@@ -30,10 +30,10 @@ layer at (0,0) size 800x456
             RenderSVGRoot {svg} at (0,0) size 110x28
               RenderSVGRect {rect} at (0,0) size 110x28 [stroke={[type=SOLID] [color=#008000] [stroke width=12.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=1000.00] [height=250.00]
               RenderSVGPath {path} at (16,5) size 78x17 [fill={[type=SOLID] [color=#008000]}] [data="M 500 50 L 150 200 L 850 200 Z"]
-      RenderTable at (1,250) size 138x41
-        RenderTableSection (anonymous) at (0,0) size 138x40
-          RenderTableRow (anonymous) at (0,0) size 138x40
-            RenderTableCell {P} at (0,0) size 138x40 [r=0 c=0 rs=1 cs=1]
+      RenderTable at (1,250) size 139x41
+        RenderTableSection (anonymous) at (0,0) size 139x40
+          RenderTableRow (anonymous) at (0,0) size 139x40
+            RenderTableCell {P} at (0,0) size 139x40 [r=0 c=0 rs=1 cs=1]
               RenderEmbeddedObject {OBJECT} at (9,0) size 121x38 [bgcolor=#FF0000] [border: (5px solid #0000FF)]
                 layer at (0,0) size 110x28
                   RenderView at (0,0) size 110x28
@@ -41,10 +41,10 @@ layer at (0,0) size 800x456
                   RenderSVGRoot {svg} at (0,0) size 110x28
                     RenderSVGRect {rect} at (0,0) size 110x28 [stroke={[type=SOLID] [color=#008000] [stroke width=12.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=1000.00] [height=250.00]
                     RenderSVGPath {path} at (16,5) size 78x17 [fill={[type=SOLID] [color=#008000]}] [data="M 500 50 L 150 200 L 850 200 Z"]
-      RenderTable {TABLE} at (1,346) size 138x41
-        RenderTableSection {TBODY} at (0,0) size 138x40
-          RenderTableRow {TR} at (0,0) size 138x40
-            RenderTableCell {TD} at (0,0) size 138x40 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (1,346) size 139x41
+        RenderTableSection {TBODY} at (0,0) size 139x40
+          RenderTableRow {TR} at (0,0) size 139x40
+            RenderTableCell {TD} at (0,0) size 139x40 [r=0 c=0 rs=1 cs=1]
               RenderEmbeddedObject {OBJECT} at (9,0) size 121x38 [bgcolor=#FF0000] [border: (5px solid #0000FF)]
                 layer at (0,0) size 110x28
                   RenderView at (0,0) size 110x28

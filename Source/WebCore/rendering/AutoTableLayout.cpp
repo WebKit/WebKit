@@ -74,9 +74,9 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                 if (cell->colSpan() == 1) {
                     if (cell->preferredLogicalWidthsDirty())
                         cell->computePreferredLogicalWidths();
-                    columnLayout.minLogicalWidth = max<int>(cell->minPreferredLogicalWidth(), columnLayout.minLogicalWidth);
+                    columnLayout.minLogicalWidth = max<int>(cell->minPreferredLogicalWidth().ceil(), columnLayout.minLogicalWidth);
                     if (cell->maxPreferredLogicalWidth() > columnLayout.maxLogicalWidth) {
-                        columnLayout.maxLogicalWidth = cell->maxPreferredLogicalWidth();
+                        columnLayout.maxLogicalWidth = cell->maxPreferredLogicalWidth().ceil();
                         maxContributor = cell;
                     }
 
@@ -93,7 +93,7 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                     case Fixed:
                         // ignore width=0
                         if (cellLogicalWidth.isPositive() && !columnLayout.logicalWidth.isPercent()) {
-                            int logicalWidth = cell->computeBorderBoxLogicalWidth(cellLogicalWidth.value());
+                            LayoutUnit logicalWidth = cell->computeBorderBoxLogicalWidth(cellLogicalWidth.value());
                             if (columnLayout.logicalWidth.isFixed()) {
                                 // Nav/IE weirdness
                                 if ((logicalWidth > columnLayout.logicalWidth.value()) 

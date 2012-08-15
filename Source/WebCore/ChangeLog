@@ -1,3 +1,22 @@
+2012-08-15  Levi Weintraub  <leviw@chromium.org>
+
+        AutoTableLayout truncates preferred widths for cells when it needs to ceil them to contain the contents
+        https://bugs.webkit.org/show_bug.cgi?id=93911
+
+        Reviewed by Eric Seidel.
+
+        Avoiding truncation of sub-pixel accumulated values when determining the preferred width of a table cell
+        in AutoTableLayout. Since we continue to layout tables using integers, we need to ceil the contents to
+        prevent premature wrapping of the contents.
+
+        This only affects ports with sub-pixel layout enabled, and fixes regressions of a handful of tests that
+        were missed when updating expectations when sub-pixel was enabled.
+
+        Test: fast/sub-pixel/auto-table-layout-should-avoid-text-wrapping.html
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+
 2012-08-10  Ojan Vafai  <ojan@chromium.org>
 
         z-index should work without position on flexitems

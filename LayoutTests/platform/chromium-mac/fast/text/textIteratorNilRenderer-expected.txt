@@ -6,21 +6,21 @@ layer at (0,0) size 800x600
       RenderBlock {CENTER} at (0,0) size 784x57
         RenderBlock {FORM} at (0,0) size 784x23
           RenderTable {TABLE} at (74,0) size 636x23
-            RenderTableSection {TBODY} at (0,0) size 635x23
-              RenderTableRow {TR} at (0,0) size 635x23
+            RenderTableSection {TBODY} at (0,0) size 636x23
+              RenderTableRow {TR} at (0,0) size 636x23
                 RenderTableCell {TD} at (0,2) size 150x18 [r=0 c=0 rs=2 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
                 RenderTableCell {TD} at (150,0) size 227x23 [r=0 c=1 rs=1 cs=1]
                   RenderTextControl {INPUT} at (2,2) size 223x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderText {#text} at (0,0) size 0x0
-                RenderTableCell {TD} at (377,0) size 98x22 [r=0 c=2 rs=1 cs=1]
+                RenderTableCell {TD} at (377,0) size 99x22 [r=0 c=2 rs=1 cs=1]
                   RenderButton {INPUT} at (2,1) size 95x19 [bgcolor=#C0C0C0]
                     RenderBlock (anonymous) at (8,2) size 79x14
                       RenderText at (0,0) size 79x13
                         text run at (0,0) width 79: "Search Froogle"
                   RenderText {#text} at (0,0) size 0x0
-                RenderTableCell {TD} at (475,2) size 160x18 [r=0 c=3 rs=2 cs=1]
+                RenderTableCell {TD} at (476,2) size 160x18 [r=0 c=3 rs=2 cs=1]
                   RenderInline {LABEL} at (0,0) size 117x13
                     RenderText {#text} at (0,0) size 0x0
                     RenderBlock {INPUT} at (12,3) size 13x12
@@ -29,6 +29,6 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 0x0
         RenderBlock (anonymous) at (0,39) size 784x18
           RenderBR {BR} at (392,0) size 0x18
-layer at (238,13) size 217x13
+layer at (237,13) size 217x13
   RenderBlock {DIV} at (3,3) size 217x13
 caret: position 1 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 1 {FORM} of child 1 {CENTER} of body

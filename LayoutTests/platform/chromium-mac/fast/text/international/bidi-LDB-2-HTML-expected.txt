@@ -89,148 +89,148 @@ layer at (0,0) size 800x513
               text run at (0,0) width 34 RTL override: "CBA"
         RenderText {#text} at (108,82) size 4x18
           text run at (108,82) width 4: " "
-        RenderBlock {DIV} at (115,50) size 35x84 [border: (1px solid #008000)]
-          RenderTable {TABLE} at (4,4) size 25x19
-            RenderTableSection {TBODY} at (0,0) size 25x19
-              RenderTableRow {TR} at (0,0) size 25x19
-                RenderTableCell {TD} at (0,0) size 6x19 [r=0 c=0 rs=1 cs=1]
+        RenderBlock {DIV} at (115,50) size 36x84 [border: (1px solid #008000)]
+          RenderTable {TABLE} at (4,4) size 28x19
+            RenderTableSection {TBODY} at (0,0) size 28x19
+              RenderTableRow {TR} at (0,0) size 28x19
+                RenderTableCell {TD} at (0,0) size 7x19 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 7x18
                     text run at (0,1) width 7 RTL: "\x{5D2}"
-                RenderTableCell {TD} at (6,0) size 9x19 [r=0 c=1 rs=1 cs=1]
+                RenderTableCell {TD} at (7,0) size 10x19 [r=0 c=1 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 10x18
                     text run at (0,1) width 10 RTL: "\x{5D1}"
-                RenderTableCell {TD} at (15,0) size 10x19 [r=0 c=2 rs=1 cs=1]
+                RenderTableCell {TD} at (17,0) size 11x19 [r=0 c=2 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 11x18
                     text run at (0,1) width 11 RTL: "\x{5D0}"
-          RenderBlock {P} at (4,23) size 27x19
+          RenderBlock {P} at (4,23) size 28x19
             RenderText {#text} at (0,1) size 27x18
               text run at (0,1) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
-          RenderBlock {P} at (4,42) size 27x19
+          RenderBlock {P} at (4,42) size 28x19
             RenderText {#text} at (0,1) size 27x18
               text run at (0,1) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
-          RenderBlock {P} at (4,61) size 27x19
+          RenderBlock {P} at (4,61) size 28x19
             RenderText {#text} at (0,1) size 27x18
               text run at (0,1) width 27 LTR override: "\x{5D2}\x{5D1}\x{5D0}"
-        RenderText {#text} at (152,82) size 5x18
-          text run at (152,82) width 5: " "
-        RenderBlock {DIV} at (159,60) size 101x65 [border: (1px solid #008000)]
-          RenderTable {TABLE} at (4,4) size 91x19
-            RenderTableSection {TBODY} at (0,0) size 91x19
-              RenderTableRow {TR} at (0,0) size 91x19
-                RenderTableCell {TD} at (0,0) size 6x19 [r=0 c=0 rs=1 cs=1]
+        RenderText {#text} at (154,82) size 4x18
+          text run at (154,82) width 4: " "
+        RenderBlock {DIV} at (161,60) size 105x65 [border: (1px solid #008000)]
+          RenderTable {TABLE} at (4,4) size 97x19
+            RenderTableSection {TBODY} at (0,0) size 97x19
+              RenderTableRow {TR} at (0,0) size 97x19
+                RenderTableCell {TD} at (0,0) size 7x19 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 7x18
                     text run at (0,1) width 7 RTL: "\x{5D2}"
-                RenderTableCell {TD} at (6,0) size 9x19 [r=0 c=1 rs=1 cs=1]
+                RenderTableCell {TD} at (7,0) size 10x19 [r=0 c=1 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 10x18
                     text run at (0,1) width 10 RTL: "\x{5D1}"
-                RenderTableCell {TD} at (15,0) size 10x19 [r=0 c=2 rs=1 cs=1]
+                RenderTableCell {TD} at (17,0) size 11x19 [r=0 c=2 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 11x18
                     text run at (0,1) width 11 RTL: "\x{5D0}"
-                RenderTableCell {TD} at (25,0) size 4x18 [r=0 c=3 rs=1 cs=1]
+                RenderTableCell {TD} at (28,0) size 4x18 [r=0 c=3 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (29,0) size 12x18 [r=0 c=4 rs=1 cs=1]
+                RenderTableCell {TD} at (32,0) size 12x18 [r=0 c=4 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 12x18
                     text run at (0,0) width 12: "A"
-                RenderTableCell {TD} at (41,0) size 11x18 [r=0 c=5 rs=1 cs=1]
+                RenderTableCell {TD} at (44,0) size 11x18 [r=0 c=5 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 11x18
                     text run at (0,0) width 11: "B"
-                RenderTableCell {TD} at (52,0) size 11x18 [r=0 c=6 rs=1 cs=1]
+                RenderTableCell {TD} at (55,0) size 11x18 [r=0 c=6 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 11x18
                     text run at (0,0) width 11: "C"
-                RenderTableCell {TD} at (63,0) size 4x18 [r=0 c=7 rs=1 cs=1]
+                RenderTableCell {TD} at (66,0) size 4x18 [r=0 c=7 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (67,0) size 5x19 [r=0 c=8 rs=1 cs=1]
+                RenderTableCell {TD} at (70,0) size 6x19 [r=0 c=8 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 6x18
                     text run at (0,1) width 6 RTL: "\x{5D5}"
-                RenderTableCell {TD} at (72,0) size 11x19 [r=0 c=9 rs=1 cs=1]
+                RenderTableCell {TD} at (76,0) size 12x19 [r=0 c=9 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 12x18
                     text run at (0,1) width 12 RTL: "\x{5D4}"
-                RenderTableCell {TD} at (83,0) size 8x19 [r=0 c=10 rs=1 cs=1]
+                RenderTableCell {TD} at (88,0) size 9x19 [r=0 c=10 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 9x18
                     text run at (0,1) width 9 RTL: "\x{5D3}"
-          RenderBlock {P} at (4,23) size 93x19
+          RenderBlock {P} at (4,23) size 97x19
             RenderText {#text} at (0,1) size 93x18
               text run at (0,1) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
               text run at (26,1) width 43: " ABC "
               text run at (68,1) width 25 RTL: "\x{5D3}\x{5D4}\x{5D5}"
-          RenderBlock {P} at (4,42) size 93x19
+          RenderBlock {P} at (4,42) size 97x19
             RenderText {#text} at (0,1) size 93x18
-              text run at (0,1) width 30 RTL: " \x{5D0}\x{5D1}\x{5D2}"
-              text run at (29,1) width 35: "ABC"
-              text run at (63,1) width 29 RTL: "\x{5D3}\x{5D4}\x{5D5} "
-        RenderText {#text} at (262,82) size 5x18
-          text run at (262,82) width 5: " "
-        RenderBlock {DIV} at (269,3) size 168x179 [border: (1px solid #008000)]
-          RenderTable {TABLE} at (4,4) size 156x19
-            RenderTableSection {TBODY} at (0,0) size 156x19
-              RenderTableRow {TR} at (0,0) size 156x19
-                RenderTableCell {TD} at (0,0) size 6x19 [r=0 c=0 rs=1 cs=1]
+              text run at (0,1) width 31 RTL: " \x{5D0}\x{5D1}\x{5D2}"
+              text run at (30,1) width 35: "ABC"
+              text run at (64,1) width 29 RTL: "\x{5D3}\x{5D4}\x{5D5} "
+        RenderText {#text} at (269,82) size 4x18
+          text run at (269,82) width 4: " "
+        RenderBlock {DIV} at (276,3) size 173x179 [border: (1px solid #008000)]
+          RenderTable {TABLE} at (4,4) size 165x19
+            RenderTableSection {TBODY} at (0,0) size 165x19
+              RenderTableRow {TR} at (0,0) size 165x19
+                RenderTableCell {TD} at (0,0) size 7x19 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 7x18
                     text run at (0,1) width 7 RTL: "\x{5D2}"
-                RenderTableCell {TD} at (6,0) size 9x19 [r=0 c=1 rs=1 cs=1]
+                RenderTableCell {TD} at (7,0) size 10x19 [r=0 c=1 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 10x18
                     text run at (0,1) width 10 RTL: "\x{5D1}"
-                RenderTableCell {TD} at (15,0) size 10x19 [r=0 c=2 rs=1 cs=1]
+                RenderTableCell {TD} at (17,0) size 11x19 [r=0 c=2 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 11x18
                     text run at (0,1) width 11 RTL: "\x{5D0}"
-                RenderTableCell {TD} at (25,0) size 4x18 [r=0 c=3 rs=1 cs=1]
+                RenderTableCell {TD} at (28,0) size 4x18 [r=0 c=3 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (29,0) size 12x18 [r=0 c=4 rs=1 cs=1]
+                RenderTableCell {TD} at (32,0) size 12x18 [r=0 c=4 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 12x18
                     text run at (0,0) width 12: "A"
-                RenderTableCell {TD} at (41,0) size 11x18 [r=0 c=5 rs=1 cs=1]
+                RenderTableCell {TD} at (44,0) size 11x18 [r=0 c=5 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 11x18
                     text run at (0,0) width 11: "B"
-                RenderTableCell {TD} at (52,0) size 11x18 [r=0 c=6 rs=1 cs=1]
+                RenderTableCell {TD} at (55,0) size 11x18 [r=0 c=6 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 11x18
                     text run at (0,0) width 11: "C"
-                RenderTableCell {TD} at (63,0) size 4x18 [r=0 c=7 rs=1 cs=1]
+                RenderTableCell {TD} at (66,0) size 4x18 [r=0 c=7 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (67,0) size 5x19 [r=0 c=8 rs=1 cs=1]
+                RenderTableCell {TD} at (70,0) size 6x19 [r=0 c=8 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 6x18
                     text run at (0,1) width 6 RTL: "\x{5D5}"
-                RenderTableCell {TD} at (72,0) size 11x19 [r=0 c=9 rs=1 cs=1]
+                RenderTableCell {TD} at (76,0) size 12x19 [r=0 c=9 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 12x18
                     text run at (0,1) width 12 RTL: "\x{5D4}"
-                RenderTableCell {TD} at (83,0) size 8x19 [r=0 c=10 rs=1 cs=1]
+                RenderTableCell {TD} at (88,0) size 9x19 [r=0 c=10 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 9x18
                     text run at (0,1) width 9 RTL: "\x{5D3}"
-                RenderTableCell {TD} at (91,0) size 4x18 [r=0 c=11 rs=1 cs=1]
+                RenderTableCell {TD} at (97,0) size 4x18 [r=0 c=11 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (95,0) size 12x18 [r=0 c=12 rs=1 cs=1]
+                RenderTableCell {TD} at (101,0) size 12x18 [r=0 c=12 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 12x18
                     text run at (0,0) width 12: "D"
-                RenderTableCell {TD} at (107,0) size 10x18 [r=0 c=13 rs=1 cs=1]
+                RenderTableCell {TD} at (113,0) size 10x18 [r=0 c=13 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 10x18
                     text run at (0,0) width 10: "E"
-                RenderTableCell {TD} at (117,0) size 9x18 [r=0 c=14 rs=1 cs=1]
+                RenderTableCell {TD} at (123,0) size 9x18 [r=0 c=14 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 9x18
                     text run at (0,0) width 9: "F"
-                RenderTableCell {TD} at (126,0) size 4x18 [r=0 c=15 rs=1 cs=1]
+                RenderTableCell {TD} at (132,0) size 4x18 [r=0 c=15 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (130,0) size 10x19 [r=0 c=16 rs=1 cs=1]
+                RenderTableCell {TD} at (136,0) size 11x19 [r=0 c=16 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 11x18
                     text run at (0,1) width 11 RTL: "\x{5D8}"
-                RenderTableCell {TD} at (140,0) size 11x19 [r=0 c=17 rs=1 cs=1]
+                RenderTableCell {TD} at (147,0) size 12x19 [r=0 c=17 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 12x18
                     text run at (0,1) width 12 RTL: "\x{5D7}"
-                RenderTableCell {TD} at (151,0) size 5x19 [r=0 c=18 rs=1 cs=1]
+                RenderTableCell {TD} at (159,0) size 6x19 [r=0 c=18 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 6x18
                     text run at (0,1) width 6 RTL: "\x{5D6}"
-          RenderBlock {P} at (4,23) size 159x19
+          RenderBlock {P} at (4,23) size 165x19
             RenderText {#text} at (0,1) size 159x18
               text run at (0,1) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
               text run at (26,1) width 43: " ABC "
               text run at (68,1) width 25 RTL: "\x{5D3}\x{5D4}\x{5D5}"
               text run at (92,1) width 40: " DEF "
               text run at (131,1) width 28 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-          RenderBlock {P} at (4,42) size 159x19
+          RenderBlock {P} at (4,42) size 165x19
             RenderText {#text} at (0,1) size 31x18
               text run at (0,1) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
               text run at (26,1) width 5: " "
@@ -241,7 +241,7 @@ layer at (0,0) size 800x513
             RenderText {#text} at (92,1) size 67x18
               text run at (92,1) width 40: " DEF "
               text run at (131,1) width 28 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-          RenderBlock {P} at (4,61) size 159x19
+          RenderBlock {P} at (4,61) size 165x19
             RenderText {#text} at (0,1) size 31x18
               text run at (0,1) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
               text run at (26,1) width 5: " "
@@ -253,7 +253,7 @@ layer at (0,0) size 800x513
             RenderText {#text} at (127,1) size 32x18
               text run at (127,1) width 5: " "
               text run at (131,1) width 28 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-          RenderBlock {P} at (4,80) size 159x19
+          RenderBlock {P} at (4,80) size 165x19
             RenderText {#text} at (127,1) size 32x18
               text run at (127,1) width 32 RTL: "\x{5D6}\x{5D7}\x{5D8} "
             RenderInline {SPAN} at (0,0) size 98x18
@@ -263,7 +263,7 @@ layer at (0,0) size 800x513
                 text run at (96,1) width 32: "DEF"
             RenderText {#text} at (0,1) size 31x18
               text run at (0,1) width 31 RTL: " \x{5D0}\x{5D1}\x{5D2}"
-          RenderBlock {P} at (4,99) size 159x19
+          RenderBlock {P} at (4,99) size 165x19
             RenderText {#text} at (64,1) size 29x18
               text run at (64,1) width 29 RTL: "\x{5D3}\x{5D4}\x{5D5} "
             RenderInline {SPAN} at (0,0) size 65x18
@@ -273,7 +273,7 @@ layer at (0,0) size 800x513
             RenderText {#text} at (92,1) size 67x18
               text run at (92,1) width 40: " DEF "
               text run at (131,1) width 28 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-          RenderBlock {P} at (4,118) size 159x19
+          RenderBlock {P} at (4,118) size 165x19
             RenderText {#text} at (64,1) size 29x18
               text run at (64,1) width 29 RTL: "\x{5D3}\x{5D4}\x{5D5} "
             RenderInline {BDO} at (0,0) size 65x18
@@ -282,7 +282,7 @@ layer at (0,0) size 800x513
             RenderText {#text} at (92,1) size 67x18
               text run at (92,1) width 40: " DEF "
               text run at (131,1) width 28 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-          RenderBlock {P} at (4,137) size 159x19
+          RenderBlock {P} at (4,137) size 165x19
             RenderText {#text} at (0,1) size 31x18
               text run at (0,1) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
               text run at (26,1) width 5: " "
@@ -292,104 +292,104 @@ layer at (0,0) size 800x513
             RenderText {#text} at (92,1) size 67x18
               text run at (92,1) width 40: " DEF "
               text run at (131,1) width 28 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-          RenderBlock {P} at (4,156) size 159x19
-            RenderText {#text} at (126,1) size 32x18
-              text run at (126,1) width 32 RTL: "\x{5D6}\x{5D7}\x{5D8} "
+          RenderBlock {P} at (4,156) size 165x19
+            RenderText {#text} at (127,1) size 32x18
+              text run at (127,1) width 32 RTL: "\x{5D6}\x{5D7}\x{5D8} "
             RenderInline {BDO} at (0,0) size 63x18
-              RenderText {#text} at (29,1) size 63x18
-                text run at (29,1) width 63 LTR override: "ABC \x{5D5}\x{5D4}\x{5D3}"
+              RenderText {#text} at (30,1) size 63x18
+                text run at (30,1) width 63 LTR override: "ABC \x{5D5}\x{5D4}\x{5D3}"
             RenderText {#text} at (0,1) size 128x18
-              text run at (0,1) width 30 RTL: " \x{5D0}\x{5D1}\x{5D2}"
-              text run at (91,1) width 36: " DEF"
-        RenderText {#text} at (439,82) size 5x18
-          text run at (439,82) width 5: " "
-        RenderBlock {DIV} at (446,69) size 201x46 [border: (1px solid #008000)]
-          RenderTable {TABLE} at (4,4) size 189x19
-            RenderTableSection {TBODY} at (0,0) size 189x19
-              RenderTableRow {TR} at (0,0) size 189x19
-                RenderTableCell {TD} at (0,0) size 6x19 [r=0 c=0 rs=1 cs=1]
+              text run at (0,1) width 31 RTL: " \x{5D0}\x{5D1}\x{5D2}"
+              text run at (92,1) width 36: " DEF"
+        RenderText {#text} at (452,82) size 4x18
+          text run at (452,82) width 4: " "
+        RenderBlock {DIV} at (459,69) size 206x46 [border: (1px solid #008000)]
+          RenderTable {TABLE} at (4,4) size 198x19
+            RenderTableSection {TBODY} at (0,0) size 198x19
+              RenderTableRow {TR} at (0,0) size 198x19
+                RenderTableCell {TD} at (0,0) size 7x19 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 7x18
                     text run at (0,1) width 7 RTL: "\x{5D2}"
-                RenderTableCell {TD} at (6,0) size 9x19 [r=0 c=1 rs=1 cs=1]
+                RenderTableCell {TD} at (7,0) size 10x19 [r=0 c=1 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 10x18
                     text run at (0,1) width 10 RTL: "\x{5D1}"
-                RenderTableCell {TD} at (15,0) size 10x19 [r=0 c=2 rs=1 cs=1]
+                RenderTableCell {TD} at (17,0) size 11x19 [r=0 c=2 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 11x18
                     text run at (0,1) width 11 RTL: "\x{5D0}"
-                RenderTableCell {TD} at (25,0) size 4x18 [r=0 c=3 rs=1 cs=1]
+                RenderTableCell {TD} at (28,0) size 4x18 [r=0 c=3 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (29,0) size 12x18 [r=0 c=4 rs=1 cs=1]
+                RenderTableCell {TD} at (32,0) size 12x18 [r=0 c=4 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 12x18
                     text run at (0,0) width 12: "A"
-                RenderTableCell {TD} at (41,0) size 11x18 [r=0 c=5 rs=1 cs=1]
+                RenderTableCell {TD} at (44,0) size 11x18 [r=0 c=5 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 11x18
                     text run at (0,0) width 11: "B"
-                RenderTableCell {TD} at (52,0) size 11x18 [r=0 c=6 rs=1 cs=1]
+                RenderTableCell {TD} at (55,0) size 11x18 [r=0 c=6 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 11x18
                     text run at (0,0) width 11: "C"
-                RenderTableCell {TD} at (63,0) size 4x18 [r=0 c=7 rs=1 cs=1]
+                RenderTableCell {TD} at (66,0) size 4x18 [r=0 c=7 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (67,0) size 5x19 [r=0 c=8 rs=1 cs=1]
+                RenderTableCell {TD} at (70,0) size 6x19 [r=0 c=8 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 6x18
                     text run at (0,1) width 6 RTL: "\x{5D5}"
-                RenderTableCell {TD} at (72,0) size 11x19 [r=0 c=9 rs=1 cs=1]
+                RenderTableCell {TD} at (76,0) size 12x19 [r=0 c=9 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 12x18
                     text run at (0,1) width 12 RTL: "\x{5D4}"
-                RenderTableCell {TD} at (83,0) size 8x19 [r=0 c=10 rs=1 cs=1]
+                RenderTableCell {TD} at (88,0) size 9x19 [r=0 c=10 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 9x18
                     text run at (0,1) width 9 RTL: "\x{5D3}"
-                RenderTableCell {TD} at (91,0) size 4x18 [r=0 c=11 rs=1 cs=1]
+                RenderTableCell {TD} at (97,0) size 4x18 [r=0 c=11 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (95,0) size 12x18 [r=0 c=12 rs=1 cs=1]
+                RenderTableCell {TD} at (101,0) size 12x18 [r=0 c=12 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 12x18
                     text run at (0,0) width 12: "D"
-                RenderTableCell {TD} at (107,0) size 10x18 [r=0 c=13 rs=1 cs=1]
+                RenderTableCell {TD} at (113,0) size 10x18 [r=0 c=13 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 10x18
                     text run at (0,0) width 10: "E"
-                RenderTableCell {TD} at (117,0) size 9x18 [r=0 c=14 rs=1 cs=1]
+                RenderTableCell {TD} at (123,0) size 9x18 [r=0 c=14 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 9x18
                     text run at (0,0) width 9: "F"
-                RenderTableCell {TD} at (126,0) size 4x18 [r=0 c=15 rs=1 cs=1]
+                RenderTableCell {TD} at (132,0) size 4x18 [r=0 c=15 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (130,0) size 12x18 [r=0 c=16 rs=1 cs=1]
+                RenderTableCell {TD} at (136,0) size 12x18 [r=0 c=16 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 12x18
                     text run at (0,0) width 12: "G"
-                RenderTableCell {TD} at (142,0) size 12x18 [r=0 c=17 rs=1 cs=1]
+                RenderTableCell {TD} at (148,0) size 12x18 [r=0 c=17 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 12x18
                     text run at (0,0) width 12: "H"
-                RenderTableCell {TD} at (154,0) size 5x18 [r=0 c=18 rs=1 cs=1]
+                RenderTableCell {TD} at (160,0) size 5x18 [r=0 c=18 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 5x18
                     text run at (0,0) width 5: "I"
-                RenderTableCell {TD} at (159,0) size 4x18 [r=0 c=19 rs=1 cs=1]
+                RenderTableCell {TD} at (165,0) size 4x18 [r=0 c=19 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (163,0) size 10x19 [r=0 c=20 rs=1 cs=1]
+                RenderTableCell {TD} at (169,0) size 11x19 [r=0 c=20 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 11x18
                     text run at (0,1) width 11 RTL: "\x{5D8}"
-                RenderTableCell {TD} at (173,0) size 11x19 [r=0 c=21 rs=1 cs=1]
+                RenderTableCell {TD} at (180,0) size 12x19 [r=0 c=21 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 12x18
                     text run at (0,1) width 12 RTL: "\x{5D7}"
-                RenderTableCell {TD} at (184,0) size 5x19 [r=0 c=22 rs=1 cs=1]
+                RenderTableCell {TD} at (192,0) size 6x19 [r=0 c=22 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 6x18
                     text run at (0,1) width 6 RTL: "\x{5D6}"
-          RenderBlock {P} at (4,23) size 192x19
+          RenderBlock {P} at (4,23) size 198x19
             RenderText {#text} at (0,1) size 192x18
               text run at (0,1) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
               text run at (26,1) width 43: " ABC "
               text run at (68,1) width 25 RTL: "\x{5D3}\x{5D4}\x{5D5}"
               text run at (92,1) width 73: " DEF GHI "
               text run at (164,1) width 28 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-        RenderText {#text} at (649,82) size 5x18
-          text run at (649,82) width 5: " "
-        RenderBR {BR} at (653,82) size 1x18
-        RenderBlock {DIV} at (3,188) size 200x46 [border: (1px solid #008000)]
-          RenderTable {TABLE} at (4,4) size 189x19
-            RenderTableSection {TBODY} at (0,0) size 189x19
-              RenderTableRow {TR} at (0,0) size 189x19
+        RenderText {#text} at (668,82) size 4x18
+          text run at (668,82) width 4: " "
+        RenderBR {BR} at (672,82) size 0x18
+        RenderBlock {DIV} at (3,188) size 206x46 [border: (1px solid #008000)]
+          RenderTable {TABLE} at (4,4) size 198x19
+            RenderTableSection {TBODY} at (0,0) size 198x19
+              RenderTableRow {TR} at (0,0) size 198x19
                 RenderTableCell {TD} at (0,0) size 9x18 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 9x18
                     text run at (0,0) width 9: "F"
@@ -402,64 +402,64 @@ layer at (0,0) size 800x513
                 RenderTableCell {TD} at (31,0) size 4x18 [r=0 c=3 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (35,0) size 5x19 [r=0 c=4 rs=1 cs=1]
+                RenderTableCell {TD} at (35,0) size 6x19 [r=0 c=4 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 6x18
                     text run at (0,1) width 6 RTL: "\x{5D5}"
-                RenderTableCell {TD} at (40,0) size 11x19 [r=0 c=5 rs=1 cs=1]
+                RenderTableCell {TD} at (41,0) size 12x19 [r=0 c=5 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 12x18
                     text run at (0,1) width 12 RTL: "\x{5D4}"
-                RenderTableCell {TD} at (51,0) size 8x19 [r=0 c=6 rs=1 cs=1]
+                RenderTableCell {TD} at (53,0) size 9x19 [r=0 c=6 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 9x18
                     text run at (0,1) width 9 RTL: "\x{5D3}"
-                RenderTableCell {TD} at (59,0) size 4x18 [r=0 c=7 rs=1 cs=1]
+                RenderTableCell {TD} at (62,0) size 4x18 [r=0 c=7 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (63,0) size 11x18 [r=0 c=8 rs=1 cs=1]
+                RenderTableCell {TD} at (66,0) size 11x18 [r=0 c=8 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 11x18
                     text run at (0,0) width 11: "C"
-                RenderTableCell {TD} at (74,0) size 11x18 [r=0 c=9 rs=1 cs=1]
+                RenderTableCell {TD} at (77,0) size 11x18 [r=0 c=9 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 11x18
                     text run at (0,0) width 11: "B"
-                RenderTableCell {TD} at (85,0) size 12x18 [r=0 c=10 rs=1 cs=1]
+                RenderTableCell {TD} at (88,0) size 12x18 [r=0 c=10 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 12x18
                     text run at (0,0) width 12: "A"
-                RenderTableCell {TD} at (97,0) size 4x18 [r=0 c=11 rs=1 cs=1]
+                RenderTableCell {TD} at (100,0) size 4x18 [r=0 c=11 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (101,0) size 6x19 [r=0 c=12 rs=1 cs=1]
+                RenderTableCell {TD} at (104,0) size 7x19 [r=0 c=12 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 7x18
                     text run at (0,1) width 7 RTL: "\x{5D2}"
-                RenderTableCell {TD} at (107,0) size 9x19 [r=0 c=13 rs=1 cs=1]
+                RenderTableCell {TD} at (111,0) size 10x19 [r=0 c=13 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 10x18
                     text run at (0,1) width 10 RTL: "\x{5D1}"
-                RenderTableCell {TD} at (116,0) size 10x19 [r=0 c=14 rs=1 cs=1]
+                RenderTableCell {TD} at (121,0) size 11x19 [r=0 c=14 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 11x18
                     text run at (0,1) width 11 RTL: "\x{5D0}"
-                RenderTableCell {TD} at (126,0) size 4x18 [r=0 c=15 rs=1 cs=1]
+                RenderTableCell {TD} at (132,0) size 4x18 [r=0 c=15 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (130,0) size 12x18 [r=0 c=16 rs=1 cs=1]
+                RenderTableCell {TD} at (136,0) size 12x18 [r=0 c=16 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 12x18
                     text run at (0,0) width 12: "G"
-                RenderTableCell {TD} at (142,0) size 12x18 [r=0 c=17 rs=1 cs=1]
+                RenderTableCell {TD} at (148,0) size 12x18 [r=0 c=17 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 12x18
                     text run at (0,0) width 12: "H"
-                RenderTableCell {TD} at (154,0) size 5x18 [r=0 c=18 rs=1 cs=1]
+                RenderTableCell {TD} at (160,0) size 5x18 [r=0 c=18 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 5x18
                     text run at (0,0) width 5: "I"
-                RenderTableCell {TD} at (159,0) size 4x18 [r=0 c=19 rs=1 cs=1]
+                RenderTableCell {TD} at (165,0) size 4x18 [r=0 c=19 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (163,0) size 10x19 [r=0 c=20 rs=1 cs=1]
+                RenderTableCell {TD} at (169,0) size 11x19 [r=0 c=20 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 11x18
                     text run at (0,1) width 11 RTL: "\x{5D8}"
-                RenderTableCell {TD} at (173,0) size 11x19 [r=0 c=21 rs=1 cs=1]
+                RenderTableCell {TD} at (180,0) size 12x19 [r=0 c=21 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 12x18
                     text run at (0,1) width 12 RTL: "\x{5D7}"
-                RenderTableCell {TD} at (184,0) size 5x19 [r=0 c=22 rs=1 cs=1]
+                RenderTableCell {TD} at (192,0) size 6x19 [r=0 c=22 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 6x18
                     text run at (0,1) width 6 RTL: "\x{5D6}"
-          RenderBlock {P} at (4,23) size 192x19
+          RenderBlock {P} at (4,23) size 198x19
             RenderText {#text} at (97,1) size 31x18
               text run at (97,1) width 31 RTL: "\x{5D0}\x{5D1}\x{5D2} "
             RenderInline {BDO} at (0,0) size 98x18
@@ -468,82 +468,82 @@ layer at (0,0) size 800x513
             RenderText {#text} at (127,1) size 65x18
               text run at (127,1) width 38: " GHI "
               text run at (164,1) width 28 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-        RenderText {#text} at (205,201) size 5x18
-          text run at (205,201) width 5: " "
-        RenderBlock {DIV} at (212,188) size 201x46 [border: (1px solid #008000)]
-          RenderTable {TABLE} at (4,4) size 189x19
-            RenderTableSection {TBODY} at (0,0) size 189x19
-              RenderTableRow {TR} at (0,0) size 189x19
-                RenderTableCell {TD} at (0,0) size 6x19 [r=0 c=0 rs=1 cs=1]
+        RenderText {#text} at (212,201) size 4x18
+          text run at (212,201) width 4: " "
+        RenderBlock {DIV} at (219,188) size 206x46 [border: (1px solid #008000)]
+          RenderTable {TABLE} at (4,4) size 198x19
+            RenderTableSection {TBODY} at (0,0) size 198x19
+              RenderTableRow {TR} at (0,0) size 198x19
+                RenderTableCell {TD} at (0,0) size 7x19 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 7x18
                     text run at (0,1) width 7 RTL: "\x{5D2}"
-                RenderTableCell {TD} at (6,0) size 9x19 [r=0 c=1 rs=1 cs=1]
+                RenderTableCell {TD} at (7,0) size 10x19 [r=0 c=1 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 10x18
                     text run at (0,1) width 10 RTL: "\x{5D1}"
-                RenderTableCell {TD} at (15,0) size 10x19 [r=0 c=2 rs=1 cs=1]
+                RenderTableCell {TD} at (17,0) size 11x19 [r=0 c=2 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 11x18
                     text run at (0,1) width 11 RTL: "\x{5D0}"
-                RenderTableCell {TD} at (25,0) size 4x18 [r=0 c=3 rs=1 cs=1]
+                RenderTableCell {TD} at (28,0) size 4x18 [r=0 c=3 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (29,0) size 12x18 [r=0 c=4 rs=1 cs=1]
+                RenderTableCell {TD} at (32,0) size 12x18 [r=0 c=4 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 12x18
                     text run at (0,0) width 12: "A"
-                RenderTableCell {TD} at (41,0) size 11x18 [r=0 c=5 rs=1 cs=1]
+                RenderTableCell {TD} at (44,0) size 11x18 [r=0 c=5 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 11x18
                     text run at (0,0) width 11: "B"
-                RenderTableCell {TD} at (52,0) size 11x18 [r=0 c=6 rs=1 cs=1]
+                RenderTableCell {TD} at (55,0) size 11x18 [r=0 c=6 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 11x18
                     text run at (0,0) width 11: "C"
-                RenderTableCell {TD} at (63,0) size 4x18 [r=0 c=7 rs=1 cs=1]
+                RenderTableCell {TD} at (66,0) size 4x18 [r=0 c=7 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (67,0) size 9x18 [r=0 c=8 rs=1 cs=1]
+                RenderTableCell {TD} at (70,0) size 9x18 [r=0 c=8 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 9x18
                     text run at (0,0) width 9: "F"
-                RenderTableCell {TD} at (76,0) size 10x18 [r=0 c=9 rs=1 cs=1]
+                RenderTableCell {TD} at (79,0) size 10x18 [r=0 c=9 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 10x18
                     text run at (0,0) width 10: "E"
-                RenderTableCell {TD} at (86,0) size 12x18 [r=0 c=10 rs=1 cs=1]
+                RenderTableCell {TD} at (89,0) size 12x18 [r=0 c=10 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 12x18
                     text run at (0,0) width 12: "D"
-                RenderTableCell {TD} at (98,0) size 4x18 [r=0 c=11 rs=1 cs=1]
+                RenderTableCell {TD} at (101,0) size 4x18 [r=0 c=11 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (102,0) size 5x19 [r=0 c=12 rs=1 cs=1]
+                RenderTableCell {TD} at (105,0) size 6x19 [r=0 c=12 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 6x18
                     text run at (0,1) width 6 RTL: "\x{5D5}"
-                RenderTableCell {TD} at (107,0) size 11x19 [r=0 c=13 rs=1 cs=1]
+                RenderTableCell {TD} at (111,0) size 12x19 [r=0 c=13 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 12x18
                     text run at (0,1) width 12 RTL: "\x{5D4}"
-                RenderTableCell {TD} at (118,0) size 8x19 [r=0 c=14 rs=1 cs=1]
+                RenderTableCell {TD} at (123,0) size 9x19 [r=0 c=14 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 9x18
                     text run at (0,1) width 9 RTL: "\x{5D3}"
-                RenderTableCell {TD} at (126,0) size 4x18 [r=0 c=15 rs=1 cs=1]
+                RenderTableCell {TD} at (132,0) size 4x18 [r=0 c=15 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (130,0) size 12x18 [r=0 c=16 rs=1 cs=1]
+                RenderTableCell {TD} at (136,0) size 12x18 [r=0 c=16 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 12x18
                     text run at (0,0) width 12: "G"
-                RenderTableCell {TD} at (142,0) size 12x18 [r=0 c=17 rs=1 cs=1]
+                RenderTableCell {TD} at (148,0) size 12x18 [r=0 c=17 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 12x18
                     text run at (0,0) width 12: "H"
-                RenderTableCell {TD} at (154,0) size 5x18 [r=0 c=18 rs=1 cs=1]
+                RenderTableCell {TD} at (160,0) size 5x18 [r=0 c=18 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 5x18
                     text run at (0,0) width 5: "I"
-                RenderTableCell {TD} at (159,0) size 4x18 [r=0 c=19 rs=1 cs=1]
+                RenderTableCell {TD} at (165,0) size 4x18 [r=0 c=19 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (163,0) size 10x19 [r=0 c=20 rs=1 cs=1]
+                RenderTableCell {TD} at (169,0) size 11x19 [r=0 c=20 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 11x18
                     text run at (0,1) width 11 RTL: "\x{5D8}"
-                RenderTableCell {TD} at (173,0) size 11x19 [r=0 c=21 rs=1 cs=1]
+                RenderTableCell {TD} at (180,0) size 12x19 [r=0 c=21 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 12x18
                     text run at (0,1) width 12 RTL: "\x{5D7}"
-                RenderTableCell {TD} at (184,0) size 5x19 [r=0 c=22 rs=1 cs=1]
+                RenderTableCell {TD} at (192,0) size 6x19 [r=0 c=22 rs=1 cs=1]
                   RenderText {#text} at (0,1) size 6x18
                     text run at (0,1) width 6 RTL: "\x{5D6}"
-          RenderBlock {P} at (4,23) size 192x19
+          RenderBlock {P} at (4,23) size 198x19
             RenderText {#text} at (0,1) size 69x18
               text run at (0,1) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
               text run at (26,1) width 43: " ABC "

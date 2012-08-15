@@ -9,22 +9,22 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,18) size 784x26
         RenderTableSection {TBODY} at (0,0) size 784x26
           RenderTableRow {TR} at (0,1) size 784x24
-            RenderTableCell {TD} at (1,1) size 66x24 [r=0 c=0 rs=1 cs=1]
-              RenderButton {INPUT} at (1,2) size 64x19 [bgcolor=#C0C0C0]
-                RenderBlock (anonymous) at (8,2) size 48x14
+            RenderTableCell {TD} at (1,1) size 67x24 [r=0 c=0 rs=1 cs=1]
+              RenderButton {INPUT} at (1,2) size 65x19 [bgcolor=#C0C0C0]
+                RenderBlock (anonymous) at (8,2) size 49x14
                   RenderText at (0,0) size 49x13
                     text run at (0,0) width 49: "New Mail"
-            RenderTableCell {TD} at (68,1) size 46x24 [r=0 c=1 rs=1 cs=1]
-              RenderButton {INPUT} at (1,2) size 44x19 [bgcolor=#C0C0C0]
-                RenderBlock (anonymous) at (8,2) size 28x14
+            RenderTableCell {TD} at (69,1) size 47x24 [r=0 c=1 rs=1 cs=1]
+              RenderButton {INPUT} at (1,2) size 45x19 [bgcolor=#C0C0C0]
+                RenderBlock (anonymous) at (8,2) size 29x14
                   RenderText at (0,0) size 29x13
                     text run at (0,0) width 29: "Reply"
-            RenderTableCell {TD} at (115,1) size 64x24 [r=0 c=2 rs=1 cs=1]
-              RenderButton {INPUT} at (1,2) size 62x19 [bgcolor=#C0C0C0]
-                RenderBlock (anonymous) at (8,2) size 46x14
+            RenderTableCell {TD} at (117,1) size 65x24 [r=0 c=2 rs=1 cs=1]
+              RenderButton {INPUT} at (1,2) size 63x19 [bgcolor=#C0C0C0]
+                RenderBlock (anonymous) at (8,2) size 47x14
                   RenderText at (0,0) size 47x13
                     text run at (0,0) width 47: "Reply All"
-            RenderTableCell {TD} at (180,3) size 603x20 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (183,3) size 600x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x18
                 text run at (1,1) width 4: " "
       RenderBlock (anonymous) at (0,44) size 784x36
@@ -33,21 +33,21 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,80) size 784x26
         RenderTableSection {TBODY} at (0,0) size 784x26
           RenderTableRow {TR} at (0,1) size 784x24
-            RenderTableCell {TD} at (1,1) size 66x24 [r=0 c=0 rs=1 cs=1]
-              RenderButton {INPUT} at (1,2) size 64x19 [bgcolor=#C0C0C0]
-                RenderBlock (anonymous) at (8,2) size 48x14
+            RenderTableCell {TD} at (1,1) size 67x24 [r=0 c=0 rs=1 cs=1]
+              RenderButton {INPUT} at (1,2) size 65x19 [bgcolor=#C0C0C0]
+                RenderBlock (anonymous) at (8,2) size 49x14
                   RenderText at (0,0) size 49x13
                     text run at (0,0) width 49: "New Mail"
-            RenderTableCell {TD} at (68,1) size 46x24 [r=0 c=1 rs=1 cs=1]
-              RenderButton {INPUT} at (1,2) size 44x19 [bgcolor=#C0C0C0]
-                RenderBlock (anonymous) at (8,2) size 28x14
+            RenderTableCell {TD} at (69,1) size 47x24 [r=0 c=1 rs=1 cs=1]
+              RenderButton {INPUT} at (1,2) size 45x19 [bgcolor=#C0C0C0]
+                RenderBlock (anonymous) at (8,2) size 29x14
                   RenderText at (0,0) size 29x13
                     text run at (0,0) width 29: "Reply"
-            RenderTableCell {TD} at (115,1) size 64x24 [r=0 c=2 rs=1 cs=1]
-              RenderButton {INPUT} at (1,2) size 62x19 [bgcolor=#C0C0C0]
-                RenderBlock (anonymous) at (8,2) size 46x14
+            RenderTableCell {TD} at (117,1) size 65x24 [r=0 c=2 rs=1 cs=1]
+              RenderButton {INPUT} at (1,2) size 63x19 [bgcolor=#C0C0C0]
+                RenderBlock (anonymous) at (8,2) size 47x14
                   RenderText at (0,0) size 47x13
                     text run at (0,0) width 47: "Reply All"
-            RenderTableCell {TD} at (180,3) size 603x20 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (183,3) size 600x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x18
                 text run at (1,1) width 4: " "

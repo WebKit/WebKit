@@ -7,25 +7,25 @@ layer at (0,0) size 800x600
         RenderTable {TABLE} at (0,0) size 784x28
           RenderTableSection {TBODY} at (0,0) size 784x28
             RenderTableRow {TR} at (0,2) size 784x24 [bgcolor=#FFFFFF]
-              RenderTableCell {TD} at (2,2) size 69x24 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,2) size 70x24 [r=0 c=0 rs=1 cs=1]
                 RenderButton {INPUT} at (3,2) size 64x19 [bgcolor=#C0C0C0]
                   RenderBlock (anonymous) at (8,2) size 48x14
                     RenderText at (0,0) size 48x13
                       text run at (0,0) width 48: "Select all"
-              RenderTableCell {TD} at (73,2) size 55x24 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (74,2) size 56x24 [r=0 c=1 rs=1 cs=1]
                 RenderButton {INPUT} at (3,2) size 50x19 [bgcolor=#C0C0C0]
                   RenderBlock (anonymous) at (8,2) size 34x14
                     RenderText at (0,0) size 34x13
                       text run at (0,0) width 34: "Delete"
-              RenderTableCell {TD} at (130,2) size 85x24 [r=0 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (132,2) size 86x24 [r=0 c=2 rs=1 cs=1]
                 RenderButton {INPUT} at (3,2) size 80x19 [bgcolor=#C0C0C0]
                   RenderBlock (anonymous) at (8,2) size 64x14
                     RenderText at (0,0) size 64x13
                       text run at (0,0) width 64: "Empty trash"
-              RenderTableCell {TD} at (217,6) size 378x20 [r=0 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (220,6) size 374x20 [r=0 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 4x18
                   text run at (1,1) width 4: " "
-              RenderTableCell {TD} at (597,2) size 67x24 [r=0 c=4 rs=1 cs=1]
+              RenderTableCell {TD} at (596,2) size 68x24 [r=0 c=4 rs=1 cs=1]
                 RenderButton {INPUT} at (3,2) size 62x19 [bgcolor=#C0C0C0]
                   RenderBlock (anonymous) at (8,2) size 46x14
                     RenderText at (0,0) size 46x13

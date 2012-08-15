@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (183,1) size 601x17 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (183,1) size 600x17 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 95x17
                 text run at (0,0) width 95: "getClientRects():"
               RenderText {#text} at (0,0) size 0x0

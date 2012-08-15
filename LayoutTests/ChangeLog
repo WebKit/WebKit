@@ -1,3 +1,64 @@
+2012-08-15  Levi Weintraub  <leviw@chromium.org>
+
+        AutoTableLayout truncates preferred widths for cells when it needs to ceil them to contain the contents
+        https://bugs.webkit.org/show_bug.cgi?id=93911
+
+        Reviewed by Eric Seidel.
+
+        This only affects ports with sub-pixel layout enabled, and fixes regressions of a handful of tests that
+        were missed when updating expectations when sub-pixel was enabled.
+
+        * fast/sub-pixel/auto-table-layout-should-avoid-text-wrapping-expected.txt: Added.
+        * fast/sub-pixel/auto-table-layout-should-avoid-text-wrapping.html: Added.
+        * platform/chromium-mac/editing/deleting/5144139-2-expected.txt:
+        * platform/chromium-mac/fast/forms/001-expected.png:
+        * platform/chromium-mac/fast/forms/001-expected.txt:
+        * platform/chromium-mac/fast/forms/button-white-space-expected.txt:
+        * platform/chromium-mac/fast/forms/form-element-geometry-expected.png:
+        * platform/chromium-mac/fast/forms/form-element-geometry-expected.txt:
+        * platform/chromium-mac/fast/forms/formmove3-expected.txt:
+        * platform/chromium-mac/fast/replaced/width100percent-button-expected.png:
+        * platform/chromium-mac/fast/replaced/width100percent-button-expected.txt:
+        * platform/chromium-mac/fast/replaced/width100percent-checkbox-expected.png:
+        * platform/chromium-mac/fast/replaced/width100percent-checkbox-expected.txt:
+        * platform/chromium-mac/fast/replaced/width100percent-radio-expected.png:
+        * platform/chromium-mac/fast/replaced/width100percent-radio-expected.txt:
+        * platform/chromium-mac/fast/table/rowindex-expected.png:
+        * platform/chromium-mac/fast/table/rowindex-expected.txt:
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-CSS-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-CSS-expected.txt:
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-HTML-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-HTML-expected.txt:
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-formatting-characters-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-formatting-characters-expected.txt:
+        * platform/chromium-mac/fast/text/international/bidi-layout-across-linebreak-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-layout-across-linebreak-expected.txt:
+        * platform/chromium-mac/fast/text/international/bidi-override-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-override-expected.txt:
+        * platform/chromium-mac/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-mac/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/chromium-mac/fast/transforms/bounding-rect-zoom-expected.txt:
+        * platform/chromium-mac/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt:
+        * platform/chromium-mac/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug138725-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug33855-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug33855-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug39209-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug39209-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug55527-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug89315-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug89315-expected.txt:
+        * platform/chromium/TestExpectations:
+        * platform/mac/tables/mozilla/bugs/bug55527-expected.txt:
+
 2012-08-10  Ojan Vafai  <ojan@chromium.org>
 
         z-index should work without position on flexitems

@@ -6,15 +6,15 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 431x82 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 429x80
           RenderTableRow {TR} at (0,2) size 429x52
-            RenderTableCell {TD} at (2,17) size 136x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,17) size 135x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x18
                 text run at (2,2) width 30: "Blah"
-            RenderTableCell {TD} at (140,2) size 287x52 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (110,2) size 67x48 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 65x46
-                  RenderTableRow {TR} at (0,2) size 65x42
-                    RenderTableCell {TD} at (2,2) size 61x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderBlock {FORM} at (2,2) size 57x22
+            RenderTableCell {TD} at (139,2) size 288x52 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (110,2) size 68x48 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 66x46
+                  RenderTableRow {TR} at (0,2) size 66x42
+                    RenderTableCell {TD} at (2,2) size 62x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderBlock {FORM} at (2,2) size 58x22
                         RenderButton {INPUT} at (2,1) size 54x19 [bgcolor=#C0C0C0]
                           RenderBlock (anonymous) at (8,2) size 38x14
                             RenderText at (0,0) size 38x13
