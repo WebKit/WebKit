@@ -2013,12 +2013,13 @@ bool InputHandler::setText(spannable_string_t* spannableString)
     removeAttributedTextMarker();
 
     if (isTrailingSingleCharacter(changedSpan, textLength, composingTextLength)) {
-        // Handle the case where text is being composed.
-        if (firstSpanInString(spannableString, COMPOSED_TEXT_ATTRIB)) {
-            InputLog(LogLevelInfo, "InputHandler::setText Single trailing character detected.  Text is being composed.");
+        // If the text is unconverted, do not allow JS processing as it is not a "real"
+        // character in the field.
+        if (firstSpanInString(spannableString, UNCONVERTED_TEXT_ATTRIB)) {
+            InputLog(LogLevelInfo, "InputHandler::setText Single trailing character detected.  Text is unconverted.");
             return editor->command("InsertText").execute(textToInsert.right(1));
         }
-        InputLog(LogLevelInfo, "InputHandler::setText Single trailing character detected. Text is not being composed.");
+        InputLog(LogLevelInfo, "InputHandler::setText Single trailing character detected.");
         return handleKeyboardInput(Platform::KeyboardEvent(textToInsert[textLength - 1], Platform::KeyboardEvent::KeyChar, 0), false /* changeIsPartOfComposition */);
     }
 

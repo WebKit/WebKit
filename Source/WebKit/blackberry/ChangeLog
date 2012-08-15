@@ -1,3 +1,21 @@
+2012-08-15  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Use the unconverted attribute instead of composing when deciding to how to handle key input.
+        https://bugs.webkit.org/show_bug.cgi?id=94132
+
+        Reviewed by Rob Buis.
+
+        PR 139838.
+
+        Switch direct key input handling to be based on the unconverted
+        attribute being present.  Converted keys, even during composition
+        are now input directly.
+
+        Reviewed Internally by Nima Ghanavatian.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::setText):
+
 2012-08-15  Joshua Netterfield  <jnetterfield@rim.com>
 
         [BlackBerry] Upstream BlackBerry build fixes
