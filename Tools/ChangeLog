@@ -1,3 +1,14 @@
+2012-08-14  Dan Bernstein  <mitz@apple.com>
+
+        fast/events/overflow-scroll-fake-mouse-move.html and fast/events/frame-scroll-fake-mouse-move.html are failing in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=94045
+
+        Reviewed by Geoff Garen.
+
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        (-[DumpRenderTreeWindow _hasKeyAppearance]): Added. Returns [self isKeyWindow]. This is
+        needed now that WebView uses -_hasKeyAppearance instead of -isKeyWindow.
+
 2012-08-14  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Fix some typos in MiniBrowser

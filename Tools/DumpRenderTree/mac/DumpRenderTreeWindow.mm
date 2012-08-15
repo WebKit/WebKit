@@ -82,6 +82,11 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
     return gTestRunner ? gTestRunner->windowIsKey() : YES;
 }
 
+- (BOOL)_hasKeyAppearance
+{
+    return [self isKeyWindow];
+}
+
 - (void)keyDown:(NSEvent *)event
 {
     // Do nothing, avoiding the beep we'd otherwise get from NSResponder,
