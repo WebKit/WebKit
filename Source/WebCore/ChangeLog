@@ -1,3 +1,41 @@
+2012-08-15  Dan Carney  <dcarney@google.com>
+
+        Refactor away IsolatedWorld
+        https://bugs.webkit.org/show_bug.cgi?id=93971
+
+        Reviewed by Adam Barth.
+
+        Remove IsolatedWorld class as it was 1:1 with DOMWrapperWorld.
+        This paves the way towards a JSC-like use of DOMWrapperWorld.
+
+        No tests.  No change in functionality.
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/v8/DOMWrapperWorld.cpp:
+        (WebCore):
+        (WebCore::mainThreadNormalWorld):
+        * bindings/v8/DOMWrapperWorld.h:
+        (WebCore):
+        (DOMWrapperWorld):
+        (WebCore::DOMWrapperWorld::create):
+        (WebCore::DOMWrapperWorld::~DOMWrapperWorld):
+        (WebCore::DOMWrapperWorld::count):
+        (WebCore::DOMWrapperWorld::worldId):
+        (WebCore::DOMWrapperWorld::domDataStore):
+        (WebCore::DOMWrapperWorld::DOMWrapperWorld):
+        * bindings/v8/IsolatedWorld.cpp: Removed.
+        * bindings/v8/IsolatedWorld.h: Removed.
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::getCachedWrapper):
+        * bindings/v8/V8IsolatedContext.cpp:
+        (WebCore::V8IsolatedContext::V8IsolatedContext):
+        (WebCore::V8IsolatedContext::destroy):
+        * bindings/v8/V8IsolatedContext.h:
+        (WebCore::V8IsolatedContext::getEntered):
+        (WebCore::V8IsolatedContext::world):
+        (V8IsolatedContext):
+
 2012-08-15  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css3-text] Add CSS3 Text decoration compile flag

@@ -31,7 +31,7 @@
 #ifndef V8IsolatedContext_h
 #define V8IsolatedContext_h
 
-#include "IsolatedWorld.h"
+#include "DOMWrapperWorld.h"
 #include "ScriptSourceCode.h" // for WebCore::ScriptSourceCode
 #include "SharedPersistent.h"
 #include "V8Utilities.h"
@@ -82,7 +82,7 @@ public:
         // V8 team to add a real property to v8::Context for isolated worlds.
         // Until then, we optimize the common case of not having any isolated
         // worlds at all.
-        if (!IsolatedWorld::count())
+        if (!DOMWrapperWorld::count())
             return 0;
         if (!v8::Context::InContext())
             return 0;
@@ -92,7 +92,7 @@ public:
     v8::Handle<v8::Context> context() { return m_context->get(); }
     PassRefPtr<SharedPersistent<v8::Context> > sharedContext() { return m_context; }
 
-    IsolatedWorld* world() const { return m_world.get(); }
+    DOMWrapperWorld* world() const { return m_world.get(); }
 
     SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
     void setSecurityOrigin(PassRefPtr<SecurityOrigin>);
@@ -115,7 +115,7 @@ private:
     // long as |m_context| has not been garbage collected.
     RefPtr<SharedPersistent<v8::Context> > m_context;
 
-    RefPtr<IsolatedWorld> m_world;
+    RefPtr<DOMWrapperWorld> m_world;
 
     RefPtr<SecurityOrigin> m_securityOrigin;
 
