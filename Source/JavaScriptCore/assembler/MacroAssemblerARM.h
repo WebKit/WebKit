@@ -204,7 +204,7 @@ public:
 
     void neg32(RegisterID srcDest)
     {
-        m_assembler.rsbs_r(srcDest, srcDest, ARMAssembler::getOp2Byte(0));
+        m_assembler.rsbs(srcDest, srcDest, ARMAssembler::getOp2Byte(0));
     }
 
     void or32(RegisterID src, RegisterID dest)
@@ -303,12 +303,12 @@ public:
 
     void xor32(RegisterID src, RegisterID dest)
     {
-        m_assembler.eors_r(dest, dest, src);
+        m_assembler.eors(dest, dest, src);
     }
 
     void xor32(RegisterID op1, RegisterID op2, RegisterID dest)
     {
-        m_assembler.eors_r(dest, op1, op2);
+        m_assembler.eors(dest, op1, op2);
     }
 
     void xor32(TrustedImm32 imm, RegisterID dest)
@@ -316,7 +316,7 @@ public:
         if (imm.m_value == -1)
             m_assembler.mvns(dest, dest);
         else
-            m_assembler.eors_r(dest, dest, m_assembler.getImm(imm.m_value, ARMRegisters::S0));
+            m_assembler.eors(dest, dest, m_assembler.getImm(imm.m_value, ARMRegisters::S0));
     }
 
     void xor32(TrustedImm32 imm, RegisterID src, RegisterID dest)
@@ -324,7 +324,7 @@ public:
         if (imm.m_value == -1)
             m_assembler.mvns(dest, src);
         else    
-            m_assembler.eors_r(dest, src, m_assembler.getImm(imm.m_value, ARMRegisters::S0));
+            m_assembler.eors(dest, src, m_assembler.getImm(imm.m_value, ARMRegisters::S0));
     }
 
     void countLeadingZeros32(RegisterID src, RegisterID dest)

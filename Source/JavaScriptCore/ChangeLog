@@ -1,3 +1,16 @@
+2012-08-15  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
+
+        Buildfix after r125541
+        https://bugs.webkit.org/show_bug.cgi?id=94097
+
+        Reviewed by Filip Pizlo.
+
+        r125541 has broken the traditional ARM port build of JSC.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::neg32):
+        (JSC::MacroAssemblerARM::xor32):
+
 2012-08-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Change behavior of MasqueradesAsUndefined to better accommodate DFG changes
