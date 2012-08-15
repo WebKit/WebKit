@@ -165,8 +165,8 @@ JSValue JSDeviceMotionEvent::interval(ExecState*) const
 JSValue JSDeviceMotionEvent::initDeviceMotionEvent(ExecState* exec)
 {
     const String& type = ustringToString(exec->argument(0).toString(exec)->value(exec));
-    bool bubbles = exec->argument(1).toBoolean();
-    bool cancelable = exec->argument(2).toBoolean();
+    bool bubbles = exec->argument(1).toBoolean(exec);
+    bool cancelable = exec->argument(2).toBoolean(exec);
 
     // If any of the parameters are null or undefined, mark them as not provided.
     // Otherwise, use the standard JavaScript conversion.

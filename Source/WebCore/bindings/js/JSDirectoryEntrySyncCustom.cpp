@@ -53,9 +53,9 @@ static PassRefPtr<WebKitFlags> getFlags(ExecState* exec, const JSValue& argument
     JSObject* object = argument.getObject();
     flags = WebKitFlags::create();
     JSValue jsCreate = object->get(exec, Identifier(exec, "create"));
-    flags->setCreate(jsCreate.toBoolean());
+    flags->setCreate(jsCreate.toBoolean(exec));
     JSValue jsExclusive = object->get(exec, Identifier(exec, "exclusive"));
-    flags->setExclusive(jsExclusive.toBoolean());
+    flags->setExclusive(jsExclusive.toBoolean(exec));
     return flags;
 }
 

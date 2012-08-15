@@ -500,23 +500,23 @@ namespace JSC {
 
     inline bool isJSString(JSValue v) { return v.isCell() && v.asCell()->classInfo() == &JSString::s_info; }
 
-    inline bool JSCell::toBoolean() const
+    inline bool JSCell::toBoolean(ExecState* exec) const
     {
         if (isString()) 
             return static_cast<const JSString*>(this)->toBoolean();
-        return !structure()->typeInfo().masqueradesAsUndefined();
+        return !structure()->masqueradesAsUndefined(exec->lexicalGlobalObject());
     }
 
     // --- JSValue inlines ----------------------------
     
-    inline bool JSValue::toBoolean() const
+    inline bool JSValue::toBoolean(ExecState* exec) const
     {
         if (isInt32())
             return asInt32();
         if (isDouble())
             return asDouble() > 0.0 || asDouble() < 0.0; // false for NaN
         if (isCell())
-            return asCell()->toBoolean();
+            return asCell()->toBoolean(exec);
         return isTrue(); // false, null, and undefined all convert to false.
     }
 

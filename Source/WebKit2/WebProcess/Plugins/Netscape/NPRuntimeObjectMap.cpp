@@ -154,7 +154,7 @@ void NPRuntimeObjectMap::convertJSValueToNPVariant(ExecState* exec, JSValue valu
     }
 
     if (value.isBoolean()) {
-        BOOLEAN_TO_NPVARIANT(value.toBoolean(), variant);
+        BOOLEAN_TO_NPVARIANT(value.toBoolean(exec), variant);
         return;
     }
 

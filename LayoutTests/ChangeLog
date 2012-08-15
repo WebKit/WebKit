@@ -1,3 +1,18 @@
+2012-08-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Change behavior of MasqueradesAsUndefined to better accommodate DFG changes
+        https://bugs.webkit.org/show_bug.cgi?id=93884
+
+        Reviewed by Geoffrey Garen.
+
+        Added a test that uses a variety of ways of checking whether something is correctly 
+        masquerading as undefined (or not) in a subframe.
+
+        * fast/js/document-all-between-frames-expected.txt: Added.
+        * fast/js/document-all-between-frames.html: Added.
+        * fast/js/resources/document-all-between-frames-subframe.html: Added.
+        * platform/chromium/TestExpectations: Chromium treats document.all differently, so skip our new test.
+
 2012-08-15  Adam Barth  <abarth@webkit.org>
 
         Update TestExpectations entry to refer to an actual bug.

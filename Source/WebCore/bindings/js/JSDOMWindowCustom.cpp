@@ -640,7 +640,7 @@ JSValue JSDOMWindow::addEventListener(ExecState* exec)
     if (!listener.isObject())
         return jsUndefined();
 
-    impl()->addEventListener(ustringToAtomicString(exec->argument(0).toString(exec)->value(exec)), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)), exec->argument(2).toBoolean());
+    impl()->addEventListener(ustringToAtomicString(exec->argument(0).toString(exec)->value(exec)), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)), exec->argument(2).toBoolean(exec));
     return jsUndefined();
 }
 
@@ -654,7 +654,7 @@ JSValue JSDOMWindow::removeEventListener(ExecState* exec)
     if (!listener.isObject())
         return jsUndefined();
 
-    impl()->removeEventListener(ustringToAtomicString(exec->argument(0).toString(exec)->value(exec)), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)).get(), exec->argument(2).toBoolean());
+    impl()->removeEventListener(ustringToAtomicString(exec->argument(0).toString(exec)->value(exec)), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)).get(), exec->argument(2).toBoolean(exec));
     return jsUndefined();
 }
 

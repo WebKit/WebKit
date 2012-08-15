@@ -55,22 +55,22 @@ JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
             JSObject* jsAttrs = exec->argument(1).getObject();
             Identifier alpha(exec, "alpha");
             if (jsAttrs->hasProperty(exec, alpha))
-                webGLAttrs->setAlpha(jsAttrs->get(exec, alpha).toBoolean());
+                webGLAttrs->setAlpha(jsAttrs->get(exec, alpha).toBoolean(exec));
             Identifier depth(exec, "depth");
             if (jsAttrs->hasProperty(exec, depth))
-                webGLAttrs->setDepth(jsAttrs->get(exec, depth).toBoolean());
+                webGLAttrs->setDepth(jsAttrs->get(exec, depth).toBoolean(exec));
             Identifier stencil(exec, "stencil");
             if (jsAttrs->hasProperty(exec, stencil))
-                webGLAttrs->setStencil(jsAttrs->get(exec, stencil).toBoolean());
+                webGLAttrs->setStencil(jsAttrs->get(exec, stencil).toBoolean(exec));
             Identifier antialias(exec, "antialias");
             if (jsAttrs->hasProperty(exec, antialias))
-                webGLAttrs->setAntialias(jsAttrs->get(exec, antialias).toBoolean());
+                webGLAttrs->setAntialias(jsAttrs->get(exec, antialias).toBoolean(exec));
             Identifier premultipliedAlpha(exec, "premultipliedAlpha");
             if (jsAttrs->hasProperty(exec, premultipliedAlpha))
-                webGLAttrs->setPremultipliedAlpha(jsAttrs->get(exec, premultipliedAlpha).toBoolean());
+                webGLAttrs->setPremultipliedAlpha(jsAttrs->get(exec, premultipliedAlpha).toBoolean(exec));
             Identifier preserveDrawingBuffer(exec, "preserveDrawingBuffer");
             if (jsAttrs->hasProperty(exec, preserveDrawingBuffer))
-                webGLAttrs->setPreserveDrawingBuffer(jsAttrs->get(exec, preserveDrawingBuffer).toBoolean());
+                webGLAttrs->setPreserveDrawingBuffer(jsAttrs->get(exec, preserveDrawingBuffer).toBoolean(exec));
         }
     }
 #endif

@@ -1,3 +1,20 @@
+2012-08-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Change behavior of MasqueradesAsUndefined to better accommodate DFG changes
+        https://bugs.webkit.org/show_bug.cgi?id=93884
+
+        Reviewed by Geoffrey Garen.
+
+        With some upcoming changes to the DFG to remove uses of ClassInfo, we will be changing the behavior of 
+        MasqueradesAsUndefined. In order to make this change consistent across all of our execution engines, 
+        we will make this change to MasqueradesAsUndefined as a separate patch. After this patch, MasqueradesAsUndefined 
+        objects will only masquerade as undefined in their original context (i.e. their original JSGlobalObject). 
+        For example, if an object that masquerades as undefined in frame A is passed to frame B, it will not 
+        masquerade as undefined within frame B, but it will continue to masquerade in frame A.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::addValueToArray): Passing ExecState to toBoolean call.
+
 2012-08-14  Adam Barth  <abarth@webkit.org>
 
         Delete Frame::domWindow() and Frame::existingDOMWindow()

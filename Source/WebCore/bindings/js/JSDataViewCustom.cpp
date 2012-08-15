@@ -73,7 +73,7 @@ static JSValue getDataViewMember(ExecState* exec, DataView* imp, DataViewAccessT
 
     bool littleEndian = false;
     if (exec->argumentCount() > 1 && (type == AccessDataViewMemberAsFloat32 || type == AccessDataViewMemberAsFloat64)) {
-        littleEndian = exec->argument(1).toBoolean();
+        littleEndian = exec->argument(1).toBoolean(exec);
         if (exec->hadException())
             return jsUndefined();
     }

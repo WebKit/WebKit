@@ -147,11 +147,11 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
 
     char postfix[5] = { '/', 0, 0, 0, 0 };
     int index = 1;
-    if (thisObject->get(exec, exec->propertyNames().global).toBoolean())
+    if (thisObject->get(exec, exec->propertyNames().global).toBoolean(exec))
         postfix[index++] = 'g';
-    if (thisObject->get(exec, exec->propertyNames().ignoreCase).toBoolean())
+    if (thisObject->get(exec, exec->propertyNames().ignoreCase).toBoolean(exec))
         postfix[index++] = 'i';
-    if (thisObject->get(exec, exec->propertyNames().multiline).toBoolean())
+    if (thisObject->get(exec, exec->propertyNames().multiline).toBoolean(exec))
         postfix[index] = 'm';
     UString source = thisObject->get(exec, exec->propertyNames().source).toString(exec)->value(exec);
     // If source is empty, use "/(?:)/" to avoid colliding with comment syntax

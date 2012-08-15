@@ -1,3 +1,106 @@
+2012-08-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Change behavior of MasqueradesAsUndefined to better accommodate DFG changes
+        https://bugs.webkit.org/show_bug.cgi?id=93884
+
+        Reviewed by Geoffrey Garen.
+
+        With some upcoming changes to the DFG to remove uses of ClassInfo, we will be changing the behavior of 
+        MasqueradesAsUndefined. In order to make this change consistent across all of our execution engines, 
+        we will make this change to MasqueradesAsUndefined as a separate patch. After this patch, MasqueradesAsUndefined 
+        objects will only masquerade as undefined in their original context (i.e. their original JSGlobalObject). 
+        For example, if an object that masquerades as undefined in frame A is passed to frame B, it will not 
+        masquerade as undefined within frame B, but it will continue to masquerade in frame A.
+
+        There are two primary changes that are taking place here. One is to thread the ExecState* through 
+        JSValue::toBoolean and JSCell::toBoolean so that JSCell::toBoolean can check the object's 
+        JSGlobalObject to compare it to the lexical JSGlobalObject of the currently running code. If the two 
+        are distinct, then the object cannot MasqueradeAsUndefined.
+
+        The other change is to perform this comparison of JSGlobalObjects everywhere where the MasqueradesAsUndefined
+        flag in the Structure is checked. For C++ code, this check has been factored into its own function in 
+        Structure::masqueradesAsUndefined. We only perform this check in the DFG if the current JSGlobalObject has 
+        had a MasqueradesAsUndefined object allocated within its context. This conditional compilation is managed 
+        through the use of a WatchpointSet in each JSGlobalObject and alternate create() functions for JS DOM wrappers
+        that are MasqueradesAsUndefined.
+
+        * API/JSValueRef.cpp:
+        (JSValueToBoolean):
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * bytecode/Watchpoint.h:
+        (WatchpointSet):
+        * debugger/DebuggerCallFrame.h:
+        (JSC::DebuggerCallFrame::callFrame):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_is_undefined):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_is_undefined):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncSome):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::constructBoolean):
+        (JSC::callBooleanConstructor):
+        * runtime/JSCell.h:
+        (JSCell):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::masqueradesAsUndefinedWatchpoint):
+        * runtime/JSString.h:
+        (JSC::JSCell::toBoolean):
+        (JSC::JSValue::toBoolean):
+        * runtime/JSValue.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::toPropertyDescriptor):
+        * runtime/Operations.cpp:
+        (JSC::jsTypeStringForValue):
+        (JSC::jsIsObjectType):
+        * runtime/Operations.h:
+        (JSC):
+        (JSC::JSValue::equalSlowCaseInline):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::setRegExpConstructorMultiline):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncToString):
+        * runtime/Structure.h:
+        (Structure):
+        (JSC::Structure::globalObjectOffset):
+        (JSC::Structure::masqueradesAsUndefined):
+        (JSC):
+
 2012-08-14  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, build fix for !ENABLE(DFG_JIT)

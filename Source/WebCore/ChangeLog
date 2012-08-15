@@ -1,3 +1,78 @@
+2012-08-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Change behavior of MasqueradesAsUndefined to better accommodate DFG changes
+        https://bugs.webkit.org/show_bug.cgi?id=93884
+
+        Reviewed by Geoffrey Garen.
+
+        With some upcoming changes to the DFG to remove uses of ClassInfo, we will be changing the behavior of 
+        MasqueradesAsUndefined. In order to make this change consistent across all of our execution engines, 
+        we will make this change to MasqueradesAsUndefined as a separate patch. After this patch, MasqueradesAsUndefined 
+        objects will only masquerade as undefined in their original context (i.e. their original JSGlobalObject). 
+        For example, if an object that masquerades as undefined in frame A is passed to frame B, it will not 
+        masquerade as undefined within frame B, but it will continue to masquerade in frame A.
+
+        Test: fast/js/document-all-between-frames.html
+
+        All of the changes in WebCore are simply passing the additional ExecState argument to JSValue::toBoolean.
+
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::addEventListener):
+        (WebCore::JSDOMWindow::removeEventListener):
+        * bindings/js/JSDataViewCustom.cpp:
+        (WebCore::getDataViewMember):
+        * bindings/js/JSDeviceMotionEventCustom.cpp:
+        (WebCore::JSDeviceMotionEvent::initDeviceMotionEvent):
+        * bindings/js/JSDeviceOrientationEventCustom.cpp:
+        (WebCore::JSDeviceOrientationEvent::initDeviceOrientationEvent):
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        * bindings/js/JSDirectoryEntryCustom.cpp:
+        (WebCore::JSDirectoryEntry::getFile):
+        (WebCore::JSDirectoryEntry::getDirectory):
+        * bindings/js/JSDirectoryEntrySyncCustom.cpp:
+        (WebCore::getFlags):
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::getContext):
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::populateContextMenuItems):
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::handleInitMessageEvent):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::dataFunctionMatrix):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::open):
+        * bindings/js/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::exec):
+        (WebCore):
+        * bindings/js/JavaScriptCallFrame.h:
+        (JavaScriptCallFrame):
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::hasBreakpoint):
+        * bindings/scripts/CodeGeneratorJS.pm: Also add the custom create function for MasqueradesAsUndefined JS DOM wrappers.
+        (GenerateEventListenerCall):
+        (GenerateHeader):
+        (JSValueToNative):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::jsTestEventTargetPrototypeFunctionAddEventListener):
+        (WebCore::jsTestEventTargetPrototypeFunctionRemoveEventListener):
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        (WebCore::JSTestEventTarget::create):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjCreate):
+        (WebCore::setJSTestObjReflectedBooleanAttr):
+        (WebCore::setJSTestObjReflectedCustomBooleanAttr):
+        (WebCore::jsTestObjPrototypeFunctionAddEventListener):
+        (WebCore::jsTestObjPrototypeFunctionRemoveEventListener):
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::convertValueToNPVariant):
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::convertValueToJObject):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertValueToQVariant):
+
 2012-08-15  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [Gtk] atk_text_get_text_at_offset() fails to provide the correct line for paragraphs in list items whose text wraps

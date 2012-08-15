@@ -258,6 +258,7 @@ EXPORTS
     ?neuter@ArrayBufferView@WTF@@MAEXXZ
     ?newUninitialized@CString@WTF@@SA?AV12@IAAPAD@Z
     ?notifyWriteSlow@SymbolTableEntry@JSC@@AAEXXZ
+    ?notifyWriteSlow@WatchpointSet@JSC@@QAEXXZ
     ?nullptr@@3Vnullptr_t@std@@A
     ?number@String@WTF@@SA?AV12@NII@Z
     ?number@UString@JSC@@SA?AV12@H@Z

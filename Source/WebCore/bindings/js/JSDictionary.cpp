@@ -63,9 +63,9 @@ JSDictionary::GetPropertyResult JSDictionary::tryGetProperty(const char* propert
     return PropertyFound;
 }
 
-void JSDictionary::convertValue(ExecState*, JSValue value, bool& result)
+void JSDictionary::convertValue(ExecState* exec, JSValue value, bool& result)
 {
-    result = value.toBoolean();
+    result = value.toBoolean(exec);
 }
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, int& result)

@@ -64,7 +64,7 @@ bool JSSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction, SQLEr
         // Therefore an exception and returning true are the same thing - so, return true on an exception
         return true;
     }
-    return result.toBoolean();
+    return result.toBoolean(exec);
 }
 
 }
