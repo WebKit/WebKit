@@ -1,3 +1,19 @@
+2012-08-15  Peter Beverloo  <peter@chromium.org>
+
+        Fix a warning in TestWebKitAPI's MediaTime test-suite
+        https://bugs.webkit.org/show_bug.cgi?id=94096
+
+        Reviewed by Adam Barth.
+
+        This warning is visible when building the file with certain GCC versions,
+        including the one used by Chromium for Android. The warning is visible in
+        the cr-android build bot output:
+
+        MediaTime.cpp:152: warning: this decimal constant is unsigned only in ISO C90
+
+        * TestWebKitAPI/Tests/WTF/MediaTime.cpp:
+        (TestWebKitAPI::TEST):
+
 2012-08-15  Kevin Funk  <kevin.funk@kdab.com>
 
         Fix the 'git log' call in VCSUtils.pm for Windows

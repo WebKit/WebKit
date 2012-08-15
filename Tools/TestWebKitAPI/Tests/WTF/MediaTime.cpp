@@ -149,7 +149,7 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime(3, 2).toDouble(), 1.5);
     EXPECT_EQ(MediaTime(1, 1 << 16).toFloat(), 1 / pow(2.0f, 16.0f));
     EXPECT_EQ(MediaTime(1, 1 << 30).toDouble(), 1 / pow(2.0, 30.0));
-    EXPECT_EQ(MediaTime::createWithDouble(M_PI, 1 << 30), MediaTime(3373259426, 1 << 30));
+    EXPECT_EQ(MediaTime::createWithDouble(M_PI, 1 << 30), MediaTime(3373259426U, 1 << 30));
     EXPECT_EQ(MediaTime::createWithFloat(INFINITY), MediaTime::positiveInfiniteTime());
     EXPECT_EQ(MediaTime::createWithFloat(-INFINITY), MediaTime::negativeInfiniteTime());
     EXPECT_EQ(MediaTime::createWithFloat(NAN), MediaTime::invalidTime());
