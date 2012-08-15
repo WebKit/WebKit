@@ -1,3 +1,32 @@
+2012-08-15  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        There is additional space not belonged to a table between the table cells
+        https://bugs.webkit.org/show_bug.cgi?id=74864
+
+        Reviewed by Julien Chaffraix.
+
+        Hittest for a point on the edge, i.e. between two table columns, currently
+        does not return any matching underlying element.
+
+        A hittest on such a point (on the edge of two table columns) should return
+        the column that lies either on the logical right/bottom of the said point.
+
+        Tests: fast/table/hittest-tablecell-bottom-edge.html
+               fast/table/hittest-tablecell-right-edge.html
+               fast/table/hittest-tablecell-with-borders-bottom-edge.html
+               fast/table/hittest-tablecell-with-borders-right-edge.html
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::spannedRows):
+        Removed the FIXME regarding the correctness of the usage of the upper_bound algorithm
+        since that is now verified by the testcases in this patch. Also, the comment
+        regarding the inconsistency between the algorithms used in spannedRows and spannedColumns
+        is no longer valid.
+
+        (WebCore::RenderTableSection::spannedColumns):
+        Changed lower_bound() algorithm to upper_bound() for obtaining the next column.
+        This is now similar to what is used for obtaining the next row in spannedRows().
+
 2012-08-15  Anna Cavender  <annacc@chromium.org>
 
         Add the timestampOffset attribute to SourceBuffer.

@@ -1,3 +1,24 @@
+2012-08-15  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        There is additional space not belonged to a table between the table cells
+        https://bugs.webkit.org/show_bug.cgi?id=74864
+
+        Reviewed by Julien Chaffraix.
+
+        * fast/table/hittest-tablecell-bottom-edge-expected.txt: Added.
+        * fast/table/hittest-tablecell-bottom-edge.html: Added.
+        * fast/table/hittest-tablecell-right-edge-expected.txt: Added.
+        * fast/table/hittest-tablecell-right-edge.html: Added.
+        Testcases added for verifying that the proper node is returned upon hit test
+        carried out at a point lying on the edge of two table cells.
+
+        * fast/table/hittest-tablecell-with-borders-bottom-edge-expected.txt: Added.
+        * fast/table/hittest-tablecell-with-borders-bottom-edge.html: Added.
+        * fast/table/hittest-tablecell-with-borders-right-edge-expected.txt: Added.
+        * fast/table/hittest-tablecell-with-borders-right-edge.html: Added.
+        These testcases verify the aforementioned behavior when the table cells
+        also have border specified for them.
+
 2012-08-15  Anna Cavender  <annacc@chromium.org>
 
         Add the timestampOffset attribute to SourceBuffer.

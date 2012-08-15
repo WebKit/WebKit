@@ -1092,8 +1092,6 @@ CellSpan RenderTableSection::dirtiedColumns(const LayoutRect& damageRect) const
 CellSpan RenderTableSection::spannedRows(const LayoutRect& flippedRect) const
 {
     // Find the first row that starts after rect top.
-    // FIXME: Upper_bound might not be the correct algorithm here since it might skip empty rows, but it is
-    // consistent with behavior in the former point based hit-testing (but inconsistent with spannedColumns).
     unsigned nextRow = std::upper_bound(m_rowPos.begin(), m_rowPos.end(), flippedRect.y()) - m_rowPos.begin();
 
     if (nextRow == m_rowPos.size())
@@ -1118,20 +1116,24 @@ CellSpan RenderTableSection::spannedColumns(const LayoutRect& flippedRect) const
 {
     const Vector<int>& columnPos = table()->columnPositions();
 
-    // Find the first columnt that starts after rect left.
-    unsigned nextColumn = std::lower_bound(columnPos.begin(), columnPos.end(), flippedRect.x()) - columnPos.begin();
+    // Find the first column that starts after rect left.
+    // lower_bound doesn't handle the edge between two cells properly as it would wrongly return the
+    // cell on the logical top/left.
+    // upper_bound on the other hand properly returns the cell on the logical bottom/right, which also
+    // matches the behavior of other browsers.
+    unsigned nextColumn = std::upper_bound(columnPos.begin(), columnPos.end(), flippedRect.x()) - columnPos.begin();
 
     if (nextColumn == columnPos.size())
         return CellSpan(columnPos.size() - 1, columnPos.size() - 1); // After all columns.
 
     unsigned startColumn = nextColumn > 0 ? nextColumn - 1 : 0;
 
-    // Find the first row that starts after rect right.
+    // Find the first column that starts after rect right.
     unsigned endColumn;
     if (columnPos[nextColumn] >= flippedRect.maxX())
         endColumn = nextColumn;
     else {
-        endColumn = std::lower_bound(columnPos.begin() + nextColumn, columnPos.end(), flippedRect.maxX()) - columnPos.begin();
+        endColumn = std::upper_bound(columnPos.begin() + nextColumn, columnPos.end(), flippedRect.maxX()) - columnPos.begin();
         if (endColumn == columnPos.size())
             endColumn = columnPos.size() - 1;
     }
