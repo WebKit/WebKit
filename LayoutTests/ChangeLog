@@ -1,3 +1,19 @@
+2012-08-15  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding image failure expectation for fast/overflow/line-clamp-and-columns.html,
+        the reftest is failing since it was introduced in r125635.
+
+        Skipping media/video-controls-fullscreen-volume.html for the moment after
+        it's been failing since introduced in r125590, the failure is probably expected
+        and will be marked as WONTFIX when confirmed.
+
+        Marking fast/js/random-array-gc-stress.html as a flaky crasher. The crashing
+        occurs due to parallel GC being enabled.
+
+        * platform/gtk/TestExpectations:
+
 2012-08-15  Adam Barth  <abarth@webkit.org>
 
         [Chromium] fast/dom/Window/dom-access-from-closure-window.html is flaky on Linux

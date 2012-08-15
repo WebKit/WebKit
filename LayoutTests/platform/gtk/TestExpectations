@@ -430,6 +430,8 @@ BUGWK93727 DEBUG : fullscreen/full-screen-iframe-not-allowed.html = CRASH PASS
 BUGWK93727 DEBUG : fullscreen/exit-full-screen-iframe.html = CRASH PASS
 BUGWK93727 DEBUG : svg/custom/use-instanceRoot-as-event-target.xhtml = CRASH PASS
 
+BUGWK90957 DEBUG : fast/js/random-array-gc-stress.html = CRASH PASS
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -1305,6 +1307,10 @@ BUGWK94008 : fast/css/word-spacing-characters.html = IMAGE
 BUGWK94003 : fast/css/word-spacing-characters-complex-text.html = IMAGE
 // This has always failed on Gtk/Efl - exposed by bug 89826
 BUGWK94009 : css2.1/20110323/c541-word-sp-000.htm = IMAGE
+
+BUGWK94080 : fast/overflow/line-clamp-and-columns.html = IMAGE
+
+BUGWK94083 SKIP : media/video-controls-fullscreen-volume.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
