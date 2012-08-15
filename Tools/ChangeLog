@@ -1,3 +1,9 @@
+2012-08-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Add rfong to Bugzilla CC "contributor" list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-08-15  Scott Graham  <scottmg@chromium.org>
 
         Rename window.internals.fastMallocStatistics to mallocStatistics
