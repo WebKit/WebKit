@@ -23,7 +23,7 @@ Tests getEventListeners() method of console command line API.
 <div id="empty">
 </div>
 <button id="button" onclick="alert(1)" onmouseover="listener2()"></button>
-
+<button id="invalid" onclick="Invalid JavaScript"></button>
 <script>
 function listener1()
 {
@@ -80,6 +80,8 @@ function runTestsInPage(getEventListeners)
     dumpObject(getEventListeners(document.getElementById("button")));
     output("- empty -");
     dumpObject(getEventListeners(document.getElementById("empty")));
+    output("- invalid -");
+    dumpObject(getEventListeners(document.getElementById("invalid")));
     output("- object -");
     output(typeof getEventListeners({}));
     output("- null -");

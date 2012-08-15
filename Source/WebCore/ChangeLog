@@ -1,3 +1,17 @@
+2012-08-14  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: Calling getEventListeners() on element with malformed javascript event listeners crashes
+        https://bugs.webkit.org/show_bug.cgi?id=93937
+
+        Reviewed by Pavel Feldman.
+
+        - check listener function to be non-null (happens upon an exception while compiling attribute listeners)
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::getJSListenerFunctions):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::getJSListenerFunctions):
+
 2012-08-14  Jan Keromnes  <janx@linux.com>
 
         Web Inspector: CodeMirrorTextEditor doesn't clear execution line

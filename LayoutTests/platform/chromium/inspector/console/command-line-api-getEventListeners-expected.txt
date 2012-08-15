@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 26: SyntaxError: Expected an identifier but found 'JavaScript' instead
 Tests getEventListeners() method of console command line API.
 
  

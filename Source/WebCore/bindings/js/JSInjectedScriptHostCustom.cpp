@@ -203,6 +203,8 @@ static JSArray* getJSListenerFunctions(ExecState* exec, Document* document, cons
         if (jsListener->isolatedWorld() != currentWorld(exec))
             continue;
         JSObject* function = jsListener->jsFunction(document);
+        if (!function)
+            continue;
         JSObject* listenerEntry = constructEmptyObject(exec);
         listenerEntry->putDirect(exec->globalData(), Identifier(exec, "listener"), function);
         listenerEntry->putDirect(exec->globalData(), Identifier(exec, "useCapture"), jsBoolean(listenerInfo.eventListenerVector[i].useCapture));

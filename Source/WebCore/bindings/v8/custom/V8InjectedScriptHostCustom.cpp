@@ -207,7 +207,15 @@ static v8::Handle<v8::Array> getJSListenerFunctions(Document* document, const Ev
         // Hide listeners from other contexts.
         if (context != v8::Context::GetCurrent())
             continue;
-        v8::Local<v8::Object> function = v8Listener->getListenerObject(document);
+        v8::Local<v8::Object> function;
+        {
+            // getListenerObject() may cause JS in the event attribute to get compiled, potentially unsuccessfully.
+            v8::TryCatch block;
+            function = v8Listener->getListenerObject(document);
+            if (block.HasCaught())
+                continue;
+        }
+        ASSERT(!function.IsEmpty());
         v8::Local<v8::Object> listenerEntry = v8::Object::New();
         listenerEntry->Set(v8::String::New("listener"), function);
         listenerEntry->Set(v8::String::New("useCapture"), v8::Boolean::New(listenerInfo.eventListenerVector[i].useCapture));

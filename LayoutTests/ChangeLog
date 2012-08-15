@@ -1,3 +1,17 @@
+2012-08-14  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: Calling getEventListeners() on element with malformed javascript event listeners crashes
+        https://bugs.webkit.org/show_bug.cgi?id=93937
+
+        Reviewed by Pavel Feldman.
+
+        - added test for crash on invalid syntax in an attribute JS listener;
+        - added custom expectation for chrome due to JS error logged to console by JSC while compiling attribute listener;
+
+        * inspector/console/command-line-api-getEventListeners-expected.txt:
+        * inspector/console/command-line-api-getEventListeners.html:
+        * platform/chromium/inspector/console/command-line-api-getEventListeners-expected.txt: Copied from LayoutTests/inspector/console/command-line-api-getEventListeners-expected.txt.
+
 2012-08-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Update expectations for canvas/philip tests that require space collapsing
