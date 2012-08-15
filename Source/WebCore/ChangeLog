@@ -1,3 +1,40 @@
+2012-08-15  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [css3-text] Add CSS3 Text decoration compile flag
+        https://bugs.webkit.org/show_bug.cgi?id=93863
+
+        Reviewed by Julien Chaffraix.
+
+        This patch handles the compile flag implementation, which will come disabled by
+        default, thus not exposing the CSS3 text decoration features to the web, unless
+        when explicitly enabling it with "--css3-text-decoration" build parameter.
+
+        Changeset r125205 added "-webkit-text-decoration-line" support without proper
+        compile flag. I am fixing this on this patch by adding #ifdef's along the added
+        code and reverting getComputedStyle* layout test changes until further notice.
+        The text-decoration-line.html layout test is now moved to
+        fast/css3-text-decoration directory, which is skipped on all platforms until
+        feature is sound and ready to be exposed to web.
+
+        Test: fast/css3-text-decoration/text-decoration-line.html
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::addTextDecorationProperty):
+        (WebCore::CSSParser::parseTextDecoration):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        Added #ifdefs to enable/disable CSS3 Text Decoration code implemented by r125205.
+
 2012-08-15  Iain Merrick  <husky@chromium.org>
 
         Refactoring: move EventHandler::targetNode into HitTestResult

@@ -362,6 +362,9 @@ BUGWK85262 SKIP : fast/css/image-resolution = PASS TEXT
 // CSS image-orientation is not yet enabled.
 BUGWK89052 SKIP : fast/css/image-orientation = PASS
 
+// CSS3 Text Decoration support is not yet enabled (needs ENABLE_CSS3_TEXT_DECORATION).
+BUGWK58491 SKIP : fast/css3-text-decoration = PASS
+
 // No CORS support for media elements is implemented yet.
 BUGWKGTK SKIP : http/tests/security/video-cross-origin-readback.html = TEXT
 

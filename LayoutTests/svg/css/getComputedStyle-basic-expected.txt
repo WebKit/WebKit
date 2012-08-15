@@ -168,8 +168,6 @@ rect: style.getPropertyValue(text-align) : start
 rect: style.getPropertyCSSValue(text-align) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-decoration) : none
 rect: style.getPropertyCSSValue(text-decoration) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-text-decoration-line) : none
-rect: style.getPropertyCSSValue(-webkit-text-decoration-line) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-indent) : 0px
 rect: style.getPropertyCSSValue(text-indent) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-rendering) : auto
@@ -672,8 +670,6 @@ g: style.getPropertyValue(text-align) : start
 g: style.getPropertyCSSValue(text-align) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-decoration) : none
 g: style.getPropertyCSSValue(text-decoration) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-text-decoration-line) : none
-g: style.getPropertyCSSValue(-webkit-text-decoration-line) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-indent) : 0px
 g: style.getPropertyCSSValue(text-indent) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-rendering) : auto

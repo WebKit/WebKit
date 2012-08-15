@@ -232,7 +232,6 @@ var propertiesToTest = {
     "text-align": true,
     "text-anchor": true,
     "text-decoration": true,
-    "-webkit-text-decoration-line": true,
     "text-indent": true,
     "text-overflow": true,
     "text-rendering": true,

@@ -722,6 +722,13 @@ webcore_cppflags += -DENABLE_CSS3_FLEXBOX=1
 endif  # END ENABLE_CSS3_FLEXBOX
 
 # ---
+# CSS3 Text Decoration support
+if ENABLE_CSS3_TEXT_DECORATION
+FEATURE_DEFINES += ENABLE_CSS3_TEXT_DECORATION=1
+webcore_cppflags += -DENABLE_CSS3_TEXT_DECORATION=1
+endif # END ENABLE_CSS3_TEXT_DECORATION
+
+# ---
 # Link prefetch support
 # ---
 if ENABLE_LINK_PREFETCH

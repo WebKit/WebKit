@@ -84,7 +84,6 @@ table-layout: auto
 tab-size: 8
 text-align: start
 text-decoration: none
--webkit-text-decoration-line: none
 text-indent: 0px
 text-rendering: auto
 text-shadow: none

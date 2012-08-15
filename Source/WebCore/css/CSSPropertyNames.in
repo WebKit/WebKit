@@ -351,7 +351,9 @@ z-index
 -webkit-rtl-ordering
 -webkit-text-combine
 -epub-text-combine = -webkit-text-combine
+#if defined(ENABLE_CSS3_TEXT_DECORATION) && ENABLE_CSS3_TEXT_DECORATION
 -webkit-text-decoration-line
+#endif
 -webkit-text-decorations-in-effect
 -webkit-text-emphasis
 -epub-text-emphasis = -webkit-text-emphasis

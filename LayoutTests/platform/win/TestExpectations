@@ -6,3 +6,6 @@ BUGWK85565 : fast/block/float/016.html = IMAGE
 BUGWK85565 : fast/css/border-solid-single-edge-antialias.html = IMAGE
 
 BUGWK90007 : http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html = TEXT
+
+// CSS3 Text Decoration support is not yet enabled (needs ENABLE_CSS3_TEXT_DECORATION).
+BUGWK58491 SKIP : fast/css3-text-decoration = PASS

@@ -1006,6 +1006,14 @@ AC_ARG_ENABLE(css3_flexbox,
               [],[enable_css3_flexbox=$enable_unstable_features])
 AC_MSG_RESULT([$enable_css3_flexbox])
 
+# check whether to enable CSS3 text decoration support
+AC_MSG_CHECKING([whether to enable CSS3 text decoration support])
+AC_ARG_ENABLE(css3_text_decoration,
+              AC_HELP_STRING([--enable-css3-text-decoration],
+                             [enable CSS3 text decoration support [default=no]]),
+              [],[enable_css3_text_decoration=$enable_unstable_features])
+AC_MSG_RESULT([$enable_css3_text_decoration])
+
 # check whether to enable FastMalloc
 AC_MSG_CHECKING([whether to enable optimized memory allocator])
 AC_ARG_ENABLE(fast_malloc,
@@ -1464,6 +1472,7 @@ AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS3_FLEXBOX],[test "$enable_css3_flexbox" = "yes"])
+AM_CONDITIONAL([ENABLE_CSS3_TEXT_DECORATION],[test "$enable_css3_text_decoration" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
 AM_CONDITIONAL([ENABLE_WORKERS],[test "$enable_workers" = "yes"])
 AM_CONDITIONAL([ENABLE_SHADOW_DOM],[test "$enable_shadow_dom" = "yes"])
@@ -1550,6 +1559,7 @@ Features:
  CSS Regions support                                      : $enable_css_regions
  CSS box-decoration-break support                         : $enable_css_box_decoration_break
  CSS3 Flexbox support                                     : $enable_css3_flexbox
+ CSS3 Text Decoration support                             : $enable_css3_text_decoration
  Color input support                                      : $enable_input_type_color
  DOM mutation observer support                            : $enable_mutation_observers
  DeviceOrientation support                                : $enable_device_orientation
