@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBundleIntentRequest_h
-#define WKBundleIntentRequest_h
+#ifndef WKBundleIntent_h
+#define WKBundleIntent_h
 
 #include <WebKit2/WKBase.h>
 
@@ -32,15 +32,20 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKBundleIntentRequestGetTypeID();
+WK_EXPORT WKTypeID WKBundleIntentGetTypeID();
 
-WK_EXPORT WKBundleIntentRef WKBundleIntentRequestCopyIntent(WKBundleIntentRequestRef request);
+WK_EXPORT WKBundleIntentRef WKBundleIntentCreate(WKDictionaryRef dictionaryRef);
 
-WK_EXPORT void WKBundleIntentRequestPostResult(WKBundleIntentRequestRef request, WKSerializedScriptValueRef serializedData);
-WK_EXPORT void WKBundleIntentRequestPostFailure(WKBundleIntentRequestRef request, WKSerializedScriptValueRef serializedData);
+WK_EXPORT WKStringRef WKBundleIntentCopyAction(WKBundleIntentRef intentRef);
+WK_EXPORT WKStringRef WKBundleIntentCopyType(WKBundleIntentRef intentRef);
+WK_EXPORT WKURLRef WKBundleIntentCopyService(WKBundleIntentRef intentRef);
+WK_EXPORT WKArrayRef WKBundleIntentCopySuggestions(WKBundleIntentRef intentRef);
+WK_EXPORT WKStringRef WKBundleIntentCopyExtraValue(WKBundleIntentRef intentRef, WKStringRef key);
+WK_EXPORT WKDictionaryRef WKBundleIntentCopyExtras(WKBundleIntentRef intentRef);
+WK_EXPORT size_t WKBundleIntentMessagePortCount(WKBundleIntentRef intentRef);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* WKBundleIntentRequest_h */
+#endif // WKBundleIntent_h

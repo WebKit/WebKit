@@ -31,7 +31,10 @@
 #include "APIObject.h"
 #include "DataReference.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebProcess.h"
 #include <WebCore/Intent.h>
+#include <WebCore/MessagePortChannel.h>
+#include <WebCore/PlatformMessagePortChannel.h>
 
 using namespace WebCore;
 
@@ -45,6 +48,12 @@ IntentData::IntentData(Intent* coreIntent)
     , extras(coreIntent->extras())
     , suggestions(coreIntent->suggestions())
 {
+    MessagePortChannelArray* coreMessagePorts = coreIntent->messagePorts();
+    if (coreMessagePorts) {
+        size_t numMessagePorts = coreMessagePorts->size();
+        for (size_t i = 0; i < numMessagePorts; ++i)
+            messagePorts.append(WebProcess::shared().addMessagePortChannel((*coreMessagePorts)[i]->channel()));
+    }
 }
 
 void IntentData::encode(CoreIPC::ArgumentEncoder* encoder) const
@@ -55,6 +64,7 @@ void IntentData::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(CoreIPC::DataReference(data));
     encoder->encode(extras);
     encoder->encode(suggestions);
+    encoder->encode(messagePorts);
 }
 
 bool IntentData::decode(CoreIPC::ArgumentDecoder* decoder, IntentData& intentData)
@@ -72,6 +82,8 @@ bool IntentData::decode(CoreIPC::ArgumentDecoder* decoder, IntentData& intentDat
     if (!decoder->decode(intentData.extras))
         return false;
     if (!decoder->decode(intentData.suggestions))
+        return false;
+    if (!decoder->decode(intentData.messagePorts))
         return false;
 
     return true;

@@ -135,6 +135,7 @@ typedef const struct OpaqueWKBundleDOMWindowExtension* WKBundleDOMWindowExtensio
 typedef const struct OpaqueWKBundleFrame* WKBundleFrameRef;
 typedef const struct OpaqueWKBundleHitTestResult* WKBundleHitTestResultRef;
 typedef const struct OpaqueWKBundleInspector* WKBundleInspectorRef;
+typedef const struct OpaqueWKBundleIntent* WKBundleIntentRef;
 typedef const struct OpaqueWKBundleIntentRequest* WKBundleIntentRequestRef;
 typedef const struct OpaqueWKBundleNavigationAction* WKBundleNavigationActionRef;
 typedef const struct OpaqueWKBundleNodeHandle* WKBundleNodeHandleRef;

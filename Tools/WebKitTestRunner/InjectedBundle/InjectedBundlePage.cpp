@@ -51,8 +51,8 @@
 #endif
 
 #if ENABLE(WEB_INTENTS)
+#include <WebKit2/WKBundleIntent.h>
 #include <WebKit2/WKBundleIntentRequest.h>
-#include <WebKit2/WKIntentData.h>
 #endif
 #if ENABLE(WEB_INTENTS_TAG)
 #include <WebKit2/WKIntentServiceInfo.h>
@@ -548,19 +548,24 @@ void InjectedBundlePage::didReceiveIntentForFrame(WKBundlePageRef page, WKBundle
 {
 #if ENABLE(WEB_INTENTS)
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->m_currentIntentRequest = intentRequest;
-    WKRetainPtr<WKIntentDataRef> intent(AdoptWK, WKBundleIntentRequestCopyIntentData(intentRequest));
+    WKRetainPtr<WKBundleIntentRef> intent(AdoptWK, WKBundleIntentRequestCopyIntent(intentRequest));
 
     InjectedBundle::shared().stringBuilder()->append("Received Web Intent: action=");
-    WKRetainPtr<WKStringRef> wkAction(AdoptWK, WKIntentDataCopyAction(intent.get()));
+    WKRetainPtr<WKStringRef> wkAction(AdoptWK, WKBundleIntentCopyAction(intent.get()));
     InjectedBundle::shared().stringBuilder()->append(toWTFString(wkAction.get()));
     InjectedBundle::shared().stringBuilder()->append(" type=");
-    WKRetainPtr<WKStringRef> wkType(AdoptWK, WKIntentDataCopyType(intent.get()));
+    WKRetainPtr<WKStringRef> wkType(AdoptWK, WKBundleIntentCopyType(intent.get()));
     InjectedBundle::shared().stringBuilder()->append(toWTFString(wkType.get()));
     InjectedBundle::shared().stringBuilder()->append("\n");
 
-    // FIXME: Print number of ports when exposed in WebKit2
+    const size_t numMessagePorts = WKBundleIntentMessagePortCount(intent.get());
+    if (numMessagePorts) {
+        InjectedBundle::shared().stringBuilder()->append("Have ");
+        InjectedBundle::shared().stringBuilder()->append(WTF::String::number(numMessagePorts));
+        InjectedBundle::shared().stringBuilder()->append(" ports\n");
+    }
 
-    WKRetainPtr<WKURLRef> wkServiceUrl(AdoptWK, WKIntentDataCopyService(intent.get()));
+    WKRetainPtr<WKURLRef> wkServiceUrl(AdoptWK, WKBundleIntentCopyService(intent.get()));
     if (wkServiceUrl) {
         WKRetainPtr<WKStringRef> wkService(AdoptWK, WKURLCopyString(wkServiceUrl.get()));
         if (wkService && !WKStringIsEmpty(wkService.get())) {
@@ -570,7 +575,7 @@ void InjectedBundlePage::didReceiveIntentForFrame(WKBundlePageRef page, WKBundle
         }
     }
 
-    WKRetainPtr<WKDictionaryRef> wkExtras(AdoptWK, WKIntentDataCopyExtras(intent.get()));
+    WKRetainPtr<WKDictionaryRef> wkExtras(AdoptWK, WKBundleIntentCopyExtras(intent.get()));
     WKRetainPtr<WKArrayRef> wkExtraKeys(AdoptWK, WKDictionaryCopyKeys(wkExtras.get()));
     const size_t numExtraKeys = WKArrayGetSize(wkExtraKeys.get());
     for (size_t i = 0; i < numExtraKeys; ++i) {
@@ -583,7 +588,7 @@ void InjectedBundlePage::didReceiveIntentForFrame(WKBundlePageRef page, WKBundle
         InjectedBundle::shared().stringBuilder()->append("\n");
     }
 
-    WKRetainPtr<WKArrayRef> wkSuggestions(AdoptWK, WKIntentDataCopySuggestions(intent.get()));
+    WKRetainPtr<WKArrayRef> wkSuggestions(AdoptWK, WKBundleIntentCopySuggestions(intent.get()));
     const size_t numSuggestions = WKArrayGetSize(wkSuggestions.get());
     for (size_t i = 0; i < numSuggestions; ++i) {
         WKStringRef wkSuggestion = static_cast<WKStringRef>(WKArrayGetItemAtIndex(wkSuggestions.get(), i));

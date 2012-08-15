@@ -30,21 +30,26 @@
 
 #include "APIObject.h"
 #include "IntentData.h"
-#include "WebSerializedScriptValue.h"
+#include <WebCore/KURL.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebKit {
+
+class ImmutableArray;
+class ImmutableDictionary;
+class WebProcessProxy;
+class WebSerializedScriptValue;
 
 class WebIntentData : public APIObject {
 public:
     static const Type APIType = TypeIntentData;
 
-    static PassRefPtr<WebIntentData> create(const IntentData& store)
+    static PassRefPtr<WebIntentData> create(const IntentData& store, WebProcessProxy* process)
     {
-        return adoptRef(new WebIntentData(store));
+        return adoptRef(new WebIntentData(store, process));
     }
 
-    virtual ~WebIntentData() { }
+    virtual ~WebIntentData();
 
     const String& action() const { return m_store.action; }
     const String& payloadType() const { return m_store.type; }
@@ -57,11 +62,12 @@ public:
     const IntentData& store() const { return m_store; }
 
 private:
-    WebIntentData(const IntentData&);
+    WebIntentData(const IntentData&, WebProcessProxy*);
 
     virtual Type type() const { return APIType; }
 
     IntentData m_store;
+    WebProcessProxy* m_process;
 };
 
 } // namespace WebKit

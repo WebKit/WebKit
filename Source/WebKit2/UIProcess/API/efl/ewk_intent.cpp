@@ -171,7 +171,7 @@ const char* ewk_intent_extra_get(const Ewk_Intent* intent, const char* key)
     EWK_INTENT_WK_GET_OR_RETURN(intent, wkIntent, 0);
 
     WKRetainPtr<WKStringRef> keyRef = adoptWK(WKStringCreateWithUTF8CString(key));
-    WKRetainPtr<WKStringRef> wkValue(AdoptWK, WKIntentDataCopyExtra(wkIntent, keyRef.get()));
+    WKRetainPtr<WKStringRef> wkValue(AdoptWK, WKIntentDataCopyExtraValue(wkIntent, keyRef.get()));
     String value = toImpl(wkValue.get())->string();
     if (value.isEmpty())
         return 0;

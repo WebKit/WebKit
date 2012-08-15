@@ -1,3 +1,17 @@
+2012-08-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] Add support for Web Intents MessagePorts
+        https://bugs.webkit.org/show_bug.cgi?id=89072
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip webintents/web-intents-invoke-port.html and
+        webintents/web-intents-obj-constructor.html for
+        WebKit2 EFL now that information about message ports
+        is correctly displayed by WebKitTestRunner.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-08-15  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Remove image expectation added for a ref test

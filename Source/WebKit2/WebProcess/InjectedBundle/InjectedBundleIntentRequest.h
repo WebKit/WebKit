@@ -29,7 +29,6 @@
 #if ENABLE(WEB_INTENTS)
 
 #include "APIObject.h"
-#include "WebIntentData.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -40,6 +39,7 @@ class IntentRequest;
 
 namespace WebKit {
 
+class InjectedBundleIntent;
 class WebSerializedScriptValue;
 
 class InjectedBundleIntentRequest : public APIObject {
@@ -51,7 +51,7 @@ public:
     void postResult(WebSerializedScriptValue*);
     void postFailure(WebSerializedScriptValue*);
 
-    PassRefPtr<WebIntentData> intent() const;
+    PassRefPtr<InjectedBundleIntent> intent() const;
 
 private:
     explicit InjectedBundleIntentRequest(WebCore::IntentRequest*);

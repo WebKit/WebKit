@@ -23,24 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBundleIntentRequest_h
-#define WKBundleIntentRequest_h
+#ifndef InjectedBundleIntent_h
+#define InjectedBundleIntent_h
 
-#include <WebKit2/WKBase.h>
+#if ENABLE(WEB_INTENTS)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "APIObject.h"
+#include <WebCore/Intent.h>
+#include <WebCore/KURL.h>
+#include <wtf/Forward.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
-WK_EXPORT WKTypeID WKBundleIntentRequestGetTypeID();
+namespace WebKit {
 
-WK_EXPORT WKBundleIntentRef WKBundleIntentRequestCopyIntent(WKBundleIntentRequestRef request);
+class ImmutableArray;
+class ImmutableDictionary;
+class WebSerializedScriptValue;
 
-WK_EXPORT void WKBundleIntentRequestPostResult(WKBundleIntentRequestRef request, WKSerializedScriptValueRef serializedData);
-WK_EXPORT void WKBundleIntentRequestPostFailure(WKBundleIntentRequestRef request, WKSerializedScriptValueRef serializedData);
+class InjectedBundleIntent : public APIObject {
+public:
+    static const Type APIType = TypeBundleIntent;
 
-#ifdef __cplusplus
-}
-#endif
+    static PassRefPtr<InjectedBundleIntent> create(WebCore::Intent*);
 
-#endif /* WKBundleIntentRequest_h */
+    String action() const;
+    String payloadType() const;
+    WebCore::KURL service() const;
+    PassRefPtr<WebSerializedScriptValue> data() const;
+    String extra(const String& key) const;
+    PassRefPtr<ImmutableDictionary> extras() const;
+    PassRefPtr<ImmutableArray> suggestions() const;
+
+    WebCore::Intent* coreIntent() const { return m_intent.get(); }
+
+private:
+    explicit InjectedBundleIntent(WebCore::Intent*);
+
+    virtual Type type() const { return APIType; }
+
+    RefPtr<WebCore::Intent> m_intent;
+};
+
+} // namespace WebKit
+
+#endif // ENABLE(WEB_INTENTS)
+
+#endif // InjectedBundleIntent_h

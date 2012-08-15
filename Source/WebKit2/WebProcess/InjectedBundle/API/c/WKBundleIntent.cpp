@@ -24,31 +24,51 @@
  */
 
 #include "config.h"
-#include "WKIntentData.h"
+#include "WKBundleIntent.h"
 
+#if ENABLE(WEB_INTENTS)
 #include "ImmutableArray.h"
 #include "ImmutableDictionary.h"
+#include "InjectedBundleIntent.h"
 #include "WKAPICast.h"
+#include "WKBundleAPICast.h"
 #include "WKDictionary.h"
 #include "WKString.h"
 #include "WebSerializedScriptValue.h"
 
-#if ENABLE(WEB_INTENTS)
-#include "WebIntentData.h"
+using namespace WebCore;
+using namespace WebKit;
 #endif
 
-using namespace WebKit;
-
-WKTypeID WKIntentDataGetTypeID()
+WKTypeID WKBundleIntentGetTypeID()
 {
 #if ENABLE(WEB_INTENTS)
-    return toAPI(WebIntentData::APIType);
+    return toAPI(InjectedBundleIntent::APIType);
 #else
     return 0;
 #endif
 }
 
-WKStringRef WKIntentDataCopyAction(WKIntentDataRef intentRef)
+WKBundleIntentRef WKBundleIntentCreate(WKDictionaryRef dictionaryRef)
+{
+#if ENABLE(WEB_INTENTS)
+    WKStringRef action = static_cast<WKStringRef>(WKDictionaryGetItemForKey(dictionaryRef, WKStringCreateWithUTF8CString("action")));
+    ASSERT(action);
+    WKStringRef type = static_cast<WKStringRef>(WKDictionaryGetItemForKey(dictionaryRef, WKStringCreateWithUTF8CString("type")));
+    ASSERT(type);
+    WKSerializedScriptValueRef data = static_cast<WKSerializedScriptValueRef>(WKDictionaryGetItemForKey(dictionaryRef, WKStringCreateWithUTF8CString("data")));
+    MessagePortArray dummyPorts;
+    ExceptionCode ec;
+
+    RefPtr<Intent> coreIntent = Intent::create(toImpl(action)->string(), toImpl(type)->string(), data ? static_cast<SerializedScriptValue*>(toImpl(data)->internalRepresentation()) : 0, dummyPorts, ec);
+
+    return toAPI(InjectedBundleIntent::create(coreIntent.get()).leakRef());
+#else
+    return 0;
+#endif
+}
+
+WKStringRef WKBundleIntentCopyAction(WKBundleIntentRef intentRef)
 {
 #if ENABLE(WEB_INTENTS)
     return toCopiedAPI(toImpl(intentRef)->action());
@@ -57,7 +77,7 @@ WKStringRef WKIntentDataCopyAction(WKIntentDataRef intentRef)
 #endif
 }
 
-WKStringRef WKIntentDataCopyType(WKIntentDataRef intentRef)
+WKStringRef WKBundleIntentCopyType(WKBundleIntentRef intentRef)
 {
 #if ENABLE(WEB_INTENTS)
     return toCopiedAPI(toImpl(intentRef)->payloadType());
@@ -66,7 +86,7 @@ WKStringRef WKIntentDataCopyType(WKIntentDataRef intentRef)
 #endif
 }
 
-WKURLRef WKIntentDataCopyService(WKIntentDataRef intentRef)
+WKURLRef WKBundleIntentCopyService(WKBundleIntentRef intentRef)
 {
 #if ENABLE(WEB_INTENTS)
     return toCopiedURLAPI(toImpl(intentRef)->service());
@@ -75,7 +95,7 @@ WKURLRef WKIntentDataCopyService(WKIntentDataRef intentRef)
 #endif
 }
 
-WKArrayRef WKIntentDataCopySuggestions(WKIntentDataRef intentRef)
+WKArrayRef WKBundleIntentCopySuggestions(WKBundleIntentRef intentRef)
 {
 #if ENABLE(WEB_INTENTS)
     return toAPI(toImpl(intentRef)->suggestions().leakRef());
@@ -84,7 +104,7 @@ WKArrayRef WKIntentDataCopySuggestions(WKIntentDataRef intentRef)
 #endif
 }
 
-WKStringRef WKIntentDataCopyExtraValue(WKIntentDataRef intentRef, WKStringRef key)
+WKStringRef WKBundleIntentCopyExtraValue(WKBundleIntentRef intentRef, WKStringRef key)
 {
 #if ENABLE(WEB_INTENTS)
     return toCopiedAPI(toImpl(intentRef)->extra(toWTFString(key)));
@@ -93,10 +113,21 @@ WKStringRef WKIntentDataCopyExtraValue(WKIntentDataRef intentRef, WKStringRef ke
 #endif
 }
 
-WKDictionaryRef WKIntentDataCopyExtras(WKIntentDataRef intentRef)
+WKDictionaryRef WKBundleIntentCopyExtras(WKBundleIntentRef intentRef)
 {
 #if ENABLE(WEB_INTENTS)
     return toAPI(toImpl(intentRef)->extras().leakRef());
+#else
+    return 0;
+#endif
+}
+
+size_t WKBundleIntentMessagePortCount(WKBundleIntentRef intentRef)
+{
+#if ENABLE(WEB_INTENTS)
+    MessagePortChannelArray* messagePorts = toImpl(intentRef)->coreIntent()->messagePorts();
+
+    return messagePorts ? messagePorts->size() : 0;
 #else
     return 0;
 #endif

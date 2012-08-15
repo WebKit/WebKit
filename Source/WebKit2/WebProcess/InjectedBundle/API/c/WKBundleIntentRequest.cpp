@@ -27,10 +27,10 @@
 #include "WKBundleIntentRequest.h"
 
 #if ENABLE(WEB_INTENTS)
+#include "InjectedBundleIntent.h"
 #include "InjectedBundleIntentRequest.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
-#include "WebIntentData.h"
 
 using namespace WebKit;
 #endif
@@ -44,11 +44,11 @@ WKTypeID WKBundleIntentRequestGetTypeID()
 #endif
 }
 
-WKIntentDataRef WKBundleIntentRequestCopyIntentData(WKBundleIntentRequestRef requestRef)
+WKBundleIntentRef WKBundleIntentRequestCopyIntent(WKBundleIntentRequestRef requestRef)
 {
 #if ENABLE(WEB_INTENTS)
-    RefPtr<WebIntentData> webIntentData = toImpl(requestRef)->intent();
-    return toAPI(webIntentData.release().leakRef());
+    RefPtr<InjectedBundleIntent> webIntent = toImpl(requestRef)->intent();
+    return toAPI(webIntent.release().leakRef());
 #else
     return 0;
 #endif

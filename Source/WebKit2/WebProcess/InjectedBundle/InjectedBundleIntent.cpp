@@ -24,66 +24,77 @@
  */
 
 #include "config.h"
-#include "WebIntentData.h"
+#include "InjectedBundleIntent.h"
 
 #if ENABLE(WEB_INTENTS)
 
 #include "ImmutableArray.h"
 #include "ImmutableDictionary.h"
-#include "WebProcessProxy.h"
 #include "WebSerializedScriptValue.h"
 #include "WebString.h"
 #include "WebURL.h"
 
+using namespace WebCore;
+
 namespace WebKit {
 
-WebIntentData::WebIntentData(const IntentData& store, WebProcessProxy* process)
-    : m_store(store)
-    , m_process(process)
+PassRefPtr<InjectedBundleIntent> InjectedBundleIntent::create(WebCore::Intent* intent)
+{
+    return adoptRef(new InjectedBundleIntent(intent));
+}
+
+InjectedBundleIntent::InjectedBundleIntent(WebCore::Intent* intent)
+    : m_intent(intent)
 {
 }
 
-WebIntentData::~WebIntentData()
+String InjectedBundleIntent::action() const
 {
-    // Remove MessagePortChannels from WebProcess.
-    if (m_process) {
-        size_t numMessagePorts = m_store.messagePorts.size();
-        for (size_t i = 0; i < numMessagePorts; ++i)
-            m_process->removeMessagePortChannel(m_store.messagePorts[i]);
-    }
+    return m_intent->action();
 }
 
-PassRefPtr<WebSerializedScriptValue> WebIntentData::data() const
+String InjectedBundleIntent::payloadType() const
 {
-    Vector<uint8_t> dataCopy = m_store.data;
-    return WebSerializedScriptValue::adopt(dataCopy);
+    return m_intent->type();
 }
 
-PassRefPtr<ImmutableArray> WebIntentData::suggestions() const
+WebCore::KURL InjectedBundleIntent::service() const
 {
-    const size_t numSuggestions = m_store.suggestions.size();
-    Vector<RefPtr<APIObject> > wkSuggestions(numSuggestions);
-    for (unsigned i = 0; i < numSuggestions; ++i)
-        wkSuggestions[i] = WebURL::create(m_store.suggestions[i]);
-    return ImmutableArray::adopt(wkSuggestions);
+    return m_intent->service();
 }
 
-String WebIntentData::extra(const String& key) const
+PassRefPtr<WebSerializedScriptValue> InjectedBundleIntent::data() const
 {
-    return m_store.extras.get(key);
+    return WebSerializedScriptValue::create(m_intent->data());
 }
 
-PassRefPtr<ImmutableDictionary> WebIntentData::extras() const
+String InjectedBundleIntent::extra(const String& key) const
 {
+    return m_intent->extras().get(key);
+}
+
+PassRefPtr<ImmutableDictionary> InjectedBundleIntent::extras() const
+{
+    const HashMap<String, String>& extras = m_intent->extras();
     ImmutableDictionary::MapType wkExtras;
-    HashMap<String, String>::const_iterator end = m_store.extras.end();
-    for (HashMap<String, String>::const_iterator it = m_store.extras.begin(); it != end; ++it)
+    HashMap<String, String>::const_iterator end = extras.end();
+    for (HashMap<String, String>::const_iterator it = extras.begin(); it != end; ++it)
         wkExtras.set(it->first, WebString::create(it->second));
 
     return ImmutableDictionary::adopt(wkExtras);
 }
 
+PassRefPtr<ImmutableArray> InjectedBundleIntent::suggestions() const
+{
+    const Vector<KURL>& suggestions = m_intent->suggestions();
+    const size_t numSuggestions = suggestions.size();
+    Vector<RefPtr<APIObject> > wkSuggestions(numSuggestions);
+    for (unsigned i = 0; i < numSuggestions; ++i)
+        wkSuggestions[i] = WebURL::create(suggestions[i]);
+
+    return ImmutableArray::adopt(wkSuggestions);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WEB_INTENTS)
-

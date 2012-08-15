@@ -140,6 +140,7 @@
 
 #if ENABLE(WEB_INTENTS)
 #include "IntentData.h"
+#include <WebCore/Intent.h>
 #endif
 
 #if ENABLE(VIBRATION)
@@ -1958,6 +1959,12 @@ void WebPage::deliverIntentToFrame(uint64_t frameID, const IntentData& intentDat
         return;
 
     frame->deliverIntent(intentData);
+}
+
+void WebPage::deliverCoreIntentToFrame(uint64_t frameID, Intent* coreIntent)
+{
+    if (WebFrame* frame = WebProcess::shared().webFrame(frameID))
+        frame->deliverIntent(coreIntent);
 }
 #endif
 

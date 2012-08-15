@@ -56,6 +56,7 @@ SET(WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/bridge/jsc"
     "${WEBCORE_DIR}/css"
     "${WEBCORE_DIR}/dom"
+    "${WEBCORE_DIR}/dom/default"
     "${WEBCORE_DIR}/editing"
     "${WEBCORE_DIR}/history"
     "${WEBCORE_DIR}/html"
@@ -380,6 +381,7 @@ SET(WebKit2_SOURCES
     WebProcess/InjectedBundle/InjectedBundleClient.cpp
     WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp
     WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp
+    WebProcess/InjectedBundle/InjectedBundleIntent.cpp
     WebProcess/InjectedBundle/InjectedBundleIntentRequest.cpp
     WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp
     WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.cpp
@@ -400,6 +402,7 @@ SET(WebKit2_SOURCES
     WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp
     WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp
+    WebProcess/InjectedBundle/API/c/WKBundleIntent.cpp
     WebProcess/InjectedBundle/API/c/WKBundleIntentRequest.cpp
     WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.cpp
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp

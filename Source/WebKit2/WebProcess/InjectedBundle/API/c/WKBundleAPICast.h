@@ -46,6 +46,7 @@ class InjectedBundleBackForwardList;
 class InjectedBundleBackForwardListItem;
 class InjectedBundleDOMWindowExtension;
 class InjectedBundleHitTestResult;
+class InjectedBundleIntent;
 class InjectedBundleIntentRequest;
 class InjectedBundleNavigationAction;
 class InjectedBundleNodeHandle;
@@ -64,6 +65,7 @@ WK_ADD_API_MAPPING(WKBundleDOMWindowExtensionRef, InjectedBundleDOMWindowExtensi
 WK_ADD_API_MAPPING(WKBundleFrameRef, WebFrame)
 WK_ADD_API_MAPPING(WKBundleHitTestResultRef, InjectedBundleHitTestResult)
 WK_ADD_API_MAPPING(WKBundleInspectorRef, WebInspector)
+WK_ADD_API_MAPPING(WKBundleIntentRef, InjectedBundleIntent)
 WK_ADD_API_MAPPING(WKBundleIntentRequestRef, InjectedBundleIntentRequest)
 WK_ADD_API_MAPPING(WKBundleNavigationActionRef, InjectedBundleNavigationAction)
 WK_ADD_API_MAPPING(WKBundleNodeHandleRef, InjectedBundleNodeHandle)

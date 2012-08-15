@@ -34,13 +34,11 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKIntentDataGetTypeID();
 
-WK_EXPORT WKIntentDataRef WKIntentDataCreate(WKDictionaryRef initDictionary);
-
 WK_EXPORT WKStringRef WKIntentDataCopyAction(WKIntentDataRef intentRef);
 WK_EXPORT WKStringRef WKIntentDataCopyType(WKIntentDataRef intentRef);
 WK_EXPORT WKURLRef WKIntentDataCopyService(WKIntentDataRef intentRef);
 WK_EXPORT WKArrayRef WKIntentDataCopySuggestions(WKIntentDataRef intentRef);
-WK_EXPORT WKStringRef WKIntentDataCopyExtra(WKIntentDataRef intentRef, WKStringRef key);
+WK_EXPORT WKStringRef WKIntentDataCopyExtraValue(WKIntentDataRef intentRef, WKStringRef key);
 WK_EXPORT WKDictionaryRef WKIntentDataCopyExtras(WKIntentDataRef intentRef);
 
 #ifdef __cplusplus

@@ -63,6 +63,8 @@
 #include "IntentData.h"
 #include <WebCore/DOMWindowIntents.h>
 #include <WebCore/DeliveredIntent.h>
+#include <WebCore/Intent.h>
+#include <WebCore/PlatformMessagePortChannel.h>
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(WIN)
@@ -246,11 +248,37 @@ void WebFrame::convertHandleToDownload(ResourceHandle* handle, const ResourceReq
 void WebFrame::deliverIntent(const IntentData& intentData)
 {
     OwnPtr<DeliveredIntentClient> dummyClient;
-    OwnPtr<MessagePortArray> dummyPorts;
     Vector<uint8_t> dataCopy = intentData.data;
+
+    OwnPtr<WebCore::MessagePortChannelArray> channels;
+    if (!intentData.messagePorts.isEmpty()) {
+        channels = adoptPtr(new WebCore::MessagePortChannelArray(intentData.messagePorts.size()));
+        for (size_t i = 0; i < intentData.messagePorts.size(); ++i)
+            (*channels)[i] = MessagePortChannel::create(WebProcess::shared().messagePortChannel(intentData.messagePorts.at(i)));
+    }
+    OwnPtr<WebCore::MessagePortArray> messagePorts = WebCore::MessagePort::entanglePorts(*m_coreFrame->document()->domWindow()->scriptExecutionContext(), channels.release());
+
     RefPtr<DeliveredIntent> deliveredIntent = DeliveredIntent::create(m_coreFrame, dummyClient.release(), intentData.action, intentData.type,
-                                                                      SerializedScriptValue::adopt(dataCopy), dummyPorts.release(),
+                                                                      SerializedScriptValue::adopt(dataCopy), messagePorts.release(),
                                                                       intentData.extras);
+    WebCore::DOMWindowIntents::from(m_coreFrame->document()->domWindow())->deliver(deliveredIntent.release());
+}
+
+void WebFrame::deliverIntent(WebCore::Intent* intent)
+{
+    OwnPtr<DeliveredIntentClient> dummyClient;
+
+    OwnPtr<WebCore::MessagePortChannelArray> channels;
+    WebCore::MessagePortChannelArray* origChannels = intent->messagePorts();
+    if (origChannels && origChannels->size()) {
+        channels = adoptPtr(new WebCore::MessagePortChannelArray(origChannels->size()));
+        for (size_t i = 0; i < origChannels->size(); ++i)
+            (*channels)[i] = origChannels->at(i).release();
+    }
+    OwnPtr<WebCore::MessagePortArray> messagePorts = WebCore::MessagePort::entanglePorts(*m_coreFrame->document()->domWindow()->scriptExecutionContext(), channels.release());
+
+    RefPtr<DeliveredIntent> deliveredIntent = DeliveredIntent::create(m_coreFrame, dummyClient.release(), intent->action(), intent->type(),
+                                                                      intent->data(), messagePorts.release(), intent->extras());
     WebCore::DOMWindowIntents::from(m_coreFrame->document()->domWindow())->deliver(deliveredIntent.release());
 }
 #endif

@@ -279,6 +279,7 @@ HEADERS += \
     WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.h \
     WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.h \
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h \
+    WebProcess/InjectedBundle/API/c/WKBundleIntent.h \
     WebProcess/InjectedBundle/API/c/WKBundleIntentRequest.h \
     WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.h \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h \
@@ -292,6 +293,7 @@ HEADERS += \
     WebProcess/InjectedBundle/InjectedBundleClient.h \
     WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.h \
     WebProcess/InjectedBundle/InjectedBundleHitTestResult.h \
+    WebProcess/InjectedBundle/InjectedBundleIntent.h \
     WebProcess/InjectedBundle/InjectedBundleIntentRequest.h \
     WebProcess/InjectedBundle/InjectedBundleNavigationAction.h \
     WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h \
@@ -631,6 +633,7 @@ SOURCES += \
     WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp \
+    WebProcess/InjectedBundle/API/c/WKBundleIntent.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleIntentRequest.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp \
@@ -646,6 +649,7 @@ SOURCES += \
     WebProcess/InjectedBundle/InjectedBundleClient.cpp \
     WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp \
     WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp \
+    WebProcess/InjectedBundle/InjectedBundleIntent.cpp \
     WebProcess/InjectedBundle/InjectedBundleIntentRequest.cpp \
     WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp \

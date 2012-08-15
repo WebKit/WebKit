@@ -29,7 +29,8 @@
 #if ENABLE(WEB_INTENTS)
 
 #include "APIObject.h"
-#include "GenericCallback.h"
+#include <WebCore/KURL.h>
+#include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
@@ -56,6 +57,7 @@ struct IntentData {
     Vector<uint8_t> data;
     HashMap<String, String> extras;
     Vector<WebCore::KURL> suggestions;
+    Vector<uint64_t> messagePorts;
 };
 
 } // namespace WebKit

@@ -27,6 +27,7 @@
 #include "InjectedBundleIntentRequest.h"
 
 #if ENABLE(WEB_INTENTS)
+#include "InjectedBundleIntent.h"
 #include <WebCore/IntentRequest.h>
 #include <WebSerializedScriptValue.h>
 
@@ -54,9 +55,9 @@ void InjectedBundleIntentRequest::postFailure(WebSerializedScriptValue* data)
     m_intentRequest->postFailure(static_cast<SerializedScriptValue*>(data->internalRepresentation()));
 }
 
-PassRefPtr<WebIntentData> InjectedBundleIntentRequest::intent() const
+PassRefPtr<InjectedBundleIntent> InjectedBundleIntentRequest::intent() const
 {
-    return WebIntentData::create(IntentData(m_intentRequest->intent()));
+    return InjectedBundleIntent::create(m_intentRequest->intent());
 }
 
 } // namespace WebKit

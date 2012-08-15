@@ -1,3 +1,134 @@
+2012-08-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] Add support for Web Intents MessagePorts
+        https://bugs.webkit.org/show_bug.cgi?id=89072
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add support for WebIntents MessagePorts in WebKit2.
+        MessagePorts can be passed with a Web Intent in
+        order to open a direct communication channel
+        between the Web application and the intent service.
+
+        This functionality is already supported by WebKit 1.
+
+        This patch introduces a new InjectedBundleIntent
+        class which wraps a WebCore::Intent. This way
+        information regarding the MessagePorts in a Web
+        Intent is kept when using an injected bundle.
+
+        For the UIProcess, WebIntentData now carries
+        identifiers for the MessagePorts which can go over
+        IPC. Those identifiers map to actual MessagePorts
+        stored in the Web process. This way, when the UI
+        delivers an intent to a frame, we can get back the
+        corresponding MessagePorts from the Web process
+        before delivering the intent to the DOMWindow.
+
+        This functionality is already tested by:
+
+        - webintents/web-intents-invoke-port.html
+        - webintents/web-intents-obj-constructor.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * Shared/IntentData.cpp: Add MessagePort identifiers.
+        (WebKit::IntentData::IntentData):
+        (WebKit::IntentData::encode):
+        (WebKit::IntentData::decode):
+        * Shared/IntentData.h:
+        (IntentData):
+        * Target.pri:
+        * UIProcess/API/C/WKIntentData.cpp: Rename WKIntentDataCopyExtra() to
+        WKIntentDataCopyExtraValue() for clarity.
+        (WKIntentDataCopyExtraValue): 
+        * UIProcess/API/C/WKIntentData.h: Remove WKIntentDataCreate() function now
+        that WTR uses WKBundleIntentCreate() instead.
+        * UIProcess/API/efl/ewk_intent.cpp:
+        (ewk_intent_extra_get): Use WKIntentDataCopyExtraValue() instead of
+        WKIntentDataCopyExtra() since it was renamed.
+        * UIProcess/WebIntentData.cpp:
+        (WebKit::WebIntentData::WebIntentData):
+        (WebKit::WebIntentData::~WebIntentData): Remove MessagePorts from WebProcess upon
+        WebIntentData destruction.
+        (WebKit):
+        (WebKit::WebIntentData::extras):
+        * UIProcess/WebIntentData.h:
+        (WebKit):
+        (WebKit::WebIntentData::create):
+        (WebIntentData):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveIntentForFrame):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit):
+        (WebKit::WebProcessProxy::removeMessagePortChannel):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        (WebKit):
+        * WebProcess/InjectedBundle/API/c/WKBundleIntent.cpp: Copied from Source/WebKit2/UIProcess/API/C/WKIntentData.cpp.
+        (WKBundleIntentGetTypeID):
+        (WKBundleIntentCreate):
+        (WKBundleIntentCopyAction):
+        (WKBundleIntentCopyType):
+        (WKBundleIntentCopyService):
+        (WKBundleIntentCopySuggestions):
+        (WKBundleIntentCopyExtraValue):
+        (WKBundleIntentCopyExtras):
+        (WKBundleIntentMessagePortCount):
+        * WebProcess/InjectedBundle/API/c/WKBundleIntent.h: Copied from Source/WebKit2/UIProcess/API/C/WKIntentData.h.
+        * WebProcess/InjectedBundle/API/c/WKBundleIntentRequest.cpp:
+        (WKBundleIntentRequestCopyIntent):
+        * WebProcess/InjectedBundle/API/c/WKBundleIntentRequest.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageDeliverIntentToFrame):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundleIntent.cpp: Copied from Source/WebKit2/UIProcess/WebIntentData.cpp.
+        (WebKit):
+        (WebKit::InjectedBundleIntent::create):
+        (WebKit::InjectedBundleIntent::InjectedBundleIntent):
+        (WebKit::InjectedBundleIntent::action):
+        (WebKit::InjectedBundleIntent::payloadType):
+        (WebKit::InjectedBundleIntent::service):
+        (WebKit::InjectedBundleIntent::data):
+        (WebKit::InjectedBundleIntent::extra):
+        (WebKit::InjectedBundleIntent::extras):
+        (WebKit::InjectedBundleIntent::suggestions):
+        * WebProcess/InjectedBundle/InjectedBundleIntent.h: Copied from Source/WebKit2/UIProcess/WebIntentData.h.
+        (WebKit):
+        (InjectedBundleIntent):
+        (WebKit::InjectedBundleIntent::coreIntent):
+        (WebKit::InjectedBundleIntent::type):
+        * WebProcess/InjectedBundle/InjectedBundleIntentRequest.cpp:
+        (WebKit::InjectedBundleIntentRequest::intent):
+        * WebProcess/InjectedBundle/InjectedBundleIntentRequest.h:
+        (WebKit):
+        (InjectedBundleIntentRequest):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::deliverIntent):
+        (WebKit):
+        * WebProcess/WebPage/WebFrame.h:
+        (WebCore):
+        (WebFrame):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit):
+        (WebKit::WebPage::deliverCoreIntentToFrame):
+        * WebProcess/WebPage/WebPage.h:
+        (WebCore):
+        (WebPage):
+        * WebProcess/WebProcess.cpp: Store MessagePorts in WebProcess and keep mapping with
+        their identifiers.
+        (WebKit):
+        (WebKit::WebProcess::addMessagePortChannel):
+        (WebKit::WebProcess::messagePortChannel):
+        (WebKit::WebProcess::removeMessagePortChannel):
+        * WebProcess/WebProcess.h:
+        (WebCore):
+        (WebProcess):
+        * WebProcess/WebProcess.messages.in:
+
 2012-08-14  Adam Barth  <abarth@webkit.org>
 
         Delete Frame::domWindow() and Frame::existingDOMWindow()

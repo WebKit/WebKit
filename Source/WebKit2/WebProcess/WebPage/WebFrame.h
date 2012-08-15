@@ -42,6 +42,9 @@
 namespace WebCore {
     class Frame;
     class HTMLFrameOwnerElement;
+#if ENABLE(WEB_INTENTS)
+    class Intent;
+#endif
     class KURL;
 }
 
@@ -81,6 +84,7 @@ public:
 
 #if ENABLE(WEB_INTENTS)
     void deliverIntent(const IntentData&);
+    void deliverIntent(WebCore::Intent*);
 #endif
 
     String source() const;

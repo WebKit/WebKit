@@ -85,6 +85,10 @@ public:
     void addExistingWebPage(WebPageProxy*, uint64_t pageID);
     void removeWebPage(uint64_t pageID);
 
+#if ENABLE(WEB_INTENTS)
+    void removeMessagePortChannel(uint64_t channelID);
+#endif
+
     WebBackForwardListItem* webBackForwardItem(uint64_t itemID) const;
 
     ResponsivenessTimer* responsivenessTimer() { return &m_responsivenessTimer; }

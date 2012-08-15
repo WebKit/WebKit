@@ -2206,7 +2206,7 @@ void WebPageProxy::didReceiveIntentForFrame(uint64_t frameID, const IntentData& 
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
-    RefPtr<WebIntentData> webIntentData = WebIntentData::create(intentData);
+    RefPtr<WebIntentData> webIntentData = WebIntentData::create(intentData, process());
     m_loaderClient.didReceiveIntentForFrame(this, frame, webIntentData.get(), userData.get());
 }
 #endif

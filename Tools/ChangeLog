@@ -1,3 +1,22 @@
+2012-08-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] Add support for Web Intents MessagePorts
+        https://bugs.webkit.org/show_bug.cgi?id=89072
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use WKBundleIntent instead of WebIntentData in
+        WebKitTestRunner. WTR now prints the number of
+        MessagePorts in received Web intents as
+        expected by the following layout tests:
+        webintents/web-intents-invoke-port.html
+        webintents/web-intents-obj-constructor.html
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didReceiveIntentForFrame):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::deliverWebIntent):
+
 2012-08-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r125516. Revert the erroneous rename since we need to keep exposing

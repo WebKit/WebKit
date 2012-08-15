@@ -49,8 +49,8 @@
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(WEB_INTENTS)
+#include <WebKit2/WKBundleIntent.h>
 #include <WebKit2/WKBundleIntentRequest.h>
-#include <WebKit2/WKIntentData.h>
 #endif
 
 namespace WTR {
@@ -652,8 +652,8 @@ void LayoutTestController::deliverWebIntent(JSStringRef action, JSStringRef type
     WKDictionaryAddItem(intentInitDict.get(), WKStringCreateWithUTF8CString("type"), typeWK.get());
     WKDictionaryAddItem(intentInitDict.get(), WKStringCreateWithUTF8CString("data"), dataWK.get());
 
-    WKRetainPtr<WKIntentDataRef> wkIntentData(AdoptWK, WKIntentDataCreate(intentInitDict.get()));
-    WKBundlePageDeliverIntentToFrame(InjectedBundle::shared().page()->page(), mainFrame, wkIntentData.get());
+    WKRetainPtr<WKBundleIntentRef> wkIntent(AdoptWK, WKBundleIntentCreate(intentInitDict.get()));
+    WKBundlePageDeliverIntentToFrame(InjectedBundle::shared().page()->page(), mainFrame, wkIntent.get());
 #endif
 }
 

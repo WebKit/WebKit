@@ -117,6 +117,7 @@ public:
         TypeBundleFrame,
         TypeBundleHitTestResult,
         TypeBundleInspector,
+        TypeBundleIntent,
         TypeBundleIntentRequest,
         TypeBundleNavigationAction,
         TypeBundleNodeHandle,

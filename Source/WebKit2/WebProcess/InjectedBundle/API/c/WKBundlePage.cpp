@@ -47,7 +47,7 @@
 #include <WebCore/Page.h>
 
 #if ENABLE(WEB_INTENTS)
-#include "WebIntentData.h"
+#include "InjectedBundleIntent.h"
 #endif
 
 using namespace WebKit;
@@ -316,10 +316,10 @@ double WKBundlePageGetBackingScaleFactor(WKBundlePageRef pageRef)
     return toImpl(pageRef)->deviceScaleFactor();
 }
 
-void WKBundlePageDeliverIntentToFrame(WKBundlePageRef pageRef, WKBundleFrameRef frameRef, WKIntentDataRef intentRef)
+void WKBundlePageDeliverIntentToFrame(WKBundlePageRef pageRef, WKBundleFrameRef frameRef, WKBundleIntentRef intentRef)
 {
 #if ENABLE(WEB_INTENTS)
-    toImpl(pageRef)->deliverIntentToFrame(toImpl(frameRef)->frameID(), toImpl(intentRef)->store());
+    toImpl(pageRef)->deliverCoreIntentToFrame(toImpl(frameRef)->frameID(), toImpl(intentRef)->coreIntent());
 #endif
 }
 

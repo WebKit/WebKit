@@ -27,6 +27,10 @@ messages -> WebProcess {
     # Create a new page.
     CreateWebPage(uint64_t newPageID, WebKit::WebPageCreationParameters pageCreationParameters)
 
+#if ENABLE(WEB_INTENTS)
+    RemoveMessagePortChannel(uint64_t channelID);
+#endif
+
     # Visited link tracking.
     SetVisitedLinkTable(WebKit::SharedMemory::Handle handle)
     VisitedLinkStateChanged(Vector<WebCore::LinkHash> linkHashes)
