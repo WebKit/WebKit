@@ -87,6 +87,7 @@ void IDBDatabaseBackendProxy::deleteObjectStore(const String& name, IDBTransacti
 
 void IDBDatabaseBackendProxy::setVersion(const String& version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, ExceptionCode& ec)
 {
+    ASSERT(m_webIDBDatabase);
     m_webIDBDatabase->setVersion(version, new WebIDBCallbacksImpl(callbacks), ec);
 }
 

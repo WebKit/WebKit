@@ -426,8 +426,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     ASSERT(m_enqueuedEvents.size());
     ASSERT(scriptExecutionContext());
     ASSERT(event->target() == this);
-    ASSERT_WITH_MESSAGE(m_readyState < DONE, "m_readyState < DONE(%d), was %d", DONE, m_readyState);
-
+    ASSERT_WITH_MESSAGE(m_readyState < DONE, "When dispatching event %s, m_readyState < DONE(%d), was %d", event->type().string().utf8().data(), DONE, m_readyState);
     if (event->type() != eventNames().blockedEvent)
         m_readyState = DONE;
 
@@ -456,7 +455,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     }
 
     // FIXME: When we allow custom event dispatching, this will probably need to change.
-    ASSERT(event->type() == eventNames().successEvent || event->type() == eventNames().errorEvent || event->type() == eventNames().blockedEvent);
+    ASSERT_WITH_MESSAGE(event->type() == eventNames().successEvent || event->type() == eventNames().errorEvent || event->type() == eventNames().blockedEvent, "event type was %s", event->type().string().utf8().data());
     const bool setTransactionActive = m_transaction && (event->type() == eventNames().successEvent || (event->type() == eventNames().errorEvent && m_errorCode != IDBDatabaseException::IDB_ABORT_ERR));
 
     if (setTransactionActive)
@@ -501,7 +500,7 @@ void IDBRequest::enqueueEvent(PassRefPtr<Event> event)
     if (m_contextStopped || !scriptExecutionContext())
         return;
 
-    ASSERT(m_readyState == PENDING);
+    ASSERT_WITH_MESSAGE(m_readyState == PENDING, "When queueing event %s, m_readyState was %d", event->type().string().utf8().data(), m_readyState);
 
     EventQueue* eventQueue = scriptExecutionContext()->eventQueue();
     event->setTarget(this);

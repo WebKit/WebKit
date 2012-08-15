@@ -1,3 +1,13 @@
+2012-08-15  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Add some ASSERTs
+        https://bugs.webkit.org/show_bug.cgi?id=94055
+
+        Reviewed by Ojan Vafai.
+
+        * src/IDBDatabaseBackendProxy.cpp:
+        (WebKit::IDBDatabaseBackendProxy::setVersion):
+
 2012-08-15  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Must account for empty transformation lists when checking for big rotations.

@@ -208,6 +208,7 @@ PassRefPtr<IDBVersionChangeRequest> IDBDatabase::setVersion(ScriptExecutionConte
     }
 
     RefPtr<IDBVersionChangeRequest> request = IDBVersionChangeRequest::create(context, IDBAny::create(this), version);
+    ASSERT(m_backend);
     m_backend->setVersion(version, request, m_databaseCallbacks, ec);
     return request;
 }
@@ -314,6 +315,7 @@ void IDBDatabase::onVersionChange(const String& version)
 
 void IDBDatabase::registerFrontendCallbacks()
 {
+    ASSERT(m_backend);
     m_backend->registerFrontendCallbacks(m_databaseCallbacks);
 }
 

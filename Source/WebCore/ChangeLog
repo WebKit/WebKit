@@ -1,3 +1,25 @@
+2012-08-15  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Add some ASSERTs
+        https://bugs.webkit.org/show_bug.cgi?id=94055
+
+        Reviewed by Ojan Vafai.
+
+        These are just some additional ASSERTS and some ASSERT_WITH_MESSAGE in
+        place of ASSERT. They are from the patch in
+        https://bugs.webkit.org/show_bug.cgi?id=92897
+
+        No new tests - we should never hit this behavior.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::setVersion):
+        (WebCore::IDBDatabase::registerFrontendCallbacks):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::dispatchEvent):
+        (WebCore::IDBRequest::enqueueEvent):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::setActive):
+
 2012-08-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r125687.

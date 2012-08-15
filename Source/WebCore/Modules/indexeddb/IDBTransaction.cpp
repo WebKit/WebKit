@@ -182,7 +182,7 @@ void IDBTransaction::objectStoreDeleted(const String& name)
 
 void IDBTransaction::setActive(bool active)
 {
-    ASSERT(m_state != Finished);
+    ASSERT_WITH_MESSAGE(m_state != Finished, "A finished transaction tried to setActive(%s)", active ? "true" : "false");
     if (m_state == Finishing)
         return;
     ASSERT(m_state == Unused || m_state == Used);
