@@ -1,3 +1,13 @@
+2012-08-14  Chris Evans  <cevans@google.com>
+
+        Handle the XPath / (root) operator correctly for nodes that aren't attached to the document.
+        https://bugs.webkit.org/show_bug.cgi?id=36427
+
+        Reviewed by Abhishek Arya.
+
+        * fast/xpath/xpath-detached-nodes-expected.txt: Added.
+        * fast/xpath/xpath-detached-nodes.html: Added.
+
 2012-08-14  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders][Chromium] Filters area applied twice when CustomFilterOperation is in the list

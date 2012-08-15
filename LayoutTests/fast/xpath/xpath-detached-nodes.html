@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This tests XPath expressions on detached document fragments and nodes.
+<br/>See https://bugs.webkit.org/show_bug.cgi?id=36427
+<div id="console"></div>
+
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  frag = document.createDocumentFragment();
+  child = document.createElement('div');
+  frag.appendChild(child);
+  result = document.evaluate("count(/div)",
+                             child, null, XPathResult.NUMBER_TYPE, null);
+  shouldBe("result.numberValue", "1");
+  result = document.evaluate("count(/html)",
+                             child, null, XPathResult.NUMBER_TYPE, null);
+  shouldBe("result.numberValue", "0");
+
+  ele = document.createElement('p');
+  ele.appendChild(document.createElement('h1'));
+  result = document.evaluate("count(/h1)",
+                             ele, null, XPathResult.NUMBER_TYPE, null);
+  shouldBe("result.numberValue", "1");
+  result = document.evaluate("count(/html)",
+                             ele, null, XPathResult.NUMBER_TYPE, null);
+  shouldBe("result.numberValue", "0");
+  result = document.evaluate("/* | *",
+                             ele, null, XPathResult.NUMBER_TYPE, null);
+  shouldBe("result.numberValue", "NaN");
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,3 +1,19 @@
+2012-08-14  Chris Evans  <cevans@google.com>
+
+        Handle the XPath / (root) operator correctly for nodes that aren't attached to the document.
+        https://bugs.webkit.org/show_bug.cgi?id=36427
+
+        Reviewed by Abhishek Arya.
+
+        We now behave the same as Firefox 14.
+        The consensus seems to be that the XPath spec is ambiguous for the case of detached nodes, and that using the fragment root is more intuitive than the document root for the case of detached nodes.
+        For example, http://www.w3.org/TR/xpath/ section 2 "Location Paths" is only clear for attached nodes: "A / by itself selects the root node of the document containing the context node. If it is followed by a relative location path, then the location path selects the set of nodes that would be selected by the relative location path relative to the root node of the document containing the context node."
+
+        Test: fast/xpath/xpath-detached-nodes.html
+
+        * xml/XPathPath.cpp:
+        (WebCore::XPath::LocationPath::evaluate): Jump to the root of the detached subtree instead of the parent document if the node isn't attached to the document.
+
 2012-08-14  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders][Chromium] Filters area applied twice when CustomFilterOperation is in the list

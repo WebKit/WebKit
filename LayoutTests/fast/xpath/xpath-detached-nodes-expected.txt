@@ -1,0 +1,12 @@
+This tests XPath expressions on detached document fragments and nodes. 
+See https://bugs.webkit.org/show_bug.cgi?id=36427
+
+PASS result.numberValue is 1
+PASS result.numberValue is 0
+PASS result.numberValue is 1
+PASS result.numberValue is 0
+PASS result.numberValue is NaN
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
