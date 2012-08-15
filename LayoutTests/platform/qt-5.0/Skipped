@@ -53,12 +53,6 @@ http/tests/security/xssAuditor/script-tag-with-16bit-unicode5.html
 http/tests/security/xssAuditor/script-tag-with-fancy-unicode.html
 http/tests/security/xssAuditor/script-tag-with-invalid-url-encoding.html
 
-# Unskipped by http://trac.webkit.org/changeset/116409
-# These tests pass on Qt 4.8, but fail on Qt 5. The needs more investigation.
-fast/text/complex-text-opacity.html
-fast/text/whitespace/pre-wrap-overflow-selection.html
-fast/text/word-break.html
-
 # [Qt] New failing and flakey tests with newer Qt 5
 # https://bugs.webkit.org/show_bug.cgi?id=86452
 fast/ruby/ruby-inline-style-not-updated-with-before-after-content.html
