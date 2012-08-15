@@ -262,6 +262,7 @@ void IDBTransaction::unregisterRequest(IDBRequest* request)
 
 void IDBTransaction::onAbort()
 {
+    IDB_TRACE("IDBTransaction::onAbort");
     ASSERT(m_state != Finished);
 
     if (m_state != Finishing) {
@@ -294,6 +295,7 @@ void IDBTransaction::onAbort()
 
 void IDBTransaction::onComplete()
 {
+    IDB_TRACE("IDBTransaction::onComplete");
     ASSERT(m_state != Finished);
     m_state = Finishing;
     m_objectStoreCleanupMap.clear();

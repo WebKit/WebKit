@@ -212,7 +212,7 @@ private:
 
     bool addingKeyAllowed(IDBBackingStore& backingStore,
                           int64_t databaseId, int64_t objectStoreId, int64_t indexId,
-                          const IDBKey* indexKey, const IDBKey* primaryKey)
+                          const IDBKey* indexKey, const IDBKey* primaryKey) const
     {
         if (!m_indexMetadata.unique)
             return true;
