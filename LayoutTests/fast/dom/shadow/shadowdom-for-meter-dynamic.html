@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/polyfill.js"></script>
+
+<div id="container">
+    <meter id="host" min="0" max="100" value="50"></meter>
+</div>
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var shadowRoot = new WebKitShadowRoot(host);
+shadowRoot.innerHTML = "<shadow></shadow><span>(after)</span>";
+
+setTimeout(function() {
+    host.setAttribute('value', 30);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+
+</body>
+</html>

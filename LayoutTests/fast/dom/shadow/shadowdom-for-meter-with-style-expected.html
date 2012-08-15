@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/polyfill.js"></script>
+<style>
+div#wrapper {
+    display: block;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    height: 3em;
+    vertical-align: 0;
+}
+
+meter {
+    display: block;
+    width: 15em;
+    height: 3em;
+}
+</style>
+
+<div id="container">
+    <div id="wrapper" class="meter-like">
+        <div style="margin-left: 100px;">
+            <meter id="with-style" class="meter-inner-element-like" min="0" max="100" value="50"></meter><span>(after)</span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

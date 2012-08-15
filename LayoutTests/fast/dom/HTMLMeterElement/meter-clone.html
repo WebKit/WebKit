@@ -21,9 +21,11 @@
     shouldBe("cloned.value", "target.value");
     shouldBe("internals.shadowPseudoId(clonedShadowRoot.firstChild)", "internals.shadowPseudoId(targetShadowRoot.firstChild)");
     shouldBe("internals.shadowPseudoId(clonedShadowRoot.firstChild.firstChild)", "internals.shadowPseudoId(targetShadowRoot.firstChild.firstChild)");
+    shouldBe("internals.shadowPseudoId(clonedShadowRoot.firstChild.firstChild.firstChild)", "internals.shadowPseudoId(targetShadowRoot.firstChild.firstChild.firstChild)");
+
     cloned.value = 70;
-    shouldBe("clonedShadowRoot.firstChild.firstChild.style.width", '"70%"');
-    shouldBe("targetShadowRoot.firstChild.firstChild.style.width", '"50%"');
+    shouldBe("clonedShadowRoot.firstChild.firstChild.firstChild.style.width", '"70%"');
+    shouldBe("targetShadowRoot.firstChild.firstChild.firstChild.style.width", '"50%"');
 })();
 </script>
 <script src="../../js/resources/js-test-post.js"></script>

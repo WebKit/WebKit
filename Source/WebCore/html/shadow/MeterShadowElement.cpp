@@ -37,6 +37,7 @@
 #include "HTMLNames.h"
 #include "RenderMeter.h"
 #include "RenderTheme.h"
+#include "ShadowRoot.h"
 #include "StylePropertySet.h"
 
 namespace WebCore {
@@ -50,15 +51,38 @@ MeterShadowElement::MeterShadowElement(Document* document)
 
 HTMLMeterElement* MeterShadowElement::meterElement() const
 {
-    Element* element = shadowHost();
-    ASSERT(!element || element->hasTagName(meterTag));
-    return static_cast<HTMLMeterElement*>(element);
+    return toHTMLMeterElement(shadowHost());
 }
 
 bool MeterShadowElement::rendererIsNeeded(const NodeRenderingContext& context)
 {
-    RenderMeter* meterRenderer = toRenderMeter(meterElement()->renderer());
-    return meterRenderer && !meterRenderer->theme()->supportsMeter(meterRenderer->style()->appearance()) && HTMLDivElement::rendererIsNeeded(context);
+    RenderObject* render = meterElement()->renderer();
+    return render && !render->theme()->supportsMeter(render->style()->appearance()) && HTMLDivElement::rendererIsNeeded(context);
+}
+
+MeterInnerElement::MeterInnerElement(Document* document)
+    : MeterShadowElement(document)
+{
+}
+
+bool MeterInnerElement::rendererIsNeeded(const NodeRenderingContext& context)
+{
+    if (meterElement()->hasAuthorShadowRoot())
+        return HTMLDivElement::rendererIsNeeded(context);
+
+    RenderObject* render = meterElement()->renderer();
+    return render && !render->theme()->supportsMeter(render->style()->appearance()) && HTMLDivElement::rendererIsNeeded(context);
+}
+
+RenderObject* MeterInnerElement::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderMeter(this);
+}
+
+const AtomicString& MeterInnerElement::shadowPseudoId() const
+{
+    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-meter-inner-element"));
+    return pseudId;
 }
 
 const AtomicString& MeterBarElement::shadowPseudoId() const
@@ -66,7 +90,6 @@ const AtomicString& MeterBarElement::shadowPseudoId() const
     DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-meter-bar"));
     return pseudId;
 }
-
 
 const AtomicString& MeterValueElement::shadowPseudoId() const
 {

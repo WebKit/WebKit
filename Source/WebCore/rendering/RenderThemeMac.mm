@@ -926,7 +926,7 @@ NSLevelIndicatorCell* RenderThemeMac::levelIndicatorFor(const RenderMeter* rende
         m_levelIndicator.adoptNS([[NSLevelIndicatorCell alloc] initWithLevelIndicatorStyle:NSContinuousCapacityLevelIndicatorStyle]);
     NSLevelIndicatorCell* cell = m_levelIndicator.get();
 
-    HTMLMeterElement* element = static_cast<HTMLMeterElement*>(renderMeter->node());
+    HTMLMeterElement* element = renderMeter->meterElement();
     double value = element->value();
 
     // Because NSLevelIndicatorCell does not support optimum-in-the-middle type coloring,

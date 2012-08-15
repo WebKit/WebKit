@@ -31,7 +31,9 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "MeterShadowElement.h"
+#include "Page.h"
 #include "RenderMeter.h"
+#include "RenderTheme.h"
 #include "ShadowRoot.h"
 #include <wtf/StdLibExtras.h>
 
@@ -41,6 +43,7 @@ using namespace HTMLNames;
 
 HTMLMeterElement::HTMLMeterElement(const QualifiedName& tagName, Document* document)
     : LabelableElement(tagName, document)
+    , m_hasAuthorShadowRoot(false)
 {
     ASSERT(hasTagName(meterTag));
 }
@@ -56,8 +59,11 @@ PassRefPtr<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagNa
     return meter;
 }
 
-RenderObject* HTMLMeterElement::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* HTMLMeterElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
+    if (hasAuthorShadowRoot() || !document()->page()->theme()->supportsMeter(style->appearance()))
+        return RenderObject::createObject(this, style);
+
     return new (arena) RenderMeter(this);
 }
 
@@ -77,6 +83,12 @@ void HTMLMeterElement::parseAttribute(const Attribute& attribute)
         didElementStateChange();
     else
         LabelableElement::parseAttribute(attribute);
+}
+
+void HTMLMeterElement::attach()
+{
+    m_value->setWidthPercentage(valueRatio()*100);
+    LabelableElement::attach();
 }
 
 double HTMLMeterElement::min() const
@@ -214,22 +226,40 @@ double HTMLMeterElement::valueRatio() const
 void HTMLMeterElement::didElementStateChange()
 {
     m_value->setWidthPercentage(valueRatio()*100);
-    if (RenderObject* render = renderer())
+    if (RenderMeter* render = renderMeter())
         render->updateFromElement();
+}
+
+void HTMLMeterElement::willAddAuthorShadowRoot()
+{
+    m_hasAuthorShadowRoot = true;
+}
+
+RenderMeter* HTMLMeterElement::renderMeter() const
+{
+    if (renderer() && renderer()->isMeter())
+        return static_cast<RenderMeter*>(renderer());
+
+    RenderObject* renderObject = userAgentShadowRoot()->firstChild()->renderer();
+    ASSERT(!renderObject || renderObject->isMeter());
+    return static_cast<RenderMeter*>(renderObject);
 }
 
 void HTMLMeterElement::createShadowSubtree()
 {
-    ASSERT(!shadow());
+    ASSERT(!userAgentShadowRoot());
+           
+    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot, ASSERT_NO_EXCEPTION);
+
+    RefPtr<MeterInnerElement> inner = MeterInnerElement::create(document());
+    root->appendChild(inner);
 
     RefPtr<MeterBarElement> bar = MeterBarElement::create(document());
     m_value = MeterValueElement::create(document());
     m_value->setWidthPercentage(0);
-    ExceptionCode ec = 0;
-    bar->appendChild(m_value, ec);
+    bar->appendChild(m_value, ASSERT_NO_EXCEPTION);
 
-    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot);
-    root->appendChild(bar, ec);
+    inner->appendChild(bar, ASSERT_NO_EXCEPTION);
 }
 
 } // namespace

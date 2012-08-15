@@ -1,3 +1,86 @@
+2012-08-15  Shinya Kawanaka  <shinyak@chromium.org>
+
+        AuthorShadowDOM for meter element
+        https://bugs.webkit.org/show_bug.cgi?id=91970
+
+        Reviewed by Hajime Morita.
+
+        We add support for AuthorShadowDOM for a meter element.
+
+        According to the Shadow DOM spec, a meter element should behave like having a UserAgentShadowRoot and
+        an element in UserAgentShadowRoot draws a real 'meter' bar. In this patch, we change the inner structure
+        of a meter element so that we can distribute an element having RenderMeter to AuthorShadowDOM.
+
+        Before this patch, a meter element has the following inner structure.
+
+            <meter>--UserAgentShadowRoot -- -- -- -- -- -- -- -- -- -- AuthorShadowRoot
+                               |
+                               +-- MeterBarElement
+                               |
+                               +-- MeterValueElement
+
+        After this patch, a meter element will have the following inner structure.
+
+            <meter>--UserAgentShadowRoot -- -- -- -- -- -- -- -- -- -- AuthorShadowRoot
+                               |
+                               +-- MeterInnerElement
+                                           |
+                                           +-- MeterBarElement
+                                           |
+                                           +-- MeterValueElement
+
+        However, if RenderTheme supports rendering meter, MeterInnerElement will not create a renderer
+        unless an AuthorShadowDOM is attached to it so that we can keep the current rendering style.
+
+        Tests: fast/dom/shadow/shadowdom-for-meter-dynamic.html
+               fast/dom/shadow/shadowdom-for-meter-multiple.html
+               fast/dom/shadow/shadowdom-for-meter-with-style.html
+               fast/dom/shadow/shadowdom-for-meter-without-appearance.html
+               fast/dom/shadow/shadowdom-for-meter-without-shadow-element.html
+               fast/dom/shadow/shadowdom-for-meter.html
+
+        * css/html.css:
+        (meter): Changed the display type. inline-box is not supported WebKit. inline-block is true.
+        (meter::-webkit-meter-inner-element):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::HTMLMeterElement):
+        (WebCore::HTMLMeterElement::createRenderer):
+        (WebCore):
+        (WebCore::HTMLMeterElement::attach): Added didElementStateChange.
+        (WebCore::HTMLMeterElement::didElementStateChange):
+        (WebCore::HTMLMeterElement::willAddAuthorShadowRoot):
+        (WebCore::HTMLMeterElement::renderMeter):
+        (WebCore::HTMLMeterElement::createShadowSubtree):
+        * html/HTMLMeterElement.h:
+        (WebCore):
+        (WebCore::HTMLMeterElement::hasAuthorShadowRoot):
+        (HTMLMeterElement):
+        (WebCore::isHTMLMeterElement):
+        (WebCore::toHTMLMeterElement):
+        * html/shadow/MeterShadowElement.cpp:
+        (WebCore::MeterShadowElement::meterElement):
+        (WebCore::MeterShadowElement::rendererIsNeeded):
+        (WebCore):
+        (WebCore::MeterInnerElement::MeterInnerElement): We introduce a new element having RenderMeter
+        so that we can distribute an element having RenderMeter to AuthorShadowDOM.
+        (WebCore::MeterInnerElement::rendererIsNeeded): Different from a progress element, meter element will not be
+        rendered using a theme. So we don't need to check the style appearance.
+        (WebCore::MeterInnerElement::createRenderer):
+        (WebCore::MeterInnerElement::shadowPseudoId):
+        * html/shadow/MeterShadowElement.h:
+        (WebCore):
+        (MeterInnerElement):
+        (WebCore::MeterInnerElement::create):
+        * rendering/RenderMeter.cpp:
+        (WebCore::RenderMeter::RenderMeter):
+        (WebCore::RenderMeter::meterElement):
+        (WebCore):
+        (WebCore::RenderMeter::valueRatio):
+        * rendering/RenderMeter.h:
+        (RenderMeter):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::levelIndicatorFor):
+
 2012-08-15  Adam Barth  <abarth@webkit.org>
 
         [Chromium] fast/dom/Window/dom-access-from-closure-window.html is flaky on Linux

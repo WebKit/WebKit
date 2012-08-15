@@ -1,3 +1,47 @@
+2012-08-15  Shinya Kawanaka  <shinyak@chromium.org>
+
+        AuthorShadowDOM for meter element
+        https://bugs.webkit.org/show_bug.cgi?id=91970
+
+        Reviewed by Hajime Morita.
+
+        Contains the following tests:
+          (1) meter element with AuthorShadowDOM
+          (2) meter element with multiple AuthorShadowDOM with a shadow element
+          (3) meter element with multiple AuthorShadowDOM without a shadow element
+          (4) meter element with AuthorShadowDOM with dynamic value update
+          (5) meter element with AuthorShadowDOM with style
+          (6) meter element with AuthorShadowDOM with -webkit-appearance: none
+
+        * fast/dom/HTMLMeterElement/meter-clone-expected.txt:
+        * fast/dom/HTMLMeterElement/meter-clone.html:
+        * fast/dom/HTMLMeterElement/meter-element-markup-expected.txt:
+        * fast/dom/shadow/resources/replaced-element-styles.css:
+        (.meter-like):
+        (.meter-inner-element-like):
+        * fast/dom/shadow/shadowdom-for-meter-dynamic-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-meter-dynamic.html: Added.
+        * fast/dom/shadow/shadowdom-for-meter-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-meter-multiple-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-meter-multiple.html: Added.
+        * fast/dom/shadow/shadowdom-for-meter-with-style-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-meter-with-style.html: Added.
+        * fast/dom/shadow/shadowdom-for-meter-without-appearance-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-meter-without-appearance.html: Added.
+        * fast/dom/shadow/shadowdom-for-meter-without-shadow-element-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-meter-without-shadow-element.html: Added.
+        * fast/dom/shadow/shadowdom-for-meter.html: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-element-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-writing-mode-expected.txt:
+        * platform/mac/TestExpectations:
+
 2012-08-15  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviwed gardening. Skip failing tests and remove obsolete test expectations.

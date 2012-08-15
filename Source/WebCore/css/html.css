@@ -894,10 +894,18 @@ output {
 meter {
     -webkit-appearance: meter;
     -webkit-box-sizing: border-box;
-    display: inline-box;
+    display: inline-block;
     height: 1em;
     width: 5em;
     vertical-align: -0.2em;
+}
+
+meter::-webkit-meter-inner-element {
+    -webkit-appearance: inherit;
+    -webkit-box-sizing: inherit;
+    -webkit-user-modify: read-only !important;
+    height: 100%;
+    width: 100%;
 }
 
 meter::-webkit-meter-bar {
