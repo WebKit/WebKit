@@ -1,3 +1,19 @@
+2012-08-15  Gregg Tavares  <gman@google.com>
+
+        Mark Skia and Compositor Contexts
+        https://bugs.webkit.org/show_bug.cgi?id=94129
+
+        Reviewed by James Robinson.
+
+        Marks the Skia and Compositor contexts to aid in debugging.
+
+        No new tests as no new functionality.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::initializeLayerRenderer):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::createAcceleratedCanvas):
+
 2012-08-15  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Must account for empty transformation lists when checking for big rotations.

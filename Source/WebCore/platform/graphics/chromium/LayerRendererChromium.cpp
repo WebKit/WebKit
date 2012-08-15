@@ -186,6 +186,7 @@ bool LayerRendererChromium::initialize()
         return false;
 
     m_context->setContextLostCallback(this);
+    m_context->pushGroupMarkerEXT("CompositorContext");
 
     WebKit::WebString extensionsWebString = m_context->getString(GraphicsContext3D::EXTENSIONS);
     String extensionsString(extensionsWebString.data(), extensionsWebString.length());
