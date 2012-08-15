@@ -100,7 +100,7 @@ public:
 
     virtual void notifyRunLayoutTestsFinished() = 0;
 
-    virtual void notifyInRegionScrollingStartingPointChanged(std::vector<Platform::ScrollViewBase*>) = 0;
+    virtual void notifyInRegionScrollingStartingPointChanged(const std::vector<Platform::ScrollViewBase*>&) = 0;
 
     virtual void notifyDocumentOnLoad() = 0;
 
