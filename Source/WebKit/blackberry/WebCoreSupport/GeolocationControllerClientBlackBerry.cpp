@@ -47,7 +47,7 @@ void GeolocationControllerClientBlackBerry::startUpdating()
     if (m_tracker)
         m_tracker->resume();
     else
-        m_tracker = BlackBerry::Platform::GeoTracker::create(this, 0, m_accuracy, -1, -1);
+        m_tracker = BlackBerry::Platform::GeoTracker::create(this, m_accuracy);
 }
 
 void GeolocationControllerClientBlackBerry::stopUpdating()
@@ -101,9 +101,10 @@ void GeolocationControllerClientBlackBerry::setEnableHighAccuracy(bool newAccura
 {
     if (m_accuracy == newAccuracy)
         return;
-    if (m_tracker) {
-        m_tracker->destroy();
-        m_tracker = BlackBerry::Platform::GeoTracker::create(this, 0, newAccuracy, -1, -1);
-    }
+
+    m_accuracy = newAccuracy;
+
+    if (m_tracker)
+        m_tracker->setRequiresHighAccuracy(m_accuracy);
 }
 

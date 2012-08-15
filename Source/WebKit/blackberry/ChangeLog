@@ -1,3 +1,23 @@
+2012-08-15  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Should not keep recreating GeoTracker in setEnableHighAccuracy()
+        https://bugs.webkit.org/show_bug.cgi?id=94136
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Lyon Chen.
+
+        PR# 192401.
+        1. The prototype of GeoTracker::create() has changed.
+        2. Fix the issue that it could recreate tracker unnecessarily when
+           setEnableHighAccuracy() is called but accuracy requirment hasn't
+           changed.
+        3. Fix the issue setEnableHighAccuracy() could start tracking when
+           tracker was suspended.
+
+        * WebCoreSupport/GeolocationControllerClientBlackBerry.cpp:
+        (GeolocationControllerClientBlackBerry::startUpdating):
+        (GeolocationControllerClientBlackBerry::setEnableHighAccuracy):
+
 2012-08-15  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Use the unconverted attribute instead of composing when deciding to how to handle key input.
