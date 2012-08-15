@@ -1,3 +1,10 @@
+2012-08-15  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewd gardening. Readd removed expectations in r125658 with some modification.
+
+        * platform/qt/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write-expected.txt: Added.
+        * platform/qt/http/tests/security/aboutBlank/xss-DENIED-set-opener-expected.txt: Added.
+
 2012-08-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: split standalone test runner, test scanner and test stub.
