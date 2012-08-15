@@ -24,14 +24,8 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/frameset-frameborder-boolean-val
 BUGCR24182 SLOW SNOWLEOPARD WIN DEBUG : fast/frames/sandboxed-iframe-navigation-parent.html = PASS
 BUGCR24182 SLOW DEBUG : fast/frames/valid.html = PASS
 BUGWK77184 SLOW DEBUG : fast/js/dfg-double-vote-fuzz.html = PASS
-BUGCR24182 SLOW DEBUG : fast/js/dfg-float32array.html = PASS
-BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int16array.html = PASS
-BUGWK77365 SLOW DEBUG : fast/js/dfg-int32array-overflow-values.html = PASS
-BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int8array.html = PASS
 BUGWK92948 DEBUG : fast/js/dfg-osr-entry-hoisted-clobbered-structure-check.html = PASS TIMEOUT
 BUGWK74787 SLOW DEBUG : fast/js/dfg-poison-fuzz.html = PASS
-BUGWK77069 SLOW DEBUG : fast/js/dfg-uint32array-overflow-values.html = PASS
-BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-uint8clampedarray.html = PASS
 BUGCR24182 SLOW : fast/js/regexp-overflow.html = PASS
 BUGCR24182 SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS TIMEOUT
 BUGCR24182 SLOW DEBUG : fast/js/toString-and-valueOf-override.html = PASS
@@ -68,6 +62,17 @@ BUGCR24182 SLOW MAC : storage/indexeddb/factory-basics.html = PASS
 BUGCR24182 SLOW DEBUG : css3/flexbox/position-absolute-child.html = PASS
 BUGCR24182 SLOW WIN MAC DEBUG : fast/events/tabindex-focus-blur-all.html = PASS
 BUGCR24182 SLOW WIN SNOWLEOPARD DEBUG : fast/frames/invalid.html = PASS
+BUGCR24182 SLOW DEBUG : fast/js/dfg-int8array.html = PASS
+BUGCR24182 SLOW DEBUG : fast/js/dfg-uint8array.html = PASS
+BUGCR24182 SLOW DEBUG : fast/js/dfg-int16array.html = PASS
+BUGCR24182 SLOW DEBUG : fast/js/dfg-uint16array.html = PASS
+BUGCR24182 SLOW DEBUG : fast/js/dfg-int32array.html = PASS
+BUGCR24182 SLOW DEBUG : fast/js/dfg-uint32array.html = PASS
+BUGCR24182 SLOW DEBUG : fast/js/dfg-float32array.html = PASS
+BUGCR24182 SLOW DEBUG : fast/js/dfg-float64array.html = PASS
+BUGCR24182 SLOW DEBUG : fast/js/dfg-uint8clampedarray.html = PASS
+BUGCR24182 SLOW DEBUG : fast/js/dfg-int32array-overflow-values.html = PASS
+BUGCR24182 SLOW DEBUG : fast/js/dfg-uint32array-overflow-values.html = PASS
 
 // These tests started being slow when we switched to DRT.
 BUGWK90488 SLOW LINUX WIN DEBUG : inspector = PASS
@@ -2809,7 +2814,6 @@ BUGWK76572 : http/tests/download = TEXT
 BUGABARTH : fast/html/marquee-alternate.html = PASS TEXT
 
 BUGWK77314 WIN MAC : fast/events/touch/send-oncancel-event.html = PASS TEXT
-BUGWK77324 WIN MAC DEBUG SLOW : fast/js/dfg-int32array.html = PASS
 
 // CRASH comes from BUGCR121442
 BUGWK77397 LINUX : plugins/crash-restoring-plugin-page-from-page-cache.html = TIMEOUT CRASH
@@ -3145,10 +3149,6 @@ BUGWK84847 WIN RELEASE : inspector/timeline/timeline-start-time.html = TEXT PASS
 
 BUGCR128325 : platform/chromium/compositing/overflow/overflow-scrolling-touch-stacking-context.html = IMAGE+TEXT
 
-BUGWK85090 DEBUG SLOW : fast/js/dfg-float64array.html = PASS
-BUGWK85090 DEBUG SLOW : fast/js/dfg-uint32array.html = PASS
-BUGWK85090 DEBUG SLOW : fast/js/dfg-uint16array.html = PASS
-BUGWK85090 DEBUG SLOW : fast/js/dfg-uint8array.html = PASS
 BUGWK85106 SLOW : tables/mozilla/other/slashlogo.html = PASS
 
 BUGWK85174 : fast/files/blob-constructor.html = TEXT

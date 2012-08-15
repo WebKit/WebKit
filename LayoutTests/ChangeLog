@@ -1,3 +1,10 @@
+2012-08-15  Yuta Kitamura  <yutak@google.com>
+
+        [Chromium] Unreviewed test expectations update. Tests named dfg-*array.html are
+        known to be slow on debug bots.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-14  Sukolsak Sakshuwong  <sukolsak@google.com>
 
         Text selection in text area in auto scroll mode goes wrong.
