@@ -1,3 +1,18 @@
+2012-08-14  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: CodeMirrorTextEditor doesn't clear execution line
+        https://bugs.webkit.org/show_bug.cgi?id=94069
+
+        Reviewed by Pavel Feldman.
+
+        Make CodeMirrorTextEditor use line handles instead of numbers, remove
+        typeof == "number" checks.
+
+        * inspector/front-end/CodeMirrorTextEditor.js:
+        (WebInspector.CodeMirrorTextEditor.prototype.clearExecutionLine):
+        (WebInspector.CodeMirrorTextEditor.prototype.highlightLine):
+        (WebInspector.CodeMirrorTextEditor.prototype.clearLineHighlight):
+
 2012-08-14  Yuta Kitamura  <yutak@google.com>
 
         Unreviewed. Fix Chromium-Android builds.
