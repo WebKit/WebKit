@@ -1,3 +1,14 @@
+2012-08-15  Kevin Funk  <kevin.funk@kdab.com>
+
+        Fix the 'git log' call in VCSUtils.pm for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=94113
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Failed because of invalid enquoting characters.
+
+        * Scripts/VCSUtils.pm:
+
 2012-08-14  Gustavo Noronha Silva  <gns@gnome.org>
 
         [jhbuild] move md5sum checking to update-webkit-libs-jhbuild

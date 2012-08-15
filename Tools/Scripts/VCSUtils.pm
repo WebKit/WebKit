@@ -383,7 +383,7 @@ sub svnRevisionForDirectory($)
         my $svnInfo = `$command`;
         ($revision) = ($svnInfo =~ m/Revision: (\d+).*/g);
     } elsif (isGitDirectory($dir)) {
-        my $command = "git log --grep='git-svn-id: ' -n 1 | grep git-svn-id:";
+        my $command = "git log --grep=\"git-svn-id: \" -n 1 | grep git-svn-id:";
         $command = "LC_ALL=C $command" if !isWindows();
         $command = "cd $dir && $command";
         my $gitLog = `$command`;
