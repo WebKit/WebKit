@@ -1,3 +1,22 @@
+2012-08-15  Levi Weintraub  <leviw@chromium.org>
+
+        More unreviewed updated expectations from r125694.
+
+        * platform/chromium-linux/fast/text/international/bidi-layout-across-linebreak-expected.txt: Removed.
+        * platform/chromium-linux/fast/transforms/bounding-rect-zoom-expected.txt: Removed.
+        * platform/chromium-linux/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt: Removed.
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt: Removed.
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug89315-expected.txt: Removed.
+        * platform/chromium-win/fast/text/international/bidi-layout-across-linebreak-expected.png:
+        * platform/chromium-win/fast/text/international/bidi-layout-across-linebreak-expected.txt:
+        * platform/chromium-win/fast/transforms/bounding-rect-zoom-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug89315-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug89315-expected.txt:
+
 2012-08-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r125687.

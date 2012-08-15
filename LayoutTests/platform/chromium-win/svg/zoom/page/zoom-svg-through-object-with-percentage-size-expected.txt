@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x378
   RenderBlock {html} at (0,0) size 800x379
     RenderBody {body} at (5,5) size 790x368
-      RenderTable {table} at (42,0) size 705x367
-        RenderTableSection (anonymous) at (0,0) size 704x367
-          RenderTableRow {tr} at (0,0) size 704x367
-            RenderTableCell {td} at (0,0) size 704x367 [r=0 c=0 rs=1 cs=3]
-              RenderTable {table} at (7,6) size 692x355
-                RenderTableSection (anonymous) at (0,0) size 691x355
-                  RenderTableRow {tr} at (0,1) size 691x65
-                    RenderTableCell {td} at (1,1) size 689x66 [r=0 c=0 rs=1 cs=2]
-                      RenderBlock {h1} at (5,19) size 680x27
-                        RenderText {#text} at (101,0) size 477x25
-                          text run at (101,0) width 477: "Both sides should have identical size after zooming"
-                  RenderTableRow {tr} at (0,67) size 691x24
-                    RenderTableCell {td} at (1,67) size 344x24 [r=1 c=0 rs=1 cs=1]
-                      RenderText {#text} at (147,5) size 50x14
-                        text run at (147,5) width 50: "SVG Image"
-                    RenderTableCell {td} at (346,67) size 344x24 [r=1 c=1 rs=1 cs=1]
-                      RenderText {#text} at (145,5) size 54x14
-                        text run at (145,5) width 54: "PNG Image"
-                  RenderTableRow {tr} at (0,92) size 691x262
-                    RenderTableCell {td} at (1,92) size 344x262 [r=2 c=0 rs=1 cs=1]
-                      RenderEmbeddedObject {object} at (5,4) size 334x250
+      RenderTable {table} at (41,0) size 707x367
+        RenderTableSection (anonymous) at (0,0) size 706x367
+          RenderTableRow {tr} at (0,0) size 706x367
+            RenderTableCell {td} at (0,0) size 706x367 [r=0 c=0 rs=1 cs=3]
+              RenderTable {table} at (7,6) size 694x355
+                RenderTableSection (anonymous) at (0,0) size 693x355
+                  RenderTableRow {tr} at (0,1) size 693x65
+                    RenderTableCell {td} at (1,1) size 691x66 [r=0 c=0 rs=1 cs=2]
+                      RenderBlock {h1} at (5,19) size 682x27
+                        RenderText {#text} at (102,0) size 477x25
+                          text run at (102,0) width 477: "Both sides should have identical size after zooming"
+                  RenderTableRow {tr} at (0,67) size 693x24
+                    RenderTableCell {td} at (1,67) size 345x24 [r=1 c=0 rs=1 cs=1]
+                      RenderText {#text} at (147,5) size 51x14
+                        text run at (147,5) width 51: "SVG Image"
+                    RenderTableCell {td} at (347,67) size 345x24 [r=1 c=1 rs=1 cs=1]
+                      RenderText {#text} at (146,5) size 53x14
+                        text run at (146,5) width 53: "PNG Image"
+                  RenderTableRow {tr} at (0,92) size 693x262
+                    RenderTableCell {td} at (1,92) size 345x262 [r=2 c=0 rs=1 cs=1]
+                      RenderEmbeddedObject {object} at (6,4) size 334x250
                         layer at (0,0) size 333x250
                           RenderView at (0,0) size 333x250
                         layer at (0,0) size 333x250
@@ -42,6 +42,6 @@ layer at (0,0) size 800x378
                                 chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 260.66: "$Revision: 1.7 $"
                             RenderSVGRect {rect} at (0,0) size 333x250 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
                       RenderText {#text} at (0,0) size 0x0
-                    RenderTableCell {td} at (346,92) size 344x262 [r=2 c=1 rs=1 cs=1]
+                    RenderTableCell {td} at (347,92) size 345x262 [r=2 c=1 rs=1 cs=1]
                       RenderImage {img} at (5,5) size 333x249
                       RenderText {#text} at (0,0) size 0x0
