@@ -1,3 +1,11 @@
+2012-08-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r125516. Revert the erroneous rename since we need to keep exposing
+        layoutTestController in Chromium port as explained r124785.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::bindJSObjectsToWindow):
+
 2012-08-14  Dan Bernstein  <mitz@apple.com>
 
         fast/events/overflow-scroll-fake-mouse-move.html and fast/events/frame-scroll-fake-mouse-move.html are failing in WebKit1

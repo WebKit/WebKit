@@ -726,7 +726,7 @@ void TestShell::bindJSObjectsToWindow(WebFrame* frame)
     WebTestingSupport::injectInternalsObject(frame);
     m_testInterfaces->bindTo(frame);
     m_testRunner->bindToJavascript(frame, WebString::fromUTF8("testRunner"));
-    m_testRunner->bindToJavascript(frame, WebString::fromUTF8("testRunner"));
+    m_testRunner->bindToJavascript(frame, WebString::fromUTF8("layoutTestController"));
 }
 
 WebViewHost* TestShell::createNewWindow(const WebKit::WebURL& url)
