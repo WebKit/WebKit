@@ -1,3 +1,14 @@
+2012-08-15  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (125659): 4 HTMLMeterElement tests fail on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=94157
+
+        Skipping these 4 tests until the perpetrator can fix.
+
+        Not reviewed (Bot gardening).
+
+        * platform/mac/Skipped:
+
 2012-08-15  Dominik Röttsches  <d-r@roettsches.de>
 
         [EFL] Some late night gardening
