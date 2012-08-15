@@ -1,3 +1,10 @@
+2012-08-14  Yuta Kitamura  <yutak@google.com>
+
+        [Chromium] Unreviewed. Remove obsolete test expectations, and mark
+        slow tests as such.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-10  Kinuko Yasuda  <kinuko@chromium.org>
 
         FileWriter fails with assertion when trying to write empty Blob

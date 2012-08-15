@@ -66,6 +66,8 @@ BUGCR24182 LINUX ANDROID WIN DEBUG : jquery/traversing.html = PASS TIMEOUT
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : svg/dom/baseVal-animVal-crash.html = PASS
 BUGCR24182 SLOW MAC : storage/indexeddb/factory-basics.html = PASS
 BUGCR24182 SLOW DEBUG : css3/flexbox/position-absolute-child.html = PASS
+BUGCR24182 SLOW WIN MAC DEBUG : fast/events/tabindex-focus-blur-all.html = PASS
+BUGCR24182 SLOW WIN SNOWLEOPARD DEBUG : fast/frames/invalid.html = PASS
 
 // These tests started being slow when we switched to DRT.
 BUGWK90488 SLOW LINUX WIN DEBUG : inspector = PASS
@@ -2701,16 +2703,9 @@ BUGWK72039 MAC : http/tests/loading/empty-subframe.html = MISSING PASS
 BUGWK72039 LINUX ANDROID RELEASE : fast/forms/formaction-attribute.html = MISSING PASS
 BUGWK78620 LINUX ANDROID DEBUG SLOW : fast/forms/formaction-attribute.html = PASS TEXT
 
-BUGWK70988 SNOWLEOPARD : fast/forms/submit-to-blank-multiple-times.html = PASS TEXT
-BUGWK70988 SNOWLEOPARD : fast/overflow/003.xml = PASS TEXT
-BUGWK70988 SNOWLEOPARD : fast/preloader/noscript.html = PASS TEXT
+BUGWK70988 SNOWLEOPARD DEBUG : fast/forms/submit-to-blank-multiple-times.html = PASS TEXT
+BUGWK70988 SNOWLEOPARD DEBUG : fast/overflow/003.xml = PASS TEXT
 
-BUGWK70988 SNOWLEOPARD : fast/css/css-selector-deeply-nested.html = PASS TIMEOUT
-BUGWK70988 SNOWLEOPARD : fast/events/tabindex-focus-blur-all.html = PASS TIMEOUT
-BUGWK70988 SNOWLEOPARD : fast/frames/invalid.html = PASS TIMEOUT
-BUGWK70988 SNOWLEOPARD : fast/parser/residual-style-dom.html = PASS TIMEOUT
-BUGWK70988 SNOWLEOPARD : fast/text/khmer-crash.html = PASS TIMEOUT
-BUGWK70988 SNOWLEOPARD : http/tests/navigation/navigation-interrupted-by-fragment.html = PASS TIMEOUT
 BUGWK70988 SNOWLEOPARD : jquery/traversing.html = PASS TIMEOUT
 
 // BUGWK70988 MAC DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
