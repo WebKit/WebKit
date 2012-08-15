@@ -1,5 +1,17 @@
 2012-08-15  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Scroll/selection are not saved in sources panel editors sometimes.
+        https://bugs.webkit.org/show_bug.cgi?id=94098
+
+        Reviewed by Pavel Feldman.
+
+        SourceFrame listeners and _currentFile field are now cleared only when currently open tab is closed.
+
+        * inspector/front-end/TabbedEditorContainer.js:
+        (WebInspector.TabbedEditorContainer.prototype._tabClosed):
+
+2012-08-15  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: [REGRESSION] "save as" of edited source in developer mode fails to update saved file
         https://bugs.webkit.org/show_bug.cgi?id=94074
 

@@ -292,11 +292,13 @@ WebInspector.TabbedEditorContainer.prototype = {
         var tabId = /** @type {string} */ event.data.tabId;
         var userGesture = /** @type {boolean} */ event.data.isUserGesture;
 
-        this._removeScrollAndSelectionListeners();
         var uiSourceCode = this._files[tabId];
+        if (this._currentFile === uiSourceCode) {
+            this._removeScrollAndSelectionListeners();
+            delete this._currentFile;
+        }
         this._tabIds.remove(uiSourceCode);
         delete this._files[tabId];
-        delete this._currentFile;
 
         uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.TitleChanged, this._uiSourceCodeTitleChanged, this);
         uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._uiSourceCodeWorkingCopyChanged, this);
