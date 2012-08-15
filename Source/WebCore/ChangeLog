@@ -1,3 +1,31 @@
+2012-08-14  Levi Weintraub  <leviw@chromium.org>
+
+        r125591 broke tests with SUBPIXEL_LAYOUT disabled
+        https://bugs.webkit.org/show_bug.cgi?id=94027
+
+        Reviewed by Eric Seidel.
+
+        The previous patch to fix block preferred widths for subpixel layout broke ports
+        without the flag enabled. This patch adds a static inline function --
+        adjustFloatForSubPixelLayout -- that truncates with sub-pixel layout disabled, and
+        ceil's to the nearest FractionalLayoutUnit when sub-pixel layout is enabled.
+
+        A block's max preferred width should be enough to layout the entire line without
+        wrapping. r125591 addressed a bug whereby converting floats to LayoutUnits with sub-
+        pixel layout enabled lost precision in certain cases, and could result in a line
+        being layed out to slightly over the max preferred width of the block.
+
+        This patch reverts the behavior when sub-pixel layout is disabled to truncating
+        sub-pixel values (such as those that originate in Length) when assigning them to
+        LayoutUnits, and ceiling the length of the entire line to the next largest integer.
+
+        Covered by existing tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore):
+        (WebCore::adjustFloatForSubPixelLayout):
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths):
+
 2012-08-14  Chris Evans  <cevans@google.com>
 
         Handle the XPath / (root) operator correctly for nodes that aren't attached to the document.
