@@ -73,6 +73,7 @@ void Vibration::vibrate(const VibrationPattern& pattern)
 
 void Vibration::cancelVibration()
 {
+    m_pattern.clear();
     if (m_isVibrating) {
         m_vibrationClient->cancelVibration();
         m_isVibrating = false;

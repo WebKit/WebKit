@@ -1,3 +1,18 @@
+2012-08-14  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Clear pattern to prevent timing problem between cancelVibration and vibrate
+        https://bugs.webkit.org/show_bug.cgi?id=93957
+
+        Reviewed by Kentaro Hara.
+
+        There is a timing issue in the cancelVibration.
+        Since vibrate works based on timer, cancelVibration might be called
+        eariler than vibrate when cancelVibration is called just after vibrate call.
+        It can be prevented from clearing m_pattern in the cancelVibration.
+
+        * Modules/vibration/Vibration.cpp:
+        (WebCore::Vibration::cancelVibration):
+
 2012-08-14  Alexandru Chiculita  <achicu@adobe.com>
 
         Layout Test css3/filters/custom/custom-filter-animation.html is failing
