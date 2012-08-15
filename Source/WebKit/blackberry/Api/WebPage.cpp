@@ -4177,7 +4177,9 @@ void WebPagePrivate::setScrollOriginPoint(const Platform::IntPoint& point)
     if (!m_hasInRegionScrollableAreas)
         return;
 
-    m_client->notifyInRegionScrollingStartingPointChanged(m_inRegionScroller->d->inRegionScrollableAreasForPoint(point));
+    m_inRegionScroller->d->calculateInRegionScrollableAreasForPoint(point);
+    if (!m_inRegionScroller->d->activeInRegionScrollableAreas().empty())
+        m_client->notifyInRegionScrollingStartingPointChanged(m_inRegionScroller->d->activeInRegionScrollableAreas());
 }
 
 void WebPage::setScrollOriginPoint(const Platform::IntPoint& point)

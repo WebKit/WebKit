@@ -1,3 +1,48 @@
+2012-08-14  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Robust-fy the LayerWebKitThread ownership with InRegionScroller
+        https://bugs.webkit.org/show_bug.cgi?id=93983
+        PR #191737
+
+        Reviewed by Yong Li.
+
+        Patch changes the way we currently keep track of the active scrollable area
+        objects: before, we acquired the scrollable areas and just passed them in a vector up
+        to the client, copying it over and over again. Also, it was a client responsability to
+        delete stuff (BAD!).
+        Now, we keep track of vector within InRegionScroller, as a class member, which allows us to
+        avoid copies (in follow up patch), and control until when these objects outlive.
+
+        Patch also changes InRegionScrollableArea to "retptr" the composited layer
+        associated to it (if any). This ensure we have a non-null scrollable element always.
+
+        As mentioned, InRegionScroller is now responsible for deleting and vector of scrollable areas.
+
+        Internally reviewed by Arvid Nilsson.
+
+        * Api/InRegionScroller.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::reset): Method is now responsible for
+        deleting the tracked scrollable areas.
+        (BlackBerry::WebKit::InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint):
+        Renamed from 'inRegionScrollableAreasForPoint'. It was changed in order to store the
+        scrollable area objects instead of just pass a copy of them up to the client.
+        (BlackBerry::WebKit::InRegionScrollerPrivate::activeInRegionScrollableAreas): Getter.
+        (BlackBerry::WebKit::InRegionScrollerPrivate::pushBackInRegionScrollable): It was
+        promoted to a class method instead of a local helper.
+        * Api/InRegionScroller_p.h:
+        (WebKit):
+        (InRegionScrollerPrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setScrollOriginPoint): Adjustments needed due to the
+        above changed.
+        * WebKitSupport/InRegionScrollableArea.cpp:
+        (BlackBerry::WebKit::InRegionScrollableArea::~InRegionScrollableArea): Clear up the cached layer.
+        (WebKit):
+        (BlackBerry::WebKit::InRegionScrollableArea::InRegionScrollableArea):
+        * WebKitSupport/InRegionScrollableArea.h:
+        (InRegionScrollableArea):
+
 2012-08-15  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Check for valid field focus before processing a spellcheck request

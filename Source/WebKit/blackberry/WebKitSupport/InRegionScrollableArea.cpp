@@ -40,6 +40,10 @@ InRegionScrollableArea::InRegionScrollableArea()
 {
 }
 
+InRegionScrollableArea::~InRegionScrollableArea()
+{
+}
+
 InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLayer* layer)
     : m_webPage(webPage)
     , m_layer(layer)
@@ -89,7 +93,8 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
         if (m_layer->usesCompositedScrolling()) {
             m_supportsCompositedScrolling = true;
             ASSERT(m_layer->backing()->hasScrollingLayer());
-            m_cachedCompositedScrollableLayer = reinterpret_cast<unsigned>(m_layer->backing()->scrollingLayer()->platformLayer());
+            m_camouflagedCompositedScrollableLayer = reinterpret_cast<unsigned>(m_layer->backing()->scrollingLayer()->platformLayer());
+            m_cachedCompositedScrollableLayer = m_layer->backing()->scrollingLayer()->platformLayer();
         }
 
         m_overscrollLimitFactor = 0.0;

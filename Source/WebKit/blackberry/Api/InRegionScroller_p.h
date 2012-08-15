@@ -35,6 +35,7 @@ class RenderLayer;
 namespace BlackBerry {
 namespace WebKit {
 
+class InRegionScrollableArea;
 class WebPagePrivate;
 
 class InRegionScrollerPrivate {
@@ -53,12 +54,15 @@ public:
     bool setScrollPositionCompositingThread(unsigned camouflagedLayer, const WebCore::IntPoint& scrollPosition);
     bool setScrollPositionWebKitThread(unsigned camouflagedLayer, const WebCore::IntPoint& scrollPosition);
 
-    std::vector<Platform::ScrollViewBase*> inRegionScrollableAreasForPoint(const WebCore::IntPoint&);
+    void calculateInRegionScrollableAreasForPoint(const WebCore::IntPoint&);
+    const std::vector<Platform::ScrollViewBase*>& activeInRegionScrollableAreas() const;
 
     WebPagePrivate* m_webPage;
 
 private:
     bool setLayerScrollPosition(WebCore::RenderLayer*, const WebCore::IntPoint& scrollPosition);
+
+    void pushBackInRegionScrollable(InRegionScrollableArea*);
 
     // Obsolete codepath.
     bool scrollNodeRecursively(WebCore::Node*, const WebCore::IntSize& delta);
@@ -66,6 +70,7 @@ private:
     void adjustScrollDelta(const WebCore::IntPoint& maxOffset, const WebCore::IntPoint& currentOffset, WebCore::IntSize& delta) const;
 
     RefPtr<WebCore::Node> m_inRegionScrollStartingNode;
+    std::vector<Platform::ScrollViewBase*> m_activeInRegionScrollableAreas;
 };
 
 }
