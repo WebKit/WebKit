@@ -1,3 +1,18 @@
+2012-08-10  Kinuko Yasuda  <kinuko@chromium.org>
+
+        FileWriter fails with assertion when trying to write empty Blob
+        https://bugs.webkit.org/show_bug.cgi?id=93694
+
+        Reviewed by Kent Tamura.
+
+        if the given data size is zero (i.e. m_bytesToWrite is zero) the assertion 'bytes + m_bytesWritten > 0' should not be tested.
+
+        * fast/filesystem/file-writer-empty-blob-expected.txt: Added.
+        * fast/filesystem/file-writer-empty-blob.html: Added.
+        * fast/filesystem/resources/file-writer-empty-blob.js: Added.
+        * fast/filesystem/workers/file-writer-empty-blob-expected.txt: Added.
+        * fast/filesystem/workers/file-writer-empty-blob.html: Added.
+
 2012-08-14  Yuta Kitamura  <yutak@google.com>
 
         [Chromium] Unreviewed, another gardening. Add one slow test.

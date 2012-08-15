@@ -188,7 +188,7 @@ void FileWriter::didWrite(long long bytes, bool complete)
     ASSERT(m_readyState == WRITING);
     ASSERT(m_truncateLength == -1);
     ASSERT(m_operationInProgress == OperationWrite);
-    ASSERT(bytes + m_bytesWritten > 0);
+    ASSERT(!m_bytesToWrite || bytes + m_bytesWritten > 0);
     ASSERT(bytes + m_bytesWritten <= m_bytesToWrite);
     m_bytesWritten += bytes;
     ASSERT((m_bytesWritten == m_bytesToWrite) || !complete);
