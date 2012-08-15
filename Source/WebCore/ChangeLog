@@ -1,3 +1,16 @@
+2012-08-15  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [REGRESSION] "save as" of edited source in developer mode fails to update saved file
+        https://bugs.webkit.org/show_bug.cgi?id=94074
+
+        Reviewed by Pavel Feldman.
+
+        Added dirty flag check when saving uiSourceCode to save working copy in this case.
+
+        * inspector/front-end/HandlerRegistry.js:
+        (WebInspector.HandlerRegistry.prototype.appendApplicableItems.save):
+        (WebInspector.HandlerRegistry.prototype.appendApplicableItems):
+
 2012-08-15  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Relative units are not set when the canvas has not parent
