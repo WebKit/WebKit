@@ -1,3 +1,10 @@
+2012-08-16  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed speculative 32 bits build fix.
+
+        * Source/autotools/symbols.filter: add symbol version that gets
+        generated in 32 bits build.
+
 2012-08-16  Max Feil  <mfeil@rim.com>
 
         [BlackBerry] Some media controls are mispositioned for dynamic live streams (HLS)
