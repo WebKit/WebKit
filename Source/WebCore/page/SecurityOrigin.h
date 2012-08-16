@@ -123,8 +123,8 @@ public:
 
     void blockThirdPartyStorage() { m_blockThirdPartyStorage = true; }
 
-    bool canAccessDatabase() const { return !isUnique(); }
-    bool canAccessLocalStorage(const SecurityOrigin* topOrigin) const;
+    bool canAccessDatabase(const SecurityOrigin* topOrigin = 0) const { return canAccessStorage(topOrigin); };
+    bool canAccessLocalStorage(const SecurityOrigin* topOrigin) const { return canAccessStorage(topOrigin); };
     bool canAccessCookies() const { return !isUnique(); }
     bool canAccessPasswordManager() const { return !isUnique(); }
     bool canAccessFileSystem() const { return !isUnique(); }
@@ -192,6 +192,7 @@ private:
     // FIXME: Rename this function to something more semantic.
     bool passesFileCheck(const SecurityOrigin*) const;
     bool isThirdParty(const SecurityOrigin*) const;
+    bool canAccessStorage(const SecurityOrigin*) const;
 
     String m_protocol;
     String m_host;

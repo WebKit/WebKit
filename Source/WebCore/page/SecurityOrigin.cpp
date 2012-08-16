@@ -391,10 +391,14 @@ bool SecurityOrigin::canDisplay(const KURL& url) const
     return true;
 }
 
-bool SecurityOrigin::canAccessLocalStorage(const SecurityOrigin* topOrigin) const
+bool SecurityOrigin::canAccessStorage(const SecurityOrigin* topOrigin) const
 {
     if (isUnique())
         return false;
+
+    // FIXME: This check should be replaced with an ASSERT once we can guarantee that topOrigin is not null.
+    if (!topOrigin)
+        return true;
 
     if (m_blockThirdPartyStorage && topOrigin->isThirdParty(this))
         return false;

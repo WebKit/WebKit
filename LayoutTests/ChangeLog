@@ -1,3 +1,18 @@
+2012-08-14  Jeffrey Pfau  <jpfau@apple.com>
+
+        Allow blocking of Web SQL databases in third-party documents
+        https://bugs.webkit.org/show_bug.cgi?id=94057
+
+        Reviewed by Adam Barth.
+
+        Created tests for accessing openDatabase from a third party and first party context when third-party blocking is on and off.
+
+        * http/tests/security/cross-origin-websql-allowed-expected.txt: Added.
+        * http/tests/security/cross-origin-websql-allowed.html: Added.
+        * http/tests/security/cross-origin-websql-expected.txt: Added.
+        * http/tests/security/cross-origin-websql.html: Added.
+        * http/tests/security/resources/cross-origin-iframe-for-websql.html: Added.
+
 2012-08-15  Kiran Muppala  <cmuppala@apple.com>
 
         Fix TestExpectations line format for two fast/css tests failing on mac

@@ -1,3 +1,24 @@
+2012-08-14  Jeffrey Pfau  <jpfau@apple.com>
+
+        Allow blocking of Web SQL databases in third-party documents
+        https://bugs.webkit.org/show_bug.cgi?id=94057
+
+        Reviewed by Adam Barth.
+
+        Add a check for pages in third-party pages to allow third-party storage blocking of Web SQL databases.
+
+        Tests: http/tests/security/cross-origin-websql-allowed.html
+               http/tests/security/cross-origin-websql.html
+
+        * Modules/webdatabase/DOMWindowWebDatabase.cpp:
+        (WebCore::DOMWindowWebDatabase::openDatabase): Pass top origin to canAccessDatabase
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canAccessStorage): Common method for various types of storage that use the same criteria
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::canAccessDatabase): Use canAccessStorage
+        (WebCore::SecurityOrigin::canAccessLocalStorage): Change to using canAccessStorage
+        (SecurityOrigin):
+
 2012-08-15  Nikhil Bhargava  <nbhargava@google.com>
 
         Improve Document.h compile time - reduce includes of ScriptCallStack.h
