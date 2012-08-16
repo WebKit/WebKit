@@ -1,3 +1,35 @@
+2012-08-15  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Refactoring: Introduce a new function for some part of PopupContainer::layoutAndCalculateWidgetRect()
+        https://bugs.webkit.org/show_bug.cgi?id=94087
+
+        Reviewed by Hajime Morita.
+
+        Move some part of PopupContainer::layoutAndCalculateWidgetRect() to a
+        new function which is not a member of PopupContainer because we'd like
+        to add a unit test for the position calculation code, and to reduce the
+        dependency.
+
+        No new tests. Popup positioning code is not testable in WebKit.
+
+        * platform/chromium/PopupContainer.cpp:
+        (WebCore::layoutAndCalculateWidgetRectInternal):
+        Added. Move the code from PopupContainer::layoutAndCalculateWidgetRect.
+        In order to avoid to call member functions of PopupContainer, we
+        don't call layoutAndGetRTLOffset() and height(). Use
+        PopupListBox::layout() to recalculate the popup content size, and use
+        PopupListBox::height() + kBorderSize * 2 instead of height(). We
+        resize the view after finishing layoutAndCalculateWidgetRectInternal
+        in PopupContainer::layoutAndCalculateWidgetRect.
+        (WebCore::PopupContainer::layoutAndCalculateWidgetRect):
+        Move some code to layoutAndCalculateWidgetRectInternal.
+        (WebCore::PopupContainer::fitToListBox):
+        Added. Move the code from PopupContainer::layoutAndGetRTLOffset.
+        (WebCore::PopupContainer::layoutAndGetRTLOffset):
+        Move some code to fitToListBox.
+        * platform/chromium/PopupContainer.h:
+        (PopupContainer): Added fitToListBox.
+
 2012-08-15  Adam Barth  <abarth@webkit.org>
 
         VoidCallback should not be a special snowflake
