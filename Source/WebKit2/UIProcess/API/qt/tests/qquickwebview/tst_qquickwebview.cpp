@@ -58,6 +58,7 @@ private Q_SLOTS:
     void transparentWebViews();
 
     void inputMethod();
+    void inputMethodHints();
     void basicRenderingSanity();
 
 private:
@@ -408,6 +409,33 @@ void tst_QQuickWebView::inputMethod()
     QVERIFY(view->flags().testFlag(QQuickItem::ItemAcceptsInputMethod));
     runJavaScript("document.getElementById('inputField').blur();");
     QVERIFY(!view->flags().testFlag(QQuickItem::ItemAcceptsInputMethod));
+}
+
+void tst_QQuickWebView::inputMethodHints()
+{
+    QQuickWebView* view = webView();
+
+    view->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/inputmethod.html")));
+    QVERIFY(waitForLoadSucceeded(view));
+
+    // Setting focus on an input element results in an element in its shadow tree becoming the focus node.
+    // Input hints should not be set from this shadow tree node but from the input element itself.
+    runJavaScript("document.getElementById('emailInputField').focus();");
+    QVERIFY(view->flags().testFlag(QQuickItem::ItemAcceptsInputMethod));
+    QInputMethodQueryEvent query(Qt::ImHints);
+    QGuiApplication::sendEvent(view, &query);
+    Qt::InputMethodHints hints(query.value(Qt::ImHints).toUInt() & Qt::ImhExclusiveInputMask);
+    QCOMPARE(hints, Qt::ImhEmailCharactersOnly);
+
+    // The focus of an editable DIV is given directly to it, so no shadow root element
+    // is necessary. This tests the WebPage::editorState() method ability to get the
+    // right element without breaking.
+    runJavaScript("document.getElementById('editableDiv').focus();");
+    QVERIFY(view->flags().testFlag(QQuickItem::ItemAcceptsInputMethod));
+    query = QInputMethodQueryEvent(Qt::ImHints);
+    QGuiApplication::sendEvent(view, &query);
+    hints = Qt::InputMethodHints(query.value(Qt::ImHints).toUInt());
+    QCOMPARE(hints, Qt::ImhNone);
 }
 
 void tst_QQuickWebView::scrollRequest()

@@ -1,3 +1,28 @@
+2012-08-16  Marcelo Lira  <marcelo.lira@openbossa.org>
+
+        [Qt] Input method hints are not being set.
+        https://bugs.webkit.org/show_bug.cgi?id=92386
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Input method hints for an editable element must be obtained from a proper
+        HTML element. If the editable element is a complex one, it will have elements
+        in the Shadow DOM, and it's one of those that will be returned as the root
+        editable element. This works for editable DIVs, but not for INPUT elements.
+        Using Element::shadowHost() on the root editable element will provide the
+        needed HTML element, and for further clarity a method that does this was added
+        to FrameSelection.
+
+        Added an API test to the Qt port regarding the correct setting
+        of input method hints information on INPUT HTML tags.
+
+        * UIProcess/API/qt/tests/html/inputmethod.html:
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView):
+        (tst_QQuickWebView::inputMethodHints):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+
 2012-08-16  Zeno Albisser  <zeno@webkit.org>
 
         Make GraphicsSurface double buffered by default.
