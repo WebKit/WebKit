@@ -1,3 +1,31 @@
+2012-08-16  Adam Barth  <abarth@webkit.org>
+
+        Delete DOMWindow::securityOrigin()
+        https://bugs.webkit.org/show_bug.cgi?id=93991
+
+        Reviewed by Eric Seidel.
+
+        DOMWindow::securityOrigin() just calls through to
+        document()->securityOrigin(). This patch updates all the callers to do
+        that work themselves, making it clearer what's going on at each call
+        site.
+
+        * bindings/generic/BindingSecurity.cpp:
+        (WebCore::canAccessDocument):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::allowsAccessFrom):
+        * bindings/js/JSDOMWindowCustom.h:
+        (WebCore::JSDOMWindowBase::allowsAccessFromPrivate):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::collectIsolatedContexts):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::isInsecureScriptAccess):
+        (WebCore::DOMWindow::createWindow):
+        * page/DOMWindow.h:
+        (DOMWindow):
+        * page/Location.cpp:
+        (WebCore::Location::reload):
+
 2012-08-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r125751.

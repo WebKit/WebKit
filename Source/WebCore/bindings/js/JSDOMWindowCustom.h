@@ -73,8 +73,8 @@ ALWAYS_INLINE bool JSDOMWindowBase::allowsAccessFromPrivate(const JSGlobalObject
     if (originWindow == targetWindow)
         return true;
 
-    const SecurityOrigin* originSecurityOrigin = originWindow->impl()->securityOrigin();
-    const SecurityOrigin* targetSecurityOrigin = targetWindow->impl()->securityOrigin();
+    const SecurityOrigin* originSecurityOrigin = originWindow->impl()->document()->securityOrigin();
+    const SecurityOrigin* targetSecurityOrigin = targetWindow->impl()->document()->securityOrigin();
 
     return originSecurityOrigin->canAccess(targetSecurityOrigin);
 }

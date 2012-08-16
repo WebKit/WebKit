@@ -108,8 +108,8 @@ bool JSDOMWindowBase::allowsAccessFrom(const JSGlobalObject* thisObject, ExecSta
     if (originWindow == targetWindow)
         return true;
 
-    const SecurityOrigin* originSecurityOrigin = originWindow->impl()->securityOrigin();
-    const SecurityOrigin* targetSecurityOrigin = targetWindow->impl()->securityOrigin();
+    const SecurityOrigin* originSecurityOrigin = originWindow->impl()->document()->securityOrigin();
+    const SecurityOrigin* targetSecurityOrigin = targetWindow->impl()->document()->securityOrigin();
 
     if (originSecurityOrigin->canAccess(targetSecurityOrigin))
         return true;

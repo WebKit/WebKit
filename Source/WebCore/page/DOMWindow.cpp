@@ -1306,11 +1306,6 @@ Document* DOMWindow::document() const
     return static_cast<Document*>(context);
 }
 
-SecurityOrigin* DOMWindow::securityOrigin() const
-{
-    return document() ? document()->securityOrigin() : 0;
-}
-
 PassRefPtr<StyleMedia> DOMWindow::styleMedia() const
 {
     if (!isCurrentlyDisplayedInFrame())
@@ -1786,7 +1781,7 @@ bool DOMWindow::isInsecureScriptAccess(DOMWindow* activeWindow, const String& ur
 
         // FIXME: The name canAccess seems to be a roundabout way to ask "can execute script".
         // Can we name the SecurityOrigin function better to make this more clear?
-        if (activeWindow->securityOrigin()->canAccess(securityOrigin()))
+        if (activeWindow->document()->securityOrigin()->canAccess(document()->securityOrigin()))
             return false;
     }
 
@@ -1811,7 +1806,7 @@ Frame* DOMWindow::createWindow(const String& urlString, const AtomicString& fram
 
     ResourceRequest request(completedURL, referrer);
     FrameLoader::addHTTPOriginIfNeeded(request, firstFrame->loader()->outgoingOrigin());
-    FrameLoadRequest frameRequest(activeWindow->securityOrigin(), request, frameName);
+    FrameLoadRequest frameRequest(activeWindow->document()->securityOrigin(), request, frameName);
 
     // We pass the opener frame for the lookupFrame in case the active frame is different from
     // the opener frame, and the name references a frame relative to the opener frame.
@@ -1830,10 +1825,10 @@ Frame* DOMWindow::createWindow(const String& urlString, const AtomicString& fram
         function(newFrame->document()->domWindow(), functionContext);
 
     if (created)
-        newFrame->loader()->changeLocation(activeWindow->securityOrigin(), completedURL, referrer, false, false);
+        newFrame->loader()->changeLocation(activeWindow->document()->securityOrigin(), completedURL, referrer, false, false);
     else if (!urlString.isEmpty()) {
         bool lockHistory = !ScriptController::processingUserGesture();
-        newFrame->navigationScheduler()->scheduleLocationChange(activeWindow->securityOrigin(), completedURL.string(), referrer, lockHistory, false);
+        newFrame->navigationScheduler()->scheduleLocationChange(activeWindow->document()->securityOrigin(), completedURL.string(), referrer, lockHistory, false);
     }
 
     return newFrame;

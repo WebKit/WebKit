@@ -352,7 +352,7 @@ void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::ExecState*,
 {
     for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter) {
         JSC::ExecState* exec = iter->second->window()->globalExec();
-        SecurityOrigin* origin = iter->second->window()->impl()->securityOrigin();
+        SecurityOrigin* origin = iter->second->window()->impl()->document()->securityOrigin();
         result.append(std::pair<ScriptState*, SecurityOrigin*>(exec, origin));
     }
 }

@@ -51,17 +51,7 @@ static bool canAccessDocument(BindingState* state, Document* targetDocument, Sec
     if (!active)
         return false;
 
-    // If the embedder executes JavaScript synchronously during the didCreateScriptContext callback,
-    // in some cases the active SecurityOrigin will not yet be copied to the DOMWindow. For example,
-    // Frame::setDocument can trigger didCreateScriptContext during ScriptController::updateDocument.
-    //
-    // FIXME: Remove this branch once we manage to delete DOMWindow::m_securityOrigin. Ideally, we'd
-    //        get the SecurityOrigin from the Document rather than the DOMWindow. In that case, there
-    //        shouldn't ever be a chance to execute script before the SecurityOrigin object is created.
-    if (!active->securityOrigin())
-        return false;
-
-    if (active->securityOrigin()->canAccess(targetDocument->securityOrigin()))
+    if (active->document()->securityOrigin()->canAccess(targetDocument->securityOrigin()))
         return true;
 
     if (reportingOption == ReportSecurityError)

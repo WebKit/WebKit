@@ -115,9 +115,6 @@ namespace WebCore {
 
         PassRefPtr<MediaQueryList> matchMedia(const String&);
 
-        // FIXME: Callers should use document()->securityOrigin() directly.
-        SecurityOrigin* securityOrigin() const;
-
         unsigned pendingUnloadEventListeners() const;
 
         static bool dispatchAllPendingBeforeUnloadEvents();

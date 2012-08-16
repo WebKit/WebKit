@@ -252,7 +252,7 @@ void Location::reload(DOMWindow* activeWindow)
     // We allow one page to change the location of another. Why block attempts to reload?
     // Other location operations simply block use of JavaScript URLs cross origin.
     DOMWindow* targetWindow = m_frame->document()->domWindow();
-    if (!activeWindow->securityOrigin()->canAccess(targetWindow->securityOrigin())) {
+    if (!activeWindow->document()->securityOrigin()->canAccess(m_frame->document()->securityOrigin())) {
         targetWindow->printErrorMessage(targetWindow->crossDomainAccessErrorMessage(activeWindow));
         return;
     }
