@@ -1,3 +1,15 @@
+2012-08-16  Keishi Hattori  <keishi@webkit.org>
+
+        DOMWindowPagePopup needs to be installed before loading the html inside the page popup
+        https://bugs.webkit.org/show_bug.cgi?id=94193
+
+        Reviewed by Kent Tamura.
+
+        We are using window.pagePopupController.localizeNumberString while loading so we need to install DOMWindowPagePopup before loading the html.
+
+        * src/WebPagePopupImpl.cpp:
+        (WebKit::WebPagePopupImpl::initPage):
+
 2012-08-16  Marja Hölttä  <marja@chromium.org>
 
         WebHistoryItem: Enable reading selected file names from document state

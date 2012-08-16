@@ -191,14 +191,14 @@ bool WebPagePopupImpl::initPage()
     frame->view()->resize(m_popupClient->contentSize());
     frame->view()->setTransparent(false);
 
+    DOMWindowPagePopup::install(frame->document()->domWindow(), m_popupClient);
+
     DocumentWriter* writer = frame->loader()->activeDocumentLoader()->writer();
     writer->setMIMEType("text/html");
     writer->setEncoding("UTF-8", false);
     writer->begin();
     m_popupClient->writeDocument(*writer);
     writer->end();
-
-    DOMWindowPagePopup::install(frame->document()->domWindow(), m_popupClient);
     return true;
 }
 
