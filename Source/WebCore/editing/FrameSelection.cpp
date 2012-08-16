@@ -422,8 +422,6 @@ static void updatePositionAfterAdoptingTextReplacement(Position& position, Chara
     // (positionOffset > offset + oldLength) to avoid having a stale offset.
     if (positionOffset > offset + oldLength)
         position.moveToOffset(positionOffset - oldLength + newLength);
-
-    ASSERT(static_cast<unsigned>(position.offsetInContainerNode()) <= node->length());
 }
 
 static inline bool nodeIsDetachedFromDocument(Node* node)
@@ -433,7 +431,7 @@ static inline bool nodeIsDetachedFromDocument(Node* node)
     return highest->nodeType() == Node::DOCUMENT_FRAGMENT_NODE && !highest->isShadowRoot();
 }
 
-void FrameSelection::textWasReplaced(CharacterData* node, unsigned offset, unsigned oldLength, unsigned newLength)
+void FrameSelection::textWillBeReplaced(CharacterData* node, unsigned offset, unsigned oldLength, unsigned newLength)
 {
     // The fragment check is a performance optimization. See http://trac.webkit.org/changeset/30062.
     if (isNone() || !node || nodeIsDetachedFromDocument(node))
