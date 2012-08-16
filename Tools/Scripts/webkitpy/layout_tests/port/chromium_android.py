@@ -262,7 +262,9 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def create_driver(self, worker_number, no_timeout=False):
         # We don't want the default DriverProxy which is not compatible with our driver.
         # See comments in ChromiumAndroidDriver.start().
-        return ChromiumAndroidDriver(self, worker_number, pixel_tests=self.get_option('pixel_tests'), no_timeout=no_timeout)
+        return ChromiumAndroidDriver(self, worker_number, pixel_tests=self.get_option('pixel_tests'),
+                                     # Force no timeout to avoid DumpRenderTree timeouts before NRWT.
+                                     no_timeout=True)
 
     def driver_cmd_line(self):
         # Override to return the actual DumpRenderTree command line.
