@@ -4,26 +4,26 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Regression test for https://bugs.webkit.org/show_bug.cgi?id=33352 : Passing array that is too large to set method of WebGLArrays does not throw an exception
 Testing Int8Array
-PASS webGLArray.set([4, 5], 1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS webGLArray.set([4, 5, 6]) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS webGLArray.set([4, 5], 1) threw exception RangeError: Index is out of range..
+PASS webGLArray.set([4, 5, 6]) threw exception RangeError: Index is out of range..
 Testing Uint8Array
-PASS webGLArray.set([4, 5], 1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS webGLArray.set([4, 5, 6]) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS webGLArray.set([4, 5], 1) threw exception RangeError: Index is out of range..
+PASS webGLArray.set([4, 5, 6]) threw exception RangeError: Index is out of range..
 Testing Int16Array
-PASS webGLArray.set([4, 5], 1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS webGLArray.set([4, 5, 6]) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS webGLArray.set([4, 5], 1) threw exception RangeError: Index is out of range..
+PASS webGLArray.set([4, 5, 6]) threw exception RangeError: Index is out of range..
 Testing Uint16Array
-PASS webGLArray.set([4, 5], 1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS webGLArray.set([4, 5, 6]) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS webGLArray.set([4, 5], 1) threw exception RangeError: Index is out of range..
+PASS webGLArray.set([4, 5, 6]) threw exception RangeError: Index is out of range..
 Testing Int32Array
-PASS webGLArray.set([4, 5], 1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS webGLArray.set([4, 5, 6]) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS webGLArray.set([4, 5], 1) threw exception RangeError: Index is out of range..
+PASS webGLArray.set([4, 5, 6]) threw exception RangeError: Index is out of range..
 Testing Uint32Array
-PASS webGLArray.set([4, 5], 1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS webGLArray.set([4, 5, 6]) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS webGLArray.set([4, 5], 1) threw exception RangeError: Index is out of range..
+PASS webGLArray.set([4, 5, 6]) threw exception RangeError: Index is out of range..
 Testing Float32Array
-PASS webGLArray.set([4, 5], 1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS webGLArray.set([4, 5, 6]) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS webGLArray.set([4, 5], 1) threw exception RangeError: Index is out of range..
+PASS webGLArray.set([4, 5, 6]) threw exception RangeError: Index is out of range..
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -2,8 +2,8 @@ Test that DataView does not crash with bad offset or length.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS view = new DataView(array.buffer, -4500000000) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS view = new DataView(array.buffer, -4500000000, 4500000000) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view = new DataView(array.buffer, -4500000000) threw exception RangeError: Size is too large (or is negative)..
+PASS view = new DataView(array.buffer, -4500000000, 4500000000) threw exception RangeError: Size is too large (or is negative)..
 PASS successfullyParsed is true
 
 TEST COMPLETE

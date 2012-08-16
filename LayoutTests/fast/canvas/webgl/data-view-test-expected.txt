@@ -22,9 +22,9 @@ PASS view.byteOffset is 0
 PASS view.byteLength is 1
 
 Test for constructor throwing exception
-PASS view = new DataView(arayBuffer, 0, 3) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS view = new DataView(arayBuffer, 1, 2) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS view = new DataView(arayBuffer, 2, 1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS view = new DataView(arayBuffer, 0, 3) threw exception RangeError: Size is too large (or is negative)..
+PASS view = new DataView(arayBuffer, 1, 2) threw exception RangeError: Size is too large (or is negative)..
+PASS view = new DataView(arayBuffer, 2, 1) threw exception RangeError: Size is too large (or is negative)..
 
 Test for get methods that work
 PASS view.getInt8(0) is 0

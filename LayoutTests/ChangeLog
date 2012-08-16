@@ -1,3 +1,21 @@
+2012-08-16  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        Update TypedArrays to throw RangeError or similar instead of INDEX_SIZE_ERR
+        https://bugs.webkit.org/show_bug.cgi?id=45118
+
+        Reviewed by Kenneth Russell.
+
+        New test to test invalid arguments to TypedArray set method
+
+        Update array-set-out-of-bounds.html, data-view-crash.html and
+        data-view-test.html test expectations no match new exceptions thrown.
+
+        * fast/canvas/webgl/array-set-invalid-arguments-expected.txt: Added.
+        * fast/canvas/webgl/array-set-invalid-arguments.html: Added.
+        * fast/canvas/webgl/array-set-out-of-bounds-expected.txt:
+        * fast/canvas/webgl/data-view-crash-expected.txt:
+        * fast/canvas/webgl/data-view-test-expected.txt:
+
 2012-08-16  Adrienne Walker  <enne@google.com>
 
         Remove text output from overflow-hidden-canvas-layer test
