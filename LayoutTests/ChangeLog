@@ -1,3 +1,19 @@
+2012-08-15  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Rename LayoutTests/fast/forms/number/number-wheel.html to number-wheel-event.html
+        https://bugs.webkit.org/show_bug.cgi?id=94173
+
+        Reviewed by Kent Tamura.
+
+        This patch renames LayoutTest/fast/forms/number/number-wheel.html to 
+        number-wheel-event.html to indicate the test checks wheel event
+        handling.
+
+        * fast/forms/number/number-wheel-event-expected.txt: Copied from LayoutTests/fast/forms/number/number-wheel-expected.txt.
+        * fast/forms/number/number-wheel-event.html: Copied from LayoutTests/fast/forms/number/number-wheel.html.
+        * fast/forms/number/number-wheel-expected.txt: Removed.
+        * fast/forms/number/number-wheel.html: Removed.
+
 2012-08-15  MORITA Hajime  <morrita@google.com>
 
         Regression(121518) TextFieldDecorationElement formatting is broken.
