@@ -21,8 +21,10 @@
 #include "config.h"
 #include "FormController.h"
 
+#include "FileChooser.h"
 #include "HTMLFormControlElementWithState.h"
 #include "HTMLFormElement.h"
+#include "HTMLInputElement.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -180,6 +182,8 @@ public:
     void appendControlState(const AtomicString& name, const AtomicString& type, const FormControlState&);
     FormControlState takeControlState(const AtomicString& name, const AtomicString& type);
 
+    Vector<String> getReferencedFilePaths() const;
+
 private:
     SavedFormState() : m_controlStateCount(0) { }
 
@@ -261,6 +265,23 @@ FormControlState SavedFormState::takeControlState(const AtomicString& name, cons
     if (!it->second.size())
         m_stateForNewFormElements.remove(it);
     return state;
+}
+
+Vector<String> SavedFormState::getReferencedFilePaths() const
+{
+    Vector<String> toReturn;
+    for (FormElementStateMap::const_iterator it = m_stateForNewFormElements.begin(); it != m_stateForNewFormElements.end(); ++it) {
+        const FormElementKey& key = it->first;
+        if (AtomicString(key.type()) != AtomicString("file"))
+            continue;
+        const Deque<FormControlState>& queue = it->second;
+        for (Deque<FormControlState>::const_iterator queIterator = queue.begin(); queIterator != queue.end(); ++queIterator) {
+            const Vector<FileChooserFileInfo>& selectedFiles = HTMLInputElement::filesFromFileInputFormControlState(*queIterator);
+            for (size_t i = 0; i < selectedFiles.size(); ++i)
+                toReturn.append(selectedFiles[i].path);
+        }
+    }
+    return toReturn;
 }
 
 // ----------------------------------------------------------------------------
@@ -408,23 +429,7 @@ Vector<String> FormController::formElementsState() const
 
 void FormController::setStateForNewFormElements(const Vector<String>& stateVector)
 {
-    m_formElementsWithState.clear();
-
-    size_t i = 0;
-    if (stateVector.size() < 1 || stateVector[i++] != formStateSignature())
-        return;
-
-    while (i + 1 < stateVector.size()) {
-        AtomicString formKey = stateVector[i++];
-        OwnPtr<SavedFormState> state = SavedFormState::deserialize(stateVector, i);
-        if (!state) {
-            i = 0;
-            break;
-        }
-        m_savedFormStateMap.add(formKey.impl(), state.release());
-    }
-    if (i != stateVector.size())
-        m_savedFormStateMap.clear();
+    formStatesFromStateVector(stateVector, m_savedFormStateMap);
 }
 
 FormControlState FormController::takeStateForFormElement(const HTMLFormControlElementWithState& control)
@@ -440,6 +445,27 @@ FormControlState FormController::takeStateForFormElement(const HTMLFormControlEl
     if (it->second->isEmpty())
         m_savedFormStateMap.remove(it);
     return state;
+}
+
+void FormController::formStatesFromStateVector(const Vector<String>& stateVector, SavedFormStateMap& map)
+{
+    map.clear();
+
+    size_t i = 0;
+    if (stateVector.size() < 1 || stateVector[i++] != formStateSignature())
+        return;
+
+    while (i + 1 < stateVector.size()) {
+        AtomicString formKey = stateVector[i++];
+        OwnPtr<SavedFormState> state = SavedFormState::deserialize(stateVector, i);
+        if (!state) {
+            i = 0;
+            break;
+        }
+        map.add(formKey.impl(), state.release());
+    }
+    if (i != stateVector.size())
+        map.clear();
 }
 
 void FormController::willDeleteForm(HTMLFormElement* form)
@@ -479,5 +505,14 @@ void FormController::restoreControlStateIn(HTMLFormElement& form)
     }
 }
 
-} // namespace WebCore
+Vector<String> FormController::getReferencedFilePaths(const Vector<String>& stateVector)
+{
+    Vector<String> toReturn;
+    SavedFormStateMap map;
+    formStatesFromStateVector(stateVector, map);
+    for (SavedFormStateMap::const_iterator it = map.begin(); it != map.end(); ++it)
+        toReturn.append(it->second->getReferencedFilePaths());
+    return toReturn;
+}
 
+} // namespace WebCore

@@ -92,6 +92,8 @@ public:
     void restoreControlStateFor(HTMLFormControlElementWithState&);
     void restoreControlStateIn(HTMLFormElement&);
 
+    static Vector<String> getReferencedFilePaths(const Vector<String>& stateVector);
+
 private:
     typedef ListHashSet<HTMLFormControlElementWithState*, 64> FormElementListHashSet;
     typedef HashMap<RefPtr<AtomicStringImpl>, OwnPtr<SavedFormState> > SavedFormStateMap;
@@ -99,6 +101,7 @@ private:
     FormController();
     static PassOwnPtr<SavedFormStateMap> createSavedFormStateMap(const FormElementListHashSet&);
     FormControlState takeStateForFormElement(const HTMLFormControlElementWithState&);
+    static void formStatesFromStateVector(const Vector<String>&, SavedFormStateMap&);
 
     CheckedRadioButtons m_checkedRadioButtons;
     FormElementListHashSet m_formElementsWithState;

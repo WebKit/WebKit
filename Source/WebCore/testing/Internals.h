@@ -210,6 +210,8 @@ public:
 
     PassRefPtr<MallocStatistics> mallocStatistics() const;
 
+    PassRefPtr<DOMStringList> getReferencedFilePaths() const;
+
 private:
     explicit Internals(Document*);
     Document* contextDocument() const;

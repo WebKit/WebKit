@@ -96,6 +96,18 @@ PassOwnPtr<InputType> FileInputType::create(HTMLInputElement* element)
     return adoptPtr(new FileInputType(element));
 }
 
+Vector<FileChooserFileInfo> FileInputType::filesFromFormControlState(const FormControlState& state)
+{
+    Vector<FileChooserFileInfo> files;
+    for (size_t i = 0; i < state.valueSize(); i += 2) {
+        if (!state[i + 1].isEmpty())
+            files.append(FileChooserFileInfo(state[i], state[i + 1]));
+        else
+            files.append(FileChooserFileInfo(state[i]));
+    }
+    return files;
+}
+
 const AtomicString& FileInputType::formControlType() const
 {
     return InputTypeNames::file();
@@ -118,14 +130,7 @@ void FileInputType::restoreFormControlState(const FormControlState& state)
 {
     if (state.valueSize() % 2)
         return;
-    Vector<FileChooserFileInfo> files;
-    for (size_t i = 0; i < state.valueSize(); i += 2) {
-        if (!state[i + 1].isEmpty())
-            files.append(FileChooserFileInfo(state[i], state[i + 1]));
-        else
-            files.append(FileChooserFileInfo(state[i]));
-    }
-    filesChosen(files);
+    filesChosen(filesFromFormControlState(state));
 }
 
 bool FileInputType::appendFormData(FormDataList& encoding, bool multipart) const

@@ -36,6 +36,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
+#include "FileInputType.h"
 #include "FileList.h"
 #include "FormController.h"
 #include "Frame.h"
@@ -157,6 +158,11 @@ HTMLInputElement::~HTMLInputElement()
 const AtomicString& HTMLInputElement::name() const
 {
     return m_name.isNull() ? emptyAtom : m_name;
+}
+
+Vector<FileChooserFileInfo> HTMLInputElement::filesFromFileInputFormControlState(const FormControlState& state)
+{
+    return FileInputType::filesFromFormControlState(state);
 }
 
 HTMLElement* HTMLInputElement::containerElement() const

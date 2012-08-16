@@ -1,3 +1,15 @@
+2012-08-16  Marja Hölttä  <marja@chromium.org>
+
+        FormController, WebHistoryItem: Enable reading selected file names from document state
+        https://bugs.webkit.org/show_bug.cgi?id=91231
+
+        Reviewed by Jochen Eisinger.
+
+        This change enables Chromium to set up file permissions properly when
+        the session restore feature restores a page with selected files.
+
+        * win/WebKit2.def: Exported FormController::getReferencedFilePaths and HistoryController::saveDocumentAndScrollState.
+
 2012-08-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update manual tests and comments to refer to TestRunner instead of LayoutTestController

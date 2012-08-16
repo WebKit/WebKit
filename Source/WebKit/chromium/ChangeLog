@@ -1,3 +1,19 @@
+2012-08-16  Marja Hölttä  <marja@chromium.org>
+
+        WebHistoryItem: Enable reading selected file names from document state
+        https://bugs.webkit.org/show_bug.cgi?id=91231
+
+        Reviewed by Jochen Eisinger.
+
+        This change enables Chromium to set up file permissions properly when
+        the session restore feature restores a page with selected files.
+
+        * public/WebHistoryItem.h:
+        (WebHistoryItem): Added getReferencedFilePaths.
+        * src/WebHistoryItem.cpp:
+        (WebKit::WebHistoryItem::getReferencedFilePaths): Extracts selected and posted file paths from a document state.
+        (WebKit):
+
 2012-08-15  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] set scissorRect per quad so that quads are correctly clipped

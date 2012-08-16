@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebHistoryItem.h"
 
+#include "FormController.h"
 #include "FormData.h"
 #include "HistoryItem.h"
 #include "KURL.h"
@@ -285,6 +286,23 @@ void WebHistoryItem::appendToChildren(const WebHistoryItem& item)
 {
     ensureMutable();
     m_private->addChildItem(item);
+}
+
+WebVector<WebString> WebHistoryItem::getReferencedFilePaths() const
+{
+    Vector<WebString> filePaths;
+    const FormData* formData = m_private->formData();
+    if (formData) {
+        for (size_t i = 0; i < formData->elements().size(); ++i) {
+            const FormDataElement& element = formData->elements()[i];
+            if (element.m_type == FormDataElement::encodedFile)
+                filePaths.append(element.m_filename);
+        }
+    }
+    const Vector<String>& selectedFilePaths = WebCore::FormController::getReferencedFilePaths(m_private->documentState());
+    for (size_t i = 0; i < selectedFilePaths.size(); ++i)
+        filePaths.append(selectedFilePaths[i]);
+    return filePaths;
 }
 
 WebHistoryItem::WebHistoryItem(const PassRefPtr<HistoryItem>& item)

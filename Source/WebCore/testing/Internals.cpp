@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Internals.h"
 
+#include "BackForwardController.h"
 #include "CachedResourceLoader.h"
 #include "ClientRect.h"
 #include "ClientRectList.h"
@@ -37,6 +38,7 @@
 #include "Element.h"
 #include "ElementShadow.h"
 #include "ExceptionCode.h"
+#include "FormController.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLContentElement.h"
@@ -1186,6 +1188,16 @@ void Internals::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const 
 PassRefPtr<MallocStatistics> Internals::mallocStatistics() const
 {
     return MallocStatistics::create();
+}
+
+PassRefPtr<DOMStringList> Internals::getReferencedFilePaths() const
+{
+    RefPtr<DOMStringList> stringList = DOMStringList::create();
+    frame()->loader()->history()->saveDocumentAndScrollState();
+    const Vector<String>& filePaths = FormController::getReferencedFilePaths(frame()->loader()->history()->currentItem()->documentState());
+    for (size_t i = 0; i < filePaths.size(); ++i)
+        stringList->append(filePaths[i]);
+    return stringList.release();
 }
 
 }

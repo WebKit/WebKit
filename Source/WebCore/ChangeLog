@@ -1,3 +1,43 @@
+2012-08-16  Marja Hölttä  <marja@chromium.org>
+
+        FormController, FileInputType: Enable reading selected file names from document state
+        https://bugs.webkit.org/show_bug.cgi?id=91231
+
+        Reviewed by Jochen Eisinger.
+
+        This change enables Chromium to set up file permissions properly when
+        the session restore feature restores a page with selected files.
+
+        Test: fast/forms/file/selected-files-from-history-state.html
+
+        * WebCore.exp.in: Exported FormController::getReferencedFilePaths.
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::filesFromFormControlState): Added. Extracts FileChooserFileInfos from a FormControlState.
+        (WebCore):
+        (WebCore::FileInputType::restoreFormControlState): Refactored to use filesFromFormControlState.
+        * html/FileInputType.h:
+        (FileInputType): Added filesFromFormControlState.
+        * html/FormController.cpp:
+        (SavedFormState): Added getReferencedFilePaths.
+        (WebCore::SavedFormState::getReferencedFilePaths): Added. Extracts selected file paths from SavedFormState.
+        (WebCore):
+        (WebCore::FormController::setStateForNewFormElements): Refactored to use formStatesFromStateVector.
+        (WebCore::FormController::formStatesFromStateVector):
+        (WebCore::FormController::getReferencedFilePaths): Added. Static. Extracts selected file paths from a document state.
+        * html/FormController.h:
+        (FormController): Added getReferencedFilePaths and formStatesFromStateVector.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::filesFromFileInputFormControlState): Added. Delegates to FileInputType::filesFromFormControlState.
+        (WebCore):
+        * html/HTMLInputElement.h: Added filesFromFileInputFormControlState.
+        (HTMLInputElement):
+        * testing/Internals.cpp:
+        (WebCore::Internals::getReferencedFilePaths): Calls FormController::getReferencedFilePaths.
+        (WebCore):
+        * testing/Internals.h:
+        (Internals): Added getReferencedFilePaths.
+        * testing/Internals.idl: Added binding for getReferencedFilePaths.
+
 2012-08-15  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] set scissorRect per quad so that quads are correctly clipped

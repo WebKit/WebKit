@@ -25,6 +25,7 @@
 #ifndef HTMLInputElement_h
 #define HTMLInputElement_h
 
+#include "FileChooser.h"
 #include "HTMLTextFormControlElement.h"
 #include "ImageLoaderClient.h"
 #include "StepRange.h"
@@ -276,6 +277,8 @@ public:
     void setWidth(unsigned);
 
     virtual const AtomicString& name() const OVERRIDE;
+
+    static Vector<FileChooserFileInfo> filesFromFileInputFormControlState(const FormControlState&);
 
 protected:
     HTMLInputElement(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);

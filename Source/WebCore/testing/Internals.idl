@@ -186,6 +186,8 @@ module window {
         void removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(in DOMString scheme);
 
         MallocStatistics mallocStatistics();
+
+        DOMString[] getReferencedFilePaths();
     };
 }
 

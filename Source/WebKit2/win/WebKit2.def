@@ -181,6 +181,7 @@ EXPORTS
         ?getElementById@TreeScope@WebCore@@QBEPAVElement@2@ABVAtomicString@WTF@@@Z
         ?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@@Z
         ?getLocationAndLengthFromRange@TextIterator@WebCore@@SA_NPAVElement@2@PBVRange@2@AAI2@Z
+        ?getReferencedFilePaths@FormController@WebCore@@SA?AV?$Vector@VString@WTF@@$0A@@WTF@@ABV34@@Z
         ?inputTag@HTMLNames@WebCore@@3VQualifiedName@2@B
         ?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@CAPAVInstrumentingAgents@2@PAVPage@2@@Z
         ?isActiveInsertionPoint@WebCore@@YA_NPBVNode@1@@Z
@@ -207,6 +208,7 @@ EXPORTS
         ?removedLastRef@Node@WebCore@@AAEXXZ
         ?reverseFind@StringImpl@WTF@@QAEI_WI@Z
         ?s_frontendCounter@InspectorInstrumentation@WebCore@@0HA
+        ?saveDocumentAndScrollState@HistoryController@WebCore@@QAEXXZ
         ?scriptExecutionContext@JSDOMGlobalObject@WebCore@@QBEPAVScriptExecutionContext@2@XZ
         ?scriptNameToCode@WebCore@@YA?AW4UScriptCode@@ABVString@WTF@@@Z
         ?scrollElementToRect@FrameView@WebCore@@QAEXPAVElement@2@ABVIntRect@2@@Z

@@ -124,6 +124,8 @@ public:
     WEBKIT_EXPORT void setChildren(const WebVector<WebHistoryItem>&);
     WEBKIT_EXPORT void appendToChildren(const WebHistoryItem&);
 
+    WEBKIT_EXPORT WebVector<WebString> getReferencedFilePaths() const;
+
 #if WEBKIT_IMPLEMENTATION
     WebHistoryItem(const WTF::PassRefPtr<WebCore::HistoryItem>&);
     WebHistoryItem& operator=(const WTF::PassRefPtr<WebCore::HistoryItem>&);
