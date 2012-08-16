@@ -59,7 +59,7 @@ public:
     virtual void onTimerFired() OVERRIDE;
 
     // Virtual for testing.
-    virtual double monotonicallyIncreasingTime() const;
+    virtual double monotonicTimeNow() const;
 
 protected:
     CCDelayBasedTimeSource(double interval, CCThread*);

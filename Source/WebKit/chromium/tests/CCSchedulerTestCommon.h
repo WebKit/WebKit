@@ -130,15 +130,15 @@ public:
         return adoptRef(new FakeCCDelayBasedTimeSource(interval, thread));
     }
 
-    void setMonotonicallyIncreasingTime(double time) { m_monotonicallyIncreasingTime = time; }
-    virtual double monotonicallyIncreasingTime() const { return m_monotonicallyIncreasingTime; }
+    void setMonotonicTimeNow(double time) { m_monotonicTimeNow = time; }
+    virtual double monotonicTimeNow() const OVERRIDE { return m_monotonicTimeNow; }
 
 protected:
     FakeCCDelayBasedTimeSource(double interval, WebCore::CCThread* thread)
         : CCDelayBasedTimeSource(interval, thread)
-        , m_monotonicallyIncreasingTime(0) { }
+        , m_monotonicTimeNow(0) { }
 
-    double m_monotonicallyIncreasingTime;
+    double m_monotonicTimeNow;
 };
 
 class FakeCCFrameRateController : public WebCore::CCFrameRateController {

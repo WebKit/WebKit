@@ -88,7 +88,7 @@ void CCDelayBasedTimeSource::setActive(bool active)
 
     m_state = STATE_ACTIVE;
 
-    double now = monotonicallyIncreasingTime();
+    double now = monotonicTimeNow();
     postNextTickTask(now);
 }
 
@@ -106,7 +106,7 @@ void CCDelayBasedTimeSource::onTimerFired()
 {
     ASSERT(m_state != STATE_INACTIVE);
 
-    double now = monotonicallyIncreasingTime();
+    double now = monotonicTimeNow();
     m_lastTickTime = now;
 
     if (m_state == STATE_STARTING) {
@@ -157,9 +157,9 @@ void CCDelayBasedTimeSource::setTimebaseAndInterval(double timebase, double inte
     }
 }
 
-double CCDelayBasedTimeSource::monotonicallyIncreasingTime() const
+double CCDelayBasedTimeSource::monotonicTimeNow() const
 {
-    return WTF::monotonicallyIncreasingTime();
+    return monotonicallyIncreasingTime();
 }
 
 // This code tries to achieve an average tick rate as close to m_intervalMs as possible.

@@ -63,7 +63,7 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_ImmediateAck)
 
     // Trigger one frame, make sure the vsync callback is called
     elapsed += thread.pendingDelayMs() / 1000.0;
-    timeSource->setMonotonicallyIncreasingTime(elapsed);
+    timeSource->setMonotonicTimeNow(elapsed);
     thread.runPendingTask();
     EXPECT_TRUE(client.vsyncTicked());
     client.reset();
@@ -72,13 +72,13 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_ImmediateAck)
     controller.didBeginFrame();
 
     // Tell the controller the frame ended 5ms later
-    timeSource->setMonotonicallyIncreasingTime(timeSource->monotonicallyIncreasingTime() + 0.005);
+    timeSource->setMonotonicTimeNow(timeSource->monotonicTimeNow() + 0.005);
     controller.didFinishFrame();
 
     // Trigger another frame, make sure vsync runs again
     elapsed += thread.pendingDelayMs() / 1000.0;
-    EXPECT_TRUE(elapsed >= timeSource->monotonicallyIncreasingTime()); // Sanity check that previous code didn't move time backward.
-    timeSource->setMonotonicallyIncreasingTime(elapsed);
+    EXPECT_TRUE(elapsed >= timeSource->monotonicTimeNow()); // Sanity check that previous code didn't move time backward.
+    timeSource->setMonotonicTimeNow(elapsed);
     thread.runPendingTask();
     EXPECT_TRUE(client.vsyncTicked());
 }
@@ -98,7 +98,7 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_TwoFramesInFlight)
 
     // Trigger one frame, make sure the vsync callback is called
     elapsed += thread.pendingDelayMs() / 1000.0;
-    timeSource->setMonotonicallyIncreasingTime(elapsed);
+    timeSource->setMonotonicTimeNow(elapsed);
     thread.runPendingTask();
     EXPECT_TRUE(client.vsyncTicked());
     client.reset();
@@ -108,8 +108,8 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_TwoFramesInFlight)
 
     // Trigger another frame, make sure vsync callback runs again
     elapsed += thread.pendingDelayMs() / 1000.0;
-    EXPECT_TRUE(elapsed >= timeSource->monotonicallyIncreasingTime()); // Sanity check that previous code didn't move time backward.
-    timeSource->setMonotonicallyIncreasingTime(elapsed);
+    EXPECT_TRUE(elapsed >= timeSource->monotonicTimeNow()); // Sanity check that previous code didn't move time backward.
+    timeSource->setMonotonicTimeNow(elapsed);
     thread.runPendingTask();
     EXPECT_TRUE(client.vsyncTicked());
     client.reset();
@@ -119,13 +119,13 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_TwoFramesInFlight)
 
     // Trigger another frame. Since two frames are pending, we should not draw.
     elapsed += thread.pendingDelayMs() / 1000.0;
-    EXPECT_TRUE(elapsed >= timeSource->monotonicallyIncreasingTime()); // Sanity check that previous code didn't move time backward.
-    timeSource->setMonotonicallyIncreasingTime(elapsed);
+    EXPECT_TRUE(elapsed >= timeSource->monotonicTimeNow()); // Sanity check that previous code didn't move time backward.
+    timeSource->setMonotonicTimeNow(elapsed);
     thread.runPendingTask();
     EXPECT_FALSE(client.vsyncTicked());
 
     // Tell the controller the first frame ended 5ms later
-    timeSource->setMonotonicallyIncreasingTime(timeSource->monotonicallyIncreasingTime() + 0.005);
+    timeSource->setMonotonicTimeNow(timeSource->monotonicTimeNow() + 0.005);
     controller.didFinishFrame();
 
     // Tick should not have been called
@@ -133,8 +133,8 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_TwoFramesInFlight)
 
     // Trigger yet another frame. Since one frames is pending, another vsync callback should run.
     elapsed += thread.pendingDelayMs() / 1000.0;
-    EXPECT_TRUE(elapsed >= timeSource->monotonicallyIncreasingTime()); // Sanity check that previous code didn't move time backward.
-    timeSource->setMonotonicallyIncreasingTime(elapsed);
+    EXPECT_TRUE(elapsed >= timeSource->monotonicTimeNow()); // Sanity check that previous code didn't move time backward.
+    timeSource->setMonotonicTimeNow(elapsed);
     thread.runPendingTask();
     EXPECT_TRUE(client.vsyncTicked());
 }
