@@ -1,3 +1,20 @@
+2012-08-16  Hironori Bono  <hbono@chromium.org>
+
+        Prevent showing suggestions when right-clicking a selection range.
+        https://bugs.webkit.org/show_bug.cgi?id=94189
+
+        Reviewed by Hajime Morita.
+
+        To emulate Safari, my r120810 changes selection when right-clicking a misspelled
+        word. Unfortunately, this change somehow uses VisibleSelection::isCaretOrRange
+        and it changes the existing selection when right-clicking a selection which
+        includes a misspelled word. This change uses VisibleSelection::isCaret to
+        prevent showing suggestions when right-clicking a selection range. (Neither does
+        Safari show suggestions when there is a selection range.)
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+
 2012-08-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.
