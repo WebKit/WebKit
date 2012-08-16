@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayoutTestController_h
-#define LayoutTestController_h
+#ifndef TestRunner_h
+#define TestRunner_h
 
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSRetainPtr.h>
@@ -51,10 +51,10 @@ typedef Ecore_Timer* PlatformTimerRef;
 
 namespace WTR {
 
-class LayoutTestController : public JSWrappable {
+class TestRunner : public JSWrappable {
 public:
-    static PassRefPtr<LayoutTestController> create();
-    virtual ~LayoutTestController();
+    static PassRefPtr<TestRunner> create();
+    virtual ~TestRunner();
 
     // JSWrappable
     virtual JSClassRef wrapperClass();
@@ -232,7 +232,7 @@ public:
 private:
     static const double waitToDumpWatchdogTimerInterval;
 
-    LayoutTestController();
+    TestRunner();
 
     void platformInitialize();
     void initializeWaitToDumpWatchdogTimerIfNeeded();
@@ -273,4 +273,4 @@ private:
 
 } // namespace WTR
 
-#endif // LayoutTestController_h
+#endif // TestRunner_h

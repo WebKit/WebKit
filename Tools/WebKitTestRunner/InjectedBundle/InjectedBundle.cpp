@@ -169,19 +169,19 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
         return;
     }
     if (WKStringIsEqualToUTF8CString(messageName, "CallAddChromeInputFieldCallback")) {
-        m_layoutTestController->callAddChromeInputFieldCallback();
+        m_testRunner->callAddChromeInputFieldCallback();
         return;
     }
     if (WKStringIsEqualToUTF8CString(messageName, "CallRemoveChromeInputFieldCallback")) {
-        m_layoutTestController->callRemoveChromeInputFieldCallback();
+        m_testRunner->callRemoveChromeInputFieldCallback();
         return;
     }
     if (WKStringIsEqualToUTF8CString(messageName, "CallFocusWebViewCallback")) {
-        m_layoutTestController->callFocusWebViewCallback();
+        m_testRunner->callFocusWebViewCallback();
         return;
     }
     if (WKStringIsEqualToUTF8CString(messageName, "CallSetBackingScaleFactorCallback")) {
-        m_layoutTestController->callSetBackingScaleFactorCallback();
+        m_testRunner->callSetBackingScaleFactorCallback();
         return;
     }
 
@@ -211,7 +211,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     m_repaintRects.clear();
     m_stringBuilder->clear();
 
-    m_layoutTestController = LayoutTestController::create();
+    m_testRunner = TestRunner::create();
     m_gcController = GCController::create();
     m_eventSendingController = EventSendingController::create();
     m_textInputController = TextInputController::create();
@@ -228,7 +228,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
 
     WKBundleRemoveAllUserContent(m_bundle, m_pageGroup);
 
-    m_layoutTestController->setShouldDumpFrameLoadCallbacks(booleanForKey(settings, "DumpFrameLoadDelegates"));
+    m_testRunner->setShouldDumpFrameLoadCallbacks(booleanForKey(settings, "DumpFrameLoadDelegates"));
 
     page()->prepare();
 

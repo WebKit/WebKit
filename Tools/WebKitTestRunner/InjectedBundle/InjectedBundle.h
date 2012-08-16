@@ -29,7 +29,7 @@
 #include "AccessibilityController.h"
 #include "EventSendingController.h"
 #include "GCController.h"
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 #include "TextInputController.h"
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKRetainPtr.h>
@@ -57,7 +57,7 @@ public:
     WKBundleRef bundle() const { return m_bundle; }
     WKBundlePageGroupRef pageGroup() const { return m_pageGroup; }
 
-    LayoutTestController* layoutTestController() { return m_layoutTestController.get(); }
+    TestRunner* testRunner() { return m_testRunner.get(); }
     GCController* gcController() { return m_gcController.get(); }
     EventSendingController* eventSendingController() { return m_eventSendingController.get(); }
     TextInputController* textInputController() { return m_textInputController.get(); }
@@ -115,7 +115,7 @@ private:
     Vector<OwnPtr<InjectedBundlePage> > m_pages;
 
     RefPtr<AccessibilityController> m_accessibilityController;
-    RefPtr<LayoutTestController> m_layoutTestController;
+    RefPtr<TestRunner> m_testRunner;
     RefPtr<GCController> m_gcController;
     RefPtr<EventSendingController> m_eventSendingController;
     RefPtr<TextInputController> m_textInputController;

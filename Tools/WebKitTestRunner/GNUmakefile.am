@@ -72,7 +72,7 @@ webkittestrunner_built_sources += \
 	DerivedSources/InjectedBundle/JSAccessibilityUIElement.cpp \
 	DerivedSources/InjectedBundle/JSEventSendingController.cpp \
 	DerivedSources/InjectedBundle/JSGCController.cpp \
-	DerivedSources/InjectedBundle/JSLayoutTestController.cpp \
+	DerivedSources/InjectedBundle/JSTestRunner.cpp \
 	DerivedSources/InjectedBundle/JSTextInputController.cpp
 nodist_Libraries_libTestRunnerInjectedBundle_la_SOURCES = $(webkittestrunner_built_sources)
 BUILT_SOURCES += $(webkittestrunner_built_sources)
@@ -98,14 +98,14 @@ Libraries_libTestRunnerInjectedBundle_la_SOURCES = \
 	Tools/WebKitTestRunner/InjectedBundle/gtk/AccessibilityUIElementGtk.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/gtk/InjectedBundleGtk.cpp \
-	Tools/WebKitTestRunner/InjectedBundle/gtk/LayoutTestControllerGtk.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/InjectedBundle.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/InjectedBundle.h \
 	Tools/WebKitTestRunner/InjectedBundle/InjectedBundleMain.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/InjectedBundlePage.h \
-	Tools/WebKitTestRunner/InjectedBundle/LayoutTestController.cpp \
-	Tools/WebKitTestRunner/InjectedBundle/LayoutTestController.h \
+	Tools/WebKitTestRunner/InjectedBundle/TestRunner.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/TestRunner.h \
 	Tools/WebKitTestRunner/InjectedBundle/TextInputController.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/TextInputController.h
 

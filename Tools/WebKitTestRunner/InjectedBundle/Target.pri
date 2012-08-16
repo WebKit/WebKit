@@ -22,14 +22,14 @@ SOURCES += \
     EventSendingController.h \
     GCController.cpp \
     GCController.h \
-    LayoutTestController.cpp \
-    LayoutTestController.h \
+    TestRunner.cpp \
+    TestRunner.h \
     TextInputController.cpp \
     TextInputController.h \
     Bindings/JSWrapper.cpp \
     qt/ActivateFontsQt.cpp \
     qt/InjectedBundleQt.cpp \
-    qt/LayoutTestControllerQt.cpp
+    qt/TestRunnerQt.cpp
 
 # Adds the generated sources to SOURCES
 include(DerivedSources.pri)
@@ -45,7 +45,7 @@ HEADERS += \
     GCController.h \
     InjectedBundle.h \
     InjectedBundlePage.h \
-    LayoutTestController.h \
+    TestRunner.h \
     TextInputController.h \
 
 DESTDIR = $${ROOT_BUILD_DIR}/lib

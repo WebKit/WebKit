@@ -23,47 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "LayoutTestController.h"
+#include "config.h"
+#include "TestRunner.h"
 
 #include "InjectedBundle.h"
 
 namespace WTR {
 
-void LayoutTestController::platformInitialize()
+void TestRunner::platformInitialize()
 {
+    m_waitToDumpWatchdogTimer = 0;
 }
 
-void LayoutTestController::invalidateWaitToDumpWatchdogTimer()
+void TestRunner::invalidateWaitToDumpWatchdogTimer()
 {
     if (!m_waitToDumpWatchdogTimer)
         return;
 
-    CFRunLoopTimerInvalidate(m_waitToDumpWatchdogTimer.get());
+    ::KillTimer(0, m_waitToDumpWatchdogTimer);
     m_waitToDumpWatchdogTimer = 0;
 }
 
-static void waitUntilDoneWatchdogTimerFired(CFRunLoopTimerRef timer, void* info)
+static void CALLBACK waitToDumpWatchdogTimerFired(HWND, UINT, UINT_PTR, DWORD)
 {
-    InjectedBundle::shared().layoutTestController()->waitToDumpWatchdogTimerFired();
+    InjectedBundle::shared().testRunner()->waitToDumpWatchdogTimerFired();
 }
 
-void LayoutTestController::initializeWaitToDumpWatchdogTimerIfNeeded()
+static const UINT_PTR waitToDumpWatchdogTimerIdentifier = 1;
+
+void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
 {
     if (m_waitToDumpWatchdogTimer)
         return;
 
-    m_waitToDumpWatchdogTimer.adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + waitToDumpWatchdogTimerInterval, 0, 0, 0, WTR::waitUntilDoneWatchdogTimerFired, NULL));
-    CFRunLoopAddTimer(CFRunLoopGetCurrent(), m_waitToDumpWatchdogTimer.get(), kCFRunLoopCommonModes);
+    m_waitToDumpWatchdogTimer = ::SetTimer(0, waitToDumpWatchdogTimerIdentifier, waitToDumpWatchdogTimerInterval * 1000, WTR::waitToDumpWatchdogTimerFired);
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::pathToLocalResource(JSStringRef url)
+JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
 {
-    return JSStringRetain(url); // Do nothing on mac.
+    return JSStringRetain(url); // TODO.
 }
-    
-JSRetainPtr<JSStringRef> LayoutTestController::platformName()
+
+JSRetainPtr<JSStringRef> TestRunner::platformName()
 {
-    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("mac"));
+    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("win"));
     return platformName;
 }
 

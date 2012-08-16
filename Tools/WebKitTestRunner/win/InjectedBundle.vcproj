@@ -718,7 +718,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\InjectedBundle\Bindings\LayoutTestController.idl"
+				RelativePath="..\InjectedBundle\Bindings\TestRunner.idl"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -874,11 +874,11 @@
 				>
 			</File>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSLayoutTestController.cpp"
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSTestRunner.cpp"
 				>
 			</File>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSLayoutTestController.h"
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSTestRunner.h"
 				>
 			</File>
 			<File
@@ -967,15 +967,15 @@
 			>
 		</File>
 		<File
-			RelativePath="..\InjectedBundle\LayoutTestController.cpp"
+			RelativePath="..\InjectedBundle\TestRunner.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\InjectedBundle\LayoutTestController.h"
+			RelativePath="..\InjectedBundle\TestRunner.h"
 			>
 		</File>
 		<File
-			RelativePath="..\InjectedBundle\win\LayoutTestControllerWin.cpp"
+			RelativePath="..\InjectedBundle\win\TestRunnerWin.cpp"
 			>
 		</File>
 		<File

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,49 +25,49 @@
  */
 
 #include "config.h"
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 
 #include "InjectedBundle.h"
+#include <glib.h>
 
 namespace WTR {
 
-void LayoutTestController::platformInitialize()
+static gboolean waitToDumpWatchdogTimerCallback(gpointer)
+{
+    InjectedBundle::shared().testRunner()->waitToDumpWatchdogTimerFired();
+    return FALSE;
+}
+
+void TestRunner::platformInitialize()
 {
     m_waitToDumpWatchdogTimer = 0;
 }
 
-void LayoutTestController::invalidateWaitToDumpWatchdogTimer()
+void TestRunner::invalidateWaitToDumpWatchdogTimer()
 {
     if (!m_waitToDumpWatchdogTimer)
         return;
-
-    ::KillTimer(0, m_waitToDumpWatchdogTimer);
+    g_source_remove(m_waitToDumpWatchdogTimer);
     m_waitToDumpWatchdogTimer = 0;
 }
 
-static void CALLBACK waitToDumpWatchdogTimerFired(HWND, UINT, UINT_PTR, DWORD)
-{
-    InjectedBundle::shared().layoutTestController()->waitToDumpWatchdogTimerFired();
-}
-
-static const UINT_PTR waitToDumpWatchdogTimerIdentifier = 1;
-
-void LayoutTestController::initializeWaitToDumpWatchdogTimerIfNeeded()
+void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
 {
     if (m_waitToDumpWatchdogTimer)
         return;
 
-    m_waitToDumpWatchdogTimer = ::SetTimer(0, waitToDumpWatchdogTimerIdentifier, waitToDumpWatchdogTimerInterval * 1000, WTR::waitToDumpWatchdogTimerFired);
+    m_waitToDumpWatchdogTimer = g_timeout_add(waitToDumpWatchdogTimerInterval * 1000,
+                                              waitToDumpWatchdogTimerCallback, 0);
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::pathToLocalResource(JSStringRef url)
+JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
 {
-    return JSStringRetain(url); // TODO.
+    return url;
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::platformName()
+JSRetainPtr<JSStringRef> TestRunner::platformName()
 {
-    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("win"));
+    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("gtk"));
     return platformName;
 }
 

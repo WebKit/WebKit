@@ -71,13 +71,13 @@
 		BC8FD8D2120E545B00F3E71A /* JSEventSendingController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8FD8D0120E545B00F3E71A /* JSEventSendingController.cpp */; };
 		BC9192051333E4F8003011DC /* TestInvocationCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9192041333E4F8003011DC /* TestInvocationCG.cpp */; };
 		BC952C0D11F3B965003398B4 /* JSWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC952C0C11F3B965003398B4 /* JSWrapper.cpp */; };
-		BC952F1F11F3C652003398B4 /* JSLayoutTestController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC952F1D11F3C652003398B4 /* JSLayoutTestController.cpp */; };
+		BC952F1F11F3C652003398B4 /* JSTestRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC952F1D11F3C652003398B4 /* JSTestRunner.cpp */; };
 		BCC997A411D3C8F60017BCA2 /* InjectedBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC997A011D3C8F60017BCA2 /* InjectedBundle.cpp */; };
 		BCC997A511D3C8F60017BCA2 /* InjectedBundlePage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC997A211D3C8F60017BCA2 /* InjectedBundlePage.cpp */; };
-		BCC9981811D3F51E0017BCA2 /* LayoutTestController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC9981711D3F51E0017BCA2 /* LayoutTestController.cpp */; };
+		BCC9981811D3F51E0017BCA2 /* TestRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC9981711D3F51E0017BCA2 /* TestRunner.cpp */; };
 		BCD7D2F811921278006DB7EE /* TestInvocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD7D2F711921278006DB7EE /* TestInvocation.cpp */; };
 		BCDA2B9A1191051F00C3BC47 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */; };
-		C0CE720B1247C93300BC0EC4 /* LayoutTestControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0CE720A1247C93300BC0EC4 /* LayoutTestControllerMac.mm */; };
+		C0CE720B1247C93300BC0EC4 /* TestRunnerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0CE720A1247C93300BC0EC4 /* TestRunnerMac.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -185,21 +185,21 @@
 		BC952C0C11F3B965003398B4 /* JSWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWrapper.cpp; sourceTree = "<group>"; };
 		BC952C0E11F3B97B003398B4 /* JSWrappable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWrappable.h; sourceTree = "<group>"; };
 		BC952EC511F3C10F003398B4 /* DerivedSources.make */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DerivedSources.make; sourceTree = "<group>"; };
-		BC952ED211F3C29F003398B4 /* LayoutTestController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LayoutTestController.idl; sourceTree = "<group>"; };
+		BC952ED211F3C29F003398B4 /* TestRunner.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TestRunner.idl; sourceTree = "<group>"; };
 		BC952ED311F3C318003398B4 /* CodeGeneratorTestRunner.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = CodeGeneratorTestRunner.pm; sourceTree = "<group>"; };
-		BC952F1D11F3C652003398B4 /* JSLayoutTestController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSLayoutTestController.cpp; path = DerivedSources/WebKitTestRunner/JSLayoutTestController.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
-		BC952F1E11F3C652003398B4 /* JSLayoutTestController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSLayoutTestController.h; path = DerivedSources/WebKitTestRunner/JSLayoutTestController.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC952F1D11F3C652003398B4 /* JSTestRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSTestRunner.cpp; path = DerivedSources/WebKitTestRunner/JSTestRunner.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC952F1E11F3C652003398B4 /* JSTestRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSTestRunner.h; path = DerivedSources/WebKitTestRunner/JSTestRunner.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC99A4841208901A007E9F08 /* StringFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringFunctions.h; sourceTree = "<group>"; };
 		BCC997A011D3C8F60017BCA2 /* InjectedBundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundle.cpp; sourceTree = "<group>"; };
 		BCC997A111D3C8F60017BCA2 /* InjectedBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundle.h; sourceTree = "<group>"; };
 		BCC997A211D3C8F60017BCA2 /* InjectedBundlePage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePage.cpp; sourceTree = "<group>"; };
 		BCC997A311D3C8F60017BCA2 /* InjectedBundlePage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePage.h; sourceTree = "<group>"; };
-		BCC9981611D3F51E0017BCA2 /* LayoutTestController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutTestController.h; sourceTree = "<group>"; };
-		BCC9981711D3F51E0017BCA2 /* LayoutTestController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutTestController.cpp; sourceTree = "<group>"; };
+		BCC9981611D3F51E0017BCA2 /* TestRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestRunner.h; sourceTree = "<group>"; };
+		BCC9981711D3F51E0017BCA2 /* TestRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestRunner.cpp; sourceTree = "<group>"; };
 		BCD7D2F611921278006DB7EE /* TestInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestInvocation.h; sourceTree = "<group>"; };
 		BCD7D2F711921278006DB7EE /* TestInvocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestInvocation.cpp; sourceTree = "<group>"; };
 		BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C0CE720A1247C93300BC0EC4 /* LayoutTestControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LayoutTestControllerMac.mm; path = mac/LayoutTestControllerMac.mm; sourceTree = "<group>"; };
+		C0CE720A1247C93300BC0EC4 /* TestRunnerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestRunnerMac.mm; path = mac/TestRunnerMac.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -324,9 +324,9 @@
 				BC8FD8C8120E527F00F3E71A /* EventSendingController.h */,
 				BC14E4D9120E02D000826C0C /* GCController.cpp */,
 				BC14E4D8120E02D000826C0C /* GCController.h */,
-				BCC9981711D3F51E0017BCA2 /* LayoutTestController.cpp */,
-				BCC9981611D3F51E0017BCA2 /* LayoutTestController.h */,
-				C0CE720A1247C93300BC0EC4 /* LayoutTestControllerMac.mm */,
+				BCC9981711D3F51E0017BCA2 /* TestRunner.cpp */,
+				BCC9981611D3F51E0017BCA2 /* TestRunner.h */,
+				C0CE720A1247C93300BC0EC4 /* TestRunnerMac.mm */,
 				5664A49814326384008881BE /* TextInputController.cpp */,
 				5664A49914326384008881BE /* TextInputController.h */,
 			);
@@ -412,7 +412,7 @@
 				29210EDC144CD56E00835BB5 /* AccessibilityUIElement.idl */,
 				BC8FD8CB120E52B000F3E71A /* EventSendingController.idl */,
 				BC14E4E1120E032000826C0C /* GCController.idl */,
-				BC952ED211F3C29F003398B4 /* LayoutTestController.idl */,
+				BC952ED211F3C29F003398B4 /* TestRunner.idl */,
 				5664A49614326377008881BE /* TextInputController.idl */,
 			);
 			path = Bindings;
@@ -433,8 +433,8 @@
 				BC8FD8D1120E545B00F3E71A /* JSEventSendingController.h */,
 				BC14E4E8120E03D800826C0C /* JSGCController.cpp */,
 				BC14E4E9120E03D800826C0C /* JSGCController.h */,
-				BC952F1D11F3C652003398B4 /* JSLayoutTestController.cpp */,
-				BC952F1E11F3C652003398B4 /* JSLayoutTestController.h */,
+				BC952F1D11F3C652003398B4 /* JSTestRunner.cpp */,
+				BC952F1E11F3C652003398B4 /* JSTestRunner.h */,
 				5641E2CE14335E95008307E5 /* JSTextInputController.cpp */,
 				5641E2CF14335E95008307E5 /* JSTextInputController.h */,
 			);
@@ -577,16 +577,16 @@
 				BC251A3E11D16831002EBC01 /* InjectedBundleMain.cpp in Sources */,
 				BCC997A411D3C8F60017BCA2 /* InjectedBundle.cpp in Sources */,
 				BCC997A511D3C8F60017BCA2 /* InjectedBundlePage.cpp in Sources */,
-				BCC9981811D3F51E0017BCA2 /* LayoutTestController.cpp in Sources */,
+				BCC9981811D3F51E0017BCA2 /* TestRunner.cpp in Sources */,
 				65EB85A011EC67CC0034D300 /* ActivateFonts.mm in Sources */,
 				BC952C0D11F3B965003398B4 /* JSWrapper.cpp in Sources */,
-				BC952F1F11F3C652003398B4 /* JSLayoutTestController.cpp in Sources */,
+				BC952F1F11F3C652003398B4 /* JSTestRunner.cpp in Sources */,
 				BC14E4DB120E02D000826C0C /* GCController.cpp in Sources */,
 				BC14E4EA120E03D800826C0C /* JSGCController.cpp in Sources */,
 				BC8DAD7B1316D91000EC96FC /* InjectedBundleMac.mm in Sources */,
 				BC8FD8CA120E527F00F3E71A /* EventSendingController.cpp in Sources */,
 				BC8FD8D2120E545B00F3E71A /* JSEventSendingController.cpp in Sources */,
-				C0CE720B1247C93300BC0EC4 /* LayoutTestControllerMac.mm in Sources */,
+				C0CE720B1247C93300BC0EC4 /* TestRunnerMac.mm in Sources */,
 				5664A49A14326384008881BE /* TextInputController.cpp in Sources */,
 				5641E2D014335E95008307E5 /* JSTextInputController.cpp in Sources */,
 				29210EAE144CACB700835BB5 /* AccessibilityUIElement.cpp in Sources */,

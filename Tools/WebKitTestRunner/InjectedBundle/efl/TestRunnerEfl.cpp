@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 
 #include "InjectedBundle.h"
 #include <Ecore.h>
@@ -27,16 +27,16 @@ namespace WTR {
 
 static Eina_Bool waitToDumpWatchdogTimerCallback(void*)
 {
-    InjectedBundle::shared().layoutTestController()->waitToDumpWatchdogTimerFired();
+    InjectedBundle::shared().testRunner()->waitToDumpWatchdogTimerFired();
     return false;
 }
 
-void LayoutTestController::platformInitialize()
+void TestRunner::platformInitialize()
 {
     m_waitToDumpWatchdogTimer = 0;
 }
 
-void LayoutTestController::invalidateWaitToDumpWatchdogTimer()
+void TestRunner::invalidateWaitToDumpWatchdogTimer()
 {
     if (!m_waitToDumpWatchdogTimer)
         return;
@@ -45,7 +45,7 @@ void LayoutTestController::invalidateWaitToDumpWatchdogTimer()
     m_waitToDumpWatchdogTimer = 0;
 }
 
-void LayoutTestController::initializeWaitToDumpWatchdogTimerIfNeeded()
+void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
 {
     if (m_waitToDumpWatchdogTimer)
         return;
@@ -54,12 +54,12 @@ void LayoutTestController::initializeWaitToDumpWatchdogTimerIfNeeded()
                                                      waitToDumpWatchdogTimerCallback, 0);
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::pathToLocalResource(JSStringRef url)
+JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
 {
     return url;
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::platformName()
+JSRetainPtr<JSStringRef> TestRunner::platformName()
 {
     JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("efl"));
     return platformName;

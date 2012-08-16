@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2011 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,50 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 
 #include "InjectedBundle.h"
-#include <glib.h>
 
 namespace WTR {
 
-static gboolean waitToDumpWatchdogTimerCallback(gpointer)
+void TestRunner::platformInitialize()
 {
-    InjectedBundle::shared().layoutTestController()->waitToDumpWatchdogTimerFired();
-    return FALSE;
 }
 
-void LayoutTestController::platformInitialize()
-{
-    m_waitToDumpWatchdogTimer = 0;
-}
-
-void LayoutTestController::invalidateWaitToDumpWatchdogTimer()
+void TestRunner::invalidateWaitToDumpWatchdogTimer()
 {
     if (!m_waitToDumpWatchdogTimer)
         return;
-    g_source_remove(m_waitToDumpWatchdogTimer);
+
+    CFRunLoopTimerInvalidate(m_waitToDumpWatchdogTimer.get());
     m_waitToDumpWatchdogTimer = 0;
 }
 
-void LayoutTestController::initializeWaitToDumpWatchdogTimerIfNeeded()
+static void waitUntilDoneWatchdogTimerFired(CFRunLoopTimerRef timer, void* info)
+{
+    InjectedBundle::shared().testRunner()->waitToDumpWatchdogTimerFired();
+}
+
+void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
 {
     if (m_waitToDumpWatchdogTimer)
         return;
 
-    m_waitToDumpWatchdogTimer = g_timeout_add(waitToDumpWatchdogTimerInterval * 1000,
-                                              waitToDumpWatchdogTimerCallback, 0);
+    m_waitToDumpWatchdogTimer.adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + waitToDumpWatchdogTimerInterval, 0, 0, 0, WTR::waitUntilDoneWatchdogTimerFired, NULL));
+    CFRunLoopAddTimer(CFRunLoopGetCurrent(), m_waitToDumpWatchdogTimer.get(), kCFRunLoopCommonModes);
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::pathToLocalResource(JSStringRef url)
+JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
 {
-    return url;
+    return JSStringRetain(url); // Do nothing on mac.
 }
-
-JSRetainPtr<JSStringRef> LayoutTestController::platformName()
+    
+JSRetainPtr<JSStringRef> TestRunner::platformName()
 {
-    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("gtk"));
+    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("mac"));
     return platformName;
 }
 

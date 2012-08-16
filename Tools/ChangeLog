@@ -1,3 +1,75 @@
+2012-08-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename LayoutTestController to TestRunner in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=93942
+
+        Reviewed by Simon Fraser.
+
+        Renamed the class and relevant files.
+
+        * WebKitTestRunner/CMakeLists.txt:
+        * WebKitTestRunner/DerivedSources.make:
+        * WebKitTestRunner/GNUmakefile.am:
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl: Removed.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl: Copied from Tools/WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl.
+        * WebKitTestRunner/InjectedBundle/DerivedSources.pri:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessage):
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (WTR::InjectedBundle::testRunner):
+        (InjectedBundle):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp: Removed.
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h: Removed.
+        * WebKitTestRunner/InjectedBundle/Target.pri:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp: Copied from Tools/WebKitTestRunner/InjectedBundle/LayoutTestController.cpp.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h: Copied from Tools/WebKitTestRunner/InjectedBundle/LayoutTestController.h.
+        (TestRunner):
+        * WebKitTestRunner/InjectedBundle/efl/LayoutTestControllerEfl.cpp: Removed.
+        * WebKitTestRunner/InjectedBundle/efl/TestRunnerEfl.cpp: Copied from Tools/WebKitTestRunner/InjectedBundle/efl/LayoutTestControllerEfl.cpp.
+        (WTR::waitToDumpWatchdogTimerCallback):
+        (WTR::TestRunner::platformInitialize):
+        (WTR::TestRunner::invalidateWaitToDumpWatchdogTimer):
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        (WTR::TestRunner::pathToLocalResource):
+        (WTR::TestRunner::platformName):
+        * WebKitTestRunner/InjectedBundle/gtk/LayoutTestControllerGtk.cpp: Removed.
+        * WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp: Copied from Tools/WebKitTestRunner/InjectedBundle/gtk/LayoutTestControllerGtk.cpp.
+        (WTR::waitToDumpWatchdogTimerCallback):
+        (WTR::TestRunner::platformInitialize):
+        (WTR::TestRunner::invalidateWaitToDumpWatchdogTimer):
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        (WTR::TestRunner::pathToLocalResource):
+        (WTR::TestRunner::platformName):
+        * WebKitTestRunner/InjectedBundle/mac/LayoutTestControllerMac.mm: Removed.
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm: Copied from Tools/WebKitTestRunner/InjectedBundle/mac/LayoutTestControllerMac.mm.
+        (WTR::TestRunner::platformInitialize):
+        (WTR::TestRunner::invalidateWaitToDumpWatchdogTimer):
+        (WTR::waitUntilDoneWatchdogTimerFired):
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        (WTR::TestRunner::pathToLocalResource):
+        (WTR::TestRunner::platformName):
+        * WebKitTestRunner/InjectedBundle/qt/LayoutTestControllerQt.cpp: Removed.
+        * WebKitTestRunner/InjectedBundle/qt/TestRunnerQt.cpp: Copied from Tools/WebKitTestRunner/InjectedBundle/qt/LayoutTestControllerQt.cpp.
+        (WTR::WatchdogTimerHelper::timerFired):
+        (WTR::TestRunner::platformInitialize):
+        (WTR::TestRunner::invalidateWaitToDumpWatchdogTimer):
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        (WTR::TestRunner::pathToLocalResource):
+        (WTR::TestRunner::platformName):
+        * WebKitTestRunner/InjectedBundle/win/LayoutTestControllerWin.cpp: Removed.
+        * WebKitTestRunner/InjectedBundle/win/TestRunnerWin.cpp: Copied from Tools/WebKitTestRunner/InjectedBundle/win/LayoutTestControllerWin.cpp.
+        (WTR::TestRunner::platformInitialize):
+        (WTR::TestRunner::invalidateWaitToDumpWatchdogTimer):
+        (WTR::waitToDumpWatchdogTimerFired):
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        (WTR::TestRunner::pathToLocalResource):
+        (WTR::TestRunner::platformName):
+        * WebKitTestRunner/PlatformEfl.cmake:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/win/InjectedBundle.vcproj:
+
 2012-08-15  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] DumpRenderTree timeouts before NRWT timeouts

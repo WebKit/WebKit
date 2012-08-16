@@ -51,7 +51,7 @@ LIST(APPEND WebKitTestRunnerInjectedBundle_SOURCES
 
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/efl/ActivateFontsEfl.cpp
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/efl/InjectedBundleEfl.cpp
-    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/efl/LayoutTestControllerEfl.cpp
+    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/efl/TestRunnerEfl.cpp
 )
 
 # FIXME: DOWNLOADED_FONTS_DIR should not hardcode the directory

@@ -32,7 +32,7 @@ INTERFACES = \
     AccessibilityUIElement \
     EventSendingController \
     GCController \
-    LayoutTestController \
+    TestRunner \
     TextInputController \
 #
 

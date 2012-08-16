@@ -18,7 +18,7 @@ IDL_BINDINGS += \
     Bindings/AccessibilityUIElement.idl \
     Bindings/EventSendingController.idl \
     Bindings/GCController.idl \
-    Bindings/LayoutTestController.idl \
+    Bindings/TestRunner.idl \
     Bindings/TextInputController.idl \
 
 # GENERATOR 1: IDL compiler

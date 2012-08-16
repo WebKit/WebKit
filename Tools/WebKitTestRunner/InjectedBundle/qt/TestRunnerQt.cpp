@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 
 #include "ActivateFonts.h"
 #include "InjectedBundle.h"
@@ -50,14 +50,14 @@ public:
 public Q_SLOTS:
     void timerFired()
     {
-        InjectedBundle::shared().layoutTestController()->waitToDumpWatchdogTimerFired();
+        InjectedBundle::shared().testRunner()->waitToDumpWatchdogTimerFired();
     }
 
 private:
     WatchdogTimerHelper() {}
 };
 
-void LayoutTestController::platformInitialize()
+void TestRunner::platformInitialize()
 {
     // Make WebKit2 mimic the behaviour of DumpRenderTree, which is incorrect,
     // but tests are successfully passed. On the long run, Qt will move to QRawFont,
@@ -69,12 +69,12 @@ void LayoutTestController::platformInitialize()
     QObject::connect(&m_waitToDumpWatchdogTimer, SIGNAL(timeout()), WatchdogTimerHelper::instance(), SLOT(timerFired()));
 }
 
-void LayoutTestController::invalidateWaitToDumpWatchdogTimer()
+void TestRunner::invalidateWaitToDumpWatchdogTimer()
 {
     m_waitToDumpWatchdogTimer.stop();
 }
 
-void LayoutTestController::initializeWaitToDumpWatchdogTimerIfNeeded()
+void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
 {
     if (qgetenv("QT_WEBKIT2_DEBUG") == "1")
         return;
@@ -85,7 +85,7 @@ void LayoutTestController::initializeWaitToDumpWatchdogTimerIfNeeded()
     m_waitToDumpWatchdogTimer.start(waitToDumpWatchdogTimerInterval * 1000);
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::pathToLocalResource(JSStringRef url)
+JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
 {
     QString localTmpUrl(QStringLiteral("file:///tmp/LayoutTests"));
     QString givenUrl(reinterpret_cast<const QChar*>(JSStringGetCharactersPtr(url)), JSStringGetLength(url));
@@ -104,7 +104,7 @@ JSRetainPtr<JSStringRef> LayoutTestController::pathToLocalResource(JSStringRef u
     return url;
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::platformName()
+JSRetainPtr<JSStringRef> TestRunner::platformName()
 {
     JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("qt"));
     return platformName;
@@ -112,4 +112,4 @@ JSRetainPtr<JSStringRef> LayoutTestController::platformName()
 
 } // namespace WTR
 
-#include "LayoutTestControllerQt.moc"
+#include "TestRunnerQt.moc"
