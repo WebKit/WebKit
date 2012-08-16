@@ -214,20 +214,25 @@ WebInspector.ProfilesPanel = function()
     this.profileViews.id = "profile-views";
     this.splitView.mainElement.appendChild(this.profileViews);
 
-    this.enableToggleButton = new WebInspector.StatusBarButton("", "enable-toggle-status-bar-item");
-    this.enableToggleButton.addEventListener("click", this._toggleProfiling, this);
-    if (!Capabilities.profilerCausesRecompilation)
-        this.enableToggleButton.element.addStyleClass("hidden");
+    this._statusBarButtons = [];
 
+    this.enableToggleButton = new WebInspector.StatusBarButton("", "enable-toggle-status-bar-item");
+    if (Capabilities.profilerCausesRecompilation) {
+        this._statusBarButtons.push(this.enableToggleButton);
+        this.enableToggleButton.addEventListener("click", this._toggleProfiling, this);
+    }
     this.recordButton = new WebInspector.StatusBarButton("", "record-profile-status-bar-item");
     this.recordButton.addEventListener("click", this.toggleRecordButton, this);
+    this._statusBarButtons.push(this.recordButton);
 
     this.clearResultsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear all profiles."), "clear-status-bar-item");
     this.clearResultsButton.addEventListener("click", this._clearProfiles, this);
+    this._statusBarButtons.push(this.clearResultsButton);
 
     if (WebInspector.experimentsSettings.liveNativeMemoryChart.isEnabled()) {
         this.garbageCollectButton = new WebInspector.StatusBarButton(WebInspector.UIString("Collect Garbage"), "garbage-collect-status-bar-item");
         this.garbageCollectButton.addEventListener("click", this._garbageCollectButtonClicked, this);
+        this._statusBarButtons.push(this.garbageCollectButton);
     }
 
     this.profileViewStatusBarItemsContainer = document.createElement("div");
@@ -296,10 +301,7 @@ WebInspector.ProfilesPanel.prototype = {
 
     get statusBarItems()
     {
-        var statusBarItems = [this.enableToggleButton.element, this.recordButton.element, this.clearResultsButton.element, this.profileViewStatusBarItemsContainer];
-        if (WebInspector.experimentsSettings.liveNativeMemoryChart.isEnabled())
-            statusBarItems.splice(3, 0, this.garbageCollectButton.element);
-        return statusBarItems;
+        return this._statusBarButtons.select("element").concat([this.profileViewStatusBarItemsContainer]);
     },
 
     toggleRecordButton: function()
@@ -1023,9 +1025,13 @@ WebInspector.ProfilesPanel.prototype = {
 
     sidebarResized: function(event)
     {
-        var width = event.data;
-        // Min width = <number of buttons on the left> * 31
-        this.profileViewStatusBarItemsContainer.style.left = Math.max(5 * 31, width) + "px";
+        this.onResize();
+    },
+
+    onResize: function()
+    {
+        var minFloatingStatusBarItemsOffset = document.getElementById("panel-status-bar").totalOffsetLeft() + this._statusBarButtons.length * WebInspector.StatusBarButton.width;
+        this.profileViewStatusBarItemsContainer.style.left = Math.max(minFloatingStatusBarItemsOffset, this.splitView.sidebarWidth()) + "px";
     },
 
     /**

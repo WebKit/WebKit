@@ -223,6 +223,11 @@ WebInspector.SplitView.prototype = {
         this.saveSidebarWidth();
     },
 
+    sidebarWidth: function()
+    {
+        return this._sidebarWidth;
+    },
+
     /**
      * @param {number} width
      */

@@ -1,3 +1,24 @@
+2012-08-16  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: CPU profiler status bar is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=94212
+
+        Reviewed by Pavel Feldman.
+
+        - properly compute floating status bar buttons offset for profile and timeline panels,
+            taking actual number of panel status bar buttons and panel sidebar offset into account;
+
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.get statusBarItems):
+        (WebInspector.ProfilesPanel.prototype.sidebarResized):
+        (WebInspector.ProfilesPanel.prototype.onResize):
+        * inspector/front-end/SplitView.js:
+        (WebInspector.SplitView.prototype.sidebarWidth):
+        * inspector/front-end/StatusBarButton.js:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.sidebarResized):
+        (WebInspector.TimelinePanel.prototype.onResize):
+
 2012-08-16  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Fix the Mac build.
