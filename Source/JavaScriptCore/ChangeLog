@@ -1,5 +1,28 @@
 2012-08-16  Filip Pizlo  <fpizlo@apple.com>
 
+        Structure check hoisting should be less expensive
+        https://bugs.webkit.org/show_bug.cgi?id=94201
+
+        Reviewed by Mark Hahnenberg.
+
+        This appears like a broad win on short-running programs.
+
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::compareAndSwap):
+        (Graph):
+        (JSC::DFG::Graph::substitute):
+        (JSC::DFG::Graph::substituteGetLocal):
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+
+2012-08-16  Filip Pizlo  <fpizlo@apple.com>
+
         All op_resolve_global instructions should end up in the list of global resolve instructions
         https://bugs.webkit.org/show_bug.cgi?id=94247
         <rdar://problem/12103500>

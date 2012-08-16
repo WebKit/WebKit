@@ -137,6 +137,20 @@ public:
         edge = newEdge;
     }
     
+    void compareAndSwap(Edge& edge, NodeIndex oldIndex, NodeIndex newIndex, bool changeRef)
+    {
+        if (edge.index() != oldIndex)
+            return;
+        changeIndex(edge, newIndex, changeRef);
+    }
+    
+    void compareAndSwap(Edge& edge, Edge oldEdge, Edge newEdge, bool changeRef)
+    {
+        if (edge != oldEdge)
+            return;
+        changeEdge(edge, newEdge, changeRef);
+    }
+    
     void clearAndDerefChild1(Node& node)
     {
         if (!node.child1())
@@ -612,6 +626,69 @@ public:
         if (!node.child3())
             return;
         vote(node.child3(), ballot);
+    }
+    
+    template<typename T> // T = NodeIndex or Edge
+    void substitute(BasicBlock& block, unsigned startIndexInBlock, T oldThing, T newThing)
+    {
+        for (unsigned indexInBlock = startIndexInBlock; indexInBlock < block.size(); ++indexInBlock) {
+            NodeIndex nodeIndex = block[indexInBlock];
+            Node& node = at(nodeIndex);
+            if (node.flags() & NodeHasVarArgs) {
+                for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); ++childIdx)
+                    compareAndSwap(m_varArgChildren[childIdx], oldThing, newThing, node.shouldGenerate());
+                continue;
+            }
+            if (!node.child1())
+                continue;
+            compareAndSwap(node.children.child1(), oldThing, newThing, node.shouldGenerate());
+            if (!node.child2())
+                continue;
+            compareAndSwap(node.children.child2(), oldThing, newThing, node.shouldGenerate());
+            if (!node.child3())
+                continue;
+            compareAndSwap(node.children.child3(), oldThing, newThing, node.shouldGenerate());
+        }
+    }
+    
+    // Use this if you introduce a new GetLocal and you know that you introduced it *before*
+    // any GetLocals in the basic block.
+    // FIXME: it may be appropriate, in the future, to generalize this to handle GetLocals
+    // introduced anywhere in the basic block.
+    void substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, VariableAccessData* variableAccessData, NodeIndex newGetLocal)
+    {
+        if (variableAccessData->isCaptured()) {
+            // Let CSE worry about this one.
+            return;
+        }
+        for (unsigned indexInBlock = startIndexInBlock; indexInBlock < block.size(); ++indexInBlock) {
+            NodeIndex nodeIndex = block[indexInBlock];
+            Node& node = at(nodeIndex);
+            bool shouldContinue = true;
+            switch (node.op()) {
+            case SetLocal: {
+                if (node.local() == variableAccessData->local())
+                    shouldContinue = false;
+                break;
+            }
+                
+            case GetLocal: {
+                if (node.variableAccessData() != variableAccessData)
+                    continue;
+                substitute(block, indexInBlock, nodeIndex, newGetLocal);
+                NodeIndex oldTailIndex = block.variablesAtTail.operand(variableAccessData->local());
+                if (oldTailIndex == nodeIndex)
+                    block.variablesAtTail.operand(variableAccessData->local()) = newGetLocal;
+                shouldContinue = false;
+                break;
+            }
+                
+            default:
+                break;
+            }
+            if (!shouldContinue)
+                break;
+        }
     }
     
     JSGlobalData& m_globalData;

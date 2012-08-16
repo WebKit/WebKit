@@ -318,6 +318,7 @@ public:
                     break;
                     
                 case CheckStructure:
+                case ForwardCheckStructure:
                 case StructureTransitionWatchpoint:
                     // We don't care about these because if we get uses of the relevant
                     // variable then we can safely get rid of these, too. This of course
@@ -481,6 +482,7 @@ public:
                 }
                     
                 case CheckStructure:
+                case ForwardCheckStructure:
                 case StructureTransitionWatchpoint: {
                     // We can just get rid of this node, if it references a phantom argument.
                     if (!isOKToOptimize(m_graph[node.child1()]))

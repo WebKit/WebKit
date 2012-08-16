@@ -90,6 +90,7 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     validate(dfg);
     performPredictionPropagation(dfg);
     performFixup(dfg);
+    performStructureCheckHoisting(dfg);
     unsigned cnt = 1;
     for (;; ++cnt) {
 #if DFG_ENABLE(DEBUG_VERBOSE)
@@ -106,10 +107,7 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
         dfg.resetExitStates();
         performFixup(dfg);
     }
-    bool shouldRedoCFA = performStructureCheckHoisting(dfg);
     performCSE(dfg, FixpointConverged);
-    if (shouldRedoCFA)
-        performCFA(dfg);
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLog("DFG optimization fixpoint converged in %u iterations.\n", cnt);
 #endif

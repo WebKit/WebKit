@@ -944,7 +944,7 @@ private:
             
         case GetLocal: {
             VariableAccessData* variableAccessData = node.variableAccessData();
-            if (m_fixpointState == FixpointNotConverged && !variableAccessData->isCaptured())
+            if (!variableAccessData->isCaptured())
                 break;
             NodeIndex relevantLocalOp;
             NodeIndex possibleReplacement = getLocalLoadElimination(variableAccessData->local(), relevantLocalOp, variableAccessData->isCaptured());

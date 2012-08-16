@@ -353,6 +353,8 @@ public:
                     if (block->variablesAtTail.operand(variable->local()) == nodeIndex)
                         block->variablesAtTail.operand(variable->local()) = getLocalIndex;
                     
+                    m_graph.substituteGetLocal(*block, indexInBlock, variable, getLocalIndex);
+                    
                     changed = true;
                     break;
                 }
