@@ -1,3 +1,10 @@
+2012-08-16  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed. Update bindings tests results from my recent VoidCallback
+        patch. The new result is correct.
+
+        * bindings/scripts/test/V8/V8TestCallback.cpp:
+
 2012-08-16  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: CPU profiler status bar is broken.
