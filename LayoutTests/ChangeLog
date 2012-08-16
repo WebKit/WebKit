@@ -1,3 +1,15 @@
+2012-08-16  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Breakpoints are not correctly restored on reload.
+        https://bugs.webkit.org/show_bug.cgi?id=94209
+
+        Reviewed by Pavel Feldman.
+
+        restoreBreakpoints is not called inside the test anymore to test that it is called automatically.
+
+        * inspector/debugger/breakpoint-manager-expected.txt:
+        * inspector/debugger/breakpoint-manager.html:
+
 2012-08-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Gardening after r125592, r125635

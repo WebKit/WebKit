@@ -65,9 +65,6 @@ WebInspector.UISourceCode = function(url, resource, contentProvider, sourceMappi
     this.history = [];
     this._restoreRevisionHistory();
     this._formatterMapping = new WebInspector.IdentityFormatterSourceMapping();
-
-    // FIXME: postpone formattedChanged call to after the mapping has been established.
-    setTimeout(this.formattedChanged.bind(this), 0);
 }
 
 WebInspector.UISourceCode.Events = {

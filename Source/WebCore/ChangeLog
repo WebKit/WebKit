@@ -1,3 +1,21 @@
+2012-08-16  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Breakpoints are not correctly restored on reload.
+        https://bugs.webkit.org/show_bug.cgi?id=94209
+
+        Reviewed by Pavel Feldman.
+
+        BreakpointManager now resets uiLocations on workspace reset (was doing it on GlobalObjectCleared).
+        Breakpoint manager now calls restoreBreakpoints automatically when uiSourceCode is added to workspace.
+
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager):
+        (WebInspector.BreakpointManager.prototype._uiSourceCodeAdded):
+        (WebInspector.BreakpointManager.prototype._workspaceReset):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode):
+        * inspector/front-end/inspector.js:
+
 2012-08-16  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Remove FontQt4, HAVE_QRAWFONT flag and the related dead code

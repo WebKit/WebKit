@@ -94,7 +94,6 @@ function test()
         {
             InspectorTest.addResult("  Resetting debugger.");
             this._scripts = {};
-            this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.GlobalObjectCleared);
         },
 
         setSourceMapping: function(sourceMapping)
@@ -104,6 +103,27 @@ function test()
         }
     }
     DebuggerModelMock.prototype.__proto__ = WebInspector.Object.prototype;
+
+    function WorkspaceMock()
+    {
+    }
+
+    WorkspaceMock.prototype = {
+        _addUISourceCode: function(url)
+        {
+            var uiSourceCode = new WebInspector.JavaScriptSource(url, null, null, defaultMapping, false);
+            uiSourceCodes[url] = uiSourceCode;
+            this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
+            return uiSourceCode;
+        },
+
+        reset: function()
+        {
+            InspectorTest.addResult("  Resetting workspace.");
+            this.dispatchEventToListeners(WebInspector.Workspace.Events.WorkspaceReset);
+        }
+    }
+    WorkspaceMock.prototype.__proto__ = WebInspector.Object.prototype;
 
     var dummySetting = {
         get: function() { return []; },
@@ -136,10 +156,7 @@ function test()
     {
         breakpointManager._debuggerModel._addScript(url, url);
         InspectorTest.addResult("  Adding UISourceCode: " + url + ")");
-        var uiSourceCode = new WebInspector.JavaScriptSource(url, null, null, defaultMapping, false);
-        uiSourceCodes[url] = uiSourceCode;
-        breakpointManager.restoreBreakpoints(uiSourceCode);
-        return uiSourceCode;
+        return breakpointManager._workspace._addUISourceCode(url);
     }
 
     function createBreakpoint(uiSourceCodeId, lineNumber, condition, enabled)
@@ -162,7 +179,8 @@ function test()
 
         var sourceMapping = sourceMapping || defaultMapping;
         var debuggerModel = new DebuggerModelMock(sourceMapping);
-        var breakpointManager = new WebInspector.BreakpointManager(setting, debuggerModel, sourceMapping);
+        var workspaceMock = new WorkspaceMock();
+        var breakpointManager = new WebInspector.BreakpointManager(setting, debuggerModel, workspaceMock);
         breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.BreakpointAdded, breakpointAdded);
         breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.BreakpointRemoved, breakpointRemoved);
         InspectorTest.addResult("  Created breakpoints manager");
@@ -289,10 +307,12 @@ function test()
 
             InspectorTest.addResult("\n  Navigating to B.");
             breakpointManager._debuggerModel.reset();
+            breakpointManager._workspace.reset();
             var uiSourceCodeB = addUISourceCode(breakpointManager, "b.js");
 
             InspectorTest.addResult("\n  Navigating back to A.");
             breakpointManager._debuggerModel.reset();
+            breakpointManager._workspace.reset();
             InspectorTest.addResult("  Resolving provisional breakpoint.");
             var eventData = { breakpointId: "a.js:10", location: { scriptId: "a.js", lineNumber: 11, columnNumber: 5 }};
             breakpointManager._debuggerModel.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointResolved, eventData);
@@ -326,6 +346,7 @@ function test()
             var breakpointManager = createBreakpointManager(serializedBreakpoints);
             var uiSourceCode = addUISourceCode(breakpointManager, "a.js");
             breakpointManager._debuggerModel.reset();
+            breakpointManager._workspace.reset();
             InspectorTest.addResult("  Resolving provisional breakpoint.");
             var eventData = { breakpointId: "a.js:10", location: { scriptId: "a.js", lineNumber: 11, columnNumber: 5 }};
             breakpointManager._debuggerModel.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointResolved, eventData);

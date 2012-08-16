@@ -33,11 +33,13 @@
  * @extends {WebInspector.Object}
  * @param {WebInspector.Setting} breakpointStorage
  * @param {WebInspector.DebuggerModel} debuggerModel
+ * @param {WebInspector.Workspace} workspace
  */
-WebInspector.BreakpointManager = function(breakpointStorage, debuggerModel)
+WebInspector.BreakpointManager = function(breakpointStorage, debuggerModel, workspace)
 {
     this._storage = new WebInspector.BreakpointManager.Storage(this, breakpointStorage);
     this._debuggerModel = debuggerModel;
+    this._workspace = workspace;
 
     this._breakpoints = [];
     this._breakpointForDebuggerId = {};
@@ -45,7 +47,8 @@ WebInspector.BreakpointManager = function(breakpointStorage, debuggerModel)
     this._sourceFilesWithRestoredBreakpoints = {};
 
     this._debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointResolved, this._breakpointResolved, this);
-    this._debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
+    this._workspace.addEventListener(WebInspector.Workspace.Events.WorkspaceReset, this._workspaceReset, this);
+    this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._uiSourceCodeAdded, this);
 }
 
 WebInspector.BreakpointManager.Events = {
@@ -73,6 +76,16 @@ WebInspector.BreakpointManager.prototype = {
             delete this._breakpointForDebuggerId[debuggerId];
         }
         this._storage._restoreBreakpoints(uiSourceCode);
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _uiSourceCodeAdded: function(event)
+    {
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
+        if (uiSourceCode instanceof WebInspector.JavaScriptSource)
+            this.restoreBreakpoints(uiSourceCode);
     },
 
     /**
@@ -170,7 +183,7 @@ WebInspector.BreakpointManager.prototype = {
         this._sourceFilesWithRestoredBreakpoints = {};
     },
 
-    _debuggerReset: function()
+    _workspaceReset: function()
     {
         var breakpoints = this._breakpoints.slice();
         for (var i = 0; i < breakpoints.length; ++i) {

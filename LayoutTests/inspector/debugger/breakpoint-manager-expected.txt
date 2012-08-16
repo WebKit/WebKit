@@ -189,6 +189,7 @@ Running: testNavigation
 
   Navigating to B.
   Resetting debugger.
+  Resetting workspace.
     breakpointRemoved(a.js, 10)
     Location disposed: a.js:10
     breakpointRemoved(a.js, 20)
@@ -199,6 +200,7 @@ Running: testNavigation
 
   Navigating back to A.
   Resetting debugger.
+  Resetting workspace.
     breakpointRemoved(b.js, 3)
     Location disposed: b.js:3
   Resolving provisional breakpoint.
@@ -263,6 +265,7 @@ Running: testProvisionalBreakpointsResolve
     breakpointAdded(a.js, 10, foo == bar, true)
     Location created: a.js:10
   Resetting debugger.
+  Resetting workspace.
     breakpointRemoved(a.js, 10)
     Location disposed: a.js:10
   Resolving provisional breakpoint.

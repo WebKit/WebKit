@@ -456,7 +456,6 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.console.addEventListener(WebInspector.ConsoleModel.Events.RepeatCountUpdated, this._updateErrorAndWarningCounts, this);
 
     this.debuggerModel = new WebInspector.DebuggerModel();
-    this.breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, this.debuggerModel);
 
     WebInspector.CSSCompletions.requestCSSNameCompletions();
 
@@ -495,6 +494,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.openAnchorLocationRegistry.registerHandler(autoselectPanel, function() { return false; });
 
     this.workspace = new WebInspector.Workspace();
+    this.breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, this.debuggerModel, this.workspace);
 
     this._createPanels();
     this._createGlobalStatusBarItems();
