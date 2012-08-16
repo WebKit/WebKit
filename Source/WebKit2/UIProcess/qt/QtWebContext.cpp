@@ -116,6 +116,9 @@ PassRefPtr<QtWebContext> QtWebContext::defaultContext()
         return PassRefPtr<QtWebContext>(s_defaultContext);
 
     RefPtr<WebContext> context = WebContext::create(String());
+    // A good all-around default.
+    context->setCacheModel(CacheModelDocumentBrowser);
+
     RefPtr<QtWebContext> defaultContext = QtWebContext::create(context.get());
     s_defaultContext = defaultContext.get();
     // Make sure that this doesn't get called in WebKitTestRunner (defaultContext isn't used there).

@@ -1,3 +1,20 @@
+2012-08-16  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt][WK2] Change the default cache model to enable the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=94221
+
+        Reviewed by Simon Hausmann.
+
+        The default CacheModelDocumentViewer disables the memory back-forward page cache.
+        As uses of applications using QQuickWebView might vary, I'm setting the default to
+        CacheModelDocumentBrowser.
+        We should eventually expose this in the API to allow serious Web browsers setting it
+        to CacheModelPrimaryWebBrowser or to CacheModelDocumentViewer for application tight
+        on memory with limited page navigations.
+
+        * UIProcess/qt/QtWebContext.cpp:
+        (WebKit::QtWebContext::defaultContext):
+
 2012-08-15  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Make sure that we don't prematurely force the first layout during loading.
