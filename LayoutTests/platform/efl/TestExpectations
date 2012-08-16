@@ -880,3 +880,9 @@ BUGWK94003 : fast/css/word-spacing-characters-complex-text.html = IMAGE
 BUGWK94009 : css2.1/20110323/c541-word-sp-000.htm = IMAGE
 
 BUGWK94150 : fast/events/autoscroll-in-textarea.html = TEXT
+
+// Fails also on GTK
+BUGWK94080 : fast/overflow/line-clamp-and-columns.html = IMAGE
+
+// Failing after 125592
+BUGWK94194 : http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html = TEXT

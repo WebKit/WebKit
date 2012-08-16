@@ -1,3 +1,15 @@
+2012-08-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Gardening after r125592, r125635
+        https://bugs.webkit.org/show_bug.cgi?id=94197
+
+        Unreviewed gardening.
+
+        Gardening of fast/overflow/line-clamp-and-columns.html and 
+        http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html.
+
+        * platform/efl/TestExpectations:
+
 2012-08-16  Marja Hölttä  <marja@chromium.org>
 
         FormController: Enable reading selected file names from document state
