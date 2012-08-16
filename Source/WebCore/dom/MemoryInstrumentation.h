@@ -137,6 +137,10 @@ private:
         static void addObject(MemoryInstrumentation* instrumentation, const T* const& t, ObjectType ownerObjectType) { instrumentation->addObjectImpl(t, ownerObjectType, byPointer); }
     };
 
+    // FIXME: get rid of addObject(String)
+    void addInstrumentedObjectImpl(const String* const& string, ObjectType objectType, OwningType) { addObject(*string, objectType); }
+    void addInstrumentedObjectImpl(const StringImpl* const& string, ObjectType objectType, OwningType) { addObject(string, objectType); }
+    void addInstrumentedObjectImpl(const AtomicString* const&, ObjectType, OwningType);
     template <typename T> void addInstrumentedObjectImpl(const T* const&, ObjectType, OwningType);
     template <typename T> void addInstrumentedObjectImpl(const DataRef<T>* const&, ObjectType, OwningType);
     template <typename T> void addInstrumentedObjectImpl(const OwnPtr<T>* const&, ObjectType, OwningType);

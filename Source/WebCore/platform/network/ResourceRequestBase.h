@@ -44,6 +44,7 @@ namespace WebCore {
         ReturnCacheDataDontLoad  // results of a post - allow stale data and only use cache
     };
 
+    class MemoryObjectInfo;
     class ResourceRequest;
     struct CrossThreadResourceRequestData;
 
@@ -131,6 +132,8 @@ namespace WebCore {
         // Whether actual headers being sent/received should be collected and reported for the request.
         bool reportRawHeaders() const { return m_reportRawHeaders; }
         void setReportRawHeaders(bool reportRawHeaders) { m_reportRawHeaders = reportRawHeaders; }
+
+        void reportMemoryUsage(MemoryObjectInfo*) const;
 
         static double defaultTimeoutInterval(); // May return 0 when using platform default.
         static void setDefaultTimeoutInterval(double);

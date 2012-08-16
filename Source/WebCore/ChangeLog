@@ -1,3 +1,45 @@
+2012-08-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: memory instrumentation for Resource{Request/Response}Base
+        https://bugs.webkit.org/show_bug.cgi?id=94109
+
+        Reviewed by Vsevolod Vlasov.
+
+        Added reportMemoryUsage methods to ResourceRequestBase, ResourceResponseBase
+        and several related classes.
+
+        * dom/MemoryInstrumentation.cpp:
+        (WebCore::MemoryInstrumentation::addInstrumentedObjectImpl): added overrides
+        for String, StringImpl and AtomicString object types so that we can reuse
+        existing addInstrumentedCollection method instead of adding a counterpart
+        that would operate on not instrumented content. Next step would be to get
+        rid od addObject overrides for these types so that all kinds of Strings are
+        considered as instrumented classes despite they don't have reportMemoryUsage
+        method.
+        (WebCore):
+        * dom/MemoryInstrumentation.h:
+        (WebCore::MemoryInstrumentation::addInstrumentedObjectImpl):
+        (MemoryInstrumentation):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::reportMemoryUsage):
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::reportMemoryUsage):
+        (WebCore):
+        * platform/network/FormData.h:
+        (WebCore):
+        (FormData):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::reportMemoryUsage):
+        (WebCore):
+        * platform/network/ResourceRequestBase.h:
+        (ResourceRequestBase):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore):
+        (WebCore::ResourceResponseBase::reportMemoryUsage):
+        * platform/network/ResourceResponseBase.h:
+        (WebCore):
+        (ResourceResponseBase):
+
 2012-08-16  Adam Barth  <abarth@webkit.org>
 
         Delete DOMWindow::securityOrigin()

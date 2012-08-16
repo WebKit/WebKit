@@ -58,4 +58,9 @@ void MemoryInstrumentation::addObject(const KURL& url, ObjectType objectType)
         addObject(url.innerURL(), objectType);
 }
 
+void MemoryInstrumentation::addInstrumentedObjectImpl(const AtomicString* const& string, ObjectType objectType, OwningType)
+{
+    addObject(static_cast<const String&>(*string), objectType);
+}
+
 } // namespace WebCore

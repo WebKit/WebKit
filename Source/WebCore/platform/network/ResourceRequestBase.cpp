@@ -24,8 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include "config.h"
-
 #include "ResourceRequestBase.h"
+
+#include "MemoryInstrumentation.h"
 #include "ResourceRequest.h"
 
 using namespace std;
@@ -441,6 +442,18 @@ bool ResourceRequestBase::isConditional() const
             m_httpHeaderFields.contains("If-None-Match") ||
             m_httpHeaderFields.contains("If-Range") ||
             m_httpHeaderFields.contains("If-Unmodified-Since"));
+}
+
+void ResourceRequestBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
+    info.addMember(m_url);
+    info.addMember(m_firstPartyForCookies);
+    info.addInstrumentedMember(m_httpMethod);
+    info.addHashMap(m_httpHeaderFields);
+    info.addInstrumentedMapEntries(m_httpHeaderFields);
+    info.addInstrumentedVector(m_responseContentDispositionEncodingFallbackArray);
+    info.addInstrumentedMember(m_httpBody);
 }
 
 double ResourceRequestBase::defaultTimeoutInterval()

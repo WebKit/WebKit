@@ -30,6 +30,7 @@ namespace WebCore {
 
 class Document;
 class FormDataList;
+class MemoryObjectInfo;
 class TextEncoding;
 
 class FormDataElement {
@@ -151,6 +152,8 @@ public:
 
     bool containsPasswordData() const { return m_containsPasswordData; }
     void setContainsPasswordData(bool containsPasswordData) { m_containsPasswordData = containsPasswordData; }
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
     static EncodingType parseEncodingType(const String& type)
     {

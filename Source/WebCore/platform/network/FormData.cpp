@@ -32,6 +32,7 @@
 #include "FormDataBuilder.h"
 #include "FormDataList.h"
 #include "MIMETypeRegistry.h"
+#include "MemoryInstrumentation.h"
 #include "Page.h"
 #include "TextEncoding.h"
 #include <wtf/Decoder.h>
@@ -354,6 +355,12 @@ void FormData::removeGeneratedFilesIfNeeded()
         }
     }
     m_hasGeneratedFiles = false;
+}
+
+void FormData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
+    info.addVector(m_boundary);
 }
 
 static void encode(Encoder& encoder, const FormDataElement& element)

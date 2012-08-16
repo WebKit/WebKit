@@ -41,6 +41,7 @@
 
 namespace WebCore {
 
+class MemoryObjectInfo;
 class ResourceResponse;
 struct CrossThreadResourceResponseData;
 
@@ -125,6 +126,8 @@ public:
         // average size, mostly due to URL and Header Map strings
         return 1280;
     }
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
     static bool compare(const ResourceResponse&, const ResourceResponse&);
 

@@ -28,6 +28,7 @@
 #include "ResourceResponseBase.h"
 
 #include "HTTPParsers.h"
+#include "MemoryInstrumentation.h"
 #include "ResourceResponse.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
@@ -565,6 +566,20 @@ void ResourceResponseBase::setResourceLoadInfo(PassRefPtr<ResourceLoadInfo> load
 void ResourceResponseBase::lazyInit(InitLevel initLevel) const
 {
     const_cast<ResourceResponse*>(static_cast<const ResourceResponse*>(this))->platformLazyInit(initLevel);
+}
+
+void ResourceResponseBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
+    info.addMember(m_url);
+    info.addInstrumentedMember(m_mimeType);
+    info.addInstrumentedMember(m_textEncodingName);
+    info.addInstrumentedMember(m_suggestedFilename);
+    info.addInstrumentedMember(m_httpStatusText);
+    info.addHashMap(m_httpHeaderFields);
+    info.addInstrumentedMapEntries(m_httpHeaderFields);
+    info.addMember(m_resourceLoadTiming);
+    info.addMember(m_resourceLoadInfo);
 }
     
 bool ResourceResponseBase::compare(const ResourceResponse& a, const ResourceResponse& b)
