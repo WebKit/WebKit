@@ -259,6 +259,7 @@ BUGWK6033 : css3/filters/custom/effect-custom-parameters.html = PASS IMAGE
 BUGWK6033 : css3/filters/custom/filter-repaint-custom-clipped.html = PASS IMAGE
 BUGWK6033 : css3/filters/custom/filter-repaint-custom-rotated.html = PASS IMAGE
 BUGWK6033 : css3/filters/custom/filter-repaint-custom.html = PASS IMAGE
+BUGWK6033 : css3/filters/custom/invalid-custom-filter-shader.html = PASS IMAGE
 BUGWK6033 : css3/filters/effect-blur.html = PASS IMAGE
 BUGWK6033 : css3/filters/effect-brightness-clamping.html = PASS IMAGE
 BUGWK6033 : css3/filters/effect-brightness.html = PASS IMAGE

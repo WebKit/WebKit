@@ -1,3 +1,14 @@
+2012-08-15  Kiran Muppala  <cmuppala@apple.com>
+
+        Update test expectations for css3/filters/custom/invalid-custom-filter-shader.html failing on Apple Lion Debug WK1 (Tests) 
+        https://bugs.webkit.org/show_bug.cgi?id=94067
+
+        Reviewed by Brady Eidson.
+
+        Add to the list of tests needing rebaselining after https://bugs.webkit.org/show_bug.cgi?id=6033
+
+        * platform/mac/TestExpectations:
+
 2012-08-15  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: generate index keys for existing data in createIndex in front end
