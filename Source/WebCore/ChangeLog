@@ -1,3 +1,9 @@
+2012-08-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        EFL build fix attempt after r125711. Touch an IDL file to regenerate derived sources.
+
+        * html/HTMLAllCollection.idl:
+
 2012-08-15  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: generate index keys for existing data in createIndex in front end
