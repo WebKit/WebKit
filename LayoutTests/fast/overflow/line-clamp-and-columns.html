@@ -4,6 +4,9 @@
 </div>
 <script>
 document.body.offsetTop;
+// If the page doesn't crash under AddressSanitizer, then the test passes.
+if (window.testRunner)
+    testRunner.dumpAsText();
 </script>
 <style>
 body {
