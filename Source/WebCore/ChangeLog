@@ -1,3 +1,22 @@
+2012-08-16  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Wheel event support in multiple fields time input UI
+        https://bugs.webkit.org/show_bug.cgi?id=94166
+
+        Reviewed by Kent Tamura.
+
+        This patch makes multiple fields time input UI to handle wheel event
+        on spin button.
+
+        This patch affects if ENABLE_INPUT_TYPE_TIME and ENABLE_INPUT_TYPE_MULTIPLE_FIELDS
+        are enabled.
+
+        Test: fast/forms/time-multiple-fields/time-multiple-fields-wheel-event.html
+
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditElement::defaultEventHandler): Changed to forward
+        event to spin button if available.
+
 2012-08-16  Zhigang Gong  <zhigang.gong@linux.intel.com>
 
         TextureMapperGL::beginPainting has a duplicate call to get GL_FRAMEBUFFER_BINDING.

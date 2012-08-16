@@ -418,6 +418,12 @@ void DateTimeEditElement::defaultEventHandler(Event* event)
     if (!focusField)
         return;
 
+    if (m_spinButton) {
+        m_spinButton->forwardEvent(event);
+        if (event->defaultHandled())
+            return;
+    }
+
     focusField->defaultEventHandler(event);
 }
 

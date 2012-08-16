@@ -1,3 +1,16 @@
+2012-08-16  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Wheel event support in multiple fields time input UI
+        https://bugs.webkit.org/show_bug.cgi?id=94166
+
+        Reviewed by Kent Tamura.
+
+        This patch adds a test for wheel event handling in multiple fields
+        time input UI. 
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-wheel-event-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-wheel-event.html: Added.
+
 2012-08-15  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Tests] Disable fast/forms/time-multiple-fields tests for port which don't enable multiple fields time input UI feature
