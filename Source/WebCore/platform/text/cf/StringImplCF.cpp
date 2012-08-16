@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2009, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -134,18 +134,23 @@ namespace StringWrapperCFAllocator {
 
 CFStringRef StringImpl::createCFString()
 {
-    CFAllocatorRef allocator = (m_length && isMainThread()) ? StringWrapperCFAllocator::allocator() : 0;
-    if (!allocator)
-        return CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(characters()), m_length);
+    if (!m_length || !isMainThread()) {
+        if (is8Bit())
+            return CFStringCreateWithBytes(0, reinterpret_cast<const UInt8*>(characters8()), m_length, kCFStringEncodingISOLatin1, false);
+        return CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(characters16()), m_length);
+    }
+    CFAllocatorRef allocator = StringWrapperCFAllocator::allocator();
 
     // Put pointer to the StringImpl in a global so the allocator can store it with the CFString.
     ASSERT(!StringWrapperCFAllocator::currentString);
     StringWrapperCFAllocator::currentString = this;
 
-    CFStringRef string = CFStringCreateWithCharactersNoCopy(allocator, reinterpret_cast<const UniChar*>(characters()), m_length, kCFAllocatorNull);
-
-    // The allocator cleared the global when it read it, but also clear it here just in case.
-    ASSERT(!StringWrapperCFAllocator::currentString);
+    CFStringRef string;
+    if (is8Bit())
+        string = CFStringCreateWithBytesNoCopy(allocator, reinterpret_cast<const UInt8*>(characters8()), m_length, kCFStringEncodingISOLatin1, false, kCFAllocatorNull);
+    else
+        string = CFStringCreateWithCharactersNoCopy(allocator, reinterpret_cast<const UniChar*>(characters16()), m_length, kCFAllocatorNull);
+    // CoreFoundation might not have to allocate anything, we clear currentString in case we did not execute allocate().
     StringWrapperCFAllocator::currentString = 0;
 
     return string;
