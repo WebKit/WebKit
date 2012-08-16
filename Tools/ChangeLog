@@ -1,3 +1,15 @@
+2012-08-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a hyperlink to perf-o-matic from build.webkit.org/root.html
+        https://bugs.webkit.org/show_bug.cgi?id=93749
+
+        Reviewed by Csaba Osztrogonác.
+
+        Added the hyperlink to webkit-perf.appspot.com. Also added hyperlinks to the waterfall display
+        of performance tests.
+
+        * BuildSlaveSupport/build.webkit.org-config/templates/root.html:
+
 2012-08-15  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css3-text] Add CSS3 Text decoration compile flag
