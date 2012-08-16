@@ -1,3 +1,15 @@
+2012-08-16  Kiran Muppala  <cmuppala@apple.com>
+
+        Update test expectations for fast/overflow/line-clamp-and-columns.html on mac
+        https://bugs.webkit.org/show_bug.cgi?id=94251
+
+        Reviewed by Brady Eidson.
+
+        Mark layout test fast/overflow/line-clamp-and-columns.html as an expected failure
+        on mac until https://bugs.webkit.org/show_bug.cgi?id=94080 is fixed.
+
+        * platform/mac/TestExpectations:
+
 2012-08-16  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed gardening. Update expectations.
