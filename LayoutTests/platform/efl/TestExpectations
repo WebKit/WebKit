@@ -260,6 +260,7 @@ BUGWK84333 : fast/forms/file/input-file-entries.html = TEXT
 BUGWK84333 : fast/forms/file/input-file-re-render.html = MISSING
 BUGWK84333 : fast/forms/file/input-file-write-files.html = TEXT
 BUGWK84333 : fast/forms/file/recover-file-input-in-unposted-form.html = TEXT
+BUGWK84333 : fast/forms/file/selected-files-from-history-state.html = TEXT
 BUGWK84333 : http/tests/local/blob/send-hybrid-blob.html = TEXT
 BUGWK84333 : http/tests/local/fileapi/file-last-modified.html = TEXT
 BUGWK84333 : http/tests/local/fileapi/send-dragged-file.html = TEXT
@@ -890,3 +891,6 @@ BUGWK94194 : http/tests/security/frameNavigation/inactive-function-in-popup-navi
 // Alt text should be displayed if src attribute is not set.
 BUGWK94198 : fast/dom/HTMLImageElement/image-alt-text.html = IMAGE
 BUGWK94198 : fast/dom/HTMLInputElement/input-image-alt-text.html = IMAGE
+
+// Failing after 125758
+BUGWK94214 : compositing/overflow/overflow-hidden-canvas-layer.html = TEXT

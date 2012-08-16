@@ -1,3 +1,15 @@
+2012-08-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Gardening after r125758, r125759
+        https://bugs.webkit.org/show_bug.cgi?id=94215
+
+        Unreviewed, gardening.
+
+        Newly added tests: compositing/overflow/overflow-hidden-canvas-layer.html, 
+        fast/forms/file/selected-files-from-history-state.html fail on EFL and need gardening.
+
+        * platform/efl/TestExpectations:
+
 2012-08-16  Mike West  <mkwst@chromium.org>
 
         Implement the form-action Content Security Policy directive.
