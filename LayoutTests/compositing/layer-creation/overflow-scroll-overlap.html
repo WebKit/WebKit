@@ -4,17 +4,17 @@
 <head>
   <style type="text/css" media="screen">
     
-    video {
+    .composited {
       height: 30px;
       width: 30px;
-      opacity: 0; /* Avoid issues in pixel test */
+      -webkit-transform:translateZ(0);
     }
     
     .overflow {
       position: absolute;
       top: 20px;
       left: 20px;
-      overflow: auto;
+      overflow-y: scroll;
       height: 200px;
       width: 300px;
       border: solid;
@@ -60,7 +60,7 @@
 </head>
 <body>
 
-  <video src="../resources/video.mp4" height="20" width="20"></video>
+  <div class="composited"></div>
 
   <div id="scroller" class="overflow">
     <div class="box" style="width: 200px";></div>

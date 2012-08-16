@@ -1,3 +1,23 @@
+2012-08-16  Adrienne Walker  <enne@google.com>
+
+        Make compositing/layer-creation/overflow-scroll-overlap non-flaky
+        https://bugs.webkit.org/show_bug.cgi?id=94162
+
+        Reviewed by James Robinson.
+
+        This test has been failing flakily in Chromium with the scrollbar
+        layer sometimes being composited and sometimes not. This is likely due
+        to the video flakily being accelerated depending on whether it has
+        loaded or not.
+
+        Fix this test by making it always have a vertical scrollbar and remove
+        the video with an always-composited div.
+
+        * compositing/layer-creation/overflow-scroll-overlap-expected.txt:
+        * compositing/layer-creation/overflow-scroll-overlap.html:
+        * platform/chromium/TestExpectations:
+        * platform/chromium/compositing/layer-creation/overflow-scroll-overlap-expected.txt: Removed.
+
 2012-08-16  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
