@@ -1,3 +1,14 @@
+2012-08-16  Filip Pizlo  <fpizlo@apple.com>
+
+        All op_resolve_global instructions should end up in the list of global resolve instructions
+        https://bugs.webkit.org/show_bug.cgi?id=94247
+        <rdar://problem/12103500>
+
+        Reviewed by Mark Hahnenberg.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitResolveWithBase):
+
 2012-08-15  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css3-text] Add CSS3 Text decoration compile flag
