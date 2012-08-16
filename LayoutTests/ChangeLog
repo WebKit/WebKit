@@ -1,3 +1,23 @@
+2012-08-16  Sergey Rogulenko  <rogulenko@google.com>
+
+        Web Inspector: added Paint events for Images to TimelineAgent
+        https://bugs.webkit.org/show_bug.cgi?id=90277
+
+        Reviewed by Pavel Feldman.
+
+        Added a test and fixed enum-stabitily because of a new Timeline Event.
+
+        * inspector/timeline/resources/big.png: Added.
+        * inspector/timeline/resources/test.bmp: Added.
+        * inspector/timeline/resources/test.gif: Added.
+        * inspector/timeline/resources/test.ico: Added.
+        * inspector/timeline/resources/test.jpg: Added.
+        * inspector/timeline/resources/test.png: Added.
+        * inspector/timeline/resources/test.webp: Added.
+        * inspector/timeline/timeline-decode-resize-expected.txt: Added.
+        * inspector/timeline/timeline-decode-resize.html: Added.
+        * inspector/timeline/timeline-enum-stability-expected.txt:
+
 2012-08-16  Adrienne Walker  <enne@google.com>
 
         Make compositing/layer-creation/overflow-scroll-overlap non-flaky

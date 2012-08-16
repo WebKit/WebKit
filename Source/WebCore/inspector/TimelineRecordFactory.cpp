@@ -179,6 +179,20 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createPaintData(const LayoutR
     return data.release();
 }
 
+PassRefPtr<InspectorObject> TimelineRecordFactory::createDecodeImageData(const String& imageType)
+{
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setString("imageType", imageType);
+    return data.release();
+}
+
+PassRefPtr<InspectorObject> TimelineRecordFactory::createResizeImageData(bool shouldCache)
+{
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setBoolean("cached", shouldCache);
+    return data.release();
+}
+
 PassRefPtr<InspectorObject> TimelineRecordFactory::createParseHTMLData(unsigned int length, unsigned int startLine)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();

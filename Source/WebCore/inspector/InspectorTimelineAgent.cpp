@@ -68,6 +68,8 @@ static const char BeginFrame[] = "BeginFrame";
 static const char Layout[] = "Layout";
 static const char RecalculateStyles[] = "RecalculateStyles";
 static const char Paint[] = "Paint";
+static const char DecodeImage[] = "DecodeImage";
+static const char ResizeImage[] = "ResizeImage";
 static const char CompositeLayers[] = "CompositeLayers";
 
 static const char ParseHTML[] = "ParseHTML";
@@ -255,20 +257,24 @@ void InspectorTimelineAgent::didPaint()
     didCompleteCurrentRecord(TimelineRecordType::Paint);
 }
 
-void InspectorTimelineAgent::willDecodeImage(const String&)
+void InspectorTimelineAgent::willDecodeImage(const String& imageType)
 {
+    pushCurrentRecord(TimelineRecordFactory::createDecodeImageData(imageType), TimelineRecordType::DecodeImage, true, 0);
 }
 
 void InspectorTimelineAgent::didDecodeImage()
 {
+    didCompleteCurrentRecord(TimelineRecordType::DecodeImage);
 }
 
-void InspectorTimelineAgent::willResizeImage(bool)
+void InspectorTimelineAgent::willResizeImage(bool shouldCache)
 {
+    pushCurrentRecord(TimelineRecordFactory::createResizeImageData(shouldCache), TimelineRecordType::ResizeImage, true, 0);
 }
 
 void InspectorTimelineAgent::didResizeImage()
 {
+    didCompleteCurrentRecord(TimelineRecordType::ResizeImage);
 }
 
 void InspectorTimelineAgent::willComposite()

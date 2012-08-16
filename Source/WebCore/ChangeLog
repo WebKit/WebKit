@@ -1,3 +1,33 @@
+2012-08-16  Sergey Rogulenko  <rogulenko@google.com>
+
+        Web Inspector: added Paint events for Images to TimelineAgent
+        https://bugs.webkit.org/show_bug.cgi?id=90277
+
+        Reviewed by Pavel Feldman.
+
+        - add DecodeImage & ResizeImage timeline events;
+        - implement {will,did}DecodeImage and {will,did}ResizeImage methods of Timeline agent;
+
+        Test: inspector/timeline/timeline-decode-resize.html
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorTimelineAgent.cpp:
+        (TimelineRecordType):
+        (WebCore::InspectorTimelineAgent::willDecodeImage):
+        (WebCore::InspectorTimelineAgent::didDecodeImage):
+        (WebCore::InspectorTimelineAgent::willResizeImage):
+        (WebCore::InspectorTimelineAgent::didResizeImage):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createDecodeImageData):
+        (WebCore):
+        (WebCore::TimelineRecordFactory::createResizeImageData):
+        * inspector/TimelineRecordFactory.h:
+        (TimelineRecordFactory):
+        * inspector/front-end/TimelineModel.js:
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel.initRecordStyles_):
+        (WebInspector.TimelinePresentationModel.Record.prototype._getRecordDetails):
+
 2012-08-16  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove alwaysReserveTextures code - it doesn't do anything

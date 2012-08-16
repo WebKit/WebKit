@@ -1,0 +1,68 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+
+function addImage(src, width, height, callback)
+{
+    var img = document.createElement("img");
+    img.width = width;
+    img.height = height;
+    img.onload = callback;
+    img.src = src;
+    document.body.appendChild(img);
+}
+
+function addImage1() { addImage("resources/test.bmp", "25", "25", addImage2); }
+function addImage2() { addImage("resources/test.gif", "25", "25", addImage3); }
+function addImage3() { addImage("resources/test.ico", "25", "25", addImage4); }
+function addImage4() { addImage("resources/test.jpg", "25", "25", addImage5); }
+function addImage5() { addImage("resources/test.png", "25", "25", addImage6); }
+function addImage6() { addImage("resources/test.webp", "25", "25", addImage7); }
+function addImage7() { addImage("resources/big.png", "5000", "5000", displayPage); }
+
+function displayPage()
+{
+    if (window.testRunner) {
+        testRunner.display();
+        testRunner.waitUntilDone();
+    }
+    testRunner.evaluateInWebInspector(0, "window.step2()");
+}
+
+function test()
+{
+    InspectorTest.startTimeline(step1);
+
+    function step1()
+    {
+        InspectorTest.evaluateInPage("addImage1()");
+    }
+
+    window.step2 = function()
+    {
+        InspectorTest.stopTimeline(step3);
+    }
+
+    function step3(records)
+    {
+        for (var i = 0; i < records.length; ++i) {
+            var record = records[i];
+            if (record.type === WebInspector.TimelineModel.RecordType.DecodeImage || record.type === WebInspector.TimelineModel.RecordType.ResizeImage)
+                InspectorTest.printTimelineRecordProperties(record);
+        }
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the Timeline API instrumentation of a DecodeImage and ResizeImage events
+</p>
+
+</body>
+</html>

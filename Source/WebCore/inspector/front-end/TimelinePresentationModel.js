@@ -75,6 +75,8 @@ WebInspector.TimelinePresentationModel.initRecordStyles_ = function()
     recordStyles[recordTypes.Layout] = { title: WebInspector.UIString("Layout"), category: categories["rendering"] };
     recordStyles[recordTypes.RecalculateStyles] = { title: WebInspector.UIString("Recalculate Style"), category: categories["rendering"] };
     recordStyles[recordTypes.Paint] = { title: WebInspector.UIString("Paint"), category: categories["painting"] };
+    recordStyles[recordTypes.DecodeImage] = { title: WebInspector.UIString("Image Decode"), category: categories["painting"] };
+    recordStyles[recordTypes.ResizeImage] = { title: WebInspector.UIString("Image Resize"), category: categories["painting"] };
     recordStyles[recordTypes.CompositeLayers] = { title: WebInspector.UIString("Composite Layers"), category: categories["painting"] };
     recordStyles[recordTypes.ParseHTML] = { title: WebInspector.UIString("Parse"), category: categories["loading"] };
     recordStyles[recordTypes.TimerInstall] = { title: WebInspector.UIString("Install Timer"), category: categories["scripting"] };
@@ -751,6 +753,10 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
                 return this.data ? this.data["type"] : null;
             case WebInspector.TimelineModel.RecordType.Paint:
                 return this.data["width"] + "\u2009\u00d7\u2009" + this.data["height"];
+            case WebInspector.TimelineModel.RecordType.DecodeImage:
+                return this.data["imageType"];
+            case WebInspector.TimelineModel.RecordType.ResizeImage:
+                return this.data["cached"] ? WebInspector.UIString("cached") : WebInspector.UIString("non-cached");
             case WebInspector.TimelineModel.RecordType.TimerInstall:
             case WebInspector.TimelineModel.RecordType.TimerRemove:
                 return this._linkifyTopCallFrame(this.data["timerId"]);

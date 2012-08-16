@@ -1,0 +1,200 @@
+Tests the Timeline API instrumentation of a DecodeImage and ResizeImage events
+
+
+DecodeImage Properties:
+{
+    startTime : <number>
+    stackTrace : <object>
+    data : {
+        imageType : "BMP"
+    }
+    children : <object>
+    endTime : <number>
+    type : "DecodeImage"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+    counters : <object>
+}
+ResizeImage Properties:
+{
+    startTime : <number>
+    stackTrace : <object>
+    data : {
+        cached : true
+    }
+    children : <object>
+    endTime : <number>
+    type : "ResizeImage"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+    counters : <object>
+}
+DecodeImage Properties:
+{
+    startTime : <number>
+    stackTrace : <object>
+    data : {
+        imageType : "GIF"
+    }
+    children : <object>
+    endTime : <number>
+    type : "DecodeImage"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+    counters : <object>
+}
+ResizeImage Properties:
+{
+    startTime : <number>
+    stackTrace : <object>
+    data : {
+        cached : true
+    }
+    children : <object>
+    endTime : <number>
+    type : "ResizeImage"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+    counters : <object>
+}
+DecodeImage Properties:
+{
+    startTime : <number>
+    stackTrace : <object>
+    data : {
+        imageType : "ICO"
+    }
+    children : <object>
+    endTime : <number>
+    type : "DecodeImage"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+    counters : <object>
+}
+ResizeImage Properties:
+{
+    startTime : <number>
+    stackTrace : <object>
+    data : {
+        cached : true
+    }
+    children : <object>
+    endTime : <number>
+    type : "ResizeImage"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+    counters : <object>
+}
+DecodeImage Properties:
+{
+    startTime : <number>
+    stackTrace : <object>
+    data : {
+        imageType : "JPEG"
+    }
+    children : <object>
+    endTime : <number>
+    type : "DecodeImage"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+    counters : <object>
+}
+ResizeImage Properties:
+{
+    startTime : <number>
+    stackTrace : <object>
+    data : {
+        cached : true
+    }
+    children : <object>
+    endTime : <number>
+    type : "ResizeImage"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+    counters : <object>
+}
+DecodeImage Properties:
+{
+    startTime : <number>
+    stackTrace : <object>
+    data : {
+        imageType : "PNG"
+    }
+    children : <object>
+    endTime : <number>
+    type : "DecodeImage"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+    counters : <object>
+}
+ResizeImage Properties:
+{
+    startTime : <number>
+    stackTrace : <object>
+    data : {
+        cached : true
+    }
+    children : <object>
+    endTime : <number>
+    type : "ResizeImage"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+    counters : <object>
+}
+DecodeImage Properties:
+{
+    startTime : <number>
+    stackTrace : <object>
+    data : {
+        imageType : "WEBP"
+    }
+    children : <object>
+    endTime : <number>
+    type : "DecodeImage"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+    counters : <object>
+}
+ResizeImage Properties:
+{
+    startTime : <number>
+    stackTrace : <object>
+    data : {
+        cached : true
+    }
+    children : <object>
+    endTime : <number>
+    type : "ResizeImage"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+    counters : <object>
+}
+DecodeImage Properties:
+{
+    startTime : <number>
+    stackTrace : <object>
+    data : {
+        imageType : "PNG"
+    }
+    children : <object>
+    endTime : <number>
+    type : "DecodeImage"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+    counters : <object>
+}
+ResizeImage Properties:
+{
+    startTime : <number>
+    stackTrace : <object>
+    data : {
+        cached : false
+    }
+    children : <object>
+    endTime : <number>
+    type : "ResizeImage"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+    counters : <object>
+}
+

@@ -10,6 +10,8 @@ Applications outside of WebKit depend on the stability of the mapping of these t
     Layout : "Layout"
     RecalculateStyles : "RecalculateStyles"
     Paint : "Paint"
+    DecodeImage : "DecodeImage"
+    ResizeImage : "ResizeImage"
     CompositeLayers : "CompositeLayers"
     ParseHTML : "ParseHTML"
     TimerInstall : "TimerInstall"
