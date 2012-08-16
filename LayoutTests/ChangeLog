@@ -1,3 +1,14 @@
+2012-08-16  Mike West  <mkwst@chromium.org>
+
+        Refactor CSPDirective to support non-sourcelist types.
+        https://bugs.webkit.org/show_bug.cgi?id=94252
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce-expected.txt:
+            This test was buggy. Now it writes out the full directive text as it
+            ought to.
+
 2012-08-16  Kiran Muppala  <cmuppala@apple.com>
 
         Update test expectations for fast/overflow/line-clamp-and-columns.html on mac

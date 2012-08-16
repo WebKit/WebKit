@@ -12,7 +12,7 @@ CONSOLE MESSAGE: line 7: Refused to load 'http://127.0.0.1:8000/security/content
 
 CONSOLE MESSAGE: Ignoring invalid Content Security Policy script nonce: 'nonces have no spaces'.
 
-CONSOLE MESSAGE: line 7: Refused to load 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-nonce ".
+CONSOLE MESSAGE: line 7: Refused to load 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-nonce nonces have no spaces".
 
 None of these scripts should execute, as all the nonces are invalid.
 
