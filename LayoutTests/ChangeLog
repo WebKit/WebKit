@@ -1,3 +1,46 @@
+2012-08-16  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL] Update pixel test expectations for layout test fast/dom/
+        https://bugs.webkit.org/show_bug.cgi?id=94177
+
+        Unreviewed, rebaseline.
+
+        Some tests have wrong pixel test results. They should be replaced.
+
+        And, two tests related image seem to fail. Alt text should be displayed
+        if src attribute is not set.
+
+        * platform/efl/TestExpectations: Added two tests related to display alt text without src.
+        * platform/efl/fast/dom/34176-expected.png:
+        * platform/efl/fast/dom/Element/class-attribute-whitespace-expected.png:
+        * platform/efl/fast/dom/HTMLElement/bdo-expected.png:
+        * platform/efl/fast/dom/HTMLHeadElement/head-link-style-href-check-expected.png:
+        * platform/efl/fast/dom/HTMLLinkElement/pending-stylesheet-count-expected.png:
+        * platform/efl/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.png:
+        * platform/efl/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.png:
+        * platform/efl/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png:
+        * platform/efl/fast/dom/HTMLMeterElement/meter-optimums-expected.png:
+        * platform/efl/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.png:
+        * platform/efl/fast/dom/HTMLMeterElement/meter-styles-expected.png:
+        * platform/efl/fast/dom/HTMLObjectElement/vspace-hspace-as-number-expected.png:
+        * platform/efl/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.png:
+        * platform/efl/fast/dom/HTMLTableElement/colSpan-expected.png:
+        * platform/efl/fast/dom/HTMLTableElement/createCaption-expected.png:
+        * platform/efl/fast/dom/HTMLTextAreaElement/reset-textarea-expected.png:
+        * platform/efl/fast/dom/Range/surroundContents-1-expected.png:
+        * platform/efl/fast/dom/Window/open-existing-pop-up-blocking-expected.png:
+        * platform/efl/fast/dom/blur-contenteditable-expected.png:
+        * platform/efl/fast/dom/children-nodes-expected.png:
+        * platform/efl/fast/dom/clone-contents-0-end-offset-expected.png:
+        * platform/efl/fast/dom/css-rule-functions-expected.png:
+        * platform/efl/fast/dom/focus-contenteditable-expected.png:
+        * platform/efl/fast/dom/gc-10-expected.png:
+        * platform/efl/fast/dom/importNodeHTML-expected.png:
+        * platform/efl/fast/dom/importNodeXML-expected.png:
+        * platform/efl/fast/dom/row-inner-text-expected.png:
+        * platform/efl/fast/dom/scroll-reveal-left-overflow-expected.png:
+        * platform/efl/fast/dom/scroll-reveal-top-overflow-expected.png:
+
 2012-08-16  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Breakpoints are not correctly restored on reload.

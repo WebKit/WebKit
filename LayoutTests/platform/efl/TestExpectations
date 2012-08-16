@@ -886,3 +886,7 @@ BUGWK94080 : fast/overflow/line-clamp-and-columns.html = IMAGE
 
 // Failing after 125592
 BUGWK94194 : http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html = TEXT
+
+// Alt text should be displayed if src attribute is not set.
+BUGWK94198 : fast/dom/HTMLImageElement/image-alt-text.html = IMAGE
+BUGWK94198 : fast/dom/HTMLInputElement/input-image-alt-text.html = IMAGE
