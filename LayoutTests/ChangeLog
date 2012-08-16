@@ -1,5 +1,16 @@
 2012-08-15  Kiran Muppala  <cmuppala@apple.com>
 
+        Fix TestExpectations line format for two fast/css tests failing on mac
+        https://bugs.webkit.org/show_bug.cgi?id=94160
+
+        Reviewed by Sam Weinig.
+
+        Remove "MAC" modifier, which seems to prevent the expectations from taking effect.
+
+        * platform/mac/TestExpectations:
+
+2012-08-15  Kiran Muppala  <cmuppala@apple.com>
+
         Update test expectations for css3/filters/custom/invalid-custom-filter-shader.html failing on Apple Lion Debug WK1 (Tests) 
         https://bugs.webkit.org/show_bug.cgi?id=94067
 

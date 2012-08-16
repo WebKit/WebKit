@@ -387,5 +387,5 @@ BUGWK93636 : http/tests/images/jpg-img-partial-load.html = TEXT
 BUGWK89826 : fast/css/word-space-extra.html = TEXT
 
 // Added by bug 89826 
-BUGWK94008 MAC : fast/css/word-spacing-characters.html = IMAGE 
-BUGWK94003 MAC : fast/css/word-spacing-characters-complex-text.html = IMAGE 
+BUGWK94008 : fast/css/word-spacing-characters.html = IMAGE
+BUGWK94003 : fast/css/word-spacing-characters-complex-text.html = IMAGE
