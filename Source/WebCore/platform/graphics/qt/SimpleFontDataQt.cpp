@@ -24,25 +24,15 @@
 #include "config.h"
 #include "SimpleFontData.h"
 
-#if HAVE(QRAWFONT)
 #include "NotImplemented.h"
-#else
-#include <QFontMetricsF>
-#endif
 
 namespace WebCore {
 
 void SimpleFontData::determinePitch()
 {
-#if HAVE(QRAWFONT)
     notImplemented();
     m_treatAsFixedPitch = false;
-#else
-    m_treatAsFixedPitch = m_platformData.font().fixedPitch();
-#endif
 }
-
-#if HAVE(QRAWFONT)
 
 static const float smallCapsFraction = 0.7;
 static const float emphasisMarkFraction = 0.5;
@@ -102,23 +92,6 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph) const
     notImplemented();
     return FloatRect();
 }
-#else
-bool SimpleFontData::containsCharacters(const UChar*, int) const
-{
-    return true;
-}
-
-void SimpleFontData::platformGlyphInit()
-{
-    if (!m_platformData.size())
-        return;
-    m_spaceGlyph = 0;
-    m_adjustedSpaceWidth = m_spaceWidth;
-    determinePitch();
-    m_missingGlyphData.fontData = this;
-    m_missingGlyphData.glyph = 0;
-}
-#endif
 
 void SimpleFontData::platformInit()
 {
@@ -129,7 +102,6 @@ void SimpleFontData::platformInit()
          return;
     }
 
-#if HAVE(QRAWFONT)
     QRawFont rawFont(m_platformData.rawFont());
     float descent = rawFont.descent();
     float ascent = rawFont.ascent();
@@ -139,14 +111,6 @@ void SimpleFontData::platformInit()
     QVector<quint32> indexes = rawFont.glyphIndexesForString(QLatin1String(" "));
     QVector<QPointF> advances = rawFont.advancesForGlyphIndexes(indexes);
     float spaceWidth = advances.at(0).x();
-#else
-    QFontMetricsF fm(m_platformData.font());
-    float descent = fm.descent();
-    float ascent = fm.ascent();
-    float xHeight = fm.xHeight();
-    float lineSpacing = fm.lineSpacing();
-    float spaceWidth = fm.width(QLatin1Char(' '));
-#endif
 
     // The line spacing should always be >= (ascent + descent), but this
     // may be false in some cases due to misbehaving platform libraries.
@@ -171,15 +135,9 @@ void SimpleFontData::platformCharWidthInit()
 {
     if (!m_platformData.size())
         return;
-#if HAVE(QRAWFONT)
     QRawFont rawFont(m_platformData.rawFont());
     m_avgCharWidth = rawFont.averageCharWidth();
     m_maxCharWidth = rawFont.maxCharWidth();
-#else
-    QFontMetricsF fm(m_platformData.font());
-    m_avgCharWidth = fm.averageCharWidth();
-    m_maxCharWidth = fm.maxWidth();
-#endif
 }
 
 void SimpleFontData::platformDestroy()

@@ -944,9 +944,11 @@ SOURCES += \
     platform/graphics/FontData.cpp \
     platform/graphics/Font.cpp \
     platform/graphics/FontCache.cpp \
+    platform/graphics/FontFastPath.cpp \
     platform/graphics/FractionalLayoutBoxExtent.cpp \
     platform/graphics/FractionalLayoutRect.cpp \
     platform/graphics/GeneratorGeneratedImage.cpp \
+    platform/graphics/GlyphPageTreeNode.cpp \
     platform/graphics/Gradient.cpp \
     platform/graphics/GraphicsContext.cpp \
     platform/graphics/GraphicsLayer.cpp \
@@ -961,6 +963,7 @@ SOURCES += \
     platform/graphics/Path.cpp \
     platform/graphics/PathTraversalState.cpp \
     platform/graphics/Pattern.cpp \
+    platform/graphics/qt/FontQt.cpp \
     platform/graphics/Region.cpp \
     platform/graphics/RoundedRect.cpp \
     platform/graphics/SegmentedFontData.cpp \
@@ -970,6 +973,7 @@ SOURCES += \
     platform/graphics/StringTruncator.cpp \
     platform/graphics/surfaces/GraphicsSurface.cpp \
     platform/graphics/surfaces/qt/GraphicsSurfaceQt.cpp \
+    platform/graphics/SurrogatePairAwareTextIterator.cpp \
     platform/graphics/TextRun.cpp \
     platform/graphics/TiledBackingStore.cpp \
     platform/graphics/transforms/AffineTransform.cpp \
@@ -983,6 +987,7 @@ SOURCES += \
     platform/graphics/transforms/TransformOperations.cpp \
     platform/graphics/transforms/TransformState.cpp \
     platform/graphics/transforms/TranslateTransformOperation.cpp \
+    platform/graphics/WidthIterator.cpp \
     platform/image-decoders/ImageDecoder.cpp \
     platform/image-decoders/bmp/BMPImageDecoder.cpp \
     platform/image-decoders/bmp/BMPImageReader.cpp \
@@ -2102,6 +2107,7 @@ HEADERS += \
     platform/graphics/ShadowBlur.h \
     platform/graphics/SimpleFontData.h \
     platform/graphics/surfaces/GraphicsSurface.h \
+    platform/graphics/SurrogatePairAwareTextIterator.h \
     platform/graphics/texmap/GraphicsLayerTextureMapper.h \
     platform/graphics/texmap/TextureMapper.h \
     platform/graphics/texmap/TextureMapperBackingStore.h \
@@ -2121,6 +2127,7 @@ HEADERS += \
     platform/graphics/transforms/TransformOperations.h \
     platform/graphics/transforms/TransformState.h \
     platform/graphics/transforms/TranslateTransformOperation.h \
+    platform/graphics/WidthIterator.h \
     platform/image-decoders/bmp/BMPImageDecoder.h \
     platform/image-decoders/bmp/BMPImageReader.h \
     platform/image-decoders/ico/ICOImageDecoder.h \
@@ -3282,28 +3289,6 @@ contains(DEFINES, ENABLE_MATHML=1) {
         rendering/mathml/RenderMathMLSquareRoot.cpp \
         rendering/mathml/RenderMathMLSubSup.cpp \
         rendering/mathml/RenderMathMLUnderOver.cpp
-}
-
-# QRawFont transition handling.
-#
-# Even though QRawFont was already available in Qt 4.8, it had
-# limitations that made switching fully to it impossible.
-# We preserve the old code path when building with Qt 4.
-
-contains(DEFINES, HAVE_QRAWFONT=1) {
-    SOURCES += \
-        platform/graphics/qt/FontQt.cpp \
-        platform/graphics/FontFastPath.cpp \
-        platform/graphics/GlyphPageTreeNode.cpp \
-        platform/graphics/WidthIterator.cpp \
-        platform/graphics/SurrogatePairAwareTextIterator.cpp
-
-    HEADERS += \
-        platform/graphics/WidthIterator.h \
-        platform/graphics/SurrogatePairAwareTextIterator.h
-} else {
-    SOURCES += \
-        platform/graphics/qt/FontQt4.cpp
 }
 
 contains(DEFINES, ENABLE_TEXT_AUTOSIZING=1) {

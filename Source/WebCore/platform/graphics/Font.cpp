@@ -259,11 +259,6 @@ Font::CodePath Font::codePath(const TextRun& run) const
         return Simple;
 #endif
 
-#if PLATFORM(QT) && !HAVE(QRAWFONT)
-    if (run.expansion() || run.rtl() || isSmallCaps() || wordSpacing() || letterSpacing())
-        return Complex;
-#endif
-
     if (m_fontDescription.featureSettings() && m_fontDescription.featureSettings()->size() > 0)
         return Complex;
     

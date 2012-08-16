@@ -376,7 +376,7 @@ bool GraphicsContext::paintingDisabled() const
     return m_state.paintingDisabled;
 }
 
-#if !OS(WINCE) || (PLATFORM(QT) && !HAVE(QRAWFONT))
+#if !OS(WINCE)
 void GraphicsContext::drawText(const Font& font, const TextRun& run, const FloatPoint& point, int from, int to)
 {
     if (paintingDisabled())

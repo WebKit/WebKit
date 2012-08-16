@@ -34,11 +34,6 @@ load(mobilityconfig, true)
 DEFINES += WTF_USE_ICU_UNICODE=1
 DEFINES -= WTF_USE_QT4_UNICODE=1
 
-!contains(DEFINES, HAVE_QRAWFONT=.) {
-    # Use of QRawFont in Qt 5:
-    DEFINES += HAVE_QRAWFONT=1
-}
-
 # We need fontconfig to set up the test fonts for DumpRenderTree and WebKitTestRunner.
 config_fontconfig:!mac {
     DEFINES += HAVE_FONTCONFIG=1
@@ -201,8 +196,8 @@ for(feature, FEATURE_DEFAULTS) {
 
 # ---------------- Sanitize defines -------------------
 
-# Disable SVG fonts if SVG is disabled or we don't have raw fonts
-contains(DEFINES, ENABLE_SVG=0)|!contains(DEFINES, HAVE_QRAWFONT=1): DEFINES += ENABLE_SVG_FONTS=0
+# Disable SVG fonts if SVG is disabled
+contains(DEFINES, ENABLE_SVG=0): DEFINES += ENABLE_SVG_FONTS=0
 
 # JavaScript debugger requires the inspector
 contains(DEFINES, ENABLE_INSPECTOR=0) {

@@ -53,11 +53,7 @@
 #endif
 
 #if PLATFORM(QT)
-#if !HAVE(QRAWFONT)
-#include <QFont>
-#else
 #include <QRawFont>
-#endif
 #endif
 
 namespace WebCore {
@@ -186,11 +182,7 @@ public:
 #endif
 
 #if PLATFORM(QT)
-#if !HAVE(QRAWFONT)
-    QFont getQtFont() const { return m_platformData.font(); }
-#else
     QRawFont getQtRawFont() const { return m_platformData.rawFont(); }
-#endif // !HAVE(QRAWFONT)
 #endif
 
 #if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
@@ -295,7 +287,6 @@ private:
 #endif
 };
 
-#if !(PLATFORM(QT) && !HAVE(QRAWFONT))
 ALWAYS_INLINE FloatRect SimpleFontData::boundsForGlyph(Glyph glyph) const
 {
     if (isZeroWidthSpaceGlyph(glyph))
@@ -332,7 +323,6 @@ ALWAYS_INLINE float SimpleFontData::widthForGlyph(Glyph glyph) const
     m_glyphToWidthMap.setMetricsForGlyph(glyph, width);
     return width;
 }
-#endif // HAVE(QRAWFONT)
 
 } // namespace WebCore
 

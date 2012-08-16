@@ -1,3 +1,14 @@
+2012-08-16  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Remove FontQt4, HAVE_QRAWFONT flag and the related dead code
+        https://bugs.webkit.org/show_bug.cgi?id=93960
+
+        Reviewed by Simon Hausmann.
+
+        Following the removal of Qt 4 support from trunk in r124879.
+
+        * WebCoreSupport/AboutDataHaveFeatures.in: Remove all traces of HAVE_QRAWFONT's existence.
+
 2012-08-15  Benjamin C Meyer  <bmeyer@rim.com>
 
         [BlackBerry] When there is an exception we want to check if the ref is 0, not the

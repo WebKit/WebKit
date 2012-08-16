@@ -1,3 +1,15 @@
+2012-08-16  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Remove FontQt4, HAVE_QRAWFONT flag and the related dead code
+        https://bugs.webkit.org/show_bug.cgi?id=93960
+
+        Reviewed by Simon Hausmann.
+
+        Following the removal of Qt 4 support from trunk in r124879.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::getWebCoreStatistics):
+
 2012-08-16  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add unit tests for Web intent registration

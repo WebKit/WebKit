@@ -48,23 +48,16 @@ bool SVGTextMetricsBuilder::advance()
     if (int(m_textPosition) >= m_run.charactersLength())
         return false;
 
-#if PLATFORM(QT) && !HAVE(QRAWFONT)
-    advanceComplexText();
-#else
     if (m_isComplexText)
         advanceComplexText();
     else
         advanceSimpleText();
-#endif
 
     return m_currentMetrics.length() > 0;
 }
 
 void SVGTextMetricsBuilder::advanceSimpleText()
 {
-#if PLATFORM(QT) && !HAVE(QRAWFONT)
-    ASSERT_NOT_REACHED();
-#else
     unsigned metricsLength = m_simpleWidthIterator->advance(m_textPosition + 1);
     if (!metricsLength) {
         m_currentMetrics = SVGTextMetrics();
@@ -81,7 +74,6 @@ void SVGTextMetricsBuilder::advanceSimpleText()
     m_currentMetrics = SVGTextMetrics(m_text, m_textPosition, metricsLength, currentWidth, m_simpleWidthIterator->lastGlyphName());
 #else
     m_currentMetrics = SVGTextMetrics(m_text, m_textPosition, metricsLength, currentWidth, emptyString());
-#endif
 #endif
 }
 
@@ -115,12 +107,10 @@ void SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer(RenderSVGInlin
     m_run = SVGTextMetrics::constructTextRun(text, text->characters(), 0, text->textLength());
     m_isComplexText = scaledFont.codePath(m_run) == Font::Complex;
 
-#if !PLATFORM(QT) || HAVE(QRAWFONT)
     if (m_isComplexText)
         m_simpleWidthIterator.clear();
     else
         m_simpleWidthIterator = adoptPtr(new WidthIterator(&scaledFont, m_run));
-#endif
 }
 
 struct MeasureTextData {

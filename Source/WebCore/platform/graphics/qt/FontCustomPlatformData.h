@@ -29,9 +29,7 @@
 #include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#if HAVE(QRAWFONT)
 #include <QRawFont>
-#endif
 
 namespace WebCore {
 
@@ -42,19 +40,13 @@ struct FontCustomPlatformData {
     WTF_MAKE_NONCOPYABLE(FontCustomPlatformData); WTF_MAKE_FAST_ALLOCATED;
 public:
     FontCustomPlatformData() { }
-    ~FontCustomPlatformData();
-
-#if !HAVE(QRAWFONT)
-    // for use with QFontDatabase::addApplicationFont/removeApplicationFont
-    int m_handle;
-#else
-    QRawFont m_rawFont;
-#endif
 
     FontPlatformData fontPlatformData(int size, bool bold, bool italic, FontOrientation = Horizontal, TextOrientation = TextOrientationVerticalRight,
                                       FontWidthVariant = RegularWidth, FontRenderingMode = NormalRenderingMode);
 
     static bool supportsFormat(const String&);
+
+    QRawFont m_rawFont;
 };
 
 FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer);
