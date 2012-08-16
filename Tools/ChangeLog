@@ -1,3 +1,9 @@
+2012-08-16  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed warning fix, sys.argv is a python construct.
+
+        * Scripts/update-webkitefl-libs:
+
 2012-08-16  Dirk Pranke  <dpranke@chromium.org>
 
         NRWT cutting off the output from LayoutTest run under Valgrind

@@ -20,4 +20,4 @@ use lib $FindBin::Bin;
 use webkitdirs;
 
 my $scriptsDir = relativeScriptsDir();
-system("perl", "$scriptsDir/update-webkit-libs-jhbuild", "--efl", sys.argv) == 0 or die $!;
+system("perl", "$scriptsDir/update-webkit-libs-jhbuild", "--efl") == 0 or die $!;
