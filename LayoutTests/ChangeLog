@@ -1,3 +1,14 @@
+2012-08-16  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding failure expectations for two accessibility tests introduced in r125710.
+
+        Rebaselining fast/css/word-space-extra.html after r125578.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/css/word-space-extra-expected.txt:
+
 2012-08-16  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Wheel event support in multiple fields time input UI

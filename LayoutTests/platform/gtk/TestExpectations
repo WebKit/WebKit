@@ -36,9 +36,6 @@
 // Tests that require new results.
 //////////////////////////////////////////////////////////////////////////////////////////
 
-// Require rebaselining after  https://bugs.webkit.org/show_bug.cgi?id=89826
-BUGWK89826 : fast/css/word-space-extra.html = TEXT
-
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Expected failures
@@ -434,6 +431,8 @@ BUGWK93727 DEBUG : fullscreen/exit-full-screen-iframe.html = CRASH PASS
 BUGWK93727 DEBUG : svg/custom/use-instanceRoot-as-event-target.xhtml = CRASH PASS
 
 BUGWK90957 DEBUG : fast/js/random-array-gc-stress.html = CRASH PASS
+
+BUGWK94200 DEBUG : accessibility/accessibility-node-memory-management.html = CRASH TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
@@ -1318,6 +1317,9 @@ BUGWK94080 : fast/overflow/line-clamp-and-columns.html = IMAGE
 BUGWK94083 SKIP : media/video-controls-fullscreen-volume.html = TEXT
 
 BUGWK94186 SKIP : fast/forms/time-multiple-fields = PASS
+
+BUGWK94200 : accessibility/accessibility-node-reparent.html = TEXT
+BUGWK94200 RELEASE : accessibility/accessibility-node-memory-management.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
