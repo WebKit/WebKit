@@ -1093,16 +1093,6 @@ void WebPagePrivate::setLoadState(LoadState state)
             didReceiveTouchEventMode(ProcessedTouchEvents);
 #endif
 
-            // If it's a outmost SVG document, we use FixedDesktop mode, otherwise
-            // we default to Mobile mode. For example, using FixedDesktop mode to
-            // render http://www.croczilla.com/bits_and_pieces/svg/samples/tiger/tiger.svg
-            // is user-experience friendly.
-            if (m_page->mainFrame()->document()->isSVGDocument()) {
-                setShouldUseFixedDesktopMode(true);
-                setViewMode(FixedDesktop);
-            } else
-                setViewMode(Mobile);
-
             // Reset block zoom and reflow.
             resetBlockZoom();
 #if ENABLE(VIEWPORT_REFLOW)
@@ -2536,32 +2526,8 @@ IntSize WebPagePrivate::fixedLayoutSize(bool snapToIncrement) const
         return IntSize(width, height);
     }
 
-    if (m_webSettings->isZoomToFitOnLoad()) {
-        // We need to clamp the layout width to the minimum of the layout
-        // width or the content width. This is important under rotation for mobile
-        // websites. We want the page to remain layouted at the same width which
-        // it was loaded with, and instead change the zoom level to fit to screen.
-        // The height is welcome to adapt to the height used in the new orientation,
-        // otherwise we will get a grey bar below the web page.
-        if (m_mainFrame->view() && !contentsSize().isEmpty())
-            minWidth = contentsSize().width();
-        else {
-            // If there is no contents width, use the minimum of screen width
-            // and layout width to shape the first layout to a contents width
-            // that we could reasonably zoom to fit, in a manner that takes
-            // orientation into account and still respects a small default
-            // layout width.
-#if ENABLE(ORIENTATION_EVENTS)
-            minWidth = m_mainFrame->orientation() % 180
-                ? Platform::Graphics::Screen::primaryScreen()->height()
-                : Platform::Graphics::Screen::primaryScreen()->width();
-#else
-            minWidth = Platform::Graphics::Screen::primaryScreen()->width();
-#endif
-        }
-    }
-
-    return IntSize(std::min(minWidth, defaultLayoutWidth), defaultLayoutHeight);
+    ASSERT_NOT_REACHED();
+    return IntSize(defaultLayoutWidth, defaultLayoutHeight);
 }
 
 BackingStoreClient* WebPagePrivate::backingStoreClientForFrame(const Frame* frame) const

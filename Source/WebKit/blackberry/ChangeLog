@@ -1,3 +1,20 @@
+2012-08-16  Leo Yang  <leoyang@rim.com>
+
+        [BlackBerry] Remove Mobile mode from WebPage.cpp and WebPage_p.h
+        https://bugs.webkit.org/show_bug.cgi?id=94223
+        PR #192773
+
+        Reviewed by Rob Buis.
+        Reviewed internally by Arvid Nilsson.
+
+        Remove Mobile mode as it's not been used. Also remove code that
+        handle top-level SVG document because now we can handle it in Desktop mode.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::fixedLayoutSize):
+        * Api/WebPage_p.h:
+
 2012-08-16  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] SurfacePool::waitForBuffer() sometimes waits for deleted EGLSyncKHR object
