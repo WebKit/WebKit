@@ -1,3 +1,15 @@
+2012-08-15  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] set scissorRect per quad so that quads are correctly clipped
+        https://bugs.webkit.org/show_bug.cgi?id=94050
+
+        Reviewed by Adrienne Walker.
+
+        Updated two unit tests to reflect that we need to always scissor,
+        until we refactor so that quads do not depend on scissoring.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-08-16  Hironori Bono  <hbono@chromium.org>
 
         Prevent showing suggestions when right-clicking a selection range.

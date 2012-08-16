@@ -1,3 +1,14 @@
+2012-08-15  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] set scissorRect per quad so that quads are correctly clipped
+        https://bugs.webkit.org/show_bug.cgi?id=94050
+
+        Reviewed by Adrienne Walker.
+
+        * compositing/overflow/overflow-hidden-canvas-layer-expected.png: Added.
+        * compositing/overflow/overflow-hidden-canvas-layer-expected.txt: Added.
+        * compositing/overflow/overflow-hidden-canvas-layer.html: Added.
+
 2012-08-16  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

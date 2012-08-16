@@ -420,11 +420,7 @@ void LayerRendererChromium::drawRenderPass(DrawingFrame& frame, const CCRenderPa
         scissorRect.intersect(CCMathUtil::projectClippedRect(inverseTransformToRoot, frame.rootDamageRect));
     }
 
-    if (scissorRect != renderPass->outputRect())
-        setScissorToRect(frame, enclosingIntRect(scissorRect));
-    else
-        GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
-
+    setScissorToRect(frame, enclosingIntRect(scissorRect));
     clearFramebuffer(frame);
 
     const CCQuadList& quadList = renderPass->quadList();
@@ -441,6 +437,10 @@ void LayerRendererChromium::drawQuad(DrawingFrame& frame, const CCDrawQuad* quad
     scissorRect.intersect(quad->clippedRectInTarget());
     if (scissorRect.isEmpty())
         return;
+
+    // For now, we always do per-quad scissoring because some quad types draw their
+    // un-clipped bounds, relying on scissoring for correct clipping.
+    setScissorToRect(frame, enclosingIntRect(scissorRect));
 
     if (quad->needsBlending())
         GLC(m_context, m_context->enable(GraphicsContext3D::BLEND));

@@ -1,3 +1,24 @@
+2012-08-15  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] set scissorRect per quad so that quads are correctly clipped
+        https://bugs.webkit.org/show_bug.cgi?id=94050
+
+        Reviewed by Adrienne Walker.
+
+        Certain quad types rely on scissoring to do correct
+        clipping. Refactoring the quad types to remove this assumption
+        will be done in a later patch, but for now, we have to apply the
+        scissor rect to every quad to ensure that those quads are
+        correctly clipped.
+
+        Test: compositing/overflow/overflow-hidden-canvas-layer.html
+
+        Also updated two unit tests to reflect the change in semantics.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawRenderPass):
+        (WebCore::LayerRendererChromium::drawQuad):
+
 2012-08-16  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Wheel event support in multiple fields time input UI

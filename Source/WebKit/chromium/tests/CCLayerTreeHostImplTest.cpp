@@ -1840,7 +1840,7 @@ TEST_F(CCLayerTreeHostImplTest, noPartialSwap)
     MockContextHarness harness(mockContext);
 
     harness.mustDrawSolidQuad();
-    harness.mustSetNoScissor();
+    harness.mustSetScissor(0, 0, 10, 10);
 
     // Run test case
     OwnPtr<CCLayerTreeHostImpl> myHostImpl = createLayerTreeHost(false, context.release(), FakeLayerWithQuads::create(1));
@@ -1861,7 +1861,7 @@ TEST_F(CCLayerTreeHostImplTest, partialSwap)
     OwnPtr<CCLayerTreeHostImpl> myHostImpl = createLayerTreeHost(true, context.release(), FakeLayerWithQuads::create(1));
 
     // The first frame is not a partially-swapped one.
-    harness.mustSetNoScissor();
+    harness.mustSetScissor(0, 0, 10, 10);
     harness.mustDrawSolidQuad();
     {
         CCLayerTreeHostImpl::FrameData frame;
