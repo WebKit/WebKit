@@ -529,8 +529,10 @@ void CoordinatedGraphicsLayer::syncCanvas()
         return;
 
 #if USE(GRAPHICS_SURFACE)
-    uint32_t graphicsSurfaceToken = m_canvasPlatformLayer->copyToGraphicsSurface();
-    m_CoordinatedGraphicsLayerClient->syncCanvas(m_id, IntSize(size().width(), size().height()), graphicsSurfaceToken);
+    uint32_t frontBuffer = m_canvasPlatformLayer->copyToGraphicsSurface();
+    uint64_t token = m_canvasPlatformLayer->graphicsSurfaceToken();
+
+    m_CoordinatedGraphicsLayerClient->syncCanvas(m_id, IntSize(size().width(), size().height()), token, frontBuffer);
 #endif
     m_canvasNeedsDisplay = false;
 }

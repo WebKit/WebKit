@@ -34,6 +34,7 @@ public:
     virtual void swapBuffers() { }
 #if USE(GRAPHICS_SURFACE)
     virtual uint32_t copyToGraphicsSurface() { return 0; }
+    virtual uint64_t graphicsSurfaceToken() const { return 0; }
 #endif
 };
 

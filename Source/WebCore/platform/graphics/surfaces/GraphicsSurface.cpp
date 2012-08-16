@@ -25,7 +25,7 @@
 #if USE(GRAPHICS_SURFACE)
 namespace WebCore {
 
-PassRefPtr<GraphicsSurface> GraphicsSurface::create(const IntSize& size, Flags flags, uint32_t token)
+PassRefPtr<GraphicsSurface> GraphicsSurface::create(const IntSize& size, Flags flags, uint64_t token)
 {
     return platformImport(size, flags, token);
 }
@@ -35,7 +35,7 @@ PassRefPtr<GraphicsSurface> GraphicsSurface::create(const IntSize& size, Graphic
     return platformCreate(size, flags);
 }
 
-uint32_t GraphicsSurface::exportToken()
+uint64_t GraphicsSurface::exportToken()
 {
     return platformExport();
 }
@@ -61,6 +61,16 @@ void GraphicsSurface::copyToGLTexture(uint32_t target, uint32_t texture, const I
 void GraphicsSurface::copyFromFramebuffer(uint32_t fbo, const IntRect& sourceRect)
 {
     platformCopyFromFramebuffer(fbo, sourceRect);
+}
+
+uint32_t GraphicsSurface::frontBuffer()
+{
+    return platformFrontBuffer();
+}
+
+uint32_t GraphicsSurface::swapBuffers()
+{
+    return platformSwapBuffers();
 }
 
 GraphicsSurface::GraphicsSurface(const IntSize& size, Flags flags)

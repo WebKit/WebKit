@@ -69,6 +69,7 @@ public:
 #endif
 #if USE(GRAPHICS_SURFACE)
     virtual uint32_t copyToGraphicsSurface();
+    virtual uint64_t graphicsSurfaceToken() const;
 #endif
 
     QRectF boundingRect() const;
@@ -83,8 +84,7 @@ public:
     PlatformGraphicsContext3D m_platformContext;
 #if USE(GRAPHICS_SURFACE)
     GraphicsSurface::Flags m_surfaceFlags;
-    RefPtr<GraphicsSurface> m_frontBufferGraphicsSurface;
-    RefPtr<GraphicsSurface> m_backBufferGraphicsSurface;
+    RefPtr<GraphicsSurface> m_graphicsSurface;
 #endif
 };
 
@@ -140,8 +140,7 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, H
                     | GraphicsSurface::SupportsSharing;
 
     if (!surfaceSize.isEmpty()) {
-        m_frontBufferGraphicsSurface = GraphicsSurface::create(surfaceSize, m_surfaceFlags);
-        m_backBufferGraphicsSurface = GraphicsSurface::create(surfaceSize, m_surfaceFlags);
+        m_graphicsSurface = GraphicsSurface::create(surfaceSize, m_surfaceFlags);
     }
 #endif
 }
@@ -220,14 +219,19 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
 #if USE(GRAPHICS_SURFACE)
 uint32_t GraphicsContext3DPrivate::copyToGraphicsSurface()
 {
-    if (!m_frontBufferGraphicsSurface || !m_backBufferGraphicsSurface)
+    if (!m_graphicsSurface)
         return 0;
 
     blitMultisampleFramebufferAndRestoreContext();
     makeCurrentIfNeeded();
-    m_backBufferGraphicsSurface->copyFromFramebuffer(m_context->m_fbo, IntRect(0, 0, m_context->m_currentWidth, m_context->m_currentHeight));
-    std::swap(m_frontBufferGraphicsSurface, m_backBufferGraphicsSurface);
-    return m_frontBufferGraphicsSurface->exportToken();
+    m_graphicsSurface->copyFromFramebuffer(m_context->m_fbo, IntRect(0, 0, m_context->m_currentWidth, m_context->m_currentHeight));
+    uint32_t frontBuffer = m_graphicsSurface->swapBuffers();
+    return frontBuffer;
+}
+
+uint64_t GraphicsContext3DPrivate::graphicsSurfaceToken() const
+{
+    return m_graphicsSurface->exportToken();
 }
 #endif
 
@@ -275,13 +279,10 @@ bool GraphicsContext3DPrivate::makeCurrentIfNeeded() const
 void GraphicsContext3DPrivate::createGraphicsSurfaces(const IntSize& size)
 {
 #if USE(GRAPHICS_SURFACE)
-    if (size.isEmpty()) {
-        m_frontBufferGraphicsSurface.clear();
-        m_backBufferGraphicsSurface.clear();
-    } else {
-        m_frontBufferGraphicsSurface = GraphicsSurface::create(size, m_surfaceFlags);
-        m_backBufferGraphicsSurface = GraphicsSurface::create(size, m_surfaceFlags);
-    }
+    if (size.isEmpty())
+        m_graphicsSurface.clear();
+    else
+        m_graphicsSurface = GraphicsSurface::create(size, m_surfaceFlags);
 #endif
 }
 

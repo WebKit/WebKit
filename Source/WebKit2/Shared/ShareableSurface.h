@@ -62,7 +62,7 @@ public:
         friend class ShareableSurface;
         mutable ShareableBitmap::Handle m_bitmapHandle;
 #if USE(GRAPHICS_SURFACE)
-        uint32_t m_graphicsSurfaceToken;
+        uint64_t m_graphicsSurfaceToken;
 #endif
         WebCore::IntSize m_size;
         ShareableBitmap::Flags m_flags;

@@ -47,35 +47,27 @@ protected:
 };
 
 #if USE(GRAPHICS_SURFACE)
-struct GraphicsSurfaceData {
-    void setSurface(PassRefPtr<GraphicsSurface> surface)
-    {
-        m_graphicsSurface = surface;
-        m_graphicsSurfaceToken = m_graphicsSurface->exportToken();
-        m_textureID = m_graphicsSurface->getTextureID();
-    }
-
-    GraphicsSurfaceData()
-        : m_textureID(0)
-        , m_graphicsSurfaceToken(0)
-    { }
-
-    uint32_t m_textureID;
-    uint32_t m_graphicsSurfaceToken;
-    RefPtr<WebCore::GraphicsSurface> m_graphicsSurface;
-};
-
 class TextureMapperSurfaceBackingStore : public TextureMapperBackingStore {
 public:
     static PassRefPtr<TextureMapperSurfaceBackingStore> create() { return adoptRef(new TextureMapperSurfaceBackingStore); }
-    void setGraphicsSurface(uint32_t graphicsSurfaceToken, const IntSize& surfaceSize);
+    void setGraphicsSurface(uint64_t graphicsSurfaceToken, const IntSize& surfaceSize, uint32_t frontBuffer);
+    PassRefPtr<WebCore::GraphicsSurface> graphicsSurface() const { return m_graphicsSurface; }
     virtual PassRefPtr<BitmapTexture> texture() const;
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float, BitmapTexture*);
     virtual ~TextureMapperSurfaceBackingStore() { }
+
+protected:
+    void setSurface(PassRefPtr<GraphicsSurface>);
+
 private:
+    TextureMapperSurfaceBackingStore()
+        : TextureMapperBackingStore()
+        , m_graphicsSurfaceToken(0)
+        { }
+
+    uint64_t m_graphicsSurfaceToken;
+    RefPtr<WebCore::GraphicsSurface> m_graphicsSurface;
     IntSize m_graphicsSurfaceSize;
-    GraphicsSurfaceData m_frontBufferGraphicsSurfaceData;
-    GraphicsSurfaceData m_backBufferGraphicsSurfaceData;
 };
 #endif
 

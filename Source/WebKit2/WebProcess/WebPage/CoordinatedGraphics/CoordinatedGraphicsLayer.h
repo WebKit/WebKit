@@ -62,7 +62,7 @@ public:
     virtual void syncLayerFilters(WebLayerID, const WebCore::FilterOperations&) = 0;
 #endif
 #if PLATFORM(QT)
-    virtual void syncCanvas(WebLayerID, const WebCore::IntSize& canvasSize, uint32_t graphicsSurfaceToken) = 0;
+    virtual void syncCanvas(WebLayerID, const WebCore::IntSize& canvasSize, uint64_t graphicsSurfaceToken, uint32_t frontBuffer) = 0;
 #endif
 
     virtual void setLayerAnimatedOpacity(WebLayerID, float) = 0;

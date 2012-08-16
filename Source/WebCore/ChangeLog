@@ -1,3 +1,100 @@
+2012-08-16  Zeno Albisser  <zeno@webkit.org>
+
+        Make GraphicsSurface double buffered by default.
+        https://bugs.webkit.org/show_bug.cgi?id=93252
+
+        Create only a single GraphicsSurface per canvas
+        on both supported platforms Mac/Linux.
+        The GraphicsSurface on Mac internally uses two IOSurface
+        to provide a front and a back buffer.
+        The GLX implementation of GraphicsSurface uses
+        an XWindow which already provides a front and a back buffer.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (GraphicsContext3DPrivate):
+            Remove creation of second GraphicsSurface.
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::copyToGraphicsSurface):
+        (WebCore):
+        (WebCore::GraphicsContext3DPrivate::graphicsSurfaceToken):
+        (WebCore::GraphicsContext3DPrivate::createGraphicsSurfaces):
+        * platform/graphics/surfaces/GraphicsSurface.cpp:
+        (WebCore::GraphicsSurface::create):
+            Adjust token type to uint64_t.
+        (WebCore::GraphicsSurface::exportToken):
+            Adjust return type to uint64_t.
+        (WebCore::GraphicsSurface::frontBuffer):
+        (WebCore):
+        (WebCore::GraphicsSurface::swapBuffers):
+            Add forwarding function to swap buffers inside GraphicsSurface.
+        * platform/graphics/surfaces/GraphicsSurface.h:
+        (GraphicsSurface):
+            Add SupportsSingleBuffered flag to allow for single buffered implementations.
+            Currently single buffered surfaces are either not implemented or disabled.
+        * platform/graphics/surfaces/mac/GraphicsSurfaceMac.cpp:
+            Move implementation details into GraphicsSurfacePrivate.
+            This way the platform specific code can be hidden in the specific cpp file
+            instead of polluting the global GraphicsSurface header.
+        (WebCore::createTexture):
+        (GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::~GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::swapBuffers):
+        (WebCore::GraphicsSurfacePrivate::token):
+        (WebCore::GraphicsSurfacePrivate::frontBufferTextureID):
+        (WebCore::GraphicsSurfacePrivate::backBufferTextureID):
+        (WebCore::GraphicsSurfacePrivate::frontBuffer):
+        (WebCore::GraphicsSurfacePrivate::backBuffer):
+        (WebCore):
+        (WebCore::GraphicsSurface::platformExport):
+        (WebCore::GraphicsSurface::platformGetTextureID):
+        (WebCore::GraphicsSurface::platformCopyToGLTexture):
+        (WebCore::GraphicsSurface::platformCopyFromFramebuffer):
+        (WebCore::GraphicsSurface::platformFrontBuffer):
+        (WebCore::GraphicsSurface::platformSwapBuffers):
+        (WebCore::GraphicsSurface::platformCreate):
+        (WebCore::GraphicsSurface::platformImport):
+        (WebCore::ioSurfaceLockOptions):
+        (WebCore::GraphicsSurface::platformLock):
+        (WebCore::GraphicsSurface::platformUnlock):
+        (WebCore::GraphicsSurface::platformDestroy):
+        * platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp:
+        (WebCore::OffScreenRootWindow::get):
+        (WebCore::GraphicsSurfacePrivate::swapBuffers):
+            Make sure that framebuffer bindings remain consistent
+            after swapping buffers on the XWindow.
+        (WebCore::GraphicsSurface::platformExport):
+            Make sure the GLXPixmap is only bound to the texture once.
+        (WebCore::GraphicsSurface::platformGetTextureID):
+        (WebCore::GraphicsSurface::platformCopyFromFramebuffer):
+        (WebCore):
+        (WebCore::GraphicsSurface::platformFrontBuffer):
+            The GLX surface does not know how to destinguish between
+            the front and the back buffer by an id. This is not necessary
+            for GraphicsSurfaceGLX, because the texture can just be
+            read from the XWindow at any time.
+        (WebCore::GraphicsSurface::platformSwapBuffers):
+        (WebCore::GraphicsSurface::platformCreate):
+        (WebCore::GraphicsSurface::platformImport):
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp:
+            Remove code that was used for switching between two GraphicsSurfaces,
+            as this is now handled directly inside GraphicsSurface.
+        (WebCore::TextureMapperSurfaceBackingStore::setGraphicsSurface):
+        (WebCore::TextureMapperSurfaceBackingStore::paintToTextureMapper):
+        (WebCore::TextureMapperSurfaceBackingStore::setSurface):
+        (WebCore):
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+            Remove GraphicsSurfaceData struct. This class is not needed anymore
+            as we do not keep track of more than one GraphicsSurface at the time.
+        (WebCore):
+        (TextureMapperSurfaceBackingStore):
+        (WebCore::TextureMapperSurfaceBackingStore::graphicsSurface):
+        (WebCore::TextureMapperSurfaceBackingStore::TextureMapperSurfaceBackingStore):
+        * platform/graphics/texmap/TextureMapperPlatformLayer.h:
+        (WebCore::TextureMapperPlatformLayer::graphicsSurfaceToken):
+
 2012-08-16  Mike West  <mkwst@chromium.org>
 
         Implement the form-action Content Security Policy directive.

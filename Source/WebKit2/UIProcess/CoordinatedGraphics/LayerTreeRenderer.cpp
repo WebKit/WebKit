@@ -191,7 +191,7 @@ void LayerTreeRenderer::didChangeScrollPosition(const IntPoint& position)
     m_pendingRenderedContentsScrollPosition = position;
 }
 
-void LayerTreeRenderer::syncCanvas(WebLayerID id, const WebCore::IntSize& canvasSize, uint32_t graphicsSurfaceToken)
+void LayerTreeRenderer::syncCanvas(WebLayerID id, const WebCore::IntSize& canvasSize, uint64_t graphicsSurfaceToken, uint32_t frontBuffer)
 {
     if (canvasSize.isEmpty() || !m_textureMapper)
         return;
@@ -208,7 +208,7 @@ void LayerTreeRenderer::syncCanvas(WebLayerID id, const WebCore::IntSize& canvas
     } else
         canvasBackingStore = it->second;
 
-    canvasBackingStore->setGraphicsSurface(graphicsSurfaceToken, canvasSize);
+    canvasBackingStore->setGraphicsSurface(graphicsSurfaceToken, canvasSize, frontBuffer);
     layer->setContentsToMedia(canvasBackingStore.get());
 #endif
 }

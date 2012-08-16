@@ -33,7 +33,7 @@ messages -> LayerTreeCoordinatorProxy {
     DestroyDirectlyCompositedImage(int64_t key)
     DidRenderFrame()
     DidChangeScrollPosition(WebCore::IntPoint position)
-    SyncCanvas(uint32_t id, WebCore::IntSize canvasSize, uint32_t graphicsSurfaceToken)
+    SyncCanvas(uint32_t id, WebCore::IntSize canvasSize, uint64_t graphicsSurfaceToken, uint32_t frontBuffer)
     SetLayerAnimatedOpacity(uint32_t id, float opacity)
     SetLayerAnimatedTransform(uint32_t id, WebCore::TransformationMatrix transform)
 }
