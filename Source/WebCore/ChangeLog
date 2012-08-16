@@ -1,3 +1,16 @@
+2012-08-16  Konrad Piascik  <kpiascik@rim.com>
+
+        Add BB10 User Agent String to Web Inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=94217
+
+        Reviewed by George Staikos.
+
+        Add the new BlackBerry 10 User Agent String and device metrics for
+        emulation.
+
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.UserAgentSettingsTab.prototype._createUserAgentSelectRowElement.get const):
+
 2012-08-16  Marcelo Lira  <marcelo.lira@openbossa.org>
 
         [Qt] Input method hints are not being set.
