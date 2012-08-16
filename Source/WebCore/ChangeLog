@@ -1,3 +1,20 @@
+2012-08-16  Adam Barth  <abarth@webkit.org>
+
+        Null checks of m_frame->document()->domWindow() aren't needed
+        https://bugs.webkit.org/show_bug.cgi?id=94052
+
+        Reviewed by Eric Seidel.
+
+        If a document is attached to a frame, then its DOMWindow is necessarily
+        non-0. Checking for 0 is needless.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::checkLoadComplete):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::didOpenURL):
+        (WebCore::FrameLoader::prepareForCachedPageRestore):
+
 2012-08-16  Max Feil  <mfeil@rim.com>
 
         [BlackBerry] Some media controls are mispositioned for dynamic live streams (HLS)

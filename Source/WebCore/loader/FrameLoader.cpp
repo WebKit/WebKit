@@ -359,7 +359,7 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
                 Node* currentFocusedNode = m_frame->document()->focusedNode();
                 if (currentFocusedNode)
                     currentFocusedNode->aboutToUnload();
-                if (m_frame->document()->domWindow() && m_pageDismissalEventBeingDispatched == NoDismissal) {
+                if (m_pageDismissalEventBeingDispatched == NoDismissal) {
                     if (unloadEventPolicy == UnloadEventPolicyUnloadAndPageHide) {
                         m_pageDismissalEventBeingDispatched = PageHideDismissal;
                         m_frame->document()->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, m_frame->document()->inPageCache()), m_frame->document());
@@ -466,10 +466,9 @@ bool FrameLoader::didOpenURL()
     // its frame is not in a consistent state for rendering, so avoid setJSStatusBarText
     // since it may cause clients to attempt to render the frame.
     if (!m_stateMachine.creatingInitialEmptyDocument()) {
-        if (DOMWindow* window = m_frame->document()->domWindow()) {
-            window->setStatus(String());
-            window->setDefaultStatus(String());
-        }
+        DOMWindow* window = m_frame->document()->domWindow();
+        window->setStatus(String());
+        window->setDefaultStatus(String());
     }
 
     started();
@@ -1912,10 +1911,9 @@ void FrameLoader::prepareForCachedPageRestore()
     
     // Delete old status bar messages (if it _was_ activated on last URL).
     if (m_frame->script()->canExecuteScripts(NotAboutToExecuteScript)) {
-        if (DOMWindow* window = m_frame->document()->domWindow()) {
-            window->setStatus(String());
-            window->setDefaultStatus(String());
-        }
+        DOMWindow* window = m_frame->document()->domWindow();
+        window->setStatus(String());
+        window->setDefaultStatus(String());
     }
 }
 

@@ -428,9 +428,7 @@ void DocumentLoader::checkLoadComplete()
     if (!m_frame || isLoading())
         return;
     ASSERT(this == frameLoader()->activeDocumentLoader());
-
-    if (DOMWindow* window = m_frame->document()->domWindow())
-        window->finishedLoading();
+    m_frame->document()->domWindow()->finishedLoading();
 }
 
 void DocumentLoader::setFrame(Frame* frame)
