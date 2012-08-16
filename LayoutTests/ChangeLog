@@ -1,3 +1,15 @@
+2012-08-16  Anna Cavender  <annacc@chromium.org>
+
+        Layout Test media/track/track-active-cues.html frequently times out on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=81402
+
+        Reviewed by Eric Carlson.
+
+        This patch changes the test to use captions-fast.vtt to see if several cuechange
+        events available at different times helps the test not timeout.
+
+        * media/track/track-active-cues.html:
+
 2012-08-16  Sergey Rogulenko  <rogulenko@google.com>
 
         Web Inspector: added Paint events for Images to TimelineAgent
