@@ -184,7 +184,7 @@ bool WebPreferencesStore::setBoolValueForKey(const String& key, bool value)
 
 bool WebPreferencesStore::getBoolValueForKey(const String& key) const
 {
-    // FIXME: Extend overriding to other key types used from LayoutTestController.
+    // FIXME: Extend overriding to other key types used from TestRunner.
     BoolOverridesMap::const_iterator it = boolTestRunnerOverridesMap().find(key);
     if (it != boolTestRunnerOverridesMap().end())
         return it->second;

@@ -1,3 +1,15 @@
+2012-08-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update manual tests and comments to refer to TestRunner instead of LayoutTestController
+        https://bugs.webkit.org/show_bug.cgi?id=94168
+
+        Reviewed by Kent Tamura.
+
+        * public/WebDevToolsAgent.h:
+        (WebDevToolsAgent):
+        * public/WebView.h:
+        (WebView):
+
 2012-08-15  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: generate index keys for existing data in createIndex in front end

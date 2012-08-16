@@ -88,7 +88,7 @@ interface IWebPreferencesPrivate : IUnknown
     HRESULT setShouldUseHighResolutionTimers([in] BOOL useHighResolutionTimers);
     HRESULT shouldUseHighResolutionTimers([out, retval] BOOL* useHighResolutionTimers);
 
-    // Used to set preference specified by a test via LayoutTestController.overridePreference(..).
+    // Used to set preference specified by a test via TestRunner.overridePreference(..).
     // Used by DumpRenderTree.
     HRESULT setPreferenceForTest([in] BSTR key, [in] BSTR value);
 

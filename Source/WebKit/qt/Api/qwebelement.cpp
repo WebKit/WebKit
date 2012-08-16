@@ -2057,7 +2057,7 @@ static QVariant convertJSValueToWebElementVariant(JSC::JSObject* object, int *di
         // loop since when we find an Element we do not recurse.
         visitedObjects->remove(object);
     } else if (object && object->inherits(&JSDocument::s_info)) {
-        // To support LayoutTestControllerQt::nodesFromRect(), used in DRT, we do an implicit
+        // To support TestRunnerQt::nodesFromRect(), used in DRT, we do an implicit
         // conversion from 'document' to the QWebElement representing the 'document.documentElement'.
         // We can't simply use a QVariantMap in nodesFromRect() because it currently times out
         // when serializing DOMMimeType and DOMPlugin, even if we limit the recursion.

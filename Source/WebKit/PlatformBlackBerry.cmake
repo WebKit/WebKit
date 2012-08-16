@@ -132,14 +132,14 @@ IF (NOT PUBLIC_BUILD)
         ${TOOLS_DIR}/DumpRenderTree/blackberry/DumpRenderTree.cpp
         ${TOOLS_DIR}/DumpRenderTree/blackberry/EventSender.cpp
         ${TOOLS_DIR}/DumpRenderTree/blackberry/GCControllerBlackBerry.cpp
-        ${TOOLS_DIR}/DumpRenderTree/blackberry/LayoutTestControllerBlackBerry.cpp
+        ${TOOLS_DIR}/DumpRenderTree/blackberry/TestRunnerBlackBerry.cpp
         ${TOOLS_DIR}/DumpRenderTree/blackberry/PixelDumpSupportBlackBerry.cpp
         ${TOOLS_DIR}/DumpRenderTree/blackberry/PNGImageEncoder.cpp
         ${TOOLS_DIR}/DumpRenderTree/blackberry/WorkQueueItemBlackBerry.cpp
         ${TOOLS_DIR}/DumpRenderTree/AccessibilityController.cpp
         ${TOOLS_DIR}/DumpRenderTree/AccessibilityUIElement.cpp
         ${TOOLS_DIR}/DumpRenderTree/AccessibilityTextMarker.cpp
-        ${TOOLS_DIR}/DumpRenderTree/LayoutTestController.cpp
+        ${TOOLS_DIR}/DumpRenderTree/TestRunner.cpp
         ${TOOLS_DIR}/DumpRenderTree/CyclicRedundancyCheck.cpp
         ${TOOLS_DIR}/DumpRenderTree/PixelDumpSupport.cpp
         ${TOOLS_DIR}/DumpRenderTree/WorkQueue.cpp

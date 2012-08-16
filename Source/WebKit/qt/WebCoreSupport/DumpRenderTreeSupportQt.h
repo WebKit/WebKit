@@ -52,7 +52,7 @@ QT_END_NAMESPACE
 
 extern QMap<int, QWebScriptWorld*> m_worldMap;
 
-// Used to pass WebCore::Node's to layout tests using LayoutTestController
+// Used to pass WebCore::Node's to layout tests using TestRunner
 class QWEBKIT_EXPORT QDRTNode {
 public:
     QDRTNode();

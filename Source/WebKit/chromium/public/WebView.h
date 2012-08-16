@@ -507,7 +507,7 @@ public:
     // level is changed in this update from the previous update).
     virtual void updateBatteryStatus(const WebBatteryStatus&) { }
 
-    // Testing functionality for LayoutTestController -----------------------
+    // Testing functionality for TestRunner ---------------------------------
 
     // Simulates a compositor lost context.
     virtual void loseCompositorContext(int numTimes) = 0;

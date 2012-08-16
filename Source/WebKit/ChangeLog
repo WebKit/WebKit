@@ -1,3 +1,12 @@
+2012-08-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update manual tests and comments to refer to TestRunner instead of LayoutTestController
+        https://bugs.webkit.org/show_bug.cgi?id=94168
+
+        Reviewed by Kent Tamura.
+
+        * PlatformBlackBerry.cmake:
+
 2012-08-14  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] undefined reference to 'g_type_init' with gold linker

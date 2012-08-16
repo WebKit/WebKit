@@ -1,3 +1,13 @@
+2012-08-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update manual tests and comments to refer to TestRunner instead of LayoutTestController
+        https://bugs.webkit.org/show_bug.cgi?id=94168
+
+        Reviewed by Kent Tamura.
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::getBoolValueForKey):
+
 2012-08-15  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css3-text] Add CSS3 Text decoration compile flag
