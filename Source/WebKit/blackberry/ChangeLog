@@ -1,3 +1,58 @@
+2012-08-16  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] SurfacePool::waitForBuffer() sometimes waits for deleted EGLSyncKHR object
+        https://bugs.webkit.org/show_bug.cgi?id=94208
+
+        Reviewed by Rob Buis.
+
+        SurfacePool::notifyBuffersComposited() adds a tile's previous
+        sync object to the garbage list before replacing it with a new one.
+        However, it failed to thoroughly clear all tiles that were referencing
+        the old sync object.
+
+        Thus it could happen that if a set of tiles A was composited, then
+        another set of tiles B was composited, only the intersection of A and B
+        was cleared of the soon-to-be-deleted sync object, and the subtraction
+        A - B would reference an invalid sync object in case the BackingStore
+        decided to render to one of the tiles in A - B before they were
+        composited again.
+
+        Fixed by storing each individual sync object in only one place so we
+        don't have to rummage through all tiles and remove stale references to
+        sync objects that are about to be destroyed.
+
+        A new reference counted Fence class is added for this purpose, to store
+        a sync object. Tiles refer to Fence instances instead of holding a sync
+        object directly. Since Fence is reference counted, several tiles can
+        refer to the same Fence instance, and clearing its sync object will
+        instantly remove it from the grasp of all tiles that depend on that
+        Fence.
+
+        Since there's no point in waiting for the same Fence twice, the only
+        operation provided on Fence is takePlatformSync() which returns the
+        sync object and clears the Fence of its sync object.
+
+        Reviewed internally by Filip Spacek.
+
+        PR 193610
+
+        * WebKitSupport/BackingStoreTile.cpp:
+        (BlackBerry::WebKit::TileBuffer::TileBuffer):
+        * WebKitSupport/BackingStoreTile.h:
+        (BlackBerry):
+        (Fence):
+        (BlackBerry::Fence::create):
+        (BlackBerry::Fence::takePlatformSync):
+        (BlackBerry::Fence::Fence):
+        (BlackBerry::WebKit::TileBuffer::fence):
+        (BlackBerry::WebKit::TileBuffer::setFence):
+        (TileBuffer):
+        * WebKitSupport/SurfacePool.cpp:
+        (BlackBerry::WebKit::SurfacePool::waitForBuffer):
+        (BlackBerry::WebKit::SurfacePool::notifyBuffersComposited):
+        * WebKitSupport/SurfacePool.h:
+        (SurfacePool):
+
 2012-08-16  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Suppress non DRT JS Console output.

@@ -99,7 +99,7 @@ private:
     bool m_initialized; // SurfacePool has been set up, with or without buffers.
     bool m_buffersSuspended; // Buffer objects exist, but pixel memory has been freed.
 
-    std::set<void*> m_syncObjectsToDestroy;
+    std::set<void*> m_garbage;
     bool m_hasFenceExtension;
     mutable pthread_mutex_t m_mutex;
 };

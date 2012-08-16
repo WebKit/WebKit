@@ -21,6 +21,9 @@
 
 #include "BlackBerryPlatformIntRectRegion.h"
 #include "BlackBerryPlatformPrimitives.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace BlackBerry {
 namespace Platform {
@@ -28,6 +31,37 @@ namespace Graphics {
 struct Buffer;
 }
 }
+
+// Represents a fence that has been inserted into the command stream. You can wait on the corresponding platform sync
+// object to make sure that previous commands have been completed.
+// There is no reason to wait twice on the same platform sync object, so the only mechanism provided to access the sync
+// object will also clear it to prevent anyone from waiting again.
+// Fence is only refcounted on the compositing thread, so RefCounted will suffice, we don't need ThreadSafeRefCounted.
+class Fence : public RefCounted<Fence> {
+public:
+    static PassRefPtr<Fence> create(void* platformSync = 0)
+    {
+        return adoptRef(new Fence(platformSync));
+    }
+
+    // Returns 0 if this fence is stale (someone already waited on it)
+    // Otherwise returns the platform sync object and clears the sync
+    // object so no-one waits again.
+    void* takePlatformSync()
+    {
+        void* tmp = m_platformSync;
+        m_platformSync = 0;
+        return tmp;
+    }
+
+private:
+    Fence(void* platformSync)
+        : m_platformSync(platformSync)
+    {
+    }
+
+    void* m_platformSync;
+};
 
 namespace WebKit {
 class TileBuffer {
@@ -47,13 +81,13 @@ class TileBuffer {
 
         Platform::Graphics::Buffer* nativeBuffer() const;
 
-        void* syncObject() const { return m_syncObject; }
-        void setSyncObject(void* syncObject) { m_syncObject = syncObject; }
+        Fence* fence() const { return m_fence.get(); }
+        void setFence(PassRefPtr<Fence> fence) { m_fence = fence; }
 
     private:
         Platform::IntSize m_size;
         Platform::IntRectRegion m_renderedRegion;
-        void* m_syncObject;
+        RefPtr<Fence> m_fence;
         mutable Platform::Graphics::Buffer* m_buffer;
 };
 

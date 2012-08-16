@@ -234,31 +234,24 @@ void SurfacePool::waitForBuffer(TileBuffer* tileBuffer)
         return;
 
 #if BLACKBERRY_PLATFORM_GRAPHICS_EGL
-    EGLSyncKHR syncObject;
+    EGLSyncKHR platformSync;
 
     {
         Platform::MutexLocker locker(&m_mutex);
-        syncObject = tileBuffer->syncObject();
-        if (!syncObject)
-            return;
-
-        // Stale references to this sync object may remain with other tiles, don't wait for it again.
-        for (unsigned int i = 0; i < m_tilePool.size(); ++i) {
-            TileBuffer* tileBuffer = m_tilePool[i]->frontBuffer();
-            if (tileBuffer->syncObject() == syncObject)
-                tileBuffer->setSyncObject(0);
-        }
-        if (backBuffer()->syncObject() == syncObject)
-            backBuffer()->setSyncObject(0);
+        platformSync = tileBuffer->fence()->takePlatformSync();
     }
 
-    eglClientWaitSyncKHR(Platform::Graphics::eglDisplay(), syncObject, 0, 100000000LL);
+    if (!platformSync)
+        return;
+
+    if (!eglClientWaitSyncKHR(Platform::Graphics::eglDisplay(), platformSync, 0, 100000000LL))
+        Platform::logAlways(Platform::LogLevelWarn, "Failed to wait for EGLSyncKHR object!\n");
 
     // Instead of assuming eglDestroySyncKHR is thread safe, we add it to
     // a garbage list for later collection on the thread that created it.
     {
         Platform::MutexLocker locker(&m_mutex);
-        m_syncObjectsToDestroy.insert(syncObject);
+        m_garbage.insert(platformSync);
     }
 #endif
 }
@@ -275,21 +268,23 @@ void SurfacePool::notifyBuffersComposited(const Vector<TileBuffer*>& tileBuffers
 
     // The EGL_KHR_fence_sync spec is nice enough to specify that the sync object
     // is not actually deleted until everyone has stopped using it.
-    for (std::set<void*>::const_iterator it = m_syncObjectsToDestroy.begin(); it != m_syncObjectsToDestroy.end(); ++it)
+    for (std::set<void*>::const_iterator it = m_garbage.begin(); it != m_garbage.end(); ++it)
         eglDestroySyncKHR(display, *it);
-    m_syncObjectsToDestroy.clear();
+    m_garbage.clear();
 
-    // If we didn't blit anything, we don't need to create a new sync object.
+    // If we didn't blit anything, we don't need to create a new fence.
     if (tileBuffers.isEmpty())
         return;
 
-    EGLSyncKHR syncObject = eglCreateSyncKHR(display, EGL_SYNC_FENCE_KHR, 0);
-
+    // Create a new fence and assign to the tiles that were blit. Invalidate any previous
+    // fence that may be active among these tiles and add its sync object to the garbage set
+    // for later destruction to make sure it doesn't leak.
+    RefPtr<Fence> fence = Fence::create(eglCreateSyncKHR(display, EGL_SYNC_FENCE_KHR, 0));
     for (unsigned int i = 0; i < tileBuffers.size(); ++i) {
-        if (EGLSyncKHR previousSyncObject = tileBuffers[i]->syncObject())
-            m_syncObjectsToDestroy.insert(previousSyncObject);
+        if (EGLSyncKHR platformSync = tileBuffers[i]->fence()->takePlatformSync())
+            m_garbage.insert(platformSync);
 
-        tileBuffers[i]->setSyncObject(syncObject);
+        tileBuffers[i]->setFence(fence);
     }
 #endif
 }

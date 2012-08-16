@@ -29,7 +29,7 @@ namespace WebKit {
 
 TileBuffer::TileBuffer(const Platform::IntSize& size)
     : m_size(size)
-    , m_syncObject(0)
+    , m_fence(Fence::create())
     , m_buffer(0)
 {
 }
