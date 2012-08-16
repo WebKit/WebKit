@@ -1,3 +1,33 @@
+2012-08-16  Justin Novosad  <junov@chromium.org>
+
+        [Chromium] Changing Canvas2DLayerBridge to use SkDeferredCanvas's notification client API
+        https://bugs.webkit.org/show_bug.cgi?id=94234
+
+        Reviewed by James Robinson.
+
+        The existing DeviceContext API in skia's SkDeferredCanvas is being
+        deprecated in favor of the new NotificationClient interface, which is
+        designed to allow WebKit to control deferred canvas global memory
+        consumption.
+
+        No new tests: this patch does not fix any bug and does not add new
+        functionality. It is just a transition to a new skia interface.
+        Coverage is assured by existing tests.
+
+        * platform/graphics/chromium/Canvas2DLayerBridge.cpp:
+        (WebCore):
+        Removed the AcceleratedDeviceContext class completely and mixed it
+        into Canvas2DLayerBridge by inheriting
+        SkDeferredCanvas::NotificationClient
+        (WebCore::Canvas2DLayerBridge::~Canvas2DLayerBridge):
+        (WebCore::Canvas2DLayerBridge::deferredCanvas):
+        (WebCore::Canvas2DLayerBridge::prepareForDraw):
+        (WebCore::Canvas2DLayerBridge::skCanvas):
+        * platform/graphics/chromium/Canvas2DLayerBridge.h:
+        (Canvas2DLayerBridge):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        Cleaning up unnecessary include of SkDeferredCanvas.h
+
 2012-08-16  David Reveman  <reveman@chromium.org>
 
         [Chromium] Avoid aliasing global symbol monotonicallyIncreasingTime().
