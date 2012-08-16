@@ -268,6 +268,7 @@ SET(EWK2UnitTests_BINARIES
     test_ewk2_context
     test_ewk2_cookie_manager
     test_ewk2_download_job
+    test_ewk2_intents
     test_ewk2_view
 )
 

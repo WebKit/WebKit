@@ -1,3 +1,20 @@
+2012-08-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add unit tests for Web intent registration
+        https://bugs.webkit.org/show_bug.cgi?id=94133
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add unit tests for Web Intent service registration.
+        This tests the "intent,service,register" signaling
+        on the Ewk_View as well as Ewk_Intent_Service.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/tests/resources/intent-service.html: Added.
+        * UIProcess/API/efl/tests/test_ewk2_intents.cpp: Added.
+        (onIntentServiceRegistration):
+        (TEST_F):
+
 2012-08-16  Marja Hölttä  <marja@chromium.org>
 
         FormController, WebHistoryItem: Enable reading selected file names from document state
