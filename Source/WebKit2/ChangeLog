@@ -1,3 +1,17 @@
+2012-08-15  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Make sure that we don't prematurely force the first layout during loading.
+        https://bugs.webkit.org/show_bug.cgi?id=94106
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This would have the nasty effect that the frame loader would report the first layout
+        before loadCommitted was reported. This would resume the rendering engine prematurely,
+        showing blank content and reporting an empty contents size.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setFixedLayoutSize):
+
 2012-08-16  Marcelo Lira  <marcelo.lira@openbossa.org>
 
         [Qt] Input method hints are not being set.
