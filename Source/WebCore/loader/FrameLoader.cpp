@@ -303,6 +303,8 @@ void FrameLoader::submitForm(PassRefPtr<FormSubmission> submission)
         return;
 
     if (protocolIsJavaScript(submission->action())) {
+        if (!m_frame->document()->contentSecurityPolicy()->allowFormAction(KURL(submission->action())))
+            return;
         m_isExecutingJavaScriptFormAction = true;
         m_frame->script()->executeIfJavaScriptURL(submission->action(), DoNotReplaceDocumentIfJavaScriptURL);
         m_isExecutingJavaScriptFormAction = false;
@@ -910,6 +912,14 @@ bool FrameLoader::checkIfRunInsecureContent(SecurityOrigin* context, const KURL&
         m_client->didRunInsecureContent(context, url);
 
     return allowed;
+}
+
+bool FrameLoader::checkIfFormActionAllowedByCSP(const KURL& url) const
+{
+    if (m_submittedFormURL.isEmpty())
+        return true;
+
+    return m_frame->document()->contentSecurityPolicy()->allowFormAction(url);
 }
 
 Frame* FrameLoader::opener()

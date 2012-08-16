@@ -204,6 +204,11 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
     // reference to this object; one example of this is 3266216.
     RefPtr<MainResourceLoader> protect(this);
 
+    if (!frameLoader()->checkIfFormActionAllowedByCSP(newRequest.url())) {
+        cancel();
+        return;
+    }
+
     ASSERT(documentLoader()->timing()->fetchStart());
     if (!redirectResponse.isNull()) {
         // If the redirecting url is not allowed to display content from the target origin,

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Refused to connect to connect 'http://localhost:8000/xmlhttprequest/resources/get.txt' because it violates the following Content Security Policy directive: "connect-src http://127.0.0.1:8000".
+CONSOLE MESSAGE: Refused to connect to 'http://localhost:8000/xmlhttprequest/resources/get.txt' because it violates the following Content Security Policy directive: "connect-src http://127.0.0.1:8000".
 
 Pass
 

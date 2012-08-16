@@ -91,6 +91,7 @@ public:
     bool allowFontFromSource(const KURL&, ReportingStatus = SendReport) const;
     bool allowMediaFromSource(const KURL&, ReportingStatus = SendReport) const;
     bool allowConnectToSource(const KURL&, ReportingStatus = SendReport) const;
+    bool allowFormAction(const KURL&, ReportingStatus = SendReport) const;
 
     void setOverrideAllowInlineStyle(bool);
 

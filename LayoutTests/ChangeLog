@@ -1,3 +1,29 @@
+2012-08-16  Mike West  <mkwst@chromium.org>
+
+        Implement the form-action Content Security Policy directive.
+        https://bugs.webkit.org/show_bug.cgi?id=93777
+
+        Reviewed by Jochen Eisinger.
+
+        * http/tests/navigation/resources/redirection-response.php:
+            Allow for the specification of alternate hosts for the redirect. We
+            need this capability in order to check that an initial submission
+            followed by a blocked redirect results in the correct behavior.
+        * http/tests/security/contentSecurityPolicy/1.1/form-action-src-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/form-action-src-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/form-action-src-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/form-action-src-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/form-action-src-default-ignored-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/form-action-src-default-ignored.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/form-action-src-javascript-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/form-action-src-javascript-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/form-action-src-redirect-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/form-action-src-redirect-blocked.html: Added.
+
 2012-08-16  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL] Update pixel test expectations for layout test fast/dom/

@@ -1,3 +1,59 @@
+2012-08-16  Mike West  <mkwst@chromium.org>
+
+        Implement the form-action Content Security Policy directive.
+        https://bugs.webkit.org/show_bug.cgi?id=93777
+
+        Reviewed by Jochen Eisinger.
+
+        The CSP 1.1 editor's draft defines the 'form-action' directive as a
+        mechanism for whitelisting valid targets for form submission from a
+        protected resource. A web author might desire to restrict form
+        submissions to the same origin as the protected resource itself via
+        a Content Security Policy of "form-action 'self'", or ensure that all
+        submissions were sent over an SSL connection via "form-action https:".
+
+        Specification details available at: https://dvcs.w3.org/hg/content-security-policy/raw-file/tip/csp-specification.dev.html#form-action--experimental
+
+        This experimental directive is gated on the ENABLE_CSP_NEXT flag, which
+        is currently only enabled in Chromium.
+
+        Tests: http/tests/security/contentSecurityPolicy/1.1/form-action-src-allowed.html
+               http/tests/security/contentSecurityPolicy/1.1/form-action-src-blocked.html
+               http/tests/security/contentSecurityPolicy/1.1/form-action-src-default-ignored.html
+               http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-allowed.html
+               http/tests/security/contentSecurityPolicy/1.1/form-action-src-get-blocked.html
+               http/tests/security/contentSecurityPolicy/1.1/form-action-src-javascript-blocked.html
+               http/tests/security/contentSecurityPolicy/1.1/form-action-src-redirect-blocked.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkIfFormActionAllowedByCSP):
+            Adding a callback to FrameLoader in order to allow the
+            MainResourceLoader to check the relevant CSP status without knowing
+            anything about CSP.
+        (WebCore):
+        * loader/FrameLoader.h:
+        (FrameLoader):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::willSendRequest):
+            Check against the protected resource's Content Security Policy when
+            presented with a request that is itself a form submission, or is the
+            result of a redirect in response to a form submission. If CSP would
+            block the target, cancel the request.
+        * page/ContentSecurityPolicy.cpp:
+        (CSPDirectiveList):
+        (WebCore::CSPDirectiveList::checkSourceAndReportViolation):
+            Added explanatory text to the source violation console warning that
+            specifically calls out sending form data (as opposed to "connect to"
+            or "load the").
+        (WebCore::CSPDirectiveList::allowFormAction):
+            Check a URL against a directive list's the 'form-action' source list.
+        (WebCore):
+        (WebCore::CSPDirectiveList::addDirective):
+            Recognize the 'form-action' CSP directive.
+        (WebCore::ContentSecurityPolicy::allowFormAction):
+            Public interface to check a form action.
+        * page/ContentSecurityPolicy.h:
+
 2012-08-16  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] WebGL and Canvas fail to display after being restored from page cache

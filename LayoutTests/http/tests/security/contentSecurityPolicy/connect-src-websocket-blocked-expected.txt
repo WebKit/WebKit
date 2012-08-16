@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Refused to connect to connect 'ws://localhost:8880/websocket/tests/hybi/echo' because it violates the following Content Security Policy directive: "connect-src ws://127.0.0.1:8880".
+CONSOLE MESSAGE: Refused to connect to 'ws://localhost:8880/websocket/tests/hybi/echo' because it violates the following Content Security Policy directive: "connect-src ws://127.0.0.1:8880".
 
 Pass
 

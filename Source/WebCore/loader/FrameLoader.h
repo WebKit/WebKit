@@ -222,6 +222,8 @@ public:
     bool checkIfDisplayInsecureContent(SecurityOrigin* context, const KURL&);
     bool checkIfRunInsecureContent(SecurityOrigin* context, const KURL&);
 
+    bool checkIfFormActionAllowedByCSP(const KURL&) const;
+
     Frame* opener();
     void setOpener(Frame*);
 

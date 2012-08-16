@@ -582,6 +582,7 @@ public:
     bool allowFontFromSource(const KURL&, ContentSecurityPolicy::ReportingStatus) const;
     bool allowMediaFromSource(const KURL&, ContentSecurityPolicy::ReportingStatus) const;
     bool allowConnectToSource(const KURL&, ContentSecurityPolicy::ReportingStatus) const;
+    bool allowFormAction(const KURL&, ContentSecurityPolicy::ReportingStatus) const;
 
     void gatherReportURIs(DOMStringList&) const;
 
@@ -631,6 +632,7 @@ private:
     OwnPtr<CSPDirective> m_fontSrc;
     OwnPtr<CSPDirective> m_mediaSrc;
     OwnPtr<CSPDirective> m_connectSrc;
+    OwnPtr<CSPDirective> m_formAction;
 
     Vector<KURL> m_reportURIs;
     HashSet<String> m_pluginTypes;
@@ -742,8 +744,14 @@ bool CSPDirectiveList::checkSourceAndReportViolation(CSPDirective* directive, co
 {
     if (checkSource(directive, url))
         return true;
-    String verb = type == "connect" ? "connect to" : "load the";
-    reportViolation(directive->text(), "Refused to " + verb + " " + type + " '" + url.string() + "' because it violates the following Content Security Policy directive: \"" + directive->text() + "\".\n", url);
+
+    String prefix = makeString("Refused to load the ", type, " '");
+    if (type == "connect")
+        prefix = "Refused to connect to '";
+    if (type == "form")
+        prefix = "Refused to send form data to '";
+
+    reportViolation(directive->text(), makeString(prefix, url.string(), "' because it violates the following Content Security Policy directive: \"", directive->text(), "\".\n"), url);
     return denyIfEnforcingPolicy();
 }
 
@@ -882,6 +890,14 @@ void CSPDirectiveList::gatherReportURIs(DOMStringList& list) const
 {
     for (size_t i = 0; i < m_reportURIs.size(); ++i)
         list.append(m_reportURIs[i].string());
+}
+
+bool CSPDirectiveList::allowFormAction(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+{
+    DEFINE_STATIC_LOCAL(String, type, ("form"));
+    return reportingStatus == ContentSecurityPolicy::SendReport ?
+        checkSourceAndReportViolation(m_formAction.get(), url, type) :
+        checkSource(m_formAction.get(), url);
 }
 
 // policy            = directive-list
@@ -1116,8 +1132,9 @@ void CSPDirectiveList::addDirective(const String& name, const String& value)
     DEFINE_STATIC_LOCAL(String, sandbox, ("sandbox"));
     DEFINE_STATIC_LOCAL(String, reportURI, ("report-uri"));
 #if ENABLE(CSP_NEXT)
-    DEFINE_STATIC_LOCAL(String, scriptNonce, ("script-nonce"));
+    DEFINE_STATIC_LOCAL(String, formAction, ("form-action"));
     DEFINE_STATIC_LOCAL(String, pluginTypes, ("plugin-types"));
+    DEFINE_STATIC_LOCAL(String, scriptNonce, ("script-nonce"));
 #endif
 
     ASSERT(!name.isEmpty());
@@ -1145,10 +1162,12 @@ void CSPDirectiveList::addDirective(const String& name, const String& value)
     else if (equalIgnoringCase(name, reportURI))
         parseReportURI(name, value);
 #if ENABLE(CSP_NEXT)
-    else if (equalIgnoringCase(name, scriptNonce))
-        parseScriptNonce(name, value);
+    else if (equalIgnoringCase(name, formAction))
+        setCSPDirective(name, value, m_formAction);
     else if (equalIgnoringCase(name, pluginTypes))
         parsePluginTypes(name, value);
+    else if (equalIgnoringCase(name, scriptNonce))
+        parseScriptNonce(name, value);
 #endif
     else
         m_policy->reportUnrecognizedDirective(name);
@@ -1333,6 +1352,11 @@ bool ContentSecurityPolicy::allowMediaFromSource(const KURL& url, ContentSecurit
 bool ContentSecurityPolicy::allowConnectToSource(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
     return isAllowedByAllWithURL<&CSPDirectiveList::allowConnectToSource>(m_policies, url, reportingStatus);
+}
+
+bool ContentSecurityPolicy::allowFormAction(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+{
+    return isAllowedByAllWithURL<&CSPDirectiveList::allowFormAction>(m_policies, url, reportingStatus);
 }
 
 bool ContentSecurityPolicy::isActive() const
