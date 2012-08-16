@@ -1,3 +1,16 @@
+2012-08-15  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] Copy to fast/forms/resources/common-wheel-event.js from fast/forms/number/number-wheel-event.html
+        https://bugs.webkit.org/show_bug.cgi?id=94184
+
+        Reviewed by Kent Tamura.
+
+        This patch copies fast/forms/number/number-wheel-event.html 
+        to fast/forms/resources/common-wheel-event.js for sharing
+        test code among input types.
+
+        * fast/forms/resources/common-wheel-event.js: Copied from LayoutTests/fast/forms/number/number-wheel-event.html.
+
 2012-08-15  Kiran Muppala  <cmuppala@apple.com>
 
         (r125629): Newly added test css3/filters/custom/filter-fallback-to-software.html failing on mac
