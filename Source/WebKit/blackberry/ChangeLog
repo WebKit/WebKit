@@ -1,3 +1,21 @@
+2012-08-16  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Use form state to determine the VKB enter key.
+        https://bugs.webkit.org/show_bug.cgi?id=94239
+
+        Reviewed by Rob Buis.
+
+        PR 188234.
+
+        If the enter key for the VKB is not explicitly set, use
+        submit if we are in a single line input and a default
+        button exists for the form.
+
+        Reviewed Internally by Gen Mak.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::setElementFocused):
+
 2012-08-16  Konrad Piascik  <kpiascik@rim.com>
 
         [BlackBerry] Reload valid page from Error Page keeps history ViewState and zoom.

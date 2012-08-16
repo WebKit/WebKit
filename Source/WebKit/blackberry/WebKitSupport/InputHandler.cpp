@@ -818,6 +818,14 @@ void InputHandler::setElementFocused(Element* element)
     VirtualKeyboardType keyboardType = keyboardTypeAttribute(element);
     VirtualKeyboardEnterKeyType enterKeyType = keyboardEnterKeyTypeAttribute(element);
 
+    if (enterKeyType == VKBEnterKeyNotSet && type != InputTypeTextArea) {
+        if (element->isFormControlElement()) {
+            const HTMLFormControlElement* formElement = static_cast<const HTMLFormControlElement*>(element);
+            if (formElement->form() && formElement->form()->defaultButton())
+                enterKeyType = VKBEnterKeySubmit;
+        }
+    }
+
     FocusLog(LogLevelInfo, "InputHandler::setElementFocused, Type=%d, Style=%d, Keyboard Type=%d, Enter Key=%d", type, m_currentFocusElementTextEditMask, keyboardType, enterKeyType);
     m_webPage->m_client->inputFocusGained(type, m_currentFocusElementTextEditMask, keyboardType, enterKeyType);
 
