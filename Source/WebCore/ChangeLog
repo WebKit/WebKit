@@ -1,3 +1,11 @@
+2012-08-16  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Fix the Mac build.
+
+        Unreviewed build fix.
+
+        * WebCore.exp.in: Export FrameView::didFirstLayout()
+
 2012-08-16  Konrad Piascik  <kpiascik@rim.com>
 
         Add BB10 User Agent String to Web Inspector.
