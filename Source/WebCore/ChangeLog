@@ -1,3 +1,24 @@
+2012-08-16  Max Feil  <mfeil@rim.com>
+
+        [BlackBerry] Some media controls are mispositioned for dynamic live streams (HLS)
+        https://bugs.webkit.org/show_bug.cgi?id=94176
+
+        Reviewed by Antonio Gomes.
+
+        The default HTML5 media controls for dynamic live streams have
+        no timeline or timeline container, which for BlackBerry results
+        in mispositioning of the buttons that are supposed to be to
+        the right of the timeline (fullscreen and mute). Instead of
+        being right justified they incorrectly appear on the left next
+        to the play button. The fix is to explicitly position these 2
+        buttons whenever the media duration is infinite (indicating a
+        live stream).
+
+        Manual test: ManualTests/blackberry/video-hls-controls.html
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore::RenderThemeBlackBerry::adjustMediaControlStyle):
+
 2012-08-16  Abhishek Arya  <inferno@chromium.org>
 
         Regression(r118248): Replaced element not layout

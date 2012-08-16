@@ -1,3 +1,18 @@
+2012-08-16  Max Feil  <mfeil@rim.com>
+
+        [BlackBerry] Some media controls are mispositioned for dynamic live streams (HLS)
+        https://bugs.webkit.org/show_bug.cgi?id=94176
+
+        Reviewed by Antonio Gomes.
+
+        An automated layout test is not possible for this patch because
+        dynamic live streams require a special dedicated web server.
+        Putting an external video URL into an automated test is not
+        correct either. So I have created a manual test that points to
+        an external HLS video that works today.
+
+        * ManualTests/blackberry/video-hls-controls.html: Added.
+
 2012-08-16  Marja Hölttä  <marja@chromium.org>
 
         FormController, WebHistoryItem: Enable reading selected file names from document state

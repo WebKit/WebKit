@@ -763,8 +763,12 @@ bool RenderThemeBlackBerry::paintSliderThumb(RenderObject* object, const PaintIn
 void RenderThemeBlackBerry::adjustMediaControlStyle(StyleResolver*, RenderStyle* style, Element* element) const
 {
     float fullScreenMultiplier = determineFullScreenMultiplier(element);
+    HTMLMediaElement* mediaElement = toParentMediaElement(element);
+    if (!mediaElement)
+        return;
 
     // We use multiples of mediaControlsHeight to make all objects scale evenly
+    Length zero(0, Fixed);
     Length controlsHeight(mediaControlsHeight * fullScreenMultiplier, Fixed);
     Length timeWidth(mediaControlsHeight * 3 / 2 * fullScreenMultiplier, Fixed);
     Length volumeHeight(mediaControlsHeight * 4 * fullScreenMultiplier, Fixed);
@@ -793,6 +797,28 @@ void RenderThemeBlackBerry::adjustMediaControlStyle(StyleResolver*, RenderStyle*
         break;
     default:
         break;
+    }
+
+    if (!isfinite(mediaElement->duration())) {
+        // Live streams have infinite duration with no timeline. Force the mute
+        // and fullscreen buttons to the right. This is needed when webkit does
+        // not render the timeline container because it has a webkit-box-flex
+        // of 1 and normally allows those buttons to be on the right.
+        switch (style->appearance()) {
+        case MediaEnterFullscreenButtonPart:
+        case MediaExitFullscreenButtonPart:
+            style->setPosition(AbsolutePosition);
+            style->setBottom(zero);
+            style->setRight(controlsHeight);
+            break;
+        case MediaMuteButtonPart:
+            style->setPosition(AbsolutePosition);
+            style->setBottom(zero);
+            style->setRight(zero);
+            break;
+        default:
+            break;
+        }
     }
 }
 
