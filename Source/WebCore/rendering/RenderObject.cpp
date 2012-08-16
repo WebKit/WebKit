@@ -586,6 +586,15 @@ RenderFlowThread* RenderObject::enclosingRenderFlowThread() const
     return 0;
 }
 
+RenderNamedFlowThread* RenderObject::enclosingRenderNamedFlowThread() const
+{
+    RenderObject* object = const_cast<RenderObject*>(this);
+    while (object && object->isAnonymousBlock() && !object->isRenderNamedFlowThread())
+        object = object->parent();
+
+    return object && object->isRenderNamedFlowThread() ? toRenderNamedFlowThread(object) : 0;
+}
+
 RenderBlock* RenderObject::firstLineBlock() const
 {
     return 0;
@@ -2352,6 +2361,34 @@ void RenderObject::willBeDestroyed()
     setAncestorLineBoxDirty(false);
 
     clearLayoutRootIfNeeded();
+}
+
+void RenderObject::insertedIntoTree()
+{
+    // FIXME: We should ASSERT(isRooted()) here but generated content makes some out-of-order insertion.
+
+    // Keep our layer hierarchy updated. Optimize for the common case where we don't have any children
+    // and don't have a layer attached to ourselves.
+    RenderLayer* layer = 0;
+    if (firstChild() || hasLayer()) {
+        layer = parent()->enclosingLayer();
+        addLayers(layer);
+    }
+
+    // If |this| is visible but this object was not, tell the layer it has some visible content
+    // that needs to be drawn and layer visibility optimization can't be used
+    if (parent()->style()->visibility() != VISIBLE && style()->visibility() == VISIBLE && !hasLayer()) {
+        if (!layer)
+            layer = parent()->enclosingLayer();
+        if (layer)
+            layer->setHasVisibleContent();
+    }
+
+    if (!isFloating() && parent()->childrenInline())
+        parent()->dirtyLinesFromChangedChild(this);
+
+    if (RenderNamedFlowThread* containerFlowThread = parent()->enclosingRenderNamedFlowThread())
+        containerFlowThread->addFlowChild(this);
 }
 
 void RenderObject::destroyAndCleanupAnonymousWrappers()

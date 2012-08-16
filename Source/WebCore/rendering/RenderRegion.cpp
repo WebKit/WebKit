@@ -357,6 +357,13 @@ void RenderRegion::restoreRegionObjectsOriginalStyle()
     m_renderObjectRegionStyle.swap(temp);
 }
 
+void RenderRegion::insertedIntoTree()
+{
+    RenderReplaced::insertedIntoTree();
+
+    attachRegion();
+}
+
 PassRefPtr<RenderStyle> RenderRegion::computeStyleInRegion(const RenderObject* object)
 {
     ASSERT(object);

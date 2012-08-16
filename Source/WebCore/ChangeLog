@@ -1,3 +1,58 @@
+2012-08-15  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Add a was-inserted-into-tree notification to RenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=93874
+
+        Reviewed by Eric Seidel.
+
+        This change adds insertedIntoTree to RenderObject so that renderers
+        can now do their post-insertion task inside this function.
+
+        Our current architecture has 2 ways of doing post-insertion tasks:
+        - overriding RenderObject::addChild
+        - RenderObjectChildList::insertChildNode / appendChildNode
+
+        Because the former is not guaranteed to be called for each insertion
+        (on top of being called on the parent and not the inserted child), the
+        2 latter functions are the one that have been mostly used recently. This
+        led to code duplication between the functions but also doesn't scale as
+        other renderers need to hop on this notification and currently don't (for
+        example, table parts). The other renderer's migration will be done in
+        follow-up patches.
+
+        Refactoring covered by existing tests.
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::enclosingRenderNamedFlowThread):
+        Moved the code from renderNamedFlowThreadContainer to RenderObject::enclosingRenderNamedFlowThread.
+        This is needed as now 2 classes need to access the function.
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::appendChildNode):
+        (WebCore::RenderObjectChildList::insertChildNode):
+        Moved the code duplicated from those 2 functions into
+        the instances of insertedIntoTree below.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::insertedIntoTree):
+        Base function that needs to be called from all the other
+        specialized functions below.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::insertedIntoTree):
+        * rendering/RenderListItem.h:
+        * rendering/RenderObject.h:
+        * rendering/RenderObjectChildList.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::insertedIntoTree):
+        * rendering/RenderRegion.h:
+        Added the overriden insertedIntoTree function.
+
+        * rendering/RenderQuote.h:
+        Moved the comment from RenderObjectChildList about RenderQuote here.
+
 2012-08-14  Jeffrey Pfau  <jpfau@apple.com>
 
         Allow blocking of Web SQL databases in third-party documents

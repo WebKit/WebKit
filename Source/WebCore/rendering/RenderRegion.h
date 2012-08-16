@@ -100,6 +100,8 @@ public:
 private:
     virtual const char* renderName() const { return "RenderRegion"; }
 
+    virtual void insertedIntoTree() OVERRIDE;
+
     PassRefPtr<RenderStyle> computeStyleInRegion(const RenderObject*);
     void computeChildrenStyleInRegion(const RenderObject*);
     void setRegionObjectsRegionStyle();

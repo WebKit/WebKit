@@ -76,6 +76,13 @@ void RenderListItem::willBeDestroyed()
     RenderBlock::willBeDestroyed();
 }
 
+void RenderListItem::insertedIntoTree()
+{
+    RenderBlock::insertedIntoTree();
+
+    updateListMarkerNumbers();
+}
+
 static bool isList(Node* node)
 {
     return (node->hasTagName(ulTag) || node->hasTagName(olTag));
