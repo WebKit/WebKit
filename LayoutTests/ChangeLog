@@ -1,3 +1,14 @@
+2012-08-15  Lauro Neto  <lauro.neto@openbossa.org>
+
+        [Qt] new test fast/forms/radio/radio-group.html introduced in r104668 fails
+        https://bugs.webkit.org/show_bug.cgi?id=76051
+
+        Reviewed by Csaba Osztrogonác.
+
+        Unskip now working test.
+
+        * platform/qt/Skipped:
+
 2012-08-15  Matt Falkenhagen  <falken@chromium.org>
 
         Add a layout test for :lang() selector observing dynamic changes to lang
