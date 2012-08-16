@@ -1,3 +1,13 @@
+2012-08-15  MORITA Hajime  <morrita@google.com>
+
+        Regression(121518) TextFieldDecorationElement formatting is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=90913
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/shadow-div-reflow-expected.html: Added.
+        * fast/dom/shadow/shadow-div-reflow.html: Added.
+
 2012-08-14  Jeffrey Pfau  <jpfau@apple.com>
 
         Allow blocking of Web SQL databases in third-party documents

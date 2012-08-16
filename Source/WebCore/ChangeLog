@@ -1,3 +1,24 @@
+2012-08-15  MORITA Hajime  <morrita@google.com>
+
+        Regression(121518) TextFieldDecorationElement formatting is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=90913
+
+        Reviewed by Dimitri Glazkov.
+
+        NodeRenderingContext::nextRenderer() has a problem which cannot retrieve the renderer
+        across an insertion point in some case. That is because ad-hoc composed tree traversal on
+        NodeRenderingContext is broken. The problem is hidden before r121518 though.
+
+        This change rewrite nextRenderer() using ComposedShadowTreeWalker to eliminate the ad-hoc
+        traversal. previousRenderer() is also rewritten in the same way.
+
+        Test: fast/dom/shadow/shadow-div-reflow.html
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore):
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::previousRenderer):
+
 2012-08-15  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Add a was-inserted-into-tree notification to RenderObject

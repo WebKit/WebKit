@@ -49,9 +49,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static RenderObject* firstRendererOf(Node*);
-static RenderObject* lastRendererOf(Node*);
-
 NodeRenderingContext::NodeRenderingContext(Node* node)
     : m_node(node)
     , m_style(0)
@@ -82,93 +79,6 @@ PassRefPtr<RenderStyle> NodeRenderingContext::releaseStyle()
     return m_style.release();
 }
 
-static inline RenderObject* nextRendererOfInsertionPoint(InsertionPoint* parent, Node* current)
-{
-    size_t start = parent->indexOf(current);
-    if (notFound == start)
-        return 0;
-
-    for (size_t i = start + 1; i < parent->size(); ++i) {
-        if (RenderObject* renderer = parent->at(i)->renderer())
-            return renderer;
-    }
-
-    return 0;
-}
-
-static inline RenderObject* previousRendererOfInsertionPoint(InsertionPoint* parent, Node* current)
-{
-    RenderObject* lastRenderer = 0;
-
-    for (size_t i = 0; i < parent->size(); ++i) {
-        if (parent->at(i) == current)
-            break;
-        if (RenderObject* renderer = parent->at(i)->renderer())
-            lastRenderer = renderer;
-    }
-
-    return lastRenderer;
-}
-
-static inline RenderObject* firstRendererOfInsertionPoint(InsertionPoint* parent)
-{
-    size_t size = parent->size();
-    for (size_t i = 0; i < size; ++i) {
-        if (RenderObject* renderer = parent->at(i)->renderer())
-            return renderer;
-    }
-
-    return firstRendererOf(parent->firstChild());
-}
-
-static inline RenderObject* lastRendererOfInsertionPoint(InsertionPoint* parent)
-{
-    size_t size = parent->size();
-    for (size_t i = 0; i < size; ++i) {
-        if (RenderObject* renderer = parent->at(size - 1 - i)->renderer())
-            return renderer;
-    }
-
-    return lastRendererOf(parent->lastChild());
-}
-
-static inline RenderObject* firstRendererOf(Node* node)
-{
-    for (; node; node = node->nextSibling()) {
-        if (node->renderer()) {
-            // Do not return elements that are attached to a different flow-thread.
-            if (node->renderer()->style() && !node->renderer()->style()->flowThread().isEmpty())
-                continue;
-            return node->renderer();
-        }
-
-        if (isInsertionPoint(node) && toInsertionPoint(node)->isActive()) {
-            if (RenderObject* first = firstRendererOfInsertionPoint(toInsertionPoint(node)))
-                return first;
-        }
-    }
-
-    return 0;
-}
-
-static inline RenderObject* lastRendererOf(Node* node)
-{
-    for (; node; node = node->previousSibling()) {
-        if (node->renderer()) {
-            // Do not return elements that are attached to a different flow-thread.
-            if (node->renderer()->style() && !node->renderer()->style()->flowThread().isEmpty())
-                continue;
-            return node->renderer();
-        }
-        if (isInsertionPoint(node) && toInsertionPoint(node)->isActive()) {
-            if (RenderObject* last = lastRendererOfInsertionPoint(toInsertionPoint(node)))
-                return last;
-        }
-    }
-
-    return 0;
-}
-
 RenderObject* NodeRenderingContext::nextRenderer() const
 {
     if (RenderObject* renderer = m_node->renderer())
@@ -177,18 +87,26 @@ RenderObject* NodeRenderingContext::nextRenderer() const
     if (m_parentFlowRenderer)
         return m_parentFlowRenderer->nextRendererForNode(m_node);
 
-    if (m_parentDetails.insertionPoint()) {
-        if (RenderObject* found = nextRendererOfInsertionPoint(m_parentDetails.insertionPoint(), m_node))
-            return found;
-        return NodeRenderingContext(m_parentDetails.insertionPoint()).nextRenderer();
-    }
-
     // Avoid an O(N^2) problem with this function by not checking for
     // nextRenderer() when the parent element hasn't attached yet.
-    if (m_node->parentOrHostNode() && !m_node->parentOrHostNode()->attached())
+    if (m_parentDetails.node() && !m_parentDetails.node()->attached())
         return 0;
 
-    return firstRendererOf(m_node->nextSibling());
+    ComposedShadowTreeWalker walker(m_node);
+    do {
+        walker.nextSibling();
+        if (!walker.get())
+            return 0;
+        if (RenderObject* renderer = walker.get()->renderer()) {
+            // Do not return elements that are attached to a different flow-thread.
+            if (renderer->style() && !renderer->style()->flowThread().isEmpty())
+                continue;
+            return renderer;
+        }
+    } while (true);
+
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 RenderObject* NodeRenderingContext::previousRenderer() const
@@ -199,15 +117,24 @@ RenderObject* NodeRenderingContext::previousRenderer() const
     if (m_parentFlowRenderer)
         return m_parentFlowRenderer->previousRendererForNode(m_node);
 
-    if (m_parentDetails.insertionPoint()) {
-        if (RenderObject* found = previousRendererOfInsertionPoint(m_parentDetails.insertionPoint(), m_node))
-            return found;
-        return NodeRenderingContext(m_parentDetails.insertionPoint()).previousRenderer();
-    }
-
     // FIXME: We should have the same O(N^2) avoidance as nextRenderer does
     // however, when I tried adding it, several tests failed.
-    return lastRendererOf(m_node->previousSibling());
+
+    ComposedShadowTreeWalker walker(m_node);
+    do {
+        walker.previousSibling();
+        if (!walker.get())
+            return 0;
+        if (RenderObject* renderer = walker.get()->renderer()) {
+            // Do not return elements that are attached to a different flow-thread.
+            if (renderer->style() && !renderer->style()->flowThread().isEmpty())
+                continue;
+            return renderer;
+        }
+    } while (true);
+
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 RenderObject* NodeRenderingContext::parentRenderer() const

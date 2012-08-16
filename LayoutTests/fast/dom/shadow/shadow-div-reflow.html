@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#host {
+    width: 200px;
+}
+</style>
+</head>
+<body>
+<div id="host" tabindex=0>
+    <div>
+        <div><div>First line leads,</div></div>
+    </div>
+</div>
+<script>
+if (window.internals)
+   internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
+
+var host = document.getElementById("host");
+var shadow1 = new WebKitShadowRoot(host);
+shadow1.innerHTML = "<div><shadow></shadow><div></div></div>";
+var shadow2 = new WebKitShadowRoot(host);
+shadow2.innerHTML = "<section>"
+                 +   "<shadow></shadow>"
+                 +   "<div>second line follows.</div>"
+                 + "</section>";
+host.focus();
+host.blur();
+</script>
+</body>
+</html>
