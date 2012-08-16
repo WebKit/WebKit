@@ -51,9 +51,10 @@ PassRefPtr<DirectoryReaderSync> DirectoryEntrySync::createReader(ExceptionCode&)
     return DirectoryReaderSync::create(m_fileSystem, m_fullPath);
 }
 
-PassRefPtr<FileEntrySync> DirectoryEntrySync::getFile(const String& path, PassRefPtr<WebKitFlags> flags, ExceptionCode& ec)
+PassRefPtr<FileEntrySync> DirectoryEntrySync::getFile(const String& path, const Dictionary& options, ExceptionCode& ec)
 {
     ec = 0;
+    FileSystemFlags flags(options);
     EntrySyncCallbackHelper helper(m_fileSystem->asyncFileSystem());
     if (!m_fileSystem->getFile(this, path, flags, helper.successCallback(), helper.errorCallback())) {
         ec = FileException::INVALID_MODIFICATION_ERR;
@@ -62,9 +63,10 @@ PassRefPtr<FileEntrySync> DirectoryEntrySync::getFile(const String& path, PassRe
     return static_pointer_cast<FileEntrySync>(helper.getResult(ec));
 }
 
-PassRefPtr<DirectoryEntrySync> DirectoryEntrySync::getDirectory(const String& path, PassRefPtr<WebKitFlags> flags, ExceptionCode& ec)
+PassRefPtr<DirectoryEntrySync> DirectoryEntrySync::getDirectory(const String& path, const Dictionary& options, ExceptionCode& ec)
 {
     ec = 0;
+    FileSystemFlags flags(options);
     EntrySyncCallbackHelper helper(m_fileSystem->asyncFileSystem());
     if (!m_fileSystem->getDirectory(this, path, flags, helper.successCallback(), helper.errorCallback())) {
         ec = FileException::INVALID_MODIFICATION_ERR;

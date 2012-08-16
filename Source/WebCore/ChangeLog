@@ -1,3 +1,55 @@
+2012-08-16  Adam Barth  <abarth@webkit.org>
+
+        DirectoryEntry should use Dictionary rather than custom bindings code
+        https://bugs.webkit.org/show_bug.cgi?id=94207
+
+        Reviewed by Eric Seidel.
+
+        Since this code was written, we added native support for WebIDL
+        Dictionary objects. This patch moves DirectoryEntry to use this
+        automatic facility instead of custom code.
+
+        I've also renamed and simplified WebKitFlags. This is possible because
+        this object was no longer exposed via IDL (even before to this patch).
+
+        * GNUmakefile.list.am:
+        * Modules/filesystem/DOMFileSystemBase.cpp:
+        (WebCore::DOMFileSystemBase::getFile):
+        (WebCore::DOMFileSystemBase::getDirectory):
+        * Modules/filesystem/DOMFileSystemBase.h:
+        (DOMFileSystemBase):
+        * Modules/filesystem/DirectoryEntry.cpp:
+        (WebCore::DirectoryEntry::getFile):
+        (WebCore::DirectoryEntry::getDirectory):
+        * Modules/filesystem/DirectoryEntry.h:
+        (DirectoryEntry):
+        * Modules/filesystem/DirectoryEntry.idl:
+        * Modules/filesystem/DirectoryEntrySync.cpp:
+        (WebCore::DirectoryEntrySync::getFile):
+        (WebCore::DirectoryEntrySync::getDirectory):
+        * Modules/filesystem/DirectoryEntrySync.h:
+        (DirectoryEntrySync):
+        * Modules/filesystem/DirectoryEntrySync.idl:
+        * Modules/filesystem/FileSystemCallbacks.cpp:
+        (WebCore):
+        (WebCore::ResolveURICallbacks::didOpenFileSystem):
+        * Modules/filesystem/FileSystemFlags.h: Renamed from Source/WebCore/Modules/filesystem/WebKitFlags.h.
+        (WebCore):
+        (WebCore::FileSystemFlags::FileSystemFlags):
+        (FileSystemFlags):
+        * Modules/filesystem/WorkerContextFileSystem.cpp:
+        (WebCore::WorkerContextFileSystem::webkitResolveLocalFileSystemSyncURL):
+        * Target.pri:
+        * UseJSC.cmake:
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDirectoryEntryCustom.cpp: Removed.
+        * bindings/js/JSDirectoryEntrySyncCustom.cpp: Removed.
+        * bindings/v8/custom/V8DirectoryEntryCustom.cpp: Removed.
+        * bindings/v8/custom/V8DirectoryEntrySyncCustom.cpp: Removed.
+
 2012-08-15  Antti Koivisto  <antti@apple.com>
 
         Remove StyleSheetContents::m_finalURL 

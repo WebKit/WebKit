@@ -127,9 +127,9 @@ PassRefPtr<EntrySync> WorkerContextFileSystem::webkitResolveLocalFileSystemSyncU
     if (!fileSystem)
         return 0;
 
-    RefPtr<EntrySync> entry = fileSystem->root()->getDirectory(filePath, 0, ec);
+    RefPtr<EntrySync> entry = fileSystem->root()->getDirectory(filePath, Dictionary(), ec);
     if (ec == FileException::TYPE_MISMATCH_ERR)
-        return fileSystem->root()->getFile(filePath, 0, ec);
+        return fileSystem->root()->getFile(filePath, Dictionary(), ec);
 
     return entry.release();
 }

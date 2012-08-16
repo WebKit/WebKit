@@ -94,8 +94,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp
     bindings/v8/custom/V8DeviceMotionEventCustom.cpp
     bindings/v8/custom/V8DeviceOrientationEventCustom.cpp
-    bindings/v8/custom/V8DirectoryEntryCustom.cpp
-    bindings/v8/custom/V8DirectoryEntrySyncCustom.cpp
     bindings/v8/custom/V8DocumentCustom.cpp
     bindings/v8/custom/V8DocumentLocationCustom.cpp
     bindings/v8/custom/V8EntrySyncCustom.cpp

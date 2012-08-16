@@ -34,17 +34,22 @@ function errorCallback(error) {
 
 // Test body functions ----------------------------------------------------
 function runNullTest(v) {
-    debug("* Passing null as a WebKitFlags parameter.");
+    debug("* Passing null as a flags parameter.");
 
     // This should be ok and we treat it as {false, false} Flags.
     fileSystem.root.getFile(testFileName, null, runNextTest, errorCallback);
 }
 
 function runNonObjectTest(v) {
-    debug("* Passing a number as a WebKitFlags parameter.");
+    debug("* Passing a number as a flags parameter.");
 
-    // This should be ok and we treat it as {false, false} Flags.
-    fileSystem.root.getFile(testFileName, 7, runNextTest, errorCallback);
+    try {
+        // This should be not be ok because 7 is not an object.
+        fileSystem.root.getFile(testFileName, 7, errorCallback, errorCallback);
+    } catch (ex) {
+        debug("Caught exception: " + ex);
+        runNextTest();
+    }
 }
 
 function runObjectTest(v) {

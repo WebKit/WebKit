@@ -5,8 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 * Passing JSON Flags object.
 * Passing JSON Flags object (with exclusive=true).
-* Passing null as a WebKitFlags parameter.
-* Passing a number as a WebKitFlags parameter.
+* Passing null as a flags parameter.
+* Passing a number as a flags parameter.
+Caught exception: TypeError: Not an object.
 Finished running tests.
 PASS expectedCallbacksCount is 1
 PASS unexpectedCallbacksCount is 0

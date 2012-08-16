@@ -1,3 +1,20 @@
+2012-08-16  Adam Barth  <abarth@webkit.org>
+
+        DirectoryEntry should use Dictionary rather than custom bindings code
+        https://bugs.webkit.org/show_bug.cgi?id=94207
+
+        Reviewed by Eric Seidel.
+
+        This patch changes our behavior slightly in that passing a non-object
+        as a flags Dictionary throws an exception rather than being treated as
+        an empty dictionary. This new behavior matches the WebIDL spec and
+        hopefully won't cause compat problems.
+
+        * fast/filesystem/flags-passing-expected.txt:
+        * fast/filesystem/script-tests/flags-passing.js:
+        (runNullTest):
+        (runNonObjectTest):
+
 2012-08-16  Brady Eidson  <beidson@apple.com>
 
         http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked.html fails (results weren't updated in r125772)

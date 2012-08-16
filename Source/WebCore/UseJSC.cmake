@@ -250,8 +250,6 @@ ENDIF ()
 
 if (ENABLE_FILE_SYSTEM)
     LIST(APPEND WebCore_SOURCES
-        bindings/js/JSDirectoryEntryCustom.cpp
-        bindings/js/JSDirectoryEntrySyncCustom.cpp
         bindings/js/JSEntryCustom.cpp
         bindings/js/JSEntrySyncCustom.cpp
     )

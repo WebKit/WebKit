@@ -222,29 +222,29 @@ bool DOMFileSystemBase::getParent(const EntryBase* entry, PassRefPtr<EntryCallba
     return true;
 }
 
-bool DOMFileSystemBase::getFile(const EntryBase* entry, const String& path, PassRefPtr<WebKitFlags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+bool DOMFileSystemBase::getFile(const EntryBase* entry, const String& path, const FileSystemFlags& flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     String absolutePath;
     if (!pathToAbsolutePath(m_type, entry, path, absolutePath))
         return false;
 
     OwnPtr<EntryCallbacks> callbacks = EntryCallbacks::create(successCallback, errorCallback, this, absolutePath, false);
-    if (flags && flags->isCreate())
-        m_asyncFileSystem->createFile(createFileSystemURL(absolutePath), flags->isExclusive(), callbacks.release());
+    if (flags.create)
+        m_asyncFileSystem->createFile(createFileSystemURL(absolutePath), flags.exclusive, callbacks.release());
     else
         m_asyncFileSystem->fileExists(createFileSystemURL(absolutePath), callbacks.release());
     return true;
 }
 
-bool DOMFileSystemBase::getDirectory(const EntryBase* entry, const String& path, PassRefPtr<WebKitFlags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+bool DOMFileSystemBase::getDirectory(const EntryBase* entry, const String& path, const FileSystemFlags& flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     String absolutePath;
     if (!pathToAbsolutePath(m_type, entry, path, absolutePath))
         return false;
 
     OwnPtr<EntryCallbacks> callbacks = EntryCallbacks::create(successCallback, errorCallback, this, absolutePath, true);
-    if (flags && flags->isCreate())
-        m_asyncFileSystem->createDirectory(createFileSystemURL(absolutePath), flags->isExclusive(), callbacks.release());
+    if (flags.create)
+        m_asyncFileSystem->createDirectory(createFileSystemURL(absolutePath), flags.exclusive, callbacks.release());
     else
         m_asyncFileSystem->directoryExists(createFileSystemURL(absolutePath), callbacks.release());
     return true;

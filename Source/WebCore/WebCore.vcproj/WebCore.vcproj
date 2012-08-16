@@ -24730,6 +24730,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Modules\filesystem\FileSystemFlags.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\filesystem\FileSystemType.h"
 					>
 				</File>
@@ -24783,10 +24787,6 @@
 				</File>
 				<File
 					RelativePath="..\Modules\filesystem\SyncCallbackHelper.h"
-					>
-				</File>
-				<File
-					RelativePath="..\Modules\filesystem\WebKitFlags.h"
 					>
 				</File>
 				<File
@@ -65667,14 +65667,6 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSDictionary.h"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSDirectoryEntryCustom.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSDirectoryEntrySyncCustom.cpp"
 					>
 				</File>
 				<File

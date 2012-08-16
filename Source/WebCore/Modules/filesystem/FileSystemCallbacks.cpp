@@ -173,7 +173,7 @@ public:
     {
         ASSERT(error);
         if (error->code() == FileError::TYPE_MISMATCH_ERR)
-            m_root->getFile(m_filePath, 0, m_successCallback, m_errorCallback);
+            m_root->getFile(m_filePath, Dictionary(), m_successCallback, m_errorCallback);
         else if (m_errorCallback)
             m_errorCallback->handleEvent(error);
         return true;
@@ -215,7 +215,7 @@ void ResolveURICallbacks::didOpenFileSystem(const String& name, const KURL& root
 {
     ASSERT(asyncFileSystem);
     RefPtr<DirectoryEntry> root = DOMFileSystem::create(m_scriptExecutionContext.get(), name, m_type, rootURL, asyncFileSystem)->root();
-    root->getDirectory(m_filePath, 0, m_successCallback, ErrorCallbackWrapper::create(m_successCallback, m_errorCallback, root, m_filePath));
+    root->getDirectory(m_filePath, Dictionary(), m_successCallback, ErrorCallbackWrapper::create(m_successCallback, m_errorCallback, root, m_filePath));
 }
 
 // MetadataCallbacks ----------------------------------------------------------

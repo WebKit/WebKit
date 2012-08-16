@@ -28,40 +28,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitFlags_h
-#define WebKitFlags_h
+#ifndef FileSystemFlags_h
+#define FileSystemFlags_h
 
 #if ENABLE(FILE_SYSTEM)
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include "Dictionary.h"
 
 namespace WebCore {
 
-class WebKitFlags : public RefCounted<WebKitFlags> {
-public:
-    static PassRefPtr<WebKitFlags> create(bool create = false, bool exclusive = false)
+struct FileSystemFlags  {
+    explicit FileSystemFlags(const Dictionary& options)
+        : create(false)
+        , exclusive(false)
     {
-        return adoptRef(new WebKitFlags(create, exclusive));
+        options.get("create", create);
+        options.get("exclusive", exclusive);
     }
 
-    bool isCreate() const { return m_create; }
-    void setCreate(bool create) { m_create = create; }
-    bool isExclusive() const { return m_exclusive; }
-    void setExclusive(bool exclusive) { m_exclusive = exclusive; }
-
-private:
-    WebKitFlags(bool create, bool exclusive)
-        : m_create(create)
-        , m_exclusive(exclusive)
-    {
-    }
-    bool m_create;
-    bool m_exclusive;
+    bool create;
+    bool exclusive;
 };
 
-} // namespace
+}
 
 #endif // ENABLE(FILE_SYSTEM)
 
-#endif // WebKitFlags_h
+#endif // FileSystemFlags_h

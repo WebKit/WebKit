@@ -1751,6 +1751,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/filesystem/FileSystemCallback.h \
 	Source/WebCore/Modules/filesystem/FileSystemCallbacks.cpp \
 	Source/WebCore/Modules/filesystem/FileSystemCallbacks.h \
+	Source/WebCore/Modules/filesystem/FileSystemFlags.h \
 	Source/WebCore/Modules/filesystem/FileSystemType.h \
 	Source/WebCore/Modules/filesystem/FileWriter.cpp \
 	Source/WebCore/Modules/filesystem/FileWriter.h \
@@ -1764,7 +1765,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/filesystem/LocalFileSystem.h \
 	Source/WebCore/Modules/filesystem/MetadataCallback.h \
 	Source/WebCore/Modules/filesystem/Metadata.h \
-	Source/WebCore/Modules/filesystem/WebKitFlags.h \
 	Source/WebCore/Modules/filesystem/WorkerContextFileSystem.cpp \
 	Source/WebCore/Modules/filesystem/WorkerContextFileSystem.h \
 	Source/WebCore/Modules/gamepad/Gamepad.cpp \
@@ -2224,8 +2224,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSDedicatedWorkerContextCustom.cpp \
 	Source/WebCore/bindings/js/JSDeviceMotionEventCustom.cpp \
 	Source/WebCore/bindings/js/JSDeviceOrientationEventCustom.cpp \
-	Source/WebCore/bindings/js/JSDirectoryEntryCustom.cpp \
-	Source/WebCore/bindings/js/JSDirectoryEntrySyncCustom.cpp \
 	Source/WebCore/bindings/js/JSDocumentCustom.cpp \
 	Source/WebCore/bindings/js/JSElementCustom.cpp \
 	Source/WebCore/bindings/js/JSEntryCustom.cpp \

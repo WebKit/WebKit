@@ -2986,13 +2986,13 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         Modules/filesystem/FileEntrySync.h \
         Modules/filesystem/FileSystemCallback.h \
         Modules/filesystem/FileSystemCallbacks.h \
+        Modules/filesystem/FileSystemFlags.h \
         Modules/filesystem/FileWriter.h \
         Modules/filesystem/FileWriterBase.h \
         Modules/filesystem/FileWriterBaseCallback.h \
         Modules/filesystem/FileWriterCallback.h \
         Modules/filesystem/FileWriterClient.h \
         Modules/filesystem/FileWriterSync.h \
-        Modules/filesystem/WebKitFlags.h \
         Modules/filesystem/LocalFileSystem.h \
         Modules/filesystem/Metadata.h \
         Modules/filesystem/MetadataCallback.h \
@@ -3001,8 +3001,6 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         platform/FileMetadata.h
 
     SOURCES += \
-        bindings/js/JSDirectoryEntryCustom.cpp \
-        bindings/js/JSDirectoryEntrySyncCustom.cpp \
         bindings/js/JSEntryCustom.cpp \
         bindings/js/JSEntrySyncCustom.cpp \
         platform/AsyncFileSystem.cpp
