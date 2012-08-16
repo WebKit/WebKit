@@ -1,3 +1,9 @@
+2012-08-16  Peter Beverloo  <peter@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-08-16  Keishi Hattori  <keishi@webkit.org>
 
         DOMWindowPagePopup needs to be installed before loading the html inside the page popup
