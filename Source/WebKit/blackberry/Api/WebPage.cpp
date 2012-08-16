@@ -1041,11 +1041,9 @@ void WebPagePrivate::setLoadState(LoadState state)
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
-            if (isAcceleratedCompositingActive()) {
-                Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(
-                    Platform::createMethodCallMessage(&WebPagePrivate::destroyLayerResources, this));
-            }
+            releaseLayerResources();
 #endif
+
             // Suspend screen update to avoid ui thread blitting while resetting backingstore.
             m_backingStore->d->suspendScreenAndBackingStoreUpdates();
 
@@ -5912,7 +5910,19 @@ void WebPagePrivate::syncDestroyCompositorOnCompositingThread()
             &WebPagePrivate::destroyCompositor, this));
 }
 
-void WebPagePrivate::destroyLayerResources()
+void WebPagePrivate::releaseLayerResources()
+{
+    if (!isAcceleratedCompositingActive())
+        return;
+
+    if (m_frameLayers)
+        m_frameLayers->releaseLayerResources();
+
+    Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(
+        Platform::createMethodCallMessage(&WebPagePrivate::releaseLayerResourcesCompositingThread, this));
+}
+
+void WebPagePrivate::releaseLayerResourcesCompositingThread()
 {
      m_compositor->releaseLayerResources();
 }
@@ -5927,8 +5937,7 @@ void WebPagePrivate::suspendRootLayerCommit()
     if (!m_compositor)
         return;
 
-    Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(
-        Platform::createMethodCallMessage(&WebPagePrivate::destroyLayerResources, this));
+    releaseLayerResources();
 }
 
 void WebPagePrivate::resumeRootLayerCommit()

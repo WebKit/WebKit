@@ -59,6 +59,7 @@ EGLImageLayerWebKitThread::~EGLImageLayerWebKitThread()
     ASSERT(!m_frontBufferTexture);
     ASSERT(!m_fbo);
     ASSERT(!m_shader);
+    ASSERT(!m_image);
 }
 
 void EGLImageLayerWebKitThread::setNeedsDisplay()
@@ -124,6 +125,13 @@ void EGLImageLayerWebKitThread::deleteFrontBuffer()
     m_fbo = 0;
     glDeleteShader(m_shader);
     m_shader = 0;
+
+    // The image is in our EGLImageLayerCompositingThreadClient's custody
+    // at this point, and that object is responsible for deleting it.
+    m_image = 0;
+
+    // If anyone tries to render us after this, we're certainly going to need display.
+    m_needsDisplay = true;
 }
 
 void EGLImageLayerWebKitThread::commitPendingTextureUploads()

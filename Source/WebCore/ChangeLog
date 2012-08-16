@@ -1,3 +1,66 @@
+2012-08-16  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] WebGL and Canvas fail to display after being restored from page cache
+        https://bugs.webkit.org/show_bug.cgi?id=94105
+
+        Reviewed by George Staikos.
+
+        The EGLImage was being destroyed when releasing layer resources on the
+        compositing thread, but the WebKit thread layer never found out and
+        failed to create a new image.
+
+        Fixed by extending the release layer resources mechanism to also make a
+        pass on the WebKit thread so that thread's layers have a chance to
+        delete their textures and related resources.
+
+        WebGL and canvas layers now take this opportunity to release their
+        textures so the EGLImage gets recreated when compositing commits
+        resume.
+
+        The only detail that deserves extra explanation is the ownership of the
+        EGLImage.
+
+        Since the EGLImage is created in updateTextureContentsIfNeeded() and
+        that one is always followed by commitPendingTextureUploads() which
+        transfers the EGLImage to the compositing thread layer's custody, the
+        EGLImage currently referenced by EGLImageLayerWebKitThread::m_image
+        should never be deleted by the WebKit thread layer.
+
+        Thus all we have to do in deleteFrontBuffer() is to set the m_image
+        member to 0 so the image gets recreated on the next commit. It will be
+        deleted by the part of releaseLayerResources() that executes on the
+        compositing thread (which, if you recall, was the original source of
+        this bug).
+
+        Reviewed internally by Filip Spacek.
+
+        PR 192899
+
+        Not currently testable by the BlackBerry testing infrastructure.
+
+        * platform/graphics/blackberry/CanvasLayerWebKitThread.cpp:
+        (WebCore::CanvasLayerWebKitThread::deleteTextures):
+        (WebCore):
+        * platform/graphics/blackberry/CanvasLayerWebKitThread.h:
+        (CanvasLayerWebKitThread):
+        * platform/graphics/blackberry/EGLImageLayerWebKitThread.cpp:
+        (WebCore::EGLImageLayerWebKitThread::~EGLImageLayerWebKitThread):
+        (WebCore::EGLImageLayerWebKitThread::deleteFrontBuffer):
+        * platform/graphics/blackberry/EGLImageLayerWebKitThread.h:
+        (EGLImageLayerWebKitThread):
+        * platform/graphics/blackberry/LayerWebKitThread.cpp:
+        (WebCore::LayerWebKitThread::releaseLayerResources):
+        (WebCore):
+        * platform/graphics/blackberry/LayerWebKitThread.h:
+        (LayerWebKitThread):
+        (WebCore::LayerWebKitThread::deleteTextures):
+        * platform/graphics/blackberry/WebGLLayerWebKitThread.cpp:
+        (WebCore::WebGLLayerWebKitThread::~WebGLLayerWebKitThread):
+        (WebCore::WebGLLayerWebKitThread::deleteTextures):
+        (WebCore):
+        * platform/graphics/blackberry/WebGLLayerWebKitThread.h:
+        (WebGLLayerWebKitThread):
+
 2012-08-16  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: enable instrumentation of platform code

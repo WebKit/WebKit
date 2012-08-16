@@ -119,6 +119,12 @@ void FrameLayers::calculateRootLayer()
         m_rootLayer = 0;
 }
 
+void FrameLayers::releaseLayerResources()
+{
+    if (m_rootLayer)
+        m_rootLayer->releaseLayerResources();
+}
+
 } // namespace BlackBerry
 } // namespace WebKit
 

@@ -419,7 +419,8 @@ public:
     bool createCompositor();
     void destroyCompositor();
     void syncDestroyCompositorOnCompositingThread();
-    void destroyLayerResources();
+    void releaseLayerResources();
+    void releaseLayerResourcesCompositingThread();
     void suspendRootLayerCommit();
     void resumeRootLayerCommit();
     void blitVisibleContents();

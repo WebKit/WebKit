@@ -34,7 +34,7 @@ WebGLLayerWebKitThread::WebGLLayerWebKitThread()
 
 WebGLLayerWebKitThread::~WebGLLayerWebKitThread()
 {
-    if (m_webGLContext->makeContextCurrent())
+    if (m_webGLContext && m_webGLContext->makeContextCurrent())
         deleteFrontBuffer();
 }
 
@@ -46,6 +46,12 @@ void WebGLLayerWebKitThread::updateTextureContentsIfNeeded()
     m_webGLContext->prepareTexture();
 
     updateFrontBuffer(m_webGLContext->getInternalFramebufferSize(), m_webGLContext->platformTexture());
+}
+
+void WebGLLayerWebKitThread::deleteTextures()
+{
+    if (m_webGLContext && m_webGLContext->makeContextCurrent())
+        deleteFrontBuffer();
 }
 
 } // namespace WebCore

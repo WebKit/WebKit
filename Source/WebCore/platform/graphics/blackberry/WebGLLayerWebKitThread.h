@@ -40,6 +40,7 @@ public:
 
 protected:
     virtual void updateTextureContentsIfNeeded();
+    virtual void deleteTextures();
 
 private:
     WebGLLayerWebKitThread();

@@ -57,6 +57,8 @@ public:
     // But it's now also being called on the Compositing thread.
     WebCore::LayerWebKitThread* rootLayer() const { return m_rootLayer; }
 
+    void releaseLayerResources();
+
 private:
     WebPagePrivate* m_pagePrivate;
     OwnPtr<WebCore::GraphicsLayer> m_rootGraphicsLayer;

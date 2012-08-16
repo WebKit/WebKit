@@ -517,6 +517,21 @@ void LayerWebKitThread::setSuspendedAnimations(const Vector<RefPtr<LayerAnimatio
     setNeedsCommit();
 }
 
+void LayerWebKitThread::releaseLayerResources()
+{
+    deleteTextures();
+
+    size_t listSize = m_sublayers.size();
+    for (size_t i = 0; i < listSize; i++)
+        m_sublayers[i]->releaseLayerResources();
+
+    if (maskLayer())
+        maskLayer()->releaseLayerResources();
+
+    if (replicaLayer())
+        replicaLayer()->releaseLayerResources();
+}
+
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)

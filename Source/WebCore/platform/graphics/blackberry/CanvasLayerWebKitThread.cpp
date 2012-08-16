@@ -64,6 +64,12 @@ void CanvasLayerWebKitThread::updateTextureContentsIfNeeded()
     updateFrontBuffer(IntSize(m_device->width(), m_device->height()), texture->getTextureHandle());
 }
 
+void CanvasLayerWebKitThread::deleteTextures()
+{
+    if (SharedGraphicsContext3D::get()->makeContextCurrent())
+        deleteFrontBuffer();
+}
+
 }
 
 #endif // USE(ACCELERATED_COMPOSITING) && ENABLE(ACCELERATED_2D_CANVAS)

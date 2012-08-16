@@ -42,6 +42,7 @@ public:
 
 protected:
     virtual void updateTextureContentsIfNeeded();
+    virtual void deleteTextures();
 
 private:
     CanvasLayerWebKitThread(SkGpuDevice*);

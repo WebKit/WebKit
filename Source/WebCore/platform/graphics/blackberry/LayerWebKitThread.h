@@ -160,6 +160,8 @@ public:
     // Allows you to clear the LayerCompositingThread::overrides from the WK thread
     void clearOverride() { m_clearOverrideOnCommit = true; setNeedsCommit(); }
 
+    void releaseLayerResources();
+
 protected:
     LayerWebKitThread(LayerType, GraphicsLayerBlackBerry* owner);
 
@@ -174,6 +176,7 @@ protected:
     virtual void boundsChanged() { }
     virtual void updateTextureContentsIfNeeded();
     virtual void commitPendingTextureUploads();
+    virtual void deleteTextures() { }
 
 private:
     void updateLayerHierarchy();

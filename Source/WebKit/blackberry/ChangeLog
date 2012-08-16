@@ -1,3 +1,36 @@
+2012-08-16  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] WebGL and Canvas fail to display after being restored from page cache
+        https://bugs.webkit.org/show_bug.cgi?id=94105
+
+        Reviewed by George Staikos.
+
+        The EGLImage was being destroyed when releasing layer resources on the
+        compositing thread, but the WebKit thread layer never found out and
+        failed to create a new image.
+
+        Fixed by extending the release layer resources mechanism to also make a
+        pass on the WebKit thread so that thread's layers have a chance to
+        delete their textures and related resources.
+
+        Reviewed internally by Filip Spacek.
+
+        PR 192899
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::releaseLayerResources):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::releaseLayerResourcesCompositingThread):
+        (BlackBerry::WebKit::WebPagePrivate::suspendRootLayerCommit):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebKitSupport/FrameLayers.cpp:
+        (BlackBerry::WebKit::FrameLayers::releaseLayerResources):
+        (WebKit):
+        * WebKitSupport/FrameLayers.h:
+        (FrameLayers):
+
 2012-08-16  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Remove FontQt4, HAVE_QRAWFONT flag and the related dead code

@@ -41,6 +41,7 @@ protected:
 
     virtual void updateTextureContentsIfNeeded() = 0;
     virtual void commitPendingTextureUploads();
+    virtual void deleteTextures() = 0;
 
     // The context must be current before you call any of these
     void updateFrontBuffer(const IntSize&, unsigned backBufferTexture);
