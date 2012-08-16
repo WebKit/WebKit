@@ -115,7 +115,7 @@ void TextCheckerEnchant::checkSpellingOfString(const String& string, int& misspe
             g_utf8_strncpy(word.get(), cstart, wordLength);
 
             for (; dictIter != m_enchantDictionaries.end(); ++dictIter) {
-                if (enchant_dict_check(*dictIter, word.get(), wordLength)) {
+                if (enchant_dict_check(*dictIter, word.get(), bytes)) {
                     misspellingLocation = start;
                     misspellingLength = wordLength;
                 } else {

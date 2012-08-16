@@ -1,3 +1,17 @@
+2012-08-16  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Bad utf8 data is being passed to enchant_dict_check
+        https://bugs.webkit.org/show_bug.cgi?id=94202
+
+        Reviewed by Martin Robinson.
+
+        Pass the number of bytes instead of the number of UTF8 characters
+        when calling enchant_dict_check.
+
+        * platform/text/gtk/TextCheckerEnchant.cpp:
+        (TextCheckerEnchant::checkSpellingOfString): Use 'bytes' instead
+        of 'wordLength'.
+
 2012-08-16  Sergey Rogulenko  <rogulenko@google.com>
 
         Web Inspector: added Paint events for Images to TimelineAgent
