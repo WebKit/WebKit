@@ -1,3 +1,9 @@
+2012-08-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-08-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update manual tests and comments to refer to TestRunner instead of LayoutTestController
