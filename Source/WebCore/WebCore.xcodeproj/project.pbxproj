@@ -1801,6 +1801,7 @@
 		65DF326109D1E199000BE325 /* UserAgentStyleSheetsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581AF09D14EE6000E61D7 /* UserAgentStyleSheetsData.cpp */; };
 		65E0E9441133C89F00B4CB10 /* JSDOMWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E0E9431133C89F00B4CB10 /* JSDOMWrapper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65FEA86909833ADE00BED4AB /* Page.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FEA86809833ADE00BED4AB /* Page.cpp */; };
+		6B3480940EEF50D400AC1B41 /* NativeImagePtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B3480920EEF50D400AC1B41 /* NativeImagePtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6E21C6C01126338500A7BE02 /* GraphicsContext3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C6BF1126338500A7BE02 /* GraphicsContext3D.cpp */; };
 		6E21C6C21126339900A7BE02 /* GraphicsContext3DCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C6C11126339900A7BE02 /* GraphicsContext3DCG.cpp */; };
 		6E3FAD3814733F4000E42306 /* JSWebGLCompressedTextureS3TC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E3FAD3614733F4000E42306 /* JSWebGLCompressedTextureS3TC.cpp */; };
@@ -1960,8 +1961,7 @@
 		7B1EA0CF1576C5B50060177D /* JSUndoManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B1EA0CD1576C5B50060177D /* JSUndoManager.h */; };
 		7B9184D215758E420092AA93 /* UndoManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B9184CF15758E420092AA93 /* UndoManager.cpp */; };
 		7B9184D315758E420092AA93 /* UndoManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B9184D015758E420092AA93 /* UndoManager.h */; };
-        7C522D4B15B477E8009B7C95 /* InspectorOverlay.cpp */ = {isa = PBXBuildFile; fileRef = 7C522D4915B477E8009B7C95 /* InspectorOverlay.cpp */; };
-        7C522D4C15B478B2009B7C95 /* InspectorOverlay.h */ = {isa = PBXBuildFile; fileRef = 7C522D4A15B477E8009B7C95 /* InspectorOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C522D4B15B477E8009B7C95 /* InspectorOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C522D4915B477E8009B7C95 /* InspectorOverlay.cpp */; };
 		7E33CD01127F340D00BE8F17 /* PurgePriority.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E33CD00127F340D00BE8F17 /* PurgePriority.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E37EF2E1339208800B29250 /* SubresourceLoaderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E37EF2D1339208800B29250 /* SubresourceLoaderCF.cpp */; };
 		7E99AF510B13846468FB01A5 /* WindowFocusAllowedIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E99AF520B13846468FB01A5 /* WindowFocusAllowedIndicator.cpp */; };
@@ -4825,7 +4825,6 @@
 		B27535740B053814002CE64F /* IntRect.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535460B053814002CE64F /* IntRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B27535750B053814002CE64F /* IntSize.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535470B053814002CE64F /* IntSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B27535760B053814002CE64F /* IntSizeHash.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535480B053814002CE64F /* IntSizeHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6B3480940EEF50D400AC1B41 /* NativeImagePtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B3480920EEF50D400AC1B41 /* NativeImagePtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B27535770B053814002CE64F /* ColorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B275354A0B053814002CE64F /* ColorMac.mm */; };
 		B27535780B053814002CE64F /* FloatPointMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B275354B0B053814002CE64F /* FloatPointMac.mm */; };
 		B27535790B053814002CE64F /* FloatRectMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B275354C0B053814002CE64F /* FloatRectMac.mm */; };
@@ -23634,7 +23633,6 @@
 				7ACD88D414C08BD60084EDD2 /* InspectorIndexedDBAgent.h in Headers */,
 				20D629271253690B00081543 /* InspectorInstrumentation.h in Headers */,
 				7AA51DD6148506A900AD2752 /* InspectorMemoryAgent.h in Headers */,
-                7C522D4C15B478B2009B7C95 /* InspectorOverlay.h in Headers */,
 				4F6FDD651341DEDD001F8EE3 /* InspectorPageAgent.h in Headers */,
 				9F0D6B2F121BFEBA006C0288 /* InspectorProfilerAgent.h in Headers */,
 				82AB1776125C826700C5069D /* InspectorResourceAgent.h in Headers */,
