@@ -1,5 +1,18 @@
 2012-08-16  Adrienne Walker  <enne@google.com>
 
+        Remove text output from overflow-hidden-canvas-layer test
+        https://bugs.webkit.org/show_bug.cgi?id=94050
+
+        Unreviewed gardening.
+
+        This was added in r125758 and doesn't need a text dump.
+
+        * compositing/overflow/overflow-hidden-canvas-layer-expected.txt:
+        * compositing/overflow/overflow-hidden-canvas-layer.html:
+        * platform/chromium-linux/compositing/overflow/overflow-hidden-canvas-layer-expected.txt: Removed.
+
+2012-08-16  Adrienne Walker  <enne@google.com>
+
         [chromium] Mark http/tests/inspector/indexeddb/resources-panel.html as debug crasher
         https://bugs.webkit.org/show_bug.cgi?id=94261
 
