@@ -1,3 +1,9 @@
+2012-08-16  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed gardening. Update expectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-16  Ojan Vafai  <ojan@chromium.org>
 
         Fix test added in r125635. The test failed on non-chromium ports due

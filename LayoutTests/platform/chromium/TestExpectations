@@ -3509,3 +3509,6 @@ BUGWK94078 WIN RELEASE : http/tests/inspector/web-socket-frame-error.html = PASS
 
 BUGWK94156 DEBUG : accessibility/canvas-fallback-content.html = PASS CRASH
 BUGWK94156 DEBUG : platform/chromium/virtual/gpu/fast/canvas/fallback-content.html = PASS CRASH
+BUGWK94156 DEBUG : fast/canvas/fallback-content.html = PASS CRASH
+
+BUGWK94256 DEBUG : fast/block/inline-children-root-linebox-crash.html = PASS CRASH
