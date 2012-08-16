@@ -49,7 +49,7 @@ class MainTest(unittest.TestCase):
         self.assertEquals(stream.buflist, contents)
 
     class TestDriver:
-        def run_test(self, driver_input):
+        def run_test(self, driver_input, stop_when_done):
             text = ''
             timeout = False
             crash = False

@@ -182,7 +182,7 @@ class DriverTest(unittest.TestCase):
             def has_crashed(self):
                 return self.crashed
 
-            def stop(self):
+            def stop(self, timeout):
                 pass
 
         def assert_crash(driver, error_line, crashed, name, pid, unresponsive=False):

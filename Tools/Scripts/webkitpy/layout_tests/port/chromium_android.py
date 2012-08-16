@@ -173,6 +173,10 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         # marked as slow tests on desktop platforms.
         return 10 * 1000
 
+    def driver_stop_timeout(self):
+        # DRT doesn't respond to closing stdin, so we might as well stop the driver immediately.
+        return 0.0
+
     def default_child_processes(self):
         return len(self._get_devices())
 
@@ -659,15 +663,10 @@ class ChromiumAndroidDriver(driver.Driver):
             self._read_stderr_process.kill()
             self._read_stderr_process = None
 
-        # Stop and kill server_process because our pipe reading/writing processes won't quit
-        # by itself on close of the pipes.
-        if self._server_process:
-            self._server_process.stop(kill_directly=True)
-            self._server_process = None
         super(ChromiumAndroidDriver, self).stop()
 
         if self._forwarder_process:
-            self._forwarder_process.stop(kill_directly=True)
+            self._forwarder_process.kill()
             self._forwarder_process = None
 
         if not ChromiumAndroidDriver._loop_with_timeout(self._remove_all_pipes, DRT_START_STOP_TIMEOUT_SECS):

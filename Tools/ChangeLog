@@ -1,3 +1,82 @@
+2012-08-16  Dirk Pranke  <dpranke@chromium.org>
+
+        NRWT cutting off the output from LayoutTest run under Valgrind
+        https://bugs.webkit.org/show_bug.cgi?id=94011
+
+        Reviewed by Ojan Vafai.
+
+        Make NRWT work with valgrind again ... I needed to rework the
+        driver infrastructure so that we could get the stderr written
+        between a test completing and a process being stopped and
+        associate it with the DriverOutput for the test; this meant that
+        run_test() needed to stop the driver at the end of the test
+        directly if/when appropriate. This also entailed reworking
+        run_test() so that we would gather stderr and stdout
+        consistently regardless of whether this was a normal test, or
+        stop_when_done, or a crash or timeout.
+
+        Also, I had to rework the process_stop_time() (and renamed it to
+        driver_stop_timeout) so that it would be longer if --time-out-ms
+        was long as well (so that valgrind would get enough time to
+        run), and I reworked driver.stop(kill_directly=True) to just
+        driver.stop(timeout=0.0).
+
+        Lastly, adding the new stop_when_done parameter entailed
+        touching a lot of test mock functions :(.
+
+        This change appeared to be well-covered by existing tests.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (Worker._run_test):
+        (Worker._run_test_with_timeout):
+        (Worker._run_test_in_another_thread):
+        (Worker._run_test_in_another_thread.SingleTestThread.run):
+        (Worker._run_test_in_this_thread):
+        (Worker._run_single_test):
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (run_single_test):
+        (SingleTestRunner.__init__):
+        (SingleTestRunner._run_compare_test):
+        (SingleTestRunner._run_rebaseline):
+        (SingleTestRunner._run_reftest):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.driver_stop_timeout):
+        (Port.variable.default_configuration):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.driver_stop_timeout):
+        (ChromiumAndroidDriver.stop):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.run_test):
+        (Driver.stop):
+        (DriverProxy.run_test):
+        * Scripts/webkitpy/layout_tests/port/driver_unittest.py:
+        (DriverTest.test_check_for_driver_crash.FakeServerProcess.stop):
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess.write):
+        (ServerProcess._wait_for_data_and_update_buffers_using_select):
+        (ServerProcess.stop):
+        (ServerProcess.kill):
+        (ServerProcess):
+        (ServerProcess._kill):
+        * Scripts/webkitpy/layout_tests/port/server_process_unittest.py:
+        (TrivialMockPort.__init__):
+        (MockProc.wait):
+        (TestServerProcess.test_basic):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestDriver.run_test):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (get_tests_run.RecordingTestDriver.run_test):
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest.run_single):
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (TestPageLoadingPerfTest.MockDriver.run_test):
+        (TestReplayPerfTest.ReplayTestPort.__init__.ReplayTestDriver.run_test):
+        (TestReplayPerfTest.test_run_single.run_test):
+        (TestReplayPerfTest.test_run_single_fails_when_output_has_error.run_test):
+        (TestReplayPerfTest.test_prepare.run_test):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (MainTest.TestDriver.run_test):
+
 2012-08-16  Roger Fong  <roger_fong@apple.com>
 
         Typo in old-run-webkit-tests script from https://bugs.webkit.org/show_bug.cgi?id=93904.

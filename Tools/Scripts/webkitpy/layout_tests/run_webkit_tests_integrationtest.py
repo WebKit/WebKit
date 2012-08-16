@@ -147,7 +147,7 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
         def stop(self):
             self._current_test_batch = None
 
-        def run_test(self, test_input):
+        def run_test(self, test_input, stop_when_done):
             if self._current_test_batch is None:
                 self._current_test_batch = []
                 test_batches.append(self._current_test_batch)
@@ -159,7 +159,7 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
             dirname, filename = filesystem.split(test_name)
             if include_reference_html or not Port.is_reference_html_file(filesystem, dirname, filename):
                 self._current_test_batch.append(test_name)
-            return TestDriver.run_test(self, test_input)
+            return TestDriver.run_test(self, test_input, stop_when_done)
 
     class RecordingTestPort(TestPort):
         def create_driver(self, worker_number):

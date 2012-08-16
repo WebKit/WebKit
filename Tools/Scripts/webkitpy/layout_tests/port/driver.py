@@ -136,7 +136,7 @@ class Driver(object):
     def __del__(self):
         self.stop()
 
-    def run_test(self, driver_input):
+    def run_test(self, driver_input, stop_when_done):
         """Run a single test and return the results.
 
         Note that it is okay if a test times out or crashes and leaves
@@ -158,14 +158,19 @@ class Driver(object):
         text, audio = self._read_first_block(deadline)  # First block is either text or audio
         image, actual_image_hash = self._read_optional_image_block(deadline)  # The second (optional) block is image data.
 
-        # We may not have read all of the output if an error (crash) occured.
-        # Since some platforms output the stacktrace over error, we should
-        # dump any buffered error into self.error_from_test.
-        # FIXME: We may need to also read stderr until the process dies?
-        self.error_from_test += self._server_process.pop_all_buffered_stderr()
+        crashed = self.has_crashed()
+        timed_out = self._server_process.timed_out
+
+        if stop_when_done or crashed or timed_out:
+            # We call stop() even if we crashed or timed out in order to get any remaining stdout/stderr output.
+            # In the timeout case, we kill the hung process as well.
+            out, err = self._server_process.stop(self._port.driver_stop_timeout() if stop_when_done else 0.0)
+            text += out
+            self.error_from_test += err
+            self._server_process = None
 
         crash_log = None
-        if self.has_crashed():
+        if crashed:
             self.error_from_test, crash_log = self._get_crash_log(text, self.error_from_test, newer_than=start_time)
 
             # If we don't find a crash log use a placeholder error message instead.
@@ -175,15 +180,9 @@ class Driver(object):
                 if self._subprocess_was_unresponsive:
                     crash_log += '  Process failed to become responsive before timing out.'
 
-        timeout = self._server_process.timed_out
-        if timeout:
-            # DRT doesn't have a built in timer to abort the test, so we might as well
-            # kill the process directly and not wait for it to shut down cleanly (since it may not).
-            self._server_process.kill()
-
         return DriverOutput(text, image, actual_image_hash, audio,
-            crash=self.has_crashed(), test_time=time.time() - test_begin_time,
-            timeout=timeout, error=self.error_from_test,
+            crash=crashed, test_time=time.time() - test_begin_time,
+            timeout=timed_out, error=self.error_from_test,
             crashed_process_name=self._crashed_process_name,
             crashed_pid=self._crashed_pid, crash_log=crash_log)
 
@@ -273,7 +272,7 @@ class Driver(object):
 
     def stop(self):
         if self._server_process:
-            self._server_process.stop()
+            self._server_process.stop(self._port.driver_stop_timeout())
             self._server_process = None
 
         if self._driver_tempdir:
@@ -476,20 +475,20 @@ class DriverProxy(object):
     def uri_to_test(self, uri):
         return self._driver.uri_to_test(uri)
 
-    def run_test(self, driver_input):
+    def run_test(self, driver_input, stop_when_done):
         base = self._port.lookup_virtual_test_base(driver_input.test_name)
         if base:
             virtual_driver_input = copy.copy(driver_input)
             virtual_driver_input.test_name = base
             virtual_driver_input.args = self._port.lookup_virtual_test_args(driver_input.test_name)
-            return self.run_test(virtual_driver_input)
+            return self.run_test(virtual_driver_input, stop_when_done)
 
         pixel_tests_needed = driver_input.should_run_pixel_test
         cmd_line_key = self._cmd_line_as_key(pixel_tests_needed, driver_input.args)
         if not cmd_line_key in self._running_drivers:
             self._running_drivers[cmd_line_key] = self._make_driver(pixel_tests_needed)
 
-        return self._running_drivers[cmd_line_key].run_test(driver_input)
+        return self._running_drivers[cmd_line_key].run_test(driver_input, stop_when_done)
 
     def start(self):
         # FIXME: Callers shouldn't normally call this, since this routine

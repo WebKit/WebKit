@@ -99,7 +99,7 @@ class TestPageLoadingPerfTest(unittest.TestCase):
             self._values = values
             self._index = 0
 
-        def run_test(self, input):
+        def run_test(self, input, stop_when_done):
             value = self._values[self._index]
             self._index += 1
             if isinstance(value, str):
@@ -141,8 +141,8 @@ class TestReplayPerfTest(unittest.TestCase):
         def __init__(self, custom_run_test=None):
 
             class ReplayTestDriver(TestDriver):
-                def run_test(self, text_input):
-                    return custom_run_test(text_input) if custom_run_test else None
+                def run_test(self, text_input, stop_when_done):
+                    return custom_run_test(text_input, stop_when_done) if custom_run_test else None
 
             self._custom_driver_class = ReplayTestDriver
             super(self.__class__, self).__init__(host=MockHost())
@@ -174,7 +174,7 @@ class TestReplayPerfTest(unittest.TestCase):
 
         loaded_pages = []
 
-        def run_test(test_input):
+        def run_test(test_input, stop_when_done):
             if test_input.test_name != "about:blank":
                 self.assertEqual(test_input.test_name, 'http://some-test/')
             loaded_pages.append(test_input)
@@ -243,7 +243,7 @@ class TestReplayPerfTest(unittest.TestCase):
 
         loaded_pages = []
 
-        def run_test(test_input):
+        def run_test(test_input, stop_when_done):
             loaded_pages.append(test_input)
             self._add_file(port, '/path/some-dir', 'some-test.wpr', 'wpr content')
             return DriverOutput('actual text', 'actual image', 'actual checksum',
@@ -270,7 +270,7 @@ class TestReplayPerfTest(unittest.TestCase):
         output_capture = OutputCapture()
         output_capture.capture_output()
 
-        def run_test(test_input):
+        def run_test(test_input, stop_when_done):
             self._add_file(port, '/path/some-dir', 'some-test.wpr', 'wpr content')
             return DriverOutput('actual text', 'actual image', 'actual checksum',
                 audio=None, crash=False, timeout=False, error=False)

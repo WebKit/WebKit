@@ -315,12 +315,19 @@ class Worker(object):
             test_input.should_run_pixel_test = self._port.should_run_as_pixel_test(test_input)
 
     def _run_test(self, test_input):
+        self._batch_count += 1
+
+        stop_when_done = False
+        if self._batch_size > 0 and self._batch_count >= self._batch_size:
+            self._batch_count = 0
+            stop_when_done = True
+
         self._update_test_input(test_input)
         test_timeout_sec = self._timeout(test_input)
         start = time.time()
         self._caller.post('started_test', test_input, test_timeout_sec)
 
-        result = self._run_test_with_timeout(test_input, test_timeout_sec)
+        result = self._run_test_with_timeout(test_input, test_timeout_sec, stop_when_done)
 
         elapsed_time = time.time() - start
         self._caller.post('finished_test', result, elapsed_time)
@@ -359,13 +366,12 @@ class Worker(object):
             _log.debug("%s killing driver" % self._name)
             driver.stop()
 
-    def _run_test_with_timeout(self, test_input, timeout):
+    def _run_test_with_timeout(self, test_input, timeout, stop_when_done):
         if self._options.run_singly:
-            return self._run_test_in_another_thread(test_input, timeout)
-        return self._run_test_in_this_thread(test_input)
+            return self._run_test_in_another_thread(test_input, timeout, stop_when_done)
+        return self._run_test_in_this_thread(test_input, stop_when_done)
 
     def _clean_up_after_test(self, test_input, result):
-        self._batch_count += 1
         test_name = test_input.test_name
         self._tests_run_file.write(test_name + "\n")
 
@@ -385,11 +391,7 @@ class Worker(object):
         else:
             _log.debug("%s %s passed" % (self._name, test_name))
 
-        if self._batch_size > 0 and self._batch_count >= self._batch_size:
-            self._kill_driver()
-            self._batch_count = 0
-
-    def _run_test_in_another_thread(self, test_input, thread_timeout_sec):
+    def _run_test_in_another_thread(self, test_input, thread_timeout_sec, stop_when_done):
         """Run a test in a separate thread, enforcing a hard time limit.
 
         Since we can only detect the termination of a thread, not any internal
@@ -412,7 +414,7 @@ class Worker(object):
                 self.result = None
 
             def run(self):
-                self.result = worker._run_single_test(driver, test_input)
+                self.result = worker._run_single_test(driver, test_input, stop_when_done)
 
         thread = SingleTestThread()
         thread.start()
@@ -435,7 +437,7 @@ class Worker(object):
             result = test_results.TestResult(test_input.test_name, failures=[], test_run_time=0)
         return result
 
-    def _run_test_in_this_thread(self, test_input):
+    def _run_test_in_this_thread(self, test_input, stop_when_done):
         """Run a single test file using a shared DumpRenderTree process.
 
         Args:
@@ -447,11 +449,11 @@ class Worker(object):
             self._kill_driver()
         if not self._driver:
             self._driver = self._port.create_driver(self._worker_number)
-        return self._run_single_test(self._driver, test_input)
+        return self._run_single_test(self._driver, test_input, stop_when_done)
 
-    def _run_single_test(self, driver, test_input):
+    def _run_single_test(self, driver, test_input, stop_when_done):
         return single_test_runner.run_single_test(self._port, self._options,
-            test_input, driver, self._name)
+            test_input, driver, self._name, stop_when_done)
 
 
 class TestShard(object):

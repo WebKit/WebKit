@@ -140,7 +140,7 @@ class ServerProcess(object):
         try:
             self._proc.stdin.write(bytes)
         except IOError, e:
-            self.stop()
+            self.stop(0.0)
             # stop() calls _reset(), so we have to set crashed to True after calling stop().
             self._crashed = True
 
@@ -218,7 +218,7 @@ class ServerProcess(object):
         err_fd = self._proc.stderr.fileno()
         select_fds = (out_fd, err_fd)
         try:
-            read_fds, _, _ = select.select(select_fds, [], select_fds, deadline - time.time())
+            read_fds, _, _ = select.select(select_fds, [], select_fds, max(deadline - time.time(), 0))
         except select.error, e:
             # We can ignore EINVAL since it's likely the process just crashed and we'll
             # figure that out the next time through the loop in _read().
@@ -307,41 +307,44 @@ class ServerProcess(object):
         if not self._proc:
             self._start()
 
-    def stop(self, kill_directly=False):
+    def stop(self, timeout_secs=3.0):
         if not self._proc:
-            return
+            return (None, None)
 
-        # Only bother to check for leaks if the process is still running.
+        # Only bother to check for leaks or stderr if the process is still running.
         if self.poll() is None:
             self._port.check_for_leaks(self.name(), self.pid())
 
+        now = time.time()
         self._proc.stdin.close()
-        self._proc.stdout.close()
-        if self._proc.stderr:
-            self._proc.stderr.close()
-
-        if kill_directly:
-            self.kill()
+        if not timeout_secs:
+            self._kill()
         elif not self._host.platform.is_win():
-            # Closing stdin/stdout/stderr hangs sometimes on OS X,
-            # and anyway we don't want to hang the harness if DumpRenderTree
-            # is buggy, so we wait a couple seconds to give DumpRenderTree a
-            # chance to clean up, but then force-kill the process if necessary.
-            timeout = time.time() + self._port.process_kill_time()
-            while self._proc.poll() is None and time.time() < timeout:
+            # FIXME: Why aren't we calling this on win?
+            deadline = now + timeout_secs
+            while self._proc.poll() is None and time.time() < deadline:
                 time.sleep(0.01)
             if self._proc.poll() is None:
                 _log.warning('stopping %s timed out, killing it' % self._name)
-                self.kill()
+                self._kill()
                 _log.warning('killed')
+
+        # read any remaining data on the pipes and return it.
+        if self._use_win32_apis:
+            self._wait_for_data_and_update_buffers_using_win32_apis(now)
+        else:
+            self._wait_for_data_and_update_buffers_using_select(now)
+        out, err = self._output, self._error
         self._reset()
+        return (out, err)
 
     def kill(self):
-        if self._proc:
-            self._host.executive.kill_process(self._proc.pid)
-            if self._proc.poll() is not None:
-                self._proc.wait()
-            self._reset()
+        self.stop(0.0)
+
+    def _kill(self):
+        self._host.executive.kill_process(self._proc.pid)
+        if self._proc.poll() is not None:
+            self._proc.wait()
 
     def replace_outputs(self, stdout, stderr):
         assert self._proc

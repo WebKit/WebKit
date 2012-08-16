@@ -41,6 +41,8 @@ from webkitpy.common.system.outputcapture import OutputCapture
 class TrivialMockPort(object):
     def __init__(self):
         self.host = MockSystemHost()
+        self.host.executive.kill_process = lambda x: None
+        self.host.executive.kill_process = lambda x: None
 
     def results_directory(self):
         return "/mock-results"
@@ -76,6 +78,9 @@ class MockProc(object):
 
     def poll(self):
         return 1
+
+    def wait(self):
+        return 0
 
 
 class FakeServerProcess(server_process.ServerProcess):
@@ -114,7 +119,7 @@ class TestServerProcess(unittest.TestCase):
         if line:
             self.assertEquals(line.strip(), "stderr")
 
-        proc.stop()
+        proc.stop(0)
 
     def test_broken_pipe(self):
         port_obj = TrivialMockPort()

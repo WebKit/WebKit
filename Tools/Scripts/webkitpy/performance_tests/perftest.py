@@ -74,7 +74,7 @@ class PerfTest(object):
         return self.parse_output(output)
 
     def run_single(self, driver, path_or_url, time_out_ms, should_run_pixel_test=False):
-        return driver.run_test(DriverInput(path_or_url, time_out_ms, image_hash=None, should_run_pixel_test=should_run_pixel_test))
+        return driver.run_test(DriverInput(path_or_url, time_out_ms, image_hash=None, should_run_pixel_test=should_run_pixel_test), stop_when_done=False)
 
     def run_failed(self, output):
         if output.text == None or output.error:
