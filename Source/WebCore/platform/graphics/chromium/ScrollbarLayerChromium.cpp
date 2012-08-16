@@ -228,8 +228,8 @@ void ScrollbarLayerChromium::updatePart(LayerTextureUpdater* painter, LayerTextu
     painter->prepareToUpdate(rect, rect.size(), 1, 1, paintedOpaqueRect, stats);
     texture->prepareRect(rect, stats);
 
-    IntRect destRect(IntPoint(), rect.size());
-    TextureUploader::Parameters upload = { texture, rect, destRect };
+    IntSize destOffset(0, 0);
+    TextureUploader::Parameters upload = { texture, rect, destOffset };
     queue.appendFullUpload(upload);
 }
 

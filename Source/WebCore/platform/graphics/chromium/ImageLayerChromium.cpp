@@ -50,9 +50,9 @@ public:
         {
         }
 
-        virtual void updateRect(CCResourceProvider* resourceProvider, const IntRect& sourceRect, const IntRect& destRect) OVERRIDE
+        virtual void updateRect(CCResourceProvider* resourceProvider, const IntRect& sourceRect, const IntSize& destOffset) OVERRIDE
         {
-            textureUpdater()->updateTextureRect(resourceProvider, texture(), sourceRect, destRect);
+            textureUpdater()->updateTextureRect(resourceProvider, texture(), sourceRect, destOffset);
         }
 
     private:
@@ -79,7 +79,7 @@ public:
                 LayerTextureUpdater::SampledTexelFormatRGBA : LayerTextureUpdater::SampledTexelFormatBGRA;
     }
 
-    void updateTextureRect(CCResourceProvider* resourceProvider, CCPrioritizedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+    void updateTextureRect(CCResourceProvider* resourceProvider, CCPrioritizedTexture* texture, const IntRect& sourceRect, const IntSize& destOffset)
     {
         // Source rect should never go outside the image pixels, even if this
         // is requested because the texture extends outside the image.
@@ -87,12 +87,10 @@ public:
         IntRect imageRect = IntRect(0, 0, m_bitmap.width(), m_bitmap.height());
         clippedSourceRect.intersect(imageRect);
 
-        IntRect clippedDestRect = destRect;
-        clippedDestRect.move(clippedSourceRect.location() - sourceRect.location());
-        clippedDestRect.setSize(clippedSourceRect.size());
+        IntSize clippedDestOffset = destOffset + IntSize(clippedSourceRect.location() - sourceRect.location());
 
         SkAutoLockPixels lock(m_bitmap);
-        texture->upload(resourceProvider, static_cast<const uint8_t*>(m_bitmap.getPixels()), imageRect, clippedSourceRect, clippedDestRect);
+        texture->upload(resourceProvider, static_cast<const uint8_t*>(m_bitmap.getPixels()), imageRect, clippedSourceRect, clippedDestOffset);
     }
 
     void setBitmap(const SkBitmap& bitmap)

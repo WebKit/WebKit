@@ -2353,7 +2353,7 @@ public:
     static PassOwnPtr<EvictionTrackingTexture> create(PassOwnPtr<CCPrioritizedTexture> texture) { return adoptPtr(new EvictionTrackingTexture(texture)); }
     virtual ~EvictionTrackingTexture() { }
 
-    virtual void updateRect(CCResourceProvider* resourceProvider, const IntRect&, const IntRect&) OVERRIDE
+    virtual void updateRect(CCResourceProvider* resourceProvider, const IntRect&, const IntSize&) OVERRIDE
     {
         ASSERT_TRUE(!texture()->haveBackingTexture() || resourceProvider->numResources() > 0);
         texture()->acquireBackingTexture(resourceProvider);
@@ -2438,7 +2438,7 @@ void EvictionTestLayer::update(CCTextureUpdateQueue& queue, const CCOcclusionTra
     if (!m_texture.get())
         return;
     IntRect fullRect(0, 0, 10, 10);
-    TextureUploader::Parameters parameters = { m_texture.get(), fullRect, fullRect };
+    TextureUploader::Parameters parameters = { m_texture.get(), fullRect, IntSize() };
     queue.appendFullUpload(parameters);
 }
 

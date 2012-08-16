@@ -80,7 +80,7 @@ public:
     void deleteOwnedResources(int pool);
 
     // Upload data from image, copying sourceRect (in image) into destRect (in the resource).
-    void upload(ResourceId, const uint8_t* image, const IntRect& imageRect, const IntRect& sourceRect, const IntRect& destRect);
+    void upload(ResourceId, const uint8_t* image, const IntRect& imageRect, const IntRect& sourceRect, const IntSize& destOffset);
 
     // Flush all context operations, kicking uploads and ensuring ordering with
     // respect to other contexts.

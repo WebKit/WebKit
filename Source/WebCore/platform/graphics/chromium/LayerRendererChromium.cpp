@@ -126,7 +126,7 @@ public:
     virtual bool isBusy() OVERRIDE { return false; }
     virtual void beginUploads() OVERRIDE { }
     virtual void endUploads() OVERRIDE { }
-    virtual void uploadTexture(CCResourceProvider* resourceProvider, Parameters upload) OVERRIDE { upload.texture->updateRect(resourceProvider, upload.sourceRect, upload.destRect); }
+    virtual void uploadTexture(CCResourceProvider* resourceProvider, Parameters upload) OVERRIDE { upload.texture->updateRect(resourceProvider, upload.sourceRect, upload.destOffset); }
 
 protected:
     UnthrottledTextureUploader() { }

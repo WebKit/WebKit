@@ -223,7 +223,7 @@ TEST_F(CCResourceProviderTest, Basic)
 
     uint8_t data[4] = {1, 2, 3, 4};
     IntRect rect(IntPoint(), size);
-    m_resourceProvider->upload(id, data, rect, rect, rect);
+    m_resourceProvider->upload(id, data, rect, rect, IntSize());
 
     uint8_t result[4] = {0};
     getResourcePixels(id, size, format, result);
@@ -263,7 +263,7 @@ TEST_F(CCResourceProviderTest, Upload)
 
     uint8_t image[16] = {0};
     IntRect imageRect(IntPoint(), size);
-    m_resourceProvider->upload(id, image, imageRect, imageRect, imageRect);
+    m_resourceProvider->upload(id, image, imageRect, imageRect, IntSize());
 
     for (uint8_t i = 0 ; i < pixelSize; ++i)
         image[i] = i;
@@ -271,8 +271,8 @@ TEST_F(CCResourceProviderTest, Upload)
     uint8_t result[16] = {0};
     {
         IntRect sourceRect(0, 0, 1, 1);
-        IntRect destRect(0, 0, 1, 1);
-        m_resourceProvider->upload(id, image, imageRect, sourceRect, destRect);
+        IntSize destOffset(0, 0);
+        m_resourceProvider->upload(id, image, imageRect, sourceRect, destOffset);
 
         uint8_t expected[16] = {0, 1, 2, 3,   0, 0, 0, 0,
                                 0, 0, 0, 0,   0, 0, 0, 0};
@@ -281,8 +281,8 @@ TEST_F(CCResourceProviderTest, Upload)
     }
     {
         IntRect sourceRect(0, 0, 1, 1);
-        IntRect destRect(1, 1, 1, 1);
-        m_resourceProvider->upload(id, image, imageRect, sourceRect, destRect);
+        IntSize destOffset(1, 1);
+        m_resourceProvider->upload(id, image, imageRect, sourceRect, destOffset);
 
         uint8_t expected[16] = {0, 1, 2, 3,   0, 0, 0, 0,
                                 0, 0, 0, 0,   0, 1, 2, 3};
@@ -291,8 +291,8 @@ TEST_F(CCResourceProviderTest, Upload)
     }
     {
         IntRect sourceRect(1, 0, 1, 1);
-        IntRect destRect(0, 1, 1, 1);
-        m_resourceProvider->upload(id, image, imageRect, sourceRect, destRect);
+        IntSize destOffset(0, 1);
+        m_resourceProvider->upload(id, image, imageRect, sourceRect, destOffset);
 
         uint8_t expected[16] = {0, 1, 2, 3,   0, 0, 0, 0,
                                 4, 5, 6, 7,   0, 1, 2, 3};

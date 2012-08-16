@@ -34,7 +34,7 @@ public:
     struct Parameters {
         LayerTextureUpdater::Texture* texture;
         IntRect sourceRect;
-        IntRect destRect;
+        IntSize destOffset;
     };
 
     virtual ~TextureUploader() { }

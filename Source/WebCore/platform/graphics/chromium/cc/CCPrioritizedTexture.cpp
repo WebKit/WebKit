@@ -105,13 +105,13 @@ CCResourceProvider::ResourceId CCPrioritizedTexture::resourceId() const
 
 void CCPrioritizedTexture::upload(CCResourceProvider* resourceProvider,
                                   const uint8_t* image, const IntRect& imageRect,
-                                  const IntRect& sourceRect, const IntRect& destRect)
+                                  const IntRect& sourceRect, const IntSize& destOffset)
 {
     ASSERT(m_isAbovePriorityCutoff);
     if (m_isAbovePriorityCutoff)
         acquireBackingTexture(resourceProvider);
     ASSERT(m_backing);
-    resourceProvider->upload(resourceId(), image, imageRect, sourceRect, destRect);
+    resourceProvider->upload(resourceId(), image, imageRect, sourceRect, destOffset);
 }
 
 void CCPrioritizedTexture::link(Backing* backing)

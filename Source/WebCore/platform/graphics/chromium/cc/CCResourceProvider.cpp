@@ -150,7 +150,7 @@ void CCResourceProvider::deleteOwnedResources(int pool)
         deleteResource(*it);
 }
 
-void CCResourceProvider::upload(ResourceId id, const uint8_t* image, const IntRect& imageRect, const IntRect& sourceRect, const IntRect& destRect)
+void CCResourceProvider::upload(ResourceId id, const uint8_t* image, const IntRect& imageRect, const IntRect& sourceRect, const IntSize& destOffset)
 {
     ASSERT(CCProxy::isImplThread());
     ASSERT(m_texSubImage.get());
@@ -163,7 +163,7 @@ void CCResourceProvider::upload(ResourceId id, const uint8_t* image, const IntRe
     ASSERT(it != m_resources.end() && !it->second.lockedForWrite && !it->second.lockForReadCount && !it->second.external);
 
     context3d->bindTexture(GraphicsContext3D::TEXTURE_2D, it->second.glId);
-    m_texSubImage->upload(image, imageRect, sourceRect, destRect, it->second.format, context3d);
+    m_texSubImage->upload(image, imageRect, sourceRect, destOffset, it->second.format, context3d);
 }
 
 unsigned CCResourceProvider::lockForWrite(ResourceId id)

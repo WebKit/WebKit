@@ -49,17 +49,17 @@ LayerTextureSubImage::~LayerTextureSubImage()
 }
 
 void LayerTextureSubImage::upload(const uint8_t* image, const IntRect& imageRect,
-                                  const IntRect& sourceRect, const IntRect& destRect,
+                                  const IntRect& sourceRect, const IntSize& destOffset,
                                   GC3Denum format, WebGraphicsContext3D* context)
 {
     if (m_useMapTexSubImage)
-        uploadWithMapTexSubImage(image, imageRect, sourceRect, destRect, format, context);
+        uploadWithMapTexSubImage(image, imageRect, sourceRect, destOffset, format, context);
     else
-        uploadWithTexSubImage(image, imageRect, sourceRect, destRect, format, context);
+        uploadWithTexSubImage(image, imageRect, sourceRect, destOffset, format, context);
 }
 
 void LayerTextureSubImage::uploadWithTexSubImage(const uint8_t* image, const IntRect& imageRect,
-                                                 const IntRect& sourceRect, const IntRect& destRect,
+                                                 const IntRect& sourceRect, const IntSize& destOffset,
                                                  GC3Denum format, WebGraphicsContext3D* context)
 {
     TRACE_EVENT0("cc", "LayerTextureSubImage::uploadWithTexSubImage");
@@ -71,26 +71,26 @@ void LayerTextureSubImage::uploadWithTexSubImage(const uint8_t* image, const Int
     if (imageRect.width() == sourceRect.width() && !offset.x())
         pixelSource = &image[4 * offset.y() * imageRect.width()];
     else {
-        size_t neededSize = 4 * destRect.width() * destRect.height();
+        size_t neededSize = 4 * sourceRect.width() * sourceRect.height();
         if (m_subImageSize < neededSize) {
           m_subImage = adoptArrayPtr(new uint8_t[neededSize]);
           m_subImageSize = neededSize;
         }
         // Strides not equal, so do a row-by-row memcpy from the
         // paint results into a temp buffer for uploading.
-        for (int row = 0; row < destRect.height(); ++row)
-            memcpy(&m_subImage[destRect.width() * 4 * row],
+        for (int row = 0; row < sourceRect.height(); ++row)
+            memcpy(&m_subImage[sourceRect.width() * 4 * row],
                    &image[4 * (offset.x() + (offset.y() + row) * imageRect.width())],
-                   destRect.width() * 4);
+                   sourceRect.width() * 4);
 
         pixelSource = &m_subImage[0];
     }
 
-    GLC(context, context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), format, GraphicsContext3D::UNSIGNED_BYTE, pixelSource));
+    GLC(context, context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, destOffset.width(), destOffset.height(), sourceRect.width(), sourceRect.height(), format, GraphicsContext3D::UNSIGNED_BYTE, pixelSource));
 }
 
 void LayerTextureSubImage::uploadWithMapTexSubImage(const uint8_t* image, const IntRect& imageRect,
-                                                    const IntRect& sourceRect, const IntRect& destRect,
+                                                    const IntRect& sourceRect, const IntSize& destOffset,
                                                     GC3Denum format, WebGraphicsContext3D* context)
 {
     TRACE_EVENT0("cc", "LayerTextureSubImage::uploadWithMapTexSubImage");
@@ -98,10 +98,10 @@ void LayerTextureSubImage::uploadWithMapTexSubImage(const uint8_t* image, const 
     IntPoint offset(sourceRect.x() - imageRect.x(), sourceRect.y() - imageRect.y());
 
     // Upload tile data via a mapped transfer buffer
-    uint8_t* pixelDest = static_cast<uint8_t*>(context->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), format, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY));
+    uint8_t* pixelDest = static_cast<uint8_t*>(context->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, destOffset.width(), destOffset.height(), sourceRect.width(), sourceRect.height(), format, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY));
 
     if (!pixelDest) {
-        uploadWithTexSubImage(image, imageRect, sourceRect, destRect, format, context);
+        uploadWithTexSubImage(image, imageRect, sourceRect, destOffset, format, context);
         return;
     }
 
@@ -113,14 +113,14 @@ void LayerTextureSubImage::uploadWithMapTexSubImage(const uint8_t* image, const 
     }
 
     if (imageRect.width() == sourceRect.width() && !offset.x())
-        memcpy(pixelDest, &image[offset.y() * imageRect.width() * componentsPerPixel * bytesPerComponent], imageRect.width() * destRect.height() * componentsPerPixel * bytesPerComponent);
+        memcpy(pixelDest, &image[offset.y() * imageRect.width() * componentsPerPixel * bytesPerComponent], imageRect.width() * sourceRect.height() * componentsPerPixel * bytesPerComponent);
     else {
         // Strides not equal, so do a row-by-row memcpy from the
         // paint results into the pixelDest
-        for (int row = 0; row < destRect.height(); ++row)
-            memcpy(&pixelDest[destRect.width() * row * componentsPerPixel * bytesPerComponent],
+        for (int row = 0; row < sourceRect.height(); ++row)
+            memcpy(&pixelDest[sourceRect.width() * row * componentsPerPixel * bytesPerComponent],
                    &image[4 * (offset.x() + (offset.y() + row) * imageRect.width())],
-                   destRect.width() * componentsPerPixel * bytesPerComponent);
+                   sourceRect.width() * componentsPerPixel * bytesPerComponent);
     }
     GLC(context, context->unmapTexSubImage2DCHROMIUM(pixelDest));
 }

@@ -67,13 +67,13 @@ FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::~Texture()
 {
 }
 
-void FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::updateRect(CCResourceProvider* resourceProvider, const IntRect& sourceRect, const IntRect& destRect)
+void FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::updateRect(CCResourceProvider* resourceProvider, const IntRect& sourceRect, const IntSize& destOffset)
 {
     WebGraphicsContext3D* sharedContext = CCProxy::hasImplThread() ? WebSharedGraphicsContext3D::compositorThreadContext() : WebSharedGraphicsContext3D::mainThreadContext();
     GrContext* sharedGrContext = CCProxy::hasImplThread() ? WebSharedGraphicsContext3D::compositorThreadGrContext() : WebSharedGraphicsContext3D::mainThreadGrContext();
     if (!sharedContext || !sharedGrContext)
         return;
-    textureUpdater()->updateTextureRect(sharedContext, sharedGrContext, resourceProvider, texture(), sourceRect, destRect);
+    textureUpdater()->updateTextureRect(sharedContext, sharedGrContext, resourceProvider, texture(), sourceRect, destOffset);
 }
 
 PassRefPtr<FrameBufferSkPictureCanvasLayerTextureUpdater> FrameBufferSkPictureCanvasLayerTextureUpdater::create(PassOwnPtr<LayerPainterChromium> painter)
@@ -101,7 +101,7 @@ LayerTextureUpdater::SampledTexelFormat FrameBufferSkPictureCanvasLayerTextureUp
     return LayerTextureUpdater::SampledTexelFormatRGBA;
 }
 
-void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(WebGraphicsContext3D* context, GrContext* grContext, CCResourceProvider* resourceProvider, CCPrioritizedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(WebGraphicsContext3D* context, GrContext* grContext, CCResourceProvider* resourceProvider, CCPrioritizedTexture* texture, const IntRect& sourceRect, const IntSize& destOffset)
 {
     // Make sure ganesh uses the correct GL context.
     context->makeContextCurrent();
@@ -116,12 +116,12 @@ void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(WebGraphic
     // need to do a y-flip.
     canvas->translate(0.0, texture->size().height());
     canvas->scale(1.0, -1.0);
-    // Only the region corresponding to destRect on the texture must be updated.
-    canvas->clipRect(SkRect::MakeXYWH(destRect.x(), destRect.y(), destRect.width(), destRect.height()));
+    // Clip to the destination on the texture that must be updated.
+    canvas->clipRect(SkRect::MakeXYWH(destOffset.width(), destOffset.height(), sourceRect.width(), sourceRect.height()));
     // Translate the origin of contentRect to that of destRect.
     // Note that destRect is defined relative to sourceRect.
-    canvas->translate(contentRect().x() - sourceRect.x() + destRect.x(),
-                      contentRect().y() - sourceRect.y() + destRect.y());
+    canvas->translate(contentRect().x() - sourceRect.x() + destOffset.width(),
+                      contentRect().y() - sourceRect.y() + destOffset.height());
     drawPicture(canvas.get());
 
     // Flush ganesh context so that all the rendered stuff appears on the texture.

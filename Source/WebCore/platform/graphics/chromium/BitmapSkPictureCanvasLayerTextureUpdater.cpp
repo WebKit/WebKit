@@ -57,10 +57,10 @@ void BitmapSkPictureCanvasLayerTextureUpdater::Texture::prepareRect(const IntRec
     stats.totalPaintTimeInSeconds += monotonicallyIncreasingTime() - paintBeginTime;
 }
 
-void BitmapSkPictureCanvasLayerTextureUpdater::Texture::updateRect(CCResourceProvider* resourceProvider, const IntRect& sourceRect, const IntRect& destRect)
+void BitmapSkPictureCanvasLayerTextureUpdater::Texture::updateRect(CCResourceProvider* resourceProvider, const IntRect& sourceRect, const IntSize& destOffset)
 {
     m_bitmap.lockPixels();
-    texture()->upload(resourceProvider, static_cast<uint8_t*>(m_bitmap.getPixels()), destRect, destRect, destRect);
+    texture()->upload(resourceProvider, static_cast<uint8_t*>(m_bitmap.getPixels()), sourceRect, sourceRect, destOffset);
     m_bitmap.unlockPixels();
     m_bitmap.reset();
 }

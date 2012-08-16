@@ -351,7 +351,7 @@ bool CCVideoLayerImpl::copyPlaneData(CCResourceProvider* resourceProvider)
         CCVideoLayerImpl::FramePlane& plane = m_framePlanes[softwarePlaneIndex];
         const uint8_t* softwarePlanePixels = static_cast<const uint8_t*>(m_frame->data(softwarePlaneIndex));
         IntRect planeRect(IntPoint(), plane.size);
-        resourceProvider->upload(plane.resourceId, softwarePlanePixels, planeRect, planeRect, planeRect);
+        resourceProvider->upload(plane.resourceId, softwarePlanePixels, planeRect, planeRect, IntSize());
     }
     return true;
 }

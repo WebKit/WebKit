@@ -40,7 +40,7 @@ FakeLayerTextureUpdater::Texture::~Texture()
 {
 }
 
-void FakeLayerTextureUpdater::Texture::updateRect(CCResourceProvider* resourceProvider, const IntRect&, const IntRect&)
+void FakeLayerTextureUpdater::Texture::updateRect(CCResourceProvider* resourceProvider, const IntRect&, const IntSize&)
 {
     texture()->acquireBackingTexture(resourceProvider);
     m_layer->updateRect();

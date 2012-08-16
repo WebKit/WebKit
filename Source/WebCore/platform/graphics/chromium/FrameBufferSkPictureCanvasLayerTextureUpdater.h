@@ -50,7 +50,7 @@ public:
         Texture(FrameBufferSkPictureCanvasLayerTextureUpdater*, PassOwnPtr<CCPrioritizedTexture>);
         virtual ~Texture();
 
-        virtual void updateRect(CCResourceProvider*, const IntRect& sourceRect, const IntRect& destRect) OVERRIDE;
+        virtual void updateRect(CCResourceProvider*, const IntRect& sourceRect, const IntSize& destOffset) OVERRIDE;
 
     private:
         FrameBufferSkPictureCanvasLayerTextureUpdater* textureUpdater() { return m_textureUpdater; }
@@ -63,7 +63,7 @@ public:
 
     virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(CCPrioritizedTextureManager*) OVERRIDE;
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat) OVERRIDE;
-    void updateTextureRect(WebKit::WebGraphicsContext3D*, GrContext*, CCResourceProvider*, CCPrioritizedTexture*, const IntRect& sourceRect, const IntRect& destRect);
+    void updateTextureRect(WebKit::WebGraphicsContext3D*, GrContext*, CCResourceProvider*, CCPrioritizedTexture*, const IntRect& sourceRect, const IntSize& destOffset);
 
 private:
     explicit FrameBufferSkPictureCanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>);

@@ -529,10 +529,10 @@ void TiledLayerChromium::updateTileTextures(const IntRect& paintRect, int left, 
             const IntPoint anchor = m_tiler->tileRect(tile).location();
 
             // Calculate tile-space rectangle to upload into.
-            IntRect destRect(IntPoint(sourceRect.x() - anchor.x(), sourceRect.y() - anchor.y()), sourceRect.size());
-            if (destRect.x() < 0)
+            IntSize destOffset(sourceRect.x() - anchor.x(), sourceRect.y() - anchor.y());
+            if (destOffset.width() < 0)
                 CRASH();
-            if (destRect.y() < 0)
+            if (destOffset.height() < 0)
                 CRASH();
 
             // Offset from paint rectangle to this tile's dirty rectangle.
@@ -541,12 +541,12 @@ void TiledLayerChromium::updateTileTextures(const IntRect& paintRect, int left, 
                 CRASH();
             if (paintOffset.y() < 0)
                 CRASH();
-            if (paintOffset.x() + destRect.width() > paintRect.width())
+            if (paintOffset.x() + sourceRect.width() > paintRect.width())
                 CRASH();
-            if (paintOffset.y() + destRect.height() > paintRect.height())
+            if (paintOffset.y() + sourceRect.height() > paintRect.height())
                 CRASH();
 
-            TextureUploader::Parameters upload = { tile->texture(), sourceRect, destRect };
+            TextureUploader::Parameters upload = { tile->texture(), sourceRect, destOffset };
             if (tile->partialUpdate)
                 queue.appendPartialUpload(upload);
             else

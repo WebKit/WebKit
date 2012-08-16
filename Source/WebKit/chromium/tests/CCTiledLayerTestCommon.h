@@ -49,7 +49,7 @@ public:
         Texture(FakeLayerTextureUpdater*, PassOwnPtr<WebCore::CCPrioritizedTexture>);
         virtual ~Texture();
 
-        virtual void updateRect(WebCore::CCResourceProvider* , const WebCore::IntRect&, const WebCore::IntRect&) OVERRIDE;
+        virtual void updateRect(WebCore::CCResourceProvider* , const WebCore::IntRect&, const WebCore::IntSize&) OVERRIDE;
         virtual void prepareRect(const WebCore::IntRect&, WebCore::CCRenderingStats&) OVERRIDE;
 
     private:
@@ -162,7 +162,7 @@ public:
     virtual bool isBusy() { return false; }
     virtual void beginUploads() { }
     virtual void endUploads() { }
-    virtual void uploadTexture(WebCore::CCResourceProvider* resourceProvider, Parameters upload) { upload.texture->updateRect(resourceProvider, upload.sourceRect, upload.destRect); }
+    virtual void uploadTexture(WebCore::CCResourceProvider* resourceProvider, Parameters upload) { upload.texture->updateRect(resourceProvider, upload.sourceRect, upload.destOffset); }
 };
 
 }

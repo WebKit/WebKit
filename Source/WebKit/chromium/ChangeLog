@@ -1,3 +1,26 @@
+2012-08-16  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Replace destRect with destOffset in texture upload
+        https://bugs.webkit.org/show_bug.cgi?id=94154
+
+        Reviewed by James Robinson.
+
+        Previously, texture upload code implicitly assumed that sourceRect and
+        destRect have the same size. The behavior is undefined if they are
+        different, since they are used interchangeably and there's no support
+        for scaling from one rect to the other. This patch enforces that
+        constraint at the interface level by replacing all instances of
+        "IntRect destRect" by "IntSize destOffset".
+
+        * tests/CCResourceProviderTest.cpp:
+        (WebKit::TEST_F):
+        * tests/CCTextureUpdateControllerTest.cpp:
+        * tests/CCTiledLayerTestCommon.cpp:
+        (WebKitTests::FakeLayerTextureUpdater::Texture::updateRect):
+        * tests/CCTiledLayerTestCommon.h:
+        (Texture):
+        (WebKitTests::FakeTextureUploader::uploadTexture):
+
 2012-08-16  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove unnecessary tree hierarchy inspection APIs from WebLayer

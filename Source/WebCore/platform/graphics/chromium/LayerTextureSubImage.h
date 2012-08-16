@@ -46,15 +46,15 @@ public:
     ~LayerTextureSubImage();
 
     void upload(const uint8_t* image, const IntRect& imageRect,
-                const IntRect& sourceRect, const IntRect& destRect,
+                const IntRect& sourceRect, const IntSize& destOffset,
                 GC3Denum format, WebKit::WebGraphicsContext3D*);
 
 private:
     void uploadWithTexSubImage(const uint8_t* image, const IntRect& imageRect,
-                               const IntRect& sourceRect, const IntRect& destRect,
+                               const IntRect& sourceRect, const IntSize& destOffset,
                                GC3Denum format, WebKit::WebGraphicsContext3D*);
     void uploadWithMapTexSubImage(const uint8_t* image, const IntRect& imageRect,
-                                  const IntRect& sourceRect, const IntRect& destRect,
+                                  const IntRect& sourceRect, const IntSize& destOffset,
                                   GC3Denum format, WebKit::WebGraphicsContext3D*);
 
     bool m_useMapTexSubImage;

@@ -86,7 +86,7 @@ public:
     bool requestLate();
 
     // Uploads pixels into the backing resource. This functions will aquire the backing if needed.
-    void upload(CCResourceProvider*, const uint8_t* image, const IntRect& imageRect, const IntRect& sourceRect, const IntRect& destRect);
+    void upload(CCResourceProvider*, const uint8_t* image, const IntRect& imageRect, const IntRect& sourceRect, const IntSize& destOffset);
 
     CCResourceProvider::ResourceId resourceId() const;
 

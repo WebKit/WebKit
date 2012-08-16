@@ -47,7 +47,7 @@ public:
         Texture(BitmapCanvasLayerTextureUpdater*, PassOwnPtr<CCPrioritizedTexture>);
         virtual ~Texture();
 
-        virtual void updateRect(CCResourceProvider*, const IntRect& sourceRect, const IntRect& destRect) OVERRIDE;
+        virtual void updateRect(CCResourceProvider*, const IntRect& sourceRect, const IntSize& destOffset) OVERRIDE;
 
     private:
         BitmapCanvasLayerTextureUpdater* textureUpdater() { return m_textureUpdater; }
@@ -61,7 +61,7 @@ public:
     virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(CCPrioritizedTextureManager*) OVERRIDE;
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat) OVERRIDE;
     virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, float contentsWidthScale, float contentsHeightScale, IntRect& resultingOpaqueRect, CCRenderingStats&) OVERRIDE;
-    void updateTextureRect(CCResourceProvider*, CCPrioritizedTexture*, const IntRect& sourceRect, const IntRect& destRect);
+    void updateTextureRect(CCResourceProvider*, CCPrioritizedTexture*, const IntRect& sourceRect, const IntSize& destOffset);
 
     virtual void setOpaque(bool) OVERRIDE;
 

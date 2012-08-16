@@ -122,7 +122,7 @@ void ThrottledTextureUploader::endUploads()
 
 void ThrottledTextureUploader::uploadTexture(CCResourceProvider* resourceProvider, Parameters upload)
 {
-    upload.texture->updateRect(resourceProvider, upload.sourceRect, upload.destRect);
+    upload.texture->updateRect(resourceProvider, upload.sourceRect, upload.destOffset);
 }
 
 void ThrottledTextureUploader::processQueries()
