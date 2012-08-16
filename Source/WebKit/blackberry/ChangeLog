@@ -1,3 +1,18 @@
+2012-08-16  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Suppress non DRT JS Console output.
+        https://bugs.webkit.org/show_bug.cgi?id=94058
+
+        Reviewed by Yong Li.
+        Reviewed internally by Ming Xie.
+
+        Some actual test results show JS Console showing up twice, for
+        instance traversal/moz-bug559526.html. Only print the DRT specific
+        Console message.
+
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::addMessageToConsole):
+
 2012-08-16  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] WebGL and Canvas fail to display after being restored from page cache

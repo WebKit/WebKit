@@ -1,3 +1,17 @@
+2012-08-16  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] Update format of JS console message to keep consistent with other ports.
+        https://bugs.webkit.org/show_bug.cgi?id=94058
+
+        Reviewed by Yong Li.
+        Reviewed internally by George Staikos.
+
+        1. Remove line number if it's zero.
+        2. Print only file name for "file://" URL.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::addMessageToConsole):
+
 2012-08-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Make DRT results more reliable on X11

@@ -91,8 +91,10 @@ ChromeClientBlackBerry::ChromeClientBlackBerry(WebPagePrivate* pagePrivate)
 void ChromeClientBlackBerry::addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned int lineNumber, const String& sourceID)
 {
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
-    if (m_webPagePrivate->m_dumpRenderTree)
+    if (m_webPagePrivate->m_dumpRenderTree) {
         m_webPagePrivate->m_dumpRenderTree->addMessageToConsole(message, lineNumber, sourceID);
+        return;
+    }
 #endif
 
     m_webPagePrivate->m_client->addMessageToConsole(message.characters(), message.length(), sourceID.characters(), sourceID.length(), lineNumber);

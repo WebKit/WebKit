@@ -643,7 +643,23 @@ void DumpRenderTree::didReceiveTitleForFrame(const String& title, WebCore::Frame
 // ChromeClient delegates.
 void DumpRenderTree::addMessageToConsole(const String& message, unsigned int lineNumber, const String& sourceID)
 {
-    printf("CONSOLE MESSAGE: line %d: %s\n", lineNumber, message.utf8().data());
+    printf("CONSOLE MESSAGE: ");
+    if (lineNumber)
+        printf("line %d: ", lineNumber);
+    String newMessage = message;
+    int pos = message.find("file://");
+    if (pos >= 0) {
+        newMessage = message.substring(0, pos);
+        String remaining = message.substring(pos);
+        String fileName;
+        int indexFile = remaining.reverseFind('/') + 1;
+        if (indexFile > 0 && indexFile < remaining.length())
+            fileName = remaining.substring(indexFile);
+        else
+            fileName = "file:";
+        newMessage.append(fileName);
+    }
+    printf("%s\n", newMessage.utf8().data());
 }
 
 void DumpRenderTree::runJavaScriptAlert(const String& message)
