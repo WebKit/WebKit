@@ -375,11 +375,6 @@ void WebLayer::transferAnimationsTo(WebLayer* other)
         other->m_private->setLayerAnimationController(m_private->releaseLayerAnimationController());
 }
 
-void WebLayer::setAlwaysReserveTextures(bool reserve)
-{
-    m_private->setAlwaysReserveTextures(reserve);
-}
-
 void WebLayer::setForceRenderSurface(bool forceRenderSurface)
 {
     m_private->setForceRenderSurface(forceRenderSurface);

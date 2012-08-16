@@ -174,11 +174,6 @@ public:
     // Transfers all animations running on the current layer.
     WEBKIT_EXPORT void transferAnimationsTo(WebLayer*);
 
-    // DEPRECATED.
-    // This requests that this layer's compositor-managed textures always be reserved
-    // when determining texture limits.
-    WEBKIT_EXPORT void setAlwaysReserveTextures(bool);
-
     // Forces this layer to use a render surface. There is no benefit in doing
     // so, but this is to facilitate benchmarks and tests.
     WEBKIT_EXPORT void setForceRenderSurface(bool);

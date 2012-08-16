@@ -1,3 +1,18 @@
+2012-08-16  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove alwaysReserveTextures code - it doesn't do anything
+        https://bugs.webkit.org/show_bug.cgi?id=94183
+
+        Reviewed by Dimitri Glazkov.
+
+        LayerChromium::setAlwaysReservesTextures doesn't do anything and hasn't since the prioritized texture manager
+        landed. This deletes the associated code.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        * platform/graphics/chromium/LayerChromium.h:
+        (LayerChromium):
+
 2012-08-16  Adam Barth  <abarth@webkit.org>
 
         Unreviewed. Sort the xcodeproj file.

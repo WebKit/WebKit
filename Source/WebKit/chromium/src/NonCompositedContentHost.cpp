@@ -87,20 +87,6 @@ void NonCompositedContentHost::setScrollLayer(WebCore::GraphicsLayer* layer)
     ASSERT(haveScrollLayer());
 }
 
-static void reserveScrollbarLayers(WebLayer layer, WebLayer clipLayer)
-{
-    // Scrollbars and corners are known to be attached outside the root clip
-    // rect, so skip the clipLayer subtree.
-    if (layer == clipLayer)
-        return;
-
-    for (size_t i = 0; i < layer.numberOfChildren(); ++i)
-        reserveScrollbarLayers(layer.childAt(i), clipLayer);
-
-    if (layer.drawsContent())
-        layer.setAlwaysReserveTextures(true);
-}
-
 void NonCompositedContentHost::setViewport(const WebCore::IntSize& viewportSize, const WebCore::IntSize& contentsSize, const WebCore::IntPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, float deviceScale)
 {
     if (!haveScrollLayer())
@@ -134,12 +120,6 @@ void NonCompositedContentHost::setViewport(const WebCore::IntSize& viewportSize,
         m_graphicsLayer->setNeedsDisplay();
     } else if (visibleRectChanged)
         m_graphicsLayer->setNeedsDisplay();
-
-    WebLayer clipLayer = layer.parent();
-    WebLayer rootLayer = clipLayer;
-    while (!rootLayer.parent().isNull())
-        rootLayer = rootLayer.parent();
-    reserveScrollbarLayers(rootLayer, clipLayer);
 }
 
 bool NonCompositedContentHost::haveScrollLayer()
