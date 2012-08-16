@@ -39,12 +39,9 @@
 
 #include "config.h"
 #include "JPEGImageDecoder.h"
+#include "PlatformInstrumentation.h"
 #include <stdio.h>  // Needed by jpeglib.h for FILE.
 #include <wtf/PassOwnPtr.h>
-
-#if PLATFORM(CHROMIUM)
-#include "TraceEvent.h"
-#endif
 
 #if OS(WINCE)
 // Remove warning: 'FAR' macro redefinition
@@ -540,8 +537,11 @@ ImageFrame* JPEGImageDecoder::frameBufferAtIndex(size_t index)
     }
 
     ImageFrame& frame = m_frameBufferCache[0];
-    if (frame.status() != ImageFrame::FrameComplete)
+    if (frame.status() != ImageFrame::FrameComplete) {
+        PlatformInstrumentation::willDecodeImage("JPEG");
         decode(false);
+        PlatformInstrumentation::didDecodeImage();
+    }
     return &frame;
 }
 
@@ -647,9 +647,6 @@ void JPEGImageDecoder::jpegComplete()
 
 void JPEGImageDecoder::decode(bool onlySize)
 {
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT0("webkit", "JPEGImageDecoder::decode");
-#endif
     if (failed())
         return;
 

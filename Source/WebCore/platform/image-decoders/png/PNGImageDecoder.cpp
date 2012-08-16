@@ -40,13 +40,10 @@
 #include "config.h"
 #include "PNGImageDecoder.h"
 
+#include "PlatformInstrumentation.h"
 #include "png.h"
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnPtr.h>
-
-#if PLATFORM(CHROMIUM)
-#include "TraceEvent.h"
-#endif
 
 #if USE(QCMSLIB)
 #include "qcms.h"
@@ -261,8 +258,11 @@ ImageFrame* PNGImageDecoder::frameBufferAtIndex(size_t index)
     }
 
     ImageFrame& frame = m_frameBufferCache[0];
-    if (frame.status() != ImageFrame::FrameComplete)
+    if (frame.status() != ImageFrame::FrameComplete) {
+        PlatformInstrumentation::willDecodeImage("PNG");
         decode(false);
+        PlatformInstrumentation::didDecodeImage();
+    }
     return &frame;
 }
 
@@ -530,9 +530,6 @@ void PNGImageDecoder::pngComplete()
 
 void PNGImageDecoder::decode(bool onlySize)
 {
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT0("webkit", "PNGImageDecoder::decode");
-#endif
     if (failed())
         return;
 

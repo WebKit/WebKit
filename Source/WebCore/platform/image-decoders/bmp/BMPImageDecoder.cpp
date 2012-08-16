@@ -32,11 +32,8 @@
 #include "BMPImageDecoder.h"
 
 #include "BMPImageReader.h"
+#include "PlatformInstrumentation.h"
 #include <wtf/PassOwnPtr.h>
-
-#if PLATFORM(CHROMIUM)
-#include "TraceEvent.h"
-#endif
 
 namespace WebCore {
 
@@ -81,8 +78,11 @@ ImageFrame* BMPImageDecoder::frameBufferAtIndex(size_t index)
     }
 
     ImageFrame* buffer = &m_frameBufferCache.first();
-    if (buffer->status() != ImageFrame::FrameComplete)
+    if (buffer->status() != ImageFrame::FrameComplete) {
+        PlatformInstrumentation::willDecodeImage("BMP");
         decode(false);
+        PlatformInstrumentation::didDecodeImage();
+    }
     return buffer;
 }
 
@@ -94,9 +94,6 @@ bool BMPImageDecoder::setFailed()
 
 void BMPImageDecoder::decode(bool onlySize)
 {
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT0("webkit", "BMPImageDecoder::decode");
-#endif
     if (failed())
         return;
 

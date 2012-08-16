@@ -255,6 +255,22 @@ void InspectorTimelineAgent::didPaint()
     didCompleteCurrentRecord(TimelineRecordType::Paint);
 }
 
+void InspectorTimelineAgent::willDecodeImage(const String&)
+{
+}
+
+void InspectorTimelineAgent::didDecodeImage()
+{
+}
+
+void InspectorTimelineAgent::willResizeImage(bool)
+{
+}
+
+void InspectorTimelineAgent::didResizeImage()
+{
+}
+
 void InspectorTimelineAgent::willComposite()
 {
     pushCurrentRecord(InspectorObject::create(), TimelineRecordType::CompositeLayers, false, 0);
@@ -486,9 +502,9 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(const String& type)
     // An empty stack could merely mean that the timeline agent was turned on in the middle of
     // an event.  Don't treat as an error.
     if (!m_recordStack.isEmpty()) {
-        if (m_orphanEventsEnabledStackMark == m_recordStack.size()) {
-            m_orphanEventsEnabledStackMark = 0;
-            InspectorInstrumentation::setTimelineAgentForOrphanEvents(0);
+        if (m_platformInstrumentationClientInstalledAtStackDepth == m_recordStack.size()) {
+            m_platformInstrumentationClientInstalledAtStackDepth = 0;
+            PlatformInstrumentation::setClient(0);
         }
 
         pushGCEventRecords();
@@ -509,7 +525,7 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
     , m_timestampOffset(0)
     , m_id(1)
     , m_maxCallStackDepth(5)
-    , m_orphanEventsEnabledStackMark(0)
+    , m_platformInstrumentationClientInstalledAtStackDepth(0)
     , m_inspectorType(type)
     , m_client(client)
 {
@@ -527,7 +543,7 @@ void InspectorTimelineAgent::appendRecord(PassRefPtr<InspectorObject> data, cons
     addRecordToTimeline(record.release(), type, frameId);
 }
 
-void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack, Frame* frame, bool hasOrphanDetails)
+void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack, Frame* frame, bool hasLowLevelDetails)
 {
     pushGCEventRecords();
     commitFrameRecord();
@@ -536,9 +552,9 @@ void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data,
     if (frame && m_pageAgent)
         frameId = m_pageAgent->frameId(frame);
     m_recordStack.append(TimelineRecordEntry(record.release(), data, InspectorArray::create(), type, frameId));
-    if (hasOrphanDetails && !m_orphanEventsEnabledStackMark && !InspectorInstrumentation::timelineAgentForOrphanEvents()) {
-        m_orphanEventsEnabledStackMark = m_recordStack.size();
-        InspectorInstrumentation::setTimelineAgentForOrphanEvents(this);
+    if (hasLowLevelDetails && !m_platformInstrumentationClientInstalledAtStackDepth && !PlatformInstrumentation::hasClient()) {
+        m_platformInstrumentationClientInstalledAtStackDepth = m_recordStack.size();
+        PlatformInstrumentation::setClient(this);
     }
 }
 
@@ -553,6 +569,10 @@ void InspectorTimelineAgent::commitFrameRecord()
 
 void InspectorTimelineAgent::clearRecordStack()
 {
+    if (m_platformInstrumentationClientInstalledAtStackDepth) {
+        m_platformInstrumentationClientInstalledAtStackDepth = 0;
+        PlatformInstrumentation::setClient(0);
+    }
     m_pendingFrameRecord.clear();
     m_recordStack.clear();
     m_id++;

@@ -31,11 +31,8 @@
 
 #if USE(WEBP)
 
+#include "PlatformInstrumentation.h"
 #include "webp/decode.h"
-
-#if PLATFORM(CHROMIUM)
-#include "TraceEvent.h"
-#endif
 
 #if CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN)
 inline WEBP_CSP_MODE outputMode() { return MODE_RGBA; }
@@ -80,16 +77,16 @@ ImageFrame* WEBPImageDecoder::frameBufferAtIndex(size_t index)
     }
 
     ImageFrame& frame = m_frameBufferCache[0];
-    if (frame.status() != ImageFrame::FrameComplete)
+    if (frame.status() != ImageFrame::FrameComplete) {
+        PlatformInstrumentation::willDecodeImage("WEBP");
         decode(false);
+        PlatformInstrumentation::didDecodeImage();
+    }
     return &frame;
 }
 
 bool WEBPImageDecoder::decode(bool onlySize)
 {
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT0("webkit", "WEBPImageDecoder::decode");
-#endif
     if (failed())
         return false;
 

@@ -28419,6 +28419,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\PlatformInstrumentation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\PlatformInstrumentation.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\PlatformKeyboardEvent.h"
 				>
 			</File>

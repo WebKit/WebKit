@@ -27,11 +27,8 @@
 #include "GIFImageDecoder.h"
 
 #include "GIFImageReader.h"
+#include "PlatformInstrumentation.h"
 #include <wtf/PassOwnPtr.h>
-
-#if PLATFORM(CHROMIUM)
-#include "TraceEvent.h"
-#endif
 
 namespace WebCore {
 
@@ -130,8 +127,11 @@ ImageFrame* GIFImageDecoder::frameBufferAtIndex(size_t index)
         return 0;
 
     ImageFrame& frame = m_frameBufferCache[index];
-    if (frame.status() != ImageFrame::FrameComplete)
+    if (frame.status() != ImageFrame::FrameComplete) {
+        PlatformInstrumentation::willDecodeImage("GIF");
         decode(index + 1, GIFFullQuery);
+        PlatformInstrumentation::didDecodeImage();
+    }
     return &frame;
 }
 
@@ -314,9 +314,6 @@ void GIFImageDecoder::gifComplete()
 
 void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query)
 {
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT0("webkit", "GIFImageDecoder::decode");
-#endif
     if (failed())
         return;
 

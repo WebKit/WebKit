@@ -1,3 +1,66 @@
+2012-08-16  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: enable instrumentation of platform code
+        https://bugs.webkit.org/show_bug.cgi?id=94125
+
+        Reviewed by Pavel Feldman.
+
+        - add PlatformInstrumentation class that exposes instrumentation methods that may be used by code under WebCore/platform;
+        - move TRACE_EVENT_XXX() macros into PlatformInstrumentation.h to minimize instrumentation hassle in the client code;
+        - implement PlatformInstrumentationClient by InspectorTimelineAgent;
+        - only install PlatformInstrumentationClient when we have outer events for which we expect low-level details
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willDecodeImage): to be implemented by subsequent change;
+        (WebCore::InspectorTimelineAgent::didDecodeImage): to be implemented by subsequent change;
+        (WebCore::InspectorTimelineAgent::willResizeImage): to be implemented by subsequent change;
+        (WebCore::InspectorTimelineAgent::didResizeImage): to be implemented by subsequent change;
+        (WebCore::InspectorTimelineAgent::didCompleteCurrentRecord):
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+        (WebCore::InspectorTimelineAgent::clearRecordStack):
+        * inspector/InspectorTimelineAgent.h:
+        (InspectorTimelineAgent):
+        * platform/PlatformInstrumentation.cpp: Added.
+        (WebCore):
+        (WebCore::PlatformInstrumentation::setClient):
+        * platform/PlatformInstrumentation.h: Added.
+        (WebCore):
+        (PlatformInstrumentationClient):
+        (PlatformInstrumentation):
+        (WebCore::PlatformInstrumentation::hasClient):
+        (WebCore::PlatformInstrumentation::willDecodeImage):
+        (WebCore::PlatformInstrumentation::didDecodeImage):
+        (WebCore::PlatformInstrumentation::willResizeImage):
+        (WebCore::PlatformInstrumentation::didResizeImage):
+        * platform/graphics/skia/NativeImageSkia.cpp:
+        (WebCore::NativeImageSkia::resizedBitmap): added calls to PlatformInstrumentation, removed TRACE_EVENT();
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        (WebCore::BMPImageDecoder::frameBufferAtIndex): added calls to PlatformInstrumentation;
+        (WebCore::BMPImageDecoder::decode): removed TRACE_EVENT()
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::frameBufferAtIndex): added calls to PlatformInstrumentation;
+        (WebCore::GIFImageDecoder::decode): removed TRACE_EVENT()
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::frameBufferAtIndex): added calls to PlatformInstrumentation;
+        (WebCore::ICOImageDecoder::decode): removed TRACE_EVENT()
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::frameBufferAtIndex): added calls to PlatformInstrumentation;
+        (WebCore::JPEGImageDecoder::decode): removed TRACE_EVENT()
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::frameBufferAtIndex): added calls to PlatformInstrumentation;
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::frameBufferAtIndex): added calls to PlatformInstrumentation;
+        (WebCore::WEBPImageDecoder::decode): removed TRACE_EVENT();
+        * inspector/InspectorInstrumentation.cpp: removed orphan event support;
+        (WebCore):
+        * inspector/InspectorInstrumentation.h: ditto.
+
 2012-08-16  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Breakpoints are not correctly restored on reload.

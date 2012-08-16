@@ -4139,6 +4139,8 @@ webcore_sources += \
 	Source/WebCore/platform/EventLoop.h \
 	Source/WebCore/platform/EventTracer.cpp \
 	Source/WebCore/platform/EventTracer.h \
+	Source/WebCore/platform/PlatformInstrumentation.cpp \
+	Source/WebCore/platform/PlatformInstrumentation.h \
 	Source/WebCore/platform/FileChooser.cpp \
 	Source/WebCore/platform/FileChooser.h \
 	Source/WebCore/platform/FileIconLoader.cpp \

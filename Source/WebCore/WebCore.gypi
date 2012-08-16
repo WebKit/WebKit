@@ -304,6 +304,8 @@
             'platform/PlatformEvent.cpp',
             'platform/PlatformEvent.h',
             'platform/PlatformGestureEvent.h',
+            'platform/PlatformInstrumentation.cpp',
+            'platform/PlatformInstrumentation.h',
             'platform/PlatformKeyboardEvent.h',
             'platform/PlatformMenuDescription.h',
             'platform/PlatformMouseEvent.h',

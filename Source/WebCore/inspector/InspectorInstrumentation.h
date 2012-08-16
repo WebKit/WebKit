@@ -255,8 +255,6 @@ public:
     static bool hasFrontends() { return s_frontendCounter; }
     static bool hasFrontendForScriptContext(ScriptExecutionContext*);
     static bool collectingHTMLParseErrors(Page*);
-    static InspectorTimelineAgent* timelineAgentForOrphanEvents();
-    static void setTimelineAgentForOrphanEvents(InspectorTimelineAgent*);
 #else
     static bool hasFrontends() { return false; }
     static bool hasFrontendForScriptContext(ScriptExecutionContext*) { return false; }
@@ -274,8 +272,6 @@ public:
 
 private:
 #if ENABLE(INSPECTOR)
-    static WTF::ThreadSpecific<InspectorTimelineAgent*>& threadSpecificTimelineAgentForOrphanEvents();
-
     static void didClearWindowObjectInWorldImpl(InstrumentingAgents*, Frame*, DOMWrapperWorld*);
     static bool isDebuggerPausedImpl(InstrumentingAgents*);
 

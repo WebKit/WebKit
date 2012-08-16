@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2009 Google Inc. All rights reserved.
+* Copyright (C) 2012 Google Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are
@@ -37,6 +37,7 @@
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "LayoutTypes.h"
+#include "PlatformInstrumentation.h"
 #include "ScriptGCEvent.h"
 #include "ScriptGCEventListener.h"
 #include <wtf/PassOwnPtr.h>
@@ -56,7 +57,11 @@ class ResourceResponse;
 
 typedef String ErrorString;
 
-class InspectorTimelineAgent : public InspectorBaseAgent<InspectorTimelineAgent>, ScriptGCEventListener, public InspectorBackendDispatcher::TimelineCommandHandler {
+class InspectorTimelineAgent
+    : public InspectorBaseAgent<InspectorTimelineAgent>,
+      public ScriptGCEventListener,
+      public InspectorBackendDispatcher::TimelineCommandHandler,
+      public PlatformInstrumentationClient {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
 public:
     enum InspectorType { PageInspector, WorkerInspector };
@@ -146,6 +151,12 @@ public:
     void willProcessTask();
     void didProcessTask();
 
+    // PlatformInstrumentationClient methods.
+    virtual void willDecodeImage(const String& imageType) OVERRIDE;
+    virtual void didDecodeImage() OVERRIDE;
+    virtual void willResizeImage(bool shouldCache) OVERRIDE;
+    virtual void didResizeImage() OVERRIDE;
+
 private:
     struct TimelineRecordEntry {
         TimelineRecordEntry(PassRefPtr<InspectorObject> record, PassRefPtr<InspectorObject> data, PassRefPtr<InspectorArray> children, const String& type, const String& frameId)
@@ -161,7 +172,7 @@ private:
         
     InspectorTimelineAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*, InspectorType, InspectorClient*);
 
-    void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type, bool captureCallStack, Frame*, bool hasOrphanDetails = false);
+    void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type, bool captureCallStack, Frame*, bool hasLowLevelDetails = false);
     void setHeapSizeStatistics(InspectorObject* record);
 
     void didCompleteCurrentRecord(const String& type);
@@ -196,7 +207,7 @@ private:
     typedef Vector<GCEvent> GCEvents;
     GCEvents m_gcEvents;
     int m_maxCallStackDepth;
-    unsigned m_orphanEventsEnabledStackMark;
+    unsigned m_platformInstrumentationClientInstalledAtStackDepth;
     RefPtr<InspectorObject> m_pendingFrameRecord;
     InspectorType m_inspectorType;
     InspectorClient* m_client;

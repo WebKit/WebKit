@@ -1235,6 +1235,8 @@
 		46F9D5DF0B0D60170028EE36 /* progressCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DC0B0D60170028EE36 /* progressCursor.png */; };
 		490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */; };
 		490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */; };
+		49182B5215DCE6F000548418 /* PlatformInstrumentation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49182B5015DCE6F000548418 /* PlatformInstrumentation.cpp */; };
+		49182B5315DCE6F000548418 /* PlatformInstrumentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49182B5115DCE6F000548418 /* PlatformInstrumentation.h */; };
 		492863991253B8FC00F792D6 /* ResourceLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 492863981253B8FC00F792D6 /* ResourceLoadInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49291E4B134172C800E753DE /* ImageRenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 49291E4A134172C800E753DE /* ImageRenderingMode.h */; };
 		493E5E0912D6420500020081 /* PlatformCALayerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 493E5E0812D6420500020081 /* PlatformCALayerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8338,6 +8340,8 @@
 		46F9D5DC0B0D60170028EE36 /* progressCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = progressCursor.png; sourceTree = "<group>"; };
 		490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ANGLEWebKitBridge.cpp; sourceTree = "<group>"; };
 		490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANGLEWebKitBridge.h; sourceTree = "<group>"; };
+		49182B5015DCE6F000548418 /* PlatformInstrumentation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformInstrumentation.cpp; sourceTree = "<group>"; };
+		49182B5115DCE6F000548418 /* PlatformInstrumentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformInstrumentation.h; sourceTree = "<group>"; };
 		492863981253B8FC00F792D6 /* ResourceLoadInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadInfo.h; sourceTree = "<group>"; };
 		49291E4A134172C800E753DE /* ImageRenderingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageRenderingMode.h; sourceTree = "<group>"; };
 		493E5E0812D6420500020081 /* PlatformCALayerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformCALayerClient.h; path = ca/PlatformCALayerClient.h; sourceTree = "<group>"; };
@@ -20719,6 +20723,8 @@
 				BC5C76291497FE1400BC4775 /* PlatformEvent.h */,
 				A723F77A1484CA4C008C6DBE /* PlatformExportMacros.h */,
 				BC9585DF12F0989500755821 /* PlatformGestureEvent.h */,
+				49182B5015DCE6F000548418 /* PlatformInstrumentation.cpp */,
+				49182B5115DCE6F000548418 /* PlatformInstrumentation.h */,
 				935C476609AC4D4300A6AAB4 /* PlatformKeyboardEvent.h */,
 				932871BF0B20DEB70049035A /* PlatformMenuDescription.h */,
 				935C476709AC4D4300A6AAB4 /* PlatformMouseEvent.h */,
@@ -25395,6 +25401,7 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				49182B5315DCE6F000548418 /* PlatformInstrumentation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -28465,6 +28472,7 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				49182B5215DCE6F000548418 /* PlatformInstrumentation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -35,11 +35,8 @@
 
 #include "BMPImageReader.h"
 #include "PNGImageDecoder.h"
+#include "PlatformInstrumentation.h"
 #include <wtf/PassOwnPtr.h>
-
-#if PLATFORM(CHROMIUM)
-#include "TraceEvent.h"
-#endif
 
 namespace WebCore {
 
@@ -121,8 +118,11 @@ ImageFrame* ICOImageDecoder::frameBufferAtIndex(size_t index)
         return 0;
 
     ImageFrame* buffer = &m_frameBufferCache[index];
-    if (buffer->status() != ImageFrame::FrameComplete)
+    if (buffer->status() != ImageFrame::FrameComplete) {
+        PlatformInstrumentation::willDecodeImage("ICO");
         decode(index, false);
+        PlatformInstrumentation::didDecodeImage();
+    }
     return buffer;
 }
 
@@ -157,9 +157,6 @@ void ICOImageDecoder::setDataForPNGDecoderAtIndex(size_t index)
 
 void ICOImageDecoder::decode(size_t index, bool onlySize)
 {
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT0("webkit", "ICOImageDecoder::decode");
-#endif
     if (failed())
         return;
 
