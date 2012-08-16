@@ -231,7 +231,7 @@ static void fillMediaListChain(CSSRule* rule, Array<TypeBuilder::CSS::CSSMedia>*
             mediaList = 0;
 
         if (parentStyleSheet) {
-            sourceURL = parentStyleSheet->contents()->finalURL();
+            sourceURL = parentStyleSheet->contents()->baseURL();
             if (sourceURL.isEmpty())
                 sourceURL = InspectorDOMAgent::documentURLString(parentStyleSheet->ownerDocument());
         } else
@@ -250,8 +250,8 @@ static void fillMediaListChain(CSSRule* rule, Array<TypeBuilder::CSS::CSSMedia>*
                     Document* doc = styleSheet->ownerDocument();
                     if (doc)
                         sourceURL = doc->url();
-                    else if (!styleSheet->contents()->finalURL().isEmpty())
-                        sourceURL = styleSheet->contents()->finalURL();
+                    else if (!styleSheet->contents()->baseURL().isEmpty())
+                        sourceURL = styleSheet->contents()->baseURL();
                     else
                         sourceURL = "";
                     mediaArray->addItem(buildMediaObject(mediaList, styleSheet->ownerNode() ? MediaListSourceLinkedSheet : MediaListSourceInlineSheet, sourceURL));
@@ -707,8 +707,8 @@ PassRefPtr<InspectorStyleSheet> InspectorStyleSheet::create(InspectorPageAgent* 
 // static
 String InspectorStyleSheet::styleSheetURL(CSSStyleSheet* pageStyleSheet)
 {
-    if (pageStyleSheet && !pageStyleSheet->contents()->finalURL().isEmpty())
-        return pageStyleSheet->contents()->finalURL().string();
+    if (pageStyleSheet && !pageStyleSheet->contents()->baseURL().isEmpty())
+        return pageStyleSheet->contents()->baseURL().string();
     return emptyString();
 }
 

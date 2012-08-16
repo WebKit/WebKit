@@ -54,10 +54,9 @@ unsigned StyleSheetContents::estimatedSizeInBytes() const
     return size;
 }
 
-StyleSheetContents::StyleSheetContents(StyleRuleImport* ownerRule, const String& originalURL, const KURL& finalURL, const CSSParserContext& context)
+StyleSheetContents::StyleSheetContents(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext& context)
     : m_ownerRule(ownerRule)
     , m_originalURL(originalURL)
-    , m_finalURL(finalURL)
     , m_loadCompleted(false)
     , m_isUserStyleSheet(ownerRule && ownerRule->parentStyleSheet() && ownerRule->parentStyleSheet()->isUserStyleSheet())
     , m_hasSyntacticallyValidCSSHeader(true)
@@ -73,7 +72,6 @@ StyleSheetContents::StyleSheetContents(const StyleSheetContents& o)
     : RefCounted<StyleSheetContents>()
     , m_ownerRule(0)
     , m_originalURL(o.m_originalURL)
-    , m_finalURL(o.m_finalURL)
     , m_encodingFromCharsetRule(o.m_encodingFromCharsetRule)
     , m_importRules(o.m_importRules.size())
     , m_childRules(o.m_childRules.size())
@@ -283,7 +281,7 @@ void StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
     // to at least start with a syntactically valid CSS rule.
     // This prevents an attacker playing games by injecting CSS strings into HTML, XML, JSON, etc. etc.
     if (!hasValidMIMEType && !hasSyntacticallyValidCSSHeader()) {
-        bool isCrossOriginCSS = !securityOrigin || !securityOrigin->canRequest(finalURL());
+        bool isCrossOriginCSS = !securityOrigin || !securityOrigin->canRequest(baseURL());
         if (isCrossOriginCSS) {
             clearRules();
             return;
@@ -295,7 +293,7 @@ void StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
         DEFINE_STATIC_LOCAL(const String, mediaWikiKHTMLFixesStyleSheet, ("/* KHTML fix stylesheet */\n/* work around the horizontal scrollbars */\n#column-content { margin-left: 0; }\n\n"));
         // There are two variants of KHTMLFixes.css. One is equal to mediaWikiKHTMLFixesStyleSheet,
         // while the other lacks the second trailing newline.
-        if (finalURL().string().endsWith(slashKHTMLFixesDotCss) && !sheetText.isNull() && mediaWikiKHTMLFixesStyleSheet.startsWith(sheetText)
+        if (baseURL().string().endsWith(slashKHTMLFixesDotCss) && !sheetText.isNull() && mediaWikiKHTMLFixesStyleSheet.startsWith(sheetText)
             && sheetText.length() >= mediaWikiKHTMLFixesStyleSheet.length() - 1)
             clearRules();
     }
@@ -489,7 +487,6 @@ void StyleSheetContents::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) c
 {
     MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addMember(m_originalURL);
-    info.addMember(m_finalURL);
     info.addMember(m_encodingFromCharsetRule);
     info.addVector(m_importRules);
     info.addInstrumentedVector(m_childRules);

@@ -1,3 +1,42 @@
+2012-08-15  Antti Koivisto  <antti@apple.com>
+
+        Remove StyleSheetContents::m_finalURL 
+        https://bugs.webkit.org/show_bug.cgi?id=94140
+
+        Reviewed by Andreas Kling.
+
+        It is equal (or empty in case of inline stylesheets) to the baseURL passed in CSSParserContext.
+        Removing it simplifies the constructors and the related code.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::createInline):
+        (WebCore::CSSStyleSheet::canAccessRules):
+        (WebCore::CSSStyleSheet::rules):
+        (WebCore::CSSStyleSheet::cssRules):
+
+            - factor access check to a function
+            - allow document always access rules of its inline stylesheets
+
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::setCSSStyleSheet):
+        (WebCore::StyleRuleImport::requestStyleSheet):
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::StyleSheetContents):
+        (WebCore::StyleSheetContents::parseAuthorStyleSheet):
+        * css/StyleSheetContents.h:
+        (WebCore::StyleSheetContents::create):
+        (WebCore::StyleSheetContents::originalURL):
+        (StyleSheetContents):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::setCSSStyleSheet):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::fillMediaListChain):
+        (WebCore::InspectorStyleSheet::styleSheetURL):
+        * xml/XSLImportRule.cpp:
+        (WebCore::XSLImportRule::loadSheet):
+
 2012-08-16  Justin Novosad  <junov@chromium.org>
 
         [Chromium] Changing Canvas2DLayerBridge to use SkDeferredCanvas's notification client API
