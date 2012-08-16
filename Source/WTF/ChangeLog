@@ -1,3 +1,15 @@
+2012-08-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        Use initialization from literals for StringStatics
+        https://bugs.webkit.org/show_bug.cgi?id=94185
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/text/StringStatics.cpp:
+        Remove the arguments for DEFINE_GLOBAL. They are no longer used by the macro.
+        (WTF::AtomicString::init):
+        Use ConstructFromLiteral to initialize the strings faster and to save memory.
+
 2012-08-14  Milian Wolff  <milian.wolff@kdab.com>
 
         [Qt] QNX build fails due to reference to MADV_FREE_REUSE and MADV_FREE_REUSABLE
