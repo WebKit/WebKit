@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/polyfill.js"></script>
+<div id="container">
+    <img id="host">
+</div>
+<script>
+description("Tests to ensure that an img element receives a load event, but an inner image element in shadow DOM subtree does not receive.");
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function listener(event) {
+    shouldBeEqualToString("event.currentTarget.id", "host");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function addShadowDOM(host) {
+    var shadowRoot = new WebKitShadowRoot(host);
+    var div = document.createElement('div');
+    shadowRoot.appendChild(div);
+    div.id = 'inner-div';
+    div.addEventListener('load', listener, true);
+    div.appendChild(document.createElement('shadow'));
+}
+
+var host = document.getElementById('host');
+host.addEventListener('load', listener, true);
+addShadowDOM(host);
+host.src = "../resources/apple.gif";
+</script>
+</body>
+</html>

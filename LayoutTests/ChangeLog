@@ -1,3 +1,13 @@
+2012-08-15  Hayato Ito  <hayato@chromium.org>
+
+        A 'load' event should be fired on the shadow host directly, not on an inner image element of shadow dom subtree.
+        https://bugs.webkit.org/show_bug.cgi?id=93920
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/shadowdom-for-image-event-expected.txt: Added.
+        * fast/dom/shadow/shadowdom-for-image-event.html: Added.
+
 2012-08-15  Lauro Neto  <lauro.neto@openbossa.org>
 
         [Qt] new test fast/forms/radio/radio-group.html introduced in r104668 fails

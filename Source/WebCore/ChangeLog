@@ -1,3 +1,21 @@
+2012-08-15  Hayato Ito  <hayato@chromium.org>
+
+        A 'load' event should be fired on the shadow host directly, not on an inner image element of shadow dom subtree.
+        https://bugs.webkit.org/show_bug.cgi?id=93920
+
+        Reviewed by Dimitri Glazkov.
+
+        A 'load' event is a must-stoppable event at shadow boundary. So we
+        should fire a 'load' event on a shadow host directly, not on an
+        inner image element.
+
+        Test: fast/dom/shadow/shadowdom-for-image-event.html
+
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::dispatchLoadEvent):
+        * loader/ImageLoaderClient.h:
+        (WebCore::ImageLoaderClient::eventTarget):
+
 2012-08-15  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Show custom error page when 407 is received

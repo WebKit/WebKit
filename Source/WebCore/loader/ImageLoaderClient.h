@@ -42,6 +42,7 @@ public:
 
     virtual Element* sourceElement() = 0;
     virtual Element* imageElement() = 0;
+    Element* eventTarget() { return sourceElement(); }
 
     virtual void refSourceElement() = 0;
     virtual void derefSourceElement() = 0;
