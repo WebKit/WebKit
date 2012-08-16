@@ -81,7 +81,7 @@ public:
         return CCScheduledActionDrawAndSwapResult(true, m_swapWillHappenIfDrawHappens);
     }
 
-    virtual void scheduledActionUpdateMoreResources() OVERRIDE { m_actions.push_back("scheduledActionUpdateMoreResources"); }
+    virtual void scheduledActionUpdateMoreResources(double) OVERRIDE { m_actions.push_back("scheduledActionUpdateMoreResources"); }
     virtual void scheduledActionCommit() OVERRIDE { m_actions.push_back("scheduledActionCommit"); }
     virtual void scheduledActionBeginContextRecreation() OVERRIDE { m_actions.push_back("scheduledActionBeginContextRecreation"); }
     virtual void scheduledActionAcquireLayerTexturesForMainThread() OVERRIDE { m_actions.push_back("scheduledActionAcquireLayerTexturesForMainThread"); }
@@ -114,12 +114,10 @@ TEST(CCSchedulerTest, RequestCommit)
     client.reset();
 
     // Since, hasMoreResourceUpdates is set to false,
-    // beginFrameComplete should updateMoreResources, then
-    // commit
+    // beginFrameComplete should commit
     scheduler->beginFrameComplete();
-    EXPECT_EQ(2, client.numActions());
-    EXPECT_STREQ("scheduledActionUpdateMoreResources", client.action(0));
-    EXPECT_STREQ("scheduledActionCommit", client.action(1));
+    EXPECT_EQ(1, client.numActions());
+    EXPECT_STREQ("scheduledActionCommit", client.action(0));
     EXPECT_TRUE(timeSource->active());
     client.reset();
 
@@ -152,12 +150,10 @@ TEST(CCSchedulerTest, RequestCommitAfterBeginFrame)
     scheduler->setNeedsCommit();
 
     // Since, hasMoreResourceUpdates is set to false, and another commit is
-    // needed, beginFrameComplete should updateMoreResources, then commit, then
-    // begin another frame.
+    // needed, beginFrameComplete should commit, then begin another frame.
     scheduler->beginFrameComplete();
-    EXPECT_EQ(2, client.numActions());
-    EXPECT_STREQ("scheduledActionUpdateMoreResources", client.action(0));
-    EXPECT_STREQ("scheduledActionCommit", client.action(1));
+    EXPECT_EQ(1, client.numActions());
+    EXPECT_STREQ("scheduledActionCommit", client.action(0));
     client.reset();
 
     // Tick should draw but then begin another frame.
@@ -257,7 +253,7 @@ public:
         return CCScheduledActionDrawAndSwapResult(true, true);
     }
 
-    virtual void scheduledActionUpdateMoreResources() OVERRIDE { }
+    virtual void scheduledActionUpdateMoreResources(double) OVERRIDE { }
     virtual void scheduledActionCommit() OVERRIDE { }
     virtual void scheduledActionBeginContextRecreation() OVERRIDE { }
 
@@ -357,7 +353,7 @@ public:
         return CCScheduledActionDrawAndSwapResult(true, true);
     }
 
-    virtual void scheduledActionUpdateMoreResources() OVERRIDE { }
+    virtual void scheduledActionUpdateMoreResources(double) OVERRIDE { }
     virtual void scheduledActionCommit() OVERRIDE { }
     virtual void scheduledActionBeginContextRecreation() OVERRIDE { }
 

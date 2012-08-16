@@ -1,3 +1,18 @@
+2012-08-16  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Schedule texture uploads based on hard-coded timer and vsync.
+        https://bugs.webkit.org/show_bug.cgi?id=84281
+
+        Reviewed by James Robinson.
+
+        * tests/CCSchedulerTest.cpp:
+        (WebKitTests::TEST):
+        * tests/CCSchedulerTestCommon.h:
+        (WebKitTests::FakeCCTimeSource::FakeCCTimeSource):
+        (WebKitTests::FakeCCTimeSource::setNextTickTime):
+        (FakeCCTimeSource):
+        * tests/CCTextureUpdateControllerTest.cpp:
+
 2012-08-16  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Impl scrolling crashes when the renderer's initialization failed

@@ -29,6 +29,7 @@
 #include "TraceEvent.h"
 #include "cc/CCDelayBasedTimeSource.h"
 #include "cc/CCTimeSource.h"
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
@@ -145,6 +146,14 @@ void CCFrameRateController::didFinishFrame()
 void CCFrameRateController::didAbortAllPendingFrames()
 {
     m_numFramesPending = 0;
+}
+
+double CCFrameRateController::nextTickTime()
+{
+    if (m_isTimeSourceThrottling)
+        return m_timeSource->nextTickTime();
+
+    return monotonicallyIncreasingTime();
 }
 
 }

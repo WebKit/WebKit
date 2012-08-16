@@ -34,8 +34,11 @@
 
 namespace {
 
-// Number of textures to update with each call to updateMoreTextures().
-static const size_t textureUpdatesPerFrame = 48;
+// Number of textures to update with each call to updateMoreTexturesIfEnoughTimeRemaining().
+static const size_t textureUpdatesPerTick = 12;
+
+// Measured in seconds.
+static const double textureUpdateTickRate = 0.004;
 
 // Flush interval when performing texture uploads.
 static const int textureUploadFlushPeriod = 4;
@@ -46,7 +49,7 @@ namespace WebCore {
 
 size_t CCTextureUpdateController::maxPartialTextureUpdates()
 {
-    return textureUpdatesPerFrame;
+    return textureUpdatesPerTick;
 }
 
 void CCTextureUpdateController::updateTextures(CCResourceProvider* resourceProvider, TextureCopier* copier, TextureUploader* uploader, CCTextureUpdateQueue* queue, size_t count)
@@ -110,11 +113,14 @@ void CCTextureUpdateController::updateTextures(CCResourceProvider* resourceProvi
         copier->flush();
 }
 
-CCTextureUpdateController::CCTextureUpdateController(PassOwnPtr<CCTextureUpdateQueue> queue, CCResourceProvider* resourceProvider, TextureCopier* copier, TextureUploader* uploader)
-    : m_queue(queue)
+CCTextureUpdateController::CCTextureUpdateController(CCThread* thread, PassOwnPtr<CCTextureUpdateQueue> queue, CCResourceProvider* resourceProvider, TextureCopier* copier, TextureUploader* uploader)
+    : m_timer(adoptPtr(new CCTimer(thread, this)))
+    , m_queue(queue)
     , m_resourceProvider(resourceProvider)
     , m_copier(copier)
     , m_uploader(uploader)
+    , m_monotonicTimeLimit(0)
+    , m_firstUpdateAttempt(true)
 {
 }
 
@@ -127,17 +133,57 @@ bool CCTextureUpdateController::hasMoreUpdates() const
     return m_queue->hasMoreUpdates();
 }
 
-void CCTextureUpdateController::updateMoreTextures()
+void CCTextureUpdateController::updateMoreTextures(double monotonicTimeLimit)
+{
+    m_monotonicTimeLimit = monotonicTimeLimit;
+
+    if (!m_queue->hasMoreUpdates())
+        return;
+
+    // Call updateMoreTexturesNow() directly unless it's the first update
+    // attempt. This ensures that we empty the update queue in a finite
+    // amount of time.
+    if (m_firstUpdateAttempt) {
+        updateMoreTexturesIfEnoughTimeRemaining();
+        m_firstUpdateAttempt = false;
+    } else
+        updateMoreTexturesNow();
+}
+
+void CCTextureUpdateController::onTimerFired()
 {
     if (!m_queue->hasMoreUpdates())
         return;
 
-    updateTextures(m_resourceProvider, m_copier, m_uploader, m_queue.get(), updateMoreTexturesSize());
+    updateMoreTexturesIfEnoughTimeRemaining();
+}
+
+double CCTextureUpdateController::monotonicTimeNow() const
+{
+    return monotonicallyIncreasingTime();
+}
+
+double CCTextureUpdateController::updateMoreTexturesTime() const
+{
+    return textureUpdateTickRate;
 }
 
 size_t CCTextureUpdateController::updateMoreTexturesSize() const
 {
-    return textureUpdatesPerFrame;
+    return textureUpdatesPerTick;
+}
+
+void CCTextureUpdateController::updateMoreTexturesIfEnoughTimeRemaining()
+{
+    bool hasTimeRemaining = monotonicTimeNow() < m_monotonicTimeLimit - updateMoreTexturesTime();
+    if (hasTimeRemaining)
+        updateMoreTexturesNow();
+}
+
+void CCTextureUpdateController::updateMoreTexturesNow()
+{
+    m_timer->startOneShot(updateMoreTexturesTime());
+    updateTextures(m_resourceProvider, m_copier, m_uploader, m_queue.get(), updateMoreTexturesSize());
 }
 
 }

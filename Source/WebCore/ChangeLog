@@ -1,3 +1,52 @@
+2012-08-16  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Schedule texture uploads based on hard-coded timer and vsync.
+        https://bugs.webkit.org/show_bug.cgi?id=84281
+
+        Reviewed by James Robinson.
+
+        Improve interaction between vsync and texture uploads by performing
+        uploads in smaller batches and use a hard-coded timer to emulate
+        upload completion. This greatly reduces the chance of the compositor
+        missing a vsync due to being busy with texture uploads.
+
+        The CCScheduler client is now given a time limit when told to update
+        more resources. This time limit is passed to an instance of the
+        CCTextureUpdateController class, which is responsible for performing
+        texture updates until the limit is reached.
+
+        Unit tests: CCSchedulerTest.RequestCommit
+                    CCTextureUpdateControllerTest.UpdateMoreTextures
+                    CCTextureUpdateControllerTest.HasMoreUpdates
+
+        * platform/graphics/chromium/cc/CCFrameRateController.cpp:
+        (WebCore::CCFrameRateController::nextTickTime):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCFrameRateController.h:
+        (CCFrameRateController):
+        * platform/graphics/chromium/cc/CCScheduler.cpp:
+        (WebCore::CCScheduler::processScheduledActions):
+        * platform/graphics/chromium/cc/CCScheduler.h:
+        (CCSchedulerClient):
+        * platform/graphics/chromium/cc/CCTextureUpdateController.cpp:
+        (WebCore::CCTextureUpdateController::maxPartialTextureUpdates):
+        (WebCore::CCTextureUpdateController::CCTextureUpdateController):
+        (WebCore::CCTextureUpdateController::updateMoreTextures):
+        (WebCore):
+        (WebCore::CCTextureUpdateController::onTimerFired):
+        (WebCore::CCTextureUpdateController::monotonicTimeNow):
+        (WebCore::CCTextureUpdateController::updateMoreTexturesTime):
+        (WebCore::CCTextureUpdateController::updateMoreTexturesSize):
+        (WebCore::CCTextureUpdateController::updateMoreTexturesIfEnoughTimeRemaining):
+        (WebCore::CCTextureUpdateController::updateMoreTexturesNow):
+        * platform/graphics/chromium/cc/CCTextureUpdateController.h:
+        (WebCore::CCTextureUpdateController::create):
+        (CCTextureUpdateController):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::beginFrameCompleteOnImplThread):
+        (WebCore::CCThreadProxy::scheduledActionUpdateMoreResources):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2012-08-16  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Impl scrolling crashes when the renderer's initialization failed
