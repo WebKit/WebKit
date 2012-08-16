@@ -1,5 +1,11 @@
 2012-08-16  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed. Sort the xcodeproj file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2012-08-16  Adam Barth  <abarth@webkit.org>
+
         Unreviewed. Update bindings tests results from my recent VoidCallback
         patch. The new result is correct.
 

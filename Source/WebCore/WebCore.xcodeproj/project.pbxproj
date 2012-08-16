@@ -14934,14 +14934,14 @@
 			isa = PBXGroup;
 			children = (
 				41815C1B138319630057AAA4 /* js */,
-				A7BE7EDD14C9175A0014489D /* MallocStatistics.h */,
-				A7BE7EDE14C9175A0014489D /* MallocStatistics.idl */,
 				417DA4CF13734326007C57FB /* Internals.cpp */,
 				417DA4CE13734326007C57FB /* Internals.h */,
 				41813F9113818AD60057AAA4 /* Internals.idl */,
 				A7BF7EDC14C9175A0014489D /* InternalSettings.cpp */,
 				A7BF7EDD14C9175A0014489D /* InternalSettings.h */,
 				A7BF7EDE14C9175A0014489D /* InternalSettings.idl */,
+				A7BE7EDD14C9175A0014489D /* MallocStatistics.h */,
+				A7BE7EDE14C9175A0014489D /* MallocStatistics.idl */,
 			);
 			path = testing;
 			sourceTree = "<group>";
@@ -14949,12 +14949,12 @@
 		417DA71213735D90007C57FB /* Testing */ = {
 			isa = PBXGroup;
 			children = (
-				A7B4EA6814C9348400C8F5BF /* JSMallocStatistics.cpp */,
-				A7B4EA6914C9348400C8F5BF /* JSMallocStatistics.h */,
 				417DA71B13735DFA007C57FB /* JSInternals.cpp */,
 				417DA71C13735DFA007C57FB /* JSInternals.h */,
 				A7B4EA7814C9348400C8F5BF /* JSInternalSettings.cpp */,
 				A7B4EA7914C9348400C8F5BF /* JSInternalSettings.h */,
+				A7B4EA6814C9348400C8F5BF /* JSMallocStatistics.cpp */,
+				A7B4EA6914C9348400C8F5BF /* JSMallocStatistics.h */,
 			);
 			name = Testing;
 			sourceTree = "<group>";
@@ -22119,9 +22119,9 @@
 			files = (
 				417DA6DA13734E6E007C57FB /* Internals.h in Headers */,
 				A7BF7EE014C9175A0014489D /* InternalSettings.h in Headers */,
-				A740B59514C935AB00A77FA4 /* JSMallocStatistics.h in Headers */,
 				417DA71E13735DFA007C57FB /* JSInternals.h in Headers */,
 				A740B5A514C935AB00A77FA4 /* JSInternalSettings.h in Headers */,
+				A740B59514C935AB00A77FA4 /* JSMallocStatistics.h in Headers */,
 				41815C1F138319830057AAA4 /* WebCoreTestSupport.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -24441,6 +24441,7 @@
 				BCAA487014A052530088FAC4 /* PlatformEventFactoryMac.h in Headers */,
 				A723F77B1484CA4C008C6DBE /* PlatformExportMacros.h in Headers */,
 				BC9585E112F0989500755821 /* PlatformGestureEvent.h in Headers */,
+				49182B5315DCE6F000548418 /* PlatformInstrumentation.h in Headers */,
 				935C476809AC4D4300A6AAB4 /* PlatformKeyboardEvent.h in Headers */,
 				0562F9611573F88F0031CA16 /* PlatformLayer.h in Headers */,
 				932871C00B20DEB70049035A /* PlatformMenuDescription.h in Headers */,
@@ -25401,7 +25402,6 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
-				49182B5315DCE6F000548418 /* PlatformInstrumentation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25741,9 +25741,9 @@
 			files = (
 				417DA6D913734E6E007C57FB /* Internals.cpp in Sources */,
 				A7BF7EDF14C9175A0014489D /* InternalSettings.cpp in Sources */,
-				A740B59714C935AF00A77FA4 /* JSMallocStatistics.cpp in Sources */,
 				417DA71D13735DFA007C57FB /* JSInternals.cpp in Sources */,
 				A740B5A714C935AF00A77FA4 /* JSInternalSettings.cpp in Sources */,
+				A740B59714C935AF00A77FA4 /* JSMallocStatistics.cpp in Sources */,
 				41815C1E138319830057AAA4 /* WebCoreTestSupport.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -27697,6 +27697,7 @@
 				CDAA8D0A14D71B2E0061EA60 /* PlatformClockCM.mm in Sources */,
 				BC5C762A1497FE1400BC4775 /* PlatformEvent.cpp in Sources */,
 				BCAA486F14A052530088FAC4 /* PlatformEventFactoryMac.mm in Sources */,
+				49182B5215DCE6F000548418 /* PlatformInstrumentation.cpp in Sources */,
 				41BF700F0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp in Sources */,
 				C598902E14E9B0F800E8D18B /* PlatformPasteboardMac.mm in Sources */,
 				BC94D1080C274F88006BC617 /* PlatformScreenMac.mm in Sources */,
@@ -28472,7 +28473,6 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
-				49182B5215DCE6F000548418 /* PlatformInstrumentation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
