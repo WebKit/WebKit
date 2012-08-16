@@ -1,3 +1,20 @@
+2012-08-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r125751.
+        http://trac.webkit.org/changeset/125751
+        https://bugs.webkit.org/show_bug.cgi?id=94206
+
+        we shouldn't be rolling out this patch without a formal
+        review. (Requested by rniwa_ on #webkit).
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::setDataAndUpdate):
+        * editing/FrameSelection.cpp:
+        (WebCore::updatePositionAfterAdoptingTextReplacement):
+        (WebCore::FrameSelection::textWasReplaced):
+        * editing/FrameSelection.h:
+        (FrameSelection):
+
 2012-08-16  Marja Hölttä  <marja@chromium.org>
 
         FormController, FileInputType: Enable reading selected file names from document state
