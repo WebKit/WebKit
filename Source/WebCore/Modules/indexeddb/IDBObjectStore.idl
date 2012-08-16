@@ -29,7 +29,7 @@ module storage {
         Conditional=INDEXED_DATABASE
     ] IDBObjectStore {
         readonly attribute [TreatReturnedNullStringAs=Null] DOMString name;
-        readonly attribute IDBAny keyPath;
+        readonly attribute [ImplementedAs=keyPathAny] IDBAny keyPath;
         readonly attribute DOMStringList indexNames;
         readonly attribute IDBTransaction transaction;
         readonly attribute boolean autoIncrement;

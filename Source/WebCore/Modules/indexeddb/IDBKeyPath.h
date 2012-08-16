@@ -28,7 +28,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBAny.h"
 #include "PlatformString.h"
 #include <wtf/Vector.h>
 
@@ -71,8 +70,6 @@ public:
 
     bool isNull() const { return m_type == NullType; }
     bool isValid() const;
-    operator PassRefPtr<IDBAny>() const;
-    bool operator==(PassRefPtr<IDBAny> other) const;
     bool operator==(const IDBKeyPath& other) const;
 
 private:

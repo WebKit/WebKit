@@ -30,7 +30,7 @@ module storage {
     ] IDBIndex {
         readonly attribute DOMString name;
         readonly attribute IDBObjectStore objectStore;
-        readonly attribute IDBAny keyPath;
+        readonly attribute [ImplementedAs=keyPathAny] IDBAny keyPath;
         readonly attribute boolean unique;
         readonly attribute boolean multiEntry;
 

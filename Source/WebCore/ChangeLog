@@ -1,3 +1,33 @@
+2012-08-15  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: IDB*::keyPath should return IDBKeyPath, not IDBAny
+        https://bugs.webkit.org/show_bug.cgi?id=92434
+
+        Reviewed by Tony Chang.
+
+        Clean up IDBKeyPath conversion to IDBAny objects. This gets rid of
+        some implicit conversion from IDBKeyPath to IDBAny.
+
+        No new tests, just changing method signatures.
+
+        * Modules/indexeddb/IDBAny.cpp:
+        (WebCore::IDBAny::set):
+        (WebCore):
+        * Modules/indexeddb/IDBAny.h:
+        (WebCore):
+        (WebCore::IDBAny::create):
+        (IDBAny):
+        * Modules/indexeddb/IDBIndex.h:
+        (WebCore::IDBIndex::keyPathAny):
+        (WebCore::IDBIndex::keyPath):
+        * Modules/indexeddb/IDBIndex.idl:
+        * Modules/indexeddb/IDBKeyPath.cpp:
+        * Modules/indexeddb/IDBKeyPath.h:
+        * Modules/indexeddb/IDBObjectStore.h:
+        (WebCore::IDBObjectStore::keyPathAny):
+        (WebCore::IDBObjectStore::keyPath):
+        * Modules/indexeddb/IDBObjectStore.idl:
+
 2012-08-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         EFL build fix attempt after r125711. Touch an IDL file to regenerate derived sources.
