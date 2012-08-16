@@ -2570,7 +2570,7 @@ sub isUsedInReftest($)
     my $base = stripExtension($filename);
     
     foreach my $extension (@extensions) {
-        if (-f "$base-$expectedTag.$extension" || -f "$base-$expectedTag-$mismatchTag.$extensionsJoined") {
+        if (-f "$base-$expectedTag.$extension" || -f "$base-$expectedTag-$mismatchTag.$extension") {
             return 1;
         }
     }

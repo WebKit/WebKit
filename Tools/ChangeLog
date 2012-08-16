@@ -1,3 +1,15 @@
+2012-08-16  Roger Fong  <roger_fong@apple.com>
+
+        Typo in old-run-webkit-tests script from https://bugs.webkit.org/show_bug.cgi?id=93904.
+        https://bugs.webkit.org/show_bug.cgi?id=94228
+
+        Reviewed by Tim Horton.
+
+        I previously made the change but made a typo that causes the script not ignore mismatch ref tests.
+
+        * Scripts/old-run-webkit-tests:
+        (isUsedInReftest):
+
 2012-08-16  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Pass the --strip-binary argument to the apk test generator
