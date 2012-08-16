@@ -1,5 +1,16 @@
 2012-08-16  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
+        [Qt] Remove an unused variable
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPagePrivate::QQuickWebPagePrivate):
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        (QQuickWebPagePrivate):
+
+2012-08-16  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
         [Qt][WK2] Change the default cache model to enable the page cache
         https://bugs.webkit.org/show_bug.cgi?id=94221
 

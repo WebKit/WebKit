@@ -55,7 +55,6 @@ QQuickWebPagePrivate::QQuickWebPagePrivate(QQuickWebPage* q, QQuickWebView* view
     , viewportItem(viewportItem)
     , webPageProxy(0)
     , paintingIsInitialized(false)
-    , m_paintNode(0)
     , contentsScale(1)
 {
 }

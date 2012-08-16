@@ -47,7 +47,6 @@ public:
     QQuickWebView* const viewportItem;
     WebKit::WebPageProxy* webPageProxy;
     bool paintingIsInitialized;
-    QSGNode* m_paintNode;
 
     QSizeF contentsSize;
     qreal contentsScale;
