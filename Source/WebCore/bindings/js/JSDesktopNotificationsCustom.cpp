@@ -34,9 +34,9 @@
 #if ENABLE(LEGACY_NOTIFICATIONS)
 
 #include "Document.h"
-#include "JSCustomVoidCallback.h"
 #include "JSEventListener.h"
 #include "JSNotificationCenter.h"
+#include "JSVoidCallback.h"
 #include "NotificationCenter.h"
 #include <runtime/Error.h>
 
@@ -61,9 +61,7 @@ JSValue JSNotificationCenter::requestPermission(ExecState* exec)
     if (!exec->argument(0).isObject())
         return throwTypeError(exec);
 
-    PassRefPtr<JSCustomVoidCallback> callback = JSCustomVoidCallback::create(exec->argument(0).getObject(), toJSDOMGlobalObject(static_cast<Document*>(context), exec));
-
-    impl()->requestPermission(callback);
+    impl()->requestPermission(JSVoidCallback::create(exec->argument(0).getObject(), toJSDOMGlobalObject(static_cast<Document*>(context), exec)));
     return jsUndefined();
 }
 

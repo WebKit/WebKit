@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
- * 
+ * Copyright (C) 2012 Google Inc. All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -29,39 +29,12 @@
  */
 
 #include "config.h"
-#include "V8CustomVoidCallback.h"
+#include "V8Callback.h"
 
-#include "ScriptExecutionContext.h"
-#include "V8Binding.h"
+#include "Document.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
-
-V8CustomVoidCallback::V8CustomVoidCallback(v8::Local<v8::Object> callback, ScriptExecutionContext *context)
-    : m_callback(v8::Persistent<v8::Object>::New(callback))
-    , m_scriptExecutionContext(context)
-    , m_worldContext(UseCurrentWorld)
-{
-}
-
-V8CustomVoidCallback::~V8CustomVoidCallback()
-{
-    m_callback.Dispose();
-}
-
-void V8CustomVoidCallback::handleEvent()
-{
-    v8::HandleScope handleScope;
-
-    v8::Handle<v8::Context> v8Context = toV8Context(m_scriptExecutionContext.get(), m_worldContext);
-    if (v8Context.IsEmpty())
-        return;
-
-    v8::Context::Scope scope(v8Context);
-
-    bool callbackReturnValue = false;
-    invokeCallback(m_callback, 0, 0, callbackReturnValue, m_scriptExecutionContext.get());
-}
 
 bool invokeCallback(v8::Persistent<v8::Object> callback, int argc, v8::Handle<v8::Value> argv[], bool& callbackReturnValue, ScriptExecutionContext* scriptExecutionContext)
 {

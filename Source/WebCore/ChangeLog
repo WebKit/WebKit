@@ -1,3 +1,68 @@
+2012-08-15  Adam Barth  <abarth@webkit.org>
+
+        VoidCallback should not be a special snowflake
+        https://bugs.webkit.org/show_bug.cgi?id=94119
+
+        Reviewed by Eric Seidel.
+
+        VoidCallback is the oldest of the callbacks and it predates our ability
+        to autogenerate callback objects. The existing implementation of
+        VoidCallback is wrong because it doesn't call
+        ActiveDOMCallback::canInvokeCallback. The net result of that is that
+        void callbacks can race with navigations and occationally execute after
+        the Frame has navigated to a new Document, which was causing the
+        flakiness.
+
+        This patch changes VoidCallback to no longer be a unique snowflake.
+        Instead, we autogenerate the implementation, just like every other
+        callback in WebCore.
+
+        Tests: storage/websql/database-lock-after-reload.html is no longer flaky.
+
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * Modules/filesystem/SyncCallbackHelper.h:
+        (WebCore::SyncCallbackHelper::SuccessCallbackImpl::handleEvent):
+        * Target.pri:
+        * UseJSC.cmake:
+        * UseV8.cmake:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/cpp/WebDOMCustomVoidCallback.cpp: Removed.
+        * bindings/cpp/WebDOMCustomVoidCallback.h: Removed.
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSCustomVoidCallback.cpp: Removed.
+        * bindings/js/JSCustomVoidCallback.h: Removed.
+        * bindings/js/JSDesktopNotificationsCustom.cpp:
+        (WebCore::JSNotificationCenter::requestPermission):
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (GetClassName):
+        (AddIncludesForType):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetCallbackClassName):
+        (GenerateCallbackImplementation):
+        (JSValueToNative):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateCallbackImplementation):
+        (TypeCanFailConversion):
+        (GetCallbackClassName):
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        (WebCore::JSTestCallback::callbackWithNoParam):
+        * bindings/scripts/test/V8/V8TestCallback.cpp:
+        * bindings/v8/custom/V8CustomSQLStatementErrorCallback.cpp:
+        * bindings/v8/custom/V8CustomVoidCallback.cpp: Removed.
+        * bindings/v8/custom/V8CustomVoidCallback.h: Removed.
+        * bindings/v8/custom/V8MutationCallbackCustom.cpp:
+        * bindings/v8/custom/V8NotificationCenterCustom.cpp:
+        (WebCore::V8NotificationCenter::requestPermissionCallback):
+        * html/VoidCallback.h:
+        (VoidCallback):
+        * html/VoidCallback.idl:
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore):
+
 2012-08-15  Hayato Ito  <hayato@chromium.org>
 
         [Shadow] Stop 'load' and 'error' events at shadow boundaries

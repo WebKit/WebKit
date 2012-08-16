@@ -67,7 +67,6 @@ bool JSTestCallback::callbackWithNoParam()
 
     JSLockHolder lock(m_data->globalObject()->globalData());
 
-    ExecState* exec = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
 
     bool raisedException = false;

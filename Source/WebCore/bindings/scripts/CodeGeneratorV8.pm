@@ -3215,7 +3215,7 @@ sub GenerateCallbackImplementation
          
     AddToImplIncludes("ScriptExecutionContext.h");
     AddToImplIncludes("V8Binding.h");
-    AddToImplIncludes("V8CustomVoidCallback.h");
+    AddToImplIncludes("V8Callback.h");
     AddToImplIncludes("V8Proxy.h");
 
     push(@implContent, "#include <wtf/Assertions.h>\n\n");
@@ -3746,7 +3746,6 @@ sub TypeCanFailConversion
 
     AddToImplIncludes("ExceptionCode.h") if $type eq "Attr";
     return 1 if $type eq "Attr";
-    return 1 if $type eq "VoidCallback";
     return 0;
 }
 
@@ -4180,7 +4179,6 @@ sub GetCallbackClassName
 {
     my $interfaceName = shift;
 
-    return "V8CustomVoidCallback" if $interfaceName eq "VoidCallback";
     return "V8$interfaceName";
 }
 

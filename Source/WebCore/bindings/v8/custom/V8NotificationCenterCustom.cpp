@@ -38,11 +38,11 @@
 #include "Notification.h"
 #include "NotificationCenter.h"
 #include "V8Binding.h"
-#include "V8CustomVoidCallback.h"
 #include "V8EventListener.h"
 #include "V8Notification.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
+#include "V8VoidCallback.h"
 #include "WorkerContext.h"
 
 namespace WebCore {
@@ -92,12 +92,12 @@ v8::Handle<v8::Value> V8NotificationCenter::requestPermissionCallback(const v8::
     if (context->isWorkerContext())
         return setDOMException(NOT_SUPPORTED_ERR, args.GetIsolate());
 
-    RefPtr<V8CustomVoidCallback> callback;
+    RefPtr<V8VoidCallback> callback;
     if (args.Length() > 0) {
         if (!args[0]->IsObject())
             return throwTypeError("Callback must be of valid type.", args.GetIsolate());
  
-        callback = V8CustomVoidCallback::create(args[0], context);
+        callback = V8VoidCallback::create(args[0], context);
     }
 
     notificationCenter->requestPermission(callback.release());

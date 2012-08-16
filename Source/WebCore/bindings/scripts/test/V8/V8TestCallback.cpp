@@ -28,10 +28,10 @@
 #include "V8Class1.h"
 #include "V8Class2.h"
 #include "V8Class8.h"
-#include "V8CustomVoidCallback.h"
 #include "V8DOMStringList.h"
 #include "V8Proxy.h"
 #include "V8ThisClass.h"
+#include "V8VoidCallback.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

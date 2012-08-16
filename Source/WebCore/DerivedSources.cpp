@@ -477,6 +477,7 @@
 #include "JSUndoManager.cpp"
 #endif
 #include "JSValidityState.cpp"
+#include "JSVoidCallback.cpp"
 #include "JSWebKitAnimation.cpp"
 #include "JSWebKitAnimationEvent.cpp"
 #include "JSWebKitAnimationList.cpp"

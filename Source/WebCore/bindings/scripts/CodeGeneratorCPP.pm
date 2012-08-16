@@ -144,7 +144,6 @@ sub GetClassName
     return "WebDOMObject" if $name eq "DOMObject";
     return "bool" if $name eq "boolean";
     return $name if $codeGenerator->IsPrimitiveType($name);
-    return "WebDOMCustomVoidCallback" if $name eq "VoidCallback";
 
     return "WebDOM$name";
 }
@@ -326,12 +325,7 @@ sub AddIncludesForType
         $implIncludes{"SerializedScriptValue.h"} = 1;
         return;
     }
-    
-    if ($type eq "VoidCallback") {
-        $implIncludes{"WebDOMCustomVoidCallback.h"} = 1;
-        return;
-    }
-    
+
     # Also include CSSImportRule so that the toWebKit methods for subclasses are found
     if ($type eq "CSSRule") {
         $implIncludes{"WebDOMCSSImportRule.h"} = 1;

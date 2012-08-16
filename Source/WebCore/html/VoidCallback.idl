@@ -25,9 +25,8 @@
 
 module html {
     interface [
-        JSCustomToNativeObject,
-        OmitConstructor
+        Callback
     ] VoidCallback {
-        void handleEvent();
+        boolean handleEvent();
     };
 }

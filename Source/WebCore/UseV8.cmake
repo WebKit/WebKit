@@ -86,7 +86,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/custom/V8ConsoleCustom.cpp
     bindings/v8/custom/V8CoordinatesCustom.cpp
     bindings/v8/custom/V8CustomSQLStatementErrorCallback.cpp
-    bindings/v8/custom/V8CustomVoidCallback.cpp
     bindings/v8/custom/V8CustomXPathNSResolver.cpp
     bindings/v8/custom/V8DOMFormDataCustom.cpp
     bindings/v8/custom/V8DOMStringMapCustom.cpp

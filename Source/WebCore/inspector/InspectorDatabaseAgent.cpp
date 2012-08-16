@@ -215,7 +215,7 @@ public:
 
     virtual ~TransactionSuccessCallback() { }
 
-    virtual void handleEvent() { }
+    virtual bool handleEvent() { return false; }
 
 private:
     TransactionSuccessCallback() { }

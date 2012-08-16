@@ -52,7 +52,6 @@
 #include "JSConsoleCustom.cpp"
 #include "JSCoordinatesCustom.cpp"
 #include "JSCustomSQLStatementErrorCallback.cpp"
-#include "JSCustomVoidCallback.cpp"
 #include "JSCustomXPathNSResolver.cpp"
 #include "JSDictionary.cpp"
 #include "JSDOMBinding.cpp"

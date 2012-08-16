@@ -36,7 +36,7 @@
 
 #include "ScriptExecutionContext.h"
 #include "V8Binding.h"
-#include "V8CustomVoidCallback.h"
+#include "V8Callback.h"
 #include "V8MutationObserver.h"
 #include "V8MutationRecord.h"
 #include "V8Proxy.h"
