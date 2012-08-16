@@ -1385,6 +1385,11 @@ void WebViewHost::openFileSystem(WebFrame* frame, WebFileSystem::Type type, long
     webkit_support::OpenFileSystem(frame, type, size, create, callbacks);
 }
 
+void WebViewHost::deleteFileSystem(WebKit::WebFrame* frame, WebKit::WebFileSystem::Type type, WebKit::WebFileSystemCallbacks* callbacks)
+{
+    webkit_support::DeleteFileSystem(frame, type, callbacks);
+}
+
 bool WebViewHost::willCheckAndDispatchMessageEvent(WebFrame* source, WebSecurityOrigin target, WebDOMMessageEvent event)
 {
     if (m_shell->testRunner()->shouldInterceptPostMessage()) {

@@ -1,3 +1,15 @@
+2012-08-16  Taiju Tsuiki  <tzik@chromium.org>
+
+        Add deleteFileSystem support to DumpRenderTree for chromium
+        https://bugs.webkit.org/show_bug.cgi?id=94071
+
+        Reviewed by Kent Tamura.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::deleteFileSystem): Added
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-08-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename LayoutTestController to TestRunner in WebKitTestRunner
