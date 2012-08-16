@@ -1,3 +1,13 @@
+2012-08-16  Abhishek Arya  <inferno@chromium.org>
+
+        Regression(r118248): Replaced element not layout
+        https://bugs.webkit.org/show_bug.cgi?id=85804
+
+        Reviewed by Levi Weintraub.
+
+        * fast/replaced/replaced-last-line-layout-expected.html: Added.
+        * fast/replaced/replaced-last-line-layout.html: Added.
+
 2012-08-16  Adam Barth  <abarth@webkit.org>
 
         DirectoryEntry should use Dictionary rather than custom bindings code

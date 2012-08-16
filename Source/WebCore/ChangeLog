@@ -1,3 +1,23 @@
+2012-08-16  Abhishek Arya  <inferno@chromium.org>
+
+        Regression(r118248): Replaced element not layout
+        https://bugs.webkit.org/show_bug.cgi?id=85804
+
+        Reviewed by Levi Weintraub.
+
+        r118248 moved the layout call of replaced elements to nextLineBreak.
+        This was intended to delay the layout after all the lineboxes are cleared
+        in RenderBlock::layoutInlineChildren. However, this caused the end line
+        object to not layout at all. We revert to the old planned way to just
+        keep a local vector of replaced elements to layout and then layout all of them
+        after the lineboxes are cleared.
+
+        Test: fast/replaced/replaced-last-line-layout.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+
 2012-08-16  Benjamin Poulain  <bpoulain@apple.com>
 
         Do not perform 8 to 16bits characters conversion when converting a WTFString to NSString/CFString
