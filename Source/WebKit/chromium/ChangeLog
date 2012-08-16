@@ -1,3 +1,15 @@
+2012-08-16  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove unnecessary tree hierarchy inspection APIs from WebLayer
+        https://bugs.webkit.org/show_bug.cgi?id=94229
+
+        Reviewed by Adrienne Walker.
+
+        Remove dead WebLayer function implementations and tests of same.
+
+        * src/WebLayer.cpp:
+        * tests/WebLayerTest.cpp:
+
 2012-08-16  David Reveman  <reveman@chromium.org>
 
         [Chromium] Avoid aliasing global symbol monotonicallyIncreasingTime().

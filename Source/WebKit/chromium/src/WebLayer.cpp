@@ -107,26 +107,6 @@ void WebLayer::invalidate()
     m_private->setNeedsDisplay();
 }
 
-WebLayer WebLayer::rootLayer() const
-{
-    return WebLayer(const_cast<LayerChromium*>(m_private->rootLayer()));
-}
-
-WebLayer WebLayer::parent() const
-{
-    return WebLayer(const_cast<LayerChromium*>(m_private->parent()));
-}
-
-size_t WebLayer::numberOfChildren() const
-{
-    return m_private->children().size();
-}
-
-WebLayer WebLayer::childAt(size_t index) const
-{
-    return WebLayer(m_private->children()[index]);
-}
-
 void WebLayer::addChild(const WebLayer& child)
 {
     m_private->addChild(child);
@@ -205,11 +185,6 @@ void WebLayer::setMaskLayer(const WebLayer& maskLayer)
 {
     WebLayer ref = maskLayer;
     m_private->setMaskLayer(ref.unwrap<LayerChromium>());
-}
-
-WebLayer WebLayer::maskLayer() const
-{
-    return WebLayer(m_private->maskLayer());
 }
 
 void WebLayer::setReplicaLayer(const WebLayer& replicaLayer)

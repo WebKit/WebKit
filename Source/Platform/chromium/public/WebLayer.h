@@ -67,11 +67,6 @@ public:
     // Sets the entire layer as invalid, i.e. needs to update its content.
     WEBKIT_EXPORT void invalidate();
 
-    WEBKIT_EXPORT WebLayer rootLayer() const;
-    WEBKIT_EXPORT WebLayer parent() const;
-    WEBKIT_EXPORT size_t numberOfChildren() const;
-    WEBKIT_EXPORT WebLayer childAt(size_t) const;
-
     WEBKIT_EXPORT void addChild(const WebLayer&);
     WEBKIT_EXPORT void insertChild(const WebLayer&, size_t index);
     WEBKIT_EXPORT void replaceChild(const WebLayer& reference, const WebLayer& newLayer);
@@ -92,8 +87,6 @@ public:
     WEBKIT_EXPORT bool masksToBounds() const;
 
     WEBKIT_EXPORT void setMaskLayer(const WebLayer&);
-    WEBKIT_EXPORT WebLayer maskLayer() const;
-
     WEBKIT_EXPORT void setReplicaLayer(const WebLayer&);
 
     WEBKIT_EXPORT void setOpacity(float);

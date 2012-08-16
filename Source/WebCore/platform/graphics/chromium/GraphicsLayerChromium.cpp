@@ -741,16 +741,16 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
         m_layer.setContentsScale(contentsScale());
 
         // Move this layer to be a child of the transform layer.
-        if (!m_layer.parent().isNull())
-            m_layer.parent().replaceChild(m_layer, m_transformLayer);
+        if (parent())
+            parent()->platformLayer()->replaceChild(m_layer, m_transformLayer);
         m_transformLayer.addChild(m_layer);
 
         updateChildList();
     } else if (!m_preserves3D && !m_transformLayer.isNull()) {
         // Relace the transformLayer in the parent with this layer.
         m_layer.removeFromParent();
-        if (!m_transformLayer.parent().isNull())
-            m_transformLayer.parent().replaceChild(m_transformLayer, m_layer);
+        if (parent())
+            parent()->platformLayer()->replaceChild(m_transformLayer, m_layer);
 
         m_layer.setAnimationDelegate(this);
         m_transformLayer.transferAnimationsTo(&m_layer);

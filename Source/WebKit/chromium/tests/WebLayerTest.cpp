@@ -137,7 +137,6 @@ TEST_F(WebLayerTest, Client)
     EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
     layer.setMaskLayer(otherLayer);
     Mock::VerifyAndClearExpectations(&m_client);
-    EXPECT_EQ(otherLayer, layer.maskLayer());
 
     EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
     float opacity = 0.123f;
@@ -187,44 +186,6 @@ TEST_F(WebLayerTest, Client)
     contentLayer.setDrawsContent(false);
     Mock::VerifyAndClearExpectations(&m_client);
     EXPECT_FALSE(contentLayer.drawsContent());
-}
-
-TEST_F(WebLayerTest, Hierarchy)
-{
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AnyNumber());
-    WebLayer layer1 = WebLayer::create();
-    WebLayer layer2 = WebLayer::create();
-
-    EXPECT_TRUE(layer1.parent().isNull());
-    EXPECT_TRUE(layer2.parent().isNull());
-
-    layer1.addChild(layer2);
-    EXPECT_TRUE(layer1.parent().isNull());
-    EXPECT_EQ(layer1, layer2.parent());
-
-    layer2.removeFromParent();
-    EXPECT_TRUE(layer2.parent().isNull());
-
-    layer1.addChild(layer2);
-    EXPECT_EQ(layer1, layer2.parent());
-    layer1.removeAllChildren();
-    EXPECT_TRUE(layer2.parent().isNull());
-
-    MockWebContentLayerClient contentClient;
-    EXPECT_CALL(contentClient, paintContents(_, _, _)).Times(AnyNumber());
-    WebContentLayer contentLayer = WebContentLayer::create(&contentClient);
-    WebExternalTextureLayer textureLayer = WebExternalTextureLayer::create();
-
-    textureLayer.addChild(contentLayer);
-    contentLayer.addChild(layer1);
-    layer1.addChild(layer2);
-
-    // Release reference on all layers, checking that destruction (which may
-    // generate calls to the client) doesn't crash.
-    layer2.reset();
-    layer1.reset();
-    contentLayer.reset();
-    textureLayer.reset();
 }
 
 }
