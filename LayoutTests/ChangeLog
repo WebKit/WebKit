@@ -1,3 +1,16 @@
+2012-08-15  Shinya Kawanaka  <shinyak@chromium.org>
+
+        REGRESSION (r125659): 4 HTMLMeterElement tests fail on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=94157
+
+        Unreviewed, unskip failing tests and  rebaseline after r125659.
+
+        * platform/mac/Skipped:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-writing-mode-expected.txt:
+
 2012-08-15  Hayato Ito  <hayato@chromium.org>
 
         [Shadow] Stop 'load' and 'error' events at shadow boundaries

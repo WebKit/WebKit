@@ -3,22 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderMeter {METER} at (0,0) size 50x50 [bgcolor=#FF0000]
-        RenderBlock {DIV} at (0,0) size 50x50
-          RenderBlock {DIV} at (0,0) size 15x50
+      RenderBlock {METER} at (0,0) size 50x50 [bgcolor=#FF0000]
+        RenderMeter {DIV} at (0,0) size 50x50
+          RenderBlock {DIV} at (0,0) size 50x50
+            RenderBlock {DIV} at (0,0) size 15x50
       RenderText {#text} at (50,33) size 4x18
         text run at (50,33) width 4: " "
-      RenderMeter {METER} at (54,0) size 50x50 [bgcolor=#FF0000]
-        RenderBlock {DIV} at (0,0) size 50x50
-          RenderBlock {DIV} at (0,0) size 15x50
+      RenderBlock {METER} at (54,0) size 50x50 [bgcolor=#FF0000]
+        RenderMeter {DIV} at (0,0) size 50x50
+          RenderBlock {DIV} at (0,0) size 50x50
+            RenderBlock {DIV} at (0,0) size 15x50
       RenderText {#text} at (104,33) size 4x18
         text run at (104,33) width 4: " "
-      RenderMeter {METER} at (108,0) size 50x50 [bgcolor=#FF0000]
-        RenderBlock {DIV} at (0,0) size 50x50
-          RenderBlock {DIV} at (0,0) size 15x50
+      RenderBlock {METER} at (108,0) size 50x50 [bgcolor=#FF0000]
+        RenderMeter {DIV} at (0,0) size 50x50
+          RenderBlock {DIV} at (0,0) size 50x50
+            RenderBlock {DIV} at (0,0) size 15x50
       RenderText {#text} at (158,33) size 4x18
         text run at (158,33) width 4: " "
-      RenderMeter {METER} at (162,0) size 50x50 [bgcolor=#FF0000]
-        RenderBlock {DIV} at (0,0) size 50x50
-          RenderBlock {DIV} at (0,0) size 15x50
+      RenderBlock {METER} at (162,0) size 50x50 [bgcolor=#FF0000]
+        RenderMeter {DIV} at (0,0) size 50x50
+          RenderBlock {DIV} at (0,0) size 50x50
+            RenderBlock {DIV} at (0,0) size 15x50
       RenderText {#text} at (0,0) size 0x0

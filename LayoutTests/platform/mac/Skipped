@@ -961,10 +961,3 @@ platform/mac/plugins/root-object-premature-delete-crash.html
 # This test depends on subpixel layout.
 # https://bugs.webkit.org/show_bug.cgi?id=92352
 css3/flexbox/flex-rounding.html
-
-# Checked in as failing tests
-# https://bugs.webkit.org/show_bug.cgi?id=94157
-fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html
-fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html
-fast/dom/HTMLMeterElement/meter-styles.html
-fast/dom/HTMLMeterElement/meter-writing-mode.html

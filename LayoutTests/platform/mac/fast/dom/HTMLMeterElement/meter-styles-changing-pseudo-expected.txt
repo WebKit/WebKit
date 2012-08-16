@@ -10,7 +10,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 647x18
           text run at (0,0) width 647: "Following meter gauge should be solid green - Changing the paseudo class by changing value attribute"
       RenderBlock (anonymous) at (0,92) size 784x16
-        RenderMeter {METER} at (0,0) size 80x16
-          RenderBlock {DIV} at (0,0) size 80x16 [bgcolor=#808080]
-            RenderBlock {DIV} at (0,0) size 72x16 [bgcolor=#008000]
+        RenderBlock {METER} at (0,0) size 80x16
+          RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16 [bgcolor=#808080]
+              RenderBlock {DIV} at (0,0) size 72x16 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 0x0
