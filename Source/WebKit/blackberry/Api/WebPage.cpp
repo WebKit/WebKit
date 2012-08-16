@@ -1074,7 +1074,9 @@ void WebPagePrivate::setLoadState(LoadState state)
                 documentHasViewportArguments = true;
             if (m_mainFrame && m_mainFrame->loader())
                 frameLoadType = m_mainFrame->loader()->loadType();
-            if (!((m_didRestoreFromPageCache && documentHasViewportArguments) || (frameLoadType == FrameLoadTypeReload || frameLoadType == FrameLoadTypeReloadFromOrigin))) {
+            FrameLoaderClientBlackBerry* frameLoaderClient = static_cast<FrameLoaderClientBlackBerry*>(m_mainFrame->loader()->client());
+            if (!((m_didRestoreFromPageCache && documentHasViewportArguments)
+                || ((frameLoadType == FrameLoadTypeReload || frameLoadType == FrameLoadTypeReloadFromOrigin) && frameLoaderClient->shouldRestoreViewState()))) {
                 m_viewportArguments = ViewportArguments();
                 m_userScalable = m_webSettings->isUserScalable();
                 resetScales();
@@ -1576,6 +1578,10 @@ bool WebPagePrivate::hasVirtualViewport() const
 
 void WebPagePrivate::updateViewportSize(bool setFixedReportedSize, bool sendResizeEvent)
 {
+    // This checks to make sure we're not calling updateViewportSize
+    // during WebPagePrivate::init().
+    if (!m_backingStore)
+        return;
     ASSERT(m_mainFrame->view());
     if (setFixedReportedSize)
         m_mainFrame->view()->setFixedReportedSize(actualVisibleSize());
@@ -1755,7 +1761,9 @@ void WebPagePrivate::zoomToInitialScaleOnLoad()
 
     // If this load should restore view state, don't zoom to initial scale
     // but instead let the HistoryItem's saved viewport reign supreme.
-    if (m_mainFrame && m_mainFrame->loader() && m_mainFrame->loader()->shouldRestoreScrollPositionAndViewState())
+    FrameLoaderClientBlackBerry* frameLoaderClient = static_cast<FrameLoaderClientBlackBerry*>(m_mainFrame->loader()->client());
+    if (m_mainFrame && m_mainFrame->loader() && m_mainFrame->loader()->shouldRestoreScrollPositionAndViewState()
+        && frameLoaderClient && frameLoaderClient->shouldRestoreViewState())
         shouldZoom = false;
 
     if (shouldZoom && shouldZoomToInitialScaleOnLoad()) {

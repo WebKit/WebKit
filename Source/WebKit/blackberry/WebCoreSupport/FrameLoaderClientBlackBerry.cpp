@@ -109,6 +109,7 @@ FrameLoaderClientBlackBerry::FrameLoaderClientBlackBerry()
     , m_hasSentResponseToPlugin(false)
     , m_cancelLoadOnNextData(false)
     , m_wasProvisionalLoadTriggeredByUserGesture(true) // To avoid affecting the first load.
+    , m_shouldRestoreViewState(true)
 {
 }
 
@@ -550,6 +551,8 @@ void FrameLoaderClientBlackBerry::dispatchDidCommitLoad()
         // SubstituteData in dispatchDidFailProvisionalLoad).
         if (m_loadingErrorPage) {
             m_loadingErrorPage = false;
+            if (HistoryItem* item = m_frame->loader()->history()->currentItem())
+                item->viewState().shouldSaveViewState = false;
             m_webPagePrivate->m_client->notifyLoadFailedBeforeCommit(
                 originalUrl.characters(), originalUrl.length(),
                     url.characters(), url.length(), token.characters(), token.length());
@@ -1025,7 +1028,8 @@ void FrameLoaderClientBlackBerry::saveViewStateToItem(HistoryItem* item)
 
     ASSERT(item);
     HistoryItemViewState& viewState = item->viewState();
-    if (viewState.shouldSaveViewState) {
+    m_shouldRestoreViewState = viewState.shouldSaveViewState;
+    if (m_shouldRestoreViewState) {
         viewState.orientation = m_webPagePrivate->mainFrame()->orientation();
         viewState.isZoomToFitScale = m_webPagePrivate->currentScale() == m_webPagePrivate->zoomToFitScale();
         viewState.scale = m_webPagePrivate->currentScale();
@@ -1038,6 +1042,8 @@ void FrameLoaderClientBlackBerry::saveViewStateToItem(HistoryItem* item)
 
 void FrameLoaderClientBlackBerry::restoreViewState()
 {
+    if (!m_shouldRestoreViewState)
+        return;
     if (!isMainFrame())
         return;
 

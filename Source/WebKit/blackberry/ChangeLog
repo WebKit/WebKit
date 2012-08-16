@@ -1,3 +1,35 @@
+2012-08-16  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] Reload valid page from Error Page keeps history ViewState and zoom.
+        https://bugs.webkit.org/show_bug.cgi?id=94123
+
+        Reviewed by Antonio Gomes.
+
+        Reviewed internally by Leo Yang, Jacky Jiang.
+        PR 178305
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):Reset the scales and
+        the user scalable flag if we're reloading from an error page.
+        (BlackBerry::WebKit::WebPagePrivate::updateViewportSize): Don't update the
+        viewport size if we're still in the WebPagePrivate::init method.
+        (BlackBerry::WebKit::WebPagePrivate::zoomToInitialScaleOnLoad):
+        Properly set the shouldZoom flag if we're not going to restore the
+        view state.
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::FrameLoaderClientBlackBerry):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidCommitLoad): Set the
+        ViewState's shouldSaveViewState flag if we're coming from an error page.
+        (WebCore::FrameLoaderClientBlackBerry::saveViewStateToItem): Set the
+        new member variable m_shouldRestoreViewState based on the ViewState's
+        shouldSaveViewState flag.
+        (WebCore::FrameLoaderClientBlackBerry::restoreViewState): Added early
+        return if m_shouldRestoreViewState is false.
+        * WebCoreSupport/FrameLoaderClientBlackBerry.h: Add new method to have
+        the client track whether we should restore the view state.
+        (WebCore::FrameLoaderClientBlackBerry::shouldRestoreViewState):
+        (FrameLoaderClientBlackBerry):
+
 2012-08-16  Leo Yang  <leoyang@rim.com>
 
         [BlackBerry] Remove Mobile mode from WebPage.cpp and WebPage_p.h

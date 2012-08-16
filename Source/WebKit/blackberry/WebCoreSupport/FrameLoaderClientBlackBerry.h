@@ -182,6 +182,8 @@ public:
 
     void suppressChildFrameCreation() { m_childFrameCreationSuppressed = true; }
 
+    bool shouldRestoreViewState() const { return m_shouldRestoreViewState; }
+
 private:
     void receivedData(const char*, int, const String&);
     void didFinishOrFailLoading(const ResourceError&);
@@ -219,6 +221,8 @@ private:
     bool m_cancelLoadOnNextData;
 
     bool m_wasProvisionalLoadTriggeredByUserGesture;
+
+    bool m_shouldRestoreViewState;
 };
 
 } // WebCore
