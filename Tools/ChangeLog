@@ -1,3 +1,15 @@
+2012-08-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Make DRT results more reliable on X11
+
+        Reviewed by Jocelyn Turcotte.
+
+        Disable desktop setting awareness, to prevent QApplication on X11 from reading palette settings from
+        the running desktop environment.
+
+        * DumpRenderTree/qt/main.cpp:
+        (main):
+
 2012-08-16  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Remove FontQt4, HAVE_QRAWFONT flag and the related dead code
