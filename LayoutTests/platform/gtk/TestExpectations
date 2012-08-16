@@ -345,6 +345,7 @@ BUGWK85532 : fast/sub-pixel/table-cells-with-padding-do-not-wrap.html = PASS
 BUGWK85532 SKIP : fast/sub-pixel/table-rows-have-stable-height.html = CRASH TEXT
 BUGWK85532 : fast/sub-pixel/table-rows-no-gaps.html = PASS
 BUGWK85532 : fast/sub-pixel/vertical-align-middle-overflow.html = PASS
+BUGWK85532 : fast/sub-pixel/sub-pixel-accumulates-to-layers.html = PASS
 
 // Mediastream implementation is not complete yet.
 BUGWK79203 SKIP : fast/mediastream = TEXT

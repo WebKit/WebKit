@@ -54,7 +54,7 @@ public:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
     virtual bool isSVGForeignObject() const { return true; }
 
-    virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, TransformState&, MapLocalToContainerFlags mode = ApplyContainerFlip, bool* wasFixed = 0) const OVERRIDE;
+    virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, TransformState&, MapLocalToContainerFlags mode = ApplyContainerFlip | SnapOffsetForTransforms, bool* wasFixed = 0) const OVERRIDE;
     virtual const RenderObject* pushMappingToContainer(const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap&) const;
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 

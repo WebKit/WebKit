@@ -1,3 +1,94 @@
+2012-08-15  Levi Weintraub  <leviw@chromium.org>
+
+        Accumulate sub-pixel offsets through layers and transforms
+        https://bugs.webkit.org/show_bug.cgi?id=89238
+
+        Reviewed by Eric Seidel.
+
+        Pixel snapping logic makes use of sub-pixel offsets accumulated when walking down
+        the render tree. When we align RenderLayers to paint on pixel boundaries, we were
+        also losing that accumulated value. This preserves the fractional offset and passes
+        it to the RenderLayer's RenderObjects so they paint the proper size and offset.
+
+        This also necessitates a new mode of mapLocalToContainer whereby we pixel snap the
+        offset used in transforms. Otherwise, they wouldn't account for the pixel snapping
+        done elsewhere in the render tree.
+
+        Test: fast/sub-pixel/sub-pixel-accumulates-to-layers.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::pixelSnappedSizingBox): The LayoutUnit version of sizingBox returns a
+        LayoutRect with the location zeroed out. This leads to incorrect pixel snapping, so
+        we shouldn't put these numbers into a transform. Sadly, I couldn't figure out a
+        test for this without the rest of the patch.
+        (WebCore):
+        (WebCore::computedTransform): Using pixel-snapped values when generating transforms.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer): Adding a mode whereby the values inputed
+        into the transform are properly pixel snapped.
+        (WebCore::RenderBox::computeRectForRepaint): Using pixel snapped values for the transform.
+        * rendering/RenderBox.h:
+        (RenderBox):
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::mapToAbsolute):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::mapLocalToContainer):
+        * rendering/RenderInline.h:
+        (RenderInline):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateTransform): Using pixel snapped values for the transform.
+        (WebCore::RenderLayer::currentTransform): Ditto.
+        (WebCore::RenderLayer::perspectiveTransform): Ditto.
+        (WebCore::RenderLayer::paint): Support passing along the accumulated sub-pixel offset instead
+        of rounding and use enclosingIntRect for the damageRect.
+        (WebCore::RenderLayer::paintOverlayScrollbars): Updating to the new paintLayer contract
+        (WebCore::RenderLayer::paintLayer): Adding a sub-pixel accumulation LayoutSize. We pass this
+        delta to the Layer's RenderObject when we paint, but align the graphics context to the proper
+        pixel value.
+        (WebCore::RenderLayer::paintLayerContentsAndReflection): Ditto.
+        (WebCore::RenderLayer::paintLayerContents): Ditto.
+        (WebCore::RenderLayer::paintList): Ditto.
+        (WebCore::RenderLayer::paintChildLayerIntoColumns): Ditto.
+        (WebCore::RenderLayer::calculateClipRects): Avoid unnecessary rounding when sub-pixel is enabled.
+        (WebCore::RenderLayer::calculateRects): Remove unnecessary pixel snapping.
+        * rendering/RenderLayer.h:
+        (RenderLayer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateLayerTransform): Use pixel-snapped values for transforms.
+        (WebCore::RenderLayerBacking::paintIntoLayer): Update to new paintLayer contract.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::localToContainerQuad): Adding a mode for optionally pixel snapping.
+        (WebCore::RenderObject::localToContainerPoint): Ditto.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::localToAbsoluteQuad): Ditto.
+        (RenderObject):
+        * rendering/RenderReplica.cpp:
+        (WebCore::RenderReplica::paint): Updating to new paintLayer contract.
+        * rendering/RenderView.h:
+        (RenderView):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::mapLocalToContainer):
+        * rendering/svg/RenderSVGForeignObject.h:
+        (RenderSVGForeignObject):
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::mapLocalToContainer):
+        * rendering/svg/RenderSVGInline.h:
+        (RenderSVGInline):
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::mapLocalToContainer):
+        * rendering/svg/RenderSVGModelObject.h:
+        (RenderSVGModelObject):
+        * rendering/svg/RenderSVGRoot.h:
+        (RenderSVGRoot):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::mapLocalToContainer):
+        * rendering/svg/RenderSVGText.h:
+        (RenderSVGText):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::mapLocalToContainer):
+        * rendering/svg/SVGRenderSupport.h:
+        (SVGRenderSupport):
+
 2012-08-16  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Bad utf8 data is being passed to enchant_dict_check

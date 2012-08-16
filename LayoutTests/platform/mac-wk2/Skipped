@@ -216,6 +216,7 @@ fast/sub-pixel/position-right-aligns-with-container.html
 fast/sub-pixel/selection/selection-gaps-at-fractional-offsets.html
 fast/sub-pixel/size-of-box-with-zoom.html
 fast/sub-pixel/table-rows-no-gaps.html
+fast/sub-pixel/sub-pixel-accumulates-to-layers.html
 
 # fast/events/pagehide-timeout.html, pageshow-pagehide-on-back-cached-with-frames.html, and
 # pageshow-pagehide-on-back-cached.html flakey on Lion Intel Debug WebKit testers.

@@ -2107,7 +2107,7 @@ void RenderObject::getTransformFromContainer(const RenderObject* containerObject
 #endif
 }
 
-FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, RenderBoxModelObject* repaintContainer, bool fixed, bool* wasFixed) const
+FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, RenderBoxModelObject* repaintContainer, bool snapOffsetForTransforms, bool fixed, bool* wasFixed) const
 {
     // Track the point at the center of the quad's bounding box. As mapLocalToContainer() calls offsetFromContainer(),
     // it will use that point as the reference point to decide which column's transform to apply in multiple-column blocks.
@@ -2115,18 +2115,22 @@ FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, RenderB
     MapLocalToContainerFlags mode = ApplyContainerFlip | UseTransforms;
     if (fixed)
         mode |= IsFixed;
+    if (snapOffsetForTransforms)
+        mode |= SnapOffsetForTransforms;
     mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
     transformState.flatten();
     
     return transformState.lastPlanarQuad();
 }
 
-FloatPoint RenderObject::localToContainerPoint(const FloatPoint& localPoint, RenderBoxModelObject* repaintContainer, bool fixed, bool* wasFixed) const
+FloatPoint RenderObject::localToContainerPoint(const FloatPoint& localPoint, RenderBoxModelObject* repaintContainer, bool snapOffsetForTransforms, bool fixed, bool* wasFixed) const
 {
     TransformState transformState(TransformState::ApplyTransformDirection, localPoint);
     MapLocalToContainerFlags mode = ApplyContainerFlip | UseTransforms;
     if (fixed)
         mode |= IsFixed;
+    if (snapOffsetForTransforms)
+        mode |= SnapOffsetForTransforms;
     mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
     transformState.flatten();
 

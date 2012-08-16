@@ -1145,6 +1145,8 @@ void RenderInline::mapLocalToContainer(RenderBoxModelObject* repaintContainer, T
     }
 
     LayoutSize containerOffset = offsetFromContainer(o, roundedLayoutPoint(transformState.mappedPoint()));
+    if (mode & SnapOffsetForTransforms)
+        containerOffset = roundedIntSize(containerOffset);
 
     bool preserve3D = mode & UseTransforms && (o->style()->preserves3D() || style()->preserves3D());
     if (mode & UseTransforms && shouldUseTransformFromContainer(o)) {

@@ -58,7 +58,7 @@ public:
     virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const;
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const;
 
-    virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, TransformState&, MapLocalToContainerFlags mode = ApplyContainerFlip, bool* wasFixed = 0) const OVERRIDE;
+    virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, TransformState&, MapLocalToContainerFlags mode = ApplyContainerFlip | SnapOffsetForTransforms, bool* wasFixed = 0) const OVERRIDE;
     virtual const RenderObject* pushMappingToContainer(const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap&) const;
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);

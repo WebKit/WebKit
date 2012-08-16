@@ -565,7 +565,7 @@ void RenderLayer::updateTransform()
         RenderBox* box = renderBox();
         ASSERT(box);
         m_transform->makeIdentity();
-        box->style()->applyTransform(*m_transform, box->borderBoxRect().size(), RenderStyle::IncludeTransformOrigin);
+        box->style()->applyTransform(*m_transform, box->pixelSnappedBorderBoxRect().size(), RenderStyle::IncludeTransformOrigin);
         makeMatrixRenderable(*m_transform, canRender3DTransforms());
     }
 
@@ -582,7 +582,7 @@ TransformationMatrix RenderLayer::currentTransform() const
     if (renderer()->style()->isRunningAcceleratedAnimation()) {
         TransformationMatrix currTransform;
         RefPtr<RenderStyle> style = renderer()->animation()->getAnimatedStyleForRenderer(renderer());
-        style->applyTransform(currTransform, renderBox()->borderBoxRect().size(), RenderStyle::IncludeTransformOrigin);
+        style->applyTransform(currTransform, renderBox()->pixelSnappedBorderBoxRect().size(), RenderStyle::IncludeTransformOrigin);
         makeMatrixRenderable(currTransform, canRender3DTransforms());
         return currTransform;
     }
@@ -890,7 +890,7 @@ TransformationMatrix RenderLayer::perspectiveTransform() const
         return TransformationMatrix();
 
     // Maybe fetch the perspective from the backing?
-    const LayoutRect borderBox = toRenderBox(renderer())->borderBoxRect();
+    const IntRect borderBox = toRenderBox(renderer())->pixelSnappedBorderBoxRect();
     const float boxWidth = borderBox.width();
     const float boxHeight = borderBox.height();
 
@@ -2852,7 +2852,7 @@ bool RenderLayer::scroll(ScrollDirection direction, ScrollGranularity granularit
 void RenderLayer::paint(GraphicsContext* context, const LayoutRect& damageRect, PaintBehavior paintBehavior, RenderObject* paintingRoot, RenderRegion* region, PaintLayerFlags paintFlags)
 {
     OverlapTestRequestMap overlapTestRequests;
-    paintLayer(this, context, damageRect, paintBehavior, paintingRoot, region, &overlapTestRequests, paintFlags);
+    paintLayer(this, context, enclosingIntRect(damageRect), LayoutSize(), paintBehavior, paintingRoot, region, &overlapTestRequests, paintFlags);
     OverlapTestRequestMap::iterator end = overlapTestRequests.end();
     for (OverlapTestRequestMap::iterator it = overlapTestRequests.begin(); it != end; ++it)
         it->first->setOverlapTestResult(false);
@@ -2862,7 +2862,7 @@ void RenderLayer::paintOverlayScrollbars(GraphicsContext* context, const LayoutR
 {
     if (!m_containsDirtyOverlayScrollbars)
         return;
-    paintLayer(this, context, damageRect, paintBehavior, paintingRoot, 0, 0, PaintLayerHaveTransparency | PaintLayerTemporaryClipRects 
+    paintLayer(this, context, damageRect, LayoutSize(), paintBehavior, paintingRoot, 0, 0, PaintLayerHaveTransparency | PaintLayerTemporaryClipRects 
                | PaintLayerPaintingOverlayScrollbars);
     m_containsDirtyOverlayScrollbars = false;
 }
@@ -2959,7 +2959,7 @@ static inline bool shouldSuppressPaintingLayer(RenderLayer* layer)
 
 
 void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* context,
-                        const LayoutRect& paintDirtyRect, PaintBehavior paintBehavior,
+                        const LayoutRect& paintDirtyRect, const LayoutSize& subPixelAccumulation, PaintBehavior paintBehavior,
                         RenderObject* paintingRoot, RenderRegion* region, OverlapTestRequestMap* overlapTestRequests,
                         PaintLayerFlags paintFlags)
 {
@@ -3017,11 +3017,14 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* context,
         }
 
         // Adjust the transform such that the renderer's upper left corner will paint at (0,0) in user space.
-        // This involves subtracting out the position of the layer in our current coordinate space.
+        // This involves subtracting out the position of the layer in our current coordinate space, but preserving
+        // the accumulated error for sub-pixel layout.
         LayoutPoint delta;
         convertToLayerCoords(rootLayer, delta);
         TransformationMatrix transform(layerTransform);
-        transform.translateRight(delta.x(), delta.y());
+        IntPoint roundedDelta = roundedIntPoint(delta);
+        transform.translateRight(roundedDelta.x(), roundedDelta.y());
+        LayoutSize adjustedSubPixelAccumulation = subPixelAccumulation + (delta - roundedDelta);
         
         // Apply the transform.
         {
@@ -3029,7 +3032,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* context,
             context->concatCTM(transform.toAffineTransform());
 
             // Now do a paint with the root layer shifted to be us.
-            paintLayerContentsAndReflection(this, context, transform.inverse().mapRect(paintDirtyRect), paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags);
+            paintLayerContentsAndReflection(this, context, enclosingIntRect(transform.inverse().mapRect(paintDirtyRect)), adjustedSubPixelAccumulation, paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags);
         }        
 
         // Restore the clip.
@@ -3039,11 +3042,11 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* context,
         return;
     }
     
-    paintLayerContentsAndReflection(rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags);
+    paintLayerContentsAndReflection(rootLayer, context, paintDirtyRect, subPixelAccumulation, paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags);
 }
 
 void RenderLayer::paintLayerContentsAndReflection(RenderLayer* rootLayer, GraphicsContext* context,
-                        const LayoutRect& paintDirtyRect, PaintBehavior paintBehavior,
+                        const LayoutRect& paintDirtyRect, const LayoutSize& subPixelAccumulation, PaintBehavior paintBehavior,
                         RenderObject* paintingRoot, RenderRegion* region, OverlapTestRequestMap* overlapTestRequests,
                         PaintLayerFlags paintFlags)
 {
@@ -3055,16 +3058,16 @@ void RenderLayer::paintLayerContentsAndReflection(RenderLayer* rootLayer, Graphi
     if (m_reflection && !m_paintingInsideReflection) {
         // Mark that we are now inside replica painting.
         m_paintingInsideReflection = true;
-        reflectionLayer()->paintLayer(rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, localPaintFlags | PaintLayerPaintingReflection);
+        reflectionLayer()->paintLayer(rootLayer, context, paintDirtyRect, subPixelAccumulation, paintBehavior, paintingRoot, region, overlapTestRequests, localPaintFlags | PaintLayerPaintingReflection);
         m_paintingInsideReflection = false;
     }
 
     localPaintFlags |= PaintLayerPaintingCompositingAllPhases;
-    paintLayerContents(rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, localPaintFlags);
+    paintLayerContents(rootLayer, context, paintDirtyRect, subPixelAccumulation, paintBehavior, paintingRoot, region, overlapTestRequests, localPaintFlags);
 }
 
 void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* context, 
-                        const LayoutRect& parentPaintDirtyRect, PaintBehavior paintBehavior,
+                        const LayoutRect& parentPaintDirtyRect, const LayoutSize& subPixelAccumulation, PaintBehavior paintBehavior,
                         RenderObject* paintingRoot, RenderRegion* region, OverlapTestRequestMap* overlapTestRequests,
                         PaintLayerFlags paintFlags)
 {
@@ -3123,7 +3126,7 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
     
     if (shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars) {
         calculateRects(rootLayer, region, (localPaintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect);
-        paintOffset = toPoint(layerBounds.location() - renderBoxLocation());
+        paintOffset = toPoint(layerBounds.location() - renderBoxLocation() + subPixelAccumulation);
     }
 
     bool forceBlackText = paintBehavior & PaintBehaviorForceBlackText;
@@ -3274,7 +3277,7 @@ void RenderLayer::paintList(Vector<RenderLayer*>* list, RenderLayer* rootLayer, 
     for (size_t i = 0; i < list->size(); ++i) {
         RenderLayer* childLayer = list->at(i);
         if (!childLayer->isPaginated())
-            childLayer->paintLayer(rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags);
+            childLayer->paintLayer(rootLayer, context, paintDirtyRect, LayoutSize(), paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags);
         else
             paintPaginatedChildLayer(childLayer, rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags);
     }
@@ -3365,7 +3368,7 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
                 newTransform.translateRight(roundToInt(offset.width()), roundToInt(offset.height()));
                 
                 childLayer->m_transform = adoptPtr(new TransformationMatrix(newTransform));
-                childLayer->paintLayer(rootLayer, context, localDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags);
+                childLayer->paintLayer(rootLayer, context, localDirtyRect, LayoutSize(), paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags);
                 if (oldHasTransform)
                     childLayer->m_transform = adoptPtr(new TransformationMatrix(oldTransform));
                 else
@@ -3961,7 +3964,7 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, RenderRegion*
         // some transformed layer boundary, for example, in the RenderLayerCompositor overlapMap, where
         // clipRects are needed in view space.
         LayoutPoint offset;
-        offset = roundedIntPoint(renderer()->localToContainerPoint(FloatPoint(), rootLayer->renderer()));
+        offset = roundedLayoutPoint(renderer()->localToContainerPoint(FloatPoint(), rootLayer->renderer(), false, false, 0));
         RenderView* view = renderer()->view();
         ASSERT(view);
         if (view && clipRects.fixed() && rootLayer->renderer() == view) {
@@ -4069,7 +4072,7 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, RenderRegion* reg
             backgroundRect.intersect(layerBoundsWithVisualOverflow);
         } else {
             // Shift the bounds to be for our region only.
-            LayoutRect bounds = pixelSnappedIntRect(renderBox()->borderBoxRectInRegion(region));
+            LayoutRect bounds = renderBox()->borderBoxRectInRegion(region);
             bounds.moveBy(offset);
             backgroundRect.intersect(bounds);
         }

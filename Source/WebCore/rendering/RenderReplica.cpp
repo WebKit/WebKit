@@ -71,7 +71,7 @@ void RenderReplica::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         // Turn around and paint the parent layer. Use temporary clipRects, so that the layer doesn't end up caching clip rects
         // computing using the wrong rootLayer
         layer()->parent()->paintLayer(layer()->transform() ? layer()->parent() : layer()->enclosingTransformedAncestor(),
-                                      paintInfo.context, paintInfo.rect,
+                                      paintInfo.context, paintInfo.rect, LayoutSize(),
                                       PaintBehaviorNormal, 0, paintInfo.renderRegion, 0,
                                       RenderLayer::PaintLayerHaveTransparency | RenderLayer::PaintLayerAppliedTransform | RenderLayer::PaintLayerTemporaryClipRects | RenderLayer::PaintLayerPaintingReflection);
     else if (paintInfo.phase == PaintPhaseMask)

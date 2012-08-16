@@ -111,9 +111,9 @@ void RenderSVGText::computeFloatRectForRepaint(RenderBoxModelObject* repaintCont
     SVGRenderSupport::computeFloatRectForRepaint(this, repaintContainer, repaintRect, fixed);
 }
 
-void RenderSVGText::mapLocalToContainer(RenderBoxModelObject* repaintContainer, TransformState& transformState, MapLocalToContainerFlags, bool* wasFixed) const
+void RenderSVGText::mapLocalToContainer(RenderBoxModelObject* repaintContainer, TransformState& transformState, MapLocalToContainerFlags mode, bool* wasFixed) const
 {
-    SVGRenderSupport::mapLocalToContainer(this, repaintContainer, transformState, wasFixed);
+    SVGRenderSupport::mapLocalToContainer(this, repaintContainer, transformState, mode & SnapOffsetForTransforms, wasFixed);
 }
 
 const RenderObject* RenderSVGText::pushMappingToContainer(const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const

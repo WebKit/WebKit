@@ -71,7 +71,7 @@ void SVGRenderSupport::computeFloatRectForRepaint(const RenderObject* object, Re
     object->parent()->computeFloatRectForRepaint(repaintContainer, repaintRect, fixed);
 }
 
-void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderBoxModelObject* repaintContainer, TransformState& transformState, bool* wasFixed)
+void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderBoxModelObject* repaintContainer, TransformState& transformState, bool snapOffsetForTransforms, bool* wasFixed)
 {
     transformState.applyTransform(object->localToParentTransform());
 
@@ -82,8 +82,11 @@ void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderBox
     // RenderSVGRoot's mapLocalToContainer method expects CSS box coordinates.
     if (parent->isSVGRoot())
         transformState.applyTransform(toRenderSVGRoot(parent)->localToBorderBoxTransform());
-    
-    parent->mapLocalToContainer(repaintContainer, transformState, UseTransforms, wasFixed);
+
+    MapLocalToContainerFlags mode = UseTransforms;
+    if (snapOffsetForTransforms)
+        mode |= SnapOffsetForTransforms;
+    parent->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
 }
 
 const RenderObject* SVGRenderSupport::pushMappingToContainer(const RenderObject* object, const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap)

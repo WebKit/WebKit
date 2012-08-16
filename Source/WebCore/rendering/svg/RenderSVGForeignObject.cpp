@@ -190,9 +190,9 @@ bool RenderSVGForeignObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, 
     return false;
 }
 
-void RenderSVGForeignObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, TransformState& transformState, MapLocalToContainerFlags, bool* wasFixed) const
+void RenderSVGForeignObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, TransformState& transformState, MapLocalToContainerFlags mode, bool* wasFixed) const
 {
-    SVGRenderSupport::mapLocalToContainer(this, repaintContainer, transformState, wasFixed);
+    SVGRenderSupport::mapLocalToContainer(this, repaintContainer, transformState, mode & SnapOffsetForTransforms, wasFixed);
 }
 
 const RenderObject* RenderSVGForeignObject::pushMappingToContainer(const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const

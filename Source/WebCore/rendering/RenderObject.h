@@ -111,7 +111,8 @@ enum PlaceGeneratedRunInFlag {
 enum MapLocalToContainerMode {
     IsFixed = 1 << 0,
     UseTransforms = 1 << 1,
-    ApplyContainerFlip = 1 << 2
+    ApplyContainerFlip = 1 << 2,
+    SnapOffsetForTransforms = 1 << 3
 };
 typedef unsigned MapLocalToContainerFlags;
 
@@ -686,12 +687,12 @@ public:
     // Convert a local quad to absolute coordinates, taking transforms into account.
     FloatQuad localToAbsoluteQuad(const FloatQuad& quad, bool fixed = false, bool* wasFixed = 0) const
     {
-        return localToContainerQuad(quad, 0, fixed, wasFixed);
+        return localToContainerQuad(quad, 0, false, fixed, wasFixed);
     }
 
     // Convert a local quad into the coordinate system of container, taking transforms into account.
-    FloatQuad localToContainerQuad(const FloatQuad&, RenderBoxModelObject* repaintContainer, bool fixed = false, bool* wasFixed = 0) const;
-    FloatPoint localToContainerPoint(const FloatPoint&, RenderBoxModelObject* repaintContainer, bool fixed = false, bool* wasFixed = 0) const;
+    FloatQuad localToContainerQuad(const FloatQuad&, RenderBoxModelObject* repaintContainer, bool snapOffsetForTransforms = true, bool fixed = false, bool* wasFixed = 0) const;
+    FloatPoint localToContainerPoint(const FloatPoint&, RenderBoxModelObject* repaintContainer, bool snapOffsetForTransforms = true, bool fixed = false, bool* wasFixed = 0) const;
 
     // Return the offset from the container() renderer (excluding transforms). In multi-column layout,
     // different offsets apply at different points, so return the offset that applies to the given point.

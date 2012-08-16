@@ -1,3 +1,33 @@
+2012-08-15  Levi Weintraub  <leviw@chromium.org>
+
+        Accumulate sub-pixel offsets through layers and transforms
+        https://bugs.webkit.org/show_bug.cgi?id=89238
+
+        Reviewed by Eric Seidel.
+
+        * fast/sub-pixel/sub-pixel-accumulates-to-layers.html: Added.
+        * platform/chromium-mac/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac/fast/repaint/scroll-fixed-layer-with-transformed-parent-layer-expected.png:
+        * platform/chromium-mac/fast/sub-pixel/sub-pixel-accumulates-to-layers-expected.png: Added.
+        * platform/chromium-mac/fast/sub-pixel/sub-pixel-accumulates-to-layers-expected.txt: Added.
+        * platform/chromium-mac/fast/transforms/transformed-document-element-expected.png:
+        * platform/chromium-mac/media/audio-repaint-expected.png:
+        * platform/chromium-mac/svg/transforms/svg-css-transforms-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/efl/Skipped:
+        * platform/gtk/TestExpectations:
+        * platform/mac-lion/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt-4.8/Skipped:
+        * platform/qt/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/win-xp/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+
 2012-08-16  Anna Cavender  <annacc@chromium.org>
 
         Layout Test media/track/track-active-cues.html frequently times out on Windows.

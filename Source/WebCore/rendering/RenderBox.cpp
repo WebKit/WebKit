@@ -1282,6 +1282,8 @@ void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, Tran
         *wasFixed = mode & IsFixed;
     
     LayoutSize containerOffset = offsetFromContainer(o, roundedLayoutPoint(transformState.mappedPoint()));
+    if (mode & SnapOffsetForTransforms)
+        containerOffset = roundedIntSize(containerOffset);
     
     bool preserve3D = mode & UseTransforms && (o->style()->preserves3D() || style()->preserves3D());
     if (mode & UseTransforms && shouldUseTransformFromContainer(o)) {
@@ -1508,7 +1510,7 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, La
             LayoutState* layoutState = v->layoutState();
 
             if (layer() && layer()->transform())
-                rect = layer()->transform()->mapRect(rect);
+                rect = layer()->transform()->mapRect(pixelSnappedIntRect(rect));
 
             if (styleToUse->position() == RelativePosition && layer())
                 rect.move(layer()->relativePositionOffset());
@@ -1547,7 +1549,7 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, La
     // in the parent's coordinate space that encloses us.
     if (layer() && layer()->transform()) {
         fixed = position == FixedPosition;
-        rect = layer()->transform()->mapRect(rect);
+        rect = layer()->transform()->mapRect(pixelSnappedIntRect(rect));
         topLeft = rect.location();
         topLeft.move(locationOffset());
     } else if (position == FixedPosition)

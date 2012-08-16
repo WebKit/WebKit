@@ -710,13 +710,13 @@ private:
 
     void updateCompositingAndLayerListsIfNeeded();
 
-    void paintLayer(RenderLayer* rootLayer, GraphicsContext*, const LayoutRect& paintDirtyRect,
+    void paintLayer(RenderLayer* rootLayer, GraphicsContext*, const LayoutRect& paintDirtyRect, const LayoutSize& subPixelAccumulation,
                     PaintBehavior, RenderObject* paintingRoot, RenderRegion* = 0, OverlapTestRequestMap* = 0,
                     PaintLayerFlags = 0);
-    void paintLayerContentsAndReflection(RenderLayer* rootLayer, GraphicsContext*, const LayoutRect& paintDirtyRect,
+    void paintLayerContentsAndReflection(RenderLayer* rootLayer, GraphicsContext*, const LayoutRect& paintDirtyRect, const LayoutSize& subPixelAccumulation,
                     PaintBehavior, RenderObject* paintingRoot, RenderRegion* = 0, OverlapTestRequestMap* = 0,
                     PaintLayerFlags = 0);
-    void paintLayerContents(RenderLayer* rootLayer, GraphicsContext*, const LayoutRect& paintDirtyRect,
+    void paintLayerContents(RenderLayer* rootLayer, GraphicsContext*, const LayoutRect& paintDirtyRect, const LayoutSize& subPixelAccumulation,
                     PaintBehavior, RenderObject* paintingRoot, RenderRegion* = 0, OverlapTestRequestMap* = 0,
                     PaintLayerFlags = 0);
     void paintList(Vector<RenderLayer*>*, RenderLayer* rootLayer, GraphicsContext* p,
