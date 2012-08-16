@@ -96,8 +96,8 @@ addSuccess():
 PASS event.target.result is "key"
 event.target.source.add({x: 'foo'}, 'zzz')
 addAgainFailure():
-PASS event.target.errorCode is IDBDatabaseException.DATA_ERR
-PASS event.target.error.name is 'DataError'
+PASS event.target.errorCode is IDBDatabaseException.CONSTRAINT_ERR
+PASS event.target.error.name is 'ConstraintError'
 event.preventDefault()
 db.transaction(['storeName'], 'readwrite')
 store = transaction.objectStore('storeName')

@@ -1,3 +1,16 @@
+2012-08-15  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: generate index keys for existing data in createIndex in front end
+        https://bugs.webkit.org/show_bug.cgi?id=91125
+
+        Reviewed by Tony Chang.
+
+        The transaction should be aborted when existing data in an
+        objectStore causes uniqueness errors during index creation.
+
+        * storage/indexeddb/lazy-index-population-expected.txt: Added.
+        * storage/indexeddb/lazy-index-population.html: Added.
+
 2012-08-15  Hayato Ito  <hayato@chromium.org>
 
         A 'load' event should be fired on the shadow host directly, not on an inner image element of shadow dom subtree.

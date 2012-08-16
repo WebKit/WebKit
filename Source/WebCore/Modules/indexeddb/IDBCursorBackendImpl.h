@@ -49,7 +49,11 @@ class IDBCursorBackendImpl : public IDBCursorBackendInterface {
 public:
     static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStore::Cursor> cursor, CursorType cursorType, IDBTransactionBackendImpl* transaction, IDBObjectStoreBackendImpl* objectStore)
     {
-        return adoptRef(new IDBCursorBackendImpl(cursor, cursorType, transaction, objectStore));
+        return adoptRef(new IDBCursorBackendImpl(cursor, cursorType, IDBTransactionBackendInterface::NormalTask, transaction, objectStore));
+    }
+    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStore::Cursor> cursor, CursorType cursorType, IDBTransactionBackendInterface::TaskType taskType, IDBTransactionBackendImpl* transaction, IDBObjectStoreBackendImpl* objectStore)
+    {
+        return adoptRef(new IDBCursorBackendImpl(cursor, cursorType, taskType, transaction, objectStore));
     }
     virtual ~IDBCursorBackendImpl();
 
@@ -67,7 +71,7 @@ public:
     void close();
 
 private:
-    IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor>, CursorType, IDBTransactionBackendImpl*, IDBObjectStoreBackendImpl*);
+    IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor>, CursorType, IDBTransactionBackendInterface::TaskType, IDBTransactionBackendImpl*, IDBObjectStoreBackendImpl*);
 
     static void advanceInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl>, unsigned long, PassRefPtr<IDBCallbacks>);
     static void continueFunctionInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl>, PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>);
@@ -75,6 +79,7 @@ private:
 
     RefPtr<IDBBackingStore::Cursor> m_cursor;
     RefPtr<IDBBackingStore::Cursor> m_savedCursor;
+    IDBTransactionBackendInterface::TaskType m_taskType;
     CursorType m_cursorType;
     RefPtr<IDBTransactionBackendImpl> m_transaction;
     RefPtr<IDBObjectStoreBackendImpl> m_objectStore;

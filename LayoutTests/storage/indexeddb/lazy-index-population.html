@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/shared.js"></script>
+<script>
+setTimeout(finishJSTest, 4000);
+description("Verify edge cases that lazy index population in an IndexedDB implementation might reveal.");
+
+function test()
+{
+    removeVendorPrefixes();
+    prepareDatabase();
+}
+
+function prepareDatabase()
+{
+    request = evalAndLog("indexedDB.open('lazy-index-population')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function(e) {
+        evalAndLog("connection = request.result");
+        verifyPreExistingIndex();
+    };
+}
+
+function verifyPreExistingIndex()
+{
+    debug("");
+    debug("Verify that uniqueness constraints are enforced with a pre-existing index:");
+
+    request = evalAndLog("connection.setVersion('1')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function() {
+        trans = request.result;
+        trans.onabort = unexpectedAbortCallback;
+        deleteAllObjectStores(connection);
+        evalAndLog("store = connection.createObjectStore('store')");
+        evalAndLog("store.createIndex('index1', 'name', {unique: true})");
+
+        trans.oncomplete = function() {
+            evalAndLog("trans = connection.transaction('store', 'readwrite')");
+            evalAndLog("store = trans.objectStore('store')");
+            evalAndLog("request1 = store.put({name: 'bob'}, 1)");
+            evalAndLog("request2 = store.put({name: 'bob'}, 2)");
+            evalAndLog("state = 0");
+
+            request1.onerror = unexpectedErrorCallback;
+            request1.onsuccess = function () {
+                debug("request1 received success event");
+                shouldBe("++state", "1");
+            };
+
+            request2.onsuccess = unexpectedSuccessCallback;
+            request2.onerror = function () {
+                debug("request2 received error event");
+                shouldBe("++state", "2");
+            };
+
+            trans.oncomplete = unexpectedCompleteCallback;
+            trans.onabort = function () {
+                debug("transaction aborted");
+                shouldBe("++state", "3");
+                verifyCreateThenPut();
+            };
+        };
+    };
+}
+
+function verifyCreateThenPut()
+{
+    debug("");
+    debug("Verify that uniqueness constraints are enforced when index is created before puts:");
+
+    request = evalAndLog("connection.setVersion('2')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function() {
+        trans = request.result;
+
+        evalAndLog("deleteAllObjectStores(connection)");
+
+        evalAndLog("store = connection.createObjectStore('store')");
+        evalAndLog("store.createIndex('index2', 'name', {unique: true})");
+        evalAndLog("request1 = store.put({name: 'carol'}, 1)");
+        evalAndLog("request2 = store.put({name: 'carol'}, 2)");
+        evalAndLog("state = 0");
+
+        request1.onerror = unexpectedErrorCallback;
+        request1.onsuccess = function () {
+            debug("request1 (index2) received success event");
+            shouldBe("++state", "1");
+        };
+
+        request2.onsuccess = unexpectedSuccessCallback;
+        request2.onerror = function () {
+            debug("request2 (index2) received error event");
+            shouldBe("++state", "2");
+        };
+
+        trans.oncomplete = unexpectedCompleteCallback;
+        trans.onabort = function () {
+            debug("transaction aborted");
+            shouldBe("++state", "3");
+            verifyPutThenCreate();
+        };
+    };
+}
+
+function verifyPutThenCreate()
+{
+    debug("");
+    debug("Verify that uniqueness constraints are enforced when index is created after puts:");
+
+    request = evalAndLog("connection.setVersion('3')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function() {
+        trans = request.result;
+
+        evalAndLog("deleteAllObjectStores(connection)");
+
+        evalAndLog("store = connection.createObjectStore('store')");
+        evalAndLog("request1 = store.put({name: 'ted'}, 1)");
+        evalAndLog("request2 = store.put({name: 'ted'}, 2)");
+        evalAndLog("store.createIndex('index3', 'name', {unique: true})");
+        evalAndLog("state = 0");
+
+        request1.onerror = unexpectedErrorCallback;
+        request1.onsuccess = function () {
+            debug("request1 received success event");
+            shouldBe("++state", "1");
+        };
+
+        request2.onerror = unexpectedErrorCallback;
+        request2.onsuccess = function () {
+            debug("request2 received success event");
+            shouldBe("++state", "2");
+        };
+
+        trans.oncomplete = unexpectedCompleteCallback;
+        trans.onabort = function () {
+            debug("transaction aborted");
+            shouldBe("++state", "3");
+            verifyPutThenCreateThenPut();
+        };
+    };
+}
+
+function verifyPutThenCreateThenPut()
+{
+    debug("");
+    debug("Verify that uniqueness constraints are enforced when index is created between puts:");
+
+    request = evalAndLog("connection.setVersion('4')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function() {
+        trans = request.result;
+
+        evalAndLog("deleteAllObjectStores(connection)");
+
+        evalAndLog("store = connection.createObjectStore('store')");
+        evalAndLog("request1 = store.put({name: 'alice'}, 1)");
+        evalAndLog("store.createIndex('index4', 'name', {unique: true})");
+        evalAndLog("request2 = store.put({name: 'alice'}, 2)");
+        evalAndLog("state = 0");
+
+        request1.onerror = unexpectedErrorCallback;
+        request1.onsuccess = function () {
+            debug("request1 received success event");
+            shouldBe("++state", "1");
+        };
+
+        request2.onsuccess = unexpectedSuccessCallback;
+        request2.onerror = function () {
+            debug("request2 received error event");
+            shouldBe("++state", "2");
+        };
+
+        trans.oncomplete = unexpectedCompleteCallback;
+        trans.onabort = function () {
+            debug("transaction aborted");
+            shouldBe("++state", "3");
+            finishJSTest();
+        };
+    };
+}
+
+test();
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>

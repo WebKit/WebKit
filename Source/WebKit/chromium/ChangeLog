@@ -1,3 +1,30 @@
+2012-08-15  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: generate index keys for existing data in createIndex in front end
+        https://bugs.webkit.org/show_bug.cgi?id=91125
+
+        Reviewed by Tony Chang.
+
+        Add Chromium API methods to let the renderer process tell the
+        browser process about indexing progress.
+
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::openCursor):
+        * src/IDBObjectStoreBackendProxy.cpp:
+        (WebKit::IDBObjectStoreBackendProxy::setIndexKeys):
+        (WebKit):
+        (WebKit::IDBObjectStoreBackendProxy::setIndexesReady):
+        (WebKit::IDBObjectStoreBackendProxy::openCursor):
+        * src/IDBObjectStoreBackendProxy.h:
+        (IDBObjectStoreBackendProxy):
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::setIndexKeys):
+        (WebKit):
+        (WebKit::WebIDBObjectStoreImpl::setIndexesReady):
+        (WebKit::WebIDBObjectStoreImpl::openCursor):
+        * src/WebIDBObjectStoreImpl.h:
+        (WebIDBObjectStoreImpl):
+
 2012-08-15  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css3-text] Add CSS3 Text decoration compile flag

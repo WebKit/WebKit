@@ -42,8 +42,9 @@
 
 namespace WebCore {
 
-IDBCursorBackendImpl::IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor> cursor, CursorType cursorType, IDBTransactionBackendImpl* transaction, IDBObjectStoreBackendImpl* objectStore)
+IDBCursorBackendImpl::IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor> cursor, CursorType cursorType, IDBTransactionBackendInterface::TaskType taskType, IDBTransactionBackendImpl* transaction, IDBObjectStoreBackendImpl* objectStore)
     : m_cursor(cursor)
+    , m_taskType(taskType)
     , m_cursorType(cursorType)
     , m_transaction(transaction)
     , m_objectStore(objectStore)
@@ -65,9 +66,8 @@ IDBCursorBackendImpl::~IDBCursorBackendImpl()
 void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
 {
     IDB_TRACE("IDBCursorBackendImpl::continue");
-    RefPtr<IDBKey> key = prpKey;
 
-    if (!m_transaction->scheduleTask(createCallbackTask(&IDBCursorBackendImpl::continueFunctionInternal, this, key, prpCallbacks)))
+    if (!m_transaction->scheduleTask(m_taskType, createCallbackTask(&IDBCursorBackendImpl::continueFunctionInternal, this, prpKey, prpCallbacks)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
@@ -126,7 +126,7 @@ void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks,
 void IDBCursorBackendImpl::prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
 {
     IDB_TRACE("IDBCursorBackendImpl::prefetchContinue");
-    if (!m_transaction->scheduleTask(createCallbackTask(&IDBCursorBackendImpl::prefetchContinueInternal, this, numberToFetch, prpCallbacks)))
+    if (!m_transaction->scheduleTask(m_taskType, createCallbackTask(&IDBCursorBackendImpl::prefetchContinueInternal, this, numberToFetch, prpCallbacks)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 

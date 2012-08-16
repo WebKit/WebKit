@@ -68,6 +68,11 @@ public:
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, ExceptionCode& ec) { return openCursor(context, static_cast<IDBKeyRange*>(0), ec); } 
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec) { return openCursor(context, keyRange, IDBCursor::directionNext(), ec); } 
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec) { return openCursor(context, key, IDBCursor::directionNext(), ec); } 
+    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, const String& direction, ExceptionCode& ec) { return openCursor(context, range, direction, IDBTransactionBackendInterface::NormalTask, ec); }
+    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, const String& direction, IDBTransactionBackendInterface::TaskType, ExceptionCode&);
+    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKey>, const String& direction, ExceptionCode&);
+    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, unsigned short direction, ExceptionCode&);
+    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKey>, unsigned short direction, ExceptionCode&);
 
     PassRefPtr<IDBRequest> get(ScriptExecutionContext*, PassRefPtr<IDBKey>, ExceptionCode&);
     PassRefPtr<IDBRequest> get(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
@@ -78,19 +83,15 @@ public:
     PassRefPtr<IDBRequest> clear(ScriptExecutionContext*, ExceptionCode&);
 
     // FIXME: Try to modify the code generator so this duplication is unneeded.
-    PassRefPtr<IDBIndex> createIndex(const String& name, const String& keyPath, const Dictionary&, ExceptionCode&);
-    PassRefPtr<IDBIndex> createIndex(const String& name, const String& keyPath, ExceptionCode& ec) { return createIndex(name, keyPath, Dictionary(), ec); }
-    PassRefPtr<IDBIndex> createIndex(const String& name, PassRefPtr<DOMStringList> keyPath, const Dictionary&, ExceptionCode&);
-    PassRefPtr<IDBIndex> createIndex(const String& name, PassRefPtr<DOMStringList> keyPath, ExceptionCode& ec) { return createIndex(name, keyPath, Dictionary(), ec); }
-    PassRefPtr<IDBIndex> createIndex(const String&, const IDBKeyPath&, const Dictionary&, ExceptionCode&);
+    PassRefPtr<IDBIndex> createIndex(ScriptExecutionContext*, const String& name, const String& keyPath, const Dictionary&, ExceptionCode&);
+    PassRefPtr<IDBIndex> createIndex(ScriptExecutionContext* context, const String& name, const String& keyPath, ExceptionCode& ec) { return createIndex(context, name, keyPath, Dictionary(), ec); }
+    PassRefPtr<IDBIndex> createIndex(ScriptExecutionContext*, const String& name, PassRefPtr<DOMStringList> keyPath, const Dictionary&, ExceptionCode&);
+    PassRefPtr<IDBIndex> createIndex(ScriptExecutionContext* context, const String& name, PassRefPtr<DOMStringList> keyPath, ExceptionCode& ec) { return createIndex(context, name, keyPath, Dictionary(), ec); }
+    PassRefPtr<IDBIndex> createIndex(ScriptExecutionContext*, const String&, const IDBKeyPath&, const Dictionary&, ExceptionCode&);
 
     PassRefPtr<IDBIndex> index(const String& name, ExceptionCode&);
     void deleteIndex(const String& name, ExceptionCode&);
 
-    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, const String& direction, ExceptionCode&); 
-    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKey>, const String& direction, ExceptionCode&); 
-    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, unsigned short direction, ExceptionCode&); 
-    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKey>, unsigned short direction, ExceptionCode&); 
     PassRefPtr<IDBRequest> count(ScriptExecutionContext* context, ExceptionCode& ec) { return count(context, static_cast<IDBKeyRange*>(0), ec); }
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKey>, ExceptionCode&);

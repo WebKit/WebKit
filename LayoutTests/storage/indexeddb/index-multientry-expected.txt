@@ -97,7 +97,7 @@ transaction.objectStore('store-unique').put({x: [1, 2, 7], y: 'a'}, 'foo')
 success!
 This should fail the uniqueness constraint on the index, and fail:
 transaction.objectStore('store-unique').put({x: [5, 2], y: 'c'}, 'should fail')
-Request failed, as expected (DataError)
+Request failed, as expected (ConstraintError)
 Transaction aborted as expected
 
 Create an index on a populated store

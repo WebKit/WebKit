@@ -97,8 +97,8 @@ PASS [Worker] code is DOMException.DATA_CLONE_ERR
 PASS [Worker] event.target.result is "key"
 [Worker] event.target.source.add({x: 'foo'}, 'zzz')
 [Worker] addAgainFailure():
-PASS [Worker] event.target.errorCode is IDBDatabaseException.DATA_ERR
-PASS [Worker] event.target.error.name is 'DataError'
+PASS [Worker] event.target.errorCode is IDBDatabaseException.CONSTRAINT_ERR
+PASS [Worker] event.target.error.name is 'ConstraintError'
 [Worker] event.preventDefault()
 [Worker] db.transaction(['storeName'], 'readwrite')
 [Worker] store = transaction.objectStore('storeName')

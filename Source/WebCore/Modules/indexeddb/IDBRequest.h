@@ -52,6 +52,7 @@ typedef int ExceptionCode;
 class IDBRequest : public IDBCallbacks, public EventTarget, public ActiveDOMObject {
 public:
     static PassRefPtr<IDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransaction*);
+    static PassRefPtr<IDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface::TaskType, IDBTransaction*);
     virtual ~IDBRequest();
 
     PassRefPtr<IDBAny> result(ExceptionCode&) const;
@@ -105,8 +106,10 @@ public:
     using ThreadSafeRefCounted<IDBCallbacks>::ref;
     using ThreadSafeRefCounted<IDBCallbacks>::deref;
 
+    IDBTransactionBackendInterface::TaskType taskType() { return m_taskType; }
+
 protected:
-    IDBRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransaction*);
+    IDBRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface::TaskType, IDBTransaction*);
     void enqueueEvent(PassRefPtr<Event>);
     bool shouldEnqueueEvent() const;
 
@@ -126,6 +129,7 @@ private:
     void setResultCursor(PassRefPtr<IDBCursor>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue>);
 
     RefPtr<IDBAny> m_source;
+    const IDBTransactionBackendInterface::TaskType m_taskType;
     RefPtr<IDBTransaction> m_transaction;
 
     ReadyState m_readyState;

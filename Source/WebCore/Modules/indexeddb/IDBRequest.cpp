@@ -46,15 +46,23 @@ namespace WebCore {
 
 PassRefPtr<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBTransaction* transaction)
 {
-    RefPtr<IDBRequest> request(adoptRef(new IDBRequest(context, source, transaction)));
+    RefPtr<IDBRequest> request(adoptRef(new IDBRequest(context, source, IDBTransactionBackendInterface::NormalTask, transaction)));
     request->suspendIfNeeded();
     return request.release();
 }
 
-IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBTransaction* transaction)
+PassRefPtr<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface::TaskType taskType, IDBTransaction* transaction)
+{
+    RefPtr<IDBRequest> request(adoptRef(new IDBRequest(context, source, taskType, transaction)));
+    request->suspendIfNeeded();
+    return request.release();
+}
+
+IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface::TaskType taskType, IDBTransaction* transaction)
     : ActiveDOMObject(context, this)
     , m_errorCode(0)
     , m_source(source)
+    , m_taskType(taskType)
     , m_transaction(transaction)
     , m_readyState(PENDING)
     , m_requestAborted(false)

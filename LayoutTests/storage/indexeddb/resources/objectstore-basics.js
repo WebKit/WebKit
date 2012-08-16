@@ -175,8 +175,8 @@ function addAgainFailure(evt)
 {
     event = evt;
     debug("addAgainFailure():");
-    shouldBe("event.target.errorCode", "IDBDatabaseException.DATA_ERR");
-    shouldBe("event.target.error.name", "'DataError'");
+    shouldBe("event.target.errorCode", "IDBDatabaseException.CONSTRAINT_ERR");
+    shouldBe("event.target.error.name", "'ConstraintError'");
 
     evalAndLog("event.preventDefault()");
 

@@ -1,3 +1,91 @@
+2012-08-15  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: generate index keys for existing data in createIndex in front end
+        https://bugs.webkit.org/show_bug.cgi?id=91125
+
+        Reviewed by Tony Chang.
+
+        Make createIndex() do index key generation in the frontend, rather
+        than the backend. When an index is created, the frontend uses the
+        cursor API to iterate through the values in the backend to
+        generate keys, sending them back to the backend using
+        IDBObjectStore::setIndexKeys()
+
+        This confines all key injection/extraction to the frontend.
+
+        The new test verifies the implemented behavior with respect to
+        error handling in degenerate uses of put(), though that behavior
+        is still in discussion as the spec is vague on the proper error
+        behavior.
+
+        Test: storage/indexeddb/lazy-index-population.html
+
+        * Modules/indexeddb/IDBCursorBackendImpl.cpp: Make sure that the
+        TaskType propagates throught the cursor and all subsequent
+        continue() calls.
+        (WebCore::IDBCursorBackendImpl::IDBCursorBackendImpl):
+        (WebCore::IDBCursorBackendImpl::continueFunction):
+        (WebCore::IDBCursorBackendImpl::prefetchContinue):
+        * Modules/indexeddb/IDBCursorBackendImpl.h:
+        (WebCore::IDBCursorBackendImpl::create):
+        (IDBCursorBackendImpl):
+        * Modules/indexeddb/IDBObjectStore.cpp: Add an IndexPopulator
+        class to run a cursor from the frontend.
+        (WebCore):
+        (WebCore::IDBObjectStore::createIndex):
+        (WebCore::IDBObjectStore::openCursor):
+        * Modules/indexeddb/IDBObjectStore.h:
+        (WebCore::IDBObjectStore::openCursor):
+        (IDBObjectStore):
+        (WebCore::IDBObjectStore::createIndex):
+        * Modules/indexeddb/IDBObjectStore.idl: Pass along ScriptContext
+        so that openCursor can be called from createIndex.
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore):
+        (WebCore::makeIndexWriters):
+        (WebCore::IDBObjectStoreBackendImpl::setIndexKeys):
+        (WebCore::IDBObjectStoreBackendImpl::setIndexesReady):
+        (WebCore::IDBObjectStoreBackendImpl::setIndexesReadyInternal):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore::IDBObjectStoreBackendImpl::deleteInternal):
+        (WebCore::IDBObjectStoreBackendImpl::createIndexInternal):
+        (WebCore::IDBObjectStoreBackendImpl::openCursor):
+        (WebCore::IDBObjectStoreBackendImpl::openCursorInternal):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.h:
+        (IDBObjectStoreBackendImpl):
+        (WebCore::IDBObjectStoreBackendImpl::iterIndexesBegin):
+        (WebCore::IDBObjectStoreBackendImpl::iterIndexesEnd):
+        (WebCore::IDBObjectStoreBackendImpl::backingStore):
+        (WebCore::IDBObjectStoreBackendImpl::databaseId):
+        * Modules/indexeddb/IDBObjectStoreBackendInterface.h:
+        * Modules/indexeddb/IDBRequest.cpp:
+        Allow requests to keep their own TaskType, to give certain
+        requests priority over others.
+        (WebCore::IDBRequest::create):
+        (WebCore):
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::abort):
+        * Modules/indexeddb/IDBRequest.h:
+        (IDBRequest):
+        (WebCore::IDBRequest::taskType):
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        Introduce a second, higher priority event queue, m_preemptiveTaskQueue,
+        which takes priority over the regular task queue.
+        (WebCore::IDBTransactionBackendImpl::IDBTransactionBackendImpl):
+        (WebCore::IDBTransactionBackendImpl::scheduleTask):
+        (WebCore::IDBTransactionBackendImpl::isTaskQueueEmpty):
+        (WebCore):
+        (WebCore::IDBTransactionBackendImpl::commit):
+        (WebCore::IDBTransactionBackendImpl::taskTimerFired):
+        (WebCore::IDBTransactionBackendImpl::taskEventTimerFired):
+        * Modules/indexeddb/IDBTransactionBackendImpl.h:
+        (WebCore::IDBTransactionBackendImpl::scheduleTask):
+        (IDBTransactionBackendImpl):
+        (WebCore::IDBTransactionBackendImpl::addEarlyEvent):
+        (WebCore::IDBTransactionBackendImpl::didCompleteEarlyEvent):
+        * Modules/indexeddb/IDBVersionChangeRequest.cpp:
+        (WebCore::IDBVersionChangeRequest::IDBVersionChangeRequest):
+
 2012-08-15  Hayato Ito  <hayato@chromium.org>
 
         A 'load' event should be fired on the shadow host directly, not on an inner image element of shadow dom subtree.

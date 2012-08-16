@@ -32,6 +32,7 @@
 #include "IDBAny.h"
 #include "IDBBindingUtilities.h"
 #include "IDBCursorBackendInterface.h"
+#include "IDBCursorWithValue.h"
 #include "IDBDatabase.h"
 #include "IDBDatabaseException.h"
 #include "IDBIndex.h"
@@ -282,18 +283,96 @@ PassRefPtr<IDBRequest> IDBObjectStore::clear(ScriptExecutionContext* context, Ex
     return request.release();
 }
 
-PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const String& keyPath, const Dictionary& options, ExceptionCode& ec)
-{
-    return createIndex(name, IDBKeyPath(keyPath), options, ec);
+namespace {
+// This class creates the index keys for a given index by extracting
+// them from the SerializedScriptValue, for all the existing values in
+// the objectStore. It only needs to be kept alive by virtue of being
+// a listener on an IDBRequest object, in the same way that JavaScript
+// cursor success handlers are kept alive.
+class IndexPopulator : public EventListener {
+public:
+    static PassRefPtr<IndexPopulator> create(PassRefPtr<IDBObjectStoreBackendInterface> backend, PassRefPtr<IDBTransactionBackendInterface> transaction, PassRefPtr<IDBRequest> request, const IDBIndexMetadata& indexMetadata)
+    {
+        return adoptRef(new IndexPopulator(backend, transaction, indexMetadata));
+    }
+
+    virtual bool operator==(const EventListener& other)
+    {
+        return this == &other;
+    }
+
+private:
+    IndexPopulator(PassRefPtr<IDBObjectStoreBackendInterface> backend,
+                   PassRefPtr<IDBTransactionBackendInterface> transaction,
+                   const IDBIndexMetadata& indexMetadata)
+        : EventListener(CPPEventListenerType)
+        , m_objectStoreBackend(backend)
+        , m_transaction(transaction)
+        , m_indexMetadata(indexMetadata)
+    {
+    }
+
+    virtual void handleEvent(ScriptExecutionContext*, Event* event)
+    {
+        ASSERT(event->type() == eventNames().successEvent);
+        EventTarget* target = event->target();
+        IDBRequest* request = static_cast<IDBRequest*>(target);
+
+        ExceptionCode ec = 0;
+        RefPtr<IDBAny> cursorAny = request->result(ec);
+        ASSERT(!ec);
+        RefPtr<IDBCursorWithValue> cursor;
+        if (cursorAny->type() == IDBAny::IDBCursorWithValueType)
+            cursor = cursorAny->idbCursorWithValue();
+
+        Vector<String, 1> indexNames;
+        indexNames.append(m_indexMetadata.name);
+        if (cursor) {
+            cursor->continueFunction(ec);
+            ASSERT(!ec);
+
+            RefPtr<IDBKey> primaryKey = cursor->primaryKey();
+            RefPtr<IDBAny> valueAny = cursor->value();
+
+            ASSERT(valueAny->type() == IDBAny::SerializedScriptValueType);
+            RefPtr<SerializedScriptValue> value = valueAny->serializedScriptValue();
+
+            IDBObjectStore::IndexKeys indexKeys;
+            generateIndexKeysForValue(m_indexMetadata, value, &indexKeys);
+
+            Vector<IDBObjectStore::IndexKeys, 1> indexKeysList;
+            indexKeysList.append(indexKeys);
+
+            m_objectStoreBackend->setIndexKeys(primaryKey, indexNames, indexKeysList, m_transaction.get());
+
+        } else {
+            // Now that we are done indexing, tell the backend to go
+            // back to processing tasks of type NormalTask.
+            m_objectStoreBackend->setIndexesReady(indexNames, m_transaction.get());
+            m_objectStoreBackend.clear();
+            m_transaction.clear();
+        }
+
+    }
+
+    RefPtr<IDBObjectStoreBackendInterface> m_objectStoreBackend;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
+    IDBIndexMetadata m_indexMetadata;
+};
 }
 
-PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, PassRefPtr<DOMStringList> keyPath, const Dictionary& options, ExceptionCode& ec)
+PassRefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context, const String& name, const String& keyPath, const Dictionary& options, ExceptionCode& ec)
 {
-    return createIndex(name, IDBKeyPath(*keyPath), options, ec);
+    return createIndex(context, name, IDBKeyPath(keyPath), options, ec);
+}
+
+PassRefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context, const String& name, PassRefPtr<DOMStringList> keyPath, const Dictionary& options, ExceptionCode& ec)
+{
+    return createIndex(context, name, IDBKeyPath(*keyPath), options, ec);
 }
 
 
-PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const IDBKeyPath& keyPath, const Dictionary& options, ExceptionCode& ec)
+PassRefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context, const String& name, const IDBKeyPath& keyPath, const Dictionary& options, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::createIndex");
     if (!m_transaction->isVersionChange() || m_deleted) {
@@ -337,6 +416,19 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const IDBKe
     RefPtr<IDBIndex> index = IDBIndex::create(metadata, indexBackend.release(), this, m_transaction.get());
     m_indexMap.set(name, index);
     m_metadata.indexes.set(name, metadata);
+
+    ASSERT(!ec);
+    if (ec)
+        return 0;
+
+    RefPtr<IDBRequest> indexRequest = openCursor(context, static_cast<IDBKeyRange*>(0), IDBCursor::directionNext(), IDBTransactionBackendInterface::PreemptiveTask, ec);
+    ASSERT(!ec);
+    if (ec)
+        return 0;
+
+    // This is kept alive by being the success handler of the request, which is in turn kept alive by the owning transaction.
+    RefPtr<IndexPopulator> indexPopulator = IndexPopulator::create(m_backend, m_transaction->backend(), indexRequest, metadata);
+    indexRequest->setOnsuccess(indexPopulator);
 
     return index.release();
 }
@@ -398,7 +490,7 @@ void IDBObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
     }
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, const String& directionString, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, const String& directionString, IDBTransactionBackendInterface::TaskType taskType, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::openCursor");
     if (m_deleted) {
@@ -415,7 +507,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* contex
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     request->setCursorDetails(IDBCursorBackendInterface::ObjectStoreCursor, direction);
-    m_backend->openCursor(range, direction, request, m_transaction->backend(), ec);
+    m_backend->openCursor(range, direction, request, taskType, m_transaction->backend(), ec);
     if (ec) {
         request->markEarlyDeath();
         return 0;

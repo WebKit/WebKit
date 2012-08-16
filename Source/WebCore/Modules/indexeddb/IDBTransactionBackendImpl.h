@@ -58,10 +58,13 @@ public:
 
     void run();
     unsigned short mode() const { return m_mode; }
-    bool scheduleTask(PassOwnPtr<ScriptExecutionContext::Task>, PassOwnPtr<ScriptExecutionContext::Task> abortTask = nullptr);
+    bool scheduleTask(PassOwnPtr<ScriptExecutionContext::Task> task, PassOwnPtr<ScriptExecutionContext::Task> abortTask = nullptr) { return scheduleTask(NormalTask, task, abortTask); }
+    bool scheduleTask(TaskType, PassOwnPtr<ScriptExecutionContext::Task>, PassOwnPtr<ScriptExecutionContext::Task> abortTask = nullptr);
     void registerOpenCursor(IDBCursorBackendImpl*);
     void unregisterOpenCursor(IDBCursorBackendImpl*);
     void addPendingEvents(int);
+    void addPreemptiveEvent() { m_pendingPreemptiveEvents++; }
+    void didCompletePreemptiveEvent() { m_pendingPreemptiveEvents--; ASSERT(m_pendingPreemptiveEvents >= 0); }
 
 private:
     IDBTransactionBackendImpl(DOMStringList* objectStores, unsigned short mode, IDBDatabaseBackendImpl*);
@@ -76,6 +79,8 @@ private:
     void start();
     void commit();
 
+    bool isTaskQueueEmpty() const;
+
     void taskTimerFired(Timer<IDBTransactionBackendImpl>*);
     void taskEventTimerFired(Timer<IDBTransactionBackendImpl>*);
     void closeOpenCursors();
@@ -89,6 +94,7 @@ private:
 
     typedef Deque<OwnPtr<ScriptExecutionContext::Task> > TaskQueue;
     TaskQueue m_taskQueue;
+    TaskQueue m_preemptiveTaskQueue;
     TaskQueue m_abortTaskQueue;
 
     RefPtr<IDBBackingStore::Transaction> m_transaction;
@@ -96,6 +102,7 @@ private:
     // FIXME: delete the timer once we have threads instead.
     Timer<IDBTransactionBackendImpl> m_taskTimer;
     Timer<IDBTransactionBackendImpl> m_taskEventTimer;
+    int m_pendingPreemptiveEvents;
     int m_pendingEvents;
 
     HashSet<IDBCursorBackendImpl*> m_openCursors;

@@ -46,7 +46,9 @@ public:
     ~WebIDBObjectStoreImpl();
 
     void get(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
-    void putWithIndexKeys(const WebSerializedScriptValue&, const WebIDBKey&, PutMode, WebIDBCallbacks*, const WebIDBTransaction&, const WebVector<WebString>& indexNames, const WebVector<WebIndexKeys>&, WebExceptionCode&);
+    void putWithIndexKeys(const WebSerializedScriptValue&, const WebIDBKey&, PutMode, WebIDBCallbacks*, const WebIDBTransaction&, const WebVector<WebString>&, const WebVector<WebIndexKeys>&, WebExceptionCode&);
+    void setIndexKeys(const WebIDBKey&, const WebVector<WebString>& indexNames, const WebVector<WebIndexKeys>&, const WebIDBTransaction&);
+    void setIndexesReady(const WebVector<WebString>&, const WebIDBTransaction&);
     void deleteFunction(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
     void clear(WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
 

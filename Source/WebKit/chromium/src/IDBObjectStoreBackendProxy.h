@@ -49,10 +49,15 @@ public:
     virtual void clear(PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
 
     PassRefPtr<WebCore::IDBIndexBackendInterface> createIndex(const String& name, const WebCore::IDBKeyPath&, bool unique, bool multiEntry, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
+    virtual void setIndexKeys(PassRefPtr<WebCore::IDBKey> prpPrimaryKey, const WTF::Vector<WTF::String>&, const WTF::Vector<IndexKeys>&, WebCore::IDBTransactionBackendInterface*);
+    virtual void setIndexesReady(const Vector<String>&, WebCore::IDBTransactionBackendInterface*);
+    
     PassRefPtr<WebCore::IDBIndexBackendInterface> index(const String& name, WebCore::ExceptionCode&);
     void deleteIndex(const String& name, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
 
+    // FIXME: Remove this version of openCursor when TaskType is plumbed through chromium.
     virtual void openCursor(PassRefPtr<WebCore::IDBKeyRange>, unsigned short direction, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
+    virtual void openCursor(PassRefPtr<WebCore::IDBKeyRange>, WebCore::IDBCursor::Direction, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface::TaskType, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
     virtual void count(PassRefPtr<WebCore::IDBKeyRange>, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
 
 private:
