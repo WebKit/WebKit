@@ -395,6 +395,8 @@ EventDispatchBehavior EventDispatcher::determineDispatchBehavior(Event* event, S
     if (inTheSameScope(shadowRoot, target)
         && (eventType == eventNames().abortEvent
             || eventType == eventNames().changeEvent
+            || eventType == eventNames().errorEvent
+            || eventType == eventNames().loadEvent
             || eventType == eventNames().resetEvent
             || eventType == eventNames().resizeEvent
             || eventType == eventNames().scrollEvent

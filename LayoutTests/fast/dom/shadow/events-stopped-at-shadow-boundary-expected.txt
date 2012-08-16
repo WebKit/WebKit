@@ -33,6 +33,14 @@ Other events than "click" should be stopped at shadow boundary.  A "click" is ad
      @target (target: target)
      @parent-of-target (target: target)
 
+  load
+     @target (target: target)
+     @parent-of-target (target: target)
+
+  error
+     @target (target: target)
+     @parent-of-target (target: target)
+
   click
      @target (target: target)
      @parent-of-target (target: target)

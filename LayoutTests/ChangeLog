@@ -1,3 +1,13 @@
+2012-08-15  Hayato Ito  <hayato@chromium.org>
+
+        [Shadow] Stop 'load' and 'error' events at shadow boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=93425
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/events-stopped-at-shadow-boundary-expected.txt:
+        * fast/dom/shadow/events-stopped-at-shadow-boundary.html:
+
 2012-08-15  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Tests] Copy to fast/forms/resources/common-wheel-event.js from fast/forms/number/number-wheel-event.html

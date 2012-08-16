@@ -1,3 +1,18 @@
+2012-08-15  Hayato Ito  <hayato@chromium.org>
+
+        [Shadow] Stop 'load' and 'error' events at shadow boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=93425
+
+        Reviewed by Dimitri Glazkov.
+
+        The shadow DOM spec has added these events as 'always-be-stopped' events at shadow boundaries.
+        http://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/shadow/index.html#events-that-are-always-stopped
+
+        Test: fast/dom/shadow/events-stopped-at-shadow-boundary.html
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::determineDispatchBehavior):
+
 2012-08-15  Kent Tamura  <tkent@chromium.org>
 
         Calendar Picker: Localize numbers in a calendar picker
