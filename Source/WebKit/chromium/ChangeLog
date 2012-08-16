@@ -1,3 +1,15 @@
+2012-08-16  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Impl scrolling crashes when the renderer's initialization failed
+        https://bugs.webkit.org/show_bug.cgi?id=94232
+
+        Reviewed by James Robinson.
+
+        Also updated the finishAllRenderingAfterContextLost to properly fail
+        renderer initialization.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-08-16  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Pass the --strip-binary argument to the apk test generator

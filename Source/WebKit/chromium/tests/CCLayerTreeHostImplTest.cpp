@@ -190,6 +190,11 @@ protected:
     CCScopedSettings m_scopedSettings;
 };
 
+class FakeWebGraphicsContext3DMakeCurrentFails : public FakeWebGraphicsContext3D {
+public:
+    virtual bool makeContextCurrent() { return false; }
+};
+
 TEST_F(CCLayerTreeHostImplTest, scrollDeltaNoLayers)
 {
     ASSERT_FALSE(m_hostImpl->rootLayer());
@@ -273,6 +278,21 @@ TEST_F(CCLayerTreeHostImplTest, scrollRootCallsCommitAndRedraw)
 TEST_F(CCLayerTreeHostImplTest, scrollWithoutRootLayer)
 {
     // We should not crash when trying to scroll an empty layer tree.
+    EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollIgnored);
+}
+
+TEST_F(CCLayerTreeHostImplTest, scrollWithoutRenderer)
+{
+    CCLayerTreeSettings settings;
+    m_hostImpl = CCLayerTreeHostImpl::create(settings, this);
+
+    // Initialization will fail here.
+    m_hostImpl->initializeLayerRenderer(FakeWebCompositorOutputSurface::create(adoptPtr(new FakeWebGraphicsContext3DMakeCurrentFails)), UnthrottledUploader);
+    m_hostImpl->setViewportSize(IntSize(10, 10), IntSize(10, 10));
+
+    setupScrollAndContentsLayers(IntSize(100, 100));
+
+    // We should not crash when trying to scroll after the renderer initialization fails.
     EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollIgnored);
 }
 
@@ -2062,13 +2082,11 @@ TEST_F(CCLayerTreeHostImplTest, contextLostAndRestoredNotificationSentToAllLayer
     EXPECT_TRUE(layer2->didLoseContextCalled());
 }
 
-class FakeWebGraphicsContext3DMakeCurrentFails : public FakeWebGraphicsContext3D {
-public:
-    virtual bool makeContextCurrent() { return false; }
-};
-
 TEST_F(CCLayerTreeHostImplTest, finishAllRenderingAfterContextLost)
 {
+    CCLayerTreeSettings settings;
+    m_hostImpl = CCLayerTreeHostImpl::create(settings, this);
+
     // The context initialization will fail, but we should still be able to call finishAllRendering() without any ill effects.
     m_hostImpl->initializeLayerRenderer(FakeWebCompositorOutputSurface::create(adoptPtr(new FakeWebGraphicsContext3DMakeCurrentFails)), UnthrottledUploader);
     m_hostImpl->finishAllRendering();

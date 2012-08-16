@@ -251,6 +251,7 @@ void CCLayerTreeHostImpl::calculateRenderSurfaceLayerList(CCLayerList& renderSur
 {
     ASSERT(renderSurfaceLayerList.isEmpty());
     ASSERT(m_rootLayerImpl);
+    ASSERT(m_layerRenderer); // For maxTextureSize.
 
     {
         TRACE_EVENT0("cc", "CCLayerTreeHostImpl::calcDrawEtc");
@@ -829,6 +830,8 @@ void CCLayerTreeHostImpl::setNeedsRedraw()
 bool CCLayerTreeHostImpl::ensureRenderSurfaceLayerList()
 {
     if (!m_rootLayerImpl)
+        return false;
+    if (!m_layerRenderer)
         return false;
 
     // We need both a non-empty render surface layer list and a root render
