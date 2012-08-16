@@ -1,3 +1,17 @@
+2012-08-16  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Pass the --strip-binary argument to the apk test generator
+        https://bugs.webkit.org/show_bug.cgi?id=94224
+
+        Reviewed by Adam Barth.
+
+        The native test generator currently relies on the $STRIP environment
+        variable to be available, which it shouldn't do. Instead, pass it as an
+        argument to the script. The $STRIP variable is being deprecated.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * TestWebKitAPI/TestWebKitAPI.gyp/TestWebKitAPI.gyp:
+
 2012-08-16  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] Update format of JS console message to keep consistent with other ports.

@@ -495,6 +495,7 @@
                         '"<@(input_jars_paths)"',
                         '--output',
                         '<(PRODUCT_DIR)/DumpRenderTree_apk',
+                        '--strip-binary=<(android_strip)',
                         '--ant-args',
                         '-DANDROID_SDK=<(android_sdk)',
                         '--ant-args',
