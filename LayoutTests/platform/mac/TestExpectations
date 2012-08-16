@@ -389,3 +389,6 @@ BUGWK89826 : fast/css/word-space-extra.html = TEXT
 // Added by bug 89826 
 BUGWK94008 : fast/css/word-spacing-characters.html = IMAGE
 BUGWK94003 : fast/css/word-spacing-characters-complex-text.html = IMAGE
+
+// (r125629): Newly added test css3/filters/custom/filter-fallback-to-software.html failing on mac
+BUGWK94169 : css3/filters/custom/filter-fallback-to-software.html = IMAGE
