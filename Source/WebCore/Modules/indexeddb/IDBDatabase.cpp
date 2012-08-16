@@ -43,6 +43,7 @@
 #include "IDBTransaction.h"
 #include "IDBVersionChangeEvent.h"
 #include "IDBVersionChangeRequest.h"
+#include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include <limits>
 

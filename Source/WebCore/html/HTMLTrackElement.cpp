@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "Logging.h"
 #include "RuntimeEnabledFeatures.h"
+#include "ScriptCallStack.h"
 #include "ScriptEventListener.h"
 
 using namespace std;

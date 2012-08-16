@@ -41,6 +41,7 @@
 #include "IDBKeyRange.h"
 #include "IDBTracing.h"
 #include "IDBTransaction.h"
+#include "ScriptCallStack.h"
 #include "SerializedScriptValue.h"
 #include <wtf/UnusedParam.h>
 

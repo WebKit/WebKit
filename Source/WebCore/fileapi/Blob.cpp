@@ -34,6 +34,7 @@
 #include "BlobURL.h"
 #include "File.h"
 #include "HistogramSupport.h"
+#include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadableBlobRegistry.h"
 

@@ -36,6 +36,7 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "PluginView.h"
+#include "ScriptCallStack.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "ScriptableDocumentParser.h"

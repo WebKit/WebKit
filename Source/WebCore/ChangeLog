@@ -1,3 +1,29 @@
+2012-08-15  Nikhil Bhargava  <nbhargava@google.com>
+
+        Improve Document.h compile time - reduce includes of ScriptCallStack.h
+        https://bugs.webkit.org/show_bug.cgi?id=94161
+
+        Reviewed by Eric Seidel.
+
+        ScriptCallStack.h no longer included from ScriptExecutionContext. It's
+        relatively expensive to compile and gets compiled a ton because
+        Document.h indirectly includes it.
+
+        No new tests. Functionality should remain the same
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        * Modules/indexeddb/IDBIndex.cpp:
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        * bindings/js/ScriptController.cpp:
+        * dom/ScriptElement.cpp:
+        * dom/ScriptExecutionContext.h:
+        (WebCore):
+        * fileapi/Blob.cpp:
+        * fileapi/WebKitBlobBuilder.cpp:
+        * html/HTMLTrackElement.cpp:
+        * loader/TextTrackLoader.cpp:
+        * page/DOMSecurityPolicy.cpp:
+
 2012-08-15  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: IDB*::keyPath should return IDBKeyPath, not IDBAny

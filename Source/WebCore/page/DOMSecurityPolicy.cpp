@@ -30,6 +30,7 @@
 #include "ContextDestructionObserver.h"
 #include "DOMStringList.h"
 #include "Frame.h"
+#include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
