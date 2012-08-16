@@ -33,5 +33,6 @@ module window {
         Conditional=PAGE_POPUP
     ] PagePopupController {
         void setValueAndClosePopup(in long numberValue, in DOMString stringValue);
+        DOMString localizeNumberString(in DOMString numberString);
     };
 }

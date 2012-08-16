@@ -93,6 +93,11 @@ function openCalendar(args) {
             window.log('number=' + numValue + ', string="' + stringValue + '"');
             if (numValue == 0)
                 window.document.getElementById('date').value = stringValue;
+        },
+        localizeNumberString: function(numString) {
+            if (typeof numString == "number")
+                return numString.toLocaleString();
+            return numString.toString();
         }
     }
 

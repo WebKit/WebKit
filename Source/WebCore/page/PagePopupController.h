@@ -44,6 +44,7 @@ class PagePopupController : public RefCounted<PagePopupController> {
 public:
     static PassRefPtr<PagePopupController> create(PagePopupClient*);
     void setValueAndClosePopup(int numValue, const String& stringValue);
+    String localizeNumberString(const String&);
 
 private:
     explicit PagePopupController(PagePopupClient*);

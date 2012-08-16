@@ -1,3 +1,28 @@
+2012-08-15  Kent Tamura  <tkent@chromium.org>
+
+        Calendar Picker: Localize numbers in a calendar picker
+        https://bugs.webkit.org/show_bug.cgi?id=93704
+
+        Reviewed by Hajime Morita.
+
+        Because Number.toLocaleString() of V8 returns no localized
+        numbers, we provide a localization function via
+        PagePopupController.
+
+        No new tests. We have no ways to change the locale in layout tests.
+
+        * Resources/pagepopups/calendarPicker.js:
+        (localizeNumber): Added. A wrapper for pagePopupController.localizeNumberString().
+        (formatJapaneseImperialEra): Use localizeNumber().
+        (formatYearMonth): ditto.
+        (DaysTable.prototype._renderMonth): ditto.
+        * page/PagePopupController.cpp:
+        (WebCore::PagePopupController::localizeNumberString):
+        Added. Just calls WebCore::convertToLocalizedNumber().
+        * page/PagePopupController.h:
+        (PagePopupController): Declare localizeNumberString().
+        * page/PagePopupController.idl: Add localizeNumberString().
+
 2012-08-15  MORITA Hajime  <morrita@google.com>
 
         Regression(121518) TextFieldDecorationElement formatting is broken.

@@ -1,3 +1,13 @@
+2012-08-15  Kent Tamura  <tkent@chromium.org>
+
+        Calendar Picker: Localize numbers in a calendar picker
+        https://bugs.webkit.org/show_bug.cgi?id=93704
+
+        Reviewed by Hajime Morita.
+
+        * ManualTests/forms/calendar-picker.html:
+        Add a mock pagePopupController.localizeNumberString().
+
 2012-08-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update manual tests and comments to refer to TestRunner instead of LayoutTestController

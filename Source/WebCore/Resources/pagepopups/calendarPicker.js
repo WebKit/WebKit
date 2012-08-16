@@ -97,6 +97,14 @@ function getLanguage() {
     return result[1];
 }
 
+/**
+ * @param {!number} number
+ * @return {!string}
+ */
+function localizeNumber(number) {
+    return window.pagePopupController.localizeNumberString(number);
+}
+
 /*
  * @const
  * @type {number}
@@ -114,17 +122,17 @@ function formatJapaneseImperialEra(year, month) {
     if (year > ImperialEraLimit)
         return "";
     if (year > 1989)
-        return "(平成" + (year - 1988) + "年)";
+        return "(平成" + localizeNumber(year - 1988) + "年)";
     if (year == 1989)
         return "(平成元年)";
     if (year >= 1927)
-        return "(昭和" + (year - 1925) + "年)";
+        return "(昭和" + localizeNumber(year - 1925) + "年)";
     if (year > 1912)
-        return "(大正" + (year - 1911) + "年)";
+        return "(大正" + localizeNumber(year - 1911) + "年)";
     if (year == 1912 && month >= 7)
         return "(大正元年)";
     if (year > 1868)
-        return "(明治" + (year - 1867) + "年)";
+        return "(明治" + localizeNumber(year - 1867) + "年)";
     if (year == 1868)
         return "(明治元年)";
     return "";
@@ -136,8 +144,7 @@ function formatJapaneseImperialEra(year, month) {
  * @return {!string}
  */
 function formatYearMonth(year, month) {
-    // FIXME: Need localized number?
-    var yearString = String(year);
+    var yearString = localizeNumber(year);
     var monthString = global.params.monthLabels[month];
     switch (getLanguage()) {
     case "eu":
@@ -857,8 +864,7 @@ DaysTable.prototype._renderMonth = function(year, month) {
             var iterMonth = dayIterator.getUTCMonth();
             var time = dayIterator.getTime();
             var element = this._days[w][d];
-            // FIXME: Need localized number?
-            element.innerText = String(dayIterator.getUTCDate());
+            element.innerText = localizeNumber(dayIterator.getUTCDate());
             element.className = ClassNames.Day;
             element.dataset.submitValue = serializeDate(iterYear, iterMonth, dayIterator.getUTCDate());
             if (outOfRange(time))
