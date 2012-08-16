@@ -861,6 +861,9 @@ WONTFIX SKIP : plugins/npruntime/overrides-all-properties.html = TEXT
 // Chromium doesn't use fullscreen-specific media controls
 WONTFIX SKIP : media/video-controls-fullscreen-volume.html = TEXT
 
+// ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS) isn't enabled for Android (WK94186).
+WONTFIX SKIP ANDROID : fast/forms/time-multiple-fields = PASS
+
 // -----------------------------------------------------------------
 // TESTS TO FIX
 // -----------------------------------------------------------------

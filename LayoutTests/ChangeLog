@@ -1,5 +1,24 @@
 2012-08-15  Yoshifumi Inoue  <yosin@chromium.org>
 
+        [Tests] Disable fast/forms/time-multiple-fields tests for port which don't enable multiple fields time input UI feature
+        https://bugs.webkit.org/show_bug.cgi?id=94186
+
+        Reviewed by Kent Tamura.
+
+        This patch disables tests in fast/forms/time-multiple-fields.
+        These tests are enabled if both ENABLE_INPUT_TYPE_TIME and
+        ENABLED_INPUT_TYPE_TIME_MULTIPLE_FIELDS enabled.
+
+        * platform/chromium/TestExpectations:
+        * platform/efl/tExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+
+2012-08-15  Yoshifumi Inoue  <yosin@chromium.org>
+
         [Forms] Re-factor fast/forms/number/number-wheel-event.html
         https://bugs.webkit.org/show_bug.cgi?id=94172
 

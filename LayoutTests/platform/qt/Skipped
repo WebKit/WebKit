@@ -2733,3 +2733,6 @@ fast/profiler/nested-start-and-stop-profiler.html
 # New test introduced in r125648 fast/events/autoscroll-in-textarea.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=94076
 fast/events/autoscroll-in-textarea.html
+
+# ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS) is disabled
+fast/forms/time-multiple-fields

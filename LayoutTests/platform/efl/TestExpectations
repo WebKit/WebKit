@@ -854,6 +854,9 @@ BUGWK50485 SKIP : inspector/profiler/heap-snapshot-summary-sorting-fields.html =
 BUGWK50485 SKIP : inspector/profiler/heap-snapshot-summary-sorting.html = TEXT
 BUGWK50485 SKIP : inspector/profiler/heap-snapshot-summary-sorting-instances.html = TEXT
 
+// ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS) is disabled
+BUGWK94186 SKIP : fast/forms/time-multiple-fields = PASS
+
 // Require rebaseline after bug 93148
 BUGWK93148 : tables/mozilla_expected_failures/bugs/bug106966.html = TEXT
 BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html = TEXT
