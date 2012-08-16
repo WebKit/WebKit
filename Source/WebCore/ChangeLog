@@ -1,3 +1,13 @@
+2012-08-16  Zhigang Gong  <zhigang.gong@linux.intel.com>
+
+        TextureMapperGL::beginPainting has a duplicate call to get GL_FRAMEBUFFER_BINDING.
+        https://bugs.webkit.org/show_bug.cgi?id=94180
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::beginPainting):
+
 2012-08-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r119705.

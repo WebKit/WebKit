@@ -264,7 +264,6 @@ void TextureMapperGL::beginPainting(PaintFlags flags)
     GL_CMD(glDepthMask(0));
     GL_CMD(glGetIntegerv(GL_VIEWPORT, data().viewport));
     GL_CMD(glGetIntegerv(GL_SCISSOR_BOX, data().previousScissor));
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &data().targetFrameBuffer);
     m_clipStack.init(IntRect(0, 0, data().viewport[2], data().viewport[3]));
     GL_CMD(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &data().targetFrameBuffer));
     data().PaintFlags = flags;
