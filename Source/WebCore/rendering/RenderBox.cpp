@@ -2146,10 +2146,7 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height)
         cb->computeLogicalHeight();
         result = cb->contentLogicalHeight();
         cb->setLogicalHeight(oldHeight);
-    } else if (cb->isRoot() && isOutOfFlowPositioned())
-        // Match the positioned objects behavior, which is that positioned objects will fill their viewport
-        // always.  Note we could only hit this case by recurring into computePercentageLogicalHeight on a positioned containing block.
-        result = cb->computeContentBoxLogicalHeight(cb->availableLogicalHeight());
+    }
 
     if (result != -1) {
         result = valueForLength(height, result);
