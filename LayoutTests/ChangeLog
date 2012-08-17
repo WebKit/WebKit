@@ -1,3 +1,14 @@
+2012-08-17  Dominic Mazzoni  <dmazzoni@google.com>
+
+        REGRESSION(r125710) - canvas-fallback-content tests asserting in Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=94156
+
+        Reviewed by Chris Fleizach.
+
+        Fixes two canvas tests that were asserting.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-17  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Updating test expectations after r125794.

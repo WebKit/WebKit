@@ -3503,10 +3503,6 @@ BUGWK94063 LION : fast/css/nested-rounded-corners.html = IMAGE+TEXT
 
 BUGWK94078 WIN RELEASE : http/tests/inspector/web-socket-frame-error.html = PASS TEXT
 
-BUGWK94156 DEBUG : accessibility/canvas-fallback-content.html = PASS CRASH
-BUGWK94156 DEBUG : platform/chromium/virtual/gpu/fast/canvas/fallback-content.html = PASS CRASH
-BUGWK94156 DEBUG : fast/canvas/fallback-content.html = PASS CRASH
-
 BUGWK94256 DEBUG : fast/block/inline-children-root-linebox-crash.html = PASS CRASH
 
 BUGWK94261 DEBUG : http/tests/inspector/indexeddb/resources-panel.html = PASS CRASH TIMEOUT

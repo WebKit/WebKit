@@ -919,13 +919,6 @@ bool Node::isFocusable() const
     if (!inDocument() || !supportsFocus())
         return false;
     
-    if (renderer())
-        ASSERT(!renderer()->needsLayout());
-    else
-        // If the node is in a display:none tree it might say it needs style recalc but
-        // the whole document is actually up to date.
-        ASSERT(!document()->childNeedsStyleRecalc());
-
     // Elements in canvas fallback content are not rendered, but they are allowed to be
     // focusable as long as their canvas is displayed and visible.
     if (isElementNode() && toElement(this)->isInCanvasSubtree()) {
@@ -935,6 +928,13 @@ bool Node::isFocusable() const
         ASSERT(e);
         return e->renderer() && e->renderer()->style()->visibility() == VISIBLE;
     }
+
+    if (renderer())
+        ASSERT(!renderer()->needsLayout());
+    else
+        // If the node is in a display:none tree it might say it needs style recalc but
+        // the whole document is actually up to date.
+        ASSERT(!document()->childNeedsStyleRecalc());
 
     // FIXME: Even if we are not visible, we might have a child that is visible.
     // Hyatt wants to fix that some day with a "has visible content" flag or the like.
