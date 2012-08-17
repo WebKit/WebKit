@@ -42,7 +42,7 @@ var WebInspector = {
         var network = new WebInspector.PanelDescriptor("network", WebInspector.UIString("Network"), undefined, undefined, new WebInspector.NetworkPanel());
         var scripts = new WebInspector.PanelDescriptor("scripts", WebInspector.UIString("Sources"), undefined, undefined, new WebInspector.ScriptsPanel());
         var timeline = new WebInspector.PanelDescriptor("timeline", WebInspector.UIString("Timeline"), "TimelinePanel", "TimelinePanel.js");
-        var profiles = new WebInspector.PanelDescriptor("profiles", WebInspector.UIString("Profiles"), undefined, undefined, new WebInspector.ProfilesPanel());
+        var profiles = new WebInspector.PanelDescriptor("profiles", WebInspector.UIString("Profiles"), "ProfilesPanel", "ProfilesPanel.js");
         var audits = new WebInspector.PanelDescriptor("audits", WebInspector.UIString("Audits"), "AuditsPanel", "AuditsPanel.js");
         var console = new WebInspector.PanelDescriptor("console", WebInspector.UIString("Console"), "ConsolePanel");
         var allDescriptors = [elements, resources, network, scripts, timeline, profiles, audits, console];
@@ -384,6 +384,16 @@ var WebInspector = {
                 this._nodeSearchButton.toggled = enabled;
         }
         WebInspector.domAgent.setInspectModeEnabled(enabled, callback.bind(this));
+    },
+
+    _profilesLinkifier: function(title)
+    {
+        var profileStringMatches = WebInspector.ProfileURLRegExp.exec(title);
+        if (profileStringMatches) {
+            var profilesPanel = /** @ type {WebInspector.ProfilesPanel} */ WebInspector.panel("profiles");
+            title = WebInspector.ProfilesPanel._instance.displayTitleForProfileLink(profileStringMatches[2], profileStringMatches[1]);
+        }
+        return title;
     }
 }
 
@@ -527,6 +537,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
         WebInspector.inspectorView.addPanel(panelDescriptors[i]);
 
     this.addMainEventListeners(document);
+    WebInspector.registerLinkifierPlugin(this._profilesLinkifier.bind(this));
 
     window.addEventListener("resize", this.windowResize.bind(this), true);
 
@@ -671,7 +682,7 @@ WebInspector.documentClick = function(event)
         if (WebInspector.isBeingEdited(event.target) || WebInspector._showAnchorLocation(anchor))
             return;
 
-        const profileMatch = WebInspector.ProfileType.URLRegExp.exec(anchor.href);
+        const profileMatch = WebInspector.ProfileURLRegExp.exec(anchor.href);
         if (profileMatch) {
             WebInspector.showProfileForURL(anchor.href);
             return;
@@ -1076,3 +1087,5 @@ WebInspector.frontendReused = function()
 {
     this.resourceTreeModel.frontendReused();
 }
+
+WebInspector.ProfileURLRegExp = /webkit-profile:\/\/(.+)\/(.+)#([0-9]+)/;

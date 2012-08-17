@@ -11,6 +11,7 @@ function test()
         InspectorTest.assertEquals(JSON.stringify(reference), JSON.stringify(actual));
     }
 
+    WebInspector.showPanel("profiles");
     var source = InspectorTest.createHeapSnapshotMockRaw();
     var sourceStringified = JSON.stringify(source);
     var partSize = sourceStringified.length >> 3;

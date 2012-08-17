@@ -82,11 +82,11 @@ WebInspector.NativeMemoryProfileType.prototype = {
 
     /**
      * @override
+     * @param {WebInspector.ProfilesPanel} profilesPanel
      * @return {boolean}
      */
-    buttonClicked: function()
+    buttonClicked: function(profilesPanel)
     {
-        var profilesPanel = WebInspector.panels.profiles;
         var profileHeader = new WebInspector.NativeMemoryProfileHeader(this, WebInspector.UIString("Snapshot %d", this._nextProfileUid), this._nextProfileUid);
         ++this._nextProfileUid;
         profileHeader.isTemporary = true;
@@ -178,8 +178,9 @@ WebInspector.NativeMemoryProfileHeader.prototype = {
 
     /**
      * @override
+     * @param {WebInspector.ProfilesPanel} profilesPanel
      */
-    createView: function()
+    createView: function(profilesPanel)
     {
         return new WebInspector.NativeMemorySnapshotView(this);
     }

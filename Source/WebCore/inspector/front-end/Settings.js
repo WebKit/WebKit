@@ -42,7 +42,6 @@ var Preferences = {
     localizeUI: true,
     exposeDisableCache: false,
     applicationTitle: "Web Inspector - %s",
-    showHeapSnapshotObjectsHiddenProperties: false,
     showDockToRight: false,
     exposeFileSystemInspection: false
 }
@@ -101,6 +100,7 @@ WebInspector.Settings = function()
     this.javaScriptDisabled = this.createSetting("javaScriptDisabled", false);
     this.geolocationOverride = this.createSetting("geolocationOverride", "");
     this.deviceOrientationOverride = this.createSetting("deviceOrientationOverride", "");
+    this.showHeapSnapshotObjectsHiddenProperties = this.createSetting("showHeaSnapshotObjectsHiddenProperties", false);
 
     // If there are too many breakpoints in a storage, it is likely due to a recent bug that caused
     // periodical breakpoints duplication leading to inspector slowness.
