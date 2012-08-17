@@ -57,21 +57,22 @@ InspectorFrontendAPI = {
 
     isProfilingJavaScript: function()
     {
-        return WebInspector.panels.profiles && WebInspector.CPUProfileType.instance && WebInspector.CPUProfileType.instance.isRecordingProfile();
+        return WebInspector.CPUProfileType.instance && WebInspector.CPUProfileType.instance.isRecordingProfile();
     },
 
     startProfilingJavaScript: function()
     {
-        WebInspector.showPanel("profiles").enableProfiler();
+        WebInspector.panels.profiles.enableProfiler();
+        WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.profiles);
         if (WebInspector.CPUProfileType.instance)
             WebInspector.CPUProfileType.instance.startRecordingProfile();
     },
 
     stopProfilingJavaScript: function()
     {
-        WebInspector.showPanel("profiles");
         if (WebInspector.CPUProfileType.instance)
             WebInspector.CPUProfileType.instance.stopRecordingProfile();
+        WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.profiles);
     },
 
     setAttachedWindow: function(attached)
