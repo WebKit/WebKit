@@ -162,7 +162,7 @@ struct _WebKitWebViewClass {
     void       (* mouse_target_changed)   (WebKitWebView               *web_view,
                                            WebKitHitTestResult         *hit_test_result,
                                            guint                        modifiers);
-    gboolean   (* print_requested)        (WebKitWebView               *web_view,
+    gboolean   (* print)                  (WebKitWebView               *web_view,
                                            WebKitPrintOperation        *print_operation);
     void       (* resource_load_started)  (WebKitWebView               *web_view,
                                            WebKitWebResource           *resource,

@@ -49,7 +49,7 @@ static void testPrintOperationPrintSettings(WebViewTest* test, gconstpointer)
     g_assert(webkit_print_operation_get_page_setup(printOperation.get()) == pageSetup.get());
 }
 
-static gboolean webViewPrintRequestedCallback(WebKitWebView* webView, WebKitPrintOperation* printOperation, WebViewTest* test)
+static gboolean webViewPrintCallback(WebKitWebView* webView, WebKitPrintOperation* printOperation, WebViewTest* test)
 {
     g_assert(webView == test->m_webView);
 
@@ -64,9 +64,9 @@ static gboolean webViewPrintRequestedCallback(WebKitWebView* webView, WebKitPrin
     return TRUE;
 }
 
-static void testWebViewPrintRequested(WebViewTest* test, gconstpointer)
+static void testWebViewPrint(WebViewTest* test, gconstpointer)
 {
-    g_signal_connect(test->m_webView, "print-requested", G_CALLBACK(webViewPrintRequestedCallback), test);
+    g_signal_connect(test->m_webView, "print", G_CALLBACK(webViewPrintCallback), test);
     test->loadHtml("<html><body onLoad=\"print();\">WebKitGTK+ printing test</body></html>", 0);
     g_main_loop_run(test->m_mainLoop);
 }
@@ -196,7 +196,7 @@ void beforeAll()
     g_assert(kTempDirectory);
 
     WebViewTest::add("WebKitPrintOperation", "printing-settings", testPrintOperationPrintSettings);
-    WebViewTest::add("WebKitWebView", "print-requested", testWebViewPrintRequested);
+    WebViewTest::add("WebKitWebView", "print", testWebViewPrint);
 #ifdef HAVE_GTK_UNIX_PRINTING
     PrintTest::add("WebKitPrintOperation", "print", testPrintOperationPrint);
     PrintTest::add("WebKitPrintOperation", "print-errors", testPrintOperationErrors);

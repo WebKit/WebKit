@@ -1,3 +1,26 @@
+2012-08-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Rename WebKitWebView print-requested signal to print
+        https://bugs.webkit.org/show_bug.cgi?id=94306
+
+        Reviewed by Martin Robinson.
+
+        WebKitWebView::print-requested is inconsistent with the rest of
+        the API. It's a true_handled signal that allows users to implement
+        their own print dialog, or block printing, or rely on
+        defaults. The signal should be WebKitWebView::print like other
+        signals (create, close, decide_policy, etc.)
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init):
+        (webkitWebViewPrintFrame):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        (_WebKitWebViewClass):
+        * UIProcess/API/gtk/tests/TestPrinting.cpp:
+        (webViewPrintCallback):
+        (testWebViewPrint):
+        (beforeAll):
+
 2012-08-17  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [WK2] Free Eina Strbuf with eina_strbuf_free() instead of eina_strbuf_string_free()

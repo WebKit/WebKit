@@ -79,7 +79,7 @@ enum {
 
     MOUSE_TARGET_CHANGED,
 
-    PRINT_REQUESTED,
+    PRINT,
 
     RESOURCE_LOAD_STARTED,
 
@@ -882,7 +882,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                       WEBKIT_TYPE_HIT_TEST_RESULT,
                       G_TYPE_UINT);
     /**
-     * WebKitWebView::print-requested:
+     * WebKitWebView::print:
      * @web_view: the #WebKitWebView on which the signal is emitted
      * @print_operation: the #WebKitPrintOperation that will handle the print request
      *
@@ -899,11 +899,11 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * Returns: %TRUE to stop other handlers from being invoked for the event.
      *    %FALSE to propagate the event further.
      */
-    signals[PRINT_REQUESTED] =
-        g_signal_new("print-requested",
+    signals[PRINT] =
+        g_signal_new("print",
                      G_TYPE_FROM_CLASS(webViewClass),
                      G_SIGNAL_RUN_LAST,
-                     G_STRUCT_OFFSET(WebKitWebViewClass, print_requested),
+                     G_STRUCT_OFFSET(WebKitWebViewClass, print),
                      g_signal_accumulator_true_handled, 0,
                      webkit_marshal_BOOLEAN__OBJECT,
                      G_TYPE_BOOLEAN, 1,
@@ -1321,7 +1321,7 @@ void webkitWebViewPrintFrame(WebKitWebView* webView, WKFrameRef wkFrame)
 {
     GRefPtr<WebKitPrintOperation> printOperation = adoptGRef(webkit_print_operation_new(webView));
     gboolean returnValue;
-    g_signal_emit(webView, signals[PRINT_REQUESTED], 0, printOperation.get(), &returnValue);
+    g_signal_emit(webView, signals[PRINT], 0, printOperation.get(), &returnValue);
     if (returnValue)
         return;
 
