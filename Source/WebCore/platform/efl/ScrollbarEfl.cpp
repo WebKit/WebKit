@@ -36,6 +36,7 @@
 #include <Ecore.h>
 #include <Edje.h>
 #include <Evas.h>
+#include <new>
 #include <string>
 #include <wtf/text/CString.h>
 
@@ -171,8 +172,8 @@ void ScrollbarEfl::updateThumbPositionAndProportion()
     m_lastTotalSize = tSize;
     m_lastVisibleSize = vSize;
 
-    char buffer[sizeof(Edje_Message_Float_Set) + sizeof(double)];
-    Edje_Message_Float_Set* message = reinterpret_cast<Edje_Message_Float_Set*>(buffer);
+    OwnArrayPtr<char> buffer = adoptArrayPtr(new char[sizeof(Edje_Message_Float_Set) + sizeof(double)]);
+    Edje_Message_Float_Set* message = new(buffer.get()) Edje_Message_Float_Set;
     message->count = 2;
 
     if (tSize - vSize > 0)
