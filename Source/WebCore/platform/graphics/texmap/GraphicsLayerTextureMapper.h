@@ -100,8 +100,8 @@ private:
     virtual void willBeDestroyed();
 
     OwnPtr<TextureMapperLayer> m_layer;
-    RefPtr<TextureMapperBackingStore> m_compositedImage;
-    RefPtr<Image> m_image;
+    RefPtr<TextureMapperTiledBackingStore> m_compositedImage;
+    NativeImagePtr m_compositedNativeImagePtr;
     int m_changeMask;
     bool m_needsDisplay;
     bool m_fixedToViewport;
