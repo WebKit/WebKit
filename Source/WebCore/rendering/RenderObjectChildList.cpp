@@ -63,7 +63,7 @@ void RenderObjectChildList::destroyLeftoverChildren()
     }
 }
 
-RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, RenderObject* oldChild, bool fullRemove)
+RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, RenderObject* oldChild, bool notifyRenderer)
 {
     ASSERT(oldChild->parent() == owner);
 
@@ -73,7 +73,7 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
     // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
     // that a positioned child got yanked).  We also repaint, so that the area exposed when the child
     // disappears gets repainted properly.
-    if (!owner->documentBeingDestroyed() && fullRemove && oldChild->everHadLayout()) {
+    if (!owner->documentBeingDestroyed() && notifyRenderer && oldChild->everHadLayout()) {
         oldChild->setNeedsLayoutAndPrefWidthsRecalc();
         if (oldChild->isBody())
             owner->view()->repaint();
@@ -85,47 +85,8 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
     if (oldChild->isBox())
         toRenderBox(oldChild)->deleteLineBoxWrapper();
 
-    if (!owner->documentBeingDestroyed() && fullRemove) {
-        // if we remove visible child from an invisible parent, we don't know the layer visibility any more
-        RenderLayer* layer = 0;
-        if (owner->style()->visibility() != VISIBLE && oldChild->style()->visibility() == VISIBLE && !oldChild->hasLayer()) {
-            if ((layer = owner->enclosingLayer()))
-                layer->dirtyVisibleContentStatus();
-        }
-
-         // Keep our layer hierarchy updated.
-        if (oldChild->firstChild() || oldChild->hasLayer()) {
-            if (!layer)
-                layer = owner->enclosingLayer();
-            oldChild->removeLayers(layer);
-        }
-
-        if (oldChild->isListItem())
-            toRenderListItem(oldChild)->updateListMarkerNumbers();
-
-        if (oldChild->isOutOfFlowPositioned() && owner->childrenInline())
-            owner->dirtyLinesFromChangedChild(oldChild);
-
-        if (oldChild->isRenderRegion())
-            toRenderRegion(oldChild)->detachRegion();
-
-        if (oldChild->isQuote())
-            toRenderQuote(oldChild)->detachQuote();
-
-        if (oldChild->inRenderFlowThread()) {
-            if (oldChild->isBox())
-                oldChild->enclosingRenderFlowThread()->removeRenderBoxRegionInfo(toRenderBox(oldChild));
-            oldChild->enclosingRenderFlowThread()->clearRenderObjectCustomStyle(oldChild);
-        }
-
-        if (RenderNamedFlowThread* containerFlowThread = owner->enclosingRenderNamedFlowThread())
-            containerFlowThread->removeFlowChild(oldChild);
-
-#if ENABLE(SVG)
-        // Update cached boundaries in SVG renderers, if a child is removed.
-        owner->setNeedsBoundariesUpdate();
-#endif
-    }
+    if (!owner->documentBeingDestroyed() && notifyRenderer)
+        oldChild->willBeRemovedFromTree();
     
     // If oldChild is the start or end of the selection, then clear the selection to
     // avoid problems of invalid pointers.

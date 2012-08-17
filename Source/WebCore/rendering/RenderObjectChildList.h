@@ -52,7 +52,7 @@ public:
     
     void destroyLeftoverChildren();
 
-    RenderObject* removeChildNode(RenderObject* owner, RenderObject*, bool fullRemove = true);
+    RenderObject* removeChildNode(RenderObject* owner, RenderObject*, bool notifyRenderer = true);
     void appendChildNode(RenderObject* owner, RenderObject*, bool notifyRenderer = true);
     void insertChildNode(RenderObject* owner, RenderObject* child, RenderObject* before, bool notifyRenderer = true);
 

@@ -49,6 +49,8 @@ private:
     // renderers before going into the main render tree. Once we can ensure that insertIntoTree,
     // is called on an attached tree, we should override it here.
 
+    virtual void willBeRemovedFromTree() OVERRIDE;
+
     const QuotesData* quotesData() const;
     void updateDepth();
     bool isAttached() { return m_attached; }
