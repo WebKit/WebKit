@@ -54,17 +54,18 @@ WebInspector.CPUProfileView = function(profile)
     this.dataGrid.element.addEventListener("mousedown", this._mouseDownInDataGrid.bind(this), true);
     this.dataGrid.show(this.element);
 
-    this.viewSelectElement = document.createElement("select");
-    this.viewSelectElement.className = "status-bar-item";
-    this.viewSelectElement.addEventListener("change", this._changeView.bind(this), false);
+    this.viewSelectComboBox = new WebInspector.StatusBarComboBox(this._changeView.bind(this));
 
     var heavyViewOption = document.createElement("option");
     heavyViewOption.label = WebInspector.UIString("Heavy (Bottom Up)");
+    heavyViewOption.value = WebInspector.CPUProfileView._TypeHeavy;
     var treeViewOption = document.createElement("option");
     treeViewOption.label = WebInspector.UIString("Tree (Top Down)");
-    this.viewSelectElement.appendChild(heavyViewOption);
-    this.viewSelectElement.appendChild(treeViewOption);
-    this.viewSelectElement.selectedIndex = this._viewType.get() === WebInspector.CPUProfileView._TypeHeavy ? 0 : 1;
+    treeViewOption.value = WebInspector.CPUProfileView._TypeTree;
+
+    this.viewSelectComboBox.addOption(heavyViewOption);
+    this.viewSelectComboBox.addOption(treeViewOption);
+    this.viewSelectComboBox.select(this._viewType.get() === WebInspector.CPUProfileView._TypeHeavy ? heavyViewOption : treeViewOption);
 
     this.percentButton = new WebInspector.StatusBarButton("", "percent-time-status-bar-item");
     this.percentButton.addEventListener("click", this._percentClicked, this);
@@ -109,7 +110,7 @@ WebInspector.CPUProfileView._TypeHeavy = "Heavy";
 WebInspector.CPUProfileView.prototype = {
     get statusBarItems()
     {
-        return [this.viewSelectElement, this.percentButton.element, this.focusButton.element, this.excludeButton.element, this.resetButton.element];
+        return [this.viewSelectComboBox.element, this.percentButton.element, this.focusButton.element, this.excludeButton.element, this.resetButton.element];
     },
 
     get bottomUpProfileDataGridTree()
@@ -385,11 +386,13 @@ WebInspector.CPUProfileView.prototype = {
         if (!this.profile)
             return;
 
-        if (this.viewSelectElement.selectedIndex == 1) {
+        switch (this.viewSelectComboBox.selectedOption().value) {
+        case WebInspector.CPUProfileView._TypeTree:
             this.profileDataGridTree = this.topDownProfileDataGridTree;
             this._sortProfile();
             this._viewType.set(WebInspector.CPUProfileView._TypeTree);
-        } else if (this.viewSelectElement.selectedIndex == 0) {
+            break;
+        case WebInspector.CPUProfileView._TypeHeavy:
             this.profileDataGridTree = this.bottomUpProfileDataGridTree;
             this._sortProfile();
             this._viewType.set(WebInspector.CPUProfileView._TypeHeavy);

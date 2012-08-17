@@ -96,6 +96,13 @@ Array.prototype.partition = function(comparator, left, right, pivotIndex) {}
  */
 Array.prototype.qselect = function(k, comparator) {}
 
+/**
+ * @this {Array.<*>}
+ * @param {string} field
+ * @return {Array.<*>}
+ */
+Array.prototype.select = function(field) {}
+
 DOMApplicationCache.prototype.UNCACHED = 0;
 DOMApplicationCache.prototype.IDLE = 1;
 DOMApplicationCache.prototype.CHECKING = 2;
