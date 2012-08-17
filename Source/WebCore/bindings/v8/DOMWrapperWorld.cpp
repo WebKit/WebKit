@@ -36,12 +36,15 @@
 
 namespace WebCore {
 
-int DOMWrapperWorld::isolatedWorldCount = 0;
+DOMWrapperWorld::DOMWrapperWorld()
+{
+    // This class is pretty boring, huh?
+}
 
 DOMWrapperWorld* mainThreadNormalWorld()
 {
     ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(RefPtr<DOMWrapperWorld>, cachedNormalWorld, (DOMWrapperWorld::create(DOMWrapperWorld::mainWorldId)));
+    DEFINE_STATIC_LOCAL(RefPtr<DOMWrapperWorld>, cachedNormalWorld, (DOMWrapperWorld::create()));
     return cachedNormalWorld.get();
 }
 
