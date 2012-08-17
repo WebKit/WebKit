@@ -48,6 +48,7 @@ WebInspector.evaluateForTestInFrontend = function(callId, script)
     function invokeMethod()
     {
         try {
+            script = script + "//@ sourceURL=evaluateInWebInspector" + callId + ".js";
             var result = window.eval(script);
             WebInspector.TestController.prototype.notifyDone(callId, result);
         } catch (e) {
