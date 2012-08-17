@@ -1,3 +1,14 @@
+2012-08-16  Adrienne Walker  <enne@google.com>
+
+        [chromium] Rebaseline media-document-audio-repaint after Chromium r151988
+
+        Unreviewed gardening.
+
+        * platform/chromium-linux/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-mac-snowleopard/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-win/media/media-document-audio-repaint-expected.png:
+
 2012-08-16  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Snippet script mapping should not load snippets until workspace reset event is dispatched on scripts panel.
