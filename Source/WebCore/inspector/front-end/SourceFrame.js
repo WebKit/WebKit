@@ -29,14 +29,13 @@
  */
 
 /**
- * @extends {WebInspector.View}
  * @constructor
+ * @extends {WebInspector.Object}
  * @param {WebInspector.ContentProvider} contentProvider
  */
 WebInspector.SourceFrame = function(contentProvider)
 {
-    WebInspector.View.call(this);
-    this.element.addStyleClass("script-view");
+    WebInspector.Object.call(this);
 
     this._url = contentProvider.contentURL();
     this._contentProvider = contentProvider;
@@ -47,6 +46,9 @@ WebInspector.SourceFrame = function(contentProvider)
         this._textEditor = new WebInspector.CodeMirrorTextEditor(this._url, textEditorDelegate);
     else
         this._textEditor = new WebInspector.DefaultTextEditor(this._url, textEditorDelegate);
+
+    this._textEditor.addEventListener(WebInspector.TextEditor.Events.WasShown, this._onTextEditorWasShown.bind(this), this);
+    this._textEditor.addEventListener(WebInspector.TextEditor.Events.WillHide, this._onTextEditorWillHide.bind(this), this);
 
     this._currentSearchResultIndex = -1;
     this._searchResults = [];
@@ -59,7 +61,7 @@ WebInspector.SourceFrame = function(contentProvider)
 
     this._shortcuts = {};
     this._shortcuts[WebInspector.KeyboardShortcut.makeKey("s", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta)] = this._commitEditing.bind(this);
-    this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
+    this._textEditor.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
 }
 
 /**
@@ -92,17 +94,29 @@ WebInspector.SourceFrame.Events = {
 }
 
 WebInspector.SourceFrame.prototype = {
-    wasShown: function()
+    show: function(parent)
+    {
+        this._textEditor.show(parent);
+    },
+
+    detach: function()
+    {
+        this._textEditor.detach();
+    },
+
+    focus: function()
+    {
+        this._textEditor.focus();
+    },
+
+    _onTextEditorWasShown: function()
     {
         this._ensureContentLoaded();
-        this._textEditor.show(this.element);
         this._wasShownOrLoaded();
     },
 
-    willHide: function()
+    _onTextEditorWillHide: function()
     {
-        WebInspector.View.prototype.willHide.call(this);
-
         this._clearLineHighlight();
         this._clearLineToReveal();
     },
@@ -652,7 +666,7 @@ WebInspector.SourceFrame.prototype = {
     }
 }
 
-WebInspector.SourceFrame.prototype.__proto__ = WebInspector.View.prototype;
+WebInspector.SourceFrame.prototype.__proto__ = WebInspector.Object.prototype;
 
 
 /**

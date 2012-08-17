@@ -1,3 +1,15 @@
+2012-08-17  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: SourceFrame shouldn't be a View
+        https://bugs.webkit.org/show_bug.cgi?id=93444
+
+        Reviewed by Pavel Feldman.
+
+        Use TextEditor as a View instead of SourceFrame.
+
+        * inspector/debugger/reveal-execution-line.html:
+        * inspector/debugger/source-frame-count.html:
+
 2012-08-17  Anthony Berent  <aberent@chromium.org>
 
         View source doesn't interpret escape characters in hrefs.

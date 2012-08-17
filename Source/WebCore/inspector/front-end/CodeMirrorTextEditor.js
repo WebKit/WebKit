@@ -393,6 +393,16 @@ WebInspector.CodeMirrorTextEditor.prototype = {
         loadLibrary("javascript.js");
         loadLibrary("xml.js");
         loadLibrary("htmlmixed.js");
+    },
+
+    wasShown: function()
+    {
+        this.dispatchEventToListeners(WebInspector.TextEditor.Events.WasShown);
+    },
+
+    willHide: function()
+    {
+        this.dispatchEventToListeners(WebInspector.TextEditor.Events.WillHide);
     }
 }
 

@@ -553,6 +553,8 @@ WebInspector.DefaultTextEditor.prototype = {
 
         this._boundSelectionChangeListener = this._handleSelectionChange.bind(this);
         document.addEventListener("selectionchange", this._boundSelectionChangeListener, false);
+
+        this.dispatchEventToListeners(WebInspector.TextEditor.Events.WasShown);
     },
 
     _handleFocused: function()
@@ -563,6 +565,8 @@ WebInspector.DefaultTextEditor.prototype = {
 
     willHide: function()
     {
+        this.dispatchEventToListeners(WebInspector.TextEditor.Events.WillHide);
+
         document.removeEventListener("selectionchange", this._boundSelectionChangeListener, false);
         delete this._boundSelectionChangeListener;
 
