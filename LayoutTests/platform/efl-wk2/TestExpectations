@@ -264,7 +264,6 @@ BUGWKEFL : fast/media/mq-valueless.html = TEXT
 BUGWKEFL : fast/repaint/fixed-move-after-keyboard-scroll.html = TEXT
 BUGWKEFL : fast/replaced/no-focus-ring-embed.html = TEXT
 BUGWKEFL : fast/replaced/no-focus-ring-object.html = TEXT
-BUGWKEFL : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
 BUGWKEFL : fast/viewport/viewport-128.html = TEXT
 BUGWKEFL : fast/workers/worker-cloneport.html = TEXT
 BUGWKEFL : http/tests/appcache/load-from-appcache-defer-resume-crash.html = TEXT

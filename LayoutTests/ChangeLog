@@ -1,3 +1,13 @@
+2012-08-17  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Gardening of failing tests and new passes
+        https://bugs.webkit.org/show_bug.cgi?id=94344
+
+        Unreviewed EFL gardening of failing tests and new passes.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-08-17  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Touch adjustment for context menu gestures

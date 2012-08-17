@@ -892,5 +892,10 @@ BUGWK94194 : http/tests/security/frameNavigation/inactive-function-in-popup-navi
 BUGWK94198 : fast/dom/HTMLImageElement/image-alt-text.html = IMAGE
 BUGWK94198 : fast/dom/HTMLInputElement/input-image-alt-text.html = IMAGE
 
-// Failing after 125758
-BUGWK94214 : compositing/overflow/overflow-hidden-canvas-layer.html = TEXT
+BUGWK84037 : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
+
+// Fails also on GTK and QT
+BUGWK59706 : http/tests/inspector/resource-tree/resource-tree-frame-navigate.html = TEXT
+
+// New test introduced in r125790 fails
+BUGWK94341 : inspector/timeline/timeline-decode-resize.html = TEXT
