@@ -1,3 +1,312 @@
+2012-08-17  Adrienne Walker  <enne@google.com>
+
+        [chromium] Rebaseline Chromium mac images after r125830
+
+        Unreviewed gardening. Expectation update.
+
+        All changes looked like text fields changed imperceptibly and
+        checkboxes with text fields moved up to match the expected
+        non-Chromium versions.
+
+        * platform/chromium-linux-x86/fast/events/autoscroll-expected.png: Removed.
+        * platform/chromium-linux-x86/http/tests/navigation/javascriptlink-frames-expected.png: Removed.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/bugs/bug92647-1-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css1/box_properties/acid_test-expected.png:
+        * platform/chromium-mac-snowleopard/css2.1/t09-c5526c-display-00-e-expected.png:
+        * platform/chromium-mac-snowleopard/css3/selectors3/html/css3-modsel-25-expected.png:
+        * platform/chromium-mac-snowleopard/css3/selectors3/html/css3-modsel-70-expected.png:
+        * platform/chromium-mac-snowleopard/css3/selectors3/xhtml/css3-modsel-25-expected.png:
+        * platform/chromium-mac-snowleopard/css3/selectors3/xhtml/css3-modsel-70-expected.png:
+        * platform/chromium-mac-snowleopard/css3/selectors3/xml/css3-modsel-25-expected.png:
+        * platform/chromium-mac-snowleopard/css3/selectors3/xml/css3-modsel-70-expected.png:
+        * platform/chromium-mac-snowleopard/editing/input/caret-at-the-edge-of-input-expected.png:
+        * platform/chromium-mac-snowleopard/editing/inserting/before-after-input-element-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/4806874-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/drop-text-without-selection-expected.png:
+        * platform/chromium-mac-snowleopard/editing/pasteboard/input-field-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/3690703-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/3690703-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/3690719-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/4895428-3-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/4975120-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/drag-select-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/select-across-readonly-input-1-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/select-across-readonly-input-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/select-across-readonly-input-3-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/select-across-readonly-input-4-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/select-across-readonly-input-5-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/select-from-textfield-outwards-expected.png:
+        * platform/chromium-mac-snowleopard/fast/block/basic/011-expected.png:
+        * platform/chromium-mac-snowleopard/fast/block/margin-collapse/103-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/input-search-padding-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/line-height-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/text-overflow-input-expected.png:
+        * platform/chromium-mac-snowleopard/fast/dom/isindex-001-expected.png:
+        * platform/chromium-mac-snowleopard/fast/dom/isindex-002-expected.png:
+        * platform/chromium-mac-snowleopard/fast/events/autoscroll-expected.png:
+        * platform/chromium-mac-snowleopard/fast/events/context-no-deselect-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/001-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/basic-inputs-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/box-shadow-override-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date/date-appearance-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/encoding-test-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/fieldset-align-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/file/file-input-disabled-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/floating-textfield-relayout-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/form-element-geometry-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/formmove-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/formmove2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/indeterminate-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-align-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-appearance-default-bkcolor-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-appearance-disabled-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-appearance-focus-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-appearance-height-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-appearance-preventDefault-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-appearance-readonly-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-appearance-selection-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-appearance-visibility-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-appearance-width-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-baseline-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-disabled-color-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-field-text-truncated-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-placeholder-paint-order-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-placeholder-visibility-1-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-placeholder-visibility-3-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-readonly-autoscroll-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-readonly-dimmed-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-readonly-empty-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-spaces-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-table-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-text-click-inside-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-text-click-outside-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-text-double-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-text-drag-down-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-text-option-delete-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-text-scroll-left-on-blur-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-text-self-emptying-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-text-word-wrap-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-type-text-min-width-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-value-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-width-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug12384-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/minWidthPercent-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/number/number-appearance-rtl-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/number/number-appearance-spinbutton-layer-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/placeholder-position-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/placeholder-pseudo-style-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/plaintext-mode-2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/tabbing-input-iframe-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/text-style-color-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/textfield-focus-ring-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/textfield-overflow-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/textfield-overflow-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/visual-hebrew-text-field-expected.png:
+        * platform/chromium-mac-snowleopard/fast/frames/take-focus-from-iframe-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-no-summary4-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-open-javascript-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-open2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-open4-expected.png:
+        * platform/chromium-mac-snowleopard/fast/inline/positionedLifetime-expected.png:
+        * platform/chromium-mac-snowleopard/fast/lists/dynamic-marker-crash-expected.png:
+        * platform/chromium-mac-snowleopard/fast/parser/bad-xml-slash-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug12384-expected.png.
+        * platform/chromium-mac-snowleopard/fast/repaint/subtree-root-skipped-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/replaced-breaking-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/replaced-breaking-mixture-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/width100percent-textfield-expected.png:
+        * platform/chromium-mac-snowleopard/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-mac-snowleopard/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-mac-snowleopard/fast/speech/speech-bidi-rendering-expected.png:
+        * platform/chromium-mac-snowleopard/fast/table/003-expected.png:
+        * platform/chromium-mac-snowleopard/fast/table/colspanMinWidth-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/textfield-overflow-expected.png.
+        * platform/chromium-mac-snowleopard/fast/table/colspanMinWidth-vertical-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug12384-expected.png.
+        * platform/chromium-mac-snowleopard/fast/table/spanOverlapRepaint-expected.png: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug12384-expected.png.
+        * platform/chromium-mac-snowleopard/fast/table/text-field-baseline-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-mac-snowleopard/fast/transforms/transformed-focused-text-input-expected.png: Added.
+        * platform/chromium-mac-snowleopard/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/chromium-mac-snowleopard/plugins/mouse-click-plugin-clears-selection-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png.
+        * platform/chromium-mac-snowleopard/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/chromium-mac-snowleopard/svg/hixie/mixed/003-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/45621-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug12384-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug24200-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug2479-2-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug2479-3-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug4382-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug46368-1-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug46368-2-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug51037-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug55545-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug59354-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug7342-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug96334-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/dom/tableDom-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/other/move_row-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug92647-1-expected.png:
+        * platform/chromium-mac/css1/box_properties/acid_test-expected.png:
+        * platform/chromium-mac/css2.1/t09-c5526c-display-00-e-expected.png:
+        * platform/chromium-mac/css3/selectors3/html/css3-modsel-25-expected.png:
+        * platform/chromium-mac/css3/selectors3/html/css3-modsel-70-expected.png:
+        * platform/chromium-mac/css3/selectors3/xhtml/css3-modsel-25-expected.png:
+        * platform/chromium-mac/css3/selectors3/xhtml/css3-modsel-70-expected.png:
+        * platform/chromium-mac/css3/selectors3/xml/css3-modsel-25-expected.png:
+        * platform/chromium-mac/css3/selectors3/xml/css3-modsel-70-expected.png:
+        * platform/chromium-mac/editing/input/caret-at-the-edge-of-input-expected.png:
+        * platform/chromium-mac/editing/inserting/before-after-input-element-expected.png:
+        * platform/chromium-mac/editing/pasteboard/4806874-expected.png:
+        * platform/chromium-mac/editing/pasteboard/drop-text-without-selection-expected.png:
+        * platform/chromium-mac/editing/pasteboard/input-field-1-expected.png:
+        * platform/chromium-mac/editing/selection/3690703-2-expected.png:
+        * platform/chromium-mac/editing/selection/3690703-expected.png:
+        * platform/chromium-mac/editing/selection/3690719-expected.png:
+        * platform/chromium-mac/editing/selection/4895428-3-expected.png:
+        * platform/chromium-mac/editing/selection/4975120-expected.png:
+        * platform/chromium-mac/editing/selection/drag-select-1-expected.png:
+        * platform/chromium-mac/editing/selection/select-across-readonly-input-1-expected.png:
+        * platform/chromium-mac/editing/selection/select-across-readonly-input-2-expected.png:
+        * platform/chromium-mac/editing/selection/select-across-readonly-input-3-expected.png:
+        * platform/chromium-mac/editing/selection/select-across-readonly-input-4-expected.png:
+        * platform/chromium-mac/editing/selection/select-across-readonly-input-5-expected.png:
+        * platform/chromium-mac/editing/selection/select-from-textfield-outwards-expected.png:
+        * platform/chromium-mac/fast/block/basic/011-expected.png:
+        * platform/chromium-mac/fast/block/margin-collapse/103-expected.png:
+        * platform/chromium-mac/fast/css/input-search-padding-expected.png:
+        * platform/chromium-mac/fast/css/line-height-expected.png:
+        * platform/chromium-mac/fast/css/text-overflow-input-expected.png:
+        * platform/chromium-mac/fast/dom/isindex-001-expected.png:
+        * platform/chromium-mac/fast/dom/isindex-002-expected.png:
+        * platform/chromium-mac/fast/events/autoscroll-expected.png:
+        * platform/chromium-mac/fast/events/context-no-deselect-expected.png:
+        * platform/chromium-mac/fast/forms/001-expected.png:
+        * platform/chromium-mac/fast/forms/basic-inputs-expected.png:
+        * platform/chromium-mac/fast/forms/box-shadow-override-expected.png:
+        * platform/chromium-mac/fast/forms/date/date-appearance-expected.png:
+        * platform/chromium-mac/fast/forms/encoding-test-expected.png:
+        * platform/chromium-mac/fast/forms/fieldset-align-expected.png:
+        * platform/chromium-mac/fast/forms/file/file-input-disabled-expected.png:
+        * platform/chromium-mac/fast/forms/floating-textfield-relayout-expected.png:
+        * platform/chromium-mac/fast/forms/form-element-geometry-expected.png:
+        * platform/chromium-mac/fast/forms/formmove-expected.png:
+        * platform/chromium-mac/fast/forms/formmove2-expected.png:
+        * platform/chromium-mac/fast/forms/indeterminate-expected.png:
+        * platform/chromium-mac/fast/forms/input-align-expected.png:
+        * platform/chromium-mac/fast/forms/input-appearance-default-bkcolor-expected.png:
+        * platform/chromium-mac/fast/forms/input-appearance-disabled-expected.png:
+        * platform/chromium-mac/fast/forms/input-appearance-focus-expected.png:
+        * platform/chromium-mac/fast/forms/input-appearance-height-expected.png:
+        * platform/chromium-mac/fast/forms/input-appearance-preventDefault-expected.png:
+        * platform/chromium-mac/fast/forms/input-appearance-readonly-expected.png:
+        * platform/chromium-mac/fast/forms/input-appearance-selection-expected.png:
+        * platform/chromium-mac/fast/forms/input-appearance-visibility-expected.png:
+        * platform/chromium-mac/fast/forms/input-appearance-width-expected.png:
+        * platform/chromium-mac/fast/forms/input-baseline-expected.png:
+        * platform/chromium-mac/fast/forms/input-disabled-color-expected.png:
+        * platform/chromium-mac/fast/forms/input-field-text-truncated-expected.png:
+        * platform/chromium-mac/fast/forms/input-placeholder-paint-order-expected.png:
+        * platform/chromium-mac/fast/forms/input-placeholder-visibility-1-expected.png:
+        * platform/chromium-mac/fast/forms/input-placeholder-visibility-3-expected.png:
+        * platform/chromium-mac/fast/forms/input-readonly-autoscroll-expected.png:
+        * platform/chromium-mac/fast/forms/input-readonly-dimmed-expected.png:
+        * platform/chromium-mac/fast/forms/input-readonly-empty-expected.png:
+        * platform/chromium-mac/fast/forms/input-spaces-expected.png:
+        * platform/chromium-mac/fast/forms/input-table-expected.png:
+        * platform/chromium-mac/fast/forms/input-text-click-inside-expected.png:
+        * platform/chromium-mac/fast/forms/input-text-click-outside-expected.png:
+        * platform/chromium-mac/fast/forms/input-text-double-click-expected.png:
+        * platform/chromium-mac/fast/forms/input-text-drag-down-expected.png:
+        * platform/chromium-mac/fast/forms/input-text-option-delete-expected.png:
+        * platform/chromium-mac/fast/forms/input-text-scroll-left-on-blur-expected.png:
+        * platform/chromium-mac/fast/forms/input-text-self-emptying-click-expected.png:
+        * platform/chromium-mac/fast/forms/input-text-word-wrap-expected.png:
+        * platform/chromium-mac/fast/forms/input-type-text-min-width-expected.png:
+        * platform/chromium-mac/fast/forms/input-value-expected.png:
+        * platform/chromium-mac/fast/forms/input-width-expected.png:
+        * platform/chromium-mac/fast/forms/minWidthPercent-expected.png:
+        * platform/chromium-mac/fast/forms/number/number-appearance-rtl-expected.png:
+        * platform/chromium-mac/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.png:
+        * platform/chromium-mac/fast/forms/number/number-appearance-spinbutton-layer-expected.png:
+        * platform/chromium-mac/fast/forms/placeholder-position-expected.png:
+        * platform/chromium-mac/fast/forms/placeholder-pseudo-style-expected.png:
+        * platform/chromium-mac/fast/forms/plaintext-mode-2-expected.png:
+        * platform/chromium-mac/fast/forms/tabbing-input-iframe-expected.png:
+        * platform/chromium-mac/fast/forms/text-style-color-expected.png:
+        * platform/chromium-mac/fast/forms/textfield-focus-ring-expected.png:
+        * platform/chromium-mac/fast/forms/textfield-overflow-expected.png:
+        * platform/chromium-mac/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-mac/fast/forms/visual-hebrew-text-field-expected.png:
+        * platform/chromium-mac/fast/frames/take-focus-from-iframe-expected.png:
+        * platform/chromium-mac/fast/html/details-no-summary4-expected.png:
+        * platform/chromium-mac/fast/html/details-open-javascript-expected.png:
+        * platform/chromium-mac/fast/html/details-open2-expected.png:
+        * platform/chromium-mac/fast/html/details-open4-expected.png:
+        * platform/chromium-mac/fast/inline/positionedLifetime-expected.png:
+        * platform/chromium-mac/fast/lists/dynamic-marker-crash-expected.png:
+        * platform/chromium-mac/fast/parser/bad-xml-slash-expected.png:
+        * platform/chromium-mac/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png:
+        * platform/chromium-mac/fast/repaint/subtree-root-skipped-expected.png:
+        * platform/chromium-mac/fast/replaced/replaced-breaking-expected.png:
+        * platform/chromium-mac/fast/replaced/replaced-breaking-mixture-expected.png:
+        * platform/chromium-mac/fast/replaced/width100percent-textfield-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-mac/fast/speech/speech-bidi-rendering-expected.png:
+        * platform/chromium-mac/fast/table/003-expected.png:
+        * platform/chromium-mac/fast/table/colspanMinWidth-expected.png:
+        * platform/chromium-mac/fast/table/colspanMinWidth-vertical-expected.png:
+        * platform/chromium-mac/fast/table/spanOverlapRepaint-expected.png:
+        * platform/chromium-mac/fast/table/text-field-baseline-expected.png:
+        * platform/chromium-mac/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-mac/fast/transforms/transformed-focused-text-input-expected.png:
+        * platform/chromium-mac/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/chromium-mac/plugins/mouse-click-plugin-clears-selection-expected.png:
+        * platform/chromium-mac/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/chromium-mac/svg/hixie/mixed/003-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/45621-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug12384-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug24200-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-3-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4382-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug46368-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug46368-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug51037-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug55545-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug59354-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug7342-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug96334-expected.png:
+        * platform/chromium-mac/tables/mozilla/dom/tableDom-expected.png:
+        * platform/chromium-mac/tables/mozilla/other/move_row-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug92647-1-expected.png:
+        * platform/chromium-win-xp/editing/input/caret-at-the-edge-of-input-expected.png: Removed.
+        * platform/chromium-win-xp/fast/block/margin-collapse/103-expected.png: Removed.
+        * platform/chromium-win-xp/fast/events/autoscroll-expected.png: Removed.
+        * platform/chromium-win-xp/fast/events/context-no-deselect-expected.png: Removed.
+        * platform/chromium-win-xp/fast/forms/date/date-appearance-expected.png: Removed.
+        * platform/chromium-win-xp/fast/frames/take-focus-from-iframe-expected.png: Removed.
+        * platform/chromium-win-xp/fast/lists/dynamic-marker-crash-expected.png: Removed.
+        * platform/chromium-win-xp/fast/speech/input-appearance-numberandspeech-expected.png: Removed.
+        * platform/chromium-win-xp/fast/speech/input-appearance-speechbutton-expected.png: Removed.
+        * platform/chromium-win-xp/fast/speech/speech-bidi-rendering-expected.png: Removed.
+        * platform/chromium-win-xp/fast/transforms/transformed-focused-text-input-expected.png: Removed.
+        * platform/chromium-win-xp/http/tests/navigation/javascriptlink-frames-expected.png: Removed.
+        * platform/chromium-win-xp/plugins/mouse-click-plugin-clears-selection-expected.png: Removed.
+        * platform/chromium-win-xp/svg/hixie/mixed/003-expected.png: Removed.
+        * platform/chromium-win-xp/tables/mozilla/dom/tableDom-expected.png: Removed.
+        * platform/chromium-win-xp/tables/mozilla/other/move_row-expected.png: Removed.
+        * platform/chromium-win-xp/tables/mozilla_expected_failures/bugs/bug92647-1-expected.png: Removed.
+
 2012-08-17  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
