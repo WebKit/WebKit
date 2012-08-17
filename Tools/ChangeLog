@@ -1,3 +1,18 @@
+2012-08-17  Shadi Khalek  <shadi@chromium.org>
+
+        Add AV perf layout tests to webkit flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=94255
+
+        Reviewed by Ojan Vafai.
+
+        Added missing mappings to LEGACY_BUILDER_MASTERS_TO_GROUPS.
+        The isChromiumDepsAVTestRunner() filter does not work on current builder names. 
+        It assumes the new names they are getting renamed to (AV Linux, AV Win7).
+
+        * TestResultServer/static-dashboards/builders.js:
+        (isChromiumTipOfTreeAVTestRunner):
+        (loadBuildersList):
+
 2012-08-17  Milian Wolff  <milian.wolff@kdab.com>
 
         [Qt] QtWebKit fails to build with OpenGL support on QNX

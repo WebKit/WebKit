@@ -52,14 +52,19 @@ CHROMIUM_LINUX_BUILDER_MASTER = new BuilderMaster('ChromiumLinux', 'http://build
 CHROMIUMOS_BUILDER_MASTER = new BuilderMaster('ChromiumChromiumOS', 'http://build.chromium.org/p/chromium.chromiumos/');
 CHROMIUM_GPU_BUILDER_MASTER = new BuilderMaster('ChromiumGPU', 'http://build.chromium.org/p/chromium.gpu/');
 CHROMIUM_GPU_FYI_BUILDER_MASTER = new BuilderMaster('ChromiumGPUFYI', 'http://build.chromium.org/p/chromium.gpu.fyi/');
+CHROMIUM_PERF_AV_BUILDER_MASTER = new BuilderMaster('ChromiumPerfAv', 'http://build.chromium.org/p/chromium.perf_av/');
 CHROMIUM_WEBKIT_BUILDER_MASTER = new BuilderMaster('ChromiumWebkit', 'http://build.chromium.org/p/chromium.webkit/');
 WEBKIT_BUILDER_MASTER = new BuilderMaster('webkit.org', 'http://build.webkit.org/');
 
 var LEGACY_BUILDER_MASTERS_TO_GROUPS = {
     'Chromium': '@DEPS - chromium.org',
+    'ChromiumWin': '@DEPS - chromium.org',
+    'ChromiumMac': '@DEPS - chromium.org',
+    'ChromiumLinux': '@DEPS - chromium.org',
     'ChromiumChromiumOS': '@DEPS CrOS - chromium.org',
     'ChromiumGPU': '@DEPS - chromium.org',
     'ChromiumGPUFYI': '@DEPS FYI - chromium.org',
+    'ChromiumPerfAv': '@DEPS - chromium.org',
     'ChromiumWebkit': '@ToT - chromium.org',
     'webkit.org': '@ToT - webkit.org'
 };
@@ -191,6 +196,11 @@ function isChromiumTipOfTreeGTestRunner(builder)
          builder.indexOf('Webkit') == -1 && builder.indexOf('Valgrind') == -1 && builder.indexOf('Chrome Frame') == -1;
 }
 
+function isChromiumDepsAVTestRunner(builder)
+{
+    return builder.indexOf('Builder') == -1;
+}
+
 function generateBuildersFromBuilderList(builderList, filter)
 {
     return builderList.filter(filter).map(function(tester, index) {
@@ -253,6 +263,7 @@ function loadBuildersList(groupName, testType) {
         case '@DEPS - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
             requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, isChromiumWebkitDepsTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, BuilderGroup.DEPS_WEBKIT, builderGroup);
+            requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, isChromiumDepsAVTestRunner, CHROMIUM_PERF_AV_BUILDER_MASTER, groupName, BuilderGroup.DEPS_WEBKIT, builderGroup);
             break;
         }
         break;
