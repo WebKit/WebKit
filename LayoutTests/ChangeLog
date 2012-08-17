@@ -1,3 +1,16 @@
+2012-08-17  Kiran Muppala  <cmuppala@apple.com>
+
+        Update test expectations for inspector/timeline/timeline-decode-resize.html on mac
+        https://bugs.webkit.org/show_bug.cgi?id=94375
+
+        Reviewed by Brady Eidson.
+
+        Mark inspector/timeline/timeline-decode-resize.html as an expected
+        failure on mac until https://bugs.webkit.org/show_bug.cgi?id=94374
+        is resolved.
+
+        * platform/mac/TestExpectations:
+
 2012-08-17  John J. Barton  <johnjbarton@chromium.org>
 
         Web Inspector: Refactor InspectorTest to split evals for initialization from runTest

@@ -392,3 +392,6 @@ BUGWK94003 : fast/css/word-spacing-characters-complex-text.html = IMAGE
 
 // (r125629): Newly added test css3/filters/custom/filter-fallback-to-software.html failing on mac
 BUGWK94169 : css3/filters/custom/filter-fallback-to-software.html = IMAGE
+
+// (r125790): Newly added test inspector/timeline/timeline-decode-resize.html is failing on mac
+BUGWK94374 : inspector/timeline/timeline-decode-resize.html = TEXT
