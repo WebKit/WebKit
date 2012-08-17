@@ -1,3 +1,19 @@
+2012-08-17  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [WK2] Free Eina Strbuf with eina_strbuf_free() instead of eina_strbuf_string_free()
+        https://bugs.webkit.org/show_bug.cgi?id=94312
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        eina_strbuf_string_free() frees the contents of a string buffer but not the
+        buffer, so eina_strbuf_free() must be used to free the buffer.
+
+        Contents of the buffer has already been take care by stealing it with
+        eina_strbuf_string_steal(), so no reason to call eina_strbuf_string_free().
+
+        * UIProcess/API/efl/tests/test_ewk2_cookie_manager.cpp:
+        (serverCallback):
+
 2012-08-17  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Getting unnecessary  EINA_SAFETY_ON_NULL_RETURN_VAL warnings while page navigation
