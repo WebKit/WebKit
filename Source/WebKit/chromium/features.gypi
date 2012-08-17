@@ -52,7 +52,6 @@
       'ENABLE_CSS_VARIABLES=1',
       'ENABLE_CSS_STICKY_POSITION=1',
       'ENABLE_CUSTOM_SCHEME_HANDLER=0',
-      'ENABLE_DATALIST_ELEMENT=1',
       'ENABLE_DASHBOARD_SUPPORT=0',
       'ENABLE_DATA_TRANSFER_ITEMS=1',
       'ENABLE_DETAILS_ELEMENT=1',
@@ -150,6 +149,7 @@
       ['OS=="android"', {
         'feature_defines': [
           'ENABLE_CALENDAR_PICKER=0',
+          'ENABLE_DATALIST_ELEMENT=0',
           'ENABLE_INPUT_SPEECH=0',
           'ENABLE_INPUT_TYPE_COLOR=0',
           'ENABLE_JAVASCRIPT_I18N_API=0',
@@ -171,6 +171,7 @@
       }, { # OS!="android"
         'feature_defines': [
           'ENABLE_CALENDAR_PICKER=1',
+          'ENABLE_DATALIST_ELEMENT=1',
           'ENABLE_INPUT_SPEECH=1',
           'ENABLE_INPUT_TYPE_COLOR=1',
           'ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS=1',
