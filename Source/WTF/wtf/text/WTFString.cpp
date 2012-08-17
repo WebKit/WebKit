@@ -32,10 +32,6 @@
 #include <wtf/dtoa.h>
 #include <wtf/unicode/UTF8.h>
 #include <wtf/unicode/Unicode.h>
-#if OS(DARWIN)
-#include <emmintrin.h>
-#include <tmmintrin.h>
-#endif
 
 using namespace std;
 

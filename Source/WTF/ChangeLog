@@ -1,3 +1,9 @@
+2012-08-16  Kent Tamura  <tkent@chromium.org>
+
+        Build fix for Chromium-mac.
+
+        * wtf/text/WTFString.cpp: Remove unnecessary includes.
+
 2012-08-16  Michael Saboff  <msaboff@apple.com>
 
         HTML Parser should produce 8bit substrings for inline style and script elements
