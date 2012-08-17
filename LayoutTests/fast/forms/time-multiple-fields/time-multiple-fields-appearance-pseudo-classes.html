@@ -1,0 +1,25 @@
+<html>
+<head>
+<style type="text/css">
+:disabled { color: gray; }
+:enabled { color: blue; }
+:invalid { color: pink; }
+:in-range { font-weight: bold; }
+:out-of-range { color: red; }
+:read-only { color: yellow; }
+:valid { color: green; }
+</style>
+</head>
+<body>
+<h1>Input Type "time"</h1>
+<h2>Pseudo Classes</h2>
+<table>
+<tr><th>:enabled, :valid</th><td><input type="time" value="12:34:00"></td></tr>
+<tr><th>:disabled</th><td><input type="time" value="12:34:00" disabled></td></tr>
+<tr><th>:invalid</th><td><input type="time" value="12:34:00" min="11:00:00" step="3600"></td></tr>
+<tr><th>:in-range</th><td><input type="time" value="12:34:00" min="12:00:00" max="13:00:00"></td></tr>
+<tr><th>:out-of-range</th><td><input type="time" value="12:34:00" min="13:00:00" max="14:00:00"></td></tr>
+<tr><th>:read-only</th><td><input type="time" value="12:34:00" readonly></td></tr>
+</table>
+</body>
+</html>

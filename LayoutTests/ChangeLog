@@ -1,3 +1,33 @@
+2012-08-16  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Cleanup CSS selectors for multiple fields time input UI
+        https://bugs.webkit.org/show_bug.cgi?id=94287
+
+        Reviewed by Kent Tamura.
+
+        This patch introduces tests for multiple fields time input UI appearance
+        when both ENABLE_INPUT_TYPE_TIME and ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS
+        are enabled.
+
+        Note: We need to do rebaseline for Chromium-Mac and Chromium-Win.
+
+        * fast/forms/time-multiple-fields/resources/time-multiple-fields-appearance.css: Added.
+        * fast/forms/time-multiple-fields/resources/time-multiple-fields-appearance.js: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.html: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic.html: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly.html: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes.html: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.html: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements.html: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-style.html: Added.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png: Added.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.txt: Added.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png: Added.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.txt: Added.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png: Added.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.txt: Added.
+        * platform/chromium/TestExpectations: Added MISSING entries for Chromium-Mac and Chromium-Win.
+
 2012-08-16  Michelangelo De Simone  <michelangelo@webkit.org>
 
         [Part 3] Parse the custom() function in -webkit-filter: parse the 3d-transforms parameters

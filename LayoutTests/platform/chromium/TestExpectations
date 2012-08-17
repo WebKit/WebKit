@@ -170,6 +170,11 @@ BUGWK60830 SKIP : editing/pasteboard/smart-paste-in-text-control.html = PASS
 // Chromium needs larger media files to test buffering this way.
 BUGWK88172 SKIP : http/tests/media/video-buffered.html = PASS
 
+// BUG94287: We need to rebaseline for MAC and WIN for multiple fields time input UI
+BUGWK94287 MAC WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly.html = MISSING TEXT IMAGE IMAGE+TEXT PASS
+BUGWK94287 MAC WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes.html = MISSING TEXT IMAGE IMAGE+TEXT PASS
+BUGWK94287 MAC WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance-style.html = MISSING TEXT IMAGE IMAGE+TEXT PASS
+
 // Proximity Events is not supported.
 BUGWK92942 SKIP : fast/dom/Proximity = PASS
 BUGWK92942 SKIP : fast/events/constructors/device-proximity-event-constructor.html = PASS

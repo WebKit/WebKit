@@ -490,8 +490,7 @@ input::-webkit-datetime-edit {
 input::-webkit-datetime-edit-ampm-field {
     -webkit-user-modify: read-only !important;
     border: none;
-    width: 2em;
-    padding: 2px;
+    padding: 0.15em;
 }
 
 input::-webkit-datetime-edit-hour-field {
@@ -499,8 +498,7 @@ input::-webkit-datetime-edit-hour-field {
     display: inline-block;
     border: none;
     text-align: center;
-    width: 1.2em;
-    padding: 2px;
+    padding: 0.15em;
 }
 
 input::-webkit-datetime-edit-millisecond-field {
@@ -508,8 +506,7 @@ input::-webkit-datetime-edit-millisecond-field {
     display: inline-block;
     border: none;
     text-align: center;
-    width: 1.8em;
-    padding: 2px;
+    padding: 0.15em;
 }
 
 input::-webkit-datetime-edit-minute-field {
@@ -517,8 +514,7 @@ input::-webkit-datetime-edit-minute-field {
     display: inline-block;
     border: none;
     text-align: center;
-    width: 1.2em;
-    padding: 2px;
+    padding: 0.15em;
 }
 
 /* This selector is used when step >= 3600 second but format contains minute field. */
@@ -531,13 +527,16 @@ input::-webkit-datetime-edit-second-field {
     display: inline-block;
     border: none;
     text-align: center;
-    width: 1.2em;
-    padding: 2px;
+    padding: 0.15em;
 }
 
 /* This selector is used when step >= 60 second but format contains second field. */
 input::-webkit-datetime-edit-second-field[readonly] {
     color: GrayText;
+}
+
+input[type="time"]::-webkit-inner-spin-button {
+    margin-left: 0.2em;
 }
 #endif
 

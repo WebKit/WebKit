@@ -1,0 +1,88 @@
+.after:after { content: "[after]"; }
+.before:before { content: "[before]"; }
+.first-letter:first-letter { color: green; font-size: 200%; }
+
+span[type="time"] {
+    font-family: monospace;
+}
+
+.host {
+    box-sizing: border-box;
+
+    padding: 1px 0px;
+
+    -webkit-appearance: textfield;
+    background-color: white;
+    border: 2px inset;
+    -webkit-rtl-ordering: logical;
+    -webkit-user-select: text;
+    cursor: auto;
+
+    margin: 2px;
+    font: -webkit-small-control;
+    color: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    line-height: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-shadow: none;
+    display: inline-block;
+    text-align: -webkit-auto;
+}
+
+.edit {
+    display: -webkit-box;
+    -webkit-box-align: center;
+}
+
+.ampmField {
+    border: none;
+    --width: 2em;
+    padding: 0.15em;
+}
+
+.hourField {
+    display: inline-block;
+    border: none;
+    text-align: center;
+    --width: 1.2em;
+    padding: 0.15em;
+}
+
+.millisecondField {
+    display: inline-block;
+    border: none;
+    text-align: center;
+    --width: 1.8em;
+    padding: 0.15em;
+}
+
+.minuteField {
+    display: inline-block;
+    border: none;
+    text-align: center;
+    --width: 1.2em;
+    padding: 0.15em;
+}
+
+.secondField {
+    display: inline-block;
+    border: none;
+    text-align: center;
+    --width: 1.2em;
+    padding: 0.15em;
+}
+
+.spinButton {
+    -webkit-appearance: inner-spin-button;
+    display: inline-block;
+    position: relative;
+    cursor: default;
+    height: 1.5em;
+    vertical-align: middle;
+    -webkit-box-flex: 0;
+    -webkit-user-select: none;
+    margin-top: -3px;
+    margin-left: 0.2em;
+}
