@@ -35,6 +35,14 @@
 // ASCII-specific functions instead. This header makes sure we get a compile-time
 // error if we use one of the <ctype.h> functions by accident.
 
+// this breaks compilation of <QFontDatabase>, at least, so turn it off for now
+// Also generates errors on wx on Windows, presumably because these functions
+// are used from wx headers. On GTK+ for Mac many GTK+ files include <libintl.h>
+// or <glib/gi18n-lib.h>, which in turn include <xlocale/_ctype.h> which uses
+// isacii(). 
+#include <wtf/Platform.h>
+#if !PLATFORM(QT) && !PLATFORM(WX) && !PLATFORM(CHROMIUM) && !(OS(DARWIN) && PLATFORM(GTK)) && !OS(QNX) && !defined(_LIBCPP_VERSION)
+
 #include <ctype.h>
 
 #undef isalnum
@@ -70,5 +78,7 @@
 #define toascii toascii_WTF_Please_use_ASCIICType_instead_of_ctype_see_comment_in_ASCIICType_h
 #define tolower tolower_WTF_Please_use_ASCIICType_instead_of_ctype_see_comment_in_ASCIICType_h
 #define toupper toupper_WTF_Please_use_ASCIICType_instead_of_ctype_see_comment_in_ASCIICType_h
+
+#endif
 
 #endif

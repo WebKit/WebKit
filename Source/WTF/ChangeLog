@@ -1,5 +1,21 @@
 2012-08-17  Milian Wolff  <milian.wolff@kdab.com>
 
+        [Qt] QNX build fails due to ctype usage in system headers
+        https://bugs.webkit.org/show_bug.cgi?id=93849
+
+        Reviewed by Simon Hausmann.
+
+        Move the check for whether DisallowCType should be active or not
+        to the DisallowCType.h header. This way, we can update the list
+        of platforms or OSes which do not work with this header in a
+        central place. All users can now safely include the header
+        and do not need to place custom guards around it.
+
+        * config.h:
+        * wtf/DisallowCType.h:
+
+2012-08-17  Milian Wolff  <milian.wolff@kdab.com>
+
         [Qt] QNX build fails due to missing timegm declaration
         https://bugs.webkit.org/show_bug.cgi?id=93842
 

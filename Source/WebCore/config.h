@@ -88,14 +88,7 @@
 #include <wx/defs.h>
 #endif
 
-// this breaks compilation of <QFontDatabase>, at least, so turn it off for now
-// Also generates errors on wx on Windows, presumably because these functions
-// are used from wx headers. On GTK+ for Mac many GTK+ files include <libintl.h>
-// or <glib/gi18n-lib.h>, which in turn include <xlocale/_ctype.h> which uses
-// isacii(). 
-#if !PLATFORM(QT) && !PLATFORM(WX) && !PLATFORM(CHROMIUM) && !(OS(DARWIN) && PLATFORM(GTK)) && !OS(QNX) && !defined(_LIBCPP_VERSION)
 #include <wtf/DisallowCType.h>
-#endif
 
 #if COMPILER(MSVC)
 #define SKIP_STATIC_CONSTRUCTORS_ON_MSVC 1
