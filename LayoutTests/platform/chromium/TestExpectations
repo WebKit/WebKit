@@ -873,6 +873,9 @@ WONTFIX SKIP : media/video-controls-fullscreen-volume.html = TEXT
 // ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS) isn't enabled for Android (WK94186).
 WONTFIX SKIP ANDROID : fast/forms/time-multiple-fields = PASS
 
+// Test fails because it's trying to load a plugin we don't have. We probably don't need to fix this.
+WONTFIX : platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html = TEXT
+
 // -----------------------------------------------------------------
 // TESTS TO FIX
 // -----------------------------------------------------------------
@@ -1811,7 +1814,7 @@ BUGCR40680 SKIP : fast/media/media-query-list-06.html = PASS
 BUGCR40680 SKIP : fast/media/media-query-list-07.html = PASS
 
 // Caused by http://trac.webkit.org/changeset/56394.
-BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html = TIMEOUT TEXT PASS
+BUGCR143475 WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html = TIMEOUT TEXT PASS
 
 // Due to the differences in handling text encodings in KURL and googleurl.
 BUGWK20559 : http/tests/navigation/anchor-frames-gbk.html = TEXT
@@ -2079,10 +2082,10 @@ BUGJAMESR LINUX ANDROID WIN : fast/text/international/vertical-text-metrics-test
 
 // Added in Webkit r69707 without expected results.
 // Expected result file added in r83450. Still no match.
-BUGJAPHET : platform/gtk/accessibility/aria-table-hierarchy.html = TEXT
+BUG143479 : platform/gtk/accessibility/aria-table-hierarchy.html = TEXT
 
 // r69833, JSC/V8 Date parsing differences
-BUGJAPHET : fast/js/date-parse-test.html = TEXT
+BUG143476 : fast/js/date-parse-test.html = TEXT
 
 // Vertical text needs to be implemented in platforms other than OS X.
 BUGCR65877 LINUX ANDROID WIN : fast/writing-mode/border-vertical-lr.html = IMAGE+TEXT
@@ -2557,9 +2560,6 @@ BUGCR89282 SNOWLEOPARD : fast/forms/range/input-appearance-range.html = PASS IMA
 BUGWK63115 : fast/css/font-face-in-shadow-DOM.html = PASS IMAGE+TEXT
 
 BUGCR87732 : fast/regex/toString.html = TEXT
-
-// Test fails because it's trying to load a plugin we don't have. We probably don't need to fix this.
-BUGJAPHET : platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html = TEXT
 
 // Started around WebKit r90233:r90242
 BUGWK64000 DEBUG : fast/events/click-focus-anchor.html = PASS TEXT

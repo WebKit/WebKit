@@ -1,3 +1,9 @@
+2012-08-17  Nate Chapin  <japhet@chromium.org>
+
+        Update BUGJAPHET TextExpectations entries to point to bugs.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-17  Kiran Muppala  <cmuppala@apple.com>
 
         Update test expectations for inspector/timeline/timeline-decode-resize.html on mac
