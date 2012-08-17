@@ -1,3 +1,23 @@
+2012-08-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r125838.
+        http://trac.webkit.org/changeset/125838
+        https://bugs.webkit.org/show_bug.cgi?id=94283
+
+        Breaks Mac compile due to bug 74625 (Requested by enne on
+        #webkit).
+
+        * tests/CCResourceProviderTest.cpp:
+        (WebKit::ResourceProviderContext::create):
+        (WebKit::ResourceProviderContext::textureSize):
+        (ResourceProviderContext):
+        (WebKit::ResourceProviderContext::ResourceProviderContext):
+        (WebKit::ResourceProviderContext::Texture::Texture):
+        (Texture):
+        (WebKit::CCResourceProviderTest::CCResourceProviderTest):
+        (CCResourceProviderTest):
+        (WebKit::TEST_F):
+
 2012-08-16  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r125800.
