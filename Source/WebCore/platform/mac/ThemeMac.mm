@@ -552,19 +552,23 @@ static void paintStepper(ControlStates states, GraphicsContext* context, const I
         int heightDiff = clampToInteger(bounds.size.height - backgroundBounds.size.height);
         backgroundBounds.origin.y = bounds.origin.y + (heightDiff / 2) + 1;
     }
-    HIThemeDrawButton(&backgroundBounds, &drawInfo, context->platformContext(), kHIThemeOrientationNormal, 0);
+
+    LocalCurrentGraphicsContext localContext(context);
+    HIThemeDrawButton(&backgroundBounds, &drawInfo, localContext.cgContext(), kHIThemeOrientationNormal, 0);
 }
 
 // This will ensure that we always return a valid NSView, even if ScrollView doesn't have an associated document NSView.
 // If the ScrollView doesn't have an NSView, we will return a fake NSView whose sole purpose is to tell AppKit that it's flipped.
 NSView *ThemeMac::ensuredView(ScrollView* scrollView)
 {
+#if !PLATFORM(CHROMIUM)
     if (NSView *documentView = scrollView->documentView())
         return documentView;
+#endif
     
     // Use a fake flipped view.
     static NSView *flippedView = [[WebCoreFlippedView alloc] init];
-    [flippedView setFrameSize:scrollView->contentsSize()];
+    [flippedView setFrameSize:NSSizeFromCGSize(scrollView->contentsSize())];
 
     return flippedView;
 }

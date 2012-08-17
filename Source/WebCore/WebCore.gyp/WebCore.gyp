@@ -1449,6 +1449,7 @@
               # such as:
               # com.google.Chrome[] objc[]: Class ScrollbarPrefsObserver is implemented in both .../Google Chrome.app/Contents/Versions/.../Google Chrome Helper.app/Contents/MacOS/../../../Google Chrome Framework.framework/Google Chrome Framework and /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks/WebCore.framework/Versions/A/WebCore. One of the two will be used. Which one is undefined.
               'WebCascadeList=ChromiumWebCoreObjCWebCascadeList',
+              'WebCoreFlippedView=ChromiumWebCoreObjCWebCoreFlippedView',
               'WebScrollbarPrefsObserver=ChromiumWebCoreObjCWebScrollbarPrefsObserver',
               'WebCoreRenderThemeNotificationObserver=ChromiumWebCoreObjCWebCoreRenderThemeNotificationObserver',
               'WebFontCache=ChromiumWebCoreObjCWebFontCache',
@@ -1734,6 +1735,8 @@
             ['include', 'platform/mac/ScrollbarThemeMac\\.mm$'],
             ['include', 'platform/mac/ScrollAnimatorMac\\.mm$'],
             ['include', 'platform/mac/ScrollElasticityController\\.mm$'],
+            ['include', 'platform/mac/ThemeMac\\.h$'],
+            ['include', 'platform/mac/ThemeMac\\.mm$'],
             ['include', 'platform/mac/WebCoreSystemInterface\\.mm$'],
             ['include', 'platform/mac/WebCoreTextRenderer\\.mm$'],
             ['include', 'platform/text/mac/ShapeArabic\\.c$'],

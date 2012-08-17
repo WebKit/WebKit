@@ -3435,8 +3435,6 @@
             'platform/chromium/SuddenTerminationChromium.cpp',
             'platform/chromium/SystemTimeChromium.cpp',
             'platform/chromium/TemporaryLinkStubs.cpp',
-            'platform/chromium/ThemeChromiumMac.h',
-            'platform/chromium/ThemeChromiumMac.mm',
             'platform/chromium/TraceEvent.h',
             'platform/chromium/VisitedLinksChromium.cpp',
             'platform/chromium/WidgetChromium.cpp',
