@@ -437,9 +437,9 @@ DOMWindow::~DOMWindow()
     else
         willDestroyDocumentInFrame();
 
-    // As the ASSERTs above indicate, this clear should only be necesary if this DOMWindow is suspended for the page cache.
+    // As the ASSERTs above indicate, this reset should only be necessary if this DOMWindow is suspended for the page cache.
     // But we don't want to risk any of these objects hanging around after we've been destroyed.
-    clearDOMWindowProperties();
+    resetDOMWindowProperties();
 
     removeAllUnloadEventListeners(this);
     removeAllBeforeUnloadEventListeners(this);
@@ -474,7 +474,7 @@ void DOMWindow::frameDestroyed()
 {
     willDestroyDocumentInFrame();
     FrameDestructionObserver::frameDestroyed();
-    clearDOMWindowProperties();
+    resetDOMWindowProperties();
 }
 
 void DOMWindow::willDetachPage()
@@ -522,16 +522,12 @@ void DOMWindow::unregisterProperty(DOMWindowProperty* property)
     m_properties.remove(property);
 }
 
-void DOMWindow::clear()
+void DOMWindow::resetUnlessSuspendedForPageCache()
 {
-    // The main frame will always try to clear its DOMWindow when a new load is committed, even if that
-    // DOMWindow is suspended in the page cache.
-    // In those cases we need to make sure we don't actually clear it.
     if (m_suspendedForPageCache)
         return;
-    
     willDestroyDocumentInFrame();
-    clearDOMWindowProperties();
+    resetDOMWindowProperties();
 }
 
 void DOMWindow::suspendForPageCache()
@@ -567,7 +563,7 @@ void DOMWindow::reconnectDOMWindowProperties()
         properties[i]->reconnectFrameFromPageCache(m_frame);
 }
 
-void DOMWindow::clearDOMWindowProperties()
+void DOMWindow::resetDOMWindowProperties()
 {
     m_properties.clear();
 

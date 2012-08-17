@@ -561,7 +561,7 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
     // Do this after detaching the document so that the unload event works.
     if (clearWindowProperties) {
         InspectorInstrumentation::frameWindowDiscarded(m_frame, m_frame->document()->domWindow());
-        m_frame->document()->domWindow()->clear();
+        m_frame->document()->domWindow()->resetUnlessSuspendedForPageCache();
         m_frame->script()->clearWindowShell(newDocument->domWindow(), m_frame->document()->inPageCache());
     }
 

@@ -109,7 +109,7 @@ namespace WebCore {
         void registerProperty(DOMWindowProperty*);
         void unregisterProperty(DOMWindowProperty*);
 
-        void clear();
+        void resetUnlessSuspendedForPageCache();
         void suspendForPageCache();
         void resumeFromPageCache();
 
@@ -422,7 +422,7 @@ namespace WebCore {
             PrepareDialogFunction = 0, void* functionContext = 0);
         bool isInsecureScriptAccess(DOMWindow* activeWindow, const String& urlString);
 
-        void clearDOMWindowProperties();
+        void resetDOMWindowProperties();
         void disconnectDOMWindowProperties();
         void reconnectDOMWindowProperties();
         void willDestroyDocumentInFrame();

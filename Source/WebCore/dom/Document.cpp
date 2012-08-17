@@ -612,9 +612,9 @@ Document::~Document()
     ASSERT(!m_parentTreeScope);
     ASSERT(!m_guardRefCount);
 
-    // FIXME: Should we clear m_domWindow when we detach from the Frame?
+    // FIXME: Should we reset m_domWindow when we detach from the Frame?
     if (m_domWindow)
-        m_domWindow->clear();
+        m_domWindow->resetUnlessSuspendedForPageCache();
 
     m_scriptRunner.clear();
 
