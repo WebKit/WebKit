@@ -265,6 +265,7 @@ TARGET_LINK_LIBRARIES(ewk2UnitTestUtils ${EWK2UnitTests_LIBRARIES})
 # The "ewk" on the test name needs to be suffixed with "2", otherwise it
 # will clash with tests from the WebKit 1 test suite.
 SET(EWK2UnitTests_BINARIES
+    test_ewk2_back_forward_list
     test_ewk2_context
     test_ewk2_cookie_manager
     test_ewk2_download_job

@@ -1,3 +1,20 @@
+2012-08-17  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][wk2] Add unit tests for back-forward list API
+        https://bugs.webkit.org/show_bug.cgi?id=92617
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added unit tests covering the existing EFL WK2 back-forward list API.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/tests/resources/default_test_page.html:
+        * UIProcess/API/efl/tests/test_ewk2_back_forward_list.cpp: Added.
+        (serverCallbackNavigation):
+        (checkItem):
+        (urlFromTitle):
+        (TEST_F):
+
 2012-08-17  Jeff Miller  <jeffm@apple.com>
 
         UserMessageEncoder::baseEncode() should ASSERT when attempting to encode a non-shareable image
