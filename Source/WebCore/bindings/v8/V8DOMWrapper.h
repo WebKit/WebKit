@@ -33,7 +33,6 @@
 
 #include "DOMDataStore.h"
 #include "Event.h"
-#include "IsolatedWorld.h"
 #include "Node.h"
 #include "NodeFilter.h"
 #include "PlatformString.h"
@@ -130,7 +129,7 @@ namespace WebCore {
         static v8::Handle<v8::Object> getCachedWrapper(Node* node)
         {
             ASSERT(isMainThread());
-            if (LIKELY(!IsolatedWorld::count())) {
+            if (LIKELY(!DOMWrapperWorld::count())) {
                 v8::Persistent<v8::Object>* wrapper = node->wrapper();
                 if (LIKELY(!!wrapper))
                     return *wrapper;

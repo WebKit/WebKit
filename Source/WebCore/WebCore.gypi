@@ -2182,8 +2182,6 @@
             'bindings/v8/IDBBindingUtilities.h',
             'bindings/v8/IDBCustomBindings.cpp',
             'bindings/v8/IntrusiveDOMWrapperMap.h',
-            'bindings/v8/IsolatedWorld.cpp',
-            'bindings/v8/IsolatedWorld.h',
             'bindings/v8/JavaScriptCallFrame.cpp',
             'bindings/v8/JavaScriptCallFrame.h',
             'bindings/v8/NPObjectWrapper.cpp',

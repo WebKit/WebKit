@@ -31,6 +31,7 @@
 #ifndef DOMWrapperWorld_h
 #define DOMWrapperWorld_h
 
+#include "DOMDataStore.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -38,15 +39,35 @@
 namespace WebCore {
 
 // This class represent a collection of DOM wrappers for a specific world.
-// The base class is pretty boring because the wrappers are actually stored
-// statically in V8DOMMap and garbage collected by V8 itself.
 class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
 public:
-    static PassRefPtr<DOMWrapperWorld> create() { return adoptRef(new DOMWrapperWorld()); }
-    virtual ~DOMWrapperWorld() {}
+    static const int mainWorldId = -1;
+    static PassRefPtr<DOMWrapperWorld> create(int worldId = mainWorldId) { return adoptRef(new DOMWrapperWorld(worldId)); }
+    ~DOMWrapperWorld()
+    {
+        if (m_worldId != mainWorldId)
+            isolatedWorldCount--;
+    }
+    static int count() { return isolatedWorldCount; }
 
-protected:
-    DOMWrapperWorld();
+    int worldId() const { return m_worldId; }
+    DOMDataStore* domDataStore() const { return m_domDataStore.getStore(); }
+
+private:
+    DOMWrapperWorld(int worldId)
+        : m_worldId(worldId)
+    {
+        if (m_worldId != mainWorldId)
+            isolatedWorldCount++;
+    }
+
+    // The backing store for the isolated world's DOM wrappers. This class
+    // doesn't have visibility into the wrappers. This handle simply helps
+    // manage their lifetime.
+    DOMDataStoreHandle m_domDataStore;
+
+    const int m_worldId;
+    static int isolatedWorldCount;
 };
 
 DOMWrapperWorld* mainThreadNormalWorld();
