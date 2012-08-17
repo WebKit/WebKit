@@ -1,3 +1,14 @@
+2012-08-17  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Remove some shared libraries from linking
+        https://bugs.webkit.org/show_bug.cgi?id=94253
+
+        Reviewed by Yong Li.
+
+        Remove some shared libraries.
+
+        * PlatformBlackBerry.cmake:
+
 2012-08-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update manual tests and comments to refer to TestRunner instead of LayoutTestController
