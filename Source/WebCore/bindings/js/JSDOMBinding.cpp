@@ -158,14 +158,10 @@ void reportException(ExecState* exec, JSValue exception)
     if (ExceptionBase* exceptionBase = toExceptionBase(exception))
         errorMessage = stringToUString(exceptionBase->message() + ": "  + exceptionBase->description());
 
-    ScriptExecutionContext* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
-
-    // scriptExecutionContext can be null when the relevant global object is a stale inner window object.
-    // It's harmless to return here without reporting the exception to the log and the debugger in this case.
-    if (!scriptExecutionContext)
+    DOMWindow* activeWindow = activeDOMWindow(exec);
+    if (!activeWindow->isCurrentlyDisplayedInFrame())
         return;
-
-    scriptExecutionContext->reportException(ustringToString(errorMessage), lineNumber, ustringToString(exceptionSourceURL), 0);
+    activeWindow->scriptExecutionContext()->reportException(ustringToString(errorMessage), lineNumber, ustringToString(exceptionSourceURL), 0);
 }
 
 void reportCurrentException(ExecState* exec)
