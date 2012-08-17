@@ -23,6 +23,8 @@
 
 #include <wtf/Platform.h>
 #include <algorithm>
+#include <stdint.h>
+
 
 namespace WTF {
 
@@ -58,6 +60,11 @@ namespace WTF {
             std::swap(a.buffer[i], b.buffer[i]);
     }
 
+    template <uintptr_t mask>
+    inline bool isAlignedTo(const void* pointer)
+    {
+        return !(reinterpret_cast<uintptr_t>(pointer) & mask);
+    }
 }
 
 #endif // WTF_Alignment_h

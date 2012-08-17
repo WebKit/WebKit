@@ -249,6 +249,7 @@ public:
     explicit ExternalCharacterTokenBuffer(AtomicHTMLToken* token)
         : m_current(token->characters().data())
         , m_end(m_current + token->characters().size())
+        , m_isAll8BitData(token->isAll8BitData())
     {
         ASSERT(!isEmpty());
     }
@@ -256,6 +257,7 @@ public:
     explicit ExternalCharacterTokenBuffer(const String& string)
         : m_current(string.characters())
         , m_end(m_current + string.length())
+        , m_isAll8BitData(string.length() && string.is8Bit())
     {
         ASSERT(!isEmpty());
     }
@@ -266,6 +268,8 @@ public:
     }
 
     bool isEmpty() const { return m_current == m_end; }
+
+    bool isAll8BitData() const { return m_isAll8BitData; }
 
     void skipAtMostOneLeadingNewline()
     {
@@ -294,7 +298,12 @@ public:
         ASSERT(!isEmpty());
         const UChar* start = m_current;
         m_current = m_end;
-        return String(start, m_current - start);
+        size_t length = m_current - start;
+
+        if (isAll8BitData())
+            return String::make8BitFrom16BitSource(start, length);
+
+        return String(start, length);
     }
 
     void giveRemainingTo(StringBuilder& recipient)
@@ -344,6 +353,7 @@ private:
 
     const UChar* m_current;
     const UChar* m_end;
+    bool m_isAll8BitData;
 };
 
 

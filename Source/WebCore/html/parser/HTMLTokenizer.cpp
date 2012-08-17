@@ -474,6 +474,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             } else if (cc == '>') {
                 if (isAppropriateEndTag()) {
                     m_temporaryBuffer.append(cc);
+                    m_token->setConvertTo8BitIfPossible();
                     return flushEmitAndResumeIn(source, HTMLTokenizerState::DataState);
                 }
             }
@@ -543,6 +544,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             } else if (cc == '>') {
                 if (isAppropriateEndTag()) {
                     m_temporaryBuffer.append(cc);
+                    m_token->setConvertTo8BitIfPossible();
                     return flushEmitAndResumeIn(source, HTMLTokenizerState::DataState);
                 }
             }

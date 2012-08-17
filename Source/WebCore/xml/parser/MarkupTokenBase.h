@@ -97,6 +97,8 @@ public:
         m_range.m_end = 0;
         m_baseOffset = 0;
         m_data.clear();
+        m_orAllData = 0;
+        m_convertTo8BitIfPossible = false;
     }
 
     bool isUninitialized() { return m_type == TypeSet::Uninitialized; }
@@ -170,6 +172,13 @@ public:
         ASSERT(character);
         beginDOCTYPE();
         m_data.append(character);
+    }
+
+    void appendToCharacter(UChar character)
+    {
+        ASSERT(m_type == TypeSet::Character);
+        m_data.append(character);
+        m_orAllData |= character;
     }
 
     template<typename T>
@@ -274,6 +283,7 @@ public:
     {
         ASSERT(m_type == TypeSet::Character);
         m_data.clear();
+        m_orAllData = 0;
     }
 
     void eraseValueOfAttribute(size_t i)
@@ -292,6 +302,16 @@ public:
     {
         ASSERT(m_type == TypeSet::Comment);
         return m_data;
+    }
+
+    void setConvertTo8BitIfPossible()
+    {
+        m_convertTo8BitIfPossible = true;
+    }
+
+    bool isAll8BitData() const
+    {
+        return m_convertTo8BitIfPossible && (m_orAllData <= 0xff);
     }
 
     // FIXME: Distinguish between a missing public identifer and an empty one.
@@ -370,6 +390,8 @@ protected:
     typename Attribute::Range m_range; // Always starts at zero.
     int m_baseOffset;
     DataVector m_data;
+    UChar m_orAllData;
+    bool m_convertTo8BitIfPossible;
 
     // For DOCTYPE
     OwnPtr<DoctypeData> m_doctypeData;
@@ -413,6 +435,7 @@ public:
             break;
         case Token::Type::Character:
             m_externalCharacters = &token->characters();
+            m_isAll8BitData = token->isAll8BitData();
             break;
         default:
             break;
@@ -423,6 +446,7 @@ public:
         : m_type(type)
         , m_name(name)
         , m_externalCharacters(0)
+        , m_isAll8BitData(false)
         , m_attributes(attributes)
     {
         ASSERT(usesName());
@@ -472,6 +496,11 @@ public:
         return *m_externalCharacters;
     }
 
+    bool isAll8BitData() const
+    {
+        return m_isAll8BitData;
+    }
+
     const String& comment() const
     {
         ASSERT(m_type == Token::Type::Comment);
@@ -495,6 +524,7 @@ public:
     void clearExternalCharacters()
     {
         m_externalCharacters = 0;
+        m_isAll8BitData = false;
     }
 
 protected:
@@ -522,6 +552,7 @@ protected:
     // FIXME: Add a mechanism for "internalizing" the characters when the
     //        HTMLToken is destructed.
     const typename Token::DataVector* m_externalCharacters;
+    bool m_isAll8BitData;
 
     // For DOCTYPE
     OwnPtr<typename Token::DoctypeData> m_doctypeData;

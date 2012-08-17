@@ -1,3 +1,27 @@
+2012-08-16  Michael Saboff  <msaboff@apple.com>
+
+        HTML Parser should produce 8bit substrings for inline style and script elements
+        https://bugs.webkit.org/show_bug.cgi?id=93742
+
+        Reviewed by Benjamin Poulain.
+
+        Added 8 bit path to String::isAllSpecialCharacters(). Added new String creator
+        that takes a pointer to a UChar array that is known to contain only 8 bit
+        characters (LChar's). Added new helper method to copy contents of a
+        UChar buffer to a LChar buffer. The helper method includes X86-64 intrinsics
+        of SSE family instructions for performance.
+
+        * wtf/Alignment.h:
+        (WTF::isAlignedTo):
+        * wtf/text/ASCIIFastPath.h:
+        (WTF::copyLCharsFromUCharSource):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::make8BitFrom16BitSource):
+        * wtf/text/WTFString.h:
+        (String):
+        (WTF::isAllSpecialCharacters):
+        (WTF::String::isAllSpecialCharacters):
+
 2012-08-16  Benjamin Poulain  <bpoulain@apple.com>
 
         Use initialization from literals for StringStatics

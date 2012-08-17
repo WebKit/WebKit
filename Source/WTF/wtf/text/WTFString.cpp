@@ -32,6 +32,10 @@
 #include <wtf/dtoa.h>
 #include <wtf/unicode/UTF8.h>
 #include <wtf/unicode/Unicode.h>
+#if OS(DARWIN)
+#include <emmintrin.h>
+#include <tmmintrin.h>
+#endif
 
 using namespace std;
 
@@ -773,6 +777,19 @@ CString String::utf8(bool strict) const
     }
 
     return CString(bufferVector.data(), buffer - bufferVector.data());
+}
+
+String String::make8BitFrom16BitSource(const UChar* source, size_t length)
+{
+    if (!length)
+        return String();
+
+    LChar* destination;
+    String result = String::createUninitialized(length, destination);
+
+    copyLCharsFromUCharSource(destination, source, length);
+
+    return result;
 }
 
 String String::fromUTF8(const LChar* stringStart, size_t length)
