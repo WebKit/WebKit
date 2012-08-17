@@ -3480,6 +3480,8 @@ webcore_sources += \
 	Source/WebCore/html/shadow/ProgressShadowElement.h \
 	Source/WebCore/html/shadow/SliderThumbElement.cpp \
 	Source/WebCore/html/shadow/SliderThumbElement.h \
+	Source/WebCore/html/shadow/SpinButtonElement.cpp \
+	Source/WebCore/html/shadow/SpinButtonElement.h \
 	Source/WebCore/html/shadow/TextControlInnerElements.cpp \
 	Source/WebCore/html/shadow/TextControlInnerElements.h \
 	Source/WebCore/html/PasswordInputType.cpp \

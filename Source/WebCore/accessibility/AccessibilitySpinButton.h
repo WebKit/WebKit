@@ -28,7 +28,7 @@
 
 #include "AccessibilityMockObject.h"
 
-#include "TextControlInnerElements.h"
+#include "SpinButtonElement.h"
 
 namespace WebCore {
     

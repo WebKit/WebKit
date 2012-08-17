@@ -28,7 +28,7 @@
 
 #if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
 #include "DateTimeFieldElement.h"
-#include "TextControlInnerElements.h"
+#include "SpinButtonElement.h"
 
 namespace WebCore {
 

@@ -5779,6 +5779,8 @@
             'html/shadow/ProgressShadowElement.h',
             'html/shadow/SliderThumbElement.cpp',
             'html/shadow/SliderThumbElement.h',
+            'html/shadow/SpinButtonElement.cpp',
+            'html/shadow/SpinButtonElement.h',
             'html/shadow/TextControlInnerElements.cpp',
             'html/shadow/TextControlInnerElements.h',
             'html/shadow/TextFieldDecorationElement.cpp',

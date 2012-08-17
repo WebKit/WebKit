@@ -1210,6 +1210,8 @@
 		45099C411370A7800058D513 /* IconURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45099C401370A7800058D513 /* IconURL.cpp */; };
 		450CEBF015073BBE002BB149 /* LabelableElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 450CEBEE15073BBE002BB149 /* LabelableElement.cpp */; };
 		450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 450CEBEF15073BBE002BB149 /* LabelableElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4512502215DCE37D002F84E2 /* SpinButtonElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4512502015DCE37D002F84E2 /* SpinButtonElement.cpp */; };
+		4512502315DCE37D002F84E2 /* SpinButtonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4512502115DCE37D002F84E2 /* SpinButtonElement.h */; };
 		453EB636159C570400001BB7 /* DateTimeFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 453EB634159C570400001BB7 /* DateTimeFormat.cpp */; };
 		453EB637159C570400001BB7 /* DateTimeFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 453EB635159C570400001BB7 /* DateTimeFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		458FE4091589DF0B005609E6 /* RenderSearchField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 458FE4071589DF0B005609E6 /* RenderSearchField.cpp */; };
@@ -8317,6 +8319,8 @@
 		45099C401370A7800058D513 /* IconURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconURL.cpp; sourceTree = "<group>"; };
 		450CEBEE15073BBE002BB149 /* LabelableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LabelableElement.cpp; sourceTree = "<group>"; };
 		450CEBEF15073BBE002BB149 /* LabelableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelableElement.h; sourceTree = "<group>"; };
+		4512502015DCE37D002F84E2 /* SpinButtonElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpinButtonElement.cpp; sourceTree = "<group>"; };
+		4512502115DCE37D002F84E2 /* SpinButtonElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpinButtonElement.h; sourceTree = "<group>"; };
 		453EB634159C570400001BB7 /* DateTimeFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeFormat.cpp; sourceTree = "<group>"; };
 		453EB635159C570400001BB7 /* DateTimeFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeFormat.h; sourceTree = "<group>"; };
 		458FE4071589DF0B005609E6 /* RenderSearchField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSearchField.cpp; sourceTree = "<group>"; };
@@ -14930,6 +14934,8 @@
 				A715E651134BBBEC00D8E713 /* ProgressShadowElement.h */,
 				4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */,
 				4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */,
+				4512502015DCE37D002F84E2 /* SpinButtonElement.cpp */,
+				4512502115DCE37D002F84E2 /* SpinButtonElement.h */,
 				142B97C713138943008BEF4B /* TextControlInnerElements.cpp */,
 				142B97C813138943008BEF4B /* TextControlInnerElements.h */,
 			);
@@ -24806,6 +24812,7 @@
 				75415B0012958D5E003AD669 /* SpeechInputResultList.h in Headers */,
 				A78FE13C12366B1000ACE8D0 /* SpellChecker.h in Headers */,
 				B8DBDB4E130B0F8A00F5CDB1 /* SpellingCorrectionCommand.h in Headers */,
+				4512502315DCE37D002F84E2 /* SpinButtonElement.h in Headers */,
 				93309E12099E64920056E581 /* SplitElementCommand.h in Headers */,
 				93309E14099E64920056E581 /* SplitTextNodeCommand.h in Headers */,
 				93309E16099E64920056E581 /* SplitTextNodeContainingElementCommand.h in Headers */,
@@ -27998,6 +28005,7 @@
 				75415C29129A9920003AD669 /* SpeechInputResultList.cpp in Sources */,
 				A78FE13B12366B1000ACE8D0 /* SpellChecker.cpp in Sources */,
 				B8DBDB4D130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp in Sources */,
+				4512502215DCE37D002F84E2 /* SpinButtonElement.cpp in Sources */,
 				93309E11099E64920056E581 /* SplitElementCommand.cpp in Sources */,
 				93309E13099E64920056E581 /* SplitTextNodeCommand.cpp in Sources */,
 				93309E15099E64920056E581 /* SplitTextNodeContainingElementCommand.cpp in Sources */,

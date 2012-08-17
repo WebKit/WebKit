@@ -721,6 +721,7 @@ SOURCES += \
     html/shadow/MeterShadowElement.cpp \
     html/shadow/ProgressShadowElement.cpp \
     html/shadow/SliderThumbElement.cpp \
+    html/shadow/SpinButtonElement.cpp \
     html/shadow/TextControlInnerElements.cpp \
     inspector/ConsoleMessage.cpp \
     inspector/ContentSearchUtils.cpp \

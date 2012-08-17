@@ -24,71 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#ifndef TextControlInnerElements_h
-#define TextControlInnerElements_h
+#ifndef SpinButtonElement_h
+#define SpinButtonElement_h
 
 #include "HTMLDivElement.h"
-#include "SpeechInputListener.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
-
-class SpeechInput;
-
-class TextControlInnerElement : public HTMLDivElement {
-public:
-    static PassRefPtr<TextControlInnerElement> create(Document*);
-
-protected:
-    TextControlInnerElement(Document*);
-    virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
-
-private:
-    virtual bool isMouseFocusable() const { return false; }
-};
-
-class TextControlInnerTextElement : public HTMLDivElement {
-public:
-    static PassRefPtr<TextControlInnerTextElement> create(Document*);
-
-    virtual void defaultEventHandler(Event*);
-
-private:
-    TextControlInnerTextElement(Document*);
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
-    virtual bool isMouseFocusable() const { return false; }
-};
-
-class SearchFieldResultsButtonElement : public HTMLDivElement {
-public:
-    static PassRefPtr<SearchFieldResultsButtonElement> create(Document*);
-
-    virtual void defaultEventHandler(Event*);
-    virtual bool willRespondToMouseClickEvents() OVERRIDE;
-
-private:
-    SearchFieldResultsButtonElement(Document*);
-    virtual const AtomicString& shadowPseudoId() const;
-    virtual bool isMouseFocusable() const { return false; }
-};
-
-class SearchFieldCancelButtonElement : public HTMLDivElement {
-public:
-    static PassRefPtr<SearchFieldCancelButtonElement> create(Document*);
-
-    virtual void defaultEventHandler(Event*);
-    virtual bool willRespondToMouseClickEvents() OVERRIDE;
-
-private:
-    SearchFieldCancelButtonElement(Document*);
-    virtual const AtomicString& shadowPseudoId() const;
-    virtual void detach();
-    virtual bool isMouseFocusable() const { return false; }
-
-    bool m_capturing;
-};
 
 class SpinButtonElement : public HTMLDivElement {
 public:
@@ -143,56 +86,6 @@ private:
     UpDownState m_pressStartingState;
     Timer<SpinButtonElement> m_repeatingTimer;
 };
-
-#if ENABLE(INPUT_SPEECH)
-
-class InputFieldSpeechButtonElement
-    : public HTMLDivElement,
-      public SpeechInputListener {
-public:
-    enum SpeechInputState {
-        Idle,
-        Recording,
-        Recognizing,
-    };
-
-    static PassRefPtr<InputFieldSpeechButtonElement> create(Document*);
-    virtual ~InputFieldSpeechButtonElement();
-
-    virtual void detach();
-    virtual void defaultEventHandler(Event*);
-    virtual bool willRespondToMouseClickEvents();
-    virtual bool isInputFieldSpeechButtonElement() const { return true; }
-    SpeechInputState state() const { return m_state; }
-    void startSpeechInput();
-    void stopSpeechInput();
-
-    // SpeechInputListener methods.
-    void didCompleteRecording(int);
-    void didCompleteRecognition(int);
-    void setRecognitionResult(int, const SpeechInputResultArray&);
-
-private:
-    InputFieldSpeechButtonElement(Document*);
-    SpeechInput* speechInput();
-    void setState(SpeechInputState state);
-    virtual const AtomicString& shadowPseudoId() const;
-    virtual bool isMouseFocusable() const { return false; }
-    virtual void attach();
-
-    bool m_capturing;
-    SpeechInputState m_state;
-    int m_listenerId;
-    SpeechInputResultArray m_results;
-};
-
-inline InputFieldSpeechButtonElement* toInputFieldSpeechButtonElement(Element* element)
-{
-    ASSERT(!element || element->isInputFieldSpeechButtonElement());
-    return static_cast<InputFieldSpeechButtonElement*>(element);
-}
-
-#endif // ENABLE(INPUT_SPEECH)
 
 } // namespace
 

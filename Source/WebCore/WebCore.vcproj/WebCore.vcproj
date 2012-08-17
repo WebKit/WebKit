@@ -63898,6 +63898,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\shadow\SpinButtonElement.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\SpinButtonElement.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\shadow\TextControlInnerElements.cpp"
 					>
 				</File>

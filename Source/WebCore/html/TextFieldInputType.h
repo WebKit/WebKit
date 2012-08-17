@@ -32,12 +32,12 @@
 #define TextFieldInputType_h
 
 #include "InputType.h"
+#include "SpinButtonElement.h"
 #include "TextControlInnerElements.h"
 
 namespace WebCore {
 
 class FormDataList; 
-class SpinButtonElement;
 
 // The class represents types of which UI contain text fields.
 // It supports not only the types for BaseTextInputType but also type=number.
