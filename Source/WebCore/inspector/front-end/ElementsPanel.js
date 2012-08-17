@@ -206,6 +206,7 @@ WebInspector.ElementsPanel.prototype = {
             ConsoleAgent.addInspectedNode(selectedNode.id);
             this._lastValidSelectedNode = selectedNode;
         }
+        WebInspector.notifications.dispatchEventToListeners(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged);
     },
 
     _updateSidebars: function()

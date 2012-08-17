@@ -574,17 +574,10 @@ WebInspector.ExtensionServer.prototype = {
             WebInspector.workspace,
             WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded,
             this._notifyResourceAdded);
-        this._registerSubscriptionHandler(WebInspector.extensionAPI.Events.ElementsPanelObjectSelected,
-            function()
-            {
-                WebInspector.panel("elements").treeOutline.addEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, this._notifyElementsSelectionChanged, this);
-            }.bind(this),
-            function()
-            {
-                WebInspector.panel("elements").treeOutline.removeEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, this._notifyElementsSelectionChanged, this);
-            }.bind(this)
-        );
-
+        this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.ElementsPanelObjectSelected,
+            WebInspector.notifications,
+            WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged,
+            this._notifyElementsSelectionChanged);
         this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.ResourceContentCommitted,
             WebInspector.workspace,
             WebInspector.Workspace.Events.UISourceCodeContentCommitted,
