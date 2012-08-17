@@ -1,3 +1,23 @@
+2012-08-17  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [CMake] Add FindDBus.cmake and use it in the EFL port.
+        https://bugs.webkit.org/show_bug.cgi?id=94319
+
+        Reviewed by Daniel Bates.
+
+        Currently, the Battery Status-related code in the EFL port uses
+        libdbus but does not directly include its directories or link
+        against it, relying instead on the compiler flags coming via
+        EDbus's pkg-config information.
+
+        That will break once we stop obtaining EFL's include directories
+        and library paths from pkg-config, so write FindDBus.cmake to
+        prepare for that.
+
+        * Source/cmake/FindDBus.cmake: Added.
+        * Source/cmake/OptionsEfl.cmake: Look for D-Bus if BATTERY_STATUS
+        support is enabled.
+
 2012-08-17  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Remove some shared libraries from linking
