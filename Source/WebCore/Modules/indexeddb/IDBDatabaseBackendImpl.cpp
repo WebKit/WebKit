@@ -267,6 +267,8 @@ void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCal
     if (!transaction->scheduleTask(
             createCallbackTask(&IDBDatabaseBackendImpl::setVersionInternal, database, version, callbacks, transaction),
             createCallbackTask(&IDBDatabaseBackendImpl::resetVersion, database, m_version))) {
+        // FIXME: Remove one of the following lines.
+        ASSERT_NOT_REACHED();
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
     }
 }
@@ -479,8 +481,11 @@ void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(int64_t requestedVer
     OwnPtr<ScriptExecutionContext::Task> intVersionTask = createCallbackTask(&IDBDatabaseBackendImpl::setIntVersionInternal, database, requestedVersion, callbacks, transaction);
     // FIXME: Make this reset the integer version as well.
     OwnPtr<ScriptExecutionContext::Task> resetVersionOnAbortTask = createCallbackTask(&IDBDatabaseBackendImpl::resetVersion, database, m_version);
-    if (!transaction->scheduleTask(intVersionTask.release(), resetVersionOnAbortTask.release()))
+    if (!transaction->scheduleTask(intVersionTask.release(), resetVersionOnAbortTask.release())) {
+        // FIXME: Remove one of the following lines.
+        ASSERT_NOT_REACHED();
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+    }
     m_pendingSecondHalfOpenWithVersionCalls.append(PendingOpenWithVersionCall::create(callbacks, requestedVersion));
 }
 
