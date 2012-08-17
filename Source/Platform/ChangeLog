@@ -1,3 +1,18 @@
+2012-08-17  Zach Kuznia  <zork@chromium.org>
+
+        Add support for Skia Magnifier filter to Chromium layers
+        https://bugs.webkit.org/show_bug.cgi?id=93939
+
+        Reviewed by James Robinson.
+
+        This is used by Chrome OS for the screen magnifier
+
+        * chromium/public/WebFilterOperation.h:
+        (WebKit::WebFilterOperation::zoomRect):
+        (WebFilterOperation):
+        (WebKit::WebFilterOperation::createZoomFilter):
+        (WebKit::WebFilterOperation::WebFilterOperation):
+
 2012-08-16  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove unnecessary tree hierarchy inspection APIs from WebLayer
