@@ -1,3 +1,13 @@
+2012-08-17  Marja Hölttä  <marja@chromium.org>
+
+        Fixed fast/forms/file/selected-files-from-history-state.html on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=94278
+
+        Reviewed by Jochen Eisinger.
+
+        * fast/forms/file/selected-files-from-history-state.html: Fixed the test.
+        * platform/chromium/TestExpectations: Removed the expectation to fail.
+
 2012-08-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: build Elements, Resources, Timeline, Audits and Console panels lazily.

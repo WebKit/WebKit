@@ -24,13 +24,13 @@ function runTest() {
         ++onChangeFired;
     };
 
-    eventSender.beginDragWithFiles(['/home/user/testfile.txt']);
+    eventSender.beginDragWithFiles(['testpath1/testfile1.txt']);
     var centerX = input1.offsetLeft + input1.offsetWidth / 2;
     var centerY = input1.offsetTop + input1.offsetHeight / 2;
     eventSender.mouseMoveTo(centerX, centerY);
     eventSender.mouseUp();
 
-    eventSender.beginDragWithFiles(['/home/user/testfile2.txt']);
+    eventSender.beginDragWithFiles(['testpath2/testfile2.txt']);
     centerX = input2.offsetLeft + input2.offsetWidth / 2;
     centerY = input2.offsetTop + input2.offsetHeight / 2;
     eventSender.mouseMoveTo(centerX, centerY);
@@ -41,9 +41,12 @@ function runTest() {
     }
 
     var files = internals.getReferencedFilePaths();
+    files.sort();
     if (files.length == 2 &&
-        ((files[0] == '/home/user/testfile.txt' && files[1] == '/home/user/testfile2.txt') ||
-         (files[1] == '/home/user/testfile.txt' && files[0] == '/home/user/testfile2.txt'))) {
+        files[0].indexOf('testfile1.txt') != -1 &&
+        files[0].indexOf('testpath1') != -1 &&
+        files[1].indexOf('testfile2.txt') != -1 &&
+        files[1].indexOf('testpath2') != -1) {
         testPassed('');
     } else {
         testFailed('Unexpected files: ' + files);
