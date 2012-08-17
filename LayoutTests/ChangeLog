@@ -1,3 +1,15 @@
+2012-08-17  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Narrowing the failure expectation for http/tests/xmlhttprequest/origin-exact-matching.html.
+        The test now constantly fails only on release builds.
+
+        Adding a new baseline for a subpixel test that's required after r125794.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/sub-pixel/sub-pixel-accumulates-to-layers-expected.txt: Added.
+
 2012-08-17  Anna Cavender <annacc@chromium.org>
 
         [Chromium] Removing track-active-cues.html from TextExpectations, passing now.

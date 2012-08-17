@@ -577,9 +577,6 @@ BUGWK89099 : svg/transforms/transformed-text-fill-pattern.html = PASS IMAGE
 // Fails on 32-bit release and 64-bit debug builders
 BUGWK83560 : fast/events/drop-with-file-paths.html = PASS TEXT
 
-// Fails on 32-bit release and 64-bit release builders
-BUGWK88727 : http/tests/xmlhttprequest/origin-exact-matching.html = PASS TEXT
-
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of tests with architecture-specific results
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -1320,6 +1317,8 @@ BUGWK77631 : fast/multicol/span/span-as-immediate-columns-child-removal.html = T
 BUGWK80129 : fast/frames/flattening/frameset-flattening-advanced.html = TEXT
 
 BUGWK89663 : editing/deleting/delete-3800834-fix.html = TEXT
+
+BUGWK88727 RELEASE : http/tests/xmlhttprequest/origin-exact-matching.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
