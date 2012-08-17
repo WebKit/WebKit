@@ -77,7 +77,7 @@ void WeakMap::set(JSContextRef context, void *key, JSObjectRef object)
         JSContextGroupRef group = JSContextGetGroup(context);
         WeakMapSet::AddResult entry = weakMaps.add(group, 0);
         if (entry.isNewEntry)
-            entry.iterator->second = new WeakMapImpl(group);
+            entry.iterator->second = adoptRef(new WeakMapImpl(group));
         m_impl = entry.iterator->second;
     }
     JSWeakObjectMapSet(m_impl->m_context, m_impl->m_map, key, object);
