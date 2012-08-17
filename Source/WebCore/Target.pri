@@ -1292,7 +1292,7 @@ HEADERS += \
     bindings/js/JSDOMBinding.h \
     bindings/js/JSDOMGlobalObject.h \
     bindings/js/JSDOMStringMapCustom.h \
-    bindings/js/JSDOMTransaction.h \
+    bindings/js/DOMTransaction.h \
     bindings/js/JSDOMWindowBase.h \
     bindings/js/JSDOMWindowCustom.h \
     bindings/js/JSDOMWindowShell.h \
