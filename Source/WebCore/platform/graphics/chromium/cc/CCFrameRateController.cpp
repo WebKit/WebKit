@@ -100,7 +100,8 @@ void CCFrameRateController::setMaxFramesPending(int maxFramesPending)
 
 void CCFrameRateController::setTimebaseAndInterval(double timebase, double intervalSeconds)
 {
-    m_timeSource->setTimebaseAndInterval(timebase, intervalSeconds);
+    if (m_isTimeSourceThrottling)
+        m_timeSource->setTimebaseAndInterval(timebase, intervalSeconds);
 }
 
 void CCFrameRateController::onTimerTick()
