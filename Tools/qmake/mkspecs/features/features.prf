@@ -105,9 +105,18 @@ config_fontconfig:!mac {
 # QStyle detection
 haveQtModule(widgets): DEFINES += HAVE_QSTYLE=1
 
-# WebGL support
-!contains(DEFINES, ENABLE_WEBGL=.) {
-    contains(QT_CONFIG, opengl):!win32-*: DEFINES += ENABLE_WEBGL=1
+# Enable the USE(3D_GRAPHICS) flag when QtOpenGL is enabled.
+!contains(DEFINES, WTF_USE_3D_GRAPHICS=.):contains(QT_CONFIG, opengl) {
+    # Disable USE(3D_GRAPHICS) on Windows temporarily, see https://bugs.webkit.org/show_bug.cgi?id=90850 for details.
+    # Also disable on QNX, see https://bugs.webkit.org/show_bug.cgi?id=93278
+    !win32-*:!qnx {
+        DEFINES += WTF_USE_3D_GRAPHICS=1
+    }
+}
+
+# WebGL support - only enabled if we can use 3D graphics
+!contains(DEFINES, ENABLE_WEBGL=.):contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
+    DEFINES += ENABLE_WEBGL=1
 }
 
 # CSS Shaders support
@@ -217,14 +226,6 @@ for(define, DEFINES) {
 
     # Is there a later define that overrides this one?
     contains(DEFINES, $$opposite): DEFINES -= $$define
-}
-
-# Enable the USE(3D_GRAPHICS) flag for Qt5 or when QtOpenGL is enabled.
-!contains(DEFINES, WTF_USE_3D_GRAPHICS=.) {
-    # Disable USE(3D_GRAPHICS) on Windows temporarily, see https://bugs.webkit.org/show_bug.cgi?id=90850 for details.
-    !win32-* {
-        DEFINES += WTF_USE_3D_GRAPHICS=1
-    }
 }
 
 contains(DEFINES, ENABLE_GAMEPAD=1) {

@@ -1,3 +1,19 @@
+2012-08-17  Milian Wolff  <milian.wolff@kdab.com>
+
+        [Qt] QtWebKit fails to build with OpenGL support on QNX
+        https://bugs.webkit.org/show_bug.cgi?id=93278
+
+        Reviewed by Noam Rosenthal.
+
+        Change the order in which we define WTF_USE_3D_GRAPHICS and ENABLE_WEBGL.
+        First, we now defined WTF_USE_3D_GRAPHICS=1, but only if QT_CONFIG
+        contains opengl. Furthermore, we disable this feature on win32-* as usual,
+        but now also disable it on QNX.
+
+        Then, we set ENABLE_WEBGL=1 but only if we previously set WTF_USE_3D_GRAPHICS=1.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-08-16  Gustavo Noronha Silva  <gns@gnome.org>
 
         [jhbuild] EFL now runs jhbuild update for every build
