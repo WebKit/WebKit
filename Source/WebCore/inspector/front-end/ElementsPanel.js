@@ -92,7 +92,7 @@ WebInspector.ElementsPanel = function()
 
     this._registerShortcuts();
 
-    this._popoverHelper = new WebInspector.PopoverHelper(document.body, this._getPopoverAnchor.bind(this), this._showPopover.bind(this));
+    this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this));
     this._popoverHelper.setTimeout(0);
 
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.NodeRemoved, this._nodeRemoved, this);
@@ -425,69 +425,21 @@ WebInspector.ElementsPanel.prototype = {
      */
     _showPopover: function(anchor, popover)
     {
-        var listItem = anchor.enclosingNodeOrSelfWithNodeNameInArray(["li"]);
+        var listItem = anchor.enclosingNodeOrSelfWithNodeName("li");
         if (listItem && listItem.treeElement)
-            this._loadDimensionsForNode(listItem.treeElement, dimensionsCallback);
+            this._loadDimensionsForNode(listItem.treeElement, WebInspector.buildImagePreviewContents.bind(WebInspector, anchor.href, true, showPopover));
         else
-            dimensionsCallback();
+            WebInspector.buildImagePreviewContents(anchor.href, true, showPopover);
 
         /**
-         * @param {Object=} dimensions
+         * @param {Element=} contents
          */
-        function dimensionsCallback(dimensions)
+        function showPopover(contents)
         {
-            var imageElement = document.createElement("img");
-            imageElement.addEventListener("load", showPopover.bind(null, imageElement, dimensions), false);
-            var resource = WebInspector.resourceTreeModel.resourceForURL(anchor.href);
-            if (!resource)
+            if (!contents)
                 return;
-    
-            resource.populateImageSource(imageElement);
-        }
-
-        /**
-         * @param {Object=} dimensions
-         */
-        function showPopover(imageElement, dimensions)
-        {
-            var contents = buildPopoverContents(imageElement, dimensions);
             popover.setCanShrink(false);
             popover.show(contents, anchor);
-        }
-
-        /**
-         * @param {Object=} nodeDimensions
-         */
-        function buildPopoverContents(imageElement, nodeDimensions)
-        {
-            const maxImageWidth = 100;
-            const maxImageHeight = 100;
-            var container = document.createElement("table");
-            container.className = "image-preview-container";
-            var naturalWidth = nodeDimensions ? nodeDimensions.naturalWidth : imageElement.naturalWidth;
-            var naturalHeight = nodeDimensions ? nodeDimensions.naturalHeight : imageElement.naturalHeight;
-            var offsetWidth = nodeDimensions ? nodeDimensions.offsetWidth : naturalWidth;
-            var offsetHeight = nodeDimensions ? nodeDimensions.offsetHeight : naturalHeight;
-            var description;
-            if (offsetHeight === naturalHeight && offsetWidth === naturalWidth)
-                description = WebInspector.UIString("%d \xd7 %d pixels", offsetWidth, offsetHeight);
-            else
-                description = WebInspector.UIString("%d \xd7 %d pixels (Natural: %d \xd7 %d pixels)", offsetWidth, offsetHeight, naturalWidth, naturalHeight);
-
-            if (naturalWidth > naturalHeight) {
-                if (naturalWidth > maxImageWidth) {
-                    imageElement.style.width = maxImageWidth + "px";
-                    imageElement.style.height = (naturalHeight * maxImageWidth / naturalWidth) + "px";
-                }
-            } else {
-                if (naturalHeight > maxImageHeight) {
-                    imageElement.style.width = (naturalWidth * maxImageHeight / naturalHeight) + "px";
-                    imageElement.style.height = maxImageHeight + "px";
-                }
-            }
-            container.createChild("tr").createChild("td", "image-container").appendChild(imageElement);
-            container.createChild("tr").createChild("td").createChild("span", "description").textContent = description;
-            return container;
         }
     },
 

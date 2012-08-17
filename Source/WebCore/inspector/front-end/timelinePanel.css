@@ -654,3 +654,21 @@
     background-color: rgba(255, 255, 255, 0.75);
     z-index: 350;
 }
+
+.image-preview-container {
+    background: transparent;
+    text-align: left;
+    border-spacing: 0;
+}
+
+.image-preview-container img {
+    max-width: 100px;
+    max-height: 100px;
+    background-image: url(Images/checker.png);
+    -webkit-user-select: text;
+    -webkit-user-drag: auto;
+}
+
+.image-container {
+    padding: 0;
+}

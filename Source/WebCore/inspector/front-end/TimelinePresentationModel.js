@@ -171,6 +171,27 @@ WebInspector.TimelinePresentationModel.forAllRecords = function(recordsArray, pr
 }
 
 /**
+ * @param {string=} recordType
+ * @return {boolean}
+ */
+WebInspector.TimelinePresentationModel.needsPreviewElement = function(recordType)
+{
+    if (!recordType)
+        return false;
+    const recordTypes = WebInspector.TimelineModel.RecordType;
+    switch (recordType) {
+    case recordTypes.ScheduleResourceRequest:
+    case recordTypes.ResourceSendRequest:
+    case recordTypes.ResourceReceiveResponse:
+    case recordTypes.ResourceReceivedData:
+    case recordTypes.ResourceFinish:
+        return true;
+    default:
+        return false;
+    }
+}
+
+/**
  * @param {string} recordType
  * @param {string=} title
  */
@@ -637,10 +658,24 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
         return this.startTime <= time && time <= this.endTime;
     },
 
-    generatePopupContent: function()
+    /**
+     * @param {function(Element)} callback
+     */
+    generatePopupContent: function(callback)
+    {
+        if (WebInspector.TimelinePresentationModel.needsPreviewElement(this.type))
+            WebInspector.buildImagePreviewContents(this.url, false, this._generatePopupContentWithImagePreview.bind(this, callback));
+        else
+            this._generatePopupContentWithImagePreview(callback);
+    },
+
+    /**
+     * @param {function(Element)} callback
+     * @param {Element=} previewElement
+     */
+    _generatePopupContentWithImagePreview: function(callback, previewElement)
     {
         var contentHelper = new WebInspector.TimelinePresentationModel.PopupContentHelper(this.title);
-
         var text = WebInspector.UIString("%s (at %s)", Number.secondsToString(this._lastChildEndTime - this.startTime, true),
             Number.secondsToString(this._startTimeOffset));
         contentHelper._appendTextRow(WebInspector.UIString("Duration"), text);
@@ -678,6 +713,8 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
             case recordTypes.ResourceReceivedData:
             case recordTypes.ResourceFinish:
                 contentHelper._appendElementRow(WebInspector.UIString("Resource"), this._linkifyLocation(this.url));
+                if (previewElement)
+                    contentHelper._appendElementRow(WebInspector.UIString("Preview"), previewElement);
                 if (this.data["requestMethod"])
                     contentHelper._appendTextRow(WebInspector.UIString("Request Method"), this.data["requestMethod"]);
                 if (typeof this.data["statusCode"] === "number")
@@ -720,7 +757,7 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
         if (this.stackTrace)
             contentHelper._appendStackTrace(WebInspector.UIString("Call Stack"), this.stackTrace, this._linkifyCallFrame.bind(this));
 
-        return contentHelper._contentTable;
+        callback(contentHelper._contentTable);
     },
 
     _refreshDetails: function()
@@ -860,6 +897,7 @@ WebInspector.TimelinePresentationModel._generateAggregatedInfo = function(aggreg
 
 /**
  * @constructor
+ * @param {string} title
  */
 WebInspector.TimelinePresentationModel.PopupContentHelper = function(title)
 {

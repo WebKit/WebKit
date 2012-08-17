@@ -1039,6 +1039,54 @@ WebInspector.revertDomChanges = function(domChanges)
 }
 
 /**
+ * @param {string} imageURL
+ * @param {boolean} showDimensions
+ * @param {function(Element=)} userCallback
+ * @param {Object=} precomputedDimensions
+ */
+WebInspector.buildImagePreviewContents = function(imageURL, showDimensions, userCallback, precomputedDimensions)
+{
+    var resource = WebInspector.resourceTreeModel.resourceForURL(imageURL);
+    if (!resource) {
+        userCallback();
+        return;
+    }
+
+    var imageElement = document.createElement("img");
+    imageElement.addEventListener("load", buildContent, false);
+    imageElement.addEventListener("error", errorCallback, false);
+    resource.populateImageSource(imageElement);
+
+    function errorCallback()
+    {
+        // Drop the event parameter when invoking userCallback.
+        userCallback();
+    }
+
+    function buildContent()
+    {
+        var container = document.createElement("table");
+        container.className = "image-preview-container";
+        var naturalWidth = precomputedDimensions ? precomputedDimensions.naturalWidth : imageElement.naturalWidth;
+        var naturalHeight = precomputedDimensions ? precomputedDimensions.naturalHeight : imageElement.naturalHeight;
+        var offsetWidth = precomputedDimensions ? precomputedDimensions.offsetWidth : naturalWidth;
+        var offsetHeight = precomputedDimensions ? precomputedDimensions.offsetHeight : naturalHeight;
+        var description;
+        if (showDimensions) {
+            if (offsetHeight === naturalHeight && offsetWidth === naturalWidth)
+                description = WebInspector.UIString("%d \xd7 %d pixels", offsetWidth, offsetHeight);
+            else
+                description = WebInspector.UIString("%d \xd7 %d pixels (Natural: %d \xd7 %d pixels)", offsetWidth, offsetHeight, naturalWidth, naturalHeight);
+        }
+
+        container.createChild("tr").createChild("td", "image-container").appendChild(imageElement);
+        if (description)
+            container.createChild("tr").createChild("td").createChild("span", "description").textContent = description;
+        userCallback(container);
+    }
+}
+
+/**
  * @param {WebInspector.ContextMenu} contextMenu
  * @param {Node} contextNode
  * @param {Event} event

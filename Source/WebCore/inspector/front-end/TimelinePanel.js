@@ -939,7 +939,12 @@ WebInspector.TimelinePanel.prototype = {
             popover.show(WebInspector.TimelinePresentationModel.generatePopupContentForFrame(frame), anchor);
         } else {
             if (anchor.row && anchor.row._record)
-                popover.show(anchor.row._record.generatePopupContent(), anchor);
+                anchor.row._record.generatePopupContent(showCallback);
+        }
+
+        function showCallback(popupContent)
+        {
+            popover.show(popupContent, anchor);
         }
     },
 

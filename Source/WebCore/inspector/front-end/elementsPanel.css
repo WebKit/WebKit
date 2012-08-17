@@ -566,11 +566,12 @@
 .image-preview-container {
     background: transparent;
     text-align: center;
-    padding-left: 11px;
 }
 
 .image-preview-container img {
     margin: 2px auto;
+    max-width: 100px;
+    max-height: 100px;
     background-image: url(Images/checker.png);
     -webkit-user-select: text;
     -webkit-user-drag: auto;
