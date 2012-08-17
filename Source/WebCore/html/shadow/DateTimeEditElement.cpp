@@ -202,7 +202,7 @@ DateTimeEditElement::~DateTimeEditElement()
         m_fields[fieldIndex]->removeEventHandler();
 
     if (m_spinButton)
-        m_spinButton->removeStepActionHandler();
+        m_spinButton->removeSpinButtonOwner();
 }
 
 void DateTimeEditElement::addField(PassRefPtr<DateTimeFieldElement> field)

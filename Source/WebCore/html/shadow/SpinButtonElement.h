@@ -41,20 +41,20 @@ public:
         Up,
     };
 
-    class StepActionHandler {
+    class SpinButtonOwner {
     public:
-        virtual ~StepActionHandler() { }
+        virtual ~SpinButtonOwner() { }
         virtual void spinButtonStepDown() = 0;
         virtual void spinButtonStepUp() = 0;
     };
 
-    // The owner of SpinButtonElement must call removeStepActionHandler
-    // because SpinButtonElement can be outlive StepActionHandler
+    // The owner of SpinButtonElement must call removeSpinButtonOwner
+    // because SpinButtonElement can be outlive SpinButtonOwner
     // implementation, e.g. during event handling.
-    static PassRefPtr<SpinButtonElement> create(Document*, StepActionHandler&);
+    static PassRefPtr<SpinButtonElement> create(Document*, SpinButtonOwner&);
     UpDownState upDownState() const { return m_upDownState; }
     virtual void releaseCapture();
-    void removeStepActionHandler() { m_stepActionHandler = 0; }
+    void removeSpinButtonOwner() { m_spinButtonOwner = 0; }
 
     void step(int amount);
     
@@ -64,7 +64,7 @@ public:
     void forwardEvent(Event*);
 
 private:
-    SpinButtonElement(Document*, StepActionHandler&);
+    SpinButtonElement(Document*, SpinButtonOwner&);
 
     virtual const AtomicString& shadowPseudoId() const;
     virtual void detach();
@@ -80,7 +80,7 @@ private:
     virtual void setHovered(bool = true);
     virtual bool isMouseFocusable() const { return false; }
 
-    StepActionHandler* m_stepActionHandler;
+    SpinButtonOwner* m_spinButtonOwner;
     bool m_capturing;
     UpDownState m_upDownState;
     UpDownState m_pressStartingState;

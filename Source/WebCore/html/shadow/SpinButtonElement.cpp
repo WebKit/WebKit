@@ -41,9 +41,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline SpinButtonElement::SpinButtonElement(Document* document, StepActionHandler& stepActionHandler)
+inline SpinButtonElement::SpinButtonElement(Document* document, SpinButtonOwner& spinButtonOwner)
     : HTMLDivElement(divTag, document)
-    , m_stepActionHandler(&stepActionHandler)
+    , m_spinButtonOwner(&spinButtonOwner)
     , m_capturing(false)
     , m_upDownState(Indeterminate)
     , m_pressStartingState(Indeterminate)
@@ -51,9 +51,9 @@ inline SpinButtonElement::SpinButtonElement(Document* document, StepActionHandle
 {
 }
 
-PassRefPtr<SpinButtonElement> SpinButtonElement::create(Document* document, StepActionHandler& stepActionHandler)
+PassRefPtr<SpinButtonElement> SpinButtonElement::create(Document* document, SpinButtonOwner& spinButtonOwner)
 {
-    return adoptRef(new SpinButtonElement(document, stepActionHandler));
+    return adoptRef(new SpinButtonElement(document, spinButtonOwner));
 }
 
 const AtomicString& SpinButtonElement::shadowPseudoId() const
@@ -169,13 +169,13 @@ bool SpinButtonElement::willRespondToMouseClickEvents()
 
 void SpinButtonElement::doStepAction(int amount)
 {
-    if (!m_stepActionHandler)
+    if (!m_spinButtonOwner)
         return;
 
     if (amount > 0)
-        m_stepActionHandler->spinButtonStepUp();
+        m_spinButtonOwner->spinButtonStepUp();
     else if (amount < 0)
-        m_stepActionHandler->spinButtonStepDown();
+        m_spinButtonOwner->spinButtonStepDown();
 }
 
 void SpinButtonElement::releaseCapture()

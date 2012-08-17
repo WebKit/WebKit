@@ -64,7 +64,7 @@ TextFieldInputType::TextFieldInputType(HTMLInputElement* element)
 TextFieldInputType::~TextFieldInputType()
 {
     if (m_innerSpinButton)
-        m_innerSpinButton->removeStepActionHandler();
+        m_innerSpinButton->removeSpinButtonOwner();
 }
 
 bool TextFieldInputType::isKeyboardFocusable(KeyboardEvent*) const
@@ -312,7 +312,7 @@ void TextFieldInputType::destroyShadowSubtree()
     m_speechButton.clear();
 #endif
     if (m_innerSpinButton)
-        m_innerSpinButton->removeStepActionHandler();
+        m_innerSpinButton->removeSpinButtonOwner();
     m_innerSpinButton.clear();
     m_container.clear();
 }

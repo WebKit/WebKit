@@ -41,7 +41,7 @@ class FormDataList;
 
 // The class represents types of which UI contain text fields.
 // It supports not only the types for BaseTextInputType but also type=number.
-class TextFieldInputType : public InputType, private SpinButtonElement::StepActionHandler {
+class TextFieldInputType : public InputType, private SpinButtonElement::SpinButtonOwner {
 protected:
     TextFieldInputType(HTMLInputElement*);
     virtual ~TextFieldInputType();
@@ -85,7 +85,7 @@ private:
     virtual bool appendFormData(FormDataList&, bool multipart) const OVERRIDE;
     virtual void attach() OVERRIDE;
 
-    // SpinButtonElement::StepActionHandler functions.
+    // SpinButtonElement::SpinButtonOwner functions.
     virtual void spinButtonStepDown() OVERRIDE;
     virtual void spinButtonStepUp() OVERRIDE;
 
