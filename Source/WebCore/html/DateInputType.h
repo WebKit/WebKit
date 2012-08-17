@@ -65,7 +65,7 @@ private:
     virtual bool needsContainer() const OVERRIDE;
     virtual bool shouldHaveSpinButton() const OVERRIDE;
 
-    RefPtr<CalendarPickerElement> m_pickerElement;
+    CalendarPickerElement* m_pickerElement;
 #endif
 };
 
