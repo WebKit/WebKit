@@ -1,3 +1,16 @@
+2012-08-17  Milian Wolff  <milian.wolff@kdab.com>
+
+        [Qt] QNX build fails due to missing timegm declaration
+        https://bugs.webkit.org/show_bug.cgi?id=93842
+
+        Reviewed by Simon Hausmann.
+
+        On QNX, timegm is declared in nbutils.h and one must link against
+        nbutils to use it.
+
+        * WTF.pri:
+        * wtf/DateMath.cpp:
+
 2012-08-16  Kent Tamura  <tkent@chromium.org>
 
         Build fix for Chromium-mac.

@@ -102,6 +102,11 @@
 #include <sys/timeb.h>
 #endif
 
+#if OS(QNX)
+// qnx6 defines timegm in nbutil.h
+#include <nbutil.h>
+#endif
+
 using namespace WTF;
 
 namespace WTF {
