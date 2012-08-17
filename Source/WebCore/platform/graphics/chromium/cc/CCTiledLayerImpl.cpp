@@ -36,6 +36,7 @@
 #include "CCQuadSink.h"
 #include "CCSolidColorDrawQuad.h"
 #include "CCTileDrawQuad.h"
+#include "FloatQuad.h"
 #include "GraphicsContext3D.h"
 #include "SkColor.h"
 #include "TextStream.h"
