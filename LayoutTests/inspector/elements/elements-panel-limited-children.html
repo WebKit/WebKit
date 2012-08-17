@@ -18,7 +18,7 @@ function insertNode()
 function test()
 {
     var dataTreeElement;
-    WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.elements);
+    WebInspector.showPanel("elements");
     InspectorTest.nodeWithId("data", step1);
 
     function step1(node)

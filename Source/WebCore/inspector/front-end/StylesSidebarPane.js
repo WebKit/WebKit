@@ -1332,12 +1332,12 @@ WebInspector.StylePropertiesSection.prototype = {
             this.rule = newRule;
             this.styleRule = { section: this, style: newRule.style, selectorText: newRule.selectorText, media: newRule.media, sourceURL: newRule.sourceURL, rule: newRule };
 
-            this.pane.update();
+            this._parentPane.update();
 
             this._moveEditorFromSelector(moveDirection);
         }
 
-        var selectedNode = WebInspector.panels.elements.selectedDOMNode();
+        var selectedNode = this._parentPane.node;
         WebInspector.cssModel.setRuleSelector(this.rule.id, selectedNode ? selectedNode.id : 0, newContent, successCallback.bind(this), this._moveEditorFromSelector.bind(this, moveDirection));
     },
 
@@ -1729,8 +1729,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 container.appendChild(document.createTextNode("url("));
                 if (self._styleRule.sourceURL)
                     hrefUrl = WebInspector.completeURL(self._styleRule.sourceURL, hrefUrl);
-                else if (WebInspector.panels.elements.selectedDOMNode())
-                    hrefUrl = WebInspector.resourceURLForRelatedNode(WebInspector.panels.elements.selectedDOMNode(), hrefUrl);
+                else if (this._parentPane.node)
+                    hrefUrl = WebInspector.resourceURLForRelatedNode(this._parentPane.node, hrefUrl);
                 var hasResource = !!WebInspector.resourceForURL(hrefUrl);
                 // FIXME: WebInspector.linkifyURLAsNode() should really use baseURI.
                 container.appendChild(WebInspector.linkifyURLAsNode(hrefUrl, url, undefined, !hasResource));
@@ -1904,7 +1904,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             var colorRegex = /((?:rgb|hsl)a?\([^)]+\)|#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}|\b\w+\b(?!-))/g;
             var colorProcessor = processValue.bind(window, colorRegex, processColor, null);
 
-            valueElement.appendChild(processValue(/url\(\s*([^)\s]+)\s*\)/g, linkifyURL, WebInspector.CSSKeywordCompletions.isColorAwareProperty(self.name) ? colorProcessor : null, value));
+            valueElement.appendChild(processValue(/url\(\s*([^)\s]+)\s*\)/g, linkifyURL.bind(this), WebInspector.CSSKeywordCompletions.isColorAwareProperty(self.name) ? colorProcessor : null, value));
         }
 
         this.listItemElement.removeChildren();
@@ -2439,7 +2439,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
             return;
 
         var section = this.treeOutline.section;
-        var elementsPanel = WebInspector.panels.elements;
         styleText = styleText.replace(/\s/g, " ").trim(); // Replace &nbsp; with whitespace.
         var styleTextLength = styleText.length;
         if (!styleTextLength && updateInterface && !isRevert && this._newProperty && !this._hasBeenModifiedIncrementally()) {

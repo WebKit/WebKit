@@ -89,6 +89,11 @@ WebInspector.ResourceTreeModel.prototype = {
         this._cachedResourcesProcessed = true;
     },
 
+    cachedResourcesLoaded: function()
+    {
+        return this._cachedResourcesProcessed;
+    },
+
     _dispatchInspectedURLChanged: function()
     {
         InspectorFrontendHost.inspectedURLChanged(WebInspector.inspectedPageURL);

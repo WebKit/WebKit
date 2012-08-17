@@ -8,7 +8,7 @@ function initialize_extensionsSidebarTest()
 {
     InspectorTest.dumpSidebarContent = function(callback)
     {
-        var sidebarPanes = WebInspector.panels.elements.sidebarPanes;
+        var sidebarPanes = WebInspector.panel("elements").sidebarPanes;
         // the sidebar of interest is presumed to always be last.
         var sidebar = sidebarPanes[Object.keys(sidebarPanes).pop()];
         InspectorTest.runAfterPendingDispatches(function() {

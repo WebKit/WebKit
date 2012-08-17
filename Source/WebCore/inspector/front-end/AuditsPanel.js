@@ -43,7 +43,7 @@ WebInspector.AuditsPanel = function()
     this.sidebarTree.appendChild(this.auditsTreeElement);
     this.auditsTreeElement.listItemElement.addStyleClass("hidden");
 
-    this.auditsItemTreeElement = new WebInspector.AuditsSidebarTreeElement();
+    this.auditsItemTreeElement = new WebInspector.AuditsSidebarTreeElement(this);
     this.auditsTreeElement.appendChild(this.auditsItemTreeElement);
 
     this.auditResultsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RESULTS"), {}, true);
@@ -65,11 +65,6 @@ WebInspector.AuditsPanel = function()
 }
 
 WebInspector.AuditsPanel.prototype = {
-    get toolbarItemLabel()
-    {
-        return WebInspector.UIString("Audits");
-    },
-
     get statusBarItems()
     {
         return [this.clearResultsButton.element];
@@ -151,7 +146,7 @@ WebInspector.AuditsPanel.prototype = {
                 ordinal++;
         }
 
-        var resultTreeElement = new WebInspector.AuditResultSidebarTreeElement(results, mainResourceURL, ordinal);
+        var resultTreeElement = new WebInspector.AuditResultSidebarTreeElement(this, results, mainResourceURL, ordinal);
         this.auditResultsTreeElement.appendChild(resultTreeElement);
         resultTreeElement.revealAndSelect();
         if (!this._progressMonitor.canceled && launcherCallback)
@@ -526,11 +521,12 @@ WebInspector.AuditProgressMonitor.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.SidebarTreeElement}
+ * @param {WebInspector.AuditsPanel} panel
  */
-WebInspector.AuditsSidebarTreeElement = function()
+WebInspector.AuditsSidebarTreeElement = function(panel)
 {
+    this._panel = panel;
     this.small = false;
-
     WebInspector.SidebarTreeElement.call(this, "audits-sidebar-tree-item", WebInspector.UIString("Audits"), "", null, false);
 }
 
@@ -542,7 +538,7 @@ WebInspector.AuditsSidebarTreeElement.prototype = {
 
     onselect: function()
     {
-        WebInspector.panels.audits.showLauncherView();
+        this._panel.showLauncherView();
     },
 
     get selectable()
@@ -561,19 +557,20 @@ WebInspector.AuditsSidebarTreeElement.prototype.__proto__ = WebInspector.Sidebar
 /**
  * @constructor
  * @extends {WebInspector.SidebarTreeElement}
+ * @param {WebInspector.AuditsPanel} panel
  */
-WebInspector.AuditResultSidebarTreeElement = function(results, mainResourceURL, ordinal)
+WebInspector.AuditResultSidebarTreeElement = function(panel, results, mainResourceURL, ordinal)
 {
+    this._panel = panel;
     this.results = results;
     this.mainResourceURL = mainResourceURL;
-
     WebInspector.SidebarTreeElement.call(this, "audit-result-sidebar-tree-item", String.sprintf("%s (%d)", mainResourceURL, ordinal), "", {}, false);
 }
 
 WebInspector.AuditResultSidebarTreeElement.prototype = {
     onselect: function()
     {
-        WebInspector.panels.audits.showResults(this.results);
+        this._panel.showResults(this.results);
     },
 
     get selectable()

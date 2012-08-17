@@ -22,7 +22,7 @@ var test = function()
                 step2();
             }
         }
-        WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.network);
+        WebInspector.showPanel("network");
         var networkLogView = WebInspector.panels.network._networkLogView;
         // networkLogView.clear();
         networkLogView._preserveLogToggle.toggled = true;

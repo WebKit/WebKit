@@ -102,7 +102,7 @@ WebInspector.DOMStorageDispatcher.prototype = {
             payload.id,
             payload.origin,
             payload.isLocalStorage);
-        WebInspector.panels.resources.addDOMStorage(domStorage);
+        WebInspector.panel("resources").addDOMStorage(domStorage);
     },
 
     /**
@@ -110,6 +110,6 @@ WebInspector.DOMStorageDispatcher.prototype = {
      */
     domStorageUpdated: function(storageId)
     {
-        WebInspector.panels.resources.domStorageUpdated(storageId);
+        WebInspector.panel("resources").domStorageUpdated(storageId);
     }
 }

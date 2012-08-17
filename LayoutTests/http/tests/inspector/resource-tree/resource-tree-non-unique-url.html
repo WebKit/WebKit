@@ -14,7 +14,7 @@ function loadIframe()
 function test()
 {
     InspectorTest.addSniffer(WebInspector.ResourcesPanel.prototype, "_resourceAdded", onResource, true);
-    WebInspector.panels.resources.show();
+    WebInspector.showPanel("resources");
 
     var cssRequestsCount = 0;
     function onResource(event)

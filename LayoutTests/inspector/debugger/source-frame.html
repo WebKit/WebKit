@@ -17,7 +17,7 @@ function methodForBreakpoint()
 
 function test()
 {
-    WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.resources);
+    WebInspector.showPanel("resources");
     InspectorTest.runDebuggerTestSuite([
         function testSetBreakpoint(next)
         {

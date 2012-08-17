@@ -118,6 +118,10 @@ body.compact.inactive #toolbar {
     background-image: url(Images/toolbarIconsSmall.png);
 }
 
+.toolbar-small .toolbar-icon.custom-toolbar-icon {
+    background-position-x: -32px;
+}
+
 .toolbar-item:active .toolbar-icon {
     background-position-y: 32px;
 }

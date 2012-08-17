@@ -47,15 +47,6 @@ WebInspector.Panel = function(name)
 WebInspector.Panel.counterRightMargin = 25;
 
 WebInspector.Panel.prototype = {
-    get toolbarItem()
-    {
-        if (this._toolbarItem)
-            return this._toolbarItem;
-
-        this._toolbarItem = WebInspector.Toolbar.createPanelToolbarItem(this);
-        return this._toolbarItem;
-    },
-
     get name()
     {
         return this._panelName;
@@ -76,9 +67,6 @@ WebInspector.Panel.prototype = {
             document.getElementById("panel-status-bar").appendChild(this._statusBarItemContainer);
         }
 
-        if ("_toolbarItem" in this)
-            this._toolbarItem.addStyleClass("toggled-on");
-
         this.focus();
     },
 
@@ -87,8 +75,6 @@ WebInspector.Panel.prototype = {
         if (this._statusBarItemContainer && this._statusBarItemContainer.parentNode)
             this._statusBarItemContainer.parentNode.removeChild(this._statusBarItemContainer);
         delete this._statusBarItemContainer;
-        if ("_toolbarItem" in this)
-            this._toolbarItem.removeStyleClass("toggled-on");
     },
 
     reset: function()
@@ -193,10 +179,6 @@ WebInspector.Panel.prototype = {
 
     // Should be implemented by ancestors.
 
-    get toolbarItemLabel()
-    {
-    },
-
     get statusBarItems()
     {
     },
@@ -252,3 +234,63 @@ WebInspector.Panel.prototype = {
 }
 
 WebInspector.Panel.prototype.__proto__ = WebInspector.View.prototype;
+
+/**
+ * @constructor
+ * @param {string} name
+ * @param {string} title
+ * @param {function(new:WebInspector.Panel)} constructor
+ * @param {boolean=} lazyInit
+ */
+WebInspector.PanelDescriptor = function(name, title, constructor, lazyInit)
+{
+    this._name = name;
+    this._title = title;
+    this._constructor = constructor;
+    this._panel = lazyInit ? null : this.panel();
+}
+
+WebInspector.PanelDescriptor.prototype = {
+    /**
+     * @return {string}
+     */
+    name: function()
+    {
+        return this._name;
+    },
+
+    /**
+     * @return {string}
+     */
+    title: function()
+    {
+        return this._title;
+    },
+
+    /**
+     * @return {string}
+     */
+    iconURL: function()
+    {
+        return this._iconURL;
+    },
+
+    /**
+     * @param {string} iconURL
+     */
+    setIconURL: function(iconURL)
+    {
+        this._iconURL = iconURL;
+    },
+
+    /**
+     * @return {WebInspector.Panel}
+     */
+    panel: function()
+    {
+        if (!this._panel)
+            this._panel = new this._constructor();
+        WebInspector.panels[this._name] = this._panel;
+        return this._panel;
+    }
+}

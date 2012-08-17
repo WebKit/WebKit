@@ -1,3 +1,38 @@
+2012-08-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: build Elements, Resources, Timeline, Audits and Console panels lazily.
+        https://bugs.webkit.org/show_bug.cgi?id=94222
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/elements-test.js:
+        (initialize_ElementTest.InspectorTest.selectNodeWithId.onNodeFound):
+        (initialize_ElementTest.InspectorTest.selectNodeWithId):
+        (initialize_ElementTest.InspectorTest.expandElementsTree):
+        * http/tests/inspector/extensions-test.js:
+        (initialize_ExtensionsTest.InspectorTest.showPanel):
+        * http/tests/inspector/inspect-element.html:
+        * http/tests/inspector/resource-har-pages.html:
+        * http/tests/inspector/resource-tree/resource-tree-frame-add.html:
+        * http/tests/inspector/resource-tree/resource-tree-non-unique-url.html:
+        * http/tests/inspector/resource-tree/resource-tree-reload.html:
+        * http/tests/inspector/resource-tree/resource-tree-test.js:
+        (initialize_ResourceTreeTest.InspectorTest.dumpResourcesTree):
+        * inspector/console/command-line-api-inspect.html:
+        * inspector/debugger/dom-breakpoints.html:
+        * inspector/debugger/source-frame.html:
+        * inspector/elements/edit-dom-actions.html:
+        * inspector/elements/elements-img-tooltip.html:
+        * inspector/elements/elements-panel-limited-children.html:
+        * inspector/elements/highlight-node-scaled.html:
+        * inspector/extensions/extensions-panel.html:
+        * inspector/extensions/extensions-sidebar.html:
+        * inspector/styles/force-pseudo-state.html:
+        * inspector/styles/set-property-boundaries.html:
+        * inspector/styles/styles-new-API.html:
+        * inspector/timeline/timeline-test.js:
+        (initialize_Timeline.InspectorTest.stopTimeline):
+
 2012-08-17  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

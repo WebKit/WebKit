@@ -1172,7 +1172,6 @@ WebInspector.ElementsTreeElement.prototype = {
         const pseudoClasses = ["active", "hover", "focus", "visited"];
         var node = this.representedObject;
         var forcedPseudoState = (node ? node.getUserProperty("pseudoState") : null) || [];
-        var elementsPanel = WebInspector.panels.elements;
         for (var i = 0; i < pseudoClasses.length; ++i) {
             var pseudoClassForced = forcedPseudoState.indexOf(pseudoClasses[i]) >= 0;
             subMenu.appendCheckboxItem(":" + pseudoClasses[i], this.treeOutline._setPseudoClassCallback.bind(null, node.id, pseudoClasses[i], !pseudoClassForced), pseudoClassForced, false);

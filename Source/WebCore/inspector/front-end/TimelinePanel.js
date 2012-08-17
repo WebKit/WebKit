@@ -195,11 +195,6 @@ WebInspector.TimelinePanel.prototype = {
         return this._calculator;
     },
 
-    get toolbarItemLabel()
-    {
-        return WebInspector.UIString("Timeline");
-    },
-
     get statusBarItems()
     {
         return this._statusBarButtons.select("element").concat([

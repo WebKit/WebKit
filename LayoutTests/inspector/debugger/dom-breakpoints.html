@@ -57,7 +57,7 @@ function breakDebugger()
 
 function test()
 {
-    WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.elements);
+    WebInspector.showPanel("elements");
 
     var pane = WebInspector.domBreakpointsSidebarPane;
     var rootElement;

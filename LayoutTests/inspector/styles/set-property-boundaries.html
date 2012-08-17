@@ -13,7 +13,7 @@ h1 {
 
 function test()
 {
-    WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.elements);
+    WebInspector.showPanel("elements");
     CSSAgent.getAllStyleSheets(styleSheetInfosLoaded);
 
     function styleSheetInfosLoaded(error, infos)

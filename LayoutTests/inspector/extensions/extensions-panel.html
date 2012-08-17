@@ -12,7 +12,6 @@ function initialize_extensionsPanelTest()
 {
     InspectorTest.getPanelSize = function()
     {
-        var extensionPanel = WebInspector.inspectorView._panelOrder[WebInspector.inspectorView._panelOrder.length - 1];
         var boundingRect = document.getElementById("main-panels").getBoundingClientRect();
         return {
             width: boundingRect.width,
@@ -47,7 +46,7 @@ function initialize_extensionsPanelTest()
     {
         WebInspector.showPanel("console");
         var xpathResult = document.evaluate("//a[starts-with(., 'extensions-panel.html')]",
-                                            WebInspector.panels.console.element, null, XPathResult.ANY_UNORDERED_NODE_TYPE, null);
+                                            WebInspector.panel("console").element, null, XPathResult.ANY_UNORDERED_NODE_TYPE, null);
         var click = document.createEvent("MouseEvent");
         click.initMouseEvent("click", true, true);
         xpathResult.singleNodeValue.dispatchEvent(click);

@@ -26,8 +26,8 @@ InspectorTest.timelinePropertyFormatters = {
 InspectorTest.startTimeline = function(callback)
 {
     InspectorTest._timelineRecords = [];
-    WebInspector.panels.timeline.toggleTimelineButton.toggled = true;
-    WebInspector.panels.timeline._model._collectionEnabled = true;
+    WebInspector.panel("timeline").toggleTimelineButton.toggled = true;
+    WebInspector.panel("timeline")._model._collectionEnabled = true;
     TimelineAgent.start(callback);
     function addRecord(record)
     {
@@ -62,8 +62,8 @@ InspectorTest.stopTimeline = function(callback)
 {
     function didStop()
     {
-        WebInspector.panels.timeline.toggleTimelineButton.toggled = false;
-        WebInspector.panels.timeline._model._collectionEnabled = false;
+        WebInspector.panel("timeline").toggleTimelineButton.toggled = false;
+        WebInspector.panel("timeline")._model._collectionEnabled = false;
         callback(InspectorTest._timelineRecords);
     }
     TimelineAgent.stop(didStop);

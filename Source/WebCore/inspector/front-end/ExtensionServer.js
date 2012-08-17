@@ -197,11 +197,10 @@ WebInspector.ExtensionServer.prototype = {
             return this._status.E_EXISTS(id);
 
         var page = this._expandResourcePath(port._extensionOrigin, message.page);
-        var icon = this._expandResourcePath(port._extensionOrigin, message.icon)
-        var panel = new WebInspector.ExtensionPanel(id, message.title, page, icon);
-        this._clientObjects[id] = panel;
-        WebInspector.panels[id] = panel;
-        WebInspector.addPanel(panel);
+        var panelDescriptor = new WebInspector.PanelDescriptor(id, message.title, WebInspector.ExtensionPanel.bind(null, id, page));
+        panelDescriptor.setIconURL(this._expandResourcePath(port._extensionOrigin, message.icon));
+        this._clientObjects[id] = panelDescriptor.panel();
+        WebInspector.inspectorView.addPanel(panelDescriptor);
         return this._status.OK();
     },
 
@@ -233,7 +232,7 @@ WebInspector.ExtensionServer.prototype = {
 
     _onCreateSidebarPane: function(message)
     {
-        var panel = WebInspector.panels[message.panel];
+        var panel = WebInspector.panel(message.panel);
         if (!panel)
             return this._status.E_NOTFOUND(message.panel);
         if (!panel.sidebarElement || !panel.sidebarPanes)
@@ -532,10 +531,10 @@ WebInspector.ExtensionServer.prototype = {
     _onAddAuditCategory: function(message, port)
     {
         var category = new WebInspector.ExtensionAuditCategory(port._extensionOrigin, message.id, message.displayName, message.resultCount);
-        if (WebInspector.panels.audits.getCategory(category.id))
+        if (WebInspector.panel("audits").getCategory(category.id))
             return this._status.E_EXISTS(category.id);
         this._clientObjects[message.id] = category;
-        WebInspector.panels.audits.addCategory(category);
+        WebInspector.panel("audits").addCategory(category);
     },
 
     _onAddAuditResult: function(message)
@@ -575,12 +574,17 @@ WebInspector.ExtensionServer.prototype = {
             WebInspector.workspace,
             WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded,
             this._notifyResourceAdded);
-        if (WebInspector.panels.elements) {
-            this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.ElementsPanelObjectSelected,
-                WebInspector.panels.elements.treeOutline,
-                WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged,
-                this._notifyElementsSelectionChanged);
-        }
+        this._registerSubscriptionHandler(WebInspector.extensionAPI.Events.ElementsPanelObjectSelected,
+            function()
+            {
+                WebInspector.panel("elements").treeOutline.addEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, this._notifyElementsSelectionChanged, this);
+            }.bind(this),
+            function()
+            {
+                WebInspector.panel("elements").treeOutline.removeEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, this._notifyElementsSelectionChanged, this);
+            }.bind(this)
+        );
+
         this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.ResourceContentCommitted,
             WebInspector.workspace,
             WebInspector.Workspace.Events.UISourceCodeContentCommitted,

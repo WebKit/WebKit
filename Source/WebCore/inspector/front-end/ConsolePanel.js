@@ -40,11 +40,6 @@ WebInspector.ConsolePanel = function()
 }
 
 WebInspector.ConsolePanel.prototype = {
-    get toolbarItemLabel()
-    {
-        return WebInspector.UIString("Console");
-    },
-
     get statusBarItems()
     {
         return this._view.statusBarItems;

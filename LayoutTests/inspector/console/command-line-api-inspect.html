@@ -32,7 +32,7 @@ function test()
     InspectorTest.runTestSuite([
         function testRevealElement(next)
         {
-            InspectorTest.addSniffer(WebInspector, "updateFocusedNode", step2);
+            InspectorTest.addSniffer(WebInspector, "_updateFocusedNode", step2);
             evalAndDump("inspect($('p1'))");
 
             function step2()

@@ -294,11 +294,6 @@ WebInspector.ProfilesPanel.prototype = {
         this._createFileSelectorElement();
     },
 
-    get toolbarItemLabel()
-    {
-        return WebInspector.UIString("Profiles");
-    },
-
     get statusBarItems()
     {
         return this._statusBarButtons.select("element").concat([this.profileViewStatusBarItemsContainer]);

@@ -90,25 +90,20 @@ WebInspector.ElementsPanel = function()
             this.sidebarPanes[pane].onattach();
     }
 
-    this.nodeSearchButton = new WebInspector.StatusBarButton(WebInspector.UIString("Select an element in the page to inspect it."), "node-search-status-bar-item");
-    this.nodeSearchButton.addEventListener("click", this.toggleSearchingForNode, this);
-
     this._registerShortcuts();
 
     this._popoverHelper = new WebInspector.PopoverHelper(document.body, this._getPopoverAnchor.bind(this), this._showPopover.bind(this));
     this._popoverHelper.setTimeout(0);
 
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.NodeRemoved, this._nodeRemoved, this);
-    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.DocumentUpdated, this._documentUpdated, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.DocumentUpdated, this._documentUpdatedEvent, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.InspectElementRequested, this._inspectElementRequested, this);
+
+    if (WebInspector.domAgent.existingDocument())
+        this._documentUpdated(WebInspector.domAgent.existingDocument());
 }
 
 WebInspector.ElementsPanel.prototype = {
-    get toolbarItemLabel()
-    {
-        return WebInspector.UIString("Elements");
-    },
-
     get statusBarItems()
     {
         return [this.crumbsElement];
@@ -145,7 +140,6 @@ WebInspector.ElementsPanel.prototype = {
     willHide: function()
     {
         WebInspector.domAgent.hideDOMNodeHighlight();
-        this.setSearchingForNode(false);
         this.treeOutline.setVisible(false);
         this._popoverHelper.hidePopover();
 
@@ -230,10 +224,13 @@ WebInspector.ElementsPanel.prototype = {
         delete this.currentQuery;
     },
 
-    _documentUpdated: function(event)
+    _documentUpdatedEvent: function(event)
     {
-        var inspectedRootDocument = event.data;
+        this._documentUpdated(event.data);
+    },
 
+    _documentUpdated: function(inspectedRootDocument)
+    {
         this._reset();
         this.searchCanceled();
 
@@ -1073,22 +1070,6 @@ WebInspector.ElementsPanel.prototype = {
 
     handleShortcut: function(event)
     {
-        // Cmd/Control + Shift + C should be a shortcut to clicking the Node Search Button.
-        // This shortcut matches Firebug.
-        if (event.keyIdentifier === "U+0043") { // C key
-            if (WebInspector.isMac())
-                var isNodeSearchKey = event.metaKey && !event.ctrlKey && !event.altKey && event.shiftKey;
-            else
-                var isNodeSearchKey = event.ctrlKey && !event.metaKey && !event.altKey && event.shiftKey;
-
-            if (isNodeSearchKey) {
-                this.toggleSearchingForNode();
-                event.handled = true;
-                return;
-            }
-            return;
-        }
-
         if (WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && !event.shiftKey && event.keyIdentifier === "U+005A") { // Z key
             WebInspector.domAgent.undo(this._updateSidebars.bind(this));
             event.handled = true;
@@ -1137,28 +1118,6 @@ WebInspector.ElementsPanel.prototype = {
 
         WebInspector.domAgent.highlightDOMNodeForTwoSeconds(nodeId);
         this.selectDOMNode(node, true);
-        if (this.nodeSearchButton.toggled) {
-            InspectorFrontendHost.bringToFront();
-            this.nodeSearchButton.toggled = false;
-        }
-    },
-
-    setSearchingForNode: function(enabled)
-    {
-        /**
-         * @param {?Protocol.Error} error
-         */
-        function callback(error)
-        {
-            if (!error)
-                this.nodeSearchButton.toggled = enabled;
-        }
-        WebInspector.domAgent.setInspectModeEnabled(enabled, callback.bind(this));
-    },
-
-    toggleSearchingForNode: function()
-    {
-        this.setSearchingForNode(!this.nodeSearchButton.toggled);
     }
 }
 

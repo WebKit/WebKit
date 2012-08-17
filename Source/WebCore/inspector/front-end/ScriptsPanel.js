@@ -189,11 +189,6 @@ WebInspector.ScriptsPanel.PauseOnExceptionsState = {
 };
 
 WebInspector.ScriptsPanel.prototype = {
-    get toolbarItemLabel()
-    {
-        return WebInspector.UIString("Sources");
-    },
-
     get statusBarItems()
     {
         return [this.enableToggleButton.element, this._pauseOnExceptionButton.element, this._toggleFormatSourceButton.element, this._scriptViewStatusBarItemsContainer];

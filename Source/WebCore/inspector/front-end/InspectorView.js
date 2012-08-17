@@ -43,6 +43,7 @@ WebInspector.InspectorView = function()
     document.addEventListener("keydown", this._keyDown.bind(this), false);
     document.addEventListener("keypress", this._keyPress.bind(this), false);
     this._panelOrder = [];
+    this._panelDescriptors = {};
 
     // Windows and Mac have two different definitions of '[' and ']', so accept both of each.
     this._openBracketIdentifiers = ["U+005B", "U+00DB"].keySet();
@@ -52,14 +53,42 @@ WebInspector.InspectorView = function()
 }
 
 WebInspector.InspectorView.Events = {
-    PanelSelected: "panel-selected"
+    PanelSelected: "PanelSelected"
 }
 
 WebInspector.InspectorView.prototype = {
-    addPanel: function(panel)
+    /**
+     * @param {WebInspector.PanelDescriptor} panelDescriptor
+     */
+    addPanel: function(panelDescriptor)
     {
-        this._panelOrder.push(panel);
-        WebInspector.toolbar.addPanel(panel);
+        this._panelOrder.push(panelDescriptor.name());
+        this._panelDescriptors[panelDescriptor.name()] = panelDescriptor;
+        WebInspector.toolbar.addPanel(panelDescriptor);
+    },
+
+    /**
+     * @param {string} panelName
+     * @return {?WebInspector.Panel}
+     */
+    panel: function(panelName)
+    {
+        var panelDescriptor = this._panelDescriptors[panelName];
+        if (!panelDescriptor && this._panelOrder.length)
+            panelDescriptor = this._panelDescriptors[this._panelOrder[0]];
+        return panelDescriptor ? panelDescriptor.panel() : null;
+    },
+
+    /**
+     * @param {string} panelName
+     * @return {?WebInspector.Panel}
+     */
+    showPanel: function(panelName)
+    {
+        var panel = this.panel(panelName);
+        if (panel)
+            this.setCurrentPanel(panel);
+        return panel;
     },
 
     currentPanel: function()
@@ -116,9 +145,9 @@ WebInspector.InspectorView.prototype = {
         if (this._openBracketIdentifiers.hasOwnProperty(event.keyIdentifier)) {
             var isRotateLeft = WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && !event.shiftKey && !event.altKey;
             if (isRotateLeft) {
-                var index = this._panelOrder.indexOf(this.currentPanel());
+                var index = this._panelOrder.indexOf(this.currentPanel().name);
                 index = (index === 0) ? this._panelOrder.length - 1 : index - 1;
-                this._panelOrder[index].toolbarItem.click();
+                this.showPanel(this._panelOrder[index]);
                 event.consume(true);
                 return;
             }
@@ -134,9 +163,9 @@ WebInspector.InspectorView.prototype = {
         if (this._closeBracketIdentifiers.hasOwnProperty(event.keyIdentifier)) {
             var isRotateRight = WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && !event.shiftKey && !event.altKey;
             if (isRotateRight) {
-                var index = this._panelOrder.indexOf(this.currentPanel());
+                var index = this._panelOrder.indexOf(this.currentPanel().name);
                 index = (index + 1) % this._panelOrder.length;
-                this._panelOrder[index].toolbarItem.click();
+                this.showPanel(this._panelOrder[index]);
                 event.consume(true);
                 return;
             }

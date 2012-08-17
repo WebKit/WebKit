@@ -96,14 +96,11 @@ WebInspector.ResourcesPanel = function(database)
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.OnLoad, this._onLoadEventFired, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, this._cachedResourcesLoaded, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources, this._resetWithFrames, this);
+    if (WebInspector.resourceTreeModel.cachedResourcesLoaded())
+        this._cachedResourcesLoaded();
 }
 
 WebInspector.ResourcesPanel.prototype = {
-    get toolbarItemLabel()
-    {
-        return WebInspector.UIString("Resources");
-    },
-
     get statusBarItems()
     {
         return [this.storageViewStatusBarItemsContainer];

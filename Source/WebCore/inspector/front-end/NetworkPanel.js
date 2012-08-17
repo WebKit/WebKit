@@ -1251,11 +1251,6 @@ WebInspector.NetworkPanel = function()
 }
 
 WebInspector.NetworkPanel.prototype = {
-    get toolbarItemLabel()
-    {
-        return WebInspector.UIString("Network");
-    },
-
     get statusBarItems()
     {
         return this._networkLogView.statusBarItems;

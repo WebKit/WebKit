@@ -30,7 +30,7 @@ function onload()
     
 function test()
 {
-    WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.elements);
+    WebInspector.showPanel("elements");
     WebInspector.panels.elements.treeOutline.addEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, selectedNodeChanged, this);
 
     function selectedNodeChanged(event)

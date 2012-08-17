@@ -825,6 +825,14 @@ WebInspector.DOMAgent.prototype = {
     },
 
     /**
+     * @return {WebInspector.DOMDocument?}
+     */
+    existingDocument: function()
+    {
+        return this._document;
+    },
+
+    /**
      * @param {RuntimeAgent.RemoteObjectId} objectId
      * @param {function(?DOMAgent.NodeId)=} callback
      */

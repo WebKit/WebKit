@@ -47,12 +47,12 @@ InspectorFrontendAPI = {
 
     isTimelineProfilingEnabled: function()
     {
-        return WebInspector.panels.timeline.timelineProfilingEnabled;
+        return WebInspector.panels.timeline && WebInspector.panels.timeline.timelineProfilingEnabled;
     },
 
     setTimelineProfilingEnabled: function(enabled)
     {
-        WebInspector.panels.timeline.setTimelineProfilingEnabled(enabled);
+        WebInspector.panel("timeline").setTimelineProfilingEnabled(enabled);
     },
 
     isProfilingJavaScript: function()
@@ -82,7 +82,7 @@ InspectorFrontendAPI = {
 
     showConsole: function()
     {
-        WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.console);
+        WebInspector.showPanel("console");
     },
 
     showMainResourceForFrame: function(frameId)
@@ -92,7 +92,7 @@ InspectorFrontendAPI = {
 
     showResources: function()
     {
-        WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.resources);
+        WebInspector.showPanel("resources");
     },
 
     setDockingUnavailable: function(unavailable)
@@ -102,7 +102,7 @@ InspectorFrontendAPI = {
 
     enterInspectElementMode: function()
     {
-        WebInspector.toggleSearchingForNode();
+        WebInspector.panel("elements").toggleSearchingForNode();
     },
 
     savedURL: function(url)

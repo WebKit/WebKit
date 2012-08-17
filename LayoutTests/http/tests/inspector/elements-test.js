@@ -63,7 +63,7 @@ InspectorTest.selectNodeWithId = function(idValue, callback)
     function onNodeFound(node)
     {
         if (node)
-            WebInspector.updateFocusedNode(node.id);
+            WebInspector._updateFocusedNode(node.id);
         callback(node);
     }
     InspectorTest.nodeWithId(idValue, onNodeFound);
@@ -407,7 +407,7 @@ InspectorTest.expandElementsTree = function(callback)
         expand(WebInspector.panels.elements.treeOutline);
         callback();
     }
-    WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.elements);
+    WebInspector.showPanel("elements");
     InspectorTest.findNode(function() { return false; }, onAllNodesAvailable);
 };
 

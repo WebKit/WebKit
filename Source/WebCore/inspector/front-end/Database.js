@@ -140,7 +140,7 @@ WebInspector.DatabaseDispatcher.prototype = {
             payload.domain,
             payload.name,
             payload.version);
-        WebInspector.panels.resources.addDatabase(database);
+        WebInspector.panel("resources").addDatabase(database);
     },
 
     /**
