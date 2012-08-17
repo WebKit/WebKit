@@ -1041,7 +1041,7 @@ static bool parseTransformArguments(WebKitCSSTransformValue* transformValue, Cha
     return true;
 }
 
-static bool parseTransformValue(StylePropertySet* properties, CSSPropertyID propertyID, const String& string, bool important)
+static bool parseTranslateTransformValue(StylePropertySet* properties, CSSPropertyID propertyID, const String& string, bool important)
 {
     if (propertyID != CSSPropertyWebkitTransform)
         return false;
@@ -1126,7 +1126,7 @@ bool CSSParser::parseValue(StylePropertySet* declaration, CSSPropertyID property
         return true;
     if (parseKeywordValue(declaration, propertyID, string, important, contextStyleSheet->parserContext()))
         return true;
-    if (parseTransformValue(declaration, propertyID, string, important))
+    if (parseTranslateTransformValue(declaration, propertyID, string, important))
         return true;
 
     CSSParserContext context(cssParserMode);
@@ -2322,9 +2322,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         if (id == CSSValueNone)
             validPrimitive = true;
         else {
-            PassRefPtr<CSSValue> val = parseTransform();
-            if (val) {
-                addProperty(propId, val, important);
+            RefPtr<CSSValue> transformValue = parseTransform();
+            if (transformValue) {
+                addProperty(propId, transformValue.release(), important);
                 return true;
             }
             return false;
@@ -7273,70 +7273,82 @@ PassRefPtr<CSSValueList> CSSParser::parseTransform()
     if (!m_valueList)
         return 0;
 
-    // The transform is a list of functional primitives that specify transform operations.
-    // We collect a list of WebKitCSSTransformValues, where each value specifies a single operation.
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
-        if (value->unit != CSSParserValue::Function || !value->function)
+        RefPtr<CSSValue> parsedTransformValue = parseTransformValue(value);
+        if (!parsedTransformValue)
             return 0;
 
-        // Every primitive requires at least one argument.
-        CSSParserValueList* args = value->function->args.get();
-        if (!args)
-            return 0;
-
-        // See if the specified primitive is one we understand.
-        TransformOperationInfo info(value->function->name);
-        if (info.unknown())
-            return 0;
-
-        if (!info.hasCorrectArgCount(args->size()))
-            return 0;
-
-        // Create the new WebKitCSSTransformValue for this operation and add it to our list.
-        RefPtr<WebKitCSSTransformValue> transformValue = WebKitCSSTransformValue::create(info.type());
-        list->append(transformValue);
-
-        // Snag our values.
-        CSSParserValue* a = args->current();
-        unsigned argNumber = 0;
-        while (a) {
-            CSSParser::Units unit = info.unit();
-
-            if (info.type() == WebKitCSSTransformValue::Rotate3DTransformOperation && argNumber == 3) {
-                // 4th param of rotate3d() is an angle rather than a bare number, validate it as such
-                if (!validUnit(a, FAngle, CSSStrictMode))
-                    return 0;
-            } else if (info.type() == WebKitCSSTransformValue::Translate3DTransformOperation && argNumber == 2) {
-                // 3rd param of translate3d() cannot be a percentage
-                if (!validUnit(a, FLength, CSSStrictMode))
-                    return 0;
-            } else if (info.type() == WebKitCSSTransformValue::TranslateZTransformOperation && argNumber == 0) {
-                // 1st param of translateZ() cannot be a percentage
-                if (!validUnit(a, FLength, CSSStrictMode))
-                    return 0;
-            } else if (info.type() == WebKitCSSTransformValue::PerspectiveTransformOperation && argNumber == 0) {
-                // 1st param of perspective() must be a non-negative number (deprecated) or length.
-                if (!validUnit(a, FNumber | FLength | FNonNeg, CSSStrictMode))
-                    return 0;
-            } else if (!validUnit(a, unit, CSSStrictMode))
-                return 0;
-
-            // Add the value to the current transform operation.
-            transformValue->append(createPrimitiveNumericValue(a));
-
-            a = args->next();
-            if (!a)
-                break;
-            if (a->unit != CSSParserValue::Operator || a->iValue != ',')
-                return 0;
-            a = args->next();
-
-            argNumber++;
-        }
+        list->append(parsedTransformValue.release());
     }
 
     return list.release();
+}
+    
+
+PassRefPtr<CSSValue> CSSParser::parseTransformValue(CSSParserValue *value)
+{
+    if (value->unit != CSSParserValue::Function || !value->function)
+        return 0;
+
+    // Every primitive requires at least one argument.
+    CSSParserValueList* args = value->function->args.get();
+    if (!args)
+        return 0;
+
+    // See if the specified primitive is one we understand.
+    TransformOperationInfo info(value->function->name);
+    if (info.unknown())
+        return 0;
+
+    if (!info.hasCorrectArgCount(args->size()))
+        return 0;
+
+    // The transform is a list of functional primitives that specify transform operations.
+    // We collect a list of WebKitCSSTransformValues, where each value specifies a single operation.
+
+    // Create the new WebKitCSSTransformValue for this operation and add it to our list.
+    RefPtr<WebKitCSSTransformValue> transformValue = WebKitCSSTransformValue::create(info.type());
+
+    // Snag our values.
+    CSSParserValue* a = args->current();
+    unsigned argNumber = 0;
+    while (a) {
+        CSSParser::Units unit = info.unit();
+
+        if (info.type() == WebKitCSSTransformValue::Rotate3DTransformOperation && argNumber == 3) {
+            // 4th param of rotate3d() is an angle rather than a bare number, validate it as such
+            if (!validUnit(a, FAngle, CSSStrictMode))
+                return 0;
+        } else if (info.type() == WebKitCSSTransformValue::Translate3DTransformOperation && argNumber == 2) {
+            // 3rd param of translate3d() cannot be a percentage
+            if (!validUnit(a, FLength, CSSStrictMode))
+                return 0;
+        } else if (info.type() == WebKitCSSTransformValue::TranslateZTransformOperation && !argNumber) {
+            // 1st param of translateZ() cannot be a percentage
+            if (!validUnit(a, FLength, CSSStrictMode))
+                return 0;
+        } else if (info.type() == WebKitCSSTransformValue::PerspectiveTransformOperation && !argNumber) {
+            // 1st param of perspective() must be a non-negative number (deprecated) or length.
+            if (!validUnit(a, FNumber | FLength | FNonNeg, CSSStrictMode))
+                return 0;
+        } else if (!validUnit(a, unit, CSSStrictMode))
+            return 0;
+
+        // Add the value to the current transform operation.
+        transformValue->append(createPrimitiveNumericValue(a));
+
+        a = args->next();
+        if (!a)
+            break;
+        if (a->unit != CSSParserValue::Operator || a->iValue != ',')
+            return 0;
+        a = args->next();
+
+        argNumber++;
+    }
+
+    return transformValue.release();
 }
 
 bool CSSParser::isBlendMode(int ident)
@@ -7558,32 +7570,63 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilter(CSSParserValue* va
         if (!(arg = argsList->current()))
             return 0;
 
-        // TODO: Implement other parameters types parsing.
-        // textures: https://bugs.webkit.org/show_bug.cgi?id=71442
-        // 3d-transforms: https://bugs.webkit.org/show_bug.cgi?id=71443
-        // mat2, mat3, mat4: https://bugs.webkit.org/show_bug.cgi?id=71444
-        RefPtr<CSSValueList> paramValueList = CSSValueList::createSpaceSeparated();
-        while ((arg = argsList->current())) {
-            // If we hit a comma it means we finished this parameter's values.
-            if (isComma(arg))
-                break;
-            if (!validUnit(arg, FNumber, CSSStrictMode))
+        RefPtr<CSSValue> parameterValue;
+
+        if (arg->unit == CSSParserValue::Function && arg->function)
+            // TODO: Implement other parameters types parsing.
+            // textures: https://bugs.webkit.org/show_bug.cgi?id=71442
+            // mat2, mat3, mat4: https://bugs.webkit.org/show_bug.cgi?id=71444
+            // array: https://bugs.webkit.org/show_bug.cgi?id=94226
+            // 3d-transform shall be the last to be checked
+            parameterValue = parseCustomFilterTransform(argsList);
+        else {
+            RefPtr<CSSValueList> paramValueList = CSSValueList::createSpaceSeparated();
+            while ((arg = argsList->current())) {
+                // If we hit a comma it means we finished this parameter's values.
+                if (isComma(arg))
+                    break;
+                if (!validUnit(arg, FNumber, CSSStrictMode))
+                    return 0;
+                paramValueList->append(cssValuePool().createValue(arg->fValue, CSSPrimitiveValue::CSS_NUMBER));
+                argsList->next();
+            }
+            if (!paramValueList->length() || paramValueList->length() > 4)
                 return 0;
-            paramValueList->append(cssValuePool().createValue(arg->fValue, CSSPrimitiveValue::CSS_NUMBER));
-            argsList->next();
+            parameterValue = paramValueList.release();
         }
-        if (!paramValueList->length() || paramValueList->length() > 4)
+
+        if (!parameterValue || !acceptCommaOperator(argsList))
             return 0;
-        parameter->append(paramValueList.release());
+
+        parameter->append(parameterValue.release());
         paramList->append(parameter.release());
-        if (!acceptCommaOperator(argsList))
-            return 0;
     }
     
     if (paramList->length())
         filterValue->append(paramList.release());
     
     return filterValue;
+}
+
+PassRefPtr<CSSValueList> CSSParser::parseCustomFilterTransform(CSSParserValueList* valueList)
+{
+    if (!valueList)
+        return 0;
+
+    // CSS Shaders' custom() transforms are space separated and comma terminated.
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    for (CSSParserValue* value = valueList->current(); value; value = valueList->next()) {
+        if (isComma(value))
+            break;
+
+        RefPtr<CSSValue> parsedTransformValue = parseTransformValue(value);
+        if (!parsedTransformValue)
+            return 0;
+
+        list->append(parsedTransformValue.release());
+    }
+
+    return list.release();
 }
 #endif
 

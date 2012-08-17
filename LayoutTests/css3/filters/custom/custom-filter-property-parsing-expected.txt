@@ -513,6 +513,28 @@ PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS removeBaseURL(subRule.cssText) is 'custom(url(vertex.shader))'
+
+Custom with one transform : custom(none url(fragment.shader), oneTransform rotate(0deg))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), oneTransform rotate(0deg))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), oneTransform rotate(0deg))'
+
+Custom with multiple transforms : custom(none url(fragment.shader), multipleTransform rotate(0deg) perspective(0) scale(0, 0) translate(0px, 0px))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), multipleTransform rotate(0deg) perspective(0) scale(0, 0) translate(0px, 0px))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), multipleTransform rotate(0deg) perspective(0) scale(0, 0) translate(0px, 0px))'
 PASS successfullyParsed is true
 
 TEST COMPLETE

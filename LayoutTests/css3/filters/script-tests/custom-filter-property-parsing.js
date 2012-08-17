@@ -155,3 +155,11 @@ testFilterRule("Multiple with fragment shader",
 
 testFilterRule("Custom in CAPS",
             "CUSTOM(url(vertex.shader))", "custom(url(vertex.shader))");
+
+testFilterRule("Custom with one transform",
+            "custom(none url(fragment.shader), oneTransform rotate(0deg))",
+            "custom(none url(fragment.shader), oneTransform rotate(0deg))");
+
+testFilterRule("Custom with multiple transforms",
+            "custom(none url(fragment.shader), multipleTransform rotate(0deg) perspective(0) scale(0, 0) translate(0px, 0px))",
+            "custom(none url(fragment.shader), multipleTransform rotate(0deg) perspective(0) scale(0, 0) translate(0px, 0px))");

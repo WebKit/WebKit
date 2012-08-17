@@ -1,3 +1,18 @@
+2012-08-16  Michelangelo De Simone  <michelangelo@webkit.org>
+
+        [Part 3] Parse the custom() function in -webkit-filter: parse the 3d-transforms parameters
+        https://bugs.webkit.org/show_bug.cgi?id=71443
+
+        Reviewed by Dirk Schulze.
+
+        New round of tests for custom() to assess the correct parsing of the 3d-transform parameters.
+
+        * css3/filters/custom/custom-filter-property-parsing-expected.txt:
+        * css3/filters/custom/custom-filter-property-parsing-invalid-expected.txt:
+        * css3/filters/script-tests/custom-filter-property-parsing-invalid.js:
+        * css3/filters/script-tests/custom-filter-property-parsing.js:
+        * platform/chromium/css3/filters/custom/custom-filter-property-parsing-expected.txt:
+
 2012-08-16  Kiran Muppala  <cmuppala@apple.com>
 
         Remove test expectations for fast/overflow/line-clamp-and-columns.html on mac

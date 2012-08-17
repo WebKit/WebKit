@@ -75,3 +75,16 @@ testInvalidFilterRule("Invalid parameter types", "custom(url(shader), p1 1.0 2.0
 testInvalidFilterRule("No parameter value 1", "custom(url(shader), p1)");
 testInvalidFilterRule("No parameter value 2", "custom(url(shader), p1, p2, p3)");
 
+testInvalidFilterRule("One invalid transform", "custom(none url(shader), someId invalid_rotate(0deg))");
+testInvalidFilterRule("Multiple invalid transforms", "custom(none url(shader), someId invalid_rotate(0deg) invalid_perspective(0))");
+testInvalidFilterRule("Invalid transform between valid ones", "custom(none url(shader), someId rotate(0deg) invalid_rotate(0deg) perspective(0))");
+testInvalidFilterRule("Valid transform between invalid ones", "custom(none url(shader), someId invalid_rotate(0deg) perspective(0) another_invalid(0))");
+testInvalidFilterRule("Valid transform without leading comma", "custom(none url(shader) someId perspective(0))");
+testInvalidFilterRule("Valid transform with trailing comma", "custom(none url(shader), someId perspective(0),)");
+testInvalidFilterRule("Valid transform with trailing comma and without leading comma", "custom(none url(shader) someId perspective(0),)");
+testInvalidFilterRule("Invalid transform with trailing comma", "custom(none url(shader), someId invalid_rotate(0deg),)");
+testInvalidFilterRule("Invalid transform without leading comma", "custom(none url(shader) someId invalid_rotate(0deg))");
+testInvalidFilterRule("Empty transform (only the id)", "custom(none url(shader), someId)");
+testInvalidFilterRule("Empty transform (without the id)", "custom(none url(shader),)");
+testInvalidFilterRule("Empty transform (two empty commas)", "custom(none url(shader),,)");
+testInvalidFilterRule("Valid transform with invalid characters", "custom(none url(shader),someId rotate(0deg) *.-,)");

@@ -213,6 +213,71 @@ No parameter value 2 : custom(url(shader), p1, p2, p3)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
+
+One invalid transform : custom(none url(shader), someId invalid_rotate(0deg))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Multiple invalid transforms : custom(none url(shader), someId invalid_rotate(0deg) invalid_perspective(0))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Invalid transform between valid ones : custom(none url(shader), someId rotate(0deg) invalid_rotate(0deg) perspective(0))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Valid transform between invalid ones : custom(none url(shader), someId invalid_rotate(0deg) perspective(0) another_invalid(0))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Valid transform without leading comma : custom(none url(shader) someId perspective(0))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Valid transform with trailing comma : custom(none url(shader), someId perspective(0),)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Valid transform with trailing comma and without leading comma : custom(none url(shader) someId perspective(0),)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Invalid transform with trailing comma : custom(none url(shader), someId invalid_rotate(0deg),)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Invalid transform without leading comma : custom(none url(shader) someId invalid_rotate(0deg))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Empty transform (only the id) : custom(none url(shader), someId)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Empty transform (without the id) : custom(none url(shader),)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Empty transform (two empty commas) : custom(none url(shader),,)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Valid transform with invalid characters : custom(none url(shader),someId rotate(0deg) *.-,)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
 PASS successfullyParsed is true
 
 TEST COMPLETE
