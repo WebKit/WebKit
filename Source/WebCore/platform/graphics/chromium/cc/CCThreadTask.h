@@ -24,7 +24,7 @@
 #ifndef CCThreadTask_h
 #define CCThreadTask_h
 
-#include "cc/CCThread.h"
+#include "CCThread.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 

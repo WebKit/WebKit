@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "cc/CCTextureUpdateController.h"
+#include "CCTextureUpdateController.h"
 
 #include "GraphicsContext3D.h"
 #include "TextureCopier.h"

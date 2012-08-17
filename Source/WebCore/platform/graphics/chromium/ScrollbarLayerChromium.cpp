@@ -29,10 +29,10 @@
 #include "ScrollbarLayerChromium.h"
 
 #include "BitmapCanvasLayerTextureUpdater.h"
+#include "CCLayerTreeHost.h"
+#include "CCScrollbarLayerImpl.h"
+#include "CCTextureUpdateQueue.h"
 #include "LayerPainterChromium.h"
-#include "cc/CCLayerTreeHost.h"
-#include "cc/CCScrollbarLayerImpl.h"
-#include "cc/CCTextureUpdateQueue.h"
 #include <public/WebRect.h>
 
 using WebKit::WebRect;

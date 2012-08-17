@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#include "cc/CCRenderSurfaceFilters.h"
+#include "CCRenderSurfaceFilters.h"
 
 #include "CompositorFakeWebGraphicsContext3D.h"
 #include <gtest/gtest.h>

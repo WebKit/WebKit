@@ -26,22 +26,22 @@
 
 #include "CCThreadedTest.h"
 
+#include "CCActiveAnimation.h"
 #include "CCAnimationTestCommon.h"
+#include "CCLayerAnimationController.h"
+#include "CCLayerImpl.h"
+#include "CCLayerTreeHostImpl.h"
 #include "CCOcclusionTrackerTestCommon.h"
+#include "CCScopedThreadProxy.h"
+#include "CCSingleThreadProxy.h"
+#include "CCTextureUpdateQueue.h"
+#include "CCThreadTask.h"
 #include "CCTiledLayerTestCommon.h"
+#include "CCTimingFunction.h"
 #include "ContentLayerChromium.h"
 #include "FakeWebCompositorOutputSurface.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "LayerChromium.h"
-#include "cc/CCActiveAnimation.h"
-#include "cc/CCLayerAnimationController.h"
-#include "cc/CCLayerImpl.h"
-#include "cc/CCLayerTreeHostImpl.h"
-#include "cc/CCScopedThreadProxy.h"
-#include "cc/CCSingleThreadProxy.h"
-#include "cc/CCTextureUpdateQueue.h"
-#include "cc/CCThreadTask.h"
-#include "cc/CCTimingFunction.h"
 #include <gmock/gmock.h>
 #include <public/Platform.h>
 #include <public/WebCompositor.h>

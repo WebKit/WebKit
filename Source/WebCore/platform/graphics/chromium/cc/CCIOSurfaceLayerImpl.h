@@ -26,8 +26,8 @@
 #ifndef CCIOSurfaceLayerImpl_h
 #define CCIOSurfaceLayerImpl_h
 
+#include "CCLayerImpl.h"
 #include "IntSize.h"
-#include "cc/CCLayerImpl.h"
 
 namespace WebCore {
 

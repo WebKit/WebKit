@@ -26,9 +26,9 @@
 #ifndef FakeCCGraphicsContext_h
 #define FakeCCGraphicsContext_h
 
+#include "CCGraphicsContext.h"
 #include "CompositorFakeWebGraphicsContext3D.h"
 #include "FakeWebCompositorOutputSurface.h"
-#include "cc/CCGraphicsContext.h"
 #include <public/WebCompositorOutputSurface.h>
 
 namespace WebKit {

@@ -27,9 +27,9 @@
 
 #include "HeadsUpDisplayLayerChromium.h"
 
+#include "CCHeadsUpDisplayLayerImpl.h"
+#include "CCLayerTreeHost.h"
 #include "TraceEvent.h"
-#include "cc/CCHeadsUpDisplayLayerImpl.h"
-#include "cc/CCLayerTreeHost.h"
 
 namespace WebCore {
 

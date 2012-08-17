@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "cc/CCIOSurfaceDrawQuad.h"
+#include "CCIOSurfaceDrawQuad.h"
 
 namespace WebCore {
 

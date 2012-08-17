@@ -24,9 +24,7 @@
 
 #include "config.h"
 
-#include "cc/CCSchedulerStateMachine.h"
-
-#include <stdio.h>
+#include "CCSchedulerStateMachine.h"
 
 namespace WebCore {
 

@@ -29,7 +29,7 @@
 
 #include "SolidColorLayerChromium.h"
 
-#include "cc/CCSolidColorLayerImpl.h"
+#include "CCSolidColorLayerImpl.h"
 
 namespace WebCore {
 

@@ -26,8 +26,8 @@
 #ifndef CCYUVVideoDrawQuad_h
 #define CCYUVVideoDrawQuad_h
 
-#include "cc/CCDrawQuad.h"
-#include "cc/CCVideoLayerImpl.h"
+#include "CCDrawQuad.h"
+#include "CCVideoLayerImpl.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

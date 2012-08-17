@@ -24,10 +24,10 @@
 
 #include "config.h"
 
-#include "cc/CCLayerSorter.h"
+#include "CCLayerSorter.h"
 
-#include "cc/CCMathUtil.h"
-#include "cc/CCRenderSurface.h"
+#include "CCMathUtil.h"
+#include "CCRenderSurface.h"
 #include <limits.h>
 #include <public/WebTransformationMatrix.h>
 #include <wtf/Deque.h>

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "cc/CCStreamVideoDrawQuad.h"
+#include "CCStreamVideoDrawQuad.h"
 
 namespace WebCore {
 

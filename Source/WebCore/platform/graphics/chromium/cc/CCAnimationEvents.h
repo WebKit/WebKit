@@ -25,7 +25,7 @@
 #ifndef CCAnimationEvents_h
 #define CCAnimationEvents_h
 
-#include "cc/CCActiveAnimation.h"
+#include "CCActiveAnimation.h"
 
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>

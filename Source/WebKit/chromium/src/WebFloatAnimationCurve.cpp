@@ -26,9 +26,9 @@
 
 #include <public/WebFloatAnimationCurve.h>
 
+#include "CCKeyframedAnimationCurve.h"
+#include "CCTimingFunction.h"
 #include "WebAnimationCurveCommon.h"
-#include "cc/CCKeyframedAnimationCurve.h"
-#include "cc/CCTimingFunction.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 

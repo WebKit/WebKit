@@ -24,7 +24,8 @@
 
 #include "config.h"
 
-#include "cc/CCScheduler.h"
+#include "CCScheduler.h"
+
 #include "TraceEvent.h"
 
 namespace WebCore {

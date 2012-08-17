@@ -24,17 +24,16 @@
 
 #include "config.h"
 
-#include "cc/CCTextureUpdateController.h"
+#include "CCTextureUpdateController.h"
 
 #include "CCSchedulerTestCommon.h"
+#include "CCSingleThreadProxy.h" // For DebugScopedSetImplThread
 #include "CCTiledLayerTestCommon.h"
 #include "FakeWebCompositorOutputSurface.h"
 #include "FakeWebGraphicsContext3D.h"
-#include "cc/CCSingleThreadProxy.h" // For DebugScopedSetImplThread
+#include <gtest/gtest.h>
 #include <public/WebCompositor.h>
 #include <public/WebThread.h>
-
-#include <gtest/gtest.h>
 #include <wtf/RefPtr.h>
 
 using namespace WebCore;

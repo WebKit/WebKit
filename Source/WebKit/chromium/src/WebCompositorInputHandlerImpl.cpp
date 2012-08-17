@@ -27,14 +27,14 @@
 
 #include "WebCompositorInputHandlerImpl.h"
 
+#include "CCActiveGestureAnimation.h"
+#include "CCProxy.h"
 #include "PlatformGestureCurveTarget.h"
 #include "TouchpadFlingPlatformGestureCurve.h"
 #include "TraceEvent.h"
 #include "WebCompositorImpl.h"
 #include "WebCompositorInputHandlerClient.h"
 #include "WebInputEvent.h"
-#include "cc/CCActiveGestureAnimation.h"
-#include "cc/CCProxy.h"
 #include <wtf/ThreadingPrimitives.h>
 
 using namespace WebCore;

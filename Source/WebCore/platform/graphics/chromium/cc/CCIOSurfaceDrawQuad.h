@@ -26,8 +26,8 @@
 #ifndef CCIOSurfaceDrawQuad_h
 #define CCIOSurfaceDrawQuad_h
 
+#include "CCDrawQuad.h"
 #include "IntSize.h"
-#include "cc/CCDrawQuad.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

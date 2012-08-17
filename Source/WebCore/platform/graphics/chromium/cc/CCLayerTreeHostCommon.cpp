@@ -25,17 +25,17 @@
 
 #include "config.h"
 
-#include "cc/CCLayerTreeHostCommon.h"
+#include "CCLayerTreeHostCommon.h"
 
+#include "CCLayerImpl.h"
+#include "CCLayerIterator.h"
+#include "CCLayerSorter.h"
+#include "CCMathUtil.h"
+#include "CCRenderSurface.h"
 #include "FloatQuad.h"
 #include "IntRect.h"
 #include "LayerChromium.h"
 #include "RenderSurfaceChromium.h"
-#include "cc/CCLayerImpl.h"
-#include "cc/CCLayerIterator.h"
-#include "cc/CCLayerSorter.h"
-#include "cc/CCMathUtil.h"
-#include "cc/CCRenderSurface.h"
 #include <public/WebTransformationMatrix.h>
 
 using WebKit::WebTransformationMatrix;

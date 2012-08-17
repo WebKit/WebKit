@@ -32,12 +32,12 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCDamageTracker.h"
+#include "CCDamageTracker.h"
 
-#include "cc/CCLayerImpl.h"
-#include "cc/CCLayerTreeHostCommon.h"
-#include "cc/CCMathUtil.h"
-#include "cc/CCRenderSurface.h"
+#include "CCLayerImpl.h"
+#include "CCLayerTreeHostCommon.h"
+#include "CCMathUtil.h"
+#include "CCRenderSurface.h"
 #include <public/WebFilterOperations.h>
 
 using WebKit::WebTransformationMatrix;

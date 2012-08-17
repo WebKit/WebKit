@@ -25,9 +25,9 @@
 #ifndef CCSingleThreadProxy_h
 #define CCSingleThreadProxy_h
 
-#include "cc/CCAnimationEvents.h"
-#include "cc/CCLayerTreeHostImpl.h"
-#include "cc/CCProxy.h"
+#include "CCAnimationEvents.h"
+#include "CCLayerTreeHostImpl.h"
+#include "CCProxy.h"
 #include <limits>
 #include <wtf/OwnPtr.h>
 

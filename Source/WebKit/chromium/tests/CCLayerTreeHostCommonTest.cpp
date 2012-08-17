@@ -24,19 +24,19 @@
 
 #include "config.h"
 
-#include "cc/CCLayerTreeHostCommon.h"
+#include "CCLayerTreeHostCommon.h"
 
 #include "CCAnimationTestCommon.h"
+#include "CCLayerAnimationController.h"
+#include "CCLayerImpl.h"
+#include "CCLayerSorter.h"
 #include "CCLayerTreeTestCommon.h"
+#include "CCMathUtil.h"
+#include "CCProxy.h"
+#include "CCSingleThreadProxy.h"
+#include "CCThread.h"
 #include "ContentLayerChromium.h"
 #include "LayerChromium.h"
-#include "cc/CCLayerAnimationController.h"
-#include "cc/CCLayerImpl.h"
-#include "cc/CCLayerSorter.h"
-#include "cc/CCMathUtil.h"
-#include "cc/CCProxy.h"
-#include "cc/CCSingleThreadProxy.h"
-#include "cc/CCThread.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

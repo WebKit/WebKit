@@ -25,11 +25,11 @@
 #ifndef CCThreadProxy_h
 #define CCThreadProxy_h
 
-#include "cc/CCAnimationEvents.h"
-#include "cc/CCCompletionEvent.h"
-#include "cc/CCLayerTreeHostImpl.h"
-#include "cc/CCProxy.h"
-#include "cc/CCScheduler.h"
+#include "CCAnimationEvents.h"
+#include "CCCompletionEvent.h"
+#include "CCLayerTreeHostImpl.h"
+#include "CCProxy.h"
+#include "CCScheduler.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {

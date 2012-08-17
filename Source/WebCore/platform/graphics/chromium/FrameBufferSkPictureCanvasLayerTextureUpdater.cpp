@@ -30,10 +30,10 @@
 
 #include "FrameBufferSkPictureCanvasLayerTextureUpdater.h"
 
+#include "CCProxy.h"
 #include "LayerPainterChromium.h"
 #include "SkCanvas.h"
 #include "SkGpuDevice.h"
-#include "cc/CCProxy.h"
 #include <public/WebGraphicsContext3D.h>
 #include <public/WebSharedGraphicsContext3D.h>
 

@@ -29,16 +29,14 @@
 
 #include "TiledLayerChromium.h"
 
+#include "CCLayerImpl.h"
+#include "CCLayerTreeHost.h"
+#include "CCOverdrawMetrics.h"
+#include "CCTextureUpdateQueue.h"
+#include "CCTiledLayerImpl.h"
 #include "GraphicsContext3D.h"
 #include "Region.h"
 #include "TextStream.h"
-
-#include "cc/CCLayerImpl.h"
-#include "cc/CCLayerTreeHost.h"
-#include "cc/CCOverdrawMetrics.h"
-#include "cc/CCTextureUpdateQueue.h"
-#include "cc/CCTiledLayerImpl.h"
-
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 

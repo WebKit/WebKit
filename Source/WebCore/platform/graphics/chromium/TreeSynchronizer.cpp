@@ -27,11 +27,11 @@
 
 #include "TreeSynchronizer.h"
 
+#include "CCLayerImpl.h"
+#include "CCScrollbarAnimationController.h"
+#include "CCScrollbarLayerImpl.h"
 #include "LayerChromium.h"
 #include "ScrollbarLayerChromium.h"
-#include "cc/CCLayerImpl.h"
-#include "cc/CCScrollbarAnimationController.h"
-#include "cc/CCScrollbarLayerImpl.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

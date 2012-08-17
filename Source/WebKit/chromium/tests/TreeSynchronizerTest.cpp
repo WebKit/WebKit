@@ -27,12 +27,12 @@
 #include "TreeSynchronizer.h"
 
 #include "CCAnimationTestCommon.h"
+#include "CCLayerAnimationController.h"
+#include "CCLayerImpl.h"
+#include "CCProxy.h"
+#include "CCSingleThreadProxy.h"
 #include "LayerChromium.h"
 #include "Region.h"
-#include "cc/CCLayerAnimationController.h"
-#include "cc/CCLayerImpl.h"
-#include "cc/CCProxy.h"
-#include "cc/CCSingleThreadProxy.h"
 #include <gtest/gtest.h>
 
 using namespace WebCore;

@@ -25,9 +25,9 @@
 #ifndef CCSchedulerTestCommon_h
 #define CCSchedulerTestCommon_h
 
-#include "cc/CCDelayBasedTimeSource.h"
-#include "cc/CCFrameRateController.h"
-#include "cc/CCThread.h"
+#include "CCDelayBasedTimeSource.h"
+#include "CCFrameRateController.h"
+#include "CCThread.h"
 #include <gtest/gtest.h>
 #include <wtf/OwnPtr.h>
 

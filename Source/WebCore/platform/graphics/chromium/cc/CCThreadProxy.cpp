@@ -24,19 +24,19 @@
 
 #include "config.h"
 
-#include "cc/CCThreadProxy.h"
+#include "CCThreadProxy.h"
 
+#include "CCDelayBasedTimeSource.h"
+#include "CCDrawQuad.h"
+#include "CCFrameRateController.h"
+#include "CCGraphicsContext.h"
+#include "CCInputHandler.h"
+#include "CCLayerTreeHost.h"
+#include "CCScheduler.h"
+#include "CCScopedThreadProxy.h"
+#include "CCTextureUpdateController.h"
+#include "CCThreadTask.h"
 #include "TraceEvent.h"
-#include "cc/CCDelayBasedTimeSource.h"
-#include "cc/CCDrawQuad.h"
-#include "cc/CCFrameRateController.h"
-#include "cc/CCGraphicsContext.h"
-#include "cc/CCInputHandler.h"
-#include "cc/CCLayerTreeHost.h"
-#include "cc/CCScheduler.h"
-#include "cc/CCScopedThreadProxy.h"
-#include "cc/CCTextureUpdateController.h"
-#include "cc/CCThreadTask.h"
 #include <public/WebSharedGraphicsContext3D.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>

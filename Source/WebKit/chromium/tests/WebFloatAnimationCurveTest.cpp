@@ -26,7 +26,7 @@
 
 #include <public/WebFloatAnimationCurve.h>
 
-#include "cc/CCTimingFunction.h"
+#include "CCTimingFunction.h"
 
 #include <gtest/gtest.h>
 #include <wtf/OwnPtr.h>

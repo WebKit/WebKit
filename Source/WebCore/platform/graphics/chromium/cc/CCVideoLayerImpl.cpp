@@ -27,20 +27,20 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCVideoLayerImpl.h"
+#include "CCVideoLayerImpl.h"
 
+#include "CCIOSurfaceDrawQuad.h"
+#include "CCLayerTreeHostImpl.h"
+#include "CCProxy.h"
+#include "CCQuadSink.h"
+#include "CCResourceProvider.h"
+#include "CCStreamVideoDrawQuad.h"
+#include "CCTextureDrawQuad.h"
+#include "CCYUVVideoDrawQuad.h"
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include "NotImplemented.h"
 #include "TextStream.h"
-#include "cc/CCIOSurfaceDrawQuad.h"
-#include "cc/CCLayerTreeHostImpl.h"
-#include "cc/CCProxy.h"
-#include "cc/CCQuadSink.h"
-#include "cc/CCResourceProvider.h"
-#include "cc/CCStreamVideoDrawQuad.h"
-#include "cc/CCTextureDrawQuad.h"
-#include "cc/CCYUVVideoDrawQuad.h"
 #include <public/WebVideoFrame.h>
 #include <wtf/text/WTFString.h>
 

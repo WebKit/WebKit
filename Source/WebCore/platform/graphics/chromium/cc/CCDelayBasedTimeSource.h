@@ -25,9 +25,8 @@
 #ifndef CCDelayBasedTimeSource_h
 #define CCDelayBasedTimeSource_h
 
-#include "cc/CCTimeSource.h"
-#include "cc/CCTimer.h"
-
+#include "CCTimeSource.h"
+#include "CCTimer.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {

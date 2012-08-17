@@ -25,11 +25,11 @@
 #ifndef CCOcclusionTrackerTestCommon_h
 #define CCOcclusionTrackerTestCommon_h
 
+#include "CCOcclusionTracker.h"
+#include "CCRenderSurface.h"
 #include "IntRect.h"
 #include "Region.h"
 #include "RenderSurfaceChromium.h"
-#include "cc/CCOcclusionTracker.h"
-#include "cc/CCRenderSurface.h"
 
 namespace WebKitTests {
 

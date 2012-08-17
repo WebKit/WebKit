@@ -27,16 +27,16 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCLayerImpl.h"
+#include "CCLayerImpl.h"
 
+#include "CCDebugBorderDrawQuad.h"
+#include "CCLayerSorter.h"
+#include "CCMathUtil.h"
+#include "CCProxy.h"
+#include "CCQuadSink.h"
+#include "CCScrollbarAnimationController.h"
 #include "TextStream.h"
 #include "TraceEvent.h"
-#include "cc/CCDebugBorderDrawQuad.h"
-#include "cc/CCLayerSorter.h"
-#include "cc/CCMathUtil.h"
-#include "cc/CCProxy.h"
-#include "cc/CCQuadSink.h"
-#include "cc/CCScrollbarAnimationController.h"
 #include <wtf/text/WTFString.h>
 
 using WebKit::WebTransformationMatrix;

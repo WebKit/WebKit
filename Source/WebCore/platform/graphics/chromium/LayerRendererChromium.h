@@ -34,18 +34,18 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "CCCheckerboardDrawQuad.h"
+#include "CCDebugBorderDrawQuad.h"
+#include "CCIOSurfaceDrawQuad.h"
+#include "CCRenderPassDrawQuad.h"
+#include "CCRenderer.h"
+#include "CCSolidColorDrawQuad.h"
+#include "CCStreamVideoDrawQuad.h"
+#include "CCTextureDrawQuad.h"
+#include "CCTileDrawQuad.h"
+#include "CCYUVVideoDrawQuad.h"
 #include "Extensions3DChromium.h"
 #include "TextureCopier.h"
-#include "cc/CCCheckerboardDrawQuad.h"
-#include "cc/CCDebugBorderDrawQuad.h"
-#include "cc/CCIOSurfaceDrawQuad.h"
-#include "cc/CCRenderPassDrawQuad.h"
-#include "cc/CCRenderer.h"
-#include "cc/CCSolidColorDrawQuad.h"
-#include "cc/CCStreamVideoDrawQuad.h"
-#include "cc/CCTextureDrawQuad.h"
-#include "cc/CCTileDrawQuad.h"
-#include "cc/CCYUVVideoDrawQuad.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebKit {

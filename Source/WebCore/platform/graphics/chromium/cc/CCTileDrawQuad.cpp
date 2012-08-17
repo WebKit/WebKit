@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "cc/CCTileDrawQuad.h"
+#include "CCTileDrawQuad.h"
 
 namespace WebCore {
 

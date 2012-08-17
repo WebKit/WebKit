@@ -27,8 +27,9 @@
 #include "config.h"
 
 #include "SharedGraphicsContext3D.h"
+
+#include "CCProxy.h"
 #include "Extensions3D.h"
-#include "cc/CCProxy.h"
 
 namespace WebCore {
 

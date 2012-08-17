@@ -24,9 +24,9 @@
 
 #include "config.h"
 
-#include "cc/CCActiveAnimation.h"
-#include "CCAnimationTestCommon.h"
+#include "CCActiveAnimation.h"
 
+#include "CCAnimationTestCommon.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <wtf/Vector.h>

@@ -29,7 +29,7 @@
 
 #include "IOSurfaceLayerChromium.h"
 
-#include "cc/CCIOSurfaceLayerImpl.h"
+#include "CCIOSurfaceLayerImpl.h"
 
 namespace WebCore {
 

@@ -26,7 +26,7 @@
 
 #include <public/WebTransformAnimationCurve.h>
 
-#include "cc/CCTimingFunction.h"
+#include "CCTimingFunction.h"
 
 #include <gtest/gtest.h>
 #include <public/WebTransformOperations.h>

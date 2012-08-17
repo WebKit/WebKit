@@ -26,11 +26,10 @@
 
 #include "CCAnimationTestCommon.h"
 
+#include "CCKeyframedAnimationCurve.h"
+#include "CCLayerAnimationController.h"
+#include "CCLayerImpl.h"
 #include "LayerChromium.h"
-#include "cc/CCKeyframedAnimationCurve.h"
-#include "cc/CCLayerAnimationController.h"
-#include "cc/CCLayerImpl.h"
-
 #include <public/WebTransformOperations.h>
 
 using namespace WebCore;

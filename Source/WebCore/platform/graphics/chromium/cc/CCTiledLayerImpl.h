@@ -26,7 +26,7 @@
 #ifndef CCTiledLayerImpl_h
 #define CCTiledLayerImpl_h
 
-#include "cc/CCLayerImpl.h"
+#include "CCLayerImpl.h"
 #include <public/WebTransformationMatrix.h>
 
 namespace WebCore {

@@ -26,12 +26,12 @@
 
 #include "LayerChromium.h"
 
+#include "CCLayerImpl.h"
+#include "CCLayerTreeHost.h"
 #include "CCLayerTreeTestCommon.h"
+#include "CCSingleThreadProxy.h"
 #include "FakeCCLayerTreeHostClient.h"
 #include "LayerPainterChromium.h"
-#include "cc/CCLayerImpl.h"
-#include "cc/CCLayerTreeHost.h"
-#include "cc/CCSingleThreadProxy.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <public/WebCompositor.h>

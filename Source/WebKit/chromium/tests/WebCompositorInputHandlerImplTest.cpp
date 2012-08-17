@@ -27,11 +27,11 @@
 
 #include "WebCompositorInputHandlerImpl.h"
 
+#include "CCActiveGestureAnimation.h"
+#include "CCInputHandler.h"
+#include "CCSingleThreadProxy.h"
 #include "WebCompositorInputHandlerClient.h"
 #include "WebInputEvent.h"
-#include "cc/CCActiveGestureAnimation.h"
-#include "cc/CCInputHandler.h"
-#include "cc/CCSingleThreadProxy.h"
 #include <public/WebCompositor.h>
 #include <public/WebFloatPoint.h>
 #include <public/WebPoint.h>

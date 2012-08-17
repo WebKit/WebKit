@@ -26,9 +26,9 @@
 #ifndef CCRenderPassDrawQuad_h
 #define CCRenderPassDrawQuad_h
 
+#include "CCDrawQuad.h"
+#include "CCResourceProvider.h"
 #include "IntRect.h"
-#include "cc/CCDrawQuad.h"
-#include "cc/CCResourceProvider.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

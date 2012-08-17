@@ -24,15 +24,15 @@
 
 #include "config.h"
 
-#include "cc/CCQuadCuller.h"
+#include "CCQuadCuller.h"
 
-#include "cc/CCLayerTilingData.h"
-#include "cc/CCMathUtil.h"
-#include "cc/CCOcclusionTracker.h"
-#include "cc/CCOverdrawMetrics.h"
-#include "cc/CCSingleThreadProxy.h"
-#include "cc/CCTiledLayerImpl.h"
-#include "cc/CCTileDrawQuad.h"
+#include "CCLayerTilingData.h"
+#include "CCMathUtil.h"
+#include "CCOcclusionTracker.h"
+#include "CCOverdrawMetrics.h"
+#include "CCSingleThreadProxy.h"
+#include "CCTileDrawQuad.h"
+#include "CCTiledLayerImpl.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <public/WebTransformationMatrix.h>

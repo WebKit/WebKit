@@ -27,9 +27,9 @@
 #ifndef CCResourceProvider_h
 #define CCResourceProvider_h
 
+#include "CCGraphicsContext.h"
 #include "GraphicsContext3D.h"
 #include "IntSize.h"
-#include "cc/CCGraphicsContext.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>

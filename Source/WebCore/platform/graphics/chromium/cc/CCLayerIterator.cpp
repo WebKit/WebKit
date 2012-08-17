@@ -26,12 +26,12 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCLayerIterator.h"
+#include "CCLayerIterator.h"
 
+#include "CCLayerImpl.h"
+#include "CCRenderSurface.h"
 #include "LayerChromium.h"
 #include "RenderSurfaceChromium.h"
-#include "cc/CCLayerImpl.h"
-#include "cc/CCRenderSurface.h"
 
 namespace WebCore {
 

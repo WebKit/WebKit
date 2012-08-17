@@ -27,8 +27,8 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "CCFontAtlas.h"
 
+#include "CCProxy.h"
 #include "SkCanvas.h"
-#include "cc/CCProxy.h"
 
 namespace WebCore {
 

@@ -29,9 +29,9 @@
 
 #include "CCScrollbarLayerImpl.h"
 
-#include "cc/CCQuadSink.h"
-#include "cc/CCScrollbarAnimationController.h"
-#include "cc/CCTextureDrawQuad.h"
+#include "CCQuadSink.h"
+#include "CCScrollbarAnimationController.h"
+#include "CCTextureDrawQuad.h"
 
 using WebKit::WebRect;
 using WebKit::WebScrollbar;

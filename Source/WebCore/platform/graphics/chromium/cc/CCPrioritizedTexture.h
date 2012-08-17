@@ -25,12 +25,12 @@
 #ifndef CCPrioritizedTexture_h
 #define CCPrioritizedTexture_h
 
+#include "CCPriorityCalculator.h"
+#include "CCResourceProvider.h"
+#include "CCTexture.h"
 #include "GraphicsContext3D.h"
 #include "IntRect.h"
 #include "IntSize.h"
-#include "cc/CCPriorityCalculator.h"
-#include "cc/CCResourceProvider.h"
-#include "cc/CCTexture.h"
 
 namespace WebCore {
 

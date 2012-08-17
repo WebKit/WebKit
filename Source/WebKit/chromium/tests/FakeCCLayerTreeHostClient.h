@@ -27,10 +27,9 @@
 
 #include "config.h"
 
+#include "CCLayerTreeHost.h"
 #include "CompositorFakeWebGraphicsContext3D.h"
 #include "FakeWebCompositorOutputSurface.h"
-
-#include "cc/CCLayerTreeHost.h"
 
 namespace WebCore {
 

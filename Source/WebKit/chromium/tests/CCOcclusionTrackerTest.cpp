@@ -24,19 +24,19 @@
 
 #include "config.h"
 
-#include "cc/CCOcclusionTracker.h"
+#include "CCOcclusionTracker.h"
 
 #include "CCAnimationTestCommon.h"
+#include "CCLayerAnimationController.h"
+#include "CCLayerImpl.h"
+#include "CCLayerTreeHostCommon.h"
 #include "CCLayerTreeTestCommon.h"
+#include "CCMathUtil.h"
 #include "CCOcclusionTrackerTestCommon.h"
+#include "CCOverdrawMetrics.h"
+#include "CCSingleThreadProxy.h"
 #include "LayerChromium.h"
 #include "Region.h"
-#include "cc/CCLayerAnimationController.h"
-#include "cc/CCLayerImpl.h"
-#include "cc/CCLayerTreeHostCommon.h"
-#include "cc/CCMathUtil.h"
-#include "cc/CCOverdrawMetrics.h"
-#include "cc/CCSingleThreadProxy.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <public/WebFilterOperation.h>

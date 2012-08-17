@@ -25,9 +25,9 @@
 #ifndef MockCCQuadCuller_h
 #define MockCCQuadCuller_h
 
+#include "CCDrawQuad.h"
+#include "CCQuadSink.h"
 #include "IntRect.h"
-#include "cc/CCDrawQuad.h"
-#include "cc/CCQuadSink.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

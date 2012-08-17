@@ -26,7 +26,7 @@
 #ifndef CCStreamVideoDrawQuad_h
 #define CCStreamVideoDrawQuad_h
 
-#include "cc/CCDrawQuad.h"
+#include "CCDrawQuad.h"
 #include <public/WebTransformationMatrix.h>
 
 #include <wtf/PassOwnPtr.h>

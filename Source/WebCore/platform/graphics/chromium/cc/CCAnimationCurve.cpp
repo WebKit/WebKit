@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#include "cc/CCAnimationCurve.h"
+#include "CCAnimationCurve.h"
 
 namespace WebCore {
 

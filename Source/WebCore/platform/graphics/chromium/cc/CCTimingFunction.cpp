@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#include "cc/CCTimingFunction.h"
+#include "CCTimingFunction.h"
 
 #include <wtf/OwnPtr.h>
 

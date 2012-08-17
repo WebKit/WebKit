@@ -28,9 +28,9 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "CCLayerTilingData.h"
 #include "LayerChromium.h"
 #include "LayerTextureUpdater.h"
-#include "cc/CCLayerTilingData.h"
 
 namespace WebCore {
 class UpdatableTile;

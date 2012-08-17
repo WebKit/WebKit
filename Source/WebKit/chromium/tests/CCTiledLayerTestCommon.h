@@ -25,6 +25,11 @@
 #ifndef CCTiledLayerTestCommon_h
 #define CCTiledLayerTestCommon_h
 
+#include "CCGraphicsContext.h"
+#include "CCPrioritizedTexture.h"
+#include "CCResourceProvider.h"
+#include "CCTextureUpdateQueue.h"
+#include "CCTiledLayerImpl.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "LayerTextureUpdater.h"
@@ -32,11 +37,6 @@
 #include "TextureCopier.h"
 #include "TextureUploader.h"
 #include "TiledLayerChromium.h"
-#include "cc/CCGraphicsContext.h"
-#include "cc/CCPrioritizedTexture.h"
-#include "cc/CCResourceProvider.h"
-#include "cc/CCTextureUpdateQueue.h"
-#include "cc/CCTiledLayerImpl.h"
 
 namespace WebKitTests {
 

@@ -26,10 +26,10 @@
 #ifndef CCTexture_h
 #define CCTexture_h
 
+#include "CCResourceProvider.h"
+#include "CCTexture.h"
 #include "GraphicsContext3D.h"
 #include "IntSize.h"
-#include "cc/CCResourceProvider.h"
-#include "cc/CCTexture.h"
 
 namespace WebCore {
 

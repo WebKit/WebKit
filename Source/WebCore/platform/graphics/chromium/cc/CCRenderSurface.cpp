@@ -27,18 +27,18 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCRenderSurface.h"
+#include "CCRenderSurface.h"
 
+#include "CCDamageTracker.h"
+#include "CCDebugBorderDrawQuad.h"
+#include "CCLayerImpl.h"
+#include "CCMathUtil.h"
+#include "CCQuadSink.h"
+#include "CCRenderPassDrawQuad.h"
+#include "CCSharedQuadState.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "TextStream.h"
-#include "cc/CCDamageTracker.h"
-#include "cc/CCDebugBorderDrawQuad.h"
-#include "cc/CCLayerImpl.h"
-#include "cc/CCMathUtil.h"
-#include "cc/CCQuadSink.h"
-#include "cc/CCRenderPassDrawQuad.h"
-#include "cc/CCSharedQuadState.h"
 #include <public/WebTransformationMatrix.h>
 #include <wtf/text/CString.h>
 

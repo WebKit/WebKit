@@ -26,9 +26,8 @@
 #ifndef CCSolidColorDrawQuad_h
 #define CCSolidColorDrawQuad_h
 
+#include "CCDrawQuad.h"
 #include "SkColor.h"
-#include "cc/CCDrawQuad.h"
-
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

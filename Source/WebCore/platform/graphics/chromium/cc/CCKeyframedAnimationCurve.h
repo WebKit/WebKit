@@ -25,11 +25,9 @@
 #ifndef CCKeyframedAnimationCurve_h
 #define CCKeyframedAnimationCurve_h
 
-#include "cc/CCAnimationCurve.h"
-#include "cc/CCTimingFunction.h"
-
+#include "CCAnimationCurve.h"
+#include "CCTimingFunction.h"
 #include <public/WebTransformOperations.h>
-
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>

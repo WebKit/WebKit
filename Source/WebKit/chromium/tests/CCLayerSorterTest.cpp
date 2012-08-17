@@ -24,11 +24,11 @@
 
 #include "config.h"
 
-#include "cc/CCLayerSorter.h"
+#include "CCLayerSorter.h"
 
-#include "cc/CCLayerImpl.h"
-#include "cc/CCMathUtil.h"
-#include "cc/CCSingleThreadProxy.h"
+#include "CCLayerImpl.h"
+#include "CCMathUtil.h"
+#include "CCSingleThreadProxy.h"
 #include <gtest/gtest.h>
 #include <public/WebTransformationMatrix.h>
 

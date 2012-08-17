@@ -25,7 +25,7 @@
 #ifndef CCScopedThreadProxy_h
 #define CCScopedThreadProxy_h
 
-#include "cc/CCThreadTask.h"
+#include "CCThreadTask.h"
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {

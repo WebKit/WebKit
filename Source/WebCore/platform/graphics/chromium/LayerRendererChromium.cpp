@@ -34,6 +34,16 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "LayerRendererChromium.h"
 
+#include "CCDamageTracker.h"
+#include "CCLayerQuad.h"
+#include "CCMathUtil.h"
+#include "CCProxy.h"
+#include "CCRenderPass.h"
+#include "CCRenderSurfaceFilters.h"
+#include "CCScopedTexture.h"
+#include "CCSettings.h"
+#include "CCSingleThreadProxy.h"
+#include "CCVideoLayerImpl.h"
 #include "Extensions3D.h"
 #include "FloatQuad.h"
 #include "GeometryBinding.h"
@@ -44,16 +54,6 @@
 #include "SkColor.h"
 #include "ThrottledTextureUploader.h"
 #include "TraceEvent.h"
-#include "cc/CCDamageTracker.h"
-#include "cc/CCLayerQuad.h"
-#include "cc/CCMathUtil.h"
-#include "cc/CCProxy.h"
-#include "cc/CCRenderPass.h"
-#include "cc/CCRenderSurfaceFilters.h"
-#include "cc/CCScopedTexture.h"
-#include "cc/CCSettings.h"
-#include "cc/CCSingleThreadProxy.h"
-#include "cc/CCVideoLayerImpl.h"
 #include <public/WebGraphicsContext3D.h>
 #include <public/WebSharedGraphicsContext3D.h>
 #include <public/WebVideoFrame.h>

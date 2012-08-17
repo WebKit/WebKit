@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "cc/CCSolidColorDrawQuad.h"
+#include "CCSolidColorDrawQuad.h"
 
 namespace WebCore {
 

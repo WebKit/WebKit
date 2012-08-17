@@ -32,7 +32,8 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "VideoLayerChromium.h"
-#include "cc/CCVideoLayerImpl.h"
+
+#include "CCVideoLayerImpl.h"
 
 namespace WebCore {
 

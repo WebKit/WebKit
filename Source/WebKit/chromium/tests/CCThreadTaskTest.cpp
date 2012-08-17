@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#include "cc/CCThreadTask.h"
+#include "CCThreadTask.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

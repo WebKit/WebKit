@@ -25,12 +25,12 @@
 #ifndef CCLayerTreeHostImpl_h
 #define CCLayerTreeHostImpl_h
 
+#include "CCAnimationEvents.h"
+#include "CCInputHandler.h"
+#include "CCLayerSorter.h"
+#include "CCRenderPass.h"
+#include "CCRenderer.h"
 #include "SkColor.h"
-#include "cc/CCAnimationEvents.h"
-#include "cc/CCInputHandler.h"
-#include "cc/CCLayerSorter.h"
-#include "cc/CCRenderPass.h"
-#include "cc/CCRenderer.h"
 #include <public/WebCompositorOutputSurfaceClient.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>

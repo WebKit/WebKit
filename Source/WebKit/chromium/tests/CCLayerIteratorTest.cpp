@@ -24,10 +24,10 @@
 
 #include "config.h"
 
-#include "cc/CCLayerIterator.h"
+#include "CCLayerIterator.h"
 
+#include "CCLayerTreeHostCommon.h"
 #include "LayerChromium.h"
-#include "cc/CCLayerTreeHostCommon.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <public/WebTransformationMatrix.h>

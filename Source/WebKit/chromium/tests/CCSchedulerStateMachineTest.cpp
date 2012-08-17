@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#include "cc/CCSchedulerStateMachine.h"
+#include "CCSchedulerStateMachine.h"
 
 #include <gtest/gtest.h>
 #include <wtf/text/CString.h>

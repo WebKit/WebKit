@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#include "cc/CCSettings.h"
+#include "CCSettings.h"
 
 namespace {
 static bool s_perTilePaintingEnabled = false;

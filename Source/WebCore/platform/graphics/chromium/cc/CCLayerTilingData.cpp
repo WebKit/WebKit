@@ -28,7 +28,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCLayerTilingData.h"
+#include "CCLayerTilingData.h"
 
 using namespace std;
 

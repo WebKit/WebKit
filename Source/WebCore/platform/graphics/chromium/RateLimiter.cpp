@@ -26,11 +26,11 @@
 #include "config.h"
 
 #if USE(ACCELERATED_COMPOSITING)
-
 #include "RateLimiter.h"
+
+#include "CCProxy.h"
+#include "CCThread.h"
 #include "TraceEvent.h"
-#include "cc/CCProxy.h"
-#include "cc/CCThread.h"
 #include <public/WebGraphicsContext3D.h>
 
 namespace WebCore {

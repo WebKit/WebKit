@@ -25,7 +25,7 @@
 #ifndef CCLayerIterator_h
 #define CCLayerIterator_h
 
-#include "cc/CCLayerTreeHostCommon.h"
+#include "CCLayerTreeHostCommon.h"
 
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>

@@ -24,10 +24,10 @@
 
 #include "config.h"
 
-#include "cc/CCDelayBasedTimeSource.h"
+#include "CCDelayBasedTimeSource.h"
 
 #include "CCSchedulerTestCommon.h"
-#include "cc/CCThread.h"
+#include "CCThread.h"
 #include <gtest/gtest.h>
 #include <wtf/RefPtr.h>
 

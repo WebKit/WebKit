@@ -28,11 +28,11 @@
 #include "PlatformGestureCurve.h"
 
 #include "ActivePlatformGestureAnimation.h"
+#include "CCActiveGestureAnimation.h"
+#include "CCGestureCurve.h"
 #include "PlatformGestureCurveTarget.h"
 #include "TouchpadFlingPlatformGestureCurve.h"
 #include "WheelFlingPlatformGestureCurve.h"
-#include "cc/CCActiveGestureAnimation.h"
-#include "cc/CCGestureCurve.h"
 #include <gtest/gtest.h>
 #include <wtf/OwnPtr.h>
 

@@ -29,8 +29,8 @@
 
 #include "TextureLayerChromium.h"
 
-#include "cc/CCLayerTreeHost.h"
-#include "cc/CCTextureLayerImpl.h"
+#include "CCLayerTreeHost.h"
+#include "CCTextureLayerImpl.h"
 #include <public/WebGraphicsContext3D.h>
 
 namespace WebCore {

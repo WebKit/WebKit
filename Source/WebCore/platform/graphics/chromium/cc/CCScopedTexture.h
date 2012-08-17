@@ -26,7 +26,7 @@
 #ifndef CCScopedTexture_h
 #define CCScopedTexture_h
 
-#include "cc/CCTexture.h"
+#include "CCTexture.h"
 
 #if !ASSERT_DISABLED
 #include <wtf/MainThread.h>

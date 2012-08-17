@@ -25,18 +25,16 @@
 #ifndef CCLayerTreeHost_h
 #define CCLayerTreeHost_h
 
+#include "CCAnimationEvents.h"
+#include "CCGraphicsContext.h"
+#include "CCLayerTreeHostCommon.h"
+#include "CCOcclusionTracker.h"
+#include "CCPrioritizedTextureManager.h"
+#include "CCProxy.h"
+#include "CCRenderingStats.h"
 #include "IntRect.h"
 #include "RateLimiter.h"
 #include "SkColor.h"
-#include "cc/CCAnimationEvents.h"
-#include "cc/CCGraphicsContext.h"
-#include "cc/CCLayerTreeHostCommon.h"
-#include "cc/CCOcclusionTracker.h"
-#include "cc/CCPrioritizedTextureManager.h"
-#include "cc/CCProxy.h"
-#include "cc/CCRenderingStats.h"
-
-
 #include <limits>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>

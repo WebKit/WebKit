@@ -24,10 +24,10 @@
 
 #include "config.h"
 
-#include "cc/CCLayerAnimationController.h"
+#include "CCLayerAnimationController.h"
 
-#include "cc/CCActiveAnimation.h"
-#include "cc/CCKeyframedAnimationCurve.h"
+#include "CCActiveAnimation.h"
+#include "CCKeyframedAnimationCurve.h"
 #include <public/WebTransformationMatrix.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>

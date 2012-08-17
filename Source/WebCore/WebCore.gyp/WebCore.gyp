@@ -115,6 +115,7 @@
       '../platform/chromium/support',
       '../platform/graphics',
       '../platform/graphics/chromium',
+      '../platform/graphics/chromium/cc',
       '../platform/graphics/filters',
       '../platform/graphics/filters/arm',
       '../platform/graphics/gpu',

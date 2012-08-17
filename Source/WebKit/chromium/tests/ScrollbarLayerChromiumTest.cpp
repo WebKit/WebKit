@@ -26,13 +26,13 @@
 
 #include "ScrollbarLayerChromium.h"
 
+#include "CCScrollbarAnimationController.h"
+#include "CCScrollbarLayerImpl.h"
+#include "CCSingleThreadProxy.h"
 #include "FakeWebScrollbarThemeGeometry.h"
 #include "Scrollbar.h"
 #include "Settings.h"
 #include "TreeSynchronizer.h"
-#include "cc/CCScrollbarAnimationController.h"
-#include "cc/CCScrollbarLayerImpl.h"
-#include "cc/CCSingleThreadProxy.h"
 #include <gtest/gtest.h>
 #include <public/WebScrollbar.h>
 #include <public/WebScrollbarThemeGeometry.h>

@@ -25,14 +25,14 @@
 
 #include "config.h"
 
-#include "cc/CCRenderPass.h"
+#include "CCRenderPass.h"
 
-#include "cc/CCLayerImpl.h"
-#include "cc/CCMathUtil.h"
-#include "cc/CCOcclusionTracker.h"
-#include "cc/CCQuadCuller.h"
-#include "cc/CCSharedQuadState.h"
-#include "cc/CCSolidColorDrawQuad.h"
+#include "CCLayerImpl.h"
+#include "CCMathUtil.h"
+#include "CCOcclusionTracker.h"
+#include "CCQuadCuller.h"
+#include "CCSharedQuadState.h"
+#include "CCSolidColorDrawQuad.h"
 
 using WebKit::WebTransformationMatrix;
 

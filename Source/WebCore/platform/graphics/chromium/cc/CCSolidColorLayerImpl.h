@@ -26,7 +26,7 @@
 #ifndef CCSolidColorLayerImpl_h
 #define CCSolidColorLayerImpl_h
 
-#include "cc/CCLayerImpl.h"
+#include "CCLayerImpl.h"
 #include <public/WebTransformationMatrix.h>
 
 namespace WebCore {

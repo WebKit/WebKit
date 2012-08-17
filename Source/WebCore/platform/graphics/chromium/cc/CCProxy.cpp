@@ -24,9 +24,9 @@
 
 #include "config.h"
 
-#include "cc/CCProxy.h"
+#include "CCProxy.h"
 
-#include "cc/CCThreadTask.h"
+#include "CCThreadTask.h"
 #include <wtf/MainThread.h>
 
 using namespace WTF;

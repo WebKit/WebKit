@@ -27,7 +27,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCTextureUpdateQueue.h"
+#include "CCTextureUpdateQueue.h"
 
 namespace WebCore {
 

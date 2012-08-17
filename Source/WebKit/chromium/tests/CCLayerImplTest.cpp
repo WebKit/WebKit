@@ -24,9 +24,9 @@
 
 #include "config.h"
 
-#include "cc/CCLayerImpl.h"
+#include "CCLayerImpl.h"
 
-#include "cc/CCSingleThreadProxy.h"
+#include "CCSingleThreadProxy.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <public/WebFilterOperation.h>

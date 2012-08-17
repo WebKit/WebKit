@@ -24,10 +24,10 @@
 
 #include "config.h"
 
-#include "cc/CCActiveGestureAnimation.h"
+#include "CCActiveGestureAnimation.h"
 
+#include "CCGestureCurve.h"
 #include "TraceEvent.h"
-#include "cc/CCGestureCurve.h"
 
 namespace WebCore {
 

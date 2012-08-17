@@ -26,8 +26,8 @@
 #include "config.h"
 #include <public/WebExternalTextureLayer.h>
 
+#include "CCTextureUpdateQueue.h"
 #include "TextureLayerChromium.h"
-#include "cc/CCTextureUpdateQueue.h"
 #include <public/WebExternalTextureLayerClient.h>
 #include <public/WebFloatRect.h>
 #include <public/WebSize.h>

@@ -26,9 +26,9 @@
 #ifndef CCVideoLayerImpl_h
 #define CCVideoLayerImpl_h
 
+#include "CCLayerImpl.h"
 #include "GraphicsContext3D.h"
 #include "IntSize.h"
-#include "cc/CCLayerImpl.h"
 #include <public/WebTransformationMatrix.h>
 #include <public/WebVideoFrameProvider.h>
 

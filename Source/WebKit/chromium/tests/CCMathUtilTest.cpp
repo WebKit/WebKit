@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#include "cc/CCMathUtil.h"
+#include "CCMathUtil.h"
 
 #include "CCLayerTreeTestCommon.h"
 #include "FloatRect.h"

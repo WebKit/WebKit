@@ -34,9 +34,9 @@
 
 #include "ImageLayerChromium.h"
 
+#include "CCLayerTreeHost.h"
 #include "LayerTextureUpdater.h"
 #include "PlatformColor.h"
-#include "cc/CCLayerTreeHost.h"
 
 namespace WebCore {
 

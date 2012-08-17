@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#include "cc/CCTimer.h"
+#include "CCTimer.h"
 
 #include "CCSchedulerTestCommon.h"
 #include <gtest/gtest.h>

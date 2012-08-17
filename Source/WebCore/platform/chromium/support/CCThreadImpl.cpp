@@ -25,7 +25,7 @@
 #include "config.h"
 #include "CCThreadImpl.h"
 
-#include "cc/CCCompletionEvent.h"
+#include "CCCompletionEvent.h"
 #include <public/Platform.h>
 #include <public/WebThread.h>
 

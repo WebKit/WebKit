@@ -27,10 +27,10 @@
 
 #include "WebCompositorImpl.h"
 
+#include "CCLayerTreeHost.h"
+#include "CCProxy.h"
+#include "CCSettings.h"
 #include "CCThreadImpl.h"
-#include "cc/CCLayerTreeHost.h"
-#include "cc/CCProxy.h"
-#include "cc/CCSettings.h"
 #include <public/Platform.h>
 #include <wtf/ThreadingPrimitives.h>
 

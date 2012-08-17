@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "cc/CCDebugBorderDrawQuad.h"
+#include "CCDebugBorderDrawQuad.h"
 
 namespace WebCore {
 

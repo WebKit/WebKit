@@ -25,7 +25,7 @@
 #ifndef CCTestCommon_h
 #define CCTestCommon_h
 
-#include "cc/CCSettings.h"
+#include "CCSettings.h"
 
 namespace WebKitTests {
 

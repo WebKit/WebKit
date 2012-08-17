@@ -26,8 +26,8 @@
 #ifndef CCTextureDrawQuad_h
 #define CCTextureDrawQuad_h
 
+#include "CCDrawQuad.h"
 #include "FloatRect.h"
-#include "cc/CCDrawQuad.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

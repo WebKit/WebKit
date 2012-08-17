@@ -36,10 +36,10 @@
 
 #include "BitmapCanvasLayerTextureUpdater.h"
 #include "BitmapSkPictureCanvasLayerTextureUpdater.h"
+#include "CCLayerTreeHost.h"
+#include "CCSettings.h"
 #include "FrameBufferSkPictureCanvasLayerTextureUpdater.h"
 #include "LayerPainterChromium.h"
-#include "cc/CCLayerTreeHost.h"
-#include "cc/CCSettings.h"
 #include <public/Platform.h>
 #include <wtf/CurrentTime.h>
 

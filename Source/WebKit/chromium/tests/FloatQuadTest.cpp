@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "cc/CCMathUtil.h"
+#include "CCMathUtil.h"
 #include "FloatQuad.h"
 #include <gtest/gtest.h>
 #include <public/WebTransformationMatrix.h>

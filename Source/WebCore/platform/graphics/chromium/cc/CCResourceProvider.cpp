@@ -24,13 +24,13 @@
 
 #include "config.h"
 
-#include "cc/CCResourceProvider.h"
+#include "CCResourceProvider.h"
 
+#include "CCProxy.h"
 #include "Extensions3DChromium.h"
 #include "IntRect.h"
 #include "LayerRendererChromium.h" // For the GLC() macro
 #include "LayerTextureSubImage.h"
-#include "cc/CCProxy.h"
 #include <public/WebGraphicsContext3D.h>
 #include <wtf/HashSet.h>
 

@@ -26,14 +26,14 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCOverdrawMetrics.h"
+#include "CCOverdrawMetrics.h"
 
+#include "CCLayerTreeHost.h"
+#include "CCLayerTreeHostImpl.h"
+#include "CCMathUtil.h"
 #include "FloatQuad.h"
 #include "IntRect.h"
 #include "TraceEvent.h"
-#include "cc/CCLayerTreeHost.h"
-#include "cc/CCLayerTreeHostImpl.h"
-#include "cc/CCMathUtil.h"
 #include <public/Platform.h>
 #include <public/WebTransformationMatrix.h>
 

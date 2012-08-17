@@ -26,7 +26,7 @@
 #ifndef CCCheckerboardDrawQuad_h
 #define CCCheckerboardDrawQuad_h
 
-#include "cc/CCDrawQuad.h"
+#include "CCDrawQuad.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

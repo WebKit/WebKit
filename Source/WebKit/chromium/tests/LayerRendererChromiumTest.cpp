@@ -25,18 +25,17 @@
 #include "config.h"
 #include "LayerRendererChromium.h"
 
+#include "CCDrawQuad.h"
+#include "CCPrioritizedTextureManager.h"
+#include "CCSettings.h"
+#include "CCSingleThreadProxy.h"
 #include "CCTestCommon.h"
 #include "FakeWebCompositorOutputSurface.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3D.h"
-#include "cc/CCDrawQuad.h"
-#include "cc/CCPrioritizedTextureManager.h"
-#include "cc/CCSettings.h"
-#include "cc/CCSingleThreadProxy.h"
-#include <public/WebCompositor.h>
-
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <public/WebCompositor.h>
 
 using namespace WebCore;
 using namespace WebKit;

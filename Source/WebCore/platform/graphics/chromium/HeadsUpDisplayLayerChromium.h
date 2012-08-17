@@ -27,9 +27,9 @@
 #ifndef HeadsUpDisplayLayerChromium_h
 #define HeadsUpDisplayLayerChromium_h
 
+#include "CCFontAtlas.h"
 #include "IntSize.h"
 #include "LayerChromium.h"
-#include "cc/CCFontAtlas.h"
 
 namespace WebCore {
 

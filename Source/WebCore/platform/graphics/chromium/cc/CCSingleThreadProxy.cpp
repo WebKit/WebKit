@@ -24,14 +24,14 @@
 
 #include "config.h"
 
-#include "cc/CCSingleThreadProxy.h"
+#include "CCSingleThreadProxy.h"
 
+#include "CCDrawQuad.h"
+#include "CCGraphicsContext.h"
+#include "CCLayerTreeHost.h"
+#include "CCTextureUpdateController.h"
+#include "CCTimer.h"
 #include "TraceEvent.h"
-#include "cc/CCDrawQuad.h"
-#include "cc/CCGraphicsContext.h"
-#include "cc/CCLayerTreeHost.h"
-#include "cc/CCTextureUpdateController.h"
-#include "cc/CCTimer.h"
 #include <wtf/CurrentTime.h>
 
 using namespace WTF;

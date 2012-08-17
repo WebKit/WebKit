@@ -27,15 +27,15 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCIOSurfaceLayerImpl.h"
+#include "CCIOSurfaceLayerImpl.h"
 
+#include "CCGraphicsContext.h"
+#include "CCIOSurfaceDrawQuad.h"
+#include "CCLayerTreeHostImpl.h"
+#include "CCQuadSink.h"
 #include "Extensions3D.h"
 #include "LayerRendererChromium.h"
 #include "TextStream.h"
-#include "cc/CCGraphicsContext.h"
-#include "cc/CCIOSurfaceDrawQuad.h"
-#include "cc/CCLayerTreeHostImpl.h"
-#include "cc/CCQuadSink.h"
 #include <public/WebGraphicsContext3D.h>
 
 namespace WebCore {

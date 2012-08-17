@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "cc/CCTexture.h"
+#include "CCTexture.h"
 
 namespace WebCore {
 

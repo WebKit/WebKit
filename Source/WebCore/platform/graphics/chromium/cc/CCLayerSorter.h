@@ -25,10 +25,10 @@
 #ifndef CCLayerSorter_h
 #define CCLayerSorter_h
 
+#include "CCLayerImpl.h"
 #include "FloatPoint3D.h"
 #include "FloatQuad.h"
 #include "FloatRect.h"
-#include "cc/CCLayerImpl.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>

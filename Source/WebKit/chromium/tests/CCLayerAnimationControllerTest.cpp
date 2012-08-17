@@ -24,12 +24,11 @@
 
 #include "config.h"
 
-#include "cc/CCLayerAnimationController.h"
+#include "CCLayerAnimationController.h"
 
+#include "CCActiveAnimation.h"
+#include "CCAnimationCurve.h"
 #include "CCAnimationTestCommon.h"
-#include "cc/CCActiveAnimation.h"
-#include "cc/CCAnimationCurve.h"
-
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <public/WebTransformationMatrix.h>

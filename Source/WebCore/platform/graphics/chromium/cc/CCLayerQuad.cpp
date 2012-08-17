@@ -28,7 +28,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCLayerQuad.h"
+#include "CCLayerQuad.h"
 
 namespace WebCore {
 

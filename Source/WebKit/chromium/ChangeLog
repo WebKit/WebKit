@@ -1,3 +1,75 @@
+2012-08-16  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add Source/WebCore/platform/graphics/chromium/cc/ to include path and remove cc/ prefix from includes
+        https://bugs.webkit.org/show_bug.cgi?id=94279
+
+        Reviewed by Adam Barth.
+
+        * src/WebAnimationCurveCommon.cpp:
+        * src/WebAnimationImpl.cpp:
+        * src/WebCompositorInputHandlerImpl.cpp:
+        * src/WebCompositorInputHandlerImpl.h:
+        * src/WebExternalTextureLayer.cpp:
+        * src/WebFloatAnimationCurve.cpp:
+        * src/WebLayerTreeView.cpp:
+        * src/WebLayerTreeViewImpl.cpp:
+        * src/WebTransformAnimationCurve.cpp:
+        * tests/CCActiveAnimationTest.cpp:
+        * tests/CCAnimationTestCommon.cpp:
+        * tests/CCAnimationTestCommon.h:
+        * tests/CCDamageTrackerTest.cpp:
+        * tests/CCDelayBasedTimeSourceTest.cpp:
+        * tests/CCFrameRateControllerTest.cpp:
+        * tests/CCKeyframedAnimationCurveTest.cpp:
+        * tests/CCLayerAnimationControllerTest.cpp:
+        * tests/CCLayerImplTest.cpp:
+        * tests/CCLayerIteratorTest.cpp:
+        * tests/CCLayerQuadTest.cpp:
+        * tests/CCLayerSorterTest.cpp:
+        * tests/CCLayerTestCommon.cpp:
+        * tests/CCLayerTestCommon.h:
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        * tests/CCMathUtilTest.cpp:
+        * tests/CCOcclusionTrackerTest.cpp:
+        * tests/CCOcclusionTrackerTestCommon.h:
+        * tests/CCPrioritizedTextureTest.cpp:
+        * tests/CCQuadCullerTest.cpp:
+        * tests/CCRenderSurfaceFiltersTest.cpp:
+        * tests/CCRenderSurfaceTest.cpp:
+        * tests/CCResourceProviderTest.cpp:
+        * tests/CCSchedulerStateMachineTest.cpp:
+        * tests/CCSchedulerTest.cpp:
+        * tests/CCSchedulerTestCommon.h:
+        * tests/CCScopedTextureTest.cpp:
+        * tests/CCScrollbarAnimationControllerLinearFadeTest.cpp:
+        * tests/CCSolidColorLayerImplTest.cpp:
+        * tests/CCTestCommon.h:
+        * tests/CCTextureUpdateControllerTest.cpp:
+        * tests/CCThreadTaskTest.cpp:
+        * tests/CCThreadedTest.cpp:
+        * tests/CCThreadedTest.h:
+        * tests/CCTiledLayerImplTest.cpp:
+        * tests/CCTiledLayerTestCommon.h:
+        * tests/CCTimerTest.cpp:
+        * tests/ContentLayerChromiumTest.cpp:
+        * tests/FakeCCGraphicsContext.h:
+        * tests/FakeCCLayerTreeHostClient.h:
+        * tests/FloatQuadTest.cpp:
+        * tests/GraphicsLayerChromiumTest.cpp:
+        * tests/LayerChromiumTest.cpp:
+        * tests/LayerRendererChromiumTest.cpp:
+        * tests/MockCCQuadCuller.h:
+        * tests/PlatformGestureCurveTest.cpp:
+        * tests/ScrollbarLayerChromiumTest.cpp:
+        * tests/TextureLayerChromiumTest.cpp:
+        * tests/TiledLayerChromiumTest.cpp:
+        * tests/TreeSynchronizerTest.cpp:
+        * tests/WebCompositorInputHandlerImplTest.cpp:
+        * tests/WebFloatAnimationCurveTest.cpp:
+        * tests/WebTransformAnimationCurveTest.cpp:
+
 2012-08-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: make profiles panel a lazily loaded module.

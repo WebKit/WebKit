@@ -24,16 +24,16 @@
 
 #include "config.h"
 
-#include "cc/CCLayerTreeHost.h"
+#include "CCLayerTreeHost.h"
 
+#include "CCGraphicsContext.h"
+#include "CCLayerTreeHostImpl.h"
 #include "CCOcclusionTrackerTestCommon.h"
+#include "CCSettings.h"
+#include "CCTextureUpdateQueue.h"
 #include "CCThreadedTest.h"
+#include "CCTimingFunction.h"
 #include "ContentLayerChromium.h"
-#include "cc/CCGraphicsContext.h"
-#include "cc/CCLayerTreeHostImpl.h"
-#include "cc/CCSettings.h"
-#include "cc/CCTextureUpdateQueue.h"
-#include "cc/CCTimingFunction.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <public/Platform.h>

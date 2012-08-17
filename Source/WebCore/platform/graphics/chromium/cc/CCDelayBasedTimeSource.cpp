@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#include "cc/CCDelayBasedTimeSource.h"
+#include "CCDelayBasedTimeSource.h"
 
 #include "TraceEvent.h"
 #include <algorithm>

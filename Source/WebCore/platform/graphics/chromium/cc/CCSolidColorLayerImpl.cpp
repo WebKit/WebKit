@@ -27,10 +27,10 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCSolidColorLayerImpl.h"
+#include "CCSolidColorLayerImpl.h"
 
-#include "cc/CCQuadSink.h"
-#include "cc/CCSolidColorDrawQuad.h"
+#include "CCQuadSink.h"
+#include "CCSolidColorDrawQuad.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
 

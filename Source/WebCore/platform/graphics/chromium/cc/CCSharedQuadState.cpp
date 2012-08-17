@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "cc/CCSharedQuadState.h"
+#include "CCSharedQuadState.h"
 
 #include "FloatQuad.h"
 

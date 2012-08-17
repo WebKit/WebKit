@@ -25,8 +25,8 @@
 #ifndef CCScheduler_h
 #define CCScheduler_h
 
-#include "cc/CCFrameRateController.h"
-#include "cc/CCSchedulerStateMachine.h"
+#include "CCFrameRateController.h"
+#include "CCSchedulerStateMachine.h"
 
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>

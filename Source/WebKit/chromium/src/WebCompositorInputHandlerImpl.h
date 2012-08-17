@@ -26,11 +26,11 @@
 #ifndef WebCompositorInputHandlerImpl_h
 #define WebCompositorInputHandlerImpl_h
 
+#include "CCGestureCurve.h"
+#include "CCInputHandler.h"
 #include "WebActiveWheelFlingParameters.h"
 #include "WebCompositorInputHandler.h"
 #include "WebInputEvent.h"
-#include "cc/CCGestureCurve.h"
-#include "cc/CCInputHandler.h"
 #include <public/WebCompositor.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>

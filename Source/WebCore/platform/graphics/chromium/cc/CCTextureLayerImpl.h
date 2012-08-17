@@ -26,7 +26,7 @@
 #ifndef CCTextureLayerImpl_h
 #define CCTextureLayerImpl_h
 
-#include "cc/CCLayerImpl.h"
+#include "CCLayerImpl.h"
 
 namespace WebCore {
 

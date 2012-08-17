@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#include "cc/CCKeyframedAnimationCurve.h"
+#include "CCKeyframedAnimationCurve.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

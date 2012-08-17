@@ -30,6 +30,7 @@
 
 #include "CanvasLayerTextureUpdater.h"
 
+#include "CCRenderingStats.h"
 #include "FloatRect.h"
 #include "LayerPainterChromium.h"
 #include "SkCanvas.h"
@@ -37,7 +38,6 @@
 #include "SkRect.h"
 #include "SkiaUtils.h"
 #include "TraceEvent.h"
-#include "cc/CCRenderingStats.h"
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {

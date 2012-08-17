@@ -26,7 +26,7 @@
 #ifndef CCTextureUpdateController_h
 #define CCTextureUpdateController_h
 
-#include "cc/CCTextureUpdateQueue.h"
+#include "CCTextureUpdateQueue.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 

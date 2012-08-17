@@ -26,7 +26,7 @@
 
 #include "WebAnimationCurveCommon.h"
 
-#include "cc/CCTimingFunction.h"
+#include "CCTimingFunction.h"
 
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>

@@ -26,10 +26,10 @@
 #ifndef CCTileDrawQuad_h
 #define CCTileDrawQuad_h
 
+#include "CCDrawQuad.h"
 #include "GraphicsTypes3D.h"
 #include "IntPoint.h"
 #include "IntSize.h"
-#include "cc/CCDrawQuad.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

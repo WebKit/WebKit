@@ -29,9 +29,9 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "CCSharedQuadState.h"
 #include "FloatRect.h"
 #include "IntRect.h"
-#include "cc/CCSharedQuadState.h"
 #include <public/WebTransformationMatrix.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>

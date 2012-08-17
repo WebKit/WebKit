@@ -24,14 +24,13 @@
 
 #include "config.h"
 
-#include "cc/CCScopedTexture.h"
+#include "CCScopedTexture.h"
 
+#include "CCRenderer.h"
+#include "CCSingleThreadProxy.h" // For DebugScopedSetImplThread
 #include "CCTiledLayerTestCommon.h"
 #include "FakeCCGraphicsContext.h"
 #include "GraphicsContext3D.h"
-#include "cc/CCRenderer.h"
-#include "cc/CCSingleThreadProxy.h" // For DebugScopedSetImplThread
-
 #include <gtest/gtest.h>
 
 using namespace WebCore;

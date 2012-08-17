@@ -25,9 +25,8 @@
 #ifndef CCTimingFunction_h
 #define CCTimingFunction_h
 
+#include "CCAnimationCurve.h"
 #include "UnitBezier.h"
-#include "cc/CCAnimationCurve.h"
-
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

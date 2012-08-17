@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "cc/CCCheckerboardDrawQuad.h"
+#include "CCCheckerboardDrawQuad.h"
 
 namespace WebCore {
 

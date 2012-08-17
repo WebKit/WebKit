@@ -30,11 +30,11 @@
 
 #include "BitmapSkPictureCanvasLayerTextureUpdater.h"
 
+#include "CCRenderingStats.h"
 #include "LayerPainterChromium.h"
 #include "PlatformColor.h"
 #include "SkCanvas.h"
 #include "SkDevice.h"
-#include "cc/CCRenderingStats.h"
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {

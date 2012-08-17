@@ -27,15 +27,15 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCQuadCuller.h"
+#include "CCQuadCuller.h"
 
+#include "CCDebugBorderDrawQuad.h"
+#include "CCLayerImpl.h"
+#include "CCOcclusionTracker.h"
+#include "CCOverdrawMetrics.h"
+#include "CCRenderPass.h"
 #include "Region.h"
 #include "SkColor.h"
-#include "cc/CCDebugBorderDrawQuad.h"
-#include "cc/CCLayerImpl.h"
-#include "cc/CCOcclusionTracker.h"
-#include "cc/CCOverdrawMetrics.h"
-#include "cc/CCRenderPass.h"
 #include <public/WebTransformationMatrix.h>
 
 using namespace std;

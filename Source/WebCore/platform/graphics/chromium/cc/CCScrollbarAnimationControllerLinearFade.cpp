@@ -24,9 +24,9 @@
 
 #include "config.h"
 
-#include "cc/CCScrollbarAnimationControllerLinearFade.h"
+#include "CCScrollbarAnimationControllerLinearFade.h"
 
-#include "cc/CCScrollbarLayerImpl.h"
+#include "CCScrollbarLayerImpl.h"
 
 namespace WebCore {
 

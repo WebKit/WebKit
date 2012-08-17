@@ -27,7 +27,7 @@
 
 #include "config.h"
 
-#include "cc/CCPageScaleAnimation.h"
+#include "CCPageScaleAnimation.h"
 
 #include "FloatRect.h"
 #include "FloatSize.h"

@@ -22,7 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "cc/CCThread.h"
+#include "CCThread.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/Threading.h>
 

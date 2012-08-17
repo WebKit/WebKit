@@ -29,8 +29,8 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "CCPrioritizedTexture.h"
 #include "GraphicsTypes3D.h"
-#include "cc/CCPrioritizedTexture.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

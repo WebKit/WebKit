@@ -26,9 +26,9 @@
 #ifndef CCOcclusionTracker_h
 #define CCOcclusionTracker_h
 
+#include "CCLayerIterator.h"
 #include "FloatQuad.h"
 #include "Region.h"
-#include "cc/CCLayerIterator.h"
 
 namespace WebCore {
 class CCOverdrawMetrics;

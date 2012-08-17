@@ -25,7 +25,7 @@
 #ifndef CCScrollbarAnimationControllerLinearFade_h
 #define CCScrollbarAnimationControllerLinearFade_h
 
-#include "cc/CCScrollbarAnimationController.h"
+#include "CCScrollbarAnimationController.h"
 
 namespace WebCore {
 

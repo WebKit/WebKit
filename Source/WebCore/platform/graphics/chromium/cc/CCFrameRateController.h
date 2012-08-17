@@ -25,7 +25,7 @@
 #ifndef CCFrameRateController_h
 #define CCFrameRateController_h
 
-#include "cc/CCTimer.h"
+#include "CCTimer.h"
 
 #include <wtf/CurrentTime.h>
 #include <wtf/Deque.h>

@@ -26,12 +26,12 @@
 #include "config.h"
 #include <public/WebLayerTreeView.h>
 
+#include "CCFontAtlas.h"
+#include "CCGraphicsContext.h"
+#include "CCLayerTreeHost.h"
+#include "CCRenderingStats.h"
 #include "LayerChromium.h"
 #include "WebLayerTreeViewImpl.h"
-#include "cc/CCFontAtlas.h"
-#include "cc/CCGraphicsContext.h"
-#include "cc/CCLayerTreeHost.h"
-#include "cc/CCRenderingStats.h"
 #include <public/WebLayer.h>
 #include <public/WebPoint.h>
 #include <public/WebRect.h>

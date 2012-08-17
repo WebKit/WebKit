@@ -27,13 +27,12 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCOcclusionTracker.h"
+#include "CCOcclusionTracker.h"
 
+#include "CCLayerImpl.h"
+#include "CCMathUtil.h"
+#include "CCOverdrawMetrics.h"
 #include "LayerChromium.h"
-#include "cc/CCLayerImpl.h"
-#include "cc/CCMathUtil.h"
-#include "cc/CCOverdrawMetrics.h"
-
 #include <algorithm>
 
 using namespace std;

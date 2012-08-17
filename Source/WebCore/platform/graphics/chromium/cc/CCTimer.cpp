@@ -30,9 +30,9 @@
 
 #include "config.h"
 
-#include "cc/CCTimer.h"
+#include "CCTimer.h"
 
-#include "cc/CCThread.h"
+#include "CCThread.h"
 
 namespace WebCore {
 

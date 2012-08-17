@@ -26,10 +26,10 @@
 #ifndef CCRenderPass_h
 #define CCRenderPass_h
 
+#include "CCDrawQuad.h"
+#include "CCOcclusionTracker.h"
+#include "CCSharedQuadState.h"
 #include "SkColor.h"
-#include "cc/CCDrawQuad.h"
-#include "cc/CCOcclusionTracker.h"
-#include "cc/CCSharedQuadState.h"
 #include <public/WebFilterOperations.h>
 #include <public/WebTransformationMatrix.h>
 #include <wtf/HashMap.h>

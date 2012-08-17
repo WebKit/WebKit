@@ -25,7 +25,7 @@
 #ifndef CCLayerAnimationController_h
 #define CCLayerAnimationController_h
 
-#include "cc/CCAnimationEvents.h"
+#include "CCAnimationEvents.h"
 
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>

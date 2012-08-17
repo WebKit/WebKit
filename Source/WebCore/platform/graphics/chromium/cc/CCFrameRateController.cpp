@@ -24,11 +24,12 @@
 
 #include "config.h"
 
-#include "cc/CCFrameRateController.h"
+#include "CCFrameRateController.h"
 
+#include "CCDelayBasedTimeSource.h"
+#include "CCTimeSource.h"
 #include "TraceEvent.h"
-#include "cc/CCDelayBasedTimeSource.h"
-#include "cc/CCTimeSource.h"
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 

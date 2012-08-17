@@ -34,13 +34,13 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "CCLayerAnimationController.h"
+#include "CCOcclusionTracker.h"
+#include "CCPrioritizedTexture.h"
 #include "FloatPoint.h"
 #include "Region.h"
 #include "RenderSurfaceChromium.h"
 #include "SkColor.h"
-#include "cc/CCLayerAnimationController.h"
-#include "cc/CCOcclusionTracker.h"
-#include "cc/CCPrioritizedTexture.h"
 
 #include <public/WebFilterOperations.h>
 #include <public/WebTransformationMatrix.h>

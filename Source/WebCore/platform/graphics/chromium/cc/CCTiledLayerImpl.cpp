@@ -27,18 +27,18 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCTiledLayerImpl.h"
+#include "CCTiledLayerImpl.h"
 
+#include "CCCheckerboardDrawQuad.h"
+#include "CCDebugBorderDrawQuad.h"
+#include "CCLayerTilingData.h"
+#include "CCMathUtil.h"
+#include "CCQuadSink.h"
+#include "CCSolidColorDrawQuad.h"
+#include "CCTileDrawQuad.h"
 #include "GraphicsContext3D.h"
 #include "SkColor.h"
 #include "TextStream.h"
-#include "cc/CCCheckerboardDrawQuad.h"
-#include "cc/CCDebugBorderDrawQuad.h"
-#include "cc/CCLayerTilingData.h"
-#include "cc/CCMathUtil.h"
-#include "cc/CCQuadSink.h"
-#include "cc/CCSolidColorDrawQuad.h"
-#include "cc/CCTileDrawQuad.h"
 #include <wtf/text/WTFString.h>
 
 using namespace std;

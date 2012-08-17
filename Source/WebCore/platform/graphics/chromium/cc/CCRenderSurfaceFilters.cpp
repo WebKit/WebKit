@@ -27,7 +27,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCRenderSurfaceFilters.h"
+#include "CCRenderSurfaceFilters.h"
 
 #include "FloatSize.h"
 #include "SkBlurImageFilter.h"

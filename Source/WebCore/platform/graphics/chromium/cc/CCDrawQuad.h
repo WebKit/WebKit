@@ -26,7 +26,7 @@
 #ifndef CCDrawQuad_h
 #define CCDrawQuad_h
 
-#include "cc/CCSharedQuadState.h"
+#include "CCSharedQuadState.h"
 
 namespace WebCore {
 

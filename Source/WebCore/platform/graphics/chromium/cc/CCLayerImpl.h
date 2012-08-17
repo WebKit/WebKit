@@ -26,16 +26,16 @@
 #ifndef CCLayerImpl_h
 #define CCLayerImpl_h
 
+#include "CCInputHandler.h"
+#include "CCLayerAnimationController.h"
+#include "CCRenderSurface.h"
+#include "CCResourceProvider.h"
+#include "CCSharedQuadState.h"
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "Region.h"
 #include "SkColor.h"
 #include "TextStream.h"
-#include "cc/CCInputHandler.h"
-#include "cc/CCLayerAnimationController.h"
-#include "cc/CCRenderSurface.h"
-#include "cc/CCResourceProvider.h"
-#include "cc/CCSharedQuadState.h"
 #include <public/WebFilterOperations.h>
 #include <public/WebTransformationMatrix.h>
 #include <wtf/OwnPtr.h>

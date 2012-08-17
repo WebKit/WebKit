@@ -24,10 +24,9 @@
 
 #include "config.h"
 
-#include "cc/CCActiveAnimation.h"
+#include "CCActiveAnimation.h"
 
-#include "cc/CCAnimationCurve.h"
-
+#include "CCAnimationCurve.h"
 #include <cmath>
 
 namespace WebCore {

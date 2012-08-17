@@ -26,8 +26,8 @@
 #ifndef CCDebugBorderDrawQuad_h
 #define CCDebugBorderDrawQuad_h
 
+#include "CCDrawQuad.h"
 #include "SkColor.h"
-#include "cc/CCDrawQuad.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

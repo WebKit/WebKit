@@ -24,10 +24,10 @@
 
 #include "config.h"
 
-#include "cc/CCScrollbarAnimationControllerLinearFade.h"
+#include "CCScrollbarAnimationControllerLinearFade.h"
 
-#include "cc/CCScrollbarLayerImpl.h"
-#include "cc/CCSingleThreadProxy.h"
+#include "CCScrollbarLayerImpl.h"
+#include "CCSingleThreadProxy.h"
 #include <gtest/gtest.h>
 #include <wtf/OwnPtr.h>
 

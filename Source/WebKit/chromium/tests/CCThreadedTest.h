@@ -25,10 +25,10 @@
 #ifndef CCThreadedTest_h
 #define CCThreadedTest_h
 
+#include "CCLayerTreeHost.h"
+#include "CCLayerTreeHostImpl.h"
+#include "CCScopedThreadProxy.h"
 #include "CompositorFakeWebGraphicsContext3D.h"
-#include "cc/CCLayerTreeHost.h"
-#include "cc/CCLayerTreeHostImpl.h"
-#include "cc/CCScopedThreadProxy.h"
 #include <gtest/gtest.h>
 #include <public/WebAnimationDelegate.h>
 

@@ -33,13 +33,13 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "LayerChromium.h"
 
+#include "CCActiveAnimation.h"
+#include "CCAnimationEvents.h"
+#include "CCLayerAnimationController.h"
+#include "CCLayerImpl.h"
+#include "CCLayerTreeHost.h"
+#include "CCSettings.h"
 #include "TextStream.h"
-#include "cc/CCActiveAnimation.h"
-#include "cc/CCAnimationEvents.h"
-#include "cc/CCLayerAnimationController.h"
-#include "cc/CCLayerImpl.h"
-#include "cc/CCLayerTreeHost.h"
-#include "cc/CCSettings.h"
 
 #include <public/WebAnimationDelegate.h>
 

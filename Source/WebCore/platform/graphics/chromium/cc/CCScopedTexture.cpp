@@ -24,7 +24,8 @@
  */
 
 #include "config.h"
-#include "cc/CCScopedTexture.h"
+
+#include "CCScopedTexture.h"
 
 namespace WebCore {
 

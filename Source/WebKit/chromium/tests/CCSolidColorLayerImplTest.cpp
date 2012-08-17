@@ -24,13 +24,12 @@
 
 #include "config.h"
 
-#include "cc/CCSolidColorLayerImpl.h"
+#include "CCSolidColorLayerImpl.h"
 
 #include "CCLayerTestCommon.h"
+#include "CCSingleThreadProxy.h"
+#include "CCSolidColorDrawQuad.h"
 #include "MockCCQuadCuller.h"
-#include "cc/CCSingleThreadProxy.h"
-#include "cc/CCSolidColorDrawQuad.h"
-
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 

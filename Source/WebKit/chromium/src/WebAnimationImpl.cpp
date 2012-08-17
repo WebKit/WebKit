@@ -27,8 +27,8 @@
 #include "WebAnimationImpl.h"
 
 #include "AnimationIdVendor.h"
-#include "cc/CCActiveAnimation.h"
-#include "cc/CCAnimationCurve.h"
+#include "CCActiveAnimation.h"
+#include "CCAnimationCurve.h"
 #include <public/WebAnimation.h>
 #include <public/WebAnimationCurve.h>
 #include <wtf/OwnPtr.h>

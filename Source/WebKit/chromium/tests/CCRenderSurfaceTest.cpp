@@ -24,11 +24,11 @@
 
 #include "config.h"
 
-#include "cc/CCRenderSurface.h"
+#include "CCRenderSurface.h"
 
-#include "cc/CCLayerImpl.h"
-#include "cc/CCSharedQuadState.h"
-#include "cc/CCSingleThreadProxy.h"
+#include "CCLayerImpl.h"
+#include "CCSharedQuadState.h"
+#include "CCSingleThreadProxy.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <public/WebTransformationMatrix.h>

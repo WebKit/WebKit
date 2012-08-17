@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#include "cc/CCLayerQuad.h"
+#include "CCLayerQuad.h"
 
 #include <gtest/gtest.h>
 

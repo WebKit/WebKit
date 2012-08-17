@@ -24,13 +24,13 @@
 
 #include "config.h"
 
-#include "cc/CCScrollbarAnimationController.h"
+#include "CCScrollbarAnimationController.h"
 
-#include "cc/CCScrollbarLayerImpl.h"
+#include "CCScrollbarLayerImpl.h"
 #include <wtf/CurrentTime.h>
 
 #if OS(ANDROID)
-#include "cc/CCScrollbarAnimationControllerLinearFade.h"
+#include "CCScrollbarAnimationControllerLinearFade.h"
 #endif
 
 namespace WebCore {

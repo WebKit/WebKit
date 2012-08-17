@@ -28,7 +28,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCLayerImpl.h"
+#include "CCLayerImpl.h"
 #include <public/WebRect.h>
 #include <public/WebScrollbar.h>
 #include <public/WebScrollbarThemeGeometry.h>

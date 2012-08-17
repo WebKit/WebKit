@@ -29,14 +29,14 @@
 #include "BitmapCanvasLayerTextureUpdater.h"
 #include "CCAnimationTestCommon.h"
 #include "CCLayerTreeTestCommon.h"
+#include "CCOverdrawMetrics.h"
+#include "CCRenderingStats.h"
+#include "CCSingleThreadProxy.h" // For DebugScopedSetImplThread
+#include "CCTextureUpdateController.h"
 #include "CCTiledLayerTestCommon.h"
 #include "FakeCCGraphicsContext.h"
 #include "FakeCCLayerTreeHostClient.h"
 #include "LayerPainterChromium.h"
-#include "cc/CCOverdrawMetrics.h"
-#include "cc/CCRenderingStats.h"
-#include "cc/CCSingleThreadProxy.h" // For DebugScopedSetImplThread
-#include "cc/CCTextureUpdateController.h"
 #include <gtest/gtest.h>
 #include <public/WebCompositor.h>
 #include <public/WebTransformationMatrix.h>

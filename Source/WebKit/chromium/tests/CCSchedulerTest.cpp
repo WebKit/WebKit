@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#include "cc/CCScheduler.h"
+#include "CCScheduler.h"
 
 #include "CCSchedulerTestCommon.h"
 #include <gmock/gmock.h>

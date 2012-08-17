@@ -24,24 +24,24 @@
 
 #include "config.h"
 
-#include "cc/CCLayerTreeHost.h"
+#include "CCLayerTreeHost.h"
 
+#include "CCFontAtlas.h"
+#include "CCGraphicsContext.h"
+#include "CCLayerAnimationController.h"
+#include "CCLayerIterator.h"
+#include "CCLayerTreeHostCommon.h"
+#include "CCLayerTreeHostImpl.h"
+#include "CCOcclusionTracker.h"
+#include "CCOverdrawMetrics.h"
+#include "CCSettings.h"
+#include "CCSingleThreadProxy.h"
+#include "CCThreadProxy.h"
 #include "HeadsUpDisplayLayerChromium.h"
 #include "LayerChromium.h"
 #include "Region.h"
 #include "TraceEvent.h"
 #include "TreeSynchronizer.h"
-#include "cc/CCFontAtlas.h"
-#include "cc/CCGraphicsContext.h"
-#include "cc/CCLayerAnimationController.h"
-#include "cc/CCLayerIterator.h"
-#include "cc/CCLayerTreeHostCommon.h"
-#include "cc/CCLayerTreeHostImpl.h"
-#include "cc/CCOcclusionTracker.h"
-#include "cc/CCOverdrawMetrics.h"
-#include "cc/CCSettings.h"
-#include "cc/CCSingleThreadProxy.h"
-#include "cc/CCThreadProxy.h"
 
 using namespace std;
 using WebKit::WebTransformationMatrix;

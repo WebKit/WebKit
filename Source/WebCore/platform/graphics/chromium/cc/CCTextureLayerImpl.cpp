@@ -27,12 +27,12 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCTextureLayerImpl.h"
+#include "CCTextureLayerImpl.h"
 
+#include "CCQuadSink.h"
+#include "CCRenderer.h"
+#include "CCTextureDrawQuad.h"
 #include "TextStream.h"
-#include "cc/CCQuadSink.h"
-#include "cc/CCRenderer.h"
-#include "cc/CCTextureDrawQuad.h"
 
 namespace WebCore {
 

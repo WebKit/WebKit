@@ -24,13 +24,13 @@
 
 #include "config.h"
 
-#include "cc/CCTiledLayerImpl.h"
+#include "CCTiledLayerImpl.h"
 
 #include "CCLayerTestCommon.h"
+#include "CCLayerTilingData.h"
+#include "CCSingleThreadProxy.h"
+#include "CCTileDrawQuad.h"
 #include "MockCCQuadCuller.h"
-#include "cc/CCLayerTilingData.h"
-#include "cc/CCSingleThreadProxy.h"
-#include "cc/CCTileDrawQuad.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 

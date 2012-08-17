@@ -24,13 +24,13 @@
 
 #include "config.h"
 
-#include "cc/CCResourceProvider.h"
+#include "CCResourceProvider.h"
 
+#include "CCGraphicsContext.h"
+#include "CCSingleThreadProxy.h" // For DebugScopedSetImplThread
 #include "CompositorFakeWebGraphicsContext3D.h"
 #include "Extensions3DChromium.h"
 #include "FakeWebCompositorOutputSurface.h"
-#include "cc/CCGraphicsContext.h"
-#include "cc/CCSingleThreadProxy.h" // For DebugScopedSetImplThread
 #include <gtest/gtest.h>
 #include <public/WebGraphicsContext3D.h>
 #include <wtf/HashMap.h>

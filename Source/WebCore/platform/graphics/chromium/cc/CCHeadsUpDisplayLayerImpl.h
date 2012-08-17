@@ -26,9 +26,9 @@
 #ifndef CCHeadsUpDisplayLayerImpl_h
 #define CCHeadsUpDisplayLayerImpl_h
 
-#include "cc/CCFontAtlas.h"
-#include "cc/CCLayerImpl.h"
-#include "cc/CCScopedTexture.h"
+#include "CCFontAtlas.h"
+#include "CCLayerImpl.h"
+#include "CCScopedTexture.h"
 
 class SkCanvas;
 

@@ -27,9 +27,9 @@
 
 #include "LinkHighlight.h"
 
+#include "CCKeyframedAnimationCurve.h"
 #include "GraphicsLayerChromium.h"
 #include "PlatformContextSkia.h"
-#include "cc/CCKeyframedAnimationCurve.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/OwnPtr.h>
 

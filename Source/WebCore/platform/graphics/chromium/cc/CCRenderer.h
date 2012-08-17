@@ -26,10 +26,10 @@
 #ifndef CCRenderer_h
 #define CCRenderer_h
 
+#include "CCLayerTreeHost.h"
+#include "CCRenderPass.h"
 #include "FloatQuad.h"
 #include "IntRect.h"
-#include "cc/CCLayerTreeHost.h"
-#include "cc/CCRenderPass.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 

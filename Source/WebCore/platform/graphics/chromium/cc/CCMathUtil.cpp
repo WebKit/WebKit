@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#include "cc/CCMathUtil.h"
+#include "CCMathUtil.h"
 
 #include "FloatPoint.h"
 #include "FloatQuad.h"

@@ -28,11 +28,10 @@
 
 #include "BitmapCanvasLayerTextureUpdater.h"
 #include "CCLayerTreeTestCommon.h"
+#include "CCRenderingStats.h"
 #include "GraphicsContext.h"
 #include "OpaqueRectTrackingContentLayerDelegate.h"
-#include "cc/CCRenderingStats.h"
 #include "skia/ext/platform_canvas.h"
-
 #include <gtest/gtest.h>
 #include <public/WebFloatRect.h>
 #include <public/WebRect.h>

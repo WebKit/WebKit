@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#include "cc/CCFrameRateController.h"
+#include "CCFrameRateController.h"
 
 #include "CCSchedulerTestCommon.h"
 #include <gtest/gtest.h>

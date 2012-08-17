@@ -25,7 +25,7 @@
 #include "config.h"
 
 #include "CCLayerTestCommon.h"
-#include "cc/CCDrawQuad.h"
+#include "CCDrawQuad.h"
 
 #include <gtest/gtest.h>
 #include <wtf/Vector.h>

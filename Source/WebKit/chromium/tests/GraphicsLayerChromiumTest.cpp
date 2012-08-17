@@ -26,15 +26,15 @@
 
 #include "GraphicsLayerChromium.h"
 
+#include "CCLayerTreeHost.h"
+#include "CCLayerTreeHostImpl.h"
+#include "CCSingleThreadProxy.h"
 #include "CompositorFakeWebGraphicsContext3D.h"
 #include "GraphicsLayer.h"
 #include "Matrix3DTransformOperation.h"
 #include "RotateTransformOperation.h"
 #include "TranslateTransformOperation.h"
 #include "WebLayerTreeViewTestCommon.h"
-#include "cc/CCLayerTreeHost.h"
-#include "cc/CCLayerTreeHostImpl.h"
-#include "cc/CCSingleThreadProxy.h"
 #include <gtest/gtest.h>
 #include <public/WebCompositor.h>
 #include <public/WebFloatAnimationCurve.h>
