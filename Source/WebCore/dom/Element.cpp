@@ -2237,7 +2237,7 @@ PassRefPtr<UndoManager> Element::undoManager()
     }
     ElementRareData* data = ensureElementRareData();
     if (!data->m_undoManager)
-        data->m_undoManager = UndoManager::create(this);
+        data->m_undoManager = UndoManager::create(document(), this);
     return data->m_undoManager;
 }
 
@@ -2249,7 +2249,6 @@ void Element::disconnectUndoManager()
     UndoManager* undoManager = data->m_undoManager.get();
     if (!undoManager)
         return;
-    undoManager->clearUndoRedo();
     undoManager->disconnect();
     data->m_undoManager.clear();
 }

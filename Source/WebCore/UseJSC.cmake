@@ -283,6 +283,13 @@ IF (ENABLE_WEB_INTENTS)
     )
 ENDIF ()
 
+IF (ENABLE_UNDO_MANAGER)
+    LIST (APPEND WebCore_SOURCES
+        bindings/js/DOMTransaction.cpp
+        bindings/js/JSUndoManagerCustom.cpp
+    )
+ENDIF ()
+
 LIST(APPEND SCRIPTS_BINDINGS
     ${WEBCORE_DIR}/bindings/scripts/CodeGenerator.pm
 )

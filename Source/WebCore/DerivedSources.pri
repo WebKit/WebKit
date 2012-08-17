@@ -269,6 +269,7 @@ IDL_BINDINGS += \
     $$PWD/dom/WebKitNamedFlow.idl \
     $$PWD/dom/WebKitTransitionEvent.idl \
     $$PWD/dom/WheelEvent.idl \
+    $$PWD/editing/DOMTransaction.idl \
     $$PWD/editing/UndoManager.idl \
     $$PWD/fileapi/Blob.idl \
     $$PWD/fileapi/File.idl \

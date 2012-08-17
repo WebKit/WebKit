@@ -1,3 +1,21 @@
+2012-08-17  Sukolsak Sakshuwong  <sukolsak@google.com>
+
+        Implement UndoManager's V8 bindings
+        https://bugs.webkit.org/show_bug.cgi?id=93912
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/undomanager/domtransaction-survives-gc-expected.txt: Added.
+        * editing/undomanager/domtransaction-survives-gc.html: Added.
+        * editing/undomanager/undomanager-isolated-world-expected.txt: Added.
+        * editing/undomanager/undomanager-isolated-world.html: Added.
+        * editing/undomanager/undomanager-transact-expected.txt: Added.
+        * editing/undomanager/undomanager-transact.html: Added.
+        * editing/undomanager/undomanager-undo-redo-expected.txt: Added.
+        * editing/undomanager/undomanager-undo-redo.html: Added.
+        * editing/undomanager/undomanager-use-after-free-expected.txt: Added.
+        * editing/undomanager/undomanager-use-after-free.html: Added.
+
 2012-08-17  Dominic Mazzoni  <dmazzoni@google.com>
 
         REGRESSION (r125710): accessibility/accessibility-node-reparent.html, accessibility/accessibility-node-memory-management.html failing on GTK Linux

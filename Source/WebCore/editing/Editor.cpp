@@ -86,6 +86,7 @@
 #include "TextEvent.h"
 #include "TextIterator.h"
 #include "TypingCommand.h"
+#include "UndoManager.h"
 #include "UserTypingGestureIndicator.h"
 #include "htmlediting.h"
 #include "markup.h"
@@ -802,8 +803,12 @@ void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
         // Only register a new undo command if the command passed in is
         // different from the last command
         m_lastEditCommand = cmd;
+#if !ENABLE(UNDO_MANAGER)
         if (client())
             client()->registerUndoStep(m_lastEditCommand->ensureComposition());
+#else
+        m_frame->document()->undoManager()->registerUndoStep(m_lastEditCommand->ensureComposition());
+#endif
     }
 
     respondToChangedContents(newSelection);
@@ -820,8 +825,12 @@ void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
     m_alternativeTextController->respondToUnappliedEditing(cmd.get());
     
     m_lastEditCommand = 0;
+#if !ENABLE(UNDO_MANAGER)
     if (client())
         client()->registerRedoStep(cmd);
+#else
+    m_frame->document()->undoManager()->registerRedoStep(cmd);
+#endif
     respondToChangedContents(newSelection);
 }
 
@@ -835,8 +844,12 @@ void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
     changeSelectionAfterCommand(newSelection, FrameSelection::CloseTyping | FrameSelection::ClearTypingStyle);
     
     m_lastEditCommand = 0;
+#if !ENABLE(UNDO_MANAGER)
     if (client())
         client()->registerUndoStep(cmd);
+#else
+    m_frame->document()->undoManager()->registerUndoStep(cmd);
+#endif
     respondToChangedContents(newSelection);
 }
 
@@ -1244,24 +1257,40 @@ void Editor::clearUndoRedoOperations()
 
 bool Editor::canUndo()
 {
+#if !ENABLE(UNDO_MANAGER)
     return client() && client()->canUndo();
+#else
+    return m_frame->document()->undoManager()->canUndo();
+#endif
 }
 
 void Editor::undo()
 {
+#if !ENABLE(UNDO_MANAGER)
     if (client())
         client()->undo();
+#else
+    m_frame->document()->undoManager()->undo();
+#endif
 }
 
 bool Editor::canRedo()
 {
+#if !ENABLE(UNDO_MANAGER)
     return client() && client()->canRedo();
+#else
+    return m_frame->document()->undoManager()->canRedo();
+#endif
 }
 
 void Editor::redo()
 {
+#if !ENABLE(UNDO_MANAGER)
     if (client())
         client()->redo();
+#else
+    m_frame->document()->undoManager()->redo();
+#endif
 }
 
 void Editor::didBeginEditing()

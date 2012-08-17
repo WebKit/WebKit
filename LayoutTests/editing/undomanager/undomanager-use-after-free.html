@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="edit" contentEditable="true" undoscope></div>
+<script>
+description("Ensure that undoManager doesn't have use-after-free vulnerabilities.");
+
+var edit = document.getElementById("edit");
+var undoManager = edit.undoManager;
+
+var transaction = {
+    "execute": function() {
+        undoManager.transact({
+            "execute": function() { },
+            "undo": function() { },
+            "redo": function() { }
+        });
+    },
+    "undo": function() {
+        undoManager.undo();
+    },
+    "redo": function() {
+        undoManager.clearRedo();
+    }
+};
+
+debug("call undoManager.transact() during the execute callback");
+shouldThrow("undoManager.transact(transaction)", "'Error: INVALID_ACCESS_ERR: DOM Exception 15'");
+
+debug("call undoManager.undo() during the undo callback");
+shouldThrow("undoManager.undo()", "'Error: INVALID_ACCESS_ERR: DOM Exception 15'");
+
+debug("call undoManager.clearRedo() during the redo callback");
+shouldThrow("undoManager.redo()", "'Error: INVALID_ACCESS_ERR: DOM Exception 15'");
+
+var result = "";
+undoManager.clearUndo();
+undoManager.clearRedo();
+
+debug("call undoManager.transact() with a transaction that disconnects the undoManager when undoing");
+undoManager.transact({
+    "execute": function() {
+        result += "execute ";
+    },
+    "undo": function() {
+        result += "undo ";
+        edit.undoScope = false;
+        gc();
+    },
+    "redo": function() {
+        result += "redo ";
+    }
+});
+shouldBeEqualToString("result", "execute ");
+
+debug("call undoManager.undo()");
+undoManager.undo();
+shouldBeEqualToString("result", "execute undo ");
+shouldBeNull("edit.undoManager");
+shouldBe("undoManager.length", "0");
+
+debug("call undoManager.redo() when the undoManager is disconnected");
+shouldThrow("undoManager.redo()", "'Error: INVALID_ACCESS_ERR: DOM Exception 15'");
+shouldBeEqualToString("result", "execute undo ");
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

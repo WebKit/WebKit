@@ -45,6 +45,9 @@ public:
     virtual void unapply() OVERRIDE;
     virtual void reapply() OVERRIDE;
     EditAction editingAction() const OVERRIDE { return m_editAction; }
+#if ENABLE(UNDO_MANAGER)
+    virtual bool isDOMTransaction() const OVERRIDE { return false; }
+#endif
     void append(SimpleEditCommand*);
     bool wasCreateLinkCommand() const { return m_editAction == EditActionCreateLink; }
 

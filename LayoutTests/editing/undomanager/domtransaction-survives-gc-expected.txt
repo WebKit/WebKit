@@ -1,0 +1,11 @@
+This tests that undoManager keeps DOMTransaction objects aliveduring its lifetime and therefore does not crash after the GC runs.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS gc(); document.undoManager.undo(); result is "execute undo "
+PASS gc(); document.undoManager.redo(); result is "execute undo redo "
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

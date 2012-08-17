@@ -43,6 +43,9 @@ public:
     virtual void unapply() = 0;
     virtual void reapply() = 0;
     virtual EditAction editingAction() const = 0;
+#if ENABLE(UNDO_MANAGER)
+    virtual bool isDOMTransaction() const = 0;
+#endif
 };
 
 }

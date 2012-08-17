@@ -40,6 +40,7 @@ namespace WebCore {
     V(document) \
     V(domStringMap) \
     V(domTokenList) \
+    V(domTransactionData) \
     V(event) \
     V(listener) \
     V(ownerNode) \

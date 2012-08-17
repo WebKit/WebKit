@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DOMTransaction survives GC</title>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("This tests that undoManager keeps DOMTransaction objects alive"
+    + "during its lifetime and therefore does not crash after the GC runs.");
+
+var result = "";
+
+document.undoManager.transact({
+    "execute": function() { result += "execute "; },
+    "undo": function() { result += "undo "; },
+    "redo": function() { result += "redo "; }
+});
+
+shouldBeEqualToString("gc(); document.undoManager.undo(); result", "execute undo ");
+shouldBeEqualToString("gc(); document.undoManager.redo(); result", "execute undo redo ");
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -206,6 +206,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDOMStringMap.h \
 	DerivedSources/WebCore/JSDOMTokenList.cpp \
 	DerivedSources/WebCore/JSDOMTokenList.h \
+	DerivedSources/WebCore/JSDOMTransaction.cpp \
+	DerivedSources/WebCore/JSDOMTransaction.h \
 	DerivedSources/WebCore/JSDOMURL.cpp \
 	DerivedSources/WebCore/JSDOMURL.h \
 	DerivedSources/WebCore/JSDOMWindow.cpp \
@@ -1365,6 +1367,7 @@ dom_binding_idls += \
 	$(WebCore)/dom/WebKitNamedFlow.idl \
 	$(WebCore)/dom/WebKitTransitionEvent.idl \
 	$(WebCore)/dom/WheelEvent.idl \
+	$(WebCore)/editing/DOMTransaction.idl \
 	$(WebCore)/editing/UndoManager.idl \
 	$(WebCore)/fileapi/Blob.idl \
 	$(WebCore)/fileapi/File.idl \
@@ -2163,6 +2166,8 @@ webcore_sources += \
 	Source/WebCore/bindings/js/CallbackFunction.h \
 	Source/WebCore/bindings/js/DOMObjectHashTableMap.cpp \
 	Source/WebCore/bindings/js/DOMObjectHashTableMap.h \
+	Source/WebCore/bindings/js/DOMTransaction.cpp \
+	Source/WebCore/bindings/js/DOMTransaction.h \
 	Source/WebCore/bindings/js/DOMWrapperWorld.cpp \
 	Source/WebCore/bindings/js/DOMWrapperWorld.h \
 	Source/WebCore/bindings/js/GCController.cpp \
@@ -2325,6 +2330,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSTrackCustom.h \
 	Source/WebCore/bindings/js/JSTrackEventCustom.cpp \
 	Source/WebCore/bindings/js/JSTreeWalkerCustom.cpp \
+	Source/WebCore/bindings/js/JSUndoManagerCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitAnimationCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitAnimationListCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \

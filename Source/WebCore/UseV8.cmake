@@ -207,6 +207,15 @@ IF (ENABLE_SVG)
     )
 ENDIF ()
 
+IF (ENABLE_UNDO_MANAGER)
+    LIST(APPEND WebCore_SOURCES
+        bindings/v8/DOMTransaction.cpp
+
+        bindings/v8/custom/V8DOMTransactionCustom.cpp
+        bindings/v8/custom/V8UndoManagerCustom.cpp
+    )
+ENDIF ()
+
 LIST(APPEND SCRIPTS_BINDINGS
     ${WEBCORE_DIR}/bindings/scripts/CodeGenerator.pm
 )

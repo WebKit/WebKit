@@ -1,0 +1,17 @@
+This tests UndoManager's transact() method.
+
+PASS undoManager has property transact. 
+PASS After a transact call, undoManager applies the transaction. 
+PASS After another transact call, undoManager applies the second transaction. 
+PASS After an undo call, undoManager unapplies the second transaction. 
+PASS After another undo call, undoManager unapplies the first transaction. 
+PASS After a redo call, undoManager reapplies the first transaction. 
+PASS After another redo call, undoManager reapplies the second transaction. 
+PASS After three transact calls that are merged into one entry, undoManager applies the three transactions. 
+PASS After an undo call, undoManager unapplies the three transactions in the correct order. 
+PASS After a redo call, undoManager reapplies the three transactions in the correct order. 
+PASS After an undo call, undoManager unapplies the three transactions in the correct order. 
+PASS The |this| value during the execute callback is the undoManager. 
+PASS The |this| value during the undo callback is the undoManager. 
+PASS The |this| value during the redo callback is the undoManager. 
+

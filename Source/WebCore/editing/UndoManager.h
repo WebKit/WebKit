@@ -33,8 +33,11 @@
 
 #if ENABLE(UNDO_MANAGER)
 
-#include "ExceptionCode.h"
+#include "ActiveDOMObject.h"
+#include "ExceptionCodePlaceholder.h"
 #include "UndoStep.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -42,32 +45,48 @@
 
 namespace WebCore {
 
-class Dictionary;
+class DOMTransaction;
 class Node;
 
-class UndoManager : public RefCounted<UndoManager> {
+typedef Vector<RefPtr<UndoStep> > UndoManagerEntry;
+typedef Vector<OwnPtr<UndoManagerEntry> > UndoManagerStack;
+
+class UndoManager : public RefCounted<UndoManager>, public ActiveDOMObject {
 public:
-    static PassRefPtr<UndoManager> create(Node* host);
+    static PassRefPtr<UndoManager> create(ScriptExecutionContext*, Node* host);
     void disconnect();
+    virtual void stop() OVERRIDE;
+    virtual ~UndoManager();
 
-    void transact(const Dictionary& transaction, bool merge, ExceptionCode&);
+    void transact(PassRefPtr<DOMTransaction>, bool merge, ExceptionCode&);
 
-    void undo(ExceptionCode&);
-    void redo(ExceptionCode&);
+    void undo(ExceptionCode& = ASSERT_NO_EXCEPTION);
+    void redo(ExceptionCode& = ASSERT_NO_EXCEPTION);
 
     unsigned length() const { return m_undoStack.size() + m_redoStack.size(); }
+    unsigned position() const { return m_redoStack.size(); }
 
     void clearUndo(ExceptionCode&);
     void clearRedo(ExceptionCode&);
-    void clearUndoRedo();
+    
+    bool canUndo() const { return !m_undoStack.isEmpty(); }
+    bool canRedo() const { return !m_redoStack.isEmpty(); }
+    
+    void registerUndoStep(PassRefPtr<UndoStep>);
+    void registerRedoStep(PassRefPtr<UndoStep>);
+    
+    Node* undoScopeHost() const { return m_undoScopeHost; }
+    Node* ownerNode() const { return m_undoScopeHost; }
 
 private:
-    explicit UndoManager(Node* host);
+    explicit UndoManager(ScriptExecutionContext*, Node* host);
     bool isConnected();
     
     Node* m_undoScopeHost;
-    Vector<RefPtr<UndoStep> > m_undoStack;
-    Vector<RefPtr<UndoStep> > m_redoStack;
+    UndoManagerStack m_undoStack;
+    UndoManagerStack m_redoStack;
+    bool m_isInProgress;
+    OwnPtr<UndoManagerEntry> m_inProgressEntry;
 };
     
 }

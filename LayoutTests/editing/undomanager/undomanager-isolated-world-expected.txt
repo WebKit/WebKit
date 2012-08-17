@@ -1,0 +1,10 @@
+This tests that undoManager's callback functions only run in the right world.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS undoManager's callback was not invoked in isolated world.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

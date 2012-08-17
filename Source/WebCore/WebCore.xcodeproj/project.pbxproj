@@ -1957,10 +1957,15 @@
 		7AF11A5A12E727490061F23C /* InspectorRuntimeAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AF11A5912E727490061F23C /* InspectorRuntimeAgent.h */; };
 		7AFD4A8B1131C2760035B883 /* ScriptBreakpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFD4A8A1131C2760035B883 /* ScriptBreakpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AFD4FF4113277B60035B883 /* ScriptDebugListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFD4FF3113277B60035B883 /* ScriptDebugListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7B0992F515ACF1AD00ED6D20 /* JSUndoManagerCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B0992F415ACF1AD00ED6D20 /* JSUndoManagerCustom.cpp */; };
 		7B1EA0CE1576C5B50060177D /* JSUndoManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B1EA0CC1576C5B50060177D /* JSUndoManager.cpp */; };
 		7B1EA0CF1576C5B50060177D /* JSUndoManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B1EA0CD1576C5B50060177D /* JSUndoManager.h */; };
+ 		7B3537C515CB2CB50083AB69 /* JSDOMTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B3537C315CB2CB50083AB69 /* JSDOMTransaction.cpp */; };
+ 		7B3537C615CB2CB50083AB69 /* JSDOMTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B3537C415CB2CB50083AB69 /* JSDOMTransaction.h */; };
 		7B9184D215758E420092AA93 /* UndoManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B9184CF15758E420092AA93 /* UndoManager.cpp */; };
 		7B9184D315758E420092AA93 /* UndoManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B9184D015758E420092AA93 /* UndoManager.h */; };
+		7BB35AEB15CCDDF400F2A643 /* DOMTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB35AE915CCDDF400F2A643 /* DOMTransaction.cpp */; };
+ 		7BB35AEC15CCDDF400F2A643 /* DOMTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BB35AEA15CCDDF400F2A643 /* DOMTransaction.h */; };
 		7C522D4B15B477E8009B7C95 /* InspectorOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C522D4915B477E8009B7C95 /* InspectorOverlay.cpp */; };
 		7E33CD01127F340D00BE8F17 /* PurgePriority.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E33CD00127F340D00BE8F17 /* PurgePriority.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E37EF2E1339208800B29250 /* SubresourceLoaderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E37EF2D1339208800B29250 /* SubresourceLoaderCF.cpp */; };
@@ -9125,11 +9130,17 @@
 		7AF11A5912E727490061F23C /* InspectorRuntimeAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorRuntimeAgent.h; sourceTree = "<group>"; };
 		7AFD4A8A1131C2760035B883 /* ScriptBreakpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptBreakpoint.h; sourceTree = "<group>"; };
 		7AFD4FF3113277B60035B883 /* ScriptDebugListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptDebugListener.h; sourceTree = "<group>"; };
+		7B0992F415ACF1AD00ED6D20 /* JSUndoManagerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUndoManagerCustom.cpp; sourceTree = "<group>"; };
 		7B1EA0CC1576C5B50060177D /* JSUndoManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUndoManager.cpp; sourceTree = "<group>"; };
 		7B1EA0CD1576C5B50060177D /* JSUndoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSUndoManager.h; sourceTree = "<group>"; };
+		7B3537C315CB2CB50083AB69 /* JSDOMTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMTransaction.cpp; sourceTree = "<group>"; };
+ 		7B3537C415CB2CB50083AB69 /* JSDOMTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMTransaction.h; sourceTree = "<group>"; };
+ 		7B8C1FE615CCE3C2004B35DC /* DOMTransaction.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMTransaction.idl; sourceTree = "<group>"; };
 		7B9184CF15758E420092AA93 /* UndoManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UndoManager.cpp; sourceTree = "<group>"; };
 		7B9184D015758E420092AA93 /* UndoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UndoManager.h; sourceTree = "<group>"; };
 		7B9184D115758E420092AA93 /* UndoManager.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UndoManager.idl; sourceTree = "<group>"; };
+		7BB35AE915CCDDF400F2A643 /* DOMTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMTransaction.cpp; sourceTree = "<group>"; };
+ 		7BB35AEA15CCDDF400F2A643 /* DOMTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTransaction.h; sourceTree = "<group>"; };
 		7C522D4915B477E8009B7C95 /* InspectorOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorOverlay.cpp; sourceTree = "<group>"; };
 		7C522D4A15B478B2009B7C95 /* InspectorOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorOverlay.h; sourceTree = "<group>"; };
 		7C60128060078BB70E367A95 /* DNSResolveQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DNSResolveQueue.cpp; sourceTree = "<group>"; };
@@ -15840,6 +15851,8 @@
 		7B7F686D1576BFA1003FABF2 /* Editing */ = {
 			isa = PBXGroup;
 			children = (
+				7B3537C315CB2CB50083AB69 /* JSDOMTransaction.cpp */,
+				7B3537C415CB2CB50083AB69 /* JSDOMTransaction.h */,
 				7B1EA0CC1576C5B50060177D /* JSUndoManager.cpp */,
 				7B1EA0CD1576C5B50060177D /* JSUndoManager.h */,
 			);
@@ -17084,6 +17097,7 @@
 				CECADFC3153778FF00E37068 /* DictationAlternative.h */,
 				CECADFC4153778FF00E37068 /* DictationCommand.cpp */,
 				CECADFC5153778FF00E37068 /* DictationCommand.h */,
+				7B8C1FE615CCE3C2004B35DC /* DOMTransaction.idl */,
 				93309D93099E64910056E581 /* EditAction.h */,
 				93309D94099E64910056E581 /* EditCommand.cpp */,
 				93309D95099E64910056E581 /* EditCommand.h */,
@@ -20075,6 +20089,8 @@
 				316023EF1532C40C00D50FF4 /* Dictionary.h */,
 				BC53DA61114314BD000D817E /* DOMObjectHashTableMap.cpp */,
 				BC53DA5F1143141A000D817E /* DOMObjectHashTableMap.h */,
+				7BB35AE915CCDDF400F2A643 /* DOMTransaction.cpp */,
+				7BB35AEA15CCDDF400F2A643 /* DOMTransaction.h */,
 				BC53DA471143134D000D817E /* DOMWrapperWorld.cpp */,
 				BC53DA2D1143121E000D817E /* DOMWrapperWorld.h */,
 				1432E8480C51493F00B1500F /* GCController.cpp */,
@@ -20320,6 +20336,7 @@
 				07846384145B1B8E00A58DF1 /* JSTrackCustom.h */,
 				07B5A30A14687B8400A81ECE /* JSTrackEventCustom.cpp */,
 				516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */,
+				7B0992F415ACF1AD00ED6D20 /* JSUndoManagerCustom.cpp */,
 				49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */,
 				319E68861327C911004AC91A /* JSWebKitAnimationCustom.cpp */,
 				3194623113022F65004BB3F8 /* JSWebKitAnimationListCustom.cpp */,
@@ -23105,6 +23122,7 @@
 				188604B40F2E654A000B6443 /* DOMTimer.h in Headers */,
 				05FD69E012845D4300B2BEB3 /* DOMTimeStamp.h in Headers */,
 				76FC2B0C12370DA0006A991A /* DOMTokenList.h in Headers */,
+				7BB35AEC15CCDDF400F2A643 /* DOMTransaction.h in Headers */,
 				BC1A37BE097C715F0019F3D8 /* DOMTraversal.h in Headers */,
 				85526CD20AB0B7D9000302EA /* DOMTreeWalker.h in Headers */,
 				850B41C30AD9E7E700A6ED4F /* DOMTreeWalkerInternal.h in Headers */,
@@ -23760,6 +23778,7 @@
 				C5137CF311A58378004ADB99 /* JSDOMStringList.h in Headers */,
 				BC64649811D82349006455B0 /* JSDOMStringMap.h in Headers */,
 				7694563D1214D97C0007CBAE /* JSDOMTokenList.h in Headers */,
+				7B3537C615CB2CB50083AB69 /* JSDOMTransaction.h in Headers */,
 				2E37E00612DBC5A400A6B233 /* JSDOMURL.h in Headers */,
 				BC6932740D7E293900AE44D1 /* JSDOMWindowBase.h in Headers */,
 				652FBBBC0DE27CB60001D386 /* JSDOMWindowCustom.h in Headers */,
@@ -26365,6 +26384,7 @@
 				933A14AA0B7D1D0900A53FFD /* DOMTextEvent.mm in Sources */,
 				188604B30F2E654A000B6443 /* DOMTimer.cpp in Sources */,
 				76FC2B0B12370DA0006A991A /* DOMTokenList.cpp in Sources */,
+				7BB35AEB15CCDDF400F2A643 /* DOMTransaction.cpp in Sources */,
 				85526CD30AB0B7DA000302EA /* DOMTreeWalker.mm in Sources */,
 				85C7F4920AAF79DC004014DD /* DOMUIEvent.mm in Sources */,
 				2E37DFDA12DBAFB800A6B233 /* DOMURL.cpp in Sources */,
@@ -26962,6 +26982,7 @@
 				BC64649C11D8238C006455B0 /* JSDOMStringMapCustom.cpp in Sources */,
 				7694563C1214D97C0007CBAE /* JSDOMTokenList.cpp in Sources */,
 				14E0BC56136148A8002AD12E /* JSDOMTokenListCustom.cpp in Sources */,
+				7B3537C515CB2CB50083AB69 /* JSDOMTransaction.cpp in Sources */,
 				2E37E00512DBC5A400A6B233 /* JSDOMURL.cpp in Sources */,
 				1403BA0C09EB18C700797C7F /* JSDOMWindow.cpp in Sources */,
 				BC6932730D7E293900AE44D1 /* JSDOMWindowBase.cpp in Sources */,
@@ -27425,6 +27446,7 @@
 				49EECF08105070C400099FAB /* JSUint8Array.cpp in Sources */,
 				91089D3314C33605005AFC49 /* JSUint8ClampedArray.cpp in Sources */,
 				7B1EA0CE1576C5B50060177D /* JSUndoManager.cpp in Sources */,
+				7B0992F515ACF1AD00ED6D20 /* JSUndoManagerCustom.cpp in Sources */,
 				15C77094100D3CA8005BA267 /* JSValidityState.cpp in Sources */,
 				9703E1BF15DC4E37001F24C8 /* JSVoidCallback.cpp in Sources */,
 				FD82D7F713D4C8BD004E4372 /* JSWaveShaperNode.cpp in Sources */,

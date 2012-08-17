@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>UndoManager.transact()</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+This tests UndoManager's transact() method.
+
+<div id="edit" contentEditable="true"></div>
+<script>
+var undoManager = document.undoManager;
+
+test(function() {
+    assert_idl_attribute(undoManager, "transact");
+}, "undoManager has property transact.");
+
+var edit = document.getElementById("edit");
+
+test(function() {
+    undoManager.transact({
+        "execute": function() { edit.innerHTML += "1e "; },
+        "undo": function() { edit.innerHTML += "1u "; },
+        "redo": function() { edit.innerHTML += "1r "; }
+    }, false);
+    assert_true(edit.innerHTML == "1e ");
+}, "After a transact call, undoManager applies the transaction.");
+
+test(function() {
+    undoManager.transact({
+        "execute": function() { edit.innerHTML += "2e "; },
+        "undo": function() { edit.innerHTML += "2u "; },
+        "redo": function() { edit.innerHTML += "2r "; }
+    }, false);
+    assert_true(edit.innerHTML == "1e 2e ");
+}, "After another transact call, undoManager applies the second transaction.");
+
+test(function() {
+    undoManager.undo();
+    assert_true(edit.innerHTML == "1e 2e 2u ");
+}, "After an undo call, undoManager unapplies the second transaction.");
+
+test(function() {
+    undoManager.undo();
+    assert_true(edit.innerHTML == "1e 2e 2u 1u ");
+}, "After another undo call, undoManager unapplies the first transaction.");
+
+test(function() {
+    undoManager.redo();
+    assert_true(edit.innerHTML == "1e 2e 2u 1u 1r ");
+}, "After a redo call, undoManager reapplies the first transaction.");
+
+test(function() {
+    undoManager.redo();
+    assert_true(edit.innerHTML == "1e 2e 2u 1u 1r 2r ");
+}, "After another redo call, undoManager reapplies the second transaction.");
+
+edit.innerHTML = "";
+
+test(function() {
+    undoManager.transact({
+        "execute": function() { edit.innerHTML += "1e "; },
+        "undo": function() { edit.innerHTML += "1u "; },
+        "redo": function() { edit.innerHTML += "1r "; }
+    }, false);
+    undoManager.transact({
+        "execute": function() { edit.innerHTML += "2e "; },
+        "undo": function() { edit.innerHTML += "2u "; },
+        "redo": function() { edit.innerHTML += "2r "; }
+    }, true);
+    undoManager.transact({
+        "execute": function() { edit.innerHTML += "3e "; },
+        "undo": function() { edit.innerHTML += "3u "; },
+        "redo": function() { edit.innerHTML += "3r "; }
+    }, true);
+    assert_true(edit.innerHTML == "1e 2e 3e ");
+}, "After three transact calls that are merged into one entry, undoManager applies the three transactions.");
+
+test(function() {
+    undoManager.undo();
+    assert_true(edit.innerHTML == "1e 2e 3e 3u 2u 1u ");
+}, "After an undo call, undoManager unapplies the three transactions in the correct order.");
+
+test(function() {
+    undoManager.redo();
+    assert_true(edit.innerHTML == "1e 2e 3e 3u 2u 1u 1r 2r 3r ");
+}, "After a redo call, undoManager reapplies the three transactions in the correct order.");
+
+test(function() {
+    undoManager.undo();
+    assert_true(edit.innerHTML == "1e 2e 3e 3u 2u 1u 1r 2r 3r 3u 2u 1u ");
+}, "After an undo call, undoManager unapplies the three transactions in the correct order.");
+
+var thisValue;
+
+test(function() {
+    thisValue = null;
+    undoManager.transact({
+        "execute": function() { thisValue = this; },
+        "undo": function() { thisValue = this; },
+        "redo": function() { thisValue = this; }
+    }, false);
+    assert_equals(thisValue, undoManager);
+}, "The |this| value during the execute callback is the undoManager.");
+
+test(function() {
+    thisValue = null;
+    undoManager.undo();
+    assert_equals(thisValue, undoManager);
+}, "The |this| value during the undo callback is the undoManager.");
+
+test(function() {
+    thisValue = null;
+    undoManager.redo();
+    assert_equals(thisValue, undoManager);
+}, "The |this| value during the redo callback is the undoManager.");
+
+edit.style.display = "none";
+</script>
+</body>
+</html>

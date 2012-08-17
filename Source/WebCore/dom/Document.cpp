@@ -666,11 +666,6 @@ Document::~Document()
     clearStyleResolver(); // We need to destory CSSFontSelector before destroying m_cachedResourceLoader.
     m_cachedResourceLoader.clear();
 
-#if ENABLE(UNDO_MANAGER)
-    if (m_undoManager)
-        m_undoManager->disconnect();
-#endif
-
     // We must call clearRareData() here since a Document class inherits TreeScope
     // as well as Node. See a comment on TreeScope.h for the reason.
     if (hasRareData())
@@ -6144,7 +6139,7 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 PassRefPtr<UndoManager> Document::undoManager()
 {
     if (!m_undoManager)
-        m_undoManager = UndoManager::create(this);
+        m_undoManager = UndoManager::create(this, this);
     return m_undoManager;
 }
 #endif

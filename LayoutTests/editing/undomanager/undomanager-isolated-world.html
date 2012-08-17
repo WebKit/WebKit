@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Isolated world</title>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+description("This tests that undoManager's callback functions only run in the right world.");
+
+if (window.testRunner) {
+    document.undoManager.transact({
+        "execute": function() { },
+        "undo": function() {
+            document.getElementById('log').innerHTML = "fail";
+        },
+        "redo": function() { }
+    });
+
+    testRunner.evaluateScriptInIsolatedWorld(
+        0,
+        "document.undoManager.undo(); "
+    );
+
+    var log = document.getElementById('log');
+    if (log.innerHTML == "")
+        testPassed("undoManager's callback was not invoked in isolated world.");
+    else
+        testFailed("undoManager's callback was invoked in isolated world.");
+} else
+    testFailed("This test requires testRunner.");
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

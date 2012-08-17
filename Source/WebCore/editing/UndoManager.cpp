@@ -33,74 +33,169 @@
 
 #if ENABLE(UNDO_MANAGER)
 
+#include "DOMTransaction.h"
 #include "Element.h"
-#include "Node.h"
 
 namespace WebCore {
 
-PassRefPtr<UndoManager> UndoManager::create(Node* host)
+PassRefPtr<UndoManager> UndoManager::create(ScriptExecutionContext* context, Node* host)
 {
-    return adoptRef(new UndoManager(host));
+    RefPtr<UndoManager> undoManager = adoptRef(new UndoManager(context, host));
+    undoManager->suspendIfNeeded();
+    return undoManager.release();
 }
 
-UndoManager::UndoManager(Node* host)
-    : m_undoScopeHost(host)
+UndoManager::UndoManager(ScriptExecutionContext* context, Node* host)
+    : ActiveDOMObject(context, this)
+    , m_undoScopeHost(host)
+    , m_isInProgress(false)
 {
+}
+
+static void clearStack(UndoManagerStack& stack)
+{
+    for (size_t i = 0; i < stack.size(); ++i) {
+        const UndoManagerEntry& entry = *stack[i];
+        for (size_t j = 0; j < entry.size(); ++j) {
+            UndoStep* step = entry[j].get();
+            if (step->isDOMTransaction())
+                static_cast<DOMTransaction*>(step)->setUndoManager(0);
+        }
+    }
+    stack.clear();
 }
 
 void UndoManager::disconnect()
 {
     m_undoScopeHost = 0;
+    clearStack(m_undoStack);
+    clearStack(m_redoStack);
 }
 
-void UndoManager::transact(const Dictionary&, bool, ExceptionCode& ec)
+void UndoManager::stop()
 {
-    if (!isConnected()) {
+    disconnect();
+}
+
+UndoManager::~UndoManager()
+{
+    disconnect();
+}
+
+static inline PassOwnPtr<UndoManagerEntry> createUndoManagerEntry()
+{
+    return adoptPtr(new UndoManagerEntry);
+}
+
+void UndoManager::transact(PassRefPtr<DOMTransaction> transaction, bool merge, ExceptionCode& ec)
+{
+    if (m_isInProgress || !isConnected()) {
         ec = INVALID_ACCESS_ERR;
         return;
     }
-    RefPtr<UndoStep> step;
-    m_undoStack.append(step);
+    clearRedo(ASSERT_NO_EXCEPTION);
+    transaction->setUndoManager(this);
+
+    m_isInProgress = true;
+    RefPtr<UndoManager> protect(this);
+    transaction->apply();
+    m_isInProgress = false;
+
+    if (!m_undoScopeHost)
+        return;
+    if (!merge || m_undoStack.isEmpty())
+        m_undoStack.append(createUndoManagerEntry());
+    m_undoStack.last()->append(transaction);
 }
 
 void UndoManager::undo(ExceptionCode& ec)
 {
-    if (!isConnected()) {
+    if (m_isInProgress || !isConnected()) {
         ec = INVALID_ACCESS_ERR;
         return;
     }
+    if (m_undoStack.isEmpty())
+        return;
+    m_inProgressEntry = createUndoManagerEntry();
+
+    m_isInProgress = true;
+    RefPtr<UndoManager> protect(this);
+    UndoManagerEntry entry = *m_undoStack.last();
+    for (size_t i = entry.size(); i > 0; --i)
+        entry[i - 1]->unapply();
+    m_isInProgress = false;
+
+    if (!m_undoScopeHost) {
+        m_inProgressEntry.clear();
+        return;
+    }
+    m_redoStack.append(m_inProgressEntry.release());
+    m_undoStack.removeLast();
 }
 
 void UndoManager::redo(ExceptionCode& ec)
 {
-    if (!isConnected()) {
+    if (m_isInProgress || !isConnected()) {
         ec = INVALID_ACCESS_ERR;
         return;
     }
+    if (m_redoStack.isEmpty())
+        return;
+    m_inProgressEntry = createUndoManagerEntry();
+
+    m_isInProgress = true;
+    RefPtr<UndoManager> protect(this);
+    UndoManagerEntry entry = *m_redoStack.last();
+    for (size_t i = entry.size(); i > 0; --i)
+        entry[i - 1]->reapply();
+    m_isInProgress = false;
+
+    if (!m_undoScopeHost) {
+        m_inProgressEntry.clear();
+        return;
+    }
+    m_undoStack.append(m_inProgressEntry.release());
+    m_redoStack.removeLast();
+}
+
+void UndoManager::registerUndoStep(PassRefPtr<UndoStep> step)
+{
+    if (!m_isInProgress) {
+        OwnPtr<UndoManagerEntry> entry = createUndoManagerEntry();
+        entry->append(step);
+        m_undoStack.append(entry.release());
+
+        clearRedo(ASSERT_NO_EXCEPTION);
+    } else
+        m_inProgressEntry->append(step);
+}
+
+void UndoManager::registerRedoStep(PassRefPtr<UndoStep> step)
+{
+    if (!m_isInProgress) {
+        OwnPtr<UndoManagerEntry> entry = createUndoManagerEntry();
+        entry->append(step);
+        m_redoStack.append(entry.release());
+    } else
+        m_inProgressEntry->append(step);
 }
 
 void UndoManager::clearUndo(ExceptionCode& ec)
 {
-    if (!isConnected()) {
+    if (m_isInProgress || !isConnected()) {
         ec = INVALID_ACCESS_ERR;
         return;
     }
-    m_undoStack.clear();
+    clearStack(m_undoStack);
 }
 
 void UndoManager::clearRedo(ExceptionCode& ec)
 {
-    if (!isConnected()) {
+    if (m_isInProgress || !isConnected()) {
         ec = INVALID_ACCESS_ERR;
         return;
     }
-    m_redoStack.clear();
-}
-
-void UndoManager::clearUndoRedo()
-{
-    m_undoStack.clear();
-    m_redoStack.clear();
+    clearStack(m_redoStack);
 }
 
 bool UndoManager::isConnected()

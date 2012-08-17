@@ -392,6 +392,7 @@ SET(WebCore_IDL_FILES
     dom/WebKitTransitionEvent.idl
     dom/WheelEvent.idl
 
+    editing/DOMTransaction.idl
     editing/UndoManager.idl
 
     fileapi/Blob.idl
