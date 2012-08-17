@@ -165,6 +165,42 @@ static bool isDocumentSandboxed(Frame* frame, SandboxFlags mask)
     return frame->document() && frame->document()->isSandboxed(mask);
 }
 
+class FrameLoader::FrameProgressTracker {
+public:
+    static PassOwnPtr<FrameProgressTracker> create(Frame* frame) { return adoptPtr(new FrameProgressTracker(frame)); }
+    ~FrameProgressTracker()
+    {
+        ASSERT(!m_inProgressCount || m_frame->page());
+        for (; m_inProgressCount; m_inProgressCount--)
+            m_frame->page()->progress()->progressCompleted(m_frame);
+    }
+
+    void progressStarted()
+    {
+        ASSERT(m_frame->page());
+        m_inProgressCount++;
+        m_frame->page()->progress()->progressStarted(m_frame);
+    }
+
+    void progressCompleted()
+    {
+        ASSERT(m_inProgressCount > 0);
+        ASSERT(m_frame->page());
+        m_inProgressCount--;
+        m_frame->page()->progress()->progressCompleted(m_frame);
+    }
+
+private:
+    FrameProgressTracker(Frame* frame)
+        : m_frame(frame)
+        , m_inProgressCount(0)
+    {
+    }
+
+    Frame* m_frame;
+    int m_inProgressCount;
+};
+
 FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     : m_frame(frame)
     , m_client(client)
@@ -228,6 +264,7 @@ void FrameLoader::init()
     m_didCallImplicitClose = true;
 
     m_networkingContext = m_client->createNetworkingContext();
+    m_progressTracker = FrameProgressTracker::create(m_frame);
 }
 
 void FrameLoader::setDefersLoading(bool defers)
@@ -1087,9 +1124,8 @@ void FrameLoader::prepareForHistoryNavigation()
 
 void FrameLoader::prepareForLoadStart()
 {
-    if (Page* page = m_frame->page())
-        page->progress()->progressStarted(m_frame);
     m_client->dispatchDidStartProvisionalLoad();
+    m_progressTracker->progressStarted();
 
     // Notify accessibility.
     if (AXObjectCache::accessibilityEnabled()) {
@@ -1646,8 +1682,7 @@ void FrameLoader::setState(FrameState newState)
 void FrameLoader::clearProvisionalLoad()
 {
     setProvisionalDocumentLoader(0);
-    if (Page* page = m_frame->page())
-        page->progress()->progressCompleted(m_frame);
+    m_progressTracker->progressCompleted();
     setState(FrameStateComplete);
 }
 
@@ -2123,9 +2158,8 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 return;
 
             if (!settings->needsDidFinishLoadOrderQuirk()) {
+                m_progressTracker->progressCompleted();
                 if (Page* page = m_frame->page()) {
-                    page->progress()->progressCompleted(m_frame);
-
                     if (m_frame == page->mainFrame())
                         page->resetRelevantPaintedObjectCounter();
                 }
@@ -2143,9 +2177,8 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             }
 
             if (settings->needsDidFinishLoadOrderQuirk()) {
+                m_progressTracker->progressCompleted();
                 if (Page* page = m_frame->page()) {
-                    page->progress()->progressCompleted(m_frame);
-
                     if (m_frame == page->mainFrame())
                         page->resetRelevantPaintedObjectCounter();
                 }
@@ -2368,6 +2401,8 @@ void FrameLoader::detachFromParent()
     InspectorInstrumentation::frameDetachedFromParent(m_frame);
 
     detachViewsAndDocumentLoader();
+
+    m_progressTracker.clear();
 
     if (Frame* parent = m_frame->tree()->parent()) {
         parent->loader()->closeAndRemoveChild(m_frame);
