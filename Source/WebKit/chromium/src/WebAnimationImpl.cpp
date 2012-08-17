@@ -96,7 +96,7 @@ void WebAnimationImpl::setAlternatesDirection(bool alternates)
 
 PassOwnPtr<WebCore::CCActiveAnimation> WebAnimationImpl::cloneToCCAnimation()
 {
-    OwnPtr<WebCore::CCActiveAnimation> toReturn(m_animation->clone(WebCore::CCActiveAnimation::NonControllingInstance));
+    OwnPtr<WebCore::CCActiveAnimation> toReturn(m_animation->cloneForImplThread());
     toReturn->setNeedsSynchronizedStartTime(true);
     return toReturn.release();
 }

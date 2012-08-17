@@ -26,38 +26,9 @@
 
 #include "cc/CCActiveAnimation.h"
 
-#include "TraceEvent.h"
 #include "cc/CCAnimationCurve.h"
-#include <wtf/Assertions.h>
-#include <wtf/StdLibExtras.h>
 
 #include <cmath>
-
-namespace {
-
-// This should match the RunState enum.
-static const char* const s_runStateNames[] = {
-    "WaitingForNextTick",
-    "WaitingForTargetAvailability",
-    "WaitingForStartTime",
-    "WaitingForDeletion",
-    "Running",
-    "Paused",
-    "Finished",
-    "Aborted"
-};
-
-COMPILE_ASSERT(static_cast<int>(WebCore::CCActiveAnimation::RunStateEnumSize) == WTF_ARRAY_LENGTH(s_runStateNames), RunState_names_match_enum);
-
-// This should match the TargetProperty enum.
-static const char* const s_targetPropertyNames[] = {
-    "Transform",
-    "Opacity"
-};
-
-COMPILE_ASSERT(static_cast<int>(WebCore::CCActiveAnimation::TargetPropertyEnumSize) == WTF_ARRAY_LENGTH(s_targetPropertyNames), TargetProperty_names_match_enum);
-
-} // namespace
 
 namespace WebCore {
 
@@ -80,14 +51,11 @@ CCActiveAnimation::CCActiveAnimation(PassOwnPtr<CCAnimationCurve> curve, int ani
     , m_suspended(false)
     , m_pauseTime(0)
     , m_totalPausedTime(0)
-    , m_isControllingInstance(false)
 {
 }
 
 CCActiveAnimation::~CCActiveAnimation()
 {
-    if (m_runState == Running || m_runState == Paused)
-        setRunState(Aborted, 0);
 }
 
 void CCActiveAnimation::setRunState(RunState runState, double monotonicTime)
@@ -95,35 +63,11 @@ void CCActiveAnimation::setRunState(RunState runState, double monotonicTime)
     if (m_suspended)
         return;
 
-    char nameBuffer[256];
-    snprintf(nameBuffer, sizeof(nameBuffer), "%s-%d%s", s_targetPropertyNames[m_targetProperty], m_group, m_isControllingInstance ? "(impl)" : "");
-
-    bool isWaitingToStart = m_runState == WaitingForNextTick
-        || m_runState == WaitingForTargetAvailability
-        || m_runState == WaitingForStartTime;
-
-    if (isWaitingToStart && runState == Running)
-        TRACE_EVENT_ASYNC_BEGIN1("cc", "CCActiveAnimation", this, "Name", TRACE_STR_COPY(nameBuffer));
-
-    bool wasFinished = isFinished();
-
-    const char* oldRunStateName = s_runStateNames[m_runState];
-
     if (runState == Running && m_runState == Paused)
         m_totalPausedTime += monotonicTime - m_pauseTime;
     else if (runState == Paused)
         m_pauseTime = monotonicTime;
     m_runState = runState;
-
-    const char* newRunStateName = s_runStateNames[runState];
-
-    if (!wasFinished && isFinished())
-        TRACE_EVENT_ASYNC_END0("cc", "CCActiveAnimation", this);
-
-    char stateBuffer[256];
-    snprintf(stateBuffer, sizeof(stateBuffer), "%s->%s", oldRunStateName, newRunStateName);
-
-    TRACE_EVENT_INSTANT2("cc", "CCLayerAnimationController::setRunState", "Name", TRACE_STR_COPY(nameBuffer), "State", TRACE_STR_COPY(stateBuffer));
 }
 
 void CCActiveAnimation::suspend(double monotonicTime)
@@ -195,22 +139,16 @@ double CCActiveAnimation::trimTimeToCurrentIteration(double monotonicTime) const
     return trimmed;
 }
 
-PassOwnPtr<CCActiveAnimation> CCActiveAnimation::clone(InstanceType instanceType) const
-{
-    return cloneAndInitialize(instanceType, m_runState, m_startTime);
-}
-
-PassOwnPtr<CCActiveAnimation> CCActiveAnimation::cloneAndInitialize(InstanceType instanceType, RunState initialRunState, double startTime) const
+PassOwnPtr<CCActiveAnimation> CCActiveAnimation::cloneForImplThread() const
 {
     OwnPtr<CCActiveAnimation> toReturn(adoptPtr(new CCActiveAnimation(m_curve->clone(), m_id, m_group, m_targetProperty)));
-    toReturn->m_runState = initialRunState;
+    toReturn->m_runState = m_runState;
     toReturn->m_iterations = m_iterations;
-    toReturn->m_startTime = startTime;
+    toReturn->m_startTime = m_startTime;
     toReturn->m_pauseTime = m_pauseTime;
     toReturn->m_totalPausedTime = m_totalPausedTime;
     toReturn->m_timeOffset = m_timeOffset;
     toReturn->m_alternatesDirection = m_alternatesDirection;
-    toReturn->m_isControllingInstance = instanceType == ControllingInstance;
     return toReturn.release();
 }
 

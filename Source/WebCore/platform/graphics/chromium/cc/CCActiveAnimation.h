@@ -56,16 +56,12 @@ public:
         Running,
         Paused,
         Finished,
-        Aborted,
-        // This sentinel must be last.
-        RunStateEnumSize
+        Aborted
     };
 
     enum TargetProperty {
         Transform = 0,
-        Opacity,
-        // This sentinel must be last.
-        TargetPropertyEnumSize
+        Opacity
     };
 
     static PassOwnPtr<CCActiveAnimation> create(PassOwnPtr<CCAnimationCurve>, int animationId, int groupId, TargetProperty);
@@ -116,14 +112,7 @@ public:
     // of iterations, returns the relative time in the current iteration.
     double trimTimeToCurrentIteration(double monotonicTime) const;
 
-    enum InstanceType {
-        ControllingInstance = 0,
-        NonControllingInstance
-    };
-
-    PassOwnPtr<CCActiveAnimation> clone(InstanceType) const;
-    PassOwnPtr<CCActiveAnimation> cloneAndInitialize(InstanceType, RunState initialRunState, double startTime) const;
-    bool isControllingInstance() const { return m_isControllingInstance; }
+    PassOwnPtr<CCActiveAnimation> cloneForImplThread() const;
 
     void pushPropertiesTo(CCActiveAnimation*) const;
 
@@ -165,15 +154,6 @@ private:
     // about these values.
     double m_pauseTime;
     double m_totalPausedTime;
-
-    // Animations lead dual lives. An active animation will be conceptually owned by
-    // two controllers, one on the impl thread and one on the main. In reality, there
-    // will be two separate CCActiveAnimation instances for the same animation. They
-    // will have the same group id and the same target property (these two values
-    // uniquely identify an animation). The instance on the impl thread is the instance
-    // that ultimately controls the values of the animating layer and so we will refer
-    // to it as the 'controlling instance'.
-    bool m_isControllingInstance;
 };
 
 } // namespace WebCore
