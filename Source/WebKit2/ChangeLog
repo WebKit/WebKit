@@ -1,3 +1,17 @@
+2012-08-17  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Getting unnecessary  EINA_SAFETY_ON_NULL_RETURN_VAL warnings while page navigation
+        https://bugs.webkit.org/show_bug.cgi?id=94308
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The reason is that loadClient.didChangeBackForwardList callback is invoked with zero 
+        arguments which is valid case while page back-forward navigation and means basically 
+        that the back-froward list has changed but items were not added or deleted.
+
+        * UIProcess/API/efl/ewk_back_forward_list.cpp:
+        (ewk_back_forward_list_changed):
+
 2012-08-16  Lauro Neto  <lauro.neto@openbossa.org>
 
         [Qt] Failure to build with --no-inspector

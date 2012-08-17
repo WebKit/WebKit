@@ -128,7 +128,8 @@ unsigned ewk_back_forward_list_count(Ewk_Back_Forward_List* list)
  */
 void ewk_back_forward_list_changed(Ewk_Back_Forward_List* list, WKBackForwardListItemRef wkAddedItem, WKArrayRef wkRemovedItems)
 {
-    addItemToWrapperCache(list, wkAddedItem); // Puts new item to the cache.
+    if (wkAddedItem) // Checking also here to avoid EINA_SAFETY_ON_NULL_RETURN_VAL warnings.
+        addItemToWrapperCache(list, wkAddedItem); // Puts new item to the cache.
 
     const size_t removedItemsSize = wkRemovedItems ? WKArrayGetSize(wkRemovedItems) : 0;
     for (size_t i = 0; i < removedItemsSize; ++i) {
