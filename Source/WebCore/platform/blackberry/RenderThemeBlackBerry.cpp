@@ -788,7 +788,7 @@ void RenderThemeBlackBerry::adjustMediaControlStyle(StyleResolver*, RenderStyle*
         style->setWidth(timeWidth);
         style->setHeight(controlsHeight);
         style->setPaddingRight(padding);
-        style->setBlendedFontSize(fontSize);
+        style->setFontSize(static_cast<int>(fontSize));
         break;
     case MediaVolumeSliderContainerPart:
         style->setWidth(controlsHeight);

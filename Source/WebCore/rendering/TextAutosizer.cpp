@@ -27,6 +27,7 @@
 #include "Document.h"
 #include "InspectorInstrumentation.h"
 #include "RenderObject.h"
+#include "RenderStyle.h"
 #include "RenderText.h"
 #include "RenderView.h"
 #include "Settings.h"
@@ -56,68 +57,63 @@ bool TextAutosizer::processSubtree(RenderObject* layoutRoot)
         windowSize = mainFrame->view()->visibleContentRect(includeScrollbars).size(); // FIXME: Check that this is always in logical (density-independent) pixels (see wkbug.com/87440).
     }
 
-    for (RenderObject* descendant = traverseNext(layoutRoot, layoutRoot); descendant; descendant = traverseNext(descendant, layoutRoot)) {
-        if (!treatAsInline(descendant))
-            processBlock(toRenderBlock(descendant), windowSize);
+    for (RenderObject* descendant = layoutRoot->nextInPreOrder(layoutRoot); descendant; descendant = descendant->nextInPreOrder(layoutRoot)) {
+        if (isNotAnAutosizingContainer(descendant))
+            continue;
+        processBox(toRenderBox(descendant), windowSize);
     }
 
     return true;
 }
 
-void TextAutosizer::processBlock(RenderBlock* block, const IntSize& windowSize)
+void TextAutosizer::processBox(RenderBox* box, const IntSize& windowSize)
 {
-    int windowLogicalWidth = block->isHorizontalWritingMode() ? windowSize.width() : windowSize.height();
-    float multiplier = static_cast<float>(block->logicalWidth()) / windowLogicalWidth; // FIXME: This is overly simplistic.
+    int windowLogicalWidth = box->isHorizontalWritingMode() ? windowSize.width() : windowSize.height();
+    float multiplier = static_cast<float>(box->logicalWidth()) / windowLogicalWidth; // FIXME: This is overly simplistic.
     multiplier *= m_document->settings()->textAutosizingFontScaleFactor();
 
     if (multiplier < 1)
         return;
-    for (RenderObject* descendant = traverseNext(block, block, treatAsInline); descendant; descendant = traverseNext(descendant, block, treatAsInline)) {
-        if (descendant->isText())
-            processText(toRenderText(descendant), multiplier);
-    }
-}
-
-void TextAutosizer::processText(RenderText* text, float multiplier)
-{
-    float specifiedSize = text->style()->fontDescription().specifiedSize();
-    float newSize = specifiedSize * multiplier; // FIXME: This is overly simplistic.
-
-    RefPtr<RenderStyle> style = RenderStyle::clone(text->style());
-    FontDescription fontDescription(style->fontDescription());
-    fontDescription.setComputedSize(newSize);
-    style->setFontDescription(fontDescription);
-    style->font().update(style->font().fontSelector());
-    text->setStyle(style.release());
-
-    // FIXME: Increase computed line height proportionately.
-    // FIXME: Increase list marker size proportionately.
-}
-
-bool TextAutosizer::treatAsInline(const RenderObject* renderer)
-{
-    return !renderer->isRenderBlock() || renderer->isListItem() || renderer->isInlineBlockOrInlineTable();
-}
-
-// FIXME: Consider making this a method on RenderObject if it remains this generic.
-RenderObject* TextAutosizer::traverseNext(RenderObject* current, const RenderObject* stayWithin, RenderObjectFilter filter)
-{
-    for (RenderObject* child = current->firstChild(); child; child = child->nextSibling()) {
-        if (!filter || filter(child)) {
-            ASSERT(!stayWithin || child->isDescendantOf(stayWithin));
-            return child;
+    RenderObject* descendant = nextInPreOrderMatchingFilter(box, box, isNotAnAutosizingContainer);
+    while (descendant) {
+        if (descendant->isText()) {
+            setMultiplier(descendant, multiplier);
+            setMultiplier(descendant->parent(), multiplier); // Parent does line spacing.
+            // FIXME: Increase list marker size proportionately.
         }
+        descendant = nextInPreOrderMatchingFilter(descendant, box, isNotAnAutosizingContainer);
     }
+}
 
-    for (RenderObject* ancestor = current; ancestor; ancestor = ancestor->parent()) {
+void TextAutosizer::setMultiplier(RenderObject* renderer, float multiplier)
+{
+    RefPtr<RenderStyle> newStyle = RenderStyle::clone(renderer->style());
+    newStyle->setTextAutosizingMultiplier(multiplier);
+    renderer->setStyle(newStyle.release());
+}
+
+bool TextAutosizer::isNotAnAutosizingContainer(const RenderObject* renderer)
+{
+    // "Autosizing containers" are the smallest unit for which we can enable/disable
+    // Text Autosizing. A uniform text size multiplier is enforced within them.
+    // - Must be RenderBoxes since they need a well-defined logicalWidth().
+    // - Must not be inline, as different multipliers on one line looks terrible.
+    // - Must not be list items, as items in the same list should look consistent.
+    return !renderer->isBox() || renderer->isInline() || renderer->isListItem();
+}
+
+RenderObject* TextAutosizer::nextInPreOrderMatchingFilter(RenderObject* current, const RenderObject* stayWithin, RenderObjectFilterFunctor filter)
+{
+    for (RenderObject* child = current->firstChild(); child; child = child->nextSibling())
+        if (filter(child))
+            return child;
+
+    for (const RenderObject* ancestor = current; ancestor; ancestor = ancestor->parent()) {
         if (ancestor == stayWithin)
             return 0;
-        for (RenderObject* sibling = ancestor->nextSibling(); sibling; sibling = sibling->nextSibling()) {
-            if (!filter || filter(sibling)) {
-                ASSERT(!stayWithin || sibling->isDescendantOf(stayWithin));
+        for (RenderObject* sibling = ancestor->nextSibling(); sibling; sibling = sibling->nextSibling())
+            if (filter(sibling))
                 return sibling;
-            }
-        }
     }
 
     return 0;

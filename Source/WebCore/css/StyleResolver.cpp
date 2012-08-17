@@ -3669,7 +3669,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyFont:
         if (isInherit) {
             FontDescription fontDescription = m_parentStyle->fontDescription();
-            m_style->setLineHeight(m_parentStyle->lineHeight());
+            m_style->setLineHeight(m_parentStyle->specifiedLineHeight());
             m_lineHeightValue = 0;
             setFontDescription(fontDescription);
         } else if (isInitial) {

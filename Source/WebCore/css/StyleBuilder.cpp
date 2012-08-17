@@ -1211,7 +1211,7 @@ public:
         Length lineHeight;
 
         if (primitiveValue->getIdent() == CSSValueNormal)
-            lineHeight = Length(-100.0, Percent);
+            lineHeight = RenderStyle::initialLineHeight();
         else if (primitiveValue->isLength()) {
             double multiplier = styleResolver->style()->effectiveZoom();
             if (styleResolver->style()->textSizeAdjust()) {
@@ -1233,7 +1233,7 @@ public:
     }
     static PropertyHandler createHandler()
     {
-        PropertyHandler handler = ApplyPropertyDefaultBase<Length, &RenderStyle::lineHeight, Length, &RenderStyle::setLineHeight, Length, &RenderStyle::initialLineHeight>::createHandler();
+        PropertyHandler handler = ApplyPropertyDefaultBase<Length, &RenderStyle::specifiedLineHeight, Length, &RenderStyle::setLineHeight, Length, &RenderStyle::initialLineHeight>::createHandler();
         return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
     }
 };

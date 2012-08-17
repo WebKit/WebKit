@@ -597,7 +597,13 @@ public:
     const Font& font() const;
     const FontMetrics& fontMetrics() const;
     const FontDescription& fontDescription() const;
+    float specifiedFontSize() const;
+    float computedFontSize() const;
     int fontSize() const;
+
+#if ENABLE(TEXT_AUTOSIZING)
+    float textAutosizingMultiplier() const { return visual->m_textAutosizingMultiplier; }
+#endif
 
     Length textIndent() const { return rareInheritedData->indent; }
     ETextAlign textAlign() const { return static_cast<ETextAlign>(inherited_flags._text_align); }
@@ -613,6 +619,7 @@ public:
     TextDirection direction() const { return static_cast<TextDirection>(inherited_flags._direction); }
     bool isLeftToRightDirection() const { return direction() == LTR; }
 
+    Length specifiedLineHeight() const;
     Length lineHeight() const;
     int computedLineHeight(RenderView* = 0) const;
 
@@ -1102,9 +1109,16 @@ public:
     void setTableLayout(ETableLayout v) { noninherited_flags._table_layout = v; }
 
     bool setFontDescription(const FontDescription&);
+    // Only used for blending font sizes when animating, for MathML anonymous blocks, and for text autosizing.
+    void setFontSize(float);
 
-    // Only used for blending font sizes when animating, or MathML anonymous blocks.
-    void setBlendedFontSize(int);
+#if ENABLE(TEXT_AUTOSIZING)
+    void setTextAutosizingMultiplier(float v)
+    {
+        SET_VAR(visual, m_textAutosizingMultiplier, v)
+        setFontSize(fontDescription().specifiedSize());
+    }
+#endif
 
     void setColor(const Color&);
     void setTextIndent(Length v) { SET_VAR(rareInheritedData, indent, v) }
@@ -1114,7 +1128,7 @@ public:
     void setTextDecorationsInEffect(ETextDecoration v) { inherited_flags._text_decorations = v; }
     void setTextDecoration(ETextDecoration v) { SET_VAR(visual, textDecoration, v); }
     void setDirection(TextDirection v) { inherited_flags._direction = v; }
-    void setLineHeight(Length);
+    void setLineHeight(Length specifiedLineHeight);
     bool setZoom(float);
     void setZoomWithoutReturnValue(float f) { setZoom(f); }
     bool setEffectiveZoom(float);

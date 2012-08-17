@@ -40,17 +40,23 @@ public:
 
     bool operator==(const StyleVisualData& o) const
     {
-        return ( clip == o.clip &&
-                 hasClip == o.hasClip &&
-                 textDecoration == o.textDecoration &&
-                 m_zoom == o.m_zoom);
+        return clip == o.clip
+            && hasClip == o.hasClip
+            && textDecoration == o.textDecoration
+#if ENABLE(TEXT_AUTOSIZING)
+            && m_textAutosizingMultiplier == o.m_textAutosizingMultiplier
+#endif
+            && m_zoom == o.m_zoom;
     }
     bool operator!=(const StyleVisualData& o) const { return !(*this == o); }
 
     LengthBox clip;
     bool hasClip : 1;
     unsigned textDecoration : ETextDecorationBits; // Text decorations defined *only* by this element.
-    
+
+#if ENABLE(TEXT_AUTOSIZING)
+    float m_textAutosizingMultiplier;
+#endif
     float m_zoom;
 
 private:

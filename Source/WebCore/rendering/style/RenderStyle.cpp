@@ -488,6 +488,11 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             return StyleDifferenceLayout;
     }
 
+#if ENABLE(TEXT_AUTOSIZING)
+    if (visual->m_textAutosizingMultiplier != other->visual->m_textAutosizingMultiplier)
+        return StyleDifferenceLayout;
+#endif
+
     if (inherited->line_height != other->inherited->line_height
         || inherited->list_style_image != other->inherited->list_style_image
         || inherited->font != other->inherited->font
@@ -1184,6 +1189,8 @@ const Animation* RenderStyle::transitionForProperty(CSSPropertyID property) cons
 const Font& RenderStyle::font() const { return inherited->font; }
 const FontMetrics& RenderStyle::fontMetrics() const { return inherited->font.fontMetrics(); }
 const FontDescription& RenderStyle::fontDescription() const { return inherited->font.fontDescription(); }
+float RenderStyle::specifiedFontSize() const { return fontDescription().specifiedSize(); }
+float RenderStyle::computedFontSize() const { return fontDescription().computedSize(); }
 int RenderStyle::fontSize() const { return inherited->font.pixelSize(); }
 
 int RenderStyle::wordSpacing() const { return inherited->font.wordSpacing(); }
@@ -1198,12 +1205,26 @@ bool RenderStyle::setFontDescription(const FontDescription& v)
     return false;
 }
 
-Length RenderStyle::lineHeight() const { return inherited->line_height; }
-void RenderStyle::setLineHeight(Length v) { SET_VAR(inherited, line_height, v); }
+Length RenderStyle::specifiedLineHeight() const { return inherited->line_height; }
+Length RenderStyle::lineHeight() const
+{
+    const Length& lh = inherited->line_height;
+#if ENABLE(TEXT_AUTOSIZING)
+    // Unlike fontDescription().computedSize() and hence fontSize(), this is
+    // recalculated on demand as we only store the specified line height.
+    // FIXME: Should consider scaling the fixed part of any calc expressions
+    // too, though this involves messily poking into CalcExpressionLength.
+    float multiplier = textAutosizingMultiplier();
+    if (multiplier > 1 && lh.isFixed())
+        return Length(lh.value() * multiplier, Fixed);
+#endif
+    return lh;
+}
+void RenderStyle::setLineHeight(Length specifiedLineHeight) { SET_VAR(inherited, line_height, specifiedLineHeight); }
 
 int RenderStyle::computedLineHeight(RenderView* renderView) const
 {
-    const Length& lh = inherited->line_height;
+    const Length& lh = lineHeight();
 
     // Negative value means the line height is not set. Use the font's built-in spacing.
     if (lh.isNegative())
@@ -1221,12 +1242,24 @@ int RenderStyle::computedLineHeight(RenderView* renderView) const
 void RenderStyle::setWordSpacing(int v) { inherited.access()->font.setWordSpacing(v); }
 void RenderStyle::setLetterSpacing(int v) { inherited.access()->font.setLetterSpacing(v); }
 
-void RenderStyle::setBlendedFontSize(int size)
+void RenderStyle::setFontSize(float size)
 {
+    // size must be specifiedSize if Text Autosizing is enabled, but computedSize if text
+    // zoom is enabled (if neither is enabled it's irrelevant as they're probably the same).
+
     FontSelector* currentFontSelector = font().fontSelector();
     FontDescription desc(fontDescription());
     desc.setSpecifiedSize(size);
     desc.setComputedSize(size);
+
+#if ENABLE(TEXT_AUTOSIZING)
+    float multiplier = textAutosizingMultiplier();
+    if (multiplier > 1) {
+        // FIXME: Large font sizes needn't be multiplied as much since they are already more legible.
+        desc.setComputedSize(size * multiplier);
+    }
+#endif
+
     setFontDescription(desc);
     font().update(currentFontSelector);
 }

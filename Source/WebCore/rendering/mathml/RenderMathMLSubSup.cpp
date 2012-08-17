@@ -71,7 +71,7 @@ void RenderMathMLSubSup::fixScriptsStyle()
     scriptsStyle->setMarginLeft(Length(gSubsupScriptMargin, Fixed));
     scriptsStyle->setTextAlign(LEFT);
     // Set this wrapper's font-size for its line-height & baseline position, for its children.
-    scriptsStyle->setBlendedFontSize(static_cast<int>(0.75 * style()->fontSize()));
+    scriptsStyle->setFontSize(static_cast<int>(0.75 * style()->fontSize()));
 }
 
 void RenderMathMLSubSup::addChild(RenderObject* child, RenderObject* beforeChild)

@@ -1,3 +1,32 @@
+2012-08-17  John Mellor  <johnme@chromium.org>
+
+        Text Autosizing: Increase line height in proportion to font size.
+        https://bugs.webkit.org/show_bug.cgi?id=91660
+
+        Reviewed by Julien Chaffraix.
+
+        Adjusted the expectation for simple-paragraph.html and
+        font-scale-factor.html now that line-height is correctly increased.
+        Also added 5 more tests making sure that autosized children of
+        non-autosized parents work correctly, and vice versa; that nested
+        inline elements behave correctly; and documenting the behavior of
+        margins, borders, and padding with em lengths.
+
+        * fast/text-autosizing/em-margin-border-padding-expected.html: Added.
+        * fast/text-autosizing/em-margin-border-padding.html: Copied from LayoutTests/fast/text-autosizing/simple-paragraph.html.
+        * fast/text-autosizing/font-scale-factor-expected.html:
+        * fast/text-autosizing/font-scale-factor.html:
+        * fast/text-autosizing/narrow-child-expected.html: Added.
+        * fast/text-autosizing/narrow-child.html: Copied from LayoutTests/fast/text-autosizing/simple-paragraph.html.
+        * fast/text-autosizing/nested-em-line-height-expected.html: Added.
+        * fast/text-autosizing/nested-em-line-height.html: Added.
+        * fast/text-autosizing/simple-paragraph-expected.html:
+        * fast/text-autosizing/simple-paragraph.html:
+        * fast/text-autosizing/span-child-expected.html: Added.
+        * fast/text-autosizing/span-child.html: Copied from LayoutTests/fast/text-autosizing/simple-paragraph.html.
+        * fast/text-autosizing/wide-child-expected.html: Added.
+        * fast/text-autosizing/wide-child.html: Copied from LayoutTests/fast/text-autosizing/simple-paragraph.html.
+
 2012-08-17  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

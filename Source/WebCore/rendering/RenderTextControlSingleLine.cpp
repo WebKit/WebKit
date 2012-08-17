@@ -351,7 +351,7 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const 
         textBlockStyle->setHeight(Length(m_desiredInnerTextHeight, Fixed));
     // Do not allow line-height to be smaller than our default.
     if (textBlockStyle->fontMetrics().lineSpacing() > lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes))
-        textBlockStyle->setLineHeight(Length(-100.0f, Percent));
+        textBlockStyle->setLineHeight(RenderStyle::initialLineHeight());
 
     textBlockStyle->setDisplay(BLOCK);
 
