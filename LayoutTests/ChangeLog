@@ -1,3 +1,12 @@
+2012-08-17  Anna Cavender <annacc@chromium.org>
+
+        [Chromium] Removing track-active-cues.html from TextExpectations, passing now.
+        [Chromium] Updating bug on track-cues-sorted-before-dispatch.html.
+ 
+        Unreviewed gardening.
+
+        * platform/chromium/TextExpectations:
+
 2012-08-17  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Gardening of failing tests and new passes
