@@ -117,6 +117,10 @@ void CCFrameRateController::onTimerTick()
 
     if (m_client)
         m_client->vsyncTick();
+
+    if (!m_isTimeSourceThrottling
+        && (!m_maxFramesPending || m_numFramesPending < m_maxFramesPending))
+        postManualTick();
 }
 
 void CCFrameRateController::postManualTick()
@@ -133,8 +137,6 @@ void CCFrameRateController::onTimerFired()
 void CCFrameRateController::didBeginFrame()
 {
     m_numFramesPending++;
-    if (!m_isTimeSourceThrottling)
-        postManualTick();
 }
 
 void CCFrameRateController::didFinishFrame()

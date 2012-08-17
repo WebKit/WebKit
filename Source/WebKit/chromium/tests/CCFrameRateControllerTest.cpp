@@ -154,6 +154,17 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_Unthrottled)
     EXPECT_TRUE(client.vsyncTicked());
     client.reset();
 
+    // Even if we don't call didBeginFrame, CCFrameRateController should
+    // still attempt to vsync tick multiple times until it does result in
+    // a didBeginFrame.
+    thread.runPendingTask();
+    EXPECT_TRUE(client.vsyncTicked());
+    client.reset();
+
+    thread.runPendingTask();
+    EXPECT_TRUE(client.vsyncTicked());
+    client.reset();
+
     // didBeginFrame triggers 2nd frame, make sure the vsync callback is called
     controller.didBeginFrame();
     thread.runPendingTask();
@@ -165,6 +176,9 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_Unthrottled)
     thread.runPendingTask();
     EXPECT_FALSE(client.vsyncTicked());
     client.reset();
+
+    // Make sure there is no pending task since we can't do anything until we receive a didFinishFrame anyway.
+    EXPECT_FALSE(thread.hasPendingTask());
 
     // didFinishFrame triggers a frame, make sure the vsync callback is called
     controller.didFinishFrame();
