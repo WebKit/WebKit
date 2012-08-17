@@ -1,3 +1,11 @@
+2012-08-17  Adrienne Walker  <enne@google.com>
+
+        [chromium] Mark indexeddb/resources-panel as also timing out
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-17  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         ASSERTION FAILED: allocatedMaxLogicalWidth <= cellMaxLogicalWidth : int WebCore::AutoTableLayout::calcEffectiveLogicalWidth()
