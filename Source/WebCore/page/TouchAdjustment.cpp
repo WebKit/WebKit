@@ -88,6 +88,32 @@ bool nodeIsZoomTarget(Node* node)
     return node->renderer()->isBox();
 }
 
+bool providesContextMenuItems(Node* node)
+{
+    // This function tries to match the nodes that receive special context-menu items in
+    // ContextMenuController::populate(), and should be kept uptodate with those.
+    if (node->isContentEditable())
+        return true;
+    if (node->isLink())
+        return true;
+    if (node->renderer()->isImage())
+        return true;
+    if (node->renderer()->isMedia())
+        return true;
+    if (node->renderer()->canBeSelectionLeaf()) {
+        // If the context menu gesture will trigger a selection all selectable nodes are targets.
+        // FIXME: To improve the adjusted point, each individual word should be a separate subtarget,
+        // see for example FatFingers::checkForText() in WebKit/blackberry.
+        if (node->renderer()->frame()->editor()->behavior().shouldSelectOnContextualMenuClick())
+            return true;
+        // FIXME: A selected text might only be partially selected, and we should only append
+        // the selected subtargets of it in appendSubtargetsForNodeToList().
+        if (node->renderer()->selectionState() != RenderObject::SelectionNone)
+            return true;
+    }
+    return false;
+}
+
 static inline void appendSubtargetsForNodeToList(Node* node, SubtargetGeometryList& subtargets)
 {
     // Since the node is a result of a hit test, we are already ensured it has a renderer.
@@ -383,6 +409,14 @@ bool findBestClickableCandidate(Node*& targetNode, IntPoint &targetPoint, const 
     IntRect targetArea;
     TouchAdjustment::SubtargetGeometryList subtargets;
     TouchAdjustment::compileSubtargetList(nodeList, subtargets, TouchAdjustment::nodeRespondsToTapGesture);
+    return TouchAdjustment::findNodeWithLowestDistanceMetric(targetNode, targetPoint, targetArea, touchHotspot, touchArea, subtargets, TouchAdjustment::hybridDistanceFunction);
+}
+
+bool findBestContextMenuCandidate(Node*& targetNode, IntPoint &targetPoint, const IntPoint &touchHotspot, const IntRect &touchArea, const NodeList& nodeList)
+{
+    IntRect targetArea;
+    TouchAdjustment::SubtargetGeometryList subtargets;
+    TouchAdjustment::compileSubtargetList(nodeList, subtargets, TouchAdjustment::providesContextMenuItems);
     return TouchAdjustment::findNodeWithLowestDistanceMetric(targetNode, targetPoint, targetArea, touchHotspot, touchArea, subtargets, TouchAdjustment::hybridDistanceFunction);
 }
 

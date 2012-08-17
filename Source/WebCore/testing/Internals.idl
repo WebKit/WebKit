@@ -117,6 +117,8 @@ module window {
 #if defined(ENABLE_TOUCH_ADJUSTMENT) && ENABLE_TOUCH_ADJUSTMENT
         WebKitPoint touchPositionAdjustedToBestClickableNode(in long x, in long y, in long width, in long height, in Document document) raises (DOMException);
         Node touchNodeAdjustedToBestClickableNode(in long x, in long y, in long width, in long height, in Document document) raises (DOMException);
+        WebKitPoint touchPositionAdjustedToBestContextMenuNode(in long x, in long y, in long width, in long height, in Document document) raises (DOMException);
+        Node touchNodeAdjustedToBestContextMenuNode(in long x, in long y, in long width, in long height, in Document document) raises (DOMException);
         ClientRect bestZoomableAreaForTouchPoint(in long x, in long y, in long width, in long height, in Document document) raises (DOMException);
 #endif
 

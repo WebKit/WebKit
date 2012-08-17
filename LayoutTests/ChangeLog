@@ -1,3 +1,22 @@
+2012-08-17  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Touch adjustment for context menu gestures
+        https://bugs.webkit.org/show_bug.cgi?id=94101
+
+        Reviewed by Antonio Gomes.
+
+        Two new tests for context-menu touch adjustment.
+
+        * touchadjustment/context-menu-expected.txt: Added.
+        * touchadjustment/context-menu-select-text-expected.txt: Added.
+        * touchadjustment/context-menu-select-text.html: Added.
+        * touchadjustment/context-menu.html: Added.
+        * touchadjustment/resources/touchadjustment.js:
+        (nodeToString):
+        (testTouchPoint):
+        (testTouchPointContextMenu):
+        (adjustTouchPointContextMenu):
+
 2012-08-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: load panels code on demand

@@ -2522,6 +2522,17 @@ bool EventHandler::bestClickableNodeForTouchPoint(const IntPoint& touchCenter, c
     return success;
 }
 
+bool EventHandler::bestContextMenuNodeForTouchPoint(const IntPoint& touchCenter, const IntSize& touchRadius, IntPoint& targetPoint, Node*& targetNode)
+{
+    HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active;
+    IntPoint hitTestPoint = m_frame->view()->windowToContents(touchCenter);
+    HitTestResult result = hitTestResultAtPoint(hitTestPoint, /*allowShadowContent*/ true, /*ignoreClipping*/ false, DontHitTestScrollbars, hitType, touchRadius);
+
+    IntRect touchRect(touchCenter - touchRadius, touchRadius + touchRadius);
+    RefPtr<StaticHashSetNodeList> nodeList = StaticHashSetNodeList::adopt(result.rectBasedTestResult());
+    return findBestContextMenuCandidate(targetNode, targetPoint, touchCenter, touchRect, *nodeList.get());
+}
+
 bool EventHandler::bestZoomableAreaForTouchPoint(const IntPoint& touchCenter, const IntSize& touchRadius, IntRect& targetArea, Node*& targetNode)
 {
     HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active;
@@ -2536,7 +2547,17 @@ bool EventHandler::bestZoomableAreaForTouchPoint(const IntPoint& touchCenter, co
 bool EventHandler::adjustGesturePosition(const PlatformGestureEvent& gestureEvent, IntPoint& adjustedPoint)
 {
     Node* targetNode = 0;
-    bestClickableNodeForTouchPoint(gestureEvent.position(), IntSize(gestureEvent.area().width() / 2, gestureEvent.area().height() / 2), adjustedPoint, targetNode);
+    switch (gestureEvent.type()) {
+    case PlatformEvent::GestureTap:
+        bestClickableNodeForTouchPoint(gestureEvent.position(), IntSize(gestureEvent.area().width() / 2, gestureEvent.area().height() / 2), adjustedPoint, targetNode);
+        break;
+    case PlatformEvent::GestureLongPress:
+        bestContextMenuNodeForTouchPoint(gestureEvent.position(), IntSize(gestureEvent.area().width() / 2, gestureEvent.area().height() / 2), adjustedPoint, targetNode);
+        break;
+    default:
+        // FIXME: Implement handling for other types as needed.
+        ASSERT_NOT_REACHED();
+    }
     return targetNode;
 }
 #endif
