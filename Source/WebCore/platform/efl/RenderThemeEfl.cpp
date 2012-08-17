@@ -453,6 +453,7 @@ void RenderThemeEfl::createEdje()
         else if (!edje_object_file_set(m_edje, m_themePath.utf8().data(), "webkit/base")) {
             Edje_Load_Error err = edje_object_load_error_get(m_edje);
             const char* errmsg = edje_load_error_str(err);
+            EINA_LOG_ERR("Could not set file: %s", errmsg);
             evas_object_del(m_edje);
             m_edje = 0;
         } else {

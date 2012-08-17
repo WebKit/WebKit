@@ -403,8 +403,8 @@ int HarfBuzzShaper::offsetForPosition(float targetX)
 FloatRect HarfBuzzShaper::selectionRect(const FloatPoint& point, int height, int from, int to)
 {
     float currentX = 0;
-    float fromX;
-    float toX;
+    float fromX = 0;
+    float toX = 0;
     bool foundFromX = false;
     bool foundToX = false;
 
