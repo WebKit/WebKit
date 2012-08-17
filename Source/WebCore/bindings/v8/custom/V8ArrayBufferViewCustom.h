@@ -227,12 +227,8 @@ v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
         if (args.Length() == 2)
             offset = toUInt32(args[1]);
         uint32_t length = toUInt32(array->Get(v8::String::New("length")));
-        if (offset > impl->length()
-            || offset + length > impl->length()
-            || offset + length < offset) {
-            // Out of range offset or overflow
+        if (!impl->checkInboundData(offset, length))
             return throwError(RangeError, outOfRangeLengthAndOffset, args.GetIsolate());
-        }
         bool copied = copyElements(args.Holder(), array, length, offset, args.GetIsolate());
         if (!copied) {
             for (uint32_t i = 0; i < length; i++)
