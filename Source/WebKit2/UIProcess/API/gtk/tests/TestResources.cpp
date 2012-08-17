@@ -397,6 +397,17 @@ static void testWebResourceMimeType(SingleResourceLoadTest* test, gconstpointer)
     g_assert_cmpstr(webkit_uri_response_get_mime_type(response), ==, "text/css");
 }
 
+static void testWebResourceSuggestedFilename(SingleResourceLoadTest* test, gconstpointer)
+{
+    test->loadURI(kServer->getURIForPath("/javascript.html").data());
+    WebKitURIResponse* response = test->waitUntilResourceLoadFinishedAndReturnURIResponse();
+    g_assert_cmpstr(webkit_uri_response_get_suggested_filename(response), ==, "JavaScript.js");
+
+    test->loadURI(kServer->getURIForPath("/image.html").data());
+    response = test->waitUntilResourceLoadFinishedAndReturnURIResponse();
+    g_assert(!webkit_uri_response_get_suggested_filename(response));
+}
+
 class ResourceURITrackingTest: public SingleResourceLoadTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(ResourceURITrackingTest);
@@ -588,6 +599,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     } else if (g_str_equal(path, "/javascript.js")) {
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, kJavascript, strlen(kJavascript));
         soup_message_headers_append(message->response_headers, "Content-Type", "text/javascript");
+        soup_message_headers_append(message->response_headers, "Content-Disposition", "filename=JavaScript.js");
     } else if (g_str_equal(path, "/blank.ico")) {
         GOwnPtr<char> filePath(g_build_filename(Test::getWebKit1TestResoucesDir().data(), path, NULL));
         char* contents;
@@ -620,6 +632,7 @@ void beforeAll()
     SingleResourceLoadTest::add("WebKitWebResource", "loading", testWebResourceLoading);
     SingleResourceLoadTest::add("WebKitWebResource", "response", testWebResourceResponse);
     SingleResourceLoadTest::add("WebKitWebResource", "mime-type", testWebResourceMimeType);
+    SingleResourceLoadTest::add("WebKitWebResource", "suggested-filename", testWebResourceSuggestedFilename);
     ResourceURITrackingTest::add("WebKitWebResource", "active-uri", testWebResourceActiveURI);
     ResourcesTest::add("WebKitWebResource", "get-data", testWebResourceGetData);
     ResourcesTest::add("WebKitWebView", "replaced-content", testWebViewResourcesReplacedContent);

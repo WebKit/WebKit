@@ -1,3 +1,29 @@
+2012-08-17  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Add WK2 API to get suggested filename for URI responses
+        https://bugs.webkit.org/show_bug.cgi?id=92967
+
+        Reviewed by Carlos Garcia Campos.
+
+        Webcore has API to get the suggested filename for a response, add
+        a property and getter for it in WebKitURIResponse.
+
+        * UIProcess/API/gtk/WebKitURIResponse.cpp:
+        (_WebKitURIResponsePrivate): Add a CString holding the value.
+        (webkitURIResponseGetProperty): Add the gobject bits for the
+        property.
+        (webkit_uri_response_class_init): Install the property.
+        (webkit_uri_response_get_suggested_filename): New getter.
+        * UIProcess/API/gtk/WebKitURIResponse.h: Declare the public
+        method.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add the new API
+        symbols.
+        * UIProcess/API/gtk/tests/TestResources.cpp:
+        (testWebResourceSuggestedFilename): Test the new API.
+        (serverCallback): Add the the content-disposition header
+        in one case, in order to test it.
+        (beforeAll): Add the new test.
+
 2012-08-17  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][wk2] Add unit tests for back-forward list API

@@ -33,7 +33,8 @@ enum {
     PROP_URI,
     PROP_STATUS_CODE,
     PROP_CONTENT_LENGTH,
-    PROP_MIME_TYPE
+    PROP_MIME_TYPE,
+    PROP_SUGGESTED_FILENAME
 };
 
 using namespace WebKit;
@@ -45,6 +46,7 @@ struct _WebKitURIResponsePrivate {
     WebCore::ResourceResponse resourceResponse;
     CString uri;
     CString mimeType;
+    CString suggestedFilename;
 };
 
 static void webkitURIResponseFinalize(GObject* object)
@@ -69,6 +71,9 @@ static void webkitURIResponseGetProperty(GObject* object, guint propId, GValue* 
         break;
     case PROP_MIME_TYPE:
         g_value_set_string(value, webkit_uri_response_get_mime_type(response));
+        break;
+    case PROP_SUGGESTED_FILENAME:
+        g_value_set_string(value, webkit_uri_response_get_suggested_filename(response));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -130,6 +135,19 @@ static void webkit_uri_response_class_init(WebKitURIResponseClass* responseClass
                                     g_param_spec_string("mime-type",
                                                         _("MIME Type"),
                                                         _("The MIME type of the response"),
+                                                        0,
+                                                        WEBKIT_PARAM_READABLE));
+
+    /**
+     * WebKitURIResponse:suggested-filename:
+     *
+     * The suggested filename for the URI response.
+     */
+    g_object_class_install_property(objectClass,
+                                    PROP_SUGGESTED_FILENAME,
+                                    g_param_spec_string("suggested-filename",
+                                                        _("Suggested Filename"),
+                                                        _("The suggested filename for the URI response"),
                                                         0,
                                                         WEBKIT_PARAM_READABLE));
 
@@ -228,6 +246,28 @@ gboolean webkit_uri_response_get_https_status(WebKitURIResponse* response, GTlsC
         *errors = response->priv->resourceResponse.soupMessageTLSErrors();
 
     return !!response->priv->resourceResponse.soupMessageCertificate();
+}
+
+/**
+ * webkit_uri_response_get_suggested_filename:
+ * @response: a #WebKitURIResponse
+ *
+ * Get the suggested filename for @response, as specified by
+ * the 'Content-Disposition' HTTP header, or %NULL if it's not
+ * present.
+ *
+ * Returns: (transfer none): the suggested filename or %NULL if
+ *    the 'Content-Disposition' HTTP header is not present.
+ */
+const gchar* webkit_uri_response_get_suggested_filename(WebKitURIResponse* response)
+{
+    g_return_val_if_fail(WEBKIT_IS_URI_RESPONSE(response), 0);
+
+    if (response->priv->resourceResponse.suggestedFilename().isEmpty())
+        return 0;
+
+    response->priv->suggestedFilename = response->priv->resourceResponse.suggestedFilename().utf8();
+    return response->priv->suggestedFilename.data();
 }
 
 WebKitURIResponse* webkitURIResponseCreateForResourceResponse(const WebCore::ResourceResponse& resourceResponse)
