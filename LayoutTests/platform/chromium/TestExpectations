@@ -3514,3 +3514,5 @@ BUGWK94156 DEBUG : fast/canvas/fallback-content.html = PASS CRASH
 BUGWK94256 DEBUG : fast/block/inline-children-root-linebox-crash.html = PASS CRASH
 
 BUGWK94261 DEBUG : http/tests/inspector/indexeddb/resources-panel.html = PASS CRASH
+
+BUGWK94278 WIN : fast/forms/file/selected-files-from-history-state.html = TEXT

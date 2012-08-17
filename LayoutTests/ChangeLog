@@ -1,3 +1,12 @@
+2012-08-16  Adrienne Walker  <enne@google.com>
+
+        [chromium] Mark fast/forms/file/selected-files-from-history-state.html as failing
+        https://bugs.webkit.org/show_bug.cgi?id=94278
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-16  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         Update TypedArrays to throw RangeError or similar instead of INDEX_SIZE_ERR
