@@ -98,21 +98,24 @@ void StyleRuleImport::requestStyleSheet()
     if (!cachedResourceLoader)
         return;
 
-    String absHref = m_strHref;
+    KURL absURL;
     if (!m_parentStyleSheet->baseURL().isNull())
         // use parent styleheet's URL as the base URL
-        absHref = KURL(m_parentStyleSheet->baseURL(), m_strHref).string();
+        absURL = KURL(m_parentStyleSheet->baseURL(), m_strHref);
+    else
+        absURL = document->completeURL(m_strHref);
 
     // Check for a cycle in our import chain.  If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.
     StyleSheetContents* rootSheet = m_parentStyleSheet;
     for (StyleSheetContents* sheet = m_parentStyleSheet; sheet; sheet = sheet->parentStyleSheet()) {
-        if (absHref == sheet->baseURL().string() || absHref == sheet->originalURL())
+        if (equalIgnoringFragmentIdentifier(absURL, sheet->baseURL())
+            || equalIgnoringFragmentIdentifier(absURL, document->completeURL(sheet->originalURL())))
             return;
         rootSheet = sheet;
     }
 
-    ResourceRequest request(document->completeURL(absHref));
+    ResourceRequest request(absURL);
     if (m_parentStyleSheet->isUserStyleSheet())
         m_cachedSheet = cachedResourceLoader->requestUserCSSStyleSheet(request, m_parentStyleSheet->charset());
     else

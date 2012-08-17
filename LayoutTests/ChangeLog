@@ -1,3 +1,14 @@
+2012-08-16  David Barr  <davidbarr@chromium.org>
+
+        @import url("#foo") causes stack overflow
+        https://bugs.webkit.org/show_bug.cgi?id=93687
+
+        Reviewed by Tony Chang.
+
+        * http/tests/css/css-imports-url-fragment-expected.txt: Added.
+        * http/tests/css/css-imports-url-fragment.css: Added.
+        * http/tests/css/css-imports-url-fragment.html: Added.
+
 2012-08-16  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Frontend and plumbing for integer versions
