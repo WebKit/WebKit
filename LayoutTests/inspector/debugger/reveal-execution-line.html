@@ -36,7 +36,7 @@ var test = function()
             {
                 if (executionLineRevealed)
                     return;
-                if (this._textEditor.isShowing()) {
+                if (this.isShowing()) {
                     executionLineRevealed = true;
                     maybeNext();
                 }

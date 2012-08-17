@@ -35,7 +35,7 @@ function test()
                 {
                     sourceFrameCount += 1;
                 }
-                InspectorTest.addSniffer(WebInspector.TextEditor.prototype, "wasShown", didCreateSourceFrame, true);
+                InspectorTest.addSniffer(WebInspector.SourceFrame.prototype, "wasShown", didCreateSourceFrame, true);
                 InspectorTest.reloadPage(didReload);
             }
 

@@ -52,7 +52,6 @@ WebInspector.JavaScriptSourceFrame = function(scriptsPanel, javaScriptSource)
     this.textEditor.element.addEventListener("keydown", this._onKeyDown.bind(this), true);
 
     this.textEditor.addEventListener(WebInspector.TextEditor.Events.GutterClick, this._handleGutterClick.bind(this), this);
-    this.textEditor.addEventListener(WebInspector.TextEditor.Events.WillHide, this._popoverHelper.hidePopover.bind(this._popoverHelper));
 
     this._breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.BreakpointAdded, this._breakpointAdded, this);
     this._breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.BreakpointRemoved, this._breakpointRemoved, this);
@@ -64,6 +63,18 @@ WebInspector.JavaScriptSourceFrame = function(scriptsPanel, javaScriptSource)
 }
 
 WebInspector.JavaScriptSourceFrame.prototype = {
+    // View events
+    wasShown: function()
+    {
+        WebInspector.SourceFrame.prototype.wasShown.call(this);
+    },
+
+    willHide: function()
+    {
+        WebInspector.SourceFrame.prototype.willHide.call(this);
+        this._popoverHelper.hidePopover();
+    },
+
     /**
      * @return {boolean}
      */

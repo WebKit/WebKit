@@ -35,9 +35,7 @@
 WebInspector.TextEditor = function() { };
 
 WebInspector.TextEditor.Events = {
-    GutterClick: "gutterClick",
-    WasShown: "WasShown",
-    WillHide: "WillHide"
+    GutterClick: "gutterClick"
 };
 
 WebInspector.TextEditor.prototype = {

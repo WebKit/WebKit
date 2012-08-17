@@ -199,6 +199,20 @@ button.status-bar-item.scripts-navigator-show-hide-button.toggled-overlay
     left: 0;
 }
 
+.script-view {
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.script-view.visible {
+    display: block;
+}
+
 .dedicated-worker-item {
     margin: 5px 0px 5px 1px;
 }
