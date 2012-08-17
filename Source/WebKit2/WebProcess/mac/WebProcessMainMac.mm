@@ -110,6 +110,10 @@ int WebProcessMainXPC(xpc_connection_t xpcConnection, mach_port_t serverPort)
 
 int WebProcessMain(const CommandLine& commandLine)
 {
+    // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
+    // the WebProcess don't try to insert the shim and crash.
+    EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
+
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     String serviceName = commandLine["servicename"];

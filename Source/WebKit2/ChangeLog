@@ -1,3 +1,13 @@
+2012-08-17  Enrica Casucci  <enrica@apple.com>
+
+        Adding back the first statement of WebProcessMain accidentally
+        removed in r125358.
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/mac/WebProcessMainMac.mm: Adding back the stripping
+        of DYLD_INSERT_LIBRARIES.
+
 2012-08-17  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] REGRESSION(r125923): Breaks EFL build
