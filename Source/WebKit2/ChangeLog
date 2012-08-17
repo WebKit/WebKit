@@ -1,3 +1,14 @@
+2012-08-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Access m_process directly in WebPageProxy.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=94363
+
+        Reviewed by John Sullivan.
+
+        Consistency fix - we don't use accessors when we don't have to, and there is a mix in this file.
+
+        * UIProcess/WebPageProxy.cpp:
+
 2012-08-17  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Add WK2 API to get suggested filename for URI responses
