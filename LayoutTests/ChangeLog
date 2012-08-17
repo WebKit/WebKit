@@ -1,3 +1,12 @@
+2012-08-16  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] time-multiple-fields-appearance-basic.html and time-multiple-fields-appearance-pseudo-elements.html are failed on Chromium Windows
+        https://bugs.webkit.org/show_bug.cgi?id=94297
+
+        Unreviewed. Temporary disabled time-multiple-fields-appearance-basic.html and time-multiple-fields-appearance-pseudo-elements.html are failed on Chromium Windows
+
+        * platform/chromium/TestExpectations:
+
 2012-08-16  Adrienne Walker  <enne@google.com>
 
         Rebaseline overflow-scroll-overlap to pass on both Mac and Chromium

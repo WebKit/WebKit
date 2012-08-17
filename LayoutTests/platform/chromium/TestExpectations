@@ -175,6 +175,10 @@ BUGWK94287 MAC WIN : fast/forms/time-multiple-fields/time-multiple-fields-appear
 BUGWK94287 MAC WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes.html = MISSING TEXT IMAGE IMAGE+TEXT PASS
 BUGWK94287 MAC WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance-style.html = MISSING TEXT IMAGE IMAGE+TEXT PASS
 
+// Temporary disabled
+BUGWK94297 WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic.html = IMAGE PASS
+BUGWK94297 WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements.html = IMAGE PASS
+
 // Proximity Events is not supported.
 BUGWK92942 SKIP : fast/dom/Proximity = PASS
 BUGWK92942 SKIP : fast/events/constructors/device-proximity-event-constructor.html = PASS
