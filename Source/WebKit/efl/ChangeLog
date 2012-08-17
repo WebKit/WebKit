@@ -1,3 +1,18 @@
+2012-08-17  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Change font family/script on layout tests causes flakiness
+        https://bugs.webkit.org/show_bug.cgi?id=94327
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Always set the font on WebCore even if the font family is the same. It
+        has to be done because the script value might have also changed.
+        Settings::set*FontFamily() has an implicit UScriptCode
+        parameter that will set the script back to the defaults.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_font_family_name_set):
+
 2012-08-14  Adam Barth  <abarth@webkit.org>
 
         Delete Frame::domWindow() and Frame::existingDOMWindow()
