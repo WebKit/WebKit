@@ -1301,8 +1301,9 @@ QtRuntimeMethod::QtRuntimeMethod(JSContextRef ctx, QObject* object, const QByteA
 
 QtRuntimeMethod::~QtRuntimeMethod()
 {
-    if (m_jsObject)
-        JSObjectSetPrivate(toRef(m_jsObject.get()), 0);
+    if (JSObjectRef cachedWrapper = m_instance->m_cachedMethods.get(this))
+        JSObjectSetPrivate(cachedWrapper, 0);
+    m_instance->m_cachedMethods.remove(this);
 }
 
 JSValueRef QtRuntimeMethod::call(JSContextRef context, JSObjectRef function, JSObjectRef /*thisObject*/, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -1350,8 +1351,8 @@ JSValueRef QtRuntimeMethod::disconnect(JSContextRef context, JSObjectRef functio
 
 JSObjectRef QtRuntimeMethod::jsObjectRef(JSContextRef context, JSValueRef* exception)
 {
-    if (m_jsObject)
-        return toRef(m_jsObject.get());
+    if (JSObjectRef cachedWrapper = m_instance->m_cachedMethods.get(this))
+        return cachedWrapper;
 
     static const JSClassDefinition classDefForConnect = {
         0, 0, "connect", 0, 0, 0,
@@ -1387,7 +1388,8 @@ JSObjectRef QtRuntimeMethod::jsObjectRef(JSContextRef context, JSValueRef* excep
     JSObjectSetProperty(context, object, lengthStr, JSValueMakeNumber(context, 0), attributes, exception);
     JSObjectSetProperty(context, object, nameStr, JSValueMakeString(context, actualNameStr.get()), attributes, exception);
 
-    m_jsObject = PassWeak<JSObject>(toJS(object));
+    m_instance->m_cachedMethods.set(context, this, object);
+
     return object;
 }
 
