@@ -1,3 +1,42 @@
+2012-08-17  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. Updating test expectations after r125794.
+
+        * fast/repaint/transform-absolute-child-expected.txt: Added.
+        * fast/repaint/transform-repaint-descendants-expected.txt: Added.
+        * platform/chromium-linux/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-linux/fast/repaint/transform-absolute-child-expected.png:
+        * platform/chromium-linux/fast/repaint/transform-repaint-descendants-expected.png:
+        * platform/chromium-linux/fast/repaint/transform-translate-expected.png:
+        * platform/chromium-linux/fast/sub-pixel/sub-pixel-accumulates-to-layers-expected.png: Added.
+        * platform/chromium-linux/fast/transforms/transformed-document-element-expected.png:
+        * platform/chromium-linux/media/audio-repaint-expected.png:
+        * platform/chromium-linux/svg/transforms/svg-css-transforms-expected.png:
+        * platform/chromium-linux/transforms/svg-vs-css-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/sub-pixel-accumulates-to-layers-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/sub-pixel-accumulates-to-layers-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/media/audio-repaint-expected.png:
+        * platform/chromium-mac/fast/sub-pixel/sub-pixel-accumulates-to-layers-expected.txt: Removed.
+        * platform/chromium-win/fast/repaint/scroll-fixed-layer-with-transformed-parent-layer-expected.png:
+        * platform/chromium-win/fast/repaint/transform-absolute-child-expected.png:
+        * platform/chromium-win/fast/repaint/transform-repaint-descendants-expected.png:
+        * platform/chromium-win/fast/repaint/transform-translate-expected.png:
+        * platform/chromium-win/fast/sub-pixel/sub-pixel-accumulates-to-layers-expected.png: Added.
+        * platform/chromium-win/fast/transforms/transformed-document-element-expected.png:
+        * platform/chromium-win/media/audio-repaint-expected.png:
+        * platform/chromium-win/svg/transforms/svg-css-transforms-expected.png:
+        * platform/chromium-win/transforms/svg-vs-css-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/sub-pixel: Added.
+        * platform/chromium/fast/sub-pixel/sub-pixel-accumulates-to-layers-expected.txt: Added.
+        * platform/efl/fast/repaint/transform-absolute-child-expected.txt: Removed.
+        * platform/efl/fast/repaint/transform-repaint-descendants-expected.txt: Removed.
+        * platform/gtk/fast/repaint/transform-absolute-child-expected.txt: Removed.
+        * platform/gtk/fast/repaint/transform-repaint-descendants-expected.txt: Removed.
+        * platform/mac/fast/repaint/transform-absolute-child-expected.txt: Removed.
+        * platform/qt/fast/repaint/transform-absolute-child-expected.txt: Removed.
+
 2012-08-17  Adrienne Walker  <enne@google.com>
 
         [chromium] Mark indexeddb/resources-panel as also timing out

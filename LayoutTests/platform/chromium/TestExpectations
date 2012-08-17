@@ -3416,18 +3416,6 @@ BUGWK92570 WIN DEBUG : inspector/timeline/timeline-start-time.html = TEXT PASS T
 
 BUGWK94242 DEBUG : media/track/track-cues-sorted-before-dispatch.html = PASS TIMEOUT
 
-// Needs update after bots cycle
-BUGLEVIW SNOWLEOPARD WIN LINUX : fast/sub-pixel/sub-pixel-accumulates-to-layers.html = PASS MISSING TEXT IMAGE IMAGE+TEXT
-BUGLEVIW SNOWLEOPARD WIN LINUX : transforms/svg-vs-css.xhtml = PASS TEXT IMAGE IMAGE+TEXT
-BUGLEVIW SNOWLEOPARD WIN LINUX : svg/transforms/svg-css-transforms.xhtml = PASS TEXT IMAGE IMAGE+TEXT
-BUGLEVIW SNOWLEOPARD WIN LINUX : media/audio-repaint.html = PASS TEXT IMAGE IMAGE+TEXT
-BUGLEVIW SNOWLEOPARD WIN LINUX : compositing/shadows/shadow-drawing.html = PASS TEXT IMAGE IMAGE+TEXT
-BUGLEVIW WIN LINUX : fast/repaint/transform-absolute-child.html = PASS TEXT IMAGE IMAGE+TEXT
-BUGLEVIW WIN LINUX : fast/repaint/transform-repaint-descendants.html = PASS TEXT IMAGE IMAGE+TEXT
-BUGLEVIW SNOWLEOPARD WIN LINUX : fast/repaint/transform-translate.html = PASS TEXT IMAGE IMAGE+TEXT
-BUGLEVIW SNOWLEOPARD WIN LINUX : fast/repaint/scroll-fixed-layer-with-transformed-parent-layer.html = PASS TEXT IMAGE IMAGE+TEXT
-BUGLEVIW SNOWLEOPARD WIN LINUX : fast/transforms/transformed-document-element.html = PASS TEXT IMAGE IMAGE+TEXT
-
 // Supposedly started failing between CR r140760 and CR r141216.  The failures
 // look like they involve antialiasing; the fact that the test clearly expects
 // these pixels not to be antialiased means these shouldn't just be rebaselined
