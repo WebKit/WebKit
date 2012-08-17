@@ -709,7 +709,7 @@ void LocaleWin::initializeNumberLocalizerData()
     };
     DWORD digitSubstitution = DigitSubstitution0to9;
     getLocaleInfo(LOCALE_IDIGITSUBSTITUTION, digitSubstitution);
-    if (digitSubstitution != DigitSubstitutionNative) {
+    if (digitSubstitution == DigitSubstitution0to9) {
         symbols.append("0");
         symbols.append("1");
         symbols.append("2");
