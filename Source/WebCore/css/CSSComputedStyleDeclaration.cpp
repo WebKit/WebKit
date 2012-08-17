@@ -2355,7 +2355,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
                     else if (animation->animationMode() == Animation::AnimateAll)
                         propertyValue = cssValuePool().createIdentifierValue(CSSValueAll);
                     else
-                        propertyValue = cssValuePool().createValue(getPropertyName(animation->property()), CSSPrimitiveValue::CSS_STRING);
+                        propertyValue = cssValuePool().createValue(getPropertyNameString(animation->property()), CSSPrimitiveValue::CSS_STRING);
                     list->append(propertyValue);
                 }
             } else
@@ -2631,7 +2631,7 @@ String CSSComputedStyleDeclaration::item(unsigned i) const
     if (i >= length())
         return "";
 
-    return getPropertyName(computedProperties[i]);
+    return getPropertyNameString(computedProperties[i]);
 }
 
 bool CSSComputedStyleDeclaration::cssPropertyMatches(const CSSProperty* property) const

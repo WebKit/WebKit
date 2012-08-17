@@ -161,7 +161,7 @@ bool ImplicitAnimation::sendTransitionEvent(const AtomicString& eventType, doubl
         Document::ListenerType listenerType = Document::TRANSITIONEND_LISTENER;
 
         if (shouldSendEventForListener(listenerType)) {
-            String propertyName = getPropertyName(m_animatingProperty);
+            String propertyName = getPropertyNameString(m_animatingProperty);
                 
             // Dispatch the event
             RefPtr<Element> element = 0;

@@ -148,7 +148,7 @@ String PropertySetCSSStyleDeclaration::item(unsigned i) const
 {
     if (i >= m_propertySet->propertyCount())
         return "";
-    return getPropertyName(m_propertySet->propertyAt(i).id());
+    return getPropertyNameString(m_propertySet->propertyAt(i).id());
 }
 
 String PropertySetCSSStyleDeclaration::cssText() const
@@ -206,7 +206,7 @@ String PropertySetCSSStyleDeclaration::getPropertyShorthand(const String& proper
     CSSPropertyID shorthandID = m_propertySet->getPropertyShorthand(propertyID);
     if (!shorthandID)
         return String();
-    return getPropertyName(shorthandID);
+    return getPropertyNameString(shorthandID);
 }
 
 bool PropertySetCSSStyleDeclaration::isPropertyImplicit(const String& propertyName)

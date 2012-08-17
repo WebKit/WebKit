@@ -48,7 +48,7 @@ String CSSProperty::cssName() const
         return "-webkit-var-" + static_cast<CSSVariableValue*>(value())->name();
     }
 #endif
-    return String(getPropertyName(id()));
+    return getPropertyNameString(id());
 }
 
 String CSSProperty::cssText() const

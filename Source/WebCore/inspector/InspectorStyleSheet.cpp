@@ -528,7 +528,7 @@ PassRefPtr<TypeBuilder::CSS::CSSStyle> InspectorStyle::styleWithProperties() con
                 bool shouldInactivate = false;
                 CSSPropertyID propertyId = cssPropertyID(name);
                 // Canonicalize property names to treat non-prefixed and vendor-prefixed property names the same (opacity vs. -webkit-opacity).
-                String canonicalPropertyName = propertyId ? String(getPropertyName(propertyId)) : name;
+                String canonicalPropertyName = propertyId ? getPropertyNameString(propertyId) : name;
                 HashMap<String, RefPtr<TypeBuilder::CSS::CSSProperty> >::iterator activeIt = propertyNameToPreviousActiveProperty.find(canonicalPropertyName);
                 if (activeIt != propertyNameToPreviousActiveProperty.end()) {
                     if (propertyEntry.parsedOk)

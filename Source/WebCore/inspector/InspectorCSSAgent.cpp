@@ -783,7 +783,7 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString*, RefPtr<TypeBuild
     for (int i = firstCSSProperty; i <= lastCSSProperty; ++i) {
         CSSPropertyID id = convertToCSSPropertyID(i);
         RefPtr<TypeBuilder::CSS::CSSPropertyInfo> property = TypeBuilder::CSS::CSSPropertyInfo::create()
-            .setName(getPropertyName(id));
+            .setName(getPropertyNameString(id));
 
         const StylePropertyShorthand& shorthand = shorthandForProperty(id);
         if (!shorthand.length()) {
@@ -793,7 +793,7 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString*, RefPtr<TypeBuild
         RefPtr<TypeBuilder::Array<String> > longhands = TypeBuilder::Array<String>::create();
         for (unsigned j = 0; j < shorthand.length(); ++j) {
             CSSPropertyID longhandID = shorthand.properties()[j];
-            longhands->addItem(getPropertyName(longhandID));
+            longhands->addItem(getPropertyNameString(longhandID));
         }
         property->setLonghands(longhands);
         properties->addItem(property.release());

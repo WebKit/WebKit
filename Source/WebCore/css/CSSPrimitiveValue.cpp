@@ -207,15 +207,7 @@ static const AtomicString& valueOrPropertyName(int valueOrPropertyID)
         return keywordString;
     }
 
-    if (valueOrPropertyID >= firstCSSProperty && valueOrPropertyID < firstCSSProperty + numCSSProperties) {
-        static AtomicString* propertyStrings = new AtomicString[numCSSProperties]; // Leaked intentionally.
-        AtomicString& propertyString = propertyStrings[valueOrPropertyID - firstCSSProperty];
-        if (propertyString.isNull())
-            propertyString = getPropertyName(static_cast<CSSPropertyID>(valueOrPropertyID));
-        return propertyString;
-    }
-
-    return nullAtom;
+    return getPropertyNameAtomicString(static_cast<CSSPropertyID>(valueOrPropertyID));
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(int ident)
