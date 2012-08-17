@@ -1,3 +1,16 @@
+2012-08-17  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Allow in-region accelerated scrolling take advantage of defer_blits
+        https://bugs.webkit.org/show_bug.cgi?id=94379
+        PR #194595
+
+        Reviewed by Yong Li.
+
+        Client does the blitting now.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::setScrollPositionCompositingThread):
+
 2012-08-17  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] On reload, www.sohu.com renders part white background, part overscroll pattern

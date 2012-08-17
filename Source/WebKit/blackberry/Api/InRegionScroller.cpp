@@ -113,7 +113,8 @@ bool InRegionScrollerPrivate::setScrollPositionCompositingThread(unsigned camouf
 
     // FIXME: Clamp maximum and minimum scroll positions as a last attempt to fix round errors.
     scrollLayer->override()->setBoundsOrigin(scrollPosition);
-    m_webPage->scheduleCompositingRun();
+
+    // The client is going to blitVisibleContens, which allow us benefit from "defer blits" technique.
     return true;
 }
 
