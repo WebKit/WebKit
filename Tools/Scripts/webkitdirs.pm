@@ -2070,15 +2070,15 @@ sub buildAutotoolsProject($@)
 
 sub jhbuildWrapperPrefixIfNeeded()
 {
-    if (isEfl()) {
-        return File::Spec->catfile(sourceDir(), "Tools", "efl", "run-with-jhbuild");
-    } elsif (isGtk()) {
-        if (-e getJhbuildPath()) {
+    if (-e getJhbuildPath()) {
+        if (isEfl()) {
+            return File::Spec->catfile(sourceDir(), "Tools", "efl", "run-with-jhbuild");
+        } elsif (isGtk()) {
             return File::Spec->catfile(sourceDir(), "Tools", "gtk", "run-with-jhbuild");
         }
-        return "env";
     }
-    return "";
+
+    return "env";
 }
 
 sub removeCMakeCache()
@@ -2115,10 +2115,6 @@ sub generateBuildSystemFromCMakeProject
     determineArchitecture();
     if ($architecture ne "x86_64" && !isARM()) {
         $ENV{'CXXFLAGS'} = "-march=pentium4 -msse2 -mfpmath=sse " . ($ENV{'CXXFLAGS'} || "");
-    }
-
-    if (isEfl()) {
-        system("perl", "$sourceDir/Tools/Scripts/update-webkitefl-libs") == 0 or die $!;
     }
 
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
@@ -2163,6 +2159,11 @@ sub buildCMakeProjectOrExit($$$$@)
     my $returnCode;
 
     exit(exitStatus(cleanCMakeGeneratedProject())) if $clean;
+
+    if (isEfl() && checkForArgumentAndRemoveFromARGV("--update-efl")) {
+        system("perl", "$sourceDir/Tools/Scripts/update-webkitefl-libs") == 0 or die $!;
+    }
+
 
     $returnCode = exitStatus(generateBuildSystemFromCMakeProject($port, $prefixPath, @cmakeArgs));
     exit($returnCode) if $returnCode;

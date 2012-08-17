@@ -1,3 +1,26 @@
+2012-08-16  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [jhbuild] EFL now runs jhbuild update for every build
+        https://bugs.webkit.org/show_bug.cgi?id=94267
+
+        Reviewed by Dirk Pranke.
+
+        This change makes EFL's approach to jhbuild more in line with the one
+        used by WebKitGTK+. update-webkitefl-libs will only be called by build-
+        webkit if --update-efl is given explicitly. The EWS bot will do that
+        from now on.
+
+        * Scripts/webkitdirs.pm:
+        (jhbuildWrapperPrefixIfNeeded): return jhbuild wrapper only if the
+        Dependencies directory exists also for EFL
+        (generateBuildSystemFromCMakeProject): no longer run update-webkitefl-libs
+        (buildCMakeProjectOrExit): build update-webkitefl-libs if --update-efl is
+        given
+        * Scripts/webkitpy/common/config/ports.py:
+        (EflPort.build_webkit_command): make EWS bots pass --update-efl to build-webkit
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+        (DeprecatedPortTest.test_efl_port): add unit testing for EFL port
+
 2012-08-16  Kent Tamura  <tkent@chromium.org>
 
         Add forms-bugs@chromium.org as a contributor.

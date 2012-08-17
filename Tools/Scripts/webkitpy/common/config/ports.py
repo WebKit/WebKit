@@ -160,6 +160,7 @@ class EflPort(DeprecatedPort):
     def build_webkit_command(self, build_style=None):
         command = super(EflPort, self).build_webkit_command(build_style=build_style)
         command.append("--efl")
+        command.append("--update-efl")
         command.append(super(EflPort, self).makeArgs())
         return command
 
