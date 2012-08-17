@@ -1,3 +1,19 @@
+2012-08-17  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [WK2] Add unit tests for vibration_client_callbacks_set API
+        https://bugs.webkit.org/show_bug.cgi?id=93890
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch covers unit testing of the Vibration API as delivered.
+
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        (VibrationCbData):
+        (vibrateCallback):
+        (cancelVibrationCallback):
+        (loadVibrationHTMLString):
+        (TEST_F):
+
 2012-08-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Rename WebKitWebView print-requested signal to print
