@@ -1,3 +1,16 @@
+2012-08-17  Anthony Berent  <aberent@chromium.org>
+
+        View source doesn't interpret escape characters in hrefs.
+        https://bugs.webkit.org/show_bug.cgi?id=94216
+
+        Reviewed by Adam Barth.
+
+        Extra href added to test containing escape characters
+
+        * fast/frames/resources/viewsource-frame-3.html: Added href containing escape characters to test
+        * fast/frames/resources/viewsource-frame-4.html: Added href containing escape characters to test
+        * fast/frames/viewsource-link-on-href-value.html: Check escape characters are correctly interpreted in href.
+
 2012-08-17  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Tests] time-multiple-fields-appearance-basic.html and time-multiple-fields-appearance-pseudo-elements.html are failed on Chromium Windows

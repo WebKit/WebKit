@@ -17,11 +17,16 @@
             [ "bar", "http://example.org/foo/bar" ],
             [ "/bar", "http://example.org/bar" ],
             // This shouldn't be affected.
-            [ "http://example.org/foobar", "http://example.org/foobar" ]
+            [ "http://example.org/foobar", "http://example.org/foobar" ],
+            // We should interpret escape chars in the href. 
+            // Note that innerHTML escapes '&'s (and other special characters) so
+            // this is saying we expect the text of the href to be "bar?a&amp;b" 
+            // and the URL to be "http://example.org/foo/bar?a&b"
+            [ "bar?a&amp;amp;b", "http://example.org/foo/bar?a&b" ]
         ];
 
         var elements = frame.contentDocument.documentElement.getElementsByTagName("a");
-        if (!elements || elements.length !== 4) {
+        if (!elements || elements.length !== 5) {
             return false;
         }
 

@@ -158,7 +158,7 @@ void HTMLViewSourceDocument::processTagToken(const String& source, HTMLToken& to
         index = addRange(source, index, iter->m_valueRange.m_start - token.startIndex(), "");
 
         bool isLink = name == srcAttr || name == hrefAttr;
-        index = addRange(source, index, iter->m_valueRange.m_end - token.startIndex(), "webkit-html-attribute-value", isLink, tagName == aTag);
+        index = addRange(source, index, iter->m_valueRange.m_end - token.startIndex(), "webkit-html-attribute-value", isLink, tagName == aTag, value);
 
         ++iter;
     }
@@ -262,7 +262,7 @@ void HTMLViewSourceDocument::addText(const String& text, const AtomicString& cla
     }
 }
 
-int HTMLViewSourceDocument::addRange(const String& source, int start, int end, const String& className, bool isLink, bool isAnchor)
+int HTMLViewSourceDocument::addRange(const String& source, int start, int end, const String& className, bool isLink, bool isAnchor, const String& link)
 {
     ASSERT(start <= end);
     if (start == end)
@@ -271,7 +271,7 @@ int HTMLViewSourceDocument::addRange(const String& source, int start, int end, c
     String text = source.substring(start, end - start);
     if (!className.isEmpty()) {
         if (isLink)
-            m_current = addLink(text, isAnchor);
+            m_current = addLink(link, isAnchor);
         else
             m_current = addSpanWithClassName(className);
     }
