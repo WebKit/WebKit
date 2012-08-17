@@ -1,3 +1,9 @@
+2012-08-16  Kent Tamura  <tkent@chromium.org>
+
+        Add forms-bugs@chromium.org as a contributor.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-08-16  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed warning fix, sys.argv is a python construct.

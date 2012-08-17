@@ -131,6 +131,7 @@ contributors_who_are_not_committers = [
     Contributor("Eric Penner", "epenner@chromium.org", "epenner"),
     Contributor("Felician Marton", ["felician@inf.u-szeged.hu", "marton.felician.zoltan@stud.u-szeged.hu"], "Felician"),
     Contributor("Finnur Thorarinsson", ["finnur@chromium.org", "finnur.webkit@gmail.com"], "finnur"),
+    Contributor("Forms Bugs", "forms-bugs@chromium.org"),
     Contributor("Grace Kloba", "klobag@chromium.org", "klobag"),
     Contributor("Greg Simon", "gregsimon@chromium.org", "gregsimon"),
     Contributor("Gregg Tavares", ["gman@google.com", "gman@chromium.org"], "gman"),
