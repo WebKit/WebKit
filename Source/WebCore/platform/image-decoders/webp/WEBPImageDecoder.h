@@ -50,6 +50,7 @@ private:
     bool decode(bool onlySize);
 
     WebPIDecoder* m_decoder;
+    bool m_hasAlpha;
 };
 
 } // namespace WebCore

@@ -34,12 +34,18 @@
 #include "PlatformInstrumentation.h"
 #include "webp/decode.h"
 
+// backward emulation for earlier versions than 0.1.99
+#if (WEBP_DECODER_ABI_VERSION < 0x0163)
+#define MODE_rgbA MODE_RGBA
+#define MODE_bgrA MODE_BGRA
+#endif
+
 #if CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN)
-inline WEBP_CSP_MODE outputMode() { return MODE_RGBA; }
+inline WEBP_CSP_MODE outputMode(bool hasAlpha) { return hasAlpha ? MODE_rgbA : MODE_RGBA; }
 #elif USE(SKIA) && SK_B32_SHIFT
-inline WEBP_CSP_MODE outputMode() { return MODE_RGBA; }
+inline WEBP_CSP_MODE outputMode(bool hasAlpha) { return hasAlpha ? MODE_rgbA : MODE_RGBA; }
 #else // LITTLE_ENDIAN, output BGRA pixels.
-inline WEBP_CSP_MODE outputMode() { return MODE_BGRA; }
+inline WEBP_CSP_MODE outputMode(bool hasAlpha) { return hasAlpha ? MODE_bgrA : MODE_BGRA; }
 #endif
 
 namespace WebCore {
@@ -48,6 +54,7 @@ WEBPImageDecoder::WEBPImageDecoder(ImageSource::AlphaOption alphaOption,
                                    ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
     : ImageDecoder(alphaOption, gammaAndColorProfileOption)
     , m_decoder(0)
+    , m_hasAlpha(false)
 {
 }
 
@@ -98,8 +105,19 @@ bool WEBPImageDecoder::decode(bool onlySize)
         if (dataSize < imageHeaderSize)
             return false;
         int width, height;
+#if (WEBP_DECODER_ABI_VERSION >= 0x0163)
+        WebPBitstreamFeatures features;
+        if (WebPGetFeatures(dataBytes, dataSize, &features) != VP8_STATUS_OK)
+            return setFailed();
+        width = features.width;
+        height = features.height;
+        m_hasAlpha = features.has_alpha;
+#else
+        // Earlier version won't be able to display WebP files with alpha.
         if (!WebPGetInfo(dataBytes, dataSize, &width, &height))
             return setFailed();
+        m_hasAlpha = false;
+#endif
         if (!setSize(width, height))
             return setFailed();
     }
@@ -116,7 +134,7 @@ bool WEBPImageDecoder::decode(bool onlySize)
         if (!buffer.setSize(size().width(), size().height()))
             return setFailed();
         buffer.setStatus(ImageFrame::FramePartial);
-        buffer.setHasAlpha(false); // FIXME: webp does not support alpha yet.
+        buffer.setHasAlpha(m_hasAlpha);
         buffer.setOriginalFrameRect(IntRect(IntPoint(), size()));
     }
 
@@ -124,7 +142,7 @@ bool WEBPImageDecoder::decode(bool onlySize)
         int rowStride = size().width() * sizeof(ImageFrame::PixelData);
         uint8_t* output = reinterpret_cast<uint8_t*>(buffer.getAddr(0, 0));
         int outputSize = size().height() * rowStride;
-        m_decoder = WebPINewRGB(outputMode(), output, outputSize, rowStride);
+        m_decoder = WebPINewRGB(outputMode(m_hasAlpha), output, outputSize, rowStride);
         if (!m_decoder)
             return setFailed();
     }

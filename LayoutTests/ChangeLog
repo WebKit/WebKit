@@ -1,3 +1,18 @@
+2012-08-17  Pascal Massimino  <pascal.massimino@gmail.com>
+
+        update layout test for new libwebp-0.2.0
+        https://bugs.webkit.org/show_bug.cgi?id=93430
+
+        Reviewed by Adam Barth.
+
+        * fast/images/resources/test2.webp: Added.
+                lossy+alpha example
+        * fast/images/resources/test3.webp: Added.
+                lossless with alpha example
+        * fast/images/webp-image-decoding-expected.txt:
+        * fast/images/webp-image-decoding.html:
+                Updated test. Will now decode test2.webp and test3.webp too.
+
 2012-08-17  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Tests] Adding tests for multiple fields time input UI
