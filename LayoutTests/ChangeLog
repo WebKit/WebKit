@@ -1,5 +1,14 @@
 2012-08-17  Adrienne Walker  <enne@google.com>
 
+        [chromium] Mark context-menu.html as failing on Chromium Mac
+        https://bugs.webkit.org/show_bug.cgi?id=94367
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
+2012-08-17  Adrienne Walker  <enne@google.com>
+
         [chromium] Rebaseline Chromium mac images after r125830
 
         Unreviewed gardening. Expectation update.

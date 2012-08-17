@@ -3522,3 +3522,5 @@ BUGWK94156 DEBUG : fast/canvas/fallback-content.html = PASS CRASH
 BUGWK94256 DEBUG : fast/block/inline-children-root-linebox-crash.html = PASS CRASH
 
 BUGWK94261 DEBUG : http/tests/inspector/indexeddb/resources-panel.html = PASS CRASH
+
+BUGWK94376 MAC : touchadjustment/context-menu.html = PASS TEXT
