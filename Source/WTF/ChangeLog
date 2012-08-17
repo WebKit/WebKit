@@ -1,3 +1,14 @@
+2012-08-17  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Turn on a few macros for jpeg decoding and image interpolation
+        https://bugs.webkit.org/show_bug.cgi?id=94244
+
+        Reviewed by Antonio Gomes.
+
+        Turn on these macros to get better performance.
+
+        * wtf/Platform.h:
+
 2012-08-17  Milian Wolff  <milian.wolff@kdab.com>
 
         [Qt] QNX build fails due to ctype usage in system headers
