@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Check stepping-up and -down for time input fields from renderer. No cases of empty initial values.');
+
+var input = document.createElement('input');
+var invalidStateErr = '"Error: INVALID_STATE_ERR: DOM Exception 11"';
+
+document.body.appendChild(input);
+
+function sendKey(keyName) {
+    var event = document.createEvent('KeyboardEvent');
+    event.initKeyboardEvent('keydown', true, true, document.defaultView, keyName);
+    input.dispatchEvent(event);
+}
+
+function setInputAttributes(min, max, step, value) {
+    input.min = min;
+    input.max = max;
+    input.step = step;
+    input.value = value;
+}
+
+function stepUp(value, step, max, optionalStepCount) {
+    setInputAttributes(null, max, step, value);
+    if (typeof optionalStepCount != "undefined")
+        if (optionalStepCount < 0)
+            for (var i = 0; i < -optionalStepCount; i++)
+                sendKey('Down');
+        else
+            for (var i = 0; i < optionalStepCount; i++)
+                sendKey('Up');
+    else
+        sendKey('Up');
+    return input.value;
+}
+
+function stepDown(value, step, min, optionalStepCount) {
+    setInputAttributes(min, null, step, value);
+    if (typeof optionalStepCount != "undefined")
+        if (optionalStepCount < 0)
+            for (var i = 0; i < -optionalStepCount; i++)
+                sendKey('Up');
+        else
+            for (var i = 0; i < optionalStepCount; i++)
+                sendKey('Down');
+    else
+        sendKey('Down');
+    return input.value;
+}
+
+input.type = 'time';
+input.focus();
+sendKey('Right');
+debug('Function arguments are (value, step, {min or max}, [stepCount]).');
+debug('Normal cases');
+shouldBe('stepUp("07:13", null, null)', '"07:14"');
+shouldBe('stepDown("07:13", null, null)', '"07:12"');
+shouldBe('stepUp("07:13", null, null, 10)', '"07:23"');
+shouldBe('stepDown("07:13", null, null, 11)', '"07:02"');
+debug('');
+document.body.removeChild(input);
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

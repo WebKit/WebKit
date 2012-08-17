@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<p>
+Please run this with DumpRenderTree.
+</p>
+Test following keys:
+<ul>
+    <li>Digit keys</li>
+    <li>Left/Right - Move focus field inside element</li>
+    <li>Up/Down - Increment/decrement value of focus field</li>
+    <li>Tab - Move focus field</li>
+    <li>Backspace - Make value empty</li>
+</ul>
+<input id="input" type="time">
+<input id="another">
+<div id="console"></div>
+<script>
+description("Multiple fields UI of time input type with keyboard events");
+var input = document.getElementById("input");
+
+function keyDown(key, modifiers)
+{
+    if (!window.eventSender)
+        return;
+    eventSender.keyDown(key, modifiers);
+}
+
+function beginTest(title, value)
+{
+    debug("== " + title + " ==");
+    input.value = value;
+    input.blur();
+    input.focus();
+}
+
+beginTest('Digit keys');
+keyDown('7');
+keyDown('5');
+keyDown('6');
+keyDown('A');
+shouldBeEqualToString('input.value', '07:56');
+
+// FIXME: We should test type ahead time out. When event.leapForward() affects
+// keyboard event time stamp, we can uncomment this fragment.
+/*
+beginTest('Digit keys with type ahead timeout');
+keyDown('1');
+leapForward(1100);
+keyDown('1');
+keyDown('5');
+keyDown('6');
+keyDown('A');
+shouldBeEqualToString('input.value', '01:56');
+*/
+
+beginTest('Left/Right keys', '01:24');
+keyDown('rightArrow');
+keyDown('5');
+keyDown('leftArrow');
+keyDown('6');
+shouldBeEqualToString('input.value', '06:05');
+keyDown('leftArrow');
+keyDown('leftArrow');
+keyDown('leftArrow');
+shouldBeEqualToString('document.activeElement.id', 'input');
+
+beginTest('Up/Down keys', '04:56');
+keyDown('upArrow');
+shouldBeEqualToString('input.value', '05:56');
+keyDown('downArrow');
+keyDown('downArrow');
+shouldBeEqualToString('input.value', '03:56');
+
+beginTest('Up/Down keys on empty value', '');
+keyDown('upArrow');
+keyDown('upArrow');
+keyDown('rightArrow');
+keyDown('downArrow');
+keyDown('downArrow');
+keyDown('rightArrow');
+keyDown('downArrow');
+shouldBeEqualToString('input.value', '14:58');
+
+beginTest('Tab key', '03:00');
+keyDown('\t');
+keyDown('5');
+shouldBeEqualToString('input.value', '03:05');
+keyDown('\t', ['shiftKey']);
+keyDown('7');
+shouldBeEqualToString('input.value', '07:05');
+keyDown('\t');
+keyDown('\t');
+shouldBeEqualToString('document.activeElement.id', 'another');
+
+beginTest('Backspace key', '12:34');
+keyDown("\b");
+shouldBeEqualToString('input.value', '');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

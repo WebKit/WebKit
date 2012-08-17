@@ -1,3 +1,27 @@
+2012-08-17  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] Adding tests for multiple fields time input UI
+        https://bugs.webkit.org/show_bug.cgi?id=94196
+
+        Reviewed by Kent Tamura.
+
+        This patch introduces functional testing for multiple fields time input
+        UI when both ENABLE_INPUT_TYPE_TIME and ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS
+        are enabled.
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-change-type-on-focus-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-change-type-on-focus.html: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-keyboard-events-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-keyboard-events.html: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-losing-renderer-on-click-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-losing-renderer-on-click.html: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-spinbutton-change-and-input-events-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-spinbutton-change-and-input-events.html: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-step-attribute-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-step-attribute.html: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-stepup-stepdown-from-renderer-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-stepup-stepdown-from-renderer.html: Added.
+
 2012-08-17  Sukolsak Sakshuwong  <sukolsak@google.com>
 
         Implement UndoManager's V8 bindings

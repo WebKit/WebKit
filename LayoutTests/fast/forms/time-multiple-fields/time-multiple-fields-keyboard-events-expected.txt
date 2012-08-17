@@ -1,0 +1,34 @@
+Multiple fields UI of time input type with keyboard events
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Please run this with DumpRenderTree.
+
+Test following keys:
+Digit keys
+Left/Right - Move focus field inside element
+Up/Down - Increment/decrement value of focus field
+Tab - Move focus field
+Backspace - Make value empty
+ 
+== Digit keys ==
+PASS input.value is "07:56"
+== Left/Right keys ==
+PASS input.value is "06:05"
+PASS document.activeElement.id is "input"
+== Up/Down keys ==
+PASS input.value is "05:56"
+PASS input.value is "03:56"
+== Up/Down keys on empty value ==
+PASS input.value is "14:58"
+== Tab key ==
+PASS input.value is "03:05"
+PASS input.value is "07:05"
+PASS document.activeElement.id is "another"
+== Backspace key ==
+PASS input.value is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

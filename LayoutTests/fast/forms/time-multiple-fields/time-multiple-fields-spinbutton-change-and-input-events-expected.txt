@@ -1,0 +1,19 @@
+Test for event dispatching by spin buttons in a type=time input.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial state
+PASS changeEventCounter is 0
+PASS inputEventCounter is 0
+Click the upper button
+PASS testInput.value is "04:00"
+PASS changeEventCounter is 1
+PASS inputEventCounter is 1
+Focus on another field
+PASS changeEventCounter is 1
+PASS inputEventCounter is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
