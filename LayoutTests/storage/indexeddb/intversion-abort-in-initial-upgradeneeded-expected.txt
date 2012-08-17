@@ -11,7 +11,13 @@ indexedDB.open(dbname, 2)
 request.onupgradeneeded = upgradeNeeded
 FIXME: This should get an error event of type AbortError
 request.onerror = unexpectedErrorCallback
-FAIL Success function called unexpectedly.
+
+upgradeNeeded():
+PASS db.version is 2
+transaction.abort()
+
+onAbort():
+FAIL event.target.db.version should be 0. Was 2.
 PASS successfullyParsed is true
 
 TEST COMPLETE

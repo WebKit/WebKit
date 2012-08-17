@@ -36,6 +36,7 @@
 #include "IDBIndex.h"
 #include "IDBObjectStore.h"
 #include "IDBObjectStoreBackendInterface.h"
+#include "IDBOpenDBRequest.h"
 #include "IDBPendingTransactionMonitor.h"
 #include "IDBTracing.h"
 
@@ -43,7 +44,13 @@ namespace WebCore {
 
 PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, PassRefPtr<IDBTransactionBackendInterface> backend, IDBTransaction::Mode mode, IDBDatabase* db)
 {
-    RefPtr<IDBTransaction> transaction(adoptRef(new IDBTransaction(context, backend, mode, db)));
+    IDBOpenDBRequest* openDBRequest = 0;
+    return create(context, backend, mode, db, openDBRequest);
+}
+
+PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, PassRefPtr<IDBTransactionBackendInterface> backend, IDBTransaction::Mode mode, IDBDatabase* db, IDBOpenDBRequest* openDBRequest)
+{
+    RefPtr<IDBTransaction> transaction(adoptRef(new IDBTransaction(context, backend, mode, db, openDBRequest)));
     transaction->suspendIfNeeded();
     return transaction.release();
 }
@@ -79,10 +86,11 @@ const AtomicString& IDBTransaction::modeReadWriteLegacy()
 }
 
 
-IDBTransaction::IDBTransaction(ScriptExecutionContext* context, PassRefPtr<IDBTransactionBackendInterface> backend, IDBTransaction::Mode mode, IDBDatabase* db)
+IDBTransaction::IDBTransaction(ScriptExecutionContext* context, PassRefPtr<IDBTransactionBackendInterface> backend, IDBTransaction::Mode mode, IDBDatabase* db, IDBOpenDBRequest* openDBRequest)
     : ActiveDOMObject(context, this)
     , m_backend(backend)
     , m_database(db)
+    , m_openDBRequest(openDBRequest)
     , m_mode(mode)
     , m_active(true)
     , m_state(Unused)
@@ -377,7 +385,14 @@ bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
 
     // FIXME: When we allow custom event dispatching, this will probably need to change.
     ASSERT(event->type() == eventNames().completeEvent || event->type() == eventNames().abortEvent);
-    return IDBEventDispatcher::dispatch(event.get(), targets);
+    bool returnValue = IDBEventDispatcher::dispatch(event.get(), targets);
+    // FIXME: Try to construct a test where |this| outlives openDBRequest and we
+    // get a crash.
+    if (m_openDBRequest) {
+        ASSERT(isVersionChange());
+        m_openDBRequest->transactionDidFinishAndDispatch();
+    }
+    return returnValue;
 }
 
 bool IDBTransaction::canSuspend() const

@@ -65,8 +65,13 @@ FAIL event.oldVersion should be non-null. Was undefined
 FAIL event.newVersion should be null (of type object). Was undefined (of type undefined).
 PASS event.target.result is null
 
+upgradeNeededCallback():
+gotUpgradeNeededEvent = true
+PASS event.newVersion is 1
+PASS event.oldVersion is 0
+
 openWithVersionSuccessCallback():
-FAIL gotUpgradeNeededEvent should be true. Was false.
+PASS gotUpgradeNeededEvent is true
 PASS event.target.result.objectStoreNames.length is 0
 PASS successfullyParsed is true
 

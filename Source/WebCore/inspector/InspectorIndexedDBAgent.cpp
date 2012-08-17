@@ -129,6 +129,7 @@ public:
     virtual ~InspectorIDBDatabaseCallbacks() { }
 
     virtual void onVersionChange(const String& version) { }
+    virtual void onVersionChange(int64_t oldVersion, int64_t newVersion) { }
 private:
     InspectorIDBDatabaseCallbacks() { }
 };
@@ -237,7 +238,7 @@ private:
 void ExecutableWithDatabase::start(IDBFactoryBackendInterface* idbFactory, SecurityOrigin* securityOrigin, ScriptExecutionContext* context, const String& databaseName)
 {
     RefPtr<OpenDatabaseCallback> callback = OpenDatabaseCallback::create(this);
-    idbFactory->open(databaseName, callback.get(), securityOrigin, context, String());
+    idbFactory->open(databaseName, IDBDatabaseMetadata::NoIntVersion, callback.get(), securityOrigin, context, String());
 }
 
 static PassRefPtr<IDBTransactionBackendInterface> transactionForDatabase(IDBDatabaseBackendInterface* idbDatabase, const String& objectStoreName)

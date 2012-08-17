@@ -51,9 +51,12 @@ public:
     virtual void onSuccess(const WebSerializedScriptValue&, const WebIDBKey&, const WebIDBKeyPath&);
     virtual void onSuccess(const WebIDBKey&, const WebIDBKey& primaryKey, const WebSerializedScriptValue&);
     virtual void onBlocked();
+    virtual void onBlocked(long long oldVersion);
+    virtual void onUpgradeNeeded(long long oldVersion, WebIDBTransaction*, WebIDBDatabase*);
 
 private:
     RefPtr<WebCore::IDBCallbacks> m_callbacks;
+    bool m_didCreateDatabaseProxy;
 };
 
 } // namespace WebKit

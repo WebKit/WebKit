@@ -10,11 +10,27 @@ indexedDB.deleteDatabase(dbname)
 request = indexedDB.open(dbname, 7)
 
 
+upgradeNeeded():
+db = event.target.result
+PASS event.newVersion is 7
+db.createObjectStore('objectstore')
+transaction = event.target.transaction
+
+transaction.oncomplete:
+sawTransactionComplete = true
+setTimeout(closeDB, 0)
+
 openSuccess():
 PASS didCallCloseDB is false
-FAIL sawTransactionComplete should be true. Was false.
+PASS sawTransactionComplete is true
 db = event.target.result
-FAIL db.version should be 7 (of type number). Was  (of type string).
+PASS db.version is 7
+PASS db.objectStoreNames.length is 1
+db.transaction(db.objectStoreNames)
+
+closeDB():
+didCallCloseDB = true
+db.close()
 PASS successfullyParsed is true
 
 TEST COMPLETE

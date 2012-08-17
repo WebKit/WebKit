@@ -130,6 +130,16 @@ void IDBCallbacksProxy::onBlocked()
     m_callbacks->onBlocked();
 }
 
+void IDBCallbacksProxy::onBlocked(int64_t existingVersion)
+{
+    m_callbacks->onBlocked(existingVersion);
+}
+
+void IDBCallbacksProxy::onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBTransactionBackendInterface> transaction, PassRefPtr<IDBDatabaseBackendInterface> database)
+{
+    m_callbacks->onUpgradeNeeded(oldVersion, new WebIDBTransactionImpl(transaction), new WebIDBDatabaseImpl(database));
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

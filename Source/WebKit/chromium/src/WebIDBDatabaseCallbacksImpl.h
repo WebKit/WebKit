@@ -43,6 +43,7 @@ public:
     WebIDBDatabaseCallbacksImpl(PassRefPtr<WebCore::IDBDatabaseCallbacks>);
     virtual ~WebIDBDatabaseCallbacksImpl();
 
+    virtual void onVersionChange(long long oldVersion, long long newVersion);
     virtual void onVersionChange(const WebString& version);
 
 private:

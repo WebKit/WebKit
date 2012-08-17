@@ -64,6 +64,9 @@ public:
 private:
     WTF::RefPtr<WebCore::IDBDatabaseBackendInterface> m_databaseBackend;
     WTF::RefPtr<IDBDatabaseCallbacksProxy> m_databaseCallbacks;
+    // FIXME: Remove this flag when we consolidate two-phase open.
+    // http://wkb.ug/90411
+    bool m_closePending;
 };
 
 } // namespace WebKit

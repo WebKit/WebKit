@@ -47,6 +47,7 @@ namespace WebKit {
 
 WebIDBDatabaseImpl::WebIDBDatabaseImpl(PassRefPtr<IDBDatabaseBackendInterface> databaseBackend)
     : m_databaseBackend(databaseBackend)
+    , m_closePending(false)
 {
 }
 
@@ -94,8 +95,10 @@ void WebIDBDatabaseImpl::close()
 {
     // Use the callbacks that ::open gave us so that the backend in
     // multi-process chromium knows which database connection is closing.
-    if (!m_databaseCallbacks)
+    if (!m_databaseCallbacks) {
+        m_closePending = true;
         return;
+    }
     m_databaseBackend->close(m_databaseCallbacks);
     m_databaseCallbacks = 0;
 }
@@ -105,6 +108,8 @@ void WebIDBDatabaseImpl::open(WebIDBDatabaseCallbacks* callbacks)
     ASSERT(!m_databaseCallbacks);
     m_databaseCallbacks = IDBDatabaseCallbacksProxy::create(adoptPtr(callbacks));
     m_databaseBackend->registerFrontendCallbacks(m_databaseCallbacks);
+    if (m_closePending)
+        close();
 }
 
 } // namespace WebKit

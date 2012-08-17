@@ -1,3 +1,26 @@
+2012-08-16  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Frontend and plumbing for integer versions
+        https://bugs.webkit.org/show_bug.cgi?id=92897
+
+        This patch exposes integer versions and the upgradeneeded event to
+        script so upgradeneeded events are now fired mostly per expectations.
+        This is the bulk of changes to the expected files, further intversion
+        patches will change the behavior of a test or two, nothing wholesale.
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/intversion-abort-in-initial-upgradeneeded-expected.txt:
+        * storage/indexeddb/intversion-and-setversion-expected.txt:
+        * storage/indexeddb/intversion-blocked-expected.txt:
+        * storage/indexeddb/intversion-close-between-events-expected.txt:
+        * storage/indexeddb/intversion-close-in-oncomplete-expected.txt:
+        * storage/indexeddb/intversion-close-in-upgradeneeded-expected.txt:
+        * storage/indexeddb/intversion-gated-on-delete-expected.txt:
+        * storage/indexeddb/intversion-invalid-setversion-has-no-side-effects-expected.txt:
+        * storage/indexeddb/intversion-long-queue-expected.txt:
+        * storage/indexeddb/intversion-open-with-version-expected.txt:
+
 2012-08-16  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Cleanup CSS selectors for multiple fields time input UI

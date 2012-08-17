@@ -91,6 +91,7 @@ public:
     virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue>);
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<SerializedScriptValue> >&) { ASSERT_NOT_REACHED(); } // Not implemented. Callback should not reach the renderer side.
     virtual void onBlocked();
+    virtual void onBlocked(int64_t existingVersion) { ASSERT_NOT_REACHED(); }
 
     // ActiveDOMObject
     virtual bool hasPendingActivity() const OVERRIDE;
@@ -103,6 +104,8 @@ public:
     bool dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec) { return EventTarget::dispatchEvent(event, ec); }
     virtual void uncaughtExceptionInEventHandler();
 
+    void transactionDidFinishAndDispatch();
+
     using ThreadSafeRefCounted<IDBCallbacks>::ref;
     using ThreadSafeRefCounted<IDBCallbacks>::deref;
 
@@ -111,12 +114,16 @@ public:
 protected:
     IDBRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface::TaskType, IDBTransaction*);
     void enqueueEvent(PassRefPtr<Event>);
-    bool shouldEnqueueEvent() const;
+    virtual bool shouldEnqueueEvent() const;
 
     RefPtr<IDBAny> m_result;
     unsigned short m_errorCode;
     String m_errorMessage;
     RefPtr<DOMError> m_error;
+    bool m_contextStopped;
+    RefPtr<IDBTransaction> m_transaction;
+    ReadyState m_readyState;
+    bool m_requestAborted; // May be aborted by transaction then receive async onsuccess; ignore vs. assert.
 
 private:
     // EventTarget
@@ -130,11 +137,7 @@ private:
 
     RefPtr<IDBAny> m_source;
     const IDBTransactionBackendInterface::TaskType m_taskType;
-    RefPtr<IDBTransaction> m_transaction;
 
-    ReadyState m_readyState;
-    bool m_requestAborted; // May be aborted by transaction then receive async onsuccess; ignore vs. assert.
-    bool m_contextStopped;
     Vector<RefPtr<Event> > m_enqueuedEvents;
 
     // Only used if the result type will be a cursor.
@@ -144,6 +147,7 @@ private:
     RefPtr<IDBKey> m_cursorKey;
     RefPtr<IDBKey> m_cursorPrimaryKey;
     RefPtr<SerializedScriptValue> m_cursorValue;
+    bool m_didFireUpgradeNeededEvent;
 
     EventTargetData m_eventTargetData;
 };

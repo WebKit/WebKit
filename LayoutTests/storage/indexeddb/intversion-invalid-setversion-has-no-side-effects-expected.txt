@@ -11,8 +11,13 @@ indexedDB.deleteDatabase(dbname)
 deleteSuccess():
 request = indexedDB.open(dbname, 2)
 
+firstUpgradeNeededCallback():
+gotFirstUpgradeNeededEvent = true
+PASS event.oldVersion is 0
+PASS event.newVersion is 2
+
 firstSuccessEventHandler():
-FAIL gotFirstUpgradeNeededEvent should be true. Was false.
+PASS gotFirstUpgradeNeededEvent is true
 connection1 = event.target.result
 connection1.onversionchange = unexpectedVersionChangeCallback
 PASS String(connection1) is "[object IDBDatabase]"
@@ -24,7 +29,13 @@ request = db.setVersion('version')
 request.onerror = setVersionError
 request.onsuccess = unexpectedSuccessCallback
 request.onblocked = unexpectedBlockedCallback
-FAIL onversionchange called unexpectedly
+
+setVersionError():
+Open up a new db to ensure that if connection1 were to get a versionchange event, it will be delivered before the test finishes
+new_db = indexedDB.open(dbname + '2')
+new_db.onsuccess = newDBSuccess
+
+newDBSuccess():
 PASS successfullyParsed is true
 
 TEST COMPLETE

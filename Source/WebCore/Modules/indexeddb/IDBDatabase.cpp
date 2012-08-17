@@ -41,6 +41,7 @@
 #include "IDBObjectStore.h"
 #include "IDBTracing.h"
 #include "IDBTransaction.h"
+#include "IDBUpgradeNeededEvent.h"
 #include "IDBVersionChangeEvent.h"
 #include "IDBVersionChangeRequest.h"
 #include "ScriptCallStack.h"
@@ -301,6 +302,17 @@ void IDBDatabase::closeConnection()
         bool removed = eventQueue->cancelEvent(m_enqueuedEvents[i].get());
         ASSERT_UNUSED(removed, removed);
     }
+}
+
+void IDBDatabase::onVersionChange(int64_t oldVersion, int64_t newVersion)
+{
+    if (m_contextStopped || !scriptExecutionContext())
+        return;
+
+    if (m_closePending)
+        return;
+
+    enqueueEvent(IDBUpgradeNeededEvent::create(oldVersion, newVersion, eventNames().versionchangeEvent));
 }
 
 void IDBDatabase::onVersionChange(const String& version)

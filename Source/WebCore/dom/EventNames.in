@@ -39,6 +39,7 @@ StorageEvent
 SVGEvents interfaceName=Event, conditional=SVG
 SVGZoomEvent conditional=SVG
 SVGZoomEvents interfaceName=SVGZoomEvent, conditional=SVG
+IDBUpgradeNeededEvent conditional=INDEXED_DATABASE
 IDBVersionChangeEvent conditional=INDEXED_DATABASE
 TouchEvent conditional=TOUCH_EVENTS, runtimeConditional=touchEnabled
 DeviceMotionEvent conditional=DEVICE_ORIENTATION

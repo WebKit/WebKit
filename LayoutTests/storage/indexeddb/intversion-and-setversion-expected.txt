@@ -33,17 +33,57 @@ PASS db.version is "some version"
 db.close()
 request = indexedDB.open(dbname, 2)
 
+firstUpgradeNeeded():
+db = event.target.result
+PASS String(db) is "[object IDBDatabase]"
+PASS String(request.transaction) is "[object IDBTransaction]"
+FAIL event.oldVersion should be some version (of type string). Was 0 (of type number).
+PASS event.newVersion is 2
+request.transaction.oncomplete = transactionCompleted
+
+transactionCompleted():
+didTransactionComplete = true
+
 firstOpenWithVersion():
-FAIL didTransactionComplete should be true. Was false.
+PASS didTransactionComplete is true
 db = event.target.result
 PASS String(db) is "[object IDBDatabase]"
 PASS request.transaction is null
-FAIL db.version should be 2 (of type number). Was some version (of type string).
-FAIL String(request) should be [object IDBOpenDBRequest]. Was [object IDBRequest].
+PASS db.version is 2
+PASS String(request) is "[object IDBOpenDBRequest]"
 request = db.setVersion("string version 2")
 PASS String(request) is "[object IDBVersionChangeRequest]"
 request.onerror = setVersionNotAllowed
-FAIL Success function called unexpectedly.
+
+setVersionNotAllowed():
+PASS event.type is "error"
+request.webkitErrorMessage = You can't use the setVersion function if you've already set the version through an open call.  The current integer version is 2
+db.close()
+request = indexedDB.open(dbname, 1)
+request.onerror = errorWhenTryingLowVersion
+
+errorWhenTryingLowVersion():
+request.webkitErrorMessage = The requested version (1) is less than the existing version (2).
+request = indexedDB.open(dbname, 4)
+request.onupgradeneeded = secondUpgradeNeeded
+request.onsuccess = thirdOpenSuccess
+
+secondUpgradeNeeded():
+gotSecondUpgradeNeeded = true
+PASS event.oldVersion is 2
+PASS event.newVersion is 4
+
+thirdOpenSuccess():
+PASS gotSecondUpgradeNeeded is true
+db = event.target.result
+PASS db.version is 4
+db.close()
+request = indexedDB.open(dbname)
+request.onsuccess = fourthOpenSuccess
+
+fourthOpenSuccess():
+db = event.target.result
+PASS db.version is 4
 PASS successfullyParsed is true
 
 TEST COMPLETE

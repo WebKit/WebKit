@@ -9,6 +9,7 @@ EventSource
 FileReader conditional=BLOB
 FileWriter conditional=FILE_SYSTEM
 IDBDatabase conditional=INDEXED_DATABASE
+IDBOpenDBRequest conditional=INDEXED_DATABASE
 IDBRequest conditional=INDEXED_DATABASE
 IDBTransaction conditional=INDEXED_DATABASE
 IDBVersionChangeRequest conditional=INDEXED_DATABASE

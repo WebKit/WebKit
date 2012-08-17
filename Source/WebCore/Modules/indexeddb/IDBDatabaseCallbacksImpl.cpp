@@ -52,6 +52,12 @@ void IDBDatabaseCallbacksImpl::onVersionChange(const String& version)
         m_database->onVersionChange(version);
 }
 
+void IDBDatabaseCallbacksImpl::onVersionChange(int64_t oldVersion, int64_t newVersion)
+{
+    if (m_database)
+        m_database->onVersionChange(oldVersion, newVersion);
+}
+
 void IDBDatabaseCallbacksImpl::unregisterDatabase(IDBDatabase* database)
 {
     ASSERT_UNUSED(database, database == m_database);

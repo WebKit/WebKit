@@ -46,6 +46,7 @@ namespace WebCore {
 class IDBCursor;
 class IDBDatabase;
 class IDBObjectStore;
+class IDBOpenDBRequest;
 
 class IDBTransaction : public IDBTransactionCallbacks, public EventTarget, public ActiveDOMObject {
 public:
@@ -56,6 +57,7 @@ public:
     };
 
     static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, Mode, IDBDatabase*);
+    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, Mode, IDBDatabase*, IDBOpenDBRequest*);
     virtual ~IDBTransaction();
 
     static const AtomicString& modeReadOnly();
@@ -119,7 +121,7 @@ public:
     using RefCounted<IDBTransactionCallbacks>::deref;
 
 private:
-    IDBTransaction(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, Mode, IDBDatabase*);
+    IDBTransaction(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, Mode, IDBDatabase*, IDBOpenDBRequest*);
 
     void enqueueEvent(PassRefPtr<Event>);
     void closeOpenCursors();
@@ -142,6 +144,7 @@ private:
 
     RefPtr<IDBTransactionBackendInterface> m_backend;
     RefPtr<IDBDatabase> m_database;
+    IDBOpenDBRequest* m_openDBRequest;
     const Mode m_mode;
     bool m_active;
     State m_state;

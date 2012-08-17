@@ -115,6 +115,7 @@ namespace WebCore {
     macro(textInput) \
     macro(unload) \
     macro(updateready) \
+    macro(upgradeneeded) \
     macro(versionchange) \
     macro(webkitvisibilitychange) \
     macro(write) \

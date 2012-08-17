@@ -10,12 +10,22 @@ indexedDB.deleteDatabase(dbname)
 request = indexedDB.open(dbname, 7)
 
 
-openSuccess():
-FAIL sawTransactionComplete should be true. Was false.
+upgradeNeeded():
 db = event.target.result
-FAIL db.version should be 7 (of type number). Was  (of type string).
+PASS event.newVersion is 7
+transaction = event.target.transaction
+db.createObjectStore('os')
+db.close()
+
+transaction.oncomplete:
+sawTransactionComplete = true
+
+openSuccess():
+PASS sawTransactionComplete is true
+db = event.target.result
+PASS db.version is 7
 transaction = db.transaction('os')
-FAIL transaction = db.transaction('os') threw exception Error: NotFoundError: DOM IDBDatabase Exception 8
+FAIL transaction = db.transaction('os') threw exception Error: InvalidStateError: DOM IDBDatabase Exception 11
 PASS successfullyParsed is true
 
 TEST COMPLETE

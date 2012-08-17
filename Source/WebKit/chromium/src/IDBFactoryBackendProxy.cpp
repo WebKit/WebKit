@@ -203,7 +203,7 @@ void IDBFactoryBackendProxy::getDatabaseNames(PassRefPtr<IDBCallbacks> prpCallba
 }
 
 
-void IDBFactoryBackendProxy::open(const String& name, PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext* context, const String& dataDir)
+void IDBFactoryBackendProxy::open(const String& name, int64_t version, PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext* context, const String& dataDir)
 {
     RefPtr<IDBCallbacks> callbacks(prpCallbacks);
     WebSecurityOrigin origin(securityOrigin);
@@ -211,7 +211,7 @@ void IDBFactoryBackendProxy::open(const String& name, PassRefPtr<IDBCallbacks> p
         return;
 
     WebFrameImpl* webFrame = getWebFrame(context);
-    m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
+    m_webIDBFactory->open(name, version, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
 }
 
 void IDBFactoryBackendProxy::deleteDatabase(const String& name, PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext* context, const String& dataDir)

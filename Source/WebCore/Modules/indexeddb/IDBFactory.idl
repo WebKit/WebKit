@@ -30,7 +30,7 @@ module storage {
     ] IDBFactory {
         [CallWith=ScriptExecutionContext, ImplementedAs=getDatabaseNames] IDBRequest webkitGetDatabaseNames();
 
-        [CallWith=ScriptExecutionContext] IDBRequest open(in DOMString name)
+        [CallWith=ScriptExecutionContext] IDBOpenDBRequest open(in DOMString name, in [Optional] unsigned long long version)
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBVersionChangeRequest deleteDatabase(in DOMString name)
             raises (IDBDatabaseException);

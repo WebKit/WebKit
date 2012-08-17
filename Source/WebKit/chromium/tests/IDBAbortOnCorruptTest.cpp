@@ -102,7 +102,8 @@ TEST(IDBAbortTest, TheTest)
     const String& name = "db name";
     MockIDBCallbacks callbacks;
     RefPtr<SecurityOrigin> origin = SecurityOrigin::create("http", "localhost", 81);
-    factory->open(name, &callbacks, origin, 0 /*Frame*/, String() /*path*/);
+    const int64_t DummyVersion = 2;
+    factory->open(name, DummyVersion, &callbacks, origin, 0 /*Frame*/, String() /*path*/);
 }
 
 } // namespace

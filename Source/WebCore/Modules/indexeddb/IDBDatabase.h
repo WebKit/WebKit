@@ -78,6 +78,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(versionchange);
 
     // IDBDatabaseCallbacks
+    virtual void onVersionChange(int64_t oldVersion, int64_t newVersion);
     virtual void onVersionChange(const String& requestedVersion);
 
     // ActiveDOMObject

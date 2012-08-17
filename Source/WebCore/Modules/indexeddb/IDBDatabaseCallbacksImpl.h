@@ -42,6 +42,7 @@ public:
     virtual ~IDBDatabaseCallbacksImpl();
 
     virtual void onVersionChange(const String& version);
+    virtual void onVersionChange(int64_t oldVersion, int64_t newVersion);
     void unregisterDatabase(IDBDatabase*);
 
 private:

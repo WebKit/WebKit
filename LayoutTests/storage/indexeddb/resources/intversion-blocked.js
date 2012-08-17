@@ -30,7 +30,7 @@ function firstUpgradeNeededCallback(evt)
     evalAndLog("gotFirstUpgradeNeededEvent = true");
     shouldBe("event.oldVersion", "0");
     shouldBe("event.newVersion", "2");
-    shouldBeEqualToString("String(event)", "[object IDBUpgradeNeededEvent]");
+    shouldBeEqualToString("String(event)", "[object IDBVersionChangeEvent]");
 }
 
 gotBlockedEvent = false;

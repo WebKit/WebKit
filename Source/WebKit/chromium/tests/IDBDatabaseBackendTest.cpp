@@ -100,6 +100,7 @@ public:
     static PassRefPtr<FakeIDBDatabaseCallbacks> create() { return adoptRef(new FakeIDBDatabaseCallbacks()); }
     virtual ~FakeIDBDatabaseCallbacks() { }
     virtual void onVersionChange(const String& version) OVERRIDE { }
+    virtual void onVersionChange(int64_t oldVersion, int64_t newVersion) OVERRIDE { }
 private:
     FakeIDBDatabaseCallbacks() { }
 };

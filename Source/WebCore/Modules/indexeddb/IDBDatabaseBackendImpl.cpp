@@ -444,10 +444,6 @@ void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> callbacks)
 
 void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(int64_t requestedVersion, PassRefPtr<IDBCallbacks> prpCallbacks)
 {
-    // FIXME: This function won't be reached until it's exposed to script in
-    // wbk.ug/92897.
-    ASSERT_NOT_REACHED();
-
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     ASSERT(callbacks);
     for (DatabaseCallbacksSet::const_iterator it = m_databaseCallbacksSet.begin(); it != m_databaseCallbacksSet.end(); ++it) {

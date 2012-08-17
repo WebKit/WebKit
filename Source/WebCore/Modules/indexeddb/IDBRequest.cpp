@@ -60,16 +60,18 @@ PassRefPtr<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassR
 
 IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface::TaskType taskType, IDBTransaction* transaction)
     : ActiveDOMObject(context, this)
+    , m_result(0)
     , m_errorCode(0)
-    , m_source(source)
-    , m_taskType(taskType)
+    , m_contextStopped(false)
     , m_transaction(transaction)
     , m_readyState(PENDING)
     , m_requestAborted(false)
-    , m_contextStopped(false)
+    , m_source(source)
+    , m_taskType(taskType)
     , m_cursorType(IDBCursorBackendInterface::InvalidCursorType)
     , m_cursorDirection(IDBCursor::NEXT)
     , m_pendingCursor(0)
+    , m_didFireUpgradeNeededEvent(false)
 {
     if (m_transaction) {
         m_transaction->registerRequest(this);
@@ -285,10 +287,15 @@ void IDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend)
     if (!shouldEnqueueEvent())
         return;
 
-    RefPtr<IDBDatabase> idbDatabase = IDBDatabase::create(scriptExecutionContext(), backend);
+    RefPtr<IDBDatabase> idbDatabase;
+    if (m_result) {
+        idbDatabase = m_result->idbDatabase();
+        ASSERT(idbDatabase);
+    } else {
+        idbDatabase = IDBDatabase::create(scriptExecutionContext(), backend);
+        m_result = IDBAny::create(idbDatabase.get());
+    }
     idbDatabase->registerFrontendCallbacks();
-
-    m_result = IDBAny::create(idbDatabase.release());
     enqueueEvent(createSuccessEvent());
 }
 
@@ -463,17 +470,23 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     }
 
     // FIXME: When we allow custom event dispatching, this will probably need to change.
-    ASSERT_WITH_MESSAGE(event->type() == eventNames().successEvent || event->type() == eventNames().errorEvent || event->type() == eventNames().blockedEvent, "event type was %s", event->type().string().utf8().data());
-    const bool setTransactionActive = m_transaction && (event->type() == eventNames().successEvent || (event->type() == eventNames().errorEvent && m_errorCode != IDBDatabaseException::IDB_ABORT_ERR));
+    ASSERT_WITH_MESSAGE(event->type() == eventNames().successEvent || event->type() == eventNames().errorEvent || event->type() == eventNames().blockedEvent || event->type() == eventNames().upgradeneededEvent, "event type was %s", event->type().string().utf8().data());
+    const bool setTransactionActive = m_transaction && (event->type() == eventNames().successEvent || event->type() == eventNames().upgradeneededEvent || (event->type() == eventNames().errorEvent && m_errorCode != IDBDatabaseException::IDB_ABORT_ERR));
 
     if (setTransactionActive)
         m_transaction->setActive(true);
+
     bool dontPreventDefault = IDBEventDispatcher::dispatch(event.get(), targets);
     if (setTransactionActive)
         m_transaction->setActive(false);
 
     if (cursorToNotify)
         cursorToNotify->postSuccessHandlerCallback();
+
+    if (event->type() == eventNames().upgradeneededEvent) {
+        ASSERT(!m_didFireUpgradeNeededEvent);
+        m_didFireUpgradeNeededEvent = true;
+    }
 
     if (m_transaction) {
         if (event->type() == eventNames().errorEvent && dontPreventDefault && !m_requestAborted) {
@@ -501,6 +514,16 @@ void IDBRequest::uncaughtExceptionInEventHandler()
     }
 }
 
+void IDBRequest::transactionDidFinishAndDispatch()
+{
+    ASSERT(m_transaction);
+    ASSERT(m_transaction->isVersionChange());
+    ASSERT(m_readyState == DONE);
+    ASSERT(scriptExecutionContext());
+    m_transaction.clear();
+    m_readyState = PENDING;
+}
+
 void IDBRequest::enqueueEvent(PassRefPtr<Event> event)
 {
     ASSERT(m_readyState == PENDING || m_readyState == DONE);
@@ -508,7 +531,7 @@ void IDBRequest::enqueueEvent(PassRefPtr<Event> event)
     if (m_contextStopped || !scriptExecutionContext())
         return;
 
-    ASSERT_WITH_MESSAGE(m_readyState == PENDING, "When queueing event %s, m_readyState was %d", event->type().string().utf8().data(), m_readyState);
+    ASSERT_WITH_MESSAGE(m_readyState == PENDING || m_didFireUpgradeNeededEvent, "When queueing event %s, m_readyState was %d", event->type().string().utf8().data(), m_readyState);
 
     EventQueue* eventQueue = scriptExecutionContext()->eventQueue();
     event->setTarget(this);
