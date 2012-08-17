@@ -27,7 +27,6 @@
 #define CCTextureUpdateController_h
 
 #include "cc/CCTextureUpdateQueue.h"
-#include "cc/CCTimer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 
@@ -36,12 +35,12 @@ namespace WebCore {
 class TextureCopier;
 class TextureUploader;
 
-class CCTextureUpdateController : public CCTimerClient {
+class CCTextureUpdateController {
     WTF_MAKE_NONCOPYABLE(CCTextureUpdateController);
 public:
-    static PassOwnPtr<CCTextureUpdateController> create(CCThread* thread, PassOwnPtr<CCTextureUpdateQueue> queue, CCResourceProvider* resourceProvider, TextureCopier* copier, TextureUploader* uploader)
+    static PassOwnPtr<CCTextureUpdateController> create(PassOwnPtr<CCTextureUpdateQueue> queue, CCResourceProvider* resourceProvider, TextureCopier* copier, TextureUploader* uploader)
     {
-        return adoptPtr(new CCTextureUpdateController(thread, queue, resourceProvider, copier, uploader));
+        return adoptPtr(new CCTextureUpdateController(queue, resourceProvider, copier, uploader));
     }
     static size_t maxPartialTextureUpdates();
     static void updateTextures(CCResourceProvider*, TextureCopier*, TextureUploader*, CCTextureUpdateQueue*, size_t count);
@@ -49,30 +48,19 @@ public:
     virtual ~CCTextureUpdateController();
 
     bool hasMoreUpdates() const;
-    void updateMoreTextures(double monotonicTimeLimit);
-
-    // CCTimerClient implementation.
-    virtual void onTimerFired() OVERRIDE;
+    void updateMoreTextures();
 
     // Virtual for testing.
-    virtual double monotonicTimeNow() const;
-    virtual double updateMoreTexturesTime() const;
     virtual size_t updateMoreTexturesSize() const;
 
 protected:
-    CCTextureUpdateController(CCThread*, PassOwnPtr<CCTextureUpdateQueue>, CCResourceProvider*, TextureCopier*, TextureUploader*);
+    CCTextureUpdateController(PassOwnPtr<CCTextureUpdateQueue>, CCResourceProvider*, TextureCopier*, TextureUploader*);
 
-    void updateMoreTexturesIfEnoughTimeRemaining();
-    void updateMoreTexturesNow();
-
-    OwnPtr<CCTimer> m_timer;
     OwnPtr<CCTextureUpdateQueue> m_queue;
     bool m_contentsTexturesPurged;
     CCResourceProvider* m_resourceProvider;
     TextureCopier* m_copier;
     TextureUploader* m_uploader;
-    double m_monotonicTimeLimit;
-    bool m_firstUpdateAttempt;
 };
 
 }

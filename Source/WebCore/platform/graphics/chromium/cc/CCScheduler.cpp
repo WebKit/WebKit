@@ -173,11 +173,16 @@ void CCScheduler::processScheduledActions()
             m_client->scheduledActionBeginFrame();
             break;
         case CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES:
-            if (m_client->hasMoreResourceUpdates()) {
-                m_client->scheduledActionUpdateMoreResources(m_frameRateController->nextTickTime());
-                m_updateMoreResourcesPending = true;
-            } else
+            m_client->scheduledActionUpdateMoreResources();
+            if (!m_client->hasMoreResourceUpdates()) {
+                // If we were just told to update resources, but there are no
+                // more pending, then tell the state machine that the
+                // beginUpdateMoreResources completed. If more are pending,
+                // then we will ack the update at the next draw.
+                m_updateMoreResourcesPending = false;
                 m_stateMachine.beginUpdateMoreResourcesComplete(false);
+            } else
+                m_updateMoreResourcesPending = true;
             break;
         case CCSchedulerStateMachine::ACTION_COMMIT:
             m_client->scheduledActionCommit();

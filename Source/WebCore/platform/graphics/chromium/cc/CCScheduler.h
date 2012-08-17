@@ -58,7 +58,7 @@ public:
     virtual void scheduledActionBeginFrame() = 0;
     virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapIfPossible() = 0;
     virtual CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapForced() = 0;
-    virtual void scheduledActionUpdateMoreResources(double monotonicTimeLimit) = 0;
+    virtual void scheduledActionUpdateMoreResources() = 0;
     virtual void scheduledActionCommit() = 0;
     virtual void scheduledActionBeginContextRecreation() = 0;
     virtual void scheduledActionAcquireLayerTexturesForMainThread() = 0;

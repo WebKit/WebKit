@@ -577,7 +577,7 @@ void CCThreadProxy::beginFrameCompleteOnImplThread(CCCompletionEvent* completion
     } else
         m_resetContentsTexturesPurgedAfterCommitOnImplThread = true;
 
-    m_currentTextureUpdateControllerOnImplThread = CCTextureUpdateController::create(CCProxy::implThread(), queue, m_layerTreeHostImpl->resourceProvider(), m_layerTreeHostImpl->layerRenderer()->textureCopier(), m_layerTreeHostImpl->layerRenderer()->textureUploader());
+    m_currentTextureUpdateControllerOnImplThread = CCTextureUpdateController::create(queue, m_layerTreeHostImpl->resourceProvider(), m_layerTreeHostImpl->layerRenderer()->textureCopier(), m_layerTreeHostImpl->layerRenderer()->textureUploader());
     m_commitCompletionEventOnImplThread = completion;
 
     m_schedulerOnImplThread->beginFrameComplete();
@@ -608,11 +608,11 @@ bool CCThreadProxy::canDraw()
     return m_layerTreeHostImpl->canDraw();
 }
 
-void CCThreadProxy::scheduledActionUpdateMoreResources(double monotonicTimeLimit)
+void CCThreadProxy::scheduledActionUpdateMoreResources()
 {
     TRACE_EVENT0("cc", "CCThreadProxy::scheduledActionUpdateMoreResources");
     ASSERT(m_currentTextureUpdateControllerOnImplThread);
-    m_currentTextureUpdateControllerOnImplThread->updateMoreTextures(monotonicTimeLimit);
+    m_currentTextureUpdateControllerOnImplThread->updateMoreTextures();
 }
 
 void CCThreadProxy::scheduledActionCommit()

@@ -1,3 +1,20 @@
+2012-08-16  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, rolling out r125800.
+        http://trac.webkit.org/changeset/125800
+        https://bugs.webkit.org/show_bug.cgi?id=84281
+
+        Hypothesis that this change caused gpu_throughput_tests to
+        start timing out on all platforms on the Chromium GPU
+        canaries.
+
+        * tests/CCSchedulerTest.cpp:
+        (WebKitTests::TEST):
+        * tests/CCSchedulerTestCommon.h:
+        (WebKitTests::FakeCCTimeSource::FakeCCTimeSource):
+        (FakeCCTimeSource):
+        * tests/CCTextureUpdateControllerTest.cpp:
+
 2012-08-16  Antoine Labour  <piman@chromium.org>
 
         [chromium] Add resource transfer functions to CCResourceProvider

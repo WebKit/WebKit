@@ -96,7 +96,6 @@ class FakeCCTimeSource : public WebCore::CCTimeSource {
 public:
     FakeCCTimeSource()
         : m_active(false)
-        , m_nextTickTime(0)
         , m_client(0) { }
 
     virtual ~FakeCCTimeSource() { }
@@ -115,11 +114,8 @@ public:
             m_client->onTimerTick();
     }
 
-    void setNextTickTime(double nextTickTime) { m_nextTickTime = nextTickTime; }
-
 protected:
     bool m_active;
-    double m_nextTickTime;
     WebCore::CCTimeSourceClient* m_client;
 };
 
