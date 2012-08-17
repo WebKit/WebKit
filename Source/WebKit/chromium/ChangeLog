@@ -1,3 +1,18 @@
+2012-08-17  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Add tracing for active composited animations
+        https://bugs.webkit.org/show_bug.cgi?id=84210
+
+        Reviewed by James Robinson.
+
+        This patch issues the trace events from the animations. Animations will
+        report when they start and finish on the main and impl threads (via
+        TRACE_EVENT_ASYNC*), and also issues instant trace events whenever they
+        change state.
+
+        * src/WebAnimationImpl.cpp:
+        (WebKit::WebAnimationImpl::cloneToCCAnimation):
+
 2012-08-16  Antoine Labour  <piman@chromium.org>
 
         [chromium] Add resource transfer functions to CCResourceProvider
