@@ -470,15 +470,15 @@
     display: none;
 }
 
-.network-log-grid.data-grid.filter-all table.data tr.revealed.network-item,
-.network-log-grid.data-grid.filter-document table.data tr.revealed.network-type-document,
-.network-log-grid.data-grid.filter-stylesheet table.data tr.revealed.network-type-stylesheet,
-.network-log-grid.data-grid.filter-image table.data tr.revealed.network-type-image,
-.network-log-grid.data-grid.filter-script table.data tr.revealed.network-type-script,
-.network-log-grid.data-grid.filter-xhr table.data tr.revealed.network-type-xhr,
-.network-log-grid.data-grid.filter-font table.data tr.revealed.network-type-font,
-.network-log-grid.data-grid.filter-websocket table.data tr.revealed.network-type-websocket,
-.network-log-grid.data-grid.filter-other table.data tr.revealed.network-type-other {
+.network-log-grid.data-grid.filter-all table.data tr.revealed.network-item:not(.filtered-out),
+.network-log-grid.data-grid.filter-document table.data tr.revealed.network-type-document:not(.filtered-out),
+.network-log-grid.data-grid.filter-stylesheet table.data tr.revealed.network-type-stylesheet:not(.filtered-out),
+.network-log-grid.data-grid.filter-image table.data tr.revealed.network-type-image:not(.filtered-out),
+.network-log-grid.data-grid.filter-script table.data tr.revealed.network-type-script:not(.filtered-out),
+.network-log-grid.data-grid.filter-xhr table.data tr.revealed.network-type-xhr:not(.filtered-out),
+.network-log-grid.data-grid.filter-font table.data tr.revealed.network-type-font:not(.filtered-out),
+.network-log-grid.data-grid.filter-websocket table.data tr.revealed.network-type-websocket:not(.filtered-out),
+.network-log-grid.data-grid.filter-other table.data tr.revealed.network-type-other:not(.filtered-out) {
     display: table-row;
 }
 

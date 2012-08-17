@@ -275,6 +275,14 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     width: 165px;
 }
 
+.filter {
+    -webkit-appearance: none;
+    border: 0;
+    padding: 0 2px;
+    margin: 0;
+    width: 251px;
+}
+
 .search-replace:focus {
     outline: none;
 }

@@ -42,10 +42,17 @@ WebInspector.SearchController = function()
     this._secondRowElement = this._element.createChild("tr", "hidden");
 
     // Column 1
-    this._searchControlElement = this._firstRowElement.createChild("td").createChild("span", "toolbar-search-control");
+    var searchControlElementColumn = this._firstRowElement.createChild("td"); 
+    this._searchControlElement = searchControlElementColumn.createChild("span", "toolbar-search-control");
     this._searchInputElement = this._searchControlElement.createChild("input", "search-replace");
     this._searchInputElement.id = "search-input-field";
     this._searchInputElement.placeholder = WebInspector.UIString("Find");
+
+    this._filterControlElement = searchControlElementColumn.createChild("span", "toolbar-search-control");
+    this._filterControlElement.addStyleClass("hidden");
+    this._filterInputElement = this._filterControlElement.createChild("input", "filter");
+    this._filterInputElement.id = "filter-input-field";
+    this._filterInputElement.placeholder = WebInspector.UIString("Filter");
 
     this._matchesElement = this._searchControlElement.createChild("label", "search-results-matches");
     this._matchesElement.setAttribute("for", "search-input-field");
@@ -62,7 +69,9 @@ WebInspector.SearchController = function()
 
     this._searchInputElement.addEventListener("mousedown", this._onSearchFieldManualFocus.bind(this), false); // when the search field is manually selected
     this._searchInputElement.addEventListener("keydown", this._onKeyDown.bind(this), true);
-    this._searchInputElement.addEventListener("input", this._onInput.bind(this), false);
+    this._filterInputElement.addEventListener("keydown", this._onKeyDown.bind(this), true);
+    this._filterInputElement.addEventListener("input", this._onFilterInput.bind(this), false);
+    this._searchInputElement.addEventListener("input", this._onSearchInput.bind(this), false);
 
     this._replaceInputElement = this._secondRowElement.createChild("td").createChild("input", "search-replace toolbar-replace-control");
     this._replaceInputElement.addEventListener("keydown", this._onKeyDown.bind(this), true);
@@ -104,6 +113,18 @@ WebInspector.SearchController = function()
     this._replaceLabelElement.setAttribute("for", "search-replace-trigger");
 
     // Column 5
+    this._filterCheckboxContainer = this._firstRowElement.createChild("td").createChild("span");
+
+    this._filterCheckboxElement = this._filterCheckboxContainer.createChild("input");
+    this._filterCheckboxElement.type = "checkbox";
+    this._filterCheckboxElement.id = "filter-trigger";
+    this._filterCheckboxElement.addEventListener("click", this._filterCheckboxClick.bind(this), false);
+  
+    this._filterLabelElement = this._filterCheckboxContainer.createChild("label");
+    this._filterLabelElement.textContent = WebInspector.UIString("Filter");
+    this._filterLabelElement.setAttribute("for", "filter-trigger");
+
+    // Column 6
     var cancelButtonElement = this._firstRowElement.createChild("td").createChild("button");
     cancelButtonElement.textContent = WebInspector.UIString("Cancel");
     cancelButtonElement.tabIndex = -1;
@@ -132,6 +153,10 @@ WebInspector.SearchController.prototype = {
     {
         if (!this._searchIsVisible)
             return;
+        if (this._filterCheckboxElement.checked) {
+            this._filterCheckboxElement.checked = false;
+            this._switchFilterToSearch();
+        } 
         delete this._searchIsVisible;
         WebInspector.inspectorView.setFooterElement(null);
         this.resetSearch();
@@ -223,11 +248,40 @@ WebInspector.SearchController.prototype = {
     {
         WebInspector.inspectorView.setFooterElement(this._element);
         this._updateReplaceVisibility();
+        this._updateFilterVisibility();
         this._searchInputElement.focus();
         this._searchInputElement.select();
         this._searchIsVisible = true;
     },
 
+    _switchFilterToSearch: function()
+    {
+        this._filterControlElement.addStyleClass("hidden");
+        this._searchControlElement.removeStyleClass("hidden");
+        this._searchInputElement.focus();
+        this._searchInputElement.select();
+        this._searchInputElement.value = this._filterInputElement.value;
+        this.resetFilter();
+    },
+
+    _switchSearchToFilter: function()
+    {
+        this._filterControlElement.removeStyleClass("hidden");
+        this._searchControlElement.addStyleClass("hidden");
+        this._filterInputElement.focus();
+        this._filterInputElement.select();
+        this._filterInputElement.value = this._searchInputElement.value;
+        this.resetSearch();
+    },
+    
+    _updateFilterVisibility: function()
+    {
+        if (typeof WebInspector.inspectorView.currentPanel().performFilter === "function")
+            this._filterCheckboxContainer.removeStyleClass("hidden");
+        else
+            this._filterCheckboxContainer.addStyleClass("hidden");
+    },
+  
     _updateReplaceVisibility: function()
     {
         var panel = WebInspector.inspectorView.currentPanel();
@@ -263,11 +317,6 @@ WebInspector.SearchController.prototype = {
             else if (event.target === this._replaceInputElement)
                 this._replace();
         }
-    },
-
-    _onInput: function(event)
-    {
-        this._performSearch(event.target.value, false, false);
     },
 
     _onNextButtonSearch: function(event)
@@ -364,6 +413,41 @@ WebInspector.SearchController.prototype = {
     {
         var currentPanel = WebInspector.inspectorView.currentPanel();
         currentPanel.replaceAllWith(this._searchInputElement.value, this._replaceInputElement.value);
+    },
+  
+    _filterCheckboxClick: function()
+    {
+        if (this._filterCheckboxElement.checked) { 
+            this._switchSearchToFilter();
+            this._performFilter(this._filterInputElement.value);
+        } else {
+            this._switchFilterToSearch();
+            this._performSearch(this._searchInputElement.value, false, false);
+        }
+    },
+    
+    /**
+     * @param {string} query
+     */
+    _performFilter: function(query)
+    {
+        if (typeof WebInspector.inspectorView.currentPanel().performFilter === "function")
+            WebInspector.inspectorView.currentPanel().performFilter(query);
+    },
+  
+    _onFilterInput: function(event)
+    {
+        this._performFilter(event.target.value);
+    },
+  
+    _onSearchInput: function(event)
+    {
+        this._performSearch(event.target.value, false, false);
+    },
+    
+    resetFilter: function()
+    {
+        this._performFilter("");
     }
 }
 

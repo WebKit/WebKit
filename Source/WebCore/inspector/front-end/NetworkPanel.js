@@ -48,6 +48,8 @@ WebInspector.NetworkLogView = function()
     this._mainRequestDOMContentTime = -1;
     this._hiddenCategories = {};
     this._matchedRequests = [];
+    this._filteredOutRequests = new Map();
+    
     this._matchedRequestsMap = {};
     this._currentMatchedRequestIndex = -1;
 
@@ -384,7 +386,7 @@ WebInspector.NetworkLogView.prototype = {
             var request = this._requests[i];
             var requestTransferSize = (request.cached || !request.transferSize) ? 0 : request.transferSize;
             transferSize += requestTransferSize;
-            if (!this._hiddenCategories.all || !this._hiddenCategories[request.type.name()]) {
+            if ((!this._hiddenCategories.all || !this._hiddenCategories[request.type.name()]) && !this._filteredOutRequests.get(request)) {
                 selectedRequestsNumber++;
                 selectedTransferSize += requestTransferSize;
             }
@@ -394,7 +396,7 @@ WebInspector.NetworkLogView.prototype = {
                 maxTime = request.endTime;
         }
         var text = "";
-        if (this._hiddenCategories.all) {
+        if (selectedRequestsNumber !== requestsNumber) {
             text += String.sprintf(WebInspector.UIString("%d / %d requests"), selectedRequestsNumber, requestsNumber);
             text += "  \u2758  " + String.sprintf(WebInspector.UIString("%s / %s transferred"), Number.bytesToString(selectedTransferSize), Number.bytesToString(transferSize));
         } else {
@@ -1067,7 +1069,7 @@ WebInspector.NetworkLogView.prototype = {
     {
         this._matchedRequests = [];
         this._matchedRequestsMap = {};
-        this._highlightNthMatchedRequest(-1, false);
+        this._removeAllHighlights();
     },
 
     _updateSearchMatchedListAfterRequestIdChanged: function(oldRequestId, newRequestId)
@@ -1091,37 +1093,57 @@ WebInspector.NetworkLogView.prototype = {
         if (this._currentMatchedRequestIndex !== -1 && this._currentMatchedRequestIndex !== matchedRequestIndex)
             return;
 
-        this._highlightNthMatchedRequest(matchedRequestIndex, false);
+        this._highlightNthMatchedRequestForSearch(matchedRequestIndex, false);
     },
 
-    _highlightNthMatchedRequest: function(matchedRequestIndex, reveal)
+    _removeAllHighlights: function()
     {
         if (this._highlightedSubstringChanges) {
-            WebInspector.revertDomChanges(this._highlightedSubstringChanges);
+            for (var i = 0; i < this._highlightedSubstringChanges.length; ++i)
+                WebInspector.revertDomChanges(this._highlightedSubstringChanges[i]);
             this._highlightedSubstringChanges = null;
         }
-
-        if (matchedRequestIndex === -1) {
-            this._currentMatchedRequestIndex = matchedRequestIndex;
-            return;
+    },
+    
+    /**
+     * @param {Array.<WebInspector.NetworkRequest>} requests
+     * @param {boolean} reveal
+     * @param {RegExp=} regExp
+     */
+    _highlightMatchedRequests: function(requests, reveal, regExp)
+    {
+        this._highlightedSubstringChanges = [];
+        for (var i = 0; i < requests.length; ++i) {
+            var request = requests[i];
+            var node = this._requestGridNode(request);
+            if (node) {
+                var nameMatched = request.displayName && request.displayName.match(regExp);
+                var pathMatched = request.parsedURL.path && request.folder.match(regExp);
+                if (!nameMatched && pathMatched && !this._largerRequestsButton.toggled)
+                    this._toggleLargerRequests();
+                var highlightedSubstringChanges = node._highlightMatchedSubstring(regExp);
+                this._highlightedSubstringChanges.push(highlightedSubstringChanges);
+                if (reveal)
+                    node.reveal();
+            }
         }
+    },
 
-        var request = this._requestsById[this._matchedRequests[matchedRequestIndex]];
+    /**
+     * @param {number} matchedRequestIndex
+     * @param {boolean} reveal
+     */
+    _highlightNthMatchedRequestForSearch: function(matchedRequestIndex, reveal)
+    {
+        var request = this.requestById(this._matchedRequests[matchedRequestIndex]);
         if (!request)
             return;
-
-        var nameMatched = request.displayName && request.displayName.match(this._searchRegExp);
-        var pathMatched = request.parsedURL.path && request.folder.match(this._searchRegExp);
-        if (!nameMatched && pathMatched && !this._largerRequestsButton.toggled)
-            this._toggleLargerRequests();
-
+        this._removeAllHighlights();
+        this._highlightMatchedRequests([request], reveal, this._searchRegExp);
         var node = this._requestGridNode(request);
-        if (node) {
-            this._highlightedSubstringChanges = node._highlightMatchedSubstring(this._searchRegExp);
-            if (reveal)
-                node.reveal();
+        if (node)
             this._currentMatchedRequestIndex = matchedRequestIndex;
-        }
+
         this.dispatchEventToListeners(WebInspector.NetworkLogView.EventTypes.SearchIndexUpdated, this._currentMatchedRequestIndex);
     },
 
@@ -1133,7 +1155,6 @@ WebInspector.NetworkLogView.prototype = {
             currentMatchedRequestId = this._matchedRequests[this._currentMatchedRequestIndex];
 
         this._searchRegExp = createPlainTextSearchRegex(searchQuery, "i");
-
         this._clearSearchMatchedList();
 
         var childNodes = this._dataGrid.dataTableBody.childNodes;
@@ -1143,27 +1164,51 @@ WebInspector.NetworkLogView.prototype = {
             var dataGridNode = this._dataGrid.dataGridNodeFromNode(requestNodes[i]);
             if (dataGridNode.isFilteredOut())
                 continue;
-
             if (this._matchRequest(dataGridNode._request) !== -1 && dataGridNode._request.requestId === currentMatchedRequestId)
                 newMatchedRequestIndex = this._matchedRequests.length - 1;
         }
 
         this.dispatchEventToListeners(WebInspector.NetworkLogView.EventTypes.SearchCountUpdated, this._matchedRequests.length);
-        this._highlightNthMatchedRequest(newMatchedRequestIndex, false);
+        this._highlightNthMatchedRequestForSearch(newMatchedRequestIndex, false);
     },
 
+    /**
+     * @param {string} query
+     */
+    performFilter: function(query) {
+        this._filteredOutRequests.clear();
+        var filterRegExp = createPlainTextSearchRegex(query, "i");
+        var shownRequests = [];
+        for (var i = 0; i < this._dataGrid.rootNode().children.length; ++i) {
+            var node = this._dataGrid.rootNode().children[i];
+            node.element.removeStyleClass("filtered-out");
+            var nameMatched = node._request.displayName && node._request.displayName.match(filterRegExp);
+            var pathMatched = node._request.parsedURL.path && node._request.folder.match(filterRegExp);
+            if (!nameMatched && !pathMatched) {
+                node.element.addStyleClass("filtered-out");
+                this._filteredOutRequests.put(this._requests[i], true);
+            } else 
+                shownRequests.push(node._request);
+        }
+        this._removeAllHighlights();
+        if (query)
+            this._highlightMatchedRequests(shownRequests, false, filterRegExp);
+        this._updateSummaryBar();
+        this._updateOffscreenRows();
+    },
+    
     jumpToPreviousSearchResult: function()
     {
         if (!this._matchedRequests.length)
             return;
-        this._highlightNthMatchedRequest((this._currentMatchedRequestIndex + this._matchedRequests.length - 1) % this._matchedRequests.length, true);
+        this._highlightNthMatchedRequestForSearch((this._currentMatchedRequestIndex + this._matchedRequests.length - 1) % this._matchedRequests.length, true);
     },
 
     jumpToNextSearchResult: function()
     {
         if (!this._matchedRequests.length)
             return;
-        this._highlightNthMatchedRequest((this._currentMatchedRequestIndex + 1) % this._matchedRequests.length, true);
+        this._highlightNthMatchedRequestForSearch((this._currentMatchedRequestIndex + 1) % this._matchedRequests.length, true);
     },
 
     searchCanceled: function()
@@ -1400,11 +1445,21 @@ WebInspector.NetworkPanel.prototype = {
         this._networkLogView.switchToBriefView();
     },
 
+    /**
+     * @param {string} searchQuery
+     */    
     performSearch: function(searchQuery)
     {
         this._networkLogView.performSearch(searchQuery);
     },
-
+    
+    /**
+     * @param {string} query
+     */    
+    performFilter: function(query){
+        this._networkLogView.performFilter(query);
+    },
+    
     jumpToPreviousSearchResult: function()
     {
         this._networkLogView.jumpToPreviousSearchResult();
@@ -1717,6 +1772,8 @@ WebInspector.NetworkDataGridNode.prototype = {
 
     isFilteredOut: function()
     {
+        if (this._parentView._filteredOutRequests.get(this._request))
+            return true;
         if (!this._parentView._hiddenCategories.all)
             return false;
         return this._request.type.name() in this._parentView._hiddenCategories;
@@ -1731,8 +1788,9 @@ WebInspector.NetworkDataGridNode.prototype = {
     _highlightMatchedSubstring: function(regexp)
     {
         var domChanges = [];
-        var matchInfo = this._nameCell.textContent.match(regexp);
-        WebInspector.highlightSearchResult(this._nameCell, matchInfo.index, matchInfo[0].length, domChanges);
+        var matchInfo = this._element.textContent.match(regexp);
+        if (matchInfo)
+            WebInspector.highlightSearchResult(this._nameCell, matchInfo.index, matchInfo[0].length, domChanges);
         return domChanges;
     },
 
