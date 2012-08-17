@@ -1,3 +1,15 @@
+2012-08-17  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] REGRESSION(r125923): Breaks EFL build
+        https://bugs.webkit.org/show_bug.cgi?id=94376
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix EFL build break after r125923.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveIntentForFrame):
+
 2012-08-17  Alexey Proskuryakov  <ap@apple.com>
 
         Access m_process directly in WebPageProxy.cpp
