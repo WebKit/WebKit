@@ -30,11 +30,13 @@
 #include "GraphicsContext3D.h"
 #include "IntSize.h"
 #include "cc/CCGraphicsContext.h"
+#include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 class WebGraphicsContext3D;
@@ -53,7 +55,23 @@ class CCResourceProvider {
     WTF_MAKE_NONCOPYABLE(CCResourceProvider);
 public:
     typedef unsigned ResourceId;
+    typedef Vector<ResourceId> ResourceIdArray;
+    typedef HashMap<ResourceId, ResourceId> ResourceIdMap;
     enum TextureUsageHint { TextureUsageAny, TextureUsageFramebuffer };
+    struct Mailbox {
+        GC3Dbyte name[64];
+    };
+    struct TransferableResource {
+        unsigned id;
+        GC3Denum format;
+        IntSize size;
+        Mailbox mailbox;
+    };
+    typedef Vector<TransferableResource> TransferableResourceArray;
+    struct TransferableResourceList {
+        TransferableResourceArray resources;
+        unsigned syncPoint;
+    };
 
     static PassOwnPtr<CCResourceProvider> create(CCGraphicsContext*);
 
@@ -90,20 +108,86 @@ public:
     // Returns true if the shallow flush occurred, false otherwise.
     bool shallowFlushIfSupported();
 
+    // Creates accounting for a child, and associate it with a pool. Resources
+    // transfered from that child will go to that pool. Returns a child ID.
+    int createChild(int pool);
+
+    // Destroys accounting for the child, deleting all resources from that pool.
+    void destroyChild(int child);
+
+    // Gets the child->parent resource ID map.
+    const ResourceIdMap& getChildToParentMap(int child) const;
+
+    // Prepares resources to be transfered to the parent, moving them to
+    // mailboxes and serializing meta-data into TransferableResources.
+    // Resources are not removed from the CCResourceProvider, but are markes as
+    // "in use".
+    TransferableResourceList prepareSendToParent(const ResourceIdArray&);
+
+    // Prepares resources to be transfered back to the child, moving them to
+    // mailboxes and serializing meta-data into TransferableResources.
+    // Resources are removed from the CCResourceProvider. Note: the resource IDs
+    // passed are in the parent namespace and will be translated to the child
+    // namespace when returned.
+    TransferableResourceList prepareSendToChild(int child, const ResourceIdArray&);
+
+    // Receives resources from a child, moving them from mailboxes. Resource IDs
+    // passed are in the child namespace, and will be translated to the parent
+    // namespace, added to the child->parent map.
+    // NOTE: if the syncPoint filed in TransferableResourceList is set, this
+    // will wait on it.
+    void receiveFromChild(int child, const TransferableResourceList&);
+
+    // Receives resources from the parent, moving them from mailboxes. Resource IDs
+    // passed are in the child namespace.
+    // NOTE: if the syncPoint filed in TransferableResourceList is set, this
+    // will wait on it.
+    void receiveFromParent(const TransferableResourceList&);
+
+    // Only for testing
+    size_t mailboxCount() const { return m_mailboxes.size(); }
+
 private:
     friend class CCScopedLockResourceForRead;
     friend class CCScopedLockResourceForWrite;
 
     struct Resource {
+        Resource()
+            : glId(0)
+            , pool(0)
+            , lockForReadCount(0)
+            , lockedForWrite(false)
+            , external(false)
+            , exported(false)
+            , size()
+            , format(0)
+        { }
+        Resource(unsigned textureId, int pool, const IntSize& size, GC3Denum format)
+            : glId(textureId)
+            , pool(pool)
+            , lockForReadCount(0)
+            , lockedForWrite(false)
+            , external(false)
+            , exported(false)
+            , size(size)
+            , format(format)
+        { }
         unsigned glId;
         int pool;
         int lockForReadCount;
         bool lockedForWrite;
         bool external;
+        bool exported;
         IntSize size;
         GC3Denum format;
     };
     typedef HashMap<ResourceId, Resource> ResourceMap;
+    struct Child {
+        int pool;
+        ResourceIdMap childToParentMap;
+        ResourceIdMap parentToChildMap;
+    };
+    typedef HashMap<int, Child> ChildMap;
 
     explicit CCResourceProvider(CCGraphicsContext*);
     bool initialize();
@@ -116,9 +200,16 @@ private:
     unsigned lockForRead(ResourceId);
     void unlockForRead(ResourceId);
 
+    bool transferResource(WebKit::WebGraphicsContext3D*, ResourceId, TransferableResource*);
+    void trimMailboxDeque();
+
     CCGraphicsContext* m_context;
     ResourceId m_nextId;
     ResourceMap m_resources;
+    int m_nextChild;
+    ChildMap m_children;
+
+    Deque<Mailbox> m_mailboxes;
 
     bool m_useTextureStorageExt;
     bool m_useTextureUsageHint;

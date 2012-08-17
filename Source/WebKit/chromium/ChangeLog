@@ -1,3 +1,40 @@
+2012-08-16  Antoine Labour  <piman@chromium.org>
+
+        [chromium] Add resource transfer functions to CCResourceProvider
+        https://bugs.webkit.org/show_bug.cgi?id=93524
+
+        Reviewed by James Robinson.
+
+        This adds methods to CCResourceProvider to be able to transport
+        resources from a child to a parent.
+
+        Added test to CCResourceProviderTest.
+
+        * tests/CCResourceProviderTest.cpp:
+        (WebKit::textureSize):
+        (WebKit):
+        (WebKit::Texture::Texture):
+        (Texture):
+        (ContextSharedData):
+        (WebKit::ContextSharedData::create):
+        (WebKit::ContextSharedData::insertSyncPoint):
+        (WebKit::ContextSharedData::genMailbox):
+        (WebKit::ContextSharedData::produceTexture):
+        (WebKit::ContextSharedData::consumeTexture):
+        (WebKit::ContextSharedData::ContextSharedData):
+        (WebKit::ResourceProviderContext::create):
+        (ResourceProviderContext):
+        (WebKit::ResourceProviderContext::insertSyncPoint):
+        (WebKit::ResourceProviderContext::waitSyncPoint):
+        (WebKit::ResourceProviderContext::genMailboxCHROMIUM):
+        (WebKit::ResourceProviderContext::produceTextureCHROMIUM):
+        (WebKit::ResourceProviderContext::consumeTextureCHROMIUM):
+        (WebKit::ResourceProviderContext::ResourceProviderContext):
+        (PendingProduceTexture):
+        (WebKit::CCResourceProviderTest::CCResourceProviderTest):
+        (CCResourceProviderTest):
+        (WebKit::TEST_F):
+
 2012-08-16  Alexandre Elias  <aelias@google.com>
 
         [chromium] Replace destRect with destOffset in texture upload
