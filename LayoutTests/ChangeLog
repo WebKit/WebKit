@@ -1,3 +1,15 @@
+2012-08-17  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Add two more crash expectations for a couple of tests that started crashing
+        after r125710.
+
+        Update stale test expectations, removing or adding build type modifiers
+        or updating the expected failure type.
+
+        * platform/gtk/TestExpectations:
+
 2012-08-17  Pascal Massimino  <pascal.massimino@gmail.com>
 
         update layout test for new libwebp-0.2.0

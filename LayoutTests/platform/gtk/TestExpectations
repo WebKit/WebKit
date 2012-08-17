@@ -404,7 +404,7 @@ BUGWK92942 SKIP : fast/events/constructors/device-proximity-event-constructor.ht
 // Crashing tests
 //////////////////////////////////////////////////////////////////////////////////////////
 
-BUGWK74297 : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = CRASH PASS
+BUGWK74297 DEBUG : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = CRASH PASS
 
 BUGWK85811 DEBUG : fast/events/message-port-close.html = CRASH PASS
 
@@ -434,6 +434,8 @@ BUGWK93727 DEBUG : svg/custom/use-instanceRoot-as-event-target.xhtml = CRASH PAS
 BUGWK90957 DEBUG : fast/js/random-array-gc-stress.html = CRASH PASS
 
 BUGWK94200 DEBUG : accessibility/accessibility-node-memory-management.html = CRASH TEXT
+BUGWK94200 DEBUG : accessibility/canvas-fallback-content.html = CRASH
+BUGWK94200 DEBUG : fast/canvas/fallback-content.html = CRASH PASS
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
@@ -458,7 +460,6 @@ BUGWK61932 : jquery/manipulation.html = PASS TEXT
 BUGWK71777 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
 
 BUGWK71655 : fast/frames/flattening/frameset-flattening-simple.html = PASS TEXT
-BUGWK80129 : fast/frames/flattening/frameset-flattening-advanced.html = PASS TEXT
 BUGWK80129 : fast/frames/flattening/frameset-flattening-subframesets.html = PASS TEXT
 BUGWK80129 : fast/frames/flattening/iframe-flattening-offscreen.html = PASS TEXT
 BUGWK80129 : fast/frames/flattening/frameset-flattening-grid.html = TEXT PASS
@@ -513,13 +514,8 @@ BUGWK83704 : media/event-attributes.html = PASS TEXT
 BUGWK89811 : media/media-blocked-by-beforeload.html = PASS TEXT
 BUGWK84856 : media/media-controller-playback.html = PASS TEXT
 
-// Sometimes asserts in debug builds (cross-platform problem): https://bugs.webkit.org/show_bug.cgi?id=59801
-BUGWK84859 : fast/workers/storage/use-same-database-in-page-and-workers.html = PASS TEXT
-
 BUGWK83878 : media/track/track-mode.html = PASS TEXT
 BUGWK88867 : media/track/track-cue-rendering-snap-to-lines-not-set.html = PASS TEXT
-
-BUGWK89663 : editing/deleting/delete-3800834-fix.html = PASS TEXT
 
 BUGWK49179 : animations/stop-animation-on-suspend.html = PASS TEXT
 
@@ -527,14 +523,9 @@ BUGWK78819 : fast/workers/shared-worker-load-error.html = PASS TEXT
 
 BUGWK61121 : http/tests/appcache/interrupted-update.html = PASS TEXT
 
-BUGWK77631 : fast/multicol/span/span-as-immediate-child-property-removal.html = PASS TEXT
-BUGWK77631 : fast/multicol/span/span-as-immediate-columns-child-removal.html = PASS TEXT
-
 BUGWK88061 : fast/replaced/border-radius-clip.html = PASS TEXT
 
 BUGWK91314 : http/tests/misc/webtiming-origins.html = PASS TEXT
-
-BUGWK70485 : fast/events/drag-selects-image.html = PASS TEXT
 
 BUGWK94119 : storage/websql/database-lock-after-reload.html = TEXT PASS
 
@@ -580,10 +571,7 @@ BUGWKGTK : svg/css/composite-shadow-example.html = PASS TEXT
 BUGWKGTK : svg/css/composite-shadow-with-opacity.html = PASS TEXT
 BUGWKGTK : svg/css/stars-with-shadow.html = PASS TEXT
 
-// Fail on 64-bit release and debug builders
-BUGWKGTK : sputnik/Unicode/Unicode_510/S7.6_A3.2.html = PASS TEXT
-BUGWKGTK : sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html = PASS TEXT
-BUGWKGTK : sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html = PASS TEXT
+// Fails on 64-bit release and debug builders
 BUGWK89099 : svg/transforms/transformed-text-fill-pattern.html = PASS IMAGE
 
 // Fails on 32-bit release and 64-bit debug builders
@@ -982,6 +970,9 @@ BUGWKGTK : fast/events/ondragenter.html = TEXT
 
 // Remaining Sputnik failures
 BUGWK43568 : sputnik/Unicode/Unicode_510/S7.6_A3.1.html = TEXT
+BUGWKGTK RELEASE : sputnik/Unicode/Unicode_510/S7.6_A3.2.html = TEXT
+BUGWKGTK RELEASE : sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html = TEXT
+BUGWKGTK RELEASE : sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html = TEXT
 
 // The following Sputnik tests fail on the 32bit release bot
 BUGWKGTK : sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html = TEXT
@@ -1213,8 +1204,6 @@ BUGWK85308 RELEASE : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 
 // IETC namespace failures
-BUGWK86137 : ietestcenter/css3/namespaces/prefix-007.xml = IMAGE
-BUGWK86139 : ietestcenter/css3/namespaces/prefix-010.xml = IMAGE
 BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 
 BUGWK86443 : plugins/npruntime/delete-plugin-within-hasProperty-return-false.html = TEXT
@@ -1316,14 +1305,21 @@ BUGWK94003 : fast/css/word-spacing-characters-complex-text.html = IMAGE
 // This has always failed on Gtk/Efl - exposed by bug 89826
 BUGWK94009 : css2.1/20110323/c541-word-sp-000.htm = IMAGE
 
-BUGWK94080 : fast/overflow/line-clamp-and-columns.html = IMAGE
-
 BUGWK94083 SKIP : media/video-controls-fullscreen-volume.html = TEXT
 
 BUGWK94186 SKIP : fast/forms/time-multiple-fields = PASS
 
 BUGWK94200 : accessibility/accessibility-node-reparent.html = TEXT
 BUGWK94200 RELEASE : accessibility/accessibility-node-memory-management.html = TEXT
+
+BUGWK70485 : fast/events/drag-selects-image.html = TEXT
+
+BUGWK77631 : fast/multicol/span/span-as-immediate-child-property-removal.html = TEXT
+BUGWK77631 : fast/multicol/span/span-as-immediate-columns-child-removal.html = TEXT
+
+BUGWK80129 : fast/frames/flattening/frameset-flattening-advanced.html = TEXT
+
+BUGWK89663 : editing/deleting/delete-3800834-fix.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
