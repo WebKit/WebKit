@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -129,6 +129,9 @@ public:
     {
         append(static_cast<LChar>(c));
     }
+
+    template<unsigned charactersCount>
+    ALWAYS_INLINE void appendLiteral(const char (&characters)[charactersCount]) { append(characters, charactersCount - 1); }
 
     String toString()
     {

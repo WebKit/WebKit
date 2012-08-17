@@ -1,3 +1,14 @@
+2012-08-17  Benjamin Poulain  <bpoulain@apple.com>
+
+        Make it easier to append a literal to StringBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=94273
+
+        Reviewed by Kentaro Hara.
+
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::appendLiteral): Add the method StringBuilder::appendLiteral() for efficiently
+        adding a string literal to the StringBuilder.
+
 2012-08-17  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Turn on a few macros for jpeg decoding and image interpolation

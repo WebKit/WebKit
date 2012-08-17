@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -303,11 +303,9 @@ void MarkupAccumulator::appendText(StringBuilder& result, Text* text)
 void MarkupAccumulator::appendComment(StringBuilder& result, const String& comment)
 {
     // FIXME: Comment content is not escaped, but XMLSerializer (and possibly other callers) should raise an exception if it includes "-->".
-    static const char commentBegin[] = "<!--";
-    result.append(commentBegin, sizeof(commentBegin) - 1);
+    result.appendLiteral("<!--");
     result.append(comment);
-    static const char commentEnd[] = "-->";
-    result.append(commentEnd, sizeof(commentEnd) - 1);
+    result.appendLiteral("-->");
 }
 
 void MarkupAccumulator::appendXMLDeclaration(StringBuilder& result, const Document* document)
@@ -315,29 +313,22 @@ void MarkupAccumulator::appendXMLDeclaration(StringBuilder& result, const Docume
     if (!document->hasXMLDeclaration())
         return;
 
-    static const char xmlDeclStart[] = "<?xml version=\"";
-    result.append(xmlDeclStart, sizeof(xmlDeclStart) - 1);
+    result.appendLiteral("<?xml version=\"");
     result.append(document->xmlVersion());
     const String& encoding = document->xmlEncoding();
     if (!encoding.isEmpty()) {
-        static const char xmlEncoding[] = "\" encoding=\"";
-        result.append(xmlEncoding, sizeof(xmlEncoding) - 1);
+        result.appendLiteral("\" encoding=\"");
         result.append(encoding);
     }
     if (document->xmlStandaloneStatus() != Document::StandaloneUnspecified) {
-        static const char xmlStandalone[] = "\" standalone=\"";
-        result.append(xmlStandalone, sizeof(xmlStandalone) - 1);
-        if (document->xmlStandalone()) {
-            static const char standaloneYes[] = "yes";
-            result.append(standaloneYes, sizeof(standaloneYes) - 1);
-        } else {
-            static const char standaloneNo[] = "no";
-            result.append(standaloneNo, sizeof(standaloneNo) - 1);
-        }
+        result.appendLiteral("\" standalone=\"");
+        if (document->xmlStandalone())
+            result.appendLiteral("yes");
+        else
+            result.appendLiteral("no");
     }
 
-    static const char xmlDeclEnd[] = "\"?>";
-    result.append(xmlDeclEnd, sizeof(xmlDeclEnd) - 1);
+    result.appendLiteral("\"?>");
 }
 
 void MarkupAccumulator::appendDocumentType(StringBuilder& result, const DocumentType* n)
@@ -345,12 +336,10 @@ void MarkupAccumulator::appendDocumentType(StringBuilder& result, const Document
     if (n->name().isEmpty())
         return;
 
-    static const char doctypeString[] = "<!DOCTYPE ";
-    result.append(doctypeString, sizeof(doctypeString) - 1);
+    result.appendLiteral("<!DOCTYPE ");
     result.append(n->name());
     if (!n->publicId().isEmpty()) {
-        static const char publicString[] = " PUBLIC \"";
-        result.append(publicString, sizeof(publicString) - 1);
+        result.appendLiteral(" PUBLIC \"");
         result.append(n->publicId());
         result.append('"');
         if (!n->systemId().isEmpty()) {
@@ -360,8 +349,7 @@ void MarkupAccumulator::appendDocumentType(StringBuilder& result, const Document
             result.append('"');
         }
     } else if (!n->systemId().isEmpty()) {
-        static const char systemString[] = " SYSTEM \"";
-        result.append(systemString, sizeof(systemString) - 1);
+        result.appendLiteral(" SYSTEM \"");
         result.append(n->systemId());
         result.append('"');
     }
@@ -467,11 +455,9 @@ void MarkupAccumulator::appendAttribute(StringBuilder& result, Element* element,
 void MarkupAccumulator::appendCDATASection(StringBuilder& result, const String& section)
 {
     // FIXME: CDATA content is not escaped, but XMLSerializer (and possibly other callers) should raise an exception if it includes "]]>".
-    static const char cdataBegin[] = "<![CDATA[";
-    result.append(cdataBegin, sizeof(cdataBegin) - 1);
+    result.appendLiteral("<![CDATA[");
     result.append(section);
-    static const char cdataEnd[] = "]]>";
-    result.append(cdataEnd, sizeof(cdataEnd) - 1);
+    result.appendLiteral("]]>");
 }
 
 void MarkupAccumulator::appendStartMarkup(StringBuilder& result, const Node* node, Namespaces* namespaces)
