@@ -1,3 +1,19 @@
+2012-08-17  John J. Barton  <johnjbarton@chromium.org>
+
+        Web Inspector: Refactor InspectorTest to split evals for initialization from runTest
+        https://bugs.webkit.org/show_bug.cgi?id=93520
+
+        Reviewed by Pavel Feldman.
+
+         Split function runTestInFrontend() into initialization and runTestInFrontEnd parts;
+         send them to the front-end in two different evaluateInFrontEnd calls, resulting in
+         two different eval() calls. In debug setup, we'll get two different UISourceCodes,
+         much easier to debug with.        
+
+        Refactoring, all inspector tests pass.
+
+        * http/tests/inspector/inspector-test.js:
+
 2012-08-17  John Mellor  <johnme@chromium.org>
 
         Text Autosizing: Increase line height in proportion to font size.

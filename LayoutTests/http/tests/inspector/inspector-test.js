@@ -371,8 +371,9 @@ InspectorTest.textContentWithLineBreaks = function(node)
 
 };
 
-var runTestCallId = 0;
-var completeTestCallId = 1;
+var initializeCallId = 0;
+var runTestCallId = 1;
+var completeTestCallId = 2;
 var frontendReopeningCount = 0;
 
 function reopenFrontend()
@@ -419,7 +420,7 @@ function runTest(enableWatchDogWhileDebugging)
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
 
-    function runTestInFrontend(initializationFunctions, testFunction, completeTestCallId)
+    function initializeFrontend(initializationFunctions)
     {
         if (window.InspectorTest) {
             InspectorTest.pageLoaded();
@@ -427,8 +428,7 @@ function runTest(enableWatchDogWhileDebugging)
         }
 
         InspectorTest = {};
-        InspectorTest.completeTestCallId = completeTestCallId;
-
+    
         for (var i = 0; i < initializationFunctions.length; ++i) {
             try {
                 initializationFunctions[i]();
@@ -437,12 +437,20 @@ function runTest(enableWatchDogWhileDebugging)
                 InspectorTest.completeTest();
             }
         }
+    }
+
+    function runTestInFrontend(testFunction, completeTestCallId)
+    {
+        if (InspectorTest.completeTestCallId) 
+            return;
+
+        InspectorTest.completeTestCallId = completeTestCallId;
 
         WebInspector.showPanel("audits");
         try {
             testFunction();
         } catch (e) {
-            console.error("Exception during test execution: " + e);
+            console.error("Exception during test execution: " + e,  (e.stack ? e.stack : "") );
             InspectorTest.completeTest();
         }
     }
@@ -452,8 +460,12 @@ function runTest(enableWatchDogWhileDebugging)
         if (name.indexOf("initialize_") === 0 && typeof window[name] === "function" && name !== "initialize_InspectorTest")
             initializationFunctions.push(window[name].toString());
     }
-    var parameters = ["[" + initializationFunctions + "]", test, completeTestCallId];
-    var toEvaluate = "(" + runTestInFrontend + ")(" + parameters.join(", ") + ");";
+    var parameters = ["[" + initializationFunctions + "]"];
+    var toEvaluate = "(" + initializeFrontend + ")(" + parameters.join(", ") + ");";
+    testRunner.evaluateInWebInspector(initializeCallId, toEvaluate);
+
+    parameters = [test, completeTestCallId];
+    toEvaluate = "(" + runTestInFrontend + ")(" + parameters.join(", ") + ");";
     testRunner.evaluateInWebInspector(runTestCallId, toEvaluate);
 
     if (enableWatchDogWhileDebugging) {
