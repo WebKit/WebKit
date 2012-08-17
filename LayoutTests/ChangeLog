@@ -1,5 +1,11 @@
 2012-08-17  Nate Chapin  <japhet@chromium.org>
 
+        Add missing CR in bug identifiers in TextExpectations
+
+        * platform/chromium/TestExpectations:
+
+2012-08-17  Nate Chapin  <japhet@chromium.org>
+
         Update BUGJAPHET TextExpectations entries to point to bugs.
 
         * platform/chromium/TestExpectations:

@@ -2082,10 +2082,10 @@ BUGJAMESR LINUX ANDROID WIN : fast/text/international/vertical-text-metrics-test
 
 // Added in Webkit r69707 without expected results.
 // Expected result file added in r83450. Still no match.
-BUG143479 : platform/gtk/accessibility/aria-table-hierarchy.html = TEXT
+BUGCR143479 : platform/gtk/accessibility/aria-table-hierarchy.html = TEXT
 
 // r69833, JSC/V8 Date parsing differences
-BUG143476 : fast/js/date-parse-test.html = TEXT
+BUGCR143476 : fast/js/date-parse-test.html = TEXT
 
 // Vertical text needs to be implemented in platforms other than OS X.
 BUGCR65877 LINUX ANDROID WIN : fast/writing-mode/border-vertical-lr.html = IMAGE+TEXT
