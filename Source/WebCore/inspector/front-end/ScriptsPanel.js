@@ -168,7 +168,7 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ExecutionLineChanged, this._executionLineChanged, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointsActiveStateChanged, this._breakpointsActiveStateChanged, this);
 
-    this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this);
+    this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._uiSourceCodeAdded, this);
     this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
     this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
     this._workspace.addEventListener(WebInspector.Workspace.Events.WorkspaceReset, this._reset.bind(this, false), this);
@@ -227,26 +227,9 @@ WebInspector.ScriptsPanel.prototype = {
     /**
      * @param {WebInspector.Event} event
      */
-    _handleUISourceCodeAdded: function(event)
+    _uiSourceCodeAdded: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
-        if (this._toggleFormatSourceButton.toggled)
-            uiSourceCode.setFormatted(true);
-        this._uiSourceCodeAdded(uiSourceCode);
-    },
-
-    _loadUISourceCodes: function()
-    {
-        var uiSourceCodes = this._workspace.uiSourceCodes();
-        for (var i = 0; i < uiSourceCodes.length; ++i)
-            this._uiSourceCodeAdded(uiSourceCodes[i]);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    _uiSourceCodeAdded: function(uiSourceCode)
-    {
         this._addUISourceCode(uiSourceCode);
     },
 
@@ -255,6 +238,9 @@ WebInspector.ScriptsPanel.prototype = {
      */
     _addUISourceCode: function(uiSourceCode)
     {
+        if (this._toggleFormatSourceButton.toggled)
+            uiSourceCode.setFormatted(true);
+
         this._navigator.addUISourceCode(uiSourceCode);
         this._editorContainer.addUISourceCode(uiSourceCode);
     },
@@ -367,8 +353,6 @@ WebInspector.ScriptsPanel.prototype = {
         var uiSourceCodes = this._workspace.uiSourceCodes();
         for (var i = 0; i < uiSourceCodes.length; ++i)
             this._removeSourceFrame(uiSourceCodes[i]);
-
-        this._loadUISourceCodes();
     },
 
     get visibleView()

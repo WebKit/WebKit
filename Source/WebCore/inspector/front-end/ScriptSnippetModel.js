@@ -364,7 +364,8 @@ WebInspector.ScriptSnippetModel.prototype = {
         var removedUISourceCodes = this._releasedUISourceCodes();
         this._uiSourceCodeForScriptId = {};
         this._scriptForUISourceCode = new Map();
-        this._loadSnippets();
+        this._snippetJavaScriptSourceForSnippetId = {};
+        setTimeout(this._loadSnippets.bind(this), 0);
     }
 }
 

@@ -6,7 +6,6 @@ Dumping ScriptsNavigator 'Scripts' tab:
   bar.js
   baz.js
   foo.js
-  foobar.js
 Dumping ScriptsNavigator 'Content scripts' tab:
 Source requested for baz.js
 

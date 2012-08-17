@@ -158,8 +158,9 @@ InspectorTest._resumedScript = function()
     }
 };
 
-InspectorTest.showScriptSourceOnScriptsPanel = function(panel, scriptName, callback)
+InspectorTest.showScriptSource = function(scriptName, callback)
 {
+    var panel = WebInspector.panels.scripts;
     var uiSourceCodes = panel._workspace.uiSourceCodes();
     for (var i = 0; i < uiSourceCodes.length; ++i) {
         if (uiSourceCodes[i].parsedURL.lastPathComponent === scriptName) {
@@ -172,12 +173,8 @@ InspectorTest.showScriptSourceOnScriptsPanel = function(panel, scriptName, callb
             return;
         }
     }
-    InspectorTest.addSniffer(panel, "_addUISourceCode", InspectorTest.showScriptSource.bind(InspectorTest, scriptName, callback));
-};
 
-InspectorTest.showScriptSource = function(scriptName, callback)
-{
-    InspectorTest.showScriptSourceOnScriptsPanel(WebInspector.panels.scripts, scriptName, callback)
+    InspectorTest.addSniffer(WebInspector.ScriptsPanel.prototype, "_addUISourceCode", InspectorTest.showScriptSource.bind(InspectorTest, scriptName, callback));
 };
 
 InspectorTest.dumpScriptsNavigator = function(navigator)

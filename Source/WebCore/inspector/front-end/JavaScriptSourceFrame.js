@@ -93,6 +93,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
         this._isCommittingEditing = true;
         this._javaScriptSource.commitWorkingCopy(this._didEditContent.bind(this));
+        delete this._isCommittingEditing;
     },
 
     /**
@@ -158,8 +159,6 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     _didEditContent: function(error)
     {
-        delete this._isCommittingEditing;
-
         if (error) {
             WebInspector.log(error, WebInspector.ConsoleMessage.MessageLevel.Error, true);
             return;

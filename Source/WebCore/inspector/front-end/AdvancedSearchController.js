@@ -222,6 +222,8 @@ WebInspector.SearchView = function(controller)
 WebInspector.SearchView.maxQueriesCount = 20;
 
 WebInspector.SearchView.prototype = {
+    __proto__: WebInspector.View.prototype,
+
     /**
      * @return {Array.<Element>}
      */
@@ -388,7 +390,7 @@ WebInspector.SearchView.prototype = {
     }
 }
 
-WebInspector.SearchView.prototype.__proto__ = WebInspector.View.prototype;
+//WebInspector.SearchView.prototype.__proto__ = WebInspector.View.prototype;
 
 /**
  * @constructor

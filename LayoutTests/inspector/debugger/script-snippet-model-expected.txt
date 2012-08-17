@@ -2,6 +2,11 @@ Tests script snippet model.
 
 Debugger was enabled.
 
+Running: testWorkspaceReset
+Snippet created.
+Resetting snippet script mapping.
+Snippet uiSourceCode was recreated.
+
 Running: testEvaluate
 Last evaluation source url for snippet: snippets:///1_1
 Snippet script added, sourceURL = snippets:///1_1

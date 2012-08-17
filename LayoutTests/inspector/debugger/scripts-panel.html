@@ -37,8 +37,11 @@ function test()
         }
         provider._reset = function(preservedItems)
         {
-            uiSourceCodes = preservedItems || [];
+            uiSourceCodes = [];
             this.dispatchEventToListeners(WebInspector.Workspace.Events.WorkspaceReset, null);
+
+            for (var i = 0; i < preservedItems.length; ++i)
+                this._addUISourceCode(preservedItems[i]);
         }
         provider._replaceUISourceCode = function(oldUISourceCode, uiSourceCode)
         {

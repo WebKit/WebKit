@@ -1,3 +1,18 @@
+2012-08-16  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Snippet script mapping should not load snippets until workspace reset event is dispatched on scripts panel.
+        https://bugs.webkit.org/show_bug.cgi?id=94218
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest):
+        * inspector/debugger/script-snippet-model-expected.txt:
+        * inspector/debugger/script-snippet-model.html: added a check that snippet uiSourceCode is correctly recreated after workspace reset.
+        * inspector/debugger/scripts-panel-expected.txt:
+        * inspector/debugger/scripts-panel.html:
+        * platform/chromium/inspector/debugger/script-snippet-model-expected.txt: Removed.
+
 2012-08-16  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Tests] time-multiple-fields-appearance-basic.html and time-multiple-fields-appearance-pseudo-elements.html are failed on Chromium Windows

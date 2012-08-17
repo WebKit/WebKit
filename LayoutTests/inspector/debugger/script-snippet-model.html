@@ -17,6 +17,29 @@ function test()
     WebInspector.scriptSnippetModel = new WebInspector.ScriptSnippetModel();
 
     InspectorTest.runDebuggerTestSuite([
+        function testWorkspaceReset(next)
+        {
+            resetSnippetsSettings();
+            var snippetJavaScriptSource = WebInspector.scriptSnippetModel.createScriptSnippet();
+            var snippetName = "TestSnippet" + Math.random();
+            InspectorTest.addResult("Snippet created.");
+            WebInspector.scriptSnippetModel.renameScriptSnippet(snippetJavaScriptSource, snippetName);
+            WebInspector.scriptSnippetModel.scriptMapping.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCodeAdded);
+            InspectorTest.addResult("Resetting snippet script mapping.");
+            WebInspector.scriptSnippetModel.scriptMapping.reset();
+            InspectorTest.assertTrue(!WebInspector.scriptSnippetModel.scriptMapping.uiSourceCodes().length, "Snippets script mapping should not have any uiSourceCodea after reset.");
+
+            function uiSourceCodeAdded(event)
+            {
+                var uiSourceCode = event.data;
+                if (uiSourceCode.url.indexOf(snippetName) === -1)
+                    return;
+                InspectorTest.addResult("Snippet uiSourceCode was recreated.");
+                WebInspector.workspace.removeEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCodeAdded);
+                next();
+            }
+        },
+
         function testEvaluate(next)
         {
             resetSnippetsSettings();
@@ -32,8 +55,7 @@ function test()
             WebInspector.scriptSnippetModel.renameScriptSnippet(snippetJavaScriptSource2, "Snippet2");
             content = "";
             content += "// This snippet creates a function that does nothing and returns it.\n";
-            content += "function doesNothing()\n";
-            content += "{\n";
+            content += "function doesNothing() {\n";
             content += "    var  i = 2+2;\n";
             content += "};\n";
             content += "doesNothing;\n";
