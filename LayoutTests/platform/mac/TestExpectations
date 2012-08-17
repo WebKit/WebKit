@@ -392,6 +392,3 @@ BUGWK94003 : fast/css/word-spacing-characters-complex-text.html = IMAGE
 
 // (r125629): Newly added test css3/filters/custom/filter-fallback-to-software.html failing on mac
 BUGWK94169 : css3/filters/custom/filter-fallback-to-software.html = IMAGE
-
-// (r125635): Added by bug 91138
-BUGWK94080 : fast/overflow/line-clamp-and-columns.html = IMAGE
