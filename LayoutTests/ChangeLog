@@ -1,3 +1,12 @@
+2012-08-16  Adrienne Walker  <enne@google.com>
+
+        Rebaseline overflow-scroll-overlap to pass on both Mac and Chromium
+
+        Unreviewed expectation gardening.
+
+        * compositing/layer-creation/overflow-scroll-overlap-expected.txt:
+        * platform/chromium/compositing/layer-creation/overflow-scroll-overlap-expected.txt: Copied from LayoutTests/compositing/layer-creation/overflow-scroll-overlap-expected.txt.
+
 2012-08-16  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Tests] Remove redundant text from fast/forms/resources/common-change-type-on-focus.js
