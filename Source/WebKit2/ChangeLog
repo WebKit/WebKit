@@ -1,3 +1,17 @@
+2012-08-17  Jeff Miller  <jeffm@apple.com>
+
+        UserMessageEncoder::baseEncode() should ASSERT when attempting to encode a non-shareable image
+        https://bugs.webkit.org/show_bug.cgi?id=94245
+
+        Reviewed by Alexey Proskuryakov.
+
+        It's a programming error if a client attempts to encode an image that has an
+        allocated bitmap, but isn't shareable, so we should assert in this case.
+
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        Assert if we're trying to encode valid non-shareable image.
+
 2012-08-17  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [WK2] Add unit tests for vibration_client_callbacks_set API

@@ -186,6 +186,7 @@ public:
             WebImage* image = static_cast<WebImage*>(m_root);
 
             ShareableBitmap::Handle handle;
+            ASSERT(!image->bitmap() || image->bitmap()->isBackedBySharedMemory());            
             if (!image->bitmap() || !image->bitmap()->isBackedBySharedMemory() || !image->bitmap()->createHandle(handle)) {
                 // Initial false indicates no allocated bitmap or is not shareable.
                 encoder->encode(false);
