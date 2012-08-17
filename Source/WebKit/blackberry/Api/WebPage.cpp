@@ -1066,17 +1066,11 @@ void WebPagePrivate::setLoadState(LoadState state)
             // Check if we have already process the meta viewport tag, this only happens on history navigation.
             // For back/forward history navigation, we should only keep these previous values if the document
             // has the meta viewport tag when the state is Committed in setLoadState.
-            // Refreshing should keep these previous values as well.
             static ViewportArguments defaultViewportArguments;
             bool documentHasViewportArguments = false;
-            FrameLoadType frameLoadType = FrameLoadTypeStandard;
             if (m_mainFrame && m_mainFrame->document() && m_mainFrame->document()->viewportArguments() != defaultViewportArguments)
                 documentHasViewportArguments = true;
-            if (m_mainFrame && m_mainFrame->loader())
-                frameLoadType = m_mainFrame->loader()->loadType();
-            FrameLoaderClientBlackBerry* frameLoaderClient = static_cast<FrameLoaderClientBlackBerry*>(m_mainFrame->loader()->client());
-            if (!((m_didRestoreFromPageCache && documentHasViewportArguments)
-                || ((frameLoadType == FrameLoadTypeReload || frameLoadType == FrameLoadTypeReloadFromOrigin) && frameLoaderClient->shouldRestoreViewState()))) {
+            if (!(m_didRestoreFromPageCache && documentHasViewportArguments)) {
                 m_viewportArguments = ViewportArguments();
                 m_userScalable = m_webSettings->isUserScalable();
                 resetScales();
@@ -1759,11 +1753,9 @@ void WebPagePrivate::zoomToInitialScaleOnLoad()
     bool performedZoom = false;
     bool shouldZoom = !m_userPerformedManualZoom;
 
-    // If this load should restore view state, don't zoom to initial scale
+    // If this is a back/forward type navigation, don't zoom to initial scale
     // but instead let the HistoryItem's saved viewport reign supreme.
-    FrameLoaderClientBlackBerry* frameLoaderClient = static_cast<FrameLoaderClientBlackBerry*>(m_mainFrame->loader()->client());
-    if (m_mainFrame && m_mainFrame->loader() && m_mainFrame->loader()->shouldRestoreScrollPositionAndViewState()
-        && frameLoaderClient && frameLoaderClient->shouldRestoreViewState())
+    if (m_mainFrame && m_mainFrame->loader() && isBackForwardLoadType(m_mainFrame->loader()->loadType()))
         shouldZoom = false;
 
     if (shouldZoom && shouldZoomToInitialScaleOnLoad()) {

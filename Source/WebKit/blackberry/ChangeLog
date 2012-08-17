@@ -1,3 +1,34 @@
+2012-08-17  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] On reload, www.sohu.com renders part white background, part overscroll pattern
+        https://bugs.webkit.org/show_bug.cgi?id=94348
+
+        Reviewed by Yong Li.
+        Jacky Jiang  <zhajiang@rim.com>
+
+        PR: 179200
+        This can fix the reload issues of sohu.com, yahoo.com and
+        thestar.com/iphone(PR158041). And it is also related with PR178305.
+
+        Internally reviewed by George Staikos.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):  Keeping scales for
+        reload was doing more harm than good. Two reasons to remove this:
+        (1) During reload, contents rect is changing due to layout updates,
+        it is possible that the contents or the white background can't cover
+        the whole screen if we are using the previous scales.
+        (2) Before reload, the source of the web page can be changed, therefore
+        previous scales won't be valid anymore.
+        Remove shouldRestoreViewState() as this check here is useless now.
+        (BlackBerry::WebKit::WebPagePrivate::zoomToInitialScaleOnLoad):  During
+        reload, we should give it a chance to zoom to fit the screen,
+        otherwise, it happens that the contents can't cover the whole screen
+        until we restore the view state, see PR158041.
+        Remove shouldRestoreViewState() as the error page issue PR178305 can be
+        covered by reload now.
+        * WebCoreSupport/FrameLoaderClientBlackBerry.h: Remove unused shouldRestoreViewState().
+
 2012-08-16  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Use form state to determine the VKB enter key.
