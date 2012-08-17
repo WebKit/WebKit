@@ -158,10 +158,13 @@ void reportException(ExecState* exec, JSValue exception)
     if (ExceptionBase* exceptionBase = toExceptionBase(exception))
         errorMessage = stringToUString(exceptionBase->message() + ": "  + exceptionBase->description());
 
-    DOMWindow* activeWindow = activeDOMWindow(exec);
-    if (!activeWindow->isCurrentlyDisplayedInFrame())
-        return;
-    activeWindow->scriptExecutionContext()->reportException(ustringToString(errorMessage), lineNumber, ustringToString(exceptionSourceURL), 0);
+    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
+    if (JSDOMWindow* window = jsDynamicCast<JSDOMWindow*>(globalObject)) {
+        if (!window->impl()->isCurrentlyDisplayedInFrame())
+            return;
+    }
+    ScriptExecutionContext* scriptExecutionContext = globalObject->scriptExecutionContext();
+    scriptExecutionContext->reportException(ustringToString(errorMessage), lineNumber, ustringToString(exceptionSourceURL), 0);
 }
 
 void reportCurrentException(ExecState* exec)
