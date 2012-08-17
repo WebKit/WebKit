@@ -1,3 +1,16 @@
+2012-08-16  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] Remove redundant text from fast/forms/resources/common-change-type-on-focus.js
+        https://bugs.webkit.org/show_bug.cgi?id=94293
+
+        Reviewed by Kent Tamura.
+
+        This patch removes bug number text in description for sharing code
+        among input types.
+
+        * fast/forms/number/number-change-type-on-focus-expected.txt:
+        * fast/forms/resources/common-change-type-on-focus.js:
+
 2012-08-16  David Barr  <davidbarr@chromium.org>
 
         @import url("#foo") causes stack overflow

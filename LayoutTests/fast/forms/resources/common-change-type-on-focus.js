@@ -3,7 +3,7 @@ var mouseDownCount = 0;
 function testChangeTypeOnFocus()
 {
     var input = document.getElementById('test');
-    description('Bug 46950: Assertion failure by changing type from type=' + input.type + ' in focus event.');
+    description('Assertion failure by changing type from type=' + input.type + ' in focus event.');
     input.onfocus = function () { this.type = 'text'; };
 
     var spinX = input.offsetLeft + input.offsetWidth - 6;
