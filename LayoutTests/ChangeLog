@@ -1,3 +1,14 @@
+2012-08-17  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Removing expectations for two flaky crashers that were fixed in r125181.
+
+        Skipping three tests of otherwise unsupported features as they time out
+        and just prolong the bot cycle in doing so.
+
+        * platform/gtk/TestExpectations:
+
 2012-08-17  Dominic Mazzoni  <dmazzoni@google.com>
 
         REGRESSION(r125710) - canvas-fallback-content tests asserting in Chromium

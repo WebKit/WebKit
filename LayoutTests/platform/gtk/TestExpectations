@@ -320,12 +320,15 @@ BUGWKGTK SKIP : http/tests/pointer-lock = TEXT
 
 // Battery Status API support not yet.
 BUGWK62698 : batterystatus = TEXT
+BUGWK62698 SKIP : batterystatus/event-after-navigation.html = TEXT
 
 // Network Information API support not yet.
 BUGWK73528 : networkinformation = TEXT
+BUGWK73528 SKIP : networkinformation/event-after-navigation.html = TEXT
 
 // Touch adjustment not enabled
 BUGWK78801 : touchadjustment = TEXT
+BUGWK78801 SKIP : touchadjustment/iframe.html = TEXT
 
 // IETC flexbox failures
 BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
@@ -416,9 +419,6 @@ BUGWK86176 DEBUG : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
 BUGWK89188 RELEASE : storage/websql/quota-tracking.html = CRASH PASS
 
 BUGWK90589 RELEASE : fast/css/user-drag-none.html = CRASH TIMEOUT
-
-BUGWK93501 : editing/inserting/insert-character-in-first-letter-crash.html = CRASH PASS
-BUGWK93501 : fast/css/first-letter-text-fragment-crash.html = CRASH PASS
 
 BUGWK93502 : fast/history/nested-visited-test.html = CRASH PASS
 
