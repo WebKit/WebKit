@@ -1,3 +1,14 @@
+2012-08-16  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening.
+
+        r125694 incorrectly updated mac expectations for the below test instead of
+        Chromium Mac. Moving the updated expectations to Chromium and reverting the
+        incorrect Mac expectations.
+
+        * platform/chromium-mac/tables/mozilla/bugs/bug55527-expected.txt: Added.
+        * platform/mac/tables/mozilla/bugs/bug55527-expected.txt:
+
 2012-08-16  Adrienne Walker  <enne@google.com>
 
         [chromium] Mark fast/forms/file/selected-files-from-history-state.html as failing
