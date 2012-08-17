@@ -1,3 +1,14 @@
+2012-08-17  Dominic Mazzoni  <dmazzoni@google.com>
+
+        REGRESSION (r125710): accessibility/accessibility-node-reparent.html, accessibility/accessibility-node-memory-management.html failing on GTK Linux
+        https://bugs.webkit.org/show_bug.cgi?id=94200
+
+        Unreviewed gardening.
+
+        Updating the GTK test expectations for two failing accessibility tests.
+
+        * platform/gtk/TestExpectations:
+
 2012-08-16  Adrienne Walker  <enne@google.com>
 
         [chromium] Rebaseline media-document-audio-repaint after Chromium r151988
