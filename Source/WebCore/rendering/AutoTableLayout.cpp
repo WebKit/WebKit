@@ -277,7 +277,7 @@ void AutoTableLayout::computePreferredLogicalWidths(LayoutUnit& minWidth, Layout
  */
 int AutoTableLayout::calcEffectiveLogicalWidth()
 {
-    float maxLogicalWidth = 0;
+    int maxLogicalWidth = 0;
 
     size_t nEffCols = m_layoutStruct.size();
     int spacingInRowDirection = m_table->hBorderSpacing();
@@ -302,10 +302,10 @@ int AutoTableLayout::calcEffectiveLogicalWidth()
         unsigned effCol = m_table->colToEffCol(cell->col());
         size_t lastCol = effCol;
         int cellMinLogicalWidth = cell->minPreferredLogicalWidth() + spacingInRowDirection;
-        float cellMaxLogicalWidth = cell->maxPreferredLogicalWidth() + spacingInRowDirection;
+        int cellMaxLogicalWidth = cell->maxPreferredLogicalWidth() + spacingInRowDirection;
         float totalPercent = 0;
         int spanMinLogicalWidth = 0;
-        float spanMaxLogicalWidth = 0;
+        int spanMaxLogicalWidth = 0;
         bool allColsArePercent = true;
         bool allColsAreFixed = true;
         bool haveAuto = false;
@@ -361,11 +361,11 @@ int AutoTableLayout::calcEffectiveLogicalWidth()
                 // can't satify this condition, treat as variable
                 cellLogicalWidth = Length();
             } else {
-                maxLogicalWidth = max(maxLogicalWidth, static_cast<float>(max(spanMaxLogicalWidth, cellMaxLogicalWidth) * 100  / cellLogicalWidth.percent()));
+                maxLogicalWidth = max(maxLogicalWidth, static_cast<int>(max(spanMaxLogicalWidth, cellMaxLogicalWidth) * 100  / cellLogicalWidth.percent()));
 
                 // all non percent columns in the span get percent values to sum up correctly.
                 float percentMissing = cellLogicalWidth.percent() - totalPercent;
-                float totalWidth = 0;
+                int totalWidth = 0;
                 for (unsigned pos = effCol; pos < lastCol; ++pos) {
                     if (!m_layoutStruct[pos].effectiveLogicalWidth.isPercent())
                         totalWidth += m_layoutStruct[pos].effectiveMaxLogicalWidth;
@@ -397,13 +397,13 @@ int AutoTableLayout::calcEffectiveLogicalWidth()
             } else if (allColsArePercent) {
                 // In this case, we just split the colspan's min amd max widths following the percentage.
                 int allocatedMinLogicalWidth = 0;
-                float allocatedMaxLogicalWidth = 0;
+                int allocatedMaxLogicalWidth = 0;
                 for (unsigned pos = effCol; pos < lastCol; ++pos) {
                     ASSERT(m_layoutStruct[pos].logicalWidth.isPercent() || m_layoutStruct[pos].effectiveLogicalWidth.isPercent());
                     // |allColsArePercent| means that either the logicalWidth *or* the effectiveLogicalWidth are percents, handle both of them here.
                     float percent = m_layoutStruct[pos].logicalWidth.isPercent() ? m_layoutStruct[pos].logicalWidth.percent() : m_layoutStruct[pos].effectiveLogicalWidth.percent();
                     int columnMinLogicalWidth = static_cast<int>(percent * cellMinLogicalWidth / totalPercent);
-                    float columnMaxLogicalWidth = percent * cellMaxLogicalWidth / totalPercent;
+                    int columnMaxLogicalWidth = static_cast<int>(percent * cellMaxLogicalWidth / totalPercent);
                     m_layoutStruct[pos].effectiveMinLogicalWidth = max(m_layoutStruct[pos].effectiveMinLogicalWidth, columnMinLogicalWidth);
                     m_layoutStruct[pos].effectiveMaxLogicalWidth = columnMaxLogicalWidth;
                     allocatedMinLogicalWidth += columnMinLogicalWidth;
@@ -414,7 +414,7 @@ int AutoTableLayout::calcEffectiveLogicalWidth()
                 cellMinLogicalWidth -= allocatedMinLogicalWidth;
                 cellMaxLogicalWidth -= allocatedMaxLogicalWidth;
             } else {
-                float remainingMaxLogicalWidth = spanMaxLogicalWidth;
+                int remainingMaxLogicalWidth = spanMaxLogicalWidth;
                 int remainingMinLogicalWidth = spanMinLogicalWidth;
                 
                 // Give min to variable first, to fixed second, and to others third.
@@ -462,7 +462,7 @@ int AutoTableLayout::calcEffectiveLogicalWidth()
     }
     m_effectiveLogicalWidthDirty = false;
 
-    return static_cast<int>(min(maxLogicalWidth, INT_MAX / 2.0f));
+    return min(maxLogicalWidth, INT_MAX / 2);
 }
 
 /* gets all cells that originate in a column and have a cellspan > 1
