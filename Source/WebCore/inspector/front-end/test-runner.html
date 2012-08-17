@@ -28,6 +28,10 @@ iframe {
 
 <script>
 
+var layoutTestsServer = "http://localhost:8002/";
+var scannerServer = "http://localhost:8002/";
+var remoteDebuggingServer = "http://localhost:9222/";
+
 var tests = [];
 var skipList = [
     // HALT
@@ -65,9 +69,15 @@ var treeOutline = null;
 
 function run(debug)
 {
-    var iframe = document.createElement("iframe");
-    iframe.src = "http://localhost:8001/LayoutTests/http/tests/inspector/resources/test-scanner.html";
-    document.body.appendChild(iframe);
+    if (window.testScannerIframe) 
+        document.body.removeChild(window.testScannerIframe);
+
+    if (window.runner)
+        window.runner.cleanup();
+
+    window.testScannerIframe = document.createElement("iframe");
+    window.testScannerIframe.src = scannerServer + "LayoutTests/http/tests/inspector/resources/test-scanner.html";
+    document.body.appendChild(window.testScannerIframe);
     window.debug = debug;
 }
 
@@ -106,7 +116,7 @@ function runNextTest(lastResult)
     var filter = document.getElementById("filter").value;
     while (test = tests.shift()) {
         if (!filter || test[0].match(filter)) {
-            new StandaloneTestRunner("http://localhost:8001" + test[0], test[1], runNextTest.bind(null));
+            new StandaloneTestRunner(layoutTestsServer + test[0], test[1], runNextTest.bind(null));
             return;
         }
     }
@@ -129,12 +139,12 @@ function StandaloneTestRunner(testPath, expected, next)
             return;
         }
     }
-
+    window.runner = this;
     this._testPage = window.open("about:blank", "inspected", "width=800,height=600");
 
     window.remoteDebuggingHandshake = this._remoteDebuggingHandshake.bind(this);
     var script = document.createElement("script");
-    script.src = "http://localhost:9222/json?jsonp=remoteDebuggingHandshake";
+    script.src = remoteDebuggingServer + "json?jsonp=remoteDebuggingHandshake";
     document.head.appendChild(script);
 }
 
@@ -147,16 +157,21 @@ StandaloneTestRunner.prototype = {
             if (data[i].url !== "about:blank")
                 continue;
             this._debuggerURL = data[i].webSocketDebuggerUrl.replace("://", "=");
-            this._openTestPage();
+            this._navigateTestPage();
             break;
         }
     },
 
-    _openTestPage: function()
+    _navigateTestPage: function()
     {
-        window.runner = this;
         this._testPage.location.href = this._testPath;
-        this._inspectorWindowLoading = window.open(StandaloneTestRunner.FrontendLocation + "?" + this._debuggerURL, "inspector", "width=600,height=400");
+        var width = localStorage.getItem('inspectorWidth') || 600;
+        var height = localStorage.getItem('inspectorHeight') || 400;
+        var features = "width=" + Math.max(width , 600) + ",height=" + Math.max(height, 400);
+        this._inspectorWindowLoading = window.open(StandaloneTestRunner.FrontendLocation + "?" + this._debuggerURL, "inspector", features);
+        
+        window.addEventListener('unload', this.cleanup.bind(this));
+        
         this._watchDog = setTimeout(this._timeout.bind(this), 10000);
     },
 
@@ -179,15 +194,16 @@ StandaloneTestRunner.prototype = {
         if (this._done)
             return;
         this._done = true;
-        delete window.runner;
 
-        if (!window.debug) {
-            this._testPage.close();
-            this._inspectorWindow.close();
-        }
+        if (!window.debug) 
+            this.cleanup()
+
         clearTimeout(this._watchDog);
 
-        if (actual === this._expected) {
+        this._treeElement.onselect = this.onTreeElementSelect.bind(this);
+
+        // TODO pavel  is the  RHS || condition wanted?
+        if (actual === this._expected || actual === this._expected + "\n") {
             this._treeElement.title = this._testPath + ": SUCCESS";
             this._next("pass");
             return;
@@ -246,11 +262,27 @@ StandaloneTestRunner.prototype = {
         this._treeElement.title = this._testPath + ": TIMEOUT";
         this._treeElement.listItemElement.addStyleClass("timeout");
         this._done = true;
-        if (!window.debug) {
-            this._testPage.close();
-            this._inspectorWindow.close();
-        }
+        if (!window.debug) 
+            this.cleanup();
+
         this._next("timeout");
+    },
+
+    cleanup: function ()
+    {
+        localStorage.setItem('inspectorWidth', this._inspectorWindowLoading.outerWidth);
+        localStorage.setItem('inspectorHeight', this._inspectorWindowLoading.outerHeight);
+        this._inspectorWindowLoading.close();
+        this._testPage.close();
+        delete window.runner;
+    },
+
+    onTreeElementSelect: function () 
+    {
+        var baseEndSentinel = '/inspector/';
+        var baseChars = this._testPath.indexOf(baseEndSentinel) + baseEndSentinel.length;
+        if (baseChars > 0) 
+            document.getElementById("filter").value = this._testPath.substr(baseChars);
     },
 
     display: function() { }
@@ -266,8 +298,8 @@ function onMessageFromTestPage(event)
         return;
     }
 
-    if (runner)
-        runner[method].apply(runner, signature);
+    if (window.runner)
+        window.runner[method].apply(window.runner, signature);
 }
 
 window.addEventListener("message", onMessageFromTestPage, true);
@@ -278,15 +310,13 @@ This is a standalone test suite for inspector front-end. Here is how you run it:
 <ul>
 <li>Check out WebKit source tree: git clone http://git.chromium.org/external/Webkit.git</li>
 <li>Run "Tools/Scripts/new-run-webkit-httpd --root=. --port=8002 --server=start"</li>
-<li>Visit <a href="http://localhost:8002/Source/WebCore/inspector/front-end/test-runner.html"
->http://localhost:8002/Source/WebCore/inspector/front-end/test-runner.html</a></li>
 <li>Run Chrome Canary (ToT Chromium) with following flags: "--remote-debugging-port=9222 --user-data-dir=testProfile http://localhost:8002/Source/WebCore/inspector/front-end/test-runner.html</li>
 </ul>
 
 <button onclick="run()">Run</button>
 <button onclick="run(true)">Debug</button>
 <button onclick="interrupt()">Interrupt</button>
-Filter: <input id="filter" type="text"></input><br>
+Filter: <input id="filter" type="text" size="40"></input><small><i>Click on results to load filter</i></small><br>
 
 <span>Passed: <span id="pass">0</span></span>
 <span>Failed: <span id="fail">0</span></span>
