@@ -1,3 +1,15 @@
+2012-08-16  Lauro Neto  <lauro.neto@openbossa.org>
+
+        [Qt] Failure to build with --no-inspector
+        https://bugs.webkit.org/show_bug.cgi?id=94148
+
+        Reviewed by Noam Rosenthal.
+
+        Add guards around usage of inspector functions.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewExperimental::remoteInspectorUrl):
+
 2012-08-16  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Remove an unused variable
