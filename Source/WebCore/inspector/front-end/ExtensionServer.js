@@ -197,7 +197,7 @@ WebInspector.ExtensionServer.prototype = {
             return this._status.E_EXISTS(id);
 
         var page = this._expandResourcePath(port._extensionOrigin, message.page);
-        var panelDescriptor = new WebInspector.PanelDescriptor(id, message.title, WebInspector.ExtensionPanel.bind(null, id, page));
+        var panelDescriptor = new WebInspector.PanelDescriptor(id, message.title, undefined, undefined, new WebInspector.ExtensionPanel(id, page));
         panelDescriptor.setIconURL(this._expandResourcePath(port._extensionOrigin, message.icon));
         this._clientObjects[id] = panelDescriptor.panel();
         WebInspector.inspectorView.addPanel(panelDescriptor);

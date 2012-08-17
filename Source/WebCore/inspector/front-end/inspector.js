@@ -37,14 +37,14 @@ var WebInspector = {
         WebInspector.inspectorView.show(parentElement);
         WebInspector.inspectorView.addEventListener(WebInspector.InspectorView.Events.PanelSelected, this._panelSelected, this);
 
-        var elements = new WebInspector.PanelDescriptor("elements", WebInspector.UIString("Elements"), WebInspector.ElementsPanel, true);
-        var resources = new WebInspector.PanelDescriptor("resources", WebInspector.UIString("Resources"), WebInspector.ResourcesPanel, true);
-        var network = new WebInspector.PanelDescriptor("network", WebInspector.UIString("Network"), WebInspector.NetworkPanel);
-        var scripts = new WebInspector.PanelDescriptor("scripts", WebInspector.UIString("Sources"), WebInspector.ScriptsPanel);
-        var timeline = new WebInspector.PanelDescriptor("timeline", WebInspector.UIString("Timeline"), WebInspector.TimelinePanel, true);
-        var profiles = new WebInspector.PanelDescriptor("profiles", WebInspector.UIString("Profiles"), WebInspector.ProfilesPanel);
-        var audits = new WebInspector.PanelDescriptor("audits", WebInspector.UIString("Audits"), WebInspector.AuditsPanel, true);
-        var console = new WebInspector.PanelDescriptor("console", WebInspector.UIString("Console"), WebInspector.ConsolePanel, true);
+        var elements = new WebInspector.PanelDescriptor("elements", WebInspector.UIString("Elements"), "ElementsPanel", "ElementsPanel.js");
+        var resources = new WebInspector.PanelDescriptor("resources", WebInspector.UIString("Resources"), "ResourcesPanel", "ResourcesPanel.js");
+        var network = new WebInspector.PanelDescriptor("network", WebInspector.UIString("Network"), undefined, undefined, new WebInspector.NetworkPanel());
+        var scripts = new WebInspector.PanelDescriptor("scripts", WebInspector.UIString("Sources"), undefined, undefined, new WebInspector.ScriptsPanel());
+        var timeline = new WebInspector.PanelDescriptor("timeline", WebInspector.UIString("Timeline"), "TimelinePanel", "TimelinePanel.js");
+        var profiles = new WebInspector.PanelDescriptor("profiles", WebInspector.UIString("Profiles"), undefined, undefined, new WebInspector.ProfilesPanel());
+        var audits = new WebInspector.PanelDescriptor("audits", WebInspector.UIString("Audits"), "AuditsPanel", "AuditsPanel.js");
+        var console = new WebInspector.PanelDescriptor("console", WebInspector.UIString("Console"), "ConsolePanel");
         var allDescriptors = [elements, resources, network, scripts, timeline, profiles, audits, console];
 
         var panelDescriptors = [];
@@ -458,6 +458,8 @@ WebInspector.doLoadedDone = function()
     PageAgent.canOverrideDeviceMetrics(WebInspector._initializeCapability.bind(WebInspector, "canOverrideDeviceMetrics", null));
     PageAgent.canOverrideGeolocation(WebInspector._initializeCapability.bind(WebInspector, "canOverrideGeolocation", null));
     PageAgent.canOverrideDeviceOrientation(WebInspector._initializeCapability.bind(WebInspector, "canOverrideDeviceOrientation", WebInspector._doLoadedDoneWithCapabilities.bind(WebInspector)));
+    if ("debugLoad" in WebInspector.queryParamsObject)
+        WebInspector._doLoadedDoneWithCapabilities();
 }
 
 WebInspector._doLoadedDoneWithCapabilities = function()

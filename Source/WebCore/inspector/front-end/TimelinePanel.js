@@ -28,6 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+importScript("MemoryStatistics.js");
+importScript("TimelineModel.js");
+importScript("TimelineOverviewPane.js");
+importScript("TimelinePresentationModel.js");
+importScript("TimelineFrameController.js");
+
 /**
  * @constructor
  * @extends {WebInspector.Panel}

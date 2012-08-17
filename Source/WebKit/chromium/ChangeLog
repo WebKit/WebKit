@@ -1,3 +1,16 @@
+2012-08-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: load panels code on demand
+        https://bugs.webkit.org/show_bug.cgi?id=94326
+
+        Reviewed by Vsevolod Vlasov.
+
+        * WebKit.gyp:
+        * scripts/concatenate_js_files.py:
+        (OrderedJSFilesExtractor.handle_starttag):
+        * scripts/inline_js_imports.py:
+        (main):
+
 2012-08-17  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Add tracing for active composited animations
