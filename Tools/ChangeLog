@@ -1,3 +1,16 @@
+2012-08-17  Ojan Vafai  <ojan@chromium.org>
+
+        Delete some dead code from the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=94380
+
+        Reviewed by Dirk Pranke.
+
+        This code became dead in one of the refactors of how we handle BuilderGroups.
+        There's no bug here, it's just dead code.
+        * TestResultServer/static-dashboards/builders.js:
+        (requestBuilderList):
+        (loadBuildersList):
+
 2012-08-17  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] Add content shell bots to the flakiness dashboard
