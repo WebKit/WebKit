@@ -1,3 +1,17 @@
+2012-08-18  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: load panels code on demand
+        https://bugs.webkit.org/show_bug.cgi?id=94326
+
+        Reviewed by Vsevolod Vlasov.
+
+        Showing panels prior to running tests in order to load the code for them.
+
+        * http/tests/inspector/resource-tree/resource-tree-non-unique-url.html:
+        * inspector/database-table-name-excaping.html:
+        * inspector/styles/styles-invalid-color-values.html:
+        * inspector/timeline-dfs.html:
+
 2012-08-17  Keishi Hattori  <keishi@webkit.org>
 
         Calendar picker shows wrong date when input element has year earlier than 100
@@ -7,19 +21,6 @@
 
         * fast/forms/date/calendar-picker-appearance-pre-100-expected.txt: Added.
         * fast/forms/date/calendar-picker-appearance-pre-100.html: Added.
-
-2012-08-17  Dirk Pranke  <dpranke@chromium.org>
-
-        Unreviewed, rolling out r125897.
-        http://trac.webkit.org/changeset/125897
-        https://bugs.webkit.org/show_bug.cgi?id=94326
-
-        This patch seems to have broken the inspector on the apple mac bots.
-
-        * http/tests/inspector/resource-tree/resource-tree-non-unique-url.html:
-        * inspector/database-table-name-excaping.html:
-        * inspector/styles/styles-invalid-color-values.html:
-        * inspector/timeline-dfs.html:
 
 2012-08-17  Alice Cheng  <alice_cheng@apple.com>
 

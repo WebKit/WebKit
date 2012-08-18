@@ -27,6 +27,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+importScript("ApplicationCacheItemsView.js");
+importScript("DOMStorageItemsView.js");
+importScript("DatabaseQueryView.js");
+importScript("DatabaseTableView.js");
+importScript("DirectoryContentView.js");
+importScript("IndexedDBViews.js");
+importScript("FileContentView.js");
+importScript("FileSystemView.js");
+
 /**
  * @constructor
  * @extends {WebInspector.Panel}

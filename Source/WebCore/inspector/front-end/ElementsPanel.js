@@ -28,6 +28,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+importScript("EventListenersSidebarPane.js");
+importScript("MetricsSidebarPane.js");
+importScript("PropertiesSidebarPane.js");
+importScript("StylesSidebarPane.js");
+
 /**
  * @constructor
  * @extends {WebInspector.Panel}

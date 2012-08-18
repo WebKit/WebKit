@@ -28,6 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+importScript("cm/codemirror.js");
+importScript("cm/css.js");
+importScript("cm/javascript.js");
+importScript("cm/xml.js");
+importScript("cm/htmlmixed.js");
+
 /**
  * @constructor
  * @extends {WebInspector.View}
@@ -41,7 +47,6 @@ WebInspector.CodeMirrorTextEditor = function(url, delegate)
     this._delegate = delegate;
     this._url = url;
 
-    this._loadLibraries();
     this.registerRequiredCSS("codemirror.css");
     this.registerRequiredCSS("cmdevtools.css");
 
@@ -373,26 +378,6 @@ WebInspector.CodeMirrorTextEditor.prototype = {
     _toRange: function(start, end)
     {
         return new WebInspector.TextRange(start.line, start.ch, end.line, end.ch);
-    },
-
-    _loadLibraries: function()
-    {
-        if (window.CodeMirror)
-            return;
-
-        function loadLibrary(file)
-        {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", file, false);
-            xhr.send(null);
-            window.eval(xhr.responseText);
-        }
-
-        loadLibrary("codemirror.js");
-        loadLibrary("css.js");
-        loadLibrary("javascript.js");
-        loadLibrary("xml.js");
-        loadLibrary("htmlmixed.js");
     }
 }
 

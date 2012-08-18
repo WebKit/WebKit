@@ -586,3 +586,9 @@ WebInspector.AuditRules = {};
 
 // Contributed audit categories should go into this namespace.
 WebInspector.AuditCategories = {};
+
+importScript("AuditCategories.js");
+importScript("AuditFormatters.js");
+importScript("AuditLauncherView.js");
+importScript("AuditResultView.js");
+importScript("AuditRules.js");

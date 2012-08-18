@@ -13,13 +13,12 @@ function loadIframe()
 
 function test()
 {
-    InspectorTest.addSniffer(WebInspector.ResourcesPanel.prototype, "_resourceAdded", onResource, true);
     WebInspector.showPanel("resources");
+    InspectorTest.addSniffer(WebInspector.FrameTreeElement.prototype, "appendResource", onResource, true);
 
     var cssRequestsCount = 0;
-    function onResource(event)
+    function onResource(resource)
     {
-        var resource = event.data;
         if (resource.url.match(/\.css$/) && ++cssRequestsCount === 2) {
             InspectorTest.addResult("Resources Tree:");
             InspectorTest.dumpResourcesTree();

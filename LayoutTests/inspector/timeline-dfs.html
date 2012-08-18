@@ -5,6 +5,8 @@
 
 var test = function()
 {
+    WebInspector.showPanel("timeline");
+
     function dumper(record)
     {
         InspectorTest.addResult(record.name);

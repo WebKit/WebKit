@@ -65,7 +65,7 @@ def main(argv):
         importFile.close()
         return importScript
 
-    outputScript = re.sub(r'importScripts\([\'"]([^\'"]+)[\'"]\)', replace, inputScript)
+    outputScript = re.sub(r'importScripts?\([\'"]([^\'"]+)[\'"]\)', replace, inputScript)
 
     outputFile = open(outputFileName, 'w')
     outputFile.write(outputScript)
