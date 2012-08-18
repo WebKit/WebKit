@@ -41,22 +41,22 @@ WebInspector.StylesSidebarPane = function(computedStylePane, setPseudoClassCallb
     this.settingsSelectElement.className = "select-settings";
 
     var option = document.createElement("option");
-    option.value = WebInspector.Color.Format.Original;
+    option.value = WebInspector.StylesSidebarPane.ColorFormat.Original;
     option.label = WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "As authored" : "As Authored");
     this.settingsSelectElement.appendChild(option);
 
     option = document.createElement("option");
-    option.value = WebInspector.Color.Format.HEX;
+    option.value = WebInspector.StylesSidebarPane.ColorFormat.HEX;
     option.label = WebInspector.UIString("Hex Colors");
     this.settingsSelectElement.appendChild(option);
 
     option = document.createElement("option");
-    option.value = WebInspector.Color.Format.RGB;
+    option.value = WebInspector.StylesSidebarPane.ColorFormat.RGB;
     option.label = WebInspector.UIString("RGB Colors");
     this.settingsSelectElement.appendChild(option);
 
     option = document.createElement("option");
-    option.value = WebInspector.Color.Format.HSL;
+    option.value = WebInspector.StylesSidebarPane.ColorFormat.HSL;
     option.label = WebInspector.UIString("HSL Colors");
     this.settingsSelectElement.appendChild(option);
 
@@ -101,6 +101,17 @@ WebInspector.StylesSidebarPane = function(computedStylePane, setPseudoClassCallb
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrRemoved, this._attributesRemoved, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.StyleInvalidated, this._styleInvalidated, this);
     WebInspector.settings.showUserAgentStyles.addChangeListener(this._showUserAgentStylesSettingChanged.bind(this));
+}
+
+WebInspector.StylesSidebarPane.ColorFormat = {
+    Original: "original",
+    Nickname: "nickname",
+    HEX: "hex",
+    ShortHEX: "shorthex",
+    RGB: "rgb",
+    RGBA: "rgba",
+    HSL: "hsl",
+    HSLA: "hsla"
 }
 
 // Keep in sync with RenderStyleConstants.h PseudoId enum. Array below contains pseudo id names for corresponding enum indexes.
@@ -1682,7 +1693,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         valueElement.className = "value";
         this.valueElement = valueElement;
 
-        var cf = WebInspector.Color.Format;
+        var cf = WebInspector.StylesSidebarPane.ColorFormat;
 
         if (value) {
             var self = this;

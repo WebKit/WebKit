@@ -289,7 +289,7 @@ WebInspector.Spectrum.prototype = {
 
     get outputColorFormat()
     {
-        var cf = WebInspector.Color.Format;
+        var cf = WebInspector.StylesSidebarPane.ColorFormat;
         var format = this._originalFormat;
 
         if (this.hsv[3] === 1) {

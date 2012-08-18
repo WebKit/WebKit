@@ -811,14 +811,3 @@ WebInspector.Color.PageHighlight = {
     Margin: WebInspector.Color.fromRGBA(246, 178, 107, .66),
     MarginLight: WebInspector.Color.fromRGBA(246, 178, 107, .5)
 }
-
-WebInspector.Color.Format = {
-    Original: "original",
-    Nickname: "nickname",
-    HEX: "hex",
-    ShortHEX: "shorthex",
-    RGB: "rgb",
-    RGBA: "rgba",
-    HSL: "hsl",
-    HSLA: "hsla"
-}

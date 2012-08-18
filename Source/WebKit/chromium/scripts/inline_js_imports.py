@@ -43,13 +43,12 @@ import sys
 def main(argv):
 
     if len(argv) < 3:
-        print('usage: %s input_file imports_dir output_file no_minify' % argv[0])
+        print('usage: %s input_file imports_dir output_file' % argv[0])
         return 1
 
     input_file_name = argv[1]
     imports_dir = argv[2]
     output_file_name = argv[3]
-    no_minify = len(argv) > 4 and argv[4]
 
     input_file = open(input_file_name, 'r')
     input_script = input_file.read()
@@ -67,12 +66,10 @@ def main(argv):
         import_file.close()
         return import_script
 
-    output_script = re.sub(r'importScripts?\([\'"]([^\'"]+)[\'"]\)', replace, input_script)
+    output_script = re.sub(r'importScripts\([\'"]([^\'"]+)[\'"]\)', replace, input_script)
 
     output_file = open(output_file_name, 'w')
-    if not no_minify:
-        output_script = jsmin.jsmin(output_script)
-    output_file.write(output_script)
+    output_file.write(jsmin.jsmin(output_script))
     output_file.close()
 
     # Touch output file directory to make sure that Xcode will copy

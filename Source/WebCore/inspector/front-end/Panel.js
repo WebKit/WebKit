@@ -33,7 +33,6 @@
 WebInspector.Panel = function(name)
 {
     WebInspector.View.call(this);
-    WebInspector.panels[name] = this;
 
     this.element.addStyleClass("panel");
     this.element.addStyleClass(name);
@@ -240,17 +239,15 @@ WebInspector.Panel.prototype.__proto__ = WebInspector.View.prototype;
  * @constructor
  * @param {string} name
  * @param {string} title
- * @param {string=} className
- * @param {string=} scriptName
- * @param {WebInspector.Panel=} panel
+ * @param {function(new:WebInspector.Panel)} constructor
+ * @param {boolean=} lazyInit
  */
-WebInspector.PanelDescriptor = function(name, title, className, scriptName, panel)
+WebInspector.PanelDescriptor = function(name, title, constructor, lazyInit)
 {
     this._name = name;
     this._title = title;
-    this._className = className;
-    this._scriptName = scriptName;
-    this._panel = panel;
+    this._constructor = constructor;
+    this._panel = lazyInit ? null : this.panel();
 }
 
 WebInspector.PanelDescriptor.prototype = {
@@ -291,11 +288,9 @@ WebInspector.PanelDescriptor.prototype = {
      */
     panel: function()
     {
-        if (this._panel)
-            return this._panel;
-        if (this._scriptName)
-            importScript(this._scriptName);
-        this._panel = new WebInspector[this._className];
+        if (!this._panel)
+            this._panel = new this._constructor();
+        WebInspector.panels[this._name] = this._panel;
         return this._panel;
     }
 }

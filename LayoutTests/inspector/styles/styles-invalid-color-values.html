@@ -40,7 +40,7 @@ function test()
         InspectorTest.addResult("");
         InspectorTest.addResult("color: " + colorString);
         InspectorTest.addResult("  simple: " + color.simple);
-        var cf = WebInspector.Color.Format;
+        var cf = WebInspector.StylesSidebarPane.ColorFormat;
         for (var colorFormatKey in cf) {
             var colorFormat = cf[colorFormatKey];
             // Simple colors do not have RGBA and HSLA representations.

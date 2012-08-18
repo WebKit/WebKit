@@ -781,19 +781,3 @@ StringPool.prototype = {
         }
     }
 }
-
-var _importedScripts = {};
-
-/**
- * @param {string} scriptName
- */
-function importScript(scriptName)
-{
-    if (_importedScripts[scriptName])
-        return;
-    _importedScripts[scriptName] = true;
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", scriptName, false);
-    xhr.send(null);
-    window.eval(xhr.responseText + "\n//@ sourceURL=" + scriptName);
-}

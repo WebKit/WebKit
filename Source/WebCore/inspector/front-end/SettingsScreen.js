@@ -259,13 +259,13 @@ WebInspector.GenericSettingsTab = function()
     WebInspector.settings.javaScriptDisabled.addChangeListener(this._javaScriptDisabledChanged, this);
     this._disableJSCheckbox = disableJSElement.getElementsByTagName("input")[0];
     this._updateScriptDisabledCheckbox();
-
+    
     p = this._appendSection(WebInspector.UIString("Elements"));
     p.appendChild(this._createRadioSetting(WebInspector.UIString("Color format"), [
-        [ WebInspector.Color.Format.Original, WebInspector.UIString("As authored") ],
-        [ WebInspector.Color.Format.HEX, "HEX: #DAC0DE" ],
-        [ WebInspector.Color.Format.RGB, "RGB: rgb(128, 255, 255)" ],
-        [ WebInspector.Color.Format.HSL, "HSL: hsl(300, 80%, 90%)" ] ], WebInspector.settings.colorFormat));
+        [ WebInspector.StylesSidebarPane.ColorFormat.Original, WebInspector.UIString("As authored") ],
+        [ WebInspector.StylesSidebarPane.ColorFormat.HEX, "HEX: #DAC0DE" ],
+        [ WebInspector.StylesSidebarPane.ColorFormat.RGB, "RGB: rgb(128, 255, 255)" ],
+        [ WebInspector.StylesSidebarPane.ColorFormat.HSL, "HSL: hsl(300, 80%, 90%)" ] ], WebInspector.settings.colorFormat));
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show user agent styles"), WebInspector.settings.showUserAgentStyles));
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Word wrap"), WebInspector.settings.domWordWrap));
 

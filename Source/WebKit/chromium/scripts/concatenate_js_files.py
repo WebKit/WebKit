@@ -55,6 +55,7 @@ class OrderedJSFilesExtractor(HTMLParser):
             if ('type' in attrs_dict and attrs_dict['type'] == 'text/javascript' and 'src' in attrs_dict):
                 self.ordered_js_files.append(attrs_dict['src'])
 
+
 class PathExpander:
 
     def __init__(self, paths):

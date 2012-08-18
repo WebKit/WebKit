@@ -873,11 +873,6 @@
             'conditions': [
                 ['debug_devtools==0', {
                     'dependencies': ['concatenated_devtools_js',
-                                     'concatenated_devtools_elements_js',
-                                     'concatenated_devtools_resources_js',
-                                     'concatenated_devtools_timeline_js',
-                                     'concatenated_devtools_audits_js',
-                                     'concatenated_devtools_codemirror_js',
                                      'concatenated_heap_snapshot_worker_js',
                                      'concatenated_script_formatter_worker_js',
                                      'concatenated_devtools_css'],
@@ -958,11 +953,6 @@
             'conditions': [
                 ['debug_devtools==0', {
                     'dependencies': ['concatenated_devtools_js',
-                                     'concatenated_devtools_elements_js',
-                                     'concatenated_devtools_resources_js',
-                                     'concatenated_devtools_timeline_js',
-                                     'concatenated_devtools_audits_js',
-                                     'concatenated_devtools_codemirror_js',
                                      'concatenated_heap_snapshot_worker_js',
                                      'concatenated_script_formatter_worker_js',
                                      'concatenated_devtools_css'],
@@ -979,15 +969,11 @@
                 'input_pages': [
                     '<(PRODUCT_DIR)/resources/inspector/devtools.html',
                     '<(PRODUCT_DIR)/resources/inspector/DevTools.js',
-                    '<(PRODUCT_DIR)/resources/inspector/ElementsPanel.js',
-                    '<(PRODUCT_DIR)/resources/inspector/ResourcesPanel.js',
-                    '<(PRODUCT_DIR)/resources/inspector/TimelinePanel.js',
-                    '<(PRODUCT_DIR)/resources/inspector/AuditsPanel.js',
-                    '<(PRODUCT_DIR)/resources/inspector/CodeMirrorTextEditor.js',
                     '<(PRODUCT_DIR)/resources/inspector/HeapSnapshotWorker.js',
                     '<(PRODUCT_DIR)/resources/inspector/ScriptFormatterWorker.js',
                     '<(PRODUCT_DIR)/resources/inspector/devTools.css',
                     '<(PRODUCT_DIR)/resources/inspector/devtools_extension_api.js',
+                    '<@(webinspector_standalone_js_files)',
                     '<@(webinspector_standalone_css_files)',
                 ],
                 'images': [
@@ -1103,85 +1089,11 @@
                         'outputs': ['<(PRODUCT_DIR)/resources/inspector/DevTools.js'],
                         'action': ['python', '<@(_script_name)', '<@(_input_page)', '<@(_search_path)', '<@(_outputs)'],
                     }],
-                },
-                {
-                    'target_name': 'concatenated_devtools_elements_js',
-                    'type': 'none',
-                    'actions': [{
-                        'action_name': 'concatenate_devtools_elements_js',
-                        'script_name': 'scripts/inline_js_imports.py',
-                        'input_file': '../../WebCore/inspector/front-end/ElementsPanel.js',
-                        'inputs': [
-                            '<@(_script_name)',
-                            '<@(webinspector_elements_js_files)',
+                    'copies': [{
+                        'destination': '<(PRODUCT_DIR)/resources/inspector',
+                        'files': [
+                            '<@(webinspector_standalone_js_files)',
                         ],
-                        'search_path': '../../WebCore/inspector/front-end',
-                        'outputs': ['<(PRODUCT_DIR)/resources/inspector/ElementsPanel.js'],
-                        'action': ['python', '<@(_script_name)', '<@(_input_file)', '<@(_search_path)', '<@(_outputs)'],
-                    }],
-                },
-                {
-                    'target_name': 'concatenated_devtools_resources_js',
-                    'type': 'none',
-                    'actions': [{
-                        'action_name': 'concatenate_devtools_resources_js',
-                        'script_name': 'scripts/inline_js_imports.py',
-                        'input_file': '../../WebCore/inspector/front-end/ResourcesPanel.js',
-                        'inputs': [
-                            '<@(_script_name)',
-                            '<@(webinspector_resources_js_files)',
-                        ],
-                        'search_path': '../../WebCore/inspector/front-end',
-                        'outputs': ['<(PRODUCT_DIR)/resources/inspector/ResourcesPanel.js'],
-                        'action': ['python', '<@(_script_name)', '<@(_input_file)', '<@(_search_path)', '<@(_outputs)'],
-                    }],
-                },
-                {
-                    'target_name': 'concatenated_devtools_timeline_js',
-                    'type': 'none',
-                    'actions': [{
-                        'action_name': 'concatenate_devtools_timeline_js',
-                        'script_name': 'scripts/inline_js_imports.py',
-                        'input_file': '../../WebCore/inspector/front-end/TimelinePanel.js',
-                        'inputs': [
-                            '<@(_script_name)',
-                            '<@(webinspector_resources_js_files)',
-                        ],
-                        'search_path': '../../WebCore/inspector/front-end',
-                        'outputs': ['<(PRODUCT_DIR)/resources/inspector/TimelinePanel.js'],
-                        'action': ['python', '<@(_script_name)', '<@(_input_file)', '<@(_search_path)', '<@(_outputs)'],
-                    }],
-                },
-                {
-                    'target_name': 'concatenated_devtools_audits_js',
-                    'type': 'none',
-                    'actions': [{
-                        'action_name': 'concatenate_devtools_audits_js',
-                        'script_name': 'scripts/inline_js_imports.py',
-                        'input_file': '../../WebCore/inspector/front-end/AuditsPanel.js',
-                        'inputs': [
-                            '<@(_script_name)',
-                            '<@(webinspector_audits_js_files)',
-                        ],
-                        'search_path': '../../WebCore/inspector/front-end',
-                        'outputs': ['<(PRODUCT_DIR)/resources/inspector/AuditsPanel.js'],
-                        'action': ['python', '<@(_script_name)', '<@(_input_file)', '<@(_search_path)', '<@(_outputs)'],
-                    }],
-                },
-                {
-                    'target_name': 'concatenated_devtools_codemirror_js',
-                    'type': 'none',
-                    'actions': [{
-                        'action_name': 'concatenate_devtools_codemirror_js',
-                        'script_name': 'scripts/inline_js_imports.py',
-                        'input_file': '../../WebCore/inspector/front-end/CodeMirrorTextEditor.js',
-                        'inputs': [
-                            '<@(_script_name)',
-                            '<@(webinspector_codemirror_js_files)',
-                        ],
-                        'search_path': '../../WebCore/inspector/front-end',
-                        'outputs': ['<(PRODUCT_DIR)/resources/inspector/CodeMirrorTextEditor.js'],
-                        'action': ['python', '<@(_script_name)', '<@(_input_file)', '<@(_search_path)', '<@(_outputs)', 'true'],
                     }],
                 },
                 {

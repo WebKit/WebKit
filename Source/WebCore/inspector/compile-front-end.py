@@ -95,6 +95,7 @@ modules = [
             "SnippetStorage.js",
             "SourceMapping.js",
             "TimelineManager.js",
+            "TimelineModel.js",
             "RawSourceCode.js",
             "RemoteObject.js",
             "Resource.js",
@@ -162,6 +163,7 @@ modules = [
             "DOMBreakpointsSidebarPane.js",
             "DOMPresentationUtils.js",
             "ElementsTreeOutline.js",
+            "EventListenersSidebarPane.js",
             "FilteredItemSelectionDialog.js",
             "GoToLineDialog.js",
             "NavigatorOverlayController.js",
@@ -170,6 +172,7 @@ modules = [
             "JavaScriptSource.js",
             "ObjectPopoverHelper.js",
             "ObjectPropertiesSection.js",
+            "PropertiesSidebarPane.js",
             "SourceFrame.js",
             "TimelineGrid.js",
             "UISourceCodeFrame.js",
@@ -179,11 +182,9 @@ modules = [
         "target_name": "elements",
         "dependencies": ["components"],
         "sources": [
-            "ElementsPanel.js",
-            "EventListenersSidebarPane.js",
-            "MetricsSidebarPane.js",
-            "PropertiesSidebarPane.js",
             "StylesSidebarPane.js",
+            "MetricsSidebarPane.js",
+            "ElementsPanel.js",
         ]
     },
     {
@@ -253,7 +254,6 @@ modules = [
         "dependencies": ["components"],
         "sources": [
             "MemoryStatistics.js",
-            "TimelineModel.js",
             "TimelineOverviewPane.js",
             "TimelinePanel.js",
             "TimelinePresentationModel.js",
