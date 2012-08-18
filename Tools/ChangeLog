@@ -1,3 +1,22 @@
+2012-08-17  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: don't fail tests if ImageDiff fails on the wk2 ports
+        https://bugs.webkit.org/show_bug.cgi?id=94396
+
+        Reviewed by Ryosuke Niwa.
+
+        It appears that WTR is generating PNGs that ImageDiff doesn't
+        like, and so we're getting lots of "can not get ImageDiff"
+        errors (see bug 81962). The change in r124581 made this a test
+        failure, and this is causing the WK2 bots to frequently abort
+        with 500+ failures. 
+
+        This change makes ImageDiff errors not be test failures just for
+        WK2 for now until we can better triage what's going on.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._compare_image):
+
 2012-08-17  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add a style check for #include "cc/..." in chromium files

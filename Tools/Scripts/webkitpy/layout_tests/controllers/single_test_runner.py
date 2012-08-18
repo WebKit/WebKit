@@ -266,7 +266,10 @@ class SingleTestRunner(object):
         elif driver_output.image_hash != expected_driver_output.image_hash:
             diff_result = self._port.diff_image(driver_output.image, expected_driver_output.image)
             err_str = diff_result[2]
-            if err_str:
+            # FIXME: see https://bugs.webkit.org/show_bug.cgi?id=94277 and
+            # https://bugs.webkit.org/show_bug.cgi?id=81962; ImageDiff doesn't
+            # seem to be working with WTR properly and tons of tests are failing.
+            if err_str and not self._options.webkit_test_runner:
                 _log.warning('  %s : %s' % (self._test_name, err_str))
                 failures.append(test_failures.FailureImageHashMismatch())
                 driver_output.error = (driver_output.error or '') + err_str
