@@ -50,7 +50,8 @@ class PerfalizerTaskTest(unittest.TestCase):
             if args[0] in commands_to_fail:
                 raise ScriptError
 
-        def run_perf_test(build_path):
+        def run_perf_test(build_path, description):
+            self.assertTrue(description == 'without 10000' or description == 'with 10000')
             if 'run-perf-tests' in commands_to_fail:
                 return -1
             if 'results-page' not in commands_to_fail:

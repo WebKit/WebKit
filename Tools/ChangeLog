@@ -1,3 +1,21 @@
+2012-08-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perfalizer should differentiate results with and without the patch
+        https://bugs.webkit.org/show_bug.cgi?id=94399
+
+        Reviewed by Dirk Pranke.
+
+        Add "with 12345" and "without 12345" descriptions in results JSON so that graphs in
+        the results page are labled accordingly.
+
+        Also use _build_without_patch when building without a patch so that we get the right error message.
+
+        * Scripts/webkitpy/tool/commands/perfalizer.py:
+        (PerfalizerTask.run):
+        (PerfalizerTask._run_perf_test):
+        * Scripts/webkitpy/tool/commands/perfalizer_unittest.py:
+        (PerfalizerTaskTest._create_and_run_perfalizer.run_perf_test):
+
 2012-08-17  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: don't fail tests if ImageDiff fails on the wk2 ports

@@ -72,7 +72,7 @@ class PerfalizerTask(PatchAnalysisTask):
         head_revision = self._tool.scm().head_svn_revision()
 
         self._logger('Building WebKit at r%s without the patch' % head_revision)
-        if not self._build():
+        if not self._build_without_patch():
             return False
 
         if not self._port.check_build(needs_http=False):
@@ -96,11 +96,11 @@ class PerfalizerTask(PatchAnalysisTask):
             filesystem.remove(self._json_path())
 
         self._logger("Running performance tests...")
-        if self._run_perf_test(self._build_directory_without_patch) < 0:
+        if self._run_perf_test(self._build_directory_without_patch, 'without %d' % self._patch.id()) < 0:
             self._logger('Failed to run performance tests without the patch.')
             return False
 
-        if self._run_perf_test(self._build_directory) < 0:
+        if self._run_perf_test(self._build_directory, 'with %d' % self._patch.id()) < 0:
             self._logger('Failed to run performance tests with the patch.')
             return False
 
@@ -129,11 +129,11 @@ class PerfalizerTask(PatchAnalysisTask):
     def _results_page_path(self):
         return self._tool.filesystem.join(self._build_directory, 'PerformanceTestResults.html')
 
-    def _run_perf_test(self, build_path):
+    def _run_perf_test(self, build_path, description):
         filesystem = self._tool.filesystem
         script_path = filesystem.join(filesystem.dirname(self._tool.path()), 'run-perf-tests')
         perf_test_runner_args = [script_path, '--no-build', '--no-show-results', '--build-directory', build_path,
-            '--output-json-path', self._json_path()]
+            '--output-json-path', self._json_path(), '--description', description]
         return self._tool.executive.run_and_throw_if_fail(perf_test_runner_args, cwd=self._tool.scm().checkout_root)
 
     def run_command(self, command):
