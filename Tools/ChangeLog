@@ -1,3 +1,14 @@
+2012-08-17  Kiran Muppala  <cmuppala@apple.com>
+
+        Add self to webkit contributors list
+        https://bugs.webkit.org/show_bug.cgi?id=94409
+
+        Reviewed by Dirk Pranke.
+
+        Add name, email and irc handle to webkit contributors list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-08-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perfalizer should differentiate results with and without the patch
