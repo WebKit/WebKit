@@ -2736,6 +2736,15 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          'wtf includes should be <wtf/file.h> instead of "wtf/file.h".'
                                          '  [build/include] [4]')
 
+    def test_check_cc_includes(self):
+        self.assert_language_rules_check('bar/chromium/foo.cpp',
+                                         '#include "config.h"\n'
+                                         '#include "foo.h"\n'
+                                         '\n'
+                                         '#include "cc/CCProxy.h"\n',
+                                         'cc includes should be "CCFoo.h" instead of "cc/CCFoo.h".'
+                                         '  [build/include] [4]')
+
     def test_classify_include(self):
         classify_include = cpp_style._classify_include
         include_state = cpp_style._IncludeState()

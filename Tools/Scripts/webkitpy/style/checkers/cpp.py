@@ -2747,6 +2747,10 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
         error(line_number, 'build/include', 4,
               'wtf includes should be <wtf/file.h> instead of "wtf/file.h".')
 
+    if filename.find('/chromium/') != -1 and include.startswith('cc/CC'):
+        error(line_number, 'build/include', 4,
+              'cc includes should be "CCFoo.h" instead of "cc/CCFoo.h".')
+
     duplicate_header = include in include_state
     if duplicate_header:
         error(line_number, 'build/include', 4,

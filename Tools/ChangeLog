@@ -1,3 +1,17 @@
+2012-08-17  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add a style check for #include "cc/..." in chromium files
+        https://bugs.webkit.org/show_bug.cgi?id=94382
+
+        Reviewed by Adam Barth.
+
+        Adds a style check to make sure new chromium code follows the correct convention for including cc files.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_include_line):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (OrderOfIncludesTest.test_check_cc_includes):
+
 2012-08-17  Ojan Vafai  <ojan@chromium.org>
 
         Delete some dead code from the flakiness dashboard
