@@ -19,23 +19,23 @@ function setupEventListeners()
 function test()
 {
     WebInspector.settings.eventListenersFilter.set("all");
-    InspectorTest.selectNodeWithId("div-in-iframe", step1);
+    InspectorTest.evaluateInPage("setupEventListeners()", step1);
 
     function step1()
+    {
+        InspectorTest.selectNodeWithId("div-in-iframe", step2);
+    }
+
+    function step2()
     {
         InspectorTest.expandAndDumpSelectedElementEventListeners(InspectorTest.completeTest);
     }
 }
 
-function onloadHandler()
-{
-    setupEventListeners();
-    runTest();
-}
 </script>
 </head>
 
-<body onload="onloadHandler()">
+<body onload="runTest()">
 <p>
 Tests event listeners output in the Elements sidebar panel when the listeners are added on an element in about:blank page.
 </p>

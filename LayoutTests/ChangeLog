@@ -1,5 +1,11 @@
 2012-08-18  Pavel Feldman  <pfeldman@chromium.org>
 
+        Follow up to r125966, fixing flaky tests.
+
+        * inspector/elements/event-listeners-about-blank.html:
+
+2012-08-18  Pavel Feldman  <pfeldman@chromium.org>
+
         Web Inspector: make profiles panel a lazily loaded module.
         https://bugs.webkit.org/show_bug.cgi?id=94351
 

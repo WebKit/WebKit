@@ -8,7 +8,7 @@
 document.addEventListener("DOMContentLoaded", runTest);
 function test()
 {
-    var resourcesPanel = WebInspector.panels.resources;
+    var resourcesPanel = WebInspector.showPanel("resources");
     var fileSystemListTreeElement = resourcesPanel.fileSystemListTreeElement;
     if (!fileSystemListTreeElement) {
         fileSystemListTreeElement = new WebInspector.FileSystemListTreeElement(resourcesPanel);
@@ -23,7 +23,6 @@ function test()
     var testStep = [
         function()
         {
-            WebInspector.showPanel("resources");
             InspectorTest.createDirectory("/hoge", testStep.shift());
         },
 
