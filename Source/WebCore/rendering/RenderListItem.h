@@ -59,7 +59,6 @@ private:
     virtual void willBeDestroyed();
 
     virtual void insertedIntoTree() OVERRIDE;
-    virtual void willBeRemovedFromTree() OVERRIDE;
 
     virtual bool isEmpty() const;
     virtual void paint(PaintInfo&, const LayoutPoint&);

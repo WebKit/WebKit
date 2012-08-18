@@ -939,7 +939,6 @@ protected:
     virtual bool canBeReplacedWithInlineRunIn() const;
 
     virtual void insertedIntoTree();
-    virtual void willBeRemovedFromTree();
 
 private:
     RenderStyle* firstLineStyleSlowCase() const;

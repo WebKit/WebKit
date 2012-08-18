@@ -83,13 +83,6 @@ void RenderListItem::insertedIntoTree()
     updateListMarkerNumbers();
 }
 
-void RenderListItem::willBeRemovedFromTree()
-{
-    RenderBlock::willBeRemovedFromTree();
-
-    updateListMarkerNumbers();
-}
-
 static bool isList(Node* node)
 {
     return (node->hasTagName(ulTag) || node->hasTagName(olTag));
