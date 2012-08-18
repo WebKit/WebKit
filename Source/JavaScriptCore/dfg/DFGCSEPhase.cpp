@@ -843,6 +843,8 @@ private:
         // At this point we will eliminate all references to this node.
         m_replacements[m_compileIndex] = replacement;
         
+        m_changed = true;
+        
         return true;
     }
     
@@ -856,6 +858,8 @@ private:
         ASSERT(node.refCount() == 1);
         ASSERT(node.mustGenerate());
         node.setOpAndDefaultFlags(Phantom);
+        
+        m_changed = true;
     }
     
     void eliminate(NodeIndex nodeIndex, NodeType phantomType = Phantom)
@@ -867,6 +871,8 @@ private:
             return;
         ASSERT(node.mustGenerate());
         node.setOpAndDefaultFlags(phantomType);
+        
+        m_changed = true;
     }
     
     void performNodeCSE(Node& node)
@@ -982,7 +988,7 @@ private:
             
         case GetLocalUnlinked: {
             NodeIndex relevantLocalOpIgnored;
-            m_changed |= setReplacement(getLocalLoadElimination(node.unlinkedLocal(), relevantLocalOpIgnored, true));
+            setReplacement(getLocalLoadElimination(node.unlinkedLocal(), relevantLocalOpIgnored, true));
             break;
         }
             
