@@ -65,6 +65,7 @@ private:
     void calculateEndingPosition();
     void calculateTypingStyleAfterDelete();
     void clearTransientState();
+    void makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss();
     virtual void removeNode(PassRefPtr<Node>);
     virtual void deleteTextFromNode(PassRefPtr<Text>, unsigned, unsigned);
     void removeRedundantBlocks();

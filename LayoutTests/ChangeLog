@@ -1,3 +1,18 @@
+2012-08-17  Alice Cheng  <alice_cheng@apple.com>
+
+        Preserve styling elements in DeleteSelectionCommand
+        <rdar://problem/12040676>
+        https://bugs.webkit.org/show_bug.cgi?id=93643
+
+        Reviewed by Ryosuke Niwa.
+
+        Test if delete selection command does move styling elements to
+        rootEditableElement, when the selection contains some. Also test command's
+        undoness.
+
+        * editing/execCommand/delete-selection-has-style-expected.txt: Added.
+        * editing/execCommand/delete-selection-has-style.html: Added.
+
 2012-08-17  Sukolsak Sakshuwong  <sukolsak@google.com>
 
         Disconnect UndoManager when its undo scope host is destroyed
