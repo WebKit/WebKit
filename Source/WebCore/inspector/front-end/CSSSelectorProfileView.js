@@ -286,15 +286,16 @@ WebInspector.CSSSelectorProfileType.prototype = {
 
     /**
      * @override
+     * @param {WebInspector.ProfilesPanel} profilesPanel
      * @return {boolean}
      */
-    buttonClicked: function()
+    buttonClicked: function(profilesPanel)
     {
         if (this._recording) {
-            this._stopRecordingProfile();
+            this._stopRecordingProfile(profilesPanel);
             return false;
         } else {
-            this._startRecordingProfile();
+            this._startRecordingProfile(profilesPanel);
             return true;
         }
     },
@@ -319,14 +320,20 @@ WebInspector.CSSSelectorProfileType.prototype = {
         this._recording = isProfiling;
     },
 
-    _startRecordingProfile: function()
+    /**
+     * @param {WebInspector.ProfilesPanel} profilesPanel
+     */
+    _startRecordingProfile: function(profilesPanel)
     {
         this._recording = true;
         CSSAgent.startSelectorProfiler();
-        WebInspector.panels.profiles.setRecordingProfile(WebInspector.CSSSelectorProfileType.TypeId, true);
+        profilesPanel.setRecordingProfile(WebInspector.CSSSelectorProfileType.TypeId, true);
     },
 
-    _stopRecordingProfile: function()
+    /**
+     * @param {WebInspector.ProfilesPanel} profilesPanel
+     */
+    _stopRecordingProfile: function(profilesPanel)
     {
         /**
          * @param {?Protocol.Error} error
@@ -340,8 +347,8 @@ WebInspector.CSSSelectorProfileType.prototype = {
             var uid = this._profileUid++;
             var title = WebInspector.UIString("Profile %d", uid) + String.sprintf(" (%s)", Number.secondsToString(profile.totalTime / 1000));
             var profileHeader = new WebInspector.CSSProfileHeader(this, title, uid, profile);
-            WebInspector.panels.profiles.addProfileHeader(profileHeader);
-            WebInspector.panels.profiles.setRecordingProfile(WebInspector.CSSSelectorProfileType.TypeId, false);
+            profilesPanel.addProfileHeader(profileHeader);
+            profilesPanel.setRecordingProfile(WebInspector.CSSSelectorProfileType.TypeId, false);
         }
 
         this._recording = false;
@@ -388,8 +395,9 @@ WebInspector.CSSProfileHeader.prototype = {
 
     /**
      * @override
+     * @param {WebInspector.ProfilesPanel} profilesPanel
      */
-    createView: function()
+    createView: function(profilesPanel)
     {
         var profile = /** @type {CSSAgent.SelectorProfile} */this._protocolData;
         return new WebInspector.CSSSelectorProfileView(profile);

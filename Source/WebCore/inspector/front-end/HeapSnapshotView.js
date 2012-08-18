@@ -31,6 +31,7 @@
 /**
  * @constructor
  * @extends {WebInspector.View}
+ * @param {WebInspector.ProfilesPanel} parent
  */
 WebInspector.HeapSnapshotView = function(parent, profile)
 {
@@ -407,7 +408,7 @@ WebInspector.HeapSnapshotView.prototype = {
 
     _profiles: function()
     {
-        return WebInspector.panels.profiles.getProfiles(WebInspector.HeapSnapshotProfileType.TypeId);
+        return this.parent.getProfiles(WebInspector.HeapSnapshotProfileType.TypeId);
     },
 
     processLoadedSnapshot: function(profile, snapshot)
@@ -420,10 +421,11 @@ WebInspector.HeapSnapshotView.prototype = {
 
     /**
      * @param {WebInspector.ContextMenu} contextMenu
+     * @param {Event} event
      */
     populateContextMenu: function(contextMenu, event)
     {
-        this.dataGrid.populateContextMenu(contextMenu, event);
+        this.dataGrid.populateContextMenu(this.parent, contextMenu, event);
     },
 
     _selectionChanged: function(event)
@@ -720,8 +722,6 @@ WebInspector.HeapSnapshotView.prototype = {
 
 WebInspector.HeapSnapshotView.prototype.__proto__ = WebInspector.View.prototype;
 
-WebInspector.settings.showHeapSnapshotObjectsHiddenProperties = WebInspector.settings.createSetting("showHeaSnapshotObjectsHiddenProperties", false);
-
 /**
  * @constructor
  * @extends {WebInspector.ProfileType}
@@ -741,11 +741,12 @@ WebInspector.HeapSnapshotProfileType.prototype = {
 
     /**
      * @override
+     * @param {WebInspector.ProfilesPanel} profilesPanel
      * @return {boolean}
      */
-    buttonClicked: function()
+    buttonClicked: function(profilesPanel)
     {
-        WebInspector.panels.profiles.takeHeapSnapshot();
+        profilesPanel.takeHeapSnapshot();
         return false;
     },
 
@@ -846,10 +847,11 @@ WebInspector.HeapProfileHeader.prototype = {
 
     /**
      * @override
+     * @param {WebInspector.ProfilesPanel} profilesPanel
      */
-    createView: function()
+    createView: function(profilesPanel)
     {
-        return new WebInspector.HeapSnapshotView(WebInspector.panels.profiles, this);
+        return new WebInspector.HeapSnapshotView(profilesPanel, this);
     },
 
     snapshotProxy: function()

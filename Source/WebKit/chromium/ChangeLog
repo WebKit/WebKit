@@ -1,9 +1,32 @@
 2012-08-18  Pavel Feldman  <pfeldman@chromium.org>
 
+        Web Inspector: make profiles panel a lazily loaded module.
+        https://bugs.webkit.org/show_bug.cgi?id=94351
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebKit.gyp:
+
+2012-08-18  Pavel Feldman  <pfeldman@chromium.org>
+
         Web Inspector: load panels code on demand
         https://bugs.webkit.org/show_bug.cgi?id=94326
 
         Reviewed by Vsevolod Vlasov.
+
+        * WebKit.gyp:
+        * scripts/concatenate_js_files.py:
+        (OrderedJSFilesExtractor.handle_starttag):
+        * scripts/inline_js_imports.py:
+        (main):
+
+2012-08-17  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, rolling out r125897.
+        http://trac.webkit.org/changeset/125897
+        https://bugs.webkit.org/show_bug.cgi?id=94326
+
+        this patch seems to have broken the inspector on the apple mac bots.
 
         * WebKit.gyp:
         * scripts/concatenate_js_files.py:

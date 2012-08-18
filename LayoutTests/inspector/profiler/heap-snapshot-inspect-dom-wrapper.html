@@ -13,6 +13,7 @@ function handleLoad()
 
 function test()
 {
+    WebInspector.showPanel("profiles");
     ProfilerAgent.takeHeapSnapshot(step0);
 
     function step0()

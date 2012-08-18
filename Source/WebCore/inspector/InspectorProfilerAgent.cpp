@@ -321,7 +321,7 @@ void InspectorProfilerAgent::resetState()
 
 void InspectorProfilerAgent::resetFrontendProfiles()
 {
-    if (m_frontend
+    if (m_frontend && enabled()
         && m_profiles.begin() == m_profiles.end()
         && m_snapshots.begin() == m_snapshots.end())
         m_frontend->resetProfiles();
