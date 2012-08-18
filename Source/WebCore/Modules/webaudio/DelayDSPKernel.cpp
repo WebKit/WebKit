@@ -99,7 +99,7 @@ void DelayDSPKernel::process(const float* source, float* destination, size_t fra
         return;
         
     float sampleRate = this->sampleRate();
-    double delayTime = delayProcessor() ? delayProcessor()->delayTime()->value() : m_desiredDelayFrames / sampleRate;
+    double delayTime = delayProcessor() ? delayProcessor()->delayTime()->finalValue() : m_desiredDelayFrames / sampleRate;
 
     // Make sure the delay time is in a valid range.
     delayTime = min(maxDelayTime(), delayTime);

@@ -56,8 +56,13 @@ public:
     virtual bool canUpdateState() OVERRIDE { return true; }
     virtual void didUpdate() OVERRIDE { }
 
+    // Intrinsic value.
     float value();
     void setValue(float);
+
+    // Final value for k-rate parameters, otherwise use calculateSampleAccurateValues() for a-rate.
+    // Must be called in the audio thread.
+    float finalValue();
 
     String name() const { return m_name; }
 
@@ -112,7 +117,8 @@ protected:
     }
 
 private:
-    void calculateAudioRateSignalValues(float* values, unsigned numberOfValues);
+    // sampleAccurate corresponds to a-rate (audio rate) vs. k-rate in the Web Audio specification.
+    void calculateFinalValues(float* values, unsigned numberOfValues, bool sampleAccurate);
     void calculateTimelineValues(float* values, unsigned numberOfValues);
 
     String m_name;

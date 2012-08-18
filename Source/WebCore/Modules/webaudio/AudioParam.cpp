@@ -94,6 +94,13 @@ bool AudioParam::smooth()
     return false;
 }
 
+float AudioParam::finalValue()
+{
+    float value;
+    calculateFinalValues(&value, 1, false);
+    return value;
+}
+
 void AudioParam::calculateSampleAccurateValues(float* values, unsigned numberOfValues)
 {
     bool isSafe = context() && context()->isAudioThread() && values && numberOfValues;
@@ -101,31 +108,30 @@ void AudioParam::calculateSampleAccurateValues(float* values, unsigned numberOfV
     if (!isSafe)
         return;
 
-    if (numberOfRenderingConnections())
-        calculateAudioRateSignalValues(values, numberOfValues);
-    else
-        calculateTimelineValues(values, numberOfValues);
+    calculateFinalValues(values, numberOfValues, true);
 }
 
-void AudioParam::calculateAudioRateSignalValues(float* values, unsigned numberOfValues)
+void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bool sampleAccurate)
 {
-    bool isGood = numberOfRenderingConnections() && numberOfValues;
+    bool isGood = context() && context()->isAudioThread() && values && numberOfValues;
     ASSERT(isGood);
     if (!isGood)
         return;
 
     // The calculated result will be the "intrinsic" value summed with all audio-rate connections.
 
-    if (m_timeline.hasValues()) {
-        // Calculate regular timeline values, if we have any.
+    if (sampleAccurate) {
+        // Calculate sample-accurate (a-rate) intrinsic values.
         calculateTimelineValues(values, numberOfValues);
     } else {
-        // Otherwise set values array to our constant value.
-        float value = m_value; // Cache in local.
+        // Calculate control-rate (k-rate) intrinsic value.
+        bool hasValue;
+        float timelineValue = m_timeline.valueForContextTime(context(), narrowPrecisionToFloat(m_value), hasValue);
 
-        // FIXME: can be optimized if we create a new VectorMath function.
-        for (unsigned i = 0; i < numberOfValues; ++i)
-            values[i] = value;
+        if (hasValue)
+            m_value = timelineValue;
+
+        values[0] = narrowPrecisionToFloat(m_value);
     }
 
     // Now sum all of the audio-rate connections together (unity-gain summing junction).
@@ -138,7 +144,7 @@ void AudioParam::calculateAudioRateSignalValues(float* values, unsigned numberOf
         ASSERT(output);
 
         // Render audio from this output.
-        AudioBus* connectionBus = output->pull(0, numberOfValues);
+        AudioBus* connectionBus = output->pull(0, AudioNode::ProcessingSizeInFrames);
 
         // Sum, with unity-gain.
         summingBus.sumFrom(*connectionBus);
