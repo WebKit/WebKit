@@ -1,3 +1,24 @@
+2012-08-17  Michael Saboff  <msaboff@apple.com>
+
+        Add ability to create AtomicString using LChar* buffer and length
+        https://bugs.webkit.org/show_bug.cgi?id=94381
+
+        Reviewed by Geoffrey Garen.
+
+        Allows the use of 8 bit string data directly without converting to 16 bits first.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::LCharBufferTranslator::hash):
+        (LCharBufferTranslator):
+        (WTF::LCharBufferTranslator::equal):
+        (WTF::LCharBufferTranslator::translate):
+        (WTF::AtomicString::add):
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::AtomicString):
+        (AtomicString):
+        * wtf/text/StringImpl.h:
+        (StringImpl):
+
 2012-08-17  Benjamin Poulain  <bpoulain@apple.com>
 
         Make it easier to append a literal to StringBuilder

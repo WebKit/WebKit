@@ -298,6 +298,26 @@ PassRefPtr<StringImpl> AtomicString::add(StringImpl* baseString, unsigned start,
     SubstringLocation buffer = { baseString, start, length };
     return addToStringTable<SubstringLocation, SubstringTranslator>(buffer);
 }
+    
+typedef HashTranslatorCharBuffer<LChar> LCharBuffer;
+struct LCharBufferTranslator {
+    static unsigned hash(const LCharBuffer& buf)
+    {
+        return StringHasher::computeHashAndMaskTop8Bits(buf.s, buf.length);
+    }
+
+    static bool equal(StringImpl* const& str, const LCharBuffer& buf)
+    {
+        return WTF::equal(str, buf.s, buf.length);
+    }
+
+    static void translate(StringImpl*& location, const LCharBuffer& buf, unsigned hash)
+    {
+        location = StringImpl::create(buf.s, buf.length).leakRef();
+        location->setHash(hash);
+        location->setIsAtomic(true);
+    }
+};
 
 typedef HashTranslatorCharBuffer<char> CharBuffer;
 struct CharBufferFromLiteralDataTranslator {
@@ -318,6 +338,18 @@ struct CharBufferFromLiteralDataTranslator {
         location->setIsAtomic(true);
     }
 };
+
+PassRefPtr<StringImpl> AtomicString::add(const LChar* s, unsigned length)
+{
+    if (!s)
+        return 0;
+
+    if (!length)
+        return StringImpl::empty();
+
+    LCharBuffer buffer = { s, length };
+    return addToStringTable<LCharBuffer, LCharBufferTranslator>(buffer);
+}
 
 PassRefPtr<StringImpl> AtomicString::addFromLiteralData(const char* characters, unsigned length)
 {

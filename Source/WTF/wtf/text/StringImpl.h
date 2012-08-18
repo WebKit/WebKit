@@ -58,6 +58,7 @@ namespace WTF {
 struct CStringTranslator;
 template<typename CharacterType> struct HashAndCharactersTranslator;
 struct HashAndUTF8CharactersTranslator;
+struct LCharBufferTranslator;
 struct CharBufferFromLiteralDataTranslator;
 struct SubstringTranslator;
 struct UCharBufferTranslator;
@@ -77,6 +78,7 @@ class StringImpl {
     template<typename CharacterType> friend struct WTF::HashAndCharactersTranslator;
     friend struct WTF::HashAndUTF8CharactersTranslator;
     friend struct WTF::CharBufferFromLiteralDataTranslator;
+    friend struct WTF::LCharBufferTranslator;
     friend struct WTF::SubstringTranslator;
     friend struct WTF::UCharBufferTranslator;
     friend class AtomicStringImpl;
