@@ -97,6 +97,7 @@ public:
                 case GetByVal:
                 case PutByVal:
                 case PutByValAlias:
+                case PutByValSafe:
                 case GetArrayLength:
                 case Phantom:
                     // Don't count these uses.
@@ -220,17 +221,22 @@ public:
                     break;
                     
                 case PutByVal:
-                case PutByValAlias: {
+                case PutByValAlias:
+                case PutByValSafe: {
                     Edge child1 = m_graph.varArgChild(node, 0);
                     Edge child2 = m_graph.varArgChild(node, 1);
                     
                     if (!m_graph[child1].prediction() || !m_graph[child2].prediction())
                         break;
-                    if (!m_graph[child2].shouldSpeculateInteger() || !isActionableMutableArraySpeculation(m_graph[child1].prediction())) {
+                    if (!m_graph[child2].shouldSpeculateInteger()
+#if USE(JSVALUE32_64)
+                        || m_graph[child1].shouldSpeculateArguments()
+#endif
+                        ) {
                         clobber(live);
                         break;
                     }
-                    if (node.op() == PutByValAlias)
+                    if (node.op() != PutByValSafe)
                         break;
                     if (m_graph[child1].shouldSpeculateArguments())
                         break;
@@ -296,7 +302,7 @@ public:
             dataLog("Hoisting checks for %s\n", m_graph.nameOfVariableAccessData(it->first));
         }
 #endif // DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-
+        
         // Make changes:
         // 1) If a variable's live range does not span a clobber, then inject structure
         //    checks before the SetLocal.

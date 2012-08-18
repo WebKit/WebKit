@@ -956,7 +956,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             m_isValid = false;
             break;
         }
-        if (!m_graph[child2].shouldSpeculateInteger() || !isActionableMutableArraySpeculation(m_graph[child1].prediction())
+        if (!m_graph[child2].shouldSpeculateInteger()
 #if USE(JSVALUE32_64)
             || m_graph[child1].shouldSpeculateArguments()
 #endif

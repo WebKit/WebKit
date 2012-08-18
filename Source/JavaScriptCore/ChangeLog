@@ -1,3 +1,20 @@
+2012-08-17  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG is still too pessimistic about what constitutes a side-effect on array accesses
+        https://bugs.webkit.org/show_bug.cgi?id=94309
+
+        Reviewed by Geoffrey Garen.
+
+        This change means that even if structure transition watchpoints are not used for
+        hoisting of clobbered structure checks, we still retain good performance on the
+        benchmarks we care about. That's important, since butterflies will likely make
+        most array structures not watchpointable.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+
 2012-08-17  Milian Wolff  <milian.wolff@kdab.com>
 
         [Qt] QNX build fails due to ctype usage in system headers
