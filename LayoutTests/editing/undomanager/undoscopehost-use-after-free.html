@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="div" undoscope></div>
+<script>
+description("This tests that undoManager doesn't have use-after-free vulnerabilities "
+    + "after its undoScopeHost has been reclaimed by GC.");
+
+var div = document.getElementById("div");
+var undoManager = div.undoManager;
+
+div.parentNode.removeChild(div);
+div = null;
+gc();
+
+var transaction = {
+    "execute": function() { },
+    "undo": function() { },
+    "redo": function() { }
+};
+
+debug("call transact() after the undoScopeHost has been reclaimed.");
+shouldThrow("undoManager.transact(transaction)", "'Error: INVALID_ACCESS_ERR: DOM Exception 15'");
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

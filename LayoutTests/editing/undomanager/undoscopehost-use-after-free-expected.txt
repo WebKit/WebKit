@@ -1,0 +1,11 @@
+This tests that undoManager doesn't have use-after-free vulnerabilities after its undoScopeHost has been reclaimed by GC.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+call transact() after the undoScopeHost has been reclaimed.
+PASS undoManager.transact(transaction) threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

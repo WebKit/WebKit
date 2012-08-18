@@ -146,6 +146,13 @@ Element::~Element()
         ASSERT(m_attributeData);
         m_attributeData->detachAttrObjectsFromElement(this);
     }
+
+#if ENABLE(UNDO_MANAGER)
+    if (hasRareData() && elementRareData()->m_undoManager) {
+        elementRareData()->m_undoManager->disconnect();
+        elementRareData()->m_undoManager.clear();
+    }
+#endif
 }
 
 inline ElementRareData* Element::elementRareData() const
