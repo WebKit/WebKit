@@ -65,7 +65,7 @@ SkBitmap CompositorHUDFontAtlas::generateFontAtlas(WebRect asciiToRectTable[128]
 
     // Clear the entire texture atlas to transparent before drawing fonts.
     atlasContext.setFillColor(Color(0, 0, 0, 0), ColorSpaceDeviceRGB);
-    atlasContext.fillRect(FloatRect(0, 0, ATLAS_SIZE, ATLAS_SIZE));
+    atlasContext.clearRect(FloatRect(0, 0, ATLAS_SIZE, ATLAS_SIZE));
 
     // FIXME: monospace font does not work as expected.
     FontDescription fontDescription;
