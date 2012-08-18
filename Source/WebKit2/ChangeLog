@@ -1,3 +1,26 @@
+2012-08-18  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] ewk_back_forward_list_item properties should be in sync with WebProcessProxy::m_backForwardListItemMap
+        https://bugs.webkit.org/show_bug.cgi?id=94248
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Currently ewk_back_forward_list_item properties are initialized from
+        WKBackForwardListItemRef once in the constructor and then just stored.
+        This is erroneous approach as back forward items can be initialized within
+        several iterations, meaning several ipc calls to UI process and several updates
+        of WebProcessProxy::m_backForwardListItemMap where the items are stored.
+        Hence the values of ewk_back_forward_list_item properties should be updated
+        with the corresponding WKBackForwardListItem function invokes every time
+        they are called.
+
+        * UIProcess/API/efl/ewk_back_forward_list_item.cpp:
+        (_Ewk_Back_Forward_List_Item): Data members have to be mutable as assigned being const pointers.
+        (_Ewk_Back_Forward_List_Item::_Ewk_Back_Forward_List_Item):
+        (ewk_back_forward_list_item_uri_get):
+        (ewk_back_forward_list_item_title_get):
+        (ewk_back_forward_list_item_original_uri_get):
+
 2012-08-17  Enrica Casucci  <enrica@apple.com>
 
         Adding back the first statement of WebProcessMain accidentally
