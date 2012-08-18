@@ -174,6 +174,13 @@ function formatYearMonth(year, month) {
     }
 }
 
+function createUTCDate(year, month, date) {
+    var newDate = new Date(Date.UTC(year, month, date));
+    if (year < 100)
+        newDate.setUTCFullYear(year);
+    return newDate;
+};
+
 /**
  * @param {string=} opt_current
  * @return {!Date}
@@ -182,11 +189,11 @@ function parseDateString(opt_current) {
     if (opt_current) {
         var result = opt_current.match(/(\d+)-(\d+)-(\d+)/);
         if (result)
-            return new Date(Date.UTC(Number(result[1]), Number(result[2]) - 1, Number(result[3])));
+            return createUTCDate(Number(result[1]), Number(result[2]) - 1, Number(result[3]));
     }
     var now = new Date();
     // Create UTC date with same numbers as local date.
-    return new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+    return createUTCDate(now.getFullYear(), now.getMonth(), now.getDate());
 }
 
 /**
@@ -850,8 +857,7 @@ function isValidDate(time) {
 DaysTable.prototype._renderMonth = function(year, month) {
     this._currentYear = year;
     this._currentMonth = month;
-    var dayIterator = new Date(Date.UTC(year, month, 1));
-    dayIterator.setUTCFullYear(year);
+    var dayIterator = createUTCDate(year, month, 1);
     var monthStartDay = dayIterator.getUTCDay();
     var weekStartDay = global.params.weekStartDay || 0;
     var startOffset = weekStartDay - monthStartDay;
@@ -968,7 +974,7 @@ DaysTable.prototype.selectDate = function(date) {
 DaysTable.prototype._maybeSetPreviousMonth = function() {
     var year = global.yearMonthController.year();
     var month = global.yearMonthController.month();
-    var thisMonthStartTime = Date.UTC(year, month, 1);
+    var thisMonthStartTime = createUTCDate(year, month, 1).getTime();
     if (global.minimumDate.getTime() >= thisMonthStartTime)
         return false;
     if (month == 0) {
@@ -991,7 +997,7 @@ DaysTable.prototype._maybeSetNextMonth = function() {
         month = 0;
     } else
         month++;
-    var nextMonthStartTime = Date.UTC(year, month, 1);
+    var nextMonthStartTime = createUTCDate(year, month, 1).getTime();
     if (global.maximumDate.getTime() < nextMonthStartTime)
         return false;
     this._navigateToMonthWithAnimation(year, month);
