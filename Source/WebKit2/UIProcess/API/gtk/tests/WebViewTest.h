@@ -48,6 +48,7 @@ public:
     void waitUntilTitleChanged();
     void showInWindowAndWaitUntilMapped(GtkWindowType = GTK_WINDOW_POPUP);
     void resizeView(int width, int height);
+    const char* mainResourceData(size_t& mainResourceDataSize);
 
     void mouseMoveTo(int x, int y, unsigned int mouseModifiers = 0);
     void clickMouseButton(int x, int y, unsigned int button = 1, unsigned int mouseModifiers = 0);
@@ -69,6 +70,8 @@ public:
     CString m_expectedTitle;
     WebKitJavascriptResult* m_javascriptResult;
     GError** m_javascriptError;
+    GOwnPtr<char> m_resourceData;
+    size_t m_resourceDataSize;
 
 private:
     void doMouseButtonEvent(GdkEventType, int, int, unsigned int, unsigned int);

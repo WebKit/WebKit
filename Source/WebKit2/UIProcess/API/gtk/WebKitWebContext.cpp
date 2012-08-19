@@ -32,6 +32,7 @@
 #include "WebKitURISchemeRequestPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include <WebCore/FileSystem.h>
+#include <WebCore/Language.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/gobject/GOwnPtr.h>
@@ -516,6 +517,31 @@ void webkit_web_context_set_spell_checking_languages(WebKitWebContext* context, 
 #if ENABLE(SPELLCHECK)
     context->priv->textChecker->setSpellCheckingLanguages(languages);
 #endif
+}
+
+/**
+ * webkit_web_context_set_preferred_languages:
+ * @context: a #WebKitWebContext
+ * @languages: (element-type utf8): a #GList of language identifiers
+ *
+ * Set the list of preferred languages, sorted from most desirable
+ * to least desirable. The list will be used to build the "Accept-Language"
+ * header that will be included in the network requests started by
+ * the #WebKitWebContext.
+ */
+void webkit_web_context_set_preferred_languages(WebKitWebContext* context, GList* languageList)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+
+    if (!languageList)
+        return;
+
+    Vector<String> languages;
+    for (GList* iter = languageList; iter; iter = g_list_next(iter))
+        languages.append(String::fromUTF8(static_cast<char*>(iter->data)).lower().replace("_", "-"));
+
+    WebCore::overrideUserPreferredLanguages(languages);
+    WebCore::languageDidChange();
 }
 
 WebKitDownload* webkitWebContextGetOrCreateDownload(WKDownloadRef wkDownload)
