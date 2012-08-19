@@ -1,3 +1,15 @@
+2012-08-19  Pavel Feldman  <pfeldman@chromium.org>
+
+        REGRESSION (r125280-r125284): inspector/console/console-format-collections.html failing on Apple Lion Debug WK1 (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=93748
+
+        Reviewed by Pavel Feldman.
+
+        Not reviewed - simple test fix.
+
+        * inspector/console/console-format-collections-expected.txt:
+        * inspector/console/console-format-collections.html:
+
 2012-08-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Follow up to r125966, fixing flaky tests.
