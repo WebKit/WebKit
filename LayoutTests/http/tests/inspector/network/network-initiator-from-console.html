@@ -39,7 +39,7 @@ var test = function()
         if (!findRequestByURL(/script.js/))
             return;
 
-        WebInspector.panels.network.show();
+        WebInspector.panel("network").show();
         InspectorTest.completeTest();
     }
 }

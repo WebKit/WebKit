@@ -2,7 +2,7 @@ var initialize_NetworkTest = function() {
 
 InspectorTest.dumpNetworkRequests = function()
 {
-    var requests = WebInspector.panels.network.requests.slice();
+    var requests = WebInspector.panel("network").requests.slice();
     requests.sort(function(a, b) {return a.url.localeCompare(b.url);});
     InspectorTest.addResult("resources count = " + requests.length);
     for (i = 0; i < requests.length; i++)

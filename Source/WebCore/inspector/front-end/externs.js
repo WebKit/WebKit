@@ -119,14 +119,6 @@ InspectorBackend.runAfterPendingDispatches = function(message) {}
 
 // FIXME: remove everything below.
 var WebInspector = {}
-
-/**
- * @param {NetworkAgent.RequestId} requestId
- * @return {?WebInspector.NetworkRequest}
- */
-WebInspector.networkRequestById = function(requestId)
-{
-}
   
 WebInspector.panels = {};
 

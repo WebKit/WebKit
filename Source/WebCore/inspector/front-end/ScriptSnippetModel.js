@@ -199,9 +199,7 @@ WebInspector.ScriptSnippetModel.prototype = {
                 var consoleMessage = WebInspector.ConsoleMessage.create(
                         WebInspector.ConsoleMessage.MessageSource.JS,
                         WebInspector.ConsoleMessage.MessageLevel.Error,
-                        syntaxErrorMessage || "",
-                        WebInspector.ConsoleMessage.MessageType.Log,
-                        "", 0, 1, null, null, null);
+                        syntaxErrorMessage || "");
                 WebInspector.console.addMessage(consoleMessage);
                 return;
             }

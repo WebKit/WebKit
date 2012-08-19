@@ -46,7 +46,7 @@ function test()
 
     function step2()
     {
-        imageRequest = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 1];
+        imageRequest = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 1];
         imageRequest.requestContent(step3);
     }
 

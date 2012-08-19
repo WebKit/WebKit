@@ -22,7 +22,7 @@ function test()
 
     function step2()
     {
-        var request1 = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 1];
+        var request1 = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 1];
         InspectorTest.addResult(request1.url);
         InspectorTest.addResult("resourceSize: " + request1.resourceSize);
         InspectorTest.addResult("transferSize: " + request1.transferSize);

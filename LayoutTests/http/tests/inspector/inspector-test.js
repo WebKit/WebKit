@@ -183,8 +183,7 @@ InspectorTest.navigate = function(url, callback)
 {
     InspectorTest._pageLoadedCallback = InspectorTest.safeWrap(callback);
 
-    if (WebInspector.panels.network)
-        WebInspector.panels.network._reset();
+    WebInspector.panel("network")._reset();
     InspectorTest.evaluateInConsole("window.location = '" + url + "'");
 }
 
@@ -202,8 +201,7 @@ InspectorTest._innerReloadPage = function(hardReload, callback)
 {
     InspectorTest._pageLoadedCallback = InspectorTest.safeWrap(callback);
 
-    if (WebInspector.panels.network)
-        WebInspector.panels.network._reset();
+    WebInspector.panel("network")._reset();
     PageAgent.reload(hardReload);
 }
 

@@ -39,7 +39,7 @@ var WebInspector = {
 
         var elements = new WebInspector.PanelDescriptor("elements", WebInspector.UIString("Elements"), "ElementsPanel", "ElementsPanel.js");
         var resources = new WebInspector.PanelDescriptor("resources", WebInspector.UIString("Resources"), "ResourcesPanel", "ResourcesPanel.js");
-        var network = new WebInspector.PanelDescriptor("network", WebInspector.UIString("Network"), undefined, undefined, new WebInspector.NetworkPanel());
+        var network = new WebInspector.PanelDescriptor("network", WebInspector.UIString("Network"), "NetworkPanel", "NetworkPanel.js");
         var scripts = new WebInspector.PanelDescriptor("scripts", WebInspector.UIString("Sources"), undefined, undefined, new WebInspector.ScriptsPanel());
         var timeline = new WebInspector.PanelDescriptor("timeline", WebInspector.UIString("Timeline"), "TimelinePanel", "TimelinePanel.js");
         var profiles = new WebInspector.PanelDescriptor("profiles", WebInspector.UIString("Profiles"), "ProfilesPanel", "ProfilesPanel.js");
@@ -324,15 +324,6 @@ var WebInspector = {
             errorWarningElement.title = WebInspector.UIString("%d warnings", warnings);
         else
             errorWarningElement.title = null;
-    },
-
-    /**
-     * @param {NetworkAgent.RequestId} requestId
-     * @return {?WebInspector.NetworkRequest}
-     */
-    networkRequestById: function(requestId)
-    {
-        return this.panels.network.requestById(requestId);
     },
 
     get inspectedPageDomain()
@@ -1037,7 +1028,7 @@ WebInspector._showAnchorLocation = function(anchor)
         return true;
     if (WebInspector._showAnchorLocationInPanel(anchor, this.panel("resources")))
         return true;
-    if (WebInspector._showAnchorLocationInPanel(anchor, this.panels.network))
+    if (WebInspector._showAnchorLocationInPanel(anchor, this.panel("network")))
         return true;
     return false;
 }

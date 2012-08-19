@@ -27,15 +27,15 @@ function test()
 
         function scriptLoaded()
         {
-            var requestsCount = WebInspector.panels.network.requests.length;
-            var request = WebInspector.panels.network.requests[requestsCount - 1];
+            var requestsCount = WebInspector.panel("network").requests.length;
+            var request = WebInspector.panel("network").requests[requestsCount - 1];
             request.requestContent(contentLoaded);
         }
 
         function contentLoaded()
         {
-            var requestsCount = WebInspector.panels.network.requests.length;
-            var request = WebInspector.panels.network.requests[requestsCount - 1];
+            var requestsCount = WebInspector.panel("network").requests.length;
+            var request = WebInspector.panel("network").requests[requestsCount - 1];
             callback(request.content);
         }
     }

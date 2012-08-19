@@ -80,25 +80,25 @@ function test()
 
     function step1()
     {
-        var request = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 4];
+        var request = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 4];
         dumpRequest(request, step2);
     }
 
     function step2()
     {
-        var request = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 3];
+        var request = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 3];
         dumpRequest(request, step3);
     }
 
     function step3()
     {
-        var request = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 2];
+        var request = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 2];
         dumpRequest(request, step4);
     }
 
     function step4()
     {
-        var request = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 1];
+        var request = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 1];
         dumpRequest(request, step5);
     }
 

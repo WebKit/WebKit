@@ -1,5 +1,51 @@
 2012-08-19  Pavel Feldman  <pfeldman@chromium.org>
 
+        Web Inspector: load network panel lazily
+        https://bugs.webkit.org/show_bug.cgi?id=94414
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.navigate):
+        (initialize_InspectorTest.InspectorTest._innerReloadPage):
+        * http/tests/inspector/network-test.js:
+        * http/tests/inspector/network/async-xhr-json-mime-type.html:
+        * http/tests/inspector/network/cached-resource-destroyed-moved-to-storage.html:
+        * http/tests/inspector/network/cached-resource-destroyed-too-big-discarded.html:
+        * http/tests/inspector/network/download.html:
+        * http/tests/inspector/network/network-cachedresources-with-same-urls.html:
+        * http/tests/inspector/network/network-clear-cache.html-disabled:
+        * http/tests/inspector/network/network-clear-cookies.html-disabled:
+        * http/tests/inspector/network/network-content-replacement-embed.html:
+        * http/tests/inspector/network/network-content-replacement-xhr.html:
+        * http/tests/inspector/network/network-cyrillic-xhr.html:
+        * http/tests/inspector/network/network-disable-cache-memory.html:
+        * http/tests/inspector/network/network-disable-cache-xhrs.html:
+        * http/tests/inspector/network/network-disabling-check-no-memory-leak.html:
+        * http/tests/inspector/network/network-embed.html:
+        * http/tests/inspector/network/network-empty-xhr.html:
+        * http/tests/inspector/network/network-iframe-load-and-delete.html:
+        * http/tests/inspector/network/network-image-404.html:
+        * http/tests/inspector/network/network-initiator-from-console.html:
+        * http/tests/inspector/network/network-preview-json.html:
+        * http/tests/inspector/network/network-request-revision-content.html:
+        * http/tests/inspector/network/network-shared-worker.html:
+        * http/tests/inspector/network/network-sidebar-width.html:
+        * http/tests/inspector/network/network-size-chunked.html:
+        * http/tests/inspector/network/network-size-sync.html:
+        * http/tests/inspector/network/network-size.html:
+        * http/tests/inspector/network/network-worker.html:
+        * http/tests/inspector/network/network-xhr-async-double.html:
+        * http/tests/inspector/network/network-xhr-async.html:
+        * http/tests/inspector/network/network-xhr-same-url-as-main-resource.html:
+        * http/tests/inspector/network/network-xhr-sync.html:
+        * http/tests/inspector/network/request-parameters-decoding.html:
+        * http/tests/inspector/network/x-frame-options-deny.html:
+        * http/tests/inspector/resource-har-pages.html:
+        * http/tests/inspector/resource-tree/resource-tree-mimetype.html:
+
+2012-08-19  Pavel Feldman  <pfeldman@chromium.org>
+
         REGRESSION (r125280-r125284): inspector/console/console-format-collections.html failing on Apple Lion Debug WK1 (Tests)
         https://bugs.webkit.org/show_bug.cgi?id=93748
 

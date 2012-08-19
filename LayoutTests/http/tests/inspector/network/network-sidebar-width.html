@@ -21,9 +21,9 @@ function test()
     var oldSetting;
     function step2()
     {
-        var panel = WebInspector.panels.network;
+        var panel = WebInspector.panel("network");
         var setting = WebInspector.settings[panel._sidebarWidthSettingName()];
-        var request = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 1];
+        var request = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 1];
 
         oldSetting = setting.get();
         panel.show();

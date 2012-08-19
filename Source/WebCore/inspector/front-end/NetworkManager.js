@@ -197,7 +197,7 @@ WebInspector.NetworkDispatcher.prototype = {
                 1,
                 [],
                 null,
-                networkRequest));
+                networkRequest.requestId));
         }
     },
 

@@ -32,9 +32,9 @@ function test()
     {
         // inspector-test.js appears in network panel occasionally in Safari on
         // Mac, so checking two last requests.
-        var requestsCount = WebInspector.panels.network.requests.length;
-        var request1 = WebInspector.panels.network.requests[requestsCount - 2];
-        var request2 = WebInspector.panels.network.requests[requestsCount - 1];
+        var requestsCount = WebInspector.panel("network").requests.length;
+        var request1 = WebInspector.panel("network").requests[requestsCount - 2];
+        var request2 = WebInspector.panel("network").requests[requestsCount - 1];
         request1.requestContent(contentLoaded);
         request2.requestContent(contentLoaded);
     }
@@ -45,9 +45,9 @@ function test()
         if (++contentLoadedCount !== 2)
             return;
 
-        var requestsCount = WebInspector.panels.network.requests.length;
-        var request1 = WebInspector.panels.network.requests[requestsCount - 2];
-        var request2 = WebInspector.panels.network.requests[requestsCount - 1];
+        var requestsCount = WebInspector.panel("network").requests.length;
+        var request1 = WebInspector.panel("network").requests[requestsCount - 2];
+        var request2 = WebInspector.panel("network").requests[requestsCount - 1];
 
         InspectorTest.addResult(request1.url);
         InspectorTest.addResult(request2.url);

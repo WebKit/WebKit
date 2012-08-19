@@ -32,13 +32,13 @@ function test()
 
     function step3()
     {
-        var request1 = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 1];
+        var request1 = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 1];
         request1.requestContent(step4);
     }
 
     function step4()
     {
-        var request1 = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 1];
+        var request1 = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 1];
         InspectorTest.addResult("resource.content after disabling network domain: " + request1.content);
         NetworkAgent.enable(step5);
     }

@@ -23,7 +23,7 @@ var test = function()
             }
         }
         WebInspector.showPanel("network");
-        var networkLogView = WebInspector.panels.network._networkLogView;
+        var networkLogView = WebInspector.panel("network")._networkLogView;
         // networkLogView.clear();
         networkLogView._preserveLogToggle.toggled = true;
         WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestFinished, onRequestFinished);
@@ -32,7 +32,7 @@ var test = function()
 
     function step2()
     {
-        var log = (new WebInspector.HARLog(WebInspector.panels.network._networkLogView._requests)).build();
+        var log = (new WebInspector.HARLog(WebInspector.panel("network")._networkLogView._requests)).build();
         InspectorTest.addObject(log.pages, InspectorTest.HARPropertyFormattersWithSize);
 
         // Filter out favicon.ico requests that only appear on certain platforms.

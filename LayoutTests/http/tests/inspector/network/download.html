@@ -18,7 +18,7 @@ function test()
 
     function responseReceived(requestId, time, resourceType, response)
     {
-        var request = WebInspector.networkRequestById(requestId);
+        var request = WebInspector.networkLog.requestForId(requestId);
         if (/download\.zzz/.exec(request.url)) {
             InspectorTest.addResult("Received response for download.zzz");
             InspectorTest.addResult("SUCCESS");
@@ -28,14 +28,14 @@ function test()
 
     function loadingFinished(requestId, finishTime)
     {
-        var request = WebInspector.networkRequestById(requestId);
+        var request = WebInspector.networkLog.requestForId(requestId);
         if (/download\.zzz/.exec(request.url))
             InspectorTest.completeTest();
     }
 
     function loadingFailed(requestId, time, localizedDescription, canceled)
     {
-        var request = WebInspector.networkRequestById(requestId);
+        var request = WebInspector.networkLog.requestForId(requestId);
         if (/download\.zzz/.exec(request.url))
             InspectorTest.completeTest();
     }

@@ -58,9 +58,9 @@ function test()
     {
         // inspector-test.js appears in network panel occasionally in Safari on
         // Mac, so checking two last resources.
-        var resourcesCount = WebInspector.panels.network.resources.length;
-        var resource1 = WebInspector.panels.network.resources[resourcesCount - 2];
-        var resource2 = WebInspector.panels.network.resources[resourcesCount - 1];
+        var resourcesCount = WebInspector.panel("network").resources.length;
+        var resource1 = WebInspector.panel("network").resources[resourcesCount - 2];
+        var resource2 = WebInspector.panel("network").resources[resourcesCount - 1];
 
         InspectorTest.addResult(resource1.url);
         InspectorTest.addResult(resource2.url);

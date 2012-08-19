@@ -34,6 +34,7 @@
 WebInspector.NetworkLog = function()
 {
     this._requests = [];
+    this._requestForId = {};
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestStarted, this._onRequestStarted, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._onMainFrameNavigated, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.OnLoad, this._onLoad, this);
@@ -85,6 +86,7 @@ WebInspector.NetworkLog.prototype = {
     {
         var request = /** @type {WebInspector.NetworkRequest} */ event.data;
         this._requests.push(request);
+        this._requestForId[request.requestId] = request;
         request.__page = this._currentPageLoad;
     },
 
@@ -104,6 +106,15 @@ WebInspector.NetworkLog.prototype = {
     {
         if (this._currentPageLoad)
             this._currentPageLoad.loadTime = event.data;
+    },
+
+    /**
+     * @param {NetworkAgent.RequestId} requestId
+     * @return {?WebInspector.NetworkRequest}
+     */
+    requestForId: function(requestId)
+    {
+        return this._requestForId[requestId];
     }
 }
 

@@ -202,11 +202,11 @@ WebInspector.ConsoleMessage.prototype = {
  * @param {number=} repeatCount
  * @param {Array.<RuntimeAgent.RemoteObject>=} parameters
  * @param {ConsoleAgent.StackTrace=} stackTrace
- * @param {WebInspector.NetworkRequest=} request
+ * @param {NetworkAgent.RequestId=} requestId
  * @param {boolean=} isOutdated
  * @return {WebInspector.ConsoleMessage}
  */
-WebInspector.ConsoleMessage.create = function(source, level, message, type, url, line, repeatCount, parameters, stackTrace, request, isOutdated)
+WebInspector.ConsoleMessage.create = function(source, level, message, type, url, line, repeatCount, parameters, stackTrace, requestId, isOutdated)
 {
 }
 
@@ -267,7 +267,7 @@ WebInspector.ConsoleDispatcher.prototype = {
             payload.repeatCount,
             payload.parameters,
             payload.stackTrace,
-            payload.networkRequestId ? WebInspector.networkRequestById(payload.networkRequestId) : undefined,
+            payload.networkRequestId,
             this._console._enablingConsole);
         this._console.addMessage(consoleMessage);
     },

@@ -28,6 +28,20 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+importScript("RequestView.js");
+importScript("ResourceView.js");
+importScript("FontView.js");
+importScript("ImageView.js");
+importScript("NetworkItemView.js");
+importScript("RequestCookiesView.js");
+importScript("RequestHeadersView.js");
+importScript("RequestHTMLView.js");
+importScript("RequestJSONView.js");
+importScript("RequestPreviewView.js");
+importScript("RequestResponseView.js");
+importScript("RequestTimingView.js");
+importScript("ResourceWebSocketFrameView.js");
+
 /**
  * @constructor
  * @extends {WebInspector.View}
@@ -77,6 +91,8 @@ WebInspector.NetworkLogView = function()
         this._canClearBrowserCookies = result;
     }
     NetworkAgent.canClearBrowserCookies(onCanClearBrowserCookies.bind(this));
+
+    WebInspector.networkLog.requests.forEach(this._appendRequest.bind(this));
 }
 
 WebInspector.NetworkLogView.prototype = {

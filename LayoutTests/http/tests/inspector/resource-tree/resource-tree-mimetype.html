@@ -6,8 +6,7 @@
 <script>
 function test()
 {
-    if (WebInspector.panels.network)
-        WebInspector.panels.network._reset();
+    WebInspector.panel("network")._reset();
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, step2);
     WebInspector.resourceTreeModel._fetchResourceTree();
 
