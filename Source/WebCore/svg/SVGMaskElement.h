@@ -26,13 +26,13 @@
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
-#include "SVGStyledLocatableElement.h"
+#include "SVGStyledElement.h"
 #include "SVGTests.h"
 #include "SVGUnitTypes.h"
 
 namespace WebCore {
 
-class SVGMaskElement : public SVGStyledLocatableElement,
+class SVGMaskElement : public SVGStyledElement,
                        public SVGTests,
                        public SVGLangSpace,
                        public SVGExternalResourcesRequired {
