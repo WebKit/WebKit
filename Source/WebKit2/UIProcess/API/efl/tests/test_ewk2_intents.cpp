@@ -29,6 +29,7 @@
 #include "UnitTestUtils/EWK2UnitTestEnvironment.h"
 #include "UnitTestUtils/EWK2UnitTestServer.h"
 #include <EWebKit2.h>
+#include <Ecore.h>
 
 using namespace EWK2UnitTest;
 
@@ -56,4 +57,60 @@ TEST_F(EWK2UnitTestBase, ewk_intent_service_registration)
     loadUrlSync(environment->urlForResource("intent-service.html").data());
     evas_object_smart_callback_del(webView(), "intent,service,register", onIntentServiceRegistration);
     ASSERT_TRUE(intentRegistered);
+}
+
+int stringSortCb(const void* d1, const void* d2)
+{
+    return strcmp(static_cast<const char*>(d1), static_cast<const char*>(d2));
+}
+
+static void onIntentReceived(void* userData, Evas_Object*, void* eventInfo)
+{
+    unsigned* intentReceivedCount = static_cast<unsigned*>(userData);
+    ASSERT_GE(*intentReceivedCount, 0);
+    ASSERT_LE(*intentReceivedCount, 1);
+    ++(*intentReceivedCount);
+
+    Ewk_Intent* intent = static_cast<Ewk_Intent*>(eventInfo);
+    ASSERT_TRUE(intent);
+
+    if (*intentReceivedCount == 1) {
+        // First intent.
+        EXPECT_STREQ(ewk_intent_action_get(intent), "action1");
+        EXPECT_STREQ(ewk_intent_type_get(intent), "mime/type1");
+        EXPECT_STREQ(ewk_intent_service_get(intent), "http://service1.com/");
+        EXPECT_STREQ(ewk_intent_extra_get(intent, "key1"), "value1");
+        EXPECT_STREQ(ewk_intent_extra_get(intent, "key2"), "value2");
+    } else {
+        // Second intent.
+        EXPECT_STREQ(ewk_intent_action_get(intent), "action2");
+        EXPECT_STREQ(ewk_intent_type_get(intent), "mime/type2");
+        Eina_List* suggestions = ewk_intent_suggestions_get(intent);
+        ASSERT_TRUE(suggestions);
+        ASSERT_EQ(eina_list_count(suggestions), 2);
+        // We need to sort the suggestions since Intent is using a HashSet internally.
+        suggestions = eina_list_sort(suggestions, 2, stringSortCb);
+        EXPECT_STREQ(static_cast<const char*>(eina_list_nth(suggestions, 0)), "http://service1.com/");
+        EXPECT_STREQ(static_cast<const char*>(eina_list_nth(suggestions, 1)), "http://service2.com/");
+    }
+}
+
+TEST_F(EWK2UnitTestBase, ewk_intent_request)
+{
+    unsigned intentReceivedCount = 0;
+    evas_object_smart_callback_add(webView(), "intent,request,new", onIntentReceived, &intentReceivedCount);
+    loadUrlSync(environment->urlForResource("intent-request.html").data());
+
+    // A user gesture is required for the intent to start.
+    mouseClick(5, 5);
+    while (intentReceivedCount != 1)
+        ecore_main_loop_iterate();
+    ASSERT_EQ(intentReceivedCount, 1);
+
+    // Generate a second intent request.
+    mouseClick(5, 5);
+    while (intentReceivedCount != 2)
+        ecore_main_loop_iterate();
+    ASSERT_EQ(intentReceivedCount, 2);
+    evas_object_smart_callback_del(webView(), "intent,request,new", onIntentReceived);
 }

@@ -1,0 +1,29 @@
+<html>
+<head>
+<title>Web intent request test</title>
+<script type="text/javascript">
+var clickCount = 0;
+
+function buttonClicked() {
+  if (clickCount == 0) {
+    var testIntent = new WebKitIntent(
+                     {"action": "action1",
+                      "type": "mime/type1",
+                      "service": "http://service1.com/",
+                      "extras": {"key1": "value1", "key2": "value2"}});
+    navigator.webkitStartActivity(testIntent);
+  } else if (clickCount == 1) {
+    var testIntent = new WebKitIntent(
+                     {"action": "action2",
+                      "type": "mime/type2",
+                      "suggestions": ["http://service1.com/", "http://service2.com/"]});
+    navigator.webkitStartActivity(testIntent);
+  }
+  clickCount++;
+}
+</script>
+</head>
+<body>
+<input type="button" id="button" value="Start Web Intent" onmouseup="buttonClicked()" style="position: absolute; top: 0px; left: 0px;"/>
+</body>
+</html>

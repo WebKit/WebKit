@@ -112,4 +112,12 @@ void EWK2UnitTestBase::waitUntilTitleChangedTo(const char* expectedTitle)
     evas_object_smart_callback_del(m_webView, "title,changed", onTitleChanged);
 }
 
+void EWK2UnitTestBase::mouseClick(int x, int y)
+{
+    Evas* evas = evas_object_evas_get(m_webView);
+    evas_event_feed_mouse_move(evas, x, y, 0, 0);
+    evas_event_feed_mouse_down(evas, /* Left */ 1, EVAS_BUTTON_NONE, 0, 0);
+    evas_event_feed_mouse_up(evas, /* Left */ 1, EVAS_BUTTON_NONE, 0, 0);
+}
+
 } // namespace EWK2UnitTest

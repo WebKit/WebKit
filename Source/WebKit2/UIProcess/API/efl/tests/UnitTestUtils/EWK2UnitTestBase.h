@@ -38,6 +38,7 @@ protected:
 
     void loadUrlSync(const char* url);
     void waitUntilTitleChangedTo(const char* expectedTitle);
+    void mouseClick(int x, int y);
 
 private:
     Evas_Object* m_webView;

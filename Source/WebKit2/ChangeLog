@@ -1,3 +1,27 @@
+2012-08-19  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add API unit tests for Web Intents
+        https://bugs.webkit.org/show_bug.cgi?id=90454
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add unit testing for Web intent requests,
+        including the "intent,request,new" signal on
+        the Ewk_View and the Ewk_Intent API.
+
+        * UIProcess/API/efl/ewk_view.h: Fix documentation for argument type of "intent,request,new" signal.
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::mouseClick): Add utility method to simulate a click at given
+        coordinates. This is needed for testing functionality that requires a user gesture.
+        (EWK2UnitTest):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        (EWK2UnitTestBase):
+        * UIProcess/API/efl/tests/resources/intent-request.html: Added.
+        * UIProcess/API/efl/tests/test_ewk2_intents.cpp:
+        (stringSortCb):
+        (onIntentReceived):
+        (TEST_F):
+
 2012-08-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to set preferred languages to WebKit2 GTK+

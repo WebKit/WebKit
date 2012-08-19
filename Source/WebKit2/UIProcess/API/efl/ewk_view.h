@@ -42,7 +42,7 @@
  *   when done to continue with the form submission. If the last reference is removed on a
  *   #Ewk_Form_Submission_Request and the form has not been submitted yet,
  *   ewk_form_submission_request_submit() will be called automatically.
- * - "intent,request,new", Ewk_Intent_Request*: reports new Web intent request.
+ * - "intent,request,new", Ewk_Intent*: reports new Web intent request.
  * - "intent,service,register", Ewk_Intent_Service*: reports new Web intent service registration.
  * - "load,error", const Ewk_Web_Error*: reports main frame load failed.
  * - "load,finished", void: reports load finished.
