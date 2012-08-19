@@ -315,7 +315,6 @@ void WebProcess::setShouldUseFontSmoothing(bool useFontSmoothing)
 void WebProcess::userPreferredLanguagesChanged(const Vector<String>& languages) const
 {
     overrideUserPreferredLanguages(languages);
-    languageDidChange();
 }
 
 void WebProcess::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)

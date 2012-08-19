@@ -1,3 +1,26 @@
+2012-08-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r125972.
+        http://trac.webkit.org/changeset/125972
+        https://bugs.webkit.org/show_bug.cgi?id=94431
+
+        Breaks AppleMac builds (Requested by pfeldman on #webkit).
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        * UIProcess/API/gtk/tests/TestWebKitWebContext.cpp:
+        (beforeAll):
+        (afterAll):
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::WebViewTest):
+        * UIProcess/API/gtk/tests/WebViewTest.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::userPreferredLanguagesChanged):
+        * WebProcess/gtk/WebProcessGtk.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::platformTerminate):
+
 2012-08-19  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add API unit tests for Web Intents

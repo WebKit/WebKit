@@ -146,10 +146,6 @@ WEBKIT_API void
 webkit_web_context_set_spell_checking_languages     (WebKitWebContext              *context,
                                                      const gchar                   *languages);
 
-WEBKIT_API void
-webkit_web_context_set_preferred_languages          (WebKitWebContext              *context,
-                                                     GList                         *languages);
-
 G_END_DECLS
 
 #endif

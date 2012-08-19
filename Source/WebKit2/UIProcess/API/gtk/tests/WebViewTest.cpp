@@ -29,7 +29,6 @@ WebViewTest::WebViewTest()
     , m_mainLoop(g_main_loop_new(0, TRUE))
     , m_parentWindow(0)
     , m_javascriptResult(0)
-    , m_resourceDataSize(0)
 {
     assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webView));
 }
@@ -196,33 +195,6 @@ void WebViewTest::resizeView(int width, int height)
     if (height != -1)
         allocation.height = height;
     gtk_widget_size_allocate(GTK_WIDGET(m_webView), &allocation);
-}
-
-static void resourceGetDataCallback(GObject* object, GAsyncResult* result, gpointer userData)
-{
-    size_t dataSize;
-    GOwnPtr<GError> error;
-    unsigned char* data = webkit_web_resource_get_data_finish(WEBKIT_WEB_RESOURCE(object), result, &dataSize, &error.outPtr());
-    g_assert(data);
-
-    WebViewTest* test = static_cast<WebViewTest*>(userData);
-    test->m_resourceData.set(reinterpret_cast<char*>(data));
-    test->m_resourceDataSize = dataSize;
-    g_main_loop_quit(test->m_mainLoop);
-}
-
-const char* WebViewTest::mainResourceData(size_t& mainResourceDataSize)
-{
-    m_resourceDataSize = 0;
-    m_resourceData.clear();
-    WebKitWebResource* resource = webkit_web_view_get_main_resource(m_webView);
-    g_assert(resource);
-
-    webkit_web_resource_get_data(resource, 0, resourceGetDataCallback, this);
-    g_main_loop_run(m_mainLoop);
-
-    mainResourceDataSize = m_resourceDataSize;
-    return m_resourceData.get();
 }
 
 void WebViewTest::mouseMoveTo(int x, int y, unsigned int mouseModifiers)
