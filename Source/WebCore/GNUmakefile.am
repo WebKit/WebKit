@@ -1068,7 +1068,6 @@ EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/mediastream/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/notifications/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/protocolhandler/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/Modules/quota/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/webaudio/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/webdatabase/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/websockets/*.idl) \

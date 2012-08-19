@@ -1191,10 +1191,8 @@ dom_binding_idls += \
 	$(WebCore)/Modules/indexeddb/IDBKey.idl \
 	$(WebCore)/Modules/indexeddb/IDBKeyRange.idl \
 	$(WebCore)/Modules/indexeddb/IDBObjectStore.idl \
-	$(WebCore)/Modules/indexeddb/IDBOpenDBRequest.idl \
 	$(WebCore)/Modules/indexeddb/IDBRequest.idl \
 	$(WebCore)/Modules/indexeddb/IDBTransaction.idl \
-	$(WebCore)/Modules/indexeddb/IDBUpgradeNeededEvent.idl \
 	$(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
 	$(WebCore)/Modules/indexeddb/IDBVersionChangeRequest.idl \
 	$(WebCore)/Modules/indexeddb/WorkerContextIndexedDatabase.idl \
@@ -1846,8 +1844,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBObjectStoreBackendInterface.h \
 	Source/WebCore/Modules/indexeddb/IDBObjectStore.cpp \
 	Source/WebCore/Modules/indexeddb/IDBObjectStore.h \
-	Source/WebCore/Modules/indexeddb/IDBOpenDBRequest.cpp \
-	Source/WebCore/Modules/indexeddb/IDBOpenDBRequest.h \
 	Source/WebCore/Modules/indexeddb/IDBPendingTransactionMonitor.cpp \
 	Source/WebCore/Modules/indexeddb/IDBPendingTransactionMonitor.h \
 	Source/WebCore/Modules/indexeddb/IDBRequest.cpp \
@@ -1861,8 +1857,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBTransactionCoordinator.h \
 	Source/WebCore/Modules/indexeddb/IDBTransaction.cpp \
 	Source/WebCore/Modules/indexeddb/IDBTransaction.h \
-	Source/WebCore/Modules/indexeddb/IDBUpgradeNeededEvent.cpp \
-	Source/WebCore/Modules/indexeddb/IDBUpgradeNeededEvent.h \
 	Source/WebCore/Modules/indexeddb/IDBVersionChangeEvent.cpp \
 	Source/WebCore/Modules/indexeddb/IDBVersionChangeEvent.h \
 	Source/WebCore/Modules/indexeddb/IDBVersionChangeRequest.cpp \
@@ -2873,8 +2867,6 @@ webcore_sources += \
 	Source/WebCore/dom/StaticHashSetNodeList.h \
 	Source/WebCore/dom/StaticNodeList.cpp \
 	Source/WebCore/dom/StaticNodeList.h \
-	Source/WebCore/dom/StringCallback.cpp \
-	Source/WebCore/dom/StringCallback.h \
 	Source/WebCore/dom/StyledElement.cpp \
 	Source/WebCore/dom/StyledElement.h \
 	Source/WebCore/dom/StyleElement.cpp \
