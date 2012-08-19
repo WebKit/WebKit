@@ -2687,27 +2687,27 @@ CodeBlock* FunctionCodeBlock::replacement()
     return &static_cast<FunctionExecutable*>(ownerExecutable())->generatedBytecodeFor(m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 
-JSObject* ProgramCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode)
+JSObject* ProgramCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode, unsigned bytecodeIndex)
 {
     if (replacement()->getJITType() == JITCode::nextTierJIT(getJITType()))
         return 0;
-    JSObject* error = static_cast<ProgramExecutable*>(ownerExecutable())->compileOptimized(exec, scopeChainNode);
+    JSObject* error = static_cast<ProgramExecutable*>(ownerExecutable())->compileOptimized(exec, scopeChainNode, bytecodeIndex);
     return error;
 }
 
-JSObject* EvalCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode)
+JSObject* EvalCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode, unsigned bytecodeIndex)
 {
     if (replacement()->getJITType() == JITCode::nextTierJIT(getJITType()))
         return 0;
-    JSObject* error = static_cast<EvalExecutable*>(ownerExecutable())->compileOptimized(exec, scopeChainNode);
+    JSObject* error = static_cast<EvalExecutable*>(ownerExecutable())->compileOptimized(exec, scopeChainNode, bytecodeIndex);
     return error;
 }
 
-JSObject* FunctionCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode)
+JSObject* FunctionCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode, unsigned bytecodeIndex)
 {
     if (replacement()->getJITType() == JITCode::nextTierJIT(getJITType()))
         return 0;
-    JSObject* error = static_cast<FunctionExecutable*>(ownerExecutable())->compileOptimizedFor(exec, scopeChainNode, m_isConstructor ? CodeForConstruct : CodeForCall);
+    JSObject* error = static_cast<FunctionExecutable*>(ownerExecutable())->compileOptimizedFor(exec, scopeChainNode, bytecodeIndex, m_isConstructor ? CodeForConstruct : CodeForCall);
     return error;
 }
 

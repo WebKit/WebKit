@@ -38,7 +38,7 @@
 namespace JSC {
 
 template<typename CodeBlockType>
-inline bool jitCompileIfAppropriate(ExecState* exec, OwnPtr<CodeBlockType>& codeBlock, JITCode& jitCode, JITCode::JITType jitType, JITCompilationEffort effort)
+inline bool jitCompileIfAppropriate(ExecState* exec, OwnPtr<CodeBlockType>& codeBlock, JITCode& jitCode, JITCode::JITType jitType, unsigned bytecodeIndex, JITCompilationEffort effort)
 {
     JSGlobalData& globalData = exec->globalData();
     
@@ -54,7 +54,7 @@ inline bool jitCompileIfAppropriate(ExecState* exec, OwnPtr<CodeBlockType>& code
     
     bool dfgCompiled = false;
     if (jitType == JITCode::DFGJIT)
-        dfgCompiled = DFG::tryCompile(exec, codeBlock.get(), jitCode);
+        dfgCompiled = DFG::tryCompile(exec, codeBlock.get(), jitCode, bytecodeIndex);
     if (dfgCompiled) {
         if (codeBlock->alternative())
             codeBlock->alternative()->unlinkIncomingCalls();
@@ -75,7 +75,7 @@ inline bool jitCompileIfAppropriate(ExecState* exec, OwnPtr<CodeBlockType>& code
     return true;
 }
 
-inline bool jitCompileFunctionIfAppropriate(ExecState* exec, OwnPtr<FunctionCodeBlock>& codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, SharedSymbolTable*& symbolTable, JITCode::JITType jitType, JITCompilationEffort effort)
+inline bool jitCompileFunctionIfAppropriate(ExecState* exec, OwnPtr<FunctionCodeBlock>& codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, SharedSymbolTable*& symbolTable, JITCode::JITType jitType, unsigned bytecodeIndex, JITCompilationEffort effort)
 {
     JSGlobalData& globalData = exec->globalData();
     
@@ -92,7 +92,7 @@ inline bool jitCompileFunctionIfAppropriate(ExecState* exec, OwnPtr<FunctionCode
     
     bool dfgCompiled = false;
     if (jitType == JITCode::DFGJIT)
-        dfgCompiled = DFG::tryCompileFunction(exec, codeBlock.get(), jitCode, jitCodeWithArityCheck);
+        dfgCompiled = DFG::tryCompileFunction(exec, codeBlock.get(), jitCode, jitCodeWithArityCheck, bytecodeIndex);
     if (dfgCompiled) {
         if (codeBlock->alternative())
             codeBlock->alternative()->unlinkIncomingCalls();

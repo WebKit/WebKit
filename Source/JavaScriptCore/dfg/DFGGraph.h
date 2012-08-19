@@ -76,11 +76,13 @@ struct ResolveGlobalData {
 // Nodes that are 'dead' remain in the vector with refCount 0.
 class Graph : public Vector<Node, 64> {
 public:
-    Graph(JSGlobalData& globalData, CodeBlock* codeBlock)
+    Graph(JSGlobalData& globalData, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues)
         : m_globalData(globalData)
         , m_codeBlock(codeBlock)
         , m_profiledBlock(codeBlock->alternative())
         , m_hasArguments(false)
+        , m_osrEntryBytecodeIndex(osrEntryBytecodeIndex)
+        , m_mustHandleValues(mustHandleValues)
     {
         ASSERT(m_profiledBlock);
     }
@@ -710,6 +712,8 @@ public:
     Dominators m_dominators;
     unsigned m_localVars;
     unsigned m_parameterSlots;
+    unsigned m_osrEntryBytecodeIndex;
+    Operands<JSValue> m_mustHandleValues;
 private:
     
     void handleSuccessor(Vector<BlockIndex, 16>& worklist, BlockIndex blockIndex, BlockIndex successorIndex);

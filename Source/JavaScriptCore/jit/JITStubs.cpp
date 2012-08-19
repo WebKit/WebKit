@@ -2022,8 +2022,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
         }
         
         ScopeChainNode* scopeChain = callFrame->scopeChain();
-        
-        JSObject* error = codeBlock->compileOptimized(callFrame, scopeChain);
+        JSObject* error = codeBlock->compileOptimized(callFrame, scopeChain, bytecodeIndex);
 #if ENABLE(JIT_VERBOSE_OSR)
         if (error)
             dataLog("WARNING: optimized compilation failed.\n");

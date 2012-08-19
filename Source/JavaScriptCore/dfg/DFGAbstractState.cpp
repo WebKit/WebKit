@@ -158,6 +158,16 @@ void AbstractState::initialize(Graph& graph)
             block->valuesAtHead.local(i).clear();
             block->valuesAtTail.local(i).clear();
         }
+        if (!block->isOSRTarget)
+            continue;
+        if (block->bytecodeBegin != graph.m_osrEntryBytecodeIndex)
+            continue;
+        for (size_t i = 0; i < graph.m_mustHandleValues.size(); ++i) {
+            AbstractValue value;
+            value.setMostSpecific(graph.m_mustHandleValues[i]);
+            block->valuesAtHead.operand(graph.m_mustHandleValues.operandForIndex(i)).merge(value);
+        }
+        block->cfaShouldRevisit = true;
     }
 }
 

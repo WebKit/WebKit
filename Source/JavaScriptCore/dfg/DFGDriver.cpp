@@ -57,7 +57,7 @@ unsigned getNumCompilations()
 }
 
 enum CompileMode { CompileFunction, CompileOther };
-inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck)
+inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck, unsigned osrEntryBytecodeIndex)
 {
     SamplingRegion samplingRegion("DFG Compilation (Driver)");
     
@@ -66,6 +66,8 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     ASSERT(codeBlock);
     ASSERT(codeBlock->alternative());
     ASSERT(codeBlock->alternative()->getJITType() == JITCode::BaselineJIT);
+    
+    ASSERT(osrEntryBytecodeIndex != UINT_MAX);
 
     if (!Options::useDFGJIT())
         return false;
@@ -74,7 +76,30 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     dataLog("DFG compiling code block %p(%p) for executable %p, number of instructions = %u.\n", codeBlock, codeBlock->alternative(), codeBlock->ownerExecutable(), codeBlock->instructionCount());
 #endif
     
-    Graph dfg(exec->globalData(), codeBlock);
+    // Derive our set of must-handle values. The compilation must be at least conservative
+    // enough to allow for OSR entry with these values.
+    unsigned numVarsWithValues;
+    if (osrEntryBytecodeIndex)
+        numVarsWithValues = codeBlock->m_numVars;
+    else
+        numVarsWithValues = 0;
+    Operands<JSValue> mustHandleValues(codeBlock->numParameters(), numVarsWithValues);
+    for (size_t i = 0; i < mustHandleValues.size(); ++i) {
+        int operand = mustHandleValues.operandForIndex(i);
+        if (operandIsArgument(operand)
+            && !operandToArgument(operand)
+            && compileMode == CompileFunction
+            && codeBlock->specializationKind() == CodeForConstruct) {
+            // Ugh. If we're in a constructor, the 'this' argument may hold garbage. It will
+            // also never be used. It doesn't matter what we put into the value for this,
+            // but it has to be an actual value that can be grokked by subsequent DFG passes,
+            // so we sanitize it here by turning it into Undefined.
+            mustHandleValues[i] = jsUndefined();
+        } else
+            mustHandleValues[i] = exec->uncheckedR(operand).jsValue();
+    }
+    
+    Graph dfg(exec->globalData(), codeBlock, osrEntryBytecodeIndex, mustHandleValues);
     if (!parse(exec, dfg))
         return false;
     
@@ -137,14 +162,14 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     return result;
 }
 
-bool tryCompile(ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode)
+bool tryCompile(ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode, unsigned bytecodeIndex)
 {
-    return compile(CompileOther, exec, codeBlock, jitCode, 0);
+    return compile(CompileOther, exec, codeBlock, jitCode, 0, bytecodeIndex);
 }
 
-bool tryCompileFunction(ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck)
+bool tryCompileFunction(ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, unsigned bytecodeIndex)
 {
-    return compile(CompileFunction, exec, codeBlock, jitCode, &jitCodeWithArityCheck);
+    return compile(CompileFunction, exec, codeBlock, jitCode, &jitCodeWithArityCheck, bytecodeIndex);
 }
 
 } } // namespace JSC::DFG

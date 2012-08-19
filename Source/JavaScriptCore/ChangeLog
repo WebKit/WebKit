@@ -1,5 +1,70 @@
 2012-08-17  Filip Pizlo  <fpizlo@apple.com>
 
+        The current state of the call frame should be taken into account in the DFG for both predictions and proofs
+        https://bugs.webkit.org/show_bug.cgi?id=94412
+
+        Reviewed by Geoffrey Garen.
+
+        This ensures that no matter how smart the DFG gets, it'll always know through
+        which entrypoint OSR will try to enter, and with which values it will attempt
+        to do so. For prologue OSR, this has no effect other than adding the current
+        arguments to the argument predictions. For loop OSR, this makes our treatment
+        of the loop slightly more conservative - just conservative enough to ensure
+        that OSR succeeds.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::ProgramCodeBlock::compileOptimized):
+        (JSC::EvalCodeBlock::compileOptimized):
+        (JSC::FunctionCodeBlock::compileOptimized):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (ProgramCodeBlock):
+        (EvalCodeBlock):
+        (FunctionCodeBlock):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::setMostSpecific):
+        (AbstractValue):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::fixVariableAccessPredictions):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        * dfg/DFGDriver.h:
+        (DFG):
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::Graph):
+        (Graph):
+        * jit/JITDriver.h:
+        (JSC::jitCompileIfAppropriate):
+        (JSC::jitCompileFunctionIfAppropriate):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileOptimized):
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileOptimized):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileOptimizedForCall):
+        (JSC::FunctionExecutable::compileOptimizedForConstruct):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        * runtime/Executable.h:
+        (EvalExecutable):
+        (ProgramExecutable):
+        (FunctionExecutable):
+        (JSC::FunctionExecutable::compileOptimizedFor):
+        * runtime/ExecutionHarness.h:
+        (JSC::prepareForExecution):
+        (JSC::prepareFunctionForExecution):
+
+2012-08-17  Filip Pizlo  <fpizlo@apple.com>
+
         DFG CSE should be more honest about when it changed the IR
         https://bugs.webkit.org/show_bug.cgi?id=94408
 

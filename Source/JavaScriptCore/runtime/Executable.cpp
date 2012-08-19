@@ -160,13 +160,13 @@ void FunctionExecutable::destroy(JSCell* cell)
     static_cast<FunctionExecutable*>(cell)->FunctionExecutable::~FunctionExecutable();
 }
 
-JSObject* EvalExecutable::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode)
+JSObject* EvalExecutable::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode, unsigned bytecodeIndex)
 {
     ASSERT(exec->globalData().dynamicGlobalObject);
     ASSERT(!!m_evalCodeBlock);
     JSObject* error = 0;
     if (m_evalCodeBlock->getJITType() != JITCode::topTierJIT())
-        error = compileInternal(exec, scopeChainNode, JITCode::nextTierJIT(m_evalCodeBlock->getJITType()));
+        error = compileInternal(exec, scopeChainNode, JITCode::nextTierJIT(m_evalCodeBlock->getJITType()), bytecodeIndex);
     ASSERT(!!m_evalCodeBlock);
     return error;
 }
@@ -174,7 +174,7 @@ JSObject* EvalExecutable::compileOptimized(ExecState* exec, ScopeChainNode* scop
 #if ENABLE(JIT)
 bool EvalExecutable::jitCompile(ExecState* exec)
 {
-    return jitCompileIfAppropriate(exec, m_evalCodeBlock, m_jitCodeForCall, JITCode::bottomTierJIT(), JITCompilationCanFail);
+    return jitCompileIfAppropriate(exec, m_evalCodeBlock, m_jitCodeForCall, JITCode::bottomTierJIT(), UINT_MAX, JITCompilationCanFail);
 }
 #endif
 
@@ -193,7 +193,7 @@ inline const char* samplingDescription(JITCode::JITType jitType)
     }
 }
 
-JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType)
+JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType, unsigned bytecodeIndex)
 {
     SamplingRegion samplingRegion(samplingDescription(jitType));
     
@@ -235,7 +235,7 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
     }
 
 #if ENABLE(JIT)
-    if (!prepareForExecution(exec, m_evalCodeBlock, m_jitCodeForCall, jitType))
+    if (!prepareForExecution(exec, m_evalCodeBlock, m_jitCodeForCall, jitType, bytecodeIndex))
         return 0;
 #endif
 
@@ -301,13 +301,13 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
     return exception;
 }
 
-JSObject* ProgramExecutable::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode)
+JSObject* ProgramExecutable::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode, unsigned bytecodeIndex)
 {
     ASSERT(exec->globalData().dynamicGlobalObject);
     ASSERT(!!m_programCodeBlock);
     JSObject* error = 0;
     if (m_programCodeBlock->getJITType() != JITCode::topTierJIT())
-        error = compileInternal(exec, scopeChainNode, JITCode::nextTierJIT(m_programCodeBlock->getJITType()));
+        error = compileInternal(exec, scopeChainNode, JITCode::nextTierJIT(m_programCodeBlock->getJITType()), bytecodeIndex);
     ASSERT(!!m_programCodeBlock);
     return error;
 }
@@ -315,11 +315,11 @@ JSObject* ProgramExecutable::compileOptimized(ExecState* exec, ScopeChainNode* s
 #if ENABLE(JIT)
 bool ProgramExecutable::jitCompile(ExecState* exec)
 {
-    return jitCompileIfAppropriate(exec, m_programCodeBlock, m_jitCodeForCall, JITCode::bottomTierJIT(), JITCompilationCanFail);
+    return jitCompileIfAppropriate(exec, m_programCodeBlock, m_jitCodeForCall, JITCode::bottomTierJIT(), UINT_MAX, JITCompilationCanFail);
 }
 #endif
 
-JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType)
+JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType, unsigned bytecodeIndex)
 {
     SamplingRegion samplingRegion(samplingDescription(jitType));
     
@@ -359,7 +359,7 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
     }
 
 #if ENABLE(JIT)
-    if (!prepareForExecution(exec, m_programCodeBlock, m_jitCodeForCall, jitType))
+    if (!prepareForExecution(exec, m_programCodeBlock, m_jitCodeForCall, jitType, bytecodeIndex))
         return 0;
 #endif
 
@@ -431,24 +431,24 @@ FunctionCodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKi
     return result;
 }
 
-JSObject* FunctionExecutable::compileOptimizedForCall(ExecState* exec, ScopeChainNode* scopeChainNode)
+JSObject* FunctionExecutable::compileOptimizedForCall(ExecState* exec, ScopeChainNode* scopeChainNode, unsigned bytecodeIndex)
 {
     ASSERT(exec->globalData().dynamicGlobalObject);
     ASSERT(!!m_codeBlockForCall);
     JSObject* error = 0;
     if (m_codeBlockForCall->getJITType() != JITCode::topTierJIT())
-        error = compileForCallInternal(exec, scopeChainNode, JITCode::nextTierJIT(m_codeBlockForCall->getJITType()));
+        error = compileForCallInternal(exec, scopeChainNode, JITCode::nextTierJIT(m_codeBlockForCall->getJITType()), bytecodeIndex);
     ASSERT(!!m_codeBlockForCall);
     return error;
 }
 
-JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, ScopeChainNode* scopeChainNode)
+JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, ScopeChainNode* scopeChainNode, unsigned bytecodeIndex)
 {
     ASSERT(exec->globalData().dynamicGlobalObject);
     ASSERT(!!m_codeBlockForConstruct);
     JSObject* error = 0;
     if (m_codeBlockForConstruct->getJITType() != JITCode::topTierJIT())
-        error = compileForConstructInternal(exec, scopeChainNode, JITCode::nextTierJIT(m_codeBlockForConstruct->getJITType()));
+        error = compileForConstructInternal(exec, scopeChainNode, JITCode::nextTierJIT(m_codeBlockForConstruct->getJITType()), bytecodeIndex);
     ASSERT(!!m_codeBlockForConstruct);
     return error;
 }
@@ -456,12 +456,12 @@ JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, Scop
 #if ENABLE(JIT)
 bool FunctionExecutable::jitCompileForCall(ExecState* exec)
 {
-    return jitCompileFunctionIfAppropriate(exec, m_codeBlockForCall, m_jitCodeForCall, m_jitCodeForCallWithArityCheck, m_symbolTable, JITCode::bottomTierJIT(), JITCompilationCanFail);
+    return jitCompileFunctionIfAppropriate(exec, m_codeBlockForCall, m_jitCodeForCall, m_jitCodeForCallWithArityCheck, m_symbolTable, JITCode::bottomTierJIT(), UINT_MAX, JITCompilationCanFail);
 }
 
 bool FunctionExecutable::jitCompileForConstruct(ExecState* exec)
 {
-    return jitCompileFunctionIfAppropriate(exec, m_codeBlockForConstruct, m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, m_symbolTable, JITCode::bottomTierJIT(), JITCompilationCanFail);
+    return jitCompileFunctionIfAppropriate(exec, m_codeBlockForConstruct, m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, m_symbolTable, JITCode::bottomTierJIT(), UINT_MAX, JITCompilationCanFail);
 }
 #endif
 
@@ -502,7 +502,7 @@ PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(ScopeChain
     return result.release();
 }
 
-JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType)
+JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType, unsigned bytecodeIndex)
 {
     SamplingRegion samplingRegion(samplingDescription(jitType));
     
@@ -526,7 +526,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
     m_symbolTable = m_codeBlockForCall->sharedSymbolTable();
 
 #if ENABLE(JIT)
-    if (!prepareFunctionForExecution(exec, m_codeBlockForCall, m_jitCodeForCall, m_jitCodeForCallWithArityCheck, m_symbolTable, jitType, CodeForCall))
+    if (!prepareFunctionForExecution(exec, m_codeBlockForCall, m_jitCodeForCall, m_jitCodeForCallWithArityCheck, m_symbolTable, jitType, bytecodeIndex, CodeForCall))
         return 0;
 #endif
 
@@ -544,7 +544,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
     return 0;
 }
 
-JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType)
+JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType, unsigned bytecodeIndex)
 {
     SamplingRegion samplingRegion(samplingDescription(jitType));
     
@@ -568,7 +568,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
     m_symbolTable = m_codeBlockForConstruct->sharedSymbolTable();
 
 #if ENABLE(JIT)
-    if (!prepareFunctionForExecution(exec, m_codeBlockForConstruct, m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, m_symbolTable, jitType, CodeForConstruct))
+    if (!prepareFunctionForExecution(exec, m_codeBlockForConstruct, m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, m_symbolTable, jitType, bytecodeIndex, CodeForConstruct))
         return 0;
 #endif
 

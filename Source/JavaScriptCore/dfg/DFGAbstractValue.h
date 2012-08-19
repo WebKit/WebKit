@@ -386,6 +386,23 @@ struct AbstractValue {
         return result;
     }
     
+    void setMostSpecific(JSValue value)
+    {
+        if (!!value && value.isCell()) {
+            Structure* structure = value.asCell()->structure();
+            m_structure = structure;
+            m_unclobberedStructure = structure;
+        } else {
+            m_structure.clear();
+            m_unclobberedStructure.clear();
+        }
+        
+        m_type = speculationFromValue(value);
+        m_value = value;
+        
+        checkConsistency();
+    }
+    
     void set(JSValue value)
     {
         if (!!value && value.isCell()) {
