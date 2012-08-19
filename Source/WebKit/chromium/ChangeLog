@@ -1,3 +1,19 @@
+2012-08-19  Rick Byers  <rbyers@chromium.org>
+
+        [chromium] Add additional fields to WebGestureEvent
+        https://bugs.webkit.org/show_bug.cgi?id=94238
+
+        Reviewed by James Robinson.
+
+        Add a union to WebGestureEvent with per-event-type data, as a first
+        step to eliminating the overloaded delta fields.
+
+        * public/WebInputEvent.h:
+        (WebGestureEvent):
+        (WebKit::WebGestureEvent::WebGestureEvent):
+        * src/WebInputEvent.cpp:
+        (SameSizeAsWebGestureEvent):
+
 2012-08-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: load network panel lazily
