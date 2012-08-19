@@ -3196,7 +3196,10 @@ void WebPageProxy::setToolTip(const String& toolTip)
 
 void WebPageProxy::setCursor(const WebCore::Cursor& cursor)
 {
-    m_pageClient->setCursor(cursor);
+    // The Web process may have asked to change the cursor when the view was in an active window, but
+    // if it is no longer in a window or the window is not active, then the cursor should not change.
+    if (m_pageClient->isViewWindowActive())
+        m_pageClient->setCursor(cursor);
 }
 
 void WebPageProxy::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)

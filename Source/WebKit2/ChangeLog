@@ -1,3 +1,18 @@
+2012-08-19  Dan Bernstein  <mitz@apple.com>
+
+        WebPageProxy::setCursor does not check that the view is still in an active window
+        https://bugs.webkit.org/show_bug.cgi?id=94427
+
+        Reviewed by Alexey Proskuryakov.
+
+        The Web process may ask to change the cursor when the view is in an active window, but
+        if by the time the UI process receives the message, the view is no longer in a window or the
+        window is not active , then the cursor should not change.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setCursor): Added a check that the view is in an active window before
+        allowing the page to change the cursor.
+
 2012-08-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r125972.
