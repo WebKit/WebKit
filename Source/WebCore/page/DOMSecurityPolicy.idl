@@ -35,10 +35,12 @@ module core {
 
         boolean allowsConnectionTo(in DOMString url);
         boolean allowsFontFrom(in DOMString url);
+        boolean allowsFormAction(in DOMString url);
         boolean allowsFrameFrom(in DOMString url);
         boolean allowsImageFrom(in DOMString url);
         boolean allowsMediaFrom(in DOMString url);
         boolean allowsObjectFrom(in DOMString url);
+        boolean allowsPluginType(in DOMString type);
         boolean allowsScriptFrom(in DOMString url);
         boolean allowsStyleFrom(in DOMString url);
 

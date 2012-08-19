@@ -48,6 +48,15 @@ bool isPolicyActiveInContext(ScriptExecutionContext* context)
     return context->contentSecurityPolicy()->isActive();
 }
 
+template<bool (ContentSecurityPolicy::*allowWithType)(const String&, const String&, const KURL&, ContentSecurityPolicy::ReportingStatus) const>
+bool isAllowedWithType(ScriptExecutionContext* context, const String& type)
+{
+    if (!isPolicyActiveInContext(context))
+        return true;
+
+    return (context->contentSecurityPolicy()->*allowWithType)(type, type, KURL(), ContentSecurityPolicy::SuppressReport);
+}
+
 template<bool (ContentSecurityPolicy::*allowWithURL)(const KURL&, ContentSecurityPolicy::ReportingStatus) const>
 bool isAllowedWithURL(ScriptExecutionContext* context, const String& url)
 {
@@ -67,7 +76,7 @@ bool isAllowed(ScriptExecutionContext* context)
     if (!isPolicyActiveInContext(context))
         return true;
 
-    return (context->contentSecurityPolicy()->*allowWithContext)(KURL(), WTF::OrdinalNumber::beforeFirst(), ContentSecurityPolicy::SuppressReport);
+    return (context->contentSecurityPolicy()->*allowWithContext)(String(), WTF::OrdinalNumber::beforeFirst(), ContentSecurityPolicy::SuppressReport);
 }
 
 } // namespace
@@ -125,6 +134,11 @@ bool DOMSecurityPolicy::allowsFontFrom(const String& url) const
     return isAllowedWithURL<&ContentSecurityPolicy::allowFontFromSource>(scriptExecutionContext(), url);
 }
 
+bool DOMSecurityPolicy::allowsFormAction(const String& url) const
+{
+    return isAllowedWithURL<&ContentSecurityPolicy::allowFormAction>(scriptExecutionContext(), url);
+}
+
 bool DOMSecurityPolicy::allowsFrameFrom(const String& url) const
 {
     return isAllowedWithURL<&ContentSecurityPolicy::allowChildFrameFromSource>(scriptExecutionContext(), url);
@@ -143,6 +157,11 @@ bool DOMSecurityPolicy::allowsMediaFrom(const String& url) const
 bool DOMSecurityPolicy::allowsObjectFrom(const String& url) const
 {
     return isAllowedWithURL<&ContentSecurityPolicy::allowObjectFromSource>(scriptExecutionContext(), url);
+}
+
+bool DOMSecurityPolicy::allowsPluginType(const String& type) const
+{
+    return isAllowedWithType<&ContentSecurityPolicy::allowPluginType>(scriptExecutionContext(), type);
 }
 
 bool DOMSecurityPolicy::allowsScriptFrom(const String& url) const

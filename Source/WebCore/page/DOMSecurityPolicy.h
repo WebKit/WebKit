@@ -55,10 +55,12 @@ public:
 
     bool allowsConnectionTo(const String& url) const;
     bool allowsFontFrom(const String& url) const;
+    bool allowsFormAction(const String& url) const;
     bool allowsFrameFrom(const String& url) const;
     bool allowsImageFrom(const String& url) const;
     bool allowsMediaFrom(const String& url) const;
     bool allowsObjectFrom(const String& url) const;
+    bool allowsPluginType(const String& type) const;
     bool allowsScriptFrom(const String& url) const;
     bool allowsStyleFrom(const String& url) const;
 

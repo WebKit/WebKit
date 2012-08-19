@@ -1,3 +1,15 @@
+2012-08-19  Mike West  <mkwst@chromium.org>
+
+        CSP 1.1: Add 'plugin-types' and 'form-action' DOM API.
+        https://bugs.webkit.org/show_bug.cgi?id=94415
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowformaction-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowformaction.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowplugintype-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowplugintype.html: Added.
+
 2012-08-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: load network panel lazily
