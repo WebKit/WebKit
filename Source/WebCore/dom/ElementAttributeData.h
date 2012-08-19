@@ -79,7 +79,6 @@ public:
 
     // These functions do no error checking.
     void addAttribute(const Attribute&, Element*, SynchronizationOfLazyAttribute = NotInSynchronizationOfLazyAttribute);
-    void removeAttribute(const QualifiedName&, Element*);
     void removeAttribute(size_t index, Element*, SynchronizationOfLazyAttribute = NotInSynchronizationOfLazyAttribute);
     PassRefPtr<Attr> takeAttribute(size_t index, Element*);
 
@@ -133,15 +132,6 @@ inline size_t ElementAttributeData::length() const
     if (isMutable())
         return m_mutableAttributeVector->size();
     return m_arraySize;
-}
-
-inline void ElementAttributeData::removeAttribute(const QualifiedName& name, Element* element)
-{
-    size_t index = getAttributeItemIndex(name);
-    if (index == notFound)
-        return;
-
-    removeAttribute(index, element);
 }
 
 inline Attribute* ElementAttributeData::getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase)
