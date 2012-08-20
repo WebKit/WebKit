@@ -245,8 +245,14 @@ IntSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float mu
     if (m_image->isSVGImage()) {
         SVGImageCache::SizeAndScales sizeAndScales = m_svgImageCache->requestedSizeAndScales(renderer);
         if (!sizeAndScales.size.isEmpty()) {
-            imageSize.setWidth(sizeAndScales.size.width() / sizeAndScales.zoom);
-            imageSize.setHeight(sizeAndScales.size.height() / sizeAndScales.zoom);
+            float scale = sizeAndScales.scale;
+            if (!scale) {
+                Page* page = renderer->document()->page();
+                scale = page->deviceScaleFactor() * page->pageScaleFactor();
+            }
+
+            imageSize.setWidth(scale * sizeAndScales.size.width() / sizeAndScales.zoom);
+            imageSize.setHeight(scale * sizeAndScales.size.height() / sizeAndScales.zoom);
         }
     }
 #endif

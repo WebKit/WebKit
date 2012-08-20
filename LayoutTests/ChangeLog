@@ -1,3 +1,14 @@
+2012-08-20  Philip Rogers  <pdr@google.com>
+
+        Canvas drawImage() should draw SVG at the correct scale.
+        https://bugs.webkit.org/show_bug.cgi?id=94377
+
+        Reviewed by Tim Horton.
+
+        * svg/as-image/resources/100px-green-rect.svg: Added.
+        * svg/as-image/svg-as-image-canvas-expected.html: Added.
+        * svg/as-image/svg-as-image-canvas.html: Added.
+
 2012-08-20  Chris Rogers  <crogers@google.com>
 
         Update TestExpectations now that stray ASSERT is fixed in AudioParamTimeline
