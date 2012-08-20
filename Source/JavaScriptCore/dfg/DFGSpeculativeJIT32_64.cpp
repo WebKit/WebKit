@@ -1530,7 +1530,7 @@ void SpeculativeJIT::compileObjectToObjectOrOtherEquality(
     
     // We know that within this branch, rightChild must not be a cell. Check if that is enough to
     // prove that it is either null or undefined.
-    if (!isOtherSpeculation(m_state.forNode(rightChild).m_type & ~SpecCell)) {
+    if (!isOtherOrEmptySpeculation(m_state.forNode(rightChild).m_type & ~SpecCell)) {
         m_jit.move(op2TagGPR, resultGPR);
         m_jit.or32(TrustedImm32(1), resultGPR);
         
