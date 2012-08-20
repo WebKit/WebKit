@@ -1,3 +1,16 @@
+2012-08-20  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Get rid of pango backend support once harfbuzz-ng is working
+        https://bugs.webkit.org/show_bug.cgi?id=92102
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Removing choice of font backend, Pango detection not required any more.
+
+        * Source/cmake/FindPango.cmake: Removed.
+        * Source/cmake/LibFindMacros.cmake: Removed.
+        * Source/cmake/OptionsEfl.cmake: Removing choice of font backend.
+
 2012-08-17  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [CMake] Add FindDBus.cmake and use it in the EFL port.

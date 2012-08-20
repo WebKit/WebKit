@@ -60,16 +60,6 @@ IF (WTF_USE_FREETYPE)
   )
 ENDIF ()
 
-IF (WTF_USE_PANGO)
-  LIST(APPEND WebKit_INCLUDE_DIRECTORIES
-    "${WEBCORE_DIR}/platform/graphics/pango"
-    ${Pango_INCLUDE_DIRS}
-  )
-  LIST(APPEND WebKit_LIBRARIES
-    ${Pango_LIBRARIES}
-  )
-ENDIF ()
-
 IF (ENABLE_NOTIFICATIONS)
   LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/notifications"
