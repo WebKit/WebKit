@@ -47,9 +47,9 @@ public:
     void layoutVerticalBox(bool relayoutChildren);
 
     virtual bool avoidsFloats() const { return true; }
-
     virtual bool isDeprecatedFlexibleBox() const { return true; }
     virtual bool isStretchingChildren() const { return m_stretchingChildren; }
+    virtual bool canCollapseAnonymousBlockChild() const OVERRIDE { return false; }
 
     void placeChild(RenderBox* child, const LayoutPoint& location);
 

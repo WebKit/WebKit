@@ -1,3 +1,15 @@
+2012-08-20  Tony Chang  <tony@chromium.org>
+
+        RenderGrid children should always be RenderBoxes
+        https://bugs.webkit.org/show_bug.cgi?id=94305
+
+        Reviewed by Abhishek Arya.
+
+        Add test case from fuzzer.
+
+        * fast/css-grid-layout/should-not-collapse-anonymous-blocks-expected.txt: Added.
+        * fast/css-grid-layout/should-not-collapse-anonymous-blocks.html: Added.
+
 2012-08-20  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r126026.

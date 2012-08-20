@@ -45,6 +45,7 @@ public:
 
     virtual bool isFlexibleBox() const OVERRIDE { return true; }
     virtual bool avoidsFloats() const OVERRIDE { return true; }
+    virtual bool canCollapseAnonymousBlockChild() const OVERRIDE { return false; }
     virtual void computePreferredLogicalWidths() OVERRIDE;
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;
 

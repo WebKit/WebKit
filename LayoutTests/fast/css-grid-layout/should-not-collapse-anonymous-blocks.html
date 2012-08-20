@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner) {
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+    testRunner.dumpAsText();
+}
+</script>
+<style>
+#a:nth-last-child(-n+2) {
+    -webkit-flow-into: body;
+}
+</style>
+<body>
+<p>This test passes if it does not crash.</p>
+<div style="display: -webkit-grid;">
+    <div id=a></div>
+    <div style="display: inline; "></div>
+</div>
+</html>

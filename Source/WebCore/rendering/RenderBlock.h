@@ -985,6 +985,8 @@ protected:
 
     virtual bool recomputeLogicalWidth();
 
+    virtual bool canCollapseAnonymousBlockChild() const { return true; }
+
 public:
     LayoutUnit offsetFromLogicalTopOfFirstPage() const;
     RenderRegion* regionAtBlockOffset(LayoutUnit) const;

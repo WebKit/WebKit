@@ -41,6 +41,7 @@ public:
     virtual void computePreferredLogicalWidths() OVERRIDE;
 
     virtual bool avoidsFloats() const OVERRIDE { return true; }
+    virtual bool canCollapseAnonymousBlockChild() const OVERRIDE { return false; }
 
 private:
     class GridTrack;
