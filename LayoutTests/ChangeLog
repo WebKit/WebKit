@@ -1,3 +1,26 @@
+2012-08-20  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [JSC] SerializedScriptValue::create() should throw a DataCloneError if input is an unsupported object
+        https://bugs.webkit.org/show_bug.cgi?id=94493
+
+        Reviewed by Oliver Hunt.
+
+        Add checks for Function, Error and host objects arguments to
+        MessagePort.postMessage() in fast/events/message-port-multi.html.
+
+        According to the structured clone specification, we should throw
+        a DataCloneError for such input types.
+
+        * fast/dom/Window/anonymous-slot-with-changes-expected.txt:
+        * fast/dom/Window/anonymous-slot-with-changes.html: Update test to expect
+        an exception when passing a function to postMessage().
+        * fast/events/message-port-multi-expected.txt: Update expected result
+        accordingly.
+        * fast/events/resources/message-port-multi.js:
+        (testTransfers.try.f1):
+        * platform/chromium/fast/events/message-port-multi-expected.txt: Removed.
+        Now identical to global expectation.
+
 2012-08-20  Ken Buchanan  <kenrb@chromium.org>
         Line boxes not being dirtied correctly during inline removal
         https://bugs.webkit.org/show_bug.cgi?id=93156

@@ -1,4 +1,5 @@
 Tests that we clone object hierarchies
+PASS: 'postMessage((function(){}))' threw Error: DATA_CLONE_ERR: DOM Exception 25
 PASS: eventData is null of type object
 PASS: eventData is null of type object
 PASS: eventData is null of type object
@@ -49,11 +50,6 @@ PASS: eventData is ,,1 of type object
 PASS: eventData is ,,1 of type object
 PASS: eventData is ,,1 of type object
 PASS: eventData is ,,1 of type object
-PASS: eventData is null of type object
-PASS: eventData is null of type object
-PASS: eventData is null of type object
-PASS: eventData is null of type object
-PASS: eventData is null of type object
 PASS: eventData is 2009-02-13T23:31:30.000Z of type object
 PASS: eventData is 2009-02-13T23:31:30.000Z of type object
 PASS: eventData is 2009-02-13T23:31:30.000Z of type object

@@ -51,6 +51,7 @@ enum SerializationReturnCode {
     InterruptedExecutionError,
     ValidationError,
     ExistingExceptionError,
+    DataCloneError,
     UnspecifiedError
 };
     

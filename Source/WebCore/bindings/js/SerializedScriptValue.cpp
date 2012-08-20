@@ -582,13 +582,6 @@ private:
 
         if (isArray(value))
             return false;
-           
-        // Object cannot be serialized because the act of walking the object creates new objects
-        if (value.isObject() && asObject(value)->inherits(&JSNavigator::s_info)) {
-            fail();
-            write(NullTag);
-            return true; 
-        }
 
         if (value.isObject()) {
             JSObject* obj = asObject(value);
@@ -677,9 +670,7 @@ private:
                 return success;
             }
 
-            CallData unusedData;
-            if (getCallData(value, unusedData) == CallTypeNone)
-                return false;
+            return false;
         }
         // Any other types are expected to serialize as null.
         write(NullTag);
@@ -898,6 +889,12 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 JSObject* inObject = asObject(inValue);
                 if (!startObject(inObject))
                     break;
+                // At this point, all supported objects other than Object
+                // objects have been handled. If we reach this point and
+                // the input is not an Object object then we should throw
+                // a DataCloneError.
+                if (inObject->classInfo() != &JSFinalObject::s_info)
+                    return DataCloneError;
                 inputObjectStack.append(inObject);
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArray(m_exec));
@@ -1919,6 +1916,9 @@ void SerializedScriptValue::maybeThrowExceptionIfSerializationFailed(ExecState* 
         break;
     case ValidationError:
         throwError(exec, createTypeError(exec, "Unable to deserialize data."));
+        break;
+    case DataCloneError:
+        setDOMException(exec, DATA_CLONE_ERR);
         break;
     case ExistingExceptionError:
         break;

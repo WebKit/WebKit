@@ -47,7 +47,39 @@ function testTransfers() {
         channel0.port1.webkitPostMessage({id:"host-object", hostObject:c3, port:c4.port1}, [c4.port1]);
         testFailed("Sending host object should throw");
     } catch(e) {
-        testPassed("Sending host object has thrown " + e);
+        if (e.code == DOMException.DATA_CLONE_ERR)
+          testPassed("Sending host object has thrown " + e);
+        else
+          testFailed("Sending host object should throw a DataCloneError, got: " + e);
+    }
+    try {
+        channel0.port1.webkitPostMessage({id:"host-object2", hostObject:navigator, port:c4.port1}, [c4.port1]);
+        testFailed("Sending host object should throw");
+    } catch(e) {
+        if (e.code == DOMException.DATA_CLONE_ERR)
+          testPassed("Sending host object has thrown " + e);
+        else
+          testFailed("Sending host object should throw a DataCloneError, got: " + e);
+    }
+    try {
+        var f1 = function() {}
+        channel0.port1.webkitPostMessage({id:"function-object", function:f1, port:c4.port1}, [c4.port1]);
+        testFailed("Sending Function object should throw");
+    } catch(e) {
+        if (e.code == DOMException.DATA_CLONE_ERR)
+          testPassed("Sending Function object has thrown " + e);
+        else
+          testFailed("Sending Function object should throw a DataCloneError, got: " + e);
+    }
+    try {
+        var err = new Error();
+        channel0.port1.webkitPostMessage({id:"error-object", error:err, port:c4.port1}, [c4.port1]);
+        testFailed("Sending Error object should throw");
+    } catch(e) {
+        if (e.code == DOMException.DATA_CLONE_ERR)
+          testPassed("Sending Error object has thrown " + e);
+        else
+          testPassed("Sending Error object should throw a DataCloneError, got: " + e);
     }
     c4.port1.postMessage("Should succeed");
     channel0.port1.webkitPostMessage({id:"done"});

@@ -14,7 +14,10 @@ PASS event.ports is non-null and zero length when no port sent
 PASS event.ports is non-null and zero length when empty array sent
 PASS event.ports contains two ports when two ports sent
 PASS event.ports contains two ports when two ports re-sent after error
-PASS Sending host object has thrown TypeError: Unable to deserialize data.
+PASS Sending host object has thrown Error: DATA_CLONE_ERR: DOM Exception 25
+PASS Sending host object has thrown Error: DATA_CLONE_ERR: DOM Exception 25
+PASS Sending Function object has thrown Error: DATA_CLONE_ERR: DOM Exception 25
+PASS Sending Error object has thrown Error: DATA_CLONE_ERR: DOM Exception 25
 PASS send-port: transferred one port
 PASS send-port-twice: transferred one port twice
 PASS send-two-ports: transferred two ports
