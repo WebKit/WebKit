@@ -204,9 +204,6 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 #if ENABLE(CSS_FILTERS)
     updateLayerFilters(renderer()->style());
 #endif
-#if ENABLE(CSS_COMPOSITING)
-    updateLayerBlendMode(renderer()->style());
-#endif
 }
 
 void RenderLayerBacking::destroyGraphicsLayers()
@@ -242,12 +239,6 @@ void RenderLayerBacking::updateLayerTransform(const RenderStyle* style)
 void RenderLayerBacking::updateLayerFilters(const RenderStyle* style)
 {
     m_canCompositeFilters = m_graphicsLayer->setFilters(style->filter());
-}
-#endif
-
-#if ENABLE(CSS_COMPOSITING)
-void RenderLayerBacking::updateLayerBlendMode(const RenderStyle*)
-{
 }
 #endif
 
@@ -460,10 +451,6 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         
 #if ENABLE(CSS_FILTERS)
     updateLayerFilters(renderer()->style());
-#endif
-
-#if ENABLE(CSS_COMPOSITING)
-    updateLayerBlendMode(renderer()->style());
 #endif
     
     m_owningLayer->updateDescendantDependentFlags();
@@ -1195,12 +1182,6 @@ void RenderLayerBacking::setRequiresOwnBackingStore(bool requiresOwnBacking)
     
     compositor()->repaintInCompositedAncestor(m_owningLayer, compositedBounds());
 }
-
-#if ENABLE(CSS_COMPOSITING)
-void RenderLayerBacking::setBlendMode(BlendMode)
-{
-}
-#endif
 
 void RenderLayerBacking::setContentsNeedDisplay()
 {

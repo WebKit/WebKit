@@ -674,15 +674,6 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueVisible || valueID == CSSValueHidden)
             return true;
         break;
-#if ENABLE(CSS_COMPOSITING)
-    case CSSPropertyWebkitBlendMode:
-        if (valueID == CSSValueNormal || valueID == CSSValueMultiply || valueID == CSSValueScreen || valueID == CSSValueOverlay 
-            || valueID == CSSValueDarken || valueID == CSSValueLighten ||  valueID == CSSValueColorDodge || valueID == CSSValueColorBurn 
-            || valueID == CSSValueHardLight || valueID == CSSValueSoftLight || valueID == CSSValueDifference || valueID == CSSValueExclusion 
-            || valueID == CSSValueHue || valueID == CSSValueSaturation || valueID == CSSValueColor || valueID == CSSValueLuminosity)
-            return true;
-        break;
-#endif
     case CSSPropertyWebkitBorderFit:
         if (valueID == CSSValueBorder || valueID == CSSValueLines)
             return true;
@@ -927,9 +918,6 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyTextUnderlineStyle:
     case CSSPropertyVisibility:
     case CSSPropertyWebkitAppearance:
-#if ENABLE(CSS_COMPOSITING)
-    case CSSPropertyWebkitBlendMode:
-#endif
     case CSSPropertyWebkitBackfaceVisibility:
     case CSSPropertyWebkitBorderAfterStyle:
     case CSSPropertyWebkitBorderBeforeStyle:
@@ -2267,11 +2255,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             }
             return false;
         }
-        break;
-#endif
-#if ENABLE(CSS_COMPOSITING)
-    case CSSPropertyWebkitBlendMode:
-            validPrimitive = true;
         break;
 #endif
 #if ENABLE(CSS3_FLEXBOX)
