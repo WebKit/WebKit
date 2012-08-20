@@ -64,8 +64,8 @@ private:
     bool searchEventsShouldBeDispatched() const;
     void startSearchEventTimer();
 
-    RefPtr<HTMLElement> m_resultsButton;
-    RefPtr<HTMLElement> m_cancelButton;
+    HTMLElement* m_resultsButton;
+    HTMLElement* m_cancelButton;
     Timer<SearchInputType> m_searchEventTimer;
 };
 
