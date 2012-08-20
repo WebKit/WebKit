@@ -422,6 +422,7 @@ hide
 higher
 invert
 -webkit-isolate
+-webkit-isolate-override
 -webkit-plaintext
 landscape
 ledger

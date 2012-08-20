@@ -1,3 +1,16 @@
+2012-08-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Replace isolate || bidi-override by isolate-override
+        https://bugs.webkit.org/show_bug.cgi?id=89746
+
+        Reviewed by Levi Weintraub.
+
+        Rebaseline test expectations. These tests test the new behavior and new property value -webkit-isolate-override.
+
+        * fast/css/unicode-bidi-computed-value-expected.txt:
+        * fast/css/unicode-bidi-computed-value.html:
+        * fast/text/bidi-override-isolate.html:
+
 2012-08-20  Tony Chang  <tony@chromium.org>
 
         RenderGrid children should always be RenderBoxes
