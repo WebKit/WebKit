@@ -170,7 +170,6 @@ float AudioParamTimeline::valuesForTimeRangeImpl(float startTime,
         return defaultValue;
 
     // Return default value if there are no events matching the desired time range.
-    ASSERT(m_events.size());
     if (!m_events.size() || endTime <= m_events[0].time()) {
         for (unsigned i = 0; i < numberOfValues; ++i)
             values[i] = defaultValue;
