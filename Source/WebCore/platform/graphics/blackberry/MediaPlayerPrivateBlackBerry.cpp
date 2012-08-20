@@ -66,7 +66,7 @@ void MediaPlayerPrivate::registerMediaEngine(MediaEngineRegistrar registrar)
 
 void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
 {
-    set<string> supported = MMRPlayer::allSupportedMimeTypes();
+    set<string> supported = PlatformPlayer::allSupportedMimeTypes();
     set<string>::iterator i = supported.begin();
     for (; i != supported.end(); i++)
         types.add(i->c_str());
@@ -80,7 +80,7 @@ MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& type, c
     }
 
     // spec says we should not return "probably" if the codecs string is empty
-    if (MMRPlayer::mimeTypeSupported(type.ascii().data())) {
+    if (PlatformPlayer::mimeTypeSupported(type.ascii().data())) {
         LOG(Media, "MediaPlayer supports type; cache contains type '%s'.", type.ascii().data());
         return codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported;
     }
@@ -90,16 +90,17 @@ MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& type, c
 
 void MediaPlayerPrivate::notifyAppActivatedEvent(bool activated)
 {
-    MMRPlayer::notifyAppActivatedEvent(activated);
+    PlatformPlayer::notifyAppActivatedEvent(activated);
 }
 
 void MediaPlayerPrivate::setCertificatePath(const String& caPath)
 {
-    MMRPlayer::setCertificatePath(string(caPath.utf8().data()));
+    PlatformPlayer::setCertificatePath(string(caPath.utf8().data()));
 }
 
 MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     : m_webCorePlayer(player)
+    , m_platformPlayer(0)
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_fullscreenWebPageClient(0)
@@ -114,14 +115,6 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_waitMetadataTimer(this, &MediaPlayerPrivate::waitMetadataTimerFired)
     , m_waitMetadataPopDialogCounter(0)
 {
-    void* tabId = 0;
-    if (frameView() && frameView()->hostWindow())
-        tabId = frameView()->hostWindow()->platformPageClient();
-#if USE(ACCELERATED_COMPOSITING)
-    m_platformPlayer = new MMRPlayer(this, tabId, true);
-#else
-    m_platformPlayer = new MMRPlayer(this, tabId, false);
-#endif
 }
 
 MediaPlayerPrivate::~MediaPlayerPrivate()
@@ -156,6 +149,17 @@ void MediaPlayerPrivate::load(const String& url)
         modifiedUrl = decodeURLEscapeSequences(modifiedUrl);
     }
 
+    void* tabId = 0;
+    if (frameView() && frameView()->hostWindow())
+        tabId = frameView()->hostWindow()->platformPageClient();
+
+    deleteGuardedObject(m_platformPlayer);
+#if USE(ACCELERATED_COMPOSITING)
+    m_platformPlayer = PlatformPlayer::create(this, tabId, true, modifiedUrl.utf8().data());
+#else
+    m_platformPlayer = PlatformPlayer::create(this, tabId, false, modifiedUrl.utf8().data());
+#endif
+
     String cookiePairs;
     if (!url.isEmpty())
         cookiePairs = cookieManager().getCookie(KURL(ParsedURLString, url.utf8().data()), WithHttpOnlyCookies);
@@ -167,22 +171,26 @@ void MediaPlayerPrivate::load(const String& url)
 
 void MediaPlayerPrivate::cancelLoad()
 {
-    m_platformPlayer->cancelLoad();
+    if (m_platformPlayer)
+        m_platformPlayer->cancelLoad();
 }
 
 void MediaPlayerPrivate::prepareToPlay()
 {
-    m_platformPlayer->prepareToPlay();
+    if (m_platformPlayer)
+        m_platformPlayer->prepareToPlay();
 }
 
 void MediaPlayerPrivate::play()
 {
-    m_platformPlayer->play();
+    if (m_platformPlayer)
+        m_platformPlayer->play();
 }
 
 void MediaPlayerPrivate::pause()
 {
-    m_platformPlayer->pause();
+    if (m_platformPlayer)
+        m_platformPlayer->pause();
 }
 
 bool MediaPlayerPrivate::supportsFullscreen() const
@@ -192,6 +200,9 @@ bool MediaPlayerPrivate::supportsFullscreen() const
 
 IntSize MediaPlayerPrivate::naturalSize() const
 {
+    if (!m_platformPlayer)
+        return IntSize();
+
     // Cannot return empty size, otherwise paint() will never get called.
     // Also, the values here will affect the aspect ratio of the output rectangle that will
     // be used for renderering the video, so we must take PAR into account.
@@ -209,12 +220,16 @@ IntSize MediaPlayerPrivate::naturalSize() const
 
 bool MediaPlayerPrivate::hasVideo() const
 {
-    return m_platformPlayer->hasVideo();
+    if (m_platformPlayer)
+        return m_platformPlayer->hasVideo();
+    return false;
 }
 
 bool MediaPlayerPrivate::hasAudio() const
 {
-    return m_platformPlayer->hasAudio();
+    if (m_platformPlayer)
+        return m_platformPlayer->hasAudio();
+    return false;
 }
 
 void MediaPlayerPrivate::setVisible(bool)
@@ -224,7 +239,9 @@ void MediaPlayerPrivate::setVisible(bool)
 
 float MediaPlayerPrivate::duration() const
 {
-    return m_platformPlayer->duration();
+    if (m_platformPlayer)
+        return m_platformPlayer->duration();
+    return 0.0f;
 }
 
 static const double SeekSubmissionDelay = 0.1; // Reasonable throttling value.
@@ -232,6 +249,9 @@ static const double ShortMediaThreshold = SeekSubmissionDelay * 2.0;
 
 float MediaPlayerPrivate::currentTime() const
 {
+    if (!m_platformPlayer)
+        return 0.0f;
+
     // For very short media on the order of SeekSubmissionDelay we get
     // unwanted repeats if we don't return the most up-to-date currentTime().
     bool shortMedia = m_platformPlayer->duration() < ShortMediaThreshold;
@@ -240,6 +260,9 @@ float MediaPlayerPrivate::currentTime() const
 
 void MediaPlayerPrivate::seek(float time)
 {
+    if (!m_platformPlayer)
+        return;
+
     m_lastSeekTime = time;
     m_lastSeekTimePending = true;
     if (!m_userDrivenSeekTimer.isActive())
@@ -262,17 +285,21 @@ bool MediaPlayerPrivate::seeking() const
 
 void MediaPlayerPrivate::setRate(float rate)
 {
-    m_platformPlayer->setRate(rate);
+    if (m_platformPlayer)
+        m_platformPlayer->setRate(rate);
 }
 
 bool MediaPlayerPrivate::paused() const
 {
-    return m_platformPlayer->paused();
+    if (m_platformPlayer)
+        return m_platformPlayer->paused();
+    return false;
 }
 
 void MediaPlayerPrivate::setVolume(float volume)
 {
-    m_platformPlayer->setVolume(volume);
+    if (m_platformPlayer)
+        m_platformPlayer->setVolume(volume);
 }
 
 MediaPlayer::NetworkState MediaPlayerPrivate::networkState() const
@@ -287,11 +314,16 @@ MediaPlayer::ReadyState MediaPlayerPrivate::readyState() const
 
 float MediaPlayerPrivate::maxTimeSeekable() const
 {
-    return m_platformPlayer->maxTimeSeekable();
+    if (m_platformPlayer)
+        return m_platformPlayer->maxTimeSeekable();
+    return 0.0f;
 }
 
 PassRefPtr<TimeRanges> MediaPlayerPrivate::buffered() const
 {
+    if (!m_platformPlayer)
+        return TimeRanges::create();
+
     RefPtr<TimeRanges> timeRanges = TimeRanges::create();
     if (float bufferLoaded = m_platformPlayer->bufferLoaded())
         timeRanges->add(0, bufferLoaded);
@@ -311,6 +343,9 @@ void MediaPlayerPrivate::setSize(const IntSize&)
 
 void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
 {
+    if (!m_platformPlayer)
+        return;
+
 #if USE(ACCELERATED_COMPOSITING)
     // Only process paint calls coming via the accelerated compositing code
     // path, where we get called with a null graphics context. See
@@ -335,7 +370,9 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
 
 bool MediaPlayerPrivate::hasAvailableVideoFrame() const
 {
-    return m_platformPlayer->hasAvailableVideoFrame();
+    if (m_platformPlayer)
+        return m_platformPlayer->hasAvailableVideoFrame();
+    return false;
 }
 
 bool MediaPlayerPrivate::hasSingleSecurityOrigin() const
@@ -345,7 +382,9 @@ bool MediaPlayerPrivate::hasSingleSecurityOrigin() const
 
 MediaPlayer::MovieLoadType MediaPlayerPrivate::movieLoadType() const
 {
-    return static_cast<MediaPlayer::MovieLoadType>(m_platformPlayer->movieLoadType());
+    if (m_platformPlayer)
+        return static_cast<MediaPlayer::MovieLoadType>(m_platformPlayer->movieLoadType());
+    return MediaPlayer::Unknown;
 }
 
 void MediaPlayerPrivate::resizeSourceDimensions()
@@ -454,7 +493,8 @@ unsigned MediaPlayerPrivate::sourceHeight()
 
 void MediaPlayerPrivate::setAllowPPSVolumeUpdates(bool allow)
 {
-    return m_platformPlayer->setAllowPPSVolumeUpdates(allow);
+    if (m_platformPlayer)
+        return m_platformPlayer->setAllowPPSVolumeUpdates(allow);
 }
 
 void MediaPlayerPrivate::updateStates()
@@ -462,36 +502,36 @@ void MediaPlayerPrivate::updateStates()
     MediaPlayer::NetworkState oldNetworkState = m_networkState;
     MediaPlayer::ReadyState oldReadyState = m_readyState;
 
-    MMRPlayer::Error currentError = m_platformPlayer->error();
+    PlatformPlayer::Error currentError = m_platformPlayer->error();
 
     HTMLMediaElement* element = static_cast<HTMLMediaElement*>(m_webCorePlayer->mediaPlayerClient());
 
-    if (currentError != MMRPlayer::MediaOK) {
+    if (currentError != PlatformPlayer::MediaOK) {
         m_readyState = MediaPlayer::HaveNothing;
-        if (currentError == MMRPlayer::MediaDecodeError)
+        if (currentError == PlatformPlayer::MediaDecodeError)
             m_networkState = MediaPlayer::DecodeError;
-        else if (currentError == MMRPlayer::MediaMetaDataError
-            || currentError == MMRPlayer::MediaAudioReceiveError
-            || currentError == MMRPlayer::MediaVideoReceiveError)
+        else if (currentError == PlatformPlayer::MediaMetaDataError
+            || currentError == PlatformPlayer::MediaAudioReceiveError
+            || currentError == PlatformPlayer::MediaVideoReceiveError)
             m_networkState = MediaPlayer::NetworkError;
     } else {
         switch (m_platformPlayer->mediaState()) {
-        case MMRPlayer::MMRPlayStateIdle:
+        case PlatformPlayer::MMRPlayStateIdle:
             m_networkState = MediaPlayer::Idle;
             break;
-        case MMRPlayer::MMRPlayStatePlaying:
+        case PlatformPlayer::MMRPlayStatePlaying:
             m_networkState = MediaPlayer::Loading;
             break;
-        case MMRPlayer::MMRPlayStateStopped:
+        case PlatformPlayer::MMRPlayStateStopped:
             m_networkState = MediaPlayer::Idle;
             break;
-        case MMRPlayer::MMRPlayStateUnknown:
+        case PlatformPlayer::MMRPlayStateUnknown:
         default:
             break;
         }
 
         switch (m_platformPlayer->state()) {
-        case MMRPlayer::MP_STATE_IDLE:
+        case PlatformPlayer::MP_STATE_IDLE:
 #if USE(ACCELERATED_COMPOSITING)
             setBuffering(false);
             m_mediaIsBuffering = false;
@@ -504,7 +544,7 @@ void MediaPlayerPrivate::updateStates()
             if (isFullscreen())
                 element->exitFullscreen();
             break;
-        case MMRPlayer::MP_STATE_ACTIVE:
+        case PlatformPlayer::MP_STATE_ACTIVE:
 #if USE(ACCELERATED_COMPOSITING)
             m_showBufferingImage = false;
             m_mediaIsBuffering = false;
@@ -513,7 +553,7 @@ void MediaPlayerPrivate::updateStates()
                 m_platformLayer = VideoLayerWebKitThread::create(m_webCorePlayer);
 #endif
             break;
-        case MMRPlayer::MP_STATE_UNSUPPORTED:
+        case PlatformPlayer::MP_STATE_UNSUPPORTED:
             break;
         default:
             break;
@@ -529,18 +569,18 @@ void MediaPlayerPrivate::updateStates()
         m_webCorePlayer->networkStateChanged();
 }
 
-// IMMRPlayerListener callbacks implementation
-void MediaPlayerPrivate::onStateChanged(MMRPlayer::MpState)
+// IPlatformPlayerListener callbacks implementation
+void MediaPlayerPrivate::onStateChanged(PlatformPlayer::MpState)
 {
     updateStates();
 }
 
-void MediaPlayerPrivate::onMediaStatusChanged(MMRPlayer::MMRPlayState)
+void MediaPlayerPrivate::onMediaStatusChanged(PlatformPlayer::MMRPlayState)
 {
     updateStates();
 }
 
-void MediaPlayerPrivate::onError(MMRPlayer::Error type)
+void MediaPlayerPrivate::onError(PlatformPlayer::Error type)
 {
     updateStates();
 }
@@ -640,7 +680,7 @@ void MediaPlayerPrivate::waitMetadataTimerFired(Timer<MediaPlayerPrivate>*)
     }
     m_waitMetadataPopDialogCounter = 0;
 
-    int wait = showErrorDialog(MMRPlayer::MediaMetaDataTimeoutError);
+    int wait = showErrorDialog(PlatformPlayer::MediaMetaDataTimeoutError);
     if (!wait)
         onPauseNotified();
     else {
@@ -702,34 +742,34 @@ void MediaPlayerPrivate::onAuthenticationAccepted(const MMRAuthChallenge& authCh
         CredentialStorage::set(Credential(authChallenge.username().c_str(), authChallenge.password().c_str(), static_cast<CredentialPersistence>(authChallenge.persistence())), protectionSpace, url);
 }
 
-int MediaPlayerPrivate::showErrorDialog(MMRPlayer::Error type)
+int MediaPlayerPrivate::showErrorDialog(PlatformPlayer::Error type)
 {
     using namespace BlackBerry::WebKit;
 
     WebPageClient::AlertType atype;
     switch (type) {
-    case MMRPlayer::MediaOK:
+    case PlatformPlayer::MediaOK:
         atype = WebPageClient::MediaOK;
         break;
-    case MMRPlayer::MediaDecodeError:
+    case PlatformPlayer::MediaDecodeError:
         atype = WebPageClient::MediaDecodeError;
         break;
-    case MMRPlayer::MediaMetaDataError:
+    case PlatformPlayer::MediaMetaDataError:
         atype = WebPageClient::MediaMetaDataError;
         break;
-    case MMRPlayer::MediaMetaDataTimeoutError:
+    case PlatformPlayer::MediaMetaDataTimeoutError:
         atype = WebPageClient::MediaMetaDataTimeoutError;
         break;
-    case MMRPlayer::MediaNoMetaDataError:
+    case PlatformPlayer::MediaNoMetaDataError:
         atype = WebPageClient::MediaNoMetaDataError;
         break;
-    case MMRPlayer::MediaVideoReceiveError:
+    case PlatformPlayer::MediaVideoReceiveError:
         atype = WebPageClient::MediaVideoReceiveError;
         break;
-    case MMRPlayer::MediaAudioReceiveError:
+    case PlatformPlayer::MediaAudioReceiveError:
         atype = WebPageClient::MediaAudioReceiveError;
         break;
-    case MMRPlayer::MediaInvalidError:
+    case PlatformPlayer::MediaInvalidError:
         atype = WebPageClient::MediaInvalidError;
         break;
     default:

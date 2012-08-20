@@ -22,7 +22,7 @@
 #if ENABLE(VIDEO)
 #include "MediaPlayerPrivate.h"
 
-#include <BlackBerryPlatformMMRPlayer.h>
+#include <BlackBerryPlatformPlayer.h>
 
 namespace BlackBerry {
 namespace WebKit {
@@ -32,7 +32,7 @@ class WebPageClient;
 
 namespace WebCore {
 
-class MediaPlayerPrivate : public MediaPlayerPrivateInterface, public BlackBerry::Platform::IMMRPlayerListener {
+class MediaPlayerPrivate : public MediaPlayerPrivateInterface, public BlackBerry::Platform::IPlatformPlayerListener {
 public:
     virtual ~MediaPlayerPrivate();
 
@@ -113,10 +113,10 @@ public:
     unsigned sourceHeight();
     void setAllowPPSVolumeUpdates(bool);
 
-    // IMMRPlayerListener implementation.
-    virtual void onStateChanged(BlackBerry::Platform::MMRPlayer::MpState);
-    virtual void onMediaStatusChanged(BlackBerry::Platform::MMRPlayer::MMRPlayState);
-    virtual void onError(BlackBerry::Platform::MMRPlayer::Error);
+    // IPlatformPlayerListener implementation.
+    virtual void onStateChanged(BlackBerry::Platform::PlatformPlayer::MpState);
+    virtual void onMediaStatusChanged(BlackBerry::Platform::PlatformPlayer::MMRPlayState);
+    virtual void onError(BlackBerry::Platform::PlatformPlayer::Error);
     virtual void onDurationChanged(float);
     virtual void onTimeChanged(float);
     virtual void onRateChanged(float);
@@ -136,7 +136,7 @@ public:
     virtual bool isFullscreen() const;
     virtual bool isElementPaused() const;
     virtual bool isTabVisible() const;
-    virtual int showErrorDialog(BlackBerry::Platform::MMRPlayer::Error);
+    virtual int showErrorDialog(BlackBerry::Platform::PlatformPlayer::Error);
     virtual BlackBerry::Platform::Graphics::Window* platformWindow();
 
 private:
@@ -149,7 +149,7 @@ private:
     virtual String engineDescription() const { return "BlackBerry"; }
 
     MediaPlayer* m_webCorePlayer;
-    BlackBerry::Platform::MMRPlayer* m_platformPlayer;
+    BlackBerry::Platform::PlatformPlayer* m_platformPlayer;
 
     mutable MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
