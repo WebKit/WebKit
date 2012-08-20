@@ -35,6 +35,7 @@ WEBKIT_API void webkit_dom_html_element_set_class_name(WebKitDOMHTMLElement* ele
 WEBKIT_API WebKitDOMDOMTokenList* webkit_dom_html_element_get_class_list(WebKitDOMHTMLElement* element);
 WEBKIT_API void webkit_dom_html_form_element_dispatch_form_change(WebKitDOMHTMLFormElement* self);
 WEBKIT_API void webkit_dom_html_form_element_dispatch_form_input(WebKitDOMHTMLFormElement* self);
+WEBKIT_API gboolean webkit_dom_webkit_named_flow_get_overflow(WebKitDOMWebKitNamedFlow* flow);
 
 G_END_DECLS
 
