@@ -104,8 +104,6 @@ public:
     // Returns all cookies that are associated with the specified URL as raw cookies.
     void getRawCookies(Vector<ParsedCookie*>& stackOfCookies, const KURL& requestURL, CookieFilter = WithHttpOnlyCookies) const;
 
-    void flushCookiesToBackingStore();
-
 private:
     friend CookieManager& cookieManager();
 

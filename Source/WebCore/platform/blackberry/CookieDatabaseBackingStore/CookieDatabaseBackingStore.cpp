@@ -44,6 +44,7 @@
 #endif
 
 #include <BlackBerryPlatformExecutableMessage.h>
+#include <BlackBerryPlatformNavigatorHandler.h>
 
 using BlackBerry::Platform::MessageClient;
 using BlackBerry::Platform::TypedReplyBuffer;
@@ -81,6 +82,18 @@ CookieDatabaseBackingStore::~CookieDatabaseBackingStore()
         ASSERT(m_changedCookies.isEmpty());
     }
 #endif
+}
+
+void CookieDatabaseBackingStore::onThreadFinished()
+{
+    CookieLog("CookieManager - flushing cookies to backingStore...");
+    // This is called from shutdown, so we need to be sure the OS doesn't kill us before the db write finishes.
+    // Once should be enough since this extends terimination by 2 seconds.
+    BlackBerry::Platform::NavigatorHandler::sendExtendTerminate();
+    sendChangesToDatabaseSynchronously();
+    CookieLog("CookieManager - finished flushing cookies to backingStore.");
+
+    MessageClient::onThreadFinished();
 }
 
 void CookieDatabaseBackingStore::upgradeTableIfNeeded(const String& databaseFields, const String& primaryKeyFields)
@@ -409,7 +422,10 @@ void CookieDatabaseBackingStore::sendChangesToDatabaseSynchronously()
         if (m_dbTimer.started())
             m_dbTimer.stop();
     }
-    dispatchSyncMessage(createMethodCallMessage(&CookieDatabaseBackingStore::invokeSendChangesToDatabase, this));
+    if (isCurrentThread())
+        invokeSendChangesToDatabase();
+    else
+        dispatchSyncMessage(createMethodCallMessage(&CookieDatabaseBackingStore::invokeSendChangesToDatabase, this));
 }
 
 void CookieDatabaseBackingStore::sendChangesToDatabase(int nextInterval)

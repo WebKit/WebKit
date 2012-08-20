@@ -61,6 +61,9 @@ public:
 
     void sendChangesToDatabaseSynchronously();
 
+    // MessageClient methods
+    virtual void onThreadFinished();
+
     // ThreadTimerClient methods
     virtual bool willFireTimer() { return true; }
     virtual int getPulseCode() const { return pulseCode(); }
