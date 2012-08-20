@@ -1154,8 +1154,11 @@ float AccessibilityRenderObject::minValueForRange() const
 
 String AccessibilityRenderObject::stringValue() const
 {
-    if (!m_renderer || isPasswordField())
+    if (!m_renderer)
         return String();
+
+    if (isPasswordField())
+        return passwordFieldValue();
 
     RenderBoxModelObject* cssBox = renderBoxModelObject();
 
@@ -1975,8 +1978,11 @@ String AccessibilityRenderObject::text() const
     if (ariaRoleAttribute() == StaticTextRole)
         return ariaAccessibilityDescription();
     
-    if (!isTextControl() || isPasswordField())
+    if (!isTextControl())
         return String();
+
+    if (isPasswordField())
+        return passwordFieldValue();
 
     Node* node = m_renderer->node();
     if (!node)
@@ -1996,8 +2002,12 @@ int AccessibilityRenderObject::textLength() const
     ASSERT(isTextControl());
     
     if (isPasswordField())
+#if PLATFORM(GTK)
+        return passwordFieldValue().length();
+#else
         return -1; // need to return something distinct from 0
-    
+#endif
+
     return text().length();
 }
 
@@ -2792,16 +2802,13 @@ PlainTextRange AccessibilityRenderObject::doAXRangeForIndex(unsigned index) cons
 // specified by the given character range.
 String AccessibilityRenderObject::doAXStringForRange(const PlainTextRange& range) const
 {
-    if (isPasswordField())
-        return String();
-    
     if (!range.length)
         return String();
     
     if (!isTextControl())
         return String();
     
-    String elementText = text();
+    String elementText = isPasswordField() ? passwordFieldValue() : text();
     if (range.start + range.length > elementText.length())
         return String();
     
@@ -3938,6 +3945,27 @@ AccessibilityRole AccessibilityRenderObject::roleValueForMSAA() const
         m_roleForMSAA = roleValue();
 
     return m_roleForMSAA;
+}
+
+String AccessibilityRenderObject::passwordFieldValue() const
+{
+#if !PLATFORM(GTK)
+    // It seems only GTK is interested in this at the moment.
+    return String();
+#endif
+
+    ASSERT(isPasswordField());
+
+    // Look for the RenderText object in the RenderObject tree for this input field.
+    RenderObject* renderer = node()->renderer();
+    while (renderer && !renderer->isText())
+        renderer = renderer->firstChild();
+
+    if (!renderer || !renderer->isText())
+        return String();
+
+    // Return the text that is actually being rendered in the input field.
+    return static_cast<RenderText*>(renderer)->textWithoutTranscoding();
 }
 
 ScrollableArea* AccessibilityRenderObject::getScrollableAreaIfScrollable() const
