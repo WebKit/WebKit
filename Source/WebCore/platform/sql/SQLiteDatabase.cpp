@@ -56,7 +56,7 @@ SQLiteDatabase::SQLiteDatabase()
     , m_openingThread(0)
     , m_interrupted(false)
     , m_openError(SQLITE_ERROR)
-    , m_openErrorMessage(notOpenErrorMessage)
+    , m_openErrorMessage()
 {
 }
 
@@ -114,7 +114,7 @@ void SQLiteDatabase::close()
 
     m_openingThread = 0;
     m_openError = SQLITE_ERROR;
-    m_openErrorMessage = notOpenErrorMessage;
+    m_openErrorMessage = CString();
 }
 
 void SQLiteDatabase::interrupt()
@@ -333,8 +333,10 @@ int SQLiteDatabase::lastError()
 }
 
 const char* SQLiteDatabase::lastErrorMsg()
-{ 
-    return m_db ? sqlite3_errmsg(m_db) : m_openErrorMessage.data();
+{
+    if (m_db)
+        return sqlite3_errmsg(m_db);
+    return m_openErrorMessage.isNull() ? notOpenErrorMessage : m_openErrorMessage.data();
 }
 
 #ifndef NDEBUG
