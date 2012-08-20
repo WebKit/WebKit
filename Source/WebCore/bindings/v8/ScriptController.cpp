@@ -114,6 +114,7 @@ ScriptController::ScriptController(Frame* frame)
 
 ScriptController::~ScriptController()
 {
+    clearForClose();
 }
 
 void ScriptController::clearScriptObjects()
@@ -143,6 +144,30 @@ void ScriptController::clearScriptObjects()
         m_wrappedWindowScriptNPObject = 0;
     }
 #endif
+}
+
+void ScriptController::resetIsolatedWorlds()
+{
+    for (IsolatedWorldMap::iterator iter = m_proxy->isolatedWorlds().begin();
+         iter != m_proxy->isolatedWorlds().end(); ++iter) {
+        iter->second->destroy();
+    }
+    m_proxy->isolatedWorlds().clear();
+    m_proxy->isolatedWorldSecurityOrigins().clear();
+}
+
+void ScriptController::clearForClose()
+{
+    resetIsolatedWorlds();
+    V8GCController::collectGarbageIfNecessary();
+    windowShell()->clearForClose();
+}
+
+void ScriptController::clearForNavigation()
+{
+    resetIsolatedWorlds();
+    V8GCController::collectGarbageIfNecessary();
+    windowShell()->clearForNavigation();
 }
 
 void ScriptController::updateSecurityOrigin()
@@ -522,7 +547,7 @@ void ScriptController::clearWindowShell(DOMWindow*, bool)
     // V8 binding expects ScriptController::clearWindowShell only be called
     // when a frame is loading a new page. V8Proxy::clearForNavigation
     // creates a new context for the new page.
-    m_proxy->clearForNavigation();
+    clearForNavigation();
 }
 
 #if ENABLE(INSPECTOR)

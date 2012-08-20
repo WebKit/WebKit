@@ -87,9 +87,6 @@ namespace WebCore {
 
         Frame* frame() const { return m_frame; }
 
-        void clearForNavigation();
-        void clearForClose();
-
         void finishedWithEvent(Event*) { }
 
         // Evaluate a script file in the current execution environment.
@@ -143,8 +140,6 @@ namespace WebCore {
         IsolatedWorldSecurityOriginMap& isolatedWorldSecurityOrigins() { return m_isolatedWorldSecurityOrigins; }
 
     private:
-        void resetIsolatedWorlds();
-
         PassOwnPtr<v8::ScriptData> precompileScript(v8::Handle<v8::String>, CachedScript*);
 
         Frame* m_frame;

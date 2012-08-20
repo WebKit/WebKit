@@ -118,7 +118,6 @@ V8Proxy::V8Proxy(Frame* frame)
 
 V8Proxy::~V8Proxy()
 {
-    clearForClose();
     windowShell()->destroyGlobal();
 }
 
@@ -145,7 +144,7 @@ bool V8Proxy::handleOutOfMemory()
     if (!frame)
         return true;
 
-    frame->script()->proxy()->clearForClose();
+    frame->script()->clearForClose();
     frame->script()->windowShell()->destroyGlobal();
 
 #if PLATFORM(CHROMIUM)
@@ -346,30 +345,6 @@ V8PerContextData* V8Proxy::retrievePerContextData(Frame* frame)
     if (UNLIKELY(!!(isolatedContext = V8IsolatedContext::getEntered())))
         return isolatedContext->perContextData();
     return frame->script()->windowShell()->perContextData();
-}
-
-void V8Proxy::resetIsolatedWorlds()
-{
-    for (IsolatedWorldMap::iterator iter = m_isolatedWorlds.begin();
-         iter != m_isolatedWorlds.end(); ++iter) {
-        iter->second->destroy();
-    }
-    m_isolatedWorlds.clear();
-    m_isolatedWorldSecurityOrigins.clear();
-}
-
-void V8Proxy::clearForClose()
-{
-    resetIsolatedWorlds();
-    V8GCController::collectGarbageIfNecessary();
-    windowShell()->clearForClose();
-}
-
-void V8Proxy::clearForNavigation()
-{
-    resetIsolatedWorlds();
-    V8GCController::collectGarbageIfNecessary();
-    windowShell()->clearForNavigation();
 }
 
 v8::Local<v8::Context> V8Proxy::context(Frame* frame)

@@ -188,6 +188,9 @@ public:
     void updatePlatformScriptObjects();
     void cleanupScriptObjectsForPlugin(Widget*);
 
+    void clearForNavigation();
+    void clearForClose();
+
     NPObject* createScriptObjectForPluginElement(HTMLPlugInElement*);
     NPObject* windowScriptNPObject();
 
@@ -205,6 +208,8 @@ public:
     static int contextDebugId(v8::Handle<v8::Context>);
 
 private:
+    void resetIsolatedWorlds();
+
     Frame* m_frame;
     const String* m_sourceURL;
 
