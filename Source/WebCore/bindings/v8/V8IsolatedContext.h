@@ -39,9 +39,9 @@
 
 namespace WebCore {
 
+class Frame;
 class SecurityOrigin;
 class V8PerContextData;
-class V8Proxy;
 
 // V8IsolatedContext
 //
@@ -59,7 +59,7 @@ class V8IsolatedContext {
 public:
     // Creates an isolated world. To destroy it, call destroy().
     // This will delete the isolated world when the context it owns is GC'd.
-    V8IsolatedContext(V8Proxy*, int extensionGroup, int worldId);
+    V8IsolatedContext(Frame*, int extensionGroup, int worldId);
     ~V8IsolatedContext();
 
     // Call this to destroy the isolated world. It will be deleted sometime

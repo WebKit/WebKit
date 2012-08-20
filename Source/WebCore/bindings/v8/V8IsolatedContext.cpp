@@ -38,7 +38,6 @@
 #include "SecurityOrigin.h"
 #include "V8DOMWindow.h"
 #include "V8PerContextData.h"
-#include "V8Proxy.h"
 #include <wtf/StringExtras.h>
 
 namespace WebCore {
@@ -65,17 +64,17 @@ static void setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContex
     targetContext->SetData(v8::String::New(buffer));
 }
 
-V8IsolatedContext::V8IsolatedContext(V8Proxy* proxy, int extensionGroup, int worldId)
+V8IsolatedContext::V8IsolatedContext(Frame* frame, int extensionGroup, int worldId)
     : m_world(IsolatedWorld::create(worldId)),
-      m_frame(proxy->frame())
+      m_frame(frame)
 {
     v8::HandleScope scope;
-    v8::Handle<v8::Context> mainWorldContext = proxy->windowShell()->context();
+    v8::Handle<v8::Context> mainWorldContext = frame->script()->windowShell()->context();
     if (mainWorldContext.IsEmpty())
         return;
 
     // FIXME: We should be creating a new V8DOMWindowShell here instead of riping out the context.
-    m_context = SharedPersistent<v8::Context>::create(proxy->windowShell()->createNewContext(v8::Handle<v8::Object>(), extensionGroup, m_world->id()));
+    m_context = SharedPersistent<v8::Context>::create(frame->script()->windowShell()->createNewContext(v8::Handle<v8::Object>(), extensionGroup, m_world->id()));
     if (m_context->get().IsEmpty())
         return;
 
@@ -90,7 +89,7 @@ V8IsolatedContext::V8IsolatedContext(V8Proxy* proxy, int extensionGroup, int wor
     m_perContextData->init();
 
     // FIXME: This will go away once we have a windowShell for the isolated world.
-    proxy->windowShell()->installDOMWindow(m_context->get(), m_frame->document()->domWindow());
+    frame->script()->windowShell()->installDOMWindow(m_context->get(), m_frame->document()->domWindow());
 
     // Using the default security token means that the canAccess is always
     // called, which is slow.
