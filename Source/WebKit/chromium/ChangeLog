@@ -1,3 +1,16 @@
+2012-08-20  Hans Wennborg  <hans@chromium.org>
+
+        Respect runtime flags for Device Orientation and Device Motion
+        https://bugs.webkit.org/show_bug.cgi?id=94479
+
+        Reviewed by Adam Barth.
+
+        WebRuntimeFeatures::enableDeviceMotion should not be hard-coded to
+        false.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebView::create):
+
 2012-08-20  David Reveman  <reveman@chromium.org>
 
         [Chromium] Schedule texture uploads based on hard-coded timer and vsync.

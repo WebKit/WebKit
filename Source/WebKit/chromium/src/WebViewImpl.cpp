@@ -266,9 +266,6 @@ static int webInputEventKeyStateToPlatformEventKeyState(int webInputEventKeyStat
 
 WebView* WebView::create(WebViewClient* client)
 {
-    // Keep runtime flag for device motion turned off until it's implemented.
-    WebRuntimeFeatures::enableDeviceMotion(false);
-
     // Pass the WebViewImpl's self-reference to the caller.
     return adoptRef(new WebViewImpl(client)).leakRef();
 }
