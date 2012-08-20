@@ -35,7 +35,10 @@
 #include "RenderBox.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
+#include "RenderText.h"
 #include "ShadowRoot.h"
+#include "Text.h"
+#include "TextBreakIterator.h"
 
 namespace WebCore {
 
@@ -62,6 +65,7 @@ private:
 
 typedef Vector<SubtargetGeometry> SubtargetGeometryList;
 typedef bool (*NodeFilter)(Node*);
+typedef void (*AppendSubtargetsForNode)(Node*, SubtargetGeometryList&);
 typedef float (*DistanceFunction)(const IntPoint&, const IntRect&, const SubtargetGeometry&);
 
 // Takes non-const Node* because isContentEditable is a non-const function.
@@ -101,20 +105,26 @@ bool providesContextMenuItems(Node* node)
     if (node->renderer()->isMedia())
         return true;
     if (node->renderer()->canBeSelectionLeaf()) {
-        // If the context menu gesture will trigger a selection all selectable nodes are targets.
-        // FIXME: To improve the adjusted point, each individual word should be a separate subtarget,
-        // see for example FatFingers::checkForText() in WebKit/blackberry.
+        // If the context menu gesture will trigger a selection all selectable nodes are valid targets.
         if (node->renderer()->frame()->editor()->behavior().shouldSelectOnContextualMenuClick())
             return true;
-        // FIXME: A selected text might only be partially selected, and we should only append
-        // the selected subtargets of it in appendSubtargetsForNodeToList().
+        // Only the selected part of the renderer is a valid target, but this will be corrected in
+        // appendContextSubtargetsForNode.
         if (node->renderer()->selectionState() != RenderObject::SelectionNone)
             return true;
     }
     return false;
 }
 
-static inline void appendSubtargetsForNodeToList(Node* node, SubtargetGeometryList& subtargets)
+static inline void appendQuadsToSubtargetList(Vector<FloatQuad>& quads, Node* node, SubtargetGeometryList& subtargets)
+{
+    Vector<FloatQuad>::const_iterator it = quads.begin();
+    const Vector<FloatQuad>::const_iterator end = quads.end();
+    for (; it != end; ++it)
+        subtargets.append(SubtargetGeometry(node, *it));
+}
+
+static inline void appendBasicSubtargetsForNode(Node* node, SubtargetGeometryList& subtargets)
 {
     // Since the node is a result of a hit test, we are already ensured it has a renderer.
     ASSERT(node->renderer());
@@ -122,10 +132,65 @@ static inline void appendSubtargetsForNodeToList(Node* node, SubtargetGeometryLi
     Vector<FloatQuad> quads;
     node->renderer()->absoluteQuads(quads);
 
-    Vector<FloatQuad>::const_iterator it = quads.begin();
-    const Vector<FloatQuad>::const_iterator end = quads.end();
-    for (; it != end; ++it)
-        subtargets.append(SubtargetGeometry(node, *it));
+    appendQuadsToSubtargetList(quads, node, subtargets);
+}
+
+static inline void appendContextSubtargetsForNode(Node* node, SubtargetGeometryList& subtargets)
+{
+    // This is a variant of appendBasicSubtargetsForNode that adds special subtargets for
+    // selected or auto-selectable parts of text nodes.
+    ASSERT(node->renderer());
+
+    if (!node->isTextNode())
+        return appendBasicSubtargetsForNode(node, subtargets);
+
+    Text* textNode = static_cast<WebCore::Text*>(node);
+    RenderText* textRenderer = static_cast<RenderText*>(textNode->renderer());
+
+    if (textRenderer->frame()->editor()->behavior().shouldSelectOnContextualMenuClick()) {
+        // Make subtargets out of every word.
+        String textValue = textNode->data();
+        TextBreakIterator* wordIterator = wordBreakIterator(textValue.characters(), textValue.length());
+        int lastOffset = textBreakFirst(wordIterator);
+        if (lastOffset == -1)
+            return;
+        int offset;
+        while ((offset = textBreakNext(wordIterator)) != -1) {
+            if (isWordTextBreak(wordIterator)) {
+                Vector<FloatQuad> quads;
+                textRenderer->absoluteQuadsForRange(quads, lastOffset, offset);
+                appendQuadsToSubtargetList(quads, textNode, subtargets);
+            }
+            lastOffset = offset;
+        }
+    } else {
+        // Make subtargets out of only the selected part of the text.
+        ASSERT(textRenderer->selectionState() != RenderObject::SelectionNone);
+        int startPos, endPos;
+        switch (textRenderer->selectionState()) {
+        case RenderObject::SelectionInside:
+            startPos = 0;
+            endPos = textRenderer->textLength();
+            break;
+        case RenderObject::SelectionStart:
+            textRenderer->selectionStartEnd(startPos, endPos);
+            endPos = textRenderer->textLength();
+            break;
+        case RenderObject::SelectionEnd:
+            textRenderer->selectionStartEnd(startPos, endPos);
+            startPos = 0;
+            break;
+        case RenderObject::SelectionBoth:
+            textRenderer->selectionStartEnd(startPos, endPos);
+            break;
+        default:
+            appendBasicSubtargetsForNode(node, subtargets);
+            return;
+        }
+        Vector<FloatQuad> quads;
+        textRenderer->absoluteQuadsForRange(quads, startPos, endPos);
+        appendQuadsToSubtargetList(quads, textNode, subtargets);
+    }
 }
 
 static inline void appendZoomableSubtargets(Node* node, SubtargetGeometryList& subtargets)
@@ -148,7 +213,7 @@ static inline void appendZoomableSubtargets(Node* node, SubtargetGeometryList& s
 }
 
 // Compiles a list of subtargets of all the relevant target nodes.
-void compileSubtargetList(const NodeList& intersectedNodes, SubtargetGeometryList& subtargets, NodeFilter nodeFilter)
+void compileSubtargetList(const NodeList& intersectedNodes, SubtargetGeometryList& subtargets, NodeFilter nodeFilter, AppendSubtargetsForNode appendSubtargetsForNode)
 {
     // Find candidates responding to tap gesture events in O(n) time.
     HashMap<Node*, Node*> responderMap;
@@ -201,7 +266,7 @@ void compileSubtargetList(const NodeList& intersectedNodes, SubtargetGeometryLis
         ASSERT(respondingNode);
         if (ancestorsToRespondersSet.contains(respondingNode))
             continue;
-        appendSubtargetsForNodeToList(candidate, subtargets);
+        appendSubtargetsForNode(candidate, subtargets);
     }
 }
 
@@ -408,7 +473,7 @@ bool findBestClickableCandidate(Node*& targetNode, IntPoint &targetPoint, const 
 {
     IntRect targetArea;
     TouchAdjustment::SubtargetGeometryList subtargets;
-    TouchAdjustment::compileSubtargetList(nodeList, subtargets, TouchAdjustment::nodeRespondsToTapGesture);
+    TouchAdjustment::compileSubtargetList(nodeList, subtargets, TouchAdjustment::nodeRespondsToTapGesture, TouchAdjustment::appendBasicSubtargetsForNode);
     return TouchAdjustment::findNodeWithLowestDistanceMetric(targetNode, targetPoint, targetArea, touchHotspot, touchArea, subtargets, TouchAdjustment::hybridDistanceFunction);
 }
 
@@ -416,7 +481,7 @@ bool findBestContextMenuCandidate(Node*& targetNode, IntPoint &targetPoint, cons
 {
     IntRect targetArea;
     TouchAdjustment::SubtargetGeometryList subtargets;
-    TouchAdjustment::compileSubtargetList(nodeList, subtargets, TouchAdjustment::providesContextMenuItems);
+    TouchAdjustment::compileSubtargetList(nodeList, subtargets, TouchAdjustment::providesContextMenuItems, TouchAdjustment::appendContextSubtargetsForNode);
     return TouchAdjustment::findNodeWithLowestDistanceMetric(targetNode, targetPoint, targetArea, touchHotspot, touchArea, subtargets, TouchAdjustment::hybridDistanceFunction);
 }
 

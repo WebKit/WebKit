@@ -1,3 +1,19 @@
+2012-08-20  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [TouchAdjustment] Adjust to word or selection
+        https://bugs.webkit.org/show_bug.cgi?id=94449
+
+        Reviewed by Antonio Gomes.
+
+        Tests that touch-adjustment can adjust to the right subtargets within text-nodes.
+
+        * touchadjustment/context-menu-select-text.html:
+        * touchadjustment/context-menu-text-subtargets-expected.txt: Added.
+        * touchadjustment/context-menu-text-subtargets.html: Added.
+        * touchadjustment/resources/touchadjustment.js:
+        (pointToString):
+        (shouldBeWithin):
+
 2012-08-20  'Pavel Feldman'  <pfeldman@chromium.org>
 
         Not reviewed: fixing flaky inspector test.
