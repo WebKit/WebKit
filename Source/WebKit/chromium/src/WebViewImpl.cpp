@@ -129,6 +129,7 @@
 #include "WebDevToolsAgentPrivate.h"
 #include "WebFrameImpl.h"
 #include "WebHelperPluginImpl.h"
+#include "WebHitTestResult.h"
 #include "WebInputElement.h"
 #include "WebInputEvent.h"
 #include "WebInputEventConversion.h"
@@ -3852,7 +3853,7 @@ void WebViewImpl::selectAutofillSuggestionAtIndex(unsigned listIndex)
         m_autofillPopupClient->valueChanged(listIndex);
 }
 
-bool WebViewImpl::detectContentIntentOnTouch(const WebPoint& position, WebInputEvent::Type touchType)
+bool WebViewImpl::detectContentOnTouch(const WebPoint& position, WebInputEvent::Type touchType)
 {
     ASSERT(touchType == WebInputEvent::GestureTap || touchType == WebInputEvent::GestureLongPress);
     HitTestResult touchHit = hitTestResultForWindowPos(position);
@@ -3866,7 +3867,7 @@ bool WebViewImpl::detectContentIntentOnTouch(const WebPoint& position, WebInputE
 
     // FIXME: Should we not detect content intents in nodes that have event listeners?
 
-    WebContentDetectionResult content = m_client->detectContentIntentAround(touchHit);
+    WebContentDetectionResult content = m_client->detectContentAround(touchHit);
     if (!content.isValid())
         return false;
 

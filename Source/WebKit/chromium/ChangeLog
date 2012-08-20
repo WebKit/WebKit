@@ -1,3 +1,25 @@
+2012-08-20  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        [Chromium] detectContentIntentAround has a misleading name
+        https://bugs.webkit.org/show_bug.cgi?id=94349
+
+        Reviewed by Adam Barth.
+
+        The current WebViewClient API exposes a method named detectContentIntentAround.
+        However, this is not designed to detect any "content intent", but to allow the embedder
+        to detect content around a position and fire Android intents if appropriate.
+
+        This patch also disables content detection if the touched node listens to events
+        that consume the tap action like clicks, touch events or mouse events.
+
+        * public/WebViewClient.h:
+        (WebViewClient):
+        (WebKit::WebViewClient::detectContentAround):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::detectContentOnTouch):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-08-20  Hans Wennborg  <hans@chromium.org>
 
         Respect runtime flags for Device Orientation and Device Motion

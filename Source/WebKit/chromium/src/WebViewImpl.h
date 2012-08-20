@@ -391,7 +391,7 @@ public:
     void mouseContextMenu(const WebMouseEvent&);
     void mouseDoubleClick(const WebMouseEvent&);
 
-    bool detectContentIntentOnTouch(const WebPoint&, WebInputEvent::Type);
+    bool detectContentOnTouch(const WebPoint&, WebInputEvent::Type);
     void startPageScaleAnimation(const WebCore::IntPoint& targetPosition, bool useAnchor, float newScale, double durationInSeconds);
 
     void numberOfWheelEventHandlersChanged(unsigned);
