@@ -978,6 +978,14 @@ public:
     bool hasFilter() const { return false; }
 #endif
 
+#if ENABLE(CSS_COMPOSITING)
+    BlendMode blendMode() const { return static_cast<BlendMode>(rareNonInheritedData->m_effectiveBlendMode); }
+    void setBlendMode(BlendMode v) { rareNonInheritedData.access()->m_effectiveBlendMode = v; }
+    bool hasBlendMode() const { return static_cast<BlendMode>(rareNonInheritedData->m_effectiveBlendMode) == BlendModeNormal; }
+#else
+    bool hasBlendMode() const { return false; }
+#endif
+ 
 #if USE(RTL_SCROLLBAR)
     bool shouldPlaceBlockDirectionScrollbarOnLogicalLeft() const { return !isLeftToRightDirection() && isHorizontalWritingMode(); }
 #else
@@ -1703,6 +1711,9 @@ public:
 #endif
 #if ENABLE(CSS_FILTERS)
     static const FilterOperations& initialFilter() { DEFINE_STATIC_LOCAL(FilterOperations, ops, ()); return ops; }
+#endif
+#if ENABLE(CSS_COMPOSITING)
+    static BlendMode initialBlendMode() { return BlendModeNormal; }
 #endif
 private:
     void setVisitedLinkColor(const Color&);

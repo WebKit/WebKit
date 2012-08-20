@@ -926,7 +926,7 @@ edges
 coarse
 fine
 
-#if defined(ENABLE_CSS_FILTERS) && ENABLE_CSS_FILTERS
+#if (defined(ENABLE_CSS_FILTERS) && ENABLE_CSS_FILTERS) || (defined(ENABLE_CSS_COMPOSITING) && ENABLE_CSS_COMPOSITING)
 // -webkit-filter
 #if defined(ENABLE_CSS_SHADERS) && ENABLE_CSS_SHADERS
 // values for the custom() function

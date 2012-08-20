@@ -78,6 +78,9 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_runningAcceleratedAnimation(false)
 #endif
     , m_hasAspectRatio(false)
+#if ENABLE(CSS_COMPOSITING)
+    , m_effectiveBlendMode(RenderStyle::initialBlendMode())
+#endif
 {
     m_maskBoxImage.setMaskDefaults();
 }
@@ -149,6 +152,9 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_runningAcceleratedAnimation(o.m_runningAcceleratedAnimation)
 #endif
     , m_hasAspectRatio(o.m_hasAspectRatio)
+#if ENABLE(CSS_COMPOSITING)
+    , m_effectiveBlendMode(RenderStyle::initialBlendMode())
+#endif
 {
 }
 
@@ -224,6 +230,9 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_wrapThrough == o.m_wrapThrough
 #if USE(ACCELERATED_COMPOSITING)
         && !m_runningAcceleratedAnimation && !o.m_runningAcceleratedAnimation
+#endif
+#if ENABLE(CSS_COMPOSITING)
+        && m_effectiveBlendMode == o.m_effectiveBlendMode
 #endif
         && m_hasAspectRatio == o.m_hasAspectRatio;
 }

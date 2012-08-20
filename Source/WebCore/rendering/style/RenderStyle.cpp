@@ -612,6 +612,11 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
                  || visual->clip != other->visual->clip || visual->hasClip != other->visual->hasClip)
             return StyleDifferenceRepaintLayer;
     }
+    
+#if ENABLE(CSS_COMPOSITING)
+    if (rareNonInheritedData->m_effectiveBlendMode != other->rareNonInheritedData->m_effectiveBlendMode)
+        return StyleDifferenceRepaintLayer;
+#endif
 
     if (rareNonInheritedData->opacity != other->rareNonInheritedData->opacity) {
 #if USE(ACCELERATED_COMPOSITING)

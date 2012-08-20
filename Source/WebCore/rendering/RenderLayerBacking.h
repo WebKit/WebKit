@@ -165,6 +165,10 @@ public:
 
     String nameForLayer() const;
     
+#if ENABLE(CSS_COMPOSITING)
+    void setBlendMode(BlendMode);
+#endif
+
 private:
     void createPrimaryGraphicsLayer();
     void destroyGraphicsLayers();
@@ -196,7 +200,9 @@ private:
 #if ENABLE(CSS_FILTERS)
     void updateLayerFilters(const RenderStyle*);
 #endif
-
+#if ENABLE(CSS_COMPOSITING)
+    void updateLayerBlendMode(const RenderStyle*);
+#endif
     // Return the opacity value that this layer should use for compositing.
     float compositingOpacity(float rendererOpacity) const;
     

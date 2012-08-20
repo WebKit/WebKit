@@ -1,0 +1,24 @@
+Test the parsing of the -webkit-blend-mode property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Too many parameters : overlay overlay
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-blend-mode') is null
+
+Wrong type : "5px"
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-blend-mode') is null
+
+Trailing comma : overlay,
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-blend-mode') is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
