@@ -370,13 +370,6 @@ BUGWK93148 : fast/css/nested-layers-with-hover.html = TEXT
 
 BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
 
-// REGRESSION (r124723-r124741): 5 inspector/debugger tests failing on Apple Lion Debug WK1 (Tests)
-BUGWK93387 :  inspector/debugger/script-formatter-breakpoints.html = TEXT
-BUGWK93387 :  inspector/debugger/pause-in-internal-script.html = TEXT
-BUGWK93387 :  inspector/debugger/watch-expressions-panel-switch.html = TEXT
-BUGWK93387 :  inspector/debugger/debugger-activation-crash2.html = TEXT
-BUGWK93387 :  inspector/debugger/debugger-set-breakpoint-regex.html = TEXT
-
 // (r124484) inspector/device-orientation-success.html failing on Mac ports
 BUGWK93552 : inspector/device-orientation-success.html = TEXT
 

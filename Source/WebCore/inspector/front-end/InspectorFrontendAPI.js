@@ -33,16 +33,16 @@ InspectorFrontendAPI = {
 
     isDebuggingEnabled: function()
     {
-        return WebInspector.panels.scripts.debuggingEnabled;
+        return WebInspector.debuggerModel.debuggerEnabled();
     },
 
     setDebuggingEnabled: function(enabled)
     {
         if (enabled) {
-            WebInspector.panels.scripts.enableDebugging();
-            WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.scripts);
+            WebInspector.debuggerModel.enableDebugger();
+            WebInspector.showPanel("scripts");
         } else
-            WebInspector.panels.scripts.disableDebugging();
+            WebInspector.debuggerModel.disableDebugger();
     },
 
     isTimelineProfilingEnabled: function()

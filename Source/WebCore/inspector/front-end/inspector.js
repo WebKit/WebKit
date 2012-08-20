@@ -470,8 +470,6 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._updateErrorAndWarningCounts, this);
     this.console.addEventListener(WebInspector.ConsoleModel.Events.RepeatCountUpdated, this._updateErrorAndWarningCounts, this);
 
-    this.debuggerModel = new WebInspector.DebuggerModel();
-
     WebInspector.CSSCompletions.requestCSSNameCompletions();
 
     this.drawer = new WebInspector.Drawer();
@@ -479,6 +477,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     this.networkManager = new WebInspector.NetworkManager();
     this.resourceTreeModel = new WebInspector.ResourceTreeModel(this.networkManager);
+    this.debuggerModel = new WebInspector.DebuggerModel();
     this.networkLog = new WebInspector.NetworkLog();
     this.domAgent = new WebInspector.DOMAgent();
     this.javaScriptContextManager = new WebInspector.JavaScriptContextManager(this.resourceTreeModel, this.consoleView);
@@ -788,7 +787,7 @@ WebInspector.documentKeyDown = function(event)
     switch (event.keyIdentifier) {
         case "U+004F": // O key
             if (!event.shiftKey && !event.altKey && WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event)) {
-                WebInspector.panels.scripts.showGoToSourceDialog();
+                WebInspector.showPanel("scripts").showGoToSourceDialog();
                 event.consume(true);
             }
             break;

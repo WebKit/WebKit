@@ -20,7 +20,7 @@ var test = function()
 
     function step1()
     {
-        DebuggerAgent.setPauseOnExceptions(WebInspector.ScriptsPanel.PauseOnExceptionsState.PauseOnUncaughtExceptions);
+        DebuggerAgent.setPauseOnExceptions(WebInspector.DebuggerModel.PauseOnExceptionsState.PauseOnUncaughtExceptions);
         InspectorTest.showScriptSource("debugger-pause-in-internal.html", step2);
     }
 
