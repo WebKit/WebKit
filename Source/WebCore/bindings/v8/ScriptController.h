@@ -196,6 +196,9 @@ public:
     static void registerExtensionIfNeeded(v8::Extension*);
     static V8Extensions& registeredExtensions();
 
+    bool setContextDebugId(int);
+    static int contextDebugId(v8::Handle<v8::Context>);
+
 private:
     Frame* m_frame;
     const String* m_sourceURL;

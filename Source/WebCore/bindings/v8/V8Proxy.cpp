@@ -434,37 +434,6 @@ v8::Local<v8::Context> V8Proxy::mainWorldContext(Frame* frame)
     return frame->script()->proxy()->mainWorldContext();
 }
 
-bool V8Proxy::setContextDebugId(int debugId)
-{
-    ASSERT(debugId > 0);
-    v8::HandleScope scope;
-    v8::Handle<v8::Context> context = windowShell()->context();
-    if (context.IsEmpty())
-        return false;
-    if (!context->GetData()->IsUndefined())
-        return false;
-
-    v8::Context::Scope contextScope(context);
-
-    char buffer[32];
-    snprintf(buffer, sizeof(buffer), "page,%d", debugId);
-    context->SetData(v8::String::New(buffer));
-
-    return true;
-}
-
-int V8Proxy::contextDebugId(v8::Handle<v8::Context> context)
-{
-    v8::HandleScope scope;
-    if (!context->GetData()->IsString())
-        return -1;
-    v8::String::AsciiValue ascii(context->GetData());
-    char* comma = strnstr(*ascii, ",", ascii.length());
-    if (!comma)
-        return -1;
-    return atoi(comma + 1);
-}
-
 v8::Local<v8::Context> toV8Context(ScriptExecutionContext* context, const WorldContextHandle& worldContext)
 {
     if (context->isDocument()) {

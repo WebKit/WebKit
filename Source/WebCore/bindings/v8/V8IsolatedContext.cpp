@@ -82,8 +82,7 @@ V8IsolatedContext::V8IsolatedContext(V8Proxy* proxy, int extensionGroup, int wor
     // Run code in the new context.
     v8::Context::Scope contextScope(m_context->get());
 
-    // Setup context id for JS debugger.
-    setInjectedScriptContextDebugId(m_context->get(), proxy->contextDebugId(mainWorldContext));
+    setInjectedScriptContextDebugId(m_context->get(), ScriptController::contextDebugId(mainWorldContext));
 
     getGlobalObject(m_context->get())->SetPointerInInternalField(V8DOMWindow::enteredIsolatedWorldIndex, this);
 

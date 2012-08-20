@@ -65,6 +65,7 @@
 #include "V8RecursionScope.h"
 #include "Widget.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -531,6 +532,38 @@ void ScriptController::collectIsolatedContexts(Vector<std::pair<ScriptState*, Se
     }
 }
 #endif
+
+bool ScriptController::setContextDebugId(int debugId)
+{
+    ASSERT(debugId > 0);
+    v8::HandleScope scope;
+    v8::Handle<v8::Context> context = windowShell()->context();
+    if (context.IsEmpty())
+        return false;
+    if (!context->GetData()->IsUndefined())
+        return false;
+
+    v8::Context::Scope contextScope(context);
+
+    char buffer[32];
+    snprintf(buffer, sizeof(buffer), "page,%d", debugId);
+    buffer[31] = 0;
+    context->SetData(v8::String::New(buffer));
+
+    return true;
+}
+
+int ScriptController::contextDebugId(v8::Handle<v8::Context> context)
+{
+    v8::HandleScope scope;
+    if (!context->GetData()->IsString())
+        return -1;
+    v8::String::AsciiValue ascii(context->GetData());
+    char* comma = strnstr(*ascii, ",", ascii.length());
+    if (!comma)
+        return -1;
+    return atoi(comma + 1);
+}
 
 void ScriptController::attachDebugger(void*)
 {
