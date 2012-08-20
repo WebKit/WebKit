@@ -2221,7 +2221,7 @@ public:
     {
         if (impl->sourceAnimationFrameNumber() == 1) {
             EXPECT_EQ(impl->scrollBegin(IntPoint(5, 5), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollStarted);
-            impl->scrollBy(m_scrollAmount);
+            impl->scrollBy(IntPoint(), m_scrollAmount);
             impl->scrollEnd();
         } else if (impl->sourceAnimationFrameNumber() == 2)
             endTest();

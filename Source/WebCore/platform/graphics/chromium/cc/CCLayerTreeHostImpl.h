@@ -74,7 +74,7 @@ public:
 
     // CCInputHandlerClient implementation
     virtual CCInputHandlerClient::ScrollStatus scrollBegin(const IntPoint&, CCInputHandlerClient::ScrollInputType) OVERRIDE;
-    virtual void scrollBy(const IntSize&) OVERRIDE;
+    virtual void scrollBy(const IntPoint&, const IntSize&) OVERRIDE;
     virtual void scrollEnd() OVERRIDE;
     virtual void pinchGestureBegin() OVERRIDE;
     virtual void pinchGestureUpdate(float, const IntPoint&) OVERRIDE;
@@ -268,6 +268,7 @@ private:
     CCLayerImpl* m_rootScrollLayerImpl;
     CCLayerImpl* m_currentlyScrollingLayerImpl;
     int m_scrollingLayerIdFromPreviousTree;
+    bool m_scrollDeltaIsInScreenSpace;
     CCLayerTreeSettings m_settings;
     IntSize m_layoutViewportSize;
     IntSize m_deviceViewportSize;

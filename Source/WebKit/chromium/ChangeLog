@@ -1,3 +1,31 @@
+2012-08-20  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Convert screen space scroll gestures to layer space
+        https://bugs.webkit.org/show_bug.cgi?id=92499
+
+        Reviewed by James Robinson.
+
+        Added new tests for verifying transformed layer scrolling:
+
+            CCLayerTreeHostImplTest.scrollAxisAlignedRotatedLayer
+            CCLayerTreeHostImplTest.scrollNonAxisAlignedRotatedLayer
+            CCLayerTreeHostImplTest.scrollScaledLayer
+
+        Also some tests for the introduced math utilities:
+
+            CCMathUtilTest.smallestAngleBetweenVectors
+            CCMathUtilTest.vectorProjection
+
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebKit::WebCompositorInputHandlerImpl::handleInputEventInternal):
+        (WebKit::WebCompositorInputHandlerImpl::handleGestureFling):
+        * tests/CCLayerTreeHostImplTest.cpp: Adjusted scroll delta in scrollChildBeyondLimit to avoid triggering the 45 degree rule.
+        * tests/CCLayerTreeHostTest.cpp:
+        * tests/CCMathUtilTest.cpp:
+        * tests/WebCompositorInputHandlerImplTest.cpp:
+        (MockCCInputHandlerClient):
+        (WebKit::TEST_F):
+
 2012-08-20  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: load scripts panel lazily

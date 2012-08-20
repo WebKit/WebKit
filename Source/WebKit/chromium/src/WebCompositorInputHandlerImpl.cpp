@@ -181,7 +181,7 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
         switch (scrollStatus) {
         case CCInputHandlerClient::ScrollStarted: {
             TRACE_EVENT_INSTANT2("cc", "WebCompositorInputHandlerImpl::handleInput wheel scroll", "deltaX", -wheelEvent.deltaX, "deltaY", -wheelEvent.deltaY);
-            m_inputHandlerClient->scrollBy(IntSize(-wheelEvent.deltaX, -wheelEvent.deltaY));
+            m_inputHandlerClient->scrollBy(IntPoint(wheelEvent.x, wheelEvent.y), IntSize(-wheelEvent.deltaX, -wheelEvent.deltaY));
             m_inputHandlerClient->scrollEnd();
             return DidHandle;
         }
@@ -216,7 +216,7 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
             return DidNotHandle;
 
         const WebGestureEvent& gestureEvent = *static_cast<const WebGestureEvent*>(&event);
-        m_inputHandlerClient->scrollBy(IntSize(-gestureEvent.deltaX, -gestureEvent.deltaY));
+        m_inputHandlerClient->scrollBy(IntPoint(gestureEvent.x, gestureEvent.y), IntSize(-gestureEvent.deltaX, -gestureEvent.deltaY));
         return DidHandle;
     } else if (event.type == WebInputEvent::GestureScrollEnd) {
         ASSERT(m_expectScrollUpdateEnd);
@@ -263,7 +263,7 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
 
 WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::handleGestureFling(const WebGestureEvent& gestureEvent)
 {
-    CCInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(IntPoint(gestureEvent.x, gestureEvent.y), CCInputHandlerClient::Wheel);
+    CCInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(IntPoint(gestureEvent.x, gestureEvent.y), CCInputHandlerClient::Gesture);
     switch (scrollStatus) {
     case CCInputHandlerClient::ScrollStarted: {
         TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::handleGestureFling::started");

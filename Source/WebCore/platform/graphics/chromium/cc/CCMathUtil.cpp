@@ -381,4 +381,19 @@ void CCMathUtil::flattenTransformTo2d(WebTransformationMatrix& transform)
     transform.setM43(0);
 }
 
+float CCMathUtil::smallestAngleBetweenVectors(const FloatSize& v1, const FloatSize& v2)
+{
+    float dotProduct = (v1.width() * v2.width() + v1.height() * v2.height()) / (v1.diagonalLength() * v2.diagonalLength());
+    // Clamp to compensate for rounding errors.
+    dotProduct = std::max(-1.f, std::min(1.f, dotProduct));
+    return rad2deg(acosf(dotProduct));
+}
+
+FloatSize CCMathUtil::projectVector(const FloatSize& source, const FloatSize& destination)
+{
+    float sourceDotDestination = source.width() * destination.width() + source.height() * destination.height();
+    float projectedLength = sourceDotDestination / destination.diagonalLengthSquared();
+    return FloatSize(projectedLength * destination.width(), projectedLength * destination.height());
+}
+
 } // namespace WebCore

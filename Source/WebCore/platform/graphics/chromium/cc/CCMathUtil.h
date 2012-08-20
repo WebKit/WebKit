@@ -115,6 +115,13 @@ public:
     static FloatPoint projectPoint(const WebKit::WebTransformationMatrix&, const FloatPoint&, bool& clipped);
 
     static void flattenTransformTo2d(WebKit::WebTransformationMatrix&);
+
+    // Returns the smallest angle between the given two vectors in degrees. Neither vector is
+    // assumed to be normalized.
+    static float smallestAngleBetweenVectors(const FloatSize&, const FloatSize&);
+
+    // Projects the |source| vector onto |destination|. Neither vector is assumed to be normalized.
+    static FloatSize projectVector(const FloatSize& source, const FloatSize& destination);
 };
 
 } // namespace WebCore
