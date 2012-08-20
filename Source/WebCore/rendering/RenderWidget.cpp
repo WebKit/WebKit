@@ -176,11 +176,11 @@ bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
 
 bool RenderWidget::updateWidgetGeometry()
 {
-    IntRect contentBox = pixelSnappedIntRect(contentBoxRect());
+    LayoutRect contentBox = contentBoxRect();
     if (!m_widget->transformsAffectFrameRect())
         return setWidgetGeometry(absoluteContentBox());
 
-    IntRect absoluteContentBox(localToAbsoluteQuad(FloatQuad(contentBox)).boundingBox());
+    LayoutRect absoluteContentBox(localToAbsoluteQuad(FloatQuad(contentBox)).boundingBox());
     if (m_widget->isFrameView()) {
         contentBox.setLocation(absoluteContentBox.location());
         return setWidgetGeometry(contentBox);
