@@ -102,6 +102,7 @@
     <file>Linkifier.js</file>
     <file>MemoryStatistics.js</file>
     <file>MetricsSidebarPane.js</file>
+    <file>NativeBreakpointsSidebarPane.js</file>
     <file>NativeMemorySnapshotView.js</file>
     <file>NavigatorOverlayController.js</file>
     <file>NavigatorView.js</file>
@@ -161,6 +162,7 @@
     <file>SidebarOverlay.js</file>
     <file>SidebarPane.js</file>
     <file>SidebarTreeElement.js</file>
+    <file>SnippetJavaScriptSourceFrame.js</file>
     <file>SnippetStorage.js</file>
     <file>SoftContextMenu.js</file>
     <file>SourceCSSTokenizer.js</file>
@@ -172,7 +174,8 @@
     <file>Spectrum.js</file>
     <file>SplitView.js</file>
     <file>StatusBarButton.js</file>
-    <file>StylesPanel.js</file>
+    <file>StyleSheetOutlineDialog.js</file>
+    <file>StyleSource.js</file>
     <file>StylesSidebarPane.js</file>
     <file>TabbedEditorContainer.js</file>
     <file>TabbedPane.js</file>

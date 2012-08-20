@@ -316,7 +316,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
                 console.error(error);
                 return;
             }
-            WebInspector.panels.scripts.showFunctionDefinition(response.location);
+            WebInspector.panel("scripts").showFunctionDefinition(response.location);
         }
 
         function revealFunction()

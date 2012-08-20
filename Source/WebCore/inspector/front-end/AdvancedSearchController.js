@@ -56,7 +56,7 @@ WebInspector.AdvancedSearchController.prototype = {
     {
         if (WebInspector.KeyboardShortcut.makeKeyFromEvent(event) === this._shortcut.key) {
             if (!this._searchView || !this._searchView.isShowing() || this._searchView._search !== document.activeElement) {
-                WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.scripts);
+                WebInspector.showPanel("scripts");
                 this.show();
             } else
                 this.close();

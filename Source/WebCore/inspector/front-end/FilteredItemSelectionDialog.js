@@ -622,11 +622,6 @@ WebInspector.OpenResourceDialog = function(panel, uiSourceCodeProvider)
     this._uiSourceCodes.sort(compareFunction);
 }
 
-WebInspector.OpenResourceDialog.createShortcut = function()
-{
-    return WebInspector.KeyboardShortcut.makeDescriptor("o", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta);
-}
-
 WebInspector.OpenResourceDialog.prototype = {
     /**
      * @param {number} itemIndex

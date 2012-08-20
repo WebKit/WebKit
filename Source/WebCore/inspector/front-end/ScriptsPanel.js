@@ -24,6 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+importScript("BreakpointsSidebarPane.js");
+importScript("CallStackSidebarPane.js");
+importScript("FilteredItemSelectionDialog.js");
+importScript("JavaScriptSourceFrame.js");
+importScript("RevisionHistoryView.js");
+importScript("ScopeChainSidebarPane.js");
+importScript("ScriptsNavigator.js");
+importScript("ScriptsSearchScope.js");
+importScript("SnippetJavaScriptSourceFrame.js");
+importScript("StyleSheetOutlineDialog.js");
+importScript("TabbedEditorContainer.js");
+importScript("UISourceCodeFrame.js");
+importScript("WatchExpressionsSidebarPane.js");
+importScript("WorkersSidebarPane.js");
+
 /**
  * @constructor
  * @implements {WebInspector.TabbedEditorContainerDelegate}
@@ -157,7 +172,6 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
     this._sourceFramesByUISourceCode = new Map();
     this._updateDebuggerButtons();
     this._pauseOnExceptionStateChanged();
-
     if (WebInspector.debuggerModel.isPaused())
         this._debuggerPaused();
 

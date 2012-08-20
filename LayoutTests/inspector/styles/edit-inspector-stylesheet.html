@@ -14,7 +14,7 @@ function test()
 
     function step1(node)
     {
-        WebInspector.panels.scripts._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, sourceCodeAdded);
+        WebInspector.panel("scripts")._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, sourceCodeAdded);
         WebInspector.cssModel.addRule(node.id, "#inspected", successCallback, failureCallback);
 
         function successCallback() { }

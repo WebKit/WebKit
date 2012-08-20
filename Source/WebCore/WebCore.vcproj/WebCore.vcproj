@@ -75994,6 +75994,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\NativeBreakpointsSidebarPane.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\NavigatorOverlayController.js"
 					>
 				</File>
@@ -76274,6 +76278,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\SnippetJavaScriptSourceFrame.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\SnippetStorage.js"
 					>
 				</File>
@@ -76322,11 +76330,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\StylesPanel.js"
+					RelativePath="..\inspector\front-end\StyleSheetOutlineDialog.js"
 					>
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\StylesSidebarPane.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\StyleSource.js"
 					>
 				</File>
 				<File

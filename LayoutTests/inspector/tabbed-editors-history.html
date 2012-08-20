@@ -4,6 +4,8 @@
 <script type="text/javascript">
 var test = function()
 {
+    WebInspector.showPanel("scripts");
+
     function dumpHistory(history)
     {
         InspectorTest.addResult("  history = " + JSON.stringify(history._serializeToObject()) + "");

@@ -40,7 +40,7 @@ var WebInspector = {
         var elements = new WebInspector.PanelDescriptor("elements", WebInspector.UIString("Elements"), "ElementsPanel", "ElementsPanel.js");
         var resources = new WebInspector.PanelDescriptor("resources", WebInspector.UIString("Resources"), "ResourcesPanel", "ResourcesPanel.js");
         var network = new WebInspector.PanelDescriptor("network", WebInspector.UIString("Network"), "NetworkPanel", "NetworkPanel.js");
-        var scripts = new WebInspector.PanelDescriptor("scripts", WebInspector.UIString("Sources"), undefined, undefined, new WebInspector.ScriptsPanel());
+        var scripts = new WebInspector.PanelDescriptor("scripts", WebInspector.UIString("Sources"), "ScriptsPanel", "ScriptsPanel.js");
         var timeline = new WebInspector.PanelDescriptor("timeline", WebInspector.UIString("Timeline"), "TimelinePanel", "TimelinePanel.js");
         var profiles = new WebInspector.PanelDescriptor("profiles", WebInspector.UIString("Profiles"), "ProfilesPanel", "ProfilesPanel.js");
         var audits = new WebInspector.PanelDescriptor("audits", WebInspector.UIString("Audits"), "AuditsPanel", "AuditsPanel.js");
@@ -378,6 +378,12 @@ var WebInspector = {
             title = WebInspector.ProfilesPanel._instance.displayTitleForProfileLink(profileStringMatches[2], profileStringMatches[1]);
         }
         return title;
+    },
+
+    _debuggerPaused: function()
+    {
+        // Create scripts panel upon demand.
+        WebInspector.panel("scripts");
     }
 }
 
@@ -478,6 +484,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.networkManager = new WebInspector.NetworkManager();
     this.resourceTreeModel = new WebInspector.ResourceTreeModel(this.networkManager);
     this.debuggerModel = new WebInspector.DebuggerModel();
+    this.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPaused, this);
     this.networkLog = new WebInspector.NetworkLog();
     this.domAgent = new WebInspector.DOMAgent();
     this.javaScriptContextManager = new WebInspector.JavaScriptContextManager(this.resourceTreeModel, this.consoleView);
@@ -543,6 +550,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     InspectorAgent.enable(showInitialPanel);
     DatabaseAgent.enable();
     DOMStorageAgent.enable();
+
     if (!Capabilities.profilerCausesRecompilation || WebInspector.settings.profilerEnabled.get())
         ProfilerAgent.enable();
 
@@ -737,7 +745,7 @@ WebInspector._registerShortcuts = function()
     var advancedSearchShortcut = WebInspector.AdvancedSearchController.createShortcut();
     section.addKey(advancedSearchShortcut.name, WebInspector.UIString("Search across all sources"));
 
-    var openResourceShortcut = WebInspector.OpenResourceDialog.createShortcut();
+    var openResourceShortcut = WebInspector.KeyboardShortcut.makeDescriptor("o", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta);
     section.addKey(openResourceShortcut.name, WebInspector.UIString("Go to source"));
 
     if (WebInspector.isMac()) {
@@ -1022,7 +1030,7 @@ WebInspector._showAnchorLocation = function(anchor)
     var preferredPanel = this.panels[anchor.preferredPanel];
     if (preferredPanel && WebInspector._showAnchorLocationInPanel(anchor, preferredPanel))
         return true;
-    if (WebInspector._showAnchorLocationInPanel(anchor, this.panels.scripts))
+    if (WebInspector._showAnchorLocationInPanel(anchor, this.panel("scripts")))
         return true;
     if (WebInspector._showAnchorLocationInPanel(anchor, this.panel("resources")))
         return true;

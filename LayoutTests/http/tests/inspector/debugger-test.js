@@ -160,7 +160,7 @@ InspectorTest._resumedScript = function()
 
 InspectorTest.showScriptSource = function(scriptName, callback)
 {
-    var panel = WebInspector.panels.scripts;
+    var panel = WebInspector.panel("scripts");
     var uiSourceCodes = panel._workspace.uiSourceCodes();
     for (var i = 0; i < uiSourceCodes.length; ++i) {
         if (uiSourceCodes[i].parsedURL.lastPathComponent === scriptName) {
