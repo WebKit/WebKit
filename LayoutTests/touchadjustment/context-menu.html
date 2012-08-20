@@ -75,8 +75,10 @@
 
     function runTests()
     {
-        if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
+        if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestContextMenuNode) {
             description('Test touch adjustment for context-menu gestures.');
+            // Set editing-behaviour to win, so context-menu gesture does not trigger selections.
+            internals.settings.setEditingBehavior('win');
             testDirectTouches();
             testAdjustedTouches();
             e.sandbox.style.display = 'none';
