@@ -1,3 +1,36 @@
+2012-08-20  Adam Barth  <abarth@webkit.org>
+
+        WebWidget should be able to paint into a zoomed canvas without aliasing
+        https://bugs.webkit.org/show_bug.cgi?id=92043
+
+        Reviewed by James Robinson.
+
+        If accelerated compositing is enabled, WebWidget::paint reads back from
+        the compositor rather than re-painting the widget. That approach works
+        well if the canvas we're rendering into is at a similar resolution to
+        the pixels in the compositor, but if the canvas has been scaled (e.g.,
+        to help the user disambiguate links), then reading back from the
+        compositor will cause aliasing artifacts.
+
+        This patch adds an option to paint to let the embedder request a
+        software re-rendering of the widget to avoid these aliasing artifacts.
+
+        * public/WebWidget.h:
+        (WebKit::WebWidget::paint):
+        * src/WebPagePopupImpl.cpp:
+        (WebKit::WebPagePopupImpl::paint):
+        * src/WebPagePopupImpl.h:
+        (WebPagePopupImpl):
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::paint):
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::canvasBackgroundForTransparencey):
+        (WebKit):
+        (WebKit::WebViewImpl::paint):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-08-20  James Robinson  <jamesr@chromium.org>
 
         Unreviewed. Roll WebKit chromium DEPS forward.

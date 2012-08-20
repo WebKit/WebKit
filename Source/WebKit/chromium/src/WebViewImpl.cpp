@@ -1686,9 +1686,15 @@ void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect
 }
 #endif
 
-void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect)
+void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect, PaintOptions option)
 {
-    if (isAcceleratedCompositingActive()) {
+#if !OS(ANDROID)
+    // ReadbackFromCompositorIfAvailable is the only option available on non-Android.
+    // Ideally, Android would always use ReadbackFromCompositorIfAvailable as well.
+    ASSERT(option == ReadbackFromCompositorIfAvailable);
+#endif
+
+    if (option == ReadbackFromCompositorIfAvailable && isAcceleratedCompositingActive()) {
 #if USE(ACCELERATED_COMPOSITING)
         // If a canvas was passed in, we use it to grab a copy of the
         // freshly-rendered pixels.
@@ -1700,12 +1706,24 @@ void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect)
         }
 #endif
     } else {
+        FrameView* view = page()->mainFrame()->view();
+        PaintBehavior oldPaintBehavior = view->paintBehavior();
+        if (isAcceleratedCompositingActive()) {
+            ASSERT(option == ForceSoftwareRenderingAndIgnoreGPUResidentContent);            
+            view->setPaintBehavior(oldPaintBehavior | PaintBehaviorFlattenCompositingLayers);
+        }
+
         double paintStart = currentTime();
         PageWidgetDelegate::paint(m_page.get(), pageOverlays(), canvas, rect, isTransparent() ? PageWidgetDelegate::Translucent : PageWidgetDelegate::Opaque);
         double paintEnd = currentTime();
         double pixelsPerSec = (rect.width * rect.height) / (paintEnd - paintStart);
         WebKit::Platform::current()->histogramCustomCounts("Renderer4.SoftwarePaintDurationMS", (paintEnd - paintStart) * 1000, 0, 120, 30);
         WebKit::Platform::current()->histogramCustomCounts("Renderer4.SoftwarePaintMegapixPerSecond", pixelsPerSec / 1000000, 10, 210, 30);
+
+        if (isAcceleratedCompositingActive()) {
+            ASSERT(option == ForceSoftwareRenderingAndIgnoreGPUResidentContent);            
+            view->setPaintBehavior(oldPaintBehavior);
+        }
     }
 }
 
