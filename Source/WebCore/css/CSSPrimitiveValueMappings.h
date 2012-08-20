@@ -2198,6 +2198,27 @@ template<> inline CSSPrimitiveValue::operator ETextDecoration() const
     return TDNONE;
 }
 
+#if ENABLE(CSS3_TEXT_DECORATION)
+template<> inline CSSPrimitiveValue::operator TextDecorationStyle() const
+{
+    switch (m_value.ident) {
+    case CSSValueSolid:
+        return TextDecorationStyleSolid;
+    case CSSValueDouble:
+        return TextDecorationStyleDouble;
+    case CSSValueDotted:
+        return TextDecorationStyleDotted;
+    case CSSValueDashed:
+        return TextDecorationStyleDashed;
+    case CSSValueWavy:
+        return TextDecorationStyleWavy;
+    }
+
+    ASSERT_NOT_REACHED();
+    return TextDecorationStyleSolid;
+}
+#endif // CSS3_TEXT_DECORATION
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextSecurity e)
     : CSSValue(PrimitiveClass)
 {

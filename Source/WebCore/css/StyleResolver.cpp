@@ -4415,6 +4415,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitTextCombine:
 #if ENABLE(CSS3_TEXT_DECORATION)
     case CSSPropertyWebkitTextDecorationLine:
+    case CSSPropertyWebkitTextDecorationStyle:
 #endif // CSS3_TEXT_DECORATION
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextEmphasisPosition:

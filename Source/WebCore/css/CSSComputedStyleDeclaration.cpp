@@ -179,6 +179,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyTextDecoration,
 #if ENABLE(CSS3_TEXT_DECORATION)
     CSSPropertyWebkitTextDecorationLine,
+    CSSPropertyWebkitTextDecorationStyle,
 #endif // CSS3_TEXT_DECORATION
     CSSPropertyTextIndent,
     CSSPropertyTextRendering,
@@ -1217,6 +1218,27 @@ static PassRefPtr<CSSValue> renderTextDecorationFlagsToCSSValue(int textDecorati
     return list;
 }
 
+#if ENABLE(CSS3_TEXT_DECORATION)
+static PassRefPtr<CSSValue> renderTextDecorationStyleFlagsToCSSValue(TextDecorationStyle textDecorationStyle)
+{
+    switch (textDecorationStyle) {
+    case TextDecorationStyleSolid:
+        return cssValuePool().createIdentifierValue(CSSValueSolid);
+    case TextDecorationStyleDouble:
+        return cssValuePool().createIdentifierValue(CSSValueDouble);
+    case TextDecorationStyleDotted:
+        return cssValuePool().createIdentifierValue(CSSValueDotted);
+    case TextDecorationStyleDashed:
+        return cssValuePool().createIdentifierValue(CSSValueDashed);
+    case TextDecorationStyleWavy:
+        return cssValuePool().createIdentifierValue(CSSValueWavy);
+    }
+
+    ASSERT_NOT_REACHED();
+    return cssValuePool().createExplicitInitialValue();
+}
+#endif // CSS3_TEXT_DECORATION
+
 static PassRefPtr<CSSValue> fillRepeatToCSSValue(EFillRepeat xRepeat, EFillRepeat yRepeat)
 {
     // For backwards compatibility, if both values are equal, just return one of them. And
@@ -1960,10 +1982,13 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
         case CSSPropertyTextAlign:
             return cssValuePool().createValue(style->textAlign());
         case CSSPropertyTextDecoration:
+            return renderTextDecorationFlagsToCSSValue(style->textDecoration());
 #if ENABLE(CSS3_TEXT_DECORATION)
         case CSSPropertyWebkitTextDecorationLine:
-#endif // CSS3_TEXT_DECORATION
             return renderTextDecorationFlagsToCSSValue(style->textDecoration());
+        case CSSPropertyWebkitTextDecorationStyle:
+            return renderTextDecorationStyleFlagsToCSSValue(style->textDecorationStyle());
+#endif // CSS3_TEXT_DECORATION
         case CSSPropertyWebkitTextDecorationsInEffect:
             return renderTextDecorationFlagsToCSSValue(style->textDecorationsInEffect());
         case CSSPropertyWebkitTextFillColor:

@@ -353,6 +353,7 @@ z-index
 -epub-text-combine = -webkit-text-combine
 #if defined(ENABLE_CSS3_TEXT_DECORATION) && ENABLE_CSS3_TEXT_DECORATION
 -webkit-text-decoration-line
+-webkit-text-decoration-style
 #endif
 -webkit-text-decorations-in-effect
 -webkit-text-emphasis

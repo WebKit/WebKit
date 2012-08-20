@@ -1,3 +1,24 @@
+2012-08-20  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [css3-text] Add parsing support for -webkit-text-decoration-style
+        https://bugs.webkit.org/show_bug.cgi?id=94093
+
+        Reviewed by Julien Chaffraix.
+
+        This patch implements the "text-decoration-style" property parsing as specified
+        in CSS3 working draft, with "-webkit-" prefix. The specification can be found
+        here: http://dev.w3.org/csswg/css3-text/#text-decoration-style
+
+        Additionally, Mozilla implementation details can be found here:
+        https://developer.mozilla.org/en-US/docs/CSS/text-decoration-style
+
+        This is an individual task for bug 90958. Rendering support will be handled on a
+        different bug.
+
+        * fast/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-style-expected.txt: Added.
+        * fast/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-style.html: Added.
+        * fast/css3-text-decoration/getComputedStyle/script-tests/getComputedStyle-text-decoration-style.js: Added.
+
 2012-08-20  Kenneth Russell  <kbr@google.com>
 
         Unreviewed Chromium gardening. Fixed invalid test expectation.

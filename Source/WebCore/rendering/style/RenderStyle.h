@@ -610,6 +610,9 @@ public:
     ETextTransform textTransform() const { return static_cast<ETextTransform>(inherited_flags._text_transform); }
     ETextDecoration textDecorationsInEffect() const { return static_cast<ETextDecoration>(inherited_flags._text_decorations); }
     ETextDecoration textDecoration() const { return static_cast<ETextDecoration>(visual->textDecoration); }
+#if ENABLE(CSS3_TEXT_DECORATION)
+    TextDecorationStyle textDecorationStyle() const { return static_cast<TextDecorationStyle>(rareNonInheritedData->m_textDecorationStyle); }
+#endif // CSS3_TEXT_DECORATION
     int wordSpacing() const;
     int letterSpacing() const;
 
@@ -1127,6 +1130,9 @@ public:
     void addToTextDecorationsInEffect(ETextDecoration v) { inherited_flags._text_decorations |= v; }
     void setTextDecorationsInEffect(ETextDecoration v) { inherited_flags._text_decorations = v; }
     void setTextDecoration(ETextDecoration v) { SET_VAR(visual, textDecoration, v); }
+#if ENABLE(CSS3_TEXT_DECORATION)
+    void setTextDecorationStyle(TextDecorationStyle v) { SET_VAR(rareNonInheritedData, m_textDecorationStyle, v); }
+#endif // CSS3_TEXT_DECORATION
     void setDirection(TextDirection v) { inherited_flags._direction = v; }
     void setLineHeight(Length specifiedLineHeight);
     bool setZoom(float);
@@ -1575,6 +1581,9 @@ public:
     static Length initialLineHeight() { return Length(-100.0, Percent); }
     static ETextAlign initialTextAlign() { return TASTART; }
     static ETextDecoration initialTextDecoration() { return TDNONE; }
+#if ENABLE(CSS3_TEXT_DECORATION)
+    static TextDecorationStyle initialTextDecorationStyle() { return TextDecorationStyleSolid; }
+#endif // CSS3_TEXT_DECORATION
     static float initialZoom() { return 1.0f; }
     static int initialOutlineOffset() { return 0; }
     static float initialOpacity() { return 1.0f; }

@@ -2108,6 +2108,12 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitTextDecorationLine:
         // none | [ underline || overline || line-through ] | inherit
         return parseTextDecoration(propId, important);
+
+    case CSSPropertyWebkitTextDecorationStyle:
+        // solid | double | dotted | dashed | wavy
+        if (id == CSSValueSolid || id == CSSValueDouble || id == CSSValueDotted || id == CSSValueDashed || id == CSSValueWavy)
+            validPrimitive = true;
+        break;
 #endif // CSS3_TEXT_DECORATION
 
     case CSSPropertyZoom:          // normal | reset | document | <number> | <percentage> | inherit
