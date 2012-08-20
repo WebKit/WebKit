@@ -364,6 +364,13 @@ void RenderRegion::insertedIntoTree()
     attachRegion();
 }
 
+void RenderRegion::willBeRemovedFromTree()
+{
+    RenderReplaced::willBeRemovedFromTree();
+
+    detachRegion();
+}
+
 PassRefPtr<RenderStyle> RenderRegion::computeStyleInRegion(const RenderObject* object)
 {
     ASSERT(object);

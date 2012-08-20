@@ -50,6 +50,13 @@ void RenderQuote::willBeDestroyed()
     RenderText::willBeDestroyed();
 }
 
+void RenderQuote::willBeRemovedFromTree()
+{
+    RenderText::willBeRemovedFromTree();
+
+    detachQuote();
+}
+
 typedef HashMap<AtomicString, const QuotesData*, CaseFoldingHash> QuotesMap;
 
 static const QuotesMap& quotesDataLanguageMap()
