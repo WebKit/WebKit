@@ -37,7 +37,6 @@
 #include "EventTargetInterfaces.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
-#include "SafeAllocation.h"
 #include "StylePropertySet.h"
 #include "V8AbstractEventListener.h"
 #include "V8Binding.h"
@@ -51,6 +50,7 @@
 #include "V8NamedNodeMap.h"
 #include "V8NodeFilterCondition.h"
 #include "V8NodeList.h"
+#include "V8ObjectConstructor.h"
 #include "V8PerContextData.h"
 #include "V8Proxy.h"
 #include "V8StyleSheet.h"
@@ -205,7 +205,7 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, WrapperT
         instance = contextData->createWrapperFromCache(type);
     else {
         v8::Local<v8::Function> function = type->getTemplate()->GetFunction();
-        instance = SafeAllocation::newInstance(function);
+        instance = V8ObjectConstructor::newInstance(function);
     }
 
     if (!instance.IsEmpty()) {

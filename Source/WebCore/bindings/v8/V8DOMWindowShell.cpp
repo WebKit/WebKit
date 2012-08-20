@@ -42,7 +42,6 @@
 #include "PageGroup.h"
 #include "PlatformSupport.h"
 #include "RuntimeEnabledFeatures.h"
-#include "SafeAllocation.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
 #include "ScriptProfiler.h"
@@ -59,6 +58,7 @@
 #include "V8HiddenPropertyName.h"
 #include "V8History.h"
 #include "V8Location.h"
+#include "V8ObjectConstructor.h"
 #include "V8PerContextData.h"
 #include "V8Proxy.h"
 #include "WorkerContextExecutionProxy.h"
@@ -410,7 +410,7 @@ bool V8DOMWindowShell::installDOMWindow(v8::Handle<v8::Context> context, DOMWind
 {
     // Create a new JS window object and use it as the prototype for the  shadow global object.
     v8::Handle<v8::Function> windowConstructor = V8DOMWrapper::constructorForType(&V8DOMWindow::info, window);
-    v8::Local<v8::Object> jsWindow = SafeAllocation::newInstance(windowConstructor);
+    v8::Local<v8::Object> jsWindow = V8ObjectConstructor::newInstance(windowConstructor);
     // Bail out if allocation failed.
     if (jsWindow.IsEmpty())
         return false;

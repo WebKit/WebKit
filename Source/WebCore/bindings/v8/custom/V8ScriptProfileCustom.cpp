@@ -32,7 +32,6 @@
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 #include "V8ScriptProfile.h"
 
-#include "SafeAllocation.h"
 #include "ScriptProfile.h"
 #include "V8Binding.h"
 #include "V8Proxy.h"
@@ -50,7 +49,7 @@ v8::Handle<v8::Value> toV8(ScriptProfile* impl, v8::Isolate* isolate)
         // Return if allocation failed.
         return v8Undefined();
     }
-    v8::Local<v8::Object> instance = SafeAllocation::newInstance(function);
+    v8::Local<v8::Object> instance = V8ObjectConstructor::newInstance(function);
     if (instance.IsEmpty()) {
         // Avoid setting the wrapper if allocation failed.
         return v8Undefined();

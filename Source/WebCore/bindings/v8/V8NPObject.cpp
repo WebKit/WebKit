@@ -34,13 +34,13 @@
 
 #include "HTMLPlugInElement.h"
 #include "NPV8Object.h"
-#include "SafeAllocation.h"
 #include "V8Binding.h"
 #include "V8DOMMap.h"
 #include "V8HTMLAppletElement.h"
 #include "V8HTMLEmbedElement.h"
 #include "V8HTMLObjectElement.h"
 #include "V8NPUtils.h"
+#include "V8ObjectConstructor.h"
 #include "V8Proxy.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
@@ -407,7 +407,7 @@ v8::Local<v8::Object> createV8ObjectForNPObject(NPObject* object, NPObject* root
     }
 
     v8::Handle<v8::Function> v8Function = npObjectDesc->GetFunction();
-    v8::Local<v8::Object> value = SafeAllocation::newInstance(v8Function);
+    v8::Local<v8::Object> value = V8ObjectConstructor::newInstance(v8Function);
 
     // If we were unable to allocate the instance, we avoid wrapping and registering the NP object.
     if (value.IsEmpty())

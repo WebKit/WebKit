@@ -31,11 +31,11 @@
 #include "config.h"
 #include "ScriptFunctionCall.h"
 
-#include "SafeAllocation.h"
 #include "ScriptScope.h"
 #include "ScriptState.h"
 #include "ScriptValue.h"
 #include "V8Binding.h"
+#include "V8ObjectConstructor.h"
 #include "V8Proxy.h"
 #include "V8RecursionScope.h"
 #include "V8Utilities.h"
@@ -168,7 +168,7 @@ ScriptObject ScriptFunctionCall::construct(bool& hadException, bool reportExcept
     for (size_t i = 0; i < m_arguments.size(); ++i)
         args[i] = m_arguments[i].v8Value();
 
-    v8::Local<v8::Object> result = SafeAllocation::newInstance(constructor, m_arguments.size(), args.get());
+    v8::Local<v8::Object> result = V8ObjectConstructor::newInstance(constructor, m_arguments.size(), args.get());
     if (!scope.success()) {
         hadException = true;
         return ScriptObject();

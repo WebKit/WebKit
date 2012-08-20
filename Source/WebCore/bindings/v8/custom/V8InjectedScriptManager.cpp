@@ -35,7 +35,6 @@
 #include "BindingState.h"
 #include "DOMWindow.h"
 #include "InjectedScriptHost.h"
-#include "SafeAllocation.h"
 #include "ScriptObject.h"
 #include "V8Binding.h"
 #include "V8DOMWindow.h"
@@ -59,7 +58,7 @@ static v8::Local<v8::Object> createInjectedScriptHostV8Wrapper(InjectedScriptHos
         // Return if allocation failed.
         return v8::Local<v8::Object>();
     }
-    v8::Local<v8::Object> instance = SafeAllocation::newInstance(function);
+    v8::Local<v8::Object> instance = V8ObjectConstructor::newInstance(function);
     if (instance.IsEmpty()) {
         // Avoid setting the wrapper if allocation failed.
         return v8::Local<v8::Object>();

@@ -31,7 +31,7 @@
 #include "config.h"
 #include "V8PerContextData.h"
 
-#include "SafeAllocation.h"
+#include "V8ObjectConstructor.h"
 
 namespace WebCore {
 
@@ -92,7 +92,7 @@ v8::Local<v8::Object> V8PerContextData::createWrapperFromCacheSlowCase(WrapperTy
 
     v8::Context::Scope scope(m_context);
     v8::Local<v8::Function> function = constructorForType(type);
-    v8::Local<v8::Object> instance = SafeAllocation::newInstance(function);
+    v8::Local<v8::Object> instance = V8ObjectConstructor::newInstance(function);
     if (!instance.IsEmpty()) {
         m_wrapperBoilerplates.set(type, v8::Persistent<v8::Object>::New(instance));
         return instance->Clone();

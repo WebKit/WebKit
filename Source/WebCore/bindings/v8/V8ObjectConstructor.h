@@ -28,8 +28,8 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef SafeAllocation_h
-#define SafeAllocation_h
+#ifndef V8ObjectConstructor_h
+#define V8ObjectConstructor_h
 
 #include "V8PerIsolateData.h"
 #include "V8RecursionScope.h"
@@ -64,7 +64,7 @@ private:
     bool m_previous;
 };
 
-class SafeAllocation {
+class V8ObjectConstructor {
 public:
     static inline v8::Local<v8::Object> newInstance(v8::Handle<v8::Function>);
     static inline v8::Local<v8::Object> newInstance(v8::Handle<v8::ObjectTemplate>);
@@ -73,7 +73,7 @@ public:
     static v8::Handle<v8::Value> isValidConstructorMode(const v8::Arguments&);
 };
 
-v8::Local<v8::Object> SafeAllocation::newInstance(v8::Handle<v8::Function> function)
+v8::Local<v8::Object> V8ObjectConstructor::newInstance(v8::Handle<v8::Function> function)
 {
     if (function.IsEmpty())
         return v8::Local<v8::Object>();
@@ -82,7 +82,7 @@ v8::Local<v8::Object> SafeAllocation::newInstance(v8::Handle<v8::Function> funct
     return function->NewInstance();
 }
 
-v8::Local<v8::Object> SafeAllocation::newInstance(v8::Handle<v8::ObjectTemplate> objectTemplate)
+v8::Local<v8::Object> V8ObjectConstructor::newInstance(v8::Handle<v8::ObjectTemplate> objectTemplate)
 {
     if (objectTemplate.IsEmpty())
         return v8::Local<v8::Object>();
@@ -91,7 +91,7 @@ v8::Local<v8::Object> SafeAllocation::newInstance(v8::Handle<v8::ObjectTemplate>
     return objectTemplate->NewInstance();
 }
 
-v8::Local<v8::Object> SafeAllocation::newInstance(v8::Handle<v8::Function> function, int argc, v8::Handle<v8::Value> argv[])
+v8::Local<v8::Object> V8ObjectConstructor::newInstance(v8::Handle<v8::Function> function, int argc, v8::Handle<v8::Value> argv[])
 {
     if (function.IsEmpty())
         return v8::Local<v8::Object>();
@@ -102,4 +102,4 @@ v8::Local<v8::Object> SafeAllocation::newInstance(v8::Handle<v8::Function> funct
 
 } // namespace WebCore
 
-#endif // SafeAllocation_h
+#endif // V8ObjectConstructor_h
