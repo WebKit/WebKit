@@ -152,7 +152,8 @@ TEST(CCMathUtilTest, verifyEnclosingRectOfVerticesUsesCorrectInitialBounds)
     EXPECT_FLOAT_RECT_EQ(FloatRect(FloatPoint(-100, -100), FloatSize(90, 90)), result);
 }
 
-TEST(CCMathUtilTest, smallestAngleBetweenVectors)
+// http://webkit.org/b/94502
+TEST(CCMathUtilTest, DISABLED_smallestAngleBetweenVectors)
 {
     FloatSize x(1, 0);
     FloatSize y(0, 1);

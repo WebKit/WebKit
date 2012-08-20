@@ -1,3 +1,17 @@
+2012-08-20  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed Chromium rebaselining and test failure suppressions.
+
+        https://bugs.webkit.org/show_bug.cgi?id=94494
+        https://bugs.webkit.org/show_bug.cgi?id=94501
+        https://bugs.webkit.org/show_bug.cgi?id=94502
+
+        * platform/chromium-mac-snowleopard/fast/forms/input-double-click-selection-gap-bug-expected.png:
+        * platform/chromium-mac/fast/css/text-overflow-input-expected.png:
+        * platform/chromium-mac/fast/forms/box-shadow-override-expected.png:
+        * platform/chromium-mac/fast/forms/input-double-click-selection-gap-bug-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-08-20  Mike West  <mkwst@chromium.org>
 
         CSP 1.1: The 'plugin-types' warning should include details about explicit type declaration when relevant.

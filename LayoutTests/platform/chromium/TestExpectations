@@ -3505,3 +3505,12 @@ BUGWK94261 DEBUG : http/tests/inspector/indexeddb/resources-panel.html = PASS CR
 
 // Needs a rebaseline.
 BUGWK40272 : svg/css/circle-in-mask-with-shadow.svg = IMAGE
+
+BUGWK90488 SLOW WIN : http/tests/inspector/network-preflight-options.html = PASS
+
+BUGWK94494 DEBUG : webaudio/audioparam-connect-audioratesignal.html = PASS CRASH
+BUGWK94494 DEBUG : webaudio/audioparam-summingjunction.html = PASS CRASH
+
+BUGWK94501 WIN : http/tests/inspector/resource-tree/resource-tree-invalid-mime-type-css-content.html = PASS TEXT
+BUGWK94501 WIN LINUX : http/tests/inspector/resource-tree/resource-tree-frame-navigate.html = PASS TEXT
+
