@@ -200,11 +200,11 @@ void CCLayerAnimationController::pushNewAnimationsToImplThread(CCLayerAnimationC
         if (!m_activeAnimations[i]->needsSynchronizedStartTime())
             continue;
 
-        OwnPtr<CCActiveAnimation> toAdd(m_activeAnimations[i]->cloneForImplThread());
-        ASSERT(!toAdd->needsSynchronizedStartTime());
         // The new animation should be set to run as soon as possible.
-        toAdd->setRunState(CCActiveAnimation::WaitingForTargetAvailability, 0);
-        toAdd->setStartTime(0);
+        CCActiveAnimation::RunState initialRunState = CCActiveAnimation::WaitingForTargetAvailability;
+        double startTime = 0;
+        OwnPtr<CCActiveAnimation> toAdd(m_activeAnimations[i]->cloneAndInitialize(CCActiveAnimation::ControllingInstance, initialRunState, startTime));
+        ASSERT(!toAdd->needsSynchronizedStartTime());
         controllerImpl->addAnimation(toAdd.release());
     }
 }
@@ -324,7 +324,6 @@ void CCLayerAnimationController::resolveConflicts(double monotonicTime)
     }
 }
 
-
 void CCLayerAnimationController::markAnimationsForDeletion(double monotonicTime, CCAnimationEventsVector* events)
 {
     for (size_t i = 0; i < m_activeAnimations.size(); i++) {
@@ -369,13 +368,16 @@ void CCLayerAnimationController::replaceImplThreadAnimations(CCLayerAnimationCon
 {
     controllerImpl->m_activeAnimations.clear();
     for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
-        OwnPtr<CCActiveAnimation> toAdd(m_activeAnimations[i]->cloneForImplThread());
+        OwnPtr<CCActiveAnimation> toAdd;
         if (m_activeAnimations[i]->needsSynchronizedStartTime()) {
             // We haven't received an animation started notification yet, so it
             // is important that we add it in a 'waiting' and not 'running' state.
-            toAdd->setRunState(CCActiveAnimation::WaitingForTargetAvailability, 0);
-            toAdd->setStartTime(0);
-        }
+            CCActiveAnimation::RunState initialRunState = CCActiveAnimation::WaitingForTargetAvailability;
+            double startTime = 0;
+            toAdd = m_activeAnimations[i]->cloneAndInitialize(CCActiveAnimation::ControllingInstance, initialRunState, startTime);
+        } else
+            toAdd = m_activeAnimations[i]->clone(CCActiveAnimation::ControllingInstance);
+
         controllerImpl->addAnimation(toAdd.release());
     }
 }
@@ -412,6 +414,10 @@ void CCLayerAnimationController::tickAnimations(double monotonicTime)
                 m_client->setOpacityFromAnimation(opacity);
                 break;
             }
+
+            // Do nothing for sentinel value.
+            case CCActiveAnimation::TargetPropertyEnumSize:
+                ASSERT_NOT_REACHED();
 
             }
         }

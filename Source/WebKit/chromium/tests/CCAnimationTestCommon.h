@@ -25,9 +25,11 @@
 #ifndef CCAnimationTestCommon_h
 #define CCAnimationTestCommon_h
 
+#include "CCActiveAnimation.h"
 #include "CCAnimationCurve.h"
 #include "CCLayerAnimationController.h"
 #include "IntSize.h"
+
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
