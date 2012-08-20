@@ -1,3 +1,16 @@
+2012-08-20  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Custom tap-highlight-color renders fully opaque
+        https://bugs.webkit.org/show_bug.cgi?id=94468
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Draw tap-highlight-color at 50% transparency, to better match how
+        existing WebKit browsers act on custom tap-highlight colors.
+
+        * WebProcess/WebPage/TapHighlightController.cpp:
+        (WebKit::TapHighlightController::drawRect):
+
 2012-08-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Replace webkit_web_view_replace_content with webkit_web_view_load_alternate_html
