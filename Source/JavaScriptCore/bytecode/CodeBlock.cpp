@@ -2580,6 +2580,60 @@ void CodeBlock::unlinkIncomingCalls()
         m_incomingCalls.begin()->unlink(*m_globalData, repatchBuffer);
 }
 
+#if ENABLE(LLINT)
+Instruction* CodeBlock::adjustPCIfAtCallSite(Instruction* potentialReturnPC)
+{
+    ASSERT(potentialReturnPC);
+
+    unsigned returnPCOffset = potentialReturnPC - instructions().begin();
+    Instruction* adjustedPC;
+    unsigned opcodeLength;
+
+    // If we are at a callsite, the LLInt stores the PC after the call
+    // instruction rather than the PC of the call instruction. This requires
+    // some correcting. If so, we can rely on the fact that the preceding
+    // instruction must be one of the call instructions, so either it's a
+    // call_varargs or it's a call, construct, or eval.
+    //
+    // If we are not at a call site, then we need to guard against the
+    // possibility of peeking past the start of the bytecode range for this
+    // codeBlock. Hence, we do a bounds check before we peek at the
+    // potential "preceding" instruction.
+    //     The bounds check is done by comparing the offset of the potential
+    // returnPC with the length of the opcode. If there is room for a call
+    // instruction before the returnPC, then the offset of the returnPC must
+    // be greater than the size of the call opcode we're looking for.
+
+    // The determination of the call instruction present (if we are at a
+    // callsite) depends on the following assumptions. So, assert that
+    // they are still true:
+    ASSERT(OPCODE_LENGTH(op_call_varargs) <= OPCODE_LENGTH(op_call));
+    ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_construct));
+    ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_call_eval));
+
+    // Check for the case of a preceeding op_call_varargs:
+    opcodeLength = OPCODE_LENGTH(op_call_varargs);
+    adjustedPC = potentialReturnPC - opcodeLength;
+    if ((returnPCOffset >= opcodeLength)
+        && (adjustedPC->u.pointer == bitwise_cast<void*>(llint_op_call_varargs))) {
+        return adjustedPC;
+    }
+
+    // Check for the case of the other 3 call instructions:
+    opcodeLength = OPCODE_LENGTH(op_call);
+    adjustedPC = potentialReturnPC - opcodeLength;
+    if ((returnPCOffset >= opcodeLength)
+        && (adjustedPC->u.pointer == bitwise_cast<void*>(llint_op_call)
+            || adjustedPC->u.pointer == bitwise_cast<void*>(llint_op_construct)
+            || adjustedPC->u.pointer == bitwise_cast<void*>(llint_op_call_eval))) {
+        return adjustedPC;
+    }
+
+    // Not a call site. No need to adjust PC. Just return the original.
+    return potentialReturnPC;
+}
+#endif
+
 unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddress)
 {
 #if ENABLE(LLINT)
@@ -2590,28 +2644,8 @@ unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddre
         ASSERT(JITCode::isBaselineCode(getJITType()));
         Instruction* instruction = exec->currentVPC();
         ASSERT(instruction);
-        
-        // The LLInt stores the PC after the call instruction rather than the PC of
-        // the call instruction. This requires some correcting. We rely on the fact
-        // that the preceding instruction must be one of the call instructions, so
-        // either it's a call_varargs or it's a call, construct, or eval.
-        ASSERT(OPCODE_LENGTH(op_call_varargs) <= OPCODE_LENGTH(op_call));
-        ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_construct));
-        ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_call_eval));
-        if (instruction[-OPCODE_LENGTH(op_call_varargs)].u.pointer == bitwise_cast<void*>(llint_op_call_varargs)) {
-            // We know that the preceding instruction must be op_call_varargs because there is no way that
-            // the pointer to the call_varargs could be an operand to the call.
-            instruction -= OPCODE_LENGTH(op_call_varargs);
-            ASSERT(instruction[-OPCODE_LENGTH(op_call)].u.pointer != bitwise_cast<void*>(llint_op_call)
-                   && instruction[-OPCODE_LENGTH(op_call)].u.pointer != bitwise_cast<void*>(llint_op_construct)
-                   && instruction[-OPCODE_LENGTH(op_call)].u.pointer != bitwise_cast<void*>(llint_op_call_eval));
-        } else {
-            // Must be that the last instruction was some op_call.
-            ASSERT(instruction[-OPCODE_LENGTH(op_call)].u.pointer == bitwise_cast<void*>(llint_op_call)
-                   || instruction[-OPCODE_LENGTH(op_call)].u.pointer == bitwise_cast<void*>(llint_op_construct)
-                   || instruction[-OPCODE_LENGTH(op_call)].u.pointer == bitwise_cast<void*>(llint_op_call_eval));
-            instruction -= OPCODE_LENGTH(op_call);
-        }
+
+        instruction = adjustPCIfAtCallSite(instruction);
         
         return bytecodeOffset(instruction);
     }

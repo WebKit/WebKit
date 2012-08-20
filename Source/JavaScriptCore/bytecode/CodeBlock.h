@@ -230,6 +230,9 @@ namespace JSC {
             return *(binarySearch<MethodCallLinkInfo, unsigned, getMethodCallLinkInfoBytecodeIndex>(m_methodCallLinkInfos.begin(), m_methodCallLinkInfos.size(), bytecodeIndex));
         }
 
+#if ENABLE(LLINT)
+        Instruction* adjustPCIfAtCallSite(Instruction*);
+#endif
         unsigned bytecodeOffset(ExecState*, ReturnAddressPtr);
 
         unsigned bytecodeOffsetForCallAtIndex(unsigned index)

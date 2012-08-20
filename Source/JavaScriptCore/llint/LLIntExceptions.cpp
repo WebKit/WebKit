@@ -37,6 +37,14 @@
 
 namespace JSC { namespace LLInt {
 
+static void fixupPCforExceptionIfNeeded(ExecState* exec)
+{
+    CodeBlock* codeBlock = exec->codeBlock();
+    ASSERT(!!codeBlock);
+    Instruction* pc = exec->currentVPC();
+    exec->setCurrentVPC(codeBlock->adjustPCIfAtCallSite(pc));
+}
+
 void interpreterThrowInCaller(ExecState* exec, ReturnAddressPtr pc)
 {
     JSGlobalData* globalData = &exec->globalData();
@@ -44,6 +52,7 @@ void interpreterThrowInCaller(ExecState* exec, ReturnAddressPtr pc)
 #if LLINT_SLOW_PATH_TRACING
     dataLog("Throwing exception %s.\n", globalData->exception.description());
 #endif
+    fixupPCforExceptionIfNeeded(exec);
     genericThrow(
         globalData, exec, globalData->exception,
         exec->codeBlock()->bytecodeOffset(exec, pc));
@@ -61,6 +70,7 @@ Instruction* returnToThrow(ExecState* exec, Instruction* pc)
 #if LLINT_SLOW_PATH_TRACING
     dataLog("Throwing exception %s (returnToThrow).\n", globalData->exception.description());
 #endif
+    fixupPCforExceptionIfNeeded(exec);
     genericThrow(globalData, exec, globalData->exception, pc - exec->codeBlock()->instructions().begin());
     
     return globalData->llintData.exceptionInstructions();
@@ -73,6 +83,7 @@ void* callToThrow(ExecState* exec, Instruction* pc)
 #if LLINT_SLOW_PATH_TRACING
     dataLog("Throwing exception %s (callToThrow).\n", globalData->exception.description());
 #endif
+    fixupPCforExceptionIfNeeded(exec);
     genericThrow(globalData, exec, globalData->exception, pc - exec->codeBlock()->instructions().begin());
     
     return bitwise_cast<void*>(&llint_throw_during_call_trampoline);
