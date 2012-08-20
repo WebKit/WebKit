@@ -3218,20 +3218,6 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
         // Now walk the sorted list of children with positive z-indices.
         paintList(posZOrderList(), rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, localPaintFlags);
     }
-    
-    if ((localPaintFlags & PaintLayerPaintingCompositingMaskPhase) && shouldPaintContent && renderer()->hasMask() && !selectionOnly) {
-        if (useClipRect)
-            clipToRect(rootLayer, context, paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius); // Mask painting will handle clipping to self.
-
-        // Paint the mask.
-        PaintInfo paintInfo(context, pixelSnappedIntRect(damageRect.rect()), PaintPhaseMask, false, paintingRootForRenderer, region, 0);
-        renderer()->paint(paintInfo, paintOffset);
-        
-        if (useClipRect) {
-            // Restore the clip.
-            restoreClip(context, paintDirtyRect, damageRect);
-        }
-    }
 
     if (isPaintingOverlayScrollbars) {
         clipToRect(rootLayer, context, paintDirtyRect, damageRect);
@@ -3250,7 +3236,21 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
 
     // Make sure that we now use the original transparency context.
     ASSERT(transparencyLayerContext == context);
-    
+
+    if ((localPaintFlags & PaintLayerPaintingCompositingMaskPhase) && shouldPaintContent && renderer()->hasMask() && !selectionOnly) {
+        if (useClipRect)
+            clipToRect(rootLayer, context, paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius); // Mask painting will handle clipping to self.
+        
+        // Paint the mask.
+        PaintInfo paintInfo(context, pixelSnappedIntRect(damageRect.rect()), PaintPhaseMask, false, paintingRootForRenderer, region, 0);
+        renderer()->paint(paintInfo, paintOffset);
+        
+        if (useClipRect) {
+            // Restore the clip.
+            restoreClip(context, paintDirtyRect, damageRect);
+        }
+    }
+
     // End our transparency layer
     if (haveTransparency && m_usedTransparency && !m_paintingInsideReflection) {
         context->endTransparencyLayer();

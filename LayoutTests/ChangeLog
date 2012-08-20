@@ -1,3 +1,17 @@
+2012-08-20  Dirk Schulze  <krit@webkit.org>
+
+        CSS Masking and CSS Filters applied in wrong order
+        https://bugs.webkit.org/show_bug.cgi?id=94354
+
+        Reviewed by Dean Jackson.
+
+        The test checks the correct order on applying CSS Masking, Filter Effects and CSS Clipping.
+        According to the Filter Effects spec, the order should be first filters, then masking and clipping.
+
+        * css3/filters/filter-mask-clip-order-expected.html: Added.
+        * css3/filters/filter-mask-clip-order.html: Added.
+        * css3/filters/resources/mask.png: Added.
+
 2012-08-20  Adam Klein  <adamk@chromium.org>
 
         Remove redundant TOUCH_LISTENER event type
