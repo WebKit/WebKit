@@ -1,2 +1,0 @@
-Failed assertion window.CanvasPixelArray !== undefined (got [undefined], expected not [undefined])
-Aborted with exception: 'undefined' is not an object (evaluating 'window.CanvasPixelArray.prototype')

@@ -308,9 +308,6 @@ canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html
 canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html
 canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html
 canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html
-canvas/philip/tests/2d.imageData.create1.type.html
-canvas/philip/tests/2d.imageData.create2.type.html
-canvas/philip/tests/2d.imageData.get.type.html
 canvas/philip/tests/2d.missingargs.html
 canvas/philip/tests/2d.pattern.image.broken.html
 canvas/philip/tests/2d.pattern.image.incomplete.empty.html

@@ -1,3 +1,25 @@
+2012-08-20  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        Update canvas tests that are using CanvasPixelArray
+        https://bugs.webkit.org/show_bug.cgi?id=94474
+
+        Reviewed by Andreas Kling.
+
+        CanvasPixelArray is deprecated. W3C already updated these tests on the
+        approved tests repository. Using Uint8ClampedArray, they now pass on
+        WebKit.
+
+        * canvas/philip/tests/2d.imageData.create1.type.html:
+        * canvas/philip/tests/2d.imageData.create2.type.html:
+        * canvas/philip/tests/2d.imageData.get.type.html:
+        * platform/chromium/TestExpectations:
+        * platform/efl/Skipped:
+        * platform/gtk/TestExpectations:
+        * platform/mac/canvas/philip/tests/2d.imageData.create1.type-expected.txt: Removed.
+        * platform/mac/canvas/philip/tests/2d.imageData.create2.type-expected.txt: Removed.
+        * platform/mac/canvas/philip/tests/2d.imageData.get.type-expected.txt: Removed.
+        * platform/qt/Skipped:
+
 2012-08-20  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [TouchAdjustment] Adjust to word or selection
