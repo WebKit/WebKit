@@ -3238,7 +3238,7 @@ BUGWK89238 SKIP : fast/repaint/reflection-repaint-test.html = PASS
 BUGWK89238 SKIP : fast/repaint/transform-layout-repaint.html = PASS
 BUGWK87282 WIN : fast/sub-pixel/layout-boxes-with-zoom.html = IMAGE
 
-BUGWK87273 : webaudio/audioparam-connect-audioratesignal.html = TIMEOUT PASS
+BUGWK87273 RELEASE : webaudio/audioparam-connect-audioratesignal.html = TIMEOUT PASS
 
 BUGWK87321 XP : fast/history/history-subframe-with-name.html = TEXT PASS
 BUGWK87321 XP : fast/history/history-traversal-is-asynchronous.html = TEXT PASS
@@ -3508,7 +3508,7 @@ BUGWK40272 : svg/css/circle-in-mask-with-shadow.svg = IMAGE
 
 BUGWK90488 SLOW WIN : http/tests/inspector/network-preflight-options.html = PASS
 
-BUGWK94494 DEBUG : webaudio/audioparam-connect-audioratesignal.html = PASS CRASH
+BUGWK94494 DEBUG : webaudio/audioparam-connect-audioratesignal.html = TIMEOUT PASS CRASH
 BUGWK94494 DEBUG : webaudio/audioparam-summingjunction.html = PASS CRASH
 
 BUGWK94501 WIN : http/tests/inspector/resource-tree/resource-tree-invalid-mime-type-css-content.html = PASS TEXT
