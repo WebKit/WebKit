@@ -1,3 +1,17 @@
+2012-08-20  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Add unit tests for WKEinaSharedString
+        https://bugs.webkit.org/show_bug.cgi?id=94104
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added unit tests for WKEinaSharedString class.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/tests/test_ewk2_eina_shared_string.cpp: Added.
+        (checkString):
+        (TEST_F):
+
 2012-08-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to set preferred languages to WebKit2 GTK+
