@@ -51,10 +51,12 @@ namespace WebCore {
 class DOMWrapperWorld;
 class Event;
 class Frame;
+class HTMLDocument;
 class HTMLPlugInElement;
 class PagePopupClient;
 class ScriptSourceCode;
 class ScriptState;
+class V8DOMWindowShell;
 class Widget;
 
 class ScriptController {
@@ -65,7 +67,7 @@ public:
     // FIXME: V8Proxy should either be folded into ScriptController
     // or this accessor should be made JSProxy*
     V8Proxy* proxy() { return m_proxy.get(); }
-    V8DOMWindowShell* windowShell() { return m_proxy->windowShell(); }
+    V8DOMWindowShell* windowShell() const { return m_windowShell.get(); }
 
     ScriptValue executeScript(const ScriptSourceCode&);
     ScriptValue executeScript(const String& script, bool forceUserGesture = false);
@@ -185,6 +187,9 @@ public:
 private:
     Frame* m_frame;
     const String* m_sourceURL;
+
+    // For the moment, we have one of these. Soon we will have one per DOMWrapperWorld.
+    RefPtr<V8DOMWindowShell> m_windowShell;
 
     bool m_paused;
 

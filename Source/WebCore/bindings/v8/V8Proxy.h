@@ -35,7 +35,6 @@
 #include "SharedPersistent.h"
 #include "StatsCounter.h"
 #include "V8AbstractEventListener.h"
-#include "V8DOMWindowShell.h"
 #include "V8DOMWrapper.h"
 #include "V8GCController.h"
 #include "V8Utilities.h"
@@ -62,9 +61,10 @@ namespace WebCore {
     class ScriptExecutionContext;
     class ScriptSourceCode;
     class SecurityOrigin;
-    class V8PerContextData;
+    class V8DOMWindowShell;
     class V8EventListener;
     class V8IsolatedContext;
+    class V8PerContextData;
     class WorldContextHandle;
 
     const int kMaxRecursionDepth = 22;
@@ -88,7 +88,7 @@ namespace WebCore {
 
         ~V8Proxy();
 
-        Frame* frame() { return m_frame; }
+        Frame* frame() const { return m_frame; }
 
         void clearForNavigation();
         void clearForClose();
@@ -138,7 +138,9 @@ namespace WebCore {
         bool matchesCurrentContext();
 
         // FIXME: This should eventually take DOMWrapperWorld argument!
-        V8DOMWindowShell* windowShell() const { return m_windowShell.get(); }
+        // FIXME: This method will be soon removed, as all methods that access windowShell()
+        // will be moved to ScriptController.
+        V8DOMWindowShell* windowShell() const;
 
         bool setContextDebugId(int id);
         static int contextDebugId(v8::Handle<v8::Context>);
@@ -163,9 +165,6 @@ namespace WebCore {
         PassOwnPtr<v8::ScriptData> precompileScript(v8::Handle<v8::String>, CachedScript*);
 
         Frame* m_frame;
-
-        // For the moment, we have one of these.  Soon we will have one per DOMWrapperWorld.
-        RefPtr<V8DOMWindowShell> m_windowShell;
 
         // All of the extensions registered with the context.
         static V8Extensions m_extensions;

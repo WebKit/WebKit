@@ -36,6 +36,7 @@
 #include "SafeAllocation.h"
 #include "V8BindingMacros.h"
 #include "V8DOMConfiguration.h"
+#include "V8DOMWindowShell.h"
 #include "V8DOMWrapper.h"
 #include "V8HiddenPropertyName.h"
 #include "V8PerIsolateData.h"

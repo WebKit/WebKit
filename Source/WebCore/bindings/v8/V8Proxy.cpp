@@ -120,7 +120,6 @@ static v8::Local<v8::Value> handleMaxRecursionDepthExceeded()
 
 V8Proxy::V8Proxy(Frame* frame)
     : m_frame(frame)
-    , m_windowShell(V8DOMWindowShell::create(frame))
 {
 }
 
@@ -353,6 +352,11 @@ v8::Local<v8::Value> V8Proxy::newInstance(v8::Handle<v8::Function> constructor, 
         handleFatalErrorInV8();
 
     return result;
+}
+
+V8DOMWindowShell* V8Proxy::windowShell() const
+{
+    return frame()->script()->windowShell();
 }
 
 DOMWindow* V8Proxy::retrieveWindow(v8::Handle<v8::Context> context)
