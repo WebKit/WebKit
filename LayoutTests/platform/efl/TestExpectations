@@ -899,3 +899,6 @@ BUGWK59706 : http/tests/inspector/resource-tree/resource-tree-frame-navigate.htm
 
 // New test introduced in r125790 fails
 BUGWK94341 : inspector/timeline/timeline-decode-resize.html = TEXT
+
+// Slider thumb can not be displayed without parent slider.
+BUGWK94334 : fast/forms/range/thumbslider-no-parent-slider.html = MISSING

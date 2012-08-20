@@ -1,3 +1,17 @@
+2012-08-19  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL] Gardening for fast/forms/range/thumbslider-no-parent-slider.html
+        https://bugs.webkit.org/show_bug.cgi?id=94334
+
+        Unreviewed gardening.
+
+        Slider thumb can not be displayed without parent slider because
+        current theme of EFL does not display slider thumb separately.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/forms/range/thumbslider-no-parent-slider-expected.png: Removed.
+        * platform/efl/fast/forms/range/thumbslider-no-parent-slider-expected.txt: Removed.
+
 2012-08-19  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Tests] time-multiple-fields-appearance-basic.html and time-multiple-fields-appearance-pseudo-elements.html are failed on Chromium Windows
