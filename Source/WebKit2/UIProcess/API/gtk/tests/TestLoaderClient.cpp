@@ -70,6 +70,13 @@ static void testLoadHtml(LoadTrackingTest* test, gconstpointer)
     assertNormalLoadHappened(test->m_loadEvents);
 }
 
+static void testLoadAlternateHTML(LoadTrackingTest* test, gconstpointer)
+{
+    test->loadAlternateHTML("<html><body>Alternate page</body></html>", "http://error-page.foo/", 0);
+    test->waitUntilLoadFinished();
+    assertNormalLoadHappened(test->m_loadEvents);
+}
+
 static void testLoadPlainText(LoadTrackingTest* test, gconstpointer)
 {
     test->loadPlainText("Hello WebKit-GTK+");
@@ -262,6 +269,7 @@ void beforeAll()
     LoadTrackingTest::add("WebKitWebView", "loading-status", testLoadingStatus);
     LoadTrackingTest::add("WebKitWebView", "loading-error", testLoadingError);
     LoadTrackingTest::add("WebKitWebView", "load-html", testLoadHtml);
+    LoadTrackingTest::add("WebKitWebView", "load-alternate-html", testLoadAlternateHTML);
     LoadTrackingTest::add("WebKitWebView", "load-plain-text", testLoadPlainText);
     LoadTrackingTest::add("WebKitWebView", "load-request", testLoadRequest);
     LoadStopTrackingTest::add("WebKitWebView", "stop-loading", testLoadCancelled);

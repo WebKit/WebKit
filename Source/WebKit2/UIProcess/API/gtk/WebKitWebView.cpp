@@ -106,13 +106,6 @@ enum {
     PROP_ZOOM_LEVEL
 };
 
-typedef enum {
-    NotReplacingContent,
-    WillReplaceContent,
-    ReplacingContent,
-    DidReplaceContent
-} ReplaceContentStatus;
-
 typedef HashMap<uint64_t, GRefPtr<WebKitWebResource> > LoadingResourcesMap;
 typedef HashMap<String, GRefPtr<WebKitWebResource> > ResourcesMap;
 
@@ -122,7 +115,6 @@ struct _WebKitWebViewPrivate {
     CString customTextEncoding;
     double estimatedLoadProgress;
     CString activeURI;
-    ReplaceContentStatus replaceContentStatus;
 
     bool waitingForMainResource;
     gulong mainResourceResponseHandlerID;
@@ -159,7 +151,7 @@ static gboolean webkitWebViewLoadFail(WebKitWebView* webView, WebKitLoadEvent, c
         return FALSE;
 
     GOwnPtr<char> htmlString(g_strdup_printf("<html><body>%s</body></html>", error->message));
-    webkit_web_view_replace_content(webView, htmlString.get(), failingURI, 0);
+    webkit_web_view_load_alternate_html(webView, htmlString.get(), failingURI, 0);
 
     return TRUE;
 }
@@ -1107,25 +1099,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                      WEBKIT_TYPE_FORM_SUBMISSION_REQUEST);
 }
 
-static bool updateReplaceContentStatus(WebKitWebView* webView, WebKitLoadEvent loadEvent)
-{
-    if (webView->priv->replaceContentStatus == ReplacingContent) {
-        if (loadEvent == WEBKIT_LOAD_FINISHED)
-            webView->priv->replaceContentStatus = DidReplaceContent;
-        return true;
-    }
-
-    if (loadEvent == WEBKIT_LOAD_STARTED) {
-        if (webView->priv->replaceContentStatus == WillReplaceContent) {
-            webView->priv->replaceContentStatus = ReplacingContent;
-            return true;
-        }
-        webView->priv->replaceContentStatus = NotReplacingContent;
-    }
-
-    return false;
-}
-
 static void setCertificateToMainResource(WebKitWebView* webView)
 {
     WebKitWebViewPrivate* priv = webView->priv;
@@ -1169,20 +1142,15 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
         webView->priv->waitingForMainResource = false;
     } else if (loadEvent == WEBKIT_LOAD_COMMITTED) {
         webView->priv->subresourcesMap.clear();
-        if (webView->priv->replaceContentStatus != ReplacingContent) {
-            if (!webView->priv->mainResource) {
-                // When a page is loaded from the history cache, the main resource load callbacks
-                // are called when the main frame load is finished. We want to make sure there's a
-                // main resource available when load has been committed, so we delay the emission of
-                // load-changed signal until main resource object has been created.
-                webView->priv->waitingForMainResource = true;
-            } else
-                setCertificateToMainResource(webView);
-        }
+        if (!webView->priv->mainResource) {
+            // When a page is loaded from the history cache, the main resource load callbacks
+            // are called when the main frame load is finished. We want to make sure there's a
+            // main resource available when load has been committed, so we delay the emission of
+            // load-changed signal until main resource object has been created.
+            webView->priv->waitingForMainResource = true;
+        } else
+            setCertificateToMainResource(webView);
     }
-
-    if (updateReplaceContentStatus(webView, loadEvent))
-        return;
 
     if (webView->priv->waitingForMainResource)
         webView->priv->lastDelayedEvent = loadEvent;
@@ -1192,9 +1160,6 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 
 void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, const char* failingURI, GError *error)
 {
-    if (webView->priv->replaceContentStatus == ReplacingContent)
-        return;
-
     gboolean returnValue;
     g_signal_emit(webView, signals[LOAD_FAILED], 0, loadEvent, failingURI, error, &returnValue);
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, WEBKIT_LOAD_FINISHED);
@@ -1212,9 +1177,6 @@ void webkitWebViewSetTitle(WebKitWebView* webView, const CString& title)
 
 void webkitWebViewSetEstimatedLoadProgress(WebKitWebView* webView, double estimatedLoadProgress)
 {
-    if (webView->priv->replaceContentStatus != NotReplacingContent)
-        return;
-
     if (webView->priv->estimatedLoadProgress == estimatedLoadProgress)
         return;
 
@@ -1349,16 +1311,8 @@ static void waitForMainResourceResponseIfWaitingForResource(WebKitWebView* webVi
         g_signal_connect(priv->mainResource.get(), "notify::response", G_CALLBACK(mainResourceResponseChangedCallback), webView);
 }
 
-static inline bool webkitWebViewIsReplacingContentOrDidReplaceContent(WebKitWebView* webView)
-{
-    return (webView->priv->replaceContentStatus == ReplacingContent || webView->priv->replaceContentStatus == DidReplaceContent);
-}
-
 void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WKFrameRef wkFrame, uint64_t resourceIdentifier, WebKitURIRequest* request, bool isMainResource)
 {
-    if (webkitWebViewIsReplacingContentOrDidReplaceContent(webView))
-        return;
-
     WebKitWebViewPrivate* priv = webView->priv;
     WebKitWebResource* resource = webkitWebResourceCreate(wkFrame, request, isMainResource);
     if (WKFrameIsMainFrame(wkFrame) && (isMainResource || !priv->mainResource)) {
@@ -1371,9 +1325,6 @@ void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WKFrameRef wkFrame
 
 WebKitWebResource* webkitWebViewGetLoadingWebResource(WebKitWebView* webView, uint64_t resourceIdentifier)
 {
-    if (webkitWebViewIsReplacingContentOrDidReplaceContent(webView))
-        return 0;
-
     GRefPtr<WebKitWebResource> resource = webView->priv->loadingResourcesMap.get(resourceIdentifier);
     ASSERT(resource.get());
     return resource.get();
@@ -1381,9 +1332,6 @@ WebKitWebResource* webkitWebViewGetLoadingWebResource(WebKitWebView* webView, ui
 
 void webkitWebViewRemoveLoadingWebResource(WebKitWebView* webView, uint64_t resourceIdentifier)
 {
-    if (webkitWebViewIsReplacingContentOrDidReplaceContent(webView))
-        return;
-
     WebKitWebViewPrivate* priv = webView->priv;
     ASSERT(priv->loadingResourcesMap.contains(resourceIdentifier));
     priv->loadingResourcesMap.remove(resourceIdentifier);
@@ -1391,9 +1339,6 @@ void webkitWebViewRemoveLoadingWebResource(WebKitWebView* webView, uint64_t reso
 
 WebKitWebResource* webkitWebViewResourceLoadFinished(WebKitWebView* webView, uint64_t resourceIdentifier)
 {
-    if (webkitWebViewIsReplacingContentOrDidReplaceContent(webView))
-        return 0;
-
     WebKitWebViewPrivate* priv = webView->priv;
     WebKitWebResource* resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier);
     if (resource != priv->mainResource)
@@ -1597,6 +1542,33 @@ void webkit_web_view_load_html(WebKitWebView* webView, const gchar* content, con
 }
 
 /**
+ * webkit_web_view_load_alternate_html:
+ * @web_view: a #WebKitWebView
+ * @content: the new content to display as the main page of the @web_view
+ * @content_uri: the URI for the alternate page content
+ * @base_uri: (allow-none): the base URI for relative locations or %NULL
+ *
+ * Load the given @content string for the URI @content_uri.
+ * This allows clients to display page-loading errors in the #WebKitWebView itself.
+ * When this method is called from #WebKitWebView::load-failed signal to show an
+ * error page, the the back-forward list is maintained appropriately.
+ * For everything else this method works the same way as webkit_web_view_load_html().
+ */
+void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* content, const gchar* contentURI, const gchar* baseURI)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(content);
+    g_return_if_fail(contentURI);
+
+    WKRetainPtr<WKStringRef> htmlString(AdoptWK, WKStringCreateWithUTF8CString(content));
+    WKRetainPtr<WKURLRef> contentURL(AdoptWK, WKURLCreateWithUTF8CString(contentURI));
+    WKRetainPtr<WKURLRef> baseURL = baseURI ? adoptWK(WKURLCreateWithUTF8CString(baseURI)) : 0;
+    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
+    WKPageLoadAlternateHTMLString(toAPI(page), htmlString.get(), baseURL.get(), contentURL.get());
+    webkitWebViewUpdateURI(webView);
+}
+
+/**
  * webkit_web_view_load_plain_text:
  * @web_view: a #WebKitWebView
  * @plain_text: The plain text to load
@@ -1633,36 +1605,6 @@ void webkit_web_view_load_request(WebKitWebView* webView, WebKitURIRequest* requ
     WKRetainPtr<WKURLRequestRef> wkRequest(AdoptWK, WKURLRequestCreateWithWKURL(wkURL.get()));
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKPageLoadURLRequest(toAPI(page), wkRequest.get());
-    webkitWebViewUpdateURI(webView);
-}
-
-/**
- * webkit_web_view_replace_content:
- * @web_view: a #WebKitWebView
- * @content: the new content to display as the main page of the @web_view
- * @content_uri: the URI for the page content
- * @base_uri: (allow-none): the base URI for relative locations or %NULL
- *
- * Replace the content of @web_view with @content using @content_uri as page URI.
- * This allows clients to display page-loading errors in the #WebKitWebView itself.
- * This is typically called from #WebKitWebView::load-failed signal. The URI passed in
- * @base_uri has to be an absolute URI. The mime type of the document will be "text/html".
- * Signals #WebKitWebView::load-changed and #WebKitWebView::load-failed are not emitted
- * when replacing content of a #WebKitWebView using this method.
- */
-void webkit_web_view_replace_content(WebKitWebView* webView, const gchar* content, const gchar* contentURI, const gchar* baseURI)
-{
-    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
-    g_return_if_fail(content);
-    g_return_if_fail(contentURI);
-
-    webView->priv->replaceContentStatus = WillReplaceContent;
-
-    WKRetainPtr<WKStringRef> htmlString(AdoptWK, WKStringCreateWithUTF8CString(content));
-    WKRetainPtr<WKURLRef> contentURL(AdoptWK, WKURLCreateWithUTF8CString(contentURI));
-    WKRetainPtr<WKURLRef> baseURL = baseURI ? adoptWK(WKURLCreateWithUTF8CString(baseURI)) : 0;
-    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
-    WKPageLoadAlternateHTMLString(toAPI(page), htmlString.get(), baseURL.get(), contentURL.get());
     webkitWebViewUpdateURI(webView);
 }
 
@@ -1815,6 +1757,10 @@ gboolean webkit_web_view_can_go_forward(WebKitWebView* webView)
  *     the requested URI is "about:blank".
  *   </para></listitem>
  *   <listitem><para>
+ *     If the load operation was started by webkit_web_view_load_alternate_html(),
+ *     the requested URI is content URI provided.
+ *   </para></listitem>
+ *   <listitem><para>
  *     If the load operation was started by webkit_web_view_go_back() or
  *     webkit_web_view_go_forward(), the requested URI is the original URI
  *     of the previous/next item in the #WebKitBackForwardList of @web_view.
@@ -1837,10 +1783,6 @@ gboolean webkit_web_view_can_go_forward(WebKitWebView* webView)
  *   with %WEBKIT_LOAD_COMMITTED event, the active URI is the final
  *   one and it will not change unless a new load operation is started
  *   or a navigation action within the same page is performed.
- * </para></listitem>
- * <listitem><para>
- *   When the page content is replaced using webkit_web_view_replace_content(),
- *   the active URI is the content_uri provided.
  * </para></listitem>
  * </orderedlist>
  *

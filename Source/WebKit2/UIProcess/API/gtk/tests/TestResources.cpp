@@ -505,32 +505,6 @@ static void testWebResourceGetData(ResourcesTest* test, gconstpointer)
         test->checkResourceData(WEBKIT_WEB_RESOURCE(item->data));
 }
 
-static void replacedContentResourceLoadStartedCallback()
-{
-    g_assert_not_reached();
-}
-
-static void testWebViewResourcesReplacedContent(ResourcesTest* test, gconstpointer)
-{
-    test->loadURI(kServer->getURIForPath("/").data());
-    // FIXME: this should be 4 instead of 3, but we don't get the css image resource
-    // due to bug https://bugs.webkit.org/show_bug.cgi?id=78510.
-    test->waitUntilResourcesLoaded(3);
-
-    static const char* replacedHtml =
-        "<html><head>"
-        " <title>Content Replaced</title>"
-        " <link rel='stylesheet' href='data:text/css,body { margin: 0px; padding: 0px; }' type='text/css'>"
-        " <script language='javascript' src='data:application/javascript,function foo () { var a = 1; }'></script>"
-        "</head><body onload='document.title=\"Loaded\"'>WebKitGTK+ resources on replaced content test</body></html>";
-    g_signal_connect(test->m_webView, "resource-load-started", G_CALLBACK(replacedContentResourceLoadStartedCallback), test);
-    test->replaceContent(replacedHtml, "http://error-page.foo", 0);
-    test->waitUntilTitleChangedTo("Loaded");
-
-    g_assert(!webkit_web_view_get_main_resource(test->m_webView));
-    g_assert(!webkit_web_view_get_subresources(test->m_webView));
-}
-
 static void testWebViewResourcesHistoryCache(SingleResourceLoadTest* test, gconstpointer)
 {
     test->loadURI(kServer->getURIForPath("/").data());
@@ -635,7 +609,6 @@ void beforeAll()
     SingleResourceLoadTest::add("WebKitWebResource", "suggested-filename", testWebResourceSuggestedFilename);
     ResourceURITrackingTest::add("WebKitWebResource", "active-uri", testWebResourceActiveURI);
     ResourcesTest::add("WebKitWebResource", "get-data", testWebResourceGetData);
-    ResourcesTest::add("WebKitWebView", "replaced-content", testWebViewResourcesReplacedContent);
     SingleResourceLoadTest::add("WebKitWebView", "history-cache", testWebViewResourcesHistoryCache);
 }
 

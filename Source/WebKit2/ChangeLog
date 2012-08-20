@@ -1,3 +1,46 @@
+2012-08-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Replace webkit_web_view_replace_content with webkit_web_view_load_alternate_html
+        https://bugs.webkit.org/show_bug.cgi?id=94471
+
+        Reviewed by Martin Robinson.
+
+        In WebKit1 there's code to prevent that load signals are emitted
+        when loading internal custom error pages. We added
+        webkit_web_view_replace_content() with the same idea, but it has
+        ended up being problematic, because it allows to add any HTML
+        content (in WebKit1 we assumed internal error pages never failed
+        and always loaded) and it's impossible to know when the load has
+        finished. It also required a lot of logic to handle
+        replace_content as an especial case, in order to hide the fact
+        that it loads content. This patch renames
+        webkit_web_view_replace_content() as
+        webkit_web_view_load_alternate_html() and emit load events
+        normally.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (_WebKitWebViewPrivate):
+        (webkitWebViewLoadChanged):
+        (webkitWebViewLoadFailed):
+        (webkitWebViewSetEstimatedLoadProgress):
+        (webkitWebViewResourceLoadStarted):
+        (webkitWebViewGetLoadingWebResource):
+        (webkitWebViewRemoveLoadingWebResource):
+        (webkitWebViewResourceLoadFinished):
+        (webkit_web_view_load_alternate_html):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        * UIProcess/API/gtk/tests/TestLoaderClient.cpp:
+        (testLoadAlternateHTML):
+        (beforeAll):
+        * UIProcess/API/gtk/tests/TestResources.cpp:
+        (beforeAll):
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (beforeAll):
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::loadAlternateHTML):
+        * UIProcess/API/gtk/tests/WebViewTest.h:
+
 2012-08-20  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Add unit tests for WKEinaSharedString

@@ -35,7 +35,7 @@ public:
     virtual void loadHtml(const char* html, const char* baseURI);
     virtual void loadPlainText(const char* plainText);
     virtual void loadRequest(WebKitURIRequest*);
-    void replaceContent(const char* html, const char* contentURI, const char* baseURI);
+    void loadAlternateHTML(const char* html, const char* contentURI, const char* baseURI);
     void goBack();
     void goForward();
     void goToBackForwardListItem(WebKitBackForwardListItem*);

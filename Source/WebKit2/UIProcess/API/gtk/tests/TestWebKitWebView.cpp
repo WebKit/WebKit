@@ -74,24 +74,6 @@ static void testWebViewSettings(WebViewTest* test, gconstpointer)
     g_assert(webkit_settings_get_enable_javascript(settings));
 }
 
-static void replaceContentLoadCallback(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebViewTest* test)
-{
-    // There might be an event from a previous load,
-    // but never a WEBKIT_LOAD_STARTED after webkit_web_view_replace_content().
-    g_assert_cmpint(loadEvent, !=, WEBKIT_LOAD_STARTED);
-}
-
-static void testWebViewReplaceContent(WebViewTest* test, gconstpointer)
-{
-    test->loadHtml("<html><head><title>Replace Content Test</title></head><body>Content to replace</body></html>", 0);
-    test->waitUntilTitleChangedTo("Replace Content Test");
-
-    g_signal_connect(test->m_webView, "load-changed", G_CALLBACK(replaceContentLoadCallback), test);
-    test->replaceContent("<html><body onload='document.title=\"Content Replaced\"'>New Content</body></html>",
-                         "http://foo.com/bar", 0);
-    test->waitUntilTitleChangedTo("Content Replaced");
-}
-
 static const char* kAlertDialogMessage = "WebKitGTK+ alert dialog message";
 static const char* kConfirmDialogMessage = "WebKitGTK+ confirm dialog message";
 static const char* kPromptDialogMessage = "WebKitGTK+ prompt dialog message";
@@ -1048,7 +1030,6 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "default-context", testWebViewDefaultContext);
     WebViewTest::add("WebKitWebView", "custom-charset", testWebViewCustomCharset);
     WebViewTest::add("WebKitWebView", "settings", testWebViewSettings);
-    WebViewTest::add("WebKitWebView", "replace-content", testWebViewReplaceContent);
     UIClientTest::add("WebKitWebView", "create-ready-close", testWebViewCreateReadyClose);
     ModalDialogsTest::add("WebKitWebView", "allow-modal-dialogs", testWebViewAllowModalDialogs);
     ModalDialogsTest::add("WebKitWebView", "disallow-modal-dialogs", testWebViewDisallowModalDialogs);

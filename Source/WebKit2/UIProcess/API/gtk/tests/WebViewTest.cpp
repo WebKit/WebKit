@@ -71,10 +71,10 @@ void WebViewTest::loadRequest(WebKitURIRequest* request)
     webkit_web_view_load_request(m_webView, request);
 }
 
-void WebViewTest::replaceContent(const char* html, const char* contentURI, const char* baseURI)
+void WebViewTest::loadAlternateHTML(const char* html, const char* contentURI, const char* baseURI)
 {
     m_activeURI = contentURI;
-    webkit_web_view_replace_content(m_webView, html, contentURI, baseURI);
+    webkit_web_view_load_alternate_html(m_webView, html, contentURI, baseURI);
 }
 
 void WebViewTest::goBack()
