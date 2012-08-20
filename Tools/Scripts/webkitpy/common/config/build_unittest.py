@@ -31,7 +31,7 @@ class ShouldBuildTest(unittest.TestCase):
         (["GNUmakefile.am", "Source/WebCore/GNUmakefile.am"], ["gtk"]),
         (["Websites/bugs.webkit.org/foo", "Source/WebCore/bar"], ["*"]),
         (["Websites/bugs.webkit.org/foo"], []),
-        (["Source/JavaScriptCore/JavaScriptCore.xcodeproj/foo"], ["mac-leopard", "mac-lion", "mac-snowleopard"]),
+        (["Source/JavaScriptCore/JavaScriptCore.xcodeproj/foo"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
         (["Source/JavaScriptCore/JavaScriptCore.vcproj/foo", "Source/WebKit2/win/WebKit2.vcproj", "Source/WebKit/win/WebKit.sln", "Tools/WebKitTestRunner/Configurations/WebKitTestRunnerCommon.vsprops"], ["win"]),
         (["LayoutTests/platform/mac/foo", "Source/WebCore/bar"], ["*"]),
         (["LayoutTests/foo"], ["*"]),
@@ -41,17 +41,17 @@ class ShouldBuildTest(unittest.TestCase):
         (["LayoutTests/platform/mac-leopard/foo"], ["mac-leopard"]),
         (["LayoutTests/platform/mac-lion/foo"], ["mac-leopard", "mac-lion", "mac-snowleopard", "win"]),
         (["LayoutTests/platform/mac-snowleopard/foo"], ["mac-leopard", "mac-snowleopard"]),
-        (["LayoutTests/platform/mac-wk2/Skipped"], ["mac-lion", "mac-snowleopard", "win"]),
-        (["LayoutTests/platform/mac/foo"], ["mac-leopard", "mac-lion", "mac-snowleopard", "win"]),
+        (["LayoutTests/platform/mac-wk2/Skipped"], ["mac-lion",  "mac-mountainlion", "mac-snowleopard", "win"]),
+        (["LayoutTests/platform/mac/foo"], ["mac-leopard", "mac-lion", "mac-mountainlion", "mac-snowleopard", "win"]),
         (["LayoutTests/platform/win-xp/foo"], ["win"]),
         (["LayoutTests/platform/win-wk2/foo"], ["win"]),
         (["LayoutTests/platform/win/foo"], ["win"]),
-        (["Source/WebCore.exp.in", "Source/WebKit/mac/WebKit.exp"], ["mac-leopard", "mac-lion", "mac-snowleopard"]),
-        (["Source/WebCore/mac/foo"], ["chromium-mac", "mac-leopard", "mac-lion", "mac-snowleopard"]),
+        (["Source/WebCore.exp.in", "Source/WebKit/mac/WebKit.exp"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
+        (["Source/WebCore/mac/foo"], ["chromium-mac", "mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
         (["Source/WebCore/win/foo"], ["chromium-win", "win"]),
-        (["Source/WebCore/platform/graphics/gpu/foo"], ["mac-leopard", "mac-lion", "mac-snowleopard"]),
+        (["Source/WebCore/platform/graphics/gpu/foo"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
         (["Source/WebCore/platform/wx/wxcode/win/foo"], []),
-        (["Source/WebCore/rendering/RenderThemeMac.mm", "Source/WebCore/rendering/RenderThemeMac.h"], ["mac-leopard", "mac-lion", "mac-snowleopard"]),
+        (["Source/WebCore/rendering/RenderThemeMac.mm", "Source/WebCore/rendering/RenderThemeMac.h"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
         (["Source/WebCore/rendering/RenderThemeChromiumLinux.h"], ["chromium-linux"]),
         (["Source/WebCore/rendering/RenderThemeWinCE.h"], []),
         (["Tools/BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.js"], []),
@@ -61,7 +61,7 @@ class ShouldBuildTest(unittest.TestCase):
         for files, platforms in self._should_build_tests:
             # FIXME: We should test more platforms here once
             # build._should_file_trigger_build is implemented for them.
-            for platform in ["mac-leopard", "mac-lion", "mac-snowleopard", "win"]:
+            for platform in ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard", "win"]:
                 should_build = platform in platforms or "*" in platforms
                 self.assertEqual(build.should_build(platform, files), should_build, "%s should%s have built but did%s (files: %s)" % (platform, "" if should_build else "n't", "n't" if should_build else "", str(files)))
 

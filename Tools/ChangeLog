@@ -1,3 +1,18 @@
+2012-08-19  Stephanie Lewis  <slewis@apple.com>
+
+        Add mountain lion to build config.
+        https://bugs.webkit.org/show_bug.cgi?id=94441
+
+        Reviewed by Adam Barth.
+
+        Add Mountain Lion to the build trigger configurations.
+
+        * Scripts/webkitpy/common/config/build.py:
+        (_should_file_trigger_build):
+        * Scripts/webkitpy/common/config/build_unittest.py:
+        (ShouldBuildTest):
+        (ShouldBuildTest.test_should_build):
+
 2012-08-17  Kiran Muppala  <cmuppala@apple.com>
 
         Add self to webkit contributors list
