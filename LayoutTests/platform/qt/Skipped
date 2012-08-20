@@ -2094,7 +2094,6 @@ canvas/philip/tests/2d.gradient.radial.cone.top.html
 canvas/philip/tests/2d.gradient.radial.touch1.html
 canvas/philip/tests/2d.gradient.radial.touch2.html
 canvas/philip/tests/2d.gradient.radial.touch3.html
-canvas/philip/tests/2d.imageData.object.wrap.html
 canvas/philip/tests/2d.imageData.put.unchanged.html
 canvas/philip/tests/2d.line.cap.open.html
 canvas/philip/tests/2d.line.join.open.html

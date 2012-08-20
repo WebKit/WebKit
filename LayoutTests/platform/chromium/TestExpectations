@@ -1871,9 +1871,6 @@ BUGWK94246 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.obje
 BUGWK94246 : fast/canvas/canvas-ImageData-behaviour.html = TEXT
 BUGWK94246 : platform/chromium/virtual/gpu/fast/canvas/canvas-ImageData-behaviour.html = TEXT
 
-BUGWK94089 : canvas/philip/tests/2d.imageData.object.wrap.html = TEXT
-BUGWK94089 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.object.wrap.html = TEXT
-
 BUGWK45991 : canvas/philip/tests/2d.pattern.image.broken.html = TEXT
 BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.image.broken.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT

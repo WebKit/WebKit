@@ -1,3 +1,20 @@
+2012-08-20  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        2d.imageData.object.wrap.html has wrong expectations
+        https://bugs.webkit.org/show_bug.cgi?id=94089
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Updating and renaming the test to match new version in W3C approved tests.
+
+        * canvas/philip/tests/2d.imageData.object.clamp-expected.txt: Renamed from LayoutTests/canvas/philip/tests/2d.imageData.object.wrap-expected.txt.
+        * canvas/philip/tests/2d.imageData.object.clamp.html: Renamed from LayoutTests/canvas/philip/tests/2d.imageData.object.wrap.html.
+        * platform/chromium/TestExpectations: Unskipping.
+        * platform/efl/Skipped: Unskipping.
+        * platform/gtk/TestExpectations: Unskipping.
+        * platform/mac/Skipped: Unskipping.
+        * platform/qt/Skipped: Unskipping.
+
 2012-08-20  Dirk Schulze  <krit@webkit.org>
 
         CSS Masking and CSS Filters applied in wrong order

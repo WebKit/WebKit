@@ -911,5 +911,3 @@ BUGWK94341 : inspector/timeline/timeline-decode-resize.html = TEXT
 
 // Slider thumb can not be displayed without parent slider.
 BUGWK94334 : fast/forms/range/thumbslider-no-parent-slider.html = MISSING
-
-BUGWK94089 : canvas/philip/tests/2d.imageData.object.wrap.html = TEXT
