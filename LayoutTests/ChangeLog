@@ -1,3 +1,34 @@
+2012-08-20  John Mellor  <johnme@chromium.org>
+
+        Text Autosizing: Only take into account block width <= document layout width.
+        https://bugs.webkit.org/show_bug.cgi?id=93862
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added 4 tests: a block wider than the main frame, iframes both narrower
+        than and wider than the main frame, both also containing wide blocks,
+        and a narrow iframe expanded by frame flattening.
+
+        I verified experimentally that narrow-iframe-flattened.html passes, by
+        enabling frame flattening in Settings.cpp, but unfortunately it won't
+        get run by any bots since the only platform which currently enables
+        Text Autosizing (Chromium), doesn't enable frame flattening (or have
+        the DRT methods required to test it).
+
+        * fast/text-autosizing/font-scale-factor-expected.html:
+        * fast/text-autosizing/font-scale-factor.html:
+        * fast/text-autosizing/narrow-iframe-expected.html: Added.
+        * fast/text-autosizing/narrow-iframe-flattened-expected.html: Added.
+        * fast/text-autosizing/narrow-iframe-flattened.html: Added.
+        * fast/text-autosizing/narrow-iframe.html: Added.
+        * fast/text-autosizing/wide-block-expected.html: Added.
+        * fast/text-autosizing/wide-block.html: Added.
+        * fast/text-autosizing/wide-iframe-expected.html: Added.
+        * fast/text-autosizing/wide-iframe.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+
 2012-08-20  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css3-text] Add parsing support for -webkit-text-decoration-style

@@ -2932,7 +2932,7 @@ FrameView* FrameView::parentFrameView() const
     return 0;
 }
 
-bool FrameView::isInChildFrameWithFrameFlattening()
+bool FrameView::isInChildFrameWithFrameFlattening() const
 {
     if (!parent() || !m_frame->ownerElement())
         return false;

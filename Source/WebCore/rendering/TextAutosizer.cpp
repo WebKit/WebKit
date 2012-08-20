@@ -50,26 +50,40 @@ bool TextAutosizer::processSubtree(RenderObject* layoutRoot)
     if (!m_document->settings() || !m_document->settings()->textAutosizingEnabled() || layoutRoot->view()->printing() || !m_document->page())
         return false;
 
+    Frame* mainFrame = m_document->page()->mainFrame();
+
+    // Window area, in logical (density-independent) pixels.
     IntSize windowSize = m_document->settings()->textAutosizingWindowSizeOverride();
     if (windowSize.isEmpty()) {
-        Frame* mainFrame = m_document->page()->mainFrame();
         bool includeScrollbars = !InspectorInstrumentation::shouldApplyScreenWidthOverride(mainFrame);
         windowSize = mainFrame->view()->visibleContentRect(includeScrollbars).size(); // FIXME: Check that this is always in logical (density-independent) pixels (see wkbug.com/87440).
+    }
+
+    // Largest area of block that can be visible at once (assuming the main
+    // frame doesn't get scaled to less than overview scale), in CSS pixels.
+    IntSize minLayoutSize = mainFrame->view()->layoutSize();
+    for (Frame* frame = m_document->frame(); frame; frame = frame->tree()->parent()) {
+        if (!frame->view()->isInChildFrameWithFrameFlattening())
+            minLayoutSize = minLayoutSize.shrunkTo(frame->view()->layoutSize());
     }
 
     for (RenderObject* descendant = layoutRoot->nextInPreOrder(layoutRoot); descendant; descendant = descendant->nextInPreOrder(layoutRoot)) {
         if (isNotAnAutosizingContainer(descendant))
             continue;
-        processBox(toRenderBox(descendant), windowSize);
+        processBox(toRenderBox(descendant), windowSize, minLayoutSize);
     }
 
     return true;
 }
 
-void TextAutosizer::processBox(RenderBox* box, const IntSize& windowSize)
+void TextAutosizer::processBox(RenderBox* box, const IntSize& windowSize, const IntSize& layoutSize)
 {
-    int windowLogicalWidth = box->isHorizontalWritingMode() ? windowSize.width() : windowSize.height();
-    float multiplier = static_cast<float>(box->logicalWidth()) / windowLogicalWidth; // FIXME: This is overly simplistic.
+    int logicalWindowWidth = box->isHorizontalWritingMode() ? windowSize.width() : windowSize.height();
+    int logicalLayoutWidth = box->isHorizontalWritingMode() ? layoutSize.width() : layoutSize.height();
+    // Ignore box width in excess of the layout width, to avoid extreme multipliers.
+    float logicalBoxWidth = std::min<float>(box->logicalWidth(), logicalLayoutWidth);
+
+    float multiplier = logicalBoxWidth / logicalWindowWidth;
     multiplier *= m_document->settings()->textAutosizingFontScaleFactor();
 
     if (multiplier < 1)

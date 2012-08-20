@@ -764,6 +764,7 @@ WONTFIX SKIP : fast/fast-mobile-scrolling/no-fixed-position-elements.html = IMAG
 
 // Tests for frameset flattening. Relevant only on mobile browsers.
 WONTFIX SKIP : fast/frames/flattening = TIMEOUT
+WONTFIX SKIP : fast/text-autosizing/narrow-iframe-flattened.html = IMAGE
 WONTFIX SKIP : http/tests/misc/iframe-flattening-3level-nesting-with-blocking-resource.html = TIMEOUT
 
 // This should be tested differently (see discussion on https://bugs.webkit.org/show_bug.cgi?id=35063).

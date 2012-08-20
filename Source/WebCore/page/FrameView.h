@@ -256,6 +256,8 @@ public:
 
     Color documentBackgroundColor() const;
 
+    bool isInChildFrameWithFrameFlattening() const;
+
     static double currentPaintTimeStamp() { return sCurrentPaintTimeStamp; } // returns 0 if not painting
     
     void updateLayoutAndStyleIfNeededRecursive();
@@ -430,7 +432,6 @@ private:
 
     FrameView* parentFrameView() const;
 
-    bool isInChildFrameWithFrameFlattening();
     bool doLayoutWithFrameFlattening(bool allowSubtree);
 
     virtual AXObjectCache* axObjectCache() const;

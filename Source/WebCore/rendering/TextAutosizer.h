@@ -54,7 +54,7 @@ public:
 private:
     explicit TextAutosizer(Document*);
 
-    void processBox(RenderBox*, const IntSize& windowSize);
+    void processBox(RenderBox*, const IntSize& windowSize, const IntSize& layoutSize);
     void setMultiplier(RenderObject*, float);
 
     static bool isNotAnAutosizingContainer(const RenderObject*);
