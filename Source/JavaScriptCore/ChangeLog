@@ -1,5 +1,15 @@
 2012-08-20  Filip Pizlo  <fpizlo@apple.com>
 
+        fast/js/dfg-peephole-compare-final-object-to-final-object-or-other-when-both-proven-final-object.html on 32-bit
+        https://bugs.webkit.org/show_bug.cgi?id=94538
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+
+2012-08-20  Filip Pizlo  <fpizlo@apple.com>
+
         fast/js/dfg-compare-final-object-to-final-object-or-other-when-both-proven-final-object.html crashes on 32-bit
         https://bugs.webkit.org/show_bug.cgi?id=94026
 
