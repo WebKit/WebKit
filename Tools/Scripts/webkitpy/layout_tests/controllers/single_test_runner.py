@@ -320,6 +320,10 @@ class SingleTestRunner(object):
         if failures:
             return TestResult(self._test_name, failures, total_test_time, has_stderr)
 
+        if self._options.webkit_test_runner and not self._options.pixel_tests:
+            # don't check pixel results for WTR/WK2; they're broken.
+            return TestResult(self._test_name, failures, total_test_time, has_stderr)
+
         if not driver_output1.image_hash and not driver_output2.image_hash:
             failures.append(test_failures.FailureReftestNoImagesGenerated(reference_filename))
         elif mismatch:
