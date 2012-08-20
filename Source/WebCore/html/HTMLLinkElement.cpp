@@ -278,7 +278,7 @@ void HTMLLinkElement::removedFrom(ContainerNode* insertionPoint)
         clearSheet();
 
     if (styleSheetIsLoading())
-        removePendingSheet();
+        removePendingSheet(RemovePendingSheetNotifyLater);
 
     if (document()->renderer())
         document()->styleResolverChanged(DeferRecalcStyle);
@@ -458,7 +458,7 @@ void HTMLLinkElement::addPendingSheet(PendingSheetType type)
     document()->addPendingSheet();
 }
 
-void HTMLLinkElement::removePendingSheet()
+void HTMLLinkElement::removePendingSheet(RemovePendingSheetNotificationType notification)
 {
     PendingSheetType type = m_pendingSheetType;
     m_pendingSheetType = None;
@@ -470,7 +470,11 @@ void HTMLLinkElement::removePendingSheet()
         document()->styleResolverChanged(RecalcStyleImmediately);
         return;
     }
-    document()->removePendingSheet();
+
+    document()->removePendingSheet(
+        notification == RemovePendingSheetNotifyImmediately
+        ? Document::RemovePendingSheetNotifyImmediately
+        : Document::RemovePendingSheetNotifyLater);
 }
 
 DOMSettableTokenList* HTMLLinkElement::sizes() const

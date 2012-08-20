@@ -1,3 +1,16 @@
+2012-08-19  MORITA Hajime  <morrita@google.com>
+
+        DOM mutation against including <link> shouldn't trigger pending HTML parser.
+        https://bugs.webkit.org/show_bug.cgi?id=93641
+
+        Reviewed by Ryosuke Niwa.
+
+        Note that the test content need to be such cryptic because HTML parser is involving the
+        captured bug and adding explanations can affect the behavior then mask the bug.
+
+        * http/tests/loading/remove-child-triggers-parser-expected.txt: Added.
+        * http/tests/loading/remove-child-triggers-parser.html: Added.
+
 2012-08-19  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL] Gardening for fast/forms/range/thumbslider-no-parent-slider.html

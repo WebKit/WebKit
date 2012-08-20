@@ -260,9 +260,10 @@ inline void ChildNodeRemovalNotifier::notifyNodeRemovedFromTree(ContainerNode* n
 
 inline void ChildNodeRemovalNotifier::notify(Node* node)
 {
-    if (node->inDocument())
+    if (node->inDocument()) {
         notifyNodeRemovedFromDocument(node);
-    else if (node->isContainerNode())
+        node->document()->notifyRemovePendingSheetIfNeeded();
+    } else if (node->isContainerNode())
         notifyNodeRemovedFromTree(toContainerNode(node));
 }
 

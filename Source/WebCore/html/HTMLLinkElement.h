@@ -105,7 +105,13 @@ private:
     
     enum PendingSheetType { None, NonBlocking, Blocking };
     void addPendingSheet(PendingSheetType);
-    void removePendingSheet();
+
+    enum RemovePendingSheetNotificationType {
+        RemovePendingSheetNotifyImmediately,
+        RemovePendingSheetNotifyLater
+    };
+
+    void removePendingSheet(RemovePendingSheetNotificationType = RemovePendingSheetNotifyImmediately);
 
 #if ENABLE(MICRODATA)
     virtual String itemValueText() const OVERRIDE;
