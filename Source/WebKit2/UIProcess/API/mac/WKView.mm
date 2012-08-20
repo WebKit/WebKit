@@ -1895,8 +1895,17 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     NSWindow *currentWindow = [self window];
     if (window == currentWindow)
         return;
-    
-    _data->_pageClient->viewWillMoveToAnotherWindow();
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
+    // Avoid calling the code added in 121482 that ensures that the undo stack is cleaned up
+    // before the WKView is moved from one window to another when the WKView is being moved
+    // out of a popover window. This avoids a bug in OS X 10.7 that was fixed in 10.8.
+    // While this technically reopens a potentially crashing code path that 121482 closed,
+    // it only reopens it for WKViews that are used for text editing and that are removed
+    // from an NSPopover at some time earlier than tear-down of the NSPopover.
+    if (![currentWindow isKindOfClass:NSClassFromString(@"_NSPopoverWindow")])
+#endif
+        _data->_pageClient->viewWillMoveToAnotherWindow();
     
     [self removeWindowObservers];
     [self addWindowObserversForWindow:window];
