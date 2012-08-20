@@ -79,6 +79,21 @@ WONTFIX : fast/css/apple-prefix.html = TEXT
 WONTFIX SKIP : fast/dom/Window/slow-unload-handler.html = TEXT
 WONTFIX SKIP : fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html = TEXT
 
+// Accessibility tests that should never be run for GTK due to be
+// written in a platform-specific way. They should either be moved to
+// the right platform or re-written in a more platform-agnostic way.
+WONTFIX SKIP : accessibility/aria-list-and-listitem.html = TEXT
+WONTFIX SKIP : accessibility/aria-option-role.html = TEXT
+WONTFIX SKIP : accessibility/internal-link-anchors2.html = TEXT
+WONTFIX SKIP : accessibility/radio-button-group-members.html = TEXT
+WONTFIX SKIP : accessibility/table-attributes.html = TEXT
+WONTFIX SKIP : accessibility/table-detection.html = TEXT
+WONTFIX SKIP : accessibility/table-one-cell.html = TEXT
+WONTFIX SKIP : accessibility/table-sections.html = TEXT
+WONTFIX SKIP : accessibility/table-with-aria-role.html = TEXT
+WONTFIX SKIP : accessibility/table-with-rules.html = TEXT
+WONTFIX SKIP : accessibility/plugin.html = TEXT
+
 // Feature disabled, see: https://bugs.webkit.org/show_bug.cgi?id=85425
 BUGWKGTK SKIP : fast/viewport/viewport-legacy-handheldfriendly.html = TEXT
 BUGWKGTK SKIP : fast/viewport/viewport-legacy-mobileoptimized-2.html = TEXT
@@ -433,9 +448,7 @@ BUGWK93727 DEBUG : svg/custom/use-instanceRoot-as-event-target.xhtml = CRASH PAS
 
 BUGWK90957 DEBUG : fast/js/random-array-gc-stress.html = CRASH PASS
 
-BUGWK94200 DEBUG : accessibility/accessibility-node-memory-management.html = CRASH TEXT
-BUGWK94200 DEBUG : accessibility/canvas-fallback-content.html = CRASH
-BUGWK94200 DEBUG : fast/canvas/fallback-content.html = CRASH PASS
+BUGWK94458 DEBUG : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html = CRASH PASS
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
@@ -698,7 +711,7 @@ BUGWKGTK : http/tests/plugins/npapi-response-headers.html = TEXT
 BUGWKGTK : http/tests/security/mixedContent/insecure-iframe-in-main-frame.html = TEXT
 BUGWKGTK : http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html = TEXT
 BUGWKGTK : http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html = TEXT
-BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html = TEXT
+BUGWKGTK RELEASE : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html = TEXT
 BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html = TEXT
 BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html = TEXT
 BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html = TEXT
@@ -1080,21 +1093,6 @@ BUGWK84045 SKIP : accessibility/image-map2.html = TEXT
 // Properly expose <legend> elements to ATs
 BUGWK84137 SKIP : accessibility/legend.html = TEXT
 
-// Accessibility tests that should never be run for GTK due to be
-// written in a platform-specific way. They should either be moved to
-// the right platform or re-written in a more platform-agnostic way.
-BUGWKGTK SKIP WONTFIX : accessibility/aria-list-and-listitem.html = TEXT
-BUGWKGTK SKIP WONTFIX : accessibility/aria-option-role.html = TEXT
-BUGWKGTK SKIP WONTFIX : accessibility/internal-link-anchors2.html = TEXT
-BUGWKGTK SKIP WONTFIX : accessibility/radio-button-group-members.html = TEXT
-BUGWKGTK SKIP WONTFIX : accessibility/table-attributes.html = TEXT
-BUGWKGTK SKIP WONTFIX : accessibility/table-detection.html = TEXT
-BUGWKGTK SKIP WONTFIX : accessibility/table-one-cell.html = TEXT
-BUGWKGTK SKIP WONTFIX : accessibility/table-sections.html = TEXT
-BUGWKGTK SKIP WONTFIX : accessibility/table-with-aria-role.html = TEXT
-BUGWKGTK SKIP WONTFIX : accessibility/table-with-rules.html = TEXT
-BUGWKGTK SKIP WONTFIX : accessibility/plugin.html = TEXT
-
 // [DRT] didDetectXSS is not implemented
 BUGWK71465 : http/tests/security/xssAuditor/script-tag-with-callbacks.html = TEXT
 
@@ -1305,9 +1303,6 @@ BUGWK94009 : css2.1/20110323/c541-word-sp-000.htm = IMAGE
 BUGWK94083 SKIP : media/video-controls-fullscreen-volume.html = TEXT
 
 BUGWK94186 SKIP : fast/forms/time-multiple-fields = PASS
-
-BUGWK94200 : accessibility/accessibility-node-reparent.html = TEXT
-BUGWK94200 RELEASE : accessibility/accessibility-node-memory-management.html = TEXT
 
 BUGWK70485 : fast/events/drag-selects-image.html = TEXT
 

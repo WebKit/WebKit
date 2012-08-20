@@ -1,0 +1,57 @@
+Test the parsing of the -webkit-blend-mode property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL cssRule.type should be 1. Threw exception ReferenceError: Can't find variable: cssRule
+FAIL declaration.length should be 1. Threw exception ReferenceError: Can't find variable: declaration
+FAIL declaration.getPropertyValue('-webkit-blend-mode') should be normal. Threw exception ReferenceError: Can't find variable: declaration
+FAIL cssRule.type should be 1. Threw exception ReferenceError: Can't find variable: cssRule
+FAIL declaration.length should be 1. Threw exception ReferenceError: Can't find variable: declaration
+FAIL declaration.getPropertyValue('-webkit-blend-mode') should be multiply. Threw exception ReferenceError: Can't find variable: declaration
+FAIL cssRule.type should be 1. Threw exception ReferenceError: Can't find variable: cssRule
+FAIL declaration.length should be 1. Threw exception ReferenceError: Can't find variable: declaration
+FAIL declaration.getPropertyValue('-webkit-blend-mode') should be screen. Threw exception ReferenceError: Can't find variable: declaration
+FAIL cssRule.type should be 1. Threw exception ReferenceError: Can't find variable: cssRule
+FAIL declaration.length should be 1. Threw exception ReferenceError: Can't find variable: declaration
+FAIL declaration.getPropertyValue('-webkit-blend-mode') should be overlay. Threw exception ReferenceError: Can't find variable: declaration
+FAIL cssRule.type should be 1. Threw exception ReferenceError: Can't find variable: cssRule
+FAIL declaration.length should be 1. Threw exception ReferenceError: Can't find variable: declaration
+FAIL declaration.getPropertyValue('-webkit-blend-mode') should be darken. Threw exception ReferenceError: Can't find variable: declaration
+FAIL cssRule.type should be 1. Threw exception ReferenceError: Can't find variable: cssRule
+FAIL declaration.length should be 1. Threw exception ReferenceError: Can't find variable: declaration
+FAIL declaration.getPropertyValue('-webkit-blend-mode') should be lighten. Threw exception ReferenceError: Can't find variable: declaration
+FAIL cssRule.type should be 1. Threw exception ReferenceError: Can't find variable: cssRule
+FAIL declaration.length should be 1. Threw exception ReferenceError: Can't find variable: declaration
+FAIL declaration.getPropertyValue('-webkit-blend-mode') should be color-dodge. Threw exception ReferenceError: Can't find variable: declaration
+FAIL cssRule.type should be 1. Threw exception ReferenceError: Can't find variable: cssRule
+FAIL declaration.length should be 1. Threw exception ReferenceError: Can't find variable: declaration
+FAIL declaration.getPropertyValue('-webkit-blend-mode') should be color-burn. Threw exception ReferenceError: Can't find variable: declaration
+FAIL cssRule.type should be 1. Threw exception ReferenceError: Can't find variable: cssRule
+FAIL declaration.length should be 1. Threw exception ReferenceError: Can't find variable: declaration
+FAIL declaration.getPropertyValue('-webkit-blend-mode') should be hard-light. Threw exception ReferenceError: Can't find variable: declaration
+FAIL cssRule.type should be 1. Threw exception ReferenceError: Can't find variable: cssRule
+FAIL declaration.length should be 1. Threw exception ReferenceError: Can't find variable: declaration
+FAIL declaration.getPropertyValue('-webkit-blend-mode') should be soft-light. Threw exception ReferenceError: Can't find variable: declaration
+FAIL cssRule.type should be 1. Threw exception ReferenceError: Can't find variable: cssRule
+FAIL declaration.length should be 1. Threw exception ReferenceError: Can't find variable: declaration
+FAIL declaration.getPropertyValue('-webkit-blend-mode') should be difference. Threw exception ReferenceError: Can't find variable: declaration
+FAIL cssRule.type should be 1. Threw exception ReferenceError: Can't find variable: cssRule
+FAIL declaration.length should be 1. Threw exception ReferenceError: Can't find variable: declaration
+FAIL declaration.getPropertyValue('-webkit-blend-mode') should be exclusion. Threw exception ReferenceError: Can't find variable: declaration
+FAIL cssRule.type should be 1. Threw exception ReferenceError: Can't find variable: cssRule
+FAIL declaration.length should be 1. Threw exception ReferenceError: Can't find variable: declaration
+FAIL declaration.getPropertyValue('-webkit-blend-mode') should be hue. Threw exception ReferenceError: Can't find variable: declaration
+FAIL cssRule.type should be 1. Threw exception ReferenceError: Can't find variable: cssRule
+FAIL declaration.length should be 1. Threw exception ReferenceError: Can't find variable: declaration
+FAIL declaration.getPropertyValue('-webkit-blend-mode') should be saturation. Threw exception ReferenceError: Can't find variable: declaration
+FAIL cssRule.type should be 1. Threw exception ReferenceError: Can't find variable: cssRule
+FAIL declaration.length should be 1. Threw exception ReferenceError: Can't find variable: declaration
+FAIL declaration.getPropertyValue('-webkit-blend-mode') should be color. Threw exception ReferenceError: Can't find variable: declaration
+FAIL cssRule.type should be 1. Threw exception ReferenceError: Can't find variable: cssRule
+FAIL declaration.length should be 1. Threw exception ReferenceError: Can't find variable: declaration
+FAIL declaration.getPropertyValue('-webkit-blend-mode') should be luminosity. Threw exception ReferenceError: Can't find variable: declaration
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
