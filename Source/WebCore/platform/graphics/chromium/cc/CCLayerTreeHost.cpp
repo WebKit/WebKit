@@ -28,6 +28,7 @@
 
 #include "CCFontAtlas.h"
 #include "CCGraphicsContext.h"
+#include "CCHeadsUpDisplayLayerImpl.h"
 #include "CCLayerAnimationController.h"
 #include "CCLayerIterator.h"
 #include "CCLayerTreeHostCommon.h"
@@ -235,6 +236,11 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
     ASSERT(CCProxy::isImplThread());
 
     hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->detachLayerTree(), hostImpl));
+
+    if (!m_hudLayer)
+        hostImpl->setHudLayer(0);
+    else
+        hostImpl->setHudLayer(static_cast<CCHeadsUpDisplayLayerImpl*>(CCLayerTreeHostCommon::findLayerInSubtree(hostImpl->rootLayer(), m_hudLayer->id())));
 
     // We may have added an animation during the tree sync. This will cause both layer tree hosts
     // to visit their controllers.

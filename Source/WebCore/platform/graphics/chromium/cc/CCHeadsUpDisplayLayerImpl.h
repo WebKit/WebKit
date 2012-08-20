@@ -50,6 +50,7 @@ public:
 
     virtual void willDraw(CCResourceProvider*) OVERRIDE;
     virtual void appendQuads(CCQuadSink&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
+    void updateHudTexture(CCResourceProvider*);
     virtual void didDraw(CCResourceProvider*) OVERRIDE;
 
     virtual void didLoseContext() OVERRIDE;

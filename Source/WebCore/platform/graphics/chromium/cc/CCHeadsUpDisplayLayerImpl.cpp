@@ -87,7 +87,25 @@ void CCHeadsUpDisplayLayerImpl::willDraw(CCResourceProvider* resourceProvider)
     if (m_hudTexture->size() != bounds())
         m_hudTexture->free();
 
-    if (!m_hudTexture->id() && !m_hudTexture->allocate(CCRenderer::ImplPool, bounds(), GraphicsContext3D::RGBA, CCResourceProvider::TextureUsageAny))
+    if (!m_hudTexture->id())
+        m_hudTexture->allocate(CCRenderer::ImplPool, bounds(), GraphicsContext3D::RGBA, CCResourceProvider::TextureUsageAny);
+}
+
+void CCHeadsUpDisplayLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&)
+{
+    if (!m_hudTexture->id())
+        return;
+
+    IntRect quadRect(IntPoint(), bounds());
+    bool premultipliedAlpha = true;
+    FloatRect uvRect(0, 0, 1, 1);
+    bool flipped = false;
+    quadList.append(CCTextureDrawQuad::create(sharedQuadState, quadRect, m_hudTexture->id(), premultipliedAlpha, uvRect, flipped));
+}
+
+void CCHeadsUpDisplayLayerImpl::updateHudTexture(CCResourceProvider* resourceProvider)
+{
+    if (!m_hudTexture->id())
         return;
 
     SkISize canvasSize;
@@ -108,18 +126,6 @@ void CCHeadsUpDisplayLayerImpl::willDraw(CCResourceProvider* resourceProvider)
     IntRect layerRect(IntPoint(), bounds());
     ASSERT(bitmap->config() == SkBitmap::kARGB_8888_Config);
     resourceProvider->upload(m_hudTexture->id(), static_cast<const uint8_t*>(bitmap->getPixels()), layerRect, layerRect, IntSize());
-}
-
-void CCHeadsUpDisplayLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&)
-{
-    if (!m_hudTexture->id())
-        return;
-
-    IntRect quadRect(IntPoint(), bounds());
-    bool premultipliedAlpha = true;
-    FloatRect uvRect(0, 0, 1, 1);
-    bool flipped = false;
-    quadList.append(CCTextureDrawQuad::create(sharedQuadState, quadRect, m_hudTexture->id(), premultipliedAlpha, uvRect, flipped));
 }
 
 void CCHeadsUpDisplayLayerImpl::didDraw(CCResourceProvider* resourceProvider)

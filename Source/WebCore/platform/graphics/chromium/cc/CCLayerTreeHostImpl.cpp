@@ -32,6 +32,7 @@
 #include "CCDelayBasedTimeSource.h"
 #include "CCFontAtlas.h"
 #include "CCFrameRateCounter.h"
+#include "CCHeadsUpDisplayLayerImpl.h"
 #include "CCLayerIterator.h"
 #include "CCLayerTreeHost.h"
 #include "CCLayerTreeHostCommon.h"
@@ -119,6 +120,7 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCLayerTreeSettings& settings, CC
     , m_sourceFrameNumber(-1)
     , m_rootScrollLayerImpl(0)
     , m_currentlyScrollingLayerImpl(0)
+    , m_hudLayerImpl(0)
     , m_scrollingLayerIdFromPreviousTree(-1)
     , m_scrollDeltaIsInScreenSpace(false)
     , m_settings(settings)
@@ -547,10 +549,15 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
     // RenderWidget.
     m_fpsCounter->markBeginningOfFrame(currentTime());
 
-    m_layerRenderer->drawFrame(frame.renderPasses, frame.renderPassesById);
-
     if (m_settings.showDebugRects())
         m_debugRectHistory->saveDebugRectsForCurrentFrame(m_rootLayerImpl.get(), *frame.renderSurfaceLayerList, frame.occludingScreenSpaceRects, settings());
+
+    // Because the contents of the HUD depend on everything else in the frame, the contents
+    // of its texture are updated as the last thing before the frame is drawn.
+    if (m_hudLayerImpl)
+        m_hudLayerImpl->updateHudTexture(m_resourceProvider.get());
+
+    m_layerRenderer->drawFrame(frame.renderPasses, frame.renderPassesById);
 
     // Once a RenderPass has been drawn, its damage should be cleared in
     // case the RenderPass will be reused next frame.

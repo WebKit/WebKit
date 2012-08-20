@@ -41,6 +41,7 @@ class CCActiveGestureAnimation;
 class CCCompletionEvent;
 class CCDebugRectHistory;
 class CCFrameRateCounter;
+class CCHeadsUpDisplayLayerImpl;
 class CCLayerImpl;
 class CCLayerTreeHostImplTimeSourceAdapter;
 class CCPageScaleAnimation;
@@ -139,6 +140,9 @@ public:
 
     void setRootLayer(PassOwnPtr<CCLayerImpl>);
     CCLayerImpl* rootLayer() { return m_rootLayerImpl.get(); }
+
+    void setHudLayer(CCHeadsUpDisplayLayerImpl* layerImpl) { m_hudLayerImpl = layerImpl; }
+    CCHeadsUpDisplayLayerImpl* hudLayer() { return m_hudLayerImpl; }
 
     // Release ownership of the current layer tree and replace it with an empty
     // tree. Returns the root layer of the detached tree.
@@ -267,6 +271,7 @@ private:
     OwnPtr<CCLayerImpl> m_rootLayerImpl;
     CCLayerImpl* m_rootScrollLayerImpl;
     CCLayerImpl* m_currentlyScrollingLayerImpl;
+    CCHeadsUpDisplayLayerImpl* m_hudLayerImpl;
     int m_scrollingLayerIdFromPreviousTree;
     bool m_scrollDeltaIsInScreenSpace;
     CCLayerTreeSettings m_settings;
