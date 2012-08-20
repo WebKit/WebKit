@@ -97,8 +97,6 @@ public:
 
     static const SVGPropertyInfo* dPropertyInfo();
 
-    virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate);
-
     bool isAnimValObserved() const { return m_isAnimValObserved; }
 
 private:

@@ -356,20 +356,6 @@ void SVGPathElement::pathSegListChanged(SVGPathSegRole role)
     RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
 }
 
-FloatRect SVGPathElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
-{
-    if (styleUpdateStrategy == AllowStyleUpdate)
-        this->document()->updateLayoutIgnorePendingStylesheets();
-
-    RenderSVGPath* renderer = static_cast<RenderSVGPath*>(this->renderer());
-
-    // FIXME: Eventually we should support getBBox for detached elements.
-    if (!renderer)
-        return FloatRect();
-
-    return renderer->path().boundingRect();
-}
-
 RenderObject* SVGPathElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     // By default, any subclass is expected to do path-based drawing
