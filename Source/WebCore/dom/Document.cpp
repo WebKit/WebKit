@@ -5,7 +5,7 @@
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2011, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
- * Copyright (C) 2008, 2009, 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2011, 2012 Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) Research In Motion Limited 2010-2011. All rights reserved.
  *
@@ -5554,15 +5554,14 @@ void Document::webkitExitFullscreen()
 
         // 2. Queue a task to fire an event named fullscreenchange with its bubbles attribute set to true
         // on doc.
-        Node* target = currentDoc->m_fullScreenElement.get();
-        if (!target)
-            target = currentDoc;
         addDocumentToFullScreenChangeEventQueue(currentDoc);
 
         // 3. If doc's fullscreen element stack is empty and doc's browsing context has a browsing context
         // container, set doc to that browsing context container's node document.
-        if (!newTop && currentDoc->ownerElement())
+        if (!newTop && currentDoc->ownerElement()) {
             currentDoc = currentDoc->ownerElement()->document();
+            continue;
+        }
 
         // 4. Otherwise, set doc to null.
         currentDoc = 0;
@@ -5675,7 +5674,13 @@ void Document::webkitDidExitFullScreenForElement(Element*)
     m_fullScreenElement = 0;
     scheduleForcedStyleRecalc();
     
-    m_fullScreenChangeDelayTimer.startOneShot(0);
+    // When webkitCancelFullScreen is called, we call webkitExitFullScreen on the topDocument(). That
+    // means that the events will be queued there. So if we have no events here, start the timer on
+    // the exiting document.
+    Document* exitingDocument = this;
+    if (m_fullScreenChangeEventTargetQueue.isEmpty() && m_fullScreenErrorEventTargetQueue.isEmpty())
+        exitingDocument = topDocument();
+    exitingDocument->m_fullScreenChangeDelayTimer.startOneShot(0);
 }
     
 void Document::setFullScreenRenderer(RenderFullScreen* renderer)
@@ -5746,8 +5751,9 @@ void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
         if (!node)
             node = documentElement();
 
-        // If the element was removed from our tree, also message the documentElement.
-        if (!contains(node.get()))
+        // If the element was removed from our tree, also message the documentElement. Since we may
+        // have a document hierarchy, check that node isn't in another document.
+        if (!contains(node.get()) && !node->inDocument())
             changeQueue.append(documentElement());
         
         node->dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, true, false));
@@ -5761,8 +5767,9 @@ void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
         if (!node)
             node = documentElement();
         
-        // If the node was removed from our tree, also message the documentElement.
-        if (!contains(node.get()))
+        // If the element was removed from our tree, also message the documentElement. Since we may
+        // have a document hierarchy, check that node isn't in another document.
+        if (!contains(node.get()) && !node->inDocument())
             errorQueue.append(documentElement());
         
         node->dispatchEvent(Event::create(eventNames().webkitfullscreenerrorEvent, true, false));
