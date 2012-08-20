@@ -1204,6 +1204,24 @@ void RenderObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
     }
 }
 
+FloatRect RenderObject::absoluteBoundingBoxRectForRange(const Range* range)
+{
+    if (!range || !range->startContainer())
+        return FloatRect();
+
+    if (range->ownerDocument())
+        range->ownerDocument()->updateLayout();
+
+    Vector<FloatQuad> quads;
+    range->textQuads(quads);
+
+    FloatRect result;
+    for (size_t i = 0; i < quads.size(); ++i)
+        result.unite(quads[i].boundingBox());
+
+    return result;
+}
+
 void RenderObject::addAbsoluteRectForLayer(LayoutRect& result)
 {
     if (hasLayer())

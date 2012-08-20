@@ -1671,7 +1671,7 @@ bool WebFrameImpl::find(int identifier,
     }
 
 #if OS(ANDROID)
-    viewImpl()->zoomToFindInPageRect(frameView()->contentsToWindow(enclosingIntRect(m_activeMatch->transformFriendlyBoundingBox())));
+    viewImpl()->zoomToFindInPageRect(frameView()->contentsToWindow(enclosingIntRect(RenderObject::absoluteBoundingBoxRectForRange(m_activeMatch.get()))));
 #endif
 
     setMarkerActive(m_activeMatch.get(), true);
@@ -2149,7 +2149,7 @@ int WebFrameImpl::selectFindMatch(unsigned index, WebRect* selectionRect)
     }
 
     IntRect activeMatchRect;
-    IntRect activeMatchBoundingBox = enclosingIntRect(m_activeMatch->transformFriendlyBoundingBox());
+    IntRect activeMatchBoundingBox = enclosingIntRect(RenderObject::absoluteBoundingBoxRectForRange(m_activeMatch.get()));
 
     if (!activeMatchBoundingBox.isEmpty()) {
         if (m_activeMatch->firstNode() && m_activeMatch->firstNode()->renderer())

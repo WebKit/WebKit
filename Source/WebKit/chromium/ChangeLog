@@ -1,5 +1,20 @@
 2012-08-20  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
+        Move transformFriendlyBoundingBox out of Range
+        https://bugs.webkit.org/show_bug.cgi?id=94366
+
+        Reviewed by Ryosuke Niwa.
+
+        Update the WebKit code that makes use of transformFriendlyBoundingBox.
+
+        * src/FindInPageCoordinates.cpp:
+        (WebKit::findInPageRectFromRange):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::find):
+        (WebKit::WebFrameImpl::selectFindMatch):
+
+2012-08-20  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
         [Chromium] detectContentIntentAround has a misleading name
         https://bugs.webkit.org/show_bug.cgi?id=94349
 

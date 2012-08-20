@@ -136,7 +136,7 @@ FloatRect findInPageRectFromRange(Range* range)
     if (!range || !range->firstNode())
         return FloatRect();
 
-    return findInPageRectFromAbsoluteRect(range->transformFriendlyBoundingBox(), range->firstNode()->renderer());
+    return findInPageRectFromAbsoluteRect(RenderObject::absoluteBoundingBoxRectForRange(range), range->firstNode()->renderer());
 }
 
 } // namespace WebKit
