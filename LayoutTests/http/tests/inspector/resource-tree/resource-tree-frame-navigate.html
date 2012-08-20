@@ -24,6 +24,7 @@ function onIframeLoad()
 
 function test()
 {
+    WebInspector.showPanel("resources");
     InspectorTest.runAfterResourcesAreFinished(["resource-tree-frame-navigate-iframe-before.html", "script-initial.js", "styles-initial.css", "styles-initial-2.css"], step1);
 
     function step1()

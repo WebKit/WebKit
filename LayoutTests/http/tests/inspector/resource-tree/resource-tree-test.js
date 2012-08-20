@@ -64,8 +64,7 @@ InspectorTest.dumpResourcesTree = function()
             dump(children[i], prefix + "    ");
     }
 
-    WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.resources);
-    dump(WebInspector.panel("resources").resourcesListTreeElement, "");
+    dump(WebInspector.showPanel("resources").resourcesListTreeElement, "");
 }
 
 InspectorTest.dumpResourceTreeEverything = function()
