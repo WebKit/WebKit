@@ -161,6 +161,8 @@ class Driver(object):
         crashed = self.has_crashed()
         timed_out = self._server_process.timed_out
         if 'Timed out waiting for final message from web process' in text:
+            # FIXME: This is a hack to work around the issues in https://bugs.webkit.org/show_bug.cgi?id=94505.
+            # We need to either fix the underlying problem in WTR or return a more canonical error.
             if not timed_out:
                 _log.warning("webprocess timed out but WTR didn't, killing WTR")
                 timed_out = True
