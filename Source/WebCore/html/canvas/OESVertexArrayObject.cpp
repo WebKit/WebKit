@@ -69,6 +69,9 @@ void OESVertexArrayObject::deleteVertexArrayOES(WebGLVertexArrayObjectOES* array
     if (!arrayObject || m_context->isContextLost())
         return;
     
+    if (!arrayObject->isDefaultObject() && arrayObject == m_context->m_boundVertexArrayObject)
+        m_context->setBoundVertexArrayObject(0);
+
     arrayObject->deleteObject(m_context->graphicsContext3D());
 }
 
@@ -90,7 +93,7 @@ void OESVertexArrayObject::bindVertexArrayOES(WebGLVertexArrayObjectOES* arrayOb
     if (m_context->isContextLost())
         return;
     
-    if (arrayObject && !arrayObject->validate(0, context())) {
+    if (arrayObject && (arrayObject->isDeleted() || !arrayObject->validate(0, context()))) {
         m_context->graphicsContext3D()->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
@@ -103,7 +106,6 @@ void OESVertexArrayObject::bindVertexArrayOES(WebGLVertexArrayObjectOES* arrayOb
         m_context->setBoundVertexArrayObject(arrayObject);
     } else {
         extensions->bindVertexArrayOES(0);
-        
         m_context->setBoundVertexArrayObject(0);
     }
     
