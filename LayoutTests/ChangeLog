@@ -1,3 +1,13 @@
+2012-08-20  Mike West  <mkwst@chromium.org>
+
+        CSP 1.1: The 'plugin-types' warning should include details about explicit type declaration when relevant.
+        https://bugs.webkit.org/show_bug.cgi?id=94432
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-data-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-url-expected.txt:
+
 2012-08-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r125989.

@@ -861,7 +861,11 @@ bool CSPDirectiveList::checkMediaTypeAndReportViolation(MediaListDirective* dire
     if (checkMediaType(directive, type, typeAttribute))
         return true;
 
-    reportViolation(directive->text(), consoleMessage + "\'" + directive->text() + "\'.\n", KURL());
+    String message = makeString(consoleMessage, "\'", directive->text(), "\'.");
+    if (typeAttribute.isEmpty())
+        message = message + " When enforcing the 'plugin-types' directive, the plugin's media type must be explicitly declared with a 'type' attribute on the containing element (e.g. '<object type=\"[TYPE GOES HERE]\" ...>').";
+
+    reportViolation(directive->text(), message + "\n", KURL());
     return denyIfEnforcingPolicy();
 }
 
