@@ -28,29 +28,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMWrapperWorld_h
-#define DOMWrapperWorld_h
-
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include "config.h"
+#include "IsolatedWorld.h"
 
 namespace WebCore {
 
-// This class represent a collection of DOM wrappers for a specific world.
-// The base class is pretty boring because the wrappers are actually stored
-// statically in V8DOMMap and garbage collected by V8 itself.
-class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
-public:
-    static PassRefPtr<DOMWrapperWorld> create() { return adoptRef(new DOMWrapperWorld()); }
-    virtual ~DOMWrapperWorld() {}
+int IsolatedWorld::isolatedWorldCount = 0;
 
-protected:
-    DOMWrapperWorld();
-};
+IsolatedWorld::IsolatedWorld(int id)
+{
+    ++isolatedWorldCount;
+    m_id = id;
+}
 
-DOMWrapperWorld* mainThreadNormalWorld();
+IsolatedWorld::~IsolatedWorld()
+{
+    --isolatedWorldCount;
+}
 
 } // namespace WebCore
-
-#endif // DOMWrapperWorld_h

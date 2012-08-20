@@ -28,29 +28,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMWrapperWorld_h
-#define DOMWrapperWorld_h
+#ifndef IsolatedWorld_h
+#define IsolatedWorld_h
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include "DOMWrapperWorld.h"
+#include "V8DOMMap.h"
 
 namespace WebCore {
 
-// This class represent a collection of DOM wrappers for a specific world.
-// The base class is pretty boring because the wrappers are actually stored
-// statically in V8DOMMap and garbage collected by V8 itself.
-class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
+// An DOMWrapperWorld other than the thread's normal world.
+class IsolatedWorld : public DOMWrapperWorld {
 public:
-    static PassRefPtr<DOMWrapperWorld> create() { return adoptRef(new DOMWrapperWorld()); }
-    virtual ~DOMWrapperWorld() {}
+    static PassRefPtr<IsolatedWorld> create(int id) { return adoptRef(new IsolatedWorld(id)); }
+    static int count() { return isolatedWorldCount; }
+
+    int id() const { return m_id; }
+    DOMDataStore* domDataStore() const { return m_domDataStore.getStore(); }
 
 protected:
-    DOMWrapperWorld();
-};
+    explicit IsolatedWorld(int id);
+    ~IsolatedWorld();
 
-DOMWrapperWorld* mainThreadNormalWorld();
+private:
+    int m_id;
+
+    // The backing store for the isolated world's DOM wrappers.  This class
+    // doesn't have visibility into the wrappers.  This handle simply helps
+    // manage their lifetime.
+    DOMDataStoreHandle m_domDataStore;
+
+    static int isolatedWorldCount;
+};
 
 } // namespace WebCore
 
-#endif // DOMWrapperWorld_h
+#endif // IsolatedWorld_h
