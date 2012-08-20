@@ -146,7 +146,7 @@ void ScriptController::clearScriptObjects()
 
 void ScriptController::updateSecurityOrigin()
 {
-    m_proxy->windowShell()->updateSecurityOrigin();
+    windowShell()->updateSecurityOrigin();
 }
 
 void ScriptController::updatePlatformScriptObjects()
@@ -331,13 +331,13 @@ void ScriptController::lowMemoryNotification()
 
 bool ScriptController::haveInterpreter() const
 {
-    return m_proxy->windowShell()->isContextInitialized();
+    return windowShell()->isContextInitialized();
 }
 
 void ScriptController::enableEval()
 {
     v8::HandleScope handleScope;
-    v8::Handle<v8::Context> v8Context = proxy()->windowShell()->context();
+    v8::Handle<v8::Context> v8Context = windowShell()->context();
     if (v8Context.IsEmpty())
         return;
 
@@ -347,7 +347,7 @@ void ScriptController::enableEval()
 void ScriptController::disableEval()
 {
     v8::HandleScope handleScope;
-    v8::Handle<v8::Context> v8Context = proxy()->windowShell()->context();
+    v8::Handle<v8::Context> v8Context = windowShell()->context();
     if (v8Context.IsEmpty())
         return;
 
@@ -522,17 +522,17 @@ void ScriptController::attachDebugger(void*)
 
 void ScriptController::updateDocument()
 {
-    m_proxy->windowShell()->updateDocument();
+    windowShell()->updateDocument();
 }
 
 void ScriptController::namedItemAdded(HTMLDocument* doc, const AtomicString& name)
 {
-    m_proxy->windowShell()->namedItemAdded(doc, name);
+    windowShell()->namedItemAdded(doc, name);
 }
 
 void ScriptController::namedItemRemoved(HTMLDocument* doc, const AtomicString& name)
 {
-    m_proxy->windowShell()->namedItemRemoved(doc, name);
+    windowShell()->namedItemRemoved(doc, name);
 }
 
 } // namespace WebCore
