@@ -937,12 +937,9 @@ String CSSPrimitiveValue::customCssText() const
             text = valueOrPropertyName(m_value.ident);
             break;
         case CSS_ATTR: {
-            DEFINE_STATIC_LOCAL(const String, attrParen, ("attr("));
-
             StringBuilder result;
             result.reserveCapacity(6 + m_value.string->length());
-
-            result.append(attrParen);
+            result.appendLiteral("attr(");
             result.append(m_value.string);
             result.append(')');
 
@@ -955,22 +952,21 @@ String CSSPrimitiveValue::customCssText() const
             text += ")";
             break;
         case CSS_COUNTER: {
-            DEFINE_STATIC_LOCAL(const String, counterParen, ("counter("));
-            DEFINE_STATIC_LOCAL(const String, countersParen, ("counters("));
-            DEFINE_STATIC_LOCAL(const String, commaSpace, (", "));
-
             StringBuilder result;
             String separator = m_value.counter->separator();
-            result.append(separator.isEmpty() ? counterParen : countersParen);
+            if (separator.isEmpty())
+                result.appendLiteral("counter(");
+            else
+                result.appendLiteral("counters(");
 
             result.append(m_value.counter->identifier());
             if (!separator.isEmpty()) {
-                result.append(commaSpace);
+                result.appendLiteral(", ");
                 result.append(quoteCSSStringIfNeeded(separator));
             }
             String listStyle = m_value.counter->listStyle();
             if (!listStyle.isEmpty()) {
-                result.append(commaSpace);
+                result.appendLiteral(", ");
                 result.append(listStyle);
             }
             result.append(')');
@@ -979,26 +975,8 @@ String CSSPrimitiveValue::customCssText() const
             break;
         }
         case CSS_RECT: {
-            DEFINE_STATIC_LOCAL(const String, rectParen, ("rect("));
-
             Rect* rectVal = getRectValue();
-            StringBuilder result;
-            result.reserveCapacity(32);
-            result.append(rectParen);
-
-            result.append(rectVal->top()->cssText());
-            result.append(' ');
-
-            result.append(rectVal->right()->cssText());
-            result.append(' ');
-
-            result.append(rectVal->bottom()->cssText());
-            result.append(' ');
-
-            result.append(rectVal->left()->cssText());
-            result.append(')');
-
-            text = result.toString();
+            text = "rect(" + rectVal->top()->cssText() + ' ' + rectVal->right()->cssText() + ' ' + rectVal->bottom()->cssText() + ' ' + rectVal->left()->cssText() + ')';
             break;
         }
         case CSS_QUAD: {
