@@ -32,11 +32,12 @@
 #define V8ObjectConstructor_h
 
 #include "V8PerIsolateData.h"
-#include "V8RecursionScope.h"
 
 #include <v8.h>
 
 namespace WebCore {
+
+class Document;
 
 class ConstructorMode {
 public:
@@ -66,39 +67,13 @@ private:
 
 class V8ObjectConstructor {
 public:
-    static inline v8::Local<v8::Object> newInstance(v8::Handle<v8::Function>);
-    static inline v8::Local<v8::Object> newInstance(v8::Handle<v8::ObjectTemplate>);
-    static inline v8::Local<v8::Object> newInstance(v8::Handle<v8::Function>, int argc, v8::Handle<v8::Value> argv[]);
+    static v8::Local<v8::Object> newInstance(v8::Handle<v8::Function>);
+    static v8::Local<v8::Object> newInstance(v8::Handle<v8::ObjectTemplate>);
+    static v8::Local<v8::Object> newInstance(v8::Handle<v8::Function>, int, v8::Handle<v8::Value> argv[]);
+    static v8::Local<v8::Object> newInstanceInDocument(v8::Handle<v8::Function>, int, v8::Handle<v8::Value> argv[], Document*);
 
     static v8::Handle<v8::Value> isValidConstructorMode(const v8::Arguments&);
 };
-
-v8::Local<v8::Object> V8ObjectConstructor::newInstance(v8::Handle<v8::Function> function)
-{
-    if (function.IsEmpty())
-        return v8::Local<v8::Object>();
-    ConstructorMode constructorMode;
-    V8RecursionScope::MicrotaskSuppression scope;
-    return function->NewInstance();
-}
-
-v8::Local<v8::Object> V8ObjectConstructor::newInstance(v8::Handle<v8::ObjectTemplate> objectTemplate)
-{
-    if (objectTemplate.IsEmpty())
-        return v8::Local<v8::Object>();
-    ConstructorMode constructorMode;
-    V8RecursionScope::MicrotaskSuppression scope;
-    return objectTemplate->NewInstance();
-}
-
-v8::Local<v8::Object> V8ObjectConstructor::newInstance(v8::Handle<v8::Function> function, int argc, v8::Handle<v8::Value> argv[])
-{
-    if (function.IsEmpty())
-        return v8::Local<v8::Object>();
-    ConstructorMode constructorMode;
-    V8RecursionScope::MicrotaskSuppression scope;
-    return function->NewInstance(argc, argv);
-}
 
 } // namespace WebCore
 

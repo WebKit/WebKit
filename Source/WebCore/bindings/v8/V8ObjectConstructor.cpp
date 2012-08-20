@@ -25,9 +25,62 @@
 #include "config.h"
 #include "V8ObjectConstructor.h"
 
+#include "Frame.h"
 #include "V8Binding.h"
+#include "V8RecursionScope.h"
+
+#if PLATFORM(CHROMIUM)
+#include "TraceEvent.h"
+#endif
 
 namespace WebCore {
+
+v8::Local<v8::Object> V8ObjectConstructor::newInstance(v8::Handle<v8::Function> function)
+{
+    if (function.IsEmpty())
+        return v8::Local<v8::Object>();
+    ConstructorMode constructorMode;
+    V8RecursionScope::MicrotaskSuppression scope;
+    v8::Local<v8::Object> result = function->NewInstance();
+    crashIfV8IsDead();
+    return result;
+}
+
+v8::Local<v8::Object> V8ObjectConstructor::newInstance(v8::Handle<v8::ObjectTemplate> objectTemplate)
+{
+    if (objectTemplate.IsEmpty())
+        return v8::Local<v8::Object>();
+    ConstructorMode constructorMode;
+    V8RecursionScope::MicrotaskSuppression scope;
+    v8::Local<v8::Object> result = objectTemplate->NewInstance();
+    crashIfV8IsDead();
+    return result;
+}
+
+v8::Local<v8::Object> V8ObjectConstructor::newInstance(v8::Handle<v8::Function> function, int argc, v8::Handle<v8::Value> argv[])
+{
+    if (function.IsEmpty())
+        return v8::Local<v8::Object>();
+    ConstructorMode constructorMode;
+    V8RecursionScope::MicrotaskSuppression scope;
+    v8::Local<v8::Object> result = function->NewInstance(argc, argv);
+    crashIfV8IsDead();
+    return result;
+}
+
+v8::Local<v8::Object> V8ObjectConstructor::newInstanceInDocument(v8::Handle<v8::Function> function, int argc, v8::Handle<v8::Value> argv[], Document* document)
+{
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT0("v8", "v8.newInstance");
+#endif
+
+    // No artificial limitations on the depth of recursion, see comment in
+    // V8Proxy::callFunction.
+    V8RecursionScope recursionScope(document);
+    v8::Local<v8::Object> result = function->NewInstance(argc, argv);
+    crashIfV8IsDead();
+    return result;
+}
 
 v8::Handle<v8::Value> V8ObjectConstructor::isValidConstructorMode(const v8::Arguments& args)
 {

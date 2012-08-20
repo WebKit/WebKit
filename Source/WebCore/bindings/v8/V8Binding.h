@@ -368,6 +368,8 @@ namespace WebCore {
 
     PassRefPtr<DOMStringList> toDOMStringList(v8::Handle<v8::Value>);
 
+    void crashIfV8IsDead();
+
     class V8ParameterBase {
     public:
         operator String() { return toString<String>(); }

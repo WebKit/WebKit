@@ -591,11 +591,10 @@ bool _NPN_Construct(NPP npp, NPObject* npObject, const NPVariant* arguments, uin
         v8::Local<v8::Value> resultObject;
         v8::Handle<v8::Function> ctor(v8::Function::Cast(*ctorObj));
         if (!ctor->IsNull()) {
-            V8Proxy* proxy = toV8Proxy(npObject);
-            ASSERT(proxy);
-
+            Frame* frame = object->rootObject->frame();
+            ASSERT(frame);
             OwnArrayPtr<v8::Handle<v8::Value> > argv = createValueListFromVariantArgs(arguments, argumentCount, npObject);
-            resultObject = proxy->newInstance(ctor, argumentCount, argv.get());
+            resultObject = V8ObjectConstructor::newInstanceInDocument(ctor, argumentCount, argv.get(), frame ? frame->document() : 0);
         }
 
         if (resultObject.IsEmpty())

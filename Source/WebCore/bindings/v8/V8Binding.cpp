@@ -381,4 +381,13 @@ PassRefPtr<DOMStringList> toDOMStringList(v8::Handle<v8::Value> value)
     return ret.release();
 }
 
+void crashIfV8IsDead()
+{
+    if (v8::V8::IsDead()) {
+        // FIXME: We temporarily deal with V8 internal error situations
+        // such as out-of-memory by crashing the renderer.
+        CRASH();
+    }
+}
+
 } // namespace WebCore

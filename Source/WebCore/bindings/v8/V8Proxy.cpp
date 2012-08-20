@@ -105,13 +105,6 @@ void V8Proxy::reportUnsafeAccessTo(Document* targetDocument)
     sourceDocument->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, str, stackTrace.release());
 }
 
-static void handleFatalErrorInV8()
-{
-    // FIXME: We temporarily deal with V8 internal error situations
-    // such as out-of-memory by crashing the renderer.
-    CRASH();
-}
-
 static v8::Local<v8::Value> handleMaxRecursionDepthExceeded()
 {
     throwError(RangeError, "Maximum call stack size exceeded.");
@@ -262,9 +255,7 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script)
     if (result.IsEmpty())
         return v8::Local<v8::Value>();
 
-    if (v8::V8::IsDead())
-        handleFatalErrorInV8();
-
+    crashIfV8IsDead();
     return result;
 }
 
@@ -320,30 +311,7 @@ v8::Local<v8::Value> V8Proxy::instrumentedCallFunction(Frame* frame, v8::Handle<
     }
 
     InspectorInstrumentation::didCallFunction(cookie);
-
-    if (v8::V8::IsDead())
-        handleFatalErrorInV8();
-
-    return result;
-}
-
-v8::Local<v8::Value> V8Proxy::newInstance(v8::Handle<v8::Function> constructor, int argc, v8::Handle<v8::Value> args[])
-{
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT0("v8", "v8.newInstance");
-#endif
-
-    // No artificial limitations on the depth of recursion, see comment in
-    // V8Proxy::callFunction.
-    v8::Local<v8::Value> result;
-    {
-        V8RecursionScope recursionScope(frame() ? frame()->document() : 0);
-        result = constructor->NewInstance(argc, args);
-    }
-
-    if (v8::V8::IsDead())
-        handleFatalErrorInV8();
-
+    crashIfV8IsDead();
     return result;
 }
 
