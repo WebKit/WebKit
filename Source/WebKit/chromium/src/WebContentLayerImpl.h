@@ -27,23 +27,33 @@
 #define WebContentLayerImpl_h
 
 #include "ContentLayerChromium.h"
+#include "WebLayerImpl.h"
+#include <public/WebContentLayer.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebKit {
 class WebContentLayerClient;
 
-class WebContentLayerImpl : public WebCore::ContentLayerChromium, public WebCore::ContentLayerDelegate {
+class WebContentLayerImpl : public WebContentLayer,
+                            public WebCore::ContentLayerDelegate {
 public:
-    static PassRefPtr<WebContentLayerImpl> create(WebContentLayerClient* contentClient);
+    explicit WebContentLayerImpl(WebContentLayerClient*);
+
+    // WebContentLayer implementation.
+    virtual WebLayer* layer() OVERRIDE;
+    virtual void setDoubleSided(bool)  OVERRIDE;
+    virtual void setContentsScale(float)  OVERRIDE;
+    virtual void setUseLCDText(bool)  OVERRIDE;
+    virtual void setDrawCheckerboardForMissingTiles(bool)  OVERRIDE;
 
 protected:
-    explicit WebContentLayerImpl(WebContentLayerClient* contentClient);
     virtual ~WebContentLayerImpl();
 
     // ContentLayerDelegate implementation.
     virtual void paintContents(SkCanvas*, const WebCore::IntRect& clip, WebCore::FloatRect& opaque) OVERRIDE;
 
-    WebContentLayerClient* m_contentClient;
+    OwnPtr<WebLayerImpl> m_webLayerImpl;
+    WebContentLayerClient* m_client;
     bool m_drawsContent;
 };
 

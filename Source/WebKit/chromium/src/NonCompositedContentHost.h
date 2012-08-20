@@ -29,7 +29,7 @@
 #include "GraphicsLayerClient.h"
 #include "IntSize.h"
 
-#include <public/WebScrollableLayer.h>
+#include <public/WebLayer.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -80,7 +80,7 @@ private:
     virtual float deviceScaleFactor() const OVERRIDE { return m_deviceScaleFactor; }
 
     bool haveScrollLayer();
-    WebScrollableLayer scrollLayer();
+    WebLayer* scrollLayer();
 
     OwnPtr<WebCore::GraphicsLayer> m_graphicsLayer;
     WebViewImpl* m_webView;

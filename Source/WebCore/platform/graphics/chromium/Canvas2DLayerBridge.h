@@ -76,7 +76,7 @@ private:
     unsigned m_backBufferTexture;
     IntSize m_size;
     SkCanvas* m_canvas;
-    WebKit::WebExternalTextureLayer m_layer;
+    OwnPtr<WebKit::WebExternalTextureLayer> m_layer;
     RefPtr<GraphicsContext3D> m_context;
 };
 
