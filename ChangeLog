@@ -1,3 +1,16 @@
+2012-08-20  George Staikos  <staikos@webkit.org>
+
+        [BlackBerry] Enable XHR Response BLOB
+        https://bugs.webkit.org/show_bug.cgi?id=94525
+
+        Reviewed by Rob Buis.
+
+        Add the XHR response blob enable feature to the cmake build system and
+        enable it for BlackBerry.
+
+        * Source/cmake/OptionsBlackBerry.cmake: Add the feature and enable
+        * Source/cmakeconfig.h.cmake: Add the feature
+
 2012-08-20  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Get rid of pango backend support once harfbuzz-ng is working

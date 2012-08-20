@@ -136,6 +136,7 @@ my (
     $webSocketsSupport,
     $webTimingSupport,
     $workersSupport,
+    $xhrResponseBlobSupport,
     $xsltSupport,
 );
 
@@ -418,6 +419,9 @@ my @features = (
 
     { option => "workers", desc => "Toggle Workers support",
       define => "ENABLE_WORKERS", default => (isAppleWebKit() || isGtk() || isBlackBerry() || isEfl()), value => \$workersSupport },
+
+    { option => "xhr-response-blob", desc => "Toggle XHR Response BLOB support",
+      define => "ENABLE_XHR_RESPONSE_BLOB", default => isBlackBerry(), value => \$xhrResponseBlobSupport },
 
     { option => "xslt", desc => "Toggle XSLT support",
       define => "ENABLE_XSLT", default => 1, value => \$xsltSupport },
