@@ -160,6 +160,12 @@ class Driver(object):
 
         crashed = self.has_crashed()
         timed_out = self._server_process.timed_out
+        if 'Timed out waiting for final message from web process' in text:
+            if not timed_out:
+                _log.warning("webprocess timed out but WTR didn't, killing WTR")
+                timed_out = True
+            else:
+                _log.warning("webprocess timed out and so did WTR")
 
         if stop_when_done or crashed or timed_out:
             # We call stop() even if we crashed or timed out in order to get any remaining stdout/stderr output.

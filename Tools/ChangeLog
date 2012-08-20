@@ -1,5 +1,25 @@
 2012-08-20  Dirk Pranke  <dpranke@chromium.org>
 
+        Intermittenly, many WebKit2 tests have results from the wrong test compared to the test just run, giving false failures.
+        https://bugs.webkit.org/show_bug.cgi?id=94505
+
+        Reviewed by Ojan Vafai.
+
+        It looks like if the webprocess times out, WTR may tell NRWT
+        that the test completed, but not properly reset its internal
+        state, and then return stale output for subsequent tests.
+
+        This patch modifies NRWT temporarily to check for
+        "Timed out waiting for final message from web process" in stdout
+        and treat that as a timeout (and thus kill WTR); this seems
+        to solve the cascade of failures, but of course there's probably
+        still a bug in WTR that needs to be fixed.
+
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.run_test):
+
+2012-08-20  Dirk Pranke  <dpranke@chromium.org>
+
         NRWT reports unexpected EOF
         https://bugs.webkit.org/show_bug.cgi?id=94387
 
