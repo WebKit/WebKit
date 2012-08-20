@@ -72,15 +72,49 @@ ScriptObject InjectedScriptWebGLModule::wrapWebGLContext(const ScriptObject& glC
     return ScriptObject(glContext.scriptState(), resultValue);
 }
 
-void InjectedScriptWebGLModule::captureFrame(ErrorString* errorString, const String& contextId)
+void InjectedScriptWebGLModule::captureFrame(ErrorString* errorString, String* traceLogId)
 {
     ScriptFunctionCall function(injectedScriptObject(), "captureFrame");
-    function.appendArgument(contextId);
+    RefPtr<InspectorValue> resultValue;
+    makeCall(function, &resultValue);
+    if (!resultValue || resultValue->type() != InspectorValue::TypeString || !resultValue->asString(traceLogId))
+        *errorString = "Internal error: captureFrame";
+}
+
+void InjectedScriptWebGLModule::dropTraceLog(ErrorString* errorString, const String& traceLogId)
+{
+    ScriptFunctionCall function(injectedScriptObject(), "dropTraceLog");
+    function.appendArgument(traceLogId);
     bool hadException = false;
     callFunctionWithEvalEnabled(function, hadException);
     ASSERT(!hadException);
     if (hadException)
-        *errorString = "Internal error";
+        *errorString = "Internal error: dropTraceLog";
+}
+
+void InjectedScriptWebGLModule::traceLog(ErrorString* errorString, const String& traceLogId, RefPtr<TypeBuilder::WebGL::TraceLog>* traceLog)
+{
+    ScriptFunctionCall function(injectedScriptObject(), "traceLog");
+    function.appendArgument(traceLogId);
+    RefPtr<InspectorValue> resultValue;
+    makeCall(function, &resultValue);
+    if (!resultValue || resultValue->type() != InspectorValue::TypeObject) {
+        if (!resultValue->asString(errorString))
+            *errorString = "Internal error: traceLog";
+        return;
+    }
+    *traceLog = TypeBuilder::WebGL::TraceLog::runtimeCast(resultValue);
+}
+
+void InjectedScriptWebGLModule::replayTraceLog(ErrorString* errorString, const String& traceLogId, int stepNo, String* result)
+{
+    ScriptFunctionCall function(injectedScriptObject(), "replayTraceLog");
+    function.appendArgument(traceLogId);
+    function.appendArgument(stepNo);
+    RefPtr<InspectorValue> resultValue;
+    makeCall(function, &resultValue);
+    if (!resultValue || resultValue->type() != InspectorValue::TypeString || !resultValue->asString(result))
+        *errorString = "Internal error: replayTraceLog";
 }
 
 } // namespace WebCore
