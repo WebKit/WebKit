@@ -24,17 +24,6 @@ function nodeToString(node)
     return node.nodeName + (node.id ? ('#' + node.id) : '');
 }
 
-function boundsToString(bounds)
-{
-    return "("+bounds.left+","+bounds.top+")x("+bounds.width+","+bounds.height+")";
-}
-
-function pointToString(point)
-{
-    return "("+point.x+","+point.y+")";
-}
-
-
 function shouldBeNode(adjustedNode, targetNode) {
     if (typeof targetNode == "string") {
         var adjustedNodeString = nodeToString(adjustedNode);
@@ -53,17 +42,6 @@ function shouldBeNode(adjustedNode, targetNode) {
         testFailed("adjusted node should be " + nodeToString(targetNode)  + ". Was " + nodeToString(adjustedNode) + ".");
     }
 }
-
-function shouldBeWithin(adjustedPoint, targetArea) {
-    if (adjustedPoint.x >= targetArea.left && adjustedPoint.y >= targetArea.top
-        && adjustedPoint.x <= (targetArea.left + targetArea.width)
-        && adjustedPoint.y <= (targetArea.top + targetArea.height)) {
-        testPassed("adjusted point was within " + boundsToString(targetArea));
-    } else {
-        testFailed("adjusted node should be within " + boundsToString(targetArea)  + ". Was " + pointToString(adjustedPoint));
-    }
-}
-
 
 function testTouchPoint(touchpoint, targetNode, allowTextNodes)
 {
