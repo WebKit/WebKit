@@ -53,6 +53,10 @@
 #include "LayerWebKitThread.h"
 #include "NotImplemented.h"
 
+#if DEBUG_LAYER_ANIMATION
+#include <wtf/text/CString.h>
+#endif
+
 namespace WebCore {
 
 static void setLayerBorderColor(LayerWebKitThread& layer, const Color& color)
@@ -446,7 +450,7 @@ bool GraphicsLayerBlackBerry::addAnimation(const KeyframeValueList& values, cons
     RefPtr<LayerAnimation> layerAnimation = LayerAnimation::create(values, boxSize, animation, animationName, timeOffset);
 
 #if DEBUG_LAYER_ANIMATION
-    fprintf(stderr, "LayerAnimation 0x%08x: Adding animation %s for property %d\n", layerAnimation.get(), animationName.latin1().data(), values.property());
+    fprintf(stderr, "LayerAnimation 0x%08x: Adding animation %s for property %d\n", (int)layerAnimation.get(), animationName.latin1().data(), values.property());
 #endif
 
     m_runningAnimations.append(layerAnimation);
@@ -462,7 +466,7 @@ void GraphicsLayerBlackBerry::pauseAnimation(const String& animationName, double
 
     while (RefPtr<LayerAnimation> animation = removeAnimationByName(animationName, m_runningAnimations)) {
 #if DEBUG_LAYER_ANIMATION
-        fprintf(stderr, "LayerAnimation 0x%08x: Pausing animation %s\n", animation.get(), animation->name().latin1().data());
+        fprintf(stderr, "LayerAnimation 0x%08x: Pausing animation %s\n", (int)animation.get(), animation->name().latin1().data());
 #endif
 
         // LayerAnimation is readonly. Create a new animation with the same data except for timeOffset.
@@ -475,7 +479,7 @@ void GraphicsLayerBlackBerry::pauseAnimation(const String& animationName, double
         m_suspendedAnimations.append(animation);
 
 #if DEBUG_LAYER_ANIMATION
-        fprintf(stderr, "LayerAnimation 0x%08x: Paused animation %s\n", animation.get(), animation->name().latin1().data());
+        fprintf(stderr, "LayerAnimation 0x%08x: Paused animation %s\n", (int)animation.get(), animation->name().latin1().data());
 #endif
     };
 
