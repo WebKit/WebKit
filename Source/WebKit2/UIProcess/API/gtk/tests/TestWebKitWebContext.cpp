@@ -20,12 +20,15 @@
 #include "config.h"
 
 #include "LoadTrackingTest.h"
+#include "WebKitTestServer.h"
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
 #include <wtf/HashMap.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/StringHash.h>
+
+static WebKitTestServer* kServer;
 
 static void testWebContextDefault(Test* test, gconstpointer)
 {
@@ -165,35 +168,6 @@ public:
         webkit_web_context_register_uri_scheme(webkit_web_context_get_default(), scheme, uriSchemeRequestCallback, this);
     }
 
-    static void resourceGetDataCallback(GObject* object, GAsyncResult* result, gpointer userData)
-    {
-        size_t dataSize;
-        GOwnPtr<GError> error;
-        unsigned char* data = webkit_web_resource_get_data_finish(WEBKIT_WEB_RESOURCE(object), result, &dataSize, &error.outPtr());
-        g_assert(data);
-
-        URISchemeTest* test = static_cast<URISchemeTest*>(userData);
-        test->m_resourceData.set(reinterpret_cast<char*>(data));
-        test->m_resourceDataSize = dataSize;
-        g_main_loop_quit(test->m_mainLoop);
-    }
-
-    const char* mainResourceData(size_t& mainResourceDataSize)
-    {
-        m_resourceDataSize = 0;
-        m_resourceData.clear();
-        WebKitWebResource* resource = webkit_web_view_get_main_resource(m_webView);
-        g_assert(resource);
-
-        webkit_web_resource_get_data(resource, 0, resourceGetDataCallback, this);
-        g_main_loop_run(m_mainLoop);
-
-        mainResourceDataSize = m_resourceDataSize;
-        return m_resourceData.get();
-    }
-
-    GOwnPtr<char> m_resourceData;
-    size_t m_resourceDataSize;
     GRefPtr<WebKitURISchemeRequest> m_uriSchemeRequest;
     HashMap<String, URISchemeHandler> m_handlersMap;
 };
@@ -266,14 +240,57 @@ static void testWebContextSpellChecker(Test* test, gconstpointer)
     g_assert(webkit_web_context_get_spell_checking_enabled(webContext));
 }
 
+static void testWebContextLanguages(WebViewTest* test, gconstpointer)
+{
+    static const char* expectedDefaultLanguage = "en";
+    test->loadURI(kServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+    size_t mainResourceDataSize = 0;
+    const char* mainResourceData = test->mainResourceData(mainResourceDataSize);
+    g_assert_cmpuint(mainResourceDataSize, ==, strlen(expectedDefaultLanguage));
+    g_assert(!strncmp(mainResourceData, expectedDefaultLanguage, mainResourceDataSize));
+
+    GList* languages = g_list_prepend(0, const_cast<gpointer>(static_cast<const void*>("dE")));
+    languages = g_list_prepend(languages, const_cast<gpointer>(static_cast<const void*>("ES_es")));
+    languages = g_list_prepend(languages, const_cast<gpointer>(static_cast<const void*>("en")));
+    webkit_web_context_set_preferred_languages(webkit_web_context_get_default(), languages);
+    g_list_free(languages);
+
+    static const char* expectedLanguages = "en, es-es;q=0.90, de;q=0.80";
+    test->loadURI(kServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+    mainResourceDataSize = 0;
+    mainResourceData = test->mainResourceData(mainResourceDataSize);
+    g_assert_cmpuint(mainResourceDataSize, ==, strlen(expectedLanguages));
+    g_assert(!strncmp(mainResourceData, expectedLanguages, mainResourceDataSize));
+}
+
+static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+{
+    if (message->method != SOUP_METHOD_GET) {
+        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+        return;
+    }
+
+    soup_message_set_status(message, SOUP_STATUS_OK);
+    const char* acceptLanguage = soup_message_headers_get_one(message->request_headers, "Accept-Language");
+    soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, acceptLanguage, strlen(acceptLanguage));
+    soup_message_body_complete(message->response_body);
+}
+
 void beforeAll()
 {
+    kServer = new WebKitTestServer();
+    kServer->run(serverCallback);
+
     Test::add("WebKitWebContext", "default-context", testWebContextDefault);
     PluginsTest::add("WebKitWebContext", "get-plugins", testWebContextGetPlugins);
     URISchemeTest::add("WebKitWebContext", "uri-scheme", testWebContextURIScheme);
     Test::add("WebKitWebContext", "spell-checker", testWebContextSpellChecker);
+    WebViewTest::add("WebKitWebContext", "languages", testWebContextLanguages);
 }
 
 void afterAll()
 {
+    delete kServer;
 }

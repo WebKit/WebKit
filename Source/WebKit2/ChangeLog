@@ -1,3 +1,42 @@
+2012-08-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to set preferred languages to WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=90878
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_set_preferred_languages): Public API to set a
+        list of preferred languages sorted from most desirable to least
+        desirable.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbol.
+        * UIProcess/API/gtk/tests/TestWebKitWebContext.cpp:
+        (testWebContextLanguages):
+        (serverCallback):
+        (beforeAll):
+        (afterAll):
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (resourceGetDataCallback):
+        (WebViewTest::mainResourceData): Moved from TestWebKitWebContext
+        to make it available to all WebViewTests.
+        * UIProcess/API/gtk/tests/WebViewTest.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::userPreferredLanguagesChanged): Notify our
+        observer that the languages have been overriden.
+        * WebProcess/gtk/WebProcessGtk.cpp:
+        (WebKit::buildAcceptLanguages): Helper function to build the
+        accept languages as specified in RFC 2616.
+        (WebKit::setSoupSessionAcceptLanguage): Set the accept-language
+        property of the default SoupSession.
+        (WebKit::languageChanged): Update the preferred languages in
+        SoupSession.
+        (WebKit::WebProcess::platformInitializeWebProcess): Add an
+        observer to be notified when the list of preferred languages is
+        updated.
+        (WebKit::WebProcess::platformTerminate): Remove the observer added
+        in platformInitializeWebProcess().
+
 2012-08-19  Dan Bernstein  <mitz@apple.com>
 
         WebPageProxy::setCursor does not check that the view is still in an active window
