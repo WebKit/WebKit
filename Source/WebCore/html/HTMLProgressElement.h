@@ -71,7 +71,7 @@ private:
     void didElementStateChange();
     void createShadowSubtree();
 
-    RefPtr<ProgressValueElement> m_value;
+    ProgressValueElement* m_value;
     bool m_hasAuthorShadowRoot;
 };
 

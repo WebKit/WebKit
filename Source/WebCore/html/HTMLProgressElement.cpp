@@ -43,6 +43,7 @@ const double HTMLProgressElement::InvalidPosition = -2;
 
 HTMLProgressElement::HTMLProgressElement(const QualifiedName& tagName, Document* document)
     : LabelableElement(tagName, document)
+    , m_value(0)
     , m_hasAuthorShadowRoot(false)
 {
     ASSERT(hasTagName(progressTag));
@@ -164,6 +165,7 @@ void HTMLProgressElement::didElementStateChange()
 void HTMLProgressElement::createShadowSubtree()
 {
     ASSERT(!userAgentShadowRoot());
+    ASSERT(!m_value);
            
     RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot, ASSERT_NO_EXCEPTION);
 
@@ -171,7 +173,8 @@ void HTMLProgressElement::createShadowSubtree()
     root->appendChild(inner);
 
     RefPtr<ProgressBarElement> bar = ProgressBarElement::create(document());
-    m_value = ProgressValueElement::create(document());
+    RefPtr<ProgressValueElement> value = ProgressValueElement::create(document());
+    m_value = value.get();
     bar->appendChild(m_value, ASSERT_NO_EXCEPTION);
 
     inner->appendChild(bar, ASSERT_NO_EXCEPTION);
