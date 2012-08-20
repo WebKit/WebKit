@@ -43,7 +43,9 @@ input[type="number"],
 input[type="password"],
 input[type="tel"],
 input[type="text"],
+#if !defined(ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS) || !ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS
 input[type="time"],
+#endif
 input[type="url"],
 input[type="week"] {
     padding:1px 0;

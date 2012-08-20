@@ -8,8 +8,8 @@ layer at (0,0) size 800x600
           RenderListMarker at (-18,4) size 7x19: bullet
           RenderText {#text} at (0,4) size 62x19
             text run at (0,4) width 62: "text-align: "
-          RenderBlock {INPUT} at (64,2) size 98x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderDeprecatedFlexibleBox {DIV} at (2,3) size 94x20
+          RenderBlock {INPUT} at (64,2) size 100x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderDeprecatedFlexibleBox {DIV} at (3,3) size 94x20
               RenderBlock (anonymous) at (0,0) size 76x20
                 RenderBlock {SPAN} at (0,0) size 20x20
                   RenderText {#text} at (2,2) size 16x16
@@ -28,8 +28,8 @@ layer at (0,0) size 800x600
           RenderListMarker at (-18,4) size 7x19: bullet
           RenderText {#text} at (0,4) size 92x19
             text run at (0,4) width 92: "text-transform: "
-          RenderBlock {INPUT} at (94,2) size 98x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderDeprecatedFlexibleBox {DIV} at (2,3) size 94x20
+          RenderBlock {INPUT} at (94,2) size 100x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderDeprecatedFlexibleBox {DIV} at (3,3) size 94x20
               RenderBlock (anonymous) at (0,0) size 76x20
                 RenderBlock {SPAN} at (0,0) size 20x20
                   RenderText {#text} at (2,2) size 16x16
@@ -48,8 +48,8 @@ layer at (0,0) size 800x600
           RenderListMarker at (-18,2) size 7x19: bullet
           RenderText {#text} at (0,2) size 118x19
             text run at (0,2) width 118: "background, color: "
-          RenderBlock {INPUT} at (120,2) size 94x22 [color=#FFFF00] [bgcolor=#008000]
-            RenderDeprecatedFlexibleBox {DIV} at (0,1) size 94x20
+          RenderBlock {INPUT} at (120,2) size 96x22 [color=#FFFF00] [bgcolor=#008000]
+            RenderDeprecatedFlexibleBox {DIV} at (1,1) size 94x20
               RenderBlock (anonymous) at (0,0) size 76x20
                 RenderBlock {SPAN} at (0,0) size 20x20
                   RenderText {#text} at (2,2) size 16x16
@@ -68,8 +68,8 @@ layer at (0,0) size 800x600
           RenderListMarker at (-18,18) size 7x19: bullet
           RenderText {#text} at (0,18) size 58x19
             text run at (0,18) width 58: "font-size: "
-          RenderBlock {INPUT} at (60,2) size 177x46 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderDeprecatedFlexibleBox {DIV} at (2,3) size 173x40
+          RenderBlock {INPUT} at (60,2) size 179x46 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderDeprecatedFlexibleBox {DIV} at (3,3) size 173x40
               RenderBlock (anonymous) at (0,1) size 152x38
                 RenderBlock {SPAN} at (0,0) size 40x38
                   RenderText {#text} at (4,4) size 32x30
@@ -89,7 +89,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,18) size 190x19
             text run at (0,18) width 190: "font-size with fixed input width: "
           RenderBlock {INPUT} at (190,2) size 267x46 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderDeprecatedFlexibleBox {DIV} at (2,3) size 263x40
+            RenderDeprecatedFlexibleBox {DIV} at (3,3) size 261x40
               RenderBlock (anonymous) at (0,1) size 152x38
                 RenderBlock {SPAN} at (0,0) size 40x38
                   RenderText {#text} at (4,4) size 32x30
@@ -104,13 +104,13 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (0,0) size 40x38
                   RenderText {#text} at (116,4) size 32x30
                     text run at (116,4) width 32: "PM"
-layer at (193,13) size 15x20
+layer at (194,13) size 15x20
   RenderBlock (relative positioned) {DIV} at (78,0) size 16x20
-layer at (223,43) size 15x20
+layer at (224,43) size 15x20
   RenderBlock (relative positioned) {DIV} at (78,0) size 16x20
-layer at (247,71) size 15x20
+layer at (248,71) size 15x20
   RenderBlock (relative positioned) {DIV} at (78,0) size 16x20
-layer at (267,99) size 15x40
+layer at (268,99) size 15x40
   RenderBlock (relative positioned) {DIV} at (157,0) size 16x40
-layer at (397,149) size 15x40
+layer at (398,149) size 15x40
   RenderBlock (relative positioned) {DIV} at (157,0) size 16x40

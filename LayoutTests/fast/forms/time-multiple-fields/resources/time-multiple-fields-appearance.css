@@ -8,9 +8,7 @@ span[type="time"] {
 
 .host {
     box-sizing: border-box;
-
-    padding: 1px 0px;
-
+    padding: 1px;
     -webkit-appearance: textfield;
     background-color: white;
     border: 2px inset;
@@ -38,7 +36,6 @@ span[type="time"] {
 
 .ampmField {
     border: none;
-    --width: 2em;
     padding: 0.15em;
 }
 
@@ -46,7 +43,6 @@ span[type="time"] {
     display: inline-block;
     border: none;
     text-align: center;
-    --width: 1.2em;
     padding: 0.15em;
 }
 
@@ -54,7 +50,6 @@ span[type="time"] {
     display: inline-block;
     border: none;
     text-align: center;
-    --width: 1.8em;
     padding: 0.15em;
 }
 
@@ -62,7 +57,6 @@ span[type="time"] {
     display: inline-block;
     border: none;
     text-align: center;
-    --width: 1.2em;
     padding: 0.15em;
 }
 
@@ -70,7 +64,6 @@ span[type="time"] {
     display: inline-block;
     border: none;
     text-align: center;
-    --width: 1.2em;
     padding: 0.15em;
 }
 

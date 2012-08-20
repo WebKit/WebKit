@@ -1,3 +1,29 @@
+2012-08-19  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] time-multiple-fields-appearance-basic.html and time-multiple-fields-appearance-pseudo-elements.html are failed on Chromium Mac
+        https://bugs.webkit.org/show_bug.cgi?id=94439
+
+        Reviewed by Kent Tamura.
+
+        This patch updates expected images of multiple fields time input UI for
+        Chromium-Linux and CSS selectors for expected HTML file for changing
+        of Source/WebCore/css/themeWin.css.
+
+        * fast/forms/time-multiple-fields/resources/time-multiple-fields-appearance.css:
+        (.host): Changed padding property.
+        (.ampmField): Remove wrong property.
+        (.hourField): ditto
+        (.millisecondField): ditto
+        (.minuteField): ditto
+        (.secondField): ditto
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png:
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.txt:
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.txt:
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.txt:
+        * platform/chromium/TestExpectations: Remove Chromium-Mac disabled entries.
+
 2012-08-19  Rik Cabanier  <cabanier@adobe.com>
 
         parse CSS attribute -webkit-blend-mode
