@@ -111,14 +111,14 @@ body.compact.inactive #toolbar {
     background-image: url(Images/toolbarIcons.png);
 }
 
-.toolbar-small .toolbar-icon {
+body.compact .toolbar-icon {
     width: 24px;
     height: 24px;
     vertical-align: middle;
     background-image: url(Images/toolbarIconsSmall.png);
 }
 
-.toolbar-small .toolbar-icon.custom-toolbar-icon {
+body.compact .toolbar-icon.custom-toolbar-icon {
     background-position-x: -32px;
 }
 
@@ -126,7 +126,7 @@ body.compact.inactive #toolbar {
     background-position-y: 32px;
 }
 
-.toolbar-small .toolbar-item:active .toolbar-icon {
+body.compact .toolbar-item:active .toolbar-icon {
     background-position-y: 24px;
 }
 
@@ -140,7 +140,7 @@ body.compact.inactive #toolbar {
     text-shadow: none;
 }
 
-.toolbar-small .toolbar-label {
+body.compact .toolbar-label {
     display: inline-block;
     margin-left: 3px;
     position: relative;
@@ -395,7 +395,7 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     background-position-x: -32px;
 }
 
-.toolbar-small .toolbar-item.resources .toolbar-icon {
+body.compact .toolbar-item.resources .toolbar-icon {
     background-position-x: -24px;
 }
 
@@ -403,7 +403,7 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     background-position-x: -64px;
 }
 
-.toolbar-small .toolbar-item.network .toolbar-icon {
+body.compact .toolbar-item.network .toolbar-icon {
     background-position-x: -48px;
 }
 
@@ -411,7 +411,7 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     background-position-x: -96px;
 }
 
-.toolbar-small .toolbar-item.scripts .toolbar-icon {
+body.compact .toolbar-item.scripts .toolbar-icon {
     background-position-x: -72px;
 }
 
@@ -419,7 +419,7 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     background-position-x: -128px;
 }
 
-.toolbar-small .toolbar-item.timeline .toolbar-icon {
+body.compact .toolbar-item.timeline .toolbar-icon {
     background-position-x: -96px;
 }
 
@@ -427,7 +427,7 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     background-position-x: -160px;
 }
 
-.toolbar-small .toolbar-item.profiles .toolbar-icon {
+body.compact .toolbar-item.profiles .toolbar-icon {
     background-position-x: -120px;
 }
 
@@ -435,7 +435,7 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     background-position-x: -192px;
 }
 
-.toolbar-small .toolbar-item.audits .toolbar-icon {
+body.compact .toolbar-item.audits .toolbar-icon {
     background-position-x: -144px;
 }
 
@@ -443,7 +443,7 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     background-position-x: -224px;
 }
 
-.toolbar-small .toolbar-item.console .toolbar-icon {
+body.compact .toolbar-item.console .toolbar-icon {
     background-position-x: -168px;
 }
 

@@ -256,14 +256,7 @@ var WebInspector = {
             body.addStyleClass("compact");
         else
             body.removeStyleClass("compact");
-
-        // This may be called before doLoadedDone, hence the bulk of inspector objects may
-        // not be created yet.
-        if (WebInspector.toolbar)
-            WebInspector.toolbar.compact = x;
-
-        if (WebInspector.drawer)
-            WebInspector.drawer.resize();
+        WebInspector.windowResize();
     },
 
     _updateErrorAndWarningCounts: function()
@@ -520,12 +513,14 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     this._createGlobalStatusBarItems();
 
-    this.toolbar = new WebInspector.Toolbar();
     WebInspector._installDockToRight();
 
+    this.toolbar = new WebInspector.Toolbar();
+    this.toolbar.setCoalescingUpdate(true);
     var panelDescriptors = this._panelDescriptors();
     for (var i = 0; i < panelDescriptors.length; ++i)
         WebInspector.inspectorView.addPanel(panelDescriptors[i]);
+    this.toolbar.setCoalescingUpdate(false);
 
     this.addMainEventListeners(document);
     WebInspector.registerLinkifierPlugin(this._profilesLinkifier.bind(this));
@@ -640,10 +635,14 @@ WebInspector.dispatchMessageFromBackend = function(messageObject)
 
 WebInspector.windowResize = function(event)
 {
-    WebInspector.inspectorView.doResize();
-    WebInspector.drawer.resize();
-    WebInspector.toolbar.resize();
-    WebInspector.settingsController.resize();
+    if (WebInspector.inspectorView)
+        WebInspector.inspectorView.doResize();
+    if (WebInspector.drawer)
+        WebInspector.drawer.resize();
+    if (WebInspector.toolbar)
+        WebInspector.toolbar.resize();
+    if (WebInspector.settingsController)
+        WebInspector.settingsController.resize();
 }
 
 WebInspector.setDockingUnavailable = function(unavailable)
