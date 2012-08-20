@@ -160,7 +160,11 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
 
 static void emitTextChanged(AccessibilityObject* object, AXObjectCache::AXTextChange textChange, unsigned offset, const String& text)
 {
-    AtkObject* wrapper = object->parentObjectUnignored()->wrapper();
+    AccessibilityObject* parentObject = object->parentObjectUnignored();
+    if (!parentObject)
+        return;
+
+    AtkObject* wrapper = parentObject->wrapper();
     if (!wrapper || !ATK_IS_TEXT(wrapper))
         return;
 
