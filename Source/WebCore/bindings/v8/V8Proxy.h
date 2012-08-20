@@ -103,9 +103,6 @@ namespace WebCore {
         // Run an already compiled script.
         v8::Local<v8::Value> runScript(v8::Handle<v8::Script>);
 
-        // Call the function with the given receiver and arguments.
-        v8::Local<v8::Value> callFunction(v8::Handle<v8::Function>, v8::Handle<v8::Object>, int argc, v8::Handle<v8::Value> argv[]);
-
         // call the function with the given receiver and arguments and report times to DevTools.
         static v8::Local<v8::Value> instrumentedCallFunction(Frame*, v8::Handle<v8::Function>, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[]);
 

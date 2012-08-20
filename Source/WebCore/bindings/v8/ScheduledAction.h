@@ -40,8 +40,8 @@
 
 namespace WebCore {
 
+    class ScriptController;
     class ScriptExecutionContext;
-    class V8Proxy;
     class WorkerContext;
 
     class ScheduledAction {
@@ -59,7 +59,7 @@ namespace WebCore {
         virtual void execute(ScriptExecutionContext*);
 
     private:
-        void execute(V8Proxy*);
+        void execute(ScriptController*);
 #if ENABLE(WORKERS)
         void execute(WorkerContext*);
 #endif

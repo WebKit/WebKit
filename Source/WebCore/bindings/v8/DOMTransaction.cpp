@@ -113,7 +113,7 @@ void DOMTransaction::callFunction(const char* propertyName)
     if (receiver.IsEmpty())
         return;
     v8::Handle<v8::Value> parameters[0] = { };
-    frame->script()->proxy()->callFunction(function, receiver, 0, parameters);
+    frame->script()->callFunction(function, receiver, 0, parameters);
 }
 
 }

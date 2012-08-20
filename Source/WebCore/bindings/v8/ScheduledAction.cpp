@@ -40,6 +40,7 @@
 #include "TraceEvent.h"
 #endif
 
+#include "ScriptController.h"
 #include "V8Binding.h"
 #include "V8Proxy.h"
 #include "V8RecursionScope.h"
@@ -102,7 +103,7 @@ void ScheduledAction::execute(ScriptExecutionContext* context)
             return;
         if (!frame->script()->canExecuteScripts(AboutToExecuteScript))
             return;
-        execute(frame->script()->proxy());
+        execute(frame->script());
     }
 #if ENABLE(WORKERS)
     else {
@@ -112,9 +113,9 @@ void ScheduledAction::execute(ScriptExecutionContext* context)
 #endif
 }
 
-void ScheduledAction::execute(V8Proxy* proxy)
+void ScheduledAction::execute(ScriptController* script)
 {
-    ASSERT(proxy);
+    ASSERT(script->proxy());
 
     v8::HandleScope handleScope;
     v8::Handle<v8::Context> v8Context = v8::Local<v8::Context>::New(m_context.get());
@@ -129,9 +130,9 @@ void ScheduledAction::execute(V8Proxy* proxy)
 
     // FIXME: Need to implement timeouts for preempting a long-running script.
     if (!m_function.IsEmpty() && m_function->IsFunction())
-        proxy->callFunction(v8::Persistent<v8::Function>::Cast(m_function), v8Context->Global(), m_argc, m_argv);
+        script->callFunction(v8::Persistent<v8::Function>::Cast(m_function), v8Context->Global(), m_argc, m_argv);
     else
-        proxy->evaluate(m_code, 0);
+        script->proxy()->evaluate(m_code, 0);
 
     // The 'proxy' may be invalid at this point since JS could have released the owning Frame.
 }

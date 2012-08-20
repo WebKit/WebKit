@@ -93,7 +93,7 @@ v8::Local<v8::Value> V8EventListener::callListenerFunction(ScriptExecutionContex
     if (!frame->script()->canExecuteScripts(AboutToExecuteScript))
         return v8::Local<v8::Value>();
 
-    return frame->script()->proxy()->callFunction(handlerFunction, receiver, 1, parameters);
+    return frame->script()->callFunction(handlerFunction, receiver, 1, parameters);
 }
 
 } // namespace WebCore

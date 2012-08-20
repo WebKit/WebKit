@@ -100,7 +100,7 @@ v8::Local<v8::Value> V8LazyEventListener::callListenerFunction(ScriptExecutionCo
     if (!frame->script()->canExecuteScripts(AboutToExecuteScript))
         return v8::Local<v8::Value>();
 
-    return frame->script()->proxy()->callFunction(handlerFunction, receiver, 1, parameters);
+    return frame->script()->callFunction(handlerFunction, receiver, 1, parameters);
 }
 
 static v8::Handle<v8::Value> V8LazyEventListenerToString(const v8::Arguments& args)

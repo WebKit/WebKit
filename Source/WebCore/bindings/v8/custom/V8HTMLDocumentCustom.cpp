@@ -157,7 +157,7 @@ v8::Handle<v8::Value> V8HTMLDocument::openCallback(const v8::Arguments& args)
             for (int i = 0; i < args.Length(); i++)
                 params[i] = args[i];
 
-            return frame->script()->proxy()->callFunction(v8::Local<v8::Function>::Cast(function), global, args.Length(), params.get());
+            return frame->script()->callFunction(v8::Local<v8::Function>::Cast(function), global, args.Length(), params.get());
         }
     }
 

@@ -159,10 +159,17 @@ bool ScriptController::processingUserGesture()
     return UserGestureIndicator::processingUserGesture();
 }
 
+v8::Local<v8::Value> ScriptController::callFunction(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
+{
+    // Keep Frame (and therefore ScriptController and V8Proxy) alive.
+    RefPtr<Frame> protect(m_frame);
+    return V8Proxy::instrumentedCallFunction(m_frame, function, receiver, argc, args);
+}
+
 ScriptValue ScriptController::callFunctionEvenIfScriptDisabled(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> argv[])
 {
     // FIXME: This should probably perform the same isPaused check that happens in ScriptController::executeScript.
-    return ScriptValue(m_proxy->callFunction(function, receiver, argc, argv));
+    return ScriptValue(callFunction(function, receiver, argc, argv));
 }
 
 void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>& sources, Vector<ScriptValue>* results)

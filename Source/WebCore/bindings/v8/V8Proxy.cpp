@@ -268,13 +268,6 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script)
     return result;
 }
 
-v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
-{
-    // Keep Frame (and therefore ScriptController and V8Proxy) alive.
-    RefPtr<Frame> protect(frame());
-    return V8Proxy::instrumentedCallFunction(frame(), function, receiver, argc, args);
-}
-
 static inline void resourceInfo(const v8::Handle<v8::Function> function, String& resourceName, int& lineNumber)
 {
     v8::ScriptOrigin origin = function->GetScriptOrigin();

@@ -244,13 +244,13 @@ bool _NPN_Invoke(NPP npp, NPObject* npObject, NPIdentifier methodName, const NPV
         return false;
     }
 
-    V8Proxy* proxy = toV8Proxy(npObject);
-    ASSERT(proxy);
+    Frame* frame = v8NpObject->rootObject->frame();
+    ASSERT(frame);
 
     // Call the function object.
     v8::Handle<v8::Function> function = v8::Handle<v8::Function>::Cast(functionObject);
     OwnArrayPtr<v8::Handle<v8::Value> > argv = createValueListFromVariantArgs(arguments, argumentCount, npObject);
-    v8::Local<v8::Value> resultObject = proxy->callFunction(function, v8NpObject->v8Object, argumentCount, argv.get());
+    v8::Local<v8::Value> resultObject = frame->script()->callFunction(function, v8NpObject->v8Object, argumentCount, argv.get());
 
     // If we had an error, return false.  The spec is a little unclear here, but says "Returns true if the method was
     // successfully invoked".  If we get an error return value, was that successfully invoked?
@@ -295,11 +295,11 @@ bool _NPN_InvokeDefault(NPP npp, NPObject* npObject, const NPVariant* arguments,
     v8::Local<v8::Value> resultObject;
     v8::Handle<v8::Function> function(v8::Function::Cast(*functionObject));
     if (!function->IsNull()) {
-        V8Proxy* proxy = toV8Proxy(npObject);
-        ASSERT(proxy);
+        Frame* frame = v8NpObject->rootObject->frame();
+        ASSERT(frame);
 
         OwnArrayPtr<v8::Handle<v8::Value> > argv = createValueListFromVariantArgs(arguments, argumentCount, npObject);
-        resultObject = proxy->callFunction(function, functionObject, argumentCount, argv.get());
+        resultObject = frame->script()->callFunction(function, functionObject, argumentCount, argv.get());
     }
     // If we had an error, return false.  The spec is a little unclear here, but says "Returns true if the method was
     // successfully invoked".  If we get an error return value, was that successfully invoked?
