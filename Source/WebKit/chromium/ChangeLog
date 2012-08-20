@@ -1,3 +1,17 @@
+2012-08-20  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Move V8Proxy::m_extensions to ScriptController
+        https://bugs.webkit.org/show_bug.cgi?id=94444
+
+        Reviewed by Adam Barth.
+
+        To kill V8Proxy, this patch moves V8Proxy::m_extensions to ScriptController.
+
+        No tests. No change in behavior.
+
+        * src/WebScriptController.cpp:
+        (WebKit::WebScriptController::registerExtension):
+
 2012-08-19  James Robinson  <jamesr@chromium.org>
 
         [chromium] Put webkit compositor binding files in separate conditionally included gyp section

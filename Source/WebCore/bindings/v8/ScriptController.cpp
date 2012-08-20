@@ -422,6 +422,23 @@ void ScriptController::evaluateInWorld(const ScriptSourceCode& source,
     evaluateInIsolatedWorld(0, sources, 0);
 }
 
+V8Extensions& ScriptController::registeredExtensions()
+{
+    DEFINE_STATIC_LOCAL(V8Extensions, extensions, ());
+    return extensions;
+}
+
+void ScriptController::registerExtensionIfNeeded(v8::Extension* extension)
+{
+    const V8Extensions& extensions = registeredExtensions();
+    for (size_t i = 0; i < extensions.size(); ++i) {
+        if (extensions[i] == extension)
+            return;
+    }
+    v8::RegisterExtension(extension);
+    registeredExtensions().append(extension);
+}
+
 static NPObject* createNoScriptObject()
 {
     notImplemented();

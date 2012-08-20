@@ -466,23 +466,6 @@ v8::Local<v8::Context> V8Proxy::mainWorldContext(Frame* frame)
     return frame->script()->proxy()->mainWorldContext();
 }
 
-V8Extensions& V8Proxy::extensions()
-{
-    DEFINE_STATIC_LOCAL(V8Extensions, extensions, ());
-    return extensions;
-}
-
-void V8Proxy::registerExtensionIfNeeded(v8::Extension* extension)
-{
-    const V8Extensions& registeredExtensions = extensions();
-    for (size_t i = 0; i < registeredExtensions.size(); ++i) {
-        if (registeredExtensions[i] == extension)
-            return;
-    }
-    v8::RegisterExtension(extension);
-    extensions().append(extension);
-}
-
 bool V8Proxy::setContextDebugId(int debugId)
 {
     ASSERT(debugId > 0);

@@ -31,9 +31,9 @@
 #include "config.h"
 #include "WebScriptController.h"
 
+#include "ScriptController.h"
 #include "V8Binding.h"
 #include "V8DOMMap.h"
-#include "V8Proxy.h"
 
 #include "platform/WebString.h"
 
@@ -43,7 +43,7 @@ namespace WebKit {
 
 void WebScriptController::registerExtension(v8::Extension* extension)
 {
-    V8Proxy::registerExtensionIfNeeded(extension);
+    ScriptController::registerExtensionIfNeeded(extension);
 }
 
 void WebScriptController::enableV8SingleThreadMode()

@@ -69,9 +69,6 @@ namespace WebCore {
 
     const int kMaxRecursionDepth = 22;
 
-    // The list of extensions that are registered for use with V8.
-    typedef WTF::Vector<v8::Extension*> V8Extensions;
-
     // Note: although the pointer is raw, the instance is kept alive by a strong
     // reference to the v8 context it contains, which is not made weak until we
     // call world->destroy().
@@ -142,12 +139,6 @@ namespace WebCore {
         bool setContextDebugId(int id);
         static int contextDebugId(v8::Handle<v8::Context>);
 
-        // Registers a v8 extension to be available on webpages. Will only
-        // affect v8 contexts initialized after this call. Takes ownership of
-        // the v8::Extension object passed.
-        static void registerExtensionIfNeeded(v8::Extension*);
-        static V8Extensions& extensions();
-
         static void reportUnsafeAccessTo(Document* targetDocument);
 
         // FIXME: Move m_isolatedWorlds to ScriptController and remove this getter.
@@ -162,9 +153,6 @@ namespace WebCore {
         PassOwnPtr<v8::ScriptData> precompileScript(v8::Handle<v8::String>, CachedScript*);
 
         Frame* m_frame;
-
-        // All of the extensions registered with the context.
-        static V8Extensions m_extensions;
 
         // The isolated worlds we are tracking for this frame. We hold them alive
         // here so that they can be used again by future calls to

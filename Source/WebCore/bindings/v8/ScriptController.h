@@ -59,6 +59,8 @@ class ScriptState;
 class V8DOMWindowShell;
 class Widget;
 
+typedef WTF::Vector<v8::Extension*> V8Extensions;
+
 class ScriptController {
 public:
     ScriptController(Frame*);
@@ -188,6 +190,12 @@ public:
     void evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld*);
     static void getAllWorlds(Vector<RefPtr<DOMWrapperWorld> >& worlds);
 
+    // Registers a v8 extension to be available on webpages. Will only
+    // affect v8 contexts initialized after this call. Takes ownership of
+    // the v8::Extension object passed.
+    static void registerExtensionIfNeeded(v8::Extension*);
+    static V8Extensions& registeredExtensions();
+
 private:
     Frame* m_frame;
     const String* m_sourceURL;
@@ -213,6 +221,9 @@ private:
     // pointer in this object is cleared out when the window object is
     // destroyed.
     NPObject* m_wrappedWindowScriptNPObject;
+
+    // All of the extensions registered with the context.
+    static V8Extensions m_extensions;
 };
 
 } // namespace WebCore
