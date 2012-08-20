@@ -882,6 +882,9 @@ BUGWK94009 : css2.1/20110323/c541-word-sp-000.htm = IMAGE
 
 BUGWK94150 : fast/events/autoscroll-in-textarea.html = TEXT
 
+// Requires CSS_COMPOSITING to be turned on
+BUGWK94024 SKIP : css3/compositing = TEXT
+
 // Fails also on GTK
 BUGWK94080 : fast/overflow/line-clamp-and-columns.html = IMAGE
 
