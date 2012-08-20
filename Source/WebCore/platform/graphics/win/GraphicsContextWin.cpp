@@ -51,6 +51,7 @@ static void fillWithClearColor(HBITMAP bitmap)
     memset(bmpInfo.bmBits, 0, bufferSize);
 }
 
+#if PLATFORM(WIN)
 void GraphicsContext::setShouldIncludeChildWindows(bool include)
 {
     m_data->m_shouldIncludeChildWindows = include;
@@ -94,6 +95,7 @@ PassOwnPtr<GraphicsContext::WindowsBitmap> GraphicsContext::createWindowsBitmap(
 {
     return adoptPtr(new WindowsBitmap(m_data->m_hdc, size));
 }
+#endif
 
 HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
 {
@@ -133,6 +135,7 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
     return m_data->m_hdc;
 }
 
+#if PLATFORM(WIN)
 void GraphicsContextPlatformPrivate::save()
 {
     if (!m_hdc)
@@ -202,5 +205,6 @@ void GraphicsContextPlatformPrivate::setCTM(const AffineTransform& transform)
     XFORM xform = transform.toTransformationMatrix();
     SetWorldTransform(m_hdc, &xform);
 }
+#endif
 
 }

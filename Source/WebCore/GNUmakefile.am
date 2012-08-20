@@ -142,6 +142,14 @@ webcoregtk_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/graphics/pango
 endif # END USE_PANGO
 
+# ---
+# Windows plugin support
+# ---
+if TARGET_WIN32
+webcoregtk_cppflags += \
+	-I$(srcdir)/Source/WebCore/platform/graphics/win
+endif # END TARGET_WIN32
+
 # ----
 # HTML Details Element
 # ----
@@ -851,6 +859,11 @@ libWebCore_la_CPPFLAGS = \
 	$(UNICODE_CFLAGS) \
 	$(XRENDER_CFLAGS) \
 	$(XT_CFLAGS)
+
+if TARGET_WIN32
+# PluginPackageWin.cpp needs the symbols from version dll
+libWebCore_la_LIBADD = -lversion
+endif
 
 # We have a different library with only the files that require GTK+. It allows us
 # to build a common WebCore lib and two different gtk WebCore libs depending on

@@ -15,6 +15,11 @@ libWTF_la_LIBADD = \
 	$(WINMM_LIBS) \
 	-lpthread
 
+if TARGET_WIN32
+# OwnPtrWin.cpp needs the symbols from gdi32 dll
+libWTF_la_LIBADD += -lgdi32
+endif
+
 libWTF_la_CXXFLAGS = \
 	$(global_cxxflags) \
 	$(libWTF_la_CFLAGS)
