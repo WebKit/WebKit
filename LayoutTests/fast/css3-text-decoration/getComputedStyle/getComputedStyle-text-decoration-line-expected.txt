@@ -1,0 +1,93 @@
+Test to make sure -webkit-text-decoration-line property returns values properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial value:
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line') is null
+PASS computedStyle.webkitTextDecorationLine is 'none'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'none'
+
+Initial value (explicit):
+PASS e.style.webkitTextDecorationLine is 'initial'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'initial'
+PASS computedStyle.webkitTextDecorationLine is 'none'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'none'
+
+Value 'none':
+PASS e.style.webkitTextDecorationLine is 'initial'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'initial'
+PASS computedStyle.webkitTextDecorationLine is 'none'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'none'
+
+Value 'underline':
+PASS e.style.webkitTextDecorationLine is 'underline'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline'
+PASS computedStyle.webkitTextDecorationLine is 'underline'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline'
+
+Value 'overline':
+PASS e.style.webkitTextDecorationLine is 'overline'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'overline'
+PASS computedStyle.webkitTextDecorationLine is 'overline'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'overline'
+
+Value 'line-through':
+PASS e.style.webkitTextDecorationLine is 'line-through'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'line-through'
+PASS computedStyle.webkitTextDecorationLine is 'line-through'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'line-through'
+
+Value 'underline overline line-through':
+PASS e.style.webkitTextDecorationLine is 'underline overline line-through'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline overline line-through'
+PASS computedStyle.webkitTextDecorationLine is 'underline overline line-through'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline overline line-through'
+
+Value 'blink' (invalid, last valid value is used):
+PASS e.style.webkitTextDecorationLine is 'underline overline line-through'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline overline line-through'
+PASS computedStyle.webkitTextDecorationLine is 'underline overline line-through'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline overline line-through'
+
+Value '':
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line') is null
+PASS computedStyle.webkitTextDecorationLine is 'none'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'none'
+
+Parent gets 'underline' value:
+PASS e.style.webkitTextDecorationLine is 'underline'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline'
+PASS computedStyle.webkitTextDecorationLine is 'underline'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline'
+
+Ancestor should explicitly inherit value from parent when 'inherit' value is used:
+PASS e.style.webkitTextDecorationLine is 'inherit'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'inherit'
+PASS computedStyle.webkitTextDecorationLine is 'underline'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,19 @@
+2012-08-20  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [css3-text] Add getComputedStyle tests for -webkit-text-decoration-line
+        https://bugs.webkit.org/show_bug.cgi?id=94108
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Changeset r125205 introduced new CSS3 property "-webkit-text-decoration-line",
+        with included basic getComputedStyle* layout tests for parsing check. This
+        patch adds a new, more robust getComputedStyle-based layout test for this
+        property.
+
+        * fast/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-line-expected.txt: Added.
+        * fast/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-line.html: Added.
+        * fast/css3-text-decoration/getComputedStyle/script-tests/getComputedStyle-text-decoration-line.js: Added.
+
 2012-08-20  John Mellor  <johnme@chromium.org>
 
         Text Autosizing: Only take into account block width <= document layout width.
