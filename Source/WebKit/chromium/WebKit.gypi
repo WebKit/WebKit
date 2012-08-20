@@ -175,6 +175,35 @@
             'tests/WebViewTest.cpp',
         ],
 
+        'webkit_compositor_bindings_files': [
+            'src/WebAnimationCurveCommon.cpp',
+            'src/WebAnimationCurveCommon.h',
+            'src/WebAnimationImpl.cpp',
+            'src/WebAnimationImpl.h',
+            'src/WebCompositorInputHandlerImpl.cpp',
+            'src/WebCompositorInputHandlerImpl.h',
+            'src/WebContentLayer.cpp',
+            'src/WebContentLayerImpl.cpp',
+            'src/WebContentLayerImpl.h',
+            'src/WebExternalTextureLayer.cpp',
+            'src/WebFloatAnimationCurve.cpp',
+            'src/WebIOSurfaceLayer.cpp',
+            'src/WebImageLayer.cpp',
+            'src/WebLayer.cpp',
+            'src/WebLayerImpl.cpp',
+            'src/WebLayerImpl.h',
+            'src/WebLayerTreeView.cpp',
+            'src/WebLayerTreeViewImpl.cpp',
+            'src/WebLayerTreeViewImpl.h',
+            'src/WebScrollableLayer.cpp',
+            'src/WebScrollbarLayer.cpp',
+            'src/WebSolidColorLayer.cpp',
+            'src/WebSolidColorLayerImpl.cpp',
+            'src/WebSolidColorLayerImpl.h',
+            'src/WebTransformAnimationCurve.cpp',
+            'src/WebVideoLayer.cpp',
+        ],
+
         'conditions': [
             ['OS=="win"', {
                 'webkit_unittest_files': [

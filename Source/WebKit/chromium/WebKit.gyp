@@ -54,6 +54,10 @@
         # stored as is. Otherwise, a concatenated file is stored.
         'debug_devtools%': 0,
 
+        # If set to 1, links against the compositor bindings from the chromium repository
+        # instead of the compositor-implementation binding files in WebKit/chromium/src.
+        'use_libcc_for_compositor%': 0,
+
         # List of DevTools source files, ordered by dependencies. It is used both
         # for copying them to resource dir, and for generating 'devtools.html' file.
         'devtools_files': [
@@ -470,12 +474,8 @@
                 'src/WebTextCheckingCompletionImpl.cpp',
                 'src/WebTextCheckingResult.cpp',
                 'src/WebAccessibilityObject.cpp',
-                'src/WebAnimationImpl.cpp',
-                'src/WebAnimationImpl.h',
                 'src/WebAnimationControllerImpl.cpp',
                 'src/WebAnimationControllerImpl.h',
-                'src/WebAnimationCurveCommon.cpp',
-                'src/WebAnimationCurveCommon.h',
                 'src/WebArrayBuffer.cpp',
                 'src/WebArrayBufferView.cpp',
                 'src/WebBindings.cpp',
@@ -484,11 +484,6 @@
                 'src/WebCache.cpp',
                 'src/WebColorName.cpp',
                 'src/WebCommon.cpp',
-                'src/WebCompositorInputHandlerImpl.cpp',
-                'src/WebCompositorInputHandlerImpl.h',
-                'src/WebContentLayer.cpp',
-                'src/WebContentLayerImpl.cpp',
-                'src/WebContentLayerImpl.h',
                 'src/WebCrossOriginPreflightResultCache.cpp',
                 'src/WebCursorInfo.cpp',
                 'src/WebDOMEvent.cpp',
@@ -515,12 +510,10 @@
                 'src/WebElement.cpp',
                 'src/WebEntities.cpp',
                 'src/WebEntities.h',
-                'src/WebExternalTextureLayer.cpp',
                 'src/WebFileChooserCompletionImpl.cpp',
                 'src/WebFileChooserCompletionImpl.h',
                 'src/WebFileSystemCallbacksImpl.cpp',
                 'src/WebFileSystemCallbacksImpl.h',
-                'src/WebFloatAnimationCurve.cpp',
                 'src/WebFontCache.cpp',
                 'src/WebFontDescription.cpp',
                 'src/WebFontImpl.cpp',
@@ -564,9 +557,7 @@
                 'src/WebIDBTransactionImpl.h',
                 'src/WebIDBTransactionCallbacksImpl.cpp',
                 'src/WebIDBTransactionCallbacksImpl.h',
-                'src/WebIOSurfaceLayer.cpp',
                 'src/WebImageDecoder.cpp',
-                'src/WebImageLayer.cpp',
                 'src/WebImageSkia.cpp',
                 'src/WebInputElement.cpp',
                 'src/WebInputEvent.cpp',
@@ -577,12 +568,6 @@
                 'src/WebIntentServiceInfo.cpp',
                 'src/WebKit.cpp',
                 'src/WebLabelElement.cpp',
-                'src/WebLayer.cpp',
-                'src/WebLayerImpl.cpp',
-                'src/WebLayerImpl.h',
-                'src/WebLayerTreeView.cpp',
-                'src/WebLayerTreeViewImpl.cpp',
-                'src/WebLayerTreeViewImpl.h',
                 'src/WebMediaPlayerClientImpl.cpp',
                 'src/WebMediaPlayerClientImpl.h',
                 'src/WebMediaStreamRegistry.cpp',
@@ -618,8 +603,6 @@
                 'src/WebScopedMicrotaskSuppression.cpp',
                 'src/WebScopedUserGesture.cpp',
                 'src/WebScriptController.cpp',
-                'src/WebScrollbarLayer.cpp',
-                'src/WebScrollableLayer.cpp',
                 'src/WebScrollbarImpl.cpp',
                 'src/WebScrollbarImpl.h',
                 'src/WebScrollbarThemeClientImpl.cpp',
@@ -638,8 +621,6 @@
                 'src/WebSocket.cpp',
                 'src/WebSocketImpl.cpp',
                 'src/WebSocketImpl.h',
-                'src/WebSolidColorLayer.cpp',
-                'src/WebSolidColorLayerImpl.cpp',
                 'src/WebSpeechGrammar.cpp',
                 'src/WebSpeechInputResult.cpp',
                 'src/WebSpeechRecognitionHandle.cpp',
@@ -650,12 +631,10 @@
                 'src/WebSurroundingText.cpp',
                 'src/WebTextInputInfo.cpp',
                 'src/WebTextRun.cpp',
-                'src/WebTransformAnimationCurve.cpp',
                 'src/WebURLLoadTiming.cpp',
                 'src/WebScopedUserGesture.cpp',
                 'src/WebTextFieldDecoratorClient.cpp',
                 'src/WebUserMediaRequest.cpp',
-                'src/WebVideoLayer.cpp',
                 'src/WebViewBenchmarkSupportImpl.cpp',
                 'src/WebViewBenchmarkSupportImpl.h',
                 'src/WebViewImpl.cpp',
@@ -852,6 +831,15 @@
                     'xcode_settings': {
                         'WARNING_CFLAGS': ['-Wglobal-constructors'],
                     },
+                }],
+                ['use_libcc_for_compositor==1', {
+                    'dependencies': [
+                        '<(chromium_src_dir)/webkit/compositor/compositor.gyp:webkit_compositor',
+                    ],
+                }, { # else: use_libcc_for_compositor==0
+                    'sources': [
+                        '<@(webkit_compositor_bindings_files)',
+                    ]
                 }],
             ],
             'target_conditions': [

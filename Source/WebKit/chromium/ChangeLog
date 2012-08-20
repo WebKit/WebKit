@@ -1,3 +1,16 @@
+2012-08-19  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Put webkit compositor binding files in separate conditionally included gyp section
+        https://bugs.webkit.org/show_bug.cgi?id=94392
+
+        Reviewed by Dirk Pranke.
+
+        This allows the use_libcc_for_compositor gyp variable to control whether the webkit bindings are pulled from the
+        WebKit repository or an external target.
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+
 2012-08-19  Rick Byers  <rbyers@chromium.org>
 
         [chromium] Add additional fields to WebGestureEvent
