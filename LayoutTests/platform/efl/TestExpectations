@@ -172,12 +172,14 @@ BUGWK86084 : svg/dom/SVGScriptElement/script-onerror-bubbling.svg = TEXT PASS
 BUGWK60103 : fast/replaced/border-radius-clip.html = TEXT PASS
 BUGWK91366 : fast/forms/number/number-spinbutton-gets-disabled-or-readonly.html = TEXT PASS
 BUGWK92112 : fast/overflow/overflow-height-float-not-removed-crash2.html = CRASH PASS
+BUGWK93589 : svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg = TEXT PASS
 
 // Flaky inspector tests
 BUGWK91958 : http/tests/inspector-enabled/injected-script-discard.html = TEXT PASS
 BUGWK85615 : http/tests/inspector/resource-har-pages.html = TEXT PASS
 BUGWKEFL : http/tests/inspector/search/resources-search-match-index.html = TEXT PASS
 BUGWK93820 : inspector/console/console-format-collections.html = TEXT PASS
+BUGWKEFL : inspector/profiler/heap-snapshot.html = TEXT PASS
 BUGWKEFL : inspector/timeline/timeline-enum-stability.html = TEXT PASS
 
 // Aborting application cache downloads is flaky.
