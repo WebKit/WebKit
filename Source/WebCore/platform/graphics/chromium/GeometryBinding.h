@@ -26,6 +26,8 @@
 #ifndef GeometryBinding_h
 #define GeometryBinding_h
 
+#include "FloatRect.h"
+
 #if USE(ACCELERATED_COMPOSITING)
 
 namespace WebKit {
@@ -36,7 +38,7 @@ namespace WebCore {
 
 class GeometryBinding {
 public:
-    explicit GeometryBinding(WebKit::WebGraphicsContext3D*);
+    GeometryBinding(WebKit::WebGraphicsContext3D*, const FloatRect& quadVertexRect);
     ~GeometryBinding();
 
     bool initialized() const { return m_initialized; }

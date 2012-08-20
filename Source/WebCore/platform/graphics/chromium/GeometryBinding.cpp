@@ -35,17 +35,17 @@
 
 namespace WebCore {
 
-GeometryBinding::GeometryBinding(WebKit::WebGraphicsContext3D* context)
+GeometryBinding::GeometryBinding(WebKit::WebGraphicsContext3D* context, const FloatRect& quadVertexRect)
     : m_context(context)
     , m_quadVerticesVbo(0)
     , m_quadElementsVbo(0)
     , m_initialized(false)
 {
     // Vertex positions and texture coordinates for the 4 corners of a 1x1 quad.
-    float vertices[] = { -0.5f,  0.5f, 0.0f, 0.0f,  1.0f,
-                         -0.5f, -0.5f, 0.0f, 0.0f,  0.0f,
-                         0.5f, -0.5f, 0.0f, 1.0f,  0.0f,
-                         0.5f,  0.5f, 0.0f, 1.0f,  1.0f };
+    float vertices[] = { quadVertexRect.x(), quadVertexRect.maxY(), 0.0f, 0.0f,  1.0f,
+                         quadVertexRect.x(), quadVertexRect.y(), 0.0f, 0.0f,  0.0f,
+                         quadVertexRect.maxX(), quadVertexRect.y(), 0.0f, 1.0f,  0.0f,
+                         quadVertexRect.maxX(),  quadVertexRect.maxY(), 0.0f, 1.0f,  1.0f };
     uint16_t indices[] = { 0, 1, 2, 0, 2, 3, // The two triangles that make up the layer quad.
                            0, 1, 2, 3}; // A line path for drawing the layer border.
 

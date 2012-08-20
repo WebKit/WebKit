@@ -51,7 +51,6 @@ public:
     virtual void copyTexture(Parameters) = 0;
     virtual void flush() = 0;
 
-protected:
     virtual ~TextureCopier() { }
 };
 

@@ -54,6 +54,7 @@
 #include "SkColor.h"
 #include "ThrottledTextureUploader.h"
 #include "TraceEvent.h"
+#include "UnthrottledTextureUploader.h"
 #include <public/WebGraphicsContext3D.h>
 #include <public/WebSharedGraphicsContext3D.h>
 #include <public/WebVideoFrame.h>
@@ -71,40 +72,6 @@ namespace WebCore {
 
 namespace {
 
-static WebTransformationMatrix orthoMatrix(float left, float right, float bottom, float top)
-{
-    float deltaX = right - left;
-    float deltaY = top - bottom;
-    WebTransformationMatrix ortho;
-    if (!deltaX || !deltaY)
-        return ortho;
-    ortho.setM11(2.0f / deltaX);
-    ortho.setM41(-(right + left) / deltaX);
-    ortho.setM22(2.0f / deltaY);
-    ortho.setM42(-(top + bottom) / deltaY);
-
-    // Z component of vertices is always set to zero as we don't use the depth buffer
-    // while drawing.
-    ortho.setM33(0);
-
-    return ortho;
-}
-
-static WebTransformationMatrix screenMatrix(int x, int y, int width, int height)
-{
-    WebTransformationMatrix screen;
-
-    // Map to viewport.
-    screen.translate3d(x, y, 0);
-    screen.scale3d(width, height, 0);
-
-    // Map x, y and z to unit square.
-    screen.translate3d(0.5, 0.5, 0.5);
-    screen.scale3d(0.5, 0.5, 0.5);
-
-    return screen;
-}
-
 bool needsIOSurfaceReadbackWorkaround()
 {
 #if OS(DARWIN)
@@ -114,45 +81,7 @@ bool needsIOSurfaceReadbackWorkaround()
 #endif
 }
 
-class UnthrottledTextureUploader : public TextureUploader {
-    WTF_MAKE_NONCOPYABLE(UnthrottledTextureUploader);
-public:
-    static PassOwnPtr<UnthrottledTextureUploader> create()
-    {
-        return adoptPtr(new UnthrottledTextureUploader());
-    }
-    virtual ~UnthrottledTextureUploader() { }
-
-    virtual bool isBusy() OVERRIDE { return false; }
-    virtual void beginUploads() OVERRIDE { }
-    virtual void endUploads() OVERRIDE { }
-    virtual void uploadTexture(CCResourceProvider* resourceProvider, Parameters upload) OVERRIDE { upload.texture->updateRect(resourceProvider, upload.sourceRect, upload.destOffset); }
-
-protected:
-    UnthrottledTextureUploader() { }
-};
-
 } // anonymous namespace
-
-class LayerRendererChromium::CachedTexture : public CCScopedTexture {
-    WTF_MAKE_NONCOPYABLE(CachedTexture);
-public:
-    static PassOwnPtr<CachedTexture> create(CCResourceProvider* resourceProvider) { return adoptPtr(new CachedTexture(resourceProvider)); }
-    virtual ~CachedTexture() { }
-
-    bool isComplete() const { return m_isComplete; }
-    void setIsComplete(bool isComplete) { m_isComplete = isComplete; }
-
-protected:
-    explicit CachedTexture(CCResourceProvider* resourceProvider)
-        : CCScopedTexture(resourceProvider)
-        , m_isComplete(false)
-    {
-    }
-
-private:
-    bool m_isComplete;
-};
 
 PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(CCRendererClient* client, CCResourceProvider* resourceProvider, TextureUploaderOption textureUploaderSetting)
 {
@@ -166,10 +95,9 @@ PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(CCRendererClient
 LayerRendererChromium::LayerRendererChromium(CCRendererClient* client,
                                              CCResourceProvider* resourceProvider,
                                              TextureUploaderOption textureUploaderSetting)
-    : CCRenderer(client)
+    : CCDirectRenderer(client, resourceProvider)
     , m_offscreenFramebufferId(0)
     , m_sharedGeometryQuad(FloatRect(-0.5f, -0.5f, 1.0f, 1.0f))
-    , m_resourceProvider(resourceProvider)
     , m_context(resourceProvider->graphicsContext3D())
     , m_isViewportChanged(false)
     , m_isFramebufferDiscarded(false)
@@ -299,83 +227,7 @@ void LayerRendererChromium::clearFramebuffer(DrawingFrame& frame)
         m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
 }
 
-// static
-IntSize LayerRendererChromium::renderPassTextureSize(const CCRenderPass* pass)
-{
-    return pass->outputRect().size();
-}
-
-// static
-GC3Denum LayerRendererChromium::renderPassTextureFormat(const CCRenderPass*)
-{
-    return GraphicsContext3D::RGBA;
-}
-
-void LayerRendererChromium::decideRenderPassAllocationsForFrame(const CCRenderPassList& renderPassesInDrawOrder)
-{
-    HashMap<int, const CCRenderPass*> renderPassesInFrame;
-    for (size_t i = 0; i < renderPassesInDrawOrder.size(); ++i)
-        renderPassesInFrame.set(renderPassesInDrawOrder[i]->id(), renderPassesInDrawOrder[i]);
-
-    Vector<int> passesToDelete;
-    HashMap<int, OwnPtr<CachedTexture> >::const_iterator passIterator;
-    for (passIterator = m_renderPassTextures.begin(); passIterator != m_renderPassTextures.end(); ++passIterator) {
-        const CCRenderPass* renderPassInFrame = renderPassesInFrame.get(passIterator->first);
-        if (!renderPassInFrame) {
-            passesToDelete.append(passIterator->first);
-            continue;
-        }
-
-        const IntSize& requiredSize = renderPassTextureSize(renderPassInFrame);
-        GC3Denum requiredFormat = renderPassTextureFormat(renderPassInFrame);
-        CachedTexture* texture = passIterator->second.get();
-        ASSERT(texture);
-
-        if (texture->id() && (texture->size() != requiredSize || texture->format() != requiredFormat))
-            texture->free();
-    }
-
-    // Delete RenderPass textures from the previous frame that will not be used again.
-    for (size_t i = 0; i < passesToDelete.size(); ++i)
-        m_renderPassTextures.remove(passesToDelete[i]);
-
-    for (size_t i = 0; i < renderPassesInDrawOrder.size(); ++i) {
-        if (!m_renderPassTextures.contains(renderPassesInDrawOrder[i]->id())) {
-            OwnPtr<CachedTexture> texture = CachedTexture::create(m_resourceProvider);
-            m_renderPassTextures.set(renderPassesInDrawOrder[i]->id(), texture.release());
-        }
-    }
-}
-
-bool LayerRendererChromium::haveCachedResourcesForRenderPassId(int id) const
-{
-    CachedTexture* texture = m_renderPassTextures.get(id);
-    return texture && texture->id() && texture->isComplete();
-}
-
-void LayerRendererChromium::drawFrame(const CCRenderPassList& renderPassesInDrawOrder, const CCRenderPassIdHashMap& renderPassesById)
-{
-    const CCRenderPass* rootRenderPass = renderPassesInDrawOrder.last();
-    ASSERT(rootRenderPass);
-
-    DrawingFrame frame;
-    frame.renderPassesById = &renderPassesById;
-    frame.rootRenderPass = rootRenderPass;
-
-    frame.rootDamageRect = m_capabilities.usingPartialSwap ? frame.rootRenderPass->damageRect() : frame.rootRenderPass->outputRect();
-    frame.rootDamageRect.intersect(IntRect(IntPoint::zero(), viewportSize()));
-
-    beginDrawingFrame();
-
-    for (size_t i = 0; i < renderPassesInDrawOrder.size(); ++i)
-        drawRenderPass(frame, renderPassesInDrawOrder[i]);
-
-    finishDrawingFrame();
-
-    m_swapBufferRect.unite(enclosingIntRect(frame.rootDamageRect));
-}
-
-void LayerRendererChromium::beginDrawingFrame()
+void LayerRendererChromium::beginDrawingFrame(DrawingFrame& frame)
 {
     // FIXME: Remove this once framebuffer is automatically recreated on first use
     ensureFramebuffer();
@@ -409,39 +261,8 @@ void LayerRendererChromium::doNoOp()
     GLC(m_context, m_context->flush());
 }
 
-void LayerRendererChromium::drawRenderPass(DrawingFrame& frame, const CCRenderPass* renderPass)
+void LayerRendererChromium::drawQuad(DrawingFrame& frame, const CCDrawQuad* quad)
 {
-    if (!useRenderPass(frame, renderPass))
-        return;
-
-    FloatRect scissorRect = renderPass->outputRect();
-    if (frame.rootDamageRect != frame.rootRenderPass->outputRect()) {
-        WebTransformationMatrix inverseTransformToRoot = renderPass->transformToRootTarget().inverse();
-        scissorRect.intersect(CCMathUtil::projectClippedRect(inverseTransformToRoot, frame.rootDamageRect));
-    }
-
-    setScissorToRect(frame, enclosingIntRect(scissorRect));
-    clearFramebuffer(frame);
-
-    const CCQuadList& quadList = renderPass->quadList();
-    for (CCQuadList::constBackToFrontIterator it = quadList.backToFrontBegin(); it != quadList.backToFrontEnd(); ++it)
-        drawQuad(frame, it->get(), scissorRect);
-
-    CachedTexture* texture = m_renderPassTextures.get(renderPass->id());
-    if (texture)
-        texture->setIsComplete(!renderPass->hasOcclusionFromOutsideTargetSurface());
-}
-
-void LayerRendererChromium::drawQuad(DrawingFrame& frame, const CCDrawQuad* quad, FloatRect scissorRect)
-{
-    scissorRect.intersect(quad->clippedRectInTarget());
-    if (scissorRect.isEmpty())
-        return;
-
-    // For now, we always do per-quad scissoring because some quad types draw their
-    // un-clipped bounds, relying on scissoring for correct clipping.
-    setScissorToRect(frame, enclosingIntRect(scissorRect));
-
     if (quad->needsBlending())
         GLC(m_context, m_context->enable(GraphicsContext3D::BLEND));
     else
@@ -481,7 +302,7 @@ void LayerRendererChromium::drawQuad(DrawingFrame& frame, const CCDrawQuad* quad
     }
 }
 
-void LayerRendererChromium::drawCheckerboardQuad(DrawingFrame& frame, const CCCheckerboardDrawQuad* quad)
+void LayerRendererChromium::drawCheckerboardQuad(const DrawingFrame& frame, const CCCheckerboardDrawQuad* quad)
 {
     const TileCheckerboardProgram* program = tileCheckerboardProgram();
     ASSERT(program && program->initialized());
@@ -503,7 +324,7 @@ void LayerRendererChromium::drawCheckerboardQuad(DrawingFrame& frame, const CCCh
     drawQuadGeometry(frame, quad->quadTransform(), quad->quadRect(), program->vertexShader().matrixLocation());
 }
 
-void LayerRendererChromium::drawDebugBorderQuad(DrawingFrame& frame, const CCDebugBorderDrawQuad* quad)
+void LayerRendererChromium::drawDebugBorderQuad(const DrawingFrame& frame, const CCDebugBorderDrawQuad* quad)
 {
     static float glMatrix[16];
     const SolidColorProgram* program = solidColorProgram();
@@ -760,7 +581,7 @@ void LayerRendererChromium::drawRenderPassQuad(DrawingFrame& frame, const CCRend
     drawQuadGeometry(frame, quad->quadTransform(), quad->quadRect(), shaderMatrixLocation);
 }
 
-void LayerRendererChromium::drawSolidColorQuad(DrawingFrame& frame, const CCSolidColorDrawQuad* quad)
+void LayerRendererChromium::drawSolidColorQuad(const DrawingFrame& frame, const CCSolidColorDrawQuad* quad)
 {
     const SolidColorProgram* program = solidColorProgram();
     GLC(context(), context()->useProgram(program->program()));
@@ -799,7 +620,7 @@ static void tileUniformLocation(T program, TileProgramUniforms& uniforms)
     uniforms.edgeLocation = program->fragmentShader().edgeLocation();
 }
 
-void LayerRendererChromium::drawTileQuad(DrawingFrame& frame, const CCTileDrawQuad* quad)
+void LayerRendererChromium::drawTileQuad(const DrawingFrame& frame, const CCTileDrawQuad* quad)
 {
     IntRect tileRect = quad->quadVisibleRect();
 
@@ -966,7 +787,7 @@ void LayerRendererChromium::drawTileQuad(DrawingFrame& frame, const CCTileDrawQu
     drawQuadGeometry(frame, quad->quadTransform(), centeredRect, uniforms.matrixLocation);
 }
 
-void LayerRendererChromium::drawYUVVideoQuad(DrawingFrame& frame, const CCYUVVideoDrawQuad* quad)
+void LayerRendererChromium::drawYUVVideoQuad(const DrawingFrame& frame, const CCYUVVideoDrawQuad* quad)
 {
     const VideoYUVProgram* program = videoYUVProgram();
     ASSERT(program && program->initialized());
@@ -1026,7 +847,7 @@ void LayerRendererChromium::drawYUVVideoQuad(DrawingFrame& frame, const CCYUVVid
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
 }
 
-void LayerRendererChromium::drawStreamVideoQuad(DrawingFrame& frame, const CCStreamVideoDrawQuad* quad)
+void LayerRendererChromium::drawStreamVideoQuad(const DrawingFrame& frame, const CCStreamVideoDrawQuad* quad)
 {
     static float glMatrix[16];
 
@@ -1071,7 +892,7 @@ struct TexTransformTextureProgramBinding : TextureProgramBinding {
     int texTransformLocation;
 };
 
-void LayerRendererChromium::drawTextureQuad(DrawingFrame& frame, const CCTextureDrawQuad* quad)
+void LayerRendererChromium::drawTextureQuad(const DrawingFrame& frame, const CCTextureDrawQuad* quad)
 {
     ASSERT(CCProxy::isImplThread());
 
@@ -1115,7 +936,7 @@ void LayerRendererChromium::drawTextureQuad(DrawingFrame& frame, const CCTexture
         GLC(m_context, m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
 }
 
-void LayerRendererChromium::drawIOSurfaceQuad(DrawingFrame& frame, const CCIOSurfaceDrawQuad* quad)
+void LayerRendererChromium::drawIOSurfaceQuad(const DrawingFrame& frame, const CCIOSurfaceDrawQuad* quad)
 {
     ASSERT(CCProxy::isImplThread());
     TexTransformTextureProgramBinding binding;
@@ -1137,8 +958,11 @@ void LayerRendererChromium::drawIOSurfaceQuad(DrawingFrame& frame, const CCIOSur
     GLC(context(), context()->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, 0));
 }
 
-void LayerRendererChromium::finishDrawingFrame()
+void LayerRendererChromium::finishDrawingFrame(DrawingFrame& frame)
 {
+    m_currentFramebufferLock.clear();
+    m_swapBufferRect.unite(enclosingIntRect(frame.rootDamageRect));
+
     GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
     GLC(m_context, m_context->disable(GraphicsContext3D::BLEND));
 }
@@ -1186,20 +1010,18 @@ void LayerRendererChromium::setShaderOpacity(float opacity, int alphaLocation)
         GLC(m_context, m_context->uniform1f(alphaLocation, opacity));
 }
 
-void LayerRendererChromium::drawQuadGeometry(DrawingFrame& frame, const WebKit::WebTransformationMatrix& drawTransform, const FloatRect& quadRect, int matrixLocation)
+void LayerRendererChromium::drawQuadGeometry(const DrawingFrame& frame, const WebKit::WebTransformationMatrix& drawTransform, const FloatRect& quadRect, int matrixLocation)
 {
-    WebTransformationMatrix quadMatrix = drawTransform;
-    quadMatrix.translate(0.5 * quadRect.width() + quadRect.x(), 0.5 * quadRect.height() + quadRect.y());
-    quadMatrix.scaleNonUniform(quadRect.width(), quadRect.height());
-
+    WebTransformationMatrix quadRectMatrix;
+    quadRectTransform(&quadRectMatrix, drawTransform, quadRect);
     static float glMatrix[16];
-    toGLMatrix(&glMatrix[0], frame.projectionMatrix * quadMatrix);
+    toGLMatrix(&glMatrix[0], frame.projectionMatrix * quadRectMatrix);
     GLC(m_context, m_context->uniformMatrix4fv(matrixLocation, 1, false, &glMatrix[0]));
 
     GLC(m_context, m_context->drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0));
 }
 
-void LayerRendererChromium::copyTextureToFramebuffer(DrawingFrame& frame, int textureId, const IntRect& rect, const WebTransformationMatrix& drawMatrix)
+void LayerRendererChromium::copyTextureToFramebuffer(const DrawingFrame& frame, int textureId, const IntRect& rect, const WebTransformationMatrix& drawMatrix)
 {
     const RenderPassProgram* program = renderPassProgram();
 
@@ -1384,31 +1206,6 @@ bool LayerRendererChromium::getFramebufferTexture(CCScopedTexture* texture, cons
     return true;
 }
 
-bool LayerRendererChromium::isCurrentRenderPass(DrawingFrame& frame, const CCRenderPass* renderPass)
-{
-    return frame.currentRenderPass == renderPass && !frame.currentTexture;
-}
-
-bool LayerRendererChromium::useRenderPass(DrawingFrame& frame, const CCRenderPass* renderPass)
-{
-    frame.currentRenderPass = renderPass;
-    frame.currentTexture = 0;
-
-    if (renderPass == frame.rootRenderPass) {
-        frame.currentFramebufferLock.clear();
-        GLC(m_context, m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
-        setDrawFramebufferRect(frame, renderPass->outputRect(), true);
-        return true;
-    }
-
-    CachedTexture* texture = m_renderPassTextures.get(renderPass->id());
-    ASSERT(texture);
-    if (!texture->id() && !texture->allocate(CCRenderer::ImplPool, renderPassTextureSize(renderPass), renderPassTextureFormat(renderPass), CCResourceProvider::TextureUsageFramebuffer))
-        return false;
-
-    return bindFramebufferToTexture(frame, texture, renderPass->outputRect());
-}
-
 bool LayerRendererChromium::useScopedTexture(DrawingFrame& frame, const CCScopedTexture* texture, const IntRect& viewportRect)
 {
     ASSERT(texture->id());
@@ -1418,13 +1215,19 @@ bool LayerRendererChromium::useScopedTexture(DrawingFrame& frame, const CCScoped
     return bindFramebufferToTexture(frame, texture, viewportRect);
 }
 
+void LayerRendererChromium::bindFramebufferToOutputSurface(DrawingFrame& frame)
+{
+    m_currentFramebufferLock.clear();
+    GLC(m_context, m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
+}
+
 bool LayerRendererChromium::bindFramebufferToTexture(DrawingFrame& frame, const CCScopedTexture* texture, const IntRect& framebufferRect)
 {
     ASSERT(texture->id());
 
     GLC(m_context, m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_offscreenFramebufferId));
-    frame.currentFramebufferLock = adoptPtr(new CCScopedLockResourceForWrite(m_resourceProvider, texture->id()));
-    unsigned textureId = frame.currentFramebufferLock->textureId();
+    m_currentFramebufferLock = adoptPtr(new CCScopedLockResourceForWrite(m_resourceProvider, texture->id()));
+    unsigned textureId = m_currentFramebufferLock->textureId();
     GLC(m_context, m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, textureId, 0));
 
 #if !defined ( NDEBUG )
@@ -1434,51 +1237,32 @@ bool LayerRendererChromium::bindFramebufferToTexture(DrawingFrame& frame, const 
     }
 #endif
 
-    setDrawFramebufferRect(frame, framebufferRect, false);
+    initializeMatrices(frame, framebufferRect, false);
+    setDrawViewportSize(framebufferRect.size());
 
     return true;
 }
 
-// Sets the scissor region to the given rectangle. The coordinate system for the
-// scissorRect has its origin at the top left corner of the current visible rect.
-void LayerRendererChromium::setScissorToRect(DrawingFrame& frame, const IntRect& scissorRect)
+void LayerRendererChromium::enableScissorTestRect(const IntRect& scissorRect)
 {
-    IntRect framebufferOutputRect = frame.currentRenderPass->outputRect();
-
     GLC(m_context, m_context->enable(GraphicsContext3D::SCISSOR_TEST));
+    GLC(m_context, m_context->scissor(scissorRect.x(), scissorRect.y(), scissorRect.width(), scissorRect.height()));
+}
 
-    // The scissor coordinates must be supplied in viewport space so we need to offset
-    // by the relative position of the top left corner of the current render pass.
-    int scissorX = scissorRect.x() - framebufferOutputRect.x();
-    // When rendering to the default render surface we're rendering upside down so the top
-    // of the GL scissor is the bottom of our layer.
-    // But, if rendering to offscreen texture, we reverse our sense of 'upside down'.
-    int scissorY;
-    if (isCurrentRenderPass(frame, frame.rootRenderPass))
-        scissorY = framebufferOutputRect.height() - (scissorRect.maxY() - framebufferOutputRect.y());
-    else
-        scissorY = scissorRect.y() - framebufferOutputRect.y();
-    GLC(m_context, m_context->scissor(scissorX, scissorY, scissorRect.width(), scissorRect.height()));
+void LayerRendererChromium::disableScissorTest()
+{
+    GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
+}
+
+void LayerRendererChromium::setDrawViewportSize(const IntSize& viewportSize)
+{
+    GLC(m_context, m_context->viewport(0, 0, viewportSize.width(), viewportSize.height()));
 }
 
 bool LayerRendererChromium::makeContextCurrent()
 {
     return m_context->makeContextCurrent();
 }
-
-// Sets the coordinate range of content that ends being drawn onto the target render surface.
-// The target render surface is assumed to have an origin at 0, 0 and the width and height of
-// of the drawRect.
-void LayerRendererChromium::setDrawFramebufferRect(DrawingFrame& frame, const IntRect& drawRect, bool flipY)
-{
-    if (flipY)
-        frame.projectionMatrix = orthoMatrix(drawRect.x(), drawRect.maxX(), drawRect.maxY(), drawRect.y());
-    else
-        frame.projectionMatrix = orthoMatrix(drawRect.x(), drawRect.maxX(), drawRect.y(), drawRect.maxY());
-    GLC(m_context, m_context->viewport(0, 0, drawRect.width(), drawRect.height()));
-    frame.windowMatrix = screenMatrix(0, 0, drawRect.width(), drawRect.height());
-}
-
 
 bool LayerRendererChromium::initializeSharedObjects()
 {
@@ -1490,7 +1274,7 @@ bool LayerRendererChromium::initializeSharedObjects()
 
     // We will always need these programs to render, so create the programs eagerly so that the shader compilation can
     // start while we do other work. Other programs are created lazily on first access.
-    m_sharedGeometry = adoptPtr(new GeometryBinding(m_context));
+    m_sharedGeometry = adoptPtr(new GeometryBinding(m_context, quadVertexRect()));
     m_renderPassProgram = adoptPtr(new RenderPassProgram(m_context));
     m_tileProgram = adoptPtr(new TileProgram(m_context));
     m_tileProgramOpaque = adoptPtr(new TileProgramOpaque(m_context));
