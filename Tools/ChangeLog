@@ -1,5 +1,15 @@
 2012-08-20  Dirk Pranke  <dpranke@chromium.org>
 
+        Fix change for timeout detection to not crash if we have no output :)
+        https://bugs.webkit.org/show_bug.cgi?id=94505
+
+        Unreviewed, build fix.
+
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.run_test):
+
+2012-08-20  Dirk Pranke  <dpranke@chromium.org>
+
         temporarily disable ImageDiff on WK2 ports for ref tests
         https://bugs.webkit.org/show_bug.cgi?id=94517
 
