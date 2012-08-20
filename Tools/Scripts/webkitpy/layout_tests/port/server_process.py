@@ -213,7 +213,7 @@ class ServerProcess(object):
         output, self._error = self._split_string_after_index(self._error, bytes_count)
         return output
 
-    def _wait_for_data_and_update_buffers_using_select(self, deadline):
+    def _wait_for_data_and_update_buffers_using_select(self, deadline, stopping=False):
         out_fd = self._proc.stdout.fileno()
         err_fd = self._proc.stderr.fileno()
         select_fds = (out_fd, err_fd)
@@ -229,16 +229,22 @@ class ServerProcess(object):
         try:
             if out_fd in read_fds:
                 data = self._proc.stdout.read()
-                if not data:
-                    _log.warning('unexpected EOF of stdout')
-                    self._crashed = True
+                if not data and not stopping:
+                    if self._proc.poll() is not None:
+                        _log.warning('unexpected EOF of stdout, %s crashed' % self._name)
+                        self._crashed = True
+                    else:
+                        _log.warning('unexpected EOF of stdout, %s still alive' % self._name)
                 self._output += data
 
             if err_fd in read_fds:
                 data = self._proc.stderr.read()
-                if not data:
-                    _log.warning('unexpected EOF of stderr')
-                    self._crashed = True
+                if not data and not stopping:
+                    if self._proc.poll() is not None:
+                        _log.warning('unexpected EOF on stderr, %s crashed' % self._name)
+                        self._crashed = True
+                    else:
+                        _log.warning('unexpected EOF on stderr, %s is still alive' % self._name)
                 self._error += data
         except IOError, e:
             # We can ignore the IOErrors because we will detect if the subporcess crashed
@@ -333,7 +339,7 @@ class ServerProcess(object):
         if self._use_win32_apis:
             self._wait_for_data_and_update_buffers_using_win32_apis(now)
         else:
-            self._wait_for_data_and_update_buffers_using_select(now)
+            self._wait_for_data_and_update_buffers_using_select(now, stopping=True)
         out, err = self._output, self._error
         self._reset()
         return (out, err)
