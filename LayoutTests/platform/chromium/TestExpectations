@@ -3517,6 +3517,6 @@ BUGWK94501 WIN LINUX : http/tests/inspector/resource-tree/resource-tree-frame-na
 
 BUGWK94521 LINUX : fast/loader/loadInProgress.html = PASS CRASH
 
-BUGWK94528 : fast/text-autosizing/nested-em-line-height.html = IMAGE
+BUGWK94528 MAC : fast/text-autosizing/nested-em-line-height.html = PASS IMAGE
 
 BUGWK94532 LINUX : fast/forms/formmethod-attribute-button-html.html = PASS MISSING
