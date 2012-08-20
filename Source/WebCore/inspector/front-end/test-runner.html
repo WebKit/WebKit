@@ -69,6 +69,11 @@ var treeOutline = null;
 
 function run(debug)
 {
+    if (window.runner && debug) {
+        window.runner.continueDebugging();
+        return;
+    }
+
     if (window.testScannerIframe) 
         document.body.removeChild(window.testScannerIframe);
 
@@ -108,8 +113,10 @@ function runNextTest(lastResult)
 
         element = document.getElementById("remaining");
         element.textContent = parseInt(element.textContent) - 1;
-        if (window.debug)
+        if (window.debug) {
+            document.getElementById("debug").textContent = "Debug";
             return;
+        }
     }
 
     var test;
@@ -171,11 +178,26 @@ StandaloneTestRunner.prototype = {
         this._inspectorWindowLoading = window.open(StandaloneTestRunner.FrontendLocation + "?" + this._debuggerURL, "inspector", features);
         
         window.addEventListener('unload', this.cleanup.bind(this));
-        
-        this._watchDog = setTimeout(this._timeout.bind(this), 10000);
+
+        if (!window.debug)
+            this._watchDog = setTimeout(this._timeout.bind(this), 10000);
     },
 
     loadCompleted: function()
+    {
+        if (!window.debug) {
+            this._loadCompleted(this);
+            return;
+        }
+        document.getElementById("debug").textContent = "Continue";
+    },
+
+    continueDebugging: function()
+    {
+        this._loadCompleted();
+    },
+
+    _loadCompleted: function()
     {
         this._inspectorWindow = this._inspectorWindowLoading;
         for (var i = 0; i < this._pendingMessages.length; ++i)
@@ -262,9 +284,7 @@ StandaloneTestRunner.prototype = {
         this._treeElement.title = this._testPath + ": TIMEOUT";
         this._treeElement.listItemElement.addStyleClass("timeout");
         this._done = true;
-        if (!window.debug) 
-            this.cleanup();
-
+        this.cleanup();
         this._next("timeout");
     },
 
@@ -302,10 +322,25 @@ function onMessageFromTestPage(event)
         window.runner[method].apply(window.runner, signature);
 }
 
+function onload()
+{
+    var queryParamsObject = {};
+    var queryParams = window.location.search;
+    if (!queryParams)
+        return;
+    var params = queryParams.substring(1).split("&");
+    for (var i = 0; i < params.length; ++i) {
+        var pair = params[i].split("=");
+        queryParamsObject[pair[0]] = pair[1];
+    }
+    if ("filter" in queryParamsObject)
+        document.getElementById("filter").value = queryParamsObject["filter"];
+}
+
 window.addEventListener("message", onMessageFromTestPage, true);
 
 </script>
-<body>
+<body onload="onload()">
 This is a standalone test suite for inspector front-end. Here is how you run it:
 <ul>
 <li>Check out WebKit source tree: git clone http://git.chromium.org/external/Webkit.git</li>
@@ -314,7 +349,7 @@ This is a standalone test suite for inspector front-end. Here is how you run it:
 </ul>
 
 <button onclick="run()">Run</button>
-<button onclick="run(true)">Debug</button>
+<button id="debug" onclick="run(true)">Debug</button>
 <button onclick="interrupt()">Interrupt</button>
 Filter: <input id="filter" type="text" size="40"></input><small><i>Click on results to load filter</i></small><br>
 
