@@ -29,7 +29,6 @@
 
 #include "HTMLDivElement.h"
 #include "Timer.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -44,6 +43,9 @@ public:
     class SpinButtonOwner {
     public:
         virtual ~SpinButtonOwner() { }
+        virtual void focusAndSelectSpinButtonOwner() = 0;
+        virtual bool shouldSpinButtonRespondToMouseEvents() = 0;
+        virtual bool shouldSpinButtonRespondToWheelEvents() = 0;
         virtual void spinButtonStepDown() = 0;
         virtual void spinButtonStepUp() = 0;
     };
@@ -78,6 +80,7 @@ private:
     void stopRepeatingTimer();
     void repeatingTimerFired(Timer<SpinButtonElement>*);
     virtual void setHovered(bool = true);
+    bool shouldRespondToMouseEvents();
     virtual bool isMouseFocusable() const { return false; }
 
     SpinButtonOwner* m_spinButtonOwner;

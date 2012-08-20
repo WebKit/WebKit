@@ -70,7 +70,9 @@ private:
     private:
         virtual void editControlMouseFocus() OVERRIDE FINAL;
         virtual void editControlValueChanged() OVERRIDE FINAL;
+        virtual void focusAndSelectEditControlOwner() OVERRIDE FINAL;
         virtual bool isEditControlOwnerDisabled() const OVERRIDE FINAL;
+        virtual bool isEditControlOwnerFocused() const OVERRIDE FINAL;
         virtual bool isEditControlOwnerReadOnly() const OVERRIDE FINAL;
 
         TimeInputType& m_timeInputType;

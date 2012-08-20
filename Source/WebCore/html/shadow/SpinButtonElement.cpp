@@ -30,7 +30,6 @@
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "MouseEvent.h"
 #include "RenderBox.h"
@@ -83,8 +82,7 @@ void SpinButtonElement::defaultEventHandler(Event* event)
         return;
     }
 
-    RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowHost()));
-    if (input->disabled() || input->readOnly()) {
+    if (!shouldRespondToMouseEvents()) {
         if (!event->defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
         return;
@@ -98,8 +96,8 @@ void SpinButtonElement::defaultEventHandler(Event* event)
             // code which detaches this shadow node. We need to take a reference
             // and check renderer() after such function calls.
             RefPtr<Node> protector(this);
-            input->focus();
-            input->select();
+            if (m_spinButtonOwner)
+                m_spinButtonOwner->focusAndSelectSpinButtonOwner();
             if (renderer()) {
                 if (m_upDownState != Indeterminate) {
                     doStepAction(m_upDownState == Up ? 1 : -1);
@@ -141,8 +139,10 @@ void SpinButtonElement::forwardEvent(Event* event)
     if (!event->hasInterface(eventNames().interfaceForWheelEvent))
         return;
 
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
-    if (input->disabled() || input->readOnly() || !input->focused())
+    if (!m_spinButtonOwner)
+        return;
+
+    if (!m_spinButtonOwner->shouldSpinButtonRespondToWheelEvents())
         return;
 
     doStepAction(static_cast<WheelEvent*>(event)->wheelDeltaY());
@@ -151,8 +151,7 @@ void SpinButtonElement::forwardEvent(Event* event)
 
 bool SpinButtonElement::willRespondToMouseMoveEvents()
 {
-    const HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
-    if (renderBox() && !input->disabled() && !input->readOnly())
+    if (renderBox() && shouldRespondToMouseEvents())
         return true;
 
     return HTMLDivElement::willRespondToMouseMoveEvents();
@@ -160,8 +159,7 @@ bool SpinButtonElement::willRespondToMouseMoveEvents()
 
 bool SpinButtonElement::willRespondToMouseClickEvents()
 {
-    const HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
-    if (renderBox() && !input->disabled() && !input->readOnly())
+    if (renderBox() && shouldRespondToMouseEvents())
         return true;
 
     return HTMLDivElement::willRespondToMouseClickEvents();
@@ -213,8 +211,7 @@ void SpinButtonElement::stopRepeatingTimer()
 
 void SpinButtonElement::step(int amount)
 {
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
-    if (input->disabled() || input->readOnly())
+    if (!shouldRespondToMouseEvents())
         return;
     // On Mac OS, NSStepper updates the value for the button under the mouse
     // cursor regardless of the button pressed at the beginning. So the
@@ -237,6 +234,11 @@ void SpinButtonElement::setHovered(bool flag)
     if (!flag)
         m_upDownState = Indeterminate;
     HTMLDivElement::setHovered(flag);
+}
+
+bool SpinButtonElement::shouldRespondToMouseEvents()
+{
+    return !m_spinButtonOwner || m_spinButtonOwner->shouldSpinButtonRespondToMouseEvents();
 }
 
 }

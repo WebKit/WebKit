@@ -86,6 +86,9 @@ private:
     virtual void attach() OVERRIDE;
 
     // SpinButtonElement::SpinButtonOwner functions.
+    virtual void focusAndSelectSpinButtonOwner() OVERRIDE;
+    virtual bool shouldSpinButtonRespondToMouseEvents() OVERRIDE;
+    virtual bool shouldSpinButtonRespondToWheelEvents() OVERRIDE;
     virtual void spinButtonStepDown() OVERRIDE;
     virtual void spinButtonStepUp() OVERRIDE;
 

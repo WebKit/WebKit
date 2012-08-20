@@ -51,9 +51,11 @@ public:
     class EditControlOwner {
     public:
         virtual ~EditControlOwner();
+        virtual void focusAndSelectEditControlOwner() = 0;
         virtual void editControlMouseFocus() = 0;
         virtual void editControlValueChanged() = 0;
         virtual bool isEditControlOwnerDisabled() const = 0;
+        virtual bool isEditControlOwnerFocused() const = 0;
         virtual bool isEditControlOwnerReadOnly() const = 0;
     };
 
@@ -102,6 +104,9 @@ private:
     virtual void focusOnNextField() OVERRIDE FINAL;
 
     // SpinButtonElement::SpinButtonOwner functions.
+    virtual void focusAndSelectSpinButtonOwner() OVERRIDE FINAL;
+    virtual bool shouldSpinButtonRespondToMouseEvents() OVERRIDE FINAL;
+    virtual bool shouldSpinButtonRespondToWheelEvents() OVERRIDE FINAL;
     virtual void spinButtonStepDown() OVERRIDE FINAL;
     virtual void spinButtonStepUp() OVERRIDE FINAL;
 

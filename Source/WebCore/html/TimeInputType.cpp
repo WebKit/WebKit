@@ -138,9 +138,21 @@ void TimeInputType::DateTimeEditControlOwnerImpl::editControlValueChanged()
     input->dispatchFormControlChangeEvent();
 }
 
+void TimeInputType::DateTimeEditControlOwnerImpl::focusAndSelectEditControlOwner()
+{
+    RefPtr<HTMLInputElement> input(m_timeInputType.element());
+    input->focus();
+    input->select();
+}
+
 bool TimeInputType::DateTimeEditControlOwnerImpl::isEditControlOwnerDisabled() const
 {
     return m_timeInputType.element()->readOnly();
+}
+
+bool TimeInputType::DateTimeEditControlOwnerImpl::isEditControlOwnerFocused() const
+{
+    return m_timeInputType.element()->focused();
 }
 
 bool TimeInputType::DateTimeEditControlOwnerImpl::isEditControlOwnerReadOnly() const

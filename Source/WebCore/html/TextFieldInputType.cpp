@@ -456,4 +456,21 @@ void TextFieldInputType::updateInnerTextValue()
     }
 }
 
+void TextFieldInputType::focusAndSelectSpinButtonOwner()
+{
+    RefPtr<HTMLInputElement> input(element());
+    input->focus();
+    input->select();
+}
+
+bool TextFieldInputType::shouldSpinButtonRespondToMouseEvents()
+{
+    return !element()->disabled() && !element()->readOnly();
+}
+
+bool TextFieldInputType::shouldSpinButtonRespondToWheelEvents()
+{
+    return shouldSpinButtonRespondToMouseEvents() && element()->focused();
+}
+
 } // namespace WebCore

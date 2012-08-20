@@ -230,6 +230,13 @@ DateTimeFieldElement* DateTimeEditElement::fieldAt(size_t fieldIndex) const
     return fieldIndex < m_fields.size() ? m_fields[fieldIndex] : 0;
 }
 
+void DateTimeEditElement::focusAndSelectSpinButtonOwner()
+{
+    if (!m_editControlOwner)
+        return;
+    m_editControlOwner->focusAndSelectEditControlOwner();
+}
+
 void DateTimeEditElement::focusFieldAt(size_t newFocusFieldIndex)
 {
     if (m_focusFieldIndex == newFocusFieldIndex)
@@ -437,6 +444,19 @@ void DateTimeEditElement::setEmptyValue(const DateComponents& dateForReadOnlyFie
 {
     for (size_t fieldIndex = 0; fieldIndex < m_fields.size(); ++fieldIndex)
         m_fields[fieldIndex]->setEmptyValue(dateForReadOnlyField, DateTimeFieldElement::DispatchNoEvent);
+}
+
+bool DateTimeEditElement::shouldSpinButtonRespondToMouseEvents()
+{
+    return !isDisabled() && !isReadOnly();
+}
+
+bool DateTimeEditElement::shouldSpinButtonRespondToWheelEvents()
+{
+    if (!shouldSpinButtonRespondToMouseEvents())
+        return false;
+
+    return !m_editControlOwner || m_editControlOwner->isEditControlOwnerFocused();
 }
 
 void DateTimeEditElement::spinButtonStepDown()
