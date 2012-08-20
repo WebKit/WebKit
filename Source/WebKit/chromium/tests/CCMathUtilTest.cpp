@@ -152,8 +152,7 @@ TEST(CCMathUtilTest, verifyEnclosingRectOfVerticesUsesCorrectInitialBounds)
     EXPECT_FLOAT_RECT_EQ(FloatRect(FloatPoint(-100, -100), FloatSize(90, 90)), result);
 }
 
-// http://webkit.org/b/94502
-TEST(CCMathUtilTest, DISABLED_smallestAngleBetweenVectors)
+TEST(CCMathUtilTest, smallestAngleBetweenVectors)
 {
     FloatSize x(1, 0);
     FloatSize y(0, 1);
@@ -168,13 +167,13 @@ TEST(CCMathUtilTest, DISABLED_smallestAngleBetweenVectors)
     EXPECT_EQ(0, CCMathUtil::smallestAngleBetweenVectors(testVector, testVector));
 
     // Parallel but reversed vectors are at 180 degrees.
-    EXPECT_EQ(180, CCMathUtil::smallestAngleBetweenVectors(x, -x));
-    EXPECT_EQ(180, CCMathUtil::smallestAngleBetweenVectors(y, -y));
-    EXPECT_EQ(180, CCMathUtil::smallestAngleBetweenVectors(testVector, -testVector));
+    EXPECT_FLOAT_EQ(180, CCMathUtil::smallestAngleBetweenVectors(x, -x));
+    EXPECT_FLOAT_EQ(180, CCMathUtil::smallestAngleBetweenVectors(y, -y));
+    EXPECT_FLOAT_EQ(180, CCMathUtil::smallestAngleBetweenVectors(testVector, -testVector));
 
     // The test vector is at a known angle.
-    EXPECT_EQ(45, floor(CCMathUtil::smallestAngleBetweenVectors(testVector, x)));
-    EXPECT_EQ(45, floor(CCMathUtil::smallestAngleBetweenVectors(testVector, y)));
+    EXPECT_FLOAT_EQ(45, floor(CCMathUtil::smallestAngleBetweenVectors(testVector, x)));
+    EXPECT_FLOAT_EQ(45, floor(CCMathUtil::smallestAngleBetweenVectors(testVector, y)));
 }
 
 TEST(CCMathUtilTest, vectorProjection)
