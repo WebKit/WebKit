@@ -1,3 +1,19 @@
+2012-08-19  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] time-multiple-fields-appearance-basic.html and time-multiple-fields-appearance-pseudo-elements.html are failed on Chromium Windows
+        https://bugs.webkit.org/show_bug.cgi?id=94297
+
+        Reviewed by Kent Tamura.
+
+        This patch updates a logic for detcting multiple fields time input UI
+        has second field or not.
+
+        * fast/forms/time-multiple-fields/resources/time-multiple-fields-appearance.js:
+        (checkHasShortFormat): Added "<br>" between input elements to avoid rounding error
+        on calculating rendering width of input elements. When input elements are rendered on
+        same baseline, width of first one is 126px and second is 125px.
+        * platform/chromium/TestExpectations: Changed bug id of entries Chromium-Mac specific bug entry, bug 94339.
+
 2012-08-19  Mike West  <mkwst@chromium.org>
 
         CSP 1.1: Add 'plugin-types' and 'form-action' DOM API.

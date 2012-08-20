@@ -1,7 +1,7 @@
 function checkHasShortFormat()
 {
     var container = document.createElement("span");
-    container.innerHTML = "<input type=time id=step60 step=60><input type=time id=step1 step=1>";
+    container.innerHTML = "<input type=time id=step60 step=60><br><input type=time id=step1 step=1>";
     document.body.appendChild(container);
     var hasShortFormat = document.getElementById("step60").offsetWidth != document.getElementById("step1").offsetWidth;
     container.parentElement.removeChild(container);
