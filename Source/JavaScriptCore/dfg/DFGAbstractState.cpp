@@ -62,13 +62,13 @@ void AbstractState::beginBasicBlock(BasicBlock* basicBlock)
     m_variables = basicBlock->valuesAtHead;
     m_haveStructures = false;
     for (size_t i = 0; i < m_variables.numberOfArguments(); ++i) {
-        if (m_variables.argument(i).m_structure.isNeitherClearNorTop()) {
+        if (m_variables.argument(i).m_currentKnownStructure.isNeitherClearNorTop()) {
             m_haveStructures = true;
             break;
         }
     }
     for (size_t i = 0; i < m_variables.numberOfLocals(); ++i) {
-        if (m_variables.local(i).m_structure.isNeitherClearNorTop()) {
+        if (m_variables.local(i).m_currentKnownStructure.isNeitherClearNorTop()) {
             m_haveStructures = true;
             break;
         }
@@ -1423,19 +1423,52 @@ bool AbstractState::execute(unsigned indexInBlock)
     case ForwardCheckStructure: {
         // FIXME: We should be able to propagate the structure sets of constants (i.e. prototypes).
         AbstractValue& value = forNode(node.child1());
+        // If this structure check is attempting to prove knowledge already held in
+        // the futurePossibleStructure set then the constant folding phase should
+        // turn this into a watchpoint instead.
+        StructureSet& set = node.structureSet();
+        if (value.m_futurePossibleStructure.isSubsetOf(set))
+            m_foundConstants = true;
         node.setCanExit(
-            !value.m_structure.isSubsetOf(node.structureSet())
+            !value.m_currentKnownStructure.isSubsetOf(set)
             || !isCellSpeculation(value.m_type));
-        value.filter(node.structureSet());
+        value.filter(set);
+        // This is likely to be unnecessary, but it's conservative, and that's a good thing.
+        // This is trying to avoid situations where the CFA proves that this structure check
+        // must fail due to a future structure proof. We have two options at that point. We
+        // can either compile all subsequent code as we would otherwise, or we can ensure
+        // that the subsequent code is never reachable. The former is correct because the
+        // Proof Is Infallible (TM) -- hence even if we don't force the subsequent code to
+        // be unreachable, it must be unreachable nonetheless. But imagine what would happen
+        // if the proof was borked. In the former case, we'd get really bizarre bugs where
+        // we assumed that the structure of this object was known even though it wasn't. In
+        // the latter case, we'd have a slight performance pathology because this would be
+        // turned into an OSR exit unnecessarily. Which would you rather have?
+        if (value.m_currentKnownStructure.isClear()
+            || value.m_futurePossibleStructure.isClear())
+            m_isValid = false;
         m_haveStructures = true;
         break;
     }
         
-    case StructureTransitionWatchpoint: {
-        // FIXME: Turn CheckStructure into StructureTransitionWatchpoint when possible!
+    case StructureTransitionWatchpoint:
+    case ForwardStructureTransitionWatchpoint: {
         AbstractValue& value = forNode(node.child1());
+
+        // It's only valid to issue a structure transition watchpoint if we already
+        // know that the watchpoint covers a superset of the structures known to
+        // belong to the set of future structures that this value may have.
+        // Currently, we only issue singleton watchpoints (that check one structure)
+        // and our futurePossibleStructure set can only contain zero, one, or an
+        // infinity of structures.
+        ASSERT(value.m_futurePossibleStructure.isSubsetOf(StructureSet(node.structure())));
+        
         ASSERT(value.isClear() || isCellSpeculation(value.m_type)); // Value could be clear if we've proven must-exit due to a speculation statically known to be bad.
         value.filter(node.structure());
+        // See comment in CheckStructure for why this is here.
+        if (value.m_currentKnownStructure.isClear()
+            || value.m_futurePossibleStructure.isClear())
+            m_isValid = false;
         m_haveStructures = true;
         node.setCanExit(true);
         break;

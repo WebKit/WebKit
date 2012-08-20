@@ -91,7 +91,16 @@ private:
                 break;
             }
                     
-                // FIXME: This would be a great place to remove CheckStructure's.
+            case CheckStructure:
+            case ForwardCheckStructure: {
+                AbstractValue& value = m_state.forNode(node.child1());
+                StructureAbstractValue& structureValue = value.m_futurePossibleStructure;
+                if (structureValue.isSubsetOf(node.structureSet())
+                    && structureValue.hasSingleton()
+                    && isCellSpeculation(value.m_type))
+                    node.convertToStructureTransitionWatchpoint(structureValue.singleton());
+                break;
+            }
                     
             default:
                 break;

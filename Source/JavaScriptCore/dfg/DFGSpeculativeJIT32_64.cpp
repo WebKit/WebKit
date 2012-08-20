@@ -3459,7 +3459,7 @@ void SpeculativeJIT::compile(Node& node)
     case CheckStructure:
     case ForwardCheckStructure: {
         AbstractValue& value = m_state.forNode(node.child1());
-        if (value.m_structure.isSubsetOf(node.structureSet())
+        if (value.m_currentKnownStructure.isSubsetOf(node.structureSet())
             && isCellSpeculation(value.m_type)) {
             noResult(m_compileIndex);
             break;
@@ -3500,9 +3500,12 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
         
-    case StructureTransitionWatchpoint: {
+    case StructureTransitionWatchpoint:
+    case ForwardStructureTransitionWatchpoint: {
         m_jit.addWeakReference(node.structure());
-        node.structure()->addTransitionWatchpoint(speculationWatchpoint(BadCache));
+        node.structure()->addTransitionWatchpoint(
+            speculationWatchpointWithConditionalDirection(
+                BadCache, node.op() == ForwardStructureTransitionWatchpoint));
         
 #if !ASSERT_DISABLED
         SpeculateCellOperand op1(this, node.child1());

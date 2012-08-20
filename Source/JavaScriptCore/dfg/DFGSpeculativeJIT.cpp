@@ -119,11 +119,8 @@ JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind)
     return speculationWatchpoint(kind, JSValueSource(), NoNode);
 }
 
-void SpeculativeJIT::forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, const ValueRecovery& valueRecovery)
+void SpeculativeJIT::convertLastOSRExitToForward(const ValueRecovery& valueRecovery)
 {
-    ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
-    speculationCheck(kind, jsValueSource, nodeIndex, jumpToFail);
-    
 #if !ASSERT_DISABLED
     if (!valueRecovery) {
         // Check that the preceding node was a SetLocal with the same code origin.
@@ -169,6 +166,28 @@ void SpeculativeJIT::forwardSpeculationCheck(ExitKind kind, JSValueSource jsValu
     exit.m_lastSetOperand = setLocal->local();
     exit.m_valueRecoveryOverride = adoptRef(
         new ValueRecoveryOverride(setLocal->local(), valueRecovery));
+}
+
+JumpReplacementWatchpoint* SpeculativeJIT::forwardSpeculationWatchpoint(ExitKind kind)
+{
+    JumpReplacementWatchpoint* result = speculationWatchpoint(kind);
+    convertLastOSRExitToForward();
+    return result;
+}
+
+JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpointWithConditionalDirection(ExitKind kind, bool isForward)
+{
+    JumpReplacementWatchpoint* result = speculationWatchpoint(kind);
+    if (isForward)
+        convertLastOSRExitToForward();
+    return result;
+}
+
+void SpeculativeJIT::forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, const ValueRecovery& valueRecovery)
+{
+    ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
+    speculationCheck(kind, jsValueSource, nodeIndex, jumpToFail);
+    convertLastOSRExitToForward(valueRecovery);
 }
 
 void SpeculativeJIT::forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::JumpList& jumpsToFail, const ValueRecovery& valueRecovery)
@@ -253,8 +272,8 @@ void SpeculativeJIT::clearGenerationInfo()
 void SpeculativeJIT::speculateArray(Edge edge, GPRReg baseReg)
 {
     AbstractValue& arrayValue = m_state.forNode(edge);
-    if (arrayValue.m_structure.hasSingleton()
-        && arrayValue.m_structure.singleton()->classInfo() == &JSArray::s_info)
+    if (arrayValue.m_currentKnownStructure.hasSingleton()
+        && arrayValue.m_currentKnownStructure.singleton()->classInfo() == &JSArray::s_info)
         return;
     
     GPRTemporary temp(this);

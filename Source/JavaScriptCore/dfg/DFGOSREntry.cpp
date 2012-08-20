@@ -99,7 +99,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
         else
             value = exec->argument(argument - 1);
         
-        if (!entry->m_expectedValues.argument(argument).validateForEntry(value)) {
+        if (!entry->m_expectedValues.argument(argument).validate(value)) {
 #if ENABLE(JIT_VERBOSE_OSR)
             dataLog("    OSR failed because argument %zu is %s, expected ", argument, value.description());
             entry->m_expectedValues.argument(argument).dump(WTF::dataFile());
@@ -119,7 +119,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
             }
             continue;
         }
-        if (!entry->m_expectedValues.local(local).validateForEntry(exec->registers()[local].jsValue())) {
+        if (!entry->m_expectedValues.local(local).validate(exec->registers()[local].jsValue())) {
 #if ENABLE(JIT_VERBOSE_OSR)
             dataLog("    OSR failed because variable %zu is %s, expected ", local, exec->registers()[local].jsValue().description());
             entry->m_expectedValues.local(local).dump(WTF::dataFile());

@@ -245,11 +245,19 @@ struct Node {
         children.reset();
     }
     
+    void convertToStructureTransitionWatchpoint(Structure* structure)
+    {
+        ASSERT(m_op == CheckStructure || m_op == ForwardCheckStructure);
+        m_opInfo = bitwise_cast<uintptr_t>(structure);
+        if (m_op == CheckStructure)
+            m_op = StructureTransitionWatchpoint;
+        else
+            m_op = ForwardStructureTransitionWatchpoint;
+    }
+    
     void convertToStructureTransitionWatchpoint()
     {
-        ASSERT(m_op == CheckStructure);
-        m_opInfo = bitwise_cast<uintptr_t>(structureSet().singletonStructure());
-        m_op = StructureTransitionWatchpoint;
+        convertToStructureTransitionWatchpoint(structureSet().singletonStructure());
     }
     
     JSCell* weakConstant()
@@ -675,7 +683,13 @@ struct Node {
     
     bool hasStructure()
     {
-        return op() == StructureTransitionWatchpoint;
+        switch (op()) {
+        case StructureTransitionWatchpoint:
+        case ForwardStructureTransitionWatchpoint:
+            return true;
+        default:
+            return false;
+        }
     }
     
     Structure* structure()

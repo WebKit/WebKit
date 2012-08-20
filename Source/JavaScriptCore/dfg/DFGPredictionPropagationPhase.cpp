@@ -675,6 +675,7 @@ private:
         case CheckStructure:
         case ForwardCheckStructure:
         case StructureTransitionWatchpoint:
+        case ForwardStructureTransitionWatchpoint:
         case CheckFunction:
         case PutStructure:
         case TearOffActivation:

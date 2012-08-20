@@ -2181,6 +2181,10 @@ public:
     // act of firing a watchpoint invalidates it. So, future recompilations will not
     // attempt to set this watchpoint again.
     JumpReplacementWatchpoint* speculationWatchpoint(ExitKind = UncountableWatchpoint);
+    
+    // It is generally a good idea to not use this directly.
+    void convertLastOSRExitToForward(const ValueRecovery& = ValueRecovery());
+    
     // Note: not specifying the valueRecovery argument (leaving it as ValueRecovery()) implies
     // that you've ensured that there exists a MovHint prior to your use of forwardSpeculationCheck().
     void forwardSpeculationCheck(ExitKind, JSValueSource, NodeIndex, MacroAssembler::Jump jumpToFail, const ValueRecovery& = ValueRecovery());
@@ -2190,6 +2194,10 @@ public:
     void terminateSpeculativeExecution(ExitKind, JSValueRegs, NodeIndex);
     void terminateSpeculativeExecution(ExitKind, JSValueRegs, Edge);
     void terminateSpeculativeExecutionWithConditionalDirection(ExitKind, JSValueRegs, NodeIndex, bool isForward);
+    // Issue a forward speculation watchpoint, which will exit to the next instruction rather
+    // than the current one.
+    JumpReplacementWatchpoint* forwardSpeculationWatchpoint(ExitKind = UncountableWatchpoint);
+    JumpReplacementWatchpoint* speculationWatchpointWithConditionalDirection(ExitKind, bool isForward);
     
     void speculateArray(Edge baseEdge, GPRReg baseReg);
     

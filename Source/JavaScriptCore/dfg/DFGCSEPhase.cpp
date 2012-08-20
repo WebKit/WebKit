@@ -345,6 +345,7 @@ private:
                 break;
                 
             case StructureTransitionWatchpoint:
+            case ForwardStructureTransitionWatchpoint:
                 if (node.child1() == child1
                     && structureSet.contains(node.structure()))
                     return true;
@@ -418,6 +419,7 @@ private:
                 return false;
                 
             case StructureTransitionWatchpoint:
+            case ForwardStructureTransitionWatchpoint:
                 if (node.structure() == structure && node.child1() == child1)
                     return true;
                 break;
@@ -1123,6 +1125,7 @@ private:
             break;
             
         case StructureTransitionWatchpoint:
+        case ForwardStructureTransitionWatchpoint:
             if (structureTransitionWatchpointElimination(node.structure(), node.child1().index()))
                 eliminate();
             break;
