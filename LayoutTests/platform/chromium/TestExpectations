@@ -3515,3 +3515,8 @@ BUGWK94494 DEBUG : webaudio/audioparam-summingjunction.html = PASS CRASH
 BUGWK94501 WIN : http/tests/inspector/resource-tree/resource-tree-invalid-mime-type-css-content.html = PASS TEXT
 BUGWK94501 WIN LINUX : http/tests/inspector/resource-tree/resource-tree-frame-navigate.html = PASS TEXT
 
+BUGWK94521 LINUX : fast/loader/loadInProgress.html = PASS CRASH
+
+BUGWK94528 : fast/text-autosizing/nested-em-line-height.html = IMAGE
+
+BUGWK94532 LINUX : fast/forms/formmethod-attribute-button-html.html = PASS MISSING

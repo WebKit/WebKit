@@ -1,3 +1,13 @@
+2012-08-20  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed Chromium gardening. Adding suppressions for failing tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=94521
+        https://bugs.webkit.org/show_bug.cgi?id=94528
+        https://bugs.webkit.org/show_bug.cgi?id=94532
+
+        * platform/chromium/TestExpectations:
+
 2012-08-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace isolate || bidi-override by isolate-override
