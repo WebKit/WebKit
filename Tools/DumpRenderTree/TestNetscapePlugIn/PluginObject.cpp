@@ -60,23 +60,13 @@ static void pluginLogWithWindowObject(NPObject* windowObject, NPP instance, cons
     browser->releaseobject(consoleObject);
 }
 
-// Helper function which takes in the plugin window object for logging to the console object. This function supports variable
-// arguments.
-static void pluginLogWithWindowObjectVariableArgs(NPObject* windowObject, NPP instance, const char* format, ...)
-{
-    va_list args;
-    va_start(args, format);
-    char message[2048] = "PLUGIN: ";
-    vsprintf(message + strlen(message), format, args);
-    va_end(args);
-
-    pluginLogWithWindowObject(windowObject, instance, message);
-}
-             
 void pluginLogWithArguments(NPP instance, const char* format, va_list args)
 {
-    char message[2048] = "PLUGIN: ";
-    vsprintf(message + strlen(message), format, args);
+    const size_t messageBufferSize = 2048;
+    char message[messageBufferSize] = "PLUGIN: ";
+    int messageLength = sizeof("PLUGIN: ") - 1;
+    messageLength += vsnprintf(message + messageLength, messageBufferSize - 1 - messageLength, format, args);
+    message[messageLength] = '\0';
 
     NPObject* windowObject = 0;
     NPError error = browser->getvalue(instance, NPNVWindowNPObject, &windowObject);
@@ -936,7 +926,7 @@ bool testDocumentOpen(NPP npp)
         return false;
     }
 
-    pluginLogWithWindowObjectVariableArgs(windowObject, npp, "DOCUMENT OPEN SUCCESS");
+    pluginLogWithWindowObject(windowObject, npp, "PLUGIN: DOCUMENT OPEN SUCCESS");
     notifyTestCompletion(npp, result.value.objectValue);
     browser->releaseobject(result.value.objectValue);
     browser->releaseobject(windowObject);
@@ -968,7 +958,7 @@ bool testWindowOpen(NPP npp)
         return false;
     }
 
-    pluginLogWithWindowObjectVariableArgs(windowObject, npp, "WINDOW OPEN SUCCESS");
+    pluginLogWithWindowObject(windowObject, npp, "PLUGIN: WINDOW OPEN SUCCESS");
     notifyTestCompletion(npp, result.value.objectValue);
     browser->releaseobject(result.value.objectValue);
     browser->releaseobject(windowObject);
