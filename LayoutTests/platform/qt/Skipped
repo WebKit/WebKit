@@ -2097,7 +2097,6 @@ canvas/philip/tests/2d.gradient.radial.touch3.html
 canvas/philip/tests/2d.imageData.create1.type.html
 canvas/philip/tests/2d.imageData.create2.type.html
 canvas/philip/tests/2d.imageData.get.type.html
-canvas/philip/tests/2d.imageData.object.round.html
 canvas/philip/tests/2d.imageData.object.wrap.html
 canvas/philip/tests/2d.imageData.put.unchanged.html
 canvas/philip/tests/2d.line.cap.open.html

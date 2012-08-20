@@ -335,14 +335,6 @@ sputnik/Unicode/Unicode_510/S7.6_A3.2.html
 sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
 sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
 
-# Tests failing with other ports too.
-# https://bugs.webkit.org/show_bug.cgi?id=40272
-canvas/philip/tests/2d.imageData.object.round.html
-canvas/philip/tests/2d.imageData.object.wrap.html
-
-# These tests are failing for us, but not for Mac. This likely
-# indicates platform specific problems (via GTK+).
-
 # A testcase for this failure is already in cairo tree, but has not yet been fixed.
 # Cairo commit http://cgit.freedesktop.org/cairo/commit/?id=4d4056872db94573183473610ad1d81d5439fdc6
 # https://bugs.webkit.org/show_bug.cgi?id=54471

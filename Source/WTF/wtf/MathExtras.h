@@ -202,6 +202,22 @@ inline double wtf_pow(double x, double y) { return y == 0 ? 1 : pow(x, y); }
 #define fmod(x, y) wtf_fmod(x, y)
 #define pow(x, y) wtf_pow(x, y)
 
+// MSVC's math functions do not bring lrint.
+inline long int lrint(double flt)
+{
+    int intgr;
+#if CPU(X86)
+    __asm {
+        fld flt
+        fistp intgr
+    };
+#else
+#pragma message("Falling back to casting for lrint(), causes rounding inaccuracy in halfway case.")
+    intgr = static_cast<int>flt;
+#endif
+    return intgr;
+}
+
 #endif // COMPILER(MSVC)
 
 inline double deg2rad(double d)  { return d * piDouble / 180.0; }

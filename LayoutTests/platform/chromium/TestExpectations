@@ -1872,10 +1872,13 @@ BUGWK39212 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.crea
 BUGWK39212 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.create2.type.html = TEXT
 BUGWK39212 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.get.type.html = TEXT
 
-BUGWK40272 : canvas/philip/tests/2d.imageData.object.round.html = TEXT
-BUGWK40272 : canvas/philip/tests/2d.imageData.object.wrap.html = TEXT
-BUGWK40272 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.object.round.html = TEXT
-BUGWK40272 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.object.wrap.html = TEXT
+BUGWK94246 : canvas/philip/tests/2d.imageData.object.round.html = TEXT
+BUGWK94246 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.object.round.html = TEXT
+BUGWK94246 : fast/canvas/canvas-ImageData-behaviour.html = TEXT
+BUGWK94246 : platform/chromium/virtual/gpu/fast/canvas/canvas-ImageData-behaviour.html = TEXT
+
+BUGWK94089 : canvas/philip/tests/2d.imageData.object.wrap.html = TEXT
+BUGWK94089 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.object.wrap.html = TEXT
 
 BUGWK45991 : canvas/philip/tests/2d.pattern.image.broken.html = TEXT
 BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.image.broken.html = TEXT
@@ -3506,3 +3509,6 @@ BUGWK94078 WIN RELEASE : http/tests/inspector/web-socket-frame-error.html = PASS
 BUGWK94256 DEBUG : fast/block/inline-children-root-linebox-crash.html = PASS CRASH
 
 BUGWK94261 DEBUG : http/tests/inspector/indexeddb/resources-panel.html = PASS CRASH TIMEOUT
+
+// Needs a rebaseline.
+BUGWK40272 : svg/css/circle-in-mask-with-shadow.svg = IMAGE

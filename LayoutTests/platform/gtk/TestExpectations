@@ -1016,8 +1016,7 @@ BUGWK50740 : editing/spelling/spellcheck-async-mutation.html = TEXT
 // DRT does not obey testRunner.addURLToRedirect()
 BUGWKGTK : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT
 
-BUGWK40272 : canvas/philip/tests/2d.imageData.object.round.html = TEXT
-BUGWK40272 : canvas/philip/tests/2d.imageData.object.wrap.html = TEXT
+BUGWK94089 : canvas/philip/tests/2d.imageData.object.wrap.html = TEXT
 
 // See also https://bugs.webkit.org/show_bug.cgi?id=54926
 BUGWK53707 : http/tests/security/xss-DENIED-xsl-document-redirect.xml = TEXT

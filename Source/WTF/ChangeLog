@@ -1,3 +1,22 @@
+2012-08-20  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        The 2d.imageData.object.round canvas test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=40272
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        According to the Uint8ClampedArray spec (http://www.khronos.org/registry/typedarray/specs/latest/#7.1)
+        which references WebIDL's clamping rules, with implications defined in http://www.w3.org/TR/WebIDL/#es-octet
+        we need to round to nearest integer, and to the even one if exactly halfway in between.
+        As a solution: applying C99's lrint which, in default rounding mode, does that.
+
+        The updated version of test 2d.imageData.object.round.html test passes now.
+
+        * wtf/MathExtras.h:
+        (lrint): Assembly based implementation for MSVC under X86, otherwise falling back to casting.
+        * wtf/Uint8ClampedArray.h:
+        (WTF::Uint8ClampedArray::set): lrint instead of simple rounding.
+
 2012-08-17  Michael Saboff  <msaboff@apple.com>
 
         Add ability to create AtomicString using LChar* buffer and length
