@@ -135,7 +135,6 @@ module window {
 
         unsigned long wheelEventHandlerCount(in Document document) raises (DOMException);
         unsigned long touchEventHandlerCount(in Document document) raises (DOMException);
-        boolean hasTouchEventListener(in Document document) raises (DOMException);
 
         NodeList nodesFromRect(in Document document, in long x, in long y,
             in unsigned long topPadding, in unsigned long rightPadding, in unsigned long bottomPadding, in unsigned long leftPadding,

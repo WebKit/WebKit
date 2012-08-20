@@ -1,3 +1,16 @@
+2012-08-20  Adam Klein  <adamk@chromium.org>
+
+        Remove redundant TOUCH_LISTENER event type
+        https://bugs.webkit.org/show_bug.cgi?id=94524
+
+        Reviewed by Ryosuke Niwa.
+
+        Removed tests for hasTouchEventListener as they're redundant
+        with tests for touchEventHandlerCount.
+
+        * fast/events/touch/touch-handler-count-expected.txt:
+        * fast/events/touch/touch-handler-count.html:
+
 2012-08-20  Kenneth Russell  <kbr@google.com>
 
         Reftest fast/text-autosizing/nested-em-line-height.html needs updating after r126058

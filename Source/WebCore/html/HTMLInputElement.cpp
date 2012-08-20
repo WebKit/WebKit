@@ -444,10 +444,9 @@ void HTMLInputElement::updateType()
 #if ENABLE(TOUCH_EVENTS)
     bool hasTouchEventHandler = m_inputType->hasTouchEventHandler();
     if (hasTouchEventHandler != m_hasTouchEventHandler) {
-      if (hasTouchEventHandler) {
+      if (hasTouchEventHandler)
         document()->didAddTouchEventHandler();
-        document()->addListenerType(Document::TOUCH_LISTENER);
-      } else
+      else
         document()->didRemoveTouchEventHandler();
       m_hasTouchEventHandler = hasTouchEventHandler;
     }

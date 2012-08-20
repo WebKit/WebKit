@@ -158,7 +158,6 @@ public:
 
     unsigned wheelEventHandlerCount(Document*, ExceptionCode&);
     unsigned touchEventHandlerCount(Document*, ExceptionCode&);
-    bool hasTouchEventListener(Document*, ExceptionCode&);
 
     PassRefPtr<NodeList> nodesFromRect(Document*, int x, int y, unsigned topPadding, unsigned rightPadding,
         unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, bool allowShadowContent, ExceptionCode&) const;

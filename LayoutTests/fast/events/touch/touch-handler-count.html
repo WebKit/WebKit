@@ -8,10 +8,8 @@ debug("Test addEventListener/removeEventListener on the document.");
     var listener = function() { }
 
     shouldBe('window.internals.touchEventHandlerCount(document)', '0');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'false');
     document.addEventListener('touchstart', listener, true);
     shouldBe('window.internals.touchEventHandlerCount(document)', '1');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'true');
     document.addEventListener('touchmove', listener, true);
     shouldBe('window.internals.touchEventHandlerCount(document)', '2');
     document.addEventListener('touchstart', listener, false);
@@ -29,19 +27,16 @@ debug("Test addEventListener/removeEventListener on the document.");
 
     document.removeEventListener('touchstart', listener, false);
     shouldBe('window.internals.touchEventHandlerCount(document)', '0');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'false');
 })();
 
 debug("Test setting touch handlers on the document.");
 (function() {
     shouldBe('window.internals.touchEventHandlerCount(document)', '0');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'false');
     document.ontouchstart = function() { }
     document.ontouchmove = function() {}
     document.ontouchend = function() {}
     document.ontouchcancel = function() {}
     shouldBe('window.internals.touchEventHandlerCount(document)', '4');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'true');
     document.ontouchstart = function() { }
     shouldBe('window.internals.touchEventHandlerCount(document)', '4');
     document.ontouchstart = null;
@@ -52,7 +47,6 @@ debug("Test setting touch handlers on the document.");
     document.ontouchend = null;
     document.ontouchcancel = null;
     shouldBe('window.internals.touchEventHandlerCount(document)', '0');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'false');
 })();
 
 debug("Test addEventListener/removeEventListener on the window.");
@@ -60,10 +54,8 @@ debug("Test addEventListener/removeEventListener on the window.");
     var listener = function() { }
 
     shouldBe('window.internals.touchEventHandlerCount(document)', '0');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'false');
     window.addEventListener('touchstart', listener, true);
     shouldBe('window.internals.touchEventHandlerCount(document)', '1');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'true');
     window.addEventListener('touchmove', listener, true);
     shouldBe('window.internals.touchEventHandlerCount(document)', '2');
     window.addEventListener('touchstart', listener, false);
@@ -81,19 +73,16 @@ debug("Test addEventListener/removeEventListener on the window.");
 
     window.removeEventListener('touchstart', listener, false);
     shouldBe('window.internals.touchEventHandlerCount(document)', '0');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'false');
 })();
 
 debug("Test setting touch handlers on the window.");
 (function() {
     shouldBe('window.internals.touchEventHandlerCount(document)', '0');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'false');
     window.ontouchstart = function() { }
     window.ontouchmove = function() {}
     window.ontouchend = function() {}
     window.ontouchcancel = function() {}
     shouldBe('window.internals.touchEventHandlerCount(document)', '4');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'true');
     window.ontouchstart = function() { }
     shouldBe('window.internals.touchEventHandlerCount(document)', '4');
     window.ontouchstart = null;
@@ -104,7 +93,6 @@ debug("Test setting touch handlers on the window.");
     window.ontouchend = null;
     window.ontouchcancel = null;
     shouldBe('window.internals.touchEventHandlerCount(document)', '0');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'false');
 })();
 
 debug("Test addEventListener/removeEventListener on a div.");
@@ -113,10 +101,8 @@ debug("Test addEventListener/removeEventListener on a div.");
     var div = document.getElementById('touchtarget');
 
     shouldBe('window.internals.touchEventHandlerCount(document)', '0');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'false');
     div.addEventListener('touchstart', listener, true);
     shouldBe('window.internals.touchEventHandlerCount(document)', '1');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'true');
     div.addEventListener('touchmove', listener, true);
     shouldBe('window.internals.touchEventHandlerCount(document)', '2');
     div.addEventListener('touchstart', listener, false);
@@ -134,7 +120,6 @@ debug("Test addEventListener/removeEventListener on a div.");
 
     div.removeEventListener('touchstart', listener, false);
     shouldBe('window.internals.touchEventHandlerCount(document)', '0');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'false');
 })();
 
 debug("Test setting touch handlers on a div.");
@@ -142,13 +127,11 @@ debug("Test setting touch handlers on a div.");
     var div = document.getElementById('touchtarget');
 
     shouldBe('window.internals.touchEventHandlerCount(document)', '0');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'false');
     div.ontouchstart = function() { }
     div.ontouchmove = function() { }
     div.ontouchend = function() { }
     div.ontouchcancel = function() { }
     shouldBe('window.internals.touchEventHandlerCount(document)', '4');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'true');
     div.ontouchstart = function() { }
     shouldBe('window.internals.touchEventHandlerCount(document)', '4');
     div.ontouchstart = null;
@@ -159,7 +142,6 @@ debug("Test setting touch handlers on a div.");
     div.ontouchend = null;
     div.ontouchcancel = null;
     shouldBe('window.internals.touchEventHandlerCount(document)', '0');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'false');
 })();
 
 debug("Test addEventListener/removeEventListener on a new div.");
@@ -169,12 +151,10 @@ debug("Test addEventListener/removeEventListener on a new div.");
     var listener = function() { }
 
     shouldBe('window.internals.touchEventHandlerCount(document)', '0');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'false');
 
     div.addEventListener('touchstart', listener, true);
     div.addEventListener('touchmove', listener, true);
     shouldBe('window.internals.touchEventHandlerCount(document)', '2');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'true');
 
     touchtarget.appendChild(div);
     shouldBe('window.internals.touchEventHandlerCount(document)', '2');
@@ -194,7 +174,6 @@ debug("Test addEventListener/removeEventListener on a new div.");
     div.removeEventListener('touchmove', listener, true);
     div.removeEventListener('touchend', listener, true);
     shouldBe('window.internals.touchEventHandlerCount(document)', '0');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'false');
 })();
 
 debug("Test setting touch handlers on a new div.");
@@ -203,12 +182,10 @@ debug("Test setting touch handlers on a new div.");
     var touchtarget = document.getElementById('touchtarget');
 
     shouldBe('window.internals.touchEventHandlerCount(document)', '0');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'false');
 
     div.ontouchstart = function() { }
     div.ontouchmove = function() { }
     shouldBe('window.internals.touchEventHandlerCount(document)', '2');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'true');
 
     touchtarget.appendChild(div);
     shouldBe('window.internals.touchEventHandlerCount(document)', '2');
@@ -225,7 +202,6 @@ debug("Test setting touch handlers on a new div.");
     div.ontouchend = null;
     div.ontouchmove = null;
     shouldBe('window.internals.touchEventHandlerCount(document)', '0');
-    shouldBe('window.internals.hasTouchEventListener(document)', 'false');
 })();
 
 </script>

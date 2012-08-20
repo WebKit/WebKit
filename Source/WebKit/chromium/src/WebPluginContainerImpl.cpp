@@ -512,10 +512,9 @@ void WebPluginContainerImpl::setIsAcceptingTouchEvents(bool acceptingTouchEvents
     if (m_isAcceptingTouchEvents == acceptingTouchEvents)
         return;
     m_isAcceptingTouchEvents = acceptingTouchEvents;
-    if (m_isAcceptingTouchEvents) {
+    if (m_isAcceptingTouchEvents)
         m_element->document()->didAddTouchEventHandler();
-        m_element->document()->addListenerType(Document::TOUCH_LISTENER);
-    } else
+    else
         m_element->document()->didRemoveTouchEventHandler();
 }
 

@@ -5,9 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Test addEventListener/removeEventListener on the document.
 PASS window.internals.touchEventHandlerCount(document) is 0
-PASS window.internals.hasTouchEventListener(document) is false
 PASS window.internals.touchEventHandlerCount(document) is 1
-PASS window.internals.hasTouchEventListener(document) is true
 PASS window.internals.touchEventHandlerCount(document) is 2
 PASS window.internals.touchEventHandlerCount(document) is 3
 PASS window.internals.touchEventHandlerCount(document) is 2
@@ -15,22 +13,16 @@ PASS window.internals.touchEventHandlerCount(document) is 1
 PASS window.internals.touchEventHandlerCount(document) is 1
 PASS window.internals.touchEventHandlerCount(document) is 1
 PASS window.internals.touchEventHandlerCount(document) is 0
-PASS window.internals.hasTouchEventListener(document) is false
 Test setting touch handlers on the document.
 PASS window.internals.touchEventHandlerCount(document) is 0
-PASS window.internals.hasTouchEventListener(document) is false
 PASS window.internals.touchEventHandlerCount(document) is 4
-PASS window.internals.hasTouchEventListener(document) is true
 PASS window.internals.touchEventHandlerCount(document) is 4
 PASS window.internals.touchEventHandlerCount(document) is 3
 PASS window.internals.touchEventHandlerCount(document) is 3
 PASS window.internals.touchEventHandlerCount(document) is 0
-PASS window.internals.hasTouchEventListener(document) is false
 Test addEventListener/removeEventListener on the window.
 PASS window.internals.touchEventHandlerCount(document) is 0
-PASS window.internals.hasTouchEventListener(document) is false
 PASS window.internals.touchEventHandlerCount(document) is 1
-PASS window.internals.hasTouchEventListener(document) is true
 PASS window.internals.touchEventHandlerCount(document) is 2
 PASS window.internals.touchEventHandlerCount(document) is 3
 PASS window.internals.touchEventHandlerCount(document) is 2
@@ -38,22 +30,16 @@ PASS window.internals.touchEventHandlerCount(document) is 1
 PASS window.internals.touchEventHandlerCount(document) is 1
 PASS window.internals.touchEventHandlerCount(document) is 1
 PASS window.internals.touchEventHandlerCount(document) is 0
-PASS window.internals.hasTouchEventListener(document) is false
 Test setting touch handlers on the window.
 PASS window.internals.touchEventHandlerCount(document) is 0
-PASS window.internals.hasTouchEventListener(document) is false
 PASS window.internals.touchEventHandlerCount(document) is 4
-PASS window.internals.hasTouchEventListener(document) is true
 PASS window.internals.touchEventHandlerCount(document) is 4
 PASS window.internals.touchEventHandlerCount(document) is 3
 PASS window.internals.touchEventHandlerCount(document) is 3
 PASS window.internals.touchEventHandlerCount(document) is 0
-PASS window.internals.hasTouchEventListener(document) is false
 Test addEventListener/removeEventListener on a div.
 PASS window.internals.touchEventHandlerCount(document) is 0
-PASS window.internals.hasTouchEventListener(document) is false
 PASS window.internals.touchEventHandlerCount(document) is 1
-PASS window.internals.hasTouchEventListener(document) is true
 PASS window.internals.touchEventHandlerCount(document) is 2
 PASS window.internals.touchEventHandlerCount(document) is 3
 PASS window.internals.touchEventHandlerCount(document) is 2
@@ -61,38 +47,28 @@ PASS window.internals.touchEventHandlerCount(document) is 1
 PASS window.internals.touchEventHandlerCount(document) is 1
 PASS window.internals.touchEventHandlerCount(document) is 1
 PASS window.internals.touchEventHandlerCount(document) is 0
-PASS window.internals.hasTouchEventListener(document) is false
 Test setting touch handlers on a div.
 PASS window.internals.touchEventHandlerCount(document) is 0
-PASS window.internals.hasTouchEventListener(document) is false
 PASS window.internals.touchEventHandlerCount(document) is 4
-PASS window.internals.hasTouchEventListener(document) is true
 PASS window.internals.touchEventHandlerCount(document) is 4
 PASS window.internals.touchEventHandlerCount(document) is 3
 PASS window.internals.touchEventHandlerCount(document) is 3
 PASS window.internals.touchEventHandlerCount(document) is 0
-PASS window.internals.hasTouchEventListener(document) is false
 Test addEventListener/removeEventListener on a new div.
 PASS window.internals.touchEventHandlerCount(document) is 0
-PASS window.internals.hasTouchEventListener(document) is false
 PASS window.internals.touchEventHandlerCount(document) is 2
-PASS window.internals.hasTouchEventListener(document) is true
 PASS window.internals.touchEventHandlerCount(document) is 2
 PASS window.internals.touchEventHandlerCount(document) is 3
 PASS window.internals.touchEventHandlerCount(document) is 2
 PASS window.internals.touchEventHandlerCount(document) is 2
 PASS window.internals.touchEventHandlerCount(document) is 2
 PASS window.internals.touchEventHandlerCount(document) is 0
-PASS window.internals.hasTouchEventListener(document) is false
 Test setting touch handlers on a new div.
 PASS window.internals.touchEventHandlerCount(document) is 0
-PASS window.internals.hasTouchEventListener(document) is false
 PASS window.internals.touchEventHandlerCount(document) is 2
-PASS window.internals.hasTouchEventListener(document) is true
 PASS window.internals.touchEventHandlerCount(document) is 2
 PASS window.internals.touchEventHandlerCount(document) is 3
 PASS window.internals.touchEventHandlerCount(document) is 2
 PASS window.internals.touchEventHandlerCount(document) is 2
 PASS window.internals.touchEventHandlerCount(document) is 0
-PASS window.internals.hasTouchEventListener(document) is false
 
