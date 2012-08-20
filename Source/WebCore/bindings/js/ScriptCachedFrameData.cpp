@@ -80,7 +80,11 @@ void ScriptCachedFrameData::restore(Frame* frame)
         if (JSDOMWindow* window = m_windows.get(world).get())
             windowShell->setWindow(window->globalData(), window);
         else {
-            windowShell->setWindow(frame->document()->domWindow());
+            DOMWindow* domWindow = frame->document()->domWindow();
+            if (windowShell->window()->impl() == domWindow)
+                continue;
+
+            windowShell->setWindow(domWindow);
 
             if (Page* page = frame->page()) {
                 scriptController->attachDebugger(windowShell, page->debugger());
