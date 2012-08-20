@@ -27,7 +27,6 @@
 
 #include "CCTimer.h"
 
-#include <wtf/CurrentTime.h>
 #include <wtf/Deque.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -68,6 +67,7 @@ public:
     void didFinishFrame();
     void didAbortAllPendingFrames();
     void setMaxFramesPending(int); // 0 for unlimited.
+    double nextTickTime();
 
     void setTimebaseAndInterval(double timebase, double intervalSeconds);
 
