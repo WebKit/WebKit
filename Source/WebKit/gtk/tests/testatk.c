@@ -55,7 +55,7 @@ static const char* comboBoxSelector = "<html><body><select><option selected valu
 
 static const char* embeddedObjects = "<html><body><p>Choose: <input value='foo' type='checkbox'/>foo <input value='bar' type='checkbox'/>bar (pick one)</p><p>Choose: <select name='foo'><option>bar</option><option>baz</option></select> (pick one)</p><p><input name='foobarbutton' value='foobar' type='button'/></p></body></html>";
 
-static const char* formWithTextInputs = "<html><body><form><input type='text' name='entry' /></form></body></html>";
+static const char* formWithTextInputs = "<html><body><form><input type='text' name='entry' /><input type='password' name='passwordEntry' /></form></body></html>";
 
 static const char* hypertextAndHyperlinks = "<html><body><p>A paragraph with no links at all</p><p><a href='http://foo.bar.baz/'>A line</a> with <a href='http://bar.baz.foo/'>a link in the middle</a> as well as at the beginning and <a href='http://baz.foo.bar/'>at the end</a></p><ol><li>List item with a <span><a href='http://foo.bar.baz/'>link inside a span node</a></span></li></ol></body></html>";
 
@@ -1735,6 +1735,7 @@ static void testWebkitAtkTextChangedNotifications()
     AtkObject* form = atk_object_ref_accessible_child(object, 0);
     g_assert(ATK_IS_OBJECT(form));
 
+    /* First check normal text entries. */
     AtkObject* textEntry = atk_object_ref_accessible_child(form, 0);
     g_assert(ATK_IS_EDITABLE_TEXT(textEntry));
     g_assert(atk_object_get_role(ATK_OBJECT(textEntry)) == ATK_ROLE_ENTRY);
@@ -1766,10 +1767,45 @@ static void testWebkitAtkTextChangedNotifications()
     g_assert_cmpstr(textChangedResult, ==, "|1|4|8|'qux quux'|");
     g_free(text);
 
+    /* Now check for password entries. */
+    AtkObject* passwordEntry = atk_object_ref_accessible_child(form, 1);
+    g_assert(ATK_IS_EDITABLE_TEXT(passwordEntry));
+    g_assert(atk_object_get_role(ATK_OBJECT(passwordEntry)) == ATK_ROLE_PASSWORD_TEXT);
+
+    g_signal_connect(passwordEntry, "text-insert",
+                     G_CALLBACK(textChangedCb),
+                     GINT_TO_POINTER(TEXT_CHANGE_INSERT));
+    g_signal_connect(passwordEntry, "text-remove",
+                     G_CALLBACK(textChangedCb),
+                     GINT_TO_POINTER(TEXT_CHANGE_REMOVE));
+
+    pos = 0;
+    atk_editable_text_insert_text(ATK_EDITABLE_TEXT(passwordEntry), "foobar", 6, &pos);
+    g_assert_cmpstr(textChangedResult, ==, "|1|0|6|'\342\200\242\342\200\242\342\200\242\342\200\242\342\200\242\342\200\242'|");
+    text = atk_text_get_text(ATK_TEXT(passwordEntry), 0, -1);
+    g_assert_cmpstr(text, ==, "\303\242\302\200\302\242\303\242\302\200\302\242");
+    g_free(text);
+
+    atk_editable_text_delete_text(ATK_EDITABLE_TEXT(passwordEntry), 2, 4);
+    g_assert_cmpstr(textChangedResult, ==, "|2|2|2|'\342\200\242\342\200\242'|");
+
+    text = atk_text_get_text(ATK_TEXT(passwordEntry), 0, -1);
+    g_assert_cmpstr(text, ==, "\303\242\302\200\302\242\303\242");
+    g_free(text);
+
+    pos = 3;
+    atk_editable_text_insert_text(ATK_EDITABLE_TEXT(passwordEntry), "qux", 3, &pos);
+    g_assert_cmpstr(textChangedResult, ==, "|1|3|3|'\342\200\242\342\200\242\342\200\242'|");
+
+    text = atk_text_get_text(ATK_TEXT(passwordEntry), 0, -1);
+    g_assert_cmpstr(text, ==, "\303\242\302\200\302\242\303\242\302\200\302\242\303\242");
+    g_free(text);
+
     g_free(textChangedResult);
 
     g_object_unref(form);
     g_object_unref(textEntry);
+    g_object_unref(passwordEntry);
     g_object_unref(webView);
 }
 
