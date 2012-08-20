@@ -1,3 +1,15 @@
+2012-08-20  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        Regression(r124945): Build is broken when touch events is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=94466
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added missing guards around touch events code.
+
+        * ewk/ewk_touch_event.cpp:
+        * ewk/ewk_touch_event_private.h:
+
 2012-08-17  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Change font family/script on layout tests causes flakiness

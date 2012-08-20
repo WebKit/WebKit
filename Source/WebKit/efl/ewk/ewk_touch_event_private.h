@@ -26,11 +26,15 @@
 #ifndef ewk_touch_event_private_h
 #define ewk_touch_event_private_h
 
+#if ENABLE(TOUCH_EVENTS)
+
 #include "PlatformTouchEvent.h"
 #include "ewk_frame.h"
 
 namespace EWKPrivate {
 WebCore::PlatformTouchEvent platformTouchEvent(Evas_Coord x, Evas_Coord y, Eina_List* points, Ewk_Touch_Event_Type action, unsigned modifiers);
 } // namespace EWKPrivate
+
+#endif // ENABLE(TOUCH_EVENTS)
 
 #endif // ewk_touch_event_private_h

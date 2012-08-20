@@ -25,6 +25,8 @@
 
 #include "config.h"
 
+#if ENABLE(TOUCH_EVENTS)
+
 #include "PlatformTouchPoint.h"
 #include "ewk_touch_event_private.h"
 #include <Ecore_Input.h>
@@ -92,3 +94,5 @@ WebCore::PlatformTouchEvent platformTouchEvent(Evas_Coord x, Evas_Coord y, Eina_
 }
 
 }
+
+#endif // ENABLE(TOUCH_EVENTS)
