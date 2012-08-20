@@ -31,8 +31,8 @@
 #include "config.h"
 #include "WorldContextHandle.h"
 
+#include "ScriptController.h"
 #include "V8IsolatedContext.h"
-#include "V8Proxy.h"
 
 namespace WebCore {
 
@@ -46,10 +46,10 @@ WorldContextHandle::WorldContextHandle(WorldToUse worldToUse)
         m_context = context->sharedContext();
 }
 
-v8::Local<v8::Context> WorldContextHandle::adjustedContext(V8Proxy* proxy) const
+v8::Local<v8::Context> WorldContextHandle::adjustedContext(ScriptController* script) const
 {
     if (m_worldToUse == UseMainWorld || !m_context || m_context->get().IsEmpty())
-        return proxy->mainWorldContext();
+        return script->mainWorldContext();
 
     return v8::Local<v8::Context>::New(m_context->get());
 }

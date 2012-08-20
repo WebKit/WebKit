@@ -38,14 +38,14 @@
 
 namespace WebCore {
 
-class V8Proxy;
+class ScriptController;
 
 enum WorldToUse { UseMainWorld, UseCurrentWorld };
 
 class WorldContextHandle {
 public:
     WorldContextHandle(WorldToUse);
-    v8::Local<v8::Context> adjustedContext(V8Proxy*) const;
+    v8::Local<v8::Context> adjustedContext(ScriptController*) const;
 
 private:
     WorldToUse m_worldToUse;

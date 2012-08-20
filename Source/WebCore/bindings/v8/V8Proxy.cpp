@@ -374,7 +374,7 @@ void V8Proxy::clearForNavigation()
 
 v8::Local<v8::Context> V8Proxy::context(Frame* frame)
 {
-    v8::Local<v8::Context> context = V8Proxy::mainWorldContext(frame);
+    v8::Local<v8::Context> context = ScriptController::mainWorldContext(frame);
     if (context.IsEmpty())
         return v8::Local<v8::Context>();
 
@@ -395,13 +395,7 @@ v8::Local<v8::Context> V8Proxy::context()
             return v8::Local<v8::Context>();
         return v8::Local<v8::Context>::New(context->get());
     }
-    return mainWorldContext();
-}
-
-v8::Local<v8::Context> V8Proxy::mainWorldContext()
-{
-    windowShell()->initContextIfNeeded();
-    return v8::Local<v8::Context>::New(windowShell()->context());
+    return frame()->script()->mainWorldContext();
 }
 
 v8::Local<v8::Context> V8Proxy::isolatedWorldContext(int worldId)
@@ -426,19 +420,11 @@ bool V8Proxy::matchesCurrentContext()
     return context == context->GetCurrent();
 }
 
-v8::Local<v8::Context> V8Proxy::mainWorldContext(Frame* frame)
-{
-    if (!frame)
-        return v8::Local<v8::Context>();
-
-    return frame->script()->proxy()->mainWorldContext();
-}
-
 v8::Local<v8::Context> toV8Context(ScriptExecutionContext* context, const WorldContextHandle& worldContext)
 {
     if (context->isDocument()) {
         if (Frame* frame = static_cast<Document*>(context)->frame())
-            return worldContext.adjustedContext(frame->script()->proxy());
+            return worldContext.adjustedContext(frame->script());
 #if ENABLE(WORKERS)
     } else if (context->isWorkerContext()) {
         if (WorkerContextExecutionProxy* proxy = static_cast<WorkerContext*>(context)->script()->proxy())

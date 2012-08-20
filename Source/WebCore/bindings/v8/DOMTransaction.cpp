@@ -105,7 +105,7 @@ void DOMTransaction::callFunction(const char* propertyName)
     if (function.IsEmpty())
         return;
 
-    v8::Local<v8::Context> v8Context = m_worldContext.adjustedContext(frame->script()->proxy());
+    v8::Local<v8::Context> v8Context = m_worldContext.adjustedContext(frame->script());
     if (v8Context.IsEmpty())
         return;
 

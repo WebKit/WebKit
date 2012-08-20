@@ -960,7 +960,7 @@ v8::Local<v8::Context> WebFrameImpl::mainWorldScriptContext() const
     if (!m_frame)
         return v8::Local<v8::Context>();
 
-    return V8Proxy::mainWorldContext(m_frame);
+    return ScriptController::mainWorldContext(m_frame);
 }
 
 v8::Handle<v8::Value> WebFrameImpl::createFileSystem(WebFileSystem::Type type,

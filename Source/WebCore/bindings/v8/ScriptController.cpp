@@ -256,7 +256,7 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
     m_sourceURL = &sourceURL;
 
     v8::HandleScope handleScope;
-    v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(m_proxy->frame());
+    v8::Handle<v8::Context> v8Context = ScriptController::mainWorldContext(m_proxy->frame());
     if (v8Context.IsEmpty())
         return ScriptValue();
 
@@ -287,12 +287,26 @@ void ScriptController::finishedWithEvent(Event* event)
     m_proxy->finishedWithEvent(event);
 }
 
+v8::Local<v8::Context> ScriptController::mainWorldContext()
+{
+    windowShell()->initContextIfNeeded();
+    return v8::Local<v8::Context>::New(windowShell()->context());
+}
+
+v8::Local<v8::Context> ScriptController::mainWorldContext(Frame* frame)
+{
+    if (!frame)
+        return v8::Local<v8::Context>();
+
+    return frame->script()->mainWorldContext();
+}
+
 // Create a V8 object with an interceptor of NPObjectPropertyGetter.
 void ScriptController::bindToWindowObject(Frame* frame, const String& key, NPObject* object)
 {
     v8::HandleScope handleScope;
 
-    v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(frame);
+    v8::Handle<v8::Context> v8Context = ScriptController::mainWorldContext(frame);
     if (v8Context.IsEmpty())
         return;
 
@@ -449,7 +463,7 @@ static NPObject* createNoScriptObject()
 static NPObject* createScriptObject(Frame* frame)
 {
     v8::HandleScope handleScope;
-    v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(frame);
+    v8::Handle<v8::Context> v8Context = ScriptController::mainWorldContext(frame);
     if (v8Context.IsEmpty())
         return createNoScriptObject();
 
@@ -489,7 +503,7 @@ NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement
         return createNoScriptObject();
 
     v8::HandleScope handleScope;
-    v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(m_frame);
+    v8::Handle<v8::Context> v8Context = ScriptController::mainWorldContext(m_frame);
     if (v8Context.IsEmpty())
         return createNoScriptObject();
     v8::Context::Scope scope(v8Context);

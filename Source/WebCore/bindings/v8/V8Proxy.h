@@ -118,7 +118,6 @@ namespace WebCore {
         // Returns V8 Context of a frame. If none exists, creates
         // a new context. It is potentially slow and consumes memory.
         static v8::Local<v8::Context> context(Frame*);
-        static v8::Local<v8::Context> mainWorldContext(Frame*);
 
         // If the current context causes out of memory, JavaScript setting
         // is disabled and it returns true.
@@ -127,7 +126,6 @@ namespace WebCore {
         static v8::Handle<v8::Script> compileScript(v8::Handle<v8::String> code, const String& fileName, const TextPosition& scriptStartPosition, v8::ScriptData* = 0);
 
         v8::Local<v8::Context> context();
-        v8::Local<v8::Context> mainWorldContext();
         v8::Local<v8::Context> isolatedWorldContext(int worldId);
         bool matchesCurrentContext();
 

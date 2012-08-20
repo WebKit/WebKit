@@ -145,8 +145,7 @@ void setEvalEnabled(ScriptState* scriptState, bool enabled)
 ScriptState* mainWorldScriptState(Frame* frame)
 {
     v8::HandleScope handleScope;
-    V8Proxy* proxy = frame->script()->proxy();
-    return ScriptState::forContext(proxy->mainWorldContext());
+    return ScriptState::forContext(frame->script()->mainWorldContext());
 }
 
 ScriptState* scriptStateFromNode(DOMWrapperWorld*, Node* node)

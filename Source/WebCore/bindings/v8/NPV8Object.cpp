@@ -66,7 +66,7 @@ static v8::Local<v8::Context> toV8Context(NPP npp, NPObject* npObject)
     DOMWindow* window = object->rootObject;
     if (!window || !window->isCurrentlyDisplayedInFrame())
         return v8::Local<v8::Context>();
-    return V8Proxy::mainWorldContext(object->rootObject->frame());
+    return ScriptController::mainWorldContext(object->rootObject->frame());
 }
 
 static V8Proxy* toV8Proxy(NPObject* npObject)
