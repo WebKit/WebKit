@@ -29,14 +29,24 @@
  */
 
 #include "config.h"
+#include "V8ArrayBufferCustom.h"
+
 #include <wtf/ArrayBuffer.h>
+#include <wtf/StdLibExtras.h>
 
 #include "ExceptionCode.h"
-#include "V8Binding.h"
 #include "V8ArrayBuffer.h"
+#include "V8Binding.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
+
+V8ArrayBufferDeallocationObserver* V8ArrayBufferDeallocationObserver::instance()
+{
+    DEFINE_STATIC_LOCAL(V8ArrayBufferDeallocationObserver, deallocationObserver, ());
+    return &deallocationObserver;
+}
+
 
 v8::Handle<v8::Value> V8ArrayBuffer::constructorCallback(const v8::Arguments& args)
 {
@@ -71,6 +81,8 @@ v8::Handle<v8::Value> V8ArrayBuffer::constructorCallback(const v8::Arguments& ar
         buffer = ArrayBuffer::create(static_cast<unsigned>(length), 1);
     if (!buffer.get())
         return throwError(RangeError, "ArrayBuffer size is not a small enough positive integer.", args.GetIsolate());
+    buffer->setDeallocationObserver(V8ArrayBufferDeallocationObserver::instance());
+    v8::V8::AdjustAmountOfExternalAllocatedMemory(buffer->byteLength());
     // Transform the holder into a wrapper object for the array.
     v8::Handle<v8::Object> wrapper = args.Holder();
     V8DOMWrapper::setDOMWrapper(wrapper, &info, buffer.get());

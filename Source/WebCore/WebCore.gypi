@@ -2310,6 +2310,7 @@
             'bindings/v8/WorldContextHandle.h',
             'bindings/v8/WrapperTypeInfo.h',
             'bindings/v8/custom/V8ArrayBufferCustom.cpp',
+            'bindings/v8/custom/V8ArrayBufferCustom.h',
             'bindings/v8/custom/V8ArrayBufferViewCustom.cpp',
             'bindings/v8/custom/V8ArrayBufferViewCustom.h',
             'bindings/v8/custom/V8AudioBufferSourceNodeCustom.cpp',

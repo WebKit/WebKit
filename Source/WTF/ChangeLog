@@ -1,3 +1,24 @@
+2012-08-21  Ulan Degenbaev  <ulan@chromium.org>
+
+        Call AdjustAmountOfExternalAllocatedMemory when V8ArrayBuffer constructed and destructed
+        https://bugs.webkit.org/show_bug.cgi?id=92993
+
+        Reviewed by Kenneth Russell.
+
+        Call AdjustAmountOfExternalAllocatedMemory when V8ArrayBuffer
+        is constructed and destructed so that V8's garbage collection
+        heuristics can account for the memory held by these objects.
+
+        * wtf/ArrayBuffer.h:
+        (WTF):
+        (ArrayBufferDeallocationObserver):
+        (WTF::ArrayBufferContents::ArrayBufferContents):
+        (WTF::ArrayBufferContents::transfer):
+        (ArrayBufferContents):
+        (ArrayBuffer):
+        (WTF::ArrayBuffer::setDeallocationObserver):
+        (WTF::ArrayBufferContents::~ArrayBufferContents):
+
 2012-08-21  Benjamin Poulain  <bpoulain@apple.com>
 
         Store CString data in the CStringBuffer to avoid the double indirection

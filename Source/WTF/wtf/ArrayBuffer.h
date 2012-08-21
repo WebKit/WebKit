@@ -36,12 +36,25 @@ namespace WTF {
 class ArrayBuffer;
 class ArrayBufferView;
 
+#if defined(WTF_USE_V8)
+// The current implementation assumes that the instance of this class is a
+// singleton living for the entire process's lifetime.
+class ArrayBufferDeallocationObserver {
+public:
+    virtual void ArrayBufferDeallocated(unsigned sizeInBytes) = 0;
+};
+#endif
+
+
 class ArrayBufferContents {
     WTF_MAKE_NONCOPYABLE(ArrayBufferContents);
 public:
     ArrayBufferContents() 
         : m_data(0)
         , m_sizeInBytes(0)
+#if defined(WTF_USE_V8)
+        , m_deallocationObserver(0)
+#endif
     { }
 
     inline ~ArrayBufferContents();
@@ -53,6 +66,9 @@ private:
     ArrayBufferContents(void* data, unsigned sizeInBytes) 
         : m_data(data)
         , m_sizeInBytes(sizeInBytes)
+#if defined(WTF_USE_V8)
+        , m_deallocationObserver(0)
+#endif
     { }
 
     friend class ArrayBuffer;
@@ -70,10 +86,21 @@ private:
         other.m_sizeInBytes = m_sizeInBytes;
         m_data = 0;
         m_sizeInBytes = 0;
+#if defined(WTF_USE_V8)
+        // Notify the current V8 isolate that the buffer is gone.
+        if (m_deallocationObserver)
+            m_deallocationObserver->ArrayBufferDeallocated(other.m_sizeInBytes);
+        ASSERT(!other.m_deallocationObserver);
+        m_deallocationObserver = 0;
+#endif
     }
 
     void* m_data;
     unsigned m_sizeInBytes;
+
+#if defined(WTF_USE_V8)
+    ArrayBufferDeallocationObserver* m_deallocationObserver;
+#endif
 };
 
 class ArrayBuffer : public RefCounted<ArrayBuffer> {
@@ -98,6 +125,13 @@ public:
 
     WTF_EXPORT_PRIVATE bool transfer(ArrayBufferContents&, Vector<RefPtr<ArrayBufferView> >& neuteredViews);
     bool isNeutered() { return !m_contents.m_data; }
+
+#if defined(WTF_USE_V8)
+    void setDeallocationObserver(ArrayBufferDeallocationObserver* deallocationObserver)
+    {
+        m_contents.m_deallocationObserver = deallocationObserver;
+    }
+#endif
 
     ~ArrayBuffer() { }
 
@@ -238,6 +272,10 @@ void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByte
 
 ArrayBufferContents::~ArrayBufferContents()
 {
+#if defined (WTF_USE_V8)
+    if (m_deallocationObserver)
+        m_deallocationObserver->ArrayBufferDeallocated(m_sizeInBytes);
+#endif
     WTF::fastFree(m_data);
 }
 

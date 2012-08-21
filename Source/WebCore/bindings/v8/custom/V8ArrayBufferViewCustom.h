@@ -35,6 +35,7 @@
 #include "ExceptionCode.h"
 
 #include "V8ArrayBuffer.h"
+#include "V8ArrayBufferCustom.h"
 #include "V8Binding.h"
 #include "V8Proxy.h"
 
@@ -147,6 +148,9 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
         if (!array.get())
             return throwError(RangeError, tooLargeSize, args.GetIsolate());
 
+        array->buffer()->setDeallocationObserver(V8ArrayBufferDeallocationObserver::instance());
+        v8::V8::AdjustAmountOfExternalAllocatedMemory(array->byteLength());
+
         memcpy(array->baseAddress(), source->baseAddress(), length * sizeof(ElementType));
 
         return wrapArrayBufferView(args, type, array, arrayType, true);
@@ -181,6 +185,11 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
 
     if (!array.get())
         return throwError(RangeError, tooLargeSize, args.GetIsolate());
+
+    if (doInstantiation) {
+        array->buffer()->setDeallocationObserver(V8ArrayBufferDeallocationObserver::instance());
+        v8::V8::AdjustAmountOfExternalAllocatedMemory(array->byteLength());
+    }
 
 
     // Transform the holder into a wrapper object for the array.
