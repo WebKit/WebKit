@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Web Worker Test</title>
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+window.jsTestIsAsync = true;
+var iters = 0;
+
+var startLotsOfEmptyWorkers = function() {
+    for (var i = 0; i < 100; i++) {
+        var w = new Worker('resources/empty-worker.js');
+    }
+    if (iters < 2) {
+        iters += 1;
+        setTimeout(startLotsOfEmptyWorkers, 1000);
+    } else if (testRunner) {
+        setTimeout(function() {
+            debug("PASSED");
+            testRunner.notifyDone();
+        }, 1000);
+    }
+};
+
+startLotsOfEmptyWorkers();
+</script>
+<script src="resources/js-test-post.js"></script>
+</body>
+</html>

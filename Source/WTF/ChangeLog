@@ -1,3 +1,48 @@
+2012-08-21  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        WTF Threading leaks kernel objects on platforms that use pthreads
+        https://bugs.webkit.org/show_bug.cgi?id=94636
+
+        Reviewed by Geoffrey Garen.
+
+        Creating lots of Web workers on Mac platforms leaks lots of Mach ports. Eventually, the 
+        process can exhaust its allocation of Mach ports from the kernel, which can then cause 
+        all sorts of badness, including the inability to allocate new virtual memory from the 
+        kernel. ThreadingPthreads.cpp and ThreadIdentifierDataPthreads.cpp need to be refactored 
+        so that we do not leak these kernel resources. I would assume that we also leak kernel 
+        resources on other pthreads platforms as well.
+
+        * wtf/ThreadIdentifierDataPthreads.cpp:
+        (WTF):
+        (WTF::ThreadIdentifierData::~ThreadIdentifierData): Now calls the event threadDidExit, which 
+        handles all relevant tear-down of the thread metadata in the thread map.
+        * wtf/ThreadingPthreads.cpp: Added a new class called PthreadState that encapsulates the 
+        state of a thread and the possible transitions between those states.
+        (PthreadState):
+        (WTF::PthreadState::PthreadState):
+        (WTF::PthreadState::joinableState): Returns the current state of the pthread.
+        (WTF::PthreadState::pthreadHandle): Returns the pthread_t for this particular thread. This needs to 
+        remain valid even after the thread has exited because somebody could come along at any time in the 
+        future and call join on the thread.
+        (WTF::PthreadState::didBecomeDetached): Signals that the thread was detached.
+        (WTF::PthreadState::didExit): Signals that the thread's exit destructor (~ThreadIdentifierData) has run.
+        (WTF::PthreadState::didJoin): Signals that the thread has been joined on successfully.
+        (WTF::PthreadState::hasExited): Returns whether or not the thread's exit destructor has run.
+        (WTF):
+        (WTF::identifierByPthreadHandle): Changed to also check hasExited() on the threads it finds in the map. We 
+        should only have one valid pthread_t in the map, but there are other pthread_t's that need to remain in the 
+        thread map for when somebody joins on that thread id later.
+        (WTF::establishIdentifierForPthreadHandle): Changed to put the allocate the new PthreadState data structure and 
+        put it in the map.
+        (WTF::pthreadHandleForIdentifierWithLockAlreadyHeld):
+        (WTF::wtfThreadEntryPoint):
+        (WTF::waitForThreadCompletion): We now do the relevant cleanup after the specified thread has been 
+        successfully joined on depending on if the joined thread has already exited.
+        (WTF::detachThread): Performs relevant cleanup if the thread has already exited. Otherwise signals to the 
+        PthreadState that the thread has been detached.
+        (WTF::threadDidExit): Function called by ~ThreadIdentifierData to indicate that the thread has exited. 
+        Only cleans up after itself if the thread isn't Joinable (i.e. Joined or Detached).
+
 2012-08-21  Ulan Degenbaev  <ulan@chromium.org>
 
         Call AdjustAmountOfExternalAllocatedMemory when V8ArrayBuffer constructed and destructed

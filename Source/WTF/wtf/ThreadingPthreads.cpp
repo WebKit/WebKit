@@ -61,11 +61,47 @@
 
 namespace WTF {
 
-typedef HashMap<ThreadIdentifier, pthread_t> ThreadMap;
+class PthreadState {
+public:
+    enum JoinableState {
+        Joinable, // The default thread state. The thread can be joined on.
+
+        Joined, // Somebody waited on this thread to exit and this thread finally exited. This state is here because there can be a 
+                // period of time between when the thread exits (which causes pthread_join to return and the remainder of waitOnThreadCompletion to run) 
+                // and when threadDidExit is called. We need threadDidExit to take charge and delete the thread data since there's 
+                // nobody else to pick up the slack in this case (since waitOnThreadCompletion has already returned).
+
+        Detached // The thread has been detached and can no longer be joined on. At this point, the thread must take care of cleaning up after itself.
+    };
+
+    // Currently all threads created by WTF start out as joinable. 
+    PthreadState(pthread_t handle)
+        : m_joinableState(Joinable)
+        , m_didExit(false)
+        , m_pthreadHandle(handle)
+    {
+    }
+
+    JoinableState joinableState() { return m_joinableState; }
+    pthread_t pthreadHandle() { return m_pthreadHandle; }
+    void didBecomeDetached() { m_joinableState = Detached; }
+    void didExit() { m_didExit = true; }
+    void didJoin() { m_joinableState = Joined; }
+    bool hasExited() { return m_didExit; }
+
+private:
+    JoinableState m_joinableState;
+    bool m_didExit;
+    pthread_t m_pthreadHandle;
+};
+
+typedef HashMap<ThreadIdentifier, OwnPtr<PthreadState> > ThreadMap;
 
 static Mutex* atomicallyInitializedStaticMutex;
 
-void clearPthreadHandleForIdentifier(ThreadIdentifier);
+void unsafeThreadWasDetached(ThreadIdentifier);
+void threadDidExit(ThreadIdentifier);
+void threadWasJoined(ThreadIdentifier);
 
 static Mutex& threadMapMutex()
 {
@@ -114,7 +150,7 @@ static ThreadIdentifier identifierByPthreadHandle(const pthread_t& pthreadHandle
 
     ThreadMap::iterator i = threadMap().begin();
     for (; i != threadMap().end(); ++i) {
-        if (pthread_equal(i->second, pthreadHandle))
+        if (pthread_equal(i->second->pthreadHandle(), pthreadHandle) && !i->second->hasExited())
             return i->first;
     }
 
@@ -124,30 +160,15 @@ static ThreadIdentifier identifierByPthreadHandle(const pthread_t& pthreadHandle
 static ThreadIdentifier establishIdentifierForPthreadHandle(const pthread_t& pthreadHandle)
 {
     ASSERT(!identifierByPthreadHandle(pthreadHandle));
-
     MutexLocker locker(threadMapMutex());
-
     static ThreadIdentifier identifierCount = 1;
-
-    threadMap().add(identifierCount, pthreadHandle);
-
+    threadMap().add(identifierCount, adoptPtr(new PthreadState(pthreadHandle)));
     return identifierCount++;
 }
 
-static pthread_t pthreadHandleForIdentifier(ThreadIdentifier id)
+static pthread_t pthreadHandleForIdentifierWithLockAlreadyHeld(ThreadIdentifier id)
 {
-    MutexLocker locker(threadMapMutex());
-
-    return threadMap().get(id);
-}
-
-void clearPthreadHandleForIdentifier(ThreadIdentifier id)
-{
-    MutexLocker locker(threadMapMutex());
-
-    ASSERT(threadMap().contains(id));
-
-    threadMap().remove(id);
+    return threadMap().get(id)->pthreadHandle();
 }
 
 static void* wtfThreadEntryPoint(void* param)
@@ -155,7 +176,6 @@ static void* wtfThreadEntryPoint(void* param)
     // Balanced by .leakPtr() in createThreadInternal.
     OwnPtr<ThreadFunctionInvocation> invocation = adoptPtr(static_cast<ThreadFunctionInvocation*>(param));
     invocation->function(invocation->data);
-
     return 0;
 }
 
@@ -198,15 +218,34 @@ void initializeCurrentThreadInternal(const char* threadName)
 
 int waitForThreadCompletion(ThreadIdentifier threadID)
 {
+    pthread_t pthreadHandle;
     ASSERT(threadID);
 
-    pthread_t pthreadHandle = pthreadHandleForIdentifier(threadID);
-    if (!pthreadHandle)
-        return 0;
+    {
+        // We don't want to lock across the call to join, since that can block our thread and cause deadlock.
+        MutexLocker locker(threadMapMutex());
+        pthreadHandle = pthreadHandleForIdentifierWithLockAlreadyHeld(threadID);
+        ASSERT(pthreadHandle);
+    }
 
     int joinResult = pthread_join(pthreadHandle, 0);
+
     if (joinResult == EDEADLK)
         LOG_ERROR("ThreadIdentifier %u was found to be deadlocked trying to quit", threadID);
+    else if (joinResult)
+        LOG_ERROR("ThreadIdentifier %u was unable to be joined.\n", threadID);
+
+    MutexLocker locker(threadMapMutex());
+    PthreadState* state = threadMap().get(threadID);
+    ASSERT(state);
+    ASSERT(state->joinableState() == PthreadState::Joinable);
+
+    // The thread has already exited, so clean up after it.
+    if (state->hasExited())
+        threadMap().remove(threadID);
+    // The thread hasn't exited yet, so don't clean anything up. Just signal that we've already joined on it so that it will clean up after itself.
+    else
+        state->didJoin();
 
     return joinResult;
 }
@@ -215,11 +254,32 @@ void detachThread(ThreadIdentifier threadID)
 {
     ASSERT(threadID);
 
-    pthread_t pthreadHandle = pthreadHandleForIdentifier(threadID);
-    if (!pthreadHandle)
-        return;
+    MutexLocker locker(threadMapMutex());
+    pthread_t pthreadHandle = pthreadHandleForIdentifierWithLockAlreadyHeld(threadID);
+    ASSERT(pthreadHandle);
 
-    pthread_detach(pthreadHandle);
+    int detachResult = pthread_detach(pthreadHandle);
+    if (detachResult)
+        LOG_ERROR("ThreadIdentifier %u was unable to be detached\n", threadID);
+
+    PthreadState* state = threadMap().get(threadID);
+    ASSERT(state);
+    if (state->hasExited())
+        threadMap().remove(threadID);
+    else
+        threadMap().get(threadID)->didBecomeDetached();
+}
+
+void threadDidExit(ThreadIdentifier threadID)
+{
+    MutexLocker locker(threadMapMutex());
+    PthreadState* state = threadMap().get(threadID);
+    ASSERT(state);
+    
+    state->didExit();
+
+    if (state->joinableState() != PthreadState::Joinable)
+        threadMap().remove(threadID);
 }
 
 void yield()

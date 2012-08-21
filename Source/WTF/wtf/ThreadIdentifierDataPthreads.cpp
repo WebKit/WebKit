@@ -47,11 +47,11 @@ namespace WTF {
 
 pthread_key_t ThreadIdentifierData::m_key = PTHREAD_KEYS_MAX;
 
-void clearPthreadHandleForIdentifier(ThreadIdentifier);
+void threadDidExit(ThreadIdentifier);
 
 ThreadIdentifierData::~ThreadIdentifierData()
 {
-    clearPthreadHandleForIdentifier(m_identifier);
+    threadDidExit(m_identifier);
 }
 
 void ThreadIdentifierData::initializeOnce()
