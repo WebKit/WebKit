@@ -1,3 +1,13 @@
+2012-08-21  Florin Malita  <fmalita@chromium.org>
+
+        ASSERT triggered in SVGTRefTargetEventListener::handleEvent()
+        https://bugs.webkit.org/show_bug.cgi?id=94487
+
+        Reviewed by Nikolas Zimmermann.
+
+        * svg/custom/tref-stale-listener-crash-expected.txt: Added.
+        * svg/custom/tref-stale-listener-crash.html: Added.
+
 2012-08-21  Brady Eidson  <beidson@apple.com>
 
         Rebaseline failing fast/canvas tests for Mountain Lion

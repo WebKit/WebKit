@@ -69,9 +69,9 @@ public:
                 ? static_cast<const SVGTRefTargetEventListener*>(listener) : 0;
     }
 
-    void attach(Element* target, String& targetId);
+    void attach(PassRefPtr<Element> target);
     void detach();
-    bool isAttached() const { return m_attached; }
+    bool isAttached() const { return m_target.get(); }
 
 private:
     SVGTRefTargetEventListener(SVGTRefElement* trefElement);
@@ -80,29 +80,26 @@ private:
     virtual bool operator==(const EventListener&) OVERRIDE;
 
     SVGTRefElement* m_trefElement;
-    String m_targetId;
-    bool m_attached;
+    RefPtr<Element> m_target;
 };
 
 SVGTRefTargetEventListener::SVGTRefTargetEventListener(SVGTRefElement* trefElement)
     : EventListener(SVGTRefTargetEventListenerType)
     , m_trefElement(trefElement)
-    , m_attached(false)
+    , m_target(0)
 {
     ASSERT(m_trefElement);
 }
 
-void SVGTRefTargetEventListener::attach(Element* target, String& targetId)
+void SVGTRefTargetEventListener::attach(PassRefPtr<Element> target)
 {
     ASSERT(!isAttached());
-    ASSERT(target);
+    ASSERT(target.get());
     ASSERT(target->inDocument());
-    ASSERT(!targetId.isEmpty());
 
     target->addEventListener(eventNames().DOMSubtreeModifiedEvent, this, false);
     target->addEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, this, false);
-    m_targetId = targetId;
-    m_attached = true;
+    m_target = target;
 }
 
 void SVGTRefTargetEventListener::detach()
@@ -110,13 +107,9 @@ void SVGTRefTargetEventListener::detach()
     if (!isAttached())
         return;
 
-    if (Element* target = m_trefElement->treeScope()->getElementById(m_targetId)) {
-        target->removeEventListener(eventNames().DOMSubtreeModifiedEvent, this, false);
-        target->removeEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, this, false);
-    }
-
-    m_targetId = emptyString();
-    m_attached = false;
+    m_target->removeEventListener(eventNames().DOMSubtreeModifiedEvent, this, false);
+    m_target->removeEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, this, false);
+    m_target.clear();
 }
 
 bool SVGTRefTargetEventListener::operator==(const EventListener& listener)
@@ -131,7 +124,7 @@ void SVGTRefTargetEventListener::handleEvent(ScriptExecutionContext*, Event* eve
     ASSERT(isAttached());
 
     if (event->type() == eventNames().DOMSubtreeModifiedEvent && m_trefElement != event->target())
-        m_trefElement->updateReferencedText();
+        m_trefElement->updateReferencedText(m_target.get());
     else if (event->type() == eventNames().DOMNodeRemovedFromDocumentEvent)
         m_trefElement->detachTarget();
 }
@@ -183,10 +176,10 @@ void SVGTRefElement::createShadowSubtree()
     ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot, ASSERT_NO_EXCEPTION);
 }
 
-void SVGTRefElement::updateReferencedText()
+void SVGTRefElement::updateReferencedText(Element* target)
 {
     String textContent;
-    if (Element* target = SVGURIReference::targetElementFromIRIString(href(), document()))
+    if (target)
         textContent = target->textContent();
 
     ASSERT(shadow());
@@ -296,8 +289,8 @@ void SVGTRefElement::buildPendingResource()
         return;
 
     String id;
-    Element* target = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
-    if (!target) {
+    RefPtr<Element> target = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
+    if (!target.get()) {
         if (id.isEmpty())
             return;
 
@@ -311,9 +304,9 @@ void SVGTRefElement::buildPendingResource()
     // expects every element instance to have an associated shadow tree element - which is not the
     // case when we land here from SVGUseElement::buildShadowTree().
     if (!isInShadowTree())
-        m_targetListener->attach(target, id);
+        m_targetListener->attach(target);
 
-    updateReferencedText();
+    updateReferencedText(target.get());
 }
 
 Node::InsertionNotificationRequest SVGTRefElement::insertedInto(ContainerNode* rootParent)
