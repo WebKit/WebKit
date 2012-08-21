@@ -121,17 +121,6 @@ V8Proxy::~V8Proxy()
     windowShell()->destroyGlobal();
 }
 
-v8::Handle<v8::Script> V8Proxy::compileScript(v8::Handle<v8::String> code, const String& fileName, const TextPosition& scriptStartPosition, v8::ScriptData* scriptData)
-{
-    const uint16_t* fileNameString = fromWebCoreString(fileName);
-    v8::Handle<v8::String> name = v8::String::New(fileNameString, fileName.length());
-    v8::Handle<v8::Integer> line = v8Integer(scriptStartPosition.m_line.zeroBasedInt());
-    v8::Handle<v8::Integer> column = v8Integer(scriptStartPosition.m_column.zeroBasedInt());
-    v8::ScriptOrigin origin(name, line, column);
-    v8::Handle<v8::Script> script = v8::Script::Compile(code, &origin, scriptData);
-    return script;
-}
-
 PassOwnPtr<v8::ScriptData> V8Proxy::precompileScript(v8::Handle<v8::String> code, CachedScript* cachedScript)
 {
     // A pseudo-randomly chosen ID used to store and retrieve V8 ScriptData from
@@ -180,7 +169,7 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
 
         // NOTE: For compatibility with WebCore, ScriptSourceCode's line starts at
         // 1, whereas v8 starts at 0.
-        v8::Handle<v8::Script> script = compileScript(code, source.url(), source.startPosition(), scriptData.get());
+        v8::Handle<v8::Script> script = ScriptSourceCode::compileScript(code, source.url(), source.startPosition(), scriptData.get());
 #if PLATFORM(CHROMIUM)
         TRACE_EVENT_END0("v8", "v8.compile");
         TRACE_EVENT0("v8", "v8.run");

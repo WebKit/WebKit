@@ -40,6 +40,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/ScriptInstance.cpp
     bindings/v8/ScriptObject.cpp
     bindings/v8/ScriptScope.cpp
+    bindings/v8/ScriptSourceCode.cpp
     bindings/v8/ScriptState.cpp
     bindings/v8/ScriptValue.cpp
     bindings/v8/SerializedScriptValue.cpp

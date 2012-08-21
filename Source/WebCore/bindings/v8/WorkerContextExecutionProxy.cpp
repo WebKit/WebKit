@@ -38,6 +38,7 @@
 #include "DedicatedWorkerContext.h"
 #include "Event.h"
 #include "ScriptCallStack.h"
+#include "ScriptSourceCode.h"
 #include "SharedWorker.h"
 #include "SharedWorkerContext.h"
 #include "V8Binding.h"
@@ -46,7 +47,6 @@
 #include "V8DedicatedWorkerContext.h"
 #include "V8ObjectConstructor.h"
 #include "V8PerContextData.h"
-#include "V8Proxy.h"
 #include "V8RecursionScope.h"
 #include "V8SharedWorkerContext.h"
 #include "Worker.h"
@@ -213,7 +213,7 @@ ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const St
     v8::TryCatch exceptionCatcher;
 
     v8::Local<v8::String> scriptString = v8ExternalString(script);
-    v8::Handle<v8::Script> compiledScript = V8Proxy::compileScript(scriptString, fileName, scriptStartPosition);
+    v8::Handle<v8::Script> compiledScript = ScriptSourceCode::compileScript(scriptString, fileName, scriptStartPosition);
     v8::Local<v8::Value> result = runScript(compiledScript);
 
     if (!exceptionCatcher.CanContinue()) {
@@ -250,7 +250,7 @@ v8::Local<v8::Value> WorkerContextExecutionProxy::runScript(v8::Handle<v8::Scrip
     // Compute the source string and prevent against infinite recursion.
     if (V8RecursionScope::recursionLevel() >= kMaxRecursionDepth) {
         v8::Local<v8::String> code = v8ExternalString("throw RangeError('Recursion too deep')");
-        script = V8Proxy::compileScript(code, "", TextPosition::minimumPosition());
+        script = ScriptSourceCode::compileScript(code, "", TextPosition::minimumPosition());
     }
 
     if (handleOutOfMemory())

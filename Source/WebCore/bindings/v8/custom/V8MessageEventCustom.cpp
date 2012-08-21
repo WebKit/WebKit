@@ -68,7 +68,7 @@ v8::Handle<v8::Value> V8MessageEvent::dataAccessorGetter(v8::Local<v8::String> n
 
     case MessageEvent::DataTypeString: {
         String stringValue = event->dataAsString();
-        result = v8::String::New(fromWebCoreString(stringValue), stringValue.length());
+        result = v8String(stringValue);
         break;
     }
 

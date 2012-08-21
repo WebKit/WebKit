@@ -97,14 +97,9 @@ namespace WebCore {
         // Run an already compiled script.
         v8::Local<v8::Value> runScript(v8::Handle<v8::Script>);
 
-        // Call the function as constructor with the given arguments.
-        v8::Local<v8::Value> newInstance(v8::Handle<v8::Function>, int argc, v8::Handle<v8::Value> argv[]);
-
         // Returns V8 Context of a frame. If none exists, creates
         // a new context. It is potentially slow and consumes memory.
         static v8::Local<v8::Context> context(Frame*);
-
-        static v8::Handle<v8::Script> compileScript(v8::Handle<v8::String> code, const String& fileName, const TextPosition& scriptStartPosition, v8::ScriptData* = 0);
 
         v8::Local<v8::Context> context();
         v8::Local<v8::Context> isolatedWorldContext(int worldId);

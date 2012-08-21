@@ -89,8 +89,6 @@ public:
     static void initializeThreading();
 
     // Evaluate a script file in the environment of this proxy.
-    // If succeeded, 'succ' is set to true and result is returned
-    // as a string.
     ScriptValue evaluate(const ScriptSourceCode&);
 
     // Evaluate JavaScript in a new isolated world. The script gets its own

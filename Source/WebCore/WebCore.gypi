@@ -2230,6 +2230,7 @@
             'bindings/v8/ScriptProfiler.h',
             'bindings/v8/ScriptScope.cpp',
             'bindings/v8/ScriptScope.h',
+            'bindings/v8/ScriptSourceCode.cpp',
             'bindings/v8/ScriptSourceCode.h',
             'bindings/v8/ScriptState.cpp',
             'bindings/v8/ScriptState.h',

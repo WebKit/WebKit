@@ -35,6 +35,7 @@
 #include "CachedScript.h"
 #include "KURL.h"
 #include "PlatformString.h"
+#include <v8.h>
 #include <wtf/text/TextPosition.h>
 
 namespace WebCore {
@@ -71,6 +72,8 @@ public:
     }
     int startLine() const { return m_startPosition.m_line.oneBasedInt(); }
     const TextPosition& startPosition() const { return m_startPosition; }
+
+    static v8::Handle<v8::Script> compileScript(v8::Handle<v8::String>, const String&, const TextPosition&, v8::ScriptData* = 0);
 
 private:
     String m_source;

@@ -282,13 +282,6 @@ namespace WebCore {
         return static_cast<long long>(value->IntegerValue());
     }
 
-    // The string returned by this function is still owned by the argument
-    // and will be deallocated when the argument is deallocated.
-    inline const uint16_t* fromWebCoreString(const String& str)
-    {
-        return reinterpret_cast<const uint16_t*>(str.characters());
-    }
-
     inline bool isUndefinedOrNull(v8::Handle<v8::Value> value)
     {
         return value->IsNull() || value->IsUndefined();
