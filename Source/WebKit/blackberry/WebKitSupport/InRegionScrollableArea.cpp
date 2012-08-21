@@ -42,6 +42,8 @@ InRegionScrollableArea::InRegionScrollableArea()
 
 InRegionScrollableArea::~InRegionScrollableArea()
 {
+    if (m_cachedCompositedScrollableLayer)
+        m_cachedCompositedScrollableLayer->clearOverride();
 }
 
 InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLayer* layer)

@@ -1,5 +1,27 @@
 2012-08-21  Antonio Gomes  <agomes@rim.com>
 
+        [BlackBerry] Accelerated In-Region Scrolling does not render correctly on rotation
+        https://bugs.webkit.org/show_bug.cgi?id=94608
+        PR #194754
+
+        Reviewed by Goerge Staikos.
+
+        When one translates/scrolls a HW accelerated scrollable layer, it makes use of
+        the OVERRIDE mechanism. Suppose the following scenario:
+
+        - In landscape, the overflow menu is scrollable. Then the user scrolls it so
+        that is has scroll position of 0, -100.
+        - when he rotates to portrait, the menus fit well to the available space but it
+        still has the OVERRIDE set, so it keeps the layer translated at 0, -100.
+
+        Fix is simple: clear the override when we stop scrolling a HW accelerated layer,
+        when we destroy the objects.
+
+        * WebKitSupport/InRegionScrollableArea.cpp:
+        (BlackBerry::WebKit::InRegionScrollableArea::~InRegionScrollableArea):
+
+2012-08-21  Antonio Gomes  <agomes@rim.com>
+
         [BlackBerry] Properly notify WebKit when Client stops in-region scrolling
         https://bugs.webkit.org/show_bug.cgi?id=94603
         PR #195813
