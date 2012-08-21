@@ -1,5 +1,36 @@
 2012-08-21  Brady Eidson  <beidson@apple.com>
 
+        Rebaseline failing fast/writing-mode tests for Mountain Lion
+
+        Unreviewed (Bot gardening).
+
+        * platform/mac-lion/fast/writing-mode/japanese-ruby-vertical-lr-expected.png: Copied from LayoutTests/platform/mac/fast/writing-mode/japanese-ruby-vertical-lr-expected.png.
+        * platform/mac-lion/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt: Copied from LayoutTests/platform/mac/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt.
+        * platform/mac-lion/fast/writing-mode/japanese-ruby-vertical-rl-expected.png: Copied from LayoutTests/platform/mac/fast/writing-mode/japanese-ruby-vertical-rl-expected.png.
+        * platform/mac-lion/fast/writing-mode/japanese-ruby-vertical-rl-expected.txt: Copied from LayoutTests/platform/mac/fast/writing-mode/japanese-ruby-vertical-rl-expected.txt.
+        * platform/mac-lion/fast/writing-mode/text-orientation-basic-expected.png: Copied from LayoutTests/platform/mac/fast/writing-mode/text-orientation-basic-expected.png.
+        * platform/mac-lion/fast/writing-mode/text-orientation-basic-expected.txt: Copied from LayoutTests/platform/mac/fast/writing-mode/text-orientation-basic-expected.txt.
+        * platform/mac-lion/fast/writing-mode/vertical-align-table-baseline-expected.png: Copied from LayoutTests/platform/mac/fast/writing-mode/vertical-align-table-baseline-expected.png.
+        * platform/mac-lion/fast/writing-mode/vertical-align-table-baseline-expected.txt: Copied from LayoutTests/platform/mac/fast/writing-mode/vertical-align-table-baseline-expected.txt.
+        * platform/mac-lion/fast/writing-mode/vertical-baseline-alignment-expected.png: Copied from LayoutTests/platform/mac/fast/writing-mode/vertical-baseline-alignment-expected.png.
+        * platform/mac-lion/fast/writing-mode/vertical-baseline-alignment-expected.txt: Copied from LayoutTests/platform/mac/fast/writing-mode/vertical-baseline-alignment-expected.txt.
+        * platform/mac-lion/fast/writing-mode/vertical-font-fallback-expected.png: Copied from LayoutTests/platform/mac/fast/writing-mode/vertical-font-fallback-expected.png.
+        * platform/mac-lion/fast/writing-mode/vertical-font-fallback-expected.txt: Copied from LayoutTests/platform/mac/fast/writing-mode/vertical-font-fallback-expected.txt.
+        * platform/mac/fast/writing-mode/japanese-ruby-vertical-lr-expected.png:
+        * platform/mac/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt:
+        * platform/mac/fast/writing-mode/japanese-ruby-vertical-rl-expected.png:
+        * platform/mac/fast/writing-mode/japanese-ruby-vertical-rl-expected.txt:
+        * platform/mac/fast/writing-mode/text-orientation-basic-expected.png:
+        * platform/mac/fast/writing-mode/text-orientation-basic-expected.txt:
+        * platform/mac/fast/writing-mode/vertical-align-table-baseline-expected.png:
+        * platform/mac/fast/writing-mode/vertical-align-table-baseline-expected.txt:
+        * platform/mac/fast/writing-mode/vertical-baseline-alignment-expected.png:
+        * platform/mac/fast/writing-mode/vertical-baseline-alignment-expected.txt:
+        * platform/mac/fast/writing-mode/vertical-font-fallback-expected.png:
+        * platform/mac/fast/writing-mode/vertical-font-fallback-expected.txt:
+
+2012-08-21  Brady Eidson  <beidson@apple.com>
+
         Rebaseline failing editing/selection tests for mountain lion
         https://bugs.webkit.org/show_bug.cgi?id=94629
 

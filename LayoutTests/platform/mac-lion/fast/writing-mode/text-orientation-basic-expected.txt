@@ -18,7 +18,7 @@ layer at (0,0) size 785x704
           text run at (0,54) width 103: "API deficiency. "
           text run at (103,54) width 603: "There is no way to tell CoreText to use upright horizontal glyphs when rendering a vertical line."
       RenderBlock {DIV} at (0,88) size 388x600
-        RenderBlock {DIV} at (0,0) size 194x398 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (0,0) size 194x401 [border: (1px solid #008000)]
           RenderInline {SPAN} at (0,0) size 40x173
             RenderText {#text} at (2,1) size 40x173
               text run at (2,1) width 173: "Hello world"
@@ -27,14 +27,14 @@ layer at (0,0) size 785x704
             RenderText {#text} at (44,1) size 40x254
               text run at (44,1) width 254: "Hello world"
           RenderBR {BR} at (52,254) size 0x1
-          RenderInline {SPAN} at (0,0) size 36x198
-            RenderText {#text} at (94,1) size 36x198
-              text run at (94,1) width 198: "Hello world"
-          RenderBR {BR} at (112,198) size 0x1
-          RenderInline {SPAN} at (0,0) size 36x396
-            RenderText {#text} at (148,1) size 36x396
-              text run at (148,1) width 396: "Hello world"
-          RenderBR {BR} at (166,397) size 0x0
+          RenderInline {SPAN} at (0,0) size 36x199
+            RenderText {#text} at (94,1) size 36x199
+              text run at (94,1) width 199: "Hello world"
+          RenderBR {BR} at (112,199) size 0x1
+          RenderInline {SPAN} at (0,0) size 36x399
+            RenderText {#text} at (148,1) size 36x399
+              text run at (148,1) width 399: "Hello world"
+          RenderBR {BR} at (166,399) size 0x1
         RenderText {#text} at (0,0) size 0x0
         RenderBlock {DIV} at (194,0) size 194x257 [border: (1px solid #008000)]
           RenderInline {SPAN} at (0,0) size 40x173
@@ -45,12 +45,12 @@ layer at (0,0) size 785x704
             RenderText {#text} at (44,1) size 40x255
               text run at (44,1) width 255: "Hello world"
           RenderBR {BR} at (52,256) size 0x0
-          RenderInline {SPAN} at (0,0) size 36x197
-            RenderText {#text} at (94,1) size 36x197
-              text run at (94,1) width 197: "Hello world"
-          RenderBR {BR} at (112,198) size 0x0
-          RenderInline {SPAN} at (0,0) size 36x221
-            RenderText {#text} at (148,1) size 36x221
-              text run at (148,1) width 221: "Hello world"
-          RenderBR {BR} at (166,222) size 0x0
+          RenderInline {SPAN} at (0,0) size 36x198
+            RenderText {#text} at (94,1) size 36x198
+              text run at (94,1) width 198: "Hello world"
+          RenderBR {BR} at (112,199) size 0x0
+          RenderInline {SPAN} at (0,0) size 36x222
+            RenderText {#text} at (148,1) size 36x222
+              text run at (148,1) width 222: "Hello world"
+          RenderBR {BR} at (166,223) size 0x0
         RenderText {#text} at (0,0) size 0x0
