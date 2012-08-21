@@ -50,9 +50,14 @@ static PropertySetCSSOMWrapperMap& propertySetCSSOMWrapperMap()
     return propertySetCSSOMWrapperMapInstance;
 }
 
+static size_t immutableStylePropertySetSize(unsigned count)
+{
+    return sizeof(StylePropertySet) - sizeof(void*) + sizeof(CSSProperty) * count;
+}
+
 PassRefPtr<StylePropertySet> StylePropertySet::createImmutable(const CSSProperty* properties, unsigned count, CSSParserMode cssParserMode)
 {
-    void* slot = WTF::fastMalloc(sizeof(StylePropertySet) - sizeof(void*) + sizeof(CSSProperty) * count);
+    void* slot = WTF::fastMalloc(immutableStylePropertySetSize(count));
     return adoptRef(new (slot) StylePropertySet(properties, count, cssParserMode, /* makeMutable */ false));
 }
 
@@ -1091,11 +1096,11 @@ unsigned StylePropertySet::averageSizeInBytes()
 
 void StylePropertySet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    size_t actualSize = m_isMutable ? sizeof(StylePropertySet) : immutableStylePropertySetSize(m_arraySize);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS, actualSize);
     if (m_isMutable)
         info.addVectorPtr(m_mutablePropertyVector);
-    else
-        info.addRawBuffer(m_properties, m_arraySize * sizeof(CSSProperty));
+
     unsigned count = propertyCount();
     for (unsigned i = 0; i < count; ++i)
         info.addInstrumentedMember(propertyAt(i));

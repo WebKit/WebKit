@@ -168,10 +168,10 @@ public:
 private:
     friend class MemoryClassInfo;
 
-    template <typename T> void reportObjectInfo(MemoryInstrumentation::ObjectType objectType)
+    template <typename T> void reportObjectInfo(MemoryInstrumentation::ObjectType objectType, size_t actualSize)
     {
         if (!m_objectSize) {
-            m_objectSize = sizeof(T);
+            m_objectSize = actualSize ? actualSize : sizeof(T);
             if (objectType != MemoryInstrumentation::Other)
                 m_objectType = objectType;
         }
@@ -185,11 +185,11 @@ private:
 class MemoryClassInfo {
 public:
     template <typename T>
-    MemoryClassInfo(MemoryObjectInfo* memoryObjectInfo, const T*, MemoryInstrumentation::ObjectType objectType)
+    MemoryClassInfo(MemoryObjectInfo* memoryObjectInfo, const T*, MemoryInstrumentation::ObjectType objectType, size_t actualSize = 0)
         : m_memoryObjectInfo(memoryObjectInfo)
         , m_memoryInstrumentation(memoryObjectInfo->memoryInstrumentation())
     {
-        m_memoryObjectInfo->reportObjectInfo<T>(objectType);
+        m_memoryObjectInfo->reportObjectInfo<T>(objectType, actualSize);
         m_objectType = memoryObjectInfo->objectType();
     }
 
