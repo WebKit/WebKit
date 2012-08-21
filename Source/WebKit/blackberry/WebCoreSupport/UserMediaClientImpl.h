@@ -30,6 +30,10 @@ namespace BlackBerry {
 namespace WebKit {
 class WebPage;
 }
+
+namespace Platform {
+class WebUserMedia;
+}
 }
 
 namespace WebCore {
@@ -47,6 +51,9 @@ public:
 
 private:
     UserMediaClientImpl();
+    BlackBerry::Platform::WebUserMedia* webUserMedia();
+
+    BlackBerry::Platform::WebUserMedia* m_webUserMedia;
 };
 
 }

@@ -30,6 +30,8 @@
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HostWindow.h"
+#include "MediaStreamDescriptor.h"
+#include "MediaStreamRegistry.h"
 #include "NotImplemented.h"
 #include "PlatformContextSkia.h"
 #include "ProtectionSpace.h"
@@ -781,6 +783,33 @@ int MediaPlayerPrivate::showErrorDialog(PlatformPlayer::Error type)
     if (frameView() && frameView()->hostWindow())
         rc = frameView()->hostWindow()->platformPageClient()->showAlertDialog(atype);
     return rc;
+}
+
+static WebMediaStreamSource toWebMediaStreamSource(MediaStreamSource* src)
+{
+    return WebMediaStreamSource(src->id().utf8().data(), static_cast<WebMediaStreamSource::Type>(src->type()), src->name().utf8().data());
+}
+
+static WebMediaStreamDescriptor toWebMediaStreamDescriptor(MediaStreamDescriptor* d)
+{
+    vector<WebMediaStreamSource> audioSources;
+    for (size_t i = 0; i < d->numberOfAudioComponents(); i++)
+        audioSources.push_back(toWebMediaStreamSource(d->audioComponent(i)->source()));
+
+    vector<WebMediaStreamSource> videoSources;
+    for (size_t i = 0; i < d->numberOfVideoComponents(); i++)
+        videoSources.push_back(toWebMediaStreamSource(d->videoComponent(i)->source()));
+
+    return WebMediaStreamDescriptor(d->label().utf8().data(), audioSources, videoSources);
+}
+
+WebMediaStreamDescriptor MediaPlayerPrivate::lookupMediaStream(const string& url)
+{
+    MediaStreamDescriptor* descriptor = MediaStreamRegistry::registry().lookupMediaStreamDescriptor(String::fromUTF8(url.c_str()));
+    if (!descriptor)
+        return WebMediaStreamDescriptor();
+
+    return toWebMediaStreamDescriptor(descriptor);
 }
 
 FrameView* MediaPlayerPrivate::frameView() const

@@ -138,6 +138,7 @@ public:
     virtual bool isTabVisible() const;
     virtual int showErrorDialog(BlackBerry::Platform::PlatformPlayer::Error);
     virtual BlackBerry::Platform::Graphics::Window* platformWindow();
+    virtual BlackBerry::Platform::WebMediaStreamDescriptor lookupMediaStream(const std::string& url);
 
 private:
     MediaPlayerPrivate(MediaPlayer*);

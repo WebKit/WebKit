@@ -1,3 +1,35 @@
+2012-08-21  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Add support for getUserMedia
+        https://bugs.webkit.org/show_bug.cgi?id=94591
+
+        Reviewed by George Staikos.
+
+        Implement getUserMedia feature using the platform API.
+
+        PR #153571
+
+        Reviewed internally by George Staikos.
+
+        * WebCoreSupport/UserMediaClientImpl.cpp:
+        (WebCore):
+        (WebCore::userMediaRequestsMap):
+        (WebCore::toMediaStreamSource):
+        (WebCore::toMediaStreamDescriptor):
+        (WebUserMediaRequestClientImpl):
+        (WebCore::WebUserMediaRequestClientImpl::WebUserMediaRequestClientImpl):
+        (WebCore::WebUserMediaRequestClientImpl::requestSucceeded):
+        (WebCore::WebUserMediaRequestClientImpl::requestFailed):
+        (WebCore::UserMediaClientImpl::UserMediaClientImpl):
+        (WebCore::UserMediaClientImpl::~UserMediaClientImpl):
+        (WebCore::UserMediaClientImpl::requestUserMedia):
+        (WebCore::UserMediaClientImpl::cancelUserMediaRequest):
+        (WebCore::UserMediaClientImpl::webUserMedia):
+        * WebCoreSupport/UserMediaClientImpl.h:
+        (BlackBerry):
+        (Platform):
+        (UserMediaClientImpl):
+
 2012-08-21  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL][GTK][BlackBerry] Fix build error in the DeviceOrientationClient
