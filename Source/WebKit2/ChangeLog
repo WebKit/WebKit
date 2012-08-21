@@ -1,5 +1,13 @@
 2012-08-21  Alexey Proskuryakov  <ap@apple.com>
 
+        <rdar://problem/11241850> Block access to xpcd in WebProcess.sb
+
+        Reviewed by Sam Weinig and Jon Honeycutt.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2012-08-21  Alexey Proskuryakov  <ap@apple.com>
+
         <rdar://problem/8900275> Remove PubSub access from WebProcess, since it is no longer necessary
 
         Reviewed by Mark Rowe.

@@ -8,6 +8,10 @@
 ;; Distributed notifications, local pasteboard client
 (corefoundation)
 
+;; Override an unnecessary entry from system.sb.
+(deny mach-lookup
+       (global-name "com.apple.xpcd"))
+
 ;; Utility functions for home directory relative path filters
 (define (home-regex home-relative-regex)
   (regex (string-append "^" (regex-quote (param "HOME_DIR")) home-relative-regex)))
