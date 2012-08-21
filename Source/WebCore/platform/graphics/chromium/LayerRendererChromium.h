@@ -248,7 +248,7 @@ private:
     bool m_visible;
     TextureUploaderOption m_textureUploaderSetting;
 
-    OwnPtr<CCScopedLockResourceForWrite> m_currentFramebufferLock;
+    OwnPtr<CCResourceProvider::ScopedWriteLockGL> m_currentFramebufferLock;
 };
 
 

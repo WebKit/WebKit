@@ -287,23 +287,36 @@ private:
     PendingProduceTextureList m_pendingProduceTextures;
 };
 
-class CCResourceProviderTest : public testing::Test {
+class CCResourceProviderTest : public testing::TestWithParam<CCResourceProvider::ResourceType> {
 public:
     CCResourceProviderTest()
         : m_sharedData(ContextSharedData::create())
         , m_context(FakeWebCompositorOutputSurface::create(ResourceProviderContext::create(m_sharedData.get())))
         , m_resourceProvider(CCResourceProvider::create(m_context.get()))
     {
+        m_resourceProvider->setDefaultResourceType(GetParam());
     }
 
     ResourceProviderContext* context() { return static_cast<ResourceProviderContext*>(m_context->context3D()); }
 
     void getResourcePixels(CCResourceProvider::ResourceId id, const IntSize& size, WGC3Denum format, uint8_t* pixels)
     {
-        CCScopedLockResourceForRead lock(m_resourceProvider.get(), id);
-        ASSERT_NE(0U, lock.textureId());
-        context()->bindTexture(GraphicsContext3D::TEXTURE_2D, lock.textureId());
-        context()->getPixels(size, format, pixels);
+        if (GetParam() == CCResourceProvider::GLTexture) {
+            CCResourceProvider::ScopedReadLockGL lockGL(m_resourceProvider.get(), id);
+            ASSERT_NE(0U, lockGL.textureId());
+            context()->bindTexture(GraphicsContext3D::TEXTURE_2D, lockGL.textureId());
+            context()->getPixels(size, format, pixels);
+        } else if (GetParam() == CCResourceProvider::Bitmap) {
+            CCResourceProvider::ScopedReadLockSoftware lockSoftware(m_resourceProvider.get(), id);
+            memcpy(pixels, lockSoftware.skBitmap()->getPixels(), lockSoftware.skBitmap()->getSize());
+        }
+    }
+
+    void expectNumResources(int count)
+    {
+        EXPECT_EQ(count, static_cast<int>(m_resourceProvider->numResources()));
+        if (GetParam() == CCResourceProvider::GLTexture)
+            EXPECT_EQ(count, context()->textureCount());
     }
 
 protected:
@@ -313,7 +326,7 @@ protected:
     OwnPtr<CCResourceProvider> m_resourceProvider;
 };
 
-TEST_F(CCResourceProviderTest, Basic)
+TEST_P(CCResourceProviderTest, Basic)
 {
     IntSize size(1, 1);
     WGC3Denum format = GraphicsContext3D::RGBA;
@@ -322,7 +335,7 @@ TEST_F(CCResourceProviderTest, Basic)
     ASSERT_EQ(4U, pixelSize);
 
     CCResourceProvider::ResourceId id = m_resourceProvider->createResource(pool, size, format, CCResourceProvider::TextureUsageAny);
-    EXPECT_EQ(1, context()->textureCount());
+    expectNumResources(1);
 
     uint8_t data[4] = {1, 2, 3, 4};
     IntRect rect(IntPoint(), size);
@@ -333,10 +346,10 @@ TEST_F(CCResourceProviderTest, Basic)
     EXPECT_EQ(0, memcmp(data, result, pixelSize));
 
     m_resourceProvider->deleteResource(id);
-    EXPECT_EQ(0, context()->textureCount());
+    expectNumResources(0);
 }
 
-TEST_F(CCResourceProviderTest, DeleteOwnedResources)
+TEST_P(CCResourceProviderTest, DeleteOwnedResources)
 {
     IntSize size(1, 1);
     WGC3Denum format = GraphicsContext3D::RGBA;
@@ -345,16 +358,16 @@ TEST_F(CCResourceProviderTest, DeleteOwnedResources)
     const int count = 3;
     for (int i = 0; i < count; ++i)
         m_resourceProvider->createResource(pool, size, format, CCResourceProvider::TextureUsageAny);
-    EXPECT_EQ(3, context()->textureCount());
+    expectNumResources(3);
 
     m_resourceProvider->deleteOwnedResources(pool+1);
-    EXPECT_EQ(3, context()->textureCount());
+    expectNumResources(3);
 
     m_resourceProvider->deleteOwnedResources(pool);
-    EXPECT_EQ(0, context()->textureCount());
+    expectNumResources(0);
 }
 
-TEST_F(CCResourceProviderTest, Upload)
+TEST_P(CCResourceProviderTest, Upload)
 {
     IntSize size(2, 2);
     WGC3Denum format = GraphicsContext3D::RGBA;
@@ -402,12 +415,28 @@ TEST_F(CCResourceProviderTest, Upload)
         getResourcePixels(id, size, format, result);
         EXPECT_EQ(0, memcmp(expected, result, pixelSize));
     }
+    {
+        IntRect offsetImageRect(IntPoint(100, 100), size);
+        IntRect sourceRect(100, 100, 1, 1);
+        IntSize destOffset(1, 0);
+        m_resourceProvider->upload(id, image, offsetImageRect, sourceRect, destOffset);
+
+        uint8_t expected[16] = {0, 1, 2, 3,   0, 1, 2, 3,
+                                4, 5, 6, 7,   0, 1, 2, 3};
+        getResourcePixels(id, size, format, result);
+        EXPECT_EQ(0, memcmp(expected, result, pixelSize));
+    }
+
 
     m_resourceProvider->deleteResource(id);
 }
 
-TEST_F(CCResourceProviderTest, TransferResources)
+TEST_P(CCResourceProviderTest, TransferResources)
 {
+    // Resource transfer is only supported with GL textures for now.
+    if (GetParam() != CCResourceProvider::GLTexture)
+        return;
+
     OwnPtr<CCGraphicsContext> childContext(FakeWebCompositorOutputSurface::create(ResourceProviderContext::create(m_sharedData.get())));
     OwnPtr<CCResourceProvider> childResourceProvider(CCResourceProvider::create(childContext.get()));
 
@@ -486,14 +515,14 @@ TEST_F(CCResourceProviderTest, TransferResources)
 
     ResourceProviderContext* childContext3D = static_cast<ResourceProviderContext*>(childContext->context3D());
     {
-        CCScopedLockResourceForRead lock(childResourceProvider.get(), id1);
+        CCResourceProvider::ScopedReadLockGL lock(childResourceProvider.get(), id1);
         ASSERT_NE(0U, lock.textureId());
         childContext3D->bindTexture(GraphicsContext3D::TEXTURE_2D, lock.textureId());
         childContext3D->getPixels(size, format, result);
         EXPECT_EQ(0, memcmp(data1, result, pixelSize));
     }
     {
-        CCScopedLockResourceForRead lock(childResourceProvider.get(), id2);
+        CCResourceProvider::ScopedReadLockGL lock(childResourceProvider.get(), id2);
         ASSERT_NE(0U, lock.textureId());
         childContext3D->bindTexture(GraphicsContext3D::TEXTURE_2D, lock.textureId());
         childContext3D->getPixels(size, format, result);
@@ -518,5 +547,10 @@ TEST_F(CCResourceProviderTest, TransferResources)
     EXPECT_EQ(0u, m_resourceProvider->numResources());
     EXPECT_EQ(0u, m_resourceProvider->mailboxCount());
 }
+
+INSTANTIATE_TEST_CASE_P(CCResourceProviderTests,
+                        CCResourceProviderTest,
+                        ::testing::Values(CCResourceProvider::GLTexture,
+                                          CCResourceProvider::Bitmap));
 
 } // namespace

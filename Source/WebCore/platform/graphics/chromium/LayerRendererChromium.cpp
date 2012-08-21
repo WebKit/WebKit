@@ -363,7 +363,7 @@ static inline SkBitmap applyFilters(LayerRendererChromium* layerRenderer, const 
 
     layerRenderer->context()->flush();
 
-    CCScopedLockResourceForWrite lock(layerRenderer->resourceProvider(), sourceTexture->id());
+    CCResourceProvider::ScopedWriteLockGL lock(layerRenderer->resourceProvider(), sourceTexture->id());
     SkBitmap source = CCRenderSurfaceFilters::apply(filters, lock.textureId(), sourceTexture->size(), filterContext, filterGrContext);
     return source;
 }
@@ -465,20 +465,20 @@ void LayerRendererChromium::drawRenderPassQuad(DrawingFrame& frame, const CCRend
     // FIXME: Cache this value so that we don't have to do it for both the surface and its replica.
     // Apply filters to the contents texture.
     SkBitmap filterBitmap = applyFilters(this, renderPass->filters(), contentsTexture);
-    OwnPtr<CCScopedLockResourceForRead> contentsResourceLock;
+    OwnPtr<CCResourceProvider::ScopedReadLockGL> contentsResourceLock;
     unsigned contentsTextureId = 0;
     if (filterBitmap.getTexture()) {
         GrTexture* texture = reinterpret_cast<GrTexture*>(filterBitmap.getTexture());
         contentsTextureId = texture->getTextureHandle();
     } else {
-        contentsResourceLock = adoptPtr(new CCScopedLockResourceForRead(m_resourceProvider, contentsTexture->id()));
+        contentsResourceLock = adoptPtr(new CCResourceProvider::ScopedReadLockGL(m_resourceProvider, contentsTexture->id()));
         contentsTextureId = contentsResourceLock->textureId();
     }
 
     // Draw the background texture if there is one.
     if (backgroundTexture) {
         ASSERT(backgroundTexture->size() == quad->quadRect().size());
-        CCScopedLockResourceForRead lock(m_resourceProvider, backgroundTexture->id());
+        CCResourceProvider::ScopedReadLockGL lock(m_resourceProvider, backgroundTexture->id());
         copyTextureToFramebuffer(frame, lock.textureId(), quad->quadRect(), quad->quadTransform());
     }
 
@@ -495,10 +495,10 @@ void LayerRendererChromium::drawRenderPassQuad(DrawingFrame& frame, const CCRend
         deviceLayerEdges.inflateAntiAliasingDistance();
     }
 
-    OwnPtr<CCScopedLockResourceForRead> maskResourceLock;
+    OwnPtr<CCResourceProvider::ScopedReadLockGL> maskResourceLock;
     unsigned maskTextureId = 0;
     if (quad->maskResourceId()) {
-        maskResourceLock = adoptPtr(new CCScopedLockResourceForRead(m_resourceProvider, quad->maskResourceId()));
+        maskResourceLock = adoptPtr(new CCResourceProvider::ScopedReadLockGL(m_resourceProvider, quad->maskResourceId()));
         maskTextureId = maskResourceLock->textureId();
     }
 
@@ -689,7 +689,7 @@ void LayerRendererChromium::drawTileQuad(const DrawingFrame& frame, const CCTile
     GLC(context(), context()->useProgram(uniforms.program));
     GLC(context(), context()->uniform1i(uniforms.samplerLocation, 0));
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
-    CCScopedLockResourceForRead quadResourceLock(m_resourceProvider, quad->resourceId());
+    CCResourceProvider::ScopedReadLockGL quadResourceLock(m_resourceProvider, quad->resourceId());
     GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, quadResourceLock.textureId()));
     GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, quad->textureFilter()));
     GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, quad->textureFilter()));
@@ -796,9 +796,9 @@ void LayerRendererChromium::drawYUVVideoQuad(const DrawingFrame& frame, const CC
     const CCVideoLayerImpl::FramePlane& uPlane = quad->uPlane();
     const CCVideoLayerImpl::FramePlane& vPlane = quad->vPlane();
 
-    CCScopedLockResourceForRead yPlaneLock(m_resourceProvider, yPlane.resourceId);
-    CCScopedLockResourceForRead uPlaneLock(m_resourceProvider, uPlane.resourceId);
-    CCScopedLockResourceForRead vPlaneLock(m_resourceProvider, vPlane.resourceId);
+    CCResourceProvider::ScopedReadLockGL yPlaneLock(m_resourceProvider, yPlane.resourceId);
+    CCResourceProvider::ScopedReadLockGL uPlaneLock(m_resourceProvider, uPlane.resourceId);
+    CCResourceProvider::ScopedReadLockGL vPlaneLock(m_resourceProvider, vPlane.resourceId);
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE1));
     GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, yPlaneLock.textureId()));
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE2));
@@ -907,7 +907,7 @@ void LayerRendererChromium::drawTextureQuad(const DrawingFrame& frame, const CCT
     GLC(context(), context()->uniform4f(binding.texTransformLocation, uvRect.x(), uvRect.y(), uvRect.width(), uvRect.height()));
 
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
-    CCScopedLockResourceForRead quadResourceLock(m_resourceProvider, quad->resourceId());
+    CCResourceProvider::ScopedReadLockGL quadResourceLock(m_resourceProvider, quad->resourceId());
     GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, quadResourceLock.textureId()));
 
     // FIXME: setting the texture parameters every time is redundant. Move this code somewhere
@@ -1199,7 +1199,7 @@ bool LayerRendererChromium::getFramebufferTexture(CCScopedTexture* texture, cons
     if (!texture->id() && !texture->allocate(CCRenderer::ImplPool, deviceRect.size(), GraphicsContext3D::RGB, CCResourceProvider::TextureUsageAny))
         return false;
 
-    CCScopedLockResourceForWrite lock(m_resourceProvider, texture->id());
+    CCResourceProvider::ScopedWriteLockGL lock(m_resourceProvider, texture->id());
     GLC(m_context, m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, lock.textureId()));
     GLC(m_context, m_context->copyTexImage2D(GraphicsContext3D::TEXTURE_2D, 0, texture->format(),
                                              deviceRect.x(), deviceRect.y(), deviceRect.width(), deviceRect.height(), 0));
@@ -1226,7 +1226,7 @@ bool LayerRendererChromium::bindFramebufferToTexture(DrawingFrame& frame, const 
     ASSERT(texture->id());
 
     GLC(m_context, m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_offscreenFramebufferId));
-    m_currentFramebufferLock = adoptPtr(new CCScopedLockResourceForWrite(m_resourceProvider, texture->id()));
+    m_currentFramebufferLock = adoptPtr(new CCResourceProvider::ScopedWriteLockGL(m_resourceProvider, texture->id()));
     unsigned textureId = m_currentFramebufferLock->textureId();
     GLC(m_context, m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, textureId, 0));
 
