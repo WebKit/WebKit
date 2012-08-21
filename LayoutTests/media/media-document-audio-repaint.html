@@ -16,21 +16,13 @@
             testRunner.notifyDone();
     }
 
-    function onPlay()
-    {
-        var videoElement = document.getElementById("fr").contentDocument.querySelector("video");
-        videoElement.pause();
-    }
-
     function frameLoaded()
     {
         var videoElement = document.getElementById("fr").contentDocument.querySelector("video");
-        videoElement.addEventListener("play", onPlay, false);
         videoElement.addEventListener("pause", onPause, false);
         videoElement.addEventListener("seeked", onSeeked, false);
-        // Make sure we're playing, even though the MediaDocument has AUTOPLAY set,
-        // to avoid races between the frame's loaded event and the video's play event.
-        videoElement.play();
+        // The MediaDocument has AUTOPLAY set, make sure we're paused.
+        videoElement.pause();
     }
 </script>
 <p>
