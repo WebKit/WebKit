@@ -1,0 +1,190 @@
+// These are the layout test expectations for the Qt port of WebKit.
+//
+// See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+
+BUGWK64526 DEBUG : svg/animations/svgtransform-animation-1.html = CRASH PASS
+
+// Slow tests
+// FIXME: File bugs.
+BUG_QT_SLOW SLOW DEBUG : editing/selection/empty-cell-right-click.html = PASS
+BUG_QT_SLOW SLOW DEBUG : editing/selection/dump-as-markup.html = PASS
+BUG_QT_SLOW DEBUG : fast/js/array-sort-modifying-tostring.html = TIMEOUT PASS
+BUG_QT_SLOW SLOW DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
+BUG_QT_SLOW SLOW DEBUG : fast/js/dfg-inline-function-dot-caller.html = PASS
+BUG_QT_SLOW SLOW DEBUG : fast/js/dfg-poison-fuzz.html = PASS
+
+BUGWK62662 DEBUG : inspector/cookie-parser.html = CRASH PASS
+
+BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = IMAGE
+
+// Web Inspector: Implement support for InspectorClient::overrideDeviceMetrics() in platforms other than Chromium
+// https://bugs.webkit.org/show_bug.cgi?id=82886
+BUGWK82886 SKIP : inspector/styles/override-screen-size.html = TEXT
+
+BUGWK83906 : ietestcenter/css3/grid/grid-column-001.htm = IMAGE
+BUGWK83907 : ietestcenter/css3/grid/grid-column-002.htm = IMAGE
+BUGWK83909 : ietestcenter/css3/grid/grid-column-003.htm = IMAGE
+BUGWK83912 : ietestcenter/css3/grid/grid-items-002.htm = IMAGE
+BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
+
+BUGWK84759 : ietestcenter/css3/multicolumn/column-containing-block-001.htm = IMAGE
+BUGWK84760 : ietestcenter/css3/multicolumn/column-containing-block-002.htm = IMAGE
+BUGWK84761 : ietestcenter/css3/multicolumn/column-filling-001.htm = IMAGE
+BUGWK84764 : ietestcenter/css3/multicolumn/column-width-applies-to-001.htm = IMAGE
+BUGWK84767 : ietestcenter/css3/multicolumn/column-width-applies-to-002.htm = IMAGE
+BUGWK84768 : ietestcenter/css3/multicolumn/column-width-applies-to-003.htm = IMAGE
+BUGWK84769 : ietestcenter/css3/multicolumn/column-width-applies-to-004.htm = IMAGE
+BUGWK84770 : ietestcenter/css3/multicolumn/column-width-applies-to-007.htm = IMAGE
+BUGWK84771 : ietestcenter/css3/multicolumn/column-width-applies-to-009.htm = IMAGE
+BUGWK84772 : ietestcenter/css3/multicolumn/column-width-applies-to-010.htm = IMAGE
+BUGWK84773 : ietestcenter/css3/multicolumn/column-width-applies-to-012.htm = IMAGE
+BUGWK84775 : ietestcenter/css3/multicolumn/column-width-applies-to-013.htm = IMAGE
+BUGWK84776 : ietestcenter/css3/multicolumn/column-width-applies-to-014.htm = IMAGE
+BUGWK84777 : ietestcenter/css3/multicolumn/column-width-applies-to-015.htm = IMAGE
+BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
+
+// Following failing because of DRT not rendering monospace font for QT
+BUGWK85203 : ietestcenter/css3/multicolumn/column-width-applies-to-005.htm = IMAGE
+BUGWK85203 : ietestcenter/css3/multicolumn/column-width-applies-to-006.htm = IMAGE
+BUGWK85203 : ietestcenter/css3/multicolumn/column-width-applies-to-008.htm = IMAGE
+BUGWK85203 : ietestcenter/css3/multicolumn/column-width-percentage-001.htm = IMAGE
+BUGWK85203 : ietestcenter/css3/multicolumn/column-containing-block-003.htm = IMAGE
+
+// IETC flexbox failures
+BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
+BUGWK85212 : ietestcenter/css3/flexbox/flexbox-layout-002.htm = IMAGE
+
+// Generate results for your platform(s)
+BUGWK85567 : fast/images/png-suite/test.html = IMAGE
+
+// Interferes with the tests that should pass
+BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
+
+// ietestcenter/css3/valuesandunits/units-000.htm asserts
+// https://bugs.webkit.org/show_bug.cgi?id=86176
+BUGWK85308 SKIP : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
+BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
+
+// IETC namespace failures
+BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
+
+// CSS Variables are not yet enabled.
+BUGWK85580 SKIP : fast/css/variables = PASS
+BUGWK85580 SKIP : inspector/styles/variables = PASS
+
+// Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=6033
+BUGWK6033 : css3/filters/add-filter-rendering.html = PASS IMAGE
+BUGWK6033 : css3/filters/blur-filter-page-scroll-parents.html = PASS IMAGE
+BUGWK6033 : css3/filters/blur-filter-page-scroll.html = PASS IMAGE
+BUGWK6033 : css3/filters/crash-filter-change.html = PASS IMAGE
+BUGWK6033 : css3/filters/crash-hw-sw-switch.html = PASS IMAGE
+BUGWK6033 : css3/filters/custom/custom-filter-shader-cache.html = PASS IMAGE
+BUGWK6033 : css3/filters/custom/effect-color-check.html = PASS IMAGE
+BUGWK6033 : css3/filters/custom/effect-custom-combined-missing.html = PASS IMAGE
+BUGWK6033 : css3/filters/custom/effect-custom.html = PASS IMAGE
+BUGWK6033 : css3/filters/custom/effect-custom-parameters.html = PASS IMAGE
+BUGWK6033 : css3/filters/custom/filter-repaint-custom-clipped.html = PASS IMAGE
+BUGWK6033 : css3/filters/custom/filter-repaint-custom-rotated.html = PASS IMAGE
+BUGWK6033 : css3/filters/custom/filter-repaint-custom.html = PASS IMAGE
+BUGWK6033 : css3/filters/effect-blur.html = PASS IMAGE
+BUGWK6033 : css3/filters/effect-brightness-clamping.html = PASS IMAGE
+BUGWK6033 : css3/filters/effect-brightness.html = PASS IMAGE
+BUGWK6033 : css3/filters/effect-combined.html = PASS IMAGE
+BUGWK6033 : css3/filters/effect-contrast.html = PASS IMAGE
+BUGWK6033 : css3/filters/effect-drop-shadow.html = PASS IMAGE
+BUGWK6033 : css3/filters/effect-grayscale.html = PASS IMAGE
+BUGWK6033 : css3/filters/effect-hue-rotate.html = PASS IMAGE
+BUGWK6033 : css3/filters/effect-invert.html = PASS IMAGE
+BUGWK6033 : css3/filters/effect-opacity.html = PASS IMAGE
+BUGWK6033 : css3/filters/effect-reference-external.html = PASS IMAGE
+BUGWK6033 : css3/filters/effect-reference-hw.html = PASS IMAGE
+BUGWK6033 : css3/filters/effect-reference-ordering.html = PASS IMAGE
+BUGWK6033 : css3/filters/effect-reference.html = PASS IMAGE
+BUGWK6033 : css3/filters/effect-saturate.html = PASS IMAGE
+BUGWK6033 : css3/filters/effect-sepia.html = PASS IMAGE
+BUGWK6033 : css3/filters/filtered-inline.html = PASS IMAGE
+BUGWK6033 : css3/filters/multiple-filters-invalidation.html = PASS IMAGE
+BUGWK6033 : css3/filters/nested-filters.html = PASS IMAGE
+BUGWK6033 : css3/filters/regions-expanding.html = PASS IMAGE
+BUGWK6033 : css3/filters/simple-filter-rendering.html = PASS IMAGE
+BUGWK6033 : svg/filters/color-interpolation-filters.svg = PASS MISSING
+
+// UndoManager is not yet enabled.
+BUGWK87908 SKIP : editing/undomanager = PASS
+
+// CSS image-resolution is not yet enabled.
+BUGWK85262 SKIP : fast/css/image-resolution = PASS
+
+// CSS image-orientation is not yet enabled.
+BUGWK89052 SKIP : fast/css/image-orientation = PASS
+
+// CSS3 Text Decoration support is not yet enabled (needs ENABLE_CSS3_TEXT_DECORATION).
+BUGWK58491 SKIP : fast/css3-text-decoration = PASS
+
+// Needs rebaseline after bug 86441
+// failing new tests
+BUGWK86441 SKIP : fast/borders/border-antialiasing.html = IMAGE
+BUGWK86441 : fast/multicol/shadow-breaking.html = IMAGE
+
+// Requires rebaseline after https://bugs.webkit.org/show_bug.cgi?id=85405
+BUGWK85405 SKIP : tables/mozilla/bugs/bug10296-1.html = TEXT
+
+// Paletted PNG with ICC color profiles not working.
+BUGWK86722 SKIP : fast/images/paletted-png-with-color-profile.html = PASS
+
+// Needs Rebaseline after bug 86942
+BUGWK86942 : fast/backgrounds/size/zero.html = TEXT
+
+// LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
+BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = PASS
+
+// Disable webaudio codec tests, including proprietary codecs.
+BUGWK88794 SKIP : webaudio/codec-tests = PASS
+
+BUGWK90007 : http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html = TEXT
+
+// Require rebaseline after bug 88171
+BUGWK88171 : css1/formatting_model/floating_elements.html = TEXT
+
+// Text Autosizing is not enabled.
+BUGWK84186 SKIP : fast/text-autosizing = PASS
+
+// Dialog element is not yet enabled.
+BUGWK84635 SKIP : fast/dom/HTMLDialogElement = TEXT
+
+// Skip tests in fast/text/shaping
+BUGWK90951 SKIP : fast/text/shaping = PASS
+
+// Missing test infrastructure, no gamepads available.
+BUGWK92873 SKIP : gamepad/gamepad-polling-access.html = TEXT
+
+// Flaky tests
+BUGWK91376 : http/tests/security/sandboxed-iframe-modify-self.html = TEXT PASS
+BUGWK91379 : http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html = TEXT PASS
+BUGWK91379 : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = TEXT PASS
+
+BUGWK85811 DEBUG : fast/events/message-port-close.html = CRASH
+
+// Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80219
+BUGWK80219 : compositing/overflow/clip-descendents.html = TEXT
+
+// Require rebaseline after bug 93148
+BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html  = TEXT
+BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.html  = TEXT
+BUGWK93148 : fast/css/nested-layers-with-hover.html = TEXT
+
+BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
+
+BUGWK93654 DEBUG : fast/events/keyevent-iframe-removed-crash.html = CRASH
+
+// Require rebaselining after  https://bugs.webkit.org/show_bug.cgi?id=89826
+BUGWK89826 : fast/css/word-space-extra.html = TEXT
+
+// This has always failed on Qt - exposed by bug 89826
+BUGWK94004 : css2.1/20110323/c541-word-sp-000.htm = IMAGE
+
+// Added by bug 89826
+BUGWK94005 : css2.1/20110323/word-spacing-remove-space-003.htm = IMAGE
+BUGWK94005 : css2.1/20110323/word-spacing-remove-space-006.htm = IMAGE
+BUGWK94006 : fast/css/word-spacing-characters-complex-text.html = IMAGE
+
