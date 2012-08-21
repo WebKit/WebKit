@@ -1,3 +1,31 @@
+2012-08-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move free functions in test_expectations to TestExpectations class
+        https://bugs.webkit.org/show_bug.cgi?id=94557
+
+        Reviewed by Dirk Pranke.
+
+        Moved test_result_was_expected, test_remove_pixel_failures, and test_suffixes_for_expectations into TestExpectations
+        to allow further refactoring.
+
+        * Scripts/webkitpy/common/net/resultsjsonparser.py:
+        (JSONTestResult.did_run_as_expected):
+        (JSONTestResult._tokenize):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations):
+        (TestExpectations.result_was_expected):
+        (TestExpectations.remove_pixel_failures):
+        (TestExpectations.has_pixel_failures):
+        (TestExpectations.suffixes_for_expectations):
+        (TestExpectations.matches_an_expected_result):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (MockBugManager.create_bug):
+        (test_result_was_expected):
+        (test_remove_pixel_failures):
+        (test_suffixes_for_expectations):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineExpectations._tests_to_rebaseline):
+
 2012-08-21  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed build fix for newer Qt 5: The meaning of private_includes changed to be fully

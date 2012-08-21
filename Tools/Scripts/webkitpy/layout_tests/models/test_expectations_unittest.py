@@ -50,47 +50,6 @@ class MockBugManager(object):
         return "BUG_NEWLY_CREATED"
 
 
-class FunctionsTest(unittest.TestCase):
-    def test_result_was_expected(self):
-        # test basics
-        self.assertEquals(result_was_expected(PASS, set([PASS]),
-                                              False, False), True)
-        self.assertEquals(result_was_expected(TEXT, set([PASS]),
-                                              False, False), False)
-
-        # test handling of SKIPped tests and results
-        self.assertEquals(result_was_expected(SKIP, set([CRASH]),
-                                              False, True), True)
-        self.assertEquals(result_was_expected(SKIP, set([CRASH]),
-                                              False, False), False)
-
-        # test handling of MISSING results and the REBASELINE modifier
-        self.assertEquals(result_was_expected(MISSING, set([PASS]),
-                                              True, False), True)
-        self.assertEquals(result_was_expected(MISSING, set([PASS]),
-                                              False, False), False)
-
-    def test_remove_pixel_failures(self):
-        self.assertEquals(remove_pixel_failures(set([TEXT])),
-                          set([TEXT]))
-        self.assertEquals(remove_pixel_failures(set([PASS])),
-                          set([PASS]))
-        self.assertEquals(remove_pixel_failures(set([IMAGE])),
-                          set([PASS]))
-        self.assertEquals(remove_pixel_failures(set([IMAGE_PLUS_TEXT])),
-                          set([TEXT]))
-        self.assertEquals(remove_pixel_failures(set([PASS, IMAGE, CRASH])),
-                          set([PASS, CRASH]))
-
-    def test_suffixes_for_expectations(self):
-        self.assertEquals(suffixes_for_expectations(set([TEXT])), set(['txt']))
-        self.assertEquals(suffixes_for_expectations(set([IMAGE_PLUS_TEXT])), set(['txt', 'png']))
-        self.assertEquals(suffixes_for_expectations(set([IMAGE])), set(['png']))
-        self.assertEquals(suffixes_for_expectations(set([AUDIO])), set(['wav']))
-        self.assertEquals(suffixes_for_expectations(set([TEXT, IMAGE, CRASH])), set(['txt', 'png']))
-        self.assertEquals(suffixes_for_expectations(set()), set())
-
-
 class Base(unittest.TestCase):
     # Note that all of these tests are written assuming the configuration
     # being tested is Windows XP, Release build.
@@ -136,6 +95,34 @@ BUG_TEST WONTFIX MAC : failures/expected/image.html = IMAGE
 
     def assert_bad_expectations(self, expectations, overrides=None):
         self.assertRaises(ParseError, self.parse_exp, expectations, is_lint_mode=True, overrides=overrides)
+
+    def test_result_was_expected(self):
+        # test basics
+        self.assertEquals(TestExpectations.result_was_expected(PASS, set([PASS]), test_needs_rebaselining=False, test_is_skipped=False), True)
+        self.assertEquals(TestExpectations.result_was_expected(TEXT, set([PASS]), test_needs_rebaselining=False, test_is_skipped=False), False)
+
+        # test handling of SKIPped tests and results
+        self.assertEquals(TestExpectations.result_was_expected(SKIP, set([CRASH]), test_needs_rebaselining=False, test_is_skipped=True), True)
+        self.assertEquals(TestExpectations.result_was_expected(SKIP, set([CRASH]), test_needs_rebaselining=False, test_is_skipped=False), False)
+
+        # test handling of MISSING results and the REBASELINE modifier
+        self.assertEquals(TestExpectations.result_was_expected(MISSING, set([PASS]), test_needs_rebaselining=True, test_is_skipped=False), True)
+        self.assertEquals(TestExpectations.result_was_expected(MISSING, set([PASS]), test_needs_rebaselining=False, test_is_skipped=False), False)
+
+    def test_remove_pixel_failures(self):
+        self.assertEquals(TestExpectations.remove_pixel_failures(set([TEXT])), set([TEXT]))
+        self.assertEquals(TestExpectations.remove_pixel_failures(set([PASS])), set([PASS]))
+        self.assertEquals(TestExpectations.remove_pixel_failures(set([IMAGE])), set([PASS]))
+        self.assertEquals(TestExpectations.remove_pixel_failures(set([IMAGE_PLUS_TEXT])), set([TEXT]))
+        self.assertEquals(TestExpectations.remove_pixel_failures(set([PASS, IMAGE, CRASH])), set([PASS, CRASH]))
+
+    def test_suffixes_for_expectations(self):
+        self.assertEquals(TestExpectations.suffixes_for_expectations(set([TEXT])), set(['txt']))
+        self.assertEquals(TestExpectations.suffixes_for_expectations(set([IMAGE_PLUS_TEXT])), set(['txt', 'png']))
+        self.assertEquals(TestExpectations.suffixes_for_expectations(set([IMAGE])), set(['png']))
+        self.assertEquals(TestExpectations.suffixes_for_expectations(set([AUDIO])), set(['wav']))
+        self.assertEquals(TestExpectations.suffixes_for_expectations(set([TEXT, IMAGE, CRASH])), set(['txt', 'png']))
+        self.assertEquals(TestExpectations.suffixes_for_expectations(set()), set())
 
 
 class BasicTests(Base):

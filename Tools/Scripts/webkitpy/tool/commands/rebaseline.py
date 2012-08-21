@@ -44,7 +44,7 @@ from webkitpy.common.system.user import User
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
-from webkitpy.layout_tests.models.test_expectations import TestExpectations, suffixes_for_expectations, BASELINE_SUFFIX_LIST
+from webkitpy.layout_tests.models.test_expectations import TestExpectations, BASELINE_SUFFIX_LIST
 from webkitpy.layout_tests.port import builders
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
@@ -333,7 +333,7 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
         tests_to_rebaseline = {}
         expectations = TestExpectations(port, include_overrides=True)
         for test in expectations.get_rebaselining_failures():
-            tests_to_rebaseline[test] = suffixes_for_expectations(expectations.get_expectations(test))
+            tests_to_rebaseline[test] = TestExpectations.suffixes_for_expectations(expectations.get_expectations(test))
         return tests_to_rebaseline
 
     def _add_tests_to_rebaseline_for_port(self, port_name):
