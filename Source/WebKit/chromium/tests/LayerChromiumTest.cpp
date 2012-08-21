@@ -803,6 +803,18 @@ TEST(LayerChromiumLayerTreeHostTest, replaceMaskAndReplicaLayer)
     WebKit::WebCompositor::shutdown();
 }
 
+TEST(LayerChromiumLayerTreeHostTest, destroyHostWithNonNullRootLayer)
+{
+    WebKit::WebCompositor::initialize(0);
+    RefPtr<LayerChromium> root = LayerChromium::create();
+    RefPtr<LayerChromium> child = LayerChromium::create();
+    root->addChild(child);
+    OwnPtr<FakeCCLayerTreeHost> layerTreeHost(FakeCCLayerTreeHost::create());
+    layerTreeHost->setRootLayer(root);
+    layerTreeHost.clear();
+    WebKit::WebCompositor::shutdown();
+}
+
 class MockLayerChromium : public LayerChromium {
 public:
     bool needsDisplay() const { return m_needsDisplay; }

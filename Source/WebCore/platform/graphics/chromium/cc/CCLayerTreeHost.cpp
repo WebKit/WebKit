@@ -113,6 +113,8 @@ bool CCLayerTreeHost::initialize()
 
 CCLayerTreeHost::~CCLayerTreeHost()
 {
+    if (m_rootLayer)
+        m_rootLayer->setLayerTreeHost(0);
     ASSERT(CCProxy::isMainThread());
     TRACE_EVENT0("cc", "CCLayerTreeHost::~CCLayerTreeHost");
     ASSERT(m_proxy);

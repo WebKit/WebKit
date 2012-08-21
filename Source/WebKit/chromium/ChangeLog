@@ -1,5 +1,16 @@
 2012-08-21  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Should be able to destroy a CCLayerTreeHost without manually setting the root layer
+        https://bugs.webkit.org/show_bug.cgi?id=94631
+
+        Reviewed by Adrienne Walker.
+
+        Tests that destroying a CCLayerTreeHost that still points to a non-null root doesn't crash.
+
+        * tests/LayerChromiumTest.cpp:
+
+2012-08-21  James Robinson  <jamesr@chromium.org>
+
         Unreviewed, rolling out r126170.
         http://trac.webkit.org/changeset/126170
         https://bugs.webkit.org/show_bug.cgi?id=94614
