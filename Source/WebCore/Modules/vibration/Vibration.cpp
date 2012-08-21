@@ -58,11 +58,14 @@ void Vibration::vibrate(const VibrationPattern& pattern)
 {
     int length = pattern.size();
 
+    // Cancel the pre-existing instance of vibration patterns, if the pattern is 0 or an empty list.
+    if (!length || (length == 1 && !pattern[0])) {
+        cancelVibration();
+        return;
+    }
+
     if (m_isVibrating)
         cancelVibration();
-
-    if (!length || (length == 1 && !pattern[0]))
-        return;
 
     if (m_timerStart.isActive())
         m_timerStart.stop();
