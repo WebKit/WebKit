@@ -165,7 +165,7 @@ public:
     void registerURISchemeHandler(const char* scheme, const char* reply, int replyLength, const char* mimeType, bool replyWithPath = false)
     {
         m_handlersMap.set(String::fromUTF8(scheme), URISchemeHandler(reply, replyLength, mimeType, replyWithPath));
-        webkit_web_context_register_uri_scheme(webkit_web_context_get_default(), scheme, uriSchemeRequestCallback, this);
+        webkit_web_context_register_uri_scheme(webkit_web_context_get_default(), scheme, uriSchemeRequestCallback, this, 0);
     }
 
     GRefPtr<WebKitURISchemeRequest> m_uriSchemeRequest;

@@ -1,3 +1,20 @@
+2012-08-21  Jesse van den Kieboom  <jessevdk@gnome.org> and Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add destroy notify for register_uri_scheme
+        https://bugs.webkit.org/show_bug.cgi?id=94315
+
+        Reviewed by Philippe Normand.
+
+        For introspection to work correctly, a destroy notify needs to be
+        added to register_uri_scheme so that bindings know when to
+        finalize the user_data.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_register_uri_scheme):
+        (webkitWebContextReceivedURIRequest):
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/tests/TestWebKitWebContext.cpp:
+
 2012-08-21  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed build fix for newer Qt 5: QT += qmltest does not imply QT += testlib anymore, but

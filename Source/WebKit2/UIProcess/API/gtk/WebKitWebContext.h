@@ -131,7 +131,8 @@ WEBKIT_API void
 webkit_web_context_register_uri_scheme              (WebKitWebContext              *context,
                                                      const gchar                   *scheme,
                                                      WebKitURISchemeRequestCallback callback,
-                                                     gpointer                       user_data);
+                                                     gpointer                       user_data,
+                                                     GDestroyNotify                 user_data_destroy_func);
 
 WEBKIT_API gboolean
 webkit_web_context_get_spell_checking_enabled       (WebKitWebContext              *context);

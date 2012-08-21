@@ -35,6 +35,8 @@
 #include <WebCore/Language.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
@@ -47,23 +49,46 @@ enum {
     LAST_SIGNAL
 };
 
-struct WebKitURISchemeHandler {
+class WebKitURISchemeHandler: public RefCounted<WebKitURISchemeHandler> {
+public:
     WebKitURISchemeHandler()
-        : callback(0)
-        , userData(0)
+        : m_callback(0)
+        , m_userData(0)
+        , m_destroyNotify(0)
     {
     }
-    WebKitURISchemeHandler(WebKitURISchemeRequestCallback callback, void* userData)
-        : callback(callback)
-        , userData(userData)
+    WebKitURISchemeHandler(WebKitURISchemeRequestCallback callback, void* userData, GDestroyNotify destroyNotify)
+        : m_callback(callback)
+        , m_userData(userData)
+        , m_destroyNotify(destroyNotify)
     {
     }
 
-    WebKitURISchemeRequestCallback callback;
-    void* userData;
+    ~WebKitURISchemeHandler()
+    {
+        if (m_destroyNotify)
+            m_destroyNotify(m_userData);
+    }
+
+    bool hasCallback()
+    {
+        return m_callback;
+    }
+
+    void performCallback(WebKitURISchemeRequest* request)
+    {
+        ASSERT(m_callback);
+
+        m_callback(request, m_userData);
+    }
+
+private:
+    WebKitURISchemeRequestCallback m_callback;
+    void* m_userData;
+    GDestroyNotify m_destroyNotify;
 };
 
-typedef HashMap<String, WebKitURISchemeHandler> URISchemeHandlerMap;
+typedef HashMap<String, RefPtr<WebKitURISchemeHandler> > URISchemeHandlerMap;
 typedef HashMap<uint64_t, GRefPtr<WebKitURISchemeRequest> > URISchemeRequestMap;
 
 struct _WebKitWebContextPrivate {
@@ -379,8 +404,9 @@ GList* webkit_web_context_get_plugins_finish(WebKitWebContext* context, GAsyncRe
  * webkit_web_context_register_uri_scheme:
  * @context: a #WebKitWebContext
  * @scheme: the network scheme to register
- * @callback: a #WebKitURISchemeRequestCallback
+ * @callback: (scope async): a #WebKitURISchemeRequestCallback
  * @user_data: data to pass to callback function
+ * @user_data_destroy_func: destroy notify for @user_data
  *
  * Register @scheme in @context, so that when an URI request with @scheme is made in the
  * #WebKitWebContext, the #WebKitURISchemeRequestCallback registered will be called with a
@@ -417,13 +443,14 @@ GList* webkit_web_context_get_plugins_finish(WebKitWebContext* context, GAsyncRe
  * }
  * </programlisting></informalexample>
  */
-void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const char* scheme, WebKitURISchemeRequestCallback callback, gpointer userData)
+void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const char* scheme, WebKitURISchemeRequestCallback callback, gpointer userData, GDestroyNotify destroyNotify)
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
     g_return_if_fail(scheme);
     g_return_if_fail(callback);
 
-    context->priv->uriSchemeHandlers.set(String::fromUTF8(scheme), WebKitURISchemeHandler(callback, userData));
+    RefPtr<WebKitURISchemeHandler> handler = adoptRef(new WebKitURISchemeHandler(callback, userData, destroyNotify));
+    context->priv->uriSchemeHandlers.set(String::fromUTF8(scheme), handler.get());
     WKRetainPtr<WKStringRef> wkScheme(AdoptWK, WKStringCreateWithUTF8CString(scheme));
     WKSoupRequestManagerRegisterURIScheme(context->priv->requestManager.get(), wkScheme.get());
 }
@@ -579,12 +606,14 @@ WKSoupRequestManagerRef webkitWebContextGetRequestManager(WebKitWebContext* cont
 
 void webkitWebContextReceivedURIRequest(WebKitWebContext* context, WebKitURISchemeRequest* request)
 {
-    WebKitURISchemeHandler handler = context->priv->uriSchemeHandlers.get(webkit_uri_scheme_request_get_scheme(request));
-    if (!handler.callback)
+    String scheme(String::fromUTF8(webkit_uri_scheme_request_get_scheme(request)));
+    RefPtr<WebKitURISchemeHandler> handler = context->priv->uriSchemeHandlers.get(scheme);
+    ASSERT(handler.get());
+    if (!handler->hasCallback())
         return;
 
     context->priv->uriSchemeRequests.set(webkitURISchemeRequestGetID(request), request);
-    handler.callback(request, handler.userData);
+    handler->performCallback(request);
 }
 
 void webkitWebContextDidFailToLoadURIRequest(WebKitWebContext* context, uint64_t requestID)
