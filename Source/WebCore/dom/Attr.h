@@ -81,7 +81,7 @@ private:
 
     virtual String nodeValue() const OVERRIDE { return value(); }
     virtual void setNodeValue(const String&, ExceptionCode&);
-    virtual PassRefPtr<Node> cloneNode(bool deep);
+    virtual PassRefPtr<Node> cloneNode(bool deep, ExceptionCode&);
 
     virtual bool isAttributeNode() const { return true; }
     virtual bool childTypeAllowed(NodeType) const;

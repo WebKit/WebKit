@@ -1,0 +1,26 @@
+<!DOCTYPE>
+<html>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/polyfill.js"></script>
+
+<pre id="console"></pre>
+
+<script>
+description('Calling ShadowRoot.cloneNode() should throw a DATA_CLONE_ERR exception.');
+
+var host = document.createElement('div');
+var shadowRoot = new WebKitShadowRoot(host);
+
+var exceptionCode = null;
+try {
+    shadowRoot.cloneNode()
+} catch (e) {
+    exceptionCode = e.code;
+}
+
+shouldBe('exceptionCode', 'DOMException.DATA_CLONE_ERR')
+
+finishJSTest();
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</html>

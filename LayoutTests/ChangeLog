@@ -1,3 +1,13 @@
+2012-08-20  Shinya Kawanaka  <shinyak@chromium.org>
+
+        ShadowRoot.cloneNode() must always throw a DATA_CLONE_ERR exception.
+        https://bugs.webkit.org/show_bug.cgi?id=91704
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/shadowroot-clonenode-expected.txt: Added.
+        * fast/dom/shadow/shadowroot-clonenode.html: Added.
+
 2012-08-20  Kenneth Russell  <kbr@google.com>
 
         Unreviewed Chromium gardening. Improved how a few test

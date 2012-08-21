@@ -138,7 +138,7 @@ void Attr::setNodeValue(const String& v, ExceptionCode& ec)
     setValue(v, ec);
 }
 
-PassRefPtr<Node> Attr::cloneNode(bool /*deep*/)
+PassRefPtr<Node> Attr::cloneNode(bool /*deep*/, ExceptionCode&)
 {
     RefPtr<Attr> clone = adoptRef(new Attr(document(), qualifiedName(), value()));
     cloneChildNodes(clone.get());

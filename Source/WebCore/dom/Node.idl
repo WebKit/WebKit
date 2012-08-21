@@ -79,7 +79,9 @@ module core {
             raises(DOMException);
 
         boolean            hasChildNodes();
-        Node               cloneNode(in [Optional=DefaultIsUndefined] boolean deep);
+        Node               cloneNode(in [Optional=DefaultIsUndefined] boolean deep)
+            raises(DOMException);
+
         void               normalize();
 
         // Introduced in DOM Level 2:

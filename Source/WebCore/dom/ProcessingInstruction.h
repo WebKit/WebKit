@@ -60,7 +60,7 @@ private:
     virtual NodeType nodeType() const;
     virtual String nodeValue() const;
     virtual void setNodeValue(const String&, ExceptionCode&);
-    virtual PassRefPtr<Node> cloneNode(bool deep);
+    virtual PassRefPtr<Node> cloneNode(bool deep, ExceptionCode&);
     virtual bool offsetInCharacters() const;
     virtual int maxCharacterOffset() const;
 

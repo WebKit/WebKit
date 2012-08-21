@@ -46,7 +46,7 @@ Node::NodeType CDATASection::nodeType() const
     return CDATA_SECTION_NODE;
 }
 
-PassRefPtr<Node> CDATASection::cloneNode(bool /*deep*/)
+PassRefPtr<Node> CDATASection::cloneNode(bool /*deep*/, ExceptionCode&)
 {
     return create(document(), data());
 }

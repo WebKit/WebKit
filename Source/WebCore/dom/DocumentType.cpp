@@ -51,7 +51,7 @@ Node::NodeType DocumentType::nodeType() const
     return DOCUMENT_TYPE_NODE;
 }
 
-PassRefPtr<Node> DocumentType::cloneNode(bool /*deep*/)
+PassRefPtr<Node> DocumentType::cloneNode(bool /*deep*/, ExceptionCode&)
 {
     return create(document(), m_name, m_publicId, m_systemId);
 }

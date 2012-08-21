@@ -97,7 +97,7 @@ void ProcessingInstruction::setNodeValue(const String& nodeValue, ExceptionCode&
     setData(nodeValue, ec);
 }
 
-PassRefPtr<Node> ProcessingInstruction::cloneNode(bool /*deep*/)
+PassRefPtr<Node> ProcessingInstruction::cloneNode(bool /*deep*/, ExceptionCode&)
 {
     // FIXME: Is it a problem that this does not copy m_localHref?
     // What about other data members?

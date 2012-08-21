@@ -46,7 +46,7 @@ Node::NodeType EntityReference::nodeType() const
     return ENTITY_REFERENCE_NODE;
 }
 
-PassRefPtr<Node> EntityReference::cloneNode(bool)
+PassRefPtr<Node> EntityReference::cloneNode(bool, ExceptionCode&)
 {
     return create(document(), m_entityName);
 }

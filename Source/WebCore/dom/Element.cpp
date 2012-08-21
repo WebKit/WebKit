@@ -176,7 +176,7 @@ DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, error);
 DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, focus);
 DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, load);
 
-PassRefPtr<Node> Element::cloneNode(bool deep)
+PassRefPtr<Node> Element::cloneNode(bool deep, ExceptionCode&)
 {
     return deep ? cloneElementWithChildren() : cloneElementWithoutChildren();
 }

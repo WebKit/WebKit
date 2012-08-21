@@ -184,7 +184,7 @@ Node::NodeType Text::nodeType() const
     return TEXT_NODE;
 }
 
-PassRefPtr<Node> Text::cloneNode(bool /*deep*/)
+PassRefPtr<Node> Text::cloneNode(bool /*deep*/, ExceptionCode&)
 {
     return create(document(), data());
 }

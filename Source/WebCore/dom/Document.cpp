@@ -3285,7 +3285,7 @@ bool Document::canReplaceChild(Node* newChild, Node* oldChild)
     return true;
 }
 
-PassRefPtr<Node> Document::cloneNode(bool /*deep*/)
+PassRefPtr<Node> Document::cloneNode(bool /*deep*/, ExceptionCode&)
 {
     // Spec says cloning Document nodes is "implementation dependent"
     // so we do not support it...

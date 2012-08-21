@@ -68,7 +68,7 @@ bool DocumentFragment::childTypeAllowed(NodeType type) const
     }
 }
 
-PassRefPtr<Node> DocumentFragment::cloneNode(bool deep)
+PassRefPtr<Node> DocumentFragment::cloneNode(bool deep, ExceptionCode&)
 {
     RefPtr<DocumentFragment> clone = create(document());
     if (deep)

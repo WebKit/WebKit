@@ -46,7 +46,7 @@ Node::NodeType Comment::nodeType() const
     return COMMENT_NODE;
 }
 
-PassRefPtr<Node> Comment::cloneNode(bool /*deep*/)
+PassRefPtr<Node> Comment::cloneNode(bool /*deep*/, ExceptionCode&)
 {
     return create(document(), data());
 }
