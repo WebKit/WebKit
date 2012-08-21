@@ -1,3 +1,20 @@
+2012-08-21  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        fast/js/random-array-gc-stress.html has started to flakily crash in
+        release builds as well, so expanding the expectation.
+
+        The fast/forms/range/range-hit-test-with-padding.html test has been
+        failing since introduced in 126132. Adding a text expectation.
+
+        Marking one more frame flattening test as flaky.
+
+        Skipping two calendar picker tests. The feature is currently unsupported
+        and the tests take half a minute to run, so it's not really worth it.
+
+        * platform/gtk/TestExpectations:
+
 2012-08-21  Chris Evans  <cevans@google.com>
 
         Add another interesting test that used to fire a different ASSERT before we fixed https://bugs.webkit.org/show_bug.cgi?id=36427:

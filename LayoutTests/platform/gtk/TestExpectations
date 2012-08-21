@@ -179,6 +179,8 @@ BUGWKGTK SKIP : fast/forms/color = TEXT
 
 // ENABLE_INPUT_TYPE_* are not enabled.
 BUGWK29359 : fast/forms/date = TEXT
+BUGWK29359 SKIP : fast/forms/date/calendar-picker-appearance-pre-100.html = TEXT
+BUGWK29359 SKIP : fast/forms/date/calendar-picker-appearance.html = TEXT
 BUGWK29359 : fast/forms/date/calendar-picker-type-change-onclick.html = PASS
 BUGWK29359 : fast/forms/date/date-stepup-stepdown-from-renderer.html = PASS
 BUGWK29359 : fast/forms/date/no-page-popup-controller.html = PASS
@@ -446,7 +448,7 @@ BUGWK93727 DEBUG : fullscreen/full-screen-iframe-not-allowed.html = CRASH PASS
 BUGWK93727 DEBUG : fullscreen/exit-full-screen-iframe.html = CRASH PASS
 BUGWK93727 DEBUG : svg/custom/use-instanceRoot-as-event-target.xhtml = CRASH PASS
 
-BUGWK90957 DEBUG : fast/js/random-array-gc-stress.html = CRASH PASS
+BUGWK90957 : fast/js/random-array-gc-stress.html = CRASH PASS
 
 BUGWK94458 DEBUG : http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html = CRASH TEXT
 
@@ -474,6 +476,7 @@ BUGWK71777 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
 
 BUGWK71655 : fast/frames/flattening/frameset-flattening-simple.html = PASS TEXT
 BUGWK80129 : fast/frames/flattening/frameset-flattening-subframesets.html = PASS TEXT
+BUGWK80129 : fast/frames/flattening/iframe-flattening-fixed-width.html = PASS TEXT
 BUGWK80129 : fast/frames/flattening/iframe-flattening-offscreen.html = PASS TEXT
 BUGWK80129 : fast/frames/flattening/frameset-flattening-grid.html = TEXT PASS
 BUGWK80129 : fast/frames/flattening/iframe-flattening-out-of-view.html = TEXT PASS
@@ -1308,6 +1311,8 @@ BUGWK80129 : fast/frames/flattening/frameset-flattening-advanced.html = TEXT
 BUGWK89663 : editing/deleting/delete-3800834-fix.html = TEXT
 
 BUGWK88727 RELEASE : http/tests/xmlhttprequest/origin-exact-matching.html = TEXT
+
+BUGWK94578 : fast/forms/range/range-hit-test-with-padding.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
