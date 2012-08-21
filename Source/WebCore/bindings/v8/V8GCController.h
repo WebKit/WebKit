@@ -77,6 +77,7 @@ namespace WebCore {
 
         static void checkMemoryUsage();
         static void collectGarbageIfNecessary();
+        static void collectGarbage();
 
     private:
         // Estimate of current working set.

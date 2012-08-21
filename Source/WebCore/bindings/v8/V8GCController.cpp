@@ -48,6 +48,7 @@
 #include "V8CSSStyleDeclaration.h"
 #include "V8DOMImplementation.h"
 #include "V8MessagePort.h"
+#include "V8RecursionScope.h"
 #include "V8StyleSheet.h"
 #include "V8StyleSheetList.h"
 #include "WrapperTypeInfo.h"
@@ -528,6 +529,26 @@ void V8GCController::collectGarbageIfNecessary()
     data->clearShouldCollectGarbageSoon();
     v8::V8::ContextDisposedNotification();
     v8::V8::IdleNotification(longIdlePauseInMS);
+}
+
+void V8GCController::collectGarbage()
+{
+    v8::HandleScope handleScope;
+
+    v8::Persistent<v8::Context> context = v8::Context::New();
+    if (context.IsEmpty())
+        return;
+    {
+        v8::Context::Scope scope(context);
+        v8::Local<v8::String> source = v8::String::New("if (gc) gc();");
+        v8::Local<v8::String> name = v8::String::New("gc");
+        v8::Handle<v8::Script> script = v8::Script::Compile(source, name);
+        if (!script.IsEmpty()) {
+            V8RecursionScope::MicrotaskSuppression scope;
+            script->Run();
+        }
+    }
+    context.Dispose();
 }
 
 }  // namespace WebCore

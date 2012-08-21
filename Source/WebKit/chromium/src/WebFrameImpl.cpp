@@ -194,6 +194,7 @@
 #include "V8DirectoryEntry.h"
 #include "V8DOMFileSystem.h"
 #include "V8FileEntry.h"
+#include "V8GCController.h"
 #include <public/WebFileSystem.h>
 #endif
 
@@ -898,7 +899,7 @@ void WebFrameImpl::collectGarbage()
         return;
     // FIXME: Move this to the ScriptController and make it JS neutral.
 #if USE(V8)
-    m_frame->script()->collectGarbage();
+    V8GCController::collectGarbage();
 #else
     notImplemented();
 #endif

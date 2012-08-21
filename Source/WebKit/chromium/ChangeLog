@@ -1,3 +1,20 @@
+2012-08-20  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Move collectGarbage() from ScriptController to V8GCController
+        https://bugs.webkit.org/show_bug.cgi?id=94455
+
+        Reviewed by Adam Barth.
+
+        - This patch moves collectGarbage() from ScriptController to V8GCController.
+        - This patch makes collectGarbage() a static method.
+        - This patch removes ScriptController::lowMemoryNotification()
+        since it is not used at all.
+
+        No tests. No change in behavior.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::collectGarbage):
+
 2012-08-20  Adam Barth  <abarth@webkit.org>
 
         WebWidget should be able to paint into a zoomed canvas without aliasing
