@@ -140,6 +140,7 @@
             'tests/PODArenaTest.cpp',
             'tests/PODIntervalTreeTest.cpp',
             'tests/PODRedBlackTreeTest.cpp',
+            'tests/PopupContainerTest.cpp',
             'tests/CCPrioritizedTextureTest.cpp',
             'tests/RegionTest.cpp',
             'tests/RenderTableCellTest.cpp',

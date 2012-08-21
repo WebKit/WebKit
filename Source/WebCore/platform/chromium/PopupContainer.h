@@ -118,6 +118,10 @@ public:
     // While hovering popup menu window, we want to show tool tip message.
     String getSelectedItemToolTip();
 
+    // This is public for testing.
+    static IntRect layoutAndCalculateWidgetRectInternal(IntRect widgetRectInScreen, int targetControlHeight, const FloatRect& windowRect, const FloatRect& screen, bool isRTL, const int rtlOffset, PopupContent*, bool& needToResizeView);
+
+
 private:
     friend class WTF::RefCounted<PopupContainer>;
 

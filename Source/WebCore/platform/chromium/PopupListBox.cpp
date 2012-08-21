@@ -908,4 +908,9 @@ bool PopupListBox::isPointInBounds(const IntPoint& point)
     return numItems() && IntRect(0, 0, width(), height()).contains(point);
 }
 
+int PopupListBox::popupContentHeight() const
+{
+    return height();
+}
+
 } // namespace WebCore

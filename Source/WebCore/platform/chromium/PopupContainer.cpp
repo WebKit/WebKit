@@ -117,7 +117,7 @@ PopupContainer::~PopupContainer()
         removeChild(m_listBox.get());
 }
 
-static IntRect layoutAndCalculateWidgetRectInternal(IntRect widgetRectInScreen, int targetControlHeight, const FloatRect& windowRect, const FloatRect& screen, bool isRTL, const int rtlOffset, PopupListBox* listBox, bool& needToResizeView)
+IntRect PopupContainer::layoutAndCalculateWidgetRectInternal(IntRect widgetRectInScreen, int targetControlHeight, const FloatRect& windowRect, const FloatRect& screen, bool isRTL, const int rtlOffset, PopupContent* listBox, bool& needToResizeView)
 {
     ASSERT(listBox);
     if (windowRect.x() >= screen.x() && windowRect.maxX() <= screen.maxX() && (widgetRectInScreen.x() < screen.x() || widgetRectInScreen.maxX() > screen.maxX())) {
@@ -135,9 +135,8 @@ static IntRect layoutAndCalculateWidgetRectInternal(IntRect widgetRectInScreen, 
             widgetRectInScreen = inverseWidgetRectInScreen;
 
         if (widgetRectInScreen.x() < screen.x()) {
-            unsigned widgetRight = widgetRectInScreen.maxX();
             widgetRectInScreen.setWidth(widgetRectInScreen.maxX() - screen.x());
-            widgetRectInScreen.setX(widgetRight - widgetRectInScreen.width());
+            widgetRectInScreen.setX(screen.x());
             listBox->setMaxWidthAndLayout(std::max(widgetRectInScreen.width() - kBorderSize * 2, 0));
         } else if (widgetRectInScreen.maxX() > screen.maxX()) {
             widgetRectInScreen.setWidth(screen.maxX() - widgetRectInScreen.x());
@@ -161,7 +160,7 @@ static IntRect layoutAndCalculateWidgetRectInternal(IntRect widgetRectInScreen, 
                 listBox->setMaxHeight(spaceBelow);
             listBox->layout();
             needToResizeView = true;
-            widgetRectInScreen.setHeight(listBox->height() + kBorderSize * 2);
+            widgetRectInScreen.setHeight(listBox->popupContentHeight() + kBorderSize * 2);
             // Move WebWidget upwards if necessary.
             if (spaceAbove > spaceBelow)
                 widgetRectInScreen.move(0, -(widgetRectInScreen.height() + targetControlHeight));
