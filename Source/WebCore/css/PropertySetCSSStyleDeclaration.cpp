@@ -127,7 +127,7 @@ void PropertySetCSSStyleDeclaration::ref()
 }
 
 void PropertySetCSSStyleDeclaration::deref()
-{ 
+{
     m_propertySet->deref(); 
 }
 
@@ -148,7 +148,7 @@ String PropertySetCSSStyleDeclaration::item(unsigned i) const
 {
     if (i >= m_propertySet->propertyCount())
         return "";
-    return getPropertyNameString(m_propertySet->propertyAt(i).id());
+    return m_propertySet->propertyAt(i).cssName();
 }
 
 String PropertySetCSSStyleDeclaration::cssText() const

@@ -1,3 +1,15 @@
+2012-08-20  Luke Macpherson   <macpherson@chromium.org>
+
+        Fix inspector with variables enabled and enable inspector variables tests by default.
+        https://bugs.webkit.org/show_bug.cgi?id=94296
+
+        Reviewed by Hajime Morita.
+
+        Fix paths to included javascript and enable tests by default on Chromium port.
+
+        * inspector/styles/variables/css-variables.html:
+        * platform/chromium/TestExpectations:
+
 2012-08-20  Kenneth Russell  <kbr@google.com>
 
         Unreviewed. Fixed lint errors in TestExpectations after r126110.
