@@ -1,3 +1,11 @@
+2012-08-21  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Gardening. Skip new failing tests.
+
+        Reviewed Csaba Osztrogonác.
+
+        * platform/qt/Skipped:
+
 2012-08-17  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] REGRESSION(r125428): fast/profiler/nested-start-and-stop-profiler.html fails
