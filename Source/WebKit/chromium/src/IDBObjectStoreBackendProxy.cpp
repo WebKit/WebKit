@@ -138,14 +138,6 @@ void IDBObjectStoreBackendProxy::deleteIndex(const String& name, IDBTransactionB
     m_webIDBObjectStore->deleteIndex(name, *transactionProxy->getWebIDBTransaction(), ec);
 }
 
-void IDBObjectStoreBackendProxy::openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
-{
-    // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
-    // all implementations of IDB interfaces are proxy objects.
-    IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
-    m_webIDBObjectStore->openCursor(range, static_cast<WebIDBCursor::Direction>(direction), new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction(), ec);
-}
-
 void IDBObjectStoreBackendProxy::openCursor(PassRefPtr<IDBKeyRange> range, IDBCursor::Direction direction, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface::TaskType taskType, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,

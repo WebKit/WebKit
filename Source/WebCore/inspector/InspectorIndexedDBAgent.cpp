@@ -610,7 +610,7 @@ public:
             RefPtr<OpenCursorCallback> openCursorCallback = OpenCursorCallback::create(m_frontendProvider, m_injectedScript, this, idbTransaction.get(), OpenCursorCallback::ObjectStoreDataCursor, m_requestId, m_skipCount, m_pageSize);
 
             ExceptionCode ec = 0;
-            idbObjectStore->openCursor(m_idbKeyRange, IDBCursor::NEXT, openCursorCallback, idbTransaction.get(), ec);
+            idbObjectStore->openCursor(m_idbKeyRange, IDBCursor::NEXT, openCursorCallback, IDBTransactionBackendInterface::NormalTask, idbTransaction.get(), ec);
         }
     }
 

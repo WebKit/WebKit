@@ -510,12 +510,6 @@ void IDBObjectStoreBackendImpl::deleteIndexInternal(ScriptExecutionContext*, Pas
     transaction->didCompleteTaskEvents();
 }
 
-void IDBObjectStoreBackendImpl::openCursor(PassRefPtr<IDBKeyRange> prpRange, unsigned short tmpDirection, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
-{
-    IDBCursor::Direction direction = static_cast<IDBCursor::Direction>(tmpDirection);
-    openCursor(prpRange, direction, prpCallbacks, IDBTransactionBackendInterface::NormalTask, transactionPtr, ec);
-}
-
 void IDBObjectStoreBackendImpl::openCursor(PassRefPtr<IDBKeyRange> prpRange, IDBCursor::Direction direction, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface::TaskType taskType, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::openCursor");

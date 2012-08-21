@@ -1,3 +1,20 @@
+2012-08-21  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: remove old update/openCursor glue
+        https://bugs.webkit.org/show_bug.cgi?id=94378
+
+        Reviewed by Tony Chang.
+
+        Remove Chromium/WebKit API for old methods that have now been
+        removed from chromium proper.
+
+        * public/WebIDBObjectStore.h:
+        * src/IDBObjectStoreBackendProxy.cpp:
+        * src/IDBObjectStoreBackendProxy.h:
+        (IDBObjectStoreBackendProxy):
+        * src/WebIDBObjectStoreImpl.h:
+        (WebIDBObjectStoreImpl):
+
 2012-08-21  James Robinson  <jamesr@chromium.org>
 
         [chromium] Should be able to destroy a CCLayerTreeHost without manually setting the root layer

@@ -55,8 +55,6 @@ public:
     PassRefPtr<WebCore::IDBIndexBackendInterface> index(const String& name, WebCore::ExceptionCode&);
     void deleteIndex(const String& name, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
 
-    // FIXME: Remove this version of openCursor when TaskType is plumbed through chromium.
-    virtual void openCursor(PassRefPtr<WebCore::IDBKeyRange>, unsigned short direction, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
     virtual void openCursor(PassRefPtr<WebCore::IDBKeyRange>, WebCore::IDBCursor::Direction, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface::TaskType, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
     virtual void count(PassRefPtr<WebCore::IDBKeyRange>, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
 

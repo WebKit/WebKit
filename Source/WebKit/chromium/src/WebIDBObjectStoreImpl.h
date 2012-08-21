@@ -56,10 +56,6 @@ public:
     WebIDBIndex* index(const WebString& name, WebExceptionCode&);
     void deleteIndex(const WebString& name, const WebIDBTransaction&, WebExceptionCode&);
 
-    void openCursor(const WebIDBKeyRange& range, unsigned short direction, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
-    {
-        openCursor(range, static_cast<WebIDBCursor::Direction>(direction), callbacks, WebIDBTransaction::NormalTask, transaction, ec);
-    }
     void openCursor(const WebIDBKeyRange&, WebIDBCursor::Direction, WebIDBCallbacks*, WebIDBTransaction::TaskType, const WebIDBTransaction&, WebExceptionCode&);
     void count(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
 

@@ -79,8 +79,6 @@ public:
     virtual PassRefPtr<IDBIndexBackendInterface> index(const String& name, ExceptionCode&);
     virtual void deleteIndex(const String& name, IDBTransactionBackendInterface*, ExceptionCode&);
 
-    // FIXME: Remove this version of openCursor when TaskType is plumbed through chromium.
-    virtual void openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void openCursor(PassRefPtr<IDBKeyRange>, IDBCursor::Direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface::TaskType, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void count(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
 
