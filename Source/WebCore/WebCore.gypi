@@ -2288,6 +2288,8 @@
             'bindings/v8/V8Proxy.h',
             'bindings/v8/V8RecursionScope.cpp',
             'bindings/v8/V8RecursionScope.h',
+            'bindings/v8/V8StringResource.cpp',
+            'bindings/v8/V8StringResource.h',
             'bindings/v8/V8ThrowException.cpp',
             'bindings/v8/V8ThrowException.h',
             'bindings/v8/V8Utilities.cpp',

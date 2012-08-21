@@ -145,6 +145,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/custom/V8SQLTransactionCustom.cpp
     bindings/v8/custom/V8SQLTransactionSyncCustom.cpp
     bindings/v8/custom/V8StorageCustom.cpp
+    bindings/v8/custom/V8StringResource.cpp
     bindings/v8/custom/V8StyleSheetCustom.cpp
     bindings/v8/custom/V8StyleSheetListCustom.cpp
     bindings/v8/custom/V8WebGLRenderingContextCustom.cpp

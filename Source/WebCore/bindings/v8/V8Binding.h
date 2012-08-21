@@ -41,6 +41,7 @@
 #include "V8ObjectConstructor.h"
 #include "V8PerIsolateData.h"
 #include "V8Proxy.h"
+#include "V8StringResource.h"
 #include "V8ThrowException.h"
 #include "V8ValueCache.h"
 #include <wtf/Noncopyable.h>
@@ -75,14 +76,6 @@ namespace WebCore {
     {
         return isolate ? v8::Null(isolate) : v8::Null();
     }
-
-    enum ExternalMode {
-        Externalize,
-        DoNotExternalize
-    };
-
-    template <typename StringType>
-    StringType v8StringToWebCoreString(v8::Handle<v8::String>, ExternalMode);
 
     // Convert v8 types to a WTF::String. If the V8 string is not already
     // an external string then it is transformed into an external string at this
@@ -364,8 +357,6 @@ namespace WebCore {
     v8::Persistent<v8::String> getToStringName();
     v8::Persistent<v8::FunctionTemplate> getToStringTemplate();
 
-    String int32ToWebCoreString(int value);
-
     PassRefPtr<DOMStringList> toDOMStringList(v8::Handle<v8::Value>);
 
     // Returns the window object associated with a context.
@@ -383,102 +374,6 @@ namespace WebCore {
     bool handleOutOfMemory();
 
     void crashIfV8IsDead();
-
-    class V8ParameterBase {
-    public:
-        operator String() { return toString<String>(); }
-        operator AtomicString() { return toString<AtomicString>(); }
-
-    protected:
-        V8ParameterBase(v8::Local<v8::Value> object) : m_v8Object(object), m_mode(Externalize), m_string() { }
-
-        bool prepareBase()
-        {
-            if (m_v8Object.IsEmpty())
-                return true;
-
-            if (LIKELY(m_v8Object->IsString()))
-                return true;
-
-            if (LIKELY(m_v8Object->IsInt32())) {
-                setString(int32ToWebCoreString(m_v8Object->Int32Value()));
-                return true;
-            }
-
-            m_mode = DoNotExternalize;
-            v8::TryCatch block;
-            m_v8Object = m_v8Object->ToString();
-            // Handle the case where an exception is thrown as part of invoking toString on the object.
-            if (block.HasCaught()) {
-                block.ReThrow();
-                return false;
-            }
-            return true;
-        }
-
-        v8::Local<v8::Value> object() { return m_v8Object; }
-
-        void setString(const String& string)
-        {
-            m_string = string;
-            m_v8Object.Clear(); // To signal that String is ready.
-        }
-
-     private:
-        v8::Local<v8::Value> m_v8Object;
-        ExternalMode m_mode;
-        String m_string;
-
-        template <class StringType>
-        StringType toString()
-        {
-            if (LIKELY(!m_v8Object.IsEmpty()))
-                return v8StringToWebCoreString<StringType>(m_v8Object.As<v8::String>(), m_mode);
-
-            return StringType(m_string);
-        }
-    };
-
-    // V8Parameter is an adapter class that converts V8 values to Strings
-    // or AtomicStrings as appropriate, using multiple typecast operators.
-    enum V8ParameterMode {
-        DefaultMode,
-        WithNullCheck,
-        WithUndefinedOrNullCheck
-    };
-    template <V8ParameterMode MODE = DefaultMode>
-    class V8Parameter: public V8ParameterBase {
-    public:
-        V8Parameter(v8::Local<v8::Value> object) : V8ParameterBase(object) { }
-        V8Parameter(v8::Local<v8::Value> object, bool) : V8ParameterBase(object) { prepare(); }
-
-        bool prepare();
-    };
-
-    template<> inline bool V8Parameter<DefaultMode>::prepare()
-    {
-        return V8ParameterBase::prepareBase();
-    }
-
-    template<> inline bool V8Parameter<WithNullCheck>::prepare()
-    {
-        if (object().IsEmpty() || object()->IsNull()) {
-            setString(String());
-            return true;
-        }
-
-        return V8ParameterBase::prepareBase();
-    }
-
-    template<> inline bool V8Parameter<WithUndefinedOrNullCheck>::prepare()
-    {
-        if (object().IsEmpty() || object()->IsNull() || object()->IsUndefined()) {
-            setString(String());
-            return true;
-        }
-
-        return V8ParameterBase::prepareBase();
-    }
 
 } // namespace WebCore
 
