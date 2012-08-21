@@ -97,23 +97,29 @@ public:
     virtual LayoutUnit logicalWidthForFlowThreadContent() const;
     virtual LayoutUnit logicalHeightForFlowThreadContent() const;
 
+protected:
+    void setRegionObjectsRegionStyle();
+    void restoreRegionObjectsOriginalStyle();
+    
 private:
     virtual const char* renderName() const { return "RenderRegion"; }
 
     virtual void insertedIntoTree() OVERRIDE;
     virtual void willBeRemovedFromTree() OVERRIDE;
 
+    virtual void installFlowThread();
+
     PassRefPtr<RenderStyle> computeStyleInRegion(const RenderObject*);
     void computeChildrenStyleInRegion(const RenderObject*);
-    void setRegionObjectsRegionStyle();
-    void restoreRegionObjectsOriginalStyle();
     void setObjectStyleInRegion(RenderObject*, PassRefPtr<RenderStyle>, bool objectRegionStyleCached);
     void printRegionObjectsStyles();
 
     void checkRegionStyle();
 
+protected:
     RenderFlowThread* m_flowThread;
 
+private:
     // If this RenderRegion is displayed as part of another named flow,
     // we need to create a dependency tree, so that layout of the
     // regions is always done before the regions themselves.

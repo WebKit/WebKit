@@ -33,4 +33,10 @@ RenderRegionSet::RenderRegionSet(Node* node, RenderFlowThread* flowThread)
 {
 }
 
+void RenderRegionSet::installFlowThread()
+{
+    // We don't have to do anything, since we were able to connect the flow thread
+    // in the constructor.
+}
+
 }

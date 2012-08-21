@@ -43,6 +43,8 @@ public:
     LayoutUnit columnWidth() const { return m_columnWidth; }
     unsigned columnCount() const { return m_columnCount; }
 
+    RenderMultiColumnFlowThread* flowThread() const { return m_flowThread; }
+
 private:
     virtual bool isRenderMultiColumnBlock() const { return true; }
     
@@ -57,8 +59,6 @@ private:
     void computeColumnCountAndWidth();
 
     void ensureColumnSets();
-
-    RenderMultiColumnFlowThread* flowThread() const { return m_flowThread; }
 
     RenderMultiColumnFlowThread* m_flowThread;
     unsigned m_columnCount;   // The default column count/width that are based off our containing block width. These values represent only the default,

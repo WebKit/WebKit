@@ -65,10 +65,18 @@ private:
     virtual void computeLogicalWidth() OVERRIDE;
     virtual void computeLogicalHeight() OVERRIDE;
 
+    virtual void paintReplaced(PaintInfo&, const LayoutPoint& paintOffset) OVERRIDE;
+
     virtual LayoutUnit logicalWidthForFlowThreadContent() const OVERRIDE { return m_columnWidth; }
     virtual LayoutUnit logicalHeightForFlowThreadContent() const OVERRIDE { return m_columnHeight; } // FIXME: Will be wrong once we have multiple sets.
 
     virtual const char* renderName() const;
+    
+    void paintColumnRules(PaintInfo&, const LayoutPoint& paintOffset);
+    void paintColumnContents(PaintInfo&, const LayoutPoint& paintOffset);
+
+    LayoutUnit columnGap() const;
+    LayoutRect columnRectAt( unsigned index) const;
     
     unsigned m_columnCount;
     LayoutUnit m_columnWidth;

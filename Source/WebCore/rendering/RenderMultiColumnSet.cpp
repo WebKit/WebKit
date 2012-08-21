@@ -24,6 +24,8 @@
  */
 
 #include "config.h"
+#include "PaintInfo.h"
+#include "RenderMultiColumnFlowThread.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnBlock.h"
 
@@ -58,6 +60,106 @@ void RenderMultiColumnSet::computeLogicalHeight()
     
     // Our logical height is always just the height of our columns.
     setLogicalHeight(columnHeight());
+}
+
+LayoutUnit RenderMultiColumnSet::columnGap() const
+{
+    if (style()->hasNormalColumnGap())
+        return style()->fontDescription().computedPixelSize(); // "1em" is recommended as the normal gap setting. Matches <p> margins.
+    return static_cast<int>(style()->columnGap());
+}
+
+LayoutRect RenderMultiColumnSet::columnRectAt(unsigned index) const
+{
+    LayoutUnit colLogicalWidth = columnWidth();
+    LayoutUnit colLogicalHeight = columnHeight();
+    LayoutUnit colLogicalTop = borderBefore() + paddingBefore();
+    LayoutUnit colLogicalLeft = borderAndPaddingLogicalLeft();
+    int colGap = columnGap();
+    if (style()->isLeftToRightDirection())
+        colLogicalLeft += index * (colLogicalWidth + colGap);
+    else
+        colLogicalLeft += contentLogicalWidth() - colLogicalWidth - index * (colLogicalWidth + colGap);
+
+    if (isHorizontalWritingMode())
+        return LayoutRect(colLogicalLeft, colLogicalTop, colLogicalWidth, colLogicalHeight);
+    return LayoutRect(colLogicalTop, colLogicalLeft, colLogicalHeight, colLogicalWidth);
+}
+
+void RenderMultiColumnSet::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    // FIXME: RenderRegions are replaced elements right now and so they only paint in the foreground phase.
+    // Columns should technically respect phases and allow for background/float/foreground overlap etc., just like
+    // RenderBlocks do. We can't correct this, however, until RenderRegions are changed to actually be
+    // RenderBlocks. Note this is a pretty minor issue, since the old column implementation clipped columns
+    // anyway, thus making it impossible for them to overlap one another. It's also really unlikely that the columns
+    // would overlap another block.
+    setRegionObjectsRegionStyle();
+    paintColumnRules(paintInfo, paintOffset);
+    paintColumnContents(paintInfo, paintOffset);
+    restoreRegionObjectsOriginalStyle();
+}
+
+void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    if (paintInfo.context->paintingDisabled())
+        return;
+
+    RenderStyle* blockStyle = toRenderMultiColumnBlock(parent())->style();
+    const Color& ruleColor = blockStyle->visitedDependentColor(CSSPropertyWebkitColumnRuleColor);
+    bool ruleTransparent = blockStyle->columnRuleIsTransparent();
+    EBorderStyle ruleStyle = blockStyle->columnRuleStyle();
+    LayoutUnit ruleThickness = blockStyle->columnRuleWidth();
+    LayoutUnit colGap = columnGap();
+    bool renderRule = ruleStyle > BHIDDEN && !ruleTransparent && ruleThickness <= colGap;
+    if (!renderRule)
+        return;
+
+    unsigned colCount = columnCount();
+
+    bool antialias = shouldAntialiasLines(paintInfo.context);
+
+    bool leftToRight = style()->isLeftToRightDirection();
+    LayoutUnit currLogicalLeftOffset = leftToRight ? ZERO_LAYOUT_UNIT : contentLogicalWidth();
+    LayoutUnit ruleAdd = borderAndPaddingLogicalLeft();
+    LayoutUnit ruleLogicalLeft = leftToRight ? ZERO_LAYOUT_UNIT : contentLogicalWidth();
+    LayoutUnit inlineDirectionSize = columnWidth();
+    BoxSide boxSide = isHorizontalWritingMode()
+        ? leftToRight ? BSLeft : BSRight
+        : leftToRight ? BSTop : BSBottom;
+
+    for (unsigned i = 0; i < colCount; i++) {
+        // Move to the next position.
+        if (leftToRight) {
+            ruleLogicalLeft += inlineDirectionSize + colGap / 2;
+            currLogicalLeftOffset += inlineDirectionSize + colGap;
+        } else {
+            ruleLogicalLeft -= (inlineDirectionSize + colGap / 2);
+            currLogicalLeftOffset -= (inlineDirectionSize + colGap);
+        }
+       
+        // Now paint the column rule.
+        if (i < colCount - 1) {
+            LayoutUnit ruleLeft = isHorizontalWritingMode() ? paintOffset.x() + ruleLogicalLeft - ruleThickness / 2 + ruleAdd : paintOffset.x() + borderLeft() + paddingLeft();
+            LayoutUnit ruleRight = isHorizontalWritingMode() ? ruleLeft + ruleThickness : ruleLeft + contentWidth();
+            LayoutUnit ruleTop = isHorizontalWritingMode() ? paintOffset.y() + borderTop() + paddingTop() : paintOffset.y() + ruleLogicalLeft - ruleThickness / 2 + ruleAdd;
+            LayoutUnit ruleBottom = isHorizontalWritingMode() ? ruleTop + contentHeight() : ruleTop + ruleThickness;
+            IntRect pixelSnappedRuleRect = pixelSnappedIntRectFromEdges(ruleLeft, ruleTop, ruleRight, ruleBottom);
+            drawLineForBoxSide(paintInfo.context, pixelSnappedRuleRect.x(), pixelSnappedRuleRect.y(), pixelSnappedRuleRect.maxX(), pixelSnappedRuleRect.maxY(), boxSide, ruleColor, ruleStyle, 0, 0, antialias);
+        }
+        
+        ruleLogicalLeft = currLogicalLeftOffset;
+    }
+}
+
+void RenderMultiColumnSet::paintColumnContents(PaintInfo& /* paintInfo */, const LayoutPoint& /* paintOffset */)
+{
+    // For each rectangle, set it as the region rectangle and then let flow thread painting do the rest.
+    // We make multiple calls to paintIntoRegion, changing the rectangles each time.
+    if (!columnCount())
+        return;
+        
+    // FIXME: Implement.
 }
 
 const char* RenderMultiColumnSet::renderName() const
