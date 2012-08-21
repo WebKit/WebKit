@@ -1,3 +1,12 @@
+2012-08-20  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (125759) fast/forms/file/selected-files-from-history-state.html fails on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=94549
+
+        Unreviewed (Bot gardening)
+
+        * platform/mac-wk2/Skipped:
+
 2012-08-20  Philip Rogers  <pdr@google.com>
 
         Canvas drawImage() should draw SVG at the correct scale.

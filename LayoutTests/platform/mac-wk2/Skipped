@@ -281,6 +281,9 @@ platform/mac/editing/spelling/autocorrection-blockquote-crash.html
 # https://bugs.webkit.org/show_bug.cgi?id=91778
 storage/domstorage/storage-close-database-on-idle.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=94549
+fast/forms/file/selected-files-from-history-state.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
