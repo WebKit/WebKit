@@ -56,7 +56,7 @@ var WebInspector = {
             return panelDescriptors;
         }
         var allDescriptors = [elements, resources, network, scripts, timeline, profiles, audits, console];
-        var hiddenPanels = (InspectorFrontendHost.hiddenPanels() || "").split(',');
+        var hiddenPanels = InspectorFrontendHost.hiddenPanels();
         for (var i = 0; i < allDescriptors.length; ++i) {
             if (hiddenPanels.indexOf(allDescriptors[i].name) === -1)
                 panelDescriptors.push(allDescriptors[i]);
@@ -433,7 +433,14 @@ WebInspector.loaded = function()
         }
         return;
     }
+
     WebInspector.doLoadedDone();
+
+    // In case of loading as a web page with no bindings / harness, kick off initialization manually.
+    if (InspectorFrontendHost.isStub) {
+        InspectorFrontendAPI.dispatchQueryParameters();
+        WebInspector._doLoadedDoneWithCapabilities();
+    }
 }
 
 WebInspector.doLoadedDone = function()
@@ -458,8 +465,6 @@ WebInspector.doLoadedDone = function()
     PageAgent.canOverrideDeviceMetrics(WebInspector._initializeCapability.bind(WebInspector, "canOverrideDeviceMetrics", null));
     PageAgent.canOverrideGeolocation(WebInspector._initializeCapability.bind(WebInspector, "canOverrideGeolocation", null));
     PageAgent.canOverrideDeviceOrientation(WebInspector._initializeCapability.bind(WebInspector, "canOverrideDeviceOrientation", WebInspector._doLoadedDoneWithCapabilities.bind(WebInspector)));
-    if ("debugLoad" in WebInspector.queryParamsObject)
-        WebInspector._doLoadedDoneWithCapabilities();
 }
 
 WebInspector._doLoadedDoneWithCapabilities = function()
@@ -991,6 +996,11 @@ WebInspector.log = function(message, messageLevel, showConsole)
 
     // log the message
     logMessage(message);
+}
+
+WebInspector.showErrorMessage = function(error)
+{
+    WebInspector.log(error, WebInspector.ConsoleMessage.MessageLevel.Error, true);
 }
 
 WebInspector.inspect = function(payload, hints)

@@ -102,7 +102,7 @@ WebInspector.InspectorFrontendHostStub.prototype = {
 
     hiddenPanels: function()
     {
-        return "";
+        return WebInspector.queryParamsObject["hiddenPanels"] || "";
     },
 
     inspectedURLChanged: function(url)
@@ -179,7 +179,7 @@ WebInspector.InspectorFrontendHostStub.prototype = {
 
     loadResourceSynchronously: function(url)
     {
-        return "";
+        return loadXHR(url);
     },
 
     setZoomFactor: function(zoom)

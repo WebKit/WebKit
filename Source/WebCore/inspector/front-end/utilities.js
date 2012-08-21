@@ -726,6 +726,40 @@ Map.prototype = {
     }
 };
 
+/**
+ * @param {string} url
+ * @param {boolean=} async
+ * @param {function(?string)=} callback
+ * @return {?string}
+ */
+function loadXHR(url, async, callback) 
+{
+    function onReadyStateChanged() 
+    {
+        if (xhr.readyState !== XMLHttpRequest.DONE)
+            return;
+
+        if (xhr.status === 200) {
+            callback(xhr.responseText);
+            return;
+        }
+
+        callback(null); 
+   }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, async);
+    if (async)
+        xhr.onreadystatechange = onReadyStateChanged;        
+    xhr.send(null);
+
+    if (!async) {
+        if (xhr.status === 200) 
+            return xhr.responseText;
+        return null;
+    }
+    return null;
+}
 
 /**
  * @constructor

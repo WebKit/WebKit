@@ -52,7 +52,7 @@ InspectorFrontendAPI = {
 
     setTimelineProfilingEnabled: function(enabled)
     {
-        WebInspector.panel("timeline").setTimelineProfilingEnabled(enabled);
+        WebInspector.showPanel("timeline").setTimelineProfilingEnabled(enabled);
     },
 
     isProfilingJavaScript: function()
@@ -131,6 +131,20 @@ InspectorFrontendAPI = {
             return InspectorFrontendAPI[methodName].apply(InspectorFrontendAPI, signature);
         }
         InspectorFrontendAPI._pendingCommands.push(signature);
+    },
+
+    dispatchQueryParameters: function()
+    {
+        if ("dispatch" in WebInspector.queryParamsObject)
+            InspectorFrontendAPI.dispatch(JSON.parse(window.decodeURI(WebInspector.queryParamsObject["dispatch"])));
+    },
+
+    /**
+     * @param {string} url
+     */
+    loadTimelineFromURL: function(url) 
+    {
+        WebInspector.showPanel("timeline").loadFromURL(url);
     },
 
     loadCompleted: function()

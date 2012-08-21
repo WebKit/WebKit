@@ -197,11 +197,16 @@ WebInspector.TimelineModel.prototype = {
 
         function parseAndImportData(data)
         {
-            var records = JSON.parse(data);
-            parsingProgress.done();
-            this.reset();
-            processingProgress.setTotalWork(records.length);
-            this._loadNextChunk(processingProgress, records, 1);
+            try {
+                var records = JSON.parse(data);
+                parsingProgress.done();
+                this.reset();
+                processingProgress.setTotalWork(records.length);
+                this._loadNextChunk(processingProgress, records, 1);
+            } catch (e) {
+                WebInspector.showErrorMessage("Malformed timeline data.");
+                progress.done();
+            }
         }
 
         function onLoad(e)
@@ -216,15 +221,15 @@ WebInspector.TimelineModel.prototype = {
             progress.done();
             switch(e.target.error.code) {
             case e.target.error.NOT_FOUND_ERR:
-                WebInspector.log(WebInspector.UIString('Timeline.loadFromFile: File "%s" not found.', file.name));
+                WebInspector.showErrorMessage(WebInspector.UIString("File \"%s\" not found.", file.name));
             break;
             case e.target.error.NOT_READABLE_ERR:
-                WebInspector.log(WebInspector.UIString('Timeline.loadFromFile: File "%s" is not readable', file.name));
+                WebInspector.showErrorMessage(WebInspector.UIString("File \"%s\" is not readable", file.name));
             break;
             case e.target.error.ABORT_ERR:
                 break;
             default:
-                WebInspector.log(WebInspector.UIString('Timeline.loadFromFile: An error occurred while reading the file "%s"', file.name));
+                WebInspector.showErrorMessage(WebInspector.UIString("An error occurred while reading the file \"%s\"", file.name));
             }
         }
 
@@ -241,6 +246,39 @@ WebInspector.TimelineModel.prototype = {
         loadingProgress.setTitle(WebInspector.UIString("Loading\u2026"));
         loadingProgress.setTotalWork(1);
         reader.readAsText(file);
+    },
+
+    /**
+     * @param {string} url
+     */
+    loadFromURL: function(url, progress)
+    {
+        var compositeProgress = new WebInspector.CompositeProgress(progress);
+        var loadingProgress = compositeProgress.createSubProgress(1);
+        var parsingProgress = compositeProgress.createSubProgress(1);
+        var processingProgress = compositeProgress.createSubProgress(1);
+
+        // FIXME: extract parsing routines so that they did not require too many progress objects.
+        function parseAndImportData(data)
+        {
+            try {
+                var records = JSON.parse(data);
+                parsingProgress.done();
+                this.reset();
+                processingProgress.setTotalWork(records.length);
+                this._loadNextChunk(processingProgress, records, 1);
+            } catch (e) {
+                WebInspector.showErrorMessage("Malformed timeline data.");
+                progress.done();
+            }
+        }
+
+        var responseText = loadXHR(url);
+        if (responseText) {
+            loadingProgress.done();
+            parsingProgress.setTotalWork(1);
+            setTimeout(parseAndImportData.bind(this, responseText), 0);
+        }
     },
 
     saveToFile: function()

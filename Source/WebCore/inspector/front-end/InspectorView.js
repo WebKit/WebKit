@@ -95,7 +95,10 @@ WebInspector.InspectorView.prototype = {
     {
         return this._currentPanel;
     },
-
+    
+    /**
+     * @param {WebInspector.Panel} x
+     */
     setCurrentPanel: function(x)
     {
         if (this._currentPanel === x)

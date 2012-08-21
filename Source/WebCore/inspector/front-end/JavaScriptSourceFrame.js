@@ -160,7 +160,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     _didEditContent: function(error)
     {
         if (error) {
-            WebInspector.log(error, WebInspector.ConsoleMessage.MessageLevel.Error, true);
+            WebInspector.showErrorMessage(error);
             return;
         }
         if (!this._javaScriptSource.supportsEnabledBreakpointsWhileEditing())

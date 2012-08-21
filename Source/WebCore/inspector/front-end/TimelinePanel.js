@@ -349,8 +349,31 @@ WebInspector.TimelinePanel.prototype = {
 
     _loadFromFile: function()
     {
-        if (this._operationInProgress)
+        var progressIndicator = this._prepareToLoadTimeline();
+        if (!progressIndicator)
             return;
+        this._model.loadFromFile(this._fileSelectorElement.files[0], progressIndicator);
+        this._createFileSelector();
+    },
+
+    /**
+     * @param {string} url
+     */
+    loadFromURL: function(url)
+    {
+        var progressIndicator = this._prepareToLoadTimeline();
+        if (!progressIndicator)
+            return;
+        this._model.loadFromURL(url, progressIndicator);
+    },
+
+    /**
+     * @return {?WebInspector.ProgressIndicator}
+     */
+    _prepareToLoadTimeline: function()
+    {
+        if (this._operationInProgress)
+            return null;
         if (this.toggleTimelineButton.toggled) {
             this.toggleTimelineButton.toggled = false;
             this._model.stopRecord();
@@ -358,8 +381,7 @@ WebInspector.TimelinePanel.prototype = {
         var progressIndicator = new WebInspector.ProgressIndicator();
         progressIndicator.addEventListener(WebInspector.ProgressIndicator.Events.Done, this._setOperationInProgress.bind(this, null));
         this._setOperationInProgress(progressIndicator);
-        this._model.loadFromFile(this._fileSelectorElement.files[0], progressIndicator);
-        this._createFileSelector();
+        return progressIndicator;
     },
 
     _rootRecord: function()
