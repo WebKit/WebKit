@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # Copyright (c) 2011 Google Inc. All rights reserved.
+# Copyright (c) 2012 Intel Corporation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -909,6 +910,12 @@ class TypeBindings:
                                     writer.append("#endif  // %s\n" % VALIDATOR_IFDEF_NAME)
 
                                     validator_writer = generate_context.validator_writer
+
+                                    domain_fixes = DomainNameFixes.get_fixed_data(context_domain_name)
+                                    domain_guard = domain_fixes.get_guard()
+                                    if domain_guard:
+                                        domain_guard.generate_open(validator_writer)
+
                                     validator_writer.newline("void %s%s::assertCorrectValue(InspectorValue* value)\n" % (helper.full_name_prefix_for_impl, enum_name))
                                     validator_writer.newline("{\n")
                                     validator_writer.newline("    WTF::String s;\n")
@@ -920,8 +927,12 @@ class TypeBindings:
                                             enum_pos = EnumConstants.add_constant(enum_item)
                                             condition_list.append("s == \"%s\"" % enum_item)
                                         validator_writer.newline("    ASSERT(%s);\n" % join(condition_list, " || "))
-                                    validator_writer.newline("}\n\n\n")
+                                    validator_writer.newline("}\n")
 
+                                    if domain_guard:
+                                        domain_guard.generate_close(validator_writer)
+
+                                    validator_writer.newline("\n\n")
 
                                 writer.newline("}; // struct ")
                                 writer.append(enum_name)
@@ -1288,6 +1299,12 @@ class TypeBindings:
                                     closed_field_set = (context_domain_name + "." + class_name) not in TYPES_WITH_OPEN_FIELD_LIST_SET
 
                                     validator_writer = generate_context.validator_writer
+
+                                    domain_fixes = DomainNameFixes.get_fixed_data(context_domain_name)
+                                    domain_guard = domain_fixes.get_guard()
+                                    if domain_guard:
+                                        domain_guard.generate_open(validator_writer)
+
                                     validator_writer.newline("void %s%s::assertCorrectValue(InspectorValue* value)\n" % (helper.full_name_prefix_for_impl, class_name))
                                     validator_writer.newline("{\n")
                                     validator_writer.newline("    RefPtr<InspectorObject> object;\n")
@@ -1319,7 +1336,12 @@ class TypeBindings:
 
                                     if closed_field_set:
                                         validator_writer.newline("    ASSERT(foundPropertiesCount == object->size());\n")
-                                    validator_writer.newline("}\n\n\n")
+                                    validator_writer.newline("}\n")
+
+                                    if domain_guard:
+                                        domain_guard.generate_close(validator_writer)
+
+                                    validator_writer.newline("\n\n")
 
                                 if is_open_type:
                                     cpp_writer = generate_context.cpp_writer
