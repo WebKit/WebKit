@@ -257,7 +257,11 @@ static String memoryPage()
 
     page += numberToHTMLTr("Total used memory (malloc + JSC)", mallocInfo.usmblks + mallocInfo.uordblks + jscMemoryStat.stackBytes + jscMemoryStat.JITBytes + mainHeap.capacity());
 
-    page += numberToHTMLTr("Total committed memory", BlackBerry::Platform::totalCommittedMemory());
+    if (unsigned totalCommittedMemoryOfChromeProcess = BlackBerry::Platform::totalCommittedMemoryOfChromeProcess()) {
+        page += numberToHTMLTr("Total committed memory of tab process", BlackBerry::Platform::totalCommittedMemoryOfCurrentProcess());
+        page += numberToHTMLTr("Total committed memory of chrome process", totalCommittedMemoryOfChromeProcess);
+    } else
+        page += numberToHTMLTr("Total committed memory", BlackBerry::Platform::totalCommittedMemoryOfCurrentProcess());
 
     struct stat processInfo;
     if (!stat(String::format("/proc/%u/as", getpid()).latin1().data(), &processInfo))
@@ -316,24 +320,34 @@ public:
     void start();
     void stop();
     bool isActive() const { return m_memoryTrackingTimer.isActive(); }
-    void clear() { m_peakTotalUsedMemory = 0; m_peakTotalCommittedMemory = 0; m_peakTotalMappedMemory = 0; }
+    void clear()
+    {
+        m_peakTotalUsedMemory = 0;
+        m_peakTotalCommittedMemoryOfCurrentProcess = 0;
+        m_peakTotalCommittedMemoryOfChromeProcess = 0;
+        m_peakTotalMappedMemory = 0;
+    }
+
     void updateMemoryPeaks(Timer<MemoryTracker>*);
     unsigned peakTotalUsedMemory() const { return m_peakTotalUsedMemory; }
-    unsigned peakTotalCommittedMemory() const {return m_peakTotalCommittedMemory; }
+    unsigned peakTotalCommittedMemoryOfCurrentProcess() const { return m_peakTotalCommittedMemoryOfCurrentProcess; }
+    unsigned peakTotalCommittedMemoryOfChromeProcess() const { return m_peakTotalCommittedMemoryOfChromeProcess; }
     unsigned peakTotalMappedMemory() const { return m_peakTotalMappedMemory; }
 
 private:
     MemoryTracker();
     Timer<MemoryTracker> m_memoryTrackingTimer;
     unsigned m_peakTotalUsedMemory;
-    unsigned m_peakTotalCommittedMemory;
+    unsigned m_peakTotalCommittedMemoryOfCurrentProcess;
+    unsigned m_peakTotalCommittedMemoryOfChromeProcess;
     unsigned m_peakTotalMappedMemory;
 };
 
 MemoryTracker::MemoryTracker()
     : m_memoryTrackingTimer(this, &MemoryTracker::updateMemoryPeaks)
     , m_peakTotalUsedMemory(0)
-    , m_peakTotalCommittedMemory(0)
+    , m_peakTotalCommittedMemoryOfCurrentProcess(0)
+    , m_peakTotalCommittedMemoryOfChromeProcess(0)
     , m_peakTotalMappedMemory(0)
 {
 }
@@ -370,9 +384,13 @@ void MemoryTracker::updateMemoryPeaks(Timer<MemoryTracker>*)
     if (totalUsedMemory > m_peakTotalUsedMemory)
         m_peakTotalUsedMemory = totalUsedMemory;
 
-    unsigned totalCommittedMemory = BlackBerry::Platform::totalCommittedMemory();
-    if (totalCommittedMemory > m_peakTotalCommittedMemory)
-        m_peakTotalCommittedMemory = totalCommittedMemory;
+    unsigned totalCommittedMemoryOfCurrentProcess = BlackBerry::Platform::totalCommittedMemoryOfCurrentProcess();
+    if (totalCommittedMemoryOfCurrentProcess > m_peakTotalCommittedMemoryOfCurrentProcess)
+        m_peakTotalCommittedMemoryOfCurrentProcess = totalCommittedMemoryOfCurrentProcess;
+
+    unsigned totalCommittedMemoryOfChromeProcess = BlackBerry::Platform::totalCommittedMemoryOfChromeProcess();
+    if (totalCommittedMemoryOfChromeProcess > m_peakTotalCommittedMemoryOfChromeProcess)
+        m_peakTotalCommittedMemoryOfChromeProcess = totalCommittedMemoryOfChromeProcess;
 
     struct stat processInfo;
     if (!stat(String::format("/proc/%u/as", getpid()).latin1().data(), &processInfo)) {
@@ -384,11 +402,17 @@ void MemoryTracker::updateMemoryPeaks(Timer<MemoryTracker>*)
 
 static String memoryPeaksToHtmlTable(MemoryTracker& memoryTracker)
 {
-    return String("<table class='fixed-table'><col width=75%><col width=25%>")
-        + numberToHTMLTr("Total used memory(malloc + JSC):", memoryTracker.peakTotalUsedMemory())
-        + numberToHTMLTr("Total committed memory:", memoryTracker.peakTotalCommittedMemory())
-        + numberToHTMLTr("Total mapped memory:", memoryTracker.peakTotalMappedMemory())
-        + "</table>";
+    String htmlTable = String("<table class='fixed-table'><col width=75%><col width=25%>")
+        + numberToHTMLTr("Total used memory(malloc + JSC):", memoryTracker.peakTotalUsedMemory());
+
+    if (unsigned peakTotalCommittedMemoryOfChromeProcess = memoryTracker.peakTotalCommittedMemoryOfChromeProcess()) {
+        htmlTable += numberToHTMLTr("Total committed memory of tab process:", memoryTracker.peakTotalCommittedMemoryOfCurrentProcess());
+        htmlTable += numberToHTMLTr("Total committed memory of chrome process:", peakTotalCommittedMemoryOfChromeProcess);
+    } else
+        htmlTable += numberToHTMLTr("Total committed memory:", memoryTracker.peakTotalCommittedMemoryOfCurrentProcess());
+
+    htmlTable += numberToHTMLTr("Total mapped memory:", memoryTracker.peakTotalMappedMemory()) + "</table>";
+    return htmlTable;
 }
 
 static String memoryLivePage(String memoryLiveCommand)

@@ -1,3 +1,27 @@
+2012-08-21  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] about:memory and about:memory-live should show numbers for the chrome process
+        https://bugs.webkit.org/show_bug.cgi?id=94531
+
+        Reviewed by Rob Buis.
+        Patch by Jacky Jiang  <zhajiang@rim.com>
+
+        PR: 190504
+        Add total committed memory of chrome process into about:memory and add
+        its peak into about:memory-live.
+
+        Internally reviewed by Yong Li and George Staikos.
+
+        * WebKitSupport/AboutData.cpp:
+        (BlackBerry::WebKit::memoryPage):
+        (BlackBerry::WebKit::MemoryTracker::clear):
+        (MemoryTracker):
+        (BlackBerry::WebKit::MemoryTracker::peakTotalCommittedMemoryOfCurrentProcess):
+        (BlackBerry::WebKit::MemoryTracker::peakTotalCommittedMemoryOfChromeProcess):
+        (BlackBerry::WebKit::MemoryTracker::MemoryTracker):
+        (BlackBerry::WebKit::MemoryTracker::updateMemoryPeaks):
+        (BlackBerry::WebKit::memoryPeaksToHtmlTable):
+
 2012-08-21  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Accelerated In-Region Scrolling does not render correctly on rotation
