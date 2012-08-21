@@ -187,13 +187,19 @@ BUGX WONTFIX : failures/expected = IMAGE
 
     def test_parse_warning(self):
         try:
-            self.parse_exp("""FOO : failures/expected/text.html = TEXT
-SKIP : failures/expected/image.html""", is_lint_mode=True)
+            filesystem = self._port.host.filesystem
+            filesystem.write_text_file(filesystem.join(self._port.layout_tests_dir(), 'disabled-test.html-disabled'), 'content')
+            self.get_test('disabled-test.html-disabled'),
+            self.parse_exp("FOO : failures/expected/text.html = TEXT\n"
+                "SKIP : failures/expected/image.html\n"
+                "BUGRNIWA : non-existent-test.html = TEXT\n"
+                "BUGRNIWA : disabled-test.html-disabled = IMAGE", is_lint_mode=True)
             self.assertFalse(True, "ParseError wasn't raised")
         except ParseError, e:
             warnings = ("expectations:1 Test lacks BUG modifier. failures/expected/text.html\n"
                         "expectations:1 Unrecognized modifier 'foo' failures/expected/text.html\n"
-                        "expectations:2 Missing expectations SKIP : failures/expected/image.html")
+                        "expectations:2 Missing expectations SKIP : failures/expected/image.html\n"
+                        "expectations:3 Path does not exist. non-existent-test.html")
             self.assertEqual(str(e), warnings)
 
         try:

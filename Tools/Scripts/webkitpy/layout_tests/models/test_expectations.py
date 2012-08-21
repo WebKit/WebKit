@@ -188,10 +188,10 @@ class TestExpectationParser(object):
         if not expectation_line.name:
             return
 
-        expectation_line.is_file = self._port.test_isfile(expectation_line.name)
-        if not expectation_line.is_file and self._check_path_does_not_exist(expectation_line):
+        if not self._check_test_exists(expectation_line):
             return
 
+        expectation_line.is_file = self._port.test_isfile(expectation_line.name)
         if expectation_line.is_file:
             expectation_line.path = expectation_line.name
         else:
@@ -245,18 +245,17 @@ class TestExpectationParser(object):
             result.add(expectation)
         expectation_line.parsed_expectations = result
 
-    def _check_path_does_not_exist(self, expectation_line):
+    def _check_test_exists(self, expectation_line):
         # WebKit's way of skipping tests is to add a -disabled suffix.
         # So we should consider the path existing if the path or the
         # -disabled version exists.
-        if (not self._port.test_exists(expectation_line.name)
-            and not self._port.test_exists(expectation_line.name + '-disabled')):
+        if not self._port.test_exists(expectation_line.name) and not self._port.test_exists(expectation_line.name + '-disabled'):
             # Log a warning here since you hit this case any
             # time you update TestExpectations without syncing
             # the LayoutTests directory
             expectation_line.warnings.append('Path does not exist.')
-            return True
-        return False
+            return False
+        return True
 
     def _collect_matching_tests(self, expectation_line):
         """Convert the test specification to an absolute, normalized

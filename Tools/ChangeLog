@@ -1,3 +1,18 @@
+2012-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        TestExpectationsParser doesn't warn about test files that don't exist.
+        https://bugs.webkit.org/show_bug.cgi?id=94632
+
+        Reviewed by Dirk Pranke.
+
+        Exit early and warn when the test file doesn't exist as well when a test directory doesn't exist.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser._parse_line):
+        (TestExpectationParser._check_test_exists):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (test_parse_warning):
+
 2012-08-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move free functions in test_expectations to TestExpectations class
