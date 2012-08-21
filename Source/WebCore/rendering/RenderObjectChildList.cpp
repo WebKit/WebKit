@@ -138,7 +138,7 @@ void RenderObjectChildList::appendChildNode(RenderObject* owner, RenderObject* n
 
     setLastChild(newChild);
     
-    if (notifyRenderer)
+    if (!owner->documentBeingDestroyed() && notifyRenderer)
         newChild->insertedIntoTree();
 
     if (!owner->documentBeingDestroyed()) {
@@ -178,7 +178,7 @@ void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* c
 
     child->setParent(owner);
     
-    if (notifyRenderer)
+    if (!owner->documentBeingDestroyed() && notifyRenderer)
         child->insertedIntoTree();
 
     if (!owner->documentBeingDestroyed()) {

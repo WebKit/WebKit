@@ -193,9 +193,7 @@ void RenderRegion::layout()
 
 void RenderRegion::attachRegion()
 {
-    if (documentBeingDestroyed())
-        return;
-
+    ASSERT(view());
     ASSERT(!m_flowThread);
     // Initialize the flow thread reference and create the flow thread object if needed.
     // The flow thread lifetime is influenced by the number of regions attached to it,
