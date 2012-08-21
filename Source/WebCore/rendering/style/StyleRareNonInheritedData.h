@@ -97,9 +97,6 @@ public:
     float m_aspectRatioDenominator;
     float m_aspectRatioNumerator;
 
-    short m_counterIncrement;
-    short m_counterReset;
-
     float m_perspective;
     Length m_perspectiveOriginX;
     Length m_perspectiveOriginY;

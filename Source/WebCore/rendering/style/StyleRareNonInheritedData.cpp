@@ -38,8 +38,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     : opacity(RenderStyle::initialOpacity())
     , m_aspectRatioDenominator(RenderStyle::initialAspectRatioDenominator())
     , m_aspectRatioNumerator(RenderStyle::initialAspectRatioNumerator())
-    , m_counterIncrement(0)
-    , m_counterReset(0)
     , m_perspective(RenderStyle::initialPerspective())
     , m_perspectiveOriginX(RenderStyle::initialPerspectiveOriginX())
     , m_perspectiveOriginY(RenderStyle::initialPerspectiveOriginY())
@@ -93,8 +91,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , opacity(o.opacity)
     , m_aspectRatioDenominator(o.m_aspectRatioDenominator)
     , m_aspectRatioNumerator(o.m_aspectRatioNumerator)
-    , m_counterIncrement(o.m_counterIncrement)
-    , m_counterReset(o.m_counterReset)
     , m_perspective(o.m_perspective)
     , m_perspectiveOriginX(o.m_perspectiveOriginX)
     , m_perspectiveOriginY(o.m_perspectiveOriginY)
@@ -173,8 +169,6 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
     return opacity == o.opacity
         && m_aspectRatioDenominator == o.m_aspectRatioDenominator
         && m_aspectRatioNumerator == o.m_aspectRatioNumerator
-        && m_counterIncrement == o.m_counterIncrement
-        && m_counterReset == o.m_counterReset
         && m_perspective == o.m_perspective
         && m_perspectiveOriginX == o.m_perspectiveOriginX
         && m_perspectiveOriginY == o.m_perspectiveOriginY

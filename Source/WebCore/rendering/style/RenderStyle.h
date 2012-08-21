@@ -717,9 +717,6 @@ public:
     EEmptyCell emptyCells() const { return static_cast<EEmptyCell>(inherited_flags._empty_cells); }
     ECaptionSide captionSide() const { return static_cast<ECaptionSide>(inherited_flags._caption_side); }
 
-    short counterIncrement() const { return rareNonInheritedData->m_counterIncrement; }
-    short counterReset() const { return rareNonInheritedData->m_counterReset; }
-
     EListStyleType listStyleType() const { return static_cast<EListStyleType>(inherited_flags._list_style_type); }
     StyleImage* listStyleImage() const;
     EListStylePosition listStylePosition() const { return static_cast<EListStylePosition>(inherited_flags._list_style_position); }
@@ -1203,8 +1200,6 @@ public:
     void setHasAspectRatio(bool b) { SET_VAR(rareNonInheritedData, m_hasAspectRatio, b); }
     void setAspectRatioDenominator(float v) { SET_VAR(rareNonInheritedData, m_aspectRatioDenominator, v); }
     void setAspectRatioNumerator(float v) { SET_VAR(rareNonInheritedData, m_aspectRatioNumerator, v); }
-    void setCounterIncrement(short v) { SET_VAR(rareNonInheritedData, m_counterIncrement, v) }
-    void setCounterReset(short v) { SET_VAR(rareNonInheritedData, m_counterReset, v) }
 
     void setListStyleType(EListStyleType v) { inherited_flags._list_style_type = v; }
     void setListStyleImage(PassRefPtr<StyleImage>);

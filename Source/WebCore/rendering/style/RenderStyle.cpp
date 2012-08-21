@@ -567,9 +567,6 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
     const CounterDirectiveMap* mapB = other->rareNonInheritedData->m_counterDirectives.get();
     if (!(mapA == mapB || (mapA && mapB && *mapA == *mapB)))
         return StyleDifferenceLayout;
-    if (rareNonInheritedData->m_counterIncrement != other->rareNonInheritedData->m_counterIncrement
-        || rareNonInheritedData->m_counterReset != other->rareNonInheritedData->m_counterReset)
-        return StyleDifferenceLayout;
 
     if ((visibility() == COLLAPSE) != (other->visibility() == COLLAPSE))
         return StyleDifferenceLayout;
