@@ -95,7 +95,7 @@ v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructorConstructor::GetTempl
 
     v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
     instance->SetInternalFieldCount(V8TestNamedConstructor::internalFieldCount);
-    result->SetClassName(v8::String::New("TestNamedConstructor"));
+    result->SetClassName(v8::String::NewSymbol("TestNamedConstructor"));
     result->Inherit(V8TestNamedConstructor::GetTemplate());
 
     cachedTemplate = v8::Persistent<v8::FunctionTemplate>::New(result);

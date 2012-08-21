@@ -49,8 +49,8 @@ void V8DOMConfiguration::batchConfigureConstants(v8::Handle<v8::FunctionTemplate
 {
     for (size_t i = 0; i < constantCount; ++i) {
         const BatchedConstant* constant = &constants[i];
-        functionDescriptor->Set(v8::String::New(constant->name), v8Integer(constant->value), v8::ReadOnly);
-        prototype->Set(v8::String::New(constant->name), v8Integer(constant->value), v8::ReadOnly);
+        functionDescriptor->Set(v8::String::NewSymbol(constant->name), v8Integer(constant->value), v8::ReadOnly);
+        prototype->Set(v8::String::NewSymbol(constant->name), v8Integer(constant->value), v8::ReadOnly);
     }
 }
 
@@ -61,7 +61,7 @@ void V8DOMConfiguration::batchConfigureCallbacks(v8::Handle<v8::ObjectTemplate> 
                                                  size_t callbackCount)
 {
     for (size_t i = 0; i < callbackCount; ++i)
-        prototype->Set(v8::String::New(callbacks[i].name), v8::FunctionTemplate::New(callbacks[i].callback, v8Undefined(), signature), attributes);
+        prototype->Set(v8::String::NewSymbol(callbacks[i].name), v8::FunctionTemplate::New(callbacks[i].callback, v8Undefined(), signature), attributes);
 }
 
 v8::Local<v8::Signature> V8DOMConfiguration::configureTemplate(v8::Persistent<v8::FunctionTemplate> functionDescriptor,
@@ -73,7 +73,7 @@ v8::Local<v8::Signature> V8DOMConfiguration::configureTemplate(v8::Persistent<v8
                                                                const BatchedCallback* callbacks,
                                                                size_t callbackCount)
 {
-    functionDescriptor->SetClassName(v8::String::New(interfaceName));
+    functionDescriptor->SetClassName(v8::String::NewSymbol(interfaceName));
     v8::Local<v8::ObjectTemplate> instance = functionDescriptor->InstanceTemplate();
     instance->SetInternalFieldCount(fieldCount);
     if (!parentClass.IsEmpty())

@@ -131,7 +131,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestEventTargetTemplate(v
     const int dispatchEventArgc = 1;
     v8::Handle<v8::FunctionTemplate> dispatchEventArgv[dispatchEventArgc] = { V8Event::GetRawTemplate() };
     v8::Handle<v8::Signature> dispatchEventSignature = v8::Signature::New(desc, dispatchEventArgc, dispatchEventArgv);
-    proto->Set(v8::String::New("dispatchEvent"), v8::FunctionTemplate::New(TestEventTargetV8Internal::dispatchEventCallback, v8Undefined(), dispatchEventSignature));
+    proto->Set(v8::String::NewSymbol("dispatchEvent"), v8::FunctionTemplate::New(TestEventTargetV8Internal::dispatchEventCallback, v8Undefined(), dispatchEventSignature));
 
     // Custom toString template
     desc->Set(getToStringName(), getToStringTemplate());

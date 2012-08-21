@@ -63,7 +63,7 @@ public:
                                           v8::Handle<ObjectOrTemplate> prototype,
                                           const BatchedAttribute& attribute)
     {
-        (attribute.onPrototype ? prototype : instance)->SetAccessor(v8::String::New(attribute.name),
+        (attribute.onPrototype ? prototype : instance)->SetAccessor(v8::String::NewSymbol(attribute.name),
                                                                     attribute.getter,
                                                                     attribute.setter,
                                                                     v8::External::Wrap(attribute.data),
