@@ -1,3 +1,21 @@
+2012-08-21  Brady Eidson  <beidson@apple.com>
+
+        MathML tests need rebaselining on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=94393
+
+        Reviewed by Dan Bernstein and Dave Barton.
+
+        * platform/mac/mathml/presentation/attributes-expected.txt:
+        * platform/mac/mathml/presentation/fenced-mi-expected.txt:
+        * platform/mac/mathml/presentation/fractions-expected.txt:
+        * platform/mac/mathml/presentation/mo-expected.txt:
+        * platform/mac/mathml/presentation/over-expected.txt:
+        * platform/mac/mathml/presentation/roots-expected.txt:
+        * platform/mac/mathml/presentation/row-expected.txt:
+        * platform/mac/mathml/presentation/sub-expected.txt:
+        * platform/mac/mathml/presentation/tokenElements-expected.txt:
+        * platform/mac/mathml/presentation/underover-expected.txt:
+
 2012-08-20  Philippe Normand  <pnormand@igalia.com>
 
         media/media-document-audio-repaint.html is racy

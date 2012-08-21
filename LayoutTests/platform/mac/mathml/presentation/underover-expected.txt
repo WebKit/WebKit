@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x227
-  RenderBlock {html} at (0,0) size 800x227
-    RenderBody {body} at (8,16) size 784x195
+layer at (0,0) size 800x231
+  RenderBlock {html} at (0,0) size 800x231
+    RenderBody {body} at (8,16) size 784x199
       RenderBlock {p} at (0,0) size 784x28
         RenderText {#text} at (0,6) size 92x18
           text run at (0,6) width 92: "under & over: "
@@ -39,13 +39,13 @@ layer at (0,0) size 800x227
                 RenderText {#text} at (1,-5) size 8x18
                   text run at (1,-5) width 8: "X"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,90) size 784x44
-        RenderText {#text} at (0,14) size 92x18
-          text run at (0,14) width 92: "under & over: "
-        RenderMathMLMath {math} at (92,0) size 21x44 [padding: 0 1 0 1]
-          RenderMathMLUnderOver {munderover} at (1,0) size 19x44
-            RenderMathMLBlock (anonymous, block) at (0,0) size 19x10
-              RenderMathMLRow {mrow} at (0,0) size 19x10
+      RenderBlock {p} at (0,90) size 784x46
+        RenderText {#text} at (0,15) size 92x18
+          text run at (0,15) width 92: "under & over: "
+        RenderMathMLMath {math} at (92,0) size 24x46 [padding: 0 1 0 1]
+          RenderMathMLUnderOver {munderover} at (1,0) size 22x46
+            RenderMathMLBlock (anonymous, block) at (0,0) size 22x10
+              RenderMathMLRow {mrow} at (2,0) size 19x10
                 RenderInline {mi} at (0,0) size 5x18
                   RenderText {#text} at (0,-6) size 5x18
                     text run at (0,-6) width 5: "x"
@@ -56,13 +56,13 @@ layer at (0,0) size 800x227
                 RenderInline {mi} at (0,0) size 5x18
                   RenderText {#text} at (14,-6) size 5x18
                     text run at (14,-6) width 5: "y"
-            RenderMathMLBlock (anonymous, block) at (0,10) size 19x24
-              RenderMathMLOperator {mo} at (0,0) size 17x24
-                RenderMathMLBlock (inline-block) {mo} at (0,0) size 17x24
-                  RenderText {mo} at (0,-7) size 17x36
-                    text run at (0,-7) width 17: "\x{2211}"
-            RenderMathMLBlock (anonymous, block) at (0,34) size 19x10
-              RenderMathMLRow {mrow} at (1,0) size 18x10
+            RenderMathMLBlock (anonymous, block) at (0,10) size 22x26
+              RenderMathMLOperator {mo} at (0,0) size 22x26
+                RenderMathMLBlock (inline-block) {mo} at (0,0) size 22x26
+                  RenderText {mo} at (0,-6) size 22x36
+                    text run at (0,-6) width 22: "\x{2211}"
+            RenderMathMLBlock (anonymous, block) at (0,36) size 22x10
+              RenderMathMLRow {mrow} at (2,0) size 18x10
                 RenderInline {mi} at (0,0) size 3x18
                   RenderText {#text} at (0,-4) size 3x18
                     text run at (0,-4) width 3: "i"
@@ -74,13 +74,13 @@ layer at (0,0) size 800x227
                   RenderText {#text} at (12,-4) size 6x18
                     text run at (12,-4) width 6: "0"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,150) size 784x45
-        RenderText {#text} at (0,15) size 92x18
-          text run at (0,15) width 92: "under & over: "
-        RenderMathMLMath {math} at (92,0) size 23x45 [padding: 0 1 0 1]
-          RenderMathMLUnderOver {munderover} at (1,0) size 21x45
-            RenderMathMLBlock (anonymous, block) at (0,0) size 21x11
-              RenderMathMLRow {mrow} at (0,0) size 21x11
+      RenderBlock {p} at (0,152) size 784x47
+        RenderText {#text} at (0,16) size 92x18
+          text run at (0,16) width 92: "under & over: "
+        RenderMathMLMath {math} at (92,0) size 24x47 [padding: 0 1 0 1]
+          RenderMathMLUnderOver {munderover} at (1,0) size 22x47
+            RenderMathMLBlock (anonymous, block) at (0,0) size 22x11
+              RenderMathMLRow {mrow} at (1,0) size 21x11
                 RenderInline {mi} at (0,0) size 7x18
                   RenderText {#text} at (0,-5) size 7x18
                     text run at (0,-5) width 7: "X"
@@ -91,13 +91,13 @@ layer at (0,0) size 800x227
                 RenderInline {mi} at (0,0) size 5x18
                   RenderText {#text} at (16,-5) size 5x18
                     text run at (16,-5) width 5: "y"
-            RenderMathMLBlock (anonymous, block) at (0,11) size 21x24
-              RenderMathMLOperator {mo} at (0,0) size 17x24
-                RenderMathMLBlock (inline-block) {mo} at (0,0) size 17x24
-                  RenderText {mo} at (0,-7) size 17x36
-                    text run at (0,-7) width 17: "\x{2211}"
-            RenderMathMLBlock (anonymous, block) at (0,35) size 21x10
-              RenderMathMLRow {mrow} at (1,0) size 19x10
+            RenderMathMLBlock (anonymous, block) at (0,11) size 22x26
+              RenderMathMLOperator {mo} at (0,0) size 22x26
+                RenderMathMLBlock (inline-block) {mo} at (0,0) size 22x26
+                  RenderText {mo} at (0,-6) size 22x36
+                    text run at (0,-6) width 22: "\x{2211}"
+            RenderMathMLBlock (anonymous, block) at (0,37) size 22x10
+              RenderMathMLRow {mrow} at (2,0) size 19x10
                 RenderInline {mi} at (0,0) size 4x18
                   RenderText {#text} at (0,-4) size 4x18
                     text run at (0,-4) width 4: "I"

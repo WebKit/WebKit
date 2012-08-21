@@ -402,10 +402,10 @@ layer at (233,437) size 12x14
   RenderBlock (positioned) {mn} at (0,18) size 12x14
     RenderText {#text} at (2,-4) size 6x18
       text run at (2,-4) width 6: "6"
-layer at (195,438) size 12x13
-  RenderBlock (positioned) {mn} at (0,22) size 12x13
-    RenderText {#text} at (2,-5) size 6x18
-      text run at (2,-5) width 6: "5"
+layer at (195,437) size 12x14
+  RenderBlock (positioned) {mn} at (0,21) size 12x14
+    RenderText {#text} at (2,-4) size 6x18
+      text run at (2,-4) width 6: "5"
 layer at (157,438) size 12x14
   RenderBlock (positioned) {mn} at (0,25) size 12x14
     RenderText {#text} at (2,-4) size 6x18
