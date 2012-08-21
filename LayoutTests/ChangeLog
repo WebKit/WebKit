@@ -1,3 +1,18 @@
+2012-08-21  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. Further rebaselining following r126110.
+
+        * platform/chromium-linux-x86/editing/selection: Added.
+        * platform/chromium-linux-x86/editing/selection/select-from-textfield-outwards-expected.txt: Added.
+        * platform/chromium-linux/editing/selection/select-from-textfield-outwards-expected.txt:
+        * platform/chromium-linux/fast/forms/input-text-self-emptying-click-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-text-self-emptying-click-expected.png:
+        * platform/chromium-win-xp/editing/selection/select-from-textfield-outwards-expected.txt: Added.
+        * platform/chromium-win/editing/selection/select-from-textfield-outwards-expected.txt:
+        * platform/chromium-win/fast/forms/input-text-drag-down-expected.txt:
+        * platform/chromium-win/fast/forms/input-text-self-emptying-click-expected.png:
+
 2012-08-21  Filip Pizlo  <fpizlo@apple.com>
 
         A patchable GetById right after a watchpoint should have the appropriate nop padding
