@@ -28,6 +28,18 @@ function test()
 
         function()
         {
+            fileSystemRequestManager.requestDirectoryContent("InvalidURL", testStep.shift());
+        },
+
+        function(errorCode, entries)
+        {
+            InspectorTest.dumpDirectoryContentRequestResult(errorCode, entries);
+            fileSystemRequestManager.requestDirectoryContent("filesystem:http://127.0.0.1:8000/InvalidType/", testStep.shift());
+        },
+
+        function(errorCode, entries)
+        {
+            InspectorTest.dumpDirectoryContentRequestResult(errorCode, entries);
             fileSystemRequestManager.requestDirectoryContent("filesystem:http://127.0.0.1:8000/temporary/hoge", testStep.shift());
         },
 

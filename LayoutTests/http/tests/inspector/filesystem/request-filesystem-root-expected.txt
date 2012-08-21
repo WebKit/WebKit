@@ -3,7 +3,7 @@ Tests requestFileSystemRoot command.
 errorCode: 0
 backendRootEntry.url: filesystem:http://127.0.0.1:8000/temporary/
 
-errorCode: 2
+errorCode: 8
 backendRootEntry: (null)
 
 errorCode: 2

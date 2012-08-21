@@ -1,3 +1,21 @@
+2012-08-21  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Completion events of InspectorFileSystemAgent should be fired asynchronously.
+        https://bugs.webkit.org/show_bug.cgi?id=93933
+
+        Reviewed by Yury Semikhatsky.
+
+        InspectorFileSystemAgent fires completion event too early in error case. It should wait
+        until JS code is ready.
+
+        * http/tests/inspector/filesystem/request-directory-content-expected.txt:
+        * http/tests/inspector/filesystem/request-directory-content.html: Add more error case test.
+        * http/tests/inspector/filesystem/request-file-content-expected.txt:
+        * http/tests/inspector/filesystem/request-file-content.html: Add more error case test.
+        * http/tests/inspector/filesystem/request-filesystem-root-expected.txt:
+        * http/tests/inspector/filesystem/request-metadata-expected.txt:
+        * http/tests/inspector/filesystem/request-metadata.html: Add more error case test.
+
 2012-08-21  Mike West  <mkwst@chromium.org>
 
         Blocking a resource via Content Security Policy should trigger an Error event.

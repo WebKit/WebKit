@@ -1,5 +1,13 @@
 Tests requestFileContent command.
 
+errorCode: 2
+content: (null)
+charset: undefined
+
+errorCode: 8
+content: (null)
+charset: undefined
+
 errorCode: 0
 content: "PASS"
 charset: UTF-8

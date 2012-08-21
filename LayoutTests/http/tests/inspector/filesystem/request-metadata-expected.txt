@@ -1,5 +1,11 @@
 Tests requestMetadata command.
 
+errorCode: 2
+metadata: (null)
+
+errorCode: 8
+metadata: (null)
+
 errorCode: 0
 metadata:
   modificationTime: (exists)

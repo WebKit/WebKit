@@ -10,7 +10,6 @@ function test()
 {
     var fileSystemRequestManager = new WebInspector.FileSystemRequestManager();
 
-setTimeout(function() {InspectorTest.completeTest();}, 1000);
     var testStep = [
         function()
         {
@@ -24,6 +23,18 @@ setTimeout(function() {InspectorTest.completeTest();}, 1000);
 
         function()
         {
+            fileSystemRequestManager.requestFileContent("InvalidURL", true, 2, 6, "UTF-8", testStep.shift());
+        },
+
+        function(errorCode, content, charset)
+        {
+            InspectorTest.dumpFileContentRequestResult(errorCode, content, charset);
+            fileSystemRequestManager.requestFileContent("filesystem:http://127.0.0.1:8000/InvalidType/hoge/fuga.txt", true, 2, 6, "UTF-8", testStep.shift());
+        },
+
+        function(errorCode, content, charset)
+        {
+            InspectorTest.dumpFileContentRequestResult(errorCode, content, charset);
             fileSystemRequestManager.requestFileContent("filesystem:http://127.0.0.1:8000/temporary/hoge/fuga.txt", true, 2, 6, "UTF-8", testStep.shift());
         },
 

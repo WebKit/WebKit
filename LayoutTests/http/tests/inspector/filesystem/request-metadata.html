@@ -18,6 +18,18 @@ function test()
 
         function()
         {
+            fileSystemRequestManager.requestMetadata("InvalidURL", testStep.shift());
+        },
+
+        function(errorCode, metadata)
+        {
+            InspectorTest.dumpMetadataRequestResult(errorCode, metadata);
+            fileSystemRequestManager.requestMetadata("filesystem:http://127.0.0.1:8000/InvalidType", testStep.shift());
+        },
+
+        function(errorCode, metadata)
+        {
+            InspectorTest.dumpMetadataRequestResult(errorCode, metadata);
             fileSystemRequestManager.requestMetadata("filesystem:http://127.0.0.1:8000/temporary/hoge", testStep.shift());
         },
 

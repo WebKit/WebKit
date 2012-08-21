@@ -1,5 +1,11 @@
 Tests requestDirectoryContent command.
 
+errorCode: 2
+entries: (null)
+
+errorCode: 8
+entries: (null)
+
 errorCode: 0
 entries:
   0:
