@@ -1,3 +1,18 @@
+2012-08-20  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
+
+        [BlackBerry] Select popup shows blank content when its option tags contain '\' characters
+        https://bugs.webkit.org/show_bug.cgi?id=94321
+
+        Reviewed by George Staikos.
+
+        PR 194224
+
+        When the SelectPopupClient generates HTML, if there is a character '\' in the select options'
+        description, we should escape it to avoid the character being interpreted as an escape character.
+
+        * WebCoreSupport/SelectPopupClient.cpp:
+        (WebCore::SelectPopupClient::generateHTML):
+
 2012-08-20  Genevieve Mak  <gmak@rim.com>
 
         [BLACKBERRY] Add notification if an element does not have touch move or mouse move handlers.
