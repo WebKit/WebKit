@@ -891,7 +891,7 @@ TEST_F(WebFrameTest, FindInPageMatchRects)
 
     static const char* kFindString = "result";
     static const int kFindIdentifier = 12345;
-    static const int kNumResults = 10;
+    static const int kNumResults = 16;
 
     WebFindOptions options;
     WebString searchText = WebString::fromUTF8(kFindString);
@@ -918,8 +918,8 @@ TEST_F(WebFrameTest, FindInPageMatchRects)
         // Check that the find result ordering matches with our expectations.
         Range* result = mainFrame->activeMatchFrame()->activeMatch();
         ASSERT_TRUE(result);
-        result->setEnd(result->endContainer(), result->endOffset() + 2);
-        EXPECT_EQ(result->text(), String::format("%s %d", kFindString, resultIndex));
+        result->setEnd(result->endContainer(), result->endOffset() + 3);
+        EXPECT_EQ(result->text(), String::format("%s %02d", kFindString, resultIndex));
 
         // Verify that the expected match rect also matches the currently active match.
         // Compare the enclosing rects to prevent precision issues caused by CSS transforms.
@@ -949,6 +949,36 @@ TEST_F(WebFrameTest, FindInPageMatchRects)
     EXPECT_TRUE(webMatchRects[6].y < webMatchRects[7].y);
     EXPECT_TRUE(webMatchRects[7].y < webMatchRects[8].y);
     EXPECT_TRUE(webMatchRects[8].y < webMatchRects[9].y);
+
+    // Results 11, 12, 13 and 14 should be between results 10 and 15, as they are inside the table.
+    EXPECT_TRUE(webMatchRects[11].y > webMatchRects[10].y);
+    EXPECT_TRUE(webMatchRects[12].y > webMatchRects[10].y);
+    EXPECT_TRUE(webMatchRects[13].y > webMatchRects[10].y);
+    EXPECT_TRUE(webMatchRects[14].y > webMatchRects[10].y);
+    EXPECT_TRUE(webMatchRects[11].y < webMatchRects[15].y);
+    EXPECT_TRUE(webMatchRects[12].y < webMatchRects[15].y);
+    EXPECT_TRUE(webMatchRects[13].y < webMatchRects[15].y);
+    EXPECT_TRUE(webMatchRects[14].y < webMatchRects[15].y);
+
+    // Result 11 should be above 12, 13 and 14 as it's in the table header.
+    EXPECT_TRUE(webMatchRects[11].y < webMatchRects[12].y);
+    EXPECT_TRUE(webMatchRects[11].y < webMatchRects[13].y);
+    EXPECT_TRUE(webMatchRects[11].y < webMatchRects[14].y);
+
+    // Result 11 should also be right to 12, 13 and 14 because of the colspan.
+    EXPECT_TRUE(webMatchRects[11].x > webMatchRects[12].x);
+    EXPECT_TRUE(webMatchRects[11].x > webMatchRects[13].x);
+    EXPECT_TRUE(webMatchRects[11].x > webMatchRects[14].x);
+
+    // Result 12 should be left to results 11, 13 and 14 in the table layout.
+    EXPECT_TRUE(webMatchRects[12].x < webMatchRects[11].x);
+    EXPECT_TRUE(webMatchRects[12].x < webMatchRects[13].x);
+    EXPECT_TRUE(webMatchRects[12].x < webMatchRects[14].x);
+
+    // Results 13, 12 and 14 should be one above the other in that order because of the rowspan
+    // and vertical-align: middle by default.
+    EXPECT_TRUE(webMatchRects[13].y < webMatchRects[12].y);
+    EXPECT_TRUE(webMatchRects[12].y < webMatchRects[14].y);
 
     // Resizing should update the rects version.
     webView->resize(WebSize(800, 600));

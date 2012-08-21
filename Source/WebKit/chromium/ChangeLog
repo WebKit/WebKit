@@ -1,3 +1,21 @@
+2012-08-21  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        [Chromium] Find-in-page coordinates should use containingBlock
+        https://bugs.webkit.org/show_bug.cgi?id=94343
+
+        Reviewed by Julien Chaffraix.
+
+        The current implementation uses the container method to climb the render tree.
+        However, it would be more correct and convenient to use containingBlock instead.
+        Also, this patch introduces new tests for find-in-page coordinates in tables.
+
+        * src/FindInPageCoordinates.cpp:
+        (WebKit::toNormalizedRect): use containingBlock and get rid of the output parameter as it's not required now.
+        (WebKit::findInPageRectFromAbsoluteRect): use containingBlock introduce some simplifications.
+        * tests/WebFrameTest.cpp: add new tests for tables.
+        * tests/data/find_in_page.html:
+        * tests/data/find_in_page_frame.html: new tests for tables.
+
 2012-08-21  Alexandre Elias  <aelias@google.com>
 
         [chromium] Add software bitmap resources to CCResourceProvider

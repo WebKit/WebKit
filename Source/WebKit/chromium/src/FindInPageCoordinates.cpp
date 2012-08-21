@@ -38,6 +38,7 @@
 #include "IntPoint.h"
 #include "Node.h"
 #include "Range.h"
+#include "RenderBlock.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
 #include "RenderPart.h"
@@ -48,39 +49,32 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static FloatRect toNormalizedRect(const FloatRect& absoluteRect, const RenderObject* renderer, FloatRect& containerBoundingBox)
+static FloatRect toNormalizedRect(const FloatRect& absoluteRect, const RenderObject* renderer)
 {
     ASSERT(renderer);
 
-    const RenderObject* container = renderer->container();
-    if (!container) {
-        containerBoundingBox = FloatRect();
+    const RenderBlock* container = renderer->containingBlock();
+    ASSERT(container || renderer->isRenderView());
+    if (!container)
         return FloatRect();
-    }
 
-    FloatRect normalizedRect = absoluteRect;
-    FloatRect containerRect = container->absoluteBoundingBoxRect();
-    containerBoundingBox = containerRect;
-
-    // For RenderBoxes we want to normalize by the max layout overflow size instead of only the visible bounding box.
+    // We want to normalize by the max layout overflow size instead of only the visible bounding box.
     // Quads and their enclosing bounding boxes need to be used in order to keep results transform-friendly.
-    if (container->isBox()) {
-        const RenderBox* containerBox = toRenderBox(container);
-        FloatPoint scrolledOrigin;
+    FloatPoint scrolledOrigin;
 
-        // For overflow:scroll we need to get where the actual origin is independently of the scroll.
-        if (container->hasOverflowClip())
-            scrolledOrigin = -IntPoint(containerBox->scrolledContentOffset());
+    // For overflow:scroll we need to get where the actual origin is independently of the scroll.
+    if (container->hasOverflowClip())
+        scrolledOrigin = -IntPoint(container->scrolledContentOffset());
 
-        FloatRect overflowRect(scrolledOrigin, containerBox->maxLayoutOverflow());
-        containerRect = containerBox->localToAbsoluteQuad(FloatQuad(overflowRect), false).enclosingBoundingBox();
-    }
+    FloatRect overflowRect(scrolledOrigin, container->maxLayoutOverflow());
+    FloatRect containerRect = container->localToAbsoluteQuad(FloatQuad(overflowRect), false).enclosingBoundingBox();
 
     if (containerRect.isEmpty())
         return FloatRect();
 
     // Make the coordinates relative to the container enclosing bounding box.
     // Since we work with rects enclosing quad unions this is still transform-friendly.
+    FloatRect normalizedRect = absoluteRect;
     normalizedRect.moveBy(-containerRect.location());
 
     // Fixed positions do not make sense in this coordinate system, but need to leave consistent tickmarks.
@@ -89,29 +83,26 @@ static FloatRect toNormalizedRect(const FloatRect& absoluteRect, const RenderObj
         normalizedRect.move(-toRenderView(container)->frameView()->scrollOffsetForFixedPosition());
 
     normalizedRect.scale(1 / containerRect.width(), 1 / containerRect.height());
-
     return normalizedRect;
 }
 
-FloatRect findInPageRectFromAbsoluteRect(const FloatRect& inputRect, const RenderObject* renderer)
+FloatRect findInPageRectFromAbsoluteRect(const FloatRect& inputRect, const RenderObject* baseRenderer)
 {
-    if (!renderer || inputRect.isEmpty())
+    if (!baseRenderer || inputRect.isEmpty())
         return FloatRect();
 
-    // Normalize the input rect to its container, saving the container bounding box for the incoming loop.
-    FloatRect rendererBoundingBox;
-    FloatRect normalizedRect = toNormalizedRect(inputRect, renderer, rendererBoundingBox);
-    renderer = renderer->container();
+    // Normalize the input rect to its container block.
+    FloatRect normalizedRect = toNormalizedRect(inputRect, baseRenderer);
 
     // Go up across frames.
-    while (renderer) {
+    for (const RenderObject* renderer = baseRenderer->containingBlock(); renderer; ) {
 
         // Go up the render tree until we reach the root of the current frame (the RenderView).
-        for (const RenderObject* container = renderer->container(); container; renderer = container, container = container->container()) {
+        for (const RenderBlock* container = renderer->containingBlock(); container;
+                renderer = container, container = container->containingBlock()) {
 
-            // Compose the normalized rects. The absolute bounding box of the container is calculated in toNormalizedRect
-            // and can be reused for the next iteration of the loop.
-            FloatRect normalizedBoxRect = toNormalizedRect(rendererBoundingBox, renderer, rendererBoundingBox);
+            // Compose the normalized rects.
+            FloatRect normalizedBoxRect = toNormalizedRect(renderer->absoluteBoundingBoxRect(), renderer);
             normalizedRect.scale(normalizedBoxRect.width(), normalizedBoxRect.height());
             normalizedRect.moveBy(normalizedBoxRect.location());
 
@@ -122,10 +113,6 @@ FloatRect findInPageRectFromAbsoluteRect(const FloatRect& inputRect, const Rende
         // Jump to the renderer owning the frame, if any.
         ASSERT(renderer->isRenderView());
         renderer = renderer->frame() ? renderer->frame()->ownerRenderer() : 0;
-
-        // Update the absolute coordinates to the new frame.
-        if (renderer)
-            rendererBoundingBox = renderer->absoluteBoundingBoxRect();
     }
 
     return normalizedRect;
