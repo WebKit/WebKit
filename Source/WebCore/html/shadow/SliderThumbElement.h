@@ -100,6 +100,7 @@ inline SliderThumbElement* toSliderThumbElement(Node* node)
 // This always return a valid pointer.
 // An assertion fails if the specified node is not a range input.
 SliderThumbElement* sliderThumbElementOf(Node*);
+HTMLElement* sliderTrackElementOf(Node*);
 
 // --------------------------------
 

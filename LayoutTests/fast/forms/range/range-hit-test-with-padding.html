@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<style>
+input::before {
+  content: "lorem ipsum";
+  display: inline-block;
+  height: 20px;
+  background-color: red;
+}
+</style>
+</head>
+<body>
+<p id="description">Clicking middle of input type=range with padding should set the value to middle.</p>
+<div id="console"></div>
+<input id="input" type=range min=0 max=1000 step=1 value="0" style="width: 100px; padding: 0 20px;">
+<script>
+var input = document.getElementById("input");
+function clickSlider(offsetLeft) {
+    var centerY = input.offsetTop + input.offsetHeight / 2;
+    eventSender.mouseMoveTo(input.offsetLeft + offsetLeft, centerY);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+clickSlider(70); // left padding (20px) + middle (50px)
+shouldBe('input.value', '"500"');
+
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

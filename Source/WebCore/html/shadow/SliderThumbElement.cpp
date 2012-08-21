@@ -83,6 +83,16 @@ SliderThumbElement* sliderThumbElementOf(Node* node)
     return toSliderThumbElement(thumb);
 }
 
+HTMLElement* sliderTrackElementOf(Node* node)
+{
+    ASSERT(node);
+    ShadowRoot* shadow = node->toInputElement()->userAgentShadowRoot();
+    ASSERT(shadow);
+    Node* track = shadow->firstChild()->firstChild();
+    ASSERT(track);
+    return toHTMLElement(track);
+}
+
 // --------------------------------
 
 RenderSliderThumb::RenderSliderThumb(Node* node)
@@ -240,8 +250,9 @@ void SliderThumbElement::dragFrom(const LayoutPoint& point)
 void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
 {
     HTMLInputElement* input = hostInput();
+    HTMLElement* trackElement = sliderTrackElementOf(input);
 
-    if (!input->renderer() || !renderer())
+    if (!input->renderer() || !renderer() || !trackElement->renderer())
         return;
 
     input->setTextAsOfLastFormControlChangeEvent(input->value());
@@ -256,13 +267,15 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
     // FIXME: This should probably respect transforms.
     LayoutPoint absoluteThumbOrigin = renderBox()->absoluteBoundingBoxRectIgnoringTransforms().location();
     LayoutPoint absoluteSliderContentOrigin = roundedLayoutPoint(input->renderer()->localToAbsolute());
+    IntRect trackBoundingBox = trackElement->renderer()->absoluteBoundingBoxRectIgnoringTransforms();
+    IntRect inputBoundingBox = input->renderer()->absoluteBoundingBoxRectIgnoringTransforms();
     if (isVertical) {
-        trackSize = input->renderBox()->contentHeight() - renderBox()->height();
-        position = offset.y() - renderBox()->height() / 2;
+        trackSize = trackElement->renderBox()->contentHeight();
+        position = offset.y() - renderBox()->height() / 2 - trackBoundingBox.y() + inputBoundingBox.y();
         currentPosition = absoluteThumbOrigin.y() - absoluteSliderContentOrigin.y();
     } else {
-        trackSize = input->renderBox()->contentWidth() - renderBox()->width();
-        position = offset.x() - renderBox()->width() / 2;
+        trackSize = trackElement->renderBox()->contentWidth();
+        position = offset.x() - renderBox()->width() / 2 - trackBoundingBox.x() + inputBoundingBox.x();
         currentPosition = absoluteThumbOrigin.x() - absoluteSliderContentOrigin.x();
     }
     position = max<LayoutUnit>(0, min(position, trackSize));
