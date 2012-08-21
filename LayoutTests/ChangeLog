@@ -1,3 +1,11 @@
+2012-08-21  Keishi Hattori  <keishi@webkit.org>
+
+        Fix range-hit-test-with-padding.html by removing unnecessary part.
+
+        Unreviewed.
+
+        * fast/forms/range/range-hit-test-with-padding.html:
+
 2012-08-21  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Gardening. Skip new failing tests.
