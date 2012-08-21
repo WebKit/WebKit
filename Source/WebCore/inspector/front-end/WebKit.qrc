@@ -207,6 +207,7 @@
     <file>Workspace.js</file>
     <file>UglifyJS/parse-js.js</file>
     <file>auditsPanel.css</file>
+    <file>breadcrumbList.css</file>
     <file>dataGrid.css</file>
     <file>cmdevtools.css</file>
     <file>dialog.css</file>

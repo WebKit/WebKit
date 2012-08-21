@@ -75582,6 +75582,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\breadcrumbList.css"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\BreakpointManager.js"
 					>
 				</File>
