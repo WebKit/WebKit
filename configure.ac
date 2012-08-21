@@ -565,6 +565,12 @@ AC_ARG_WITH(acceleration_backend,
                            ])
 AC_MSG_RESULT([$with_acceleration_backend])
 
+if test "$with_acceleration_backend" = "opengl"; then
+    PKG_CHECK_MODULES([XCOMPOSITE], [xcomposite]);
+    AC_SUBST(XCOMPOSITE_CFLAGS)
+    AC_SUBST(XCOMPOSITE_LIBS)
+fi
+
 # OpenGL is turned on by default (along with WebGL and accelerated compositing), but if
 # Clutter is chosen as the accelerated drawing backend, we want to disable it. COGL does 
 # not play well with OpenGL.

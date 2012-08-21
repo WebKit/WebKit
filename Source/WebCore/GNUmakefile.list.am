@@ -5875,6 +5875,8 @@ webcoregtk_sources += \
 	Source/WebCore/platform/graphics/cairo/GLContext.cpp \
 	Source/WebCore/platform/graphics/cairo/GLContext.h \
 	Source/WebCore/platform/gtk/GtkWidgetBackingStoreX11.cpp \
+	Source/WebCore/platform/gtk/RedirectedXCompositeWindow.cpp \
+	Source/WebCore/platform/gtk/RedirectedXCompositeWindow.h \
 	Source/WebCore/plugins/gtk/gtk2xtbin.c \
 	Source/WebCore/plugins/gtk/gtk2xtbin.h \
 	Source/WebCore/plugins/gtk/PluginPackageGtk.cpp \

@@ -1,3 +1,37 @@
+2012-08-21  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Using a native window for the WebView breaks GtkOverlay
+        https://bugs.webkit.org/show_bug.cgi?id=90085
+
+        Reviewed by Alejandro G. Castro.
+
+        Rewrite AcceleratedCompositingContext for TextureMapperGL to be more similar to
+        the WebKit2 LayerTreeHost and switch from rendering directly to the widget window
+        to a window redirected to a pixmap via XComposite. The AcceleratedCompositingContext
+        now handles painting the non-composited content itself and no longer relies on the
+        ChromeClient backing store.
+
+        This fixes issues with using GtkOverlay WebKitWebView as well as making it possible
+        to run pixel tests with accelerated compositing turned on.
+
+        * WebCoreSupport/AcceleratedCompositingContext.h:
+        (AcceleratedCompositingContext):
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp:
+        Rename some methods to make them more similar to LayerTreeHost. Now we wait to render
+        the OpenGL context to the window until the widget's draw signal. Escape out of all
+        methods early if accelerated compositing is disabled.
+        * WebCoreSupport/ChromeClientGtk.cpp: Always check if accelerated compositing is on
+        before calling into AcceleratedCompositingContext methods. When AC is on, never paint
+        the backing store, deferring immediately to the AcceleratedCompositingContext. When
+        AC is turned on the backing store now shrinks to a small size to save memory.
+        * webkit/webkitwebview.cpp:
+        (resizeWebViewFromAllocation): ChromeClient is now responsible for talking to the
+        AcceleratedCompositingContext directly.
+        (webkit_web_view_size_allocate): Exit early if the allocation is not a resize. This
+        makes some deeper logic a bit simpler and avoids accidentally doing too much work for
+        widget movement.
+        (webkit_web_view_realize): We no longer need a native window.
+
 2012-08-15  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [Gtk] atk_text_set_caret_offset() fails for table cells

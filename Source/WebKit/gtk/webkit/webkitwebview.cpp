@@ -679,8 +679,10 @@ static gboolean webkit_web_view_draw(GtkWidget* widget, cairo_t* cr)
 
     WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW(widget)->priv;
 #if USE(TEXTURE_MAPPER)
-    if (priv->acceleratedCompositingContext->renderLayersToWindow(cr, clipRect))
+    if (priv->acceleratedCompositingContext->renderLayersToWindow(cr, clipRect)) {
+        GTK_WIDGET_CLASS(webkit_web_view_parent_class)->draw(widget, cr);
         return FALSE;
+    }
 #endif
 
     cairo_rectangle_list_t* rectList = cairo_copy_clip_rectangle_list(cr);
@@ -875,15 +877,16 @@ static void resizeWebViewFromAllocation(WebKitWebView* webView, GtkAllocation* a
     WebKit::ChromeClient* chromeClient = static_cast<WebKit::ChromeClient*>(page->chrome()->client());
     chromeClient->widgetSizeChanged(oldSize, IntSize(allocation->width, allocation->height));
     chromeClient->adjustmentWatcher()->updateAdjustmentsFromScrollbars();
-
-#if USE(ACCELERATED_COMPOSITING)
-    webView->priv->acceleratedCompositingContext->resizeRootLayer(IntSize(allocation->width, allocation->height));
-#endif
 }
 
 static void webkit_web_view_size_allocate(GtkWidget* widget, GtkAllocation* allocation)
 {
+    GtkAllocation oldAllocation;
+    gtk_widget_get_allocation(widget, &oldAllocation);
+
     GTK_WIDGET_CLASS(webkit_web_view_parent_class)->size_allocate(widget, allocation);
+    if (allocation->width == oldAllocation.width && allocation->height == oldAllocation.height)
+        return;
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
     if (!gtk_widget_get_mapped(widget)) {
@@ -1003,10 +1006,6 @@ static void webkit_web_view_realize(GtkWidget* widget)
 #endif
     GdkWindow* window = gdk_window_new(gtk_widget_get_parent_window(widget), &attributes, attributes_mask);
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
-    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW(widget)->priv;
-    priv->hasNativeWindow = gdk_window_ensure_native(window);
-#endif
     gtk_widget_set_window(widget, window);
     gdk_window_set_user_data(window, widget);
 

@@ -1,3 +1,12 @@
+2012-08-21  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Using a native window for the WebView breaks GtkOverlay
+        https://bugs.webkit.org/show_bug.cgi?id=90085
+
+        Reviewed by Alejandro G. Castro.
+
+        * configure.ac: Parse xcomposite pkg-config file during configuration.
+
 2012-08-21  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for WinCE after r115348.

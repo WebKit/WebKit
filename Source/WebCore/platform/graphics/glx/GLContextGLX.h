@@ -39,7 +39,7 @@ namespace WebCore {
 class GLContextGLX : public GLContext {
     WTF_MAKE_NONCOPYABLE(GLContextGLX);
 public:
-    static PassOwnPtr<GLContextGLX> createContext(XID, GLContext* sharingContext = 0);
+    static PassOwnPtr<GLContextGLX> createContext(XID window, GLContext* sharingContext);
     static PassOwnPtr<GLContextGLX> createWindowContext(XID window, GLContext* sharingContext);
 
     virtual ~GLContextGLX();
@@ -47,6 +47,8 @@ public:
     virtual void swapBuffers();
     virtual bool canRenderToDefaultFramebuffer();
     virtual IntSize defaultFrameBufferSize();
+
+    static Display* sharedDisplay();
 
 #if USE(3D_GRAPHICS)
     virtual PlatformGraphicsContext3D platformContext();

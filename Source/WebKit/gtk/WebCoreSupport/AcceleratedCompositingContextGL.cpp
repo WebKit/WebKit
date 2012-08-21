@@ -27,6 +27,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "PlatformContextCairo.h"
+#include "Settings.h"
 #include "TextureMapperGL.h"
 #include "TextureMapperLayer.h"
 #include "webkitwebviewprivate.h"
@@ -35,13 +36,12 @@
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
-#if defined(GDK_WINDOWING_X11)
-#define Region XRegion
-#define Font XFont
-#define Cursor XCursor
-#define Screen XScreen
-#include <gdk/gdkx.h>
-#endif
+const double gFramesPerSecond = 60;
+
+// There seems to be a delicate balance between the main loop being flooded
+// with motion events (that force flushes) and starving the main loop of events
+// with flush callbacks. This delay is entirely empirical.
+const double gScheduleDelay = (1.0 / (gFramesPerSecond / 3.0));
 
 using namespace WebCore;
 
@@ -49,150 +49,322 @@ namespace WebKit {
 
 AcceleratedCompositingContext::AcceleratedCompositingContext(WebKitWebView* webView)
     : m_webView(webView)
-    , m_syncTimerCallbackId(0)
-    , m_rootTextureMapperLayer(0)
+    , m_layerFlushTimerCallbackId(0)
+    , m_redirectedWindow(RedirectedXCompositeWindow::create(IntSize(1, 1)))
+    , m_lastFlushTime(0)
+    , m_redrawPendingTime(0)
+    , m_needsExtraFlush(false)
 {
+}
+
+static IntSize getWebViewSize(WebKitWebView* webView)
+{
+    GtkAllocation allocation;
+    gtk_widget_get_allocation(GTK_WIDGET(webView), &allocation);
+    return IntSize(allocation.width, allocation.height);
+}
+
+void AcceleratedCompositingContext::initialize()
+{
+    if (m_rootLayer)
+        return;
+
+    m_rootLayer = GraphicsLayer::create(this);
+    m_rootLayer->setDrawsContent(false);
+
+    IntSize pageSize = getWebViewSize(m_webView);
+    m_rootLayer->setSize(pageSize);
+
+    // The non-composited contents are a child of the root layer.
+    m_nonCompositedContentLayer = GraphicsLayer::create(this);
+    m_nonCompositedContentLayer->setDrawsContent(true);
+    m_nonCompositedContentLayer->setContentsOpaque(!m_webView->priv->transparent);
+    m_nonCompositedContentLayer->setSize(pageSize);
+    if (core(m_webView)->settings()->acceleratedDrawingEnabled())
+        m_nonCompositedContentLayer->setAcceleratesDrawing(true);
+
+#ifndef NDEBUG
+    m_rootLayer->setName("Root layer");
+    m_nonCompositedContentLayer->setName("Non-composited content");
+#endif
+
+    m_rootLayer->addChild(m_nonCompositedContentLayer.get());
+    m_nonCompositedContentLayer->setNeedsDisplay();
+
+    // The creation of the TextureMapper needs an active OpenGL context.
+    GLContext* context = m_redirectedWindow->context();
+    context->makeContextCurrent();
+    m_textureMapper = TextureMapperGL::create();
+
+    toTextureMapperLayer(m_rootLayer.get())->setTextureMapper(m_textureMapper.get());
+
+    scheduleLayerFlush();
 }
 
 AcceleratedCompositingContext::~AcceleratedCompositingContext()
 {
-    if (m_syncTimerCallbackId)
-        g_source_remove(m_syncTimerCallbackId);
+    stopAnyPendingLayerFlush();
+}
+
+void AcceleratedCompositingContext::stopAnyPendingLayerFlush()
+{
+    if (!m_layerFlushTimerCallbackId)
+        return;
+    g_source_remove(m_layerFlushTimerCallbackId);
+    m_layerFlushTimerCallbackId = 0;
 }
 
 bool AcceleratedCompositingContext::enabled()
 {
-    return m_rootTextureMapperLayer && m_textureMapper;
+    return m_rootLayer && m_textureMapper;
 }
 
-GLContext* AcceleratedCompositingContext::glContext()
+bool AcceleratedCompositingContext::renderLayersToWindow(cairo_t* cr, const IntRect& clipRect)
 {
-    if (m_context)
-        return m_context.get();
+    m_redrawPendingTime = 0;
 
-#if defined(GDK_WINDOWING_X11)
-    // FIXME: Gracefully account for situations where we do not have a realized window.
-    GdkWindow* gdkWindow = gtk_widget_get_window(GTK_WIDGET(m_webView));
-    if (gdkWindow && gdk_window_has_native(gdkWindow))
-        m_context = GLContext::createContextForWindow(GDK_WINDOW_XID(gdkWindow), GLContext::sharingContext());
-#endif
-
-    return m_context.get();
-}
-
-bool AcceleratedCompositingContext::renderLayersToWindow(cairo_t*, const IntRect& clipRect)
-{
     if (!enabled())
         return false;
 
-    GLContext* context = glContext();
-    if (!context)
-        return false;
+    // It's important to paint a white background (if the WebView isn't transparent), because when growing
+    // the redirected window, the usable size of the window may be smaller than the allocation of our widget.
+    // We don't want to show artifacts in that case.
+    IntSize usableWindowSize = m_redirectedWindow->usableSize();
+    if (usableWindowSize != m_redirectedWindow->size()) {
+        if (!m_webView->priv->transparent) {
+            cairo_set_source_rgb(cr, 1, 1, 1);
+            cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+        } else
+            cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+        cairo_paint(cr);
+    }
 
-    if (!context->makeContextCurrent())
-        return false;
+    cairo_surface_t* windowSurface = m_redirectedWindow->cairoSurfaceForWidget(GTK_WIDGET(m_webView));
+    if (!windowSurface)
+        return true;
 
-    GtkAllocation allocation;
-    gtk_widget_get_allocation(GTK_WIDGET(m_webView), &allocation);
-    glViewport(0, 0, allocation.width, allocation.height);
+    cairo_rectangle(cr, clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height());
+    cairo_set_source_surface(cr, windowSurface, 0, 0);
+    cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+    cairo_fill(cr);
 
-    m_textureMapper->beginPainting();
-    m_rootTextureMapperLayer->paint();
-    m_textureMapper->endPainting();
+    if (!m_layerFlushTimerCallbackId && toTextureMapperLayer(m_rootLayer.get())->descendantsOrSelfHaveRunningAnimations() || m_needsExtraFlush) {
+        m_needsExtraFlush = false;
+        double nextFlush = max((1 / gFramesPerSecond) - (currentTime() - m_lastFlushTime), 0.0);
+        m_layerFlushTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 1000 * nextFlush, reinterpret_cast<GSourceFunc>(layerFlushTimerFiredCallback), this, 0);
+    }
 
-    context->swapBuffers();
     return true;
 }
 
-void AcceleratedCompositingContext::attachRootGraphicsLayer(GraphicsLayer* graphicsLayer)
+GLContext* AcceleratedCompositingContext::prepareForRendering()
 {
-    if (!graphicsLayer) {
-        m_rootGraphicsLayer.clear();
-        m_rootTextureMapperLayer = 0;
-        m_context.clear();
-        return;
-    }
+    if (!enabled())
+        return 0;
 
-    m_rootGraphicsLayer = GraphicsLayer::create(this);
-    m_rootTextureMapperLayer = toTextureMapperLayer(m_rootGraphicsLayer.get());
-    m_rootGraphicsLayer->addChild(graphicsLayer);
-    m_rootGraphicsLayer->setDrawsContent(true);
-    m_rootGraphicsLayer->setMasksToBounds(false);
-    m_rootGraphicsLayer->setNeedsDisplay();
-    m_rootGraphicsLayer->setSize(core(m_webView)->mainFrame()->view()->frameRect().size());
+    GLContext* context = m_redirectedWindow->context();
+    if (!context)
+        return 0;
 
-    GLContext* context = glContext();
+    if (!context->makeContextCurrent())
+        return 0;
+
+    return context;
+}
+
+void AcceleratedCompositingContext::compositeLayersToContext()
+{
+    GLContext* context = prepareForRendering();
     if (!context)
         return;
 
-    // The context needs to be active when creating the texture mapper. It's fine to
-    // avoid calling swapBuffers here, because it will just initialize shaders.
-    if (!context->makeContextCurrent())
-        return;
+    const IntSize& windowSize = m_redirectedWindow->size();
+    glViewport(0, 0, windowSize.width(), windowSize.height());
 
-    GtkAllocation allocation;
-    gtk_widget_get_allocation(GTK_WIDGET(m_webView), &allocation);
-    glViewport(0, 0, allocation.width, allocation.height);
+    m_textureMapper->beginPainting();
+    toTextureMapperLayer(m_rootLayer.get())->paint();
+    m_textureMapper->endPainting();
 
-    m_textureMapper = TextureMapperGL::create();
-    m_rootTextureMapperLayer->setTextureMapper(m_textureMapper.get());
-    m_rootGraphicsLayer->syncCompositingStateForThisLayerOnly();
+    context->swapBuffers();
+
+    // FIXME: It seems that when using double-buffering (and on some drivers single-buffering)
+    // and XComposite window redirection, two swap buffers are required to force the pixmap
+    // to update. This isn't a problem during animations, because swapBuffer is continuously
+    // called. For non-animation situations we use this terrible hack until we can get to the
+    // bottom of the issue.
+    if (!toTextureMapperLayer(m_rootLayer.get())->descendantsOrSelfHaveRunningAnimations()) {
+        context->swapBuffers();
+        context->swapBuffers();
+    }
 }
 
-void AcceleratedCompositingContext::scheduleRootLayerRepaint(const IntRect& rect)
+void AcceleratedCompositingContext::clearEverywhere()
 {
-    if (!m_rootGraphicsLayer)
+    GLContext* context = prepareForRendering();
+    if (!context)
         return;
-    if (rect.isEmpty()) {
-        m_rootGraphicsLayer->setNeedsDisplay();
+
+    const IntSize& windowSize = m_redirectedWindow->size();
+    glViewport(0, 0, windowSize.width(), windowSize.height());
+    glClearColor(1, 1, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    context->swapBuffers();
+
+    // FIXME: It seems that when using double-buffering (and on some drivers single-buffering)
+    // and XComposite window redirection, two swap buffers are required to force the pixmap
+    // to update. This isn't a problem during animations, because swapBuffer is continuously
+    // called. For non-animation situations we use this terrible hack until we can get to the
+    // bottom of the issue.
+    if (!toTextureMapperLayer(m_rootLayer.get())->descendantsOrSelfHaveRunningAnimations()) {
+        context->swapBuffers();
+        context->swapBuffers();
+    }
+}
+
+void AcceleratedCompositingContext::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
+{
+    // Clearing everywhere when turning on or off the layer tree prevents us from flashing
+    // old content before the first flush.
+    clearEverywhere();
+
+    if (!graphicsLayer) {
+        stopAnyPendingLayerFlush();
+
+        // Shrink the offscreen window to save memory while accelerated compositing is turned off.
+        m_redirectedWindow->resize(IntSize(1, 1));
+        m_rootLayer = nullptr;
+        m_nonCompositedContentLayer = nullptr;
+        m_textureMapper = nullptr;
         return;
     }
-    m_rootGraphicsLayer->setNeedsDisplayInRect(rect);
+
+    if (graphicsLayer && !enabled())
+        m_redirectedWindow->resize(getWebViewSize(m_webView));
+
+    // Add the accelerated layer tree hierarchy.
+    initialize();
+    m_nonCompositedContentLayer->removeAllChildren();
+    m_nonCompositedContentLayer->addChild(graphicsLayer);
+
+    stopAnyPendingLayerFlush();
+
+    // FIXME: Two flushes seem necessary to get the proper rendering in some cases. It's unclear
+    // if this is a bug with the RedirectedXComposite window or with this class.
+    m_needsExtraFlush = true;
+    scheduleLayerFlush();
+
+    m_layerFlushTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 500, reinterpret_cast<GSourceFunc>(layerFlushTimerFiredCallback), this, 0);
 }
 
-void AcceleratedCompositingContext::resizeRootLayer(const IntSize& size)
+void AcceleratedCompositingContext::setNonCompositedContentsNeedDisplay(const IntRect& rect)
 {
-    if (!m_rootGraphicsLayer)
+    if (!m_rootLayer)
         return;
-    m_rootGraphicsLayer->setSize(size);
-    m_rootGraphicsLayer->syncCompositingStateForThisLayerOnly();
+    if (rect.isEmpty()) {
+        m_rootLayer->setNeedsDisplay();
+        return;
+    }
+    m_nonCompositedContentLayer->setNeedsDisplayInRect(rect);
+    scheduleLayerFlush();
 }
 
-static gboolean syncLayersTimeoutCallback(AcceleratedCompositingContext* context)
+void AcceleratedCompositingContext::resizeRootLayer(const IntSize& newSize)
 {
-    context->syncLayersTimeout();
+    if (!enabled())
+        return;
+
+    if (m_rootLayer->size() == newSize)
+        return;
+
+    m_redirectedWindow->resize(newSize);
+    m_rootLayer->setSize(newSize);
+
+    // If the newSize exposes new areas of the non-composited content a setNeedsDisplay is needed
+    // for those newly exposed areas.
+    FloatSize oldSize = m_nonCompositedContentLayer->size();
+    m_nonCompositedContentLayer->setSize(newSize);
+
+    if (newSize.width() > oldSize.width()) {
+        float height = std::min(static_cast<float>(newSize.height()), oldSize.height());
+        m_nonCompositedContentLayer->setNeedsDisplayInRect(FloatRect(oldSize.width(), 0, newSize.width() - oldSize.width(), height));
+    }
+
+    if (newSize.height() > oldSize.height())
+        m_nonCompositedContentLayer->setNeedsDisplayInRect(FloatRect(0, oldSize.height(), newSize.width(), newSize.height() - oldSize.height()));
+
+    m_nonCompositedContentLayer->setNeedsDisplayInRect(IntRect(IntPoint(), newSize));
+    flushAndRenderLayers();
+}
+
+void AcceleratedCompositingContext::scrollNonCompositedContents(const IntRect& scrollRect, const IntSize& scrollOffset)
+{
+    m_nonCompositedContentLayer->setNeedsDisplayInRect(scrollRect);
+    scheduleLayerFlush();
+}
+
+gboolean AcceleratedCompositingContext::layerFlushTimerFiredCallback(AcceleratedCompositingContext* context)
+{
+    context->layerFlushTimerFired();
     return FALSE;
 }
 
-void AcceleratedCompositingContext::markForSync()
+void AcceleratedCompositingContext::scheduleLayerFlush()
 {
-    if (m_syncTimerCallbackId)
+    if (!enabled())
         return;
 
-    // We use a GLib timer because otherwise GTK+ event handling during
-    // dragging can starve WebCore timers, which have a lower priority.
-    m_syncTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 0, reinterpret_cast<GSourceFunc>(syncLayersTimeoutCallback), this, 0);
-}
-
-void AcceleratedCompositingContext::syncLayersNow()
-{
-    if (m_rootGraphicsLayer)
-        m_rootGraphicsLayer->syncCompositingStateForThisLayerOnly();
-
-    core(m_webView)->mainFrame()->view()->syncCompositingStateIncludingSubframes();
-}
-
-void AcceleratedCompositingContext::syncLayersTimeout()
-{
-    m_syncTimerCallbackId = 0;
-    syncLayersNow();
-    if (!m_rootGraphicsLayer)
+    if (m_layerFlushTimerCallbackId)
         return;
 
-    if (toTextureMapperLayer(m_rootGraphicsLayer.get())->descendantsOrSelfHaveRunningAnimations())
-        m_syncTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 1000.0 / 60.0, reinterpret_cast<GSourceFunc>(syncLayersTimeoutCallback), this, 0);
+    // We use a GLib timer because otherwise GTK+ event handling during dragging can
+    // starve WebCore timers, which have a lower priority.
+    double nextFlush = max(gScheduleDelay - (currentTime() - m_lastFlushTime), 0.0);
+    m_layerFlushTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, nextFlush * 1000, reinterpret_cast<GSourceFunc>(layerFlushTimerFiredCallback), this, 0);
+}
 
-    renderLayersToWindow(0, IntRect());
+bool AcceleratedCompositingContext::flushPendingLayerChanges()
+{
+    m_rootLayer->syncCompositingStateForThisLayerOnly();
+    m_nonCompositedContentLayer->syncCompositingStateForThisLayerOnly();
+    return core(m_webView)->mainFrame()->view()->syncCompositingStateIncludingSubframes();
+}
+
+void AcceleratedCompositingContext::flushAndRenderLayers()
+{
+    if (!enabled())
+        return;
+
+    Frame* frame = core(m_webView)->mainFrame();
+    if (!frame || !frame->contentRenderer() || !frame->view())
+        return;
+    frame->view()->updateLayoutAndStyleIfNeededRecursive();
+
+    GLContext* context = m_redirectedWindow->context();
+    if (context && !context->makeContextCurrent())
+        return;
+
+    if (!flushPendingLayerChanges())
+        return;
+
+    m_lastFlushTime = currentTime();
+    compositeLayersToContext();
+
+    gtk_widget_queue_draw(GTK_WIDGET(m_webView));
+
+    // If it's been a long time since we've actually painted, which means that events might
+    // be starving the main loop, we should force a draw now. This seems to prevent display
+    // lag on http://2012.beercamp.com.
+    if (m_redrawPendingTime && currentTime() - m_redrawPendingTime > gScheduleDelay)
+        gdk_window_process_updates(gtk_widget_get_window(GTK_WIDGET(m_webView)), FALSE);
+    else if (!m_redrawPendingTime)
+        m_redrawPendingTime = currentTime();
+}
+
+void AcceleratedCompositingContext::layerFlushTimerFired()
+{
+    m_layerFlushTimerCallbackId = 0;
+    flushAndRenderLayers();
 }
 
 void AcceleratedCompositingContext::notifyAnimationStarted(const GraphicsLayer*, double time)
@@ -206,9 +378,10 @@ void AcceleratedCompositingContext::notifySyncRequired(const GraphicsLayer*)
 
 void AcceleratedCompositingContext::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const IntRect& rectToPaint)
 {
-    cairo_t* cr = context.platformContext()->cr();
-    copyRectFromCairoSurfaceToContext(m_webView->priv->backingStore->cairoSurface(), cr,
-                                      IntSize(), rectToPaint);
+    context.save();
+    context.clip(rectToPaint);
+    core(m_webView)->mainFrame()->view()->paint(&context, rectToPaint);
+    context.restore();
 }
 
 bool AcceleratedCompositingContext::showDebugBorders(const GraphicsLayer*) const

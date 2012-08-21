@@ -179,7 +179,6 @@ namespace WebKit {
         double m_lastDisplayTime;
         unsigned int m_repaintSoonSourceId;
 
-        void invalidateWidgetRect(const IntRect&);
 #if ENABLE(FULLSCREEN_API)
         RefPtr<Element> m_fullScreenElement;
 #endif

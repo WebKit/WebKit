@@ -31,7 +31,7 @@ namespace WebCore {
 // because it might lead to crashes in some drivers (fglrx). We use a shared display
 // pointer here.
 static Display* gSharedDisplay = 0;
-static Display* sharedDisplay()
+Display* GLContextGLX::sharedDisplay()
 {
     if (!gSharedDisplay)
         gSharedDisplay = XOpenDisplay(0);

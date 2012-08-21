@@ -1,3 +1,14 @@
+2012-08-21  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Using a native window for the WebView breaks GtkOverlay
+        https://bugs.webkit.org/show_bug.cgi?id=90085
+
+        Reviewed by Alejandro G. Castro.
+
+        Add XComposite libraries to the linker list for WebKit2.
+
+        * GNUmakefile.am: Add XComposite
+
 2012-08-21  Jesse van den Kieboom  <jessevdk@gnome.org> and Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add destroy notify for register_uri_scheme

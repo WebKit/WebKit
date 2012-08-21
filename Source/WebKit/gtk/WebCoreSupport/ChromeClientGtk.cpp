@@ -142,15 +142,16 @@ void ChromeClient::setWindowRect(const FloatRect& rect)
     }
 }
 
-FloatRect ChromeClient::pageRect()
+static IntRect getWebViewRect(WebKitWebView* webView)
 {
     GtkAllocation allocation;
-#if GTK_CHECK_VERSION(2, 18, 0)
-    gtk_widget_get_allocation(GTK_WIDGET(m_webView), &allocation);
-#else
-    allocation = GTK_WIDGET(m_webView)->allocation;
-#endif
+    gtk_widget_get_allocation(GTK_WIDGET(webView), &allocation);
     return IntRect(allocation.x, allocation.y, allocation.width, allocation.height);
+}
+
+FloatRect ChromeClient::pageRect()
+{
+    return getWebViewRect(m_webView);
 }
 
 void ChromeClient::focus()
@@ -419,10 +420,20 @@ static void clearEverywhereInBackingStore(WebKitWebView* webView, cairo_t* cr)
 
 void ChromeClient::widgetSizeChanged(const IntSize& oldWidgetSize, IntSize newSize)
 {
-    WidgetBackingStore* backingStore = m_webView->priv->backingStore.get();
+#if USE(ACCELERATED_COMPOSITING)
+    AcceleratedCompositingContext* compositingContext = m_webView->priv->acceleratedCompositingContext.get();
+    if (compositingContext->enabled()) {
+        m_webView->priv->acceleratedCompositingContext->resizeRootLayer(newSize);
+        return;
+    }
+#endif
 
     // Grow the backing store by at least 1.5 times the current size. This prevents
     // lots of unnecessary allocations during an opaque resize.
+    WidgetBackingStore* backingStore = m_webView->priv->backingStore.get();
+    if (backingStore && oldWidgetSize == newSize)
+        return;
+
     if (backingStore) {
         const IntSize& oldSize = backingStore->size();
         if (newSize.width() > oldSize.width())
@@ -526,20 +537,6 @@ static void paintWebView(WebKitWebView* webView, Frame* frame, Region dirtyRegio
     gc.restore();
 }
 
-void ChromeClient::invalidateWidgetRect(const IntRect& rect)
-{
-#if USE(ACCELERATED_COMPOSITING)
-    AcceleratedCompositingContext* acContext = m_webView->priv->acceleratedCompositingContext.get();
-    if (acContext->enabled()) {
-        acContext->scheduleRootLayerRepaint(rect);
-        return;
-    }
-#endif
-    gtk_widget_queue_draw_area(GTK_WIDGET(m_webView),
-                               rect.x(), rect.y(),
-                               rect.width(), rect.height());
-}
-
 void ChromeClient::performAllPendingScrolls()
 {
     if (!m_webView->priv->backingStore)
@@ -549,7 +546,7 @@ void ChromeClient::performAllPendingScrolls()
     for (size_t i = 0; i < m_rectsToScroll.size(); i++) {
         IntRect& scrollRect = m_rectsToScroll[i];
         m_webView->priv->backingStore->scroll(scrollRect, m_scrollOffsets[i]);
-        invalidateWidgetRect(scrollRect);
+        gtk_widget_queue_draw_area(GTK_WIDGET(m_webView), scrollRect.x(), scrollRect.y(), scrollRect.width(), scrollRect.height());
     }
 
     m_rectsToScroll.clear();
@@ -585,12 +582,7 @@ void ChromeClient::paint(WebCore::Timer<ChromeClient>*)
     }
 
     const IntRect& rect = m_dirtyRegion.bounds();
-    invalidateWidgetRect(rect);
-
-#if USE(ACCELERATED_COMPOSITING)
-    m_webView->priv->acceleratedCompositingContext->syncLayersNow();
-    m_webView->priv->acceleratedCompositingContext->renderLayersToWindow(0, rect);
-#endif
+    gtk_widget_queue_draw_area(GTK_WIDGET(m_webView), rect.x(), rect.y(), rect.width(), rect.height());
 
     m_dirtyRegion = Region();
     m_lastDisplayTime = currentTime();
@@ -606,6 +598,11 @@ void ChromeClient::paint(WebCore::Timer<ChromeClient>*)
 
 void ChromeClient::forcePaint()
 {
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_webView->priv->acceleratedCompositingContext->enabled())
+        return;
+#endif
+
     m_forcePaint = true;
     paint(0);
     m_forcePaint = false;
@@ -617,6 +614,14 @@ void ChromeClient::invalidateRootView(const IntRect&, bool immediate)
 
 void ChromeClient::invalidateContentsAndRootView(const IntRect& updateRect, bool immediate)
 {
+#if USE(ACCELERATED_COMPOSITING)
+    AcceleratedCompositingContext* acContext = m_webView->priv->acceleratedCompositingContext.get();
+    if (acContext->enabled()) {
+        acContext->setNonCompositedContentsNeedDisplay(updateRect);
+        return;
+    }
+#endif
+
     if (updateRect.isEmpty())
         return;
     m_dirtyRegion.unite(updateRect);
@@ -625,12 +630,34 @@ void ChromeClient::invalidateContentsAndRootView(const IntRect& updateRect, bool
 
 void ChromeClient::invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate)
 {
-    invalidateContentsAndRootView(updateRect, immediate);
     m_adjustmentWatcher.updateAdjustmentsFromScrollbarsLater();
+
+#if USE(ACCELERATED_COMPOSITING)
+    AcceleratedCompositingContext* acContext = m_webView->priv->acceleratedCompositingContext.get();
+    if (acContext->enabled()) {
+        acContext->setNonCompositedContentsNeedDisplay(updateRect);
+        return;
+    }
+#endif
+
+    invalidateContentsAndRootView(updateRect, immediate);
 }
 
 void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
+    m_adjustmentWatcher.updateAdjustmentsFromScrollbarsLater();
+
+#if USE(ACCELERATED_COMPOSITING)
+    AcceleratedCompositingContext* compositingContext = m_webView->priv->acceleratedCompositingContext.get();
+    if (compositingContext->enabled()) {
+        ASSERT(!rectToScroll.isEmpty());
+        ASSERT(!delta.isEmpty());
+
+        compositingContext->scrollNonCompositedContents(rectToScroll, delta);
+        return;
+    }
+#endif
+
     m_rectsToScroll.append(rectToScroll);
     m_scrollOffsets.append(delta);
 
@@ -657,8 +684,6 @@ void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, con
 
     m_dirtyRegion.unite(scrollRepaintRegion);
     m_displayTimer.startOneShot(0);
-
-    m_adjustmentWatcher.updateAdjustmentsFromScrollbarsLater();
 }
 
 IntRect ChromeClient::rootViewToScreen(const IntRect& rect) const
@@ -966,17 +991,32 @@ void ChromeClient::exitFullScreenForElement(WebCore::Element*)
 #if USE(ACCELERATED_COMPOSITING)
 void ChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* rootLayer)
 {
-    m_webView->priv->acceleratedCompositingContext->attachRootGraphicsLayer(rootLayer);
+    AcceleratedCompositingContext* context = m_webView->priv->acceleratedCompositingContext.get();
+    bool turningOffCompositing = !rootLayer && context->enabled();
+    bool turningOnCompositing = rootLayer && !context->enabled();
+
+    context->setRootCompositingLayer(rootLayer);
+
+    if (turningOnCompositing) {
+        m_displayTimer.stop();
+        m_webView->priv->backingStore = WebCore::WidgetBackingStore::create(GTK_WIDGET(m_webView), IntSize(1, 1));
+    }
+
+    if (turningOffCompositing) {
+        m_webView->priv->backingStore = WebCore::WidgetBackingStore::create(GTK_WIDGET(m_webView), getWebViewRect(m_webView).size());
+        RefPtr<cairo_t> cr = adoptRef(cairo_create(m_webView->priv->backingStore->cairoSurface()));
+        clearEverywhereInBackingStore(m_webView, cr.get());
+    }
 }
 
 void ChromeClient::setNeedsOneShotDrawingSynchronization()
 {
-    m_webView->priv->acceleratedCompositingContext->markForSync();
+    m_webView->priv->acceleratedCompositingContext->scheduleLayerFlush();
 }
 
 void ChromeClient::scheduleCompositingLayerSync()
 {
-    m_webView->priv->acceleratedCompositingContext->markForSync();
+    m_webView->priv->acceleratedCompositingContext->scheduleLayerFlush();
 }
 
 ChromeClient::CompositingTriggerFlags ChromeClient::allowedCompositingTriggers() const
