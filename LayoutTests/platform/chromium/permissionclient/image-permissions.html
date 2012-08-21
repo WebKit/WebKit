@@ -21,14 +21,14 @@ function loaded()
 
     // Load an image not in cache.
     var img = document.createElement('img');
-    img.onerror = function () { log("FAIL: error event for not cached image"); }
+    img.onerror = function () { log("PASS: error event for not cached image"); }
     img.onload = function () { log("FAIL: not cached image loaded"); }
     img.src = "resources/boston.gif?nocache";
     document.getElementById("img").appendChild(img);
 
     // Load an image from cache.
     var imgFromCache = document.createElement('img');
-    imgFromCache.onerror = function () { log("FAIL: error event for image from cache"); }
+    imgFromCache.onerror = function () { log("PASS: error event for image from cache"); }
     imgFromCache.onload = function () { log("FAIL: image from cache loaded"); }
     imgFromCache.src = "resources/boston.gif";
     document.getElementById("img").appendChild(imgFromCache);

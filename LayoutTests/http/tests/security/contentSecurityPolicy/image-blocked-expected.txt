@@ -1,3 +1,4 @@
 CONSOLE MESSAGE: Refused to load the image 'http://127.0.0.1:8000/security/resources/abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
 
-This test passes if it doesn't alert fail. 
+ALERT: PASS
+This test passes if it doesn't alert FAIL and does alert PASS. 

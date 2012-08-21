@@ -10,14 +10,15 @@
 
     function test1() {
         var img = document.createElement('img');
-        img.onload = function () { alert('FAIL'); };
-        img.onerror = function () { alert('PASS (1/3)'); };
-        try {
-            img.src = "../resources/abe.png";
-        } catch (e) {
-            alert("PASS (1/3)");
-        }
-        test2();
+        img.onload = function () {
+            alert('FAIL (1/3)');
+            test2();
+        };
+        img.onerror = function () {
+            alert('PASS (1/3)');
+            test2();
+        };
+        img.src = "../resources/abe.png";
     }
 
     function test2() {
@@ -27,25 +28,25 @@
             alert('PASS (2/3)');
             test3();
         };
-        try {
-            img.src = "../resources/abe.png";
-        } catch (e) {
-            alert('FAIL');
+        img.onerror = function () {
+            alert('FAIL (2/3)');
             test3();
-        }
+        };
+        img.src = "../resources/abe.png";
     }
 
     function test3() {
         internals.removeURLSchemeRegisteredAsBypassingContentSecurityPolicy('http');
         var img = document.createElement('img');
-        img.onload = function () { alert('FAIL'); };
-        img.onerror = function () { alert('PASS (2/3)'); };
-        try {
-            img.src = "../resources/abe.png";
-        } catch (e) {
-            alert("PASS (3/3)");
-        }
-        finishTesting();
+        img.onload = function () {
+            alert('FAIL (3/3)');
+            finishTesting();
+        };
+        img.onerror = function () {
+            alert('PASS (3/3)');
+            finishTesting();
+        };
+        img.src = "../resources/abe.png";
     }
 
     function finishTesting() {

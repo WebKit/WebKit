@@ -8,7 +8,7 @@ if (window.testRunner)
 </script>
 </head>
 <body>
-This test passes if it doesn't alert fail.
-<img src="../resources/abe.png" onload="alert('FAIL')">
+This test passes if it doesn't alert FAIL and does alert PASS.
+<img src="../resources/abe.png" onload="alert('FAIL')" onerror="alert('PASS')">
 </body>
 </html>

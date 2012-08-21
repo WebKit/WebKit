@@ -1,3 +1,21 @@
+2012-08-21  Mike West  <mkwst@chromium.org>
+
+        Blocking a resource via Content Security Policy should trigger an Error event.
+        https://bugs.webkit.org/show_bug.cgi?id=89440
+
+        Reviewed by Jochen Eisinger.
+
+        * http/tests/security/contentSecurityPolicy/image-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/image-blocked.html:
+        * http/tests/security/contentSecurityPolicy/register-bypassing-scheme-expected.txt:
+        * http/tests/security/contentSecurityPolicy/register-bypassing-scheme.html:
+            Adjusting existing tests to use the error event, as opposed to
+            hacking around the fact that it wasn't triggered.
+        * platform/chromium/permissionclient/image-permissions-expected.txt:
+        * platform/chromium/permissionclient/image-permissions.html:
+            Error events are now also generated for images blocked by Chromium's
+            content settings.
+
 2012-08-21  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html fails

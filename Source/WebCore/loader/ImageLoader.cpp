@@ -197,8 +197,14 @@ void ImageLoader::updateFromElement()
             newImage = document()->cachedResourceLoader()->requestImage(request);
 
         // If we do not have an image here, it means that a cross-site
-        // violation occurred.
-        m_failedLoadURL = !newImage ? attr : AtomicString();
+        // violation occurred, or that the image was blocked via Content
+        // Security Policy. Either way, trigger an error event.
+        if (!newImage) {
+            m_failedLoadURL = attr;
+            m_hasPendingErrorEvent = true;
+            errorEventSender().dispatchEventSoon(this);
+        } else
+            m_failedLoadURL = AtomicString();
     } else if (!attr.isNull()) {
         // Fire an error event if the url is empty.
         // FIXME: Should we fire this event asynchronoulsy via errorEventSender()?
