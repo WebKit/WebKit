@@ -1,3 +1,17 @@
+2012-08-21  Benjamin Poulain  <bpoulain@apple.com>
+
+        Store CString data in the CStringBuffer to avoid the double indirection
+        https://bugs.webkit.org/show_bug.cgi?id=94562
+
+        Reviewed by Darin Adler.
+
+        Add test coverage for WTF::CString.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/GNUmakefile.am:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/CString.cpp:
+
 2012-08-21  Dirk Pranke  <dpranke@chromium.org>
 
         Text Autosizing: ::first-letter pseudo-element is incorrectly sized

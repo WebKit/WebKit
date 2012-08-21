@@ -55,7 +55,7 @@ size_t WebDOMCString::length() const
     if (!m_private)
         return 0;
     // NOTE: The buffer's length includes the null byte.
-    return const_cast<WebDOMCStringPrivate*>(m_private)->length() - 1;
+    return const_cast<WebDOMCStringPrivate*>(m_private)->length();
 }
 
 const char* WebDOMCString::data() const

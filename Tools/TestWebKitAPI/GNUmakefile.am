@@ -51,6 +51,7 @@ Programs_TestWebKitAPI_TestWTF_LDFLAGS = \
 
 Programs_TestWebKitAPI_TestWTF_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WTF/AtomicString.cpp \
+	Tools/TestWebKitAPI/Tests/WTF/CString.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/Functional.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/HashMap.cpp \

@@ -23,6 +23,7 @@
 		1AEDE22613E5E7E700E62FE8 /* InjectedBundleControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */; };
 		261516D615B0E60500A2C201 /* SetAndUpdateCacheModel.mm in Sources */ = {isa = PBXBuildFile; fileRef = 261516D515B0E60500A2C201 /* SetAndUpdateCacheModel.mm */; };
 		265AF55015D1E48A00B0CB4A /* WTFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 265AF54F15D1E48A00B0CB4A /* WTFString.cpp */; };
+		26A2C72F15E2E73C005B1A14 /* CString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26A2C72E15E2E73C005B1A14 /* CString.cpp */; };
 		26B2DFF915BDE599004F691D /* HashSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26B2DFF815BDE599004F691D /* HashSet.cpp */; };
 		26DF5A5E15A29BAA003689C2 /* CancelLoadFromResourceLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26DF5A5D15A29BAA003689C2 /* CancelLoadFromResourceLoadDelegate.mm */; };
 		26DF5A6315A2A27E003689C2 /* CancelLoadFromResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26DF5A6115A2A22B003689C2 /* CancelLoadFromResourceLoadDelegate.html */; };
@@ -253,6 +254,7 @@
 		1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundleControllerMac.mm; sourceTree = "<group>"; };
 		261516D515B0E60500A2C201 /* SetAndUpdateCacheModel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SetAndUpdateCacheModel.mm; sourceTree = "<group>"; };
 		265AF54F15D1E48A00B0CB4A /* WTFString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WTFString.cpp; path = WTF/WTFString.cpp; sourceTree = "<group>"; };
+		26A2C72E15E2E73C005B1A14 /* CString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CString.cpp; path = WTF/CString.cpp; sourceTree = "<group>"; };
 		26B2DFF815BDE599004F691D /* HashSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HashSet.cpp; path = WTF/HashSet.cpp; sourceTree = "<group>"; };
 		26DF5A5D15A29BAA003689C2 /* CancelLoadFromResourceLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CancelLoadFromResourceLoadDelegate.mm; sourceTree = "<group>"; };
 		26DF5A6115A2A22B003689C2 /* CancelLoadFromResourceLoadDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CancelLoadFromResourceLoadDelegate.html; sourceTree = "<group>"; };
@@ -628,6 +630,7 @@
 				BC029B1A1486B23800817DA9 /* ns */,
 				C0991C4F143C7D68007998F2 /* cf */,
 				26F1B44215CA434F00D1E4BF /* AtomicString.cpp */,
+				26A2C72E15E2E73C005B1A14 /* CString.cpp */,
 				CD5497B315857F0C00B5BC30 /* MediaTime.cpp */,
 				0FC6C4CE141034AD005B7F0C /* MetaAllocator.cpp */,
 				0FC6C4CB141027E0005B7F0C /* RedBlackTree.cpp */,
@@ -871,6 +874,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				26F1B44415CA434F00D1E4BF /* AtomicString.cpp in Sources */,
+				26A2C72F15E2E73C005B1A14 /* CString.cpp in Sources */,
 				BC131885117114B600B69727 /* PlatformUtilitiesMac.mm in Sources */,
 				BC131A9B1171316900B69727 /* main.mm in Sources */,
 				BC131AA9117131FC00B69727 /* TestsController.cpp in Sources */,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,19 +32,23 @@
 
 namespace WTF {
 
+// CStringBuffer is the ref-counted storage class for the characters in a CString.
+// The data is implicitly allocated 1 character longer than length(), as it is zero-terminated.
 class CStringBuffer : public RefCounted<CStringBuffer> {
 public:
-    const char* data() { return m_vector.data(); }
-    size_t length() { return m_vector.size(); }
+    const char* data() { return m_data; }
+    size_t length() { return m_length; }
 
 private:
     friend class CString;
 
-    static PassRefPtr<CStringBuffer> create(size_t length) { return adoptRef(new CStringBuffer(length)); }
-    CStringBuffer(size_t length) : m_vector(length) { }
-    char* mutableData() { return m_vector.data(); }
+    static PassRefPtr<CStringBuffer> createUninitialized(size_t length);
 
-    Vector<char> m_vector;
+    CStringBuffer(size_t length) : m_length(length) { }
+    char* mutableData() { return m_data; }
+
+    const size_t m_length;
+    char m_data[1];
 };
 
 // A container for a null-terminated char array supporting copy-on-write
@@ -64,7 +68,7 @@ public:
     WTF_EXPORT_PRIVATE char* mutableData();
     size_t length() const
     {
-        return m_buffer ? m_buffer->length() - 1 : 0;
+        return m_buffer ? m_buffer->length() : 0;
     }
 
     bool isNull() const { return !m_buffer; }

@@ -1,3 +1,37 @@
+2012-08-21  Benjamin Poulain  <bpoulain@apple.com>
+
+        Store CString data in the CStringBuffer to avoid the double indirection
+        https://bugs.webkit.org/show_bug.cgi?id=94562
+
+        Reviewed by Darin Adler.
+
+        Previously, any non-trivial CString would require two allocations:
+        1) CStringBuffer (ref-counted container for CString's data).
+        2) VectorBuffer's m_buffer (the actual char data).
+
+        This patches changes CStringBuffer to hold the data previously owned by
+        WTF::Vector and WTF::VectorBuffer. This makes CString more efficient
+        both in CPU time and memory use.
+
+        * wtf/text/CString.cpp:
+        (WTF::CStringBuffer::createUninitialized): This new method allocate the memory
+        for CStringBuffer and its data. We simply allocate more memory after CStringBuffer
+        to hold the data.
+
+        The extra memory needed to store the terminating zero is now handled by design.
+        (WTF::CString::CString): Move the test for "str" one level up the stack from CString::init().
+        This avoid double checking the pointer when using the other constructor.
+        (WTF::CString::init):
+        (WTF::CString::newUninitialized):
+        (WTF::CString::copyBufferIfNeeded):
+        * wtf/text/CString.h:
+        (WTF::CStringBuffer::data):
+        (WTF::CStringBuffer::length):
+        (CStringBuffer):
+        (WTF::CStringBuffer::CStringBuffer):
+        (WTF::CStringBuffer::mutableData):
+        (WTF::CString::length):
+
 2012-08-21  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for COMPILER(MSVC) && !CPU(X86) after r126023.
