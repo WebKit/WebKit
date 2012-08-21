@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -1001,32 +1001,32 @@ String CSSPrimitiveValue::customCssText() const
         }
         case CSS_RGBCOLOR:
         case CSS_PARSER_HEXCOLOR: {
-            DEFINE_STATIC_LOCAL(const String, commaSpace, (", "));
-            DEFINE_STATIC_LOCAL(const String, rgbParen, ("rgb("));
-            DEFINE_STATIC_LOCAL(const String, rgbaParen, ("rgba("));
-
             RGBA32 rgbColor = m_value.rgbcolor;
             if (m_primitiveUnitType == CSS_PARSER_HEXCOLOR)
                 Color::parseHexColor(m_value.string, rgbColor);
             Color color(rgbColor);
 
-            Vector<UChar> result;
+            Vector<LChar> result;
             result.reserveInitialCapacity(32);
-            if (color.hasAlpha())
-                append(result, rgbaParen);
+            bool colorHasAlpha = color.hasAlpha();
+            if (colorHasAlpha)
+                result.append("rgba(", 5);
             else
-                append(result, rgbParen);
+                result.append("rgb(", 4);
 
             appendNumber(result, static_cast<unsigned char>(color.red()));
-            append(result, commaSpace);
+            result.append(", ", 2);
 
             appendNumber(result, static_cast<unsigned char>(color.green()));
-            append(result, commaSpace);
+            result.append(", ", 2);
 
             appendNumber(result, static_cast<unsigned char>(color.blue()));
-            if (color.hasAlpha()) {
-                append(result, commaSpace);
-                append(result, String::number(color.alpha() / 255.0f));
+            if (colorHasAlpha) {
+                result.append(", ", 2);
+
+                NumberToStringBuffer buffer;
+                const char* alphaString = numberToFixedPrecisionString(color.alpha() / 255.0f, 6, buffer, true);
+                result.append(alphaString, strlen(alphaString));
             }
 
             result.append(')');
