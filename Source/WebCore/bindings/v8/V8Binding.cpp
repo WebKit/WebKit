@@ -43,6 +43,8 @@
 #include "V8DOMWindow.h"
 #include "V8Element.h"
 #include "V8ObjectConstructor.h"
+#include "WorkerContext.h"
+#include "WorkerContextExecutionProxy.h"
 
 #include <wtf/MathExtras.h>
 #include <wtf/MainThread.h>
@@ -401,6 +403,20 @@ Frame* toFrameIfNotDetached(v8::Handle<v8::Context> context)
     // did return |frame| we could get in trouble because the frame could be
     // navigated to another security origin.
     return 0;
+}
+
+v8::Local<v8::Context> toV8Context(ScriptExecutionContext* context, const WorldContextHandle& worldContext)
+{
+    if (context->isDocument()) {
+        if (Frame* frame = static_cast<Document*>(context)->frame())
+            return worldContext.adjustedContext(frame->script());
+#if ENABLE(WORKERS)
+    } else if (context->isWorkerContext()) {
+        if (WorkerContextExecutionProxy* proxy = static_cast<WorkerContext*>(context)->script()->proxy())
+            return proxy->context();
+#endif
+    }
+    return v8::Local<v8::Context>();
 }
 
 V8PerContextData* perContextDataForCurrentWorld(Frame* frame)

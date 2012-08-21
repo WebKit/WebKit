@@ -371,6 +371,9 @@ namespace WebCore {
     // Returns the window object associated with a context.
     DOMWindow* toDOMWindow(v8::Handle<v8::Context>);
 
+    // Returns the context associated with a ScriptExecutionContext.
+    v8::Local<v8::Context> toV8Context(ScriptExecutionContext*, const WorldContextHandle&);
+
     // Returns the frame object of the window object associated with
     // a context, if the window is currently being displayed in the Frame.
     Frame* toFrameIfNotDetached(v8::Handle<v8::Context>);

@@ -286,18 +286,4 @@ bool V8Proxy::matchesCurrentContext()
     return context == context->GetCurrent();
 }
 
-v8::Local<v8::Context> toV8Context(ScriptExecutionContext* context, const WorldContextHandle& worldContext)
-{
-    if (context->isDocument()) {
-        if (Frame* frame = static_cast<Document*>(context)->frame())
-            return worldContext.adjustedContext(frame->script());
-#if ENABLE(WORKERS)
-    } else if (context->isWorkerContext()) {
-        if (WorkerContextExecutionProxy* proxy = static_cast<WorkerContext*>(context)->script()->proxy())
-            return proxy->context();
-#endif
-    }
-    return v8::Local<v8::Context>();
-}
-
 }  // namespace WebCore

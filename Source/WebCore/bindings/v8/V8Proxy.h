@@ -135,8 +135,6 @@ namespace WebCore {
         
         IsolatedWorldSecurityOriginMap m_isolatedWorldSecurityOrigins;
     };
-
-    v8::Local<v8::Context> toV8Context(ScriptExecutionContext*, const WorldContextHandle& worldContext);
 }
 
 #endif // V8Proxy_h
