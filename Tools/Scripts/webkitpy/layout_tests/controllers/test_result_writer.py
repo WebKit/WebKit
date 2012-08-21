@@ -74,7 +74,7 @@ def write_test_result(filesystem, port, test_name, driver_output,
                     writer.write_image_diff_files(diff_image)
                     failure.diff_percent = diff_percent
                 else:
-                    _log.warn('Can not get image diff. ImageDiff program might not work correctly.')
+                    _log.warn('ref test mismatch did not produce an image diff.')
             writer.write_reftest(failure.reference_filename)
         elif isinstance(failure, test_failures.FailureReftestMismatchDidNotOccur):
             writer.write_image_files(driver_output.image, expected_image=None)

@@ -266,10 +266,7 @@ class SingleTestRunner(object):
         elif driver_output.image_hash != expected_driver_output.image_hash:
             diff_result = self._port.diff_image(expected_driver_output.image, driver_output.image)
             err_str = diff_result[2]
-            # FIXME: see https://bugs.webkit.org/show_bug.cgi?id=94277 and
-            # https://bugs.webkit.org/show_bug.cgi?id=81962; ImageDiff doesn't
-            # seem to be working with WTR properly and tons of tests are failing.
-            if err_str and not self._options.webkit_test_runner:
+            if err_str:
                 _log.warning('  %s : %s' % (self._test_name, err_str))
                 failures.append(test_failures.FailureImageHashMismatch())
                 driver_output.error = (driver_output.error or '') + err_str
@@ -279,7 +276,7 @@ class SingleTestRunner(object):
                     failures.append(test_failures.FailureImageHashMismatch(diff_result[1]))
                 else:
                     # See https://bugs.webkit.org/show_bug.cgi?id=69444 for why this isn't a full failure.
-                    _log.warning('  %s -> pixel hash failed (but pixel test still passes)' % self._test_name)
+                    _log.warning('  %s -> pixel hash failed (but diff passed)' % self._test_name)
         return failures
 
     def _run_reftest(self):
@@ -320,19 +317,21 @@ class SingleTestRunner(object):
         if failures:
             return TestResult(self._test_name, failures, total_test_time, has_stderr)
 
-        if self._options.webkit_test_runner and not self._options.pixel_tests:
-            # don't check pixel results for WTR/WK2; they're broken.
-            return TestResult(self._test_name, failures, total_test_time, has_stderr)
-
         if not reference_driver_output.image_hash and not actual_driver_output.image_hash:
             failures.append(test_failures.FailureReftestNoImagesGenerated(reference_filename))
         elif mismatch:
             if reference_driver_output.image_hash == actual_driver_output.image_hash:
-                failures.append(test_failures.FailureReftestMismatchDidNotOccur(reference_filename))
-        elif reference_driver_output.image_hash != actual_driver_output.image_hash:
-            failures.append(test_failures.FailureReftestMismatch(reference_filename))
+                diff_result = self._port.diff_image(reference_driver_output.image, actual_driver_output.image)
+                if not diff_result[0]:
+                    failures.append(test_failures.FailureReftestMismatchDidNotOccur(reference_filename))
+                else:
+                    _log.warning("  %s -> ref test hashes matched but diff failed" % self._test_name)
 
-        # recompute in case we added to stderr during diff_image
-        has_stderr = reference_driver_output.has_stderr() or actual_driver_output.has_stderr()
+        elif reference_driver_output.image_hash != actual_driver_output.image_hash:
+            diff_result = self._port.diff_image(reference_driver_output.image, actual_driver_output.image)
+            if diff_result[0]:
+                failures.append(test_failures.FailureReftestMismatch(reference_filename))
+            else:
+                _log.warning("  %s -> ref test hashes didn't match but diff passed" % self._test_name)
 
         return TestResult(self._test_name, failures, total_test_time, has_stderr)

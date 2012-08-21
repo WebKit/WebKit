@@ -1,5 +1,28 @@
 2012-08-21  Dirk Pranke  <dpranke@chromium.org>
 
+        Text Autosizing: ::first-letter pseudo-element is incorrectly sized
+        https://bugs.webkit.org/show_bug.cgi?id=94540
+
+        Reviewed by Ojan Vafai.
+
+        Revert the changes in bugs 94517 and 94396 so that we are
+        actually looking for stderr output from ImageDiff and doing
+        image compares on ref tests on the wk2 ports again.
+
+        Also, do an actual diff_image() call if the hash checks fail on
+        reftests, and only fail the test if we get real diffs (or don't,
+        for mismatches).
+
+        Lastly, clean up the log messages to be more helpful.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._compare_image):
+        (SingleTestRunner._compare_output_with_reference):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (write_test_result):
+
+2012-08-21  Dirk Pranke  <dpranke@chromium.org>
+
         _compare_image() swaps actual and expected images by mistake
         https://bugs.webkit.org/show_bug.cgi?id=94567
 
