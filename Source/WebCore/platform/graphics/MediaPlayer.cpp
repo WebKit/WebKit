@@ -406,6 +406,7 @@ void MediaPlayer::loadWithNextMediaEngine(MediaPlayerFactory* current)
         m_private->setPrivateBrowsingMode(m_privateBrowsing);
         m_private->setPreload(m_preload);
         m_private->setPreservesPitch(preservesPitch());
+        m_private->setRate(m_rate);
         if (m_shouldPrepareToRender)
             m_private->prepareForRendering();
     }
@@ -619,6 +620,9 @@ float MediaPlayer::volume() const
 
 void MediaPlayer::setVolume(float volume)
 {
+    if (volume == m_volume)
+        return;
+
     m_volume = volume;
 
     if (m_private->supportsMuting() || !m_muted)
@@ -632,6 +636,9 @@ bool MediaPlayer::muted() const
 
 void MediaPlayer::setMuted(bool muted)
 {
+    if (muted == m_muted)
+        return;
+
     m_muted = muted;
 
     if (m_private->supportsMuting())
@@ -668,6 +675,9 @@ bool MediaPlayer::preservesPitch() const
 
 void MediaPlayer::setPreservesPitch(bool preservesPitch)
 {
+    if (preservesPitch == m_preservesPitch)
+        return;
+
     m_preservesPitch = preservesPitch;
     m_private->setPreservesPitch(preservesPitch);
 }
@@ -693,7 +703,10 @@ bool MediaPlayer::didLoadingProgress()
 }
 
 void MediaPlayer::setSize(const IntSize& size)
-{ 
+{
+    if (size == m_size)
+        return;
+
     m_size = size;
     m_private->setSize(size);
 }
@@ -705,6 +718,9 @@ bool MediaPlayer::visible() const
 
 void MediaPlayer::setVisible(bool b)
 {
+    if (b == m_visible)
+        return;
+
     m_visible = b;
     m_private->setVisible(b);
 }
@@ -716,6 +732,9 @@ MediaPlayer::Preload MediaPlayer::preload() const
 
 void MediaPlayer::setPreload(MediaPlayer::Preload preload)
 {
+    if (preload == m_preload)
+        return;
+
     m_preload = preload;
     m_private->setPreload(preload);
 }
