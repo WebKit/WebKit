@@ -783,9 +783,8 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
 
     qConvDebug() << "convertQVariantToValue: metatype:" << type << ", isnull: " << variant.isNull();
     if (variant.isNull() &&
-        type != QMetaType::QObjectStar &&
+        !QMetaType::typeFlags(type).testFlag(QMetaType::PointerToQObject)) &&
         type != QMetaType::VoidStar &&
-        type != QMetaType::QWidgetStar &&
         type != QMetaType::QString) {
         return jsNull();
     }
@@ -845,7 +844,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
         return toJS(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), wtfByteArray.get());
     }
 
-    if (type == QMetaType::QObjectStar || type == QMetaType::QWidgetStar) {
+    if (QMetaType::typeFlags(type).testFlag(QMetaType::PointerToQObject)) {
         QObject* obj = variant.value<QObject*>();
         if (!obj)
             return jsNull();
