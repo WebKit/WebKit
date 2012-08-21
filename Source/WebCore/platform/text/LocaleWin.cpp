@@ -278,16 +278,32 @@ static Vector<DateFormatToken> parseDateFormat(const String format)
 
 // -------------------------------- Parsing
 
+bool LocaleWin::isLocalizedDigit(UChar ch)
+{
+    String normalizedDigit = convertFromLocalizedNumber(String(&ch, 1));
+    if (normalizedDigit.length() != 1)
+        return false;
+    return isASCIIDigit(normalizedDigit[0]);
+}
+
 // Returns -1 if parsing fails.
-static int parseNumber(const String& input, unsigned& index)
+int LocaleWin::parseNumber(const String& input, unsigned& index)
 {
     unsigned digitsStart = index;
     while (index < input.length() && isASCIIDigit(input[index]))
         index++;
+    if (digitsStart != index) {
+        bool ok = false;
+        int number = input.substring(digitsStart, index - digitsStart).toInt(&ok);
+        return ok ? number : -1;
+    }
+
+    while (index < input.length() && isLocalizedDigit(input[index]))
+        index++;
     if (digitsStart == index)
         return -1;
     bool ok = false;
-    int number = input.substring(digitsStart, index - digitsStart).toInt(&ok);
+    int number = convertFromLocalizedNumber(input.substring(digitsStart, index - digitsStart)).toInt(&ok);
     return ok ? number : -1;
 }
 
@@ -403,31 +419,42 @@ double LocaleWin::parseDate(const Vector<DateFormatToken>& tokens, int baseYear,
 
 // -------------------------------- Formatting
 
-static inline void appendNumber(int value, StringBuilder& buffer)
+inline void LocaleWin::appendNumber(int value, StringBuilder& buffer)
 {
-    buffer.append(String::number(value));
+    buffer.append(convertToLocalizedNumber(String::number(value)));
 }
 
-static void appendTwoDigitsNumber(int value, StringBuilder& buffer)
+void LocaleWin::appendTwoDigitsNumber(int value, StringBuilder& buffer)
 {
-    if (value >= 0 && value < 10)
-        buffer.append("0");
-    buffer.append(String::number(value));
-}
-
-static void appendFourDigitsNumber(int value, StringBuilder& buffer)
-{
-    if (value < 0) {
-        buffer.append(String::number(value));
+    String numberString = String::number(value);
+    if (value < 0 || value >= 10) {
+        buffer.append(convertToLocalizedNumber(numberString));
         return;
     }
+    StringBuilder numberBuffer;
+    numberBuffer.reserveCapacity(1 + numberString.length());
+    numberBuffer.append("0");
+    numberBuffer.append(numberString);
+    buffer.append(convertToLocalizedNumber(numberBuffer.toString()));
+}
+
+void LocaleWin::appendFourDigitsNumber(int value, StringBuilder& buffer)
+{
+    String numberString = String::number(value);
+    if (value < 0) {
+        buffer.append(convertToLocalizedNumber(numberString));
+        return;
+    }
+    StringBuilder numberBuffer;
+    numberBuffer.reserveCapacity(3 + numberString.length());
     if (value < 10)
-        buffer.append("000");
+        numberBuffer.append("000");
     else if (value < 100)
-        buffer.append("00");
+        numberBuffer.append("00");
     else if (value < 1000)
-        buffer.append("0");
-    buffer.append(String::number(value));
+        numberBuffer.append("0");
+    numberBuffer.append(numberString);
+    buffer.append(convertToLocalizedNumber(numberBuffer.toString()));
 }
 
 String LocaleWin::formatDate(const DateComponents& dateComponents)

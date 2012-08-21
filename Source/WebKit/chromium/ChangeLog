@@ -1,5 +1,16 @@
 2012-08-20  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium-win] Use native digits in parsing/formatting dates in the textfield part of input[type=date]
+        https://bugs.webkit.org/show_bug.cgi?id=94281
+
+        Reviewed by Hajime Morita.
+
+        * tests/LocaleWinTest.cpp:
+        (TEST_F): Added formatting and parsing tests for Persian locale to check
+        native digit behavior.
+
+2012-08-20  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Make the popup positioning code testable
         https://bugs.webkit.org/show_bug.cgi?id=94086
 
