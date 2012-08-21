@@ -488,7 +488,7 @@ class RebaseliningTest(Base):
 
 class TestExpectationParserTests(unittest.TestCase):
     def _tokenize(self, line):
-        return TestExpectationParser._tokenize('path', line, 0)
+        return TestExpectationParser._tokenize_line('path', line, 0)
 
     def test_tokenize_blank(self):
         expectation = self._tokenize('')
@@ -529,15 +529,15 @@ class TestExpectationParserTests(unittest.TestCase):
     def test_tokenize_valid_with_comment(self):
         expectation = self._tokenize('FOO : bar = BAZ //Qux.')
         self.assertEqual(expectation.comment, 'Qux.')
-        self.assertEqual(str(expectation.modifiers), '[\'foo\']')
-        self.assertEqual(str(expectation.expectations), '[\'baz\']')
+        self.assertEqual(str(expectation.modifiers), "['FOO']")
+        self.assertEqual(str(expectation.expectations), "['BAZ']")
         self.assertEqual(len(expectation.warnings), 0)
 
     def test_tokenize_valid_with_multiple_modifiers(self):
         expectation = self._tokenize('FOO1 FOO2 : bar = BAZ //Qux.')
         self.assertEqual(expectation.comment, 'Qux.')
-        self.assertEqual(str(expectation.modifiers), '[\'foo1\', \'foo2\']')
-        self.assertEqual(str(expectation.expectations), '[\'baz\']')
+        self.assertEqual(str(expectation.modifiers), "['FOO1', 'FOO2']")
+        self.assertEqual(str(expectation.expectations), "['BAZ']")
         self.assertEqual(len(expectation.warnings), 0)
 
     def test_parse_empty_string(self):
@@ -560,7 +560,7 @@ class TestExpectationSerializerTests(unittest.TestCase):
         unittest.TestCase.__init__(self, testFunc)
 
     def _tokenize(self, line):
-        return TestExpectationParser._tokenize('path', line, 0)
+        return TestExpectationParser._tokenize_line('path', line, 0)
 
     def assert_round_trip(self, in_string, expected_string=None):
         expectation = self._tokenize(in_string)
@@ -569,7 +569,9 @@ class TestExpectationSerializerTests(unittest.TestCase):
         self.assertEqual(expected_string, self._serializer.to_string(expectation))
 
     def assert_list_round_trip(self, in_string, expected_string=None):
-        expectations = TestExpectationParser._tokenize_list('path', in_string)
+        host = MockHost()
+        parser = TestExpectationParser(host.port_factory.get('test-win-xp', None), [], allow_rebaseline_modifier=False)
+        expectations = parser.parse('path', in_string)
         if expected_string is None:
             expected_string = in_string
         self.assertEqual(expected_string, TestExpectationSerializer.list_to_string(expectations, self._converter))

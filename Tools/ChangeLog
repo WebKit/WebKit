@@ -1,3 +1,32 @@
+2012-08-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Cleanup TestExpectationParser.parse
+        https://bugs.webkit.org/show_bug.cgi?id=94545
+
+        Reviewed by Dirk Pranke.
+
+        Refactor TestExpectations to simplify the code.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser.parse): Merged _tokenize_list.
+        (TestExpectationParser._parse_line): Removed the call to _check_modifiers_against_expectations
+        since the check is now done in _parser_modifiers.
+        (TestExpectationParser._parse_modifiers): Merged _check_modifiers_against_expectations.
+        (TestExpectationParser._tokenize_line): Renamed from _tokenize.
+        (TestExpectationParser._split_space_separated): No longer calls lower() on all modifiers.
+        This is done on a local variable in _parse_modifiers, preserving the original case.
+        (TestExpectations.remove_rebaselined_tests.without_rebaseline_modifier): Check the existence
+        of 'rebaseline' against parsed modifiers.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (TestExpectationParserTests._tokenize):
+        (TestExpectationParserTests.test_tokenize_valid_with_comment): Preserves case.
+        (TestExpectationParserTests.test_tokenize_valid_with_multiple_modifiers): Ditto.
+        (TestExpectationSerializerTests._tokenize):
+        (TestExpectationSerializerTests.assert_list_round_trip): Call parse since _tokenize_list has
+        been merged into parse.
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        (PrintExpectationsTest.test_csv): Preserves the case.
+
 2012-08-20  Gustavo Noronha Silva  <gns@gnome.org>
 
         [jhbuild] EFL now runs jhbuild update for every build

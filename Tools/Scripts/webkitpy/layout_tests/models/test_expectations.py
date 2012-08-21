@@ -206,10 +206,14 @@ class TestExpectationParser(object):
         self._allow_rebaseline_modifier = allow_rebaseline_modifier
 
     def parse(self, filename, expectations_string):
-        expectations = TestExpectationParser._tokenize_list(filename, expectations_string)
-        for expectation_line in expectations:
-            self._parse_line(expectation_line)
-        return expectations
+        expectation_lines = []
+        line_number = 0
+        for line in expectations_string.split("\n"):
+            line_number += 1
+            test_expectation = self._tokenize_line(filename, line, line_number)
+            self._parse_line(test_expectation)
+            expectation_lines.append(test_expectation)
+        return expectation_lines
 
     def expectation_for_skipped_test(self, test_name):
         expectation_line = TestExpectationLine()
@@ -231,8 +235,6 @@ class TestExpectationParser(object):
         if not expectation_line.name:
             return
 
-        self._check_modifiers_against_expectations(expectation_line)
-
         expectation_line.is_file = self._port.test_isfile(expectation_line.name)
         if not expectation_line.is_file and self._check_path_does_not_exist(expectation_line):
             return
@@ -251,7 +253,14 @@ class TestExpectationParser(object):
         has_wontfix = False
         has_bugid = False
         parsed_specifiers = set()
-        for modifier in expectation_line.modifiers:
+
+        modifiers = [modifier.lower() for modifier in expectation_line.modifiers]
+        expectations = [expectation.lower() for expectation in expectation_line.expectations]
+
+        if self.SLOW_MODIFIER in modifiers and self.TIMEOUT_EXPECTATION in expectations:
+            expectation_line.warnings.append('A test can not be both SLOW and TIMEOUT. If it times out indefinitely, then it should be just TIMEOUT.')
+
+        for modifier in modifiers:
             if modifier in TestExpectations.MODIFIERS:
                 expectation_line.parsed_modifiers.append(modifier)
                 if modifier == self.WONTFIX_MODIFIER:
@@ -268,7 +277,7 @@ class TestExpectationParser(object):
         if not expectation_line.parsed_bug_modifiers and not has_wontfix and not has_bugid:
             expectation_line.warnings.append('Test lacks BUG modifier.')
 
-        if self._allow_rebaseline_modifier and self.REBASELINE_MODIFIER in expectation_line.modifiers:
+        if self._allow_rebaseline_modifier and self.REBASELINE_MODIFIER in modifiers:
             expectation_line.warnings.append('REBASELINE should only be used for running rebaseline.py. Cannot be checked in.')
 
         expectation_line.matching_configurations = self._test_configuration_converter.to_config_set(parsed_specifiers, expectation_line.warnings)
@@ -282,10 +291,6 @@ class TestExpectationParser(object):
                 continue
             result.add(expectation)
         expectation_line.parsed_expectations = result
-
-    def _check_modifiers_against_expectations(self, expectation_line):
-        if self.SLOW_MODIFIER in expectation_line.modifiers and self.TIMEOUT_EXPECTATION in expectation_line.expectations:
-            expectation_line.warnings.append('A test can not be both SLOW and TIMEOUT. If it times out indefinitely, then it should be just TIMEOUT.')
 
     def _check_path_does_not_exist(self, expectation_line):
         # WebKit's way of skipping tests is to add a -disabled suffix.
@@ -324,7 +329,7 @@ class TestExpectationParser(object):
             expectation_line.matching_tests.append(expectation_line.path)
 
     @classmethod
-    def _tokenize(cls, filename, expectation_string, line_number):
+    def _tokenize_line(cls, filename, expectation_string, line_number):
         """Tokenizes a line from TestExpectations and returns an unparsed TestExpectationLine instance.
 
         The format of a test expectation line is:
@@ -364,20 +369,9 @@ class TestExpectationParser(object):
         return expectation_line
 
     @classmethod
-    def _tokenize_list(cls, filename, expectations_string):
-        """Returns a list of TestExpectationLines, one for each line in expectations_string."""
-        expectation_lines = []
-        line_number = 0
-        for line in expectations_string.split("\n"):
-            line_number += 1
-            expectation_lines.append(cls._tokenize(filename, line, line_number))
-        return expectation_lines
-
-    @classmethod
     def _split_space_separated(cls, space_separated_string):
         """Splits a space-separated string into an array."""
-        # FIXME: Lower-casing is necessary to support legacy code. Need to eliminate.
-        return [part.strip().lower() for part in space_separated_string.strip().split(' ')]
+        return [part.strip() for part in space_separated_string.strip().split(' ')]
 
 
 class TestExpectationLine(object):
@@ -857,7 +851,7 @@ class TestExpectations(object):
         def without_rebaseline_modifier(expectation):
             return not (not expectation.is_invalid() and
                         expectation.name in except_these_tests and
-                        "rebaseline" in expectation.modifiers and
+                        'rebaseline' in expectation.parsed_modifiers and
                         filename == expectation.filename)
 
         return TestExpectationSerializer.list_to_string(filter(without_rebaseline_modifier, self._expectations))
