@@ -1,3 +1,9 @@
+2012-08-20  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed. Fixed lint errors in TestExpectations after r126110.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-20  Levi Weintraub  <leviw@chromium.org>
 
         [Sub-pixel Layout] Block selection gap repainting can leave one pixel gaps

@@ -1063,7 +1063,7 @@ BUGWK71792 : editing/spelling/markers.html = TEXT
 BUGCR79854 : editing/execCommand/delete-empty-container.html = PASS TEXT
 
 // pulled in from downstream during webkit roll 84350:84431
-BUGCASEQ LINUX ANDROID WIN : editing/selection/select-from-textfield-outwards.html = IMAGE+TEXT
+BUGCASEQ ANDROID : editing/selection/select-from-textfield-outwards.html = IMAGE+TEXT
 
 BUGWK60120 DEBUG : editing/execCommand/append-node-under-document.html = PASS TEXT
 
@@ -2424,7 +2424,7 @@ BUGWK60103 MAC : fast/replaced/border-radius-clip.html = IMAGE+TEXT
 BUGWK60131 SLOW : fast/css/visited-link-hang.html = PASS
 
 // pulled in from downstream during webkit roll 84350:84431
-BUGCASEQ LINUX ANDROID WIN : fast/forms/input-text-drag-down.html = IMAGE+TEXT
+BUGCASEQ ANDROID : fast/forms/input-text-drag-down.html = IMAGE+TEXT
 
 // Introduced in r84443
 BUGWK59063 : fast/images/animated-gif-restored-from-bfcache.html = TEXT
@@ -3223,7 +3223,6 @@ BUGLEVIW LINUX SNOWLEOPARD WIN : fast/css/input-search-padding.html = IMAGE PASS
 BUGLEVIW LINUX SNOWLEOPARD WIN : fast/css/line-height-determined-by-primary-font.html = IMAGE PASS
 BUGLEVIW LINUX SNOWLEOPARD WIN : fast/css/line-height.html = IMAGE PASS
 BUGLEVIW LINUX SNOWLEOPARD WIN : fast/css/square-button-appearance.html = IMAGE PASS
-BUGLEVIW LINUX SNOWLEOPARD WIN : fast/css/text-overflow-input.html = IMAGE PASS
 BUGLEVIW LINUX SNOWLEOPARD WIN : fast/dom/isindex-001.html = IMAGE PASS
 BUGLEVIW LINUX SNOWLEOPARD WIN : fast/dom/isindex-002.html = IMAGE PASS
 BUGLEVIW LINUX SNOWLEOPARD WIN : fast/events/autoscroll.html = IMAGE PASS
@@ -3461,7 +3460,7 @@ BUGWK89813 LINUX ANDROID DEBUG : fast/js/large-expressions.html = PASS TIMEOUT
 
 BUGWK89820 : fast/text/hyphen-min-preferred-width.html = IMAGE
 
-BUGWK91433 LINUX ANDROID : fast/forms/placeholder-position.html = PASS IMAGE
+BUGWK91433 ANDROID : fast/forms/placeholder-position.html = PASS IMAGE
 
 // Kerning seems disabled for some reason.
 BUGWK89936 XP : fast/text/atsui-kerning-and-ligatures.html = IMAGE
