@@ -8,11 +8,11 @@ layer at (0,0) size 800x284
           text run at (0,3) width 690: "This tests horizontal caret movement in vertical writing mode. \"\x{3042}\x{308B}\x{3002}\" and \"\x{540D}\x{524D}\x{306F}\x{307E}\x{3060}\" must be selected."
       RenderBlock {DIV} at (0,40) size 96x215
         RenderBlock {P} at (16,0) size 24x215
-          RenderText {#text} at (3,0) size 18x129
-            text run at (3,0) width 129: "\x{543E}\x{8F29}\x{306F}\x{732B}\x{3067}\x{3042}\x{308B}\x{3002}"
+          RenderText {#text} at (3,0) size 18x128
+            text run at (3,0) width 128: "\x{543E}\x{8F29}\x{306F}\x{732B}\x{3067}\x{3042}\x{308B}\x{3002}"
         RenderBlock {P} at (56,0) size 24x215
-          RenderText {#text} at (3,0) size 18x129
-            text run at (3,0) width 129: "\x{540D}\x{524D}\x{306F}\x{307E}\x{3060}\x{7121}\x{3044}\x{3002}"
+          RenderText {#text} at (3,0) size 18x128
+            text run at (3,0) width 128: "\x{540D}\x{524D}\x{306F}\x{307E}\x{3060}\x{7121}\x{3044}\x{3002}"
       RenderBlock {PRE} at (0,268) size 784x0
 selection start: position 5 of child 0 {#text} of child 1 {P} of child 3 {DIV} of body
 selection end:   position 5 of child 0 {#text} of child 3 {P} of child 3 {DIV} of body

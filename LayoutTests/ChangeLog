@@ -1,3 +1,37 @@
+2012-08-21  Brady Eidson  <beidson@apple.com>
+
+        Rebaseline failing editing/selection tests for mountain lion
+        https://bugs.webkit.org/show_bug.cgi?id=94629
+
+        Reviewed by Simon Fraser.
+
+        Move current Mac-specific results to platform/mac-lion and add Mountain Lion results to platform/mac
+
+        * platform/mac-lion/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.png: Renamed from LayoutTests/platform/mac/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.png.
+        * platform/mac-lion/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt.
+        * platform/mac-lion/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.png: Renamed from LayoutTests/platform/mac/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.png.
+        * platform/mac-lion/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt.
+        * platform/mac-lion/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.png: Renamed from LayoutTests/platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.png.
+        * platform/mac-lion/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt.
+        * platform/mac-lion/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.png: Renamed from LayoutTests/platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.png.
+        * platform/mac-lion/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt.
+        * platform/mac-lion/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png: Renamed from LayoutTests/platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png.
+        * platform/mac-lion/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt.
+        * platform/mac-lion/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png: Renamed from LayoutTests/platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png.
+        * platform/mac-lion/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt.
+        * platform/mac-lion/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.png: Renamed from LayoutTests/platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.png.
+        * platform/mac-lion/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt.
+        * platform/mac-lion/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png: Renamed from LayoutTests/platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png.
+        * platform/mac-lion/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt.
+        * platform/mac/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt:
+
 2012-08-21  Kenneth Russell  <kbr@google.com>
 
         [Chromium] context-creation-and-destruction layout tests are slow
