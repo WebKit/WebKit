@@ -57,6 +57,7 @@ class ImageDiffer(object):
 
             if not self._process:
                 self._start(tolerance)
+            # Note that although we are handed 'old', 'new', ImageDiff wants 'new', 'old'.
             self._process.write('Content-Length: %d\n%sContent-Length: %d\n%s' % (
                 len(actual_contents), actual_contents,
                 len(expected_contents), expected_contents))

@@ -110,7 +110,7 @@ class SingleTestRunner(object):
             expected_driver_output.strip_metrics()
             driver_output.strip_metrics()
 
-        test_result = self._compare_output(driver_output, expected_driver_output)
+        test_result = self._compare_output(expected_driver_output, driver_output)
         if self._options.new_test_results:
             self._add_missing_baselines(test_result, driver_output)
         test_result_writer.write_test_result(self._filesystem, self._port, self._test_name, driver_output, expected_driver_output, test_result.failures)
@@ -209,7 +209,7 @@ class SingleTestRunner(object):
             _log.debug("  %s" % line)
         return failures
 
-    def _compare_output(self, driver_output, expected_driver_output):
+    def _compare_output(self, expected_driver_output, driver_output):
         failures = []
         failures.extend(self._handle_error(driver_output))
 
@@ -218,26 +218,26 @@ class SingleTestRunner(object):
             # In case of timeouts, we continue since we still want to see the text and image output.
             return TestResult(self._test_name, failures, driver_output.test_time, driver_output.has_stderr())
 
-        failures.extend(self._compare_text(driver_output.text, expected_driver_output.text))
-        failures.extend(self._compare_audio(driver_output.audio, expected_driver_output.audio))
+        failures.extend(self._compare_text(expected_driver_output.text, driver_output.text))
+        failures.extend(self._compare_audio(expected_driver_output.audio, driver_output.audio))
         if self._should_run_pixel_test:
-            failures.extend(self._compare_image(driver_output, expected_driver_output))
+            failures.extend(self._compare_image(expected_driver_output, driver_output))
         return TestResult(self._test_name, failures, driver_output.test_time, driver_output.has_stderr())
 
-    def _compare_text(self, actual_text, expected_text):
+    def _compare_text(self, expected_text, actual_text):
         failures = []
         if (expected_text and actual_text and
             # Assuming expected_text is already normalized.
-            self._port.do_text_results_differ(self._get_normalized_output_text(actual_text), expected_text)):
+            self._port.do_text_results_differ(expected_text, self._get_normalized_output_text(actual_text))):
             failures.append(test_failures.FailureTextMismatch())
         elif actual_text and not expected_text:
             failures.append(test_failures.FailureMissingResult())
         return failures
 
-    def _compare_audio(self, actual_audio, expected_audio):
+    def _compare_audio(self, expected_audio, actual_audio):
         failures = []
         if (expected_audio and actual_audio and
-            self._port.do_audio_results_differ(actual_audio, expected_audio)):
+            self._port.do_audio_results_differ(expected_audio, actual_audio)):
             failures.append(test_failures.FailureAudioMismatch())
         elif actual_audio and not expected_audio:
             failures.append(test_failures.FailureMissingAudio())
@@ -254,7 +254,7 @@ class SingleTestRunner(object):
 
     # FIXME: This function also creates the image diff. Maybe that work should
     # be handled elsewhere?
-    def _compare_image(self, driver_output, expected_driver_output):
+    def _compare_image(self, expected_driver_output, driver_output):
         failures = []
         # If we didn't produce a hash file, this test must be text-only.
         if driver_output.image_hash is None:
@@ -264,7 +264,7 @@ class SingleTestRunner(object):
         elif not expected_driver_output.image_hash:
             failures.append(test_failures.FailureMissingImageHash())
         elif driver_output.image_hash != expected_driver_output.image_hash:
-            diff_result = self._port.diff_image(driver_output.image, expected_driver_output.image)
+            diff_result = self._port.diff_image(expected_driver_output.image, driver_output.image)
             err_str = diff_result[2]
             # FIXME: see https://bugs.webkit.org/show_bug.cgi?id=94277 and
             # https://bugs.webkit.org/show_bug.cgi?id=81962; ImageDiff doesn't
@@ -298,7 +298,7 @@ class SingleTestRunner(object):
         for expectation, reference_filename in putAllMismatchBeforeMatch(self._reference_files):
             reference_test_name = self._port.relative_test_filename(reference_filename)
             reference_output = self._driver.run_test(DriverInput(reference_test_name, self._timeout, test_output.image_hash, should_run_pixel_test=True), self._stop_when_done)
-            test_result = self._compare_output_with_reference(test_output, reference_output, reference_filename, expectation == '!=')
+            test_result = self._compare_output_with_reference(reference_output, test_output, reference_filename, expectation == '!=')
 
             if (expectation == '!=' and test_result.failures) or (expectation == '==' and not test_result.failures):
                 break
@@ -308,15 +308,15 @@ class SingleTestRunner(object):
         test_result_writer.write_test_result(self._filesystem, self._port, self._test_name, test_output, reference_output, test_result.failures)
         return TestResult(self._test_name, test_result.failures, total_test_time + test_result.test_run_time, test_result.has_stderr)
 
-    def _compare_output_with_reference(self, driver_output1, driver_output2, reference_filename, mismatch):
-        total_test_time = driver_output1.test_time + driver_output2.test_time
-        has_stderr = driver_output1.has_stderr() or driver_output2.has_stderr()
+    def _compare_output_with_reference(self, reference_driver_output, actual_driver_output, reference_filename, mismatch):
+        total_test_time = reference_driver_output.test_time + actual_driver_output.test_time
+        has_stderr = reference_driver_output.has_stderr() or actual_driver_output.has_stderr()
         failures = []
-        failures.extend(self._handle_error(driver_output1))
+        failures.extend(self._handle_error(actual_driver_output))
         if failures:
             # Don't continue any more if we already have crash or timeout.
             return TestResult(self._test_name, failures, total_test_time, has_stderr)
-        failures.extend(self._handle_error(driver_output2, reference_filename=reference_filename))
+        failures.extend(self._handle_error(reference_driver_output, reference_filename=reference_filename))
         if failures:
             return TestResult(self._test_name, failures, total_test_time, has_stderr)
 
@@ -324,15 +324,15 @@ class SingleTestRunner(object):
             # don't check pixel results for WTR/WK2; they're broken.
             return TestResult(self._test_name, failures, total_test_time, has_stderr)
 
-        if not driver_output1.image_hash and not driver_output2.image_hash:
+        if not reference_driver_output.image_hash and not actual_driver_output.image_hash:
             failures.append(test_failures.FailureReftestNoImagesGenerated(reference_filename))
         elif mismatch:
-            if driver_output1.image_hash == driver_output2.image_hash:
+            if reference_driver_output.image_hash == actual_driver_output.image_hash:
                 failures.append(test_failures.FailureReftestMismatchDidNotOccur(reference_filename))
-        elif driver_output1.image_hash != driver_output2.image_hash:
+        elif reference_driver_output.image_hash != actual_driver_output.image_hash:
             failures.append(test_failures.FailureReftestMismatch(reference_filename))
 
         # recompute in case we added to stderr during diff_image
-        has_stderr = driver_output1.has_stderr() or driver_output2.has_stderr()
+        has_stderr = reference_driver_output.has_stderr() or actual_driver_output.has_stderr()
 
         return TestResult(self._test_name, failures, total_test_time, has_stderr)

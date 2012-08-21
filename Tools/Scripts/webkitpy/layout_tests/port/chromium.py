@@ -216,6 +216,7 @@ class ChromiumPort(Port):
         native_diff_filename = self._convert_path(diff_filename)
 
         executable = self._path_to_image_diff()
+        # Note that although we are handed 'old', 'new', image_diff wants 'new', 'old'.
         comand = [executable, '--diff', native_actual_filename, native_expected_filename, native_diff_filename]
 
         result = None

@@ -1,3 +1,24 @@
+2012-08-21  Dirk Pranke  <dpranke@chromium.org>
+
+        _compare_image() swaps actual and expected images by mistake
+        https://bugs.webkit.org/show_bug.cgi?id=94567
+
+        Reviewed by Ojan Vafai.
+
+        Re-work the code so that we consistently pass (expected, actual)
+        across all of the compare/diff routines.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._run_compare_test):
+        (SingleTestRunner._compare_output):
+        (SingleTestRunner._compare_text):
+        (SingleTestRunner._compare_audio):
+        (SingleTestRunner._compare_image):
+        (SingleTestRunner._run_reftest):
+        (SingleTestRunner._compare_output_with_reference):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (write_test_result):
+
 2012-08-21  Adam Barth  <abarth@webkit.org>
 
         Unreviewed. Move the commit-queue to building release only. Previously,
