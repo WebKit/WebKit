@@ -37,8 +37,8 @@ struct GradientAttributes {
     {
     }
 
-    SVGSpreadMethodType spreadMethod() const { return m_spreadMethod; }
-    SVGUnitTypes::SVGUnitType gradientUnits() const { return m_gradientUnits; }
+    SVGSpreadMethodType spreadMethod() const { return static_cast<SVGSpreadMethodType>(m_spreadMethod); }
+    SVGUnitTypes::SVGUnitType gradientUnits() const { return static_cast<SVGUnitTypes::SVGUnitType>(m_gradientUnits); }
     AffineTransform gradientTransform() const { return m_gradientTransform; }
     const Vector<Gradient::ColorStop>& stops() const { return m_stops; }
 
@@ -73,17 +73,26 @@ struct GradientAttributes {
 
 private:
     // Properties
-    SVGSpreadMethodType m_spreadMethod;
-    SVGUnitTypes::SVGUnitType m_gradientUnits;
     AffineTransform m_gradientTransform;
     Vector<Gradient::ColorStop> m_stops;
 
+    unsigned m_spreadMethod : 2;
+    unsigned m_gradientUnits : 2;
+
     // Property states
-    bool m_spreadMethodSet : 1;
-    bool m_gradientUnitsSet : 1;
-    bool m_gradientTransformSet : 1;
-    bool m_stopsSet : 1;
+    unsigned m_spreadMethodSet : 1;
+    unsigned m_gradientUnitsSet : 1;
+    unsigned m_gradientTransformSet : 1;
+    unsigned m_stopsSet : 1;
 };
+
+struct SameSizeAsGradientAttributes {
+    AffineTransform a;
+    Vector<Gradient::ColorStop> b;
+    unsigned c : 8;
+};
+
+COMPILE_ASSERT(sizeof(GradientAttributes) == sizeof(SameSizeAsGradientAttributes), GradientAttributes_size_guard);
 
 } // namespace WebCore
 
