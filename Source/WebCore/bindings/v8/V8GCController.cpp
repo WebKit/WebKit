@@ -520,7 +520,7 @@ void V8GCController::checkMemoryUsage()
 #endif
 }
 
-void V8GCController::collectGarbageIfNecessary()
+void V8GCController::hintForCollectGarbage()
 {
     V8PerIsolateData* data = V8PerIsolateData::current();
     if (!data->shouldCollectGarbageSoon())

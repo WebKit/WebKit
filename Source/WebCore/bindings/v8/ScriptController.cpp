@@ -165,14 +165,14 @@ void ScriptController::resetIsolatedWorlds()
 void ScriptController::clearForClose()
 {
     resetIsolatedWorlds();
-    V8GCController::collectGarbageIfNecessary();
+    V8GCController::hintForCollectGarbage();
     windowShell()->clearForClose();
 }
 
 void ScriptController::clearForNavigation()
 {
     resetIsolatedWorlds();
-    V8GCController::collectGarbageIfNecessary();
+    V8GCController::hintForCollectGarbage();
     windowShell()->clearForNavigation();
 }
 
