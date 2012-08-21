@@ -4121,22 +4121,28 @@ PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& 
     return 0;
 }
 
+void Document::addMutationEventListenerTypeIfEnabled(ListenerType listenerType)
+{
+    if (ContextFeatures::mutationEventsEnabled(this))
+        addListenerType(listenerType);
+}
+
 void Document::addListenerTypeIfNeeded(const AtomicString& eventType)
 {
     if (eventType == eventNames().DOMSubtreeModifiedEvent)
-        addListenerType(DOMSUBTREEMODIFIED_LISTENER);
+        addMutationEventListenerTypeIfEnabled(DOMSUBTREEMODIFIED_LISTENER);
     else if (eventType == eventNames().DOMNodeInsertedEvent)
-        addListenerType(DOMNODEINSERTED_LISTENER);
+        addMutationEventListenerTypeIfEnabled(DOMNODEINSERTED_LISTENER);
     else if (eventType == eventNames().DOMNodeRemovedEvent)
-        addListenerType(DOMNODEREMOVED_LISTENER);
+        addMutationEventListenerTypeIfEnabled(DOMNODEREMOVED_LISTENER);
     else if (eventType == eventNames().DOMNodeRemovedFromDocumentEvent)
-        addListenerType(DOMNODEREMOVEDFROMDOCUMENT_LISTENER);
+        addMutationEventListenerTypeIfEnabled(DOMNODEREMOVEDFROMDOCUMENT_LISTENER);
     else if (eventType == eventNames().DOMNodeInsertedIntoDocumentEvent)
-        addListenerType(DOMNODEINSERTEDINTODOCUMENT_LISTENER);
+        addMutationEventListenerTypeIfEnabled(DOMNODEINSERTEDINTODOCUMENT_LISTENER);
     else if (eventType == eventNames().DOMAttrModifiedEvent)
-        addListenerType(DOMATTRMODIFIED_LISTENER);
+        addMutationEventListenerTypeIfEnabled(DOMATTRMODIFIED_LISTENER);
     else if (eventType == eventNames().DOMCharacterDataModifiedEvent)
-        addListenerType(DOMCHARACTERDATAMODIFIED_LISTENER);
+        addMutationEventListenerTypeIfEnabled(DOMCHARACTERDATAMODIFIED_LISTENER);
     else if (eventType == eventNames().overflowchangedEvent)
         addListenerType(OVERFLOWCHANGED_LISTENER);
     else if (eventType == eventNames().webkitAnimationStartEvent)

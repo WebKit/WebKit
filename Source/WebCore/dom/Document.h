@@ -807,7 +807,6 @@ public:
     };
 
     bool hasListenerType(ListenerType listenerType) const { return (m_listenerTypes & listenerType); }
-    void addListenerType(ListenerType listenerType) { m_listenerTypes = m_listenerTypes | listenerType; }
     void addListenerTypeIfNeeded(const AtomicString& eventType);
 
 #if ENABLE(MUTATION_OBSERVERS)
@@ -1267,6 +1266,9 @@ private:
     void setVisualUpdatesAllowed(ReadyState);
     void setVisualUpdatesAllowed(bool);
     void visualUpdatesSuppressionTimerFired(Timer<Document>*);
+
+    void addListenerType(ListenerType listenerType) { m_listenerTypes |= listenerType; }
+    void addMutationEventListenerTypeIfEnabled(ListenerType);
 
     int m_guardRefCount;
 

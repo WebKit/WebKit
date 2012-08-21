@@ -96,6 +96,11 @@ public:
     // Controls whether enabling HTML notifications for this frame.
     virtual bool allowHTMLNotifications(const WebDocument&) { return true; }
 
+    // Controls whether to enable MutationEvents for this document.
+    // The common use case of this method is actually to selectively disable MutationEvents,
+    // but it's been named for consistency with the rest of the interface.
+    virtual bool allowMutationEvents(const WebDocument&, bool defaultValue) { return defaultValue; }
+
     // Notifies the client that the frame would have instantiated a plug-in if plug-ins were enabled.
     virtual void didNotAllowPlugins(WebFrame*) { }
 

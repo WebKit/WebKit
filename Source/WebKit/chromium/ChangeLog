@@ -1,3 +1,19 @@
+2012-08-20  Adam Klein  <adamk@chromium.org>
+
+        Allow MutationEvents to be enabled/disabled per context
+        https://bugs.webkit.org/show_bug.cgi?id=94016
+
+        Reviewed by Ojan Vafai.
+
+        Add Chromium/WebKit API for enabling/disabling MutationEvents via
+        WebPermissionClient.
+
+        * public/WebPermissionClient.h:
+        (WebPermissionClient):
+        (WebKit::WebPermissionClient::allowMutationEvents):
+        * src/ContextFeaturesClientImpl.cpp:
+        (WebKit::ContextFeaturesClientImpl::askIfIsEnabled):
+
 2012-08-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126095.

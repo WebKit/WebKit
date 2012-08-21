@@ -111,6 +111,14 @@ bool ContextFeatures::htmlNotificationsEnabled(Document* document)
 #endif
 }
 
+bool ContextFeatures::mutationEventsEnabled(Document* document)
+{
+    ASSERT(document);
+    if (!document)
+        return true;
+    return document->contextFeatures()->isEnabled(document, MutationEvents, true);
+}
+
 void provideContextFeaturesTo(Page* page, ContextFeaturesClient* client)
 {
     RefCountedSupplement<Page, ContextFeatures>::provideTo(page, ContextFeatures::supplementName(), ContextFeatures::create(client));

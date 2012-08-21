@@ -44,6 +44,7 @@ public:
         StyleScoped,
         PagePopup,
         HTMLNotifications,
+        MutationEvents,
         FeatureTypeSize // Should be the last entry.
     };
 
@@ -56,6 +57,7 @@ public:
     static bool styleScopedEnabled(Document*);
     static bool pagePopupEnabled(Document*);
     static bool htmlNotificationsEnabled(Document*);
+    static bool mutationEventsEnabled(Document*);
 
     bool isEnabled(Document*, FeatureType, bool) const;
     void urlDidChange(Document*);
