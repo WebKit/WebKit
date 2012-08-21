@@ -237,7 +237,7 @@ template <typename T>
 void MemoryInstrumentation::addInstrumentedObjectImpl(const DataRef<T>* const& object, ObjectType ownerObjectType, OwningType owningType)
 {
     if (owningType == byPointer)
-        countObjectSize(ownerObjectType, sizeof(DataRef<T>));
+        countObjectSize(ownerObjectType, sizeof(*object));
     addInstrumentedObjectImpl(object->get(), ownerObjectType, byPointer);
 }
 
@@ -245,7 +245,7 @@ template <typename T>
 void MemoryInstrumentation::addInstrumentedObjectImpl(const OwnPtr<T>* const& object, ObjectType ownerObjectType, OwningType owningType)
 {
     if (owningType == byPointer)
-        countObjectSize(ownerObjectType, sizeof(OwnPtr<T>));
+        countObjectSize(ownerObjectType, sizeof(*object));
     addInstrumentedObjectImpl(object->get(), ownerObjectType, byPointer);
 }
 
@@ -253,7 +253,7 @@ template <typename T>
 void MemoryInstrumentation::addInstrumentedObjectImpl(const RefPtr<T>* const& object, ObjectType ownerObjectType, OwningType owningType)
 {
     if (owningType == byPointer)
-        countObjectSize(ownerObjectType, sizeof(RefPtr<T>));
+        countObjectSize(ownerObjectType, sizeof(*object));
     addInstrumentedObjectImpl(object->get(), ownerObjectType, byPointer);
 }
 
@@ -261,7 +261,7 @@ template <typename T>
 void MemoryInstrumentation::addObjectImpl(const DataRef<T>* const& object, ObjectType ownerObjectType, OwningType owningType)
 {
     if (owningType == byPointer)
-        countObjectSize(ownerObjectType, sizeof(DataRef<T>));
+        countObjectSize(ownerObjectType, sizeof(*object));
     addObjectImpl(object->get(), ownerObjectType, byPointer);
 }
 
@@ -269,7 +269,7 @@ template <typename T>
 void MemoryInstrumentation::addObjectImpl(const OwnPtr<T>* const& object, ObjectType ownerObjectType, OwningType owningType)
 {
     if (owningType == byPointer)
-        countObjectSize(ownerObjectType, sizeof(RefPtr<T>));
+        countObjectSize(ownerObjectType, sizeof(*object));
     addObjectImpl(object->get(), ownerObjectType, byPointer);
 }
 
@@ -277,7 +277,7 @@ template <typename T>
 void MemoryInstrumentation::addObjectImpl(const RefPtr<T>* const& object, ObjectType ownerObjectType, OwningType owningType)
 {
     if (owningType == byPointer)
-        countObjectSize(ownerObjectType, sizeof(RefPtr<T>));
+        countObjectSize(ownerObjectType, sizeof(*object));
     addObjectImpl(object->get(), ownerObjectType, byPointer);
 }
 
