@@ -1,3 +1,9 @@
+2012-08-21  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r115348.
+
+        * Source/cmake/OptionsWindows.cmake: Removed duplicated WEBKIT_OPTION_DEFAULT_PORT_VALUE().
+
 2012-08-20  George Staikos  <staikos@webkit.org>
 
         [BlackBerry] Enable XHR Response BLOB
