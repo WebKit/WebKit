@@ -1,3 +1,16 @@
+2012-08-20  James Robinson  <jamesr@chromium.org>
+
+        [chromium] REGRESSION(126076) Should not touch old GraphicsLayerChromium::m_contentsLayer when setting up a new contents layer
+        https://bugs.webkit.org/show_bug.cgi?id=94544
+
+        Reviewed by Adrienne Walker.
+
+        Exposes an id so users of the WebLayer API can make identity checks for layers that they do not have ownership
+        of.
+
+        * chromium/public/WebLayer.h:
+        (WebLayer):
+
 2012-08-16  James Robinson  <jamesr@chromium.org>
 
         [chromium] Change WebLayer from a concrete type to a pure virtual interface

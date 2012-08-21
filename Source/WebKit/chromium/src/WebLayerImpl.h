@@ -41,6 +41,7 @@ public:
     virtual ~WebLayerImpl();
 
     // WebLayer implementation.
+    virtual int id() const OVERRIDE;
     virtual void invalidateRect(const WebFloatRect&) OVERRIDE;
     virtual void invalidate() OVERRIDE;
     virtual void addChild(WebLayer*) OVERRIDE;

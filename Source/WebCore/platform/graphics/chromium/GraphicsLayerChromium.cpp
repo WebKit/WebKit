@@ -84,6 +84,7 @@ PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_contentsLayer(0)
+    , m_contentsLayerId(0)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_contentsLayerHasBackgroundColor(false)
     , m_inSetChildren(false)
@@ -443,7 +444,7 @@ void GraphicsLayerChromium::setContentsToImage(Image* image)
 {
     bool childrenChanged = false;
     if (image) {
-        if (!m_contentsLayer || m_contentsLayerPurpose != ContentsLayerForImage) {
+        if (m_contentsLayerPurpose != ContentsLayerForImage) {
             m_imageLayer = adoptPtr(WebImageLayer::create());
             setupContentsLayer(m_imageLayer->layer());
             m_contentsLayerPurpose = ContentsLayerForImage;
@@ -481,7 +482,7 @@ void GraphicsLayerChromium::setContentsTo(ContentsLayerPurpose purpose, WebKit::
 {
     bool childrenChanged = false;
     if (layer) {
-        if (m_contentsLayer || m_contentsLayerPurpose != purpose) {
+        if (m_contentsLayerId != layer->id()) {
             setupContentsLayer(layer);
             m_contentsLayerPurpose = purpose;
             childrenChanged = true;
@@ -768,14 +769,6 @@ void GraphicsLayerChromium::updateContentsScale()
 
 void GraphicsLayerChromium::setupContentsLayer(WebLayer* contentsLayer)
 {
-    if (contentsLayer == m_contentsLayer)
-        return;
-
-    if (m_contentsLayer) {
-        m_contentsLayer->setUseParentBackfaceVisibility(false);
-        m_contentsLayer->removeFromParent();
-    }
-
     m_contentsLayer = contentsLayer;
 
     if (m_contentsLayer) {

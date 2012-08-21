@@ -1,3 +1,16 @@
+2012-08-20  James Robinson  <jamesr@chromium.org>
+
+        [chromium] REGRESSION(126076) Should not touch old GraphicsLayerChromium::m_contentsLayer when setting up a new contents layer
+        https://bugs.webkit.org/show_bug.cgi?id=94544
+
+        Reviewed by Adrienne Walker.
+
+        * src/WebLayerImpl.cpp:
+        (WebKit::WebLayerImpl::id):
+        (WebKit):
+        * src/WebLayerImpl.h:
+        (WebLayerImpl):
+
 2012-08-20  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Move collectGarbage() from ScriptController to V8GCController

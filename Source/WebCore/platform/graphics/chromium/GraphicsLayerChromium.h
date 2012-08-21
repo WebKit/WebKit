@@ -168,6 +168,11 @@ private:
     OwnPtr<WebKit::WebLayer> m_transformLayer;
     OwnPtr<WebKit::WebImageLayer> m_imageLayer;
     WebKit::WebLayer* m_contentsLayer;
+    // We don't have ownership of m_contentsLayer, but we do want to know if a given layer is the
+    // same as our current layer in setContentsTo(). Since m_contentsLayer may be deleted at this point,
+    // we stash an ID away when we know m_contentsLayer is alive and use that for comparisons from that point
+    // on.
+    int m_contentsLayerId;
 
     OwnPtr<OpaqueRectTrackingContentLayerDelegate> m_opaqueRectTrackingContentLayerDelegate;
 

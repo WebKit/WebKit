@@ -93,6 +93,11 @@ WebLayerImpl::~WebLayerImpl()
     m_layer->setLayerAnimationDelegate(0);
 }
 
+int WebLayerImpl::id() const
+{
+    return m_layer->id();
+}
+
 void WebLayerImpl::invalidateRect(const WebFloatRect& rect)
 {
     m_layer->setNeedsDisplayRect(rect);
