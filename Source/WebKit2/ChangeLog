@@ -1,3 +1,11 @@
+2012-08-21  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/8900275> Remove PubSub access from WebProcess, since it is no longer necessary
+
+        Reviewed by Mark Rowe.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2012-08-21  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Some public API functions don't have their symbols exported

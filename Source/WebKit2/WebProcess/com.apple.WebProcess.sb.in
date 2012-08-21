@@ -183,13 +183,6 @@
        (literal "/private/var/run/mDNSResponder")
        (remote tcp))
 
-;; FIXME: Once <rdar://problem/8900275> has been fixed, these rules can be removed.
-(allow mach-lookup (global-name "com.apple.pubsub.ipc"))
-(allow network-outbound (regex #"^/private/tmp/launch-[^/]+/Render"))
-(allow file-read*
-       (home-literal "/Library/Preferences/com.apple.Safari.RSS.plist")
-       (home-literal "/Library/Preferences/com.apple.Syndication.plist"))
-
 ;; FIXME should be removed when <rdar://problem/9347205> + related radar in Safari is fixed
 (allow mach-lookup
        (global-name "org.h5l.kcm")
