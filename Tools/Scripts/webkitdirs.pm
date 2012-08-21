@@ -2078,7 +2078,7 @@ sub jhbuildWrapperPrefixIfNeeded()
         }
     }
 
-    return "env";
+    return "";
 }
 
 sub removeCMakeCache()
