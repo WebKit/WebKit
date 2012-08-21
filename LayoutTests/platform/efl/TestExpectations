@@ -57,9 +57,6 @@ BUGWK85262 SKIP : fast/css/image-resolution = PASS
 // CSS image-orientation is not yet enabled.
 BUGWK89052 SKIP : fast/css/image-orientation = PASS
 
-// CSS3 Text Decoration support is not yet enabled (needs ENABLE_CSS3_TEXT_DECORATION).
-BUGWK58491 SKIP : fast/css3-text-decoration = PASS
-
 // This test assumes we cannot play RTSP, but we can.
 BUGWKEFL SKIP : media/unsupported-rtsp.html = TIMEOUT
 

@@ -172,7 +172,7 @@ my @features = (
       define => "ENABLE_CSS3_FLEXBOX", default => 1, value => \$css3FlexboxSupport },
 
     { option => "css3-text-decoration", desc => "Toggle CSS3 Text Decoration support",
-      define => "ENABLE_CSS3_TEXT_DECORATION", default => 0, value => \$css3TextDecorationSupport },
+      define => "ENABLE_CSS3_TEXT_DECORATION", default => isEfl(), value => \$css3TextDecorationSupport },
 
     { option => "css-hierarchies", desc => "Toggle CSS Hierarchy support",
       define => "ENABLE_CSS_HIERARCHIES", default => 0, value => \$cssHierarchiesSupport },

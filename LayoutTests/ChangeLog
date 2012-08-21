@@ -1,3 +1,14 @@
+2012-08-21  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Enable CSS Text Decoration by default
+        https://bugs.webkit.org/show_bug.cgi?id=94483
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove test that will now pass from the skip list.
+
+        * platform/efl/TestExpectations:
+
 2012-08-21  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Completion events of InspectorFileSystemAgent should be fired asynchronously.
