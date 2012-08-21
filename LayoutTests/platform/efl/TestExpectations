@@ -80,6 +80,9 @@ WONTFIX X86 : svg/css/stars-with-shadow.html = PASS TEXT
 // Newly added test which fails on other bots too
 BUGWK85969 : http/tests/loading/post-in-iframe-with-back-navigation.html = TEXT
 
+// Padding is broken for range inputs.
+BUGWK94595 : fast/forms/range/range-hit-test-with-padding.html = TEXT
+
 // Missing drag'n'drop support.
 BUGWK86623 : editing/pasteboard/drag-and-drop-image-contenteditable.html = TEXT
 BUGWK86623 : editing/pasteboard/drag-and-drop-inputimage-contenteditable.html = TEXT
@@ -149,12 +152,11 @@ BUGWKEFL SKIP : inspector/device-orientation-success.html = TEXT
 // CRASHES
 //////////////////////////////////////////////////////////////////////////////////////////
 
-BUGWK93654 DEBUG : fast/events/keyevent-iframe-removed-crash.html = CRASH
-
 //////////////////////////////////////////////////////////////////////////////////////////
 // FLAKY TESTS
 //////////////////////////////////////////////////////////////////////////////////////////
 
+BUGWK93654 : fast/events/keyevent-iframe-removed-crash.html = CRASH TEXT
 BUGWK85603 : fast/forms/textarea-placeholder-set-attribute.html = TEXT IMAGE PASS
 BUGWK59801 : fast/workers/storage/use-same-database-in-page-and-workers.html = TEXT PASS
 BUGWK83878 : media/track/track-mode.html = TEXT PASS

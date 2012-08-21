@@ -1,3 +1,13 @@
+2012-08-21  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Layout tests gardening
+        https://bugs.webkit.org/show_bug.cgi?id=94594
+
+        Unreviewed gardening.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-08-21  Vincent Scheib  <scheib@chromium.org>
 
         Add parsing logic for allow-pointer-lock to iframe sandbox attribute.
