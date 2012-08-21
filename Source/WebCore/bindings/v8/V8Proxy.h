@@ -104,10 +104,6 @@ namespace WebCore {
         // a new context. It is potentially slow and consumes memory.
         static v8::Local<v8::Context> context(Frame*);
 
-        // If the current context causes out of memory, JavaScript setting
-        // is disabled and it returns true.
-        static bool handleOutOfMemory();
-
         static v8::Handle<v8::Script> compileScript(v8::Handle<v8::String> code, const String& fileName, const TextPosition& scriptStartPosition, v8::ScriptData* = 0);
 
         v8::Local<v8::Context> context();

@@ -132,31 +132,6 @@ v8::Handle<v8::Script> V8Proxy::compileScript(v8::Handle<v8::String> code, const
     return script;
 }
 
-bool V8Proxy::handleOutOfMemory()
-{
-    v8::Local<v8::Context> context = v8::Context::GetCurrent();
-
-    if (!context->HasOutOfMemoryException())
-        return false;
-
-    // Warning, error, disable JS for this frame?
-    Frame* frame = toFrameIfNotDetached(context);
-    if (!frame)
-        return true;
-
-    frame->script()->clearForClose();
-    frame->script()->windowShell()->destroyGlobal();
-
-#if PLATFORM(CHROMIUM)
-    PlatformSupport::notifyJSOutOfMemory(frame);
-#endif
-
-    if (Settings* settings = frame->settings())
-        settings->setScriptEnabled(false);
-
-    return true;
-}
-
 PassOwnPtr<v8::ScriptData> V8Proxy::precompileScript(v8::Handle<v8::String> code, CachedScript* cachedScript)
 {
     // A pseudo-randomly chosen ID used to store and retrieve V8 ScriptData from

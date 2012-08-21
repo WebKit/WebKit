@@ -253,7 +253,7 @@ v8::Local<v8::Value> WorkerContextExecutionProxy::runScript(v8::Handle<v8::Scrip
         script = V8Proxy::compileScript(code, "", TextPosition::minimumPosition());
     }
 
-    if (V8Proxy::handleOutOfMemory())
+    if (handleOutOfMemory())
         ASSERT(script.IsEmpty());
 
     if (script.IsEmpty())

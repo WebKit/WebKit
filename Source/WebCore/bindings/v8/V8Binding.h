@@ -378,6 +378,10 @@ namespace WebCore {
     // Returns the PerContextData associated with a frame for the current isolated world.
     V8PerContextData* perContextDataForCurrentWorld(Frame*);
 
+    // If the current context causes out of memory, JavaScript setting
+    // is disabled and it returns true.
+    bool handleOutOfMemory();
+
     void crashIfV8IsDead();
 
     class V8ParameterBase {

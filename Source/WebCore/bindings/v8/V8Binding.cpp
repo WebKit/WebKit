@@ -38,6 +38,7 @@
 #include "MemoryInstrumentation.h"
 #include "PlatformString.h"
 #include "QualifiedName.h"
+#include "Settings.h"
 #include "V8DOMStringList.h"
 #include "V8DOMWindow.h"
 #include "V8Element.h"
@@ -408,6 +409,31 @@ V8PerContextData* perContextDataForCurrentWorld(Frame* frame)
     if (UNLIKELY(!!(isolatedContext = V8IsolatedContext::getEntered())))
         return isolatedContext->perContextData();
     return frame->script()->windowShell()->perContextData();
+}
+
+bool handleOutOfMemory()
+{
+    v8::Local<v8::Context> context = v8::Context::GetCurrent();
+
+    if (!context->HasOutOfMemoryException())
+        return false;
+
+    // Warning, error, disable JS for this frame?
+    Frame* frame = toFrameIfNotDetached(context);
+    if (!frame)
+        return true;
+
+    frame->script()->clearForClose();
+    frame->script()->windowShell()->destroyGlobal();
+
+#if PLATFORM(CHROMIUM)
+    PlatformSupport::notifyJSOutOfMemory(frame);
+#endif
+
+    if (Settings* settings = frame->settings())
+        settings->setScriptEnabled(false);
+
+    return true;
 }
 
 void crashIfV8IsDead()

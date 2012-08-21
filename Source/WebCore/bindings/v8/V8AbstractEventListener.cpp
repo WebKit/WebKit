@@ -181,7 +181,7 @@ void V8AbstractEventListener::invokeEventHandler(ScriptExecutionContext* context
     if (event->type() == eventNames().beforeunloadEvent || event->type() == eventNames().unloadEvent)
         DateExtension::get()->setAllowSleep(true);
 
-    ASSERT(!V8Proxy::handleOutOfMemory() || returnValue.IsEmpty());
+    ASSERT(!handleOutOfMemory() || returnValue.IsEmpty());
 
     if (returnValue.IsEmpty())
         return;
