@@ -1,3 +1,16 @@
+2012-08-21  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL][GTK][BlackBerry] Fix build error in the DeviceOrientationClient
+        https://bugs.webkit.org/show_bug.cgi?id=94586
+
+        Reviewed by Kentaro Hara.
+
+        Fix build error in the DeviceOrientationClientGtk.cpp.
+        It is occured because DeviceOrientation is changed to DeviceOrientationData in the WebCore.
+
+        * WebCoreSupport/DeviceOrientationClientGtk.cpp:
+        (WebKit::DeviceOrientationClientGtk::lastOrientation):
+
 2012-08-21  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Using a native window for the WebView breaks GtkOverlay

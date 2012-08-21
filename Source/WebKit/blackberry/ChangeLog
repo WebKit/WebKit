@@ -1,3 +1,16 @@
+2012-08-21  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL][GTK][BlackBerry] Fix build error in the DeviceOrientationClient
+        https://bugs.webkit.org/show_bug.cgi?id=94586
+
+        Reviewed by Kentaro Hara.
+
+        Fix build error in the DeviceOrientationClientBlackBerry.cpp.
+        It is occured because DeviceOrientation is changed to DeviceOrientationData in the WebCore.
+
+        * WebCoreSupport/DeviceOrientationClientBlackBerry.cpp:
+        (DeviceOrientationClientBlackBerry::lastOrientation):
+
 2012-08-21  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] about:memory and about:memory-live should show numbers for the chrome process

@@ -62,7 +62,7 @@ void DeviceOrientationClientEfl::stopUpdating()
     notImplemented();
 }
 
-DeviceOrientation* DeviceOrientationClientEfl::lastOrientation() const
+DeviceOrientationData* DeviceOrientationClientEfl::lastOrientation() const
 {
     notImplemented();
     return 0;

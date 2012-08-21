@@ -62,7 +62,7 @@ void DeviceOrientationClientBlackBerry::stopUpdating()
         m_tracker->suspend();
 }
 
-DeviceOrientation* DeviceOrientationClientBlackBerry::lastOrientation() const
+DeviceOrientationData* DeviceOrientationClientBlackBerry::lastOrientation() const
 {
     return m_currentOrientation.get();
 }

@@ -58,7 +58,7 @@ void DeviceOrientationClientGtk::stopUpdating()
     notImplemented();
 }
 
-DeviceOrientation* DeviceOrientationClientGtk::lastOrientation() const
+WebCore::DeviceOrientationData* DeviceOrientationClientGtk::lastOrientation() const
 {
     notImplemented();
     return 0;
