@@ -1672,8 +1672,9 @@ void WebViewHost::updateForCommittedLoad(WebFrame* frame, bool isNewNavigation)
 {
     // Code duplicated from RenderView::DidCommitLoadForFrame.
     TestShellExtraData* extraData = static_cast<TestShellExtraData*>(frame->dataSource()->extraData());
+    bool nonBlankPageAfterReset = m_pageId == -1 && strcmp(frame->dataSource()->request().url().spec().data(), "about:blank");
 
-    if (isNewNavigation) {
+    if (isNewNavigation || nonBlankPageAfterReset) {
         // New navigation.
         updateSessionHistory(frame);
         m_pageId = nextPageID++;

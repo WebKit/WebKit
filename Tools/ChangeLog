@@ -1,3 +1,23 @@
+2012-08-21  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] DRT produces wrong back-forward list
+        https://bugs.webkit.org/show_bug.cgi?id=94575
+
+        Reviewed by Adam Barth.
+
+        DRT clears its history state before running every tests. However
+        HistoryController in WebCore isn't reset. So, it is possible that
+        'isNewNavigation' flag is false even though the navigation should be
+        handled as "new" for DRT.
+
+        This change might fix a problem of
+        fast/forms/select/select-state-restore.html (Bug 90207).
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::updateForCommittedLoad):
+        Treat the first page load (m_pageID == -1) as new navigation except for about:blank.
+        Without this change, a navigation entry for this loading won't be recorded.
+
 2012-08-21  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Enable CSS Text Decoration by default
