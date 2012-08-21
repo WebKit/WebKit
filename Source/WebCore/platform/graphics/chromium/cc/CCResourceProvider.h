@@ -224,7 +224,10 @@ public:
     CCScopedLockResourceForRead(CCResourceProvider* resourceProvider, CCResourceProvider::ResourceId resourceId)
         : m_resourceProvider(resourceProvider)
         , m_resourceId(resourceId)
-        , m_textureId(resourceProvider->lockForRead(resourceId)) { }
+        , m_textureId(resourceProvider->lockForRead(resourceId))
+    {
+        ASSERT(m_textureId);
+    }
 
     ~CCScopedLockResourceForRead()
     {
