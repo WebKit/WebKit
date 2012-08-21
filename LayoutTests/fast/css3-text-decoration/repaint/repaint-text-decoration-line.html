@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Bugzilla link: http://webkit.org/b/94480 -->
+        <title>CSS Test: CSS3 text-decoration-line repaint</title>
+        <link rel="help" href="http://http://dev.w3.org/csswg/css3-text/#text-decoration-line"/>
+        <meta name="flags" content="ahem"/>
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText(true);
+        </script>
+        <script src="../../repaint/resources/repaint.js" type="text/javascript"></script>
+        <script>
+            function repaintTest() {
+                document.getElementById("test-underline").style.webkitTextDecorationLine = 'underline';
+                document.getElementById("test-overline").style.webkitTextDecorationLine = 'overline';
+                document.getElementById("test-line-through").style.webkitTextDecorationLine = 'line-through';
+                document.getElementById("test-all").style.webkitTextDecorationLine = 'underline overline line-through';
+                document.getElementById("test-invalid-blink").style.webkitTextDecorationLine = 'blink';
+                document.getElementById("test-invalid-inherit").style.webkitTextDecorationLine = 'inherit';
+                document.getElementById("test-initial-explicit").style.webkitTextDecorationLine = 'initial';
+                document.getElementById("test-initial-empty").style.webkitTextDecorationLine = '';
+                document.getElementById("test-parent").style.webkitTextDecorationLine = 'underline';
+                document.getElementById("test-ancestor").style.webkitTextDecorationLine = 'overline';
+            }
+        </script>
+    </head>
+    <body onload="runRepaintTest();" style="font: 10px Ahem; -webkit-font-smoothing: none;">
+        <!-- Valid values repaint ("webkit-text-decoration-line" overwrites "text-decoration" on repaintTest(). -->
+        <p><span id="test-underline" style="text-decoration: none;">&gt; &lt;</span></p>
+        <p><span id="test-overline" style="text-decoration: none;">&gt; &lt;</span></p>
+        <p><span id="test-line-through" style="text-decoration: none;">&gt; &lt;</span></p>
+        <p><span id="test-all" style="text-decoration: none;">&gt; &lt;</span></p>
+
+        <!-- Parent value is not set, so fallback to initial "none" value. -->
+        <p><span id="test-invalid-inherit" style="text-decoration: underline;">&gt; &lt;</span></p>
+
+        <!-- Explicit 'initial' value computed style is 'none'. -->
+        <p><span id="test-initial-explicit" style="text-decoration: underline;">&gt; &lt;</span></p>
+
+        <!-- "text-decoration-line" property does not accept 'blink' value. -->
+        <p><span id="test-invalid-blink" style="text-decoration: underline;">&gt; &lt;</span></p>
+
+        <!-- Empty value treated as invalid, so fallback to last valid value "underline". -->
+        <p><span id="test-initial-empty" style="text-decoration: underline;">&gt; &lt;</span></p>
+
+        <!-- Ancestor inherits "-webkit-text-decoration-line" value from parent on repaintTest(). -->
+        <p><span id="test-parent"><span>&gt; &lt;</span></span></p>
+
+        <!-- Ancestor overwrites parent value on repaintTest(). -->
+        <p><span style="-webkit-text-decoration-style: underline;"><span id="test-ancestor">&gt; &lt;</span></span></p>
+    </body>
+</html>

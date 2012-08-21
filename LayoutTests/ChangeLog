@@ -1,3 +1,18 @@
+2012-08-21  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [css3-text] Add repaint tests for -webkit-text-decoration-line
+        https://bugs.webkit.org/show_bug.cgi?id=94480
+
+        Reviewed by Julien Chaffraix.
+
+        Changeset r125205 introduced new CSS3 property "-webkit-text-decoration-line".
+        This patch adds repaint layout tests for this property.
+
+        * fast/css3-text-decoration/repaint/repaint-text-decoration-line-expected.png: Added.
+        * fast/css3-text-decoration/repaint/repaint-text-decoration-line-expected.txt: Added.
+        * fast/css3-text-decoration/repaint/repaint-text-decoration-line.html: Added.
+        Expected results generated from Chromium Linux build.
+
 2012-08-21  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Further rebaselining following r126110.
