@@ -196,6 +196,9 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, bool useFa
             Element* possibleTargetNodeForMouseMoveEvents = static_cast<Element*>(m_lastFatFingersResult.positionWasAdjusted() ? elementUnderFatFinger : m_lastFatFingersResult.node());
             m_convertTouchToMouse = pureWithMouseConversion ? true : shouldConvertTouchToMouse(possibleTargetNodeForMouseMoveEvents);
 
+            if (!possibleTargetNodeForMouseMoveEvents || (!possibleTargetNodeForMouseMoveEvents->hasEventListeners(eventNames().touchmoveEvent) && !m_convertTouchToMouse))
+                m_webPage->client()->notifyNoMouseMoveOrTouchMoveHandlers();
+
             if (elementUnderFatFinger)
                 drawTapHighlight();
 

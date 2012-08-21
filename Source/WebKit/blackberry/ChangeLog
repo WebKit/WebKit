@@ -1,3 +1,20 @@
+2012-08-20  Genevieve Mak  <gmak@rim.com>
+
+        [BLACKBERRY] Add notification if an element does not have touch move or mouse move handlers.
+        https://bugs.webkit.org/show_bug.cgi?id=94529
+
+        Reviewed by George Staikos.
+
+        Send a notification to the client if the fat finger element does
+        not have a mouse move or touch move handler or if it is empty.
+        PR #177701
+
+        Reviewed Internally By Mike Lattanzio and Antonio Gomes.
+
+        * Api/WebPageClient.h:
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+
 2012-08-17  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Allow in-region accelerated scrolling take advantage of defer_blits
