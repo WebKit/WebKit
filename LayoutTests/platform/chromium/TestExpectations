@@ -3214,7 +3214,7 @@ BUGLEVIW LINUX SNOWLEOPARD WIN : editing/selection/select-across-readonly-input-
 BUGLEVIW LINUX SNOWLEOPARD WIN : editing/selection/select-across-readonly-input-3.html = IMAGE PASS
 BUGLEVIW LINUX SNOWLEOPARD WIN : editing/selection/select-across-readonly-input-4.html = IMAGE PASS
 BUGLEVIW LINUX SNOWLEOPARD WIN : editing/selection/select-across-readonly-input-5.html = IMAGE PASS
-BUGLEVIW LINUX SNOWLEOPARD WIN : editing/selection/select-from-textfield-outwards.html = IMAGE PASS
+BUGLEVIW LINUX SNOWLEOPARD WIN : editing/selection/select-from-textfield-outwards.html = IMAGE IMAGE+TEXT PASS
 BUGLEVIW LINUX SNOWLEOPARD WIN : fast/block/margin-collapse/103.html = IMAGE PASS
 BUGLEVIW LINUX SNOWLEOPARD WIN : fast/css/input-search-padding.html = IMAGE PASS
 BUGLEVIW LINUX SNOWLEOPARD WIN : fast/css/line-height-determined-by-primary-font.html = IMAGE PASS
@@ -3259,7 +3259,7 @@ BUGLEVIW LINUX SNOWLEOPARD WIN : fast/forms/input-table.html = IMAGE PASS
 BUGLEVIW LINUX SNOWLEOPARD WIN : fast/forms/input-text-click-inside.html = IMAGE PASS
 BUGLEVIW LINUX SNOWLEOPARD WIN : fast/forms/input-text-click-outside.html = IMAGE PASS
 BUGLEVIW LINUX SNOWLEOPARD WIN : fast/forms/input-text-double-click.html = IMAGE PASS
-BUGLEVIW LINUX SNOWLEOPARD WIN : fast/forms/input-text-drag-down.html = IMAGE PASS
+BUGLEVIW LINUX SNOWLEOPARD WIN : fast/forms/input-text-drag-down.html = IMAGE IMAGE+TEXT PASS
 BUGLEVIW LINUX SNOWLEOPARD WIN : fast/forms/input-text-option-delete.html = IMAGE PASS
 BUGLEVIW LINUX SNOWLEOPARD WIN : fast/forms/input-text-scroll-left-on-blur.html = IMAGE PASS
 BUGLEVIW LINUX SNOWLEOPARD WIN : fast/forms/input-text-self-emptying-click.html = IMAGE PASS
