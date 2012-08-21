@@ -129,7 +129,7 @@ PassRefPtr<CSSValue> CSSImageValue::cloneForCSSOM() const
 void CSSImageValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
-    info.addMember(m_url);
+    info.addInstrumentedMember(m_url);
     // No need to report m_image as it is counted as part of RenderArena.
 }
 

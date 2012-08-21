@@ -102,9 +102,7 @@ private:
     {
         OwningTraits<T>::addObject(this, t, ownerObjectType);
     }
-    void addObject(const String&, ObjectType);
-    void addObject(const StringImpl*, ObjectType);
-    void addObject(const KURL&, ObjectType);
+
     template <typename T> void addInstrumentedObject(const T& t, ObjectType ownerObjectType) { OwningTraits<T>::addInstrumentedObject(this, t, ownerObjectType); }
     template <typename HashMapType> void addHashMap(const HashMapType&, ObjectType, bool contentOnly = false);
     template <typename HashSetType> void addHashSet(const HashSetType&, ObjectType, bool contentOnly = false);
@@ -137,10 +135,10 @@ private:
         static void addObject(MemoryInstrumentation* instrumentation, const T* const& t, ObjectType ownerObjectType) { instrumentation->addObjectImpl(t, ownerObjectType, byPointer); }
     };
 
-    // FIXME: get rid of addObject(String)
-    void addInstrumentedObjectImpl(const String* const& string, ObjectType objectType, OwningType) { addObject(*string, objectType); }
-    void addInstrumentedObjectImpl(const StringImpl* const& string, ObjectType objectType, OwningType) { addObject(string, objectType); }
+    void addInstrumentedObjectImpl(const String* const&, ObjectType, OwningType);
+    void addInstrumentedObjectImpl(const StringImpl* const&, ObjectType, OwningType);
     void addInstrumentedObjectImpl(const AtomicString* const&, ObjectType, OwningType);
+    void addInstrumentedObjectImpl(const KURL* const&, ObjectType, OwningType);
     template <typename T> void addInstrumentedObjectImpl(const T* const&, ObjectType, OwningType);
     template <typename T> void addInstrumentedObjectImpl(const DataRef<T>* const&, ObjectType, OwningType);
     template <typename T> void addInstrumentedObjectImpl(const OwnPtr<T>* const&, ObjectType, OwningType);
@@ -150,6 +148,12 @@ private:
     template <typename T> void addObjectImpl(const DataRef<T>* const&, ObjectType, OwningType);
     template <typename T> void addObjectImpl(const OwnPtr<T>* const&, ObjectType, OwningType);
     template <typename T> void addObjectImpl(const RefPtr<T>* const&, ObjectType, OwningType);
+
+    // Link time guards for special cases.
+    void addObjectImpl(const String* const&, ObjectType, OwningType);
+    void addObjectImpl(const StringImpl* const&, ObjectType, OwningType);
+    void addObjectImpl(const AtomicString* const&, ObjectType, OwningType);
+    void addObjectImpl(const KURL* const&, ObjectType, OwningType);
 };
 
 class MemoryObjectInfo {
@@ -209,11 +213,6 @@ public:
     template <typename VectorType> void addVector(const VectorType& vector) { m_memoryInstrumentation->addVector(vector, m_objectType, true); }
     template <typename VectorType> void addVectorPtr(const VectorType* const vector) { m_memoryInstrumentation->addVector(*vector, m_objectType, false); }
     void addRawBuffer(const void* const& buffer, size_t size) { m_memoryInstrumentation->addRawBuffer(buffer, m_objectType, size); }
-
-    void addMember(const String& string) { m_memoryInstrumentation->addObject(string, m_objectType); }
-    void addMember(const AtomicString& string) { m_memoryInstrumentation->addObject((const String&)string, m_objectType); }
-    void addMember(const StringImpl* string) { m_memoryInstrumentation->addObject(string, m_objectType); }
-    void addMember(const KURL& url) { m_memoryInstrumentation->addObject(url, m_objectType); }
 
 private:
     MemoryObjectInfo* m_memoryObjectInfo;

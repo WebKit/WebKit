@@ -71,7 +71,7 @@ public:
     {
         MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
         info.addInstrumentedMember(m_name);
-        info.addMember(m_value);
+        info.addInstrumentedMember(m_value);
     }
 
 private:

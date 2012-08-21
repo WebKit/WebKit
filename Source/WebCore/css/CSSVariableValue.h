@@ -51,8 +51,8 @@ public:
     void reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
-        info.addMember(m_name);
-        info.addMember(m_value);
+        info.addInstrumentedMember(m_name);
+        info.addInstrumentedMember(m_value);
     }
 
 private:

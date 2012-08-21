@@ -53,10 +53,10 @@ public:
         void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
         {
             MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
-            info.addMember(m_prefix);
-            info.addMember(m_localName);
-            info.addMember(m_namespace);
-            info.addMember(m_localNameUpper);
+            info.addInstrumentedMember(m_prefix);
+            info.addInstrumentedMember(m_localName);
+            info.addInstrumentedMember(m_namespace);
+            info.addInstrumentedMember(m_localNameUpper);
         }
     private:
         QualifiedNameImpl(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI)

@@ -38,6 +38,9 @@
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomicString.h>
+#include <wtf/text/StringImpl.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 
@@ -222,6 +225,34 @@ TEST(MemoryInstrumentationTest, visitFirstMemberInNonVirtualClass)
     impl.addRootObject(&nonVirtualInstrumented);
     EXPECT_EQ(sizeof(NonVirtualInstrumented) + sizeof(NotInstrumented), impl.reportedSizeForAllTypes());
     EXPECT_EQ(2, visitedObjects.size());
+}
+
+TEST(MemoryInstrumentationTest, visitStrings)
+{
+    {
+        VisitedObjects visitedObjects;
+        MemoryInstrumentationImpl impl(visitedObjects);
+        String string("string");
+        impl.addRootObject(string);
+        EXPECT_EQ(string.impl()->sizeInBytes(), impl.reportedSizeForAllTypes());
+        EXPECT_EQ(2, visitedObjects.size());
+    }
+    {
+        VisitedObjects visitedObjects;
+        MemoryInstrumentationImpl impl(visitedObjects);
+        String string("string");
+        impl.addRootObject(&string);
+        EXPECT_EQ(string.impl()->sizeInBytes() + sizeof(String), impl.reportedSizeForAllTypes());
+        EXPECT_EQ(2, visitedObjects.size());
+    }
+    {
+        VisitedObjects visitedObjects;
+        MemoryInstrumentationImpl impl(visitedObjects);
+        AtomicString string("string");
+        impl.addRootObject(&string);
+        EXPECT_EQ(string.impl()->sizeInBytes() + sizeof(AtomicString), impl.reportedSizeForAllTypes());
+        EXPECT_EQ(2, visitedObjects.size());
+    }
 }
 
 } // namespace

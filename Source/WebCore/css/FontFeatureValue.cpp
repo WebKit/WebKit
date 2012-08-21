@@ -53,7 +53,7 @@ String FontFeatureValue::customCssText() const
 void FontFeatureValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
-    info.addMember(m_tag);
+    info.addInstrumentedMember(m_tag);
 }
 
 }

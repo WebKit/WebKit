@@ -158,7 +158,7 @@ void Event::storeResult(const String&)
 void Event::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
-    info.addMember(m_type);
+    info.addInstrumentedMember(m_type);
     info.addMember(m_currentTarget);
     info.addMember(m_target);
     info.addInstrumentedMember(m_underlyingEvent);

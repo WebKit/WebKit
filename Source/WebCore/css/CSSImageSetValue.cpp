@@ -174,7 +174,7 @@ void CSSImageSetValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjec
 void CSSImageSetValue::ImageWithScale::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
-    info.addMember(imageURL);
+    info.addInstrumentedMember(imageURL);
 }
 
 } // namespace WebCore

@@ -364,8 +364,8 @@ void DocumentLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addInstrumentedHashSet(m_multipartSubresourceLoaders);
     info.addInstrumentedHashSet(m_plugInStreamLoaders);
     info.addInstrumentedMember(m_substituteData);
-    info.addMember(m_pageTitle.string());
-    info.addMember(m_overrideEncoding);
+    info.addInstrumentedMember(m_pageTitle.string());
+    info.addInstrumentedMember(m_overrideEncoding);
     info.addVector(m_responses);
     info.addInstrumentedMember(m_originalRequest);
     info.addInstrumentedMember(m_originalRequestCopy);
@@ -376,7 +376,7 @@ void DocumentLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addHashMap(m_pendingSubstituteResources);
     info.addInstrumentedHashSet(m_resourcesClientKnowsAbout);
     info.addVector(m_resourcesLoadedFromMemoryCacheForClientNotification);
-    info.addMember(m_clientRedirectSourceForHistory);
+    info.addInstrumentedMember(m_clientRedirectSourceForHistory);
     info.addInstrumentedMember(m_mainResourceData);
 }
 

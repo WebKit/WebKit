@@ -97,7 +97,7 @@ void CSSCanvasValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectI
 {
     MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     CSSImageGeneratorValue::reportBaseClassMemoryUsage(memoryObjectInfo);
-    info.addMember(m_name);
+    info.addInstrumentedMember(m_name);
     info.addInstrumentedMember(m_element);
 }
 

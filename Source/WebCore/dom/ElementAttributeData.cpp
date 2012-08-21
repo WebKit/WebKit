@@ -33,9 +33,14 @@
 
 namespace WebCore {
 
+static size_t immutableElementAttributeDataSize(unsigned count)
+{
+    return sizeof(ElementAttributeData) - sizeof(void*) + sizeof(Attribute) * count;
+}
+
 PassOwnPtr<ElementAttributeData> ElementAttributeData::createImmutable(const Vector<Attribute>& attributes)
 {
-    void* slot = WTF::fastMalloc(sizeof(ElementAttributeData) - sizeof(void*) + sizeof(Attribute) * attributes.size());
+    void* slot = WTF::fastMalloc(immutableElementAttributeDataSize(attributes.size()));
     return adoptPtr(new (slot) ElementAttributeData(attributes));
 }
 
@@ -286,15 +291,14 @@ void ElementAttributeData::detachAttrObjectsFromElement(Element* element) const
 
 void ElementAttributeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+    size_t actualSize = m_isMutable ? sizeof(ElementAttributeData) : immutableElementAttributeDataSize(m_arraySize);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM, actualSize);
     info.addInstrumentedMember(m_inlineStyleDecl);
     info.addInstrumentedMember(m_attributeStyle);
     info.addMember(m_classNames);
-    info.addMember(m_idForStyleResolution);
+    info.addInstrumentedMember(m_idForStyleResolution);
     if (m_isMutable)
         info.addVectorPtr(m_mutableAttributeVector);
-    else
-        info.addRawBuffer(m_attributes, m_arraySize * sizeof(Attribute));
     for (unsigned i = 0, len = length(); i < len; i++)
         info.addInstrumentedMember(*attributeItem(i));
 }

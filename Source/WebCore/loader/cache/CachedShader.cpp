@@ -73,7 +73,7 @@ void CachedShader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceShader);
     CachedResource::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_decoder);
-    info.addMember(m_shaderString);
+    info.addInstrumentedMember(m_shaderString);
 }
 
 } // namespace WebCore

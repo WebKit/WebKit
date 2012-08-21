@@ -131,7 +131,7 @@ void CachedScript::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceScript);
     CachedResource::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_script);
+    info.addInstrumentedMember(m_script);
     info.addMember(m_decoder);
 #if USE(JSC)
     info.addMember(m_sourceProviderCache);

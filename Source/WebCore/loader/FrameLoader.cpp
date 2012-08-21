@@ -3236,10 +3236,10 @@ NetworkingContext* FrameLoader::networkingContext() const
 void FrameLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
-    info.addInstrumentedMember(m_documentLoader.get());
-    info.addInstrumentedMember(m_provisionalDocumentLoader.get());
-    info.addInstrumentedMember(m_policyDocumentLoader.get());
-    info.addMember(m_outgoingReferrer);
+    info.addInstrumentedMember(m_documentLoader);
+    info.addInstrumentedMember(m_provisionalDocumentLoader);
+    info.addInstrumentedMember(m_policyDocumentLoader);
+    info.addInstrumentedMember(m_outgoingReferrer);
     info.addInstrumentedHashSet(m_openedFrames);
 }
 

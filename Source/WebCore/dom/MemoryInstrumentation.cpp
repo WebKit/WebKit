@@ -37,30 +37,36 @@
 
 namespace WebCore {
 
-void MemoryInstrumentation::addObject(const String& string, ObjectType objectType)
+void MemoryInstrumentation::addInstrumentedObjectImpl(const String* const& string, ObjectType objectType, OwningType owningType)
 {
-    addObject(string.impl(), objectType);
+    if (!string || visited(string))
+        return;
+    if (owningType == byPointer)
+        countObjectSize(objectType, sizeof(String));
+    addInstrumentedObjectImpl(string->impl(), objectType, byPointer);
 }
 
-void MemoryInstrumentation::addObject(const StringImpl* stringImpl, ObjectType objectType)
+void MemoryInstrumentation::addInstrumentedObjectImpl(const StringImpl* const& stringImpl, ObjectType objectType, OwningType)
 {
     if (!stringImpl || visited(stringImpl))
         return;
     countObjectSize(objectType, stringImpl->sizeInBytes());
 }
 
-void MemoryInstrumentation::addObject(const KURL& url, ObjectType objectType)
+void MemoryInstrumentation::addInstrumentedObjectImpl(const KURL* const& url, ObjectType objectType, OwningType owningType)
 {
-    if (visited(&url))
+    if (!url || visited(url))
         return;
-    addObject(url.string(), objectType);
-    if (url.innerURL())
-        addObject(url.innerURL(), objectType);
+    if (owningType == byPointer)
+        countObjectSize(objectType, sizeof(KURL));
+    addInstrumentedObject(url->string(), objectType);
+    if (url->innerURL())
+        addInstrumentedObject(url->innerURL(), objectType);
 }
 
-void MemoryInstrumentation::addInstrumentedObjectImpl(const AtomicString* const& string, ObjectType objectType, OwningType)
+void MemoryInstrumentation::addInstrumentedObjectImpl(const AtomicString* const& atomicString, ObjectType objectType, OwningType owningType)
 {
-    addObject(static_cast<const String&>(*string), objectType);
+    addInstrumentedObjectImpl(reinterpret_cast<const String* const>(atomicString), objectType, owningType);
 }
 
 } // namespace WebCore

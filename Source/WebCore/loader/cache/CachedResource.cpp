@@ -806,11 +806,11 @@ void CachedResource::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResource);
     info.addMember(m_resourceRequest);
     info.addHashSet(m_clients);
-    info.addMember(m_accept);
+    info.addInstrumentedMember(m_accept);
     info.addInstrumentedMember(m_loader);
-    info.addMember(m_response);
+    info.addInstrumentedMember(m_response);
     info.addInstrumentedMember(m_data);
-    info.addMember(m_cachedMetadata.get());
+    info.addMember(m_cachedMetadata);
     info.addInstrumentedMember(m_nextInAllResourcesList);
     info.addInstrumentedMember(m_prevInAllResourcesList);
     info.addInstrumentedMember(m_nextInLiveResourcesList);

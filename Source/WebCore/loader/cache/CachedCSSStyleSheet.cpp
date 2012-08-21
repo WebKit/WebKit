@@ -208,7 +208,7 @@ void CachedCSSStyleSheet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) 
     CachedResource::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_decoder);
     info.addInstrumentedMember(m_parsedStyleSheetCache);
-    info.addMember(m_decodedSheetText);
+    info.addInstrumentedMember(m_decodedSheetText);
 }
 
 }

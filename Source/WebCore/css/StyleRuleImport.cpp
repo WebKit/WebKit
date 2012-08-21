@@ -134,7 +134,7 @@ void StyleRuleImport::requestStyleSheet()
 void StyleRuleImport::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
-    info.addMember(m_strHref);
+    info.addInstrumentedMember(m_strHref);
     info.addInstrumentedMember(m_mediaQueries);
     info.addInstrumentedMember(m_styleSheet);
 }

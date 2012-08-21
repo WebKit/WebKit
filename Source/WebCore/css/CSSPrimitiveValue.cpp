@@ -1252,7 +1252,7 @@ void CSSPrimitiveValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObje
     case CSS_VARIABLE_NAME:
 #endif
         // FIXME: detect other cases when m_value is StringImpl*
-        info.addMember(m_value.string);
+        info.addInstrumentedMember(m_value.string);
         break;
     case CSS_COUNTER:
         info.addMember(m_value.counter);

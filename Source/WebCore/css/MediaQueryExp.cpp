@@ -112,8 +112,8 @@ String MediaQueryExp::serialize() const
 void MediaQueryExp::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
-    info.addMember(m_mediaFeature);
-    info.addMember(m_serializationCache);
+    info.addInstrumentedMember(m_mediaFeature);
+    info.addInstrumentedMember(m_serializationCache);
     info.addInstrumentedMember(m_value);
 }
 

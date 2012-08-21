@@ -1,3 +1,16 @@
+2012-08-21  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI: rename addMember for strings and KURL to addInstrumentedMember.
+        https://bugs.webkit.org/show_bug.cgi?id=94580
+
+        Reviewed by Yury Semikhatsky.
+
+        Drive by fix: immutable ElementAttrybuteData uses the same trick with placement new as in StylePropertySet.
+
+        * tests/MemoryInstrumentationTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+
 2012-08-21  Peter Beverloo  <peter@chromium.org>
 
         Unreviewed.  Rolled DEPS.
