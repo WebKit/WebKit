@@ -1,0 +1,29 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+var foo = 'fooValue';
+
+window.eval = "Non-function";
+
+function test()
+{
+    InspectorTest.evaluateInConsole("foo", step1);
+
+    function step1()
+    {
+        InspectorTest.dumpConsoleMessages();
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that overriding window.eval does not break inspector.
+</p>
+
+</body>
+</html>

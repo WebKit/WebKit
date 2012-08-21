@@ -1,3 +1,13 @@
+2012-08-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: do not use window's eval in InjectedScript
+        https://bugs.webkit.org/show_bug.cgi?id=94610
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/console/console-eval-fake-expected.txt: Added.
+        * inspector/console/console-eval-fake.html: Added.
+
 2012-08-21  Adam Barth  <abarth@webkit.org>
 
         Implement JSDOMWindow*::allowsAccessFrom* in terms of BindingSecurity

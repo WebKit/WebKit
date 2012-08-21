@@ -174,7 +174,7 @@ InjectedScript.prototype = {
      */
     _parseObjectId: function(objectId)
     {
-        return eval("(" + objectId + ")");
+        return InjectedScriptHost.evaluate("(" + objectId + ")");
     },
 
     /**
@@ -197,7 +197,7 @@ InjectedScript.prototype = {
      */
     dispatch: function(methodName, args)
     {
-        var argsArray = eval("(" + args + ")");
+        var argsArray = InjectedScriptHost.evaluate("(" + args + ")");
         var result = this[methodName].apply(this, argsArray);
         if (typeof result === "undefined") {
             inspectedWindow.console.error("Web Inspector error: InjectedScript.%s returns undefined", methodName);
@@ -342,7 +342,7 @@ InjectedScript.prototype = {
      */
     evaluate: function(expression, objectGroup, injectCommandLineAPI, returnByValue)
     {
-        return this._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, expression, objectGroup, false, injectCommandLineAPI, returnByValue);
+        return this._evaluateAndWrap(InjectedScriptHost.evaluate, InjectedScriptHost, expression, objectGroup, false, injectCommandLineAPI, returnByValue);
     },
 
     /**
@@ -360,7 +360,7 @@ InjectedScript.prototype = {
 
         if (args) {
             var resolvedArgs = [];
-            args = eval(args);
+            args = InjectedScriptHost.evaluate(args);
             for (var i = 0; i < args.length; ++i) {
                 objectId = args[i].objectId;
                 if (objectId) {
@@ -382,7 +382,7 @@ InjectedScript.prototype = {
 
         try {
             var objectGroup = this._idToObjectGroupName[parsedObjectId.id];
-            var func = eval("(" + expression + ")");
+            var func = InjectedScriptHost.evaluate("(" + expression + ")");
             if (typeof func !== "function")
                 return "Given expression does not evaluate to a function";
 
@@ -515,7 +515,7 @@ InjectedScript.prototype = {
      */
     _callFrameForId: function(topCallFrame, callFrameId)
     {
-        var parsedCallFrameId = eval("(" + callFrameId + ")");
+        var parsedCallFrameId = InjectedScriptHost.evaluate("(" + callFrameId + ")");
         var ordinal = parsedCallFrameId["ordinal"];
         var callFrame = topCallFrame;
         while (--ordinal >= 0 && callFrame)
@@ -562,7 +562,7 @@ InjectedScript.prototype = {
     injectModule: function(name, source)
     {
         delete this._modules[name];
-        var module = eval("(" + source + ")");
+        var module = InjectedScriptHost.evaluate("(" + source + ")");
         this._modules[name] = module;
         return module;
     },

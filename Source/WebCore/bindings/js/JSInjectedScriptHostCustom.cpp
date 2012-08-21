@@ -275,6 +275,28 @@ JSValue JSInjectedScriptHost::storageId(ExecState* exec)
     return jsUndefined();
 }
 
+JSValue JSInjectedScriptHost::evaluate(ExecState* exec)
+{
+    JSValue expression = exec->argument(0);
+    if (!expression.isString())
+        return throwError(exec, createError(exec, "String argument expected."));
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    JSFunction* evalFunction = globalObject->evalFunction();
+    CallData callData;
+    CallType callType = evalFunction->methodTable()->getCallData(evalFunction, callData);
+    if (callType == CallTypeNone)
+        return jsUndefined();
+    MarkedArgumentBuffer args;
+    args.append(expression);
+
+    bool wasEvalEnabled = globalObject->evalEnabled();
+    globalObject->setEvalEnabled(true);
+    JSValue result = JSC::call(exec, evalFunction, callType, callData, exec->globalThisValue(), args);
+    globalObject->setEvalEnabled(wasEvalEnabled);
+
+    return result;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

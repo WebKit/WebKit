@@ -47,6 +47,7 @@ module core {
 
         [Custom] DOMString databaseId(in DOMObject database);
         [Custom] DOMString storageId(in DOMObject storage);
+        [Custom] DOMObject evaluate(in DOMString text);
     };
 }
 
