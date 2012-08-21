@@ -273,7 +273,7 @@ EAPI Eina_Bool ewk_view_smart_class_set(Ewk_View_Smart_Class *api);
  *
  * @return view object on success or @c NULL on failure
  */
-Evas_Object *ewk_view_smart_add(Evas *e, Evas_Smart *smart, Ewk_Context *context);
+EAPI Evas_Object *ewk_view_smart_add(Evas *e, Evas_Smart *smart, Ewk_Context *context);
 
 /**
  * Creates a new EFL WebKit view object.
@@ -475,7 +475,7 @@ Eina_Bool ewk_view_scale_set(Evas_Object *o, double scaleFactor, int x, int y);
  *
  * @return current scale factor in use on success or @c -1.0 on failure
  */
-double ewk_view_scale_get(const Evas_Object *o);
+EAPI double ewk_view_scale_get(const Evas_Object *o);
 
 /**
  * Queries the ratio between the CSS units and device pixels when the content is unscaled.
