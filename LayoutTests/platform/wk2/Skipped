@@ -769,6 +769,10 @@ inspector/geolocation-error.html
 inspector/geolocation-success.html
 inspector/geolocation-watchPosition.html
 
+# WKTR doesn't implement dumpWillCacheResponse()
+# https://bugs.webkit.org/show_bug.cgi?id=94607
+http/tests/misc/willCacheResponse-delegate-callback.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
