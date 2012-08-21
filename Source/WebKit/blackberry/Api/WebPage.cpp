@@ -1497,17 +1497,17 @@ bool WebPage::scrollBy(const Platform::IntSize& delta, bool scrollMainFrame)
     return b;
 }
 
-void WebPagePrivate::notifyInRegionScrollStatusChanged(bool status)
+void WebPagePrivate::notifyInRegionScrollStopped()
 {
-    if (!status && m_inRegionScroller->d->hasNode()) {
+    if (m_inRegionScroller->d->hasNode()) {
         enqueueRenderingOfClippedContentOfScrollableNodeAfterInRegionScrolling(m_inRegionScroller->d->node());
         m_inRegionScroller->d->reset();
     }
 }
 
-void WebPage::notifyInRegionScrollStatusChanged(bool status)
+void WebPage::notifyInRegionScrollStopped()
 {
-    d->notifyInRegionScrollStatusChanged(status);
+    d->notifyInRegionScrollStopped();
 }
 
 void WebPagePrivate::enqueueRenderingOfClippedContentOfScrollableNodeAfterInRegionScrolling(Node* scrolledNode)
