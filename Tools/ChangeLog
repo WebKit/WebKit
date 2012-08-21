@@ -1,3 +1,10 @@
+2012-08-21  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed build fix for newer Qt 5: The meaning of private_includes changed to be fully
+        self-contained. The module name is not appended automatically anymore.
+
+        * qmake/qt_webkit.pri:
+
 2012-08-20  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Add stop_when_done parameter to ChromiumAndroidDriver.run_test()

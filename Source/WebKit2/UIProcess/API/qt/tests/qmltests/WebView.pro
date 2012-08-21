@@ -6,7 +6,6 @@ OBJECTS_DIR = obj_WebView/$$activeBuildConfig()
 QT += webkit-private
 CONFIG += warn_on testcase
 
-QT -= testlib
 QT += qmltest
 
 # Test the QML files under WebView in the source repository.

@@ -1,3 +1,11 @@
+2012-08-21  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed build fix for newer Qt 5: QT += qmltest does not imply QT += testlib anymore, but
+        the code here needs QSignalSpy from QTestLib
+
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior.pro:
+        * UIProcess/API/qt/tests/qmltests/WebView.pro:
+
 2012-08-18  John Sullivan  <sullivan@apple.com>
 
         <https://bugs.webkit.org/show_bug.cgi?id=94486>

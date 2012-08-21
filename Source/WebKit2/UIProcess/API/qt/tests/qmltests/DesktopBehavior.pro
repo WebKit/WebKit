@@ -6,7 +6,6 @@ OBJECTS_DIR = obj_DesktopBehavior/$$activeBuildConfig()
 QT += webkit-private
 CONFIG += warn_on testcase
 
-QT -= testlib
 QT += qmltest
 
 DEFINES += DISABLE_FLICKABLE_VIEWPORT=1
