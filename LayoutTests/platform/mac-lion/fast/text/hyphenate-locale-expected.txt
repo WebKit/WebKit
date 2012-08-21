@@ -25,17 +25,17 @@ layer at (0,0) size 785x754
             text run at (0,0) width 158: "throughout"
       RenderBlock {DIV} at (0,369) size 135x369
         RenderBlock {DIV} at (0,0) size 135x82
-          RenderText {#text} at (0,0) size 130x82
-            text run at (0,0) width 130: "reciproc" + hyphen string "-"
-            text run at (0,41) width 38: "ity"
+          RenderText {#text} at (0,0) size 102x82
+            text run at (0,0) width 66: "reci" + hyphen string "-"
+            text run at (0,41) width 102: "procity"
         RenderBlock {DIV} at (0,82) size 135x82
-          RenderText {#text} at (0,0) size 130x82
-            text run at (0,0) width 130: "reciproc" + hyphen string "-"
-            text run at (0,41) width 38: "ity"
+          RenderText {#text} at (0,0) size 102x82
+            text run at (0,0) width 66: "reci" + hyphen string "-"
+            text run at (0,41) width 102: "procity"
         RenderBlock {DIV} at (0,164) size 135x82
-          RenderText {#text} at (0,0) size 130x82
-            text run at (0,0) width 130: "reciproc" + hyphen string "-"
-            text run at (0,41) width 38: "ity"
+          RenderText {#text} at (0,0) size 102x82
+            text run at (0,0) width 66: "reci" + hyphen string "-"
+            text run at (0,41) width 102: "procity"
         RenderBlock {DIV} at (0,246) size 135x82
           RenderText {#text} at (0,0) size 114x82
             text run at (0,0) width 114: "recipro" + hyphen string "-"

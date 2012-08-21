@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x98
-  RenderBlock {HTML} at (0,0) size 800x98
-    RenderBody {BODY} at (8,16) size 784x74
+layer at (0,0) size 800x96
+  RenderBlock {HTML} at (0,0) size 800x96
+    RenderBody {BODY} at (8,16) size 784x72
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 233x18
           text run at (0,0) width 233: "The following two lines should look "
@@ -83,17 +83,17 @@ layer at (0,0) size 800x98
             RenderCounter at (139,1) size 10x18
               text run at (139,1) width 10: "\x{25A0}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,53) size 784x21
-        RenderText {#text} at (0,2) size 284x18
-          text run at (0,2) width 24: "\x{25FE} "
-          text run at (24,2) width 24: "\x{25FE} "
-          text run at (48,2) width 24: "\x{25FE} "
-          text run at (72,2) width 24: "\x{25FE} "
-          text run at (96,2) width 24: "\x{25FE} "
-          text run at (120,2) width 24: "\x{25FE} "
-          text run at (144,2) width 24: "\x{25FE} "
-          text run at (168,2) width 24: "\x{25FE} "
-          text run at (192,2) width 24: "\x{25FE} "
-          text run at (216,2) width 24: "\x{25FE} "
-          text run at (240,2) width 24: "\x{25FE} "
-          text run at (264,2) width 20: "\x{25FE}"
+      RenderBlock {DIV} at (0,53) size 784x19
+        RenderText {#text} at (0,1) size 164x18
+          text run at (0,1) width 14: "\x{25FE} "
+          text run at (14,1) width 14: "\x{25FE} "
+          text run at (28,1) width 14: "\x{25FE} "
+          text run at (42,1) width 14: "\x{25FE} "
+          text run at (56,1) width 14: "\x{25FE} "
+          text run at (70,1) width 14: "\x{25FE} "
+          text run at (84,1) width 14: "\x{25FE} "
+          text run at (98,1) width 14: "\x{25FE} "
+          text run at (112,1) width 14: "\x{25FE} "
+          text run at (126,1) width 14: "\x{25FE} "
+          text run at (140,1) width 14: "\x{25FE} "
+          text run at (154,1) width 10: "\x{25FE}"

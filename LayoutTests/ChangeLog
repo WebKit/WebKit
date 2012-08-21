@@ -56,10 +56,57 @@
 
 2012-08-21  Brady Eidson  <beidson@apple.com>
 
-        Rebaseline failing fast/canvas tests for Mountain Lion
+        Rebaseline various tests for Mountain Lion where Mountain Lion specific results override current Lion specific results,
+        or in some cases match the generic results.
 
         Unreviewed (Bot gardening).
 
+        * platform/mac-lion/canvas/philip/tests/2d.strokeRect.zero.5-expected.txt: Renamed from LayoutTests/platform/mac/canvas/philip/tests/2d.strokeRect.zero.5-expected.txt.
+        * platform/mac-lion/css2.1/t1202-counter-04-b-expected.png: Copied from LayoutTests/platform/mac/css2.1/t1202-counter-04-b-expected.png.
+        * platform/mac-lion/css2.1/t1202-counter-04-b-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t1202-counter-04-b-expected.txt.
+        * platform/mac-lion/css2.1/t1202-counters-04-b-expected.png: Copied from LayoutTests/platform/mac/css2.1/t1202-counters-04-b-expected.png.
+        * platform/mac-lion/css2.1/t1202-counters-04-b-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t1202-counters-04-b-expected.txt.
+        * platform/mac-lion/fast/text/emphasis-combined-text-expected.png: Renamed from LayoutTests/platform/mac/fast/text/emphasis-combined-text-expected.png.
+        * platform/mac-lion/fast/text/emphasis-combined-text-expected.txt: Copied from LayoutTests/platform/mac/fast/text/emphasis-combined-text-expected.txt.
+        * platform/mac-lion/fast/text/fallback-traits-fixup-expected.png: Copied from LayoutTests/platform/mac/fast/text/fallback-traits-fixup-expected.png.
+        * platform/mac-lion/fast/text/fallback-traits-fixup-expected.txt: Copied from LayoutTests/platform/mac/fast/text/fallback-traits-fixup-expected.txt.
+        * platform/mac-lion/fast/text/hyphenate-locale-expected.png: Renamed from LayoutTests/platform/mac/fast/text/hyphenate-locale-expected.png.
+        * platform/mac-lion/fast/text/hyphenate-locale-expected.txt: Copied from LayoutTests/platform/mac/fast/text/hyphenate-locale-expected.txt.
+        * platform/mac-lion/fast/text/international/hindi-spacing-expected.png: Copied from LayoutTests/platform/mac/fast/text/international/hindi-spacing-expected.png.
+        * platform/mac-lion/fast/text/international/hindi-spacing-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/hindi-spacing-expected.txt.
+        * platform/mac-lion/fast/text/international/text-combine-image-test-expected.png: Renamed from LayoutTests/platform/mac/fast/text/international/text-combine-image-test-expected.png.
+        * platform/mac-lion/fast/text/international/text-combine-image-test-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/text-combine-image-test-expected.txt.
+        * platform/mac-lion/fast/text/international/vertical-text-glyph-test-expected.png: Renamed from LayoutTests/platform/mac/fast/text/international/vertical-text-glyph-test-expected.png.
+        * platform/mac-lion/fast/text/international/vertical-text-glyph-test-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/vertical-text-glyph-test-expected.txt.
+        * platform/mac-lion/fast/text/justify-ideograph-vertical-expected.png: Renamed from LayoutTests/platform/mac/fast/text/justify-ideograph-vertical-expected.png.
+        * platform/mac-lion/fast/text/justify-ideograph-vertical-expected.txt: Copied from LayoutTests/platform/mac/fast/text/justify-ideograph-vertical-expected.txt.
+        * platform/mac-lion/http/tests/xmlhttprequest/web-apps/012-expected.txt: Renamed from LayoutTests/platform/mac/http/tests/xmlhttprequest/web-apps/012-expected.txt.
+        * platform/mac-lion/http/tests/xmlhttprequest/web-apps/013-expected.txt: Renamed from LayoutTests/platform/mac/http/tests/xmlhttprequest/web-apps/013-expected.txt.
+        * platform/mac-lion/media/audio-repaint-expected.png: Renamed from LayoutTests/platform/mac/media/audio-repaint-expected.png.
+        * platform/mac-lion/media/audio-repaint-expected.txt: Added.
+        * platform/mac-lion/media/video-size-intrinsic-scale-expected.txt: Renamed from LayoutTests/platform/mac/media/video-size-intrinsic-scale-expected.txt.
+        * platform/mac-lion/platform/mac/fast/text/vertical-surrogate-pair-expected.png: Renamed from LayoutTests/platform/mac/platform/mac/fast/text/vertical-surrogate-pair-expected.png.
+        * platform/mac-lion/platform/mac/fast/text/vertical-surrogate-pair-expected.txt: Copied from LayoutTests/platform/mac/platform/mac/fast/text/vertical-surrogate-pair-expected.txt.
+        * platform/mac/css2.1/t1202-counter-04-b-expected.png:
+        * platform/mac/css2.1/t1202-counter-04-b-expected.txt:
+        * platform/mac/css2.1/t1202-counters-04-b-expected.png:
+        * platform/mac/css2.1/t1202-counters-04-b-expected.txt:
+        * platform/mac/fast/text/emphasis-combined-text-expected.txt:
+        * platform/mac/fast/text/fallback-traits-fixup-expected.png:
+        * platform/mac/fast/text/fallback-traits-fixup-expected.txt:
+        * platform/mac/fast/text/hyphenate-locale-expected.txt:
+        * platform/mac/fast/text/international/hindi-spacing-expected.png:
+        * platform/mac/fast/text/international/hindi-spacing-expected.txt:
+        * platform/mac/fast/text/international/text-combine-image-test-expected.txt:
+        * platform/mac/fast/text/international/vertical-text-glyph-test-expected.txt:
+        * platform/mac/fast/text/justify-ideograph-vertical-expected.txt:
+        * platform/mac/platform/mac/fast/text/vertical-surrogate-pair-expected.txt:
+
+2012-08-21  Brady Eidson  <beidson@apple.com>
+
+        Rebaseline failing fast/canvas tests for Mountain Lion
+
+        Unreviewed (Bot gardening).
 
         * platform/mac-lion/fast/canvas/canvas-scale-shadowBlur-expected.txt: Added.
         * platform/mac-lion/fast/canvas/canvas-scale-strokePath-shadow-expected.txt: Added.
