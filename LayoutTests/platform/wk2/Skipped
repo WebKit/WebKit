@@ -763,6 +763,12 @@ http/tests/security/referrer-policy-redirect-link.html
 # https://bugs.webkit.org/show_bug.cgi?id=84186
 fast/text-autosizing
 
+# setMockGeolocationPosition not defined in WKTR
+# https://bugs.webkit.org/show_bug.cgi?id=94554
+inspector/geolocation-error.html
+inspector/geolocation-success.html
+inspector/geolocation-watchPosition.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
