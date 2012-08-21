@@ -4125,12 +4125,12 @@ LayoutRect RenderLayer::localClipRect() const
 
 void RenderLayer::addBlockSelectionGapsBounds(const LayoutRect& bounds)
 {
-    m_blockSelectionGapsBounds.unite(bounds);
+    m_blockSelectionGapsBounds.unite(enclosingIntRect(bounds));
 }
 
 void RenderLayer::clearBlockSelectionGapsBounds()
 {
-    m_blockSelectionGapsBounds = LayoutRect();
+    m_blockSelectionGapsBounds = IntRect();
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         child->clearBlockSelectionGapsBounds();
 }

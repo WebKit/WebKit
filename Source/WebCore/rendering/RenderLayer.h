@@ -1000,7 +1000,7 @@ protected:
     RenderScrollbarPart* m_resizer;
 
 private:
-    LayoutRect m_blockSelectionGapsBounds;
+    IntRect m_blockSelectionGapsBounds;
 
 #if USE(ACCELERATED_COMPOSITING)
     OwnPtr<RenderLayerBacking> m_backing;
