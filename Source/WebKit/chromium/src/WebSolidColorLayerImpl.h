@@ -26,18 +26,28 @@
 #ifndef WebSolidColorLayerImpl_h
 #define WebSolidColorLayerImpl_h
 
-#include "SolidColorLayerChromium.h"
+#include <public/WebSolidColorLayer.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
+namespace WebCore {
+class SolidColorLayerChromium;
+}
+
 namespace WebKit {
+class WebLayerImpl;
 
-class WebSolidColorLayerImpl : public WebCore::SolidColorLayerChromium {
+class WebSolidColorLayerImpl : public WebSolidColorLayer {
 public:
-    static PassRefPtr<WebSolidColorLayerImpl> create();
-
-protected:
-    WebSolidColorLayerImpl();
+    explicit WebSolidColorLayerImpl(PassRefPtr<WebCore::SolidColorLayerChromium>);
     virtual ~WebSolidColorLayerImpl();
+
+    // WebSolidColorLayer implementation.
+    virtual WebLayer* layer() OVERRIDE;
+    virtual void setBackgroundColor(WebColor) OVERRIDE;
+
+private:
+    OwnPtr<WebLayerImpl> m_layer;
 };
 
 } // namespace WebKit

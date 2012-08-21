@@ -234,10 +234,11 @@ void LayerChromium::setBounds(const IntSize& size)
         setNeedsCommit();
 }
 
-const LayerChromium* LayerChromium::rootLayer() const
+LayerChromium* LayerChromium::rootLayer()
 {
-    const LayerChromium* layer = this;
-    for (LayerChromium* parent = layer->parent(); parent; layer = parent, parent = parent->parent()) { }
+    LayerChromium* layer = this;
+    while (layer->parent())
+        layer = layer->parent();
     return layer;
 }
 

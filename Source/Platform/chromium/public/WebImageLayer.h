@@ -30,24 +30,16 @@
 #include "WebCommon.h"
 #include "WebLayer.h"
 
-namespace WebCore {
-class ImageLayerChromium;
-}
-
 namespace WebKit {
 
-class WebImageLayer : public WebLayer {
+class WebImageLayer {
 public:
-    WEBKIT_EXPORT static WebImageLayer create();
+    WEBKIT_EXPORT static WebImageLayer* create();
 
-    WebImageLayer() { }
     virtual ~WebImageLayer() { }
 
-    WEBKIT_EXPORT void setBitmap(SkBitmap);
-
-#if WEBKIT_IMPLEMENTATION
-    explicit WebImageLayer(PassRefPtr<WebCore::ImageLayerChromium>);
-#endif
+    virtual WebLayer* layer() = 0;
+    virtual void setBitmap(SkBitmap) = 0;
 };
 
 } // namespace WebKit

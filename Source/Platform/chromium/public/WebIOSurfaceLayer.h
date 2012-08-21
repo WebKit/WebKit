@@ -30,27 +30,19 @@
 #include "WebLayer.h"
 #include "WebSize.h"
 
-namespace WebCore {
-class IOSurfaceLayerChromium;
-}
-
 namespace WebKit {
 
 // This class represents a layer that renders an externally managed IOSurface.
-class WebIOSurfaceLayer : public WebLayer {
+class WebIOSurfaceLayer {
 public:
-    WEBKIT_EXPORT static WebIOSurfaceLayer create();
+    WEBKIT_EXPORT static WebIOSurfaceLayer* create();
 
-    WebIOSurfaceLayer() { }
     virtual ~WebIOSurfaceLayer() { }
 
-    // Sets the IO surface id that represents this layer's contents.
-    WEBKIT_EXPORT void setIOSurfaceProperties(unsigned ioSurfaceId, WebSize);
+    virtual WebLayer* layer() = 0;
 
-private:
-#if WEBKIT_IMPLEMENTATION
-    explicit WebIOSurfaceLayer(PassRefPtr<WebCore::IOSurfaceLayerChromium>);
-#endif
+    // Sets the IO surface id that represents this layer's contents.
+    virtual void setIOSurfaceProperties(unsigned ioSurfaceId, WebSize) = 0;
 };
 
 } // namespace WebKit

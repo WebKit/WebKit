@@ -109,9 +109,9 @@ void WebMediaPlayerClientImpl::readyStateChanged()
     ASSERT(m_mediaPlayer);
     m_mediaPlayer->readyStateChanged();
 #if USE(ACCELERATED_COMPOSITING)
-    if (hasVideo() && supportsAcceleratedRendering() && m_videoLayer.isNull()) {
-        m_videoLayer = WebVideoLayer::create(this);
-        m_videoLayer.setOpaque(m_opaque);
+    if (hasVideo() && supportsAcceleratedRendering() && !m_videoLayer) {
+        m_videoLayer = adoptPtr(WebVideoLayer::create(this));
+        m_videoLayer->layer()->setOpaque(m_opaque);
     }
 #endif
 }
@@ -138,8 +138,8 @@ void WebMediaPlayerClientImpl::repaint()
 {
     ASSERT(m_mediaPlayer);
 #if USE(ACCELERATED_COMPOSITING)
-    if (!m_videoLayer.isNull() && supportsAcceleratedRendering())
-        m_videoLayer.invalidate();
+    if (m_videoLayer && supportsAcceleratedRendering())
+        m_videoLayer->layer()->invalidate();
 #endif
     m_mediaPlayer->repaint();
 }
@@ -166,8 +166,8 @@ void WebMediaPlayerClientImpl::setOpaque(bool opaque)
 {
 #if USE(ACCELERATED_COMPOSITING)
     m_opaque = opaque;
-    if (!m_videoLayer.isNull())
-        m_videoLayer.setOpaque(m_opaque);
+    if (m_videoLayer)
+        m_videoLayer->layer()->setOpaque(m_opaque);
 #endif
 }
 
@@ -343,7 +343,7 @@ void WebMediaPlayerClientImpl::cancelLoad()
 WebLayer* WebMediaPlayerClientImpl::platformLayer() const
 {
     ASSERT(m_supportsAcceleratedCompositing);
-    return const_cast<WebVideoLayer*>(&m_videoLayer);
+    return m_videoLayer ? m_videoLayer->layer() : 0;
 }
 #endif
 
@@ -745,7 +745,7 @@ bool WebMediaPlayerClientImpl::supportsAcceleratedRendering() const
 
 bool WebMediaPlayerClientImpl::acceleratedRenderingInUse()
 {
-    return !m_videoLayer.isNull() && m_videoLayer.active();
+    return m_videoLayer && m_videoLayer->active();
 }
 
 void WebMediaPlayerClientImpl::setVideoFrameProviderClient(WebVideoFrameProvider::Client* client)

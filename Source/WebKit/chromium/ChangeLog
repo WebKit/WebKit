@@ -1,3 +1,203 @@
+2012-08-21  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, rolling out r126169.
+        http://trac.webkit.org/changeset/126169
+        https://bugs.webkit.org/show_bug.cgi?id=94614
+
+        Crashes already fixed downstream
+
+        * WebKit.gypi:
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::NonCompositedContentHost):
+        (WebKit::NonCompositedContentHost::setScrollLayer):
+        (WebKit::NonCompositedContentHost::setViewport):
+        (WebKit::NonCompositedContentHost::scrollLayer):
+        * src/NonCompositedContentHost.h:
+        * src/WebContentLayer.cpp: Removed.
+        * src/WebContentLayerImpl.cpp:
+        (WebKit::WebContentLayer::create):
+        (WebKit::WebContentLayerImpl::WebContentLayerImpl):
+        (WebKit::WebContentLayerImpl::~WebContentLayerImpl):
+        (WebKit::WebContentLayerImpl::layer):
+        (WebKit):
+        (WebKit::WebContentLayerImpl::setDoubleSided):
+        (WebKit::WebContentLayerImpl::setContentsScale):
+        (WebKit::WebContentLayerImpl::setUseLCDText):
+        (WebKit::WebContentLayerImpl::setDrawCheckerboardForMissingTiles):
+        (WebKit::WebContentLayerImpl::paintContents):
+        * src/WebContentLayerImpl.h:
+        (WebContentLayerImpl):
+        * src/WebExternalTextureLayerImpl.cpp: Renamed from Source/WebKit/chromium/src/WebExternalTextureLayer.cpp.
+        (WebKit):
+        (WebKit::WebExternalTextureLayer::create):
+        (WebKit::WebExternalTextureLayerImpl::WebExternalTextureLayerImpl):
+        (WebKit::WebExternalTextureLayerImpl::~WebExternalTextureLayerImpl):
+        (WebKit::WebExternalTextureLayerImpl::layer):
+        (WebKit::WebExternalTextureLayerImpl::setTextureId):
+        (WebKit::WebExternalTextureLayerImpl::setFlipped):
+        (WebKit::WebExternalTextureLayerImpl::setUVRect):
+        (WebKit::WebExternalTextureLayerImpl::setOpaque):
+        (WebKit::WebExternalTextureLayerImpl::setPremultipliedAlpha):
+        (WebKit::WebExternalTextureLayerImpl::willModifyTexture):
+        (WebKit::WebExternalTextureLayerImpl::setRateLimitContext):
+        (WebTextureUpdaterImpl):
+        (WebKit::WebTextureUpdaterImpl::WebTextureUpdaterImpl):
+        (WebKit::WebExternalTextureLayerImpl::prepareTexture):
+        (WebKit::WebExternalTextureLayerImpl::context):
+        * src/WebExternalTextureLayerImpl.h: Copied from Source/Platform/chromium/public/WebVideoLayer.h.
+        (WebKit):
+        (WebExternalTextureLayerImpl):
+        * src/WebIOSurfaceLayerImpl.cpp: Renamed from Source/WebKit/chromium/src/WebIOSurfaceLayer.cpp.
+        (WebKit):
+        (WebKit::WebIOSurfaceLayer::create):
+        (WebKit::WebIOSurfaceLayerImpl::WebIOSurfaceLayerImpl):
+        (WebKit::WebIOSurfaceLayerImpl::~WebIOSurfaceLayerImpl):
+        (WebKit::WebIOSurfaceLayerImpl::setIOSurfaceProperties):
+        (WebKit::WebIOSurfaceLayerImpl::layer):
+        * src/WebIOSurfaceLayerImpl.h: Copied from Source/Platform/chromium/public/WebImageLayer.h.
+        (WebCore):
+        (WebKit):
+        (WebIOSurfaceLayerImpl):
+        * src/WebImageLayerImpl.cpp: Renamed from Source/WebKit/chromium/src/WebSolidColorLayer.cpp.
+        (WebKit):
+        (WebKit::WebImageLayer::create):
+        (WebKit::WebImageLayerImpl::WebImageLayerImpl):
+        (WebKit::WebImageLayerImpl::~WebImageLayerImpl):
+        (WebKit::WebImageLayerImpl::layer):
+        (WebKit::WebImageLayerImpl::setBitmap):
+        * src/WebImageLayerImpl.h: Renamed from Source/WebKit/chromium/src/WebImageLayer.cpp.
+        (WebCore):
+        (WebKit):
+        (WebImageLayerImpl):
+        * src/WebLayer.cpp: Removed.
+        * src/WebLayerImpl.cpp:
+        (WebKit::WebLayer::create):
+        (WebKit::WebLayerImpl::WebLayerImpl):
+        (WebKit::WebLayerImpl::~WebLayerImpl):
+        (WebKit):
+        (WebKit::WebLayerImpl::id):
+        (WebKit::WebLayerImpl::invalidateRect):
+        (WebKit::WebLayerImpl::invalidate):
+        (WebKit::WebLayerImpl::addChild):
+        (WebKit::WebLayerImpl::insertChild):
+        (WebKit::WebLayerImpl::replaceChild):
+        (WebKit::WebLayerImpl::setChildren):
+        (WebKit::WebLayerImpl::removeFromParent):
+        (WebKit::WebLayerImpl::removeAllChildren):
+        (WebKit::WebLayerImpl::setAnchorPoint):
+        (WebKit::WebLayerImpl::anchorPoint):
+        (WebKit::WebLayerImpl::setAnchorPointZ):
+        (WebKit::WebLayerImpl::anchorPointZ):
+        (WebKit::WebLayerImpl::setBounds):
+        (WebKit::WebLayerImpl::bounds):
+        (WebKit::WebLayerImpl::setMasksToBounds):
+        (WebKit::WebLayerImpl::masksToBounds):
+        (WebKit::WebLayerImpl::setMaskLayer):
+        (WebKit::WebLayerImpl::setReplicaLayer):
+        (WebKit::WebLayerImpl::setOpacity):
+        (WebKit::WebLayerImpl::opacity):
+        (WebKit::WebLayerImpl::setOpaque):
+        (WebKit::WebLayerImpl::opaque):
+        (WebKit::WebLayerImpl::setPosition):
+        (WebKit::WebLayerImpl::position):
+        (WebKit::WebLayerImpl::setSublayerTransform):
+        (WebKit::WebLayerImpl::sublayerTransform):
+        (WebKit::WebLayerImpl::setTransform):
+        (WebKit::WebLayerImpl::transform):
+        (WebKit::WebLayerImpl::setDrawsContent):
+        (WebKit::WebLayerImpl::drawsContent):
+        (WebKit::WebLayerImpl::setPreserves3D):
+        (WebKit::WebLayerImpl::setUseParentBackfaceVisibility):
+        (WebKit::WebLayerImpl::setBackgroundColor):
+        (WebKit::WebLayerImpl::setFilters):
+        (WebKit::WebLayerImpl::setBackgroundFilters):
+        (WebKit::WebLayerImpl::setDebugBorderColor):
+        (WebKit::WebLayerImpl::setDebugBorderWidth):
+        (WebKit::WebLayerImpl::setDebugName):
+        (WebKit::WebLayerImpl::setAnimationDelegate):
+        (WebKit::WebLayerImpl::addAnimation):
+        (WebKit::WebLayerImpl::removeAnimation):
+        (WebKit::WebLayerImpl::pauseAnimation):
+        (WebKit::WebLayerImpl::suspendAnimations):
+        (WebKit::WebLayerImpl::resumeAnimations):
+        (WebKit::WebLayerImpl::hasActiveAnimation):
+        (WebKit::WebLayerImpl::transferAnimationsTo):
+        (WebKit::WebLayerImpl::setForceRenderSurface):
+        (WebKit::WebLayerImpl::setScrollPosition):
+        (WebKit::WebLayerImpl::setScrollable):
+        (WebKit::WebLayerImpl::setHaveWheelEventHandlers):
+        (WebKit::WebLayerImpl::setShouldScrollOnMainThread):
+        (WebKit::WebLayerImpl::setNonFastScrollableRegion):
+        (WebKit::WebLayerImpl::setIsContainerForFixedPositionLayers):
+        (WebKit::WebLayerImpl::setFixedToContainerLayer):
+        (WebKit::WebLayerImpl::layer):
+        * src/WebLayerImpl.h:
+        (WebCore):
+        (WebLayerImpl):
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::setRootLayer):
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeViewImpl::create):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::readyStateChanged):
+        (WebKit::WebMediaPlayerClientImpl::repaint):
+        (WebKit::WebMediaPlayerClientImpl::setOpaque):
+        (WebKit::WebMediaPlayerClientImpl::platformLayer):
+        (WebKit::WebMediaPlayerClientImpl::acceleratedRenderingInUse):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::setBackingTextureId):
+        (WebKit::WebPluginContainerImpl::setBackingIOSurfaceId):
+        (WebKit::WebPluginContainerImpl::commitBackingTexture):
+        (WebKit::WebPluginContainerImpl::setOpaque):
+        (WebKit::WebPluginContainerImpl::platformLayer):
+        * src/WebPluginContainerImpl.h:
+        (WebPluginContainerImpl):
+        * src/WebScrollableLayer.cpp: Removed.
+        * src/WebScrollbarLayerImpl.cpp: Renamed from Source/WebKit/chromium/src/WebScrollbarLayer.cpp.
+        (WebKit):
+        (WebKit::WebScrollbarLayer::create):
+        (WebKit::WebScrollbarLayerImpl::WebScrollbarLayerImpl):
+        (WebKit::WebScrollbarLayerImpl::~WebScrollbarLayerImpl):
+        (WebKit::WebScrollbarLayerImpl::layer):
+        (WebKit::WebScrollbarLayerImpl::setScrollLayer):
+        * src/WebScrollbarLayerImpl.h: Copied from Source/WebKit/chromium/src/WebSolidColorLayerImpl.h.
+        (WebCore):
+        (WebKit):
+        (WebScrollbarLayerImpl):
+        * src/WebSolidColorLayerImpl.cpp:
+        (WebKit::WebSolidColorLayer::create):
+        (WebKit::WebSolidColorLayerImpl::WebSolidColorLayerImpl):
+        (WebKit::WebSolidColorLayerImpl::layer):
+        (WebKit):
+        (WebKit::WebSolidColorLayerImpl::setBackgroundColor):
+        * src/WebSolidColorLayerImpl.h:
+        (WebCore):
+        (WebKit):
+        (WebSolidColorLayerImpl):
+        * src/WebVideoLayerImpl.cpp: Copied from Source/WebKit/chromium/src/WebVideoLayer.cpp.
+        (WebKit):
+        (WebKit::WebVideoLayer::create):
+        (WebKit::WebVideoLayerImpl::WebVideoLayerImpl):
+        (WebKit::WebVideoLayerImpl::~WebVideoLayerImpl):
+        (WebKit::WebVideoLayerImpl::layer):
+        (WebKit::WebVideoLayerImpl::active):
+        * src/WebVideoLayerImpl.h: Renamed from Source/WebKit/chromium/src/WebVideoLayer.cpp.
+        (WebCore):
+        (WebKit):
+        (WebVideoLayerImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::setRootGraphicsLayer):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit):
+        * src/WebViewImpl.h:
+        * tests/ImageLayerChromiumTest.cpp:
+        (WebCore::TEST):
+        * tests/WebLayerTest.cpp:
+        * tests/WebLayerTreeViewTest.cpp:
+
 2012-08-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126076, r126099, and r126106.
