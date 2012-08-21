@@ -1,3 +1,13 @@
+2012-08-20  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Add stop_when_done parameter to ChromiumAndroidDriver.run_test()
+        https://bugs.webkit.org/show_bug.cgi?id=94558
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidDriver.run_test):
+
 2012-08-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Cleanup TestExpectationParser.parse

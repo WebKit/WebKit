@@ -551,13 +551,13 @@ class ChromiumAndroidDriver(driver.Driver):
                 not self._file_exists_on_device(self._out_fifo_path) and
                 not self._file_exists_on_device(self._err_fifo_path))
 
-    def run_test(self, driver_input):
+    def run_test(self, driver_input, stop_when_done):
         base = self._port.lookup_virtual_test_base(driver_input.test_name)
         if base:
             driver_input = copy.copy(driver_input)
             driver_input.args = self._port.lookup_virtual_test_args(driver_input.test_name)
             driver_input.test_name = base
-        return super(ChromiumAndroidDriver, self).run_test(driver_input)
+        return super(ChromiumAndroidDriver, self).run_test(driver_input, stop_when_done)
 
     def start(self, pixel_tests, per_test_args):
         # Only one driver instance is allowed because of the nature of Android activity.
