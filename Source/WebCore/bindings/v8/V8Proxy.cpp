@@ -69,7 +69,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/UnusedParam.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(CHROMIUM)
@@ -105,6 +104,7 @@ void V8Proxy::reportUnsafeAccessTo(Document* targetDocument)
     sourceDocument->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, str, stackTrace.release());
 }
 
+// FIXME: This will be soon removed when we move runScript() to ScriptController.
 static v8::Local<v8::Value> handleMaxRecursionDepthExceeded()
 {
     throwError(RangeError, "Maximum call stack size exceeded.");
@@ -254,62 +254,6 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script)
     if (result.IsEmpty())
         return v8::Local<v8::Value>();
 
-    crashIfV8IsDead();
-    return result;
-}
-
-static inline void resourceInfo(const v8::Handle<v8::Function> function, String& resourceName, int& lineNumber)
-{
-    v8::ScriptOrigin origin = function->GetScriptOrigin();
-    if (origin.ResourceName().IsEmpty()) {
-        resourceName = "undefined";
-        lineNumber = 1;
-    } else {
-        resourceName = toWebCoreString(origin.ResourceName());
-        lineNumber = function->GetScriptLineNumber() + 1;
-    }
-}
-
-static inline String resourceString(const v8::Handle<v8::Function> function)
-{
-    String resourceName;
-    int lineNumber;
-    resourceInfo(function, resourceName, lineNumber);
-
-    StringBuilder builder;
-    builder.append(resourceName);
-    builder.append(':');
-    builder.append(String::number(lineNumber));
-    return builder.toString();
-}
-
-v8::Local<v8::Value> V8Proxy::instrumentedCallFunction(Frame* frame, v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
-{
-    V8GCController::checkMemoryUsage();
-
-    if (V8RecursionScope::recursionLevel() >= kMaxRecursionDepth)
-        return handleMaxRecursionDepthExceeded();
-
-    ScriptExecutionContext* context = frame ? frame->document() : 0;
-
-    InspectorInstrumentationCookie cookie;
-    if (InspectorInstrumentation::hasFrontends() && context) {
-        String resourceName;
-        int lineNumber;
-        resourceInfo(function, resourceName, lineNumber);
-        cookie = InspectorInstrumentation::willCallFunction(context, resourceName, lineNumber);
-    }
-
-    v8::Local<v8::Value> result;
-    {
-#if PLATFORM(CHROMIUM)
-        TRACE_EVENT1("v8", "v8.callFunction", "callsite", resourceString(function).utf8());
-#endif
-        V8RecursionScope recursionScope(context);
-        result = function->Call(receiver, argc, args);
-    }
-
-    InspectorInstrumentation::didCallFunction(cookie);
     crashIfV8IsDead();
     return result;
 }

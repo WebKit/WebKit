@@ -122,7 +122,7 @@ void WebDevToolsFrontendImpl::dispatchOnInspectorFrontend(const WebString& messa
     args.append(ToV8String(message));
     v8::TryCatch tryCatch;
     tryCatch.SetVerbose(true);
-    V8Proxy::instrumentedCallFunction(frame->frame(), function, inspectorBackend, args.size(), args.data());
+    ScriptController::callFunctionWithInstrumentation(frame->frame() ? frame->frame()->document() : 0, function, inspectorBackend, args.size(), args.data());
 }
 
 } // namespace WebKit

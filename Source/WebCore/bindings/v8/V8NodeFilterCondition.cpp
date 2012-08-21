@@ -33,9 +33,9 @@
 
 #include "Node.h"
 #include "NodeFilter.h"
+#include "ScriptController.h"
 #include "ScriptState.h"
 #include "V8Node.h"
-#include "V8Proxy.h"
 
 #include <wtf/OwnArrayPtr.h>
 
@@ -83,7 +83,7 @@ short V8NodeFilterCondition::acceptNode(ScriptState* state, Node* node) const
     OwnArrayPtr<v8::Handle<v8::Value> > args = adoptArrayPtr(new v8::Handle<v8::Value>[1]);
     args[0] = toV8(node);
 
-    v8::Handle<v8::Value> result = V8Proxy::instrumentedCallFunction(0 /* frame */, callback, object, 1, args.get());
+    v8::Handle<v8::Value> result = ScriptController::callFunctionWithInstrumentation(0, callback, object, 1, args.get());
 
     if (exceptionCatcher.HasCaught()) {
         state->setException(exceptionCatcher.Exception());

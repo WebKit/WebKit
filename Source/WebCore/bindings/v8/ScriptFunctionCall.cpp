@@ -31,12 +31,12 @@
 #include "config.h"
 #include "ScriptFunctionCall.h"
 
+#include "ScriptController.h"
 #include "ScriptScope.h"
 #include "ScriptState.h"
 #include "ScriptValue.h"
 #include "V8Binding.h"
 #include "V8ObjectConstructor.h"
-#include "V8Proxy.h"
 #include "V8RecursionScope.h"
 #include "V8Utilities.h"
 
@@ -202,7 +202,7 @@ ScriptValue ScriptCallback::call(bool& hadException)
     for (size_t i = 0; i < m_arguments.size(); ++i)
         args[i] = m_arguments[i].v8Value();
 
-    v8::Handle<v8::Value> result = V8Proxy::instrumentedCallFunction(0 /* frame */, function, object, m_arguments.size(), args.get());
+    v8::Handle<v8::Value> result = ScriptController::callFunctionWithInstrumentation(0, function, object, m_arguments.size(), args.get());
 
     if (exceptionCatcher.HasCaught()) {
         hadException = true;

@@ -32,7 +32,7 @@
 #include "V8Callback.h"
 
 #include "Document.h"
-#include "V8Proxy.h"
+#include "ScriptController.h"
 
 namespace WebCore {
 
@@ -59,8 +59,7 @@ bool invokeCallback(v8::Persistent<v8::Object> callback, v8::Handle<v8::Object> 
     if (callbackFunction.IsEmpty())
         return false;
 
-    Frame* frame = scriptExecutionContext && scriptExecutionContext->isDocument() ? static_cast<Document*>(scriptExecutionContext)->frame() : 0;
-    v8::Handle<v8::Value> result = V8Proxy::instrumentedCallFunction(frame, callbackFunction, thisObject, argc, argv);
+    v8::Handle<v8::Value> result = ScriptController::callFunctionWithInstrumentation(scriptExecutionContext, callbackFunction, thisObject, argc, argv);
 
     callbackReturnValue = !result.IsEmpty() && result->BooleanValue();
     return exceptionCatcher.HasCaught();

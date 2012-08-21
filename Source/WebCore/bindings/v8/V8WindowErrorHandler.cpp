@@ -34,8 +34,8 @@
 
 #include "EventNames.h"
 #include "ErrorEvent.h"
+#include "ScriptController.h"
 #include "V8Binding.h"
-#include "V8Proxy.h"
 
 namespace WebCore {
 
@@ -58,7 +58,7 @@ v8::Local<v8::Value> V8WindowErrorHandler::callListenerFunction(ScriptExecutionC
         v8::Handle<v8::Value> parameters[3] = { v8String(errorEvent->message()), v8String(errorEvent->filename()), v8Integer(errorEvent->lineno()) };
         v8::TryCatch tryCatch;
         tryCatch.SetVerbose(true);
-        returnValue = V8Proxy::instrumentedCallFunction(0 /* frame */, callFunction, thisValue, 3, parameters);
+        returnValue = ScriptController::callFunctionWithInstrumentation(0, callFunction, thisValue, 3, parameters);
     }
     return returnValue;
 }

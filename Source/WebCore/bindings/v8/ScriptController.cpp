@@ -33,24 +33,25 @@
 #include "ScriptController.h"
 
 #include "BindingState.h"
-#include "Document.h"
-#include "ScriptCallStack.h"
-#include "ScriptCallStackFactory.h"
-#include "ScriptableDocumentParser.h"
 #include "DOMWindow.h"
+#include "Document.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
+#include "InspectorInstrumentation.h"
+#include "NPObjectWrapper.h"
+#include "NPV8Object.h"
 #include "Node.h"
 #include "NotImplemented.h"
-#include "NPObjectWrapper.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
-#include "NPV8Object.h"
 #include "PlatformSupport.h"
+#include "ScriptCallStack.h"
+#include "ScriptCallStackFactory.h"
 #include "ScriptSourceCode.h"
+#include "ScriptableDocumentParser.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
@@ -67,6 +68,11 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
+
+#if PLATFORM(CHROMIUM)
+#include "TraceEvent.h"
+#endif
 
 namespace WebCore {
 
@@ -189,7 +195,65 @@ v8::Local<v8::Value> ScriptController::callFunction(v8::Handle<v8::Function> fun
 {
     // Keep Frame (and therefore ScriptController and V8Proxy) alive.
     RefPtr<Frame> protect(m_frame);
-    return V8Proxy::instrumentedCallFunction(m_frame, function, receiver, argc, args);
+    return ScriptController::callFunctionWithInstrumentation(m_frame ? m_frame->document() : 0, function, receiver, argc, args);
+}
+
+static v8::Local<v8::Value> handleMaxRecursionDepthExceeded()
+{
+    throwError(RangeError, "Maximum call stack size exceeded.");
+    return v8::Local<v8::Value>();
+}
+
+static inline void resourceInfo(const v8::Handle<v8::Function> function, String& resourceName, int& lineNumber)
+{
+    v8::ScriptOrigin origin = function->GetScriptOrigin();
+    if (origin.ResourceName().IsEmpty()) {
+        resourceName = "undefined";
+        lineNumber = 1;
+    } else {
+        resourceName = toWebCoreString(origin.ResourceName());
+        lineNumber = function->GetScriptLineNumber() + 1;
+    }
+}
+
+static inline String resourceString(const v8::Handle<v8::Function> function)
+{
+    String resourceName;
+    int lineNumber;
+    resourceInfo(function, resourceName, lineNumber);
+
+    StringBuilder builder;
+    builder.append(resourceName);
+    builder.append(':');
+    builder.append(String::number(lineNumber));
+    return builder.toString();
+}
+
+v8::Local<v8::Value> ScriptController::callFunctionWithInstrumentation(ScriptExecutionContext* context, v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
+{
+    V8GCController::checkMemoryUsage();
+
+    if (V8RecursionScope::recursionLevel() >= kMaxRecursionDepth)
+        return handleMaxRecursionDepthExceeded();
+
+    InspectorInstrumentationCookie cookie;
+    if (InspectorInstrumentation::hasFrontends() && context) {
+        String resourceName;
+        int lineNumber;
+        resourceInfo(function, resourceName, lineNumber);
+        cookie = InspectorInstrumentation::willCallFunction(context, resourceName, lineNumber);
+    }
+
+    v8::Local<v8::Value> result;
+    {
+        TRACE_EVENT1("v8", "v8.callFunction", "callsite", resourceString(function).utf8());
+        V8RecursionScope recursionScope(context);
+        result = function->Call(receiver, argc, args);
+    }
+
+    InspectorInstrumentation::didCallFunction(cookie);
+    crashIfV8IsDead();
+    return result;
 }
 
 ScriptValue ScriptController::callFunctionEvenIfScriptDisabled(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> argv[])
