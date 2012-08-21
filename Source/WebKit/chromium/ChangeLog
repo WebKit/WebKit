@@ -1,3 +1,25 @@
+2012-08-20  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Move retrieve{Window,Frame,PerContextData}() from V8Proxy to V8Binding
+        https://bugs.webkit.org/show_bug.cgi?id=94460
+
+        Reviewed by Adam Barth.
+
+        To kill V8Proxy, we move retrieve{Window,Frame,PerContextData}()
+        from V8Proxy to V8Binding. Also, this patch renames these methods as follows:
+
+        - retrieveWindow() -> toDOMWindow()
+        - retrieveFrame() -> toFrameIfNotDetached()
+        - retrievePerContextData() -> perContextDataForCurrentWorld()
+
+        No tests. No change in behavior.
+
+        * src/WebBindings.cpp:
+        (WebKit::makeIntArrayImpl):
+        (WebKit::makeStringArrayImpl):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrame::frameForContext):
+
 2012-08-20  James Robinson  <jamesr@chromium.org>
 
         [chromium] REGRESSION(126076) Should not touch old GraphicsLayerChromium::m_contentsLayer when setting up a new contents layer

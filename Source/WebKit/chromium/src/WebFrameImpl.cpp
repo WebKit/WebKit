@@ -583,8 +583,8 @@ WebFrame* WebFrame::frameForCurrentContext()
 
 #if WEBKIT_USING_V8
 WebFrame* WebFrame::frameForContext(v8::Handle<v8::Context> context)
-{
-    return WebFrameImpl::fromFrame(V8Proxy::retrieveFrame(context));
+{ 
+   return WebFrameImpl::fromFrame(toFrameIfNotDetached(context));
 }
 #endif
 

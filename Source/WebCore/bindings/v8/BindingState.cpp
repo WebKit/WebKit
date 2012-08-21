@@ -34,7 +34,7 @@
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "ScriptController.h"
-#include "V8Proxy.h"
+#include "V8Binding.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -58,12 +58,12 @@ static v8::Handle<v8::Context> activeContext()
 
 DOMWindow* activeDOMWindow(BindingState*)
 {
-    return V8Proxy::retrieveWindow(activeContext());
+    return toDOMWindow(activeContext());
 }
 
 DOMWindow* firstDOMWindow(BindingState*)
 {
-    return V8Proxy::retrieveWindow(v8::Context::GetEntered());
+    return toDOMWindow(v8::Context::GetEntered());
 }
 
 Frame* activeFrame(BindingState*)
@@ -71,7 +71,7 @@ Frame* activeFrame(BindingState*)
     v8::Handle<v8::Context> context = activeContext();
     if (context.IsEmpty())
         return 0;
-    return V8Proxy::retrieveFrame(context);
+    return toFrameIfNotDetached(context);
 }
 
 Frame* firstFrame(BindingState*)
@@ -79,7 +79,7 @@ Frame* firstFrame(BindingState*)
     v8::Handle<v8::Context> context = v8::Context::GetEntered();
     if (context.IsEmpty())
         return 0;
-    return V8Proxy::retrieveFrame(context);
+    return toFrameIfNotDetached(context);
 }
 
 Frame* currentFrame(BindingState*)
@@ -87,12 +87,12 @@ Frame* currentFrame(BindingState*)
     v8::Handle<v8::Context> context = v8::Context::GetCurrent();
     if (context.IsEmpty())
         return 0;
-    return V8Proxy::retrieveFrame(context);
+    return toFrameIfNotDetached(context);
 }
 
 Document* currentDocument(BindingState*)
 {
-    DOMWindow* current = V8Proxy::retrieveWindow(v8::Context::GetCurrent());
+    DOMWindow* current = toDOMWindow(v8::Context::GetCurrent());
     if (!current)
         return 0;
     return current->document();

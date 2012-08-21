@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-static Frame* retrieveFrame(v8::Handle<v8::Context> context)
+static Frame* retrieveFrameWithGlobalObjectCheck(v8::Handle<v8::Context> context)
 {
     if (context.IsEmpty())
         return 0;
@@ -61,7 +61,7 @@ static Frame* retrieveFrame(v8::Handle<v8::Context> context)
     if (global.IsEmpty())
         return 0;
 
-    return V8Proxy::retrieveFrame(context);
+    return toFrameIfNotDetached(context);
 }
 
 PageScriptDebugServer& PageScriptDebugServer::shared()
@@ -167,7 +167,7 @@ void PageScriptDebugServer::runScript(ScriptState* state, const String& scriptId
 ScriptDebugListener* PageScriptDebugServer::getDebugListenerForContext(v8::Handle<v8::Context> context)
 {
     v8::HandleScope scope;
-    Frame* frame = retrieveFrame(context);
+    Frame* frame = retrieveFrameWithGlobalObjectCheck(context);
     if (!frame)
         return 0;
     return m_listenersMap.get(frame->page());
@@ -176,7 +176,7 @@ ScriptDebugListener* PageScriptDebugServer::getDebugListenerForContext(v8::Handl
 void PageScriptDebugServer::runMessageLoopOnPause(v8::Handle<v8::Context> context)
 {
     v8::HandleScope scope;
-    Frame* frame = retrieveFrame(context);
+    Frame* frame = retrieveFrameWithGlobalObjectCheck(context);
     m_pausedPage = frame->page();
 
     // Wait for continue or step command.

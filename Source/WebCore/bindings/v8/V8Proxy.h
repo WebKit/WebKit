@@ -103,15 +103,6 @@ namespace WebCore {
         // Call the function as constructor with the given arguments.
         v8::Local<v8::Value> newInstance(v8::Handle<v8::Function>, int argc, v8::Handle<v8::Value> argv[]);
 
-        // Returns the window object associated with a context.
-        static DOMWindow* retrieveWindow(v8::Handle<v8::Context>);
-
-        // Returns the frame object of the window object associated with
-        // a context.
-        static Frame* retrieveFrame(v8::Handle<v8::Context>);
-
-        static V8PerContextData* retrievePerContextData(Frame*);
-
         // Returns V8 Context of a frame. If none exists, creates
         // a new context. It is potentially slow and consumes memory.
         static v8::Local<v8::Context> context(Frame*);

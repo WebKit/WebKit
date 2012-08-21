@@ -368,6 +368,16 @@ namespace WebCore {
 
     PassRefPtr<DOMStringList> toDOMStringList(v8::Handle<v8::Value>);
 
+    // Returns the window object associated with a context.
+    DOMWindow* toDOMWindow(v8::Handle<v8::Context>);
+
+    // Returns the frame object of the window object associated with
+    // a context, if the window is currently being displayed in the Frame.
+    Frame* toFrameIfNotDetached(v8::Handle<v8::Context>);
+
+    // Returns the PerContextData associated with a frame for the current isolated world.
+    V8PerContextData* perContextDataForCurrentWorld(Frame*);
+
     void crashIfV8IsDead();
 
     class V8ParameterBase {

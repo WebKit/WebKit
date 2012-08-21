@@ -95,7 +95,7 @@ v8::Local<v8::Function> V8DOMWrapper::constructorForType(WrapperTypeInfo* type, 
     if (!frame)
         return v8::Local<v8::Function>();
 
-    if (V8PerContextData* contextData = V8Proxy::retrievePerContextData(frame))
+    if (V8PerContextData* contextData = perContextDataForCurrentWorld(frame))
         return contextData->constructorForType(type);
 
     return v8::Local<v8::Function>();

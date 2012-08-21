@@ -140,7 +140,7 @@ bool V8Proxy::handleOutOfMemory()
         return false;
 
     // Warning, error, disable JS for this frame?
-    Frame* frame = V8Proxy::retrieveFrame(context);
+    Frame* frame = toFrameIfNotDetached(context);
     if (!frame)
         return true;
 
@@ -319,34 +319,6 @@ V8DOMWindowShell* V8Proxy::windowShell() const
     return frame()->script()->windowShell();
 }
 
-DOMWindow* V8Proxy::retrieveWindow(v8::Handle<v8::Context> context)
-{
-    v8::Handle<v8::Object> global = context->Global();
-    ASSERT(!global.IsEmpty());
-    global = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), global);
-    ASSERT(!global.IsEmpty());
-    return V8DOMWindow::toNative(global);
-}
-
-Frame* V8Proxy::retrieveFrame(v8::Handle<v8::Context> context)
-{
-    DOMWindow* window = retrieveWindow(context);
-    if (window->isCurrentlyDisplayedInFrame())
-        return window->frame();
-    // We return 0 here because |context| is detached from the Frame.  If we
-    // did return |frame| we could get in trouble because the frame could be
-    // navigated to another security origin.
-    return 0;
-}
-
-V8PerContextData* V8Proxy::retrievePerContextData(Frame* frame)
-{
-    V8IsolatedContext* isolatedContext;
-    if (UNLIKELY(!!(isolatedContext = V8IsolatedContext::getEntered())))
-        return isolatedContext->perContextData();
-    return frame->script()->windowShell()->perContextData();
-}
-
 v8::Local<v8::Context> V8Proxy::context(Frame* frame)
 {
     v8::Local<v8::Context> context = ScriptController::mainWorldContext(frame);
@@ -355,7 +327,7 @@ v8::Local<v8::Context> V8Proxy::context(Frame* frame)
 
     if (V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered()) {
         context = v8::Local<v8::Context>::New(isolatedContext->context());
-        if (frame != V8Proxy::retrieveFrame(context))
+        if (frame != toFrameIfNotDetached(context))
             return v8::Local<v8::Context>();
     }
 
@@ -366,7 +338,7 @@ v8::Local<v8::Context> V8Proxy::context()
 {
     if (V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered()) {
         RefPtr<SharedPersistent<v8::Context> > context = isolatedContext->sharedContext();
-        if (m_frame != V8Proxy::retrieveFrame(context->get()))
+        if (m_frame != toFrameIfNotDetached(context->get()))
             return v8::Local<v8::Context>();
         return v8::Local<v8::Context>::New(context->get());
     }
@@ -386,7 +358,7 @@ bool V8Proxy::matchesCurrentContext()
     v8::Handle<v8::Context> context;
     if (V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered()) {
         context = isolatedContext->sharedContext()->get();
-        if (m_frame != V8Proxy::retrieveFrame(context))
+        if (m_frame != toFrameIfNotDetached(context))
             return false;
     } else {
         windowShell()->initContextIfNeeded();
