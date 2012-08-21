@@ -1,3 +1,12 @@
+2012-08-21  Kenneth Russell  <kbr@google.com>
+
+        [Chromium] context-creation-and-destruction layout tests are slow
+        https://bugs.webkit.org/show_bug.cgi?id=92287
+
+        Unreviewed; marked test slow on Linux as well.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-21  Brady Eidson  <beidson@apple.com>
 
         fast/multicol/shrink-to-column-height-for-pagination.html fails on Mac WK2 bots
