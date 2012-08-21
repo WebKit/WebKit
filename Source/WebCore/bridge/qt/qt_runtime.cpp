@@ -1282,8 +1282,8 @@ static int findSignalIndex(const QMetaObject* meta, int initialIndex, QByteArray
 static JSClassRef prototypeForSignalsAndSlots()
 {
     static JSClassDefinition classDef = {
-        0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, QtRuntimeMethod::call, 0, 0, 0
+        0, kJSClassAttributeNoAutomaticPrototype, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
     static JSClassRef cls = JSClassCreate(&classDef);
     return cls;
@@ -1307,7 +1307,7 @@ QtRuntimeMethod::~QtRuntimeMethod()
 
 JSValueRef QtRuntimeMethod::call(JSContextRef context, JSObjectRef function, JSObjectRef /*thisObject*/, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    QtRuntimeMethod* d = reinterpret_cast<QtRuntimeMethod*>(JSObjectGetPrivate(function));
+    QtRuntimeMethod* d = toRuntimeMethod(context, function);
     if (!d) {
         setException(context, exception, QStringLiteral("cannot call function of deleted runtime method"));
         return JSValueMakeUndefined(context);
@@ -1353,50 +1353,53 @@ JSObjectRef QtRuntimeMethod::jsObjectRef(JSContextRef context, JSValueRef* excep
     if (JSObjectRef cachedWrapper = m_instance->m_cachedMethods.get(this))
         return cachedWrapper;
 
-    static const JSClassDefinition classDefForConnect = {
-        0, 0, "connect", 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, connect, 0, 0, 0
-    };
-
-    static const JSClassDefinition classDefForDisconnect = {
-        0, 0, "disconnect", 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, disconnect, 0, 0, 0
-    };
-
-    static JSClassRef classRefConnect = JSClassCreate(&classDefForConnect);
-    static JSClassRef classRefDisconnect = JSClassCreate(&classDefForDisconnect);
-    bool isSignal = m_flags & MethodIsSignal;
-    JSObjectRef object = JSObjectMake(context, prototypeForSignalsAndSlots(), this);
-    JSObjectRef connectFunction = JSObjectMake(context, classRefConnect, this);
-    JSObjectRef disconnectFunction = JSObjectMake(context, classRefDisconnect, this);
-    JSPropertyAttributes attributes = kJSPropertyAttributeDontEnum | kJSPropertyAttributeDontDelete;
-
     static JSStringRef connectStr = JSStringCreateWithUTF8CString("connect");
     static JSStringRef disconnectStr = JSStringCreateWithUTF8CString("disconnect");
-    static JSStringRef lengthStr = JSStringCreateWithUTF8CString("length");
-    static JSStringRef nameStr = JSStringCreateWithUTF8CString("name");
     JSRetainPtr<JSStringRef> actualNameStr(Adopt, JSStringCreateWithUTF8CString(m_identifier.constData()));
 
-    JSObjectSetProperty(context, connectFunction, lengthStr, JSValueMakeNumber(context, isSignal ? 1 : 0), attributes, exception);
-    JSObjectSetProperty(context, connectFunction, nameStr, JSValueMakeString(context, connectStr), attributes, exception);
-    JSObjectSetProperty(context, disconnectFunction, lengthStr, JSValueMakeNumber(context, isSignal ? 1 : 0), attributes, exception);
-    JSObjectSetProperty(context, disconnectFunction, nameStr, JSValueMakeString(context, disconnectStr), attributes, exception);
+    JSObjectRef object = JSObjectMakeFunctionWithCallback(context, actualNameStr.get(), call);
 
+    JSObjectRef generalFunctionProto = JSValueToObject(context, JSObjectGetPrototype(context, object), 0);
+    JSObjectRef runtimeMethodProto = JSObjectMake(context, prototypeForSignalsAndSlots(), this);
+    JSObjectSetPrototype(context, runtimeMethodProto, generalFunctionProto);
+
+    JSObjectSetPrototype(context, object, runtimeMethodProto);
+
+    JSObjectRef connectFunction = JSObjectMakeFunctionWithCallback(context, connectStr, connect);
+    JSObjectSetPrototype(context, connectFunction, runtimeMethodProto);
+
+    JSObjectRef disconnectFunction = JSObjectMakeFunctionWithCallback(context, disconnectStr, disconnect);
+    JSObjectSetPrototype(context, disconnectFunction, runtimeMethodProto);
+
+    const JSPropertyAttributes attributes = kJSPropertyAttributeDontEnum | kJSPropertyAttributeDontDelete;
     JSObjectSetProperty(context, object, connectStr, connectFunction, attributes, exception);
     JSObjectSetProperty(context, object, disconnectStr, disconnectFunction, attributes, exception);
-    JSObjectSetProperty(context, object, lengthStr, JSValueMakeNumber(context, 0), attributes, exception);
-    JSObjectSetProperty(context, object, nameStr, JSValueMakeString(context, actualNameStr.get()), attributes, exception);
 
     m_instance->m_cachedMethods.set(context, this, object);
 
     return object;
 }
 
+QtRuntimeMethod* QtRuntimeMethod::toRuntimeMethod(JSContextRef context, JSObjectRef object)
+{
+    JSObjectRef proto = JSValueToObject(context, JSObjectGetPrototype(context, object), 0);
+    if (!proto)
+        return 0;
+    if (!JSValueIsObjectOfClass(context, proto, prototypeForSignalsAndSlots()))
+        return 0;
+    return static_cast<QtRuntimeMethod*>(JSObjectGetPrivate(proto));
+}
+
 JSValueRef QtRuntimeMethod::connectOrDisconnect(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception, bool connect)
 {
-    QtRuntimeMethod* d = static_cast<QtRuntimeMethod*>(JSObjectGetPrivate(thisObject));
+    QtRuntimeMethod* d = toRuntimeMethod(context, thisObject);
     if (!d)
-        d = static_cast<QtRuntimeMethod*>(JSObjectGetPrivate(function));
+        d = toRuntimeMethod(context, function);
+    if (!d) {
+        QString errorStr = QStringLiteral("QtMetaMethod.%1: Cannot connect to/from deleted QObject").arg(connect ?  QStringLiteral("connect") : QStringLiteral("disconnect"));
+        setException(context, exception, errorStr);
+        return JSValueMakeUndefined(context);
+    }
 
     QString functionName = connect ? QStringLiteral("connect") : QStringLiteral("disconnect");
 
@@ -1432,11 +1435,9 @@ JSValueRef QtRuntimeMethod::connectOrDisconnect(JSContextRef context, JSObjectRe
 
         // object.signal.connect(someFunction);
         if (JSObjectIsFunction(context, targetFunction)) {
-            if (JSValueIsObjectOfClass(context, targetFunction, prototypeForSignalsAndSlots())) {
-                // object.signal.connect(otherObject.slot);
-                if (QtRuntimeMethod* targetMethod = static_cast<QtRuntimeMethod*>(JSObjectGetPrivate(targetFunction)))
-                    targetObject = toRef(QtInstance::getQtInstance(targetMethod->m_object.data(), d->m_instance->rootObject(), QtInstance::QtOwnership)->createRuntimeObject(toJS(context)));
-            }
+            // object.signal.connect(otherObject.slot);
+            if (QtRuntimeMethod* targetMethod = toRuntimeMethod(context, targetFunction))
+                targetObject = toRef(QtInstance::getQtInstance(targetMethod->m_object.data(), d->m_instance->rootObject(), QtInstance::QtOwnership)->createRuntimeObject(toJS(context)));
         } else
             targetFunction = 0;
     } else {
