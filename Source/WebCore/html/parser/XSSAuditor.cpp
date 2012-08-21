@@ -458,7 +458,7 @@ bool XSSAuditor::eraseAttributeIfInjected(HTMLToken& token, const QualifiedName&
     if (findAttributeWithName(token, attributeName, indexOfAttribute)) {
         const HTMLToken::Attribute& attribute = token.attributes().at(indexOfAttribute);
         if (isContainedInRequest(decodedSnippetForAttribute(token, attribute, treatment))) {
-            if (attributeName == srcAttr && isSameOriginResource(String(attribute.m_value.data(), attribute.m_value.size())))
+            if (attributeName == srcAttr && isLikelySafeResource(String(attribute.m_value.data(), attribute.m_value.size())))
                 return false;
             if (attributeName == http_equivAttr && !isDangerousHTTPEquiv(String(attribute.m_value.data(), attribute.m_value.size())))
                 return false;
@@ -603,16 +603,20 @@ bool XSSAuditor::isContainedInRequest(const String& decodedSnippet)
     return m_decodedHTTPBody.find(decodedSnippet, 0, false) != notFound;
 }
 
-bool XSSAuditor::isSameOriginResource(const String& url)
+bool XSSAuditor::isLikelySafeResource(const String& url)
 {
-    // If the resource is loaded from the same URL as the enclosing page, it's
+    // If the resource is loaded from the same host as the enclosing page, it's
     // probably not an XSS attack, so we reduce false positives by allowing the
-    // request. If the resource has a query string, we're more suspicious,
-    // however, because that's pretty rare and the attacker might be able to
-    // trick a server-side script into doing something dangerous with the query
-    // string.
-    KURL resourceURL(m_parser->document()->url(), url);
-    return (m_parser->document()->url().host() == resourceURL.host() && resourceURL.query().isEmpty());
+    // request, ignoring scheme and port considerations. If the resource has a
+    // query string, we're more suspicious, however, because that's pretty rare
+    // and the attacker might be able to trick a server-side script into doing
+    // something dangerous with the query string.  
+    const KURL& documentURL = m_parser->document()->url();
+    if (documentURL.host().isEmpty())
+        return false;
+
+    KURL resourceURL(documentURL, url);
+    return (documentURL.host() == resourceURL.host() && resourceURL.query().isEmpty());
 }
 
 } // namespace WebCore

@@ -1,3 +1,14 @@
+2012-08-20  Tom Sepez  <tsepez@chromium.org>
+
+        XSSAuditor too tolerant of injected data: URLs from other "hostless" schemes.
+        https://bugs.webkit.org/show_bug.cgi?id=94547
+
+        Reviewed by Adam Barth.
+
+        * fast/frames/resources/static-xss-vector.html: Added.
+        * fast/frames/xss-auditor-handles-file-urls-expected.txt: Added.
+        * fast/frames/xss-auditor-handles-file-urls.html: Added.
+
 2012-08-20  Luke Macpherson   <macpherson@chromium.org>
 
         Fix inspector with variables enabled and enable inspector variables tests by default.

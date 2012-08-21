@@ -79,7 +79,7 @@ private:
     String decodedSnippetForJavaScript(const HTMLToken&);
 
     bool isContainedInRequest(const String&);
-    bool isSameOriginResource(const String& url);
+    bool isLikelySafeResource(const String& url);
 
     HTMLDocumentParser* m_parser;
     bool m_isEnabled;
