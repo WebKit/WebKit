@@ -1,3 +1,12 @@
+2012-08-21  Brady Eidson  <beidson@apple.com>
+
+        fast/multicol/shrink-to-column-height-for-pagination.html fails on Mac WK2 bots
+        https://bugs.webkit.org/show_bug.cgi?id=94624
+
+        Unreviewed (Bot gardening).
+
+        * platform/mac-wk2/Skipped: Skip until we fix it.
+
 2012-08-21  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Layout tests gardening

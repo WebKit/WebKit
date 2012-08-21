@@ -284,6 +284,10 @@ storage/domstorage/storage-close-database-on-idle.html
 # https://bugs.webkit.org/show_bug.cgi?id=94549
 fast/forms/file/selected-files-from-history-state.html
 
+# fast/multicol/shrink-to-column-height-for-pagination.html fails on Mac WK2 bots
+# https://bugs.webkit.org/show_bug.cgi?id=94624
+fast/multicol/shrink-to-column-height-for-pagination.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
