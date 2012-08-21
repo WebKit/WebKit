@@ -1,3 +1,9 @@
+2012-08-21  Peter Beverloo  <peter@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-08-20  Kent Tamura  <tkent@chromium.org>
 
         [Chromium-win] Use native digits in parsing/formatting dates in the textfield part of input[type=date]
