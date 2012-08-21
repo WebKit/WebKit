@@ -1,3 +1,20 @@
+2012-08-21  Brady Eidson  <beidson@apple.com>
+
+        Rebaseline various tests for Mountain Lion that differ from the generic results.
+
+        Unreviewed (Bot gardening).
+
+        * platform/mac-lion/fast/css/pseudo-any-expected.txt: Added.
+        * platform/mac-lion/http/tests/multipart/multipart-replace-non-html-content-expected.txt: Added.
+        * platform/mac-lion/platform/mac/fast/loader/file-url-mimetypes-2-expected.txt: Added.
+        * platform/mac-lion/sputnik/Unicode/Unicode_320/S7.6_A2.2_T2-expected.txt: Added.
+        * platform/mac-lion/sputnik/Unicode/Unicode_320/S7.6_A5.2_T8-expected.txt: Added.
+        * platform/mac/fast/css/pseudo-any-expected.txt: Added.
+        * platform/mac/http/tests/multipart/multipart-replace-non-html-content-expected.txt: Added.
+        * platform/mac/platform/mac/fast/loader/file-url-mimetypes-2-expected.txt: Added.
+        * platform/mac/sputnik/Unicode/Unicode_320/S7.6_A2.2_T2-expected.txt: Added.
+        * platform/mac/sputnik/Unicode/Unicode_320/S7.6_A5.2_T8-expected.txt: Added.
+
 2012-08-21  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css3-text] Add repaint tests for -webkit-text-decoration-line
