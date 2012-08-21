@@ -1,3 +1,14 @@
+2012-08-21  Chris Evans  <cevans@google.com>
+
+        Add another interesting test that used to fire a different ASSERT before we fixed https://bugs.webkit.org/show_bug.cgi?id=36427:
+        ASSERT(parents.size() >= depth + 1)
+        https://bugs.webkit.org/show_bug.cgi?id=84793
+
+        Reviewed by Abhishek Arya.
+
+        * fast/xpath/xpath-detached-import-assert-expected.txt: Added.
+        * fast/xpath/xpath-detached-import-assert.html: Added.
+
 2012-08-20  Keishi Hattori  <keishi@webkit.org>
 
         Clicking input type=range with padding or border sets wrong value
