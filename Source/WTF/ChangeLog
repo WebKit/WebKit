@@ -1,3 +1,10 @@
+2012-08-21  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for COMPILER(MSVC) && !CPU(X86) after r126023.
+
+        * wtf/MathExtras.h:
+        (lrint):
+
 2012-08-20  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         The 2d.imageData.object.round canvas test is failing

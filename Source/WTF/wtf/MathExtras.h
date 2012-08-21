@@ -213,7 +213,7 @@ inline long int lrint(double flt)
     };
 #else
 #pragma message("Falling back to casting for lrint(), causes rounding inaccuracy in halfway case.")
-    intgr = static_cast<int>flt;
+    intgr = static_cast<int>(flt);
 #endif
     return intgr;
 }
