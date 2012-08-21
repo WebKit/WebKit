@@ -783,7 +783,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
 
     qConvDebug() << "convertQVariantToValue: metatype:" << type << ", isnull: " << variant.isNull();
     if (variant.isNull() &&
-        !QMetaType::typeFlags(type).testFlag(QMetaType::PointerToQObject)) &&
+        !QMetaType::typeFlags(type).testFlag(QMetaType::PointerToQObject) &&
         type != QMetaType::VoidStar &&
         type != QMetaType::QString) {
         return jsNull();
