@@ -214,7 +214,7 @@ int main(int argc, const char* argv[])
             else if (imageSize > 0 && !baselineImage)
                 baselineImage = createImageFromStdin(imageSize);
             else
-                fputs("error, image size must be specified.\n", stderr);
+                fputs("Error: image size must be specified.\n", stderr);
         }
 
         if (actualImage && baselineImage) {
@@ -229,9 +229,17 @@ int main(int argc, const char* argv[])
                     difference = roundf(difference * 100.0f) / 100.0f;
                     difference = max(difference, 0.01f); // round to 2 decimal places
                 }
-            } else
-                fputs("error, test and reference image have different properties.\n", stderr);
-
+            } else {
+                if (CGImageGetWidth(actualImage.get()) != CGImageGetWidth(baselineImage.get()) || CGImageGetHeight(actualImage.get()) != CGImageGetHeight(baselineImage.get()))
+                    fprintf(stderr, "Error: test and reference images have different sizes. Test image is %lux%lu, reference image is %lux%lu\n",
+                        CGImageGetWidth(actualImage.get()), CGImageGetHeight(actualImage.get()),
+                        CGImageGetWidth(baselineImage.get()), CGImageGetHeight(baselineImage.get()));
+                else if (imageHasAlpha(actualImage.get()) != imageHasAlpha(baselineImage.get()))
+                    fprintf(stderr, "Error: test and reference images differ in alpha. Test image %s alpha, reference image %s alpha.\n",
+                        imageHasAlpha(actualImage.get()) ? "has" : "does not have",
+                        imageHasAlpha(baselineImage.get()) ? "has" : "does not have");
+            }
+            
             if (difference > 0.0f) {
                 if (diffImage) {
                     RetainPtr<CFMutableDataRef> imageData(AdoptCF, CFDataCreateMutable(0, 0));
