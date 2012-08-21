@@ -156,15 +156,16 @@ class DrawingBufferPrivate : public WebKit::WebExternalTextureLayerClient {
 public:
     explicit DrawingBufferPrivate(DrawingBuffer* drawingBuffer)
         : m_drawingBuffer(drawingBuffer)
-        , m_layer(adoptPtr(WebKit::WebExternalTextureLayer::create(this)))
+        , m_layer(WebKit::WebExternalTextureLayer::create(this))
     {
         GraphicsContext3D::Attributes attributes = m_drawingBuffer->graphicsContext3D()->getContextAttributes();
-        m_layer->setOpaque(!attributes.alpha);
-        m_layer->setPremultipliedAlpha(attributes.premultipliedAlpha);
+        m_layer.setOpaque(!attributes.alpha);
+        m_layer.setPremultipliedAlpha(attributes.premultipliedAlpha);
     }
 
     virtual ~DrawingBufferPrivate()
     {
+        m_layer.clearClient();
     }
 
     virtual unsigned prepareTexture(WebKit::WebTextureUpdater& updater) OVERRIDE
@@ -186,11 +187,11 @@ public:
         return GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_drawingBuffer->graphicsContext3D());
     }
 
-    WebKit::WebLayer* layer() { return m_layer->layer(); }
+    WebKit::WebLayer* layer() { return &m_layer; }
 
 private:
     DrawingBuffer* m_drawingBuffer;
-    OwnPtr<WebKit::WebExternalTextureLayer> m_layer;
+    WebKit::WebExternalTextureLayer m_layer;
 };
 
 #if USE(ACCELERATED_COMPOSITING)

@@ -366,11 +366,11 @@ void WebPluginContainerImpl::setBackingTextureId(unsigned textureId)
     if (m_textureId == textureId)
         return;
 
-    ASSERT(!m_ioSurfaceLayer);
+    ASSERT(m_ioSurfaceLayer.isNull());
 
-    if (!m_textureLayer)
-        m_textureLayer = adoptPtr(WebExternalTextureLayer::create());
-    m_textureLayer->setTextureId(textureId);
+    if (m_textureLayer.isNull())
+        m_textureLayer = WebExternalTextureLayer::create();
+    m_textureLayer.setTextureId(textureId);
 
     // If anyone of the IDs is zero we need to switch between hardware
     // and software compositing. This is done by triggering a style recalc
@@ -390,11 +390,11 @@ void WebPluginContainerImpl::setBackingIOSurfaceId(int width,
     if (ioSurfaceId == m_ioSurfaceId)
         return;
 
-    ASSERT(!m_textureLayer);
+    ASSERT(m_textureLayer.isNull());
 
-    if (!m_ioSurfaceLayer)
-        m_ioSurfaceLayer = adoptPtr(WebIOSurfaceLayer::create());
-    m_ioSurfaceLayer->setIOSurfaceProperties(ioSurfaceId, WebSize(width, height));
+    if (m_ioSurfaceLayer.isNull())
+        m_ioSurfaceLayer = WebIOSurfaceLayer::create();
+    m_ioSurfaceLayer.setIOSurfaceProperties(ioSurfaceId, WebSize(width, height));
 
     // If anyone of the IDs is zero we need to switch between hardware
     // and software compositing. This is done by triggering a style recalc
@@ -409,11 +409,11 @@ void WebPluginContainerImpl::setBackingIOSurfaceId(int width,
 void WebPluginContainerImpl::commitBackingTexture()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_textureLayer)
-        m_textureLayer->layer()->invalidate();
+    if (!m_textureLayer.isNull())
+        m_textureLayer.invalidate();
 
-    if (m_ioSurfaceLayer)
-        m_ioSurfaceLayer->layer()->invalidate();
+    if (!m_ioSurfaceLayer.isNull())
+        m_ioSurfaceLayer.invalidate();
 #endif
 }
 
@@ -480,11 +480,11 @@ void WebPluginContainerImpl::zoomLevelChanged(double zoomLevel)
 void WebPluginContainerImpl::setOpaque(bool opaque)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_textureLayer)
-        m_textureLayer->layer()->setOpaque(opaque);
+    if (!m_textureLayer.isNull())
+        m_textureLayer.setOpaque(opaque);
 
-    if (m_ioSurfaceLayer)
-        m_ioSurfaceLayer->layer()->setOpaque(opaque);
+    if (!m_ioSurfaceLayer.isNull())
+        m_ioSurfaceLayer.setOpaque(opaque);
 #endif
 }
 
@@ -575,9 +575,9 @@ void WebPluginContainerImpl::willDestroyPluginLoadObserver(WebPluginLoadObserver
 WebLayer* WebPluginContainerImpl::platformLayer() const
 {
     if (m_textureId)
-        return m_textureLayer->layer();
+        return const_cast<WebExternalTextureLayer*>(&m_textureLayer);
     if (m_ioSurfaceId)
-        return m_ioSurfaceLayer->layer();
+        return const_cast<WebIOSurfaceLayer*>(&m_ioSurfaceLayer);
     return 0;
 }
 #endif

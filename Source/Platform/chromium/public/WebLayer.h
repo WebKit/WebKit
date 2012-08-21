@@ -29,13 +29,12 @@
 #include "WebAnimation.h"
 #include "WebColor.h"
 #include "WebCommon.h"
-#include "WebPoint.h"
 #include "WebPrivatePtr.h"
-#include "WebRect.h"
 #include "WebString.h"
 #include "WebVector.h"
 
 class SkMatrix44;
+namespace WebCore { class LayerChromium; }
 
 namespace WebKit {
 class WebAnimationDelegate;
@@ -45,69 +44,73 @@ struct WebFloatPoint;
 struct WebFloatRect;
 struct WebSize;
 
-class WebLayerImpl;
-
 class WebLayer {
 public:
-#define WEBLAYER_IS_PURE_VIRTUAL
-    WEBKIT_EXPORT static WebLayer* create();
+    WEBKIT_EXPORT static WebLayer create();
 
-    virtual ~WebLayer() { }
-
-    // Returns a positive ID that will be unique across all WebLayers allocated in this process.
-    virtual int id() const = 0;
+    WebLayer() { }
+    WebLayer(const WebLayer& layer) { assign(layer); }
+    virtual ~WebLayer() { reset(); }
+    WebLayer& operator=(const WebLayer& layer)
+    {
+        assign(layer);
+        return *this;
+    }
+    bool isNull() const { return m_private.isNull(); }
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebLayer&);
+    WEBKIT_EXPORT bool equals(const WebLayer&) const;
 
     // Sets a region of the layer as invalid, i.e. needs to update its content.
-    virtual void invalidateRect(const WebFloatRect&) = 0;
+    WEBKIT_EXPORT void invalidateRect(const WebFloatRect&);
 
     // Sets the entire layer as invalid, i.e. needs to update its content.
-    virtual void invalidate() = 0;
+    WEBKIT_EXPORT void invalidate();
 
-    // These functions do not take ownership of the WebLayer* parameter.
-    virtual void addChild(WebLayer*) = 0;
-    virtual void insertChild(WebLayer*, size_t index) = 0;
-    virtual void replaceChild(WebLayer* reference, WebLayer* newLayer) = 0;
-    virtual void setChildren(const WebVector<WebLayer*>&) = 0;
-    virtual void removeFromParent() = 0;
-    virtual void removeAllChildren() = 0;
+    WEBKIT_EXPORT void addChild(const WebLayer&);
+    WEBKIT_EXPORT void insertChild(const WebLayer&, size_t index);
+    WEBKIT_EXPORT void replaceChild(const WebLayer& reference, const WebLayer& newLayer);
+    WEBKIT_EXPORT void setChildren(const WebVector<WebLayer>&);
+    WEBKIT_EXPORT void removeFromParent();
+    WEBKIT_EXPORT void removeAllChildren();
 
-    virtual void setAnchorPoint(const WebFloatPoint&) = 0;
-    virtual WebFloatPoint anchorPoint() const = 0;
+    WEBKIT_EXPORT void setAnchorPoint(const WebFloatPoint&);
+    WEBKIT_EXPORT WebFloatPoint anchorPoint() const;
 
-    virtual void setAnchorPointZ(float) = 0;
-    virtual float anchorPointZ() const = 0;
+    WEBKIT_EXPORT void setAnchorPointZ(float);
+    WEBKIT_EXPORT float anchorPointZ() const;
 
-    virtual void setBounds(const WebSize&) = 0;
-    virtual WebSize bounds() const = 0;
+    WEBKIT_EXPORT void setBounds(const WebSize&);
+    WEBKIT_EXPORT WebSize bounds() const;
 
-    virtual void setMasksToBounds(bool) = 0;
-    virtual bool masksToBounds() const = 0;
+    WEBKIT_EXPORT void setMasksToBounds(bool);
+    WEBKIT_EXPORT bool masksToBounds() const;
 
-    virtual void setMaskLayer(WebLayer*) = 0;
-    virtual void setReplicaLayer(WebLayer*) = 0;
+    WEBKIT_EXPORT void setMaskLayer(const WebLayer&);
+    WEBKIT_EXPORT void setReplicaLayer(const WebLayer&);
 
-    virtual void setOpacity(float) = 0;
-    virtual float opacity() const = 0;
+    WEBKIT_EXPORT void setOpacity(float);
+    WEBKIT_EXPORT float opacity() const;
 
-    virtual void setOpaque(bool) = 0;
-    virtual bool opaque() const = 0;
+    WEBKIT_EXPORT void setOpaque(bool);
+    WEBKIT_EXPORT bool opaque() const;
 
-    virtual void setPosition(const WebFloatPoint&) = 0;
-    virtual WebFloatPoint position() const = 0;
+    WEBKIT_EXPORT void setPosition(const WebFloatPoint&);
+    WEBKIT_EXPORT WebFloatPoint position() const;
 
-    virtual void setSublayerTransform(const SkMatrix44&) = 0;
-    virtual void setSublayerTransform(const WebTransformationMatrix&) = 0;
-    virtual SkMatrix44 sublayerTransform() const = 0;
+    WEBKIT_EXPORT void setSublayerTransform(const SkMatrix44&);
+    WEBKIT_EXPORT void setSublayerTransform(const WebTransformationMatrix&);
+    WEBKIT_EXPORT SkMatrix44 sublayerTransform() const;
 
-    virtual void setTransform(const SkMatrix44&) = 0;
-    virtual void setTransform(const WebTransformationMatrix&) = 0;
-    virtual SkMatrix44 transform() const = 0;
+    WEBKIT_EXPORT void setTransform(const SkMatrix44&);
+    WEBKIT_EXPORT void setTransform(const WebTransformationMatrix&);
+    WEBKIT_EXPORT SkMatrix44 transform() const;
 
     // Sets whether the layer draws its content when compositing.
-    virtual void setDrawsContent(bool) = 0;
-    virtual bool drawsContent() const = 0;
+    WEBKIT_EXPORT void setDrawsContent(bool);
+    WEBKIT_EXPORT bool drawsContent() const;
 
-    virtual void setPreserves3D(bool) = 0;
+    WEBKIT_EXPORT void setPreserves3D(bool);
 
     // Mark that this layer should use its parent's transform and double-sided
     // properties in determining this layer's backface visibility instead of
@@ -116,67 +119,104 @@ public:
     // Note: This API is to work around issues with visibility the handling of
     // WebKit layers that have a contents layer (canvas, plugin, WebGL, video,
     // etc).
-    virtual void setUseParentBackfaceVisibility(bool) = 0;
+    WEBKIT_EXPORT void setUseParentBackfaceVisibility(bool);
 
-    virtual void setBackgroundColor(WebColor) = 0;
+    WEBKIT_EXPORT void setBackgroundColor(WebColor);
 
     // Clear the filters in use by passing in a newly instantiated
     // WebFilterOperations object.
-    virtual void setFilters(const WebFilterOperations&) = 0;
+    WEBKIT_EXPORT void setFilters(const WebFilterOperations&);
 
     // Apply filters to pixels that show through the background of this layer.
     // Note: These filters are only possible on layers that are drawn directly
     // to a root render surface with an opaque background. This means if an
     // ancestor of the background-filtered layer sets certain properties
     // (opacity, transforms), it may conflict and hide the background filters.
-    virtual void setBackgroundFilters(const WebFilterOperations&) = 0;
+    WEBKIT_EXPORT void setBackgroundFilters(const WebFilterOperations&);
 
-    virtual void setDebugBorderColor(const WebColor&) = 0;
-    virtual void setDebugBorderWidth(float) = 0;
-    virtual void setDebugName(WebString) = 0;
+    WEBKIT_EXPORT void setDebugBorderColor(const WebColor&);
+    WEBKIT_EXPORT void setDebugBorderWidth(float);
+    WEBKIT_EXPORT void setDebugName(WebString);
 
     // An animation delegate is notified when animations are started and
     // stopped. The WebLayer does not take ownership of the delegate, and it is
     // the responsibility of the client to reset the layer's delegate before
     // deleting the delegate.
-    virtual void setAnimationDelegate(WebAnimationDelegate*) = 0;
+    WEBKIT_EXPORT void setAnimationDelegate(WebAnimationDelegate*);
 
     // Returns false if the animation cannot be added.
-    virtual bool addAnimation(WebAnimation*) = 0;
+    WEBKIT_EXPORT bool addAnimation(WebAnimation*);
 
     // Removes all animations with the given id.
-    virtual void removeAnimation(int animationId) = 0;
+    WEBKIT_EXPORT void removeAnimation(int animationId);
 
     // Removes all animations with the given id targeting the given property.
-    virtual void removeAnimation(int animationId, WebAnimation::TargetProperty) = 0;
+    WEBKIT_EXPORT void removeAnimation(int animationId, WebAnimation::TargetProperty);
 
     // Pauses all animations with the given id.
-    virtual void pauseAnimation(int animationId, double timeOffset) = 0;
+    WEBKIT_EXPORT void pauseAnimation(int animationId, double timeOffset);
 
     // The following functions suspend and resume all animations. The given time
     // is assumed to use the same time base as monotonicallyIncreasingTime().
-    virtual void suspendAnimations(double monotonicTime) = 0;
-    virtual void resumeAnimations(double monotonicTime) = 0;
+    WEBKIT_EXPORT void suspendAnimations(double monotonicTime);
+    WEBKIT_EXPORT void resumeAnimations(double monotonicTime);
 
     // Returns true if this layer has any active animations - useful for tests.
-    virtual bool hasActiveAnimation() = 0;
+    WEBKIT_EXPORT bool hasActiveAnimation();
 
     // Transfers all animations running on the current layer.
-    virtual void transferAnimationsTo(WebLayer*) = 0;
-
-    // Scrolling
-    virtual void setScrollPosition(WebPoint) = 0;
-    virtual void setScrollable(bool) = 0;
-    virtual void setHaveWheelEventHandlers(bool) = 0;
-    virtual void setShouldScrollOnMainThread(bool) = 0;
-    virtual void setNonFastScrollableRegion(const WebVector<WebRect>&) = 0;
-    virtual void setIsContainerForFixedPositionLayers(bool) = 0;
-    virtual void setFixedToContainerLayer(bool) = 0;
+    WEBKIT_EXPORT void transferAnimationsTo(WebLayer*);
 
     // Forces this layer to use a render surface. There is no benefit in doing
     // so, but this is to facilitate benchmarks and tests.
-    virtual void setForceRenderSurface(bool) = 0;
+    WEBKIT_EXPORT void setForceRenderSurface(bool);
+
+    // Drops this layer's render surface, if it has one. Used to break cycles in some
+    // cases - if you aren't sure, you don't need to call this.
+    WEBKIT_EXPORT void clearRenderSurface();
+
+    template<typename T> T to()
+    {
+        T res;
+        res.WebLayer::assign(*this);
+        return res;
+    }
+
+    template<typename T> const T toConst() const
+    {
+        T res;
+        res.WebLayer::assign(*this);
+        return res;
+    }
+
+#if WEBKIT_IMPLEMENTATION
+    WebLayer(const WTF::PassRefPtr<WebCore::LayerChromium>&);
+    WebLayer& operator=(const WTF::PassRefPtr<WebCore::LayerChromium>&);
+    operator WTF::PassRefPtr<WebCore::LayerChromium>() const;
+    template<typename T> T* unwrap() const
+    {
+        return static_cast<T*>(m_private.get());
+    }
+
+    template<typename T> const T* constUnwrap() const
+    {
+        return static_cast<const T*>(m_private.get());
+    }
+#endif
+
+protected:
+    WebPrivatePtr<WebCore::LayerChromium> m_private;
 };
+
+inline bool operator==(const WebLayer& a, const WebLayer& b)
+{
+    return a.equals(b);
+}
+
+inline bool operator!=(const WebLayer& a, const WebLayer& b)
+{
+    return !(a == b);
+}
 
 } // namespace WebKit
 

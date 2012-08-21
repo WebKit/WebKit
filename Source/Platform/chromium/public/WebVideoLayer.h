@@ -29,20 +29,27 @@
 #include "WebCommon.h"
 #include "WebLayer.h"
 
+namespace WebCore {
+class VideoLayerChromium;
+}
+
 namespace WebKit {
 
 class WebVideoFrameProvider;
 
-class WebVideoLayer {
+class WebVideoLayer : public WebLayer {
 public:
-    WEBKIT_EXPORT static WebVideoLayer* create(WebVideoFrameProvider*);
+    WEBKIT_EXPORT static WebVideoLayer create(WebVideoFrameProvider*);
 
+    WebVideoLayer() { }
     virtual ~WebVideoLayer() { }
 
-    virtual WebLayer* layer() = 0;
-
     // Returns true if this layer is actively rendering (e.g. currently attached to a WebLayerTreeView).
-    virtual bool active() const = 0;
+    WEBKIT_EXPORT bool active() const;
+
+#if WEBKIT_IMPLEMENTATION
+    explicit WebVideoLayer(PassRefPtr<WebCore::VideoLayerChromium>);
+#endif
 };
 
 } // namespace WebKit

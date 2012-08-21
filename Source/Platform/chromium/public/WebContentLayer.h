@@ -27,37 +27,55 @@
 #define WebContentLayer_h
 
 #include "WebCommon.h"
+#include "WebScrollableLayer.h"
+
+namespace WebCore {
+class ContentLayerChromium;
+}
 
 namespace WebKit {
 class WebContentLayerClient;
+class WebContentLayerImpl;
 
-class WebContentLayer {
+class WebContentLayer : public WebScrollableLayer {
 public:
-    // The client must outlive the WebContentLayer.
-    WEBKIT_EXPORT static WebContentLayer* create(WebContentLayerClient*);
+    WEBKIT_EXPORT static WebContentLayer create(WebContentLayerClient*);
 
+    WebContentLayer() { }
+    WebContentLayer(const WebContentLayer& layer) : WebScrollableLayer(layer) { }
     virtual ~WebContentLayer() { }
+    WebContentLayer& operator=(const WebContentLayer& layer)
+    {
+        WebLayer::assign(layer);
+        return *this;
+    }
 
-    // The WebContentLayer has ownership of this wrapper.
-    virtual WebLayer* layer() = 0;
+    // Called when the WebContentLayerClient is going away and should not be used.
+    WEBKIT_EXPORT void clearClient();
 
     // Set to true if the backside of this layer's contents should be visible when composited.
     // Defaults to false.
-    virtual void setDoubleSided(bool) = 0;
+    WEBKIT_EXPORT void setDoubleSided(bool);
 
     // Set to apply a scale factor used when painting and drawing this layer's content. Defaults to 1.0.
-    virtual void setContentsScale(float) = 0;
+    WEBKIT_EXPORT void setContentsScale(float);
 
     // Set to render text in this layer with LCD antialiasing. Only set if you know that this layer will be
     // drawn in a way where this makes sense - i.e. opaque background, not rotated or scaled, etc.
     // Defaults to false;
-    virtual void setUseLCDText(bool) = 0;
+    WEBKIT_EXPORT void setUseLCDText(bool);
 
     // Set to draw a system-defined checkerboard if the compositor would otherwise draw a tile in this layer
     // and the actual contents are unavailable. If false, the compositor will draw the layer's background color
     // for these tiles.
     // Defaults to false.
-    virtual void setDrawCheckerboardForMissingTiles(bool) = 0;
+    WEBKIT_EXPORT void setDrawCheckerboardForMissingTiles(bool);
+
+#if WEBKIT_IMPLEMENTATION
+    WebContentLayer(const WTF::PassRefPtr<WebCore::ContentLayerChromium>&);
+    WebContentLayer& operator=(const WTF::PassRefPtr<WebCore::ContentLayerChromium>&);
+    operator WTF::PassRefPtr<WebCore::ContentLayerChromium>() const;
+#endif
 };
 
 } // namespace WebKit
