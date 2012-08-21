@@ -304,12 +304,14 @@ public:
 
     DataLabel32 loadPtrWithAddressOffsetPatch(Address address, RegisterID dest)
     {
+        padBeforePatch();
         m_assembler.movq_mr_disp32(address.offset, address.base, dest);
         return DataLabel32(this);
     }
     
     DataLabelCompact loadPtrWithCompactAddressOffsetPatch(Address address, RegisterID dest)
     {
+        padBeforePatch();
         m_assembler.movq_mr_disp8(address.offset, address.base, dest);
         return DataLabelCompact(this);
     }
@@ -348,6 +350,7 @@ public:
     
     DataLabel32 storePtrWithAddressOffsetPatch(RegisterID src, Address address)
     {
+        padBeforePatch();
         m_assembler.movq_rm_disp32(src, address.offset, address.base);
         return DataLabel32(this);
     }
@@ -518,6 +521,7 @@ public:
 
     DataLabelPtr moveWithPatch(TrustedImmPtr initialValue, RegisterID dest)
     {
+        padBeforePatch();
         m_assembler.movq_i64r(initialValue.asIntptr(), dest);
         return DataLabelPtr(this);
     }

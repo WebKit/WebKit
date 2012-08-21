@@ -606,6 +606,12 @@ public:
         return Label(this);
     }
     
+    void padBeforePatch()
+    {
+        // Rely on the fact that asking for a label already does the padding.
+        (void)label();
+    }
+    
     Label watchpointLabel()
     {
         Label result;

@@ -1,3 +1,34 @@
+2012-08-21  Filip Pizlo  <fpizlo@apple.com>
+
+        A patchable GetById right after a watchpoint should have the appropriate nop padding
+        https://bugs.webkit.org/show_bug.cgi?id=94635
+
+        Reviewed by Mark Hahnenberg.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::padBeforePatch):
+        (AbstractMacroAssembler):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::load32WithCompactAddressOffsetPatch):
+        (JSC::MacroAssemblerARMv7::moveWithPatch):
+        (JSC::MacroAssemblerARMv7::patchableJump):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::moveWithPatch):
+        (JSC::MacroAssemblerX86::branchPtrWithPatch):
+        (JSC::MacroAssemblerX86::storePtrWithPatch):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::load32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerX86Common::load32WithCompactAddressOffsetPatch):
+        (JSC::MacroAssemblerX86Common::loadCompactWithAddressOffsetPatch):
+        (JSC::MacroAssemblerX86Common::store32WithAddressOffsetPatch):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::loadPtrWithAddressOffsetPatch):
+        (JSC::MacroAssemblerX86_64::loadPtrWithCompactAddressOffsetPatch):
+        (JSC::MacroAssemblerX86_64::storePtrWithAddressOffsetPatch):
+        (JSC::MacroAssemblerX86_64::moveWithPatch):
+        * jit/JumpReplacementWatchpoint.cpp:
+        (JSC::JumpReplacementWatchpoint::fireInternal):
+
 2012-08-20  Mark Lam  <mark.lam@apple.com>
 
         Fix broken non-JIT build.

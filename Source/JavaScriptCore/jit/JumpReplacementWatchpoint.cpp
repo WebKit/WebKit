@@ -43,9 +43,11 @@ void JumpReplacementWatchpoint::correctLabels(LinkBuffer& linkBuffer)
 
 void JumpReplacementWatchpoint::fireInternal()
 {
-    MacroAssembler::replaceWithJump(
-        CodeLocationLabel(bitwise_cast<void*>(m_source)),
-        CodeLocationLabel(bitwise_cast<void*>(m_destination)));
+    void* source = bitwise_cast<void*>(m_source);
+    void* destination = bitwise_cast<void*>(m_destination);
+    if (Options::showDisassembly())
+        dataLog("Firing jump replacement watchpoint from %p, to %p.\n", source, destination);
+    MacroAssembler::replaceWithJump(CodeLocationLabel(source), CodeLocationLabel(destination));
     if (isOnList())
         remove();
 }

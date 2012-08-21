@@ -1,3 +1,19 @@
+2012-08-21  Filip Pizlo  <fpizlo@apple.com>
+
+        A patchable GetById right after a watchpoint should have the appropriate nop padding
+        https://bugs.webkit.org/show_bug.cgi?id=94635
+
+        Reviewed by Mark Hahnenberg.
+
+        * fast/js/dfg-patchable-get-by-id-after-watchpoint-expected.txt: Added.
+        * fast/js/dfg-patchable-get-by-id-after-watchpoint.html: Added.
+        * fast/js/script-tests/dfg-patchable-get-by-id-after-watchpoint.js: Added.
+        (foo):
+        (O):
+        (O.prototype.f):
+        (P1):
+        (P2):
+
 2012-08-21  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         WTF Threading leaks kernel objects on platforms that use pthreads

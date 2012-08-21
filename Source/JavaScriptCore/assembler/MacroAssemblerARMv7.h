@@ -646,6 +646,8 @@ public:
     
     DataLabelCompact load32WithCompactAddressOffsetPatch(Address address, RegisterID dest)
     {
+        padBeforePatch();
+
         RegisterID base = address.base;
         
         DataLabelCompact label(this);
@@ -1626,12 +1628,14 @@ public:
 
     ALWAYS_INLINE DataLabel32 moveWithPatch(TrustedImm32 imm, RegisterID dst)
     {
+        padBeforePatch();
         moveFixedWidthEncoding(imm, dst);
         return DataLabel32(this);
     }
 
     ALWAYS_INLINE DataLabelPtr moveWithPatch(TrustedImmPtr imm, RegisterID dst)
     {
+        padBeforePatch();
         moveFixedWidthEncoding(TrustedImm32(imm), dst);
         return DataLabelPtr(this);
     }
@@ -1659,6 +1663,7 @@ public:
 
     PatchableJump patchableJump()
     {
+        padBeforePatch();
         m_makeJumpPatchable = true;
         Jump result = jump();
         m_makeJumpPatchable = false;
