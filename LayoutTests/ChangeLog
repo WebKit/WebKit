@@ -1,3 +1,30 @@
+2012-08-20  Rik Cabanier  <cabanier@adobe.com>
+
+        parse CSS attribute -webkit-blend-mode
+        https://bugs.webkit.org/show_bug.cgi?id=94024
+
+        Reviewed by Dirk Schulze.
+
+        Added parsing and general CSS handling of -webkit-blend-mode per http://www.w3.org/TR/2012/WD-compositing-20120816/
+
+        * css3/compositing: Added.
+        * css3/compositing/blend-mode-property-expected.txt: Added.
+        * css3/compositing/blend-mode-property-parsing-expected.txt: Added.
+        * css3/compositing/blend-mode-property-parsing-invalid-expected.txt: Added.
+        * css3/compositing/blend-mode-property-parsing-invalid.html: Added.
+        * css3/compositing/blend-mode-property-parsing.html: Added.
+        * css3/compositing/blend-mode-property.html: Added.
+        * css3/compositing/script-tests: Added.
+        * css3/compositing/script-tests/blend-mode-property-parsing-invalid.js: Added.
+        (testInvalidFilterRule):
+        * css3/compositing/script-tests/blend-mode-property-parsing.js: Added.
+        (jsWrapperClass):
+        (shouldBeType):
+        (testFilterRule):
+        * css3/compositing/script-tests/blend-mode-property.js: Added.
+        * platform/chromium/css3/compositing/blend-mode-property-expected.txt : Added.
+        * platform/chromium/css3/compositing/blend-mode-property-parsing-expected.txt : Added.
+
 2012-08-20  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (125759) fast/forms/file/selected-files-from-history-state.html fails on Mac

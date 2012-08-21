@@ -185,7 +185,12 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     unsigned m_runningAcceleratedAnimation : 1;
 #endif
+
     unsigned m_hasAspectRatio : 1; // Whether or not an aspect ratio has been specified.
+
+#if ENABLE(CSS_COMPOSITING)
+    unsigned m_effectiveBlendMode: 5; // EBlendMode
+#endif
 
 private:
     StyleRareNonInheritedData();

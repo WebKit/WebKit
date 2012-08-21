@@ -397,6 +397,10 @@ public:
     bool isPaginated() const { return m_isPaginated; }
 
     void updateTransform();
+    
+#if ENABLE(CSS_COMPOSITING)
+    void updateBlendMode();
+#endif
 
     const LayoutSize& relativePositionOffset() const { return m_relativeOffset; }
 
@@ -929,6 +933,10 @@ protected:
 
 #if ENABLE(CSS_FILTERS)
     bool m_hasFilterInfo : 1;
+#endif
+
+#if ENABLE(CSS_COMPOSITING)
+    BlendMode m_blendMode;
 #endif
 
     RenderBoxModelObject* m_renderer;
