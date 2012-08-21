@@ -2121,7 +2121,6 @@ canvas/philip/tests/type.prototype.html
 
 # Failing tests after sync with Philip Taylor's upstream tests
 canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html
-canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html
 canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html
 canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html
 canvas/philip/tests/2d.imageData.put.wrongtype.html

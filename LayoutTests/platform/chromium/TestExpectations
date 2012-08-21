@@ -1873,9 +1873,6 @@ BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.image.
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
 BUGWK45991 LINUX ANDROID WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
 
-BUGWK50797 : canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html = TEXT
-BUGWK50797 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html = TEXT
-
 // Update canvas/philip in WK r71481
 BUGCR62301 : canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT
 BUGCR62301 : canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html = TEXT

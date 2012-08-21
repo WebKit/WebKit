@@ -305,7 +305,6 @@ canvas/philip/tests/2d.composite.operation.clear.html
 canvas/philip/tests/2d.composite.operation.darker.html
 canvas/philip/tests/2d.drawImage.broken.html
 canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html
-canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html
 canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html
 canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html
 canvas/philip/tests/2d.missingargs.html

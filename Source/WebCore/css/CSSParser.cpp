@@ -5335,7 +5335,7 @@ static inline bool parseAlphaValue(const UChar*& string, const UChar* end, const
     if (length < 2)
         return false;
 
-    if (string[length - 1] != terminator)
+    if (string[length - 1] != terminator || !isASCIIDigit(string[length - 2]))
         return false;
 
     if (string[0] != '0' && string[0] != '1' && string[0] != '.') {

@@ -1,3 +1,20 @@
+2012-08-21  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=50797
+
+        Reviewed by Andreas Kling.
+
+        Unskipped tests that are now passing after this fix and removed
+        wrong expectations.
+
+        * platform/chromium/TestExpectations:
+        * platform/chromium/canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6-expected.txt: Removed.
+        * platform/efl/Skipped:
+        * platform/gtk/TestExpectations:
+        * platform/mac/canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6-expected.txt: Removed.
+        * platform/qt/Skipped:
+
 2012-08-21  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Rebaselines following r126110.
