@@ -180,7 +180,7 @@ TEST(CCMathUtilTest, vectorProjection)
 {
     FloatSize x(1, 0);
     FloatSize y(0, 1);
-    FloatSize testVector(0.3, 0.7);
+    FloatSize testVector(0.3f, 0.7f);
 
     // Orthogonal vectors project to a zero vector.
     EXPECT_EQ(FloatSize(0, 0), CCMathUtil::projectVector(x, y));
@@ -193,7 +193,7 @@ TEST(CCMathUtilTest, vectorProjection)
 
     // Finally check than an arbitrary vector projected to another one gives a vector parallel to
     // the second vector.
-    FloatSize targetVector(0.5, 0.2);
+    FloatSize targetVector(0.5, 0.2f);
     FloatSize projectedVector = CCMathUtil::projectVector(testVector, targetVector);
     EXPECT_EQ(projectedVector.width() / targetVector.width(),
               projectedVector.height() / targetVector.height());
