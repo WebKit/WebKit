@@ -58,7 +58,7 @@ TYPE_NAME_FIX_MAP = {
 
 
 TYPES_WITH_RUNTIME_CAST_SET = frozenset(["Runtime.RemoteObject", "Runtime.PropertyDescriptor",
-                                         "Debugger.FunctionDetails", "Debugger.CallFrame", "WebGL.TraceLog",
+                                         "Debugger.FunctionDetails", "Debugger.CallFrame",
                                          # This should be a temporary hack. TimelineEvent should be created via generated C++ API.
                                          "Timeline.TimelineEvent"])
 

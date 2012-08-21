@@ -44,17 +44,15 @@ class ScriptObject;
 
 class InjectedScriptWebGLModule : public InjectedScriptModule {
 public:
-    InjectedScriptWebGLModule();
-    
     virtual String source() const;
 
     static InjectedScriptWebGLModule moduleForState(InjectedScriptManager*, ScriptState*);
 
     ScriptObject wrapWebGLContext(const ScriptObject& glContext);
-    void captureFrame(ErrorString*, String*);
-    void dropTraceLog(ErrorString*, const String&);
-    void traceLog(ErrorString*, const String&, RefPtr<TypeBuilder::WebGL::TraceLog>*);
-    void replayTraceLog(ErrorString*, const String&, int, String*);
+    void captureFrame(ErrorString*, const String& contextId);
+
+private:
+    InjectedScriptWebGLModule();
 };
 
 #endif

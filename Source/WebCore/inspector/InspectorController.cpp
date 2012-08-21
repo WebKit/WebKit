@@ -148,7 +148,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
 #endif
 
 #if ENABLE(WEBGL)
-    m_agents.append(InspectorWebGLAgent::create(m_instrumentingAgents.get(), m_state.get(), page, m_injectedScriptManager.get()));
+    m_agents.append(InspectorWebGLAgent::create(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get()));
 #endif
 
     ASSERT_ARG(inspectorClient, inspectorClient);

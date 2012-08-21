@@ -34,13 +34,11 @@
 
 #include "InspectorWebGLAgent.h"
 
-#include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "InjectedScriptWebGLModule.h" 
 #include "InspectorFrontend.h"
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
-#include "Page.h"
 #include "ScriptObject.h"
 #include "ScriptState.h"
 
@@ -50,9 +48,8 @@ namespace WebGLAgentState {
 static const char webGLAgentEnabled[] = "webGLAgentEnabled";
 };
 
-InspectorWebGLAgent::InspectorWebGLAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page, InjectedScriptManager* injectedScriptManager)
+InspectorWebGLAgent::InspectorWebGLAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager)
     : InspectorBaseAgent<InspectorWebGLAgent>("WebGL", instrumentingAgents, state)
-    , m_inspectedPage(page)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
     , m_enabled(false)
@@ -98,38 +95,6 @@ void InspectorWebGLAgent::disable(ErrorString*)
     m_state->setBoolean(WebGLAgentState::webGLAgentEnabled, m_enabled);
 }
 
-void InspectorWebGLAgent::dropTraceLog(ErrorString* errorString, const String& traceLogId)
-{
-    InjectedScriptWebGLModule module = injectedScriptWebGLModuleForTraceLogId(errorString, traceLogId);
-    if (!module.hasNoValue())
-        module.dropTraceLog(errorString, traceLogId);
-}
-
-void InspectorWebGLAgent::captureFrame(ErrorString* errorString, String* traceLogId)
-{
-    ScriptState* scriptState = mainWorldScriptState(m_inspectedPage->mainFrame());
-    InjectedScriptWebGLModule module = InjectedScriptWebGLModule::moduleForState(m_injectedScriptManager, scriptState);
-    if (module.hasNoValue()) {
-        *errorString = "Inspected frame has gone";
-        return;
-    }
-    module.captureFrame(errorString, traceLogId);
-}
-
-void InspectorWebGLAgent::getTraceLog(ErrorString* errorString, const String& traceLogId, RefPtr<TypeBuilder::WebGL::TraceLog>& traceLog)
-{
-    InjectedScriptWebGLModule module = injectedScriptWebGLModuleForTraceLogId(errorString, traceLogId);
-    if (!module.hasNoValue())
-        module.traceLog(errorString, traceLogId, &traceLog);
-}
-
-void InspectorWebGLAgent::replayTraceLog(ErrorString* errorString, const String& traceLogId, int stepNo, String* result)
-{
-    InjectedScriptWebGLModule module = injectedScriptWebGLModuleForTraceLogId(errorString, traceLogId);
-    if (!module.hasNoValue())
-        module.replayTraceLog(errorString, traceLogId, stepNo, result);
-}
-
 ScriptObject InspectorWebGLAgent::wrapWebGLRenderingContextForInstrumentation(const ScriptObject& glContext)
 {
     if (glContext.hasNoValue()) {
@@ -142,22 +107,6 @@ ScriptObject InspectorWebGLAgent::wrapWebGLRenderingContextForInstrumentation(co
         return ScriptObject();
     }
     return module.wrapWebGLContext(glContext);
-}
-
-InjectedScriptWebGLModule InspectorWebGLAgent::injectedScriptWebGLModuleForTraceLogId(ErrorString* errorString, const String& traceLogId)
-{
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(traceLogId);
-    if (injectedScript.hasNoValue()) {
-        *errorString = "Inspected frame has gone";
-        return InjectedScriptWebGLModule();
-    }
-    InjectedScriptWebGLModule module = InjectedScriptWebGLModule::moduleForState(m_injectedScriptManager, injectedScript.scriptState());
-    if (module.hasNoValue()) {
-        ASSERT_NOT_REACHED();
-        *errorString = "Internal error: no WebGL module";
-        return InjectedScriptWebGLModule();
-    }
-    return module;
 }
 
 } // namespace WebCore
