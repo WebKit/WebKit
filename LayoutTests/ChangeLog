@@ -1,3 +1,13 @@
+2012-08-20  MORITA Hajime  <morrita@google.com>
+
+        load event shouldn't fired during node insertion traversals.
+        https://bugs.webkit.org/show_bug.cgi?id=94447
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/frames/iframe-onload-and-domnodeinserted-expected.txt: Added.
+        * fast/frames/iframe-onload-and-domnodeinserted.html: Added.
+
 2012-08-20  Shinya Kawanaka  <shinyak@chromium.org>
 
         ShadowRoot.cloneNode() must always throw a DATA_CLONE_ERR exception.
