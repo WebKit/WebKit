@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebScriptObjectPrivate.h"
 
+#import "BindingSecurity.h"
 #import "BridgeJSC.h"
 #import "Console.h"
 #import "DOMInternal.h"
@@ -241,7 +242,11 @@ static void _didExecute(WebScriptObject *obj)
     if (!_private->originRootObject->isValid())
         return false;
 
-    return jsCast<JSDOMWindowBase*>(root->globalObject())->allowsAccessFrom(_private->originRootObject->globalObject());
+    // It's not actually correct to call shouldAllowAccessToFrame in this way because
+    // JSDOMWindowBase* isn't the right object to represent the currently executing
+    // JavaScript. Instead, we should use ExecState, like we do elsewhere.
+    JSDOMWindowBase* target = jsCast<JSDOMWindowBase*>(root->globalObject());
+    return BindingSecurity::shouldAllowAccessToDOMWindow(_private->originRootObject->globalObject()->globalExec(), target->impl());
 }
 
 - (oneway void)release

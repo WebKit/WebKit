@@ -60,6 +60,11 @@ static bool canAccessDocument(BindingState* state, Document* targetDocument, Sec
     return false;
 }
 
+bool BindingSecurity::shouldAllowAccessToDOMWindow(BindingState* state, DOMWindow* target, SecurityReportingOption reportingOption)
+{
+    return target && canAccessDocument(state, target->document(), reportingOption);
+}
+
 bool BindingSecurity::shouldAllowAccessToFrame(BindingState* state, Frame* target, SecurityReportingOption reportingOption)
 {
     return target && canAccessDocument(state, target->document(), reportingOption);

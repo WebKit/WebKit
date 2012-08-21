@@ -401,11 +401,10 @@ enum ParameterDefaultPolicy {
         return result;
     }
 
-    // FIXME: Implement allowAccessToContext(JSC::ExecState*, ScriptExecutionContext*);
     bool shouldAllowAccessToNode(JSC::ExecState*, Node*);
     bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*);
     bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*, String& message);
-    // FIXME: Implement allowAccessToDOMWindow(JSC::ExecState*, DOMWindow*);
+    bool shouldAllowAccessToDOMWindow(BindingState*, DOMWindow*, String& message);
 
     void printErrorMessageForFrame(Frame*, const String& message);
     JSC::JSValue objectToStringFunctionGetter(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);

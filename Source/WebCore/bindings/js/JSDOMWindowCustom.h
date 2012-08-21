@@ -36,49 +36,6 @@ inline const JSDOMWindow* asJSDOMWindow(const JSC::JSGlobalObject* globalObject)
     return static_cast<const JSDOMWindow*>(globalObject);
 }
 
-inline bool JSDOMWindowBase::allowsAccessFrom(const JSGlobalObject* other) const
-{
-    if (allowsAccessFromPrivate(other))
-        return true;
-    printErrorMessage(crossDomainAccessErrorMessage(other));
-    return false;
-}
-
-inline bool JSDOMWindowBase::allowsAccessFrom(JSC::ExecState* exec) const
-{
-    if (allowsAccessFromPrivate(exec->lexicalGlobalObject()))
-        return true;
-    printErrorMessage(crossDomainAccessErrorMessage(exec->lexicalGlobalObject()));
-    return false;
-}
-    
-inline bool JSDOMWindowBase::allowsAccessFromNoErrorMessage(JSC::ExecState* exec) const
-{
-    return allowsAccessFromPrivate(exec->lexicalGlobalObject());
-}
-    
-inline bool JSDOMWindowBase::allowsAccessFrom(JSC::ExecState* exec, String& message) const
-{
-    if (allowsAccessFromPrivate(exec->lexicalGlobalObject()))
-        return true;
-    message = crossDomainAccessErrorMessage(exec->lexicalGlobalObject());
-    return false;
-}
-    
-ALWAYS_INLINE bool JSDOMWindowBase::allowsAccessFromPrivate(const JSGlobalObject* other) const
-{
-    const JSDOMWindow* originWindow = asJSDOMWindow(other);
-    const JSDOMWindow* targetWindow = m_shell->window();
-
-    if (originWindow == targetWindow)
-        return true;
-
-    const SecurityOrigin* originSecurityOrigin = originWindow->impl()->document()->securityOrigin();
-    const SecurityOrigin* targetSecurityOrigin = targetWindow->impl()->document()->securityOrigin();
-
-    return originSecurityOrigin->canAccess(targetSecurityOrigin);
-}
-
 }
 
 #endif // JSDOMWindowCustom_h

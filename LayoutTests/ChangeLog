@@ -1,3 +1,20 @@
+2012-08-21  Adam Barth  <abarth@webkit.org>
+
+        Implement JSDOMWindow*::allowsAccessFrom* in terms of BindingSecurity
+        https://bugs.webkit.org/show_bug.cgi?id=93407
+
+        Reviewed by Eric Seidel.
+
+        These test results are now more similar (although not identical) to the
+        results for the V8 bindings.
+
+        * http/tests/security/listener/xss-JSTargetNode-onclick-addEventListener-expected.txt:
+        * http/tests/security/listener/xss-JSTargetNode-onclick-shortcut-expected.txt:
+        * http/tests/security/listener/xss-XMLHttpRequest-addEventListener-expected.txt:
+        * http/tests/security/listener/xss-XMLHttpRequest-shortcut-expected.txt:
+        * http/tests/security/listener/xss-window-onclick-addEventListener-expected.txt:
+        * http/tests/security/listener/xss-window-onclick-shortcut-expected.txt:
+
 2012-08-21  Brady Eidson  <beidson@apple.com>
 
         WKTR doesn't implement dumpWillCacheResponse().

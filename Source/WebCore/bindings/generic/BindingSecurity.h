@@ -47,6 +47,7 @@ enum SecurityReportingOption {
 class BindingSecurity {
 public:
     static bool shouldAllowAccessToNode(BindingState*, Node*);
+    static bool shouldAllowAccessToDOMWindow(BindingState*, DOMWindow*, SecurityReportingOption = ReportSecurityError);
     static bool shouldAllowAccessToFrame(BindingState*, Frame*, SecurityReportingOption = ReportSecurityError);
     static bool allowSettingFrameSrcToJavascriptUrl(BindingState*, HTMLFrameElementBase*, const String& value);
 };

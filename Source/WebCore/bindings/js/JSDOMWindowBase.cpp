@@ -23,6 +23,7 @@
 #include "config.h"
 #include "JSDOMWindowBase.h"
 
+#include "BindingSecurity.h"
 #include "Chrome.h"
 #include "Console.h"
 #include "DOMWindow.h"
@@ -42,9 +43,14 @@ using namespace JSC;
 
 namespace WebCore {
 
+static bool shouldAllowAccessFrom(const JSGlobalObject* thisObject, ExecState* exec)
+{
+    return BindingSecurity::shouldAllowAccessToDOMWindow(exec, asJSDOMWindow(thisObject)->impl());
+}
+
 const ClassInfo JSDOMWindowBase::s_info = { "Window", &JSDOMGlobalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSDOMWindowBase) };
 
-const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptExperimentsEnabled };
+const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = { &shouldAllowAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptExperimentsEnabled };
 
 JSDOMWindowBase::JSDOMWindowBase(JSGlobalData& globalData, Structure* structure, PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
     : JSDOMGlobalObject(globalData, structure, shell->world(), &s_globalObjectMethodTable)
@@ -83,39 +89,9 @@ ScriptExecutionContext* JSDOMWindowBase::scriptExecutionContext() const
     return m_impl->document();
 }
 
-String JSDOMWindowBase::crossDomainAccessErrorMessage(const JSGlobalObject* other) const
-{
-    return m_shell->window()->impl()->crossDomainAccessErrorMessage(asJSDOMWindow(other)->impl());
-}
-
 void JSDOMWindowBase::printErrorMessage(const String& message) const
 {
     printErrorMessageForFrame(impl()->frame(), message);
-}
-
-// This method checks whether accesss to *this* global object is permitted from
-// the given context; this differs from allowsAccessFromPrivate, since that
-// method checks whether the given context is permitted to access the current
-// window the shell is referencing (which may come from a different security
-// origin to this global object).
-bool JSDOMWindowBase::allowsAccessFrom(const JSGlobalObject* thisObject, ExecState* exec)
-{
-    JSGlobalObject* otherObject = exec->lexicalGlobalObject();
-
-    const JSDOMWindow* originWindow = asJSDOMWindow(otherObject);
-    const JSDOMWindow* targetWindow = asJSDOMWindow(thisObject);
-
-    if (originWindow == targetWindow)
-        return true;
-
-    const SecurityOrigin* originSecurityOrigin = originWindow->impl()->document()->securityOrigin();
-    const SecurityOrigin* targetSecurityOrigin = targetWindow->impl()->document()->securityOrigin();
-
-    if (originSecurityOrigin->canAccess(targetSecurityOrigin))
-        return true;
-
-    targetWindow->printErrorMessage(targetWindow->crossDomainAccessErrorMessage(otherObject));
-    return false;
 }
 
 bool JSDOMWindowBase::supportsProfiling(const JSGlobalObject* object)
