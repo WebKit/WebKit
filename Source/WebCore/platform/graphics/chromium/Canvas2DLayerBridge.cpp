@@ -69,21 +69,22 @@ Canvas2DLayerBridge::Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D> context, 
             grContext->resetContext();
     }
 
-    m_layer = adoptPtr(WebExternalTextureLayer::create(this));
-    m_layer->setTextureId(textureId);
-    m_layer->setRateLimitContext(!WebKit::WebCompositor::threadingEnabled() || m_useDoubleBuffering);
+    m_layer = WebExternalTextureLayer::create(this);
+    m_layer.setTextureId(textureId);
+    m_layer.setRateLimitContext(!WebKit::WebCompositor::threadingEnabled() || m_useDoubleBuffering);
 }
 
 Canvas2DLayerBridge::~Canvas2DLayerBridge()
 {
     if (SkDeferredCanvas* deferred = deferredCanvas())
         deferred->setNotificationClient(0);
-    m_layer->setTextureId(0);
+    m_layer.setTextureId(0);
     if (m_useDoubleBuffering) {
         m_context->makeContextCurrent();
         GLC(m_context.get(), m_context->deleteTexture(m_frontBufferTexture));
         m_context->flush();
     }
+    m_layer.clearClient();
 }
 
 SkDeferredCanvas* Canvas2DLayerBridge::deferredCanvas()
@@ -97,7 +98,7 @@ void Canvas2DLayerBridge::prepareForDraw()
 {
     ASSERT(deferredCanvas());
     if (!m_useDoubleBuffering)
-        m_layer->willModifyTexture();
+        m_layer.willModifyTexture();
     m_context->makeContextCurrent();
 }
 
@@ -147,13 +148,13 @@ WebGraphicsContext3D* Canvas2DLayerBridge::context()
 
 WebKit::WebLayer* Canvas2DLayerBridge::layer()
 {
-    return m_layer->layer();
+    return &m_layer;
 }
 
 void Canvas2DLayerBridge::contextAcquired()
 {
     if (m_deferralMode == NonDeferred && !m_useDoubleBuffering)
-        m_layer->willModifyTexture();
+        m_layer.willModifyTexture();
 }
 
 unsigned Canvas2DLayerBridge::backBufferTexture()

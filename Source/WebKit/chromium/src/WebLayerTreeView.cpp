@@ -31,7 +31,6 @@
 #include "CCLayerTreeHost.h"
 #include "CCRenderingStats.h"
 #include "LayerChromium.h"
-#include "WebLayerImpl.h"
 #include "WebLayerTreeViewImpl.h"
 #include <public/WebLayer.h>
 #include <public/WebPoint.h>
@@ -84,7 +83,7 @@ void WebLayerTreeView::setSurfaceReady()
 void WebLayerTreeView::setRootLayer(WebLayer *root)
 {
     if (root)
-        m_private->layerTreeHost()->setRootLayer(static_cast<WebLayerImpl*>(root)->layer());
+        m_private->layerTreeHost()->setRootLayer(*root);
     else
         m_private->layerTreeHost()->setRootLayer(PassRefPtr<LayerChromium>());
 }

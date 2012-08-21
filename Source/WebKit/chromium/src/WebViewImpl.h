@@ -814,7 +814,7 @@ private:
     WebCore::IntRect m_rootLayerScrollDamage;
     OwnPtr<NonCompositedContentHost> m_nonCompositedContentHost;
     WebLayerTreeView m_layerTreeView;
-    WebLayer* m_rootLayer;
+    WebLayer m_rootLayer;
     WebCore::GraphicsLayer* m_rootGraphicsLayer;
     bool m_isAcceleratedCompositingActive;
     bool m_compositorCreationFailed;

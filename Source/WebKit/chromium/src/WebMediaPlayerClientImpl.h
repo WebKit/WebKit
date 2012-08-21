@@ -205,7 +205,7 @@ private:
     WebCore::MediaPlayer::Preload m_preload;
     RefPtr<WebHelperPluginImpl> m_helperPlugin;
 #if USE(ACCELERATED_COMPOSITING)
-    OwnPtr<WebVideoLayer> m_videoLayer;
+    WebVideoLayer m_videoLayer;
     bool m_supportsAcceleratedCompositing;
     bool m_opaque;
     WebVideoFrameProvider::Client* m_videoFrameProviderClient;

@@ -26,20 +26,21 @@
 #ifndef WebSolidColorLayer_h
 #define WebSolidColorLayer_h
 
-#include "WebColor.h"
 #include "WebCommon.h"
+#include "WebFloatRect.h"
+#include "WebLayer.h"
 
 namespace WebKit {
-class WebLayer;
+class WebSolidColorLayerImpl;
 
-class WebSolidColorLayer {
+class WebSolidColorLayer : public WebLayer {
 public:
-    WEBKIT_EXPORT static WebSolidColorLayer* create();
+    WEBKIT_EXPORT static WebSolidColorLayer create();
+    WEBKIT_EXPORT void setBackgroundColor(const WebColor&);
 
-    virtual ~WebSolidColorLayer() { }
-
-    virtual WebLayer* layer() = 0;
-    virtual void setBackgroundColor(WebColor) = 0;
+#if WEBKIT_IMPLEMENTATION
+    WebSolidColorLayer(const WTF::PassRefPtr<WebSolidColorLayerImpl>&);
+#endif
 };
 
 } // namespace WebKit

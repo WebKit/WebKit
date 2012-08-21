@@ -60,8 +60,8 @@ public:
     virtual void SetUp()
     {
         initializeCompositor();
-        m_rootLayer = adoptPtr(WebLayer::create());
-        EXPECT_TRUE(m_view.initialize(client(), *m_rootLayer, WebLayerTreeView::Settings()));
+        m_rootLayer = WebLayer::create();
+        EXPECT_TRUE(m_view.initialize(client(), m_rootLayer, WebLayerTreeView::Settings()));
         m_view.setSurfaceReady();
     }
 
@@ -70,13 +70,13 @@ public:
         Mock::VerifyAndClearExpectations(client());
 
         m_view.setRootLayer(0);
-        m_rootLayer.clear();
+        m_rootLayer.reset();
         m_view.reset();
         WebKit::WebCompositor::shutdown();
     }
 
 protected:
-    OwnPtr<WebLayer> m_rootLayer;
+    WebLayer m_rootLayer;
     WebLayerTreeView m_view;
 };
 

@@ -26,36 +26,23 @@
 #include "config.h"
 #include "WebSolidColorLayerImpl.h"
 
-#include "SolidColorLayerChromium.h"
-#include "WebLayerImpl.h"
-
-using WebCore::SolidColorLayerChromium;
+using namespace WebCore;
 
 namespace WebKit {
 
-WebSolidColorLayer* WebSolidColorLayer::create()
+PassRefPtr<WebSolidColorLayerImpl> WebSolidColorLayerImpl::create()
 {
-    return new WebSolidColorLayerImpl(SolidColorLayerChromium::create());
+    return adoptRef(new WebSolidColorLayerImpl());
 }
 
-WebSolidColorLayerImpl::WebSolidColorLayerImpl(PassRefPtr<SolidColorLayerChromium> layer)
-    : m_layer(adoptPtr(new WebLayerImpl(layer)))
+WebSolidColorLayerImpl::WebSolidColorLayerImpl()
+    : SolidColorLayerChromium()
 {
-    m_layer->layer()->setIsDrawable(true);
+    setIsDrawable(true);
 }
 
 WebSolidColorLayerImpl::~WebSolidColorLayerImpl()
 {
-}
-
-WebLayer* WebSolidColorLayerImpl::layer()
-{
-    return m_layer.get();
-}
-
-void WebSolidColorLayerImpl::setBackgroundColor(WebColor color)
-{
-    m_layer->setBackgroundColor(color);
 }
 
 } // namespace WebKit

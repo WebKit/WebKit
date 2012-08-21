@@ -29,7 +29,6 @@
 #include "CCLayerTreeHost.h"
 #include "CCThreadProxy.h"
 #include "LayerChromium.h"
-#include "WebLayerImpl.h"
 #include <public/WebGraphicsContext3D.h>
 #include <public/WebLayer.h>
 #include <public/WebLayerTreeView.h>
@@ -143,7 +142,7 @@ PassOwnPtr<WebLayerTreeViewImpl> WebLayerTreeViewImpl::create(WebLayerTreeViewCl
     OwnPtr<WebLayerTreeViewImpl> impl = adoptPtr(new WebLayerTreeViewImpl(client, settings));
     if (!impl->layerTreeHost())
         return nullptr;
-    impl->layerTreeHost()->setRootLayer(static_cast<const WebLayerImpl*>(&root)->layer());
+    impl->layerTreeHost()->setRootLayer(root);
     return impl.release();
 }
 

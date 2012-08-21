@@ -30,7 +30,6 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "GraphicsLayer.h"
-#include "GraphicsLayerChromium.h"
 #include "PlatformContextSkia.h"
 #include "WebViewImpl.h"
 #include <public/WebContentLayer.h>
@@ -49,11 +48,11 @@ NonCompositedContentHost::NonCompositedContentHost(WebViewImpl* webView)
     m_graphicsLayer->setName("non-composited content");
 #endif
     m_graphicsLayer->setDrawsContent(true);
-    WebContentLayer* layer = static_cast<WebCore::GraphicsLayerChromium*>(m_graphicsLayer.get())->contentLayer();
-    layer->setUseLCDText(true);
-    layer->layer()->setOpaque(true);
+    WebContentLayer layer = m_graphicsLayer->platformLayer()->to<WebContentLayer>();
+    layer.setUseLCDText(true);
+    layer.setOpaque(true);
 #if !OS(ANDROID)
-    layer->setDrawCheckerboardForMissingTiles(true);
+    layer.setDrawCheckerboardForMissingTiles(true);
 #endif
 }
 
@@ -81,7 +80,7 @@ void NonCompositedContentHost::setScrollLayer(WebCore::GraphicsLayer* layer)
         return;
     }
 
-    if (layer->platformLayer() == scrollLayer())
+    if (*layer->platformLayer() == scrollLayer())
         return;
 
     layer->addChildAtIndex(m_graphicsLayer.get(), 0);
@@ -96,12 +95,12 @@ void NonCompositedContentHost::setViewport(const WebCore::IntSize& viewportSize,
     bool visibleRectChanged = m_viewportSize != viewportSize;
 
     m_viewportSize = viewportSize;
-    WebLayer* layer = scrollLayer();
-    layer->setScrollPosition(scrollPosition + scrollOrigin);
-    layer->setPosition(WebFloatPoint(-scrollPosition));
+    WebScrollableLayer layer = scrollLayer();
+    layer.setScrollPosition(scrollPosition + scrollOrigin);
+    layer.setPosition(WebFloatPoint(-scrollPosition));
     // Due to the possibility of pinch zoom, the noncomposited layer is always
     // assumed to be scrollable.
-    layer->setScrollable(true);
+    layer.setScrollable(true);
     m_deviceScaleFactor = deviceScale;
     m_graphicsLayer->deviceOrPageScaleFactorChanged();
     m_graphicsLayer->setSize(contentsSize);
@@ -128,11 +127,11 @@ bool NonCompositedContentHost::haveScrollLayer()
     return m_graphicsLayer->parent();
 }
 
-WebLayer* NonCompositedContentHost::scrollLayer()
+WebScrollableLayer NonCompositedContentHost::scrollLayer()
 {
     if (!m_graphicsLayer->parent())
-        return 0;
-    return m_graphicsLayer->parent()->platformLayer();
+        return WebScrollableLayer();
+    return m_graphicsLayer->parent()->platformLayer()->to<WebScrollableLayer>();
 }
 
 void NonCompositedContentHost::invalidateRect(const WebCore::IntRect& rect)

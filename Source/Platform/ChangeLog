@@ -1,3 +1,65 @@
+2012-08-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r126076, r126099, and r126106.
+        http://trac.webkit.org/changeset/126076
+        http://trac.webkit.org/changeset/126099
+        http://trac.webkit.org/changeset/126106
+        https://bugs.webkit.org/show_bug.cgi?id=94614
+
+        Caused crashes during compositor shutdown in Aura builds of
+        Chromium (Requested by kbr_google on #webkit).
+
+        * chromium/public/WebContentLayer.h:
+        (WebCore):
+        (WebKit):
+        (WebContentLayer):
+        (WebKit::WebContentLayer::WebContentLayer):
+        (WebKit::WebContentLayer::operator=):
+        * chromium/public/WebExternalTextureLayer.h:
+        (WebCore):
+        (WebExternalTextureLayer):
+        (WebKit::WebExternalTextureLayer::WebExternalTextureLayer):
+        (WebKit::WebExternalTextureLayer::~WebExternalTextureLayer):
+        * chromium/public/WebIOSurfaceLayer.h:
+        (WebCore):
+        (WebIOSurfaceLayer):
+        (WebKit::WebIOSurfaceLayer::WebIOSurfaceLayer):
+        * chromium/public/WebImageLayer.h:
+        (WebCore):
+        (WebImageLayer):
+        (WebKit::WebImageLayer::WebImageLayer):
+        * chromium/public/WebLayer.h:
+        (WebKit):
+        (WebLayer):
+        (WebKit::WebLayer::WebLayer):
+        (WebKit::WebLayer::~WebLayer):
+        (WebKit::WebLayer::operator=):
+        (WebKit::WebLayer::isNull):
+        (WebKit::WebLayer::to):
+        (WebKit::WebLayer::toConst):
+        (WebKit::WebLayer::unwrap):
+        (WebKit::WebLayer::constUnwrap):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * chromium/public/WebScrollableLayer.h: Copied from Source/Platform/chromium/public/WebScrollbarLayer.h.
+        (WebKit):
+        (WebScrollableLayer):
+        (WebKit::WebScrollableLayer::WebScrollableLayer):
+        (WebKit::WebScrollableLayer::~WebScrollableLayer):
+        (WebKit::WebScrollableLayer::operator=):
+        * chromium/public/WebScrollbarLayer.h:
+        (WebCore):
+        (WebKit::WebScrollbarLayer::WebScrollbarLayer):
+        (WebKit::WebScrollbarLayer::operator=):
+        (WebScrollbarLayer):
+        * chromium/public/WebSolidColorLayer.h:
+        (WebKit):
+        (WebSolidColorLayer):
+        * chromium/public/WebVideoLayer.h:
+        (WebCore):
+        (WebVideoLayer):
+        (WebKit::WebVideoLayer::WebVideoLayer):
+
 2012-08-20  James Robinson  <jamesr@chromium.org>
 
         [chromium] REGRESSION(126076) Should not touch old GraphicsLayerChromium::m_contentsLayer when setting up a new contents layer
