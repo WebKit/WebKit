@@ -1,5 +1,20 @@
 2012-08-20  Mark Lam  <mark.lam@apple.com>
 
+        Fix broken non-JIT build.
+        https://bugs.webkit.org/show_bug.cgi?id=94564.
+
+        Reviewed by Filip Pizlo.
+
+        Added some UNUSED_PARAM() macros to make the compiler happy.
+
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+
+2012-08-20  Mark Lam  <mark.lam@apple.com>
+
         Fixed erroneous line number for LLint frame when throwing exceptions.
         https://bugs.webkit.org/show_bug.cgi?id=94051.
 

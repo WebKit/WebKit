@@ -199,6 +199,7 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
     
 #if !ENABLE(JIT)
     UNUSED_PARAM(jitType);
+    UNUSED_PARAM(bytecodeIndex);
 #endif
     JSObject* exception = 0;
     JSGlobalData* globalData = &exec->globalData();
@@ -325,6 +326,7 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
     
 #if !ENABLE(JIT)
     UNUSED_PARAM(jitType);
+    UNUSED_PARAM(bytecodeIndex);
 #endif
     JSObject* exception = 0;
     JSGlobalData* globalData = &exec->globalData();
@@ -510,6 +512,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
     UNUSED_PARAM(exec);
     UNUSED_PARAM(jitType);
     UNUSED_PARAM(exec);
+    UNUSED_PARAM(bytecodeIndex);
 #endif
     ASSERT((jitType == JITCode::bottomTierJIT()) == !m_codeBlockForCall);
     JSObject* exception;
@@ -551,6 +554,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
 #if !ENABLE(JIT)
     UNUSED_PARAM(jitType);
     UNUSED_PARAM(exec);
+    UNUSED_PARAM(bytecodeIndex);
 #endif
     
     ASSERT((jitType == JITCode::bottomTierJIT()) == !m_codeBlockForConstruct);
