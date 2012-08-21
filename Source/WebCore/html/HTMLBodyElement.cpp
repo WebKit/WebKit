@@ -156,11 +156,11 @@ Node::InsertionNotificationRequest HTMLBodyElement::insertedInto(ContainerNode* 
 {
     HTMLElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument())
-        return InsertionShouldCallDidNotifyDescendantInsertions;
+        return InsertionShouldCallDidNotifySubtreeInsertions;
     return InsertionDone;
 }
 
-void HTMLBodyElement::didNotifyDescendantInsertions(ContainerNode* insertionPoint)
+void HTMLBodyElement::didNotifySubtreeInsertions(ContainerNode* insertionPoint)
 {
     ASSERT_UNUSED(insertionPoint, insertionPoint->inDocument());
     ASSERT(document());

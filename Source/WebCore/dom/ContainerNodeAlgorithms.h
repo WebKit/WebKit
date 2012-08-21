@@ -193,21 +193,10 @@ inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoDocument(Node* nod
 {
     ASSERT(m_insertionPoint->inDocument());
     RefPtr<Node> protect(node);
-    Node::InsertionNotificationRequest request = node->insertedInto(m_insertionPoint);
-
+    if (Node::InsertionShouldCallDidNotifySubtreeInsertions == node->insertedInto(m_insertionPoint))
+        m_postInsertionNotificationTargets.append(node);
     if (node->isContainerNode())
         notifyDescendantInsertedIntoDocument(toContainerNode(node));
-
-    switch (request) {
-    case Node::InsertionDone:
-        break;
-    case Node::InsertionShouldCallDidNotifyDescendantInsertions:
-        node->didNotifyDescendantInsertions(m_insertionPoint);
-        break;
-    case Node::InsertionShouldCallDidNotifySubtreeInsertions:
-        m_postInsertionNotificationTargets.append(node);
-        break;
-    }
 }
 
 inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoTree(ContainerNode* node)
@@ -215,11 +204,9 @@ inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoTree(ContainerNode
     ASSERT(!m_insertionPoint->inDocument());
     forbidEventDispatch();
 
-    Node::InsertionNotificationRequest request = node->insertedInto(m_insertionPoint);
-
+    if (Node::InsertionShouldCallDidNotifySubtreeInsertions == node->insertedInto(m_insertionPoint))
+        m_postInsertionNotificationTargets.append(node);
     notifyDescendantInsertedIntoTree(node);
-    if (request == Node::InsertionShouldCallDidNotifyDescendantInsertions)
-        node->didNotifyDescendantInsertions(m_insertionPoint);
 
     allowEventDispatch();
 }

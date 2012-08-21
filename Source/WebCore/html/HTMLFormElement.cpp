@@ -136,8 +136,6 @@ bool HTMLFormElement::rendererIsNeeded(const NodeRenderingContext& context)
 Node::InsertionNotificationRequest HTMLFormElement::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint->inDocument())
-        return InsertionShouldCallDidNotifyDescendantInsertions;
     return InsertionDone;
 }
 

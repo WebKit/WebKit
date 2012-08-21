@@ -547,12 +547,10 @@ public:
     //
     enum InsertionNotificationRequest {
         InsertionDone,
-        InsertionShouldCallDidNotifyDescendantInsertions,
         InsertionShouldCallDidNotifySubtreeInsertions
     };
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode* insertionPoint);
-    virtual void didNotifyDescendantInsertions(ContainerNode*) { }
     virtual void didNotifySubtreeInsertions(ContainerNode*) { }
 
     // Notifies the node that it is no longer part of the tree.
