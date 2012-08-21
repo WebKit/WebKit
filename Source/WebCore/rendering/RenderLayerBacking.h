@@ -124,6 +124,7 @@ public:
 
     // GraphicsLayerClient interface
     virtual bool shouldUseTileCache(const GraphicsLayer*) const;
+    virtual bool usingTileCache(const GraphicsLayer*) const { return m_usingTiledCacheLayer; }
     virtual void notifyAnimationStarted(const GraphicsLayer*, double startTime);
     virtual void notifySyncRequired(const GraphicsLayer*);
 
