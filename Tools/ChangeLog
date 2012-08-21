@@ -1,3 +1,14 @@
+2012-08-21  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed. Move the commit-queue to building release only. Previously,
+        we built debug too, but for some reason the debug build doesn't work on
+        the bots. We can re-enable debug builds once we fix the underlying
+        problem.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (CommitQueue.build_style):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2012-08-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         TestExpectationsParser doesn't warn about test files that don't exist.

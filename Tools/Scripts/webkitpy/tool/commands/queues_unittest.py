@@ -324,7 +324,7 @@ MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachm
 MOCK: update_status: commit-queue Applied patch
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'validate-changelog', '--non-interactive', 10000, '--port=%(port_name)s'], cwd=/mock-checkout
 MOCK: update_status: commit-queue ChangeLog validated
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build-style=both', '--port=%(port_name)s'], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build-style=release', '--port=%(port_name)s'], cwd=/mock-checkout
 MOCK: update_status: commit-queue Built patch
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive', '--port=%(port_name)s'], cwd=/mock-checkout
 MOCK: update_status: commit-queue Passed tests

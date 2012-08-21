@@ -332,7 +332,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
         return self._layout_test_results_reader.archive(patch)
 
     def build_style(self):
-        return "both"
+        return "release"
 
     def refetch_patch(self, patch):
         return self._tool.bugs.fetch_attachment(patch.id())
