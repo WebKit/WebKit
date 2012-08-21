@@ -1,3 +1,25 @@
+2012-08-21  Vincent Scheib  <scheib@chromium.org>
+
+        Add parsing logic for allow-pointer-lock to iframe sandbox attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=94513
+
+        Reviewed by Adam Barth.
+
+        Pointer lock was previously blocked from all sandboxed iframes.
+        Parsing the sandbox="allow-pointer-lock" attribute allows pages
+        to control the feature and enable it in sandboxed iframes.
+
+        * http/tests/pointer-lock/iframe-sandboxed-allow-pointer-lock-expected.txt: Added.
+        * http/tests/pointer-lock/iframe-sandboxed-allow-pointer-lock.html: Copied from LayoutTests/http/tests/pointer-lock/iframe-sandboxed.html.
+        * http/tests/pointer-lock/iframe-sandboxed-nested-allow-pointer-lock-expected.txt: Added.
+        * http/tests/pointer-lock/iframe-sandboxed-nested-allow-pointer-lock.html: Copied from LayoutTests/http/tests/pointer-lock/iframe-sandboxed.html.
+        * http/tests/pointer-lock/iframe-sandboxed-nested-disallow-then-allow-pointer-lock-expected.txt: Added.
+        * http/tests/pointer-lock/iframe-sandboxed-nested-disallow-then-allow-pointer-lock.html: Copied from LayoutTests/http/tests/pointer-lock/iframe-sandboxed.html.
+        * http/tests/pointer-lock/iframe-sandboxed.html:
+        * http/tests/resources/pointer-lock/iframe-allows-inner-iframe.html: Added.
+        * http/tests/resources/pointer-lock/iframe-common.js:
+        (window.onmessage):
+
 2012-08-21  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: do not use window's eval in InjectedScript

@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/pointer-lock/pointer-lock-test-harness.js"></script>
+</head>
+<body>
+<div>
+  <div id="target1"></div>
+  <iframe src="../resources/pointer-lock/inner-iframe.html" sandbox="allow-pointer-lock allow-scripts" onload="doNextStepWithUserGesture()"></iframe>
+</div>
+<script>
+    description("Test sandboxed iframe with allow-pointer-lock allows pointer lock.");
+    window.jsTestIsAsync = true;
+
+    targetDiv1 = document.getElementById("target1");
+    iframe = document.getElementsByTagName("iframe")[0];
+
+    todo = [
+      function () {
+          iframe.contentWindow.postMessage(["eval", 'document.body.webkitRequestPointerLock()'], "*");
+          window.onmessage = function (messageEvent) {
+              message = messageEvent.data;
+              shouldBeEqualToString("message", "inner-iframe.html onwebkitpointerlockchange, document.webkitPointerLockElement = [object HTMLBodyElement]");
+              window.onmessage = null;
+              doNextStep();
+          }
+      },
+    ];
+    // doNextStep() called by iframe onload handler.
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

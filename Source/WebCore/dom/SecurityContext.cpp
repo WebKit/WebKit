@@ -112,6 +112,8 @@ SandboxFlags SecurityContext::parseSandboxPolicy(const String& policy)
             flags &= ~SandboxTopNavigation;
         else if (equalIgnoringCase(sandboxToken, "allow-popups"))
             flags &= ~SandboxPopups;
+        else if (equalIgnoringCase(sandboxToken, "allow-pointer-lock"))
+            flags &= ~SandboxPointerLock;
 
         start = end + 1;
     }
