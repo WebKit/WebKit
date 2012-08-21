@@ -162,6 +162,8 @@ public:
     virtual WebTextInputInfo textInputInfo();
     virtual WebTextInputType textInputType();
     virtual bool setEditableSelectionOffsets(int start, int end);
+    virtual bool setCompositionFromExistingText(int compositionStart, int compositionEnd, const WebVector<WebCompositionUnderline>& underlines);
+    virtual void extendSelectionAndDelete(int before, int after);
     virtual bool isSelectionEditable() const;
     virtual WebColor backgroundColor() const;
     virtual bool selectionBounds(WebRect& start, WebRect& end) const;

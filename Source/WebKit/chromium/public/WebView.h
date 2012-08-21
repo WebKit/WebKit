@@ -460,6 +460,8 @@ public:
     virtual void transferActiveWheelFlingAnimation(const WebActiveWheelFlingParameters&) = 0;
 
     virtual bool setEditableSelectionOffsets(int start, int end) = 0;
+    virtual bool setCompositionFromExistingText(int compositionStart, int compositionEnd, const WebVector<WebCompositionUnderline>& underlines) = 0;
+    virtual void extendSelectionAndDelete(int before, int after) = 0;
 
     virtual bool isSelectionEditable() const = 0;
 

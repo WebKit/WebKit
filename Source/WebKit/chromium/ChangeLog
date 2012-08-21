@@ -1,3 +1,35 @@
+2012-08-21  Oli Lan  <olilan@chromium.org>
+
+        [chromium] Add WebView methods setCompositionFromExistingText and extendSelectionAndDelete.
+        https://bugs.webkit.org/show_bug.cgi?id=93724
+
+        Reviewed by Ryosuke Niwa.
+
+        This adds two new methods to WebViewImpl.
+
+        1) setCompositionFromExistingText creates a new composition from the existing text
+        in the currently focused input field. The new composition is between the two offsets
+        provided, relative to the rootEditableElement. The current selection is left unchanged.
+        
+        2) extendSelectionAndDelete extends the selection by the specified number of characters
+        before and after, and then deletes the selection. If the selection is just a caret, the effect
+        is to delete the specified number of characters before and after the current editing point.
+
+        These methods will be used e.g. by the Android port to implement IME functionality.
+
+        New tests WebViewTest.ExtendSelectionAndDelete and WebViewTest.SetCompositionFromExistingText
+        test the two new methods.       
+
+        * public/WebView.h:
+        (WebView):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setComposingRegion):
+        (WebKit):
+        (WebKit::extendSelectionAndDelete):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/WebViewTest.cpp:
+
 2012-08-21  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: remove old update/openCursor glue
