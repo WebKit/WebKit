@@ -212,7 +212,9 @@
         "Battery": {
             "filename": r"Source/WebCore/Modules/battery",
         },
-
+        "WTF": {
+            "filename": r"Source/WTF/wtf",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -257,6 +259,7 @@
         "WebIDL": [ "abarth@webkit.org", "ojan@chromium.org" ],
         "WebKitGTKTranslations": [ "gns@gnome.org", "mrobinson@webkit.org" ],
         "webkitpy": [ "abarth@webkit.org", "ojan@chromium.org", "dpranke@chromium.org" ],
+        "WTF": [ "benjamin@webkit.org",],
     },
     "MESSAGE_RULES": {
         "ChromiumPublicApi": [ "Please wait for approval from abarth@webkit.org, dglazkov@chromium.org, "
