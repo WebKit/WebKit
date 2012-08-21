@@ -770,6 +770,7 @@ void GraphicsLayerChromium::updateContentsScale()
 void GraphicsLayerChromium::setupContentsLayer(WebLayer* contentsLayer)
 {
     m_contentsLayer = contentsLayer;
+    m_contentsLayerId = m_contentsLayer->id();
 
     if (m_contentsLayer) {
         m_contentsLayer->setAnchorPoint(FloatPoint(0, 0));
