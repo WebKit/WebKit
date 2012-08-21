@@ -43,7 +43,7 @@ Node::NodeType Notation::nodeType() const
     return NOTATION_NODE;
 }
 
-PassRefPtr<Node> Notation::cloneNode(bool /*deep*/)
+PassRefPtr<Node> Notation::cloneNode(bool /*deep*/, ExceptionCode&)
 {
     // Spec says cloning Notation nodes is "implementation dependent". We do not support it.
     return 0;

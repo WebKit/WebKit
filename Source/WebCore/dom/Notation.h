@@ -38,7 +38,7 @@ private:
 
     virtual String nodeName() const;
     virtual NodeType nodeType() const;
-    virtual PassRefPtr<Node> cloneNode(bool deep);
+    virtual PassRefPtr<Node> cloneNode(bool deep, ExceptionCode&);
     virtual bool childTypeAllowed(NodeType) const;
 
     String m_name;
