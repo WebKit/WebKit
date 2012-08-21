@@ -51,7 +51,9 @@
 
 namespace WebCore {
 
+#if ENABLE(DRAG_SUPPORT)
 const double EventHandler::TextDragDelay = 0.0;
+#endif
 
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {
@@ -61,8 +63,10 @@ bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& m
 
 bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe, HitTestResult* hoveredNode)
 {
+#if ENABLE(DRAG_SUPPORT)
     if (m_mouseDownMayStartDrag && !m_mouseDownWasInSubframe)
         return false;
+#endif
     subframe->eventHandler()->handleMouseMoveEvent(mev.event(), hoveredNode);
     return true;
 }
@@ -91,6 +95,7 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
     return event.didActivateWebView();
 }
 
+#if ENABLE(DRAG_SUPPORT)
 PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 {
 #if OS(WINCE)
@@ -101,6 +106,7 @@ PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
     return ClipboardWin::create(Clipboard::DragAndDrop, dataObject.get(), ClipboardWritable, m_frame);
 #endif
 }
+#endif
 
 void EventHandler::focusDocumentView()
 {
