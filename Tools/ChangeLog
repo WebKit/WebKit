@@ -1,3 +1,9 @@
+2012-08-22  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        Unreviewed, adding myself to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-08-21  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] contextClick and getMenuItemTitle callbacks are leaky in DRT's EventSender
