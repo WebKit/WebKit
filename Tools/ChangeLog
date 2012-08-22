@@ -1,3 +1,15 @@
+2012-08-22  Zan Dobersek  <zandobersek@gmail.com>
+
+        REGRESSION(r126189): Reftest mismatches are (again) run through ImageDiff with 0.1 tolerance
+        https://bugs.webkit.org/show_bug.cgi?id=94704
+
+        Reviewed by Dirk Pranke.
+
+        Use tolerance=0 when acquiring diff image of reftest output.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._compare_output_with_reference):
+
 2012-08-22  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Add MockWebRTCPeerConnectionHandler
