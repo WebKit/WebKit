@@ -224,6 +224,7 @@ SET(WebCore_IDL_FILES
     Modules/mediastream/PeerConnection00.idl
     Modules/mediastream/RTCIceCandidate.idl
     Modules/mediastream/RTCPeerConnection.idl
+    Modules/mediastream/RTCSessionDescription.idl
     Modules/mediastream/SessionDescription.idl
 
     Modules/networkinfo/NavigatorNetworkInfoConnection.idl
@@ -853,6 +854,7 @@ SET(WebCore_SOURCES
     Modules/mediastream/PeerConnection00.cpp
     Modules/mediastream/RTCIceCandidate.cpp
     Modules/mediastream/RTCPeerConnection.cpp
+    Modules/mediastream/RTCSessionDescription.cpp
     Modules/mediastream/SessionDescription.cpp
     Modules/mediastream/UserMediaController.cpp
     Modules/mediastream/UserMediaRequest.cpp
@@ -1926,6 +1928,7 @@ SET(WebCore_SOURCES
     platform/mediastream/PeerConnection00Handler.cpp
     platform/mediastream/RTCIceCandidateDescriptor.cpp
     platform/mediastream/RTCPeerConnectionHandler.cpp
+    platform/mediastream/RTCSessionDescriptionDescriptor.cpp
     platform/mediastream/SessionDescriptionDescriptor.cpp
 
     platform/mock/DeviceMotionClientMock.cpp

@@ -628,6 +628,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSRTCIceCandidate.h \
 	DerivedSources/WebCore/JSRTCPeerConnection.cpp \
 	DerivedSources/WebCore/JSRTCPeerConnection.h \
+	DerivedSources/WebCore/JSRTCSessionDescription.cpp \
+	DerivedSources/WebCore/JSRTCSessionDescription.h \
 	DerivedSources/WebCore/JSScreen.cpp \
 	DerivedSources/WebCore/JSScreen.h \
 	DerivedSources/WebCore/JSScriptProfile.cpp \
@@ -1218,6 +1220,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediastream/PeerConnection00.idl \
 	$(WebCore)/Modules/mediastream/RTCIceCandidate.idl \
 	$(WebCore)/Modules/mediastream/RTCPeerConnection.idl \
+	$(WebCore)/Modules/mediastream/RTCSessionDescription.idl \
 	$(WebCore)/Modules/mediastream/SessionDescription.idl \
 	$(WebCore)/Modules/notifications/Notification.idl \
 	$(WebCore)/Modules/notifications/NotificationCenter.idl \
@@ -1906,6 +1909,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediastream/RTCIceCandidate.h \
 	Source/WebCore/Modules/mediastream/RTCPeerConnection.cpp \
 	Source/WebCore/Modules/mediastream/RTCPeerConnection.h \
+	Source/WebCore/Modules/mediastream/RTCSessionDescription.cpp \
+	Source/WebCore/Modules/mediastream/RTCSessionDescription.h \
 	Source/WebCore/Modules/mediastream/SessionDescription.cpp \
 	Source/WebCore/Modules/mediastream/SessionDescription.h \
 	Source/WebCore/Modules/mediastream/UserMediaClient.h \
@@ -5492,6 +5497,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/mediastream/RTCPeerConnectionHandler.cpp \
 	Source/WebCore/platform/mediastream/RTCPeerConnectionHandler.h \
 	Source/WebCore/platform/mediastream/RTCPeerConnectionHandlerClient.h \
+	Source/WebCore/platform/mediastream/RTCSessionDescriptionDescriptor.cpp \
+	Source/WebCore/platform/mediastream/RTCSessionDescriptionDescriptor.h \
 	Source/WebCore/platform/mediastream/SessionDescriptionDescriptor.cpp \
 	Source/WebCore/platform/mediastream/SessionDescriptionDescriptor.h \
 	Source/WebCore/platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp \

@@ -1,3 +1,13 @@
+2012-08-22  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Introduce RTCSessionDescription
+        https://bugs.webkit.org/show_bug.cgi?id=93119
+
+        Reviewed by Adam Barth.
+
+        * fast/mediastream/RTCSessionDescription-expected.txt: Added.
+        * fast/mediastream/RTCSessionDescription.html: Added.
+
 2012-08-22  Victor Carbune  <victor@rosedu.org>
 
         DOM manipulation crashes the browser

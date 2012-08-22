@@ -34,6 +34,7 @@ module window {
         attribute [V8EnabledAtRuntime] PeerConnection00Constructor webkitPeerConnection00;
         attribute [V8EnabledAtRuntime] RTCPeerConnectionConstructor webkitRTCPeerConnection;
         attribute SessionDescriptionConstructor SessionDescription;
+        attribute RTCSessionDescriptionConstructor RTCSessionDescription;
         attribute IceCandidateConstructor IceCandidate;
         attribute RTCIceCandidateConstructor RTCIceCandidate;
         attribute MediaStreamEventConstructor MediaStreamEvent;

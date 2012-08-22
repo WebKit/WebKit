@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Tests RTCSessionDescription.");
+
+var initializer = {type:"offer", sdp:"foobar"};
+var sessionDescription;
+shouldNotThrow("sessionDescription = new RTCSessionDescription(initializer);");
+shouldBe('sessionDescription.type', '"offer"');
+shouldBe('sessionDescription.sdp', '"foobar"');
+
+initializer = JSON.parse(JSON.stringify(sessionDescription));
+shouldNotThrow("sessionDescription = new RTCSessionDescription(initializer);");
+shouldBe('sessionDescription.type', '"offer"');
+shouldBe('sessionDescription.sdp', '"foobar"');
+
+shouldThrow("new RTCSessionDescription({});");
+shouldThrow("new RTCSessionDescription(5);");
+shouldThrow("new RTCSessionDescription('foobar');");
+shouldThrow("new RTCSessionDescription({type:'foobar', sdp:'x'});");
+shouldThrow("new RTCSessionDescription({type:'offer', sdp:''});");
+
+shouldNotThrow("new RTCSessionDescription({type:'offer', sdp:'x'});");
+shouldNotThrow("new RTCSessionDescription({type:'answer', sdp:'x'});");
+shouldNotThrow("new RTCSessionDescription({type:'pranswer', sdp:'x'});");
+
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
