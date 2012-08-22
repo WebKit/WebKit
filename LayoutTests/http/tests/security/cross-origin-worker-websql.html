@@ -1,0 +1,19 @@
+<html>
+<head>
+<script>
+
+if (window.testRunner) {
+	testRunner.dumpAsText();
+	testRunner.dumpChildFramesAsText();
+	testRunner.waitUntilDone();
+	testRunner.setCanOpenWindows(true);
+	testRunner.setCloseRemainingWindowsWhenComplete(true);
+	internals.settings.setThirdPartyStorageBlockingEnabled(true);
+}
+
+document.location = "resources/document-for-cross-origin-worker-websql.html"
+</script>
+</head>
+<body>
+</body>
+</html>

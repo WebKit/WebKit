@@ -59,7 +59,7 @@ PassRefPtr<SharedWorkerContext> SharedWorkerContext::create(const String& name, 
 }
 
 SharedWorkerContext::SharedWorkerContext(const String& name, const KURL& url, const String& userAgent, PassOwnPtr<GroupSettings> settings, SharedWorkerThread* thread)
-    : WorkerContext(url, userAgent, settings, thread)
+    : WorkerContext(url, userAgent, settings, thread, 0)
     , m_name(name)
 {
 }

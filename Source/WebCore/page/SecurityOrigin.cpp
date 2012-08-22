@@ -215,7 +215,7 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::createUnique()
     return origin.release();
 }
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::isolatedCopy()
+PassRefPtr<SecurityOrigin> SecurityOrigin::isolatedCopy() const
 {
     return adoptRef(new SecurityOrigin(this));
 }
@@ -400,7 +400,7 @@ bool SecurityOrigin::canAccessStorage(const SecurityOrigin* topOrigin) const
     if (!topOrigin)
         return true;
 
-    if (m_blockThirdPartyStorage && topOrigin->isThirdParty(this))
+    if ((m_blockThirdPartyStorage || topOrigin->m_blockThirdPartyStorage) && topOrigin->isThirdParty(this))
         return false;
 
     return true;

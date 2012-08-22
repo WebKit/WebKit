@@ -1,3 +1,21 @@
+2012-08-17  Jeffrey Pfau  <jpfau@apple.com>
+
+        Allow blocking of Web SQL databases in third-party web workers
+        https://bugs.webkit.org/show_bug.cgi?id=94170
+
+        Reviewed by Adam Barth.
+
+        Created tests for accessing openDatabase from a third party and first party dedicated workers when third-party blocking is on and off.
+
+        * http/tests/security/cross-origin-worker-websql-allowed-expected.txt: Added.
+        * http/tests/security/cross-origin-worker-websql-allowed.html: Added.
+        * http/tests/security/cross-origin-worker-websql-expected.txt: Added.
+        * http/tests/security/cross-origin-worker-websql.html: Added.
+        * http/tests/security/resources/cross-origin-iframe-for-worker-websql.html: Added.
+        * http/tests/security/resources/document-for-cross-origin-worker-websql.html: Added.
+        * http/tests/security/resources/worker-for-websql.js: Added.
+        (self.onmessage):
+
 2012-08-22  Anna Cavender  <annacc@chromium.org>
 
         [Chromium/GTK/EFL] Flaky media/track/track-mode test.

@@ -1,3 +1,18 @@
+2012-08-17  Jeffrey Pfau  <jpfau@apple.com>
+
+        Allow blocking of Web SQL databases in third-party web workers
+        https://bugs.webkit.org/show_bug.cgi?id=94170
+
+        Reviewed by Adam Barth.
+
+        Web workers did not previously know anything about the document that
+        spawned them. This is undefined for shared workers, but for dedicated
+        workers, we now pipe the information through.
+
+
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::startWorkerContext): Pass top document's origin
+
 2012-08-22  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Move context() from V8Proxy to ScriptController

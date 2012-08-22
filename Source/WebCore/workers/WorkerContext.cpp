@@ -85,7 +85,7 @@ public:
     virtual bool isCleanupTask() const { return true; }
 };
 
-WorkerContext::WorkerContext(const KURL& url, const String& userAgent, PassOwnPtr<GroupSettings> settings, WorkerThread* thread)
+WorkerContext::WorkerContext(const KURL& url, const String& userAgent, PassOwnPtr<GroupSettings> settings, WorkerThread* thread, PassRefPtr<SecurityOrigin> topOrigin)
     : m_url(url)
     , m_userAgent(userAgent)
     , m_groupSettings(settings)
@@ -96,6 +96,7 @@ WorkerContext::WorkerContext(const KURL& url, const String& userAgent, PassOwnPt
 #endif
     , m_closing(false)
     , m_eventQueue(WorkerEventQueue::create(this))
+    , m_topOrigin(topOrigin)
 {
     setSecurityOrigin(SecurityOrigin::create(url));
 }

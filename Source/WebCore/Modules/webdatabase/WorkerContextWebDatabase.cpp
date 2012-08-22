@@ -43,7 +43,7 @@ namespace WebCore {
 
 PassRefPtr<Database> WorkerContextWebDatabase::openDatabase(WorkerContext* context, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
 {
-    if (!context->securityOrigin()->canAccessDatabase() || !AbstractDatabase::isAvailable()) {
+    if (!context->securityOrigin()->canAccessDatabase(context->topOrigin()) || !AbstractDatabase::isAvailable()) {
         ec = SECURITY_ERR;
         return 0;
     }
@@ -53,7 +53,7 @@ PassRefPtr<Database> WorkerContextWebDatabase::openDatabase(WorkerContext* conte
 
 PassRefPtr<DatabaseSync> WorkerContextWebDatabase::openDatabaseSync(WorkerContext* context, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
 {
-    if (!context->securityOrigin()->canAccessDatabase() || !AbstractDatabase::isAvailable()) {
+    if (!context->securityOrigin()->canAccessDatabase(context->topOrigin()) || !AbstractDatabase::isAvailable()) {
         ec = SECURITY_ERR;
         return 0;
     }

@@ -54,7 +54,7 @@ public:
 
     // Create a deep copy of this SecurityOrigin. This method is useful
     // when marshalling a SecurityOrigin to another thread.
-    PassRefPtr<SecurityOrigin> isolatedCopy();
+    PassRefPtr<SecurityOrigin> isolatedCopy() const;
 
     // Set the domain property of this security origin to newDomain. This
     // function does not check whether newDomain is a suffix of the current

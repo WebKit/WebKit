@@ -93,8 +93,9 @@ void WebWorkerClientImpl::startWorkerContext(const KURL& scriptURL, const String
     if (document->page())
         settings = document->page()->group().groupSettings();
     RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, settings, sourceCode, *this, *this, startMode,
-                                                                         m_scriptExecutionContext->contentSecurityPolicy()->deprecatedHeader(),
-                                                                         m_scriptExecutionContext->contentSecurityPolicy()->deprecatedHeaderType());
+                                                                         document->contentSecurityPolicy()->deprecatedHeader(),
+                                                                         document->contentSecurityPolicy()->deprecatedHeaderType(),
+                                                                         document->topDocument()->securityOrigin());
     m_proxy->workerThreadCreated(thread);
     thread->start();
     InspectorInstrumentation::didStartWorkerContext(m_scriptExecutionContext.get(), m_proxy, scriptURL);

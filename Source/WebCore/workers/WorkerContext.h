@@ -138,8 +138,10 @@ namespace WebCore {
         void unregisterObserver(Observer*);
         void notifyObserversOfStop();
 
+        const SecurityOrigin* topOrigin() const { return m_topOrigin.get(); }
+
     protected:
-        WorkerContext(const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, WorkerThread*);
+        WorkerContext(const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, WorkerThread*, PassRefPtr<SecurityOrigin> topOrigin);
         void applyContentSecurityPolicyFromString(const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
 
         virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, PassRefPtr<ScriptCallStack>);
@@ -183,6 +185,8 @@ namespace WebCore {
         HashSet<Observer*> m_workerObservers;
 
         OwnPtr<WorkerEventQueue> m_eventQueue;
+
+        RefPtr<SecurityOrigin> m_topOrigin;
     };
 
 } // namespace WebCore
