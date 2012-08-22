@@ -642,6 +642,24 @@ static bool scrollAnimationEnabledForSystem()
 #endif
 }
 
+#if ENABLE(RUBBER_BANDING)
+static bool rubberBandingEnabledForSystem()
+{
+    static bool initialized = false;
+    static bool enabled = true;
+    // Caches the result, which is consistent with other apps like the Finder, which all
+    // require a restart after changing this default.
+    if (!initialized) {
+        // Uses -objectForKey: and not -boolForKey: in order to default to true if the value wasn't set.
+        id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"NSScrollViewRubberbanding"];
+        if ([value isKindOfClass:[NSNumber class]])
+            enabled = [value boolValue];
+        initialized = true;
+    }
+    return enabled;
+}
+#endif
+
 bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
 {
     m_haveScrolledSincePageLoad = true;
@@ -981,7 +999,7 @@ bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     m_haveScrolledSincePageLoad = true;
 
-    if (!wheelEvent.hasPreciseScrollingDeltas())
+    if (!wheelEvent.hasPreciseScrollingDeltas() || !rubberBandingEnabledForSystem())
         return ScrollAnimator::handleWheelEvent(wheelEvent);
 
     // FIXME: This is somewhat roundabout hack to allow forwarding wheel events
