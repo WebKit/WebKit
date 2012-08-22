@@ -119,7 +119,7 @@ namespace WebKit {
     macro(ArtificialPluginInitializationDelayEnabled, artificialPluginInitializationDelayEnabled, Bool, bool, false) \
     macro(ScrollingPerformanceLoggingEnabled, scrollingPerformanceLoggingEnabled, Bool, bool, false) \
     macro(ThirdPartyStorageBlockingEnabled, thirdPartyStorageBlockingEnabled, Bool, bool, false) \
-    macro(ScrollAnimatorEnabled, scrollAnimatorEnabled, Bool, bool, false \
+    macro(ScrollAnimatorEnabled, scrollAnimatorEnabled, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

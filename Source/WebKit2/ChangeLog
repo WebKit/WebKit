@@ -1,5 +1,12 @@
 2012-08-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
+        Unreviewed, build fixup for r126291.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit):
+
+2012-08-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
         [Qt] Optionally support smooth-scrolling on all platforms
         https://bugs.webkit.org/show_bug.cgi?id=74926
 
