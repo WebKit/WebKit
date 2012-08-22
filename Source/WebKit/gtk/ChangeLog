@@ -1,3 +1,14 @@
+2012-08-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Preferred languages and spellchecker APIs are not consistent in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=94683
+
+        Reviewed by Alejandro G. Castro.
+
+        * webkit/webkitspellcheckerenchant.cpp:
+        (updateSpellCheckingLanguages): Split the languages string to pass a
+        Vector to updateSpellCheckingLanguages().
+
 2012-08-21  Joanmarie Diggs  <jdiggs@igalia.com>
         [Gtk] No accessible caret-moved events found in certain content
         https://bugs.webkit.org/show_bug.cgi?id=72811

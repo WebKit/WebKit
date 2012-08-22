@@ -29,8 +29,6 @@
 #if ENABLE(SPELLCHECK)
 
 #include "WebKitPrivate.h"
-#include <wtf/Vector.h>
-#include <wtf/text/CString.h>
 
 using namespace WebKit;
 
@@ -140,15 +138,25 @@ void WebKitTextChecker::setSpellCheckingEnabled(bool enabled)
     WKTextCheckerContinuousSpellCheckingEnabledStateChanged(enabled);
 }
 
-const CString& WebKitTextChecker::getSpellCheckingLanguages()
+const char* const* WebKitTextChecker::getSpellCheckingLanguages()
 {
-    String spellCheckingLanguages = m_textChecker->getSpellCheckingLanguages();
-    m_spellCheckingLanguages = spellCheckingLanguages.isEmpty() ? CString() : spellCheckingLanguages.utf8();
-    return m_spellCheckingLanguages;
+    Vector<String> spellCheckingLanguages = m_textChecker->getSpellCheckingLanguages();
+    if (spellCheckingLanguages.isEmpty())
+        return 0;
+
+    m_spellCheckingLanguages = adoptGRef(g_ptr_array_new_with_free_func(g_free));
+    for (size_t i = 0; i < spellCheckingLanguages.size(); ++i)
+        g_ptr_array_add(m_spellCheckingLanguages.get(), g_strdup(spellCheckingLanguages[i].utf8().data()));
+    g_ptr_array_add(m_spellCheckingLanguages.get(), 0);
+
+    return reinterpret_cast<char**>(m_spellCheckingLanguages->pdata);
 }
 
-void WebKitTextChecker::setSpellCheckingLanguages(const CString& languages)
+void WebKitTextChecker::setSpellCheckingLanguages(const char* const* languages)
 {
-    m_textChecker->updateSpellCheckingLanguages(String::fromUTF8(languages.data()));
+    Vector<String> spellCheckingLanguages;
+    for (size_t i = 0; languages[i]; ++i)
+        spellCheckingLanguages.append(String::fromUTF8(languages[i]));
+    m_textChecker->updateSpellCheckingLanguages(spellCheckingLanguages);
 }
 #endif // ENABLE(SPELLCHECK)

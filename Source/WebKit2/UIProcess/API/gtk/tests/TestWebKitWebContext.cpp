@@ -210,26 +210,44 @@ static void testWebContextSpellChecker(Test* test, gconstpointer)
     WebKitWebContext* webContext = webkit_web_context_get_default();
 
     // Check what happens if no spell checking language has been set.
-    const gchar* currentLanguage = webkit_web_context_get_spell_checking_languages(webContext);
+    const gchar* const* currentLanguage = webkit_web_context_get_spell_checking_languages(webContext);
     g_assert(!currentLanguage);
 
     // Set the language to a specific one.
-    webkit_web_context_set_spell_checking_languages(webContext, "en_US");
+    GRefPtr<GPtrArray> languages = adoptGRef(g_ptr_array_new());
+    g_ptr_array_add(languages.get(), const_cast<gpointer>(static_cast<const void*>("en_US")));
+    g_ptr_array_add(languages.get(), 0);
+    webkit_web_context_set_spell_checking_languages(webContext, reinterpret_cast<const char* const*>(languages->pdata));
     currentLanguage = webkit_web_context_get_spell_checking_languages(webContext);
-    g_assert_cmpstr(currentLanguage, ==, "en_US");
+    g_assert_cmpuint(g_strv_length(const_cast<char**>(currentLanguage)), ==, 1);
+    g_assert_cmpstr(currentLanguage[0], ==, "en_US");
 
     // Set the language string to list of valid languages.
-    webkit_web_context_set_spell_checking_languages(webContext, "en_GB,en_US");
+    g_ptr_array_remove_index_fast(languages.get(), languages->len - 1);
+    g_ptr_array_add(languages.get(), const_cast<gpointer>(static_cast<const void*>("en_GB")));
+    g_ptr_array_add(languages.get(), 0);
+    webkit_web_context_set_spell_checking_languages(webContext, reinterpret_cast<const char* const*>(languages->pdata));
     currentLanguage = webkit_web_context_get_spell_checking_languages(webContext);
-    g_assert_cmpstr(currentLanguage, ==, "en_GB,en_US");
+    g_assert_cmpuint(g_strv_length(const_cast<char**>(currentLanguage)), ==, 2);
+    g_assert_cmpstr(currentLanguage[0], ==, "en_US");
+    g_assert_cmpstr(currentLanguage[1], ==, "en_GB");
 
     // Try passing a wrong language along with good ones.
-    webkit_web_context_set_spell_checking_languages(webContext, "bd_WR,en_US,en_GB");
+    g_ptr_array_remove_index_fast(languages.get(), languages->len - 1);
+    g_ptr_array_add(languages.get(), const_cast<gpointer>(static_cast<const void*>("bd_WR")));
+    g_ptr_array_add(languages.get(), 0);
+    webkit_web_context_set_spell_checking_languages(webContext, reinterpret_cast<const char* const*>(languages->pdata));
     currentLanguage = webkit_web_context_get_spell_checking_languages(webContext);
-    g_assert_cmpstr(currentLanguage, ==, "en_US,en_GB");
+    g_assert_cmpuint(g_strv_length(const_cast<char**>(currentLanguage)), ==, 2);
+    g_assert_cmpstr(currentLanguage[0], ==, "en_US");
+    g_assert_cmpstr(currentLanguage[1], ==, "en_GB");
 
     // Try passing a list with only wrong languages.
-    webkit_web_context_set_spell_checking_languages(webContext, "bd_WR,wr_BD");
+    languages = adoptGRef(g_ptr_array_new());
+    g_ptr_array_add(languages.get(), const_cast<gpointer>(static_cast<const void*>("bd_WR")));
+    g_ptr_array_add(languages.get(), const_cast<gpointer>(static_cast<const void*>("wr_BD")));
+    g_ptr_array_add(languages.get(), 0);
+    webkit_web_context_set_spell_checking_languages(webContext, reinterpret_cast<const char* const*>(languages->pdata));
     currentLanguage = webkit_web_context_get_spell_checking_languages(webContext);
     g_assert(!currentLanguage);
 
@@ -250,11 +268,12 @@ static void testWebContextLanguages(WebViewTest* test, gconstpointer)
     g_assert_cmpuint(mainResourceDataSize, ==, strlen(expectedDefaultLanguage));
     g_assert(!strncmp(mainResourceData, expectedDefaultLanguage, mainResourceDataSize));
 
-    GList* languages = g_list_prepend(0, const_cast<gpointer>(static_cast<const void*>("dE")));
-    languages = g_list_prepend(languages, const_cast<gpointer>(static_cast<const void*>("ES_es")));
-    languages = g_list_prepend(languages, const_cast<gpointer>(static_cast<const void*>("en")));
-    webkit_web_context_set_preferred_languages(webkit_web_context_get_default(), languages);
-    g_list_free(languages);
+    GRefPtr<GPtrArray> languages = adoptGRef(g_ptr_array_new());
+    g_ptr_array_add(languages.get(), const_cast<gpointer>(static_cast<const void*>("en")));
+    g_ptr_array_add(languages.get(), const_cast<gpointer>(static_cast<const void*>("ES_es")));
+    g_ptr_array_add(languages.get(), const_cast<gpointer>(static_cast<const void*>("dE")));
+    g_ptr_array_add(languages.get(), 0);
+    webkit_web_context_set_preferred_languages(webkit_web_context_get_default(), reinterpret_cast<const char* const*>(languages->pdata));
 
     static const char* expectedLanguages = "en, es-es;q=0.90, de;q=0.80";
     test->loadURI(kServer->getURIForPath("/").data());

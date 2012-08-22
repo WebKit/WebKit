@@ -41,8 +41,8 @@ public:
     void learnWord(const String&);
     void checkSpellingOfString(const String&, int& misspellingLocation, int& misspellingLength);
     Vector<String> getGuessesForWord(const String&);
-    void updateSpellCheckingLanguages(const String& languages);
-    String getSpellCheckingLanguages();
+    void updateSpellCheckingLanguages(const Vector<String>& languages);
+    Vector<String> getSpellCheckingLanguages();
 
 private:
     TextCheckerEnchant();

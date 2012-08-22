@@ -1,3 +1,30 @@
+2012-08-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Preferred languages and spellchecker APIs are not consistent in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=94683
+
+        Reviewed by Alejandro G. Castro.
+
+        Change spell-checker and preferred languages API to use a GStrv
+        instead of a comma-separated string and GList. This makes the API
+        more consistent and convenient to use.
+
+        * UIProcess/API/gtk/WebKitTextChecker.cpp:
+        (WebKitTextChecker::getSpellCheckingLanguages): Return a
+        Vector<String> instead of a String.
+        (WebKitTextChecker::setSpellCheckingLanguages): Receive a
+        Vector<String> instead of a String.
+        * UIProcess/API/gtk/WebKitTextChecker.h:
+        (WebKitTextChecker): Use a GPtrArray to cache languages.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_get_spell_checking_languages):
+        (webkit_web_context_set_spell_checking_languages):
+        (webkit_web_context_set_preferred_languages):
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/tests/TestWebKitWebContext.cpp:
+        (testWebContextSpellChecker):
+        (testWebContextLanguages):
+
 2012-08-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Enable runtime enabled features: DeviceMotion and DeviceOrientation

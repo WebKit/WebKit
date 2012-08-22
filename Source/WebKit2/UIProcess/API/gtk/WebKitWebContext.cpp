@@ -495,24 +495,20 @@ void webkit_web_context_set_spell_checking_enabled(WebKitWebContext* context, gb
  * @context: a #WebKitWebContext
  *
  * Get the the list of spell checking languages associated with
- * @context separated by commas, or %NULL if no languages have been
- * previously set.
-
+ * @context, or %NULL if no languages have been previously set.
+ *
  * See webkit_web_context_set_spell_checking_languages() for more
  * details on the format of the languages in the list.
  *
- * Returns: (transfer none): A comma separated list of languages if
- * available, or %NULL otherwise.
+ * Returns: (array zero-terminated=1) (element-type utf8) (transfer none): A %NULL-terminated
+ *    array of languages if available, or %NULL otherwise.
  */
-const gchar* webkit_web_context_get_spell_checking_languages(WebKitWebContext* context)
+const gchar* const* webkit_web_context_get_spell_checking_languages(WebKitWebContext* context)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
 
 #if ENABLE(SPELLCHECK)
-    CString spellCheckingLanguages = context->priv->textChecker->getSpellCheckingLanguages();
-    if (spellCheckingLanguages.isNull())
-        return 0;
-    return spellCheckingLanguages.data();
+    return context->priv->textChecker->getSpellCheckingLanguages();
 #else
     return 0;
 #endif
@@ -521,11 +517,10 @@ const gchar* webkit_web_context_get_spell_checking_languages(WebKitWebContext* c
 /**
  * webkit_web_context_set_spell_checking_languages:
  * @context: a #WebKitWebContext
- * @languages: new list of spell checking languages separated by
- * commas
+ * @languages: (array zero-terminated=1) (transfer none): a %NULL-terminated list of spell checking languages
  *
  * Set the list of spell checking languages to be used for spell
- * checking, separated by commas.
+ * checking.
  *
  * The locale string typically is in the form lang_COUNTRY, where lang
  * is an ISO-639 language code, and COUNTRY is an ISO-3166 country code.
@@ -536,7 +531,7 @@ const gchar* webkit_web_context_get_spell_checking_languages(WebKitWebContext* c
  * least once in order to properly enable the spell checking feature
  * in WebKit.
  */
-void webkit_web_context_set_spell_checking_languages(WebKitWebContext* context, const gchar* languages)
+void webkit_web_context_set_spell_checking_languages(WebKitWebContext* context, const gchar* const* languages)
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
     g_return_if_fail(languages);
@@ -549,23 +544,23 @@ void webkit_web_context_set_spell_checking_languages(WebKitWebContext* context, 
 /**
  * webkit_web_context_set_preferred_languages:
  * @context: a #WebKitWebContext
- * @languages: (element-type utf8): a #GList of language identifiers
+ * @languages: (allow-none) (array zero-terminated=1) (element-type utf8) (transfer none): a %NULL-terminated list of language identifiers
  *
  * Set the list of preferred languages, sorted from most desirable
  * to least desirable. The list will be used to build the "Accept-Language"
  * header that will be included in the network requests started by
  * the #WebKitWebContext.
  */
-void webkit_web_context_set_preferred_languages(WebKitWebContext* context, GList* languageList)
+void webkit_web_context_set_preferred_languages(WebKitWebContext* context, const gchar* const* languageList)
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
 
-    if (!languageList)
+    if (!languageList || !g_strv_length(const_cast<char**>(languageList)))
         return;
 
     Vector<String> languages;
-    for (GList* iter = languageList; iter; iter = g_list_next(iter))
-        languages.append(String::fromUTF8(static_cast<char*>(iter->data)).lower().replace("_", "-"));
+    for (size_t i = 0; languageList[i]; ++i)
+        languages.append(String::fromUTF8(languageList[i]).lower().replace("_", "-"));
 
     WebCore::overrideUserPreferredLanguages(languages);
     WebCore::languageDidChange();

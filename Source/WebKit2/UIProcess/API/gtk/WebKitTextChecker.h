@@ -26,6 +26,7 @@
 #include <wtf/FastAllocBase.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 class WebKitTextChecker {
@@ -44,14 +45,14 @@ public:
     void ignoreWord(const String& word);
 
     // To be called from WebKitWebContext only.
-    const CString& getSpellCheckingLanguages();
-    void setSpellCheckingLanguages(const CString& spellCheckingLanguages);
+    const char* const* getSpellCheckingLanguages();
+    void setSpellCheckingLanguages(const char* const* spellCheckingLanguages);
 
 private:
     WebKitTextChecker();
 
     OwnPtr<WebCore::TextCheckerEnchant> m_textChecker;
-    CString m_spellCheckingLanguages;
+    GRefPtr<GPtrArray> m_spellCheckingLanguages;
     bool m_spellCheckingEnabled;
 };
 

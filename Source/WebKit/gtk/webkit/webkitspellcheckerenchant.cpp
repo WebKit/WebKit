@@ -99,7 +99,10 @@ static char** getGuessesForWord(WebKitSpellChecker* checker, const char* word, c
 static void updateSpellCheckingLanguages(WebKitSpellChecker* checker, const char* languages)
 {
     WebKitSpellCheckerEnchantPrivate* priv = WEBKIT_SPELL_CHECKER_ENCHANT(checker)->priv;
-    priv->textCheckerEnchant->updateSpellCheckingLanguages(String::fromUTF8(languages));
+
+    Vector<String> languagesVector;
+    String::fromUTF8(languages).split(static_cast<UChar>(','), languagesVector);
+    priv->textCheckerEnchant->updateSpellCheckingLanguages(languagesVector);
 }
 
 static char* getAutocorrectSuggestionsForMisspelledWord(WebKitSpellChecker* checker, const char* word)

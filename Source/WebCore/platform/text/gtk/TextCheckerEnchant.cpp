@@ -155,14 +155,12 @@ Vector<String> TextCheckerEnchant::getGuessesForWord(const String& word)
     return guesses;
 }
 
-void TextCheckerEnchant::updateSpellCheckingLanguages(const String& languages)
+void TextCheckerEnchant::updateSpellCheckingLanguages(const Vector<String>& languages)
 {
     Vector<EnchantDict*> spellDictionaries;
 
     if (!languages.isEmpty()) {
-        Vector<String> languagesVector;
-        languages.split(static_cast<UChar>(','), languagesVector);
-        for (Vector<String>::const_iterator iter = languagesVector.begin(); iter != languagesVector.end(); ++iter) {
+        for (Vector<String>::const_iterator iter = languages.begin(); iter != languages.end(); ++iter) {
             CString currentLanguage = iter->utf8();
             if (enchant_broker_dict_exists(m_broker, currentLanguage.data())) {
                 EnchantDict* dict = enchant_broker_request_dict(m_broker, currentLanguage.data());
@@ -188,24 +186,21 @@ void TextCheckerEnchant::updateSpellCheckingLanguages(const String& languages)
     m_enchantDictionaries = spellDictionaries;
 }
 
-String TextCheckerEnchant::getSpellCheckingLanguages()
+Vector<String> TextCheckerEnchant::getSpellCheckingLanguages()
 {
+    Vector<String> languages;
     if (m_enchantDictionaries.isEmpty())
-        return String();
+        return languages;
 
     // Get a Vector<CString> with the list of languages in use.
     Vector<CString> currentDictionaries;
     for (Vector<EnchantDict*>::const_iterator iter = m_enchantDictionaries.begin(); iter != m_enchantDictionaries.end(); ++iter)
         enchant_dict_describe(*iter, enchantDictDescribeCallback, &currentDictionaries);
 
-    // Build the result String;
-    StringBuilder builder;
-    for (Vector<CString>::const_iterator iter = currentDictionaries.begin(); iter != currentDictionaries.end(); ++iter) {
-        if (iter != currentDictionaries.begin())
-            builder.append(",");
-        builder.append(String::fromUTF8(iter->data()));
-    }
-    return builder.toString();
+    for (Vector<CString>::const_iterator iter = currentDictionaries.begin(); iter != currentDictionaries.end(); ++iter)
+        languages.append(String::fromUTF8(iter->data()));
+
+    return languages;
 }
 
 void TextCheckerEnchant::freeEnchantBrokerDictionaries()
