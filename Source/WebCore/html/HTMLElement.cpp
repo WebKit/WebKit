@@ -235,10 +235,6 @@ void HTMLElement::parseAttribute(const Attribute& attribute)
     } else if (attribute.name() == itemtypeAttr) {
         setItemType(attribute.value());
 #endif
-#if ENABLE(UNDO_MANAGER)
-    } else if (attribute.name() == undoscopeAttr) {
-        setUndoScope(!attribute.isNull());
-#endif
     }
 // standard events
     else if (attribute.name() == onclickAttr) {
@@ -663,14 +659,8 @@ void HTMLElement::setContentEditable(const String& enabled, ExceptionCode& ec)
         setAttribute(contenteditableAttr, "plaintext-only");
     else if (equalIgnoringCase(enabled, "inherit"))
         removeAttribute(contenteditableAttr);
-    else {
+    else
         ec = SYNTAX_ERR;
-        return;
-    }
-#if ENABLE(UNDO_MANAGER)
-    if (isContentEditable())
-        disconnectUndoManagersInSubtree();
-#endif
 }
 
 bool HTMLElement::draggable() const

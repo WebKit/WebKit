@@ -34,6 +34,7 @@
 #if ENABLE(UNDO_MANAGER)
 
 #include "ActiveDOMObject.h"
+#include "Document.h"
 #include "ExceptionCodePlaceholder.h"
 #include "UndoStep.h"
 #include <wtf/OwnPtr.h>
@@ -46,14 +47,13 @@
 namespace WebCore {
 
 class DOMTransaction;
-class Node;
 
 typedef Vector<RefPtr<UndoStep> > UndoManagerEntry;
 typedef Vector<OwnPtr<UndoManagerEntry> > UndoManagerStack;
 
 class UndoManager : public RefCounted<UndoManager>, public ActiveDOMObject {
 public:
-    static PassRefPtr<UndoManager> create(ScriptExecutionContext*, Node* host);
+    static PassRefPtr<UndoManager> create(Document*);
     void disconnect();
     virtual void stop() OVERRIDE;
     virtual ~UndoManager();
@@ -75,14 +75,13 @@ public:
     void registerUndoStep(PassRefPtr<UndoStep>);
     void registerRedoStep(PassRefPtr<UndoStep>);
     
-    Node* undoScopeHost() const { return m_undoScopeHost; }
-    Node* ownerNode() const { return m_undoScopeHost; }
+    Document* document() const { return m_document; }
+    Node* ownerNode() const { return m_document; }
 
 private:
-    explicit UndoManager(ScriptExecutionContext*, Node* host);
-    bool isConnected();
+    explicit UndoManager(Document*);
     
-    Node* m_undoScopeHost;
+    Document* m_document;
     UndoManagerStack m_undoStack;
     UndoManagerStack m_redoStack;
     bool m_isInProgress;

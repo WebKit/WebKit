@@ -4,16 +4,16 @@
 <script src="../../fast/js/resources/js-test-pre.js"></script>
 </head>
 <body>
-<div id="div" undoscope></div>
+<iframe id="frame"></iframe>
 <script>
 description("This tests that undoManager doesn't have use-after-free vulnerabilities "
     + "after its undoScopeHost has been reclaimed by GC.");
 
-var div = document.getElementById("div");
-var undoManager = div.undoManager;
+var frame = document.getElementById("frame");
+var undoManager = frame.contentDocument.undoManager;
 
-div.parentNode.removeChild(div);
-div = null;
+frame.parentNode.removeChild(frame);
+frame = null;
 gc();
 
 var transaction = {

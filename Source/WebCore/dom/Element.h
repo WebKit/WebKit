@@ -440,14 +440,6 @@ public:
         info.addInstrumentedMember(m_attributeData);
     }
 
-#if ENABLE(UNDO_MANAGER)
-    bool undoScope() const;
-    void setUndoScope(bool);
-    PassRefPtr<UndoManager> undoManager();
-    void disconnectUndoManager();
-    void disconnectUndoManagersInSubtree();
-#endif
-
 protected:
     Element(const QualifiedName& tagName, Document* document, ConstructionType type)
         : ContainerNode(document, type)

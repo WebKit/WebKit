@@ -146,13 +146,6 @@ Element::~Element()
         ASSERT(m_attributeData);
         m_attributeData->detachAttrObjectsFromElement(this);
     }
-
-#if ENABLE(UNDO_MANAGER)
-    if (hasRareData() && elementRareData()->m_undoManager) {
-        elementRareData()->m_undoManager->disconnect();
-        elementRareData()->m_undoManager.clear();
-    }
-#endif
 }
 
 inline ElementRareData* Element::elementRareData() const
@@ -2221,62 +2214,5 @@ void Element::createMutableAttributeData()
     else
         m_attributeData = m_attributeData->makeMutable();
 }
-
-#if ENABLE(UNDO_MANAGER)
-bool Element::undoScope() const
-{
-    return hasRareData() && elementRareData()->m_undoScope;
-}
-
-void Element::setUndoScope(bool undoScope)
-{
-    ElementRareData* data = ensureElementRareData();
-    data->m_undoScope = undoScope;
-    if (!undoScope)
-        disconnectUndoManager();
-}
-
-PassRefPtr<UndoManager> Element::undoManager()
-{
-    if (!undoScope() || (isContentEditable() && !isRootEditableElement())) {
-        disconnectUndoManager();
-        return 0;
-    }
-    ElementRareData* data = ensureElementRareData();
-    if (!data->m_undoManager)
-        data->m_undoManager = UndoManager::create(document(), this);
-    return data->m_undoManager;
-}
-
-void Element::disconnectUndoManager()
-{
-    if (!hasRareData())
-        return;
-    ElementRareData* data = elementRareData();
-    UndoManager* undoManager = data->m_undoManager.get();
-    if (!undoManager)
-        return;
-    undoManager->disconnect();
-    data->m_undoManager.clear();
-}
-
-void Element::disconnectUndoManagersInSubtree()
-{
-    Node* node = firstChild();
-    while (node) {
-        if (node->isElementNode()) {
-            Element* element = toElement(node);
-            if (element->hasRareData() && element->elementRareData()->m_undoManager) {
-                if (!node->isContentEditable()) {
-                    node = node->traverseNextSibling(this);
-                    continue;
-                }
-                element->disconnectUndoManager();
-            }
-        }
-        node = node->traverseNextNode(this);
-    }
-}
-#endif
 
 } // namespace WebCore

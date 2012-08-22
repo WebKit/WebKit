@@ -1,3 +1,18 @@
+2012-08-21  Sukolsak Sakshuwong  <sukolsak@google.com>
+
+        Remove UndoManager's undoscope content attribute
+        https://bugs.webkit.org/show_bug.cgi?id=94637
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/undomanager/undomanager-reenter-expected.txt: Copied from LayoutTests/editing/undomanager/undomanager-use-after-free-expected.txt.
+        * editing/undomanager/undomanager-reenter.html: Copied from LayoutTests/editing/undomanager/undomanager-use-after-free.html.
+        * editing/undomanager/undomanager-use-after-free-expected.txt: Removed.
+        * editing/undomanager/undomanager-use-after-free.html: Removed.
+        * editing/undomanager/undoscope-attribute-expected.txt: Removed.
+        * editing/undomanager/undoscope-attribute.html: Removed.
+        * editing/undomanager/undoscopehost-use-after-free.html:
+
 2012-08-21  Mark Lam  <mark.lam@apple.com>
 
         Skipping http/tests/inspector/console-resource-errors.html.

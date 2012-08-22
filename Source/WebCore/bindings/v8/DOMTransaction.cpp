@@ -90,14 +90,10 @@ v8::Handle<v8::Function> DOMTransaction::getFunction(const char* propertyName)
 
 void DOMTransaction::callFunction(const char* propertyName)
 {
-    if (!m_undoManager || !m_undoManager->undoScopeHost())
+    if (!m_undoManager || !m_undoManager->document())
         return;
 
-    Document* document = m_undoManager->undoScopeHost()->document();
-    if (!document)
-        return;
-
-    Frame* frame = document->frame();
+    Frame* frame = m_undoManager->document()->frame();
     if (!frame || !frame->script()->canExecuteScripts(AboutToExecuteScript))
         return;
 

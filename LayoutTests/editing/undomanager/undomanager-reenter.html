@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Ensure that undoManager throws an exception when we re-enter it by calling "
+    + "undoManager functions during callbacks.");
+
+var undoManager = document.undoManager;
+
+var transaction = {
+    "execute": function() {
+        undoManager.transact({
+            "execute": function() { },
+            "undo": function() { },
+            "redo": function() { }
+        });
+    },
+    "undo": function() {
+        undoManager.undo();
+    },
+    "redo": function() {
+        undoManager.clearRedo();
+    }
+};
+
+debug("call undoManager.transact() during the execute callback");
+shouldThrow("undoManager.transact(transaction)", "'Error: INVALID_ACCESS_ERR: DOM Exception 15'");
+
+debug("call undoManager.undo() during the undo callback");
+shouldThrow("undoManager.undo()", "'Error: INVALID_ACCESS_ERR: DOM Exception 15'");
+
+debug("call undoManager.clearRedo() during the redo callback");
+shouldThrow("undoManager.redo()", "'Error: INVALID_ACCESS_ERR: DOM Exception 15'");
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

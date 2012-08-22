@@ -6155,7 +6155,7 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 PassRefPtr<UndoManager> Document::undoManager()
 {
     if (!m_undoManager)
-        m_undoManager = UndoManager::create(this, this);
+        m_undoManager = UndoManager::create(this);
     return m_undoManager;
 }
 #endif
