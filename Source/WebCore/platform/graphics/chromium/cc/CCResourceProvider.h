@@ -30,8 +30,6 @@
 #include "CCGraphicsContext.h"
 #include "GraphicsContext3D.h"
 #include "IntSize.h"
-#include "SkBitmap.h"
-#include "SkCanvas.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
@@ -46,6 +44,8 @@ class WebGraphicsContext3D;
 
 namespace WebCore {
 
+class CCScopedLockResourceForRead;
+class CCScopedLockResourceForWrite;
 class IntRect;
 class LayerTextureSubImage;
 
@@ -58,10 +58,6 @@ public:
     typedef Vector<ResourceId> ResourceIdArray;
     typedef HashMap<ResourceId, ResourceId> ResourceIdMap;
     enum TextureUsageHint { TextureUsageAny, TextureUsageFramebuffer };
-    enum ResourceType {
-        GLTexture = 1,
-        Bitmap,
-    };
     struct Mailbox {
         GC3Dbyte name[64];
     };
@@ -91,19 +87,11 @@ public:
 
     // Producer interface.
 
-    void setDefaultResourceType(ResourceType type) { m_defaultResourceType = type; }
-    ResourceType defaultResourceType() const { return m_defaultResourceType; }
-    ResourceType resourceType(ResourceId);
-
-    // Creates a resource of the default resource type.
+    // Creates a resource of the given size/format, into the given pool.
     ResourceId createResource(int pool, const IntSize&, GC3Denum format, TextureUsageHint);
 
-    // You can also explicitly create a specific resource type.
-    ResourceId createGLTexture(int pool, const IntSize&, GC3Denum format, TextureUsageHint);
-    ResourceId createBitmap(int pool, const IntSize&);
-    // Wraps an external texture into a GL resource.
+    // Wraps an external texture into a resource.
     ResourceId createResourceFromExternalTexture(unsigned textureId);
-
     void deleteResource(ResourceId);
 
     // Deletes all resources owned by a given pool.
@@ -159,72 +147,13 @@ public:
     // Only for testing
     size_t mailboxCount() const { return m_mailboxes.size(); }
 
-    // The following lock classes are part of the CCResourceProvider API and are
-    // needed to read and write the resource contents. The user must ensure
-    // that they only use GL locks on GL resources, etc, and this is enforced
-    // by assertions.
-    class ScopedReadLockGL {
-        WTF_MAKE_NONCOPYABLE(ScopedReadLockGL);
-    public:
-        ScopedReadLockGL(CCResourceProvider*, CCResourceProvider::ResourceId);
-        ~ScopedReadLockGL();
-
-        unsigned textureId() const { return m_textureId; }
-
-    private:
-        CCResourceProvider* m_resourceProvider;
-        CCResourceProvider::ResourceId m_resourceId;
-        unsigned m_textureId;
-    };
-
-    class ScopedWriteLockGL {
-        WTF_MAKE_NONCOPYABLE(ScopedWriteLockGL);
-    public:
-        ScopedWriteLockGL(CCResourceProvider*, CCResourceProvider::ResourceId);
-        ~ScopedWriteLockGL();
-
-        unsigned textureId() const { return m_textureId; }
-
-    private:
-        CCResourceProvider* m_resourceProvider;
-        CCResourceProvider::ResourceId m_resourceId;
-        unsigned m_textureId;
-    };
-
-    class ScopedReadLockSoftware {
-        WTF_MAKE_NONCOPYABLE(ScopedReadLockSoftware);
-    public:
-        ScopedReadLockSoftware(CCResourceProvider*, CCResourceProvider::ResourceId);
-        ~ScopedReadLockSoftware();
-
-        const SkBitmap* skBitmap() const { return &m_skBitmap; }
-
-    private:
-        CCResourceProvider* m_resourceProvider;
-        CCResourceProvider::ResourceId m_resourceId;
-        SkBitmap m_skBitmap;
-    };
-
-    class ScopedWriteLockSoftware {
-        WTF_MAKE_NONCOPYABLE(ScopedWriteLockSoftware);
-    public:
-        ScopedWriteLockSoftware(CCResourceProvider*, CCResourceProvider::ResourceId);
-        ~ScopedWriteLockSoftware();
-
-        SkCanvas* skCanvas() { return &m_skCanvas; }
-
-    private:
-        CCResourceProvider* m_resourceProvider;
-        CCResourceProvider::ResourceId m_resourceId;
-        SkBitmap m_skBitmap;
-        SkCanvas m_skCanvas;
-    };
-
 private:
+    friend class CCScopedLockResourceForRead;
+    friend class CCScopedLockResourceForWrite;
+
     struct Resource {
         Resource()
             : glId(0)
-            , pixels(0)
             , pool(0)
             , lockForReadCount(0)
             , lockedForWrite(false)
@@ -232,11 +161,9 @@ private:
             , exported(false)
             , size()
             , format(0)
-            , type(static_cast<ResourceType>(0))
         { }
         Resource(unsigned textureId, int pool, const IntSize& size, GC3Denum format)
             : glId(textureId)
-            , pixels(0)
             , pool(pool)
             , lockForReadCount(0)
             , lockedForWrite(false)
@@ -244,22 +171,8 @@ private:
             , exported(false)
             , size(size)
             , format(format)
-            , type(GLTexture)
-        { }
-        Resource(uint8_t* pixels, int pool, const IntSize& size, GC3Denum format)
-            : glId(0)
-            , pixels(pixels)
-            , pool(pool)
-            , lockForReadCount(0)
-            , lockedForWrite(false)
-            , external(false)
-            , exported(false)
-            , size(size)
-            , format(format)
-            , type(Bitmap)
         { }
         unsigned glId;
-        uint8_t* pixels;
         int pool;
         int lockForReadCount;
         bool lockedForWrite;
@@ -267,7 +180,6 @@ private:
         bool exported;
         IntSize size;
         GC3Denum format;
-        ResourceType type;
     };
     typedef HashMap<ResourceId, Resource> ResourceMap;
     struct Child {
@@ -280,11 +192,13 @@ private:
     explicit CCResourceProvider(CCGraphicsContext*);
     bool initialize();
 
-    const Resource* lockForRead(ResourceId);
-    void unlockForRead(ResourceId);
-    const Resource* lockForWrite(ResourceId);
+    // Gets a GL texture id representing the resource, that can be rendered into.
+    unsigned lockForWrite(ResourceId);
     void unlockForWrite(ResourceId);
-    static void populateSkBitmapWithResource(SkBitmap*, const Resource*);
+
+    // Gets a GL texture id representing the resource, that can be rendered with.
+    unsigned lockForRead(ResourceId);
+    void unlockForRead(ResourceId);
 
     bool transferResource(WebKit::WebGraphicsContext3D*, ResourceId, TransferableResource*);
     void trimMailboxDeque();
@@ -297,12 +211,56 @@ private:
 
     Deque<Mailbox> m_mailboxes;
 
-    ResourceType m_defaultResourceType;
     bool m_useTextureStorageExt;
     bool m_useTextureUsageHint;
     bool m_useShallowFlush;
     OwnPtr<LayerTextureSubImage> m_texSubImage;
     int m_maxTextureSize;
+};
+
+class CCScopedLockResourceForRead {
+    WTF_MAKE_NONCOPYABLE(CCScopedLockResourceForRead);
+public:
+    CCScopedLockResourceForRead(CCResourceProvider* resourceProvider, CCResourceProvider::ResourceId resourceId)
+        : m_resourceProvider(resourceProvider)
+        , m_resourceId(resourceId)
+        , m_textureId(resourceProvider->lockForRead(resourceId))
+    {
+        ASSERT(m_textureId);
+    }
+
+    ~CCScopedLockResourceForRead()
+    {
+        m_resourceProvider->unlockForRead(m_resourceId);
+    }
+
+    unsigned textureId() const { return m_textureId; }
+
+private:
+    CCResourceProvider* m_resourceProvider;
+    CCResourceProvider::ResourceId m_resourceId;
+    unsigned m_textureId;
+};
+
+class CCScopedLockResourceForWrite {
+    WTF_MAKE_NONCOPYABLE(CCScopedLockResourceForWrite);
+public:
+    CCScopedLockResourceForWrite(CCResourceProvider* resourceProvider, CCResourceProvider::ResourceId resourceId)
+        : m_resourceProvider(resourceProvider)
+        , m_resourceId(resourceId)
+        , m_textureId(resourceProvider->lockForWrite(resourceId)) { }
+
+    ~CCScopedLockResourceForWrite()
+    {
+        m_resourceProvider->unlockForWrite(m_resourceId);
+    }
+
+    unsigned textureId() const { return m_textureId; }
+
+private:
+    CCResourceProvider* m_resourceProvider;
+    CCResourceProvider::ResourceId m_resourceId;
+    unsigned m_textureId;
 };
 
 }
