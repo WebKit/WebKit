@@ -12,7 +12,7 @@ Active cues: 1
 * Cue 0 *
 EXPECTED (cueDisplayElement.innerText == 'This is a demo track to illustrate positioning features of cues.') OK
 Cue left position (percentage): 0
-Cue top position (percentage): 81
+Cue top position (percentage): 100
 
 ** Center **
 EVENT(seeked)

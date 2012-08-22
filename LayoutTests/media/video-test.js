@@ -14,10 +14,7 @@ findMediaElement();
 logConsole();
 
 if (window.testRunner) {
-    // Some track element rendering tests require text pixel dump.
-    if (typeof requirePixelDump == "undefined")
-        testRunner.dumpAsText();
-
+    testRunner.dumpAsText();
     testRunner.waitUntilDone();
 }
 

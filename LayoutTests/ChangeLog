@@ -1,3 +1,26 @@
+2012-08-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r126233.
+        http://trac.webkit.org/changeset/126233
+        https://bugs.webkit.org/show_bug.cgi?id=94656
+
+        Broke Chromium Mac build (Requested by dominicc on #webkit).
+
+        * media/track/captions-webvtt/captions-snap-to-lines-set.vtt: Removed.
+        * media/track/track-cue-rendering-horizontal.html: Removed.
+        * media/track/track-cue-rendering-snap-to-lines-not-set-expected.txt:
+        * media/track/track-cue-rendering-vertical.html: Removed.
+        * media/video-test.js:
+        * platform/chromium-linux/media/track/track-cue-rendering-horizontal-expected.png: Removed.
+        * platform/chromium-linux/media/track/track-cue-rendering-horizontal-expected.txt: Removed.
+        * platform/chromium-linux/media/track/track-cue-rendering-vertical-expected.png: Removed.
+        * platform/chromium-linux/media/track/track-cue-rendering-vertical-expected.txt: Removed.
+        * platform/chromium/TestExpectations:
+        * platform/mac/media/track/track-cue-rendering-horizontal-expected.png: Removed.
+        * platform/mac/media/track/track-cue-rendering-horizontal-expected.txt: Removed.
+        * platform/mac/media/track/track-cue-rendering-vertical-expected.png: Removed.
+        * platform/mac/media/track/track-cue-rendering-vertical-expected.txt: Removed.
+
 2012-08-21  Victor Carbune  <victor@rosedu.org>
 
         Display a TextTrackCue when snap-to-lines flag is set

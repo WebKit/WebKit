@@ -253,4 +253,7 @@ video::-webkit-media-text-track-future-nodes {
 video::-webkit-media-text-track-display {
     position: absolute;
     color: rgba(255, 255, 255, 1);
+
+    top: 100%;
+    -webkit-transform: translate(0%, -100%);
 }
