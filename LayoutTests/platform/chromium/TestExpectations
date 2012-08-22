@@ -191,7 +191,7 @@ WONTFIX : platform/mac-wk2 = TEXT IMAGE IMAGE+TEXT PASS TIMEOUT
 WONTFIX : platform/qt = TEXT IMAGE IMAGE+TEXT PASS MISSING
 WONTFIX SKIP : platform/qt/plugins/qt-qwidget-plugin.html = PASS
 WONTFIX SKIP : platform/qt/fast/forms = PASS
-WONTFIX MAC WIN : platform/chromium-linux = TEXT IMAGE IMAGE+TEXT
+WONTFIX MAC WIN : platform/chromium-linux = TEXT IMAGE IMAGE+TEXT MISSING
 WONTFIX SKIP LINUX MAC : platform/win = PASS
 
 // These tests are for -apple- and -khtml- prefixes, which we don't support

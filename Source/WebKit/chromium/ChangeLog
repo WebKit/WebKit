@@ -1,3 +1,57 @@
+2012-08-22  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Add touch link highlight animation layers.
+        https://bugs.webkit.org/show_bug.cgi?id=84487
+
+        Reviewed by James Robinson.
+
+        Adds support for creating composited touch link highlights in renderer thread. Clipping not yet
+        implemented for non-composited frames/overflow divs, but scrolling and layout changes are supported.
+        Transform support currently limited to translation.
+
+        Unit tests for LinkHighlight revised.
+
+        * WebKit.gyp:
+        * src/LinkHighlight.cpp: Added.
+        (WebKit):
+        (WebKit::LinkHighlight::create):
+        (WebKit::LinkHighlight::LinkHighlight):
+        (WebKit::LinkHighlight::~LinkHighlight):
+        (WebKit::LinkHighlight::contentLayer): Accessor for layer containing highlight.
+        (WebKit::LinkHighlight::clipLayer): Accessor for layer that provides clipping for highlight.
+        (WebKit::LinkHighlight::releaseResources): Releases Node* for highlight target, clears client/delegate pointers.
+        (WebKit::LinkHighlight::computeEnclosingCompositingLayer): Determines which GraphicsLayerChromium to attach highlight to.
+        (WebKit::LinkHighlight::computeHighlightLayerPathAndPosition): Determines coordinates of highlight in owning GraphicsLayerChromium's coordinates.
+        (WebKit::LinkHighlight::paintContents): If highlight active, paints highlight.
+        (WebKit::LinkHighlight::startHighlightAnimation): Called to start highlight animation.
+        (WebKit::LinkHighlight::clearGraphicsLayerLinkHighlightPointer): Removes this LinkHighlight's pointer from owning GraphicsLayerChromium.
+        (WebKit::LinkHighlight::notifyAnimationStarted): Implements WebAnimationDelegate.
+        (WebKit::LinkHighlight::notifyAnimationFinished): Implements WebAnimationDelegate, releases resources when animation completes.
+        (WebKit::LinkHighlight::updateGeometry): Invokes computation of which GraphicsLayerChromium to attach to, and highlight shape & position.
+            Computations proceed only if preceded by call to invalidate().
+        (WebKit::LinkHighlight::clearCurrentGraphicsLayer): Handles notification that current GraphicsLayerChromium* is no longer valid.
+        (WebKit::LinkHighlight::invalidate): Sets flag to allow geometry update on next call from WebViewImpl::layout().
+        (WebKit::LinkHighlight::layer): Exports WebLayer* for use in GraphicsLayerChromium.
+        * src/LinkHighlight.h: Renamed from Source/WebCore/platform/graphics/chromium/LinkHighlight.h.
+        (WebCore):
+        (WebKit):
+        (LinkHighlight):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+        (WebKit):
+        (WebKit::highlightConditions):
+        (WebKit::WebViewImpl::bestTouchLinkNode): Find highlight target node for touch event location.
+        (WebKit::WebViewImpl::enableTouchHighlight): Invokes highlight for node at current touch event location.
+        (WebKit::WebViewImpl::layout): Adds call to LinkHighlight::updateGeometry().
+        * src/WebViewImpl.h:
+        (WebKit):
+        (WebViewImpl):
+        (WebKit::WebViewImpl::linkHighlight):
+        * tests/LinkHighlightTest.cpp:
+        (WebCore):
+        (WebCore::TEST):
+        * tests/data/test_touch_link_highlight.html: Added.
+
 2012-08-22  Adam Barth  <abarth@webkit.org>
 
         WebWidget should be able to paint into a zoomed canvas without aliasing

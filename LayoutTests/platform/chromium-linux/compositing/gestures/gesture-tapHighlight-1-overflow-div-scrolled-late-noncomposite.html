@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body onload="runTest();">
+<div style="-webkit-transform: translateZ(0); position: relative; left: 10px; top: 10px"></div>
+<div id="targetDiv" style="position: relative; left: 10px; top: 40px; width: 200px; height: 100px; overflow-y: scroll; overflow-x: scroll;">
+<div id="divToControlCompositedLayer" style="-webkit-transform: translateZ(0);">
+<a href="">Link 1</a><br>
+<a href="">Link 2</a><br>
+<a href="">Link 3</a><br>
+<a href="" id="targetLink" style="-webkit-tap-highlight-color: rgba(0, 255, 0, 0.5)">Target Link.</a><br>
+<a href="">Link 4</a><br>
+<a href="">Link 5</a><br>
+</div></div>
+<div style="position: relative; left: 10px; top: 80px">
+This test is successful if "Target Link" above is covered in a transparent green rectangle with rounded corners.
+</div>
+<script>
+function runTest() {
+    var targetDiv = document.getElementById('targetDiv');
+    var clientRect = document.getElementById('targetLink').getBoundingClientRect();
+    x = (clientRect.left + clientRect.right) / 2;
+    y = (clientRect.top + clientRect.bottom) / 2;
+    if (window.testRunner) {
+        testRunner.dumpAsText(true);
+        testRunner.waitUntilDone();
+    }
+
+    // This test highlights a link in a composited overflow-div, then forces that div to become non-composited,
+    // then scrolls that div, then exits. If everything is working correctly, the link highlight will still
+    // be displayed correctly after all these operations.
+    if (window.eventSender && window.testRunner) {
+        eventSender.gestureTapDown(x, y);
+        window.testRunner.display();
+
+        document.getElementById('divToControlCompositedLayer').style.webkitTransform = "";
+        window.testRunner.display();
+
+        targetDiv.scrollTop += 20;
+        window.setTimeout(function() { window.testRunner.notifyDone(); }, 0);
+    } else {
+        debug("This test requires DumpRenderTree.");
+    }
+}
+</script>
+</script>
+</body>
+</html>

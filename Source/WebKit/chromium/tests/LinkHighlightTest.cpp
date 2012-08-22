@@ -26,62 +26,64 @@
 
 #include "LinkHighlight.h"
 
-#include "AnimationIdVendor.h"
-#include "GraphicsLayerChromium.h"
-#include "GraphicsLayerClient.h"
+#include "FrameTestHelpers.h"
 #include "IntRect.h"
-#include "Path.h"
+#include "Node.h"
+#include "URLTestHelpers.h"
+#include "WebFrame.h"
+#include "WebViewImpl.h"
 #include <gtest/gtest.h>
-#include <public/WebTransformationMatrix.h>
+#include <public/WebCompositor.h>
+#include <public/WebContentLayer.h>
+#include <public/WebFloatPoint.h>
+#include <public/WebSize.h>
 #include <wtf/PassOwnPtr.h>
 
+using namespace WebKit;
 using namespace WebCore;
-using WebKit::WebTransformationMatrix;
 
 namespace {
 
-class MockGraphicsLayerClient : public GraphicsLayerClient {
-public:
-    virtual void notifyAnimationStarted(const GraphicsLayer*, double time) OVERRIDE { }
-    virtual void notifySyncRequired(const GraphicsLayer*) OVERRIDE { }
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip) OVERRIDE { }
-    virtual bool showDebugBorders(const GraphicsLayer*) const OVERRIDE { return false; }
-    virtual bool showRepaintCounter(const GraphicsLayer*) const OVERRIDE { return false; }
-};
-
-TEST(LinkHighlightTest, verifyLinkHighlightLayer)
+#if ENABLE(GESTURE_EVENTS)
+TEST(LinkHighlightTest, verifyWebViewImplIntegration)
 {
-    Path highlightPath;
-    highlightPath.addRect(FloatRect(5, 6, 12, 8));
-    IntRect pathBoundingRect = enclosingIntRect(highlightPath.boundingRect());
+    WebCompositor::initialize(0);
 
-    RefPtr<LinkHighlight> highlight = LinkHighlight::create(0, highlightPath, AnimationIdVendor::LinkHighlightAnimationId, AnimationIdVendor::getNextGroupId());
-    ASSERT_TRUE(highlight.get());
-    ContentLayerChromium* contentLayer = highlight->contentLayer();
-    ASSERT_TRUE(contentLayer);
+    const std::string baseURL("http://www.test.com/");
+    const std::string fileName("test_touch_link_highlight.html");
 
-    EXPECT_EQ(pathBoundingRect.size(), contentLayer->bounds());
-    EXPECT_TRUE(contentLayer->transform().isIdentityOrTranslation());
-    EXPECT_TRUE(contentLayer->transform().isIntegerTranslation());
+    URLTestHelpers::registerMockedURLFromBaseURL(WebString::fromUTF8(baseURL.c_str()), WebString::fromUTF8("test_touch_link_highlight.html"));
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(baseURL + fileName, true));
+    int pageWidth = 640;
+    int pageHeight = 480;
+    webViewImpl->resize(WebSize(pageWidth, pageHeight));
+    webViewImpl->layout();
 
-    float expectedXTranslation = pathBoundingRect.x() + pathBoundingRect.width() / 2;
-    float expectedYTranslation = pathBoundingRect.y() + pathBoundingRect.height() / 2;
-    EXPECT_FLOAT_EQ(expectedXTranslation, contentLayer->transform().m41());
-    EXPECT_FLOAT_EQ(expectedYTranslation, contentLayer->transform().m42());
+    // The coordinates below are linked to absolute positions in the referenced .html file.
+    IntPoint touchEventLocation(20, 20);
+    Node* touchNode = webViewImpl->bestTouchLinkNode(touchEventLocation);
+    ASSERT_TRUE(touchNode);
+
+    touchEventLocation = IntPoint(20, 40);
+    EXPECT_FALSE(webViewImpl->bestTouchLinkNode(touchEventLocation));
+
+    touchEventLocation = IntPoint(20, 20);
+    // Shouldn't crash.
+
+    webViewImpl->enableTouchHighlight(touchEventLocation);
+    EXPECT_TRUE(webViewImpl->linkHighlight());
+    EXPECT_TRUE(webViewImpl->linkHighlight()->contentLayer());
+    EXPECT_TRUE(webViewImpl->linkHighlight()->clipLayer());
+
+    // Find a target inside a scrollable div
+
+    touchEventLocation = IntPoint(20, 100);
+    webViewImpl->enableTouchHighlight(touchEventLocation);
+    ASSERT_TRUE(webViewImpl->linkHighlight());
+
+    webViewImpl->close();
+    WebCompositor::shutdown();
 }
-
-TEST(LinkHighlightTest, verifyGraphicsLayerChromiumEmbedding)
-{
-    MockGraphicsLayerClient client;
-    OwnPtr<GraphicsLayerChromium> graphicsLayer = static_pointer_cast<GraphicsLayerChromium>(GraphicsLayer::create(&client));
-    ASSERT_TRUE(graphicsLayer.get());
-
-    Path highlightPath;
-    highlightPath.addRect(FloatRect(5, 5, 10, 8));
-
-    // Neither of the following operations should crash.
-    graphicsLayer->addLinkHighlight(highlightPath);
-    graphicsLayer->didFinishLinkHighlight();
-}
+#endif
 
 } // namespace

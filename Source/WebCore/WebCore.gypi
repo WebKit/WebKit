@@ -3676,8 +3676,6 @@
             'platform/graphics/chromium/IconChromiumAndroid.cpp',
             'platform/graphics/chromium/ImageBufferDataSkia.h',
             'platform/graphics/chromium/ImageChromium.cpp',
-            'platform/graphics/chromium/LinkHighlight.cpp',
-            'platform/graphics/chromium/LinkHighlight.h',
             'platform/graphics/chromium/MediaPlayerPrivateChromium.h',
             'platform/graphics/chromium/OpaqueRectTrackingContentLayerDelegate.cpp',
             'platform/graphics/chromium/OpaqueRectTrackingContentLayerDelegate.h',
