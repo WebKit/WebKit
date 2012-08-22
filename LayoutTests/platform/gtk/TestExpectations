@@ -605,9 +605,6 @@ BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = IMAGE
 
 BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE
 
-BUGWK94200 : accessibility/accessibility-node-memory-management.html = TEXT
-BUGWK94200 : accessibility/accessibility-node-reparent.html = TEXT
-
 BUGWKGTK : accessibility/aria-hidden.html = TEXT
 BUGWKGTK : accessibility/aria-hidden-with-elements.html = TEXT
 BUGWKGTK : accessibility/aria-invalid.html = TEXT

@@ -1,3 +1,14 @@
+2012-08-22  Dominic Mazzoni  <dmazzoni@google.com>
+
+        REGRESSION (r125710): accessibility/accessibility-node-reparent.html, accessibility/accessibility-node-memory-management.html failing on GTK Linux
+        https://bugs.webkit.org/show_bug.cgi?id=94200
+
+        Reviewed by Chris Fleizach.
+
+        This patch fixes two tests and removes them from gtk expectations.
+
+        * platform/gtk/TestExpectations:
+
 2012-08-22  Raul Hudea  <rhudea@adobe.com>
 
         Crash in WebCore::RenderBlock::removeChild

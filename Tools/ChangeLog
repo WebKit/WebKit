@@ -1,3 +1,21 @@
+2012-08-22  Dominic Mazzoni  <dmazzoni@google.com>
+
+        REGRESSION (r125710): accessibility/accessibility-node-reparent.html, accessibility/accessibility-node-memory-management.html failing on GTK Linux
+        https://bugs.webkit.org/show_bug.cgi?id=94200
+
+        Reviewed by Chris Fleizach.
+
+        Adds reference counting for AtkObjects referenced by
+        AccessibilityUIElementGtk. This prevents bogus results and
+        assertion failures on AccessibilityUIElements whose underlying
+        object has been deleted (as opposed to just made defunct).
+
+        This fixes two tests that were previously failing because of this bug.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::AccessibilityUIElement):
+        (AccessibilityUIElement::~AccessibilityUIElement):
+
 2012-08-22  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Split WebCore/platform into a separate library

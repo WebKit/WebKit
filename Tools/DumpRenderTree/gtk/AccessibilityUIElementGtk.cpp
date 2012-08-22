@@ -38,15 +38,18 @@
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
     : m_element(element)
 {
+    g_object_ref(m_element);
 }
 
 AccessibilityUIElement::AccessibilityUIElement(const AccessibilityUIElement& other)
     : m_element(other.m_element)
 {
+    g_object_ref(m_element);
 }
 
 AccessibilityUIElement::~AccessibilityUIElement()
 {
+    g_object_unref(m_element);
 }
 
 void AccessibilityUIElement::getLinkedUIElements(Vector<AccessibilityUIElement>& elements)
