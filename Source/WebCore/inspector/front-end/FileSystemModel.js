@@ -645,5 +645,14 @@ WebInspector.FileSystemDispatcher.prototype = {
     fileContentReceived: function(requestId, errorCode, content, charset)
     {
         this._agentWrapper._fileContentReceived(requestId, errorCode, content, charset);
+    },
+
+    /**
+     * @param {number} requestId
+     * @param {number} errorCode
+     */
+    deletionCompleted: function(requestId, errorCode)
+    {
+        console.error("Not implemented");
     }
 }

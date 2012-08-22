@@ -1549,6 +1549,16 @@
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier. Corresponding fileContentReceived event should have same requestId with this." }
                 ],
                 "description": "Returns content of the file as fileContentReceived event. Result should be sliced into [start, end)."
+            },
+            {
+                "name": "deleteEntry",
+                "parameters": [
+                    { "name": "url", "type": "string", "description": "URL of the entry to delete." }
+                ],
+                "returns": [
+                    { "name": "requestId", "$ref": "RequestId", "description": "Request identifier. Corresponding deletionCompleted event should have same requestId with this." }
+                ],
+                "description": "Deletes specified entry. If the entry is a directory, the agent deletes children recursively."
             }
         ],
         "events": [
@@ -1557,7 +1567,7 @@
                 "parameters": [
                     { "name": "requestId", "type": "integer", "description": "Request Identifier that was returned by corresponding requestFileSystemRoot command." },
                     { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
-                    { "name": "root", "$ref": "FileSystem.Entry", "optional": true, "description": "Contains root of the requested FileSystem if the command completed successfully." }
+                    { "name": "root", "$ref": "Entry", "optional": true, "description": "Contains root of the requested FileSystem if the command completed successfully." }
                 ],
                 "description": "Completion event of requestFileSystemRoot command."
             },
@@ -1566,7 +1576,7 @@
                 "parameters": [
                     { "name": "requestId", "type": "integer", "description": "Request Identifier that was returned by corresponding requestDirectoryContent command." },
                     { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
-                    { "name": "entries", "type": "array", "items": { "$ref": "FileSystem.Entry" }, "optional": true, "description": "Contains all entries on directory if the command completed successfully." }
+                    { "name": "entries", "type": "array", "items": { "$ref": "Entry" }, "optional": true, "description": "Contains all entries on directory if the command completed successfully." }
                 ],
                 "description": "Completion event of requestDirectoryContent command."
             },
@@ -1575,7 +1585,7 @@
                 "parameters": [
                     { "name": "requestId", "type": "integer", "description": "Request Identifier that was returned in response to the corresponding requestMetadata command." },
                     { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
-                    { "name": "metadata", "$ref": "FileSystem.Metadata", "optional": true, "description": "Contains metadata of the entry if the command completed successfully." }
+                    { "name": "metadata", "$ref": "Metadata", "optional": true, "description": "Contains metadata of the entry if the command completed successfully." }
                 ],
                 "description": "Completion event of requestMetadata command."
             },
@@ -1588,6 +1598,14 @@
                     { "name": "charset", "type": "string", "optional": true, "description": "Charset of the content if it is served as text." }
                 ],
                 "description": "Completion event of requestFileContent command."
+            },
+            {
+                "name": "deletionCompleted",
+                "parameters": [
+                    { "name": "requestId", "type": "integer", "description": "Request Identifier that was returned in response to the corresponding deleteEntry command." },
+                    { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise errorCode is set to FileError::ErrorCode value." }
+                ],
+                "description": "Completion event of deleteEntry command."
             }
         ]
     },

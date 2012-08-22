@@ -63,6 +63,7 @@
 #include "SecurityOrigin.h"
 #include "TextEncoding.h"
 #include "TextResourceDecoder.h"
+#include "VoidCallback.h"
 #include <wtf/text/Base64.h>
 
 using WebCore::TypeBuilder::Array;
@@ -173,7 +174,12 @@ public:
     void start(ScriptExecutionContext*);
 
 private:
-    bool didHitError(FileError*);
+    bool didHitError(FileError* error)
+    {
+        reportResult(error->code());
+        return true;
+    }
+
     bool didGetEntry(Entry*);
 
     void reportResult(FileError::ErrorCode errorCode, PassRefPtr<TypeBuilder::FileSystem::Entry> entry = 0)
@@ -193,12 +199,6 @@ private:
     int m_requestId;
     String m_type;
 };
-
-bool FileSystemRootRequest::didHitError(FileError* error)
-{
-    reportResult(error->code());
-    return true;
-}
 
 void FileSystemRootRequest::start(ScriptExecutionContext* scriptExecutionContext)
 {
@@ -587,6 +587,94 @@ void FileContentRequest::didRead()
     reportResult(static_cast<FileError::ErrorCode>(0), &result, &m_charset);
 }
 
+class DeleteEntryRequest : public VoidCallback {
+public:
+    static PassRefPtr<DeleteEntryRequest> create(PassRefPtr<FrontendProvider> frontendProvider, int requestId, const KURL& url)
+    {
+        return adoptRef(new DeleteEntryRequest(frontendProvider, requestId, url));
+    }
+
+    virtual ~DeleteEntryRequest()
+    {
+        reportResult(FileError::ABORT_ERR);
+    }
+
+    virtual bool handleEvent() OVERRIDE
+    {
+        return didDeleteEntry();
+    }
+
+    void start(ScriptExecutionContext*);
+
+private:
+    bool didHitError(FileError* error)
+    {
+        reportResult(error->code());
+        return true;
+    }
+
+    bool didGetEntry(Entry*);
+    bool didDeleteEntry();
+
+    void reportResult(FileError::ErrorCode errorCode)
+    {
+        if (!m_frontendProvider || !m_frontendProvider->frontend())
+            return;
+        m_frontendProvider->frontend()->deletionCompleted(m_requestId, static_cast<int>(errorCode));
+        m_frontendProvider = 0;
+    }
+
+    DeleteEntryRequest(PassRefPtr<FrontendProvider> frontendProvider, int requestId, const KURL& url)
+        : m_frontendProvider(frontendProvider)
+        , m_requestId(requestId)
+        , m_url(url) { }
+
+    RefPtr<FrontendProvider> m_frontendProvider;
+    int m_requestId;
+    FileSystemType m_type;
+    KURL m_url;
+};
+
+void DeleteEntryRequest::start(ScriptExecutionContext* scriptExecutionContext)
+{
+    ASSERT(scriptExecutionContext);
+
+    RefPtr<ErrorCallback> errorCallback = CallbackDispatcherFactory<ErrorCallback>::create(this, &DeleteEntryRequest::didHitError);
+
+    FileSystemType type;
+    String path;
+    if (!DOMFileSystemBase::crackFileSystemURL(m_url, type, path)) {
+        scriptExecutionContext->postTask(ReportErrorTask::create(errorCallback, FileError::SYNTAX_ERR));
+        return;
+    }
+
+    if (path == "/") {
+        OwnPtr<AsyncFileSystemCallbacks> fileSystemCallbacks = VoidCallbacks::create(this, errorCallback);
+        LocalFileSystem::localFileSystem().deleteFileSystem(scriptExecutionContext, type, fileSystemCallbacks.release());
+    } else {
+        RefPtr<EntryCallback> successCallback = CallbackDispatcherFactory<EntryCallback>::create(this, &DeleteEntryRequest::didGetEntry);
+        OwnPtr<ResolveURICallbacks> fileSystemCallbacks = ResolveURICallbacks::create(successCallback, errorCallback, scriptExecutionContext, type, path);
+        LocalFileSystem::localFileSystem().readFileSystem(scriptExecutionContext, type, fileSystemCallbacks.release());
+    }
+}
+
+bool DeleteEntryRequest::didGetEntry(Entry* entry)
+{
+    RefPtr<ErrorCallback> errorCallback = CallbackDispatcherFactory<ErrorCallback>::create(this, &DeleteEntryRequest::didHitError);
+    if (entry->isDirectory()) {
+        DirectoryEntry* directoryEntry = static_cast<DirectoryEntry*>(entry);
+        directoryEntry->removeRecursively(this, errorCallback);
+    } else
+        entry->remove(this, errorCallback);
+    return true;
+}
+
+bool DeleteEntryRequest::didDeleteEntry()
+{
+    reportResult(static_cast<FileError::ErrorCode>(0));
+    return true;
+}
+
 } // anonymous namespace
 
 // static
@@ -620,11 +708,8 @@ void InspectorFileSystemAgent::disable(ErrorString*)
 
 void InspectorFileSystemAgent::requestFileSystemRoot(ErrorString* error, const String& origin, const String& type, int* requestId)
 {
-    if (!m_enabled || !m_frontendProvider) {
-        *error = "FileSystem agent is not enabled";
+    if (!assertFrontend(error))
         return;
-    }
-    ASSERT(m_frontendProvider->frontend());
 
     ScriptExecutionContext* scriptExecutionContext = assertScriptExecutionContextForOrigin(error, SecurityOrigin::createFromString(origin).get());
     if (!scriptExecutionContext)
@@ -636,11 +721,8 @@ void InspectorFileSystemAgent::requestFileSystemRoot(ErrorString* error, const S
 
 void InspectorFileSystemAgent::requestDirectoryContent(ErrorString* error, const String& url, int* requestId)
 {
-    if (!m_enabled || !m_frontendProvider) {
-        *error = "FileSystem agent is not enabled";
+    if (!assertFrontend(error))
         return;
-    }
-    ASSERT(m_frontendProvider->frontend());
 
     ScriptExecutionContext* scriptExecutionContext = assertScriptExecutionContextForOrigin(error, SecurityOrigin::createFromString(url).get());
     if (!scriptExecutionContext)
@@ -652,11 +734,8 @@ void InspectorFileSystemAgent::requestDirectoryContent(ErrorString* error, const
 
 void InspectorFileSystemAgent::requestMetadata(ErrorString* error, const String& url, int* requestId)
 {
-    if (!m_enabled || !m_frontendProvider) {
-        *error = "FileSystem agent is not enabled";
+    if (!assertFrontend(error))
         return;
-    }
-    ASSERT(m_frontendProvider->frontend());
 
     ScriptExecutionContext* scriptExecutionContext = assertScriptExecutionContextForOrigin(error, SecurityOrigin::createFromString(url).get());
     if (!scriptExecutionContext)
@@ -668,11 +747,8 @@ void InspectorFileSystemAgent::requestMetadata(ErrorString* error, const String&
 
 void InspectorFileSystemAgent::requestFileContent(ErrorString* error, const String& url, bool readAsText, const int* start, const int* end, const String* charset, int* requestId)
 {
-    if (!m_enabled || !m_frontendProvider) {
-        *error = "FileSystem agent is not enabled";
+    if (!assertFrontend(error))
         return;
-    }
-    ASSERT(m_frontendProvider->frontend());
 
     ScriptExecutionContext* scriptExecutionContext = assertScriptExecutionContextForOrigin(error, SecurityOrigin::createFromString(url).get());
     if (!scriptExecutionContext)
@@ -683,6 +759,21 @@ void InspectorFileSystemAgent::requestFileContent(ErrorString* error, const Stri
     long long startPosition = start ? *start : 0;
     long long endPosition = end ? *end : std::numeric_limits<long long>::max();
     FileContentRequest::create(m_frontendProvider, *requestId, url, readAsText, startPosition, endPosition, charset ? *charset : "")->start(scriptExecutionContext);
+}
+
+void InspectorFileSystemAgent::deleteEntry(ErrorString* error, const String& urlString, int* requestId)
+{
+    if (!assertFrontend(error))
+        return;
+
+    KURL url(ParsedURLString, urlString);
+
+    ScriptExecutionContext* scriptExecutionContext = assertScriptExecutionContextForOrigin(error, SecurityOrigin::create(url).get());
+    if (!scriptExecutionContext)
+        return;
+
+    *requestId = m_nextRequestId++;
+    DeleteEntryRequest::create(m_frontendProvider, *requestId, url)->start(scriptExecutionContext);
 }
 
 void InspectorFileSystemAgent::setFrontend(InspectorFrontend* frontend)
@@ -716,6 +807,16 @@ InspectorFileSystemAgent::InspectorFileSystemAgent(InstrumentingAgents* instrume
     ASSERT(state);
     ASSERT(m_pageAgent);
     m_instrumentingAgents->setInspectorFileSystemAgent(this);
+}
+
+bool InspectorFileSystemAgent::assertFrontend(ErrorString* error)
+{
+    if (!m_enabled || !m_frontendProvider) {
+        *error = "FileSystem agent is not enabled.";
+        return false;
+    }
+    ASSERT(m_frontendProvider->frontend());
+    return true;
 }
 
 ScriptExecutionContext* InspectorFileSystemAgent::assertScriptExecutionContextForOrigin(ErrorString* error, SecurityOrigin* origin)

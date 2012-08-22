@@ -59,6 +59,7 @@ public:
     virtual void requestDirectoryContent(ErrorString*, const String& url, int* requestId) OVERRIDE;
     virtual void requestMetadata(ErrorString*, const String& url, int* requestId) OVERRIDE;
     virtual void requestFileContent(ErrorString*, const String& url, bool readAsText, const int* start, const int* end, const String* charset, int* requestId) OVERRIDE;
+    virtual void deleteEntry(ErrorString*, const String& url, int* requestId) OVERRIDE;
 
     virtual void setFrontend(InspectorFrontend*) OVERRIDE;
     virtual void clearFrontend() OVERRIDE;
@@ -66,6 +67,7 @@ public:
 
 private:
     InspectorFileSystemAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*);
+    bool assertFrontend(ErrorString*);
     ScriptExecutionContext* assertScriptExecutionContextForOrigin(ErrorString*, SecurityOrigin*);
 
     InspectorPageAgent* m_pageAgent;
