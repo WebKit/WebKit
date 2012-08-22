@@ -1,3 +1,31 @@
+2012-08-22  Leo Yang  <leoyang@rim.com>
+
+        Test cases under fast/filesystem/workers are flaky when using JSC
+        https://bugs.webkit.org/show_bug.cgi?id=94747
+
+        Reviewed by Yong Li.
+
+        These test cases sometimes can't complete because the worker object
+        created by startWorker() has been gc'ed before the worker thread complete.
+        We should reference the object to avoid it being gc'ed.
+
+        * fast/filesystem/workers/async-operations.html:
+        * fast/filesystem/workers/file-entry-to-uri-sync.html:
+        * fast/filesystem/workers/file-from-file-entry-sync.html:
+        * fast/filesystem/workers/file-from-file-entry.html:
+        * fast/filesystem/workers/file-writer-empty-blob.html:
+        * fast/filesystem/workers/file-writer-events.html:
+        * fast/filesystem/workers/file-writer-gc-blob.html:
+        * fast/filesystem/workers/file-writer-sync-truncate-extend.html:
+        * fast/filesystem/workers/file-writer-sync-write-overlapped.html:
+        * fast/filesystem/workers/file-writer-truncate-extend.html:
+        * fast/filesystem/workers/file-writer-write-overlapped.html:
+        * fast/filesystem/workers/simple-persistent-sync.html:
+        * fast/filesystem/workers/simple-persistent.html:
+        * fast/filesystem/workers/simple-temporary-sync.html:
+        * fast/filesystem/workers/simple-temporary.html:
+        * fast/filesystem/workers/sync-operations.html:
+
 2012-08-22  Anna Cavender  <annacc@chromium.org>
 
         Update the TextTrackCue Constructor
