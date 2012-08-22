@@ -257,6 +257,7 @@ void EGLImageLayerWebKitThread::blitToFrontBuffer(unsigned backBufferTexture)
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glUseProgram(m_shader);
     glBindTexture(GL_TEXTURE_2D, backBufferTexture);
+    glColorMask(true, true, true, true);
 
     {
         GLES2ContextState::VertexAttributeStateSaver vertexAttribStateSaver;
