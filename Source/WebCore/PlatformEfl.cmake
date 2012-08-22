@@ -155,6 +155,7 @@ IF (WTF_USE_CAIRO)
       "${WEBCORE_DIR}/platform/graphics/freetype"
       "${WEBCORE_DIR}/platform/graphics/harfbuzz/"
       "${WEBCORE_DIR}/platform/graphics/harfbuzz/ng"
+      ${HARFBUZZ_INCLUDE_DIRS}
     )
     LIST(APPEND WebCore_SOURCES
       platform/graphics/WOFFFileFormat.cpp
