@@ -26,9 +26,33 @@
 #include "config.h"
 #include "ScriptSourceCode.h"
 
+#include "CachedMetadata.h"
+#include "CachedScript.h"
 #include "V8Binding.h"
 
 namespace WebCore {
+
+PassOwnPtr<v8::ScriptData> ScriptSourceCode::precompileScript(v8::Handle<v8::String> code, CachedScript* cachedScript)
+{
+    // A pseudo-randomly chosen ID used to store and retrieve V8 ScriptData from
+    // the CachedScript. If the format changes, this ID should be changed too.
+    static const unsigned dataTypeID = 0xECC13BD7;
+
+    // Very small scripts are not worth the effort to preparse.
+    static const int minPreparseLength = 1024;
+
+    if (!cachedScript || code->Length() < minPreparseLength)
+        return nullptr;
+
+    CachedMetadata* cachedMetadata = cachedScript->cachedMetadata(dataTypeID);
+    if (cachedMetadata)
+        return adoptPtr(v8::ScriptData::New(cachedMetadata->data(), cachedMetadata->size()));
+
+    OwnPtr<v8::ScriptData> scriptData = adoptPtr(v8::ScriptData::PreCompile(code));
+    cachedScript->setCachedMetadata(dataTypeID, scriptData->Data(), scriptData->Length());
+
+    return scriptData.release();
+}
 
 v8::Handle<v8::Script> ScriptSourceCode::compileScript(v8::Handle<v8::String> code, const String& fileName, const TextPosition& scriptStartPosition, v8::ScriptData* scriptData)
 {

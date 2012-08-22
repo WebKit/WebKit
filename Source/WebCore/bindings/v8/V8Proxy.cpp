@@ -94,28 +94,6 @@ V8Proxy::~V8Proxy()
     windowShell()->destroyGlobal();
 }
 
-PassOwnPtr<v8::ScriptData> V8Proxy::precompileScript(v8::Handle<v8::String> code, CachedScript* cachedScript)
-{
-    // A pseudo-randomly chosen ID used to store and retrieve V8 ScriptData from
-    // the CachedScript. If the format changes, this ID should be changed too.
-    static const unsigned dataTypeID = 0xECC13BD7;
-
-    // Very small scripts are not worth the effort to preparse.
-    static const int minPreparseLength = 1024;
-
-    if (!cachedScript || code->Length() < minPreparseLength)
-        return nullptr;
-
-    CachedMetadata* cachedMetadata = cachedScript->cachedMetadata(dataTypeID);
-    if (cachedMetadata)
-        return adoptPtr(v8::ScriptData::New(cachedMetadata->data(), cachedMetadata->size()));
-
-    OwnPtr<v8::ScriptData> scriptData = adoptPtr(v8::ScriptData::PreCompile(code));
-    cachedScript->setCachedMetadata(dataTypeID, scriptData->Data(), scriptData->Length());
-
-    return scriptData.release();
-}
-
 v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* node)
 {
     ASSERT(v8::Context::InContext());
@@ -138,7 +116,7 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
 #if PLATFORM(CHROMIUM)
         TRACE_EVENT_BEGIN0("v8", "v8.compile");
 #endif
-        OwnPtr<v8::ScriptData> scriptData = precompileScript(code, source.cachedScript());
+        OwnPtr<v8::ScriptData> scriptData = ScriptSourceCode::precompileScript(code, source.cachedScript());
 
         // NOTE: For compatibility with WebCore, ScriptSourceCode's line starts at
         // 1, whereas v8 starts at 0.

@@ -117,8 +117,6 @@ namespace WebCore {
         IsolatedWorldSecurityOriginMap& isolatedWorldSecurityOrigins() { return m_isolatedWorldSecurityOrigins; }
 
     private:
-        PassOwnPtr<v8::ScriptData> precompileScript(v8::Handle<v8::String>, CachedScript*);
-
         Frame* m_frame;
 
         // The isolated worlds we are tracking for this frame. We hold them alive
