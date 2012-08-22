@@ -1,3 +1,11 @@
+2012-08-21  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        Add test expectations for regression in r126250. See bug 94667.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-21  Sukolsak Sakshuwong  <sukolsak@google.com>
 
         Implement UndoManager's automatic DOM transactions

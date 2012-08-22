@@ -3510,3 +3510,4 @@ BUGWK94528 MAC : fast/text-autosizing/nested-em-line-height.html = PASS IMAGE
 BUGWK94532 LINUX : fast/forms/formmethod-attribute-button-html.html = PASS MISSING
 
 BUGWK94660 : fast/js/create-lots-of-workers.html = PASS CRASH
+BUGWK94667 WIN WIN7 : fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic.html = IMAGE
