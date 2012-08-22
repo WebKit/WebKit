@@ -262,6 +262,7 @@ void IDBCursor::postSuccessHandlerCallback()
 void IDBCursor::close()
 {
     ASSERT(m_request);
+    m_request->finishCursor();
     m_request.clear();
 }
 

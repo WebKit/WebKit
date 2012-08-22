@@ -1,3 +1,32 @@
+2012-08-21  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: IDBRequest can be GCd during event dispatch
+        https://bugs.webkit.org/show_bug.cgi?id=94235
+
+        Reviewed by Ojan Vafai.
+
+        Release references to IDBRequest and IDBTransaction objects and force GC,
+        to ensure that pending events are still fired. (Doesn't exercise race
+        condition where GC is triggered by script during dispatch itself, though.)
+
+        * storage/indexeddb/pending-activity-expected.txt: Added.
+        * storage/indexeddb/pending-activity-workers-expected.txt: Added.
+        * storage/indexeddb/pending-activity-workers.html: Added.
+        * storage/indexeddb/pending-activity.html: Added.
+        * storage/indexeddb/resources/pending-activity.js: Added.
+        (test):
+        (prepareDatabase.request.onsuccess.request.onsuccess.request.onsuccess):
+        (prepareDatabase.request.onsuccess.request.onsuccess):
+        (prepareDatabase.request.onsuccess):
+        (prepareDatabase):
+        (testTransaction):
+        (transactionOnComplete):
+        (testRequest):
+        (requestOnSuccess):
+        (testCursorRequest):
+        (cursorRequestOnFirstSuccess):
+        (cursorRequestOnSecondSuccess):
+
 2012-08-21  Keishi Hattori  <keishi@webkit.org>
 
         range-hit-test-with-padding.html fails unless subpixel layout is on

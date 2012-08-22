@@ -77,6 +77,7 @@ public:
     void markEarlyDeath();
     void setCursorDetails(IDBCursorBackendInterface::CursorType, IDBCursor::Direction);
     void setPendingCursor(PassRefPtr<IDBCursor>);
+    void finishCursor();
     void abort();
 
     // IDBCallbacks
@@ -138,11 +139,13 @@ private:
     RefPtr<IDBAny> m_source;
     const IDBTransactionBackendInterface::TaskType m_taskType;
 
+    bool m_hasPendingActivity;
     Vector<RefPtr<Event> > m_enqueuedEvents;
 
     // Only used if the result type will be a cursor.
     IDBCursorBackendInterface::CursorType m_cursorType;
     IDBCursor::Direction m_cursorDirection;
+    bool m_cursorFinished;
     RefPtr<IDBCursor> m_pendingCursor;
     RefPtr<IDBKey> m_cursorKey;
     RefPtr<IDBKey> m_cursorPrimaryKey;

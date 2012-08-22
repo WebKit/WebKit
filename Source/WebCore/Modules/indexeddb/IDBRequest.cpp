@@ -68,8 +68,10 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
     , m_requestAborted(false)
     , m_source(source)
     , m_taskType(taskType)
+    , m_hasPendingActivity(true)
     , m_cursorType(IDBCursorBackendInterface::InvalidCursorType)
     , m_cursorDirection(IDBCursor::NEXT)
+    , m_cursorFinished(false)
     , m_pendingCursor(0)
     , m_didFireUpgradeNeededEvent(false)
 {
@@ -222,6 +224,11 @@ void IDBRequest::setResultCursor(PassRefPtr<IDBCursor> cursor, PassRefPtr<IDBKey
     }
 
     m_result = IDBAny::create(IDBCursorWithValue::fromCursor(cursor));
+}
+
+void IDBRequest::finishCursor()
+{
+    m_cursorFinished = true;
 }
 
 bool IDBRequest::shouldEnqueueEvent() const
@@ -404,7 +411,7 @@ bool IDBRequest::hasPendingActivity() const
     // FIXME: In an ideal world, we should return true as long as anyone has a or can
     //        get a handle to us and we have event listeners. This is order to handle
     //        user generated events properly.
-    return m_readyState == PENDING || ActiveDOMObject::hasPendingActivity();
+    return m_hasPendingActivity || ActiveDOMObject::hasPendingActivity();
 }
 
 void IDBRequest::stop()
@@ -438,6 +445,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     IDB_TRACE("IDBRequest::dispatchEvent");
     ASSERT(m_readyState == PENDING);
     ASSERT(!m_contextStopped);
+    ASSERT(m_hasPendingActivity);
     ASSERT(m_enqueuedEvents.size());
     ASSERT(scriptExecutionContext());
     ASSERT(event->target() == this);
@@ -487,6 +495,9 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
 
     if (cursorToNotify)
         cursorToNotify->postSuccessHandlerCallback();
+
+    if (m_readyState == DONE && (!cursorToNotify || m_cursorFinished) && event->type() != eventNames().upgradeneededEvent)
+        m_hasPendingActivity = false;
 
     if (m_transaction) {
         if (event->type() == eventNames().errorEvent && dontPreventDefault && !m_requestAborted) {

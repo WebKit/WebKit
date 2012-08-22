@@ -94,6 +94,7 @@ IDBTransaction::IDBTransaction(ScriptExecutionContext* context, PassRefPtr<IDBTr
     , m_mode(mode)
     , m_active(true)
     , m_state(Unused)
+    , m_hasPendingActivity(true)
     , m_contextStopped(false)
 {
     ASSERT(m_backend);
@@ -321,7 +322,7 @@ bool IDBTransaction::hasPendingActivity() const
     // FIXME: In an ideal world, we should return true as long as anyone has a or can
     //        get a handle to us or any child request object and any of those have
     //        event listeners. This is  in order to handle user generated events properly.
-    return m_state != Finished || ActiveDOMObject::hasPendingActivity();
+    return m_hasPendingActivity || ActiveDOMObject::hasPendingActivity();
 }
 
 IDBTransaction::Mode IDBTransaction::stringToMode(const String& modeString, ExceptionCode& ec)
@@ -370,6 +371,7 @@ bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
 {
     IDB_TRACE("IDBTransaction::dispatchEvent");
     ASSERT(m_state != Finished);
+    ASSERT(m_hasPendingActivity);
     ASSERT(scriptExecutionContext());
     ASSERT(event->target() == this);
     m_state = Finished;
@@ -392,6 +394,7 @@ bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
         ASSERT(isVersionChange());
         m_openDBRequest->transactionDidFinishAndDispatch();
     }
+    m_hasPendingActivity = false;
     return returnValue;
 }
 

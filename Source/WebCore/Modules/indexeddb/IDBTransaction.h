@@ -148,6 +148,7 @@ private:
     const Mode m_mode;
     bool m_active;
     State m_state;
+    bool m_hasPendingActivity;
     bool m_contextStopped;
     RefPtr<DOMError> m_error;
 
