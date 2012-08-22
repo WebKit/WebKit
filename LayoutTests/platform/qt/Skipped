@@ -770,6 +770,10 @@ http/tests/cookies/js-get-and-set-http-only-cookie.html
 http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html
 http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect.html
 
+# [Qt][GTK] REGRESSION(r126194): http/tests/security/contentSecurityPolicy/register-bypassing-scheme.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=94677
+http/tests/security/contentSecurityPolicy/register-bypassing-scheme.html
+
 # =========================================================================== #
 #       Failing xmlhttprequest tests                                          #
 # =========================================================================== #
