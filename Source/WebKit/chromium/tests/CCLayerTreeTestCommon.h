@@ -25,6 +25,8 @@
 #ifndef CCLayerTreeTestCommon_h
 #define CCLayerTreeTestCommon_h
 
+#include <public/WebTransformationMatrix.h>
+
 namespace WebKitTests {
 
 // These are macros instead of functions so that we get useful line numbers where a test failed.
@@ -40,26 +42,18 @@ namespace WebKitTests {
     EXPECT_EQ((expected).size().width(), (actual).size().width());      \
     EXPECT_EQ((expected).size().height(), (actual).size().height())
 
-// This is a macro instead of a function so that we get useful line numbers where a test failed.
-// Even though WebTransformationMatrix values are double precision, there are many other floating-point values used that affect
-// the transforms, and so we only expect them to be accurate up to floating-point precision.
-#define EXPECT_TRANSFORMATION_MATRIX_EQ(expected, actual)       \
-    EXPECT_FLOAT_EQ((expected).m11(), (actual).m11());          \
-    EXPECT_FLOAT_EQ((expected).m12(), (actual).m12());          \
-    EXPECT_FLOAT_EQ((expected).m13(), (actual).m13());          \
-    EXPECT_FLOAT_EQ((expected).m14(), (actual).m14());          \
-    EXPECT_FLOAT_EQ((expected).m21(), (actual).m21());          \
-    EXPECT_FLOAT_EQ((expected).m22(), (actual).m22());          \
-    EXPECT_FLOAT_EQ((expected).m23(), (actual).m23());          \
-    EXPECT_FLOAT_EQ((expected).m24(), (actual).m24());          \
-    EXPECT_FLOAT_EQ((expected).m31(), (actual).m31());          \
-    EXPECT_FLOAT_EQ((expected).m32(), (actual).m32());          \
-    EXPECT_FLOAT_EQ((expected).m33(), (actual).m33());          \
-    EXPECT_FLOAT_EQ((expected).m34(), (actual).m34());          \
-    EXPECT_FLOAT_EQ((expected).m41(), (actual).m41());          \
-    EXPECT_FLOAT_EQ((expected).m42(), (actual).m42());          \
-    EXPECT_FLOAT_EQ((expected).m43(), (actual).m43());          \
-    EXPECT_FLOAT_EQ((expected).m44(), (actual).m44())
+// This is a function rather than a macro because when this is included as a macro
+// in bulk, it causes a significant slow-down in compilation time. This problem
+// exists with both gcc and clang, and bugs have been filed at
+// http://llvm.org/bugs/show_bug.cgi?id=13651 and http://gcc.gnu.org/bugzilla/show_bug.cgi?id=54337
+void ExpectTransformationMatrixEq(WebKit::WebTransformationMatrix expected,
+                                  WebKit::WebTransformationMatrix actual);
+
+#define EXPECT_TRANSFORMATION_MATRIX_EQ(expected, actual)            \
+    {                                                                \
+        SCOPED_TRACE("");                                            \
+        WebKitTests::ExpectTransformationMatrixEq(expected, actual); \
+    }
 
 } // namespace
 

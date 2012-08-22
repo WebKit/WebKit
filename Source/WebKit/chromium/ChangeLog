@@ -1,3 +1,26 @@
+2012-08-22  Nikhil Bhargava  <nbhargava@google.com>
+
+        Speed up compilation of tests involving WebTransformationMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=94639
+
+        Reviewed by James Robinson.
+
+        EXPECT_TRANSFORMATION_MATRIX_EQ was changed to become mainly a function.
+        As a macro that expanded into 16 other macros, it caused an unneeded
+        slow down of close to 45s in the compile time of CCLayerTreeHostCommonTest
+        Bugs have been filed to clang and gcc noting the errant behavior:
+        http://llvm.org/bugs/show_bug.cgi?id=13651 and http://gcc.gnu.org/bugzilla/show_bug.cgi?id=54337
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        * tests/CCLayerTreeTestCommon.h:
+        (WebKitTests):
+        (WebKitTests::ExpectTransformationMatrixEq):
+        * tests/WebTransformOperationsTest.cpp:
+        (TEST):
+        (checkProgress):
+        * tests/WebTransformationMatrixTest.cpp:
+        (WebKit::TEST):
+
 2012-08-22  Alexandre Elias  <aelias@google.com>
 
         [chromium] Add software bitmap resources to CCResourceProvider
