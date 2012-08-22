@@ -31,6 +31,7 @@
 #include "IntRect.h"
 #include "LayerRendererChromium.h" // For the GLC() macro
 #include "LayerTextureSubImage.h"
+#include <limits.h>
 #include <public/WebGraphicsContext3D.h>
 #include <wtf/HashSet.h>
 
@@ -88,13 +89,24 @@ bool CCResourceProvider::inUseByConsumer(ResourceId id)
 
 CCResourceProvider::ResourceId CCResourceProvider::createResource(int pool, const IntSize& size, GC3Denum format, TextureUsageHint hint)
 {
+    switch (m_defaultResourceType) {
+    case GLTexture:
+        return createGLTexture(pool, size, format, hint);
+    case Bitmap:
+        ASSERT(format == GraphicsContext3D::RGBA);
+        return createBitmap(pool, size);
+    }
+
+    CRASH();
+    return 0;
+}
+
+CCResourceProvider::ResourceId CCResourceProvider::createGLTexture(int pool, const IntSize& size, GC3Denum format, TextureUsageHint hint)
+{
     ASSERT(CCProxy::isImplThread());
     unsigned textureId = 0;
     WebGraphicsContext3D* context3d = m_context->context3D();
-    if (!context3d) {
-        // FIXME: Implement this path for software compositing.
-        return 0;
-    }
+    ASSERT(context3d);
     GLC(context3d, textureId = context3d->createTexture());
     GLC(context3d, context3d->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId));
     GLC(context3d, context3d->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
@@ -115,12 +127,24 @@ CCResourceProvider::ResourceId CCResourceProvider::createResource(int pool, cons
     return id;
 }
 
+CCResourceProvider::ResourceId CCResourceProvider::createBitmap(int pool, const IntSize& size)
+{
+    ASSERT(CCProxy::isImplThread());
+
+    uint8_t* pixels = new uint8_t[size.width() * size.height() * 4];
+
+    ResourceId id = m_nextId++;
+    Resource resource(pixels, pool, size, GraphicsContext3D::RGBA);
+    m_resources.add(id, resource);
+    return id;
+}
+
 CCResourceProvider::ResourceId CCResourceProvider::createResourceFromExternalTexture(unsigned textureId)
 {
     ASSERT(CCProxy::isImplThread());
+    ASSERT(m_context->context3D());
     ResourceId id = m_nextId++;
-    Resource resource;
-    resource.glId = textureId;
+    Resource resource(textureId, 0, IntSize(), 0);
     resource.external = true;
     m_resources.add(id, resource);
     return id;
@@ -129,15 +153,17 @@ CCResourceProvider::ResourceId CCResourceProvider::createResourceFromExternalTex
 void CCResourceProvider::deleteResource(ResourceId id)
 {
     ASSERT(CCProxy::isImplThread());
-    WebGraphicsContext3D* context3d = m_context->context3D();
-    if (!context3d) {
-        // FIXME: Implement this path for software compositing.
-        return;
-    }
     ResourceMap::iterator it = m_resources.find(id);
     ASSERT(it != m_resources.end() && !it->second.lockedForWrite && !it->second.lockForReadCount);
-    if (!it->second.external)
+
+    if (it->second.glId && !it->second.external) {
+        WebGraphicsContext3D* context3d = m_context->context3D();
+        ASSERT(context3d);
         GLC(context3d, context3d->deleteTexture(it->second.glId));
+    }
+    if (it->second.pixels)
+        delete it->second.pixels;
+
     m_resources.remove(it);
 }
 
@@ -153,29 +179,85 @@ void CCResourceProvider::deleteOwnedResources(int pool)
         deleteResource(*it);
 }
 
+CCResourceProvider::ResourceType CCResourceProvider::resourceType(ResourceId id)
+{
+    ResourceMap::iterator it = m_resources.find(id);
+    ASSERT(it != m_resources.end());
+    return it->second.type;
+}
+
 void CCResourceProvider::upload(ResourceId id, const uint8_t* image, const IntRect& imageRect, const IntRect& sourceRect, const IntSize& destOffset)
 {
     ASSERT(CCProxy::isImplThread());
-    ASSERT(m_texSubImage.get());
-    WebGraphicsContext3D* context3d = m_context->context3D();
-    if (!context3d) {
-        // FIXME: Implement this path for software compositing.
-        return;
-    }
     ResourceMap::iterator it = m_resources.find(id);
     ASSERT(it != m_resources.end() && !it->second.lockedForWrite && !it->second.lockForReadCount && !it->second.external);
 
-    context3d->bindTexture(GraphicsContext3D::TEXTURE_2D, it->second.glId);
-    m_texSubImage->upload(image, imageRect, sourceRect, destOffset, it->second.format, context3d);
+    if (it->second.glId) {
+        WebGraphicsContext3D* context3d = m_context->context3D();
+        ASSERT(context3d);
+        ASSERT(m_texSubImage.get());
+        context3d->bindTexture(GraphicsContext3D::TEXTURE_2D, it->second.glId);
+        m_texSubImage->upload(image, imageRect, sourceRect, destOffset, it->second.format, context3d);
+    }
+
+    if (it->second.pixels) {
+        SkBitmap srcFull;
+        srcFull.setConfig(SkBitmap::kARGB_8888_Config, imageRect.width(), imageRect.height());
+        srcFull.setPixels(const_cast<uint8_t*>(image));
+        SkBitmap srcSubset;
+        SkIRect skSourceRect = SkIRect::MakeXYWH(sourceRect.x(), sourceRect.y(), sourceRect.width(), sourceRect.height());
+        skSourceRect.offset(-imageRect.x(), -imageRect.y());
+        srcFull.extractSubset(&srcSubset, skSourceRect);
+
+        ScopedWriteLockSoftware lock(this, id);
+        SkCanvas* dest = lock.skCanvas();
+        dest->writePixels(srcSubset, destOffset.width(), destOffset.height());
+    }
 }
 
-unsigned CCResourceProvider::lockForWrite(ResourceId id)
+void CCResourceProvider::flush()
+{
+    ASSERT(CCProxy::isImplThread());
+    WebGraphicsContext3D* context3d = m_context->context3D();
+    if (context3d)
+        context3d->flush();
+}
+
+bool CCResourceProvider::shallowFlushIfSupported()
+{
+    ASSERT(CCProxy::isImplThread());
+    WebGraphicsContext3D* context3d = m_context->context3D();
+    if (!context3d || !m_useShallowFlush)
+        return false;
+
+    context3d->shallowFlushCHROMIUM();
+    return true;
+}
+
+const CCResourceProvider::Resource* CCResourceProvider::lockForRead(ResourceId id)
+{
+    ASSERT(CCProxy::isImplThread());
+    ResourceMap::iterator it = m_resources.find(id);
+    ASSERT(it != m_resources.end() && !it->second.lockedForWrite);
+    it->second.lockForReadCount++;
+    return &it->second;
+}
+
+void CCResourceProvider::unlockForRead(ResourceId id)
+{
+    ASSERT(CCProxy::isImplThread());
+    ResourceMap::iterator it = m_resources.find(id);
+    ASSERT(it != m_resources.end() && it->second.lockForReadCount > 0);
+    it->second.lockForReadCount--;
+}
+
+const CCResourceProvider::Resource* CCResourceProvider::lockForWrite(ResourceId id)
 {
     ASSERT(CCProxy::isImplThread());
     ResourceMap::iterator it = m_resources.find(id);
     ASSERT(it != m_resources.end() && !it->second.lockedForWrite && !it->second.lockForReadCount && !it->second.external);
     it->second.lockedForWrite = true;
-    return it->second.glId;
+    return &it->second;
 }
 
 void CCResourceProvider::unlockForWrite(ResourceId id)
@@ -186,52 +268,70 @@ void CCResourceProvider::unlockForWrite(ResourceId id)
     it->second.lockedForWrite = false;
 }
 
-void CCResourceProvider::flush()
+CCResourceProvider::ScopedReadLockGL::ScopedReadLockGL(CCResourceProvider* resourceProvider, CCResourceProvider::ResourceId resourceId)
+    : m_resourceProvider(resourceProvider)
+    , m_resourceId(resourceId)
+    , m_textureId(resourceProvider->lockForRead(resourceId)->glId)
 {
-    ASSERT(CCProxy::isImplThread());
-    WebGraphicsContext3D* context3d = m_context->context3D();
-    if (!context3d) {
-        // FIXME: Implement this path for software compositing.
-        return;
-    }
-    context3d->flush();
+    ASSERT(m_textureId);
 }
 
-bool CCResourceProvider::shallowFlushIfSupported()
+CCResourceProvider::ScopedReadLockGL::~ScopedReadLockGL()
 {
-    ASSERT(CCProxy::isImplThread());
-    WebGraphicsContext3D* context3d = m_context->context3D();
-    if (!context3d) {
-        // FIXME: Implement this path for software compositing.
-        return false;
-    }
-
-    if (m_useShallowFlush)
-        context3d->shallowFlushCHROMIUM();
-    return m_useShallowFlush;
+    m_resourceProvider->unlockForRead(m_resourceId);
 }
 
-unsigned CCResourceProvider::lockForRead(ResourceId id)
+CCResourceProvider::ScopedWriteLockGL::ScopedWriteLockGL(CCResourceProvider* resourceProvider, CCResourceProvider::ResourceId resourceId)
+    : m_resourceProvider(resourceProvider)
+    , m_resourceId(resourceId)
+    , m_textureId(resourceProvider->lockForWrite(resourceId)->glId)
 {
-    ASSERT(CCProxy::isImplThread());
-    ResourceMap::iterator it = m_resources.find(id);
-    ASSERT(it != m_resources.end() && !it->second.lockedForWrite);
-    ++(it->second.lockForReadCount);
-    return it->second.glId;
+    ASSERT(m_textureId);
 }
 
-void CCResourceProvider::unlockForRead(ResourceId id)
+CCResourceProvider::ScopedWriteLockGL::~ScopedWriteLockGL()
 {
-    ASSERT(CCProxy::isImplThread());
-    ResourceMap::iterator it = m_resources.find(id);
-    ASSERT(it != m_resources.end() && it->second.lockForReadCount > 0);
-    --(it->second.lockForReadCount);
+    m_resourceProvider->unlockForWrite(m_resourceId);
+}
+
+void CCResourceProvider::populateSkBitmapWithResource(SkBitmap* skBitmap, const Resource* resource)
+{
+    ASSERT(resource->pixels);
+    ASSERT(resource->format == GraphicsContext3D::RGBA);
+    skBitmap->setConfig(SkBitmap::kARGB_8888_Config, resource->size.width(), resource->size.height());
+    skBitmap->setPixels(resource->pixels);
+}
+
+CCResourceProvider::ScopedReadLockSoftware::ScopedReadLockSoftware(CCResourceProvider* resourceProvider, CCResourceProvider::ResourceId resourceId)
+    : m_resourceProvider(resourceProvider)
+    , m_resourceId(resourceId)
+{
+    CCResourceProvider::populateSkBitmapWithResource(&m_skBitmap, resourceProvider->lockForRead(resourceId));
+}
+
+CCResourceProvider::ScopedReadLockSoftware::~ScopedReadLockSoftware()
+{
+    m_resourceProvider->unlockForRead(m_resourceId);
+}
+
+CCResourceProvider::ScopedWriteLockSoftware::ScopedWriteLockSoftware(CCResourceProvider* resourceProvider, CCResourceProvider::ResourceId resourceId)
+    : m_resourceProvider(resourceProvider)
+    , m_resourceId(resourceId)
+{
+    CCResourceProvider::populateSkBitmapWithResource(&m_skBitmap, resourceProvider->lockForWrite(resourceId));
+    m_skCanvas.setBitmapDevice(m_skBitmap);
+}
+
+CCResourceProvider::ScopedWriteLockSoftware::~ScopedWriteLockSoftware()
+{
+    m_resourceProvider->unlockForWrite(m_resourceId);
 }
 
 CCResourceProvider::CCResourceProvider(CCGraphicsContext* context)
     : m_context(context)
     , m_nextId(1)
     , m_nextChild(1)
+    , m_defaultResourceType(GLTexture)
     , m_useTextureStorageExt(false)
     , m_useTextureUsageHint(false)
     , m_useShallowFlush(false)
@@ -243,10 +343,15 @@ bool CCResourceProvider::initialize()
 {
     ASSERT(CCProxy::isImplThread());
     WebGraphicsContext3D* context3d = m_context->context3D();
-    if (!context3d || !context3d->makeContextCurrent()) {
+    if (!context3d) {
+        m_maxTextureSize = INT_MAX;
+
         // FIXME: Implement this path for software compositing.
         return false;
     }
+    if (!context3d->makeContextCurrent())
+        return false;
+
     WebKit::WebString extensionsWebString = context3d->getString(GraphicsContext3D::EXTENSIONS);
     String extensionsString(extensionsWebString.data(), extensionsWebString.length());
     Vector<String> extensions;

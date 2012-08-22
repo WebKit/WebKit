@@ -107,7 +107,7 @@ void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(WebGraphic
     context->makeContextCurrent();
 
     texture->acquireBackingTexture(resourceProvider);
-    CCScopedLockResourceForWrite lock(resourceProvider, texture->resourceId());
+    CCResourceProvider::ScopedWriteLockGL lock(resourceProvider, texture->resourceId());
     // Create an accelerated canvas to draw on.
     OwnPtr<SkCanvas> canvas = createAcceleratedCanvas(grContext, texture->size(), lock.textureId());
 

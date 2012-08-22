@@ -1,3 +1,26 @@
+2012-08-22  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Add software bitmap resources to CCResourceProvider
+        https://bugs.webkit.org/show_bug.cgi?id=93677
+
+        Reviewed by Adrienne Walker.
+
+        Second commit after revert.
+
+        This adds the ability to CCResourceProvider to use software bitmaps.
+        They are allocated as plain-old-memory, and exposed as Skia objects.
+
+        We want the ResourceProvider to be able to handle different resource
+        types at the same time.  In practice, a default resource type is
+        desired for most uses within a single compositor instance, which is
+        specified by the default resource type.  Default resource types are
+        expected to be mostly 1-to-1 with CCRenderer types.
+
+        New tests added by parametrizing existing CCResourceProvider tests.
+
+        * tests/CCResourceProviderTest.cpp:
+        (WebKit::CCResourceProviderTest::getResourcePixels):
+
 2012-08-22  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Add touch link highlight animation layers.
