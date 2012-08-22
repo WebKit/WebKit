@@ -899,11 +899,10 @@ BUGWK94198 : fast/dom/HTMLInputElement/input-image-alt-text.html = IMAGE
 
 BUGWK84037 : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
 
-// Fails also on GTK and QT
-BUGWK59706 : http/tests/inspector/resource-tree/resource-tree-frame-navigate.html = TEXT
-
 // New test introduced in r125790 fails
 BUGWK94341 : inspector/timeline/timeline-decode-resize.html = TEXT
 
 // Slider thumb can not be displayed without parent slider.
 BUGWK94334 : fast/forms/range/thumbslider-no-parent-slider.html = MISSING
+
+BUGWK94690 : fast/dom/shadow/shadowdom-dynamic-styling.html = TEXT

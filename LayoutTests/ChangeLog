@@ -1,3 +1,11 @@
+2012-08-22  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        Gardening after r126025 & r126275.
+
+        * platform/efl/TestExpectations: Unskipping one, skipping another.
+
 2012-08-22  Shinya Kawanaka  <shinyak@chromium.org>
 
         Test and test expectation of Shadow DOM for button should be fixed.
