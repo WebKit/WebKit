@@ -968,6 +968,7 @@ common_webcore_shards_cppflags += \
 	-DBUILDING_WEBKIT \
 	$(global_cppflags) \
 	$(webcore_cppflags) \
+	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \
 	-fno-strict-aliasing \
 	$(CAIRO_CFLAGS) \
@@ -1055,7 +1056,6 @@ libWebCoreGtk_la_CFLAGS = \
 
 libWebCoreGtk_la_CPPFLAGS = \
 	$(common_webcore_shards_cppflags) \
-	$(webcoregtk_cppflags) \
 	$(HILDON_CPPFLAGS) \
 	$(HILDON_CFLAGS) \
 	$(GAIL_CFLAGS) \
