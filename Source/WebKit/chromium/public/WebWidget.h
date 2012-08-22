@@ -41,6 +41,7 @@
 
 #define WEBKIT_HAS_NEW_FULLSCREEN_API 1
 #define WEBWIDGET_HAS_SETCOMPOSITORSURFACEREADY 1
+#define WEBWIDGET_HAS_PAINT_OPTIONS 1
 
 namespace WebKit {
 
@@ -90,6 +91,21 @@ public:
     // and it may result in calls to WebWidgetClient::didInvalidateRect.
     virtual void layout() { }
 
+    enum PaintOptions {
+        // Attempt to fulfill the painting request by reading back from the
+        // compositor, assuming we're using a compositor to render.
+        ReadbackFromCompositorIfAvailable,
+
+        // Force the widget to rerender onto the canvas using software. This
+        // mode ignores 3d transforms and ignores GPU-resident content, such
+        // as video, canvas, and WebGL.
+        //
+        // Note: This option exists on OS(ANDROID) and will hopefully be
+        //       removed once the link disambiguation feature renders using
+        //       the compositor.
+        ForceSoftwareRenderingAndIgnoreGPUResidentContent,
+    };
+
     // Called to paint the rectangular region within the WebWidget
     // onto the specified canvas at (viewPort.x,viewPort.y). You MUST call
     // Layout before calling this method. It is okay to call paint
@@ -97,7 +113,7 @@ public:
     // changes are made to the WebWidget (e.g., once events are
     // processed, it should be assumed that another call to layout is
     // warranted before painting again).
-    virtual void paint(WebCanvas*, const WebRect& viewPort) { }
+    virtual void paint(WebCanvas*, const WebRect& viewPort, PaintOptions = ReadbackFromCompositorIfAvailable) { }
 
     // In non-threaded compositing mode, triggers compositing of the current
     // layers onto the screen. You MUST call Layout before calling this method,

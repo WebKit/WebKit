@@ -72,7 +72,7 @@ private:
     virtual void setCompositorSurfaceReady() OVERRIDE;
     virtual void composite(bool) OVERRIDE;
     virtual void layout() OVERRIDE;
-    virtual void paint(WebCanvas*, const WebRect&) OVERRIDE;
+    virtual void paint(WebCanvas*, const WebRect&, PaintOptions = ReadbackFromCompositorIfAvailable) OVERRIDE;
     virtual void resize(const WebSize&) OVERRIDE;
     virtual void close() OVERRIDE;
     virtual bool handleInputEvent(const WebInputEvent&) OVERRIDE;

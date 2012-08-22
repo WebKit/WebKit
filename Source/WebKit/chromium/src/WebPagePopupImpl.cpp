@@ -225,7 +225,7 @@ void WebPagePopupImpl::layout()
     PageWidgetDelegate::layout(m_page.get());
 }
 
-void WebPagePopupImpl::paint(WebCanvas* canvas, const WebRect& rect)
+void WebPagePopupImpl::paint(WebCanvas* canvas, const WebRect& rect, PaintOptions)
 {
     PageWidgetDelegate::paint(m_page.get(), 0, canvas, rect, PageWidgetDelegate::Opaque);
 }

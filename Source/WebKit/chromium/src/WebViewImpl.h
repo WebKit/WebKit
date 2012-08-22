@@ -143,7 +143,7 @@ public:
     virtual void setCompositorSurfaceReady();
     virtual void animate(double);
     virtual void layout(); // Also implements WebLayerTreeViewClient::layout()
-    virtual void paint(WebCanvas*, const WebRect&);
+    virtual void paint(WebCanvas*, const WebRect&, PaintOptions = ReadbackFromCompositorIfAvailable);
     virtual void themeChanged();
     virtual void composite(bool finish);
     virtual void setNeedsRedraw();
