@@ -377,3 +377,14 @@ command += "        --js " + inspector_path + "/" + "InjectedScriptSourceTmp.js"
 command += "\n"
 os.system(command)
 os.system("rm " + inspector_path + "/" + "InjectedScriptSourceTmp.js")
+
+print "Compiling InjectedScriptWebGLModuleSource.js..."
+os.system("echo \"var injectedScriptWebGLModuleValue = \" > " + inspector_path + "/" + "InjectedScriptWebGLModuleSourceTmp.js")
+os.system("cat  " + inspector_path + "/" + "InjectedScriptWebGLModuleSource.js" + " >> " + inspector_path + "/" + "InjectedScriptWebGLModuleSourceTmp.js")
+command = compiler_command
+command += "    --externs " + inspector_path + "/" + "InjectedScriptExterns.js" + " \\\n"
+command += "    --module " + jsmodule_name_prefix + "injected_script" + ":" + "1" + " \\\n"
+command += "        --js " + inspector_path + "/" + "InjectedScriptWebGLModuleSourceTmp.js" + " \\\n"
+command += "\n"
+os.system(command)
+os.system("rm " + inspector_path + "/" + "InjectedScriptWebGLModuleSourceTmp.js")

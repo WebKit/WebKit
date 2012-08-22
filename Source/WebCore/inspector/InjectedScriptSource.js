@@ -554,15 +554,29 @@ InjectedScript.prototype = {
         return object;
     },
 
+    /**
+     * @param {string} name
+     * @return {Object}
+     */ 
     module: function(name)
     {
         return this._modules[name];
     },
- 
+
+    /**
+     * @param {string} name
+     * @param {string} source
+     * @return {Object}
+     */ 
     injectModule: function(name, source)
     {
         delete this._modules[name];
-        var module = InjectedScriptHost.evaluate("(" + source + ")");
+        var moduleFunction = InjectedScriptHost.evaluate("(" + source + ")");
+        if (typeof moduleFunction !== "function") {
+            inspectedWindow.console.error("Web Inspector error: A function was expected for module %s evaluation", name);
+            return null;
+        }
+        var module = moduleFunction.call(inspectedWindow, InjectedScriptHost, inspectedWindow, injectedScriptId);
         this._modules[name] = module;
         return module;
     },
