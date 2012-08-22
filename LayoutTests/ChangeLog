@@ -1,3 +1,37 @@
+2012-08-21  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed Chromium gardening. Rebaseline tests after http://trac.webkit.org/changeset/126225 .
+        https://bugs.webkit.org/show_bug.cgi?id=94665 filed to track optimization of these baselines.
+
+        * platform/chromium-linux-x86/fast/canvas/canvas-scale-shadowBlur-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/canvas/canvas-scale-strokePath-shadow-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt: Added.
+        * platform/chromium-linux/fast/canvas/canvas-scale-shadowBlur-expected.txt: Added.
+        * platform/chromium-linux/fast/canvas/canvas-scale-strokePath-shadow-expected.txt: Added.
+        * platform/chromium-linux/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt: Added.
+        * platform/chromium-linux/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/canvas/canvas-scale-shadowBlur-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/canvas/canvas-scale-strokePath-shadow-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt: Added.
+        * platform/chromium-mac/fast/canvas/canvas-scale-shadowBlur-expected.txt: Added.
+        * platform/chromium-mac/fast/canvas/canvas-scale-strokePath-shadow-expected.txt: Added.
+        * platform/chromium-mac/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt: Added.
+        * platform/chromium-mac/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt: Added.
+        * platform/chromium-win-xp/fast/canvas/canvas-scale-shadowBlur-expected.txt: Added.
+        * platform/chromium-win-xp/fast/canvas/canvas-scale-strokePath-shadow-expected.txt: Added.
+        * platform/chromium-win-xp/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt: Added.
+        * platform/chromium-win-xp/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt: Added.
+        * platform/chromium-win/fast/canvas/canvas-scale-shadowBlur-expected.txt: Added.
+        * platform/chromium-win/fast/canvas/canvas-scale-strokePath-shadow-expected.txt: Added.
+        * platform/chromium-win/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt: Added.
+        * platform/chromium-win/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt: Added.
+        * platform/chromium/platform/chromium/virtual/gpu/fast/canvas/canvas-scale-shadowBlur-expected.txt: Added.
+        * platform/chromium/platform/chromium/virtual/gpu/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt: Added.
+        * platform/chromium/platform/chromium/virtual/gpu/fast/canvas/canvas-strokeRect-alpha-shadow-expected.txt: Added.
+        * platform/chromium/platform/chromium/virtual/gpu/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt: Added.
+
 2012-08-21  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: IDBRequest can be GCd during event dispatch
