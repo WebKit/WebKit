@@ -1,0 +1,62 @@
+button
+
+object
+
+PASS
+
+PASS
+
+PASS
+
+PASS
+PASS
+button
+PASS
+PASS
+FAIL:
+Expected 600 for width, but got 0. 
+
+<div class="flexbox">
+  <!-- FIXME: This table should flex. -->
+  <div data-expected-display="table" data-expected-width="600" style="display: inline-table"></div>
+</div>
+
+PASS
+
+PASS
+
+FAIL:
+Expected 100px for width, but got 300. 
+
+<div class="flexbox column" style="width:100px">
+  <!-- FIXME: The iframe should shrink in the cross direction: https://webkit.org/b/94604 -->
+  <iframe data-expected-display="block" data-expected-width="100px" src="data:text/html,&lt;body bgcolor=#fff&gt;iframe&lt;/body&gt;"></iframe>
+  <iframe seamless="" data-expected-display="block" data-expected-width="100px" src="data:text/html,&lt;body bgcolor=#fff&gt;iframe&lt;/body&gt;"></iframe>
+</div>
+button
+
+object
+
+FAIL:
+Expected 600 for width, but got 34. 
+Expected 600 for width, but got 60. 
+Expected 600 for width, but got 300. 
+Expected 600 for width, but got 57. 
+Expected 600 for width, but got 155. 
+
+<div class="flexbox column" style="height:210px">
+  <!-- FIXME: The button should stretch in the cross direction. -->
+  <button data-expected-display="block" data-expected-width="600" data-expected-height="30">button</button>
+  <!-- FIXME: The canvas should stretch in the cross direction: https://webkit.org/b/94604 -->
+  <canvas data-expected-display="block" data-expected-width="600" data-expected-height="30" style="height:30px">canvas</canvas>
+  <!-- FIXME: The iframe should stretch in the cross direction: https://webkit.org/b/94604 -->
+  <iframe data-expected-display="block" data-expected-width="600" data-expected-height="30" style="height:30px" src="data:text/html,&lt;body bgcolor=#fff&gt;iframe&lt;/body&gt;"></iframe>
+  <iframe seamless="" data-expected-display="block" data-expected-width="600" data-expected-height="30" style="height:30px" src="data:text/html,&lt;body bgcolor=#fff&gt;iframe&lt;/body&gt;"></iframe>
+  <object data-expected-display="block" data-expected-width="600" data-expected-height="30">object</object>
+  <!-- FIXME: The select should stretch in the cross direction. -->
+  <select data-expected-display="block" data-expected-width="600" data-expected-height="30">
+    <option>select</option>
+  </select>
+  <!-- FIXME: The textarea should stretch in the cross direction. -->
+  <textarea data-expected-display="block" data-expected-width="600" data-expected-height="30">textarea</textarea>
+</div>

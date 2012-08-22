@@ -788,13 +788,8 @@ BUGWK35300 : http/tests/loading/307-after-303-after-post.html = TEXT
 BUGWK35300 SKIP : http/tests/navigation/post-307-response.html = TEXT
 
 // mouseScrollBy() and continuousMouseScrollBy() are not yet implemented in the GTK EventSender API.
-BUGWK36003 : fast/events/remove-child-onscroll.html = TEXT
-BUGWK36003 : fast/events/platform-wheelevent-in-scrolling-div.html = TEXT
 BUGWK36003 : fast/events/continuous-platform-wheelevent-in-scrolling-div.html = TEXT
-BUGWK36003 : fast/events/wheelevent-direction-inverted-from-device.html = TEXT
-BUGWK36003 : fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html = TEXT
-BUGWK36003 : fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html = TEXT
-BUGWK36003 : fast/events/scroll-in-scaled-page-with-overflow-hidden.html = TEXT
+BUGWK36003 : fast/events/platform-wheelevent-in-scrolling-div.html = TEXT
 BUGWK36003 : fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html = TEXT
 BUGWK36003 : fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html = TEXT
 BUGWK36003 : fast/events/platform-wheelevent-paging-x-in-scrolling-div.html = TEXT
@@ -805,6 +800,11 @@ BUGWK36003 : fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html 
 BUGWK36003 : fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html = TEXT
 BUGWK36003 : fast/events/platform-wheelevent-paging-y-in-scrolling-div.html = TEXT
 BUGWK36003 : fast/events/platform-wheelevent-paging-y-in-scrolling-page.html = TEXT
+BUGWK36003 SKIP : fast/events/remove-child-onscroll.html = TEXT
+BUGWK36003 : fast/events/scroll-in-scaled-page-with-overflow-hidden.html = TEXT
+BUGWK36003 : fast/events/wheelevent-direction-inverted-from-device.html = TEXT
+BUGWK36003 : fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html = TEXT
+BUGWK36003 : fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html = TEXT
 
 // Misses setMediaType() implementation
 BUGWKGTK SKIP : fast/media/print-restores-previous-mediatype.html = TIMEOUT
@@ -1014,7 +1014,7 @@ BUGWK53707 : http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml = T
 
 // textInputController.hasGrammarMarker() is not implemented.
 BUGWKGTK : editing/spelling/grammar.html = TEXT
-BUGWKGTK : editing/spelling/grammar-paste.html = TEXT
+BUGWKGTK SKIP : editing/spelling/grammar-paste.html = TEXT
 
 // testRunner::setTextDirection() is not implemented.
 BUGWKGTK : fast/html/set-text-direction.html = TEXT
@@ -1303,8 +1303,6 @@ BUGWK80129 : fast/frames/flattening/frameset-flattening-advanced.html = TEXT
 BUGWK89663 : editing/deleting/delete-3800834-fix.html = TEXT
 
 BUGWK88727 RELEASE : http/tests/xmlhttprequest/origin-exact-matching.html = TEXT
-
-BUGWK94578 : fast/forms/range/range-hit-test-with-padding.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

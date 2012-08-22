@@ -1,3 +1,19 @@
+2012-08-22  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding platform-specific baseline for css3/flexbox/flexitem.html that's
+        required after r126257.
+
+        Removing failure expectation for fast/forms/range/range-hit-test-with-padding.html
+        after the test was refactored in r126252 and is now passing.
+
+        Skipping two more failing tests that take too long to fail.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/css3/flexbox: Added.
+        * platform/gtk/css3/flexbox/flexitem-expected.txt: Added.
+
 2012-08-22  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Introduce RTCIceCandidate
