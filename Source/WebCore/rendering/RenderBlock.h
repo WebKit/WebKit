@@ -266,6 +266,8 @@ public:
 
     ColumnInfo* columnInfo() const;
     int columnGap() const;
+
+    void updateColumnInfoFromStyle(RenderStyle*);
     
     // These two functions take the ColumnInfo* to avoid repeated lookups of the info in the global HashMap.
     unsigned columnCount(ColumnInfo*) const;

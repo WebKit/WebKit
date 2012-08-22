@@ -2806,22 +2806,22 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     if (!page)
         return;
 
-    Page::Pagination pagination = page->pagination();
+    Pagination pagination = page->pagination();
     switch (paginationMode) {
     case WebPaginationModeUnpaginated:
-        pagination.mode = Page::Pagination::Unpaginated;
+        pagination.mode = Pagination::Unpaginated;
         break;
     case WebPaginationModeLeftToRight:
-        pagination.mode = Page::Pagination::LeftToRightPaginated;
+        pagination.mode = Pagination::LeftToRightPaginated;
         break;
     case WebPaginationModeRightToLeft:
-        pagination.mode = Page::Pagination::RightToLeftPaginated;
+        pagination.mode = Pagination::RightToLeftPaginated;
         break;
     case WebPaginationModeTopToBottom:
-        pagination.mode = Page::Pagination::TopToBottomPaginated;
+        pagination.mode = Pagination::TopToBottomPaginated;
         break;
     case WebPaginationModeBottomToTop:
-        pagination.mode = Page::Pagination::BottomToTopPaginated;
+        pagination.mode = Pagination::BottomToTopPaginated;
         break;
     default:
         return;
@@ -2837,15 +2837,15 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
         return WebPaginationModeUnpaginated;
 
     switch (page->pagination().mode) {
-    case Page::Pagination::Unpaginated:
+    case Pagination::Unpaginated:
         return WebPaginationModeUnpaginated;
-    case Page::Pagination::LeftToRightPaginated:
+    case Pagination::LeftToRightPaginated:
         return WebPaginationModeLeftToRight;
-    case Page::Pagination::RightToLeftPaginated:
+    case Pagination::RightToLeftPaginated:
         return WebPaginationModeRightToLeft;
-    case Page::Pagination::TopToBottomPaginated:
+    case Pagination::TopToBottomPaginated:
         return WebPaginationModeTopToBottom;
-    case Page::Pagination::BottomToTopPaginated:
+    case Pagination::BottomToTopPaginated:
         return WebPaginationModeBottomToTop;
     }
 
@@ -2859,7 +2859,7 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     if (!page)
         return;
 
-    Page::Pagination pagination = page->pagination();
+    Pagination pagination = page->pagination();
     pagination.behavesLikeColumns = behavesLikeColumns;
 }
 
@@ -2878,7 +2878,7 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     if (!page)
         return;
 
-    Page::Pagination pagination = page->pagination();
+    Pagination pagination = page->pagination();
     pagination.pageLength = pageLength;
 
     page->setPagination(pagination);
@@ -2899,7 +2899,7 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     if (!page)
         return;
 
-    Page::Pagination pagination = page->pagination();
+    Pagination pagination = page->pagination();
     pagination.gap = pageGap;
     page->setPagination(pagination);
 }

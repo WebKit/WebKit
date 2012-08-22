@@ -215,7 +215,7 @@ EXPORTS
         ?setFixedFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setMockScrollbarsEnabled@Settings@WebCore@@SAX_N@Z
         ?setPageScaleFactor@Page@WebCore@@QAEXMABVIntPoint@2@@Z
-        ?setPagination@Page@WebCore@@QAEXABUPagination@12@@Z
+        ?setPagination@Page@WebCore@@QAEXABUPagination@2@@Z
         ?setPictographFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QAEXHH@Z
         ?setSansSerifFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z

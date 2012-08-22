@@ -1126,28 +1126,28 @@ void WebPage::setFixedLayoutSize(const IntSize& size)
 
 void WebPage::setPaginationMode(uint32_t mode)
 {
-    Page::Pagination pagination = m_page->pagination();
-    pagination.mode = static_cast<Page::Pagination::Mode>(mode);
+    Pagination pagination = m_page->pagination();
+    pagination.mode = static_cast<Pagination::Mode>(mode);
     m_page->setPagination(pagination);
 }
 
 void WebPage::setPaginationBehavesLikeColumns(bool behavesLikeColumns)
 {
-    Page::Pagination pagination = m_page->pagination();
+    Pagination pagination = m_page->pagination();
     pagination.behavesLikeColumns = behavesLikeColumns;
     m_page->setPagination(pagination);
 }
 
 void WebPage::setPageLength(double pageLength)
 {
-    Page::Pagination pagination = m_page->pagination();
+    Pagination pagination = m_page->pagination();
     pagination.pageLength = pageLength;
     m_page->setPagination(pagination);
 }
 
 void WebPage::setGapBetweenPages(double gap)
 {
-    Page::Pagination pagination = m_page->pagination();
+    Pagination pagination = m_page->pagination();
     pagination.gap = gap;
     m_page->setPagination(pagination);
 }

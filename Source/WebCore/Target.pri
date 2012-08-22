@@ -2285,6 +2285,7 @@ HEADERS += \
     rendering/mathml/RenderMathMLSquareRoot.h \
     rendering/mathml/RenderMathMLSubSup.h \
     rendering/mathml/RenderMathMLUnderOver.h \
+    rendering/Pagination.h \
     rendering/PaintInfo.h \
     rendering/PaintPhase.h \
     rendering/PointerEventsHitRules.h \

@@ -29,6 +29,7 @@
 #include "Color.h"
 #include "Frame.h"
 #include "LayoutTypes.h"
+#include "Pagination.h"
 #include "PaintPhase.h"
 #include "ScrollView.h"
 #include <wtf/Forward.h>
@@ -51,6 +52,8 @@ class RenderEmbeddedObject;
 class RenderLayer;
 class RenderObject;
 class RenderScrollbarPart;
+
+Pagination::Mode paginationModeForRenderStyle(RenderStyle*);
 
 typedef unsigned long long DOMTimeStamp;
 
@@ -347,6 +350,15 @@ public:
 
     void setScrollingPerformanceLoggingEnabled(bool);
 
+    // Page and FrameView both store a Pagination value. Page::pagination() is set only by API,
+    // and FrameView::pagination() is set only by CSS. Page::pagination() will affect all
+    // FrameViews in the page cache, but FrameView::pagination() only affects the current
+    // FrameView. FrameView::pagination() will return m_pagination if it has been set. Otherwise,
+    // it will return Page::pagination() since currently there are no callers that need to
+    // distinguish between the two.
+    const Pagination& pagination() const;
+    void setPagination(const Pagination&);
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     virtual void scrollContentsSlowPath(const IntRect& updateRect);
@@ -483,6 +495,8 @@ private:
     bool m_horizontalOverflow;
     bool m_verticalOverflow;    
     RenderObject* m_viewportRenderer;
+
+    Pagination m_pagination;
 
     bool m_wasScrolledByUser;
     bool m_inProgrammaticScroll;

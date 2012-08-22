@@ -1,3 +1,21 @@
+2012-08-22  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=94401
+        Add support for making a web site become paginated using overflow: 
+        paged-x | paged-y
+        -and corresponding-
+        <rdar://problem/11831783> 
+
+        Reviewed by Dave Hyatt.
+
+        WebCore::Page::Pagination is now just WebCore::Pagination.
+        * WebView/WebView.mm:
+        (-[WebView _setPaginationMode:]):
+        (-[WebView _paginationMode]):
+        (-[WebView _setPaginationBehavesLikeColumns:]):
+        (-[WebView _setPageLength:]):
+        (-[WebView _setGapBetweenPages:]):
+
 2012-08-15  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css3-text] Add CSS3 Text decoration compile flag

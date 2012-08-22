@@ -5114,8 +5114,12 @@ void RenderBlock::calcColumnWidth()
 
 bool RenderBlock::requiresColumns(int desiredColumnCount) const
 {
+    // If overflow-y is set to paged-x or paged-y on the body or html element, we'll handle the paginating
+    // in the RenderView instead.
+    bool isPaginated = (style()->overflowY() == OPAGEDX || style()->overflowY() == OPAGEDY) && !(isRoot() || isBody());
+
     return firstChild()
-        && (desiredColumnCount != 1 || !style()->hasAutoColumnWidth() || !style()->hasInlineColumnAxis())
+        && (desiredColumnCount != 1 || !style()->hasAutoColumnWidth() || !style()->hasInlineColumnAxis() || isPaginated)
         && !firstChild()->isAnonymousColumnsBlock()
         && !firstChild()->isAnonymousColumnSpanBlock();
 }
@@ -5144,6 +5148,32 @@ void RenderBlock::setDesiredColumnCountAndWidth(int count, LayoutUnit width)
         info->setProgressionAxis(style()->hasInlineColumnAxis() ? ColumnInfo::InlineAxis : ColumnInfo::BlockAxis);
         info->setProgressionIsReversed(style()->columnProgression() == ReverseColumnProgression);
     }
+}
+
+void RenderBlock::updateColumnInfoFromStyle(RenderStyle* style)
+{
+    if (!hasColumns())
+        return;
+
+    ColumnInfo* info = gColumnInfoMap->get(this);
+
+    bool needsLayout = false;
+    ColumnInfo::Axis oldAxis = info->progressionAxis();
+    ColumnInfo::Axis newAxis = style->hasInlineColumnAxis() ? ColumnInfo::InlineAxis : ColumnInfo::BlockAxis;
+    if (oldAxis != newAxis) {
+        info->setProgressionAxis(newAxis);
+        needsLayout = true;
+    }
+
+    bool oldProgressionIsReversed = info->progressionIsReversed();
+    bool newProgressionIsReversed = style->columnProgression() == ReverseColumnProgression;
+    if (oldProgressionIsReversed != newProgressionIsReversed) {
+        info->setProgressionIsReversed(newProgressionIsReversed);
+        needsLayout = true;
+    }
+
+    if (needsLayout)
+        setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 LayoutUnit RenderBlock::desiredColumnWidth() const

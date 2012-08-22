@@ -136,6 +136,33 @@ static RenderLayer::UpdateLayerPositionsFlags updateLayerPositionFlags(RenderLay
     return flags;
 }
 
+Pagination::Mode paginationModeForRenderStyle(RenderStyle* style)
+{
+    EOverflow overflow = style->overflowY();
+    if (overflow != OPAGEDX && overflow != OPAGEDY)
+        return Pagination::Unpaginated;
+
+    bool isHorizontalWritingMode = style->isHorizontalWritingMode();
+    TextDirection textDirection = style->direction();
+    WritingMode writingMode = style->writingMode();
+
+    // paged-x always corresponds to LeftToRightPaginated or RightToLeftPaginated. If the WritingMode
+    // is horizontal, then we use TextDirection to choose between those options. If the WritingMode
+    // is vertical, then the direction of the verticality dictates the choice.
+    if (overflow == OPAGEDX) {
+        if ((isHorizontalWritingMode && textDirection == LTR) || writingMode == LeftToRightWritingMode)
+            return Pagination::LeftToRightPaginated;
+        return Pagination::RightToLeftPaginated;
+    }
+
+    // paged-y always corresponds to TopToBottomPaginated or BottomToTopPaginated. If the WritingMode
+    // is horizontal, then the direction of the horizontality dictates the choice. If the WritingMode
+    // is vertical, then we use TextDirection to choose between those options. 
+    if (writingMode == TopToBottomWritingMode || (!isHorizontalWritingMode && textDirection == RTL))
+        return Pagination::TopToBottomPaginated;
+    return Pagination::BottomToTopPaginated;
+}
+
 FrameView::FrameView(Frame* frame)
     : m_frame(frame)
     , m_canHaveScrollbars(true)
@@ -582,6 +609,8 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, S
             // Don't set it at all.
             ;
     }
+
+    Pagination pagination;
     
      switch (overflowY) {
         case OHIDDEN:
@@ -596,10 +625,18 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, S
         case OAUTO:
             vMode = ScrollbarAuto;
             break;
+        case OPAGEDX:
+            pagination.mode = WebCore::paginationModeForRenderStyle(o->style());
+            break;
+        case OPAGEDY:
+            pagination.mode = WebCore::paginationModeForRenderStyle(o->style());
+            break;
         default:
             // Don't set it at all.
             ;
     }
+
+    setPagination(pagination);
 
     m_viewportRenderer = o;
 }
@@ -2555,6 +2592,30 @@ void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverf
     
 }
 
+const Pagination& FrameView::pagination() const
+{
+    if (m_pagination != Pagination())
+        return m_pagination;
+
+    if (Page* page = m_frame->page()) {
+        if (page->mainFrame() == m_frame)
+            return page->pagination();
+    }
+
+    return m_pagination;
+}
+
+void FrameView::setPagination(const Pagination& pagination)
+{
+    if (m_pagination == pagination)
+        return;
+
+    m_pagination = pagination;
+
+    if (m_frame)
+        m_frame->document()->styleResolverChanged(DeferRecalcStyle);
+}
+
 IntRect FrameView::windowClipRect(bool clipToContents) const
 {
     ASSERT(m_frame->view() == this);
@@ -3051,8 +3112,7 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
         p->fillRect(rect, Color(0xFF, 0, 0), ColorSpaceDeviceRGB);
 #endif
 
-    Page* page = m_frame->page();
-    if (page->mainFrame() == m_frame && page->pagination().mode != Page::Pagination::Unpaginated)
+    if (pagination().mode != Pagination::Unpaginated)
         p->fillRect(rect, baseBackgroundColor(), ColorSpaceDeviceRGB);
 
     bool isTopLevelPainter = !sCurrentPaintTimeStamp;

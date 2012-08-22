@@ -160,7 +160,7 @@ void InternalSettings::reset()
 {
     TextRun::setAllowsRoundingHacks(false);
     setUserPreferredLanguages(Vector<String>());
-    page()->setPagination(Page::Pagination());
+    page()->setPagination(Pagination());
     page()->setPageScaleFactor(1, IntPoint(0, 0));
 #if ENABLE(PAGE_POPUP)
     m_pagePopupDriver.clear();
@@ -565,17 +565,17 @@ void InternalSettings::setPagination(const String& mode, int gap, int pageLength
         return;
     }
 
-    Page::Pagination pagination;
+    Pagination pagination;
     if (mode == "Unpaginated")
-        pagination.mode = Page::Pagination::Unpaginated;
+        pagination.mode = Pagination::Unpaginated;
     else if (mode == "LeftToRightPaginated")
-        pagination.mode = Page::Pagination::LeftToRightPaginated;
+        pagination.mode = Pagination::LeftToRightPaginated;
     else if (mode == "RightToLeftPaginated")
-        pagination.mode = Page::Pagination::RightToLeftPaginated;
+        pagination.mode = Pagination::RightToLeftPaginated;
     else if (mode == "TopToBottomPaginated")
-        pagination.mode = Page::Pagination::TopToBottomPaginated;
+        pagination.mode = Pagination::TopToBottomPaginated;
     else if (mode == "BottomToTopPaginated")
-        pagination.mode = Page::Pagination::BottomToTopPaginated;
+        pagination.mode = Pagination::BottomToTopPaginated;
     else {
         ec = SYNTAX_ERR;
         return;

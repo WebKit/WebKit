@@ -352,22 +352,22 @@ bool WKPageIsPinnedToRightSide(WKPageRef pageRef)
 
 void WKPageSetPaginationMode(WKPageRef pageRef, WKPaginationMode paginationMode)
 {
-    Page::Pagination::Mode mode;
+    Pagination::Mode mode;
     switch (paginationMode) {
     case kWKPaginationModeUnpaginated:
-        mode = Page::Pagination::Unpaginated;
+        mode = Pagination::Unpaginated;
         break;
     case kWKPaginationModeLeftToRight:
-        mode = Page::Pagination::LeftToRightPaginated;
+        mode = Pagination::LeftToRightPaginated;
         break;
     case kWKPaginationModeRightToLeft:
-        mode = Page::Pagination::RightToLeftPaginated;
+        mode = Pagination::RightToLeftPaginated;
         break;
     case kWKPaginationModeTopToBottom:
-        mode = Page::Pagination::TopToBottomPaginated;
+        mode = Pagination::TopToBottomPaginated;
         break;
     case kWKPaginationModeBottomToTop:
-        mode = Page::Pagination::BottomToTopPaginated;
+        mode = Pagination::BottomToTopPaginated;
         break;
     default:
         return;
@@ -378,15 +378,15 @@ void WKPageSetPaginationMode(WKPageRef pageRef, WKPaginationMode paginationMode)
 WKPaginationMode WKPageGetPaginationMode(WKPageRef pageRef)
 {
     switch (toImpl(pageRef)->paginationMode()) {
-    case Page::Pagination::Unpaginated:
+    case Pagination::Unpaginated:
         return kWKPaginationModeUnpaginated;
-    case Page::Pagination::LeftToRightPaginated:
+    case Pagination::LeftToRightPaginated:
         return kWKPaginationModeLeftToRight;
-    case Page::Pagination::RightToLeftPaginated:
+    case Pagination::RightToLeftPaginated:
         return kWKPaginationModeRightToLeft;
-    case Page::Pagination::TopToBottomPaginated:
+    case Pagination::TopToBottomPaginated:
         return kWKPaginationModeTopToBottom;
-    case Page::Pagination::BottomToTopPaginated:
+    case Pagination::BottomToTopPaginated:
         return kWKPaginationModeBottomToTop;
     }
 

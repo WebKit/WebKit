@@ -4108,6 +4108,7 @@ webcore_sources += \
 	Source/WebCore/rendering/LayoutRepainter.h \
 	Source/WebCore/rendering/LayoutRepainter.cpp \
 	Source/WebCore/rendering/OverlapTestRequestClient.h \
+	Source/WebCore/rendering/Pagination.h \
 	Source/WebCore/rendering/PaintInfo.h \
 	Source/WebCore/rendering/PaintPhase.h \
 	Source/WebCore/rendering/PointerEventsHitRules.cpp \

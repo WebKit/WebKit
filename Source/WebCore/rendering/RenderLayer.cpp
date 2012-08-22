@@ -4777,7 +4777,7 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
                 || renderer()->isVideo()
                 || renderer()->isEmbeddedObject()
                 || renderer()->isRenderIFrame()
-                || renderer()->style()->specifiesColumns())
+                || (renderer()->style()->specifiesColumns() && !isRootLayer()))
             && !renderer()->isOutOfFlowPositioned()
             && !renderer()->isRelPositioned()
             && !renderer()->hasTransform()

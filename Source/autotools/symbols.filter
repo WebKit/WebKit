@@ -27,7 +27,7 @@ _ZN3WTF7CStringC2EPKcm;
 _ZN3WTF7CStringD1Ev;
 _ZN3WTF7CStringaSERKS0_;
 _ZN24DumpRenderTreeSupportGtk*;
-_ZN7WebCore4Page13setPaginationERKNS0_10PaginationE;
+_ZN7WebCore4Page13setPaginationERKNS_10PaginationE;
 _ZN7WebCore4Page18setPageScaleFactorEfRKNS_8IntPointE;
 _ZN7WebCore4Page20setDeviceScaleFactorEf;
 _ZN7WebCore4Page16setCanStartMediaEb;

@@ -552,6 +552,7 @@
             'rendering/LayoutTypes.h',
             'rendering/LayoutRepainter.h',
             'rendering/OverlapTestRequestClient.h',
+            'rendering/Pagination.h',
             'rendering/PaintInfo.h',
             'rendering/PaintPhase.h',
             'rendering/RenderBR.h',

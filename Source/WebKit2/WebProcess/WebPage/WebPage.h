@@ -309,7 +309,7 @@ public:
     bool useFixedLayout() const { return m_useFixedLayout; }
     void setFixedLayoutSize(const WebCore::IntSize&);
 
-    void setPaginationMode(uint32_t /* WebCore::Page::Pagination::Mode */);
+    void setPaginationMode(uint32_t /* WebCore::Pagination::Mode */);
     void setPaginationBehavesLikeColumns(bool);
     void setPageLength(double);
     void setGapBetweenPages(double);

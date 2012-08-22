@@ -1960,6 +1960,12 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EOverflow e)
         case OOVERLAY:
             m_value.ident = CSSValueOverlay;
             break;
+        case OPAGEDX:
+            m_value.ident = CSSValueWebkitPagedX;
+            break;
+        case OPAGEDY:
+            m_value.ident = CSSValueWebkitPagedY;
+            break;
     }
 }
 
@@ -1978,6 +1984,10 @@ template<> inline CSSPrimitiveValue::operator EOverflow() const
             return OMARQUEE;
         case CSSValueOverlay:
             return OOVERLAY;
+        case CSSValueWebkitPagedX:
+            return OPAGEDX;
+        case CSSValueWebkitPagedY:
+            return OPAGEDY;
     }
 
     ASSERT_NOT_REACHED();

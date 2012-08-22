@@ -96,6 +96,7 @@
 #include "RenderScrollbarTheme.h"
 #include "RenderStyleConstants.h"
 #include "RenderTheme.h"
+#include "RenderView.h"
 #include "RotateTransformOperation.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGFontFaceElement.h"
@@ -1600,6 +1601,46 @@ void StyleResolver::matchUARules(MatchResult& result)
     }
 }
 
+static void setStylesForPaginationMode(Pagination::Mode paginationMode, RenderStyle* style)
+{
+    if (paginationMode == Pagination::Unpaginated)
+        return;
+        
+    switch (paginationMode) {
+    case Pagination::LeftToRightPaginated:
+        style->setColumnAxis(HorizontalColumnAxis);
+        if (style->isHorizontalWritingMode())
+            style->setColumnProgression(style->isLeftToRightDirection() ? NormalColumnProgression : ReverseColumnProgression);
+        else
+            style->setColumnProgression(style->isFlippedBlocksWritingMode() ? ReverseColumnProgression : NormalColumnProgression);
+        break;
+    case Pagination::RightToLeftPaginated:
+        style->setColumnAxis(HorizontalColumnAxis);
+        if (style->isHorizontalWritingMode())
+            style->setColumnProgression(style->isLeftToRightDirection() ? ReverseColumnProgression : NormalColumnProgression);
+        else
+            style->setColumnProgression(style->isFlippedBlocksWritingMode() ? NormalColumnProgression : ReverseColumnProgression);
+        break;
+    case Pagination::TopToBottomPaginated:
+        style->setColumnAxis(VerticalColumnAxis);
+        if (style->isHorizontalWritingMode())
+            style->setColumnProgression(style->isFlippedBlocksWritingMode() ? ReverseColumnProgression : NormalColumnProgression);
+        else
+            style->setColumnProgression(style->isLeftToRightDirection() ? NormalColumnProgression : ReverseColumnProgression);
+        break;
+    case Pagination::BottomToTopPaginated:
+        style->setColumnAxis(VerticalColumnAxis);
+        if (style->isHorizontalWritingMode())
+            style->setColumnProgression(style->isFlippedBlocksWritingMode() ? NormalColumnProgression : ReverseColumnProgression);
+        else
+            style->setColumnProgression(style->isLeftToRightDirection() ? ReverseColumnProgression : NormalColumnProgression);
+        break;
+    case Pagination::Unpaginated:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
 PassRefPtr<RenderStyle> StyleResolver::styleForDocument(Document* document, CSSFontSelector* fontSelector)
 {
     Frame* frame = document->frame();
@@ -1645,44 +1686,15 @@ PassRefPtr<RenderStyle> StyleResolver::styleForDocument(Document* document, CSSF
     }
 
     if (frame) {
-        if (Page* page = frame->page()) {
-            const Page::Pagination& pagination = page->pagination();
-            if (pagination.mode != Page::Pagination::Unpaginated) {
-                switch (pagination.mode) {
-                case Page::Pagination::LeftToRightPaginated:
-                    documentStyle->setColumnAxis(HorizontalColumnAxis);
-                    if (documentStyle->isHorizontalWritingMode())
-                        documentStyle->setColumnProgression(documentStyle->isLeftToRightDirection() ? NormalColumnProgression : ReverseColumnProgression);
-                    else
-                        documentStyle->setColumnProgression(documentStyle->isFlippedBlocksWritingMode() ? ReverseColumnProgression : NormalColumnProgression);
-                    break;
-                case Page::Pagination::RightToLeftPaginated:
-                    documentStyle->setColumnAxis(HorizontalColumnAxis);
-                    if (documentStyle->isHorizontalWritingMode())
-                        documentStyle->setColumnProgression(documentStyle->isLeftToRightDirection() ? ReverseColumnProgression : NormalColumnProgression);
-                    else
-                        documentStyle->setColumnProgression(documentStyle->isFlippedBlocksWritingMode() ? NormalColumnProgression : ReverseColumnProgression);
-                    break;
-                case Page::Pagination::TopToBottomPaginated:
-                    documentStyle->setColumnAxis(VerticalColumnAxis);
-                    if (documentStyle->isHorizontalWritingMode())
-                        documentStyle->setColumnProgression(documentStyle->isFlippedBlocksWritingMode() ? ReverseColumnProgression : NormalColumnProgression);
-                    else
-                        documentStyle->setColumnProgression(documentStyle->isLeftToRightDirection() ? NormalColumnProgression : ReverseColumnProgression);
-                    break;
-                case Page::Pagination::BottomToTopPaginated:
-                    documentStyle->setColumnAxis(VerticalColumnAxis);
-                    if (documentStyle->isHorizontalWritingMode())
-                        documentStyle->setColumnProgression(documentStyle->isFlippedBlocksWritingMode() ? NormalColumnProgression : ReverseColumnProgression);
-                    else
-                        documentStyle->setColumnProgression(documentStyle->isLeftToRightDirection() ? ReverseColumnProgression : NormalColumnProgression);
-                    break;
-                case Page::Pagination::Unpaginated:
-                    ASSERT_NOT_REACHED();
-                    break;
-                }
-
+        if (FrameView* frameView = frame->view()) {
+            const Pagination& pagination = frameView->pagination();
+            if (pagination.mode != Pagination::Unpaginated) {
+                setStylesForPaginationMode(pagination.mode, documentStyle.get());
                 documentStyle->setColumnGap(pagination.gap);
+                if (RenderView* view = document->renderView()) {
+                    if (view->hasColumns())
+                        view->updateColumnInfoFromStyle(documentStyle.get());
+                }
             }
         }
     }
@@ -2206,10 +2218,19 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         style->setOverflowY(OMARQUEE);
     else if (style->overflowY() == OMARQUEE && style->overflowX() != OMARQUEE)
         style->setOverflowX(OMARQUEE);
-    else if (style->overflowX() == OVISIBLE && style->overflowY() != OVISIBLE)
+    else if (style->overflowX() == OVISIBLE && style->overflowY() != OVISIBLE) {
+        // FIXME: Once we implement pagination controls, overflow-x should default to hidden
+        // if overflow-y is set to -webkit-paged-x or -webkit-page-y. For now, we'll let it
+        // default to auto so we can at least scroll through the pages.
         style->setOverflowX(OAUTO);
-    else if (style->overflowY() == OVISIBLE && style->overflowX() != OVISIBLE)
+    } else if (style->overflowY() == OVISIBLE && style->overflowX() != OVISIBLE)
         style->setOverflowY(OAUTO);
+
+    // Call setStylesForPaginationMode() if a pagination mode is set for any non-root elements. If these
+    // styles are specified on a root element, then they will be incorporated in
+    // StyleResolver::styleForDocument().
+    if ((style->overflowY() == OPAGEDX || style->overflowY() == OPAGEDY) && !(e->hasTagName(htmlTag) || e->hasTagName(bodyTag)))
+        setStylesForPaginationMode(WebCore::paginationModeForRenderStyle(style), style);
 
     // Table rows, sections and the table itself will support overflow:hidden and will ignore scroll/auto.
     // FIXME: Eventually table sections will support auto and scroll.

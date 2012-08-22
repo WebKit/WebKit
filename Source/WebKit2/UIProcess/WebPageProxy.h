@@ -488,8 +488,8 @@ public:
     bool isPinnedToLeftSide() const { return m_mainFrameIsPinnedToLeftSide; }
     bool isPinnedToRightSide() const { return m_mainFrameIsPinnedToRightSide; }
 
-    void setPaginationMode(WebCore::Page::Pagination::Mode);
-    WebCore::Page::Pagination::Mode paginationMode() const { return m_paginationMode; }
+    void setPaginationMode(WebCore::Pagination::Mode);
+    WebCore::Pagination::Mode paginationMode() const { return m_paginationMode; }
     void setPaginationBehavesLikeColumns(bool);
     bool paginationBehavesLikeColumns() const { return m_paginationBehavesLikeColumns; }
     void setPageLength(double);
@@ -1095,7 +1095,7 @@ private:
     bool m_useFixedLayout;
     WebCore::IntSize m_fixedLayoutSize;
 
-    WebCore::Page::Pagination::Mode m_paginationMode;
+    WebCore::Pagination::Mode m_paginationMode;
     bool m_paginationBehavesLikeColumns;
     double m_pageLength;
     double m_gapBetweenPages;
