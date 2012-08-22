@@ -1,3 +1,16 @@
+2012-08-22  Jer Noble  <jer.noble@apple.com>
+
+        Browser menu visible when calling webkitRequestFullscreen after user manually enters full screen mode
+        https://bugs.webkit.org/show_bug.cgi?id=93892
+
+        Reviewed by Eric Carlson.
+
+        Allow the full screen window to "Join All Spaces", so that once it's original full screen space is destroyed,
+        it can join the new one.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]):
+
 2012-08-22  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Support posting injected bundle messages to a page

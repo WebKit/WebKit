@@ -552,7 +552,12 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
     finalBounds.origin = [[self window] convertScreenToBase:finalBounds.origin];
     WKWindowSetClipRect([self window], finalBounds);
 
-    [[self window] makeKeyAndOrderFront:self];
+    NSWindow* window = [self window];
+    NSWindowCollectionBehavior behavior = [window collectionBehavior];
+    [window setCollectionBehavior:(behavior | NSWindowCollectionBehaviorCanJoinAllSpaces)];
+    [window makeKeyAndOrderFront:self];
+    [window setCollectionBehavior:behavior];
+
 
     if (!_backgroundWindow)
         _backgroundWindow = createBackgroundFullscreenWindow(screenFrame);
