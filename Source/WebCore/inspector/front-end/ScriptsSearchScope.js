@@ -128,5 +128,3 @@ WebInspector.ScriptsSearchScope.prototype = {
 }
 
 WebInspector.ScriptsSearchScope.prototype.__proto__ = WebInspector.SearchScope.prototype;
-
-WebInspector.settings.searchInContentScripts = WebInspector.settings.createSetting("searchInContentScripts", false);
