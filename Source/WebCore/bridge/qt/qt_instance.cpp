@@ -20,6 +20,7 @@
 #include "config.h"
 #include "qt_instance.h"
 
+#include "APICast.h"
 #include "Error.h"
 #include "JSDOMBinding.h"
 #include "JSDOMWindowBase.h"
@@ -303,7 +304,6 @@ JSValue QtInstance::valueOf(ExecState* exec) const
 }
 
 // In qt_runtime.cpp
-JSValue convertQVariantToValue(ExecState*, PassRefPtr<RootObject> root, const QVariant& variant);
 QVariant convertValueToQVariant(ExecState*, JSValue, QMetaType::Type hint, int *distance);
 
 QByteArray QtField::name() const
@@ -337,7 +337,11 @@ JSValue QtField::valueFromInstance(ExecState* exec, const Instance* inst) const
         else if (m_type == DynamicProperty)
             val = obj->property(m_dynamicProperty);
 #endif
-        return convertQVariantToValue(exec, inst->rootObject(), val);
+        JSValueRef exception = 0;
+        JSValueRef jsValue = convertQVariantToValue(toRef(exec), inst->rootObject(), val, &exception);
+        if (exception)
+            return throwError(exec, toJS(exec, exception));
+        return toJS(exec, jsValue);
     }
     QString msg = QString(QLatin1String("cannot access member `%1' of deleted QObject")).arg(QLatin1String(name()));
     return throwError(exec, createError(exec, msg.toLatin1().constData()));

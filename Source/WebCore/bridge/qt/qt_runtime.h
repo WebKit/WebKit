@@ -157,7 +157,7 @@ typedef JSValue (*ConvertToJSValueFunction)(ExecState* exec, WebCore::JSDOMGloba
 void registerCustomType(int qtMetaTypeId, ConvertToVariantFunction, ConvertToJSValueFunction);
 
 QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type hint, int *distance);
-JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, const QVariant& variant);
+JSValueRef convertQVariantToValue(JSContextRef, PassRefPtr<RootObject>, const QVariant&, JSValueRef* exception);
 
 void setException(JSContextRef, JSValueRef* exception, const QString& text);
 
