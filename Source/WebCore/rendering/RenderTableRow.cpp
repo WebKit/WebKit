@@ -32,6 +32,7 @@
 #include "PaintInfo.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
+#include "StyleInheritedData.h"
 
 namespace WebCore {
 

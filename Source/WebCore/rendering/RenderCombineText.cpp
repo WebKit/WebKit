@@ -22,6 +22,7 @@
 #include "RenderCombineText.h"
 
 #include "RenderBlock.h"
+#include "StyleInheritedData.h"
 
 namespace WebCore {
 

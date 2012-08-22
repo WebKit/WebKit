@@ -41,6 +41,7 @@
 #include "RenderTableCol.h"
 #include "RenderTableSection.h"
 #include "RenderView.h"
+#include "StyleInheritedData.h"
 
 using namespace std;
 

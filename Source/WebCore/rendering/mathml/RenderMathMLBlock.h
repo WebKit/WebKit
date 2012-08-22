@@ -30,6 +30,7 @@
 #if ENABLE(MATHML)
 
 #include "RenderBlock.h"
+#include "StyleInheritedData.h"
 
 #define ENABLE_DEBUG_MATH_LAYOUT 0
 

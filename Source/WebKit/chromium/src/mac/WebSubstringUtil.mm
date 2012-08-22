@@ -36,6 +36,7 @@
 #include "ColorMac.h"
 #include "Document.h"
 #include "Element.h"
+#include "Font.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLElement.h"

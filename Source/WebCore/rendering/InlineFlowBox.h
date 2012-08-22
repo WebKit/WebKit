@@ -31,7 +31,10 @@ class HitTestRequest;
 class HitTestResult;
 class InlineTextBox;
 class RenderLineBoxList;
+class SimpleFontData;
 class VerticalPositionCache;
+
+struct GlyphOverflow;
 
 typedef HashMap<const InlineTextBox*, pair<Vector<const SimpleFontData*>, GlyphOverflow> > GlyphOverflowAndFallbackFontsMap;
 

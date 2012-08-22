@@ -34,6 +34,7 @@
 #import "DOMNodeInternal.h"
 #import "DOMPrivate.h"
 #import "DOMRangeInternal.h"
+#import "Font.h"
 #import "Frame.h"
 #import "HTMLElement.h"
 #import "HTMLNames.h"

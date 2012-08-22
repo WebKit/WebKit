@@ -36,6 +36,7 @@
 #include "SVGDocument.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
+#include "StyleInheritedData.h"
 #include "Text.h"
 #include "XLinkNames.h"
 

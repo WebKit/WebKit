@@ -27,6 +27,7 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "ScrollbarTheme.h"
+#include "StyleInheritedData.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
 #include <wtf/unicode/CharacterNames.h>

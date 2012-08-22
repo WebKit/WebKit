@@ -35,7 +35,8 @@
 #include "CounterDirectives.h"
 #include "DataRef.h"
 #include "FillLayer.h"
-#include "Font.h"
+#include "FontBaseline.h"
+#include "FontDescription.h"
 #include "GraphicsTypes.h"
 #include "Length.h"
 #include "LengthBox.h"
@@ -53,7 +54,6 @@
 #include "StyleFlexibleBoxData.h"
 #include "StyleGridData.h"
 #include "StyleGridItemData.h"
-#include "StyleInheritedData.h"
 #include "StyleMarqueeData.h"
 #include "StyleMultiColData.h"
 #include "StyleRareInheritedData.h"
@@ -104,11 +104,14 @@ using std::max;
 class BorderData;
 class CounterContent;
 class CursorList;
+class Font;
+class FontMetrics;
 class IntRect;
 class MemoryObjectInfo;
 class Pair;
 class ShadowData;
 class StyleImage;
+class StyleInheritedData;
 class StyleResolver;
 class TransformationMatrix;
 

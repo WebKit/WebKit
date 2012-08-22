@@ -140,6 +140,7 @@
 #include "ShadowRoot.h"
 #include "SkiaUtils.h"
 #include "SpellChecker.h"
+#include "StyleInheritedData.h"
 #include "SubstituteData.h"
 #include "TextAffinity.h"
 #include "TextIterator.h"

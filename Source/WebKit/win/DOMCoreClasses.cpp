@@ -37,6 +37,7 @@
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Document.h>
 #include <WebCore/Element.h>
+#include <WebCore/Font.h>
 #include <WebCore/Frame.h>
 #include <WebCore/SimpleFontData.h>
 #include <WebCore/HTMLFormElement.h>

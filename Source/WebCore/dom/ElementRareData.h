@@ -29,6 +29,7 @@
 #include "HTMLCollection.h"
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
+#include "StyleInheritedData.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {

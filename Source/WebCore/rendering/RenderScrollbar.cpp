@@ -31,6 +31,7 @@
 #include "RenderPart.h"
 #include "RenderScrollbarPart.h"
 #include "RenderScrollbarTheme.h"
+#include "StyleInheritedData.h"
 
 namespace WebCore {
 

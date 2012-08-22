@@ -32,6 +32,7 @@
 #include "SVGNames.h"
 #endif
 
+#include "StyleInheritedData.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 

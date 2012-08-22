@@ -42,6 +42,7 @@
 #include "ScriptController.h"
 #include "SpeechInput.h"
 #include "SpeechInputEvent.h"
+#include "StyleInheritedData.h"
 #include "TextEvent.h"
 #include "TextEventInputType.h"
 

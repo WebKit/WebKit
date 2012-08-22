@@ -33,6 +33,7 @@
 #include "PaintInfo.h"
 #include "RenderTableCol.h"
 #include "RenderView.h"
+#include "StyleInheritedData.h"
 #include "TransformState.h"
 
 using namespace std;

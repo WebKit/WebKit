@@ -25,6 +25,7 @@
 #include "RenderThemeChromiumSkia.h"
 
 #include "CSSValueKeywords.h"
+#include "Font.h"
 #include "GraphicsContext.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"

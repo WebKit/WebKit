@@ -34,6 +34,7 @@
 #include "RenderTableCol.h"
 #include "RenderTableRow.h"
 #include "RenderView.h"
+#include "StyleInheritedData.h"
 #include <limits>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>

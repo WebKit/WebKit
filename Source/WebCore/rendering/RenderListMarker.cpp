@@ -27,6 +27,7 @@
 
 #include "CachedImage.h"
 #include "Document.h"
+#include "Font.h"
 #include "GraphicsContext.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"

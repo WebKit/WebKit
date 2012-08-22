@@ -28,6 +28,7 @@
 #include "CSSValueKeywords.h"
 #include "FileList.h"
 #include "FileSystem.h"
+#include "FontDescription.h"
 #include <wtf/gobject/GOwnPtr.h>
 #include "Gradient.h"
 #include "GraphicsContext.h"

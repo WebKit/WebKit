@@ -53,6 +53,7 @@
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "ShadowValue.h"
+#include "StyleInheritedData.h"
 #include "StylePropertySet.h"
 #include "StylePropertyShorthand.h"
 #include "WebKitCSSTransformValue.h"

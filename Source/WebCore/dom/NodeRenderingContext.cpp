@@ -40,6 +40,7 @@
 #include "RenderObject.h"
 #include "RenderView.h"
 #include "ShadowRoot.h"
+#include "StyleInheritedData.h"
 
 #if ENABLE(SVG)
 #include "SVGNames.h"

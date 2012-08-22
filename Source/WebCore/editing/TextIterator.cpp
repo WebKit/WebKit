@@ -28,6 +28,7 @@
 #include "TextIterator.h"
 
 #include "Document.h"
+#include "Font.h"
 #include "Frame.h"
 #include "HTMLElement.h"
 #include "HTMLTextFormControlElement.h"

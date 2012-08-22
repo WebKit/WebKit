@@ -34,6 +34,7 @@
 #import "EditingText.h"
 #import "Editor.h"
 #import "EditorClient.h"
+#import "Font.h"
 #import "Frame.h"
 #import "FrameView.h"
 #import "HTMLConverter.h"

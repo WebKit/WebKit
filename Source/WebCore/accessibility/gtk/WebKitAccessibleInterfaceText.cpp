@@ -33,6 +33,7 @@
 
 #include "AccessibilityObject.h"
 #include "Document.h"
+#include "Font.h"
 #include "FrameView.h"
 #include <wtf/gobject/GOwnPtr.h>
 #include "HostWindow.h"

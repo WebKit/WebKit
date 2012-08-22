@@ -38,6 +38,7 @@
 #include "RenderSelectionInfo.h"
 #include "RenderWidget.h"
 #include "RenderWidgetProtector.h"
+#include "StyleInheritedData.h"
 #include "TransformState.h"
 
 #if USE(ACCELERATED_COMPOSITING)

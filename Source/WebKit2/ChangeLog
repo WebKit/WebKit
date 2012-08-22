@@ -1,3 +1,14 @@
+2012-08-22  Nikhil Bhargava  <nbhargava@google.com>
+
+        Reduce Font.h includes across project -- improves RenderObject.h compile time
+        https://bugs.webkit.org/show_bug.cgi?id=93629
+
+        Reviewed by Eric Seidel.
+
+        Adds includes due to change in RenderStyle.h
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+
 2012-08-22  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=94401

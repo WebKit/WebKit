@@ -24,6 +24,7 @@
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "EllipsisBox.h"
+#include "Font.h"
 #include "GraphicsContext.h"
 #include "InlineTextBox.h"
 #include "HitTestResult.h"

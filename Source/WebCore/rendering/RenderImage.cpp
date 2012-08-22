@@ -29,6 +29,7 @@
 #include "RenderImage.h"
 
 #include "BitmapImage.h"
+#include "Font.h"
 #include "FontCache.h"
 #include "Frame.h"
 #include "FrameSelection.h"

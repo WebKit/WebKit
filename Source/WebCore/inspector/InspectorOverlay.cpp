@@ -33,6 +33,7 @@
 #include "InspectorOverlay.h"
 
 #include "Element.h"
+#include "Font.h"
 #include "FontCache.h"
 #include "FontFamily.h"
 #include "Frame.h"

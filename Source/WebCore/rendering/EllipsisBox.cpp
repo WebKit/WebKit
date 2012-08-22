@@ -21,6 +21,7 @@
 #include "EllipsisBox.h"
 
 #include "Document.h"
+#include "Font.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "InlineTextBox.h"

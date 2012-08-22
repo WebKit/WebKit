@@ -32,6 +32,7 @@
 #undef GTK_DISABLE_DEPRECATED
 
 #include "CSSValueKeywords.h"
+#include "Font.h"
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
 #include "HTMLNames.h"

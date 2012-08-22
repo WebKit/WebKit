@@ -34,6 +34,7 @@
 #include "RenderFlowThread.h"
 #include "RenderFlowThreadContainer.h"
 #include "RenderNamedFlowThread.h"
+#include "StyleInheritedData.h"
 #include "WebKitNamedFlow.h"
 #include "WebKitNamedFlowCollection.h"
 #include <wtf/text/AtomicString.h>

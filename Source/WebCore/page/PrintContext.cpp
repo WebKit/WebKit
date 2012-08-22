@@ -25,6 +25,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "RenderView.h"
+#include "StyleInheritedData.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

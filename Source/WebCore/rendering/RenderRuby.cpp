@@ -34,6 +34,7 @@
 
 #include "RenderRubyRun.h"
 #include "RenderStyle.h"
+#include "StyleInheritedData.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

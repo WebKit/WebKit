@@ -32,6 +32,7 @@
 #include "MutationRecord.h"
 #include "NodeRenderingContext.h"
 #include "RenderText.h"
+#include "StyleInheritedData.h"
 #include "TextBreakIterator.h"
 #include "UndoManager.h"
 

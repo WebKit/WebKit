@@ -1,5 +1,17 @@
 2012-08-22  Nikhil Bhargava  <nbhargava@google.com>
 
+        Reduce Font.h includes across project -- improves RenderObject.h compile time
+        https://bugs.webkit.org/show_bug.cgi?id=93629
+
+        Reviewed by Eric Seidel.
+
+        Adds includes due to change in RenderStyle.h
+
+        * src/WebFrameImpl.cpp:
+        * src/mac/WebSubstringUtil.mm:
+
+2012-08-22  Nikhil Bhargava  <nbhargava@google.com>
+
         Speed up compilation of tests involving WebTransformationMatrix
         https://bugs.webkit.org/show_bug.cgi?id=94639
 

@@ -27,6 +27,7 @@
 #include "RenderThemeEfl.h"
 
 #include "CSSValueKeywords.h"
+#include "FontDescription.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "InputType.h"

@@ -29,6 +29,7 @@
 #include "MediaQueryExp.h"
 #include "RenderStyle.h"
 #include "SelectorChecker.h"
+#include "StyleInheritedData.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>

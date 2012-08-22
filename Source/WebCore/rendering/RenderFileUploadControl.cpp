@@ -23,6 +23,7 @@
 
 #include "ElementShadow.h"
 #include "FileList.h"
+#include "Font.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"

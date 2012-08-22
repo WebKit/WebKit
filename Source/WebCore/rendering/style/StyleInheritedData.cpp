@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#include "StyleRareInheritedData.h"
+#include "StyleInheritedData.h"
 
 #include "RenderStyle.h"
 #include "StyleImage.h"

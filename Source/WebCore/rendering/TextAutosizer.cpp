@@ -31,6 +31,7 @@
 #include "RenderText.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "StyleInheritedData.h"
 
 namespace WebCore {
 

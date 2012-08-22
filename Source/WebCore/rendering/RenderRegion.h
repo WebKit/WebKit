@@ -31,6 +31,7 @@
 #define RenderRegion_h
 
 #include "RenderReplaced.h"
+#include "StyleInheritedData.h"
 
 namespace WebCore {
 

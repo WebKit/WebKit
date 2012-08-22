@@ -20,6 +20,7 @@
 #include "config.h"
 #include "InlineBox.h"
 
+#include "FontMetrics.h"
 #include "Frame.h"
 #include "HitTestResult.h"
 #include "InlineFlowBox.h"

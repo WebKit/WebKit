@@ -36,6 +36,7 @@
 #include "RenderLayer.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "StyleInheritedData.h"
 #include "TransformState.h"
 #include "VisiblePosition.h"
 

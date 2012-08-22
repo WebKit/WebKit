@@ -27,6 +27,7 @@
 
 #include "CSSHelper.h"
 #include "ExceptionCode.h"
+#include "FontMetrics.h"
 #include "Frame.h"
 #include "RenderPart.h"
 #include "RenderSVGRoot.h"

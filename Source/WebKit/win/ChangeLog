@@ -1,3 +1,14 @@
+2012-08-22  Nikhil Bhargava  <nbhargava@google.com>
+
+        Reduce Font.h includes across project -- improves RenderObject.h compile time
+        https://bugs.webkit.org/show_bug.cgi?id=93629
+
+        Reviewed by Eric Seidel.
+
+        Adds includes due to change in RenderStyle.h
+
+        * DOMCoreClasses.cpp:
+
 2012-08-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update manual tests and comments to refer to TestRunner instead of LayoutTestController
