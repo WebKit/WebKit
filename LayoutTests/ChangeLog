@@ -2,6 +2,25 @@
 
         [Chromium] Unreviewed gardening.
 
+        Rebaseline tests after http://trac.webkit.org/changeset/126187 .
+        These are the same results as platform/mac-lion, which until
+        r126187 were the results of platform/mac. So this is "reverting"
+        r126187 in terms of Chromium expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=94665 was filed
+        to track optimization of these baselines.
+
+        * platform/chromium-mac-snowleopard/fast/writing-mode/text-orientation-basic-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/writing-mode/vertical-align-table-baseline-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/writing-mode/vertical-align-table-baseline-expected.txt: Added.
+        * platform/chromium-mac/fast/writing-mode/text-orientation-basic-expected.txt: Added.
+        * platform/chromium-mac/fast/writing-mode/vertical-align-table-baseline-expected.png:
+        * platform/chromium-mac/fast/writing-mode/vertical-align-table-baseline-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+
+2012-08-22  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
         Update image expectations for these tests. The 'x' to clear out a
         text field is slightly brighter on chromium-mac; this is not
         material to the intent of the tests.

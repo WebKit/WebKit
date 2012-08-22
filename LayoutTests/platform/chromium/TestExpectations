@@ -2873,7 +2873,6 @@ BUGWK81145 LION : compositing/iframes/iframe-content-flipping.html = IMAGE
 BUGWK81145 LION : fast/frames/invalid.html = IMAGE
 BUGWK81145 LION : fast/repaint/background-scaling.html = IMAGE
 BUGWK81145 LION : fast/repaint/scale-page-shrink.html = IMAGE
-BUGWK81145 LION : fast/writing-mode/vertical-align-table-baseline.html = IMAGE
 BUGWK81145 LION : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
 BUGWK81145 LION : editing/inserting/insert-3907422-fix.html = TEXT
 BUGWK81145 LION : editing/pasteboard/paste-text-002.html = TEXT
