@@ -77,7 +77,7 @@ void DisplayRefreshMonitor::displayLinkFired()
     if (!m_mutex.tryLock())
         return;
 
-    if (!m_scheduled || !m_previousFrameDone) {
+    if (!m_previousFrameDone) {
         m_mutex.unlock();
         return;
     }
