@@ -265,15 +265,6 @@ void ResourceRequest::setHTTPPipeliningEnabled(bool flag)
     s_httpPipeliningEnabled = flag;
 }
 
-#if USE(CFNETWORK) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-static inline bool readBooleanPreference(CFStringRef key)
-{
-    Boolean keyExistsAndHasValidFormat;
-    Boolean result = CFPreferencesGetAppBooleanValue(key, kCFPreferencesCurrentApplication, &keyExistsAndHasValidFormat);
-    return keyExistsAndHasValidFormat ? result : false;
-}
-#endif
-
 unsigned initializeMaximumHTTPConnectionCountPerHost()
 {
     static const unsigned preferredConnectionCount = 6;
@@ -284,8 +275,10 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
 #if USE(CFNETWORK) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     static const unsigned unlimitedConnectionCount = 10000;
 
-    if (!ResourceRequest::httpPipeliningEnabled() && readBooleanPreference(CFSTR("WebKitEnableHTTPPipelining")))
-        ResourceRequest::setHTTPPipeliningEnabled(true);
+    Boolean keyExistsAndHasValidFormat = false;
+    Boolean prefValue = CFPreferencesGetAppBooleanValue(CFSTR("WebKitEnableHTTPPipelining"), kCFPreferencesCurrentApplication, &keyExistsAndHasValidFormat);
+    if (keyExistsAndHasValidFormat)
+        ResourceRequest::setHTTPPipeliningEnabled(prefValue);
 
     if (ResourceRequest::httpPipeliningEnabled()) {
         wkSetHTTPPipeliningMaximumPriority(toHTTPPipeliningPriority(ResourceLoadPriorityHighest));
