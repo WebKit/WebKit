@@ -1,3 +1,15 @@
+2012-08-21  Keishi Hattori  <keishi@webkit.org>
+
+        range-hit-test-with-padding.html fails unless subpixel layout is on
+        https://bugs.webkit.org/show_bug.cgi?id=94585
+
+        Reviewed by Kent Tamura.
+
+        Ports without subpixel layout didn't exactly match the result, because slider thumb width is an odd number and we are dividing it by two.
+
+        * fast/forms/range/range-hit-test-with-padding-expected.txt:
+        * fast/forms/range/range-hit-test-with-padding.html: Adjust the max so it snaps to the step in the middle.
+
 2012-08-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in RenderTableSection::setCellLogicalWidths

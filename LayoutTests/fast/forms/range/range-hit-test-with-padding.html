@@ -6,7 +6,7 @@
 <body>
 <p id="description">Clicking middle of input type=range with padding should set the value to middle.</p>
 <div id="console"></div>
-<input id="input" type=range min=0 max=1000 step=1 value="0" style="width: 100px; padding: 0 20px;">
+<input id="input" type=range min=0 max=50 step=1 value="0" style="width: 100px; padding: 0 40px;">
 <script>
 var input = document.getElementById("input");
 function clickSlider(offsetLeft) {
@@ -16,8 +16,8 @@ function clickSlider(offsetLeft) {
     eventSender.mouseUp();
 }
 
-clickSlider(70); // left padding (20px) + middle (50px)
-shouldBe('input.value', '"500"');
+clickSlider(90); // left padding (40px) + middle (50px)
+shouldBe('input.value', '"25"');
 
 </script>
 

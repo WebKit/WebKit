@@ -1,6 +1,6 @@
 Clicking middle of input type=range with padding should set the value to middle.
 
-PASS input.value is "500"
+PASS input.value is "25"
 PASS successfullyParsed is true
 
 TEST COMPLETE
