@@ -107,6 +107,7 @@ SET(JavaScriptCore_SOURCES
     heap/CopiedSpace.cpp
     heap/ConservativeRoots.cpp
     heap/DFGCodeBlocks.cpp
+    heap/GCThreadSharedData.cpp
     heap/HandleSet.cpp
     heap/HandleStack.cpp
     heap/Heap.cpp

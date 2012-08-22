@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "MarkStack.h"
+#include "MarkStackInlineMethods.h"
 
 #include "CopiedSpace.h"
 #include "CopiedSpaceInlineMethods.h"
@@ -223,89 +224,22 @@ void MarkStackArray::stealSomeCellsFrom(MarkStackArray& other, size_t idleThread
         append(other.removeLast());
 }
 
-#if ENABLE(PARALLEL_GC)
-void MarkStackThreadSharedData::resetChildren()
-{
-    for (unsigned i = 0; i < m_markingThreadsMarkStack.size(); ++i)
-        m_markingThreadsMarkStack[i]->reset();
-}
-
-size_t MarkStackThreadSharedData::childVisitCount()
-{       
-    unsigned long result = 0;
-    for (unsigned i = 0; i < m_markingThreadsMarkStack.size(); ++i)
-        result += m_markingThreadsMarkStack[i]->visitCount();
-    return result;
-}
-
-void MarkStackThreadSharedData::markingThreadMain(SlotVisitor* slotVisitor)
-{
-    WTF::registerGCThread();
-    {
-        ParallelModeEnabler enabler(*slotVisitor);
-        slotVisitor->drainFromShared(SlotVisitor::SlaveDrain);
-    }
-    delete slotVisitor;
-}
-
-void MarkStackThreadSharedData::markingThreadStartFunc(void* myVisitor)
-{               
-    SlotVisitor* slotVisitor = static_cast<SlotVisitor*>(myVisitor);
-
-    slotVisitor->sharedData().markingThreadMain(slotVisitor);
-}
+MarkStack::MarkStack(GCThreadSharedData& shared)
+    : m_stack(shared.m_segmentAllocator)
+#if !ASSERT_DISABLED
+    , m_isCheckingForDefaultMarkViolation(false)
+    , m_isDraining(false)
 #endif
-
-MarkStackThreadSharedData::MarkStackThreadSharedData(JSGlobalData* globalData)
-    : m_globalData(globalData)
-    , m_copiedSpace(&globalData->heap.m_storageSpace)
+    , m_visitCount(0)
+    , m_isInParallelMode(false)
+    , m_shared(shared)
     , m_shouldHashConst(false)
-    , m_sharedMarkStack(m_segmentAllocator)
-    , m_numberOfActiveParallelMarkers(0)
-    , m_parallelMarkersShouldExit(false)
 {
-#if ENABLE(PARALLEL_GC)
-    for (unsigned i = 1; i < Options::numberOfGCMarkers(); ++i) {
-        SlotVisitor* slotVisitor = new SlotVisitor(*this);
-        m_markingThreadsMarkStack.append(slotVisitor);
-        m_markingThreads.append(createThread(markingThreadStartFunc, slotVisitor, "JavaScriptCore::Marking"));
-        ASSERT(m_markingThreads.last());
-    }
-#endif
 }
 
-MarkStackThreadSharedData::~MarkStackThreadSharedData()
+MarkStack::~MarkStack()
 {
-#if ENABLE(PARALLEL_GC)    
-    // Destroy our marking threads.
-    {
-        MutexLocker locker(m_markingLock);
-        m_parallelMarkersShouldExit = true;
-        m_markingCondition.broadcast();
-    }
-    for (unsigned i = 0; i < m_markingThreads.size(); ++i)
-        waitForThreadCompletion(m_markingThreads[i]);
-#endif
-}
-    
-void MarkStackThreadSharedData::reset()
-{
-    ASSERT(!m_numberOfActiveParallelMarkers);
-    ASSERT(!m_parallelMarkersShouldExit);
-    ASSERT(m_sharedMarkStack.isEmpty());
-    
-#if ENABLE(PARALLEL_GC)
-    m_segmentAllocator.shrinkReserve();
-    m_opaqueRoots.clear();
-#else
-    ASSERT(m_opaqueRoots.isEmpty());
-#endif
-    m_weakReferenceHarvesters.removeAll();
-
-    if (m_shouldHashConst) {
-        m_globalData->resetNewStringsSinceLastHashConst();
-        m_shouldHashConst = false;
-    }
+    ASSERT(m_stack.isEmpty());
 }
 
 void MarkStack::setup()

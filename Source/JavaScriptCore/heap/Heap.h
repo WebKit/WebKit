@@ -24,6 +24,7 @@
 
 #include "BlockAllocator.h"
 #include "DFGCodeBlocks.h"
+#include "GCThreadSharedData.h"
 #include "HandleSet.h"
 #include "HandleStack.h"
 #include "JITStubRoutineSet.h"
@@ -74,7 +75,7 @@ namespace JSC {
         WTF_MAKE_NONCOPYABLE(Heap);
     public:
         friend class JIT;
-        friend class MarkStackThreadSharedData;
+        friend class GCThreadSharedData;
         static Heap* heap(const JSValue); // 0 for immediate values
         static Heap* heap(const JSCell*);
 
@@ -231,7 +232,7 @@ namespace JSC {
 
         MachineThreads m_machineThreads;
         
-        MarkStackThreadSharedData m_sharedData;
+        GCThreadSharedData m_sharedData;
         SlotVisitor m_slotVisitor;
 
         HandleSet m_handleSet;

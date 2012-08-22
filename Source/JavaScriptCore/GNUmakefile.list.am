@@ -273,6 +273,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/HandleTypes.h \
 	Source/JavaScriptCore/heap/BlockAllocator.cpp \
 	Source/JavaScriptCore/heap/BlockAllocator.h \
+    Source/JavaScriptCore/heap/GCThreadSharedData.cpp \
+    Source/JavaScriptCore/heap/GCThreadSharedData.h \
 	Source/JavaScriptCore/heap/Heap.cpp \
 	Source/JavaScriptCore/heap/Heap.h \
 	Source/JavaScriptCore/heap/JITStubRoutineSet.cpp \
@@ -284,6 +286,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/MachineStackMarker.h \
 	Source/JavaScriptCore/heap/MarkStack.cpp \
 	Source/JavaScriptCore/heap/MarkStack.h \
+    Source/JavaScriptCore/heap/MarkStackInlineMethods.h \
 	Source/JavaScriptCore/heap/HeapRootVisitor.h \
 	Source/JavaScriptCore/heap/MarkedAllocator.cpp \
 	Source/JavaScriptCore/heap/MarkedAllocator.h \

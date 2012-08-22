@@ -690,6 +690,9 @@
 		BCF605140E203EF800B9A64D /* ArgList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF605120E203EF800B9A64D /* ArgList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCFD8C920EEB2EE700283848 /* JumpTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFD8C900EEB2EE700283848 /* JumpTable.cpp */; };
 		BCFD8C930EEB2EE700283848 /* JumpTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFD8C910EEB2EE700283848 /* JumpTable.h */; };
+		C21122E115DD9AB300790E3A /* GCThreadSharedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C21122DE15DD9AB300790E3A /* GCThreadSharedData.cpp */; };
+		C21122E215DD9AB300790E3A /* GCThreadSharedData.h in Headers */ = {isa = PBXBuildFile; fileRef = C21122DF15DD9AB300790E3A /* GCThreadSharedData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C21122E315DD9AB300790E3A /* MarkStackInlineMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = C21122E015DD9AB300790E3A /* MarkStackInlineMethods.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C22B31B9140577D700DB475A /* SamplingCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F77008E1402FDD60078EB39 /* SamplingCounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C240305514B404E60079EB64 /* CopiedSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C240305314B404C90079EB64 /* CopiedSpace.cpp */; };
 		C25F8BCD157544A900245B71 /* IncrementalSweeper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C25F8BCB157544A900245B71 /* IncrementalSweeper.cpp */; };
@@ -1447,6 +1450,9 @@
 		BCF605120E203EF800B9A64D /* ArgList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgList.h; sourceTree = "<group>"; };
 		BCFD8C900EEB2EE700283848 /* JumpTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JumpTable.cpp; sourceTree = "<group>"; };
 		BCFD8C910EEB2EE700283848 /* JumpTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JumpTable.h; sourceTree = "<group>"; };
+		C21122DE15DD9AB300790E3A /* GCThreadSharedData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCThreadSharedData.cpp; sourceTree = "<group>"; };
+		C21122DF15DD9AB300790E3A /* GCThreadSharedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCThreadSharedData.h; sourceTree = "<group>"; };
+		C21122E015DD9AB300790E3A /* MarkStackInlineMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkStackInlineMethods.h; sourceTree = "<group>"; };
 		C240305314B404C90079EB64 /* CopiedSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CopiedSpace.cpp; sourceTree = "<group>"; };
 		C25F8BCB157544A900245B71 /* IncrementalSweeper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IncrementalSweeper.cpp; sourceTree = "<group>"; };
 		C25F8BCC157544A900245B71 /* IncrementalSweeper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IncrementalSweeper.h; sourceTree = "<group>"; };
@@ -1772,6 +1778,9 @@
 		142E312A134FF0A600AFADB5 /* heap */ = {
 			isa = PBXGroup;
 			children = (
+				C21122DE15DD9AB300790E3A /* GCThreadSharedData.cpp */,
+				C21122DF15DD9AB300790E3A /* GCThreadSharedData.h */,
+				C21122E015DD9AB300790E3A /* MarkStackInlineMethods.h */,
 				C2E526BB1590EF000054E48D /* HeapTimer.cpp */,
 				C2E526BC1590EF000054E48D /* HeapTimer.h */,
 				C25F8BCB157544A900245B71 /* IncrementalSweeper.cpp */,
@@ -2513,7 +2522,9 @@
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
 				C2EAD2FC14F0249800A4B159 /* CopiedAllocator.h in Headers */,
 				C2B916C214DA014E00CBAC86 /* MarkedAllocator.h in Headers */,
+				C21122E215DD9AB300790E3A /* GCThreadSharedData.h in Headers */,
 				C2E526BE1590EF000054E48D /* HeapTimer.h in Headers */,
+				C21122E315DD9AB300790E3A /* MarkStackInlineMethods.h in Headers */,
 				C25F8BCE157544A900245B71 /* IncrementalSweeper.h in Headers */,
 				BC18C3E60E16F5CD00B34460 /* ArrayConstructor.h in Headers */,
 				BC18C3E70E16F5CD00B34460 /* ArrayPrototype.h in Headers */,
@@ -3485,6 +3496,7 @@
 				FE4A331F15BD2E07006F54F3 /* VMInspector.cpp in Sources */,
 				0F63944015C75F1D006A597C /* DFGStructureCheckHoistingPhase.cpp in Sources */,
 				0F63945415D07055006A597C /* ArrayProfile.cpp in Sources */,
+				C21122E115DD9AB300790E3A /* GCThreadSharedData.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

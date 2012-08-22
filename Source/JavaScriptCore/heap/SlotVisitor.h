@@ -28,15 +28,17 @@
 
 #include "CopiedSpace.h"
 #include "MarkStack.h"
+#include "MarkStackInlineMethods.h"
 
 namespace JSC {
 
 class Heap;
+class GCThreadSharedData;
 
 class SlotVisitor : public MarkStack {
     friend class HeapRootVisitor;
 public:
-    SlotVisitor(MarkStackThreadSharedData&);
+    SlotVisitor(GCThreadSharedData&);
 
     void donate()
     {
@@ -85,7 +87,7 @@ private:
     CopiedAllocator m_copiedAllocator;
 };
 
-inline SlotVisitor::SlotVisitor(MarkStackThreadSharedData& shared)
+inline SlotVisitor::SlotVisitor(GCThreadSharedData& shared)
     : MarkStack(shared)
 {
 }

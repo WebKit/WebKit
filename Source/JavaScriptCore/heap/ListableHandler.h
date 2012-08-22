@@ -52,7 +52,7 @@ protected:
 private:
     // Allow these classes to use ListableHandler::List.
     friend class MarkStack;
-    friend class MarkStackThreadSharedData;
+    friend class GCThreadSharedData;
     friend class SlotVisitor;
     
     class List {

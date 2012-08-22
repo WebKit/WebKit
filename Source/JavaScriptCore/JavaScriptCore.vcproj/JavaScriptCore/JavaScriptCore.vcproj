@@ -2326,6 +2326,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\heap\GCThreadSharedData.cpp"
+				>
+			</File>
+			<File
+    			RelativePath="..\..\heap\GCThreadSharedData.h"
+    			>
+			</File>
+			<File
 				RelativePath="..\..\heap\Heap.cpp"
 				>
 			</File>
@@ -2387,6 +2395,10 @@
 			</File>
 			<File
 				RelativePath="..\..\heap\MarkStack.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\heap\MarkStackInlineMethods.h"
 				>
 			</File>
 			<File

@@ -1,3 +1,58 @@
+2012-08-22  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Separate MarkStackThreadSharedData from MarkStack
+        https://bugs.webkit.org/show_bug.cgi?id=94294
+
+        Reviewed by Filip Pizlo.
+
+        MarkStackThreadSharedData is soon going to have data to allow for a parallel copying 
+        mode too, so to separate our concerns we should split it out into its own set of files 
+        and rename it to GCThreadSharedData. For now this is purely a cosmetic refactoring.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * heap/GCThreadSharedData.cpp: Added.
+        (JSC):
+        (JSC::GCThreadSharedData::resetChildren):
+        (JSC::GCThreadSharedData::childVisitCount):
+        (JSC::GCThreadSharedData::markingThreadMain):
+        (JSC::GCThreadSharedData::markingThreadStartFunc):
+        (JSC::GCThreadSharedData::GCThreadSharedData):
+        (JSC::GCThreadSharedData::~GCThreadSharedData):
+        (JSC::GCThreadSharedData::reset):
+        * heap/GCThreadSharedData.h: Added.
+        (JSC):
+        (GCThreadSharedData):
+        * heap/Heap.h:
+        (Heap):
+        * heap/ListableHandler.h:
+        (ListableHandler):
+        * heap/MarkStack.cpp:
+        (JSC::MarkStack::MarkStack):
+        (JSC::MarkStack::~MarkStack):
+        * heap/MarkStack.h:
+        (JSC):
+        (MarkStack):
+        (JSC::MarkStack::sharedData):
+        * heap/MarkStackInlineMethods.h: Added.
+        (JSC):
+        (JSC::MarkStack::append):
+        (JSC::MarkStack::appendUnbarrieredPointer):
+        (JSC::MarkStack::appendUnbarrieredValue):
+        (JSC::MarkStack::internalAppend):
+        (JSC::MarkStack::addWeakReferenceHarvester):
+        (JSC::MarkStack::addUnconditionalFinalizer):
+        (JSC::MarkStack::addOpaqueRoot):
+        (JSC::MarkStack::containsOpaqueRoot):
+        (JSC::MarkStack::opaqueRootCount):
+        * heap/SlotVisitor.h:
+        (JSC):
+        (SlotVisitor):
+        (JSC::SlotVisitor::SlotVisitor):
+
 2012-08-22  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
 
         Fix JSC build when DFG-JIT is disabled

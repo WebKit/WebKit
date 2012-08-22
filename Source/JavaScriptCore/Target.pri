@@ -79,6 +79,7 @@ SOURCES += \
     heap/HandleSet.cpp \
     heap/HandleStack.cpp \
     heap/BlockAllocator.cpp \
+    heap/GCThreadSharedData.cpp \
     heap/Heap.cpp \
     heap/HeapTimer.cpp \
     heap/IncrementalSweeper.cpp \
