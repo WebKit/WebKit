@@ -63,7 +63,9 @@ void ScrollingThread::threadRunLoopSourceCallback(void* scrollingThread)
 
 void ScrollingThread::threadRunLoopSourceCallback()
 {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     dispatchFunctionsFromScrollingThread();
+    [pool drain];
 }
 
 } // namespace WebCore
