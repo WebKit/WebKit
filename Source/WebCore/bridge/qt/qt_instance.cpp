@@ -40,63 +40,6 @@
 namespace JSC {
 namespace Bindings {
 
-static void unusedWeakObjectMapCallback(JSWeakObjectMapRef, void*)
-{
-}
-
-WeakMapImpl::WeakMapImpl(JSContextGroupRef group)
-{
-    m_context = JSGlobalContextCreateInGroup(group, 0);
-    // Deleted by GC when m_context's globalObject gets collected.
-    m_map = JSWeakObjectMapCreate(m_context, 0, unusedWeakObjectMapCallback);
-}
-
-WeakMapImpl::~WeakMapImpl()
-{
-    JSGlobalContextRelease(m_context);
-    m_context = 0;
-    m_map = 0;
-}
-
-typedef HashMap<JSContextGroupRef, RefPtr<WeakMapImpl> > WeakMapSet;
-static WeakMapSet weakMaps;
-
-WeakMap::~WeakMap()
-{
-    // If this is the last WeakMap instance left, then we should remove
-    // the cached WeakMapImpl from the global weakMaps, too.
-    if (m_impl && m_impl->refCount() == 2) {
-        weakMaps.remove(JSContextGetGroup(m_impl->m_context));
-        ASSERT(m_impl->hasOneRef());
-    }
-}
-
-void WeakMap::set(JSContextRef context, void *key, JSObjectRef object)
-{
-    if (!m_impl) {
-        JSContextGroupRef group = JSContextGetGroup(context);
-        WeakMapSet::AddResult entry = weakMaps.add(group, 0);
-        if (entry.isNewEntry)
-            entry.iterator->second = adoptRef(new WeakMapImpl(group));
-        m_impl = entry.iterator->second;
-    }
-    JSWeakObjectMapSet(m_impl->m_context, m_impl->m_map, key, object);
-}
-
-JSObjectRef WeakMap::get(void* key)
-{
-    if (!m_impl)
-        return 0;
-    return JSWeakObjectMapGet(m_impl->m_context, m_impl->m_map, key);
-}
-
-void WeakMap::remove(void *key)
-{
-    if (!m_impl)
-        return;
-    JSWeakObjectMapRemove(m_impl->m_context, m_impl->m_map, key);
-}
-
 // Cache QtInstances
 typedef QMultiHash<void*, QtInstance*> QObjectInstanceMap;
 static QObjectInstanceMap cachedInstances;
