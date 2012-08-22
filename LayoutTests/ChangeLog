@@ -1,3 +1,17 @@
+2012-08-21  Tony Chang  <tony@chromium.org>
+
+        Force XML comments to maintain whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=94620
+
+        Reviewed by Pavel Feldman.
+
+        Update comments to include whitespace formatting.
+
+        * http/tests/xmlviewer/dumpAsText/xlink-expected.txt:
+        * http/tests/xmlviewer/dumpAsText/xmlviewer-expected.txt:
+        * http/tests/xmlviewer/dumpAsText/xul-expected.txt:
+        * platform/chromium/http/tests/xmlviewer/dumpAsText/mathml-expected.txt:
+
 2012-08-21  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Fire error at request when abort is called in upgradeneeded

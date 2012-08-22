@@ -51,7 +51,7 @@ div.collapsible > div.hidden {
     margin-left: 1em;
 }
 .comment {
-    whitespace: pre;
+    white-space: pre;
 }
 
 .button {

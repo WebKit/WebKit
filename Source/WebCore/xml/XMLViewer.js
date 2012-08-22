@@ -289,6 +289,7 @@ function createExpandButton(str)
 function createComment(commentString)
 {
     var comment = createHTMLElement('span');
+    comment.classList.add('comment');
     comment.classList.add('webkit-html-comment');
     comment.textContent = commentString;
     return comment;
