@@ -433,6 +433,21 @@ void RenderBox::updateLayerTransform()
         layer()->updateTransform();
 }
 
+LayoutUnit RenderBox::logicalHeightConstrainedByMinMax(LayoutUnit availableHeight)
+{
+    RenderStyle* styleToUse = style();
+    LayoutUnit result = computeLogicalHeightUsing(MainOrPreferredSize, styleToUse->logicalHeight());
+    if (result == -1)
+        result = availableHeight;
+    LayoutUnit minH = computeLogicalHeightUsing(MinSize, styleToUse->logicalMinHeight()); // Leave as -1 if unset.
+    LayoutUnit maxH = styleToUse->logicalMaxHeight().isUndefined() ? result : computeLogicalHeightUsing(MaxSize, styleToUse->logicalMaxHeight());
+    if (maxH == -1)
+        maxH = result;
+    result = min(maxH, result);
+    result = max(minH, result);
+    return result;
+}
+
 IntRect RenderBox::absoluteContentBox() const
 {
     // This is wrong with transforms and flipped writing modes.
@@ -1979,13 +1994,12 @@ void RenderBox::computeLogicalHeight()
         // grab our cached flexible height.
         // FIXME: Account for block-flow in flexible boxes.
         // https://bugs.webkit.org/show_bug.cgi?id=46418
-        RenderStyle* styleToUse = style();
         if (hasOverrideHeight() && parent()->isFlexibleBoxIncludingDeprecated())
             h = Length(overrideLogicalContentHeight(), Fixed);
         else if (treatAsReplaced)
             h = Length(computeReplacedLogicalHeight(), Fixed);
         else {
-            h = styleToUse->logicalHeight();
+            h = style()->logicalHeight();
             checkMinMaxHeight = true;
         }
 
@@ -1999,17 +2013,9 @@ void RenderBox::computeLogicalHeight()
         }
 
         LayoutUnit heightResult;
-        if (checkMinMaxHeight) {
-            heightResult = computeLogicalHeightUsing(MainOrPreferredSize, styleToUse->logicalHeight());
-            if (heightResult == -1)
-                heightResult = logicalHeight();
-            LayoutUnit minH = computeLogicalHeightUsing(MinSize, styleToUse->logicalMinHeight()); // Leave as -1 if unset.
-            LayoutUnit maxH = styleToUse->logicalMaxHeight().isUndefined() ? heightResult : computeLogicalHeightUsing(MaxSize, styleToUse->logicalMaxHeight());
-            if (maxH == -1)
-                maxH = heightResult;
-            heightResult = min(maxH, heightResult);
-            heightResult = max(minH, heightResult);
-        } else {
+        if (checkMinMaxHeight)
+            heightResult = logicalHeightConstrainedByMinMax(logicalHeight());
+        else {
             // The only times we don't check min/max height are when a fixed length has
             // been given as an override.  Just use that.  The value has already been adjusted
             // for box-sizing.

@@ -1,3 +1,17 @@
+2012-08-21  Shezan Baig  <sbaig1@bloomberg.net>
+
+        Fix cross-direction stretch for replaced elements in row flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=94237
+
+        Reviewed by Ojan Vafai.
+
+        Fix test cases for images stretching in the cross direction. Also,
+        added test cases for stretching/shrinking iframes, seamless iframes,
+        and also tests for vertically flowing flexboxes.
+
+        * css3/flexbox/flexitem-expected.txt:
+        * css3/flexbox/flexitem.html:
+
 2012-08-21  Kenneth Russell  <kbr@google.com>
 
         Unreviewed Chromium gardening. Rebaseline tests after http://trac.webkit.org/changeset/126225 .

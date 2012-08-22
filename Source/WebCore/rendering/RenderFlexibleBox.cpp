@@ -1233,21 +1233,23 @@ void RenderFlexibleBox::alignChildren(OrderIterator& iterator, const WTF::Vector
 void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox* child, LayoutUnit lineCrossAxisExtent)
 {
     if (!isColumnFlow() && child->style()->logicalHeight().isAuto()) {
-        LayoutUnit logicalHeightBefore = child->logicalHeight();
-        LayoutUnit stretchedLogicalHeight = child->logicalHeight() + availableAlignmentSpaceForChild(lineCrossAxisExtent, child);
+        // FIXME: If the child has orthogonal flow, then it already has an override height set. How do we stretch?
+        if (!hasOrthogonalFlow(child)) {
+            LayoutUnit stretchedLogicalHeight = child->logicalHeight() + availableAlignmentSpaceForChild(lineCrossAxisExtent, child);
+            LayoutUnit desiredLogicalHeight = child->logicalHeightConstrainedByMinMax(stretchedLogicalHeight);
 
-        child->setLogicalHeight(stretchedLogicalHeight);
-        child->computeLogicalHeight();
-
-        // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
-        if (child->logicalHeight() != logicalHeightBefore) {
-            child->setOverrideLogicalContentHeight(child->logicalHeight() - child->borderAndPaddingLogicalHeight());
-            child->setLogicalHeight(0);
-            child->setChildNeedsLayout(true, MarkOnlyThis);
-            child->layoutIfNeeded();
+            // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
+            if (desiredLogicalHeight != child->logicalHeight()) {
+                child->setOverrideLogicalContentHeight(desiredLogicalHeight - child->borderAndPaddingLogicalHeight());
+                child->setLogicalHeight(0);
+                child->setChildNeedsLayout(true, MarkOnlyThis);
+                child->layoutIfNeeded();
+            }
         }
     } else if (isColumnFlow() && child->style()->logicalWidth().isAuto() && isMultiline()) {
         // FIXME: Handle min-width and max-width.
+        // FIXME: We only need to relayout here if the width changes.
+        // FIXME: The isMultiline check above may not be necessary if the width has not changed. See https://webkit.org/b/94237
         LayoutUnit childWidth = lineCrossAxisExtent - crossAxisMarginExtentForChild(child);
         child->setOverrideLogicalContentWidth(std::max(ZERO_LAYOUT_UNIT, childWidth));
         child->setChildNeedsLayout(true, MarkOnlyThis);

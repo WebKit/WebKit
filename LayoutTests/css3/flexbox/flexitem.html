@@ -16,6 +16,9 @@
     font-size: 12px;
     min-width: 0;
 }
+.column {
+    -webkit-flex-direction: column;
+}
 </style>
 <script>
 if (window.testRunner)
@@ -23,15 +26,15 @@ if (window.testRunner)
 </script>
 <script src="../../resources/check-layout.js"></script>
 <body onload="checkLayout('.flexbox')">
-<div class="flexbox">
-  <button data-expected-display="block" data-expected-width="100">button</button>
-  <canvas data-expected-display="block" data-expected-width="100">canvas</canvas>
-  <iframe data-expected-display="block" data-expected-width="100" src="data:text/html,<body bgcolor=#fff>iframe</body>"></iframe>
-  <object data-expected-display="block" data-expected-width="100">object</object>
-  <select data-expected-display="block" data-expected-width="100">
+<div class="flexbox" style="height:200px">
+  <button data-expected-display="block" data-expected-width="100" data-expected-height="200">button</button>
+  <canvas data-expected-display="block" data-expected-width="100" data-expected-height="200">canvas</canvas>
+  <iframe data-expected-display="block" data-expected-width="100" data-expected-height="200" src="data:text/html,<body bgcolor=#fff>iframe</body>"></iframe>
+  <object data-expected-display="block" data-expected-width="100" data-expected-height="200">object</object>
+  <select data-expected-display="block" data-expected-width="100" data-expected-height="200">
     <option>select</option>
   </select>
-  <textarea data-expected-display="block" data-expected-width="100">textarea</textarea>
+  <textarea data-expected-display="block" data-expected-width="100" data-expected-height="200">textarea</textarea>
 </div>
 
 
@@ -48,13 +51,11 @@ if (window.testRunner)
 
 <div class="flexbox">
   <img data-expected-display="block" data-expected-width="345" style="-webkit-flex: 1 0 auto;" src="../images/resources/blue-100.png">
-  <!-- FIXME: The image should stretch in the cross direction. -->
   <img data-expected-display="block" data-expected-width="255" data-expected-height="100" style="-webkit-flex: 1 0 auto;" src="../images/resources/green-10.png">
 </div>
 
 <div class="flexbox">
   <img data-expected-display="block" data-expected-width="200" style="-webkit-flex: 1 0 auto;" src="../images/resources/blue-100.png">
-  <!-- FIXME: The missing image placeholders should stretch in the cross direction. -->
   <img data-expected-display="block" data-expected-width="200" data-expected-height="100" style="-webkit-flex: 2 0 0;" src="doesnotexist.png">
   <img data-expected-display="block" data-expected-width="200" data-expected-height="100" style="-webkit-flex: 2 0 0;" src="doesnotexist.png" alt="placeholder text">
 </div>
@@ -89,6 +90,39 @@ if (window.testRunner)
 <div class="flexbox">
   <!-- FIXME: This table should flex. -->
   <div data-expected-display="table" data-expected-width="600" style="display: inline-table"></div>
+</div>
+
+<div class="flexbox" style="height:200px">
+  <iframe data-expected-display="block" data-expected-height="200" src="data:text/html,<body bgcolor=#fff>iframe</body>"></iframe>
+  <iframe seamless data-expected-display="block" data-expected-height="200" src="data:text/html,<body bgcolor=#fff>iframe</body>"></iframe>
+</div>
+
+<div class="flexbox" style="height:100px">
+  <iframe data-expected-display="block" data-expected-height="100" src="data:text/html,<body bgcolor=#fff>iframe</body>"></iframe>
+  <iframe seamless data-expected-display="block" data-expected-height="100" src="data:text/html,<body bgcolor=#fff>iframe</body>"></iframe>
+</div>
+
+<div class="flexbox column" style="width:100px">
+  <!-- FIXME: The iframe should shrink in the cross direction: https://webkit.org/b/94604 -->
+  <iframe data-expected-display="block" data-expected-width="100px" src="data:text/html,<body bgcolor=#fff>iframe</body>"></iframe>
+  <iframe seamless data-expected-display="block" data-expected-width="100px" src="data:text/html,<body bgcolor=#fff>iframe</body>"></iframe>
+</div>
+
+<div class="flexbox column" style="height:210px">
+  <!-- FIXME: The button should stretch in the cross direction. -->
+  <button data-expected-display="block" data-expected-width="600" data-expected-height="30">button</button>
+  <!-- FIXME: The canvas should stretch in the cross direction: https://webkit.org/b/94604 -->
+  <canvas data-expected-display="block" data-expected-width="600" data-expected-height="30" style="height:30px">canvas</canvas>
+  <!-- FIXME: The iframe should stretch in the cross direction: https://webkit.org/b/94604 -->
+  <iframe data-expected-display="block" data-expected-width="600" data-expected-height="30" style="height:30px" src="data:text/html,<body bgcolor=#fff>iframe</body>"></iframe>
+  <iframe seamless data-expected-display="block" data-expected-width="600" data-expected-height="30" style="height:30px" src="data:text/html,<body bgcolor=#fff>iframe</body>"></iframe>
+  <object data-expected-display="block" data-expected-width="600" data-expected-height="30">object</object>
+  <!-- FIXME: The select should stretch in the cross direction. -->
+  <select data-expected-display="block" data-expected-width="600" data-expected-height="30">
+    <option>select</option>
+  </select>
+  <!-- FIXME: The textarea should stretch in the cross direction. -->
+  <textarea data-expected-display="block" data-expected-width="600" data-expected-height="30">textarea</textarea>
 </div>
 
 </html>
