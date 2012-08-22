@@ -629,7 +629,8 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     }
 
     return new FontPlatformData(hfont,
-                                fontDescription.computedPixelSize());
+                                fontDescription.computedPixelSize(),
+                                fontDescription.orientation());
 }
 
 }

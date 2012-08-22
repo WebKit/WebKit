@@ -100,7 +100,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
     logFont.lfWeight = bold ? FW_BOLD : FW_DONTCARE;
 
     HFONT hfont = CreateFontIndirect(&logFont);
-    return FontPlatformData(hfont, size);
+    return FontPlatformData(hfont, size, orientation);
 #elif OS(UNIX)
     ASSERT(m_fontReference);
     return FontPlatformData(m_fontReference, "", size, bold && !m_fontReference->isBold(), italic && !m_fontReference->isItalic(), orientation, textOrientation);

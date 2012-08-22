@@ -2192,10 +2192,10 @@ BUGWK90363 DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS TIMEOU
 // WebKit roll 74255:74308
 BUGCR67416 LINUX ANDROID WIN : fast/text/emphasis.html = IMAGE+TEXT
 BUGCR67416 : fast/text/emphasis-vertical.html = IMAGE IMAGE+TEXT
-BUGCR67540 LINUX ANDROID WIN : fast/text/emphasis-overlap.html = IMAGE+TEXT
-BUGCR67540 LINUX ANDROID WIN : fast/text/emphasis-avoid-ruby.html = IMAGE
+BUGCR67540 LINUX ANDROID : fast/text/emphasis-overlap.html = IMAGE+TEXT
+BUGCR67540 LINUX ANDROID : fast/text/emphasis-avoid-ruby.html = IMAGE
 BUGCR67540 LINUX ANDROID WIN SNOWLEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
-BUGCR67540 LINUX ANDROID WIN : fast/repaint/text-emphasis-v.html = IMAGE
+BUGCR67540 LINUX ANDROID : fast/repaint/text-emphasis-v.html = IMAGE
 
 BUGCR67442 LINUX WIN : fast/canvas/fillText-shadow.html = TEXT
 BUGCR67442 LINUX ANDROID WIN : platform/chromium/virtual/gpu/fast/canvas/fillText-shadow.html = TEXT

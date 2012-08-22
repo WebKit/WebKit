@@ -32,14 +32,16 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
-#include <windows.h>
-#include <objidl.h>
-#include <mlang.h>
-
+#include "FontCache.h"
 #include "HWndDC.h"
 #include "PlatformSupport.h"
+#include "SharedBuffer.h"
 #include "SkTypeface_win.h"
 #include "SkiaFontWin.h"
+
+#include <mlang.h>
+#include <objidl.h>
+#include <windows.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -62,6 +64,7 @@ SkTypeface* CreateTypefaceFromHFont(HFONT hfont, int* size, int* lfQuality)
 FontPlatformData::FontPlatformData(WTF::HashTableDeletedValueType)
     : m_font(hashTableDeletedFontValue())
     , m_size(-1)
+    , m_orientation(Horizontal)
     , m_scriptCache(0)
     , m_scriptFontProperties(0)
     , m_typeface(0)
@@ -72,6 +75,7 @@ FontPlatformData::FontPlatformData(WTF::HashTableDeletedValueType)
 FontPlatformData::FontPlatformData()
     : m_font(0)
     , m_size(0)
+    , m_orientation(Horizontal)
     , m_scriptCache(0)
     , m_scriptFontProperties(0)
     , m_typeface(0)
@@ -79,9 +83,10 @@ FontPlatformData::FontPlatformData()
 {
 }
 
-FontPlatformData::FontPlatformData(HFONT font, float size)
+FontPlatformData::FontPlatformData(HFONT font, float size, FontOrientation orientation)
     : m_font(RefCountedHFONT::create(font))
     , m_size(size)
+    , m_orientation(orientation)
     , m_scriptCache(0)
     , m_scriptFontProperties(0)
     , m_typeface(CreateTypefaceFromHFont(font, 0, &m_lfQuality))
@@ -92,6 +97,7 @@ FontPlatformData::FontPlatformData(HFONT font, float size)
 FontPlatformData::FontPlatformData(float size, bool bold, bool oblique)
     : m_font(0)
     , m_size(size)
+    , m_orientation(Horizontal)
     , m_scriptCache(0)
     , m_scriptFontProperties(0)
     , m_typeface(0)
@@ -102,6 +108,7 @@ FontPlatformData::FontPlatformData(float size, bool bold, bool oblique)
 FontPlatformData::FontPlatformData(const FontPlatformData& data)
     : m_font(data.m_font)
     , m_size(data.m_size)
+    , m_orientation(data.m_orientation)
     , m_scriptCache(0)
     , m_scriptFontProperties(0)
     , m_typeface(data.m_typeface)
@@ -115,6 +122,7 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& data)
     if (this != &data) {
         m_font = data.m_font;
         m_size = data.m_size;
+        m_orientation = data.m_orientation;
         SkRefCnt_SafeAssign(m_typeface, data.m_typeface);
         m_lfQuality = data.m_lfQuality;
 

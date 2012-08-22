@@ -1,3 +1,23 @@
+2012-08-22  Koji Ishii  <kojiishi@gmail.com>
+
+        FontMetrics.unitsPerEm(), FontPlatformData.orientation(), SimpleFontData::platformBoundsForGlyph are not implemented on Chromium Windows
+        https://bugs.webkit.org/show_bug.cgi?id=83512
+
+        Reviewed by Tony Chang.
+
+        Chromium Windows does not implement following 3 functions that are required for bug 51450.
+        1. FontMetrics.unitsPerEm() always returns the default value (gDefaultUnitsPerEm = 1000).
+           This change requires rebaseline of fast/repaint/stacked-diacritics and fast/text/emphasis-overlap.
+        2. FontPlatformData.orientation() always returns Horizontal. This has no effect as of this patch.
+        3. SimpleFontData::platformBoundsForGlyph() always returns FloatRect().
+           This change improves rendering of text-emphasis and 3 existing tests pass now.
+        Tony suggested in bug 51450 review to split code that is not behind
+        #if ENABLE(OPENTYPE_VERTICAL) to a separate patch.
+
+        * platform/chromium-win/fast/repaint/stacked-diacritics-expected.png:
+        * platform/chromium-win/fast/text/emphasis-overlap-expected.txt: Added due to metrics change.
+        * platform/chromium/TestExpectations: Enabled 3 tests for Chromium Win.
+
 2012-08-22  Dominic Mazzoni  <dmazzoni@google.com>
 
         REGRESSION (r125710): accessibility/accessibility-node-reparent.html, accessibility/accessibility-node-memory-management.html failing on GTK Linux

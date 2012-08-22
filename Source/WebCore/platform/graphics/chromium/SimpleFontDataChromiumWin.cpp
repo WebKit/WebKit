@@ -81,6 +81,8 @@ void SimpleFontData::platformInit()
 
     OUTLINETEXTMETRIC outlineTextMetric;
     if (GetOutlineTextMetrics(dc, sizeof(outlineTextMetric), &outlineTextMetric) > 0) {
+        m_fontMetrics.setUnitsPerEm(outlineTextMetric.otmEMSquare);
+
         // This is a TrueType font.  We might be able to get an accurate xHeight.
         GLYPHMETRICS glyphMetrics = {0};
         MAT2 identityMatrix = {{0, 1}, {0, 0}, {0, 0}, {0, 1}};
@@ -114,7 +116,7 @@ PassOwnPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescri
     float scaledSize = scaleFactor * fontDescription.computedSize();
     winFont.lfHeight = -lroundf(scaledSize);
     HFONT hfont = CreateFontIndirect(&winFont);
-    return adoptPtr(new SimpleFontData(FontPlatformData(hfont, scaledSize), isCustomFont(), false));
+    return adoptPtr(new SimpleFontData(FontPlatformData(hfont, scaledSize, m_platformData.orientation()), isCustomFont(), false));
 }
 
 SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
@@ -168,9 +170,28 @@ void SimpleFontData::determinePitch()
     SelectObject(dc, oldFont);
 }
 
-FloatRect SimpleFontData::platformBoundsForGlyph(Glyph) const
+FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
 {
-    return FloatRect();
+    HWndDC hdc(0);
+    SetGraphicsMode(hdc, GM_ADVANCED);
+    HGDIOBJ oldFont = SelectObject(hdc, m_platformData.hfont());
+
+    GLYPHMETRICS gdiMetrics;
+    static const MAT2 identity = { 0, 1,  0, 0,  0, 0,  0, 1 };
+    if (GetGlyphOutline(hdc, glyph, GGO_METRICS | GGO_GLYPH_INDEX, &gdiMetrics, 0, 0, &identity) == -1) {
+        if (PlatformSupport::ensureFontLoaded(m_platformData.hfont())) {
+            // Retry GetTextMetrics.
+            // FIXME: Handle gracefully the error if this call also fails.
+            // See http://crbug.com/6401.
+            if (GetGlyphOutline(hdc, glyph, GGO_METRICS | GGO_GLYPH_INDEX, &gdiMetrics, 0, 0, &identity) == -1)
+                LOG_ERROR("Unable to get the glyph metrics after second attempt");
+        }
+    }
+
+    SelectObject(hdc, oldFont);
+
+    return FloatRect(gdiMetrics.gmptGlyphOrigin.x, -gdiMetrics.gmptGlyphOrigin.y,
+        gdiMetrics.gmBlackBoxX, gdiMetrics.gmBlackBoxY);
 }
 
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const

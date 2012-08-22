@@ -64,7 +64,7 @@ public:
     FontPlatformData(WTF::HashTableDeletedValueType);
     FontPlatformData();
     // This constructor takes ownership of the HFONT
-    FontPlatformData(HFONT, float size);
+    FontPlatformData(HFONT, float size, FontOrientation);
     FontPlatformData(float size, bool bold, bool oblique);
     FontPlatformData(const FontPlatformData&);
 
@@ -79,8 +79,8 @@ public:
     SkTypeface* typeface() const { return m_typeface; }
     int lfQuality() const { return m_lfQuality; }
 
-    FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
-    void setOrientation(FontOrientation) { } // FIXME: Implement.
+    FontOrientation orientation() const { return m_orientation; }
+    void setOrientation(FontOrientation orientation) { m_orientation = orientation; }
 
     unsigned hash() const
     {
@@ -89,7 +89,7 @@ public:
 
     bool operator==(const FontPlatformData& other) const
     { 
-        return m_font == other.m_font && m_size == other.m_size;
+        return m_font == other.m_font && m_size == other.m_size && m_orientation == other.m_orientation;
     }
 
 #ifndef NDEBUG
@@ -137,6 +137,7 @@ private:
 
     RefPtr<RefCountedHFONT> m_font;
     float m_size;  // Point size of the font in pixels.
+    FontOrientation m_orientation;
 
     SkTypeface* m_typeface; // cached from m_font
     int m_lfQuality; // cached from m_font
