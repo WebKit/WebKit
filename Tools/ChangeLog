@@ -1,3 +1,15 @@
+2012-08-22  Scott Graham  <scottmg@chromium.org>
+
+        Don't unconditionally define NOMINMAX on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=94742
+
+        Reviewed by Adrienne Walker.
+
+        Avoids a warning when building on Windows when NOMINMAX is defined
+        elsewhere or on the command line.
+
+        * TestWebKitAPI/config.h:
+
 2012-08-22  Zan Dobersek  <zandobersek@gmail.com>
 
         REGRESSION(r126189): Reftest mismatches are (again) run through ImageDiff with 0.1 tolerance

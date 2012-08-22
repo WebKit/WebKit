@@ -43,7 +43,9 @@
 
 #elif defined(WIN32) || defined(_WIN32)
 
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 
 #endif
 
