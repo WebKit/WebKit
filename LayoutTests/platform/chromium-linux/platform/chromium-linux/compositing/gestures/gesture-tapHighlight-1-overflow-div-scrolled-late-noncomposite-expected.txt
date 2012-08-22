@@ -1,0 +1,7 @@
+Link 1
+Link 2
+Link 3
+Target Link.
+Link 4
+Link 5
+This test is successful if "Target Link" above is covered in a transparent green rectangle with rounded corners.

@@ -52,7 +52,6 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "Image.h"
-#include "LinkHighlight.h"
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
 #include "PlatformString.h"
@@ -83,6 +82,7 @@ PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 
 GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
     : GraphicsLayer(client)
+    , m_linkHighlight(0)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_contentsLayerHasBackgroundColor(false)
     , m_inSetChildren(false)
@@ -120,8 +120,10 @@ void GraphicsLayerChromium::willBeDestroyed()
         m_transformLayer.setAnimationDelegate(0);
     }
 
-    if (m_linkHighlight)
-        m_linkHighlight.clear();
+    if (m_linkHighlight) {
+        m_linkHighlight->clearCurrentGraphicsLayer();
+        m_linkHighlight = 0;
+    }
 
     GraphicsLayer::willBeDestroyed();
 }
@@ -150,7 +152,7 @@ void GraphicsLayerChromium::updateNames()
     }
     if (m_linkHighlight) {
         String debugName = "LinkHighlight for " + m_nameBase;
-        m_linkHighlight->contentLayer()->setDebugName(debugName);
+        m_linkHighlight->layer()->setDebugName(debugName);
     }
 }
 
@@ -233,8 +235,11 @@ void GraphicsLayerChromium::setSize(const FloatSize& size)
     GraphicsLayer::setSize(clampedSize);
     updateLayerSize();
 
-    if (m_pageScaleChanged && !m_layer.isNull())
+    if (m_pageScaleChanged && !m_layer.isNull()) {
         m_layer.invalidate();
+        if (m_linkHighlight)
+            m_linkHighlight->invalidate();
+    }
     m_pageScaleChanged = false;
 }
 
@@ -453,14 +458,20 @@ void GraphicsLayerChromium::setContentsNeedsDisplay()
 
 void GraphicsLayerChromium::setNeedsDisplay()
 {
-    if (drawsContent())
+    if (drawsContent()) {
         m_layer.invalidate();
+        if (m_linkHighlight)
+            m_linkHighlight->invalidate();
+    }
 }
 
 void GraphicsLayerChromium::setNeedsDisplayInRect(const FloatRect& rect)
 {
-    if (drawsContent())
+    if (drawsContent()) {
         m_layer.invalidateRect(rect);
+        if (m_linkHighlight)
+            m_linkHighlight->invalidate();
+    }
 }
 
 void GraphicsLayerChromium::setContentsRect(const IntRect& rect)
@@ -564,18 +575,10 @@ void GraphicsLayerChromium::resumeAnimations()
     primaryLayer().resumeAnimations(monotonicallyIncreasingTime());
 }
 
-void GraphicsLayerChromium::addLinkHighlight(const Path& path)
+void GraphicsLayerChromium::setLinkHighlight(LinkHighlightClient* linkHighlight)
 {
-    m_linkHighlight = LinkHighlight::create(this, path, AnimationIdVendor::LinkHighlightAnimationId, AnimationIdVendor::getNextGroupId());
+    m_linkHighlight = linkHighlight;
     updateChildList();
-}
-
-void GraphicsLayerChromium::didFinishLinkHighlight()
-{
-    if (m_linkHighlight)
-        m_linkHighlight->contentLayer()->removeFromParent();
-
-    m_linkHighlight.clear();
 }
 
 void GraphicsLayerChromium::setContentsToMedia(PlatformLayer* layer)
@@ -653,7 +656,7 @@ void GraphicsLayerChromium::updateChildList()
     }
 
     if (m_linkHighlight)
-        newChildren.append(m_linkHighlight->contentLayer());
+        newChildren.append(*m_linkHighlight->layer());
 
     for (size_t i = 0; i < newChildren.size(); ++i)
         newChildren[i].removeFromParent();
@@ -785,8 +788,11 @@ void GraphicsLayerChromium::updateLayerIsDrawable()
     if (!m_contentsLayer.isNull())
         m_contentsLayer.setDrawsContent(m_contentsVisible);
 
-    if (m_drawsContent)
+    if (m_drawsContent) {
         m_layer.invalidate();
+        if (m_linkHighlight)
+            m_linkHighlight->invalidate();
+    }
 
     updateDebugIndicators();
 }

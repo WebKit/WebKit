@@ -1,3 +1,121 @@
+2012-08-22  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Add touch link highlight animation layers.
+        https://bugs.webkit.org/show_bug.cgi?id=84487
+
+        Reviewed by James Robinson.
+
+        Adds support for creating composited touch link highlights in renderer thread. Clipping not yet
+        implemented for non-composited frames/overflow divs, but scrolling and layout changes are supported.
+        Transform support currently limited to translation.
+
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-clipped.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-late-composite.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-late-noncomposite.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-scrolled.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-composited-scroll-clip.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-composited-scrolled.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-composited.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-layout-change-2.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-layout-change.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-scrolled-late-composite.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-scrolled-late-noncomposite.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-scrolled.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-composited-inner.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-composited-outer.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-inner-late-composite.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-inner.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-outer-late-composite.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-outer.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-inner-scroll-inner.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-inner-scroll-outer.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-inner.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-outer-scroll-inner.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-outer-scroll-outer.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-outer.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-scrolled-inner.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-scrolled-outer.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-window-scroll.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple.html: Added.
+        * platform/chromium-linux/compositing/gestures/resources/1-frame-composited.html: Added.
+        * platform/chromium-linux/compositing/gestures/resources/1-frame-noncomposited.html: Added.
+        * platform/chromium-linux/compositing/gestures/resources/1-nested-frame-composited.html: Added.
+        * platform/chromium-linux/compositing/gestures/resources/1-nested-frame-noncomposited.html: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-clipped-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-clipped-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-late-composite-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-late-composite-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-late-noncomposite-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-late-noncomposite-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-scrolled-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-scrolled-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-composited-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-composited-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-composited-scroll-clip-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-composited-scroll-clip-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-composited-scrolled-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-composited-scrolled-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-layout-change-2-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-layout-change-2-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-layout-change-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-layout-change-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-scrolled-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-scrolled-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-scrolled-late-composite-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-scrolled-late-composite-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-scrolled-late-noncomposite-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-scrolled-late-noncomposite-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-composited-inner-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-composited-inner-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-composited-outer-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-composited-outer-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-inner-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-inner-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-inner-late-composite-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-inner-late-composite-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-outer-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-outer-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-outer-late-composite-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-outer-late-composite-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-inner-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-inner-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-inner-scroll-inner-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-inner-scroll-inner-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-inner-scroll-outer-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-inner-scroll-outer-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-outer-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-outer-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-outer-scroll-inner-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-outer-scroll-inner-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-outer-scroll-outer-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-outer-scroll-outer-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-scrolled-inner-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-scrolled-inner-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-scrolled-outer-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-scrolled-outer-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-window-scroll-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-window-scroll-expected.txt: Added.
+
 2012-08-22  Kenneth Russell  <kbr@google.com>
 
         Unreviewed Chromium gardening. Copy old Mac test expectations

@@ -1,0 +1,2 @@
+
+This test is successful if "Target Link" is covered by a transparent green box with rounded rectangles, and the inner frame is partially scrolled.

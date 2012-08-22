@@ -1,0 +1,7 @@
+Target Link.
+Link 1
+Link 2
+Link 3
+Link 4
+Link 5
+This test is successful if "Target Link" is not visible and no transparent green rectangle with rounded corners is seen.

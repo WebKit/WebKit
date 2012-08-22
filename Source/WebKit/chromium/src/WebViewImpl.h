@@ -94,6 +94,7 @@ class ContextMenuClientImpl;
 class DeviceOrientationClientProxy;
 class DragScrollTimer;
 class GeolocationClientProxy;
+class LinkHighlight;
 class WebHelperPluginImpl;
 class NonCompositedContentHost;
 class PrerendererClientImpl;
@@ -563,6 +564,8 @@ public:
 
 #if ENABLE(GESTURE_EVENTS)
     void computeScaleAndScrollForHitRect(const WebRect& hitRect, AutoZoomType, float& scale, WebPoint& scroll);
+    WebCore::Node* bestTouchLinkNode(WebCore::IntPoint touchEventLocation);
+    void enableTouchHighlight(WebCore::IntPoint touchEventLocation);
 #endif
     void animateZoomAroundPoint(const WebCore::IntPoint&, AutoZoomType);
 
@@ -585,6 +588,12 @@ public:
     virtual void requestPointerUnlock();
     virtual bool isPointerLocked();
 #endif
+
+#if ENABLE(GESTURE_EVENTS)
+    // Exposed for tests.
+    LinkHighlight* linkHighlight() { return m_linkHighlight.get(); }
+#endif
+
 
 private:
     bool computePageScaleFactorLimits();
@@ -852,6 +861,9 @@ private:
     WebPoint m_lastWheelPosition;
     WebPoint m_lastWheelGlobalPosition;
     int m_flingModifier;
+#if ENABLE(GESTURE_EVENTS)
+    OwnPtr<LinkHighlight> m_linkHighlight;
+#endif
 };
 
 } // namespace WebKit

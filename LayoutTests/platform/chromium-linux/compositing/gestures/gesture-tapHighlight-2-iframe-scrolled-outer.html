@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body onLoad="runTest();">
+<iframe id="nestingFrame" src="resources/1-nested-frame-noncomposited.html" style="position: relative; left: 10px; top: 10px; width: 450px; height: 150px;"></iframe>
+<div style="position: relative; left: 10px; top: 20px; -webkit-transform: translateZ(0);">
+This test is successful if "Target Link" is covered by a transparent green box with rounded rectangles,
+and the outer frame is partially scrolled.
+</div>
+<script>
+function runTest() {
+    var nestingFrame = document.getElementById('nestingFrame');
+    var targetFrame = nestingFrame.contentDocument.getElementById('targetFrame');
+    var clientRect = targetFrame.contentDocument.getElementById('targetLink').getBoundingClientRect();
+    x = (clientRect.left + clientRect.right) / 2;
+    y = (clientRect.top + clientRect.bottom) / 2 + nestingFrame.getBoundingClientRect().top + targetFrame.getBoundingClientRect().top;
+    if (window.testRunner) {
+        testRunner.dumpAsText(true);
+        testRunner.waitUntilDone();
+    }
+
+    if (window.eventSender) {
+        eventSender.gestureTapDown(x, y);
+        nestingFrame.contentWindow.scrollTo(0, 20);
+        window.setTimeout(function() { window.testRunner.notifyDone(); }, 0);
+    } else {
+        debug("This test requires DumpRenderTree.");
+    }
+}
+</script>
+</body>
+</html>

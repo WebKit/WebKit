@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body onload="runTest();">
+<div style="-webkit-transform: translateZ(0); width=1600px; height: 1000px">
+<div style="position: relative; left: 100; top: 50;">
+<a href="">Link 1</a></br>
+<a href="">Link 2</a></br>
+<a href="">Link 3</a></br>
+<a href="" id="targetLink" style="-webkit-tap-highlight-color: rgba(0, 255, 0, 0.5)">Target Link.</a>
+</div>
+<div style="position: relative; left: 100; top: 150; width: 700;">
+This test is successful if "Target Link" above is covered in a transparent green rectangle with rounded corners,
+and the window is partially scrolled in both directions.
+</div>
+</div>
+<script>
+function runTest() {
+    var clientRect = document.getElementById('targetLink').getBoundingClientRect();
+    x = (clientRect.left + clientRect.right) / 2;
+    y = (clientRect.top + clientRect.bottom) / 2;
+    if (window.testRunner) {
+        testRunner.dumpAsText(true);
+        testRunner.waitUntilDone();
+    }
+
+    if (window.eventSender) {
+        eventSender.gestureTapDown(x, y);
+        window.scrollTo(50, 30)
+        window.setTimeout(function() { window.testRunner.notifyDone(); }, 0);
+    } else {
+        debug("This test requires DumpRenderTree.");
+    }
+}
+</script>
+</script>
+</body>
+</html>
