@@ -1,3 +1,29 @@
+2012-08-21  Adam Barth  <abarth@webkit.org>
+
+        V8 shouldn't have its own way of printing cross-origin error messages
+        https://bugs.webkit.org/show_bug.cgi?id=94641
+
+        Reviewed by Eric Seidel.
+
+        Update these results to reflect the new error messages. These error
+        messages are both more correct and more like JavaScriptCore.
+
+        * platform/chromium/http/tests/security/cross-frame-access-private-browsing-expected.txt: Added.
+            - We don't use the private browsing setting to implement private browsing.
+        * platform/chromium/http/tests/security/cross-frame-access-document-direct-expected.txt:
+        * platform/chromium/http/tests/security/inactive-document-with-empty-security-origin-expected.txt:
+        * platform/chromium/http/tests/security/listener/xss-inactive-closure-expected.txt:
+        * platform/chromium/http/tests/security/xss-eval-expected.txt:
+            - Previously, we were incorrectly using the first script rather
+              than the active script when printing the error message.
+        * platform/chromium/http/tests/security/listener/xss-JSTargetNode-onclick-addEventListener-expected.txt: Removed.
+        * platform/chromium/http/tests/security/listener/xss-JSTargetNode-onclick-shortcut-expected.txt: Removed.
+        * platform/chromium/http/tests/security/listener/xss-XMLHttpRequest-addEventListener-expected.txt: Removed.
+        * platform/chromium/http/tests/security/listener/xss-XMLHttpRequest-shortcut-expected.txt: Removed.
+        * platform/chromium/http/tests/security/listener/xss-window-onclick-addEventListener-expected.txt: Removed.
+        * platform/chromium/http/tests/security/listener/xss-window-onclick-shortcut-expected.txt: Removed.
+            - These results are now identical to JSC.
+
 2012-08-21  Shinya Kawanaka  <shinyak@chromium.org>
 
         A shadow element in ShadowDOM of a button element does not work.

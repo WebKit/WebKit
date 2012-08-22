@@ -47,9 +47,4 @@ DOMWindow* firstDOMWindow(ExecState* exec)
     return asJSDOMWindow(exec->dynamicGlobalObject())->impl();
 }
 
-void immediatelyReportUnsafeAccessTo(ExecState* exec, Document* target)
-{
-    printErrorMessageForFrame(target->frame(), target->domWindow()->crossDomainAccessErrorMessage(activeDOMWindow(exec)));
-}
-
 }

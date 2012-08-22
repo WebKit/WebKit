@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/listener/resources/xss-inactive-closure-child-2.html from frame with URL http://127.0.0.1:8000/security/listener/resources/childWithButton.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/listener/resources/xss-inactive-closure-child-2.html from frame with URL http://127.0.0.1:8000/security/listener/resources/xss-inactive-closure-child.html. Domains, protocols and ports must match.
 
 This tests that when a frame navigates to a new page, closures in the old page cannot access page content of the new page if there are from different domains.
 

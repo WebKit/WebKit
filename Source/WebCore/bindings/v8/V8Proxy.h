@@ -110,8 +110,6 @@ namespace WebCore {
         // will be moved to ScriptController.
         V8DOMWindowShell* windowShell() const;
 
-        static void reportUnsafeAccessTo(Document* targetDocument);
-
         // FIXME: Move m_isolatedWorlds to ScriptController and remove this getter.
         IsolatedWorldMap& isolatedWorlds() { return m_isolatedWorlds; }
 

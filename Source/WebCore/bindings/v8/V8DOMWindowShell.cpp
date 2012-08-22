@@ -153,8 +153,10 @@ static Frame* getTargetFrame(v8::Local<v8::Object> host, v8::Local<v8::Value> da
 static void reportUnsafeJavaScriptAccess(v8::Local<v8::Object> host, v8::AccessType type, v8::Local<v8::Value> data)
 {
     Frame* target = getTargetFrame(host, data);
-    if (target)
-        V8Proxy::reportUnsafeAccessTo(target->document());
+    if (!target)
+        return;
+    DOMWindow* targetWindow = target->document()->domWindow();
+    targetWindow->printErrorMessage(targetWindow->crossDomainAccessErrorMessage(activeDOMWindow(BindingState::instance())));
 }
 
 PassRefPtr<V8DOMWindowShell> V8DOMWindowShell::create(Frame* frame)

@@ -77,33 +77,6 @@
 
 namespace WebCore {
 
-void V8Proxy::reportUnsafeAccessTo(Document* targetDocument)
-{
-    if (!targetDocument)
-        return;
-
-    // FIXME: We should pass both the active and target documents in as arguments.
-    Frame* source = firstFrame(BindingState::instance());
-    if (!source)
-        return;
-
-    Document* sourceDocument = source->document();
-    if (!sourceDocument)
-        return; // Ignore error if the source document is gone.
-
-    // FIXME: This error message should contain more specifics of why the same
-    // origin check has failed.
-    String str = "Unsafe JavaScript attempt to access frame with URL " + targetDocument->url().string() +
-                 " from frame with URL " + sourceDocument->url().string() + ". Domains, protocols and ports must match.\n";
-
-    RefPtr<ScriptCallStack> stackTrace = createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
-
-    // NOTE: Safari prints the message in the target page, but it seems like
-    // it should be in the source page. Even for delayed messages, we put it in
-    // the source page.
-    sourceDocument->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, str, stackTrace.release());
-}
-
 // FIXME: This will be soon removed when we move runScript() to ScriptController.
 static v8::Local<v8::Value> handleMaxRecursionDepthExceeded()
 {

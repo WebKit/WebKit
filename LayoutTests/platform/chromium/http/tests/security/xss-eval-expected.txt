@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/xss-eval3.html from frame with URL http://127.0.0.1:8000/security/xss-eval.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/xss-eval3.html from frame with URL http://127.0.0.1:8000/security/resources/xss-eval2.html. Domains, protocols and ports must match.
 
 This page verifies that you can't use eval to subvert cross-domain checks.
 

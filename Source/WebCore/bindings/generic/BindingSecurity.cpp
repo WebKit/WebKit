@@ -55,7 +55,7 @@ static bool canAccessDocument(BindingState* state, Document* targetDocument, Sec
         return true;
 
     if (reportingOption == ReportSecurityError)
-        immediatelyReportUnsafeAccessTo(state, targetDocument);
+        printErrorMessageForFrame(targetDocument->frame(), targetDocument->domWindow()->crossDomainAccessErrorMessage(active));
 
     return false;
 }

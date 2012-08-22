@@ -98,9 +98,11 @@ Document* currentDocument(BindingState*)
     return current->document();
 }
 
-void immediatelyReportUnsafeAccessTo(BindingState*, Document* targetDocument)
+void printErrorMessageForFrame(Frame* frame, const String& message)
 {
-    V8Proxy::reportUnsafeAccessTo(targetDocument);
+    if (!frame)
+        return;
+    frame->document()->domWindow()->printErrorMessage(message);
 }
 
 }
