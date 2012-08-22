@@ -886,8 +886,7 @@ void StyleResolver::collectMatchingRules(RuleSet* rules, int& firstRuleIndex, in
     // then sort the buffer.
     if (m_element->hasID())
         collectMatchingRulesForList(rules->idRules(m_element->idForStyleResolution().impl()), firstRuleIndex, lastRuleIndex, options);
-    if (m_element->hasClass()) {
-        ASSERT(m_styledElement);
+    if (m_styledElement && m_styledElement->hasClass()) {
         for (size_t i = 0; i < m_styledElement->classNames().size(); ++i)
             collectMatchingRulesForList(rules->classRules(m_styledElement->classNames()[i].impl()), firstRuleIndex, lastRuleIndex, options);
     }

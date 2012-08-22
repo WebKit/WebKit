@@ -1,3 +1,16 @@
+2012-08-22  Erik Arvidsson  <arv@chromium.org>
+
+        Changing class attribute is not reflected in the classList property
+        https://bugs.webkit.org/show_bug.cgi?id=93665
+
+        Reviewed by Ojan Vafai.
+
+        Before this change classAttributeChanged was only called for StyledElement. With this refactoring
+        it gets called for all Elements when the class attribute changes.
+
+        * fast/dom/Element/class-list-update-expected.txt: Added.
+        * fast/dom/Element/class-list-update.html: Added.
+
 2012-08-22  Kenneth Russell  <kbr@google.com>
 
         [Chromium] Need baselines for new paged-x and paged-y tests in fast/overflow after r126343

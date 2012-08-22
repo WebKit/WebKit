@@ -147,36 +147,12 @@ CSSStyleDeclaration* StyledElement::style()
 
 void StyledElement::attributeChanged(const Attribute& attribute)
 {
-    parseAttribute(attribute);
-
     if (isPresentationAttribute(attribute.name())) {
         setAttributeStyleDirty();
         setNeedsStyleRecalc(InlineStyleChange);
     }
 
     Element::attributeChanged(attribute);
-}
-
-void StyledElement::classAttributeChanged(const AtomicString& newClassString)
-{
-    const UChar* characters = newClassString.characters();
-    unsigned length = newClassString.length();
-    unsigned i;
-    for (i = 0; i < length; ++i) {
-        if (isNotHTMLSpace(characters[i]))
-            break;
-    }
-    bool hasClass = i < length;
-    if (hasClass) {
-        const bool shouldFoldCase = document()->inQuirksMode();
-        ensureAttributeData()->setClass(newClassString, shouldFoldCase);
-    } else if (attributeData())
-        mutableAttributeData()->clearClass();
-
-    if (DOMTokenList* classList = optionalClassList())
-        static_cast<ClassList*>(classList)->reset(newClassString);
-
-    setNeedsStyleRecalc();
 }
 
 void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, ShouldReparseStyleAttribute shouldReparse)
@@ -197,10 +173,10 @@ void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, Sh
 
 void StyledElement::parseAttribute(const Attribute& attribute)
 {
-    if (attribute.name() == classAttr)
-        classAttributeChanged(attribute.value());
-    else if (attribute.name() == styleAttr)
+    if (attribute.name() == styleAttr)
         styleAttributeChanged(attribute.value());
+    else
+        Element::parseAttribute(attribute);
 }
 
 void StyledElement::inlineStyleChanged()
