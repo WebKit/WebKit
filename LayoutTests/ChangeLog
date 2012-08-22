@@ -8,6 +8,21 @@
 
         [Chromium] Unreviewed gardening.
 
+        Rebaseline tests after http://trac.webkit.org/changeset/126225 .
+        https://bugs.webkit.org/show_bug.cgi?id=94665 filed to track
+        optimization of these baselines.
+
+        * platform/chromium-linux-x86/http/tests/multipart/multipart-replace-non-html-content-expected.txt: Added.
+        * platform/chromium-linux/http/tests/multipart/multipart-replace-non-html-content-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/http/tests/multipart/multipart-replace-non-html-content-expected.txt: Added.
+        * platform/chromium-mac/http/tests/multipart/multipart-replace-non-html-content-expected.txt: Added.
+        * platform/chromium-win-xp/http/tests/multipart/multipart-replace-non-html-content-expected.txt: Added.
+        * platform/chromium-win/http/tests/multipart/multipart-replace-non-html-content-expected.txt: Added.
+
+2012-08-21  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
         Add test expectations for regression in r126250. See bug 94667.
 
         * platform/chromium/TestExpectations:
