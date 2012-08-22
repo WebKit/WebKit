@@ -163,7 +163,7 @@ void InspectorConsoleAgent::startTiming(const String& title)
     if (title.isNull())
         return;
 
-    m_times.add(title, currentTime() * 1000);
+    m_times.add(title, monotonicallyIncreasingTime());
 }
 
 void InspectorConsoleAgent::stopTiming(const String& title, PassRefPtr<ScriptCallStack> callStack)
@@ -180,8 +180,8 @@ void InspectorConsoleAgent::stopTiming(const String& title, PassRefPtr<ScriptCal
     double startTime = it->second;
     m_times.remove(it);
 
-    double elapsed = currentTime() * 1000 - startTime;
-    String message = title + String::format(": %.0fms", elapsed);
+    double elapsed = monotonicallyIncreasingTime() - startTime;
+    String message = title + String::format(": %.3fms", elapsed * 1000);
     const ScriptCallFrame& lastCaller = callStack->at(0);
     addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lastCaller.sourceURL(), lastCaller.lineNumber());
 }
