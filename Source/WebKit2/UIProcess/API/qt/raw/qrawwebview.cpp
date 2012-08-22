@@ -380,9 +380,9 @@ void QRawWebView::sendWheelEvent(QWheelEvent* event)
     d->m_webPageProxy->handleWheelEvent(WebKit::NativeWebWheelEvent(event, QTransform()));
 }
 
-#if ENABLE(TOUCH_EVENTS)
 void QRawWebView::sendTouchEvent(QTouchEvent* event)
 {
+#if ENABLE(TOUCH_EVENTS)
     d->m_webPageProxy->handleTouchEvent(WebKit::NativeWebTouchEvent(event, QTransform()));
-}
 #endif
+}

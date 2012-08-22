@@ -1,3 +1,16 @@
+2012-08-22  Luiz Agostini  <luiz.agostini@nokia.com>
+
+        [Qt] Avoid using WebKit macros in qrawwebview_p.h
+        https://bugs.webkit.org/show_bug.cgi?id=94648
+
+        Reviewed by Noam Rosenthal.
+
+        ENABLE(FEATURE) should not be used in qrawwebview_p.h because it is an API header file.
+
+        * UIProcess/API/qt/raw/qrawwebview.cpp:
+        (QRawWebView::sendTouchEvent):
+        * UIProcess/API/qt/raw/qrawwebview_p.h:
+
 2012-08-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126216.
