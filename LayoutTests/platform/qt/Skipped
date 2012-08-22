@@ -2730,6 +2730,9 @@ fast/js/dfg-compare-final-object-to-final-object-or-other-when-both-proven-final
 # https://bugs.webkit.org/show_bug.cgi?id=93812
 svg/custom/use-instanceRoot-as-event-target.xhtml
 
+# https://bugs.webkit.org/show_bug.cgi?id=93897
+fast/profiler/nested-start-and-stop-profiler.html
+
 # New test introduced in r125648 fast/events/autoscroll-in-textarea.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=94076
 fast/events/autoscroll-in-textarea.html

@@ -1,3 +1,14 @@
+2012-08-22  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r126287.
+        http://trac.webkit.org/changeset/126287
+        https://bugs.webkit.org/show_bug.cgi?id=94708
+
+        It made WK1 layout testing 3.7x slower (>1hours) (Requested by
+        ossy on #webkit).
+
+        * platform/qt/Skipped:
+
 2012-08-22  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL] Support slider tick mark snapping
