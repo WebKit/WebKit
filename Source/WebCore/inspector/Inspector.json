@@ -3135,7 +3135,28 @@
     {
         "domain": "WebGL",
         "hidden": true,
-        "types": [],
+        "types": [
+            {
+                "id": "TraceLogId",
+                "type": "string",
+                "description": "Unique object identifier."
+            },
+            {
+                "id": "Call",
+                "type": "object",
+                "properties": [
+                    { "name": "functionName", "type": "string" }
+                ]
+            },
+            {
+                "id": "TraceLog",
+                "type": "object",
+                "properties": [
+                    { "name": "id", "$ref": "TraceLogId" },
+                    { "name": "calls", "type": "array", "items": { "$ref": "Call" }}
+                ]
+            }
+        ],
         "commands": [
             {
                 "name": "enable",
@@ -3144,6 +3165,37 @@
             {
                 "name": "disable",
                 "description": "Disables WebGL inspection."
+            },
+            {
+                "name": "dropTraceLog",
+                "parameters": [
+                    { "name": "traceLogId", "$ref": "TraceLogId" }
+                ]
+            },
+            {
+                "name": "captureFrame",
+                "returns": [
+                    { "name": "traceLogId", "$ref": "TraceLogId" }
+                ]
+            },
+            {
+                "name": "getTraceLog",
+                "parameters": [
+                    { "name": "traceLogId", "$ref": "TraceLogId" }
+                ],
+                "returns": [
+                    { "name": "traceLog", "$ref": "TraceLog" }
+                ]
+            },
+            {
+                "name": "replayTraceLog",
+                "parameters": [
+                    { "name": "traceLogId", "$ref": "TraceLogId" },
+                    { "name": "stepNo", "type": "integer" }
+                ],
+                "returns": [
+                    { "name": "screenshotDataUrl", "type": "string" }
+                ]
             }
         ],
         "events": []
