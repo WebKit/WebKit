@@ -1033,7 +1033,8 @@ libWebCorePlatform_la_CFLAGS = \
 	$(global_cflags)
 
 libWebCorePlatform_la_CPPFLAGS = \
-	$(common_webcore_shards_cppflags)
+	$(common_webcore_shards_cppflags) \
+	$(PANGO_CFLAGS)
 
 # We have a different library with only the files that require GTK+. It allows us
 # to build a common WebCore lib and two different gtk WebCore libs depending on
