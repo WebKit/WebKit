@@ -1,3 +1,11 @@
+2012-08-22  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed Chromium gardening. Copy old Mac test expectations
+        (ignored anyway) for this Mac-specific test after r126219.
+
+        * platform/chromium/platform/mac/fast/text/vertical-surrogate-pair-expected.png: Added.
+        * platform/chromium/platform/mac/fast/text/vertical-surrogate-pair-expected.txt: Added.
+
 2012-08-22  Mark Lam  <mark.lam@apple.com>
 
         Unskip http/tests/inspector/console-resource-errors.html.
