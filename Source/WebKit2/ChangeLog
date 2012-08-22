@@ -1,3 +1,16 @@
+2012-08-21  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] [WK2] Memory leaks in TestWebKitFindController
+        https://bugs.webkit.org/show_bug.cgi?id=94627
+
+        Reviewed by Martin Robinson.
+
+        Fix memory leaks in TestWebKitFindController by using adoptGRef
+        instead of just getting new reference of GdkPixbuf.
+
+        * UIProcess/API/gtk/tests/TestWebKitFindController.cpp:
+        (testFindControllerHide):
+
 2012-08-21  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/11241850> Block access to xpcd in WebProcess.sb

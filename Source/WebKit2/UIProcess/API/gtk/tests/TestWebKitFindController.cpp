@@ -312,7 +312,7 @@ static void testFindControllerHide(FindControllerTest* test, gconstpointer)
     g_assert(webViewGdkWindow);
 
     test->waitUntilWebViewDrawSignal();
-    GRefPtr<GdkPixbuf> originalPixbuf = gdk_pixbuf_get_from_window(webViewGdkWindow, 0, 0, allocatedHeight, allocatedWidth);
+    GRefPtr<GdkPixbuf> originalPixbuf = adoptGRef(gdk_pixbuf_get_from_window(webViewGdkWindow, 0, 0, allocatedHeight, allocatedWidth));
     g_assert(originalPixbuf);
 
     test->find("testing", WEBKIT_FIND_OPTIONS_NONE, 1);
@@ -320,7 +320,7 @@ static void testFindControllerHide(FindControllerTest* test, gconstpointer)
     g_assert(test->m_textFound);
 
     test->waitUntilWebViewDrawSignal();
-    GRefPtr<GdkPixbuf> highlightPixbuf = gdk_pixbuf_get_from_window(webViewGdkWindow, 0, 0, allocatedHeight, allocatedWidth);
+    GRefPtr<GdkPixbuf> highlightPixbuf = adoptGRef(gdk_pixbuf_get_from_window(webViewGdkWindow, 0, 0, allocatedHeight, allocatedWidth));
     g_assert(highlightPixbuf);
     g_assert(!gdkPixbufEqual(originalPixbuf.get(), highlightPixbuf.get()));
 
@@ -329,7 +329,7 @@ static void testFindControllerHide(FindControllerTest* test, gconstpointer)
     webkit_web_view_execute_editing_command(test->m_webView, "Unselect");
 
     test->waitUntilWebViewDrawSignal();
-    GRefPtr<GdkPixbuf> unhighlightPixbuf = gdk_pixbuf_get_from_window(webViewGdkWindow, 0, 0, allocatedHeight, allocatedWidth);
+    GRefPtr<GdkPixbuf> unhighlightPixbuf = adoptGRef(gdk_pixbuf_get_from_window(webViewGdkWindow, 0, 0, allocatedHeight, allocatedWidth));
     g_assert(unhighlightPixbuf);
     g_assert(gdkPixbufEqual(originalPixbuf.get(), unhighlightPixbuf.get()));
 }
