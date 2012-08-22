@@ -42,20 +42,9 @@ WebInspector.Toolbar = function()
 
     document.getElementById("close-button-left").addEventListener("click", this._onClose, true);
     document.getElementById("close-button-right").addEventListener("click", this._onClose, true);
-    this._coalescingLevel = 0;
 }
 
 WebInspector.Toolbar.prototype = {
-    /**
-     * @param {boolean} enabled
-     */
-    setCoalescingUpdate: function(enabled)
-    {
-        this._coalescingLevel += enabled ? 1 : -1;
-        if (!this._coalescingLevel)
-            this._updateDropdownButtonAndHideDropdown();
-    },
-
     resize: function()
     {
         this._updateDropdownButtonAndHideDropdown();
@@ -179,8 +168,11 @@ WebInspector.Toolbar.prototype = {
 
     _updateDropdownButtonAndHideDropdown: function()
     {
-        if (this._coalescingLevel)
-            return;
+        WebInspector.invokeOnceAfterBatchUpdate(this, this._innerUpdateDropdownButtonAndHideDropdown);
+    },
+
+    _innerUpdateDropdownButtonAndHideDropdown: function()
+    {
         this._setDropdownVisible(false);
 
         var toolbar = document.getElementById("toolbar");

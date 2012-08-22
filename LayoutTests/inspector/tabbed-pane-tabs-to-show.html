@@ -10,7 +10,7 @@ var test = function()
         {
             return title;
         }
-        return { width: width, title: title, toString: toString };
+        return { width: function() { return width; }, title: title, toString: toString };
     }
 
     var dropDownButtonMeasuredWidth = 10;

@@ -101,7 +101,7 @@ WebInspector.TabbedPane.prototype = {
      */
     appendTab: function(id, tabTitle, view, tabTooltip, userGesture)
     {
-        var tab = new WebInspector.TabbedPaneTab(this, this._tabsElement, id, tabTitle, this._closeableTabs, view, tabTooltip);
+        var tab = new WebInspector.TabbedPaneTab(this, id, tabTitle, this._closeableTabs, view, tabTooltip);
         this._tabsById[id] = tab;
 
         this._tabs.push(tab);
@@ -254,6 +254,11 @@ WebInspector.TabbedPane.prototype = {
 
     _updateTabElements: function()
     {
+        WebInspector.invokeOnceAfterBatchUpdate(this, this._innerUpdateTabElements);
+    },
+
+    _innerUpdateTabElements: function()
+    {
         if (!this.isShowing())
             return;
 
@@ -265,9 +270,7 @@ WebInspector.TabbedPane.prototype = {
         if (!this._measuredDropDownButtonWidth)
             this._measureDropDownButton();
 
-        if (this._shrinkableTabs)
-            this._updateWidths();
-        
+        this._updateWidths();
         this._updateTabsDropDown();
     },
 
@@ -374,16 +377,44 @@ WebInspector.TabbedPane.prototype = {
 
     _updateWidths: function()
     {
-        var measuredWidths = [];
-        for (var tabId in this._tabs)
-            measuredWidths.push(this._tabs[tabId].measuredWidth);
-        
-        var maxWidth = this._calculateMaxWidth(measuredWidths, this._totalWidth());
-        
+        var measuredWidths = this._measureWidths();
+        var maxWidth = this._shrinkableTabs ? this._calculateMaxWidth(measuredWidths.slice(), this._totalWidth()) : Number.MAX_VALUE;
+
+        var i = 0;
         for (var tabId in this._tabs) {
             var tab = this._tabs[tabId];
-            tab.width = Math.min(tab.measuredWidth, maxWidth);
+            tab.setWidth(Math.min(maxWidth, measuredWidths[i++]));
         }
+    },
+
+    _measureWidths: function()
+    {
+        // Add all elements to measure into this._tabsElement
+        var measuringTabElements = [];
+        for (var tabId in this._tabs) {
+            var tab = this._tabs[tabId];
+            if (typeof tab._measuredWidth === "number")
+                continue;
+            var measuringTabElement = tab._createTabElement(true);
+            measuringTabElement.__tab = tab;
+            measuringTabElements.push(measuringTabElement);
+            this._tabsElement.appendChild(measuringTabElement);
+        }
+
+        // Perform measurement
+        for (var i = 0; i < measuringTabElements.length; ++i)
+            measuringTabElements[i].__tab._measuredWidth = measuringTabElements[i].getBoundingClientRect().width;
+
+        // Nuke elements from the UI
+        for (var i = 0; i < measuringTabElements.length; ++i)
+            measuringTabElements[i].parentElement.removeChild(measuringTabElements[i]);
+
+        // Combine the results.
+        var measuredWidths = [];
+        for (var tabId in this._tabs)
+            measuredWidths.push(this._tabs[tabId]._measuredWidth);
+
+        return measuredWidths;
     },
 
     /**
@@ -429,7 +460,7 @@ WebInspector.TabbedPane.prototype = {
 
         var totalTabsWidth = 0;
         for (var i = 0; i < tabsHistory.length; ++i) {
-            totalTabsWidth += tabsHistory[i].width;
+            totalTabsWidth += tabsHistory[i].width();
             var minimalRequiredWidth = totalTabsWidth;
             if (i !== tabsHistory.length - 1)
                 minimalRequiredWidth += measuredDropDownButtonWidth;
@@ -510,18 +541,16 @@ WebInspector.TabbedPane.prototype.__proto__ = WebInspector.View.prototype;
 /**
  * @constructor
  * @param {WebInspector.TabbedPane} tabbedPane
- * @param {Element} measureElement
  * @param {string} id
  * @param {string} title
  * @param {boolean} closeable
  * @param {WebInspector.View} view
  * @param {string=} tooltip
  */
-WebInspector.TabbedPaneTab = function(tabbedPane, measureElement, id, title, closeable, view, tooltip)
+WebInspector.TabbedPaneTab = function(tabbedPane, id, title, closeable, view, tooltip)
 {
     this._closeable = closeable;
     this._tabbedPane = tabbedPane;
-    this._measureElement = measureElement;
     this._id = id;
     this._title = title;
     this._tooltip = tooltip;
@@ -599,24 +628,15 @@ WebInspector.TabbedPaneTab.prototype = {
     /**
      * @return {number}
      */
-    get measuredWidth()
+    width: function()
     {
-        if (typeof(this._measuredWidth) !== "undefined")
-            return this._measuredWidth;
-        
-        this._measure();
-        return this._measuredWidth;
+        return this._width;
     },
 
     /**
-     * @return {number}
+     * @param {number} width
      */
-    get width()
-    {
-        return this._width || this.measuredWidth;
-    },
-
-    set width(width)
+    setWidth: function(width)
     {
         this.tabElement.style.width = width + "px";
         this._width = width;
@@ -655,14 +675,6 @@ WebInspector.TabbedPaneTab.prototype = {
         }
 
         return tabElement;
-    },
-
-    _measure: function()
-    {
-        var measuringTabElement = this._createTabElement(true);
-        this._measureElement.appendChild(measuringTabElement);
-        this._measuredWidth = measuringTabElement.getBoundingClientRect().width;
-        this._measureElement.removeChild(measuringTabElement);
     },
 
     /**

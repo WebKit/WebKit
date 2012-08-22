@@ -527,11 +527,11 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     WebInspector._installDockToRight();
 
     this.toolbar = new WebInspector.Toolbar();
-    this.toolbar.setCoalescingUpdate(true);
+    WebInspector.startBatchUpdate();
     var panelDescriptors = this._panelDescriptors();
     for (var i = 0; i < panelDescriptors.length; ++i)
         WebInspector.inspectorView.addPanel(panelDescriptors[i]);
-    this.toolbar.setCoalescingUpdate(false);
+    WebInspector.endBatchUpdate();
 
     this.addMainEventListeners(document);
     WebInspector.registerLinkifierPlugin(this._profilesLinkifier.bind(this));
