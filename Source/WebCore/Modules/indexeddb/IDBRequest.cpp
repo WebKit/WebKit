@@ -160,6 +160,9 @@ void IDBRequest::abort()
     if (m_readyState == DONE)
         return;
 
+    // Enqueued events may be the only reference to this object.
+    RefPtr<IDBRequest> self(this);
+
     EventQueue* eventQueue = scriptExecutionContext()->eventQueue();
     for (size_t i = 0; i < m_enqueuedEvents.size(); ++i) {
         bool removed = eventQueue->cancelEvent(m_enqueuedEvents[i].get());
