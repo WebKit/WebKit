@@ -50,15 +50,6 @@ static const char* const s_contentEncodingHeaderKey = "Content-Encoding";
 static const char* const s_contentLengthHeaderKey = "Content-Length";
 static const char* const s_contentTypeHeaderKey = "Content-Type";
 
-static const char* const s_atom10VersionKey = "xmlns";
-static const char* const s_atom10VersionValue = "http://www.w3.org/2005/Atom";
-static const char* const s_rss10VersionKey = "xmlns";
-static const char* const s_rss10VersionValue = "http://purl.org/rss/1.0/";
-static const char* const s_rss20VersionKey = "version";
-static const char* const s_rss20VersionValue = "2.0";
-static const char* const s_rssXmlVersionKey = "version";
-static const char* const s_rssXmlVersionValue = "1.0";
-
 static int isASCIISpaceLowerByte(int ch)
 {
     return isASCIISpace<int>(ch & 0xff);
@@ -239,7 +230,7 @@ static PassOwnPtr<RSSParserBase> createParser(RSSFilterStream::ResourceType type
     case RSSFilterStream::TypeRSS20:
         return adoptPtr(new RSS20Parser());
     default:
-        // The following code is just for compiler, it should never reach here.
+        ASSERT_NOT_REACHED();
         return adoptPtr(new RSS20Parser());
     }
 }
@@ -317,8 +308,7 @@ static bool findXMLLanguagePosition(const char* str, const char*& langStart, con
 
 static const char* defaultEncodingForLanguage(const char* language)
 {
-    if (!strcasecmp(language, "en")
-        || !strcasecmp(language, "en-US"))
+    if (!strcasecmp(language, "en") || !strcasecmp(language, "en-US"))
         return s_latin1EncodingName;
     if (!strcasecmp(language, "zh-cn"))
         return s_gbkEncodingName;
@@ -330,7 +320,6 @@ static bool isTranscodingNeeded(const std::string& encoding)
 {
     // When there's no encoding information, or the encoding can not be found in all encodings
     // supported in our phone, we will try to transcode the content anyway, supposed to ASCII.
-
     if (encoding.empty())
         return true;
 
