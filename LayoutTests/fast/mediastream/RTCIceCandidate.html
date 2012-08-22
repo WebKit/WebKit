@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Tests RTCIceCandidate.");
+
+var initializer = {candidate:"foo", sdpMid:"bar", sdpMLineIndex:6};
+var candidate;
+shouldNotThrow('candidate = new RTCIceCandidate(initializer);');
+shouldBe('candidate.candidate', '"foo"');
+shouldBe('candidate.sdpMid', '"bar"');
+shouldBe('candidate.sdpMLineIndex', '6');
+
+initializer = JSON.parse(JSON.stringify(candidate));
+shouldNotThrow('candidate = new RTCIceCandidate(initializer);');
+shouldBe('candidate.candidate', '"foo"');
+shouldBe('candidate.sdpMid', '"bar"');
+shouldBe('candidate.sdpMLineIndex', '6');
+
+shouldThrow('new RTCIceCandidate({});');
+shouldThrow('new RTCIceCandidate(5);');
+shouldThrow('new RTCIceCandidate("foobar");');
+shouldThrow('new RTCIceCandidate(candidate:"");');
+
+shouldNotThrow('new RTCIceCandidate({candidate:"x"});');
+
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

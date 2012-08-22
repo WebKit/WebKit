@@ -35,6 +35,7 @@ module window {
         attribute [V8EnabledAtRuntime] RTCPeerConnectionConstructor webkitRTCPeerConnection;
         attribute SessionDescriptionConstructor SessionDescription;
         attribute IceCandidateConstructor IceCandidate;
+        attribute RTCIceCandidateConstructor RTCIceCandidate;
         attribute MediaStreamEventConstructor MediaStreamEvent;
     };
 

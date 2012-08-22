@@ -1,3 +1,13 @@
+2012-08-22  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Introduce RTCIceCandidate
+        https://bugs.webkit.org/show_bug.cgi?id=93117
+
+        Reviewed by Adam Barth.
+
+        * fast/mediastream/RTCIceCandidate-expected.txt: Added.
+        * fast/mediastream/RTCIceCandidate.html: Added.
+
 2012-08-22  Kenneth Russell  <kbr@google.com>
 
         Layout test fast/text/emphasis-overlap.html started failing differently after r126312

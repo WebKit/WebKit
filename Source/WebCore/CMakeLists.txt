@@ -222,6 +222,7 @@ SET(WebCore_IDL_FILES
     Modules/mediastream/NavigatorUserMediaErrorCallback.idl
     Modules/mediastream/NavigatorUserMediaSuccessCallback.idl
     Modules/mediastream/PeerConnection00.idl
+    Modules/mediastream/RTCIceCandidate.idl
     Modules/mediastream/RTCPeerConnection.idl
     Modules/mediastream/SessionDescription.idl
 
@@ -850,6 +851,7 @@ SET(WebCore_SOURCES
     Modules/mediastream/MediaStreamTrackList.cpp
     Modules/mediastream/NavigatorMediaStream.cpp
     Modules/mediastream/PeerConnection00.cpp
+    Modules/mediastream/RTCIceCandidate.cpp
     Modules/mediastream/RTCPeerConnection.cpp
     Modules/mediastream/SessionDescription.cpp
     Modules/mediastream/UserMediaController.cpp
@@ -1922,6 +1924,7 @@ SET(WebCore_SOURCES
     platform/mediastream/MediaHints.cpp
     platform/mediastream/MediaStreamCenter.cpp
     platform/mediastream/PeerConnection00Handler.cpp
+    platform/mediastream/RTCIceCandidateDescriptor.cpp
     platform/mediastream/RTCPeerConnectionHandler.cpp
     platform/mediastream/SessionDescriptionDescriptor.cpp
 
