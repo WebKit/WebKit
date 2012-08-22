@@ -53,7 +53,7 @@ public:
     ShBuiltInResources getResources() { return m_resources; }
     void setResources(ShBuiltInResources);
     
-    bool validateShaderSource(const char* shaderSource, ANGLEShaderType shaderType, String& translatedShaderSource, String& shaderValidationLog);
+    bool validateShaderSource(const char* shaderSource, ANGLEShaderType shaderType, String& translatedShaderSource, String& shaderValidationLog, int extraCompileOptions);
 
 private:
 

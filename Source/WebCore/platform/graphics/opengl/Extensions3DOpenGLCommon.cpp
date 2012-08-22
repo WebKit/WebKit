@@ -121,8 +121,15 @@ String Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE(Platform3DObject
 
     String translatedShaderSource;
     String shaderInfoLog;
+    int extraCompileOptions = 0;
 
-    bool isValid = compiler.validateShaderSource(entry.source.utf8().data(), shaderType, translatedShaderSource, shaderInfoLog);
+#if PLATFORM(MAC)
+    const char* vendor = reinterpret_cast<const char*>(::glGetString(GL_VENDOR));
+    if (vendor && (std::strstr(vendor, "ATI") || std::strstr(vendor, "AMD")))
+        extraCompileOptions |= SH_EMULATE_BUILT_IN_FUNCTIONS;
+#endif
+
+    bool isValid = compiler.validateShaderSource(entry.source.utf8().data(), shaderType, translatedShaderSource, shaderInfoLog, extraCompileOptions);
 
     entry.log = shaderInfoLog;
     entry.isValid = isValid;
