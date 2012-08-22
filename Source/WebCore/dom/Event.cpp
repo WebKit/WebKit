@@ -164,6 +164,11 @@ void Event::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addInstrumentedMember(m_underlyingEvent);
 }
 
+PassRefPtr<Event> Event::cloneFor(HTMLIFrameElement*) const
+{
+    return Event::create(type(), bubbles(), cancelable());
+}
+
 void Event::setTarget(PassRefPtr<EventTarget> target)
 {
     if (m_target == target)

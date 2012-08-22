@@ -27,6 +27,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "HTMLIFrameElement.h"
 #include "PlatformMouseEvent.h"
 
 namespace WebCore {
@@ -145,6 +146,36 @@ Node* MouseEvent::fromElement() const
         return relatedTarget() ? relatedTarget()->toNode() : 0;
     
     return target() ? target()->toNode() : 0;
+}
+
+// FIXME: Fix positioning. e.g. We need to consider border/padding.
+// https://bugs.webkit.org/show_bug.cgi?id=93696
+inline static int adjustedClientX(int innerClientX, HTMLIFrameElement* iframe, FrameView* frameView)
+{
+    return iframe->offsetLeft() - frameView->scrollX() + innerClientX;
+}
+
+inline static int adjustedClientY(int innerClientY, HTMLIFrameElement* iframe, FrameView* frameView)
+{
+    return iframe->offsetTop() - frameView->scrollY() + innerClientY;
+}
+
+PassRefPtr<Event> MouseEvent::cloneFor(HTMLIFrameElement* iframe) const
+{
+    ASSERT(iframe);
+    RefPtr<MouseEvent> clonedMouseEvent = MouseEvent::create();
+    Frame* frame = iframe->document()->frame();
+    FrameView* frameView = frame ? frame->view() : 0;
+    clonedMouseEvent->initMouseEvent(type(), bubbles(), cancelable(),
+            iframe->document()->defaultView(),
+            detail(), screenX(), screenY(),
+            frameView ? adjustedClientX(clientX(), iframe, frameView) : 0,
+            frameView ? adjustedClientY(clientY(), iframe, frameView) : 0,
+            ctrlKey(), altKey(), shiftKey(), metaKey(),
+            button(),
+            // Nullifies relatedTarget.
+            0);
+    return clonedMouseEvent.release();
 }
 
 PassRefPtr<SimulatedMouseEvent> SimulatedMouseEvent::create(const AtomicString& eventType, PassRefPtr<AbstractView> view, PassRefPtr<Event> underlyingEvent)
