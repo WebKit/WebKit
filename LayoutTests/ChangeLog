@@ -1,3 +1,12 @@
+2012-08-22  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        Add failure expectations for a regression in r126257. See
+        https://bugs.webkit.org/show_bug.cgi?id=94675
+
+        * platform/chromium/TestExpectations:
+
 2012-08-21  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: TabbedPane: measure tab widths in batches.
