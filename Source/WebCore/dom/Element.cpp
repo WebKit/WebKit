@@ -999,9 +999,8 @@ void Element::detach()
     if (ElementShadow* shadow = this->shadow()) {
         detachChildrenIfNeeded();
         shadow->detach();
-        detachAsNode();
-    } else
-        ContainerNode::detach();
+    }
+    ContainerNode::detach();
 
     RenderWidget::resumeWidgetHierarchyUpdates();
 }

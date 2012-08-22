@@ -1,3 +1,20 @@
+2012-08-22  Takashi Sakamoto  <tasak@google.com>
+
+        Dynamically styling ShadowDom content on a node distributed to another shadow insertion point fails.
+        https://bugs.webkit.org/show_bug.cgi?id=92899
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/shadow/shadowdom-dynamic-styling-expected.txt: Added.
+        * fast/dom/shadow/shadowdom-dynamic-styling.html: Added.
+        * editing/shadow/delete-characters-in-distributed-node-crash.html:
+        Made the layout test robust. This patch causes commit-queue- and the
+        failed test is delete-characters-in-distributed-node-crash.html.
+        However the layout test passes when locally running run_webkit_test
+        i.e. no difference between actual and expected texts. And looking at
+        the commit-queue's report, the actual text has "PASS" message (no
+        crash messages).
+
 2012-08-22  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Unreviewed gardening.

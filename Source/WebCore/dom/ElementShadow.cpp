@@ -206,7 +206,7 @@ void ElementShadow::invalidateDistribution(Element* host)
 
     if (needsReattach && host->attached()) {
         host->detach();
-        host->lazyAttach(Node::DoNotSetAttached);
+        host->lazyAttach();
     }
 
     if (needsInvalidation)

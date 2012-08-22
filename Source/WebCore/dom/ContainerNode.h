@@ -92,7 +92,6 @@ public:
     void attachChildren();
     void attachChildrenIfNeeded();
     void attachChildrenLazily();
-    void detachAsNode();
     void detachChildren();
     void detachChildrenIfNeeded();
 
@@ -186,11 +185,6 @@ inline void ContainerNode::attachChildrenLazily()
     for (Node* child = firstChild(); child; child = child->nextSibling())
         if (!child->attached())
             child->lazyAttach();
-}
-
-inline void ContainerNode::detachAsNode()
-{
-    Node::detach();
 }
 
 inline void ContainerNode::detachChildrenIfNeeded()

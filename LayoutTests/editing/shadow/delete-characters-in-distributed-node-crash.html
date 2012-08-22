@@ -2,7 +2,7 @@
 <html>
 <body>
 <p id="description">This tests the deletion of text in distributed node does not crash. To run it outside of DRT, you must delete text, 'foo', manually.</p>
-<div id="shadowhost" contenteditable><div>foo</div></div>
+<div id="wrapper"><div id="shadowhost" contenteditable><div>foo</div></div></div>
 <script>
 if (window.testRunner)
     testRunner.dumpAsText();
@@ -13,7 +13,7 @@ var textNode = document.getElementById('shadowhost').firstChild.firstChild;
 window.getSelection().setBaseAndExtent(textNode, 0, textNode, 3);
 document.execCommand('Delete');
 
-document.write('PASS');
+document.getElementById("wrapper").innerHTML = "PASS";
 </script>
 </body>
 </html>
