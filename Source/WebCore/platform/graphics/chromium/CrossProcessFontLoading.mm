@@ -41,20 +41,6 @@ namespace {
 typedef HashMap<uint32, MemoryActivatedFont*> FontContainerRefMemoryFontHash;
 typedef HashMap<WTF::String, MemoryActivatedFont*> FontNameMemoryFontHash;
 
-// On 10.5, font loading is not blocked by the sandbox and thus there is no
-// need for the cross-process font loading mechanim.
-// On system versions >=10.6 cross-process font loading is required.
-bool OutOfProcessFontLoadingEnabled()
-{
-    static SInt32 systemVersion = 0;
-    if (!systemVersion) {
-        if (Gestalt(gestaltSystemVersion, &systemVersion) != noErr)
-            return false;
-    }
-
-    return systemVersion >= 0x1060;
-}
-
 // Caching:
 //
 // Requesting a font from the browser process is expensive and so is
@@ -199,7 +185,7 @@ void FontPlatformData::loadFont(NSFont* nsFont, float fontSize, NSFont*& outNSFo
 {
     outNSFont = nsFont;
     cgFont = CTFontCopyGraphicsFont(toCTFontRef(outNSFont), 0);
-    if (OutOfProcessFontLoadingEnabled() && outNSFont && cgFont && isLastResortFont(cgFont)) {
+    if (outNSFont && cgFont && isLastResortFont(cgFont)) {
         // Release old CGFontRef since it points at the LastResort font which we don't want.
         CFRelease(cgFont);
         cgFont = 0;
