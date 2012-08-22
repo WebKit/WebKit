@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+<html>
+<body>
 <script src="resources/polyfill.js"></script>
 
 <p>When the AuthorShadowDOM has only a shadow element, this should be rendered like no Shadow DOM is added.</p>
-<form id="form" action="shadowdom-for-select.html">
+<form>
     <button id="host">button</button>
-    <input id="submit" type="submit" value="Submit">
 </form>
 
 <script>
@@ -12,3 +13,5 @@ var host = document.getElementById('host');
 var shadowRoot = new WebKitShadowRoot(host);
 shadowRoot.innerHTML = "<shadow></shadow>"
 </script>
+</body>
+</html>

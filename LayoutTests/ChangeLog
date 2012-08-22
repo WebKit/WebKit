@@ -1,3 +1,24 @@
+2012-08-22  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Test and test expectation of Shadow DOM for button should be fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=94674
+
+        Reviewed by Hajime Morita.
+
+        Now that the HTMLButtonElement was AuthroShadowDOM-ready, it's time to update the previous
+        failing tests for AuthroShadowDOM for button elements.
+
+        I've updated the failing tests to follow the current implementation and updated the test expectations.
+
+        * fast/dom/shadow/shadowdom-for-button-complex-shadow-expected.html:
+        * fast/dom/shadow/shadowdom-for-button-complex-shadow.html:
+        * fast/dom/shadow/shadowdom-for-button-only-shadow-expected.html:
+        * fast/dom/shadow/shadowdom-for-button-only-shadow.html:
+        * fast/dom/shadow/shadowdom-for-button-without-shadow-expected.html:
+        * fast/dom/shadow/shadowdom-for-button-without-shadow.html:
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-08-22  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] REGRESSION(r125428): fast/profiler/nested-start-and-stop-profiler.html fails
