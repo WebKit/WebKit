@@ -697,7 +697,7 @@ void BinaryPropertyListSerializer::appendStringObject(const String& string)
     unsigned length = string.length();
     if (charactersAreAllASCII(characters, length)) {
         if (length <= maxLengthInMarkerByte)
-            appendByte(asciiStringMarkerByte | length);
+            appendByte(static_cast<unsigned char>(asciiStringMarkerByte | length));
         else {
             appendByte(asciiStringWithSeparateLengthMarkerByte);
             appendInteger(length);
@@ -706,7 +706,7 @@ void BinaryPropertyListSerializer::appendStringObject(const String& string)
             appendByte(characters[i]);
     } else {
         if (length <= maxLengthInMarkerByte)
-            appendByte(unicodeStringMarkerByte | length);
+            appendByte(static_cast<unsigned char>(unicodeStringMarkerByte | length));
         else {
             appendByte(unicodeStringWithSeparateLengthMarkerByte);
             appendInteger(length);
@@ -723,7 +723,7 @@ void BinaryPropertyListSerializer::appendStringObject(const char* string)
     startObject();
     unsigned length = strlen(string);
     if (length <= maxLengthInMarkerByte)
-        appendByte(asciiStringMarkerByte | length);
+        appendByte(static_cast<unsigned char>(asciiStringMarkerByte | length));
     else {
         appendByte(asciiStringWithSeparateLengthMarkerByte);
         appendInteger(length);
