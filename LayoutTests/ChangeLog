@@ -2,6 +2,22 @@
 
         [Chromium] Unreviewed gardening.
 
+        Rebaseline tests after http://trac.webkit.org/changeset/126183 .
+        These are the same results as platform/mac-lion, which until
+        r126183 where the results of platform/mac. So this is "reverting"
+        r126183 in terms of Chromium expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=94665 was filed
+        to track optimization of these baselines.
+
+        * platform/chromium-mac-snowleopard/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt: Added.
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt: Added.
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt: Added.
+
+2012-08-21  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
         Fix TestExpectations syntax error WIN WIN7 => WIN.
 
         * platform/chromium/TestExpectations:
