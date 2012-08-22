@@ -1,3 +1,10 @@
+2012-08-22  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        * http/tests/inspector/console-resource-errors-expected.txt: Rebaseline after r126168.
+        * platform/qt/Skipped: Skip tests using disabled SHADOW_DOM feature.
+
 2012-08-22  Dominic Cooney   <dominicc@chromium.org>
 
         [Chromium] Unreviewed gardening.
