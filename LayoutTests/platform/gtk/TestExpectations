@@ -786,10 +786,6 @@ BUGWKGTK : scrollbars/scrollbar-middleclick-nopaste.html = TEXT
 BUGWKGTK : fast/loader/api-test-new-window-data-load-base-url.html = TEXT
 BUGWKGTK : fast/loader/api-test-go-to-current-back-forward-item.html = TEXT
 
-// Failure may be related to DRT; console message also has full file
-// path instead of just the file name
-BUGWK35086 : fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html = TEXT
-
 // Needs to make sure the redirect-chain scenario in https://bugs.webkit.org/show_bug.cgi?id=31410 works
 BUGWK35300 : http/tests/loading/307-after-303-after-post.html = TEXT
 BUGWK35300 SKIP : http/tests/navigation/post-307-response.html = TEXT

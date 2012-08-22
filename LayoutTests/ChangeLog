@@ -1,3 +1,15 @@
+2012-08-21  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=94617
+
+        Reviewed by Martin Robinson.
+
+        Remove failure expectation for fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
+        test as it now passes.
+
+        * platform/gtk/TestExpectations:
+
 2012-08-21  Brady Eidson  <beidson@apple.com>
 
         Rebaseline various tests for Mountain Lion that differ from the generic results.

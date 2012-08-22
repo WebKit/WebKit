@@ -1,3 +1,18 @@
+2012-08-21  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=94617
+
+        Reviewed by Martin Robinson.
+
+        Set the 'enable-file-access-from-file-uris' setting to true when
+        resetting default values. The other ports do this as well, giving
+        documents with local security origin permission to load other
+        local resources.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2012-08-21  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] DRT produces wrong back-forward list

@@ -450,6 +450,7 @@ static void resetDefaultsToConsistentValues()
                  "javascript-can-open-windows-automatically", TRUE,
                  "enable-offline-web-application-cache", TRUE,
                  "enable-universal-access-from-file-uris", TRUE,
+                 "enable-file-access-from-file-uris", TRUE,
                  "enable-scripts", TRUE,
                  "enable-dom-paste", TRUE,
                  "default-font-family", "Times",
