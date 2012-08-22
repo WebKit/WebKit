@@ -490,8 +490,7 @@ void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(int64_t requestedVer
 
     RefPtr<IDBDatabaseBackendImpl> database = this;
     OwnPtr<ScriptExecutionContext::Task> intVersionTask = createCallbackTask(&IDBDatabaseBackendImpl::setIntVersionInternal, database, requestedVersion, callbacks, transaction);
-    // FIXME: Make this reset the integer version as well.
-    OwnPtr<ScriptExecutionContext::Task> resetVersionOnAbortTask = createCallbackTask(&IDBDatabaseBackendImpl::resetVersion, database, m_version);
+    OwnPtr<ScriptExecutionContext::Task> resetVersionOnAbortTask = createCallbackTask(&IDBDatabaseBackendImpl::resetIntVersion, database, m_intVersion);
     if (!transaction->scheduleTask(intVersionTask.release(), resetVersionOnAbortTask.release())) {
         // FIXME: Remove one of the following lines.
         ASSERT_NOT_REACHED();
@@ -622,6 +621,11 @@ void IDBDatabaseBackendImpl::addObjectStoreToMap(ScriptExecutionContext*, PassRe
 void IDBDatabaseBackendImpl::resetVersion(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, const String& version)
 {
     database->m_version = version;
+}
+
+void IDBDatabaseBackendImpl::resetIntVersion(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, int64_t oldVersion)
+{
+    database->m_intVersion = oldVersion;
 }
 
 

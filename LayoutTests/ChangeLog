@@ -1,3 +1,29 @@
+2012-08-22  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: revert int version when version change transaction aborts
+        https://bugs.webkit.org/show_bug.cgi?id=94662
+
+        Reviewed by Tony Chang.
+
+        This is tested in some other layout tests but it should have its own,
+        so add intversion-revert-on-abort.html.
+
+        * storage/indexeddb/intversion-abort-in-initial-upgradeneeded-expected.txt:
+        FAIL event.target.result.version should be 0 will be resolved at least
+        when we figure out if we can make the default version an integer
+        during the transition period.
+
+        * storage/indexeddb/intversion-revert-on-abort-expected.txt: Added.
+        * storage/indexeddb/intversion-revert-on-abort.html: Added.
+        * storage/indexeddb/resources/intversion-revert-on-abort.js: Added.
+        (test):
+        (deleteSuccess):
+        (firstUpgradeNeededCallback):
+        (openSuccess):
+        (secondUpgradeNeededCallback):
+        (errorAfterAbortCallback):
+        (finalSuccessCallback):
+
 2012-08-17  Jeffrey Pfau  <jpfau@apple.com>
 
         Allow blocking of Web SQL databases in third-party web workers
