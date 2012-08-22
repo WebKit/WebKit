@@ -104,13 +104,19 @@ bool extractTransferables(v8::Local<v8::Value> value, MessagePortArray& ports, A
         v8::Local<v8::Value> transferrable = transferrables->Get(i);
         // Validation of non-null objects, per HTML5 spec 10.3.3.
         if (isUndefinedOrNull(transferrable)) {
-            setDOMException(DATA_CLONE_ERR, isolate);
+            setDOMException(INVALID_STATE_ERR, isolate);
             return false;
         }
         // Validation of Objects implementing an interface, per WebIDL spec 4.1.15.
-        if (V8MessagePort::HasInstance(transferrable))
-            ports.append(V8MessagePort::toNative(v8::Handle<v8::Object>::Cast(transferrable)));
-        else if (V8ArrayBuffer::HasInstance(transferrable))
+        if (V8MessagePort::HasInstance(transferrable)) {
+            RefPtr<MessagePort> port = V8MessagePort::toNative(v8::Handle<v8::Object>::Cast(transferrable));
+            // Check for duplicate MessagePorts.
+            if (ports.contains(port)) {
+                setDOMException(INVALID_STATE_ERR, isolate);
+                return false;
+            }
+            ports.append(port.release());
+        } else if (V8ArrayBuffer::HasInstance(transferrable))
             arrayBuffers.append(V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(transferrable)));
         else {
             throwTypeError();

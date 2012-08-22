@@ -91,9 +91,10 @@ shouldThrow("new MessageEvent('eventType', { get source() { throw 'MessageEvent 
 // ports is passed.
 // Valid message ports.
 var channel = new MessageChannel();
-shouldBe("new MessageEvent('eventType', { ports: [channel.port1, channel.port2, channel.port2] }).ports[0]", "channel.port1");
-shouldBe("new MessageEvent('eventType', { ports: [channel.port1, channel.port2, channel.port2] }).ports[1]", "channel.port2");
-shouldBe("new MessageEvent('eventType', { ports: [channel.port1, channel.port2, channel.port2] }).ports[2]", "channel.port2");
+var channel2 = new MessageChannel();
+shouldBe("new MessageEvent('eventType', { ports: [channel.port1, channel.port2, channel2.port1] }).ports[0]", "channel.port1");
+shouldBe("new MessageEvent('eventType', { ports: [channel.port1, channel.port2, channel2.port1] }).ports[1]", "channel.port2");
+shouldBe("new MessageEvent('eventType', { ports: [channel.port1, channel.port2, channel2.port1] }).ports[2]", "channel2.port1");
 shouldBe("new MessageEvent('eventType', { ports: [] }).ports", "[]");
 shouldBe("new MessageEvent('eventType', { ports: undefined }).ports", "[]");
 shouldBe("new MessageEvent('eventType', { ports: null }).ports", "[]");
@@ -115,15 +116,15 @@ shouldThrow("new MessageEvent('eventType', { get ports() { throw 'MessageEvent E
 shouldThrow("new MessageEvent('eventType', { ports: {valueOf: function () { return [channel.port1, channel.port2, channel.port2]; } } }).ports[0]");
 
 // All initializers are passed.
-shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).bubbles", "true");
-shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).cancelable", "true");
-shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).data", "test_object");
-shouldBeEqualToString("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).origin", "wonderful");
-shouldBeEqualToString("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).lastEventId", "excellent");
-shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).source", "window");
-shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).ports[0]", "channel.port1");
-shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).ports[1]", "channel.port2");
-shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel.port2] }).ports[2]", "channel.port2");
+shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel2.port1] }).bubbles", "true");
+shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel2.port1] }).cancelable", "true");
+shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel2.port1] }).data", "test_object");
+shouldBeEqualToString("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel2.port1] }).origin", "wonderful");
+shouldBeEqualToString("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel2.port1] }).lastEventId", "excellent");
+shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel2.port1] }).source", "window");
+shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel2.port1] }).ports[0]", "channel.port1");
+shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel2.port1] }).ports[1]", "channel.port2");
+shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel2.port1] }).ports[2]", "channel2.port1");
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

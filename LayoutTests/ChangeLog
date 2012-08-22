@@ -1,3 +1,24 @@
+2012-08-22  Christophe Dumez  <christophe.dumez@intel.com>
+
+        window.postMessage() / MessagePort.postMessage() throw wrong exception for invalid ports argument
+        https://bugs.webkit.org/show_bug.cgi?id=94581
+
+        Reviewed by Kentaro Hara.
+
+        Update several tests and their expected results now that an
+        INVALID_STATE_ERR is thrown instead of a DATA_CLONE_ERROR
+        when window.postMessage() / MessagePort.postMessage() are
+        called with invalid values in their 'ports' argument.
+
+        * fast/events/constructors/message-event-constructor-expected.txt:
+        * fast/events/constructors/message-event-constructor.html: Stop using duplicate
+        ports in the test since it throws an exception now.
+        * fast/events/message-port-clone-expected.txt:
+        * fast/events/message-port-multi-expected.txt:
+        * fast/events/resources/message-port-multi.js: Add check for duplicate port case.
+        * fast/workers/worker-context-multi-port-expected.txt:
+        * fast/workers/worker-multi-port-expected.txt:
+
 2012-08-22  Ulan Degenbaev  <ulan@chromium.org>
 
         Remove chromium/fast/js/array-functions-non-arrays-expected.txt and add WebKit bug id to chromium/TestExpectation.

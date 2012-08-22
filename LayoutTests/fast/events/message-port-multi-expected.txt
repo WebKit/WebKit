@@ -3,13 +3,14 @@ This test checks the various use cases around sending multiple ports through Mes
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS channel.port1.postMessage("same port", [channel.port1]) threw exception Error: DATA_CLONE_ERR: DOM Exception 25.
-PASS channel.port1.postMessage("entangled port", [channel.port2]) threw exception Error: DATA_CLONE_ERR: DOM Exception 25.
-PASS channel.port1.postMessage("null port", [channel3.port1, null, channel3.port2]) threw exception Error: DATA_CLONE_ERR: DOM Exception 25.
+PASS channel.port1.postMessage("same port", [channel.port1]) threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
+PASS channel.port1.postMessage("entangled port", [channel.port2]) threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
+PASS channel.port1.postMessage("null port", [channel3.port1, null, channel3.port2]) threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
 PASS channel.port1.postMessage("notAPort", [channel3.port1, {}, channel3.port2]) threw exception TypeError: Type error.
+PASS channel.port1.postMessage("duplicate port", [channel3.port1, channel3.port1]) threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
 PASS channel.port1.postMessage("notAnArray", channel3.port1) threw exception TypeError: Type error.
 PASS channel.port1.postMessage("notASequence", [{length: 3}]) threw exception TypeError: Type error.
-PASS channel.port1.postMessage("largeSequence", largePortArray) threw exception Error: DATA_CLONE_ERR: DOM Exception 25.
+PASS channel.port1.postMessage("largeSequence", largePortArray) threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
 PASS event.ports is non-null and zero length when no port sent
 PASS event.ports is non-null and zero length when empty array sent
 PASS event.ports contains two ports when two ports sent

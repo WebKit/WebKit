@@ -19,6 +19,7 @@ shouldThrow('channel.port1.postMessage("same port", [channel.port1])');
 shouldThrow('channel.port1.postMessage("entangled port", [channel.port2])');
 shouldThrow('channel.port1.postMessage("null port", [channel3.port1, null, channel3.port2])');
 shouldThrow('channel.port1.postMessage("notAPort", [channel3.port1, {}, channel3.port2])');
+shouldThrow('channel.port1.postMessage("duplicate port", [channel3.port1, channel3.port1])');
 // Should be OK to send channel3.port1 (should not have been disentangled by the previous failed calls).
 channel.port1.postMessage("entangled ports", [channel3.port1, channel3.port2]);
 

@@ -90,15 +90,20 @@ void fillMessagePortArray(JSC::ExecState* exec, JSC::JSValue value, MessagePortA
             return;
         // Validation of non-null objects, per HTML5 spec 10.3.3.
         if (value.isUndefinedOrNull()) {
-            setDOMException(exec, DATA_CLONE_ERR);
+            setDOMException(exec, INVALID_STATE_ERR);
             return;
         }
 
         // Validation of Objects implementing an interface, per WebIDL spec 4.1.15.
         RefPtr<MessagePort> port = toMessagePort(value);
-        if (port)
+        if (port) {
+            // Check for duplicate ports.
+            if (portArray.contains(port)) {
+                setDOMException(exec, INVALID_STATE_ERR);
+                return;
+            }
             portArray.append(port.release());
-        else {
+        } else {
             RefPtr<ArrayBuffer> arrayBuffer = toArrayBuffer(value);
             if (arrayBuffer)
                 arrayBuffers.append(arrayBuffer);
