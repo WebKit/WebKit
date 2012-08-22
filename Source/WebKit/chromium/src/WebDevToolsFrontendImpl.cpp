@@ -44,6 +44,7 @@
 #include "Page.h"
 #include "Pasteboard.h"
 #include "PlatformString.h"
+#include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "V8Binding.h"
@@ -51,7 +52,6 @@
 #include "V8InspectorFrontendHost.h"
 #include "V8MouseEvent.h"
 #include "V8Node.h"
-#include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WebDevToolsFrontendClient.h"
 #include "WebFrameImpl.h"
@@ -107,7 +107,7 @@ void WebDevToolsFrontendImpl::dispatchOnInspectorFrontend(const WebString& messa
 {
     WebFrameImpl* frame = m_webViewImpl->mainFrameImpl();
     v8::HandleScope scope;
-    v8::Handle<v8::Context> frameContext = V8Proxy::context(frame->frame());
+    v8::Handle<v8::Context> frameContext = frame->frame() ? frame->frame()->script()->currentWorldContext() : v8::Local<v8::Context>();
     v8::Context::Scope contextScope(frameContext);
     v8::Handle<v8::Value> inspectorBackendValue = frameContext->Global()->Get(v8::String::New("InspectorBackend"));
     if (!inspectorBackendValue->IsObject())

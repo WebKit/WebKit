@@ -36,8 +36,8 @@
 #include "InspectorFrontendHost.h"
 #include "Page.h"
 #include "PlatformString.h"
+#include "ScriptController.h"
 #include "V8InspectorFrontendHost.h"
-#include "V8Proxy.h"
 #include "WebDevToolsFrontendClient.h"
 #include "WebDevToolsFrontendImpl.h"
 #include "platform/WebFloatPoint.h"
@@ -63,7 +63,7 @@ InspectorFrontendClientImpl::~InspectorFrontendClientImpl()
 void InspectorFrontendClientImpl::windowObjectCleared()
 {
     v8::HandleScope handleScope;
-    v8::Handle<v8::Context> frameContext = V8Proxy::context(m_frontendPage->mainFrame());
+    v8::Handle<v8::Context> frameContext = m_frontendPage->mainFrame() ? m_frontendPage->mainFrame()->script()->currentWorldContext() : v8::Local<v8::Context>();
     v8::Context::Scope contextScope(frameContext);
 
     ASSERT(!m_frontendHost);

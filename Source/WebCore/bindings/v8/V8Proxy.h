@@ -97,11 +97,6 @@ namespace WebCore {
         // Run an already compiled script.
         v8::Local<v8::Value> runScript(v8::Handle<v8::Script>);
 
-        // Returns V8 Context of a frame. If none exists, creates
-        // a new context. It is potentially slow and consumes memory.
-        static v8::Local<v8::Context> context(Frame*);
-
-        v8::Local<v8::Context> context();
         v8::Local<v8::Context> isolatedWorldContext(int worldId);
         bool matchesCurrentContext();
 

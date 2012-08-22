@@ -376,6 +376,17 @@ void ScriptController::finishedWithEvent(Event* event)
     m_proxy->finishedWithEvent(event);
 }
 
+v8::Local<v8::Context> ScriptController::currentWorldContext()
+{
+    if (V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered()) {
+        RefPtr<SharedPersistent<v8::Context> > context = isolatedContext->sharedContext();
+        if (m_frame != toFrameIfNotDetached(context->get()))
+            return v8::Local<v8::Context>();
+        return v8::Local<v8::Context>::New(context->get());
+    }
+    return mainWorldContext();
+}
+
 v8::Local<v8::Context> ScriptController::mainWorldContext()
 {
     windowShell()->initContextIfNeeded();

@@ -178,32 +178,6 @@ V8DOMWindowShell* V8Proxy::windowShell() const
     return frame()->script()->windowShell();
 }
 
-v8::Local<v8::Context> V8Proxy::context(Frame* frame)
-{
-    v8::Local<v8::Context> context = ScriptController::mainWorldContext(frame);
-    if (context.IsEmpty())
-        return v8::Local<v8::Context>();
-
-    if (V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered()) {
-        context = v8::Local<v8::Context>::New(isolatedContext->context());
-        if (frame != toFrameIfNotDetached(context))
-            return v8::Local<v8::Context>();
-    }
-
-    return context;
-}
-
-v8::Local<v8::Context> V8Proxy::context()
-{
-    if (V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered()) {
-        RefPtr<SharedPersistent<v8::Context> > context = isolatedContext->sharedContext();
-        if (m_frame != toFrameIfNotDetached(context->get()))
-            return v8::Local<v8::Context>();
-        return v8::Local<v8::Context>::New(context->get());
-    }
-    return frame()->script()->mainWorldContext();
-}
-
 v8::Local<v8::Context> V8Proxy::isolatedWorldContext(int worldId)
 {
     IsolatedWorldMap::iterator iter = m_isolatedWorlds.find(worldId);

@@ -1,3 +1,19 @@
+2012-08-22  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Move context() from V8Proxy to ScriptController
+        https://bugs.webkit.org/show_bug.cgi?id=94593
+
+        Reviewed by Adam Barth.
+
+        To kill V8Proxy, we can move context() from V8Proxy to ScriptController.
+
+        No tests. No change in behavior.
+
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::windowObjectCleared):
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::dispatchOnInspectorFrontend):
+
 2012-08-22  Nikhil Bhargava  <nbhargava@google.com>
 
         Reduce Font.h includes across project -- improves RenderObject.h compile time

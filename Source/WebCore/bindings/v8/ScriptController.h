@@ -154,10 +154,11 @@ public:
     // V8Proxy::retrieveFrameForEnteredContext() for more information.
     static Frame* retrieveFrameForCurrentContext();
 
-    // Returns V8 Context of a frame. If none exists, creates
-    // a new context. It is potentially slow and consumes memory.
+    // Returns V8 Context. If none exists, creates a new context.
+    // It is potentially slow and consumes memory.
     static v8::Local<v8::Context> mainWorldContext(Frame*);
     v8::Local<v8::Context> mainWorldContext();
+    v8::Local<v8::Context> currentWorldContext();
 
     // Pass command-line flags to the JS engine.
     static void setFlags(const char* string, int length);

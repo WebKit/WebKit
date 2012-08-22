@@ -3397,7 +3397,7 @@ END
     if (proxy && !proxy->matchesCurrentContext()) {
         // For performance, we enter the context only if the currently running context
         // is different from the context that we are about to enter.
-        context = proxy->context();
+        context = proxy->frame()->script()->currentWorldContext();
         if (!context.IsEmpty())
             context->Enter();
     }

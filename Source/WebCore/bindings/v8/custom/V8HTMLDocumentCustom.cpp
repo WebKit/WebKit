@@ -44,7 +44,6 @@
 #include "V8HTMLCollection.h"
 #include "V8IsolatedContext.h"
 #include "V8Node.h"
-#include "V8Proxy.h"
 #include "V8RecursionScope.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/OwnArrayPtr.h>
@@ -142,7 +141,7 @@ v8::Handle<v8::Value> V8HTMLDocument::openCallback(const v8::Arguments& args)
     if (args.Length() > 2) {
         if (RefPtr<Frame> frame = htmlDocument->frame()) {
             // Fetch the global object for the frame.
-            v8::Local<v8::Context> context = V8Proxy::context(frame.get());
+            v8::Local<v8::Context> context = frame->script()->currentWorldContext();
             // Bail out if we cannot get the context.
             if (context.IsEmpty())
                 return v8::Undefined();

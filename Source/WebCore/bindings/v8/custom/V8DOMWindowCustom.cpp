@@ -61,7 +61,6 @@
 #include "V8HiddenPropertyName.h"
 #include "V8HTMLCollection.h"
 #include "V8Node.h"
-#include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WindowFeatures.h"
 #include <wtf/ArrayBuffer.h>
@@ -121,7 +120,8 @@ v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments& args, bool singl
         }
 
         // params is passed to action, and released in action's destructor
-        OwnPtr<ScheduledAction> action = adoptPtr(new ScheduledAction(V8Proxy::context(imp->frame()), v8::Handle<v8::Function>::Cast(function), paramCount, params));
+        ASSERT(imp->frame());
+        OwnPtr<ScheduledAction> action = adoptPtr(new ScheduledAction(imp->frame()->script()->currentWorldContext(), v8::Handle<v8::Function>::Cast(function), paramCount, params));
 
         // FIXME: We should use OwnArrayPtr for params.
         delete[] params;
@@ -131,7 +131,8 @@ v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments& args, bool singl
         RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector());
         if (imp->document() && !imp->document()->contentSecurityPolicy()->allowEval(callStack.release()))
             return v8Integer(0, args.GetIsolate());
-        id = DOMTimer::install(scriptContext, adoptPtr(new ScheduledAction(V8Proxy::context(imp->frame()), functionString)), timeout, singleShot);
+        ASSERT(imp->frame());
+        id = DOMTimer::install(scriptContext, adoptPtr(new ScheduledAction(imp->frame()->script()->currentWorldContext(), functionString)), timeout, singleShot);
     }
 
     // Try to do the idle notification before the timeout expires to get better
@@ -154,7 +155,8 @@ v8::Handle<v8::Value> V8DOMWindow::eventAccessorGetter(v8::Local<v8::String> nam
     if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), frame))
         return v8::Undefined();
 
-    v8::Local<v8::Context> context = V8Proxy::context(frame);
+    ASSERT(frame);
+    v8::Local<v8::Context> context = frame->script()->currentWorldContext();
     if (context.IsEmpty())
         return v8::Undefined();
 
@@ -175,7 +177,8 @@ void V8DOMWindow::eventAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::
     if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), frame))
         return;
 
-    v8::Local<v8::Context> context = V8Proxy::context(frame);
+    ASSERT(frame);
+    v8::Local<v8::Context> context = frame->script()->currentWorldContext();
     if (context.IsEmpty())
         return;
 
@@ -402,7 +405,7 @@ private:
 
 inline void DialogHandler::dialogCreated(DOMWindow* dialogFrame)
 {
-    m_dialogContext = V8Proxy::context(dialogFrame->frame());
+    m_dialogContext = dialogFrame->frame() ? dialogFrame->frame()->script()->currentWorldContext() : v8::Local<v8::Context>();
     if (m_dialogContext.IsEmpty())
         return;
     if (m_dialogArguments.IsEmpty())
@@ -621,7 +624,7 @@ v8::Handle<v8::Value> toV8(DOMWindow* window, v8::Isolate* isolate)
     }
 
     // Otherwise, return the global object associated with this frame.
-    v8::Handle<v8::Context> context = V8Proxy::context(frame);
+    v8::Handle<v8::Context> context = frame->script()->currentWorldContext();
     if (context.IsEmpty())
         return v8Undefined();
 

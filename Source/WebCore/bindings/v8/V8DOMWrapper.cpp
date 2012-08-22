@@ -129,7 +129,7 @@ void V8DOMWrapper::setNamedHiddenWindowReference(Frame* frame, const char* name,
     // Get DOMWindow
     if (!frame)
         return; // Object might be detached from window
-    v8::Handle<v8::Context> context = V8Proxy::context(frame);
+    v8::Handle<v8::Context> context = frame->script()->currentWorldContext();
     if (context.IsEmpty())
         return;
 
