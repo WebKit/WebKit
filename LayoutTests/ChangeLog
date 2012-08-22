@@ -1,3 +1,16 @@
+2012-08-21  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] multiple fields time input UI should not have two focus ring.
+        https://bugs.webkit.org/show_bug.cgi?id=94579
+
+        Reviewed by Hajime Morita.
+
+        This patch adds a test case of focus appearance multiple fields time
+        input UI.
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.html: Added script to make focus appearance.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic.html: Added script to set focus to input element.
+
 2012-08-21  Adam Barth  <abarth@webkit.org>
 
         V8 shouldn't have its own way of printing cross-origin error messages

@@ -530,6 +530,17 @@ input::-webkit-datetime-edit-second-field {
     padding: 0.15em;
 }
 
+/* Remove focus ring from fields and use highlight color */
+input::-webkit-datetime-edit-ampm-field:focus,
+input::-webkit-datetime-edit-hour-field:focus,
+input::-webkit-datetime-edit-millisecond-fiel:focus,
+input::-webkit-datetime-edit-minute-field:focus,
+input::-webkit-datetime-edit-second-field:focus {
+  background-color: highlight;
+  color: highlighttext;
+  outline: none;
+}
+
 /* This selector is used when step >= 60 second but format contains second field. */
 input::-webkit-datetime-edit-second-field[readonly] {
     color: GrayText;

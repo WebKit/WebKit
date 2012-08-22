@@ -4,7 +4,7 @@
 </head>
 <body>
 <ul>
-    <li>step=none <span type="time"></span> <span type="time" value="12:34:56.789"></span></li>
+    <li>step=none <span id="focus" type="time"></span> <span type="time" value="12:34:56.789"></span></li>
     <li>step=1 <span type="time" step="1"></span> <span step="1" type="time" value="12:34:56.789"></span></li>
     <li>step=0.0001 <span type="time" step="0.001"></span> <span step="0.001" type="time" value="12:34:56.789"></span></li>
     <li>step=60 <span type="time" step="60"></span> <span step="60" type="time" value="12:34:56.789"></span></li>
@@ -12,4 +12,11 @@
 </ul>
 </body>
 <script src="./resources/time-multiple-fields-appearance.js"></script>
+<script>
+var focusElment = document.getElementById("focus");
+focusElment.setAttribute("style", "outline: auto 5px -webkit-focus-ring-color; outline-offset: -2px;");
+var hourField = focusElment.firstChild.firstChild;
+hourField.style.backgroundColor = "highlight";
+hourField.style.color = "highlighttext";
+</script>
 </html>
