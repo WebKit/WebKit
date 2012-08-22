@@ -31,6 +31,7 @@
 #include "MIMETypeRegistry.h"
 #include "NetworkManager.h"
 #include "Page.h"
+#include "RSSFilterStream.h"
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
@@ -133,6 +134,16 @@ bool NetworkJob::initialize(int playerId,
     BlackBerry::Platform::FilterStream* wrappedStream = m_streamFactory->createNetworkStream(request, m_playerId);
     if (!wrappedStream)
         return false;
+
+    BlackBerry::Platform::NetworkRequest::TargetType targetType = request.getTargetType();
+    if ((targetType == BlackBerry::Platform::NetworkRequest::TargetIsMainFrame
+         || targetType == BlackBerry::Platform::NetworkRequest::TargetIsSubframe)
+            && !m_isOverrideContentType) {
+        RSSFilterStream* filter = new RSSFilterStream();
+        filter->setWrappedStream(wrappedStream);
+        wrappedStream = filter;
+    }
+
     setWrappedStream(wrappedStream);
 
     return true;

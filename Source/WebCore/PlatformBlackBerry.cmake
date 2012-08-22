@@ -6,13 +6,14 @@ LIST(INSERT WebCore_INCLUDE_DIRECTORIES 0
 LIST(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/bindings/cpp"
     "${WEBCORE_DIR}/platform/blackberry/CookieDatabaseBackingStore"
-    "${WEBCORE_DIR}/platform/network/blackberry"
     "${WEBCORE_DIR}/platform/graphics/blackberry/skia"
     "${WEBCORE_DIR}/platform/graphics/harfbuzz"
     "${WEBCORE_DIR}/platform/graphics/opentype/"
     "${WEBCORE_DIR}/platform/graphics/skia"
     "${WEBCORE_DIR}/platform/image-decoders/skia"
     "${WEBCORE_DIR}/platform/image-encoders/skia"
+    "${WEBCORE_DIR}/platform/network/blackberry"
+    "${WEBCORE_DIR}/platform/network/blackberry/rss"
 )
 
 # Skia sources
@@ -102,6 +103,12 @@ LIST(APPEND WebCore_SOURCES
     platform/network/blackberry/ResourceRequestBlackBerry.cpp
     platform/network/blackberry/ResourceResponseBlackBerry.cpp
     platform/network/blackberry/SocketStreamHandleBlackBerry.cpp
+    platform/network/blackberry/rss/RSSAtomParser.cpp
+    platform/network/blackberry/rss/RSS10Parser.cpp
+    platform/network/blackberry/rss/RSS20Parser.cpp
+    platform/network/blackberry/rss/RSSFilterStream.cpp
+    platform/network/blackberry/rss/RSSGenerator.cpp
+    platform/network/blackberry/rss/RSSParserBase.cpp
 )
 
 LIST(APPEND WebCore_USER_AGENT_STYLE_SHEETS
