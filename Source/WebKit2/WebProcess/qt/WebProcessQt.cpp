@@ -160,11 +160,6 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     }
 #endif
 
-    // Disable runtime enabled features that have no WebKit2 implementation yet.
-#if ENABLE(DEVICE_ORIENTATION)
-    WebCore::RuntimeEnabledFeatures::setDeviceMotionEnabled(false);
-    WebCore::RuntimeEnabledFeatures::setDeviceOrientationEnabled(false);
-#endif
 #if ENABLE(SPEECH_INPUT)
     WebCore::RuntimeEnabledFeatures::setSpeechInputEnabled(false);
 #endif

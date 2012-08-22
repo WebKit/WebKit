@@ -1,3 +1,13 @@
+2012-08-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Enable runtime enabled features: DeviceMotion and DeviceOrientation
+        https://bugs.webkit.org/show_bug.cgi?id=94692
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebProcess/qt/WebProcessQt.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2012-08-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Wrong default for new ScrollAnimatorEnabled preference.
