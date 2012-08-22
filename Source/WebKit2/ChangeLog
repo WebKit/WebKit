@@ -1,3 +1,14 @@
+2012-08-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r126216.
+        http://trac.webkit.org/changeset/126216
+        https://bugs.webkit.org/show_bug.cgi?id=94661
+
+        "Broke many Mac-WK2 tests" (Requested by bradee-oh on
+        #webkit).
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2012-08-21  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] [WK2] Memory leaks in TestWebKitFindController
