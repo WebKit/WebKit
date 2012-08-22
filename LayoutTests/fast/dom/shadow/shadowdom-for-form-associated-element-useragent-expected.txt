@@ -6,8 +6,6 @@ PASS oldestShadowRoot is not shadowRoot
 PASS youngerShadowRoot is shadowRoot
 PASS oldestShadowRoot is not shadowRoot
 PASS youngerShadowRoot is shadowRoot
-PASS oldestShadowRoot is not shadowRoot
-PASS youngerShadowRoot is shadowRoot
 PASS successfullyParsed is true
 
 TEST COMPLETE

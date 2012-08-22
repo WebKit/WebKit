@@ -63,6 +63,10 @@ RenderObject* HTMLButtonElement::createRenderer(RenderArena* arena, RenderStyle*
     return new (arena) RenderButton(this);
 }
 
+void HTMLButtonElement::willAddAuthorShadowRoot()
+{
+}
+
 const AtomicString& HTMLButtonElement::formControlType() const
 {
     switch (m_type) {

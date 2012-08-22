@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+<html>
+<body>
+<script src="resources/polyfill.js"></script>
+
+<p>When a button element has a shadow dom having a shadow element, it should get the children of the button element.</p>
+
+<button id="host1">Kotori</button>
+<button id="host2">Kotori</button>
+
+<script>
+var shadowRoot1 = new WebKitShadowRoot(host1);
+shadowRoot1.innerHTML = "<shadow></shadow> Otonashi";
+
+var shadowRoot2 = new WebKitShadowRoot(host2);
+shadowRoot2.innerHTML = "foo <shadow></shadow> bar";
+var shadowRoot3 = new WebKitShadowRoot(host2);
+shadowRoot3.innerHTML = "FOO <shadow></shadow> BAR";
+</script>
+
+</body>
+</html>

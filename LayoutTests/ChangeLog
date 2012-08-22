@@ -1,3 +1,16 @@
+2012-08-21  Shinya Kawanaka  <shinyak@chromium.org>
+
+        A shadow element in ShadowDOM of a button element does not work.
+        https://bugs.webkit.org/show_bug.cgi?id=91486
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/shadowdom-for-button-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-button.html: Added.
+        * fast/dom/shadow/shadowdom-for-form-associated-element-useragent-expected.txt:
+        * fast/dom/shadow/shadowdom-for-form-associated-element-useragent.html: a button element
+        does not have user agent shadow dom anymore.
+
 2012-08-21  Kenneth Russell  <kbr@google.com>
 
         Unreviewed Chromium gardening. Suppress crashes of new test.
