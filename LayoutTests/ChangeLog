@@ -1,5 +1,14 @@
 2012-08-22  Kenneth Russell  <kbr@google.com>
 
+        Layout test fast/text/emphasis-overlap.html started failing differently after r126312
+        https://bugs.webkit.org/show_bug.cgi?id=94735
+
+        Unreviewed gardening. Suppressed failure.
+
+        * platform/chromium/TestExpectations:
+
+2012-08-22  Kenneth Russell  <kbr@google.com>
+
         Unreviewed, rolling out r126319.
         http://trac.webkit.org/changeset/126319
         https://bugs.webkit.org/show_bug.cgi?id=84487

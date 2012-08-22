@@ -2192,7 +2192,7 @@ BUGWK90363 DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS TIMEOU
 // WebKit roll 74255:74308
 BUGCR67416 LINUX ANDROID WIN : fast/text/emphasis.html = IMAGE+TEXT
 BUGCR67416 : fast/text/emphasis-vertical.html = IMAGE IMAGE+TEXT
-BUGCR67540 LINUX ANDROID : fast/text/emphasis-overlap.html = IMAGE+TEXT
+BUGCR67540 ANDROID : fast/text/emphasis-overlap.html = IMAGE+TEXT
 BUGCR67540 LINUX ANDROID : fast/text/emphasis-avoid-ruby.html = IMAGE
 BUGCR67540 LINUX ANDROID WIN SNOWLEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
 BUGCR67540 LINUX ANDROID : fast/repaint/text-emphasis-v.html = IMAGE
@@ -3510,3 +3510,5 @@ BUGWK94667 WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance
 BUGWK94675 : css3/flexbox/flexitem.html = TEXT
 
 BUGWK94730 MAC : fast/repaint/japanese-rl-selection-repaint-in-regions.html = IMAGE
+
+BUGCR67540 BUGWK94735 LINUX : fast/text/emphasis-overlap.html = IMAGE IMAGE+TEXT
