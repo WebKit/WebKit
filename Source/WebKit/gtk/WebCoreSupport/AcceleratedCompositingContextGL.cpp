@@ -50,7 +50,6 @@ namespace WebKit {
 AcceleratedCompositingContext::AcceleratedCompositingContext(WebKitWebView* webView)
     : m_webView(webView)
     , m_layerFlushTimerCallbackId(0)
-    , m_redirectedWindow(RedirectedXCompositeWindow::create(IntSize(1, 1)))
     , m_lastFlushTime(0)
     , m_redrawPendingTime(0)
     , m_needsExtraFlush(false)
@@ -69,10 +68,14 @@ void AcceleratedCompositingContext::initialize()
     if (m_rootLayer)
         return;
 
+    IntSize pageSize = getWebViewSize(m_webView);
+    if (!m_redirectedWindow)
+        m_redirectedWindow = RedirectedXCompositeWindow::create(pageSize);
+    else
+        m_redirectedWindow->resize(pageSize);
+
     m_rootLayer = GraphicsLayer::create(this);
     m_rootLayer->setDrawsContent(false);
-
-    IntSize pageSize = getWebViewSize(m_webView);
     m_rootLayer->setSize(pageSize);
 
     // The non-composited contents are a child of the root layer.
@@ -238,9 +241,6 @@ void AcceleratedCompositingContext::setRootCompositingLayer(GraphicsLayer* graph
         m_textureMapper = nullptr;
         return;
     }
-
-    if (graphicsLayer && !enabled())
-        m_redirectedWindow->resize(getWebViewSize(m_webView));
 
     // Add the accelerated layer tree hierarchy.
     initialize();

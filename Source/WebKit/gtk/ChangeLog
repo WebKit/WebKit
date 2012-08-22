@@ -1,3 +1,19 @@
+2012-08-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crash when finalizing WebKitWebView
+        https://bugs.webkit.org/show_bug.cgi?id=94699
+
+        Reviewed by Martin Robinson.
+
+        Create the offscreen window the first time accelerated compositing
+        is enabled, so that if it's never enabled the window won't be
+        created.
+
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp:
+        (WebKit::AcceleratedCompositingContext::AcceleratedCompositingContext):
+        (WebKit::AcceleratedCompositingContext::initialize):
+        (WebKit::AcceleratedCompositingContext::setRootCompositingLayer):
+
 2012-08-22  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Split WebCore/platform into a separate library
