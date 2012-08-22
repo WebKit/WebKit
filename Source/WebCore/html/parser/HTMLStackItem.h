@@ -29,6 +29,8 @@
 #include "Element.h"
 #include "HTMLNames.h"
 #include "HTMLToken.h"
+#include "MathMLNames.h"
+#include "SVGNames.h"
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -77,6 +79,123 @@ public:
             || hasTagName(HTMLNames::tfootTag)
             || hasTagName(HTMLNames::theadTag)
             || hasTagName(HTMLNames::trTag);
+    }
+
+    bool isInHTMLNamespace() const
+    {
+        // A DocumentFragment takes the place of the document element when parsing
+        // fragments and should be considered in the HTML namespace.
+        return namespaceURI() == HTMLNames::xhtmlNamespaceURI
+            || isDocumentFragmentNode(); // FIXME: Does this also apply to ShadowRoot?
+    }
+
+    bool isNumberedHeaderElement() const
+    {
+        return hasTagName(HTMLNames::h1Tag)
+            || hasTagName(HTMLNames::h2Tag)
+            || hasTagName(HTMLNames::h3Tag)
+            || hasTagName(HTMLNames::h4Tag)
+            || hasTagName(HTMLNames::h5Tag)
+            || hasTagName(HTMLNames::h6Tag);
+    }
+
+    bool isTableBodyContextElement() const
+    {
+        return hasTagName(HTMLNames::tbodyTag)
+            || hasTagName(HTMLNames::tfootTag)
+            || hasTagName(HTMLNames::theadTag);
+    }
+
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#special
+    bool isSpecialNode() const
+    {
+        if (hasTagName(MathMLNames::miTag)
+            || hasTagName(MathMLNames::moTag)
+            || hasTagName(MathMLNames::mnTag)
+            || hasTagName(MathMLNames::msTag)
+            || hasTagName(MathMLNames::mtextTag)
+            || hasTagName(MathMLNames::annotation_xmlTag)
+            || hasTagName(SVGNames::foreignObjectTag)
+            || hasTagName(SVGNames::descTag)
+            || hasTagName(SVGNames::titleTag))
+            return true;
+        if (isDocumentFragmentNode())
+            return true;
+        if (!isInHTMLNamespace())
+            return false;
+        const AtomicString& tagName = localName();
+        return tagName == HTMLNames::addressTag
+            || tagName == HTMLNames::appletTag
+            || tagName == HTMLNames::areaTag
+            || tagName == HTMLNames::articleTag
+            || tagName == HTMLNames::asideTag
+            || tagName == HTMLNames::baseTag
+            || tagName == HTMLNames::basefontTag
+            || tagName == HTMLNames::bgsoundTag
+            || tagName == HTMLNames::blockquoteTag
+            || tagName == HTMLNames::bodyTag
+            || tagName == HTMLNames::brTag
+            || tagName == HTMLNames::buttonTag
+            || tagName == HTMLNames::captionTag
+            || tagName == HTMLNames::centerTag
+            || tagName == HTMLNames::colTag
+            || tagName == HTMLNames::colgroupTag
+            || tagName == HTMLNames::commandTag
+            || tagName == HTMLNames::ddTag
+            || tagName == HTMLNames::detailsTag
+            || tagName == HTMLNames::dirTag
+            || tagName == HTMLNames::divTag
+            || tagName == HTMLNames::dlTag
+            || tagName == HTMLNames::dtTag
+            || tagName == HTMLNames::embedTag
+            || tagName == HTMLNames::fieldsetTag
+            || tagName == HTMLNames::figcaptionTag
+            || tagName == HTMLNames::figureTag
+            || tagName == HTMLNames::footerTag
+            || tagName == HTMLNames::formTag
+            || tagName == HTMLNames::frameTag
+            || tagName == HTMLNames::framesetTag
+            || isNumberedHeaderElement()
+            || tagName == HTMLNames::headTag
+            || tagName == HTMLNames::headerTag
+            || tagName == HTMLNames::hgroupTag
+            || tagName == HTMLNames::hrTag
+            || tagName == HTMLNames::htmlTag
+            || tagName == HTMLNames::iframeTag
+            || tagName == HTMLNames::imgTag
+            || tagName == HTMLNames::inputTag
+            || tagName == HTMLNames::isindexTag
+            || tagName == HTMLNames::liTag
+            || tagName == HTMLNames::linkTag
+            || tagName == HTMLNames::listingTag
+            || tagName == HTMLNames::marqueeTag
+            || tagName == HTMLNames::menuTag
+            || tagName == HTMLNames::metaTag
+            || tagName == HTMLNames::navTag
+            || tagName == HTMLNames::noembedTag
+            || tagName == HTMLNames::noframesTag
+            || tagName == HTMLNames::noscriptTag
+            || tagName == HTMLNames::objectTag
+            || tagName == HTMLNames::olTag
+            || tagName == HTMLNames::pTag
+            || tagName == HTMLNames::paramTag
+            || tagName == HTMLNames::plaintextTag
+            || tagName == HTMLNames::preTag
+            || tagName == HTMLNames::scriptTag
+            || tagName == HTMLNames::sectionTag
+            || tagName == HTMLNames::selectTag
+            || tagName == HTMLNames::styleTag
+            || tagName == HTMLNames::summaryTag
+            || tagName == HTMLNames::tableTag
+            || isTableBodyContextElement()
+            || tagName == HTMLNames::tdTag
+            || tagName == HTMLNames::textareaTag
+            || tagName == HTMLNames::thTag
+            || tagName == HTMLNames::titleTag
+            || tagName == HTMLNames::trTag
+            || tagName == HTMLNames::ulTag
+            || tagName == HTMLNames::wbrTag
+            || tagName == HTMLNames::xmpTag;
     }
 
 private:

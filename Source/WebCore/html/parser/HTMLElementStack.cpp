@@ -38,16 +38,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static inline bool isNumberedHeaderElement(HTMLStackItem* item)
-{
-    return item->hasTagName(h1Tag)
-        || item->hasTagName(h2Tag)
-        || item->hasTagName(h3Tag)
-        || item->hasTagName(h4Tag)
-        || item->hasTagName(h5Tag)
-        || item->hasTagName(h6Tag);
-}
-    
 static inline bool isRootNode(HTMLStackItem* item)
 {
     return item->isDocumentFragmentNode()
@@ -108,7 +98,7 @@ inline bool isForeignContentScopeMarker(HTMLStackItem* item)
 {
     return HTMLElementStack::isMathMLTextIntegrationPoint(item)
         || HTMLElementStack::isHTMLIntegrationPoint(item)
-        || isInHTMLNamespace(item);
+        || item->isInHTMLNamespace();
 }
 
 inline bool isButtonScopeMarker(HTMLStackItem* item)
@@ -231,7 +221,7 @@ void HTMLElementStack::popUntilPopped(const AtomicString& tagName)
 
 void HTMLElementStack::popUntilNumberedHeaderElementPopped()
 {
-    while (!isNumberedHeaderElement(topStackItem()))
+    while (!topStackItem()->isNumberedHeaderElement())
         pop();
     pop();
 }
@@ -460,7 +450,7 @@ bool HTMLElementStack::hasNumberedHeaderElementInScope() const
 {
     for (ElementRecord* record = m_top.get(); record; record = record->next()) {
         HTMLStackItem* item = record->stackItem().get();
-        if (isNumberedHeaderElement(item))
+        if (item->isNumberedHeaderElement())
             return true;
         if (isScopeMarker(item))
             return false;
@@ -596,6 +586,19 @@ void HTMLElementStack::removeNonTopCommon(Element* element)
         }
     }
     ASSERT_NOT_REACHED();
+}
+
+HTMLElementStack::ElementRecord* HTMLElementStack::furthestBlockForFormattingElement(Element* formattingElement) const
+{
+    ElementRecord* furthestBlock = 0;
+    for (ElementRecord* pos = m_top.get(); pos; pos = pos->next()) {
+        if (pos->element() == formattingElement)
+            return furthestBlock;
+        if (pos->stackItem()->isSpecialNode())
+            furthestBlock = pos;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 #ifndef NDEBUG

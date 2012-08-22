@@ -174,7 +174,6 @@ private:
 
     Vector<Attribute> attributesForIsindexInput(AtomicHTMLToken*);
 
-    HTMLElementStack::ElementRecord* furthestBlockForFormattingElement(Element*);
     void callTheAdoptionAgency(AtomicHTMLToken*);
 
     void closeTheCell();
