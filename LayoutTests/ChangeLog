@@ -2,6 +2,14 @@
 
         [Chromium] Unreviewed gardening.
 
+        Fix TestExpectations syntax error WIN WIN7 => WIN.
+
+        * platform/chromium/TestExpectations:
+
+2012-08-21  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
         Rebaseline tests after http://trac.webkit.org/changeset/126225 .
         These are the same results as platform/mac-lion, which until
         r126225 where the results of platform/mac. So this is "reverting"
