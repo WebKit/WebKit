@@ -3405,7 +3405,7 @@ END
     }
 
     push(@implContent, <<END);
-    wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl.get());
+    wrapper = V8DOMWrapper::instantiateV8Object(proxy ? proxy->frame() : 0, &info, impl.get());
 END
     if (IsNodeSubType($dataNode) || IsVisibleAcrossOrigins($dataNode)) {
         push(@implContent, <<END);

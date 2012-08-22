@@ -125,7 +125,7 @@ namespace WebCore {
         static void setNamedHiddenReference(v8::Handle<v8::Object> parent, const char* name, v8::Handle<v8::Value> child);
         static void setNamedHiddenWindowReference(Frame*, const char*, v8::Handle<v8::Value>);
 
-        static v8::Local<v8::Object> instantiateV8Object(V8Proxy* proxy, WrapperTypeInfo*, void* impl);
+        static v8::Local<v8::Object> instantiateV8Object(Frame*, WrapperTypeInfo*, void*);
 
         static v8::Handle<v8::Object> getCachedWrapper(Node* node)
         {
@@ -148,7 +148,6 @@ namespace WebCore {
             return domNodeMap.get(node);
         }
     private:
-        static V8PerContextData* perContextData(V8Proxy*);
 #if ENABLE(WORKERS)
         static V8PerContextData* perContextData(WorkerContext*);
 #endif

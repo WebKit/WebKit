@@ -348,7 +348,7 @@ v8::Handle<v8::Object> V8TestInterface::wrapSlow(PassRefPtr<TestInterface> impl,
 {
     v8::Handle<v8::Object> wrapper;
     V8Proxy* proxy = 0;
-    wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl.get());
+    wrapper = V8DOMWrapper::instantiateV8Object(proxy ? proxy->frame() : 0, &info, impl.get());
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
     v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForActiveDOMObject(impl, wrapper, isolate);

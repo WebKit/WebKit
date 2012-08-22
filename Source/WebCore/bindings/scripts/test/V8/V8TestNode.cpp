@@ -125,7 +125,7 @@ v8::Handle<v8::Object> V8TestNode::wrapSlow(PassRefPtr<TestNode> impl, v8::Isola
         if (!context.IsEmpty())
             context->Enter();
     }
-    wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl.get());
+    wrapper = V8DOMWrapper::instantiateV8Object(proxy ? proxy->frame() : 0, &info, impl.get());
     // Exit the node's context if it was entered.
     if (!context.IsEmpty())
         context->Exit();
