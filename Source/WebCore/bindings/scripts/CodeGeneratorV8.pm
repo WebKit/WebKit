@@ -904,7 +904,7 @@ END
         }
         if ($attribute->signature->type eq "SerializedScriptValue" && $attrExt->{"CachedAttribute"}) {
             push(@implContentDecls, <<END);
-    v8::Handle<v8::String> propertyName = v8::String::NewSymbol("${attrName}");
+    v8::Handle<v8::String> propertyName = v8String("${attrName}", info.GetIsolate());
     v8::Handle<v8::Value> value = info.Holder()->GetHiddenValue(propertyName);
     if (!value.IsEmpty())
         return value;
@@ -1292,7 +1292,7 @@ END
 
     if ($attribute->signature->type eq "SerializedScriptValue" && $attribute->signature->extendedAttributes->{"CachedAttribute"}) {
         push(@implContentDecls, <<END);
-    info.Holder()->DeleteHiddenValue(v8::String::NewSymbol("${attrName}")); // Invalidate the cached value.
+    info.Holder()->DeleteHiddenValue(v8String("${attrName}", info.GetIsolate())); // Invalidate the cached value.
 END
     }
 
@@ -2098,7 +2098,7 @@ v8::Persistent<v8::FunctionTemplate> V8${implClassName}Constructor::GetTemplate(
 
     v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
     instance->SetInternalFieldCount(V8${implClassName}::internalFieldCount);
-    result->SetClassName(v8::String::NewSymbol("${implClassName}"));
+    result->SetClassName(v8String("${implClassName}"));
     result->Inherit(V8${implClassName}::GetTemplate());
 
     cachedTemplate = v8::Persistent<v8::FunctionTemplate>::New(result);
@@ -2298,7 +2298,7 @@ sub GenerateNonStandardFunction
         push(@implContent, <<END);
 
     // $commentInfo
-    ${conditional}$template->SetAccessor(v8::String::NewSymbol("$name"), ${interfaceName}V8Internal::${name}AttrGetter, ${interfaceName}V8Internal::${interfaceName}DomainSafeFunctionSetter, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>($property_attributes));
+    ${conditional}$template->SetAccessor(v8String("$name"), ${interfaceName}V8Internal::${name}AttrGetter, ${interfaceName}V8Internal::${interfaceName}DomainSafeFunctionSetter, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>($property_attributes));
 END
         return;
     }
@@ -2329,7 +2329,7 @@ END
     my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
     push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
 
-    push(@implContent, "    ${conditional}$template->Set(v8::String::NewSymbol(\"$name\"), v8::FunctionTemplate::New($callback, v8Undefined(), ${signature})$property_attributes);\n");
+    push(@implContent, "    ${conditional}$template->Set(v8String(\"$name\"), v8::FunctionTemplate::New($callback, v8Undefined(), ${signature})$property_attributes);\n");
 
     push(@implContent, "#endif // ${conditionalString}\n") if $conditionalString;
 }
@@ -2951,9 +2951,9 @@ END
 
     // For security reasons, these functions are on the instance instead
     // of on the prototype object to ensure that they cannot be overwritten.
-    instance->SetAccessor(v8::String::NewSymbol("reload"), V8Location::reloadAccessorGetter, 0, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
-    instance->SetAccessor(v8::String::NewSymbol("replace"), V8Location::replaceAccessorGetter, 0, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
-    instance->SetAccessor(v8::String::NewSymbol("assign"), V8Location::assignAccessorGetter, 0, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
+    instance->SetAccessor(v8String("reload"), V8Location::reloadAccessorGetter, 0, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
+    instance->SetAccessor(v8String("replace"), V8Location::replaceAccessorGetter, 0, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
+    instance->SetAccessor(v8String("assign"), V8Location::assignAccessorGetter, 0, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
 END
     }
 
@@ -3040,7 +3040,7 @@ END
                 my $name = $runtimeFunc->signature->name;
                 my $callback = GetFunctionTemplateCallbackName($runtimeFunc, $interfaceName);
                 push(@implContent, <<END);
-        proto->Set(v8::String::NewSymbol("${name}"), v8::FunctionTemplate::New(${callback}, v8Undefined(), defaultSignature)->GetFunction());
+        proto->Set(v8String("${name}"), v8::FunctionTemplate::New(${callback}, v8Undefined(), defaultSignature)->GetFunction());
 END
                 push(@implContent, "    }\n");
                 push(@implContent, "#endif // ${conditionalString}\n") if $conditionalString;

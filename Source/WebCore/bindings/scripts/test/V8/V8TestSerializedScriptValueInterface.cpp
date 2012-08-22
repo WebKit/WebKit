@@ -71,7 +71,7 @@ static v8::Handle<v8::Value> readonlyValueAttrGetter(v8::Local<v8::String> name,
 static v8::Handle<v8::Value> cachedValueAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestSerializedScriptValueInterface.cachedValue._get");
-    v8::Handle<v8::String> propertyName = v8::String::NewSymbol("cachedValue");
+    v8::Handle<v8::String> propertyName = v8String("cachedValue", info.GetIsolate());
     v8::Handle<v8::Value> value = info.Holder()->GetHiddenValue(propertyName);
     if (!value.IsEmpty())
         return value;
@@ -88,7 +88,7 @@ static void cachedValueAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Valu
     TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
     RefPtr<SerializedScriptValue> v = SerializedScriptValue::create(value, info.GetIsolate());
     imp->setCachedValue(WTF::getPtr(v));
-    info.Holder()->DeleteHiddenValue(v8::String::NewSymbol("cachedValue")); // Invalidate the cached value.
+    info.Holder()->DeleteHiddenValue(v8String("cachedValue", info.GetIsolate())); // Invalidate the cached value.
     return;
 }
 
@@ -109,7 +109,7 @@ static v8::Handle<v8::Value> portsAttrGetter(v8::Local<v8::String> name, const v
 static v8::Handle<v8::Value> cachedReadonlyValueAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestSerializedScriptValueInterface.cachedReadonlyValue._get");
-    v8::Handle<v8::String> propertyName = v8::String::NewSymbol("cachedReadonlyValue");
+    v8::Handle<v8::String> propertyName = v8String("cachedReadonlyValue", info.GetIsolate());
     v8::Handle<v8::Value> value = info.Holder()->GetHiddenValue(propertyName);
     if (!value.IsEmpty())
         return value;
