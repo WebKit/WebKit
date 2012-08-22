@@ -928,13 +928,8 @@ CustomFilterGlobalContext* RenderView::customFilterGlobalContext()
 void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
-    
-    for (RenderObject* renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
-        if (renderer->isRenderNamedFlowThread()) {
-            RenderNamedFlowThread* flowRenderer = toRenderNamedFlowThread(renderer);
-            flowRenderer->setStyle(RenderFlowThread::createFlowThreadStyle(style()));
-        }
-    }
+    if (hasRenderNamedFlowThreads())
+        flowThreadController()->styleDidChange();
 }
 
 bool RenderView::hasRenderNamedFlowThreads() const

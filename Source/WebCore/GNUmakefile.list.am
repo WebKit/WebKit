@@ -4869,6 +4869,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderFlexibleBox.h \
 	Source/WebCore/rendering/RenderFlowThread.cpp \
 	Source/WebCore/rendering/RenderFlowThread.h \
+	Source/WebCore/rendering/RenderFlowThreadContainer.cpp \
+	Source/WebCore/rendering/RenderFlowThreadContainer.h \
 	Source/WebCore/rendering/RenderFrameBase.cpp \
 	Source/WebCore/rendering/RenderFrameBase.h \
 	Source/WebCore/rendering/RenderFrame.cpp \

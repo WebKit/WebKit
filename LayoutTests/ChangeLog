@@ -1,3 +1,15 @@
+2012-08-22  Raul Hudea  <rhudea@adobe.com>
+
+        Crash in WebCore::RenderBlock::removeChild
+        https://bugs.webkit.org/show_bug.cgi?id=93879
+
+        Reviewed by Abhishek Arya.
+
+        Test the region-flow_thread sibling case
+
+        * fast/regions/remove-flow-thread-crash-expected.txt: Added.
+        * fast/regions/remove-flow-thread-crash.html: Added.
+
 2012-08-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126287.

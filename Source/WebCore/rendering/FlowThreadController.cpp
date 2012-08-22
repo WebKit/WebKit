@@ -32,6 +32,7 @@
 #include "FlowThreadController.h"
 
 #include "RenderFlowThread.h"
+#include "RenderFlowThreadContainer.h"
 #include "RenderNamedFlowThread.h"
 #include "WebKitNamedFlow.h"
 #include "WebKitNamedFlowCollection.h"
@@ -47,6 +48,7 @@ PassOwnPtr<FlowThreadController> FlowThreadController::create(RenderView* view)
 FlowThreadController::FlowThreadController(RenderView* view)
     : m_view(view)
     , m_currentRenderFlowThread(0)
+    , m_flowThreadContainer(0)
     , m_isRenderNamedFlowThreadOrderDirty(false)
 {
 }
@@ -57,6 +59,11 @@ FlowThreadController::~FlowThreadController()
 
 RenderNamedFlowThread* FlowThreadController::ensureRenderFlowThreadWithName(const AtomicString& name)
 {
+    if (!m_flowThreadContainer) {
+        m_flowThreadContainer = new (m_view->renderArena()) RenderFlowThreadContainer(m_view->document());
+        m_flowThreadContainer->setStyle(RenderFlowThread::createFlowThreadStyle(m_view->style()));
+        m_view->addChild(m_flowThreadContainer);
+    }
     if (!m_renderNamedFlowThreadList)
         m_renderNamedFlowThreadList = adoptPtr(new RenderNamedFlowThreadList());
     else {
@@ -76,12 +83,21 @@ RenderNamedFlowThread* FlowThreadController::ensureRenderFlowThreadWithName(cons
     flowRenderer->setStyle(RenderFlowThread::createFlowThreadStyle(m_view->style()));
     m_renderNamedFlowThreadList->add(flowRenderer);
 
-    // Keep the flow renderer as a child of RenderView.
-    m_view->addChild(flowRenderer);
+    // Keep the flow renderer as a child of RenderFlowThreadContainer.
+    m_flowThreadContainer->addChild(flowRenderer);
 
     setIsRenderNamedFlowThreadOrderDirty(true);
 
     return flowRenderer;
+}
+
+void FlowThreadController::styleDidChange()
+{
+    RenderStyle* viewStyle = m_view->style();
+    for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter) {
+        RenderNamedFlowThread* flowRenderer = *iter;
+        flowRenderer->setStyle(RenderFlowThread::createFlowThreadStyle(viewStyle));
+    }
 }
 
 void FlowThreadController::layoutRenderNamedFlowThreads()

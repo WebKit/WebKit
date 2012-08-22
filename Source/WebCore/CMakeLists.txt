@@ -2027,6 +2027,7 @@ SET(WebCore_SOURCES
     rendering/RenderFlexibleBox.cpp
     rendering/RenderGrid.cpp
     rendering/RenderFlowThread.cpp
+    rendering/RenderFlowThreadContainer.cpp
     rendering/RenderFrame.cpp
     rendering/RenderFrameBase.cpp
     rendering/RenderFrameSet.cpp
