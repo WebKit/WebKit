@@ -2045,6 +2045,14 @@
 				RelativePath="..\..\interpreter\RegisterFile.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\interpreter\VMInspector.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\interpreter\VMInspector.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="bytecompiler"

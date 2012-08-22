@@ -362,6 +362,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/interpreter/RegisterFile.cpp \
 	Source/JavaScriptCore/interpreter/RegisterFile.h \
 	Source/JavaScriptCore/interpreter/Register.h \
+	Source/JavaScriptCore/interpreter/VMInspector.cpp \
+	Source/JavaScriptCore/interpreter/VMInspector.h \
 	Source/JavaScriptCore/JavaScriptCorePrefix.h \
 	Source/JavaScriptCore/jit/CompactJITCodeMap.h \
 	Source/JavaScriptCore/jit/ExecutableAllocator.cpp \

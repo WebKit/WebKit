@@ -272,6 +272,8 @@ namespace JSC  {
 #endif
         ExecState();
         ~ExecState();
+
+        friend class VMInspector;
     };
 
 } // namespace JSC

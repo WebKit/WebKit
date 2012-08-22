@@ -130,6 +130,7 @@ SET(JavaScriptCore_SOURCES
     interpreter/CallFrame.cpp
     interpreter/Interpreter.cpp
     interpreter/RegisterFile.cpp
+    interpreter/VMInspector.cpp
 
     jit/ExecutableAllocator.cpp
     jit/HostCallReturnValue.cpp
