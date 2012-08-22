@@ -320,15 +320,26 @@ void IDBDatabaseBackendImpl::transactionFinished(PassRefPtr<IDBTransactionBacken
     }
 }
 
-void IDBDatabaseBackendImpl::transactionFinishedAndEventsFired(PassRefPtr<IDBTransactionBackendImpl> prpTransaction)
+void IDBDatabaseBackendImpl::transactionFinishedAndAbortFired(PassRefPtr<IDBTransactionBackendImpl> prpTransaction)
 {
     RefPtr<IDBTransactionBackendImpl> transaction = prpTransaction;
     if (transaction->mode() == IDBTransaction::VERSION_CHANGE) {
         // If this was an open-with-version call, there will be a "second
         // half" open call waiting for us in processPendingCalls.
         // FIXME: When we no longer support setVersion, assert such a thing.
+        if (m_pendingSecondHalfOpenWithVersionCalls.size() == 1) {
+            RefPtr<PendingOpenWithVersionCall> pendingOpenWithVersionCall = m_pendingSecondHalfOpenWithVersionCalls.takeFirst();
+            pendingOpenWithVersionCall->callbacks()->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR, "Version change transaction was aborted in upgradeneeded event handler."));
+        }
         processPendingCalls();
     }
+}
+
+void IDBDatabaseBackendImpl::transactionFinishedAndCompleteFired(PassRefPtr<IDBTransactionBackendImpl> prpTransaction)
+{
+    RefPtr<IDBTransactionBackendImpl> transaction = prpTransaction;
+    if (transaction->mode() == IDBTransaction::VERSION_CHANGE)
+        processPendingCalls();
 }
 
 int32_t IDBDatabaseBackendImpl::connectionCount()
@@ -486,6 +497,7 @@ void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(int64_t requestedVer
         ASSERT_NOT_REACHED();
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
     }
+    ASSERT_WITH_MESSAGE(!m_pendingSecondHalfOpenWithVersionCalls.size(), "m_pendingSecondHalfOpenWithVersionCalls.size = %zu", m_pendingSecondHalfOpenWithVersionCalls.size());
     m_pendingSecondHalfOpenWithVersionCalls.append(PendingOpenWithVersionCall::create(callbacks, requestedVersion));
 }
 

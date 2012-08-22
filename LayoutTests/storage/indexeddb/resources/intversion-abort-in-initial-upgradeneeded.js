@@ -19,16 +19,13 @@ function deleteSuccess() {
     request = evalAndLog("indexedDB.open(dbname, 2)");
     request.onsuccess = unexpectedSuccessCallback;
     evalAndLog("request.onupgradeneeded = upgradeNeeded");
-    debug("FIXME: This should get an error event of type AbortError");
-    evalAndLog("request.onerror = unexpectedErrorCallback");
+    evalAndLog("request.onerror = onError");
     request.onblocked = unexpectedBlockedCallback;
 }
 
 function upgradeNeeded(evt)
 {
-    debug("");
-    debug("upgradeNeeded():");
-    event = evt;
+    preamble(evt);
     db = event.target.result;
     shouldBe("db.version", "2");
     transaction = event.target.transaction;
@@ -39,10 +36,19 @@ function upgradeNeeded(evt)
 
 function onAbort(evt)
 {
-    debug("");
-    debug("onAbort():");
-    event = evt;
+    preamble(evt);
     shouldBe("event.target.db.version", "0");
+    shouldBeNonNull("request.transaction");
+}
+
+function onError(evt)
+{
+    preamble(evt);
+    shouldBe("db", "event.target.result");
+    shouldBe("request", "event.target");
+    shouldBeEqualToString("event.target.error.name", "AbortError");
+    shouldBe("event.target.result.version", "0");
+    shouldBeNull("request.transaction");
     finishJSTest();
 }
 

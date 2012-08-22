@@ -469,6 +469,11 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
             cursorToNotify->setValueReady(m_cursorKey.release(), m_cursorPrimaryKey.release(), m_cursorValue.release());
     }
 
+    if (event->type() == eventNames().upgradeneededEvent) {
+        ASSERT(!m_didFireUpgradeNeededEvent);
+        m_didFireUpgradeNeededEvent = true;
+    }
+
     // FIXME: When we allow custom event dispatching, this will probably need to change.
     ASSERT_WITH_MESSAGE(event->type() == eventNames().successEvent || event->type() == eventNames().errorEvent || event->type() == eventNames().blockedEvent || event->type() == eventNames().upgradeneededEvent, "event type was %s", event->type().string().utf8().data());
     const bool setTransactionActive = m_transaction && (event->type() == eventNames().successEvent || event->type() == eventNames().upgradeneededEvent || (event->type() == eventNames().errorEvent && m_errorCode != IDBDatabaseException::IDB_ABORT_ERR));
@@ -482,11 +487,6 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
 
     if (cursorToNotify)
         cursorToNotify->postSuccessHandlerCallback();
-
-    if (event->type() == eventNames().upgradeneededEvent) {
-        ASSERT(!m_didFireUpgradeNeededEvent);
-        m_didFireUpgradeNeededEvent = true;
-    }
 
     if (m_transaction) {
         if (event->type() == eventNames().errorEvent && dontPreventDefault && !m_requestAborted) {

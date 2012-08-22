@@ -151,6 +151,8 @@ void IDBTransactionBackendImpl::abort()
     if (m_callbacks)
         m_callbacks->onAbort();
 
+    m_database->transactionFinishedAndAbortFired(this);
+
     m_database = 0;
 }
 
@@ -232,12 +234,13 @@ void IDBTransactionBackendImpl::commit()
         m_database->transactionCoordinator()->didFinishTransaction(this);
     m_database->transactionFinished(this);
 
-    if (committed)
+    if (committed) {
         m_callbacks->onComplete();
-    else
+        m_database->transactionFinishedAndCompleteFired(this);
+    } else {
         m_callbacks->onAbort();
-
-    m_database->transactionFinishedAndEventsFired(this);
+        m_database->transactionFinishedAndAbortFired(this);
+    }
 
     m_database = 0;
 }

@@ -72,7 +72,8 @@ public:
     IDBTransactionCoordinator* transactionCoordinator() const { return m_transactionCoordinator.get(); }
     void transactionStarted(PassRefPtr<IDBTransactionBackendImpl>);
     void transactionFinished(PassRefPtr<IDBTransactionBackendImpl>);
-    void transactionFinishedAndEventsFired(PassRefPtr<IDBTransactionBackendImpl>);
+    void transactionFinishedAndCompleteFired(PassRefPtr<IDBTransactionBackendImpl>);
+    void transactionFinishedAndAbortFired(PassRefPtr<IDBTransactionBackendImpl>);
 
 private:
     IDBDatabaseBackendImpl(const String& name, IDBBackingStore* database, IDBTransactionCoordinator*, IDBFactoryBackendImpl*, const String& uniqueIdentifier);

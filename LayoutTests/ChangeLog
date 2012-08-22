@@ -1,3 +1,20 @@
+2012-08-21  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Fire error at request when abort is called in upgradeneeded
+        https://bugs.webkit.org/show_bug.cgi?id=94402
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/intversion-abort-in-initial-upgradeneeded-expected.txt:
+        Only remaining error in this test is versions not being reset in
+        memory.
+
+        * storage/indexeddb/resources/intversion-abort-in-initial-upgradeneeded.js:
+        (deleteSuccess):
+        (upgradeNeeded):
+        (onAbort):
+        (onError):
+
 2012-08-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126233.
