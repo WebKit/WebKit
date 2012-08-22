@@ -1,0 +1,2 @@
+94291: Crash in RenderTableSection::setCellLogicalWidths
+This test has PASSED as it didn't CRASH or ASSERT.

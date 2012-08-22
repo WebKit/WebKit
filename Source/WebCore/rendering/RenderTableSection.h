@@ -206,7 +206,7 @@ private:
 
     virtual bool isTableSection() const { return true; }
 
-    virtual void willBeDestroyed();
+    virtual void willBeRemovedFromTree() OVERRIDE;
 
     virtual void layout();
 
