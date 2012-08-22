@@ -68,7 +68,7 @@ private:
 
     void updateNameCache() const;
 
-    void updatePropertyCache(Element* element, const AtomicString& propertyName) const
+    void updatePropertyCache(Element*, const AtomicString& propertyName) const
     {
         if (!m_propertyNames)
             m_propertyNames = DOMStringList::create();
