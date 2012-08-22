@@ -139,6 +139,64 @@ Call.prototype = {
 
 /**
  * @constructor
+ * @param {ReplayableResource} thisObject
+ * @param {string} functionName
+ * @param {Array.<ReplayableResource|*>} args
+ * @param {ReplayableResource|*} result
+ */
+function ReplayableCall(thisObject, functionName, args, result)
+{
+    this._thisObject = thisObject;
+    this._functionName = functionName;
+    this._args = args;
+    this._result = result;
+}
+
+ReplayableCall.prototype = {
+    /**
+     * @return {ReplayableResource}
+     */
+    resource: function()
+    {
+        return this._thisObject;
+    },
+
+    /**
+     * @return {string}
+     */
+    functionName: function()
+    {
+        return this._functionName;
+    },
+
+    /**
+     * @return {Array.<ReplayableResource|*>}
+     */
+    args: function()
+    {
+        return this._args;
+    },
+
+    /**
+     * @return {ReplayableResource|*}
+     */
+    result: function()
+    {
+        return this._result;
+    },
+
+    /**
+     * @param {Cache} cache
+     * @return {Call}
+     */
+    replay: function(cache)
+    {
+        // FIXME: Do the replay.
+    }
+}
+
+/**
+ * @constructor
  * @param {Object} wrappedObject
  */
 function Resource(wrappedObject)
@@ -221,6 +279,26 @@ Resource.prototype = {
     _bindObjectToResource: function(object)
     {
         object["__resourceObject"] = this;
+    }
+}
+
+/**
+ * @constructor
+ * @param {Resource} originalResource
+ * @param {Object} data
+ */
+function ReplayableResource(originalResource, data)
+{
+}
+
+ReplayableResource.prototype = {
+    /**
+     * @param {Cache} cache
+     * @return {Resource}
+     */
+    replay: function(cache)
+    {
+        // FIXME: Do the replay.
     }
 }
 
@@ -353,8 +431,8 @@ WebGLRenderingContextResource.WrapFunction.prototype = {
  */
 function TraceLog()
 {
-    this._calls = [];
-    this._resourceCache = new Cache();
+    this._replayableCalls = [];
+    this._replayablesCache = new Cache();
 }
 
 TraceLog.prototype = {
@@ -363,7 +441,15 @@ TraceLog.prototype = {
      */
     size: function()
     {
-        return this._calls.length;
+        return this._replayableCalls.length;
+    },
+
+    /**
+     * @return {Array.<ReplayableCall>}
+     */
+    replayableCalls: function()
+    {
+        return this._replayableCalls;
     },
 
     /**
@@ -379,8 +465,68 @@ TraceLog.prototype = {
      */
     addCall: function(call)
     {
-        // FIXME: Clone call and push the clone.
-        this._calls.push(call);
+        // FIXME: Convert the call to a ReplayableCall and push it.
+    }
+}
+
+/**
+ * @constructor
+ * @param {TraceLog} traceLog
+ */
+function TraceLogPlayer(traceLog)
+{
+    this._traceLog = traceLog;
+    this._nextReplayStep = 0;
+    this._replayWorldCache = new Cache();
+}
+
+TraceLogPlayer.prototype = {
+    /**
+     * @return {TraceLog}
+     */
+    traceLog: function()
+    {
+        return this._traceLog;
+    },
+
+    /**
+     * @return {number}
+     */
+    nextReplayStep: function()
+    {
+        return this._nextReplayStep;
+    },
+
+    reset: function()
+    {
+        // FIXME: Prevent memory leaks: detach and delete all old resources OR reuse them OR create a new replay canvas every time.
+        this._nextReplayStep = 0;
+        this._replayWorldCache.reset();
+    },
+
+    step: function()
+    {
+        this.stepTo(this._nextReplayStep);
+    },
+
+    /**
+     * @param {number} stepNum
+     */
+    stepTo: function(stepNum)
+    {
+        stepNum = Math.min(stepNum, this._traceLog.size() - 1);
+        console.assert(stepNum >= 0);
+        if (this._nextReplayStep > stepNum)
+            this.reset();
+        // FIXME: Replay all the cached resources first to warm-up.
+        var replayableCalls = this._traceLog.replayableCalls();
+        while (this._nextReplayStep <= stepNum)
+            replayableCalls[this._nextReplayStep++].replay(this._replayWorldCache);            
+    },
+
+    replay: function()
+    {
+        this.stepTo(this._traceLog.size() - 1);
     }
 }
 
@@ -491,6 +637,10 @@ ResourceTrackingManager.prototype = {
 var InjectedScript = function()
 {
     this._manager = new ResourceTrackingManager();
+    this._lastTraceLogId = 0;
+    this._traceLogs = {};
+    this._traceLogPlayer = null;
+    this._replayContext = null;
 }
 
 InjectedScript.prototype = {
@@ -508,7 +658,72 @@ InjectedScript.prototype = {
 
     captureFrame: function()
     {
+        var id = this._makeTraceLogId();
         this._manager.captureFrame();
+        this._traceLogs[id] = this._manager.lastTraceLog();
+        return id;
+    },
+
+    /**
+     * @param {string} id
+     */
+    dropTraceLog: function(id)
+    {
+        if (this._traceLogPlayer && this._traceLogPlayer.traceLog() === this._traceLogs[id])
+            this._traceLogPlayer = null;
+        delete this._traceLogs[id];
+    },
+
+    /**
+     * @param {string} id
+     * @return {Object|string}
+     */
+    traceLog: function(id)
+    {
+        var traceLog = this._traceLogs[id];
+        if (!traceLog)
+            return "Error: Trace log with this ID not found.";
+        var result = {
+            id: id,
+            calls: []
+        };
+        var calls = traceLog.replayableCalls();
+        for (var i = 0, n = calls.length; i < n; ++i) {
+            var call = calls[i];
+            result.calls.push({
+                functionName: call.functionName() + "(" + call.args().join(", ") + ") => " + call.result()
+            });
+        }
+        return result;
+    },
+
+    /**
+     * @param {string} id
+     * @param {number} stepNo
+     * @return {string}
+     */
+    replayTraceLog: function(id, stepNo)
+    {
+        var traceLog = this._traceLogs[id];
+        if (!traceLog)
+            return "";
+        if (!this._traceLogPlayer || this._traceLogPlayer.traceLog() !== traceLog)
+            this._traceLogPlayer = new TraceLogPlayer(traceLog);
+        this._traceLogPlayer.stepTo(stepNo);
+        if (!this._replayContext) {
+            console.error("ASSERT_NOT_REACHED: replayTraceLog failed to create a replay canvas?!");
+            return "";
+        }
+        // Return current screenshot.
+        return this._replayContext.canvas.toDataURL();
+    },
+
+    /**
+     * @return {string}
+     */
+    _makeTraceLogId: function()
+    {
+        return "{\"injectedScriptId\":" + injectedScriptId + ",\"traceLogId\":" + (++this._lastTraceLogId) + "}";
     }
 }
 
