@@ -1,3 +1,12 @@
+2012-08-22  Alexandre Elias  <aelias@chromium.org>
+
+        Unreviewed, add aelias@chromium.org to committers
+
+        I (aelias@chromium.org) have been approved for commit access and Apple
+        has confirmed receipt of my committer agreement.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-08-22  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Support posting injected bundle messages to a page
