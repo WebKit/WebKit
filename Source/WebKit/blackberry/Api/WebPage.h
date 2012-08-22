@@ -380,6 +380,8 @@ public:
 
     void autofillTextField(const std::string&);
 
+    void enableQnxJavaScriptObject(bool);
+
 private:
     virtual ~WebPage();
 

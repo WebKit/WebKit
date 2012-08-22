@@ -1,3 +1,20 @@
+2012-08-21  Benjamin C Meyer  <bmeyer@rim.com>
+
+        [BlackBerry] Add option to only add JavaScript object 'qnx' to private webviews
+        https://bugs.webkit.org/show_bug.cgi?id=94621
+
+        Reviewed by Yong Li.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::enableQnxJavaScriptObject):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        * Api/WebPage.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidClearWindowObjectInWorld):
+
 2012-08-21  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [BlackBerry] Add support for getUserMedia

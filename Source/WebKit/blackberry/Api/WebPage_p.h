@@ -615,6 +615,8 @@ public:
     WebCore::KURL m_cachedManualScript;
     bool m_cachedFocused;
 
+    bool m_enableQnxJavaScriptObject;
+
     class DeferredTaskBase {
     public:
         void perform(WebPagePrivate* webPagePrivate)

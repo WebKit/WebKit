@@ -903,9 +903,8 @@ void FrameLoaderClientBlackBerry::dispatchDidClearWindowObjectInWorld(DOMWrapper
         return;
 
     // Provide the extension object first in case the client or others want to use it.
-    // FIXME: Conditionally attach extension object based on some flag or whether or not we
-    // are browser or something else.
-    attachExtensionObjectToFrame(m_frame, m_webPagePrivate->m_client);
+    if (m_webPagePrivate->m_enableQnxJavaScriptObject)
+        attachExtensionObjectToFrame(m_frame, m_webPagePrivate->m_client);
 
     m_webPagePrivate->m_client->notifyWindowObjectCleared();
 
