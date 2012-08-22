@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+            function startTest()
+            {
+                consoleWrite("** Create video and text track element **");
+                var video = document.createElement("video");
+                var track = document.createElement("track");
+
+                consoleWrite("** Append the track element to the video element **");
+                video.appendChild(track);
+
+                consoleWrite("** Set the mode of the text track to SHOWING **");
+                track.track.mode = 2;
+
+                consoleWrite("");
+                consoleWrite("No crash. PASS.");
+                consoleWrite("");
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="startTest()">
+      <p>Tests that the browser handles properly simple DOM mutations.</p>
+    </body>
+</html>

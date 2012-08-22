@@ -1,0 +1,10 @@
+Tests that the browser handles properly simple DOM mutations.
+
+** Create video and text track element **
+** Append the track element to the video element **
+** Set the mode of the text track to SHOWING **
+
+No crash. PASS.
+
+END OF TEST
+
