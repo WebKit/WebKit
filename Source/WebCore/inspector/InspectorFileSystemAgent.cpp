@@ -631,7 +631,6 @@ private:
 
     RefPtr<FrontendProvider> m_frontendProvider;
     int m_requestId;
-    FileSystemType m_type;
     KURL m_url;
 };
 
