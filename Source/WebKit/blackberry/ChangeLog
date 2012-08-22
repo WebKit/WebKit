@@ -1,3 +1,30 @@
+2012-08-22  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry] Make all pickers non-zoomable
+        https://bugs.webkit.org/show_bug.cgi?id=94729
+
+        Reviewed by Antonio Gomes.
+
+        Move HTML header initialization to PagePopupBlackBerry as that part are all the same, and make all pickers non-zoomable.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::screenSize):
+        (WebKit):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebCoreSupport/DatePickerClient.cpp:
+        (WebCore::DatePickerClient::generateHTML):
+        (WebCore::DatePickerClient::writeDocument):
+        * WebCoreSupport/PagePopupBlackBerry.cpp:
+        (WebCore::PagePopupBlackBerry::init):
+        (WebCore::PagePopupBlackBerry::generateHTML):
+        (WebCore):
+        * WebCoreSupport/PagePopupBlackBerry.h:
+        (PagePopupBlackBerry):
+        * WebCoreSupport/SelectPopupClient.cpp:
+        (WebCore::SelectPopupClient::generateHTML):
+        (WebCore::SelectPopupClient::writeDocument):
+
 2012-08-21  Benjamin C Meyer  <bmeyer@rim.com>
 
         [BlackBerry] Add option to only add JavaScript object 'qnx' to private webviews

@@ -40,6 +40,7 @@
 
 // Fixme: should get the height from runtime.
 #define URL_BAR_HEIGHT 70
+#define PADDING 80
 
 using namespace BlackBerry::Platform::Graphics;
 using namespace BlackBerry::WebKit;
@@ -63,12 +64,30 @@ bool PagePopupBlackBerry::sendCreatePopupWebViewRequest()
 
 bool PagePopupBlackBerry::init(WebPage* webpage)
 {
-    DocumentWriter* writer = webpage->d->mainFrame()->loader()->activeDocumentLoader()->writer();
-    m_client->writeDocument(*writer);
+    generateHTML(webpage);
 
     installDomFunction(webpage->d->mainFrame());
 
     return true;
+}
+
+void PagePopupBlackBerry::generateHTML(WebPage* webpage)
+{
+    DocumentWriter* writer = webpage->d->mainFrame()->loader()->activeDocumentLoader()->writer();
+    writer->setMIMEType("text/html");
+    writer->begin(KURL());
+
+    // All the popups have the same html head and the page content should be non-zoomable.
+    StringBuilder source;
+    // FIXME: the hardcoding padding will be removed soon.
+    int screenWidth = webpage->d->screenSize().width() - PADDING;
+    source.append("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>\n");
+    source.append("<meta name=\"viewport\" content=\"width=" + String::number(screenWidth));
+    source.append("; user-scalable=no\" />\n");
+    writer->addData(source.toString().utf8().data(), source.toString().utf8().length());
+
+    m_client->writeDocument(*writer);
+    writer->end();
 }
 
 static JSValueRef setValueAndClosePopupCallback(JSContextRef context,

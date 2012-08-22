@@ -6445,5 +6445,10 @@ void WebPagePrivate::restoreHistoryViewState(Platform::IntSize contentsSize, Pla
     }
 }
 
+IntSize WebPagePrivate::screenSize() const
+{
+    return Platform::Graphics::Screen::primaryScreen()->size();
+}
+
 }
 }

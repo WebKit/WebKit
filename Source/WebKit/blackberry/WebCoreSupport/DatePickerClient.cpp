@@ -50,7 +50,7 @@ DatePickerClient::~DatePickerClient()
 void DatePickerClient::generateHTML(BlackBerry::Platform::BlackBerryInputType type, const BlackBerry::WebKit::WebString& value, const BlackBerry::WebKit::WebString& min, const BlackBerry::WebKit::WebString& max, double step)
 {
     StringBuilder source;
-    source.append("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><style>\n");
+    source.append("<style>\n");
     // Include CSS file.
     source.append(popupControlBlackBerryCss,
             sizeof(popupControlBlackBerryCss));
@@ -134,9 +134,6 @@ void DatePickerClient::didClosePopup()
 
 void DatePickerClient::writeDocument(DocumentWriter& writer)
 {
-    writer.setMIMEType("text/html");
-    writer.begin(KURL());
     writer.addData(m_source.utf8().data(), m_source.utf8().length());
-    writer.end();
 }
 }

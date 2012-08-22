@@ -46,6 +46,7 @@ public:
     void closePopup();
     void installDomFunction(Frame*);
     void setRect();
+    void generateHTML(BlackBerry::WebKit::WebPage*);
 
 private:
     BlackBerry::WebKit::WebPagePrivate* m_webPagePrivate;
