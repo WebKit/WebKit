@@ -33,14 +33,14 @@
 
 #include "MockWebMediaStreamCenter.h"
 
-#include "platform/WebICECandidateDescriptor.h"
-#include "platform/WebMediaStreamCenterClient.h"
-#include "platform/WebMediaStreamComponent.h"
-#include "platform/WebMediaStreamDescriptor.h"
-#include "platform/WebMediaStreamSource.h"
-#include "platform/WebMediaStreamSourcesRequest.h"
-#include "platform/WebSessionDescriptionDescriptor.h"
-#include "platform/WebVector.h"
+#include <public/WebICECandidateDescriptor.h>
+#include <public/WebMediaStreamCenterClient.h>
+#include <public/WebMediaStreamComponent.h>
+#include <public/WebMediaStreamDescriptor.h>
+#include <public/WebMediaStreamSource.h>
+#include <public/WebMediaStreamSourcesRequest.h>
+#include <public/WebSessionDescriptionDescriptor.h>
+#include <public/WebVector.h>
 
 using namespace WebKit;
 

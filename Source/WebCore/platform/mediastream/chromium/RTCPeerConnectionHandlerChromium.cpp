@@ -56,8 +56,7 @@ RTCPeerConnectionHandlerChromium::~RTCPeerConnectionHandlerChromium()
 bool RTCPeerConnectionHandlerChromium::initialize()
 {
     m_webHandler = adoptPtr(WebKit::Platform::current()->createRTCPeerConnectionHandler(this));
-    // FIXME: Change the default value to false once the mock WebRTCPeerConnectionHandler has landed.
-    return m_webHandler ? m_webHandler->initialize() : true;
+    return m_webHandler ? m_webHandler->initialize() : false;
 }
 
 } // namespace WebCore

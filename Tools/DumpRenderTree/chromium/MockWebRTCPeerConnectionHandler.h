@@ -28,31 +28,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MockWebKitPlatformSupport_h
-#define MockWebKitPlatformSupport_h
-
-#include <public/Platform.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
-
-class MockWebKitPlatformSupport : public WebKit::Platform {
-public:
-    static PassOwnPtr<MockWebKitPlatformSupport> create();
-    ~MockWebKitPlatformSupport();
-
-    virtual void cryptographicallyRandomValues(unsigned char* buffer, size_t length) OVERRIDE;
+#ifndef MockWebRTCPeerConnectionHandler_h
+#define MockWebRTCPeerConnectionHandler_h
 
 #if ENABLE(MEDIA_STREAM)
-    virtual WebKit::WebMediaStreamCenter* createMediaStreamCenter(WebKit::WebMediaStreamCenterClient*) OVERRIDE;
-    virtual WebKit::WebRTCPeerConnectionHandler* createRTCPeerConnectionHandler(WebKit::WebRTCPeerConnectionHandlerClient*) OVERRIDE;
-#endif // ENABLE(MEDIA_STREAM)
+#include <public/WebRTCPeerConnectionHandler.h>
 
-private:
-    MockWebKitPlatformSupport();
-
-#if ENABLE(MEDIA_STREAM)
-    OwnPtr<WebKit::WebMediaStreamCenter> m_mockMediaStreamCenter;
-#endif // ENABLE(MEDIA_STREAM)
+namespace WebKit {
+class WebRTCPeerConnectionHandlerClient;
 };
 
-#endif // MockWebKitPlatformSupport_h
+class MockWebRTCPeerConnectionHandler : public WebKit::WebRTCPeerConnectionHandler {
+public:
+    explicit MockWebRTCPeerConnectionHandler(WebKit::WebRTCPeerConnectionHandlerClient*);
+
+    virtual bool initialize() OVERRIDE;
+
+private:
+    MockWebRTCPeerConnectionHandler() { }
+};
+
+#endif // ENABLE(MEDIA_STREAM)
+
+#endif // MockWebRTCPeerConnectionHandler_h
+

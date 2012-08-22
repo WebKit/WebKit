@@ -32,6 +32,7 @@
 #include "MockWebKitPlatformSupport.h"
 
 #include "MockWebMediaStreamCenter.h"
+#include "MockWebRTCPeerConnectionHandler.h"
 #include <wtf/Assertions.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -62,5 +63,10 @@ WebMediaStreamCenter* MockWebKitPlatformSupport::createMediaStreamCenter(WebMedi
         m_mockMediaStreamCenter = adoptPtr(new MockWebMediaStreamCenter(client));
 
     return m_mockMediaStreamCenter.get();
+}
+
+WebRTCPeerConnectionHandler* MockWebKitPlatformSupport::createRTCPeerConnectionHandler(WebRTCPeerConnectionHandlerClient* client)
+{
+    return new MockWebRTCPeerConnectionHandler(client);
 }
 #endif // ENABLE(MEDIA_STREAM)

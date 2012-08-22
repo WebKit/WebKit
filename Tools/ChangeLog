@@ -1,3 +1,28 @@
+2012-08-22  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Add MockWebRTCPeerConnectionHandler
+        https://bugs.webkit.org/show_bug.cgi?id=93091
+
+        Reviewed by Adam Barth.
+
+        Add a skeleton MockWebRTCPeerConnectionHandler to DumpRenderTree,
+        to complete the infrastructure for RTCPeerConnection.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/MockWebKitPlatformSupport.cpp:
+        (MockWebKitPlatformSupport::createRTCPeerConnectionHandler):
+        * DumpRenderTree/chromium/MockWebKitPlatformSupport.h:
+        (MockWebKitPlatformSupport):
+        * DumpRenderTree/chromium/MockWebMediaStreamCenter.cpp:
+        * DumpRenderTree/chromium/MockWebMediaStreamCenter.h:
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.cpp: Copied from Tools/DumpRenderTree/chromium/MockWebKitPlatformSupport.h.
+        (MockWebRTCPeerConnectionHandler::MockWebRTCPeerConnectionHandler):
+        (MockWebRTCPeerConnectionHandler::initialize):
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.h: Copied from Tools/DumpRenderTree/chromium/MockWebKitPlatformSupport.h.
+        (WebKit):
+        (MockWebRTCPeerConnectionHandler):
+        (MockWebRTCPeerConnectionHandler::MockWebRTCPeerConnectionHandler):
+
 2012-08-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Merge TestExpectationSerializer into TestExpectationLine

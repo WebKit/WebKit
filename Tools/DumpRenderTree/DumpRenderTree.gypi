@@ -18,6 +18,8 @@
             'chromium/MockWebMediaStreamCenter.h',
             'chromium/MockWebPrerenderingSupport.cpp',
             'chromium/MockWebPrerenderingSupport.h',
+            'chromium/MockWebRTCPeerConnectionHandler.cpp',
+            'chromium/MockWebRTCPeerConnectionHandler.h',
             'chromium/MockWebSpeechInputController.cpp',
             'chromium/MockWebSpeechInputController.h',
             'chromium/MockWebSpeechRecognizer.cpp',
