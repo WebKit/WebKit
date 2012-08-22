@@ -27,7 +27,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.layout_tests.models.test_configuration import TestConfigurationConverter
-from webkitpy.layout_tests.models.test_expectations import TestExpectationParser, TestExpectationSerializer
+from webkitpy.layout_tests.models.test_expectations import TestExpectationParser
+from webkitpy.layout_tests.models.test_expectations import TestExpectations
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 
 
@@ -40,4 +41,4 @@ class OptimizeExpectations(AbstractDeclarativeCommand):
         parser = TestExpectationParser(port, [], allow_rebaseline_modifier=False)
         expectation_lines = parser.parse(port.test_expectations())
         converter = TestConfigurationConverter(port.all_test_configurations(), port.configuration_specifier_macros())
-        tool.filesystem.write_text_file(port.path_to_test_expectations_file(), TestExpectationSerializer.list_to_string(expectation_lines, converter))
+        tool.filesystem.write_text_file(port.path_to_test_expectations_file(), TestExpectations.list_to_string(expectation_lines, converter))

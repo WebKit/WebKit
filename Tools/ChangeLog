@@ -1,3 +1,52 @@
+2012-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge TestExpectationSerializer into TestExpectationLine
+        https://bugs.webkit.org/show_bug.cgi?id=94638
+
+        Reviewed by Dimitri Glazkov.
+
+        Moved all methods except, list_to_string which was moved to TestExpectations
+        from TestExpectationSerializer to TestExpectationLine and removed TestExpectationSerializer.
+
+        * Scripts/webkitpy/layout_tests/controllers/test_expectations_editor_unittest.py:
+        (TestExpectationEditorTests.assert_remove_roundtrip):
+        (TestExpectationEditorTests.assert_update_roundtrip):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (ParseError.__repr__):
+        (TestExpectationLine):
+        (TestExpectationLine.create_passing_expectation):
+        (TestExpectationLine.to_string): Moved from TestExpectationSerializer.
+        (TestExpectationLine.to_csv): Ditto.
+        (TestExpectationLine._serialize_parsed_expectations): Ditto.
+        (TestExpectationLine._serialize_parsed_modifiers): Ditto.
+        (TestExpectationLine._format_line):
+        (TestExpectations.remove_configuration_from_test):
+        (TestExpectations.remove_rebaselined_tests):
+        (TestExpectations.add_skipped_tests):
+        (TestExpectations):
+        (TestExpectations.list_to_string): Moved from TestExpectationSerializer.
+        (TestExpectations.list_to_string.serialize):
+        (TestExpectations.list_to_string.nones_out):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (TestExpectationSerializationTests): Renamed from TestExpectationSerializerTests.
+        (TestExpectationSerializationTests.__init__):
+        (TestExpectationSerializationTests.assert_round_trip):
+        (TestExpectationSerializationTests.assert_list_round_trip):
+        (TestExpectationSerializationTests.test_unparsed_to_string):
+        (TestExpectationSerializationTests.test_unparsed_list_to_string):
+        (TestExpectationSerializationTests.test_parsed_to_string):
+        (TestExpectationSerializationTests.test_serialize_parsed_expectations):
+        (TestExpectationSerializationTests.test_serialize_parsed_modifier_string):
+        (TestExpectationSerializationTests.test_format_line):
+        (TestExpectationSerializationTests.test_reconstitute_only_these):
+        * Scripts/webkitpy/tool/commands/expectations.py:
+        (OptimizeExpectations.execute):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PrintExpectations.execute):
+        (PrintExpectations._format_lines):
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (GardeningExpectationsUpdater.update_expectations):
+
 2012-08-22  Alexandre Elias  <aelias@chromium.org>
 
         Unreviewed, add aelias@chromium.org to committers

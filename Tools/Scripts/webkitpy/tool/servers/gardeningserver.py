@@ -30,7 +30,7 @@ import os
 from webkitpy.common.memoized import memoized
 from webkitpy.tool.servers.reflectionhandler import ReflectionHandler
 from webkitpy.layout_tests.controllers.test_expectations_editor import BugManager, TestExpectationsEditor
-from webkitpy.layout_tests.models.test_expectations import TestExpectationParser, TestExpectations, TestExpectationSerializer
+from webkitpy.layout_tests.models.test_expectations import TestExpectationParser, TestExpectations
 from webkitpy.layout_tests.models.test_configuration import TestConfigurationConverter
 from webkitpy.layout_tests.port import builders
 
@@ -82,7 +82,7 @@ class GardeningExpectationsUpdater(BugManager):
             builder_name = failure_info['builderName']
             affected_test_configuration_set = self._extrapolator.extrapolate_test_configurations(builder_name)
             updated_expectation_lines.extend(editor.update_expectation(test_name, affected_test_configuration_set, expectation_set))
-        self._tool.filesystem.write_text_file(self._path_to_test_expectations_file, TestExpectationSerializer.list_to_string(expectation_lines, self._converter, reconstitute_only_these=updated_expectation_lines))
+        self._tool.filesystem.write_text_file(self._path_to_test_expectations_file, TestExpectations.list_to_string(expectation_lines, self._converter, reconstitute_only_these=updated_expectation_lines))
 
 
 class GardeningHTTPServer(BaseHTTPServer.HTTPServer):

@@ -88,7 +88,7 @@ class TestExpectationEditorTests(unittest.TestCase):
         editor = TestExpectationsEditor(expectation_lines, MockBugManager())
         editor.remove_expectation(test, test_config_set, remove_flakes)
         converter = TestConfigurationConverter(self.test_port.all_test_configurations(), self.test_port.configuration_specifier_macros())
-        result = TestExpectationSerializer.list_to_string(expectation_lines, converter)
+        result = TestExpectations.list_to_string(expectation_lines, converter)
         self.assertEquals(result, expected_string)
 
     def assert_update_roundtrip(self, in_string, test, expectation_set, expected_string, expected_update_count, remove_flakes=False, parsed_bug_modifiers=None, test_configs=None):
@@ -100,7 +100,7 @@ class TestExpectationEditorTests(unittest.TestCase):
             self.assertTrue(updated_expectation_line in expectation_lines)
         self.assertEquals(len(updated_expectation_lines), expected_update_count)
         converter = TestConfigurationConverter(self.test_port.all_test_configurations(), self.test_port.configuration_specifier_macros())
-        result = TestExpectationSerializer.list_to_string(expectation_lines, converter)
+        result = TestExpectations.list_to_string(expectation_lines, converter)
         self.assertEquals(result, expected_string)
 
     def test_remove_expectation(self):
@@ -188,35 +188,35 @@ BUGX2 WIN : failures/expected/audio.html = IMAGE"""
         test = "failures/expected/keyboard.html"
 
         editor.remove_expectation(test, set([TestConfiguration('xp', 'x86', 'release')]))
-        self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
+        self.assertEquals(TestExpectations.list_to_string(expectation_lines, converter), """
 BUGX1 XP DEBUG : failures/expected/keyboard.html = IMAGE
 BUGX1 VISTA WIN7 : failures/expected/keyboard.html = IMAGE
 BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
         editor.remove_expectation(test, set([TestConfiguration('xp', 'x86', 'debug')]))
-        self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
+        self.assertEquals(TestExpectations.list_to_string(expectation_lines, converter), """
 BUGX1 VISTA WIN7 : failures/expected/keyboard.html = IMAGE
 BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
         editor.remove_expectation(test, set([TestConfiguration('vista', 'x86', 'debug'), TestConfiguration('win7', 'x86', 'release')]))
-        self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
+        self.assertEquals(TestExpectations.list_to_string(expectation_lines, converter), """
 BUGX1 VISTA RELEASE : failures/expected/keyboard.html = IMAGE
 BUGX1 WIN7 DEBUG : failures/expected/keyboard.html = IMAGE
 BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
         editor.remove_expectation(test, set([TestConfiguration('vista', 'x86', 'debug'), TestConfiguration('vista', 'x86', 'release')]))
-        self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
+        self.assertEquals(TestExpectations.list_to_string(expectation_lines, converter), """
 BUGX1 WIN7 DEBUG : failures/expected/keyboard.html = IMAGE
 BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
         editor.remove_expectation(test, set(self.test_port.all_test_configurations()))
-        self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
+        self.assertEquals(TestExpectations.list_to_string(expectation_lines, converter), """
 BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
         test = "failures/expected/audio.html"
 
         editor.remove_expectation(test, set(self.test_port.all_test_configurations()))
-        self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), "")
+        self.assertEquals(TestExpectations.list_to_string(expectation_lines, converter), "")
 
     def test_update_expectation(self):
         self.assert_update_roundtrip("""
@@ -306,35 +306,35 @@ BUGX2 WIN : failures/expected/audio.html = IMAGE"""
         test = "failures/expected/keyboard.html"
 
         editor.update_expectation(test, set([TestConfiguration('xp', 'x86', 'release')]), set([IMAGE_PLUS_TEXT]), ['BUG_UPDATE1'])
-        self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
+        self.assertEquals(TestExpectations.list_to_string(expectation_lines, converter), """
 BUGX1 XP DEBUG : failures/expected/keyboard.html = IMAGE
 BUGX1 VISTA WIN7 : failures/expected/keyboard.html = IMAGE
 BUG_UPDATE1 XP RELEASE : failures/expected/keyboard.html = IMAGE+TEXT
 BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
         editor.update_expectation(test, set([TestConfiguration('xp', 'x86', 'debug')]), set([TEXT]), ['BUG_UPDATE2'])
-        self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
+        self.assertEquals(TestExpectations.list_to_string(expectation_lines, converter), """
 BUGX1 VISTA WIN7 : failures/expected/keyboard.html = IMAGE
 BUG_UPDATE2 XP DEBUG : failures/expected/keyboard.html = TEXT
 BUG_UPDATE1 XP RELEASE : failures/expected/keyboard.html = IMAGE+TEXT
 BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
         editor.update_expectation(test, self.WIN_RELEASE_CONFIGS, set([CRASH]), ['BUG_UPDATE3'])
-        self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
+        self.assertEquals(TestExpectations.list_to_string(expectation_lines, converter), """
 BUGX1 VISTA WIN7 DEBUG : failures/expected/keyboard.html = IMAGE
 BUG_UPDATE2 XP DEBUG : failures/expected/keyboard.html = TEXT
 BUG_UPDATE3 WIN RELEASE : failures/expected/keyboard.html = CRASH
 BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
         editor.update_expectation(test, self.RELEASE_CONFIGS, set([IMAGE_PLUS_TEXT]), ['BUG_UPDATE4'])
-        self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
+        self.assertEquals(TestExpectations.list_to_string(expectation_lines, converter), """
 BUGX1 VISTA WIN7 DEBUG : failures/expected/keyboard.html = IMAGE
 BUG_UPDATE2 XP DEBUG : failures/expected/keyboard.html = TEXT
 BUG_UPDATE4 RELEASE : failures/expected/keyboard.html = IMAGE+TEXT
 BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
         editor.update_expectation(test, set(self.test_port.all_test_configurations()), set([TIMEOUT]), ['BUG_UPDATE5'])
-        self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
+        self.assertEquals(TestExpectations.list_to_string(expectation_lines, converter), """
 BUG_UPDATE5 : failures/expected/keyboard.html = TIMEOUT
 BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 

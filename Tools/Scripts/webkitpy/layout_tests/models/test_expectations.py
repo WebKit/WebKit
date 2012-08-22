@@ -61,83 +61,6 @@ class ParseError(Exception):
         return 'ParseError(warnings=%s)' % self.warnings
 
 
-class TestExpectationSerializer(object):
-    """Provides means of serializing TestExpectationLine instances."""
-    def __init__(self, test_configuration_converter=None):
-        self._test_configuration_converter = test_configuration_converter
-        self._parsed_expectation_to_string = dict([[parsed_expectation, expectation_string] for expectation_string, parsed_expectation in TestExpectations.EXPECTATIONS.items()])
-
-    def to_string(self, expectation_line, include_modifiers=True, include_expectations=True, include_comment=True):
-        if expectation_line.is_invalid():
-            return expectation_line.original_string or ''
-
-        if expectation_line.name is None:
-            return '' if expectation_line.comment is None else "//%s" % expectation_line.comment
-
-        if self._test_configuration_converter and expectation_line.parsed_bug_modifiers:
-            specifiers_list = self._test_configuration_converter.to_specifiers_list(expectation_line.matching_configurations)
-            result = []
-            for specifiers in specifiers_list:
-                modifiers = self._parsed_modifier_string(expectation_line, specifiers)
-                expectations = self._parsed_expectations_string(expectation_line)
-                result.append(self._format_result(modifiers, expectation_line.name, expectations, expectation_line.comment))
-            return "\n".join(result) if result else None
-
-        return self._format_result(" ".join(expectation_line.modifiers),
-                                   expectation_line.name,
-                                   " ".join(expectation_line.expectations),
-                                   expectation_line.comment,
-                                   include_modifiers, include_expectations, include_comment)
-
-    def to_csv(self, expectation_line):
-        # Note that this doesn't include the comments.
-        return '%s,%s,%s' % (expectation_line.name, ' '.join(expectation_line.modifiers), ' '.join(expectation_line.expectations))
-
-    def _parsed_expectations_string(self, expectation_line):
-        result = []
-        for index in TestExpectations.EXPECTATION_ORDER:
-            if index in expectation_line.parsed_expectations:
-                result.append(self._parsed_expectation_to_string[index])
-        return ' '.join(result)
-
-    def _parsed_modifier_string(self, expectation_line, specifiers):
-        assert(self._test_configuration_converter)
-        result = []
-        if expectation_line.parsed_bug_modifiers:
-            result.extend(sorted(expectation_line.parsed_bug_modifiers))
-        result.extend(sorted(expectation_line.parsed_modifiers))
-        result.extend(self._test_configuration_converter.specifier_sorter().sort_specifiers(specifiers))
-        return ' '.join(result)
-
-    @classmethod
-    def _format_result(cls, modifiers, name, expectations, comment, include_modifiers=True, include_expectations=True, include_comment=True):
-        result = ''
-        if include_modifiers:
-            result += '%s : ' % modifiers.upper()
-        result += name
-        if include_expectations:
-            result += ' = %s' % expectations.upper()
-        if include_comment and comment is not None:
-            result += " //%s" % comment
-        return result
-
-    @classmethod
-    def list_to_string(cls, expectation_lines, test_configuration_converter=None, reconstitute_only_these=None):
-        serializer = cls(test_configuration_converter)
-
-        def serialize(expectation_line):
-            # If reconstitute_only_these is an empty list, we want to return original_string.
-            # So we need to compare reconstitute_only_these to None, not just check if it's falsey.
-            if reconstitute_only_these is None or expectation_line in reconstitute_only_these:
-                return serializer.to_string(expectation_line)
-            return expectation_line.original_string
-
-        def nones_out(expectation_line):
-            return expectation_line is not None
-
-        return "\n".join(filter(nones_out, map(serialize, expectation_lines)))
-
-
 class TestExpectationParser(object):
     """Provides parsing facilities for lines in the test_expectation.txt file."""
 
@@ -352,8 +275,8 @@ class TestExpectationLine(object):
     def is_flaky(self):
         return len(self.parsed_expectations) > 1
 
-    @classmethod
-    def create_passing_expectation(cls, test):
+    @staticmethod
+    def create_passing_expectation(test):
         expectation_line = TestExpectationLine()
         expectation_line.name = test
         expectation_line.path = test
@@ -361,6 +284,58 @@ class TestExpectationLine(object):
         expectation_line.expectations = set(['PASS'])
         expectation_line.matching_tests = [test]
         return expectation_line
+
+    def to_string(self, test_configuration_converter, include_modifiers=True, include_expectations=True, include_comment=True):
+        parsed_expectation_to_string = dict([[parsed_expectation, expectation_string] for expectation_string, parsed_expectation in TestExpectations.EXPECTATIONS.items()])
+
+        if self.is_invalid():
+            return self.original_string or ''
+
+        if self.name is None:
+            return '' if self.comment is None else "//%s" % self.comment
+
+        if test_configuration_converter and self.parsed_bug_modifiers:
+            specifiers_list = test_configuration_converter.to_specifiers_list(self.matching_configurations)
+            result = []
+            for specifiers in specifiers_list:
+                modifiers = self._serialize_parsed_modifiers(test_configuration_converter, specifiers)
+                expectations = self._serialize_parsed_expectations(parsed_expectation_to_string)
+                result.append(self._format_line(modifiers, self.name, expectations, self.comment))
+            return "\n".join(result) if result else None
+
+        return self._format_line(" ".join(self.modifiers), self.name, " ".join(self.expectations), self.comment,
+            include_modifiers, include_expectations, include_comment)
+
+    def to_csv(self):
+        # Note that this doesn't include the comments.
+        return '%s,%s,%s' % (self.name, ' '.join(self.modifiers), ' '.join(self.expectations))
+
+    def _serialize_parsed_expectations(self, parsed_expectation_to_string):
+        result = []
+        for index in TestExpectations.EXPECTATION_ORDER:
+            if index in self.parsed_expectations:
+                result.append(parsed_expectation_to_string[index])
+        return ' '.join(result)
+
+    def _serialize_parsed_modifiers(self, test_configuration_converter, specifiers):
+        result = []
+        if self.parsed_bug_modifiers:
+            result.extend(sorted(self.parsed_bug_modifiers))
+        result.extend(sorted(self.parsed_modifiers))
+        result.extend(test_configuration_converter.specifier_sorter().sort_specifiers(specifiers))
+        return ' '.join(result)
+
+    @staticmethod
+    def _format_line(modifiers, name, expectations, comment, include_modifiers=True, include_expectations=True, include_comment=True):
+        result = ''
+        if include_modifiers:
+            result += '%s : ' % modifiers.upper()
+        result += name
+        if include_expectations:
+            result += ' = %s' % expectations.upper()
+        if include_comment and comment is not None:
+            result += " //%s" % comment
+        return result
 
 
 # FIXME: Refactor API to be a proper CRUD.
@@ -842,7 +817,7 @@ class TestExpectations(object):
         for expectation in expectations_to_remove:
             self._expectations.remove(expectation)
 
-        return TestExpectationSerializer.list_to_string(self._expectations, self._parser._test_configuration_converter, modified_expectations)
+        return self.list_to_string(self._expectations, self._parser._test_configuration_converter, modified_expectations)
 
     def remove_rebaselined_tests(self, except_these_tests, filename):
         """Returns a copy of the expectations in the file with the tests removed."""
@@ -852,7 +827,7 @@ class TestExpectations(object):
                         'rebaseline' in expectation.parsed_modifiers and
                         filename == expectation.filename)
 
-        return TestExpectationSerializer.list_to_string(filter(without_rebaseline_modifier, self._expectations))
+        return self.list_to_string(filter(without_rebaseline_modifier, self._expectations))
 
     def _add_expectations(self, expectation_list):
         for expectation_line in expectation_list:
@@ -872,3 +847,17 @@ class TestExpectations(object):
         for test_name in tests_to_skip:
             expectation_line = self._parser.expectation_for_skipped_test(test_name)
             self._model.add_expectation_line(expectation_line, in_skipped=True)
+
+    @staticmethod
+    def list_to_string(expectation_lines, test_configuration_converter=None, reconstitute_only_these=None):
+        def serialize(expectation_line):
+            # If reconstitute_only_these is an empty list, we want to return original_string.
+            # So we need to compare reconstitute_only_these to None, not just check if it's falsey.
+            if reconstitute_only_these is None or expectation_line in reconstitute_only_these:
+                return expectation_line.to_string(test_configuration_converter)
+            return expectation_line.original_string
+
+        def nones_out(expectation_line):
+            return expectation_line is not None
+
+        return "\n".join(filter(nones_out, map(serialize, expectation_lines)))

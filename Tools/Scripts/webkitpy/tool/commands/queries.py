@@ -46,7 +46,7 @@ from webkitpy.common.system.user import User
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.common.system.deprecated_logging import log
-from webkitpy.layout_tests.models.test_expectations import TestExpectations, TestExpectationSerializer
+from webkitpy.layout_tests.models.test_expectations import TestExpectations
 from webkitpy.layout_tests.port import port_options
 
 
@@ -465,7 +465,6 @@ class PrintExpectations(AbstractDeclarativeCommand):
             default_port = tool.port_factory.get(options=options)
             port_names = [default_port.name()]
 
-        serializer = TestExpectationSerializer()
         tests = default_port.tests(args)
         for port_name in port_names:
             model = self._model(options, port_name, tests)
@@ -473,7 +472,7 @@ class PrintExpectations(AbstractDeclarativeCommand):
             lines = [model.get_expectation_line(test) for test in sorted(tests_to_print)]
             if port_name != port_names[0]:
                 print
-            print '\n'.join(self._format_lines(options, port_name, serializer, lines))
+            print '\n'.join(self._format_lines(options, port_name, lines))
 
     def _filter_tests(self, options, model, tests):
         filtered_tests = set()
@@ -487,17 +486,17 @@ class PrintExpectations(AbstractDeclarativeCommand):
             filtered_tests.difference_update(model.get_test_set_for_keyword(keyword))
         return filtered_tests
 
-    def _format_lines(self, options, port_name, serializer, lines):
+    def _format_lines(self, options, port_name, lines):
         output = []
         if options.csv:
             for line in lines:
-                output.append("%s,%s" % (port_name, serializer.to_csv(line)))
+                output.append("%s,%s" % (port_name, line.to_csv()))
         elif lines:
             include_modifiers = options.full
             include_expectations = options.full or len(options.include_keyword) != 1 or len(options.exclude_keyword)
             output.append("// For %s" % port_name)
             for line in lines:
-                output.append("%s" % serializer.to_string(line, include_modifiers, include_expectations, include_comment=False))
+                output.append("%s" % line.to_string(None, include_modifiers, include_expectations, include_comment=False))
         return output
 
     def _model(self, options, port_name, tests):
