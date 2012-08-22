@@ -949,6 +949,7 @@ DerivedSources/WebCore/JS%.h: %.idl $(SCRIPTS_FOR_GENERATE_BINDINGS) $(WebCore)/
 $(webkitgtk_sources) $(webkit2_sources) $(webkit2_plugin_process_sources) $(webcore_sources) $(webcoregtk_sources) : | $(supplemental_dependency_file) $(webcore_built_sources)
 
 noinst_LTLIBRARIES += \
+	libWebCorePlatform.la \
 	libWebCoreModules.la \
 	libWebCore.la
 
@@ -959,6 +960,31 @@ $(webcore_lib_for_dep): $(srcdir)/Source/WebCore/GNUmakefile.am $(srcdir)/Source
 
 webcoremodules_lib_for_dep = libWebcoreModules.la
 $(webcoremodules_lib_for_dep): $(srcdir)/Source/WebCore/GNUmakefile.am $(srcdir)/Source/WebCore/GNUmakefile.list.am
+
+webcoreplatform_lib_for_dep = libWebcorePlatform.la
+$(webcoreplatform_lib_for_dep): $(srcdir)/Source/WebCore/GNUmakefile.am $(srcdir)/Source/WebCore/GNUmakefile.list.am
+
+common_webcore_shards_cppflags += \
+	-DBUILDING_WEBKIT \
+	$(global_cppflags) \
+	$(webcore_cppflags) \
+	$(javascriptcore_cppflags) \
+	-fno-strict-aliasing \
+	$(CAIRO_CFLAGS) \
+	$(CLUTTER_CFLAGS) \
+	$(COVERAGE_CFLAGS) \
+	$(ENCHANT_CFLAGS) \
+	$(GAMEPAD_CFLAGS) \
+	$(GEOCLUE_CFLAGS) \
+	$(GLIB_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
+	$(LIBSOUP_CFLAGS) \
+	$(LIBXML_CFLAGS) \
+	$(LIBXSLT_CFLAGS) \
+	$(SQLITE3_CFLAGS) \
+	$(UNICODE_CFLAGS) \
+	$(XRENDER_CFLAGS) \
+	$(XT_CFLAGS)
 
 nodist_EXTRA_libWebCore_la_SOURCES = \
 	$(webcore_built_nosources)
@@ -978,28 +1004,7 @@ libWebCore_la_CFLAGS = \
 	$(global_cflags)
 
 libWebCore_la_CPPFLAGS = \
-	-DBUILDING_WEBKIT \
-	$(global_cppflags) \
-	$(webcore_cppflags) \
-	$(webcoregtk_cppflags) \
-	$(javascriptcore_cppflags) \
-	-fno-strict-aliasing \
-	$(CAIRO_CFLAGS) \
-	$(CLUTTER_CFLAGS) \
-	$(COVERAGE_CFLAGS) \
-	$(ENCHANT_CFLAGS) \
-	$(GAMEPAD_CFLAGS) \
-	$(GEOCLUE_CFLAGS) \
-	$(GLIB_CFLAGS) \
-	$(GSTREAMER_CFLAGS) \
-	$(LIBSOUP_CFLAGS) \
-	$(LIBXML_CFLAGS) \
-	$(LIBXSLT_CFLAGS) \
-	$(PANGO_CFLAGS) \
-	$(SQLITE3_CFLAGS) \
-	$(UNICODE_CFLAGS) \
-	$(XRENDER_CFLAGS) \
-	$(XT_CFLAGS)
+	$(common_webcore_shards_cppflags)
 
 if TARGET_WIN32
 # PluginPackageWin.cpp needs the symbols from version dll
@@ -1014,6 +1019,20 @@ libWebCoreModules_la_CXXFLAGS = $(libWebCore_la_CXXFLAGS)
 libWebCoreModules_la_CFLAGS = $(libWebCore_la_CFLAGS)
 
 libWebCoreModules_la_CPPFLAGS = $(libWebCore_la_CPPFLAGS)
+
+libWebCorePlatform_la_SOURCES = \
+	$(webcore_platform_sources)
+
+libWebCorePlatform_la_CXXFLAGS = \
+	$(SYMBOL_VISIBILITY_INLINES) \
+	$(global_cxxflags)
+
+libWebCorePlatform_la_CFLAGS = \
+	$(SYMBOL_VISIBILITY) \
+	$(global_cflags)
+
+libWebCorePlatform_la_CPPFLAGS = \
+	$(common_webcore_shards_cppflags)
 
 # We have a different library with only the files that require GTK+. It allows us
 # to build a common WebCore lib and two different gtk WebCore libs depending on
@@ -1035,30 +1054,13 @@ libWebCoreGtk_la_CFLAGS = \
 	$(global_cflags)
 
 libWebCoreGtk_la_CPPFLAGS = \
-	-DBUILDING_WEBKIT \
-	$(global_cppflags) \
-	$(webcore_cppflags) \
+	$(common_webcore_shards_cppflags) \
 	$(webcoregtk_cppflags) \
-	$(javascriptcore_cppflags) \
-	-fno-strict-aliasing \
 	$(HILDON_CPPFLAGS) \
-	$(COVERAGE_CFLAGS) \
-	$(ENCHANT_CFLAGS) \
-	$(FARSTREAM_CFLAGS) \
-	$(GAIL_CFLAGS) \
-	$(GEOCLUE_CFLAGS) \
-	$(GLIB_CFLAGS) \
-	$(GSTREAMER_CFLAGS) \
-	$(GTK_CFLAGS) \
 	$(HILDON_CFLAGS) \
-	$(LIBSOUP_CFLAGS) \
-	$(LIBXML_CFLAGS) \
-	$(LIBXSLT_CFLAGS) \
-	$(SQLITE3_CFLAGS) \
-	$(UNICODE_CFLAGS) \
-	$(XCOMPOSITE_CFLAGS) \
-	$(XRENDER_CFLAGS) \
-	$(XT_CFLAGS)
+	$(GAIL_CFLAGS) \
+	$(FARSTREAM_CFLAGS)
+
 
 EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/filesystem/*.idl) \
