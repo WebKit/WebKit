@@ -809,6 +809,12 @@ int RenderThemeEfl::sliderTickOffsetFromTrackCenter() const
 
     return sliderTickOffset;
 }
+
+LayoutUnit RenderThemeEfl::sliderTickSnappingThreshold() const
+{
+    // The same threshold value as the Chromium port.
+    return 5;
+}
 #endif
 
 bool RenderThemeEfl::supportsDataListUI(const AtomicString& type) const

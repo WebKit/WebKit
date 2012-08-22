@@ -1,3 +1,15 @@
+2012-08-22  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL] Support slider tick mark snapping
+        https://bugs.webkit.org/show_bug.cgi?id=94560
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The expected result of fast/forms/datalist/range-snap-to-datalist.html
+        is updated because slider tick mark snapping threshold is changed.
+
+        * platform/efl/fast/forms/datalist/range-snap-to-datalist-expected.txt:
+
 2012-08-22  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Unreviewed gardening.
