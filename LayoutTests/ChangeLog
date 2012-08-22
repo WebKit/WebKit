@@ -1,3 +1,17 @@
+2012-08-22  Anna Cavender  <annacc@chromium.org>
+
+        [Chromium/GTK/EFL] Flaky media/track/track-mode test.
+        https://bugs.webkit.org/show_bug.cgi?id=83878
+
+        Reviewed by Eric Seidel.
+
+        This test should only care that cuechange events are fired when the TextTrack
+        mode is set to HIDDEN or SHOWING.  Because the events are asynchronous, we
+        shouldn't test the order of them, just that they occur.
+
+        * media/track/track-mode-expected.txt:
+        * media/track/track-mode.html:
+
 2012-08-22  Leo Yang  <leoyang@rim.com>
 
         Test cases under fast/filesystem/workers are flaky when using JSC
