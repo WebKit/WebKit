@@ -1,5 +1,14 @@
 2012-08-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
+        Unreviewed buildfix for Qt-minimal after r126291
+
+        Disable smooth scrolling when request-animation-frame has been disabled either
+        explicitly or as part of --minimal.
+
+        * qmake/mkspecs/features/features.prf:
+
+2012-08-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
         [Qt] Optionally support smooth-scrolling on all platforms
         https://bugs.webkit.org/show_bug.cgi?id=74926
 

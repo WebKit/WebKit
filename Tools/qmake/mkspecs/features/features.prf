@@ -214,6 +214,9 @@ contains(DEFINES, ENABLE_INSPECTOR=0) {
     DEFINES += ENABLE_INSPECTOR_SERVER=0
 }
 
+# Disable animated smooth scrolling if request-animation-frame is disabled
+contains(DEFINES, ENABLE_REQUEST_ANIMATION_FRAME=0): DEFINES += ENABLE_SMOOTH_SCROLLING=0
+
 # Remove conflicting defines. The preprocessor would take care of this
 # anyways, but doing it here makes for nicer command lines when building.
 for(define, DEFINES) {
