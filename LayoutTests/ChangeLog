@@ -1,3 +1,18 @@
+2012-08-22  Dominic Cooney   <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        Rebaseline tests after http://trac.webkit.org/changeset/126219 .
+
+        These are the same results as platform/mac-lion, which until
+        r126219 were the results of platform/mac. So this is "reverting"
+        r126219 in terms of Chromium expectations.
+
+        * platform/chromium/fast/text/hyphenate-locale-expected.png: Added.
+        * platform/chromium/fast/text/hyphenate-locale-expected.txt: Added.
+        * platform/chromium/fast/text/justify-ideograph-vertical-expected.png: Added.
+        * platform/chromium/fast/text/justify-ideograph-vertical-expected.txt: Added.
+
 2012-08-22  Takashi Sakamoto  <tasak@google.com>
 
         Dynamically styling ShadowDom content on a node distributed to another shadow insertion point fails.

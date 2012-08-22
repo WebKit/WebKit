@@ -1,0 +1,45 @@
+layer at (0,0) size 785x754
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x754
+  RenderBlock {HTML} at (0,0) size 785x754
+    RenderBody {BODY} at (8,8) size 769x738
+      RenderBlock {DIV} at (0,0) size 130x369
+        RenderBlock {DIV} at (0,0) size 130x82
+          RenderText {#text} at (0,0) size 124x82
+            text run at (0,0) width 124: "through" + hyphen string "-"
+            text run at (0,41) width 46: "out"
+        RenderBlock {DIV} at (0,82) size 130x82
+          RenderText {#text} at (0,0) size 124x82
+            text run at (0,0) width 124: "through" + hyphen string "-"
+            text run at (0,41) width 46: "out"
+        RenderBlock {DIV} at (0,164) size 130x82
+          RenderText {#text} at (0,0) size 124x82
+            text run at (0,0) width 124: "through" + hyphen string "-"
+            text run at (0,41) width 46: "out"
+        RenderBlock {DIV} at (0,246) size 130x82
+          RenderText {#text} at (0,0) size 124x82
+            text run at (0,0) width 124: "through" + hyphen string "-"
+            text run at (0,41) width 46: "out"
+        RenderBlock {DIV} at (0,328) size 130x41
+          RenderText {#text} at (0,0) size 158x41
+            text run at (0,0) width 158: "throughout"
+      RenderBlock {DIV} at (0,369) size 135x369
+        RenderBlock {DIV} at (0,0) size 135x82
+          RenderText {#text} at (0,0) size 102x82
+            text run at (0,0) width 66: "reci" + hyphen string "-"
+            text run at (0,41) width 102: "procity"
+        RenderBlock {DIV} at (0,82) size 135x82
+          RenderText {#text} at (0,0) size 102x82
+            text run at (0,0) width 66: "reci" + hyphen string "-"
+            text run at (0,41) width 102: "procity"
+        RenderBlock {DIV} at (0,164) size 135x82
+          RenderText {#text} at (0,0) size 102x82
+            text run at (0,0) width 66: "reci" + hyphen string "-"
+            text run at (0,41) width 102: "procity"
+        RenderBlock {DIV} at (0,246) size 135x82
+          RenderText {#text} at (0,0) size 114x82
+            text run at (0,0) width 114: "recipro" + hyphen string "-"
+            text run at (0,41) width 54: "city"
+        RenderBlock {DIV} at (0,328) size 135x41
+          RenderText {#text} at (0,0) size 156x41
+            text run at (0,0) width 156: "reciprocity"
