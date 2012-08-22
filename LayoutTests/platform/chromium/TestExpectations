@@ -3512,3 +3512,9 @@ BUGWK94675 : css3/flexbox/flexitem.html = TEXT
 BUGWK94730 MAC : fast/repaint/japanese-rl-selection-repaint-in-regions.html = IMAGE
 
 BUGCR67540 BUGWK94735 LINUX : fast/text/emphasis-overlap.html = IMAGE IMAGE+TEXT
+
+// Until baselines are ready on all bots
+BUGWK94748 : fast/overflow/paged-x-div.html = IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK94748 : fast/overflow/paged-x-on-root.html = IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK94748 : fast/overflow/paged-y-div.html = IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK94748 : fast/overflow/paged-y-on-root.html = IMAGE IMAGE+TEXT TEXT MISSING

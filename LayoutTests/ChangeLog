@@ -1,3 +1,12 @@
+2012-08-22  Kenneth Russell  <kbr@google.com>
+
+        [Chromium] Need baselines for new paged-x and paged-y tests in fast/overflow after r126343
+        https://bugs.webkit.org/show_bug.cgi?id=94748
+
+        Unreviewed gardening; suppressing new failures until baselines are generated.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-22  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Add touch link highlight animation layers.
