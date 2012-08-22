@@ -1,3 +1,24 @@
+2012-08-22  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Support posting injected bundle messages to a page
+        https://bugs.webkit.org/show_bug.cgi?id=94630
+
+        Reviewed by Sam Weinig.
+
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m:
+        * TestWebKitAPI/InjectedBundleController.cpp:
+        (TestWebKitAPI::InjectedBundleController::initialize):
+        (TestWebKitAPI::InjectedBundleController::didReceiveMessageToPage):
+        * TestWebKitAPI/InjectedBundleController.h:
+        * TestWebKitAPI/InjectedBundleTest.h:
+        (TestWebKitAPI::InjectedBundleTest::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessage):
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        (WTR::InjectedBundle::initialize):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        Updated for new client API call.
+
 2012-08-22  Dominic Mazzoni  <dmazzoni@google.com>
 
         REGRESSION (r125710): accessibility/accessibility-node-reparent.html, accessibility/accessibility-node-memory-management.html failing on GTK Linux

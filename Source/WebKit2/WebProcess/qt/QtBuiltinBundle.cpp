@@ -58,7 +58,8 @@ void QtBuiltinBundle::initialize(WKBundleRef bundle)
         didCreatePage,
         willDestroyPage,
         0, // didInitializePageGroup
-        didReceiveMessage
+        didReceiveMessage,
+        0 // didReceiveMessageToPage
     };
     WKBundleSetClient(m_bundle, &client);
 }

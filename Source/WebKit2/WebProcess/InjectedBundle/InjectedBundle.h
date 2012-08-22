@@ -152,6 +152,7 @@ public:
     void willDestroyPage(WebPage*);
     void didInitializePageGroup(WebPageGroupProxy*);
     void didReceiveMessage(const String&, APIObject*);
+    void didReceiveMessageToPage(WebPage*, const String&, APIObject*);
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 

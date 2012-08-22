@@ -38,6 +38,7 @@ typedef void (*WKBundleDidCreatePageCallback)(WKBundleRef bundle, WKBundlePageRe
 typedef void (*WKBundleWillDestroyPageCallback)(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo);
 typedef void (*WKBundleDidInitializePageGroupCallback)(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, const void* clientInfo);
 typedef void (*WKBundleDidReceiveMessageCallback)(WKBundleRef bundle, WKStringRef name, WKTypeRef messageBody, const void* clientInfo);
+typedef void (*WKBundleDidReceiveMessageToPageCallback)(WKBundleRef bundle, WKBundlePageRef page, WKStringRef name, WKTypeRef messageBody, const void* clientInfo);
 
 struct WKBundleClient {
     int                                                                 version;
@@ -46,14 +47,17 @@ struct WKBundleClient {
     WKBundleWillDestroyPageCallback                                     willDestroyPage;
     WKBundleDidInitializePageGroupCallback                              didInitializePageGroup;
     WKBundleDidReceiveMessageCallback                                   didReceiveMessage;
+
+    // Version 1.
+    WKBundleDidReceiveMessageToPageCallback                             didReceiveMessageToPage;
 };
 typedef struct WKBundleClient WKBundleClient;
 
-enum { kWKBundleClientCurrentVersion = 0 };
+enum { kWKBundleClientCurrentVersion = 1 };
 
 WK_EXPORT WKTypeID WKBundleGetTypeID();
 
-WK_EXPORT void WKBundleSetClient(WKBundleRef bundle, WKBundleClient * client);
+WK_EXPORT void WKBundleSetClient(WKBundleRef bundle, WKBundleClient* client);
 
 WK_EXPORT void WKBundlePostMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody);
 WK_EXPORT void WKBundlePostSynchronousMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData);

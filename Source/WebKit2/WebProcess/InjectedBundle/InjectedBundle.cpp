@@ -478,6 +478,11 @@ void InjectedBundle::didReceiveMessage(const String& messageName, APIObject* mes
     m_client.didReceiveMessage(this, messageName, messageBody);
 }
 
+void InjectedBundle::didReceiveMessageToPage(WebPage* page, const String& messageName, APIObject* messageBody)
+{
+    m_client.didReceiveMessageToPage(this, page, messageName, messageBody);
+}
+
 void InjectedBundle::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     switch (messageID.get<InjectedBundleMessage::Kind>()) {
@@ -489,6 +494,25 @@ void InjectedBundle::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC:
                 return;
 
             didReceiveMessage(messageName, messageBody.get());
+            return;
+        }
+
+        case InjectedBundleMessage::PostMessageToPage: {
+            uint64_t pageID = arguments->destinationID();
+            if (!pageID)
+                return;
+            
+            WebPage* page = WebProcess::shared().webPage(pageID);
+            if (!page)
+                return;
+
+            String messageName;
+            RefPtr<APIObject> messageBody;
+            InjectedBundleUserMessageDecoder messageDecoder(messageBody);
+            if (!arguments->decode(CoreIPC::Out(messageName, messageDecoder)))
+                return;
+
+            didReceiveMessageToPage(page, messageName, messageBody.get());
             return;
         }
     }

@@ -514,17 +514,19 @@ DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const Resource
 
 void WebContext::postMessageToInjectedBundle(const String& messageName, APIObject* messageBody)
 {
-    if (m_processModel == ProcessModelSharedSecondaryProcess) {
-        if (m_processes.isEmpty() || !m_processes[0]->canSendMessage()) {
-            m_pendingMessagesToPostToInjectedBundle.append(std::make_pair(messageName, messageBody));
-            return;
-        }
+    if (m_processes.isEmpty()) {
+        m_pendingMessagesToPostToInjectedBundle.append(std::make_pair(messageName, messageBody));
+        return;
+    }
 
-        // FIXME: We should consider returning false from this function if the messageBody cannot
-        // be encoded.
-        m_processes[0]->deprecatedSend(InjectedBundleMessage::PostMessage, 0, CoreIPC::In(messageName, WebContextUserMessageEncoder(messageBody)));
-    } else {
-        // FIXME (Multi-WebProcess): Implement.
+    for (size_t i = 0; i < m_processes.size(); ++i) {
+        // FIXME (Multi-WebProcess): Evolve m_pendingMessagesToPostToInjectedBundle to work with multiple secondary processes.
+        if (!m_processes[i]->canSendMessage()) {
+            m_pendingMessagesToPostToInjectedBundle.append(std::make_pair(messageName, messageBody));
+            continue;
+        }
+        // FIXME: We should consider returning false from this function if the messageBody cannot be encoded.
+        m_processes[i]->deprecatedSend(InjectedBundleMessage::PostMessage, 0, CoreIPC::In(messageName, WebContextUserMessageEncoder(messageBody)));
     }
 }
 

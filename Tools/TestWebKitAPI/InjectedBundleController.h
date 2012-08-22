@@ -58,6 +58,7 @@ private:
     static void willDestroyPage(WKBundleRef, WKBundlePageRef, const void* clientInfo);
     static void didInitializePageGroup(WKBundleRef, WKBundlePageGroupRef, const void* clientInfo);
     static void didReceiveMessage(WKBundleRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo);
+    static void didReceiveMessageToPage(WKBundleRef, WKBundlePageRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo);
 
     std::map<std::string, CreateInjectedBundleTestFunction> m_createInjectedBundleTestFunctions;
     WKBundleRef m_bundle;

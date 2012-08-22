@@ -97,11 +97,13 @@ private:
     static void willDestroyPage(WKBundleRef, WKBundlePageRef, const void* clientInfo);
     static void didInitializePageGroup(WKBundleRef, WKBundlePageGroupRef, const void* clientInfo);
     static void didReceiveMessage(WKBundleRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo);
+    static void didReceiveMessageToPage(WKBundleRef, WKBundlePageRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo);
 
     void didCreatePage(WKBundlePageRef);
     void willDestroyPage(WKBundlePageRef);
     void didInitializePageGroup(WKBundlePageGroupRef);
     void didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody);
+    void didReceiveMessageToPage(WKBundlePageRef, WKStringRef messageName, WKTypeRef messageBody);
 
     void platformInitialize(WKTypeRef initializationUserData);
     void resetLocalSettings();

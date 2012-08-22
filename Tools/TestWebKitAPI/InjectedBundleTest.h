@@ -40,6 +40,7 @@ public:
     virtual void willDestroyPage(WKBundleRef, WKBundlePageRef) { }
     virtual void didInitializePageGroup(WKBundleRef, WKBundlePageGroupRef) { }
     virtual void didReceiveMessage(WKBundleRef, WKStringRef messageName, WKTypeRef messageBody) { }
+    virtual void didReceiveMessageToPage(WKBundleRef, WKBundlePageRef, WKStringRef messageName, WKTypeRef messageBody) { }
 
     std::string name() const { return m_identifier; }
     

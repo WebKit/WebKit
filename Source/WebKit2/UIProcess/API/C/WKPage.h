@@ -489,6 +489,8 @@ typedef void (*WKPageValidateCommandCallback)(WKStringRef command, bool isEnable
 WK_EXPORT void WKPageValidateCommand(WKPageRef page, WKStringRef command, void* context, WKPageValidateCommandCallback callback);
 WK_EXPORT void WKPageExecuteCommand(WKPageRef page, WKStringRef command);
 
+WK_EXPORT void WKPagePostMessageToInjectedBundle(WKPageRef page, WKStringRef messageName, WKTypeRef messageBody);
+
 #ifdef __cplusplus
 }
 #endif

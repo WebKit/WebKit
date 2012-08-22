@@ -60,7 +60,8 @@ void InjectedBundleController::initialize(WKBundleRef bundle, WKTypeRef initiali
         didCreatePage,
         willDestroyPage,
         didInitializePageGroup,
-        didReceiveMessage
+        didReceiveMessage,
+        didReceiveMessageToPage
     };
     WKBundleSetClient(m_bundle, &client);
 
@@ -101,6 +102,13 @@ void InjectedBundleController::didReceiveMessage(WKBundleRef bundle, WKStringRef
     InjectedBundleController* self = static_cast<InjectedBundleController*>(const_cast<void*>(clientInfo));
     assert(self->m_currentTest);
     self->m_currentTest->didReceiveMessage(bundle, messageName, messageBody);
+}
+
+void InjectedBundleController::didReceiveMessageToPage(WKBundleRef bundle, WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
+{
+    InjectedBundleController* self = static_cast<InjectedBundleController*>(const_cast<void*>(clientInfo));
+    assert(self->m_currentTest);
+    self->m_currentTest->didReceiveMessageToPage(bundle, page, messageName, messageBody);
 }
 
 void InjectedBundleController::dumpTestNames()

@@ -712,3 +712,9 @@ void WKPageSetMediaVolume(WKPageRef page, float volume)
 {
     toImpl(page)->setMediaVolume(volume);    
 }
+
+void WKPagePostMessageToInjectedBundle(WKPageRef pageRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)
+{
+    toImpl(pageRef)->postMessageToInjectedBundle(toImpl(messageNameRef)->string(), toImpl(messageBodyRef));
+}
+

@@ -62,4 +62,12 @@ void InjectedBundleClient::didReceiveMessage(InjectedBundle* bundle, const Strin
     m_client.didReceiveMessage(toAPI(bundle), toAPI(messageName.impl()), toAPI(messageBody), m_client.clientInfo);
 }
 
+void InjectedBundleClient::didReceiveMessageToPage(InjectedBundle* bundle, WebPage* page, const String& messageName, APIObject* messageBody)
+{
+    if (!m_client.didReceiveMessageToPage)
+        return;
+
+    m_client.didReceiveMessageToPage(toAPI(bundle), toAPI(page), toAPI(messageName.impl()), toAPI(messageBody), m_client.clientInfo);
+}
+
 } // namespace WebKit

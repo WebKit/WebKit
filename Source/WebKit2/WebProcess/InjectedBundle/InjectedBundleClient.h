@@ -43,6 +43,7 @@ public:
     void willDestroyPage(InjectedBundle*, WebPage*);
     void didInitializePageGroup(InjectedBundle*, WebPageGroupProxy*);
     void didReceiveMessage(InjectedBundle*, const String& messageName, APIObject* messageBody);
+    void didReceiveMessageToPage(InjectedBundle*, WebPage*, const String& messageName, APIObject* messageBody);
 };
 
 } // namespace WebKit

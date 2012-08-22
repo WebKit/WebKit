@@ -34,6 +34,7 @@
 #include "DrawingAreaProxy.h"
 #include "EventDispatcherMessages.h"
 #include "FindIndicator.h"
+#include "InjectedBundleMessageKinds.h"
 #include "Logging.h"
 #include "MessageID.h"
 #include "NativeWebKeyboardEvent.h"
@@ -2885,6 +2886,12 @@ void WebPageProxy::setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index
 NativeWebMouseEvent* WebPageProxy::currentlyProcessedMouseDownEvent()
 {
     return m_currentlyProcessedMouseDownEvent.get();
+}
+
+void WebPageProxy::postMessageToInjectedBundle(const String& messageName, APIObject* messageBody)
+{
+    // FIXME: We should consider returning false from this function if the messageBody cannot be encoded.
+    process()->deprecatedSend(InjectedBundleMessage::PostMessageToPage, m_pageID, CoreIPC::In(messageName, WebContextUserMessageEncoder(messageBody)));
 }
 
 #if PLATFORM(GTK)

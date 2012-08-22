@@ -715,6 +715,8 @@ public:
     void setSuppressVisibilityUpdates(bool flag) { m_suppressVisibilityUpdates = flag; }
     bool suppressVisibilityUpdates() { return m_suppressVisibilityUpdates; }
 
+    void postMessageToInjectedBundle(const String& messageName, APIObject* messageBody);
+
 private:
     WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
 

@@ -1,3 +1,38 @@
+2012-08-22  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Support posting injected bundle messages to a page
+        https://bugs.webkit.org/show_bug.cgi?id=94630
+
+        Reviewed by Sam Weinig.
+
+        * Shared/APIClientTraits.cpp:
+        * Shared/APIClientTraits.h:
+        * Shared/CoreIPCSupport/InjectedBundleMessageKinds.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPagePostMessageToInjectedBundle):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::postMessageToInjectedBundle):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/InjectedBundle/API/c/WKBundle.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::didReceiveMessageToPage):
+        (WebKit::InjectedBundle::didReceiveMessage):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/InjectedBundle/InjectedBundleClient.cpp:
+        (WebKit::InjectedBundleClient::didReceiveMessageToPage):
+        * WebProcess/InjectedBundle/InjectedBundleClient.h:
+        (InjectedBundleClient):
+        Added a PostMessageToPage injected bundle message type, with all associated
+        machinery. API is WKPagePostMessageToInjectedBundle(), and an associated
+        didReceiveMessageToPage() injected bundle client function.
+
+        * WebProcess/qt/QtBuiltinBundle.cpp: (WebKit::QtBuiltinBundle::initialize):
+        Updated for new client API.
+
+        * UIProcess/WebContext.cpp: (WebKit::WebContext::postMessageToInjectedBundle):
+        Implemented multiple process model case.
+
 2012-08-22  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Split WebCore/platform into a separate library

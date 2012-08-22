@@ -72,9 +72,14 @@ void InjectedBundle::didInitializePageGroup(WKBundleRef bundle, WKBundlePageGrou
     static_cast<InjectedBundle*>(const_cast<void*>(clientInfo))->didInitializePageGroup(pageGroup);
 }
 
-void InjectedBundle::didReceiveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo)
+void InjectedBundle::didReceiveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
 {
     static_cast<InjectedBundle*>(const_cast<void*>(clientInfo))->didReceiveMessage(messageName, messageBody);
+}
+
+void InjectedBundle::didReceiveMessageToPage(WKBundleRef bundle, WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
+{
+    static_cast<InjectedBundle*>(const_cast<void*>(clientInfo))->didReceiveMessageToPage(page, messageName, messageBody);
 }
 
 void InjectedBundle::initialize(WKBundleRef bundle, WKTypeRef initializationUserData)
@@ -88,7 +93,8 @@ void InjectedBundle::initialize(WKBundleRef bundle, WKTypeRef initializationUser
         didCreatePage,
         willDestroyPage,
         didInitializePageGroup,
-        didReceiveMessage
+        didReceiveMessage,
+        didReceiveMessageToPage
     };
     WKBundleSetClient(m_bundle, &client);
 
@@ -185,6 +191,13 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
         return;
     }
 
+    WKRetainPtr<WKStringRef> errorMessageName(AdoptWK, WKStringCreateWithUTF8CString("Error"));
+    WKRetainPtr<WKStringRef> errorMessageBody(AdoptWK, WKStringCreateWithUTF8CString("Unknown"));
+    WKBundlePostMessage(m_bundle, errorMessageName.get(), errorMessageBody.get());
+}
+
+void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody)
+{
     WKRetainPtr<WKStringRef> errorMessageName(AdoptWK, WKStringCreateWithUTF8CString("Error"));
     WKRetainPtr<WKStringRef> errorMessageBody(AdoptWK, WKStringCreateWithUTF8CString("Unknown"));
     WKBundlePostMessage(m_bundle, errorMessageName.get(), errorMessageBody.get());
