@@ -1,3 +1,17 @@
+2012-08-21  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] contextClick and getMenuItemTitle callbacks are leaky in DRT's EventSender
+        https://bugs.webkit.org/show_bug.cgi?id=94669
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fix memory leaks in DRT's EventSender code.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (getMenuItemTitleCallback): Use JSRetainPtr and don't leak.
+        (contextClickCallback): Use GOwnPtr to manage memory of a
+        newly-allocated list automatically.
+
 2012-08-21  Dirk Pranke  <dpranke@chromium.org>
 
         Add mountain lion to perf-tests, layout tests

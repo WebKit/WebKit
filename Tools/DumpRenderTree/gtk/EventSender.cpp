@@ -157,7 +157,8 @@ static JSValueRef getMenuItemTitleCallback(JSContextRef context, JSObjectRef obj
     else
         label = gtk_menu_item_get_label(GTK_MENU_ITEM(widget));
 
-    return JSValueMakeString(context, JSStringCreateWithUTF8CString(label.data()));
+    JSRetainPtr<JSStringRef> itemText(Adopt, JSStringCreateWithUTF8CString(label.data()));
+    return JSValueMakeString(context, itemText.get());
 }
 
 static bool setMenuItemTitleCallback(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
@@ -216,10 +217,10 @@ static JSValueRef contextClickCallback(JSContextRef context, JSObjectRef functio
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     GtkMenu* gtkMenu = webkit_web_view_get_context_menu(view);
     if (gtkMenu) {
-        GList* items = gtk_container_get_children(GTK_CONTAINER(gtkMenu));
-        JSValueRef arrayValues[g_list_length(items)];
+        GOwnPtr<GList> items(gtk_container_get_children(GTK_CONTAINER(gtkMenu)));
+        JSValueRef arrayValues[g_list_length(items.get())];
         int index = 0;
-        for (GList* item = g_list_first(items); item; item = g_list_next(item)) {
+        for (GList* item = g_list_first(items.get()); item; item = g_list_next(item)) {
             arrayValues[index] = JSObjectMake(context, getMenuItemClass(), item->data);
             index++;
         }
