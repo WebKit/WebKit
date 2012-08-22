@@ -169,7 +169,6 @@ public:
     virtual void unmarkText();
     virtual bool hasMarkedText() const;
     virtual WebRange markedRange() const;
-    virtual void setSelectionToRange(const WebRange&) OVERRIDE;
     virtual bool firstRectForCharacterRange(unsigned location, unsigned length, WebRect&) const;
     virtual size_t characterIndexForPoint(const WebPoint&) const;
     virtual bool executeCommand(const WebString&, const WebNode& = WebNode());

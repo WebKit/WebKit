@@ -433,8 +433,6 @@ public:
 
     virtual WebRange markedRange() const = 0;
 
-    virtual void setSelectionToRange(const WebRange&) = 0;
-
     // Returns the frame rectangle in window coordinate space of the given text
     // range.
     virtual bool firstRectForCharacterRange(unsigned location, unsigned length, WebRect&) const = 0;

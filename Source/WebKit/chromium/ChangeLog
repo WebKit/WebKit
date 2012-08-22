@@ -1,3 +1,19 @@
+2012-08-22  Iain Merrick  <husky@chromium.org>
+
+        [chromium] Remove WebFrame::setSelectionToRange
+        https://bugs.webkit.org/show_bug.cgi?id=94685
+
+        Reviewed by Adam Barth.
+
+        It has basically the same functionality as WebFrame::selectRange.
+        The calling code was removed in Chromium patch 152608.
+
+        * public/WebFrame.h:
+        (WebFrame):
+        * src/WebFrameImpl.cpp:
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+
 2012-08-22  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r126319.
