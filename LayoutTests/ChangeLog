@@ -1,3 +1,9 @@
+2012-08-21  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed gardening. Added file somehow missed by garden-o-matic in last rebaseline.
+
+        * platform/chromium/fast/canvas/canvas-strokeRect-alpha-shadow-expected.txt: Added.
+
 2012-08-21  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Unreviewed gardening.
