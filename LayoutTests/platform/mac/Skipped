@@ -964,6 +964,3 @@ css3/flexbox/flex-rounding.html
 # ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS) is disabled
 fast/forms/time-multiple-fields
 
-# regression caused by: https://bugs.webkit.org/show_bug.cgi?id=94610
-# https://bugs.webkit.org/show_bug.cgi?id=94640
-http/tests/inspector/console-resource-errors.html
