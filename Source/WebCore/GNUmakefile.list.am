@@ -4981,6 +4981,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderTextControlSingleLine.cpp \
 	Source/WebCore/rendering/RenderTextControlSingleLine.h \
 	Source/WebCore/rendering/RenderText.cpp \
+	Source/WebCore/rendering/RenderTextTrackCue.cpp \
+	Source/WebCore/rendering/RenderTextTrackCue.h \
 	Source/WebCore/rendering/RenderTextFragment.cpp \
 	Source/WebCore/rendering/RenderTextFragment.h \
 	Source/WebCore/rendering/RenderText.h \

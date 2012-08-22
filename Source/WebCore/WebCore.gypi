@@ -4817,6 +4817,8 @@
             'rendering/RenderTextControlSingleLine.h',
             'rendering/RenderTextFragment.cpp',
             'rendering/RenderTextFragment.h',
+            'rendering/RenderTextTrackCue.cpp',
+            'rendering/RenderTextTrackCue.h',
             'rendering/RenderTheme.cpp',
             'rendering/RenderTheme.h',
             'rendering/RenderThemeChromiumAndroid.cpp',

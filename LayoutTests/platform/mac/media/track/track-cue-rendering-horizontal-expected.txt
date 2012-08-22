@@ -1,0 +1,87 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x332
+  RenderBlock {HTML} at (0,0) size 800x332
+    RenderBody {BODY} at (8,8) size 784x316
+      RenderBlock (anonymous) at (0,0) size 784x244
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,244) size 784x72
+        RenderText {#text} at (0,0) size 266x18
+          text run at (0,0) width 266: "Rendering horizontal line-positioned cues."
+        RenderBR {BR} at (266,0) size 0x18
+        RenderText {#text} at (0,18) size 162x18
+          text run at (0,18) width 162: "EVENT(canplaythrough)"
+        RenderBR {BR} at (162,18) size 0x18
+        RenderText {#text} at (0,36) size 107x18
+          text run at (0,36) width 107: "EVENT(seeked)"
+        RenderBR {BR} at (107,36) size 0x18
+        RenderText {#text} at (0,54) size 102x18
+          text run at (0,54) width 102: "END OF TEST"
+        RenderBR {BR} at (102,54) size 0x18
+layer at (8,8) size 320x240
+  RenderVideo {VIDEO} at (0,0) size 320x240
+layer at (8,8) size 320x240
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x240
+layer at (8,8) size 320x215
+  RenderBlock (relative positioned) {DIV} at (0,0) size 320x215 [color=#FFFFFF00]
+layer at (8,8) size 320x14
+  RenderBlock (positioned) {DIV} at (0,0) size 320x14 [color=#FFFFFF]
+    RenderInline {DIV} at (0,0) size 280x18 [bgcolor=#000000CC]
+      RenderText {#text} at (22,0) size 276x14
+        text run at (22,0) width 276: "Cue 1: should be positioned at the top of the video."
+    RenderInline {DIV} at (0,0) size 3x18 [bgcolor=#000000CC]
+layer at (8,26) size 320x14
+  RenderBlock (positioned) {DIV} at (0,18) size 320x14 [color=#FFFFFF]
+    RenderInline {DIV} at (0,0) size 308x18 [bgcolor=#000000CC]
+      RenderText {#text} at (8,0) size 304x14
+        text run at (8,0) width 304: "Cue 2: should be the second cue and not overlap cue 1."
+    RenderInline {DIV} at (0,0) size 3x18 [bgcolor=#000000CC]
+layer at (8,44) size 320x14
+  RenderBlock (positioned) {DIV} at (0,36) size 320x14 [color=#FFFFFF]
+    RenderInline {DIV} at (0,0) size 300x18 [bgcolor=#000000CC]
+      RenderText {#text} at (12,0) size 296x14
+        text run at (12,0) width 296: "Cue 3: should become the third line from top to bottom."
+    RenderInline {DIV} at (0,0) size 2x18 [bgcolor=#000000CC]
+layer at (8,98) size 320x14
+  RenderBlock (positioned) {DIV} at (0,90) size 320x14 [color=#FFFFFF]
+    RenderInline {DIV} at (0,0) size 292x18 [bgcolor=#000000CC]
+      RenderText {#text} at (16,0) size 288x14
+        text run at (16,0) width 288: "Cue 4: should be fixed positioned around the middle."
+    RenderInline {DIV} at (0,0) size 3x18 [bgcolor=#000000CC]
+layer at (8,205) size 320x14
+  RenderBlock (positioned) {DIV} at (0,197) size 320x14 [color=#FFFFFF]
+    RenderInline {DIV} at (0,0) size 296x18 [bgcolor=#000000CC]
+      RenderText {#text} at (14,0) size 292x14
+        text run at (14,0) width 292: "Cue 5: should be displayed at the bottom of the video."
+    RenderInline {DIV} at (0,0) size 3x18 [bgcolor=#000000CC]
+layer at (8,187) size 320x14
+  RenderBlock (positioned) {DIV} at (0,179) size 320x14 [color=#FFFFFF]
+    RenderInline {DIV} at (0,0) size 284x18 [bgcolor=#000000CC]
+      RenderText {#text} at (20,0) size 280x14
+        text run at (20,0) width 280: "Cue 6: should be on top of bottom positioned cue 5."
+    RenderInline {DIV} at (0,0) size 3x18 [bgcolor=#000000CC]
+layer at (8,223) size 320x25
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,215) size 320x25
+    RenderButton {INPUT} at (6,3) size 18x18
+    RenderButton {INPUT} at (32,4) size 16x16
+    RenderDeprecatedFlexibleBox {DIV} at (49,5) size 216x15
+      RenderSlider {INPUT} at (45,2) size 126x13
+        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 126x13
+          RenderBlock {DIV} at (0,2) size 116x8
+          RenderBlock {DIV} at (116,2) size 10x8
+    RenderButton {INPUT} at (297,4) size 16x16
+    RenderBlock {DIV} at (265,6) size 25x12
+layer at (57,230) size 45x11
+  RenderDeprecatedFlexibleBox {DIV} at (0,2) size 45x11 [color=#FFFFFF]
+    RenderBlock (anonymous) at (9,0) size 26x11
+      RenderText {#text} at (0,0) size 26x11
+        text run at (0,0) width 26: "00:00"
+layer at (228,230) size 45x11
+  RenderDeprecatedFlexibleBox {DIV} at (171,2) size 45x11 [color=#FFFFFF]
+    RenderBlock (anonymous) at (7,0) size 31x11
+      RenderText {#text} at (0,0) size 31x11
+        text run at (0,0) width 31: "-00:05"
+layer at (106,232) size 10x8
+  RenderBlock (relative positioned) {DIV} at (0,0) size 10x8
+layer at (275,229) size 14x12
+  RenderButton zI: 1 {INPUT} at (2,0) size 14x12

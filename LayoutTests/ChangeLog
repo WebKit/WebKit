@@ -1,3 +1,28 @@
+2012-08-21  Victor Carbune  <victor@rosedu.org>
+
+        Display a TextTrackCue when snap-to-lines flag is set
+        https://bugs.webkit.org/show_bug.cgi?id=79751
+
+        Reviewed by Tony Chang.
+
+        Test cases covering snap-to-lines horizontal and vertical positioning of cues.
+
+        * media/track/captions-webvtt/captions-snap-to-lines-set.vtt: Added.
+        * media/track/track-cue-rendering-horizontal.html: Added.
+        * media/track/track-cue-rendering-snap-to-lines-not-set-expected.txt: Updated.
+        * media/track/track-cue-rendering-vertical.html: Added.
+        * media/video-test.js: Updated to support pixel test dumps.
+        * platform/chromium-linux/media/track/track-cue-rendering-horizontal-expected.png: Added.
+        * platform/chromium-linux/media/track/track-cue-rendering-horizontal-expected.txt: Added.
+        * platform/chromium-linux/media/track/track-cue-rendering-vertical-expected.png: Added.
+        * platform/chromium-linux/media/track/track-cue-rendering-vertical-expected.txt: Added.
+        * platform/chromium/TestExpectations: Marking these temporarily as IMAGE fail, as they will
+        anyway require new baselines.
+        * platform/mac/media/track/track-cue-rendering-horizontal-expected.png: Added.
+        * platform/mac/media/track/track-cue-rendering-horizontal-expected.txt: Added.
+        * platform/mac/media/track/track-cue-rendering-vertical-expected.png: Added.
+        * platform/mac/media/track/track-cue-rendering-vertical-expected.txt: Added.
+
 2012-08-21  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html is failing

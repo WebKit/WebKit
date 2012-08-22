@@ -3452,6 +3452,9 @@ BUGWK93568 DEBUG : http/tests/misc/window-dot-stop.html = PASS TEXT
 // V8 does not support static attributes
 BUGWK93488 SKIP : fast/notifications/notifications-permission.html = TEXT
 
+BUGWK79751 : media/track/track-cue-rendering-horizontal.html = IMAGE
+BUGWK79751 : media/track/track-cue-rendering-vertical.html = IMAGE
+
 // Flaky
 BUGWK93799 MAC : fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html = PASS IMAGE
 BUGWK93799 MAC : fast/dom/HTMLMeterElement/meter-element.html = PASS IMAGE

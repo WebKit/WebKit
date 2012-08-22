@@ -294,6 +294,17 @@ void TextTrack::invalidateTrackIndex()
     m_trackIndex = invalidTrackIndex;
 }
 
+bool TextTrack::isRendered()
+{
+    if (m_kind != captionsKeyword() && m_kind != subtitlesKeyword())
+        return false;
+
+    if (m_mode != SHOWING && !m_showingByDefault)
+        return false;
+
+    return true;
+}
+
 TextTrackCueList* TextTrack::ensureTextTrackCueList()
 {
     if (!m_cues)
