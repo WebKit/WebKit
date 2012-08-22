@@ -34,17 +34,21 @@
 
 #include "ScrollAnimatorNone.h"
 
-#include "ActivePlatformGestureAnimation.h"
 #include "FloatPoint.h"
 #include "NotImplemented.h"
 #include <wtf/OwnArrayPtr.h>
 #include "PlatformGestureEvent.h"
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
-#include "TouchpadFlingPlatformGestureCurve.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
 #include <wtf/PassOwnPtr.h>
+
+#if ENABLE(GESTURE_ANIMATION)
+#include "ActivePlatformGestureAnimation.h"
+#include "TouchpadFlingPlatformGestureCurve.h"
+#endif
+
 
 #if PLATFORM(CHROMIUM)
 #include "TraceEvent.h"
@@ -401,9 +405,11 @@ ScrollAnimatorNone::~ScrollAnimatorNone()
 
 void ScrollAnimatorNone::fireUpAnAnimation(FloatPoint fp)
 {
+#if ENABLE(GESTURE_ANIMATION)
     if (m_gestureAnimation)
         m_gestureAnimation.clear();
     m_gestureAnimation = ActivePlatformGestureAnimation::create(TouchpadFlingPlatformGestureCurve::create(fp), this);
+#endif
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
     startNextTimer(0);
 #else
@@ -491,7 +497,9 @@ void ScrollAnimatorNone::scrollToOffsetWithoutAnimation(const FloatPoint& offset
 void ScrollAnimatorNone::cancelAnimations()
 {
     m_animationActive = false;
+#if ENABLE(GESTURE_ANIMATION)
     m_gestureAnimation.clear();
+#endif
 }
 
 void ScrollAnimatorNone::serviceScrollAnimations()
@@ -545,12 +553,14 @@ void ScrollAnimatorNone::animationTimerFired()
     if (m_verticalData.m_startTime && m_verticalData.animateScroll(currentTime))
         continueAnimation = true;
 
+#if ENABLE(GESTURE_ANIMATION)
     if (m_gestureAnimation) {
         if (m_gestureAnimation->animate(currentTime))
             continueAnimation = true;
         else
             m_gestureAnimation.clear();
     }
+#endif
 
     if (continueAnimation)
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)

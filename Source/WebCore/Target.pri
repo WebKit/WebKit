@@ -2794,10 +2794,8 @@ contains(DEFINES, WTF_USE_LIBXML2=1) {
 }
 
 contains(DEFINES, ENABLE_SMOOTH_SCROLLING=1) {
-    win32-*|wince* {
-        HEADERS += platform/ScrollAnimatorNone.h
-        SOURCES += platform/ScrollAnimatorNone.cpp
-    }
+    HEADERS += platform/ScrollAnimatorNone.h
+    SOURCES += platform/ScrollAnimatorNone.cpp
 }
 
 win32-*|wince* {

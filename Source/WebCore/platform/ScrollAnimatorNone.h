@@ -173,7 +173,9 @@ protected:
     bool m_firstVelocitySet;
     bool m_firstVelocityIsVertical;
 
+#if ENABLE(GESTURE_ANIMATION)
     OwnPtr<ActivePlatformGestureAnimation> m_gestureAnimation;
+#endif
 };
 
 } // namespace WebCore

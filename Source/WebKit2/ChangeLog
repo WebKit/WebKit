@@ -1,3 +1,19 @@
+2012-08-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Optionally support smooth-scrolling on all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=74926
+
+        Reviewed by Simon Hausmann.
+
+        Expose scroll-animator preference, but ensure animated smooth scrolling
+        on the web process side is disabled when scrolling has been delegated
+        to the UI process.
+
+        * Shared/WebPreferencesStore.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setResizesToContentsUsingLayoutSize):
+        (WebKit::WebPage::updatePreferences):
+
 2012-08-22  Luiz Agostini  <luiz.agostini@nokia.com>
 
         [Qt] Avoid using WebKit macros in qrawwebview_p.h

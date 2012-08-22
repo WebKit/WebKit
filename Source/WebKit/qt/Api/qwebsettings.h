@@ -79,7 +79,8 @@ public:
         WebGLEnabled,
         CSSRegionsEnabled,
         HyperlinkAuditingEnabled,
-        CSSGridLayoutEnabled
+        CSSGridLayoutEnabled,
+        ScrollAnimatorEnabled
     };
     enum WebGraphic {
         MissingImageGraphic,

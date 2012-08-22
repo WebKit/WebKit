@@ -1,3 +1,17 @@
+2012-08-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Optionally support smooth-scrolling on all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=74926
+
+        Reviewed by Simon Hausmann.
+
+        Expose the enable scroll animator setting.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        (QWebSettings::QWebSettings):
+        * Api/qwebsettings.h:
+
 2012-08-22  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] REGRESSION(r125428): fast/profiler/nested-start-and-stop-profiler.html fails

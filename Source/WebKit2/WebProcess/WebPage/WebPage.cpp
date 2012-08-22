@@ -902,6 +902,10 @@ void WebPage::setResizesToContentsUsingLayoutSize(const IntSize& targetLayoutSiz
     m_page->settings()->setAcceleratedCompositingForFixedPositionEnabled(true);
     m_page->settings()->setFixedElementsLayoutRelativeToFrame(true);
     m_page->settings()->setFixedPositionCreatesStackingContext(true);
+#if ENABLE(SMOOTH_SCROLLING)
+    // Ensure we don't do animated scrolling in the WebProcess when scrolling is delegated.
+    m_page->settings()->setEnableScrollAnimator(false);
+#endif
 
     // Always reset even when empty. This also takes care of the relayout.
     setFixedLayoutSize(targetLayoutSize);
@@ -2059,6 +2063,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setMockScrollbarsEnabled(store.getBoolValueForKey(WebPreferencesKey::mockScrollbarsEnabledKey()));
     settings->setHyperlinkAuditingEnabled(store.getBoolValueForKey(WebPreferencesKey::hyperlinkAuditingEnabledKey()));
     settings->setRequestAnimationFrameEnabled(store.getBoolValueForKey(WebPreferencesKey::requestAnimationFrameEnabledKey()));
+#if ENABLE(SMOOTH_SCROLLING)
+    settings->setEnableScrollAnimator(store.getBoolValueForKey(WebPreferencesKey::scrollAnimatorEnabledKey()));
+#endif
 
     // <rdar://problem/10697417>: It is necessary to force compositing when accelerate drawing
     // is enabled on Mac so that scrollbars are always in their own layers.

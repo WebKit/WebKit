@@ -77,6 +77,7 @@ public:
         , useOfflineStorageDatabase(false)
         , useOfflineWebApplicationCache(false)
         , useDiskCookies(true)
+        , enableScrollAnimator(false)
         , offlineStorageDefaultQuotaSize(0)
 #ifndef QT_NO_OPENGL
         , useQGLWidgetViewport(false)
@@ -100,6 +101,7 @@ public:
     bool useOfflineStorageDatabase;
     bool useOfflineWebApplicationCache;
     bool useDiskCookies;
+    bool enableScrollAnimator;
     quint64 offlineStorageDefaultQuotaSize;
 #ifndef QT_NO_OPENGL
     bool useQGLWidgetViewport;
@@ -162,6 +164,7 @@ protected Q_SLOTS:
     void toggleLocalStorage(bool toggle);
     void toggleOfflineStorageDatabase(bool toggle);
     void toggleOfflineWebApplicationCache(bool toggle);
+    void toggleScrollAnimator(bool toggle);
     void setOfflineStorageDefaultQuota();
 #ifndef QT_NO_LINEEDIT
     void showFindBar();

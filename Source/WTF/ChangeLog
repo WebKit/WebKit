@@ -1,3 +1,14 @@
+2012-08-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Optionally support smooth-scrolling on all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=74926
+
+        Reviewed by Simon Hausmann.
+
+        Initialize GESTURE_ANIMATION feature flag.
+
+        * wtf/Platform.h:
+
 2012-08-21  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         WTF Threading leaks kernel objects on platforms that use pthreads

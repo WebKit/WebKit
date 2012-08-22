@@ -469,6 +469,14 @@ void LauncherWindow::createChrome()
     togglePlugins->setCheckable(true);
     togglePlugins->setChecked(false);
 
+    QAction* toggleScrollAnimator = settingsMenu->addAction("Enable Scroll Animator", this, SLOT(toggleScrollAnimator(bool)));
+#if ENABLE(SMOOTH_SCROLLING)
+    toggleScrollAnimator->setCheckable(true);
+#else
+    toggleScrollAnimator->setCheckable(false);
+#endif
+    toggleScrollAnimator->setChecked(false);
+
     QAction* toggleInterruptingJavaScripteEnabled = settingsMenu->addAction("Enable interrupting js scripts", this, SLOT(toggleInterruptingJavaScriptEnabled(bool)));
     toggleInterruptingJavaScripteEnabled->setCheckable(true);
     toggleInterruptingJavaScripteEnabled->setChecked(false);
@@ -1083,6 +1091,12 @@ void LauncherWindow::setOfflineStorageDefaultQuota()
             page()->settings()->setOfflineStorageDefaultQuota(quotaSize);
 #endif
     }
+}
+
+void LauncherWindow::toggleScrollAnimator(bool toggle)
+{
+    m_windowOptions.enableScrollAnimator = toggle;
+    page()->settings()->setAttribute(QWebSettings::ScrollAnimatorEnabled, toggle);
 }
 
 LauncherWindow* LauncherWindow::newWindow()
