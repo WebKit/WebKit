@@ -39,7 +39,7 @@ _log = logging.getLogger(__name__)
 
 
 class ChromiumMacPort(chromium.ChromiumPort):
-    SUPPORTED_OS_VERSIONS = ('snowleopard', 'lion', 'future')
+    SUPPORTED_OS_VERSIONS = ('snowleopard', 'lion', 'mountainlion', 'future')
     port_name = 'chromium-mac'
 
     FALLBACK_PATHS = {
@@ -50,6 +50,11 @@ class ChromiumMacPort(chromium.ChromiumPort):
             'mac',
         ],
         'lion': [
+            'chromium-mac',
+            'chromium',
+            'mac',
+        ],
+        'mountainlion': [  # FIXME: we don't treat ML different from Lion yet.
             'chromium-mac',
             'chromium',
             'mac',

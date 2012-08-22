@@ -56,8 +56,8 @@ class FactoryTest(unittest.TestCase):
         self.assertTrue(isinstance(port, cls))
 
     def test_mac(self):
-        self.assert_port(port_name='mac-leopard', cls=mac.MacPort)
-        self.assert_port(port_name='mac-leopard-wk2', cls=mac.MacPort)
+        self.assert_port(port_name='mac-lion', cls=mac.MacPort)
+        self.assert_port(port_name='mac-lion-wk2', cls=mac.MacPort)
         self.assert_port(port_name='mac', os_name='mac', os_version='lion', cls=mac.MacPort)
         self.assert_port(port_name=None,  os_name='mac', os_version='lion', cls=mac.MacPort)
 

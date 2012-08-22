@@ -42,9 +42,7 @@ _log = logging.getLogger(__name__)
 class WinPort(ApplePort):
     port_name = "win"
 
-    # This is a list of all supported OS-VERSION pairs for the AppleWin port
-    # and the order of fallback between them.  Matches ORWT.
-    VERSION_FALLBACK_ORDER = ["win-xp", "win-vista", "win-7sp0", "win"]
+    VERSION_FALLBACK_ORDER = ["win-xp", "win-vista", "win-7sp0", "win-win7"]
 
     ARCHITECTURES = ['x86']
 
@@ -63,8 +61,10 @@ class WinPort(ApplePort):
         return expected_text != actual_text
 
     def default_baseline_search_path(self):
-        fallback_index = self.VERSION_FALLBACK_ORDER.index(self._port_name_with_version())
-        fallback_names = list(self.VERSION_FALLBACK_ORDER[fallback_index:])
+        if self._name.endswith(self.FUTURE_VERSION):
+            fallback_names = [self.port_name]
+        else:
+            fallback_names = self.VERSION_FALLBACK_ORDER[self.VERSION_FALLBACK_ORDER.index(self._name):-1] + [self.port_name]
         # FIXME: The AppleWin port falls back to AppleMac for some results.  Eventually we'll have a shared 'apple' port.
         if self.get_option('webkit_test_runner'):
             fallback_names.insert(0, 'win-wk2')

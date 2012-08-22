@@ -46,9 +46,7 @@ _log = logging.getLogger(__name__)
 class MacPort(ApplePort):
     port_name = "mac"
 
-    # This is a list of all supported OS-VERSION pairs for the AppleMac port
-    # and the order of fallback between them.  Matches ORWT.
-    VERSION_FALLBACK_ORDER = ["mac-leopard", "mac-snowleopard", "mac-lion", "mac"]
+    VERSION_FALLBACK_ORDER = ['mac-snowleopard', 'mac-lion', 'mac-mountainlion']
 
     ARCHITECTURES = ['x86_64', 'x86']
 
@@ -73,25 +71,15 @@ class MacPort(ApplePort):
     def _build_driver_flags(self):
         return ['ARCHS=i386'] if self.architecture() == 'x86' else []
 
-    def _most_recent_version(self):
-        # This represents the most recently-shipping version of the operating system.
-        return self.VERSION_FALLBACK_ORDER[-2]
-
     def should_retry_crashes(self):
         # On Apple Mac, we retry crashes due to https://bugs.webkit.org/show_bug.cgi?id=82233
         return True
 
-    def baseline_path(self):
-        if self.name() == self._most_recent_version():
-            # Baselines for the most recently shiping version should go into 'mac', not 'mac-foo'.
-            if self.get_option('webkit_test_runner'):
-                return self._webkit_baseline_path('mac-wk2')
-            return self._webkit_baseline_path('mac')
-        return ApplePort.baseline_path(self)
-
     def default_baseline_search_path(self):
-        fallback_index = self.VERSION_FALLBACK_ORDER.index(self._port_name_with_version())
-        fallback_names = list(self.VERSION_FALLBACK_ORDER[fallback_index:])
+        if self._name.endswith(self.FUTURE_VERSION):
+            fallback_names = [self.port_name]
+        else:
+            fallback_names = self.VERSION_FALLBACK_ORDER[self.VERSION_FALLBACK_ORDER.index(self._name):-1] + [self.port_name]
         if self.get_option('webkit_test_runner'):
             fallback_names.insert(0, self._wk2_port_name())
             # Note we do not add 'wk2' here, even though it's included in _skipped_search_paths().
@@ -110,22 +98,10 @@ class MacPort(ApplePort):
     def operating_system(self):
         return 'mac'
 
-    # Belongs on a Platform object.
-    def is_leopard(self):
-        return self._version == "leopard"
-
-    # Belongs on a Platform object.
-    def is_snowleopard(self):
-        return self._version == "snowleopard"
-
-    # Belongs on a Platform object.
-    def is_lion(self):
-        return self._version == "lion"
-
     def default_child_processes(self):
         # FIXME: The Printer isn't initialized when this is called, so using _log would just show an unitialized logger error.
 
-        if self.is_snowleopard():
+        if self._version == "snowleopard":
             print >> sys.stderr, "Cannot run tests in parallel on Snow Leopard due to rdar://problem/10621525."
             return 1
 

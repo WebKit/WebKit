@@ -1,3 +1,53 @@
+2012-08-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Add mountain lion to perf-tests, layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=94553
+
+        Reviewed by Adam Barth.
+
+        This patch adds support for the 'mac-mountainlion' platform and
+        stamps out the last references to 'mac-leopard' as a supported
+        name.
+        
+        This patch does a small amount of refactoring to try and make
+        things a little clearer how we treat the "most recent version"
+        specially for baselines and skipped files, and so you only
+        should have to touch the VERSION_FALLBACK_ORDER constants on the
+        ports, but unfortunately changing this list changes a bunch of
+        the unit tests which are doing exact matches for correctness, so
+        you have to touch more than a couple files :(. There's probably
+        still more refactoring that can be done so that we don't have to
+        do all of this functional testing to feel completely correct.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo._determine_mac_version):
+        * Scripts/webkitpy/common/system/platforminfo_unittest.py:
+        (TestPlatformInfo.test_os_version):
+        * Scripts/webkitpy/layout_tests/port/apple.py:
+        (ApplePort.__init__):
+        (ApplePort):
+        (ApplePort._skipped_file_search_paths):
+        (ApplePort._generate_all_test_configurations):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        (ChromiumMacPort):
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        (FactoryTest.test_mac):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort):
+        (MacPort._build_driver_flags):
+        (MacPort.should_retry_crashes):
+        (MacPort.default_baseline_search_path):
+        (MacPort.operating_system):
+        (MacPort.default_child_processes):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (MacTest):
+        (MacTest.test_skipped_file_search_paths):
+        (test_versions):
+        (test_baseline_search_path):
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        (WinPort):
+        (WinPort.default_baseline_search_path):
+
 2012-08-21  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html is failing

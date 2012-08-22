@@ -49,9 +49,12 @@ _exact_matches = {
     "Webkit Mac10.7": {"port_name": "chromium-mac-lion", "specifiers": set(["lion"])},
 
     # These builders are on build.webkit.org.
-    # FIXME: Remove rebaseline_override_dir once there is an Apple buildbot that corresponds to platform/mac (i.e. a Mountain Lion bot).
-    "Apple Lion Release WK1 (Tests)": {"port_name": "mac-lion", "specifiers": set(["lion"]), "rebaseline_override_dir": "mac"},
-    "Apple Lion Debug WK1 (Tests)": {"port_name": "mac-lion", "specifiers": set(["lion", "debug"]), "rebaseline_override_dir": "mac"},
+    "Apple MountainLion Release WK1 (Tests)": {"port_name": "mac-mountainlion", "specifiers": set(["mountainlion"]), "rebaseline_override_dir": "mac"},
+    "Apple MountainLion Debug WK1 (Tests)": {"port_name": "mac-mountainlion", "specifiers": set(["mountainlion", "debug"]), "rebaseline_override_dir": "mac"},
+    "Apple MountainLion Release WK2 (Tests)": {"port_name": "mac-mountainlion", "specifiers": set(["mountainlion", "wk2"]), "rebaseline_override_dir": "mac"},
+    "Apple MountainLion Debug WK2 (Tests)": {"port_name": "mac-mountainlion", "specifiers": set(["mountainlion", "wk2", "debug"]), "rebaseline_override_dir": "mac"},
+    "Apple Lion Release WK1 (Tests)": {"port_name": "mac-lion", "specifiers": set(["lion"])},
+    "Apple Lion Debug WK1 (Tests)": {"port_name": "mac-lion", "specifiers": set(["lion", "debug"])},
     "Apple Lion Release WK2 (Tests)": {"port_name": "mac-lion", "specifiers": set(["lion", "wk2"])},
     "Apple Lion Debug WK2 (Tests)": {"port_name": "mac-lion", "specifiers": set(["lion", "wk2", "debug"])},
 

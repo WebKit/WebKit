@@ -103,6 +103,7 @@ class PlatformInfo(object):
             '5': 'leopard',
             '6': 'snowleopard',
             '7': 'lion',
+            '8': 'mountainlion',
         }
         assert release_version >= min(version_strings.keys())
         return version_strings.get(release_version, 'future')

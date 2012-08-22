@@ -37,8 +37,8 @@ from webkitpy.common.system.systemhost_mock import MockSystemHost
 
 class MacTest(port_testcase.PortTestCase):
     os_name = 'mac'
-    os_version = 'leopard'
-    port_name = 'mac-leopard'
+    os_version = 'lion'
+    port_name = 'mac-lion'
     port_maker = MacPort
 
     def assert_skipped_file_search_paths(self, port_name, expected_paths, use_webkit2=False):
@@ -50,16 +50,15 @@ class MacTest(port_testcase.PortTestCase):
         self.assertEquals(self.make_port(options=MockOptions(guard_malloc=True)).default_timeout_ms(), 350000)
 
     def test_skipped_file_search_paths(self):
+        # We should have two skipped files - platform+version and platform; however, we don't
+        # have platform+version for either the most recent version or mac-future.
         self.assert_skipped_file_search_paths('mac-snowleopard', set(['mac-snowleopard', 'mac']))
-        self.assert_skipped_file_search_paths('mac-leopard', set(['mac-leopard', 'mac']))
         self.assert_skipped_file_search_paths('mac-lion', set(['mac-lion', 'mac']))
-
-        # Note that there is no platform/mac-future/Skipped.
+        self.assert_skipped_file_search_paths('mac-mountainlion', set(['mac']))
         self.assert_skipped_file_search_paths('mac-future', set(['mac']))
 
         self.assert_skipped_file_search_paths('mac-snowleopard', set(['mac-snowleopard', 'mac', 'mac-wk2', 'wk2']), use_webkit2=True)
-        self.assert_skipped_file_search_paths('mac-leopard', set(['mac-leopard', 'mac', 'mac-wk2', 'wk2']), use_webkit2=True)
-        self.assert_skipped_file_search_paths('mac-lion', set(['mac-lion', 'mac', 'mac-wk2', 'wk2']), use_webkit2=True)
+        self.assert_skipped_file_search_paths('mac-lion', set(['mac', 'mac-lion', 'mac-wk2', 'wk2']), use_webkit2=True)
         self.assert_skipped_file_search_paths('mac-future', set(['mac', 'mac-wk2', 'wk2']), use_webkit2=True)
 
 
@@ -110,40 +109,21 @@ java/
         self.assertTrue(port.version())
 
     def test_versions(self):
-        self.assert_name('mac', 'leopard', 'mac-leopard')
-        self.assert_name('mac-leopard', 'tiger', 'mac-leopard')
-        self.assert_name('mac-leopard', 'leopard', 'mac-leopard')
-        self.assert_name('mac-leopard', 'snowleopard', 'mac-leopard')
-
+        # Note: these tests don't need to be exhaustive as long as we get path coverage.
         self.assert_name('mac', 'snowleopard', 'mac-snowleopard')
-        self.assert_name('mac-snowleopard', 'tiger', 'mac-snowleopard')
         self.assert_name('mac-snowleopard', 'leopard', 'mac-snowleopard')
-        self.assert_name('mac-snowleopard', 'snowleopard', 'mac-snowleopard')
+        self.assert_name('mac-snowleopard', 'lion', 'mac-snowleopard')
 
         self.assert_name('mac', 'lion', 'mac-lion')
         self.assert_name('mac-lion', 'lion', 'mac-lion')
+
+        self.assert_name('mac', 'mountainlion', 'mac-mountainlion')
+        self.assert_name('mac-mountainlion', 'lion', 'mac-mountainlion')
 
         self.assert_name('mac', 'future', 'mac-future')
         self.assert_name('mac-future', 'future', 'mac-future')
 
         self.assertRaises(AssertionError, self.assert_name, 'mac-tiger', 'leopard', 'mac-leopard')
-
-
-    def test_is_version_methods(self):
-        leopard_port = self.make_port(port_name='mac-leopard')
-        self.assertTrue(leopard_port.is_leopard())
-        self.assertFalse(leopard_port.is_snowleopard())
-        self.assertFalse(leopard_port.is_lion())
-
-        snowleopard_port = self.make_port(port_name='mac-snowleopard')
-        self.assertFalse(snowleopard_port.is_leopard())
-        self.assertTrue(snowleopard_port.is_snowleopard())
-        self.assertFalse(snowleopard_port.is_lion())
-
-        lion_port = self.make_port(port_name='mac-lion')
-        self.assertFalse(lion_port.is_leopard())
-        self.assertFalse(lion_port.is_snowleopard())
-        self.assertTrue(lion_port.is_lion())
 
     def test_setup_environ_for_server(self):
         port = self.make_port(options=MockOptions(leaks=True, guard_malloc=True))
@@ -158,18 +138,14 @@ java/
         self.assertEquals(port.baseline_search_path(), absolute_search_paths)
 
     def test_baseline_search_path(self):
-        self._assert_search_path('mac-leopard', 'mac-leopard', ['mac-leopard', 'mac-snowleopard', 'mac-lion', 'mac'])
+        # Note that we don't need total coverage here, just path coverage, since this is all data driven.
         self._assert_search_path('mac-snowleopard', 'mac-snowleopard', ['mac-snowleopard', 'mac-lion', 'mac'])
-
-        # Note that mac-lion writes baselines into mac, not mac-lion! (but it will read from mac-lion)
-        self._assert_search_path('mac-lion', 'mac', ['mac-lion', 'mac'])
-
-        # Note that there is no 'mac-future'; it uses the 'mac' directory as well.
+        self._assert_search_path('mac-lion', 'mac-lion', ['mac-lion', 'mac'])
+        self._assert_search_path('mac-mountainlion', 'mac', ['mac'])
         self._assert_search_path('mac-future', 'mac', ['mac'])
-
-        self._assert_search_path('mac-leopard', 'mac-wk2', ['mac-wk2', 'mac-leopard', 'mac-snowleopard', 'mac-lion', 'mac'], use_webkit2=True)
         self._assert_search_path('mac-snowleopard', 'mac-wk2', ['mac-wk2', 'mac-snowleopard', 'mac-lion', 'mac'], use_webkit2=True)
         self._assert_search_path('mac-lion', 'mac-wk2', ['mac-wk2', 'mac-lion', 'mac'], use_webkit2=True)
+        self._assert_search_path('mac-mountainlion', 'mac-wk2', ['mac-wk2', 'mac'], use_webkit2=True)
         self._assert_search_path('mac-future', 'mac-wk2', ['mac-wk2', 'mac'], use_webkit2=True)
 
     def test_show_results_html_file(self):

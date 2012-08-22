@@ -76,8 +76,14 @@ class ApplePort(Port):
 
         allowed_port_names = self.VERSION_FALLBACK_ORDER + [self.operating_system() + "-future"]
         port_name = port_name.replace('-wk2', '')
-        assert port_name in allowed_port_names, "%s is not in %s" % (port_name, allowed_port_names)
         self._version = self._strip_port_name_prefix(port_name)
+        assert port_name in allowed_port_names, "%s is not in %s" % (port_name, allowed_port_names)
+
+    def _skipped_file_search_paths(self):
+        # We don't have a dedicated Skipped file for the most recent version of the port;
+        # we just use the one in platform/{mac,win}
+        most_recent_name = self.VERSION_FALLBACK_ORDER[-1]
+        return set(filter(lambda name: name != most_recent_name, super(ApplePort, self)._skipped_file_search_paths()))
 
     # FIXME: A more sophisticated version of this function should move to WebKitPort and replace all calls to name().
     # This is also a misleading name, since 'mac-future' gets remapped to 'mac'.
@@ -87,14 +93,7 @@ class ApplePort(Port):
     def _generate_all_test_configurations(self):
         configurations = []
         for port_name in self.VERSION_FALLBACK_ORDER:
-            if '-' in port_name:
-                version = self._strip_port_name_prefix(port_name)
-            else:
-                # The version for the "base" port is currently defined as "future"
-                # since TestConfiguration doesn't allow None as a valid version.
-                version = self.FUTURE_VERSION
-
             for build_type in self.ALL_BUILD_TYPES:
                 for architecture in self.ARCHITECTURES:
-                    configurations.append(TestConfiguration(version=version, architecture=architecture, build_type=build_type))
+                    configurations.append(TestConfiguration(version=self._strip_port_name_prefix(port_name), architecture=architecture, build_type=build_type))
         return configurations
