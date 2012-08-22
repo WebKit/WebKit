@@ -47,9 +47,9 @@ class HTMLDivElement;
 
 class TextTrackCue : public RefCounted<TextTrackCue>, public EventTarget {
 public:
-    static PassRefPtr<TextTrackCue> create(ScriptExecutionContext* context, const String& id, double start, double end, const String& content, const String& settings, bool pauseOnExit)
+    static PassRefPtr<TextTrackCue> create(ScriptExecutionContext* context, double start, double end, const String& content)
     {
-        return adoptRef(new TextTrackCue(context, id, start, end, content, settings, pauseOnExit));
+        return adoptRef(new TextTrackCue(context, start, end, content));
     }
 
     virtual ~TextTrackCue();
@@ -90,6 +90,8 @@ public:
     const String& text() const { return m_content; }
     void setText(const String&);
 
+    void setCueSettings(const String&);
+
     int cueIndex();
     void invalidateCueIndex();
 
@@ -119,9 +121,7 @@ protected:
     virtual EventTargetData* ensureEventTargetData();
 
 private:
-    TextTrackCue(ScriptExecutionContext*, const String& id, double start, double end, const String& content, const String& settings, bool pauseOnExit);
-
-    void parseSettings(const String&);
+    TextTrackCue(ScriptExecutionContext*, double start, double end, const String& content);
 
     int calculateComputedLinePosition();
     void calculateDisplayParameters();

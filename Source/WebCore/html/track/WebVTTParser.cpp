@@ -262,7 +262,9 @@ void WebVTTParser::createNewCue()
     if (!m_currentContent.length())
         return;
 
-    RefPtr<TextTrackCue> cue = TextTrackCue::create(m_scriptExecutionContext, m_currentId, m_currentStartTime, m_currentEndTime, m_currentContent.toString(), m_currentSettings, false);
+    RefPtr<TextTrackCue> cue = TextTrackCue::create(m_scriptExecutionContext, m_currentStartTime, m_currentEndTime, m_currentContent.toString());
+    cue->setId(m_currentId);
+    cue->setCueSettings(m_currentSettings);
 
     m_cuelist.append(cue);
     if (m_client)

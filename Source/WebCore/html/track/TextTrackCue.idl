@@ -29,7 +29,7 @@ module html {
         Conditional=VIDEO_TRACK,
         V8EnabledAtRuntime=webkitVideoTrack,
         JSGenerateToNativeObject,
-        Constructor(in DOMString id, in double startTime, in double endTime, in DOMString text, in [Optional=DefaultIsUndefined] DOMString settings, in [Optional=DefaultIsUndefined] boolean pauseOnExit),
+        Constructor(in double startTime, in double endTime, in DOMString text),
         CallWith=ScriptExecutionContext,
         EventTarget,
         JSCustomMarkFunction,

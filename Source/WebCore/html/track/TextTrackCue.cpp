@@ -88,9 +88,8 @@ static const String& verticalGrowingRightKeyword()
     return verticallr;
 }
 
-TextTrackCue::TextTrackCue(ScriptExecutionContext* context, const String& id, double start, double end, const String& content, const String& settings, bool pauseOnExit)
-    : m_id(id)
-    , m_startTime(start)
+TextTrackCue::TextTrackCue(ScriptExecutionContext* context, double start, double end, const String& content)
+    : m_startTime(start)
     , m_endTime(end)
     , m_content(content)
     , m_linePosition(undefinedPosition)
@@ -103,7 +102,7 @@ TextTrackCue::TextTrackCue(ScriptExecutionContext* context, const String& id, do
     , m_documentFragment(0)
     , m_scriptExecutionContext(context)
     , m_isActive(false)
-    , m_pauseOnExit(pauseOnExit)
+    , m_pauseOnExit(false)
     , m_snapToLines(true)
     , m_hasInnerTimestamps(false)
     , m_pastDocumentNodes(HTMLDivElement::create(static_cast<Document*>(context)))
@@ -120,8 +119,6 @@ TextTrackCue::TextTrackCue(ScriptExecutionContext* context, const String& id, do
     m_displayWritingModeMap[Horizontal] = CSSValueHorizontalTb;
     m_displayWritingModeMap[VerticalGrowingLeft] = CSSValueVerticalLr;
     m_displayWritingModeMap[VerticalGrowingRight] = CSSValueVerticalRl;
-
-    parseSettings(settings);
 
     // A text track cue has a text track cue computed line position whose value
     // is defined in terms of the other aspects of the cue.
@@ -732,7 +729,7 @@ TextTrackCue::CueSetting TextTrackCue::settingName(const String& name)
     return None;
 }
 
-void TextTrackCue::parseSettings(const String& input)
+void TextTrackCue::setCueSettings(const String& input)
 {
     unsigned position = 0;
 
