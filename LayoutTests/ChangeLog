@@ -1,5 +1,120 @@
 2012-08-22  Kenneth Russell  <kbr@google.com>
 
+        Unreviewed, rolling out r126319.
+        http://trac.webkit.org/changeset/126319
+        https://bugs.webkit.org/show_bug.cgi?id=84487
+
+        Broke Chromium Mac build
+
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-clipped.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-late-composite.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-late-noncomposite.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-scrolled.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-composited-scroll-clip.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-composited-scrolled.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-composited.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-layout-change-2.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-layout-change.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-scrolled-late-composite.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-scrolled-late-noncomposite.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-scrolled.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-composited-inner.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-composited-outer.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-inner-late-composite.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-inner.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-outer-late-composite.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-outer.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-inner-scroll-inner.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-inner-scroll-outer.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-inner.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-outer-scroll-inner.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-outer-scroll-outer.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-outer.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-scrolled-inner.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-scrolled-outer.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-window-scroll.html: Removed.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple.html: Removed.
+        * platform/chromium-linux/compositing/gestures/resources/1-frame-composited.html: Removed.
+        * platform/chromium-linux/compositing/gestures/resources/1-frame-noncomposited.html: Removed.
+        * platform/chromium-linux/compositing/gestures/resources/1-nested-frame-composited.html: Removed.
+        * platform/chromium-linux/compositing/gestures/resources/1-nested-frame-noncomposited.html: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-clipped-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-clipped-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-late-composite-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-late-composite-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-late-noncomposite-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-composited-scrolled-late-noncomposite-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-scrolled-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-iframe-scrolled-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-composited-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-composited-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-composited-scroll-clip-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-composited-scroll-clip-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-composited-scrolled-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-composited-scrolled-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-layout-change-2-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-layout-change-2-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-layout-change-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-layout-change-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-scrolled-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-scrolled-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-scrolled-late-composite-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-scrolled-late-composite-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-scrolled-late-noncomposite-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-1-overflow-div-scrolled-late-noncomposite-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-composited-inner-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-composited-inner-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-composited-outer-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-composited-outer-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-inner-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-inner-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-inner-late-composite-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-inner-late-composite-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-outer-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-outer-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-outer-late-composite-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-iframe-scrolled-outer-late-composite-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-inner-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-inner-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-inner-scroll-inner-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-inner-scroll-inner-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-inner-scroll-outer-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-inner-scroll-outer-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-outer-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-outer-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-outer-scroll-inner-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-outer-scroll-inner-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-outer-scroll-outer-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-composited-outer-scroll-outer-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-scrolled-inner-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-scrolled-inner-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-scrolled-outer-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-2-overflow-div-scrolled-outer-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-window-scroll-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-window-scroll-expected.txt: Removed.
+
+2012-08-22  Kenneth Russell  <kbr@google.com>
+
         Layout Test fast/repaint/japanese-rl-selection-repaint-in-regions.html is failing after r126304
         https://bugs.webkit.org/show_bug.cgi?id=94730
 

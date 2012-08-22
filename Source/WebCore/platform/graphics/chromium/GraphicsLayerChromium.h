@@ -45,17 +45,8 @@
 namespace WebCore {
 
 class LayerChromium;
+class LinkHighlight;
 class Path;
-
-class LinkHighlightClient {
-public:
-    virtual void invalidate() = 0;
-    virtual void clearCurrentGraphicsLayer() = 0;
-    virtual WebKit::WebLayer* layer() = 0;
-
-protected:
-    virtual ~LinkHighlightClient() { }
-};
 
 class GraphicsLayerChromium : public GraphicsLayer, public GraphicsContextPainter, public WebKit::WebAnimationDelegate {
 public:
@@ -118,9 +109,8 @@ public:
     virtual void suspendAnimations(double wallClockTime);
     virtual void resumeAnimations();
 
-    void setLinkHighlight(LinkHighlightClient*);
-    // Next function for testing purposes.
-    LinkHighlightClient* linkHighlight() { return m_linkHighlight; }
+    virtual void addLinkHighlight(const Path&);
+    virtual void didFinishLinkHighlight();
 
     virtual PlatformLayer* platformLayer() const;
 
@@ -170,7 +160,6 @@ private:
     WebKit::WebContentLayer m_layer;
     WebKit::WebLayer m_transformLayer;
     WebKit::WebLayer m_contentsLayer;
-    LinkHighlightClient* m_linkHighlight;
 
     OwnPtr<OpaqueRectTrackingContentLayerDelegate> m_opaqueRectTrackingContentLayerDelegate;
 
@@ -185,6 +174,8 @@ private:
     bool m_contentsLayerHasBackgroundColor : 1;
     bool m_inSetChildren;
     bool m_pageScaleChanged;
+
+    RefPtr<LinkHighlight> m_linkHighlight;
 
     typedef HashMap<String, int> AnimationIdMap;
     AnimationIdMap m_animationIdMap;

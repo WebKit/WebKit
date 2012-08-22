@@ -1,2 +1,0 @@
-
-This test is successful if "Target Link" is scrolled barely out of view ("Link 4" is at the top of the frame) and the transparent green box with rounded rectangles is not visible.

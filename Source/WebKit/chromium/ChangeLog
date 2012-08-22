@@ -1,3 +1,23 @@
+2012-08-22  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, rolling out r126319.
+        http://trac.webkit.org/changeset/126319
+        https://bugs.webkit.org/show_bug.cgi?id=84487
+
+        Broke Chromium Mac build
+
+        * WebKit.gyp:
+        * src/LinkHighlight.cpp: Removed.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+        (WebKit::WebViewImpl::computeScaleAndScrollForHitRect):
+        (WebKit::WebViewImpl::layout):
+        * src/WebViewImpl.h:
+        (WebKit):
+        (WebViewImpl):
+        * tests/LinkHighlightTest.cpp:
+        * tests/data/test_touch_link_highlight.html: Removed.
+
 2012-08-22  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Add touch link highlight animation layers.
