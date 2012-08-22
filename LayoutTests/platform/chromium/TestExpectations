@@ -2719,7 +2719,7 @@ BUGWK71278 SLOW WIN : fast/events/dispatch-message-string-data.html = PASS
 
 BUGWK71451 SLOW : fast/frames/sandboxed-iframe-navigation-windowopen.html = PASS
 
-BUGRICOW : fast/js/array-functions-non-arrays.html = TEXT
+BUGWK94681 : fast/js/array-functions-non-arrays.html = TEXT
 BUGRICOW : fast/js/eval-cross-window.html = TEXT
 BUGRICOW : fast/js/toString-overrides.html = TEXT
 

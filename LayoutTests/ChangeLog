@@ -1,3 +1,15 @@
+2012-08-22  Ulan Degenbaev  <ulan@chromium.org>
+
+        Remove chromium/fast/js/array-functions-non-arrays-expected.txt and add WebKit bug id to chromium/TestExpectation.
+        https://bugs.webkit.org/show_bug.cgi?id=94682
+
+        Reviewed by Kentaro Hara.
+
+        Only one failing test case remains in array-functions-non-arrays and it is being tracked by Bug 94681.
+
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/js/array-functions-non-arrays-expected.txt: Removed.
+
 2012-08-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [TouchAdjustment] Adjust to word or selection
