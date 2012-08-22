@@ -354,9 +354,6 @@ namespace WebCore {
 
     v8::Persistent<v8::FunctionTemplate> createRawTemplate();
 
-    v8::Persistent<v8::String> getToStringName();
-    v8::Persistent<v8::FunctionTemplate> getToStringTemplate();
-
     String int32ToWebCoreString(int value);
 
     PassRefPtr<DOMStringList> toDOMStringList(v8::Handle<v8::Value>);

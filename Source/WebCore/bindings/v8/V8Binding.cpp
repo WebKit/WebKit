@@ -325,39 +325,6 @@ v8::Persistent<v8::FunctionTemplate> createRawTemplate()
     return v8::Persistent<v8::FunctionTemplate>::New(result);
 }        
 
-v8::Persistent<v8::String> getToStringName()
-{
-    v8::Persistent<v8::String>& toStringName = V8PerIsolateData::current()->toStringName();
-    if (toStringName.IsEmpty())
-        toStringName = v8::Persistent<v8::String>::New(v8::String::New("toString"));
-    return *toStringName;
-
-}
-
-static v8::Handle<v8::Value> constructorToString(const v8::Arguments& args)
-{
-    // The DOM constructors' toString functions grab the current toString
-    // for Functions by taking the toString function of itself and then
-    // calling it with the constructor as its receiver. This means that
-    // changes to the Function prototype chain or toString function are
-    // reflected when printing DOM constructors. The only wart is that
-    // changes to a DOM constructor's toString's toString will cause the
-    // toString of the DOM constructor itself to change. This is extremely
-    // obscure and unlikely to be a problem.
-    v8::Handle<v8::Value> value = args.Callee()->Get(getToStringName());
-    if (!value->IsFunction()) 
-        return v8::String::New("");
-    return v8::Handle<v8::Function>::Cast(value)->Call(args.This(), 0, 0);
-}
-
-v8::Persistent<v8::FunctionTemplate> getToStringTemplate()
-{
-    v8::Persistent<v8::FunctionTemplate>& toStringTemplate = V8PerIsolateData::current()->toStringTemplate();
-    if (toStringTemplate.IsEmpty())
-        toStringTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(constructorToString));
-    return toStringTemplate;
-}
-
 void StringCache::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Binding);
