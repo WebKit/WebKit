@@ -1,3 +1,12 @@
+2012-08-22  Kenneth Russell  <kbr@google.com>
+
+        Layout Test fast/repaint/japanese-rl-selection-repaint-in-regions.html is failing after r126304
+        https://bugs.webkit.org/show_bug.cgi?id=94730
+
+        Unreviewed; suppressed failure for the moment.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-22  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Add touch link highlight animation layers.

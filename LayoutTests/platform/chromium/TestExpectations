@@ -3508,3 +3508,5 @@ BUGWK94532 LINUX : fast/forms/formmethod-attribute-button-html.html = PASS MISSI
 BUGWK94660 : fast/js/create-lots-of-workers.html = PASS CRASH
 BUGWK94667 WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic.html = IMAGE
 BUGWK94675 : css3/flexbox/flexitem.html = TEXT
+
+BUGWK94730 MAC : fast/repaint/japanese-rl-selection-repaint-in-regions.html = IMAGE
