@@ -304,6 +304,7 @@ public:
 
     void swap()
     {
+        m_canvas->flush();
         m_canvas.reset(0);
         m_device.reset(0);
 
