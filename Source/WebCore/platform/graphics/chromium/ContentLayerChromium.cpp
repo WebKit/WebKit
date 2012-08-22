@@ -96,23 +96,13 @@ void ContentLayerChromium::setTexturePriorities(const CCPriorityCalculator& prio
 void ContentLayerChromium::update(CCTextureUpdateQueue& queue, const CCOcclusionTracker* occlusion, CCRenderingStats& stats)
 {
     createTextureUpdaterIfNeeded();
-
-    IntRect contentRect;
-
-    // Always call updateContentRect() but with an empty layer rectangle when
-    // layer doesn't draw contents.
-    if (drawsContent())
-        contentRect = visibleContentRect();
-
-    updateContentRect(queue, contentRect, occlusion, stats);
+    TiledLayerChromium::update(queue, occlusion, stats);
     m_needsDisplay = false;
 }
 
 bool ContentLayerChromium::needMoreUpdates()
 {
-    if (!drawsContent())
-        return false;
-    return needsIdlePaint(visibleContentRect());
+    return needsIdlePaint();
 }
 
 void ContentLayerChromium::createTextureUpdaterIfNeeded()

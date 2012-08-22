@@ -1,3 +1,17 @@
+2012-08-22  Eric Penner  <epenner@google.com>
+
+        [chromium] Simplify updateContentRect, removing rect parameter, refactor unit tests.
+        https://bugs.webkit.org/show_bug.cgi?id=94165
+
+        Reviewed by Adrienne Walker.
+
+        Refactored tests to remove lots of boilerplate code.
+
+        * tests/CCTiledLayerTestCommon.cpp:
+        * tests/CCTiledLayerTestCommon.h:
+        (FakeTiledLayerChromium):
+        * tests/TiledLayerChromiumTest.cpp:
+
 2012-08-22  Iain Merrick  <husky@chromium.org>
 
         [chromium] Remove WebFrame::setSelectionToRange

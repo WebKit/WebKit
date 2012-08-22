@@ -115,11 +115,6 @@ void FakeTiledLayerChromium::setNeedsDisplayRect(const FloatRect& rect)
     TiledLayerChromium::setNeedsDisplayRect(rect);
 }
 
-void FakeTiledLayerChromium::update(CCTextureUpdateQueue& queue, const CCOcclusionTracker* occlusion, CCRenderingStats& stats)
-{
-    updateContentRect(queue, visibleContentRect(), occlusion, stats);
-}
-
 void FakeTiledLayerChromium::setTexturePriorities(const CCPriorityCalculator& calculator)
 {
     // Ensure there is always a target render surface available. If none has been

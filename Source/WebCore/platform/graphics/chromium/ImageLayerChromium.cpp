@@ -148,8 +148,7 @@ void ImageLayerChromium::update(CCTextureUpdateQueue& queue, const CCOcclusionTr
         invalidateContentRect(IntRect(IntPoint(), contentBounds()));
         m_needsDisplay = false;
     }
-
-    updateContentRect(queue, visibleContentRect(), occlusion, stats);
+    TiledLayerChromium::update(queue, occlusion, stats);
 }
 
 void ImageLayerChromium::createTextureUpdaterIfNeeded()

@@ -60,6 +60,8 @@ public:
 
     virtual Region visibleContentOpaqueRegion() const OVERRIDE;
 
+    virtual void update(CCTextureUpdateQueue&, const CCOcclusionTracker*, CCRenderingStats&) OVERRIDE;
+
 protected:
     TiledLayerChromium();
 
@@ -82,13 +84,9 @@ protected:
     // Reset state on tiles that will be used for updating the layer.
     void resetUpdateState();
 
-    // Prepare data needed to update textures that intersect with contentRect.
-    void updateContentRect(CCTextureUpdateQueue&, const IntRect& contentRect, const CCOcclusionTracker*, CCRenderingStats&);
-
     // After preparing an update, returns true if more painting is needed.
-    bool needsIdlePaint(const IntRect& visibleContentRect);
-
-    IntRect idlePaintRect(const IntRect& visibleContentRect);
+    bool needsIdlePaint();
+    IntRect idlePaintRect();
 
     bool skipsDraw() const { return m_skipsDraw; }
 
@@ -103,8 +101,6 @@ private:
 
     bool tileOnlyNeedsPartialUpdate(UpdatableTile*);
     bool tileNeedsBufferedUpdate(UpdatableTile*);
-
-    void setTexturePrioritiesInRect(const CCPriorityCalculator&, const IntRect& visibleContentRect);
 
     void markOcclusionsAndRequestTextures(int left, int top, int right, int bottom, const CCOcclusionTracker*);
 

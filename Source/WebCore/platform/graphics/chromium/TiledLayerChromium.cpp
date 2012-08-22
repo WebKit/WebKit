@@ -553,11 +553,6 @@ void TiledLayerChromium::updateTileTextures(const IntRect& paintRect, int left, 
     }
 }
 
-void TiledLayerChromium::setTexturePriorities(const CCPriorityCalculator& priorityCalc)
-{
-    setTexturePrioritiesInRect(priorityCalc, visibleContentRect());
-}
-
 namespace {
 // This picks a small animated layer to be anything less than one viewport. This
 // is specifically for page transitions which are viewport-sized layers. The extra
@@ -592,7 +587,7 @@ void setPriorityForTexture(const CCPriorityCalculator& priorityCalc,
 }
 }
 
-void TiledLayerChromium::setTexturePrioritiesInRect(const CCPriorityCalculator& priorityCalc, const IntRect& visibleContentRect)
+void TiledLayerChromium::setTexturePriorities(const CCPriorityCalculator& priorityCalc)
 {
     updateBounds();
     resetUpdateState();
@@ -604,7 +599,7 @@ void TiledLayerChromium::setTexturePrioritiesInRect(const CCPriorityCalculator& 
     bool smallAnimatedLayer = isSmallAnimatedLayer(this);
 
     // Minimally create the tiles in the desired pre-paint rect.
-    IntRect createTilesRect = idlePaintRect(visibleContentRect);
+    IntRect createTilesRect = idlePaintRect();
     if (!createTilesRect.isEmpty()) {
         int left, top, right, bottom;
         m_tiler->contentRectToTileIndices(createTilesRect, left, top, right, bottom);
@@ -618,7 +613,7 @@ void TiledLayerChromium::setTexturePrioritiesInRect(const CCPriorityCalculator& 
 
     // Also, minimally create all tiles for small animated layers and also
     // double-buffer them since we have limited their size to be reasonable.
-    IntRect doubleBufferedRect = visibleContentRect;
+    IntRect doubleBufferedRect = visibleContentRect();
     if (smallAnimatedLayer)
         doubleBufferedRect = IntRect(IntPoint::zero(), contentBounds());
 
@@ -647,7 +642,7 @@ void TiledLayerChromium::setTexturePrioritiesInRect(const CCPriorityCalculator& 
                 IntRect tileRect = m_tiler->tileRect(tile);
                 tile->dirtyRect = tileRect;
                 LayerTextureUpdater::Texture* backBuffer = tile->texture();
-                setPriorityForTexture(priorityCalc, visibleContentRect, tile->dirtyRect, drawsToRoot, smallAnimatedLayer, backBuffer->texture());
+                setPriorityForTexture(priorityCalc, visibleContentRect(), tile->dirtyRect, drawsToRoot, smallAnimatedLayer, backBuffer->texture());
                 OwnPtr<CCPrioritizedTexture> frontBuffer = CCPrioritizedTexture::create(backBuffer->texture()->textureManager(),
                                                                                         backBuffer->texture()->size(),
                                                                                         backBuffer->texture()->format());
@@ -665,7 +660,7 @@ void TiledLayerChromium::setTexturePrioritiesInRect(const CCPriorityCalculator& 
         if (!tile)
             continue;
         IntRect tileRect = m_tiler->tileRect(tile);
-        setPriorityForTexture(priorityCalc, visibleContentRect, tileRect, drawsToRoot, smallAnimatedLayer, tile->managedTexture());
+        setPriorityForTexture(priorityCalc, visibleContentRect(), tileRect, drawsToRoot, smallAnimatedLayer, tile->managedTexture());
     }
 }
 
@@ -680,6 +675,9 @@ Region TiledLayerChromium::visibleContentOpaqueRegion() const
 
 void TiledLayerChromium::resetUpdateState()
 {
+    m_skipsDraw = false;
+    m_failedUpdate = false;
+
     CCLayerTilingData::TileMap::const_iterator end = m_tiler->tiles().end();
     for (CCLayerTilingData::TileMap::const_iterator iter = m_tiler->tiles().begin(); iter != end; ++iter) {
         UpdatableTile* tile = static_cast<UpdatableTile*>(iter->second.get());
@@ -690,13 +688,11 @@ void TiledLayerChromium::resetUpdateState()
     }
 }
 
-void TiledLayerChromium::updateContentRect(CCTextureUpdateQueue& queue, const IntRect& contentRect, const CCOcclusionTracker* occlusion, CCRenderingStats& stats)
+void TiledLayerChromium::update(CCTextureUpdateQueue& queue, const CCOcclusionTracker* occlusion, CCRenderingStats& stats)
 {
-    m_skipsDraw = false;
-    m_failedUpdate = false;
+    ASSERT(!m_skipsDraw && !m_failedUpdate); // Did resetUpdateState get skipped?
     updateBounds();
-
-    if (m_tiler->hasEmptyBounds())
+    if (m_tiler->hasEmptyBounds() || !drawsContent())
         return;
 
     bool didPaint = false;
@@ -715,12 +711,12 @@ void TiledLayerChromium::updateContentRect(CCTextureUpdateQueue& queue, const In
         m_failedUpdate = false;
     }
 
-    if (contentRect.isEmpty())
+    if (visibleContentRect().isEmpty())
         return;
 
     // Visible painting. First occlude visible tiles and paint the non-occluded tiles.
     int left, top, right, bottom;
-    m_tiler->contentRectToTileIndices(contentRect, left, top, right, bottom);
+    m_tiler->contentRectToTileIndices(visibleContentRect(), left, top, right, bottom);
     markOcclusionsAndRequestTextures(left, top, right, bottom, occlusion);
     m_skipsDraw = !updateTiles(left, top, right, bottom, queue, occlusion, stats, didPaint);
     if (m_skipsDraw)
@@ -729,7 +725,7 @@ void TiledLayerChromium::updateContentRect(CCTextureUpdateQueue& queue, const In
         return;
 
     // If we have already painting everything visible. Do some pre-painting while idle.
-    IntRect idlePaintContentRect = idlePaintRect(contentRect);
+    IntRect idlePaintContentRect = idlePaintRect();
     if (idlePaintContentRect.isEmpty())
         return;
 
@@ -765,13 +761,13 @@ void TiledLayerChromium::updateContentRect(CCTextureUpdateQueue& queue, const In
     }
 }
 
-bool TiledLayerChromium::needsIdlePaint(const IntRect& visibleContentRect)
+bool TiledLayerChromium::needsIdlePaint()
 {
     // Don't trigger more paints if we failed (as we'll just fail again).
-    if (m_failedUpdate || visibleContentRect.isEmpty() || m_tiler->hasEmptyBounds())
+    if (m_failedUpdate || visibleContentRect().isEmpty() || m_tiler->hasEmptyBounds() || !drawsContent())
         return false;
 
-    IntRect idlePaintContentRect = idlePaintRect(visibleContentRect);
+    IntRect idlePaintContentRect = idlePaintRect();
     if (idlePaintContentRect.isEmpty())
         return false;
 
@@ -795,15 +791,15 @@ bool TiledLayerChromium::needsIdlePaint(const IntRect& visibleContentRect)
     return false;
 }
 
-IntRect TiledLayerChromium::idlePaintRect(const IntRect& visibleContentRect)
+IntRect TiledLayerChromium::idlePaintRect()
 {
     // Don't inflate an empty rect.
-    if (visibleContentRect.isEmpty())
-        return visibleContentRect;
+    if (visibleContentRect().isEmpty())
+        return IntRect();
 
     // FIXME: This can be made a lot larger now! We should increase
     //        this slowly while insuring it doesn't cause any perf issues.
-    IntRect prepaintRect = visibleContentRect;
+    IntRect prepaintRect = visibleContentRect();
     prepaintRect.inflateX(m_tiler->tileSize().width());
     prepaintRect.inflateY(m_tiler->tileSize().height() * 2);
     IntRect contentRect(IntPoint::zero(), contentBounds());
