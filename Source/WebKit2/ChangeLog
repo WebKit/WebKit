@@ -1,5 +1,18 @@
 2012-08-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
+        Wrong default for new ScrollAnimatorEnabled preference.
+
+        Reviewed by Simon Hausmann.
+
+        ScrollAnimatorEnabled introduced in r126291, should default to 'true'
+        to preserve existing behaviour on WK2 platforms that already enabled 
+        SMOOTH_SCROLLING unconditionally.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit):
+
+2012-08-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
         Unreviewed, build fixup for r126291.
 
         * Shared/WebPreferencesStore.h:
