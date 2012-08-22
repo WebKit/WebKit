@@ -85,10 +85,69 @@ WebInspector.DOMStorage.prototype = {
 
 /**
  * @constructor
- * @implements {DOMStorageAgent.Dispatcher}
+ * @extends {WebInspector.Object}
  */
-WebInspector.DOMStorageDispatcher = function()
+WebInspector.DOMStorageModel = function()
 {
+    this._storages = {};
+    InspectorBackend.registerDOMStorageDispatcher(new WebInspector.DOMStorageDispatcher(this));
+    DOMStorageAgent.enable();
+}
+
+WebInspector.DOMStorageModel.Events = {
+    DOMStorageAdded: "DOMStorageAdded",
+    DOMStorageUpdated: "DOMStorageUpdated"
+}
+
+WebInspector.DOMStorageModel.prototype = {
+    /**
+     * @param {WebInspector.DOMStorage} domStorage
+     */
+    _addDOMStorage: function(domStorage)
+    {
+        this._storages[domStorage.id] = domStorage;
+        this.dispatchEventToListeners(WebInspector.DOMStorageModel.Events.DOMStorageAdded, domStorage);
+    },
+
+    /**
+     * @param {DOMStorageAgent.StorageId} storageId
+     */
+    _domStorageUpdated: function(storageId)
+    {
+        this.dispatchEventToListeners(WebInspector.DOMStorageModel.Events.DOMStorageUpdated, this._storages[storageId]);
+    },
+
+    /**
+     * @param {DOMStorageAgent.StorageId} storageId
+     * @return {WebInspector.DOMStorage}
+     */
+    storageForId: function(storageId)
+    {
+        return this._storages[storageId];
+    },
+
+    /**
+     * @return {Array.<WebInspector.DOMStorage>}
+     */
+    storages: function()
+    {
+        var result = [];
+        for (var storageId in this._storages)
+            result.push(this._storages[storageId]);
+        return result;
+    }
+}
+
+WebInspector.DOMStorageModel.prototype.__proto__ = WebInspector.Object.prototype;
+
+/**
+ * @constructor
+ * @implements {DOMStorageAgent.Dispatcher}
+ * @param {WebInspector.DOMStorageModel} model
+ */
+WebInspector.DOMStorageDispatcher = function(model)
+{
+    this._model = model;
 }
 
 WebInspector.DOMStorageDispatcher.prototype = {
@@ -98,11 +157,10 @@ WebInspector.DOMStorageDispatcher.prototype = {
      */
     addDOMStorage: function(payload)
     {
-        var domStorage = new WebInspector.DOMStorage(
+        this._model._addDOMStorage(new WebInspector.DOMStorage(
             payload.id,
             payload.origin,
-            payload.isLocalStorage);
-        WebInspector.panel("resources").addDOMStorage(domStorage);
+            payload.isLocalStorage));
     },
 
     /**
@@ -110,6 +168,11 @@ WebInspector.DOMStorageDispatcher.prototype = {
      */
     domStorageUpdated: function(storageId)
     {
-        WebInspector.panel("resources").domStorageUpdated(storageId);
+        this._model._domStorageUpdated(storageId);
     }
 }
+
+/**
+ * @type {WebInspector.DOMStorageModel}
+ */
+WebInspector.domStorageModel = null;

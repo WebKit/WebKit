@@ -20,7 +20,7 @@ function test()
 {
     function callback()
     {
-        var storages = WebInspector.panels.resources._domStorage;
+        var storages = WebInspector.domStorageModel.storages();
         for (var i = 0; i < storages.length; ++i) {
             InspectorTest.addResult("Domain: " + storages[i].domain);
             InspectorTest.addResult("IsLocalStorage: " + storages[i].isLocalStorage);

@@ -32,6 +32,7 @@ if (!window.InspectorFrontendHost) {
 
 /**
  * @constructor
+ * @implements {InspectorFrontendHostAPI}
  */
 WebInspector.InspectorFrontendHostStub = function()
 {
@@ -192,7 +193,7 @@ WebInspector.InspectorFrontendHostStub.prototype = {
     }
 }
 
-var InspectorFrontendHost = new WebInspector.InspectorFrontendHostStub();
+InspectorFrontendHost = new WebInspector.InspectorFrontendHostStub();
 Preferences.localizeUI = false;
 
 // Default implementation; platforms will override.

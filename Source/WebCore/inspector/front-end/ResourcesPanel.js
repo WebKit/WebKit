@@ -87,8 +87,11 @@ WebInspector.ResourcesPanel = function(database)
     this.storageViewStatusBarItemsContainer = document.createElement("div");
     this.storageViewStatusBarItemsContainer.className = "status-bar-items";
 
-    this._databases = [];
-    this._domStorage = [];
+    this._databaseTableViews = new Map();
+    this._databaseQueryViews = new Map();
+    this._databaseTreeElements = new Map();
+    this._domStorageViews = new Map();
+    this._domStorageTreeElements = new Map();
     this._cookieViews = {};
     this._origins = {};
     this._domains = {};
@@ -102,11 +105,19 @@ WebInspector.ResourcesPanel = function(database)
     }
     WebInspector.GoToLineDialog.install(this, viewGetter.bind(this));
 
+    if (WebInspector.resourceTreeModel.cachedResourcesLoaded())
+        this._cachedResourcesLoaded();
+
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.OnLoad, this._onLoadEventFired, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, this._cachedResourcesLoaded, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources, this._resetWithFrames, this);
-    if (WebInspector.resourceTreeModel.cachedResourcesLoaded())
-        this._cachedResourcesLoaded();
+
+    WebInspector.databaseModel.databases().forEach(this._addDatabase.bind(this));
+    WebInspector.databaseModel.addEventListener(WebInspector.DatabaseModel.Events.DatabaseAdded, this._databaseAdded, this);
+
+    WebInspector.domStorageModel.storages().forEach(this._addDOMStorage.bind(this));
+    WebInspector.domStorageModel.addEventListener(WebInspector.DOMStorageModel.Events.DOMStorageAdded, this._domStorageAdded, this);
+    WebInspector.domStorageModel.addEventListener(WebInspector.DOMStorageModel.Events.DOMStorageUpdated, this._domStorageUpdated, this);
 }
 
 WebInspector.ResourcesPanel.prototype = {
@@ -167,22 +178,14 @@ WebInspector.ResourcesPanel.prototype = {
     {
         this._origins = {};
         this._domains = {};
-        for (var i = 0; i < this._databases.length; ++i) {
-            var database = this._databases[i];
-            delete database._tableViews;
-            if (database._queryView)
-                database._queryView.removeEventListener(WebInspector.DatabaseQueryView.Events.SchemaUpdated, this._updateDatabaseTables, this);
-            delete database._queryView;
-        }
-        this._databases = [];
-
-        var domStorageLength = this._domStorage.length;
-        for (var i = 0; i < this._domStorage.length; ++i) {
-            var domStorage = this._domStorage[i];
-            delete domStorage._domStorageView;
-        }
-        this._domStorage = [];
-
+        var queryViews = this._databaseQueryViews.values();
+        for (var i = 0; i < queryViews.length; ++i)
+            queryViews[i].removeEventListener(WebInspector.DatabaseQueryView.Events.SchemaUpdated, this._updateDatabaseTables, this);
+        this._databaseTableViews.clear();
+        this._databaseQueryViews.clear();
+        this._databaseTreeElements.clear();
+        this._domStorageViews.clear();
+        this._domStorageTreeElements.clear();
         this._cookieViews = {};
 
         this.databasesListTreeElement.removeChildren();
@@ -289,12 +292,22 @@ WebInspector.ResourcesPanel.prototype = {
         this._initialize();
     },
 
-    addDatabase: function(database)
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _databaseAdded: function(event)
     {
-        this._databases.push(database);
+        var database = /** @type {WebInspector.Database} */ event.data;
+        this._addDatabase(database);
+    },
 
+    /**
+     * @param {WebInspector.Database} database
+     */
+    _addDatabase: function(database)
+    {
         var databaseTreeElement = new WebInspector.DatabaseTreeElement(this, database);
-        database._databasesTreeElement = databaseTreeElement;
+        this._databaseTreeElements.put(database, databaseTreeElement);
         this.databasesListTreeElement.appendChild(databaseTreeElement);
     },
 
@@ -313,36 +326,47 @@ WebInspector.ResourcesPanel.prototype = {
         }
     },
 
-    addDOMStorage: function(domStorage)
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _domStorageAdded: function(event)
     {
-        this._domStorage.push(domStorage);
+        var domStorage = /** @type {WebInspector.DOMStorage}*/ event.data;
+        this._addDOMStorage(domStorage);
+    },
+
+    /**
+     * @param {WebInspector.DOMStorage} domStorage
+     */
+    _addDOMStorage: function(domStorage)
+    {
         var domStorageTreeElement = new WebInspector.DOMStorageTreeElement(this, domStorage, (domStorage.isLocalStorage ? "local-storage" : "session-storage"));
-        domStorage._domStorageTreeElement = domStorageTreeElement;
+        this._domStorageTreeElements.put(domStorage, domStorageTreeElement);
         if (domStorage.isLocalStorage)
             this.localStorageListTreeElement.appendChild(domStorageTreeElement);
         else
             this.sessionStorageListTreeElement.appendChild(domStorageTreeElement);
     },
 
-    selectDatabase: function(databaseId)
+    /**
+     * @param {WebInspector.Database} database
+     */
+    selectDatabase: function(database)
     {
-        var database;
-        for (var i = 0, len = this._databases.length; i < len; ++i) {
-            database = this._databases[i];
-            if (database.id === databaseId) {
-                this.showDatabase(database);
-                database._databasesTreeElement.select();
-                return;
-            }
+        if (database) {
+            this._showDatabase(database);
+            this._databaseTreeElements.get(database).select();
         }
     },
 
-    selectDOMStorage: function(storageId)
+    /**
+     * @param {WebInspector.DOMStorage} domStorage
+     */
+    selectDOMStorage: function(domStorage)
     {
-        var domStorage = this._domStorageForId(storageId);
         if (domStorage) {
-            this.showDOMStorage(domStorage);
-            domStorage._domStorageTreeElement.select();
+            this._showDOMStorage(domStorage);
+            this._domStorageTreeElements.get(domStorage).select();
         }
     },
 
@@ -400,25 +424,28 @@ WebInspector.ResourcesPanel.prototype = {
     /**
      * @param {string=} tableName
      */
-    showDatabase: function(database, tableName)
+    _showDatabase: function(database, tableName)
     {
         if (!database)
             return;
 
         var view;
         if (tableName) {
-            if (!("_tableViews" in database))
-                database._tableViews = {};
-            view = database._tableViews[tableName];
+            var tableViews = this._databaseTableViews.get(database);
+            if (!tableViews) {
+                tableViews = {};
+                this._databaseTableViews.put(database, tableViews);
+            }
+            view = tableViews[tableName];
             if (!view) {
                 view = new WebInspector.DatabaseTableView(database, tableName);
-                database._tableViews[tableName] = view;
+                tableViews[tableName] = view;
             }
         } else {
-            view = database._queryView;
+            view = this._databaseQueryViews.get(database);
             if (!view) {
                 view = new WebInspector.DatabaseQueryView(database);
-                database._queryView = view;
+                this._databaseQueryViews.put(database, view);
                 view.addEventListener(WebInspector.DatabaseQueryView.Events.SchemaUpdated, this._updateDatabaseTables, this);
             }
         }
@@ -434,16 +461,16 @@ WebInspector.ResourcesPanel.prototype = {
         this._innerShowView(view);
     },
 
-    showDOMStorage: function(domStorage)
+    _showDOMStorage: function(domStorage)
     {
         if (!domStorage)
             return;
 
         var view;
-        view = domStorage._domStorageView;
+        view = this._domStorageViews.get(domStorage);
         if (!view) {
             view = new WebInspector.DOMStorageItemsView(domStorage);
-            domStorage._domStorageView = view;
+            this._domStorageViews.put(domStorage, view);
         }
 
         this._innerShowView(view);
@@ -513,12 +540,17 @@ WebInspector.ResourcesPanel.prototype = {
     {
         var database = event.data;
 
-        if (!database || !database._databasesTreeElement)
+        if (!database)
             return;
 
-        database._databasesTreeElement.shouldRefreshChildren = true;
+        var databasesTreeElement = this._databaseTreeElements.get(database);
+        if (!databasesTreeElement)
+            return;
 
-        if (!("_tableViews" in database))
+        databasesTreeElement.shouldRefreshChildren = true;
+        var tableViews = this._databaseTableViews.get(database);
+
+        if (!tableViews)
             return;
 
         var tableNamesHash = {};
@@ -529,26 +561,26 @@ WebInspector.ResourcesPanel.prototype = {
             for (var i = 0; i < tableNamesLength; ++i)
                 tableNamesHash[tableNames[i]] = true;
 
-            for (var tableName in database._tableViews) {
+            for (var tableName in tableViews) {
                 if (!(tableName in tableNamesHash)) {
-                    if (self.visibleView === database._tableViews[tableName])
+                    if (self.visibleView === tableViews[tableName])
                         self.closeVisibleView();
-                    delete database._tableViews[tableName];
+                    delete tableViews[tableName];
                 }
             }
         }
         database.getTableNames(tableNamesCallback);
     },
 
-    domStorageUpdated: function(storageId)
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _domStorageUpdated: function(event)
     {
-        var domStorage = this._domStorageForId(storageId);
-        if (!domStorage)
-            return;
-
-        var view = domStorage._domStorageView;
+        var storage = /** @type {WebInspector.DOMStorage}*/ event.data;
+        var view = this._domStorageViews.get(storage);
         if (this.visibleView && view === this.visibleView)
-            domStorage._domStorageView.update();
+            view.update();
     },
 
     _populateApplicationCacheTree: function()
@@ -620,19 +652,6 @@ WebInspector.ResourcesPanel.prototype = {
 
         for (var manifestURL in this._applicationCacheViews)
             this._applicationCacheViews[manifestURL].updateNetworkState(isNowOnline);
-    },
-
-    _domStorageForId: function(storageId)
-    {
-        if (!this._domStorage)
-            return null;
-        var domStorageLength = this._domStorage.length;
-        for (var i = 0; i < domStorageLength; ++i) {
-            var domStorage = this._domStorage[i];
-            if (domStorage.id == storageId)
-                return domStorage;
-        }
-        return null;
     },
 
     sidebarResized: function(event)
@@ -1322,7 +1341,7 @@ WebInspector.DatabaseTreeElement.prototype = {
     onselect: function()
     {
         WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
-        this._storagePanel.showDatabase(this._database);
+        this._storagePanel._showDatabase(this._database);
     },
 
     onexpand: function()
@@ -1366,7 +1385,7 @@ WebInspector.DatabaseTableTreeElement.prototype = {
     onselect: function()
     {
         WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
-        this._storagePanel.showDatabase(this._database, this._tableName);
+        this._storagePanel._showDatabase(this._database, this._tableName);
     }
 }
 WebInspector.DatabaseTableTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
@@ -1852,7 +1871,7 @@ WebInspector.DOMStorageTreeElement.prototype = {
     onselect: function()
     {
         WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
-        this._storagePanel.showDOMStorage(this._domStorage);
+        this._storagePanel._showDOMStorage(this._domStorage);
     }
 }
 WebInspector.DOMStorageTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;

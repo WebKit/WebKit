@@ -501,8 +501,6 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.cssModel = new WebInspector.CSSStyleModel();
     this.timelineManager = new WebInspector.TimelineManager();
     this.userAgentSupport = new WebInspector.UserAgentSupport();
-    InspectorBackend.registerDatabaseDispatcher(new WebInspector.DatabaseDispatcher());
-    InspectorBackend.registerDOMStorageDispatcher(new WebInspector.DOMStorageDispatcher());
 
     this.searchController = new WebInspector.SearchController();
     this.advancedSearchController = new WebInspector.AdvancedSearchController();
@@ -553,8 +551,8 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     }
 
     InspectorAgent.enable(showInitialPanel);
-    DatabaseAgent.enable();
-    DOMStorageAgent.enable();
+    this.databaseModel = new WebInspector.DatabaseModel();
+    this.domStorageModel = new WebInspector.DOMStorageModel();
 
     if (!Capabilities.profilerCausesRecompilation || WebInspector.settings.profilerEnabled.get())
         ProfilerAgent.enable();
@@ -1017,9 +1015,9 @@ WebInspector.inspect = function(payload, hints)
     }
 
     if (hints.databaseId)
-        WebInspector.showPanel("resources").selectDatabase(hints.databaseId);
+        WebInspector.showPanel("resources").selectDatabase(WebInspector.databaseModel.databaseForId(hints.databaseId));
     else if (hints.domStorageId)
-        WebInspector.showPanel("resources").selectDOMStorage(hints.domStorageId);
+        WebInspector.showPanel("resources").selectDOMStorage(WebInspector.domStorageModel.storageForId(hints.domStorageId));
 
     object.release();
 }
@@ -1060,15 +1058,9 @@ WebInspector._showAnchorLocationInPanel = function(anchor, panel)
         anchor.addStyleClass("webkit-html-resource-link");
     }
 
-    this.showPanelForAnchorNavigation(panel);
+    WebInspector.inspectorView.showPanelForAnchorNavigation(panel);
     panel.showAnchorLocation(anchor);
     return true;
-}
-
-WebInspector.showPanelForAnchorNavigation = function(panel)
-{
-    WebInspector.searchController.disableSearchUntilExplicitAction();
-    WebInspector.inspectorView.setCurrentPanel(panel);
 }
 
 WebInspector.showProfileForURL = function(url)

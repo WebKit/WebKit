@@ -102,6 +102,7 @@ WebInspector.Settings = function()
     this.deviceOrientationOverride = this.createSetting("deviceOrientationOverride", "");
     this.showHeapSnapshotObjectsHiddenProperties = this.createSetting("showHeaSnapshotObjectsHiddenProperties", false);
     this.searchInContentScripts = this.createSetting("searchInContentScripts", false);
+    this.textEditorIndent = this.createSetting("textEditorIndent", "    ");
 
     // If there are too many breakpoints in a storage, it is likely due to a recent bug that caused
     // periodical breakpoints duplication leading to inspector slowness.

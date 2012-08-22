@@ -22,7 +22,8 @@ function test()
     InspectorTest.evaluateInPage("populateDOMStorage()", function(result) {
         InspectorTest.addResult("Populated local and session storage");
     });
-    function name(storage) {
+    function name(storage)
+    {
         return storage.isLocalStorage ? "Local storage" : "Session storage";
     }
 
@@ -39,22 +40,23 @@ function test()
     }
 
     InspectorTest.runAfterPendingDispatches(function() {
-        var storages = WebInspector.panels.resources._domStorage;
+        var storages = WebInspector.domStorageModel.storages();
         if (storages) {
             for (var i = 0; i < storages.length; i++) {
                 var storage = storages[i];
-                WebInspector.inspectorView.currentPanel().showDOMStorage(storage);
+                WebInspector.panels.resources._showDOMStorage(storage);
                 InspectorTest.addResult("Did show: " + name(storage));
             }
         } else
             InspectorTest.addResult("FAIL: no DOM storages found.");
 
         InspectorTest.runAfterPendingDispatches(function() {
-            var storages = WebInspector.panels.resources._domStorage;
+            var storages = WebInspector.domStorageModel.storages();
             for (var i = 0; i < storages.length; i++) {
                 var storage = storages[i];
                 InspectorTest.addResult(name(storage) + " content: ");
-                dumpDataGridContent(storage._domStorageView._dataGrid);
+                var view = WebInspector.panels.resources._domStorageViews.get(storage);
+                dumpDataGridContent(view._dataGrid);
             }
             InspectorTest.addResult("DONE");
             InspectorTest.completeTest();

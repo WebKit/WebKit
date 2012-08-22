@@ -162,6 +162,7 @@ WebInspector.ConsoleMessage = function(source, level, url, line, repeatCount)
     this.level = level;
     this.url = url || null;
     this.line = line || 0;
+    this.message = "";
 
     repeatCount = repeatCount || 1;
     this.repeatCount = repeatCount;
@@ -187,6 +188,11 @@ WebInspector.ConsoleMessage.prototype = {
      * @return {WebInspector.ConsoleMessage}
      */
     clone: function()
+    {
+        // Implemented by concrete instances
+    },
+
+    location: function()
     {
         // Implemented by concrete instances
     }

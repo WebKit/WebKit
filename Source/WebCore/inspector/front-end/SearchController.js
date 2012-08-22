@@ -169,7 +169,7 @@ WebInspector.SearchController.prototype = {
         this._matchesElement.textContent = "";
     },
 
-    disableSearchUntilExplicitAction: function(event)
+    disableSearchUntilExplicitAction: function()
     {
         this._performSearch("", false, false);
     },

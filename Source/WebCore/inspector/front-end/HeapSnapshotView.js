@@ -784,35 +784,6 @@ WebInspector.HeapSnapshotProfileType.prototype = {
 
 WebInspector.HeapSnapshotProfileType.prototype.__proto__ = WebInspector.ProfileType.prototype;
 
-
-/**
- * @interface
- */
-WebInspector.OutputStream = function()
-{
-}
-
-WebInspector.OutputStream.prototype = {
-    startTransfer: function()
-    {
-    },
-
-    /**
-     * @param {string} chunk
-     */
-    transferChunk: function(chunk)
-    {
-    },
-
-    finishTransfer: function()
-    {
-    },
-
-    dispose: function()
-    {
-    }
-};
-
 /**
  * @constructor
  * @extends {WebInspector.ProfileHeader}

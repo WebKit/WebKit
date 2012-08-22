@@ -55,16 +55,15 @@ function test()
         {
             function localStorageViewUpdated()
             {
-                rootNode = storage._domStorageView._dataGrid.rootNode();
+                rootNode = WebInspector.panels.resources._domStorageViews.get(storage)._dataGrid.rootNode();
                 InspectorTest.addResult("Resource Panel with localStorage view updated");
                 next();
             }
-            var storages = WebInspector.panels.resources._domStorage;
-
+            var storages = WebInspector.domStorageModel.storages();
             for (var i = 0; i < storages.length; ++i) {
                 storage = storages[i];
                 if (storage.isLocalStorage) {
-                    WebInspector.inspectorView.currentPanel().showDOMStorage(storage);
+                    WebInspector.panels.resources._showDOMStorage(storage);
                     InspectorTest.runAfterPendingDispatches(localStorageViewUpdated);
                     break;
                 }
@@ -75,8 +74,9 @@ function test()
         {
             function viewUpdatedAfterAddition()
             {
-                InspectorTest.runAfterPendingDispatches(function() {
-                    rootNode = storage._domStorageView._dataGrid.rootNode();
+                InspectorTest.runAfterPendingDispatches(function()
+                {
+                    rootNode = WebInspector.panels.resources._domStorageViews.get(storage)._dataGrid.rootNode();
                     dumpDataGrid();
                     if (count < 6)
                         addItemTest(next);
@@ -100,7 +100,7 @@ function test()
             function viewUpdatedAfterRemoval()
             {
                 InspectorTest.runAfterPendingDispatches(function() {
-                    rootNode = storage._domStorageView._dataGrid.rootNode();
+                    rootNode = WebInspector.panels.resources._domStorageViews.get(storage)._dataGrid.rootNode();
                     dumpDataGrid();
                     if (count > 4)
                         removeItemTest(next);
@@ -124,7 +124,7 @@ function test()
             function viewUpdatedAfterClear()
             {
                 InspectorTest.runAfterPendingDispatches(function() {
-                    rootNode = storage._domStorageView._dataGrid.rootNode();
+                    rootNode = WebInspector.panels.resources._domStorageViews.get(storage)._dataGrid.rootNode();
                     dumpDataGrid();
                     next();
                 });

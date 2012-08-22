@@ -1076,7 +1076,7 @@ WebInspector.DOMAgent.prototype = {
     },
 
     /**
-     * @param {DOMAgent.Node} node
+     * @param {WebInspector.DOMNode} node
      */
     _unbind: function(node)
     {

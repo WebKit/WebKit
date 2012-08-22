@@ -392,7 +392,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     showFunctionDefinition: function(functionLocation)
     {
-        WebInspector.showPanelForAnchorNavigation(this);
+        WebInspector.inspectorView.showPanelForAnchorNavigation(this);
         var uiLocation = WebInspector.debuggerModel.rawLocationToUILocation(functionLocation);
         this._showSourceLine(uiLocation.uiSourceCode, uiLocation.lineNumber);
     },

@@ -2144,7 +2144,11 @@
             },
             {
                 "id": "ShorthandEntry",
-                "type": "object"
+                "type": "object",
+                "properties": [
+                    { "name": "name", "type": "string", "description": "Shorthand name." },
+                    { "name": "value", "type": "string", "description": "Shorthand value." }
+                ]
             },
             {
                 "id": "CSSPropertyInfo",

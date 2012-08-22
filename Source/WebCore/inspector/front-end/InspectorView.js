@@ -237,6 +237,15 @@ WebInspector.InspectorView.prototype = {
             this._panelsElement.style.bottom = 0;
         }
         this.doResize();
+    },
+
+    /**
+     * @param {WebInspector.Panel} panel
+     */
+    showPanelForAnchorNavigation: function(panel)
+    {
+        WebInspector.searchController.disableSearchUntilExplicitAction();
+        this.setCurrentPanel(panel);
     }
 }
 

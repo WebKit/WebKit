@@ -76506,6 +76506,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\UIString.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\UIUtils.js"
 					>
 				</File>

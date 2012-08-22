@@ -647,6 +647,7 @@ WebInspector.DebuggerDispatcher.prototype = {
      * @param {number} endLine
      * @param {number} endColumn
      * @param {boolean=} isContentScript
+     * @param {string=} sourceMapURL
      */
     scriptParsed: function(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL)
     {

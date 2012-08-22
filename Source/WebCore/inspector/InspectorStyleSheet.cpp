@@ -493,7 +493,7 @@ PassRefPtr<TypeBuilder::CSS::CSSStyle> InspectorStyle::styleWithProperties() con
     populateAllProperties(&properties);
 
     RefPtr<Array<TypeBuilder::CSS::CSSProperty> > propertiesObject = Array<TypeBuilder::CSS::CSSProperty>::create();
-    RefPtr<Array<InspectorObject> > shorthandEntries = Array<InspectorObject>::create();
+    RefPtr<Array<TypeBuilder::CSS::ShorthandEntry> > shorthandEntries = Array<TypeBuilder::CSS::ShorthandEntry>::create();
     HashMap<String, RefPtr<TypeBuilder::CSS::CSSProperty> > propertyNameToPreviousActiveProperty;
     HashSet<String> foundShorthands;
 
@@ -557,10 +557,10 @@ PassRefPtr<TypeBuilder::CSS::CSSStyle> InspectorStyle::styleWithProperties() con
                 if (!shorthand.isEmpty()) {
                     if (!foundShorthands.contains(shorthand)) {
                         foundShorthands.add(shorthand);
-                        RefPtr<InspectorObject> shorthandEntry = InspectorObject::create();
-                        shorthandEntry->setString("name", shorthand);
-                        shorthandEntry->setString("value", shorthandValue(shorthand));
-                        shorthandEntries->addItem(shorthandEntry.release());
+                        RefPtr<TypeBuilder::CSS::ShorthandEntry> entry = TypeBuilder::CSS::ShorthandEntry::create()
+                            .setName(shorthand)
+                            .setValue(shorthandValue(shorthand));
+                        shorthandEntries->addItem(entry);
                     }
                 }
             }
@@ -949,7 +949,7 @@ PassRefPtr<TypeBuilder::CSS::CSSStyle> InspectorStyleSheet::buildObjectForStyle(
     if (id.isEmpty()) {
         RefPtr<TypeBuilder::CSS::CSSStyle> bogusStyle = TypeBuilder::CSS::CSSStyle::create()
             .setCssProperties(Array<TypeBuilder::CSS::CSSProperty>::create())
-            .setShorthandEntries(Array<InspectorObject>::create());
+            .setShorthandEntries(Array<TypeBuilder::CSS::ShorthandEntry>::create());
         return bogusStyle.release();
     }
     RefPtr<InspectorStyle> inspectorStyle = inspectorStyleForId(id);

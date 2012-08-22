@@ -532,5 +532,3 @@ WebInspector.TextEditorModel.prototype = {
 }
 
 WebInspector.TextEditorModel.prototype.__proto__ = WebInspector.Object.prototype;
-
-WebInspector.settings.textEditorIndent = WebInspector.settings.createSetting("textEditorIndent", WebInspector.TextEditorModel.Indent.FourSpaces);

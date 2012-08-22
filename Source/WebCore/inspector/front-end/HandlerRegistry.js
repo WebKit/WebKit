@@ -184,3 +184,9 @@ WebInspector.HandlerSelector.prototype =
         this._handlerRegistry.activeHandler = value;
     }
 }
+
+
+/**
+ * @type {WebInspector.HandlerRegistry}
+ */
+WebInspector.openAnchorLocationRegistry = null;

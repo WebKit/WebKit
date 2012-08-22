@@ -20,7 +20,7 @@ function test()
 {
     function run()
     {
-        var databases = WebInspector.panels.resources._databases;
+        var databases = WebInspector.databaseModel.databases();
         for (var i = 0; i < databases.length; ++i) {
             InspectorTest.addResult("Name: " + databases[i].name);
             InspectorTest.addResult("Version: " + databases[i].version);

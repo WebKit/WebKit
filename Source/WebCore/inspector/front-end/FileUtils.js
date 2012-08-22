@@ -36,21 +36,33 @@ WebInspector.OutputStreamDelegate = function()
 }
 
 WebInspector.OutputStreamDelegate.prototype = {
-    onTransferStarted: function(source)
-    {
-    },
+    onTransferStarted: function(source) { },
 
-    onChunkTransferred: function(source)
-    {
-    },
+    onChunkTransferred: function(source) { },
 
-    onTransferFinished: function(source)
-    {
-    },
+    onTransferFinished: function(source) { },
 
-    onError: function(source, event)
-    {
-    }
+    onError: function(source, event) { }
+}
+
+/**
+ * @interface
+ */
+WebInspector.OutputStream = function()
+{
+}
+
+WebInspector.OutputStream.prototype = {
+    startTransfer: function() { },
+
+    /**
+     * @param {string} chunk
+     */
+    transferChunk: function(chunk) { },
+
+    finishTransfer: function() { },
+
+    dispose: function() { }
 }
 
 /**

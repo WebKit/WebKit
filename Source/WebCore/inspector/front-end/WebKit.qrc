@@ -196,6 +196,7 @@
     <file>treeoutline.js</file>
     <file>UISourceCode.js</file>
     <file>UISourceCodeFrame.js</file>
+    <file>UIString.js</file>
     <file>UIUtils.js</file>
     <file>UserAgentSupport.js</file>
     <file>UserMetrics.js</file>

@@ -260,6 +260,9 @@ WebInspector.SourceMapParser.prototype = {
             this._parseMap(mappingPayload, 0, 0);
     },
 
+    /**
+     * @param {Array.<SourceMapV3.Section>} sections
+     */
     _parseSections: function(sections)
     {
         for (var i = 0; i < sections.length; ++i) {
@@ -268,6 +271,11 @@ WebInspector.SourceMapParser.prototype = {
         }
     },
 
+    /**
+     * @param {SourceMapV3} map
+     * @param {number} lineNumber
+     * @param {number} columnNumber
+     */
     _parseMap: function(map, lineNumber, columnNumber)
     {
         var sourceIndex = 0;

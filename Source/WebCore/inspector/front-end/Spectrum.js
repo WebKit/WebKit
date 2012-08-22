@@ -261,6 +261,9 @@ WebInspector.Spectrum.draggable = function(element, onmove, onstart, onstop) {
 };
 
 WebInspector.Spectrum.prototype = {
+    /**
+     * @type {WebInspector.Color}
+     */
     set color(color)
     {
         var rgba = (color.rgba || color.rgb).slice(0);

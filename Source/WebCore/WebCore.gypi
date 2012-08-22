@@ -6382,6 +6382,7 @@
             'inspector/front-end/Toolbar.js',
             'inspector/front-end/treeoutline.js',
             'inspector/front-end/UISourceCode.js',
+            'inspector/front-end/UIString.js',
             'inspector/front-end/UIUtils.js',
             'inspector/front-end/UserAgentSupport.js',
             'inspector/front-end/UserMetrics.js',

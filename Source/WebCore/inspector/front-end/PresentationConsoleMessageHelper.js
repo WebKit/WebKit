@@ -101,7 +101,7 @@ WebInspector.PresentationConsoleMessageHelper.prototype = {
         var pendingMessages = [];
         for (var i = 0; i < messages.length; i++) {
             var message = messages[i];
-            var rawLocation = message.location();
+            var rawLocation = /** @type {WebInspector.DebuggerModel.Location} */ message.location();
             if (script.scriptId === rawLocation.scriptId)
                 this._addConsoleMessageToScript(message, rawLocation);
             else

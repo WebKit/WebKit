@@ -1,3 +1,13 @@
+2012-08-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: make "sdk" component compile independently from the rest of the front-end.
+        https://bugs.webkit.org/show_bug.cgi?id=94705
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector-enabled/database-open.html:
+        * http/tests/inspector-enabled/dom-storage-open.html:
+
 2012-08-22  Koji Ishii  <kojiishi@gmail.com>
 
         FontMetrics.unitsPerEm(), FontPlatformData.orientation(), SimpleFontData::platformBoundsForGlyph are not implemented on Chromium Windows

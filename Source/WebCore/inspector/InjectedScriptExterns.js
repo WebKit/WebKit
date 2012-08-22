@@ -76,6 +76,10 @@ InjectedScriptHost.prototype.type = function(object) { }
  * @param {*} object
  */
 InjectedScriptHost.prototype.getEventListeners = function(object) { }
+/**
+ * @param {string} expression
+ */
+InjectedScriptHost.prototype.evaluate = function(expression) { }
 
 
 /**
