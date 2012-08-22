@@ -1,3 +1,15 @@
+2012-08-22  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
+
+        Fix JSC build when DFG-JIT is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=94694
+
+        Reviewed by Csaba Osztrogonác.
+
+        Adding an appropriate guard for fixing the build.
+
+        * bytecode/ResolveGlobalStatus.cpp:
+        (JSC):
+
 2012-08-21  Mark Lam  <mark.lam@apple.com>
 
         Introducing the VMInspector for VM debugging use.

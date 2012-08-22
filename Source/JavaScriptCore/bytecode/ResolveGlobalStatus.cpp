@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-#if ENABLE(LLINT) || ENABLE(JIT)
+#if ENABLE(LLINT) || (ENABLE(JIT) && ENABLE(VALUE_PROFILER))
 static ResolveGlobalStatus computeForStructure(CodeBlock* codeBlock, Structure* structure, Identifier& identifier)
 {
     unsigned attributesIgnored;
