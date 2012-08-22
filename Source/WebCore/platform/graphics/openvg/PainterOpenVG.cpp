@@ -1114,8 +1114,6 @@ void PainterOpenVG::drawText(VGFont vgFont, Vector<VGuint>& characters, VGfloat*
 
     VGbitfield paintModes = 0;
 
-    if (m_state->textDrawingMode & TextModeClip)
-        return; // unsupported for every port except CG at the time of writing
     if (m_state->textDrawingMode & TextModeFill && !m_state->fillDisabled())
         paintModes |= VG_FILL_PATH;
     if (m_state->textDrawingMode & TextModeStroke && !m_state->strokeDisabled())

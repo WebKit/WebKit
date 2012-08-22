@@ -128,10 +128,8 @@ namespace WebCore {
     class TransformationMatrix;
 
     enum TextDrawingMode {
-        TextModeInvisible = 0,
         TextModeFill      = 1 << 0,
         TextModeStroke    = 1 << 1,
-        TextModeClip      = 1 << 2
     };
     typedef unsigned TextDrawingModeFlags;
 

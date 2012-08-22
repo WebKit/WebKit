@@ -1646,12 +1646,8 @@ void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)
     if (paintingDisabled())
         return;
 
-    // Wow, wish CG had used bits here.
     CGContextRef context = platformContext();
     switch (mode) {
-    case TextModeInvisible:
-        CGContextSetTextDrawingMode(context, kCGTextInvisible);
-        break;
     case TextModeFill:
         CGContextSetTextDrawingMode(context, kCGTextFill);
         break;
@@ -1660,18 +1656,6 @@ void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)
         break;
     case TextModeFill | TextModeStroke:
         CGContextSetTextDrawingMode(context, kCGTextFillStroke);
-        break;
-    case TextModeClip:
-        CGContextSetTextDrawingMode(context, kCGTextClip);
-        break;
-    case TextModeFill | TextModeClip:
-        CGContextSetTextDrawingMode(context, kCGTextFillClip);
-        break;
-    case TextModeStroke | TextModeClip:
-        CGContextSetTextDrawingMode(context, kCGTextStrokeClip);
-        break;
-    case TextModeFill | TextModeStroke | TextModeClip:
-        CGContextSetTextDrawingMode(context, kCGTextFillStrokeClip);
         break;
     default:
         break;
