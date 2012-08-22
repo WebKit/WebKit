@@ -1,3 +1,20 @@
+2012-08-21  Joanmarie Diggs  <jdiggs@igalia.com>
+        [Gtk] No accessible caret-moved events found in certain content
+        https://bugs.webkit.org/show_bug.cgi?id=72811
+
+        Reviewed by Chris Fleizach.
+
+        Part of the bug is due to objects which should claim to implement AtkText
+        failed to do so as a result of containing a mixture of inline and block
+        spans.
+
+        An updated unit test was provided.
+
+        * tests/testatk.c:
+        (testWebkitAtkCaretOffsets): Added instances of objects containing a
+        mixture of inline and block spans and tested that they implement AtkText
+        and contain the right textual contents.
+
 2012-08-21  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL][GTK][BlackBerry] Fix build error in the DeviceOrientationClient

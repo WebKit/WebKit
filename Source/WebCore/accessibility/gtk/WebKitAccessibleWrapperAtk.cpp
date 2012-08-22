@@ -815,6 +815,11 @@ static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
     return G_TYPE_INVALID;
 }
 
+static bool roleIsTextType(AccessibilityRole role)
+{
+    return role == ParagraphRole || role == HeadingRole || role == DivRole || role == CellRole;
+}
+
 static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
 {
     guint16 interfaceMask = 0;
@@ -856,7 +861,7 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
         } else {
             if (role != TableRole) {
                 interfaceMask |= 1 << WAI_HYPERTEXT;
-                if (renderer && renderer->childrenInline())
+                if ((renderer && renderer->childrenInline()) || roleIsTextType(role))
                     interfaceMask |= 1 << WAI_TEXT;
             }
 
