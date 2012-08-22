@@ -1,3 +1,17 @@
+2012-08-21  Sukolsak Sakshuwong  <sukolsak@google.com>
+
+        Implement UndoManager's automatic DOM transactions
+        https://bugs.webkit.org/show_bug.cgi?id=91812
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/undomanager/automatic-transaction-attribute-expected.txt: Added.
+        * editing/undomanager/automatic-transaction-attribute.html: Added.
+        * editing/undomanager/automatic-transaction-data-expected.txt: Added.
+        * editing/undomanager/automatic-transaction-data.html: Added.
+        * editing/undomanager/automatic-transaction-node-expected.txt: Added.
+        * editing/undomanager/automatic-transaction-node.html: Added.
+
 2012-08-21  Shezan Baig  <sbaig1@bloomberg.net>
 
         Fix cross-direction stretch for replaced elements in row flexbox

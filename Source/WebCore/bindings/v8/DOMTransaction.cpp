@@ -35,6 +35,19 @@
 
 namespace WebCore {
 
+class DOMTransactionScope {
+public:
+    DOMTransactionScope(DOMTransaction* transaction)
+    {
+        UndoManager::setRecordingDOMTransaction(transaction);
+    }
+    
+    ~DOMTransactionScope()
+    {
+        UndoManager::setRecordingDOMTransaction(0);
+    }
+};
+
 DOMTransaction::DOMTransaction(const WorldContextHandle& worldContext)
     : m_worldContext(worldContext)
     , m_undoManager(0)
@@ -51,12 +64,20 @@ void DOMTransaction::apply()
     m_isAutomatic = !getFunction("executeAutomatic").IsEmpty();
     if (!m_isAutomatic)
         callFunction("execute");
+    else {
+        DOMTransactionScope scope(this);
+        callFunction("executeAutomatic");
+    }
 }
 
 void DOMTransaction::unapply()
 {
     if (!m_isAutomatic)
         callFunction("undo");
+    else {
+        for (size_t i = m_transactionSteps.size(); i > 0; --i)
+            m_transactionSteps[i - 1]->unapply();
+    }
 
     if (m_undoManager)
         m_undoManager->registerRedoStep(this);
@@ -66,6 +87,10 @@ void DOMTransaction::reapply()
 {
     if (!m_isAutomatic)
         callFunction("redo");
+    else {
+        for (size_t i = 0; i < m_transactionSteps.size(); ++i)
+            m_transactionSteps[i]->reapply();
+    }
 
     if (m_undoManager)
         m_undoManager->registerUndoStep(this);

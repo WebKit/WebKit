@@ -1,0 +1,9 @@
+This tests that UndoManager correctly reverts/reapplies automatic DOM transactions on node data.
+
+PASS Started with 123456789. Transacted replaceData(3, 3, 'abcd'). Got 123abcd789 
+PASS undoManager.undo(). Got 123456789 
+PASS undoManager.redo(). Got 123abcd789 
+PASS Started with 1234. Transacted replaceData(2, 10, 'a'). Got 12a 
+PASS undoManager.undo(). Got 1234 
+PASS undoManager.redo(). Got 12a 
+

@@ -31,6 +31,7 @@
 #include "MutationRecord.h"
 #include "StylePropertySet.h"
 #include "StyledElement.h"
+#include "UndoManager.h"
 
 using namespace std;
 
@@ -53,15 +54,38 @@ public:
         ASSERT(!s_currentDecl);
         s_currentDecl = decl;
 
-#if ENABLE(MUTATION_OBSERVERS)
+#if ENABLE(MUTATION_OBSERVERS) || ENABLE(UNDO_MANAGER)
         if (!s_currentDecl->parentElement())
             return;
-        m_mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(s_currentDecl->parentElement(), HTMLNames::styleAttr);
-        if (!m_mutationRecipients)
-            return;
 
-        AtomicString oldValue = m_mutationRecipients->isOldValueRequested() ? s_currentDecl->parentElement()->getAttribute(HTMLNames::styleAttr) : nullAtom;
-        m_mutation = MutationRecord::createAttributes(s_currentDecl->parentElement(), HTMLNames::styleAttr, oldValue);
+        bool shouldReadOldValue = false;
+
+#if ENABLE(MUTATION_OBSERVERS)
+        m_mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(s_currentDecl->parentElement(), HTMLNames::styleAttr);
+        if (m_mutationRecipients && m_mutationRecipients->isOldValueRequested())
+            shouldReadOldValue = true;
+#endif
+#if ENABLE(UNDO_MANAGER)
+        m_isRecordingAutomaticTransaction = UndoManager::isRecordingAutomaticTransaction(s_currentDecl->parentElement());
+        if (m_isRecordingAutomaticTransaction)
+            shouldReadOldValue = true;
+#endif
+
+        AtomicString oldValue;
+        if (shouldReadOldValue)
+            oldValue = s_currentDecl->parentElement()->getAttribute(HTMLNames::styleAttr);
+
+#if ENABLE(MUTATION_OBSERVERS)
+        if (m_mutationRecipients) {
+            AtomicString requestedOldValue = m_mutationRecipients->isOldValueRequested() ? oldValue : nullAtom;
+            m_mutation = MutationRecord::createAttributes(s_currentDecl->parentElement(), HTMLNames::styleAttr, requestedOldValue);
+        }
+#endif
+#if ENABLE(UNDO_MANAGER)
+        if (m_isRecordingAutomaticTransaction)
+            m_oldValue = oldValue;
+#endif
+
 #endif
     }
 
@@ -74,6 +98,14 @@ public:
 #if ENABLE(MUTATION_OBSERVERS)
         if (m_mutation && s_shouldDeliver)
             m_mutationRecipients->enqueueMutationRecord(m_mutation);
+#endif
+#if ENABLE(UNDO_MANAGER)
+        if (m_isRecordingAutomaticTransaction && s_shouldDeliver) {
+            UndoManager::addTransactionStep(AttrChangingDOMTransactionStep::create(
+                s_currentDecl->parentElement(), HTMLNames::styleAttr, m_oldValue, s_currentDecl->parentElement()->getAttribute(HTMLNames::styleAttr)));
+        }
+#endif
+#if ENABLE(MUTATION_OBSERVERS) || ENABLE(UNDO_MANAGER)
         s_shouldDeliver = false;
 #endif
         if (!s_shouldNotifyInspector) {
@@ -88,7 +120,7 @@ public:
             InspectorInstrumentation::didInvalidateStyleAttr(localCopyStyleDecl->parentElement()->document(), localCopyStyleDecl->parentElement());
     }
 
-#if ENABLE(MUTATION_OBSERVERS)
+#if ENABLE(MUTATION_OBSERVERS) || ENABLE(UNDO_MANAGER)
     void enqueueMutationRecord()
     {
         s_shouldDeliver = true;
@@ -104,18 +136,24 @@ private:
     static unsigned s_scopeCount;
     static PropertySetCSSStyleDeclaration* s_currentDecl;
     static bool s_shouldNotifyInspector;
-#if ENABLE(MUTATION_OBSERVERS)
+#if ENABLE(MUTATION_OBSERVERS) || ENABLE(UNDO_MANAGER)
     static bool s_shouldDeliver;
+#endif
 
+#if ENABLE(MUTATION_OBSERVERS)
     OwnPtr<MutationObserverInterestGroup> m_mutationRecipients;
     RefPtr<MutationRecord> m_mutation;
+#endif
+#if ENABLE(UNDO_MANAGER)
+    bool m_isRecordingAutomaticTransaction;
+    AtomicString m_oldValue;
 #endif
 };
 
 unsigned StyleAttributeMutationScope::s_scopeCount = 0;
 PropertySetCSSStyleDeclaration* StyleAttributeMutationScope::s_currentDecl = 0;
 bool StyleAttributeMutationScope::s_shouldNotifyInspector = false;
-#if ENABLE(MUTATION_OBSERVERS)
+#if ENABLE(MUTATION_OBSERVERS) || ENABLE(UNDO_MANAGER)
 bool StyleAttributeMutationScope::s_shouldDeliver = false;
 #endif
 
@@ -158,7 +196,7 @@ String PropertySetCSSStyleDeclaration::cssText() const
     
 void PropertySetCSSStyleDeclaration::setCssText(const String& text, ExceptionCode& ec)
 {
-#if ENABLE(MUTATION_OBSERVERS)
+#if ENABLE(MUTATION_OBSERVERS) || ENABLE(UNDO_MANAGER)
     StyleAttributeMutationScope mutationScope(this);
 #endif
     willMutate();
@@ -169,7 +207,7 @@ void PropertySetCSSStyleDeclaration::setCssText(const String& text, ExceptionCod
 
     didMutate(PropertyChanged);
 
-#if ENABLE(MUTATION_OBSERVERS)
+#if ENABLE(MUTATION_OBSERVERS) || ENABLE(UNDO_MANAGER)
     mutationScope.enqueueMutationRecord();    
 #endif
 }
@@ -219,7 +257,7 @@ bool PropertySetCSSStyleDeclaration::isPropertyImplicit(const String& propertyNa
 
 void PropertySetCSSStyleDeclaration::setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode& ec)
 {
-#if ENABLE(MUTATION_OBSERVERS)
+#if ENABLE(MUTATION_OBSERVERS) || ENABLE(UNDO_MANAGER)
     StyleAttributeMutationScope mutationScope(this);
 #endif
     CSSPropertyID propertyID = cssPropertyID(propertyName);
@@ -238,7 +276,7 @@ void PropertySetCSSStyleDeclaration::setProperty(const String& propertyName, con
     if (changed) {
         // CSS DOM requires raising SYNTAX_ERR of parsing failed, but this is too dangerous for compatibility,
         // see <http://bugs.webkit.org/show_bug.cgi?id=7296>.
-#if ENABLE(MUTATION_OBSERVERS)
+#if ENABLE(MUTATION_OBSERVERS) || ENABLE(UNDO_MANAGER)
         mutationScope.enqueueMutationRecord();
 #endif
     }
@@ -246,7 +284,7 @@ void PropertySetCSSStyleDeclaration::setProperty(const String& propertyName, con
 
 String PropertySetCSSStyleDeclaration::removeProperty(const String& propertyName, ExceptionCode& ec)
 {
-#if ENABLE(MUTATION_OBSERVERS)
+#if ENABLE(MUTATION_OBSERVERS) || ENABLE(UNDO_MANAGER)
     StyleAttributeMutationScope mutationScope(this);
 #endif
     CSSPropertyID propertyID = cssPropertyID(propertyName);
@@ -262,7 +300,7 @@ String PropertySetCSSStyleDeclaration::removeProperty(const String& propertyName
     didMutate(changed ? PropertyChanged : NoChanges);
 
     if (changed) {
-#if ENABLE(MUTATION_OBSERVERS)
+#if ENABLE(MUTATION_OBSERVERS) || ENABLE(UNDO_MANAGER)
         mutationScope.enqueueMutationRecord();
 #endif
     }
@@ -281,7 +319,7 @@ String PropertySetCSSStyleDeclaration::getPropertyValueInternal(CSSPropertyID pr
 
 void PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropertyID propertyID, const String& value, bool important, ExceptionCode& ec)
 { 
-#if ENABLE(MUTATION_OBSERVERS)
+#if ENABLE(MUTATION_OBSERVERS) || ENABLE(UNDO_MANAGER)
     StyleAttributeMutationScope mutationScope(this);
 #endif
     willMutate();
@@ -292,7 +330,7 @@ void PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropertyID propertyI
     didMutate(changed ? PropertyChanged : NoChanges);
 
     if (changed) {
-#if ENABLE(MUTATION_OBSERVERS)
+#if ENABLE(MUTATION_OBSERVERS) || ENABLE(UNDO_MANAGER)
         mutationScope.enqueueMutationRecord();
 #endif
     }

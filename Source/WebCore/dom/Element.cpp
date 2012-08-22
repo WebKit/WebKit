@@ -70,6 +70,7 @@
 #include "StyleResolver.h"
 #include "Text.h"
 #include "TextIterator.h"
+#include "UndoManager.h"
 #include "VoidCallback.h"
 #include "WebKitAnimationList.h"
 #include "XMLNSNames.h"
@@ -2046,6 +2047,11 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomicString&
 #if ENABLE(MUTATION_OBSERVERS)
     if (OwnPtr<MutationObserverInterestGroup> recipients = MutationObserverInterestGroup::createForAttributesMutation(this, name))
         recipients->enqueueMutationRecord(MutationRecord::createAttributes(this, name, oldValue));
+#endif
+
+#if ENABLE(UNDO_MANAGER)
+    if (UndoManager::isRecordingAutomaticTransaction(this))
+        UndoManager::addTransactionStep(AttrChangingDOMTransactionStep::create(this, name, oldValue, newValue));
 #endif
 
 #if ENABLE(INSPECTOR)

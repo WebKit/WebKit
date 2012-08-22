@@ -34,10 +34,11 @@
 
 #include "UndoManager.h"
 
-#include "DOMTransaction.h"
 #include "ExceptionCode.h"
 
 namespace WebCore {
+
+DOMTransaction* UndoManager::s_recordingDOMTransaction = 0;
 
 PassRefPtr<UndoManager> UndoManager::create(Document* document)
 {
@@ -197,6 +198,22 @@ void UndoManager::clearRedo(ExceptionCode& ec)
         return;
     }
     clearStack(m_redoStack);
+}
+
+bool UndoManager::isRecordingAutomaticTransaction(Node* node)
+{
+    // We need to check that transaction still has its undomanager because
+    // transaction can disconnect its undomanager, which will clear the undo/redo stacks.
+    if (!s_recordingDOMTransaction || !s_recordingDOMTransaction->undoManager())
+        return false;
+    Document* document = s_recordingDOMTransaction->undoManager()->document();
+    return document && node->document() == document;
+}
+
+void UndoManager::addTransactionStep(PassRefPtr<DOMTransactionStep> step)
+{
+    ASSERT(s_recordingDOMTransaction);
+    s_recordingDOMTransaction->addTransactionStep(step);
 }
 
 }

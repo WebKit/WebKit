@@ -27,6 +27,7 @@
 
 #if ENABLE(UNDO_MANAGER)
 
+#include "DOMTransactionStep.h"
 #include "UndoStep.h"
 #include <wtf/RefPtr.h>
 
@@ -48,10 +49,13 @@ public:
     UndoManager* undoManager() const { return m_undoManager; }
     void setUndoManager(UndoManager* undoManager) { m_undoManager = undoManager; }
 
+    void addTransactionStep(PassRefPtr<DOMTransactionStep> step) { m_transactionSteps.append(step); }
+
 private:
     DOMTransaction();
 
     UndoManager* m_undoManager;
+    Vector<RefPtr<DOMTransactionStep> > m_transactionSteps;
 };
 
 }

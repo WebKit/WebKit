@@ -34,6 +34,7 @@
 #if ENABLE(UNDO_MANAGER)
 
 #include "ActiveDOMObject.h"
+#include "DOMTransaction.h"
 #include "Document.h"
 #include "ExceptionCodePlaceholder.h"
 #include "UndoStep.h"
@@ -45,8 +46,6 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-
-class DOMTransaction;
 
 typedef Vector<RefPtr<UndoStep> > UndoManagerEntry;
 typedef Vector<OwnPtr<UndoManagerEntry> > UndoManagerStack;
@@ -78,6 +77,10 @@ public:
     Document* document() const { return m_document; }
     Node* ownerNode() const { return m_document; }
 
+    static void setRecordingDOMTransaction(DOMTransaction* transaction) { s_recordingDOMTransaction = transaction; }
+    static bool isRecordingAutomaticTransaction(Node*);
+    static void addTransactionStep(PassRefPtr<DOMTransactionStep>);
+
 private:
     explicit UndoManager(Document*);
     
@@ -86,6 +89,8 @@ private:
     UndoManagerStack m_redoStack;
     bool m_isInProgress;
     OwnPtr<UndoManagerEntry> m_inProgressEntry;
+
+    static DOMTransaction* s_recordingDOMTransaction;
 };
     
 }

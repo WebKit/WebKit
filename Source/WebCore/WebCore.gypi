@@ -2644,6 +2644,8 @@
             'editing/CompositeEditCommand.cpp',
             'editing/CreateLinkCommand.cpp',
             'editing/CreateLinkCommand.h',
+            'editing/DOMTransactionStep.cpp',
+            'editing/DOMTransactionStep.h',
             'editing/DeleteButton.cpp',
             'editing/DeleteButton.h',
             'editing/DeleteButtonController.cpp',

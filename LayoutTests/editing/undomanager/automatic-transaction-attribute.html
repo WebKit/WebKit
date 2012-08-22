@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>automatic transaction on attributes</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+This tests that UndoManager correctly reverts/reapplies automatic DOM transactions
+on attribute changes. We start with a span that has blue border and doesn't have title
+or contenteditable attributes.
+
+<span id="span" style="border: 1px blue solid"></span>
+<script>
+var undoManager = document.undoManager;
+var span = document.getElementById("span");
+
+test(function() {
+    undoManager.transact({
+        "executeAutomatic": function() { span.title = "test"; }
+    });
+    assert_equals(span.title, "test");
+}, "transact 1: set title to \"test\"");
+
+test(function() {
+    undoManager.transact({
+        "executeAutomatic": function() { span.setAttribute("contenteditable", "true"); }
+    });
+    assert_equals(span.contentEditable, "true");
+}, "transact 2: set contenteditable to \"true\"");
+
+test(function() {
+    undoManager.transact({
+        "executeAutomatic": function() { span.style.cssText = "border: 1px red solid"; }
+    });
+    assert_equals(span.style.borderColor, "red");
+}, "transact 3: set border color to red");
+
+test(function() {
+    undoManager.transact({
+        "executeAutomatic": function() { span.removeAttribute("title"); }
+    });
+    assert_equals(span.title, "");
+}, "transact 4: remove attribute title");
+
+test(function() {
+    undoManager.undo();
+    assert_equals(span.title, "test");
+}, "undo 4: title is back to \"test\"");
+
+test(function() {
+    undoManager.undo();
+    assert_equals(span.style.borderColor, "blue");
+}, "undo 3: border color is back to blue");
+
+test(function() {
+    undoManager.undo();
+    assert_equals(span.contentEditable, "inherit");
+}, "undo 2: contenteditable is back to \"inherit\"");
+
+test(function() {
+    undoManager.undo();
+    assert_equals(span.title, "");
+}, "undo 1: title is back to an empty string");
+
+test(function() {
+    undoManager.redo();
+    assert_equals(span.title, "test");
+}, "redo 1: title is \"test\" again");
+
+test(function() {
+    undoManager.redo();
+    assert_equals(span.contentEditable, "true");
+}, "redo 2: contentEditable is \"true\" again");
+
+test(function() {
+    undoManager.redo();
+    assert_equals(span.style.borderColor, "red");
+}, "redo 3: border color is red again");
+
+test(function() {
+    undoManager.redo();
+    assert_equals(span.title, "");
+}, "redo 4: title is an empty string again");
+</script>
+</body>
+</html>

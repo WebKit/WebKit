@@ -2938,6 +2938,8 @@ webcore_sources += \
 	Source/WebCore/editing/DictationAlternative.h \
 	Source/WebCore/editing/DictationCommand.cpp \
 	Source/WebCore/editing/DictationCommand.h \
+	Source/WebCore/editing/DOMTransactionStep.cpp \
+	Source/WebCore/editing/DOMTransactionStep.h \
 	Source/WebCore/editing/EditAction.h \
 	Source/WebCore/editing/EditCommand.cpp \
 	Source/WebCore/editing/EditCommand.h \
