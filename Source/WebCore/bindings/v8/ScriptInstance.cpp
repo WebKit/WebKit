@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ScriptInstance.h"
 
+#include "V8GCController.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
