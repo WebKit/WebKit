@@ -32,11 +32,13 @@
 #define ScriptState_h
 
 #include "DOMWrapperWorld.h"
+#include "ScopedPersistent.h"
 #include <v8.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+
 class DOMWindow;
 class DOMWrapperWorld;
 class Frame;
@@ -57,7 +59,7 @@ public:
 
     v8::Local<v8::Context> context() const
     {
-        return v8::Local<v8::Context>::New(m_context);
+        return v8::Local<v8::Context>::New(m_context.get());
     }
 
     DOMWindow* domWindow() const;
@@ -77,7 +79,7 @@ private:
     static void weakReferenceCallback(v8::Persistent<v8::Value> object, void* parameter);
 
     v8::Local<v8::Value> m_exception;
-    v8::Persistent<v8::Context> m_context;
+    ScopedPersistent<v8::Context> m_context;
 };
 
 class EmptyScriptState : public ScriptState {
@@ -89,24 +91,24 @@ public:
 class ScriptStateProtectedPtr {
     WTF_MAKE_NONCOPYABLE(ScriptStateProtectedPtr);
 public:
-    ScriptStateProtectedPtr() : m_scriptState(0) { }
-    ScriptStateProtectedPtr(ScriptState* scriptState) : m_scriptState(scriptState)
+    ScriptStateProtectedPtr()
+        : m_scriptState(0)
+    {
+    }
+
+    ScriptStateProtectedPtr(ScriptState* scriptState)
+        : m_scriptState(scriptState)
     {
         v8::HandleScope handleScope;
         // Keep the context from being GC'ed. ScriptState is guaranteed to be live while the context is live.
-        m_context = v8::Persistent<v8::Context>::New(scriptState->context());
+        m_context.set(scriptState->context());
     }
-    ~ScriptStateProtectedPtr()
-    {
-        if (!m_context.IsEmpty()) {
-            m_context.Dispose();
-            m_context.Clear();
-        }
-    }
+
     ScriptState* get() const { return m_scriptState; }
+
 private:
     ScriptState* m_scriptState;
-    v8::Persistent<v8::Context> m_context;
+    ScopedPersistent<v8::Context> m_context;
 };
 
 DOMWindow* domWindowFromScriptState(ScriptState*);

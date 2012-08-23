@@ -353,8 +353,8 @@ namespace WebCore {
     PassRefPtr<DOMStringList> toDOMStringList(v8::Handle<v8::Value>);
     PassRefPtr<XPathNSResolver> toXPathNSResolver(v8::Handle<v8::Value>);
 
-    // Returns the window object associated with a context.
     DOMWindow* toDOMWindow(v8::Handle<v8::Context>);
+    ScriptExecutionContext* toScriptExecutionContext(v8::Handle<v8::Context>);
 
     // Returns the context associated with a ScriptExecutionContext.
     v8::Local<v8::Context> toV8Context(ScriptExecutionContext*, const WorldContextHandle&);
