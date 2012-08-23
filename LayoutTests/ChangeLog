@@ -1,3 +1,34 @@
+2012-08-22  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed Chromium gardening. Optimized baselines from yesterday
+        with dpranke's new algorithm in webkit-patch optimize-baselines
+        from r126374 and r126380.
+
+        * platform/chromium-linux/fast/canvas/canvas-scale-shadowBlur-expected.txt: Removed.
+        * platform/chromium-linux/fast/canvas/canvas-scale-strokePath-shadow-expected.txt: Removed.
+        * platform/chromium-linux/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt: Removed.
+        * platform/chromium-linux/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/canvas/canvas-scale-shadowBlur-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/canvas/canvas-scale-strokePath-shadow-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt: Removed.
+        * platform/chromium-mac/fast/canvas/canvas-scale-shadowBlur-expected.txt: Removed.
+        * platform/chromium-mac/fast/canvas/canvas-scale-strokePath-shadow-expected.txt: Removed.
+        * platform/chromium-mac/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt: Removed.
+        * platform/chromium-mac/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt: Removed.
+        * platform/chromium-win-xp/fast/canvas/canvas-scale-shadowBlur-expected.txt: Removed.
+        * platform/chromium-win-xp/fast/canvas/canvas-scale-strokePath-shadow-expected.txt: Removed.
+        * platform/chromium-win-xp/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt: Removed.
+        * platform/chromium-win-xp/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt: Removed.
+        * platform/chromium-win/fast/canvas/canvas-scale-shadowBlur-expected.txt: Removed.
+        * platform/chromium-win/fast/canvas/canvas-scale-strokePath-shadow-expected.txt: Removed.
+        * platform/chromium-win/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt: Removed.
+        * platform/chromium-win/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt: Removed.
+        * platform/chromium/fast/canvas/canvas-scale-shadowBlur-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/fast/canvas/canvas-scale-shadowBlur-expected.txt.
+        * platform/chromium/fast/canvas/canvas-scale-strokePath-shadow-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/fast/canvas/canvas-scale-strokePath-shadow-expected.txt.
+        * platform/chromium/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt.
+        * platform/chromium/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt.
+
 2012-08-22  Victor Carbune  <victor@rosedu.org>
 
         Display a TextTrackCue when snap-to-lines flag is set
