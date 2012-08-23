@@ -1177,7 +1177,7 @@
                         'input_file': '../../WebCore/inspector/front-end/TimelinePanel.js',
                         'inputs': [
                             '<@(_script_name)',
-                            '<@(webinspector_resources_js_files)',
+                            '<@(webinspector_timeline_js_files)',
                         ],
                         'search_path': '../../WebCore/inspector/front-end',
                         'outputs': ['<(PRODUCT_DIR)/resources/inspector/TimelinePanel.js'],
