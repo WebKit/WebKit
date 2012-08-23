@@ -1,3 +1,9 @@
+2012-08-23  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-08-23  Wei Jia  <wjia@chromium.org>
 
         create different WebKit::WebMediaPlayer based on URL
