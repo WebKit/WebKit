@@ -151,10 +151,10 @@ void CCFrameRateController::didAbortAllPendingFrames()
     m_numFramesPending = 0;
 }
 
-double CCFrameRateController::nextTickTime()
+double CCFrameRateController::nextTickTimeIfActivated()
 {
     if (m_isTimeSourceThrottling)
-        return m_timeSource->nextTickTime();
+        return m_timeSource->nextTickTimeIfActivated();
 
     return monotonicallyIncreasingTime();
 }

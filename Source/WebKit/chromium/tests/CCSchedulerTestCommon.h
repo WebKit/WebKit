@@ -106,7 +106,7 @@ public:
     virtual bool active() const OVERRIDE { return m_active; }
     virtual void setTimebaseAndInterval(double timebase, double interval) OVERRIDE { }
     virtual double lastTickTime() OVERRIDE { return 0; }
-    virtual double nextTickTime() OVERRIDE { return 0; }
+    virtual double nextTickTimeIfActivated() OVERRIDE { return 0; }
 
     void tick()
     {

@@ -67,7 +67,7 @@ public:
     void didFinishFrame();
     void didAbortAllPendingFrames();
     void setMaxFramesPending(int); // 0 for unlimited.
-    double nextTickTime();
+    double nextTickTimeIfActivated();
 
     void setTimebaseAndInterval(double timebase, double intervalSeconds);
 

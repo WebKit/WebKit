@@ -97,9 +97,9 @@ double CCDelayBasedTimeSource::lastTickTime()
     return m_lastTickTime;
 }
 
-double CCDelayBasedTimeSource::nextTickTime()
+double CCDelayBasedTimeSource::nextTickTimeIfActivated()
 {
-    return active() ? m_currentParameters.tickTarget : 0.0;
+    return active() ? m_currentParameters.tickTarget : nextTickTarget(monotonicTimeNow());
 }
 
 void CCDelayBasedTimeSource::onTimerFired()
@@ -207,7 +207,7 @@ double CCDelayBasedTimeSource::monotonicTimeNow() const
 //      now=37   tickTarget=16.667  newTarget=50.000  --> tick(), postDelayedTask(floor(50.000-37)) --> postDelayedTask(13)
 //
 // Note, that in the above discussion, times are expressed in milliseconds, but in the code, seconds are used.
-void CCDelayBasedTimeSource::postNextTickTask(double now)
+double CCDelayBasedTimeSource::nextTickTarget(double now)
 {
     double newInterval = m_nextParameters.interval;
     double intervalsElapsed = floor((now - m_nextParameters.tickTarget) / newInterval);
@@ -221,9 +221,16 @@ void CCDelayBasedTimeSource::postNextTickTask(double now)
     if (newTickTarget - m_lastTickTime <= newInterval * doubleTickThreshold)
         newTickTarget += newInterval;
 
+    return newTickTarget;
+}
+
+void CCDelayBasedTimeSource::postNextTickTask(double now)
+{
+    double newTickTarget = nextTickTarget(now);
+
     // Post another task *before* the tick and update state
     double delay = newTickTarget - now;
-    ASSERT(delay <= newInterval * (1.0 + doubleTickThreshold));
+    ASSERT(delay <= m_nextParameters.interval * (1.0 + doubleTickThreshold));
     m_timer.startOneShot(delay);
 
     m_nextParameters.tickTarget = newTickTarget;

@@ -175,7 +175,7 @@ void CCScheduler::processScheduledActions()
             break;
         case CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES:
             if (m_client->hasMoreResourceUpdates()) {
-                m_client->scheduledActionUpdateMoreResources(m_frameRateController->nextTickTime());
+                m_client->scheduledActionUpdateMoreResources(m_frameRateController->nextTickTimeIfActivated());
                 m_updateMoreResourcesPending = true;
             } else
                 m_stateMachine.beginUpdateMoreResourcesComplete(false);

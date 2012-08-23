@@ -50,9 +50,8 @@ public:
     virtual bool active() const OVERRIDE { return m_state != STATE_INACTIVE; }
 
     // Get the last and next tick times.
-    // If not active, nextTickTime will return 0.
     virtual double lastTickTime() OVERRIDE;
-    virtual double nextTickTime() OVERRIDE;
+    virtual double nextTickTimeIfActivated() OVERRIDE;
 
     // CCTimerClient implementation.
     virtual void onTimerFired() OVERRIDE;
@@ -62,6 +61,7 @@ public:
 
 protected:
     CCDelayBasedTimeSource(double interval, CCThread*);
+    double nextTickTarget(double now);
     void postNextTickTask(double now);
 
     enum State {
