@@ -385,6 +385,9 @@ private:
     mutable FrameLoaderStateMachine m_stateMachine;
     mutable IconController m_icon;
 
+    class FrameProgressTracker;
+    OwnPtr<FrameProgressTracker> m_progressTracker;
+
     FrameState m_state;
     FrameLoadType m_loadType;
 
