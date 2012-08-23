@@ -425,7 +425,7 @@ reviewers_list = [
     Reviewer("Alejandro G. Castro", ["alex@igalia.com", "alex@webkit.org"], "alexg__"),
     Reviewer("Alexander Pavlov", ["apavlov@chromium.org", "pavlov81@gmail.com"], "apavlov"),
     Reviewer("Alexey Proskuryakov", ["ap@webkit.org", "ap@apple.com"], "ap"),
-    Reviewer("Alexis Menard", ["alexis.menard@openbossa.org", "menard@kde.org"], "darktears"),
+    Reviewer("Alexis Menard", ["alexis@webkit.org", "menard@kde.org"], "darktears"),
     Reviewer("Alice Liu", "alice.liu@apple.com", "aliu"),
     Reviewer("Alp Toker", ["alp@nuanti.com", "alp@atoker.com", "alp@webkit.org"], "alp"),
     Reviewer("Anders Carlsson", ["andersca@apple.com", "acarlsson@apple.com"], "andersca"),

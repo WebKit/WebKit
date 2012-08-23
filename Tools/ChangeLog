@@ -1,3 +1,10 @@
+2012-08-22  Alexis Menard  <alexis@webkit.org>
+
+        Unreviewed update of my email.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-08-22  Dirk Pranke  <dpranke@chromium.org>
 
         Fix typos in r126374
