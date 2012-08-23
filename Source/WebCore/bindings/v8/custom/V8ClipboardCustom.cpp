@@ -49,14 +49,14 @@ v8::Handle<v8::Value> V8Clipboard::typesAccessorGetter(v8::Local<v8::String> nam
     INC_STATS("DOM.Clipboard.types()");
     Clipboard* clipboard = V8Clipboard::toNative(info.Holder());
 
-    HashSet<String> types = clipboard->types();
+    Vector<String> types = clipboard->types();
     if (types.isEmpty())
         return v8::Null(info.GetIsolate());
 
     v8::Local<v8::Array> result = v8::Array::New(types.size());
-    HashSet<String>::const_iterator end = types.end();
+    Vector<String>::const_iterator end = types.end();
     int index = 0;
-    for (HashSet<String>::const_iterator it = types.begin(); it != end; ++it, ++index)
+    for (Vector<String>::const_iterator it = types.begin(); it != end; ++it, ++index)
         result->Set(v8Integer(index, info.GetIsolate()), v8String(*it, info.GetIsolate()));
 
     return result;

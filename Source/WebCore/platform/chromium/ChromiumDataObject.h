@@ -69,7 +69,7 @@ public:
     void clearData(const String& type);
     void clearAllExceptFiles();
 
-    HashSet<String> types() const;
+    Vector<String> types() const;
     String getData(const String& type) const;
     bool setData(const String& type, const String& data);
 

@@ -120,15 +120,15 @@ static String utiTypeFromCocoaType(const String& type)
     return String();
 }
 
-static void addHTMLClipboardTypesForCocoaType(HashSet<String>& resultTypes, const String& cocoaType, const String& pasteboardName)
+static void addHTMLClipboardTypesForCocoaType(Vector<String>& resultTypes, const String& cocoaType, const String& pasteboardName)
 {
     // UTI may not do these right, so make sure we get the right, predictable result
     if (cocoaType == String(NSStringPboardType)) {
-        resultTypes.add("text/plain");
+        resultTypes.append("text/plain");
         return;
     }
     if (cocoaType == String(NSURLPboardType)) {
-        resultTypes.add("text/uri-list");
+        resultTypes.append("text/uri-list");
         return;
     }
     if (cocoaType == String(NSFilenamesPboardType)) {
@@ -140,18 +140,18 @@ static void addHTMLClipboardTypesForCocoaType(HashSet<String>& resultTypes, cons
         if (!fileList.isEmpty()) {
             // It is unknown if NSFilenamesPboardType always implies NSURLPboardType in Cocoa,
             // but NSFilenamesPboardType should imply both 'text/uri-list' and 'Files'
-            resultTypes.add("text/uri-list");
-            resultTypes.add("Files");
+            resultTypes.append("text/uri-list");
+            resultTypes.append("Files");
         }
         return;
     }
     String utiType = utiTypeFromCocoaType(cocoaType);
     if (!utiType.isEmpty()) {
-        resultTypes.add(utiType);
+        resultTypes.append(utiType);
         return;
     }
     // No mapping, just pass the whole string though
-    resultTypes.add(cocoaType);
+    resultTypes.append(cocoaType);
 }
 
 void ClipboardMac::clearData(const String& type)
@@ -282,10 +282,10 @@ bool ClipboardMac::setData(const String &type, const String &data)
     return false;
 }
 
-HashSet<String> ClipboardMac::types() const
+Vector<String> ClipboardMac::types() const
 {
     if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
-        return HashSet<String>();
+        return Vector<String>();
 
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
@@ -293,9 +293,9 @@ HashSet<String> ClipboardMac::types() const
     // Enforce changeCount ourselves for security.  We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
     if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
-        return HashSet<String>();
+        return Vector<String>();
 
-    HashSet<String> result;
+    Vector<String> result;
     // FIXME: This loop could be split into two stages. One which adds all the HTML5 specified types
     // and a second which adds all the extra types from the cocoa clipboard (which is Mac-only behavior).
     for (size_t i = 0; i < types.size(); i++) {
