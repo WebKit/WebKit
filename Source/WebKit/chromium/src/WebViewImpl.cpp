@@ -409,6 +409,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_isCancelingFullScreen(false)
     , m_benchmarkSupport(this)
 #if USE(ACCELERATED_COMPOSITING)
+    , m_rootLayer(0)
     , m_rootGraphicsLayer(0)
     , m_isAcceleratedCompositingActive(false)
     , m_compositorCreationFailed(false)
@@ -3640,6 +3641,7 @@ bool WebViewImpl::allowsAcceleratedCompositing()
 void WebViewImpl::setRootGraphicsLayer(GraphicsLayer* layer)
 {
     m_rootGraphicsLayer = layer;
+    m_rootLayer = layer ? layer->platformLayer() : 0;
 
     setIsAcceleratedCompositingActive(layer);
     if (m_nonCompositedContentHost) {
@@ -3653,11 +3655,8 @@ void WebViewImpl::setRootGraphicsLayer(GraphicsLayer* layer)
         m_nonCompositedContentHost->setScrollLayer(scrollLayer);
     }
 
-    if (layer)
-        m_rootLayer = *layer->platformLayer();
-
     if (!m_layerTreeView.isNull())
-        m_layerTreeView.setRootLayer(layer ? &m_rootLayer : 0);
+        m_layerTreeView.setRootLayer(m_rootLayer);
 
     IntRect damagedRect(0, 0, m_size.width, m_size.height);
     if (!m_isAcceleratedCompositingActive)
@@ -3770,7 +3769,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         m_nonCompositedContentHost->setShowDebugBorders(page()->settings()->showDebugBorders());
         m_nonCompositedContentHost->setOpaque(!isTransparent());
 
-        m_layerTreeView.initialize(this, m_rootLayer, layerTreeViewSettings);
+        m_layerTreeView.initialize(this, *m_rootLayer, layerTreeViewSettings);
         if (!m_layerTreeView.isNull()) {
             if (m_webSettings->applyDefaultDeviceScaleFactorInCompositor() && page()->deviceScaleFactor() != 1) {
                 ASSERT(page()->deviceScaleFactor());

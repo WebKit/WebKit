@@ -80,8 +80,8 @@ private:
     // size since the last call to this function.
     bool computeHighlightLayerPathAndPosition(WebCore::RenderLayer*);
 
-    WebContentLayer m_contentLayer;
-    WebLayer m_clipLayer;
+    OwnPtr<WebContentLayer> m_contentLayer;
+    OwnPtr<WebLayer> m_clipLayer;
     WebCore::Path m_path;
 
     RefPtr<WebCore::Node> m_node;

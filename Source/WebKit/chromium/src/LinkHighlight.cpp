@@ -59,8 +59,8 @@ PassOwnPtr<LinkHighlight> LinkHighlight::create(Node* node, WebViewImpl* owningW
 }
 
 LinkHighlight::LinkHighlight(Node* node, WebViewImpl* owningWebViewImpl)
-    : m_contentLayer(WebContentLayer::create(this))
-    , m_clipLayer(WebLayer::create())
+    : m_contentLayer(adoptPtr(WebContentLayer::create(this)))
+    , m_clipLayer(adoptPtr(WebLayer::create()))
     , m_node(node)
     , m_owningWebViewImpl(owningWebViewImpl)
     , m_currentGraphicsLayer(0)
@@ -69,14 +69,14 @@ LinkHighlight::LinkHighlight(Node* node, WebViewImpl* owningWebViewImpl)
     ASSERT(m_node);
     ASSERT(owningWebViewImpl);
 
-    m_clipLayer.setAnchorPoint(WebFloatPoint());
-    m_clipLayer.addChild(m_contentLayer);
-    m_contentLayer.setDrawsContent(false);
+    m_clipLayer->setAnchorPoint(WebFloatPoint());
+    m_clipLayer->addChild(m_contentLayer->layer());
+    m_contentLayer->layer()->setDrawsContent(false);
 
     // We don't want to show the highlight until startAnimation is called, even though the highlight
     // layer may be added to the tree immediately.
-    m_contentLayer.setOpacity(0);
-    m_contentLayer.setAnimationDelegate(this);
+    m_contentLayer->layer()->setOpacity(0);
+    m_contentLayer->layer()->setAnimationDelegate(this);
 }
 
 LinkHighlight::~LinkHighlight()
@@ -87,19 +87,17 @@ LinkHighlight::~LinkHighlight()
 
 WebContentLayer* LinkHighlight::contentLayer()
 {
-    return &m_contentLayer;
+    return m_contentLayer.get();
 }
 
 WebLayer* LinkHighlight::clipLayer()
 {
-    return &m_clipLayer;
+    return m_clipLayer.get();
 }
 
 void LinkHighlight::releaseResources()
 {
     m_node.clear();
-    m_contentLayer.clearClient();
-    m_contentLayer.setAnimationDelegate(0);
 }
 
 RenderLayer* LinkHighlight::computeEnclosingCompositingLayer()
@@ -175,8 +173,8 @@ bool LinkHighlight::computeHighlightLayerPathAndPosition(RenderLayer* compositin
     IntPoint targetCompositorAbsolute = compositingLayer->renderer()->frame()->view()->windowToContents(targetWindow);
     FloatPoint targetCompositorLocal = compositingLayer->renderer()->absoluteToLocal(targetCompositorAbsolute, false, true);
 
-    m_contentLayer.setBounds(WebSize(enclosingIntRect(nodeBounds).size()));
-    m_contentLayer.setPosition(WebFloatPoint(targetCompositorLocal));
+    m_contentLayer->layer()->setBounds(WebSize(enclosingIntRect(nodeBounds).size()));
+    m_contentLayer->layer()->setPosition(WebFloatPoint(targetCompositorLocal));
 
     return pathHasChanged;
 }
@@ -200,7 +198,7 @@ void LinkHighlight::startHighlightAnimation()
     // FIXME: Should duration be configurable?
     const float duration = 2;
 
-    m_contentLayer.setOpacity(startOpacity);
+    m_contentLayer->layer()->setOpacity(startOpacity);
 
     WebFloatAnimationCurve curve;
     curve.add(WebFloatKeyframe(0, startOpacity));
@@ -209,8 +207,8 @@ void LinkHighlight::startHighlightAnimation()
     curve.add(WebFloatKeyframe(duration, WebKit::layoutTestMode() ? startOpacity : 0));
 
     m_animation = adoptPtr(WebAnimation::create(curve, WebAnimation::TargetPropertyOpacity));
-    m_contentLayer.setDrawsContent(true);
-    m_contentLayer.addAnimation(m_animation.get());
+    m_contentLayer->layer()->setDrawsContent(true);
+    m_contentLayer->layer()->addAnimation(m_animation.get());
 
     invalidate();
     m_owningWebViewImpl->scheduleAnimation();
@@ -249,7 +247,7 @@ void LinkHighlight::updateGeometry()
     if (compositingLayer && computeHighlightLayerPathAndPosition(compositingLayer)) {
         // We only need to invalidate the layer if the highlight size has changed, otherwise
         // we can just re-position the layer without needing to repaint.
-        m_contentLayer.invalidate();
+        m_contentLayer->layer()->invalidate();
     }
 }
 

@@ -1,3 +1,37 @@
+2012-08-22  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Change WebLayer from a concrete type to a pure virtual interface
+        https://bugs.webkit.org/show_bug.cgi?id=94174
+
+        Reviewed by Adrienne Walker.
+
+        This changes WebLayer from a value type to a pure virtual interface and changes Web*Layers from subtypes to
+        standalone types that have a WebLayer. This better isolates the implementation from the interface and, since
+        it's not possible to re-wrap an existing layer, makes cleanup explicit instead of requiring the caller to
+        invoke special cleanup methods before shutdown.
+
+        * chromium/public/WebContentLayer.h:
+        (WebContentLayer):
+        * chromium/public/WebExternalTextureLayer.h:
+        (WebExternalTextureLayer):
+        * chromium/public/WebIOSurfaceLayer.h:
+        (WebIOSurfaceLayer):
+        * chromium/public/WebImageLayer.h:
+        (WebImageLayer):
+        * chromium/public/WebLayer.h:
+        (WebKit):
+        (WebLayer):
+        (WebKit::WebLayer::~WebLayer):
+        * chromium/public/WebScrollableLayer.h: Removed.
+        * chromium/public/WebScrollbarLayer.h:
+        (WebScrollbarLayer):
+        * chromium/public/WebSolidColorLayer.h:
+        (WebKit):
+        (WebSolidColorLayer):
+        (WebKit::WebSolidColorLayer::~WebSolidColorLayer):
+        * chromium/public/WebVideoLayer.h:
+        (WebVideoLayer):
+
 2012-08-21  Benjamin Poulain  <bpoulain@apple.com>
 
         Store CString data in the CStringBuffer to avoid the double indirection

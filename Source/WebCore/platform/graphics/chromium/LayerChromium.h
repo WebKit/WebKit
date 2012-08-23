@@ -95,7 +95,7 @@ public:
     // The root layer is a special case -- it operates in physical pixels.
     virtual const WebKit::WebTransformationMatrix& transform() const OVERRIDE { return m_transform; }
 
-    const LayerChromium* rootLayer() const;
+    LayerChromium* rootLayer();
     LayerChromium* parent() const;
     void addChild(PassRefPtr<LayerChromium>);
     void insertChild(PassRefPtr<LayerChromium>, size_t index);
