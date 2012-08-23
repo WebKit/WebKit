@@ -50,6 +50,7 @@
 #include "TextRenderingMode.h"
 #include "ThemeTypes.h"
 #include "UnicodeBidi.h"
+#include "WritingMode.h"
 
 #if ENABLE(CSS_SHADERS)
 #include "CustomFilterOperation.h"

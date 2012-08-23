@@ -32,10 +32,10 @@
 #define FractionalLayoutBoxExtent_h
 
 #include "FractionalLayoutUnit.h"
+#include "TextDirection.h"
+#include "WritingMode.h"
 
 namespace WebCore {
-
-class RenderStyle;
 
 class FractionalLayoutBoxExtent {
 public:
@@ -53,26 +53,26 @@ public:
     inline void setBottom(FractionalLayoutUnit value) { m_bottom = value; }
     inline void setLeft(FractionalLayoutUnit value) { m_left = value; }
 
-    FractionalLayoutUnit logicalTop(const RenderStyle*) const;
-    FractionalLayoutUnit logicalBottom(const RenderStyle*) const;
-    FractionalLayoutUnit logicalLeft(const RenderStyle*) const;
-    FractionalLayoutUnit logicalRight(const RenderStyle*) const;
+    FractionalLayoutUnit logicalTop(WritingMode) const;
+    FractionalLayoutUnit logicalBottom(WritingMode) const;
+    FractionalLayoutUnit logicalLeft(WritingMode) const;
+    FractionalLayoutUnit logicalRight(WritingMode) const;
 
-    FractionalLayoutUnit before(const RenderStyle*) const;
-    FractionalLayoutUnit after(const RenderStyle*) const;
-    FractionalLayoutUnit start(const RenderStyle*) const;
-    FractionalLayoutUnit end(const RenderStyle*) const;
+    FractionalLayoutUnit before(WritingMode) const;
+    FractionalLayoutUnit after(WritingMode) const;
+    FractionalLayoutUnit start(WritingMode, TextDirection) const;
+    FractionalLayoutUnit end(WritingMode, TextDirection) const;
 
-    void setBefore(const RenderStyle*, FractionalLayoutUnit);
-    void setAfter(const RenderStyle*, FractionalLayoutUnit);
-    void setStart(const RenderStyle*, FractionalLayoutUnit);
-    void setEnd(const RenderStyle*, FractionalLayoutUnit);
+    void setBefore(WritingMode, FractionalLayoutUnit);
+    void setAfter(WritingMode, FractionalLayoutUnit);
+    void setStart(WritingMode, TextDirection, FractionalLayoutUnit);
+    void setEnd(WritingMode, TextDirection, FractionalLayoutUnit);
 
-    FractionalLayoutUnit& mutableLogicalLeft(const RenderStyle*);
-    FractionalLayoutUnit& mutableLogicalRight(const RenderStyle*);
+    FractionalLayoutUnit& mutableLogicalLeft(WritingMode);
+    FractionalLayoutUnit& mutableLogicalRight(WritingMode);
 
-    FractionalLayoutUnit& mutableBefore(const RenderStyle*);
-    FractionalLayoutUnit& mutableAfter(const RenderStyle*);
+    FractionalLayoutUnit& mutableBefore(WritingMode);
+    FractionalLayoutUnit& mutableAfter(WritingMode);
 
 private:
     FractionalLayoutUnit m_top;

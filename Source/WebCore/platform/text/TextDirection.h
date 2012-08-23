@@ -28,7 +28,9 @@
 
 namespace WebCore {
 
-    enum TextDirection { RTL, LTR };
+enum TextDirection { RTL, LTR };
+
+inline bool isLeftToRightDirection(TextDirection direction) { return direction == LTR; }
 
 }
 

@@ -130,11 +130,6 @@ enum ETableLayout {
     TAUTO, TFIXED
 };
 
-// CSS Text Layout Module Level 3: Vertical writing support
-enum WritingMode {
-    TopToBottomWritingMode, RightToLeftWritingMode, LeftToRightWritingMode, BottomToTopWritingMode
-};
-
 enum TextCombine {
     TextCombineNone, TextCombineHorizontal
 };

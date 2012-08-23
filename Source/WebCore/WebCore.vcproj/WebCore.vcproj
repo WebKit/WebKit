@@ -34026,6 +34026,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\WritingMode.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\WidthIterator.cpp"
 					>
 				</File>

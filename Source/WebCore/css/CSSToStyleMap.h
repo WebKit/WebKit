@@ -30,6 +30,7 @@ namespace WebCore {
 class FillLayer;
 class CSSValue;
 class Animation;
+class RenderStyle;
 class StyleImage;
 class StyleResolver;
 class NinePieceImage;

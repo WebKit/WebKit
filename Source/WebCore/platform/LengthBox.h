@@ -23,6 +23,8 @@
 #define LengthBox_h
 
 #include "Length.h"
+#include "TextDirection.h"
+#include "WritingMode.h"
 
 namespace WebCore {
 
@@ -70,13 +72,13 @@ struct LengthBox {
     Length top() const { return m_top; }
     Length bottom() const { return m_bottom; }
 
-    Length logicalLeft(const RenderStyle*) const;
-    Length logicalRight(const RenderStyle*) const;
+    Length logicalLeft(WritingMode) const;
+    Length logicalRight(WritingMode) const;
 
-    Length before(const RenderStyle*) const;
-    Length after(const RenderStyle*) const;
-    Length start(const RenderStyle*) const;
-    Length end(const RenderStyle*) const;
+    Length before(WritingMode) const;
+    Length after(WritingMode) const;
+    Length start(WritingMode, TextDirection) const;
+    Length end(WritingMode, TextDirection) const;
 
     bool operator==(const LengthBox& o) const
     {

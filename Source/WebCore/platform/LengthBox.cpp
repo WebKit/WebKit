@@ -31,23 +31,21 @@
 #include "config.h"
 #include "LengthBox.h"
 
-#include "RenderStyle.h"
-
 namespace WebCore {
 
-Length LengthBox::logicalLeft(const RenderStyle* style) const
+Length LengthBox::logicalLeft(WritingMode writingMode) const
 {
-    return style->isHorizontalWritingMode() ? m_left : m_top;
+    return isHorizontalWritingMode(writingMode) ? m_left : m_top;
 }
 
-Length LengthBox::logicalRight(const RenderStyle* style) const
+Length LengthBox::logicalRight(WritingMode writingMode) const
 {
-    return style->isHorizontalWritingMode() ? m_right : m_bottom;
+    return isHorizontalWritingMode(writingMode) ? m_right : m_bottom;
 }
 
-Length LengthBox::before(const RenderStyle* style) const
+Length LengthBox::before(WritingMode writingMode) const
 {
-    switch (style->writingMode()) {
+    switch (writingMode) {
     case TopToBottomWritingMode:
         return m_top;
     case BottomToTopWritingMode:
@@ -61,9 +59,9 @@ Length LengthBox::before(const RenderStyle* style) const
     return m_top;
 }
 
-Length LengthBox::after(const RenderStyle* style) const
+Length LengthBox::after(WritingMode writingMode) const
 {
-    switch (style->writingMode()) {
+    switch (writingMode) {
     case TopToBottomWritingMode:
         return m_bottom;
     case BottomToTopWritingMode:
@@ -77,18 +75,18 @@ Length LengthBox::after(const RenderStyle* style) const
     return m_bottom;
 }
 
-Length LengthBox::start(const RenderStyle* style) const
+Length LengthBox::start(WritingMode writingMode, TextDirection direction) const
 {
-    if (style->isHorizontalWritingMode())
-        return style->isLeftToRightDirection() ? m_left : m_right;
-    return style->isLeftToRightDirection() ? m_top : m_bottom;
+    if (isHorizontalWritingMode(writingMode))
+        return isLeftToRightDirection(direction) ? m_left : m_right;
+    return isLeftToRightDirection(direction) ? m_top : m_bottom;
 }
 
-Length LengthBox::end(const RenderStyle* style) const
+Length LengthBox::end(WritingMode writingMode, TextDirection direction) const
 {
-    if (style->isHorizontalWritingMode())
-        return style->isLeftToRightDirection() ? m_right : m_left;
-    return style->isLeftToRightDirection() ? m_bottom : m_top;
+    if (isHorizontalWritingMode(writingMode))
+        return isLeftToRightDirection(direction) ? m_right : m_left;
+    return isLeftToRightDirection(direction) ? m_bottom : m_top;
 }
 
 } // namespace WebCore

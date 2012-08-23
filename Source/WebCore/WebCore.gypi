@@ -531,6 +531,7 @@
             'platform/text/TextStream.h',
             'platform/text/UnicodeBidi.h',
             'platform/text/UnicodeRange.h',
+            'platform/text/WritingMode.h',
             'platform/text/mac/CharsetData.h',
             'plugins/PluginData.h',
             'plugins/PluginMainThreadScheduler.h',
