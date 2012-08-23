@@ -62,61 +62,61 @@ Cursor::Cursor(wxCursor* c)
 
 const Cursor& pointerCursor()
 {
-    static Cursor c = new wxCursor(wxCURSOR_ARROW);
+    static Cursor c = Cursor(new wxCursor(wxCURSOR_ARROW));
     return c;
 }
 
 const Cursor& crossCursor()
 {
-    static Cursor c = new wxCursor(wxCURSOR_CROSS);
+    static Cursor c = Cursor(new wxCursor(wxCURSOR_CROSS));
     return c;
 }
 
 const Cursor& handCursor()
 {
-    static Cursor c = new wxCursor(wxCURSOR_HAND);
+    static Cursor c = Cursor(new wxCursor(wxCURSOR_HAND));
     return c;
 }
 
 const Cursor& iBeamCursor()
 {
-    static Cursor c = new wxCursor(wxCURSOR_IBEAM);
+    static Cursor c = Cursor(new wxCursor(wxCURSOR_IBEAM));
     return c;
 }
 
 const Cursor& waitCursor()
 {
-    static Cursor c = new wxCursor(wxCURSOR_WAIT);
+    static Cursor c = Cursor(new wxCursor(wxCURSOR_WAIT));
     return c;
 }
 
 const Cursor& helpCursor()
 {
-    static Cursor c = new wxCursor(wxCURSOR_QUESTION_ARROW);
+    static Cursor c = Cursor(new wxCursor(wxCURSOR_QUESTION_ARROW));
     return c;
 }
 
 const Cursor& eastResizeCursor()
 {
-    static Cursor c = new wxCursor(wxCURSOR_SIZEWE);
+    static Cursor c = Cursor(new wxCursor(wxCURSOR_SIZEWE));
     return c;
 }
 
 const Cursor& northResizeCursor()
 {
-    static Cursor c = new wxCursor(wxCURSOR_SIZENS);
+    static Cursor c = Cursor(new wxCursor(wxCURSOR_SIZENS));
     return c;
 }
 
 const Cursor& northEastResizeCursor()
 {
-    static Cursor c = new wxCursor(wxCURSOR_SIZENESW);
+    static Cursor c = Cursor(new wxCursor(wxCURSOR_SIZENESW));
     return c;
 }
 
 const Cursor& northWestResizeCursor()
 {
-    static Cursor c = new wxCursor(wxCURSOR_SIZENWSE);
+    static Cursor c = Cursor(new wxCursor(wxCURSOR_SIZENWSE));
     return c;
 }
 
@@ -171,14 +171,14 @@ const Cursor& northWestSouthEastResizeCursor()
 const Cursor& columnResizeCursor()
 {
     // FIXME: Windows does not have a standard column resize cursor
-    static Cursor c = new wxCursor(wxCURSOR_SIZING);
+    static Cursor c = Cursor(new wxCursor(wxCURSOR_SIZING));
     return c;
 }
 
 const Cursor& rowResizeCursor()
 {
     // FIXME: Windows does not have a standard row resize cursor
-    static Cursor c = new wxCursor(wxCURSOR_SIZING);
+    static Cursor c = Cursor(new wxCursor(wxCURSOR_SIZING));
     return c;
 }
     
@@ -270,13 +270,13 @@ const Cursor& noneCursor()
 
 const Cursor& notAllowedCursor()
 {
-    static Cursor c = new wxCursor(wxCURSOR_NO_ENTRY);
+    static Cursor c = Cursor(new wxCursor(wxCURSOR_NO_ENTRY));
     return c;
 }
 
 const Cursor& zoomInCursor()
 {
-    static Cursor c = new wxCursor(wxCURSOR_MAGNIFIER);
+    static Cursor c = Cursor(new wxCursor(wxCURSOR_MAGNIFIER));
     return c;
 }
 
@@ -300,7 +300,7 @@ const Cursor& grabbingCursor()
 
 const Cursor& moveCursor()
 {
-    static Cursor c = new wxCursor(wxCURSOR_SIZING);
+    static Cursor c = Cursor(new wxCursor(wxCURSOR_SIZING));
     return c;
 }
 
