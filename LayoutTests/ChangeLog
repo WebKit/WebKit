@@ -1,5 +1,11 @@
 2012-08-22  Mark Lam  <mark.lam@apple.com>
 
+        Fix another test.
+
+        * platform/mac/platform/mac/fast/text/vertical-surrogate-pair-expected.txt:
+
+2012-08-22  Mark Lam  <mark.lam@apple.com>
+
         Fix some more tests.
 
         * http/tests/loading/embed-image-load-outlives-gc-without-crashing-expected.txt:
