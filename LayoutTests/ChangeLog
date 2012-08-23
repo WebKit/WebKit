@@ -1,3 +1,9 @@
+2012-08-23  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed Chromium gardeing.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-23  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Unreviewed gardening.

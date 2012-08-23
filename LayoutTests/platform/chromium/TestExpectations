@@ -3516,4 +3516,4 @@ BUGWK94730 MAC : fast/repaint/japanese-rl-selection-repaint-in-regions.html = IM
 
 BUGCR67540 BUGWK94735 LINUX : fast/text/emphasis-overlap.html = IMAGE IMAGE+TEXT
 
-BUGWK94793 XP DEBUG : fast/notifications/notifications-event-listener-crash.html = TEXT PASS
+BUGWK94793 : fast/notifications/notifications-event-listener-crash.html = TEXT PASS
