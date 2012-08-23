@@ -60,22 +60,38 @@ WebInspector._elementDragStart = function(elementDragStart, elementDrag, element
     if (elementDragStart && !elementDragStart(event))
         return;
 
-    // Install glass pane
-    if (WebInspector._elementDraggingGlassPane)
+    if (WebInspector._elementDraggingGlassPane) {
         WebInspector._elementDraggingGlassPane.dispose();
+        delete WebInspector._elementDraggingGlassPane;
+    }
 
-    WebInspector._elementDraggingGlassPane = new WebInspector.GlassPane();
+    var targetDocument = event.target.ownerDocument;
 
     WebInspector._elementDraggingEventListener = elementDrag;
     WebInspector._elementEndDraggingEventListener = elementDragEnd;
+    WebInspector._mouseOutWhileDraggingTargetDocument = targetDocument;
 
-    var targetDocument = event.target.ownerDocument;
     targetDocument.addEventListener("mousemove", WebInspector._elementDraggingEventListener, true);
     targetDocument.addEventListener("mouseup", WebInspector._elementDragEnd, true);
+    targetDocument.addEventListener("mouseout", WebInspector._mouseOutWhileDragging, true);
 
     targetDocument.body.style.cursor = cursor;
 
     event.preventDefault();
+}
+
+WebInspector._mouseOutWhileDragging = function()
+{
+    WebInspector._unregisterMouseOutWhileDragging();
+    WebInspector._elementDraggingGlassPane = new WebInspector.GlassPane();
+}
+
+WebInspector._unregisterMouseOutWhileDragging = function()
+{
+    if (!WebInspector._mouseOutWhileDraggingTargetDocument)
+        return;
+    WebInspector._mouseOutWhileDraggingTargetDocument.removeEventListener("mouseout", WebInspector._mouseOutWhileDragging, true);
+    delete WebInspector._mouseOutWhileDraggingTargetDocument;
 }
 
 WebInspector._elementDragEnd = function(event)
@@ -83,6 +99,7 @@ WebInspector._elementDragEnd = function(event)
     var targetDocument = event.target.ownerDocument;
     targetDocument.removeEventListener("mousemove", WebInspector._elementDraggingEventListener, true);
     targetDocument.removeEventListener("mouseup", WebInspector._elementDragEnd, true);
+    WebInspector._unregisterMouseOutWhileDragging();
 
     targetDocument.body.style.removeProperty("cursor");
 
