@@ -1233,10 +1233,10 @@ void RenderFlexibleBox::alignChildren(OrderIterator& iterator, const WTF::Vector
 void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox* child, LayoutUnit lineCrossAxisExtent)
 {
     if (!isColumnFlow() && child->style()->logicalHeight().isAuto()) {
-        // FIXME: If the child has orthogonal flow, then it already has an override height set. How do we stretch?
+        // FIXME: If the child has orthogonal flow, then it already has an override height set, so use it.
         if (!hasOrthogonalFlow(child)) {
             LayoutUnit stretchedLogicalHeight = child->logicalHeight() + availableAlignmentSpaceForChild(lineCrossAxisExtent, child);
-            LayoutUnit desiredLogicalHeight = child->logicalHeightConstrainedByMinMax(stretchedLogicalHeight);
+            LayoutUnit desiredLogicalHeight = child->constrainLogicalHeightByMinMax(stretchedLogicalHeight);
 
             // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
             if (desiredLogicalHeight != child->logicalHeight()) {
