@@ -199,7 +199,6 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
     this._workspace.addEventListener(WebInspector.Workspace.Events.WorkspaceReset, this._reset.bind(this), this);
 
     WebInspector.advancedSearchController.registerSearchScope(new WebInspector.ScriptsSearchScope(this._workspace));
-    WebInspector.ContextMenu.registerProvider(this);
 }
 
 WebInspector.ScriptsPanel.prototype = {

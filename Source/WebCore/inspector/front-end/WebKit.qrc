@@ -110,6 +110,7 @@
     <file>NetworkLog.js</file>
     <file>NetworkManager.js</file>
     <file>NetworkPanel.js</file>
+    <file>NetworkPanelDescriptor.js</file>
     <file>NetworkRequest.js</file>
     <file>Object.js</file>
     <file>ObjectPopoverHelper.js</file>
@@ -151,6 +152,7 @@
     <file>ScriptFormatterWorker.js</file>
     <file>ScriptSnippetModel.js</file>
     <file>ScriptsPanel.js</file>
+    <file>ScriptsPanelDescriptor.js</file>
     <file>ScriptsNavigator.js</file>
     <file>ScriptsSearchScope.js</file>
     <file>SearchController.js</file>

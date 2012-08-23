@@ -27,7 +27,7 @@
 /**
  * @constructor
  * @extends {WebInspector.PropertiesSection}
- * @param {WebInspector.RemoteObject=} object
+ * @param {WebInspector.RemoteObject} object
  * @param {string|Element=} title
  * @param {string=} subtitle
  * @param {string=} emptyPlaceholder
@@ -50,38 +50,6 @@ WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPl
 
 WebInspector.ObjectPropertiesSection._arrayLoadThreshold = 100;
 
-
-/**
- * @interface
- */
-WebInspector.ObjectPropertiesSection.ContextMenuProvider = function()
-{
-}
-
-WebInspector.ObjectPropertiesSection.ContextMenuProvider.prototype = {
-    /**
-     * @param {WebInspector.ObjectPropertiesSection} section
-     * @param {WebInspector.ContextMenu} contextMenu
-     */
-    populateContextMenu: function(section, contextMenu)
-    {
-    }
-}
-
-
-/**
- * @type {Array.<WebInspector.ObjectPropertiesSection.ContextMenuProvider>}
- */
-WebInspector.ObjectPropertiesSection._contextMenuProviers = [];
-
-/**
- * @param {WebInspector.ObjectPropertiesSection.ContextMenuProvider} provider
- */
-WebInspector.ObjectPropertiesSection.addContextMenuProvider = function(provider)
-{
-    WebInspector.ObjectPropertiesSection._contextMenuProviers.push(provider);
-}
-
 WebInspector.ObjectPropertiesSection.prototype = {
     enableContextMenu: function()
     {
@@ -91,9 +59,7 @@ WebInspector.ObjectPropertiesSection.prototype = {
     _contextMenuEventFired: function(event)
     {
         var contextMenu = new WebInspector.ContextMenu();
-        var providers = WebInspector.ObjectPropertiesSection._contextMenuProviers;
-        for (var i = 0; i < providers.length; i++)
-            providers[i].populateContextMenu(this, contextMenu);
+        contextMenu.appendApplicableItems(this.object);
         if (!contextMenu.isEmpty())
             contextMenu.show(event);
     },

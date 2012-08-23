@@ -39,8 +39,8 @@ var WebInspector = {
 
         var elements = new WebInspector.PanelDescriptor("elements", WebInspector.UIString("Elements"), "ElementsPanel", "ElementsPanel.js");
         var resources = new WebInspector.PanelDescriptor("resources", WebInspector.UIString("Resources"), "ResourcesPanel", "ResourcesPanel.js");
-        var network = new WebInspector.PanelDescriptor("network", WebInspector.UIString("Network"), "NetworkPanel", "NetworkPanel.js");
-        var scripts = new WebInspector.PanelDescriptor("scripts", WebInspector.UIString("Sources"), "ScriptsPanel", "ScriptsPanel.js");
+        var network = new WebInspector.NetworkPanelDescriptor();
+        var scripts = new WebInspector.ScriptsPanelDescriptor();
         var timeline = new WebInspector.PanelDescriptor("timeline", WebInspector.UIString("Timeline"), "TimelinePanel", "TimelinePanel.js");
         var profiles = new WebInspector.PanelDescriptor("profiles", WebInspector.UIString("Profiles"), "ProfilesPanel", "ProfilesPanel.js");
         var audits = new WebInspector.PanelDescriptor("audits", WebInspector.UIString("Audits"), "AuditsPanel", "AuditsPanel.js");

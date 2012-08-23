@@ -197,6 +197,7 @@ modules = [
             "ResourceView.js",
             "ResourceWebSocketFrameView.js",
             "NetworkPanel.js",
+            "NetworkPanelDescriptor.js",
         ]
     },
     {
@@ -229,6 +230,7 @@ modules = [
             "ScopeChainSidebarPane.js",
             "ScriptsNavigator.js",
             "ScriptsPanel.js",
+            "ScriptsPanelDescriptor.js",
             "ScriptsSearchScope.js",
             "SnippetJavaScriptSourceFrame.js",
             "StyleSheetOutlineDialog.js",

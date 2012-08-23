@@ -1308,7 +1308,6 @@ WebInspector.NetworkPanel = function()
         return this.visibleView;
     }
     WebInspector.GoToLineDialog.install(this, viewGetter.bind(this));
-    WebInspector.ContextMenu.registerProvider(this);
 }
 
 WebInspector.NetworkPanel.prototype = {

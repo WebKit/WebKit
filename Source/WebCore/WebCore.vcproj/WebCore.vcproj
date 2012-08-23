@@ -76166,6 +76166,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\NetworkPanelDescriptor.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\NetworkRequest.js"
 					>
 				</File>
@@ -76359,6 +76363,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ScriptsPanel.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ScriptsPanelDescriptor.js"
 					>
 				</File>
 				<File

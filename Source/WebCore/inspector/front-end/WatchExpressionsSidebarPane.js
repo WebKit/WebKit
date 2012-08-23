@@ -123,7 +123,7 @@ WebInspector.WatchExpressionsSection = function()
 {
     this._watchObjectGroupId = "watch-group";
 
-    WebInspector.ObjectPropertiesSection.call(this);
+    WebInspector.ObjectPropertiesSection.call(this, WebInspector.RemoteObject.fromPrimitiveValue(""));
 
     this.emptyElement = document.createElement("div");
     this.emptyElement.className = "info";
