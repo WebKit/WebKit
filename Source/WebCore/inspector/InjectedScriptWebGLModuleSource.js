@@ -35,6 +35,105 @@
  */
 (function (InjectedScriptHost, inspectedWindow, injectedScriptId) {
 
+var TypeUtils = {
+    /**
+     * http://www.khronos.org/registry/typedarray/specs/latest/#7
+     * @type {Array.<Function>}
+     */
+    typedArrayClasses: (function(typeNames) {
+        var result = [];
+        for (var i = 0, n = typeNames.length; i < n; ++i) {
+            if (inspectedWindow[typeNames[i]])
+                result.push(inspectedWindow[typeNames[i]]);
+        }
+        return result;
+    })(["Int8Array", "Uint8Array", "Uint8ClampedArray", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "Float32Array", "Float64Array"]),
+
+    /**
+     * @param {*} array
+     * @return {Function}
+     */
+    typedArrayClass: function(array)
+    {
+        var classes = TypeUtils.typedArrayClasses;
+        for (var i = 0, n = classes.length; i < n; ++i) {
+            if (array instanceof classes[i])
+                return classes[i];
+        }
+        return null;
+    },
+
+    /**
+     * @param {*} obj
+     * @return {*}
+     * FIXME: suppress checkTypes due to outdated builtin externs for CanvasRenderingContext2D and ImageData
+     * @suppress {checkTypes}
+     */
+    clone: function(obj)
+    {
+        if (!obj)
+            return obj;
+
+        var type = typeof obj;
+        if (type !== "object" && type !== "function")
+            return obj;
+
+        // Handle Array and ArrayBuffer instances.
+        if (typeof obj.slice === "function") {
+            console.assert(obj instanceof Array || obj instanceof ArrayBuffer);
+            return obj.slice(0);
+        }
+
+        var typedArrayClass = TypeUtils.typedArrayClass(obj);
+        if (typedArrayClass)
+            return new typedArrayClass(obj);
+
+        if (obj instanceof HTMLImageElement)
+            return obj.cloneNode(true);
+
+        if (obj instanceof HTMLCanvasElement) {
+            var result = obj.cloneNode(true);
+            var context = result.getContext("2d");
+            context.drawImage(obj, 0, 0);
+            return result;
+        }
+
+        if (obj instanceof HTMLVideoElement) {
+            var result = obj.cloneNode(true);
+            // FIXME: Copy HTMLVideoElement's current image into a 2d canvas.
+            return result;
+        }
+
+        if (obj instanceof ImageData) {
+            var context = TypeUtils._dummyCanvas2dContext();
+            var result = context.createImageData(obj);
+            for (var i = 0, n = obj.data.length; i < n; ++i)
+              result.data[i] = obj.data[i];
+            return result;
+        }
+
+        console.error("ASSERT_NOT_REACHED: failed to clone object: ", obj);
+        return obj;
+    },
+
+    /**
+     * @return {CanvasRenderingContext2D}
+     */
+    _dummyCanvas2dContext: function()
+    {
+        var context = TypeUtils._dummyCanvas2dContext;
+        if (!context) {
+            var canvas = inspectedWindow.document.createElement("canvas");
+            context = canvas.getContext("2d");
+            var contextResource = Resource.forObject(context);
+            if (contextResource)
+                context = contextResource.wrappedObject();
+            TypeUtils._dummyCanvas2dContext = context;
+        }
+        return context;
+    }
+}
+
 /**
  * @constructor
  */
@@ -93,7 +192,7 @@ Cache.prototype = {
  * @param {Resource|Object} thisObject
  * @param {string} functionName
  * @param {Array|Arguments} args
- * @param {Resource|*} result
+ * @param {Resource|*=} result
  */
 function Call(thisObject, functionName, args, result)
 {
@@ -134,6 +233,18 @@ Call.prototype = {
     result: function()
     {
         return this._result;
+    },
+
+    freeze: function()
+    {
+        if (this._freezed)
+            return;
+        this._freezed = true;
+        for (var i = 0, n = this._args.length; i < n; ++i) {
+            // FIXME: freeze the Resources also!
+            if (!Resource.forObject(this._args[i]))
+                this._args[i] = TypeUtils.clone(this._args[i]);
+        }
     }
 }
 
@@ -203,18 +314,24 @@ function Resource(wrappedObject)
 {
     this._id = ++Resource._uniqueId;
     this._resourceManager = null;
+    this._calls = [];
     this.setWrappedObject(wrappedObject);
 }
 
+/**
+ * @type {number}
+ */
 Resource._uniqueId = 0;
 
 /**
- * @param {Object} obj
+ * @param {*} obj
  * @return {Resource}
  */
 Resource.forObject = function(obj)
 {
-    if (!obj || obj instanceof Resource)
+    if (!obj)
+        return null;
+    if (obj instanceof Resource)
         return obj;
     if (typeof obj === "object")
         return obj["__resourceObject"];
@@ -243,7 +360,8 @@ Resource.prototype = {
      */
     setWrappedObject: function(value)
     {
-        console.assert(value && !(value instanceof Resource), "Binding a Resource object to another Resource object?");
+        console.assert(value, "wrappedObject should not be NULL");
+        console.assert(!(value instanceof Resource), "Binding a Resource object to another Resource object?");
         this._wrappedObject = value;
         this._bindObjectToResource(value);
     },
@@ -271,6 +389,23 @@ Resource.prototype = {
     setManager: function(value)
     {
         this._resourceManager = value;
+    },
+
+    /**
+     * @return {Array.<Call>}
+     */
+    calls: function()
+    {
+        return this._calls;
+    },
+
+    /**
+     * @param {Call} call
+     */
+    pushCall: function(call)
+    {
+        call.freeze();
+        this._calls.push(call);
     },
 
     /**
@@ -391,7 +526,7 @@ WebGLRenderingContextResource.prototype.__proto__ = Resource.prototype;
  * @param {WebGLRenderingContext} originalObject
  * @param {Function} originalFunction
  * @param {string} functionName
- * @param {Array} args
+ * @param {Array|Arguments} args
  */
 WebGLRenderingContextResource.WrapFunction = function(originalObject, originalFunction, functionName, args)
 {
@@ -591,6 +726,10 @@ ResourceTrackingManager.prototype = {
         this._stopCapturingOnFrameEnd = true;
     },
 
+    /**
+     * @param {Resource} resource
+     * @param {Array|Arguments} args
+     */
     captureArguments: function(resource, args)
     {
         if (!this._capturing)
