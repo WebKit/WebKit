@@ -31,7 +31,7 @@
 #ifndef V8PerContextData_h
 #define V8PerContextData_h
 
-#include "OwnHandle.h"
+#include "ScopedPersistent.h"
 #include "WrapperTypeInfo.h"
 #include <v8.h>
 #include <wtf/HashMap.h>
@@ -90,8 +90,8 @@ private:
     ConstructorMap m_constructorMap;
 
     v8::Handle<v8::Context> m_context;
-    OwnHandle<v8::Value> m_errorPrototype;
-    OwnHandle<v8::Value> m_objectPrototype;
+    ScopedPersistent<v8::Value> m_errorPrototype;
+    ScopedPersistent<v8::Value> m_objectPrototype;
 };
 
 } // namespace WebCore

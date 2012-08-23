@@ -31,7 +31,7 @@
 #ifndef ScriptInstance_h
 #define ScriptInstance_h
 
-#include "OwnHandle.h"
+#include "ScopedPersistent.h"
 #include <v8.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -48,7 +48,7 @@ public:
 private:
     explicit V8ScriptInstance(v8::Handle<v8::Object>);
 
-    OwnHandle<v8::Object> m_instance;
+    ScopedPersistent<v8::Object> m_instance;
 };
 
 typedef RefPtr<V8ScriptInstance> ScriptInstance;

@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OwnHandle_h
-#define OwnHandle_h
+#ifndef ScopedPersistent_h
+#define ScopedPersistent_h
 
 #include <v8.h>
 #include <wtf/Noncopyable.h>
@@ -37,17 +37,17 @@
 namespace WebCore {
 
 template<typename T>
-class OwnHandle {
-    WTF_MAKE_NONCOPYABLE(OwnHandle);
+class ScopedPersistent {
+    WTF_MAKE_NONCOPYABLE(ScopedPersistent);
 public:
-    OwnHandle() { }
+    ScopedPersistent() { }
 
-    explicit OwnHandle(v8::Handle<T> handle)
+    explicit ScopedPersistent(v8::Handle<T> handle)
         : m_handle(v8::Persistent<T>::New(handle))
     {
     }
 
-    ~OwnHandle()
+    ~ScopedPersistent()
     {
         clear();
     }
@@ -75,4 +75,4 @@ private:
 
 } // namespace WebCore
 
-#endif // OwnHandle_h
+#endif // ScopedPersistent_h

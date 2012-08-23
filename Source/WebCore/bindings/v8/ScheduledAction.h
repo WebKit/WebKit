@@ -31,7 +31,7 @@
 #ifndef ScheduledAction_h
 #define ScheduledAction_h
 
-#include "OwnHandle.h"
+#include "ScopedPersistent.h"
 #include "ScriptSourceCode.h"
 #include <v8.h>
 #include <wtf/Forward.h>
@@ -62,8 +62,8 @@ private:
     void execute(WorkerContext*);
 #endif
 
-    OwnHandle<v8::Context> m_context;
-    OwnHandle<v8::Function> m_function;
+    ScopedPersistent<v8::Context> m_context;
+    ScopedPersistent<v8::Function> m_function;
     Vector<v8::Persistent<v8::Value> > m_args;
     ScriptSourceCode m_code;
 };

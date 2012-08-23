@@ -33,8 +33,8 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
-#include "OwnHandle.h"
 #include "PlatformString.h"
+#include "ScopedPersistent.h"
 #include "ScriptBreakpoint.h"
 #include "Timer.h"
 #include <v8-debug.h>
@@ -125,13 +125,13 @@ protected:
     v8::Local<v8::Value> callDebuggerMethod(const char* functionName, int argc, v8::Handle<v8::Value> argv[]);
 
     PauseOnExceptionsState m_pauseOnExceptionsState;
-    OwnHandle<v8::Object> m_debuggerScript;
-    OwnHandle<v8::Object> m_executionState;
+    ScopedPersistent<v8::Object> m_debuggerScript;
+    ScopedPersistent<v8::Object> m_executionState;
     v8::Local<v8::Context> m_pausedContext;
 
     bool m_breakpointsActivated;
-    OwnHandle<v8::FunctionTemplate> m_breakProgramCallbackTemplate;
-    HashMap<String, OwnPtr<OwnHandle<v8::Script> > > m_compiledScripts;
+    ScopedPersistent<v8::FunctionTemplate> m_breakProgramCallbackTemplate;
+    HashMap<String, OwnPtr<ScopedPersistent<v8::Script> > > m_compiledScripts;
 };
 
 } // namespace WebCore

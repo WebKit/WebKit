@@ -441,7 +441,7 @@ void ScriptDebugServer::compileScript(ScriptState* state, const String& expressi
         return;
 
     *scriptId = toWebCoreStringWithNullOrUndefinedCheck(script->Id());
-    m_compiledScripts.set(*scriptId, adoptPtr(new OwnHandle<v8::Script>(script)));
+    m_compiledScripts.set(*scriptId, adoptPtr(new ScopedPersistent<v8::Script>(script)));
 }
 
 void ScriptDebugServer::clearCompiledScripts()
@@ -454,8 +454,8 @@ void ScriptDebugServer::runScript(ScriptState* state, const String& scriptId, Sc
     if (!m_compiledScripts.contains(scriptId))
         return;
     v8::HandleScope handleScope;
-    OwnHandle<v8::Script>* scriptOwnHandle = m_compiledScripts.get(scriptId);
-    v8::Local<v8::Script> script = v8::Local<v8::Script>::New(scriptOwnHandle->get());
+    ScopedPersistent<v8::Script>* scriptHandle = m_compiledScripts.get(scriptId);
+    v8::Local<v8::Script> script = v8::Local<v8::Script>::New(scriptHandle->get());
     m_compiledScripts.remove(scriptId);
     if (script.IsEmpty())
         return;

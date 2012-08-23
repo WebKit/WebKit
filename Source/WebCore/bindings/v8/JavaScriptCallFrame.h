@@ -33,8 +33,8 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
-#include "OwnHandle.h"
 #include "PlatformString.h"
+#include "ScopedPersistent.h"
 #include <v8-debug.h>
 #include <wtf/RefCounted.h>
 
@@ -66,8 +66,8 @@ private:
     JavaScriptCallFrame(v8::Handle<v8::Context> debuggerContext, v8::Handle<v8::Object> callFrame);
 
     RefPtr<JavaScriptCallFrame> m_caller;
-    OwnHandle<v8::Context> m_debuggerContext;
-    OwnHandle<v8::Object> m_callFrame;
+    ScopedPersistent<v8::Context> m_debuggerContext;
+    ScopedPersistent<v8::Object> m_callFrame;
 };
 
 } // namespace WebCore
