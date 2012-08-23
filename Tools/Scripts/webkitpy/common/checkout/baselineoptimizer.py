@@ -151,33 +151,37 @@ class BaselineOptimizer(object):
         return new_results_by_directory
 
     def _optimize_by_pushing_results_up(self, results_by_directory, results_by_port_name, port_names_by_result):
-        results_by_directory = results_by_directory
-        best_so_far = results_by_directory
-        while True:
-            new_results_by_directory = copy.copy(best_so_far)
-            for port_name in self._hypergraph.keys():
-                fallback_path = self._hypergraph[port_name]
-                current_index, current_directory = self._find_in_fallbackpath(fallback_path, results_by_port_name[port_name], results_by_directory)
-                current_result = results_by_port_name[port_name]
-                for index in range(current_index + 1, len(fallback_path)):
-                    new_directory = fallback_path[index]
-                    if not new_directory in new_results_by_directory:
-                        new_results_by_directory[new_directory] = current_result
-                        if current_directory in new_results_by_directory:
-                            del new_results_by_directory[current_directory]
-                    elif new_results_by_directory[new_directory] == current_result:
-                        if current_directory in new_results_by_directory:
-                            del new_results_by_directory[current_directory]
-                    else:
-                        # The new_directory contains a different result, so stop trying to push results up.
-                        break
+        try:
+            results_by_directory = results_by_directory
+            best_so_far = results_by_directory
+            while True:
+                new_results_by_directory = copy.copy(best_so_far)
+                for port_name in self._hypergraph.keys():
+                    fallback_path = self._hypergraph[port_name]
+                    current_index, current_directory = self._find_in_fallbackpath(fallback_path, results_by_port_name[port_name], best_so_far)
+                    current_result = results_by_port_name[port_name]
+                    for index in range(current_index + 1, len(fallback_path)):
+                        new_directory = fallback_path[index]
+                        if not new_directory in new_results_by_directory:
+                            new_results_by_directory[new_directory] = current_result
+                            if current_directory in new_results_by_directory:
+                                del new_results_by_directory[current_directory]
+                        elif new_results_by_directory[new_directory] == current_result:
+                            if current_directory in new_results_by_directory:
+                                del new_results_by_directory[current_directory]
+                        else:
+                            # The new_directory contains a different result, so stop trying to push results up.
+                            break
 
-            if len(new_results_by_directory) >= len(best_so_far):
-                # We've failed to improve, so give up.
-                break
-            best_so_far = new_results_by_directory
+                if len(new_results_by_directory) >= len(best_so_far):
+                    # We've failed to improve, so give up.
+                    break
+                best_so_far = new_results_by_directory
 
-        return best_so_far
+            return best_so_far
+        except KeyError as e:
+            # FIXME: KeyErrors get raised if we're missing baselines. We should handle this better.
+            return results_by_directory
 
     def _find_in_fallbackpath(self, fallback_path, current_result, results_by_directory):
         for index, directory in enumerate(fallback_path):

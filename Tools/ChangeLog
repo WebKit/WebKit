@@ -1,5 +1,19 @@
 2012-08-22  Dirk Pranke  <dpranke@chromium.org>
 
+        Fix typos in r126374
+        https://bugs.webkit.org/show_bug.cgi?id=94665
+        Unreviewed, build fix.
+
+        Fix two issues that snuck in, one that caused a crash if there
+        were no baselines to optimize and one that occurred as a result
+        of failing to rename a variable when I changed the recursion to
+        a loop in the previous patch.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer.py:
+        (BaselineOptimizer._optimize_by_pushing_results_up):
+
+2012-08-22  Dirk Pranke  <dpranke@chromium.org>
+
         Baseline optimizer should try to optimize per-port if global optimization fails
         https://bugs.webkit.org/show_bug.cgi?id=94665
 
