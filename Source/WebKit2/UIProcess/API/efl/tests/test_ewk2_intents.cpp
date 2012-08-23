@@ -92,6 +92,10 @@ static void onIntentReceived(void* userData, Evas_Object*, void* eventInfo)
         suggestions = eina_list_sort(suggestions, 2, stringSortCb);
         EXPECT_STREQ(static_cast<const char*>(eina_list_nth(suggestions, 0)), "http://service1.com/");
         EXPECT_STREQ(static_cast<const char*>(eina_list_nth(suggestions, 1)), "http://service2.com/");
+
+        void* listData = 0;
+        EINA_LIST_FREE(suggestions, listData)
+             eina_stringshare_del(static_cast<const char*>(listData));
     }
 }
 

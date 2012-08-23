@@ -1,3 +1,15 @@
+2012-08-23  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] ewk_intent_request API test does not free Eina_List
+        https://bugs.webkit.org/show_bug.cgi?id=94809
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The used Eina_List should be freed due to ewk_intent_suggestions_get() documentation.
+
+        * UIProcess/API/efl/tests/test_ewk2_intents.cpp:
+        (onIntentReceived):
+
 2012-08-23  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Helper functions used by the raw webview tests should not be guarded by HAVE_QTQUICK
