@@ -1,3 +1,11 @@
+2012-08-23  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        WebInspector: unreviewed single line test fix.
+
+        The test has to open profiles panel explicitly because it is creating lazily.
+
+        * inspector/heap-snapshot-performance-test.js:
+
 2012-08-15  Scott Graham  <scottmg@chromium.org>
 
         Rename window.internals.fastMallocStatistics to mallocStatistics
