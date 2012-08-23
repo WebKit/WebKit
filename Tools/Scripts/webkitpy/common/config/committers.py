@@ -107,7 +107,6 @@ watchers_who_are_not_contributors = [
 
 
 contributors_who_are_not_committers = [
-    Contributor("Adam Kallai", "kadam@inf.u-szeged.hu", 'kadam'),
     Contributor("Aharon Lanin", "aharon@google.com"),
     Contributor("Alan Stearns", "stearns@adobe.com", 'astearns'),
     Contributor("Alexey Marinichev", ["amarinichev@chromium.org", "amarinichev@google.com"], "amarinichev"),
@@ -180,6 +179,7 @@ contributors_who_are_not_committers = [
 committers_unable_to_review = [
     Committer("Aaron Boodman", "aa@chromium.org", "aboodman"),
     Committer("Adam Bergkvist", "adam.bergkvist@ericsson.com", "adambe"),
+    Committer("Adam Kallai", "kadam@inf.u-szeged.hu", 'kadam'),
     Committer("Adam Klein", "adamk@chromium.org", "aklein"),
     Committer("Adam Langley", "agl@chromium.org", "agl"),
     Committer("Ademar de Souza Reis Jr", ["ademar.reis@gmail.com", "ademar@webkit.org"], "ademar"),
