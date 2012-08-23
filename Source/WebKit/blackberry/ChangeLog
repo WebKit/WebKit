@@ -1,3 +1,33 @@
+2012-08-23  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Web pages are zoomed out to much on initial load
+        https://bugs.webkit.org/show_bug.cgi?id=94830
+
+        Reviewed by Adam Treat.
+
+        PR: 193943
+        Browser continuously adds paddings to the left and right sides of the
+        main contents which makes the main contents even smaller.
+        The issue can be reproduced on the desktop websites such as
+        huffingtonpost.ca, bloomberg.com, online.wsj.com, nytimes.com,
+        yahoo.com, thestar.com, sina.com.cn, sohu.com and so on.
+        The root cause is that we layout those contents at the width of 1280
+        although the fixed width of the main contents of those websites is
+        less than 1000, which results in adding the paddings.
+        To fix this, we need to get back to the default max layout size
+        1024 * 768, which will make the main contents of those popular websites
+        take full advantage of the screen real estate and look much better.
+
+        Internally reviewed by Adam Treat.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::fixedLayoutSize):
+        (BlackBerry::WebKit::WebPagePrivate::recomputeVirtualViewportFromViewportArguments):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebKitSupport/RenderQueue.cpp:
+        (BlackBerry::WebKit::RenderQueue::splittingFactor):
+
 2012-08-22  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry] Make all pickers non-zoomable

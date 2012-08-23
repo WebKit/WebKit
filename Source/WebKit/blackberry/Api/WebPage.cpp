@@ -2488,8 +2488,8 @@ IntSize WebPagePrivate::fixedLayoutSize(bool snapToIncrement) const
     const int defaultLayoutHeight = m_defaultLayoutSize.height();
 
     int minWidth = defaultLayoutWidth;
-    int maxWidth = defaultMaxLayoutSize().width();
-    int maxHeight = defaultMaxLayoutSize().height();
+    int maxWidth = DEFAULT_MAX_LAYOUT_WIDTH;
+    int maxHeight = DEFAULT_MAX_LAYOUT_HEIGHT;
 
     // If the load state is none then we haven't actually got anything yet, but we need to layout
     // the entire page so that the user sees the entire page (unrendered) instead of just part of it.
@@ -3500,7 +3500,7 @@ IntSize WebPagePrivate::recomputeVirtualViewportFromViewportArguments()
     if (m_viewportArguments == defaultViewportArguments)
         return IntSize();
 
-    int desktopWidth = defaultMaxLayoutSize().width();
+    int desktopWidth = DEFAULT_MAX_LAYOUT_WIDTH;
     int deviceWidth = Platform::Graphics::Screen::primaryScreen()->width();
     int deviceHeight = Platform::Graphics::Screen::primaryScreen()->height();
     ViewportAttributes result = computeViewportAttributes(m_viewportArguments, desktopWidth, deviceWidth, deviceHeight, m_webSettings->devicePixelRatio(), m_defaultLayoutSize);
@@ -6201,16 +6201,6 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
         Platform::userInterfaceThreadMessageClient()->dispatchMessage(
             createMethodCallMessage(&WebPagePrivate::setCompositorBackgroundColor, this, backgroundColor));
     }
-}
-
-IntSize WebPagePrivate::defaultMaxLayoutSize()
-{
-    static IntSize size;
-    if (size.isEmpty())
-        size = IntSize(std::max(1024, Platform::Graphics::Screen::primaryScreen()->landscapeWidth()),
-                       std::max(768, Platform::Graphics::Screen::primaryScreen()->landscapeHeight()));
-
-    return size;
 }
 
 WebString WebPage::textHasAttribute(const WebString& query) const

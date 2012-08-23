@@ -41,6 +41,9 @@
 
 #include <BlackBerryPlatformMessage.h>
 
+#define DEFAULT_MAX_LAYOUT_WIDTH 1024
+#define DEFAULT_MAX_LAYOUT_HEIGHT 768
+
 namespace WebCore {
 class AutofillManager;
 class DOMWrapperWorld;
@@ -446,7 +449,6 @@ public:
     static WebCore::RenderLayer* enclosingPositionedAncestorOrSelfIfPositioned(WebCore::RenderLayer*);
     static WebCore::RenderLayer* enclosingFixedPositionedAncestorOrSelfIfFixedPositioned(WebCore::RenderLayer*);
 
-    static WebCore::IntSize defaultMaxLayoutSize();
     static const String& defaultUserAgent();
 
     void setVisible(bool);
