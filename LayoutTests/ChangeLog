@@ -1,3 +1,33 @@
+2012-08-22  Kenneth Russell  <kbr@google.com>
+
+        [Chromium] Need baselines for new paged-x and paged-y tests in fast/overflow after r126343
+        https://bugs.webkit.org/show_bug.cgi?id=94748
+
+        Unreviewed Chromium gardening. Added baselines via garden-o-matic.
+
+        * platform/chromium-linux/fast/overflow/paged-x-div-expected.png: Added.
+        * platform/chromium-linux/fast/overflow/paged-x-on-root-expected.png: Added.
+        * platform/chromium-linux/fast/overflow/paged-y-div-expected.png: Added.
+        * platform/chromium-linux/fast/overflow/paged-y-on-root-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/overflow/paged-x-div-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/overflow/paged-x-on-root-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/overflow/paged-y-div-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/overflow/paged-y-on-root-expected.png: Added.
+        * platform/chromium-mac/fast/overflow/paged-x-div-expected.png: Added.
+        * platform/chromium-mac/fast/overflow/paged-x-on-root-expected.png: Added.
+        * platform/chromium-mac/fast/overflow/paged-y-div-expected.png: Added.
+        * platform/chromium-mac/fast/overflow/paged-y-on-root-expected.png: Added.
+        * platform/chromium-win/fast/overflow/paged-x-div-expected.png: Added.
+        * platform/chromium-win/fast/overflow/paged-x-div-expected.txt: Added.
+        * platform/chromium-win/fast/overflow/paged-x-on-root-expected.png: Added.
+        * platform/chromium-win/fast/overflow/paged-x-on-root-expected.txt: Added.
+        * platform/chromium-win/fast/overflow/paged-y-div-expected.png: Added.
+        * platform/chromium-win/fast/overflow/paged-y-div-expected.txt: Added.
+        * platform/chromium-win/fast/overflow/paged-y-on-root-expected.png: Added.
+        * platform/chromium-win/fast/overflow/paged-y-on-root-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+            Removed expected failures.
+
 2012-08-22  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: revert int version when version change transaction aborts
