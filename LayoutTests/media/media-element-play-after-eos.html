@@ -9,10 +9,15 @@
 
             function start()
             {
+                mediaElement.src = findMediaFile('audio', 'content/silence');
+                waitForEvent("loadedmetadata", mediaLoadedMetadata);
+            }
+
+            function mediaLoadedMetadata()
+            {
                 waitForEvent("playing", mediaPlaying);
                 waitForEvent("pause", mediaPause);
                 waitForEvent("ended", mediaEnded);
-                mediaElement.src = findMediaFile('audio', 'content/silence');
                 run("mediaElement.play()");
             }
 

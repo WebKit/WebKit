@@ -1,3 +1,19 @@
+2012-08-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] media/video-duration-known-after-eos.html and media/media-element-play-after-eos.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=83790
+
+        Reviewed by Eric Seidel.
+
+        Refactor the tests to wait the loadedmetadata event before
+        starting playback and attempting any access to the duration
+        attribute. This is an attempt to eliminate flakyness of the tests.
+
+        * media/media-element-play-after-eos-expected.txt:
+        * media/media-element-play-after-eos.html:
+        * media/video-duration-known-after-eos.html:
+        * platform/gtk/TestExpectations:
+
 2012-08-22  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed Chromium gardeing.

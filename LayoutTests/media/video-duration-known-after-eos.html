@@ -19,24 +19,28 @@
                 run("video.currentTime = video.duration - 0.2");
             }
 
+            function loadedmetadata()
+            {
+                video.addEventListener("ended", ended);
+                video.addEventListener("playing", playing);
+
+                run("video.play()");
+            }
+
             function start()
             {
                 findMediaElement();
 
-                video.addEventListener("ended", ended);
-                video.addEventListener("playing", playing);
-
+                video.addEventListener("loadedmetadata", loadedmetadata);
                 video.src = findMediaFile("video", "content/test");
                 consoleWrite("");
-                run("video.play()");
             }
 
         </script>
     </head>
-    <body>
+    <body onload="start()">
         <video controls autobuffer></video>
         <p>Tests that duration is known after playback ended.</p>
-        <script>start()</script>
     </body>
 </html>
 
