@@ -1,3 +1,14 @@
+2012-08-23  Victor Carbune  <victor@rosedu.org>
+
+        Add myself to the committer list
+        https://bugs.webkit.org/show_bug.cgi?id=94659
+
+        Reviewed by James Robinson.
+
+        Added my email and IRC handle.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-08-22  Scott Graham  <scottmg@chromium.org>
 
         Don't unconditionally define NOMINMAX on Windows
