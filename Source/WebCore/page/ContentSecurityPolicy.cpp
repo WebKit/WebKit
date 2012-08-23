@@ -262,6 +262,9 @@ void CSPSourceList::parse(const UChar* begin, const UChar* end)
     bool isFirstSourceInList = true;
     while (position < end) {
         skipWhile<isASCIISpace>(position, end);
+        if (position == end)
+            return;
+
         const UChar* beginSource = position;
         skipWhile<isSourceCharacter>(position, end);
 

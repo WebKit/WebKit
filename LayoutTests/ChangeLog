@@ -1,3 +1,17 @@
+2012-08-23  Mike West  <mkwst@chromium.org>
+
+        Trailing spaces in CSP source lists should not generate console warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=94847
+
+        Reviewed by Adam Barth.
+
+        Trailing space after a valid source in a Content Security Policy source
+        list was accidentally generating console warnings about an invalid
+        (empty) source. This patch silently ignores trailing whitespace instead.
+
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-02-expected.txt:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-02.html:
+
 2012-08-23  Kenneth Russell  <kbr@google.com>
 
         [Chromium] LayoutTests: css3/selector3/xml tests are flaky / have wrong expectations on Snow Leopard
