@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+<body>
+<script>
+description("Basic tests for decodeAudioData function.");
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+    
+window.jsTestIsAsync = true;
+
+var context = new webkitAudioContext();
+
+try {
+    context.decodeAudioData(null, function(){}, function(){});
+    testFailed("decodeAudioData should raise exception when arraybuffer parameter is null.");
+} catch(e) {
+    testPassed("decodeAudioData raises exception correctly when arraybuffer parameter is null.");
+}
+
+var decodeCaseArray = [{url: "resources/media/24bit-44khz.wav", result: true},
+                       {url: "resources/media/invalid-audio-file.txt", result: false}];
+
+function runDecodeTest(index) {
+    if (index >= decodeCaseArray.length) {
+        finishJSTest();
+        return;
+    }
+
+    var request = new XMLHttpRequest();
+    request.open("GET", decodeCaseArray[index].url, true);
+    request.responseType = "arraybuffer";
+    
+    request.onload = function() {
+        context.decodeAudioData(request.response, successCallback, errorCallback);
+        
+        function successCallback() {
+            if (decodeCaseArray[index].result)
+                testPassed("The " + decodeCaseArray[index].url +  " test: successCallback has been called correctly.");
+            else
+                testFailed("The " + decodeCaseArray[index].url + " test: successCallback was not called.");
+            
+            runDecodeTest(++index);
+        }
+        
+        function errorCallback() {
+            if (decodeCaseArray[index].result)
+                testFailed("The " + decodeCaseArray[index].url + " test: errorCallback was called incorrectly.");
+            else
+                testPassed("The " + decodeCaseArray[index].url + " test: errorCallback has been called correctly.");
+
+            runDecodeTest(++index);
+        }
+    }
+    request.send();
+}
+
+runDecodeTest(0);
+
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

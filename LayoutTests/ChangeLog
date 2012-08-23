@@ -1,3 +1,18 @@
+2012-08-23  Li Yin  <li.yin@intel.com>
+
+        Add test for decodeAudioData
+        https://bugs.webkit.org/show_bug.cgi?id=92620
+
+        Reviewed by Chris Rogers.
+
+        Spec: https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html#AudioContext-section
+        This test checks if successCallback or errorCallback can be invoked correctly when
+        there is a correct or error decoding.
+
+        * webaudio/decode-audio-data-basic-expected.txt: Added.
+        * webaudio/decode-audio-data-basic.html: Added.
+        * webaudio/resources/media/invalid-audio-file.txt: Added.
+
 2012-08-23  Kenneth Russell  <kbr@google.com>
 
         Web Inspector: three layout tests crashing with assertion failure
