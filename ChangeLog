@@ -1,3 +1,15 @@
+2012-08-23  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] The tarball should be called webkitgtk-x.x.x.tar.xz
+        https://bugs.webkit.org/show_bug.cgi?id=94572
+
+        Reviewed by Carlos Garcia Campos.
+
+        Change the name of the tarball to match the name of the library
+        and to disambiguate it from other WebKit ports.
+
+        * configure.ac: Update the tarball name.
+
 2012-08-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Bump WebKitGTK+ version number.
