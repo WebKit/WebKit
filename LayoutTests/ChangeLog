@@ -1,3 +1,14 @@
+2012-08-23  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed Chromium gardeing.
+
+        * platform/chromium-linux/media/track/track-cue-rendering-horizontal-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/media/track/track-cue-rendering-horizontal-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/media/track/track-cue-rendering-vertical-expected.txt: Removed.
+        * platform/chromium-win-xp/media/track/track-cue-rendering-horizontal-expected.png: Removed.
+        * platform/chromium-win-xp/media/track/track-cue-rendering-horizontal-expected.txt: Removed.
+        * platform/chromium-win-xp/media/track/track-cue-rendering-vertical-expected.txt: Removed.
+
 2012-08-23  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] media/video-duration-known-after-eos.html and media/media-element-play-after-eos.html are flaky
