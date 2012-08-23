@@ -469,6 +469,27 @@ void WebPopupMenuProxyWin::setScrollOffset(const IntPoint& offset)
     scrollTo(offset.y());
 }
 
+int WebPopupMenuProxyWin::visibleHeight() const
+{
+    return m_scrollbar ? m_scrollbar->visibleSize() : contentsSize().height();
+}
+
+int WebPopupMenuProxyWin::visibleWidth() const
+{
+    int scrollbarWidth = m_scrollbar ? m_scrollbar->frameRect().width() : 0;
+    return contentsSize().width() - scrollbarWidth;
+}
+
+WebCore::IntSize WebPopupMenuProxyWin::contentsSize() const
+{
+    return clientRect().size();
+}
+
+WebCore::IntRect WebPopupMenuProxyWin::scrollableAreaBoundingBox() const
+{
+    return m_windowRect;
+}
+
 void WebPopupMenuProxyWin::scrollTo(int offset)
 {
     ASSERT(m_scrollbar);

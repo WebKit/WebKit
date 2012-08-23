@@ -61,16 +61,21 @@ private:
     WebCore::Scrollbar* scrollbar() const { return m_scrollbar.get(); }
 
     // ScrollableArea
-    virtual int scrollSize(WebCore::ScrollbarOrientation) const;
-    virtual int scrollPosition(WebCore::Scrollbar*) const;
-    virtual void setScrollOffset(const WebCore::IntPoint&);
-    virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&);
-    virtual void invalidateScrollCornerRect(const WebCore::IntRect&) { }
-    virtual bool isActive() const { return true; }
-    virtual bool isScrollCornerVisible() const { return false; }
-    virtual WebCore::IntRect scrollCornerRect() const { return WebCore::IntRect(); }
-    virtual WebCore::Scrollbar* verticalScrollbar() const { return m_scrollbar.get(); }
-    virtual WebCore::ScrollableArea* enclosingScrollableArea() const { return 0; }
+    virtual int scrollSize(WebCore::ScrollbarOrientation) const OVERRIDE;
+    virtual int scrollPosition(WebCore::Scrollbar*) const OVERRIDE;
+    virtual void setScrollOffset(const WebCore::IntPoint&) OVERRIDE;
+    virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&) OVERRIDE;
+    virtual void invalidateScrollCornerRect(const WebCore::IntRect&) OVERRIDE { }
+    virtual bool isActive() const OVERRIDE { return true; }
+    virtual bool isScrollCornerVisible() const OVERRIDE { return false; }
+    virtual WebCore::IntRect scrollCornerRect() const OVERRIDE { return WebCore::IntRect(); }
+    virtual WebCore::Scrollbar* verticalScrollbar() const OVERRIDE { return m_scrollbar.get(); }
+    virtual WebCore::ScrollableArea* enclosingScrollableArea() const OVERRIDE { return 0; }
+    virtual int visibleHeight() const OVERRIDE;
+    virtual int visibleWidth() const OVERRIDE;
+    virtual WebCore::IntSize contentsSize() const OVERRIDE;
+    virtual WebCore::IntRect scrollableAreaBoundingBox() const OVERRIDE;
+    virtual bool isOnActivePage() const OVERRIDE { return true; }
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int offset);

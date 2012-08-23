@@ -398,23 +398,21 @@ private:
 
     // Override ScrollView methods to do point conversion via renderers, in order to
     // take transforms into account.
-    virtual IntRect convertToContainingView(const IntRect&) const;
-    virtual IntRect convertFromContainingView(const IntRect&) const;
-    virtual IntPoint convertToContainingView(const IntPoint&) const;
-    virtual IntPoint convertFromContainingView(const IntPoint&) const;
+    virtual IntRect convertToContainingView(const IntRect&) const OVERRIDE;
+    virtual IntRect convertFromContainingView(const IntRect&) const OVERRIDE;
+    virtual IntPoint convertToContainingView(const IntPoint&) const OVERRIDE;
+    virtual IntPoint convertFromContainingView(const IntPoint&) const OVERRIDE;
 
     // ScrollableArea interface
-    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
-    virtual bool isActive() const;
-    virtual void getTickmarks(Vector<IntRect>&) const;
-    virtual void scrollTo(const IntSize&);
-    virtual void setVisibleScrollerThumbRect(const IntRect&);
-    virtual bool isOnActivePage() const;
-    virtual ScrollableArea* enclosingScrollableArea() const;
+    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) OVERRIDE;
+    virtual bool isActive() const OVERRIDE;
+    virtual void getTickmarks(Vector<IntRect>&) const OVERRIDE;
+    virtual void scrollTo(const IntSize&) OVERRIDE;
+    virtual void setVisibleScrollerThumbRect(const IntRect&) OVERRIDE;
+    virtual bool isOnActivePage() const OVERRIDE;
+    virtual ScrollableArea* enclosingScrollableArea() const OVERRIDE;
     virtual IntRect scrollableAreaBoundingBox() const OVERRIDE;
-
-    void updateScrollableAreaSet();
-
+    virtual bool scrollAnimatorEnabled() const OVERRIDE;
 #if USE(ACCELERATED_COMPOSITING)
     virtual GraphicsLayer* layerForHorizontalScrollbar() const OVERRIDE;
     virtual GraphicsLayer* layerForVerticalScrollbar() const OVERRIDE;
@@ -424,9 +422,9 @@ private:
 #endif
 #endif
 
-    virtual void notifyPageThatContentAreaWillPaint() const;
+    void updateScrollableAreaSet();
 
-    virtual bool scrollAnimatorEnabled() const;
+    virtual void notifyPageThatContentAreaWillPaint() const;
 
     void deferredRepaintTimerFired(Timer<FrameView>*);
     void doDeferredRepaints();

@@ -1,3 +1,19 @@
+2012-08-23  Adrienne Walker  <enne@google.com>
+
+        Convert ScrollableArea ASSERT_NOT_REACHED virtuals
+        https://bugs.webkit.org/show_bug.cgi?id=93306
+
+        Reviewed by Darin Adler.
+
+        Add implementations where necessary to make derived classes concrete.
+        Add OVERRIDE for ScrollableArea functions.
+
+        * src/ScrollbarGroup.h:
+        (ScrollbarGroup):
+        (WebKit::ScrollbarGroup::scrollCornerRect):
+        * tests/ScrollAnimatorNoneTest.cpp:
+        (MockScrollableArea):
+
 2012-08-23  David Reveman  <reveman@chromium.org>
 
         [Chromium] Unnecessary delay when starting to update resources with an inactive vsync timer.

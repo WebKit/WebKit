@@ -63,12 +63,20 @@ public:
     MOCK_METHOD1(invalidateScrollCornerRect, void(const IntRect&));
     MOCK_METHOD1(setScrollOffsetFromAnimation, void(const IntPoint&));
     MOCK_CONST_METHOD0(enclosingScrollableArea, ScrollableArea*());
+    MOCK_CONST_METHOD0(minimumScrollPosition, IntPoint());
+    MOCK_CONST_METHOD0(maximumScrollPosition, IntPoint());
+    MOCK_CONST_METHOD1(visibleContentRect, IntRect(bool));
+    MOCK_CONST_METHOD0(contentsSize, IntSize());
+    MOCK_CONST_METHOD0(overhangAmount, IntSize());
+    MOCK_CONST_METHOD0(isOnActivePage, bool());
+    MOCK_CONST_METHOD0(scrollableAreaBoundingBox, IntRect());
 
-    virtual IntPoint scrollPosition() const { return IntPoint(); }
-    virtual int visibleHeight() const { return 768; }
-    virtual int visibleWidth() const { return 1024; }
+    virtual IntPoint scrollPosition() const OVERRIDE { return IntPoint(); }
+    virtual int visibleHeight() const OVERRIDE { return 768; }
+    virtual int visibleWidth() const OVERRIDE { return 1024; }
+    virtual bool scrollAnimatorEnabled() const OVERRIDE { return m_scrollAnimatorEnabled; }
 
-    bool scrollAnimatorEnabled() const { return m_scrollAnimatorEnabled; }
+private:
     bool m_scrollAnimatorEnabled;
 };
 

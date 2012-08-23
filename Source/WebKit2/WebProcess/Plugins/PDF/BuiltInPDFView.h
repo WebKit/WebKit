@@ -122,30 +122,29 @@ private:
     virtual RetainPtr<PDFDocument> pdfDocumentForPrinting() const OVERRIDE { return m_pdfDocument; }
 
     // ScrollableArea methods.
-    virtual WebCore::IntRect scrollCornerRect() const;
-    virtual WebCore::ScrollableArea* enclosingScrollableArea() const;
+    virtual WebCore::IntRect scrollCornerRect() const OVERRIDE;
+    virtual WebCore::ScrollableArea* enclosingScrollableArea() const OVERRIDE;
     virtual WebCore::IntRect scrollableAreaBoundingBox() const OVERRIDE;
-    virtual void setScrollOffset(const WebCore::IntPoint&);
-    virtual int scrollSize(WebCore::ScrollbarOrientation) const;
-    virtual bool isActive() const;
-    virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&);
-    virtual void invalidateScrollCornerRect(const WebCore::IntRect&);
-    virtual bool isScrollCornerVisible() const;
-    virtual int scrollPosition(WebCore::Scrollbar*) const;
-    virtual WebCore::IntPoint scrollPosition() const;
-    virtual WebCore::IntPoint minimumScrollPosition() const;
-    virtual WebCore::IntPoint maximumScrollPosition() const;
-    virtual int visibleHeight() const;
-    virtual int visibleWidth() const;
-    virtual WebCore::IntSize contentsSize() const;
-    virtual WebCore::Scrollbar* horizontalScrollbar() const  { return m_horizontalScrollbar.get(); }
-    virtual WebCore::Scrollbar* verticalScrollbar() const { return m_verticalScrollbar.get(); }
-    virtual bool isOnActivePage() const;
-    virtual bool shouldSuspendScrollAnimations() const { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
-    virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate);
-
+    virtual void setScrollOffset(const WebCore::IntPoint&) OVERRIDE;
+    virtual int scrollSize(WebCore::ScrollbarOrientation) const OVERRIDE;
+    virtual bool isActive() const OVERRIDE;
+    virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&) OVERRIDE;
+    virtual void invalidateScrollCornerRect(const WebCore::IntRect&) OVERRIDE;
+    virtual bool isScrollCornerVisible() const OVERRIDE;
+    virtual int scrollPosition(WebCore::Scrollbar*) const OVERRIDE;
+    virtual WebCore::IntPoint scrollPosition() const OVERRIDE;
+    virtual WebCore::IntPoint minimumScrollPosition() const OVERRIDE;
+    virtual WebCore::IntPoint maximumScrollPosition() const OVERRIDE;
+    virtual int visibleHeight() const OVERRIDE;
+    virtual int visibleWidth() const OVERRIDE;
+    virtual WebCore::IntSize contentsSize() const OVERRIDE;
+    virtual WebCore::Scrollbar* horizontalScrollbar() const OVERRIDE { return m_horizontalScrollbar.get(); }
+    virtual WebCore::Scrollbar* verticalScrollbar() const OVERRIDE { return m_verticalScrollbar.get(); }
+    virtual bool isOnActivePage() const OVERRIDE;
+    virtual bool shouldSuspendScrollAnimations() const OVERRIDE { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
+    virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate) OVERRIDE;
     // FIXME: Implement the other conversion functions; this one is enough to get scrollbar hit testing working.
-    virtual WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar*, const WebCore::IntPoint& parentPoint) const;
+    virtual WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar*, const WebCore::IntPoint& parentPoint) const OVERRIDE;
 
     JSObjectRef makeJSPDFDoc(JSContextRef);
     static JSValueRef jsPDFDocPrint(JSContextRef, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);

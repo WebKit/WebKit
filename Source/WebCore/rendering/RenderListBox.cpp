@@ -632,11 +632,6 @@ void RenderListBox::setScrollOffset(const IntPoint& offset)
     scrollTo(offset.y());
 }
 
-IntPoint RenderListBox::scrollPosition() const
-{
-    return IntPoint(0, m_indexOffset);
-}
-
 void RenderListBox::scrollTo(int newOffset)
 {
     if (newOffset == m_indexOffset)

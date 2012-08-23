@@ -91,16 +91,21 @@ private:
     void setScrollbarCapturingMouse(bool b) { m_scrollbarCapturingMouse = b; }
 
     // ScrollableArea
-    virtual int scrollSize(ScrollbarOrientation orientation) const;
-    virtual int scrollPosition(Scrollbar*) const;
-    virtual void setScrollOffset(const IntPoint&);
-    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
-    virtual void invalidateScrollCornerRect(const WebCore::IntRect&) { }
-    virtual bool isActive() const { return true; }
-    ScrollableArea* enclosingScrollableArea() const { return 0; }
-    virtual bool isScrollCornerVisible() const { return false; }
-    virtual WebCore::IntRect scrollCornerRect() const { return WebCore::IntRect(); }
-    virtual Scrollbar* verticalScrollbar() const { return m_scrollbar.get(); }
+    virtual int scrollSize(ScrollbarOrientation) const OVERRIDE;
+    virtual int scrollPosition(Scrollbar*) const OVERRIDE;
+    virtual void setScrollOffset(const IntPoint&) OVERRIDE;
+    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) OVERRIDE;
+    virtual void invalidateScrollCornerRect(const IntRect&) OVERRIDE { }
+    virtual bool isActive() const OVERRIDE { return true; }
+    ScrollableArea* enclosingScrollableArea() const OVERRIDE { return 0; }
+    virtual bool isScrollCornerVisible() const OVERRIDE { return false; }
+    virtual IntRect scrollCornerRect() const OVERRIDE { return IntRect(); }
+    virtual Scrollbar* verticalScrollbar() const OVERRIDE { return m_scrollbar.get(); }
+    virtual int visibleHeight() const OVERRIDE;
+    virtual int visibleWidth() const OVERRIDE;
+    virtual IntSize contentsSize() const OVERRIDE;
+    virtual bool isOnActivePage() const OVERRIDE;
+    virtual IntRect scrollableAreaBoundingBox() const OVERRIDE;
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int offset);

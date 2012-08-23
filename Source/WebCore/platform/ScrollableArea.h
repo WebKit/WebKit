@@ -133,27 +133,27 @@ public:
     virtual Scrollbar* horizontalScrollbar() const { return 0; }
     virtual Scrollbar* verticalScrollbar() const { return 0; }
 
-    virtual IntPoint scrollPosition() const { ASSERT_NOT_REACHED(); return IntPoint(); }
-    virtual IntPoint minimumScrollPosition() const { ASSERT_NOT_REACHED(); return IntPoint(); }
-    virtual IntPoint maximumScrollPosition() const { ASSERT_NOT_REACHED(); return IntPoint(); }
-    virtual IntRect visibleContentRect(bool /*includeScrollbars*/ = false) const { ASSERT_NOT_REACHED(); return IntRect(); }
-    virtual int visibleHeight() const { ASSERT_NOT_REACHED(); return 0; }
-    virtual int visibleWidth() const { ASSERT_NOT_REACHED(); return 0; }
-    virtual IntSize contentsSize() const { ASSERT_NOT_REACHED(); return IntSize(); }
-    virtual IntSize overhangAmount() const { ASSERT_NOT_REACHED(); return IntSize(); }
+    virtual IntPoint scrollPosition() const;
+    virtual IntPoint minimumScrollPosition() const;
+    virtual IntPoint maximumScrollPosition() const;
+    virtual IntRect visibleContentRect(bool /*includeScrollbars*/ = false) const;
+    virtual int visibleHeight() const = 0;
+    virtual int visibleWidth() const = 0;
+    virtual IntSize contentsSize() const = 0;
+    virtual IntSize overhangAmount() const { return IntSize(); }
     virtual IntPoint currentMousePosition() const { return IntPoint(); }
 
     virtual bool shouldSuspendScrollAnimations() const { return true; }
     virtual void scrollbarStyleChanged(int /*newStyle*/, bool /*forceUpdate*/) { }
     virtual void setVisibleScrollerThumbRect(const IntRect&) { }
 
-    virtual bool isOnActivePage() const { ASSERT_NOT_REACHED(); return true; }
+    virtual bool isOnActivePage() const = 0;
     
     // Note that this only returns scrollable areas that can actually be scrolled.
     virtual ScrollableArea* enclosingScrollableArea() const = 0;
 
     // Returns the bounding box of this scrollable area, in the coordinate system of the enclosing scroll view.
-    virtual IntRect scrollableAreaBoundingBox() const { ASSERT_NOT_REACHED(); return IntRect(); }
+    virtual IntRect scrollableAreaBoundingBox() const = 0;
 
     virtual bool shouldRubberBandInDirection(ScrollDirection) const { return true; }
 

@@ -63,6 +63,16 @@ ScrollableArea* FramelessScrollView::enclosingScrollableArea() const
     return 0;
 }
 
+bool FramelessScrollView::isOnActivePage() const
+{
+    return isActive();
+}
+
+IntRect FramelessScrollView::scrollableAreaBoundingBox() const
+{
+    return windowClipRect(false);
+}
+
 void FramelessScrollView::invalidateRect(const IntRect& rect)
 {
     if (HostWindow* h = hostWindow())

@@ -117,6 +117,11 @@ protected:
     virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&);
     virtual void invalidateScrollCornerRect(const WebCore::IntRect&) { }
     virtual WebCore::ScrollableArea* enclosingScrollableArea() const { return 0; }
+    virtual int visibleHeight() const OVERRIDE;
+    virtual int visibleWidth() const OVERRIDE;
+    virtual WebCore::IntSize contentsSize() const OVERRIDE;
+    virtual bool isOnActivePage() const OVERRIDE;
+    virtual WebCore::IntRect scrollableAreaBoundingBox() const OVERRIDE;
 
     // FIXME: We should provide a way to set this value.
     virtual bool isActive() const { return true; }

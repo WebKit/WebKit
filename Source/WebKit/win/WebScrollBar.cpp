@@ -284,3 +284,28 @@ Scrollbar* WebScrollBar::verticalScrollbar() const
 {
     return m_scrollBar->orientation() == VerticalScrollbar ? m_scrollBar.get() : 0;
 }
+
+int WebScrollBar::visibleHeight() const
+{
+    return m_scrollBar->height();
+}
+
+int WebScrollBar::visibleWidth() const
+{
+    return m_scrollBar->width();
+}
+
+WebCore::IntSize WebScrollBar::contentsSize() const
+{
+    return m_scrollBar->frameRect().size();
+}
+
+bool WebScrollBar::isOnActivePage() const
+{
+    return true;
+}
+
+WebCore::IntRect WebScrollBar::scrollableAreaBoundingBox() const
+{
+    return m_scrollBar->frameRect();
+}

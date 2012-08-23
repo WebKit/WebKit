@@ -726,6 +726,31 @@ void PopupMenuWin::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& 
     ::InvalidateRect(m_popup, &r, false);
 }
 
+int PopupMenuWin::visibleHeight() const
+{
+    return m_scrollbar ? m_scrollbar->visibleSize() : m_windowRect.height();
+}
+
+int PopupMenuWin::visibleWidth() const
+{
+    return m_windowRect.width();
+}
+
+IntSize PopupMenuWin::contentsSize() const
+{
+    return m_windowRect.size();
+}
+
+bool PopupMenuWin::isOnActivePage() const
+{
+    return m_showPopup;
+}
+
+IntRect PopupMenuWin::scrollableAreaBoundingBox() const
+{
+    return m_windowRect;
+}
+
 void PopupMenuWin::registerClass()
 {
     static bool haveRegisteredWindowClass = false;
