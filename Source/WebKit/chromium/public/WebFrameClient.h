@@ -88,7 +88,7 @@ public:
     virtual WebSharedWorker* createSharedWorker(WebFrame*, const WebURL&, const WebString&, unsigned long long) { return 0; }
 
     // May return null.
-    virtual WebMediaPlayer* createMediaPlayer(WebFrame*, WebMediaPlayerClient*) { return 0; }
+    virtual WebMediaPlayer* createMediaPlayer(WebFrame*, const WebURL&, WebMediaPlayerClient*) { return 0; }
 
     // May return null.
     virtual WebApplicationCacheHost* createApplicationCacheHost(WebFrame*, WebApplicationCacheHostClient*) { return 0; }

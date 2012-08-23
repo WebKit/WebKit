@@ -1,3 +1,18 @@
+2012-08-23  Wei Jia  <wjia@chromium.org>
+
+        create different WebKit::WebMediaPlayer based on URL
+        https://bugs.webkit.org/show_bug.cgi?id=91301
+
+        Reviewed by Adam Barth.
+
+        Pass URL to createMediaPlayer. This corresponds to change in base
+        class WebKit::WebFrameClient.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createMediaPlayer): add URL as additional argument.
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-08-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, upgrade gyuyoung to reviewer.

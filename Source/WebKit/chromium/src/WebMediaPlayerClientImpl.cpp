@@ -45,13 +45,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static PassOwnPtr<WebMediaPlayer> createWebMediaPlayer(WebMediaPlayerClient* client, Frame* frame)
+static PassOwnPtr<WebMediaPlayer> createWebMediaPlayer(WebMediaPlayerClient* client, const WebURL& url, Frame* frame)
 {
     WebFrameImpl* webFrame = WebFrameImpl::fromFrame(frame);
 
     if (!webFrame->client())
         return nullptr;
-    return adoptPtr(webFrame->client()->createMediaPlayer(webFrame, client));
+    return adoptPtr(webFrame->client()->createMediaPlayer(webFrame, url, client));
 }
 
 bool WebMediaPlayerClientImpl::m_isEnabled = false;
@@ -321,7 +321,7 @@ void WebMediaPlayerClientImpl::loadInternal()
 #endif
 
     Frame* frame = static_cast<HTMLMediaElement*>(m_mediaPlayer->mediaPlayerClient())->document()->frame();
-    m_webMediaPlayer = createWebMediaPlayer(this, frame);
+    m_webMediaPlayer = createWebMediaPlayer(this, KURL(ParsedURLString, m_url), frame);
     if (m_webMediaPlayer) {
 #if ENABLE(WEB_AUDIO)
         // Make sure if we create/re-create the WebMediaPlayer that we update our wrapper.

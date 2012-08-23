@@ -1006,12 +1006,12 @@ WebPlugin* WebViewHost::createPlugin(WebFrame* frame, const WebPluginParams& par
     return webkit_support::CreateWebPlugin(frame, params);
 }
 
-WebMediaPlayer* WebViewHost::createMediaPlayer(WebFrame* frame, WebMediaPlayerClient* client)
+WebMediaPlayer* WebViewHost::createMediaPlayer(WebFrame* frame, const WebURL& url, WebMediaPlayerClient* client)
 {
 #if ENABLE(MEDIA_STREAM)
-    return webkit_support::CreateMediaPlayer(frame, client, testMediaStreamClient());
+    return webkit_support::CreateMediaPlayer(frame, url, client, testMediaStreamClient());
 #else
-    return webkit_support::CreateMediaPlayer(frame, client);
+    return webkit_support::CreateMediaPlayer(frame, url, client);
 #endif
 }
 
