@@ -1,3 +1,16 @@
+2012-08-23  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Move feature defines processing into a GNUmakefile that's simple to autogenerate
+        https://bugs.webkit.org/show_bug.cgi?id=87127
+
+        Reviewed by Martin Robinson.
+
+        Add 'feature_defines_defaults' and 'feature_defines_overrides' variables
+        and define them, along with 'feature_defines' (changed from the all-caps version),
+        before webcore_cppflags.
+
+        * GNUmakefile.am:
+
 2012-08-23  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] The tarball should be called webkitgtk-x.x.x.tar.xz

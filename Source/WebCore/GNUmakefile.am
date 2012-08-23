@@ -1,3 +1,4 @@
+include $(srcdir)/Source/WebCore/GNUmakefile.features.am
 include $(srcdir)/Source/WebCore/GNUmakefile.list.am
 
 WEBCORE_CSS_PROPERTY_NAMES := $(WebCore)/css/CSSPropertyNames.in
@@ -43,6 +44,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/loader \
 	-I$(srcdir)/Source/WebCore/loader/appcache \
 	-I$(srcdir)/Source/WebCore/loader/archive \
+	-I$(srcdir)/Source/WebCore/loader/archive/mhtml \
 	-I$(srcdir)/Source/WebCore/loader/cache \
 	-I$(srcdir)/Source/WebCore/loader/icon \
 	-I$(srcdir)/Source/WebCore/mathml \
@@ -118,25 +120,21 @@ webcoregtk_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/text/gtk
 
 # ---
-# Features enabled by default at compilation time
-# ---
-FEATURE_DEFINES += ENABLE_SMOOTH_SCROLLING=1
-webcore_cppflags += -DENABLE_SMOOTH_SCROLLING=1
-
-# ---
 # Channel mesaging support
 # ---
 if ENABLE_CHANNEL_MESSAGING
-FEATURE_DEFINES += ENABLE_CHANNEL_MESSAGING=1
-webcore_cppflags += -DENABLE_CHANNEL_MESSAGING=1
+feature_defines_overrides += ENABLE_CHANNEL_MESSAGING=1
+else
+feature_defines_overrides += ENABLE_CHANNEL_MESSAGING=0
 endif # END ENABLE_CHANNEL_MESSAGING
 
 # ---
 # Fast Mobile Scrolling
 # ---
 if ENABLE_FAST_MOBILE_SCROLLING
-FEATURE_DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
-webcore_cppflags += -DENABLE_FAST_MOBILE_SCROLLING=1
+feature_defines_overrides += ENABLE_FAST_MOBILE_SCROLLING=1
+else
+feature_defines_overrides += ENABLE_FAST_MOBILE_SCROLLING=0
 endif # END ENABLE_FAST_MOBILE_SCROLLING
 
 # ---
@@ -169,86 +167,90 @@ endif # END TARGET_WIN32
 # HTML Details Element
 # ----
 if ENABLE_DETAILS_ELEMENT
-FEATURE_DEFINES += ENABLE_DETAILS_ELEMENT=1
-webcore_cppflags += -DENABLE_DETAILS_ELEMENT=1
+feature_defines_overrides += ENABLE_DETAILS_ELEMENT=1
+else
+feature_defines_overrides += ENABLE_DETAILS_ELEMENT=0
 endif # END ENABLE_DETAILS_ELEMENT
 
 # ----
 # HTML Meter Element
 # ----
 if ENABLE_METER_ELEMENT
-FEATURE_DEFINES += ENABLE_METER_ELEMENT=1
-webcore_cppflags += -DENABLE_METER_ELEMENT=1
+feature_defines_overrides += ENABLE_METER_ELEMENT=1
+else
+feature_defines_overrides += ENABLE_METER_ELEMENT=0
 endif # END ENABLE_METER_ELEMENT
 
 # ----
 # HTML Progress Element
 # ----
 if ENABLE_PROGRESS_ELEMENT
-FEATURE_DEFINES += ENABLE_PROGRESS_ELEMENT=1
-webcore_cppflags += -DENABLE_PROGRESS_ELEMENT=1
+feature_defines_overrides += ENABLE_PROGRESS_ELEMENT=1
+else
+feature_defines_overrides += ENABLE_PROGRESS_ELEMENT=0
 endif # END ENABLE_PROGRESS_ELEMENT
 
 # ----
 # JavaScript Debugger/Profiler
 # ----
 if ENABLE_JAVASCRIPT_DEBUGGER
-FEATURE_DEFINES += ENABLE_JAVASCRIPT_DEBUGGER=1
-webcore_cppflags += -DENABLE_JAVASCRIPT_DEBUGGER=1
+feature_defines_overrides += ENABLE_JAVASCRIPT_DEBUGGER=1
 else
-webcore_cppflags += -DENABLE_JAVASCRIPT_DEBUGGER=0
+feature_defines_overrides += ENABLE_JAVASCRIPT_DEBUGGER=0
 endif # END ENABLE_JAVASCRIPT_DEBUGGER
 
 # ----
 # Gamepad support
 # ---
 if ENABLE_GAMEPAD
-FEATURE_DEFINES += ENABLE_GAMEPAD=1
-webcore_cppflags += -DENABLE_GAMEPAD=1
+feature_defines_overrides += ENABLE_GAMEPAD=1
 else
-webcore_cppflags += -DENABLE_GAMEPAD=0
+feature_defines_overrides += ENABLE_GAMEPAD=0
 endif # END ENABLE_GAMEPAD
 
 # ----
 # Database Support
 # ----
 if ENABLE_SQL_DATABASE
-FEATURE_DEFINES += ENABLE_SQL_DATABASE=1
-webcore_cppflags += -DENABLE_SQL_DATABASE=1
+feature_defines_overrides += ENABLE_SQL_DATABASE=1
 else
-webcore_cppflags += -DENABLE_SQL_DATABASE=0
+feature_defines_overrides += ENABLE_SQL_DATABASE=0
 endif # END ENABLE_SQL_DATABASE
 
 # ----
 # HTML5 datalist Support
 # ----
 if ENABLE_DATALIST_ELEMENT
-FEATURE_DEFINES += ENABLE_DATALIST_ELEMENT=1
-webcore_cppflags += -DENABLE_DATALIST_ELEMENT=1
+feature_defines_overrides += ENABLE_DATALIST_ELEMENT=1
+else
+feature_defines_overrides += ENABLE_DATALIST_ELEMENT=0
 endif # END ENABLE_DATALIST_ELEMENT
 
 # ----
 # HTML5 data transfer items support
 # ----
 if ENABLE_DATA_TRANSFER_ITEMS
-FEATURE_DEFINES += ENABLE_DATA_TRANSFER_ITEMS=1
-webcore_cppflags += -DENABLE_DATA_TRANSFER_ITEMS=1
+feature_defines_overrides += ENABLE_DATA_TRANSFER_ITEMS=1
+else
+feature_defines_overrides += ENABLE_DATA_TRANSFER_ITEMS=0
 endif # END ENABLE_DATA_TRANSFER_ITEMS
 
 # ----
 # HTML5 <style scoped> support
 # ----
 if ENABLE_STYLE_SCOPED
-FEATURE_DEFINES += ENABLE_STYLE_SCOPED=1
-webcore_cppflags += -DENABLE_STYLE_SCOPED=1
+feature_defines_overrides += ENABLE_STYLE_SCOPED=1
+else
+feature_defines_overrides += ENABLE_STYLE_SCOPED=0
 endif # END ENABLE_STYLE_SCOPED
 
 # ----
 # Indexed Database API support
 # ----
 if ENABLE_INDEXED_DATABASE
-FEATURE_DEFINES += ENABLE_INDEXED_DATABASE=1
-webcore_cppflags += -DENABLE_INDEXED_DATABASE=1
+feature_defines_overrides += ENABLE_INDEXED_DATABASE=1
+else
+feature_defines_overrides += ENABLE_INDEXED_DATABASE=0
 endif # END ENABLE_INDEXED_DATABASE
 
 if USE_LEVELDB
@@ -259,153 +261,149 @@ endif # END USE_LEVELDB
 # Support for <input type="file" directory>
 # ----
 if ENABLE_DIRECTORY_UPLOAD
-FEATURE_DEFINES += ENABLE_DIRECTORY_UPLOAD=1
-webcore_cppflags += -DENABLE_DIRECTORY_UPLOAD=1
+feature_defines_overrides += ENABLE_DIRECTORY_UPLOAD=1
 else
-webcore_cppflags += -DENABLE_DIRECTORY_UPLOAD=0
+feature_defines_overrides += ENABLE_DIRECTORY_UPLOAD=0
 endif # END ENABLE_DIRECTORY_UPLOAD
 
 # ----
 # DOM mutation observer support
 # ----
 if ENABLE_MUTATION_OBSERVERS
-FEATURE_DEFINES += ENABLE_MUTATION_OBSERVERS=1
-webcore_cppflags += -DENABLE_MUTATION_OBSERVERS=1
+feature_defines_overrides += ENABLE_MUTATION_OBSERVERS=1
+else
+feature_defines_overrides += ENABLE_MUTATION_OBSERVERS=0
 endif # END ENABLE_MUTATION_OBSERVERS
 
 # ----
 # FileSystem API support
 # ----
 if ENABLE_FILE_SYSTEM
-FEATURE_DEFINES += ENABLE_FILE_SYSTEM=1
-webcore_cppflags += -DENABLE_FILE_SYSTEM=1
+feature_defines_overrides += ENABLE_FILE_SYSTEM=1
+else
+feature_defines_overrides += ENABLE_FILE_SYSTEM=0
 endif # END ENABLE_FILE_SYSTEM
 
 # ----
 # Quota support
 # ----
 if ENABLE_QUOTA
-FEATURE_DEFINES += ENABLE_QUOTA=1
-webcore_cppflags += -DENABLE_QUOTA=1
+feature_defines_overrides += ENABLE_QUOTA=1
+else
+feature_defines_overrides += ENABLE_QUOTA=0
 endif # END ENABLE_QUOTA
 
 # ----
 # Touch Icon Loading
 # ----
 if ENABLE_TOUCH_ICON_LOADING
-FEATURE_DEFINES += ENABLE_TOUCH_ICON_LOADING=1
-webcore_cppflags += -DENABLE_TOUCH_ICON_LOADING=1
+feature_defines_overrides += ENABLE_TOUCH_ICON_LOADING=1
 else
-webcore_cppflags += -DENABLE_TOUCH_ICON_LOADING=0
+feature_defines_overrides += ENABLE_TOUCH_ICON_LOADING=0
 endif # END ENABLE_TOUCH_ICON_LOADING
 
 # ----
 # Color Input API support
 # ----
 if ENABLE_INPUT_TYPE_COLOR
-FEATURE_DEFINES += ENABLE_INPUT_TYPE_COLOR=1
-webcore_cppflags += -DENABLE_INPUT_TYPE_COLOR=1
+feature_defines_overrides += ENABLE_INPUT_TYPE_COLOR=1
 else
-webcore_cppflags += -DENABLE_INPUT_TYPE_COLOR=0
+feature_defines_overrides += ENABLE_INPUT_TYPE_COLOR=0
 endif # END ENABLE_INPUT_TYPE_COLOR
 
 # ----
 # Speech Input API support
 # ----
 if ENABLE_INPUT_SPEECH
-FEATURE_DEFINES += ENABLE_INPUT_SPEECH=1
-webcore_cppflags += -DENABLE_INPUT_SPEECH=1
+feature_defines_overrides += ENABLE_INPUT_SPEECH=1
 else
-webcore_cppflags += -DENABLE_INPUT_SPEECH=0
+feature_defines_overrides += ENABLE_INPUT_SPEECH=0
 endif # END ENABLE_INPUT_SPEECH
 
 # ----
 # Scripted Speech API support
 # ----
 if ENABLE_SCRIPTED_SPEECH
-FEATURE_DEFINES += ENABLE_SCRIPTED_SPEECH=1
-webcore_cppflags += -DENABLE_SCRIPTED_SPEECH=1
+feature_defines_overrides += ENABLE_SCRIPTED_SPEECH=1
 else
-webcore_cppflags += -DENABLE_SCRIPTED_SPEECH=0
+feature_defines_overrides += ENABLE_SCRIPTED_SPEECH=0
 endif # END ENABLE_SCRIPTED_SPEECH
 
 # ----
 # Icon Database Support
 # ----
 if ENABLE_ICONDATABASE
-webcore_cppflags += -DENABLE_ICONDATABASE=1
+feature_defines_overrides += -DENABLE_ICONDATABASE=1
 else
-webcore_cppflags += -DENABLE_ICONDATABASE=0
+feature_defines_overrides += -DENABLE_ICONDATABASE=0
 endif # END ENABLE_ICONDATABASE
 
 # ----
 # Orientation Events
 # ----
 if ENABLE_ORIENTATION_EVENTS
-FEATURE_DEFINES += ENABLE_ORIENTATION_EVENTS=1
-webcore_cppflags += -DENABLE_ORIENTATION_EVENTS=1
+feature_defines_overrides += ENABLE_ORIENTATION_EVENTS=1
+else
+feature_defines_overrides += ENABLE_ORIENTATION_EVENTS=0
 endif # END ENABLE_ORIENTATION_EVENTS
 
 # ----
 # Video Support
 # ----
 if ENABLE_VIDEO
-FEATURE_DEFINES += ENABLE_VIDEO=1
-webcore_cppflags += -DENABLE_VIDEO=1
-
+feature_defines_overrides += ENABLE_VIDEO=1
 if USE_GSTREAMER
 if ENABLE_DEBUG
 webcore_cppflags += -DGST_DISABLE_DEPRECATED
 endif # END ENABLE_DEBUG
 endif # END USE_GSTREAMER
+else
+feature_defines_overrides += ENABLE_VIDEO=0
 endif # END ENABLE_VIDEO
 
 # ----
 # Media Source Support
 # ----
 if ENABLE_MEDIA_SOURCE
-FEATURE_DEFINES += ENABLE_MEDIA_SOURCE=1
-webcore_cppflags += -DENABLE_MEDIA_SOURCE=1
+feature_defines_overrides += ENABLE_MEDIA_SOURCE=1
 else
-webcore_cppflags += -DENABLE_MEDIA_SOURCE=0
+feature_defines_overrides += ENABLE_MEDIA_SOURCE=0
 endif # END ENABLE_MEDIA_SOURCE
 
 # ----
 # Media Statistics Support
 # ----
 if ENABLE_MEDIA_STATISTICS
-FEATURE_DEFINES += ENABLE_MEDIA_STATISTICS=1
-webcore_cppflags += -DENABLE_MEDIA_STATISTICS=1
+feature_defines_overrides += ENABLE_MEDIA_STATISTICS=1
 else
-webcore_cppflags += -DENABLE_MEDIA_STATISTICS=0
+feature_defines_overrides += ENABLE_MEDIA_STATISTICS=0
 endif # END ENABLE_MEDIA_STATISTICS
 
 # ----
 # Javascript Fullscreen Support
 # ----
 if ENABLE_FULLSCREEN_API
-FEATURE_DEFINES += ENABLE_FULLSCREEN_API=1
-webcore_cppflags += -DENABLE_FULLSCREEN_API=1
+feature_defines_overrides += ENABLE_FULLSCREEN_API=1
+else
+feature_defines_overrides += ENABLE_FULLSCREEN_API=0
 endif # END ENABLE_FULLSCREEN_API
 
 # ----
 # Track Support
 # ----
 if ENABLE_VIDEO_TRACK
-FEATURE_DEFINES += ENABLE_VIDEO_TRACK=1
-webcore_cppflags += -DENABLE_VIDEO_TRACK=1
+feature_defines_overrides += ENABLE_VIDEO_TRACK=1
 else
-webcore_cppflags += -DENABLE_VIDEO_TRACK=0
+feature_defines_overrides += ENABLE_VIDEO_TRACK=0
 endif # END ENABLE_VIDEO_TRACK
 
 # ----
 # Media Stream Support
 # ----
 if ENABLE_MEDIA_STREAM
-FEATURE_DEFINES += ENABLE_MEDIA_STREAM=1
-webcore_cppflags += -DENABLE_MEDIA_STREAM=1
+feature_defines_overrides += ENABLE_MEDIA_STREAM=1
 else
-webcore_cppflags += -DENABLE_MEDIA_STREAM=0
+feature_defines_overrides += ENABLE_MEDIA_STREAM=0
 endif # END ENABLE_MEDIA_STREAM
 
 # XPath grammar
@@ -426,101 +424,108 @@ $(GENSOURCES_WEBCORE)/XPathGrammar.cpp: $(WebCore)/xml/XPathGrammar.y
 # XSLT Support
 # ----
 if ENABLE_XSLT
-FEATURE_DEFINES += ENABLE_XSLT=1
-webcore_cppflags += -DENABLE_XSLT=1
+feature_defines_overrides += ENABLE_XSLT=1
+else
+feature_defines_overrides += ENABLE_XSLT=0
 endif # END ENABLE_XSLT
 
 # ----
 # Web Workers support
 # ----
 if ENABLE_WORKERS
-FEATURE_DEFINES += ENABLE_WORKERS=1
-webcore_cppflags += -DENABLE_WORKERS=1
+feature_defines_overrides += ENABLE_WORKERS=1
+else
+feature_defines_overrides += ENABLE_WORKERS=0
 endif
 
 # ---
 # Shadow DOM support
 # ---
 if ENABLE_SHADOW_DOM
-FEATURE_DEFINES += ENABLE_SHADOW_DOM=1
-webcore_cppflags += -DENABLE_SHADOW_DOM=1
+feature_defines_overrides += ENABLE_SHADOW_DOM=1
+else
+feature_defines_overrides += ENABLE_SHADOW_DOM=0
 endif
 
 # ---
 # SharedWorker support
 # ---
 if ENABLE_SHARED_WORKERS
-FEATURE_DEFINES += ENABLE_SHARED_WORKERS=1
-webcore_cppflags += -DENABLE_SHARED_WORKERS=1
+feature_defines_overrides += ENABLE_SHARED_WORKERS=1
+else
+feature_defines_overrides += ENABLE_SHARED_WORKERS=0
 endif
 
 # ----
 # Filters
 # ----
 if ENABLE_FILTERS
-FEATURE_DEFINES += ENABLE_FILTERS=1
-webcore_cppflags += -DENABLE_FILTERS=1
+feature_defines_overrides += ENABLE_FILTERS=1
+else
+feature_defines_overrides += ENABLE_FILTERS=0
 endif # END ENABLE_FILTERS
 
 # ----
 # CSS box decoration break
 # ----
 if ENABLE_CSS_BOX_DECORATION_BREAK
-FEATURE_DEFINES += ENABLE_CSS_BOX_DECORATION_BREAK=1
-webcore_cppflags += -DENABLE_CSS_BOX_DECORATION_BREAK=1
-
+feature_defines_overrides += ENABLE_CSS_BOX_DECORATION_BREAK=1
+else
+feature_defines_overrides += ENABLE_CSS_BOX_DECORATION_BREAK=0
 endif # END ENABLE_CSS_BOX_DECORATION_BREAK
 
 # ----
 # Regions
 # ----
 if ENABLE_CSS_REGIONS
-FEATURE_DEFINES += ENABLE_CSS_REGIONS=1
-webcore_cppflags += -DENABLE_CSS_REGIONS=1
-
+feature_defines_overrides += ENABLE_CSS_REGIONS=1
+else
+feature_defines_overrides += ENABLE_CSS_REGIONS=0
 endif # END ENABLE_CSS_REGIONS
 
 # ----
 # Filters
 # ----
 if ENABLE_CSS_FILTERS
-FEATURE_DEFINES += ENABLE_CSS_FILTERS=1
-webcore_cppflags += -DENABLE_CSS_FILTERS=1
-
+feature_defines_overrides += ENABLE_CSS_FILTERS=1
+else
+feature_defines_overrides += ENABLE_CSS_FILTERS=0
 endif # END ENABLE_CSS_FILTERS
 
 # ----
 # Compositing
 # ----
 if ENABLE_CSS_COMPOSITING
-FEATURE_DEFINES += ENABLE_CSS_COMPOSITING=1
-webcore_cppflags += -DENABLE_CSS_COMPOSITING=1
+feature_defines_overrides += ENABLE_CSS_COMPOSITING=1
+else
+feature_defines_overrides += ENABLE_CSS_COMPOSITING=0
 endif # END ENABLE_CSS_COMPOSITING
 
 # ----
 # Exclusions
 # ----
 if ENABLE_CSS_EXCLUSIONS
-FEATURE_DEFINES += ENABLE_CSS_EXCLUSIONS=1
-webcore_cppflags += -DENABLE_CSS_EXCLUSIONS=1
-
+feature_defines_overrides += ENABLE_CSS_EXCLUSIONS=1
+else
+feature_defines_overrides += ENABLE_CSS_EXCLUSIONS=0
 endif # END ENABLE_CSS_EXCLUSIONS
 
 # ----
 # Geolocation
 # ----
 if ENABLE_GEOLOCATION
-
-FEATURE_DEFINES += ENABLE_GEOLOCATION=1
-webcore_cppflags += -DENABLE_GEOLOCATION=1
+feature_defines_overrides += ENABLE_GEOLOCATION=1
+else
+feature_defines_overrides += ENABLE_GEOLOCATION=0
 endif # END ENABLE_GEOLOCATION
 
 # ----
 # MathML support
 # ----
 if ENABLE_MATHML
-FEATURE_DEFINES += ENABLE_MATHML=1
-webcore_cppflags += -DENABLE_MATHML=1
+feature_defines_overrides += ENABLE_MATHML=1
+else
+feature_defines_overrides += ENABLE_MATHML=0
 endif # END ENABLE_MATHML
 
 # MathML tag and attribute names, and element factory
@@ -533,8 +538,9 @@ DerivedSources/WebCore/MathMLElementFactory.cpp DerivedSources/WebCore/MathMLNam
 # Notifications support
 # ----
 if ENABLE_NOTIFICATIONS
-FEATURE_DEFINES += ENABLE_NOTIFICATIONS=1 ENABLE_LEGACY_NOTIFICATIONS=1
-webcore_cppflags += -DENABLE_NOTIFICATIONS=1 -DENABLE_LEGACY_NOTIFICATIONS=1
+feature_defines_overrides += ENABLE_NOTIFICATIONS=1 ENABLE_LEGACY_NOTIFICATIONS=1
+else
+feature_defines_overrides += ENABLE_NOTIFICATIONS=0 ENABLE_LEGACY_NOTIFICATIONS=0
 endif # END ENABLE_NOTIFICATIONS
 
 # ----
@@ -543,24 +549,24 @@ endif # END ENABLE_NOTIFICATIONS
 # FIXME: allow a more fine-grained inclusion/generation of sources per SVG feature
 # ----
 if ENABLE_SVG
-FEATURE_DEFINES += ENABLE_SVG=1
-webcore_cppflags += -DENABLE_SVG=1
+feature_defines_overrides += ENABLE_SVG=1
 WEBCORE_CSS_PROPERTY_NAMES += $(WebCore)/css/SVGCSSPropertyNames.in
 WEBCORE_CSS_VALUE_KEYWORDS += $(WebCore)/css/SVGCSSValueKeywords.in
-
 # SVG Features
 if ENABLE_SVG_FONTS
-FEATURE_DEFINES += ENABLE_SVG_FONTS=1
-webcore_cppflags += -DENABLE_SVG_FONTS=1
+feature_defines_overrides += ENABLE_SVG_FONTS=1
+else
+feature_defines_overrides += ENABLE_SVG_FONTS=0
 endif
-
+else
+feature_defines_overrides += ENABLE_SVG=0 ENABLE_SVG_FONTS=0
 endif # END ENABLE_SVG
 
 # SVG tag and attribute names (need to pass an extra flag if svg experimental features are enabled)
 DerivedSources/WebCore/SVGNames.cpp: DerivedSources/WebCore/SVGElementFactory.cpp
 DerivedSources/WebCore/JSSVGElementWrapperFactory.cpp: DerivedSources/WebCore/SVGElementFactory.cpp
 DerivedSources/WebCore/SVGElementFactory.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/svg/svgtags.in $(WebCore)/svg/svgattrs.in
-	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "$(FEATURE_DEFINES)" --factory --wrapperFactory --outputDir "$(GENSOURCES_WEBCORE)"
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "$(feature_defines)" --factory --wrapperFactory --outputDir "$(GENSOURCES_WEBCORE)"
 
 # end SVG Features
 
@@ -572,8 +578,9 @@ DerivedSources/WebCore/XLinkNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/
 # Web Audio Support
 # ----
 if ENABLE_WEB_AUDIO
-FEATURE_DEFINES += ENABLE_WEB_AUDIO=1
-webcore_cppflags += -DENABLE_WEB_AUDIO=1
+feature_defines_overrides += ENABLE_WEB_AUDIO=1
+else
+feature_defines_overrides += ENABLE_WEB_AUDIO=0
 endif
 
 if USE_WEBAUDIO_GSTREAMER
@@ -584,59 +591,63 @@ endif
 # Web Sockets Support
 # ----
 if ENABLE_WEB_SOCKETS
-FEATURE_DEFINES += ENABLE_WEB_SOCKETS=1
-webcore_cppflags += -DENABLE_WEB_SOCKETS=1
+feature_defines_overrides += ENABLE_WEB_SOCKETS=1
 else
-webcore_cppflags += -DENABLE_WEB_SOCKETS=0
+feature_defines_overrides += ENABLE_WEB_SOCKETS=0
 endif  # END ENABLE_WEB_SOCKETS
 
 # ---
 # Blob support
 # ---
 if ENABLE_BLOB
-FEATURE_DEFINES += ENABLE_BLOB=1
-webcore_cppflags += -DENABLE_BLOB=1
+feature_defines_overrides += ENABLE_BLOB=1
+else
+feature_defines_overrides += ENABLE_BLOB=0
 endif  # END ENABLE_BLOB
 
 # ---
 # Legacy WebKitBlobBuilder support
 # ---
 if ENABLE_LEGACY_WEBKIT_BLOB_BUILDER
-FEATURE_DEFINES += ENABLE_LEGACY_WEBKIT_BLOB_BUILDER=1
-webcore_cppflags += -DENABLE_LEGACY_WEBKIT_BLOB_BUILDER=1
+feature_defines_overrides += ENABLE_LEGACY_WEBKIT_BLOB_BUILDER=1
+else
+feature_defines_overrides += ENABLE_LEGACY_WEBKIT_BLOB_BUILDER=0
 endif  # END ENABLE_LEGACY_WEBKIT_BLOB_BUILDER
 
 # ---
 # Animation API support
 # ---
 if ENABLE_ANIMATION_API
-FEATURE_DEFINES += ENABLE_ANIMATION_API=1
-webcore_cppflags += -DENABLE_ANIMATION_API=1
+feature_defines_overrides += ENABLE_ANIMATION_API=1
+else
+feature_defines_overrides += ENABLE_ANIMATION_API=0
 endif  # END ENABLE_ANIMATION_API
 
 # ---
 # RequestAnimationFrame support
 # ---
 if ENABLE_REQUEST_ANIMATION_FRAME
-FEATURE_DEFINES += ENABLE_REQUEST_ANIMATION_FRAME=1
-webcore_cppflags += -DENABLE_REQUEST_ANIMATION_FRAME=1
+feature_defines_overrides += ENABLE_REQUEST_ANIMATION_FRAME=1
+else
+feature_defines_overrides += ENABLE_REQUEST_ANIMATION_FRAME=0
 endif  # END ENABLE_REQUEST_ANIMATION_FRAME
 
 # ---
 # 3D canvas (WebGL) support
 # ---
 if ENABLE_WEBGL
-FEATURE_DEFINES += ENABLE_WEBGL=1
-webcore_cppflags += -DENABLE_WEBGL=1
+feature_defines_overrides += ENABLE_WEBGL=1
+else
+feature_defines_overrides += ENABLE_WEBGL=0
 endif  # END ENABLE_WEBGL
 
 # ---
 # Accelerated compositing support
 # ---
 if USE_ACCELERATED_COMPOSITING
-FEATURE_DEFINES += \
-	ENABLE_3D_RENDERING=1 \
-	ACCELERATED_COMPOSITING=1
+feature_defines_overrides += ENABLE_3D_RENDERING=1
+else
+feature_defines_overrides += ENABLE_3D_RENDERING=0
 endif  # END USE_ACCELERATED_COMPOSITING
 
 if USE_TEXTURE_MAPPER_CAIRO
@@ -659,104 +670,143 @@ endif  # END USE_CLUTTER
 # MHTML support
 # ---
 if ENABLE_MHTML
-FEATURE_DEFINES += ENABLE_MHTML=1
-webcore_cppflags += \
-	-DENABLE_MHTML=1 \
-	-I$(srcdir)/Source/WebCore/loader/archive/mhtml
+feature_defines_overrides += ENABLE_MHTML=1
+else
+feature_defines_overrides += ENABLE_MHTML=0
 endif  # END ENABLE_MHTML
 
 # ---
 # HTML5 Microdata support
 # ---
 if ENABLE_MICRODATA
-FEATURE_DEFINES += ENABLE_MICRODATA=1
-webcore_cppflags += -DENABLE_MICRODATA=1
+feature_defines_overrides += ENABLE_MICRODATA=1
+else
+feature_defines_overrides += ENABLE_MICRODATA=0
 endif  # END ENABLE_MICRODATA
 
 # ---
 # Register Protocol Handler support
 # ---
 if ENABLE_REGISTER_PROTOCOL_HANDLER
-FEATURE_DEFINES += ENABLE_REGISTER_PROTOCOL_HANDLER=1
-webcore_cppflags += -DENABLE_REGISTER_PROTOCOL_HANDLER=1
+feature_defines_overrides += ENABLE_REGISTER_PROTOCOL_HANDLER=1
+else
+feature_defines_overrides += ENABLE_REGISTER_PROTOCOL_HANDLER=0
 endif  # END ENABLE_REGISTER_PROTOCOL_HANDLER
 
 # ---
 # DeviceOrientation support
 # ---
 if ENABLE_DEVICE_ORIENTATION
-FEATURE_DEFINES += ENABLE_DEVICE_ORIENTATION=1
-webcore_cppflags += -DENABLE_DEVICE_ORIENTATION=1
+feature_defines_overrides += ENABLE_DEVICE_ORIENTATION=1
+else
+feature_defines_overrides += ENABLE_DEVICE_ORIENTATION=0
 endif  # END ENABLE_DEVICE_ORIENTATION
 
 # ---
 # Text Autosizing support
 # ---
 if ENABLE_TEXT_AUTOSIZING
-FEATURE_DEFINES += ENABLE_TEXT_AUTOSIZING=1
-webcore_cppflags += -DENABLE_TEXT_AUTOSIZING=1
+feature_defines_overrides += ENABLE_TEXT_AUTOSIZING=1
+else
+feature_defines_overrides += ENABLE_TEXT_AUTOSIZING=0
 endif  # END ENABLE_TEXT_AUTOSIZING
 
 # ---
 # Web Timing support
 # ---
 if ENABLE_WEB_TIMING
-FEATURE_DEFINES += ENABLE_WEB_TIMING=1
-webcore_cppflags += -DENABLE_WEB_TIMING=1
+feature_defines_overrides += ENABLE_WEB_TIMING=1
+else
+feature_defines_overrides += ENABLE_WEB_TIMING=0
 endif  # END ENABLE_WEB_TIMING
 
 # ---
 # HTML iframe seamless attribute support
 # ---
 if ENABLE_IFRAME_SEAMLESS
-FEATURE_DEFINES += ENABLE_IFRAME_SEAMLESS=1
-webcore_cppflags += -DENABLE_IFRAME_SEAMLESS=1
+feature_defines_overrides += ENABLE_IFRAME_SEAMLESS=1
+else
+feature_defines_overrides += ENABLE_IFRAME_SEAMLESS=0
 endif  # END ENABLE_IFRAME_SEAMLESS
 
 # ---
 # CSS3 Flexbox support
 # ---
 if ENABLE_CSS3_FLEXBOX
-FEATURE_DEFINES += ENABLE_CSS3_FLEXBOX=1
-webcore_cppflags += -DENABLE_CSS3_FLEXBOX=1
+feature_defines_overrides += ENABLE_CSS3_FLEXBOX=1
+else
+feature_defines_overrides += ENABLE_CSS3_FLEXBOX=0
 endif  # END ENABLE_CSS3_FLEXBOX
 
 # ---
 # CSS3 Text Decoration support
 if ENABLE_CSS3_TEXT_DECORATION
-FEATURE_DEFINES += ENABLE_CSS3_TEXT_DECORATION=1
-webcore_cppflags += -DENABLE_CSS3_TEXT_DECORATION=1
+feature_defines_overrides += ENABLE_CSS3_TEXT_DECORATION=1
+else
+feature_defines_overrides += ENABLE_CSS3_TEXT_DECORATION=0
 endif # END ENABLE_CSS3_TEXT_DECORATION
 
 # ---
 # Link prefetch support
 # ---
 if ENABLE_LINK_PREFETCH
-FEATURE_DEFINES += ENABLE_LINK_PREFETCH=1
-webcore_cppflags += -DENABLE_LINK_PREFETCH=1
+feature_defines_overrides += ENABLE_LINK_PREFETCH=1
+else
+feature_defines_overrides += ENABLE_LINK_PREFETCH=0
 endif  # END ENABLE_LINK_PREFETCH
 
 # ---
 # Widget region support
 # ---
 if ENABLE_WIDGET_REGION
-FEATURE_DEFINES += ENABLE_WIDGET_REGION=1
-webcore_cppflags += -DENABLE_WIDGET_REGION=1
+feature_defines_overrides += ENABLE_WIDGET_REGION=1
+else
+feature_defines_overrides += ENABLE_WIDGET_REGION=0
 endif  # END ENABLE_WIDGET_REGION
 
 # ---
 # Spell check support
 # ---
 if ENABLE_SPELLCHECK
-FEATURE_DEFINES += ENABLE_SPELLCHECK=1
-webcore_cppflags += -DENABLE_SPELLCHECK=1
+feature_defines_overrides += ENABLE_SPELLCHECK=1
+else
+feature_defines_overrides += ENABLE_SPELLCHECK=0
 endif  # END ENABLE_SPELLCHECK
+
+# ---
+# Unstable features
+# If unstable features should not be enabled, their defines should be overriden with a 0 value.
+# ---
+if !ENABLE_UNSTABLE_FEATURES
+# FIXME: List unstable features here once their configuration options are removed.
+feature_defines_overrides +=
+endif
+
+
+# Fill the feature_defines variable with all the defines, making it possible
+# to override the default define value (as set in feature_defines_defaults)
+# through adding the feature define with the desired value to feature_defines_overrides.
+feature_defines += $(strip $(foreach bare_define, \
+	$(foreach define,$(feature_defines_defaults), \
+		$(foreach fvalue,0 1, \
+			$(if $(findstring =$(fvalue),$(define)),$(patsubst %=$(fvalue),%,$(define))) \
+		) \
+	), \
+	$(if $(findstring $(bare_define), $(feature_defines_overrides)), \
+		$(filter $(bare_define)=%,$(feature_defines_overrides)), \
+		$(filter $(bare_define)=%,$(feature_defines_defaults)) \
+	) \
+))
+
+# Add the feature defines to webcore_cppflags in macro form.
+webcore_cppflags += $(foreach define,$(feature_defines),-D$(define))
+
 
 DerivedSources/WebCore/CSSPropertyNames.cpp: DerivedSources/WebCore/CSSPropertyNames.h
 DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
 	$(AM_V_GEN)
 	$(AM_V_at)cat $(WEBCORE_CSS_PROPERTY_NAMES) > CSSPropertyNames.in
-	$(AM_V_at)$(PERL) -I$(WebCore)/bindings/scripts "$(WebCore)/css/makeprop.pl" --defines "$(FEATURE_DEFINES)"
+	$(AM_V_at)$(PERL) -I$(WebCore)/bindings/scripts "$(WebCore)/css/makeprop.pl" --defines "$(feature_defines)"
 	$(AM_V_at)mv CSSPropertyNames* $(GENSOURCES_WEBCORE)
 
 # Lower case all the values, as CSS values are case-insensitive
@@ -764,7 +814,7 @@ DerivedSources/WebCore/CSSValueKeywords.cpp: DerivedSources/WebCore/CSSValueKeyw
 DerivedSources/WebCore/CSSValueKeywords.h: $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/makevalues.pl
 	$(AM_V_GEN)
 	$(AM_V_at)cat $(WEBCORE_CSS_VALUE_KEYWORDS) > CSSValueKeywords.in
-	$(AM_V_at)$(PERL) -I$(WebCore)/bindings/scripts "$(WebCore)/css/makevalues.pl" --defines "$(FEATURE_DEFINES)"
+	$(AM_V_at)$(PERL) -I$(WebCore)/bindings/scripts "$(WebCore)/css/makevalues.pl" --defines "$(feature_defines)"
 	$(AM_V_at)mv CSSValueKeywords* $(GENSOURCES_WEBCORE)
 
 # XML Viewer CSS
@@ -825,7 +875,7 @@ SCRIPTS_FOR_PREPROCESS_IDLS = \
 
 DerivedSources/WebCore/UserAgentStyleSheetsData.cpp: DerivedSources/WebCore/UserAgentStyleSheets.h
 DerivedSources/WebCore/UserAgentStyleSheets.h: $(WebCore)/css/make-css-file-arrays.pl $(WebCore)/bindings/scripts/preprocessor.pm $(USER_AGENT_STYLE_SHEETS)
-	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $<  --defines "$(FEATURE_DEFINES)" $@ DerivedSources/WebCore/UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $<  --defines "$(feature_defines)" $@ DerivedSources/WebCore/UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
 
 DerivedSources/WebCore/WebKitFontFamilyNames.cpp: DerivedSources/WebCore/WebKitFontFamilyNames.h
 DerivedSources/WebCore/WebKitFontFamilyNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/css/WebKitFontFamilyNames.in
@@ -838,7 +888,7 @@ DerivedSources/WebCore/HTMLElementFactory.cpp: DerivedSources/WebCore/HTMLElemen
 DerivedSources/WebCore/HTMLElementFactory.h: DerivedSources/WebCore/HTMLNames.cpp
 DerivedSources/WebCore/HTMLNames.cpp: DerivedSources/WebCore/HTMLNames.h
 DerivedSources/WebCore/HTMLNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/html/HTMLTagNames.in $(WebCore)/html/HTMLAttributeNames.in
-	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --extraDefines "$(FEATURE_DEFINES)" --factory --wrapperFactory --outputDir "$(GENSOURCES_WEBCORE)"
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --extraDefines "$(feature_defines)" --factory --wrapperFactory --outputDir "$(GENSOURCES_WEBCORE)"
 
 
 DerivedSources/WebCore/XMLNSNames.cpp DerivedSources/WebCore/XMLNSNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlnsattrs.in
@@ -930,7 +980,7 @@ $(supplemental_dependency_file): $(SCRIPTS_FOR_PREPROCESS_IDLS) $(dom_binding_id
 	$(AM_V_GEN)
 	$(AM_V_at)echo -n > $(idl_files_list)
 	$(AM_V_at)($(foreach idl, $(dom_binding_idls), echo $(idl) &&) echo -n) >> $(idl_files_list)
-	$(AM_V_at)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/preprocess-idls.pl --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --idlFilesList $(idl_files_list) --supplementalDependencyFile $@ --idlAttributesFile $(idl_attributes_file)
+	$(AM_V_at)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/preprocess-idls.pl --defines "LANGUAGE_JAVASCRIPT=1 $(feature_defines)" --idlFilesList $(idl_files_list) --supplementalDependencyFile $@ --idlAttributesFile $(idl_attributes_file)
 
 # This does not appear to work correctly with gnumake unless
 # it includes an empty command list (the semicolon).
@@ -938,7 +988,7 @@ DerivedSources/WebCore/JS%.cpp: DerivedSources/WebCore/JS%.h;
 
 .SECONDARY:
 DerivedSources/WebCore/JS%.h: %.idl $(SCRIPTS_FOR_GENERATE_BINDINGS) $(WebCore)/bindings/scripts/CodeGeneratorJS.pm $(supplemental_dependency_file)
-	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --generator JS --supplementalDependencyFile $(supplemental_dependency_file) $<
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(feature_defines)" --generator JS --supplementalDependencyFile $(supplemental_dependency_file) $<
 
 # See https://bugs.webkit.org/show_bug.cgi?id=76388
 # We need to introduce a manual dependency to prevent non-generated sources from
