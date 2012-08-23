@@ -249,9 +249,9 @@ void setRegExpConstructorInput(ExecState* exec, JSObject* baseObject, JSValue va
     asRegExpConstructor(baseObject)->setInput(exec, value.toString(exec));
 }
 
-void setRegExpConstructorMultiline(ExecState*, JSObject* baseObject, JSValue value)
+void setRegExpConstructorMultiline(ExecState* exec, JSObject* baseObject, JSValue value)
 {
-    asRegExpConstructor(baseObject)->setMultiline(value.toBoolean());
+    asRegExpConstructor(baseObject)->setMultiline(value.toBoolean(exec));
 }
 
 // ECMA 15.10.4

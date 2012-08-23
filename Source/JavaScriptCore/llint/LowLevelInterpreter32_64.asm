@@ -444,7 +444,13 @@ _llint_op_eq_null:
     loadi PayloadOffset[cfr, t0, 8], t0
     bineq t1, CellTag, .opEqNullImmediate
     loadp JSCell::m_structure[t0], t1
-    tbnz Structure::m_typeInfo + TypeInfo::m_flags[t1], MasqueradesAsUndefined, t1
+    btbnz Structure::m_typeInfo + TypeInfo::m_flags[t1], MasqueradesAsUndefined, .opEqNullMasqueradesAsUndefined
+    move 0, t1
+    jmp .opEqNullNotImmediate
+.opEqNullMasqueradesAsUndefined:
+    loadp CodeBlock[cfr], t0
+    loadp CodeBlock::m_globalObject[t0], t0
+    cpeq Structure::m_globalObject[t1], t0, t1
     jmp .opEqNullNotImmediate
 .opEqNullImmediate:
     cieq t1, NullTag, t2
@@ -485,7 +491,13 @@ _llint_op_neq_null:
     loadi PayloadOffset[cfr, t0, 8], t0
     bineq t1, CellTag, .opNeqNullImmediate
     loadp JSCell::m_structure[t0], t1
-    tbz Structure::m_typeInfo + TypeInfo::m_flags[t1], MasqueradesAsUndefined, t1
+    btbnz Structure::m_typeInfo + TypeInfo::m_flags[t1], MasqueradesAsUndefined, .opNeqNullMasqueradesAsUndefined
+    move 1, t1
+    jmp .opNeqNullNotImmediate
+.opNeqNullMasqueradesAsUndefined:
+    loadp CodeBlock[cfr], t0
+    loadp CodeBlock::m_globalObject[t0], t0
+    cpneq Structure::m_globalObject[t1], t0, t1
     jmp .opNeqNullNotImmediate
 .opNeqNullImmediate:
     cineq t1, NullTag, t2
@@ -875,7 +887,14 @@ _llint_op_is_undefined:
     dispatch(3)
 .opIsUndefinedCell:
     loadp JSCell::m_structure[t3], t1
-    tbnz Structure::m_typeInfo + TypeInfo::m_flags[t1], MasqueradesAsUndefined, t1
+    btbnz Structure::m_typeInfo + TypeInfo::m_flags[t1], MasqueradesAsUndefined, .opIsUndefinedMasqueradesAsUndefined
+    move 0, t1
+    storei t1, PayloadOffset[cfr, t0, 8]
+    dispatch(3)
+.opIsUndefinedMasqueradesAsUndefined:
+    loadp CodeBlock[cfr], t3
+    loadp CodeBlock::m_globalObject[t3], t3
+    cpeq Structure::m_globalObject[t1], t3, t1
     storei t1, PayloadOffset[cfr, t0, 8]
     dispatch(3)
 
@@ -1406,7 +1425,7 @@ macro equalNull(cellHandler, immediateHandler)
     loadi PayloadOffset[cfr, t0, 8], t0
     bineq t1, CellTag, .immediate
     loadp JSCell::m_structure[t0], t2
-    cellHandler(Structure::m_typeInfo + TypeInfo::m_flags[t2], .target)
+    cellHandler(t2, Structure::m_typeInfo + TypeInfo::m_flags[t2], .target)
     dispatch(3)
 
 .target:
@@ -1421,14 +1440,25 @@ end
 _llint_op_jeq_null:
     traceExecution()
     equalNull(
-        macro (value, target) btbnz value, MasqueradesAsUndefined, target end,
+        macro (structure, value, target) 
+            btbz value, MasqueradesAsUndefined, .opJeqNullNotMasqueradesAsUndefined
+            loadp CodeBlock[cfr], t0
+            loadp CodeBlock::m_globalObject[t0], t0
+            bpeq Structure::m_globalObject[structure], t0, target
+.opJeqNullNotMasqueradesAsUndefined:
+        end,
         macro (value, target) bieq value, NullTag, target end)
     
 
 _llint_op_jneq_null:
     traceExecution()
     equalNull(
-        macro (value, target) btbz value, MasqueradesAsUndefined, target end,
+        macro (structure, value, target) 
+            btbz value, MasqueradesAsUndefined, target 
+            loadp CodeBlock[cfr], t0
+            loadp CodeBlock::m_globalObject[t0], t0
+            bpneq Structure::m_globalObject[structure], t0, target
+        end,
         macro (value, target) bineq value, NullTag, target end)
 
 

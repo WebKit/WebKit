@@ -206,7 +206,7 @@ bool ScriptDebugServer::hasBreakpoint(intptr_t sourceID, const TextPosition& pos
         // An erroneous condition counts as "false".
         return false;
     }
-    return result.toBoolean();
+    return result.toBoolean(m_currentCallFrame->exec());
 }
 
 void ScriptDebugServer::clearBreakpoints()

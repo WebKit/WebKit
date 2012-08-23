@@ -614,7 +614,7 @@ private:
             if (obj->inherits(&BooleanObject::s_info)) {
                 if (!startObjectInternal(obj)) // handle duplicates
                     return true;
-                write(asBooleanObject(value)->internalValue().toBoolean() ? TrueObjectTag : FalseObjectTag);
+                write(asBooleanObject(value)->internalValue().toBoolean(m_exec) ? TrueObjectTag : FalseObjectTag);
                 return true;
             }
             if (obj->inherits(&StringObject::s_info)) {

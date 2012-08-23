@@ -2777,7 +2777,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_not)
 
     JSValue src = stackFrame.args[0].jsValue();
 
-    JSValue result = jsBoolean(!src.toBoolean());
+    JSValue result = jsBoolean(!src.toBoolean(stackFrame.callFrame));
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
@@ -2788,7 +2788,7 @@ DEFINE_STUB_FUNCTION(int, op_jtrue)
 
     JSValue src1 = stackFrame.args[0].jsValue();
 
-    bool result = src1.toBoolean();
+    bool result = src1.toBoolean(stackFrame.callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
     return result;
 }
@@ -2819,13 +2819,13 @@ DEFINE_STUB_FUNCTION(int, op_eq)
     start:
     if (src2.isUndefined()) {
         return src1.isNull() || 
-               (src1.isCell() && src1.asCell()->structure()->typeInfo().masqueradesAsUndefined())
+               (src1.isCell() && src1.asCell()->structure()->masqueradesAsUndefined(stackFrame.callFrame->lexicalGlobalObject()))
                || src1.isUndefined();
     }
     
     if (src2.isNull()) {
         return src1.isUndefined() || 
-               (src1.isCell() && src1.asCell()->structure()->typeInfo().masqueradesAsUndefined())
+               (src1.isCell() && src1.asCell()->structure()->masqueradesAsUndefined(stackFrame.callFrame->lexicalGlobalObject()))
                || src1.isNull();
     }
 
@@ -2862,10 +2862,10 @@ DEFINE_STUB_FUNCTION(int, op_eq)
     }
     
     if (src1.isUndefined())
-        return src2.isCell() && src2.asCell()->structure()->typeInfo().masqueradesAsUndefined();
+        return src2.isCell() && src2.asCell()->structure()->masqueradesAsUndefined(stackFrame.callFrame->lexicalGlobalObject());
     
     if (src1.isNull())
-        return src2.isCell() && src2.asCell()->structure()->typeInfo().masqueradesAsUndefined();
+        return src2.isCell() && src2.asCell()->structure()->masqueradesAsUndefined(stackFrame.callFrame->lexicalGlobalObject());
 
     JSCell* cell1 = src1.asCell();
 
@@ -3178,7 +3178,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_is_object)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    return JSValue::encode(jsBoolean(jsIsObjectType(stackFrame.args[0].jsValue())));
+    return JSValue::encode(jsBoolean(jsIsObjectType(stackFrame.callFrame, stackFrame.args[0].jsValue())));
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_is_function)

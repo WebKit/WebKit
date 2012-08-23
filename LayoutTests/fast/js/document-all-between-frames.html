@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+window.passUp = null;
+</script>
+<iframe id="subframe" src="resources/document-all-between-frames-subframe.html"></iframe>
+<script>
+window.jsTestIsAsync = true;
+window.passUp = [];
+function waitForResponse() {
+    if (window.passUp.length < (9 * 300) + 1) {
+        setTimeout(waitForResponse, 100);
+        return;
+    }
+    for (var i = 0; i < window.passUp.length; i++) {
+        debug(window.passUp[i]);
+    }
+    if (testRunner) {
+        testRunner.notifyDone();
+    }
+}
+
+var subframe = document.getElementById("subframe");
+subframe.contentWindow.passDown = document.all;
+if (document.all) {
+    debug("FAIL: document.all didn't masquerade as undefined");
+} else {
+    debug("document.all masqueraded as undefined");
+}
+setTimeout(waitForResponse, 100);
+</script>
+<script src="resources/js-test-post.js"></script>
+</body>
+</html>

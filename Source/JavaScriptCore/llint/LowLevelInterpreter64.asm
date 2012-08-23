@@ -324,7 +324,13 @@ macro equalNullComparison()
     loadp [cfr, t0, 8], t0
     btpnz t0, tagMask, .immediate
     loadp JSCell::m_structure[t0], t2
-    tbnz Structure::m_typeInfo + TypeInfo::m_flags[t2], MasqueradesAsUndefined, t0
+    btbnz Structure::m_typeInfo + TypeInfo::m_flags[t2], MasqueradesAsUndefined, .masqueradesAsUndefined
+    move 0, t0
+    jmp .done
+.masqueradesAsUndefined:
+    loadp CodeBlock[cfr], t0
+    loadp CodeBlock::m_globalObject[t0], t0
+    cpeq Structure::m_globalObject[t2], t0, t0
     jmp .done
 .immediate:
     andp ~TagBitUndefined, t0
@@ -733,9 +739,16 @@ _llint_op_is_undefined:
     dispatch(3)
 .opIsUndefinedCell:
     loadp JSCell::m_structure[t0], t0
-    tbnz Structure::m_typeInfo + TypeInfo::m_flags[t0], MasqueradesAsUndefined, t1
-    orp ValueFalse, t1
+    btbnz Structure::m_typeInfo + TypeInfo::m_flags[t0], MasqueradesAsUndefined, .masqueradesAsUndefined
+    move ValueFalse, t1
     storep t1, [cfr, t2, 8]
+    dispatch(3)
+.masqueradesAsUndefined:
+    loadp CodeBlock[cfr], t1
+    loadp CodeBlock::m_globalObject[t1], t1
+    cpeq Structure::m_globalObject[t0], t1, t3
+    orp ValueFalse, t3
+    storep t3, [cfr, t2, 8]
     dispatch(3)
 
 
@@ -1250,7 +1263,7 @@ macro equalNull(cellHandler, immediateHandler)
     loadp [cfr, t0, 8], t0
     btpnz t0, tagMask, .immediate
     loadp JSCell::m_structure[t0], t2
-    cellHandler(Structure::m_typeInfo + TypeInfo::m_flags[t2], .target)
+    cellHandler(t2, Structure::m_typeInfo + TypeInfo::m_flags[t2], .target)
     dispatch(3)
 
 .target:
@@ -1265,14 +1278,25 @@ end
 _llint_op_jeq_null:
     traceExecution()
     equalNull(
-        macro (value, target) btbnz value, MasqueradesAsUndefined, target end,
+        macro (structure, value, target) 
+            btbz value, MasqueradesAsUndefined, .notMasqueradesAsUndefined
+            loadp CodeBlock[cfr], t0
+            loadp CodeBlock::m_globalObject[t0], t0
+            bpeq Structure::m_globalObject[structure], t0, target
+.notMasqueradesAsUndefined:
+        end,
         macro (value, target) bpeq value, ValueNull, target end)
 
 
 _llint_op_jneq_null:
     traceExecution()
     equalNull(
-        macro (value, target) btbz value, MasqueradesAsUndefined, target end,
+        macro (structure, value, target) 
+            btbz value, MasqueradesAsUndefined, target
+            loadp CodeBlock[cfr], t0
+            loadp CodeBlock::m_globalObject[t0], t0
+            bpneq Structure::m_globalObject[structure], t0, target
+        end,
         macro (value, target) bpneq value, ValueNull, target end)
 
 

@@ -30,6 +30,7 @@
 #include "NumberPrototype.h"
 #include "StringPrototype.h"
 #include "StructureChain.h"
+#include "Watchpoint.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RandomNumber.h>
@@ -141,6 +142,8 @@ namespace JSC {
         WriteBarrier<Structure> m_internalFunctionStructure;
 
         Debugger* m_debugger;
+
+        RefPtr<WatchpointSet> m_masqueradesAsUndefinedWatchpoint;
 
         OwnPtr<JSGlobalObjectRareData> m_rareData;
 
@@ -269,6 +272,8 @@ namespace JSC {
         Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
         Structure* regExpStructure() const { return m_regExpStructure.get(); }
         Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
+
+        WatchpointSet* masqueradesAsUndefinedWatchpoint() { return m_masqueradesAsUndefinedWatchpoint.get(); }
 
         void setProfileGroup(unsigned value) { createRareDataIfNeeded(); m_rareData->profileGroup = value; }
         unsigned profileGroup() const

@@ -266,7 +266,7 @@ bool JSValueToBoolean(JSContextRef ctx, JSValueRef value)
     APIEntryShim entryShim(exec);
 
     JSValue jsValue = toJS(exec, value);
-    return jsValue.toBoolean();
+    return jsValue.toBoolean(exec);
 }
 
 double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception)

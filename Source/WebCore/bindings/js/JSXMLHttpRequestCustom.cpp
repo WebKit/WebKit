@@ -89,7 +89,7 @@ JSValue JSXMLHttpRequest::open(ExecState* exec)
 
     ExceptionCode ec = 0;
     if (exec->argumentCount() >= 3) {
-        bool async = exec->argument(2).toBoolean();
+        bool async = exec->argument(2).toBoolean(exec);
 
         if (exec->argumentCount() >= 4 && !exec->argument(3).isUndefined()) {
             String user = valueToStringWithNullCheck(exec, exec->argument(3));

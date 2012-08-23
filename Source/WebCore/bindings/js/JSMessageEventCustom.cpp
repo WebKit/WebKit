@@ -103,8 +103,8 @@ JSValue JSMessageEvent::ports(ExecState* exec) const
 static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecState* exec)
 {
     const UString& typeArg = exec->argument(0).toString(exec)->value(exec);
-    bool canBubbleArg = exec->argument(1).toBoolean();
-    bool cancelableArg = exec->argument(2).toBoolean();
+    bool canBubbleArg = exec->argument(1).toBoolean(exec);
+    bool cancelableArg = exec->argument(2).toBoolean(exec);
     const UString& originArg = exec->argument(4).toString(exec)->value(exec);
     const UString& lastEventIdArg = exec->argument(5).toString(exec)->value(exec);
     DOMWindow* sourceArg = toDOMWindow(exec->argument(6));

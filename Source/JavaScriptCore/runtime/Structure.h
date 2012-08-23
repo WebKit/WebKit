@@ -256,6 +256,8 @@ namespace JSC {
                 && offset <= lastValidOffset();
         }
 
+        bool masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject);
+
         PropertyOffset get(JSGlobalData&, PropertyName);
         PropertyOffset get(JSGlobalData&, const UString& name);
         JS_EXPORT_PRIVATE PropertyOffset get(JSGlobalData&, PropertyName, unsigned& attributes, JSCell*& specificValue);
@@ -311,6 +313,11 @@ namespace JSC {
         static ptrdiff_t prototypeOffset()
         {
             return OBJECT_OFFSETOF(Structure, m_prototype);
+        }
+
+        static ptrdiff_t globalObjectOffset()
+        {
+            return OBJECT_OFFSETOF(Structure, m_globalObject);
         }
 
         static ptrdiff_t typeInfoFlagsOffset()
@@ -505,6 +512,11 @@ namespace JSC {
         return entry ? entry->offset : invalidOffset;
     }
     
+    inline bool Structure::masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject)
+    {
+        return typeInfo().masqueradesAsUndefined() && globalObject() == lexicalGlobalObject;
+    }
+
     inline JSValue JSValue::structureOrUndefined() const
     {
         if (isCell())

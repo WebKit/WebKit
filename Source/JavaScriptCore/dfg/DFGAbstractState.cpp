@@ -618,7 +618,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             
     case LogicalNot: {
         JSValue childConst = forNode(node.child1()).value();
-        if (childConst && trySetConstant(nodeIndex, jsBoolean(!childConst.toBoolean()))) {
+        if (childConst && trySetConstant(nodeIndex, jsBoolean(!childConst.toBoolean(m_codeBlock->globalObjectFor(node.codeOrigin)->globalExec())))) {
             m_foundConstants = true;
             node.setCanExit(false);
             break;
@@ -650,16 +650,23 @@ bool AbstractState::execute(unsigned indexInBlock)
     case IsString:
     case IsObject:
     case IsFunction: {
-        node.setCanExit(false);
+        node.setCanExit(node.op() == IsUndefined && m_codeBlock->globalObjectFor(node.codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid());
         JSValue child = forNode(node.child1()).value();
         if (child) {
             bool constantWasSet;
             switch (node.op()) {
             case IsUndefined:
-                constantWasSet = trySetConstant(nodeIndex, jsBoolean(
-                    child.isCell()
-                    ? child.asCell()->structure()->typeInfo().masqueradesAsUndefined()
-                    : child.isUndefined()));
+                if (m_codeBlock->globalObjectFor(node.codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid()) {
+                    constantWasSet = trySetConstant(nodeIndex, jsBoolean(
+                        child.isCell()
+                        ? false 
+                        : child.isUndefined()));
+                } else {
+                    constantWasSet = trySetConstant(nodeIndex, jsBoolean(
+                        child.isCell()
+                        ? child.asCell()->structure()->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node.codeOrigin))
+                        : child.isUndefined()));
+                }
                 break;
             case IsBoolean:
                 constantWasSet = trySetConstant(nodeIndex, jsBoolean(child.isBoolean()));
@@ -739,8 +746,8 @@ bool AbstractState::execute(unsigned indexInBlock)
                  && m_graph.valueOfJSConstant(node.child1().index()).isNull())
                 || (m_graph.isConstant(node.child2().index())
                     && m_graph.valueOfJSConstant(node.child2().index()).isNull())) {
-                // We know that this won't clobber the world. But that's all we know.
-                node.setCanExit(false);
+                // We can exit if we haven't fired the MasqueradesAsUndefind watchpoint yet.
+                node.setCanExit(m_codeBlock->globalObjectFor(node.codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid());
                 break;
             }
             
@@ -1077,7 +1084,7 @@ bool AbstractState::execute(unsigned indexInBlock)
     case Branch: {
         JSValue value = forNode(node.child1()).value();
         if (value) {
-            bool booleanValue = value.toBoolean();
+            bool booleanValue = value.toBoolean(m_codeBlock->globalObjectFor(node.codeOrigin)->globalExec());
             if (booleanValue)
                 m_branchDirection = TakeTrue;
             else
