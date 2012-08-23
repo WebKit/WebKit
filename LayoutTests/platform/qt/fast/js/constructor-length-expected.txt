@@ -36,7 +36,7 @@ PASS ProgressEvent.length is 2
 FAIL ShadowRoot.length should be 1. Threw exception ReferenceError: Can't find variable: ShadowRoot
 PASS SharedWorker.length is 2
 PASS StorageEvent.length is 2
-FAIL TextTrackCue.length should be 6. Threw exception ReferenceError: Can't find variable: TextTrackCue
+FAIL TextTrackCue.length should be 3. Threw exception ReferenceError: Can't find variable: TextTrackCue
 FAIL TrackEvent.length should be 2. Threw exception ReferenceError: Can't find variable: TrackEvent
 PASS Uint16Array.length is 1
 PASS Uint32Array.length is 1

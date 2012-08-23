@@ -1,3 +1,14 @@
+2012-08-23  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed gardening.
+
+        A follow-up to r126400, updating various baselines for fast/js/constructor-length.html
+        so they are correct.
+
+        * platform/gtk/fast/js/constructor-length-expected.txt:
+        * platform/mac/fast/js/constructor-length-expected.txt:
+        * platform/qt/fast/js/constructor-length-expected.txt:
+
 2012-08-23  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL] Added missing SKIP keyword to platform/efl/TestExpectations
