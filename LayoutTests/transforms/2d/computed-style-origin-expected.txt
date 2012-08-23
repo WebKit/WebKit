@@ -7,6 +7,7 @@ PASS test1Style.webkitTransformOrigin is '10px 10px'
 PASS test2Style.webkitTransformOrigin is '10px 10px'
 PASS test3Style.webkitTransformOrigin is '0px 20px'
 PASS test4Style.webkitTransformOrigin is '5px 7px'
+PASS test5Style.webkitTransformOrigin is '15px 15px'
 
 PASS successfullyParsed is true
 

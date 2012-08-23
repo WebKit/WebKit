@@ -15,11 +15,14 @@
     .box {
       height: 100%;
       width: 100%;
+      padding: 5px;
+      margin: 5px;
+      border: 5px solid gray;
       background-color: green;
       -webkit-transform-origin: 20% 50%;
     }
     #results {
-      margin-top: 100px;
+      margin-top: 150px;
     }
   </style>
   <script type="text/javascript" charset="utf-8">
@@ -30,33 +33,51 @@
 
     var gTests = [
       { 'transform' : 'translate(80px, 90px)',  'result' : 'matrix(1, 0, 0, 1, 80, 90)' },
+      { 'transform' : 'translate(10px, 50%)',   'result' : 'matrix(1, 0, 0, 1, 10, 60)' },
       { 'transform' : 'scale(1.2, 0.8)',        'result' : 'matrix(1.2, 0, 0, 0.8, 0, 0)' },
       { 'transform' : 'skew(-0.7rad, 20deg)',   'result' : 'matrix(1, 0.36397, -0.842288, 1, 0, 0)' },
       { 'transform' : 'rotate(45deg)',          'result' : 'matrix(0.707107, 0.707107, -0.707107, 0.707107, 0, 0)' },
     ];
+
+    function compareTransform(expected, computed)
+    {
+      var re = /^matrix\(([^,]+), ([^,]+), ([^,]+), ([^,]+), ([^,]+?)(?:px)?, ([^,]+?)(?:px)?\)$/;
+      var parsedExpected = re.exec(expected);
+      var parsedComputed = re.exec(computed);
+      for(var i = 1; i < 7; i++) {
+         // use +/- 0.05 to avoid problems with rounding
+         if (!(Math.abs(parsedComputed[i] - parsedExpected[i]) < 0.05))
+            return false;
+      }
+      return true;
+    }
     
     function runTests()
     {
       var testBox = document.getElementById('test-box');
+      var testSpan = document.getElementById('test-span');
       var resultsBox = document.getElementById('results');
 
       gTests.forEach(function(curTest) {
         // set one of our test transforms
         testBox.style.webkitTransform = curTest.transform;
-        // read back computed style
-        var oldTransform = window.getComputedStyle(testBox).webkitTransform;
-        // set that matrix() back on the element
-        testBox.style.webkitTransform = oldTransform;
+        testSpan.style.webkitTransform = curTest.transform;
         // read back computed style
         var computedTransform = window.getComputedStyle(testBox).webkitTransform;
-        
-        var success = (oldTransform == computedTransform);
+        var computedSpanTransform = window.getComputedStyle(testSpan).webkitTransform;
+        // compare expected result to computed transformation matrix
+        var success = compareTransform(curTest.result, computedTransform);
         var result;
         if (success)
           result = curTest.transform + ' expected <code>' + curTest.result + '</code> : PASS';
         else
-          result = curTest.transform + ' expected <code>' + oldTransform + '</code>, got <code>' + computedTransform + '</code> : FAIL';
+          result = curTest.transform + ' expected <code>' + curTest.result + '</code>, got <code>' + computedTransform + '</code> : FAIL';
         resultsBox.innerHTML += result + '<br>';
+
+        if (computedSpanTransform !== 'none') {
+          result = curTest.transform + ' applied to a non-box element: ' + ' expected <code>none</code> got <code>' + computedSpanTransform + '</code> : FAIL';
+          resultsBox.innerHTML += result + '<br>';
+        }
       });
       
       if (window.testRunner)
@@ -69,6 +90,8 @@
   <div class="container">
     <div id="test-box" class="box"></div>
   </div>
+
+  <span id="test-span" class="box"></span>
 
   <div id="results">
   </div>

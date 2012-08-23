@@ -1,3 +1,22 @@
+2012-08-23  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        getComputedStyle returns wrong value for CSS3 2D transformations
+        https://bugs.webkit.org/show_bug.cgi?id=94211
+
+        Reviewed by Simon Fraser.
+
+        This change fixes getComputedStyle-transform.html test.
+        Before this change, the test doesn't do anything.
+        When new transformation value is set, it immediately read
+        back as an old value, thus computed style is equal to
+        an old style. Moreover, expected result is never checked.
+        Added new test case to computed-style-origin.html layout test.
+
+        * fast/css/getComputedStyle/getComputedStyle-transform-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-transform.html:
+        * transforms/2d/computed-style-origin-expected.txt:
+        * transforms/2d/computed-style-origin.html:
+
 2012-08-23  Takashi Sakamoto  <tasak@google.com>
 
         Distributed nodes should not share styles.
