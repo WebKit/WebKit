@@ -34,7 +34,6 @@
 #include "V8DOMWrapper.h"
 #include "V8IsolatedContext.h"
 #include "V8MessagePort.h"
-#include "V8Proxy.h"
 #include <wtf/ArrayBuffer.h>
 #include <wtf/UnusedParam.h>
 

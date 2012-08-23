@@ -37,6 +37,7 @@
 #include "Frame.h"
 #include "MemoryInstrumentation.h"
 #include "PlatformString.h"
+#include "PlatformSupport.h"
 #include "QualifiedName.h"
 #include "Settings.h"
 #include "V8DOMStringList.h"
@@ -47,6 +48,7 @@
 #include "V8XPathNSResolver.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
+#include "WorldContextHandle.h"
 #include "XPathNSResolver.h"
 #include <wtf/MathExtras.h>
 #include <wtf/MainThread.h>

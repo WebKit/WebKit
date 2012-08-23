@@ -2300,8 +2300,6 @@
             'bindings/v8/V8PerContextData.h',
             'bindings/v8/V8PerIsolateData.cpp',
             'bindings/v8/V8PerIsolateData.h',
-            'bindings/v8/V8Proxy.cpp',
-            'bindings/v8/V8Proxy.h',
             'bindings/v8/V8RecursionScope.cpp',
             'bindings/v8/V8RecursionScope.h',
             'bindings/v8/V8StringResource.cpp',

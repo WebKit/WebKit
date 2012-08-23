@@ -30,7 +30,6 @@
 #include "V8Class2.h"
 #include "V8Class8.h"
 #include "V8DOMStringList.h"
-#include "V8Proxy.h"
 #include "V8ThisClass.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefCounted.h>

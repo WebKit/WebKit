@@ -32,7 +32,6 @@
 #include "V8Event.h"
 #include "V8IsolatedContext.h"
 #include "V8Node.h"
-#include "V8Proxy.h"
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {

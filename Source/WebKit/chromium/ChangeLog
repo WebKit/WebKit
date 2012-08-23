@@ -1,3 +1,20 @@
+2012-08-23  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Remove V8Proxy.{h,cpp}
+        https://bugs.webkit.org/show_bug.cgi?id=94794
+
+        Reviewed by Dimitri Glazkov.
+
+        Now V8Proxy is no longer used. We can completely remove V8Proxy from the codebase.
+
+        No tests. No change in behavior.
+
+        * src/ChromeClientImpl.cpp:
+        * src/WebBindings.cpp:
+        * src/WebDOMMessageEvent.cpp:
+        * src/WebDevToolsAgentImpl.cpp:
+        * src/WebMediaPlayerClientImpl.cpp:
+
 2012-08-23  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Don't require a RenderSurface* in order to create a RenderPass

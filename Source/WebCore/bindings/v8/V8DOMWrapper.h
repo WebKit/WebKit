@@ -53,9 +53,7 @@ namespace WebCore {
     class Frame;
     class Node;
     class V8PerContextData;
-    class V8Proxy;
     class WorkerContext;
-    class XPathResolver;
 
     enum ListenerLookupType {
         ListenerFindOnly,

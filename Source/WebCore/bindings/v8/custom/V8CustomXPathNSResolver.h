@@ -39,8 +39,6 @@
 
 namespace WebCore {
 
-class V8Proxy;
-
 // V8CustomXPathNSResolver does not create a persistent handle to the
 // given resolver object.  So the lifetime of V8CustomXPathNSResolver
 // must not exceed the lifetime of the passed handle.

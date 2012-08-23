@@ -42,10 +42,6 @@
 #include "platform/WebSerializedScriptValue.h"
 #include "platform/WebString.h"
 
-#if USE(V8)
-#include "V8Proxy.h"
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {

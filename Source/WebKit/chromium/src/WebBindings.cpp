@@ -45,7 +45,6 @@
 #include "V8DOMWrapper.h"
 #include "V8Element.h"
 #include "V8NPUtils.h"
-#include "V8Proxy.h"
 #include "V8Range.h"
 #include <wtf/ArrayBufferView.h>
 // FIXME: Remove the USE(JSC) ifdefs because we don't support USE(JSC) anymore.

@@ -64,7 +64,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/V8ObjectConstructor.cpp
     bindings/v8/V8PerContextData.cpp
     bindings/v8/V8PerIsolateData.cpp
-    bindings/v8/V8Proxy.cpp
     bindings/v8/V8RecursionScope.cpp
     bindings/v8/V8ThrowException.cpp
     bindings/v8/V8Utilities.cpp

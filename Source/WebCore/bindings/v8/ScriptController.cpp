@@ -59,6 +59,7 @@
 #include "V8Binding.h"
 #include "V8DOMWindow.h"
 #include "V8Event.h"
+#include "V8GCController.h"
 #include "V8HiddenPropertyName.h"
 #include "V8HTMLEmbedElement.h"
 #include "V8IsolatedContext.h"
@@ -111,7 +112,6 @@ ScriptController::ScriptController(Frame* frame)
     , m_sourceURL(0)
     , m_windowShell(V8DOMWindowShell::create(frame))
     , m_paused(false)
-    , m_proxy(adoptPtr(new V8Proxy(frame)))
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_wrappedWindowScriptNPObject(0)
 #endif
@@ -120,6 +120,7 @@ ScriptController::ScriptController(Frame* frame)
 
 ScriptController::~ScriptController()
 {
+    windowShell()->destroyGlobal();
     clearForClose();
 }
 
@@ -193,7 +194,7 @@ bool ScriptController::processingUserGesture()
 
 v8::Local<v8::Value> ScriptController::callFunction(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
 {
-    // Keep Frame (and therefore ScriptController and V8Proxy) alive.
+    // Keep Frame (and therefore ScriptController) alive.
     RefPtr<Frame> protect(m_frame);
     return ScriptController::callFunctionWithInstrumentation(m_frame ? m_frame->document() : 0, function, receiver, argc, args);
 }
@@ -647,7 +648,7 @@ NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement
 void ScriptController::clearWindowShell(DOMWindow*, bool)
 {
     // V8 binding expects ScriptController::clearWindowShell only be called
-    // when a frame is loading a new page. V8Proxy::clearForNavigation
+    // when a frame is loading a new page. ScriptController::clearForNavigation
     // creates a new context for the new page.
     clearForNavigation();
 }

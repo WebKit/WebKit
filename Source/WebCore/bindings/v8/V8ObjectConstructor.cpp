@@ -74,8 +74,7 @@ v8::Local<v8::Object> V8ObjectConstructor::newInstanceInDocument(v8::Handle<v8::
     TRACE_EVENT0("v8", "v8.newInstance");
 #endif
 
-    // No artificial limitations on the depth of recursion, see comment in
-    // V8Proxy::callFunction.
+    // No artificial limitations on the depth of recursion.
     V8RecursionScope recursionScope(document);
     v8::Local<v8::Object> result = function->NewInstance(argc, argv);
     crashIfV8IsDead();

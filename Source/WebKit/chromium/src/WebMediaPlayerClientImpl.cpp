@@ -7,6 +7,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "AudioBus.h"
 #include "AudioSourceProvider.h"
 #include "AudioSourceProviderClient.h"
 #include "Frame.h"

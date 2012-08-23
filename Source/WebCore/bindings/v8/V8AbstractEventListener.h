@@ -41,8 +41,6 @@
 namespace WebCore {
 
     class Event;
-    class Frame;
-    class V8Proxy;
 
     // There are two kinds of event listeners: HTML or non-HMTL. onload,
     // onfocus, etc (attributes) are always HTML event handler type; Event

@@ -46,7 +46,7 @@ namespace WebCore {
 //
 // Debug-time checking of this is enforced via this class.
 //
-// Calls of type (1) should generally go through V8Proxy, as inspector
+// Calls of type (1) should generally go through ScriptController, as inspector
 // instrumentation is needed. Calls of type (2) should always stack-allocate a
 // V8RecursionScope in the same block as the call into script. Calls of type (3)
 // should stack allocate a V8RecursionScope::MicrotaskSuppression -- this

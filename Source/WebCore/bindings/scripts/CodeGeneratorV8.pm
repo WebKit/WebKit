@@ -2522,7 +2522,6 @@ sub GenerateImplementation
     AddToImplIncludes("BindingState.h");
     AddToImplIncludes("ContextFeatures.h");
     AddToImplIncludes("RuntimeEnabledFeatures.h");
-    AddToImplIncludes("V8Proxy.h");
     AddToImplIncludes("V8Binding.h");
     AddToImplIncludes("V8DOMWrapper.h");
     AddToImplIncludes("V8IsolatedContext.h");
@@ -3212,11 +3211,10 @@ sub GenerateCallbackImplementation
 
     # - Add default header template
     push(@implFixedHeader, GenerateImplementationContentHeader($dataNode));
-         
+
     AddToImplIncludes("ScriptExecutionContext.h");
     AddToImplIncludes("V8Binding.h");
     AddToImplIncludes("V8Callback.h");
-    AddToImplIncludes("V8Proxy.h");
 
     push(@implContent, "#include <wtf/Assertions.h>\n\n");
     push(@implContent, "namespace WebCore {\n\n");

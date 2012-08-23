@@ -51,7 +51,6 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "V8Binding.h"
-#include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WebDataSource.h"
 #include "WebDevToolsAgentClient.h"

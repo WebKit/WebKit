@@ -33,7 +33,6 @@
 #include "V8Float32Array.h"
 #include "V8Int32Array.h"
 #include "V8IsolatedContext.h"
-#include "V8Proxy.h"
 #include <wtf/Float32Array.h>
 #include <wtf/Float64Array.h>
 #include <wtf/GetPtr.h>

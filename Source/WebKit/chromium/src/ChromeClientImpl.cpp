@@ -71,9 +71,6 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "TextFieldDecorationElement.h"
-#if USE(V8)
-#include "V8Proxy.h"
-#endif
 #include "WebAccessibilityObject.h"
 #if ENABLE(INPUT_TYPE_COLOR)
 #include "WebColorChooser.h"

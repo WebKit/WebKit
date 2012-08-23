@@ -31,18 +31,17 @@
 #ifndef ScriptController_h
 #define ScriptController_h
 
+#include "FrameLoaderTypes.h"
 #include "ScriptControllerBase.h"
 #include "ScriptInstance.h"
 #include "ScriptValue.h"
 
-#include "V8Proxy.h"
-
 #include <v8.h>
-
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/TextPosition.h>
 
 struct NPObject;
 
@@ -53,11 +52,23 @@ class Event;
 class Frame;
 class HTMLDocument;
 class HTMLPlugInElement;
-class PagePopupClient;
+class KURL;
 class ScriptSourceCode;
 class ScriptState;
+class SecurityOrigin;
 class V8DOMWindowShell;
+class V8IsolatedContext;
 class Widget;
+
+// Note: although the pointer is raw, the instance is kept alive by a strong
+// reference to the v8 context it contains, which is not made weak until we
+// call world->destroy().
+//
+// FIXME: We want to eventually be holding window shells instead of the
+// IsolatedContext directly.
+typedef HashMap<int, V8IsolatedContext*> IsolatedWorldMap;
+
+typedef HashMap<int, RefPtr<SecurityOrigin> > IsolatedWorldSecurityOriginMap;
 
 typedef WTF::Vector<v8::Extension*> V8Extensions;
 
@@ -66,9 +77,6 @@ public:
     ScriptController(Frame*);
     ~ScriptController();
 
-    // FIXME: V8Proxy should either be folded into ScriptController
-    // or this accessor should be made JSProxy*
-    V8Proxy* proxy() { return m_proxy.get(); }
     V8DOMWindowShell* windowShell() const { return m_windowShell.get(); }
 
     ScriptValue executeScript(const ScriptSourceCode&);
@@ -150,11 +158,9 @@ public:
     // --- and there is only one VM instance.                        ---
 
     // Returns the frame for the entered context. See comments in
-    // V8Proxy::retrieveFrameForEnteredContext() for more information.
     static Frame* retrieveFrameForEnteredContext();
 
     // Returns the frame for the current context. See comments in
-    // V8Proxy::retrieveFrameForEnteredContext() for more information.
     static Frame* retrieveFrameForCurrentContext();
 
     // Returns V8 Context. If none exists, creates a new context.
@@ -227,7 +233,6 @@ private:
 
     bool m_paused;
 
-    OwnPtr<V8Proxy> m_proxy;
     typedef HashMap<Widget*, NPObject*> PluginObjectMap;
 
     // A mapping between Widgets and their corresponding script object.

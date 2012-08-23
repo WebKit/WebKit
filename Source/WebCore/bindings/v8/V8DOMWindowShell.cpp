@@ -54,6 +54,7 @@
 #include "V8DOMMap.h"
 #include "V8DOMWindow.h"
 #include "V8Document.h"
+#include "V8GCController.h"
 #include "V8GCForContextDispose.h"
 #include "V8HTMLDocument.h"
 #include "V8HiddenPropertyName.h"
@@ -93,7 +94,7 @@ static void reportFatalErrorInV8(const char* location, const char* message)
 {
     // V8 is shutdown, we cannot use V8 api.
     // The only thing we can do is to disable JavaScript.
-    // FIXME: clean up V8Proxy and disable JavaScript.
+    // FIXME: clean up ScriptController and disable JavaScript.
     int memoryUsageMB = -1;
 #if PLATFORM(CHROMIUM)
     memoryUsageMB = MemoryUsageSupport::actualMemoryUsageMB();
