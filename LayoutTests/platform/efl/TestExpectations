@@ -906,3 +906,6 @@ BUGWK94341 : inspector/timeline/timeline-decode-resize.html = TEXT
 BUGWK94334 SKIP : fast/forms/range/thumbslider-no-parent-slider.html = MISSING
 
 BUGWK94690 : fast/dom/shadow/shadowdom-dynamic-styling.html = TEXT
+
+// Fails after r126350
+BUGWK94788 : media/track/track-cue-rendering-snap-to-lines-not-set.html = TEXT

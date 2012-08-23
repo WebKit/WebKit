@@ -1,3 +1,14 @@
+2012-08-23  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Gardening after r126350
+        https://bugs.webkit.org/show_bug.cgi?id=94787
+
+        Unreviewed gardening.
+
+        Gardening of media/track/track-cue-rendering-snap-to-lines-not-set.html.
+
+        * platform/efl/TestExpectations:
+
 2012-08-23  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed Chromium gardeing.
