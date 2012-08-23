@@ -1,3 +1,13 @@
+2012-08-22  Sukolsak Sakshuwong  <sukolsak@google.com>
+
+        Implement UndoManager's item() method
+        https://bugs.webkit.org/show_bug.cgi?id=94671
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/undomanager/undomanager-item-expected.txt: Added.
+        * editing/undomanager/undomanager-item.html: Added.
+
 2012-08-22  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Focusable elements without a role should not be ignored

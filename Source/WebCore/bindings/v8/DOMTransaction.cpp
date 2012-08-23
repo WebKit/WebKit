@@ -96,17 +96,29 @@ void DOMTransaction::reapply()
         m_undoManager->registerUndoStep(this);
 }
 
-v8::Handle<v8::Function> DOMTransaction::getFunction(const char* propertyName)
+v8::Handle<v8::Value> DOMTransaction::data()
 {
     v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(toV8(this));
     if (wrapper.IsEmpty())
-        return v8::Handle<v8::Function>();
+        return v8::Handle<v8::Value>();
+    return wrapper->GetHiddenValue(V8HiddenPropertyName::domTransactionData());
+}
 
-    v8::Local<v8::Value> data = wrapper->GetHiddenValue(V8HiddenPropertyName::domTransactionData());
-    if (data.IsEmpty() || !data->IsObject())
-        return v8::Handle<v8::Function>();
+void DOMTransaction::setData(v8::Handle<v8::Value> newData)
+{
+    v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(toV8(this));
+    if (wrapper.IsEmpty())
+        return;
+    wrapper->SetHiddenValue(V8HiddenPropertyName::domTransactionData(), newData);
+}
 
-    v8::Local<v8::Value> function = v8::Local<v8::Object>::Cast(data)->Get(v8::String::NewSymbol(propertyName));
+v8::Handle<v8::Function> DOMTransaction::getFunction(const char* propertyName)
+{
+    v8::Handle<v8::Value> dictionary = data();
+    if (dictionary.IsEmpty() || !dictionary->IsObject())
+        return v8::Handle<v8::Function>();
+    
+    v8::Local<v8::Value> function = v8::Handle<v8::Object>::Cast(dictionary)->Get(v8::String::NewSymbol(propertyName));
     if (function.IsEmpty() || !function->IsFunction())
         return v8::Handle<v8::Function>();
 

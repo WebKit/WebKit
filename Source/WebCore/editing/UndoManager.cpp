@@ -160,6 +160,17 @@ void UndoManager::redo(ExceptionCode& ec)
     m_redoStack.removeLast();
 }
 
+UndoManagerEntry UndoManager::item(unsigned index) const
+{
+    ASSERT(index < length());
+    if (index < m_redoStack.size()) {
+        UndoManagerEntry entry = *m_redoStack[index];
+        entry.reverse();
+        return entry;
+    }
+    return *m_undoStack[length() - index - 1];
+}
+
 void UndoManager::registerUndoStep(PassRefPtr<UndoStep> step)
 {
     if (!m_isInProgress) {

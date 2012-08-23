@@ -41,6 +41,8 @@ module core {
         void redo()
             raises(DOMException);
 
+        [Custom] sequence<DOMTransaction> item(in unsigned long index);
+
         readonly attribute unsigned long length;
         readonly attribute unsigned long position;
 

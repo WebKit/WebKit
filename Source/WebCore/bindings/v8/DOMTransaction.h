@@ -47,6 +47,9 @@ public:
     virtual EditAction editingAction() const OVERRIDE { return EditActionUnspecified; }
     virtual bool isDOMTransaction() const OVERRIDE { return true; }
 
+    v8::Handle<v8::Value> data();
+    void setData(v8::Handle<v8::Value>);
+
     UndoManager* undoManager() const { return m_undoManager; }
     void setUndoManager(UndoManager* undoManager) { m_undoManager = undoManager; }
 

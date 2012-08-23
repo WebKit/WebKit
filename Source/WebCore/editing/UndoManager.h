@@ -62,6 +62,8 @@ public:
     void undo(ExceptionCode& = ASSERT_NO_EXCEPTION);
     void redo(ExceptionCode& = ASSERT_NO_EXCEPTION);
 
+    UndoManagerEntry item(unsigned index) const;
+
     unsigned length() const { return m_undoStack.size() + m_redoStack.size(); }
     unsigned position() const { return m_redoStack.size(); }
 

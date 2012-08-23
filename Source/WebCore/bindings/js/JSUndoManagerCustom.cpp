@@ -38,6 +38,12 @@ JSValue JSUndoManager::transact(ExecState*)
     return jsUndefined();
 }
 
+JSValue JSUndoManager::item(ExecState*)
+{
+    // FIXME: implement JSC bindings
+    return jsUndefined();
+}
+
 }
 
 #endif

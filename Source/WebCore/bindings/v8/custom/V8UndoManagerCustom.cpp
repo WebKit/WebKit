@@ -31,7 +31,6 @@
 #include "DOMTransaction.h"
 #include "ExceptionCode.h"
 #include "V8DOMTransaction.h"
-#include "V8HiddenPropertyName.h"
 
 namespace WebCore {
 
@@ -49,15 +48,44 @@ v8::Handle<v8::Value> V8UndoManager::transactCallback(const v8::Arguments& args)
     EXCEPTION_BLOCK(bool, merge, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)->BooleanValue());
 
     RefPtr<DOMTransaction> transaction = DOMTransaction::create(WorldContextHandle(UseCurrentWorld));
-    v8::Handle<v8::Object> transactionWrapper = v8::Handle<v8::Object>::Cast(toV8(transaction.get()));
-
-    transactionWrapper->SetHiddenValue(V8HiddenPropertyName::domTransactionData(), dictionary);
+    transaction->setData(dictionary);
 
     ExceptionCode ec = 0;
     imp->transact(transaction, merge, ec);
     if (ec)
         return setDOMException(ec, args.GetIsolate());
     return v8Undefined();
+}
+
+v8::Handle<v8::Value> V8UndoManager::itemCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.UndoManager.item");
+    if (args.Length() < 1)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    UndoManager* imp = V8UndoManager::toNative(args.Holder());
+
+    EXCEPTION_BLOCK(unsigned, index, toUInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+
+    if (index >= imp->length())
+        return v8::Null(args.GetIsolate());
+
+    const UndoManagerEntry& entry = imp->item(index);
+
+    v8::Handle<v8::Array> result = v8::Array::New(entry.size());
+    v8::Isolate* isolate = args.GetIsolate();
+    for (size_t index = 0; index < entry.size(); ++index) {
+        UndoStep* step = entry[index].get();
+        if (step->isDOMTransaction())
+            result->Set(v8Integer(index, isolate), static_cast<DOMTransaction*>(step)->data());
+        else {
+            // FIXME: We shouldn't be creating new object each time we return.
+            // Object for the same native editing command should always be the same.
+            v8::Handle<v8::Object> object = v8::Object::New();
+            object->Set(v8::String::NewSymbol("label"), v8::String::New("[Editing command]"));
+            result->Set(v8Integer(index, isolate), object);
+        }
+    }
+    return result;
 }
 
 } // namespace WebCore
