@@ -175,7 +175,7 @@ WebInspector.EventListenersSection.prototype.__proto__ = WebInspector.Properties
  */
 WebInspector.EventListenerBar = function(eventListener, nodeId, linkifier)
 {
-    WebInspector.ObjectPropertiesSection.call(this);
+    WebInspector.ObjectPropertiesSection.call(this, WebInspector.RemoteObject.fromPrimitiveValue(""));
 
     this.eventListener = eventListener;
     this._nodeId = nodeId;

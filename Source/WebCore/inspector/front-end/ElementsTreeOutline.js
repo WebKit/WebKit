@@ -1042,7 +1042,7 @@ WebInspector.ElementsTreeElement.prototype = {
         }
     },
 
-    onselect: function(treeElement, selectedByUser)
+    onselect: function(selectedByUser)
     {
         this.treeOutline.suppressRevealAndSelect = true;
         this.treeOutline.selectDOMNode(this.representedObject, selectedByUser);

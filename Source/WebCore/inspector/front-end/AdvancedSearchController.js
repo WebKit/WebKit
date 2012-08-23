@@ -585,7 +585,7 @@ WebInspector.FileBasedSearchResultsPane.prototype = {
         var showMoreMatchesElement = new TreeElement(showMoreMatchesText, null, false);
         fileTreeElement.appendChild(showMoreMatchesElement);
         showMoreMatchesElement.listItemElement.addStyleClass("show-more-matches");
-        showMoreMatchesElement.onselect = this._showMoreMatchesElementSelected.bind(this, searchResult, startMatchIndex);
+        showMoreMatchesElement.onselect = this._showMoreMatchesElementSelected.bind(this, searchResult, startMatchIndex, showMoreMatchesElement);
     },
 
     /**
@@ -629,7 +629,7 @@ WebInspector.FileBasedSearchResultsPane.prototype = {
         fileTreeElement.listItemElement.appendChild(matchesCountSpan);
         
         var searchResult = this._searchResults[searchResultIndex];
-        fileTreeElement.onexpand = this._fileTreeElementExpanded.bind(this, searchResult);
+        fileTreeElement.onexpand = this._fileTreeElementExpanded.bind(this, searchResult, fileTreeElement);
 
         // Expand until at least certain amount of matches is expanded.
         if (this._matchesExpandedCount < WebInspector.FileBasedSearchResultsPane.matchesExpandedByDefaultCount)
