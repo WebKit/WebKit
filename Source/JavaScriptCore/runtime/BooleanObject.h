@@ -27,8 +27,8 @@ namespace JSC {
 
     class BooleanObject : public JSWrapperObject {
     protected:
-        BooleanObject(JSGlobalData&, Structure*);
-        void finishCreation(JSGlobalData&);
+        JS_EXPORT_PRIVATE BooleanObject(JSGlobalData&, Structure*);
+        JS_EXPORT_PRIVATE void finishCreation(JSGlobalData&);
 
     public:
         typedef JSWrapperObject Base;
@@ -40,7 +40,7 @@ namespace JSC {
             return boolean;
         }
         
-        static const ClassInfo s_info;
+        static JS_EXPORTDATA const ClassInfo s_info;
         
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {

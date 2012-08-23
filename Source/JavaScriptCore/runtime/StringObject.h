@@ -78,6 +78,8 @@ namespace JSC {
         return static_cast<StringObject*>(asObject(value));
     }
 
+    JS_EXPORT_PRIVATE StringObject* constructString(ExecState*, JSGlobalObject*, JSValue);
+
 } // namespace JSC
 
 #endif // StringObject_h

@@ -56,6 +56,7 @@
 #include <limits>
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/APIShims.h>
+#include <runtime/BooleanObject.h>
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
 #include <runtime/ExceptionHelpers.h>
@@ -108,6 +109,11 @@ enum SerializationTag {
     ArrayBufferTag = 21,
     ArrayBufferViewTag = 22,
     ArrayBufferTransferTag = 23,
+    TrueObjectTag = 24,
+    FalseObjectTag = 25,
+    StringObjectTag = 26,
+    EmptyStringObjectTag = 27,
+    NumberObjectTag = 28,
     ErrorTag = 255
 };
 
@@ -152,8 +158,10 @@ static unsigned typedArrayElementSize(ArrayBufferViewSubtag tag)
  *
  * Initial version was 1.
  * Version 2. added the ObjectReferenceTag and support for serialization of cyclic graphs.
+ * Version 3. added the FalseObjectTag, TrueObjectTag, NumberObjectTag, StringObjectTag
+ * and EmptyStringObjectTag for serialization of Boolean, Number and String objects.
  */
-static const unsigned int CurrentVersion = 2;
+static const unsigned int CurrentVersion = 3;
 static const unsigned int TerminatorTag = 0xFFFFFFFF;
 static const unsigned int StringPoolTag = 0xFFFFFFFE;
 
@@ -182,10 +190,14 @@ static const unsigned int StringPoolTag = 0xFFFFFFFE;
  *    | OneTag
  *    | FalseTag
  *    | TrueTag
+ *    | FalseObjectTag
+ *    | TrueObjectTag
  *    | DoubleTag <value:double>
+ *    | NumberObjectTag <value:double>
  *    | DateTag <value:double>
  *    | String
  *    | EmptyStringTag
+ *    | EmptyStringObjectTag
  *    | File
  *    | FileList
  *    | ImageData
@@ -199,6 +211,10 @@ static const unsigned int StringPoolTag = 0xFFFFFFFE;
  * String :-
  *      EmptyStringTag
  *      StringTag StringData
+ *
+ * StringObject:
+ *      EmptyStringObjectTag
+ *      StringObjectTag StringData
  *
  * StringData :-
  *      StringPoolTag <cpIndex:IndexType>
@@ -517,6 +533,16 @@ private:
         }
     }
 
+    void dumpStringObject(UString str)
+    {
+        if (str.isEmpty())
+            write(EmptyStringObjectTag);
+        else {
+            write(StringObjectTag);
+            write(str);
+        }
+    }
+
     bool dumpArrayBufferView(JSObject* obj, SerializationReturnCode& code)
     {
         write(ArrayBufferViewTag);
@@ -585,6 +611,27 @@ private:
 
         if (value.isObject()) {
             JSObject* obj = asObject(value);
+            if (obj->inherits(&BooleanObject::s_info)) {
+                if (!startObjectInternal(obj)) // handle duplicates
+                    return true;
+                write(asBooleanObject(value)->internalValue().toBoolean() ? TrueObjectTag : FalseObjectTag);
+                return true;
+            }
+            if (obj->inherits(&StringObject::s_info)) {
+                if (!startObjectInternal(obj)) // handle duplicates
+                    return true;
+                UString str = asString(asStringObject(value)->internalValue())->value(m_exec);
+                dumpStringObject(str);
+                return true;
+            }
+            if (obj->inherits(&NumberObject::s_info)) {
+                if (!startObjectInternal(obj)) // handle duplicates
+                    return true;
+                write(NumberObjectTag);
+                NumberObject* obj = static_cast<NumberObject*>(asObject(value));
+                write(obj->internalValue().asNumber());
+                return true;
+            }
             if (obj->inherits(&JSFile::s_info)) {
                 write(FileTag);
                 write(toFile(obj));
@@ -1398,11 +1445,31 @@ private:
             return jsBoolean(false);
         case TrueTag:
             return jsBoolean(true);
+        case FalseObjectTag: {
+            BooleanObject* obj = BooleanObject::create(m_exec->globalData(), m_globalObject->booleanObjectStructure());
+            obj->setInternalValue(m_exec->globalData(), jsBoolean(false));
+            m_gcBuffer.append(obj);
+            return obj;
+        }
+        case TrueObjectTag: {
+            BooleanObject* obj = BooleanObject::create(m_exec->globalData(), m_globalObject->booleanObjectStructure());
+            obj->setInternalValue(m_exec->globalData(), jsBoolean(true));
+             m_gcBuffer.append(obj);
+            return obj;
+        }
         case DoubleTag: {
             double d;
             if (!read(d))
                 return JSValue();
             return jsNumber(d);
+        }
+        case NumberObjectTag: {
+            double d;
+            if (!read(d))
+                return JSValue();
+            NumberObject* obj = constructNumber(m_exec, m_globalObject, jsNumber(d));
+            m_gcBuffer.append(obj);
+            return obj;
         }
         case DateTag: {
             double d;
@@ -1479,6 +1546,19 @@ private:
         }
         case EmptyStringTag:
             return jsEmptyString(&m_exec->globalData());
+        case StringObjectTag: {
+            CachedStringRef cachedString;
+            if (!readStringData(cachedString))
+                return JSValue();
+            StringObject* obj = constructString(m_exec, m_globalObject, cachedString->jsString(m_exec));
+            m_gcBuffer.append(obj);
+            return obj;
+        }
+        case EmptyStringObjectTag: {
+            StringObject* obj = constructString(m_exec, m_globalObject, jsEmptyString(&m_exec->globalData()));
+            m_gcBuffer.append(obj);
+            return obj;
+        }
         case RegExpTag: {
             CachedStringRef pattern;
             if (!readStringData(pattern))

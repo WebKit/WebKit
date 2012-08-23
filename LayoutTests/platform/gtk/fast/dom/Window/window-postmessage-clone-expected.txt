@@ -1,10 +1,8 @@
-CONSOLE MESSAGE: line 86: TypeError: No default value
-CONSOLE MESSAGE: line 86: TypeError: No default value
 Tests that we clone object hierarchies
 
-FAIL: 'postMessage((function(){}))' should throw but didn't
-FAIL: 'postMessage(var x = 0; try { eval("badref"); } catch(e) { x = e; } x)' should throw but didn't
-PASS: 'postMessage(window)' threw TypeError: Type error
+PASS: 'postMessage((function(){}))' threw Error: DATA_CLONE_ERR: DOM Exception 25
+PASS: 'postMessage(var x = 0; try { eval("badref"); } catch(e) { x = e; } x)' threw Error: DATA_CLONE_ERR: DOM Exception 25
+PASS: 'postMessage(window)' threw Error: DATA_CLONE_ERR: DOM Exception 25
 PASS: 'postMessage(({get a() { throw "x" }}))' threw x
 PASS: eventData is null of type object
 PASS: eventData is undefined of type undefined
@@ -25,14 +23,12 @@ PASS: eventData is a,a,b,a,b of type object
 PASS: eventData is a,a,b,[object Object] of type object
 PASS: eventData is 1,2,3 of type object
 PASS: eventData is ,,1 of type object
-FAIL: eventData is null should be function () {} of type function
-FAIL: eventData is [object Object] should be ReferenceError: Can't find variable: badref of type object
 PASS: eventData is 2009-02-13T23:31:30.000Z of type object
 PASS: eventData is [object Object] of type object
-FAIL: eventData is [object Object] should be true of type object
-FAIL: eventData is [object Object] should be false of type object
-FAIL: eventData is [object Object] should be gnirts of type object
-FAIL: eventData is [object Object] should be 42 of type object
+PASS: eventData is true of type object
+PASS: eventData is false of type object
+PASS: eventData is gnirts of type object
+PASS: eventData is 42 of type object
 PASS: eventData is === to eventData.self
 PASS: eventData is === to eventData[0]
 PASS: eventData.graph1 is === to eventData.graph2
@@ -92,25 +88,25 @@ FAIL: accessor value was nullified
 PASS: window.pcalled === true
 PASS: window.acalled === true
 FAIL: window.bcalled === undefined
-FAIL: Boolean values correct (0)
-FAIL: Boolean values correct (3)
+PASS: Boolean values correct (0)
+PASS: Boolean values correct (3)
 PASS: Boolean values correct (1,2)
 PASS: Boolean values correct (4,5)
 PASS: References to Booleans correct (0,1)
 PASS: References to Booleans correct (3,4)
 PASS: References to Booleans correct (0,2)
 PASS: References to Booleans correct (3,5)
-FAIL: Number values correct (0)
+PASS: Number values correct (0)
 PASS: Number values correct (0,2)
 PASS: References to numbers correct (0,1)
 PASS: References to numbers correct (0,2)
-FAIL: String values correct (0)
+PASS: String values correct (0)
 PASS: String values correct (0,2)
 PASS: References to strings correct (0,1)
 PASS: References to strings correct (0,2)
-FAIL: String object properties not serialized
-FAIL: Number object properties not serialized
-FAIL: Boolean object properties not serialized
+PASS: String object properties not serialized
+PASS: Number object properties not serialized
+PASS: Boolean object properties not serialized
 PASS: Date values correct (0)
 PASS: Date values correct (1)
 FAIL: References to dates correct (0)

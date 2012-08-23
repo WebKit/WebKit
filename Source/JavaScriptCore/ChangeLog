@@ -1,3 +1,29 @@
+2012-08-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Serialization of JavaScript values does not appear to respect new HTML5 Structured Clone semantics
+        https://bugs.webkit.org/show_bug.cgi?id=65292
+
+        Reviewed by Oliver Hunt.
+
+        Add function to construct a StringObject from a JSValue.
+        Similar functions already exist for NumberObject and
+        BooleanObject for example.
+
+        Export several symbols so address linking errors in
+        WebCore.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/BooleanObject.h:
+        (BooleanObject):
+        * runtime/NumberObject.h:
+        (NumberObject):
+        (JSC):
+        * runtime/StringObject.cpp:
+        (JSC::constructString):
+        (JSC):
+        * runtime/StringObject.h:
+        (JSC):
+
 2012-08-22  Filip Pizlo  <fpizlo@apple.com>
 
         Array accesses should remember what kind of array they are predicted to access

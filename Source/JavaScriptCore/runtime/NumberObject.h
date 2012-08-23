@@ -40,7 +40,7 @@ namespace JSC {
             return number;
         }
 
-        static const ClassInfo s_info;
+        static JS_EXPORTDATA const ClassInfo s_info;
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
@@ -48,7 +48,7 @@ namespace JSC {
         }
     };
 
-    NumberObject* constructNumber(ExecState*, JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE NumberObject* constructNumber(ExecState*, JSGlobalObject*, JSValue);
 
 } // namespace JSC
 

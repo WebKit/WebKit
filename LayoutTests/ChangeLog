@@ -1,3 +1,17 @@
+2012-08-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Serialization of JavaScript values does not appear to respect new HTML5 Structured Clone semantics
+        https://bugs.webkit.org/show_bug.cgi?id=65292
+
+        Reviewed by Oliver Hunt.
+
+        Update expected results for fast/dom/Window/window-postmessage-clone.html
+        now that String, Boolean and Number object are correctly serialized with
+        JSC.
+
+        * fast/dom/Window/window-postmessage-clone-expected.txt:
+        * platform/gtk/fast/dom/Window/window-postmessage-clone-expected.txt:
+
 2012-08-23  Kenneth Russell  <kbr@google.com>
 
         Web Inspector: three layout tests crashing with assertion failure
