@@ -98,7 +98,6 @@ protected:
     AccessibilityRole ariaRoleAttribute() const;
     AccessibilityRole determineAriaRoleAttribute() const;
     AccessibilityRole remapAriaRoleDueToParent(AccessibilityRole) const;
-    bool hasContentEditableAttributeSet() const;
 
 private:
     Node* m_node;

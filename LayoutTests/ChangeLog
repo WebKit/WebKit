@@ -1,3 +1,18 @@
+2012-08-23  Dominic Cooney  <dominicc@chromium.org>
+
+        Unreviewed, rolling out r126391.
+        http://trac.webkit.org/changeset/126391
+        https://bugs.webkit.org/show_bug.cgi?id=94302
+
+        Breaks Chromium browser_tests AccessibilityFooter,
+        AccessibilityListMarkers, AccessibilityUI
+
+        * accessibility/editable-webarea-context-menu-point.html:
+        * accessibility/focusable-div-expected.txt: Removed.
+        * accessibility/focusable-div.html: Removed.
+        * accessibility/table-detection.html:
+        * platform/mac/accessibility/listbox-hit-test.html:
+
 2012-08-23  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed Chromium gardeing.
