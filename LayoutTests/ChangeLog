@@ -1,3 +1,20 @@
+2012-08-23  Ulan Degenbaev  <ulan@chromium.org>
+
+        Adjust test expectations for fast/js/toString-overrides.html and fast/js/eval-cross-window.html
+        https://bugs.webkit.org/show_bug.cgi?id=94824
+
+        Reviewed by Kentaro Hara.
+
+        Add a bug number for tracking failing cases in fast/js/toString-overrides.html.
+        Upload Chromium specific test expectations for fast/js/eval-cross-window.html.
+
+        Failing tests in eval-cross-window swap the eval() function in the main window and the frame.
+        This behaviour is not specified in ECMA-262 and is probably implementation dependent.
+        Both Firefox and Chromium produce the same result for this test.
+
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/js/eval-cross-window-expected.txt: Added.
+
 2012-08-23  Mike West  <mkwst@chromium.org>
 
         Trailing spaces in CSP source lists should not generate console warnings.

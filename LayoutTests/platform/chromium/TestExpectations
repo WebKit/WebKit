@@ -2720,8 +2720,7 @@ BUGWK71278 SLOW WIN : fast/events/dispatch-message-string-data.html = PASS
 BUGWK71451 SLOW : fast/frames/sandboxed-iframe-navigation-windowopen.html = PASS
 
 BUGWK94681 : fast/js/array-functions-non-arrays.html = TEXT
-BUGRICOW : fast/js/eval-cross-window.html = TEXT
-BUGRICOW : fast/js/toString-overrides.html = TEXT
+BUGWK94688 : fast/js/toString-overrides.html = TEXT
 
 BUGWK91944 : platform/chromium/virtual/gpu/fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 

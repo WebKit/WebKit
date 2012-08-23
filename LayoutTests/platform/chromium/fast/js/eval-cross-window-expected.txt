@@ -1,0 +1,40 @@
+This page verifies that eval, when called as a function, uses the "this" object provided by the call as its variable object, scope chain, and "this" object. However, if the "this" object is not the global object eval was originally associated with, eval throws an exception.
+
+If the test passes, you'll see a series of pass messages below.
+
+
+----- Scope Chain Head for Getters: -----
+
+PASS: window.eval("x") should be 0 and is.
+PASS: frames[0].eval("x") should be 1 and is.
+FAIL: window.eval("x") should be EvalError but instead is 1.
+FAIL: frames[0].eval("x") should be EvalError but instead is undefined.
+
+----- Scope Chain for Getters: -----
+
+PASS: window.eval("xx") should be ReferenceError and is.
+PASS: frames[0].eval("xx") should be ReferenceError and is.
+FAIL: window.eval("xx") should be EvalError but instead is ReferenceError.
+FAIL: frames[0].eval("xx") should be EvalError but instead is ReferenceError.
+
+----- Variable Object: -----
+
+PASS: window.eval("var y; "y" in top") should be true and is.
+PASS: frames[0].eval("var y; "y" in top.frames[0]") should be true and is.
+FAIL: window.eval("var y; "y" in top.frames[0]") should be EvalError but instead is undefined.
+FAIL: frames[0].eval("var y; "y" in top") should be EvalError but instead is undefined.
+
+----- Scope Chain for Setters: -----
+
+PASS: window.eval("z = 1; top.z") should be 1 and is.
+PASS: frames[0].eval("z = 2; top.frames[0].z") should be 2 and is.
+FAIL: window.eval("z = 3; top.frames[0].z") should be EvalError but instead is undefined.
+FAIL: frames[0].eval("z = 4; top.z") should be EvalError but instead is undefined.
+
+----- This Object: -----
+
+PASS: window.eval("this") should be [object Window] and is.
+PASS: frames[0].eval("this") should be [object Window] and is.
+FAIL: window.eval("this") should be EvalError but instead is undefined.
+FAIL: frames[0].eval("this") should be EvalError but instead is undefined.
+
