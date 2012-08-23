@@ -1,3 +1,16 @@
+2012-08-23  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Helper functions used by the raw webview tests should not be guarded by HAVE_QTQUICK
+
+        Reviewed by Simon Hausmann.
+
+        This fixes the build if the QtQuick module is not present.
+
+        * UIProcess/API/qt/tests/util.cpp:
+        (messageHandler):
+        (suppressDebugOutput):
+        * UIProcess/API/qt/tests/util.h:
+
 2012-08-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r126306): it broke the plugin process

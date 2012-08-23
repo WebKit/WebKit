@@ -30,11 +30,12 @@ class QWebLoadRequest;
 #endif
 
 void addQtWebProcessToPath();
-#if defined(HAVE_QTQUICK) && HAVE_QTQUICK
 bool waitForSignal(QObject*, const char* signal, int timeout = 10000);
+void suppressDebugOutput();
+
+#if defined(HAVE_QTQUICK) && HAVE_QTQUICK
 bool waitForLoadSucceeded(QQuickWebView* webView, int timeout = 10000);
 bool waitForLoadFailed(QQuickWebView* webView, int timeout = 10000);
-void suppressDebugOutput();
 
 class LoadStartedCatcher : public QObject {
     Q_OBJECT
