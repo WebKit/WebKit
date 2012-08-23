@@ -1,3 +1,15 @@
+2012-08-23  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Disable the parallel garbage collector for the 1.10 stable release
+        https://bugs.webkit.org/show_bug.cgi?id=94823
+
+        Reviewed by Carlos Garcia Campos.
+
+        The parallel garbage collector is still causing some flaky crashes, so we should
+        probably disable it for the stable release.
+
+        * wtf/Platform.h:
+
 2012-08-22  Geoffrey Garen  <ggaren@apple.com>
 
         ThreadRestrictionVerifier should be opt-in, not opt-out
