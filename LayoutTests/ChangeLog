@@ -1,3 +1,13 @@
+2012-08-23  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed gardening.
+
+        After the TextTrackCue constructor was updated in r126350 the
+        expected constructor length is 3. Updating fast/js/constructor-length.html
+        to reflect that.
+
+        * fast/js/constructor-length.html:
+
 2012-08-23  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed Chromium gardeing.
