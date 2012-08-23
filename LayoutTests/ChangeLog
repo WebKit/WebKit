@@ -1,3 +1,12 @@
+2012-08-23  Kenneth Russell  <kbr@google.com>
+
+        Web Inspector: three layout tests crashing with assertion failure
+        https://bugs.webkit.org/show_bug.cgi?id=94829
+
+        Unreviewed Chromium gardening. Suppressed failing tests.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-23  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         getComputedStyle returns wrong value for CSS3 2D transformations
