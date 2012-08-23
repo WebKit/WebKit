@@ -1,3 +1,44 @@
+2012-08-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Add url bar to EWebLauncher and MiniBrowser/Efl.
+        https://bugs.webkit.org/show_bug.cgi?id=63966
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        EWebLauncher and MiniBrowser/Efl did not have functionality that users
+        navigates the site which they want.
+        This patch adds the urlbar and functionality to load url which users want.
+
+        * CMakeLists.txt:
+        Added to share urlbar theme for both EWebLauncher and MiniBrowser/Efl.
+        * EWebLauncher/CMakeLists.txt:
+        Added urlbar.c and dependency of urlbar theme.
+        In addition, changed macro name to THEME_DIR to share the code easily.
+        * EWebLauncher/ControlTheme/CMakeLists.txt: Added for urlbar theme.
+        * EWebLauncher/ControlTheme/entry.edc: Implemented urlbar theme.
+        * EWebLauncher/main.c:
+        Implemented to use the urlbar.
+        In addition, remove unnecessary border of webview to control webview and urlbar easily.
+        (_ELauncher):
+        (on_url_changed):
+        (browserCreate):
+        (closeWindow):
+        (findThemePath):
+        * EWebLauncher/url_bar.c: Implemented functionality of the urlbar.
+        (_url_bar_url_get_with_protocol):
+        (on_urlbar_key_down):
+        (on_urlbar_mouse_down):
+        (on_urlbar_focus_out):
+        (url_bar_add):
+        (url_bar_del):
+        (url_bar_url_set):
+        * EWebLauncher/url_bar.h: Added.
+        * MiniBrowser/efl/CMakeLists.txt:
+        * MiniBrowser/efl/main.c: Implemented to use the urlbar.
+        (_MiniBrowser):
+        (on_url_changed):
+        (browserCreate):
+
 2012-08-23  Balazs Kelemen  <kbalazs@webkit.org>
 
         [nrwt, WTR] Remove workaround for timeout handing from r126062

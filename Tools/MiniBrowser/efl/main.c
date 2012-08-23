@@ -18,6 +18,7 @@
  */
 
 #include "EWebKit2.h"
+#include "url_bar.h"
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Eina.h>
@@ -41,6 +42,7 @@ typedef struct _MiniBrowser {
     Evas *evas;
     Evas_Object *bg;
     Evas_Object *browser;
+    Url_Bar *url_bar;
 } MiniBrowser;
 
 static const Ecore_Getopt options = {
@@ -155,6 +157,13 @@ on_title_changed(void *user_data, Evas_Object *webview, void *event_info)
 }
 
 static void
+on_url_changed(void *user_data, Evas_Object *webview, void *event_info)
+{
+    MiniBrowser *app = (MiniBrowser *)user_data;
+    url_bar_url_set(app->url_bar, ewk_view_uri_get(app->browser));
+}
+
+static void
 on_progress(void *user_data, Evas_Object *webview, void *event_info)
 {
     MiniBrowser *app = (MiniBrowser *)user_data;
@@ -224,13 +233,17 @@ static MiniBrowser *browserCreate(const char *url, const char *engine)
     evas_object_smart_callback_add(app->browser, "load,error", on_error, app);
     evas_object_smart_callback_add(app->browser, "load,progress", on_progress, app);
     evas_object_smart_callback_add(app->browser, "title,changed", on_title_changed, app);
+    evas_object_smart_callback_add(app->browser, "uri,changed", on_url_changed, app);
 
     evas_object_event_callback_add(app->browser, EVAS_CALLBACK_KEY_DOWN, on_key_down, app);
 
     evas_object_size_hint_weight_set(app->browser, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_resize(app->browser, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    evas_object_move(app->browser, 0, URL_BAR_HEIGHT);
+    evas_object_resize(app->browser, DEFAULT_WIDTH, DEFAULT_HEIGHT - URL_BAR_HEIGHT);
     evas_object_show(app->browser);
     evas_object_focus_set(app->browser, EINA_TRUE);
+
+    app->url_bar = url_bar_add(app->browser, DEFAULT_WIDTH);
 
     ewk_view_uri_set(app->browser, url);
 

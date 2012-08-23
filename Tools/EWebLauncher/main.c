@@ -30,7 +30,7 @@
 
 #include "EWebKit.h"
 
-#include <ctype.h>
+#include "url_bar.h"
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Ecore_File.h>
@@ -38,6 +38,7 @@
 #include <Ecore_X.h>
 #include <Edje.h>
 #include <Evas.h>
+#include <ctype.h>
 #include <inttypes.h>
 #include <limits.h>
 #include <stdio.h>
@@ -143,6 +144,7 @@ typedef struct _ELauncher {
     Evas *evas;
     Evas_Object *bg;
     Evas_Object *browser;
+    Url_Bar *url_bar;
     const char *theme;
     const char *userAgent;
     const char *backingStore;
@@ -399,6 +401,13 @@ on_inputmethod_changed(void* user_data, Evas_Object* webview, void* event_info)
     imh = ewk_view_imh_get(webview);
     info("    Keyboard flags: %#.2x\n", imh);
 
+}
+
+static void
+on_url_changed(void* user_data, Evas_Object* webview, void* event_info)
+{
+    ELauncher *app = (ELauncher *)user_data;
+    url_bar_url_set(app->url_bar, ewk_view_uri_get(app->browser));
 }
 
 static void
@@ -695,6 +704,7 @@ browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Re
     evas_object_smart_callback_add(app->browser, "menubar,visible,get", on_menubar_visible_get, app);
     evas_object_smart_callback_add(app->browser, "tooltip,text,set", on_tooltip_text_set, app);
     evas_object_smart_callback_add(app->browser, "inputmethod,changed", on_inputmethod_changed, app);
+    evas_object_smart_callback_add(app->browser, "uri,changed", on_url_changed, app);
 
 /*     ewk_callback_resize_requested_add(app->browser, on_resize_requested, app->ee); */
 
@@ -704,8 +714,10 @@ browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Re
     evas_object_event_callback_add(app->browser, EVAS_CALLBACK_FOCUS_OUT, on_focus_out, app);
     evas_object_event_callback_add(app->browser, EVAS_CALLBACK_DEL, on_browser_del, app);
 
-    evas_object_move(app->browser, 10, 10);
-    evas_object_resize(app->browser, geometry.w - 20, geometry.h - 20);
+    app->url_bar = url_bar_add(app->browser, DEFAULT_WIDTH);
+
+    evas_object_move(app->browser, 0, URL_BAR_HEIGHT);
+    evas_object_resize(app->browser, geometry.w, geometry.h - URL_BAR_HEIGHT);
 
     if (url && (url[0] != '\0'))
         ewk_view_uri_set(app->browser, url);
@@ -739,6 +751,7 @@ closeWindow(Ecore_Evas *ee)
             break;
     }
     windows = eina_list_remove(windows, app);
+    url_bar_del(((ELauncher *)app)->url_bar);
     browserDestroy(ee);
     free(app);
 }
@@ -760,12 +773,12 @@ main_signal_exit(void *data, int ev_type, void *ev)
 static char *
 findThemePath(const char *theme)
 {
-    const char *defaultTheme = DATA_DIR"/default.edj";
+    const char *default_theme = THEME_DIR"/default.edj";
     char *rpath;
     struct stat st;
 
     if (!theme)
-        theme = defaultTheme;
+        theme = default_theme;
 
     rpath = ecore_file_realpath(theme);
     if (!strlen(rpath) || stat(rpath, &st)) {

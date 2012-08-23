@@ -3,6 +3,8 @@ IF (ENABLE_WEBKIT2)
 ENDIF ()
 
 IF ("${PORT}" STREQUAL "Efl")
+    ADD_SUBDIRECTORY(EWebLauncher/ControlTheme)
+
     IF (ENABLE_WEBKIT)
         ADD_SUBDIRECTORY(DumpRenderTree/efl)
         ADD_SUBDIRECTORY(EWebLauncher)
