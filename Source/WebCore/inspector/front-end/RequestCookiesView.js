@@ -61,7 +61,7 @@ WebInspector.RequestCookiesView.prototype = {
 
     get _gotCookies()
     {
-        return !!(this._request.requestCookies || this._request.responseCookies);
+        return (this._request.requestCookies && this._request.requestCookies.length) || (this._request.responseCookies && this._request.responseCookies.length);
     },
 
     _buildCookiesTable: function()
