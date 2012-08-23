@@ -422,6 +422,16 @@ private:
     virtual bool mediaPlayerNeedsSiteSpecificHacks() const OVERRIDE;
     virtual String mediaPlayerDocumentHost() const OVERRIDE;
 
+    virtual void mediaPlayerExitFullscreen() OVERRIDE;
+    virtual bool mediaPlayerIsVideo() const OVERRIDE;
+    virtual LayoutRect mediaPlayerContentBoxRect() const OVERRIDE;
+    virtual void mediaPlayerSetSize(const IntSize&) OVERRIDE;
+    virtual void mediaPlayerPause() OVERRIDE;
+    virtual void mediaPlayerPlay() OVERRIDE;
+    virtual bool mediaPlayerIsPaused() const OVERRIDE;
+    virtual HostWindow* mediaPlayerHostWindow() OVERRIDE;
+    virtual IntRect mediaPlayerWindowClipRect() OVERRIDE;
+
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
     virtual GraphicsDeviceAdapter* mediaPlayerGraphicsDeviceAdapter(const MediaPlayer*) const OVERRIDE;
 #endif
