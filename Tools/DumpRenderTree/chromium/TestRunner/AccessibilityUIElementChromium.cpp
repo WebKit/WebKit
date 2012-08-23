@@ -204,6 +204,8 @@ static string roleToString(WebAccessibilityRole role)
         return result.append("DocumentRegion");
     case WebAccessibilityRoleUserInterfaceTooltip:
         return result.append("UserInterfaceTooltip");
+    case WebAccessibilityRoleToggleButton:
+        return result.append("ToggleButton");
     default:
         // Also matches WebAccessibilityRoleUnknown.
         return result.append("Unknown");

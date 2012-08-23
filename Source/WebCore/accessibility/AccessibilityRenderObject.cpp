@@ -1688,7 +1688,7 @@ bool AccessibilityRenderObject::ariaHasPopup() const
 {
     return elementAttributeValue(aria_haspopupAttr);
 }
-    
+
 bool AccessibilityRenderObject::supportsARIAFlowTo() const
 {
     return !getAttribute(aria_flowtoAttr).isEmpty();
@@ -3143,7 +3143,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (m_renderer->isListMarker())
         return ListMarkerRole;
     if (node && node->hasTagName(buttonTag))
-        return ariaHasPopup() ? PopUpButtonRole : ButtonRole;
+        return buttonRoleType();
     if (m_renderer->isText())
         return StaticTextRole;
     if (cssBox && cssBox->isImage()) {
@@ -3170,7 +3170,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         if (input->isRadioButton())
             return RadioButtonRole;
         if (input->isTextButton())
-            return ariaHasPopup() ? PopUpButtonRole : ButtonRole;
+            return buttonRoleType();
     }
 
     if (isFileUploadButton())

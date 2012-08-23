@@ -1,3 +1,16 @@
+2012-08-22  Alejandro Piñeiro  <apinheiro@igalia.com>
+
+        [Gtk] Dojo toggle buttons should expose ROLE_TOGGLE_BUTTON not ROLE_PUSH_BUTTON
+        https://bugs.webkit.org/show_bug.cgi?id=73819
+
+        Reviewed by Chris Fleizach.
+
+        Added a test to verify that when aria-pressed is present, buttons
+        will have the appropiate role.
+
+        * platform/gtk/accessibility/aria-toggle-button-role-expected.txt: Added.
+        * platform/gtk/accessibility/aria-toggle-button-role.html: Added.
+
 2012-08-22  Kenneth Russell  <kbr@google.com>
 
         [Chromium] Need baselines for new paged-x and paged-y tests in fast/overflow after r126343

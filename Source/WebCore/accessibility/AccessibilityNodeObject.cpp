@@ -250,7 +250,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
     if (node()->isTextNode())
         return StaticTextRole;
     if (node()->hasTagName(buttonTag))
-        return ariaHasPopup() ? PopUpButtonRole : ButtonRole;
+        return buttonRoleType();
     if (node()->hasTagName(inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
         if (input->isCheckbox())
@@ -258,7 +258,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
         if (input->isRadioButton())
             return RadioButtonRole;
         if (input->isTextButton())
-            return ariaHasPopup() ? PopUpButtonRole : ButtonRole;
+            return buttonRoleType();
         return TextFieldRole;
     }
     if (node()->hasTagName(selectTag)) {
@@ -336,9 +336,9 @@ AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
     // ARIA states if an item can get focus, it should not be presentational.
     if (role == PresentationalRole && canSetFocusAttribute())
         return UnknownRole;
-    
-    if (role == ButtonRole && ariaHasPopup())
-        role = PopUpButtonRole;
+
+    if (role == ButtonRole)
+        role = buttonRoleType();
 
     if (role == TextAreaRole && !ariaIsMultiline())
         role = TextFieldRole;

@@ -1,3 +1,16 @@
+2012-08-22  Alejandro Piñeiro  <apinheiro@igalia.com>
+
+        Dojo toggle buttons should expose ROLE_TOGGLE_BUTTON not ROLE_PUSH_BUTTON
+        https://bugs.webkit.org/show_bug.cgi?id=73819
+
+        Reviewed by Chris Fleizach.
+
+        Added a new role, Toggle Button, based on whether aria-pressed is present.
+        http://www.w3.org/TR/wai-aria/states_and_properties#aria-pressed
+
+        * DumpRenderTree/chromium/TestRunner/AccessibilityUIElementChromium.cpp:
+        (roleToString): added "ToggleButton" string for WebAccessibilityRoleToggleButton
+
 2012-08-23  Victor Carbune  <victor@rosedu.org>
 
         Add myself to the committer list

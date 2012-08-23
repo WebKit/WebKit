@@ -430,6 +430,8 @@ static AtkRole atkRole(AccessibilityRole role)
         return ATK_ROLE_UNKNOWN;
     case ButtonRole:
         return ATK_ROLE_PUSH_BUTTON;
+    case ToggleButtonRole:
+        return ATK_ROLE_TOGGLE_BUTTON;
     case RadioButtonRole:
         return ATK_ROLE_RADIO_BUTTON;
     case CheckBoxRole:

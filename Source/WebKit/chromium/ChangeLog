@@ -1,3 +1,18 @@
+2012-08-22  Alejandro Piñeiro  <apinheiro@igalia.com>
+
+        Dojo toggle buttons should expose ROLE_TOGGLE_BUTTON not ROLE_PUSH_BUTTON
+        https://bugs.webkit.org/show_bug.cgi?id=73819
+
+        Reviewed by Chris Fleizach.
+
+        Added a new role, Toggle Button, based on whether aria-pressed is present.
+        http://www.w3.org/TR/wai-aria/states_and_properties#aria-pressed
+
+        * public/WebAccessibilityRole.h: added WebAccessibilityRoleToggleButton that
+        matchs with WebCore ToggleButtonRole
+        * src/AssertMatchingEnums.cpp: added the assert matching rule for
+        WebAccessibilityRoleToggleButton and ToggleButtonRole
+
 2012-08-17  Jeffrey Pfau  <jpfau@apple.com>
 
         Allow blocking of Web SQL databases in third-party web workers

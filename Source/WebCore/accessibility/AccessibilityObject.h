@@ -187,6 +187,7 @@ enum AccessibilityRole {
     TreeGridRole,
     TreeItemRole,
     TextFieldRole,
+    ToggleButtonRole,
     ToolbarRole,
     UnknownRole,
     UserInterfaceTooltipRole,
@@ -451,6 +452,7 @@ public:
     virtual bool supportsARIAFlowTo() const { return false; }
     virtual void ariaFlowToElements(AccessibilityChildrenVector&) const { }
     virtual bool ariaHasPopup() const { return false; }
+    virtual bool ariaPressedIsPresent() const;
     bool ariaIsMultiline() const;
     virtual const AtomicString& invalidStatus() const;
     bool supportsARIAExpanded() const;
@@ -715,6 +717,7 @@ protected:
     static bool isAccessibilityObjectSearchMatch(AccessibilityObject*, AccessibilitySearchCriteria*);
     static bool isAccessibilityTextSearchMatch(AccessibilityObject*, AccessibilitySearchCriteria*);
     static bool objectMatchesSearchCriteriaWithResultLimit(AccessibilityObject*, AccessibilitySearchCriteria*, AccessibilityChildrenVector&);
+    virtual AccessibilityRole buttonRoleType() const;
     
 #if PLATFORM(GTK)
     bool allowsTextRanges() const;

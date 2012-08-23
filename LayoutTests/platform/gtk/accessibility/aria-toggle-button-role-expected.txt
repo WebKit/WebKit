@@ -1,0 +1,14 @@
+  
+This tests that the role exposed when a button has the attribute aria-pressed is toggle buttons in GTK.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS obj.childAtIndex(0).childAtIndex(0).role is 'AXRole: list item'
+PASS obj1.role is 'AXRole: toggle button'
+PASS obj2.role is 'AXRole: toggle button'
+PASS obj3.role is 'AXRole: push button'
+

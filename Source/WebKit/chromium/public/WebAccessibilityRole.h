@@ -133,6 +133,7 @@ enum WebAccessibilityRole {
     WebAccessibilityRoleTreeGrid,
     WebAccessibilityRoleTreeItemRole,
     WebAccessibilityRoleTextField,
+    WebAccessibilityRoleToggleButton,
     WebAccessibilityRoleToolbar,
     WebAccessibilityRoleUnknown,
     WebAccessibilityRoleUserInterfaceTooltip,
