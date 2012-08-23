@@ -1,3 +1,12 @@
+2012-08-23  Kenneth Russell  <kbr@google.com>
+
+        [Chromium] LayoutTests: css3/selector3/xml tests are flaky / have wrong expectations on Snow Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=82122
+
+        Unreviewed Chromium gardening. Expanded expectations from Snow Leopard to Mac.
+
+        * platform/chromium/TestExpectations:
+
 2012-05-25  Anna Cavender <annacc@chromium.org>
 
         [Chromium] Removing media/track/track-mode.html - resolved.
