@@ -1,5 +1,12 @@
 2012-08-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Bump WebKitGTK+ version number.
+
+        * configure.ac: Bump version number to 1.11.0 now that we branched
+        for 1.10.
+
+2012-08-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r126306): it broke the plugin process
         https://bugs.webkit.org/show_bug.cgi?id=94797
 
