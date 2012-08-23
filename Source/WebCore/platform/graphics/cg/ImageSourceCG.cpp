@@ -70,12 +70,10 @@ void sharedBufferRelease(void* info)
 }
 #endif
 
-ImageSource::ImageSource(ImageSource::AlphaOption alphaOption, ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
+ImageSource::ImageSource(ImageSource::AlphaOption, ImageSource::GammaAndColorProfileOption)
     : m_decoder(0)
-    // FIXME: m_premultiplyAlpha is ignored in cg at the moment.
-    , m_alphaOption(alphaOption)
-    , m_gammaAndColorProfileOption(gammaAndColorProfileOption)
 {
+    // FIXME: AlphaOption and GammaAndColorProfileOption are ignored.
 }
 
 ImageSource::~ImageSource()

@@ -57,7 +57,6 @@ private:
 
     const void* m_data;
     size_t m_dataSize;
-    const char* m_filePath;
 
     AudioFileID m_audioFileID;
     ExtAudioFileRef m_extAudioFileRef;

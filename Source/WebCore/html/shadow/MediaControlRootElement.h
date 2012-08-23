@@ -152,7 +152,6 @@ private:
     MediaControlPanelElement* m_panel;
 #if ENABLE(VIDEO_TRACK)
     MediaControlTextTrackContainerElement* m_textDisplayContainer;
-    MediaControlTextTrackDisplayElement* m_textTrackDisplay;
 #endif
     Timer<MediaControlRootElement> m_hideFullscreenControlsTimer;
     bool m_isMouseOverControls;

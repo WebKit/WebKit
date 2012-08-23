@@ -124,7 +124,6 @@ private:
     void paintWithVideoOutput(GraphicsContext*, const IntRect&);
 #endif
 
-    MediaPlayer* m_player;
     RetainPtr<AVAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;
     RetainPtr<AVPlayerItem> m_avPlayerItem;

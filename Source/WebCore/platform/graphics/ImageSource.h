@@ -153,8 +153,11 @@ public:
 
 private:
     NativeImageSourcePtr m_decoder;
+
+#if !USE(CG)
     AlphaOption m_alphaOption;
     GammaAndColorProfileOption m_gammaAndColorProfileOption;
+#endif
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
     static unsigned s_maxPixelsPerDecodedImage;
 #endif
