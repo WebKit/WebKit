@@ -1,4 +1,33 @@
 =================
+WebKitGTK+ 1.9.90
+=================
+
+What's new in WebKitGTK+ 1.9.90?
+
+  - Make WebKitWebView work again inside a GtkOverlay by not using a
+    native window for Accelerated Compositing implementation.
+  - Fix several API breaks in DOM bindings introduced in 1.9.6.
+  - Change spellchecker languages API in WebKit2 to use a GStrv for
+    the list of languages to make the API more consistent and
+    convenient to use.
+  - Add destroy notify parameter to
+    webkit_web_context_register_uri_scheme in WebKit2 GTK+ API.
+  - Replace webkit_web_view_replace_content with
+    webkit_web_view_load_alternate_html in WebKit2 GTK+ API.
+  - Rename WebKitWebView "print-requested" signal to "print" in
+    WebKit2 GTK+ API for consistenty.
+  - Add API to set preferred languages to WebKit2 GTK+.
+  - Add webkit_uri_response_get_suggested_filename to WebKit2 GTK+
+    API.
+  - Add API to save a web page in MHTML format to WebKit2 GTK+.
+  - Implement smart separators for context menu in WebKit2 GTK+.
+  - Fix invalid UTF-8 data passed to the spellchecker.
+  - Fix caret-moved events not emitted for certain content.
+  - Expose ROLE_TOGGLE_BUTTON instead of ROLE_PUSH_BUTTON when
+    aria-pressed is present.
+  - Fix several memory leaks.
+
+=================
 WebKitGTK+ 1.9.6
 =================
 

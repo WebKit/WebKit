@@ -1,5 +1,11 @@
 2012-08-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update NEWS and configure.ac for 1.9.90 release
+
+        * NEWS: Added release notes for 1.9.90.
+
+2012-08-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r126306): it broke the plugin process
         https://bugs.webkit.org/show_bug.cgi?id=94797
 
