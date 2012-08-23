@@ -75,6 +75,8 @@ private:
     virtual bool isRenderTableCol() const OVERRIDE { return true; }
     virtual void updateFromElement();
 
+    virtual void willBeRemovedFromTree() OVERRIDE;
+
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
     virtual bool canHaveChildren() const;
     virtual bool requiresLayer() const { return false; }

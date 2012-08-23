@@ -231,6 +231,8 @@ public:
     const BorderValue& tableStartBorderAdjoiningCell(const RenderTableCell*) const;
     const BorderValue& tableEndBorderAdjoiningCell(const RenderTableCell*) const;
 
+    void removeCaption(const RenderTableCaption*);
+
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
@@ -240,8 +242,6 @@ private:
     virtual bool isTable() const { return true; }
 
     virtual bool avoidsFloats() const { return true; }
-
-    virtual void removeChild(RenderObject* oldChild);
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual void paintObject(PaintInfo&, const LayoutPoint&);

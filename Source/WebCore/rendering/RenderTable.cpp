@@ -197,16 +197,17 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
     section->addChild(child);
 }
 
-void RenderTable::removeChild(RenderObject* oldChild)
+void RenderTable::removeCaption(const RenderTableCaption* oldCaption)
 {
-    RenderBox::removeChild(oldChild);
- 
-    size_t index = m_captions.find(oldChild);
-    if (index != notFound) {
-        m_captions.remove(index);
-        if (node())
-            node()->setNeedsStyleRecalc();
-    }
+    size_t index = m_captions.find(oldCaption);
+    ASSERT(index != notFound);
+    m_captions.remove(index);
+
+    // FIXME: The rest of this function is probably not needed since we have 
+    // implemented proper multiple captions support (see bug 58249).
+    if (node())
+        node()->setNeedsStyleRecalc();
+
     setNeedsSectionRecalc();
 }
 

@@ -20,6 +20,8 @@
 #include "config.h"
 #include "RenderTableCaption.h"
 
+#include "RenderTable.h"
+
 namespace WebCore {
 
 RenderTableCaption::RenderTableCaption(Node* node)
@@ -35,6 +37,18 @@ LayoutUnit RenderTableCaption::containingBlockLogicalWidthForContent() const
 {
     RenderBlock* cb = containingBlock();
     return cb->logicalWidth();
+}
+
+void RenderTableCaption::willBeRemovedFromTree()
+{
+    RenderBlock::willBeRemovedFromTree();
+
+    table()->removeCaption(this);
+}
+
+RenderTable* RenderTableCaption::table() const
+{
+    return toRenderTable(parent());
 }
 
 }

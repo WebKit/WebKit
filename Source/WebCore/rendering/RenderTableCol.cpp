@@ -69,6 +69,16 @@ void RenderTableCol::updateFromElement()
         setNeedsLayoutAndPrefWidthsRecalc();
 }
 
+void RenderTableCol::willBeRemovedFromTree()
+{
+    RenderBox::willBeRemovedFromTree();
+
+    // We don't really need to recompute our sections, but we need to update our
+    // column count and whether we have a column. Currently, we only have one
+    // size-fit-all flag but we may have to consider splitting it.
+    table()->setNeedsSectionRecalc();
+}
+
 bool RenderTableCol::isChildAllowed(RenderObject* child, RenderStyle* style) const
 {
     // We cannot use isTableColumn here as style() may return 0.
