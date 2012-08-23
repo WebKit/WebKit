@@ -67,7 +67,6 @@ public:
     virtual void addChild(WebLayer*) = 0;
     virtual void insertChild(WebLayer*, size_t index) = 0;
     virtual void replaceChild(WebLayer* reference, WebLayer* newLayer) = 0;
-    virtual void setChildren(const WebVector<WebLayer*>&) = 0;
     virtual void removeFromParent() = 0;
     virtual void removeAllChildren() = 0;
 

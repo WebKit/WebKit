@@ -123,14 +123,6 @@ void WebLayerImpl::replaceChild(WebLayer* reference, WebLayer* newLayer)
     m_layer->replaceChild(static_cast<WebLayerImpl*>(reference)->layer(), static_cast<WebLayerImpl*>(newLayer)->layer());
 }
 
-void WebLayerImpl::setChildren(const WebVector<WebLayer*>& webChildren)
-{
-    Vector<RefPtr<LayerChromium> > children(webChildren.size());
-    for (size_t i = 0; i < webChildren.size(); ++i)
-        children[i] = static_cast<WebLayerImpl*>(webChildren[i])->layer();
-    m_layer->setChildren(children);
-}
-
 void WebLayerImpl::removeFromParent()
 {
     m_layer->removeFromParent();

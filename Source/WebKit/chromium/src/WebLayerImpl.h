@@ -47,7 +47,6 @@ public:
     virtual void addChild(WebLayer*) OVERRIDE;
     virtual void insertChild(WebLayer*, size_t index) OVERRIDE;
     virtual void replaceChild(WebLayer* reference, WebLayer* newLayer) OVERRIDE;
-    virtual void setChildren(const WebVector<WebLayer*>&) OVERRIDE;
     virtual void removeFromParent() OVERRIDE;
     virtual void removeAllChildren() OVERRIDE;
     virtual void setAnchorPoint(const WebFloatPoint&) OVERRIDE;

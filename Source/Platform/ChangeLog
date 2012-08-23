@@ -1,5 +1,17 @@
 2012-08-22  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Remove WebLayer::setChildren API
+        https://bugs.webkit.org/show_bug.cgi?id=94749
+
+        Reviewed by Adrienne Walker.
+
+        This is redundant with removeAllChildren() / addChild() and less efficient.
+
+        * chromium/public/WebLayer.h:
+        (WebLayer):
+
+2012-08-22  James Robinson  <jamesr@chromium.org>
+
         [chromium] Change WebLayer from a concrete type to a pure virtual interface
         https://bugs.webkit.org/show_bug.cgi?id=94174
 

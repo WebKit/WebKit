@@ -597,16 +597,17 @@ void GraphicsLayerChromium::setDebugBorder(const Color& color, float borderWidth
 
 void GraphicsLayerChromium::updateChildList()
 {
-    Vector<WebLayer*> newChildren;
+    WebLayer* childHost = m_transformLayer ? m_transformLayer.get() : m_layer->layer();
+    childHost->removeAllChildren();
 
     if (m_transformLayer) {
         // Add the primary layer first. Even if we have negative z-order children, the primary layer always comes behind.
-        newChildren.append(m_layer->layer());
+        childHost->addChild(m_layer->layer());
     } else if (m_contentsLayer) {
         // FIXME: add the contents layer in the correct order with negative z-order children.
         // This does not cause visible rendering issues because currently contents layers are only used
         // for replaced elements that don't have children.
-        newChildren.append(m_contentsLayer);
+        childHost->addChild(m_contentsLayer);
     }
 
     const Vector<GraphicsLayer*>& childLayers = children();
@@ -614,29 +615,18 @@ void GraphicsLayerChromium::updateChildList()
     for (size_t i = 0; i < numChildren; ++i) {
         GraphicsLayerChromium* curChild = static_cast<GraphicsLayerChromium*>(childLayers[i]);
 
-        newChildren.append(curChild->platformLayer());
+        childHost->addChild(curChild->platformLayer());
     }
 
     if (m_linkHighlight)
-        newChildren.append(m_linkHighlight->layer());
+        childHost->addChild(m_linkHighlight->layer());
 
-    for (size_t i = 0; i < newChildren.size(); ++i)
-        newChildren[i]->removeFromParent();
-
-    WebVector<WebLayer*> newWebChildren;
-    newWebChildren.assign(newChildren.data(), newChildren.size());
-
-    if (m_transformLayer) {
-        m_transformLayer->setChildren(newWebChildren);
-
-        if (m_contentsLayer) {
-            // If we have a transform layer, then the contents layer is parented in the
-            // primary layer (which is itself a child of the transform layer).
-            m_layer->layer()->removeAllChildren();
-            m_layer->layer()->addChild(m_contentsLayer);
-        }
-    } else
-        m_layer->layer()->setChildren(newWebChildren);
+    if (m_transformLayer && m_contentsLayer) {
+        // If we have a transform layer, then the contents layer is parented in the
+        // primary layer (which is itself a child of the transform layer).
+        m_layer->layer()->removeAllChildren();
+        m_layer->layer()->addChild(m_contentsLayer);
+    }
 }
 
 void GraphicsLayerChromium::updateLayerPosition()
