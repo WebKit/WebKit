@@ -1,3 +1,27 @@
+2012-08-22  Geoffrey Garen  <ggaren@apple.com>
+
+        ThreadRestrictionVerifier should be opt-in, not opt-out
+        https://bugs.webkit.org/show_bug.cgi?id=94761
+
+        Reviewed by Mark Hahnenberg.
+
+        WebKit's JavaScript engine supports use on multiple threads, so default-on
+        is not appropriate for most of our objects, and it causes lots of suprious
+        assertions.
+
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocatorHandle::MetaAllocatorHandle): No need to turn off
+        explicitly, since it's off by default now.
+
+        * wtf/ThreadRestrictionVerifier.h:
+        (WTF::ThreadRestrictionVerifier::ThreadRestrictionVerifier): Turn off by default.
+
+        (WTF::ThreadRestrictionVerifier::setMutexMode):
+        (WTF::ThreadRestrictionVerifier::setDispatchQueueMode):
+        (WTF::ThreadRestrictionVerifier::turnOffVerification): These assertions
+        about state transitions were inconsistent with each other, and impossible
+        to maintain with default off, so I removed them.
+
 2012-08-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Optionally support smooth-scrolling on all platforms

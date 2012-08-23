@@ -49,8 +49,8 @@ namespace JSC {
             , m_cache(cache ? cache : new SourceProviderCache)
             , m_cacheOwned(!cache)
         {
-            turnOffVerifier();
         }
+
         virtual ~SourceProvider()
         {
             if (m_cacheOwned)

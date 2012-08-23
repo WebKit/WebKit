@@ -50,7 +50,11 @@ namespace WTF {
 class ThreadRestrictionVerifier {
 public:
     ThreadRestrictionVerifier()
+#if USE(JSC)
+        : m_mode(NoVerificationMode)
+#else
         : m_mode(SingleThreadVerificationMode)
+#endif
         , m_shared(false)
         , m_owningThread(0)
         , m_mutex(0)
@@ -70,7 +74,6 @@ public:
 
     void setMutexMode(Mutex& mutex)
     {
-        ASSERT(m_mode == SingleThreadVerificationMode || (m_mode == MutexVerificationMode && &mutex == m_mutex));
         m_mode = MutexVerificationMode;
         m_mutex = &mutex;
     }
@@ -78,7 +81,6 @@ public:
 #if HAVE(DISPATCH_H)
     void setDispatchQueueMode(dispatch_queue_t queue)
     {
-        ASSERT(m_mode == SingleThreadVerificationMode);
         m_mode = SingleDispatchQueueVerificationMode;
         m_owningQueue = queue;
         dispatch_retain(m_owningQueue);
@@ -87,7 +89,6 @@ public:
 
     void turnOffVerification()
     {
-        ASSERT(m_mode == SingleThreadVerificationMode);
         m_mode = NoVerificationMode;
     }
 

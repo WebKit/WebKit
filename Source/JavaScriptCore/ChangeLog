@@ -1,3 +1,18 @@
+2012-08-22  Geoffrey Garen  <ggaren@apple.com>
+
+        ThreadRestrictionVerifier should be opt-in, not opt-out
+        https://bugs.webkit.org/show_bug.cgi?id=94761
+
+        Reviewed by Mark Hahnenberg.
+
+        Removed explicit calls to disable the verifier, since it's off by default now.
+
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::SourceProvider):
+        (SourceProvider):
+        * runtime/SymbolTable.h:
+        (JSC::SharedSymbolTable::SharedSymbolTable):
+
 2012-08-22  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Separate MarkStackThreadSharedData from MarkStack

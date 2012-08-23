@@ -79,7 +79,6 @@ MetaAllocatorHandle::MetaAllocatorHandle(MetaAllocator* allocator, void* start, 
     ASSERT(allocator);
     ASSERT(start);
     ASSERT(sizeInBytes);
-    turnOffVerifier();
 }
 
 MetaAllocatorHandle::~MetaAllocatorHandle()
