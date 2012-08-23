@@ -107,6 +107,34 @@ void TextAutosizer::setMultiplier(RenderObject* renderer, float multiplier)
     renderer->setStyle(newStyle.release());
 }
 
+float TextAutosizer::computeAutosizedFontSize(float specifiedSize, float multiplier)
+{
+    // Somewhat arbitrary "pleasant" font size.
+    const float pleasantSize = 16;
+
+    // Multiply fonts that the page author has specified to be larger than
+    // pleasantSize by less and less, until huge fonts are not increased at all.
+    // For specifiedSize between 0 and pleasantSize we directly apply the
+    // multiplier; hence for specifiedSize == pleasantSize, computedSize will be
+    // multiplier * pleasantSize. For greater specifiedSizes we want to
+    // gradually fade out the multiplier, so for every 1px increase in
+    // specifiedSize beyond pleasantSize we will only increase computedSize
+    // by gradientAfterPleasantSize px until we meet the
+    // computedSize = specifiedSize line, after which we stay on that line (so
+    // then every 1px increase in specifiedSize increases computedSize by 1px).
+    const float gradientAfterPleasantSize = 0.5;
+
+    float computedSize;
+    if (specifiedSize <= pleasantSize)
+        computedSize = multiplier * specifiedSize;
+    else {
+        computedSize = multiplier * pleasantSize + gradientAfterPleasantSize * (specifiedSize - pleasantSize);
+        if (computedSize < specifiedSize)
+            computedSize = specifiedSize;
+    }
+    return computedSize;
+}
+
 bool TextAutosizer::isNotAnAutosizingContainer(const RenderObject* renderer)
 {
     // "Autosizing containers" are the smallest unit for which we can enable/disable

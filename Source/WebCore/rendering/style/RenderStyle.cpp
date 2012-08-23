@@ -43,6 +43,10 @@
 #include <wtf/StdLibExtras.h>
 #include <algorithm>
 
+#if ENABLE(TEXT_AUTOSIZING)
+#include "TextAutosizer.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -1223,7 +1227,7 @@ Length RenderStyle::lineHeight() const
     // too, though this involves messily poking into CalcExpressionLength.
     float multiplier = textAutosizingMultiplier();
     if (multiplier > 1 && lh.isFixed())
-        return Length(lh.value() * multiplier, Fixed);
+        return Length(TextAutosizer::computeAutosizedFontSize(lh.value(), multiplier), Fixed);
 #endif
     return lh;
 }
@@ -1262,8 +1266,7 @@ void RenderStyle::setFontSize(float size)
 #if ENABLE(TEXT_AUTOSIZING)
     float multiplier = textAutosizingMultiplier();
     if (multiplier > 1) {
-        // FIXME: Large font sizes needn't be multiplied as much since they are already more legible.
-        desc.setComputedSize(size * multiplier);
+        desc.setComputedSize(TextAutosizer::computeAutosizedFontSize(size, multiplier));
     }
 #endif
 

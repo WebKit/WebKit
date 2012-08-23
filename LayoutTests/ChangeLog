@@ -1,3 +1,15 @@
+2012-08-23  John Mellor  <johnme@chromium.org>
+
+        Text Autosizing: Multiply large fonts less, as they are already more legible.
+        https://bugs.webkit.org/show_bug.cgi?id=94227
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added test demonstrating how various font sizes are affected.
+
+        * fast/text-autosizing/various-font-sizes-expected.html: Added.
+        * fast/text-autosizing/various-font-sizes.html: Added.
+
 2012-08-23  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

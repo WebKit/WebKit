@@ -51,6 +51,8 @@ public:
 
     bool processSubtree(RenderObject* layoutRoot);
 
+    static float computeAutosizedFontSize(float specifiedSize, float multiplier);
+
 private:
     explicit TextAutosizer(Document*);
 
