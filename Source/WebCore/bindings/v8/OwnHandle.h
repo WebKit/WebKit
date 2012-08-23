@@ -52,7 +52,7 @@ public:
         clear();
     }
 
-    v8::Handle<T> get() const { return m_handle; }
+    v8::Persistent<T> get() const { return m_handle; }
 
     void set(v8::Handle<T> handle)
     {
