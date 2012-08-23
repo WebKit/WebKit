@@ -1,3 +1,10 @@
+2012-08-23  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed Chromium gardeing.
+
+        * platform/chromium-mac-snowleopard/media/track/track-cue-rendering-horizontal-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/media/track/track-cue-rendering-vertical-expected.txt: Added.
+
 2012-08-23  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed gardening.
