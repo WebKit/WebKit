@@ -3352,24 +3352,23 @@ END
 END
     }
 
-    my $proxyInit;
+    AddToImplIncludes("Frame.h");
+    my $frame = "0";
     if (IsNodeSubType($dataNode)) {
-        AddToImplIncludes("Frame.h");
-        $proxyInit = "impl->document()->frame() ? impl->document()->frame()->script()->proxy() : 0";
         # DocumentType nodes are the only nodes that may have a NULL document.
         if ($interfaceName eq "DocumentType") {
-            $proxyInit = "impl->document() ? ($proxyInit) : 0";
+            $frame = "impl->document() ? impl->document()->frame() : 0";
+        } else {
+            $frame = "impl->document()->frame()";
         }
-    } else {
-        $proxyInit = "0";
     }
     push(@implContent, <<END);
-    V8Proxy* proxy = $proxyInit;
+    Frame* frame = $frame;
 END
 
     if (IsSubType($dataNode, "Document")) {
         push(@implContent, <<END);
-    if (proxy && proxy->windowShell()->context().IsEmpty() && proxy->windowShell()->initContextIfNeeded()) {
+    if (frame && frame->script()->windowShell()->context().IsEmpty() && frame->script()->windowShell()->initContextIfNeeded()) {
         // initContextIfNeeded may have created a wrapper for the object, retry from the start.
         return ${className}::wrap(impl.get(), isolate);
     }
@@ -3383,8 +3382,8 @@ END
         AddToImplIncludes("Frame.h");
         push(@implContent, <<END);
     if (impl->frame()) {
-        proxy = impl->frame()->script()->proxy();
-        proxy->windowShell()->initContextIfNeeded();
+        frame = impl->frame();
+        frame->script()->windowShell()->initContextIfNeeded();
     }
 END
     }
@@ -3394,10 +3393,10 @@ END
 
     // Enter the node's context and create the wrapper in that context.
     v8::Handle<v8::Context> context;
-    if (proxy && !proxy->frame()->script()->matchesCurrentContext()) {
+    if (frame && !frame->script()->matchesCurrentContext()) {
         // For performance, we enter the context only if the currently running context
         // is different from the context that we are about to enter.
-        context = proxy->frame()->script()->currentWorldContext();
+        context = frame->script()->currentWorldContext();
         if (!context.IsEmpty())
             context->Enter();
     }
@@ -3405,7 +3404,7 @@ END
     }
 
     push(@implContent, <<END);
-    wrapper = V8DOMWrapper::instantiateV8Object(proxy ? proxy->frame() : 0, &info, impl.get());
+    wrapper = V8DOMWrapper::instantiateV8Object(frame, &info, impl.get());
 END
     if (IsNodeSubType($dataNode) || IsVisibleAcrossOrigins($dataNode)) {
         push(@implContent, <<END);

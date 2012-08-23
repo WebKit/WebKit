@@ -180,22 +180,22 @@ bool V8TestActiveDOMObject::HasInstance(v8::Handle<v8::Value> value)
 v8::Handle<v8::Object> V8TestActiveDOMObject::wrapSlow(PassRefPtr<TestActiveDOMObject> impl, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
-    V8Proxy* proxy = 0;
+    Frame* frame = 0;
     if (impl->frame()) {
-        proxy = impl->frame()->script()->proxy();
-        proxy->windowShell()->initContextIfNeeded();
+        frame = impl->frame();
+        frame->script()->windowShell()->initContextIfNeeded();
     }
 
     // Enter the node's context and create the wrapper in that context.
     v8::Handle<v8::Context> context;
-    if (proxy && !proxy->frame()->script()->matchesCurrentContext()) {
+    if (frame && !frame->script()->matchesCurrentContext()) {
         // For performance, we enter the context only if the currently running context
         // is different from the context that we are about to enter.
-        context = proxy->frame()->script()->currentWorldContext();
+        context = frame->script()->currentWorldContext();
         if (!context.IsEmpty())
             context->Enter();
     }
-    wrapper = V8DOMWrapper::instantiateV8Object(proxy ? proxy->frame() : 0, &info, impl.get());
+    wrapper = V8DOMWrapper::instantiateV8Object(frame, &info, impl.get());
     // Exit the node's context if it was entered.
     if (!context.IsEmpty())
         context->Exit();
