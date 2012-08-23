@@ -1,3 +1,25 @@
+2012-08-23  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] Refactoring: WebBackForwardList getters should be const
+        https://bugs.webkit.org/show_bug.cgi?id=94711
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Before the change were not consistent with each other
+        (WebBackForwardList::entries() was const but WebBackForwardList::currentIndex() was not).
+        Besides having not const getters is not a good practice in C++. (Please read
+        Scott Meyers. Effective C++ (3rd edition). ISBN: 0-321-33487-6.
+        Item 3: 'Use const whenever possible').
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::backListCount):
+        (WebKit::WebBackForwardList::forwardListCount):
+        (WebKit::WebBackForwardList::backListAsImmutableArrayWithLimit):
+        (WebKit::WebBackForwardList::forwardListAsImmutableArrayWithLimit):
+        * UIProcess/WebBackForwardList.h:
+        (WebKit::WebBackForwardList::currentIndex):
+        (WebBackForwardList):
+
 2012-08-22  Nikhil Bhargava  <nbhargava@google.com>
 
         Reduce Font.h includes across project -- improves RenderObject.h compile time

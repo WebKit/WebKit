@@ -186,21 +186,21 @@ WebBackForwardListItem* WebBackForwardList::itemAtIndex(int index)
     return m_entries[index + m_currentIndex].get();
 }
 
-int WebBackForwardList::backListCount()
+int WebBackForwardList::backListCount() const
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
     return m_page && m_hasCurrentIndex ? m_currentIndex : 0;
 }
 
-int WebBackForwardList::forwardListCount()
+int WebBackForwardList::forwardListCount() const
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
     return m_page && m_hasCurrentIndex ? m_entries.size() - (m_currentIndex + 1) : 0;
 }
 
-PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit(unsigned limit)
+PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit(unsigned limit) const
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
@@ -224,7 +224,7 @@ PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit
     return ImmutableArray::adopt(vector);
 }
 
-PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLimit(unsigned limit)
+PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLimit(unsigned limit) const
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
