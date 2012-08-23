@@ -276,7 +276,7 @@ WebInspector.SearchController.prototype = {
     
     _updateFilterVisibility: function()
     {
-        if (typeof WebInspector.inspectorView.currentPanel().performFilter === "function")
+        if (WebInspector.inspectorView.currentPanel().canFilter())
             this._filterCheckboxContainer.removeStyleClass("hidden");
         else
             this._filterCheckboxContainer.addStyleClass("hidden");
@@ -431,8 +431,7 @@ WebInspector.SearchController.prototype = {
      */
     _performFilter: function(query)
     {
-        if (typeof WebInspector.inspectorView.currentPanel().performFilter === "function")
-            WebInspector.inspectorView.currentPanel().performFilter(query);
+        WebInspector.inspectorView.currentPanel().performFilter(query);
     },
   
     _onFilterInput: function(event)

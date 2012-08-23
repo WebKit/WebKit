@@ -126,9 +126,25 @@ WebInspector.Panel.prototype = {
     },
 
     /**
+     * @param {string} query
      * @param {string} text
      */
-    replaceAllWith: function(text)
+    replaceAllWith: function(query, text)
+    {
+    },
+
+    /**
+     * @return {boolean}
+     */
+    canFilter: function()
+    {
+        return false;
+    },
+
+    /**
+     * @param {string} query
+     */
+    performFilter: function(query)
     {
     },
 

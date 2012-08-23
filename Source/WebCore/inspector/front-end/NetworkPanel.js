@@ -305,7 +305,7 @@ WebInspector.NetworkLogView.prototype = {
         this._timelineSortSelector.selectedIndex = 0;
         this._updateOffscreenRows();
 
-        this.performSearch(null);
+        this.searchCanceled();
     },
 
     _sortByTimeline: function()
@@ -451,7 +451,7 @@ WebInspector.NetworkLogView.prototype = {
             selectMultiple = true;
 
         this._filter(e.target, selectMultiple);
-        this.performSearch(null);
+        this.searchCanceled();
         this._updateSummaryBar();
     },
 
@@ -1083,6 +1083,7 @@ WebInspector.NetworkLogView.prototype = {
 
     _clearSearchMatchedList: function()
     {
+        delete this._searchRegExp;
         this._matchedRequests = [];
         this._matchedRequestsMap = {};
         this._removeAllHighlights();
@@ -1170,8 +1171,8 @@ WebInspector.NetworkLogView.prototype = {
         if (this._currentMatchedRequestIndex !== -1)
             currentMatchedRequestId = this._matchedRequests[this._currentMatchedRequestIndex];
 
-        this._searchRegExp = createPlainTextSearchRegex(searchQuery, "i");
         this._clearSearchMatchedList();
+        this._searchRegExp = createPlainTextSearchRegex(searchQuery, "i");
 
         var childNodes = this._dataGrid.dataTableBody.childNodes;
         var requestNodes = Array.prototype.slice.call(childNodes, 0, childNodes.length - 1); // drop the filler row.
@@ -1463,12 +1464,20 @@ WebInspector.NetworkPanel.prototype = {
 
     /**
      * @param {string} searchQuery
-     */    
+     */
     performSearch: function(searchQuery)
     {
         this._networkLogView.performSearch(searchQuery);
     },
-    
+
+    /**
+     * @return {boolean}
+     */
+    canFilter: function()
+    {
+        return true;
+    },
+
     /**
      * @param {string} query
      */    
