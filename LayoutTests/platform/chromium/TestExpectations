@@ -3518,6 +3518,6 @@ BUGCR67540 BUGWK94735 LINUX : fast/text/emphasis-overlap.html = IMAGE IMAGE+TEXT
 
 BUGWK94793 : fast/notifications/notifications-event-listener-crash.html = TEXT PASS
 
-BUGWK94829 LINUX DEBUG : inspector/timeline/timeline-dom-content-loaded-event.html = TEXT
-BUGWK94829 LINUX DEBUG : inspector/timeline/timeline-enum-stability.html = CRASH
-BUGWK94829 LINUX DEBUG : inspector/timeline/timeline-load-event.html = CRASH
+BUGWK94829 DEBUG : inspector/timeline/timeline-dom-content-loaded-event.html = PASS TEXT CRASH TIMEOUT
+BUGWK94829 DEBUG : inspector/timeline/timeline-enum-stability.html = PASS TEXT CRASH TIMEOUT
+BUGWK94829 DEBUG : inspector/timeline/timeline-load-event.html = PASS TEXT CRASH TIMEOUT
