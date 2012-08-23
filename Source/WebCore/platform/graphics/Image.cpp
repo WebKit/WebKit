@@ -80,7 +80,7 @@ bool Image::setData(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 
 void Image::fillWithSolidColor(GraphicsContext* ctxt, const FloatRect& dstRect, const Color& color, ColorSpace styleColorSpace, CompositeOperator op)
 {
-    if (color.alpha() <= 0)
+    if (!color.alpha())
         return;
     
     CompositeOperator previousOperator = ctxt->compositeOperation();
