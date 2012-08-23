@@ -1,3 +1,15 @@
+2012-08-23  Shezan Baig  <shezbaig.wk@gmail.com>
+
+        Fix cross-direction stretch for replaced elements in column flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=94604
+
+        Reviewed by Ojan Vafai.
+
+        Fixed failing test cases. Add tests for min/max width/height.
+
+        * css3/flexbox/flexitem-expected.txt:
+        * css3/flexbox/flexitem.html:
+
 2012-08-23  Kenneth Russell  <kbr@google.com>
 
         Unreviewed Chromium gardening. Generalized a few Snow Leopard-only

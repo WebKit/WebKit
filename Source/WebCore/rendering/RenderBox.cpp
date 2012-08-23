@@ -433,16 +433,22 @@ void RenderBox::updateLayerTransform()
         layer()->updateTransform();
 }
 
+LayoutUnit RenderBox::constrainLogicalWidthInRegionByMinMax(LayoutUnit logicalWidth, LayoutUnit availableWidth, RenderBlock* cb, RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage)
+{
+    RenderStyle* styleToUse = style();
+    if (!styleToUse->logicalMaxWidth().isUndefined())
+        logicalWidth = min(logicalWidth, computeLogicalWidthInRegionUsing(MaxSize, availableWidth, cb, region, offsetFromLogicalTopOfFirstPage));
+    return max(logicalWidth, computeLogicalWidthInRegionUsing(MinSize, availableWidth, cb, region, offsetFromLogicalTopOfFirstPage));
+}
+
 LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight)
 {
     RenderStyle* styleToUse = style();
     if (!styleToUse->logicalMaxHeight().isUndefined()) {
-        // Constrain by MaxSize.
         LayoutUnit maxH = computeLogicalHeightUsing(MaxSize, styleToUse->logicalMaxHeight());
         if (maxH != -1)
             logicalHeight = min(logicalHeight, maxH);
     }
-    // Constrain by MinSize.
     return max(logicalHeight, computeLogicalHeightUsing(MinSize, styleToUse->logicalMinHeight()));
 }
 
@@ -1688,20 +1694,8 @@ void RenderBox::computeLogicalWidthInRegion(RenderRegion* region, LayoutUnit off
     if (treatAsReplaced)
         setLogicalWidth(logicalWidthLength.value() + borderAndPaddingLogicalWidth());
     else {
-        // Calculate LogicalWidth
-        setLogicalWidth(computeLogicalWidthInRegionUsing(MainOrPreferredSize, containerWidthInInlineDirection, cb, region, offsetFromLogicalTopOfFirstPage));
-
-        // Calculate MaxLogicalWidth
-        if (!styleToUse->logicalMaxWidth().isUndefined()) {
-            LayoutUnit maxLogicalWidth = computeLogicalWidthInRegionUsing(MaxSize, containerWidthInInlineDirection, cb, region, offsetFromLogicalTopOfFirstPage);
-            if (logicalWidth() > maxLogicalWidth)
-                setLogicalWidth(maxLogicalWidth);
-        }
-
-        // Calculate MinLogicalWidth
-        LayoutUnit minLogicalWidth = computeLogicalWidthInRegionUsing(MinSize, containerWidthInInlineDirection, cb, region, offsetFromLogicalTopOfFirstPage);
-        if (logicalWidth() < minLogicalWidth)
-            setLogicalWidth(minLogicalWidth);
+        LayoutUnit preferredWidth = computeLogicalWidthInRegionUsing(MainOrPreferredSize, containerWidthInInlineDirection, cb, region, offsetFromLogicalTopOfFirstPage);
+        setLogicalWidth(constrainLogicalWidthInRegionByMinMax(preferredWidth, containerWidthInInlineDirection, cb, region, offsetFromLogicalTopOfFirstPage));
     }
 
     // Fieldsets are currently the only objects that stretch to their minimum width.
