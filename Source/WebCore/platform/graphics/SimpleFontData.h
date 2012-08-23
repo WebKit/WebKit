@@ -39,7 +39,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringHash.h>
 
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN)) || (PLATFORM(WX) && OS(DARWIN))
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -176,7 +176,7 @@ public:
     NSFont* getNSFont() const { return m_platformData.nsFont(); }
 #endif
 
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN)) || (PLATFORM(WX) && OS(DARWIN))
     CFDictionaryRef getCFStringAttributes(TypesettingFeatures, FontOrientation) const;
     bool canRenderCombiningCharacterSequence(const UChar*, size_t) const;
 #endif
@@ -273,7 +273,7 @@ private:
     float m_syntheticBoldOffset;
 #endif
 
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN)) || (PLATFORM(WX) && OS(DARWIN))
     mutable HashMap<unsigned, RetainPtr<CFDictionaryRef> > m_CFStringAttributes;
     mutable OwnPtr<HashMap<String, bool> > m_combiningCharacterSequenceSupport;
 #endif
