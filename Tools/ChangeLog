@@ -1,5 +1,36 @@
 2012-08-22  Dirk Pranke  <dpranke@chromium.org>
 
+        Baseline optimizer should try to optimize per-port if global optimization fails
+        https://bugs.webkit.org/show_bug.cgi?id=94665
+
+        Reviewed by Adam Barth.
+
+        Add a fallback strategy for optimizing baselines if the default
+        one fails; this one simply attempts to shift baselines up in the
+        tree and consolidates them if a parent and child in the fallback
+        path have the same result. This strategy is somewhat flawed in
+        that we will always put something in a parent dir even if we
+        "shouldn't"; for example, if chromium-mac produces a different
+        result from chromium-win and chromium-linux, then the new
+        algorithm will move the mac result into platform/chromium,
+        leaving chromium-mac empty. This result is still correct, but
+        perhaps confusing.
+
+        I haven't done much testing of this algorithm yet, so it's not
+        clear how many cases where this does a better job than the
+        default algorithm and how many it'll do a worse job.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer.py:
+        (BaselineOptimizer._find_optimal_result_placement):
+        (BaselineOptimizer._optimize_by_most_specific_common_directory):
+        (BaselineOptimizer):
+        (BaselineOptimizer._optimize_by_pushing_results_up):
+        (BaselineOptimizer._find_in_fallbackpath):
+        * Scripts/webkitpy/common/checkout/baselineoptimizer_unittest.py:
+        (BaselineOptimizerTest.test_platform_mac_different):
+
+2012-08-22  Dirk Pranke  <dpranke@chromium.org>
+
         add debug info, another test to webkit-patch optimize-baselines
         https://bugs.webkit.org/show_bug.cgi?id=94762
 

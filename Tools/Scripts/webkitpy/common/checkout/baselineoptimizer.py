@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import copy
 import logging
 
 
@@ -125,9 +126,9 @@ class BaselineOptimizer(object):
         results_by_port_name = self._results_by_port_name(results_by_directory)
         port_names_by_result = _invert_dictionary(results_by_port_name)
 
-        results_by_directory, new_results_by_directory = self._optimize_by_most_specific_common_directory(results_by_directory, results_by_port_name, port_names_by_result)
+        new_results_by_directory = self._optimize_by_most_specific_common_directory(results_by_directory, results_by_port_name, port_names_by_result)
         if not new_results_by_directory:
-            pass  # FIXME: Try something else.
+            new_results_by_directory = self._optimize_by_pushing_results_up(results_by_directory, results_by_port_name, port_names_by_result)
 
         return results_by_directory, new_results_by_directory
 
@@ -144,10 +145,45 @@ class BaselineOptimizer(object):
             new_unsatisfied_port_names_by_result = self._filter_port_names_by_result(is_unsatisfied, port_names_by_result)
 
             if len(new_unsatisfied_port_names_by_result.values()) >= len(unsatisfied_port_names_by_result.values()):
-                break  # Frowns. We do not appear to be converging.
+                return {}  # Frowns. We do not appear to be converging.
             unsatisfied_port_names_by_result = new_unsatisfied_port_names_by_result
 
-        return results_by_directory, new_results_by_directory
+        return new_results_by_directory
+
+    def _optimize_by_pushing_results_up(self, results_by_directory, results_by_port_name, port_names_by_result):
+        results_by_directory = results_by_directory
+        best_so_far = results_by_directory
+        while True:
+            new_results_by_directory = copy.copy(best_so_far)
+            for port_name in self._hypergraph.keys():
+                fallback_path = self._hypergraph[port_name]
+                current_index, current_directory = self._find_in_fallbackpath(fallback_path, results_by_port_name[port_name], results_by_directory)
+                current_result = results_by_port_name[port_name]
+                for index in range(current_index + 1, len(fallback_path)):
+                    new_directory = fallback_path[index]
+                    if not new_directory in new_results_by_directory:
+                        new_results_by_directory[new_directory] = current_result
+                        if current_directory in new_results_by_directory:
+                            del new_results_by_directory[current_directory]
+                    elif new_results_by_directory[new_directory] == current_result:
+                        if current_directory in new_results_by_directory:
+                            del new_results_by_directory[current_directory]
+                    else:
+                        # The new_directory contains a different result, so stop trying to push results up.
+                        break
+
+            if len(new_results_by_directory) >= len(best_so_far):
+                # We've failed to improve, so give up.
+                break
+            best_so_far = new_results_by_directory
+
+        return best_so_far
+
+    def _find_in_fallbackpath(self, fallback_path, current_result, results_by_directory):
+        for index, directory in enumerate(fallback_path):
+            if directory in results_by_directory and (results_by_directory[directory] == current_result):
+                return index, directory
+        assert False, "result %s not found in fallback_path %s, %s" % (current_result, fallback_path, results_by_directory)
 
     def _filtered_results_by_port_name(self, results_by_directory):
         results_by_port_name = self._results_by_port_name(results_by_directory)
