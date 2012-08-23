@@ -1,3 +1,31 @@
+2012-08-23  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL] Use vertical slider theme when the slider is vertical
+        https://bugs.webkit.org/show_bug.cgi?id=93838
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Updated expected result because theme of the slider is changed.
+
+        The size of the renderSlider is changed to 129x12 from 129x11
+        because it has the slider thumb 12x12 and it is not resized when
+        the size is not specified.
+
+        * platform/efl/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * platform/efl/fast/forms/box-shadow-override-expected.png:
+        * platform/efl/fast/forms/box-shadow-override-expected.txt:
+        * platform/efl/fast/forms/datalist/input-appearance-range-with-datalist-expected.png: Added.
+        * platform/efl/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png: Added.
+        * platform/efl/fast/forms/input-appearance-height-expected.png:
+        * platform/efl/fast/forms/input-appearance-height-expected.txt:
+        * platform/efl/fast/forms/range/input-appearance-range-expected.png:
+        * platform/efl/fast/forms/range/input-appearance-range-expected.txt:
+        * platform/efl/fast/forms/range/slider-padding-expected.png:
+        * platform/efl/fast/forms/range/slider-padding-expected.txt:
+        * platform/efl/fast/forms/range/slider-thumb-shared-style-expected.png:
+        * platform/efl/fast/forms/range/slider-thumb-shared-style-expected.txt:
+        * platform/efl/fast/repaint/slider-thumb-drag-release-expected.txt:
+
 2012-08-23  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed gardening.

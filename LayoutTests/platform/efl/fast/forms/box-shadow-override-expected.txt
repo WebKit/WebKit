@@ -37,8 +37,8 @@ layer at (0,0) size 800x600
         RenderBlock {INPUT} at (28,20) size 12x12
         RenderText {#text} at (44,14) size 4x19
           text run at (44,14) width 4: " "
-        RenderSlider {INPUT} at (50,18) size 129x11 [color=#909090] [bgcolor=#FFFFFF]
-          RenderDeprecatedFlexibleBox {DIV} at (0,0) size 129x11
+        RenderSlider {INPUT} at (50,17) size 129x12 [color=#909090] [bgcolor=#FFFFFF]
+          RenderDeprecatedFlexibleBox {DIV} at (0,0) size 129x12
             RenderBlock {DIV} at (0,0) size 117x12
             RenderBlock {DIV} at (117,0) size 12x12
         RenderText {#text} at (181,14) size 4x19
@@ -80,5 +80,5 @@ layer at (14,116) size 186x18
   RenderBlock {DIV} at (0,0) size 186x18
 layer at (14,148) size 186x18
   RenderBlock {DIV} at (0,0) size 186x18
-layer at (116,190) size 12x12
+layer at (116,189) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
