@@ -1,3 +1,10 @@
+2012-08-23  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Disable compilation of WebDOM file for now,
+        add the opentype directory, and remove old ATSUI files no longer in the tree.
+        
+        * wscript:
+
 2012-08-22  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [EFL] Use WTF_USE_SOUP instead BUILDING_SOUP__

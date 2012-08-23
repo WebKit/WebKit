@@ -169,6 +169,7 @@ def build(bld):
                     os.path.join(wk_root, 'Source', 'JavaScriptCore'),
                     os.path.join(wk_root, 'Source', 'WebCore'),
                     os.path.join(wk_root, 'Source', 'WebCore', 'DerivedSources'),
+                    os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'graphics', 'opentype'),
                     os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'image-decoders'),
                     os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'win'),
                     os.path.join(wk_root, 'Source', 'WebCore', 'workers'),
@@ -238,9 +239,7 @@ def build(bld):
                    'Source/WebCore/platform/graphics/cg/FloatSizeCG.cpp',
                    'Source/WebCore/platform/graphics/mac/ComplexTextController.cpp',
                    'Source/WebCore/platform/graphics/mac/ComplexTextControllerCoreText.mm',
-                   'Source/WebCore/platform/graphics/mac/ComplexTextControllerATSUI.cpp',
                    'Source/WebCore/platform/graphics/mac/GlyphPageTreeNodeMac.cpp',
-                   'Source/WebCore/platform/graphics/mac/SimpleFontDataATSUI.mm',
                    'Source/WebCore/platform/graphics/mac/SimpleFontDataCoreText.cpp',
                    'Source/WebCore/platform/graphics/wx/FontPlatformDataWxMac.mm',
                    'Source/WebCore/platform/wx/wxcode/mac/carbon/fontprops.mm',
@@ -381,6 +380,9 @@ def build(bld):
         excludes.append('WebDOMHTMLCollectionCustom.cpp')
         excludes.append('WebNativeNodeFilterCondition.cpp')
         excludes.append('WebDOMNodeFilterCustom.cpp')
+        
+        # don't compile for now until we figure out the issue with using DOMStringList
+        excludes.append('WebDOMInternals.cpp')
         
         # this file is unused by any port, not sure why it was
         # left in the tree
