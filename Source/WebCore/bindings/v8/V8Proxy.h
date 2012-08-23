@@ -87,8 +87,6 @@ namespace WebCore {
 
         Frame* frame() const { return m_frame; }
 
-        void finishedWithEvent(Event*) { }
-
         // Evaluate a script file in the current execution environment.
         // The caller must hold an execution context.
         // If cannot evalute the script, it returns an error.
@@ -96,9 +94,6 @@ namespace WebCore {
 
         // Run an already compiled script.
         v8::Local<v8::Value> runScript(v8::Handle<v8::Script>);
-
-        v8::Local<v8::Context> isolatedWorldContext(int worldId);
-        bool matchesCurrentContext();
 
         // FIXME: This should eventually take DOMWrapperWorld argument!
         // FIXME: This method will be soon removed, as all methods that access windowShell()

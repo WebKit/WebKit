@@ -3394,7 +3394,7 @@ END
 
     // Enter the node's context and create the wrapper in that context.
     v8::Handle<v8::Context> context;
-    if (proxy && !proxy->matchesCurrentContext()) {
+    if (proxy && !proxy->frame()->script()->matchesCurrentContext()) {
         // For performance, we enter the context only if the currently running context
         // is different from the context that we are about to enter.
         context = proxy->frame()->script()->currentWorldContext();

@@ -160,6 +160,8 @@ public:
     v8::Local<v8::Context> mainWorldContext();
     v8::Local<v8::Context> currentWorldContext();
 
+    bool matchesCurrentContext();
+
     // Pass command-line flags to the JS engine.
     static void setFlags(const char* string, int length);
 

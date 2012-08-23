@@ -178,26 +178,4 @@ V8DOMWindowShell* V8Proxy::windowShell() const
     return frame()->script()->windowShell();
 }
 
-v8::Local<v8::Context> V8Proxy::isolatedWorldContext(int worldId)
-{
-    IsolatedWorldMap::iterator iter = m_isolatedWorlds.find(worldId);
-    if (iter == m_isolatedWorlds.end())
-        return v8::Local<v8::Context>();
-    return v8::Local<v8::Context>::New(iter->second->context());
-}
-
-bool V8Proxy::matchesCurrentContext()
-{
-    v8::Handle<v8::Context> context;
-    if (V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered()) {
-        context = isolatedContext->sharedContext()->get();
-        if (m_frame != toFrameIfNotDetached(context))
-            return false;
-    } else {
-        windowShell()->initContextIfNeeded();
-        context = windowShell()->context();
-    }
-    return context == context->GetCurrent();
-}
-
 }  // namespace WebCore
