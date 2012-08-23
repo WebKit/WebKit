@@ -2240,6 +2240,8 @@
             'bindings/v8/ScriptProfileNode.h',
             'bindings/v8/ScriptProfiler.cpp',
             'bindings/v8/ScriptProfiler.h',
+            'bindings/v8/ScriptRunner.cpp',
+            'bindings/v8/ScriptRunner.h',
             'bindings/v8/ScriptScope.cpp',
             'bindings/v8/ScriptScope.h',
             'bindings/v8/ScriptSourceCode.cpp',

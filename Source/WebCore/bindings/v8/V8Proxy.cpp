@@ -45,6 +45,7 @@
 #include "PlatformSupport.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
+#include "ScriptRunner.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -76,13 +77,6 @@
 #endif
 
 namespace WebCore {
-
-// FIXME: This will be soon removed when we move runScript() to ScriptController.
-static v8::Local<v8::Value> handleMaxRecursionDepthExceeded()
-{
-    throwError(RangeError, "Maximum call stack size exceeded.");
-    return v8::Local<v8::Value>();
-}
 
 V8Proxy::V8Proxy(Frame* frame)
     : m_frame(frame)
@@ -125,51 +119,14 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
         TRACE_EVENT_END0("v8", "v8.compile");
         TRACE_EVENT0("v8", "v8.run");
 #endif
-        result = runScript(script);
+
+        // Keep Frame (and therefore ScriptController) alive.
+        RefPtr<Frame> protect(frame());
+        result = ScriptRunner::runCompiledScript(script, frame()->document());
     }
 
     InspectorInstrumentation::didEvaluateScript(cookie);
 
-    return result;
-}
-
-v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script)
-{
-    if (script.IsEmpty())
-        return v8::Local<v8::Value>();
-
-    V8GCController::checkMemoryUsage();
-    if (V8RecursionScope::recursionLevel() >= kMaxRecursionDepth)
-        return handleMaxRecursionDepthExceeded();
-
-    if (handleOutOfMemory())
-        ASSERT(script.IsEmpty());
-
-    // Keep Frame (and therefore ScriptController and V8Proxy) alive.
-    RefPtr<Frame> protect(frame());
-
-    // Run the script and keep track of the current recursion depth.
-    v8::Local<v8::Value> result;
-    v8::TryCatch tryCatch;
-    tryCatch.SetVerbose(true);
-    {
-        V8RecursionScope recursionScope(frame()->document());
-        result = script->Run();
-    }
-
-    if (handleOutOfMemory())
-        ASSERT(result.IsEmpty());
-
-    // Handle V8 internal error situation (Out-of-memory).
-    if (tryCatch.HasCaught()) {
-        ASSERT(result.IsEmpty());
-        return v8::Local<v8::Value>();
-    }
-
-    if (result.IsEmpty())
-        return v8::Local<v8::Value>();
-
-    crashIfV8IsDead();
     return result;
 }
 

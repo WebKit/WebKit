@@ -198,12 +198,6 @@ v8::Local<v8::Value> ScriptController::callFunction(v8::Handle<v8::Function> fun
     return ScriptController::callFunctionWithInstrumentation(m_frame ? m_frame->document() : 0, function, receiver, argc, args);
 }
 
-static v8::Local<v8::Value> handleMaxRecursionDepthExceeded()
-{
-    throwError(RangeError, "Maximum call stack size exceeded.");
-    return v8::Local<v8::Value>();
-}
-
 static inline void resourceInfo(const v8::Handle<v8::Function> function, String& resourceName, int& lineNumber)
 {
     v8::ScriptOrigin origin = function->GetScriptOrigin();

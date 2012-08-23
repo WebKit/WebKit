@@ -92,9 +92,6 @@ namespace WebCore {
         // If cannot evalute the script, it returns an error.
         v8::Local<v8::Value> evaluate(const ScriptSourceCode&, Node*);
 
-        // Run an already compiled script.
-        v8::Local<v8::Value> runScript(v8::Handle<v8::Script>);
-
         // FIXME: This should eventually take DOMWrapperWorld argument!
         // FIXME: This method will be soon removed, as all methods that access windowShell()
         // will be moved to ScriptController.
