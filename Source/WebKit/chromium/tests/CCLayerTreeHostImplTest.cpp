@@ -3808,19 +3808,17 @@ struct RenderPassCacheEntry {
 
 struct RenderPassRemovalTestData : public CCLayerTreeHostImpl::FrameData {
     std::map<char, RenderPassCacheEntry> renderPassCache;
-    Vector<OwnPtr<CCRenderSurface> > renderSurfaceStore;
-    Vector<OwnPtr<CCLayerImpl> > layerStore;
     OwnPtr<CCSharedQuadState> sharedQuadState;
 };
 
 class CCTestRenderPass: public CCRenderPass {
 public:
-    static PassOwnPtr<CCRenderPass> create(CCRenderSurface* renderSurface, int id) { return adoptPtr(new CCTestRenderPass(renderSurface, id)); }
+    static PassOwnPtr<CCRenderPass> create(int id, IntRect outputRect, const WebTransformationMatrix& rootTransform) { return adoptPtr(new CCTestRenderPass(id, outputRect, rootTransform)); }
 
     void appendQuad(PassOwnPtr<CCDrawQuad> quad) { m_quadList.append(quad); }
 
 protected:
-    CCTestRenderPass(CCRenderSurface* renderSurface, int id) : CCRenderPass(renderSurface, id) { }
+    CCTestRenderPass(int id, IntRect outputRect, const WebTransformationMatrix& rootTransform) : CCRenderPass(id, outputRect, rootTransform) { }
 };
 
 class CCTestRenderer : public CCRendererGL, public CCRendererClient {
@@ -3857,17 +3855,6 @@ private:
     HashSet<int> m_textures;
 };
 
-static PassOwnPtr<CCRenderPass> createDummyRenderPass(RenderPassRemovalTestData& testData, int id)
-{
-    OwnPtr<CCLayerImpl> layerImpl(CCLayerImpl::create(id));
-    OwnPtr<CCRenderSurface> renderSurface(adoptPtr(new CCRenderSurface(layerImpl.get())));
-    OwnPtr<CCRenderPass> renderPassPtr(CCTestRenderPass::create(renderSurface.get(), layerImpl->id()));
-
-    testData.renderSurfaceStore.append(renderSurface.release());
-    testData.layerStore.append(layerImpl.release());
-    return renderPassPtr.release();
-}
-
 static void configureRenderPassTestData(const char* testScript, RenderPassRemovalTestData& testData, CCTestRenderer* renderer)
 {
     renderer->clearCachedTextures();
@@ -3879,7 +3866,7 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
 
     // Pre-create root pass
     char rootRenderPassId = testScript[0];
-    OwnPtr<CCRenderPass> rootRenderPass = createDummyRenderPass(testData, rootRenderPassId);
+    OwnPtr<CCRenderPass> rootRenderPass = CCTestRenderPass::create(rootRenderPassId, IntRect(), WebTransformationMatrix());
     testData.renderPassCache.insert(std::pair<char, RenderPassCacheEntry>(rootRenderPassId, RenderPassCacheEntry(rootRenderPass.release())));
     while (*currentChar) {
         char renderPassId = currentChar[0];
@@ -3930,7 +3917,7 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
                     if (hasTexture)
                         renderer->setHaveCachedResourcesForRenderPassId(newRenderPassId);
 
-                    OwnPtr<CCRenderPass> renderPass = createDummyRenderPass(testData, newRenderPassId);
+                    OwnPtr<CCRenderPass> renderPass = CCTestRenderPass::create(newRenderPassId, IntRect(), WebTransformationMatrix());
                     testData.renderPassCache.insert(std::pair<char, RenderPassCacheEntry>(newRenderPassId, RenderPassCacheEntry(renderPass.release())));
                 }
 

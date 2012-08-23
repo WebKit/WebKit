@@ -58,7 +58,7 @@ typedef Vector<OwnPtr<CCSharedQuadState> > CCSharedQuadStateList;
 class CCRenderPass {
     WTF_MAKE_NONCOPYABLE(CCRenderPass);
 public:
-    static PassOwnPtr<CCRenderPass> create(CCRenderSurface*, int id);
+    static PassOwnPtr<CCRenderPass> create(int id, IntRect outputRect, const WebKit::WebTransformationMatrix& transformToRootTarget);
 
     void appendQuadsForLayer(CCLayerImpl*, CCOcclusionTrackerImpl*, bool& hadMissingTiles);
     void appendQuadsForRenderSurfaceLayer(CCLayerImpl*, const CCRenderPass* contributingRenderPass, CCOcclusionTrackerImpl*);
@@ -90,7 +90,7 @@ public:
     bool hasOcclusionFromOutsideTargetSurface() const { return m_hasOcclusionFromOutsideTargetSurface; }
     void setHasOcclusionFromOutsideTargetSurface(bool hasOcclusionFromOutsideTargetSurface) { m_hasOcclusionFromOutsideTargetSurface = hasOcclusionFromOutsideTargetSurface; }
 protected:
-    CCRenderPass(CCRenderSurface*, int id);
+    CCRenderPass(int id, IntRect outputRect, const WebKit::WebTransformationMatrix& transformToRootTarget);
 
     int m_id;
     CCQuadList m_quadList;

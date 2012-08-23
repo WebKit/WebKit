@@ -38,19 +38,18 @@ using WebKit::WebTransformationMatrix;
 
 namespace WebCore {
 
-PassOwnPtr<CCRenderPass> CCRenderPass::create(CCRenderSurface* targetSurface, int id)
+PassOwnPtr<CCRenderPass> CCRenderPass::create(int id, IntRect outputRect, const WebKit::WebTransformationMatrix& transformToRootTarget)
 {
-    return adoptPtr(new CCRenderPass(targetSurface, id));
+    return adoptPtr(new CCRenderPass(id, outputRect, transformToRootTarget));
 }
 
-CCRenderPass::CCRenderPass(CCRenderSurface* targetSurface, int id)
+CCRenderPass::CCRenderPass(int id, IntRect outputRect, const WebKit::WebTransformationMatrix& transformToRootTarget)
     : m_id(id)
-    , m_transformToRootTarget(targetSurface->screenSpaceTransform())
-    , m_outputRect(targetSurface->contentRect())
+    , m_transformToRootTarget(transformToRootTarget)
+    , m_outputRect(outputRect)
     , m_hasTransparentBackground(true)
     , m_hasOcclusionFromOutsideTargetSurface(false)
 {
-    ASSERT(targetSurface);
     ASSERT(id > 0);
 }
 

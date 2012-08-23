@@ -36,6 +36,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <public/WebCompositor.h>
+#include <public/WebTransformationMatrix.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -79,8 +80,7 @@ public:
         , m_rootLayer(CCLayerImpl::create(1))
         , m_memoryAllocationLimitBytes(CCPrioritizedTextureManager::defaultMemoryAllocationLimit())
     {
-        m_rootLayer->createRenderSurface();
-        OwnPtr<CCRenderPass> rootRenderPass = CCRenderPass::create(m_rootLayer->renderSurface(), m_rootLayer->id());
+        OwnPtr<CCRenderPass> rootRenderPass = CCRenderPass::create(m_rootLayer->id(), IntRect(), WebTransformationMatrix());
         m_renderPassesInDrawOrder.append(rootRenderPass.get());
         m_renderPasses.set(m_rootLayer->id(), rootRenderPass.release());
     }

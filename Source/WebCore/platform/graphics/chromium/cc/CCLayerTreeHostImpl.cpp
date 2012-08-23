@@ -281,7 +281,9 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
         CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
 
         int renderPassId = renderSurfaceLayer->id();
-        OwnPtr<CCRenderPass> pass = CCRenderPass::create(renderSurface, renderPassId);
+        IntRect outputRect = renderSurface->contentRect();
+        const WebTransformationMatrix& transformToRootTarget = renderSurface->screenSpaceTransform();
+        OwnPtr<CCRenderPass> pass = CCRenderPass::create(renderPassId, outputRect, transformToRootTarget);
         pass->setDamageRect(renderSurface->damageTracker()->currentDamageRect());
         pass->setFilters(renderSurfaceLayer->filters());
         pass->setBackgroundFilters(renderSurfaceLayer->backgroundFilters());

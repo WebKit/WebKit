@@ -1,3 +1,14 @@
+2012-08-23  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Don't require a RenderSurface* in order to create a RenderPass
+        https://bugs.webkit.org/show_bug.cgi?id=94862
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCRendererGLTest.cpp:
+        (FakeCCRendererClient::FakeCCRendererClient):
+
 2012-08-22  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove WebLayer::setChildren API
