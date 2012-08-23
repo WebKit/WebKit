@@ -1,3 +1,11 @@
+2012-08-23  Mark Rowe  <mrowe@apple.com>
+
+        Make WebKit2 build with the latest version of clang.
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig: Ensure that operator new isn't exported as a weak external symbol.
+
 2012-08-22  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [EFL] Use WTF_USE_SOUP instead BUILDING_SOUP__
