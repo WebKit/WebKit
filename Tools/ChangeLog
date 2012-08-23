@@ -1,3 +1,10 @@
+2012-08-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, upgrade gyuyoung to reviewer.
+        http://lists.webkit.org/pipermail/webkit-dev/2012-August/022004.html
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-08-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r126306): it broke the plugin process
