@@ -96,6 +96,7 @@ SOURCES += \
     debugger/Debugger.cpp \
     dfg/DFGAbstractState.cpp \
     dfg/DFGArgumentsSimplificationPhase.cpp \
+    dfg/DFGArrayMode.cpp \
     dfg/DFGAssemblyHelpers.cpp \
     dfg/DFGByteCodeParser.cpp \
     dfg/DFGCapabilities.cpp \

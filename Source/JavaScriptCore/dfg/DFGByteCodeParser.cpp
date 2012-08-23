@@ -31,6 +31,7 @@
 #include "ArrayConstructor.h"
 #include "CallLinkStatus.h"
 #include "CodeBlock.h"
+#include "DFGArrayMode.h"
 #include "DFGByteCodeCache.h"
 #include "DFGCapabilities.h"
 #include "GetByIdStatus.h"
@@ -816,6 +817,36 @@ private:
     {
         return getPrediction(m_graph.size(), m_currentProfilingIndex);
     }
+    
+    Array::Mode getArrayModeWithoutOSRExit(Instruction* currentInstruction, NodeIndex base)
+    {
+        ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
+        profile->computeUpdatedPrediction();
+        if (profile->hasDefiniteStructure())
+            addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(profile->expectedStructure())), base);
+        
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        if (m_inlineStackTop->m_profiledBlock->numberOfRareCaseProfiles())
+            dataLog("Slow case profile for bc#%u: %u\n", m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
+        dataLog("Array profile for bc#%u: %p%s, %u\n", m_currentIndex, profile->expectedStructure(), profile->structureIsPolymorphic() ? " (polymorphic)" : "", profile->observedArrayModes());
+#endif
+        
+        bool makeSafe =
+            m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
+            || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, OutOfBounds);
+        
+        return fromObserved(profile->observedArrayModes(), makeSafe);
+    }
+    
+    Array::Mode getArrayMode(Instruction* currentInstruction, NodeIndex base)
+    {
+        Array::Mode result = getArrayModeWithoutOSRExit(currentInstruction, base);
+        
+        if (result == Array::ForceExit)
+            addToGraph(ForceOSRExit);
+        
+        return result;
+    }
 
     NodeIndex makeSafe(NodeIndex nodeIndex)
     {
@@ -1548,8 +1579,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
             return false;
         
         int indexOperand = registerOffset + argumentToOperand(1);
-        NodeIndex storage = addToGraph(GetIndexedPropertyStorage, get(thisOperand), getToInt32(indexOperand));
-        NodeIndex charCode = addToGraph(StringCharCodeAt, get(thisOperand), getToInt32(indexOperand), storage);
+        NodeIndex charCode = addToGraph(StringCharCodeAt, OpInfo(Array::String), get(thisOperand), getToInt32(indexOperand));
 
         if (usesResult)
             set(resultOperand, charCode);
@@ -1565,8 +1595,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
             return false;
 
         int indexOperand = registerOffset + argumentToOperand(1);
-        NodeIndex storage = addToGraph(GetIndexedPropertyStorage, get(thisOperand), getToInt32(indexOperand));
-        NodeIndex charCode = addToGraph(StringCharAt, get(thisOperand), getToInt32(indexOperand), storage);
+        NodeIndex charCode = addToGraph(StringCharAt, OpInfo(Array::String), get(thisOperand), getToInt32(indexOperand));
 
         if (usesResult)
             set(resultOperand, charCode);
@@ -2148,13 +2177,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             SpeculatedType prediction = getPrediction();
             
             NodeIndex base = get(currentInstruction[2].u.operand);
+            Array::Mode arrayMode = getArrayMode(currentInstruction, base);
             NodeIndex property = get(currentInstruction[3].u.operand);
-            ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
-            profile->computeUpdatedPrediction();
-            if (profile->hasDefiniteStructure())
-                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(profile->expectedStructure())), base);
-            NodeIndex propertyStorage = addToGraph(GetIndexedPropertyStorage, base, property);
-            NodeIndex getByVal = addToGraph(GetByVal, OpInfo(0), OpInfo(prediction), base, property, propertyStorage);
+            NodeIndex getByVal = addToGraph(GetByVal, OpInfo(arrayMode), OpInfo(prediction), base, property);
             set(currentInstruction[1].u.operand, getByVal);
 
             NEXT_OPCODE(op_get_by_val);
@@ -2162,26 +2187,16 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_put_by_val: {
             NodeIndex base = get(currentInstruction[1].u.operand);
+
+            Array::Mode arrayMode = getArrayMode(currentInstruction, base);
+            
             NodeIndex property = get(currentInstruction[2].u.operand);
             NodeIndex value = get(currentInstruction[3].u.operand);
-            
-            ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
-            profile->computeUpdatedPrediction();
-            if (profile->hasDefiniteStructure())
-                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(profile->expectedStructure())), base);
-
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("Slow case profile for bc#%u: %u\n", m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
-#endif
-
-            bool makeSafe =
-                m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
-                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, OutOfBounds);
             
             addVarArgChild(base);
             addVarArgChild(property);
             addVarArgChild(value);
-            addToGraph(Node::VarArg, makeSafe ? PutByValSafe : PutByVal, OpInfo(0), OpInfo(0));
+            addToGraph(Node::VarArg, PutByVal, OpInfo(arrayMode), OpInfo(0));
 
             NEXT_OPCODE(op_put_by_val);
         }

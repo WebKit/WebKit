@@ -2082,6 +2082,8 @@ public:
     void compileGetByValOnArguments(Node&);
     void compileGetArgumentsLength(Node&);
     
+    void compileGetArrayLength(Node&);
+    
     void compileValueToInt32(Node&);
     void compileUInt32ToNumber(Node&);
     void compileDoubleAsInt32(Node&);
@@ -2095,12 +2097,6 @@ public:
 #endif
     void compileArithMod(Node&);
     void compileSoftModulo(Node&);
-    void compileGetTypedArrayLength(const TypedArrayDescriptor&, Node&, bool needsSpeculationCheck);
-    enum TypedArraySpeculationRequirements {
-        NoTypedArraySpecCheck,
-        NoTypedArrayTypeSpecCheck,
-        AllTypedArraySpecChecks
-    };
     enum TypedArraySignedness {
         SignedTypedArray,
         UnsignedTypedArray
@@ -2110,10 +2106,10 @@ public:
         ClampRounding
     };
     void compileGetIndexedPropertyStorage(Node&);
-    void compileGetByValOnIntTypedArray(const TypedArrayDescriptor&, Node&, size_t elementSize, TypedArraySpeculationRequirements, TypedArraySignedness);
-    void compilePutByValForIntTypedArray(const TypedArrayDescriptor&, GPRReg base, GPRReg property, Node&, size_t elementSize, TypedArraySpeculationRequirements, TypedArraySignedness, TypedArrayRounding = TruncateRounding);
-    void compileGetByValOnFloatTypedArray(const TypedArrayDescriptor&, Node&, size_t elementSize, TypedArraySpeculationRequirements);
-    void compilePutByValForFloatTypedArray(const TypedArrayDescriptor&, GPRReg base, GPRReg property, Node&, size_t elementSize, TypedArraySpeculationRequirements);
+    void compileGetByValOnIntTypedArray(const TypedArrayDescriptor&, Node&, size_t elementSize, TypedArraySignedness);
+    void compilePutByValForIntTypedArray(const TypedArrayDescriptor&, GPRReg base, GPRReg property, Node&, size_t elementSize, TypedArraySignedness, TypedArrayRounding = TruncateRounding);
+    void compileGetByValOnFloatTypedArray(const TypedArrayDescriptor&, Node&, size_t elementSize);
+    void compilePutByValForFloatTypedArray(const TypedArrayDescriptor&, GPRReg base, GPRReg property, Node&, size_t elementSize);
     void compileNewFunctionNoCheck(Node&);
     void compileNewFunctionExpression(Node&);
     bool compileRegExpExec(Node&);
@@ -2199,7 +2195,9 @@ public:
     JumpReplacementWatchpoint* forwardSpeculationWatchpoint(ExitKind = UncountableWatchpoint);
     JumpReplacementWatchpoint* speculationWatchpointWithConditionalDirection(ExitKind, bool isForward);
     
-    void speculateArray(Edge baseEdge, GPRReg baseReg);
+    const TypedArrayDescriptor* typedArrayDescriptor(Array::Mode);
+    
+    const TypedArrayDescriptor* speculateArray(Array::Mode, Edge baseEdge, GPRReg baseReg);
     
     template<bool strict>
     GPRReg fillSpeculateIntInternal(NodeIndex, DataFormat& returnFormat);

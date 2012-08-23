@@ -284,8 +284,7 @@ private:
                     return index;
                 break;
             case PutByVal:
-            case PutByValAlias:
-            case PutByValSafe: {
+            case PutByValAlias: {
                 if (!m_graph.byValIsPure(node))
                     return NoNode;
                 if (m_graph.varArgChild(node, 0) == child1 && canonicalize(m_graph.varArgChild(node, 1)) == canonicalize(child2))
@@ -365,7 +364,6 @@ private:
                 
             case PutByVal:
             case PutByValAlias:
-            case PutByValSafe:
                 if (m_graph.byValIsPure(node)) {
                     // If PutByVal speculates that it's accessing an array with an
                     // integer index, then it's impossible for it to cause a structure
@@ -409,7 +407,6 @@ private:
                 
             case PutByVal:
             case PutByValAlias:
-            case PutByValSafe:
                 if (m_graph.byValIsPure(node)) {
                     // If PutByVal speculates that it's accessing an array with an
                     // integer index, then it's impossible for it to cause a structure
@@ -515,7 +512,6 @@ private:
                 
             case PutByVal:
             case PutByValAlias:
-            case PutByValSafe:
                 if (m_graph.byValIsPure(node)) {
                     // If PutByVal speculates that it's accessing an array with an
                     // integer index, then it's impossible for it to cause a structure
@@ -560,7 +556,6 @@ private:
             case PutByVal:
             case PutByValAlias:
             case GetByVal:
-            case PutByValSafe:
                 if (m_graph.byValIsPure(node)) {
                     // If PutByVal speculates that it's accessing an array with an
                     // integer index, then it's impossible for it to cause a structure
@@ -613,7 +608,6 @@ private:
                 
             case PutByVal:
             case PutByValAlias:
-            case PutByValSafe:
                 if (m_graph.byValIsPure(node)) {
                     // If PutByVal speculates that it's accessing an array with an
                     // integer index, then it's impossible for it to cause a structure
@@ -925,17 +919,7 @@ private:
         case ArithMin:
         case ArithMax:
         case ArithSqrt:
-        case GetInt8ArrayLength:
-        case GetInt16ArrayLength:
-        case GetInt32ArrayLength:
-        case GetUint8ArrayLength:
-        case GetUint8ClampedArrayLength:
-        case GetUint16ArrayLength:
-        case GetUint32ArrayLength:
-        case GetFloat32ArrayLength:
-        case GetFloat64ArrayLength:
         case GetCallee:
-        case GetStringLength:
         case StringCharAt:
         case StringCharCodeAt:
         case Int32ToDouble:
@@ -1103,8 +1087,7 @@ private:
                 setReplacement(getByValLoadElimination(node.child1().index(), node.child2().index()));
             break;
             
-        case PutByVal:
-        case PutByValSafe: {
+        case PutByVal: {
             Edge child1 = m_graph.varArgChild(node, 0);
             Edge child2 = m_graph.varArgChild(node, 1);
             if (isActionableMutableArraySpeculation(m_graph[child1].prediction())

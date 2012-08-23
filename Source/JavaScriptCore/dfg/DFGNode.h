@@ -33,6 +33,7 @@
 #include "CodeBlock.h"
 #include "CodeOrigin.h"
 #include "DFGAdjacencyList.h"
+#include "DFGArrayMode.h"
 #include "DFGCommon.h"
 #include "DFGNodeFlags.h"
 #include "DFGNodeType.h"
@@ -730,6 +731,34 @@ struct Node {
     {
         ASSERT(hasFunctionExprIndex());
         return m_opInfo;
+    }
+    
+    bool hasArrayMode()
+    {
+        switch (op()) {
+        case GetIndexedPropertyStorage:
+        case GetArrayLength:
+        case PutByVal:
+        case PutByValAlias:
+        case GetByVal:
+        case StringCharAt:
+        case StringCharCodeAt:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    Array::Mode arrayMode()
+    {
+        ASSERT(hasArrayMode());
+        return static_cast<Array::Mode>(m_opInfo);
+    }
+    
+    void setArrayMode(Array::Mode arrayMode)
+    {
+        ASSERT(hasArrayMode());
+        m_opInfo = arrayMode;
     }
     
     bool hasVirtualRegister()

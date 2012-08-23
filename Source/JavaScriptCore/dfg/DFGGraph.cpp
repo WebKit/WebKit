@@ -211,6 +211,10 @@ void Graph::dump(const char* prefix, NodeIndex nodeIndex)
         dataLog("%s%s", hasPrinted ? ", " : "", nodeFlagsAsString(node.flags()));
         hasPrinted = true;
     }
+    if (node.hasArrayMode()) {
+        dataLog("%s%s", hasPrinted ? ", " : "", modeToString(node.arrayMode()));
+        hasPrinted = true;
+    }
     if (node.hasVarNumber()) {
         dataLog("%svar%u", hasPrinted ? ", " : "", node.varNumber());
         hasPrinted = true;

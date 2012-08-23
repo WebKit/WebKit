@@ -66,6 +66,7 @@ SET(JavaScriptCore_SOURCES
 
     dfg/DFGAbstractState.cpp
     dfg/DFGArgumentsSimplificationPhase.cpp
+    dfg/DFGArrayMode.cpp
     dfg/DFGAssemblyHelpers.cpp
     dfg/DFGByteCodeParser.cpp
     dfg/DFGCapabilities.cpp

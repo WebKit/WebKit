@@ -98,7 +98,6 @@ public:
                 case GetByVal:
                 case PutByVal:
                 case PutByValAlias:
-                case PutByValSafe:
                 case GetArrayLength:
                 case Phantom:
                     // Don't count these uses.
@@ -215,53 +214,12 @@ public:
                 }
                     
                 case GetByVal:
-                    if (!node.prediction() || !m_graph[node.child1()].prediction() || !m_graph[node.child2()].prediction())
-                        break;
-                    if (!isActionableArraySpeculation(m_graph[node.child1()].prediction()) || !m_graph[node.child2()].shouldSpeculateInteger())
-                        clobber(live);
-                    break;
-                    
                 case PutByVal:
                 case PutByValAlias:
-                case PutByValSafe: {
-                    Edge child1 = m_graph.varArgChild(node, 0);
-                    Edge child2 = m_graph.varArgChild(node, 1);
-                    
-                    if (!m_graph[child1].prediction() || !m_graph[child2].prediction())
-                        break;
-                    if (!m_graph[child2].shouldSpeculateInteger()
-#if USE(JSVALUE32_64)
-                        || m_graph[child1].shouldSpeculateArguments()
-#endif
-                        ) {
-                        clobber(live);
-                        break;
-                    }
-                    if (node.op() != PutByValSafe)
-                        break;
-                    if (m_graph[child1].shouldSpeculateArguments())
-                        break;
-                    if (m_graph[child1].shouldSpeculateInt8Array())
-                        break;
-                    if (m_graph[child1].shouldSpeculateInt16Array())
-                        break;
-                    if (m_graph[child1].shouldSpeculateInt32Array())
-                        break;
-                    if (m_graph[child1].shouldSpeculateUint8Array())
-                        break;
-                    if (m_graph[child1].shouldSpeculateUint8ClampedArray())
-                        break;
-                    if (m_graph[child1].shouldSpeculateUint16Array())
-                        break;
-                    if (m_graph[child1].shouldSpeculateUint32Array())
-                        break;
-                    if (m_graph[child1].shouldSpeculateFloat32Array())
-                        break;
-                    if (m_graph[child1].shouldSpeculateFloat64Array())
+                    if (m_graph.byValIsPure(node))
                         break;
                     clobber(live);
                     break;
-                }
                     
                 case GetMyArgumentsLengthSafe:
                 case GetMyArgumentByValSafe:

@@ -488,48 +488,20 @@ public:
     
     bool byValIsPure(Node& node)
     {
-        switch (node.op()) {
-        case PutByVal: {
-            if (!at(varArgChild(node, 1)).shouldSpeculateInteger())
-                return false;
-            SpeculatedType prediction = at(varArgChild(node, 0)).prediction();
-            if (!isActionableMutableArraySpeculation(prediction))
-                return false;
-            return true;
-        }
-            
-        case PutByValSafe: {
-            if (!at(varArgChild(node, 1)).shouldSpeculateInteger())
-                return false;
-            SpeculatedType prediction = at(varArgChild(node, 0)).prediction();
-            if (!isActionableMutableArraySpeculation(prediction))
-                return false;
-            if (isArraySpeculation(prediction))
-                return false;
-            return true;
-        }
-            
-        case PutByValAlias: {
-            if (!at(varArgChild(node, 1)).shouldSpeculateInteger())
-                return false;
-            SpeculatedType prediction = at(varArgChild(node, 0)).prediction();
-            if (!isActionableMutableArraySpeculation(prediction))
-                return false;
-            return true;
-        }
-            
-        case GetByVal: {
-            if (!at(node.child2()).shouldSpeculateInteger())
-                return false;
-            SpeculatedType prediction = at(node.child1()).prediction();
-            if (!isActionableArraySpeculation(prediction))
-                return false;
-            return true;
-        }
-            
-        default:
-            ASSERT_NOT_REACHED();
+        switch (node.arrayMode()) {
+        case Array::Generic:
+        case Array::JSArrayOutOfBounds:
             return false;
+        case Array::String:
+            return node.op() == GetByVal;
+#if USE(JSVALUE32_64)
+        case Array::Arguments:
+            if (node.op() == GetByVal)
+                return true;
+            return false;
+#endif // USE(JSVALUE32_64)
+        default:
+            return true;
         }
     }
     
@@ -549,7 +521,6 @@ public:
             return !isPredictedNumerical(node);
         case GetByVal:
         case PutByVal:
-        case PutByValSafe:
         case PutByValAlias:
             return !byValIsPure(node);
         default:

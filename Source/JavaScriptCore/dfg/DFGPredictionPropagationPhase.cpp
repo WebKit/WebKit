@@ -612,17 +612,6 @@ private:
             
         case PutByValAlias:
         case GetArrayLength:
-        case GetArgumentsLength:
-        case GetInt8ArrayLength:
-        case GetInt16ArrayLength:
-        case GetInt32ArrayLength:
-        case GetUint8ArrayLength:
-        case GetUint8ClampedArrayLength:
-        case GetUint16ArrayLength:
-        case GetUint32ArrayLength:
-        case GetFloat32ArrayLength:
-        case GetFloat64ArrayLength:
-        case GetStringLength:
         case Int32ToDouble:
         case DoubleAsInt32:
         case GetLocalUnlinked:
@@ -637,7 +626,6 @@ private:
         }
         
         case PutByVal:
-        case PutByValSafe:
             changed |= m_graph[m_graph.varArgChild(node, 0)].mergeFlags(NodeUsedAsValue);
             changed |= m_graph[m_graph.varArgChild(node, 1)].mergeFlags(NodeUsedAsNumber | NodeUsedAsInt);
             changed |= m_graph[m_graph.varArgChild(node, 2)].mergeFlags(NodeUsedAsValue);
