@@ -76,8 +76,8 @@ namespace WTF {
     WTF_EXPORT_PRIVATE void fastFree(void*);
 
 #ifndef NDEBUG    
-    void fastMallocForbid();
-    void fastMallocAllow();
+    WTF_EXPORT_PRIVATE void fastMallocForbid();
+    WTF_EXPORT_PRIVATE void fastMallocAllow();
 #endif
 
     WTF_EXPORT_PRIVATE void releaseFastMallocFreeMemory();

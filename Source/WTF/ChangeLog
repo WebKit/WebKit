@@ -1,5 +1,16 @@
 2012-08-22  Geoffrey Garen  <ggaren@apple.com>
 
+        Fixed a fastMallocForbid/Allow compile error for some compilers
+        https://bugs.webkit.org/show_bug.cgi?id=94775
+
+        Reviewed by Gavin Barraclough.
+
+        * wtf/FastMalloc.h:
+        (WTF::fastMallocForbid()):
+        (WTF::fastMallocAllow()): Export, since these are called by JavaScriptCore.
+
+2012-08-22  Geoffrey Garen  <ggaren@apple.com>
+
         ThreadRestrictionVerifier should be opt-in, not opt-out
         https://bugs.webkit.org/show_bug.cgi?id=94761
 
