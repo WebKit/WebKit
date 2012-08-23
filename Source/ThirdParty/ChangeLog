@@ -1,3 +1,12 @@
+2012-08-23  Mark Rowe  <mrowe@apple.com>
+
+        Make gtest build with the latest version of clang.
+
+        Reviewed by Dan Bernstein.
+
+        * gtest/src/gtest-internal-inl.h:
+        (GTestFlagSaver): Remove an unused member.
+
 2012-07-03  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed, update .gitignore to handle VS2010 files.
