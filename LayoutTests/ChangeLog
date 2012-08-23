@@ -1,3 +1,9 @@
+2012-08-23  Dan Bernstein  <mitz@apple.com>
+
+        Updated the expected results for this test after r125463.
+
+        * fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt:
+
 2012-08-22  Mark Lam  <mark.lam@apple.com>
 
         Fix another test.
