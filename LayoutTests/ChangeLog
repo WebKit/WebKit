@@ -1,3 +1,103 @@
+2012-08-23  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL] Update pixel test expectations for layout test fast/forms/
+        https://bugs.webkit.org/show_bug.cgi?id=94687
+
+        Unreviewed, rebaseline.
+
+        Some tests have wrong pixel test expectations. They should be replaced.
+
+        * platform/efl/fast/forms/003-expected.png:
+        * platform/efl/fast/forms/006-expected.png:
+        * platform/efl/fast/forms/007-expected.png:
+        * platform/efl/fast/forms/HTMLOptionElement_label01-expected.png:
+        * platform/efl/fast/forms/HTMLOptionElement_label02-expected.png:
+        * platform/efl/fast/forms/HTMLOptionElement_label03-expected.png:
+        * platform/efl/fast/forms/HTMLOptionElement_label04-expected.png:
+        * platform/efl/fast/forms/HTMLOptionElement_label05-expected.png:
+        * platform/efl/fast/forms/basic-buttons-expected.png:
+        * platform/efl/fast/forms/basic-inputs-expected.png:
+        * platform/efl/fast/forms/button-align-expected.png:
+        * platform/efl/fast/forms/button-cannot-be-nested-expected.png:
+        * platform/efl/fast/forms/button-default-title-expected.png:
+        * platform/efl/fast/forms/button-generated-content-expected.png:
+        * platform/efl/fast/forms/button-inner-block-reuse-expected.png:
+        * platform/efl/fast/forms/button-sizes-expected.png:
+        * platform/efl/fast/forms/button-style-color-expected.png:
+        * platform/efl/fast/forms/button-table-styles-expected.png:
+        * platform/efl/fast/forms/button-text-transform-expected.png:
+        * platform/efl/fast/forms/button-white-space-expected.png:
+        * platform/efl/fast/forms/control-clip-expected.png:
+        * platform/efl/fast/forms/control-clip-overflow-expected.png:
+        * platform/efl/fast/forms/control-restrict-line-height-expected.png:
+        * platform/efl/fast/forms/disabled-select-change-index-expected.png:
+        * platform/efl/fast/forms/encoding-test-expected.png:
+        * platform/efl/fast/forms/fieldset-align-expected.png:
+        * platform/efl/fast/forms/file/file-input-direction-expected.png:
+        * platform/efl/fast/forms/file/file-input-disabled-expected.png:
+        * platform/efl/fast/forms/floating-textfield-relayout-expected.png:
+        * platform/efl/fast/forms/form-hides-table-expected.png:
+        * platform/efl/fast/forms/image-border-expected.png:
+        * platform/efl/fast/forms/input-appearance-bkcolor-expected.png:
+        * platform/efl/fast/forms/input-appearance-default-bkcolor-expected.png:
+        * platform/efl/fast/forms/input-appearance-focus-expected.png:
+        * platform/efl/fast/forms/input-appearance-preventDefault-expected.png:
+        * platform/efl/fast/forms/input-appearance-selection-expected.png:
+        * platform/efl/fast/forms/input-appearance-visibility-expected.png:
+        * platform/efl/fast/forms/input-appearance-width-expected.png:
+        * platform/efl/fast/forms/input-button-sizes-expected.png:
+        * platform/efl/fast/forms/input-disabled-color-expected.png:
+        * platform/efl/fast/forms/input-double-click-selection-gap-bug-expected.png:
+        * platform/efl/fast/forms/input-field-text-truncated-expected.png:
+        * platform/efl/fast/forms/input-readonly-dimmed-expected.png:
+        * platform/efl/fast/forms/input-readonly-empty-expected.png:
+        * platform/efl/fast/forms/input-spaces-expected.png:
+        * platform/efl/fast/forms/input-table-expected.png:
+        * platform/efl/fast/forms/input-text-click-inside-expected.png:
+        * platform/efl/fast/forms/input-text-option-delete-expected.png:
+        * platform/efl/fast/forms/input-text-self-emptying-click-expected.png:
+        * platform/efl/fast/forms/input-text-word-wrap-expected.png:
+        * platform/efl/fast/forms/input-type-text-min-width-expected.png:
+        * platform/efl/fast/forms/input-value-expected.png:
+        * platform/efl/fast/forms/input-width-expected.png:
+        * platform/efl/fast/forms/listbox-bidi-align-expected.png:
+        * platform/efl/fast/forms/listbox-scrollbar-incremental-load-expected.png:
+        * platform/efl/fast/forms/listbox-width-change-expected.png:
+        * platform/efl/fast/forms/menulist-clip-expected.png:
+        * platform/efl/fast/forms/menulist-option-wrap-expected.png:
+        * platform/efl/fast/forms/menulist-width-change-expected.png:
+        * platform/efl/fast/forms/minWidthPercent-expected.png:
+        * platform/efl/fast/forms/negativeLineHeight-expected.png:
+        * platform/efl/fast/forms/option-index-expected.png:
+        * platform/efl/fast/forms/option-script-expected.png:
+        * platform/efl/fast/forms/option-strip-whitespace-expected.png:
+        * platform/efl/fast/forms/option-text-clip-expected.png:
+        * platform/efl/fast/forms/search-display-none-cancel-button-expected.png:
+        * platform/efl/fast/forms/search-vertical-alignment-expected.png:
+        * platform/efl/fast/forms/searchfield-heights-expected.png:
+        * platform/efl/fast/forms/select-align-expected.png:
+        * platform/efl/fast/forms/select-block-background-expected.png:
+        * platform/efl/fast/forms/select-change-listbox-size-expected.png:
+        * platform/efl/fast/forms/select-change-listbox-to-popup-expected.png:
+        * platform/efl/fast/forms/select-change-popup-to-listbox-expected.png:
+        * platform/efl/fast/forms/select-dirty-parent-pref-widths-expected.png:
+        * platform/efl/fast/forms/select-display-none-style-resolve-expected.png:
+        * platform/efl/fast/forms/select-initial-position-expected.png:
+        * platform/efl/fast/forms/select-item-background-clip-expected.png:
+        * platform/efl/fast/forms/select-list-box-with-height-expected.png:
+        * platform/efl/fast/forms/select-size-expected.png:
+        * platform/efl/fast/forms/select-visual-hebrew-expected.png:
+        * platform/efl/fast/forms/select/optgroup-rendering-expected.png:
+        * platform/efl/fast/forms/tabbing-input-iframe-expected.png:
+        * platform/efl/fast/forms/targeted-frame-submission-expected.png:
+        * platform/efl/fast/forms/text-style-color-expected.png:
+        * platform/efl/fast/forms/textAreaLineHeight-expected.png:
+        * platform/efl/fast/forms/textarea-align-expected.png:
+        * platform/efl/fast/forms/textarea-width-expected.png:
+        * platform/efl/fast/forms/textfield-focus-ring-expected.png:
+        * platform/efl/fast/forms/textfield-outline-expected.png:
+        * platform/efl/fast/forms/visual-hebrew-text-field-expected.png:
+
 2012-08-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         Serialization of JavaScript values does not appear to respect new HTML5 Structured Clone semantics
