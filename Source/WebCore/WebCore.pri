@@ -217,13 +217,6 @@ config_libwebp {
     LIBS += -lwebp
 }
 
-win32-*|wince* {
-    DLLDESTDIR = $${ROOT_BUILD_DIR}/bin
-
-    dlltarget.commands = $(COPY_FILE) $(DESTDIR_TARGET) $$[QT_INSTALL_BINS]
-    dlltarget.CONFIG = no_path
-    INSTALLS += dlltarget
-}
 mac {
     LIBS += -framework Carbon -framework AppKit
 }
