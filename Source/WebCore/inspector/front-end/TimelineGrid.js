@@ -132,7 +132,7 @@ WebInspector.TimelineGrid.prototype = {
                 left = dividersElementClientWidth / dividerCount * i + paddingLeft;
                 dividerLabelBar._labelElement.textContent = "";
             } else {
-                left = calculator.computePosition(calculator.minimumBoundary + slice * i);
+                left = calculator.computePosition(calculator.minimumBoundary() + slice * i);
                 dividerLabelBar._labelElement.textContent = calculator.formatTime(slice * i);
             }
             var percentLeft = 100 * left / dividersElementClientWidth;
@@ -199,4 +199,26 @@ WebInspector.TimelineGrid.prototype = {
     {
         this._dividersElement.style.top = scrollTop + "px";
     }
+}
+
+/**
+ * @interface
+ */
+WebInspector.TimelineGrid.Calculator = function() { }
+
+WebInspector.TimelineGrid.Calculator.prototype = {
+    /** @param {number} time */
+    computePosition: function(time) { },
+
+    /** @param {number} time */
+    formatTime: function(time) { },
+
+    /** @return {number} */
+    minimumBoundary: function() { },
+
+    /** @return {number} */
+    maximumBoundary: function() { },
+
+    /** @return {number} */
+    boundarySpan: function() { }
 }

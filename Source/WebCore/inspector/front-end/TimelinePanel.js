@@ -415,7 +415,7 @@ WebInspector.TimelinePanel.prototype = {
 
     _shouldShowFrames: function()
     {
-        return this._frameMode && this._presentationModel.frames().length > 0 && this.calculator.boundarySpan < 1.0;
+        return this._frameMode && this._presentationModel.frames().length > 0 && this.calculator.boundarySpan() < 1.0;
     },
 
     _updateFrames: function()
@@ -996,6 +996,7 @@ WebInspector.TimelinePanel.prototype.__proto__ = WebInspector.Panel.prototype;
 /**
  * @constructor
  * @param {WebInspector.TimelineModel} model
+ * @implements {WebInspector.TimelineGrid.Calculator}
  */
 WebInspector.TimelineCalculator = function(model)
 {
@@ -1010,15 +1011,15 @@ WebInspector.TimelineCalculator.prototype = {
      */
     computePosition: function(time)
     {
-        return (time - this.minimumBoundary) / this.boundarySpan * this._workingArea + this.paddingLeft;
+        return (time - this._minimumBoundary) / this.boundarySpan() * this._workingArea + this.paddingLeft;
     },
 
     computeBarGraphPercentages: function(record)
     {
-        var start = (record.startTime - this.minimumBoundary) / this.boundarySpan * 100;
-        var end = (record.startTime + record.selfTime - this.minimumBoundary) / this.boundarySpan * 100;
-        var endWithChildren = (record.lastChildEndTime - this.minimumBoundary) / this.boundarySpan * 100;
-        var cpuWidth = record.cpuTime / this.boundarySpan * 100;
+        var start = (record.startTime - this._minimumBoundary) / this.boundarySpan() * 100;
+        var end = (record.startTime + record.selfTime - this._minimumBoundary) / this.boundarySpan() * 100;
+        var endWithChildren = (record.lastChildEndTime - this._minimumBoundary) / this.boundarySpan() * 100;
+        var cpuWidth = record.cpuTime / this.boundarySpan() * 100;
         return {start: start, end: end, endWithChildren: endWithChildren, cpuWidth: cpuWidth};
     },
 
@@ -1043,9 +1044,8 @@ WebInspector.TimelineCalculator.prototype = {
 
     setWindow: function(minimumBoundary, maximumBoundary)
     {
-        this.minimumBoundary = minimumBoundary;
-        this.maximumBoundary = maximumBoundary;
-        this.boundarySpan = this.maximumBoundary - this.minimumBoundary;
+        this._minimumBoundary = minimumBoundary;
+        this._maximumBoundary = maximumBoundary;
     },
 
     /**
@@ -1060,7 +1060,22 @@ WebInspector.TimelineCalculator.prototype = {
 
     formatTime: function(value)
     {
-        return Number.secondsToString(value + this.minimumBoundary - this._model.minimumRecordTime());
+        return Number.secondsToString(value + this._minimumBoundary - this._model.minimumRecordTime());
+    },
+
+    maximumBoundary: function()
+    {
+        return this._maximumBoundary;
+    },
+
+    minimumBoundary: function()
+    {
+        return this._minimumBoundary;
+    },
+
+    boundarySpan: function()
+    {
+        return this._maximumBoundary - this._minimumBoundary;
     }
 }
 

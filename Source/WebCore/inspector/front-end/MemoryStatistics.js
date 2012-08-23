@@ -287,8 +287,8 @@ WebInspector.MemoryStatistics.prototype = {
     _calculateVisibleIndexes: function()
     {
         var calculator = this._timelinePanel.calculator;
-        var start = calculator.minimumBoundary * 1000;
-        var end = calculator.maximumBoundary * 1000;
+        var start = calculator.minimumBoundary() * 1000;
+        var end = calculator.maximumBoundary() * 1000;
         var firstIndex = 0;
         var lastIndex = this._counters.length - 1;
         for (var i = 0; i < this._counters.length; i++) {
