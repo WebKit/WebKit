@@ -218,6 +218,13 @@ private:
     // For the moment, we have one of these. Soon we will have one per DOMWrapperWorld.
     RefPtr<V8DOMWindowShell> m_windowShell;
 
+    // The isolated worlds we are tracking for this frame. We hold them alive
+    // here so that they can be used again by future calls to
+    // evaluateInIsolatedWorld().
+    IsolatedWorldMap m_isolatedWorlds;
+
+    IsolatedWorldSecurityOriginMap m_isolatedWorldSecurityOrigins;
+
     bool m_paused;
 
     OwnPtr<V8Proxy> m_proxy;

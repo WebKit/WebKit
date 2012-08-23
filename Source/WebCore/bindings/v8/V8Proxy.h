@@ -91,22 +91,8 @@ namespace WebCore {
         // FIXME: This method will be soon removed, as all methods that access windowShell()
         // will be moved to ScriptController.
         V8DOMWindowShell* windowShell() const;
-
-        // FIXME: Move m_isolatedWorlds to ScriptController and remove this getter.
-        IsolatedWorldMap& isolatedWorlds() { return m_isolatedWorlds; }
-
-        // FIXME: Move m_isolatedWorldSecurityOrigins to ScriptController and remove this getter.
-        IsolatedWorldSecurityOriginMap& isolatedWorldSecurityOrigins() { return m_isolatedWorldSecurityOrigins; }
-
     private:
         Frame* m_frame;
-
-        // The isolated worlds we are tracking for this frame. We hold them alive
-        // here so that they can be used again by future calls to
-        // evaluateInIsolatedWorld().
-        IsolatedWorldMap m_isolatedWorlds;
-        
-        IsolatedWorldSecurityOriginMap m_isolatedWorldSecurityOrigins;
     };
 }
 

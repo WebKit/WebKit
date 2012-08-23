@@ -155,12 +155,12 @@ void ScriptController::clearScriptObjects()
 
 void ScriptController::resetIsolatedWorlds()
 {
-    for (IsolatedWorldMap::iterator iter = m_proxy->isolatedWorlds().begin();
-         iter != m_proxy->isolatedWorlds().end(); ++iter) {
+    for (IsolatedWorldMap::iterator iter = m_isolatedWorlds.begin();
+         iter != m_isolatedWorlds.end(); ++iter) {
         iter->second->destroy();
     }
-    m_proxy->isolatedWorlds().clear();
-    m_proxy->isolatedWorldSecurityOrigins().clear();
+    m_isolatedWorlds.clear();
+    m_isolatedWorldSecurityOrigins.clear();
 }
 
 void ScriptController::clearForClose()
@@ -342,8 +342,8 @@ void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<Sc
         v8::HandleScope evaluateHandleScope;
         V8IsolatedContext* isolatedContext = 0;
         if (worldID > 0) {
-            IsolatedWorldMap::iterator iter = m_proxy->isolatedWorlds().find(worldID);
-            if (iter != m_proxy->isolatedWorlds().end())
+            IsolatedWorldMap::iterator iter = m_isolatedWorlds.find(worldID);
+            if (iter != m_isolatedWorlds.end())
                 isolatedContext = iter->second;
             else {
                 isolatedContext = new V8IsolatedContext(m_frame, extensionGroup, worldID);
@@ -353,11 +353,11 @@ void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<Sc
                 }
 
                 // FIXME: We should change this to using window shells to match JSC.
-                m_proxy->isolatedWorlds().set(worldID, isolatedContext);
+                m_isolatedWorlds.set(worldID, isolatedContext);
             }
 
-            IsolatedWorldSecurityOriginMap::iterator securityOriginIter = m_proxy->isolatedWorldSecurityOrigins().find(worldID);
-            if (securityOriginIter != m_proxy->isolatedWorldSecurityOrigins().end())
+            IsolatedWorldSecurityOriginMap::iterator securityOriginIter = m_isolatedWorldSecurityOrigins.find(worldID);
+            if (securityOriginIter != m_isolatedWorldSecurityOrigins.end())
                 isolatedContext->setSecurityOrigin(securityOriginIter->second);
         } else {
             isolatedContext = new V8IsolatedContext(m_frame, extensionGroup, worldID);
@@ -393,9 +393,9 @@ void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<Sc
 void ScriptController::setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<SecurityOrigin> securityOrigin)
 {
     ASSERT(worldID);
-    m_proxy->isolatedWorldSecurityOrigins().set(worldID, securityOrigin);
-    IsolatedWorldMap::iterator iter = m_proxy->isolatedWorlds().find(worldID);
-    if (iter != m_proxy->isolatedWorlds().end())
+    m_isolatedWorldSecurityOrigins.set(worldID, securityOrigin);
+    IsolatedWorldMap::iterator iter = m_isolatedWorlds.find(worldID);
+    if (iter != m_isolatedWorlds.end())
         iter->second->setSecurityOrigin(securityOrigin);
 }
 
@@ -662,7 +662,7 @@ void ScriptController::setCaptureCallStackForUncaughtExceptions(bool value)
 void ScriptController::collectIsolatedContexts(Vector<std::pair<ScriptState*, SecurityOrigin*> >& result)
 {
     v8::HandleScope handleScope;
-    for (IsolatedWorldMap::iterator it = m_proxy->isolatedWorlds().begin(); it != m_proxy->isolatedWorlds().end(); ++it) {
+    for (IsolatedWorldMap::iterator it = m_isolatedWorlds.begin(); it != m_isolatedWorlds.end(); ++it) {
         V8IsolatedContext* isolatedContext = it->second;
         if (!isolatedContext->securityOrigin())
             continue;
