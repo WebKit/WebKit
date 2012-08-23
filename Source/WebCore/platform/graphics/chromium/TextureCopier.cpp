@@ -26,8 +26,8 @@
 
 #include "TextureCopier.h"
 
+#include "CCRendererGL.h" // For the GLC() macro.
 #include "GraphicsContext3D.h"
-#include "LayerRendererChromium.h" // For the GLC() macro
 #include "TraceEvent.h"
 #include <public/WebGraphicsContext3D.h>
 

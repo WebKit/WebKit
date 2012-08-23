@@ -23,7 +23,7 @@
  */
 
 #include "config.h"
-#include "LayerRendererChromium.h"
+#include "CCRendererGL.h"
 
 #include "CCDrawQuad.h"
 #include "CCPrioritizedTextureManager.h"
@@ -112,32 +112,32 @@ private:
     size_t m_memoryAllocationLimitBytes;
 };
 
-class FakeLayerRendererChromium : public LayerRendererChromium {
+class FakeCCRendererGL : public CCRendererGL {
 public:
-    FakeLayerRendererChromium(CCRendererClient* client, CCResourceProvider* resourceProvider) : LayerRendererChromium(client, resourceProvider, UnthrottledUploader) { }
+    FakeCCRendererGL(CCRendererClient* client, CCResourceProvider* resourceProvider) : CCRendererGL(client, resourceProvider, UnthrottledUploader) { }
 
-    // LayerRendererChromium methods.
+    // CCRendererGL methods.
 
     // Changing visibility to public.
-    using LayerRendererChromium::initialize;
-    using LayerRendererChromium::isFramebufferDiscarded;
+    using CCRendererGL::initialize;
+    using CCRendererGL::isFramebufferDiscarded;
 };
 
-class LayerRendererChromiumTest : public testing::Test {
+class CCRendererGLTest : public testing::Test {
 protected:
-    LayerRendererChromiumTest()
+    CCRendererGLTest()
         : m_suggestHaveBackbufferYes(1, true)
         , m_suggestHaveBackbufferNo(1, false)
         , m_context(FakeWebCompositorOutputSurface::create(adoptPtr(new FrameCountingMemoryAllocationSettingContext())))
         , m_resourceProvider(CCResourceProvider::create(m_context.get()))
-        , m_layerRendererChromium(&m_mockClient, m_resourceProvider.get())
+        , m_renderer(&m_mockClient, m_resourceProvider.get())
     {
     }
 
     virtual void SetUp()
     {
         WebKit::WebCompositor::initialize(0);
-        m_layerRendererChromium.initialize();
+        m_renderer.initialize();
     }
 
     virtual void TearDown()
@@ -147,7 +147,7 @@ protected:
 
     void swapBuffers()
     {
-        m_layerRendererChromium.swapBuffers();
+        m_renderer.swapBuffers();
     }
 
     FrameCountingMemoryAllocationSettingContext* context() { return static_cast<FrameCountingMemoryAllocationSettingContext*>(m_context->context3D()); }
@@ -158,92 +158,92 @@ protected:
     OwnPtr<CCGraphicsContext> m_context;
     FakeCCRendererClient m_mockClient;
     OwnPtr<CCResourceProvider> m_resourceProvider;
-    FakeLayerRendererChromium m_layerRendererChromium;
+    FakeCCRendererGL m_renderer;
     CCScopedSettings m_scopedSettings;
 };
 
-// Test LayerRendererChromium discardFramebuffer functionality:
+// Test CCRendererGL discardFramebuffer functionality:
 // Suggest recreating framebuffer when one already exists.
 // Expected: it does nothing.
-TEST_F(LayerRendererChromiumTest, SuggestBackbufferYesWhenItAlreadyExistsShouldDoNothing)
+TEST_F(CCRendererGLTest, SuggestBackbufferYesWhenItAlreadyExistsShouldDoNothing)
 {
     context()->setMemoryAllocation(m_suggestHaveBackbufferYes);
     EXPECT_EQ(0, m_mockClient.setFullRootLayerDamageCount());
-    EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
+    EXPECT_FALSE(m_renderer.isFramebufferDiscarded());
 
     swapBuffers();
     EXPECT_EQ(1, context()->frameCount());
 }
 
-// Test LayerRendererChromium discardFramebuffer functionality:
+// Test CCRendererGL discardFramebuffer functionality:
 // Suggest discarding framebuffer when one exists and the renderer is not visible.
 // Expected: it is discarded and damage tracker is reset.
-TEST_F(LayerRendererChromiumTest, SuggestBackbufferNoShouldDiscardBackbufferAndDamageRootLayerWhileNotVisible)
+TEST_F(CCRendererGLTest, SuggestBackbufferNoShouldDiscardBackbufferAndDamageRootLayerWhileNotVisible)
 {
-    m_layerRendererChromium.setVisible(false);
+    m_renderer.setVisible(false);
     context()->setMemoryAllocation(m_suggestHaveBackbufferNo);
     EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
-    EXPECT_TRUE(m_layerRendererChromium.isFramebufferDiscarded());
+    EXPECT_TRUE(m_renderer.isFramebufferDiscarded());
 }
 
-// Test LayerRendererChromium discardFramebuffer functionality:
+// Test CCRendererGL discardFramebuffer functionality:
 // Suggest discarding framebuffer when one exists and the renderer is visible.
 // Expected: the allocation is ignored.
-TEST_F(LayerRendererChromiumTest, SuggestBackbufferNoDoNothingWhenVisible)
+TEST_F(CCRendererGLTest, SuggestBackbufferNoDoNothingWhenVisible)
 {
-    m_layerRendererChromium.setVisible(true);
+    m_renderer.setVisible(true);
     context()->setMemoryAllocation(m_suggestHaveBackbufferNo);
     EXPECT_EQ(0, m_mockClient.setFullRootLayerDamageCount());
-    EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
+    EXPECT_FALSE(m_renderer.isFramebufferDiscarded());
 }
 
 
-// Test LayerRendererChromium discardFramebuffer functionality:
+// Test CCRendererGL discardFramebuffer functionality:
 // Suggest discarding framebuffer when one does not exist.
 // Expected: it does nothing.
-TEST_F(LayerRendererChromiumTest, SuggestBackbufferNoWhenItDoesntExistShouldDoNothing)
+TEST_F(CCRendererGLTest, SuggestBackbufferNoWhenItDoesntExistShouldDoNothing)
 {
-    m_layerRendererChromium.setVisible(false);
+    m_renderer.setVisible(false);
     context()->setMemoryAllocation(m_suggestHaveBackbufferNo);
     EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
-    EXPECT_TRUE(m_layerRendererChromium.isFramebufferDiscarded());
+    EXPECT_TRUE(m_renderer.isFramebufferDiscarded());
 
     context()->setMemoryAllocation(m_suggestHaveBackbufferNo);
     EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
-    EXPECT_TRUE(m_layerRendererChromium.isFramebufferDiscarded());
+    EXPECT_TRUE(m_renderer.isFramebufferDiscarded());
 }
 
-// Test LayerRendererChromium discardFramebuffer functionality:
+// Test CCRendererGL discardFramebuffer functionality:
 // Begin drawing a frame while a framebuffer is discarded.
 // Expected: will recreate framebuffer.
-TEST_F(LayerRendererChromiumTest, DiscardedBackbufferIsRecreatedForScopeDuration)
+TEST_F(CCRendererGLTest, DiscardedBackbufferIsRecreatedForScopeDuration)
 {
-    m_layerRendererChromium.setVisible(false);
+    m_renderer.setVisible(false);
     context()->setMemoryAllocation(m_suggestHaveBackbufferNo);
-    EXPECT_TRUE(m_layerRendererChromium.isFramebufferDiscarded());
+    EXPECT_TRUE(m_renderer.isFramebufferDiscarded());
     EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
 
-    m_layerRendererChromium.setVisible(true);
-    m_layerRendererChromium.drawFrame(m_mockClient.renderPassesInDrawOrder(), m_mockClient.renderPasses());
-    EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
+    m_renderer.setVisible(true);
+    m_renderer.drawFrame(m_mockClient.renderPassesInDrawOrder(), m_mockClient.renderPasses());
+    EXPECT_FALSE(m_renderer.isFramebufferDiscarded());
 
     swapBuffers();
     EXPECT_EQ(1, context()->frameCount());
 }
 
-TEST_F(LayerRendererChromiumTest, FramebufferDiscardedAfterReadbackWhenNotVisible)
+TEST_F(CCRendererGLTest, FramebufferDiscardedAfterReadbackWhenNotVisible)
 {
-    m_layerRendererChromium.setVisible(false);
+    m_renderer.setVisible(false);
     context()->setMemoryAllocation(m_suggestHaveBackbufferNo);
-    EXPECT_TRUE(m_layerRendererChromium.isFramebufferDiscarded());
+    EXPECT_TRUE(m_renderer.isFramebufferDiscarded());
     EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
 
     char pixels[4];
-    m_layerRendererChromium.drawFrame(m_mockClient.renderPassesInDrawOrder(), m_mockClient.renderPasses());
-    EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
+    m_renderer.drawFrame(m_mockClient.renderPassesInDrawOrder(), m_mockClient.renderPasses());
+    EXPECT_FALSE(m_renderer.isFramebufferDiscarded());
 
-    m_layerRendererChromium.getFramebufferPixels(pixels, IntRect(0, 0, 1, 1));
-    EXPECT_TRUE(m_layerRendererChromium.isFramebufferDiscarded());
+    m_renderer.getFramebufferPixels(pixels, IntRect(0, 0, 1, 1));
+    EXPECT_TRUE(m_renderer.isFramebufferDiscarded());
     EXPECT_EQ(2, m_mockClient.setFullRootLayerDamageCount());
 }
 
@@ -313,16 +313,16 @@ public:
     virtual WGC3Dsizeiptr getVertexAttribOffset(WGC3Duint index, WGC3Denum pname) { ADD_FAILURE(); return 0; }
 };
 
-// This test isn't using the same fixture as LayerRendererChromiumTest, and you can't mix TEST() and TEST_F() with the same name, hence LRC2.
-TEST(LayerRendererChromiumTest2, initializationDoesNotMakeSynchronousCalls)
+// This test isn't using the same fixture as CCRendererGLTest, and you can't mix TEST() and TEST_F() with the same name, hence LRC2.
+TEST(CCRendererGLTest2, initializationDoesNotMakeSynchronousCalls)
 {
     CCScopedSettings scopedSettings;
     FakeCCRendererClient mockClient;
     OwnPtr<CCGraphicsContext> context(FakeWebCompositorOutputSurface::create(adoptPtr(new ForbidSynchronousCallContext)));
     OwnPtr<CCResourceProvider> resourceProvider(CCResourceProvider::create(context.get()));
-    FakeLayerRendererChromium layerRendererChromium(&mockClient, resourceProvider.get());
+    FakeCCRendererGL renderer(&mockClient, resourceProvider.get());
 
-    EXPECT_TRUE(layerRendererChromium.initialize());
+    EXPECT_TRUE(renderer.initialize());
 }
 
 class LoseContextOnFirstGetContext : public FakeWebGraphicsContext3D {
@@ -358,15 +358,15 @@ private:
     bool m_contextLost;
 };
 
-TEST(LayerRendererChromiumTest2, initializationWithQuicklyLostContextDoesNotAssert)
+TEST(CCRendererGLTest2, initializationWithQuicklyLostContextDoesNotAssert)
 {
     CCScopedSettings scopedSettings;
     FakeCCRendererClient mockClient;
     OwnPtr<CCGraphicsContext> context(FakeWebCompositorOutputSurface::create(adoptPtr(new LoseContextOnFirstGetContext)));
     OwnPtr<CCResourceProvider> resourceProvider(CCResourceProvider::create(context.get()));
-    FakeLayerRendererChromium layerRendererChromium(&mockClient, resourceProvider.get());
+    FakeCCRendererGL renderer(&mockClient, resourceProvider.get());
 
-    layerRendererChromium.initialize();
+    renderer.initialize();
 }
 
 class ContextThatDoesNotSupportMemoryManagmentExtensions : public FakeWebGraphicsContext3D {
@@ -381,14 +381,14 @@ public:
     virtual WebString getString(WebKit::WGC3Denum name) { return WebString(); }
 };
 
-TEST(LayerRendererChromiumTest2, initializationWithoutGpuMemoryManagerExtensionSupportShouldDefaultToNonZeroAllocation)
+TEST(CCRendererGLTest2, initializationWithoutGpuMemoryManagerExtensionSupportShouldDefaultToNonZeroAllocation)
 {
     FakeCCRendererClient mockClient;
     OwnPtr<CCGraphicsContext> context(FakeWebCompositorOutputSurface::create(adoptPtr(new ContextThatDoesNotSupportMemoryManagmentExtensions)));
     OwnPtr<CCResourceProvider> resourceProvider(CCResourceProvider::create(context.get()));
-    FakeLayerRendererChromium layerRendererChromium(&mockClient, resourceProvider.get());
+    FakeCCRendererGL renderer(&mockClient, resourceProvider.get());
 
-    layerRendererChromium.initialize();
+    renderer.initialize();
 
     EXPECT_GT(mockClient.memoryAllocationLimitBytes(), 0ul);
 }
@@ -408,19 +408,19 @@ private:
     int m_clear;
 };
 
-TEST(LayerRendererChromiumTest2, opaqueBackground)
+TEST(CCRendererGLTest2, opaqueBackground)
 {
     FakeCCRendererClient mockClient;
     OwnPtr<CCGraphicsContext> ccContext(FakeWebCompositorOutputSurface::create(adoptPtr(new ClearCountingContext)));
     ClearCountingContext* context = static_cast<ClearCountingContext*>(ccContext->context3D());
     OwnPtr<CCResourceProvider> resourceProvider(CCResourceProvider::create(ccContext.get()));
-    FakeLayerRendererChromium layerRendererChromium(&mockClient, resourceProvider.get());
+    FakeCCRendererGL renderer(&mockClient, resourceProvider.get());
 
     mockClient.rootRenderPass()->setHasTransparentBackground(false);
 
-    EXPECT_TRUE(layerRendererChromium.initialize());
+    EXPECT_TRUE(renderer.initialize());
 
-    layerRendererChromium.drawFrame(mockClient.renderPassesInDrawOrder(), mockClient.renderPasses());
+    renderer.drawFrame(mockClient.renderPassesInDrawOrder(), mockClient.renderPasses());
 
     // On DEBUG builds, render passes with opaque background clear to blue to
     // easily see regions that were not drawn on the screen.
@@ -431,19 +431,19 @@ TEST(LayerRendererChromiumTest2, opaqueBackground)
 #endif
 }
 
-TEST(LayerRendererChromiumTest2, transparentBackground)
+TEST(CCRendererGLTest2, transparentBackground)
 {
     FakeCCRendererClient mockClient;
     OwnPtr<CCGraphicsContext> ccContext(FakeWebCompositorOutputSurface::create(adoptPtr(new ClearCountingContext)));
     ClearCountingContext* context = static_cast<ClearCountingContext*>(ccContext->context3D());
     OwnPtr<CCResourceProvider> resourceProvider(CCResourceProvider::create(ccContext.get()));
-    FakeLayerRendererChromium layerRendererChromium(&mockClient, resourceProvider.get());
+    FakeCCRendererGL renderer(&mockClient, resourceProvider.get());
 
     mockClient.rootRenderPass()->setHasTransparentBackground(true);
 
-    EXPECT_TRUE(layerRendererChromium.initialize());
+    EXPECT_TRUE(renderer.initialize());
 
-    layerRendererChromium.drawFrame(mockClient.renderPassesInDrawOrder(), mockClient.renderPasses());
+    renderer.drawFrame(mockClient.renderPassesInDrawOrder(), mockClient.renderPasses());
 
     EXPECT_EQ(1, context->clearCount());
 }

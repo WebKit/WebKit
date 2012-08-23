@@ -26,8 +26,6 @@
 
 #include "CCPriorityCalculator.h"
 
-#include "LayerRendererChromium.h"
-
 using namespace std;
 
 namespace WebCore {
@@ -92,4 +90,3 @@ int CCPriorityCalculator::priorityFromVisibility(bool visible, bool drawsToRootS
 }
 
 } // WebCore
-

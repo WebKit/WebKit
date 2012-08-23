@@ -47,8 +47,7 @@ class CCLayerTreeHostImplTimeSourceAdapter;
 class CCPageScaleAnimation;
 class CCRenderPassDrawQuad;
 class CCResourceProvider;
-class LayerRendererChromium;
-struct LayerRendererCapabilities;
+struct RendererCapabilities;
 struct CCRenderingStats;
 
 // CCLayerTreeHost->CCProxy callback interface.
@@ -129,10 +128,10 @@ public:
     void finishAllRendering();
     int sourceAnimationFrameNumber() const;
 
-    bool initializeLayerRenderer(PassOwnPtr<CCGraphicsContext>, TextureUploaderOption);
+    bool initializeRenderer(PassOwnPtr<CCGraphicsContext>, TextureUploaderOption);
     bool isContextLost();
-    CCRenderer* layerRenderer() { return m_layerRenderer.get(); }
-    const LayerRendererCapabilities& layerRendererCapabilities() const;
+    CCRenderer* renderer() { return m_renderer.get(); }
+    const RendererCapabilities& rendererCapabilities() const;
 
     bool swapBuffers();
 
@@ -267,7 +266,7 @@ private:
 
     OwnPtr<CCGraphicsContext> m_context;
     OwnPtr<CCResourceProvider> m_resourceProvider;
-    OwnPtr<CCRenderer> m_layerRenderer;
+    OwnPtr<CCRenderer> m_renderer;
     OwnPtr<CCLayerImpl> m_rootLayerImpl;
     CCLayerImpl* m_rootScrollLayerImpl;
     CCLayerImpl* m_currentlyScrollingLayerImpl;

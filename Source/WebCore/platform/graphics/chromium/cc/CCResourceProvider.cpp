@@ -27,9 +27,9 @@
 #include "CCResourceProvider.h"
 
 #include "CCProxy.h"
+#include "CCRendererGL.h" // For the GLC() macro.
 #include "Extensions3DChromium.h"
 #include "IntRect.h"
-#include "LayerRendererChromium.h" // For the GLC() macro
 #include "LayerTextureSubImage.h"
 #include <limits.h>
 #include <public/WebGraphicsContext3D.h>

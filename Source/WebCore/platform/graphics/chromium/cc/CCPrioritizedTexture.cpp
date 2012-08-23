@@ -28,7 +28,6 @@
 
 #include "CCPrioritizedTextureManager.h"
 #include "CCPriorityCalculator.h"
-#include "LayerRendererChromium.h"
 #include <algorithm>
 
 using namespace std;

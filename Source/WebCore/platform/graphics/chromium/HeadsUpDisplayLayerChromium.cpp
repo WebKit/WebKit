@@ -52,7 +52,7 @@ HeadsUpDisplayLayerChromium::~HeadsUpDisplayLayerChromium()
 void HeadsUpDisplayLayerChromium::update(CCTextureUpdateQueue&, const CCOcclusionTracker*, CCRenderingStats&)
 {
     const CCLayerTreeSettings& settings = layerTreeHost()->settings();
-    int maxTextureSize = layerTreeHost()->layerRendererCapabilities().maxTextureSize;
+    int maxTextureSize = layerTreeHost()->rendererCapabilities().maxTextureSize;
 
     IntSize bounds;
     if (settings.showPlatformLayerTree || settings.showDebugRects()) {

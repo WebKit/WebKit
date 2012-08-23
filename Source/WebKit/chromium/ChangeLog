@@ -1,3 +1,92 @@
+2012-08-23  Alexandre Elias  <aelias@chromium.org>
+
+        [chromium] Rename LayerRendererChromium to GL-specific name
+        https://bugs.webkit.org/show_bug.cgi?id=94835
+
+        Reviewed by James Robinson.
+
+        Over time, LayerRendererChromium has evolved to be a GL-specific
+        subclass of CCRenderer that has no awareness of layers (as it operates
+        only with drawQuads).
+
+        This patch renames LayerRendererChromium to CCRendererGL, replaces all
+        instances of "layerRenderer" with just "renderer", and removes a
+        few unnecessary includes of LayerRendererChromium.h.
+
+        * WebKit.gypi:
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestLayerOcclusion::beginTest):
+        (WTF::CCLayerTreeHostTestLayerOcclusionWithFilters::beginTest):
+        (WTF::CCLayerTreeHostTestManySurfaces::beginTest):
+        (WTF::CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit::drawLayersOnCCThread):
+        * tests/CCRendererGLTest.cpp: Renamed from Source/WebKit/chromium/tests/LayerRendererChromiumTest.cpp.
+        (FrameCountingMemoryAllocationSettingContext):
+        (FrameCountingMemoryAllocationSettingContext::FrameCountingMemoryAllocationSettingContext):
+        (FrameCountingMemoryAllocationSettingContext::prepareTexture):
+        (FrameCountingMemoryAllocationSettingContext::setMemoryAllocationChangedCallbackCHROMIUM):
+        (FrameCountingMemoryAllocationSettingContext::getString):
+        (FrameCountingMemoryAllocationSettingContext::frameCount):
+        (FrameCountingMemoryAllocationSettingContext::setMemoryAllocation):
+        (FakeCCRendererClient):
+        (FakeCCRendererClient::FakeCCRendererClient):
+        (FakeCCRendererClient::setFullRootLayerDamageCount):
+        (FakeCCRendererClient::rootRenderPass):
+        (FakeCCRendererClient::renderPassesInDrawOrder):
+        (FakeCCRendererClient::renderPasses):
+        (FakeCCRendererClient::memoryAllocationLimitBytes):
+        (FakeCCRendererGL):
+        (FakeCCRendererGL::FakeCCRendererGL):
+        (CCRendererGLTest):
+        (CCRendererGLTest::CCRendererGLTest):
+        (CCRendererGLTest::SetUp):
+        (CCRendererGLTest::TearDown):
+        (CCRendererGLTest::swapBuffers):
+        (CCRendererGLTest::context):
+        (TEST_F):
+        (ForbidSynchronousCallContext):
+        (ForbidSynchronousCallContext::ForbidSynchronousCallContext):
+        (ForbidSynchronousCallContext::getActiveAttrib):
+        (ForbidSynchronousCallContext::getActiveUniform):
+        (ForbidSynchronousCallContext::getAttachedShaders):
+        (ForbidSynchronousCallContext::getAttribLocation):
+        (ForbidSynchronousCallContext::getBooleanv):
+        (ForbidSynchronousCallContext::getBufferParameteriv):
+        (ForbidSynchronousCallContext::getContextAttributes):
+        (ForbidSynchronousCallContext::getError):
+        (ForbidSynchronousCallContext::getFloatv):
+        (ForbidSynchronousCallContext::getFramebufferAttachmentParameteriv):
+        (ForbidSynchronousCallContext::getIntegerv):
+        (ForbidSynchronousCallContext::getProgramiv):
+        (ForbidSynchronousCallContext::getShaderiv):
+        (ForbidSynchronousCallContext::getString):
+        (ForbidSynchronousCallContext::getProgramInfoLog):
+        (ForbidSynchronousCallContext::getRenderbufferParameteriv):
+        (ForbidSynchronousCallContext::getShaderInfoLog):
+        (ForbidSynchronousCallContext::getShaderPrecisionFormat):
+        (ForbidSynchronousCallContext::getShaderSource):
+        (ForbidSynchronousCallContext::getTexParameterfv):
+        (ForbidSynchronousCallContext::getTexParameteriv):
+        (ForbidSynchronousCallContext::getUniformfv):
+        (ForbidSynchronousCallContext::getUniformiv):
+        (ForbidSynchronousCallContext::getUniformLocation):
+        (ForbidSynchronousCallContext::getVertexAttribfv):
+        (ForbidSynchronousCallContext::getVertexAttribiv):
+        (ForbidSynchronousCallContext::getVertexAttribOffset):
+        (TEST):
+        (LoseContextOnFirstGetContext):
+        (LoseContextOnFirstGetContext::LoseContextOnFirstGetContext):
+        (ContextThatDoesNotSupportMemoryManagmentExtensions):
+        (ContextThatDoesNotSupportMemoryManagmentExtensions::ContextThatDoesNotSupportMemoryManagmentExtensions):
+        (ContextThatDoesNotSupportMemoryManagmentExtensions::prepareTexture):
+        (ContextThatDoesNotSupportMemoryManagmentExtensions::setMemoryAllocationChangedCallbackCHROMIUM):
+        (ContextThatDoesNotSupportMemoryManagmentExtensions::getString):
+        (ClearCountingContext):
+        (ClearCountingContext::ClearCountingContext):
+        (ClearCountingContext::clear):
+        (ClearCountingContext::clearCount):
+        * tests/TiledLayerChromiumTest.cpp:
+
 2012-08-23  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed.  Rolled DEPS.

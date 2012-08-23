@@ -66,7 +66,7 @@ public:
 
     virtual ~CCRenderer() { }
 
-    virtual const LayerRendererCapabilities& capabilities() const = 0;
+    virtual const RendererCapabilities& capabilities() const = 0;
 
     const CCLayerTreeSettings& settings() const { return m_client->settings(); }
 

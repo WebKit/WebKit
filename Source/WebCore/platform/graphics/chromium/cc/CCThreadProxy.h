@@ -57,11 +57,11 @@ public:
     virtual bool initializeContext() OVERRIDE;
     virtual void setSurfaceReady() OVERRIDE;
     virtual void setVisible(bool) OVERRIDE;
-    virtual bool initializeLayerRenderer() OVERRIDE;
+    virtual bool initializeRenderer() OVERRIDE;
     virtual bool recreateContext() OVERRIDE;
     virtual int compositorIdentifier() const OVERRIDE;
     virtual void implSideRenderingStats(CCRenderingStats&) OVERRIDE;
-    virtual const LayerRendererCapabilities& layerRendererCapabilities() const OVERRIDE;
+    virtual const RendererCapabilities& rendererCapabilities() const OVERRIDE;
     virtual void loseContext() OVERRIDE;
     virtual void setNeedsAnimate() OVERRIDE;
     virtual void setNeedsCommit() OVERRIDE;
@@ -136,11 +136,11 @@ private:
     void setSurfaceReadyOnImplThread();
     void setVisibleOnImplThread(CCCompletionEvent*, bool);
     void initializeContextOnImplThread(CCGraphicsContext*);
-    void initializeLayerRendererOnImplThread(CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*);
+    void initializeRendererOnImplThread(CCCompletionEvent*, bool* initializeSucceeded, RendererCapabilities*);
     void layerTreeHostClosedOnImplThread(CCCompletionEvent*);
     void setFullRootLayerDamageOnImplThread();
     void acquireLayerTexturesForMainThreadOnImplThread(CCCompletionEvent*);
-    void recreateContextOnImplThread(CCCompletionEvent*, CCGraphicsContext*, bool* recreateSucceeded, LayerRendererCapabilities*);
+    void recreateContextOnImplThread(CCCompletionEvent*, CCGraphicsContext*, bool* recreateSucceeded, RendererCapabilities*);
     void implSideRenderingStatsOnImplThread(CCCompletionEvent*, CCRenderingStats*);
     CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapInternal(bool forcedDraw);
     void forceSerializeOnSwapBuffersOnImplThread(CCCompletionEvent*);
@@ -153,8 +153,8 @@ private:
     OwnPtr<CCThreadProxyContextRecreationTimer> m_contextRecreationTimer;
     CCLayerTreeHost* m_layerTreeHost;
     int m_compositorIdentifier;
-    bool m_layerRendererInitialized;
-    LayerRendererCapabilities m_layerRendererCapabilitiesMainThreadCopy;
+    bool m_rendererInitialized;
+    RendererCapabilities m_RendererCapabilitiesMainThreadCopy;
     bool m_started;
     bool m_texturesAcquired;
     bool m_inCompositeAndReadback;
@@ -168,7 +168,7 @@ private:
     RefPtr<CCScopedThreadProxy> m_mainThreadProxy;
 
     // Holds on to the context we might use for compositing in between initializeContext()
-    // and initializeLayerRenderer() calls.
+    // and initializeRenderer() calls.
     OwnPtr<CCGraphicsContext> m_contextBeforeInitializationOnImplThread;
 
     // Set when the main thread is waiting on a scheduledActionBeginFrame to be issued.

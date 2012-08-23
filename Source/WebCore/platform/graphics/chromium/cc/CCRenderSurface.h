@@ -42,7 +42,6 @@ class CCDamageTracker;
 class CCQuadSink;
 class CCRenderPass;
 class CCLayerImpl;
-class LayerRendererChromium;
 class TextStream;
 
 class CCRenderSurface {

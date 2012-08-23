@@ -35,7 +35,6 @@
 #include "CCTextureDrawQuad.h"
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
-#include "LayerRendererChromium.h"
 #include "SkBitmap.h"
 #include "SkColorMatrixFilter.h"
 #include "SkPaint.h"

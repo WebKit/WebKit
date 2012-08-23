@@ -27,10 +27,10 @@
 
 #include "Canvas2DLayerBridge.h"
 
+#include "CCRendererGL.h" // For the GLC() macro.
 #include "GrContext.h"
 #include "GraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
-#include "LayerRendererChromium.h" // For GLC() macro.
 #include "TraceEvent.h"
 #include <public/WebCompositor.h>
 #include <public/WebGraphicsContext3D.h>
@@ -166,4 +166,3 @@ unsigned Canvas2DLayerBridge::backBufferTexture()
 }
 
 }
-

@@ -29,9 +29,9 @@
 
 #include "ProgramBinding.h"
 
+#include "CCRendererGL.h" // For the GLC() macro.
 #include "GeometryBinding.h"
 #include "GraphicsContext3D.h"
-#include "LayerRendererChromium.h"
 #include "TraceEvent.h"
 #include <public/WebGraphicsContext3D.h>
 #include <wtf/text/CString.h>

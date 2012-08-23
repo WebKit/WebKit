@@ -33,8 +33,8 @@
 #include "CCIOSurfaceDrawQuad.h"
 #include "CCLayerTreeHostImpl.h"
 #include "CCQuadSink.h"
+#include "CCRendererGL.h" // For the GLC() macro.
 #include "Extensions3D.h"
-#include "LayerRendererChromium.h"
 #include "TextStream.h"
 #include <public/WebGraphicsContext3D.h>
 

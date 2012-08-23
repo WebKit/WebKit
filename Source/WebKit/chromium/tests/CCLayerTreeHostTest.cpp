@@ -1625,7 +1625,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
-        ASSERT_TRUE(m_layerTreeHost->initializeLayerRendererIfNeeded());
+        ASSERT_TRUE(m_layerTreeHost->initializeRendererIfNeeded());
         CCTextureUpdateQueue queue;
         m_layerTreeHost->updateLayers(queue, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
@@ -1833,7 +1833,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
-        ASSERT_TRUE(m_layerTreeHost->initializeLayerRendererIfNeeded());
+        ASSERT_TRUE(m_layerTreeHost->initializeRendererIfNeeded());
         CCTextureUpdateQueue queue;
         m_layerTreeHost->updateLayers(queue, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
@@ -1922,7 +1922,7 @@ public:
 
         m_layerTreeHost->setRootLayer(layers[0].get());
         m_layerTreeHost->setViewportSize(layers[0]->bounds(), layers[0]->bounds());
-        ASSERT_TRUE(m_layerTreeHost->initializeLayerRendererIfNeeded());
+        ASSERT_TRUE(m_layerTreeHost->initializeRendererIfNeeded());
         CCTextureUpdateQueue queue;
         m_layerTreeHost->updateLayers(queue, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
@@ -2300,7 +2300,7 @@ public:
 
     virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* hostImpl)
     {
-        CCRenderer* renderer = hostImpl->layerRenderer();
+        CCRenderer* renderer = hostImpl->renderer();
         unsigned surface1RenderPassId = hostImpl->rootLayer()->children()[0]->id();
         unsigned surface2RenderPassId = hostImpl->rootLayer()->children()[0]->children()[0]->id();
 

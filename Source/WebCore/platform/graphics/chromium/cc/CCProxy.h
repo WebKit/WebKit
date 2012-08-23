@@ -36,7 +36,7 @@ namespace WebCore {
 
 class CCThread;
 struct CCRenderingStats;
-struct LayerRendererCapabilities;
+struct RendererCapabilities;
 
 // Abstract class responsible for proxying commands from the main-thread side of
 // the compositor over to the compositor implementation.
@@ -64,7 +64,7 @@ public:
     virtual bool isStarted() const = 0;
 
     // Attempts to initialize a context to use for rendering. Returns false if the context could not be created.
-    // The context will not be used and no frames may be produced until initializeLayerRenderer() is called.
+    // The context will not be used and no frames may be produced until initializeRenderer() is called.
     virtual bool initializeContext() = 0;
 
     // Indicates that the compositing surface associated with our context is ready to use.
@@ -73,7 +73,7 @@ public:
     virtual void setVisible(bool) = 0;
 
     // Attempts to initialize the layer renderer. Returns false if the context isn't usable for compositing.
-    virtual bool initializeLayerRenderer() = 0;
+    virtual bool initializeRenderer() = 0;
 
     // Attempts to recreate the context and layer renderer after a context lost. Returns false if the renderer couldn't be
     // reinitialized.
@@ -83,7 +83,7 @@ public:
 
     virtual void implSideRenderingStats(CCRenderingStats&) = 0;
 
-    virtual const LayerRendererCapabilities& layerRendererCapabilities() const = 0;
+    virtual const RendererCapabilities& rendererCapabilities() const = 0;
 
     virtual void setNeedsAnimate() = 0;
     virtual void setNeedsCommit() = 0;

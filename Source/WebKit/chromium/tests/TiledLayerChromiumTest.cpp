@@ -705,7 +705,7 @@ TEST_F(TiledLayerChromiumTest, skipsDrawGetsReset)
     WebKit::WebCompositor::initialize(0);
     FakeCCLayerTreeHostClient fakeCCLayerTreeHostClient;
     OwnPtr<CCLayerTreeHost> ccLayerTreeHost = CCLayerTreeHost::create(&fakeCCLayerTreeHostClient, CCLayerTreeSettings());
-    ASSERT_TRUE(ccLayerTreeHost->initializeLayerRendererIfNeeded());
+    ASSERT_TRUE(ccLayerTreeHost->initializeRendererIfNeeded());
 
     // Create two 300 x 300 tiled layers.
     IntSize contentBounds(300, 300);
@@ -791,7 +791,7 @@ TEST_F(TiledLayerChromiumTest, partialUpdates)
 
     FakeCCLayerTreeHostClient fakeCCLayerTreeHostClient;
     OwnPtr<CCLayerTreeHost> ccLayerTreeHost = CCLayerTreeHost::create(&fakeCCLayerTreeHostClient, settings);
-    ASSERT_TRUE(ccLayerTreeHost->initializeLayerRendererIfNeeded());
+    ASSERT_TRUE(ccLayerTreeHost->initializeRendererIfNeeded());
 
     // Create one 300 x 200 tiled layer with 3 x 2 tiles.
     IntSize contentBounds(300, 200);
@@ -1333,7 +1333,7 @@ TEST_F(TiledLayerChromiumTest, dontAllocateContentsWhenTargetSurfaceCantBeAlloca
     CCLayerTreeSettings settings;
     FakeCCLayerTreeHostClient fakeCCLayerTreeHostClient;
     OwnPtr<CCLayerTreeHost> ccLayerTreeHost = CCLayerTreeHost::create(&fakeCCLayerTreeHostClient, settings);
-    ASSERT_TRUE(ccLayerTreeHost->initializeLayerRendererIfNeeded());
+    ASSERT_TRUE(ccLayerTreeHost->initializeRendererIfNeeded());
 
     RefPtr<FakeTiledLayerChromium> root = adoptRef(new FakeTiledLayerChromium(ccLayerTreeHost->contentsTextureManager()));
     RefPtr<LayerChromium> surface = LayerChromium::create();

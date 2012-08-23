@@ -41,12 +41,12 @@
 #include "CCPageScaleAnimation.h"
 #include "CCPrioritizedTextureManager.h"
 #include "CCRenderPassDrawQuad.h"
+#include "CCRendererGL.h"
 #include "CCRenderingStats.h"
 #include "CCScrollbarAnimationController.h"
 #include "CCScrollbarLayerImpl.h"
 #include "CCSettings.h"
 #include "CCSingleThreadProxy.h"
-#include "LayerRendererChromium.h"
 #include "TextStream.h"
 #include "TraceEvent.h"
 #include <wtf/CurrentTime.h>
@@ -175,8 +175,8 @@ bool CCLayerTreeHostImpl::canDraw()
         TRACE_EVENT_INSTANT0("cc", "CCLayerTreeHostImpl::canDraw empty viewport");
         return false;
     }
-    if (!m_layerRenderer) {
-        TRACE_EVENT_INSTANT0("cc", "CCLayerTreeHostImpl::canDraw no layerRenderer");
+    if (!m_renderer) {
+        TRACE_EVENT_INSTANT0("cc", "CCLayerTreeHostImpl::canDraw no renderer");
         return false;
     }
     if (m_contentsTexturesPurged) {
@@ -255,11 +255,11 @@ void CCLayerTreeHostImpl::calculateRenderSurfaceLayerList(CCLayerList& renderSur
 {
     ASSERT(renderSurfaceLayerList.isEmpty());
     ASSERT(m_rootLayerImpl);
-    ASSERT(m_layerRenderer); // For maxTextureSize.
+    ASSERT(m_renderer); // For maxTextureSize.
 
     {
         TRACE_EVENT0("cc", "CCLayerTreeHostImpl::calcDrawEtc");
-        CCLayerTreeHostCommon::calculateDrawTransforms(m_rootLayerImpl.get(), deviceViewportSize(), m_deviceScaleFactor, &m_layerSorter, layerRendererCapabilities().maxTextureSize, renderSurfaceLayerList);
+        CCLayerTreeHostCommon::calculateDrawTransforms(m_rootLayerImpl.get(), deviceViewportSize(), m_deviceScaleFactor, &m_layerSorter, rendererCapabilities().maxTextureSize, renderSurfaceLayerList);
         CCLayerTreeHostCommon::calculateVisibleRects(renderSurfaceLayerList);
 
         trackDamageForAllSurfaces(m_rootLayerImpl.get(), renderSurfaceLayerList);
@@ -347,8 +347,8 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
         occlusionTracker.overdrawMetrics().recordMetrics(this);
 
     removeRenderPasses(CullRenderPassesWithNoQuads(), frame);
-    m_layerRenderer->decideRenderPassAllocationsForFrame(frame.renderPasses);
-    removeRenderPasses(CullRenderPassesWithCachedTextures(*m_layerRenderer), frame);
+    m_renderer->decideRenderPassAllocationsForFrame(frame.renderPasses);
+    removeRenderPasses(CullRenderPassesWithCachedTextures(*m_renderer), frame);
 
     return drawFrame;
 }
@@ -557,7 +557,7 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
     if (m_hudLayerImpl)
         m_hudLayerImpl->updateHudTexture(m_resourceProvider.get());
 
-    m_layerRenderer->drawFrame(frame.renderPasses, frame.renderPassesById);
+    m_renderer->drawFrame(frame.renderPasses, frame.renderPassesById);
 
     // Once a RenderPass has been drawn, its damage should be cleared in
     // case the RenderPass will be reused next frame.
@@ -578,26 +578,26 @@ void CCLayerTreeHostImpl::didDrawAllLayers(const FrameData& frame)
 
 void CCLayerTreeHostImpl::finishAllRendering()
 {
-    if (m_layerRenderer)
-        m_layerRenderer->finish();
+    if (m_renderer)
+        m_renderer->finish();
 }
 
 bool CCLayerTreeHostImpl::isContextLost()
 {
-    return m_layerRenderer && m_layerRenderer->isContextLost();
+    return m_renderer && m_renderer->isContextLost();
 }
 
-const LayerRendererCapabilities& CCLayerTreeHostImpl::layerRendererCapabilities() const
+const RendererCapabilities& CCLayerTreeHostImpl::rendererCapabilities() const
 {
-    return m_layerRenderer->capabilities();
+    return m_renderer->capabilities();
 }
 
 bool CCLayerTreeHostImpl::swapBuffers()
 {
-    ASSERT(m_layerRenderer);
+    ASSERT(m_renderer);
 
     m_fpsCounter->markEndOfFrame();
-    return m_layerRenderer->swapBuffers();
+    return m_renderer->swapBuffers();
 }
 
 void CCLayerTreeHostImpl::didLoseContext()
@@ -612,8 +612,8 @@ void CCLayerTreeHostImpl::onSwapBuffersComplete()
 
 void CCLayerTreeHostImpl::readback(void* pixels, const IntRect& rect)
 {
-    ASSERT(m_layerRenderer);
-    m_layerRenderer->getFramebufferPixels(pixels, rect);
+    ASSERT(m_renderer);
+    m_renderer->getFramebufferPixels(pixels, rect);
 }
 
 static CCLayerImpl* findRootScrollLayer(CCLayerImpl* layer)
@@ -681,15 +681,15 @@ void CCLayerTreeHostImpl::setVisible(bool visible)
     m_visible = visible;
     didVisibilityChange(this, m_visible);
 
-    if (!m_layerRenderer)
+    if (!m_renderer)
         return;
 
-    m_layerRenderer->setVisible(visible);
+    m_renderer->setVisible(visible);
 
     setBackgroundTickingEnabled(!m_visible && m_needsAnimateLayers);
 }
 
-bool CCLayerTreeHostImpl::initializeLayerRenderer(PassOwnPtr<CCGraphicsContext> context, TextureUploaderOption textureUploader)
+bool CCLayerTreeHostImpl::initializeRenderer(PassOwnPtr<CCGraphicsContext> context, TextureUploaderOption textureUploader)
 {
     if (!context->bindToClient(this))
         return false;
@@ -703,26 +703,26 @@ bool CCLayerTreeHostImpl::initializeLayerRenderer(PassOwnPtr<CCGraphicsContext> 
 
     OwnPtr<CCGraphicsContext> contextRef(context);
     OwnPtr<CCResourceProvider> resourceProvider = CCResourceProvider::create(contextRef.get());
-    OwnPtr<LayerRendererChromium> layerRenderer;
+    OwnPtr<CCRendererGL> renderer;
     if (resourceProvider.get())
-        layerRenderer = LayerRendererChromium::create(this, resourceProvider.get(), textureUploader);
+        renderer = CCRendererGL::create(this, resourceProvider.get(), textureUploader);
 
-    // Since we now have a new context/layerRenderer, we cannot continue to use the old
+    // Since we now have a new context/renderer, we cannot continue to use the old
     // resources (i.e. renderSurfaces and texture IDs).
     if (m_rootLayerImpl) {
         clearRenderSurfaces();
         sendDidLoseContextRecursive(m_rootLayerImpl.get());
     }
 
-    m_layerRenderer = layerRenderer.release();
+    m_renderer = renderer.release();
     m_resourceProvider = resourceProvider.release();
-    if (m_layerRenderer)
+    if (m_renderer)
         m_context = contextRef.release();
 
-    if (!m_visible && m_layerRenderer)
-         m_layerRenderer->setVisible(m_visible);
+    if (!m_visible && m_renderer)
+         m_renderer->setVisible(m_visible);
 
-    return m_layerRenderer;
+    return m_renderer;
 }
 
 void CCLayerTreeHostImpl::setViewportSize(const IntSize& layoutViewportSize, const IntSize& deviceViewportSize)
@@ -735,8 +735,8 @@ void CCLayerTreeHostImpl::setViewportSize(const IntSize& layoutViewportSize, con
 
     updateMaxScrollPosition();
 
-    if (m_layerRenderer)
-        m_layerRenderer->viewportChanged();
+    if (m_renderer)
+        m_renderer->viewportChanged();
 }
 
 static void adjustScrollsForPageScaleChange(CCLayerImpl* layerImpl, float pageScaleChange)
@@ -840,7 +840,7 @@ bool CCLayerTreeHostImpl::ensureRenderSurfaceLayerList()
 {
     if (!m_rootLayerImpl)
         return false;
-    if (!m_layerRenderer)
+    if (!m_renderer)
         return false;
 
     // We need both a non-empty render surface layer list and a root render

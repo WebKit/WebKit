@@ -29,8 +29,8 @@
  */
 
 
-#ifndef LayerRendererChromium_h
-#define LayerRendererChromium_h
+#ifndef CCRendererGL_h
+#define CCRendererGL_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
@@ -60,17 +60,17 @@ class GeometryBinding;
 class ScopedEnsureFramebufferAllocation;
 
 // Class that handles drawing of composited render layers using GL.
-class LayerRendererChromium : public CCDirectRenderer,
-                              public WebKit::WebGraphicsContext3D::WebGraphicsSwapBuffersCompleteCallbackCHROMIUM,
-                              public WebKit::WebGraphicsContext3D::WebGraphicsMemoryAllocationChangedCallbackCHROMIUM ,
-                              public WebKit::WebGraphicsContext3D::WebGraphicsContextLostCallback {
-    WTF_MAKE_NONCOPYABLE(LayerRendererChromium);
+class CCRendererGL : public CCDirectRenderer,
+                     public WebKit::WebGraphicsContext3D::WebGraphicsSwapBuffersCompleteCallbackCHROMIUM,
+                     public WebKit::WebGraphicsContext3D::WebGraphicsMemoryAllocationChangedCallbackCHROMIUM ,
+                     public WebKit::WebGraphicsContext3D::WebGraphicsContextLostCallback {
+    WTF_MAKE_NONCOPYABLE(CCRendererGL);
 public:
-    static PassOwnPtr<LayerRendererChromium> create(CCRendererClient*, CCResourceProvider*, TextureUploaderOption);
+    static PassOwnPtr<CCRendererGL> create(CCRendererClient*, CCResourceProvider*, TextureUploaderOption);
 
-    virtual ~LayerRendererChromium();
+    virtual ~CCRendererGL();
 
-    virtual const LayerRendererCapabilities& capabilities() const OVERRIDE { return m_capabilities; }
+    virtual const RendererCapabilities& capabilities() const OVERRIDE { return m_capabilities; }
 
     WebKit::WebGraphicsContext3D* context();
 
@@ -100,7 +100,7 @@ public:
     virtual void setVisible(bool) OVERRIDE;
 
 protected:
-    LayerRendererChromium(CCRendererClient*, CCResourceProvider*, TextureUploaderOption);
+    CCRendererGL(CCRendererClient*, CCResourceProvider*, TextureUploaderOption);
 
     bool isFramebufferDiscarded() const { return m_isFramebufferDiscarded; }
     bool initialize();
@@ -156,7 +156,7 @@ private:
     // WebGraphicsContext3D::WebGraphicsContextLostCallback implementation.
     virtual void onContextLost() OVERRIDE;
 
-    LayerRendererCapabilities m_capabilities;
+    RendererCapabilities m_capabilities;
 
     unsigned m_offscreenFramebufferId;
 
@@ -258,7 +258,7 @@ private:
 #define DEBUG_GL_CALLS 0
 
 #if DEBUG_GL_CALLS && !defined ( NDEBUG )
-#define GLC(context, x) (x, LayerRendererChromium::debugGLCall(&*context, #x, __FILE__, __LINE__))
+#define GLC(context, x) (x, CCRendererGL::debugGLCall(&*context, #x, __FILE__, __LINE__))
 #else
 #define GLC(context, x) (x)
 #endif

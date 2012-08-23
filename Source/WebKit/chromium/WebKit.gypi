@@ -125,7 +125,7 @@
             'tests/KeyboardTest.cpp',
             'tests/KURLTest.cpp',
             'tests/LayerChromiumTest.cpp',
-            'tests/LayerRendererChromiumTest.cpp',
+            'tests/CCRendererGLTest.cpp',
             'tests/LevelDBTest.cpp',
             'tests/LinkHighlightTest.cpp',
             'tests/ListenerLeakTest.cpp',

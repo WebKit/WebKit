@@ -31,8 +31,6 @@
 
 namespace WebCore {
 
-class LayerRendererChromium;
-
 class CCSolidColorLayerImpl : public CCLayerImpl {
 public:
     static PassOwnPtr<CCSolidColorLayerImpl> create(int id)

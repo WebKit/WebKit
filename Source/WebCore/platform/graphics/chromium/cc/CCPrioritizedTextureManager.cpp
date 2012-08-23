@@ -28,7 +28,6 @@
 
 #include "CCPrioritizedTexture.h"
 #include "CCPriorityCalculator.h"
-#include "LayerRendererChromium.h"
 #include "TraceEvent.h"
 #include <algorithm>
 

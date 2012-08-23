@@ -263,7 +263,7 @@ void CCLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
 
 void sortLayers(Vector<CCLayerImpl*>::iterator first, Vector<CCLayerImpl*>::iterator end, CCLayerSorter* layerSorter)
 {
-    TRACE_EVENT0("cc", "LayerRendererChromium::sortLayers");
+    TRACE_EVENT0("cc", "CCLayerImpl::sortLayers");
     layerSorter->sort(first, end);
 }
 

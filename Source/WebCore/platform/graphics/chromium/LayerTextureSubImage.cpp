@@ -29,8 +29,8 @@
 
 #include "LayerTextureSubImage.h"
 
+#include "CCRendererGL.h" // For the GLC() macro.
 #include "Extensions3DChromium.h"
-#include "LayerRendererChromium.h" // For GLC() macro
 #include "TraceEvent.h"
 #include <public/WebGraphicsContext3D.h>
 

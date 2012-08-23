@@ -188,7 +188,7 @@ void ScrollbarLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 
 void ScrollbarLayerChromium::createTextureUpdaterIfNeeded()
 {
-    m_textureFormat = layerTreeHost()->layerRendererCapabilities().bestTextureFormat;
+    m_textureFormat = layerTreeHost()->rendererCapabilities().bestTextureFormat;
 
     if (!m_backTrackUpdater)
         m_backTrackUpdater = BitmapCanvasLayerTextureUpdater::create(ScrollbarBackgroundPainter::create(m_scrollbar.get(), m_painter, m_geometry.get(), WebKit::WebScrollbar::BackTrackPart));

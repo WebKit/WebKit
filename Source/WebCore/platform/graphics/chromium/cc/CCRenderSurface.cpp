@@ -36,8 +36,6 @@
 #include "CCQuadSink.h"
 #include "CCRenderPassDrawQuad.h"
 #include "CCSharedQuadState.h"
-#include "GraphicsContext3D.h"
-#include "LayerRendererChromium.h"
 #include "TextStream.h"
 #include <public/WebTransformationMatrix.h>
 #include <wtf/text/CString.h>

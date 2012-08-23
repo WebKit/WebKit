@@ -157,7 +157,7 @@ void ImageLayerChromium::createTextureUpdaterIfNeeded()
         return;
 
     m_textureUpdater = ImageLayerTextureUpdater::create();
-    GC3Denum textureFormat = layerTreeHost()->layerRendererCapabilities().bestTextureFormat;
+    GC3Denum textureFormat = layerTreeHost()->rendererCapabilities().bestTextureFormat;
     setTextureFormat(textureFormat);
     setSampledTexelFormat(textureUpdater()->sampledTexelFormat(textureFormat));
 }

@@ -149,7 +149,7 @@ void TiledLayerChromium::updateTileSizeAndTilingOption()
         isTiled = autoTiled;
 
     IntSize requestedSize = isTiled ? tileSize : contentBounds();
-    const int maxSize = layerTreeHost()->layerRendererCapabilities().maxTextureSize;
+    const int maxSize = layerTreeHost()->rendererCapabilities().maxTextureSize;
     IntSize clampedSize = requestedSize.shrunkTo(IntSize(maxSize, maxSize));
     setTileSize(clampedSize);
 }
