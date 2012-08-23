@@ -33,43 +33,40 @@
 
 #include "OwnHandle.h"
 #include "ScriptSourceCode.h"
-#include "V8GCController.h"
-#include <wtf/Forward.h>
-
 #include <v8.h>
+#include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-    class ScriptController;
-    class ScriptExecutionContext;
-    class WorkerContext;
+class Frame;
+class ScriptExecutionContext;
+class WorkerContext;
 
-    class ScheduledAction {
-    public:
-        ScheduledAction(v8::Handle<v8::Context>, v8::Handle<v8::Function>, int argc, v8::Handle<v8::Value> argv[]);
-        explicit ScheduledAction(v8::Handle<v8::Context> context, const WTF::String& code, const KURL& url = KURL())
-            : m_context(context)
-            , m_argc(0)
-            , m_argv(0)
-            , m_code(code, url)
-        {
-        }
+class ScheduledAction {
+public:
+    ScheduledAction(v8::Handle<v8::Context>, v8::Handle<v8::Function>, int argc, v8::Handle<v8::Value> argv[]);
 
-        virtual ~ScheduledAction();
-        virtual void execute(ScriptExecutionContext*);
+    ScheduledAction(v8::Handle<v8::Context> context, const String& code, const KURL& url = KURL())
+        : m_context(context)
+        , m_code(code, url)
+    {
+    }
 
-    private:
-        void execute(ScriptController*);
+    ~ScheduledAction();
+    void execute(ScriptExecutionContext*);
+
+private:
+    void execute(Frame*);
 #if ENABLE(WORKERS)
-        void execute(WorkerContext*);
+    void execute(WorkerContext*);
 #endif
 
-        OwnHandle<v8::Context> m_context;
-        v8::Persistent<v8::Function> m_function;
-        int m_argc;
-        v8::Persistent<v8::Value>* m_argv;
-        ScriptSourceCode m_code;
-    };
+    OwnHandle<v8::Context> m_context;
+    OwnHandle<v8::Function> m_function;
+    Vector<v8::Persistent<v8::Value> > m_args;
+    ScriptSourceCode m_code;
+};
 
 } // namespace WebCore
 

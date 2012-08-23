@@ -32,11 +32,13 @@
 #define OwnHandle_h
 
 #include <v8.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 template<typename T>
 class OwnHandle {
+    WTF_MAKE_NONCOPYABLE(OwnHandle);
 public:
     OwnHandle() { }
 

@@ -49,49 +49,20 @@
 
 namespace WebCore {
 
-ScheduledAction::ScheduledAction(v8::Handle<v8::Context> context, v8::Handle<v8::Function> func, int argc, v8::Handle<v8::Value> argv[])
+ScheduledAction::ScheduledAction(v8::Handle<v8::Context> context, v8::Handle<v8::Function> function, int argc, v8::Handle<v8::Value> argv[])
     : m_context(context)
+    , m_function(function)
     , m_code(String(), KURL(), TextPosition::belowRangePosition())
 {
-    m_function = v8::Persistent<v8::Function>::New(func);
-
-#ifndef NDEBUG
-    V8GCController::registerGlobalHandle(SCHEDULED_ACTION, this, m_function);
-#endif
-
-    m_argc = argc;
-    if (argc > 0) {
-        m_argv = new v8::Persistent<v8::Value>[argc];
-        for (int i = 0; i < argc; i++) {
-            m_argv[i] = v8::Persistent<v8::Value>::New(argv[i]);
-
-#ifndef NDEBUG
-    V8GCController::registerGlobalHandle(SCHEDULED_ACTION, this, m_argv[i]);
-#endif
-        }
-    } else
-        m_argv = 0;
+    m_args.reserveCapacity(argc);
+    for (int i = 0; i < argc; ++i)
+        m_args.append(v8::Persistent<v8::Value>::New(argv[i]));
 }
 
 ScheduledAction::~ScheduledAction()
 {
-    if (m_function.IsEmpty())
-        return;
-
-#ifndef NDEBUG
-    V8GCController::unregisterGlobalHandle(this, m_function);
-#endif
-    m_function.Dispose();
-
-    for (int i = 0; i < m_argc; i++) {
-#ifndef NDEBUG
-        V8GCController::unregisterGlobalHandle(this, m_argv[i]);
-#endif
-        m_argv[i].Dispose();
-    }
-
-    if (m_argc > 0)
-        delete[] m_argv;
+    for (size_t i = 0; i < m_args.size(); ++i)
+        m_args[i].Dispose();
 }
 
 void ScheduledAction::execute(ScriptExecutionContext* context)
@@ -102,7 +73,7 @@ void ScheduledAction::execute(ScriptExecutionContext* context)
             return;
         if (!frame->script()->canExecuteScripts(AboutToExecuteScript))
             return;
-        execute(frame->script());
+        execute(frame);
     }
 #if ENABLE(WORKERS)
     else {
@@ -112,47 +83,46 @@ void ScheduledAction::execute(ScriptExecutionContext* context)
 #endif
 }
 
-void ScheduledAction::execute(ScriptController* script)
+void ScheduledAction::execute(Frame* frame)
 {
-    ASSERT(script->proxy());
-
     v8::HandleScope handleScope;
-    v8::Handle<v8::Context> v8Context = v8::Local<v8::Context>::New(m_context.get());
-    if (v8Context.IsEmpty())
-        return; // JS may not be enabled.
+
+    v8::Handle<v8::Context> context = v8::Local<v8::Context>::New(m_context.get());
+    if (context.IsEmpty())
+        return;
+    v8::Context::Scope scope(context);
 
 #if PLATFORM(CHROMIUM)
     TRACE_EVENT0("v8", "ScheduledAction::execute");
 #endif
 
-    v8::Context::Scope scope(v8Context);
-
-    // FIXME: Need to implement timeouts for preempting a long-running script.
-    if (!m_function.IsEmpty() && m_function->IsFunction())
-        script->callFunction(v8::Persistent<v8::Function>::Cast(m_function), v8Context->Global(), m_argc, m_argv);
+    v8::Handle<v8::Function> function = m_function.get();
+    if (!function.IsEmpty())
+        frame->script()->callFunction(function, context->Global(), m_args.size(), m_args.data());
     else
-        script->compileAndRunScript(m_code);
+        frame->script()->compileAndRunScript(m_code);
 
-    // The 'proxy' may be invalid at this point since JS could have released the owning Frame.
+    // The frame might be invalid at this point because JavaScript could have released it.
 }
 
 #if ENABLE(WORKERS)
-void ScheduledAction::execute(WorkerContext* workerContext)
+void ScheduledAction::execute(WorkerContext* worker)
 {
-    // In a Worker, the execution should always happen on a worker thread.
-    ASSERT(workerContext->thread()->threadID() == currentThread());
+    ASSERT(worker->thread()->threadID() == currentThread());
 
-    V8RecursionScope recursionScope(workerContext);
-    WorkerScriptController* scriptController = workerContext->script();
+    V8RecursionScope recursionScope(worker);
 
-    if (!m_function.IsEmpty() && m_function->IsFunction()) {
+    v8::Handle<v8::Function> function = m_function.get();
+    if (!function.IsEmpty()) {
         v8::HandleScope handleScope;
-        v8::Handle<v8::Context> v8Context = v8::Local<v8::Context>::New(m_context.get());
-        ASSERT(!v8Context.IsEmpty());
-        v8::Context::Scope scope(v8Context);
-        m_function->Call(v8Context->Global(), m_argc, m_argv);
+
+        v8::Handle<v8::Context> context = v8::Local<v8::Context>::New(m_context.get());
+        ASSERT(!context.IsEmpty());
+        v8::Context::Scope scope(context);
+
+        function->Call(context->Global(), m_args.size(), m_args.data());
     } else
-        scriptController->evaluate(m_code);
+        worker->script()->evaluate(m_code);
 }
 #endif
 
