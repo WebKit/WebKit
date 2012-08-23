@@ -358,6 +358,11 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
     return;
 #endif
 
+    paintCurrentFrameInContext(context, rect);
+}
+
+void MediaPlayerPrivate::paintCurrentFrameInContext(GraphicsContext* context, const IntRect& rect)
+{
     if (!hasVideo() || context->paintingDisabled() || !m_webCorePlayer->visible())
         return;
 

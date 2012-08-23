@@ -89,6 +89,8 @@ public:
 
     virtual void paint(GraphicsContext*, const IntRect&);
 
+    virtual void paintCurrentFrameInContext(GraphicsContext*, const IntRect&);
+
     virtual bool hasAvailableVideoFrame() const;
 
 #if USE(ACCELERATED_COMPOSITING)
