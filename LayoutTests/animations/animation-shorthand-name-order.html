@@ -121,16 +121,16 @@ function runIndividualTest(testIndex) {
             if (numTestsComplete < TEST_INPUTS.length)
                 runIndividualTest(numTestsComplete);
             else {
-                if (window.testRunner)
-                    testRunner.notifyDone();
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
             }
         }, 0);
     }, 0);
 }
 
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
 }
 
 window.addEventListener("load", runTests, false);

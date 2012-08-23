@@ -3,9 +3,9 @@
 <body>
 <script src=../editing.js></script>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
 }
 
 function editingTest() {        
@@ -15,8 +15,8 @@ function editingTest() {
     extendSelectionForwardByLineCommand();
 
     test1.innerHTML = "PASS. WebKit didn't crash.";
-    if (window.testRunner)
-        testRunner.notifyDone();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 </script>
 <pre id="console"></pre>

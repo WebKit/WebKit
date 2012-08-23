@@ -12,16 +12,16 @@ function runTest()
 {
     var dragme = document.getElementById('dragme');
     dragme.addEventListener('dragend', function () {
-        if (window.testRunner)
-            testRunner.notifyDone();
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
         document.getElementById('console').appendChild(document.createTextNode('PASS'));
     });
 
-    if (!window.testRunner)
+    if (!window.layoutTestController)
         return;
 
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
 
     eventSender.mouseMoveTo(dragme.offsetLeft + dragme.offsetWidth / 2, dragme.offsetTop + dragme.offsetHeight / 2);
     eventSender.mouseDown();

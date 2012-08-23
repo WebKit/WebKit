@@ -1,9 +1,9 @@
 <script>
 
-if (window.testRunner) {
-	testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
-	testRunner.dumpAsText();
-	testRunner.waitUntilDone();
+if (window.layoutTestController) {
+	layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+	layoutTestController.dumpAsText();
+	layoutTestController.waitUntilDone();
 }
 
 function loaded()
@@ -21,8 +21,8 @@ function pageShown(evt)
 function finishUp()
 {
 	document.getElementById("logger").innerText = document.getElementById("testInput").value;
-	if (window.testRunner)
-		testRunner.notifyDone();
+	if (window.layoutTestController)
+		layoutTestController.notifyDone();
 }
 
 </script>

@@ -1,18 +1,18 @@
 <head>
 
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
 }
 
 function runTest() {
-    if (!window.testRunner) {
+    if (!window.layoutTestController) {
         log("This test can only be run under WebKit's testRunner environment");
         return;
     }
 
-    testRunner.evaluateScriptInIsolatedWorld(0, " \
+    layoutTestController.evaluateScriptInIsolatedWorld(0, " \
         function test(msg, expected) \
         { \
             var console = document.getElementById('console'); \
@@ -50,8 +50,8 @@ function runTest() {
         test(Object.getOwnPropertyDescriptor(pluginObject, 'getAttribute'), 'undefined'); \
     ");
 
-    if (window.testRunner)
-        testRunner.notifyDone();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 </script>
 </head>

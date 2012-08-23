@@ -1,7 +1,7 @@
 <input type="text" id="input1">
 <script>
-if (window.testRunner)
-    testRunner.dumpAsText();
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
 document.getElementById('input1').value = 'value';
 document.getElementById('input1').type = 'hidden';
 document.write('PASS unless crashed.');
