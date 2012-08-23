@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+
+<a id="link" href="#">A</a>
+<div id="div" tabindex="0">B</div>
+<div id="div2" tabindex="0"><div></div>C</div>
+<div id="div3" tabindex="0" aria-label="D"></div>
+
+<div id="console"></div>
+<script>
+description("This test makes sure that a generic focusable div can get accessibility focus.");
+
+if (window.testRunner && window.accessibilityController) {
+    window.testRunner.dumpAsText();
+
+    function lastChar(str) {
+        return str.substr(str.length - 1);
+    }
+
+    var link = document.getElementById('link');
+    link.focus();
+    shouldBe("document.activeElement == link", "true");
+    window.axLink = accessibilityController.focusedElement;
+    shouldBe("lastChar(axLink.title)", "\"A\"");
+
+    var div = document.getElementById('div');
+    div.focus();
+    shouldBe("document.activeElement == div", "true");
+    window.axDiv = accessibilityController.focusedElement;
+    shouldBe("lastChar(axDiv.title)", "\"B\"");
+
+    var div2 = document.getElementById('div2');
+    div2.focus();
+    shouldBe("document.activeElement == div2", "true");
+    window.axDiv2 = accessibilityController.focusedElement;
+    shouldBe("lastChar(axDiv2.title)", "\"C\"");
+
+    var div3 = document.getElementById('div3');
+    div3.focus();
+    shouldBe("document.activeElement == div3", "true");
+    window.axDiv3 = accessibilityController.focusedElement;
+    shouldBe("lastChar(axDiv3.description)", "\"D\"");
+}
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

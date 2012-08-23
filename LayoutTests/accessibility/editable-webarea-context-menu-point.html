@@ -19,6 +19,7 @@ This tests that the click point, used for opening context menus, changes based o
 
           var body = document.getElementById("body");
           body.focus();
+          var axWebArea = accessibilityController.focusedElement.parentElement();
 
           x = body.offsetLeft + 10;
           y = body.offsetTop + 10;
@@ -29,7 +30,7 @@ This tests that the click point, used for opening context menus, changes based o
           eventSender.mouseDown();
           eventSender.mouseUp();
 
-          var clickPointX1 = accessibilityController.focusedElement.clickPointX;
+          var clickPointX1 = axWebArea.clickPointX;
 
           x = body.offsetLeft + 100 + 10;
           y = body.offsetTop + 10;
@@ -40,7 +41,7 @@ This tests that the click point, used for opening context menus, changes based o
           eventSender.mouseDown();
           eventSender.mouseUp();
 
-          var clickPointX2 = accessibilityController.focusedElement.clickPointX;
+          var clickPointX2 = axWebArea.clickPointX;
           var succeeded = clickPointX2 != clickPointX1;
           shouldBe("succeeded", "true");
 

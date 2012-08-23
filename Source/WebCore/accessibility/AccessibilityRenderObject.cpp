@@ -1401,7 +1401,12 @@ String AccessibilityRenderObject::title() const
     
     if (isHeading() || isLink())
         return textUnderElement();
-    
+
+    // If it's focusable but it's not content editable or a known control type, then it will appear to
+    // the user as a single atomic object, so we should use its text as the default title.
+    if (isGenericFocusableElement())
+        return textUnderElement();
+
     return String();
 }
 
@@ -1938,12 +1943,8 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     // Anything that is content editable should not be ignored.
     // However, one cannot just call node->rendererIsEditable() since that will ask if its parents
     // are also editable. Only the top level content editable region should be exposed.
-    if (node && node->isElementNode()) {
-        Element* element = static_cast<Element*>(node);
-        const AtomicString& contentEditable = element->getAttribute(contenteditableAttr);
-        if (equalIgnoringCase(contentEditable, "true"))
-            return false;
-    }
+    if (hasContentEditableAttributeSet())
+        return false;
     
     // List items play an important role in defining the structure of lists. They should not be ignored.
     if (roleValue() == ListItemRole)
@@ -1953,7 +1954,7 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     if (supportsARIAAttributes())
         return false;
     
-    if (m_renderer->isBlockFlow() && m_renderer->childrenInline())
+    if (m_renderer->isBlockFlow() && m_renderer->childrenInline() && !canSetFocusAttribute())
         return !toRenderBlock(m_renderer)->firstLineBox() && !mouseButtonListener();
     
     // ignore images seemingly used as spacers
@@ -3117,6 +3118,29 @@ bool AccessibilityRenderObject::isDescendantOfElementType(const QualifiedName& t
             return true;
     }
     return false;
+}
+
+bool AccessibilityRenderObject::isGenericFocusableElement() const
+{
+    if (!canSetFocusAttribute())
+        return false;
+
+    // If it's a control, it's not generic.
+    if (isControl())
+        return false;
+
+    // If the content editable attribute is set on this element, that's the reason
+    // it's focusable, and existing logic should handle this case already - so it's not a
+    // generic focusable element.
+    if (hasContentEditableAttributeSet())
+        return false;
+
+    // The body element is focusable, but existing logic handles it already, we don't need
+    // to include it here.
+    if (node() && node()->hasTagName(bodyTag))
+        return false;
+
+    return true;
 }
     
 AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
