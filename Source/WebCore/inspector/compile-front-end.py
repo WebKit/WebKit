@@ -30,7 +30,9 @@
 import os
 import os.path
 import generate_protocol_externs
+import shutil
 import sys
+import tempfile
 
 inspector_path = "Source/WebCore/inspector"
 inspector_frontend_path = inspector_path + "/front-end"
@@ -365,7 +367,8 @@ def dump_module(name, recursively, processed_modules):
         command += " \\\n        --js " + inspector_frontend_path + "/" + script
     return command
 
-compiler_command = "java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SIMPLE_OPTIMIZATIONS --warning_level VERBOSE --language_in ECMASCRIPT5 --accept_const_keyword \\\n"
+modules_dir = tempfile.mkdtemp()
+compiler_command = "java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SIMPLE_OPTIMIZATIONS --warning_level VERBOSE --language_in ECMASCRIPT5 --accept_const_keyword --module_output_path_prefix %s/ \\\n" % modules_dir
 
 process_recursively = len(sys.argv) == 2
 if process_recursively:
@@ -407,3 +410,5 @@ if not process_recursively:
     command += "\n"
     os.system(command)
     os.system("rm " + inspector_path + "/" + "InjectedScriptWebGLModuleSourceTmp.js")
+
+shutil.rmtree(modules_dir)
