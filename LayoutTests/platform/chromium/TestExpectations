@@ -2728,8 +2728,6 @@ BUGWK91944 : platform/chromium/virtual/gpu/fast/canvas/canvas-transforms-fillRec
 BUGWK73865 : media/track/text-track-cue-is-reachable.html = TEXT
 BUGWK73865 : media/track/text-track-is-reachable.html = TEXT
 
-BUGWK83882 : media/track/track-mode.html = PASS TEXT TIMEOUT
-
 BUGWK72271 SNOWLEOPARD DEBUG : fast/dom/node-iterator-reference-node-moved-crash.html = PASS CRASH
 
 BUGWK72376 WIN : fast/forms/file/input-file-label.html = TEXT PASS
@@ -3290,7 +3288,6 @@ BUGWK88833 DEBUG : media/video-played-collapse.html = PASS TEXT
 
 BUGWK88833 WIN DEBUG : media/track/track-kind.html = PASS TIMEOUT
 BUGWK88833 : http/tests/media/video-play-progress.html = PASS TIMEOUT
-BUGWK88833 MAC DEBUG : media/track/track-cues-cuechange.html = PASS TIMEOUT
 
 BUGWK88832 XP : http/tests/xmlhttprequest/origin-exact-matching.html = PASS TIMEOUT
 

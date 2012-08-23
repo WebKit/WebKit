@@ -1,3 +1,12 @@
+2012-05-25  Anna Cavender <annacc@chromium.org>
+
+        [Chromium] Removing media/track/track-mode.html - resolved.
+        [Chromium] Removing media/track/track-cues-cuechange.html - appears to be no longer failing.
+ 
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations: 
+
 2012-08-23  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL] Update pixel test expectations for layout test fast/forms/
