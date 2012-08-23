@@ -117,6 +117,7 @@
     <file>ObjectPropertiesSection.js</file>
     <file>Panel.js</file>
     <file>PanelEnablerView.js</file>
+    <file>ParsedURL.js</file>
     <file>Placard.js</file>
     <file>Popover.js</file>
     <file>PresentationConsoleMessageHelper.js</file>

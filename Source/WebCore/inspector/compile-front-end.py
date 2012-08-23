@@ -45,6 +45,7 @@ modules = [
         "sources": [
             "Color.js",
             "Object.js",
+            "ParsedURL.js",
             "Settings.js",
             "UIString.js",
             "UserMetrics.js",

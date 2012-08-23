@@ -76190,6 +76190,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ParsedURL.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\panelEnablerView.css"
 					>
 				</File>

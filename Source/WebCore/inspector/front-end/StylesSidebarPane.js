@@ -1717,7 +1717,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 var container = document.createDocumentFragment();
                 container.appendChild(document.createTextNode("url("));
                 if (self._styleRule.sourceURL)
-                    hrefUrl = WebInspector.completeURL(self._styleRule.sourceURL, hrefUrl);
+                    hrefUrl = WebInspector.ParsedURL.completeURL(self._styleRule.sourceURL, hrefUrl);
                 else if (this._parentPane.node)
                     hrefUrl = WebInspector.resourceURLForRelatedNode(this._parentPane.node, hrefUrl);
                 var hasResource = !!WebInspector.resourceForURL(hrefUrl);

@@ -10,7 +10,7 @@ function test()
 {
     function completeURL(baseURL, href)
     {
-        InspectorTest.addResult(WebInspector.completeURL(baseURL, href));
+        InspectorTest.addResult(WebInspector.ParsedURL.completeURL(baseURL, href));
     }
 
     InspectorTest.addResult("URLs completed:");

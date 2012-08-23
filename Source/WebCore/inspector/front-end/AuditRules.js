@@ -718,7 +718,7 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
             if (!src.asParsedURL()) {
                 for (var frameOwnerCandidate = node; frameOwnerCandidate; frameOwnerCandidate = frameOwnerCandidate.parentNode) {
                     if (frameOwnerCandidate.documentURL) {
-                        var completeSrc = WebInspector.completeURL(frameOwnerCandidate.documentURL, src);
+                        var completeSrc = WebInspector.ParsedURL.completeURL(frameOwnerCandidate.documentURL, src);
                         break;
                     }
                 }
@@ -858,7 +858,7 @@ WebInspector.AuditRules.CssInHeadRule.prototype = {
                 var externalStylesheetHrefs = [];
                 for (var j = 0; j < externalStylesheetNodeIds.length; ++j) {
                     var linkNode = WebInspector.domAgent.nodeForId(externalStylesheetNodeIds[j]);
-                    var completeHref = WebInspector.completeURL(linkNode.ownerDocument.documentURL, linkNode.getAttribute("href"));
+                    var completeHref = WebInspector.ParsedURL.completeURL(linkNode.ownerDocument.documentURL, linkNode.getAttribute("href"));
                     externalStylesheetHrefs.push(completeHref || "<empty>");
                 }
                 urlToViolationsArray[root.documentURL] = [inlineStyleNodeIds.length, externalStylesheetHrefs];
@@ -939,7 +939,7 @@ WebInspector.AuditRules.StylesScriptsOrderRule.prototype = {
                 var lateStyleUrls = [];
                 for (var i = 0; i < lateStyleIds.length; ++i) {
                     var lateStyleNode = WebInspector.domAgent.nodeForId(lateStyleIds[i]);
-                    var completeHref = WebInspector.completeURL(lateStyleNode.ownerDocument.documentURL, lateStyleNode.getAttribute("href"));
+                    var completeHref = WebInspector.ParsedURL.completeURL(lateStyleNode.ownerDocument.documentURL, lateStyleNode.getAttribute("href"));
                     lateStyleUrls.push(completeHref || "<empty>");
                 }
                 result = [ lateStyleUrls, cssBeforeInlineCount ];

@@ -2110,7 +2110,7 @@ WebInspector.TextEditorMainPanel.prototype = {
     {
         if (!this._url || !hrefValue || hrefValue.indexOf("://") > 0)
             return hrefValue;
-        return WebInspector.completeURL(this._url, hrefValue);
+        return WebInspector.ParsedURL.completeURL(this._url, hrefValue);
     },
 
     _handleDOMUpdates: function(e)

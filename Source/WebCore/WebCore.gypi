@@ -6347,6 +6347,7 @@
             'inspector/front-end/ObjectPropertiesSection.js',
             'inspector/front-end/Panel.js',
             'inspector/front-end/PanelEnablerView.js',
+            'inspector/front-end/ParsedURL.js',
             'inspector/front-end/Placard.js',
             'inspector/front-end/Popover.js',
             'inspector/front-end/PresentationConsoleMessageHelper.js',
