@@ -2710,7 +2710,7 @@ BUGWK78620 LINUX ANDROID DEBUG SLOW : fast/forms/formaction-attribute.html = PAS
 BUGWK70988 SNOWLEOPARD DEBUG : fast/forms/submit-to-blank-multiple-times.html = PASS TEXT
 BUGWK70988 SNOWLEOPARD DEBUG : fast/overflow/003.xml = PASS TEXT
 
-BUGWK70988 SNOWLEOPARD : jquery/traversing.html = PASS TIMEOUT
+BUGWK70988 MAC : jquery/traversing.html = PASS TIMEOUT
 
 // BUGWK70988 MAC DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
 // Crashing since on or before r122699, please uncomment previous line before removing.
@@ -2794,7 +2794,7 @@ BUGV8_1900 LINUX DEBUG : inspector/debugger/debugger-breakpoints-not-activated-o
 BUGWK76050 WIN7 : fast/text/font-kerning.html = IMAGE
 
 // Started flaking presumably at http://trac.webkit.org/changeset/104368
-BUGWK76157 SNOWLEOPARD : compositing/geometry/limit-layer-bounds-transformed-overflow.html = PASS TEXT
+BUGWK76157 MAC : compositing/geometry/limit-layer-bounds-transformed-overflow.html = PASS TEXT
 
 BUGWK76488 : css3/images/cross-fade-background-size.html = IMAGE IMAGE+TEXT
 
@@ -2870,7 +2870,7 @@ BUGWK81145 LION : compositing/plugins/composited-plugin.html = IMAGE+TEXT
 BUGWK81145 LION : fast/repaint/transform-absolute-in-positioned-container.html = IMAGE+TEXT
 BUGWK81145 LION : animations/cross-fade-webkit-mask-box-image.html = IMAGE
 BUGWK81145 LION : compositing/iframes/iframe-content-flipping.html = IMAGE
-BUGWK81145 LION : fast/frames/invalid.html = IMAGE
+BUGWK81145 SLOW LION : fast/frames/invalid.html = PASS IMAGE IMAGE+TEXT
 BUGWK81145 LION : fast/repaint/background-scaling.html = IMAGE
 BUGWK81145 LION : fast/repaint/scale-page-shrink.html = IMAGE
 BUGWK81145 LION : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE

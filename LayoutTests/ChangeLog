@@ -1,3 +1,10 @@
+2012-08-23  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed Chromium gardening. Generalized a few Snow Leopard-only
+        expectations to Mac in order to get the new Lion bot green.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-23  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Focusable elements without a role should not be ignored
