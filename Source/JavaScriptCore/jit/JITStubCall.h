@@ -37,7 +37,9 @@ namespace JSC {
         JITStubCall(JIT* jit, JSObject* (JIT_STUB *stub)(STUB_ARGS_DECLARATION))
             : m_jit(jit)
             , m_stub(stub)
+#if USE(JSVALUE32_64) || !ASSERT_DISABLED
             , m_returnType(Cell)
+#endif
             , m_stackIndex(JITSTACKFRAME_ARGS_INDEX)
         {
         }
@@ -45,7 +47,9 @@ namespace JSC {
         JITStubCall(JIT* jit, JSPropertyNameIterator* (JIT_STUB *stub)(STUB_ARGS_DECLARATION))
             : m_jit(jit)
             , m_stub(stub)
+#if USE(JSVALUE32_64) || !ASSERT_DISABLED
             , m_returnType(Cell)
+#endif
             , m_stackIndex(JITSTACKFRAME_ARGS_INDEX)
         {
         }
@@ -53,7 +57,9 @@ namespace JSC {
         JITStubCall(JIT* jit, void* (JIT_STUB *stub)(STUB_ARGS_DECLARATION))
             : m_jit(jit)
             , m_stub(stub)
+#if USE(JSVALUE32_64) || !ASSERT_DISABLED      
             , m_returnType(VoidPtr)
+#endif
             , m_stackIndex(JITSTACKFRAME_ARGS_INDEX)
         {
         }
@@ -61,7 +67,9 @@ namespace JSC {
         JITStubCall(JIT* jit, int (JIT_STUB *stub)(STUB_ARGS_DECLARATION))
             : m_jit(jit)
             , m_stub(stub)
+#if USE(JSVALUE32_64) || !ASSERT_DISABLED
             , m_returnType(Int)
+#endif
             , m_stackIndex(JITSTACKFRAME_ARGS_INDEX)
         {
         }
@@ -69,7 +77,9 @@ namespace JSC {
         JITStubCall(JIT* jit, bool (JIT_STUB *stub)(STUB_ARGS_DECLARATION))
             : m_jit(jit)
             , m_stub(stub)
+#if USE(JSVALUE32_64) || !ASSERT_DISABLED
             , m_returnType(Int)
+#endif
             , m_stackIndex(JITSTACKFRAME_ARGS_INDEX)
         {
         }
@@ -77,7 +87,9 @@ namespace JSC {
         JITStubCall(JIT* jit, void (JIT_STUB *stub)(STUB_ARGS_DECLARATION))
             : m_jit(jit)
             , m_stub(stub)
+#if USE(JSVALUE32_64) || !ASSERT_DISABLED
             , m_returnType(Void)
+#endif
             , m_stackIndex(JITSTACKFRAME_ARGS_INDEX)
         {
         }
@@ -265,7 +277,9 @@ namespace JSC {
 
         JIT* m_jit;
         FunctionPtr m_stub;
+#if USE(JSVALUE32_64) || !ASSERT_DISABLED
         enum { Void, VoidPtr, Int, Value, Cell } m_returnType;
+#endif
         size_t m_stackIndex;
     };
 }

@@ -133,10 +133,13 @@ public:
 };
 
 MachineThreads::MachineThreads(Heap* heap)
-    : m_heap(heap)
-    , m_registeredThreads(0)
+    : m_registeredThreads(0)
     , m_threadSpecific(0)
+#if !ASSERT_DISABLED
+    , m_heap(heap)
+#endif
 {
+    UNUSED_PARAM(heap);
 }
 
 MachineThreads::~MachineThreads()

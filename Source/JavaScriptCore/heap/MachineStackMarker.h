@@ -52,10 +52,12 @@ namespace JSC {
 
         void gatherFromOtherThread(ConservativeRoots&, Thread*);
 
-        Heap* m_heap;
         Mutex m_registeredThreadsMutex;
         Thread* m_registeredThreads;
         WTF::ThreadSpecificKey m_threadSpecific;
+#if !ASSERT_DISABLED
+        Heap* m_heap;
+#endif
     };
 
 } // namespace JSC

@@ -1,3 +1,20 @@
+2012-08-23  Mark Rowe  <mrowe@apple.com>
+
+        Make JavaScriptCore build with the latest version of clang.
+
+        Reviewed by Dan Bernstein.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::MachineThreads): The m_heap member is only used within
+        assertions, so guard its initialization with !ASSERT_DISABLED.
+        * heap/MachineStackMarker.h:
+        (MachineThreads): Ditto for its declaration.
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::JITStubCall): The m_returnType member is only used within
+        assertions or if we're using JSVALUE32_64, so guard its uses with the appropriate
+        #if.
+        (JITStubCall): Ditto.
+
 2012-08-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         Serialization of JavaScript values does not appear to respect new HTML5 Structured Clone semantics
