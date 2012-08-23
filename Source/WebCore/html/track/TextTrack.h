@@ -110,6 +110,8 @@ public:
     int trackIndex();
     void invalidateTrackIndex();
 
+    bool isRendered();
+
 protected:
     TextTrack(ScriptExecutionContext*, TextTrackClient*, const String& kind, const String& label, const String& language, TextTrackType);
 

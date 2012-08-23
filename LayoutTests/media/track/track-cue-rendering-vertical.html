@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../media-controls.js></script>
+
+        <script>
+        var requirePixelDump = true;
+
+        function loaded()
+        {
+            consoleWrite("Rendering vertical line-positioned cues with Japanese text.");
+            findMediaElement();
+
+            testTrack = document.querySelector('track');
+            video.src = findMediaFile('video', '../content/test');
+
+            waitForEvent('seeked', endTest);
+            waitForEvent('canplaythrough', function() {
+                video.currentTime = .75;
+            });
+        }
+
+        </script>
+
+        <script src=../video-test.js></script>
+    </head>
+    <body onload="loaded()">
+        <video controls>
+            <track src="captions-webvtt/captions-snap-to-lines-set.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>

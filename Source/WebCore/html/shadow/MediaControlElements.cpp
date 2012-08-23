@@ -32,21 +32,27 @@
 
 #include "MediaControlElements.h"
 
+#include "CSSStyleDeclaration.h"
 #include "CSSValueKeywords.h"
 #include "DOMTokenList.h"
 #include "EventNames.h"
 #include "FloatConversion.h"
+#include "FloatPoint.h"
 #include "Frame.h"
+#include "HTMLDivElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
+#include "LayoutRepainter.h"
 #include "LocalizedStrings.h"
 #include "MediaControls.h"
 #include "MouseEvent.h"
 #include "Page.h"
 #include "RenderDeprecatedFlexibleBox.h"
+#include "RenderInline.h"
 #include "RenderMedia.h"
 #include "RenderSlider.h"
+#include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
@@ -1258,7 +1264,7 @@ const AtomicString& MediaControlCurrentTimeDisplayElement::shadowPseudoId() cons
 class RenderTextTrackContainerElement : public RenderBlock {
 public:
     RenderTextTrackContainerElement(Node*);
-    
+
 private:
     virtual void layout();
 };
@@ -1352,29 +1358,18 @@ void MediaControlTextTrackContainerElement::updateDisplay()
     // 10. For each text track cue cue in cues that has not yet had
     // corresponding CSS boxes added to output, in text track cue order, run the
     // following substeps:
-
-    // Simple renderer for now.
     for (size_t i = 0; i < activeCues.size(); ++i) {
         TextTrackCue* cue = activeCues[i].data();
 
         ASSERT(cue->isActive());
-        if (cue->track()->kind() != TextTrack::captionsKeyword() && cue->track()->kind() != TextTrack::subtitlesKeyword())
+        if (!cue->track() || !cue->track()->isRendered())
             continue;
 
-        if (!cue->track() || cue->track()->mode() != TextTrack::SHOWING)
-            continue;
+        RefPtr<TextTrackCueBox> displayBox = cue->getDisplayTree();
 
-        RefPtr<HTMLDivElement> displayTree = cue->getDisplayTree();
-
-        // Append only new display trees.
-        if (displayTree->hasChildNodes() && !contains(displayTree.get()))
-            appendChild(displayTree, ASSERT_NO_EXCEPTION, true);
-
-        // Note: the display tree of a cue is removed when the active flag of the cue is unset.
-
-        // FIXME(BUG 79751): Render the TextTrackCue when snap-to-lines is set.
-
-        // FIXME(BUG 84296): Implement overlapping detection for cue boxes when snap-to-lines is not set.
+        if (displayBox->hasChildNodes() && !contains(static_cast<Node*>(displayBox.get())))
+            // Note: the display tree of a cue is removed when the active flag of the cue is unset.
+            appendChild(displayBox, ASSERT_NO_EXCEPTION, false);
     }
 
     // 11. Return output.
