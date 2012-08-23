@@ -62,6 +62,7 @@ document.getElementById('sandbox').appendChild(
 document.body.offsetLeft;
 
 shouldBeEqualToString('getUserModifyProperty("child-a")', 'read-write');
+/* FIXME(90017): css property: -user-modify should be inherited from parent.*/
 shouldBeEqualToString('getUserModifyProperty("child-b")', 'read-write');
 
 </script>

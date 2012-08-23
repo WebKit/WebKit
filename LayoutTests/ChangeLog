@@ -1,3 +1,18 @@
+2012-08-23  Takashi Sakamoto  <tasak@google.com>
+
+        Distributed nodes should not share styles.
+        https://bugs.webkit.org/show_bug.cgi?id=90661
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/shadow/style-of-distributed-node-expected.txt: Added.
+        * fast/dom/shadow/style-of-distributed-node.html: Added.
+        * fast/dom/shadow/user-modify-inheritance-expected.txt:
+        As this patch also change the user-modify-inheritance's test result,
+        updated the expected result.
+        * fast/dom/shadow/user-modify-inheritance.html:
+        Added FIXME comment.
+
 2012-08-23  John Mellor  <johnme@chromium.org>
 
         Text Autosizing: Multiply large fonts less, as they are already more legible.

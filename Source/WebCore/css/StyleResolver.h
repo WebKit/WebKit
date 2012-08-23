@@ -496,6 +496,7 @@ private:
     bool m_fontDirty;
     bool m_matchAuthorAndUserStyles;
     bool m_sameOriginOnly;
+    bool m_distributedToInsertionPoint;
 
     RefPtr<CSSFontSelector> m_fontSelector;
     Vector<OwnPtr<MediaQueryResult> > m_viewportDependentMediaQueryResults;

@@ -377,6 +377,7 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
     , m_fontDirty(false)
     , m_matchAuthorAndUserStyles(matchAuthorAndUserStyles)
     , m_sameOriginOnly(false)
+    , m_distributedToInsertionPoint(false)
     , m_fontSelector(CSSFontSelector::create(document))
     , m_applyPropertyToRegularStyle(true)
     , m_applyPropertyToVisitedLinkStyle(false)
@@ -1220,9 +1221,11 @@ inline void StyleResolver::initForStyleResolve(Element* e, RenderStyle* parentSt
         m_parentStyle = context.resetStyleInheritance()? 0 :
             parentStyle ? parentStyle :
             m_parentNode ? m_parentNode->renderStyle() : 0;
+        m_distributedToInsertionPoint = context.insertionPoint();
     } else {
         m_parentNode = 0;
         m_parentStyle = parentStyle;
+        m_distributedToInsertionPoint = false;
     }
 
     Node* docElement = e ? e->document()->documentElement() : 0;
@@ -1752,7 +1755,7 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
     initElement(element);
     initForStyleResolve(element, defaultParent);
     m_regionForStyling = regionForStyling;
-    if (sharingBehavior == AllowStyleSharing) {
+    if (sharingBehavior == AllowStyleSharing && !m_distributedToInsertionPoint) {
         RenderStyle* sharedStyle = locateSharedStyle();
         if (sharedStyle)
             return sharedStyle;
