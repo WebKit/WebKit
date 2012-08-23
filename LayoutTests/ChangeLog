@@ -1,3 +1,23 @@
+2012-08-23  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding platform-specific baselines required after r126343 and r126372.
+
+        * platform/gtk/fast/overflow/paged-x-div-expected.png: Added.
+        * platform/gtk/fast/overflow/paged-x-div-expected.txt: Added.
+        * platform/gtk/fast/overflow/paged-x-on-root-expected.png: Added.
+        * platform/gtk/fast/overflow/paged-x-on-root-expected.txt: Added.
+        * platform/gtk/fast/overflow/paged-y-div-expected.png: Added.
+        * platform/gtk/fast/overflow/paged-y-div-expected.txt: Added.
+        * platform/gtk/fast/overflow/paged-y-on-root-expected.png: Added.
+        * platform/gtk/fast/overflow/paged-y-on-root-expected.txt: Added.
+        * platform/gtk/media/track: Added.
+        * platform/gtk/media/track/track-cue-rendering-horizontal-expected.png: Added.
+        * platform/gtk/media/track/track-cue-rendering-horizontal-expected.txt: Added.
+        * platform/gtk/media/track/track-cue-rendering-vertical-expected.png: Added.
+        * platform/gtk/media/track/track-cue-rendering-vertical-expected.txt: Added.
+
 2012-08-23  Dominic Cooney  <dominicc@chromium.org>
 
         Unreviewed, rolling out r126391.
