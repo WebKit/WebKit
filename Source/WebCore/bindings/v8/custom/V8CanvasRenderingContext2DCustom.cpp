@@ -45,7 +45,6 @@
 #include "V8HTMLImageElement.h"
 #include "V8HTMLVideoElement.h"
 #include "V8ImageData.h"
-#include "V8Proxy.h"
 
 namespace WebCore {
 

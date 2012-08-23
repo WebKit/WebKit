@@ -39,7 +39,6 @@
 #include "NPV8Object.h"
 #include "V8Binding.h"
 #include "V8NPObject.h"
-#include "V8Proxy.h"
 
 namespace WebCore {
 

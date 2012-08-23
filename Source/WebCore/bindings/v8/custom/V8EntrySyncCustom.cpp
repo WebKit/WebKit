@@ -39,7 +39,6 @@
 #include "V8DirectoryEntrySync.h"
 #include "V8EntrySync.h"
 #include "V8FileEntrySync.h"
-#include "V8Proxy.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

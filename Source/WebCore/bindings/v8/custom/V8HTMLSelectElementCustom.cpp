@@ -42,7 +42,6 @@
 #include "V8NamedNodesCollection.h"
 #include "V8Node.h"
 #include "V8NodeList.h"
-#include "V8Proxy.h"
 
 namespace WebCore {
 

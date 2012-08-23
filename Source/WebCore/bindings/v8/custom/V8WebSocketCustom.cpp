@@ -41,7 +41,6 @@
 #include "V8ArrayBufferView.h"
 #include "V8Binding.h"
 #include "V8Blob.h"
-#include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WebSocket.h"
 #include "WebSocketChannel.h"

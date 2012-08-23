@@ -61,7 +61,6 @@
 #include "V8Location.h"
 #include "V8ObjectConstructor.h"
 #include "V8PerContextData.h"
-#include "V8Proxy.h"
 #include "WorkerContextExecutionProxy.h"
 
 #include <algorithm>

@@ -31,9 +31,6 @@
 #include "config.h"
 #include "ScriptInstance.h"
 
-#ifndef NDEBUG
-#include "V8Proxy.h"
-#endif
 #include <wtf/Assertions.h>
 
 namespace WebCore {

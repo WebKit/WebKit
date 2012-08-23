@@ -37,7 +37,6 @@
 #include "V8ArrayBuffer.h"
 #include "V8ArrayBufferCustom.h"
 #include "V8Binding.h"
-#include "V8Proxy.h"
 
 namespace WebCore {
 

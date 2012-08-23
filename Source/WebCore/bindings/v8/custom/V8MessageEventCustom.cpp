@@ -39,7 +39,6 @@
 #include "V8Blob.h"
 #include "V8DOMWindow.h"
 #include "V8MessagePort.h"
-#include "V8Proxy.h"
 
 namespace WebCore {
 

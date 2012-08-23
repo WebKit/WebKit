@@ -38,7 +38,6 @@
 #include "V8NamedNodesCollection.h"
 #include "V8Node.h"
 #include "V8NodeList.h"
-#include "V8Proxy.h"
 #include "V8RadioNodeList.h"
 
 namespace WebCore {

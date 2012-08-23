@@ -36,7 +36,6 @@
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
 #include "V8MessagePort.h"
-#include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WorkerContextExecutionProxy.h"
 

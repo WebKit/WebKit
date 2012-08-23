@@ -33,7 +33,6 @@
 #include "ExceptionCode.h"
 #include "V8AudioBuffer.h"
 #include "V8Binding.h"
-#include "V8Proxy.h"
 
 namespace WebCore {
 

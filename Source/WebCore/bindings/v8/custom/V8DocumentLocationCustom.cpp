@@ -30,7 +30,6 @@
 #include "Location.h"
 #include "V8Binding.h"
 #include "V8Location.h"
-#include "V8Proxy.h"
 
 namespace WebCore {
 

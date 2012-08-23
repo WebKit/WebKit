@@ -51,7 +51,6 @@
 #include "V8Node.h"
 #include "V8Notation.h"
 #include "V8ProcessingInstruction.h"
-#include "V8Proxy.h"
 #include "V8Text.h"
 #include <wtf/RefPtr.h>
 

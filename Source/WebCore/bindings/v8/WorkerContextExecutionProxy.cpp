@@ -45,6 +45,7 @@
 #include "V8DOMMap.h"
 #include "V8DOMWindowShell.h"
 #include "V8DedicatedWorkerContext.h"
+#include "V8GCController.h"
 #include "V8ObjectConstructor.h"
 #include "V8PerContextData.h"
 #include "V8RecursionScope.h"

@@ -37,7 +37,6 @@
 #include "V8DOMWrapper.h"
 #include "V8Intent.h"
 #include "V8MessagePort.h"
-#include "V8Proxy.h"
 #include <wtf/ArrayBuffer.h>
 
 namespace WebCore {

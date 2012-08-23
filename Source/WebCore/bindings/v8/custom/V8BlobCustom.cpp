@@ -37,7 +37,6 @@
 #include "V8Binding.h"
 #include "V8Blob.h"
 #include "V8File.h"
-#include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WebKitBlobBuilder.h"
 #include <wtf/RefPtr.h>

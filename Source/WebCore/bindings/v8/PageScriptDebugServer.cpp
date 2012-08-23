@@ -39,7 +39,6 @@
 #include "ScriptDebugListener.h"
 #include "V8Binding.h"
 #include "V8DOMWindow.h"
-#include "V8Proxy.h"
 #include "V8RecursionScope.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>

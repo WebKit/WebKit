@@ -30,7 +30,6 @@
 #include "V8HTMLMediaElement.h"
 
 #include "V8MediaController.h"
-#include "V8Proxy.h"
 
 namespace WebCore {
 

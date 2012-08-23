@@ -39,7 +39,6 @@
 #include "V8Binding.h"
 #include "V8GCController.h"
 #include "V8NPUtils.h"
-#include "V8Proxy.h"
 #include "WrapperTypeInfo.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"

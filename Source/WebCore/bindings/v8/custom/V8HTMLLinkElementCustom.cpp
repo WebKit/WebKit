@@ -34,7 +34,6 @@
 #include "HTMLLinkElement.h"
 #include "V8Binding.h"
 #include "V8DOMSettableTokenList.h"
-#include "V8Proxy.h"
 
 namespace WebCore {
 

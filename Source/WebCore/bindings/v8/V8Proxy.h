@@ -46,12 +46,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
 
-#if defined(ENABLE_DOM_STATS_COUNTERS) && PLATFORM(CHROMIUM)
-#define INC_STATS(name) StatsCounter::incrementStatsCounter(name)
-#else
-#define INC_STATS(name)
-#endif
-
 namespace WebCore {
 
     class CachedScript;
@@ -66,8 +60,6 @@ namespace WebCore {
     class V8IsolatedContext;
     class V8PerContextData;
     class WorldContextHandle;
-
-    const int kMaxRecursionDepth = 22;
 
     // Note: although the pointer is raw, the instance is kept alive by a strong
     // reference to the v8 context it contains, which is not made weak until we

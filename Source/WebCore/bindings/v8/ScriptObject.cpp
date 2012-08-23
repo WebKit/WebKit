@@ -39,7 +39,6 @@
 #include "V8Binding.h"
 #include "V8InjectedScriptHost.h"
 #include "V8InspectorFrontendHost.h"
-#include "V8Proxy.h"
 
 #include <v8.h>
 

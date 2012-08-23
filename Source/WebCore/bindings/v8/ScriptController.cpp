@@ -63,7 +63,6 @@
 #include "V8HTMLEmbedElement.h"
 #include "V8IsolatedContext.h"
 #include "V8NPObject.h"
-#include "V8Proxy.h"
 #include "V8RecursionScope.h"
 #include "Widget.h"
 #include <wtf/StdLibExtras.h>

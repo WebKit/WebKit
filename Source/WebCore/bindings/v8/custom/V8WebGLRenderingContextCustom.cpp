@@ -50,7 +50,6 @@
 #include "V8OESStandardDerivatives.h"
 #include "V8OESTextureFloat.h"
 #include "V8OESVertexArrayObject.h"
-#include "V8Proxy.h"
 #include "V8Uint16Array.h"
 #include "V8Uint32Array.h"
 #include "V8Uint8Array.h"

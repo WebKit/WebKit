@@ -36,7 +36,6 @@
 
 #include "TrackBase.h"
 #include "TrackEvent.h"
-#include "V8Proxy.h"
 #include "V8TextTrack.h"
 
 namespace WebCore {

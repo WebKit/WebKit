@@ -42,7 +42,6 @@
 
 #include "ScriptController.h"
 #include "V8Binding.h"
-#include "V8Proxy.h"
 #include "V8RecursionScope.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"

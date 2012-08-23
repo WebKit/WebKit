@@ -41,7 +41,6 @@
 #include "V8Event.h"
 #include "V8EventListenerList.h"
 #include "V8HiddenPropertyName.h"
-#include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"

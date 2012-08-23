@@ -52,7 +52,6 @@
 #include "V8NodeList.h"
 #include "V8ObjectConstructor.h"
 #include "V8PerContextData.h"
-#include "V8Proxy.h"
 #include "V8StyleSheet.h"
 #include "V8WorkerContextEventListener.h"
 #include "WebGLContextAttributes.h"

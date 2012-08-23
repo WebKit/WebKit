@@ -42,6 +42,7 @@
 #include "PlatformSupport.h"
 #include "RetainedDOMInfo.h"
 #include "RetainedObjectInfo.h"
+#include "V8AbstractEventListener.h"
 #include "V8Binding.h"
 #include "V8CSSRule.h"
 #include "V8CSSRuleList.h"

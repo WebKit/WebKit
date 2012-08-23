@@ -42,7 +42,6 @@
 #include "V8DOMFormData.h"
 #include "V8Document.h"
 #include "V8HTMLDocument.h"
-#include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"

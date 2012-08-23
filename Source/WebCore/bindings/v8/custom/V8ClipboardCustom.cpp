@@ -40,7 +40,6 @@
 
 #include "V8Binding.h"
 #include "V8Node.h"
-#include "V8Proxy.h"
 
 namespace WebCore {
 

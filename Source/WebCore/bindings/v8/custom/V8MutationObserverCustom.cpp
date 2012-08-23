@@ -39,7 +39,6 @@
 #include "V8Binding.h"
 #include "V8DOMWrapper.h"
 #include "V8MutationCallback.h"
-#include "V8Proxy.h"
 #include "V8Utilities.h"
 
 namespace WebCore {

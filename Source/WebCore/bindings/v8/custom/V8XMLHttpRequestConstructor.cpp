@@ -36,7 +36,6 @@
 #include "SecurityOrigin.h"
 #include "V8Binding.h"
 #include "V8IsolatedContext.h"
-#include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"

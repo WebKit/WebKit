@@ -28,6 +28,7 @@
 
 #include "ScriptExecutionContext.h"
 #include "V8Binding.h"
+#include "V8GCController.h"
 #include "V8RecursionScope.h"
 
 namespace WebCore {

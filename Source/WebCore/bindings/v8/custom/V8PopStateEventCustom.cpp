@@ -36,7 +36,6 @@
 #include "SerializedScriptValue.h"
 #include "V8HiddenPropertyName.h"
 #include "V8History.h"
-#include "V8Proxy.h"
 
 namespace WebCore {
 

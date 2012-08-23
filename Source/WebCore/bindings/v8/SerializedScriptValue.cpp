@@ -54,7 +54,6 @@
 #include "V8Int32Array.h"
 #include "V8Int8Array.h"
 #include "V8MessagePort.h"
-#include "V8Proxy.h"
 #include "V8Uint16Array.h"
 #include "V8Uint32Array.h"
 #include "V8Uint8Array.h"

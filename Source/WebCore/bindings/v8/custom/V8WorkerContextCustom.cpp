@@ -37,7 +37,6 @@
 #include "ExceptionCode.h"
 #include "ScheduledAction.h"
 #include "V8Binding.h"
-#include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "V8WorkerContextEventListener.h"
 #include "WebSocket.h"

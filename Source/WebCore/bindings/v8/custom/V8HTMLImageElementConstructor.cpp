@@ -39,7 +39,6 @@
 #include "V8Binding.h"
 #include "V8Document.h"
 #include "V8HTMLImageElement.h"
-#include "V8Proxy.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

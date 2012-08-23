@@ -42,7 +42,6 @@
 #include "V8Document.h"
 #include "V8DocumentFragment.h"
 #include "V8Node.h"
-#include "V8Proxy.h"
 #include "XSLTProcessor.h"
 
 #include <wtf/RefPtr.h>

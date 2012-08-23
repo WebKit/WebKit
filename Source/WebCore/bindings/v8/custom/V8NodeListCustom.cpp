@@ -35,7 +35,6 @@
 #include "NodeList.h"
 #include "V8Binding.h"
 #include "V8Node.h"
-#include "V8Proxy.h"
 
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>

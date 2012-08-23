@@ -39,7 +39,6 @@
 #include "EventTarget.h"
 
 #include "V8Binding.h"
-#include "V8Proxy.h"
 
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenate.h>

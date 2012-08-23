@@ -34,7 +34,6 @@
 #include "HTMLStyleElement.h"
 #include "StyleSheetList.h"
 #include "V8Binding.h"
-#include "V8Proxy.h"
 #include "V8StyleSheet.h"
 
 namespace WebCore {

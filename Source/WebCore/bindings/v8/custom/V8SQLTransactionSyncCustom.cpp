@@ -39,7 +39,6 @@
 #include "SQLResultSet.h"
 #include "SQLValue.h"
 #include "V8Binding.h"
-#include "V8Proxy.h"
 #include "V8SQLResultSet.h"
 #include <wtf/Vector.h>
 

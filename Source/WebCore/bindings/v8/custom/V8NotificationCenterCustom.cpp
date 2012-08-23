@@ -40,7 +40,6 @@
 #include "V8Binding.h"
 #include "V8EventListener.h"
 #include "V8Notification.h"
-#include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "V8VoidCallback.h"
 #include "WorkerContext.h"

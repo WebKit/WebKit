@@ -40,7 +40,6 @@
 #include "V8Binding.h"
 #include "V8CanvasRenderingContext2D.h"
 #include "V8Node.h"
-#include "V8Proxy.h"
 #if ENABLE(WEBGL)
 #include "InspectorWebGLInstrumentation.h"
 #include "V8WebGLRenderingContext.h"

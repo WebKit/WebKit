@@ -40,7 +40,6 @@
 #include "V8HiddenPropertyName.h"
 #include "V8ObjectConstructor.h"
 #include "V8PerIsolateData.h"
-#include "V8Proxy.h"
 #include "V8StringResource.h"
 #include "V8ThrowException.h"
 #include "V8ValueCache.h"
@@ -51,6 +50,10 @@
 namespace WebCore {
 
     class DOMStringList;
+    class ScriptExecutionContext;
+    class WorldContextHandle;
+
+    const int kMaxRecursionDepth = 22;
 
     // Schedule a DOM exception to be thrown, if the exception code is different
     // from zero.

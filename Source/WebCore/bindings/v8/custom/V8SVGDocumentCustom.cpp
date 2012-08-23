@@ -35,7 +35,6 @@
 
 #include "Frame.h"
 #include "V8IsolatedContext.h"
-#include "V8Proxy.h"
 
 namespace WebCore {
 

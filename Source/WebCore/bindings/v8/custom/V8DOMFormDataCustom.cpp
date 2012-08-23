@@ -35,7 +35,6 @@
 #include "V8Binding.h"
 #include "V8Blob.h"
 #include "V8HTMLFormElement.h"
-#include "V8Proxy.h"
 #include "V8Utilities.h"
 
 namespace WebCore {

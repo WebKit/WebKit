@@ -34,7 +34,6 @@
 
 #include "ScriptProfileNode.h"
 #include "V8Binding.h"
-#include "V8Proxy.h"
 
 #include <v8-profiler.h>
 

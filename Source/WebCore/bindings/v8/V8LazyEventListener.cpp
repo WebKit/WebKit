@@ -43,7 +43,6 @@
 #include "V8HTMLFormElement.h"
 #include "V8HiddenPropertyName.h"
 #include "V8Node.h"
-#include "V8Proxy.h"
 #include "V8RecursionScope.h"
 #include "WorldContextHandle.h"
 

@@ -37,7 +37,6 @@
 #include "V8HTMLEmbedElement.h"
 #include "V8HTMLObjectElement.h"
 #include "V8NPObject.h"
-#include "V8Proxy.h"
 
 namespace WebCore {
 

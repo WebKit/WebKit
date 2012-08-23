@@ -36,7 +36,6 @@
 
 #include "ScriptExecutionContext.h"
 #include "V8Callback.h"
-#include "V8Proxy.h"
 #include "V8SQLError.h"
 #include "V8SQLTransaction.h"
 #include <wtf/Assertions.h>
