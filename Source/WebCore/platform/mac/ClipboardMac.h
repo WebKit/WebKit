@@ -62,7 +62,7 @@ public:
     virtual bool hasData();
     
     // extensions beyond IE's API
-    virtual Vector<String> types() const;
+    virtual HashSet<String> types() const;
     virtual PassRefPtr<FileList> files() const;
 
     void setDragImage(CachedImage*, const IntPoint&);

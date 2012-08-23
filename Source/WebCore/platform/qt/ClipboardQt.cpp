@@ -183,16 +183,16 @@ bool ClipboardQt::setData(const String& type, const String& data)
 }
 
 // extensions beyond IE's API
-Vector<String> ClipboardQt::types() const
+HashSet<String> ClipboardQt::types() const
 {
     if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
-        return Vector<String>();
+        return HashSet<String>();
 
     ASSERT(m_readableData);
-    Vector<String> result;
+    HashSet<String> result;
     QStringList formats = m_readableData->formats();
     for (int i = 0; i < formats.count(); ++i)
-        result.append(formats.at(i));
+        result.add(formats.at(i));
     return result;
 }
 

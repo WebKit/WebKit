@@ -126,20 +126,20 @@ void ChromiumDataObject::clearAllExceptFiles()
     }
 }
 
-Vector<String> ChromiumDataObject::types() const
+HashSet<String> ChromiumDataObject::types() const
 {
-    Vector<String> results;
+    HashSet<String> results;
     bool containsFiles = false;
     for (size_t i = 0; i < m_itemList.size(); ++i) {
         if (m_itemList[i]->kind() == DataTransferItem::kindString)
-            results.append(m_itemList[i]->type());
+            results.add(m_itemList[i]->type());
         else if (m_itemList[i]->kind() == DataTransferItem::kindFile)
             containsFiles = true;
         else
             ASSERT_NOT_REACHED();
     }
     if (containsFiles)
-        results.append(mimeTypeFiles);
+        results.add(mimeTypeFiles);
     return results;
 }
 

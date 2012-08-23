@@ -184,31 +184,31 @@ bool ClipboardGtk::setData(const String& typeString, const String& data)
     return success;
 }
 
-Vector<String> ClipboardGtk::types() const
+HashSet<String> ClipboardGtk::types() const
 {
     if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
-        return Vector<String>();
+        return HashSet<String>();
 
     if (m_clipboard)
         PasteboardHelper::defaultPasteboardHelper()->getClipboardContents(m_clipboard);
 
-    Vector<String> types;
+    HashSet<String> types;
     if (m_dataObject->hasText()) {
-        types.append("text/plain");
-        types.append("Text");
-        types.append("text");
+        types.add("text/plain");
+        types.add("Text");
+        types.add("text");
     }
 
     if (m_dataObject->hasMarkup())
-        types.append("text/html");
+        types.add("text/html");
 
     if (m_dataObject->hasURIList()) {
-        types.append("text/uri-list");
-        types.append("URL");
+        types.add("text/uri-list");
+        types.add("URL");
     }
 
     if (m_dataObject->hasFilenames())
-        types.append("Files");
+        types.add("Files");
 
     return types;
 }
