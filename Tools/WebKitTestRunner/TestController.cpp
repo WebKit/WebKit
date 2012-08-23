@@ -625,8 +625,10 @@ void TestController::runTestingServerLoop()
 
 void TestController::run()
 {
-    bool resetDone = resetStateToConsistentValues();
-    ASSERT_UNUSED(resetDone, resetDone);
+    if (!resetStateToConsistentValues()) {
+        TestInvocation::dumpWebProcessUnresponsiveness("Failed to reset to consistent state before the first test");
+        return;
+    }
 
     if (m_usingServerMode)
         runTestingServerLoop();

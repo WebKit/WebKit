@@ -1,3 +1,24 @@
+2012-08-23  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [nrwt, WTR] Remove workaround for timeout handing from r126062
+        https://bugs.webkit.org/show_bug.cgi?id=94609
+
+        Reviewed by Dirk Pranke.
+
+        Don't try to reset state if a timeout occured but inform
+        the harness that the web process is no longer reliable.
+
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.run_test): Remove the workaround. Furthermore, handle the case when
+        the pid is unknown.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::run):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::dumpWebProcessUnresponsiveness):
+        * WebKitTestRunner/TestInvocation.h:
+        (TestInvocation):
+
 2012-08-23  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         Unreviewed. Adding myself to committers list.

@@ -160,14 +160,6 @@ class Driver(object):
 
         crashed = self.has_crashed()
         timed_out = self._server_process.timed_out
-        if text and ('Timed out waiting for final message from web process' in text):
-            # FIXME: This is a hack to work around the issues in https://bugs.webkit.org/show_bug.cgi?id=94505.
-            # We need to either fix the underlying problem in WTR or return a more canonical error.
-            if not timed_out:
-                _log.warning("webprocess timed out but WTR didn't, killing WTR")
-                timed_out = True
-            else:
-                _log.warning("webprocess timed out and so did WTR")
 
         if stop_when_done or crashed or timed_out:
             # We call stop() even if we crashed or timed out in order to get any remaining stdout/stderr output.
@@ -183,7 +175,8 @@ class Driver(object):
 
             # If we don't find a crash log use a placeholder error message instead.
             if not crash_log:
-                crash_log = 'no crash log found for %s:%d.' % (self._crashed_process_name, self._crashed_pid)
+                pid_str = str(self._crashed_pid) if self._crashed_pid else "unknown pid"
+                crash_log = 'no crash log found for %s:%s.' % (self._crashed_process_name, pid_str)
                 # If we were unresponsive append a message informing there may not have been a crash.
                 if self._subprocess_was_unresponsive:
                     crash_log += '  Process failed to become responsive before timing out.'

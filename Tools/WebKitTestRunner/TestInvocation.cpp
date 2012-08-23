@@ -198,32 +198,30 @@ end:
         WKInspectorClose(WKPageGetInspector(TestController::shared().mainWebView()->page()));
 #endif // ENABLE(INSPECTOR)
 
-    bool resetDone = TestController::shared().resetStateToConsistentValues();
-    // We expect resetting to not fail if there was no error or timeout.
-    ASSERT(resetDone || errorMessage);
+    if (errorMessage || !TestController::shared().resetStateToConsistentValues())
+        dumpWebProcessUnresponsiveness(errorMessage);
+}
 
+void TestInvocation::dumpWebProcessUnresponsiveness(const char* textToStdout)
+{
     const char* errorMessageToStderr = 0;
 #if PLATFORM(MAC)
     char buffer[64];
-    if (!resetDone) {
-        pid_t pid = WKPageGetProcessIdentifier(TestController::shared().mainWebView()->page());
-        sprintf(buffer, "#PROCESS UNRESPONSIVE - WebProcess (pid %ld)\n", static_cast<long>(pid));
-        errorMessageToStderr = buffer;
-    }
+    pid_t pid = WKPageGetProcessIdentifier(TestController::shared().mainWebView()->page());
+    sprintf(buffer, "#PROCESS UNRESPONSIVE - WebProcess (pid %ld)\n", static_cast<long>(pid));
+    errorMessageToStderr = buffer;
 #else
-    if (!resetDone)
-        errorMessageToStderr = "#PROCESS UNRESPONSIVE - WebProcess";
+    errorMessageToStderr = "#PROCESS UNRESPONSIVE - WebProcess";
 #endif
 
-    if (errorMessage)
-        dump(errorMessage, errorMessageToStderr, true);
+    dump(textToStdout, errorMessageToStderr, true);
 }
 
 void TestInvocation::dump(const char* textToStdout, const char* textToStderr, bool seenError)
 {
     printf("Content-Type: text/plain\n");
-    printf("%s", textToStdout);
-
+    if (textToStdout)
+        fputs(textToStdout, stdout);
     if (textToStderr)
         fputs(textToStderr, stderr);
 

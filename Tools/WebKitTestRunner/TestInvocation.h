@@ -44,6 +44,7 @@ public:
     void didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
     WKRetainPtr<WKTypeRef> didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
 
+    static void dumpWebProcessUnresponsiveness(const char* textToStdout);
 private:
     static void dump(const char* textToStdout, const char* textToStderr = 0, bool seenError = false);
     void dumpPixelsAndCompareWithExpected(WKImageRef, WKArrayRef repaintRects);
