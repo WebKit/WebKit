@@ -179,30 +179,21 @@ static inline IntRect computeClippedRectInTarget(const CCLayerImpl* owningLayer)
     return clippedRectInTarget;
 }
 
-PassOwnPtr<CCSharedQuadState> CCRenderSurface::createSharedQuadState(int id) const
-{
-    IntRect clippedRectInTarget = computeClippedRectInTarget(m_owningLayer);
-    bool isOpaque = false;
-    return CCSharedQuadState::create(id, m_drawTransform, m_contentRect, clippedRectInTarget, m_drawOpacity, isOpaque);
-}
-
-PassOwnPtr<CCSharedQuadState> CCRenderSurface::createReplicaSharedQuadState(int id) const
-{
-    IntRect clippedRectInTarget = computeClippedRectInTarget(m_owningLayer);
-    bool isOpaque = false;
-    return CCSharedQuadState::create(id, m_replicaDrawTransform, m_contentRect, clippedRectInTarget, m_drawOpacity, isOpaque);
-}
-
-void CCRenderSurface::appendQuads(CCQuadSink& quadList, CCSharedQuadState* sharedQuadState, bool forReplica, int renderPassId)
+void CCRenderSurface::appendQuads(CCQuadSink& quadSink, bool forReplica, int renderPassId)
 {
     ASSERT(!forReplica || m_owningLayer->hasReplica());
+
+    IntRect clippedRectInTarget = computeClippedRectInTarget(m_owningLayer);
+    bool isOpaque = false;
+    const WebTransformationMatrix& drawTransform = forReplica ? m_replicaDrawTransform : m_drawTransform;
+    CCSharedQuadState* sharedQuadState = quadSink.useSharedQuadState(CCSharedQuadState::create(drawTransform, m_contentRect, clippedRectInTarget, m_drawOpacity, isOpaque));
 
     if (m_owningLayer->hasDebugBorders()) {
         int red = forReplica ? debugReplicaBorderColorRed : debugSurfaceBorderColorRed;
         int green = forReplica ?  debugReplicaBorderColorGreen : debugSurfaceBorderColorGreen;
         int blue = forReplica ? debugReplicaBorderColorBlue : debugSurfaceBorderColorBlue;
         SkColor color = SkColorSetARGB(debugSurfaceBorderAlpha, red, green, blue);
-        quadList.append(CCDebugBorderDrawQuad::create(sharedQuadState, contentRect(), color, debugSurfaceBorderWidth));
+        quadSink.append(CCDebugBorderDrawQuad::create(sharedQuadState, contentRect(), color, debugSurfaceBorderWidth));
     }
 
     // FIXME: By using the same RenderSurface for both the content and its reflection,
@@ -235,7 +226,7 @@ void CCRenderSurface::appendQuads(CCQuadSink& quadList, CCSharedQuadState* share
     CCResourceProvider::ResourceId maskResourceId = maskLayer ? maskLayer->contentsResourceId() : 0;
     IntRect contentsChangedSinceLastFrame = contentsChanged() ? m_contentRect : IntRect();
 
-    quadList.append(CCRenderPassDrawQuad::create(sharedQuadState, contentRect(), renderPassId, forReplica, maskResourceId, contentsChangedSinceLastFrame,
+    quadSink.append(CCRenderPassDrawQuad::create(sharedQuadState, contentRect(), renderPassId, forReplica, maskResourceId, contentsChangedSinceLastFrame,
                                                  maskTexCoordScaleX, maskTexCoordScaleY, maskTexCoordOffsetX, maskTexCoordOffsetY));
 }
 

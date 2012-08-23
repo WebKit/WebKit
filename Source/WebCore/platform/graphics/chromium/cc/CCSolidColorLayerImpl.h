@@ -39,7 +39,7 @@ public:
     }
     virtual ~CCSolidColorLayerImpl();
 
-    virtual void appendQuads(CCQuadSink&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
+    virtual void appendQuads(CCQuadSink&, bool& hadMissingTiles) OVERRIDE;
 
 protected:
     explicit CCSolidColorLayerImpl(int id);

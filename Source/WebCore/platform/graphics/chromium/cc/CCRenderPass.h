@@ -53,6 +53,8 @@ public:
     inline constBackToFrontIterator backToFrontEnd() const { return rend(); }
 };
 
+typedef Vector<OwnPtr<CCSharedQuadState> > CCSharedQuadStateList;
+
 class CCRenderPass {
     WTF_MAKE_NONCOPYABLE(CCRenderPass);
 public:
@@ -92,10 +94,10 @@ protected:
 
     int m_id;
     CCQuadList m_quadList;
+    CCSharedQuadStateList m_sharedQuadStateList;
     WebKit::WebTransformationMatrix m_transformToRootTarget;
     IntRect m_outputRect;
     FloatRect m_damageRect;
-    Vector<OwnPtr<CCSharedQuadState> > m_sharedQuadStateList;
     bool m_hasTransparentBackground;
     bool m_hasOcclusionFromOutsideTargetSurface;
     WebKit::WebFilterOperations m_filters;

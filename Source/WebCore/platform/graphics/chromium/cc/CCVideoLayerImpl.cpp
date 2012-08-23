@@ -177,12 +177,15 @@ void CCVideoLayerImpl::willDrawInternal(CCResourceProvider* resourceProvider)
         m_externalTextureResource = resourceProvider->createResourceFromExternalTexture(m_frame->textureId());
 }
 
-void CCVideoLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&)
+void CCVideoLayerImpl::appendQuads(CCQuadSink& quadSink, bool&)
 {
     ASSERT(CCProxy::isImplThread());
 
     if (!m_frame)
         return;
+
+    CCSharedQuadState* sharedQuadState = quadSink.useSharedQuadState(createSharedQuadState());
+    appendDebugBorderQuad(quadSink, sharedQuadState);
 
     // FIXME: When we pass quads out of process, we need to double-buffer, or
     // otherwise synchonize use of all textures in the quad.
@@ -196,7 +199,7 @@ void CCVideoLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState
         const FramePlane& uPlane = m_framePlanes[WebKit::WebVideoFrame::uPlane];
         const FramePlane& vPlane = m_framePlanes[WebKit::WebVideoFrame::vPlane];
         OwnPtr<CCYUVVideoDrawQuad> yuvVideoQuad = CCYUVVideoDrawQuad::create(sharedQuadState, quadRect, yPlane, uPlane, vPlane);
-        quadList.append(yuvVideoQuad.release());
+        quadSink.append(yuvVideoQuad.release());
         break;
     }
     case GraphicsContext3D::RGBA: {
@@ -208,7 +211,7 @@ void CCVideoLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState
         FloatRect uvRect(0, 0, widthScaleFactor, 1);
         bool flipped = false;
         OwnPtr<CCTextureDrawQuad> textureQuad = CCTextureDrawQuad::create(sharedQuadState, quadRect, plane.resourceId, premultipliedAlpha, uvRect, flipped);
-        quadList.append(textureQuad.release());
+        quadSink.append(textureQuad.release());
         break;
     }
     case GraphicsContext3D::TEXTURE_2D: {
@@ -217,19 +220,19 @@ void CCVideoLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState
         FloatRect uvRect(0, 0, 1, 1);
         bool flipped = false;
         OwnPtr<CCTextureDrawQuad> textureQuad = CCTextureDrawQuad::create(sharedQuadState, quadRect, m_externalTextureResource, premultipliedAlpha, uvRect, flipped);
-        quadList.append(textureQuad.release());
+        quadSink.append(textureQuad.release());
         break;
     }
     case Extensions3D::TEXTURE_RECTANGLE_ARB: {
         IntSize textureSize(m_frame->width(), m_frame->height()); 
         OwnPtr<CCIOSurfaceDrawQuad> ioSurfaceQuad = CCIOSurfaceDrawQuad::create(sharedQuadState, quadRect, textureSize, m_frame->textureId(), CCIOSurfaceDrawQuad::Unflipped);
-        quadList.append(ioSurfaceQuad.release());
+        quadSink.append(ioSurfaceQuad.release());
         break;
     }
     case Extensions3DChromium::GL_TEXTURE_EXTERNAL_OES: {
         // StreamTexture hardware decoder.
         OwnPtr<CCStreamVideoDrawQuad> streamVideoQuad = CCStreamVideoDrawQuad::create(sharedQuadState, quadRect, m_frame->textureId(), m_streamTextureMatrix);
-        quadList.append(streamVideoQuad.release());
+        quadSink.append(streamVideoQuad.release());
         break;
     }
     default:

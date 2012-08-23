@@ -51,7 +51,7 @@ public:
     virtual ~CCVideoLayerImpl();
 
     virtual void willDraw(CCResourceProvider*) OVERRIDE;
-    virtual void appendQuads(CCQuadSink&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
+    virtual void appendQuads(CCQuadSink&, bool& hadMissingTiles) OVERRIDE;
     virtual void didDraw(CCResourceProvider*) OVERRIDE;
 
     virtual void dumpLayerProperties(TextStream&, int indent) const OVERRIDE;

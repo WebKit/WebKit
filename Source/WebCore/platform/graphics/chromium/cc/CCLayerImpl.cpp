@@ -144,9 +144,9 @@ bool CCLayerImpl::descendantDrawsContent()
     return false;
 }
 
-PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState(int id) const
+PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState() const
 {
-    return CCSharedQuadState::create(id, m_drawTransform, m_visibleContentRect, m_drawableContentRect, m_drawOpacity, m_opaque);
+    return CCSharedQuadState::create(m_drawTransform, m_visibleContentRect, m_drawableContentRect, m_drawOpacity, m_opaque);
 }
 
 void CCLayerImpl::willDraw(CCResourceProvider*)

@@ -96,14 +96,12 @@ static PassOwnPtr<CCTiledLayerImpl> makeLayer(CCTiledLayerImpl* parent, const We
     return layer.release();
 }
 
-static void appendQuads(CCQuadList& quadList, Vector<OwnPtr<CCSharedQuadState> >& sharedStateList, CCTiledLayerImpl* layer, CCLayerIteratorType& it, CCOcclusionTrackerImpl& occlusionTracker)
+static void appendQuads(CCQuadList& quadList, CCSharedQuadStateList& sharedStateList, CCTiledLayerImpl* layer, CCLayerIteratorType& it, CCOcclusionTrackerImpl& occlusionTracker)
 {
     occlusionTracker.enterLayer(it);
-    CCQuadCuller quadCuller(quadList, layer, &occlusionTracker, false, false);
-    OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState(0);
+    CCQuadCuller quadCuller(quadList, sharedStateList, layer, &occlusionTracker, false, false);
     bool hadMissingTiles = false;
-    layer->appendQuads(quadCuller, sharedQuadState.get(), hadMissingTiles);
-    sharedStateList.append(sharedQuadState.release());
+    layer->appendQuads(quadCuller, hadMissingTiles);
     occlusionTracker.leaveLayer(it);
     ++it;
 }
@@ -111,9 +109,9 @@ static void appendQuads(CCQuadList& quadList, Vector<OwnPtr<CCSharedQuadState> >
 #define DECLARE_AND_INITIALIZE_TEST_QUADS               \
     DebugScopedSetImplThread impl;                      \
     CCQuadList quadList;                                \
-    Vector<OwnPtr<CCSharedQuadState> > sharedStateList; \
+    CCSharedQuadStateList sharedStateList;              \
     Vector<CCLayerImpl*> renderSurfaceLayerList;        \
-    WebTransformationMatrix childTransform;                \
+    WebTransformationMatrix childTransform;             \
     IntSize rootSize = IntSize(300, 300);               \
     IntRect rootRect = IntRect(IntPoint(), rootSize);   \
     IntSize childSize = IntSize(200, 200);              \

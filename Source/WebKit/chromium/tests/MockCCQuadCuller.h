@@ -32,19 +32,21 @@
 
 namespace WebCore {
 
-class MockCCQuadCuller : public WebCore::CCQuadSink {
+class MockCCQuadCuller : public CCQuadSink {
 public:
     MockCCQuadCuller()
         : m_activeQuadList(m_quadListStorage)
+        , m_activeSharedQuadStateList(m_sharedQuadStateStorage)
     { }
 
-    explicit MockCCQuadCuller(CCQuadList& externalQuadList)
+    explicit MockCCQuadCuller(CCQuadList& externalQuadList, CCSharedQuadStateList& externalSharedQuadStateList)
         : m_activeQuadList(externalQuadList)
+        , m_activeSharedQuadStateList(externalSharedQuadStateList)
     { }
 
-    virtual bool append(WTF::PassOwnPtr<WebCore::CCDrawQuad> newQuad)
+    virtual bool append(WTF::PassOwnPtr<CCDrawQuad> newQuad) OVERRIDE
     {
-        OwnPtr<WebCore::CCDrawQuad> drawQuad = newQuad;
+        OwnPtr<CCDrawQuad> drawQuad = newQuad;
         if (!drawQuad->quadRect().isEmpty()) {
             m_activeQuadList.append(drawQuad.release());
             return true;
@@ -52,11 +54,24 @@ public:
         return false;
     }
 
-    const WebCore::CCQuadList& quadList() const { return m_activeQuadList; };
+    virtual CCSharedQuadState* useSharedQuadState(PassOwnPtr<CCSharedQuadState> passSharedQuadState) OVERRIDE
+    {
+        OwnPtr<CCSharedQuadState> sharedQuadState(passSharedQuadState);
+        sharedQuadState->id = m_activeSharedQuadStateList.size();
+
+        CCSharedQuadState* rawPtr = sharedQuadState.get();
+        m_activeSharedQuadStateList.append(sharedQuadState.release());
+        return rawPtr;
+    }
+
+    const CCQuadList& quadList() const { return m_activeQuadList; };
+    const CCSharedQuadStateList& sharedQuadStateList() const { return m_activeSharedQuadStateList; };
 
 private:
-    WebCore::CCQuadList& m_activeQuadList;
-    WebCore::CCQuadList m_quadListStorage;
+    CCQuadList& m_activeQuadList;
+    CCQuadList m_quadListStorage;
+    CCSharedQuadStateList& m_activeSharedQuadStateList;
+    CCSharedQuadStateList m_sharedQuadStateStorage;
 };
 
 } // namespace WebCore

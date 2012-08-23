@@ -338,6 +338,13 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
         occlusionTracker.leaveLayer(it);
     }
 
+#if !ASSERT_DISABLED
+    for (size_t i = 0; i < frame.renderPasses.size(); ++i) {
+        for (size_t j = 0; j < frame.renderPasses[i]->quadList().size(); ++j)
+            ASSERT(frame.renderPasses[i]->quadList()[j]->sharedQuadStateId() >= 0);
+    }
+#endif
+
     if (!m_hasTransparentBackground) {
         frame.renderPasses.last()->setHasTransparentBackground(false);
         frame.renderPasses.last()->appendQuadsToFillScreen(m_rootLayerImpl.get(), m_backgroundColor, occlusionTracker);

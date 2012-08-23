@@ -49,8 +49,11 @@ CCSolidColorLayerImpl::~CCSolidColorLayerImpl()
 {
 }
 
-void CCSolidColorLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&)
+void CCSolidColorLayerImpl::appendQuads(CCQuadSink& quadSink, bool&)
 {
+    CCSharedQuadState* sharedQuadState = quadSink.useSharedQuadState(createSharedQuadState());
+    appendDebugBorderQuad(quadSink, sharedQuadState);
+
     // We create a series of smaller quads instead of just one large one so that the
     // culler can reduce the total pixels drawn.
     int width = contentBounds().width();
@@ -58,7 +61,7 @@ void CCSolidColorLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuad
     for (int x = 0; x < width; x += m_tileSize) {
         for (int y = 0; y < height; y += m_tileSize) {
             IntRect solidTileRect(x, y, min(width - x, m_tileSize), min(height - y, m_tileSize));
-            quadList.append(CCSolidColorDrawQuad::create(sharedQuadState, solidTileRect, backgroundColor()));
+            quadSink.append(CCSolidColorDrawQuad::create(sharedQuadState, solidTileRect, backgroundColor()));
         }
     }
 }

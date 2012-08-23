@@ -1,3 +1,29 @@
+2012-08-23  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Create sharedQuadState at same time as creating quads and give them to the quadSink
+        https://bugs.webkit.org/show_bug.cgi?id=94752
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::EvictionTestLayerImpl::appendQuads):
+        * tests/CCQuadCullerTest.cpp:
+        * tests/CCRenderSurfaceTest.cpp:
+        * tests/CCSolidColorLayerImplTest.cpp:
+        (CCLayerTestCommon::TEST):
+        * tests/CCTiledLayerImplTest.cpp:
+        (CCLayerTestCommon::TEST):
+        (CCLayerTestCommon::getQuads):
+        (CCLayerTestCommon::coverageVisibleRectOnTileBoundaries):
+        (CCLayerTestCommon::coverageVisibleRectIntersectsTiles):
+        (CCLayerTestCommon::coverageVisibleRectIntersectsBounds):
+        * tests/MockCCQuadCuller.h:
+        (WebCore::MockCCQuadCuller::MockCCQuadCuller):
+        (MockCCQuadCuller):
+        (WebCore::MockCCQuadCuller::quadList):
+        (WebCore::MockCCQuadCuller::sharedQuadStateList):
+
 2012-08-23  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed - fixing input list for timeline inspector module.

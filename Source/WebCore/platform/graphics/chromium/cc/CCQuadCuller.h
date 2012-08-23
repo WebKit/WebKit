@@ -27,27 +27,29 @@
 #define CCQuadCuller_h
 
 #include "CCQuadSink.h"
+#include "CCRenderPass.h"
 
 namespace WebCore {
 class CCLayerImpl;
 class CCRenderSurface;
-class CCQuadList;
 template<typename LayerType, typename SurfaceType>
 class CCOcclusionTrackerBase;
 
 class CCQuadCuller : public CCQuadSink {
 public:
-    CCQuadCuller(CCQuadList&, CCLayerImpl*, const CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>*, bool showCullingWithDebugBorderQuads, bool forSurface);
-
+    CCQuadCuller(CCQuadList&, CCSharedQuadStateList&, CCLayerImpl*, const CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>*, bool showCullingWithDebugBorderQuads, bool forSurface);
     virtual ~CCQuadCuller() { }
 
-    // Returns true if the quad is added to the list, and false if the quad is entirely culled.
-    virtual bool append(PassOwnPtr<CCDrawQuad> passDrawQuad) OVERRIDE;
+    // CCQuadSink implementation.
+    virtual CCSharedQuadState* useSharedQuadState(PassOwnPtr<CCSharedQuadState>) OVERRIDE;
+    virtual bool append(PassOwnPtr<CCDrawQuad>) OVERRIDE;
 
     bool hasOcclusionFromOutsideTargetSurface() { return m_hasOcclusionFromOutsideTargetSurface; }
 
 private:
     CCQuadList& m_quadList;
+    CCSharedQuadStateList& m_sharedQuadStateList;
+    CCSharedQuadState* m_currentSharedQuadState;
     CCLayerImpl* m_layer;
     const CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>* m_occlusionTracker;
     bool m_showCullingWithDebugBorderQuads;

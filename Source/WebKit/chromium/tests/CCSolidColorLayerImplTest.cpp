@@ -53,9 +53,8 @@ TEST(CCSolidColorLayerImplTest, verifyTilingCompleteAndNoOverlap)
     layer->createRenderSurface();
     layer->setRenderTarget(layer.get());
 
-    OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState(0);
     bool hadMissingTiles = false;
-    layer->appendQuads(quadCuller, sharedQuadState.get(), hadMissingTiles);
+    layer->appendQuads(quadCuller, hadMissingTiles);
 
     verifyQuadsExactlyCoverRect(quadCuller.quadList(), visibleContentRect);
 }
@@ -78,9 +77,8 @@ TEST(CCSolidColorLayerImplTest, verifyCorrectBackgroundColorInQuad)
     layer->createRenderSurface();
     layer->setRenderTarget(layer.get());
 
-    OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState(0);
     bool hadMissingTiles = false;
-    layer->appendQuads(quadCuller, sharedQuadState.get(), hadMissingTiles);
+    layer->appendQuads(quadCuller, hadMissingTiles);
 
     ASSERT_EQ(quadCuller.quadList().size(), 1U);
     EXPECT_EQ(CCSolidColorDrawQuad::materialCast(quadCuller.quadList()[0].get())->color(), testColor);
@@ -104,9 +102,8 @@ TEST(CCSolidColorLayerImplTest, verifyCorrectOpacityInQuad)
     layer->createRenderSurface();
     layer->setRenderTarget(layer.get());
 
-    OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState(0);
     bool hadMissingTiles = false;
-    layer->appendQuads(quadCuller, sharedQuadState.get(), hadMissingTiles);
+    layer->appendQuads(quadCuller, hadMissingTiles);
 
     ASSERT_EQ(quadCuller.quadList().size(), 1U);
     EXPECT_EQ(opacity, CCSolidColorDrawQuad::materialCast(quadCuller.quadList()[0].get())->opacity());

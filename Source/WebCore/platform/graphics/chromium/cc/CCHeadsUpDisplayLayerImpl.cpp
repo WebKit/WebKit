@@ -90,16 +90,18 @@ void CCHeadsUpDisplayLayerImpl::willDraw(CCResourceProvider* resourceProvider)
         m_hudTexture->allocate(CCRenderer::ImplPool, bounds(), GraphicsContext3D::RGBA, CCResourceProvider::TextureUsageAny);
 }
 
-void CCHeadsUpDisplayLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&)
+void CCHeadsUpDisplayLayerImpl::appendQuads(CCQuadSink& quadSink, bool&)
 {
     if (!m_hudTexture->id())
         return;
+
+    CCSharedQuadState* sharedQuadState = quadSink.useSharedQuadState(createSharedQuadState());
 
     IntRect quadRect(IntPoint(), bounds());
     bool premultipliedAlpha = true;
     FloatRect uvRect(0, 0, 1, 1);
     bool flipped = false;
-    quadList.append(CCTextureDrawQuad::create(sharedQuadState, quadRect, m_hudTexture->id(), premultipliedAlpha, uvRect, flipped));
+    quadSink.append(CCTextureDrawQuad::create(sharedQuadState, quadRect, m_hudTexture->id(), premultipliedAlpha, uvRect, flipped));
 }
 
 void CCHeadsUpDisplayLayerImpl::updateHudTexture(CCResourceProvider* resourceProvider)

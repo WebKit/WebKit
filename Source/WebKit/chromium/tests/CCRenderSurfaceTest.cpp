@@ -29,6 +29,7 @@
 #include "CCLayerImpl.h"
 #include "CCSharedQuadState.h"
 #include "CCSingleThreadProxy.h"
+#include "MockCCQuadCuller.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <public/WebTransformationMatrix.h>
@@ -115,7 +116,15 @@ TEST(CCRenderSurfaceTest, sanityCheckSurfaceCreatesCorrectSharedQuadState)
     renderSurface->setClipRect(clipRect);
     renderSurface->setDrawOpacity(1);
 
-    OwnPtr<CCSharedQuadState> sharedQuadState = renderSurface->createSharedQuadState(0);
+    CCQuadList quadList;
+    CCSharedQuadStateList sharedStateList;
+    MockCCQuadCuller mockQuadCuller(quadList, sharedStateList);
+
+    bool forReplica = false;
+    renderSurface->appendQuads(mockQuadCuller, forReplica, 1);
+
+    ASSERT_EQ(1u, sharedStateList.size());
+    CCSharedQuadState* sharedQuadState = sharedStateList[0].get();
 
     EXPECT_EQ(30, sharedQuadState->quadTransform.m41());
     EXPECT_EQ(40, sharedQuadState->quadTransform.m42());

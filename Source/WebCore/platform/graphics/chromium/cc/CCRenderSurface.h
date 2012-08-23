@@ -103,10 +103,7 @@ public:
 
     CCDamageTracker* damageTracker() const { return m_damageTracker.get(); }
 
-    PassOwnPtr<CCSharedQuadState> createSharedQuadState(int id) const;
-    PassOwnPtr<CCSharedQuadState> createReplicaSharedQuadState(int id) const;
-
-    void appendQuads(CCQuadSink&, CCSharedQuadState*, bool forReplica, int renderPassId);
+    void appendQuads(CCQuadSink&, bool forReplica, int renderPassId);
 
 private:
     CCLayerImpl* m_owningLayer;

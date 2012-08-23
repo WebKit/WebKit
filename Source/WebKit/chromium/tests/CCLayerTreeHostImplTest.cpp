@@ -1345,7 +1345,7 @@ class BlendStateCheckLayer : public CCLayerImpl {
 public:
     static PassOwnPtr<BlendStateCheckLayer> create(int id, CCResourceProvider* resourceProvider) { return adoptPtr(new BlendStateCheckLayer(id, resourceProvider)); }
 
-    virtual void appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&) OVERRIDE
+    virtual void appendQuads(CCQuadSink& quadSink, bool&) OVERRIDE
     {
         m_quadsAppended = true;
 
@@ -1354,11 +1354,13 @@ public:
             opaqueRect = m_quadRect;
         else
             opaqueRect = m_opaqueContentRect;
+
+        CCSharedQuadState* sharedQuadState = quadSink.useSharedQuadState(createSharedQuadState());
         OwnPtr<CCDrawQuad> testBlendingDrawQuad = CCTileDrawQuad::create(sharedQuadState, m_quadRect, opaqueRect, m_resourceId, IntPoint(), IntSize(1, 1), 0, false, false, false, false, false);
         testBlendingDrawQuad->setQuadVisibleRect(m_quadVisibleRect);
         EXPECT_EQ(m_blend, testBlendingDrawQuad->needsBlending());
         EXPECT_EQ(m_hasRenderSurface, !!renderSurface());
-        quadList.append(testBlendingDrawQuad.release());
+        quadSink.append(testBlendingDrawQuad.release());
     }
 
     void setExpectation(bool blend, bool hasRenderSurface)
@@ -1877,12 +1879,14 @@ class FakeLayerWithQuads : public CCLayerImpl {
 public:
     static PassOwnPtr<FakeLayerWithQuads> create(int id) { return adoptPtr(new FakeLayerWithQuads(id)); }
 
-    virtual void appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&) OVERRIDE
+    virtual void appendQuads(CCQuadSink& quadSink, bool&) OVERRIDE
     {
+        CCSharedQuadState* sharedQuadState = quadSink.useSharedQuadState(createSharedQuadState());
+
         SkColor gray = SkColorSetRGB(100, 100, 100);
         IntRect quadRect(IntPoint(0, 0), contentBounds());
         OwnPtr<CCDrawQuad> myQuad = CCSolidColorDrawQuad::create(sharedQuadState, quadRect, gray);
-        quadList.append(myQuad.release());
+        quadSink.append(myQuad.release());
     }
 
 private:
@@ -3869,7 +3873,7 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
     renderer->clearCachedTextures();
 
     // One shared state for all quads - we don't need the correct details
-    testData.sharedQuadState = CCSharedQuadState::create(0, WebTransformationMatrix(), IntRect(), IntRect(), 1.0, true);
+    testData.sharedQuadState = CCSharedQuadState::create(WebTransformationMatrix(), IntRect(), IntRect(), 1.0, true);
 
     const char* currentChar = testScript;
 

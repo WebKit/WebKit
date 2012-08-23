@@ -31,13 +31,13 @@
 
 namespace WebCore {
 
-PassOwnPtr<CCSharedQuadState> CCSharedQuadState::create(int id, const WebKit::WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& clippedRectInTarget, float opacity, bool opaque)
+PassOwnPtr<CCSharedQuadState> CCSharedQuadState::create(const WebKit::WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& clippedRectInTarget, float opacity, bool opaque)
 {
-    return adoptPtr(new CCSharedQuadState(id, quadTransform, visibleContentRect, clippedRectInTarget, opacity, opaque));
+    return adoptPtr(new CCSharedQuadState(quadTransform, visibleContentRect, clippedRectInTarget, opacity, opaque));
 }
 
-CCSharedQuadState::CCSharedQuadState(int id, const WebKit::WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& clippedRectInTarget, float opacity, bool opaque)
-    : id(id)
+CCSharedQuadState::CCSharedQuadState(const WebKit::WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& clippedRectInTarget, float opacity, bool opaque)
+    : id(-1)
     , quadTransform(quadTransform)
     , visibleContentRect(visibleContentRect)
     , clippedRectInTarget(clippedRectInTarget)

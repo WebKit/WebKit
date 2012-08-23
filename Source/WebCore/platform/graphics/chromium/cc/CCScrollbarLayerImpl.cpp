@@ -89,12 +89,15 @@ static FloatRect toUVRect(const WebRect& r, const IntRect& bounds)
                      static_cast<float>(r.width) / bounds.width(), static_cast<float>(r.height) / bounds.height());
 }
 
-void CCScrollbarLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&)
+void CCScrollbarLayerImpl::appendQuads(CCQuadSink& quadSink, bool&)
 {
     bool premultipledAlpha = false;
     bool flipped = false;
     FloatRect uvRect(0, 0, 1, 1);
     IntRect boundsRect(IntPoint(), contentBounds());
+
+    CCSharedQuadState* sharedQuadState = quadSink.useSharedQuadState(createSharedQuadState());
+    appendDebugBorderQuad(quadSink, sharedQuadState);
 
     WebRect thumbRect, backTrackRect, foreTrackRect;
     m_geometry->splitTrack(&m_scrollbar, m_geometry->trackRect(&m_scrollbar), backTrackRect, thumbRect, foreTrackRect);
@@ -104,7 +107,7 @@ void CCScrollbarLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadS
     if (m_thumbResourceId && !thumbRect.isEmpty()) {
         OwnPtr<CCTextureDrawQuad> quad = CCTextureDrawQuad::create(sharedQuadState, IntRect(thumbRect.x, thumbRect.y, thumbRect.width, thumbRect.height), m_thumbResourceId, premultipledAlpha, uvRect, flipped);
         quad->setNeedsBlending();
-        quadList.append(quad.release());
+        quadSink.append(quad.release());
     }
 
     if (!m_backTrackResourceId)
@@ -112,12 +115,12 @@ void CCScrollbarLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadS
 
     // We only paint the track in two parts if we were given a texture for the forward track part.
     if (m_foreTrackResourceId && !foreTrackRect.isEmpty())
-        quadList.append(CCTextureDrawQuad::create(sharedQuadState, IntRect(foreTrackRect.x, foreTrackRect.y, foreTrackRect.width, foreTrackRect.height), m_foreTrackResourceId, premultipledAlpha, toUVRect(foreTrackRect, boundsRect), flipped));
+        quadSink.append(CCTextureDrawQuad::create(sharedQuadState, IntRect(foreTrackRect.x, foreTrackRect.y, foreTrackRect.width, foreTrackRect.height), m_foreTrackResourceId, premultipledAlpha, toUVRect(foreTrackRect, boundsRect), flipped));
 
     // Order matters here: since the back track texture is being drawn to the entire contents rect, we must append it after the thumb and
     // fore track quads. The back track texture contains (and displays) the buttons.
     if (!boundsRect.isEmpty())
-        quadList.append(CCTextureDrawQuad::create(sharedQuadState, IntRect(boundsRect), m_backTrackResourceId, premultipledAlpha, uvRect, flipped));
+        quadSink.append(CCTextureDrawQuad::create(sharedQuadState, IntRect(boundsRect), m_backTrackResourceId, premultipledAlpha, uvRect, flipped));
 }
 
 void CCScrollbarLayerImpl::didLoseContext()

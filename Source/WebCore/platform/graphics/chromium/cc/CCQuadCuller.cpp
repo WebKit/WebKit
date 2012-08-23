@@ -48,14 +48,27 @@ static const int debugTileBorderColorRed = 160;
 static const int debugTileBorderColorGreen = 100;
 static const int debugTileBorderColorBlue = 0;
 
-CCQuadCuller::CCQuadCuller(CCQuadList& quadList, CCLayerImpl* layer, const CCOcclusionTrackerImpl* occlusionTracker, bool showCullingWithDebugBorderQuads, bool forSurface)
+CCQuadCuller::CCQuadCuller(CCQuadList& quadList, CCSharedQuadStateList& sharedQuadStateList, CCLayerImpl* layer, const CCOcclusionTrackerImpl* occlusionTracker, bool showCullingWithDebugBorderQuads, bool forSurface)
     : m_quadList(quadList)
+    , m_sharedQuadStateList(sharedQuadStateList)
+    , m_currentSharedQuadState(0)
     , m_layer(layer)
     , m_occlusionTracker(occlusionTracker)
     , m_showCullingWithDebugBorderQuads(showCullingWithDebugBorderQuads)
     , m_forSurface(forSurface)
     , m_hasOcclusionFromOutsideTargetSurface(false)
 {
+}
+
+CCSharedQuadState* CCQuadCuller::useSharedQuadState(PassOwnPtr<CCSharedQuadState> passSharedQuadState)
+{
+    OwnPtr<CCSharedQuadState> sharedQuadState(passSharedQuadState);
+    sharedQuadState->id = m_sharedQuadStateList.size();
+
+    // FIXME: If all quads are culled for the sharedQuadState, we can drop it from the list.
+    m_currentSharedQuadState = sharedQuadState.get();
+    m_sharedQuadStateList.append(sharedQuadState.release());
+    return m_currentSharedQuadState;
 }
 
 static inline bool appendQuadInternal(PassOwnPtr<CCDrawQuad> passDrawQuad, const IntRect& culledRect, CCQuadList& quadList, const CCOcclusionTrackerImpl& occlusionTracker, bool createDebugBorderQuads)
@@ -82,6 +95,11 @@ static inline bool appendQuadInternal(PassOwnPtr<CCDrawQuad> passDrawQuad, const
 
 bool CCQuadCuller::append(PassOwnPtr<CCDrawQuad> passDrawQuad)
 {
+    ASSERT(passDrawQuad->sharedQuadState() == m_currentSharedQuadState);
+    ASSERT(passDrawQuad->sharedQuadStateId() == m_currentSharedQuadState->id);
+    ASSERT(!m_sharedQuadStateList.isEmpty());
+    ASSERT(m_sharedQuadStateList.last().get() == m_currentSharedQuadState);
+
     IntRect culledRect;
     bool hasOcclusionFromOutsideTargetSurface;
 

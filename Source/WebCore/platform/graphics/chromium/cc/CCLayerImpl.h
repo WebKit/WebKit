@@ -89,15 +89,14 @@ public:
     CCLayerTreeHostImpl* layerTreeHostImpl() const { return m_layerTreeHostImpl; }
     void setLayerTreeHostImpl(CCLayerTreeHostImpl* hostImpl) { m_layerTreeHostImpl = hostImpl; }
 
-    PassOwnPtr<CCSharedQuadState> createSharedQuadState(int id) const;
+    PassOwnPtr<CCSharedQuadState> createSharedQuadState() const;
     // willDraw must be called before appendQuads. If willDraw is called,
     // didDraw is guaranteed to be called before another willDraw or before
     // the layer is destroyed. To enforce this, any class that overrides
     // willDraw/didDraw must call the base class version.
     virtual void willDraw(CCResourceProvider*);
-    virtual void appendQuads(CCQuadSink&, const CCSharedQuadState*, bool& hadMissingTiles) { }
+    virtual void appendQuads(CCQuadSink&, bool& hadMissingTiles) { }
     virtual void didDraw(CCResourceProvider*);
-    void appendDebugBorderQuad(CCQuadSink&, const CCSharedQuadState*) const;
 
     virtual CCResourceProvider::ResourceId contentsResourceId() const;
 
@@ -274,6 +273,8 @@ public:
 
 protected:
     explicit CCLayerImpl(int);
+
+    void appendDebugBorderQuad(CCQuadSink&, const CCSharedQuadState*) const;
 
     virtual void dumpLayerProperties(TextStream&, int indent) const;
     static void writeIndent(TextStream&, int indent);

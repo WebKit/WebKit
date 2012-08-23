@@ -2409,7 +2409,7 @@ public:
         return adoptPtr(new EvictionTestLayerImpl(id));
     }
     virtual ~EvictionTestLayerImpl() { }
-    virtual void appendQuads(CCQuadSink&, const CCSharedQuadState*, bool& hadMissingTiles)
+    virtual void appendQuads(CCQuadSink&, bool& hadMissingTiles)
     {
         ASSERT_TRUE(m_hasTexture);
         ASSERT_NE(0u, layerTreeHostImpl()->resourceProvider()->numResources());
