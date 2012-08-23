@@ -5292,14 +5292,6 @@ bool WebPage::defersLoading() const
     return d->m_page->defersLoading();
 }
 
-bool WebPage::willFireTimer()
-{
-    if (d->isLoading())
-        return true;
-
-    return d->m_backingStore->d->willFireTimer();
-}
-
 void WebPage::notifyPagePause()
 {
     FOR_EACH_PLUGINVIEW(d->m_pluginViews)

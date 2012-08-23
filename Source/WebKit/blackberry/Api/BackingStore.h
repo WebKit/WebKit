@@ -63,9 +63,6 @@ public:
     void blitContents(const BlackBerry::Platform::IntRect& dstRect, const BlackBerry::Platform::IntRect& contents);
     void repaint(int x, int y, int width, int height, bool contentChanged, bool immediate);
 
-    bool hasRenderJobs() const;
-    void renderOnIdle();
-
     // In the defers blit mode, any blit requests will just return early, and
     // a blit job will be queued that is executed by calling blitOnIdle().
     bool defersBlit() const;

@@ -1,3 +1,57 @@
+2012-08-23  Adam Treat  <atreat@rim.com>
+
+        [BlackBerry] Replace the three different rendering mechanisms for clearing the render queue
+        https://bugs.webkit.org/show_bug.cgi?id=94837
+
+        Reviewed by George Staikos.
+
+        PR 197738
+
+        Currently, we have three different mechanisms for clearing the render queue.
+        The first mechanism is render on idle.  Whenever the webkit thread becomes idle
+        (read: no more events in its queue) we render the next job in the render queue.
+         This is the primary means we use for clearing the render queue.  However, this
+        mechanism has a flaw, it is such a low priority mechanism that sometimes the
+        queue grows so fast due to higher priority events adding rects to the queue
+        that this mechanism can't possibly keep up.  That is what leads to the second
+        mechanism: rendering right before a timer is fired when we discover that the
+        render queue is under pressure and rendering on idle can't keep up.  However,
+        there are still degenerate cases where even this mechanism does not allow us to
+        keep up.  That brings us to the third mechanism: rendering based on a timer
+        that is a catch-all.
+
+        The second and third mechanisms lead to very large render jobs as they try and
+        clear the queue faster when it comes under pressure.  These very large render
+        jobs end up keeping the webkit thread busy with a message that can take large
+        fractions of a second to resolve.
+
+        These three mechanisms were put in place when the backingstore had a different
+        overall design that was not truly asynchronous.  This patch replaces these
+        three mechanisms with a single one that uses the platform messaging classes to
+        full purpose - a uniquely coalescing message that has a higher priority level
+        than timers making sure the render queue can never come under pressure.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::BackingStorePrivate):
+        (WebKit):
+        (RenderJobMessage):
+        (BlackBerry::WebKit::RenderJobMessage::RenderJobMessage):
+        (BlackBerry::WebKit::BackingStorePrivate::dispatchRenderJob):
+        (BlackBerry::WebKit::BackingStorePrivate::renderJob):
+        (BlackBerry::WebKit::BackingStore::blitContents):
+        * Api/BackingStore.h:
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * Api/WebPage.cpp:
+        * Api/WebPage.h:
+        * WebKitSupport/RenderQueue.cpp:
+        (BlackBerry::WebKit::RenderQueue::reset):
+        (BlackBerry::WebKit::RenderQueue::addToRegularQueue):
+        (BlackBerry::WebKit::RenderQueue::addToScrollZoomQueue):
+        (BlackBerry::WebKit::RenderQueue::clear):
+        (BlackBerry::WebKit::RenderQueue::clearVisibleZoom):
+        (BlackBerry::WebKit::RenderQueue::render):
+
 2012-08-23  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Unify slow and fast in-region scrolling code paths

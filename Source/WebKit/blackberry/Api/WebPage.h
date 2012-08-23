@@ -322,8 +322,6 @@ public:
 
     bool defersLoading() const;
 
-    bool willFireTimer();
-
     bool isEnableLocalAccessToAllCookies() const;
     void setEnableLocalAccessToAllCookies(bool);
 

@@ -75,7 +75,6 @@ using BlackBerry::Platform::IntSize;
 namespace BlackBerry {
 namespace WebKit {
 
-const int s_renderTimerTimeout = 1.0;
 WebPage* BackingStorePrivate::s_currentBackingStoreOwner = 0;
 
 typedef std::pair<int, int> Divisor;
@@ -216,8 +215,6 @@ BackingStorePrivate::BackingStorePrivate()
 {
     m_frontState = reinterpret_cast<unsigned>(new BackingStoreGeometry);
     m_backState = reinterpret_cast<unsigned>(new BackingStoreGeometry);
-
-    m_renderTimer = adoptPtr(new Timer<BackingStorePrivate>(this, &BackingStorePrivate::renderOnTimer));
 
     // Need a recursive mutex to achieve a global lock.
     pthread_mutexattr_t attr;
@@ -500,62 +497,27 @@ bool BackingStorePrivate::shouldPerformRegularRenderJobs() const
     return shouldPerformRenderJobs() && !m_suspendRegularRenderJobs;
 }
 
-void BackingStorePrivate::startRenderTimer()
+static const BlackBerry::Platform::Message::Type RenderJobMessageType = BlackBerry::Platform::Message::generateUniqueMessageType();
+class RenderJobMessage : public BlackBerry::Platform::ExecutableMessage
 {
-    // Called when render queue has a new job added.
-    if (m_renderTimer->isActive() || m_renderQueue->isEmpty(!m_suspendRegularRenderJobs))
-        return;
+public:
+    RenderJobMessage(BlackBerry::Platform::MessageDelegate* delegate)
+        : BlackBerry::Platform::ExecutableMessage(delegate, BlackBerry::Platform::ExecutableMessage::UniqueCoalescing, RenderJobMessageType)
+    { }
+};
 
-#if DEBUG_BACKINGSTORE
-    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::startRenderTimer time=%f", WTF::currentTime());
-#endif
-    m_renderTimer->startOneShot(s_renderTimerTimeout);
+void BackingStorePrivate::dispatchRenderJob()
+{
+    BlackBerry::Platform::MessageDelegate* messageDelegate = BlackBerry::Platform::createMethodDelegate(&BackingStorePrivate::renderJob, this);
+    BlackBerry::Platform::webKitThreadMessageClient()->dispatchMessage(new RenderJobMessage(messageDelegate));
 }
 
-void BackingStorePrivate::stopRenderTimer()
-{
-    if (!m_renderTimer->isActive())
-        return;
-
-    // Called when we render something to restart.
-#if DEBUG_BACKINGSTORE
-    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::stopRenderTimer time=%f", WTF::currentTime());
-#endif
-    m_renderTimer->stop();
-}
-
-void BackingStorePrivate::renderOnTimer(WebCore::Timer<BackingStorePrivate>*)
-{
-    // This timer is a third method of starting a render operation that is a catch-all. If more
-    // than s_renderTimerTimeout elapses with no rendering taking place and render jobs in the queue, then
-    // renderOnTimer will be called which will actually render.
-    if (!shouldPerformRenderJobs())
-        return;
-
-#if DEBUG_BACKINGSTORE
-    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::renderOnTimer time=%f", WTF::currentTime());
-#endif
-    while (m_renderQueue->hasCurrentVisibleZoomJob() || m_renderQueue->hasCurrentVisibleScrollJob())
-        m_renderQueue->render(!m_suspendRegularRenderJobs);
-
-    if (shouldPerformRegularRenderJobs() && m_renderQueue->hasCurrentRegularRenderJob())
-        m_renderQueue->renderAllCurrentRegularRenderJobs();
-
-#if USE(ACCELERATED_COMPOSITING)
-    drawLayersOnCommitIfNeeded();
-#endif
-}
-
-void BackingStorePrivate::renderOnIdle()
+void BackingStorePrivate::renderJob()
 {
     ASSERT(shouldPerformRenderJobs());
 
-    // Let the render queue know that we entered a new event queue cycle
-    // so it can determine if it is under pressure.
-    m_renderQueue->eventQueueCycled();
-
 #if DEBUG_BACKINGSTORE
-    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::renderOnIdle");
+    BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::renderJob");
 #endif
 
     m_renderQueue->render(!m_suspendRegularRenderJobs);
@@ -563,41 +525,9 @@ void BackingStorePrivate::renderOnIdle()
 #if USE(ACCELERATED_COMPOSITING)
     drawLayersOnCommitIfNeeded();
 #endif
-}
 
-bool BackingStorePrivate::willFireTimer()
-{
-    // Let the render queue know that we entered a new event queue cycle
-    // so it can determine if it is under pressure.
-    m_renderQueue->eventQueueCycled();
-
-    if (!shouldPerformRegularRenderJobs() || !m_renderQueue->hasCurrentRegularRenderJob() || !m_renderQueue->currentRegularRenderJobBatchUnderPressure())
-        return true;
-
-#if DEBUG_BACKINGSTORE
-    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::willFireTimer");
-#endif
-
-    // We've detected that the regular render jobs are coming under pressure likely
-    // due to timers firing producing invalidation jobs and our efforts to break them
-    // up into bite size pieces has produced a situation where we can not complete
-    // a batch of them before receiving more that intersect them which causes us
-    // to start the batch over. To mitigate this we have to empty the current batch
-    // when this is detected.
-
-    // We still want to perform priority jobs first to avoid redundant paints.
-    while (m_renderQueue->hasCurrentVisibleZoomJob() || m_renderQueue->hasCurrentVisibleScrollJob())
-        m_renderQueue->render(!m_suspendRegularRenderJobs);
-
-    if (m_renderQueue->hasCurrentRegularRenderJob())
-        m_renderQueue->renderAllCurrentRegularRenderJobs();
-
-#if USE(ACCELERATED_COMPOSITING)
-    drawLayersOnCommitIfNeeded();
-#endif
-
-    // Let the caller yield and reschedule the timer.
-    return false;
+    if (shouldPerformRenderJobs())
+        dispatchRenderJob();
 }
 
 Platform::IntRect BackingStorePrivate::expandedContentsRect() const
@@ -2788,16 +2718,6 @@ void BackingStore::repaint(int x, int y, int width, int height,
                            bool contentChanged, bool immediate)
 {
     d->repaint(Platform::IntRect(x, y, width, height), contentChanged, immediate);
-}
-
-bool BackingStore::hasRenderJobs() const
-{
-    return d->shouldPerformRenderJobs();
-}
-
-void BackingStore::renderOnIdle()
-{
-    d->renderOnIdle();
 }
 
 bool BackingStore::isDirectRenderingToWindow() const

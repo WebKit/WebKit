@@ -231,7 +231,6 @@ void RenderQueue::reset()
     m_currentRegularRenderJobsBatch.clear();
     m_currentRegularRenderJobsBatchRegion = Platform::IntRectRegion();
     m_regularRenderJobsNotRenderedRegion = Platform::IntRectRegion();
-    m_parent->stopRenderTimer();
     ASSERT(isEmpty());
 }
 
@@ -375,7 +374,7 @@ void RenderQueue::addToRegularQueue(const Platform::IntRect& rect)
         m_regularRenderJobsRegion = Platform::IntRectRegion::unionRegions(m_regularRenderJobsRegion, rect);
 
     if (!isEmpty())
-        m_parent->startRenderTimer(); // Start the render timer since we could have some stale content here...
+        m_parent->dispatchRenderJob();
 }
 
 void RenderQueue::addToScrollZoomQueue(const RenderRect& rect, RenderRectList* rectList)
@@ -390,7 +389,7 @@ void RenderQueue::addToScrollZoomQueue(const RenderRect& rect, RenderRectList* r
     rectList->push_back(rect);
 
     if (!isEmpty())
-        m_parent->startRenderTimer(); // Start the render timer since we know we could have some checkerboard here...
+        m_parent->dispatchRenderJob();
 }
 
 void RenderQueue::quickSort(RenderRectList* queue)
@@ -527,9 +526,6 @@ void RenderQueue::clear(const Platform::IntRect& rect, bool clearRegularRenderJo
 
     if (m_nonVisibleScrollJobs.empty() && !m_nonVisibleScrollJobsCompleted.empty())
         nonVisibleScrollJobsCompleted();
-
-    if (isEmpty())
-         m_parent->stopRenderTimer();
 }
 
 void RenderQueue::clearRegularRenderJobs(const Platform::IntRect& rect)
@@ -548,8 +544,6 @@ void RenderQueue::clearRegularRenderJobs(const Platform::IntRect& rect)
 void RenderQueue::clearVisibleZoom()
 {
     m_visibleZoomJobs.clear();
-    if (isEmpty())
-         m_parent->stopRenderTimer();
 }
 
 bool RenderQueue::regularRenderJobsPreviouslyAttemptedButNotRendered(const Platform::IntRect& rect)
@@ -590,9 +584,6 @@ void RenderQueue::render(bool shouldPerformRegularRenderJobs)
             renderRegularRenderJob();
     } else if (!m_nonVisibleScrollJobs.empty())
         renderNonVisibleScrollJob();
-
-    if (isEmpty())
-        m_parent->stopRenderTimer();
 }
 
 void RenderQueue::renderAllCurrentRegularRenderJobs()

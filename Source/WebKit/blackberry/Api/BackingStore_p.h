@@ -131,11 +131,8 @@ public:
     bool shouldSuppressNonVisibleRegularRenderJobs() const;
     bool shouldPerformRenderJobs() const;
     bool shouldPerformRegularRenderJobs() const;
-    void startRenderTimer();
-    void stopRenderTimer();
-    void renderOnTimer(WebCore::Timer<BackingStorePrivate>*);
-    void renderOnIdle();
-    bool willFireTimer();
+    void dispatchRenderJob();
+    void renderJob();
 
     // Set of helper methods for the scrollBackingStore() method.
     Platform::IntRect contentsRect() const;
@@ -363,9 +360,6 @@ public:
     TileMatrixDirection m_preferredTileMatrixDimension;
 
     Platform::IntRect m_visibleTileBufferRect;
-
-    // Last resort timer for rendering.
-    OwnPtr<WebCore::Timer<BackingStorePrivate> > m_renderTimer;
 
     pthread_mutex_t m_mutex;
 
