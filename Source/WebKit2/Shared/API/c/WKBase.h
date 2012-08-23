@@ -37,7 +37,7 @@
 #include <WebKit2/WKBaseGtk.h>
 #endif
 
-#if defined(BUILDING_SOUP__)
+#if defined(WTF_USE_SOUP)
 #include <WebKit2/WKBaseSoup.h>
 #endif
 

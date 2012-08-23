@@ -1,3 +1,15 @@
+2012-08-22  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [EFL] Use WTF_USE_SOUP instead BUILDING_SOUP__
+        https://bugs.webkit.org/show_bug.cgi?id=94744
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Use #if defined(WTF_USE_SOUP) instead of #if defined(BUILDING_SOUP__)
+        since the former is used everywhere.
+
+        * Shared/API/c/WKBase.h:
+
 2012-08-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Free ewk context data on program exit.

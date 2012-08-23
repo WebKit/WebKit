@@ -154,7 +154,6 @@ endif
 global_cppflags += \
 	-DBUILDING_CAIRO__=1 \
 	-DBUILDING_GTK__=1 \
-	-DBUILDING_SOUP__=1 \
 	-DWTF_CHANGES
 
 if ENABLE_WEBKIT2
