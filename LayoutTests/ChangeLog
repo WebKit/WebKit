@@ -1,3 +1,9 @@
+2012-08-23  Beth Dakin  <bdakin@apple.com>
+
+        Updated the expected results for this test after r125463.
+
+        * platform/mac/fast/table/multiple-captions-display-expected.txt:
+
 2012-08-23  Dan Bernstein  <mitz@apple.com>
 
         Updated the expected results for this test after r125463.
