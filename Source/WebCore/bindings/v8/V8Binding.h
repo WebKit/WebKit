@@ -98,16 +98,10 @@ namespace WebCore {
         return data->stringCache()->v8ExternalString(stringImpl, isolate);
     }
 
-    // Convert a WebCore String to a V8 string.
+    // Convert a string to a V8 string.
     inline v8::Handle<v8::String> v8String(const String& string, v8::Isolate* isolate = 0)
     {
         return v8ExternalString(string, isolate);
-    }
-
-    // Convert a char* string to a V8 string.
-    inline v8::Handle<v8::String> v8String(const char* string, v8::Isolate* isolate = 0)
-    {
-        return v8ExternalString(String(string), isolate);
     }
 
     inline v8::Handle<v8::Integer> v8Integer(int value, v8::Isolate* isolate = 0)
