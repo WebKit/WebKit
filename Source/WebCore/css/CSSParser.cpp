@@ -51,6 +51,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
+#include "StylePropertyShorthand.h"
 #if ENABLE(CSS_VARIABLES)
 #include "CSSVariableValue.h"
 #endif
@@ -3074,30 +3075,13 @@ void CSSParser::addAnimationValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> r
 
 bool CSSParser::parseAnimationShorthand(bool important)
 {
-    // When we parse the animation shorthand we need to look for animation-name
-    // last because otherwise it might match against the keywords for fill mode,
-    // timing functions and infinite iteration. This means that animation names
-    // that are the same as keywords (e.g. 'forwards') won't always match in the
-    // shorthand. In that case they should be using longhands (or reconsidering
-    // their approach). This is covered by the animations spec bug:
-    // https://www.w3.org/Bugs/Public/show_bug.cgi?id=14790
-    // And in the spec (editor's draft) at:
-    // http://dev.w3.org/csswg/css3-animations/#animation-shorthand-property
-
-    static const CSSPropertyID animationProperties[] = {
-        CSSPropertyWebkitAnimationDuration,
-        CSSPropertyWebkitAnimationTimingFunction,
-        CSSPropertyWebkitAnimationDelay,
-        CSSPropertyWebkitAnimationIterationCount,
-        CSSPropertyWebkitAnimationDirection,
-        CSSPropertyWebkitAnimationFillMode,
-        CSSPropertyWebkitAnimationName
-    };
+    const StylePropertyShorthand& animationProperties = webkitAnimationShorthandForParsing();
     const unsigned numProperties = 7;
 
     // The list of properties in the shorthand should be the same
-    // length as the list we have here, even though they are
-    // a different order.
+    // length as the list with animation name in last position, even though they are
+    // in a different order.
+    ASSERT(numProperties == webkitAnimationShorthandForParsing().length());
     ASSERT(numProperties == webkitAnimationShorthand().length());
 
     ShorthandScope scope(this, CSSPropertyWebkitAnimation);
@@ -3124,7 +3108,7 @@ bool CSSParser::parseAnimationShorthand(bool important)
         for (i = 0; i < numProperties; ++i) {
             if (!parsedProperty[i]) {
                 RefPtr<CSSValue> val;
-                if (parseAnimationProperty(animationProperties[i], val)) {
+                if (parseAnimationProperty(animationProperties.properties()[i], val)) {
                     parsedProperty[i] = found = true;
                     addAnimationValue(values[i], val.release());
                     break;
@@ -3143,7 +3127,7 @@ bool CSSParser::parseAnimationShorthand(bool important)
         if (!parsedProperty[i])
             addAnimationValue(values[i], cssValuePool().createImplicitInitialValue());
 
-        addProperty(animationProperties[i], values[i].release(), important);
+        addProperty(animationProperties.properties()[i], values[i].release(), important);
     }
 
     return true;

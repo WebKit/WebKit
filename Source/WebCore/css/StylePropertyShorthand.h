@@ -80,6 +80,7 @@ const StylePropertyShorthand& outlineShorthand();
 const StylePropertyShorthand& overflowShorthand();
 const StylePropertyShorthand& paddingShorthand();
 const StylePropertyShorthand& webkitAnimationShorthand();
+const StylePropertyShorthand& webkitAnimationShorthandForParsing();
 const StylePropertyShorthand& webkitBorderAfterShorthand();
 const StylePropertyShorthand& webkitBorderBeforeShorthand();
 const StylePropertyShorthand& webkitBorderEndShorthand();
