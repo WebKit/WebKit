@@ -74,6 +74,20 @@ class BaselineOptimizerTest(unittest.TestCase):
         })
         self.assertEqual(host.filesystem.read_binary_file('/mock-checkout/LayoutTests/platform/chromium/another/test-expected.txt'), 'result A')
 
+    def disabled_test_platform_mac_different(self):
+        self._assertOptimization({
+            'LayoutTests': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
+            'LayoutTests/platform/mac': '453e67177a75b2e79905154ece0efba6e5bfb65d',
+            'LayoutTests/platform/mac-lion': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
+            'LayoutTests/platform/chromium-mac': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
+            'LayoutTests/platform/chromium-win': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
+        }, {
+            'LayoutTests': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
+            'LayoutTests/platform/mac': '453e67177a75b2e79905154ece0efba6e5bfb65d',
+            'LayoutTests/platform/mac-lion': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
+            'LayoutTests/platform/chromium': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
+        })
+
     def test_chromium_linux_redundant_with_win(self):
         self._assertOptimization({
             'LayoutTests/platform/chromium-win': '462d03b9c025db1b0392d7453310dbee5f9a9e74',

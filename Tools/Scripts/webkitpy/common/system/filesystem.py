@@ -44,13 +44,8 @@ class FileSystem(object):
 
     Unless otherwise noted, all paths are allowed to be either absolute
     or relative."""
-    def __init__(self):
-        self._sep = os.sep
-
-    def _get_sep(self):
-        return self._sep
-
-    sep = property(_get_sep, doc="pathname separator")
+    sep = os.sep
+    pardir = os.pardir
 
     def abspath(self, path):
         return os.path.abspath(path)

@@ -255,11 +255,6 @@ class RealFileSystemTest(unittest.TestCase, GenericFileSystemTests):
         self.assertEquals(fs.join("foo", "bar"),
                           os.path.join("foo", "bar"))
 
-    def test_sep__is_readonly(self):
-        def assign_sep():
-            fs.sep = ' '
-        fs = FileSystem()
-        self.assertRaises(AttributeError, assign_sep)
 
 if __name__ == '__main__':
     unittest.main()
