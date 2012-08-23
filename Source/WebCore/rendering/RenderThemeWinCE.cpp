@@ -27,6 +27,7 @@
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
+#include "FontMetrics.h"
 #include "GraphicsContext.h"
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
