@@ -40,14 +40,17 @@
 
 namespace WebCore {
 
+ScriptValue::~ScriptValue()
+{
+}
+
 PassRefPtr<SerializedScriptValue> ScriptValue::serialize(ScriptState* scriptState)
 {
     ScriptScope scope(scriptState);
     return SerializedScriptValue::create(v8Value());
 }
 
-PassRefPtr<SerializedScriptValue> ScriptValue::serialize(ScriptState* scriptState,
-                                                         MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, bool& didThrow)
+PassRefPtr<SerializedScriptValue> ScriptValue::serialize(ScriptState* scriptState, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, bool& didThrow)
 {
     ScriptScope scope(scriptState);
     return SerializedScriptValue::create(v8Value(), messagePorts, arrayBuffers, didThrow);
@@ -61,24 +64,23 @@ ScriptValue ScriptValue::deserialize(ScriptState* scriptState, SerializedScriptV
 
 bool ScriptValue::getString(String& result) const
 {
-    if (m_value.IsEmpty())
+    if (m_value.get().IsEmpty())
         return false;
 
-    if (!m_value->IsString())
+    if (!m_value.get()->IsString())
         return false;
 
-    result = toWebCoreString(m_value);
+    result = toWebCoreString(m_value.get());
     return true;
 }
 
 String ScriptValue::toString(ScriptState*) const
 {
     v8::TryCatch block;
-    v8::Handle<v8::String> s = m_value->ToString();
-    // Handle the case where an exception is thrown as part of invoking toString on the object.
+    v8::Handle<v8::String> string = m_value.get()->ToString();
     if (block.HasCaught())
         return String();
-    return v8StringToWebCoreString<String>(s, DoNotExternalize);
+    return v8StringToWebCoreString<String>(string, DoNotExternalize);
 }
 
 #if ENABLE(INSPECTOR)
@@ -140,7 +142,7 @@ PassRefPtr<InspectorValue> ScriptValue::toInspectorValue(ScriptState* scriptStat
     v8::HandleScope handleScope;
     // v8::Object::GetPropertyNames() expects current context to be not null.
     v8::Context::Scope contextScope(scriptState->context());
-    return v8ToInspectorValue(m_value, InspectorValue::maxDepth);
+    return v8ToInspectorValue(m_value.get(), InspectorValue::maxDepth);
 }
 #endif
 

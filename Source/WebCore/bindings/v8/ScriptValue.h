@@ -31,17 +31,13 @@
 #ifndef ScriptValue_h
 #define ScriptValue_h
 
-#include "PlatformString.h"
+#include "ScopedPersistent.h"
 #include "ScriptState.h"
-
 #include <v8.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-
-#ifndef NDEBUG
-#include "V8GCController.h"
-#endif
+#include <wtf/text/WTFString.h>
 
 namespace WTF {
 class ArrayBuffer;
@@ -57,28 +53,21 @@ typedef Vector<RefPtr<WTF::ArrayBuffer>, 1> ArrayBufferArray;
 
 class ScriptValue {
 public:
-    ScriptValue() {}
+    ScriptValue() { }
+    virtual ~ScriptValue();
 
     ScriptValue(v8::Handle<v8::Value> value) 
     {
         if (value.IsEmpty())
             return;
-
-        m_value = v8::Persistent<v8::Value>::New(value);
-#ifndef NDEBUG
-        V8GCController::registerGlobalHandle(SCRIPTVALUE, this, m_value);
-#endif
+        m_value.set(value);
     }
 
     ScriptValue(const ScriptValue& value) 
     {
-        if (value.m_value.IsEmpty())
+        if (value.hasNoValue())
             return;
-
-        m_value = v8::Persistent<v8::Value>::New(value.m_value);
-#ifndef NDEBUG
-        V8GCController::registerGlobalHandle(SCRIPTVALUE, this, m_value);
-#endif
+        m_value.set(value.m_value.get());
     }
 
     ScriptValue& operator=(const ScriptValue& value) 
@@ -86,32 +75,28 @@ public:
         if (this == &value) 
             return *this;
 
-        clear();
+        m_value.clear();
 
-        if (value.m_value.IsEmpty())
+        if (value.hasNoValue())
             return *this;
 
-        m_value = v8::Persistent<v8::Value>::New(value.m_value);
-#ifndef NDEBUG
-        V8GCController::registerGlobalHandle(SCRIPTVALUE, this, m_value);
-#endif
-
+        m_value.set(value.m_value.get());
         return *this;
     }
 
     bool operator==(const ScriptValue& value) const
     {
-        return m_value == value.m_value;
+        return m_value.get() == value.m_value.get();
     }
 
     bool isEqual(ScriptState*, const ScriptValue& value) const
     {
-        return m_value == value.m_value;
+        return m_value.get() == value.m_value.get();
     }
 
     bool isFunction() const
     {
-        return m_value->IsFunction();
+        return m_value.get()->IsFunction();
     }
 
     bool operator!=(const ScriptValue& value) const
@@ -121,22 +106,22 @@ public:
 
     bool isNull() const
     {
-        return m_value->IsNull();
+        return m_value.get()->IsNull();
     }
 
     bool isUndefined() const
     {
-        return m_value->IsUndefined();
+        return m_value.get()->IsUndefined();
     }
 
     bool isObject() const
     {
-        return m_value->IsObject();
+        return m_value.get()->IsObject();
     }
 
     bool hasNoValue() const
     {
-        return m_value.IsEmpty();
+        return m_value.get().IsEmpty();
     }
 
     PassRefPtr<SerializedScriptValue> serialize(ScriptState*);
@@ -145,22 +130,11 @@ public:
 
     void clear()
     {
-        if (m_value.IsEmpty())
-            return;
-
-#ifndef NDEBUG
-        V8GCController::unregisterGlobalHandle(this, m_value);
-#endif
-        m_value.Dispose();
-        m_value.Clear();
+        m_value.clear();
     }
 
-    virtual ~ScriptValue() 
-    {
-        clear();
-    }
+    v8::Handle<v8::Value> v8Value() const { return m_value.get(); }
 
-    v8::Handle<v8::Value> v8Value() const { return m_value; }
     bool getString(ScriptState*, String& result) const { return getString(result); }
     bool getString(String& result) const;
     String toString(ScriptState*) const;
@@ -168,7 +142,7 @@ public:
     PassRefPtr<InspectorValue> toInspectorValue(ScriptState*) const;
 
 private:
-    mutable v8::Persistent<v8::Value> m_value;
+    ScopedPersistent<v8::Value> m_value;
 };
 
 } // namespace WebCore
