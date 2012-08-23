@@ -55,12 +55,10 @@
 #include "V8Proxy.h"
 #include "V8StyleSheet.h"
 #include "V8WorkerContextEventListener.h"
-#include "V8XPathNSResolver.h"
 #include "WebGLContextAttributes.h"
 #include "WebGLUniformLocation.h"
 #include "WorkerContextExecutionProxy.h"
 #include "WrapperTypeInfo.h"
-#include "XPathNSResolver.h"
 #include <algorithm>
 #include <utility>
 #include <v8-debug.h>
@@ -280,17 +278,5 @@ PassRefPtr<EventListener> V8DOMWrapper::getEventListener(v8::Local<v8::Value> va
     return 0;
 #endif
 }
-
-// XPath-related utilities
-RefPtr<XPathNSResolver> V8DOMWrapper::getXPathNSResolver(v8::Handle<v8::Value> value, V8Proxy* proxy)
-{
-    RefPtr<XPathNSResolver> resolver;
-    if (V8XPathNSResolver::HasInstance(value))
-        resolver = V8XPathNSResolver::toNative(v8::Handle<v8::Object>::Cast(value));
-    else if (value->IsObject())
-        resolver = V8CustomXPathNSResolver::create(value->ToObject());
-    return resolver;
-}
-
 
 }  // namespace WebCore

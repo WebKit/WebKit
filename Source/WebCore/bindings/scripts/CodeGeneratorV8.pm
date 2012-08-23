@@ -3815,7 +3815,7 @@ sub JSValueToNative
     }
 
     if ($type eq "XPathNSResolver") {
-        return "V8DOMWrapper::getXPathNSResolver($value)";
+        return "toXPathNSResolver($value)";
     }
 
     my $arrayType = $codeGenerator->GetArrayType($type);

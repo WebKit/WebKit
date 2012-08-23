@@ -354,6 +354,7 @@ namespace WebCore {
     v8::Persistent<v8::FunctionTemplate> createRawTemplate();
 
     PassRefPtr<DOMStringList> toDOMStringList(v8::Handle<v8::Value>);
+    PassRefPtr<XPathNSResolver> toXPathNSResolver(v8::Handle<v8::Value>);
 
     // Returns the window object associated with a context.
     DOMWindow* toDOMWindow(v8::Handle<v8::Context>);
