@@ -38,7 +38,6 @@
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "Document.h"
-#include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -726,12 +725,6 @@ void CachedResourceLoader::decrementRequestCount(const CachedResource* res)
 
     --m_requestCount;
     ASSERT(m_requestCount > -1);
-
-    // New resource loads (e.g. font loads) may be triggered by layout after the document load is
-    // complete but before we have dispatched didFinishLoading for the frame. Make sure the delegate
-    // is always dispatched by checking explicitly once we are done loading all resources.
-    if (!m_requestCount && m_document && m_document->loader() && m_document->loader()->frameLoader())
-        m_document->loader()->frameLoader()->checkLoadComplete();
 }
     
 void CachedResourceLoader::preload(CachedResource::Type type, ResourceRequest& request, const String& charset, bool referencedFromBody)
