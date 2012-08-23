@@ -29,7 +29,7 @@
 
 #include "Logging.h"
 #include "ParsedCookie.h"
-#include <network/TopLevelDomain.h>
+#include <network/DomainTools.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
 
@@ -274,7 +274,7 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
 
                 // Check whether the domain is a top level domain, if it is throw it out
                 // http://publicsuffix.org/list/
-                if (!BlackBerry::Platform::TopLevelDomain::isCookieWritableDomain(realDomain.utf8().data()))
+                if (BlackBerry::Platform::isTopLevelDomain(realDomain.utf8().data()))
                     LOG_AND_DELETE("Invalid cookie %s (domain): it did not pass the top level domain check", cookie.ascii().data());
 
                 res->setDomain(realDomain);
