@@ -30,6 +30,7 @@
 
 #include "IDBDatabase.h"
 #include "IDBPendingTransactionMonitor.h"
+#include "IDBTracing.h"
 #include "IDBUpgradeNeededEvent.h"
 #include "ScriptExecutionContext.h"
 
@@ -67,6 +68,7 @@ void IDBOpenDBRequest::onBlocked(int64_t oldVersion)
 
 void IDBOpenDBRequest::onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBTransactionBackendInterface> prpTransactionBackend, PassRefPtr<IDBDatabaseBackendInterface> prpDatabaseBackend)
 {
+    IDB_TRACE("IDBOpenDBRequest::onUpgradeNeeded()");
     if (!shouldEnqueueEvent())
         return;
 
@@ -84,6 +86,24 @@ void IDBOpenDBRequest::onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBTransac
       oldVersion = IDBDatabaseMetadata::DefaultIntVersion;
     }
     enqueueEvent(IDBUpgradeNeededEvent::create(oldVersion, m_version, eventNames().upgradeneededEvent));
+}
+
+void IDBOpenDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend)
+{
+    IDB_TRACE("IDBOpenDBRequest::onSuccess()");
+    if (!shouldEnqueueEvent())
+        return;
+
+    RefPtr<IDBDatabase> idbDatabase;
+    if (m_result) {
+        idbDatabase = m_result->idbDatabase();
+        ASSERT(idbDatabase);
+    } else {
+        idbDatabase = IDBDatabase::create(scriptExecutionContext(), backend);
+        m_result = IDBAny::create(idbDatabase.get());
+    }
+    idbDatabase->registerFrontendCallbacks();
+    enqueueEvent(Event::create(eventNames().successEvent, false, false));
 }
 
 bool IDBOpenDBRequest::shouldEnqueueEvent() const

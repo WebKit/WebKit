@@ -54,8 +54,6 @@ public:
     virtual void onSuccess(PassRefPtr<DOMStringList>) = 0;
     // From IDBObjectStore/IDBIndex.openCursor(), IDBIndex.openKeyCursor()
     virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue>) = 0;
-    // From IDBFactory.open()
-    virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>) = 0;
     // From IDBObjectStore.add()/put(), IDBIndex.getKey()
     virtual void onSuccess(PassRefPtr<IDBKey>) = 0;
     // From IDBDatabase.setVersion()
@@ -68,9 +66,12 @@ public:
     virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue>) = 0;
     // From IDBCursor.advance()/continue()
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >& keys, const Vector<RefPtr<IDBKey> >& primaryKeys, const Vector<RefPtr<SerializedScriptValue> >& values) = 0;
+    // From IDBFactory.open()/deleteDatabase(), IDBDatabase.setVersion()
     virtual void onBlocked() { ASSERT_NOT_REACHED(); }
     virtual void onBlocked(int64_t existingVersion) { ASSERT_NOT_REACHED(); }
+    // From IDBFactory.open()
     virtual void onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBTransactionBackendInterface>, PassRefPtr<IDBDatabaseBackendInterface>) { ASSERT_NOT_REACHED(); }
+    virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>) { ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebCore

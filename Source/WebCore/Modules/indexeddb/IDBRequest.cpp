@@ -291,24 +291,6 @@ void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend, PassRe
     enqueueEvent(createSuccessEvent());
 }
 
-void IDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend)
-{
-    IDB_TRACE("IDBRequest::onSuccess(IDBDatabase)");
-    if (!shouldEnqueueEvent())
-        return;
-
-    RefPtr<IDBDatabase> idbDatabase;
-    if (m_result) {
-        idbDatabase = m_result->idbDatabase();
-        ASSERT(idbDatabase);
-    } else {
-        idbDatabase = IDBDatabase::create(scriptExecutionContext(), backend);
-        m_result = IDBAny::create(idbDatabase.get());
-    }
-    idbDatabase->registerFrontendCallbacks();
-    enqueueEvent(createSuccessEvent());
-}
-
 void IDBRequest::onSuccess(PassRefPtr<IDBKey> idbKey)
 {
     IDB_TRACE("IDBRequest::onSuccess(IDBKey)");
@@ -426,11 +408,6 @@ void IDBRequest::stop()
     m_contextStopped = true;
     if (m_readyState == PENDING)
         markEarlyDeath();
-}
-
-void IDBRequest::onBlocked()
-{
-    ASSERT_NOT_REACHED();
 }
 
 const AtomicString& IDBRequest::interfaceName() const

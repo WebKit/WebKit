@@ -1,3 +1,16 @@
+2012-08-23  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Move onSuccess(IDBDatabaseBackendInterface) to IDBOpenDBRequest
+        https://bugs.webkit.org/show_bug.cgi?id=94757
+
+        Reviewed by Tony Chang.
+
+        Drop onSuccess(IDBDatabaseBackendImpl) overload from test, as it is no longer
+        implemented by IDBRequest.
+
+        * tests/IDBRequestTest.cpp:
+        (WebCore::TEST):
+
 2012-08-23  Kenneth Russell  <kbr@google.com>
 
         Convert ScrollableArea ASSERT_NOT_REACHED virtuals into pure virtuals
