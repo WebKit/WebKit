@@ -1,3 +1,18 @@
+2012-08-22  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: tests for injection/extraction of idb keys
+        https://bugs.webkit.org/show_bug.cgi?id=94653
+
+        Reviewed by Tony Chang.
+
+        Added unit tests for key injection/extraction using
+        SerializedScriptValue. These were moved from chromium, now
+        that all uses of the API are through WebKit.
+
+        * tests/IDBKeyPathTest.cpp:
+        (WebCore):
+        (WebCore::TEST):
+
 2012-08-22  James Robinson  <jamesr@chromium.org>
 
         [chromium] Change WebLayer from a concrete type to a pure virtual interface

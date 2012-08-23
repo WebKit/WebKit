@@ -26,6 +26,10 @@
 #include "config.h"
 #include "IDBKeyPath.h"
 
+#include "IDBBindingUtilities.h"
+#include "IDBKey.h"
+#include "SerializedScriptValue.h"
+
 #include <gtest/gtest.h>
 #include <wtf/Vector.h>
 
@@ -121,6 +125,92 @@ TEST(IDBKeyPathTest, InvalidKeyPath5)
     String keyPath("foo..bar..baz");
     expected.append(String("foo"));
     checkKeyPath(keyPath, expected, 3);
+}
+
+TEST(IDBKeyPathTest, Extract)
+{
+    IDBKeyPath keyPath("foo");
+    RefPtr<IDBKey> stringZooKey(IDBKey::createString("zoo"));
+    RefPtr<IDBKey> invalidKey(IDBKey::createInvalid());
+    RefPtr<SerializedScriptValue> ssv;
+    RefPtr<IDBKey> result;
+
+    // keypath: "foo", value: {foo: "zoo"}, expected: "zoo"
+    UChar dataFooZoo[] = {0x0353, 0x6f66, 0x536f, 0x7a03, 0x6f6f, 0x017b};
+    ssv = SerializedScriptValue::createFromWire(String(dataFooZoo, WTF_ARRAY_LENGTH(dataFooZoo)));
+    result = createIDBKeyFromSerializedValueAndKeyPath(ssv, keyPath);
+    EXPECT_TRUE(stringZooKey->isEqual(result.get()));
+
+    // keypath: "foo", value: {foo: null}, expected: invalid
+    UChar dataFooNull[] = {0x0353, 0x6f66, 0x306f, 0x017b};
+    ssv = SerializedScriptValue::createFromWire(String(dataFooNull, WTF_ARRAY_LENGTH(dataFooNull)));
+    result = createIDBKeyFromSerializedValueAndKeyPath(ssv, keyPath);
+    EXPECT_FALSE(result->isValid());
+
+    // keypath: "foo", value: {}, expected: null
+    UChar dataObject[] = {0x017b};
+    ssv = SerializedScriptValue::createFromWire(String(dataObject, WTF_ARRAY_LENGTH(dataObject)));
+    result = createIDBKeyFromSerializedValueAndKeyPath(ssv, keyPath);
+    EXPECT_EQ(0, result.get());
+
+    // keypath: "foo", value: null, expected: null
+    ssv = SerializedScriptValue::nullValue();
+    result = createIDBKeyFromSerializedValueAndKeyPath(ssv, keyPath);
+    EXPECT_EQ(0, result.get());
+}
+
+TEST(IDBKeyPathTest, IDBKeyPathPropertyNotAvailable)
+{
+    IDBKeyPath keyPath("PropertyNotAvailable");
+    RefPtr<SerializedScriptValue> ssv;
+    // {foo: "zoo", bar: null}
+    UChar data[] = {0x0353, 0x6f66, 0x536f, 0x7a03, 0x6f6f, 0x0353, 0x6162,
+                    0x3072, 0x027b};
+    ssv = SerializedScriptValue::createFromWire(String(data, WTF_ARRAY_LENGTH(data)));
+    RefPtr<IDBKey> result = createIDBKeyFromSerializedValueAndKeyPath(ssv, keyPath);
+    EXPECT_EQ(0, result.get());
+
+    // null
+    ssv = SerializedScriptValue::nullValue();
+    result = createIDBKeyFromSerializedValueAndKeyPath(ssv, keyPath);
+    EXPECT_EQ(0, result.get());
+}
+
+TEST(IDBKeyPathTest, InjectIDBKey)
+{
+    // {foo: 'zoo'}
+    const UChar initialData[] = {0x0353, 0x6f66, 0x536f, 0x7a03, 0x6f6f, 0x017b};
+    RefPtr<SerializedScriptValue> value = SerializedScriptValue::createFromWire(String(initialData, WTF_ARRAY_LENGTH(initialData)));
+
+    RefPtr<IDBKey> key = IDBKey::createString("myNewKey");
+    IDBKeyPath keyPath("bar");
+
+    // {foo: 'zoo', bar: 'myNewKey'}
+    const UChar expectedData[] = {0x01ff, 0x003f, 0x3f6f, 0x5301, 0x6603,
+                                  0x6f6f, 0x013f, 0x0353, 0x6f7a, 0x3f6f,
+                                  0x5301, 0x6203, 0x7261, 0x013f, 0x0853,
+                                  0x796d, 0x654e, 0x4b77, 0x7965, 0x027b};
+    RefPtr<SerializedScriptValue> expectedValue = 
+            SerializedScriptValue::createFromWire(String(expectedData, WTF_ARRAY_LENGTH(expectedData)));
+    RefPtr<SerializedScriptValue> result = injectIDBKeyIntoSerializedValue(key, value, keyPath);
+    EXPECT_EQ(expectedValue->toWireString(), result->toWireString());
+
+    // Should fail - can't apply properties to string value of key foo
+    keyPath = IDBKeyPath("foo.bad.path");
+    result = injectIDBKeyIntoSerializedValue(key, value, keyPath);
+    EXPECT_EQ(0, result.get());
+
+    // {foo: 'zoo', bar: {baz: 'myNewKey'}}
+    const UChar expectedData2[] = {0x01ff, 0x003f, 0x3f6f, 0x5301, 0x6603,
+                                   0x6f6f, 0x013f, 0x0353, 0x6f7a, 0x3f6f,
+                                   0x5301, 0x6203, 0x7261, 0x013f, 0x3f6f,
+                                   0x5302, 0x6203, 0x7a61, 0x023f, 0x0853,
+                                   0x796d, 0x654e, 0x4b77, 0x7965, 0x017b,
+                                   0x027b};
+    RefPtr<SerializedScriptValue> expectedValue2 = SerializedScriptValue::createFromWire(String(expectedData2, WTF_ARRAY_LENGTH(expectedData2)));
+    keyPath = IDBKeyPath("bar.baz");
+    result = injectIDBKeyIntoSerializedValue(key, value, keyPath);
+    EXPECT_EQ(expectedValue2->toWireString(), result->toWireString());
 }
 
 } // namespace
