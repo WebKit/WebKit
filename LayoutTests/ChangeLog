@@ -1,3 +1,12 @@
+2012-08-23  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        notifications-event-listener-crash.html test has non-deterministic
+        output on Chromium XP debug.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-23  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Gardening after r126350
