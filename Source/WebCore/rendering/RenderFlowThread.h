@@ -197,6 +197,15 @@ inline const RenderFlowThread* toRenderFlowThread(const RenderObject* object)
 // This will catch anyone doing an unnecessary cast.
 void toRenderFlowThread(const RenderFlowThread*);
 
+class CurrentRenderFlowThreadMaintainer {
+    WTF_MAKE_NONCOPYABLE(CurrentRenderFlowThreadMaintainer);
+public:
+    CurrentRenderFlowThreadMaintainer(RenderFlowThread*);
+    ~CurrentRenderFlowThreadMaintainer();
+private:
+    RenderFlowThread* m_renderFlowThread;
+};
+
 } // namespace WebCore
 
 #endif // RenderFlowThread_h

@@ -107,26 +107,6 @@ void RenderFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
     checkRegionsWithStyling();
 }
 
-class CurrentRenderFlowThreadMaintainer {
-    WTF_MAKE_NONCOPYABLE(CurrentRenderFlowThreadMaintainer);
-public:
-    CurrentRenderFlowThreadMaintainer(RenderFlowThread* renderFlowThread)
-        : m_renderFlowThread(renderFlowThread)
-    {
-        RenderView* view = m_renderFlowThread->view();
-        ASSERT(!view->flowThreadController()->currentRenderFlowThread());
-        view->flowThreadController()->setCurrentRenderFlowThread(m_renderFlowThread);
-    }
-    ~CurrentRenderFlowThreadMaintainer()
-    {
-        RenderView* view = m_renderFlowThread->view();
-        ASSERT(view->flowThreadController()->currentRenderFlowThread() == m_renderFlowThread);
-        view->flowThreadController()->setCurrentRenderFlowThread(0);
-    }
-private:
-    RenderFlowThread* m_renderFlowThread;
-};
-
 class CurrentRenderFlowThreadDisabler {
     WTF_MAKE_NONCOPYABLE(CurrentRenderFlowThreadDisabler);
 public:
@@ -792,5 +772,25 @@ bool RenderFlowThread::objectInFlowRegion(const RenderObject* object, const Rend
 
     return false;
 }
+
+CurrentRenderFlowThreadMaintainer::CurrentRenderFlowThreadMaintainer(RenderFlowThread* renderFlowThread)
+        : m_renderFlowThread(renderFlowThread)
+{
+    if (!m_renderFlowThread)
+        return;
+    RenderView* view = m_renderFlowThread->view();
+    ASSERT(!view->flowThreadController()->currentRenderFlowThread());
+    view->flowThreadController()->setCurrentRenderFlowThread(m_renderFlowThread);
+}
+
+CurrentRenderFlowThreadMaintainer::~CurrentRenderFlowThreadMaintainer()
+{
+    if (!m_renderFlowThread)
+        return;
+    RenderView* view = m_renderFlowThread->view();
+    ASSERT(view->flowThreadController()->currentRenderFlowThread() == m_renderFlowThread);
+    view->flowThreadController()->setCurrentRenderFlowThread(0);
+}
+
 
 } // namespace WebCore

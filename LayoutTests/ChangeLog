@@ -1,3 +1,16 @@
+2012-08-23  Andrei Onea  <onea@adobe.com>
+
+        [CSSRegions]Crash when moving anonymous block children inside a named flow
+        https://bugs.webkit.org/show_bug.cgi?id=90865
+
+        Reviewed by Abhishek Arya.
+
+        Added test for crash which happens when the children of an anonymous block
+        inside a flow thread are moved.
+
+        * fast/regions/move-anonymous-block-inside-named-flow-crash-expected.txt:
+        * fast/regions/move-anonymous-block-inside-named-flow-crash.html:
+
 2012-08-23  Li Yin  <li.yin@intel.com>
 
         Add test for decodeAudioData

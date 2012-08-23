@@ -2435,9 +2435,8 @@ void RenderObject::willBeRemovedFromTree()
         parent()->dirtyLinesFromChangedChild(this);
 
     if (inRenderFlowThread()) {
-        if (isBox())
-            enclosingRenderFlowThread()->removeRenderBoxRegionInfo(toRenderBox(this));
-        enclosingRenderFlowThread()->clearRenderObjectCustomStyle(this);
+        ASSERT(enclosingRenderFlowThread());
+        enclosingRenderFlowThread()->removeFlowChildInfo(this);
     }
 
     if (RenderNamedFlowThread* containerFlowThread = parent()->enclosingRenderNamedFlowThread())
