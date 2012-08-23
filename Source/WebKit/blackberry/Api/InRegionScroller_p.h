@@ -52,7 +52,7 @@ public:
     bool scrollBy(const Platform::IntSize& delta);
 
     bool setScrollPositionCompositingThread(unsigned camouflagedLayer, const WebCore::IntPoint& scrollPosition);
-    bool setScrollPositionWebKitThread(unsigned camouflagedLayer, const WebCore::IntPoint& scrollPosition);
+    bool setScrollPositionWebKitThread(unsigned camouflagedLayer, const WebCore::IntPoint& scrollPosition, bool supportsAcceleratedScrolling);
 
     void calculateInRegionScrollableAreasForPoint(const WebCore::IntPoint&);
     const std::vector<Platform::ScrollViewBase*>& activeInRegionScrollableAreas() const;

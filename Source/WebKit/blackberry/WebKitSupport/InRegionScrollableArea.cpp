@@ -46,6 +46,17 @@ InRegionScrollableArea::~InRegionScrollableArea()
         m_cachedCompositedScrollableLayer->clearOverride();
 }
 
+// FIXME: Make RenderLayer::enclosingElement public so this one can be removed.
+static Node* enclosingLayerNode(RenderLayer* layer)
+{
+    for (RenderObject* r = layer->renderer(); r; r = r->parent()) {
+        if (Node* e = r->node())
+            return e;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLayer* layer)
     : m_webPage(webPage)
     , m_layer(layer)
@@ -92,11 +103,17 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
         m_scrollsHorizontally = box->scrollWidth() != box->clientWidth() && box->scrollsOverflowX();
         m_scrollsVertically = box->scrollHeight() != box->clientHeight() && box->scrollsOverflowY();
 
+        // Both caches below are self-exclusive.
         if (m_layer->usesCompositedScrolling()) {
             m_supportsCompositedScrolling = true;
             ASSERT(m_layer->backing()->hasScrollingLayer());
             m_camouflagedCompositedScrollableLayer = reinterpret_cast<unsigned>(m_layer->backing()->scrollingLayer()->platformLayer());
             m_cachedCompositedScrollableLayer = m_layer->backing()->scrollingLayer()->platformLayer();
+            ASSERT(!m_cachedNonCompositedScrollableNode);
+        } else {
+            m_camouflagedCompositedScrollableLayer = reinterpret_cast<unsigned>(enclosingLayerNode(m_layer));
+            m_cachedNonCompositedScrollableNode = enclosingLayerNode(m_layer);
+            ASSERT(!m_cachedCompositedScrollableLayer);
         }
 
         m_overscrollLimitFactor = 0.0;

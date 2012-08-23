@@ -1,3 +1,39 @@
+2012-08-23  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Unify slow and fast in-region scrolling code paths
+        https://bugs.webkit.org/show_bug.cgi?id=94834
+        PR #197662
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Arvid Nilsson.
+
+        In order to be able to remove a bunch of obsolete code from
+        InRegionScroller.cpp, we need to unify the codepaths for slow
+        and fast in-region scrolling.
+
+        This patch caches the root scrollable node of each scrollable block
+        in InRegionScrollableArea also for the non-composited-scrolling case now too
+        (analogly to the way we cache LayerWebKitThread for the composited scrolling case).
+
+        Now the client (libwebview) can dispatch an in-region scrolling with one single code path,
+        making use of a boolean (argh!) to inform if the scroll of the given
+        layer supports compositing or not. Later on, this boolean is used to casting the proper element.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScroller::setScrollPositionWebKitThread):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::setScrollPositionWebKitThread):
+        * Api/InRegionScroller.h:
+        * Api/InRegionScroller_p.h:
+        (InRegionScrollerPrivate):
+        * WebKitSupport/InRegionScrollableArea.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::InRegionScrollableArea::InRegionScrollableArea):
+        (BlackBerry::WebKit::enclosingLayerNode):
+        * WebKitSupport/InRegionScrollableArea.h:
+        (WebCore):
+        (InRegionScrollableArea):
+
 2012-08-23  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Web pages are zoomed out to much on initial load

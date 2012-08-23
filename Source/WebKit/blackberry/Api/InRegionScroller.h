@@ -36,7 +36,7 @@ public:
     ~InRegionScroller();
 
     bool setScrollPositionCompositingThread(unsigned camouflagedLayer, const Platform::IntPoint& /*scrollPosition*/);
-    bool setScrollPositionWebKitThread(unsigned camouflagedLayer, const Platform::IntPoint& /*scrollPosition*/);
+    bool setScrollPositionWebKitThread(unsigned camouflagedLayer, const Platform::IntPoint& /*scrollPosition*/, bool acceleratedScrolling);
 
 private:
     friend class WebPagePrivate;

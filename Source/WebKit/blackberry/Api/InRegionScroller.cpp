@@ -65,12 +65,12 @@ bool InRegionScroller::setScrollPositionCompositingThread(unsigned camouflagedLa
     return d->setScrollPositionCompositingThread(camouflagedLayer, d->m_webPage->mapFromTransformed(scrollPosition));
 }
 
-bool InRegionScroller::setScrollPositionWebKitThread(unsigned camouflagedLayer, const Platform::IntPoint& scrollPosition)
+bool InRegionScroller::setScrollPositionWebKitThread(unsigned camouflagedLayer, const Platform::IntPoint& scrollPosition, bool supportsAcceleratedScrolling)
 {
     ASSERT(Platform::webKitThreadMessageClient()->isCurrentThread());
 
     // FIXME: Negative values won't work with map{To,From}Transform methods.
-    return d->setScrollPositionWebKitThread(camouflagedLayer, d->m_webPage->mapFromTransformed(scrollPosition));
+    return d->setScrollPositionWebKitThread(camouflagedLayer, d->m_webPage->mapFromTransformed(scrollPosition), supportsAcceleratedScrolling);
 }
 
 InRegionScrollerPrivate::InRegionScrollerPrivate(WebPagePrivate* webPagePrivate)
@@ -118,16 +118,25 @@ bool InRegionScrollerPrivate::setScrollPositionCompositingThread(unsigned camouf
     return true;
 }
 
-bool InRegionScrollerPrivate::setScrollPositionWebKitThread(unsigned camouflagedLayer, const WebCore::IntPoint& scrollPosition)
+bool InRegionScrollerPrivate::setScrollPositionWebKitThread(unsigned camouflagedLayer, const WebCore::IntPoint& scrollPosition, bool supportsAcceleratedScrolling)
 {
     RenderLayer* layer = 0;
 
-    LayerWebKitThread* layerWebKitThread = reinterpret_cast<LayerWebKitThread*>(camouflagedLayer);
-    ASSERT(layerWebKitThread);
-    if (layerWebKitThread->owner()) {
-        GraphicsLayer* graphicsLayer = layerWebKitThread->owner();
-        RenderLayerBacking* backing = static_cast<RenderLayerBacking*>(graphicsLayer->client());
-        layer = backing->owningLayer();
+    if (supportsAcceleratedScrolling) {
+        LayerWebKitThread* layerWebKitThread = reinterpret_cast<LayerWebKitThread*>(camouflagedLayer);
+        ASSERT(layerWebKitThread);
+        if (layerWebKitThread->owner()) {
+            GraphicsLayer* graphicsLayer = layerWebKitThread->owner();
+            RenderLayerBacking* backing = static_cast<RenderLayerBacking*>(graphicsLayer->client());
+            layer = backing->owningLayer();
+        }
+    } else {
+        Node* node = reinterpret_cast<Node*>(camouflagedLayer);
+        ASSERT(node);
+        if (!node->renderer())
+            return false;
+
+        layer = node->renderer()->enclosingLayer();
     }
 
     if (!layer)
