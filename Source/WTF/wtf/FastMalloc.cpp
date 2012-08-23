@@ -2469,11 +2469,20 @@ class TCMalloc_Central_FreeList {
   int32_t cache_size_;
 };
 
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-private-field"
+#endif
+
 // Pad each CentralCache object to multiple of 64 bytes
 class TCMalloc_Central_FreeListPadded : public TCMalloc_Central_FreeList {
  private:
   char pad_[(64 - (sizeof(TCMalloc_Central_FreeList) % 64)) % 64];
 };
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
 
 //-------------------------------------------------------------------
 // Global variables
@@ -4539,17 +4548,15 @@ class AdminRegionRecorder {
     void* m_context;
     unsigned m_typeMask;
     vm_range_recorder_t* m_recorder;
-    const RemoteMemoryReader& m_reader;
 
     Vector<vm_range_t, 1024> m_pendingRegions;
 
 public:
-    AdminRegionRecorder(task_t task, void* context, unsigned typeMask, vm_range_recorder_t* recorder, const RemoteMemoryReader& reader)
+    AdminRegionRecorder(task_t task, void* context, unsigned typeMask, vm_range_recorder_t* recorder)
         : m_task(task)
         , m_context(context)
         , m_typeMask(typeMask)
         , m_recorder(recorder)
-        , m_reader(reader)
     { }
 
     void recordRegion(vm_address_t ptr, size_t size)
@@ -4602,7 +4609,7 @@ kern_return_t FastMallocZone::enumerate(task_t task, void* context, unsigned typ
     pageMap->visitValues(usageRecorder, memoryReader);
     usageRecorder.recordPendingRegions();
 
-    AdminRegionRecorder adminRegionRecorder(task, context, typeMask, recorder, memoryReader);
+    AdminRegionRecorder adminRegionRecorder(task, context, typeMask, recorder);
     pageMap->visitAllocations(adminRegionRecorder, memoryReader);
 
     PageHeapAllocator<Span>* spanAllocator = memoryReader(mzone->m_spanAllocator);

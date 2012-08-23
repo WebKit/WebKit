@@ -1,3 +1,16 @@
+2012-08-23  Mark Rowe  <mrowe@apple.com>
+
+        Make WTF build with the latest version of clang.
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/FastMalloc.cpp:
+        (WTF): Disable the -Wunused-private-field warning around the declaration of
+        TCMalloc_Central_FreeListPadded since the padding is intentionally unused.
+        (WTF::AdminRegionRecorder): Remove the unused m_reader member.
+        (WTF::FastMallocZone::enumerate): Don't pass in the RemoteMemoryReader since
+        it is no longer needed.
+
 2012-08-22  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed a fastMallocForbid/Allow compile error for some compilers
