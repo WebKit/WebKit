@@ -88,7 +88,10 @@ public:
     // This function must be called from the main thread. It is safe to call it repeatedly.
     static void initializeThreading();
 
-    // Evaluate a script file in the environment of this proxy.
+    v8::Local<v8::Value> compileAndRunScript(const ScriptSourceCode&);
+
+    // Evaluate JavaScript in the main world.
+    // The caller must hold an execution context.
     ScriptValue evaluate(const ScriptSourceCode&);
 
     // Evaluate JavaScript in a new isolated world. The script gets its own

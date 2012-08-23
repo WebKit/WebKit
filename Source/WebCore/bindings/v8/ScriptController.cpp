@@ -50,6 +50,7 @@
 #include "PlatformSupport.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
+#include "ScriptRunner.h"
 #include "ScriptSourceCode.h"
 #include "ScriptableDocumentParser.h"
 #include "SecurityOrigin.h"
@@ -256,6 +257,73 @@ ScriptValue ScriptController::callFunctionEvenIfScriptDisabled(v8::Handle<v8::Fu
     return ScriptValue(callFunction(function, receiver, argc, argv));
 }
 
+v8::Local<v8::Value> ScriptController::compileAndRunScript(const ScriptSourceCode& source)
+{
+    ASSERT(v8::Context::InContext());
+
+    V8GCController::checkMemoryUsage();
+
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willEvaluateScript(m_frame, source.url().isNull() ? String() : source.url().string(), source.startLine());
+
+    v8::Local<v8::Value> result;
+    {
+        // Isolate exceptions that occur when compiling and executing
+        // the code. These exceptions should not interfere with
+        // javascript code we might evaluate from C++ when returning
+        // from here.
+        v8::TryCatch tryCatch;
+        tryCatch.SetVerbose(true);
+
+        // Compile the script.
+        v8::Local<v8::String> code = v8ExternalString(source.source());
+#if PLATFORM(CHROMIUM)
+        TRACE_EVENT_BEGIN0("v8", "v8.compile");
+#endif
+        OwnPtr<v8::ScriptData> scriptData = ScriptSourceCode::precompileScript(code, source.cachedScript());
+
+        // NOTE: For compatibility with WebCore, ScriptSourceCode's line starts at
+        // 1, whereas v8 starts at 0.
+        v8::Handle<v8::Script> script = ScriptSourceCode::compileScript(code, source.url(), source.startPosition(), scriptData.get());
+#if PLATFORM(CHROMIUM)
+        TRACE_EVENT_END0("v8", "v8.compile");
+        TRACE_EVENT0("v8", "v8.run");
+#endif
+
+        // Keep Frame (and therefore ScriptController) alive.
+        RefPtr<Frame> protect(m_frame);
+        result = ScriptRunner::runCompiledScript(script, m_frame->document());
+    }
+
+    InspectorInstrumentation::didEvaluateScript(cookie);
+
+    return result;
+}
+
+ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
+{
+    String sourceURL = sourceCode.url();
+    const String* savedSourceURL = m_sourceURL;
+    m_sourceURL = &sourceURL;
+
+    v8::HandleScope handleScope;
+    v8::Handle<v8::Context> v8Context = ScriptController::mainWorldContext(m_frame);
+    if (v8Context.IsEmpty())
+        return ScriptValue();
+
+    v8::Context::Scope scope(v8Context);
+
+    RefPtr<Frame> protect(m_frame);
+
+    v8::Local<v8::Value> object = compileAndRunScript(sourceCode);
+
+    m_sourceURL = savedSourceURL;
+
+    if (object.IsEmpty())
+        return ScriptValue();
+
+    return ScriptValue(object);
+}
+
 void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>& sources, Vector<ScriptValue>* results)
 {
     evaluateInIsolatedWorld(worldID, sources, 0, results);
@@ -304,7 +372,7 @@ void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<Sc
         v8::Local<v8::Array> resultArray = v8::Array::New(sources.size());
 
         for (size_t i = 0; i < sources.size(); ++i) {
-            v8::Local<v8::Value> evaluationResult = m_proxy->evaluate(sources[i], 0);
+            v8::Local<v8::Value> evaluationResult = compileAndRunScript(sources[i]);
             if (evaluationResult.IsEmpty())
                 evaluationResult = v8::Local<v8::Value>::New(v8::Undefined());
             resultArray->Set(i, evaluationResult);
@@ -329,32 +397,6 @@ void ScriptController::setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<Se
     IsolatedWorldMap::iterator iter = m_proxy->isolatedWorlds().find(worldID);
     if (iter != m_proxy->isolatedWorlds().end())
         iter->second->setSecurityOrigin(securityOrigin);
-}
-
-// Evaluate a script file in the environment of this proxy.
-ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
-{
-    String sourceURL = sourceCode.url();
-    const String* savedSourceURL = m_sourceURL;
-    m_sourceURL = &sourceURL;
-
-    v8::HandleScope handleScope;
-    v8::Handle<v8::Context> v8Context = ScriptController::mainWorldContext(m_proxy->frame());
-    if (v8Context.IsEmpty())
-        return ScriptValue();
-
-    v8::Context::Scope scope(v8Context);
-
-    RefPtr<Frame> protect(m_frame);
-
-    v8::Local<v8::Value> object = m_proxy->evaluate(sourceCode, 0);
-
-    m_sourceURL = savedSourceURL;
-
-    if (object.IsEmpty())
-        return ScriptValue();
-
-    return ScriptValue(object);
 }
 
 TextPosition ScriptController::eventHandlerPosition() const

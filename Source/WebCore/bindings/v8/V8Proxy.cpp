@@ -88,48 +88,6 @@ V8Proxy::~V8Proxy()
     windowShell()->destroyGlobal();
 }
 
-v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* node)
-{
-    ASSERT(v8::Context::InContext());
-
-    V8GCController::checkMemoryUsage();
-
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willEvaluateScript(m_frame, source.url().isNull() ? String() : source.url().string(), source.startLine());
-
-    v8::Local<v8::Value> result;
-    {
-        // Isolate exceptions that occur when compiling and executing
-        // the code. These exceptions should not interfere with
-        // javascript code we might evaluate from C++ when returning
-        // from here.
-        v8::TryCatch tryCatch;
-        tryCatch.SetVerbose(true);
-
-        // Compile the script.
-        v8::Local<v8::String> code = v8ExternalString(source.source());
-#if PLATFORM(CHROMIUM)
-        TRACE_EVENT_BEGIN0("v8", "v8.compile");
-#endif
-        OwnPtr<v8::ScriptData> scriptData = ScriptSourceCode::precompileScript(code, source.cachedScript());
-
-        // NOTE: For compatibility with WebCore, ScriptSourceCode's line starts at
-        // 1, whereas v8 starts at 0.
-        v8::Handle<v8::Script> script = ScriptSourceCode::compileScript(code, source.url(), source.startPosition(), scriptData.get());
-#if PLATFORM(CHROMIUM)
-        TRACE_EVENT_END0("v8", "v8.compile");
-        TRACE_EVENT0("v8", "v8.run");
-#endif
-
-        // Keep Frame (and therefore ScriptController) alive.
-        RefPtr<Frame> protect(frame());
-        result = ScriptRunner::runCompiledScript(script, frame()->document());
-    }
-
-    InspectorInstrumentation::didEvaluateScript(cookie);
-
-    return result;
-}
-
 V8DOMWindowShell* V8Proxy::windowShell() const
 {
     return frame()->script()->windowShell();
