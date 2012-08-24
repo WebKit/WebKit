@@ -1,5 +1,19 @@
 2012-08-24  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Update test expectations with changes merged from r126219. Patch by
+        Mark Lam. Unreviewed.
+
+        * platform/mac-lion/platform: Added.
+        * platform/mac-lion/platform/mac-lion: Added.
+        * platform/mac-lion/platform/mac-lion/platform: Added.
+        * platform/mac-lion/platform/mac-lion/platform/mac: Added.
+        * platform/mac-lion/platform/mac-lion/platform/mac/fast: Added.
+        * platform/mac-lion/platform/mac-lion/platform/mac/fast/text: Added.
+        * platform/mac-lion/platform/mac-lion/platform/mac/fast/text/vertical-surrogate-pair-expected.png: Added.
+        * platform/mac-lion/platform/mac-lion/platform/mac/fast/text/vertical-surrogate-pair-expected.txt: Added.
+
+2012-08-24  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Update test expectations. Patch by Mark Lam. Unreviewed.
 
         * platform/mac-wk2/http/tests/loading: Added.
