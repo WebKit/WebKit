@@ -46,6 +46,11 @@ WheelFlingPlatformGestureCurve::~WheelFlingPlatformGestureCurve()
 {
 }
 
+const char* WheelFlingPlatformGestureCurve::debugName() const
+{
+    return "WheelFling";
+}
+
 bool WheelFlingPlatformGestureCurve::apply(double time, PlatformGestureCurveTarget* target)
 {
     // Use a Rayleigh distribution for the curve. This simulates a velocity profile

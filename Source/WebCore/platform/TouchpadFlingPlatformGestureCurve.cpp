@@ -129,6 +129,11 @@ TouchpadFlingPlatformGestureCurve::~TouchpadFlingPlatformGestureCurve()
 {
 }
 
+const char* TouchpadFlingPlatformGestureCurve::debugName() const
+{
+    return "TouchpadFling";
+}
+
 bool TouchpadFlingPlatformGestureCurve::apply(double time, PlatformGestureCurveTarget* target)
 {
     float displacement;
