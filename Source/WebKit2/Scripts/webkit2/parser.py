@@ -22,7 +22,7 @@
 
 import re
 
-from webkit2 import model
+import model
 
 
 def parse(file):

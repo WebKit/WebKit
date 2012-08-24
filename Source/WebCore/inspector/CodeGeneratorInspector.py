@@ -32,6 +32,7 @@ import os.path
 import sys
 import string
 import optparse
+from string import join
 try:
     import json
 except ImportError:
@@ -85,10 +86,8 @@ try:
         raise Exception("Output .h directory must be specified")
     if not output_cpp_dirname:
         raise Exception("Output .cpp directory must be specified")
-except Exception:
-    # Work with python 2 and 3 http://docs.python.org/py3k/howto/pyporting.html
-    exc = sys.exc_info()[1]
-    sys.stderr.write("Failed to parse command-line arguments: %s\n\n" % exc)
+except Exception, e:
+    sys.stderr.write("Failed to parse command-line arguments: %s\n\n" % e)
     sys.stderr.write("Usage: <script> Inspector.json --output_h_dir <output_header_dir> --output_cpp_dir <output_cpp_dir>\n")
     exit(1)
 
@@ -798,7 +797,7 @@ class EnumConstants:
         output = []
         for item in cls.constants_:
             output.append("    \"" + item + "\"")
-        return ",\n".join(output) + "\n"
+        return join(output, ",\n") + "\n"
 
 
 # Typebuilder code is generated in several passes: first typedefs, then other classes.
@@ -927,7 +926,7 @@ class TypeBindings:
                                         for enum_item in enum:
                                             enum_pos = EnumConstants.add_constant(enum_item)
                                             condition_list.append("s == \"%s\"" % enum_item)
-                                        validator_writer.newline("    ASSERT(%s);\n" % " || ".join(condition_list))
+                                        validator_writer.newline("    ASSERT(%s);\n" % join(condition_list, " || "))
                                     validator_writer.newline("}\n")
 
                                     if domain_guard:
@@ -2701,7 +2700,7 @@ class Generator:
             Generator.frontend_domain_class_lines.append(Templates.frontend_domain_class.substitute(None,
                 domainClassName=domain_name,
                 domainFieldName=domain_name_lower,
-                frontendDomainMethodDeclarations="".join(flatten_list(frontend_method_declaration_lines))))
+                frontendDomainMethodDeclarations=join(flatten_list(frontend_method_declaration_lines), "")))
 
             agent_interface_name = Capitalizer.lower_camel_case_to_upper(domain_name) + "CommandHandler"
             Generator.backend_agent_interface_list.append("    class %s {\n" % agent_interface_name)
@@ -2770,15 +2769,15 @@ class Generator:
                 backend_js_event_param_list.append("\"%s\"" % parameter_name)
             method_line_list.append("    %sMessage->setObject(\"params\", paramsObject);\n" % event_name)
         frontend_method_declaration_lines.append(
-            "        void %s(%s);\n" % (event_name, ", ".join(parameter_list)))
+            "        void %s(%s);\n" % (event_name, join(parameter_list, ", ")))
 
         Generator.frontend_method_list.append(Templates.frontend_method.substitute(None,
             domainName=domain_name, eventName=event_name,
-            parameters=", ".join(parameter_list),
-            code="".join(method_line_list)))
+            parameters=join(parameter_list, ", "),
+            code=join(method_line_list, "")))
 
         Generator.backend_js_domain_initializer_list.append("InspectorBackend.registerEvent(\"%s.%s\", [%s]);\n" % (
-            domain_name, event_name, ", ".join(backend_js_event_param_list)))
+            domain_name, event_name, join(backend_js_event_param_list, ", ")))
 
     @staticmethod
     def process_command(json_command, domain_name, agent_field_name, agent_interface_name):
@@ -2852,7 +2851,7 @@ class Generator:
 
                 js_param_list.append(js_param_text)
 
-            js_parameters_text = ", ".join(js_param_list)
+            js_parameters_text = join(js_param_list, ", ")
 
         response_cook_text = ""
         js_reply_list = "[]"
@@ -2901,9 +2900,9 @@ class Generator:
 
                 backend_js_reply_param_list.append("\"%s\"" % json_return_name)
 
-            js_reply_list = "[%s]" % ", ".join(backend_js_reply_param_list)
+            js_reply_list = "[%s]" % join(backend_js_reply_param_list, ", ")
 
-            response_cook_text = "".join(response_cook_list)
+            response_cook_text = join(response_cook_list, "")
 
             if len(response_cook_text) != 0:
                 response_cook_text = "        if (!error.length()) {\n" + response_cook_text + "        }"
@@ -2913,7 +2912,7 @@ class Generator:
             agentField="m_" + agent_field_name,
             methodInCode=method_in_code,
             methodOutCode=method_out_code,
-            agentCallParams="".join(agent_call_param_list),
+            agentCallParams=join(agent_call_param_list, ""),
             requestMessageObject=request_message_param,
             responseCook=response_cook_text,
             commandNameIndex=cmd_enum_name))
@@ -3091,38 +3090,38 @@ backend_js_file = SmartOutput(output_cpp_dirname + "/InspectorBackendCommands.js
 
 
 backend_h_file.write(Templates.backend_h.substitute(None,
-    virtualSetters="\n".join(Generator.backend_virtual_setters_list),
-    agentInterfaces="".join(flatten_list(Generator.backend_agent_interface_list)),
-    methodNamesEnumContent="\n".join(Generator.method_name_enum_list)))
+    virtualSetters=join(Generator.backend_virtual_setters_list, "\n"),
+    agentInterfaces=join(flatten_list(Generator.backend_agent_interface_list), ""),
+    methodNamesEnumContent=join(Generator.method_name_enum_list, "\n")))
 
 backend_cpp_file.write(Templates.backend_cpp.substitute(None,
-    constructorInit="\n".join(Generator.backend_constructor_init_list),
-    setters="\n".join(Generator.backend_setters_list),
-    fieldDeclarations="\n".join(Generator.backend_field_list),
-    methodNameDeclarations="\n".join(Generator.backend_method_name_declaration_list),
-    methods="\n".join(Generator.backend_method_implementation_list),
-    methodDeclarations="\n".join(Generator.backend_method_declaration_list),
-    messageHandlers="\n".join(Generator.method_handler_list)))
+    constructorInit=join(Generator.backend_constructor_init_list, "\n"),
+    setters=join(Generator.backend_setters_list, "\n"),
+    fieldDeclarations=join(Generator.backend_field_list, "\n"),
+    methodNameDeclarations=join(Generator.backend_method_name_declaration_list, "\n"),
+    methods=join(Generator.backend_method_implementation_list, "\n"),
+    methodDeclarations=join(Generator.backend_method_declaration_list, "\n"),
+    messageHandlers=join(Generator.method_handler_list, "\n")))
 
 frontend_h_file.write(Templates.frontend_h.substitute(None,
-    fieldDeclarations="".join(Generator.frontend_class_field_lines),
-    domainClassList="".join(Generator.frontend_domain_class_lines)))
+    fieldDeclarations=join(Generator.frontend_class_field_lines, ""),
+    domainClassList=join(Generator.frontend_domain_class_lines, "")))
 
 frontend_cpp_file.write(Templates.frontend_cpp.substitute(None,
-    constructorInit="".join(Generator.frontend_constructor_init_list),
-    methods="\n".join(Generator.frontend_method_list)))
+    constructorInit=join(Generator.frontend_constructor_init_list, ""),
+    methods=join(Generator.frontend_method_list, "\n")))
 
 typebuilder_h_file.write(Templates.typebuilder_h.substitute(None,
-    typeBuilders="".join(flatten_list(Generator.type_builder_fragments)),
-    forwards="".join(Generator.type_builder_forwards)))
+    typeBuilders=join(flatten_list(Generator.type_builder_fragments), ""),
+    forwards=join(Generator.type_builder_forwards, "")))
 
 typebuilder_cpp_file.write(Templates.typebuilder_cpp.substitute(None,
     enumConstantValues=EnumConstants.get_enum_constant_code(),
-    implCode="".join(flatten_list(Generator.type_builder_impl_list)),
-    validatorCode="".join(flatten_list(Generator.validator_impl_list))))
+    implCode=join(flatten_list(Generator.type_builder_impl_list), ""),
+    validatorCode=join(flatten_list(Generator.validator_impl_list), "")))
 
 backend_js_file.write(Templates.backend_js.substitute(None,
-    domainInitializers="".join(Generator.backend_js_domain_initializer_list)))
+    domainInitializers=join(Generator.backend_js_domain_initializer_list, "")))
 
 backend_h_file.close()
 backend_cpp_file.close()
