@@ -49,6 +49,9 @@ public:
                            unsigned colorArrayLength);
     void platformApplyNEON(unsigned char* srcPixelArrayA, unsigned char* srcPixelArrayB, unsigned char* dstPixelArray,
                            unsigned colorArrayLength);
+#if USE(SKIA)
+    virtual bool platformApplySkia();
+#endif
 
     virtual void platformApplySoftware();
     virtual void dump();
