@@ -1,0 +1,184 @@
+# Copyright (C) 2012 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms(with or without
+# modification(are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice(this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice(this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES(INCLUDING(BUT NOT LIMITED TO(THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT(INDIRECT(INCIDENTAL(SPECIAL,
+# EXEMPLARY(OR CONSEQUENTIAL DAMAGES (INCLUDING(BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE(DATA(OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+# OF LIABILITY(WHETHER IN CONTRACT(STRICT LIABILITY(OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE(EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+enter()
+create_activation(Register dst)
+init_lazy_reg(Register dst)
+create_arguments(Register dst)
+create_this(Register dst)
+convert_this(Register dst, ValueProfile profile)
+
+new_object(Register dst)
+new_array(Register dst, Register firstReg, int count)
+new_array_buffer(Register dst, int bufferIndex, int count)
+new_regexp(Register dst, int regexpIndex)
+mov(Register dst, Register src)
+
+not(Register dst, Register src)
+eq(Register dst, Register lhs, Register rhs)
+eq_null(Register dst, Register src)
+neq(Register dst, Register lhs, Register rhs)
+neq_null(Register dst, Register src)
+stricteq(Register dst, Register lhs, Register rhs)
+nstricteq(Register dst, Register lhs, Register rhs)
+less(Register dst, Register lhs, Register rhs)
+lesseq(Register dst, Register lhs, Register rhs)
+greater(Register dst, Register lhs, Register rhs)
+greatereq(Register dst, Register lhs, Register rhs)
+
+pre_inc(Register srcDst)
+pre_dec(Register srcDst)
+post_inc(Register dst, Register srcDst)
+post_dec(Register dst, Register srcDst)
+to_jsnumber(Register dst, Register src)
+negate(Register dst, Register src)
+add(Register dst, Register lhs, Register rhs, OperandTypes types)
+mul(Register dst, Register lhs, Register rhs, OperandTypes types)
+div(Register dst, Register lhs, Register rhs, OperandTypes types)
+mod(Register dst, Register lhs, Register rhs)
+sub(Register dst, Register lhs, Register rhs, OperandTypes types)
+
+lshift(Register dst, Register lhs, Register rhs)
+rshift(Register dst, Register lhs, Register rhs)
+urshift(Register dst, Register lhs, Register rhs)
+bitand(Register dst, Register lhs, Register rhs, OperandTypes types)
+bitxor(Register dst, Register lhs, Register rhs, OperandTypes types)
+bitor(Register dst, Register lhs, Register rhs, OperandTypes types)
+
+check_has_instance(Register src)
+instanceof(Register dst, Register value, Register base, Register basePrototype)
+typeof(Register dst, Register src)
+is_undefined(Register dst, Register src)
+is_boolean(Register dst, Register src)
+is_number(Register dst, Register src)
+is_string(Register dst, Register src)
+is_object(Register dst, Register src)
+is_function(Register dst, Register src)
+in(Register dst, Register property, Register base)
+
+resolve(Register dst, Identifier propertyName, ValueProfile profile) 
+uncached resolve_skip(Register dst, Identifier propertyName, int skip, ValueProfile profile)
+uncached resolve_global(Register dst, Identifier property, Structure structure, int offset, ValueProfile profile)
+uncached resolve_global_dynamic(Register dst, Identifier property, Structure structure, int offset, int depth, ValueProfile profile)
+uncached get_scoped_var(Register dst, int index, int depth, ValueProfile profile)
+uncached put_scoped_var(int index, int depth, Register src)
+uncached get_global_var(Register dst, ValuePointer valueLocation, ValueProfile profile)
+uncached get_global_var_watchable(Register dst, ValuePointer valueLocation, Identifier ident, ValueProfile profile)
+uncached put_global_var(ValuePointer destinationLocation, int index)
+uncached put_global_var_check(ValuePointer destinationLocation, int index, WatchPointer isWatched, Identifier ident)
+resolve_base(Register dst, Identifier property, bool isStrictPut, ValueProfile profile)
+ensure_property_exists(Register dst, Identifier property)
+resolve_with_base(Register baseDst, Register propDst, Identifier property, ValueProfile profile)
+resolve_with_this(Register baseDst, Register propDst, Identifier property, ValueProfile profile)
+get_by_id(Register dst, Register base, Identifier property, void, void, void, void, ValueProfile profile)
+uncached get_by_id_out_of_line(Register dst, Register base, Identifier property, void, void, void, void, ValueProfile profile)
+uncached get_by_id_self(Register dst, Register base, Identifier property, Structure structure, int offset, void, void, ValueProfile profile)
+uncached get_by_id_proto(Register dst, Register base, Identifier property, Structure structure, Structure prototypeStructure, int offset, void, ValueProfile profile)
+uncached get_by_id_chain(Register dst, Register base, Identifier property, Structure structure, StructureChain chain, int count, int offset, ValueProfile profile)
+uncached get_by_id_getter_self(Register dst, Register base, Identifier property, Structure structure, int offset, void, void, ValueProfile profile)
+uncached get_by_id_getter_proto(Register dst, Register base, Identifier property, Structure structure, Structure prototypeStructure, int offset, void, ValueProfile profile)
+uncached get_by_id_getter_chain(Register dst, Register base, Identifier property, Structure structure, StructureChain chain, int count, int offset, ValueProfile profile)
+uncached get_by_id_custom_self(Register dst, Register base, Identifier property, Structure structure, int offset, void, void, ValueProfile profile)
+uncached get_by_id_custom_proto(Register dst, Register base, Identifier property, Structure structure, Structure prototypeStructure, int offset, void, ValueProfile profile)
+uncached get_by_id_custom_chain(Register dst, Register base, Identifier property, Structure structure, StructureChain chain, int count, int offset, ValueProfile profile)
+uncached get_by_id_generic(Register dst, Register base, Identifier property, void, void, void, void, ValueProfile profile)
+uncached get_array_length(Register dst, Register base, Identifier property, void, void, void, void, ValueProfile profile)
+uncached get_string_length(Register dst, Register base, Identifier property, void, void, void, void, ValueProfile profile)
+get_arguments_length(Register dst, Register argumentsRegister, Identifier property)
+put_by_id(Register base, Identifier property, Register value, void, void, void, void, ValueProfile profile)
+uncached put_by_id_out_of_line(Register base, Identifier property, Register value, void, void, void, void, ValueProfile profile)
+uncached put_by_id_transition(Register base, Identifier property, Register value, Structure previousID, Structure newStructure, StructureChain prototypeChain, int offset, ValueProfile profile)
+uncached put_by_id_transition_direct(Register base, Identifier property, Register value, Structure previousID, Structure newStructure, StructureChain prototypeChain, int offset, ValueProfile profile)
+uncached put_by_id_transition_direct_out_of_line(Register base, Identifier property, Register value, Structure previousID, Structure newStructure, StructureChain prototypeChain, int offset, ValueProfile profile)
+uncached put_by_id_transition_normal(Register base, Identifier property, Register value, Structure previousID, Structure newStructure, StructureChain prototypeChain, int offset, ValueProfile profile)
+uncached put_by_id_transition_normal_out_of_line(Register base, Identifier property, Register value, Structure previousID, Structure newStructure, StructureChain prototypeChain, int offset, ValueProfile profile)
+uncached put_by_id_replace(Register base, Identifier property, Register value, Structure structure, int offset, void, void, ValueProfile profile)
+uncached put_by_id_generic(Register base, Identifier property, Register value, void, void, void, void, ValueProfile profile)
+del_by_id(Register dst, Register base, Identifier property)
+get_by_val(Register dst, Register base, Register property, ArrayProfile arrayProfile, ValueProfile profile)
+get_argument_by_val(Register dst, Register base, Register property, ArrayProfile arrayProfile, ValueProfile profile)
+get_by_pname(Register dst, Register base, Register property, Register expectedSubscript, Register iter, Register index)
+put_by_val(Register base, Register property, Register value, ArrayProfile arrayProfile)
+del_by_val(Register base, Register property, Register value)
+put_by_index(Register base, unsigned index, Register value)
+put_getter_setter(Register base, Identifier property, Register getter, Register setter)
+
+jmp(Label target)
+jtrue(Register condition, Label target)
+jfalse(Register condition, Label target)
+jeq_null(Register condition, Label target)
+jneq_null(Register condition, Label target)
+jneq_ptr(Register index, JSFunction function, Label target)
+jless(Register lhs, Register rhs, Label target)
+jlesseq(Register lhs, Register rhs, Label target)
+jgreater(Register lhs, Register rhs, Label target)
+jgreatereq(Register lhs, Register rhs, Label target)
+jnless(Register lhs, Register rhs, Label target)
+jnlesseq(Register lhs, Register rhs, Label target)
+jngreater(Register lhs, Register rhs, Label target)
+jngreatereq(Register lhs, Register rhs, Label target)
+jmp_scopes(int nNormalScopes, Label target)
+loop(Label target)
+loop_if_true(Register condition, Label target)
+loop_if_false(Register condition, Label target)
+loop_if_less(Register lhs, Register rhs, Label target)
+loop_if_lesseq(Register lhs, Register rhs, Label target)
+loop_if_greater(Register lhs, Register rhs, Label target)
+loop_if_greatereq(Register lhs, Register rhs, Label target)
+loop_hint()
+switch_imm(JumpTable index, Label default, Register scrutinee)
+switch_char(JumpTable index, Label default, Register scrutinee)
+switch_string(JumpTable index, Label default, Register scrutinee)
+
+new_func(Register dst, Function function, bool shouldNullCheck)
+new_func_exp(Register dst, FunctionExpression expr)
+call(Register function, Register argumentCountIncludingThis, Register registerOffset, LLIntCallLinkInfo callLinkInfo, void)
+call_eval(Register function, Register argumentCountIncludingThis, Register registerOffset, LLIntCallLinkInfo callLinkInfo, void)
+call_varargs(Register function, Register this, Register arguments, Register firstFreeRegister)
+tear_off_activation(Register activationRegister, Register argumentsRegister)
+tear_off_arguments(Register argumentsRegister)
+ret(Register result)
+call_put_result(Register dst, ValueProfile profile)
+ret_object_or_this(Register result, Register thisRegister)
+method_check()
+
+construct(Register func, int argCount, int registerOffset, Register proto, Register thisRegister)
+strcat(Register dst, Register src, int count)
+to_primitive(Register dst, Register src)
+
+get_pnames(Register dst, Register base, Register<int> i, Register<int> size, Label breakTarget)
+next_pname(Register dst, Register base, Register<int> i, Register<int> size, Register<JSPropertyNameIterator> iter, Label target)
+
+push_scope(Register scopeObject)
+pop_scope()
+push_new_scope(Register temporaryScopeStorage, Identifier property, Register value)
+
+catch(Register exceptionDst)
+throw(Register exception)
+throw_reference_error(Register exceptionMessage)
+
+uncached debug(void, void, void, void)
+uncached profile_will_call(void)
+uncached profile_did_call(void)
+
+end(Register result)  # end must be the last opcode in the list
