@@ -1,3 +1,9 @@
+2012-08-23  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [watchlist] Unreviewed, subscribe to WebKit2-EFL bugs.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-08-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replay tests take forever to load
