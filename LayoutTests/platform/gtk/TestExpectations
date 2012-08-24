@@ -437,7 +437,8 @@ BUGWK89188 RELEASE : storage/websql/quota-tracking.html = CRASH PASS
 
 BUGWK90589 RELEASE : fast/css/user-drag-none.html = CRASH TIMEOUT
 
-BUGWK93502 : fast/history/nested-visited-test.html = CRASH PASS
+BUGWK93502 DEBUG : fast/history/nested-visited-test.html = CRASH PASS
+BUGWK93502 DEBUG : fast/history/sibling-visited-test.html = CRASH PASS
 
 BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
 
@@ -1086,7 +1087,6 @@ BUGWK71465 : http/tests/security/xssAuditor/script-tag-with-callbacks.html = TEX
 BUGWK72248 : editing/spelling/spelling-unified-emulation.html = TEXT
 
 BUGWK72363 : fast/dom/Window/window-postmessage-arrays.html = TEXT
-BUGWK84700 : fast/dom/Window/window-postmessage-clone.html = TEXT
 
 BUGWK73003 : editing/spelling/spellcheck-async.html = TEXT
 
@@ -1301,6 +1301,9 @@ BUGWK80129 : fast/frames/flattening/frameset-flattening-advanced.html = TEXT
 BUGWK89663 : editing/deleting/delete-3800834-fix.html = TEXT
 
 BUGWK88727 RELEASE : http/tests/xmlhttprequest/origin-exact-matching.html = TEXT
+
+BUGWK94952 DEBUG : platform/gtk/scrollbars/overflow-scrollbar-horizontal-wheel-scroll.html = TEXT
+BUGWK94952 DEBUG : scrollbars/scroll-rtl-or-bt-layer.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

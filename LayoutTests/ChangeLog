@@ -1,3 +1,15 @@
+2012-08-24  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding expectations for a few failing tests that popped up on the debug
+        builder after it was brought back into a working state.
+
+        Removing failure expectation for fast/dom/Window/window-postmessage-clone.html
+        after the test was fixed in r126464.
+
+        * platform/gtk/TestExpectations:
+
 2012-08-24  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed gardening.
