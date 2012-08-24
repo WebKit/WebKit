@@ -863,70 +863,76 @@ WebGLRenderingContextResource.WrapFunction.prototype = {
 
 WebGLRenderingContextResource.WrapFunctions = {
     __proto__: null
-};
+}
 
-(function(items) {
-    items.forEach(function(item) {
-        var methodName = item[0];
-        var resourceConstructor = item[1];
-        WebGLRenderingContextResource.WrapFunctions[methodName] = function()
-        {
-            var wrappedObject = this.result();
-            if (!wrappedObject)
-                return;
-            var resource = new resourceConstructor(wrappedObject);
-            var manager = this._glResource.manager();
-            if (manager)
-                manager.registerResource(resource);
+/**
+ * @param {string} methodName
+ * @param {Function} resourceConstructor
+ */
+function createResourceWrapFunction(methodName, resourceConstructor)
+{
+    /** @this WebGLRenderingContextResource.WrapFunction */
+    WebGLRenderingContextResource.WrapFunctions[methodName] = function()
+    {
+        var wrappedObject = this.result();
+        if (!wrappedObject)
+            return;
+        var resource = new resourceConstructor(wrappedObject);
+        var manager = this._glResource.manager();
+        if (manager)
+            manager.registerResource(resource);
+        resource.pushCall(this.call());
+    }
+}
+createResourceWrapFunction("createBuffer", WebGLBufferResource);
+createResourceWrapFunction("createShader", WebGLShaderResource);
+createResourceWrapFunction("createProgram", WebGLProgramResource);
+createResourceWrapFunction("createTexture", WebGLTextureResource);
+createResourceWrapFunction("createFramebuffer", WebGLFramebufferResource);
+createResourceWrapFunction("createRenderbuffer", WebGLRenderbufferResource);
+createResourceWrapFunction("getUniformLocation", Resource);
+
+/**
+ * @param {string} methodName
+ */
+function customWrapFunction(methodName)
+{
+    var customPushCall = "pushCall_" + methodName;
+    /**
+     * @param {Object|number} target
+     * @this WebGLRenderingContextResource.WrapFunction
+     */
+    WebGLRenderingContextResource.WrapFunctions[methodName] = function(target)
+    {
+        var resource = this._glResource.currentBinding(target);
+        if (!resource)
+            return;
+        if (resource[customPushCall])
+            resource[customPushCall].call(resource, this.call());
+        else
             resource.pushCall(this.call());
-        };
-    });
-})([
-    ["createBuffer", WebGLBufferResource],
-    ["createShader", WebGLShaderResource],
-    ["createProgram", WebGLProgramResource],
-    ["createTexture", WebGLTextureResource],
-    ["createFramebuffer", WebGLFramebufferResource],
-    ["createRenderbuffer", WebGLRenderbufferResource],
-    ["getUniformLocation", Resource]
-]);
-
-(function(methods) {
-    methods.forEach(function(methodName) {
-        var customPushCall = "pushCall_" + methodName;
-        WebGLRenderingContextResource.WrapFunctions[methodName] = function(target)
-        {
-            var resource = this._glResource.currentBinding(target);
-            if (resource) {
-                if (resource[customPushCall])
-                    resource[customPushCall].call(resource, this.call());
-                else
-                    resource.pushCall(this.call());
-            }
-        };
-    });
-})([
-    "attachShader",
-    "bindAttribLocation",
-    "compileShader",
-    "detachShader",
-    "linkProgram",
-    "shaderSource",
-    "bufferData",
-    "bufferSubData",
-    "compressedTexImage2D",
-    "compressedTexSubImage2D",
-    "copyTexImage2D",
-    "copyTexSubImage2D",
-    "generateMipmap",
-    "texImage2D",
-    "texSubImage2D",
-    "texParameterf",
-    "texParameteri",
-    "framebufferRenderbuffer",
-    "framebufferTexture2D",
-    "renderbufferStorage"
-]);
+    }
+}
+customWrapFunction("attachShader");
+customWrapFunction("bindAttribLocation");
+customWrapFunction("compileShader");
+customWrapFunction("detachShader");
+customWrapFunction("linkProgram");
+customWrapFunction("shaderSource");
+customWrapFunction("bufferData");
+customWrapFunction("bufferSubData");
+customWrapFunction("compressedTexImage2D");
+customWrapFunction("compressedTexSubImage2D");
+customWrapFunction("copyTexImage2D");
+customWrapFunction("copyTexSubImage2D");
+customWrapFunction("generateMipmap");
+customWrapFunction("texImage2D");
+customWrapFunction("texSubImage2D");
+customWrapFunction("texParameterf");
+customWrapFunction("texParameteri");
+customWrapFunction("framebufferRenderbuffer");
+customWrapFunction("framebufferTexture2D");
+customWrapFunction("renderbufferStorage");
 
 /**
  * @constructor
