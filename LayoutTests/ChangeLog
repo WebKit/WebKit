@@ -1,3 +1,68 @@
+2012-08-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed Chromium gardening.
+
+        Rebaselined a bunch of repaint tests on Mac. The failures or differences fell in
+        the following categories:
+        - small alpha difference on the repaint tests' background. This issue has been known for
+        some time now but is not being worked on AFAICT.
+        - Chromium unions the invalidation rects when Mac doesn't.
+        - font difference.
+
+        * platform/chromium-mac-snowleopard/fast/repaint/box-shadow-dynamic-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/box-shadow-dynamic-expected.png: Added.
+        This test was using Mac's expectation which is wrong (they have some beige rectangles that
+        are not in the page). Those new baselines matches the other ports and the expected result.
+
+        * platform/chromium-mac-snowleopard/fast/repaint/4774354-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/4776765-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/border-fit-lines-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/border-repaint-glitch-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/bugzilla-3509-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/bugzilla-6388-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/bugzilla-7235-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/change-transform-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/containing-block-position-change-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/dynamic-table-vertical-alignment-change-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/fixed-child-move-after-scroll-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/fixed-child-of-fixed-move-after-scroll-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/fixed-child-of-transformed-move-after-scroll-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/fixed-move-after-scroll-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/float-move-during-layout-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/inline-color-change-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/layout-state-relative-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/outline-shrinking-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/4774354-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/4776765-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/block-selection-gap-in-table-cell-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/border-fit-lines-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/border-repaint-glitch-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/bugzilla-3509-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/bugzilla-6388-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/bugzilla-7235-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/button-spurious-layout-hint-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/change-transform-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/clip-with-layout-delta-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/containing-block-position-change-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/delete-into-nested-block-expected.png:
+        * platform/chromium-mac/fast/repaint/dynamic-table-vertical-alignment-change-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/erase-overflow-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/fixed-child-move-after-scroll-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/fixed-child-of-fixed-move-after-scroll-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/fixed-child-of-transformed-move-after-scroll-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/fixed-move-after-scroll-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/float-in-new-block-with-layout-delta-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/float-move-during-layout-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/inline-block-resize-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/inline-color-change-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/inline-overflow-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/layer-full-repaint-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/layer-hide-when-needs-layout-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/layer-visibility-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/layout-state-relative-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/outline-shrinking-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-08-24  Chris Evans  <cevans@google.com>
 
         Improve xpath-detached-nodes.html test.
