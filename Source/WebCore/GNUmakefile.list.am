@@ -5032,6 +5032,8 @@ webcore_sources += \
 	Source/WebCore/rendering/ScrollBehavior.cpp \
 	Source/WebCore/rendering/ScrollBehavior.h \
 	Source/WebCore/rendering/VerticalPositionCache.h \
+	Source/WebCore/rendering/WrapShapeInfo.cpp \
+	Source/WebCore/rendering/WrapShapeInfo.h \
 	Source/WebCore/rendering/mathml/RenderMathMLBlock.cpp \
 	Source/WebCore/rendering/mathml/RenderMathMLBlock.h \
 	Source/WebCore/rendering/mathml/RenderMathMLFenced.cpp \

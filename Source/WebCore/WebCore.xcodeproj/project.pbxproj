@@ -6440,6 +6440,8 @@
 		FD6ED2C8136B8E66003CF072 /* DynamicsCompressor.h in Headers */ = {isa = PBXBuildFile; fileRef = FD6ED2C6136B8E66003CF072 /* DynamicsCompressor.h */; };
 		FD6F252C13F5EF0E0065165F /* MediaElementAudioSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD6F252913F5EF0E0065165F /* MediaElementAudioSourceNode.cpp */; };
 		FD6F252D13F5EF0E0065165F /* MediaElementAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD6F252A13F5EF0E0065165F /* MediaElementAudioSourceNode.h */; };
+		FD748ABF15BF74ED0059CF0D /* WrapShapeInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD748ABD15BF74ED0059CF0D /* WrapShapeInfo.cpp */; };
+		FD748AC015BF74ED0059CF0D /* WrapShapeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FD748ABE15BF74ED0059CF0D /* WrapShapeInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FD7868B9136B999200D403DF /* JSDynamicsCompressorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7868B7136B999200D403DF /* JSDynamicsCompressorNode.cpp */; };
 		FD7868BA136B999200D403DF /* JSDynamicsCompressorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD7868B8136B999200D403DF /* JSDynamicsCompressorNode.h */; };
 		FD7F299113D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7F298A13D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp */; };
@@ -13846,6 +13848,8 @@
 		FD6F252913F5EF0E0065165F /* MediaElementAudioSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaElementAudioSourceNode.cpp; sourceTree = "<group>"; };
 		FD6F252A13F5EF0E0065165F /* MediaElementAudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaElementAudioSourceNode.h; sourceTree = "<group>"; };
 		FD6F252B13F5EF0E0065165F /* MediaElementAudioSourceNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaElementAudioSourceNode.idl; sourceTree = "<group>"; };
+		FD748ABD15BF74ED0059CF0D /* WrapShapeInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WrapShapeInfo.cpp; sourceTree = "<group>"; };
+		FD748ABE15BF74ED0059CF0D /* WrapShapeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WrapShapeInfo.h; sourceTree = "<group>"; };
 		FD7868B7136B999200D403DF /* JSDynamicsCompressorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDynamicsCompressorNode.cpp; sourceTree = "<group>"; };
 		FD7868B8136B999200D403DF /* JSDynamicsCompressorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDynamicsCompressorNode.h; sourceTree = "<group>"; };
 		FD7E95A015ACD5620039E3D0 /* WrapShapeFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WrapShapeFunctions.h; sourceTree = "<group>"; };
@@ -21461,6 +21465,8 @@
 				A8CFF04C0A154F09000A4234 /* TableLayout.h */,
 				37FC96DA1104ED71003E1FAD /* TrailingFloatsRootInlineBox.h */,
 				BCA257141293C010007A263D /* VerticalPositionCache.h */,
+				FD748ABD15BF74ED0059CF0D /* WrapShapeInfo.cpp */,
+				FD748ABE15BF74ED0059CF0D /* WrapShapeInfo.h */,
 			);
 			path = rendering;
 			sourceTree = "<group>";
@@ -25405,6 +25411,7 @@
 				97AABD2D14FA09D5007457AE /* WorkerThreadableWebSocketChannel.h in Headers */,
 				93309E24099E64920056E581 /* WrapContentsInDummySpanCommand.h in Headers */,
 				FDE6860315B0A96100BB480C /* WrapShapeFunctions.h in Headers */,
+				FD748AC015BF74ED0059CF0D /* WrapShapeInfo.h in Headers */,
 				FDE6860415B0A96100BB480C /* WrapShapes.h in Headers */,
 				9BAF3B2412C1A39800014BF1 /* WritingDirection.h in Headers */,
 				6565820209D1508D000E61D7 /* XLinkNames.h in Headers */,
@@ -28492,6 +28499,7 @@
 				97AABD2C14FA09D5007457AE /* WorkerThreadableWebSocketChannel.cpp in Sources */,
 				93309E23099E64920056E581 /* WrapContentsInDummySpanCommand.cpp in Sources */,
 				FDE6860215B0A93B00BB480C /* WrapShapeFunctions.cpp in Sources */,
+				FD748ABF15BF74ED0059CF0D /* WrapShapeInfo.cpp in Sources */,
 				F553B89315BE26C000B134C9 /* WrapShapes.cpp in Sources */,
 				A833C7CC0A2CF07400D57664 /* XLinkNames.cpp in Sources */,
 				00D0464A13C4D14500326FCC /* XMLCharacterReferenceParser.cpp in Sources */,

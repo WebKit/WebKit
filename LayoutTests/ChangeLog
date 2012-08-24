@@ -1,3 +1,26 @@
+2012-08-24  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions] Enable shape-inside for simple rectangles
+        https://bugs.webkit.org/show_bug.cgi?id=89259
+
+        Reviewed by Levi Weintraub.
+
+        Test that inline content correctly wraps for a simple rectangular
+        shape-inside. Text and inline content should wrap inside the
+        rectangular shape-inside, and overflow to its containing block.
+        Inline content inside a shape-inside should also avoid floats.
+
+        * fast/exclusions/shape-inside/shape-inside-floats-simple-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-floats-simple.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-inline-elements-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-inline-elements.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-overflow-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-overflow.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-percentage-auto-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-percentage-auto.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-text-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-text.html: Added.
+
 2012-08-24  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed Chromium rebaseline.

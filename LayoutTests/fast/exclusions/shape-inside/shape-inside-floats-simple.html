@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    internals.settings.setCSSExclusionsEnabled(true);
+</script>
+<style>
+    div {
+        width: 200px;
+        height: 200px;
+    }
+    #shape-inside {
+        padding: 10px;
+        position: relative;
+        -webkit-shape-inside: rectangle(0, 0, 200px, 200px);
+    }
+    #border {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        border: 2px solid blue;
+    }
+    .spacer {
+        width: 73px;
+        height: 73px;
+        border: 1px solid green;
+    }
+</style>
+</head>
+<body>
+    <div id="shape-inside">
+        <div id="border"></div>
+        <div class="spacer" style="float:left"></div>
+        <div class="spacer" style="float:right"></div>
+        The blue box should contain a green square in both the upper left
+        and upper right corners. This text should flow around the green squares,
+        but within the blue outline.
+    </div>
+</body>
+</html>

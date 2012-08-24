@@ -46,6 +46,10 @@
 #include <wtf/Vector.h>
 #include <wtf/unicode/CharacterNames.h>
 
+#if ENABLE(CSS_EXCLUSIONS)
+#include "WrapShapeInfo.h"
+#endif
+
 #if ENABLE(SVG)
 #include "RenderSVGInlineText.h"
 #include "SVGRootInlineBox.h"
@@ -70,9 +74,21 @@ public:
         , m_left(0)
         , m_right(0)
         , m_availableWidth(0)
+#if ENABLE(CSS_EXCLUSIONS)
+        , m_segment(0)
+#endif
         , m_isFirstLine(isFirstLine)
     {
         ASSERT(block);
+#if ENABLE(CSS_EXCLUSIONS)
+        WrapShapeInfo* wrapShapeInfo = m_block->wrapShapeInfo();
+        // FIXME: Bug 91878: Add support for multiple segments, currently we only support one
+        if (wrapShapeInfo && wrapShapeInfo->lineState() == WrapShapeInfo::LINE_INSIDE_SHAPE) {
+            // All interior shape positions should have at least one segment
+            ASSERT(wrapShapeInfo->hasSegments());
+            m_segment = &wrapShapeInfo->segments()[0];
+        }
+#endif
         updateAvailableWidth();
     }
 #if ENABLE(SUBPIXEL_LAYOUT)
@@ -114,6 +130,9 @@ private:
     float m_left;
     float m_right;
     float m_availableWidth;
+#if ENABLE(CSS_EXCLUSIONS)
+    const LineSegment* m_segment;
+#endif
     bool m_isFirstLine;
 };
 
@@ -137,6 +156,13 @@ inline void LineWidth::updateAvailableWidth()
     LayoutUnit logicalHeight = logicalHeightForLine(m_block);
     m_left = m_block->logicalLeftOffsetForLine(height, m_isFirstLine, logicalHeight);
     m_right = m_block->logicalRightOffsetForLine(height, m_isFirstLine, logicalHeight);
+
+#if ENABLE(CSS_EXCLUSIONS)
+    if (m_segment) {
+        m_left = max<float>(m_segment->logicalLeft, m_left);
+        m_right = min<float>(m_segment->logicalRight, m_right);
+    }
+#endif
 
     computeAvailableWidthFromLeftAndRight();
 }
@@ -777,7 +803,15 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
     // box is only affected if it is the first child of its parent element."
     bool firstLine = lineInfo.isFirstLine() && !(isAnonymousBlock() && parent()->firstChild() != this);
     float logicalLeft = pixelSnappedLogicalLeftOffsetForLine(logicalHeight(), firstLine, lineLogicalHeight);
-    float availableLogicalWidth = pixelSnappedLogicalRightOffsetForLine(logicalHeight(), firstLine, lineLogicalHeight) - logicalLeft;
+    float logicalRight = pixelSnappedLogicalRightOffsetForLine(logicalHeight(), firstLine, lineLogicalHeight);
+#if ENABLE(CSS_EXCLUSIONS)
+    WrapShapeInfo* wrapShapeInfo = this->wrapShapeInfo();
+    if (wrapShapeInfo && wrapShapeInfo->lineState() == WrapShapeInfo::LINE_INSIDE_SHAPE) {
+        logicalLeft = max<float>(roundToInt(wrapShapeInfo->segments()[0].logicalLeft), logicalLeft);
+        logicalRight = min<float>(floorToInt(wrapShapeInfo->segments()[0].logicalRight), logicalRight);
+    }
+#endif
+    float availableLogicalWidth = logicalRight - logicalLeft;
 
     bool needsWordSpacing = false;
     float totalLogicalWidth = lineBox->getFlowSpacingLogicalWidth();
@@ -1252,6 +1286,13 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
 
     LineBreaker lineBreaker(this);
 
+#if ENABLE(CSS_EXCLUSIONS)
+    WrapShapeInfo* wrapShapeInfo = this->wrapShapeInfo();
+    // Move to the top of the shape inside to begin layout
+    if (wrapShapeInfo && logicalHeight() < wrapShapeInfo->shapeTop())
+        setLogicalHeight(wrapShapeInfo->shapeTop());
+#endif
+
     while (!end.atEnd()) {
         // FIXME: Is this check necessary before the first iteration or can it be moved to the end?
         if (checkForEndLineMatch) {
@@ -1270,6 +1311,12 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         const InlineIterator oldEnd = end;
         bool isNewUBAParagraph = layoutState.lineInfo().previousLineBrokeCleanly();
         FloatingObject* lastFloatFromPreviousLine = (m_floatingObjects && !m_floatingObjects->set().isEmpty()) ? m_floatingObjects->set().last() : 0;
+#if ENABLE(CSS_EXCLUSIONS)
+        // FIXME: Bug 89993: If the wrap shape comes from a parent, we will need to adjust
+        // the height coordinate
+        if (wrapShapeInfo)
+            wrapShapeInfo->computeSegmentsForLine(logicalHeight());
+#endif
         end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), lineBreakIteratorInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines);
         if (resolver.position().atEnd()) {
             // FIXME: We shouldn't be creating any runs in nextLineBreak to begin with!

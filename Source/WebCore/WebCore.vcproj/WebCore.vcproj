@@ -42035,6 +42035,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\WrapShapeInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\WrapShapeInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\svg\RenderSVGAllInOne.cpp"
 				>
 			</File>

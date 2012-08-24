@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    internals.settings.setCSSExclusionsEnabled(true);
+</script>
+<style>
+    #shape-inside {
+        width: 200px;
+        height: 200px;
+        -webkit-shape-inside: rectangle(10px, 10px, 180px, 180px);
+        position: relative;
+    }
+    #border {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        width: 180px;
+        height: 180px;
+        border: 2px solid blue;
+    }
+</style>
+</head>
+<body>
+    <div id="shape-inside">
+        <div id="border"></div>
+        This text should be contained by the blue square.
+    </div>
+</body>
+</html>

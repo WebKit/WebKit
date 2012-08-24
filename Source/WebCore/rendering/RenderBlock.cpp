@@ -61,6 +61,9 @@
 #include "ShadowRoot.h"
 #include "TransformState.h"
 #include <wtf/StdLibExtras.h>
+#if ENABLE(CSS_EXCLUSIONS)
+#include "WrapShapeInfo.h"
+#endif
 
 using namespace std;
 using namespace WTF;
@@ -275,6 +278,10 @@ void RenderBlock::willBeDestroyed()
     if (lineGridBox())
         lineGridBox()->destroy(renderArena());
 
+#if ENABLE(CSS_EXCLUSIONS)
+    WrapShapeInfo::removeWrapShapeInfoForRenderBlock(this);
+#endif
+
     if (UNLIKELY(gDelayedUpdateScrollInfoSet != 0))
         gDelayedUpdateScrollInfoSet->remove(this);
 
@@ -319,6 +326,12 @@ void RenderBlock::styleWillChange(StyleDifference diff, const RenderStyle* newSt
 void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBox::styleDidChange(diff, oldStyle);
+
+#if ENABLE(CSS_EXCLUSIONS)
+    // FIXME: Bug 89993: Style changes should affect the WrapShapeInfos for other render blocks that
+    // share the same WrapShapeInfo
+    updateWrapShapeInfoAfterStyleChange(style()->wrapShapeInside(), oldStyle ? oldStyle->wrapShapeInside() : 0);
+#endif
 
     if (!isAnonymousBlock()) {
         // Ensure that all of our continuation blocks pick up the new style.
@@ -1366,6 +1379,21 @@ void RenderBlock::layout()
         clearLayoutOverflow();
 }
 
+#if ENABLE(CSS_EXCLUSIONS)
+void RenderBlock::updateWrapShapeInfoAfterStyleChange(const WrapShape* wrapShape, const WrapShape* oldWrapShape)
+{
+    // FIXME: A future optimization would do a deep comparison for equality.
+    if (wrapShape == oldWrapShape)
+        return;
+
+    if (wrapShape) {
+        WrapShapeInfo* wrapShapeInfo = WrapShapeInfo::ensureWrapShapeInfoForRenderBlock(this);
+        wrapShapeInfo->dirtyWrapShapeSize();
+    } else
+        WrapShapeInfo::removeWrapShapeInfoForRenderBlock(this);
+}
+#endif
+
 void RenderBlock::computeInitialRegionRangeForBlock()
 {
     if (inRenderFlowThread()) {
@@ -1461,6 +1489,11 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
             relayoutChildren = true;
     }
     computeInitialRegionRangeForBlock();
+#if ENABLE(CSS_EXCLUSIONS)
+    // FIXME: Bug 93547: Resolve logical height for percentage based vertical lengths
+    if (WrapShapeInfo* wrapShapeInfo = this->wrapShapeInfo())
+        wrapShapeInfo->computeShapeSize(logicalWidth(), 0);
+#endif
 
     // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
     // our current maximal positive and negative margins.  These values are used when we

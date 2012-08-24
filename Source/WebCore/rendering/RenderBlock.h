@@ -33,6 +33,10 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/ListHashSet.h>
 
+#if ENABLE(CSS_EXCLUSIONS)
+#include "WrapShapeInfo.h"
+#endif
+
 namespace WebCore {
 
 class BidiContext;
@@ -396,6 +400,13 @@ public:
     void showLineTreeAndMark(const InlineBox* = 0, const char* = 0, const InlineBox* = 0, const char* = 0, const RenderObject* = 0) const;
 #endif
 
+#if ENABLE(CSS_EXCLUSIONS)
+    WrapShapeInfo* wrapShapeInfo() const
+    {
+        return style()->wrapShapeInside() && WrapShapeInfo::isWrapShapeInfoEnabledForRenderBlock(this) ? WrapShapeInfo::wrapShapeInfoForRenderBlock(this) : 0;
+    }
+#endif
+
 protected:
     virtual void willBeDestroyed();
 
@@ -485,6 +496,9 @@ protected:
     virtual void checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight);
 
 private:
+#if ENABLE(CSS_EXCLUSIONS)
+    void updateWrapShapeInfoAfterStyleChange(const WrapShape*, const WrapShape* oldWrapShape);
+#endif
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
 
