@@ -1,3 +1,14 @@
+2012-08-24  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt] Be more explicit about the ICU dependency in the error message
+
+        Rubber-stamped by Simon Hausmann.
+
+        When building QtWebKit with a Qt5 which was not configured with libICU support
+        the error message is somewhat ambiguous about the indirect dependency.
+
+        * WTF.pri:
+
 2012-08-23  Julien Chaffraix  <jchaffraix@webkit.org>
 
         [Chromium] Enable AtomicString && CString && WTFString && StringImpl unit tests
