@@ -1,3 +1,14 @@
+2012-08-23  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, rolling out r126497.
+        http://trac.webkit.org/changeset/126497
+        https://bugs.webkit.org/show_bug.cgi?id=94764
+
+        Caused webkitpy-test step to start failing.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (ReplayPerfTest.run_single):
+
 2012-08-23  Emil A Eklund  <eae@chromium.org>
 
         Add saturation arithmetic support to FractionalLayoutUnit

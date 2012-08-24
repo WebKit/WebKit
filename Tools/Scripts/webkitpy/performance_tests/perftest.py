@@ -319,7 +319,9 @@ class ReplayPerfTest(PageLoadingPerfTest):
                 _log.error("Web page replay didn't start.")
                 return None
 
-            _log.debug("Web page replay started. Loading the page.")
+            super(ReplayPerfTest, self).run_single(driver, "about:blank", time_out_ms)
+            _log.debug("Loading the page")
+
             output = super(ReplayPerfTest, self).run_single(driver, self._url, time_out_ms, should_run_pixel_test=True)
             if self.run_failed(output):
                 return None
