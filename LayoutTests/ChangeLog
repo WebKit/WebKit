@@ -1,3 +1,9 @@
+2012-08-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed rebaseline after r126622.
+
+        * platform/chromium-mac-snowleopard/fast/repaint/delete-into-nested-block-expected.png: Added.
+
 2012-08-24  Filip Pizlo  <fpizlo@apple.com>
 
         We should have tests for the DFG CFA's handling of structure clobbering and basic blocks
