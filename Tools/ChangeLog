@@ -1,3 +1,16 @@
+2012-08-24  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        build-webkit --gtk fails with Can't exec ""
+        https://bugs.webkit.org/show_bug.cgi?id=94944
+
+        Reviewed by Martin Robinson.
+
+        When jhbuild wrapper is not needed, do unshift a blank string to build
+        arguments.
+
+        * Scripts/webkitdirs.pm:
+        (runAutogenForAutotoolsProjectIfNecessary):
+
 2012-08-24  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add readyState functionality to RTCPeerConnection

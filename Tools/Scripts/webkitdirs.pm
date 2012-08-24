@@ -1937,7 +1937,10 @@ sub runAutogenForAutotoolsProjectIfNecessary($@)
 
     # Prefix the command with jhbuild run.
     unshift(@buildArgs, "$relSourceDir/autogen.sh");
-    unshift(@buildArgs, jhbuildWrapperPrefixIfNeeded());
+    my $jhbuildWrapperPrefix = jhbuildWrapperPrefixIfNeeded();
+    if ($jhbuildWrapperPrefix) {
+        unshift(@buildArgs, $jhbuildWrapperPrefix);
+    }
     if (system(@buildArgs) ne 0) {
         die "Calling autogen.sh failed!\n";
     }
