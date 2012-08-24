@@ -511,9 +511,11 @@ public:
     virtual RenderBoxModelObject* virtualContinuation() const { return 0; }
 
     bool isFloating() const { return m_bitfields.floating(); }
+
     bool isOutOfFlowPositioned() const { return m_bitfields.positioned(); } // absolute or fixed positioning
     bool isInFlowPositioned() const { return m_bitfields.relPositioned(); } // relative positioning
     bool isRelPositioned() const { return m_bitfields.relPositioned(); } // relative positioning
+
     bool isText() const  { return m_bitfields.isText(); }
     bool isBox() const { return m_bitfields.isBox(); }
     bool isInline() const { return m_bitfields.isInline(); } // inline object

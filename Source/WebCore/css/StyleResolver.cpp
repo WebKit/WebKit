@@ -2078,7 +2078,7 @@ static bool doesNotInheritTextDecoration(RenderStyle* style, Element* e)
 {
     return style->display() == TABLE || style->display() == INLINE_TABLE || style->display() == RUN_IN
         || style->display() == INLINE_BLOCK || style->display() == INLINE_BOX || isAtShadowBoundary(e)
-        || style->isFloating() || style->isOutOfFlowPositioned();
+        || style->isFloating() || style->hasOutOfFlowPosition();
 }
 
 static bool isDisplayFlexibleBox(EDisplay display)
@@ -2148,7 +2148,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
             style->setDisplay(BLOCK);
 
         // Absolute/fixed positioned elements, floating elements and the document element need block-like outside display.
-        if (style->position() == AbsolutePosition || style->position() == FixedPosition || style->isFloating() || (e && e->document()->documentElement() == e))
+        if (style->hasOutOfFlowPosition() || style->isFloating() || (e && e->document()->documentElement() == e))
             style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), m_checker.strictParsing()));
 
         // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
@@ -2190,8 +2190,12 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
     // Auto z-index becomes 0 for the root element and transparent objects. This prevents
     // cases where objects that should be blended as a single unit end up with a non-transparent
     // object wedged in between them. Auto z-index also becomes 0 for objects that specify transforms/masks/reflections.
-    if (style->hasAutoZIndex() && ((e && e->document()->documentElement() == e) || style->opacity() < 1.0f
-        || style->hasTransformRelatedProperty() || style->hasMask() || style->boxReflect() || style->hasFilter()
+    if (style->hasAutoZIndex() && ((e && e->document()->documentElement() == e)
+        || style->opacity() < 1.0f
+        || style->hasTransformRelatedProperty()
+        || style->hasMask()
+        || style->boxReflect()
+        || style->hasFilter()
 #ifdef FIXED_POSITION_CREATES_STACKING_CONTEXT
         || style->position() == FixedPosition
 #else

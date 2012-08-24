@@ -639,7 +639,7 @@ void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderOb
         RenderObject* container = object->container();
         if (!container && !object->isRenderView())
             return;
-        if (!last->isText() && last->style()->isOutOfFlowPositioned()) {
+        if (!last->isText() && last->style()->hasOutOfFlowPosition()) {
             bool willSkipRelativelyPositionedInlines = !object->isRenderBlock() || object->isAnonymousBlock() || object->isRenderFlowThreadContainer();
             // Skip relatively positioned inlines and anonymous blocks (and the flow threads container) to get to the enclosing RenderBlock.
             while (object && (!object->isRenderBlock() || object->isAnonymousBlock() || object->isRenderFlowThreadContainer()))
@@ -690,7 +690,7 @@ void RenderObject::setPreferredLogicalWidthsDirty(bool shouldBeDirty, MarkingBeh
 {
     bool alreadyDirty = preferredLogicalWidthsDirty();
     m_bitfields.setPreferredLogicalWidthsDirty(shouldBeDirty);
-    if (shouldBeDirty && !alreadyDirty && markParents == MarkContainingBlockChain && (isText() || !style()->isOutOfFlowPositioned()))
+    if (shouldBeDirty && !alreadyDirty && markParents == MarkContainingBlockChain && (isText() || !style()->hasOutOfFlowPosition()))
         invalidateContainerPreferredLogicalWidths();
 }
 
@@ -707,7 +707,7 @@ void RenderObject::invalidateContainerPreferredLogicalWidths()
             break;
 
         o->m_bitfields.setPreferredLogicalWidthsDirty(true);
-        if (o->style()->isOutOfFlowPositioned())
+        if (o->style()->hasOutOfFlowPosition())
             // A positioned object has no effect on the min/max width of its containing block ever.
             // We can optimize this case and not go up any further.
             break;
@@ -764,7 +764,7 @@ RenderBlock* RenderObject::containingBlock() const
             if (o->hasTransform() && o->isRenderBlock())
                 break;
 
-            if (o->style()->position() == RelativePosition && o->isInline() && !o->isReplaced()) {
+            if (o->style()->hasInFlowPosition() && o->isInline() && !o->isReplaced()) {
                 o = o->containingBlock();
                 break;
             }

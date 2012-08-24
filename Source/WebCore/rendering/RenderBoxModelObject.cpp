@@ -459,16 +459,16 @@ void RenderBoxModelObject::updateBoxModelInfoFromStyle()
     setHorizontalWritingMode(styleToUse->isHorizontalWritingMode());
 }
 
-static LayoutSize accumulateRelativePositionOffsets(const RenderObject* child)
+static LayoutSize accumulateInFlowPositionOffsets(const RenderObject* child)
 {
-    if (!child->isAnonymousBlock() || !child->isRelPositioned())
+    if (!child->isAnonymousBlock() || !child->isInFlowPositioned())
         return LayoutSize();
     LayoutSize offset;
     RenderObject* p = toRenderBlock(child)->inlineElementContinuation();
     while (p && p->isRenderInline()) {
-        if (p->isRelPositioned()) {
+        if (p->isInFlowPositioned()) {
             RenderInline* renderInline = toRenderInline(p);
-            offset += renderInline->relativePositionOffset();
+            offset += renderInline->offsetForInFlowPosition();
         }
         p = p->parent();
     }
@@ -477,7 +477,7 @@ static LayoutSize accumulateRelativePositionOffsets(const RenderObject* child)
 
 LayoutSize RenderBoxModelObject::relativePositionOffset() const
 {
-    LayoutSize offset = accumulateRelativePositionOffsets(this);
+    LayoutSize offset = accumulateInFlowPositionOffsets(this);
 
     RenderBlock* containingBlock = this->containingBlock();
 
@@ -548,6 +548,14 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
     }
 
     return referencePoint;
+}
+
+LayoutSize RenderBoxModelObject::offsetForInFlowPosition() const
+{
+    if (isRelPositioned())
+        return relativePositionOffset();
+
+    return LayoutSize();
 }
 
 LayoutUnit RenderBoxModelObject::offsetLeft() const
@@ -2733,7 +2741,7 @@ void RenderBoxModelObject::mapAbsoluteToLocalPoint(bool fixed, bool useTransform
 
     LayoutSize containerOffset = offsetFromContainer(o, LayoutPoint());
 
-    if (!style()->isOutOfFlowPositioned() && o->hasColumns()) {
+    if (!style()->hasOutOfFlowPosition() && o->hasColumns()) {
         RenderBlock* block = static_cast<RenderBlock*>(o);
         LayoutPoint point(roundedLayoutPoint(transformState.mappedPoint()));
         point -= containerOffset;

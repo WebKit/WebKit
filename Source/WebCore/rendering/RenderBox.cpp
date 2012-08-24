@@ -197,9 +197,9 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyl
             markContainingBlocksForLayout();
             if (oldStyle->position() == StaticPosition)
                 repaint();
-            else if (newStyle->isOutOfFlowPositioned())
+            else if (newStyle->hasOutOfFlowPosition())
                 parent()->setChildNeedsLayout(true);
-            if (isFloating() && !isOutOfFlowPositioned() && newStyle->isOutOfFlowPositioned())
+            if (isFloating() && !isOutOfFlowPositioned() && newStyle->hasOutOfFlowPosition())
                 removeFloatingOrPositionedChildFromBlockLists();
         }
     } else if (newStyle && isBody())
@@ -301,7 +301,7 @@ void RenderBox::updateBoxModelInfoFromStyle()
     if (isRootObject || isViewObject)
         setHasBoxDecorations(true);
 
-    setPositioned(styleToUse->isOutOfFlowPositioned());
+    setPositioned(styleToUse->hasOutOfFlowPosition());
     setFloating(!isOutOfFlowPositioned() && styleToUse->isFloating());
 
     // We also handle <body> and <html>, whose overflow applies to the viewport.
@@ -1276,8 +1276,8 @@ void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, Tran
         if (v->layoutStateEnabled() && !repaintContainer) {
             LayoutState* layoutState = v->layoutState();
             LayoutSize offset = layoutState->m_paintOffset + locationOffset();
-            if (style()->position() == RelativePosition && layer())
-                offset += layer()->relativePositionOffset();
+            if (style()->hasInFlowPosition() && layer())
+                offset += layer()->offsetForInFlowPosition();
             transformState.move(offset);
             return;
         }
@@ -1394,11 +1394,11 @@ LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint& po
     ASSERT(o == container());
 
     LayoutSize offset;    
-    if (isRelPositioned())
-        offset += relativePositionOffset();
+    if (isInFlowPositioned())
+        offset += offsetForInFlowPosition();
 
     if (!isInline() || isReplaced()) {
-        if (!style()->isOutOfFlowPositioned() && o->hasColumns()) {
+        if (!style()->hasOutOfFlowPosition() && o->hasColumns()) {
             RenderBlock* block = toRenderBlock(o);
             LayoutRect columnRect(frameRect());
             block->adjustStartEdgeForWritingModeIncludingColumns(columnRect);
@@ -1417,8 +1417,8 @@ LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint& po
     if (o->hasOverflowClip())
         offset -= toRenderBox(o)->scrolledContentOffset();
 
-    if (style()->position() == AbsolutePosition && o->isRelPositioned() && o->isRenderInline())
-        offset += toRenderInline(o)->relativePositionedInlineOffset(this);
+    if (style()->position() == AbsolutePosition && o->isInFlowPositioned() && o->isRenderInline())
+        offset += toRenderInline(o)->offsetForInFlowPositionedInline(this);
 
     return offset;
 }
@@ -1531,8 +1531,9 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, La
             if (layer() && layer()->transform())
                 rect = layer()->transform()->mapRect(pixelSnappedIntRect(rect));
 
-            if (styleToUse->position() == RelativePosition && layer())
-                rect.move(layer()->relativePositionOffset());
+            // We can't trust the bits on RenderObject, because this might be called while re-resolving style.
+            if (styleToUse->hasInFlowPosition() && layer())
+                rect.move(layer()->offsetForInFlowPosition());
 
             rect.moveBy(location());
             rect.move(layoutState->m_paintOffset);
@@ -1574,14 +1575,14 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, La
     } else if (position == FixedPosition)
         fixed = true;
 
-    if (position == AbsolutePosition && o->isRelPositioned() && o->isRenderInline())
-        topLeft += toRenderInline(o)->relativePositionedInlineOffset(this);
-    else if (position == RelativePosition && layer()) {
+    if (position == AbsolutePosition && o->isInFlowPositioned() && o->isRenderInline())
+        topLeft += toRenderInline(o)->offsetForInFlowPositionedInline(this);
+    else if ((position == RelativePosition) && layer()) {
         // Apply the relative position offset when invalidating a rectangle.  The layer
         // is translated, but the render box isn't, so we need to do this to get the
         // right dirty rect.  Since this is called from RenderObject::setStyle, the relative position
         // flag on the RenderObject has been cleared, so use the one on the style().
-        topLeft += layer()->relativePositionOffset();
+        topLeft += layer()->offsetForInFlowPosition();
     }
     
     if (o->isBlockFlow() && position != AbsolutePosition && position != FixedPosition) {
@@ -2385,7 +2386,7 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
         return result;
     }
 
-    ASSERT(containingBlock->isRenderInline() && containingBlock->isRelPositioned());
+    ASSERT(containingBlock->isRenderInline() && containingBlock->isInFlowPositioned());
 
     const RenderInline* flow = toRenderInline(containingBlock);
     InlineFlowBox* first = flow->firstLineBox();
@@ -2426,7 +2427,7 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxM
         return result;
     }
         
-    ASSERT(containingBlock->isRenderInline() && containingBlock->isRelPositioned());
+    ASSERT(containingBlock->isRenderInline() && containingBlock->isInFlowPositioned());
 
     const RenderInline* flow = toRenderInline(containingBlock);
     InlineFlowBox* first = flow->firstLineBox();
@@ -3831,7 +3832,7 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(RenderStyle* parentStyle)
         rect.unite(layoutOverflowRect());
 
     bool hasTransform = hasLayer() && layer()->transform();
-    if (isRelPositioned() || hasTransform) {
+    if (isInFlowPositioned() || hasTransform) {
         // If we are relatively positioned or if we have a transform, then we have to convert
         // this rectangle into physical coordinates, apply relative positioning and transforms
         // to it, and then convert it back.
@@ -3840,8 +3841,8 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(RenderStyle* parentStyle)
         if (hasTransform)
             rect = layer()->currentTransform().mapRect(rect);
 
-        if (isRelPositioned())
-            rect.move(relativePositionOffset());
+        if (isInFlowPositioned())
+            rect.move(offsetForInFlowPosition());
         
         // Now we need to flip back.
         flipForWritingMode(rect);

@@ -55,15 +55,15 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSiz
 
     if (renderer->isOutOfFlowPositioned() && !fixed) {
         if (RenderObject* container = renderer->container()) {
-            if (container->isRelPositioned() && container->isRenderInline())
-                m_paintOffset += toRenderInline(container)->relativePositionedInlineOffset(renderer);
+            if (container->isInFlowPositioned() && container->isRenderInline())
+                m_paintOffset += toRenderInline(container)->offsetForInFlowPositionedInline(renderer);
         }
     }
 
     m_layoutOffset = m_paintOffset;
 
-    if (renderer->isRelPositioned() && renderer->hasLayer())
-        m_paintOffset += renderer->layer()->relativePositionOffset();
+    if (renderer->isInFlowPositioned() && renderer->hasLayer())
+        m_paintOffset += renderer->layer()->offsetForInFlowPosition();
 
     m_clipped = !fixed && prev->m_clipped;
     if (m_clipped)

@@ -402,7 +402,7 @@ public:
     void updateBlendMode();
 #endif
 
-    const LayoutSize& relativePositionOffset() const { return m_relativeOffset; }
+    const LayoutSize& offsetForInFlowPosition() const { return m_offsetForInFlowPosition; }
 
     void clearClipRectsIncludingDescendants(ClipRectsType typeToClear = AllClipRectTypes);
     void clearClipRects(ClipRectsType typeToClear = AllClipRectTypes);
@@ -951,7 +951,7 @@ protected:
     LayoutRect m_outlineBox;
 
     // Our current relative position offset.
-    LayoutSize m_relativeOffset;
+    LayoutSize m_offsetForInFlowPosition;
 
     // Our (x,y) coordinates are in our parent layer's coordinate space.
     LayoutPoint m_topLeft;

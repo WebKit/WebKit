@@ -509,7 +509,8 @@ public:
     bool hasStaticBlockPosition(bool horizontal) const { return horizontal ? hasAutoTopAndBottom() : hasAutoLeftAndRight(); }
 
     EPosition position() const { return static_cast<EPosition>(noninherited_flags._position); }
-    bool isOutOfFlowPositioned() const { return position() == AbsolutePosition || position() == FixedPosition; }
+    bool hasOutOfFlowPosition() const { return position() == AbsolutePosition || position() == FixedPosition; }
+    bool hasInFlowPosition() const { return position() == RelativePosition || position() == StickyPosition; }
     EFloat floating() const { return static_cast<EFloat>(noninherited_flags._floating); }
 
     Length width() const { return m_box->width(); }
@@ -955,8 +956,11 @@ public:
     ETextSecurity textSecurity() const { return static_cast<ETextSecurity>(rareInheritedData->textSecurity); }
 
     WritingMode writingMode() const { return static_cast<WritingMode>(inherited_flags.m_writingMode); }
+    // Lines have horizontal orientation; modes horizontal-tb or horizontal-bt.
     bool isHorizontalWritingMode() const { return writingMode() == TopToBottomWritingMode || writingMode() == BottomToTopWritingMode; }
+    // Bottom of the line occurs earlier in the block; modes vertical-rl or horizontal-bt.
     bool isFlippedLinesWritingMode() const { return writingMode() == LeftToRightWritingMode || writingMode() == BottomToTopWritingMode; }
+    // Block progression increases in the opposite direction to normal; modes vertical-rl or horizontal-bt.
     bool isFlippedBlocksWritingMode() const { return writingMode() == RightToLeftWritingMode || writingMode() == BottomToTopWritingMode; }
 
 #if ENABLE(CSS_IMAGE_ORIENTATION)

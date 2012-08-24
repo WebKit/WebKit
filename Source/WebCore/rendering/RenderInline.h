@@ -72,7 +72,7 @@ public:
 
     virtual void updateDragState(bool dragOn);
     
-    LayoutSize relativePositionedInlineOffset(const RenderBox* child) const;
+    LayoutSize offsetForInFlowPositionedInline(const RenderBox* child) const;
 
     virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint&);
     void paintOutline(GraphicsContext*, const LayoutPoint&);
@@ -124,7 +124,7 @@ private:
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
-    virtual bool requiresLayer() const { return isRelPositioned() || isTransparent() || hasMask() || hasFilter(); }
+    virtual bool requiresLayer() const { return isInFlowPositioned() || isTransparent() || hasMask() || hasFilter(); }
 
     virtual LayoutUnit offsetLeft() const;
     virtual LayoutUnit offsetTop() const;
