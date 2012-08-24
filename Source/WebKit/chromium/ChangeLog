@@ -1,3 +1,16 @@
+2012-08-24  Dan Carney  <dcarney@google.com>
+
+        [V8] Refactor away IsolatedWorld
+        https://bugs.webkit.org/show_bug.cgi?id=93971
+
+        Reviewed by Kentaro Hara.
+
+        Remove IsolatedWorld class as it was 1:1 with DOMWrapperWorld.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebView::addUserScript):
+        (WebKit::WebView::addUserStyleSheet):
+
 2012-08-23  Antoine Labour  <piman@chromium.org>
 
         [chromium] Fix lost context when textures are evicted

@@ -36,16 +36,81 @@
 
 namespace WebCore {
 
-DOMWrapperWorld::DOMWrapperWorld()
+int DOMWrapperWorld::isolatedWorldCount = 0;
+
+PassRefPtr<DOMWrapperWorld>  DOMWrapperWorld::createUninitializedWorld()
 {
-    // This class is pretty boring, huh?
+    return adoptRef(new DOMWrapperWorld(uninitializedWorldId, uninitializedExtensionGroup));
+}
+
+PassRefPtr<DOMWrapperWorld> DOMWrapperWorld::createMainWorld()
+{
+    return adoptRef(new DOMWrapperWorld(mainWorldId, mainWorldExtensionGroup));
 }
 
 DOMWrapperWorld* mainThreadNormalWorld()
 {
     ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(RefPtr<DOMWrapperWorld>, cachedNormalWorld, (DOMWrapperWorld::create()));
+    DEFINE_STATIC_LOCAL(RefPtr<DOMWrapperWorld>, cachedNormalWorld, (DOMWrapperWorld::createMainWorld()));
     return cachedNormalWorld.get();
+}
+
+// FIXME: This should probably go to PerIsolateData.
+typedef HashMap<int, DOMWrapperWorld*> WorldMap;
+static WorldMap& isolatedWorldMap()
+{
+    DEFINE_STATIC_LOCAL(WorldMap, map, ());
+    return map;
+}
+
+void DOMWrapperWorld::deallocate(DOMWrapperWorld* world)
+{
+    int worldId = world->worldId();
+
+    // Ensure we never deallocate mainThreadNormalWorld
+    if (worldId == mainWorldId)
+        return;
+
+    delete world;
+
+    if (worldId == uninitializedWorldId)
+        return;
+
+    WorldMap& map = isolatedWorldMap();
+    WorldMap::iterator i = map.find(worldId);
+    if (i == map.end()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    ASSERT(i->second == world);
+
+    map.remove(i);
+    isolatedWorldCount--;
+}
+
+static int temporaryWorldId = DOMWrapperWorld::uninitializedWorldId-1;
+
+PassRefPtr<DOMWrapperWorld> DOMWrapperWorld::getOrCreateIsolatedWorld(int worldId, int extensionGroup)
+{
+    ASSERT(worldId != mainWorldId);
+    ASSERT(worldId != uninitializedWorldId);
+
+    WorldMap& map = isolatedWorldMap();
+    if (!worldId)
+        worldId = temporaryWorldId--;
+    else {
+        WorldMap::iterator i = map.find(worldId);
+        if (i != map.end()) {
+            ASSERT(i->second->worldId() == worldId);
+            ASSERT(i->second->extensionGroup() == extensionGroup);
+            return i->second;
+        }
+    }
+
+    RefPtr<DOMWrapperWorld> world = adoptRef(new DOMWrapperWorld(worldId, extensionGroup));
+    map.add(worldId, world.get());
+    isolatedWorldCount++;
+    return world.release();
 }
 
 } // namespace WebCore

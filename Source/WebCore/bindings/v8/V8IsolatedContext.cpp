@@ -64,8 +64,8 @@ static void setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContex
     targetContext->SetData(v8::String::New(buffer));
 }
 
-V8IsolatedContext::V8IsolatedContext(Frame* frame, int extensionGroup, int worldId)
-    : m_world(IsolatedWorld::create(worldId)),
+V8IsolatedContext::V8IsolatedContext(Frame* frame, PassRefPtr<DOMWrapperWorld> world)
+    : m_world(world),
       m_frame(frame)
 {
     v8::HandleScope scope;
@@ -74,7 +74,7 @@ V8IsolatedContext::V8IsolatedContext(Frame* frame, int extensionGroup, int world
         return;
 
     // FIXME: We should be creating a new V8DOMWindowShell here instead of riping out the context.
-    m_context = SharedPersistent<v8::Context>::create(frame->script()->windowShell()->createNewContext(v8::Handle<v8::Object>(), extensionGroup, m_world->id()));
+    m_context = SharedPersistent<v8::Context>::create(frame->script()->windowShell()->createNewContext(v8::Handle<v8::Object>(), m_world->extensionGroup(), m_world->worldId()));
     if (m_context->get().IsEmpty())
         return;
 
@@ -99,13 +99,13 @@ V8IsolatedContext::V8IsolatedContext(Frame* frame, int extensionGroup, int world
     //        changes.
     m_context->get()->UseDefaultSecurityToken();
 
-    m_frame->loader()->client()->didCreateScriptContext(context(), extensionGroup, m_world->id());
+    m_frame->loader()->client()->didCreateScriptContext(context(), m_world->extensionGroup(), m_world->worldId());
 }
 
 void V8IsolatedContext::destroy()
 {
     m_perContextData.clear();
-    m_frame->loader()->client()->willReleaseScriptContext(context(), m_world->id());
+    m_frame->loader()->client()->willReleaseScriptContext(context(), m_world->worldId());
     m_context->get().MakeWeak(this, &contextWeakReferenceCallback);
     m_frame = 0;
 }

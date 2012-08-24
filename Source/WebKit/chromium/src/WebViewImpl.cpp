@@ -3390,7 +3390,7 @@ void WebView::addUserScript(const WebString& sourceCode,
         patterns->append(patternsIn[i]);
 
     PageGroup* pageGroup = PageGroup::pageGroup(pageGroupName);
-    RefPtr<DOMWrapperWorld> world(DOMWrapperWorld::create());
+    RefPtr<DOMWrapperWorld> world(DOMWrapperWorld::createUninitializedWorld());
     pageGroup->addUserScriptToWorld(world.get(), sourceCode, WebURL(), patterns.release(), nullptr,
                                     static_cast<UserScriptInjectionTime>(injectAt),
                                     static_cast<UserContentInjectedFrames>(injectIn));
@@ -3406,7 +3406,7 @@ void WebView::addUserStyleSheet(const WebString& sourceCode,
         patterns->append(patternsIn[i]);
 
     PageGroup* pageGroup = PageGroup::pageGroup(pageGroupName);
-    RefPtr<DOMWrapperWorld> world(DOMWrapperWorld::create());
+    RefPtr<DOMWrapperWorld> world(DOMWrapperWorld::createUninitializedWorld());
 
     // FIXME: Current callers always want the level to be "author". It probably makes sense to let
     // callers specify this though, since in other cases the caller will probably want "user" level.

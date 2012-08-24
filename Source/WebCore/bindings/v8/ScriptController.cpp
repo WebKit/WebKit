@@ -346,7 +346,7 @@ void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<Sc
             if (iter != m_isolatedWorlds.end())
                 isolatedContext = iter->second;
             else {
-                isolatedContext = new V8IsolatedContext(m_frame, extensionGroup, worldID);
+                isolatedContext = new V8IsolatedContext(m_frame, DOMWrapperWorld::getOrCreateIsolatedWorld(worldID, extensionGroup));
                 if (isolatedContext->context().IsEmpty()) {
                     delete isolatedContext;
                     return;
@@ -360,7 +360,7 @@ void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<Sc
             if (securityOriginIter != m_isolatedWorldSecurityOrigins.end())
                 isolatedContext->setSecurityOrigin(securityOriginIter->second);
         } else {
-            isolatedContext = new V8IsolatedContext(m_frame, extensionGroup, worldID);
+            isolatedContext = new V8IsolatedContext(m_frame, DOMWrapperWorld::getOrCreateIsolatedWorld(worldID, extensionGroup));
             if (isolatedContext->context().IsEmpty()) {
                 delete isolatedContext;
                 return;

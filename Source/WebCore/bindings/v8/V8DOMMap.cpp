@@ -39,15 +39,17 @@
 
 namespace WebCore {
 
-DOMDataStoreHandle::DOMDataStoreHandle()
-    : m_store(adoptPtr(new ScopedDOMDataStore()))
+DOMDataStoreHandle::DOMDataStoreHandle(bool initialize)
+    : m_store(adoptPtr(!initialize ? 0 : new ScopedDOMDataStore()))
 {
-    V8PerIsolateData::current()->registerDOMDataStore(m_store.get());
+    if (m_store)
+        V8PerIsolateData::current()->registerDOMDataStore(m_store.get());
 }
 
 DOMDataStoreHandle::~DOMDataStoreHandle()
 {
-    V8PerIsolateData::current()->unregisterDOMDataStore(m_store.get());
+    if (m_store)
+        V8PerIsolateData::current()->unregisterDOMDataStore(m_store.get());
 }
 
 DOMNodeMapping& getDOMNodeMap(v8::Isolate* isolate)

@@ -31,6 +31,7 @@
 #ifndef DOMWrapperWorld_h
 #define DOMWrapperWorld_h
 
+#include "DOMDataStore.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -38,15 +39,52 @@
 namespace WebCore {
 
 // This class represent a collection of DOM wrappers for a specific world.
-// The base class is pretty boring because the wrappers are actually stored
-// statically in V8DOMMap and garbage collected by V8 itself.
-class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
+class DOMWrapperWorld : public WTF::RefCountedBase {
 public:
-    static PassRefPtr<DOMWrapperWorld> create() { return adoptRef(new DOMWrapperWorld()); }
-    virtual ~DOMWrapperWorld() {}
+    static const int mainWorldId = -1;
+    static const int mainWorldExtensionGroup = -1;
+    static const int uninitializedWorldId = -2;
+    static const int uninitializedExtensionGroup = -2;
+    // If 0 is passed as worldId, the world will be assigned a temporary id instead.
+    static PassRefPtr<DOMWrapperWorld> getOrCreateIsolatedWorld(int worldId, int extensionGroup);
+    static bool isolatedWorldsExist() { return isolatedWorldCount; }
+    // FIXME: this is a workaround for a problem in WebViewImpl.
+    // Do not use this anywhere else!!
+    static PassRefPtr<DOMWrapperWorld> createUninitializedWorld();
 
-protected:
-    DOMWrapperWorld();
+    bool isMainWorld() { return m_worldId == mainWorldId; }
+    int worldId() const { return m_worldId; }
+    int extensionGroup() const { return m_extensionGroup; }
+    DOMDataStore* domDataStore() const
+    {
+        ASSERT(m_worldId != uninitializedWorldId);
+        return m_domDataStore.getStore();
+    }
+    void deref()
+    {
+        if (derefBase())
+            deallocate(this);
+    }
+
+private:
+    static int isolatedWorldCount;
+    static PassRefPtr<DOMWrapperWorld> createMainWorld();
+    static void deallocate(DOMWrapperWorld*);
+    DOMWrapperWorld(int worldId, int extensionGroup)
+        : m_worldId(worldId)
+        , m_extensionGroup(extensionGroup)
+        , m_domDataStore(worldId != uninitializedWorldId)
+    {
+    }
+
+    const int m_worldId;
+    const int m_extensionGroup;
+    // The backing store for the isolated world's DOM wrappers. This class
+    // doesn't have visibility into the wrappers. This handle simply helps
+    // manage their lifetime.
+    DOMDataStoreHandle m_domDataStore;
+
+    friend DOMWrapperWorld* mainThreadNormalWorld();
 };
 
 DOMWrapperWorld* mainThreadNormalWorld();

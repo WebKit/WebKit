@@ -152,7 +152,7 @@ namespace WebCore {
     // A utility class to manage the lifetime of set of DOM wrappers.
     class DOMDataStoreHandle {
     public:
-        DOMDataStoreHandle();
+        DOMDataStoreHandle(bool initialize);
         ~DOMDataStoreHandle();
 
         DOMDataStore* getStore() const { return m_store.get(); }
