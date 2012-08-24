@@ -1,3 +1,10 @@
+2012-08-23  Mark Rowe  <mrowe@apple.com>
+
+        Build fix for old, old versions of Clang.
+
+        * wtf/FastMalloc.cpp:
+        (WTF): Rejigger things so that they parse correctly if __has_warning isn't defined.
+
 2012-08-23  Emil A Eklund  <eae@chromium.org>
 
         Add saturation arithmetic support to FractionalLayoutUnit

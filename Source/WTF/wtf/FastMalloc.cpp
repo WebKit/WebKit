@@ -2469,9 +2469,9 @@ class TCMalloc_Central_FreeList {
   int32_t cache_size_;
 };
 
-#if COMPILER(CLANG)
+#if COMPILER(CLANG) && defined(__has_warning)
 #pragma clang diagnostic push
-#if defined(__has_warning) && __has_warning("-Wunused-private-field")
+#if __has_warning("-Wunused-private-field")
 #pragma clang diagnostic ignored "-Wunused-private-field"
 #endif
 #endif
@@ -2482,7 +2482,7 @@ class TCMalloc_Central_FreeListPadded : public TCMalloc_Central_FreeList {
   char pad_[(64 - (sizeof(TCMalloc_Central_FreeList) % 64)) % 64];
 };
 
-#if COMPILER(CLANG)
+#if COMPILER(CLANG) && defined(__has_warning)
 #pragma clang diagnostic pop
 #endif
 
