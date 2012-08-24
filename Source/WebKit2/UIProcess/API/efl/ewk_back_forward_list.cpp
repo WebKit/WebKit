@@ -145,7 +145,7 @@ Eina_List* ewk_back_forward_list_n_back_items_copy(const Ewk_Back_Forward_List* 
 
     if (limit == -1)
         limit = WKBackForwardListGetBackListCount(wkList);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(limit >= 0, 0);
+    EINA_SAFETY_ON_FALSE_RETURN_VAL(limit >= 0, 0);
     WKRetainPtr<WKArrayRef> backList(AdoptWK, WKBackForwardListCopyBackListWithLimit(wkList, limit));
 
     return createEinaList(list, backList.get());
@@ -157,7 +157,7 @@ Eina_List* ewk_back_forward_list_n_forward_items_copy(const Ewk_Back_Forward_Lis
 
     if (limit == -1)
         limit = WKBackForwardListGetForwardListCount(wkList);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(limit >= 0, 0);
+    EINA_SAFETY_ON_FALSE_RETURN_VAL(limit >= 0, 0);
     WKRetainPtr<WKArrayRef> forwardList(AdoptWK, WKBackForwardListCopyForwardListWithLimit(wkList, limit));
 
     return createEinaList(list, forwardList.get());
