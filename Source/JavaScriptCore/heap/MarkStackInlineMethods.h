@@ -35,8 +35,6 @@ ALWAYS_INLINE void MarkStack::append(JSValue* slot, size_t count)
 {
     for (size_t i = 0; i < count; ++i) {
         JSValue& value = slot[i];
-        if (!value)
-            continue;
         internalAppend(value);
     }
 }
@@ -46,8 +44,7 @@ inline void MarkStack::appendUnbarrieredPointer(T** slot)
 {
     ASSERT(slot);
     JSCell* cell = *slot;
-    if (cell)
-        internalAppend(cell);
+    internalAppend(cell);
 }
 
 ALWAYS_INLINE void MarkStack::append(JSValue* slot)
@@ -70,8 +67,7 @@ ALWAYS_INLINE void MarkStack::append(JSCell** slot)
 
 ALWAYS_INLINE void MarkStack::internalAppend(JSValue value)
 {
-    ASSERT(value);
-    if (!value.isCell())
+    if (!value || !value.isCell())
         return;
     internalAppend(value.asCell());
 }

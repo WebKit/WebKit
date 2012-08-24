@@ -523,6 +523,8 @@ ALWAYS_INLINE void MarkStack::internalAppend(JSValue* slot)
         return;
 
     JSCell* cell = value.asCell();
+    if (!cell)
+        return;
 
     if (m_shouldHashConst && cell->isString()) {
         JSString* string = jsCast<JSString*>(cell);

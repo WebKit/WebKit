@@ -1,3 +1,26 @@
+2012-08-24  Oliver Hunt  <oliver@apple.com>
+
+        Always null check cells before marking
+        https://bugs.webkit.org/show_bug.cgi?id=94968
+
+        Reviewed by Geoffrey Garen.
+
+        Originally we tried to minimise null checks by only null checking values
+        that we knew could be null, however given that we can't ever guarantee
+        when a GC will happen, we're better off just always assuming that a null
+        check will be necessary.  This results in a much less fragile code base
+        as we can add GC allocations to object initialisers without having to
+        subsequently worry about whether the object we are initialising will need
+        to add a bunch of null checks in its visitChildren implementation.
+
+        * heap/MarkStack.cpp:
+        (JSC::MarkStack::internalAppend):
+        * heap/MarkStackInlineMethods.h:
+        (JSC::MarkStack::append):
+        (JSC::MarkStack::appendUnbarrieredPointer):
+        * runtime/Structure.h:
+        (JSC::MarkStack::internalAppend):
+
 2012-08-23  Oliver Hunt  <oliver@apple.com>
 
         Autogenerate Opcode definitions

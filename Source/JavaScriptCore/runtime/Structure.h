@@ -567,6 +567,8 @@ namespace JSC {
     ALWAYS_INLINE void MarkStack::internalAppend(JSCell* cell)
     {
         ASSERT(!m_isCheckingForDefaultMarkViolation);
+        if (!cell)
+            return;
 #if ENABLE(GC_VALIDATION)
         validate(cell);
 #endif
