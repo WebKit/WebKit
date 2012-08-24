@@ -1150,6 +1150,10 @@ Node* WebViewImpl::bestTouchLinkNode(IntPoint touchEventLocation)
     while (bestTouchNode && !highlightConditions(bestTouchNode))
         bestTouchNode = bestTouchNode->parentNode();
 
+    // If the document has click handlers installed, we don't want to default to applying the highlight to the entire RenderView.
+    if (bestTouchNode && (!bestTouchNode->renderer() || bestTouchNode->renderer()->isRenderView()))
+        return 0;
+
     return bestTouchNode;
 }
 

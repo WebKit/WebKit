@@ -1,3 +1,15 @@
+2012-08-24  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] gestureTapDown should not select a RenderView node as target.
+        https://bugs.webkit.org/show_bug.cgi?id=94956
+
+        Reviewed by James Robinson.
+
+        Add check to prevent selecting a RenderView node as a highlight target.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::bestTouchLinkNode):
+
 2012-08-24  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add readyState functionality to RTCPeerConnection

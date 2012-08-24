@@ -1,3 +1,16 @@
+2012-08-24  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] gestureTapDown should not select a RenderView node as target.
+        https://bugs.webkit.org/show_bug.cgi?id=94956
+
+        Reviewed by James Robinson.
+
+        Add check to prevent selecting a RenderView node as a highlight target.
+
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-background.html: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-background-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-background-expected.txt: Added.
+
 2012-08-24  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Upstream layout test expectations (Part 1)
