@@ -29,43 +29,24 @@
 
 #include "WebCommon.h"
 #include "WebFloatKeyframe.h"
-#include "WebPrivateOwnPtr.h"
-
-#if WEBKIT_IMPLEMENTATION
-#include <wtf/Forward.h>
-#endif
-
-namespace WebCore {
-class CCAnimationCurve;
-class CCKeyframedFloatAnimationCurve;
-}
 
 namespace WebKit {
 
 // A keyframed float animation curve.
 class WebFloatAnimationCurve : public WebAnimationCurve {
 public:
-    WebFloatAnimationCurve() { initialize(); }
-    virtual ~WebFloatAnimationCurve() { destroy(); }
+    WEBKIT_EXPORT static WebFloatAnimationCurve* create();
+
+    virtual ~WebFloatAnimationCurve() { }
 
     // Adds the keyframe with the default timing function (ease).
-    WEBKIT_EXPORT void add(const WebFloatKeyframe&);
-    WEBKIT_EXPORT void add(const WebFloatKeyframe&, TimingFunctionType);
+    virtual void add(const WebFloatKeyframe&) = 0;
+    virtual void add(const WebFloatKeyframe&, TimingFunctionType) = 0;
     // Adds the keyframe with a custom, bezier timing function. Note, it is
     // assumed that x0 = y0 = 0, and x3 = y3 = 1.
-    WEBKIT_EXPORT void add(const WebFloatKeyframe&, double x1, double y1, double x2, double y2);
+    virtual void add(const WebFloatKeyframe&, double x1, double y1, double x2, double y2) = 0;
 
-    WEBKIT_EXPORT float getValue(double time) const;
-
-#if WEBKIT_IMPLEMENTATION
-    virtual operator PassOwnPtr<WebCore::CCAnimationCurve>() const;
-#endif
-
-private:
-    WEBKIT_EXPORT void initialize();
-    WEBKIT_EXPORT void destroy();
-
-    WebPrivateOwnPtr<WebCore::CCKeyframedFloatAnimationCurve> m_private;
+    virtual float getValue(double time) const = 0;
 };
 
 } // namespace WebKit

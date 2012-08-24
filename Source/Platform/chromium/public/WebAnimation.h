@@ -49,7 +49,7 @@ public:
         TargetPropertyOpacity
     };
 
-    // The caller takes ownership of the returned valuev
+    // The caller takes ownership of the returned value.
     WEBKIT_EXPORT static WebAnimation* create(const WebAnimationCurve&, TargetProperty);
 
     // An animationId is effectively the animation's name, and it is not unique.

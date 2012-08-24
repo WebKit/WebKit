@@ -28,45 +28,27 @@
 #include "WebAnimationCurve.h"
 
 #include "WebCommon.h"
-#include "WebPrivateOwnPtr.h"
 #include "WebTransformKeyframe.h"
 #include "WebTransformationMatrix.h"
-
-#if WEBKIT_IMPLEMENTATION
-#include <wtf/Forward.h>
-#endif
-
-namespace WebCore {
-class CCAnimationCurve;
-class CCKeyframedTransformAnimationCurve;
-}
 
 namespace WebKit {
 
 // A keyframed transform animation curve.
 class WebTransformAnimationCurve : public WebAnimationCurve {
 public:
-    WebTransformAnimationCurve() { initialize(); }
-    virtual ~WebTransformAnimationCurve() { destroy(); }
+    WEBKIT_EXPORT static WebTransformAnimationCurve* create();
+
+    virtual ~WebTransformAnimationCurve() { }
 
     // Adds the keyframe with the default timing function (ease).
-    WEBKIT_EXPORT void add(const WebTransformKeyframe&);
-    WEBKIT_EXPORT void add(const WebTransformKeyframe&, TimingFunctionType);
+    virtual void add(const WebTransformKeyframe&) = 0;
+    virtual void add(const WebTransformKeyframe&, TimingFunctionType) = 0;
     // Adds the keyframe with a custom, bezier timing function. Note, it is
     // assumed that x0 = y0 = 0, and x3 = y3 = 1.
-    WEBKIT_EXPORT void add(const WebTransformKeyframe&, double x1, double y1, double x2, double y2);
+    virtual void add(const WebTransformKeyframe&, double x1, double y1, double x2, double y2) = 0;
 
-    WEBKIT_EXPORT WebTransformationMatrix getValue(double time) const;
+    virtual WebTransformationMatrix getValue(double time) const = 0;
 
-#if WEBKIT_IMPLEMENTATION
-    virtual operator PassOwnPtr<WebCore::CCAnimationCurve>() const;
-#endif
-
-protected:
-    WEBKIT_EXPORT void initialize();
-    WEBKIT_EXPORT void destroy();
-
-    WebPrivateOwnPtr<WebCore::CCKeyframedTransformAnimationCurve> m_private;
 };
 
 } // namespace WebKit

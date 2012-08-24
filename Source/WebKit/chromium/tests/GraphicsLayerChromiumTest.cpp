@@ -96,9 +96,9 @@ TEST_F(GraphicsLayerChromiumTest, updateLayerPreserves3DWithAnimations)
 {
     ASSERT_FALSE(m_platformLayer->hasActiveAnimation());
 
-    WebFloatAnimationCurve curve;
-    curve.add(WebFloatKeyframe(0.0, 0.0));
-    OwnPtr<WebAnimation> floatAnimation(adoptPtr(WebAnimation::create(curve, 1, 1, WebAnimation::TargetPropertyOpacity)));
+    OwnPtr<WebFloatAnimationCurve> curve = adoptPtr(WebFloatAnimationCurve::create());
+    curve->add(WebFloatKeyframe(0.0, 0.0));
+    OwnPtr<WebAnimation> floatAnimation(adoptPtr(WebAnimation::create(*curve, 1, 1, WebAnimation::TargetPropertyOpacity)));
     ASSERT_TRUE(m_platformLayer->addAnimation(floatAnimation.get()));
 
     ASSERT_TRUE(m_platformLayer->hasActiveAnimation());

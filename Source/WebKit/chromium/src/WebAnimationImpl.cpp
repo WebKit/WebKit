@@ -29,6 +29,8 @@
 #include "AnimationIdVendor.h"
 #include "CCActiveAnimation.h"
 #include "CCAnimationCurve.h"
+#include "WebFloatAnimationCurveImpl.h"
+#include "WebTransformAnimationCurveImpl.h"
 #include <public/WebAnimation.h>
 #include <public/WebAnimationCurve.h>
 #include <wtf/OwnPtr.h>
@@ -46,7 +48,30 @@ WebAnimation* WebAnimation::create(const WebAnimationCurve& curve, TargetPropert
 
 WebAnimation* WebAnimation::create(const WebAnimationCurve& curve, int animationId, int groupId, TargetProperty targetProperty)
 {
-    return new WebAnimationImpl(CCActiveAnimation::create(curve, animationId, groupId, static_cast<WebCore::CCActiveAnimation::TargetProperty>(targetProperty)));
+    return new WebAnimationImpl(curve, animationId, groupId, targetProperty);
+}
+
+WebAnimationImpl::WebAnimationImpl(const WebAnimationCurve& webCurve, int animationId, int groupId, TargetProperty targetProperty)
+{
+    WebAnimationCurve::AnimationCurveType curveType = webCurve.type();
+    OwnPtr<WebCore::CCAnimationCurve> curve;
+    switch (curveType) {
+    case WebAnimationCurve::AnimationCurveTypeFloat: {
+        const WebFloatAnimationCurveImpl* floatCurveImpl = static_cast<const WebFloatAnimationCurveImpl*>(&webCurve);
+        curve = floatCurveImpl->cloneToCCAnimationCurve();
+        break;
+    }
+    case WebAnimationCurve::AnimationCurveTypeTransform: {
+        const WebTransformAnimationCurveImpl* transformCurveImpl = static_cast<const WebTransformAnimationCurveImpl*>(&webCurve);
+        curve = transformCurveImpl->cloneToCCAnimationCurve();
+        break;
+    }
+    }
+    m_animation = CCActiveAnimation::create(curve.release(), animationId, groupId, static_cast<WebCore::CCActiveAnimation::TargetProperty>(targetProperty));
+}
+
+WebAnimationImpl::~WebAnimationImpl()
+{
 }
 
 WebAnimation::TargetProperty WebAnimationImpl::targetProperty() const

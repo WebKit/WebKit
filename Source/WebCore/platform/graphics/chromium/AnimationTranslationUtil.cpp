@@ -123,16 +123,16 @@ WebTransformOperations toWebTransformOperations(const TransformOperations& trans
 }
 
 template <class Value, class Keyframe, class Curve>
-bool appendKeyframeWithStandardTimingFunction(Curve& curve, double keyTime, const Value* value, const Value* lastValue, WebKit::WebAnimationCurve::TimingFunctionType timingFunctionType, const FloatSize&)
+bool appendKeyframeWithStandardTimingFunction(Curve* curve, double keyTime, const Value* value, const Value* lastValue, WebKit::WebAnimationCurve::TimingFunctionType timingFunctionType, const FloatSize&)
 {
-    curve.add(Keyframe(keyTime, value->value()), timingFunctionType);
+    curve->add(Keyframe(keyTime, value->value()), timingFunctionType);
     return true;
 }
 
 template <class Value, class Keyframe, class Curve>
-bool appendKeyframeWithCustomBezierTimingFunction(Curve& curve, double keyTime, const Value* value, const Value* lastValue, double x1, double y1, double x2, double y2, const FloatSize&)
+bool appendKeyframeWithCustomBezierTimingFunction(Curve* curve, double keyTime, const Value* value, const Value* lastValue, double x1, double y1, double x2, double y2, const FloatSize&)
 {
-    curve.add(Keyframe(keyTime, value->value()), x1, y1, x2, y2);
+    curve->add(Keyframe(keyTime, value->value()), x1, y1, x2, y2);
     return true;
 }
 
@@ -185,28 +185,28 @@ bool causesRotationOfAtLeast180Degrees(const TransformAnimationValue* value, con
 }
 
 template <>
-bool appendKeyframeWithStandardTimingFunction<TransformAnimationValue, WebTransformKeyframe, WebTransformAnimationCurve>(WebTransformAnimationCurve& curve, double keyTime, const TransformAnimationValue* value, const TransformAnimationValue* lastValue, WebKit::WebAnimationCurve::TimingFunctionType timingFunctionType, const FloatSize& boxSize)
+bool appendKeyframeWithStandardTimingFunction<TransformAnimationValue, WebTransformKeyframe, WebTransformAnimationCurve>(WebTransformAnimationCurve* curve, double keyTime, const TransformAnimationValue* value, const TransformAnimationValue* lastValue, WebKit::WebAnimationCurve::TimingFunctionType timingFunctionType, const FloatSize& boxSize)
 {
     if (causesRotationOfAtLeast180Degrees(value, lastValue))
         return false;
 
     WebTransformOperations operations = toWebTransformOperations(*value->value(), boxSize);
     if (operations.apply().isInvertible()) {
-        curve.add(WebTransformKeyframe(keyTime, operations), timingFunctionType);
+        curve->add(WebTransformKeyframe(keyTime, operations), timingFunctionType);
         return true;
     }
     return false;
 }
 
 template <>
-bool appendKeyframeWithCustomBezierTimingFunction<TransformAnimationValue, WebTransformKeyframe, WebTransformAnimationCurve>(WebTransformAnimationCurve& curve, double keyTime, const TransformAnimationValue* value, const TransformAnimationValue* lastValue, double x1, double y1, double x2, double y2, const FloatSize& boxSize)
+bool appendKeyframeWithCustomBezierTimingFunction<TransformAnimationValue, WebTransformKeyframe, WebTransformAnimationCurve>(WebTransformAnimationCurve* curve, double keyTime, const TransformAnimationValue* value, const TransformAnimationValue* lastValue, double x1, double y1, double x2, double y2, const FloatSize& boxSize)
 {
     if (causesRotationOfAtLeast180Degrees(value, lastValue))
         return false;
 
     WebTransformOperations operations = toWebTransformOperations(*value->value(), boxSize);
     if (operations.apply().isInvertible()) {
-        curve.add(WebTransformKeyframe(keyTime, operations), x1, y1, x2, y2);
+        curve->add(WebTransformKeyframe(keyTime, operations), x1, y1, x2, y2);
         return true;
     }
     return false;
@@ -225,7 +225,7 @@ PassOwnPtr<WebKit::WebAnimation> createWebAnimation(const KeyframeValueList& val
             reverse = true;
     }
 
-    Curve curve;
+    OwnPtr<Curve> curve = adoptPtr(Curve::create());
 
     for (size_t i = 0; i < valueList.size(); i++) {
         size_t index = reverse ? valueList.size() - i - 1 : i;
@@ -277,14 +277,14 @@ PassOwnPtr<WebKit::WebAnimation> createWebAnimation(const KeyframeValueList& val
 
         bool addedKeyframe = false;
         if (isUsingCustomBezierTimingFunction)
-            addedKeyframe = appendKeyframeWithCustomBezierTimingFunction<Value, Keyframe, Curve>(curve, keyTime, originalValue, lastOriginalValue, x1, y1, x2, y2, boxSize);
+            addedKeyframe = appendKeyframeWithCustomBezierTimingFunction<Value, Keyframe, Curve>(curve.get(), keyTime, originalValue, lastOriginalValue, x1, y1, x2, y2, boxSize);
         else
-            addedKeyframe = appendKeyframeWithStandardTimingFunction<Value, Keyframe, Curve>(curve, keyTime, originalValue, lastOriginalValue, timingFunctionType, boxSize);
+            addedKeyframe = appendKeyframeWithStandardTimingFunction<Value, Keyframe, Curve>(curve.get(), keyTime, originalValue, lastOriginalValue, timingFunctionType, boxSize);
         if (!addedKeyframe)
             return nullptr;
     }
 
-    OwnPtr<WebKit::WebAnimation> anim(adoptPtr(WebKit::WebAnimation::create(curve, animationId, groupId, targetProperty)));
+    OwnPtr<WebKit::WebAnimation> anim(adoptPtr(WebKit::WebAnimation::create(*curve, animationId, groupId, targetProperty)));
 
     int iterations = (animation && animation->isIterationCountSet()) ? animation->iterationCount() : 1;
     anim->setIterations(iterations);

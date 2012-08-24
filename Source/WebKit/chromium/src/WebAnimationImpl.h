@@ -37,11 +37,8 @@ namespace WebKit {
 
 class WebAnimationImpl : public WebAnimation {
 public:
-    explicit WebAnimationImpl(PassOwnPtr<WebCore::CCActiveAnimation> animation)
-        : m_animation(animation)
-    {
-    }
-    virtual ~WebAnimationImpl() { }
+    WebAnimationImpl(const WebAnimationCurve&, int animationId, int groupId, TargetProperty);
+    virtual ~WebAnimationImpl();
 
     // WebAnimation implementation
     virtual TargetProperty targetProperty() const OVERRIDE;

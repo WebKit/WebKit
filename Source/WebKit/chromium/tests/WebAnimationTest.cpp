@@ -46,8 +46,8 @@ namespace {
 #endif
 TEST(WebAnimationTest, MAYBE_DefaultSettings)
 {
-    WebFloatAnimationCurve curve;
-    OwnPtr<WebAnimation> animation = adoptPtr(WebAnimation::create(curve, WebAnimation::TargetPropertyOpacity));
+    OwnPtr<WebAnimationCurve> curve = adoptPtr(WebFloatAnimationCurve::create());
+    OwnPtr<WebAnimation> animation = adoptPtr(WebAnimation::create(*curve, WebAnimation::TargetPropertyOpacity));
 
     // Ensure that the defaults are correct.
     EXPECT_EQ(1, animation->iterations());
@@ -67,8 +67,8 @@ TEST(WebAnimationTest, MAYBE_DefaultSettings)
 #endif
 TEST(WebAnimationTest, MAYBE_ModifiedSettings)
 {
-    WebFloatAnimationCurve curve;
-    OwnPtr<WebAnimation> animation = adoptPtr(WebAnimation::create(curve, WebAnimation::TargetPropertyOpacity));
+    OwnPtr<WebFloatAnimationCurve> curve = adoptPtr(WebFloatAnimationCurve::create());
+    OwnPtr<WebAnimation> animation = adoptPtr(WebAnimation::create(*curve, WebAnimation::TargetPropertyOpacity));
     animation->setIterations(2);
     animation->setStartTime(2);
     animation->setTimeOffset(2);

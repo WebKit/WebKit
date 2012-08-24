@@ -1,3 +1,32 @@
+2012-08-23  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Convert WebAnimationCurve subtypes into pure virtual
+        https://bugs.webkit.org/show_bug.cgi?id=94068
+
+        Reviewed by Adrienne Walker.
+
+        Updates the implementations, some callers and tests of Web*AnimationCurve to its new interface.
+
+        * WebKit.gyp:
+        * src/WebAnimation.cpp:
+        (WebKit::WebAnimation::initialize):
+        * src/WebFloatAnimationCurveImpl.cpp: Renamed from Source/WebKit/chromium/src/WebFloatAnimationCurve.cpp.
+        (WebKit):
+        (WebKit::WebFloatAnimationCurve::create):
+        (WebKit::WebFloatAnimationCurveImpl::WebFloatAnimationCurveImpl):
+        (WebKit::WebFloatAnimationCurveImpl::~WebFloatAnimationCurveImpl):
+        (WebKit::WebFloatAnimationCurveImpl::type):
+        (WebKit::WebFloatAnimationCurveImpl::add):
+        (WebKit::WebFloatAnimationCurveImpl::getValue):
+        (WebKit::WebFloatAnimationCurveImpl::cloneToCCAnimationCurve):
+        * src/WebTransformAnimationCurve.cpp: Removed.
+        * tests/WebAnimationTest.cpp:
+        (WebKit::TEST):
+        * tests/WebFloatAnimationCurveTest.cpp:
+        (WebKit::TEST):
+        * tests/WebTransformAnimationCurveTest.cpp:
+        (WebKit::TEST):
+
 2012-08-23  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Remove V8Proxy.{h,cpp}

@@ -26,19 +26,11 @@
 #define WebAnimationCurve_h
 
 #include "WebCommon.h"
-#include "WebNonCopyable.h"
 
-#if WEBKIT_IMPLEMENTATION
-#include <wtf/Forward.h>
-#endif
-
-namespace WebCore {
-class CCAnimationCurve;
-}
 
 namespace WebKit {
 
-class WebAnimationCurve : public WebNonCopyable {
+class WebAnimationCurve {
 public:
     virtual ~WebAnimationCurve() { }
 
@@ -50,12 +42,12 @@ public:
         TimingFunctionTypeLinear
     };
 
-#if WEBKIT_IMPLEMENTATION
-    virtual operator PassOwnPtr<WebCore::CCAnimationCurve>() const = 0;
-#endif
+    enum AnimationCurveType {
+        AnimationCurveTypeFloat,
+        AnimationCurveTypeTransform,
+    };
 
-protected:
-    WebAnimationCurve() { }
+    virtual AnimationCurveType type() const = 0;
 };
 
 } // namespace WebKit

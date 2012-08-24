@@ -200,13 +200,13 @@ void LinkHighlight::startHighlightAnimation()
 
     m_contentLayer->layer()->setOpacity(startOpacity);
 
-    WebFloatAnimationCurve curve;
-    curve.add(WebFloatKeyframe(0, startOpacity));
-    curve.add(WebFloatKeyframe(duration / 2, startOpacity));
+    OwnPtr<WebFloatAnimationCurve> curve = adoptPtr(WebFloatAnimationCurve::create());
+    curve->add(WebFloatKeyframe(0, startOpacity));
+    curve->add(WebFloatKeyframe(duration / 2, startOpacity));
     // For layout tests we don't fade out.
-    curve.add(WebFloatKeyframe(duration, WebKit::layoutTestMode() ? startOpacity : 0));
+    curve->add(WebFloatKeyframe(duration, WebKit::layoutTestMode() ? startOpacity : 0));
 
-    m_animation = adoptPtr(WebAnimation::create(curve, WebAnimation::TargetPropertyOpacity));
+    m_animation = adoptPtr(WebAnimation::create(*curve, WebAnimation::TargetPropertyOpacity));
     m_contentLayer->layer()->setDrawsContent(true);
     m_contentLayer->layer()->addAnimation(m_animation.get());
 
