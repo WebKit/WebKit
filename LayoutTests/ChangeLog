@@ -1,3 +1,14 @@
+2012-08-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Crash in RenderTableCell::borderTop() due to custom scrollbars after r124168
+        https://bugs.webkit.org/show_bug.cgi?id=93903
+
+        Reviewed by Tony Chang.
+
+        * scrollbars/custom-scrollbar-table-cell-expected.png: Added.
+        * scrollbars/custom-scrollbar-table-cell-expected.txt: Added.
+        * scrollbars/custom-scrollbar-table-cell.html: Added.
+
 2012-08-24  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Unreviewed, fix test flakiness due to the recently introduced lazy panel loading.
