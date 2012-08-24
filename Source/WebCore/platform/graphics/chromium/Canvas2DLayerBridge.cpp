@@ -28,7 +28,6 @@
 #include "Canvas2DLayerBridge.h"
 
 #include "CCRendererGL.h" // For the GLC() macro.
-#include "Canvas2DLayerManager.h"
 #include "GrContext.h"
 #include "GraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
@@ -54,9 +53,6 @@ Canvas2DLayerBridge::Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D> context, 
     , m_size(size)
     , m_canvas(0)
     , m_context(context)
-    , m_bytesAllocated(0)
-    , m_next(0)
-    , m_prev(0)
 {
     if (m_useDoubleBuffering) {
         m_context->makeContextCurrent();
@@ -80,7 +76,6 @@ Canvas2DLayerBridge::Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D> context, 
 
 Canvas2DLayerBridge::~Canvas2DLayerBridge()
 {
-    Canvas2DLayerManager::get().layerToBeDestroyed(this);
     if (SkDeferredCanvas* deferred = deferredCanvas())
         deferred->setNotificationClient(0);
     m_layer->setTextureId(0);
@@ -104,34 +99,6 @@ void Canvas2DLayerBridge::prepareForDraw()
     if (!m_useDoubleBuffering)
         m_layer->willModifyTexture();
     m_context->makeContextCurrent();
-}
-
-void Canvas2DLayerBridge::storageAllocatedForRecordingChanged(size_t bytesAllocated)
-{
-    ASSERT(m_deferralMode == Deferred);
-    intptr_t delta = (intptr_t)bytesAllocated - (intptr_t)m_bytesAllocated;
-    m_bytesAllocated = bytesAllocated;
-    Canvas2DLayerManager::get().layerAllocatedStorageChanged(this, delta);
-}
-
-void Canvas2DLayerBridge::flushedDrawCommands()
-{
-    storageAllocatedForRecordingChanged(deferredCanvas()->storageAllocatedForRecording());
-}
-
-size_t Canvas2DLayerBridge::freeMemoryIfPossible(size_t bytesToFree)
-{
-    ASSERT(deferredCanvas());
-    size_t bytesFreed = deferredCanvas()->freeMemoryIfPossible(bytesToFree);
-    Canvas2DLayerManager::get().layerAllocatedStorageChanged(this, -((intptr_t)bytesFreed));
-    m_bytesAllocated -= bytesFreed;
-    return bytesFreed;
-}
-
-void Canvas2DLayerBridge::flush()
-{
-    ASSERT(deferredCanvas());
-    m_canvas->flush();
 }
 
 SkCanvas* Canvas2DLayerBridge::skCanvas(SkDevice* device)
@@ -187,8 +154,6 @@ void Canvas2DLayerBridge::contextAcquired()
 {
     if (m_deferralMode == NonDeferred && !m_useDoubleBuffering)
         m_layer->willModifyTexture();
-    else if (m_deferralMode == Deferred)
-        Canvas2DLayerManager::get().layerDidDraw(this);
 }
 
 unsigned Canvas2DLayerBridge::backBufferTexture()

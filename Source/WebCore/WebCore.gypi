@@ -3655,8 +3655,6 @@
             'platform/graphics/chromium/AnimationTranslationUtil.h',
             'platform/graphics/chromium/Canvas2DLayerBridge.cpp',
             'platform/graphics/chromium/Canvas2DLayerBridge.h',
-            'platform/graphics/chromium/Canvas2DLayerManager.cpp',
-            'platform/graphics/chromium/Canvas2DLayerManager.h',
             'platform/graphics/chromium/CompositorHUDFontAtlas.cpp',
             'platform/graphics/chromium/CompositorHUDFontAtlas.h',
             'platform/graphics/chromium/CrossProcessFontLoading.h',
