@@ -875,11 +875,14 @@ bool RenderThemeQtMobile::paintSliderTrack(RenderObject* o, const PaintInfo& pi,
     QRect rect(r);
     const bool vertical = (o->style()->appearance() == SliderVerticalPart);
     const int groovePadding = vertical ? r.width() * sliderGrooveBorderRatio : r.height() * sliderGrooveBorderRatio;
-    if (vertical)
+    if (vertical) {
         rect.adjust(groovePadding, 0, -groovePadding, 0);
-    else
+        // Direction is ignored on vertical sliders and we assume LTR.
+        p.drawProgress(rect, progress, true, /*animated = */ false, vertical);
+    } else {
         rect.adjust(0, groovePadding, 0, -groovePadding);
-    p.drawProgress(rect, progress, o->style()->isLeftToRightDirection(), /*animated = */ false, vertical);
+        p.drawProgress(rect, progress, o->style()->isLeftToRightDirection(), /*animated = */ false, vertical);
+    }
 
     return false;
 }
