@@ -1,3 +1,22 @@
+2012-08-24  Justin Novosad  <junov@chromium.org>
+
+        [Chromium] Implementing a global limit on memory consumed by deferred 2D canvases
+        https://bugs.webkit.org/show_bug.cgi?id=94386
+
+        Reviewed by Stephen White.
+
+        Adding unit tests for WebCore::Canvas2DLayerManager
+
+        * WebKit.gypi:
+        * tests/Canvas2DLayerManagerTest.cpp: Added.
+        (FakeCanvas2DLayerBridge):
+        (FakeCanvas2DLayerBridge::FakeCanvas2DLayerBridge):
+        (FakeCanvas2DLayerBridge::fakeFreeableBytes):
+        (Canvas2DLayerManagerTest):
+        (Canvas2DLayerManagerTest::storageAllocationTrackingTest):
+        (Canvas2DLayerManagerTest::evictionTest):
+        (Canvas2DLayerManagerTest::flushEvictionTest):
+
 2012-08-24  Cris Neckar  <cdn@chromium.org>
 
         Plumb consumeUserGesture() to the chromium platform layer.

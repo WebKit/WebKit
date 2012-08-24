@@ -56,6 +56,7 @@
             'tests/ArenaTestHelpers.h',
             'tests/AssociatedURLLoaderTest.cpp',
             'tests/Canvas2DLayerBridgeTest.cpp',
+            'tests/Canvas2DLayerManagerTest.cpp',
             'tests/CCActiveAnimationTest.cpp',
             'tests/CCAnimationTestCommon.cpp',
             'tests/CCAnimationTestCommon.h',
