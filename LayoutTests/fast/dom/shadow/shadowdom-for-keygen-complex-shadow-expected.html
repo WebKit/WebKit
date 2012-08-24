@@ -2,9 +2,9 @@
 <script src="resources/polyfill.js"></script>
 
 <p>A mixed case of a shadow element and content element.</p>
-<form>
-    foobar<div style="margin: 20px">
-        <keygen></keygen>
-    </div>    
-    <input id="submit" type="submit" value="Submit">
+<form><!-- margin-top will be cancelled out, so we use padding-top here. -->
+    <div style="margin: 2px 2px 2px; padding-top: 2px; font: -webkit-small-control;"><span style="font: -webkit-small-control;">foobar</span><div style="margin: 20px">
+        <keygen style="margin: 0">
+    </div></div>
 </form>
+

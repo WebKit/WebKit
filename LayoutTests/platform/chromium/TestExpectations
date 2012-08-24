@@ -3243,8 +3243,6 @@ BUGWK91487 : fast/dom/shadow/shadowdom-for-select-without-shadow.html = IMAGE
 BUGWK91488 : fast/dom/shadow/shadowdom-for-output-only-shadow.html = IMAGE
 BUGWK91489 : fast/dom/shadow/shadowdom-for-fieldset-complex-shadow.html = IMAGE
 BUGWK91489 : fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html = IMAGE
-BUGWK91491 : fast/dom/shadow/shadowdom-for-keygen-complex-shadow.html = IMAGE
-BUGWK91491 : fast/dom/shadow/shadowdom-for-keygen-without-shadow.html = IMAGE
 
 // Requires setUseDeferredFrameLoading() API from LayoutTestController.
 BUGWK87652 SKIP : http/tests/appcache/load-from-appcache-defer-resume-crash.html = PASS

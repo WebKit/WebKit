@@ -1,13 +1,16 @@
 <!DOCTYPE html>
+<html>
+<body>
 <script src="resources/polyfill.js"></script>
 
 <p>When the AuthorShadowDOM does not have a Shadow DOM, the content won't be rendered.</p>
 <form>
-    <keygen id="host" style="width: 100px; height:30px; margin: 0; padding: 0; border: 0">
-    <input id="submit" type="submit" value="Submit">
+    <keygen id="host" style="width: 100px; height:30px; margin: 0; padding: 0; border: 0"></keygen>
+    foobar
 </form>
 
 <script>
-var host = document.getElementById('host');
 var shadowRoot = new WebKitShadowRoot(host);
 </script>
+</body>
+</html>

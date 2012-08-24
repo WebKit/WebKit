@@ -1,3 +1,24 @@
+2012-08-23  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Needs update tests of Shadow DOM for keygen
+        https://bugs.webkit.org/show_bug.cgi?id=94765
+
+        Reviewed by Dimitri Glazkov.
+
+        Now that the HTMLKeygenElement was AuthroShadowDOM-ready, it's time to update the previous
+        failing tests for AuthroShadowDOM for keygen elements.
+
+        I've updated the failing tests to follow the current implementation and updated the test expectations.
+
+        * fast/dom/shadow/shadowdom-for-keygen-complex-shadow-expected.html:
+        * fast/dom/shadow/shadowdom-for-keygen-complex-shadow.html:
+        * fast/dom/shadow/shadowdom-for-keygen-only-shadow-expected.html:
+        * fast/dom/shadow/shadowdom-for-keygen-only-shadow.html:
+        * fast/dom/shadow/shadowdom-for-keygen-without-shadow-expected.html:
+        * fast/dom/shadow/shadowdom-for-keygen-without-shadow.html:
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-08-23  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Update Skipped list and TestExpectations in preparation for making
