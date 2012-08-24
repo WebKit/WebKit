@@ -36,7 +36,6 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
 
-#include <BlackBerryPlatformClient.h>
 #include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformSettings.h>
 #include <LocalizeResource.h>
@@ -801,7 +800,7 @@ void NetworkJob::storeCredentials()
     challenge.setStored(true);
 
     if (challenge.protectionSpace().serverType() == ProtectionSpaceProxyHTTP) {
-        BlackBerry::Platform::Client::get()->setProxyCredential(challenge.proposedCredential().user().utf8().data(),
+        BlackBerry::Platform::Settings::instance()->setProxyCredential(challenge.proposedCredential().user().utf8().data(),
                                                                 challenge.proposedCredential().password().utf8().data());
         m_frame->page()->chrome()->client()->platformPageClient()->syncProxyCredential(challenge.proposedCredential());
     }

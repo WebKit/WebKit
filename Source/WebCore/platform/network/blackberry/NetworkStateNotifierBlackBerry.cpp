@@ -27,12 +27,12 @@
 #include "config.h"
 #include "NetworkStateNotifier.h"
 
-#include <BlackBerryPlatformClient.h>
+#include <BlackBerryPlatformSettings.h>
 
 namespace WebCore {
 
 NetworkStateNotifier::NetworkStateNotifier()
-    : m_isOnLine(BlackBerry::Platform::Client::get()->isNetworkAvailable())
+    : m_isOnLine(BlackBerry::Platform::Settings::instance()->isNetworkAvailable())
     , m_networkStateChangedFunction(0)
 {
 }

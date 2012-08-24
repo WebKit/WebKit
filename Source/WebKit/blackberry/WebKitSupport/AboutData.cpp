@@ -21,6 +21,7 @@
 
 #include "AboutTemplate.html.cpp"
 #include "CString.h"
+#include "CacheHelper.h"
 #include "CookieManager.h"
 #include "JSDOMWindow.h"
 #include "MemoryCache.h"
@@ -28,7 +29,6 @@
 #include "SurfacePool.h"
 #include "WebKitVersion.h"
 
-#include <BlackBerryPlatformClient.h>
 #include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformMemory.h>
 #include <BlackBerryPlatformSettings.h>
@@ -458,23 +458,23 @@ static String cachePage(String cacheCommand)
 
     result.append(String("<html><head><title>BlackBerry Browser Disk Cache</title></head><body>"));
 
-    BlackBerry::Platform::Client* client = BlackBerry::Platform::Client::get();
-    ASSERT(client);
+    BlackBerry::Platform::Settings* settings = BlackBerry::Platform::Settings::instance();
+    ASSERT(settings);
 
     if (cacheCommand.isEmpty())
-        result.append(String(client->generateHtmlFragmentForCacheKeys().data()));
+        result.append(String(BlackBerry::Platform::generateHtmlFragmentForCacheKeys().data()));
     else if (cacheCommand.startsWith("?query=", false)) {
         std::string key(cacheCommand.substring(7).utf8().data()); // 7 is length of "query=".
         result.append(String(key.data()));
         result.append(String("<hr>"));
-        result.append(String(client->generateHtmlFragmentForCacheHeaders(key).data()));
+        result.append(String(BlackBerry::Platform::generateHtmlFragmentForCacheHeaders(key).data()));
     }
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     else if (equalIgnoringCase(cacheCommand, "/disable")) {
-        client->setDiskCacheEnabled(false);
+        settings->setDiskCacheEnabled(false);
         result.append("Http disk cache is disabled.");
     } else if (equalIgnoringCase(cacheCommand, "/enable")) {
-        client->setDiskCacheEnabled(true);
+        settings->setDiskCacheEnabled(true);
         result.append("Http disk cache is enabled.");
     }
 #endif
