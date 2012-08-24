@@ -74,7 +74,6 @@ void CSSPageRule::setSelectorText(const String& selectorText)
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    String oldSelectorText = this->selectorText();
     m_pageRule->wrapperAdoptSelectorList(selectorList);
 }
 

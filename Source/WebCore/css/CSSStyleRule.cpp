@@ -101,12 +101,11 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    String oldSelectorText = this->selectorText();
     m_styleRule->wrapperAdoptSelectorList(selectorList);
 
     if (hasCachedSelectorText()) {
-        ASSERT(selectorTextCache().contains(this));
-        selectorTextCache().set(this, generateSelectorText());
+        selectorTextCache().remove(this);
+        setHasCachedSelectorText(false);
     }
 }
 
