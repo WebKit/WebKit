@@ -1085,6 +1085,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\wtf\SaturatedArithmetic.h"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\SegmentedVector.h"
 			>
 		</File>

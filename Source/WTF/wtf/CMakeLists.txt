@@ -82,6 +82,7 @@ SET(WTF_HEADERS
     RefPtr.h
     RefPtrHashMap.h
     RetainPtr.h
+    SaturatedArithmetic.h
     SegmentedVector.h
     SHA1.h
     StackBounds.h

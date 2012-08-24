@@ -656,6 +656,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WTF\SaturatedArithmeticOperations.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WTF\StringOperators.cpp"
 					>
 				</File>

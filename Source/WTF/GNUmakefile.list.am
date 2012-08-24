@@ -128,6 +128,7 @@ wtf_sources += \
     Source/WTF/wtf/RetainPtr.h \
     Source/WTF/wtf/SHA1.cpp \
     Source/WTF/wtf/SHA1.h \
+    Source/WTF/wtf/SaturatedArithmetic.h \
     Source/WTF/wtf/SegmentedVector.h \
     Source/WTF/wtf/SentinelLinkedList.h \
     Source/WTF/wtf/SimpleStats.h \

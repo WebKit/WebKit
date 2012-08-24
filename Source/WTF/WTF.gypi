@@ -75,6 +75,7 @@
             'wtf/RefPtr.h',
             'wtf/RefPtrHashMap.h',
             'wtf/RetainPtr.h',
+            'wtf/SaturatedArithmetic.h',
             'wtf/SentinelLinkedList.h',
             'wtf/SinglyLinkedList.h',
             'wtf/StackBounds.h',
