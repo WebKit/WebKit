@@ -1,5 +1,13 @@
 2012-08-24  Michael Brüning  <michaelbruening@gmail.com>
 
+        Unreviewed. Adding myself to committers list.
+
+        Also updated email information.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
+2012-08-24  Michael Brüning  <michaelbruening@gmail.com>
+
         [Qt][WK2] Make viewport related experimental.test properties encapsulated.
         https://bugs.webkit.org/show_bug.cgi?id=88320
 
