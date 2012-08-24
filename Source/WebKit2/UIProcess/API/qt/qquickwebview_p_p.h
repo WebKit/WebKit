@@ -128,7 +128,7 @@ public:
     WebCore::IntSize viewSize() const;
     void didReceiveMessageFromNavigatorQtObject(const String& message);
     virtual void pageDidRequestScroll(const QPoint& pos) { }
-    virtual void didChangeContentsSize(const QSize& newSize) { }
+    virtual void didChangeContentsSize(const QSize& newSize);
     void processDidCrash();
     void didRelaunchProcess();
     PassOwnPtr<WebKit::DrawingAreaProxy> createDrawingAreaProxy();
@@ -190,6 +190,7 @@ protected:
     bool m_navigatorQtObjectEnabled;
     bool m_renderToOffscreenBuffer;
     bool m_allowAnyHTTPSCertificateForLocalHost;
+    qreal m_customDevicePixelRatio;
     WTF::String m_iconUrl;
     int m_loadProgress;
     WTF::String m_currentUrl;

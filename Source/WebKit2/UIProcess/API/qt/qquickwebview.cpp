@@ -272,6 +272,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     , m_navigatorQtObjectEnabled(false)
     , m_renderToOffscreenBuffer(false)
     , m_allowAnyHTTPSCertificateForLocalHost(false)
+    , m_customDevicePixelRatio(0)
     , m_loadProgress(0)
 {
     viewport->setClip(true);
@@ -473,7 +474,10 @@ void QQuickWebViewPrivate::didRelaunchProcess()
 {
     qWarning("WARNING: The web process has been successfully restarted.");
 
+    // Reset to default so that the later update can reach the web process.
+    webPageProxy->setCustomDeviceScaleFactor(0);
     webPageProxy->drawingArea()->setSize(viewSize(), IntSize());
+
     updateViewportSize();
     updateUserScripts();
 }
@@ -789,6 +793,20 @@ void QQuickWebViewPrivate::didReceiveMessageFromNavigatorQtObject(const String& 
     emit q_ptr->experimental()->messageReceived(variantMap);
 }
 
+void QQuickWebViewPrivate::didChangeContentsSize(const QSize& newSize)
+{
+    if (newSize.isEmpty() || !m_customDevicePixelRatio || webPageProxy->deviceScaleFactor() == m_customDevicePixelRatio)
+        return;
+
+    // DrawingAreaProxy returns early if the page size is empty
+    // and the device pixel ratio property is propagated from QML
+    // before the QML page item has a valid size yet, thus the
+    // information would not reach the web process.
+    // Set the custom device pixel ratio requested from QML as soon
+    // as the content item has a valid size.
+    webPageProxy->setCustomDeviceScaleFactor(m_customDevicePixelRatio);
+}
+
 QQuickWebViewLegacyPrivate::QQuickWebViewLegacyPrivate(QQuickWebView* viewport)
     : QQuickWebViewPrivate(viewport)
 {
@@ -877,6 +895,7 @@ void QQuickWebViewFlickablePrivate::didChangeContentsSize(const QSize& newSize)
     Q_Q(QQuickWebView);
 
     pageView->setContentsSize(newSize); // emits contentsSizeChanged()
+    QQuickWebViewPrivate::didChangeContentsSize(newSize);
     m_viewportHandler->pageContentsSizeChanged(newSize, q->boundingRect().size().toSize());
 }
 
@@ -1233,19 +1252,23 @@ void QQuickWebViewExperimental::setUserAgent(const QString& userAgent)
     down but still provide a better looking image.
 */
 
-double QQuickWebViewExperimental::devicePixelRatio() const
+qreal QQuickWebViewExperimental::devicePixelRatio() const
 {
     Q_D(const QQuickWebView);
+
+    if (d->m_customDevicePixelRatio)
+        return d->m_customDevicePixelRatio;
+
     return d->webPageProxy->deviceScaleFactor();
 }
 
-void QQuickWebViewExperimental::setDevicePixelRatio(double devicePixelRatio)
+void QQuickWebViewExperimental::setDevicePixelRatio(qreal devicePixelRatio)
 {
     Q_D(QQuickWebView);
-    if (devicePixelRatio == this->devicePixelRatio())
+    if (0 >= devicePixelRatio || devicePixelRatio == this->devicePixelRatio())
         return;
 
-    d->webPageProxy->setCustomDeviceScaleFactor(devicePixelRatio);
+    d->m_customDevicePixelRatio = devicePixelRatio;
     emit devicePixelRatioChanged();
 }
 

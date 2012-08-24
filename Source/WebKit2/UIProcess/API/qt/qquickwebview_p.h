@@ -255,7 +255,7 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_PROPERTY(int preferredMinimumContentsWidth WRITE setPreferredMinimumContentsWidth READ preferredMinimumContentsWidth NOTIFY preferredMinimumContentsWidthChanged)
     Q_PROPERTY(int deviceWidth WRITE setDeviceWidth READ deviceWidth NOTIFY deviceWidthChanged)
     Q_PROPERTY(int deviceHeight WRITE setDeviceHeight READ deviceHeight NOTIFY deviceHeightChanged)
-    Q_PROPERTY(double devicePixelRatio READ devicePixelRatio WRITE setDevicePixelRatio NOTIFY devicePixelRatioChanged)
+    Q_PROPERTY(qreal devicePixelRatio READ devicePixelRatio WRITE setDevicePixelRatio NOTIFY devicePixelRatioChanged)
 
     Q_PROPERTY(QWebNavigationHistory* navigationHistory READ navigationHistory CONSTANT FINAL)
 
@@ -312,8 +312,8 @@ public:
     void setDeviceWidth(int);
     int deviceHeight() const;
     void setDeviceHeight(int);
-    double devicePixelRatio() const;
-    void setDevicePixelRatio(double);
+    qreal devicePixelRatio() const;
+    void setDevicePixelRatio(qreal);
     QList<QUrl> userScripts() const;
     void setUserScripts(const QList<QUrl>& userScripts);
     QUrl remoteInspectorUrl() const;
