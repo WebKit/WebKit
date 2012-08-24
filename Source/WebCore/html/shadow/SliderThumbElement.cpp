@@ -258,6 +258,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
     input->setTextAsOfLastFormControlChangeEvent(input->value());
     LayoutPoint offset = roundedLayoutPoint(input->renderer()->absoluteToLocal(point, false, true));
     bool isVertical = hasVerticalAppearance(input);
+    bool isLeftToRightDirection = renderBox()->style()->isLeftToRightDirection();
     LayoutUnit trackSize;
     LayoutUnit position;
     LayoutUnit currentPosition;
@@ -276,6 +277,8 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
     } else {
         trackSize = trackElement->renderBox()->contentWidth();
         position = offset.x() - renderBox()->width() / 2 - trackBoundingBox.x() + inputBoundingBox.x();
+        if (!isLeftToRightDirection)
+            position += renderBox()->width();
         currentPosition = absoluteThumbOrigin.x() - absoluteSliderContentOrigin.x();
     }
     position = max<LayoutUnit>(0, min(position, trackSize));
@@ -283,7 +286,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
         return;
 
     const Decimal ratio = Decimal::fromDouble(static_cast<double>(position) / trackSize);
-    const Decimal fraction = isVertical || !renderBox()->style()->isLeftToRightDirection() ? Decimal(1) - ratio : ratio;
+    const Decimal fraction = isVertical || !isLeftToRightDirection ? Decimal(1) - ratio : ratio;
     StepRange stepRange(input->createStepRange(RejectAny));
     Decimal value = stepRange.clampValue(stepRange.valueFromProportion(fraction));
 
@@ -293,7 +296,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
         Decimal closest = input->findClosestTickMarkValue(value);
         if (closest.isFinite()) {
             double closestFraction = stepRange.proportionFromValue(closest).toDouble();
-            double closestRatio = isVertical || !renderBox()->style()->isLeftToRightDirection() ? 1.0 - closestFraction : closestFraction;
+            double closestRatio = isVertical || !isLeftToRightDirection ? 1.0 - closestFraction : closestFraction;
             LayoutUnit closestPosition = trackSize * closestRatio;
             if ((closestPosition - position).abs() <= snappingThreshold)
                 value = closest;
