@@ -391,6 +391,7 @@ SET(WebCore_IDL_FILES
     dom/UIEvent.idl
     dom/WebKitAnimationEvent.idl
     dom/WebKitNamedFlow.idl
+    dom/DOMNamedFlowCollection.idl
     dom/WebKitTransitionEvent.idl
     dom/WheelEvent.idl
 
@@ -1108,6 +1109,7 @@ SET(WebCore_SOURCES
     dom/DOMCoreException.cpp
     dom/DOMError.cpp
     dom/DOMImplementation.cpp
+    dom/DOMNamedFlowCollection.cpp
     dom/DOMStringList.cpp
     dom/DOMStringMap.cpp
     dom/Document.cpp
@@ -1154,6 +1156,7 @@ SET(WebCore_SOURCES
     dom/MutationObserverInterestGroup.cpp
     dom/MutationObserverRegistration.cpp
     dom/MutationRecord.cpp
+    dom/NamedFlowCollection.cpp
     dom/NamedNodeMap.cpp
     dom/NameNodeList.cpp
     dom/Node.cpp
@@ -1208,7 +1211,6 @@ SET(WebCore_SOURCES
     dom/ViewportArguments.cpp
     dom/WebKitAnimationEvent.cpp
     dom/WebKitNamedFlow.cpp
-    dom/WebKitNamedFlowCollection.cpp
     dom/WebKitTransitionEvent.cpp
     dom/WheelEvent.cpp
     dom/WindowEventContext.cpp

@@ -188,6 +188,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDOMMimeTypeArray.h \
 	DerivedSources/WebCore/JSDOMMimeType.cpp \
 	DerivedSources/WebCore/JSDOMMimeType.h \
+	DerivedSources/WebCore/JSDOMNamedFlowCollection.cpp \
+	DerivedSources/WebCore/JSDOMNamedFlowCollection.h \
 	DerivedSources/WebCore/JSDOMParser.cpp \
 	DerivedSources/WebCore/JSDOMParser.h \
 	DerivedSources/WebCore/JSDOMPluginArray.cpp \
@@ -1348,6 +1350,7 @@ dom_binding_idls += \
 	$(WebCore)/dom/MutationObserver.idl \
 	$(WebCore)/dom/MutationRecord.idl \
 	$(WebCore)/dom/NamedNodeMap.idl \
+	$(WebCore)/dom/DOMNamedFlowCollection.idl \
 	$(WebCore)/dom/Node.idl \
 	$(WebCore)/dom/NodeFilter.idl \
 	$(WebCore)/dom/NodeIterator.idl \
@@ -2720,6 +2723,8 @@ webcore_sources += \
 	Source/WebCore/dom/DOMError.h \
 	Source/WebCore/dom/DOMImplementation.cpp \
 	Source/WebCore/dom/DOMImplementation.h \
+    Source/WebCore/dom/DOMNamedFlowCollection.cpp \
+	Source/WebCore/dom/DOMNamedFlowCollection.h \
 	Source/WebCore/dom/DOMStringList.cpp \
 	Source/WebCore/dom/DOMStringList.h \
 	Source/WebCore/dom/DOMStringMap.cpp \
@@ -2809,6 +2814,8 @@ webcore_sources += \
 	Source/WebCore/dom/MutationObserverRegistration.h \
 	Source/WebCore/dom/MutationRecord.cpp \
 	Source/WebCore/dom/MutationRecord.h \
+	Source/WebCore/dom/NamedFlowCollection.cpp \
+	Source/WebCore/dom/NamedFlowCollection.h \
 	Source/WebCore/dom/NamedNodeMap.cpp \
 	Source/WebCore/dom/NamedNodeMap.h \
 	Source/WebCore/dom/NameNodeList.cpp \
@@ -2922,8 +2929,6 @@ webcore_sources += \
 	Source/WebCore/dom/WebKitAnimationEvent.h \
 	Source/WebCore/dom/WebKitNamedFlow.cpp \
 	Source/WebCore/dom/WebKitNamedFlow.h \
-	Source/WebCore/dom/WebKitNamedFlowCollection.cpp \
-	Source/WebCore/dom/WebKitNamedFlowCollection.h \
 	Source/WebCore/dom/WebKitTransitionEvent.cpp \
 	Source/WebCore/dom/WebKitTransitionEvent.h \
 	Source/WebCore/dom/WheelEvent.cpp \

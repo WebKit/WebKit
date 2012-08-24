@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<body>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script>
+    description("Tests WebKitNamedFlowCollection interface")
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var region1 = document.createElement("div");
+    var region2 = document.createElement("div");
+
+    debug("Test WebKitNamedFlowCollection length property");
+
+    shouldBe("document.webkitGetNamedFlows().length", "0");
+
+    document.body.appendChild(region1);
+    shouldBe("region1.style.webkitFlowFrom = 'flow1'; document.webkitGetNamedFlows().length", "1");
+
+    document.body.appendChild(region2);
+    shouldBe("region2.style.webkitFlowFrom = 'flow2'; document.webkitGetNamedFlows().length", "2");
+
+    document.body.removeChild(region1);
+    shouldBe("region1.style.webkitFlowFrom = ''; document.webkitGetNamedFlows().length", "1");
+
+    document.body.removeChild(region2);
+    shouldBe("region2.style.webkitFlowFrom = ''; document.webkitGetNamedFlows().length", "0");
+
+    document.body.appendChild(region1);
+    document.body.appendChild(region2);
+    region1.style.webkitFlowFrom = 'flow1';
+    region2.style.webkitFlowFrom = 'flow2';
+
+    debug("Test WebKitNamedFlowCollection index getter");
+    shouldBeTrue("(document.webkitGetNamedFlows()[0].name == 'flow1' && document.webkitGetNamedFlows()[1].name == 'flow2') \
+        || (document.webkitGetNamedFlows()[0].name == 'flow2' && document.webkitGetNamedFlows()[1].name == 'flow1')");
+
+    debug("Test WebKitNamedFlowCollection name getter");
+    shouldBeEqualToString("document.webkitGetNamedFlows().flow1.name", "flow1");
+    shouldBeEqualToString("document.webkitGetNamedFlows().flow2.name", "flow2");
+
+    document.body.removeChild(region1);
+    document.body.removeChild(region2);
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

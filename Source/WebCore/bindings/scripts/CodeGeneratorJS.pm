@@ -2367,7 +2367,7 @@ sub GenerateImplementation
         }
     }
 
-    if ($interfaceName eq "HTMLPropertiesCollection") {
+    if ($interfaceName eq "HTMLPropertiesCollection" or $interfaceName eq "DOMNamedFlowCollection") {
         if ($dataNode->extendedAttributes->{"NamedGetter"}) {
             push(@implContent, "bool ${className}::canGetItemsForName(ExecState*, $implClassName* collection, PropertyName propertyName)\n");
             push(@implContent, "{\n");

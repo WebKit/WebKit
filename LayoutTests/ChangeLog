@@ -1,3 +1,15 @@
+2012-08-24  Andrei Onea  <onea@adobe.com>
+
+        [CSSRegions]Expose WebKitNamedFlowCollection interface through document.getNamedFlows()
+        https://bugs.webkit.org/show_bug.cgi?id=93368
+
+        Reviewed by Ryosuke Niwa.
+
+        Added test for WebKitNamedFlowCollection interface.
+
+        * fast/regions/webkit-named-flow-collection-expected.txt: Added.
+        * fast/regions/webkit-named-flow-collection.html: Added.
+
 2012-08-24  Mark Lam  <mark.lam@apple.com>
 
         Skipping svg/custom/getBBox-path.svg on platform mac.

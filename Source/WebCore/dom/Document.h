@@ -69,6 +69,7 @@ class CharacterData;
 class Comment;
 class ContextFeatures;
 class DOMImplementation;
+class DOMNamedFlowCollection;
 class DOMSelection;
 class DOMWindow;
 class Database;
@@ -110,6 +111,7 @@ class MediaCanStartListener;
 class MediaQueryList;
 class MediaQueryMatcher;
 class MouseEventWithHitTestResults;
+class NamedFlowCollection;
 class NodeFilter;
 class NodeIterator;
 class NodeRareData;
@@ -138,7 +140,6 @@ class TextResourceDecoder;
 class TreeWalker;
 class UndoManager;
 class WebKitNamedFlow;
-class WebKitNamedFlowCollection;
 class XMLHttpRequest;
 class XPathEvaluator;
 class XPathExpression;
@@ -352,9 +353,10 @@ public:
     bool cssRegionsEnabled() const;
 #if ENABLE(CSS_REGIONS)
     PassRefPtr<WebKitNamedFlow> webkitGetFlowByName(const String&);
+    PassRefPtr<DOMNamedFlowCollection> webkitGetNamedFlows();
 #endif
 
-    WebKitNamedFlowCollection* namedFlows();
+    NamedFlowCollection* namedFlows();
 
     bool regionBasedColumnsEnabled() const;
 
@@ -1560,7 +1562,7 @@ private:
     bool m_visualUpdatesAllowed;
     Timer<Document> m_visualUpdatesSuppressionTimer;
 
-    RefPtr<WebKitNamedFlowCollection> m_namedFlows;
+    RefPtr<NamedFlowCollection> m_namedFlows;
 
 #if ENABLE(CSP_NEXT)
     RefPtr<DOMSecurityPolicy> m_domSecurityPolicy;

@@ -39,6 +39,7 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMDOMMimeTypeArrayPrivate.h \
 	DerivedSources/webkit/WebKitDOMDOMMimeType.cpp \
 	DerivedSources/webkit/WebKitDOMDOMMimeTypePrivate.h \
+	DerivedSources/webkit/WebKitDOMDOMNamedFlowCollection.cpp \
 	DerivedSources/webkit/WebKitDOMDOMPluginArray.cpp \
 	DerivedSources/webkit/WebKitDOMDOMPluginArrayPrivate.h \
 	DerivedSources/webkit/WebKitDOMDOMPlugin.cpp \
@@ -281,6 +282,7 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMDocumentFragment.h \
 	DerivedSources/webkit/WebKitDOMDocumentType.h \
 	DerivedSources/webkit/WebKitDOMDOMImplementation.h \
+	DerivedSources/webkit/WebKitDOMDOMNamedFlowCollection.h \
 	DerivedSources/webkit/WebKitDOMDOMSettableTokenList.h \
 	DerivedSources/webkit/WebKitDOMDOMSecurityPolicy.h \
 	DerivedSources/webkit/WebKitDOMDOMStringList.h \

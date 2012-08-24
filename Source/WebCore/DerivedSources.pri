@@ -267,6 +267,7 @@ IDL_BINDINGS += \
     $$PWD/dom/UIEvent.idl \
     $$PWD/dom/WebKitAnimationEvent.idl \
     $$PWD/dom/WebKitNamedFlow.idl \
+    $$PWD/dom/DOMNamedFlowCollection.idl \
     $$PWD/dom/WebKitTransitionEvent.idl \
     $$PWD/dom/WheelEvent.idl \
     $$PWD/editing/DOMTransaction.idl \

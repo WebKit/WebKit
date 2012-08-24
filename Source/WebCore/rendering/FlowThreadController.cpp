@@ -31,12 +31,12 @@
 
 #include "FlowThreadController.h"
 
+#include "NamedFlowCollection.h"
 #include "RenderFlowThread.h"
 #include "RenderFlowThreadContainer.h"
 #include "RenderNamedFlowThread.h"
 #include "StyleInheritedData.h"
 #include "WebKitNamedFlow.h"
-#include "WebKitNamedFlowCollection.h"
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -75,7 +75,7 @@ RenderNamedFlowThread* FlowThreadController::ensureRenderFlowThreadWithName(cons
         }
     }
 
-    WebKitNamedFlowCollection* namedFlows = m_view->document()->namedFlows();
+    NamedFlowCollection* namedFlows = m_view->document()->namedFlows();
 
     // Sanity check for the absence of a named flow in the "CREATED" state with the same name.
     ASSERT(!namedFlows->flowByName(name));

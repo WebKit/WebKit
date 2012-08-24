@@ -45,6 +45,7 @@
 #include "InspectorTypeBuilder.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
+#include "NamedFlowCollection.h"
 #include "Node.h"
 #include "NodeList.h"
 #include "RenderRegion.h"
@@ -54,7 +55,6 @@
 #include "StyleRule.h"
 #include "StyleSheetList.h"
 #include "WebKitNamedFlow.h"
-#include "WebKitNamedFlowCollection.h"
 
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>

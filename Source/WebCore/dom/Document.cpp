@@ -47,6 +47,7 @@
 #include "ContextFeatures.h"
 #include "CookieJar.h"
 #include "DOMImplementation.h"
+#include "DOMNamedFlowCollection.h"
 #include "DOMSelection.h"
 #include "DOMWindow.h"
 #include "DateComponents.h"
@@ -110,6 +111,7 @@
 #include "MemoryInstrumentation.h"
 #include "MouseEventWithHitTestResults.h"
 #include "NameNodeList.h"
+#include "NamedFlowCollection.h"
 #include "NestingLevelIncrementer.h"
 #include "NewXMLDocumentParser.h"
 #include "NodeFilter.h"
@@ -155,7 +157,6 @@
 #include "UndoManager.h"
 #include "UserContentURLPattern.h"
 #include "WebKitNamedFlow.h"
-#include "WebKitNamedFlowCollection.h"
 #include "XMLDocumentParser.h"
 #include "XMLHttpRequest.h"
 #include "XMLNSNames.h"
@@ -1157,12 +1158,23 @@ PassRefPtr<WebKitNamedFlow> Document::webkitGetFlowByName(const String& flowName
 
     return namedFlows()->flowByName(flowName);
 }
+
+PassRefPtr<DOMNamedFlowCollection> Document::webkitGetNamedFlows()
+{
+    if (!cssRegionsEnabled() || !renderer())
+        return 0;
+
+    updateStyleIfNeeded();
+
+    return namedFlows()->createCSSOMSnapshot();
+}
+
 #endif
 
-WebKitNamedFlowCollection* Document::namedFlows()
+NamedFlowCollection* Document::namedFlows()
 {
     if (!m_namedFlows)
-        m_namedFlows = WebKitNamedFlowCollection::create(this);
+        m_namedFlows = NamedFlowCollection::create(this);
 
     return m_namedFlows.get();
 }

@@ -31,16 +31,16 @@
 #include "WebKitNamedFlow.h"
 
 #include "EventNames.h"
+#include "NamedFlowCollection.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
 #include "ScriptExecutionContext.h"
 #include "StaticNodeList.h"
 #include "UIEvent.h"
-#include "WebKitNamedFlowCollection.h"
 
 namespace WebCore {
 
-WebKitNamedFlow::WebKitNamedFlow(PassRefPtr<WebKitNamedFlowCollection> manager, const AtomicString& flowThreadName)
+WebKitNamedFlow::WebKitNamedFlow(PassRefPtr<NamedFlowCollection> manager, const AtomicString& flowThreadName)
     : m_flowThreadName(flowThreadName)
     , m_flowManager(manager)
     , m_parentFlowThread(0)
@@ -53,7 +53,7 @@ WebKitNamedFlow::~WebKitNamedFlow()
     m_flowManager->discardNamedFlow(this);
 }
 
-PassRefPtr<WebKitNamedFlow> WebKitNamedFlow::create(PassRefPtr<WebKitNamedFlowCollection> manager, const AtomicString& flowThreadName)
+PassRefPtr<WebKitNamedFlow> WebKitNamedFlow::create(PassRefPtr<NamedFlowCollection> manager, const AtomicString& flowThreadName)
 {
     return adoptRef(new WebKitNamedFlow(manager, flowThreadName));
 }
