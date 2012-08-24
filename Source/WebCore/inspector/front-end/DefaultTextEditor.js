@@ -55,7 +55,7 @@ WebInspector.DefaultTextEditor = function(url, delegate)
     var syncScrollListener = this._syncScroll.bind(this);
     var syncDecorationsForLineListener = this._syncDecorationsForLine.bind(this);
     var syncLineHeightListener = this._syncLineHeight.bind(this);
-    this._mainPanel = new WebInspector.TextEditorMainPanel(this._textModel, url, syncScrollListener, syncDecorationsForLineListener, enterTextChangeMode, exitTextChangeMode);
+    this._mainPanel = new WebInspector.TextEditorMainPanel(this._delegate, this._textModel, url, syncScrollListener, syncDecorationsForLineListener, enterTextChangeMode, exitTextChangeMode);
     this._gutterPanel = new WebInspector.TextEditorGutterPanel(this._textModel, syncDecorationsForLineListener, syncLineHeightListener);
 
     this._mainPanel.element.addEventListener("scroll", this._handleScrollChanged.bind(this), false);
@@ -413,6 +413,9 @@ WebInspector.DefaultTextEditor.prototype = {
 
     _contextMenu: function(event)
     {
+        var anchor = event.target.enclosingNodeOrSelfWithNodeName("a");
+        if (anchor)
+            return;
         var contextMenu = new WebInspector.ContextMenu();
         var target = event.target.enclosingNodeOrSelfWithClass("webkit-line-number");
         if (target)
@@ -1208,13 +1211,15 @@ WebInspector.TextEditorGutterChunk.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.TextEditorChunkedPanel}
+ * @param {WebInspector.TextEditorDelegate} delegate
  * @param {WebInspector.TextEditorModel} textModel
  * @param {?string} url
  */
-WebInspector.TextEditorMainPanel = function(textModel, url, syncScrollListener, syncDecorationsForLineListener, enterTextChangeMode, exitTextChangeMode)
+WebInspector.TextEditorMainPanel = function(delegate, textModel, url, syncScrollListener, syncDecorationsForLineListener, enterTextChangeMode, exitTextChangeMode)
 {
     WebInspector.TextEditorChunkedPanel.call(this, textModel);
 
+    this._delegate = delegate;
     this._syncScrollListener = syncScrollListener;
     this._syncDecorationsForLineListener = syncDecorationsForLineListener;
     this._enterTextChangeMode = enterTextChangeMode;
@@ -2091,26 +2096,14 @@ WebInspector.TextEditorMainPanel.prototype = {
         else
             quote = null;
 
-        var a = WebInspector.linkifyURLAsNode(this._rewriteHref(content), content, undefined, isExternal);
         var span = document.createElement("span");
         span.className = "webkit-html-attribute-value";
         if (quote)
             span.appendChild(document.createTextNode(quote));
-        span.appendChild(a);
+        span.appendChild(this._delegate.createLink(content, isExternal));
         if (quote)
             span.appendChild(document.createTextNode(quote));
         return span;
-    },
-
-    /**
-     * @param {string=} hrefValue
-     * @param {boolean=} isExternal
-     */
-    _rewriteHref: function(hrefValue, isExternal)
-    {
-        if (!this._url || !hrefValue || hrefValue.indexOf("://") > 0)
-            return hrefValue;
-        return WebInspector.ParsedURL.completeURL(this._url, hrefValue);
     },
 
     _handleDOMUpdates: function(e)

@@ -664,7 +664,7 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
     generatePopupContent: function(callback)
     {
         if (WebInspector.TimelinePresentationModel.needsPreviewElement(this.type))
-            WebInspector.buildImagePreviewContents(this.url, false, this._generatePopupContentWithImagePreview.bind(this, callback));
+            WebInspector.DOMPresentationUtils.buildImagePreviewContents(this.url, false, this._generatePopupContentWithImagePreview.bind(this, callback));
         else
             this._generatePopupContentWithImagePreview(callback);
     },

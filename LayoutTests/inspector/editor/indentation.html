@@ -12,7 +12,7 @@ function test()
     var model = new WebInspector.TextEditorModel();
     model.setText(src);
     function noop() {}
-    var textEditorMainPanel = new WebInspector.TextEditorMainPanel(model, '', noop, noop, noop, noop);
+    var textEditorMainPanel = new WebInspector.TextEditorMainPanel(null, model, '', noop, noop, noop, noop);
 
     var selection;
     function dumpTextModel(msg)

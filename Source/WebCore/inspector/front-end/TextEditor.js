@@ -236,6 +236,12 @@ WebInspector.TextEditorDelegate.prototype = {
      * @param {WebInspector.ContextMenu} contextMenu
      * @param {number} lineNumber
      */
-    populateTextAreaContextMenu: function(contextMenu, lineNumber) { }
-}
+    populateTextAreaContextMenu: function(contextMenu, lineNumber) { },
 
+    /**
+     * @param {string} hrefValue
+     * @param {boolean} isExternal
+     * @return {Element}
+     */
+    createLink: function(hrefValue, isExternal) { }
+}

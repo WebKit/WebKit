@@ -46,16 +46,6 @@ WebInspector.forAllResources = function(callback)
 }
 
 /**
- * @param {string} host
- */
-WebInspector.displayDomain = function(host)
-{
-    if (host && (!WebInspector.inspectedPageDomain || (WebInspector.inspectedPageDomain && host !== WebInspector.inspectedPageDomain)))
-        return host;
-    return "";
-}
-
-/**
  * @param {string} url
  * @return {string}
  */

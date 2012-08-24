@@ -79,12 +79,6 @@ WebInspector.Database.prototype = {
         this._domain = x;
     },
 
-    /** @return {string} */
-    get displayDomain()
-    {
-        return WebInspector.displayDomain(this._domain);
-    },
-
     /**
      * @param {function(Array.<string>)} callback
      */

@@ -695,6 +695,19 @@ WebInspector.TextEditorDelegateForSourceFrame.prototype = {
     populateTextAreaContextMenu: function(contextMenu, lineNumber)
     {
         this._sourceFrame.populateTextAreaContextMenu(contextMenu, lineNumber);
+    },
+
+    /**
+     * @param {string} hrefValue
+     * @param {boolean} isExternal
+     * @return {Element}
+     */
+    createLink: function(hrefValue, isExternal)
+    {
+        var targetLocation = hrefValue;
+        if (this._sourceFrame._url && hrefValue && hrefValue.indexOf("://") === -1)
+            targetLocation = WebInspector.ParsedURL.completeURL(this._sourceFrame._url, hrefValue);
+        return WebInspector.linkifyURLAsNode(targetLocation, hrefValue, undefined, isExternal);
     }
 }
 

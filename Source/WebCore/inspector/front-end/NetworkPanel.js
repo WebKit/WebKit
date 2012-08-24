@@ -1925,8 +1925,7 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._nameCell.appendChild(iconElement);
         this._nameCell.appendChild(document.createTextNode(this._fileName()));
 
-
-        var subtitle = WebInspector.displayDomain(this._request.parsedURL.host);
+        var subtitle = this._request.parsedURL.host === WebInspector.inspectedPageDomain ? "" : this._request.parsedURL.host;
 
         if (this._request.parsedURL.path)
             subtitle += this._request.folder;
