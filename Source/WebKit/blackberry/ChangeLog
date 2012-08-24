@@ -1,3 +1,19 @@
+2012-08-24  Parth Patel  <parpatel@rim.com>
+
+        [BlackBerry] Changes resulting from moving application directory methods from platform client to platform settings.
+        https://bugs.webkit.org/show_bug.cgi?id=94249
+
+        Reviewed by Rob Buis.
+
+        PR# 170160
+        Changes in response to Application Directory methods moved from
+        Class BlackBerryPlatformClient to BlackBerryPlatformSettings in
+        platform respository since these methods are more appropriate in
+        class BlackBerryPlatformSettings.
+
+        * WebCoreSupport/IconDatabaseClientBlackBerry.cpp:
+        (WebCore::IconDatabaseClientBlackBerry::initIconDatabase):
+
 2012-08-24  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Touch cancel can cause huge and needless invalidations

@@ -27,8 +27,8 @@
 #include "NotImplemented.h"
 #include "ProtectionSpaceHash.h"
 #include "SQLiteStatement.h"
-#include <BlackBerryPlatformClient.h>
 #include <BlackBerryPlatformEncryptor.h>
+#include <BlackBerryPlatformSettings.h>
 #include <CertMgrWrapper.h>
 
 #define HANDLE_SQL_EXEC_FAILURE(statement, returnValue, ...) \
@@ -54,7 +54,7 @@ CredentialBackingStore& credentialBackingStore()
 {
     DEFINE_STATIC_LOCAL(CredentialBackingStore, backingStore, ());
     if (!backingStore.m_database.isOpen())
-        backingStore.open(pathByAppendingComponent(BlackBerry::Platform::Client::get()->getApplicationDataDirectory().c_str(), "/credentials.db"));
+        backingStore.open(pathByAppendingComponent(BlackBerry::Platform::Settings::instance()->applicationDataDirectory().c_str(), "/credentials.db"));
     return backingStore;
 }
 

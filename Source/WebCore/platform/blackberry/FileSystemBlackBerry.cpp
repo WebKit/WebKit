@@ -19,14 +19,14 @@
 #include "config.h"
 #include "FileSystem.h"
 
-#include <BlackBerryPlatformClient.h>
+#include <BlackBerryPlatformSettings.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
 
 String homeDirectoryPath()
 {
-    return BlackBerry::Platform::Client::get()->getApplicationDataDirectory().c_str();
+    return BlackBerry::Platform::Settings::instance()->applicationDataDirectory().c_str();
 }
 
 CString fileSystemRepresentation(const String& path)

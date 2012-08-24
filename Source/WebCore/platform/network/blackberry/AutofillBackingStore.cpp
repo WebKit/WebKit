@@ -22,7 +22,7 @@
 
 #include "FileSystem.h"
 #include "SQLiteStatement.h"
-#include <BlackBerryPlatformClient.h>
+#include <BlackBerryPlatformSettings.h>
 
 #define HANDLE_SQL_EXEC_FAILURE(statement, returnValue, ...) \
     if (statement) { \
@@ -36,7 +36,7 @@ AutofillBackingStore& autofillBackingStore()
 {
     DEFINE_STATIC_LOCAL(AutofillBackingStore, backingStore, ());
     if (!backingStore.m_database.isOpen())
-        backingStore.open(pathByAppendingComponent(BlackBerry::Platform::Client::get()->getApplicationDataDirectory().c_str(), "/autofill.db"));
+        backingStore.open(pathByAppendingComponent(BlackBerry::Platform::Settings::instance()->applicationDataDirectory().c_str(), "/autofill.db"));
     return backingStore;
 }
 

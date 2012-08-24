@@ -38,7 +38,8 @@
 #include "TimeRanges.h"
 #include "WebPageClient.h"
 
-#include <BlackBerryPlatformClient.h>
+#include <BlackBerryPlatformSettings.h>
+#include <FrameLoaderClientBlackBerry.h>
 #include <set>
 #include <string>
 #include <wtf/text/CString.h>
@@ -139,7 +140,7 @@ void MediaPlayerPrivate::load(const String& url)
     if (modifiedUrl.startsWith("local://")) {
         KURL kurl = KURL(KURL(), modifiedUrl);
         kurl.setProtocol("file");
-        String tempPath(BlackBerry::Platform::Client::get()->getApplicationLocalDirectory().c_str());
+        String tempPath(BlackBerry::Platform::Settings::instance()->applicationLocalDirectory().c_str());
         tempPath.append(kurl.path());
         kurl.setPath(tempPath);
         modifiedUrl = kurl.string();

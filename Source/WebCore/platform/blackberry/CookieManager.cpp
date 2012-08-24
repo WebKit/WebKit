@@ -36,10 +36,10 @@
 #include "FileSystem.h"
 #include "Logging.h"
 #include "WebSettings.h"
-#include <BlackBerryPlatformClient.h>
 #include <BlackBerryPlatformExecutableMessage.h>
 #include <BlackBerryPlatformMessageClient.h>
 #include <BlackBerryPlatformNavigatorHandler.h>
+#include <BlackBerryPlatformSettings.h>
 #include <stdlib.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
@@ -87,7 +87,7 @@ CookieManager::CookieManager()
     : m_count(0)
     , m_privateMode(false)
     , m_shouldDumpAllCookies(false)
-    , m_cookieJarFileName(pathByAppendingComponent(BlackBerry::Platform::Client::get()->getApplicationDataDirectory().c_str(), "/cookieCollection.db"))
+    , m_cookieJarFileName(pathByAppendingComponent(BlackBerry::Platform::Settings::instance()->applicationDataDirectory().c_str(), "/cookieCollection.db"))
     , m_policy(CookieStorageAcceptPolicyAlways)
     , m_cookieBackingStore(CookieDatabaseBackingStore::create())
     , m_limitTimer(this, &CookieManager::cookieLimitCleanUp)

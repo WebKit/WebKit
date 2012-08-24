@@ -38,6 +38,7 @@
 
 #include <BlackBerryPlatformClient.h>
 #include <BlackBerryPlatformLog.h>
+#include <BlackBerryPlatformSettings.h>
 #include <LocalizeResource.h>
 #include <network/MultipartStream.h>
 #include <network/NetworkStreamFactory.h>
@@ -763,7 +764,7 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
                 m_handle->getInternal()->m_user = "";
                 m_handle->getInternal()->m_pass = "";
             } else {
-                if (m_handle->firstRequest().targetType() != ResourceRequest::TargetIsMainFrame && BlackBerry::Platform::Client::isChromeProcess())
+                if (m_handle->firstRequest().targetType() != ResourceRequest::TargetIsMainFrame && BlackBerry::Platform::Settings::instance()->isChromeProcess())
                     return false;
                 Credential inputCredential;
                 if (!m_frame->page()->chrome()->client()->platformPageClient()->authenticationChallenge(newURL, protectionSpace, inputCredential))
