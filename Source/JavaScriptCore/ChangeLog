@@ -1,3 +1,22 @@
+2011-08-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolling out r126505.
+        http://trac.webkit.org/changeset/126505
+        https://bugs.webkit.org/show_bug.cgi?id=94840
+
+        Caused testapi to crash on launch
+
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecode/OpcodeDefinitions.h: Removed.
+        * bytecode/opcodes: Removed.
+        * opcode_definition_generator.py: Removed.
+        * opcode_generator.py: Removed.
+        * opcode_parser.py: Removed.
+
 2012-08-23  Oliver Hunt  <oliver@apple.com>
 
         Autogenerate Opcode definitions

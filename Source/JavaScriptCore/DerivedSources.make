@@ -80,13 +80,6 @@ RegExpJitTables.h: create_regex_tables
 KeywordLookup.h: KeywordLookupGenerator.py Keywords.table
 	python $^ > $@
 
-# Don't autogenerate these yet, as there are some dependency problems
-# interacting with the LLIntOffsetsExtractor
-# opcode_generator.py: opcode_definition_generator.py opcode_parser.py
-#
-# OpcodeDefinitions.h: opcode_generator.py | bytecode/opcodes
-#	python $< -i $| -m definition -o $@
-
 # udis86 instruction tables
 
 udis86_itab.h: $(JavaScriptCore)/disassembler/udis86/itab.py $(JavaScriptCore)/disassembler/udis86/optable.xml
