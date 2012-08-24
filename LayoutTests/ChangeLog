@@ -2,6 +2,17 @@
 
         [Chromium] Unreviewed gardening.
 
+        Rebaseline meter element tests on Mac. These grew a DIV in
+        r125659.
+        https://bugs.webkit.org/show_bug.cgi?id=94666
+
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt:
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+
+2012-08-23  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
         Revert a few test expectations tightened in r126529 to green
         builders.
 
