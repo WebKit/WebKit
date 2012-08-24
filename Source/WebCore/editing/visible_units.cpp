@@ -36,7 +36,6 @@
 #include "RenderedPosition.h"
 #include "Text.h"
 #include "TextBoundaries.h"
-#include "TextBreakIterator.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
 #include "VisibleSelection.h"
@@ -323,7 +322,7 @@ static TextBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePos
     return wordBreakIterator(string.data(), len);
 } 
 
-static bool isLogicalStartOfWord(TextBreakIterator* iter, int position, bool hardLineBreak)
+bool isLogicalStartOfWord(TextBreakIterator* iter, int position, bool hardLineBreak)
 {
     bool boundary = hardLineBreak ? true : isTextBreak(iter, position);
     if (!boundary)
@@ -334,7 +333,7 @@ static bool isLogicalStartOfWord(TextBreakIterator* iter, int position, bool har
     return isWordTextBreak(iter);
 }
 
-static bool islogicalEndOfWord(TextBreakIterator* iter, int position, bool hardLineBreak)
+bool islogicalEndOfWord(TextBreakIterator* iter, int position, bool hardLineBreak)
 {
     bool boundary = isTextBreak(iter, position);
     return (hardLineBreak || boundary) && isWordTextBreak(iter);

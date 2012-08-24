@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2012 Igalia S.L.
+ *  Copyright (C) 2012 Samsung Electronics
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,8 +22,10 @@
 
 #if ENABLE(SPELLCHECK)
 
-#include <pango/pango.h>
-#include <wtf/gobject/GOwnPtr.h>
+#include <Language.h>
+#include <editing/visible_units.h>
+#include <glib.h>
+#include <text/TextBreakIterator.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -34,18 +37,6 @@ static void enchantDictDescribeCallback(const char* const languageTag, const cha
 {
     Vector<CString>* dictionaries = static_cast<Vector<CString>*>(data);
     dictionaries->append(languageTag);
-}
-
-static bool wordEndIsAContractionApostrophe(const char* string, long offset)
-{
-    if (g_utf8_get_char(g_utf8_offset_to_pointer(string, offset)) != g_utf8_get_char("'"))
-        return false;
-
-    // If this is the last character in the string, it cannot be the apostrophe part of a contraction.
-    if (offset == g_utf8_strlen(string, -1))
-        return false;
-
-    return g_unichar_isalpha(g_utf8_get_char(g_utf8_offset_to_pointer(string, offset + 1)));
 }
 
 TextCheckerEnchant::TextCheckerEnchant()
@@ -79,28 +70,26 @@ void TextCheckerEnchant::checkSpellingOfString(const String& string, int& misspe
 {
     if (m_enchantDictionaries.isEmpty())
         return;
-    Vector<EnchantDict*>::const_iterator dictIter = m_enchantDictionaries.begin();
 
-    PangoLanguage* language(pango_language_get_default());
     size_t numberOfCharacters = string.length();
-    GOwnPtr<PangoLogAttr> attrs(g_new(PangoLogAttr, numberOfCharacters + 1));
+    TextBreakIterator* iter = wordBreakIterator(string.characters(), numberOfCharacters);
+    if (!iter)
+        return;
 
     CString utf8String = string.utf8();
     const char* cString = utf8String.data();
-
-    // pango_get_log_attrs uses an aditional position at the end of the text.
-    pango_get_log_attrs(cString, -1, -1, language, attrs.get(), numberOfCharacters + 1);
+    Vector<EnchantDict*>::const_iterator dictIter = m_enchantDictionaries.begin();
 
     for (size_t i = 0; i < numberOfCharacters + 1; i++) {
-        // We go through each character until we find an is_word_start,
-        // then we get into an inner loop to find the is_word_end corresponding
+        // We go through each character until we find the beginning of the word
+        // then we get into an inner loop to find the end of the word corresponding
         // to it.
-        if (attrs.get()[i].is_word_start) {
+        if (isLogicalStartOfWord(iter, i)) {
             int start = i;
             int end = i;
             int wordLength;
 
-            while (attrs.get()[end].is_word_end < 1  || wordEndIsAContractionApostrophe(cString, end))
+            while (!islogicalEndOfWord(iter, end))
                 end++;
 
             wordLength = end - start;
@@ -108,14 +97,11 @@ void TextCheckerEnchant::checkSpellingOfString(const String& string, int& misspe
             // check characters twice.
             i = end;
 
-            gchar* cstart = g_utf8_offset_to_pointer(cString, start);
-            gint bytes = static_cast<gint>(g_utf8_offset_to_pointer(cString, end) - cstart);
-            GOwnPtr<gchar> word(g_new0(gchar, bytes + 1));
-
-            g_utf8_strncpy(word.get(), cstart, wordLength);
+            char* cstart = g_utf8_offset_to_pointer(cString, start);
+            int numberOfBytes = static_cast<int>(g_utf8_offset_to_pointer(cString, end) - cstart);
 
             for (; dictIter != m_enchantDictionaries.end(); ++dictIter) {
-                if (enchant_dict_check(*dictIter, word.get(), bytes)) {
+                if (enchant_dict_check(*dictIter, cstart, numberOfBytes)) {
                     misspellingLocation = start;
                     misspellingLength = wordLength;
                 } else {
@@ -139,7 +125,7 @@ Vector<String> TextCheckerEnchant::getGuessesForWord(const String& word)
         size_t numberOfSuggestions;
         size_t i;
 
-        gchar** suggestions = enchant_dict_suggest(*iter, word.utf8().data(), -1, &numberOfSuggestions);
+        char** suggestions = enchant_dict_suggest(*iter, word.utf8().data(), -1, &numberOfSuggestions);
         if (numberOfSuggestions <= 0)
             continue;
 
@@ -168,16 +154,18 @@ void TextCheckerEnchant::updateSpellCheckingLanguages(const Vector<String>& lang
             }
         }
     } else {
-        const char* language = pango_language_to_string(pango_language_get_default());
+        // Languages are not specified by user, try to get default language.
+        CString utf8Language = defaultLanguage().utf8();
+        const char* language = utf8Language.data();
         if (enchant_broker_dict_exists(m_broker, language)) {
             EnchantDict* dict = enchant_broker_request_dict(m_broker, language);
             spellDictionaries.append(dict);
         } else {
-            // No dictionaries selected, we get one from the list.
+            // No dictionaries selected, we get the first one from the list.
             Vector<CString> allDictionaries;
             enchant_broker_list_dicts(m_broker, enchantDictDescribeCallback, &allDictionaries);
             if (!allDictionaries.isEmpty()) {
-                EnchantDict* dict = enchant_broker_request_dict(m_broker, allDictionaries[0].data());
+                EnchantDict* dict = enchant_broker_request_dict(m_broker, allDictionaries.first().data());
                 spellDictionaries.append(dict);
             }
         }

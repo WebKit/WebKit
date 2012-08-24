@@ -117,7 +117,7 @@ webcoregtk_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/Source/WebCore/platform/gtk \
 	-I$(srcdir)/Source/WebCore/platform/network/soup \
-	-I$(srcdir)/Source/WebCore/platform/text/gtk
+	-I$(srcdir)/Source/WebCore/platform/text/enchant
 
 # ---
 # Channel mesaging support

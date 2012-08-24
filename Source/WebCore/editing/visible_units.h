@@ -28,6 +28,7 @@
 
 #include "EditingBehaviorTypes.h"
 #include "EditingBoundary.h"
+#include "TextBreakIterator.h"
 #include "TextDirection.h"
 
 namespace WebCore {
@@ -45,6 +46,9 @@ VisiblePosition nextWordPosition(const VisiblePosition &);
 VisiblePosition rightWordPosition(const VisiblePosition&, bool skipsSpaceWhenMovingRight);
 VisiblePosition leftWordPosition(const VisiblePosition&, bool skipsSpaceWhenMovingRight);
 bool isStartOfWord(const VisiblePosition&);
+// used by TextCheckerEnchant.cpp
+bool isLogicalStartOfWord(TextBreakIterator*, int position, bool hardLineBreak = false);
+bool islogicalEndOfWord(TextBreakIterator*, int position, bool hardLineBreak = false);
 
 // sentences
 VisiblePosition startOfSentence(const VisiblePosition &);
