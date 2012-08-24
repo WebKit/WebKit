@@ -182,8 +182,7 @@ void TimeInputType::createShadowSubtree()
 {
     ASSERT(element()->shadow());
 
-    const StepRange stepRange(createStepRange(AnyIsDefaultStep));
-    RefPtr<DateTimeEditElement> dateTimeEditElement(DateTimeEditElement::create(element()->document(), m_dateTimeEditControlOwnerImpl, stepRange));
+    RefPtr<DateTimeEditElement> dateTimeEditElement(DateTimeEditElement::create(element()->document(), m_dateTimeEditControlOwnerImpl));
     m_dateTimeEditElement = dateTimeEditElement.get();
     element()->userAgentShadowRoot()->appendChild(m_dateTimeEditElement);
     updateInnerTextValue();
@@ -238,7 +237,7 @@ bool TimeInputType::isMouseFocusable() const
 
 void TimeInputType::minOrMaxAttributeChanged()
 {
-    updateEditElementLayout();
+    updateInnerTextValue();
 }
 
 void TimeInputType::readonlyAttributeChanged()
@@ -266,13 +265,7 @@ bool TimeInputType::shouldUseInputMethod() const
 
 void TimeInputType::stepAttributeChanged()
 {
-    updateEditElementLayout();
-}
-
-void TimeInputType::updateEditElementLayout()
-{
-    if (m_dateTimeEditElement)
-        m_dateTimeEditElement->layout(createStepRange(AnyIsDefaultStep));
+    updateInnerTextValue();
 }
 
 void TimeInputType::updateInnerTextValue()
@@ -280,13 +273,13 @@ void TimeInputType::updateInnerTextValue()
     if (!m_dateTimeEditElement)
         return;
 
+    const StepRange stepRange(createStepRange(AnyIsDefaultStep));
     DateComponents date;
     if (parseToDateComponents(element()->value(), &date))
-        m_dateTimeEditElement->setValueAsDate(date);
+        m_dateTimeEditElement->setValueAsDate(stepRange, date);
     else {
-        const StepRange stepRange(createStepRange(AnyIsDefaultStep));
         setMillisecondToDateComponents(stepRange.minimum().toDouble(), &date);
-        m_dateTimeEditElement->setEmptyValue(date);
+        m_dateTimeEditElement->setEmptyValue(stepRange, date);
     }
 }
 #else

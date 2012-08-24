@@ -80,8 +80,6 @@ private:
 
     friend class DateTimeEditControlOwnerImpl;
 
-    void updateEditElementLayout();
-
     // InputType functions
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE FINAL;
     virtual void createShadowSubtree() OVERRIDE FINAL;

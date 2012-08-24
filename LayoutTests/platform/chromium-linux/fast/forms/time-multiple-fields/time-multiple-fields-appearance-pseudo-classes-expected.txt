@@ -66,7 +66,7 @@ layer at (0,0) size 800x600
                         text run at (2,2) width 16: "12"
                     RenderText {#text} at (20,2) size 8x16
                       text run at (20,2) width 8: ":"
-                    RenderBlock {SPAN} at (28,0) size 20x20 [color=#808080]
+                    RenderBlock {SPAN} at (28,0) size 20x20
                       RenderText {#text} at (2,2) size 16x16
                         text run at (2,2) width 16: "34"
                     RenderText {#text} at (48,2) size 8x16

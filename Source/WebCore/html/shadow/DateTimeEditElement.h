@@ -59,18 +59,17 @@ public:
         virtual bool isEditControlOwnerReadOnly() const = 0;
     };
 
-    static PassRefPtr<DateTimeEditElement> create(Document*, EditControlOwner&, const StepRange&);
+    static PassRefPtr<DateTimeEditElement> create(Document*, EditControlOwner&);
 
     virtual ~DateTimeEditElement();
     void addField(PassRefPtr<DateTimeFieldElement>);
     virtual void defaultEventHandler(Event*) OVERRIDE;
     void disabledStateChanged();
-    void layout(const StepRange&);
     void readOnlyStateChanged();
     void removeEditControlOwner() { m_editControlOwner = 0; }
     void resetLayout();
-    void setEmptyValue(const DateComponents&  dateForReadOnlyField);
-    void setValueAsDate(const DateComponents&);
+    void setEmptyValue(const StepRange&, const DateComponents&  dateForReadOnlyField);
+    void setValueAsDate(const StepRange&, const DateComponents&);
     double valueAsDouble() const;
 
 private:
@@ -95,6 +94,7 @@ private:
     void handleMouseEvent(MouseEvent*);
     bool isDisabled() const;
     bool isReadOnly() const;
+    void layout(const StepRange&, const DateComponents&);
     size_t nextFieldIndex() const;
     size_t previousFieldIndex() const;
     void updateUIState();
