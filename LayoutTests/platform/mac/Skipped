@@ -1009,6 +1009,11 @@ svg/stroke/zero-length-arc-linecaps-rendering.svg
 svg/stroke/zero-length-path-linecap-rendering.svg
 svg/stroke/zero-length-subpaths-linecap-rendering.svg
 
+# Skipping due to regression caused by r126056 in
+#   https://bugs.webkit.org/show_bug.cgi?id=94419 Cleanup SVGLocatable inheritance
+# https://bugs.webkit.org/show_bug.cgi?id=94969
+svg/custom/getBBox-path.svg
+
 # Assorted failures that need investigation
 
 # --- Canvas ---
