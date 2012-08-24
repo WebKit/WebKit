@@ -22,9 +22,7 @@
 
 import collections
 import re
-
-import parser
-
+from webkit2 import parser
 
 DELAYED_ATTRIBUTE = 'Delayed'
 DISPATCH_ON_CONNECTION_QUEUE_ATTRIBUTE = 'DispatchOnConnectionQueue'
