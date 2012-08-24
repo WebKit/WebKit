@@ -1,3 +1,13 @@
+2012-08-23  Kenneth Russell  <kbr@google.com>
+
+        [Chromium] LayoutTests: css3/selector3/xml tests are flaky / have wrong expectations on Snow Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=82122
+
+        Unreviewed Chromium gardening. Tightened majority of test
+        expectations to only expect failures on debug bots.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-23  Shinya Kawanaka  <shinyak@chromium.org>
 
         Needs update tests of Shadow DOM for keygen
