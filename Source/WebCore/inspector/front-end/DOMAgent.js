@@ -750,7 +750,6 @@ WebInspector.DOMNode.prototype = {
             if (frameOwnerCandidate.documentURL)
                 return WebInspector.ParsedURL.completeURL(frameOwnerCandidate.documentURL, url);
         }
-        console.error("Could not resolve DOM URL: " + url);
         return null;
     }
 }
