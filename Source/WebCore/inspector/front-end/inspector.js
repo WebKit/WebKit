@@ -1084,9 +1084,4 @@ WebInspector.addMainEventListeners = function(doc)
     doc.addEventListener("click", this.documentClick.bind(this), true);
 }
 
-WebInspector.frontendReused = function()
-{
-    this.resourceTreeModel.frontendReused();
-}
-
 WebInspector.ProfileURLRegExp = /webkit-profile:\/\/(.+)\/(.+)#([0-9]+)/;

@@ -132,7 +132,6 @@ WebInspector.Workspace = function()
     new WebInspector.PresentationConsoleMessageHelper(this);
     
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._reset, this);
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, this._reset, this);
 }
 
 WebInspector.Workspace.Events = {
