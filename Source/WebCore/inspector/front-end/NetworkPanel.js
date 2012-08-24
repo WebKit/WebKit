@@ -29,9 +29,6 @@
  */
 
 importScript("RequestView.js");
-importScript("ResourceView.js");
-importScript("FontView.js");
-importScript("ImageView.js");
 importScript("NetworkItemView.js");
 importScript("RequestCookiesView.js");
 importScript("RequestHeadersView.js");
