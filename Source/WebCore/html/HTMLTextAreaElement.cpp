@@ -72,6 +72,7 @@ HTMLTextAreaElement::HTMLTextAreaElement(const QualifiedName& tagName, Document*
     , m_rows(defaultRows)
     , m_cols(defaultCols)
     , m_wrap(SoftWrap)
+    , m_placeholder(0)
     , m_isDirty(false)
     , m_wasModifiedByUser(false)
 {
@@ -490,13 +491,13 @@ bool HTMLTextAreaElement::shouldUseInputMethod()
 
 HTMLElement* HTMLTextAreaElement::placeholderElement() const
 {
-    return m_placeholder.get();
+    return m_placeholder;
 }
 
 void HTMLTextAreaElement::attach()
 {
     HTMLTextFormControlElement::attach();
-    fixPlaceholderRenderer(m_placeholder.get(), innerTextElement());
+    fixPlaceholderRenderer(m_placeholder, innerTextElement());
 }
 
 void HTMLTextAreaElement::updatePlaceholderText()
@@ -505,21 +506,22 @@ void HTMLTextAreaElement::updatePlaceholderText()
     String placeholderText = strippedPlaceholder();
     if (placeholderText.isEmpty()) {
         if (m_placeholder) {
-            userAgentShadowRoot()->removeChild(m_placeholder.get(), ec);
+            userAgentShadowRoot()->removeChild(m_placeholder, ec);
             ASSERT(!ec);
-            m_placeholder.clear();
+            m_placeholder = 0;
         }
         return;
     }
     if (!m_placeholder) {
-        m_placeholder = HTMLDivElement::create(document());
+        RefPtr<HTMLDivElement> placeholder = HTMLDivElement::create(document());
+        m_placeholder = placeholder.get();
         m_placeholder->setShadowPseudoId("-webkit-input-placeholder");
         userAgentShadowRoot()->insertBefore(m_placeholder, innerTextElement()->nextSibling(), ec);
         ASSERT(!ec);
     }
     m_placeholder->setInnerText(placeholderText, ec);
     ASSERT(!ec);
-    fixPlaceholderRenderer(m_placeholder.get(), innerTextElement());
+    fixPlaceholderRenderer(m_placeholder, innerTextElement());
 }
 
 }

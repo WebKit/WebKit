@@ -117,7 +117,7 @@ private:
     int m_rows;
     int m_cols;
     WrapMethod m_wrap;
-    RefPtr<HTMLElement> m_placeholder;
+    HTMLElement* m_placeholder;
     mutable String m_value;
     mutable bool m_isDirty;
     mutable bool m_wasModifiedByUser;
