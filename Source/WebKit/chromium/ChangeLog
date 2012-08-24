@@ -1,3 +1,12 @@
+2012-08-23  Antoine Labour  <piman@chromium.org>
+
+        [chromium] Add OVERRIDEs in test code
+        https://bugs.webkit.org/show_bug.cgi?id=94894
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostTest.cpp:
+
 2012-08-23  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Expose mechanism for database to force a connection to close
