@@ -30,6 +30,7 @@
 #include "CCLayerTreeHostImpl.h"
 #include "CCOcclusionTrackerTestCommon.h"
 #include "CCSettings.h"
+#include "CCSingleThreadProxy.h"
 #include "CCTextureUpdateQueue.h"
 #include "CCThreadedTest.h"
 #include "CCTimingFunction.h"
@@ -2591,5 +2592,98 @@ TEST_F(CCLayerTreeHostTestEvictTextures, runMultiThread)
 {
     runTest(true);
 }
+
+class CCLayerTreeHostTestLostContextAfterEvictTextures : public CCLayerTreeHostTest {
+public:
+    CCLayerTreeHostTestLostContextAfterEvictTextures()
+        : m_layer(EvictionTestLayer::create())
+        , m_implForEvictTextures(0)
+        , m_numCommits(0)
+    {
+    }
+
+    virtual void beginTest() OVERRIDE
+    {
+        m_layerTreeHost->setRootLayer(m_layer);
+        m_layerTreeHost->setViewportSize(IntSize(10, 20), IntSize(10, 20));
+
+        WebTransformationMatrix identityMatrix;
+        setLayerPropertiesForTesting(m_layer.get(), 0, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(10, 20), true);
+    }
+
+    class EvictTexturesTask : public WebKit::WebThread::Task {
+    public:
+        EvictTexturesTask(CCLayerTreeHostTestLostContextAfterEvictTextures* test) : m_test(test) { }
+        virtual ~EvictTexturesTask() { }
+        virtual void run() OVERRIDE
+        {
+            m_test->evictTexturesOnImplThread();
+        }
+
+    private:
+        CCLayerTreeHostTestLostContextAfterEvictTextures* m_test;
+    };
+
+    void postEvictTextures()
+    {
+        if (webThread())
+            webThread()->postTask(new EvictTexturesTask(this));
+        else {
+            DebugScopedSetImplThread impl;
+            evictTexturesOnImplThread();
+        }
+    }
+
+    void evictTexturesOnImplThread()
+    {
+        ASSERT(m_implForEvictTextures);
+        m_implForEvictTextures->releaseContentsTextures();
+    }
+
+    // Commit 1: Just commit and draw normally, then at the end, set ourselves
+    // invisible (to prevent a commit that would recreate textures after
+    // eviction, before the context recovery), and post a task that will evict
+    // textures, then cause the context to be lost, and then set ourselves
+    // visible again (to allow commits, since that's what causes context
+    // recovery in single thread).
+    virtual void didCommitAndDrawFrame() OVERRIDE
+    {
+        ++m_numCommits;
+        switch (m_numCommits) {
+        case 1:
+            EXPECT_TRUE(m_layer->updated());
+            m_layerTreeHost->setVisible(false);
+            postEvictTextures();
+            m_layerTreeHost->loseContext(1);
+            m_layerTreeHost->setVisible(true);
+            break;
+        default:
+            break;
+        }
+    }
+
+    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl* impl) OVERRIDE
+    {
+        m_implForEvictTextures = impl;
+    }
+
+    virtual void didRecreateOutputSurface(bool succeeded) OVERRIDE
+    {
+        EXPECT_TRUE(succeeded);
+        endTest();
+    }
+
+    virtual void afterTest() OVERRIDE
+    {
+    }
+
+private:
+    MockContentLayerDelegate m_delegate;
+    RefPtr<EvictionTestLayer> m_layer;
+    CCLayerTreeHostImpl* m_implForEvictTextures;
+    int m_numCommits;
+};
+
+SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestLostContextAfterEvictTextures)
 
 } // namespace

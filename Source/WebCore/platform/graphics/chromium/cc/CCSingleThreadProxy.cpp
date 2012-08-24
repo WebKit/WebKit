@@ -156,7 +156,8 @@ bool CCSingleThreadProxy::recreateContext()
     bool initialized;
     {
         DebugScopedSetImplThread impl;
-        m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->resourceProvider());
+        if (!m_layerTreeHostImpl->contentsTexturesPurged())
+            m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->resourceProvider());
         initialized = m_layerTreeHostImpl->initializeRenderer(context.release(), UnthrottledUploader);
         if (initialized) {
             m_RendererCapabilitiesForMainThread = m_layerTreeHostImpl->rendererCapabilities();
