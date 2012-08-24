@@ -188,6 +188,7 @@ public:
     void zoomToInitialScale();
     bool blockZoom(int x, int y);
     void blockZoomAnimationFinished();
+    void resetBlockZoom();
     bool isAtInitialZoom() const;
     bool isMaxZoomed() const;
     bool isMinZoomed() const;

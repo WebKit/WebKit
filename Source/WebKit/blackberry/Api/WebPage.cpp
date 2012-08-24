@@ -3122,6 +3122,11 @@ void WebPage::blockZoomAnimationFinished()
     d->zoomBlock();
 }
 
+void WebPage::resetBlockZoom()
+{
+    d->resetBlockZoom();
+}
+
 void WebPagePrivate::resetBlockZoom()
 {
     m_currentBlockZoomNode = 0;

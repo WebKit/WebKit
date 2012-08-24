@@ -1,3 +1,26 @@
+2012-08-24  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Add WebPage API to reset block zoom
+        https://bugs.webkit.org/show_bug.cgi?id=94863
+
+        PR 187478
+        This is an alternative to WebPage::blockZoomAnimationFinished() when
+        it's desirable to avoid rerendering of the whole web page at the end
+        of block zoom. This is the case when the planned "incremental zoom
+        factor" is used instead of zoomAboutPoint and it's relatives.
+
+        Ideally, the block zoom algorithm would be clever enough not to need
+        a reset or any form of callback when the animation finishes, but that
+        requires the implementation of said incremental zoom factor, which is
+        not done yet.
+
+        Reviewed by Antonio Gomes.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::resetBlockZoom):
+        (WebKit):
+        * Api/WebPage.h:
+
 2012-08-23  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Obsolete the in-region scroll codepath prior to BB10's
