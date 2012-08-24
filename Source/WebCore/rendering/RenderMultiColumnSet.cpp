@@ -76,7 +76,7 @@ unsigned RenderMultiColumnSet::columnCount() const
     
     // Our region rect determines our column count. We have as many columns as needed to fit all the content.
     LayoutUnit logicalHeightInColumns = flowThread()->isHorizontalWritingMode() ? regionRect().height() : regionRect().width();
-    return ceil(logicalHeightInColumns / computedColumnHeight());
+    return ceil(static_cast<float>(logicalHeightInColumns) / computedColumnHeight());
 }
 
 LayoutRect RenderMultiColumnSet::columnRectAt(unsigned index) const
