@@ -1,3 +1,17 @@
+2012-08-23  Frederik Gladhorn  <gladhorn@kde.org>
+
+        Make it possible to build WebKit with Python 3 (and 2)
+        https://bugs.webkit.org/show_bug.cgi?id=94814
+
+        Reviewed by Ryosuke Niwa.
+
+        Exceptions need a hack to work with both.
+        string.join was already deprecated in Python 2.
+        Relative imports are no longer supported, use package name instead.
+
+        * Scripts/webkit2/messages.py:
+        * Scripts/webkit2/parser.py:
+
 2012-08-23  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Change behavior of MasqueradesAsUndefined to better accommodate DFG changes
