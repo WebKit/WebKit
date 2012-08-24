@@ -47,10 +47,10 @@
 
 namespace WebCore {
 
-static void weakEventListenerCallback(v8::Persistent<v8::Value>, void* parameter)
+void V8AbstractEventListener::weakEventListenerCallback(v8::Persistent<v8::Value>, void* parameter)
 {
     V8AbstractEventListener* listener = static_cast<V8AbstractEventListener*>(parameter);
-    listener->disposeListenerObject();
+    listener->m_listener.clear();
 }
 
 V8AbstractEventListener::V8AbstractEventListener(bool isAttribute, const WorldContextHandle& worldContext)
@@ -65,12 +65,10 @@ V8AbstractEventListener::V8AbstractEventListener(bool isAttribute, const WorldCo
 
 V8AbstractEventListener::~V8AbstractEventListener()
 {
-    if (!m_listener.IsEmpty()) {
+    if (!m_listener.get().IsEmpty()) {
         v8::HandleScope scope;
-        v8::Local<v8::Object> listener = v8::Local<v8::Object>::New(m_listener);
-        V8EventListenerList::clearWrapper(listener, m_isAttribute);
+        V8EventListenerList::clearWrapper(v8::Local<v8::Object>::New(m_listener.get()), m_isAttribute);
     }
-    disposeListenerObject();
 #if ENABLE(INSPECTOR)
     ThreadLocalInspectorCounters::current().decrementCounter(ThreadLocalInspectorCounters::JSEventListenerCounter);
 #endif
@@ -104,25 +102,10 @@ void V8AbstractEventListener::handleEvent(ScriptExecutionContext* context, Event
     invokeEventHandler(context, event, jsEvent);
 }
 
-void V8AbstractEventListener::disposeListenerObject()
-{
-    if (!m_listener.IsEmpty()) {
-#ifndef NDEBUG
-        V8GCController::unregisterGlobalHandle(this, m_listener);
-#endif
-        m_listener.Dispose();
-        m_listener.Clear();
-    }
-}
-
 void V8AbstractEventListener::setListenerObject(v8::Handle<v8::Object> listener)
 {
-    disposeListenerObject();
-    m_listener = v8::Persistent<v8::Object>::New(listener);
-#ifndef NDEBUG
-    V8GCController::registerGlobalHandle(EVENT_LISTENER, this, m_listener);
-#endif
-    m_listener.MakeWeak(this, &weakEventListenerCallback);
+    m_listener.set(listener);
+    m_listener.get().MakeWeak(this, &V8AbstractEventListener::weakEventListenerCallback);
 }
 
 void V8AbstractEventListener::invokeEventHandler(ScriptExecutionContext* context, Event* event, v8::Handle<v8::Value> jsEvent)
@@ -201,8 +184,8 @@ bool V8AbstractEventListener::shouldPreventDefault(v8::Local<v8::Value> returnVa
 
 v8::Local<v8::Object> V8AbstractEventListener::getReceiverObject(Event* event)
 {
-    if (!m_listener.IsEmpty() && !m_listener->IsFunction())
-        return v8::Local<v8::Object>::New(m_listener);
+    if (!m_listener.get().IsEmpty() && !m_listener.get()->IsFunction())
+        return v8::Local<v8::Object>::New(m_listener.get());
 
     EventTarget* target = event->currentTarget();
     v8::Handle<v8::Value> value = V8DOMWrapper::convertEventTargetToV8Object(target);
