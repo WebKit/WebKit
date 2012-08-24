@@ -28,6 +28,16 @@
 
 2012-08-23  Mark Rowe  <mrowe@apple.com>
 
+        Roll back in the part of r126475 that I had rolled out.
+
+        * wtf/FastMalloc.cpp:
+        (WTF): Disable the -Wunused-private-field warning around the declaration of
+        TCMalloc_Central_FreeListPadded since the padding is intentionally unused.
+        Only disable the warning if we detect it is enabled, since the warning may not
+        be supported by the version of Clang that is being used.
+
+2012-08-23  Mark Rowe  <mrowe@apple.com>
+
         Roll out part of r126475 that breaks the build with older versions of Clang.
 
         * wtf/FastMalloc.cpp:
