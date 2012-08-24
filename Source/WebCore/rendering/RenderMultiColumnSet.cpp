@@ -33,9 +33,9 @@ namespace WebCore {
 
 RenderMultiColumnSet::RenderMultiColumnSet(Node* node, RenderFlowThread* flowThread)
     : RenderRegionSet(node, flowThread)
-    , m_columnCount(1)
-    , m_columnWidth(ZERO_LAYOUT_UNIT)
-    , m_columnHeight(ZERO_LAYOUT_UNIT)
+    , m_computedColumnCount(1)
+    , m_computedColumnWidth(ZERO_LAYOUT_UNIT)
+    , m_computedColumnHeight(ZERO_LAYOUT_UNIT)
 {
 }
 
@@ -49,17 +49,17 @@ void RenderMultiColumnSet::computeLogicalWidth()
     setLogicalWidth(parentBox()->contentLogicalWidth());
     
     RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
-    setColumnWidthAndCount(parentBlock->columnWidth(), parentBlock->columnCount()); // FIXME: This will eventually vary if we are contained inside regions.
+    setComputedColumnWidthAndCount(parentBlock->columnWidth(), parentBlock->columnCount()); // FIXME: This will eventually vary if we are contained inside regions.
 }
 
 void RenderMultiColumnSet::computeLogicalHeight()
 {
     // Make sure our column height is up to date.
     RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
-    setColumnHeight(parentBlock->columnHeight()); // FIXME: Once we make more than one column set, this will become variable.
+    setComputedColumnHeight(parentBlock->columnHeight()); // FIXME: Once we make more than one column set, this will become variable.
     
     // Our logical height is always just the height of our columns.
-    setLogicalHeight(columnHeight());
+    setLogicalHeight(computedColumnHeight());
 }
 
 LayoutUnit RenderMultiColumnSet::columnGap() const
@@ -69,10 +69,20 @@ LayoutUnit RenderMultiColumnSet::columnGap() const
     return static_cast<int>(style()->columnGap());
 }
 
+unsigned RenderMultiColumnSet::columnCount() const
+{
+    if (!computedColumnHeight())
+        return 0;
+    
+    // Our region rect determines our column count. We have as many columns as needed to fit all the content.
+    LayoutUnit logicalHeightInColumns = flowThread()->isHorizontalWritingMode() ? regionRect().height() : regionRect().width();
+    return ceil(logicalHeightInColumns / computedColumnHeight());
+}
+
 LayoutRect RenderMultiColumnSet::columnRectAt(unsigned index) const
 {
-    LayoutUnit colLogicalWidth = columnWidth();
-    LayoutUnit colLogicalHeight = columnHeight();
+    LayoutUnit colLogicalWidth = computedColumnWidth();
+    LayoutUnit colLogicalHeight = computedColumnHeight();
     LayoutUnit colLogicalTop = borderBefore() + paddingBefore();
     LayoutUnit colLogicalLeft = borderAndPaddingLogicalLeft();
     int colGap = columnGap();
@@ -116,6 +126,8 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
         return;
 
     unsigned colCount = columnCount();
+    if (colCount <= 1)
+        return;
 
     bool antialias = shouldAntialiasLines(paintInfo.context);
 
@@ -123,7 +135,7 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
     LayoutUnit currLogicalLeftOffset = leftToRight ? ZERO_LAYOUT_UNIT : contentLogicalWidth();
     LayoutUnit ruleAdd = borderAndPaddingLogicalLeft();
     LayoutUnit ruleLogicalLeft = leftToRight ? ZERO_LAYOUT_UNIT : contentLogicalWidth();
-    LayoutUnit inlineDirectionSize = columnWidth();
+    LayoutUnit inlineDirectionSize = computedColumnWidth();
     BoxSide boxSide = isHorizontalWritingMode()
         ? leftToRight ? BSLeft : BSRight
         : leftToRight ? BSTop : BSBottom;
@@ -152,13 +164,14 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
     }
 }
 
-void RenderMultiColumnSet::paintColumnContents(PaintInfo& /* paintInfo */, const LayoutPoint& /* paintOffset */)
+void RenderMultiColumnSet::paintColumnContents(PaintInfo& /*paintInfo*/, const LayoutPoint& /*paintOffset*/)
 {
     // For each rectangle, set it as the region rectangle and then let flow thread painting do the rest.
     // We make multiple calls to paintIntoRegion, changing the rectangles each time.
-    if (!columnCount())
+    unsigned colCount = columnCount();
+    if (!colCount)
         return;
-        
+
     // FIXME: Implement.
 }
 

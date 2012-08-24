@@ -47,18 +47,18 @@ public:
     
     virtual bool isRenderMultiColumnSet() const OVERRIDE { return true; }
 
-    unsigned columnCount() const { return m_columnCount; }
-    LayoutUnit columnWidth() const { return m_columnWidth; }
-    LayoutUnit columnHeight() const { return m_columnHeight; }
+    unsigned computedColumnCount() const { return m_computedColumnCount; }
+    LayoutUnit computedColumnWidth() const { return m_computedColumnWidth; }
+    LayoutUnit computedColumnHeight() const { return m_computedColumnHeight; }
 
-    void setColumnWidthAndCount(LayoutUnit width, unsigned count)
+    void setComputedColumnWidthAndCount(LayoutUnit width, unsigned count)
     {
-        m_columnWidth = width;
-        m_columnCount = count;
+        m_computedColumnWidth = width;
+        m_computedColumnCount = count;
     }
-    void setColumnHeight(LayoutUnit height)
+    void setComputedColumnHeight(LayoutUnit height)
     {
-        m_columnHeight = height;
+        m_computedColumnHeight = height;
     }
 
 private:
@@ -67,8 +67,8 @@ private:
 
     virtual void paintReplaced(PaintInfo&, const LayoutPoint& paintOffset) OVERRIDE;
 
-    virtual LayoutUnit logicalWidthForFlowThreadContent() const OVERRIDE { return m_columnWidth; }
-    virtual LayoutUnit logicalHeightForFlowThreadContent() const OVERRIDE { return m_columnHeight; } // FIXME: Will be wrong once we have multiple sets.
+    virtual LayoutUnit logicalWidthForFlowThreadContent() const OVERRIDE { return m_computedColumnWidth; }
+    virtual LayoutUnit logicalHeightForFlowThreadContent() const OVERRIDE { return m_computedColumnHeight; } // FIXME: Will be wrong once we have multiple sets.
 
     virtual const char* renderName() const;
     
@@ -76,11 +76,12 @@ private:
     void paintColumnContents(PaintInfo&, const LayoutPoint& paintOffset);
 
     LayoutUnit columnGap() const;
-    LayoutRect columnRectAt( unsigned index) const;
-    
-    unsigned m_columnCount;
-    LayoutUnit m_columnWidth;
-    LayoutUnit m_columnHeight;
+    LayoutRect columnRectAt(unsigned index) const;
+    unsigned columnCount() const;
+
+    unsigned m_computedColumnCount;
+    LayoutUnit m_computedColumnWidth;
+    LayoutUnit m_computedColumnHeight;
 };
 
 } // namespace WebCore

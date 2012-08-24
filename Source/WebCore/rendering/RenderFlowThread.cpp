@@ -188,6 +188,9 @@ void RenderFlowThread::layout()
     
     if (shouldDispatchRegionLayoutUpdateEvent())
         dispatchRegionLayoutUpdateEvent();
+        
+    if (lastRegion())
+        lastRegion()->expandToEncompassFlowThreadContentsIfNeeded();
 }
 
 void RenderFlowThread::computeLogicalWidth()

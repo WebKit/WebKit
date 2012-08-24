@@ -97,11 +97,13 @@ public:
     
     virtual LayoutUnit logicalWidthForFlowThreadContent() const;
     virtual LayoutUnit logicalHeightForFlowThreadContent() const;
+        
+    virtual void expandToEncompassFlowThreadContentsIfNeeded() {};
 
 protected:
     void setRegionObjectsRegionStyle();
     void restoreRegionObjectsOriginalStyle();
-    
+
 private:
     virtual const char* renderName() const { return "RenderRegion"; }
 
