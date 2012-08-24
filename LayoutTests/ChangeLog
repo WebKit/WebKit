@@ -1,3 +1,15 @@
+2012-08-23  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        Revert a few test expectations tightened in r126529 to green
+        builders.
+
+        These differ by whether zero width blocks appear in the dumped
+        render tree.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-23  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Step mismatched value should be editable in multiple field time UI.
