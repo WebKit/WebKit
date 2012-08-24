@@ -127,6 +127,7 @@ fast/js/dfg-intrinsic-osr-exit
 fast/js/dfg-intrinsic-unused-this-method-check
 fast/js/dfg-intrinsic-unused-this
 fast/js/dfg-min-max
+fast/js/dfg-multi-basic-block-structure-clobber
 fast/js/dfg-multiply
 fast/js/dfg-negative-array-index
 fast/js/dfg-obvious-constant-cfa

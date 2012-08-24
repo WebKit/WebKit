@@ -1,3 +1,17 @@
+2012-08-24  Filip Pizlo  <fpizlo@apple.com>
+
+        We should have tests for the DFG CFA's handling of structure clobbering and basic blocks
+        https://bugs.webkit.org/show_bug.cgi?id=94977
+
+        Reviewed by Mark Hahnenberg.
+
+        * fast/js/dfg-multi-basic-block-structure-clobber-expected.txt: Added.
+        * fast/js/dfg-multi-basic-block-structure-clobber.html: Added.
+        * fast/js/script-tests/dfg-multi-basic-block-structure-clobber.js: Added.
+        (bar):
+        (foo):
+        * fast/js/jsc-test-list:
+
 2012-08-24  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Reapply "Upstream layout test expectations (Part 1)"
