@@ -1,3 +1,18 @@
+2012-08-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Replay tests take forever to load
+        https://bugs.webkit.org/show_bug.cgi?id=94764
+
+        Reviewed by Adam Barth.
+
+        Don't load about:blank at the beginning. This appears to clog the DRT.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (ReplayPerfTest.run_single):
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (TestReplayPerfTest.test_run_single):
+        (TestReplayPerfTest.test_run_single_fails_when_output_has_error):
+
 2012-08-23  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r126497.

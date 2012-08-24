@@ -192,9 +192,8 @@ class TestReplayPerfTest(unittest.TestCase):
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
 
-        self.assertEqual(len(loaded_pages), 2)
-        self.assertEqual(loaded_pages[0].test_name, 'about:blank')
-        self.assertEqual(loaded_pages[1].test_name, 'http://some-test/')
+        self.assertEqual(len(loaded_pages), 1)
+        self.assertEqual(loaded_pages[0].test_name, 'http://some-test/')
         self.assertEqual(actual_stdout, '')
         self.assertEqual(actual_stderr, '')
         self.assertEqual(actual_logs, '')
@@ -259,9 +258,8 @@ class TestReplayPerfTest(unittest.TestCase):
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
 
-        self.assertEqual(len(loaded_pages), 2)
-        self.assertEqual(loaded_pages[0].test_name, 'about:blank')
-        self.assertEqual(loaded_pages[1].test_name, 'http://some-test/')
+        self.assertEqual(len(loaded_pages), 1)
+        self.assertEqual(loaded_pages[0].test_name, 'http://some-test/')
         self.assertEqual(actual_stdout, '')
         self.assertEqual(actual_stderr, '')
         self.assertEqual(actual_logs, 'error: some-test.replay\nsome error\n')
