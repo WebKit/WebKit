@@ -210,9 +210,6 @@ BUGWK60731 : ietestcenter/css3/grid/grid-column-003.htm = IMAGE
 BUGWK60731 : ietestcenter/css3/grid/grid-items-002.htm = IMAGE
 BUGWK60731 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
 
-BUGWK85401 : media/video-colorspace-yuv420.html = TEXT
-BUGWK85401 : media/video-colorspace-yuv422.html = TEXT
-
 BUGWK85404 : fast/loader/javascript-url-in-embed.html = TEXT PASS
 
 BUGWK85408 : svg/batik/text/longTextOnPath.svg = TEXT PASS
@@ -298,7 +295,6 @@ BUGWK84167 : editing/selection/iframe.html = TEXT
 BUGWK84167 : editing/selection/inline-table.html = TEXT
 BUGWK84167 : editing/selection/table-caret-3.html = TEXT
 BUGWK84167 : fast/css-generated-content/inline-display-types.html = TEXT
-BUGWK84167 : fast/css-generated-content/nested-tables-with-before-after-content-crash.html = IMAGE+TEXT
 BUGWK84167 : fast/inline-block/001.html = TEXT
 BUGWK84167 : tables/mozilla/bugs/bug2479-2.html = TEXT
 
@@ -388,3 +384,10 @@ BUGWK94169 : css3/filters/custom/filter-fallback-to-software.html = IMAGE
 
 // (r125790): Newly added test inspector/timeline/timeline-decode-resize.html is failing on mac
 BUGWK94374 : inspector/timeline/timeline-decode-resize.html = TEXT
+
+// Flakey WebGL tests
+BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = PASS TEXT
+BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html = PASS TEXT
+BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html = PASS TEXT
+BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html = PASS TEXT
+BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html = PASS TEXT

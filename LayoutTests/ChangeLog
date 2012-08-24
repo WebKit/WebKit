@@ -1,3 +1,20 @@
+2012-08-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Update Skipped list and TestExpectations in preparation for making
+        Mountain Lion the default Mac builder.
+
+        Rubber-stamped by Jessie Berlin.
+
+        * platform/mac-lion/TestExpectations: Added.
+        Moved/added test expectations from platform/mac/TestExpectations to
+        here.
+
+        * platform/mac/Skipped:
+        Added some known failures from internal testers.
+
+        * platform/mac/TestExpectations:
+        Ditto.
+
 2012-08-23  Shezan Baig  <shezbaig.wk@gmail.com>
 
         Remove FIXMEs from css3/flexbox/flexitem.html
