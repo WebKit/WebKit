@@ -52,16 +52,12 @@ RenderTableCell::RenderTableCell(Node* node)
 {
 }
 
-void RenderTableCell::willBeDestroyed()
+void RenderTableCell::willBeRemovedFromTree()
 {
-    RenderTableSection* recalcSection = parent() ? section() : 0;
+    RenderBlock::willBeRemovedFromTree();
 
-    RenderBlock::willBeDestroyed();
-
-    if (recalcSection) {
-        recalcSection->setNeedsCellRecalc();
-        recalcSection->removeCachedCollapsedBorders(this);
-    }
+    section()->setNeedsCellRecalc();
+    section()->removeCachedCollapsedBorders(this);
 }
 
 unsigned RenderTableCell::colSpan() const

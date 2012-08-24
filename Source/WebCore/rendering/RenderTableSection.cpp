@@ -189,12 +189,6 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
     toRenderTableRow(child)->updateBeforeAndAfterContent();
 }
 
-void RenderTableSection::removeChild(RenderObject* oldChild)
-{
-    setNeedsCellRecalc();
-    RenderBox::removeChild(oldChild);
-}
-
 void RenderTableSection::ensureRows(unsigned numRows)
 {
     if (numRows <= m_grid.size())

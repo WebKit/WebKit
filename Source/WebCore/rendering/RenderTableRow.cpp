@@ -46,14 +46,11 @@ RenderTableRow::RenderTableRow(Node* node)
     setInline(false);   // our object is not Inline
 }
 
-void RenderTableRow::willBeDestroyed()
+void RenderTableRow::willBeRemovedFromTree()
 {
-    RenderTableSection* recalcSection = section();
-    
-    RenderBox::willBeDestroyed();
-    
-    if (recalcSection)
-        recalcSection->setNeedsCellRecalc();
+    RenderBox::willBeRemovedFromTree();
+
+    section()->setNeedsCellRecalc();
 }
 
 void RenderTableRow::updateBeforeAndAfterContent()

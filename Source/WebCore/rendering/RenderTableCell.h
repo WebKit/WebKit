@@ -173,7 +173,7 @@ private:
 
     virtual bool isTableCell() const { return true; }
 
-    virtual void willBeDestroyed();
+    virtual void willBeRemovedFromTree() OVERRIDE;
 
     virtual void computeLogicalWidth();
 

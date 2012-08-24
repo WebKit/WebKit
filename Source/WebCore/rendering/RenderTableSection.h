@@ -210,8 +210,6 @@ private:
 
     virtual void layout();
 
-    virtual void removeChild(RenderObject* oldChild);
-
     virtual void paintCell(RenderTableCell*, PaintInfo&, const LayoutPoint&);
     virtual void paintObject(PaintInfo&, const LayoutPoint&);
 
