@@ -63,7 +63,7 @@ static int operationTypeToProgramID(const FilterOperation::OperationType& t)
         return LayerData::CSSFilterShaderShadow;
 #if ENABLE(CSS_SHADERS)
     case FilterOperation::CUSTOM:
-        return LayerData::CSSFilterCustom;
+        return LayerData::CSSFilterShaderCustom;
 #endif
     default:
         ASSERT_NOT_REACHED();
@@ -71,7 +71,7 @@ static int operationTypeToProgramID(const FilterOperation::OperationType& t)
     }
 }
 
-Uniformf::Uniformf(int c_location)
+Uniform::Uniform(int c_location)
     : m_location(c_location)
 {
 }
@@ -81,13 +81,29 @@ void Uniform1f::apply()
     glUniform1f(location(), m_val);
 }
 
-PassRefPtr<Uniformf> Uniform1f::create(int location, float val)
+PassRefPtr<Uniform> Uniform1f::create(int location, float val)
 {
     return adoptRef(new Uniform1f(location, val));
 }
 
 Uniform1f::Uniform1f(int c_location, float c_val)
-    : Uniformf(c_location)
+    : Uniform(c_location)
+    , m_val(c_val)
+{
+}
+
+void Uniform1i::apply()
+{
+    glUniform1i(location(), m_val);
+}
+
+PassRefPtr<Uniform> Uniform1i::create(int location, int val)
+{
+    return adoptRef(new Uniform1i(location, val));
+}
+
+Uniform1i::Uniform1i(int c_location, int c_val)
+    : Uniform(c_location)
     , m_val(c_val)
 {
 }
@@ -97,13 +113,13 @@ void Uniform2f::apply()
     glUniform2f(location(), m_val[0], m_val[1]);
 }
 
-PassRefPtr<Uniformf> Uniform2f::create(int location, float val0, float val1)
+PassRefPtr<Uniform> Uniform2f::create(int location, float val0, float val1)
 {
     return adoptRef(new Uniform2f(location, val0, val1));
 }
 
 Uniform2f::Uniform2f(int c_location, float c_val0, float c_val1)
-    : Uniformf(c_location)
+    : Uniform(c_location)
 {
     m_val[0] = c_val0;
     m_val[1] = c_val1;
@@ -114,17 +130,109 @@ void Uniform3f::apply()
     glUniform3f(location(), m_val[0], m_val[1], m_val[2]);
 }
 
-PassRefPtr<Uniformf> Uniform3f::create(int location, float val0, float val1, float val2)
+PassRefPtr<Uniform> Uniform3f::create(int location, float val0, float val1, float val2)
 {
     return adoptRef(new Uniform3f(location, val0, val1, val2));
 }
 
 Uniform3f::Uniform3f(int c_location, float c_val0, float c_val1, float c_val2)
-    : Uniformf(c_location)
+    : Uniform(c_location)
 {
     m_val[0] = c_val0;
     m_val[1] = c_val1;
     m_val[2] = c_val2;
+}
+
+void Uniform4f::apply()
+{
+    glUniform4f(location(), m_val[0], m_val[1], m_val[2], m_val[3]);
+}
+
+PassRefPtr<Uniform> Uniform4f::create(int location, float val0, float val1, float val2, float val3)
+{
+    return adoptRef(new Uniform4f(location, val0, val1, val2, val3));
+}
+
+Uniform4f::Uniform4f(int c_location, float c_val0, float c_val1, float c_val2, float c_val3)
+    : Uniform(c_location)
+{
+    m_val[0] = c_val0;
+    m_val[1] = c_val1;
+    m_val[2] = c_val2;
+    m_val[3] = c_val3;
+}
+
+void Matrix4fv::apply()
+{
+    glUniformMatrix4fv(location(), m_size, m_transpose, m_array);
+}
+
+PassRefPtr<Parameter> Matrix4fv::create(GLint location, GLsizei size, GLboolean transpose, GLfloat* array)
+{
+    return adoptRef(new Matrix4fv(location, size, transpose, array));
+}
+
+Matrix4fv::Matrix4fv(GLint clocation, GLsizei size, GLboolean transpose, GLfloat* array)
+    : Uniform(clocation)
+    , m_size(size)
+    , m_transpose(transpose)
+    , m_array(0)
+{
+    m_array = new GLfloat[size * 4 * 4];
+    std::memcpy(m_array, array, size * 4 * 4 * sizeof(GLfloat));
+}
+
+Matrix4fv::~Matrix4fv()
+{
+    delete[] m_array;
+}
+
+void Buffer::apply()
+{
+    glBindBuffer(m_buffer, m_object);
+}
+
+void Buffer::restoreState()
+{
+    glBindBuffer(m_buffer, 0);
+}
+
+PassRefPtr<Parameter> Buffer::create(GLenum buffer, GLuint object)
+{
+    return adoptRef(new Buffer(buffer, object));
+}
+
+Buffer::Buffer(GLenum buffer, GLuint object)
+    : Parameter()
+    , m_buffer(buffer)
+    , m_object(object)
+{
+}
+
+void VertexAttribf::apply()
+{
+    glVertexAttribPointer(m_location, m_size, GL_FLOAT, false, m_bytesPerVertex, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(m_offset)));
+    glEnableVertexAttribArray(m_location);
+}
+
+void VertexAttribf::restoreState()
+{
+    glDisableVertexAttribArray(m_location);
+}
+
+PassRefPtr<Parameter> VertexAttribf::create(int location, int size, int bytesPerVertex, int offset)
+{
+    return adoptRef(new VertexAttribf(location, size, bytesPerVertex, offset));
+}
+
+
+VertexAttribf::VertexAttribf(int location, int size, int bytesPerVertex, int offset)
+    : Parameter()
+    , m_location(location)
+    , m_size(size)
+    , m_bytesPerVertex(bytesPerVertex)
+    , m_offset(offset)
+{
 }
 
 PassRefPtr<LayerFilterRendererAction> LayerFilterRendererAction::create(int programId)
@@ -134,8 +242,10 @@ PassRefPtr<LayerFilterRendererAction> LayerFilterRendererAction::create(int prog
 
 LayerFilterRendererAction::LayerFilterRendererAction(int c_programId)
     : m_programId(c_programId)
+    , m_customId(-1)
     , m_pushSnapshot(false)
     , m_popSnapshot(false)
+    , m_drawingMode(DrawTriangleFanArrays)
 {
 }
 
@@ -147,8 +257,14 @@ void LayerFilterRendererAction::useActionOn(LayerFilterRenderer* renderer)
         return;
     }
     glUseProgram(renderer->m_cssFilterProgramObject[m_programId]);
-    for (unsigned i = 0; i < m_uniforms.size(); ++i)
-        m_uniforms[i]->apply();
+    for (unsigned i = 0; i < m_parameters.size(); ++i)
+        m_parameters[i]->apply();
+}
+
+void LayerFilterRendererAction::restoreState()
+{
+    for (unsigned i = 0; i < m_parameters.size(); ++i)
+        m_parameters[i]->restoreState();
 }
 
 PassOwnPtr<LayerFilterRenderer> LayerFilterRenderer::create(const int& positionLocation, const int& texCoordLocation)
@@ -160,6 +276,9 @@ LayerFilterRenderer::LayerFilterRenderer(const int& positionLocation, const int&
     : m_positionLocation(positionLocation)
     , m_texCoordLocation(texCoordLocation)
 {
+    // If you ever move this stuff, please make sure that
+    // everything in this constructor is called BEFORE actionsForOperations.
+
     for (int i = 0; i < LayerData::NumberOfCSSFilterShaders; ++i)
         m_cssFilterProgramObject[i] = 0;
 
@@ -429,14 +548,14 @@ Vector<RefPtr<LayerFilterRendererAction> > LayerFilterRenderer::actionsForOperat
         case FilterOperation::SEPIA:
         case FilterOperation::SATURATE:
         case FilterOperation::HUE_ROTATE:
-            ret.last()->appendUniform(Uniform1f::create(m_amountLocation[programId]
+            ret.last()->appendParameter(Uniform1f::create(m_amountLocation[programId]
                 , static_cast<const BasicColorMatrixFilterOperation&>(operation).amount()));
             break;
         case FilterOperation::INVERT:
         case FilterOperation::BRIGHTNESS:
         case FilterOperation::CONTRAST:
         case FilterOperation::OPACITY:
-            ret.last()->appendUniform(Uniform1f::create(m_amountLocation[programId]
+            ret.last()->appendParameter(Uniform1f::create(m_amountLocation[programId]
                 , static_cast<const BasicComponentTransferFilterOperation&>(operation).amount()));
             break;
         case FilterOperation::BLUR:
@@ -449,14 +568,14 @@ Vector<RefPtr<LayerFilterRendererAction> > LayerFilterRenderer::actionsForOperat
             double amount = static_cast<const BlurFilterOperation&>(operation).stdDeviation().value();
 
             // BLUR Y:
-            ret.last()->appendUniform(Uniform1f::create(m_amountLocation[LayerData::CSSFilterShaderBlurY], amount));
-            ret.last()->appendUniform(Uniform1f::create(m_blurAmountLocation[0]
+            ret.last()->appendParameter(Uniform1f::create(m_amountLocation[LayerData::CSSFilterShaderBlurY], amount));
+            ret.last()->appendParameter(Uniform1f::create(m_blurAmountLocation[0]
                 , 1.0f / float(surface->size().height())));
 
             // BLUR X:
             ret.append(LayerFilterRendererAction::create(LayerData::CSSFilterShaderBlurX));
-            ret.last()->appendUniform(Uniform1f::create(m_amountLocation[LayerData::CSSFilterShaderBlurX], amount));
-            ret.last()->appendUniform(Uniform1f::create(m_blurAmountLocation[1]
+            ret.last()->appendParameter(Uniform1f::create(m_amountLocation[LayerData::CSSFilterShaderBlurX], amount));
+            ret.last()->appendParameter(Uniform1f::create(m_blurAmountLocation[1]
                 , 1.0f / float(surface->size().width())));
 
             }
@@ -471,26 +590,26 @@ Vector<RefPtr<LayerFilterRendererAction> > LayerFilterRenderer::actionsForOperat
             //     4. repaint original on top of mask
             const DropShadowFilterOperation& dsfo = static_cast<const DropShadowFilterOperation&>(operation);
             ret.last()->setPushSnapshot();
-            ret.last()->appendUniform(Uniform2f::create(m_offsetLocation
+            ret.last()->appendParameter(Uniform2f::create(m_offsetLocation
                 , float(dsfo.x()) / float(surface->size().width())
                 , float(dsfo.y()) / float(surface->size().height())));
-            ret.last()->appendUniform(Uniform3f::create(m_shadowColorLocation
+            ret.last()->appendParameter(Uniform3f::create(m_shadowColorLocation
                 , float(dsfo.color().red()) / 255.0f
                 , float(dsfo.color().green()) / 255.0f
                 , float(dsfo.color().blue()) / 255.0f));
 
             // BLUR Y
             ret.append(LayerFilterRendererAction::create(LayerData::CSSFilterShaderBlurY));
-            ret.last()->appendUniform(Uniform1f::create(m_amountLocation[LayerData::CSSFilterShaderBlurY]
+            ret.last()->appendParameter(Uniform1f::create(m_amountLocation[LayerData::CSSFilterShaderBlurY]
                 , dsfo.stdDeviation()));
-            ret.last()->appendUniform(Uniform1f::create(m_blurAmountLocation[0]
+            ret.last()->appendParameter(Uniform1f::create(m_blurAmountLocation[0]
                 , 1.0f / float(surface->size().height())));
 
             // BLUR X
             ret.append(LayerFilterRendererAction::create(LayerData::CSSFilterShaderBlurX));
-            ret.last()->appendUniform(Uniform1f::create(m_amountLocation[LayerData::CSSFilterShaderBlurX]
+            ret.last()->appendParameter(Uniform1f::create(m_amountLocation[LayerData::CSSFilterShaderBlurX]
                 , dsfo.stdDeviation()));
-            ret.last()->appendUniform(Uniform1f::create(m_blurAmountLocation[1]
+            ret.last()->appendParameter(Uniform1f::create(m_blurAmountLocation[1]
                 , 1.0f / float(surface->size().width())));
 
             // Repaint original image
@@ -575,7 +694,24 @@ void LayerFilterRenderer::applyActions(unsigned& fbo, LayerCompositingThread* la
         if (actions[i]->shouldPopSnapshot())
             popSnapshot();
 
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+        switch (actions[i]->drawingMode()) {
+        case LayerFilterRendererAction::DrawTriangleFanArrays:
+            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+            break;
+        case LayerFilterRendererAction::DrawTriangleElementsUShort0:
+            glDrawElements(GL_TRIANGLES, actions[i]->drawingModeParameter(), GL_UNSIGNED_SHORT, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(0)));
+            break;
+        case LayerFilterRendererAction::NumberOfDrawingModes:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+
+        actions[i]->restoreState();
+
+        glVertexAttribPointer(m_positionLocation, 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds() );
+        glEnableVertexAttribArray(m_positionLocation);
+        glVertexAttribPointer(m_texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, texcoords);
+        glEnableVertexAttribArray(m_texCoordLocation);
     }
 
     m_texture->unprotect();

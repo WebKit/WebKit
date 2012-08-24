@@ -41,22 +41,33 @@ class LayerFilterRenderer;
 class LayerFilterRendererAction;
 class LayerRendererSurface;
 
-class Uniformf : public RefCounted<Uniformf> {
-    WTF_MAKE_NONCOPYABLE(Uniformf);
+class Parameter : public RefCounted<Parameter> {
+    WTF_MAKE_NONCOPYABLE(Parameter);
 public:
     virtual void apply() = 0;
+    virtual void restoreState() { }
+    virtual ~Parameter() { }
+protected:
+    explicit Parameter() { }
+};
+
+class Uniform : public Parameter {
+    WTF_MAKE_NONCOPYABLE(Uniform);
+public:
+    virtual void apply() = 0;
+    virtual ~Uniform() { }
 
 protected:
-    Uniformf(int location);
+    Uniform(int location);
     const int& location() const { return m_location; }
 
 private:
     int m_location;
 };
 
-class Uniform1f : public Uniformf {
+class Uniform1f : public Uniform {
 public:
-    static PassRefPtr<Uniformf> create(int location, float val);
+    static PassRefPtr<Uniform> create(int location, float val);
 
 protected:
     Uniform1f(int location, float val);
@@ -66,9 +77,21 @@ private:
     float m_val;
 };
 
-class Uniform2f : public Uniformf {
+class Uniform1i : public Uniform {
 public:
-    static PassRefPtr<Uniformf> create(int location, float val0, float val1);
+    static PassRefPtr<Uniform> create(int location, int val);
+
+protected:
+    Uniform1i(int location, int val);
+
+private:
+    virtual void apply();
+    int m_val;
+};
+
+class Uniform2f : public Uniform {
+public:
+    static PassRefPtr<Uniform> create(int location, float val0, float val1);
 
 protected:
     Uniform2f(int location, float val0, float val1);
@@ -78,9 +101,9 @@ private:
     float m_val[2];
 };
 
-class Uniform3f : public Uniformf {
+class Uniform3f : public Uniform {
 public:
-    static PassRefPtr<Uniformf> create(int location, float val0, float val1, float val2);
+    static PassRefPtr<Uniform> create(int location, float val0, float val1, float val2);
 
 protected:
     Uniform3f(int location, float val0, float val1, float val2);
@@ -88,6 +111,64 @@ protected:
 private:
     virtual void apply();
     float m_val[3];
+};
+
+class Uniform4f : public Uniform {
+public:
+    static PassRefPtr<Uniform> create(int location, float val0, float val1, float val2, float val3);
+
+protected:
+    Uniform4f(int location, float val0, float val1, float val2, float val3);
+
+private:
+    virtual void apply();
+    float m_val[4];
+};
+
+class Matrix4fv : public Uniform {
+public:
+    static PassRefPtr<Parameter> create(GLint location, GLsizei, GLboolean transpose, GLfloat* array);
+
+protected:
+    Matrix4fv(GLint location, GLsizei length, GLboolean transpose, GLfloat* array);
+    ~Matrix4fv();
+
+private:
+    virtual void apply();
+    GLint m_location;
+    GLsizei m_size;
+    GLboolean m_transpose;
+    GLfloat* m_array;
+};
+
+class Buffer : public Parameter {
+public:
+    static PassRefPtr<Parameter> create(GLenum buffer, GLuint index);
+
+protected:
+    Buffer(GLenum buffer, GLuint index);
+
+private:
+    virtual void apply();
+    virtual void restoreState();
+    GLenum m_buffer;
+    GLuint m_object;
+};
+
+class VertexAttribf : public Parameter {
+public:
+    static PassRefPtr<Parameter> create(int location, int size, int bytesPerVertex, int offset);
+
+protected:
+    VertexAttribf(int location, int size, int bytesPerVertex, int offset);
+
+private:
+    virtual void apply();
+    virtual void restoreState();
+    int m_location;
+    int m_size;
+    int m_bytesPerVertex;
+    int m_offset;
 };
 
 class LayerFilterRendererAction : public RefCounted<LayerFilterRendererAction> {
@@ -102,15 +183,33 @@ public:
     bool shouldPopSnapshot() const { return m_popSnapshot; }
     void setPopSnapshot() { m_popSnapshot = true; }
 
-    void appendUniform(const RefPtr<Uniformf>& uniform) { m_uniforms.append(uniform); }
+    void appendParameter(const RefPtr<Parameter>& uniform) { m_parameters.append(uniform); }
     void useActionOn(LayerFilterRenderer*);
+    void restoreState();
+
+    enum DrawingMode {
+        DrawTriangleFanArrays = 0,
+        DrawTriangleElementsUShort0,
+        NumberOfDrawingModes
+    };
+
+    DrawingMode drawingMode() const { return m_drawingMode; }
+    void setDrawingMode(const DrawingMode& mode) { m_drawingMode = mode; }
+
+    int drawingModeParameter() const { return m_drawingModeParameter; }
+    void setDrawingModeParameter(int p) { m_drawingModeParameter = p; }
+
 
 protected:
     int m_programId;
     bool m_pushSnapshot;
     bool m_popSnapshot;
 
-    Vector<RefPtr<Uniformf> > m_uniforms;
+    Vector<RefPtr<Parameter> > m_parameters;
+
+    DrawingMode m_drawingMode;
+    int m_drawingModeParameter;
+
 private:
     LayerFilterRendererAction(int programId);
 };
