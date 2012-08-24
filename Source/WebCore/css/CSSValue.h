@@ -66,6 +66,9 @@ public:
 
     bool isPrimitiveValue() const { return m_classType == PrimitiveClass; }
     bool isValueList() const { return m_classType >= ValueListClass; }
+    
+    bool isBaseValueList() const { return m_classType == ValueListClass; }
+        
 
     bool isAspectRatioValue() const { return m_classType == AspectRatioClass; }
     bool isBorderImageSliceValue() const { return m_classType == BorderImageSliceClass; }

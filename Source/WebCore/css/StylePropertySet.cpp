@@ -330,7 +330,7 @@ String StylePropertySet::getLayeredShorthandValue(const StylePropertyShorthand& 
     for (unsigned i = 0; i < size; ++i) {
         values[i] = getPropertyCSSValue(shorthand.properties()[i]);
         if (values[i]) {
-            if (values[i]->isValueList()) {
+            if (values[i]->isBaseValueList()) {
                 CSSValueList* valueList = static_cast<CSSValueList*>(values[i].get());
                 numLayers = max(valueList->length(), numLayers);
             } else
@@ -349,7 +349,7 @@ String StylePropertySet::getLayeredShorthandValue(const StylePropertyShorthand& 
         for (unsigned j = 0; j < size; j++) {
             RefPtr<CSSValue> value;
             if (values[j]) {
-                if (values[j]->isValueList())
+                if (values[j]->isBaseValueList())
                     value = static_cast<CSSValueList*>(values[j].get())->item(i);
                 else {
                     value = values[j];
