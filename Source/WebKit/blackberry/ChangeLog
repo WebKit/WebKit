@@ -1,3 +1,27 @@
+2012-08-24  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Touch cancel can cause huge and needless invalidations
+        https://bugs.webkit.org/show_bug.cgi?id=94938
+        PR #198051
+
+        Reviewed by George Staikos.
+        Internally reviewed by Gen Mak.
+
+        In order to remove the possible hover effect on touch_cancel, we always
+        invalidate the node under the fat finger, being the fat finger valid or not.
+
+        Point is: having a valid fat finger node does not mean the original touch
+        position was actually adjust for clicking or that the fat finger is actually
+        valid. We set the fat finger node to be the result of the point-based hit-test
+        regardless if it is a click target or not (in order to make our mouse-move
+        machinery to work).
+
+        We should can less aggressively invalidate the fat finger node, since it can
+        be rather an expensive call (longer than 1s in the worst scenario).
+
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::touchEventCancel):
+
 2012-08-24  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Add WebPage API to reset block zoom

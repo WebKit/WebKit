@@ -135,8 +135,13 @@ void TouchEventHandler::touchEventCancel()
 
     // If we cancel a single touch event, we need to also clean up any hover
     // state we get into by synthetically moving the mouse to the m_fingerPoint.
-    Element* elementUnderFatFinger = m_lastFatFingersResult.nodeAsElementIfApplicable();
-    if (elementUnderFatFinger && elementUnderFatFinger->renderer()) {
+    Element* elementUnderFatFinger = m_lastFatFingersResult.positionWasAdjusted() ? m_lastFatFingersResult.nodeAsElementIfApplicable() : 0;
+    do {
+        if (!elementUnderFatFinger || !elementUnderFatFinger->renderer())
+            break;
+
+        if (!elementUnderFatFinger->renderer()->style()->affectedByHoverRules())
+            break;
 
         HitTestRequest request(HitTestRequest::FingerUp);
         // The HitTestResult point is not actually needed.
@@ -147,11 +152,14 @@ void TouchEventHandler::touchEventCancel()
         ASSERT(document);
         document->renderView()->layer()->updateHoverActiveState(request, result);
         document->updateStyleIfNeeded();
+
         // Updating the document style may destroy the renderer.
-        if (elementUnderFatFinger->renderer())
-            elementUnderFatFinger->renderer()->repaint();
+        if (!elementUnderFatFinger->renderer())
+            break;
+
+        elementUnderFatFinger->renderer()->repaint();
         ASSERT(!elementUnderFatFinger->hovered());
-    }
+    } while (0);
 
     m_lastFatFingersResult.reset();
 }
