@@ -272,6 +272,14 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
     return transaction(context, prpStoreNames, modeString, ec);
 }
 
+void IDBDatabase::forceClose()
+{
+    ExceptionCode ec = 0;
+    for (HashSet<IDBTransaction*>::iterator it = m_transactions.begin(); it != m_transactions.end(); ++it)
+        (*it)->abort(ec);
+    this->close();
+}
+
 void IDBDatabase::close()
 {
     if (m_closePending)

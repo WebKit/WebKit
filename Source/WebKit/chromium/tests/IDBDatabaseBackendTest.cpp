@@ -32,12 +32,17 @@
 #include "IDBIndexBackendImpl.h"
 #include "IDBObjectStoreBackendImpl.h"
 #include "IDBTransactionCoordinator.h"
+#include "WebIDBDatabaseCallbacksImpl.h"
+#include "WebIDBDatabaseImpl.h"
 
 #include <gtest/gtest.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 using namespace WebCore;
+using WebKit::WebIDBDatabase;
+using WebKit::WebIDBDatabaseCallbacksImpl;
+using WebKit::WebIDBDatabaseImpl;
 
 namespace {
 
@@ -101,6 +106,7 @@ public:
     virtual ~FakeIDBDatabaseCallbacks() { }
     virtual void onVersionChange(const String& version) OVERRIDE { }
     virtual void onVersionChange(int64_t oldVersion, int64_t newVersion) OVERRIDE { }
+    virtual void onForcedClose() OVERRIDE { }
 private:
     FakeIDBDatabaseCallbacks() { }
 };
@@ -131,6 +137,72 @@ TEST(IDBDatabaseBackendTest, ConnectionLifecycle)
     db->registerFrontendCallbacks(connection2);
 
     db->close(connection2);
+    EXPECT_TRUE(backingStore->hasOneRef());
+}
+
+class MockIDBDatabaseBackendProxy : public IDBDatabaseBackendInterface {
+public:
+    static PassRefPtr<MockIDBDatabaseBackendProxy> create(WebIDBDatabaseImpl& database)
+    {
+        return adoptRef(new MockIDBDatabaseBackendProxy(database));
+    }
+
+    ~MockIDBDatabaseBackendProxy()
+    {
+        EXPECT_TRUE(m_wasRegisterFrontendCallbacksCalled);
+    }
+
+    virtual IDBDatabaseMetadata metadata() const { return IDBDatabaseMetadata(); }
+    virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&) { return 0; }
+    virtual void deleteObjectStore(const String& name, IDBTransactionBackendInterface*, ExceptionCode&) { }
+    virtual void setVersion(const String& version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, ExceptionCode&) { }
+    virtual PassRefPtr<IDBTransactionBackendInterface> transaction(DOMStringList* storeNames, unsigned short mode, ExceptionCode&) { return 0; }
+
+    virtual void close(PassRefPtr<IDBDatabaseCallbacks>)
+    {
+        m_wasCloseCalled = true;
+        m_webDatabase.close();
+    }
+    virtual void registerFrontendCallbacks(PassRefPtr<IDBDatabaseCallbacks> connection)
+    {
+        m_wasRegisterFrontendCallbacksCalled = true;
+        m_webDatabase.open(new WebIDBDatabaseCallbacksImpl(connection));
+    }
+
+private:
+    MockIDBDatabaseBackendProxy(WebIDBDatabaseImpl& webDatabase)
+        : m_wasRegisterFrontendCallbacksCalled(false)
+        , m_wasCloseCalled(false)
+        , m_webDatabase(webDatabase) { }
+
+    bool m_wasRegisterFrontendCallbacksCalled;
+    bool m_wasCloseCalled;
+
+    WebIDBDatabaseImpl& m_webDatabase;
+};
+
+TEST(IDBDatabaseBackendTest, ForcedClose)
+{
+    RefPtr<IDBFakeBackingStore> backingStore = adoptRef(new IDBFakeBackingStore());
+    EXPECT_TRUE(backingStore->hasOneRef());
+
+    IDBTransactionCoordinator* coordinator = 0;
+    IDBFactoryBackendImpl* factory = 0;
+    RefPtr<IDBDatabaseBackendImpl> backend = IDBDatabaseBackendImpl::create("db", backingStore.get(), coordinator, factory, "uniqueid");
+    EXPECT_GT(backingStore->refCount(), 1);
+
+    WebIDBDatabaseImpl webDatabase(backend);
+
+    RefPtr<MockIDBCallbacks> request1 = MockIDBCallbacks::create();
+    backend->openConnection(request1);
+
+    RefPtr<MockIDBDatabaseBackendProxy> proxy = MockIDBDatabaseBackendProxy::create(webDatabase);
+
+    ScriptExecutionContext* context = 0;
+    RefPtr<IDBDatabase> idbDatabase = IDBDatabase::create(context, proxy);
+    idbDatabase->registerFrontendCallbacks();
+
+    webDatabase.forceClose();
     EXPECT_TRUE(backingStore->hasOneRef());
 }
 

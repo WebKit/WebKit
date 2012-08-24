@@ -99,8 +99,18 @@ void WebIDBDatabaseImpl::close()
         m_closePending = true;
         return;
     }
-    m_databaseBackend->close(m_databaseCallbacks);
-    m_databaseCallbacks = 0;
+    m_databaseBackend->close(m_databaseCallbacks.release());
+}
+
+void WebIDBDatabaseImpl::forceClose()
+{
+    if (!m_databaseCallbacks) {
+        m_closePending = true;
+        return;
+    }
+    RefPtr<IDBDatabaseCallbacksProxy> callbacks = m_databaseCallbacks.release();
+    m_databaseBackend->close(callbacks);
+    callbacks->onForcedClose();
 }
 
 void WebIDBDatabaseImpl::open(WebIDBDatabaseCallbacks* callbacks)

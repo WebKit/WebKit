@@ -130,6 +130,7 @@ public:
 
     virtual void onVersionChange(const String& version) { }
     virtual void onVersionChange(int64_t oldVersion, int64_t newVersion) { }
+    virtual void onForcedClose() { }
 private:
     InspectorIDBDatabaseCallbacks() { }
 };

@@ -44,6 +44,11 @@ WebIDBDatabaseCallbacksImpl::~WebIDBDatabaseCallbacksImpl()
 {
 }
 
+void WebIDBDatabaseCallbacksImpl::onForcedClose()
+{
+    m_callbacks->onForcedClose();
+}
+
 void WebIDBDatabaseCallbacksImpl::onVersionChange(long long oldVersion, long long newVersion)
 {
     m_callbacks->onVersionChange(oldVersion, newVersion);

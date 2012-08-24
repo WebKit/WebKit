@@ -46,6 +46,12 @@ IDBDatabaseCallbacksImpl::~IDBDatabaseCallbacksImpl()
 {
 }
 
+void IDBDatabaseCallbacksImpl::onForcedClose()
+{
+    if (m_database)
+        m_database->forceClose();
+}
+
 void IDBDatabaseCallbacksImpl::onVersionChange(const String& version)
 {
     if (m_database)

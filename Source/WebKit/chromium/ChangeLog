@@ -1,3 +1,37 @@
+2012-08-23  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Expose mechanism for database to force a connection to close
+        https://bugs.webkit.org/show_bug.cgi?id=91010
+
+        Reviewed by Tony Chang.
+
+        In Chromium, the browsing data deleter has a WebIDBDatabase handle which
+        it can use to terminate a connection. This handles forcefully closing
+        the front end connections and the back end, to unblock disk cleanup.
+
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::forceClose): Entry point.
+        * public/WebIDBDatabaseCallbacks.h:
+        (WebKit::WebIDBDatabaseCallbacks::onForcedClose): Plumbing back to front.
+        * src/IDBDatabaseCallbacksProxy.cpp:
+        (WebKit::IDBDatabaseCallbacksProxy::onForcedClose): Plumbing back to front.
+        (WebKit):
+        * src/IDBDatabaseCallbacksProxy.h:
+        (IDBDatabaseCallbacksProxy): Plumbing.
+        * src/WebIDBDatabaseCallbacksImpl.cpp:
+        (WebKit::WebIDBDatabaseCallbacksImpl::onForcedClose): Plumbing back to front.
+        (WebKit):
+        * src/WebIDBDatabaseCallbacksImpl.h:
+        (WebIDBDatabaseCallbacksImpl): Plumbing back to front.
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::close): Tidy up dropping the callback reference.
+        (WebKit):
+        (WebKit::WebIDBDatabaseImpl::forceClose): Terminate the connection by notifying
+        the back end and the front end, while avoid re-entrant badness.
+        * src/WebIDBDatabaseImpl.h: Header tweak for unit test.
+        (WebIDBDatabaseImpl):
+        * tests/IDBDatabaseBackendTest.cpp: Added unit test to exercise connections.
+
 2012-08-23  James Robinson  <jamesr@chromium.org>
 
         [chromium] Convert WebAnimationCurve subtypes into pure virtual

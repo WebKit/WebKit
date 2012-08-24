@@ -37,6 +37,7 @@ class IDBDatabaseCallbacks : public RefCounted<IDBDatabaseCallbacks> {
 public:
     virtual ~IDBDatabaseCallbacks() { }
 
+    virtual void onForcedClose() = 0;
     virtual void onVersionChange(const String& version) = 0;
     virtual void onVersionChange(int64_t oldVersion, int64_t newVersion) = 0;
 };

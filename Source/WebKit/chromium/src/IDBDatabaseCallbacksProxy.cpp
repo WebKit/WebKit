@@ -48,6 +48,11 @@ IDBDatabaseCallbacksProxy::~IDBDatabaseCallbacksProxy()
 {
 }
 
+void IDBDatabaseCallbacksProxy::onForcedClose()
+{
+    m_callbacks->onForcedClose();
+}
+
 void IDBDatabaseCallbacksProxy::onVersionChange(int64_t oldVersion, int64_t newVersion)
 {
     m_callbacks->onVersionChange(oldVersion, newVersion);
