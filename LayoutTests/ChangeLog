@@ -1,5 +1,23 @@
 2012-08-24  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Update test expectations. Patch by Mark Lam. Unreviewed.
+
+        * platform/mac-wk2/http/tests/loading: Added.
+        * platform/mac-wk2/http/tests/loading/embed-image-load-outlives-gc-without-crashing-expected.txt: Added.
+        * platform/mac-wk2/http/tests/loading/image-input-type-outlives-gc-without-crashing-expected.txt: Added.
+        * platform/mac-wk2/http/tests/loading/image-load-outlives-gc-without-crashing-expected.txt: Added.
+        * platform/mac-wk2/http/tests/loading/object-image-load-outlives-gc-without-crashing-expected.txt: Added.
+        * platform/mac-wk2/http/tests/loading/svg-image-load-outlives-gc-without-crashing-expected.txt: Added.
+        * platform/mac-wk2/http/tests/loading/video-poster-image-load-outlives-gc-without-crashing-expected.txt: Added.
+        * platform/mac/http/tests/loading/embed-image-load-outlives-gc-without-crashing-expected.txt: Added.
+        * platform/mac/http/tests/loading/image-input-type-outlives-gc-without-crashing-expected.txt: Added.
+        * platform/mac/http/tests/loading/image-load-outlives-gc-without-crashing-expected.txt: Added.
+        * platform/mac/http/tests/loading/object-image-load-outlives-gc-without-crashing-expected.txt: Added.
+        * platform/mac/http/tests/loading/svg-image-load-outlives-gc-without-crashing-expected.txt: Added.
+        * platform/mac/http/tests/loading/video-poster-image-load-outlives-gc-without-crashing-expected.txt: Added.
+
+2012-08-24  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Merge changes to test from r125162. Patch by Mark Lam.
 
         * fast/events/dom-character-data-modified-textarea-crash.html:
