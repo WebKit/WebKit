@@ -1,5 +1,26 @@
 2012-08-24  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
+        [EFL] Add baselines for the tests which are missing expected results
+        https://bugs.webkit.org/show_bug.cgi?id=94942
+
+        Unreviewed EFL gardening. Add platform specific baselines required
+        after r126343 and r126372.
+
+        * platform/efl/fast/overflow/paged-x-div-expected.png: Added.
+        * platform/efl/fast/overflow/paged-x-div-expected.txt: Added.
+        * platform/efl/fast/overflow/paged-x-on-root-expected.png: Added.
+        * platform/efl/fast/overflow/paged-x-on-root-expected.txt: Added.
+        * platform/efl/fast/overflow/paged-y-div-expected.png: Added.
+        * platform/efl/fast/overflow/paged-y-div-expected.txt: Added.
+        * platform/efl/fast/overflow/paged-y-on-root-expected.png: Added.
+        * platform/efl/fast/overflow/paged-y-on-root-expected.txt: Added.
+        * platform/efl/media/track/track-cue-rendering-horizontal-expected.png: Added.
+        * platform/efl/media/track/track-cue-rendering-horizontal-expected.txt: Added.
+        * platform/efl/media/track/track-cue-rendering-vertical-expected.png: Added.
+        * platform/efl/media/track/track-cue-rendering-vertical-expected.txt: Added.
+
+2012-08-24  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
         [EFL] fast/dom/navigator-vibration.html is failing after r126562
         https://bugs.webkit.org/show_bug.cgi?id=94939
 
