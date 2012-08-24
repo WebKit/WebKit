@@ -96,9 +96,8 @@ void ScheduledAction::execute(Frame* frame)
     TRACE_EVENT0("v8", "ScheduledAction::execute");
 #endif
 
-    v8::Handle<v8::Function> function = m_function.get();
-    if (!function.IsEmpty())
-        frame->script()->callFunction(function, context->Global(), m_args.size(), m_args.data());
+    if (!m_function.isEmpty())
+        frame->script()->callFunction(m_function.get(), context->Global(), m_args.size(), m_args.data());
     else
         frame->script()->compileAndRunScript(m_code);
 
@@ -112,15 +111,14 @@ void ScheduledAction::execute(WorkerContext* worker)
 
     V8RecursionScope recursionScope(worker);
 
-    v8::Handle<v8::Function> function = m_function.get();
-    if (!function.IsEmpty()) {
+    if (!m_function.isEmpty()) {
         v8::HandleScope handleScope;
 
         v8::Handle<v8::Context> context = v8::Local<v8::Context>::New(m_context.get());
         ASSERT(!context.IsEmpty());
         v8::Context::Scope scope(context);
 
-        function->Call(context->Global(), m_args.size(), m_args.data());
+        m_function->Call(context->Global(), m_args.size(), m_args.data());
     } else
         worker->script()->evaluate(m_code);
 }

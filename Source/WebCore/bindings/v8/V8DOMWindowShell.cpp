@@ -198,13 +198,13 @@ bool V8DOMWindowShell::isContextInitialized()
 {
     // m_context, m_global, and m_wrapperBoilerplates should
     // all be non-empty if if m_context is non-empty.
-    ASSERT(m_context.get().IsEmpty() || !m_global.get().IsEmpty());
-    return !m_context.get().IsEmpty();
+    ASSERT(m_context.isEmpty() || !m_global.isEmpty());
+    return !m_context.isEmpty();
 }
 
 void V8DOMWindowShell::disposeContextHandles()
 {
-    if (!m_context.get().IsEmpty()) {
+    if (!m_context.isEmpty()) {
         m_frame->loader()->client()->willReleaseScriptContext(m_context.get(), 0);
         m_context.clear();
 
@@ -225,7 +225,7 @@ void V8DOMWindowShell::destroyGlobal()
 
 void V8DOMWindowShell::clearForClose()
 {
-    if (m_context.get().IsEmpty())
+    if (m_context.isEmpty())
         return;
 
     v8::HandleScope handleScope;
@@ -235,7 +235,7 @@ void V8DOMWindowShell::clearForClose()
 
 void V8DOMWindowShell::clearForNavigation()
 {
-    if (m_context.get().IsEmpty())
+    if (m_context.isEmpty())
         return;
 
     v8::HandleScope handleScope;
@@ -252,7 +252,7 @@ void V8DOMWindowShell::clearForNavigation()
     v8::Handle<v8::Object> windowWrapper = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), m_global.get());
     ASSERT(!windowWrapper.IsEmpty());
     windowWrapper->TurnOnAccessCheck();
-    m_context.get()->DetachGlobal();
+    m_context->DetachGlobal();
     disposeContextHandles();
 }
 
@@ -293,7 +293,7 @@ void V8DOMWindowShell::clearForNavigation()
 // it won't be able to reach the outer window via its global object.
 bool V8DOMWindowShell::initContextIfNeeded()
 {
-    if (!m_context.get().IsEmpty())
+    if (!m_context.isEmpty())
         return true;
 
     v8::HandleScope handleScope;
@@ -301,15 +301,15 @@ bool V8DOMWindowShell::initContextIfNeeded()
     initializeV8IfNeeded();
 
     m_context.adopt(createNewContext(m_global.get(), 0, 0));
-    if (m_context.get().IsEmpty())
+    if (m_context.isEmpty())
         return false;
 
     v8::Local<v8::Context> context = v8::Local<v8::Context>::New(m_context.get());
     v8::Context::Scope contextScope(context);
 
-    if (m_global.get().IsEmpty()) {
+    if (m_global.isEmpty()) {
         m_global.set(context->Global());
-        if (m_global.get().IsEmpty()) {
+        if (m_global.isEmpty()) {
             disposeContextHandles();
             return false;
         }
@@ -415,7 +415,7 @@ void V8DOMWindowShell::updateDocumentWrapper(v8::Handle<v8::Object> wrapper)
 {
     clearDocumentWrapper();
 
-    ASSERT(m_document.get().IsEmpty());
+    ASSERT(m_document.isEmpty());
     m_document.set(wrapper);
 }
 
@@ -450,8 +450,8 @@ void V8DOMWindowShell::updateDocumentWrapperCache()
     }
 
     v8::Handle<v8::Value> documentWrapper = toV8(m_frame->document());
-    ASSERT(documentWrapper == m_document.get() || m_document.get().IsEmpty());
-    if (m_document.get().IsEmpty())
+    ASSERT(documentWrapper == m_document.get() || m_document.isEmpty());
+    if (m_document.isEmpty())
         updateDocumentWrapper(v8::Handle<v8::Object>::Cast(documentWrapper));
     checkDocumentWrapper(m_document.get(), m_frame->document());
 
@@ -462,19 +462,19 @@ void V8DOMWindowShell::updateDocumentWrapperCache()
         return;
     }
     ASSERT(documentWrapper->IsObject());
-    m_context.get()->Global()->ForceSet(v8::String::New("document"), documentWrapper, static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
+    m_context->Global()->ForceSet(v8::String::New("document"), documentWrapper, static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
 
     // We also stash a reference to the document on the real global object so that
     // DOMWindow objects we obtain from JavaScript references are guaranteed to have
     // live Document objects.
-    v8::Handle<v8::Object> v8RealGlobal = v8::Handle<v8::Object>::Cast(m_context.get()->Global()->GetPrototype());
+    v8::Handle<v8::Object> v8RealGlobal = v8::Handle<v8::Object>::Cast(m_context->Global()->GetPrototype());
     v8RealGlobal->SetHiddenValue(V8HiddenPropertyName::document(), documentWrapper);
 }
 
 void V8DOMWindowShell::clearDocumentWrapperCache()
 {
-    ASSERT(!m_context.get().IsEmpty());
-    m_context.get()->Global()->ForceDelete(v8::String::New("document"));
+    ASSERT(!m_context.isEmpty());
+    m_context->Global()->ForceDelete(v8::String::New("document"));
 }
 
 void V8DOMWindowShell::setSecurityToken()
@@ -483,7 +483,7 @@ void V8DOMWindowShell::setSecurityToken()
 
     // FIXME: This shouldn't be possible anymore.
     if (!document) {
-        m_context.get()->UseDefaultSecurityToken();
+        m_context->UseDefaultSecurityToken();
         return;
     }
 
@@ -503,14 +503,14 @@ void V8DOMWindowShell::setSecurityToken()
     // case, we use the global object as the security token to avoid
     // calling canAccess when a script accesses its own objects.
     if (token.isEmpty() || token == "null") {
-        m_context.get()->UseDefaultSecurityToken();
+        m_context->UseDefaultSecurityToken();
         return;
     }
 
     CString utf8Token = token.utf8();
     // NOTE: V8 does identity comparison in fast path, must use a symbol
     // as the security token.
-    m_context.get()->SetSecurityToken(v8::String::NewSymbol(utf8Token.data(), utf8Token.length()));
+    m_context->SetSecurityToken(v8::String::NewSymbol(utf8Token.data(), utf8Token.length()));
 }
 
 void V8DOMWindowShell::updateDocument()
@@ -519,7 +519,7 @@ void V8DOMWindowShell::updateDocument()
     if (!m_frame->document())
         return;
 
-    if (m_global.get().IsEmpty())
+    if (m_global.isEmpty())
         return;
 
     // There is an existing JavaScript wrapper for the global object
@@ -559,9 +559,9 @@ void V8DOMWindowShell::namedItemAdded(HTMLDocument* document, const AtomicString
     v8::HandleScope handleScope;
     v8::Context::Scope contextScope(m_context.get());
 
-    ASSERT(!m_document.get().IsEmpty());
+    ASSERT(!m_document.isEmpty());
     checkDocumentWrapper(m_document.get(), document);
-    m_document.get()->SetAccessor(v8String(name), getter);
+    m_document->SetAccessor(v8String(name), getter);
 }
 
 void V8DOMWindowShell::namedItemRemoved(HTMLDocument* document, const AtomicString& name)
@@ -575,14 +575,14 @@ void V8DOMWindowShell::namedItemRemoved(HTMLDocument* document, const AtomicStri
     v8::HandleScope handleScope;
     v8::Context::Scope contextScope(m_context.get());
 
-    ASSERT(!m_document.get().IsEmpty());
+    ASSERT(!m_document.isEmpty());
     checkDocumentWrapper(m_document.get(), document);
-    m_document.get()->Delete(v8String(name));
+    m_document->Delete(v8String(name));
 }
 
 void V8DOMWindowShell::updateSecurityOrigin()
 {
-    if (m_context.get().IsEmpty())
+    if (m_context.isEmpty())
         return;
     v8::HandleScope handleScope;
     setSecurityToken();

@@ -95,7 +95,7 @@ namespace WebCore {
 
         bool hasExistingListenerObject()
         {
-            return !m_listener.get().IsEmpty();
+            return !m_listener.isEmpty();
         }
 
         const WorldContextHandle& worldContext() const { return m_worldContext; }

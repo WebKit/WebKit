@@ -100,7 +100,7 @@ public:
 
     bool isFunction() const
     {
-        return m_value.get()->IsFunction();
+        return m_value->IsFunction();
     }
 
     bool operator!=(const ScriptValue& value) const
@@ -110,22 +110,22 @@ public:
 
     bool isNull() const
     {
-        return m_value.get()->IsNull();
+        return m_value->IsNull();
     }
 
     bool isUndefined() const
     {
-        return m_value.get()->IsUndefined();
+        return m_value->IsUndefined();
     }
 
     bool isObject() const
     {
-        return m_value.get()->IsObject();
+        return m_value->IsObject();
     }
 
     bool hasNoValue() const
     {
-        return m_value.get().IsEmpty();
+        return m_value.isEmpty();
     }
 
     PassRefPtr<SerializedScriptValue> serialize(ScriptState*);

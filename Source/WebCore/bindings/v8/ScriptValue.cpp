@@ -64,10 +64,10 @@ ScriptValue ScriptValue::deserialize(ScriptState* scriptState, SerializedScriptV
 
 bool ScriptValue::getString(String& result) const
 {
-    if (m_value.get().IsEmpty())
+    if (m_value.isEmpty())
         return false;
 
-    if (!m_value.get()->IsString())
+    if (!m_value->IsString())
         return false;
 
     result = toWebCoreString(m_value.get());
@@ -77,7 +77,7 @@ bool ScriptValue::getString(String& result) const
 String ScriptValue::toString(ScriptState*) const
 {
     v8::TryCatch block;
-    v8::Handle<v8::String> string = m_value.get()->ToString();
+    v8::Handle<v8::String> string = m_value->ToString();
     if (block.HasCaught())
         return String();
     return v8StringToWebCoreString<String>(string, DoNotExternalize);

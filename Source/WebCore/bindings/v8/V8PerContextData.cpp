@@ -87,8 +87,8 @@ bool V8PerContextData::init()
 
 v8::Local<v8::Object> V8PerContextData::createWrapperFromCacheSlowCase(WrapperTypeInfo* type)
 {
-    ASSERT(!m_errorPrototype.get().IsEmpty());
-    ASSERT(!m_objectPrototype.get().IsEmpty());
+    ASSERT(!m_errorPrototype.isEmpty());
+    ASSERT(!m_objectPrototype.isEmpty());
 
     v8::Context::Scope scope(m_context);
     v8::Local<v8::Function> function = constructorForType(type);
@@ -102,8 +102,8 @@ v8::Local<v8::Object> V8PerContextData::createWrapperFromCacheSlowCase(WrapperTy
 
 v8::Local<v8::Function> V8PerContextData::constructorForTypeSlowCase(WrapperTypeInfo* type)
 {
-    ASSERT(!m_errorPrototype.get().IsEmpty());
-    ASSERT(!m_objectPrototype.get().IsEmpty());
+    ASSERT(!m_errorPrototype.isEmpty());
+    ASSERT(!m_objectPrototype.isEmpty());
 
     v8::Context::Scope scope(m_context);
     v8::Handle<v8::FunctionTemplate> functionTemplate = type->getTemplate();

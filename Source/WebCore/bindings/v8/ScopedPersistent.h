@@ -52,7 +52,10 @@ public:
         clear();
     }
 
-    v8::Persistent<T> get() const { return m_handle; }
+    ALWAYS_INLINE v8::Persistent<T> get() const { return m_handle; }
+    ALWAYS_INLINE v8::Persistent<T> operator->() const { return m_handle; }
+
+    bool isEmpty() const { return m_handle.IsEmpty(); }
 
     void set(v8::Handle<T> handle)
     {

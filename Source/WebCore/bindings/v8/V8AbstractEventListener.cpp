@@ -65,7 +65,7 @@ V8AbstractEventListener::V8AbstractEventListener(bool isAttribute, const WorldCo
 
 V8AbstractEventListener::~V8AbstractEventListener()
 {
-    if (!m_listener.get().IsEmpty()) {
+    if (!m_listener.isEmpty()) {
         v8::HandleScope scope;
         V8EventListenerList::clearWrapper(v8::Local<v8::Object>::New(m_listener.get()), m_isAttribute);
     }
@@ -184,7 +184,7 @@ bool V8AbstractEventListener::shouldPreventDefault(v8::Local<v8::Value> returnVa
 
 v8::Local<v8::Object> V8AbstractEventListener::getReceiverObject(Event* event)
 {
-    if (!m_listener.get().IsEmpty() && !m_listener.get()->IsFunction())
+    if (!m_listener.isEmpty() && !m_listener->IsFunction())
         return v8::Local<v8::Object>::New(m_listener.get());
 
     EventTarget* target = event->currentTarget();
