@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -84,9 +84,6 @@ DatabaseTracker::DatabaseTracker(const String& databasePath)
     setDatabaseDirectoryPath(databasePath);
     
     SQLiteFileSystem::registerSQLiteVFS();
-
-    MutexLocker lockDatabase(m_databaseGuard);
-    populateOrigins();
 }
 
 void DatabaseTracker::setDatabaseDirectoryPath(const String& path)
@@ -194,6 +191,7 @@ bool DatabaseTracker::canEstablishDatabase(ScriptExecutionContext* context, cons
 bool DatabaseTracker::hasEntryForOriginNoLock(SecurityOrigin* origin)
 {
     ASSERT(!m_databaseGuard.tryLock());
+    populateOriginsIfNeeded();
     ASSERT(m_quotaMap);
     return m_quotaMap->contains(origin);
 }
@@ -332,7 +330,7 @@ String DatabaseTracker::fullPathForDatabase(SecurityOrigin* origin, const String
     return fullPathForDatabaseNoLock(origin, name, createIfNotExists).isolatedCopy();
 }
 
-void DatabaseTracker::populateOrigins()
+void DatabaseTracker::populateOriginsIfNeeded()
 {
     ASSERT(!m_databaseGuard.tryLock());
     if (m_quotaMap)
@@ -364,6 +362,7 @@ void DatabaseTracker::populateOrigins()
 void DatabaseTracker::origins(Vector<RefPtr<SecurityOrigin> >& result)
 {
     MutexLocker lockDatabase(m_databaseGuard);
+    populateOriginsIfNeeded();
     ASSERT(m_quotaMap);
     copyKeysToVector(*m_quotaMap, result);
 }
@@ -645,6 +644,7 @@ unsigned long long DatabaseTracker::usageForOrigin(SecurityOrigin* origin)
 unsigned long long DatabaseTracker::quotaForOriginNoLock(SecurityOrigin* origin)
 {
     ASSERT(!m_databaseGuard.tryLock());
+    populateOriginsIfNeeded();
     ASSERT(m_quotaMap);
     return m_quotaMap->get(origin);
 }
@@ -705,10 +705,11 @@ void DatabaseTracker::setQuota(SecurityOrigin* origin, unsigned long long quota)
 bool DatabaseTracker::addDatabase(SecurityOrigin* origin, const String& name, const String& path)
 {
     ASSERT(!m_databaseGuard.tryLock());
-    ASSERT(m_quotaMap);
     openTrackerDatabase(true);
     if (!m_database.isOpen())
         return false;
+    populateOriginsIfNeeded();
+    ASSERT(m_quotaMap);
 
     // New database should never be added until the origin has been established
     ASSERT(hasEntryForOriginNoLock(origin));
@@ -805,6 +806,7 @@ bool DatabaseTracker::deleteOrigin(SecurityOrigin* origin)
 
         SQLiteFileSystem::deleteEmptyDatabaseDirectory(originPath(origin));
 
+        populateOriginsIfNeeded();
         RefPtr<SecurityOrigin> originPossiblyLastReference = origin;
         m_quotaMap->remove(origin);
 

@@ -125,7 +125,7 @@ private:
     bool hasEntryForDatabase(SecurityOrigin*, const String& databaseIdentifier);
 
     bool addDatabase(SecurityOrigin*, const String& name, const String& path);
-    void populateOrigins();
+    void populateOriginsIfNeeded();
 
     bool deleteDatabaseFile(SecurityOrigin*, const String& name);
 
