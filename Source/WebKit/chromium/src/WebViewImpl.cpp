@@ -1159,6 +1159,9 @@ Node* WebViewImpl::bestTouchLinkNode(IntPoint touchEventLocation)
 
 void WebViewImpl::enableTouchHighlight(IntPoint touchEventLocation)
 {
+    // Always clear any existing highlight when this is invoked, even if we don't get a new target to highlight.
+    m_linkHighlight.clear();
+
     Node* touchNode = bestTouchLinkNode(touchEventLocation);
 
     if (!touchNode || !touchNode->renderer() || !touchNode->renderer()->enclosingLayer())
@@ -1171,7 +1174,6 @@ void WebViewImpl::enableTouchHighlight(IntPoint touchEventLocation)
     if (!highlightColor.alpha())
         return;
 
-    // This will clear any highlight currently being displayed.
     m_linkHighlight = LinkHighlight::create(touchNode, this);
     m_linkHighlight->startHighlightAnimation();
 }

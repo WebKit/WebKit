@@ -1,3 +1,16 @@
+2012-08-24  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] WebViewImpl::enableTouchHighlight() should always clear any existing highlight when invoked.
+        https://bugs.webkit.org/show_bug.cgi?id=94978
+
+        Reviewed by James Robinson.
+
+        Modified WebViewImpl::enableTouchHighlight() so it always clears any existing highlight, even if no new
+        highlight target is found.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::enableTouchHighlight):
+
 2012-08-23  James Robinson  <jamesr@chromium.org>
 
         [chromium] Convert WebLayerTreeView interface into pure virtual

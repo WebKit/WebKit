@@ -1,3 +1,17 @@
+2012-08-24  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] WebViewImpl::enableTouchHighlight() should always clear any existing highlight when invoked.
+        https://bugs.webkit.org/show_bug.cgi?id=94978
+
+        Reviewed by James Robinson.
+
+        Modified WebViewImpl::enableTouchHighlight() so it always clears any existing highlight, even if no new
+        highlight target is found.
+
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-cancel.html: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-cancel-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-cancel-expected.txt: Added.
+
 2012-08-24  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed rebaseline after r126622.
