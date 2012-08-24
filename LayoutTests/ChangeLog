@@ -1,3 +1,11 @@
+2012-08-24  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        Narrow expected failures to Linux.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-23  Yoshifumi Inoue <yosin@chromium.org>
 
         [Chromium] REGRESSION(r126534) time-multiple-fields-appearance-pseudo-elements.html failing on Win7
