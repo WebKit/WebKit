@@ -1,3 +1,22 @@
+2012-08-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        More unreviewed Chromium rebaselining.
+
+        * fast/repaint/bugzilla-6473-expected.txt: Added.
+        * platform/chromium-linux/fast/repaint/bugzilla-6473-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/bugzilla-6473-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/bugzilla-6473-expected.png: Added.
+        * platform/chromium-win/fast/repaint/bugzilla-6473-expected.png: Added.
+        * platform/chromium-win/fast/repaint/bugzilla-6473-expected.txt: Added.
+        * platform/efl/fast/repaint/bugzilla-6473-expected.txt: Removed.
+        * platform/gtk/fast/repaint/bugzilla-6473-expected.txt: Removed.
+        Rebaseline this test as it was deflaked by Simon in r79661. The new baseline
+        matches Mac and Mitz's expectations (see bug 21536).
+
+        * platform/chromium/TestExpectations:
+        Removed fast/repaint/bugzilla-6473.html now that it's rebaselined.
+        Removed fast/table/frame-and-rules.html as it hasn't been failing for a week.
+
 2012-08-24  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] WebViewImpl::enableTouchHighlight() should always clear any existing highlight when invoked.

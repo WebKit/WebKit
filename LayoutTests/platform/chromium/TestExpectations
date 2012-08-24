@@ -923,13 +923,6 @@ BUGWK66377 : fast/dom/StyleSheet/gc-parent-rule.html = TEXT
 BUGWK66377 : fast/dom/StyleSheet/gc-parent-stylesheet.html = TEXT
 BUGWK66377 : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEXT
 
-// These tests don't work with fast timers due to setTimeout
-// races. See https://bugs.webkit.org/show_bug.cgi?id=21536
-// We currently match upstream except for font differences, but we should
-// probably rewrite the test as suggested in the webkit bug.
-BUGCR24195 LINUX ANDROID WIN : fast/repaint/bugzilla-6473.html = IMAGE+TEXT
-BUGCR24195 MAC : fast/repaint/bugzilla-6473.html = IMAGE
-
 // Implement testRunner.display()
 BUGCR8630 LINUX ANDROID WIN : fast/repaint/body-background-image.html = IMAGE IMAGE+TEXT
 
@@ -2373,9 +2366,6 @@ BUGCR79241 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEX
 
 // Regression caused by r83669. Seems to be V8 related.
 BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = PASS TEXT
-
-// Flaky, perhaps Skia related.
-BUGCR79851 LINUX ANDROID : fast/table/frame-and-rules.html = PASS TEXT
 
 BUGCR79857 DEBUG : fast/events/popup-blocking-timers.html = PASS TEXT
 
