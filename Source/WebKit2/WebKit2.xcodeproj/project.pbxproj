@@ -440,6 +440,7 @@
 		51FA2D7715212E2600C1BA0B /* WKBundleDOMWindowExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FA2D7515212E1E00C1BA0B /* WKBundleDOMWindowExtension.cpp */; };
 		5272B28A1406985D0096A5D0 /* StatisticsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5272B2881406985D0096A5D0 /* StatisticsData.cpp */; };
 		5272B28B1406985D0096A5D0 /* StatisticsData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5272B2891406985D0096A5D0 /* StatisticsData.h */; };
+		5D1A239115E75B220023E981 /* webkit2 in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = 5D1A238E15E75AD50023E981 /* webkit2 */; };
 		5D51845513BCF9CC00C7FF4A /* APIClientTraits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D51845313BCF9CC00C7FF4A /* APIClientTraits.cpp */; };
 		5D51845613BCF9CC00C7FF4A /* APIClientTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D51845413BCF9CC00C7FF4A /* APIClientTraits.h */; };
 		5DA6ED0A1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA6ED081490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h */; };
@@ -862,8 +863,6 @@
 		C0CE72A01247E71D00BC0EC4 /* WebPageMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0CE729E1247E71D00BC0EC4 /* WebPageMessageReceiver.cpp */; };
 		C0CE72A11247E71D00BC0EC4 /* WebPageMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = C0CE729F1247E71D00BC0EC4 /* WebPageMessages.h */; };
 		C0CE72AD1247E78D00BC0EC4 /* HandleMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = C0CE72AC1247E78D00BC0EC4 /* HandleMessage.h */; };
-		C0D04E9013EC759E0041EFD6 /* model.py in Headers */ = {isa = PBXBuildFile; fileRef = C0D04E8313EC74940041EFD6 /* model.py */; settings = {ATTRIBUTES = (Private, ); }; };
-		C0D04E9113EC759E0041EFD6 /* parser.py in Headers */ = {isa = PBXBuildFile; fileRef = C0D04E8413EC74940041EFD6 /* parser.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0D74DDE133BE2D90089CD44 /* LayerTreeHostCA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C098A054133BE1C500B199A4 /* LayerTreeHostCA.cpp */; };
 		C0E3AA7A1209E83000A49D01 /* ModuleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0E3AA481209E45000A49D01 /* ModuleMac.mm */; };
 		C0E3AA7B1209E83500A49D01 /* Module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E3AA451209E2BA00A49D01 /* Module.cpp */; };
@@ -1015,6 +1014,17 @@
 				5183B3921379F7B800E8754E /* WebProcessShim.dylib in Copy Web Process Shim */,
 			);
 			name = "Copy Web Process Shim";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5D1A239015E75B100023E981 /* Copy Message Generation Scripts */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = PrivateHeaders;
+			dstSubfolderSpec = 1;
+			files = (
+				5D1A239115E75B220023E981 /* webkit2 in Copy Message Generation Scripts */,
+			);
+			name = "Copy Message Generation Scripts";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BCA8D46B15BCE33C009DC1F1 /* CopyFiles */ = {
@@ -1489,6 +1499,7 @@
 		51FA2D7515212E1E00C1BA0B /* WKBundleDOMWindowExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleDOMWindowExtension.cpp; sourceTree = "<group>"; };
 		5272B2881406985D0096A5D0 /* StatisticsData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StatisticsData.cpp; sourceTree = "<group>"; };
 		5272B2891406985D0096A5D0 /* StatisticsData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatisticsData.h; sourceTree = "<group>"; };
+		5D1A238E15E75AD50023E981 /* webkit2 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = webkit2; sourceTree = "<group>"; };
 		5D51845313BCF9CC00C7FF4A /* APIClientTraits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIClientTraits.cpp; sourceTree = "<group>"; };
 		5D51845413BCF9CC00C7FF4A /* APIClientTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIClientTraits.h; sourceTree = "<group>"; };
 		5DA6ED081490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicLinkerEnvironmentExtractor.h; sourceTree = "<group>"; };
@@ -1931,7 +1942,6 @@
 		C03A136B133BEBF900D767D1 /* LayerTreeHostCAMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayerTreeHostCAMac.mm; sourceTree = "<group>"; };
 		C06C6093124C14430001682F /* WebPageCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageCreationParameters.cpp; sourceTree = "<group>"; };
 		C06C6094124C14430001682F /* WebPageCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageCreationParameters.h; sourceTree = "<group>"; };
-		C08FDE87124A851C007645BD /* messages_unittest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = messages_unittest.py; sourceTree = "<group>"; };
 		C098A053133BE1C500B199A4 /* LayerTreeHostCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerTreeHostCA.h; sourceTree = "<group>"; };
 		C098A054133BE1C500B199A4 /* LayerTreeHostCA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayerTreeHostCA.cpp; sourceTree = "<group>"; };
 		C09AE5E8125257C20025825D /* WKNativeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNativeEvent.h; sourceTree = "<group>"; };
@@ -1942,10 +1952,6 @@
 		C0CE72DB1247E8F700BC0EC4 /* DerivedSources.make */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DerivedSources.make; sourceTree = "<group>"; };
 		C0CE73361247F70E00BC0EC4 /* generate-message-receiver.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "generate-message-receiver.py"; sourceTree = "<group>"; };
 		C0CE73371247F70E00BC0EC4 /* generate-messages-header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "generate-messages-header.py"; sourceTree = "<group>"; };
-		C0CE73391247F70E00BC0EC4 /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
-		C0CE734612480B7D00BC0EC4 /* messages.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = messages.py; sourceTree = "<group>"; };
-		C0D04E8313EC74940041EFD6 /* model.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = model.py; sourceTree = "<group>"; };
-		C0D04E8413EC74940041EFD6 /* parser.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = parser.py; sourceTree = "<group>"; };
 		C0E3AA441209E2BA00A49D01 /* Module.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Module.h; sourceTree = "<group>"; };
 		C0E3AA451209E2BA00A49D01 /* Module.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Module.cpp; sourceTree = "<group>"; };
 		C0E3AA481209E45000A49D01 /* ModuleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModuleMac.mm; sourceTree = "<group>"; };
@@ -3722,7 +3728,7 @@
 		C0CE73351247F70E00BC0EC4 /* Scripts */ = {
 			isa = PBXGroup;
 			children = (
-				C0CE73381247F70E00BC0EC4 /* webkit2 */,
+				5D1A238E15E75AD50023E981 /* webkit2 */,
 				C0CE73361247F70E00BC0EC4 /* generate-message-receiver.py */,
 				C0CE73371247F70E00BC0EC4 /* generate-messages-header.py */,
 			);
@@ -3730,18 +3736,6 @@
 			sourceTree = "<group>";
 			tabWidth = 8;
 			usesTabs = 0;
-		};
-		C0CE73381247F70E00BC0EC4 /* webkit2 */ = {
-			isa = PBXGroup;
-			children = (
-				C0CE73391247F70E00BC0EC4 /* __init__.py */,
-				C0CE734612480B7D00BC0EC4 /* messages.py */,
-				C08FDE87124A851C007645BD /* messages_unittest.py */,
-				C0D04E8313EC74940041EFD6 /* model.py */,
-				C0D04E8413EC74940041EFD6 /* parser.py */,
-			);
-			path = webkit2;
-			sourceTree = "<group>";
 		};
 		CD73BA3D131A2A2100EEDED2 /* FullScreen */ = {
 			isa = PBXGroup;
@@ -3891,7 +3885,6 @@
 				1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */,
 				BC032DAC10F437D10058C15A /* MessageID.h in Headers */,
 				1A119A95127B796200A9ECB1 /* MessageSender.h in Headers */,
-				C0D04E9013EC759E0041EFD6 /* model.py in Headers */,
 				C0E3AA7C1209E83C00A49D01 /* Module.h in Headers */,
 				BCB0AD34122F285800B1341E /* MutableArray.h in Headers */,
 				BCB0AEE9122F53E300B1341E /* MutableDictionary.h in Headers */,
@@ -3915,7 +3908,6 @@
 				BC6EDAA6111271C600E7678B /* PageClient.h in Headers */,
 				BC111B50112F619200337BAB /* PageClientImpl.h in Headers */,
 				1A90C23712650717003E44D4 /* PageOverlay.h in Headers */,
-				C0D04E9113EC759E0041EFD6 /* parser.py in Headers */,
 				C574A58112E66681002DFE98 /* PasteboardTypes.h in Headers */,
 				1AAF061412B01131008E49E2 /* PDFViewController.h in Headers */,
 				BCF505E71243047B005955AE /* PlatformCertificateInfo.h in Headers */,
@@ -4312,6 +4304,8 @@
 			buildPhases = (
 				8DC2EF500486A6940098B216 /* Headers */,
 				8DC2EF520486A6940098B216 /* Resources */,
+				5D1A239015E75B100023E981 /* Copy Message Generation Scripts */,
+				5D1A239215E760590023E981 /* Remove Compiled Python Files */,
 				8DC2EF540486A6940098B216 /* Sources */,
 				8DC2EF560486A6940098B216 /* Frameworks */,
 				5DF408C0131DD37C00130071 /* Check For Global Initializers */,
@@ -4456,6 +4450,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names WK || exit $?\nfi";
+		};
+		5D1A239215E760590023E981 /* Remove Compiled Python Files */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Remove Compiled Python Files";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "find \"${BUILT_PRODUCTS_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}\" -name '*.pyc' -delete";
 		};
 		5DF408C0131DD37C00130071 /* Check For Global Initializers */ = {
 			isa = PBXShellScriptBuildPhase;

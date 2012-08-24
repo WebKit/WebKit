@@ -1,3 +1,17 @@
+2012-08-24  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/94910> Copy the entire webkit2 module in to the WebKit2 framework wrapper.
+
+        Reviewed by Dan Bernstein.
+
+        This will allow relative imports within the webkit2 module to be removed in the future without
+        requiring future changes to clients of the module.
+
+        * WebKit2.xcodeproj/project.pbxproj: Remove the webkit2 group from the project, and add it back
+        as a folder reference. This allows the directory and its contents to be copied in to the PrivateHeaders
+        directory. We also need to add a script phase to clean up any .pyc files that may be present in
+        the module.
+
 2012-08-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126542.
