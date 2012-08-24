@@ -84,6 +84,24 @@ static inline Ewk_Back_Forward_List_Item* addItemToWrapperCache(const Ewk_Back_F
     return item;
 }
 
+static inline Eina_List* createEinaList(const Ewk_Back_Forward_List* list, WKArrayRef wkList)
+{
+    if (!wkList)
+        return 0;
+
+    Eina_List* result = 0;
+
+    const size_t count = WKArrayGetSize(wkList);
+    for (size_t i = 0; i < count; ++i) {
+        WKBackForwardListItemRef wkItem = static_cast<WKBackForwardListItemRef>(WKArrayGetItemAtIndex(wkList, i));
+        Ewk_Back_Forward_List_Item* item = addItemToWrapperCache(list, wkItem);
+        ewk_back_forward_list_item_ref(item);
+        result = eina_list_append(result, item);
+    }
+
+    return result;
+}
+
 Ewk_Back_Forward_List_Item* ewk_back_forward_list_current_item_get(const Ewk_Back_Forward_List* list)
 {
     EWK_BACK_FORWARD_LIST_WK_GET_OR_RETURN(list, wkList, 0);
@@ -121,6 +139,29 @@ unsigned ewk_back_forward_list_count(Ewk_Back_Forward_List* list)
     return WKBackForwardListGetBackListCount(wkList) + WKBackForwardListGetForwardListCount(wkList) + currentItem;
 }
 
+Eina_List* ewk_back_forward_list_n_back_items_copy(const Ewk_Back_Forward_List* list, int limit)
+{
+    EWK_BACK_FORWARD_LIST_WK_GET_OR_RETURN(list, wkList, 0);
+
+    if (limit == -1)
+        limit = WKBackForwardListGetBackListCount(wkList);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(limit >= 0, 0);
+    WKRetainPtr<WKArrayRef> backList(AdoptWK, WKBackForwardListCopyBackListWithLimit(wkList, limit));
+
+    return createEinaList(list, backList.get());
+}
+
+Eina_List* ewk_back_forward_list_n_forward_items_copy(const Ewk_Back_Forward_List* list, int limit)
+{
+    EWK_BACK_FORWARD_LIST_WK_GET_OR_RETURN(list, wkList, 0);
+
+    if (limit == -1)
+        limit = WKBackForwardListGetForwardListCount(wkList);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(limit >= 0, 0);
+    WKRetainPtr<WKArrayRef> forwardList(AdoptWK, WKBackForwardListCopyForwardListWithLimit(wkList, limit));
+
+    return createEinaList(list, forwardList.get());
+}
 
 /**
  * @internal

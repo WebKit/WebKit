@@ -41,6 +41,7 @@ extern EWK2UnitTestEnvironment* environment;
 
 static const char title1[] = "Page1";
 static const char title2[] = "Page2";
+static const char title3[] = "Page3";
 
 static void serverCallbackNavigation(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
@@ -76,6 +77,13 @@ static inline WKEinaSharedString urlFromTitle(EWK2UnitTestServer* httpServer, co
     eina_strbuf_free(path);
 
     return res;
+}
+
+static inline void freeEinaList(Eina_List* list)
+{
+    void* data = 0;
+    EINA_LIST_FREE(list, data)
+        ewk_back_forward_list_item_unref(static_cast<Ewk_Back_Forward_List_Item*>(data));
 }
 
 TEST_F(EWK2UnitTestBase, ewk_back_forward_list_current_item_get)
@@ -180,4 +188,84 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_count)
     ASSERT_TRUE(backForwardList);
 
     EXPECT_EQ(ewk_back_forward_list_count(backForwardList), 2);
+}
+
+TEST_F(EWK2UnitTestBase, ewk_back_forward_list_n_back_items_copy)
+{
+    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    httpServer->run(serverCallbackNavigation);
+
+    WKEinaSharedString url1 = urlFromTitle(httpServer.get(), title1);
+    loadUrlSync(url1);
+    ASSERT_STREQ(ewk_view_title_get(webView()), title1);
+
+    WKEinaSharedString url2 = urlFromTitle(httpServer.get(), title2);
+    loadUrlSync(url2);
+    ASSERT_STREQ(ewk_view_title_get(webView()), title2);
+
+    loadUrlSync(urlFromTitle(httpServer.get(), title3));
+    ASSERT_STREQ(ewk_view_title_get(webView()), title3);
+
+    Ewk_Back_Forward_List* backForwardList = ewk_view_back_forward_list_get(webView());
+    ASSERT_TRUE(backForwardList);
+
+    Eina_List* backList = ewk_back_forward_list_n_back_items_copy(backForwardList, 1);
+    ASSERT_TRUE(backList);
+    ASSERT_EQ(eina_list_count(backList), 1);
+    checkItem(static_cast<Ewk_Back_Forward_List_Item*>(eina_list_nth(backList, 0)), title2, url2, url2);
+    freeEinaList(backList);
+
+    // Check '0' limit.
+    backList = ewk_back_forward_list_n_back_items_copy(backForwardList, 0);
+    ASSERT_FALSE(backList);
+
+    backList = ewk_back_forward_list_n_back_items_copy(backForwardList, -1);
+    ASSERT_TRUE(backList);
+    ASSERT_EQ(eina_list_count(backList), 2);
+    checkItem(static_cast<Ewk_Back_Forward_List_Item*>(eina_list_nth(backList, 0)), title1, url1, url1);
+    checkItem(static_cast<Ewk_Back_Forward_List_Item*>(eina_list_nth(backList, 1)), title2, url2, url2);
+    freeEinaList(backList);
+}
+
+TEST_F(EWK2UnitTestBase, ewk_back_forward_list_n_forward_items_copy)
+{
+    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    httpServer->run(serverCallbackNavigation);
+
+    loadUrlSync(urlFromTitle(httpServer.get(), title1));
+    ASSERT_STREQ(ewk_view_title_get(webView()), title1);
+
+    WKEinaSharedString url2 = urlFromTitle(httpServer.get(), title2);
+    loadUrlSync(url2);
+    ASSERT_STREQ(ewk_view_title_get(webView()), title2);
+
+    WKEinaSharedString url3 = urlFromTitle(httpServer.get(), title3);
+    loadUrlSync(url3);
+    ASSERT_STREQ(ewk_view_title_get(webView()), title3);
+
+    // Go back to Page1.
+    ewk_view_back(webView());
+    waitUntilTitleChangedTo(title2);
+    ewk_view_back(webView());
+    waitUntilTitleChangedTo(title1);
+
+    Ewk_Back_Forward_List* backForwardList = ewk_view_back_forward_list_get(webView());
+    ASSERT_TRUE(backForwardList);
+
+    Eina_List* forwardList = ewk_back_forward_list_n_forward_items_copy(backForwardList, 1);
+    ASSERT_TRUE(forwardList);
+    ASSERT_EQ(eina_list_count(forwardList), 1);
+    checkItem(static_cast<Ewk_Back_Forward_List_Item*>(eina_list_nth(forwardList, 0)), title2, url2, url2);
+    freeEinaList(forwardList);
+
+    // Check '0' limit.
+    forwardList = ewk_back_forward_list_n_forward_items_copy(backForwardList, 0);
+    ASSERT_FALSE(forwardList);
+
+    forwardList = ewk_back_forward_list_n_forward_items_copy(backForwardList, -1);
+    ASSERT_TRUE(forwardList);
+    ASSERT_EQ(eina_list_count(forwardList), 2);
+    checkItem(static_cast<Ewk_Back_Forward_List_Item*>(eina_list_nth(forwardList, 0)), title2, url2, url2);
+    checkItem(static_cast<Ewk_Back_Forward_List_Item*>(eina_list_nth(forwardList, 1)), title3, url3, url3);
+    freeEinaList(forwardList);
 }

@@ -1,3 +1,23 @@
+2012-08-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Back-forward list API needs extension
+        https://bugs.webkit.org/show_bug.cgi?id=94582
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added several new functions wrapping existing WK2 C back-forward list API
+        and returning list of items preceding or following the current one.
+        Corresponding API unit tests are also added.
+
+        * UIProcess/API/efl/ewk_back_forward_list.cpp:
+        (createEinaList):
+        (ewk_back_forward_list_n_back_items_copy):
+        (ewk_back_forward_list_n_forward_items_copy):
+        * UIProcess/API/efl/ewk_back_forward_list.h:
+        * UIProcess/API/efl/tests/test_ewk2_back_forward_list.cpp:
+        (freeEinaList):
+        (TEST_F):
+
 2012-08-24  Michael Brüning  <michaelbruening@gmail.com>
 
         [Qt][WK2] Make viewport related experimental.test properties encapsulated.
