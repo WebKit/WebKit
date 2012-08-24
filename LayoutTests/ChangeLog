@@ -1,3 +1,16 @@
+2012-08-24  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] fast/dom/navigator-vibration.html is failing after r126562
+        https://bugs.webkit.org/show_bug.cgi?id=94939
+
+        Reviewed by Kentaro Hara.
+
+        Update expected results for fast/dom/navigator-vibration.html now that
+        NotEnoughArguments is thrown instead of TypeError if the actual argument
+        count is less than the least mandatory argument count.
+
+        * fast/dom/navigator-vibration-expected.txt:
+
 2012-08-24  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in RenderTableCell::borderTop() due to custom scrollbars after r124168

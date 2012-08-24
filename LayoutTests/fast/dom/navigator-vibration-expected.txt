@@ -8,7 +8,7 @@ PASS navigator.vibrate([]); is undefined
 PASS navigator.vibrate(1000); is undefined
 PASS navigator.vibrate([1000, 300, 500]); is undefined
 PASS navigator.vibrate(4294967295); is undefined
-PASS navigator.vibrate(); threw exception TypeError: Type error.
+PASS navigator.vibrate(); threw exception TypeError: Not enough arguments.
 PASS successfullyParsed is true
 
 TEST COMPLETE
