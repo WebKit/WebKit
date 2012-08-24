@@ -39,6 +39,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+#ifndef NDEBUG 
+#include "V8GCController.h" 
+#endif 
+
 namespace WTF {
 class ArrayBuffer;
 }
