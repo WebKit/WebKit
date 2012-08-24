@@ -26,135 +26,251 @@
 #include "config.h"
 #include "WebLayerTreeViewImpl.h"
 
+#include "CCFontAtlas.h"
 #include "CCLayerTreeHost.h"
-#include "CCThreadProxy.h"
 #include "LayerChromium.h"
 #include "WebLayerImpl.h"
 #include <public/WebGraphicsContext3D.h>
 #include <public/WebLayer.h>
 #include <public/WebLayerTreeView.h>
 #include <public/WebLayerTreeViewClient.h>
+#include <public/WebRenderingStats.h>
 #include <public/WebSize.h>
-#include <public/WebThread.h>
 
 using namespace WebCore;
 
-namespace {
-
-// Adapts a pure WebGraphicsContext3D into a WebCompositorOutputSurface until
-// downstream code can be updated to produce output surfaces directly.
-class WebGraphicsContextToOutputSurfaceAdapter : public WebKit::WebCompositorOutputSurface {
-public:
-    explicit WebGraphicsContextToOutputSurfaceAdapter(PassOwnPtr<WebKit::WebGraphicsContext3D> context)
-        : m_context3D(context)
-        , m_client(0)
-    {
-    }
-
-    virtual bool bindToClient(WebKit::WebCompositorOutputSurfaceClient* client) OVERRIDE
-    {
-        ASSERT(client);
-        if (!m_context3D->makeContextCurrent())
-            return false;
-        m_client = client;
-        return true;
-    }
-
-    virtual const Capabilities& capabilities() const OVERRIDE
-    {
-        return m_capabilities;
-    }
-
-    virtual WebKit::WebGraphicsContext3D* context3D() const OVERRIDE
-    {
-        return m_context3D.get();
-    }
-
-    virtual void sendFrameToParentCompositor(const WebKit::WebCompositorFrame&) OVERRIDE
-    {
-    }
-
-private:
-    OwnPtr<WebKit::WebGraphicsContext3D> m_context3D;
-    Capabilities m_capabilities;
-    WebKit::WebCompositorOutputSurfaceClient* m_client;
-};
-
-}
-
 namespace WebKit {
 
-// Converts messages from CCLayerTreeHostClient to WebLayerTreeViewClient.
-class WebLayerTreeViewClientAdapter : public WebCore::CCLayerTreeHostClient {
-public:
-    WebLayerTreeViewClientAdapter(WebLayerTreeViewClient* client)
-        : m_client(client)
-        , m_usingRealOutputSurface(false)
-    {
-    }
-    virtual ~WebLayerTreeViewClientAdapter() { }
-
-    // CCLayerTreeHostClient implementation
-    virtual void willBeginFrame() OVERRIDE { m_client->willBeginFrame(); }
-    virtual void didBeginFrame() OVERRIDE { m_client->didBeginFrame(); }
-    virtual void updateAnimations(double monotonicFrameBeginTime) OVERRIDE { m_client->updateAnimations(monotonicFrameBeginTime); }
-    virtual void layout() OVERRIDE { m_client->layout(); }
-    virtual void applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale) OVERRIDE { m_client->applyScrollAndScale(scrollDelta, pageScale); }
-    virtual PassOwnPtr<WebCompositorOutputSurface> createOutputSurface() OVERRIDE
-    {
-        WebCompositorOutputSurface* outputSurface = m_client->createOutputSurface();
-        if (outputSurface) {
-            m_usingRealOutputSurface = true;
-            return adoptPtr(outputSurface);
-        }
-
-        // Temporarily, if the output surface can't be created, create a WebGraphicsContext3D
-        // directly. This allows bootstrapping the output surface system while downstream
-        // users of the API still use the old approach.
-        WebGraphicsContext3D* context = m_client->createContext3D();
-        if (!context)
-            return nullptr;
-
-        m_usingRealOutputSurface = false;
-        return adoptPtr(new WebGraphicsContextToOutputSurfaceAdapter(adoptPtr(context)));
-    }
-
-    virtual void didRecreateOutputSurface(bool success) OVERRIDE
-    {
-        if (m_usingRealOutputSurface) {
-            m_client->didRecreateOutputSurface(success);
-            return;
-        }
-        m_client->didRebindGraphicsContext(success);
-    }
-    virtual void willCommit() OVERRIDE { m_client->willCommit(); }
-    virtual void didCommit() OVERRIDE { m_client->didCommit(); }
-    virtual void didCommitAndDrawFrame() OVERRIDE { m_client->didCommitAndDrawFrame(); }
-    virtual void didCompleteSwapBuffers() OVERRIDE { m_client->didCompleteSwapBuffers(); }
-    virtual void scheduleComposite() OVERRIDE { m_client->scheduleComposite(); }
-
-private:
-    WebLayerTreeViewClient* m_client;
-    bool m_usingRealOutputSurface;
-};
-
-PassOwnPtr<WebLayerTreeViewImpl> WebLayerTreeViewImpl::create(WebLayerTreeViewClient* client, const WebLayer& root, const WebLayerTreeView::Settings& settings)
+WebLayerTreeView* WebLayerTreeView::create(WebLayerTreeViewClient* client, const WebLayer& root, const WebLayerTreeView::Settings& settings)
 {
-    OwnPtr<WebLayerTreeViewImpl> impl = adoptPtr(new WebLayerTreeViewImpl(client, settings));
-    if (!impl->layerTreeHost())
-        return nullptr;
-    impl->layerTreeHost()->setRootLayer(static_cast<const WebLayerImpl*>(&root)->layer());
-    return impl.release();
+    OwnPtr<WebLayerTreeViewImpl> layerTreeViewImpl = adoptPtr(new WebLayerTreeViewImpl(client));
+    if (!layerTreeViewImpl->initialize(settings))
+        return 0;
+    layerTreeViewImpl->setRootLayer(root);
+    return layerTreeViewImpl.leakPtr();
 }
 
-WebLayerTreeViewImpl::WebLayerTreeViewImpl(WebLayerTreeViewClient* client, const WebLayerTreeView::Settings& settings) 
-    : m_clientAdapter(adoptPtr(new WebLayerTreeViewClientAdapter(client)))
-    , m_layerTreeHost(CCLayerTreeHost::create(m_clientAdapter.get(), settings))
+WebLayerTreeViewImpl::WebLayerTreeViewImpl(WebLayerTreeViewClient* client)
+    : m_client(client)
 {
 }
 
 WebLayerTreeViewImpl::~WebLayerTreeViewImpl()
 {
+}
+
+bool WebLayerTreeViewImpl::initialize(const WebLayerTreeView::Settings& webSettings)
+{
+    CCLayerTreeSettings settings;
+    settings.acceleratePainting = webSettings.acceleratePainting;
+    settings.showFPSCounter = webSettings.showFPSCounter;
+    settings.showPlatformLayerTree = webSettings.showPlatformLayerTree;
+    settings.showPaintRects = webSettings.showPaintRects;
+    settings.renderVSyncEnabled = webSettings.renderVSyncEnabled;
+    settings.refreshRate = webSettings.refreshRate;
+    settings.defaultTileSize = webSettings.defaultTileSize;
+    settings.maxUntiledLayerSize = webSettings.maxUntiledLayerSize;
+    m_layerTreeHost = CCLayerTreeHost::create(this, settings);
+    if (!m_layerTreeHost)
+        return false;
+    return true;
+}
+
+void WebLayerTreeViewImpl::setSurfaceReady()
+{
+    m_layerTreeHost->setSurfaceReady();
+}
+
+void WebLayerTreeViewImpl::setRootLayer(const WebLayer& root)
+{
+    m_layerTreeHost->setRootLayer(static_cast<const WebLayerImpl*>(&root)->layer());
+}
+
+void WebLayerTreeViewImpl::clearRootLayer()
+{
+    m_layerTreeHost->setRootLayer(PassRefPtr<LayerChromium>());
+}
+
+int WebLayerTreeViewImpl::compositorIdentifier()
+{
+    return m_layerTreeHost->compositorIdentifier();
+}
+
+void WebLayerTreeViewImpl::setViewportSize(const WebSize& layoutViewportSize, const WebSize& deviceViewportSize)
+{
+    if (!deviceViewportSize.isEmpty())
+        m_layerTreeHost->setViewportSize(layoutViewportSize, deviceViewportSize);
+    else
+        m_layerTreeHost->setViewportSize(layoutViewportSize, layoutViewportSize);
+}
+
+WebSize WebLayerTreeViewImpl::layoutViewportSize() const
+{
+    return WebSize(m_layerTreeHost->layoutViewportSize());
+}
+
+WebSize WebLayerTreeViewImpl::deviceViewportSize() const
+{
+    return WebSize(m_layerTreeHost->deviceViewportSize());
+}
+
+void WebLayerTreeViewImpl::setDeviceScaleFactor(const float deviceScaleFactor)
+{
+    m_layerTreeHost->setDeviceScaleFactor(deviceScaleFactor);
+}
+
+float WebLayerTreeViewImpl::deviceScaleFactor() const
+{
+    return m_layerTreeHost->deviceScaleFactor();
+}
+
+void WebLayerTreeViewImpl::setBackgroundColor(WebColor color)
+{
+    m_layerTreeHost->setBackgroundColor(color);
+}
+
+void WebLayerTreeViewImpl::setHasTransparentBackground(bool transparent)
+{
+    m_layerTreeHost->setHasTransparentBackground(transparent);
+}
+
+void WebLayerTreeViewImpl::setVisible(bool visible)
+{
+    m_layerTreeHost->setVisible(visible);
+}
+
+void WebLayerTreeViewImpl::setPageScaleFactorAndLimits(float pageScaleFactor, float minimum, float maximum)
+{
+    m_layerTreeHost->setPageScaleFactorAndLimits(pageScaleFactor, minimum, maximum);
+}
+
+void WebLayerTreeViewImpl::startPageScaleAnimation(const WebPoint& scroll, bool useAnchor, float newPageScale, double durationSec)
+{
+    m_layerTreeHost->startPageScaleAnimation(IntSize(scroll.x, scroll.y), useAnchor, newPageScale, durationSec);
+}
+
+void WebLayerTreeViewImpl::setNeedsAnimate()
+{
+    m_layerTreeHost->setNeedsAnimate();
+}
+
+void WebLayerTreeViewImpl::setNeedsRedraw()
+{
+    m_layerTreeHost->setNeedsRedraw();
+}
+
+bool WebLayerTreeViewImpl::commitRequested() const
+{
+    return m_layerTreeHost->commitRequested();
+}
+
+void WebLayerTreeViewImpl::composite()
+{
+    if (CCProxy::hasImplThread())
+        m_layerTreeHost->setNeedsCommit();
+    else
+        m_layerTreeHost->composite();
+}
+
+void WebLayerTreeViewImpl::updateAnimations(double frameBeginTime)
+{
+    m_layerTreeHost->updateAnimations(frameBeginTime);
+}
+
+bool WebLayerTreeViewImpl::compositeAndReadback(void *pixels, const WebRect& rect)
+{
+    return m_layerTreeHost->compositeAndReadback(pixels, rect);
+}
+
+void WebLayerTreeViewImpl::finishAllRendering()
+{
+    m_layerTreeHost->finishAllRendering();
+}
+
+void WebLayerTreeViewImpl::renderingStats(WebRenderingStats& stats) const
+{
+    CCRenderingStats ccStats;
+    m_layerTreeHost->renderingStats(ccStats);
+
+    stats.numAnimationFrames = ccStats.numAnimationFrames;
+    stats.numFramesSentToScreen = ccStats.numFramesSentToScreen;
+    stats.droppedFrameCount = ccStats.droppedFrameCount;
+    stats.totalPaintTimeInSeconds = ccStats.totalPaintTimeInSeconds;
+    stats.totalRasterizeTimeInSeconds = ccStats.totalRasterizeTimeInSeconds;
+}
+
+void WebLayerTreeViewImpl::setFontAtlas(SkBitmap bitmap, WebRect asciiToWebRectTable[128], int fontHeight)
+{
+    IntRect asciiToRectTable[128];
+    for (int i = 0; i < 128; ++i)
+        asciiToRectTable[i] = asciiToWebRectTable[i];
+    OwnPtr<CCFontAtlas> fontAtlas = CCFontAtlas::create(bitmap, asciiToRectTable, fontHeight);
+    m_layerTreeHost->setFontAtlas(fontAtlas.release());
+}
+
+void WebLayerTreeViewImpl::loseCompositorContext(int numTimes)
+{
+    m_layerTreeHost->loseContext(numTimes);
+}
+
+void WebLayerTreeViewImpl::willBeginFrame()
+{
+    m_client->willBeginFrame();
+}
+
+void WebLayerTreeViewImpl::didBeginFrame()
+{
+    m_client->didBeginFrame();
+}
+
+void WebLayerTreeViewImpl::animate(double monotonicFrameBeginTime)
+{
+    m_client->updateAnimations(monotonicFrameBeginTime);
+}
+
+void WebLayerTreeViewImpl::layout()
+{
+    m_client->layout();
+}
+
+void WebLayerTreeViewImpl::applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale)
+{
+    m_client->applyScrollAndScale(scrollDelta, pageScale);
+}
+
+PassOwnPtr<WebCompositorOutputSurface> WebLayerTreeViewImpl::createOutputSurface()
+{
+    return adoptPtr(m_client->createOutputSurface());
+}
+
+void WebLayerTreeViewImpl::didRecreateOutputSurface(bool success)
+{
+    m_client->didRecreateOutputSurface(success);
+}
+
+void WebLayerTreeViewImpl::willCommit()
+{
+    m_client->willCommit();
+}
+
+void WebLayerTreeViewImpl::didCommit()
+{
+    m_client->didCommit();
+}
+
+void WebLayerTreeViewImpl::didCommitAndDrawFrame()
+{
+    m_client->didCommitAndDrawFrame();
+}
+
+void WebLayerTreeViewImpl::didCompleteSwapBuffers()
+{
+    m_client->didCompleteSwapBuffers();
+}
+
+void WebLayerTreeViewImpl::scheduleComposite()
+{
+    m_client->scheduleComposite();
 }
 
 } // namespace WebKit

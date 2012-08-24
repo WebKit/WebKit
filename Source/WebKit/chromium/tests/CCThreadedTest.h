@@ -56,7 +56,7 @@ public:
     virtual void animateLayers(WebCore::CCLayerTreeHostImpl*, double monotonicTime) { }
     virtual void willAnimateLayers(WebCore::CCLayerTreeHostImpl*, double monotonicTime) { }
     virtual void applyScrollAndScale(const WebCore::IntSize&, float) { }
-    virtual void updateAnimations(double monotonicTime) { }
+    virtual void animate(double monotonicTime) { }
     virtual void layout() { }
     virtual void didRecreateOutputSurface(bool succeeded) { }
     virtual void didAddAnimation() { }

@@ -1,3 +1,97 @@
+2012-08-23  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Convert WebLayerTreeView interface into pure virtual
+        https://bugs.webkit.org/show_bug.cgi?id=94866
+
+        Reviewed by Adrienne Walker.
+
+        Updates WebLayerTreeView implementation and callers to new interface. The createGraphicsContext3D() wrapper
+        stuff can just go away now since downstream has updated to createOutputSurface().
+
+        * WebKit.gypi:
+        * src/WebLayerTreeView.cpp: Removed.
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeView::create):
+        (WebKit::WebLayerTreeViewImpl::WebLayerTreeViewImpl):
+        (WebKit::WebLayerTreeViewImpl::initialize):
+        (WebKit):
+        (WebKit::WebLayerTreeViewImpl::setSurfaceReady):
+        (WebKit::WebLayerTreeViewImpl::setRootLayer):
+        (WebKit::WebLayerTreeViewImpl::clearRootLayer):
+        (WebKit::WebLayerTreeViewImpl::compositorIdentifier):
+        (WebKit::WebLayerTreeViewImpl::setViewportSize):
+        (WebKit::WebLayerTreeViewImpl::layoutViewportSize):
+        (WebKit::WebLayerTreeViewImpl::deviceViewportSize):
+        (WebKit::WebLayerTreeViewImpl::setDeviceScaleFactor):
+        (WebKit::WebLayerTreeViewImpl::deviceScaleFactor):
+        (WebKit::WebLayerTreeViewImpl::setBackgroundColor):
+        (WebKit::WebLayerTreeViewImpl::setHasTransparentBackground):
+        (WebKit::WebLayerTreeViewImpl::setVisible):
+        (WebKit::WebLayerTreeViewImpl::setPageScaleFactorAndLimits):
+        (WebKit::WebLayerTreeViewImpl::startPageScaleAnimation):
+        (WebKit::WebLayerTreeViewImpl::setNeedsAnimate):
+        (WebKit::WebLayerTreeViewImpl::setNeedsRedraw):
+        (WebKit::WebLayerTreeViewImpl::commitRequested):
+        (WebKit::WebLayerTreeViewImpl::composite):
+        (WebKit::WebLayerTreeViewImpl::updateAnimations):
+        (WebKit::WebLayerTreeViewImpl::compositeAndReadback):
+        (WebKit::WebLayerTreeViewImpl::finishAllRendering):
+        (WebKit::WebLayerTreeViewImpl::renderingStats):
+        (WebKit::WebLayerTreeViewImpl::setFontAtlas):
+        (WebKit::WebLayerTreeViewImpl::loseCompositorContext):
+        (WebKit::WebLayerTreeViewImpl::willBeginFrame):
+        (WebKit::WebLayerTreeViewImpl::didBeginFrame):
+        (WebKit::WebLayerTreeViewImpl::animate):
+        (WebKit::WebLayerTreeViewImpl::layout):
+        (WebKit::WebLayerTreeViewImpl::applyScrollAndScale):
+        (WebKit::WebLayerTreeViewImpl::createOutputSurface):
+        (WebKit::WebLayerTreeViewImpl::didRecreateOutputSurface):
+        (WebKit::WebLayerTreeViewImpl::willCommit):
+        (WebKit::WebLayerTreeViewImpl::didCommit):
+        (WebKit::WebLayerTreeViewImpl::didCommitAndDrawFrame):
+        (WebKit::WebLayerTreeViewImpl::didCompleteSwapBuffers):
+        (WebKit::WebLayerTreeViewImpl::scheduleComposite):
+        * src/WebLayerTreeViewImpl.h:
+        (WebLayerTreeViewImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::renderingStats):
+        (WebKit::WebViewImpl::startPageScaleAnimation):
+        (WebKit::WebViewImpl::setCompositorSurfaceReady):
+        (WebKit::WebViewImpl::animate):
+        (WebKit::WebViewImpl::doPixelReadbackToCanvas):
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImpl::composite):
+        (WebKit::WebViewImpl::setNeedsRedraw):
+        (WebKit::WebViewImpl::isInputThrottled):
+        (WebKit::WebViewImpl::loseCompositorContext):
+        (WebKit::WebViewImpl::setDeviceScaleFactor):
+        (WebKit::WebViewImpl::computePageScaleFactorLimits):
+        (WebKit::WebViewImpl::setIsTransparent):
+        (WebKit::WebViewImpl::setRootGraphicsLayer):
+        (WebKit::WebViewImpl::scheduleCompositingLayerSync):
+        (WebKit::WebViewImpl::invalidateRootLayerRect):
+        (WebKit::WebViewImpl::setBackgroundColor):
+        (WebKit::WebViewImpl::scheduleAnimation):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit):
+        (WebKit::WebViewImpl::updateLayerTreeViewport):
+        (WebKit::WebViewImpl::setVisibilityState):
+        * src/WebViewImpl.h:
+        (WebKit):
+        * tests/CCLayerTreeHostTest.cpp:
+        * tests/CCThreadedTest.cpp:
+        * tests/CCThreadedTest.h:
+        (WebKitTests::TestHooks::animate):
+        * tests/FakeCCLayerTreeHostClient.h:
+        * tests/GraphicsLayerChromiumTest.cpp:
+        (WebKit::GraphicsLayerChromiumTest::GraphicsLayerChromiumTest):
+        (WebKit::GraphicsLayerChromiumTest::~GraphicsLayerChromiumTest):
+        (GraphicsLayerChromiumTest):
+        * tests/WebLayerTest.cpp:
+        * tests/WebLayerTreeViewTest.cpp:
+        * tests/WebLayerTreeViewTestCommon.h:
+        (MockWebLayerTreeViewClient):
+
 2012-08-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

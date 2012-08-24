@@ -536,7 +536,7 @@ public:
         postSetNeedsAnimateToMainThread();
     }
 
-    virtual void updateAnimations(double) OVERRIDE
+    virtual void animate(double) OVERRIDE
     {
         if (!m_numAnimates) {
             m_layerTreeHost->setNeedsAnimate();
@@ -2408,11 +2408,13 @@ public:
         return adoptPtr(new EvictionTestLayerImpl(id));
     }
     virtual ~EvictionTestLayerImpl() { }
+
     virtual void appendQuads(CCQuadSink&, bool& hadMissingTiles) OVERRIDE
     {
         ASSERT_TRUE(m_hasTexture);
         ASSERT_NE(0u, layerTreeHostImpl()->resourceProvider()->numResources());
     }
+
     void setHasTexture(bool hasTexture) { m_hasTexture = hasTexture; }
 
 private:

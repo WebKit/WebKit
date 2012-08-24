@@ -149,7 +149,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual WebKit::WebWidget* createPopupMenu(WebKit::WebPopupType);
     virtual WebKit::WebWidget* createPopupMenu(const WebKit::WebPopupMenuInfo&);
     virtual WebKit::WebStorageNamespace* createSessionStorageNamespace(unsigned quota);
-    virtual WebKit::WebGraphicsContext3D* createGraphicsContext3D(const WebKit::WebGraphicsContext3D::Attributes&);
+    virtual WebKit::WebCompositorOutputSurface* createOutputSurface();
     virtual void didAddMessageToConsole(const WebKit::WebConsoleMessage&, const WebKit::WebString& sourceName, unsigned sourceLine);
     virtual void didStartLoading();
     virtual void didStopLoading();

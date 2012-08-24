@@ -22,39 +22,43 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef FakeCCLayerTreeHostClient_h
-#define FakeCCLayerTreeHostClient_h
 
 #include "config.h"
 
-#include "CCLayerTreeHost.h"
-#include "CompositorFakeWebGraphicsContext3D.h"
-#include "FakeWebCompositorOutputSurface.h"
+#include "WebViewHostOutputSurface.h"
 
-namespace WebCore {
+#include <public/WebGraphicsContext3D.h>
+#include <wtf/Assertions.h>
 
-class FakeCCLayerTreeHostClient : public CCLayerTreeHostClient {
-public:
-    virtual void willBeginFrame() OVERRIDE { }
-    virtual void didBeginFrame() OVERRIDE { }
-    virtual void animate(double monotonicFrameBeginTime) OVERRIDE { }
-    virtual void layout() OVERRIDE { }
-    virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) OVERRIDE { }
+namespace WebKit {
 
-    virtual PassOwnPtr<WebKit::WebCompositorOutputSurface> createOutputSurface() OVERRIDE
-    {
-        WebKit::WebGraphicsContext3D::Attributes attrs;
-        return WebKit::FakeWebCompositorOutputSurface::create(WebKit::CompositorFakeWebGraphicsContext3D::create(attrs));
-    }
-    virtual void didRecreateOutputSurface(bool success) OVERRIDE { }
-    virtual void willCommit() OVERRIDE { }
-    virtual void didCommit() OVERRIDE { }
-    virtual void didCommitAndDrawFrame() OVERRIDE { }
-    virtual void didCompleteSwapBuffers() OVERRIDE { }
+WebViewHostOutputSurface::WebViewHostOutputSurface(PassOwnPtr<WebKit::WebGraphicsContext3D> context)
+    : m_context(context)
+{
+}
 
-    // Used only in the single-threaded path.
-    virtual void scheduleComposite() OVERRIDE { }
-};
+WebViewHostOutputSurface::~WebViewHostOutputSurface()
+{
+}
+
+bool WebViewHostOutputSurface::bindToClient(WebCompositorOutputSurfaceClient*)
+{
+    return m_context->makeContextCurrent();
+}
+
+const WebKit::WebCompositorOutputSurface::Capabilities& WebViewHostOutputSurface::capabilities() const
+{
+    return m_capabilities;
+}
+
+WebGraphicsContext3D* WebViewHostOutputSurface::context3D() const
+{
+    return m_context.get();
+}
+
+void WebViewHostOutputSurface::sendFrameToParentCompositor(const WebCompositorFrame&)
+{
+    ASSERT_NOT_REACHED();
+}
 
 }
-#endif // FakeCCLayerTreeHostClient_h

@@ -195,7 +195,6 @@
             'src/WebImageLayerImpl.h',
             'src/WebLayerImpl.cpp',
             'src/WebLayerImpl.h',
-            'src/WebLayerTreeView.cpp',
             'src/WebLayerTreeViewImpl.cpp',
             'src/WebLayerTreeViewImpl.h',
             'src/WebScrollbarLayerImpl.cpp',

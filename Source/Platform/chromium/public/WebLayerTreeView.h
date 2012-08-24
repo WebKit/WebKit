@@ -33,21 +33,15 @@
 #include "WebPrivateOwnPtr.h"
 #include "WebSize.h"
 
-namespace WebCore {
-class CCLayerTreeHost;
-struct CCLayerTreeSettings;
-}
-
 namespace WebKit {
 class WebGraphicsContext3D;
 class WebLayer;
 class WebLayerTreeViewClient;
-class WebLayerTreeViewImpl;
 struct WebPoint;
 struct WebRect;
 struct WebRenderingStats;
 
-class WebLayerTreeView : public WebNonCopyable {
+class WebLayerTreeView {
 public:
     struct Settings {
         Settings()
@@ -70,83 +64,73 @@ public:
         double refreshRate;
         WebSize defaultTileSize;
         WebSize maxUntiledLayerSize;
-
-#if WEBKIT_IMPLEMENTATION
-        operator WebCore::CCLayerTreeSettings() const;
-#endif
     };
 
-    WebLayerTreeView() { }
-    ~WebLayerTreeView() { reset(); }
+#define WEBLAYERTREEVIEW_IS_PURE_VIRTUAL
+    // Attempts to initialize this WebLayerTreeView with the given client, root layer, and settings.
+    // If initialization fails, this will return nil.
+    WEBKIT_EXPORT static WebLayerTreeView* create(WebLayerTreeViewClient*, const WebLayer& root, const Settings&);
 
-    WEBKIT_EXPORT void reset();
-
-    bool isNull() const;
+    virtual ~WebLayerTreeView() { }
 
     // Initialization and lifecycle --------------------------------------
-
-    // Attempts to initialize this WebLayerTreeView with the given client, root layer, and settings.
-    // If initialization fails, this will return false and .isNull() will return true.
-    // Must be called before any methods below.
-    WEBKIT_EXPORT bool initialize(WebLayerTreeViewClient*, const WebLayer& root, const Settings&);
 
     // Indicates that the compositing surface used by this WebLayerTreeView is ready to use.
     // A WebLayerTreeView may request a context from its client before the surface is ready,
     // but it won't attempt to use it.
-    WEBKIT_EXPORT void setSurfaceReady();
+    virtual void setSurfaceReady() = 0;
 
     // Sets the root of the tree. The root is set by way of the constructor.
-    // This is typically used to explicitly set the root to null to break
-    // cycles.
-    WEBKIT_EXPORT void setRootLayer(WebLayer*);
+    virtual void setRootLayer(const WebLayer&) = 0;
+    virtual void clearRootLayer() = 0;
 
     // Returns a unique identifier that can be used on the compositor thread to request a
     // WebCompositorInputHandler instance.
-    WEBKIT_EXPORT int compositorIdentifier();
+    virtual int compositorIdentifier() = 0;
 
 
     // View properties ---------------------------------------------------
 
-    WEBKIT_EXPORT void setViewportSize(const WebSize& layoutViewportSize, const WebSize& deviceViewportSize = WebSize());
+    virtual void setViewportSize(const WebSize& layoutViewportSize, const WebSize& deviceViewportSize = WebSize()) = 0;
     // Gives the viewport size in layer space.
-    WEBKIT_EXPORT WebSize layoutViewportSize() const;
+    virtual WebSize layoutViewportSize() const = 0;
     // Gives the viewport size in physical device pixels (may be different
     // from the above if there exists page scale, device scale or fixed layout
     // mode).
-    WEBKIT_EXPORT WebSize deviceViewportSize() const;
+    virtual WebSize deviceViewportSize() const = 0;
 
-    WEBKIT_EXPORT void setDeviceScaleFactor(float);
-    WEBKIT_EXPORT float deviceScaleFactor() const;
+    virtual void setDeviceScaleFactor(float) = 0;
+    virtual float deviceScaleFactor() const = 0;
 
     // Sets the background color for the viewport.
-    WEBKIT_EXPORT void setBackgroundColor(WebColor);
+    virtual void setBackgroundColor(WebColor) = 0;
 
     // Sets the background transparency for the viewport. The default is 'false'.
-    WEBKIT_EXPORT void setHasTransparentBackground(bool);
+    virtual void setHasTransparentBackground(bool) = 0;
 
     // Sets whether this view is visible. In threaded mode, a view that is not visible will not
     // composite or trigger updateAnimations() or layout() calls until it becomes visible.
-    WEBKIT_EXPORT void setVisible(bool);
+    virtual void setVisible(bool) = 0;
 
     // Sets the current page scale factor and minimum / maximum limits. Both limits are initially 1 (no page scale allowed).
-    WEBKIT_EXPORT void setPageScaleFactorAndLimits(float pageScaleFactor, float minimum, float maximum);
+    virtual void setPageScaleFactorAndLimits(float pageScaleFactor, float minimum, float maximum) = 0;
 
     // Starts an animation of the page scale to a target scale factor and scroll offset.
     // If useAnchor is true, destination is a point on the screen that will remain fixed for the duration of the animation.
     // If useAnchor is false, destination is the final top-left scroll position.
-    WEBKIT_EXPORT void startPageScaleAnimation(const WebPoint& destination, bool useAnchor, float newPageScale, double durationSec);
+    virtual void startPageScaleAnimation(const WebPoint& destination, bool useAnchor, float newPageScale, double durationSec) = 0;
 
 
     // Flow control and scheduling ---------------------------------------
 
     // Requests an updateAnimations() call.
-    WEBKIT_EXPORT void setNeedsAnimate();
+    virtual void setNeedsAnimate() = 0;
 
     // Indicates that the view needs to be redrawn. This is typically used when the frontbuffer is damaged.
-    WEBKIT_EXPORT void setNeedsRedraw();
+    virtual void setNeedsRedraw() = 0;
 
     // Indicates whether a commit is pending.
-    WEBKIT_EXPORT bool commitRequested() const;
+    virtual bool commitRequested() const = 0;
 
     // Triggers a compositing pass. If the compositor thread was not
     // enabled via WebCompositor::initialize, the compositing pass happens
@@ -155,12 +139,12 @@ public:
     // returns when the compositor thread is disabled), WebContentLayers will be
     // asked to paint their dirty region, through
     // WebContentLayerClient::paintContents.
-    WEBKIT_EXPORT void composite();
+    virtual void composite() = 0;
 
     // Immediately update animations. This should only be used when frame scheduling is handled by
     // the WebLayerTreeView user and not internally by the compositor, meaning only in single-threaded
     // mode.
-    WEBKIT_EXPORT void updateAnimations(double frameBeginTime);
+    virtual void updateAnimations(double frameBeginTime) = 0;
 
     // Composites and attempts to read back the result into the provided
     // buffer. If it wasn't possible, e.g. due to context lost, will return
@@ -168,27 +152,24 @@ public:
     // large enough contain viewportSize().width() * viewportSize().height()
     // pixels. The WebLayerTreeView does not assume ownership of the buffer.
     // The buffer is not modified if the false is returned.
-    WEBKIT_EXPORT bool compositeAndReadback(void *pixels, const WebRect&);
+    virtual bool compositeAndReadback(void *pixels, const WebRect&) = 0;
 
     // Blocks until the most recently composited frame has finished rendering on the GPU.
     // This can have a significant performance impact and should be used with care.
-    WEBKIT_EXPORT void finishAllRendering();
+    virtual void finishAllRendering() = 0;
 
     // Debugging / dangerous ---------------------------------------------
 
     // Fills in a WebRenderingStats struct containing information about the state of the compositor.
     // This call is relatively expensive in threaded mode as it blocks on the compositor thread.
-    WEBKIT_EXPORT void renderingStats(WebRenderingStats&) const;
+    virtual void renderingStats(WebRenderingStats&) const = 0;
 
     // Provides a font atlas to use for debug visualizations. The atlas must be a bitmap containing glyph data, a table of
     // ASCII character values to a subrectangle of the atlas representing the corresponding glyph, and the glyph height.
-    WEBKIT_EXPORT void setFontAtlas(SkBitmap, WebRect asciiToRectTable[128], int fontHeight);
+    virtual void setFontAtlas(SkBitmap, WebRect asciiToRectTable[128], int fontHeight) = 0;
 
     // Simulates a lost context. For testing only.
-    WEBKIT_EXPORT void loseCompositorContext(int numTimes);
-
-protected:
-    WebPrivateOwnPtr<WebLayerTreeViewImpl> m_private;
+    virtual void loseCompositorContext(int numTimes) = 0;
 };
 
 } // namespace WebKit

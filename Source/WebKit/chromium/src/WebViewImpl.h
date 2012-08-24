@@ -52,7 +52,6 @@
 #include "WebViewBenchmarkSupportImpl.h"
 #include <public/WebFloatQuad.h>
 #include <public/WebLayer.h>
-#include <public/WebLayerTreeView.h>
 #include <public/WebLayerTreeViewClient.h>
 #include <public/WebPoint.h>
 #include <public/WebRect.h>
@@ -95,7 +94,6 @@ class DeviceOrientationClientProxy;
 class DragScrollTimer;
 class GeolocationClientProxy;
 class LinkHighlight;
-class WebHelperPluginImpl;
 class NonCompositedContentHost;
 class PrerendererClientImpl;
 class SpeechInputClientImpl;
@@ -107,15 +105,17 @@ class WebDevToolsAgentClient;
 class WebDevToolsAgentPrivate;
 class WebFrameImpl;
 class WebGestureEvent;
-class WebPagePopupImpl;
-class WebPrerendererClient;
-class WebViewBenchmarkSupport;
+class WebHelperPluginImpl;
 class WebImage;
 class WebKeyboardEvent;
+class WebLayerTreeView;
 class WebMouseEvent;
 class WebMouseWheelEvent;
+class WebPagePopupImpl;
+class WebPrerendererClient;
 class WebSettingsImpl;
 class WebTouchEvent;
+class WebViewBenchmarkSupport;
 
 class WebViewImpl : public WebView
                   , public WebLayerTreeViewClient
@@ -824,7 +824,7 @@ private:
 #if USE(ACCELERATED_COMPOSITING)
     WebCore::IntRect m_rootLayerScrollDamage;
     OwnPtr<NonCompositedContentHost> m_nonCompositedContentHost;
-    WebLayerTreeView m_layerTreeView;
+    OwnPtr<WebLayerTreeView> m_layerTreeView;
     WebLayer* m_rootLayer;
     WebCore::GraphicsLayer* m_rootGraphicsLayer;
     bool m_isAcceleratedCompositingActive;

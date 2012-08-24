@@ -208,7 +208,7 @@ void CCLayerTreeHost::acquireLayerTextures()
 void CCLayerTreeHost::updateAnimations(double monotonicFrameBeginTime)
 {
     m_animating = true;
-    m_client->updateAnimations(monotonicFrameBeginTime);
+    m_client->animate(monotonicFrameBeginTime);
     animateLayers(monotonicFrameBeginTime);
     m_animating = false;
 

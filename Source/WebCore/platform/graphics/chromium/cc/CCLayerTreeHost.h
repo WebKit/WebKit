@@ -58,7 +58,7 @@ public:
     virtual void willBeginFrame() = 0;
     // Marks finishing compositing-related tasks on the main thread. In threaded mode, this corresponds to didCommit().
     virtual void didBeginFrame() = 0;
-    virtual void updateAnimations(double frameBeginTime) = 0;
+    virtual void animate(double frameBeginTime) = 0;
     virtual void layout() = 0;
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) = 0;
     virtual PassOwnPtr<WebKit::WebCompositorOutputSurface> createOutputSurface() = 0;

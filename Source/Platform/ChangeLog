@@ -1,3 +1,18 @@
+2012-08-23  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Convert WebLayerTreeView interface into pure virtual
+        https://bugs.webkit.org/show_bug.cgi?id=94866
+
+        Reviewed by Adrienne Walker.
+
+        This makes the WebLayerTreeView interface pure virtual to provide better insulation from the implementation.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebKit):
+        (Settings):
+        (WebLayerTreeView):
+        (WebKit::WebLayerTreeView::~WebLayerTreeView):
+
 2012-08-24  James Robinson  <jamesr@chromium.org>
 
         [chromium] Clean up WebAnimation animationId/groupId generation

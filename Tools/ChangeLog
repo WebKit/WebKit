@@ -1,3 +1,30 @@
+2012-08-23  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Convert WebLayerTreeView interface into pure virtual
+        https://bugs.webkit.org/show_bug.cgi?id=94866
+
+        Reviewed by Adrienne Walker.
+
+        Updates DumpRenderTree's WebViewHost to vend a WebCompositorOutputSurface so DumpRenderTree can run compositing
+        tests.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createOutputSurface):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+        * DumpRenderTree/chromium/WebViewHostOutputSurface.cpp: Copied from Source/WebKit/chromium/src/WebLayerTreeViewImpl.h.
+        (WebKit):
+        (WebKit::WebViewHostOutputSurface::WebViewHostOutputSurface):
+        (WebKit::WebViewHostOutputSurface::~WebViewHostOutputSurface):
+        (WebKit::WebViewHostOutputSurface::bindToClient):
+        (WebKit::WebViewHostOutputSurface::capabilities):
+        (WebKit::WebViewHostOutputSurface::context3D):
+        (WebKit::WebViewHostOutputSurface::sendFrameToParentCompositor):
+        * DumpRenderTree/chromium/WebViewHostOutputSurface.h: Copied from Source/WebKit/chromium/src/WebLayerTreeViewImpl.h.
+        (WebKit):
+        (WebViewHostOutputSurface):
+
 2012-08-24  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Many 'Unexpected EOF ...' when a test crashes

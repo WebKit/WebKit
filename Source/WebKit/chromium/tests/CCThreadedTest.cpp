@@ -208,9 +208,9 @@ public:
     {
     }
 
-    virtual void updateAnimations(double monotonicTime) OVERRIDE
+    virtual void animate(double monotonicTime) OVERRIDE
     {
-        m_testHooks->updateAnimations(monotonicTime);
+        m_testHooks->animate(monotonicTime);
     }
 
     virtual void layout() OVERRIDE

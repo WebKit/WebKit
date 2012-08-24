@@ -39,14 +39,12 @@
 #include "TestNavigationController.h"
 #include "TestShell.h"
 #include "TestWebPlugin.h"
-#include "platform/WebCString.h"
 #include "WebConsoleMessage.h"
 #include "WebContextMenuData.h"
 #include "WebDOMMessageEvent.h"
 #include "WebDataSource.h"
 #include "WebDeviceOrientationClientMock.h"
 #include "WebDocument.h"
-#include "platform/WebDragData.h"
 #include "WebElement.h"
 #include "WebFrame.h"
 #include "WebGeolocationClientMock.h"
@@ -60,22 +58,26 @@
 #include "WebPopupType.h"
 #include "WebPrintParams.h"
 #include "WebRange.h"
-#include "platform/WebRect.h"
 #include "WebScreenInfo.h"
-#include "platform/WebSerializedScriptValue.h"
-#include "platform/WebSize.h"
 #include "WebStorageNamespace.h"
 #include "WebTextCheckingCompletion.h"
 #include "WebTextCheckingResult.h"
 #include "WebUserMediaClientMock.h"
-#include "platform/WebThread.h"
-#include "platform/WebURLRequest.h"
-#include "platform/WebURLResponse.h"
 #include "WebView.h"
+#include "WebViewHostOutputSurface.h"
 #include "WebWindowFeatures.h"
+#include "platform/WebSerializedScriptValue.h"
 #include "skia/ext/platform_canvas.h"
 #include "webkit/support/test_media_stream_client.h"
 #include "webkit/support/webkit_support.h"
+#include <public/WebCString.h>
+#include <public/WebCompositorOutputSurface.h>
+#include <public/WebDragData.h>
+#include <public/WebRect.h>
+#include <public/WebSize.h>
+#include <public/WebThread.h>
+#include <public/WebURLRequest.h>
+#include <public/WebURLResponse.h>
 
 #include <wtf/Assertions.h>
 #include <wtf/PassOwnPtr.h>
@@ -285,11 +287,11 @@ WebStorageNamespace* WebViewHost::createSessionStorageNamespace(unsigned quota)
     return webkit_support::CreateSessionStorageNamespace(quota);
 }
 
-WebKit::WebGraphicsContext3D* WebViewHost::createGraphicsContext3D(const WebKit::WebGraphicsContext3D::Attributes& attributes)
+WebKit::WebCompositorOutputSurface* WebViewHost::createOutputSurface()
 {
     if (!webView())
         return 0;
-    return webkit_support::CreateGraphicsContext3D(attributes, webView());
+    return new WebKit::WebViewHostOutputSurface(adoptPtr(webkit_support::CreateGraphicsContext3D(WebKit::WebGraphicsContext3D::Attributes(), webView())));
 }
 
 void WebViewHost::didAddMessageToConsole(const WebConsoleMessage& message, const WebString& sourceName, unsigned sourceLine)

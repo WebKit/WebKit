@@ -61,30 +61,29 @@ public:
     {
         initializeCompositor();
         m_rootLayer = adoptPtr(WebLayer::create());
-        EXPECT_TRUE(m_view.initialize(client(), *m_rootLayer, WebLayerTreeView::Settings()));
-        m_view.setSurfaceReady();
+        ASSERT_TRUE(m_view = adoptPtr(WebLayerTreeView::create(client(), *m_rootLayer, WebLayerTreeView::Settings())));
+        m_view->setSurfaceReady();
     }
 
     virtual void TearDown()
     {
         Mock::VerifyAndClearExpectations(client());
 
-        m_view.setRootLayer(0);
         m_rootLayer.clear();
-        m_view.reset();
+        m_view.clear();
         WebKit::WebCompositor::shutdown();
     }
 
 protected:
     OwnPtr<WebLayer> m_rootLayer;
-    WebLayerTreeView m_view;
+    OwnPtr<WebLayerTreeView> m_view;
 };
 
 class WebLayerTreeViewSingleThreadTest : public WebLayerTreeViewTestBase {
 protected:
     void composite()
     {
-        m_view.composite();
+        m_view->composite();
     }
 
     virtual void initializeCompositor() OVERRIDE
@@ -157,12 +156,12 @@ protected:
 
     void composite()
     {
-        m_view.setNeedsRedraw();
+        m_view->setNeedsRedraw();
         RefPtr<CancelableTaskWrapper> timeoutTask = adoptRef(new CancelableTaskWrapper(adoptPtr(new TimeoutTask())));
         WebKit::Platform::current()->currentThread()->postDelayedTask(timeoutTask->createTask(), 5000);
         WebKit::Platform::current()->currentThread()->enterRunLoop();
         timeoutTask->cancel();
-        m_view.finishAllRendering();
+        m_view->finishAllRendering();
     }
 
     virtual void initializeCompositor() OVERRIDE

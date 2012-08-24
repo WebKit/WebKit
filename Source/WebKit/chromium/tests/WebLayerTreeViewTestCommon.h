@@ -34,7 +34,7 @@ namespace WebKit {
 
 class MockWebLayerTreeViewClient : public WebLayerTreeViewClient {
 public:
-    virtual void scheduleComposite() OVERRIDE { }
+    MOCK_METHOD0(scheduleComposite, void());
     virtual void updateAnimations(double frameBeginTime) OVERRIDE { }
     MOCK_METHOD0(willBeginFrame, void());
     MOCK_METHOD0(didBeginFrame, void());

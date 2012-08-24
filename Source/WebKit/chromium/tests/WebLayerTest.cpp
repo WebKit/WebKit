@@ -27,6 +27,7 @@
 
 #include "CompositorFakeWebGraphicsContext3D.h"
 #include "WebLayerImpl.h"
+#include "WebLayerTreeViewTestCommon.h"
 #include <public/WebCompositor.h>
 #include <public/WebContentLayer.h>
 #include <public/WebContentLayerClient.h>
@@ -49,23 +50,6 @@ using testing::_;
 
 namespace {
 
-class MockWebLayerTreeViewClient : public WebLayerTreeViewClient {
-public:
-    MOCK_METHOD0(scheduleComposite, void());
-
-    virtual void updateAnimations(double frameBeginTime) { }
-    virtual void didBeginFrame() { }
-    virtual void layout() { }
-    virtual void applyScrollAndScale(const WebSize& scrollDelta, float scaleFactor) { }
-    virtual WebGraphicsContext3D* createContext3D() { return CompositorFakeWebGraphicsContext3D::create(WebGraphicsContext3D::Attributes()).leakPtr(); }
-    virtual void didRebindGraphicsContext(bool success) { }
-    virtual WebCompositorOutputSurface* createOutputSurface() { return 0; }
-    virtual void didRecreateOutputSurface(bool success) { }
-    virtual void willCommit() { }
-    virtual void didCommitAndDrawFrame() { }
-    virtual void didCompleteSwapBuffers() { }
-};
-
 class MockWebContentLayerClient : public WebContentLayerClient {
 public:
     MOCK_METHOD3(paintContents, void(WebCanvas*, const WebRect& clip, WebFloatRect& opaque));
@@ -79,7 +63,7 @@ public:
         WebKit::WebCompositor::initialize(0);
         m_rootLayer = adoptPtr(WebLayer::create());
         EXPECT_CALL(m_client, scheduleComposite()).Times(AnyNumber());
-        EXPECT_TRUE(m_view.initialize(&m_client, *m_rootLayer, WebLayerTreeView::Settings()));
+        EXPECT_TRUE(m_view = adoptPtr(WebLayerTreeView::create(&m_client, *m_rootLayer, WebLayerTreeView::Settings())));
         Mock::VerifyAndClearExpectations(&m_client);
     }
 
@@ -87,16 +71,15 @@ public:
     {
         // We may get any number of scheduleComposite calls during shutdown.
         EXPECT_CALL(m_client, scheduleComposite()).Times(AnyNumber());
-        m_view.setRootLayer(0);
         m_rootLayer.clear();
-        m_view.reset();
+        m_view.clear();
         WebKit::WebCompositor::shutdown();
     }
 
 protected:
     MockWebLayerTreeViewClient m_client;
     OwnPtr<WebLayer> m_rootLayer;
-    WebLayerTreeView m_view;
+    OwnPtr<WebLayerTreeView> m_view;
 };
 
 // Tests that the client gets called to ask for a composite if we change the
