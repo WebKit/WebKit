@@ -42,7 +42,7 @@ module window {
         void removeEventListener(in DOMString type,
                                  in EventListener listener,
                                  in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event evt)
+        boolean dispatchEvent(in Event event)
             raises(EventException);
     };
 
