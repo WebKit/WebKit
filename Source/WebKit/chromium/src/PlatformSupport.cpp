@@ -31,8 +31,6 @@
 #include "config.h"
 #include "PlatformSupport.h"
 
-#include <googleurl/src/url_util.h>
-
 #include "Chrome.h"
 #include "ChromeClientImpl.h"
 #include "FileMetadata.h"
@@ -546,51 +544,6 @@ void PlatformSupport::paintThemePart(
 }
 
 #endif
-
-// Visited Links --------------------------------------------------------------
-
-LinkHash PlatformSupport::visitedLinkHash(const UChar* url, unsigned length)
-{
-    url_canon::RawCanonOutput<2048> buffer;
-    url_parse::Parsed parsed;
-    if (!url_util::Canonicalize(url, length, 0, &buffer, &parsed))
-        return 0;  // Invalid URLs are unvisited.
-    return webKitPlatformSupport()->visitedLinkHash(buffer.data(), buffer.length());
-}
-
-LinkHash PlatformSupport::visitedLinkHash(const KURL& base,
-                                         const AtomicString& attributeURL)
-{
-    // Resolve the relative URL using googleurl and pass the absolute URL up to
-    // the embedder. We could create a GURL object from the base and resolve
-    // the relative URL that way, but calling the lower-level functions
-    // directly saves us the string allocation in most cases.
-    url_canon::RawCanonOutput<2048> buffer;
-    url_parse::Parsed parsed;
-
-#if USE(GOOGLEURL)
-    const CString& cstr = base.utf8String();
-    const char* data = cstr.data();
-    int length = cstr.length();
-    const url_parse::Parsed& srcParsed = base.parsed();
-#else
-    // When we're not using GoogleURL, first canonicalize it so we can resolve it
-    // below.
-    url_canon::RawCanonOutput<2048> srcCanon;
-    url_parse::Parsed srcParsed;
-    String str = base.string();
-    if (!url_util::Canonicalize(str.characters(), str.length(), 0, &srcCanon, &srcParsed))
-        return 0;
-    const char* data = srcCanon.data();
-    int length = srcCanon.length();
-#endif
-
-    if (!url_util::ResolveRelative(data, length, srcParsed, attributeURL.characters(),
-                                   attributeURL.length(), 0, &buffer, &parsed))
-        return 0;  // Invalid resolved URL.
-
-    return webKitPlatformSupport()->visitedLinkHash(buffer.data(), buffer.length());
-}
 
 // These are temporary methods that the WebKit layer can use to call to the
 // Glue layer. Once the Glue layer moves entirely into the WebKit layer, these

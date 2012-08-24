@@ -302,10 +302,6 @@ public:
     // Paint the given the given theme part.
     static void paintThemePart(GraphicsContext*, ThemePart, ThemePaintState, const IntRect&, const ThemePaintExtraParams*);
 #endif
-
-    // Visited links ------------------------------------------------------
-    static LinkHash visitedLinkHash(const UChar* url, unsigned length);
-    static LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL);
 };
 
 } // namespace WebCore

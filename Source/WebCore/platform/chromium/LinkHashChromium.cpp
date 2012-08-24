@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2008, 2009, Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -29,20 +29,59 @@
  */
 
 #include "config.h"
+#include "KURL.h"
 #include "LinkHash.h"
 
-#include "PlatformSupport.h"
+#if USE(GOOGLEURL)
+#include <googleurl/src/url_util.h>
+#endif
+
+#include <public/Platform.h>
 
 namespace WebCore {
 
+// Visited Links --------------------------------------------------------------
+
 LinkHash visitedLinkHash(const UChar* url, unsigned length)
 {
-    return PlatformSupport::visitedLinkHash(url, length);
+    url_canon::RawCanonOutput<2048> buffer;
+    url_parse::Parsed parsed;
+    if (!url_util::Canonicalize(url, length, 0, &buffer, &parsed))
+        return 0; // Invalid URLs are unvisited.
+    return WebKit::Platform::current()->visitedLinkHash(buffer.data(), buffer.length());
 }
 
 LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL)
 {
-    return PlatformSupport::visitedLinkHash(base, attributeURL);
+    // Resolve the relative URL using googleurl and pass the absolute URL up to
+    // the embedder. We could create a GURL object from the base and resolve
+    // the relative URL that way, but calling the lower-level functions
+    // directly saves us the string allocation in most cases.
+    url_canon::RawCanonOutput<2048> buffer;
+    url_parse::Parsed parsed;
+
+#if USE(GOOGLEURL)
+    const CString& cstr = base.utf8String();
+    const char* data = cstr.data();
+    int length = cstr.length();
+    const url_parse::Parsed& srcParsed = base.parsed();
+#else
+    // When we're not using GoogleURL, first canonicalize it so we can resolve it
+    // below.
+    url_canon::RawCanonOutput<2048> srcCanon;
+    url_parse::Parsed srcParsed;
+    String str = base.string();
+    if (!url_util::Canonicalize(str.characters(), str.length(), 0, &srcCanon, &srcParsed))
+        return 0;
+    const char* data = srcCanon.data();
+    int length = srcCanon.length();
+#endif
+
+    if (!url_util::ResolveRelative(data, length, srcParsed, attributeURL.characters(),
+                                   attributeURL.length(), 0, &buffer, &parsed))
+        return 0; // Invalid resolved URL.
+
+    return WebKit::Platform::current()->visitedLinkHash(buffer.data(), buffer.length());
 }
 
 } // namespace WebCore
