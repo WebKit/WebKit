@@ -157,11 +157,17 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         self._version = 'icecreamsandwich'
 
         self._host_port = factory.PortFactory(host).get('chromium', **kwargs)
+        self._server_process_constructor = self._android_server_process_constructor
 
         if hasattr(self._options, 'adb_device'):
             self._devices = self._options.adb_device
         else:
             self._devices = []
+
+    @staticmethod
+    def _android_server_process_constructor(port, server_name, cmd_line, env=None):
+        return server_process.ServerProcess(port, server_name, cmd_line, env,
+                                            universal_newlines=True, treat_no_data_as_crash=True)
 
     def additional_drt_flag(self):
         # The Chromium port for Android always uses the hardware GPU path.
@@ -583,7 +589,7 @@ class ChromiumAndroidDriver(driver.Driver):
         super(ChromiumAndroidDriver, self)._start(pixel_tests, per_test_args)
 
         _log.debug('Starting forwarder')
-        self._forwarder_process = server_process.ServerProcess(
+        self._forwarder_process = self._port._server_process_constructor(
             self._port, 'Forwarder', self._adb_command + ['shell', '%s -D %s' % (DEVICE_FORWARDER_PATH, FORWARD_PORTS)])
         self._forwarder_process.start()
 
@@ -605,14 +611,14 @@ class ChromiumAndroidDriver(driver.Driver):
 
         # Start a process to read from the stdout fifo of the DumpRenderTree app and print to stdout.
         _log.debug('Redirecting stdout to ' + self._out_fifo_path)
-        self._read_stdout_process = server_process.ServerProcess(
-            self._port, 'ReadStdout', self._adb_command + ['shell', 'cat', self._out_fifo_path], universal_newlines=True)
+        self._read_stdout_process = self._port._server_process_constructor(
+            self._port, 'ReadStdout', self._adb_command + ['shell', 'cat', self._out_fifo_path])
         self._read_stdout_process.start()
 
         # Start a process to read from the stderr fifo of the DumpRenderTree app and print to stdout.
         _log.debug('Redirecting stderr to ' + self._err_fifo_path)
-        self._read_stderr_process = server_process.ServerProcess(
-            self._port, 'ReadStderr', self._adb_command + ['shell', 'cat', self._err_fifo_path], universal_newlines=True)
+        self._read_stderr_process = self._port._server_process_constructor(
+            self._port, 'ReadStderr', self._adb_command + ['shell', 'cat', self._err_fifo_path])
         self._read_stderr_process.start()
 
         _log.debug('Redirecting stdin to ' + self._in_fifo_path)

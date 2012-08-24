@@ -60,7 +60,7 @@ class ServerProcess(object):
     indefinitely. The class also handles transparently restarting processes
     as necessary to keep issuing commands."""
 
-    def __init__(self, port_obj, name, cmd, env=None, universal_newlines=False):
+    def __init__(self, port_obj, name, cmd, env=None, universal_newlines=False, treat_no_data_as_crash=False):
         self._port = port_obj
         self._name = name  # Should be the command name (e.g. DumpRenderTree, ImageDiff)
         self._cmd = cmd
@@ -68,6 +68,7 @@ class ServerProcess(object):
         # Set if the process outputs non-standard newlines like '\r\n' or '\r'.
         # Don't set if there will be binary data or the data must be ASCII encoded.
         self._universal_newlines = universal_newlines
+        self._treat_no_data_as_crash = treat_no_data_as_crash
         self._host = self._port.host
         self._pid = None
         self._reset()
@@ -230,17 +231,17 @@ class ServerProcess(object):
             if out_fd in read_fds:
                 data = self._proc.stdout.read()
                 if not data and not stopping:
-                    if self._proc.poll() is not None:
+                    if self._treat_no_data_as_crash or self._proc.poll() is not None:
                         _log.warning('unexpected EOF of stdout, %s crashed' % self._name)
                         self._crashed = True
                     else:
-                        _log.warning('unexpected EOF of stdout, %s still alive' % self._name)
+                        _log.warning('unexpected EOF of stdout, %s is still alive' % self._name)
                 self._output += data
 
             if err_fd in read_fds:
                 data = self._proc.stderr.read()
                 if not data and not stopping:
-                    if self._proc.poll() is not None:
+                    if self._treat_no_data_as_crash or self._proc.poll() is not None:
                         _log.warning('unexpected EOF on stderr, %s crashed' % self._name)
                         self._crashed = True
                     else:
