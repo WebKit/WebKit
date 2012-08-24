@@ -1,3 +1,10 @@
+2012-08-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+        Marked fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements.html as failing following r126534.
+
 2012-08-24  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Add baselines for the tests which are missing expected results
