@@ -1,3 +1,13 @@
+2012-08-24  Chris Evans  <cevans@google.com>
+
+        Improve xpath-detached-nodes.html test.
+        https://bugs.webkit.org/show_bug.cgi?id=36427
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/xpath/xpath-detached-nodes-expected.txt:
+        * fast/xpath/xpath-detached-nodes.html: Increase coverage and improve log messages.
+
 2012-08-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126606.

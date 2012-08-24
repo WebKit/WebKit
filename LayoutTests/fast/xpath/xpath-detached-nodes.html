@@ -9,30 +9,39 @@
 <div id="console"></div>
 
 <script>
-  if (window.testRunner)
-    testRunner.dumpAsText();
-
   frag = document.createDocumentFragment();
   child = document.createElement('div');
   frag.appendChild(child);
-  result = document.evaluate("count(/div)",
-                             child, null, XPathResult.NUMBER_TYPE, null);
-  shouldBe("result.numberValue", "1");
-  result = document.evaluate("count(/html)",
-                             child, null, XPathResult.NUMBER_TYPE, null);
-  shouldBe("result.numberValue", "0");
+  child.appendChild(document.createElement('h2'));
+  shouldBe("document.evaluate('count(/div)', child, null, XPathResult.NUMBER_TYPE, null).numberValue",
+           "1");
+  shouldBe("document.evaluate('count(/html)', child, null, XPathResult.NUMBER_TYPE, null).numberValue",
+           "0");
+  shouldBe("document.evaluate('count(/)', child, null, XPathResult.NUMBER_TYPE, null).numberValue",
+           "1");
+  shouldBe("document.evaluate('count(//html)', child, null, XPathResult.NUMBER_TYPE, null).numberValue",
+           "0");
+  shouldBe("document.evaluate('count(//div)', child, null, XPathResult.NUMBER_TYPE, null).numberValue",
+           "1");
+  shouldBe("document.evaluate('count(//h2)', child, null, XPathResult.NUMBER_TYPE, null).numberValue",
+           "1");
 
   ele = document.createElement('p');
   ele.appendChild(document.createElement('h1'));
-  result = document.evaluate("count(/h1)",
-                             ele, null, XPathResult.NUMBER_TYPE, null);
-  shouldBe("result.numberValue", "1");
-  result = document.evaluate("count(/html)",
-                             ele, null, XPathResult.NUMBER_TYPE, null);
-  shouldBe("result.numberValue", "0");
-  result = document.evaluate("/* | *",
-                             ele, null, XPathResult.NUMBER_TYPE, null);
-  shouldBe("result.numberValue", "NaN");
+  shouldBe("document.evaluate('count(/h1)', ele, null, XPathResult.NUMBER_TYPE, null).numberValue",
+           "1");
+  shouldBe("document.evaluate('count(/html)', ele, null, XPathResult.NUMBER_TYPE, null).numberValue",
+           "0");
+  shouldBe("document.evaluate('count(/)', ele, null, XPathResult.NUMBER_TYPE, null).numberValue",
+           "1");
+  shouldBe("document.evaluate('count(//html)', ele, null, XPathResult.NUMBER_TYPE, null).numberValue",
+           "0");
+  shouldBe("document.evaluate('count(//p)', ele, null, XPathResult.NUMBER_TYPE, null).numberValue",
+           "0");
+  shouldBe("document.evaluate('count(//h1)', ele, null, XPathResult.NUMBER_TYPE, null).numberValue",
+           "1");
+  shouldBe("document.evaluate('/* | *', ele, null, XPathResult.NUMBER_TYPE, null).numberValue",
+           "NaN");
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

@@ -93,9 +93,14 @@ Value LocationPath::evaluate() const
 {
     EvaluationContext& evaluationContext = Expression::evaluationContext();
     EvaluationContext backupContext = evaluationContext;
-    // For absolute location paths, the context node is ignored. The
-    // document's root node is used for attached nodes, otherwise the root
-    // node of the detached subtree is used.
+    // http://www.w3.org/TR/xpath/
+    // Section 2, Location Paths:
+    // "/ selects the document root (which is always the parent of the document element)"
+    // "A / by itself selects the root node of the document containing the context node."
+    // In the case of a tree that is detached from the document, we violate
+    // the spec and treat / as the root node of the detached tree.
+    // This is for compatibility with Firefox, and also seems like a more
+    // logical treatment of where you would expect the "root" to be.
     Node* context = evaluationContext.node.get();
     if (m_absolute && context->nodeType() != Node::DOCUMENT_NODE)  {
         if (context->inDocument())
