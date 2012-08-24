@@ -31,6 +31,8 @@
 #include "CSSVariableValue.h"
 #endif
 
+#include <wtf/text/StringBuilder.h>
+
 namespace WebCore {
 
 struct SameSizeAsCSSProperty {
@@ -53,7 +55,14 @@ String CSSProperty::cssName() const
 
 String CSSProperty::cssText() const
 {
-    return cssName() + ": " + m_value->cssText() + (isImportant() ? " !important" : "") + "; ";
+    StringBuilder result;
+    result.append(cssName());
+    result.appendLiteral(": ");
+    result.append(m_value->cssText());
+    if (isImportant())
+        result.appendLiteral(" !important");
+    result.append(';');
+    return result.toString();
 }
 
 void CSSProperty::wrapValueInCommaSeparatedList()

@@ -26,9 +26,9 @@
                  -webkit-border-radius: 6px 8px; \
                  overflow: scroll; \
                  -webkit-mask: url(/mask.png) repeat-x scroll center top;");
-            var allProperties = element.style.cssText.split("; ");
+            var allProperties = element.style.cssText.concat(" ").split("; ");
             element.style.removeProperty(shorthand);
-            var remainingProperties = element.style.cssText.split("; ");
+            var remainingProperties = element.style.cssText.concat(" ").split("; ");
             var removedProperties = [];
             var addedProperties = [];
 

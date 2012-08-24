@@ -30,6 +30,7 @@
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertySet.h"
 #include "WebKitCSSKeyframesRule.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -77,13 +78,15 @@ void StyleKeyframe::parseKeyString(const String& s, Vector<float>& keys)
 
 String StyleKeyframe::cssText() const
 {
-    String result = keyText();
-
-    result += " { ";
-    result += m_properties->asText();
-    result += "}";
-
-    return result;
+    StringBuilder result;
+    result.append(keyText());
+    result.appendLiteral(" { ");
+    String decls = m_properties->asText();
+    result.append(decls);
+    if (!decls.isEmpty())
+        result.append(' ');
+    result.append('}');
+    return result.toString();
 }
 
 void StyleKeyframe::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

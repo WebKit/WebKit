@@ -30,6 +30,7 @@
 #include "StylePropertySet.h"
 #include "StyleRule.h"
 #include <wtf/Vector.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -79,11 +80,15 @@ void CSSPageRule::setSelectorText(const String& selectorText)
 
 String CSSPageRule::cssText() const
 {
-    String result = selectorText();
-    result += " { ";
-    result += m_pageRule->properties()->asText();
-    result += "}";
-    return result;
+    StringBuilder result;
+    result.append(selectorText());
+    result.appendLiteral(" { ");
+    String decls = m_pageRule->properties()->asText();
+    result.append(decls);
+    if (!decls.isEmpty())
+        result.append(' ');
+    result.append('}');
+    return result.toString();
 }
 
 void CSSPageRule::reattach(StyleRulePage* rule)

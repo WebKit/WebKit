@@ -23,7 +23,7 @@ after:
 | "
 "
 | <span>
-|   style="display: block; "
+|   style="display: block;"
 |   <b>
 |     "This is a paragraph."
 | <span>

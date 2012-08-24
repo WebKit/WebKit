@@ -11,7 +11,7 @@ before:
 after:
 | <a>
 |   href="http://webkit.org/"
-|   style="color: orange; "
+|   style="color: orange;"
 |   target="_blank"
 |   title="some title"
 |   "<#selection-anchor>drag me<#selection-focus>"

@@ -47,69 +47,69 @@ run("t.style.backgroundPositionX = '5%';");
 shouldBe("t.style.backgroundPosition", "5%");
 shouldBe("t.style.backgroundPositionX", "5%");
 shouldBe("t.style.backgroundPositionY", "");
-shouldBe("t.style.cssText", "background-position-x: 5%; ");
-shouldBe("t.getAttribute('style')", "background-position-x: 5%; ");
+shouldBe("t.style.cssText", "background-position-x: 5%;");
+shouldBe("t.getAttribute('style')", "background-position-x: 5%;");
 
 run("t.style.backgroundPositionY = '5%';");
 shouldBe("t.style.backgroundPosition", "5% 5%");
 shouldBe("t.style.backgroundPositionX", "5%");
 shouldBe("t.style.backgroundPositionY", "5%");
-shouldBe("t.style.cssText", "background-position: 5% 5%; ");
-shouldBe("t.getAttribute('style')", "background-position: 5% 5%; ");
+shouldBe("t.style.cssText", "background-position: 5% 5%;");
+shouldBe("t.getAttribute('style')", "background-position: 5% 5%;");
 
 run("t.style.backgroundPosition = '10% 10%';");
 shouldBe("t.style.backgroundPosition", "10% 10%");
 shouldBe("t.style.backgroundPositionX", "10%");
 shouldBe("t.style.backgroundPositionY", "10%");
-shouldBe("t.style.cssText", "background-position: 10% 10%; ");
-shouldBe("t.getAttribute('style')", "background-position: 10% 10%; ");
+shouldBe("t.style.cssText", "background-position: 10% 10%;");
+shouldBe("t.getAttribute('style')", "background-position: 10% 10%;");
 
 run("t.style.backgroundPositionX = '20%';");
 shouldBe("t.style.backgroundPosition", "20% 10%");
 shouldBe("t.style.backgroundPositionX", "20%");
 shouldBe("t.style.backgroundPositionY", "10%");
-shouldBe("t.style.cssText", "background-position: 20% 10%; ");
-shouldBe("t.getAttribute('style')", "background-position: 20% 10%; ");
+shouldBe("t.style.cssText", "background-position: 20% 10%;");
+shouldBe("t.getAttribute('style')", "background-position: 20% 10%;");
 
 run("t.style.backgroundPositionY = '20%';");
 shouldBe("t.style.backgroundPosition", "20% 20%");
 shouldBe("t.style.backgroundPositionX", "20%");
 shouldBe("t.style.backgroundPositionY", "20%");
-shouldBe("t.style.cssText", "background-position: 20% 20%; ");
-shouldBe("t.getAttribute('style')", "background-position: 20% 20%; ");
+shouldBe("t.style.cssText", "background-position: 20% 20%;");
+shouldBe("t.getAttribute('style')", "background-position: 20% 20%;");
 
 run("t.setAttribute('style', 'background-position: 30% 30%');");
 shouldBe("t.style.backgroundPosition", "30% 30%");
 shouldBe("t.style.backgroundPositionX", "30%");
 shouldBe("t.style.backgroundPositionY", "30%");
-shouldBe("t.style.cssText", "background-position: 30% 30%; ");
+shouldBe("t.style.cssText", "background-position: 30% 30%;");
 shouldBe("t.getAttribute('style')", "background-position: 30% 30%");
 
 run("t.style.backgroundPositionX = '20%';");
 shouldBe("t.style.backgroundPosition", "20% 30%");
 shouldBe("t.style.backgroundPositionX", "20%");
 shouldBe("t.style.backgroundPositionY", "30%");
-shouldBe("t.style.cssText", "background-position: 20% 30%; ");
-shouldBe("t.getAttribute('style')", "background-position: 20% 30%; ");
+shouldBe("t.style.cssText", "background-position: 20% 30%;");
+shouldBe("t.getAttribute('style')", "background-position: 20% 30%;");
 
 run("t.style.backgroundPositionY = '20%';");
 shouldBe("t.style.backgroundPosition", "20% 20%");
 shouldBe("t.style.backgroundPositionX", "20%");
 shouldBe("t.style.backgroundPositionY", "20%");
-shouldBe("t.style.cssText", "background-position: 20% 20%; ");
-shouldBe("t.getAttribute('style')", "background-position: 20% 20%; ");
+shouldBe("t.style.cssText", "background-position: 20% 20%;");
+shouldBe("t.getAttribute('style')", "background-position: 20% 20%;");
 
 run("t.setAttribute('style', 'background-position: 60% 60% !important;');");
 shouldBe("t.style.backgroundPosition", "60% 60%");
 shouldBe("t.style.backgroundPositionX", "60%");
 shouldBe("t.style.backgroundPositionY", "60%");
-shouldBe("t.style.cssText", "background-position: 60% 60% !important; ");
+shouldBe("t.style.cssText", "background-position: 60% 60% !important;");
 
 run("t.setAttribute('style', 'background-position: 10px 15px, 20px 25px, 30px 35px');");
 shouldBe("t.style.backgroundPosition", "10px 15px, 20px 25px, 30px 35px");
 shouldBe("t.style.backgroundPositionX", "10px, 20px, 30px");
 shouldBe("t.style.backgroundPositionY", "15px, 25px, 35px");
-shouldBe("t.style.cssText", "background-position: 10px 15px, 20px 25px, 30px 35px; ");
+shouldBe("t.style.cssText", "background-position: 10px 15px, 20px 25px, 30px 35px;");
 
 run("t.setAttribute('style', 'background: url(about:blank) 80% 80%;');");
 run("t.style.backgroundPositionY = '50px'");

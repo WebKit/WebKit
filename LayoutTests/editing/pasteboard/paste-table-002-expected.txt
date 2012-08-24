@@ -15,4 +15,4 @@ Problem: copy/pasting some HTML including tables can give rise to a <div> elemen
 abcdef
 foo	bar
 ghijk
-<div id="test" class="editing"> <div>abcdef<div style="text-align: center; "><table><tbody><tr><td>foo</td><td>bar</td></tr></tbody></table>ghijk</div> </div> </div>
+<div id="test" class="editing"> <div>abcdef<div style="text-align: center;"><table><tbody><tr><td>foo</td><td>bar</td></tr></tbody></table>ghijk</div> </div> </div>

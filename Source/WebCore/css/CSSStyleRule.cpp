@@ -111,13 +111,15 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
 
 String CSSStyleRule::cssText() const
 {
-    String result = selectorText();
-
-    result += " { ";
-    result += m_styleRule->properties()->asText();
-    result += "}";
-
-    return result;
+    StringBuilder result;
+    result.append(selectorText());
+    result.appendLiteral(" { ");
+    String decls = m_styleRule->properties()->asText();
+    result.append(decls);
+    if (!decls.isEmpty())
+        result.append(' ');
+    result.append('}');
+    return result.toString();
 }
 
 void CSSStyleRule::reattach(StyleRule* rule)

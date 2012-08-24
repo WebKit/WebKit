@@ -25,7 +25,7 @@ border: 1px solid black;
 
 
 Running: testSetStyleCSSText
-<div id="container" style="color: rgb(192, 255, 238); "></div>
+<div id="container" style="color: rgb(192, 255, 238);"></div>
 [expanded] 
 element.style  { ()
 color: #C0FFEE;
@@ -33,7 +33,7 @@ color: #C0FFEE;
 
 
 Running: testSetViaParsedAttributes
-<div id="container" style="color: rgb(192, 255, 238); border: 3px dashed green; "></div>
+<div id="container" style="color: rgb(192, 255, 238); border: 3px dashed green;"></div>
 [expanded] 
 element.style  { ()
 color: #C0FFEE;

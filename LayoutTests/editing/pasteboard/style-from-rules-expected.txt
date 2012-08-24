@@ -30,11 +30,11 @@ Pasted:
 |   title="none"
 |   <span>
 |     class="red"
-|     style="font-size: 1em; font-weight: bold; "
+|     style="font-size: 1em; font-weight: bold;"
 |     title="font-size: 1em; font-weight: bold;"
 |     "world"
 |   " "
 |   <em>
-|     style="font-style: normal; font-weight: bold; color: blue; "
+|     style="font-style: normal; font-weight: bold; color: blue;"
 |     title="font-style: normal; font-weight: bold; color: blue;"
 |     "WebKit<#selection-caret>"

@@ -38,6 +38,7 @@
 #include "SecurityOrigin.h"
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -311,7 +312,14 @@ void CSSStyleSheet::deleteRule(unsigned index, ExceptionCode& ec)
 
 int CSSStyleSheet::addRule(const String& selector, const String& style, int index, ExceptionCode& ec)
 {
-    insertRule(selector + " { " + style + " }", index, ec);
+    StringBuilder text;
+    text.append(selector);
+    text.appendLiteral(" { ");
+    text.append(style);
+    if (!style.isEmpty())
+        text.append(' ');
+    text.append('}');
+    insertRule(text.toString(), index, ec);
     
     // As per Microsoft documentation, always return -1.
     return -1;

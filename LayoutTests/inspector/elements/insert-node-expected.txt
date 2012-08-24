@@ -49,7 +49,7 @@ Running: testAppendWithText
       <div id="child2"></div>
       <div id="child3"></div>
       <div id="child-after"></div>
-      <div style="display: none; " id="child-with-text">Text</div>
+      <div style="display: none;" id="child-with-text">Text</div>
   </div>
 Success: child text is bound
 
@@ -64,7 +64,7 @@ Running: testInsertFirstTextNode
           "First text"
       </div>
       <div id="child-after"></div>
-      <div style="display: none; " id="child-with-text">Text</div>
+      <div style="display: none;" id="child-with-text">Text</div>
   </div>
 Success: child text is bound
 

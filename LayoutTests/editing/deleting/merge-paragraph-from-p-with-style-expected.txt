@@ -12,7 +12,7 @@ This tests deleting line break before p.
 | "
 hello<#selection-caret>"
 | <span>
-|   style="font-style: italic; "
+|   style="font-style: italic;"
 |   "world"
 | "
 "

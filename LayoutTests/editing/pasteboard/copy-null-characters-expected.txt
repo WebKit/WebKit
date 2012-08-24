@@ -27,7 +27,7 @@ If there are NULL characters in text nodes, they should not be copied to the cli
 |     id="source"
 |     "Copy paste me"
 |   <span>
-|     style="color: green; "
+|     style="color: green;"
 |     "green"
 |   "Copy paste me"
 | "

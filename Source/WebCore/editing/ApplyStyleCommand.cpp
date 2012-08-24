@@ -50,6 +50,7 @@
 #include "htmlediting.h"
 #include "visible_units.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -1313,10 +1314,15 @@ void ApplyStyleCommand::addBlockStyle(const StyleChange& styleChange, HTMLElemen
     if (!block)
         return;
         
-    String cssText = styleChange.cssStyle();
-    if (const StylePropertySet* decl = block->inlineStyle())
-        cssText += decl->asText();
-    setNodeAttribute(block, styleAttr, cssText);
+    String cssStyle = styleChange.cssStyle();
+    StringBuilder cssText;
+    cssText.append(cssStyle);
+    if (const StylePropertySet* decl = block->inlineStyle()) {
+        if (!cssStyle.isEmpty())
+            cssText.append(' ');
+        cssText.append(decl->asText());
+    }
+    setNodeAttribute(block, styleAttr, cssText.toString());
 }
 
 void ApplyStyleCommand::addInlineStyleIfNeeded(EditingStyle* style, PassRefPtr<Node> passedStart, PassRefPtr<Node> passedEnd, EAddStyledElement addStyledElement)
@@ -1379,9 +1385,15 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(EditingStyle* style, PassRefPtr<N
 
     if (styleChange.cssStyle().length()) {
         if (styleContainer) {
-            if (const StylePropertySet* existingStyle = styleContainer->inlineStyle())
-                setNodeAttribute(styleContainer, styleAttr, existingStyle->asText() + styleChange.cssStyle());
-            else
+            if (const StylePropertySet* existingStyle = styleContainer->inlineStyle()) {
+                String existingText = existingStyle->asText();
+                StringBuilder cssText;
+                cssText.append(existingText);
+                if (!existingText.isEmpty())
+                    cssText.append(' ');
+                cssText.append(styleChange.cssStyle());
+                setNodeAttribute(styleContainer, styleAttr, cssText.toString());
+            } else
                 setNodeAttribute(styleContainer, styleAttr, styleChange.cssStyle());
         } else {
             RefPtr<Element> styleElement = createStyleSpanElement(document());

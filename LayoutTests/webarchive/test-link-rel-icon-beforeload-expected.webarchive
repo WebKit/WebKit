@@ -18,7 +18,7 @@ function runTest()
 &lt;/script&gt;
 &lt;/head&gt;
 &lt;body onload="runTest()"&gt;
-&lt;div id="console"&gt;&lt;div style="font-family: monospace; color: green; "&gt;PASS&lt;/div&gt;&lt;/div&gt;
+&lt;div id="console"&gt;&lt;div style="font-family: monospace; color: green;"&gt;PASS&lt;/div&gt;&lt;/div&gt;
 &lt;script&gt;
 function print(message, color) 
 {

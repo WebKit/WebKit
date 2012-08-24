@@ -1,3 +1,90 @@
+2012-08-24  Glenn Adams  <glenn@skynav.com>
+
+        CSSStyleDeclaration.cssText should not contain extraneous whitespace in final delimiter
+        https://bugs.webkit.org/show_bug.cgi?id=94633
+
+        Reviewed by Benjamin Poulain.
+
+        Ensure cssText final delimiter does not contain extraneous space character after semicolon.
+
+        * cssom/README.txt: Added.
+        * cssom/cssstyledeclaration-csstext-final-delimiter-expected.txt: Added.
+        * cssom/cssstyledeclaration-csstext-final-delimiter.html: Added.
+        * editing/deleting/delete-line-break-before-underlined-content-expected.txt: Remove extraneous space.
+        * editing/deleting/delete-line-break-between-paragraphs-with-same-style-expected.txt: ditto
+        * editing/deleting/deleting-line-break-preserves-underline-color-expected.txt: ditto
+        * editing/deleting/merge-paragraph-from-h6-with-style-2-expected.txt: ditto
+        * editing/deleting/merge-paragraph-from-h6-with-style-expected.txt: ditto
+        * editing/deleting/merge-paragraph-from-p-with-style-3-expected.txt: ditto
+        * editing/deleting/merge-paragraph-from-p-with-style-expected.txt: ditto
+        * editing/deleting/paste-with-transparent-background-color-expected.txt: ditto
+        * editing/execCommand/insert-list-with-noneditable-content-expected.txt: ditto
+        * editing/execCommand/script-tests/toggle-link.js: ditto
+        * editing/execCommand/script-tests/toggle-unlink.js: ditto
+        * editing/execCommand/toggle-link-expected.txt: ditto
+        * editing/execCommand/toggle-unlink-expected.txt: ditto
+        * editing/inserting/page-zoom-font-size-expected.txt: ditto
+        * editing/pasteboard/19644-2-expected.txt: ditto
+        * editing/pasteboard/5761530-1-expected.txt: ditto
+        * editing/pasteboard/5780697-2-expected.txt: ditto
+        * editing/pasteboard/copy-null-characters-expected.txt: ditto
+        * editing/pasteboard/copy-paste-bidi-expected.txt: ditto
+        * editing/pasteboard/copy-text-with-backgroundcolor-expected.txt: ditto
+        * editing/pasteboard/data-transfer-items-expected.txt: ditto
+        * editing/pasteboard/display-block-on-spans-expected.txt: ditto
+        * editing/pasteboard/do-not-copy-unnecessary-styles-2-expected.txt: ditto
+        * editing/pasteboard/do-not-copy-unnecessary-styles-expected.txt: ditto
+        * editing/pasteboard/drag-drop-url-with-style-expected.txt: ditto
+        * editing/pasteboard/onpaste-text-html-expected.txt: ditto
+        * editing/pasteboard/paste-4039777-fix-expected.txt: ditto
+        * editing/pasteboard/paste-and-sanitize-expected.txt: ditto
+        * editing/pasteboard/paste-and-sanitize.html: ditto
+        * editing/pasteboard/paste-list-003-expected.txt: ditto
+        * editing/pasteboard/paste-noscript-expected.txt: ditto
+        * editing/pasteboard/paste-noscript-xhtml-expected.txt: ditto
+        * editing/pasteboard/paste-table-002-expected.txt: ditto
+        * editing/pasteboard/paste-text-with-style-4-expected.txt: ditto
+        * editing/pasteboard/paste-text-with-style-5-expected.txt: ditto
+        * editing/pasteboard/paste-with-redundant-style-expected.txt: ditto
+        * editing/pasteboard/preserve-underline-color-expected.txt: ditto
+        * editing/pasteboard/style-from-rules-expected.txt: ditto
+        * editing/pasteboard/testcase-9507-expected.txt: ditto
+        * editing/style/non-inheritable-styles-expected.txt: ditto
+        * editing/style/push-down-font-styles-expected.txt: ditto
+        * editing/style/push-down-implicit-styles-around-list-expected.txt: ditto
+        * editing/style/push-down-implicit-styles-expected.txt: ditto
+        * editing/style/push-down-inline-styles-expected.txt: ditto
+        * editing/style/script-tests/push-down-font-styles.js: ditto
+        * editing/style/script-tests/push-down-implicit-styles-around-list.js: ditto
+        * editing/style/script-tests/push-down-implicit-styles.js: ditto
+        * editing/style/script-tests/push-down-inline-styles.js: ditto
+        * editing/undo/remove-css-property-and-remove-style-expected.txt: ditto
+        * editing/undo/replace-by-span-then-remove-expected.txt: ditto
+        * editing/undo/replace-by-span-then-remove.html: ditto
+        * fast/css/background-position-serialize.html: ditto
+        * fast/css/counters/counter-cssText-expected.txt: ditto
+        * fast/css/counters/counter-cssText.html: ditto
+        * fast/css/parse-border-image-repeat-null-crash-expected.txt: ditto
+        * fast/css/remove-shorthand.html: ditto
+        * fast/dom/Element/scrollWidth.html: ditto
+        * fast/dom/HTMLMeterElement/meter-element-markup-expected.txt: ditto
+        * fast/dom/HTMLProgressElement/progress-element-markup-expected.txt: ditto
+        * fast/dom/attr-style-too-lazy-expected.txt: ditto
+        * fast/dom/attr-style-too-lazy.html: ditto
+        * fast/dom/css-set-property-exception-expected.txt: ditto
+        * fast/fast/events/ondrop-text-html-expected.txt: ditto
+        * fast/mutation/observe-attributes-expected.txt: ditto
+        * fast/mutation/observe-attributes.html: ditto
+        * inspector/elements/insert-node-expected.txt: ditto
+        * inspector/styles/styles-update-from-js-expected.txt: ditto
+        * platform/chromium-win/editing/pasteboard/5780697-2-expected.txt: ditto
+        * platform/efl/fast/dom/HTMLMeterElement/meter-element-markup-expected.txt: ditto
+        * platform/mac/editing/pasteboard/5761530-1-expected.txt: ditto
+        * platform/qt/editing/pasteboard/5761530-1-expected.txt: ditto
+        * platform/qt/editing/pasteboard/5780697-2-expected.txt: ditto
+        * svg/webarchive/svg-script-subresouces-expected.webarchive: ditto
+        * webarchive/test-link-rel-icon-beforeload-expected.webarchive: ditto
+
 2012-08-24  Julien Chaffraix  <jchaffraix@webkit.org>
 
         More unreviewed Chromium rebaselining.

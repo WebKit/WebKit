@@ -6,6 +6,6 @@ one: <b>one</b>
 two: <span style="background-color: green">two</span>
 three: three
 one: <b>one</b>
-two: <span style="background-color: green; ">two</span>
+two: <span style="background-color: green;">two</span>
 four: <span style="background-color: orange"><i>four</i></span>
 i love counting, counting to the number four: i love counting, counting to the number four

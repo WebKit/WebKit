@@ -52,7 +52,7 @@ Actual result:
 |   <li>
 |     "A"
 |   <div>
-|     style="text-align: start; "
+|     style="text-align: start;"
 |     <ul>
 |       <li>
 |         <a>

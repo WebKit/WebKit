@@ -56,7 +56,7 @@ Markup after:
 |   style="background-color: rgb(255, 0, 0);"
 |   "Red background"
 | <span>
-|   style="background-color: rgb(255, 0, 0); "
+|   style="background-color: rgb(255, 0, 0);"
 |   "Red background"
 | <div>
 |   id="test2"
@@ -64,7 +64,7 @@ Markup after:
 |     style="background-color: green;"
 |     "Green background"
 |   <span>
-|     style="background-color: rgb(0, 128, 0); "
+|     style="background-color: rgb(0, 128, 0);"
 |     "Green background"
 | "
 "

@@ -7,7 +7,7 @@ This tests deleting a line break between paragraphs with the same inline style. 
 |     face="monospace"
 |     "hello world<#selection-caret>"
 |   <span>
-|     style="font-family: monospace; "
+|     style="font-family: monospace;"
 |     "WebKit"
 | "
 "

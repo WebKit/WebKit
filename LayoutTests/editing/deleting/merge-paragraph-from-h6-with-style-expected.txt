@@ -14,7 +14,7 @@ WebKit should not cancel styles added by h6 by those of document's default style
 | <em>
 |   "hello<#selection-caret>"
 | <span>
-|   style="color: red; "
+|   style="color: red;"
 |   "world"
 | "
 "

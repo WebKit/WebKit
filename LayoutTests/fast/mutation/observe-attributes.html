@@ -647,7 +647,7 @@ function testStyleAttributePropertyAccess() {
         });
 
         div = document.createElement('div');
-        div.setAttribute('style', 'color: yellow; width: 100px; ');
+        div.setAttribute('style', 'color: yellow; width: 100px;');
         observer.observe(div, { attributes: true });
         div.style.color = 'red';
         div.style.width = '200px';
@@ -699,7 +699,7 @@ function testStyleAttributePropertyAccessOldValue() {
         });
 
         div = document.createElement('div');
-        div.setAttribute('style', 'color: yellow; width: 100px; ');
+        div.setAttribute('style', 'color: yellow; width: 100px;');
         observer.observe(div, { attributes: true, attributeOldValue: true });
         div.style.color = 'red';
         div.style.width = '200px';
@@ -712,13 +712,13 @@ function testStyleAttributePropertyAccessOldValue() {
         shouldBe('mutations.length', '3');
         shouldBe('mutations[0].type', '"attributes"');
         shouldBe('mutations[0].attributeName', '"style"');
-        shouldBe('mutations[0].oldValue', '"color: yellow; width: 100px; "');
+        shouldBe('mutations[0].oldValue', '"color: yellow; width: 100px;"');
         shouldBe('mutations[1].type', '"attributes"');
         shouldBe('mutations[1].attributeName', '"style"');
-        shouldBe('mutations[1].oldValue', '"color: red; width: 100px; "');
+        shouldBe('mutations[1].oldValue', '"color: red; width: 100px;"');
         shouldBe('mutations[2].type', '"attributes"');
         shouldBe('mutations[2].attributeName', '"style"');
-        shouldBe('mutations[2].oldValue', '"color: red; width: 200px; "');
+        shouldBe('mutations[2].oldValue', '"color: red; width: 200px;"');
 
         mutations = null;
         div.getAttribute('style');
@@ -751,7 +751,7 @@ function testStyleAttributePropertyAccessIgnoreNoop() {
         });
 
         div = document.createElement('div');
-        div.setAttribute('style', 'color: yellow; width: 100px; ');
+        div.setAttribute('style', 'color: yellow; width: 100px;');
         observer.observe(div, { attributes: true });
         div.style.removeProperty('height');
 

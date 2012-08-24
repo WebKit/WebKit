@@ -7,10 +7,10 @@ PASS confirmedMarkup is 'Hello'
 PASS confirmedMarkup is '<b><i>Hello</i></b>'
 PASS confirmedMarkup is '<div style="text-align: center;"><b>Hello</b></div>'
 PASS confirmedMarkup is '<div><b><i>hello</i></b></div><div><b><i>world</i></b></div>'
-PASS confirmedMarkup is '<b><i><span style="font-weight: normal; "><b><i>hello1</i></b><b><i>&nbsp;hello2</i></b></span></i></b>'
-FAIL confirmedMarkup should be <i style="margin: 10px; ">hello</i></b></i>. Was <i style="margin: 10px; "><b><i style="margin: 10px; ">hello</i></b></i>.
+PASS confirmedMarkup is '<b><i><span style="font-weight: normal;"><b><i>hello1</i></b><b><i>&nbsp;hello2</i></b></span></i></b>'
+FAIL confirmedMarkup should be <i style="margin: 10px;">hello</i></b></i>. Was <i style="margin: 10px;"><b><i style="margin: 10px;">hello</i></b></i>.
 PASS confirmedMarkup is '<b><i>Hello&nbsp;world</i></b>'
-PASS confirmedMarkup is '<b><i><span style="font-weight: normal; ">plain text<b><i>bold italic text</i></b></span></i></b>'
+PASS confirmedMarkup is '<b><i><span style="font-weight: normal;">plain text<b><i>bold italic text</i></b></span></i></b>'
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -25,6 +25,7 @@
 #include "MemoryInstrumentation.h"
 #include "StylePropertySet.h"
 #include "StyleRule.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -49,11 +50,14 @@ CSSStyleDeclaration* CSSFontFaceRule::style() const
 
 String CSSFontFaceRule::cssText() const
 {
-    String result("@font-face");
-    result += " { ";
-    result += m_fontFaceRule->properties()->asText();
-    result += "}";
-    return result;
+    StringBuilder result;
+    result.appendLiteral("@font-face { ");
+    String descs = m_fontFaceRule->properties()->asText();
+    result.append(descs);
+    if (!descs.isEmpty())
+        result.append(' ');
+    result.append('}');
+    return result.toString();
 }
 
 void CSSFontFaceRule::reattach(StyleRuleFontFace* rule)

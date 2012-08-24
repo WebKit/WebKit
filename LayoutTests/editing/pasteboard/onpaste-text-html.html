@@ -13,7 +13,7 @@ function removeFontName(text)
 {
     if (!text)
         return text;
-    return text.replace(/font-family: [^;]+;/g, "");
+    return text.replace(/font-family: [^;]+;\s*/g, "");
 }
 
 function paste(ev)

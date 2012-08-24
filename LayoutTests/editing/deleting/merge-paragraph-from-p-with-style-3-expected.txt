@@ -14,7 +14,7 @@ WebKit preserves the inline style of the merged paragraph, and "world" should be
 | <h1>
 |   "hello<#selection-caret>"
 |   <span>
-|     style="color: green; "
+|     style="color: green;"
 |     "world"
 | <font>
 |   color="red"

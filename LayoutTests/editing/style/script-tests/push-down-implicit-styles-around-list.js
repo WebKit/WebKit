@@ -30,24 +30,24 @@ function selectLastWord(container) {
 }
 
 testSingleToggle("bold", selectFirstWord, '<b><ul><li><b>a</b></li></ul></b>', '<ul><li>a</li></ul>');
-testSingleToggle("bold", selectFirstWord, '<b><ul><li>hello</li><li>world</li></ul></b>', '<ul><li>hello</li><li style="font-weight: bold; ">world</li></ul>');
-testSingleToggle("bold", selectLastWord, '<ul><li>hello</li><li style="font-weight: bold; ">world</li></ul>', '<ul><li>hello</li><li>world</li></ul>');
-testSingleToggle("bold", selectFirstWord, '<b><ul><li>hello world</li><li>webkit</li></ul></b>', '<ul><li>hello<b> world</b></li><li style="font-weight: bold; ">webkit</li></ul>');
+testSingleToggle("bold", selectFirstWord, '<b><ul><li>hello</li><li>world</li></ul></b>', '<ul><li>hello</li><li style="font-weight: bold;">world</li></ul>');
+testSingleToggle("bold", selectLastWord, '<ul><li>hello</li><li style="font-weight: bold;">world</li></ul>', '<ul><li>hello</li><li>world</li></ul>');
+testSingleToggle("bold", selectFirstWord, '<b><ul><li>hello world</li><li>webkit</li></ul></b>', '<ul><li>hello<b> world</b></li><li style="font-weight: bold;">webkit</li></ul>');
 
 testSingleToggle("italic", selectFirstWord, '<i><ul><li><i>a</i></li></ul></i>', '<ul><li>a</li></ul>');
-testSingleToggle("italic", selectFirstWord, '<i><ul><li>hello</li><li>world</li></ul></i>', '<ul><li>hello</li><li style="font-style: italic; ">world</li></ul>');
-testSingleToggle("italic", selectLastWord, '<ul><li>hello</li><li style="font-style: italic; ">world</li></ul>', '<ul><li>hello</li><li>world</li></ul>');
-testSingleToggle("italic", selectFirstWord, '<i><ul><li>hello world</li><li>webkit</li></ul></i>', '<ul><li>hello<i> world</i></li><li style="font-style: italic; ">webkit</li></ul>');
+testSingleToggle("italic", selectFirstWord, '<i><ul><li>hello</li><li>world</li></ul></i>', '<ul><li>hello</li><li style="font-style: italic;">world</li></ul>');
+testSingleToggle("italic", selectLastWord, '<ul><li>hello</li><li style="font-style: italic;">world</li></ul>', '<ul><li>hello</li><li>world</li></ul>');
+testSingleToggle("italic", selectFirstWord, '<i><ul><li>hello world</li><li>webkit</li></ul></i>', '<ul><li>hello<i> world</i></li><li style="font-style: italic;">webkit</li></ul>');
 
 testSingleToggle("underline", selectFirstWord, '<u><ul><li><u>a</u></li></ul></u>', '<ul><li>a</li></ul>');
-testSingleToggle("underline", selectFirstWord, '<u><ul><li>hello</li><li>world</li></ul></u>', '<ul><li>hello</li><li style="text-decoration: underline; ">world</li></ul>');
-testSingleToggle("underline", selectLastWord, '<ul><li>hello</li><li style="text-decoration: underline; ">world</li></ul>', '<ul><li>hello</li><li>world</li></ul>');
-testSingleToggle("underline", selectFirstWord, '<u><ul><li>hello world</li><li>webkit</li></ul></u>', '<ul><li>hello<u> world</u></li><li style="text-decoration: underline; ">webkit</li></ul>');
+testSingleToggle("underline", selectFirstWord, '<u><ul><li>hello</li><li>world</li></ul></u>', '<ul><li>hello</li><li style="text-decoration: underline;">world</li></ul>');
+testSingleToggle("underline", selectLastWord, '<ul><li>hello</li><li style="text-decoration: underline;">world</li></ul>', '<ul><li>hello</li><li>world</li></ul>');
+testSingleToggle("underline", selectFirstWord, '<u><ul><li>hello world</li><li>webkit</li></ul></u>', '<ul><li>hello<u> world</u></li><li style="text-decoration: underline;">webkit</li></ul>');
 
 testSingleToggle("strikethrough", selectFirstWord, '<strike><ul><li><strike>a</strike></li></ul></strike>', '<ul><li>a</li></ul>');
-testSingleToggle("strikethrough", selectFirstWord, '<strike><ul><li>hello</li><li>world</li></ul></strike>', '<ul><li>hello</li><li style="text-decoration: line-through; ">world</li></ul>');
-testSingleToggle("strikethrough", selectLastWord, '<ul><li>hello</li><li style="text-decoration: line-through; ">world</li></ul>', '<ul><li>hello</li><li>world</li></ul>');
-testSingleToggle("strikethrough", selectFirstWord, '<strike><ul><li>hello world</li><li>webkit</li></ul></strike>', '<ul><li>hello<strike> world</strike></li><li style="text-decoration: line-through; ">webkit</li></ul>');
+testSingleToggle("strikethrough", selectFirstWord, '<strike><ul><li>hello</li><li>world</li></ul></strike>', '<ul><li>hello</li><li style="text-decoration: line-through;">world</li></ul>');
+testSingleToggle("strikethrough", selectLastWord, '<ul><li>hello</li><li style="text-decoration: line-through;">world</li></ul>', '<ul><li>hello</li><li>world</li></ul>');
+testSingleToggle("strikethrough", selectFirstWord, '<strike><ul><li>hello world</li><li>webkit</li></ul></strike>', '<ul><li>hello<strike> world</strike></li><li style="text-decoration: line-through;">webkit</li></ul>');
 
 document.body.removeChild(testContainer);
 

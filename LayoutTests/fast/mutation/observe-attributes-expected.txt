@@ -170,13 +170,13 @@ Testing that modifying an elements style property dispatches Mutation Records wi
 PASS mutations.length is 3
 PASS mutations[0].type is "attributes"
 PASS mutations[0].attributeName is "style"
-PASS mutations[0].oldValue is "color: yellow; width: 100px; "
+PASS mutations[0].oldValue is "color: yellow; width: 100px;"
 PASS mutations[1].type is "attributes"
 PASS mutations[1].attributeName is "style"
-PASS mutations[1].oldValue is "color: red; width: 100px; "
+PASS mutations[1].oldValue is "color: red; width: 100px;"
 PASS mutations[2].type is "attributes"
 PASS mutations[2].attributeName is "style"
-PASS mutations[2].oldValue is "color: red; width: 200px; "
+PASS mutations[2].oldValue is "color: red; width: 200px;"
 ...mutation record created.
 PASS mutations is null
 

@@ -26,7 +26,7 @@ second test - after:
 |   <div>
 |     "1234שדגכ:"
 |   <div>
-|     style="direction: rtl; "
+|     style="direction: rtl;"
 |     "1234שדגכ:<#selection-caret>"
 | "
 "

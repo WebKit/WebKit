@@ -30,7 +30,7 @@ After paste:
 |   id="test"
 |   "foo"
 |   <div>
-|     style="color: rgb(255, 0, 0); "
+|     style="color: rgb(255, 0, 0);"
 |     "bar<#selection-caret>"
 |   <div>
 |     style="color: rgb(255, 0, 0);"

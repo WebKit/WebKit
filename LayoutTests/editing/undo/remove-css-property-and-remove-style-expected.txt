@@ -10,7 +10,7 @@ Unbolding should remove the CSS style and also remove the span:
 
 Undo should bring back both the span and style attribute so that "test" is once again bold:
 | <span>
-|   style="font-weight: 900; "
+|   style="font-weight: 900;"
 |   "<#selection-anchor>test<#selection-focus>"
 
 Redo should unbold "test" and there should be no span:
@@ -18,7 +18,7 @@ Redo should unbold "test" and there should be no span:
 
 Undo once more:
 | <span>
-|   style="font-weight: 900; "
+|   style="font-weight: 900;"
 |   "<#selection-anchor>test<#selection-focus>"
 
 Reset, and added id and title:
@@ -37,7 +37,7 @@ Unbolding should remove the CSS style but shouldn't remove the span:
 Undo should restore the style attribute and "test" should be bold:
 | <span>
 |   id="test_span"
-|   style="font-weight: 900; "
+|   style="font-weight: 900;"
 |   title="hello, world"
 |   "<#selection-anchor>test<#selection-focus>"
 
@@ -49,22 +49,22 @@ Redo should remove the style attribute again:
 
 Reset, and added color:blue:
 | <span>
-|   style="font-weight: 900; color: blue; "
+|   style="font-weight: 900; color: blue;"
 |   "<#selection-anchor>test<#selection-focus>"
 
 Unbolding should remove the font-weight but shouldn't remove the style attribute:
 | <span>
-|   style="color: blue; "
+|   style="color: blue;"
 |   "<#selection-anchor>test<#selection-focus>"
 
 Undo should reset the style attribute so that "test" is both bold and blue:
 | <span>
-|   style="color: blue; font-weight: 900; "
+|   style="color: blue; font-weight: 900;"
 |   "<#selection-anchor>test<#selection-focus>"
 
 Redo should only remove font-weight and leave "test" blue:
 | <span>
-|   style="color: blue; "
+|   style="color: blue;"
 |   "<#selection-anchor>test<#selection-focus>"
 
 Setting the forecolor to black should remove both the style attribute and the span:
@@ -72,5 +72,5 @@ Setting the forecolor to black should remove both the style attribute and the sp
 
 Undo should make "test" blue again:
 | <span>
-|   style="color: blue; "
+|   style="color: blue;"
 |   "<#selection-anchor>test<#selection-focus>"

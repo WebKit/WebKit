@@ -5,23 +5,23 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS bold converted <span style="font-weight: 900;"> <div>text</div> </span> to  <div>text</div> 
 PASS bold converted <span style="font-weight: 900;"><div>text</div></span> to <div>text</div>
-PASS bold converted <span style="font-weight: 900;"><div id="test">hello</div><div>world</div></span> to <div id="test">hello</div><div style="font-weight: 900; ">world</div>
+PASS bold converted <span style="font-weight: 900;"><div id="test">hello</div><div>world</div></span> to <div id="test">hello</div><div style="font-weight: 900;">world</div>
 PASS bold converted <div style="font-weight: bold;">hello<div id="test">world</div></div> to <div><b>hello</b><div id="test">world</div></div>
 PASS bold converted <span style="font-weight: bold;">hello<span id="test">world</div></div> to <b>hello</b><span id="test">world</span>
-PASS bold converted <span style="font-style: italic; font-weight: bold;">hello<span id="test">world</div></div> to <span style="font-style: italic; "><b>hello</b><span id="test">world</span></span>
-FAIL bold converted <span style="font-weight: bold;"><div id="test">hello</div><div style="font-weight: normal;"><div>world</div>webkit</div> to <div id="test">hello</div><div style="font-weight: normal; "><div>world</div>webkit</div>, expected <div id="test">hello</div><div>world</div>webkit
+PASS bold converted <span style="font-style: italic; font-weight: bold;">hello<span id="test">world</div></div> to <span style="font-style: italic;"><b>hello</b><span id="test">world</span></span>
+FAIL bold converted <span style="font-weight: bold;"><div id="test">hello</div><div style="font-weight: normal;"><div>world</div>webkit</div> to <div id="test">hello</div><div style="font-weight: normal;"><div>world</div>webkit</div>, expected <div id="test">hello</div><div>world</div>webkit
 PASS italic converted <span style="font-style: italic;"><div>hello</div></span> to <div>hello</div>
-PASS italic converted <span style="font-style: italic;"><div id="test">hello</div><span style="font-style: oblique;">world</span> to <div id="test">hello</div><span style="font-style: oblique; ">world</span>
-PASS italic converted <span style="font-style: italic; font-weight: bold;"><div>hello</div></span> to <span style="font-weight: bold; "><div>hello</div></span>
-PASS italic converted <span style="font-style: italic; text-decoration: line-through;"><div>hello</div></span> to <span style="text-decoration: line-through; "><div>hello</div></span>
-PASS italic converted <span style="font-style: italic;">hello<div id="test">world</div><blockquote>webkit</blockquote></span> to <i>hello</i><div id="test">world</div><blockquote style="font-style: italic; ">webkit</blockquote>
+PASS italic converted <span style="font-style: italic;"><div id="test">hello</div><span style="font-style: oblique;">world</span> to <div id="test">hello</div><span style="font-style: oblique;">world</span>
+PASS italic converted <span style="font-style: italic; font-weight: bold;"><div>hello</div></span> to <span style="font-weight: bold;"><div>hello</div></span>
+PASS italic converted <span style="font-style: italic; text-decoration: line-through;"><div>hello</div></span> to <span style="text-decoration: line-through;"><div>hello</div></span>
+PASS italic converted <span style="font-style: italic;">hello<div id="test">world</div><blockquote>webkit</blockquote></span> to <i>hello</i><div id="test">world</div><blockquote style="font-style: italic;">webkit</blockquote>
 PASS italic converted <span style="font-style: italic;">hello <span id="test">world</span> webkit</span> to <i>hello </i><span id="test">world</span><i> webkit</i>
 PASS underline converted <span style="text-decoration: underline;"><div id="test">hello</div>world</span> to <div id="test">hello</div><u>world</u>
-PASS underline converted <span style="text-decoration: underline;"><div id="test">hello</div><blockquote>world<br>webkit</blockquote></span> to <div id="test">hello</div><blockquote style="text-decoration: underline; ">world<br>webkit</blockquote>
+PASS underline converted <span style="text-decoration: underline;"><div id="test">hello</div><blockquote>world<br>webkit</blockquote></span> to <div id="test">hello</div><blockquote style="text-decoration: underline;">world<br>webkit</blockquote>
 PASS underline converted <span style="text-decoration: underline;">hello<div id="test">world</div>webkit</u> to <u>hello</u><div id="test">world</div><u>webkit</u>
-FAIL underline converted <div style="text-decoration: underline;"><div>hello</span></div><div id="test">webkit</div><span style="font-style: italic;">rocks</span> to <div><div style="text-decoration: underline; ">hello</div><div id="test">webkit</div><span style="text-decoration: underline; font-style: italic; ">rocks</span></div>, expected <div><div style="text-decoration: underline; ">hello</span></div><div id="test">webkit</div><u><span style="font-style: italic;">rocks</span></u></div>
-PASS underline converted <span style="text-decoration: underline;"><div style="text-decoration: line-through;">hello</div><div id="test">world</div></span> to <div style="text-decoration: underline line-through; ">hello</div><div id="test">world</div>
-PASS strikeThrough converted <span style="text-decoration: line-through;"><div id="test">hello</div><div style="text-decoration: underline;">world</div></span> to <div id="test">hello</div><div style="text-decoration: line-through underline; ">world</div>
+FAIL underline converted <div style="text-decoration: underline;"><div>hello</span></div><div id="test">webkit</div><span style="font-style: italic;">rocks</span> to <div><div style="text-decoration: underline;">hello</div><div id="test">webkit</div><span style="text-decoration: underline; font-style: italic;">rocks</span></div>, expected <div><div style="text-decoration: underline;">hello</span></div><div id="test">webkit</div><u><span style="font-style: italic;">rocks</span></u></div>
+PASS underline converted <span style="text-decoration: underline;"><div style="text-decoration: line-through;">hello</div><div id="test">world</div></span> to <div style="text-decoration: underline line-through;">hello</div><div id="test">world</div>
+PASS strikeThrough converted <span style="text-decoration: line-through;"><div id="test">hello</div><div style="text-decoration: underline;">world</div></span> to <div id="test">hello</div><div style="text-decoration: line-through underline;">world</div>
 PASS successfullyParsed is true
 
 TEST COMPLETE

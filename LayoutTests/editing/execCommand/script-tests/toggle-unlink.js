@@ -50,19 +50,19 @@ testSingleToggle("unlink", 'hello <a href="http://webkit.org/" style="color: blu
     selectAll, 'hello <font color="#0000ff"><span style="display: block;">world</span></font> WebKit');
 testSingleToggle("unlink", '<a href="http://webkit.org/" style="font-size: large;">hello world</a> WebKit',
     selectLastTwoWords, '<a href="http://webkit.org/" style="font-size: large;">hello </a><font size="4">world</font> WebKit');
-testSingleToggle("unlink", 'hello <a href="http://webkit.org/" style="font-size: large;">world <span style="font-size: small; ">WebKit</span> rocks</a>',
-    selectLastTwoWords, 'hello <a href="http://webkit.org/"><font size="4">world </font></a><span style="font-size: small; ">WebKit</span><font size="4"> rocks</font>');
+testSingleToggle("unlink", 'hello <a href="http://webkit.org/" style="font-size: large;">world <span style="font-size: small;">WebKit</span> rocks</a>',
+    selectLastTwoWords, 'hello <a href="http://webkit.org/"><font size="4">world </font></a><span style="font-size: small;">WebKit</span><font size="4"> rocks</font>');
 testSingleToggle("unlink", 'hello <a href="http://webkit.org/" style="font-style: italic;"><b>world</b> WebKit</a>',
-    selectFirstTwoWords, 'hello <b style="font-style: italic; ">world</b><a href="http://webkit.org/"><i> WebKit</i></a>');
+    selectFirstTwoWords, 'hello <b style="font-style: italic;">world</b><a href="http://webkit.org/"><i> WebKit</i></a>');
 
 testSingleToggle("unlink", '<a href="http://webkit.org/" style="background-color: yellow;"><div>hello</div><div>world</div></a>',
-    selectAll, '<div style="background-color: yellow; ">hello</div><div style="background-color: yellow; ">world</div>');
+    selectAll, '<div style="background-color: yellow;">hello</div><div style="background-color: yellow;">world</div>');
 testSingleToggle("unlink", 'hello<a href="http://webkit.org/" style="background-color: yellow;"><div>world</div></a>WebKit',
-    selectAll, 'hello<div style="background-color: yellow; ">world</div><span style="background-color: yellow;">WebKit</span>');
+    selectAll, 'hello<div style="background-color: yellow;">world</div><span style="background-color: yellow;">WebKit</span>');
 testSingleToggle("unlink", '<a href="http://webkit.org/" style="font-weight: bold;"><div>hello</div><div>world WebKit</div></a>',
-    selectLastTwoWords, '<a href="http://webkit.org/"><div style="font-weight: bold; ">hello</div></a><div style="font-weight: bold; ">world WebKit</div>');
+    selectLastTwoWords, '<a href="http://webkit.org/"><div style="font-weight: bold;">hello</div></a><div style="font-weight: bold;">world WebKit</div>');
 testSingleToggle("unlink", '<a href="http://webkit.org/" style="font-weight: bold;"><div style="font-weight: normal;">hello</div><div>world</div></a>',
-    selectLastWord, '<a href="http://webkit.org/"><div style="font-weight: normal; ">hello</div></a><div style="font-weight: bold; ">world</div>');
+    selectLastWord, '<a href="http://webkit.org/"><div style="font-weight: normal;">hello</div></a><div style="font-weight: bold;">world</div>');
 
 document.body.removeChild(testContainer);
 
