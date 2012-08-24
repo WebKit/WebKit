@@ -44,8 +44,6 @@ Ewk_Tile *ewk_tile_matrix_tile_nearest_get(Ewk_Tile_Matrix *tm, unsigned long co
 Ewk_Tile *ewk_tile_matrix_tile_new(Ewk_Tile_Matrix *tm, Evas *evas, unsigned long col, unsigned long row, float zoom);
 Eina_Bool ewk_tile_matrix_tile_put(Ewk_Tile_Matrix *tm, Ewk_Tile *t, double last_used);
 
-Eina_Bool ewk_tile_matrix_tile_update(Ewk_Tile_Matrix *tm, unsigned long col, unsigned long row, const Eina_Rectangle *update);
-Eina_Bool ewk_tile_matrix_tile_update_full(Ewk_Tile_Matrix *tm, unsigned long col, unsigned long row);
 void ewk_tile_matrix_tile_updates_clear(Ewk_Tile_Matrix *tm, Ewk_Tile *t);
 
 Eina_Bool ewk_tile_matrix_update(Ewk_Tile_Matrix *tm, const Eina_Rectangle *update, float zoom);

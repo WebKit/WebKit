@@ -523,59 +523,6 @@ Eina_Bool ewk_tile_matrix_tile_put(Ewk_Tile_Matrix* tileMatrix, Ewk_Tile* tile, 
     return ewk_tile_unused_cache_tile_put(tileMatrix->tileUnusedCache, tile, _ewk_tile_matrix_tile_free, tileMatrix);
 }
 
-Eina_Bool ewk_tile_matrix_tile_update(Ewk_Tile_Matrix* tileMatrix, unsigned long col, unsigned long row, const Eina_Rectangle* update)
-{
-    Eina_Rectangle newUpdate;
-    EINA_SAFETY_ON_NULL_RETURN_VAL(tileMatrix, false);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(update, false);
-
-    memcpy(&newUpdate, update, sizeof(newUpdate));
-    // check update is valid, otherwise return false
-    if (update->x < 0 || update->y < 0 || update->w <= 0 || update->h <= 0) {
-        ERR("invalid update region.");
-        return false;
-    }
-
-    if (update->x + update->w - 1 >= tileMatrix->tile.width)
-        newUpdate.w = tileMatrix->tile.width - update->x;
-    if (update->y + update->h - 1 >= tileMatrix->tile.height)
-        newUpdate.h = tileMatrix->tile.height - update->y;
-
-    Ewk_Tile* tile = static_cast<Ewk_Tile*>(eina_matrixsparse_data_idx_get(tileMatrix->matrix, row, col));
-    if (!tile)
-        return true;
-
-    if (!tile->updates && !tile->stats.full_update)
-        tileMatrix->updates = eina_list_append(tileMatrix->updates, tile);
-    ewk_tile_update_area(tile, &newUpdate);
-
-    return true;
-}
-
-Eina_Bool ewk_tile_matrix_tile_update_full(Ewk_Tile_Matrix* tileMatrix, unsigned long column, unsigned long row)
-{
-    Eina_Matrixsparse_Cell* cell;
-    EINA_SAFETY_ON_NULL_RETURN_VAL(tileMatrix, false);
-
-    if (!eina_matrixsparse_cell_idx_get(tileMatrix->matrix, row, column, &cell))
-        return false;
-
-    if (!cell)
-        return true;
-
-    Ewk_Tile* tile = static_cast<Ewk_Tile*>(eina_matrixsparse_cell_data_get(cell));
-    if (!tile) {
-        CRITICAL("matrix cell with no tile!");
-        return true;
-    }
-
-    if (!tile->updates && !tile->stats.full_update)
-        tileMatrix->updates = eina_list_append(tileMatrix->updates, tile);
-    ewk_tile_update_full(tile);
-
-    return true;
-}
-
 void ewk_tile_matrix_tile_updates_clear(Ewk_Tile_Matrix* tileMatrix, Ewk_Tile* tile)
 {
     EINA_SAFETY_ON_NULL_RETURN(tileMatrix);

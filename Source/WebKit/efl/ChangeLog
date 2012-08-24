@@ -1,3 +1,15 @@
+2012-08-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Remove ewk_tile_matrix_tile_update.
+        https://bugs.webkit.org/show_bug.cgi?id=63437
+
+        Reviewed by Gyuyoung Kim.
+
+        * ewk/ewk_tiled_matrix.cpp:
+        Removed ewk_tile_matrix_tile_update and ewk_tile_matrix_tile_update_full
+        which are dead code.
+        * ewk/ewk_tiled_matrix_private.h: Ditto.
+
 2012-08-21  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL][GTK][BlackBerry] Fix build error in the DeviceOrientationClient
