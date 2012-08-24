@@ -543,8 +543,11 @@ BUGWK29359 : fast/css/pseudo-in-range.html = TEXT
 BUGWK29359 : fast/css/pseudo-out-of-range.html = TEXT
 BUGWK29359 : fast/css/pseudo-in-range-invalid-value.html = TEXT
 
+// Tracking corner not being painted for TextArea.
 BUGWK85484 : fast/css/resize-corner-tracking-transformed.html = TEXT
 BUGWK85484 : fast/css/resize-corner-tracking.html = TEXT
+BUGWK85484 : fast/forms/textarea-scroll-height.html = MISSING
+BUGWK85484 : fast/forms/textarea-scrolled-type.html = MISSING
 
 BUGWK85493 : fast/css/square-button-appearance.html = TEXT
 
@@ -907,3 +910,19 @@ BUGWK94690 : fast/dom/shadow/shadowdom-dynamic-styling.html = TEXT
 
 // Fails after r126350
 BUGWK94788 : media/track/track-cue-rendering-snap-to-lines-not-set.html = TEXT
+
+// Intrusive theming overrides collide with style-related LayoutTests.
+BUGWK85877 : fast/forms/menulist-narrow-width.html = MISSING
+BUGWK85877 : fast/forms/select-baseline.html = MISSING
+BUGWK85877 : fast/forms/menulist-style-color.html = MISSING
+BUGWK85877 : fast/forms/select-style.html = MISSING
+
+// Test 2 in below test is failing.
+BUGWK94877 : fast/forms/listbox-hit-test-zoomed.html = MISSING
+
+// The text in the popup button is clipped.
+BUGWK94878 : fast/forms/menulist-restrict-line-height.html = MISSING
+
+// Cancel mark in search field is not working.
+BUGWK94880 : fast/forms/search-cancel-button-style-sharing.html = MISSING
+BUGWK94880 : fast/forms/search-rtl.html = MISSING

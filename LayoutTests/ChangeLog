@@ -1,3 +1,53 @@
+2012-08-23  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL] Skip the tests which have wrong pixel expectations in fast/forms/
+        https://bugs.webkit.org/show_bug.cgi?id=94798
+
+        Unreviewed. Some tests in fast/forms seem to fail. Removed wrong expectations
+        and marked the tests MISSING.
+
+        fast/forms/listbox-hit-test-zoomed.html
+        Test 2 in this test seems to fail.
+
+        fast/forms/menulist-restrict-line-height.html
+        The text in the popup button is clipped.
+
+        fast/forms/search-cancel-button-style-sharing.html
+        fast/forms/search-rtl.html
+        Cancel mark in search field is not displayed.
+
+        fast/forms/menulist-narrow-width.html
+        fast/forms/select-baseline.html
+        fast/forms/menulist-style-color.html
+        fast/forms/select-style.html
+        These tests seem to have style error.
+
+        fast/forms/textarea-scroll-height.html
+        fast/forms/textarea-scrolled-type.html
+        Scroll bar isn't being fully rendered.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/forms/listbox-hit-test-zoomed-expected.png: Removed.
+        * platform/efl/fast/forms/listbox-hit-test-zoomed-expected.txt: Removed.
+        * platform/efl/fast/forms/menulist-narrow-width-expected.png: Removed.
+        * platform/efl/fast/forms/menulist-narrow-width-expected.txt: Removed.
+        * platform/efl/fast/forms/menulist-restrict-line-height-expected.png: Removed.
+        * platform/efl/fast/forms/menulist-restrict-line-height-expected.txt: Removed.
+        * platform/efl/fast/forms/menulist-style-color-expected.png: Removed.
+        * platform/efl/fast/forms/menulist-style-color-expected.txt: Removed.
+        * platform/efl/fast/forms/search-cancel-button-style-sharing-expected.png: Removed.
+        * platform/efl/fast/forms/search-cancel-button-style-sharing-expected.txt: Removed.
+        * platform/efl/fast/forms/search-rtl-expected.png: Removed.
+        * platform/efl/fast/forms/search-rtl-expected.txt: Removed.
+        * platform/efl/fast/forms/select-baseline-expected.png: Removed.
+        * platform/efl/fast/forms/select-baseline-expected.txt: Removed.
+        * platform/efl/fast/forms/select-style-expected.png: Removed.
+        * platform/efl/fast/forms/select-style-expected.txt: Removed.
+        * platform/efl/fast/forms/textarea-scroll-height-expected.png: Removed.
+        * platform/efl/fast/forms/textarea-scroll-height-expected.txt: Removed.
+        * platform/efl/fast/forms/textarea-scrolled-type-expected.png: Removed.
+        * platform/efl/fast/forms/textarea-scrolled-type-expected.txt: Removed.
+
 2012-08-23  Keishi Hattori  <keishi@webkit.org>
 
         REGRESSION(r126132): thumb doesn't match click position for rtl input type=range
