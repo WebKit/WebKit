@@ -940,9 +940,12 @@ WebInspector.HeapSnapshot.prototype = {
         var containmentEdges = this._containmentEdges;
         var firstEdgeIndexes = this._firstEdgeIndexes;
         var edgeToNodeOffset = this._edgeToNodeOffset;
+        var edgeTypeOffset = this._edgeTypeOffset;
         var nodes = this._nodes;
         var nodeCount = this.nodeCount;
         var containmentEdgesLength = containmentEdges.length;
+        var edgeWeakType = this._edgeWeakType;
+        var edgeShortcutType = this._edgeShortcutType;
 
         var index = 0;
         while (index < nodesToVisitLength) {
@@ -951,8 +954,11 @@ WebInspector.HeapSnapshot.prototype = {
             var distance = distances[nodeOrdinal] + 1;
             var firstEdgeIndex = firstEdgeIndexes[nodeOrdinal];
             var edgesEnd = firstEdgeIndexes[nodeOrdinal + 1];
-            for (var edgeToNodeIndex = firstEdgeIndex + edgeToNodeOffset; edgeToNodeIndex < edgesEnd; edgeToNodeIndex += edgeFieldsCount) {
-                var childNodeIndex = containmentEdges[edgeToNodeIndex];
+            for (var edgeIndex = firstEdgeIndex; edgeIndex < edgesEnd; edgeIndex += edgeFieldsCount) {
+                var edgeType = containmentEdges[edgeIndex + edgeTypeOffset];
+                if (edgeType == edgeWeakType || edgeType == edgeShortcutType)
+                    continue;
+                var childNodeIndex = containmentEdges[edgeIndex + edgeToNodeOffset];
                 var childNodeOrdinal = childNodeIndex / nodeFieldCount;
                 if (distances[childNodeOrdinal])
                     continue;
