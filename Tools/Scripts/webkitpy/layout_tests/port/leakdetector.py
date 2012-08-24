@@ -57,18 +57,7 @@ class LeakDetector(object):
             "Flash_EnforceLocalSecurity",  # leaks in Flash plug-in code, rdar://problem/4449747
             "ScanFromString", # <http://code.google.com/p/angleproject/issues/detail?id=249> leak in ANGLE
         ]
-        if self._port.is_leopard():
-            callstacks += [
-                "CFHTTPMessageAppendBytes",  # leak in CFNetwork, rdar://problem/5435912
-                "sendDidReceiveDataCallback",  # leak in CFNetwork, rdar://problem/5441619
-                "_CFHTTPReadStreamReadMark",  # leak in CFNetwork, rdar://problem/5441468
-                "httpProtocolStart",  # leak in CFNetwork, rdar://problem/5468837
-                "_CFURLConnectionSendCallbacks",  # leak in CFNetwork, rdar://problem/5441600
-                "DispatchQTMsg",  # leak in QuickTime, PPC only, rdar://problem/5667132
-                "QTMovieContentView createVisualContext",  # leak in QuickTime, PPC only, rdar://problem/5667132
-                "_CopyArchitecturesForJVMVersion",  # leak in Java, rdar://problem/5910823
-            ]
-        elif self._port.is_snowleopard():
+        if self._port.is_snowleopard():
             callstacks += [
                 "readMakerNoteProps",  # <rdar://problem/7156432> leak in ImageIO
                 "QTKitMovieControllerView completeUISetup",  # <rdar://problem/7155156> leak in QTKit

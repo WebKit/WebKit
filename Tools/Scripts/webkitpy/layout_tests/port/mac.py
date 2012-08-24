@@ -98,6 +98,14 @@ class MacPort(ApplePort):
     def operating_system(self):
         return 'mac'
 
+    # Belongs on a Platform object.
+    def is_snowleopard(self):
+        return self._version == "snowleopard"
+
+    # Belongs on a Platform object.
+    def is_lion(self):
+        return self._version == "lion"
+
     def default_child_processes(self):
         # FIXME: The Printer isn't initialized when this is called, so using _log would just show an unitialized logger error.
 

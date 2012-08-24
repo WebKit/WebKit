@@ -1,3 +1,21 @@
+2012-08-23  Dirk Pranke  <dpranke@chromium.org>
+
+        leak detection broken after r126247 on mac
+        https://bugs.webkit.org/show_bug.cgi?id=94893
+
+        Unreviewed, build fix.
+
+        Adds is_snowleopard(), is_lion back() in for the mac port. We'll
+        probably need an is_mountainlion() or equivalent at some point,
+        I'm guessing (but I've deleted the leopard code).
+
+        * Scripts/webkitpy/layout_tests/port/leakdetector.py:
+        (LeakDetector._callstacks_to_exclude_from_leaks):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort):
+        (MacPort.is_snowleopard):
+        (MacPort.is_lion):
+
 2012-08-23  Julien Chaffraix  <jchaffraix@webkit.org>
 
         [Chromium] Enable AtomicString && CString && WTFString && StringImpl unit tests
