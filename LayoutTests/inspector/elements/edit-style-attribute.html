@@ -17,6 +17,7 @@ function testSetSameValue()
 function test()
 {
     // Save time on style updates.
+    WebInspector.showPanel("elements");
     WebInspector.StylesSidebarPane.prototype.update = function() {};
     WebInspector.MetricsSidebarPane.prototype.update = function() {};
 

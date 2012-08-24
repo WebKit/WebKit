@@ -1,3 +1,13 @@
+2012-08-24  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Unreviewed, fix test flakiness due to the recently introduced lazy panel loading.
+
+        * inspector/debugger/scripts-file-selector.html:
+        * inspector/debugger/step-through-event-listeners.html:
+        * inspector/elements/edit-dom-actions.html:
+        * inspector/elements/edit-style-attribute.html:
+        * inspector/timeline/timeline-enum-stability.html:
+
 2012-08-24  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add readyState functionality to RTCPeerConnection

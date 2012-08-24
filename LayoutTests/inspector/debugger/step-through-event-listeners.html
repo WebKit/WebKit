@@ -28,7 +28,7 @@ function addListenerAndClick()
 
 function test()
 {
-    var pane = WebInspector.panels.scripts.sidebarPanes.eventListenerBreakpoints;
+    var pane = WebInspector.showPanel("scripts").sidebarPanes.eventListenerBreakpoints;
     InspectorTest.runDebuggerTestSuite([
         function testClickBreakpoint(next)
         {
