@@ -172,8 +172,6 @@ private:
     void setContentsTo(ContentsLayerPurpose, WebKit::WebLayer*);
     void setupContentsLayer(WebKit::WebLayer*);
 
-    int mapAnimationNameToId(const String& animationName);
-
     String m_nameBase;
 
     OwnPtr<WebKit::WebContentLayer> m_layer;

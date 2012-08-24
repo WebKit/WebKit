@@ -49,7 +49,7 @@ class FloatSize;
 //   - a steps timing function is used,
 //   - a property other than AnimatedPropertyWebkitTransform, or AnimatedPropertyOpacity is animated, or
 //   - a transform animation involves a non-invertable transform.
-PassOwnPtr<WebKit::WebAnimation> createWebAnimation(const KeyframeValueList&, const Animation*, size_t animationId, size_t groupId, double timeOffset, const FloatSize& boxSize);
+PassOwnPtr<WebKit::WebAnimation> createWebAnimation(const KeyframeValueList&, const Animation*, int animationId, double timeOffset, const FloatSize& boxSize);
 
 } // namespace WebCore
 

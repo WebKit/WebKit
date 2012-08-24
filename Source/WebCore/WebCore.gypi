@@ -3649,8 +3649,6 @@
             'platform/graphics/cg/PathCG.cpp',
             'platform/graphics/cg/PatternCG.cpp',
             'platform/graphics/cg/TransformationMatrixCG.cpp',
-            'platform/graphics/chromium/AnimationIdVendor.cpp',
-            'platform/graphics/chromium/AnimationIdVendor.h',
             'platform/graphics/chromium/AnimationTranslationUtil.cpp',
             'platform/graphics/chromium/AnimationTranslationUtil.h',
             'platform/graphics/chromium/Canvas2DLayerBridge.cpp',

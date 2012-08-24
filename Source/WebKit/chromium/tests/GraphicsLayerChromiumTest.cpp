@@ -98,7 +98,8 @@ TEST_F(GraphicsLayerChromiumTest, updateLayerPreserves3DWithAnimations)
 
     OwnPtr<WebFloatAnimationCurve> curve = adoptPtr(WebFloatAnimationCurve::create());
     curve->add(WebFloatKeyframe(0.0, 0.0));
-    OwnPtr<WebAnimation> floatAnimation(adoptPtr(WebAnimation::create(*curve, 1, 1, WebAnimation::TargetPropertyOpacity)));
+    OwnPtr<WebAnimation> floatAnimation(adoptPtr(WebAnimation::create(*curve, WebAnimation::TargetPropertyOpacity)));
+    int animationId = floatAnimation->id();
     ASSERT_TRUE(m_platformLayer->addAnimation(floatAnimation.get()));
 
     ASSERT_TRUE(m_platformLayer->hasActiveAnimation());
@@ -109,7 +110,7 @@ TEST_F(GraphicsLayerChromiumTest, updateLayerPreserves3DWithAnimations)
     ASSERT_TRUE(m_platformLayer);
 
     ASSERT_TRUE(m_platformLayer->hasActiveAnimation());
-    m_platformLayer->removeAnimation(1);
+    m_platformLayer->removeAnimation(animationId);
     ASSERT_FALSE(m_platformLayer->hasActiveAnimation());
 
     m_graphicsLayer->setPreserves3D(false);

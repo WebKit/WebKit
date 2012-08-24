@@ -37,10 +37,11 @@ namespace WebKit {
 
 class WebAnimationImpl : public WebAnimation {
 public:
-    WebAnimationImpl(const WebAnimationCurve&, int animationId, int groupId, TargetProperty);
+    WebAnimationImpl(const WebAnimationCurve&, TargetProperty, int animationId, int groupId);
     virtual ~WebAnimationImpl();
 
     // WebAnimation implementation
+    virtual int id() OVERRIDE;
     virtual TargetProperty targetProperty() const OVERRIDE;
     virtual int iterations() const OVERRIDE;
     virtual void setIterations(int) OVERRIDE;

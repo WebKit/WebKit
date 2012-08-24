@@ -50,14 +50,14 @@ public:
     };
 
     // The caller takes ownership of the returned value.
-    WEBKIT_EXPORT static WebAnimation* create(const WebAnimationCurve&, TargetProperty);
-
-    // An animationId is effectively the animation's name, and it is not unique.
-    // Animations with the same groupId are run at the same time. An animation
-    // may be uniquely identified by a combination of groupId and target property.
-    WEBKIT_EXPORT static WebAnimation* create(const WebAnimationCurve&, int animationId, int groupId, TargetProperty);
+    // Pass a non-zero value for animationId specify an id to use for this animation, otherwise one will
+    // be generated for you.
+    WEBKIT_EXPORT static WebAnimation* create(const WebAnimationCurve&, TargetProperty, int animationId = 0);
 
     virtual ~WebAnimation() { }
+
+    // An id is effectively the animation's name, and it is not unique.
+    virtual int id() = 0;
 
     virtual TargetProperty targetProperty() const = 0;
 

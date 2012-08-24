@@ -45,7 +45,7 @@ namespace {
 bool animationCanBeTranslated(const KeyframeValueList& values, Animation* animation)
 {
     IntSize boxSize;
-    return createWebAnimation(values, animation, 0, 0, 0, boxSize);
+    return createWebAnimation(values, animation, 0, 0, boxSize);
 }
 
 TEST(AnimationTranslationUtilTest, createOpacityAnimation)

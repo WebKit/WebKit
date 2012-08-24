@@ -1,3 +1,22 @@
+2012-08-24  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Clean up WebAnimation animationId/groupId generation
+        https://bugs.webkit.org/show_bug.cgi?id=94973
+
+        Reviewed by Adrienne Walker.
+
+        * src/WebAnimationImpl.cpp:
+        (WebKit::WebAnimation::create):
+        (WebKit::WebAnimationImpl::WebAnimationImpl):
+        (WebKit::WebAnimationImpl::id):
+        (WebKit):
+        * src/WebAnimationImpl.h:
+        (WebAnimationImpl):
+        * tests/AnimationTranslationUtilTest.cpp:
+        (WebKit::animationCanBeTranslated):
+        * tests/GraphicsLayerChromiumTest.cpp:
+        (WebKit::TEST_F):
+
 2012-08-24  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove visitedLinkHash from PlatformSupport

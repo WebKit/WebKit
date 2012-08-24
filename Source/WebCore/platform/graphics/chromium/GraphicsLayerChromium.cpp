@@ -45,7 +45,6 @@
 
 #include "GraphicsLayerChromium.h"
 
-#include "AnimationIdVendor.h"
 #include "AnimationTranslationUtil.h"
 #include "ContentLayerChromium.h"
 #include "FloatConversion.h"
@@ -528,12 +527,17 @@ bool GraphicsLayerChromium::addAnimation(const KeyframeValueList& values, const 
 {
     platformLayer()->setAnimationDelegate(this);
 
-    int animationId = mapAnimationNameToId(animationName);
-    int groupId = AnimationIdVendor::getNextGroupId();
+    int animationId = 0;
 
-    OwnPtr<WebKit::WebAnimation> toAdd(createWebAnimation(values, animation, animationId, groupId, timeOffset, boxSize));
+    if (m_animationIdMap.contains(animationName))
+        animationId = m_animationIdMap.get(animationName);
+
+    OwnPtr<WebKit::WebAnimation> toAdd(createWebAnimation(values, animation, animationId, timeOffset, boxSize));
 
     if (toAdd) {
+        animationId = toAdd->id();
+        m_animationIdMap.set(animationName, animationId);
+
         // Remove any existing animations with the same animation id and target property.
         platformLayer()->removeAnimation(animationId, toAdd->targetProperty());
         return platformLayer()->addAnimation(toAdd.get());
@@ -544,12 +548,14 @@ bool GraphicsLayerChromium::addAnimation(const KeyframeValueList& values, const 
 
 void GraphicsLayerChromium::pauseAnimation(const String& animationName, double timeOffset)
 {
-    platformLayer()->pauseAnimation(mapAnimationNameToId(animationName), timeOffset);
+    if (m_animationIdMap.contains(animationName))
+        platformLayer()->pauseAnimation(m_animationIdMap.get(animationName), timeOffset);
 }
 
 void GraphicsLayerChromium::removeAnimation(const String& animationName)
 {
-    platformLayer()->removeAnimation(mapAnimationNameToId(animationName));
+    if (m_animationIdMap.contains(animationName))
+        platformLayer()->removeAnimation(m_animationIdMap.get(animationName));
 }
 
 void GraphicsLayerChromium::suspendAnimations(double wallClockTime)
@@ -830,17 +836,6 @@ void GraphicsLayerChromium::paint(GraphicsContext& context, const IntRect& clip)
 {
     context.platformContext()->setDrawingToImageBuffer(true);
     paintGraphicsLayerContents(context, clip);
-}
-
-int GraphicsLayerChromium::mapAnimationNameToId(const String& animationName)
-{
-    if (animationName.isEmpty())
-        return 0;
-
-    if (!m_animationIdMap.contains(animationName))
-        m_animationIdMap.add(animationName, AnimationIdVendor::getNextAnimationId());
-
-    return m_animationIdMap.find(animationName)->second;
 }
 
 void GraphicsLayerChromium::notifyAnimationStarted(double startTime)
