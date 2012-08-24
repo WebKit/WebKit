@@ -46,6 +46,7 @@ public:
     virtual ~RTCPeerConnectionHandler() { }
 
     virtual bool initialize() = 0;
+    virtual void stop() = 0;
 
 protected:
     RTCPeerConnectionHandler() { }

@@ -43,6 +43,7 @@ public:
     explicit MockWebRTCPeerConnectionHandler(WebKit::WebRTCPeerConnectionHandlerClient*);
 
     virtual bool initialize() OVERRIDE;
+    virtual void stop() OVERRIDE;
 
 private:
     MockWebRTCPeerConnectionHandler() { }

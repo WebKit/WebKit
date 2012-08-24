@@ -49,6 +49,16 @@ public:
     static PassRefPtr<RTCPeerConnection> create(ScriptExecutionContext*, const Dictionary& rtcConfiguration, const Dictionary& mediaConstraints, ExceptionCode&);
     ~RTCPeerConnection();
 
+    String readyState() const;
+
+    void close(ExceptionCode&);
+
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(open);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(statechange);
+
+    // RTCPeerConnectionHandlerClient
+    virtual void didChangeReadyState(ReadyState) OVERRIDE;
+
     // EventTarget
     virtual const AtomicString& interfaceName() const OVERRIDE;
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
@@ -70,6 +80,10 @@ private:
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
     EventTargetData m_eventTargetData;
+
+    void changeReadyState(ReadyState);
+
+    ReadyState m_readyState;
 
     OwnPtr<RTCPeerConnectionHandler> m_peerHandler;
 };

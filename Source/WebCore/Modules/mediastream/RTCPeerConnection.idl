@@ -38,6 +38,14 @@ module mediastream {
         CallWith=ScriptExecutionContext,
         EventTarget
     ] RTCPeerConnection {
+        readonly attribute DOMString readyState;
+
+        void close()
+            raises(DOMException);
+
+        attribute EventListener onopen;
+        attribute EventListener onstatechange;
+
         // EventTarget interface
         void addEventListener(in DOMString type,
                               in EventListener listener,

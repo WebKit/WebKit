@@ -35,8 +35,8 @@
 #include "RTCPeerConnection.h"
 
 #include "ArrayValue.h"
+#include "Event.h"
 #include "ExceptionCode.h"
-#include "KURL.h"
 #include "RTCConfiguration.h"
 #include "ScriptExecutionContext.h"
 
@@ -106,6 +106,7 @@ PassRefPtr<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext* 
 
 RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext* context, PassRefPtr<RTCConfiguration>, ExceptionCode& ec)
     : ActiveDOMObject(context, this)
+    , m_readyState(ReadyStateNew)
 {
     m_peerHandler = RTCPeerConnectionHandler::create(this);
     if (!m_peerHandler || !m_peerHandler->initialize())
@@ -114,6 +115,42 @@ RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext* context, PassRefPtr
 
 RTCPeerConnection::~RTCPeerConnection()
 {
+}
+
+String RTCPeerConnection::readyState() const
+{
+    switch (m_readyState) {
+    case ReadyStateNew:
+        return "new";
+    case ReadyStateOpening:
+        return "opening";
+    case ReadyStateActive:
+        return "active";
+    case ReadyStateClosing:
+        return "closing";
+    case ReadyStateClosed:
+        return "closed";
+    }
+
+    ASSERT_NOT_REACHED();
+    return "";
+}
+
+void RTCPeerConnection::close(ExceptionCode& ec)
+{
+    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    changeReadyState(ReadyStateClosed);
+    stop();
+}
+
+void RTCPeerConnection::didChangeReadyState(ReadyState newState)
+{
+    ASSERT(scriptExecutionContext()->isContextThread());
+    changeReadyState(newState);
 }
 
 const AtomicString& RTCPeerConnection::interfaceName() const
@@ -128,7 +165,12 @@ ScriptExecutionContext* RTCPeerConnection::scriptExecutionContext() const
 
 void RTCPeerConnection::stop()
 {
-    // FIXME: Make sure that this object stops posting events and releases resources at this stage.
+    m_readyState = ReadyStateClosed;
+
+    if (m_peerHandler) {
+        m_peerHandler->stop();
+        m_peerHandler.clear();
+    }
 }
 
 EventTargetData* RTCPeerConnection::eventTargetData()
@@ -139,6 +181,30 @@ EventTargetData* RTCPeerConnection::eventTargetData()
 EventTargetData* RTCPeerConnection::ensureEventTargetData()
 {
     return &m_eventTargetData;
+}
+
+void RTCPeerConnection::changeReadyState(ReadyState readyState)
+{
+    if (readyState == m_readyState || m_readyState == ReadyStateClosed)
+        return;
+
+    m_readyState = readyState;
+
+    switch (m_readyState) {
+    case ReadyStateOpening:
+        break;
+    case ReadyStateActive:
+        dispatchEvent(Event::create(eventNames().openEvent, false, false));
+        break;
+    case ReadyStateClosing:
+    case ReadyStateClosed:
+        break;
+    case ReadyStateNew:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    dispatchEvent(Event::create(eventNames().statechangeEvent, false, false));
 }
 
 } // namespace WebCore

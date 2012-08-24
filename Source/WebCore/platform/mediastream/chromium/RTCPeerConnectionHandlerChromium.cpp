@@ -45,8 +45,10 @@ PassOwnPtr<RTCPeerConnectionHandler> RTCPeerConnectionHandler::create(RTCPeerCon
     return adoptPtr(new RTCPeerConnectionHandlerChromium(client));
 }
 
-RTCPeerConnectionHandlerChromium::RTCPeerConnectionHandlerChromium(RTCPeerConnectionHandlerClient*)
+RTCPeerConnectionHandlerChromium::RTCPeerConnectionHandlerChromium(RTCPeerConnectionHandlerClient* client)
+    : m_client(client)
 {
+    ASSERT(m_client);
 }
 
 RTCPeerConnectionHandlerChromium::~RTCPeerConnectionHandlerChromium()
@@ -57,6 +59,19 @@ bool RTCPeerConnectionHandlerChromium::initialize()
 {
     m_webHandler = adoptPtr(WebKit::Platform::current()->createRTCPeerConnectionHandler(this));
     return m_webHandler ? m_webHandler->initialize() : false;
+}
+
+void RTCPeerConnectionHandlerChromium::stop()
+{
+    if (!m_webHandler)
+        return;
+
+    m_webHandler->stop();
+}
+
+void RTCPeerConnectionHandlerChromium::didChangeReadyState(WebKit::WebRTCPeerConnectionHandlerClient::ReadyState state)
+{
+    m_client->didChangeReadyState(static_cast<RTCPeerConnectionHandlerClient::ReadyState>(state));
 }
 
 } // namespace WebCore

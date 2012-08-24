@@ -39,6 +39,7 @@ public:
     virtual ~WebRTCPeerConnectionHandler() { }
 
     virtual bool initialize() = 0;
+    virtual void stop() = 0;
 };
 
 } // namespace WebKit

@@ -47,6 +47,7 @@ public:
     virtual ~RTCPeerConnectionHandlerDummy();
 
     virtual bool initialize() OVERRIDE;
+    virtual void stop() OVERRIDE;
 
 private:
     RTCPeerConnectionHandlerClient* m_client;
@@ -70,6 +71,10 @@ RTCPeerConnectionHandlerDummy::~RTCPeerConnectionHandlerDummy()
 bool RTCPeerConnectionHandlerDummy::initialize()
 {
     return false;
+}
+
+void RTCPeerConnectionHandlerDummy::stop()
+{
 }
 
 } // namespace WebCore

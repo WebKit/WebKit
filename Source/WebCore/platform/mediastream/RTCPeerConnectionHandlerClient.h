@@ -37,8 +37,17 @@ namespace WebCore {
 
 class RTCPeerConnectionHandlerClient {
 public:
+    enum ReadyState {
+        ReadyStateNew = 1,
+        ReadyStateOpening = 2,
+        ReadyStateActive = 3,
+        ReadyStateClosing = 4,
+        ReadyStateClosed = 5
+    };
+
     virtual ~RTCPeerConnectionHandlerClient() { }
 
+    virtual void didChangeReadyState(ReadyState) = 0;
 };
 
 } // namespace WebCore

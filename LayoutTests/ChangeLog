@@ -1,3 +1,13 @@
+2012-08-24  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Add readyState functionality to RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=94813
+
+        Reviewed by Adam Barth.
+
+        * fast/mediastream/RTCPeerConnection-state-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-state.html: Added.
+
 2012-08-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Get rid of frontendReused logic on front-end.

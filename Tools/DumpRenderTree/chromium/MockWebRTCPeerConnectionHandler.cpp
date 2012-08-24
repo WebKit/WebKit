@@ -37,13 +37,17 @@
 
 using namespace WebKit;
 
-MockWebRTCPeerConnectionHandler::MockWebRTCPeerConnectionHandler(WebRTCPeerConnectionHandlerClient* client)
+MockWebRTCPeerConnectionHandler::MockWebRTCPeerConnectionHandler(WebRTCPeerConnectionHandlerClient*)
 {
 }
 
 bool MockWebRTCPeerConnectionHandler::initialize()
 {
     return true;
+}
+
+void MockWebRTCPeerConnectionHandler::stop()
+{
 }
 
 #endif // ENABLE(MEDIA_STREAM)

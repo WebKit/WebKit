@@ -47,9 +47,14 @@ public:
     virtual ~RTCPeerConnectionHandlerChromium();
 
     virtual bool initialize() OVERRIDE;
+    virtual void stop() OVERRIDE;
+
+    // WebKit::WebRTCPeerConnectionHandlerClient implementation.
+    virtual void didChangeReadyState(WebKit::WebRTCPeerConnectionHandlerClient::ReadyState) OVERRIDE;
 
 private:
     OwnPtr<WebKit::WebRTCPeerConnectionHandler> m_webHandler;
+    RTCPeerConnectionHandlerClient* m_client;
 };
 
 } // namespace WebCore
