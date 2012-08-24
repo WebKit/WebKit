@@ -550,10 +550,10 @@ WebInspector.ConsoleView.prototype = {
             return;
         }
 
-        var contextMenu = new WebInspector.ContextMenu();
+        if (event.target.enclosingNodeOrSelfWithNodeName("a"))
+            return;
 
-        if (WebInspector.populateHrefContextMenu(contextMenu, null, event))
-            contextMenu.appendSeparator();
+        var contextMenu = new WebInspector.ContextMenu();
 
         function monitoringXHRItemAction()
         {

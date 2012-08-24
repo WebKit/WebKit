@@ -336,8 +336,7 @@ WebInspector.ElementsPanel.prototype = {
 
         var contextMenu = new WebInspector.ContextMenu();
         var populated = this.treeOutline.populateContextMenu(contextMenu, event);
-        if (populated)
-            contextMenu.appendSeparator();
+        contextMenu.appendSeparator();
         contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Word wrap" : "Word Wrap"), toggleWordWrap.bind(this), WebInspector.settings.domWordWrap.get());
 
         contextMenu.show(event);

@@ -134,9 +134,11 @@ WebInspector.StylesSidebarPane.canonicalPropertyName = function(name)
 WebInspector.StylesSidebarPane.prototype = {
     _contextMenuEventFired: function(event)
     {
+        // We start editing upon click -> default navigation to resources panel is not available
+        // Hence we add a soft context menu for hrefs.
         var contextMenu = new WebInspector.ContextMenu();
-        if (WebInspector.populateHrefContextMenu(contextMenu, this.node, event))
-            contextMenu.show(event);
+        contextMenu.appendApplicableItems(event.target);
+        contextMenu.show(event);
     },
 
     get _forcedPseudoClasses()
@@ -1719,7 +1721,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 if (self._styleRule.sourceURL)
                     hrefUrl = WebInspector.ParsedURL.completeURL(self._styleRule.sourceURL, hrefUrl);
                 else if (this._parentPane.node)
-                    hrefUrl = WebInspector.resourceURLForRelatedNode(this._parentPane.node, hrefUrl);
+                    hrefUrl = this._parentPane.node.resolveURL(hrefUrl);
                 var hasResource = !!WebInspector.resourceForURL(hrefUrl);
                 // FIXME: WebInspector.linkifyURLAsNode() should really use baseURI.
                 container.appendChild(WebInspector.linkifyURLAsNode(hrefUrl, url, undefined, !hasResource));

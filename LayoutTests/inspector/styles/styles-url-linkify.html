@@ -35,9 +35,8 @@ function test()
     const blobURL = "blob:http%3A//example.com/f91b7b00-00-0000-0000-3b7c87055d7a";
     completeURL("https://example.com/foo", dataURL);
     completeURL("http://example.com/foo", "javascript:alert('foo');");
-    InspectorTest.addResult(WebInspector.resourceURLForRelatedNode(null, " javascript:alert('foo'); "));
     completeURL("http://example.com/foo", blobURL);
-    InspectorTest.addResult(WebInspector.resourceURLForRelatedNode(null, blobURL));
+    InspectorTest.addResult(WebInspector.ParsedURL.completeURL(blobURL));
 
     function dumpHref(dumpLinkClass)
     {

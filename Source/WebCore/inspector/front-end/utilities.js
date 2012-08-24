@@ -133,6 +133,15 @@ String.prototype.trimURL = function(baseURLDomain)
     return result;
 }
 
+/**
+ * @param {string} href
+ * @return {string}
+ */
+function sanitizeHref(href)
+{
+    return href && href.trim().toLowerCase().startsWith("javascript:") ? "" : href;
+}
+
 String.prototype.removeURLFragment = function()
 {
     var fragmentIndex = this.indexOf("#");

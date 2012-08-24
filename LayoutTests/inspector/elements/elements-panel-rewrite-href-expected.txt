@@ -1,5 +1,6 @@
 Tests that src and href element targets are rewritten properly.
 
+null
 ,bogusSheet1.css
 inspector,elements,bogusSheet2.css
 tests,inspector,inspector-test.js

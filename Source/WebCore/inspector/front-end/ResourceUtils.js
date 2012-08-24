@@ -181,7 +181,7 @@ WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal, too
     classes += isExternal ? "webkit-html-external-link" : "webkit-html-resource-link";
 
     var a = document.createElement("a");
-    a.href = url;
+    a.href = sanitizeHref(url);
     a.className = classes;
     if (typeof tooltipText === "undefined")
         a.title = url;
@@ -235,37 +235,4 @@ WebInspector.linkifyRequestAsNode = function(request, classes)
     anchor.preferredPanel = "network";
     anchor.requestId  = request.requestId;
     return anchor;
-}
-
-/**
- * @return {?string} null if the specified resource MUST NOT have a URL (e.g. "javascript:...")
- */
-WebInspector.resourceURLForRelatedNode = function(node, url)
-{
-    if (!url || url.indexOf("://") > 0)
-        return url;
-
-    if (url.trim().startsWith("javascript:"))
-        return null; // Do not provide a resource URL for security.
-
-    for (var frameOwnerCandidate = node; frameOwnerCandidate; frameOwnerCandidate = frameOwnerCandidate.parentNode) {
-        if (frameOwnerCandidate.documentURL) {
-            var result = WebInspector.ParsedURL.completeURL(frameOwnerCandidate.documentURL, url);
-            if (result)
-                return result;
-            break;
-        }
-    }
-
-    // documentURL not found or has bad value
-    var resourceURL = url;
-    function callback(resource)
-    {
-        if (resource.parsedURL.path === url) {
-            resourceURL = resource.url;
-            return true;
-        }
-    }
-    WebInspector.forAllResources(callback);
-    return resourceURL;
 }

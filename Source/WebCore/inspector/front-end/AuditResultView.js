@@ -43,17 +43,9 @@ WebInspector.AuditResultView = function(categoryResults)
     categoryResults.sort(categorySorter);
     for (var i = 0; i < categoryResults.length; ++i)
         this.element.appendChild(new WebInspector.AuditCategoryResultPane(categoryResults[i]).element);
-
-    this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
 }
 
 WebInspector.AuditResultView.prototype = {
-    _contextMenuEventFired: function(event)
-    {
-        var contextMenu = new WebInspector.ContextMenu();
-        if (WebInspector.populateHrefContextMenu(contextMenu, null, event))
-            contextMenu.show(event);
-    }
 }
 
 WebInspector.AuditResultView.prototype.__proto__ = WebInspector.View.prototype;

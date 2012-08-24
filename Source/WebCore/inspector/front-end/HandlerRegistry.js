@@ -96,6 +96,16 @@ WebInspector.HandlerRegistry.prototype = {
      */
     appendApplicableItems: function(contextMenu, target)
     {
+        this._appendContentProviderItems(contextMenu, target);
+        this._appendHrefItems(contextMenu, target);
+    },
+
+    /** 
+     * @param {WebInspector.ContextMenu} contextMenu
+     * @param {Object} target
+     */
+    _appendContentProviderItems: function(contextMenu, target)
+    {
         if (!(target instanceof WebInspector.UISourceCode || target instanceof WebInspector.Resource || target instanceof WebInspector.NetworkRequest))
             return;
         var contentProvider = /** @type {WebInspector.ContentProvider} */ target;
@@ -140,6 +150,31 @@ WebInspector.HandlerRegistry.prototype = {
         contextMenu.appendSeparator();
         contextMenu.appendItem(WebInspector.UIString("Save"), save.bind(this, false));
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save as..." : "Save As..."), save.bind(this, true));
+    },
+
+    /** 
+     * @param {WebInspector.ContextMenu} contextMenu
+     * @param {Object} target
+     */
+    _appendHrefItems: function(contextMenu, target)
+    {
+        if (!(target instanceof Node))
+            return;
+        var targetNode = /** @type {Node} */ target;
+
+        var anchorElement = targetNode.enclosingNodeOrSelfWithClass("webkit-html-resource-link") || targetNode.enclosingNodeOrSelfWithClass("webkit-html-external-link");
+        if (!anchorElement)
+            return;
+
+        var resourceURL = anchorElement.href;
+        if (!resourceURL)
+            return;
+
+        // Add resource-related actions.
+        contextMenu.appendItem(WebInspector.openLinkExternallyLabel(), WebInspector.openResource.bind(WebInspector, resourceURL, false));
+        if (WebInspector.resourceForURL(resourceURL))
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Open link in Resources panel" : "Open Link in Resources Panel"), WebInspector.openResource.bind(null, resourceURL, true));
+        contextMenu.appendItem(WebInspector.copyLinkAddressLabel(), InspectorFrontendHost.copyText.bind(InspectorFrontendHost, resourceURL));
     }
 }
 

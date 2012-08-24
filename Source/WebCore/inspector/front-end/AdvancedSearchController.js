@@ -500,7 +500,7 @@ WebInspector.FileBasedSearchResultsPane.prototype = {
     {
         var anchor = document.createElement("a");
         anchor.preferredPanel = "scripts";
-        anchor.href = uiSourceCode.url;
+        anchor.href = sanitizeHref(uiSourceCode.url);
         anchor.uiSourceCode = uiSourceCode;
         anchor.lineNumber = lineNumber;
         return anchor;

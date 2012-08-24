@@ -97,7 +97,7 @@ WebInspector.Linkifier.prototype = {
     _updateAnchor: function(anchor, uiLocation)
     {
         anchor.preferredPanel = "scripts";
-        anchor.href = uiLocation.uiSourceCode.url;
+        anchor.href = sanitizeHref(uiLocation.uiSourceCode.url);
         anchor.uiSourceCode = uiLocation.uiSourceCode;
         anchor.lineNumber = uiLocation.lineNumber;
         this._formatter.formatLiveAnchor(anchor, uiLocation);

@@ -60,7 +60,7 @@ WebInspector.AuditFormatters.Registry = {
     url: function(url, displayText, allowExternalNavigation)
     {
         var a = document.createElement("a");
-        a.href = url;
+        a.href = sanitizeHref(url);
         a.title = url;
         a.textContent = displayText || url;
         if (allowExternalNavigation)
