@@ -1,3 +1,27 @@
+2012-08-24  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Animation & UI lag when rendering
+        https://bugs.webkit.org/show_bug.cgi?id=94943
+
+        Reviewed by Rob Buis.
+
+        Schedule a backing store blit & composite when commiting root layer.
+        This results in compositing not having to wait until after a long render
+        operation, increasing responsiveness & fixing animations which skip to
+        the last frame due to lag.
+
+        This can cause a blit during a "one shot drawing synchronization", which is
+        a render & commit on the AC layers, which may result in flashing.
+        However, this can happen in other situations as well, and we feel that
+        the responsiveness, reduced lag, and smoothness of animations is
+        more important.
+
+        Internal PR194209
+        Internally reviewed by: George Staikos.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::commitRootLayer):
+
 2012-08-24  Parth Patel  <parpatel@rim.com>
 
         [BlackBerry] Changes resulting from moving application directory methods from platform client to platform settings.

@@ -5631,6 +5631,8 @@ void WebPagePrivate::commitRootLayer(const IntRect& layoutRectForCompositing,
 
     if (overlayLayer)
         overlayLayer->commitOnCompositingThread();
+
+    scheduleCompositingRun();
 }
 
 bool WebPagePrivate::commitRootLayerIfNeeded()
