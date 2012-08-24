@@ -1,3 +1,16 @@
+2012-08-24  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Multiple fields time input UI should handle Delete key as Backspace key
+        https://bugs.webkit.org/show_bug.cgi?id=94902
+
+        Reviewed by Kent Tamura.
+
+        This patch adds a new test case for "Delete" key behavior for multiple
+        fields time input UI.
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-keyboard-events-expected.txt: Updated expectation.
+        * fast/forms/time-multiple-fields/time-multiple-fields-keyboard-events.html: Added "Delete" key test case.
+
 2012-08-24  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Gardening after r126442. Skip a test because of missing shadow feature.

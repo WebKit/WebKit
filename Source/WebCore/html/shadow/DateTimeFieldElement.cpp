@@ -80,7 +80,7 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent* keyboardEv
         return;
     }
 
-    if (keyIdentifier == "U+0008") {
+    if (keyIdentifier == "U+0008" || keyIdentifier == "U+007F") {
         keyboardEvent->setDefaultHandled();
         setEmptyValue(DateComponents(), DispatchEvent);
         return;

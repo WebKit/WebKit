@@ -28,6 +28,8 @@ PASS input.value is "07:05"
 PASS document.activeElement.id is "another"
 == Backspace key ==
 PASS input.value is ""
+== Delete key ==
+PASS input.value is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE
