@@ -1,5 +1,12 @@
 2012-08-24  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Update skipped list with changes merged from r121428. Patch by Mark
+        Lam. Unreviewed.
+
+        * platform/wk2/Skipped:
+
+2012-08-24  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Update skipped list with changes merged from r121440. Patch by Mark
         Lam. Unreviewed.
 

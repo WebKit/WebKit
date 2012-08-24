@@ -1475,6 +1475,10 @@ fast/repaint/overflow-flipped-writing-mode-block-in-regions.html
 fast/repaint/region-painting-invalidation.html
 fast/repaint/region-painting-via-layout.html
 
+# [WK2] New fast/events/drag-display-none-element.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=90177
+fast/events/drag-display-none-element.html
+
 ### END OF (4) Features that are not supported in WebKit2 and likely never will be
 ########################################
 
