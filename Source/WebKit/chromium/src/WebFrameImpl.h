@@ -162,6 +162,7 @@ public:
     virtual void commitDocumentData(const char* data, size_t length);
     virtual unsigned unloadListenerCount() const;
     virtual bool isProcessingUserGesture() const;
+    virtual bool consumeUserGesture() const;
     virtual bool willSuppressOpenerInNewFrame() const;
     virtual void replaceSelection(const WebString&);
     virtual void insertText(const WebString&);

@@ -34,6 +34,7 @@ static bool isDefinite(ProcessingUserGestureState state)
 }
 
 ProcessingUserGestureState UserGestureIndicator::s_state = DefinitelyNotProcessingUserGesture;
+size_t UserGestureIndicator::s_consumableGestures = 0;
 
 UserGestureIndicator::UserGestureIndicator(ProcessingUserGestureState state)
     : m_previousState(s_state)
@@ -41,13 +42,26 @@ UserGestureIndicator::UserGestureIndicator(ProcessingUserGestureState state)
     // We overwrite s_state only if the caller is definite about the gesture state.
     if (isDefinite(state))
         s_state = state;
+
+    if (s_state == DefinitelyProcessingUserGesture)
+        s_consumableGestures++;
     ASSERT(isDefinite(s_state));
 }
 
 UserGestureIndicator::~UserGestureIndicator()
 {
+    if (s_consumableGestures && s_state == DefinitelyProcessingUserGesture)
+        s_consumableGestures--;
     s_state = m_previousState;
     ASSERT(isDefinite(s_state));
+}
+
+bool UserGestureIndicator::consumeUserGesture()
+{
+    if (!s_consumableGestures)
+        return false;
+    s_consumableGestures--;
+    return true;
 }
 
 }

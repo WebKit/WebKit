@@ -1190,6 +1190,11 @@ bool WebFrameImpl::isProcessingUserGesture() const
     return ScriptController::processingUserGesture();
 }
 
+bool WebFrameImpl::consumeUserGesture() const
+{
+    return UserGestureIndicator::consumeUserGesture();
+}
+
 bool WebFrameImpl::willSuppressOpenerInNewFrame() const
 {
     return frame()->loader()->suppressOpenerInNewFrame();
