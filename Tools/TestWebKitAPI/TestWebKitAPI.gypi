@@ -31,18 +31,22 @@
 {
     'variables': {
         'TestWebKitAPI_files': [
+            'Tests/WTF/AtomicString.cpp',
             'Tests/WTF/CheckedArithmeticOperations.cpp',
+            'Tests/WTF/CString.cpp',
             'Tests/WTF/Functional.cpp',
             'Tests/WTF/HashMap.cpp',
             'Tests/WTF/MediaTime.cpp',
             'Tests/WTF/RedBlackTree.cpp',
             'Tests/WTF/SaturatedArithmeticOperations.cpp',
             'Tests/WTF/StringBuilder.cpp',
+            'Tests/WTF/StringImpl.cpp',
             'Tests/WTF/StringOperators.cpp',
             'Tests/WTF/TemporaryChange.cpp',
             'Tests/WTF/Vector.cpp',
             'Tests/WTF/VectorBasic.cpp',
             'Tests/WTF/VectorReverse.cpp',
+            'Tests/WTF/WTFString.cpp',
         ],
     },
 }

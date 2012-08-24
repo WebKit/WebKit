@@ -22,6 +22,7 @@
 #define WTF_PassRefPtr_h
 
 #include <wtf/AlwaysInline.h>
+#include <wtf/Assertions.h>
 #include <wtf/NullPtr.h>
 
 namespace WTF {

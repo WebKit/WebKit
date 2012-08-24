@@ -1,3 +1,13 @@
+2012-08-23  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        [Chromium] Enable AtomicString && CString && WTFString && StringImpl unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=94871
+
+        Reviewed by Benjamin Poulain.
+
+        * TestWebKitAPI/TestWebKitAPI.gypi:
+        Added the missing files to Chromium's build system.
+
 2012-08-23  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [watchlist] Unreviewed, subscribe to WebKit2-EFL bugs.
