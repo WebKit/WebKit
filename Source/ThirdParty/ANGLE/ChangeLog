@@ -1,3 +1,23 @@
+2012-08-24  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [CSS Shaders] [ANGLE] RenameFunction::RenameFunction may store references to temporary string
+        https://bugs.webkit.org/show_bug.cgi?id=94736
+        http://code.google.com/p/angleproject/issues/detail?id=360
+
+        Reviewed by George Staikos.
+
+        When RenameFunction::RenameFunction(const TString& oldFunctionName, const TString&
+        newFunctionName) is called from TCompiler::rewriteCSSShader(TIntermNode*), references to
+        the temporaries oldFunctionName and newFunctionName are stored as mOldFunctionName and
+        mNewFunctionName. This results in undefined behaviour in visitAggregate.
+
+        This same patch is being applied in upstream ANGLE, and is needed for CSS Shader
+        sanitization.
+
+        * src/compiler/RenameFunction.h:
+        (RenameFunction::visitAggregate):
+        (RenameFunction):
+
 2012-07-18  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Buildfix after r122870.

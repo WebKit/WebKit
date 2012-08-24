@@ -20,7 +20,7 @@ public:
     , mOldFunctionName(oldFunctionName)
     , mNewFunctionName(newFunctionName) {}
 
-    virtual bool visitAggregate(Visit visit, TIntermAggregate* node)
+    virtual bool visitAggregate(Visit, TIntermAggregate* node)
     {
         TOperator op = node->getOp();
         if ((op == EOpFunction || op == EOpFunctionCall) && node->getName() == mOldFunctionName)
@@ -29,8 +29,8 @@ public:
     }
 
 private:
-    const TString& mOldFunctionName;
-    const TString& mNewFunctionName;
+    const TString mOldFunctionName;
+    const TString mNewFunctionName;
 };
 
 #endif  // COMPILER_RENAME_FUNCTION
