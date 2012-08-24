@@ -56,7 +56,7 @@ BUGCR24182 SLOW DEBUG : jquery/dimensions.html = PASS
 BUGCR24182 DEBUG : jquery/event.html = PASS TIMEOUT
 BUGCR24182 : jquery/manipulation.html = PASS TIMEOUT
 BUGCR24182 SLOW DEBUG : jquery/offset.html = PASS
-BUGCR24182 LINUX ANDROID WIN DEBUG : jquery/traversing.html = PASS TIMEOUT
+BUGCR24182 LINUX WIN DEBUG : jquery/traversing.html = PASS TIMEOUT
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : svg/dom/baseVal-animVal-crash.html = PASS
 BUGCR24182 SLOW MAC : storage/indexeddb/factory-basics.html = PASS
 BUGCR24182 SLOW DEBUG : css3/flexbox/position-absolute-child.html = PASS
@@ -73,6 +73,10 @@ BUGCR24182 SLOW DEBUG : fast/js/dfg-float64array.html = PASS
 BUGCR24182 SLOW DEBUG : fast/js/dfg-uint8clampedarray.html = PASS
 BUGCR24182 SLOW DEBUG : fast/js/dfg-int32array-overflow-values.html = PASS
 BUGCR24182 SLOW DEBUG : fast/js/dfg-uint32array-overflow-values.html = PASS
+BUGWK93631 SLOW ANDROID DEBUG : fast/js/create-lots-of-workers.html = PASS
+BUGWK93631 SLOW ANDROID DEBUG : fast/js/exception-sequencing-binops.html = PASS
+BUGWK93631 SLOW ANDROID DEBUG : fast/js/exception-sequencing-binops2.html = PASS
+BUGWK93631 SLOW ANDROID DEBUG : fast/js/toInt32UInt32.html
 
 // These tests started being slow when we switched to DRT.
 BUGWK90488 SLOW LINUX WIN DEBUG : inspector = PASS
@@ -844,10 +848,10 @@ WONTFIX XP : css3/font-feature-settings-rendering.html = IMAGE+TEXT PASS
 
 // These test the CoreAnimation plugin model which we never intend to support on
 // Windows and Linux.
-WONTFIX SKIP WIN LINUX ANDROID : compositing/plugins/1x1-composited-plugin.html = IMAGE+TEXT
-WONTFIX SKIP WIN LINUX ANDROID : compositing/plugins/composited-plugin.html = IMAGE+TEXT
-WONTFIX SKIP WIN LINUX ANDROID : compositing/plugins/large-to-small-composited-plugin.html = TEXT
-WONTFIX SKIP WIN LINUX ANDROID : compositing/plugins/small-to-large-composited-plugin.html = TEXT
+WONTFIX SKIP WIN LINUX : compositing/plugins/1x1-composited-plugin.html = IMAGE+TEXT
+WONTFIX SKIP WIN LINUX : compositing/plugins/composited-plugin.html = IMAGE+TEXT
+WONTFIX SKIP WIN LINUX : compositing/plugins/large-to-small-composited-plugin.html = TEXT
+WONTFIX SKIP WIN LINUX : compositing/plugins/small-to-large-composited-plugin.html = TEXT
 
 // Mac's popup behavior is different.
 WONTFIX MAC SKIP : fast/forms/select/menulist-onchange-fired-with-key-up-down.html = PASS
@@ -876,6 +880,9 @@ WONTFIX SKIP ANDROID : fast/forms/time-multiple-fields = PASS
 
 // Test fails because it's trying to load a plugin we don't have. We probably don't need to fix this.
 WONTFIX : platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html = TEXT
+
+// This test is only for GTK which is not applicable to Android.
+WONTFIX ANDROID SKIP : platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html = TEXT
 
 // -----------------------------------------------------------------
 // TESTS TO FIX
@@ -1076,7 +1083,7 @@ BUGWK61624 WIN : editing/pasteboard/smart-paste-004.html = TEXT
 BUGWK78655 : editing/pasteboard/drag-files-to-editable-element.html = TEXT
 
 // New test in r93068
-BUGWK66268 WIN LINUX ANDROID : editing/deleting/regional-indicators.html = TEXT
+BUGWK66268 WIN LINUX : editing/deleting/regional-indicators.html = TEXT
 
 BUGWK67121 DEBUG SLOW : editing/selection/move-by-word-visually-multi-space.html = PASS
 
@@ -1769,7 +1776,7 @@ BUGCR30826 WIN : platform/win/fast/events/panScroll-imageMap-noHref-scroll.html 
 BUGCR30826 WIN DEBUG : platform/win/fast/events/panScroll-event-fired.html = PASS TIMEOUT TEXT
 
 // WebKit roll 52468->52535
-BUGCR31991 ANDROID WIN7 : fast/text/international/bidi-layout-across-linebreak.html = TEXT
+BUGCR31991 WIN7 : fast/text/international/bidi-layout-across-linebreak.html = TEXT
 
 BUGCR31623 WIN SNOWLEOPARD : http/tests/appcache/remove-cache.html = PASS TIMEOUT TEXT
 
@@ -1993,6 +2000,7 @@ BUGWK44199 RELEASE SLOW : perf/array-nested-loop.html = PASS TEXT
 BUGWK44199 RELEASE SLOW : perf/class-list-remove.html = PASS TEXT
 BUGWK71652 MAC LINUX ANDROID RELEASE SLOW : perf/document-contains.html = PASS
 BUGWK72372 WIN RELEASE SLOW : perf/document-contains.html = PASS
+BUGWK67921 RELEASE ANDROID : perf/show-hide-table-rows.html = TIMEOUT
 BUGWK67921 RELEASE SLOW : perf/show-hide-table-rows.html = PASS
 BUGWK44199 RELEASE : perf/clone-with-focus.html = PASS TEXT
 BUGWK44199 RELEASE : perf/typing-at-end-of-line.html = PASS TEXT
@@ -2085,7 +2093,7 @@ BUGCR65877 : fast/writing-mode/japanese-rl-selection.html = IMAGE+TEXT IMAGE
 BUGCR65877 : fast/writing-mode/japanese-ruby-vertical-lr.html = PASS IMAGE+TEXT
 BUGCR65877 : fast/writing-mode/japanese-ruby-vertical-rl.html = PASS IMAGE+TEXT
 BUGCR65877 : fast/writing-mode/japanese-ruby-horizontal-bt.html = PASS IMAGE+TEXT
-BUGCR65877 LINUX ANDROID : fast/writing-mode/broken-ideographic-font.html = IMAGE+TEXT
+BUGCR65877 LINUX : fast/writing-mode/broken-ideographic-font.html = IMAGE+TEXT
 BUGCR65877 LINUX ANDROID WIN : fast/writing-mode/vertical-font-fallback.html = IMAGE+TEXT
 //BUGCR65877 LINUX ANDROID WIN : fast/writing-mode/broken-ideograph-small-caps.html = IMAGE
 BUGCR65877 LINUX ANDROID WIN : fast/writing-mode/Kusa-Makura-background-canvas.html = IMAGE+TEXT
@@ -2234,6 +2242,7 @@ BUGCR75426 LINUX ANDROID DEBUG : fast/text/large-text-composed-char-dos.html = T
 
 // Added by http://trac.webkit.org/changeset/76548
 BUGCR70686 MAC : fast/text/international/cjk-segmentation.html = TEXT
+BUGCR144529 ANDROID : fast/text/international/cjk-segmentation.html = TEXT
 
 // Added by http://trac.webkit.org/changeset/76674
 BUGCR70882 WIN : fast/text/offsetForPosition-complex-fallback.html = TEXT
@@ -2303,7 +2312,7 @@ BUGWK55300 : fast/images/support-broken-image-delegate.html = TEXT
 // introduced by Dave Hyatt in WK r80582
 BUGCR75561 LINUX ANDROID WIN : fast/writing-mode/text-orientation-basic.html = IMAGE+TEXT
 
-BUGWK56060 LINUX ANDROID : fast/images/favicon-as-image.html = IMAGE+TEXT
+BUGWK56060 LINUX : fast/images/favicon-as-image.html = IMAGE+TEXT
 
 // Skip an overly restrictive cross-origin HTTPS test
 BUGCR69594 SKIP : http/tests/appcache/different-https-origin-resource-main.html = PASS
@@ -3115,7 +3124,8 @@ BUGWK84724 SNOWLEOPARD : platform/chromium/media/video-frame-size-change.html = 
 BUGWK84735 WIN : http/tests/inspector/change-iframe-src.html = TIMEOUT PASS
 
 // This test has its own idea of "timeout", which is to crash.
-BUGWK84802 LINUX ANDROID WIN DEBUG SLOW : fast/js/random-array-gc-stress.html = PASS
+BUGWK84802 LINUX WIN DEBUG SLOW : fast/js/random-array-gc-stress.html = PASS
+BUGWK93631 ANDROID SLOW : fast/js/random-array-gc-stress.html = PASS
 BUGWK84802 MAC DEBUG SLOW : fast/js/random-array-gc-stress.html = PASS CRASH
 
 BUGWK84847 WIN RELEASE : inspector/timeline/timeline-start-time.html = TEXT PASS
@@ -3250,7 +3260,7 @@ BUGWK87772 DEBUG : svg/dom/viewspec-parser-5.html = TIMEOUT
 
 BUGWK87880 RELEASE : fast/layers/scroll-with-transform-composited-layer.html = PASS IMAGE
 
-BUGWK87886 LINUX ANDROID : perf/mouse-event.html = PASS TEXT
+BUGWK87886 LINUX : perf/mouse-event.html = PASS TEXT
 
 BUGWK88124 DEBUG : fast/css/absolute-child-with-percent-height-inside-relative-parent.html = PASS IMAGE+TEXT
 
@@ -3484,6 +3494,7 @@ BUGWK94528 MAC : fast/text-autosizing/nested-em-line-height.html = PASS IMAGE
 
 BUGWK94532 LINUX : fast/forms/formmethod-attribute-button-html.html = PASS MISSING
 
+BUGWK94660 ANDROID : fast/js/create-lots-of-workers.html = PASS CRASH TIMEOUT
 BUGWK94660 : fast/js/create-lots-of-workers.html = PASS CRASH
 BUGWK94667 WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic.html = IMAGE
 BUGWK94675 : css3/flexbox/flexitem.html = TEXT
@@ -3495,3 +3506,26 @@ BUGCR67540 BUGWK94735 LINUX : fast/text/emphasis-overlap.html = IMAGE IMAGE+TEXT
 BUGWK94793 : fast/notifications/notifications-event-listener-crash.html = TEXT PASS
 
 BUGWK94951 WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements.html = IMAGE PASS
+
+BUGCR144536 WONTFIX ANDROID : fast/dom/HTMLSelectElement/select-selectedOptions.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/events/select-element.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/listbox-clip.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/listbox-deselect-scroll.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/listbox-onchange.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/listbox-select-all.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/listbox-selection.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/option-mouseevents.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/select-cache-desynchronization.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/select-clientheight-large-size.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/select-clientheight-with-multiple-attr.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/select-item-background-clip.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/select-listbox-multiple-no-focusring.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/select-live-pseudo-selectors.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/select-multiple-elements-with-mouse-drag-with-options-less-than-size.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/select-multiple-elements-with-mouse-drag.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/select/listbox-drag-in-non-multiple.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/select/listbox-in-multi-column.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/select/optgroup-clicking.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/select/optgroup-rendering.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/repaint/select-option-background-color.html = TEXT
+BUGCR144536 WONTFIX ANDROID : scrollbars/listbox-scrollbar-combinations.html = TEXT
