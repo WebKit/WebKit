@@ -1,3 +1,23 @@
+2012-08-24  Michael Brüning  <michaelbruening@gmail.com>
+
+        [Qt][WK2] Make viewport related experimental.test properties encapsulated.
+        https://bugs.webkit.org/show_bug.cgi?id=88320
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Introducing a new viewport attribute to QWebKitTest to group the viewport related
+        attributes into one QJsonObject. Also adding a static method to convert a QSizeF to
+        a QJsonObject.
+
+        * UIProcess/API/qt/qwebkittest.cpp:
+        (qSizeFToJsonObject):
+        (QWebKitTest::viewport):
+        (QWebKitTest::devicePixelRatio):
+        (QWebKitTest::contentsScale):
+        * UIProcess/API/qt/qwebkittest_p.h:
+        * UIProcess/qt/QtViewportHandler.cpp:
+        (WebKit::QtViewportHandler::viewportAttributesChanged):
+
 2012-08-23  Frederik Gladhorn  <gladhorn@kde.org>
 
         Make it possible to build WebKit with Python 3 (and 2)

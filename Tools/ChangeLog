@@ -1,3 +1,14 @@
+2012-08-24  Michael Brüning  <michaelbruening@gmail.com>
+
+        [Qt][WK2] Make viewport related experimental.test properties encapsulated.
+        https://bugs.webkit.org/show_bug.cgi?id=88320
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Changed the access to the viewport attributes to use the viewport object that is introduced by this change.
+
+        * MiniBrowser/qt/qml/ViewportInfoItem.qml:
+
 2012-08-23  Dirk Pranke  <dpranke@chromium.org>
 
         leak detection broken after r126247 on mac

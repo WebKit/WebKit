@@ -24,6 +24,7 @@
 #include "qwebkitglobal.h"
 #include "qquickwebview_p.h"
 
+#include <QtCore/QJsonObject>
 #include <QtCore/QObject>
 #include <QtCore/QPointer>
 #include <QtCore/QSize>
@@ -40,17 +41,14 @@ class QWEBKIT_EXPORT QWebKitTest : public QObject {
 
     Q_PROPERTY(QVariant contentsScale READ contentsScale NOTIFY contentsScaleChanged)
 
-    Q_PROPERTY(QVariant devicePixelRatio READ devicePixelRatio NOTIFY viewportChanged)
-    Q_PROPERTY(QVariant initialScale READ initialScale NOTIFY viewportChanged)
-    Q_PROPERTY(QVariant isScalable READ isScalable NOTIFY viewportChanged)
-    Q_PROPERTY(QVariant maximumScale READ maximumScale NOTIFY viewportChanged)
-    Q_PROPERTY(QVariant minimumScale READ minimumScale NOTIFY viewportChanged)
-    Q_PROPERTY(QVariant layoutSize READ layoutSize NOTIFY viewportChanged)
+    Q_PROPERTY(QVariant devicePixelRatio READ devicePixelRatio NOTIFY devicePixelRatioChanged)
+    Q_PROPERTY(QJsonObject viewport READ viewport NOTIFY viewportChanged)
 
 Q_SIGNALS:
     void contentsSizeChanged();
     void contentsScaleChanged();
     void contentsScaleCommitted();
+    void devicePixelRatioChanged();
     void viewportChanged();
 
 public Q_SLOTS:
@@ -68,11 +66,7 @@ public:
     QVariant contentsScale() const;
 
     QVariant devicePixelRatio() const;
-    QVariant initialScale() const;
-    QVariant isScalable() const;
-    QVariant layoutSize() const;
-    QVariant maximumScale() const;
-    QVariant minimumScale() const;
+    QJsonObject viewport() const;
 
 private:
     QQuickWebViewPrivate* m_webViewPrivate;
