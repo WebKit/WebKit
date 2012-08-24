@@ -1,3 +1,27 @@
+2012-08-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed Chromium rebaseline.
+
+        * platform/chromium-mac/fast/table/border-collapsing/cached-69296-expected.png: Added.
+        * platform/chromium-mac/fast/table/border-collapsing/cached-cell-append-expected.png: Added.
+        * platform/chromium-mac/fast/table/border-collapsing/cached-cell-remove-expected.png: Added.
+        * platform/chromium-mac/fast/table/border-collapsing/cached-change-cell-border-color-expected.png: Added.
+        * platform/chromium-mac/fast/table/border-collapsing/cached-change-cell-border-width-expected.png: Added.
+        * platform/chromium-mac/fast/table/border-collapsing/cached-change-cell-sl-border-color-expected.png: Added.
+        * platform/chromium-mac/fast/table/border-collapsing/cached-change-col-border-color-expected.png: Added.
+        * platform/chromium-mac/fast/table/border-collapsing/cached-change-col-border-width-expected.png: Added.
+        * platform/chromium-mac/fast/table/border-collapsing/cached-change-colgroup-border-color-expected.png: Added.
+        * platform/chromium-mac/fast/table/border-collapsing/cached-change-colgroup-border-width-expected.png: Added.
+        * platform/chromium-mac/fast/table/border-collapsing/cached-change-row-border-color-expected.png: Added.
+        * platform/chromium-mac/fast/table/border-collapsing/cached-change-row-border-width-expected.png: Added.
+        * platform/chromium-mac/fast/table/border-collapsing/cached-change-table-border-color-expected.png: Added.
+        * platform/chromium-mac/fast/table/border-collapsing/cached-change-table-border-width-expected.png: Added.
+        * platform/chromium-mac/fast/table/border-collapsing/cached-change-tbody-border-color-expected.png: Added.
+        * platform/chromium-mac/fast/table/border-collapsing/cached-change-tbody-border-width-expected.png: Added.
+        * platform/chromium/TestExpectations:
+        Rebaselined the border-collapsing tests on Mac. They have required a different baseline for several months
+        now and the root cause (small alpha difference) doesn't seem to be worked on.
+
 2012-08-24  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

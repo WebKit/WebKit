@@ -2644,23 +2644,6 @@ BUGWK68437 BUGWK54322 SNOWLEOPARD : platform/chromium/virtual/gpu/fast/canvas/se
 // Failures introduced by USE_NEW_BUILDER in Skia.
 BUGCR33287 : fast/canvas/set-colors.html = TEXT
 
-// Alpha channel differences
-BUGWK68736 MAC : fast/table/border-collapsing/cached-cell-append.html = IMAGE
-BUGWK68736 MAC : fast/table/border-collapsing/cached-cell-remove.html = IMAGE
-BUGWK68736 MAC : fast/table/border-collapsing/cached-change-cell-border-color.html = IMAGE
-BUGWK68736 MAC : fast/table/border-collapsing/cached-change-cell-border-width.html = IMAGE
-BUGWK68736 MAC : fast/table/border-collapsing/cached-change-cell-sl-border-color.html = IMAGE
-BUGWK68736 MAC : fast/table/border-collapsing/cached-change-col-border-color.html = IMAGE
-BUGWK68736 MAC : fast/table/border-collapsing/cached-change-col-border-width.html = IMAGE
-BUGWK68736 MAC : fast/table/border-collapsing/cached-change-colgroup-border-color.html = IMAGE
-BUGWK68736 MAC : fast/table/border-collapsing/cached-change-colgroup-border-width.html = IMAGE
-BUGWK68736 MAC : fast/table/border-collapsing/cached-change-row-border-color.html = IMAGE
-BUGWK68736 MAC : fast/table/border-collapsing/cached-change-row-border-width.html = IMAGE
-BUGWK68736 MAC : fast/table/border-collapsing/cached-change-table-border-color.html = IMAGE
-BUGWK68736 MAC : fast/table/border-collapsing/cached-change-table-border-width.html = IMAGE
-BUGWK68736 MAC : fast/table/border-collapsing/cached-change-tbody-border-color.html = IMAGE
-BUGWK68736 MAC : fast/table/border-collapsing/cached-change-tbody-border-width.html = IMAGE
-
 BUGWK69060 WIN LINUX ANDROID : fast/repaint/selection-clear.html = IMAGE+TEXT
 
 BUGWK69103 WIN LINUX ANDROID : fast/text/line-initial-and-final-swashes.html = IMAGE+TEXT
