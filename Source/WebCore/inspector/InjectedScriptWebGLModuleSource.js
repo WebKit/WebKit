@@ -440,12 +440,233 @@ ReplayableResource.prototype = {
 /**
  * @constructor
  * @extends {Resource}
+ */
+function WebGLBoundResource(wrappedObject)
+{
+    Resource.call(this, wrappedObject);
+    this._state = {};
+}
+
+WebGLBoundResource.prototype = {
+    /**
+     * @param {number} target
+     * @param {string} bindMethodName
+     */
+    pushBinding: function(target, bindMethodName)
+    {
+        if (this._state.BINDING !== target) {
+            this._state.BINDING = target;
+            this.pushCall(new Call(WebGLRenderingContextResource.forObject(this), bindMethodName, [target, this]));
+        }
+    }
+}
+
+WebGLBoundResource.prototype.__proto__ = Resource.prototype;
+
+/**
+ * @constructor
+ * @extends {WebGLBoundResource}
+ */
+function WebGLTextureResource(wrappedObject)
+{
+    WebGLBoundResource.call(this, wrappedObject);
+}
+
+WebGLTextureResource.prototype = {
+    /** @inheritDoc */
+    pushCall: function(call)
+    {
+        var gl = call.resource().wrappedObject();
+        WebGLRenderingContextResource.PixelStoreParameters.forEach(function(parameter) {
+            var value = gl.getParameter(gl[parameter]);
+            if (this._state[parameter] !== value) {
+                this._state[parameter] = value;
+                var pixelStoreCall = new Call(gl, "pixelStorei", [gl[parameter], value]);
+                WebGLBoundResource.prototype.pushCall.call(this, pixelStoreCall);
+            }
+        }, this);
+
+        // FIXME: remove any older calls that no longer contribute to the resource state.
+        // FIXME: optimize memory usage: maybe it's more efficient to store one texImage2D call instead of many texSubImage2D.
+        WebGLBoundResource.prototype.pushCall.call(this, call);
+    },
+
+    /**
+     * @param {Call} call
+     */
+    pushCall_texParameterf: function(call)
+    {
+        var args = call.args();
+        var pname = args[1];
+        var param = args[2];
+        if (this._state[pname] !== param) {
+            this._state[pname] = param;
+            WebGLBoundResource.prototype.pushCall.call(this, call);
+        }
+    },
+
+    /**
+     * copyTexImage2D and copyTexSubImage2D define a texture image with pixels from the current framebuffer.
+     * @param {Call} call
+     */
+    pushCall_copyTexImage2D: function(call)
+    {
+        var glResource = call.resource();
+        var gl = glResource.wrappedObject();
+        var framebufferResource = glResource.currentBinding(gl.FRAMEBUFFER);
+        if (framebufferResource)
+            this.pushCall(new Call(glResource, "bindFramebuffer", [gl.FRAMEBUFFER, framebufferResource]));
+        else
+            console.error("ASSERT_NOT_REACHED: No FRAMEBUFFER bound while calling gl." + call.functionName());
+        this.pushCall(call);
+    }
+}
+
+WebGLTextureResource.prototype.pushCall_texParameteri = WebGLTextureResource.prototype.pushCall_texParameterf;
+WebGLTextureResource.prototype.pushCall_copyTexSubImage2D = WebGLTextureResource.prototype.pushCall_copyTexImage2D;
+
+WebGLTextureResource.prototype.__proto__ = WebGLBoundResource.prototype;
+
+/**
+ * @constructor
+ * @extends {Resource}
+ */
+function WebGLProgramResource(wrappedObject)
+{
+    Resource.call(this, wrappedObject);
+}
+
+WebGLProgramResource.prototype = {
+    /** @inheritDoc */
+    pushCall: function(call)
+    {
+        // FIXME: remove any older calls that no longer contribute to the resource state.
+        // FIXME: handle multiple attachShader && detachShader.
+        Resource.prototype.pushCall.call(this, call);
+    }
+}
+
+WebGLProgramResource.prototype.__proto__ = Resource.prototype;
+
+/**
+ * @constructor
+ * @extends {Resource}
+ */
+function WebGLShaderResource(wrappedObject)
+{
+    Resource.call(this, wrappedObject);
+}
+
+WebGLShaderResource.prototype = {
+    /** @inheritDoc */
+    pushCall: function(call)
+    {
+        // FIXME: remove any older calls that no longer contribute to the resource state.
+        // FIXME: handle multiple shaderSource calls.
+        Resource.prototype.pushCall.call(this, call);
+    }
+}
+
+WebGLShaderResource.prototype.__proto__ = Resource.prototype;
+
+/**
+ * @constructor
+ * @extends {WebGLBoundResource}
+ */
+function WebGLBufferResource(wrappedObject)
+{
+    WebGLBoundResource.call(this, wrappedObject);
+}
+
+WebGLBufferResource.prototype = {
+    /** @inheritDoc */
+    pushCall: function(call)
+    {
+        // FIXME: remove any older calls that no longer contribute to the resource state.
+        // FIXME: Optimize memory for bufferSubData.
+        WebGLBoundResource.prototype.pushCall.call(this, call);
+    }
+}
+
+WebGLBufferResource.prototype.__proto__ = WebGLBoundResource.prototype;
+
+/**
+ * @constructor
+ * @extends {WebGLBoundResource}
+ */
+function WebGLFramebufferResource(wrappedObject)
+{
+    WebGLBoundResource.call(this, wrappedObject);
+}
+
+WebGLFramebufferResource.prototype = {
+    /** @inheritDoc */
+    pushCall: function(call)
+    {
+        // FIXME: remove any older calls that no longer contribute to the resource state.
+        WebGLBoundResource.prototype.pushCall.call(this, call);
+    }
+}
+
+WebGLFramebufferResource.prototype.__proto__ = WebGLBoundResource.prototype;
+
+/**
+ * @constructor
+ * @extends {WebGLBoundResource}
+ */
+function WebGLRenderbufferResource(wrappedObject)
+{
+    WebGLBoundResource.call(this, wrappedObject);
+}
+
+WebGLRenderbufferResource.prototype = {
+    /** @inheritDoc */
+    pushCall: function(call)
+    {
+        // FIXME: remove any older calls that no longer contribute to the resource state.
+        WebGLBoundResource.prototype.pushCall.call(this, call);
+    }
+}
+
+WebGLRenderbufferResource.prototype.__proto__ = WebGLBoundResource.prototype;
+
+/**
+ * @constructor
+ * @extends {Resource}
  * @param {WebGLRenderingContext} glContext
  */
 function WebGLRenderingContextResource(glContext)
 {
     Resource.call(this, glContext);
     this._proxyObject = null;
+}
+
+/**
+ * @const
+ * @type {Array.<string>}
+ */
+WebGLRenderingContextResource.PixelStoreParameters = [
+    "PACK_ALIGNMENT",
+    "UNPACK_ALIGNMENT",
+    "UNPACK_COLORSPACE_CONVERSION_WEBGL",
+    "UNPACK_FLIP_Y_WEBGL",
+    "UNPACK_PREMULTIPLY_ALPHA_WEBGL"
+];
+
+/**
+ * @param {*} obj
+ * @return {WebGLRenderingContextResource}
+ */
+WebGLRenderingContextResource.forObject = function(obj)
+{
+    var resource = Resource.forObject(obj);
+    if (!resource || resource instanceof WebGLRenderingContextResource)
+        return resource;
+    var call = resource.calls();
+    if (!call || !call.length)
+        return null;
+    resource = call[0].resource();
+    return (resource instanceof WebGLRenderingContextResource) ? resource : null;
 }
 
 WebGLRenderingContextResource.prototype = {
@@ -460,6 +681,59 @@ WebGLRenderingContextResource.prototype = {
     },
 
     /**
+     * @param {Object|number} target
+     * @return {Resource}
+     */
+    currentBinding: function(target)
+    {
+        var resource = Resource.forObject(target);
+        if (resource)
+            return resource;
+        var gl = this.wrappedObject();
+        var bindingTarget;
+        var bindMethodName;
+        switch (target) {
+            case gl.ARRAY_BUFFER:
+                bindingTarget = gl.ARRAY_BUFFER_BINDING;
+                bindMethodName = "bindBuffer";
+                break;
+            case gl.ELEMENT_ARRAY_BUFFER:
+                bindingTarget = gl.ELEMENT_ARRAY_BUFFER_BINDING;
+                bindMethodName = "bindBuffer";
+                break;
+            case gl.TEXTURE_2D:
+                bindingTarget = gl.TEXTURE_BINDING_2D;
+                bindMethodName = "bindTexture";
+                break;
+            case gl.TEXTURE_CUBE_MAP:
+            case gl.TEXTURE_CUBE_MAP_POSITIVE_X:
+            case gl.TEXTURE_CUBE_MAP_NEGATIVE_X:
+            case gl.TEXTURE_CUBE_MAP_POSITIVE_Y:
+            case gl.TEXTURE_CUBE_MAP_NEGATIVE_Y:
+            case gl.TEXTURE_CUBE_MAP_POSITIVE_Z:
+            case gl.TEXTURE_CUBE_MAP_NEGATIVE_Z:
+                bindingTarget = gl.TEXTURE_BINDING_CUBE_MAP;
+                bindMethodName = "bindTexture";
+                break;
+            case gl.FRAMEBUFFER:
+                bindingTarget = gl.FRAMEBUFFER_BINDING;
+                bindMethodName = "bindFramebuffer";
+                break;
+            case gl.RENDERBUFFER:
+                bindingTarget = gl.RENDERBUFFER_BINDING;
+                bindMethodName = "bindRenderbuffer";
+                break;
+            default:
+                console.error("ASSERT_NOT_REACHED: unknown binding target " + target);
+                return null;
+        }
+        resource = Resource.forObject(gl.getParameter(bindingTarget));
+        if (resource)
+            resource.pushBinding(target, bindMethodName);
+        return resource;
+    },
+
+    /**
      * @return {Object}
      */
     _wrapObject: function()
@@ -471,8 +745,11 @@ WebGLRenderingContextResource.prototype = {
         function processProperty(property)
         {
             if (typeof glContext[property] === "function") {
-                // FIXME: override GL calls affecting resources states here.
-                proxy[property] = self._wrapFunction(self, glContext, glContext[property], property);
+                var customWrapFunction = WebGLRenderingContextResource.WrapFunctions[property];
+                if (customWrapFunction)
+                    proxy[property] = self._wrapCustomFunction(self, glContext, glContext[property], property, customWrapFunction);
+                else
+                    proxy[property] = self._wrapFunction(self, glContext, glContext[property], property);
             } else if (/^[A-Z0-9_]+$/.test(property)) {
                 // Fast access to enums and constants.
                 proxy[property] = glContext[property];
@@ -494,6 +771,29 @@ WebGLRenderingContextResource.prototype = {
             processProperty(property);
 
         return proxy;
+    },
+
+    /**
+     * @param {Resource} resource
+     * @param {WebGLRenderingContext} originalObject
+     * @param {Function} originalFunction
+     * @param {string} functionName
+     * @param {Function} customWrapFunction
+     * @return {*}
+     */
+    _wrapCustomFunction: function(resource, originalObject, originalFunction, functionName, customWrapFunction)
+    {
+        return function()
+        {
+            var manager = resource.manager();
+            if (manager)
+                manager.captureArguments(resource, arguments);
+            var wrapFunction = new WebGLRenderingContextResource.WrapFunction(originalObject, originalFunction, functionName, arguments);
+            customWrapFunction.apply(wrapFunction, arguments);
+            if (manager)
+                manager.reportCall(wrapFunction.call());
+            return wrapFunction.result();
+        };
     },
 
     /**
@@ -560,6 +860,73 @@ WebGLRenderingContextResource.WrapFunction.prototype = {
         return this._call;
     }
 }
+
+WebGLRenderingContextResource.WrapFunctions = {
+    __proto__: null
+};
+
+(function(items) {
+    items.forEach(function(item) {
+        var methodName = item[0];
+        var resourceConstructor = item[1];
+        WebGLRenderingContextResource.WrapFunctions[methodName] = function()
+        {
+            var wrappedObject = this.result();
+            if (!wrappedObject)
+                return;
+            var resource = new resourceConstructor(wrappedObject);
+            var manager = this._glResource.manager();
+            if (manager)
+                manager.registerResource(resource);
+            resource.pushCall(this.call());
+        };
+    });
+})([
+    ["createBuffer", WebGLBufferResource],
+    ["createShader", WebGLShaderResource],
+    ["createProgram", WebGLProgramResource],
+    ["createTexture", WebGLTextureResource],
+    ["createFramebuffer", WebGLFramebufferResource],
+    ["createRenderbuffer", WebGLRenderbufferResource],
+    ["getUniformLocation", Resource]
+]);
+
+(function(methods) {
+    methods.forEach(function(methodName) {
+        var customPushCall = "pushCall_" + methodName;
+        WebGLRenderingContextResource.WrapFunctions[methodName] = function(target)
+        {
+            var resource = this._glResource.currentBinding(target);
+            if (resource) {
+                if (resource[customPushCall])
+                    resource[customPushCall].call(resource, this.call());
+                else
+                    resource.pushCall(this.call());
+            }
+        };
+    });
+})([
+    "attachShader",
+    "bindAttribLocation",
+    "compileShader",
+    "detachShader",
+    "linkProgram",
+    "shaderSource",
+    "bufferData",
+    "bufferSubData",
+    "compressedTexImage2D",
+    "compressedTexSubImage2D",
+    "copyTexImage2D",
+    "copyTexSubImage2D",
+    "generateMipmap",
+    "texImage2D",
+    "texSubImage2D",
+    "texParameterf",
+    "texParameteri",
+    "framebufferRenderbuffer",
+    "framebufferTexture2D",
+    "renderbufferStorage"
+]);
 
 /**
  * @constructor
@@ -656,7 +1023,7 @@ TraceLogPlayer.prototype = {
         // FIXME: Replay all the cached resources first to warm-up.
         var replayableCalls = this._traceLog.replayableCalls();
         while (this._nextReplayStep <= stepNum)
-            replayableCalls[this._nextReplayStep++].replay(this._replayWorldCache);            
+            replayableCalls[this._nextReplayStep++].replay(this._replayWorldCache);
     },
 
     replay: function()
