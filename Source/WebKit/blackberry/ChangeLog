@@ -1,3 +1,15 @@
+2012-08-24  Liam Quinn  <lquinn@rim.com>
+
+        [BlackBerry] Debug assertion fires in BackingStorePrivate::renderJob()
+        https://bugs.webkit.org/show_bug.cgi?id=94960
+
+        Reviewed by Adam Treat.
+
+        Change the assertion into an early return as recommended by Adam Treat.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::renderJob):
+
 2012-08-24  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Animation & UI lag when rendering

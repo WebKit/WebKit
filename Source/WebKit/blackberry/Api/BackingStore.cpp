@@ -514,7 +514,8 @@ void BackingStorePrivate::dispatchRenderJob()
 
 void BackingStorePrivate::renderJob()
 {
-    ASSERT(shouldPerformRenderJobs());
+    if (!shouldPerformRenderJobs())
+        return;
 
 #if DEBUG_BACKINGSTORE
     BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::renderJob");
