@@ -66,6 +66,7 @@ class Widget;
 //
 // FIXME: We want to eventually be holding window shells instead of the
 // IsolatedContext directly.
+// https://bugs.webkit.org/show_bug.cgi?id=94875
 typedef HashMap<int, V8IsolatedContext*> IsolatedWorldMap;
 
 typedef HashMap<int, RefPtr<SecurityOrigin> > IsolatedWorldSecurityOriginMap;
@@ -77,6 +78,8 @@ public:
     ScriptController(Frame*);
     ~ScriptController();
 
+    // FIXME: This should eventually take DOMWrapperWorld argument.
+    // https://bugs.webkit.org/show_bug.cgi?id=94875
     V8DOMWindowShell* windowShell() const { return m_windowShell.get(); }
 
     ScriptValue executeScript(const ScriptSourceCode&);
