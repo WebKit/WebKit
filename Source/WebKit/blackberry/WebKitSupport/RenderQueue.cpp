@@ -243,7 +243,7 @@ int RenderQueue::splittingFactor(const Platform::IntRect& rect) const
     // rendered in any one pass should stay fixed with regard to the zoom level.
     Platform::IntRect untransformedRect = m_parent->m_webPage->d->mapFromTransformed(rect);
     double rectArea = untransformedRect.width() * untransformedRect.height();
-    double maxArea = DEFAULT_MAX_LAYOUT_WIDTH * DEFAULT_MAX_LAYOUT_HEIGHT; // Defined in WebPage_p.h.
+    double maxArea = m_parent->tileWidth() * m_parent->tileHeight();
 
     const unsigned splitFactor = 1 << 0;
     double renderRectArea = maxArea / splitFactor;

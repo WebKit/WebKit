@@ -1,3 +1,19 @@
+2012-08-24  Adam Treat  <atreat@rim.com>
+
+        [BlackBerry] Web pages are zoomed out to much on initial load
+        https://bugs.webkit.org/show_bug.cgi?id=94830
+
+        The previous patch caused a slight regression to the calculation we do
+        for the default splitting factor in the render queue.  The default value
+        we use to represent the max area should be the tile size.  This was true
+        with the old calculation of default max layout width since it was the
+        screen size.  The fix is to be explicit and use the tile size directly.
+
+        Reviewed by George Staikos.
+
+        * WebKitSupport/RenderQueue.cpp:
+        (BlackBerry::WebKit::RenderQueue::splittingFactor):
+
 2012-08-24  Parth Patel  <parpatel@rim.com>
 
         [BlackBerry] Changes resulting from moving network related methods
