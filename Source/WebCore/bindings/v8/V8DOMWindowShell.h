@@ -31,6 +31,7 @@
 #ifndef V8DOMWindowShell_h
 #define V8DOMWindowShell_h
 
+#include "ScopedPersistent.h"
 #include "V8PerContextData.h"
 #include "WrapperTypeInfo.h"
 #include <wtf/Forward.h>
@@ -52,7 +53,7 @@ class V8DOMWindowShell : public RefCounted<V8DOMWindowShell> {
 public:
     static PassRefPtr<V8DOMWindowShell> create(Frame*);
 
-    v8::Handle<v8::Context> context() const { return m_context; }
+    v8::Handle<v8::Context> context() const { return m_context.get(); }
 
     // Update document object of the frame.
     void updateDocument();
@@ -99,9 +100,9 @@ private:
 
     OwnPtr<V8PerContextData> m_perContextData;
 
-    v8::Persistent<v8::Context> m_context;
-    v8::Persistent<v8::Object> m_global;
-    v8::Persistent<v8::Object> m_document;
+    ScopedPersistent<v8::Context> m_context;
+    ScopedPersistent<v8::Object> m_global;
+    ScopedPersistent<v8::Object> m_document;
 };
 
 } // namespace WebCore
