@@ -43,11 +43,8 @@ public:
 
     v8::Local<v8::String> v8ExternalString(StringImpl* stringImpl, v8::Isolate* isolate)
     {
-        if (m_lastStringImpl.get() == stringImpl) {
-            ASSERT(!m_lastV8String.IsNearDeath());
-            ASSERT(!m_lastV8String.IsEmpty());
+        if (m_lastStringImpl.get() == stringImpl && m_lastV8String.IsWeak())
             return v8::Local<v8::String>::New(m_lastV8String);
-        }
 
         return v8ExternalStringSlow(stringImpl, isolate);
     }

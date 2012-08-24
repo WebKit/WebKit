@@ -69,7 +69,7 @@ v8::Local<v8::String> StringCache::v8ExternalStringSlow(StringImpl* stringImpl, 
     v8::String* cachedV8String = m_stringCache.get(stringImpl);
     if (cachedV8String) {
         v8::Persistent<v8::String> handle(cachedV8String);
-        if (!handle.IsNearDeath() && !handle.IsEmpty()) {
+        if (handle.IsWeak()) {
             m_lastStringImpl = stringImpl;
             m_lastV8String = handle;
             return v8::Local<v8::String>::New(handle);
