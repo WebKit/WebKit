@@ -47,10 +47,10 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(Attributes attribs, Host
     if (renderStyle == RenderDirectlyToHostWindow)
         return 0;
 
-    return adoptRef(new GraphicsContext3D(attribs, hostWindow, false));
+    return adoptRef(new GraphicsContext3D(attribs, hostWindow, renderStyle));
 }
 
-GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWindow*, bool renderDirectlyToHostWindow)
+GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWindow*, GraphicsContext3D::RenderStyle renderStyle)
     : m_currentWidth(0)
     , m_currentHeight(0)
     , m_context(BlackBerry::Platform::Graphics::createWebGLContext())
@@ -67,7 +67,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     , m_boundTexture0(0)
     , m_isImaginationHardware(0)
 {
-    if (!renderDirectlyToHostWindow) {
+    if (renderStyle != RenderDirectlyToHostWindow) {
 #if USE(ACCELERATED_COMPOSITING)
         m_compositingLayer = WebGLLayerWebKitThread::create();
 #endif

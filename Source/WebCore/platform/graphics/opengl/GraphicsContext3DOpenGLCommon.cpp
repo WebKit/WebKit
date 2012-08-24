@@ -70,6 +70,12 @@
 
 namespace WebCore {
 
+PassRefPtr<GraphicsContext3D> GraphicsContext3D::createForCurrentGLContext()
+{
+    RefPtr<GraphicsContext3D> context = adoptRef(new GraphicsContext3D(Attributes(), 0, GraphicsContext3D::RenderToCurrentGLContext));
+    return context->m_private ? context.release() : 0;
+}
+
 void GraphicsContext3D::validateDepthStencil(const char* packedDepthStencilExtension)
 {
     Extensions3D* extensions = getExtensions();

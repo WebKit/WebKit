@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes, HostWindow*, bool)
+GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes, HostWindow*, GraphicsContext3D::RenderStyle)
 {
 }
 
