@@ -53,6 +53,7 @@ class CSSValue;
 class CSSValueList;
 class CSSWrapShape;
 class Document;
+class Element;
 class MediaQueryExp;
 class MediaQuerySet;
 class StyleKeyframe;
@@ -83,6 +84,7 @@ public:
     static PassRefPtr<CSSValueList> parseFontFaceValue(const AtomicString&);
     PassRefPtr<CSSPrimitiveValue> parseValidPrimitive(int ident, CSSParserValue*);
     bool parseDeclaration(StylePropertySet*, const String&, PassRefPtr<CSSRuleSourceData>, StyleSheetContents* contextStyleSheet);
+    static PassRefPtr<StylePropertySet> parseInlineStyleDeclaration(const String&, Element*);
     PassOwnPtr<MediaQuery> parseMediaQuery(const String&);
 
     void addProperty(CSSPropertyID, PassRefPtr<CSSValue>, bool important, bool implicit = false);
@@ -402,6 +404,7 @@ private:
     bool parseGeneratedImage(CSSParserValueList*, RefPtr<CSSValue>&);
 
     bool parseValue(StylePropertySet*, CSSPropertyID, const String&, bool important, StyleSheetContents* contextStyleSheet);
+    PassRefPtr<StylePropertySet> parseDeclaration(const String&, StyleSheetContents* contextStyleSheet);
 
     enum SizeParameterType {
         None,

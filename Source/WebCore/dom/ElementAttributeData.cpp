@@ -27,6 +27,7 @@
 #include "ElementAttributeData.h"
 
 #include "Attr.h"
+#include "CSSParser.h"
 #include "CSSStyleSheet.h"
 #include "MemoryInstrumentation.h"
 #include "StyledElement.h"
@@ -211,8 +212,9 @@ void ElementAttributeData::updateInlineStyleAvoidingMutation(StyledElement* elem
     if (m_inlineStyleDecl && !m_inlineStyleDecl->isMutable())
         m_inlineStyleDecl.clear();
     if (!m_inlineStyleDecl)
-        m_inlineStyleDecl = StylePropertySet::create(strictToCSSParserMode(element->isHTMLElement() && !element->document()->inQuirksMode()));
-    m_inlineStyleDecl->parseDeclaration(text, element->document()->elementSheet()->contents());
+        m_inlineStyleDecl = CSSParser::parseInlineStyleDeclaration(text, element);
+    else
+        m_inlineStyleDecl->parseDeclaration(text, element->document()->elementSheet()->contents());
 }
 
 void ElementAttributeData::destroyInlineStyle(StyledElement* element) const

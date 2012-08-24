@@ -46,6 +46,7 @@
 #include "CSSPropertySourceData.h"
 #include "CSSReflectValue.h"
 #include "CSSSelector.h"
+#include "CSSStyleSheet.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValueKeywords.h"
@@ -1241,6 +1242,30 @@ void CSSParser::parseSelector(const String& string, CSSSelectorList& selectorLis
 
     m_selectorListForParseSelector = 0;
 }
+
+PassRefPtr<StylePropertySet> CSSParser::parseInlineStyleDeclaration(const String& string, Element* element)
+{
+    CSSParserContext context = element->document()->elementSheet()->contents()->parserContext();
+    context.mode = strictToCSSParserMode(element->isHTMLElement() && !element->document()->inQuirksMode());
+    return CSSParser(context).parseDeclaration(string, element->document()->elementSheet()->contents());
+}
+
+PassRefPtr<StylePropertySet> CSSParser::parseDeclaration(const String& string, StyleSheetContents* contextStyleSheet)
+{
+    setStyleSheet(contextStyleSheet);
+
+    setupParser("@-webkit-decls{", string, "} ");
+    cssyyparse(this);
+    m_rule = 0;
+
+    if (m_hasFontFaceOnlyValues)
+        deleteFontFaceOnlyValues();
+
+    RefPtr<StylePropertySet> style = createStylePropertySet();
+    clearProperties();
+    return style.release();
+}
+
 
 bool CSSParser::parseDeclaration(StylePropertySet* declaration, const String& string, PassRefPtr<CSSRuleSourceData> prpRuleSourceData, StyleSheetContents* contextStyleSheet)
 {
