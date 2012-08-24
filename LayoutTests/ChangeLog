@@ -1,3 +1,18 @@
+2012-08-24  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Reapply "Upstream layout test expectations (Part 1)"
+        https://bugs.webkit.org/show_bug.cgi?id=94884
+
+        Reviewed by Adam Barth.
+
+        This part include:
+        - Removed ANDROID tag for passing tests and tests that should be covered by other Android specific rules
+        - Added android rules for fast/js and jquery/ tests
+        - crbug.com/144536
+        - Several other rules with public bugs
+
+        * platform/chromium/TestExpectations:
+
 2012-08-24  Andrei Onea  <onea@adobe.com>
 
         [CSSRegions]Expose WebKitNamedFlowCollection interface through document.getNamedFlows()
