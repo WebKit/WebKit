@@ -49,8 +49,6 @@ public:
     bool canScroll() const;
     bool hasNode() const;
 
-    bool scrollBy(const Platform::IntSize& delta);
-
     bool setScrollPositionCompositingThread(unsigned camouflagedLayer, const WebCore::IntPoint& scrollPosition);
     bool setScrollPositionWebKitThread(unsigned camouflagedLayer, const WebCore::IntPoint& scrollPosition, bool supportsAcceleratedScrolling);
 
@@ -64,9 +62,6 @@ private:
 
     void pushBackInRegionScrollable(InRegionScrollableArea*);
 
-    // Obsolete codepath.
-    bool scrollNodeRecursively(WebCore::Node*, const WebCore::IntSize& delta);
-    bool scrollRenderer(WebCore::RenderObject*, const WebCore::IntSize& delta);
     void adjustScrollDelta(const WebCore::IntPoint& maxOffset, const WebCore::IntPoint& currentOffset, WebCore::IntSize& delta) const;
 
     RefPtr<WebCore::Node> m_inRegionScrollStartingNode;

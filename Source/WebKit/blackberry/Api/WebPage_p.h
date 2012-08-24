@@ -150,7 +150,7 @@ public:
     WebCore::IntPoint scrollPosition() const;
     WebCore::IntPoint maximumScrollPosition() const;
     void setScrollPosition(const WebCore::IntPoint&);
-    bool scrollBy(int deltaX, int deltaY, bool scrollMainFrame = true);
+    void scrollBy(int deltaX, int deltaY);
 
     void enqueueRenderingOfClippedContentOfScrollableNodeAfterInRegionScrolling(WebCore::Node*);
     void notifyInRegionScrollStopped();

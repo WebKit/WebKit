@@ -175,7 +175,7 @@ public:
     Platform::IntPoint scrollPosition() const;
     // Scroll position provided should be in transformed coordinates.
     void setScrollPosition(const Platform::IntPoint&);
-    bool scrollBy(const Platform::IntSize&, bool scrollMainFrame = true);
+    void scrollBy(const Platform::IntSize&);
     void notifyInRegionScrollStopped();
     void setScrollOriginPoint(const Platform::IntPoint&);
 

@@ -1,3 +1,28 @@
+2012-08-23  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Obsolete the in-region scroll codepath prior to BB10's
+        https://bugs.webkit.org/show_bug.cgi?id=94839
+        PR #197775
+
+        Reviewed by George Staikos.
+
+        This codepath is not needed anymore, so lets let it RIP.
+
+        The only code addition is due to some code I've moved from WebPagePrivate::scrollNodeRecursively
+        and WebPagePrivate::scrollBy to InRegionScrollerPrivate::setLayerScrollPosition.
+        Rest is code removal ...
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::setLayerScrollPosition):
+        * Api/InRegionScroller_p.h:
+        (InRegionScrollerPrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::scrollBy):
+        (BlackBerry::WebKit::WebPage::scrollBy):
+        * Api/WebPage.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-08-23  Adam Treat  <atreat@rim.com>
 
         [BlackBerry] Replace the three different rendering mechanisms for clearing the render queue

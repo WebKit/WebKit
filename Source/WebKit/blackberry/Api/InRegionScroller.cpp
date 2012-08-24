@@ -33,6 +33,7 @@
 #include "RenderLayerBacking.h"
 #include "RenderObject.h"
 #include "RenderView.h"
+#include "SelectionHandler.h"
 #include "WebPage_p.h"
 
 using namespace WebCore;
@@ -146,16 +147,6 @@ bool InRegionScrollerPrivate::setScrollPositionWebKitThread(unsigned camouflaged
     return setLayerScrollPosition(layer, scrollPosition);
 }
 
-bool InRegionScrollerPrivate::scrollBy(const Platform::IntSize& delta)
-{
-    ASSERT(Platform::webkitThreadMessageClient()->isCurrentThread());
-
-    if (!canScroll())
-        return false;
-
-    return scrollNodeRecursively(node(), delta);
-}
-
 void InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint(const WebCore::IntPoint& point)
 {
     ASSERT(m_activeInRegionScrollableAreas.empty());
@@ -252,8 +243,23 @@ bool InRegionScrollerPrivate::setLayerScrollPosition(RenderLayer* layer, const I
 
         Frame* frame = view->frame();
         ASSERT_UNUSED(frame, frame);
+        ASSERT(canScrollInnerFrame(frame));
+
+        view->setCanBlitOnScroll(false);
+
+        BackingStoreClient* backingStoreClient = m_webPage->backingStoreClientForFrame(view->frame());
+        if (backingStoreClient) {
+            backingStoreClient->setIsClientGeneratedScroll(true);
+            backingStoreClient->setIsScrollNotificationSuppressed(true);
+        }
 
         view->setScrollPosition(scrollPosition);
+
+        if (backingStoreClient) {
+            backingStoreClient->setIsClientGeneratedScroll(false);
+            backingStoreClient->setIsScrollNotificationSuppressed(false);
+        }
+
         return true;
     }
 
@@ -261,104 +267,13 @@ bool InRegionScrollerPrivate::setLayerScrollPosition(RenderLayer* layer, const I
     layer->scrollToOffset(scrollPosition.x(), scrollPosition.y());
     // FIXME_agomes: Please recheck if it is needed still!
     layer->renderer()->repaint(true);
+
+    m_webPage->m_selectionHandler->selectionPositionChanged();
+    // FIXME: We have code in place to handle scrolling and clipping tap highlight
+    // on in-region scrolling. As soon as it is fast enough (i.e. we have it backed by
+    // a backing store), we can reliably make use of it in the real world.
+    // m_touchEventHandler->drawTapHighlight();
     return true;
-}
-
-bool InRegionScrollerPrivate::scrollNodeRecursively(WebCore::Node* node, const WebCore::IntSize& delta)
-{
-    if (delta.isZero())
-        return true;
-
-    if (!node)
-        return false;
-
-    RenderObject* renderer = node->renderer();
-    if (!renderer)
-        return false;
-
-    FrameView* view = renderer->view()->frameView();
-    if (!view)
-        return false;
-
-    // Try scrolling the renderer.
-    if (scrollRenderer(renderer, delta))
-        return true;
-
-    // We've hit the page, don't scroll it and return false.
-    if (view == m_webPage->m_mainFrame->view())
-        return false;
-
-    // Try scrolling the FrameView.
-    if (canScrollInnerFrame(view->frame())) {
-        IntSize viewDelta = delta;
-        IntPoint newViewOffset = view->scrollPosition();
-        IntPoint maxViewOffset = view->maximumScrollPosition();
-        adjustScrollDelta(maxViewOffset, newViewOffset, viewDelta);
-
-        if (!viewDelta.isZero()) {
-            view->setCanBlitOnScroll(false);
-
-            BackingStoreClient* backingStoreClient = m_webPage->backingStoreClientForFrame(view->frame());
-            if (backingStoreClient) {
-                backingStoreClient->setIsClientGeneratedScroll(true);
-                backingStoreClient->setIsScrollNotificationSuppressed(true);
-            }
-
-            setNode(view->frame()->document());
-
-            view->scrollBy(viewDelta);
-
-            if (backingStoreClient) {
-                backingStoreClient->setIsClientGeneratedScroll(false);
-                backingStoreClient->setIsScrollNotificationSuppressed(false);
-            }
-
-            return true;
-        }
-    }
-
-    // Try scrolling the node of the enclosing frame.
-    Frame* frame = node->document()->frame();
-    if (frame) {
-        Node* ownerNode = frame->ownerElement();
-        if (scrollNodeRecursively(ownerNode, delta))
-            return true;
-    }
-
-    return false;
-}
-
-bool InRegionScrollerPrivate::scrollRenderer(WebCore::RenderObject* renderer, const WebCore::IntSize& delta)
-{
-    RenderLayer* layer = renderer->enclosingLayer();
-    if (!layer)
-        return false;
-
-    // Try to scroll layer.
-    bool restrictedByLineClamp = false;
-    if (renderer->parent())
-        restrictedByLineClamp = !renderer->parent()->style()->lineClamp().isNone();
-
-    if (renderer->hasOverflowClip() && !restrictedByLineClamp) {
-        IntSize layerDelta = delta;
-        IntPoint maxOffset(layer->scrollWidth() - layer->renderBox()->clientWidth(), layer->scrollHeight() - layer->renderBox()->clientHeight());
-        IntPoint currentOffset(layer->scrollXOffset(), layer->scrollYOffset());
-        adjustScrollDelta(maxOffset, currentOffset, layerDelta);
-        if (!layerDelta.isZero()) {
-            setNode(enclosingLayerNode(layer));
-            IntPoint newOffset = currentOffset + layerDelta;
-            layer->scrollToOffset(IntSize(newOffset.x(), newOffset.y()));
-            renderer->repaint(true);
-            return true;
-        }
-    }
-
-    while (layer = layer->parent()) {
-        if (canScrollRenderBox(layer->renderBox()))
-            return scrollRenderer(layer->renderBox(), delta);
-    }
-
-    return false;
 }
 
 void InRegionScrollerPrivate::adjustScrollDelta(const WebCore::IntPoint& maxOffset, const WebCore::IntPoint& currentOffset, WebCore::IntSize& delta) const
