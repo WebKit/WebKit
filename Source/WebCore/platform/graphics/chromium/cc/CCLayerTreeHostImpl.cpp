@@ -962,6 +962,9 @@ void CCLayerTreeHostImpl::scrollBy(const IntPoint& viewportPoint, const IntSize&
         return;
 
     FloatSize pendingDelta(scrollDelta);
+
+    pendingDelta.scale(m_deviceScaleFactor);
+
     for (CCLayerImpl* layerImpl = m_currentlyScrollingLayerImpl; layerImpl; layerImpl = layerImpl->parent()) {
         if (!layerImpl->scrollable())
             continue;
