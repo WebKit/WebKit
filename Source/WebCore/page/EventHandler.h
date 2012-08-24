@@ -430,7 +430,6 @@ private:
     double m_mouseDownTimestamp;
     PlatformMouseEvent m_mouseDown;
 
-    bool m_useLatchedWheelEventNode;
     RefPtr<Node> m_latchedWheelEventNode;
     bool m_widgetIsLatched;
 

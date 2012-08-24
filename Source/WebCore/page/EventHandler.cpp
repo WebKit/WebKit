@@ -308,7 +308,6 @@ EventHandler::EventHandler(Frame* frame)
     , m_eventHandlerWillResetCapturingMouseEventsNode(0)
     , m_clickCount(0)
     , m_mouseDownTimestamp(0)
-    , m_useLatchedWheelEventNode(false)
     , m_widgetIsLatched(false)
 #if PLATFORM(MAC)
     , m_mouseDownView(nil)
@@ -2299,11 +2298,9 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
     HitTestResult result(vPoint);
     doc->renderView()->hitTest(request, result);
 
-#if PLATFORM(MAC)
-    m_useLatchedWheelEventNode = e.momentumPhase() == PlatformWheelEventPhaseBegan || e.momentumPhase() == PlatformWheelEventPhaseChanged;
-#endif
+    bool useLatchedWheelEventNode = e.useLatchedEventNode();
 
-    if (m_useLatchedWheelEventNode) {
+    if (useLatchedWheelEventNode) {
         if (!m_latchedWheelEventNode) {
             m_latchedWheelEventNode = result.innerNode();
             m_widgetIsLatched = result.isOverWidget();
@@ -2367,7 +2364,7 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEv
     if (scrollNode(wheelEvent->rawDeltaY(), granularity, ScrollUp, ScrollDown, startNode, &stopNode))
         wheelEvent->setDefaultHandled();
     
-    if (!m_useLatchedWheelEventNode)
+    if (!m_latchedWheelEventNode)
         m_previousWheelScrolledNode = stopNode;
 }
 
@@ -2490,7 +2487,6 @@ bool EventHandler::handleGestureScrollUpdate(const PlatformGestureEvent& gesture
 
 bool EventHandler::handleGestureScrollCore(const PlatformGestureEvent& gestureEvent, PlatformWheelEventGranularity granularity, bool latchedWheel)
 {
-    TemporaryChange<bool> latched(m_useLatchedWheelEventNode, latchedWheel);
     const float tickDivisor = (float)WheelEvent::tickMultiplier;
     IntPoint point(gestureEvent.position().x(), gestureEvent.position().y());
     IntPoint globalPoint(gestureEvent.globalPosition().x(), gestureEvent.globalPosition().y());
@@ -2498,6 +2494,7 @@ bool EventHandler::handleGestureScrollCore(const PlatformGestureEvent& gestureEv
         gestureEvent.deltaX(), gestureEvent.deltaY(), gestureEvent.deltaX() / tickDivisor, gestureEvent.deltaY() / tickDivisor,
         granularity,
         gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey());
+    syntheticWheelEvent.setUseLatchedEventNode(latchedWheel);
     return handleWheelEvent(syntheticWheelEvent);
 }
 #endif
