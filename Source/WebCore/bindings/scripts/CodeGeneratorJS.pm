@@ -1303,19 +1303,21 @@ sub GenerateFunctionParametersCheck
     my @orExpression = ();
     my $numParameters = 0;
     my @neededArguments = ();
+    my $numMandatoryParams = @{$function->parameters};
 
     foreach my $parameter (@{$function->parameters}) {
         if ($parameter->extendedAttributes->{"Optional"}) {
             my ($expression, @usedArguments) = GenerateParametersCheckExpression($numParameters, $function);
             push(@orExpression, $expression);
             push(@neededArguments, @usedArguments);
+            $numMandatoryParams--;
         }
         $numParameters++;
     }
     my ($expression, @usedArguments) = GenerateParametersCheckExpression($numParameters, $function);
     push(@orExpression, $expression);
     push(@neededArguments, @usedArguments);
-    return (join(" || ", @orExpression), @neededArguments);
+    return ($numMandatoryParams, join(" || ", @orExpression), @neededArguments);
 }
 
 sub GenerateOverloadedFunction
@@ -1340,9 +1342,11 @@ sub GenerateOverloadedFunction
 END
 
     my %fetchedArguments = ();
+    my $leastNumMandatoryParams = 255;
 
     foreach my $overload (@{$function->{overloads}}) {
-        my ($parametersCheck, @neededArguments) = GenerateFunctionParametersCheck($overload);
+        my ($numMandatoryParams, $parametersCheck, @neededArguments) = GenerateFunctionParametersCheck($overload);
+        $leastNumMandatoryParams = $numMandatoryParams if ($numMandatoryParams < $leastNumMandatoryParams);
 
         foreach my $parameterIndex (@neededArguments) {
             next if exists $fetchedArguments{$parameterIndex};
@@ -1352,6 +1356,10 @@ END
 
         push(@implContent, "    if ($parametersCheck)\n");
         push(@implContent, "        return ${functionName}$overload->{overloadIndex}(exec);\n");
+    }
+    if ($leastNumMandatoryParams >= 1) {
+        push(@implContent, "    if (argsCount < $leastNumMandatoryParams)\n");
+        push(@implContent, "        return throwVMError(exec, createNotEnoughArgumentsError(exec));\n");
     }
     push(@implContent, <<END);
     return throwVMTypeError(exec);

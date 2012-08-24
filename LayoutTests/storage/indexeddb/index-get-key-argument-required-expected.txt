@@ -11,8 +11,8 @@ request = db.setVersion('1')
 Deleted all object stores.
 objectStore = db.createObjectStore('foo', { keyPath: 'id', autoIncrement: true });
 index = objectStore.createIndex('first', 'first');
-PASS index.get(); threw exception TypeError: Type error.
-PASS index.getKey(); threw exception TypeError: Type error.
+PASS index.get(); threw exception TypeError: Not enough arguments.
+PASS index.getKey(); threw exception TypeError: Not enough arguments.
 PASS successfullyParsed is true
 
 TEST COMPLETE

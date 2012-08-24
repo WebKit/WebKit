@@ -1,3 +1,32 @@
+2012-08-24  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        Remove platform specific expected files after the change
+        https://bugs.webkit.org/show_bug.cgi?id=94790
+
+        Reviewed by Kentaro Hara.
+
+        1. Use the cross-platform expected files for the 2 tests in question.
+        2. Update other tests for overloaded functions and their expected files
+        affected by the change.
+
+        * fast/canvas/canvas-overloads-drawImage-expected.txt:
+        * fast/canvas/canvas-overloads-setFillColor-expected.txt:
+        * fast/canvas/canvas-overloads-setShadow-expected.txt:
+        * fast/canvas/canvas-overloads-setStrokeColor-expected.txt:
+        * fast/canvas/script-tests/canvas-overloads-drawImage.js:
+        * fast/canvas/script-tests/canvas-overloads-setFillColor.js:
+        * fast/canvas/script-tests/canvas-overloads-setShadow.js:
+        * fast/canvas/script-tests/canvas-overloads-setStrokeColor.js:
+        * fast/canvas/webgl/texImageTest-expected.txt:
+        * platform/chromium/fast/files/create-blob-url-crash-expected.txt: Removed.
+        * platform/chromium/fast/files/url-required-arguments-expected.txt: Removed.
+        * platform/gtk/fast/files/create-blob-url-crash-expected.txt: Removed.
+        * platform/gtk/fast/files/url-required-arguments-expected.txt: Removed.
+        * storage/indexeddb/index-get-key-argument-required-expected.txt:
+        * storage/indexeddb/objectStore-required-arguments-expected.txt:
+        * storage/indexeddb/transaction-and-objectstore-calls-expected.txt:
+        * storage/indexeddb/transaction-storeNames-required-expected.txt:
+
 2012-08-24  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Multiple fields time input UI should handle Delete key as Backspace key

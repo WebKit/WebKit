@@ -1,4 +1,0 @@
-Test that createObjectURL with no argument should throw an exception.
-PASS: Type error
-DONE
-

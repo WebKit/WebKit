@@ -76,7 +76,7 @@ PASS Exception was thrown.
 PASS code is DOMException.NOT_FOUND_ERR
 PASS ename is 'NotFoundError'
 
-PASS trans = db.transaction() threw exception TypeError: Type error.
+PASS trans = db.transaction() threw exception TypeError: Not enough arguments.
 
 Expecting exception from db.transaction(['x'])
 PASS Exception was thrown.

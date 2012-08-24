@@ -3,9 +3,9 @@ Test the behavior of CanvasRenderingContext2D.drawImage() when called with diffe
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS ctx.drawImage() threw exception TypeError: Type error.
-PASS ctx.drawImage(imageElement) threw exception TypeError: Type error.
-PASS ctx.drawImage(imageElement, 0) threw exception TypeError: Type error.
+PASS ctx.drawImage() threw exception TypeError: Not enough arguments.
+PASS ctx.drawImage(imageElement) threw exception TypeError: Not enough arguments.
+PASS ctx.drawImage(imageElement, 0) threw exception TypeError: Not enough arguments.
 PASS ctx.drawImage(imageElement, 0, 0) is undefined
 PASS ctx.drawImage(imageElement, 0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.drawImage(imageElement, 0, 0, 0, 0) is undefined
@@ -15,8 +15,8 @@ PASS ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0, 0) threw exception TypeError:
 PASS ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0, 0, 0) is undefined
 PASS ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
-PASS ctx.drawImage(canvasElement) threw exception TypeError: Type error.
-PASS ctx.drawImage(canvasElement, 0) threw exception TypeError: Type error.
+PASS ctx.drawImage(canvasElement) threw exception TypeError: Not enough arguments.
+PASS ctx.drawImage(canvasElement, 0) threw exception TypeError: Not enough arguments.
 PASS ctx.drawImage(canvasElement, 0, 0) is undefined
 PASS ctx.drawImage(canvasElement, 0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.drawImage(canvasElement, 0, 0, 0, 0) is undefined

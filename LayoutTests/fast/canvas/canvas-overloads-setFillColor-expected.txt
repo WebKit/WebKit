@@ -3,7 +3,7 @@ Test the behavior of CanvasRenderingContext2D.setFillColor() when called with di
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS ctx.setFillColor() threw exception TypeError: Type error.
+PASS ctx.setFillColor() threw exception TypeError: Not enough arguments.
 PASS ctx.setFillColor('red') is undefined
 PASS ctx.setFillColor(0) is undefined
 PASS ctx.setFillColor(0, 0) is undefined
