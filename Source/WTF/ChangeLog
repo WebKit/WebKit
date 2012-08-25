@@ -1,3 +1,11 @@
+2012-08-24  Benjamin Poulain  <benjamin@webkit.org>
+
+        Touch Platform.h to solve a build dependency issue
+
+        Unreviewed.
+
+        * wtf/Platform.h:
+
 2012-08-24  Benjamin Poulain  <bpoulain@apple.com>
 
         Unify Number to StringImpl conversion
