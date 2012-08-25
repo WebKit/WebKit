@@ -1,3 +1,11 @@
+2012-08-25  David Barton  <dbarton@mathscribe.com>
+
+        Re-unskip 2 previously fixed tests that were accidentally re-skipped in r119192.
+
+        Unreviewed, gardening.
+
+        * platform/mac/Skipped:
+
 2012-08-25  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
