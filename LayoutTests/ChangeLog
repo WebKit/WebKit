@@ -1,3 +1,13 @@
+2012-08-24  Florin Malita  <fmalita@chromium.org>
+
+        ASSERTION FAILED: !attached() in WebCore::Node::attach()
+        https://bugs.webkit.org/show_bug.cgi?id=94650
+
+        Reviewed by Abhishek Arya.
+
+        * svg/custom/system-language-crash-expected.txt: Added.
+        * svg/custom/system-language-crash.html: Added.
+
 2012-08-24  Glenn Adams  <glenn@skynav.com>
 
         CSSStyleDeclaration.cssText should not contain extraneous whitespace in final delimiter
