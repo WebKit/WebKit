@@ -457,7 +457,10 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
     m_pluginSiteDataManager->invalidate();
 #endif
 
-    // This can cause the web context to be destroyed.
+    // The vector may have the last reference to process proxy, which in turn may have the last reference to the context.
+    // Since vector elements are destroyed in place, we would recurse into WebProcessProxy destructor
+    // if it were invoked from Vector::remove(). RefPtr delays destruction until it's safe.
+    RefPtr<WebProcessProxy> protect(process);
     m_processes.remove(m_processes.find(process));
 }
 

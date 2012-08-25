@@ -1,3 +1,15 @@
+2012-08-24  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/12157689> REGRESSION: WebProcessProxy destructor is sometimes called recursively
+        https://bugs.webkit.org/show_bug.cgi?id=94997
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/WebContext.cpp: (WebKit::WebContext::disconnectProcess): Make sure that
+        we don't try to delete WebProcessProxy while the vector still contains it. Previously,
+        we used RefPtr::clear, which zeroes out the value before destructing, but doing that
+        in every RefPtr destructor would be bad for performance.
+
 2012-08-24  Benjamin Poulain  <bpoulain@apple.com>
 
         Unify Number to StringImpl conversion
