@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
           text run at (667,0) width 75: "The test has"
           text run at (0,18) width 460: "passed if there are no empty lines (quoted or unquoted) in the box below."
       RenderBlock {DIV} at (0,52) size 784x54
-        RenderBlock {BLOCKQUOTE} at (0,0) size 784x18 [color=#0000FF] [border: (2px solid #0000FF)]
+        RenderBlock {BLOCKQUOTE} at (0,0) size 784x18 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderBlock {DIV} at (12,0) size 772x18
             RenderText {#text} at (0,0) size 43x19
               text run at (0,0) width 43: "quoted"
@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 59x19
             text run at (0,0) width 59: "unquoted"
           RenderBR {BR} at (59,15) size 0x0
-        RenderBlock {BLOCKQUOTE} at (0,36) size 784x18 [color=#0000FF] [border: (2px solid #0000FF)]
+        RenderBlock {BLOCKQUOTE} at (0,36) size 784x18 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderBlock {DIV} at (12,0) size 772x18
             RenderText {#text} at (0,0) size 43x19
               text run at (0,0) width 43: "quoted"

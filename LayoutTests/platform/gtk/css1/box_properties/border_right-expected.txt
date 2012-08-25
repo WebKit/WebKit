@@ -20,12 +20,12 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 752x37
           text run at (0,0) width 752: "This paragraph has a background color of silver and a 20-pixel right margin, and it contains inline elements with classes"
           text run at (0,18) width 17: "of "
-        RenderInline {SPAN} at (0,0) size 67x19 [border: (10px double #800080) none]
+        RenderInline {SPAN} at (0,0) size 67x19 [border: none (10px double #800080) none]
           RenderText {#text} at (17,18) size 57x19
             text run at (17,18) width 57: "class one"
         RenderText {#text} at (84,18) size 398x19
           text run at (84,18) width 398: ", which should have a 10-pixel purple double right border; and "
-        RenderInline {SPAN} at (0,0) size 59x19 [border: (1px solid #800080) none]
+        RenderInline {SPAN} at (0,0) size 59x19 [border: none (1px solid #800080) none]
           RenderText {#text} at (482,18) size 58x19
             text run at (482,18) width 58: "class two"
         RenderText {#text} at (541,18) size 741x37
@@ -48,12 +48,12 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 705x37
                   text run at (0,0) width 705: "This paragraph has a background color of silver and a 20-pixel right margin, and it contains inline elements with"
                   text run at (0,18) width 64: "classes of "
-                RenderInline {SPAN} at (0,0) size 67x19 [border: (10px double #800080) none]
+                RenderInline {SPAN} at (0,0) size 67x19 [border: none (10px double #800080) none]
                   RenderText {#text} at (64,18) size 57x19
                     text run at (64,18) width 57: "class one"
                 RenderText {#text} at (131,18) size 398x19
                   text run at (131,18) width 398: ", which should have a 10-pixel purple double right border; and "
-                RenderInline {SPAN} at (0,0) size 59x19 [border: (1px solid #800080) none]
+                RenderInline {SPAN} at (0,0) size 59x19 [border: none (1px solid #800080) none]
                   RenderText {#text} at (529,18) size 58x19
                     text run at (529,18) width 58: "class two"
                 RenderText {#text} at (588,18) size 726x37

@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
           text run at (474,0) width 293: "You should see a list broken in two below, the"
           text run at (0,18) width 668: "list items numbered 1, 2, 2, 3, 4. Two list items will be numbered '2' because the original item '2' was split."
       RenderBlock {DIV} at (0,52) size 784x140
-        RenderBlock {BLOCKQUOTE} at (2,0) size 742x36 [color=#0000FF] [border: (2px solid #0000FF)]
+        RenderBlock {BLOCKQUOTE} at (2,0) size 742x36 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderBlock {OL} at (2,0) size 740x36
             RenderListItem {LI} at (40,0) size 700x18
               RenderListMarker at (-21,0) size 16x19: "1"
@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
                 text run at (0,0) width 30: "Two"
         RenderBlock (anonymous) at (0,52) size 784x18
           RenderBR {BR} at (0,0) size 0x19
-        RenderBlock {BLOCKQUOTE} at (2,86) size 742x54 [color=#0000FF] [border: (2px solid #0000FF)]
+        RenderBlock {BLOCKQUOTE} at (2,86) size 742x54 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderBlock {OL} at (2,0) size 740x54
             RenderListItem {LI} at (40,0) size 700x18
               RenderListMarker at (-21,0) size 16x19: "2"

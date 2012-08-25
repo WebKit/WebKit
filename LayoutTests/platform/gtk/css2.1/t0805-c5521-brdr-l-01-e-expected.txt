@@ -6,7 +6,7 @@ layer at (0,0) size 800x246
       RenderBlock {P} at (0,0) size 784x37
         RenderText {#text} at (0,14) size 480x19
           text run at (0,14) width 480: "There should be a solid blue line to the left of every occurance of the word \""
-        RenderInline {SPAN} at (0,0) size 133x36 [border: (2px solid #0000FF)]
+        RenderInline {SPAN} at (0,0) size 133x36 [border: none (2px solid #0000FF)]
           RenderText {#text} at (482,0) size 131x36
             text run at (482,0) width 131: "\x{21E6}THERE"
         RenderText {#text} at (613,14) size 11x19

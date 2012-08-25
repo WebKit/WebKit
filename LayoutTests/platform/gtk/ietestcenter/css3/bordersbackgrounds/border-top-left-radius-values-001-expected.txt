@@ -8,4 +8,4 @@ layer at (0,0) size 800x352
         RenderText {#text} at (0,0) size 398x19
           text run at (0,0) width 398: "Test passes if the two blue lines are radii of the rounded corner."
 layer at (10,10) size 52x82
-  RenderBlock (positioned) {DIV} at (10,10) size 52x82 [border: (2px solid #0000FF) none]
+  RenderBlock (positioned) {DIV} at (10,10) size 52x82 [border: none (2px solid #0000FF) none]

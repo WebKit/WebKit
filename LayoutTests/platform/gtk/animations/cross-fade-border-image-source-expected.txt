@@ -14,8 +14,8 @@ layer at (0,0) size 800x600
           text run at (0,36) width 779: "PASS - \"borderImageSource\" property for \"boxShorthand\" and \"boxStatic\" elements at 2.5s are close enough to each other"
         RenderBR {BR} at (779,51) size 0x0
 layer at (100,100) size 106x106
-  RenderBlock (positioned) {DIV} at (100,100) size 106x106 [bgcolor=#008000] [border:]
+  RenderBlock (positioned) {DIV} at (100,100) size 106x106 [bgcolor=#008000] [border: (3px none #000000)]
 layer at (100,250) size 106x106
-  RenderBlock (positioned) {DIV} at (100,250) size 106x106 [bgcolor=#008000] [border:]
+  RenderBlock (positioned) {DIV} at (100,250) size 106x106 [bgcolor=#008000] [border: (3px none #000000)]
 layer at (100,400) size 106x106
-  RenderBlock (positioned) {DIV} at (100,400) size 106x106 [bgcolor=#008000] [border:]
+  RenderBlock (positioned) {DIV} at (100,400) size 106x106 [bgcolor=#008000] [border: (3px none #000000)]

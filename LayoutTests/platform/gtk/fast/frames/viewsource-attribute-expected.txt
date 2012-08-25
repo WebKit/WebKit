@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
             RenderView at (0,0) size 300x150
           layer at (0,0) size 300x150 layerType: background only
           layer at (0,0) size 31x150
-            RenderBlock (positioned) zI: -1 {DIV} at (0,0) size 31x150 [bgcolor=#F0F0F0] [border: (1px solid #BBBBBB) none]
+            RenderBlock (positioned) zI: -1 {DIV} at (0,0) size 31x150 [bgcolor=#F0F0F0] [border: none (1px solid #BBBBBB) none]
           layer at (0,0) size 300x150 layerType: foreground only
             RenderBlock {HTML} at (0,0) size 300x150
               RenderBody {BODY} at (0,0) size 300x150
@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
                     RenderView at (0,0) size 300x150
                   layer at (0,0) size 300x150 layerType: background only
                   layer at (0,0) size 31x150
-                    RenderBlock (positioned) zI: -1 {DIV} at (0,0) size 31x150 [bgcolor=#F0F0F0] [border: (1px solid #BBBBBB) none]
+                    RenderBlock (positioned) zI: -1 {DIV} at (0,0) size 31x150 [bgcolor=#F0F0F0] [border: none (1px solid #BBBBBB) none]
                   layer at (0,0) size 300x150 layerType: foreground only
                     RenderBlock {HTML} at (0,0) size 300x150
                       RenderBody {BODY} at (0,0) size 300x150

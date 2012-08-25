@@ -15,7 +15,7 @@ layer at (9,43) size 300x150
 layer at (9,173) size 300x20 scrollHeight 30
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,130) size 300x20
     RenderButton {INPUT} at (0,0) size 20x20
-    RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+    RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 65x30
         RenderDeprecatedFlexibleBox {DIV} at (0,0) size 65x30
           RenderBlock (anonymous) at (5,5) size 55x20

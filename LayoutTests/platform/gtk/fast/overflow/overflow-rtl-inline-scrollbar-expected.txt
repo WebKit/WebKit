@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
           text run at (344,18) width 4: "."
       RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
 layer at (8,70) size 784x18 clip at (18,70) size 759x18 scrollHeight 19
-  RenderBlock {DIV} at (0,62) size 784x18 [border: (10px solid #0000FF)]
+  RenderBlock {DIV} at (0,62) size 784x18 [border: none (10px solid #0000FF)]
     RenderText {#text} at (454,0) size 315x19
       text run at (454,0) width 117: "This block should "
       text run at (765,0) width 4 RTL: "."

@@ -13,12 +13,12 @@ layer at (0,0) size 800x600
             text run at (0,0) width 20: "On"
           RenderBR {BR} at (20,15) size 0x0
           RenderBR {BR} at (0,18) size 0x19
-        RenderBlock {BLOCKQUOTE} at (0,36) size 784x18 [color=#0000FF] [border: (2px solid #0000FF)]
+        RenderBlock {BLOCKQUOTE} at (0,36) size 784x18 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderText {#text} at (12,0) size 164x19
             text run at (12,0) width 164: "On Tuesday, Dave wrote:"
-        RenderBlock {BLOCKQUOTE} at (0,54) size 784x18 [color=#0000FF] [border: (2px solid #0000FF)]
+        RenderBlock {BLOCKQUOTE} at (0,54) size 784x18 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderBR {BR} at (12,0) size 0x19
-        RenderBlock {BLOCKQUOTE} at (0,72) size 784x18 [color=#0000FF] [border: (2px solid #0000FF)]
+        RenderBlock {BLOCKQUOTE} at (0,72) size 784x18 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderText {#text} at (12,0) size 83x19
             text run at (12,0) width 83: "Hello World."
 caret: position 2 of child 1 {#text} of child 2 {DIV} of body
