@@ -47,6 +47,8 @@ testInvalidFilterRule("Mix function with alpha compositing mode 'plus-lighter', 
 testInvalidFilterRule("Mix function with alpha compositing mode 'highlight', which should only apply to -webkit-background-composite", "custom(none mix(url(shader) highlight))");
 testInvalidFilterRule("Mix function with 4 args", "custom(none mix(url(shader) multiply clear normal))");
 testInvalidFilterRule("Mix function with comma separators", "custom(none mix(url(shader), multiply, clear))");
+testInvalidFilterRule("Mix function with comma terminator", "custom(none mix(url(shader), multiply clear,))");
+testInvalidFilterRule("Mix function with one comma", "custom(none mix(,))");
 
 testInvalidFilterRule("No shader", "custom(none, 10 20)");
 testInvalidFilterRule("Too many mesh sizes", "custom(none, 10 20 30)");

@@ -99,6 +99,16 @@ PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
+Mix function with comma terminator : custom(none mix(url(shader), multiply clear,))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Mix function with one comma : custom(none mix(,))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
 No shader : custom(none, 10 20)
 PASS cssRule.type is 1
 PASS declaration.length is 0

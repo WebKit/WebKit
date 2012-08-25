@@ -7445,6 +7445,9 @@ PassRefPtr<WebKitCSSMixFunctionValue> CSSParser::parseMixFunction(CSSParserValue
         return 0;
 
     CSSParserValueList* argsList = value->function->args.get();
+    if (!argsList)
+        return 0;
+
     unsigned numArgs = argsList->size();
     if (numArgs < 1 || numArgs > 3)
         return 0;

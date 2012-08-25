@@ -1,3 +1,15 @@
+2012-08-25  Michelangelo De Simone  <michelangelo@webkit.org>
+
+        [Crash] Null pointer in CSSParser::parseMixFunction()
+        https://bugs.webkit.org/show_bug.cgi?id=94998
+
+        Reviewed by Benjamin Poulain.
+
+        New test cases added to check invalid comma-terminated values within mix().
+
+        * css3/filters/custom/custom-filter-property-parsing-invalid-expected.txt:
+        * css3/filters/script-tests/custom-filter-property-parsing-invalid.js:
+
 2012-08-24  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
