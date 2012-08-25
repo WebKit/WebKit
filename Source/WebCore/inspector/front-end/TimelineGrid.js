@@ -87,7 +87,7 @@ WebInspector.TimelineGrid.prototype = {
     {
         var dividersElementClientWidth = this._dividersElement.clientWidth;
         var dividerCount = Math.round(dividersElementClientWidth / 64);
-        var slice = calculator.boundarySpan / dividerCount;
+        var slice = calculator.boundarySpan() / dividerCount;
 
         this._currentDividerSlice = slice;
 
