@@ -1,3 +1,21 @@
+2012-08-24  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Chromium: WebAccessibilityObject should expose updateBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=94611
+
+        Reviewed by Chris Fleizach.
+
+        This change just exposes a method, with no new tests. Next, Chromium
+        will be modified to call this new method, and this will be followed
+        by a change that gets rid of calls to updateBackingStore under the
+        hood. That last change may add a test or update an existing test.
+
+        * public/WebAccessibilityObject.h:
+        (WebAccessibilityObject):
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::updateBackingStoreAndCheckValidity):
+        (WebKit):
+
 2012-08-24  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] WebViewImpl::enableTouchHighlight() should always clear any existing highlight when invoked.

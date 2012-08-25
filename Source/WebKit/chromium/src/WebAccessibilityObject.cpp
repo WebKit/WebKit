@@ -99,6 +99,13 @@ int WebAccessibilityObject::axID() const
     return m_private->axObjectID();
 }
 
+bool WebAccessibilityObject::updateBackingStoreAndCheckValidity()
+{
+    if (!isDetached())
+        m_private->updateBackingStore();
+    return !isDetached();
+}
+
 WebString WebAccessibilityObject::accessibilityDescription() const
 {
     if (isDetached())

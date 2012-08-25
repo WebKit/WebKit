@@ -69,6 +69,7 @@ public:
     WEBKIT_EXPORT bool equals(const WebAccessibilityObject&) const;
 
     bool isNull() const { return m_private.isNull(); }
+    // isDetached also checks for null, so it's safe to just call isDetached.
     WEBKIT_EXPORT bool isDetached() const;
 
     // Static methods for enabling accessibility.
@@ -76,6 +77,13 @@ public:
     WEBKIT_EXPORT static bool accessibilityEnabled();
 
     WEBKIT_EXPORT int axID() const;
+
+    // Update the underlying tree, and return true if this object is
+    // still valid (not detached). Note that calling this method
+    // can cause other WebAccessibilityObjects to become invalid, too,
+    // so always call isDetached if updateBackingStoreAndCheckValidity
+    // has been called on any object, or if any other WebCore code has run.
+    WEBKIT_EXPORT bool updateBackingStoreAndCheckValidity();
 
     WEBKIT_EXPORT WebString accessibilityDescription() const;
     WEBKIT_EXPORT WebString actionVerb() const;
