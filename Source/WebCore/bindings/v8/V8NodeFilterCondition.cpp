@@ -36,26 +36,17 @@
 #include "ScriptController.h"
 #include "ScriptState.h"
 #include "V8Node.h"
-
 #include <wtf/OwnArrayPtr.h>
 
 namespace WebCore {
 
 V8NodeFilterCondition::V8NodeFilterCondition(v8::Handle<v8::Value> filter)
-    : m_filter(v8::Persistent<v8::Value>::New(filter))
+    : m_filter(filter)
 {
-#ifndef NDEBUG
-    V8GCController::registerGlobalHandle(NODE_FILTER, this, m_filter);
-#endif
 }
 
 V8NodeFilterCondition::~V8NodeFilterCondition()
 {
-#ifndef NDEBUG
-    V8GCController::unregisterGlobalHandle(this, m_filter);
-#endif
-    m_filter.Dispose();
-    m_filter.Clear();
 }
 
 short V8NodeFilterCondition::acceptNode(ScriptState* state, Node* node) const
@@ -69,7 +60,7 @@ short V8NodeFilterCondition::acceptNode(ScriptState* state, Node* node) const
 
     v8::Handle<v8::Function> callback;
     if (m_filter->IsFunction())
-        callback = v8::Handle<v8::Function>::Cast(m_filter);
+        callback = v8::Handle<v8::Function>::Cast(m_filter.get());
     else {
         v8::Local<v8::Value> value = m_filter->ToObject()->Get(v8::String::New("acceptNode"));
         if (!value->IsFunction()) {
