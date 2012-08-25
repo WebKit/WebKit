@@ -31,6 +31,7 @@
 #if USE(3D_GRAPHICS)
 
 #include "GraphicsContext3D.h"
+
 #include "Extensions3DOpenGLES.h"
 #include "IntRect.h"
 #include "IntSize.h"
@@ -201,8 +202,8 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
         synthesizeGLError(INVALID_VALUE);
         return false;
     }
-    makeContextCurrent();
-    ::glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
+
+    texImage2DDirect(target, level, internalformat, width, height, border, format, type, pixels);
     return true;
 }
 

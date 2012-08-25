@@ -256,7 +256,7 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
         synthesizeGLError(INVALID_VALUE);
         return false;
     }
-    makeContextCurrent();
+
     GC3Denum openGLInternalFormat = internalformat;
     if (type == GL_FLOAT) {
         if (format == GL_RGBA)
@@ -265,7 +265,7 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
             openGLInternalFormat = GL_RGB32F_ARB;
     }
 
-    ::glTexImage2D(target, level, openGLInternalFormat, width, height, border, format, type, pixels);
+    texImage2DDirect(target, level, openGLInternalFormat, width, height, border, format, type, pixels);
     return true;
 }
 

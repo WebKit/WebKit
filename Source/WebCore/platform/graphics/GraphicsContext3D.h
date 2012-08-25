@@ -526,6 +526,9 @@ public:
     void prepareTexture();
 #endif
 
+    // Equivalent to ::glTexImage2D(). Allows pixels==0 with no allocation.
+    void texImage2DDirect(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels);
+
     // Helper to texImage2D with pixel==0 case: pixels are initialized to 0.
     // Return true if no GL error is synthesized.
     // By default, alignment is 4, the OpenGL default setting.

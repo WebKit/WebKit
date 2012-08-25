@@ -1380,6 +1380,12 @@ bool GraphicsContext3D::layerComposited() const
     return m_layerComposited;
 }
 
+void GraphicsContext3D::texImage2DDirect(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels)
+{
+    makeContextCurrent();
+    ::glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
+}
+
 }
 
 #endif // USE(3D_GRAPHICS)
