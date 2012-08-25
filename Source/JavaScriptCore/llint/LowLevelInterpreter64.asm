@@ -1430,6 +1430,18 @@ _llint_op_new_func:
     dispatch(4)
 
 
+macro arrayProfileForCall()
+    if VALUE_PROFILER
+        loadis 24[PB, PC, 8], t3
+        loadp ThisArgumentOffset[cfr, t3, 8], t0
+        btpnz t0, tagMask, .done
+        loadp JSCell::m_structure[t0], t0
+        loadp 40[PB, PC, 8], t1
+        storep t0, ArrayProfile::m_lastSeenStructure[t1]
+    .done:
+    end
+end
+
 macro doCall(slowPath)
     loadis 8[PB, PC, 8], t0
     loadp 32[PB, PC, 8], t1

@@ -160,6 +160,14 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         int argCount = instruction[2].u.operand;
         int registerOffset = instruction[3].u.operand;
 
+        if (opcodeID == op_call && shouldEmitProfiling()) {
+            emitGetVirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0), regT0);
+            Jump done = emitJumpIfNotJSCell(regT0);
+            loadPtr(Address(regT0, JSCell::structureOffset()), regT0);
+            storePtr(regT0, instruction[5].u.arrayProfile->addressOfLastSeenStructure());
+            done.link(this);
+        }
+    
         addPtr(TrustedImm32(registerOffset * sizeof(Register)), callFrameRegister, regT1);
         store32(TrustedImm32(argCount), Address(regT1, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
     } // regT1 holds newCallFrame with ArgumentCount initialized.

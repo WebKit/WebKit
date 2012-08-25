@@ -1,5 +1,28 @@
 2012-08-25  Filip Pizlo  <fpizlo@apple.com>
 
+        op_call should have ArrayProfiling for the benefit of array intrinsics
+        https://bugs.webkit.org/show_bug.cgi?id=95014
+
+        Reviewed by Sam Weinig.
+
+        This is a performance-neutral change that just adds the profiling but does not
+        use it, yet. If in the future we wanted to make this kind of profiling cheaper
+        we could move it into specialized thunks for the relevant array intrinsics, but
+        I figure that if this much simpler change gives us what we need without any
+        discernable performance penalty then that's for the best.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCall):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
+2012-08-25  Filip Pizlo  <fpizlo@apple.com>
+
         The redundant phi elimination phase is not used and should be removed
         https://bugs.webkit.org/show_bug.cgi?id=95006
 

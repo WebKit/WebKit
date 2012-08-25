@@ -1590,6 +1590,18 @@ _llint_op_new_func:
     dispatch(4)
 
 
+macro arrayProfileForCall()
+    if VALUE_PROFILER
+        loadi 12[PC], t3
+        bineq ThisArgumentOffset + TagOffset[cfr, t3, 8], CellTag, .done
+        loadi ThisArgumentOffset + PayloadOffset[cfr, t3, 8], t0
+        loadp JSCell::m_structure[t0], t0
+        loadp 20[PC], t1
+        storep t0, ArrayProfile::m_lastSeenStructure[t1]
+    .done:
+    end
+end
+
 macro doCall(slowPath)
     loadi 4[PC], t0
     loadi 16[PC], t1

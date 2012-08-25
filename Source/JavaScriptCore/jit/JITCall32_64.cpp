@@ -236,7 +236,15 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     else {
         int argCount = instruction[2].u.operand;
         int registerOffset = instruction[3].u.operand;
-
+        
+        if (opcodeID == op_call && shouldEmitProfiling()) {
+            emitLoad(registerOffset + CallFrame::argumentOffsetIncludingThis(0), regT0, regT1);
+            Jump done = branch32(NotEqual, regT0, TrustedImm32(JSValue::CellTag));
+            loadPtr(Address(regT1, JSCell::structureOffset()), regT1);
+            storePtr(regT1, instruction[5].u.arrayProfile->addressOfLastSeenStructure());
+            done.link(this);
+        }
+    
         addPtr(TrustedImm32(registerOffset * sizeof(Register)), callFrameRegister, regT3);
 
         store32(TrustedImm32(argCount), payloadFor(RegisterFile::ArgumentCount, regT3));
