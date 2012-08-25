@@ -195,8 +195,8 @@ EXPORTS
         ?lastChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?next@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?previous@ComposedShadowTreeWalker@WebCore@@QAEXXZ
-        ?number@String@WTF@@SA?AV12@I@Z
-        ?number@String@WTF@@SA?AV12@H@Z
+        ?numberToStringImpl@WTF@@YA?AV?$PassRefPtr@VStringImpl@WTF@@@1@H@Z
+        ?numberToStringImpl@WTF@@YA?AV?$PassRefPtr@VStringImpl@WTF@@@1@I@Z
         ?overrideUserPreferredLanguages@WebCore@@YAXABV?$Vector@VString@WTF@@$0A@@WTF@@@Z
         ?numberOfScopedHTMLStyleChildren@Node@WebCore@@QBEIXZ
         ?page@Document@WebCore@@QBEPAVPage@2@XZ

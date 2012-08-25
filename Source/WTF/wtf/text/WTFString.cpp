@@ -22,6 +22,7 @@
 #include "config.h"
 #include "WTFString.h"
 
+#include "IntegerToStringConversion.h"
 #include <stdarg.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/DataLog.h>
@@ -414,54 +415,6 @@ String String::format(const char *format, ...)
     va_end(args);
     
     return StringImpl::create(reinterpret_cast<const LChar*>(buffer.data()), len);
-#endif
-}
-
-String String::number(short n)
-{
-    return String::format("%hd", n);
-}
-
-String String::number(unsigned short n)
-{
-    return String::format("%hu", n);
-}
-
-String String::number(int n)
-{
-    return String::format("%d", n);
-}
-
-String String::number(unsigned n)
-{
-    return String::format("%u", n);
-}
-
-String String::number(long n)
-{
-    return String::format("%ld", n);
-}
-
-String String::number(unsigned long n)
-{
-    return String::format("%lu", n);
-}
-
-String String::number(long long n)
-{
-#if OS(WINDOWS) && !PLATFORM(QT)
-    return String::format("%I64i", n);
-#else
-    return String::format("%lli", n);
-#endif
-}
-
-String String::number(unsigned long long n)
-{
-#if OS(WINDOWS) && !PLATFORM(QT)
-    return String::format("%I64u", n);
-#else
-    return String::format("%llu", n);
 #endif
 }
     

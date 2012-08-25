@@ -1,6 +1,6 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,6 +26,7 @@
 // on systems without case-sensitive file systems.
 
 #include <wtf/text/ASCIIFastPath.h>
+#include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/StringImpl.h>
 
 #ifdef __OBJC__
@@ -220,14 +221,14 @@ public:
         return (*m_impl)[index];
     }
 
-    static String number(short);
-    WTF_EXPORT_STRING_API static String number(unsigned short);
-    WTF_EXPORT_STRING_API static String number(int);
-    WTF_EXPORT_STRING_API static String number(unsigned);
-    WTF_EXPORT_STRING_API static String number(long);
-    WTF_EXPORT_STRING_API static String number(unsigned long);
-    WTF_EXPORT_STRING_API static String number(long long);
-    WTF_EXPORT_STRING_API static String number(unsigned long long);
+    static String number(unsigned short number) { return numberToStringImpl(number); }
+    static String number(int number) { return numberToStringImpl(number); }
+    static String number(unsigned number) { return numberToStringImpl(number); }
+    static String number(long number) { return numberToStringImpl(number); }
+    static String number(unsigned long number) { return numberToStringImpl(number); }
+    static String number(long long number) { return numberToStringImpl(number); }
+    static String number(unsigned long long number) { return numberToStringImpl(number); }
+
     WTF_EXPORT_STRING_API static String number(double, unsigned = ShouldRoundSignificantFigures | ShouldTruncateTrailingZeros, unsigned precision = 6);
 
     // Find a single character or string, also with match function & latin1 forms.

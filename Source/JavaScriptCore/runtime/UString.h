@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -23,6 +23,7 @@
 #ifndef UString_h
 #define UString_h
 
+#include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {
@@ -112,10 +113,10 @@ public:
         return m_impl->characters16()[index];
     }
 
-    JS_EXPORT_PRIVATE static UString number(int);
-    JS_EXPORT_PRIVATE static UString number(unsigned);
-    JS_EXPORT_PRIVATE static UString number(long);
-    static UString number(long long);
+    static UString number(int i) { return WTF::numberToStringImpl(i); }
+    static UString number(unsigned u) { return WTF::numberToStringImpl(u); }
+    static UString number(long i) { return WTF::numberToStringImpl(i); }
+    static UString number(long long i) { return WTF::numberToStringImpl(i); }
     JS_EXPORT_PRIVATE static UString number(double);
 
     // Find a single character or string, also with match function & latin1 forms.

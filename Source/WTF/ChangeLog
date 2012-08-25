@@ -1,3 +1,38 @@
+2012-08-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        Unify Number to StringImpl conversion
+        https://bugs.webkit.org/show_bug.cgi?id=94879
+
+        Reviewed by Geoffrey Garen.
+
+        Previously, UString::number() and String::number() used different implementations.
+
+        WTF::String::number() was simply forwarding to String::format().
+        UString::number() had an optimized version of the conversion.
+
+        This patch replace both implementation by a new version, faster than the two previous versions.
+
+        The new functions numberToStringImpl improvements are:
+        -about 3 times faster than String::number().
+        -14% faster than UString::number() on signed numbers.
+        -9% faster than UString::number() on unsigned numbers.
+
+        * GNUmakefile.list.am:
+        * WTF.gypi:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/text/IntegerToStringConversion.cpp: Added.
+        (WTF::numberToStringImplSigned):
+        (WTF::numberToStringImpl):
+        (WTF::numberToStringImplUnsigned):
+        * wtf/text/IntegerToStringConversion.h: Added.
+        * wtf/text/WTFString.cpp:
+        (WTF::String::format):
+        * wtf/text/WTFString.h:
+        (WTF::String::number):
+
 2012-08-24  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt] Be more explicit about the ICU dependency in the error message

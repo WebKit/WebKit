@@ -265,12 +265,15 @@ EXPORTS
     ?notifyWriteSlow@WatchpointSet@JSC@@QAEXXZ
     ?nullptr@@3Vnullptr_t@std@@A
     ?number@String@WTF@@SA?AV12@NII@Z
-    ?number@UString@JSC@@SA?AV12@H@Z
-    ?number@UString@JSC@@SA?AV12@I@Z
-    ?number@UString@JSC@@SA?AV12@N@Z
     ?numberToFixedPrecisionString@WTF@@YAPBDNIQAD_N@Z
     ?numberToFixedWidthString@WTF@@YAPBDNIQAD@Z
     ?numberToString@WTF@@YAPBDNQAD@Z
+    ?numberToStringImpl@WTF@@YA?AV?$PassRefPtr@VStringImpl@WTF@@@1@_J@Z
+    ?numberToStringImpl@WTF@@YA?AV?$PassRefPtr@VStringImpl@WTF@@@1@_K@Z
+    ?numberToStringImpl@WTF@@YA?AV?$PassRefPtr@VStringImpl@WTF@@@1@H@Z
+    ?numberToStringImpl@WTF@@YA?AV?$PassRefPtr@VStringImpl@WTF@@@1@I@Z
+    ?numberToStringImpl@WTF@@YA?AV?$PassRefPtr@VStringImpl@WTF@@@1@J@Z
+    ?numberToStringImpl@WTF@@YA?AV?$PassRefPtr@VStringImpl@WTF@@@1@K@Z
     ?objectCount@Heap@JSC@@QAEIXZ
     ?objectProtoFuncToString@JSC@@YI_JPAVExecState@1@@Z
     ?objectTypeCounts@Heap@JSC@@QAE?AV?$PassOwnPtr@V?$HashCountedSet@PBDU?$PtrHash@PBD@WTF@@U?$HashTraits@PBD@2@@WTF@@@WTF@@XZ

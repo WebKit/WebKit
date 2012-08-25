@@ -24,6 +24,7 @@
 		1AEDE22613E5E7E700E62FE8 /* InjectedBundleControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */; };
 		261516D615B0E60500A2C201 /* SetAndUpdateCacheModel.mm in Sources */ = {isa = PBXBuildFile; fileRef = 261516D515B0E60500A2C201 /* SetAndUpdateCacheModel.mm */; };
 		265AF55015D1E48A00B0CB4A /* WTFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 265AF54F15D1E48A00B0CB4A /* WTFString.cpp */; };
+		266FAFD315E5775200F61D5B /* IntegerToStringConversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 266FAFD215E5775200F61D5B /* IntegerToStringConversion.cpp */; };
 		26A2C72F15E2E73C005B1A14 /* CString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26A2C72E15E2E73C005B1A14 /* CString.cpp */; };
 		26B2DFF915BDE599004F691D /* HashSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26B2DFF815BDE599004F691D /* HashSet.cpp */; };
 		26DF5A5E15A29BAA003689C2 /* CancelLoadFromResourceLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26DF5A5D15A29BAA003689C2 /* CancelLoadFromResourceLoadDelegate.mm */; };
@@ -256,6 +257,7 @@
 		1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundleControllerMac.mm; sourceTree = "<group>"; };
 		261516D515B0E60500A2C201 /* SetAndUpdateCacheModel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SetAndUpdateCacheModel.mm; sourceTree = "<group>"; };
 		265AF54F15D1E48A00B0CB4A /* WTFString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WTFString.cpp; path = WTF/WTFString.cpp; sourceTree = "<group>"; };
+		266FAFD215E5775200F61D5B /* IntegerToStringConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IntegerToStringConversion.cpp; path = WTF/IntegerToStringConversion.cpp; sourceTree = "<group>"; };
 		26A2C72E15E2E73C005B1A14 /* CString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CString.cpp; path = WTF/CString.cpp; sourceTree = "<group>"; };
 		26B2DFF815BDE599004F691D /* HashSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HashSet.cpp; path = WTF/HashSet.cpp; sourceTree = "<group>"; };
 		26DF5A5D15A29BAA003689C2 /* CancelLoadFromResourceLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CancelLoadFromResourceLoadDelegate.mm; sourceTree = "<group>"; };
@@ -641,6 +643,7 @@
 				0BCD833414857CE400EA2003 /* HashMap.cpp */,
 				26B2DFF815BDE599004F691D /* HashSet.cpp */,
 				14F3B11215E45EAB00210069 /* SaturatedArithmeticOperations.cpp */,
+				266FAFD215E5775200F61D5B /* IntegerToStringConversion.cpp */,
 				81B50192140F232300D9EB58 /* StringBuilder.cpp */,
 				26F1B44315CA434F00D1E4BF /* StringImpl.cpp */,
 				C01363C713C3997300EF3964 /* StringOperators.cpp */,
@@ -915,6 +918,7 @@
 				C507E8A714C6545B005D6B3B /* InspectorBar.mm in Sources */,
 				C08587FC13FEC39B001EF4E5 /* InstanceMethodSwizzler.mm in Sources */,
 				C085880013FEC3A6001EF4E5 /* InstanceMethodSwizzler.mm in Sources */,
+				266FAFD315E5775200F61D5B /* IntegerToStringConversion.cpp in Sources */,
 				C0ADBE7C12FCA4D000D2C129 /* JavaScriptTest.cpp in Sources */,
 				C081224213FC172400DC39AE /* JavaScriptTestMac.mm in Sources */,
 				440A1D3914A0103A008A66F2 /* KURL.cpp in Sources */,
