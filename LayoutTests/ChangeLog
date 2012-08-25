@@ -1,3 +1,26 @@
+2012-08-25  David Barton  <dbarton@mathscribe.com>
+
+        Remove custom mac-snowleopard mathml test baselines
+        https://bugs.webkit.org/show_bug.cgi?id=95004
+
+        Reviewed by Eric Seidel.
+
+        These custom baselines are no longer needed, since the mac lion bots were upgraded to
+        OS X 10.7.4 in the fix for https://bugs.webkit.org/show_bug.cgi?id=94393.
+
+        * platform/mac-snowleopard/mathml: Removed.
+        * platform/mac-snowleopard/mathml/presentation: Removed.
+        * platform/mac-snowleopard/mathml/presentation/attributes-expected.txt: Removed.
+        * platform/mac-snowleopard/mathml/presentation/fenced-mi-expected.txt: Removed.
+        * platform/mac-snowleopard/mathml/presentation/fractions-expected.txt: Removed.
+        * platform/mac-snowleopard/mathml/presentation/mo-expected.txt: Removed.
+        * platform/mac-snowleopard/mathml/presentation/over-expected.txt: Removed.
+        * platform/mac-snowleopard/mathml/presentation/roots-expected.txt: Removed.
+        * platform/mac-snowleopard/mathml/presentation/row-expected.txt: Removed.
+        * platform/mac-snowleopard/mathml/presentation/sub-expected.txt: Removed.
+        * platform/mac-snowleopard/mathml/presentation/tokenElements-expected.txt: Removed.
+        * platform/mac-snowleopard/mathml/presentation/underover-expected.txt: Removed.
+
 2012-08-25  Robert Hogan  <robert@webkit.org>
 
         Update TestExpectations for Qt, EFL, GTK, Apple Win and Chromium after r126683.
