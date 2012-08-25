@@ -302,6 +302,7 @@ BUGWKGTK SKIP : css3/filters = TEXT
 // CSS image-set support not yet enabled (needs ENABLE_CSS_IMAGE_SET).
 BUGWKGTK SKIP : fast/css/image-set-parsing.html = TEXT
 BUGWKGTK SKIP : fast/css/image-set-parsing-invalid.html = TEXT
+BUGWKGTK SKIP : fast/css/image-set-setting.html = TEXT
 
 // For now, Web Audio API is disabled
 BUGWKGTK SKIP : webaudio = TEXT

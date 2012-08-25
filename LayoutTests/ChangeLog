@@ -1,3 +1,12 @@
+2012-08-24  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Skipping a test added in r126611 that requires CSS image-set support.
+        That feature is not currently enabled on the GTK port.
+
+        * platform/gtk/TestExpectations:
+
 2012-08-24  Florin Malita  <fmalita@chromium.org>
 
         ASSERTION FAILED: !attached() in WebCore::Node::attach()
