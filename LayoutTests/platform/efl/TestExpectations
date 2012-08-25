@@ -1034,3 +1034,7 @@ BUGWK84286 : fast/css/caption-width-fixed-position-offset-top.htm = TEXT
 BUGWK84286 : fast/table/border-collapsing/equal-precedence-resolution.html = TEXT
 BUGWK84286 : fast/table/border-collapsing/equal-precedence-resolution-vertical.html = TEXT
 BUGWK84286 : fast/text/apply-start-width-after-skipped-text.html = TEXT
+
+BUGWK84286 : fast/writing-mode/broken-ideograph-small-caps.html = TEXT
+BUGWK84286 : fast/writing-mode/broken-ideographic-font.html = TEXT
+BUGWK84286 : fast/writing-mode/vertical-font-fallback.html = TEXT

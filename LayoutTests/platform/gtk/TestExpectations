@@ -144,6 +144,29 @@ BUGWK84286 : fast/table/border-collapsing/equal-precedence-resolution.html = TEX
 BUGWK84286 : fast/table/border-collapsing/equal-precedence-resolution-vertical.html = TEXT
 BUGWK84286 : fast/text/apply-start-width-after-skipped-text.html = TEXT
 
+BUGWK84286 : fast/hidpi/image-set-border-image-comparison.html = TEXT
+BUGWK84286 : fast/hidpi/video-controls-in-hidpi.html = TEXT
+BUGWK84286 : fast/layers/video-layer.html = TEXT
+BUGWK84286 : fast/writing-mode/broken-ideograph-small-caps.html = TEXT
+BUGWK84286 : fast/writing-mode/broken-ideographic-font.html = TEXT
+BUGWK84286 : fast/writing-mode/vertical-font-fallback.html = TEXT
+BUGWK84286 : media/audio-controls-rendering.html = TEXT
+BUGWK84286 : media/audio-repaint.html = TEXT
+BUGWK84286 : media/controls-after-reload.html = TEXT
+BUGWK84286 : media/controls-strict.html = TEXT
+BUGWK84286 : media/controls-styling-strict.html = TEXT
+BUGWK84286 : media/controls-styling.html = TEXT
+BUGWK84286 : media/media-controls-clone.html = TEXT
+BUGWK84286 : media/media-document-audio-repaint.html = TEXT
+BUGWK84286 : media/track/track-cue-rendering-horizontal.html = TEXT
+BUGWK84286 : media/track/track-cue-rendering-vertical.html = TEXT
+BUGWK84286 : media/video-controls-rendering.html = TEXT
+BUGWK84286 : media/video-display-toggle.html = TEXT
+BUGWK84286 : media/video-empty-source.html = TEXT
+BUGWK84286 : media/video-no-audio.html = TEXT
+BUGWK84286 : media/video-volume-slider.html = TEXT
+BUGWK84286 : media/video-zoom-controls.html5 = TEXT
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Expected failures

@@ -1,3 +1,14 @@
+2012-08-25  Robert Hogan  <robert@webkit.org>
+
+        Update TestExpectations for Qt, EFL, GTK, Apple Win and Chromium after r126683.
+
+        Unreviewed, gardening.
+
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2012-07-18  Robert Hogan  <robert@webkit.org>
 
         Tables with just border-style set on the cells do not get a grid
