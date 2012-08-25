@@ -121,7 +121,6 @@ SOURCES += \
     dfg/DFGOSRExitCompiler32_64.cpp \
     dfg/DFGPhase.cpp \
     dfg/DFGPredictionPropagationPhase.cpp \
-    dfg/DFGRedundantPhiEliminationPhase.cpp \
     dfg/DFGRepatch.cpp \
     dfg/DFGSpeculativeJIT.cpp \
     dfg/DFGSpeculativeJIT32_64.cpp \

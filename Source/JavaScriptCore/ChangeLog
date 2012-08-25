@@ -1,3 +1,20 @@
+2012-08-25  Filip Pizlo  <fpizlo@apple.com>
+
+        The redundant phi elimination phase is not used and should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=95006
+
+        Reviewed by Dan Bernstein.
+
+        Just removing dead code.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * dfg/DFGDriver.cpp:
+        * dfg/DFGRedundantPhiEliminationPhase.cpp: Removed.
+        * dfg/DFGRedundantPhiEliminationPhase.h: Removed.
+
 2012-08-24  Benjamin Poulain  <bpoulain@apple.com>
 
         Unify Number to StringImpl conversion

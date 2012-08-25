@@ -41,7 +41,6 @@
 #include "DFGFixupPhase.h"
 #include "DFGJITCompiler.h"
 #include "DFGPredictionPropagationPhase.h"
-#include "DFGRedundantPhiEliminationPhase.h"
 #include "DFGStructureCheckHoistingPhase.h"
 #include "DFGValidate.h"
 #include "DFGVirtualRegisterAllocationPhase.h"
