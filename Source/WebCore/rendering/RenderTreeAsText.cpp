@@ -315,19 +315,16 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         if (box.borderTop() || box.borderRight() || box.borderBottom() || box.borderLeft()) {
             ts << " [border:";
 
-            BorderValue prevBorder;
-            if (o.style()->borderTop() != prevBorder) {
-                prevBorder = o.style()->borderTop();
-                if (!box.borderTop())
-                    ts << " none";
-                else {
-                    ts << " (" << box.borderTop() << "px ";
-                    printBorderStyle(ts, o.style()->borderTopStyle());
-                    Color col = o.style()->borderTopColor();
-                    if (!col.isValid())
-                        col = o.style()->color();
-                    ts << col.nameForRenderTreeAsText() << ")";
-                }
+            BorderValue prevBorder = o.style()->borderTop();
+            if (!box.borderTop())
+                ts << " none";
+            else {
+                ts << " (" << box.borderTop() << "px ";
+                printBorderStyle(ts, o.style()->borderTopStyle());
+                Color col = o.style()->borderTopColor();
+                if (!col.isValid())
+                    col = o.style()->color();
+                ts << col.nameForRenderTreeAsText() << ")";
             }
 
             if (o.style()->borderRight() != prevBorder) {

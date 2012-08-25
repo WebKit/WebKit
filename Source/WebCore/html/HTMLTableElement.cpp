@@ -508,7 +508,7 @@ PassRefPtr<StylePropertySet> HTMLTableElement::createSharedCellStyle()
         style->setProperty(CSSPropertyBorderColor, cssValuePool().createInheritedValue());
         break;
     case NoBorders:
-        style->setProperty(CSSPropertyBorderWidth, cssValuePool().createValue(0, CSSPrimitiveValue::CSS_PX));
+        // If 'rules=none' then allow any borders set at cell level to take effect. 
         break;
     }
 
