@@ -1010,6 +1010,12 @@ svg/stroke/zero-length-subpaths-linecap-rendering.svg
 # https://bugs.webkit.org/show_bug.cgi?id=94969
 svg/custom/getBBox-path.svg
 
+# https://bugs.webkit.org/show_bug.cgi?id=95009
+compositing/overflow/overflow-auto-with-touch.html
+compositing/overflow/overflow-overlay-with-touch.html
+compositing/overflow/scrolling-content-clip-to-viewport.html
+compositing/overflow/textarea-scroll-touch.html
+
 # Assorted failures that need investigation
 
 # --- Canvas ---

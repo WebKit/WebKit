@@ -1,3 +1,17 @@
+2012-08-25  Mark Lam  <mark.lam@apple.com>
+
+        Skipping 4 compositing/overflow tests for gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=95011.
+
+        Reviewed by Sam Weinig.
+
+        compositing/overflow/overflow-auto-with-touch.html
+        compositing/overflow/overflow-overlay-with-touch.html
+        compositing/overflow/scrolling-content-clip-to-viewport.html
+        compositing/overflow/textarea-scroll-touch.html
+
+        * platform/mac/Skipped:
+
 2012-08-25  David Barton  <dbarton@mathscribe.com>
 
         Re-unskip 2 previously fixed tests that were accidentally re-skipped in r119192.
