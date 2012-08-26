@@ -1,3 +1,16 @@
+2012-08-26  Mark Lam  <mark.lam@apple.com>
+
+        Added test-generated expected results file for a few compositing
+        overflow tests.
+        https://bugs.webkit.org/show_bug.cgi?id=95023.
+
+        Reviewed by Filip Pizlo.
+
+        * platform/mac/compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor-expected.txt: Added.
+        * platform/mac/compositing/overflow/nested-scrolling-expected.txt: Added.
+        * platform/mac/compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor-expected.txt: Added.
+        * platform/mac/compositing/overflow/remove-overflow-crash2-expected.txt: Added.
+
 2012-08-25  David Barton  <dbarton@mathscribe.com>
 
         Remove { vertical-align: baseline } declarations from mathml.css
