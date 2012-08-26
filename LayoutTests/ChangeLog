@@ -1,5 +1,289 @@
 2012-08-26  Robert Hogan  <robert@webkit.org>
 
+        Rebaseline Mac test results after r126683.
+
+        Unreviewed gardening.
+
+        * platform/mac-lion/animations/cross-fade-border-image-source-expected.txt: Copied from LayoutTests/platform/mac/animations/cross-fade-border-image-source-expected.txt.
+        * platform/mac-lion/css1/box_properties/border_bottom-expected.txt: Copied from LayoutTests/platform/mac/css1/box_properties/border_bottom-expected.txt.
+        * platform/mac-lion/css1/box_properties/border_bottom_inline-expected.txt: Copied from LayoutTests/platform/mac/css1/box_properties/border_bottom_inline-expected.txt.
+        * platform/mac-lion/css1/box_properties/border_left-expected.txt: Copied from LayoutTests/platform/mac/css1/box_properties/border_left-expected.txt.
+        * platform/mac-lion/css1/box_properties/border_left_inline-expected.txt: Copied from LayoutTests/platform/mac/css1/box_properties/border_left_inline-expected.txt.
+        * platform/mac-lion/css1/box_properties/border_right-expected.txt: Copied from LayoutTests/platform/mac/css1/box_properties/border_right-expected.txt.
+        * platform/mac-lion/css1/box_properties/border_right_inline-expected.txt: Copied from LayoutTests/platform/mac/css1/box_properties/border_right_inline-expected.txt.
+        * platform/mac-lion/css1/units/length_units-expected.txt: Copied from LayoutTests/platform/mac/css1/units/length_units-expected.txt.
+        * platform/mac-lion/css2.1/20110323/absolute-replaced-height-036-expected.txt: Copied from LayoutTests/platform/mac/css2.1/20110323/absolute-replaced-height-036-expected.txt.
+        * platform/mac-lion/css2.1/20110323/abspos-non-replaced-width-margin-000-expected.txt: Added.
+        * platform/mac-lion/css2.1/20110323/abspos-replaced-width-margin-000-expected.txt: Added.
+        * platform/mac-lion/css2.1/20110323/block-non-replaced-height-007-expected.txt: Copied from LayoutTests/platform/mac/css2.1/20110323/block-non-replaced-height-007-expected.txt.
+        * platform/mac-lion/css2.1/20110323/block-non-replaced-height-008-expected.txt: Copied from LayoutTests/platform/mac/css2.1/20110323/block-non-replaced-height-008-expected.txt.
+        * platform/mac-lion/css2.1/20110323/block-non-replaced-height-009-expected.txt: Copied from LayoutTests/platform/mac/css2.1/20110323/block-non-replaced-height-009-expected.txt.
+        * platform/mac-lion/css2.1/20110323/block-non-replaced-height-010-expected.txt: Copied from LayoutTests/platform/mac/css2.1/20110323/block-non-replaced-height-010-expected.txt.
+        * platform/mac-lion/css2.1/20110323/block-non-replaced-width-001-expected.txt: Copied from LayoutTests/platform/mac/css2.1/20110323/block-non-replaced-width-001-expected.txt.
+        * platform/mac-lion/css2.1/20110323/block-non-replaced-width-002-expected.txt: Copied from LayoutTests/platform/mac/css2.1/20110323/block-non-replaced-width-002-expected.txt.
+        * platform/mac-lion/css2.1/20110323/block-non-replaced-width-003-expected.txt: Copied from LayoutTests/platform/mac/css2.1/20110323/block-non-replaced-width-003-expected.txt.
+        * platform/mac-lion/css2.1/20110323/block-non-replaced-width-004-expected.txt: Copied from LayoutTests/platform/mac/css2.1/20110323/block-non-replaced-width-004-expected.txt.
+        * platform/mac-lion/css2.1/20110323/block-non-replaced-width-008-expected.txt: Copied from LayoutTests/platform/mac/css2.1/20110323/block-non-replaced-width-008-expected.txt.
+        * platform/mac-lion/css2.1/20110323/margin-applies-to-008-expected.txt: Copied from LayoutTests/platform/mac/css2.1/20110323/margin-applies-to-008-expected.txt.
+        * platform/mac-lion/css2.1/20110323/width-non-replaced-inline-001-expected.txt: Copied from LayoutTests/platform/mac/css2.1/20110323/width-non-replaced-inline-001-expected.txt.
+        * platform/mac-lion/css2.1/t040302-c61-phys-len-00-b-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t040302-c61-phys-len-00-b-expected.txt.
+        * platform/mac-lion/css2.1/t0804-c5507-padn-r-02-f-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t0804-c5507-padn-r-02-f-expected.txt.
+        * platform/mac-lion/css2.1/t0804-c5508-ipadn-b-03-b-a-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t0804-c5508-ipadn-b-03-b-a-expected.txt.
+        * platform/mac-lion/css2.1/t0804-c5509-padn-l-02-f-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t0804-c5509-padn-l-02-f-expected.txt.
+        * platform/mac-lion/css2.1/t0805-c5519-brdr-r-00-a-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t0805-c5519-brdr-r-00-a-expected.txt.
+        * platform/mac-lion/css2.1/t0805-c5519-brdr-r-01-e-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t0805-c5519-brdr-r-01-e-expected.txt.
+        * platform/mac-lion/css2.1/t0805-c5519-brdr-r-02-e-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t0805-c5519-brdr-r-02-e-expected.txt.
+        * platform/mac-lion/css2.1/t0805-c5519-ibrdr-r-00-a-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t0805-c5519-ibrdr-r-00-a-expected.txt.
+        * platform/mac-lion/css2.1/t0805-c5520-brdr-b-00-a-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t0805-c5520-brdr-b-00-a-expected.txt.
+        * platform/mac-lion/css2.1/t0805-c5520-brdr-b-01-e-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t0805-c5520-brdr-b-01-e-expected.txt.
+        * platform/mac-lion/css2.1/t0805-c5520-ibrdr-b-00-a-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t0805-c5520-ibrdr-b-00-a-expected.txt.
+        * platform/mac-lion/css2.1/t0805-c5521-brdr-l-00-a-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t0805-c5521-brdr-l-00-a-expected.txt.
+        * platform/mac-lion/css2.1/t0805-c5521-brdr-l-01-e-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t0805-c5521-brdr-l-01-e-expected.txt.
+        * platform/mac-lion/css2.1/t0805-c5521-brdr-l-02-e-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t0805-c5521-brdr-l-02-e-expected.txt.
+        * platform/mac-lion/css2.1/t0805-c5521-ibrdr-l-00-a-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t0805-c5521-ibrdr-l-00-a-expected.txt.
+        * platform/mac-lion/css3/selectors3/html/css3-modsel-19b-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/html/css3-modsel-19b-expected.txt.
+        * platform/mac-lion/css3/selectors3/html/css3-modsel-64-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/html/css3-modsel-64-expected.txt.
+        * platform/mac-lion/css3/selectors3/xhtml/css3-modsel-19b-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xhtml/css3-modsel-19b-expected.txt.
+        * platform/mac-lion/css3/selectors3/xhtml/css3-modsel-64-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xhtml/css3-modsel-64-expected.txt.
+        * platform/mac-lion/css3/selectors3/xml/css3-modsel-19b-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xml/css3-modsel-19b-expected.txt.
+        * platform/mac-lion/css3/selectors3/xml/css3-modsel-64-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xml/css3-modsel-64-expected.txt.
+        * platform/mac-lion/editing/deleting/type-delete-after-quote-expected.txt: Copied from LayoutTests/platform/mac/editing/deleting/type-delete-after-quote-expected.txt.
+        * platform/mac-lion/editing/execCommand/4580583-1-expected.txt: Copied from LayoutTests/platform/mac/editing/execCommand/4580583-1-expected.txt.
+        * platform/mac-lion/editing/execCommand/4580583-2-expected.txt: Copied from LayoutTests/platform/mac/editing/execCommand/4580583-2-expected.txt.
+        * platform/mac-lion/editing/inserting/5418891-expected.txt: Copied from LayoutTests/platform/mac/editing/inserting/5418891-expected.txt.
+        * platform/mac-lion/editing/inserting/5510537-expected.txt: Copied from LayoutTests/platform/mac/editing/inserting/5510537-expected.txt.
+        * platform/mac-lion/editing/inserting/6703873-expected.txt: Copied from LayoutTests/platform/mac/editing/inserting/6703873-expected.txt.
+        * platform/mac-lion/editing/inserting/break-blockquote-after-delete-expected.txt: Copied from LayoutTests/platform/mac/editing/inserting/break-blockquote-after-delete-expected.txt.
+        * platform/mac-lion/editing/pasteboard/5006779-expected.txt: Copied from LayoutTests/platform/mac/editing/pasteboard/5006779-expected.txt.
+        * platform/mac-lion/editing/pasteboard/paste-blockquote-after-blockquote-expected.txt: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-blockquote-after-blockquote-expected.txt.
+        * platform/mac-lion/editing/pasteboard/paste-blockquote-into-blockquote-4-expected.txt: Copied from LayoutTests/platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-4-expected.txt.
+        * platform/mac-lion/fast/block/float/012-expected.txt: Copied from LayoutTests/platform/mac/fast/block/float/012-expected.txt.
+        * platform/mac-lion/fast/block/float/013-expected.txt: Copied from LayoutTests/platform/mac/fast/block/float/013-expected.txt.
+        * platform/mac-lion/fast/block/float/avoidance-rtl-expected.txt: Added.
+        * platform/mac-lion/fast/block/margin-collapse/041-expected.txt: Copied from LayoutTests/platform/mac/fast/block/margin-collapse/041-expected.txt.
+        * platform/mac-lion/fast/block/margin-collapse/043-expected.txt: Copied from LayoutTests/platform/mac/fast/block/margin-collapse/043-expected.txt.
+        * platform/mac-lion/fast/block/margin-collapse/057-expected.txt: Copied from LayoutTests/platform/mac/fast/block/margin-collapse/057-expected.txt.
+        * platform/mac-lion/fast/block/positioning/inline-block-relposition-expected.txt: Copied from LayoutTests/platform/mac/fast/block/positioning/inline-block-relposition-expected.txt.
+        * platform/mac-lion/fast/borders/border-radius-wide-border-01-expected.txt: Added.
+        * platform/mac-lion/fast/borders/only-one-border-with-width-expected.txt: Added.
+        * platform/mac-lion/fast/css/acid2-expected.txt: Copied from LayoutTests/platform/mac/http/tests/misc/acid2-expected.txt.
+        * platform/mac-lion/fast/css/acid2-pixel-expected.txt: Copied from LayoutTests/platform/mac/fast/css/acid2-pixel-expected.txt.
+        * platform/mac-lion/fast/css/border-height-expected.txt: Copied from LayoutTests/platform/mac/fast/css/border-height-expected.txt.
+        * platform/mac-lion/fast/css/caption-width-absolute-position-expected.txt: Copied from LayoutTests/platform/mac/fast/css/caption-width-absolute-position-expected.txt.
+        * platform/mac-lion/fast/css/caption-width-absolute-position-offset-top-expected.txt: Copied from LayoutTests/platform/mac/fast/css/caption-width-absolute-position-offset-top-expected.txt.
+        * platform/mac-lion/fast/css/caption-width-fixed-position-expected.txt: Copied from LayoutTests/platform/mac/fast/css/caption-width-fixed-position-expected.txt.
+        * platform/mac-lion/fast/css/caption-width-fixed-position-offset-top-expected.txt: Copied from LayoutTests/platform/mac/fast/css/caption-width-fixed-position-offset-top-expected.txt.
+        * platform/mac-lion/fast/css/line-height-determined-by-primary-font-expected.txt: Copied from LayoutTests/platform/mac/fast/css/line-height-determined-by-primary-font-expected.txt.
+        * platform/mac-lion/fast/css/pseudo-first-line-border-width-expected.txt: Copied from LayoutTests/platform/mac/fast/css/pseudo-first-line-border-width-expected.txt.
+        * platform/mac-lion/fast/css/rtl-ordering-expected.txt: Copied from LayoutTests/platform/mac/fast/css/rtl-ordering-expected.txt.
+        * platform/mac-lion/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.txt: Copied from LayoutTests/platform/mac/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.txt.
+        * platform/mac-lion/fast/dynamic/positioned-movement-with-positioned-children-expected.txt: Copied from LayoutTests/platform/mac/fast/dynamic/positioned-movement-with-positioned-children-expected.txt.
+        * platform/mac-lion/fast/forms/basic-buttons-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/basic-buttons-expected.txt.
+        * platform/mac-lion/fast/forms/box-shadow-override-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/box-shadow-override-expected.txt.
+        * platform/mac-lion/fast/forms/button-align-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-align-expected.txt.
+        * platform/mac-lion/fast/forms/button-cannot-be-nested-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-cannot-be-nested-expected.txt.
+        * platform/mac-lion/fast/forms/button-generated-content-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-generated-content-expected.txt.
+        * platform/mac-lion/fast/forms/button-inner-block-reuse-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-inner-block-reuse-expected.txt.
+        * platform/mac-lion/fast/forms/button-positioned-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-positioned-expected.txt.
+        * platform/mac-lion/fast/forms/button-sizes-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-sizes-expected.txt.
+        * platform/mac-lion/fast/forms/button-style-color-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-style-color-expected.txt.
+        * platform/mac-lion/fast/forms/button-text-transform-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-text-transform-expected.txt.
+        * platform/mac-lion/fast/forms/button-white-space-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-white-space-expected.txt.
+        * platform/mac-lion/fast/forms/control-clip-overflow-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/control-clip-overflow-expected.txt.
+        * platform/mac-lion/fast/forms/select-baseline-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/select-baseline-expected.txt.
+        * platform/mac-lion/fast/frames/viewsource-attribute-expected.txt: Copied from LayoutTests/platform/mac/fast/frames/viewsource-attribute-expected.txt.
+        * platform/mac-lion/fast/frames/viewsource-on-image-file-expected.txt: Copied from LayoutTests/platform/mac/fast/frames/viewsource-on-image-file-expected.txt.
+        * platform/mac-lion/fast/hidpi/image-set-border-image-comparison-expected.txt: Copied from LayoutTests/platform/mac/fast/hidpi/image-set-border-image-comparison-expected.txt.
+        * platform/mac-lion/fast/hidpi/image-set-border-image-dynamic-expected.txt: Copied from LayoutTests/platform/mac/fast/hidpi/image-set-border-image-dynamic-expected.txt.
+        * platform/mac-lion/fast/inline/inline-padding-disables-text-quirk-expected.txt: Copied from LayoutTests/platform/mac/fast/inline/inline-padding-disables-text-quirk-expected.txt.
+        * platform/mac-lion/fast/inline/inline-text-quirk-bpm-expected.txt: Copied from LayoutTests/platform/mac/fast/inline/inline-text-quirk-bpm-expected.txt.
+        * platform/mac-lion/fast/invalid/residual-style-expected.txt: Copied from LayoutTests/platform/mac/fast/invalid/residual-style-expected.txt.
+        * platform/mac-lion/fast/layers/scroll-rect-to-visible-expected.txt: Copied from LayoutTests/platform/mac/fast/layers/scroll-rect-to-visible-expected.txt.
+        * platform/mac-lion/fast/lists/007-expected.txt: Copied from LayoutTests/platform/mac/fast/lists/007-expected.txt.
+        * platform/mac-lion/fast/multicol/block-axis-horizontal-bt-expected.txt: Copied from LayoutTests/platform/mac/fast/multicol/block-axis-horizontal-bt-expected.txt.
+        * platform/mac-lion/fast/multicol/block-axis-vertical-lr-expected.txt: Copied from LayoutTests/platform/mac/fast/multicol/block-axis-vertical-lr-expected.txt.
+        * platform/mac-lion/fast/multicol/block-axis-vertical-rl-expected.txt: Copied from LayoutTests/platform/mac/fast/multicol/block-axis-vertical-rl-expected.txt.
+        * platform/mac-lion/fast/multicol/progression-reverse-expected.txt: Added.
+        * platform/mac-lion/fast/multicol/vertical-lr/rules-with-border-before-expected.txt: Added.
+        * platform/mac-lion/fast/multicol/vertical-rl/rules-with-border-before-expected.txt: Added.
+        * platform/mac-lion/fast/overflow/overflow-rtl-expected.txt: Copied from LayoutTests/platform/mac/fast/overflow/overflow-rtl-expected.txt.
+        * platform/mac-lion/fast/overflow/overflow-rtl-inline-scrollbar-expected.txt: Copied from LayoutTests/platform/mac/fast/overflow/overflow-rtl-inline-scrollbar-expected.txt.
+        * platform/mac-lion/fast/repaint/control-clip-expected.txt: Copied from LayoutTests/platform/mac/fast/repaint/control-clip-expected.txt.
+        * platform/mac-lion/fast/replaced/replaced-breaking-expected.txt: Copied from LayoutTests/platform/mac/fast/replaced/replaced-breaking-expected.txt.
+        * platform/mac-lion/fast/selectors/064-expected.txt: Copied from LayoutTests/platform/mac/fast/selectors/064-expected.txt.
+        * platform/mac-lion/fast/table/append-cells2-expected.txt: Copied from LayoutTests/platform/mac/fast/table/append-cells2-expected.txt.
+        * platform/mac-lion/fast/table/border-collapsing/003-expected.txt: Copied from LayoutTests/platform/mac/fast/table/border-collapsing/003-expected.txt.
+        * platform/mac-lion/fast/table/border-collapsing/003-vertical-expected.txt: Copied from LayoutTests/platform/mac/fast/table/border-collapsing/003-vertical-expected.txt.
+        * platform/mac-lion/fast/table/border-collapsing/equal-precedence-resolution-expected.txt: Copied from LayoutTests/platform/mac/fast/table/border-collapsing/equal-precedence-resolution-expected.txt.
+        * platform/mac-lion/fast/table/border-collapsing/equal-precedence-resolution-vertical-expected.txt: Copied from LayoutTests/platform/mac/fast/table/border-collapsing/equal-precedence-resolution-vertical-expected.txt.
+        * platform/mac-lion/fast/table/border-collapsing/rtl-border-collapsing-expected.txt: Copied from LayoutTests/platform/mac/fast/table/border-collapsing/rtl-border-collapsing-expected.txt.
+        * platform/mac-lion/fast/table/colgroup-spanning-groups-rules-expected.txt: Copied from LayoutTests/platform/mac/fast/table/colgroup-spanning-groups-rules-expected.txt.
+        * platform/mac-lion/fast/table/remove-td-display-none-expected.txt: Copied from LayoutTests/platform/mac/fast/table/remove-td-display-none-expected.txt.
+        * platform/mac-lion/fast/text/apply-start-width-after-skipped-text-expected.txt: Copied from LayoutTests/platform/mac/fast/text/apply-start-width-after-skipped-text-expected.txt.
+        * platform/mac-lion/fast/text/basic/015-expected.txt: Copied from LayoutTests/platform/mac/fast/text/basic/015-expected.txt.
+        * platform/mac-lion/fast/text/monospace-width-cache-expected.txt: Copied from LayoutTests/platform/mac/fast/text/monospace-width-cache-expected.txt.
+        * platform/mac-lion/fast/writing-mode/broken-ideographic-font-expected.txt: Copied from LayoutTests/platform/mac/fast/writing-mode/broken-ideographic-font-expected.txt.
+        * platform/mac-lion/fast/writing-mode/vertical-font-fallback-expected.txt:
+        * platform/mac-lion/http/tests/misc/acid2-expected.txt: Copied from LayoutTests/platform/mac/http/tests/misc/acid2-expected.txt.
+        * platform/mac-lion/http/tests/misc/acid2-pixel-expected.txt: Copied from LayoutTests/platform/mac/fast/css/acid2-pixel-expected.txt.
+        * platform/mac-lion/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-009-expected.txt: Copied from LayoutTests/platform/mac/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-009-expected.txt.
+        * platform/mac-lion/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-012-expected.txt: Copied from LayoutTests/platform/mac/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-012-expected.txt.
+        * platform/mac-lion/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-013-expected.txt: Copied from LayoutTests/platform/mac/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-013-expected.txt.
+        * platform/mac-lion/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-014-expected.txt: Copied from LayoutTests/platform/mac/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-014-expected.txt.
+        * platform/mac-lion/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-015-expected.txt: Copied from LayoutTests/platform/mac/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-015-expected.txt.
+        * platform/mac-lion/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-016-expected.txt: Copied from LayoutTests/platform/mac/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-016-expected.txt.
+        * platform/mac-lion/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-001-expected.txt: Copied from LayoutTests/platform/mac/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-001-expected.txt.
+        * platform/mac-lion/svg/custom/inline-svg-in-xhtml-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/inline-svg-in-xhtml-expected.txt.
+        * platform/mac-lion/tables/mozilla/bugs/bug68912-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug68912-expected.txt.
+        * platform/mac-lion/tables/mozilla/core/table_rules-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/core/table_rules-expected.txt.
+        * platform/mac-lion/tables/mozilla/marvin/x_table_rules_groups-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/marvin/x_table_rules_groups-expected.txt.
+        * platform/mac-lion/tables/mozilla_expected_failures/collapsing_borders/bug41262-1-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla_expected_failures/collapsing_borders/bug41262-1-expected.txt.
+        * platform/mac-lion/tables/mozilla_expected_failures/collapsing_borders/bug41262-6-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla_expected_failures/collapsing_borders/bug41262-6-expected.txt.
+        * platform/mac-lion/transforms/2d/transform-borderbox-expected.txt: Copied from LayoutTests/platform/mac/transforms/2d/transform-borderbox-expected.txt.
+        * platform/mac-lion/transforms/2d/transform-origin-borderbox-expected.txt: Copied from LayoutTests/platform/mac/transforms/2d/transform-origin-borderbox-expected.txt.
+        * platform/mac-lion/transitions/cross-fade-border-image-expected.txt: Added.
+        * platform/mac/TestExpectations:
+        * platform/mac/animations/cross-fade-border-image-source-expected.txt:
+        * platform/mac/css1/box_properties/border_bottom-expected.txt:
+        * platform/mac/css1/box_properties/border_bottom_inline-expected.txt:
+        * platform/mac/css1/box_properties/border_left-expected.txt:
+        * platform/mac/css1/box_properties/border_left_inline-expected.txt:
+        * platform/mac/css1/box_properties/border_right-expected.txt:
+        * platform/mac/css1/box_properties/border_right_inline-expected.txt:
+        * platform/mac/css1/units/length_units-expected.txt:
+        * platform/mac/css2.1/20110323/absolute-replaced-height-036-expected.txt:
+        * platform/mac/css2.1/20110323/abspos-non-replaced-width-margin-000-expected.txt:
+        * platform/mac/css2.1/20110323/abspos-replaced-width-margin-000-expected.txt:
+        * platform/mac/css2.1/20110323/block-non-replaced-height-007-expected.txt:
+        * platform/mac/css2.1/20110323/block-non-replaced-height-008-expected.txt:
+        * platform/mac/css2.1/20110323/block-non-replaced-height-009-expected.txt:
+        * platform/mac/css2.1/20110323/block-non-replaced-height-010-expected.txt:
+        * platform/mac/css2.1/20110323/block-non-replaced-width-001-expected.txt:
+        * platform/mac/css2.1/20110323/block-non-replaced-width-002-expected.txt:
+        * platform/mac/css2.1/20110323/block-non-replaced-width-003-expected.txt:
+        * platform/mac/css2.1/20110323/block-non-replaced-width-004-expected.txt:
+        * platform/mac/css2.1/20110323/block-non-replaced-width-008-expected.txt:
+        * platform/mac/css2.1/20110323/margin-applies-to-008-expected.txt:
+        * platform/mac/css2.1/20110323/width-non-replaced-inline-001-expected.txt:
+        * platform/mac/css2.1/t040302-c61-phys-len-00-b-expected.txt:
+        * platform/mac/css2.1/t0804-c5507-padn-r-02-f-expected.txt:
+        * platform/mac/css2.1/t0804-c5508-ipadn-b-03-b-a-expected.txt:
+        * platform/mac/css2.1/t0804-c5509-padn-l-02-f-expected.txt:
+        * platform/mac/css2.1/t0805-c5519-brdr-r-00-a-expected.txt:
+        * platform/mac/css2.1/t0805-c5519-brdr-r-01-e-expected.txt:
+        * platform/mac/css2.1/t0805-c5519-brdr-r-02-e-expected.txt:
+        * platform/mac/css2.1/t0805-c5519-ibrdr-r-00-a-expected.txt:
+        * platform/mac/css2.1/t0805-c5520-brdr-b-00-a-expected.txt:
+        * platform/mac/css2.1/t0805-c5520-brdr-b-01-e-expected.txt:
+        * platform/mac/css2.1/t0805-c5520-ibrdr-b-00-a-expected.txt:
+        * platform/mac/css2.1/t0805-c5521-brdr-l-00-a-expected.txt:
+        * platform/mac/css2.1/t0805-c5521-brdr-l-01-e-expected.txt:
+        * platform/mac/css2.1/t0805-c5521-brdr-l-02-e-expected.txt:
+        * platform/mac/css2.1/t0805-c5521-ibrdr-l-00-a-expected.txt:
+        * platform/mac/css3/selectors3/html/css3-modsel-19b-expected.txt:
+        * platform/mac/css3/selectors3/html/css3-modsel-64-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-19b-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-64-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-19b-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-64-expected.txt:
+        * platform/mac/editing/deleting/type-delete-after-quote-expected.txt:
+        * platform/mac/editing/execCommand/4580583-1-expected.txt:
+        * platform/mac/editing/execCommand/4580583-2-expected.txt:
+        * platform/mac/editing/inserting/5418891-expected.txt:
+        * platform/mac/editing/inserting/5510537-expected.txt:
+        * platform/mac/editing/inserting/6703873-expected.txt:
+        * platform/mac/editing/inserting/break-blockquote-after-delete-expected.txt:
+        * platform/mac/editing/pasteboard/5006779-expected.txt:
+        * platform/mac/editing/pasteboard/paste-blockquote-after-blockquote-expected.txt:
+        * platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-4-expected.txt:
+        * platform/mac/fast/block/float/012-expected.txt:
+        * platform/mac/fast/block/float/013-expected.txt:
+        * platform/mac/fast/block/float/avoidance-rtl-expected.txt: Added.
+        * platform/mac/fast/block/margin-collapse/041-expected.txt:
+        * platform/mac/fast/block/margin-collapse/043-expected.txt:
+        * platform/mac/fast/block/margin-collapse/057-expected.txt:
+        * platform/mac/fast/block/positioning/inline-block-relposition-expected.txt:
+        * platform/mac/fast/borders/border-radius-wide-border-01-expected.txt: Added.
+        * platform/mac/fast/borders/only-one-border-with-width-expected.txt: Added.
+        * platform/mac/fast/css/acid2-expected.txt:
+        * platform/mac/fast/css/acid2-pixel-expected.txt:
+        * platform/mac/fast/css/border-height-expected.txt:
+        * platform/mac/fast/css/caption-width-absolute-position-expected.txt:
+        * platform/mac/fast/css/caption-width-absolute-position-offset-top-expected.txt:
+        * platform/mac/fast/css/caption-width-fixed-position-expected.txt:
+        * platform/mac/fast/css/caption-width-fixed-position-offset-top-expected.txt:
+        * platform/mac/fast/css/line-height-determined-by-primary-font-expected.txt:
+        * platform/mac/fast/css/pseudo-first-line-border-width-expected.txt:
+        * platform/mac/fast/css/rtl-ordering-expected.txt:
+        * platform/mac/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.txt:
+        * platform/mac/fast/dynamic/positioned-movement-with-positioned-children-expected.txt:
+        * platform/mac/fast/forms/basic-buttons-expected.txt:
+        * platform/mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac/fast/forms/button-align-expected.txt:
+        * platform/mac/fast/forms/button-cannot-be-nested-expected.txt:
+        * platform/mac/fast/forms/button-generated-content-expected.txt:
+        * platform/mac/fast/forms/button-inner-block-reuse-expected.txt:
+        * platform/mac/fast/forms/button-positioned-expected.txt:
+        * platform/mac/fast/forms/button-sizes-expected.txt:
+        * platform/mac/fast/forms/button-style-color-expected.txt:
+        * platform/mac/fast/forms/button-text-transform-expected.txt:
+        * platform/mac/fast/forms/button-white-space-expected.txt:
+        * platform/mac/fast/forms/control-clip-overflow-expected.txt:
+        * platform/mac/fast/forms/select-baseline-expected.txt:
+        * platform/mac/fast/frames/viewsource-attribute-expected.txt:
+        * platform/mac/fast/frames/viewsource-on-image-file-expected.txt:
+        * platform/mac/fast/hidpi/image-set-border-image-comparison-expected.txt:
+        * platform/mac/fast/hidpi/image-set-border-image-dynamic-expected.txt:
+        * platform/mac/fast/inline/inline-padding-disables-text-quirk-expected.txt:
+        * platform/mac/fast/inline/inline-text-quirk-bpm-expected.txt:
+        * platform/mac/fast/invalid/residual-style-expected.txt:
+        * platform/mac/fast/layers/scroll-rect-to-visible-expected.txt:
+        * platform/mac/fast/lists/007-expected.txt:
+        * platform/mac/fast/multicol/block-axis-horizontal-bt-expected.txt:
+        * platform/mac/fast/multicol/block-axis-vertical-lr-expected.txt:
+        * platform/mac/fast/multicol/block-axis-vertical-rl-expected.txt:
+        * platform/mac/fast/multicol/progression-reverse-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-lr/rules-with-border-before-expected.txt: Added.
+        * platform/mac/fast/multicol/vertical-rl/rules-with-border-before-expected.txt: Added.
+        * platform/mac/fast/overflow/overflow-rtl-expected.txt:
+        * platform/mac/fast/overflow/overflow-rtl-inline-scrollbar-expected.txt:
+        * platform/mac/fast/repaint/control-clip-expected.txt:
+        * platform/mac/fast/replaced/replaced-breaking-expected.txt:
+        * platform/mac/fast/selectors/064-expected.txt:
+        * platform/mac/fast/table/append-cells2-expected.txt:
+        * platform/mac/fast/table/border-collapsing/003-expected.txt:
+        * platform/mac/fast/table/border-collapsing/003-vertical-expected.txt:
+        * platform/mac/fast/table/border-collapsing/equal-precedence-resolution-expected.txt:
+        * platform/mac/fast/table/border-collapsing/equal-precedence-resolution-vertical-expected.txt:
+        * platform/mac/fast/table/border-collapsing/rtl-border-collapsing-expected.txt:
+        * platform/mac/fast/table/colgroup-spanning-groups-rules-expected.txt:
+        * platform/mac/fast/table/remove-td-display-none-expected.txt:
+        * platform/mac/fast/text/apply-start-width-after-skipped-text-expected.txt:
+        * platform/mac/fast/text/basic/015-expected.txt:
+        * platform/mac/fast/text/monospace-width-cache-expected.txt:
+        * platform/mac/fast/writing-mode/broken-ideographic-font-expected.txt:
+        * platform/mac/fast/writing-mode/vertical-font-fallback-expected.txt:
+        * platform/mac/http/tests/misc/acid2-expected.txt:
+        * platform/mac/http/tests/misc/acid2-pixel-expected.txt:
+        * platform/mac/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-009-expected.txt:
+        * platform/mac/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-012-expected.txt:
+        * platform/mac/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-013-expected.txt:
+        * platform/mac/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-014-expected.txt:
+        * platform/mac/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-015-expected.txt:
+        * platform/mac/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-016-expected.txt:
+        * platform/mac/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-001-expected.txt:
+        * platform/mac/svg/custom/inline-svg-in-xhtml-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug68912-expected.txt:
+        * platform/mac/tables/mozilla/core/table_rules-expected.txt:
+        * platform/mac/tables/mozilla/marvin/x_table_rules_groups-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/collapsing_borders/bug41262-1-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/collapsing_borders/bug41262-6-expected.txt:
+        * platform/mac/transforms/2d/transform-borderbox-expected.txt:
+        * platform/mac/transforms/2d/transform-origin-borderbox-expected.txt:
+        * platform/mac/transitions/cross-fade-border-image-expected.txt: Added.
+
+2012-08-26  Robert Hogan  <robert@webkit.org>
+
         Rebaseline Qt test results after r126683.
 
         Unreviewed gardening.

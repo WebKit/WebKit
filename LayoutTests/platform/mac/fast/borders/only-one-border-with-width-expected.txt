@@ -1,0 +1,6 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x90
+  RenderBlock {HTML} at (0,0) size 800x90
+    RenderBody {BODY} at (8,20) size 784x50
+      RenderBlock {DIV} at (20,0) size 100x50 [border: none (5px solid #00000026) none]

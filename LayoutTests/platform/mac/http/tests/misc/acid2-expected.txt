@@ -12,7 +12,7 @@ layer at (36,2638) size 764x226
       RenderTableSection {TBODY} at (0,0) size 1x0
         RenderTableRow {TR} at (0,0) size 1x0
           RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
-    RenderBlock {DIV} at (60,60) size 120x12 [bgcolor=#FF0000] [border: (12px solid #000000) none (12px solid #000000)]
+    RenderBlock {DIV} at (60,60) size 120x12 [bgcolor=#FF0000] [border: none (12px solid #000000) none (12px solid #000000)]
       RenderBlock {DIV} at (12,0) size 144x12
         RenderText {#text} at (0,-1) size 90x14
           text run at (0,-1) width 90: "                              "
@@ -26,7 +26,7 @@ layer at (36,2638) size 764x226
     RenderBlock {DIV} at (87,75) size 590x0
       RenderBlock {DIV} at (48,0) size 518x0
     RenderBlock {DIV} at (48,132) size 668x24
-    RenderBlock {DIV} at (60,168) size 120x12 [bgcolor=#FFFF00] [border: (12px solid #000000) none (12px solid #000000)]
+    RenderBlock {DIV} at (60,168) size 120x12 [bgcolor=#FFFF00] [border: none (12px solid #000000) none (12px solid #000000)]
       RenderInline {DIV} at (0,0) size 1x3
         RenderText {#text} at (12,8) size 1x3
           text run at (12,8) width 1: " "
@@ -60,9 +60,9 @@ layer at (84,2710) size 144x24
     RenderBlock {DIV} at (0,0) size 144x0
       RenderInline {OBJECT} at (0,0) size 131x14
         RenderInline {OBJECT} at (0,0) size 131x14
-          RenderImage {OBJECT} at (13,0) size 131x24 [border: (12px solid #000000) none]
-    RenderBlock (floating) {DIV} at (0,0) size 144x24 [border: (12px solid #FF0000) none (12px solid #000000)]
-    RenderBlock {DIV} at (0,0) size 144x24 [border: (24px solid #FFFF00)]
+          RenderImage {OBJECT} at (13,0) size 131x24 [border: none (12px solid #000000) none]
+    RenderBlock (floating) {DIV} at (0,0) size 144x24 [border: none (12px solid #FF0000) none (12px solid #000000)]
+    RenderBlock {DIV} at (0,0) size 144x24 [border: none (24px solid #FFFF00)]
 layer at (84,2782) size 144x24
   RenderBlock (relative positioned) {DIV} at (0,0) size 144x24 [bgcolor=#000000]
 layer at (96,2782) size 120x24
