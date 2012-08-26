@@ -25,12 +25,12 @@ layer at (28,101) size 150x50 clip at (28,101) size 150x34 scrollX 50 scrollWidt
       RenderText {#text} at (189,0) size 11x19
         text run at (189,0) width 11: "A"
 layer at (28,171) size 160x50 clip at (38,171) size 150x34 scrollX 50 scrollWidth 200
-  RenderBlock {DIV} at (20,163) size 160x50 [border: (10px solid #000000)]
+  RenderBlock {DIV} at (20,163) size 160x50 [border: none (10px solid #000000)]
     RenderBlock {DIV} at (10,0) size 200x19
       RenderText {#text} at (189,0) size 11x19
         text run at (189,0) width 11: "A"
 layer at (28,241) size 160x50 clip at (28,241) size 150x34 scrollX 50 scrollWidth 200
-  RenderBlock {DIV} at (20,233) size 160x50 [border: (10px solid #000000) none]
+  RenderBlock {DIV} at (20,233) size 160x50 [border: none (10px solid #000000) none]
     RenderBlock {DIV} at (0,0) size 200x19
       RenderText {#text} at (189,0) size 11x19
         text run at (189,0) width 11: "A"
@@ -45,12 +45,12 @@ layer at (28,381) size 150x50 clip at (28,381) size 150x34 scrollWidth 200
       RenderText {#text} at (0,0) size 11x19
         text run at (0,0) width 11: "A"
 layer at (28,451) size 160x50 clip at (38,451) size 150x34 scrollWidth 200
-  RenderBlock {DIV} at (20,443) size 160x50 [border: (10px solid #000000)]
+  RenderBlock {DIV} at (20,443) size 160x50 [border: none (10px solid #000000)]
     RenderBlock {DIV} at (10,0) size 200x19
       RenderText {#text} at (0,0) size 11x19
         text run at (0,0) width 11: "A"
 layer at (28,521) size 160x50 clip at (28,521) size 150x34 scrollWidth 200
-  RenderBlock {DIV} at (20,513) size 160x50 [border: (10px solid #000000) none]
+  RenderBlock {DIV} at (20,513) size 160x50 [border: none (10px solid #000000) none]
     RenderBlock {DIV} at (0,0) size 200x19
       RenderText {#text} at (0,0) size 11x19
         text run at (0,0) width 11: "A"

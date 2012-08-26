@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
           text run at (350,19) width 4: "."
       RenderBlock {HR} at (0,54) size 784x2 [border: (1px inset #000000)]
 layer at (8,72) size 784x19 clip at (18,72) size 774x19
-  RenderBlock {DIV} at (0,64) size 784x19 [border: (10px solid #0000FF)]
+  RenderBlock {DIV} at (0,64) size 784x19 [border: none (10px solid #0000FF)]
     RenderText {#text} at (484,0) size 300x19
       text run at (484,0) width 110: "This block should "
       text run at (780,0) width 4 RTL: "."

@@ -17,7 +17,7 @@ layer at (0,0) size 800x314
           text run at (222,38) width 444: "dummy text dummy text dummy text dummy text dummy text dummy text "
           text run at (666,38) width 118: "dummy text dummy"
           text run at (0,57) width 322: "text dummy text dummy text dummy text dummy text "
-        RenderInline {SPAN} at (0,0) size 123x29 [color=#0000FF] [border: (10px double #0000FF) none]
+        RenderInline {SPAN} at (0,0) size 123x29 [color=#0000FF] [border: none (10px double #0000FF) none]
           RenderText {#text} at (322,57) size 123x19
             text run at (322,57) width 123: "two blue lines below"
         RenderText {#text} at (445,57) size 784x95
@@ -33,7 +33,7 @@ layer at (0,0) size 800x314
           text run at (518,114) width 266: "dummy text dummy text dummy text dummy"
           text run at (0,133) width 174: "text dummy text dummy text "
           text run at (174,133) width 148: "dummy text dummy text "
-        RenderInline {SPAN} at (0,0) size 141x20 [color=#0000FF] [border: (1px solid #0000FF) none]
+        RenderInline {SPAN} at (0,0) size 141x20 [color=#0000FF] [border: none (1px solid #0000FF) none]
           RenderText {#text} at (322,133) size 141x19
             text run at (322,133) width 104: "one thin blue line "
             text run at (426,133) width 37: "below"

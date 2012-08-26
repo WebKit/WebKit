@@ -6,65 +6,65 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x19
         RenderText {#text} at (0,0) size 623x19
           text run at (0,0) width 623: "The first four tests expect a green block to be above them, i.e., to have the text shrinking quirk disabled."
-      RenderBlock {DIV} at (0,19) size 784x20 [bgcolor=#008000] [border: (1px solid #000000) none]
+      RenderBlock {DIV} at (0,19) size 784x20 [bgcolor=#008000] [border: none (1px solid #000000) none]
         RenderInline {SPAN} at (0,0) size 1x19
       RenderBlock {DIV} at (0,39) size 784x19
         RenderText {#text} at (0,0) size 274x19
           text run at (0,0) width 274: "There should be a green block above this text"
-      RenderBlock {DIV} at (0,58) size 784x20 [bgcolor=#008000] [border: (1px solid #000000) none]
+      RenderBlock {DIV} at (0,58) size 784x20 [bgcolor=#008000] [border: none (1px solid #000000) none]
         RenderInline {SPAN} at (0,0) size 1x19
       RenderBlock {DIV} at (0,78) size 784x19
         RenderText {#text} at (0,0) size 274x19
           text run at (0,0) width 274: "There should be a green block above this text"
-      RenderBlock {DIV} at (0,97) size 784x20 [bgcolor=#008000] [border: (1px solid #000000) none]
-        RenderInline {SPAN} at (0,0) size 1x19 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,97) size 784x20 [bgcolor=#008000] [border: none (1px solid #000000) none]
+        RenderInline {SPAN} at (0,0) size 1x19 [border: none (1px solid #000000)]
       RenderBlock {DIV} at (0,117) size 784x19
         RenderText {#text} at (0,0) size 274x19
           text run at (0,0) width 274: "There should be a green block above this text"
-      RenderBlock {DIV} at (0,136) size 784x20 [bgcolor=#008000] [border: (1px solid #000000) none]
-        RenderInline {SPAN} at (0,0) size 1x19 [border: (1px solid #000000) none]
+      RenderBlock {DIV} at (0,136) size 784x20 [bgcolor=#008000] [border: none (1px solid #000000) none]
+        RenderInline {SPAN} at (0,0) size 1x19 [border: none (1px solid #000000) none]
       RenderBlock {DIV} at (0,156) size 784x19
         RenderText {#text} at (0,0) size 274x19
           text run at (0,0) width 274: "There should be a green block above this text"
       RenderBlock (anonymous) at (0,175) size 784x19
         RenderText {#text} at (0,0) size 563x19
           text run at (0,0) width 563: "The remaining tests do not expect a block to be above them, and red will show if the test fails."
-      RenderBlock {DIV} at (0,194) size 784x1 [bgcolor=#FF0000] [border: (1px solid #000000) none]
+      RenderBlock {DIV} at (0,194) size 784x1 [bgcolor=#FF0000] [border: none (1px solid #000000) none]
         RenderInline {SPAN} at (0,0) size 0x0
       RenderBlock {DIV} at (0,195) size 784x19
         RenderText {#text} at (0,0) size 284x19
           text run at (0,0) width 284: "There should not be a red block above this text"
-      RenderBlock {DIV} at (0,214) size 784x1 [bgcolor=#FF0000] [border: (1px solid #000000) none]
+      RenderBlock {DIV} at (0,214) size 784x1 [bgcolor=#FF0000] [border: none (1px solid #000000) none]
         RenderInline {SPAN} at (0,0) size 0x0
       RenderBlock {DIV} at (0,215) size 784x19
         RenderText {#text} at (0,0) size 284x19
           text run at (0,0) width 284: "There should not be a red block above this text"
-      RenderBlock {DIV} at (0,234) size 784x1 [bgcolor=#FF0000] [border: (1px solid #000000) none]
+      RenderBlock {DIV} at (0,234) size 784x1 [bgcolor=#FF0000] [border: none (1px solid #000000) none]
         RenderInline {SPAN} at (0,0) size 0x0 [border: (1px solid #000000) none]
       RenderBlock {DIV} at (0,235) size 784x19
         RenderText {#text} at (0,0) size 284x19
           text run at (0,0) width 284: "There should not be a red block above this text"
-      RenderBlock {DIV} at (0,254) size 784x1 [bgcolor=#FF0000] [border: (1px solid #000000) none]
-        RenderInline {SPAN} at (0,0) size 0x0 [border: (1px solid #000000) none]
+      RenderBlock {DIV} at (0,254) size 784x1 [bgcolor=#FF0000] [border: none (1px solid #000000) none]
+        RenderInline {SPAN} at (0,0) size 0x0 [border: none (1px solid #000000) none]
       RenderBlock {DIV} at (0,255) size 784x19
         RenderText {#text} at (0,0) size 284x19
           text run at (0,0) width 284: "There should not be a red block above this text"
-      RenderBlock {DIV} at (0,274) size 784x1 [bgcolor=#FF0000] [border: (1px solid #000000) none]
+      RenderBlock {DIV} at (0,274) size 784x1 [bgcolor=#FF0000] [border: none (1px solid #000000) none]
         RenderInline {SPAN} at (0,0) size 0x19
       RenderBlock {DIV} at (0,275) size 784x19
         RenderText {#text} at (0,0) size 284x19
           text run at (0,0) width 284: "There should not be a red block above this text"
-      RenderBlock {DIV} at (0,294) size 784x1 [bgcolor=#FF0000] [border: (1px solid #000000) none]
+      RenderBlock {DIV} at (0,294) size 784x1 [bgcolor=#FF0000] [border: none (1px solid #000000) none]
         RenderInline {SPAN} at (0,0) size 0x19
       RenderBlock {DIV} at (0,295) size 784x19
         RenderText {#text} at (0,0) size 284x19
           text run at (0,0) width 284: "There should not be a red block above this text"
-      RenderBlock {DIV} at (0,314) size 784x1 [bgcolor=#FF0000] [border: (1px solid #000000) none]
+      RenderBlock {DIV} at (0,314) size 784x1 [bgcolor=#FF0000] [border: none (1px solid #000000) none]
         RenderInline {SPAN} at (0,0) size 0x0
       RenderBlock {DIV} at (0,315) size 784x19
         RenderText {#text} at (0,0) size 284x19
           text run at (0,0) width 284: "There should not be a red block above this text"
-      RenderBlock {DIV} at (0,334) size 784x1 [bgcolor=#FF0000] [border: (1px solid #000000) none]
+      RenderBlock {DIV} at (0,334) size 784x1 [bgcolor=#FF0000] [border: none (1px solid #000000) none]
         RenderInline {SPAN} at (0,0) size 0x0
       RenderBlock {DIV} at (0,335) size 784x19
         RenderText {#text} at (0,0) size 284x19

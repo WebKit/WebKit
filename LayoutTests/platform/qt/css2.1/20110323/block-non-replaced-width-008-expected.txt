@@ -11,5 +11,5 @@ layer at (0,0) size 800x259
             text run at (323,0) width 42: "no red"
         RenderText {#text} at (365,0) size 4x19
           text run at (365,0) width 4: "."
-      RenderBlock {DIV} at (0,35) size 400x200 [border: (200px solid #FF0000) none]
-        RenderBlock {DIV} at (0,0) size 400x200 [border: (200px solid #008000) none]
+      RenderBlock {DIV} at (0,35) size 400x200 [border: none (200px solid #FF0000) none]
+        RenderBlock {DIV} at (0,0) size 400x200 [border: none (200px solid #008000) none]

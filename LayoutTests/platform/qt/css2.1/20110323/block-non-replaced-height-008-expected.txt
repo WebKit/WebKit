@@ -10,6 +10,6 @@ layer at (8,8) size 768x339 clip at (8,8) size 752x323
 layer at (8,91) size 752x192
   RenderBlock (relative positioned) {DIV} at (0,83) size 752x192
     RenderBlock {DIV} at (0,0) size 96x96 [bgcolor=#0000FF] [border: (48px solid #0000FF) none]
-    RenderBlock {DIV} at (0,96) size 96x96 [bgcolor=#0000FF] [border: (48px solid #0000FF) none]
+    RenderBlock {DIV} at (0,96) size 96x96 [bgcolor=#0000FF] [border: none (48px solid #0000FF) none]
 layer at (104,91) size 96x192
   RenderBlock (positioned) {DIV} at (96,0) size 96x192 [bgcolor=#0000FF]

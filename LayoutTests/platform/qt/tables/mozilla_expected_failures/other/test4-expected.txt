@@ -146,9 +146,9 @@ layer at (0,0) size 784x2559
             text run at (13,19) width 226: "table has specified column widths and"
             text run at (69,38) width 114: "collapsing borders."
         RenderTableCol {COLGROUP} at (0,0) size 0x0
-          RenderTableCol {COL} at (0,0) size 0x0 [border: (2px dashed #0000FF) none (2px solid #000000)]
-          RenderTableCol {COL} at (0,0) size 0x0 [border: (1px solid #FF0000) none]
-          RenderTableCol {COL} at (0,0) size 0x0 [border: (2px solid #000000) none]
+          RenderTableCol {COL} at (0,0) size 0x0 [border: none (2px dashed #0000FF) none (2px solid #000000)]
+          RenderTableCol {COL} at (0,0) size 0x0 [border: none (1px solid #FF0000) none]
+          RenderTableCol {COL} at (0,0) size 0x0 [border: none (2px solid #000000) none]
         RenderTableSection {THEAD} at (1,1) size 250x27 [border: none (6px solid #000000) none]
           RenderTableRow {TR} at (0,0) size 250x27 [border: (2px solid #000000)]
             RenderTableCell {TH} at (0,0) size 90x27 [border: (1px none #000000) none (3px none #000000)] [r=0 c=0 rs=1 cs=1]

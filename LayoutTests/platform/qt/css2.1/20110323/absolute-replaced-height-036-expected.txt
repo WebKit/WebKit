@@ -8,8 +8,8 @@ layer at (0,0) size 800x104
           text run at (0,0) width 133: "There must be no red."
 layer at (8,51) size 45x45
   RenderBlock (relative positioned) {DIV} at (0,35) size 45x45
-    RenderBlock {DIV} at (0,0) size 45x15 [border: (15px solid #FF0000) none]
-    RenderBlock {DIV} at (0,15) size 45x15 [border: (15px solid #FF0000)]
+    RenderBlock {DIV} at (0,0) size 45x15 [border: none (15px solid #FF0000) none]
+    RenderBlock {DIV} at (0,15) size 45x15 [border: none (15px solid #FF0000)]
     RenderBlock {DIV} at (15,30) size 15x15 [bgcolor=#FF0000]
 layer at (8,66) size 15x15
   RenderImage {IMG} at (0,15) size 15x15 [bgcolor=#FF0000]

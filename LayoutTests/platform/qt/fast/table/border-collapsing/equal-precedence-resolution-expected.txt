@@ -5,8 +5,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderTable {TABLE} at (0,0) size 118x50
         RenderTableCol {COLGROUP} at (0,0) size 0x0
-        RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: (5px solid #007F007F) none]
-        RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: (5px solid #FF0000)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: none (5px solid #007F007F) none]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: none (5px solid #FF0000)]
         RenderTableSection {TBODY} at (0,0) size 118x50
           RenderTableRow {TR} at (0,0) size 118x25
             RenderTableCell {TD} at (0,10) size 29x4 [border: none (2px solid #007F007F) none] [r=0 c=0 rs=1 cs=1]
@@ -20,8 +20,8 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (88,36) size 30x2 [border: none] [r=1 c=3 rs=1 cs=1]
       RenderTable {TABLE} at (0,50) size 118x50
         RenderTableCol {COLGROUP} at (0,0) size 0x0
-        RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: (5px solid #007F007F)]
-        RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: (5px solid #FF0000) none]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: none (5px solid #007F007F)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: none (5px solid #FF0000) none]
         RenderTableSection {TBODY} at (0,0) size 118x50
           RenderTableRow {TR} at (0,0) size 118x25
             RenderTableCell {TD} at (88,10) size 30x4 [border: none (2px solid #007F007F)] [r=0 c=0 rs=1 cs=1]

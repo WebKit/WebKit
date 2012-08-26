@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 341x19
           text run at (0,0) width 341: "This tests pasting a blockquote after another blockquote."
       RenderBlock {DIV} at (0,35) size 784x38
-        RenderBlock {BLOCKQUOTE} at (0,0) size 784x19 [color=#0000FF] [border: (2px solid #0000FF)]
+        RenderBlock {BLOCKQUOTE} at (0,0) size 784x19 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderText {#text} at (22,0) size 38x19
             text run at (22,0) width 38: "Line 1"
-        RenderBlock {BLOCKQUOTE} at (0,19) size 784x19 [color=#0000FF] [border: (2px solid #0000FF)]
+        RenderBlock {BLOCKQUOTE} at (0,19) size 784x19 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderText {#text} at (22,0) size 38x19
             text run at (22,0) width 38: "Line 2"
         RenderBlock (anonymous) at (0,38) size 784x0

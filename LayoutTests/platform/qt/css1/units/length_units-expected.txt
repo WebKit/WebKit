@@ -67,7 +67,7 @@ layer at (0,0) size 784x1631
       RenderBlock {P} at (48,565) size 720x19
         RenderText {#text} at (0,0) size 558x19
           text run at (0,0) width 558: "This paragraph should have a left margin of 3 picas (the plus sign should make no difference)."
-      RenderBlock {P} at (0,624) size 768x236 [bgcolor=#00FFFF] [border: (18px solid #800080)]
+      RenderBlock {P} at (0,624) size 768x236 [bgcolor=#00FFFF] [border: none (18px solid #800080)]
         RenderText {#text} at (18,0) size 306x45
           text run at (18,0) width 306: "This element has a "
         RenderInline {CODE} at (0,0) size 216x47
@@ -142,7 +142,7 @@ layer at (0,0) size 784x1631
               RenderBlock {P} at (52,338) size 698x19
                 RenderText {#text} at (0,0) size 558x19
                   text run at (0,0) width 558: "This paragraph should have a left margin of 3 picas (the plus sign should make no difference)."
-              RenderBlock {P} at (4,397) size 746x285 [bgcolor=#00FFFF] [border: (18px solid #800080)]
+              RenderBlock {P} at (4,397) size 746x285 [bgcolor=#00FFFF] [border: none (18px solid #800080)]
                 RenderText {#text} at (18,0) size 306x45
                   text run at (18,0) width 306: "This element has a "
                 RenderInline {CODE} at (0,0) size 216x47

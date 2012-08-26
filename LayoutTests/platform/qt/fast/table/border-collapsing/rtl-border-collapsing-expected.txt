@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
                 RenderTableCol {COLGROUP} at (0,0) size 0x0
                   RenderTableCol {COL} at (0,0) size 0x0
                   RenderTableCol {COL} at (0,0) size 0x0
-                  RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FFFF00] [border: (2px dotted #008000) none (1px solid #000000)]
+                  RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FFFF00] [border: none (2px dotted #008000) none (1px solid #000000)]
                   RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#C0C0C0]
                 RenderTableSection {TBODY} at (1,0) size 56x42
                   RenderTableRow {TR} at (0,0) size 56x21
@@ -71,7 +71,7 @@ layer at (0,0) size 800x600
                 RenderTableCol {COLGROUP} at (0,0) size 0x0
                   RenderTableCol {COL} at (0,0) size 0x0
                   RenderTableCol {COL} at (0,0) size 0x0
-                  RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FFFF00] [border: (1px solid #000000) none (2px dotted #008000)]
+                  RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FFFF00] [border: none (1px solid #000000) none (2px dotted #008000)]
                   RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#C0C0C0]
                 RenderTableSection {TBODY} at (1,0) size 56x42
                   RenderTableRow {TR} at (0,0) size 56x21

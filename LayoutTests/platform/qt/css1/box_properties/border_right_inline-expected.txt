@@ -28,10 +28,10 @@ layer at (0,0) size 784x1100
           text run at (0,0) width 612: "Note that all table cells on this page should have a two-pixel solid green border along their right sides. "
           text run at (612,0) width 116: "This border applies"
           text run at (0,19) width 299: "only to the cells, not the rows which contain them."
-      RenderBlock {P} at (0,225) size 748x19 [border: (10px double #800080) none]
+      RenderBlock {P} at (0,225) size 748x19 [border: none (10px double #800080) none]
         RenderText {#text} at (0,0) size 404x19
           text run at (0,0) width 404: "This paragraph should have a purple, double, 10-pixel right border."
-      RenderBlock {P} at (0,260) size 748x19 [border: (1px solid #800080) none]
+      RenderBlock {P} at (0,260) size 748x19 [border: none (1px solid #800080) none]
         RenderText {#text} at (0,0) size 322x19
           text run at (0,0) width 322: "This paragraph should have a thin purple right border."
       RenderTable {TABLE} at (0,295) size 768x111 [border: (1px outset #808080)]
@@ -57,7 +57,7 @@ layer at (0,0) size 784x1100
                       RenderText {#text} at (2,2) size 145x19
                         text run at (2,2) width 145: "Nested single-cell table!"
       RenderBlock {UL} at (0,422) size 768x171
-        RenderListItem {LI} at (40,0) size 728x76 [border: (3px solid #000000) none]
+        RenderListItem {LI} at (40,0) size 728x76 [border: none (3px solid #000000) none]
           RenderBlock (anonymous) at (0,0) size 725x19
             RenderListMarker at (-18,0) size 7x19: bullet
             RenderText {#text} at (0,0) size 110x19
@@ -75,11 +75,11 @@ layer at (0,0) size 784x1100
               RenderListMarker at (-18,0) size 7x19: white bullet
               RenderText {#text} at (0,0) size 165x19
                 text run at (0,0) width 165: "...nested within the list item."
-        RenderListItem {LI} at (40,76) size 728x19 [border: (3px solid #800080) none]
+        RenderListItem {LI} at (40,76) size 728x19 [border: none (3px solid #800080) none]
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 149x19
             text run at (0,0) width 149: "This is a second list item."
-        RenderListItem {LI} at (40,95) size 728x76 [border: (3px solid #0000FF) none]
+        RenderListItem {LI} at (40,95) size 728x76 [border: none (3px solid #0000FF) none]
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 715x76
             text run at (0,0) width 666: "Each list item in this 'parent' list should have a medium-width border along its right side, in each of three colors. "
@@ -105,10 +105,10 @@ layer at (0,0) size 784x1100
                   text run at (0,0) width 612: "Note that all table cells on this page should have a two-pixel solid green border along their right sides. "
                   text run at (612,0) width 70: "This border"
                   text run at (0,19) width 345: "applies only to the cells, not the rows which contain them."
-              RenderBlock {P} at (4,58) size 724x19 [border: (10px double #800080) none]
+              RenderBlock {P} at (4,58) size 724x19 [border: none (10px double #800080) none]
                 RenderText {#text} at (0,0) size 404x19
                   text run at (0,0) width 404: "This paragraph should have a purple, double, 10-pixel right border."
-              RenderBlock {P} at (4,93) size 724x19 [border: (1px solid #800080) none]
+              RenderBlock {P} at (4,93) size 724x19 [border: none (1px solid #800080) none]
                 RenderText {#text} at (0,0) size 322x19
                   text run at (0,0) width 322: "This paragraph should have a thin purple right border."
               RenderTable {TABLE} at (4,128) size 744x111 [border: (1px outset #808080)]
@@ -134,7 +134,7 @@ layer at (0,0) size 784x1100
                               RenderText {#text} at (2,2) size 145x19
                                 text run at (2,2) width 145: "Nested single-cell table!"
               RenderBlock {UL} at (4,255) size 744x171
-                RenderListItem {LI} at (40,0) size 704x76 [border: (3px solid #000000) none]
+                RenderListItem {LI} at (40,0) size 704x76 [border: none (3px solid #000000) none]
                   RenderBlock (anonymous) at (0,0) size 701x19
                     RenderListMarker at (-18,0) size 7x19: bullet
                     RenderText {#text} at (0,0) size 110x19
@@ -152,11 +152,11 @@ layer at (0,0) size 784x1100
                       RenderListMarker at (-18,0) size 7x19: white bullet
                       RenderText {#text} at (0,0) size 165x19
                         text run at (0,0) width 165: "...nested within the list item."
-                RenderListItem {LI} at (40,76) size 704x19 [border: (3px solid #800080) none]
+                RenderListItem {LI} at (40,76) size 704x19 [border: none (3px solid #800080) none]
                   RenderListMarker at (-18,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 149x19
                     text run at (0,0) width 149: "This is a second list item."
-                RenderListItem {LI} at (40,95) size 704x76 [border: (3px solid #0000FF) none]
+                RenderListItem {LI} at (40,95) size 704x76 [border: none (3px solid #0000FF) none]
                   RenderListMarker at (-18,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 698x76
                     text run at (0,0) width 666: "Each list item in this 'parent' list should have a medium-width border along its right side, in each of three colors. "

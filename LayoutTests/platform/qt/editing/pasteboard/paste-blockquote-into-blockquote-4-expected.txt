@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 518x19
           text run at (0,0) width 518: "This test passes if nothing is double-quoted, and \"Two\" and \"Four\" aren't quoted at all."
       RenderBlock {DIV} at (0,35) size 784x95
-        RenderBlock {BLOCKQUOTE} at (0,0) size 784x38 [color=#0000FF] [border: (2px solid #0000FF)]
+        RenderBlock {BLOCKQUOTE} at (0,0) size 784x38 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderText {#text} at (22,0) size 33x19
             text run at (22,0) width 33: "Paste"
           RenderBR {BR} at (55,15) size 0x0
@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,38) size 784x19
           RenderText {#text} at (0,0) size 28x19
             text run at (0,0) width 28: "Two"
-        RenderBlock {BLOCKQUOTE} at (0,57) size 784x19 [color=#0000FF] [border: (2px solid #0000FF)]
+        RenderBlock {BLOCKQUOTE} at (0,57) size 784x19 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderText {#text} at (22,0) size 35x19
             text run at (22,0) width 35: "Three"
         RenderBlock (anonymous) at (0,76) size 784x19

@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x89
   RenderBlock {HTML} at (0,0) size 800x89
     RenderBody {BODY} at (8,16) size 784x57
-      RenderBlock {P} at (0,0) size 176x57 [bgcolor=#FFFFFF] [border: (16px solid #008000) none]
+      RenderBlock {P} at (0,0) size 176x57 [bgcolor=#FFFFFF] [border: none (16px solid #008000) none]
         RenderText {#text} at (0,0) size 145x57
           text run at (0,0) width 145: "There should be a green"
           text run at (0,19) width 142: "block to the right of this"
