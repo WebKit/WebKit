@@ -1,5 +1,16 @@
 2012-08-26  Robert Hogan  <robert@webkit.org>
 
+        Suppress Mac test requiring rebaseline after r126683.
+
+        Unreviewed gardening.
+
+        fast/repaint/control-clip.html was suppressed and failing already so remove it from
+        the tests requiring rebaseline after r126683.
+
+        * platform/chromium/TestExpectations:
+
+2012-08-26  Robert Hogan  <robert@webkit.org>
+
         Suppress test requiring rebaseline after r126683
 
         Unreviewed, gardening.
