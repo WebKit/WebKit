@@ -63,11 +63,24 @@ enum Mode {
 
 Array::Mode fromObserved(ArrayModes modes, bool makeSafe);
 
+Array::Mode fromStructure(Structure*, bool makeSafe);
+
 Array::Mode refineArrayMode(Array::Mode, SpeculatedType base, SpeculatedType index);
 
 bool modeAlreadyChecked(AbstractValue&, Array::Mode);
 
 const char* modeToString(Array::Mode);
+
+inline bool modeIsJSArray(Array::Mode arrayMode)
+{
+    switch (arrayMode) {
+    case Array::JSArray:
+    case Array::JSArrayOutOfBounds:
+        return true;
+    default:
+        return false;
+    }
+}
 
 inline bool canCSEStorage(Array::Mode arrayMode)
 {
@@ -80,6 +93,11 @@ inline bool canCSEStorage(Array::Mode arrayMode)
     default:
         return true;
     }
+}
+
+inline bool lengthNeedsStorage(Array::Mode arrayMode)
+{
+    return modeIsJSArray(arrayMode);
 }
 
 inline Array::Mode modeForPut(Array::Mode arrayMode)
@@ -115,7 +133,7 @@ inline bool modesCompatibleForStorageLoad(Array::Mode left, Array::Mode right)
     return false;
 }
 
-inline bool modeSupportsLength(Array::Mode mode)
+inline bool modeIsSpecific(Array::Mode mode)
 {
     switch (mode) {
     case Array::Undecided:
@@ -125,6 +143,11 @@ inline bool modeSupportsLength(Array::Mode mode)
     default:
         return true;
     }
+}
+
+inline bool modeSupportsLength(Array::Mode mode)
+{
+    return modeIsSpecific(mode);
 }
 
 } } // namespace JSC::DFG

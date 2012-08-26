@@ -1,5 +1,124 @@
 2012-08-26  Filip Pizlo  <fpizlo@apple.com>
 
+        Array type checks and storage accesses should be uniformly represented and available to CSE
+        https://bugs.webkit.org/show_bug.cgi?id=95013
+
+        Reviewed by Oliver Hunt.
+
+        This uniformly breaks up all array accesses into up to three parts:
+        
+        1) The type check, using a newly introduced CheckArray node, in addition to possibly
+           a CheckStructure node. We were already inserting the CheckStructure prior to this
+           patch. The CheckArray node will be automatically eliminated if the thing it was
+           checking for had already been checked for, either intentionally (a CheckStructure
+           inserted based on the array profile of this access) or accidentally (some checks,
+           typically a CheckStructure, inserted for some unrelated operations). The
+           CheckArray node may not be inserted if the array type is non-specific (Generic or
+           ForceExit).
+        
+        2) The storage load using GetIndexedPropertyStorage. Previously, this only worked for
+           GetByVal. Now it works for all array accesses. The storage load may not be
+           inserted if the mode of array access does not permit CSE of storage loads (like
+           non-specific modes or Arguments).
+        
+        3) The access itself: one of GetByVal, PutByVal, PutByValAlias, ArrayPush, ArrayPop,
+           GetArrayLength, StringCharAt, or StringCharCodeAt.
+        
+        This means that the type check can be subjected to CSE even if the CFA isn't smart
+        enough to reason about it (yet!). It also means that the storage load can always be
+        subjected to CSE; previously CSE on storage load only worked for array loads and not
+        other forms of access. Finally, it removes the bizarre behavior that
+        GetIndexedPropertyStorage previously had: previously, it was responsible for the type
+        check in some cases, but not others; this made reasoning about the CFA really
+        confusing.
+        
+        This change also disables late refinement of array mode, since I decided that
+        supporting that feature is both confusing and likely unprofitable. The array modes are
+        now locked in in the first fixup run after prediction propagation. Of course,
+        refinements from Generic to something else would not have been a problem; we could
+        reenable those if we thought we really needed to.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::fromStructure):
+        (DFG):
+        (JSC::DFG::refineArrayMode):
+        * dfg/DFGArrayMode.h:
+        (DFG):
+        (JSC::DFG::modeIsJSArray):
+        (JSC::DFG::lengthNeedsStorage):
+        (JSC::DFG::modeIsSpecific):
+        (JSC::DFG::modeSupportsLength):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::getArrayMode):
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::getArrayModeAndEmitChecks):
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::mergeBlocks):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::CSEPhase):
+        (JSC::DFG::CSEPhase::checkStructureElimination):
+        (CSEPhase):
+        (JSC::DFG::CSEPhase::checkArrayElimination):
+        (JSC::DFG::CSEPhase::getIndexedPropertyStorageLoadElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        (JSC::DFG::performCSE):
+        * dfg/DFGCSEPhase.h:
+        (DFG):
+        * dfg/DFGCommon.h:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::checkArray):
+        (FixupPhase):
+        (JSC::DFG::FixupPhase::blessArrayOperation):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (DFG):
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::collectGarbage):
+        * dfg/DFGGraph.h:
+        (Graph):
+        (JSC::DFG::Graph::vote):
+        (JSC::DFG::Graph::substitute):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasArrayMode):
+        (JSC::DFG::Node::setArrayMode):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPhase.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (JSC::DFG::PredictionPropagationPhase::mergeDefaultFlags):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::useChildren):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+
+2012-08-26  Filip Pizlo  <fpizlo@apple.com>
+
         DFGGraph.h has a bogus comment about the nature of StorageAccessData
         https://bugs.webkit.org/show_bug.cgi?id=95035
 
