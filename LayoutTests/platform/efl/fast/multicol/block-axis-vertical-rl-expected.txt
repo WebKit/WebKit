@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,20) size 800x580
 layer at (360,20) size 170x200
-  RenderBlock {DIV} at (360,0) size 170x200 [border: (20px solid #C0C0C0) none]
+  RenderBlock {DIV} at (360,0) size 170x200 [border: none (20px solid #C0C0C0) none]
     RenderText {#text} at (20,0) size 91x185
       text run at (20,0) width 177: "Lorem ipsum dolor sit amet,"
       text run at (38,0) width 75: "consectetur "

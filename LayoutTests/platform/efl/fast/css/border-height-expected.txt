@@ -7,4 +7,4 @@ layer at (0,0) size 785x4173
         RenderText {#text} at (0,0) size 737x37
           text run at (0,0) width 737: "The very tall div below (> 4095 pixels) should have a 1-pixel dotted border on the right and bottom and a wider solid"
           text run at (0,18) width 112: "border on the left."
-      RenderBlock {DIV} at (0,52) size 505x4097 [border: (1px dotted #000000) (4px solid #8394B2)]
+      RenderBlock {DIV} at (0,52) size 505x4097 [border: none (1px dotted #000000) (4px solid #8394B2)]

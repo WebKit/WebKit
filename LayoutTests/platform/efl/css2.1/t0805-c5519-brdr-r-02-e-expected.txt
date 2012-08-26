@@ -8,7 +8,7 @@ layer at (0,0) size 800x336
           text run at (0,0) width 364: "There should be a solid line to the right of the text below, "
           text run at (364,0) width 384: "having three segments each of a different colour as indicated."
       RenderBlock {UL} at (0,34) size 588x270
-        RenderListItem {LI} at (40,0) size 548x72 [border: (3px solid #FFA500) none]
+        RenderListItem {LI} at (40,0) size 548x72 [border: none (3px solid #FFA500) none]
           RenderBlock (anonymous) at (0,0) size 545x18
             RenderListMarker at (-18,0) size 7x19: bullet
             RenderText {#text} at (0,0) size 106x19
@@ -26,11 +26,11 @@ layer at (0,0) size 800x336
               RenderListMarker at (-18,0) size 7x19: white bullet
               RenderText {#text} at (0,0) size 106x19
                 text run at (0,0) width 106: "...orange orange."
-        RenderListItem {LI} at (40,72) size 548x18 [border: (3px solid #00FF00) none]
+        RenderListItem {LI} at (40,72) size 548x18 [border: none (3px solid #00FF00) none]
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 37x19
             text run at (0,0) width 37: "Lime."
-        RenderListItem {LI} at (40,90) size 548x180 [border: (3px solid #FFFF00) none]
+        RenderListItem {LI} at (40,90) size 548x180 [border: none (3px solid #FFFF00) none]
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 517x181
             text run at (0,0) width 333: "Yellow yellow yellow yellow yellow yellow yellow "

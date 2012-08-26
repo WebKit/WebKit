@@ -1,3 +1,106 @@
+2012-08-26  Robert Hogan  <robert@webkit.org>
+
+        Rebaseline EFL test results after r126683.
+
+        Unreviewed gardening.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/animations/cross-fade-border-image-source-expected.txt:
+        * platform/efl/css1/box_properties/border_bottom-expected.txt:
+        * platform/efl/css1/box_properties/border_bottom_inline-expected.txt:
+        * platform/efl/css1/box_properties/border_left-expected.txt:
+        * platform/efl/css1/box_properties/border_left_inline-expected.txt:
+        * platform/efl/css1/box_properties/border_right-expected.txt:
+        * platform/efl/css1/box_properties/border_right_inline-expected.txt:
+        * platform/efl/css1/units/length_units-expected.txt:
+        * platform/efl/css2.1/20110323/absolute-replaced-height-036-expected.txt:
+        * platform/efl/css2.1/20110323/abspos-non-replaced-width-margin-000-expected.txt:
+        * platform/efl/css2.1/20110323/abspos-replaced-width-margin-000-expected.txt:
+        * platform/efl/css2.1/20110323/block-non-replaced-height-007-expected.txt:
+        * platform/efl/css2.1/20110323/block-non-replaced-height-008-expected.txt:
+        * platform/efl/css2.1/20110323/block-non-replaced-height-009-expected.txt:
+        * platform/efl/css2.1/20110323/block-non-replaced-height-010-expected.txt:
+        * platform/efl/css2.1/20110323/block-non-replaced-width-001-expected.txt:
+        * platform/efl/css2.1/20110323/block-non-replaced-width-002-expected.txt:
+        * platform/efl/css2.1/20110323/block-non-replaced-width-003-expected.txt:
+        * platform/efl/css2.1/20110323/block-non-replaced-width-004-expected.txt:
+        * platform/efl/css2.1/20110323/block-non-replaced-width-008-expected.txt:
+        * platform/efl/css2.1/20110323/margin-applies-to-008-expected.txt:
+        * platform/efl/css2.1/20110323/width-non-replaced-inline-001-expected.txt:
+        * platform/efl/css2.1/t040302-c61-phys-len-00-b-expected.txt:
+        * platform/efl/css2.1/t0804-c5507-padn-r-02-f-expected.txt:
+        * platform/efl/css2.1/t0804-c5508-ipadn-b-03-b-a-expected.txt:
+        * platform/efl/css2.1/t0804-c5509-padn-l-02-f-expected.txt:
+        * platform/efl/css2.1/t0805-c5519-brdr-r-00-a-expected.txt:
+        * platform/efl/css2.1/t0805-c5519-brdr-r-01-e-expected.txt:
+        * platform/efl/css2.1/t0805-c5519-brdr-r-02-e-expected.txt:
+        * platform/efl/css2.1/t0805-c5519-ibrdr-r-00-a-expected.txt:
+        * platform/efl/css2.1/t0805-c5520-brdr-b-00-a-expected.txt:
+        * platform/efl/css2.1/t0805-c5520-brdr-b-01-e-expected.txt:
+        * platform/efl/css2.1/t0805-c5520-ibrdr-b-00-a-expected.txt:
+        * platform/efl/css2.1/t0805-c5521-brdr-l-00-a-expected.txt:
+        * platform/efl/css2.1/t0805-c5521-brdr-l-01-e-expected.txt:
+        * platform/efl/css2.1/t0805-c5521-brdr-l-02-e-expected.txt:
+        * platform/efl/css2.1/t0805-c5521-ibrdr-l-00-a-expected.txt:
+        * platform/efl/editing/execCommand/4580583-1-expected.txt:
+        * platform/efl/editing/execCommand/4580583-2-expected.txt:
+        * platform/efl/fast/block/float/012-expected.txt:
+        * platform/efl/fast/block/float/013-expected.txt:
+        * platform/efl/fast/block/float/016-expected.txt: Added.
+        * platform/efl/fast/block/float/avoidance-rtl-expected.txt: Added.
+        * platform/efl/fast/block/margin-collapse/041-expected.txt:
+        * platform/efl/fast/block/margin-collapse/043-expected.txt:
+        * platform/efl/fast/block/margin-collapse/057-expected.txt:
+        * platform/efl/fast/borders/border-radius-wide-border-01-expected.txt: Added.
+        * platform/efl/fast/borders/only-one-border-with-width-expected.txt: Added.
+        * platform/efl/fast/css/acid2-expected.txt: Copied from LayoutTests/platform/efl/http/tests/misc/acid2-expected.txt.
+        * platform/efl/fast/css/acid2-pixel-expected.txt: Copied from LayoutTests/platform/efl/http/tests/misc/acid2-expected.txt.
+        * platform/efl/fast/css/border-height-expected.txt:
+        * platform/efl/fast/css/caption-width-absolute-position-expected.txt:
+        * platform/efl/fast/css/caption-width-absolute-position-offset-top-expected.txt:
+        * platform/efl/fast/css/caption-width-fixed-position-expected.txt:
+        * platform/efl/fast/css/caption-width-fixed-position-offset-top-expected.txt:
+        * platform/efl/fast/css/line-height-determined-by-primary-font-expected.txt:
+        * platform/efl/fast/css/pseudo-first-line-border-width-expected.txt:
+        * platform/efl/fast/frames/viewsource-attribute-expected.txt:
+        * platform/efl/fast/frames/viewsource-on-image-file-expected.txt:
+        * platform/efl/fast/inline/inline-padding-disables-text-quirk-expected.txt:
+        * platform/efl/fast/inline/inline-text-quirk-bpm-expected.txt:
+        * platform/efl/fast/layers/scroll-rect-to-visible-expected.txt:
+        * platform/efl/fast/lists/007-expected.txt:
+        * platform/efl/fast/multicol/block-axis-horizontal-bt-expected.txt:
+        * platform/efl/fast/multicol/block-axis-vertical-lr-expected.txt:
+        * platform/efl/fast/multicol/block-axis-vertical-rl-expected.txt:
+        * platform/efl/fast/multicol/progression-reverse-expected.txt: Added.
+        * platform/efl/fast/multicol/vertical-lr/rules-with-border-before-expected.txt: Added.
+        * platform/efl/fast/multicol/vertical-rl/rules-with-border-before-expected.txt: Added.
+        * platform/efl/fast/overflow/overflow-rtl-expected.txt: Added.
+        * platform/efl/fast/overflow/overflow-rtl-inline-scrollbar-expected.txt:
+        * platform/efl/fast/repaint/repaint-across-writing-mode-boundary-expected.txt:
+        * platform/efl/fast/table/border-collapsing/003-expected.txt:
+        * platform/efl/fast/table/border-collapsing/003-vertical-expected.txt:
+        * platform/efl/fast/table/border-collapsing/equal-precedence-resolution-expected.txt:
+        * platform/efl/fast/table/border-collapsing/equal-precedence-resolution-vertical-expected.txt:
+        * platform/efl/fast/table/border-collapsing/rtl-border-collapsing-expected.txt:
+        * platform/efl/fast/table/colgroup-spanning-groups-rules-expected.txt:
+        * platform/efl/fast/text/apply-start-width-after-skipped-text-expected.txt:
+        * platform/efl/fast/text/basic/015-expected.txt:
+        * platform/efl/fast/text/monospace-width-cache-expected.txt:
+        * platform/efl/fast/writing-mode/broken-ideograph-small-caps-expected.txt:
+        * platform/efl/fast/writing-mode/broken-ideographic-font-expected.txt:
+        * platform/efl/fast/writing-mode/vertical-font-fallback-expected.txt:
+        * platform/efl/http/tests/misc/acid2-expected.txt:
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-009-expected.txt:
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-012-expected.txt:
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-013-expected.txt:
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-014-expected.txt:
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-015-expected.txt:
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-016-expected.txt:
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-001-expected.txt:
+        * platform/efl/transforms/2d/transform-borderbox-expected.txt:
+        * platform/efl/transforms/2d/transform-origin-borderbox-expected.txt:
+        * platform/efl/transitions/cross-fade-border-image-expected.txt:
+
 2012-08-26  Mark Lam  <mark.lam@apple.com>
 
         Skipping fast/block/float/016.html to green the platform mac bots.

@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x228
   RenderBlock {HTML} at (0,0) size 800x228
     RenderBody {BODY} at (8,16) size 784x196
-      RenderBlock {P} at (20,0) size 764x90 [color=#0000FF] [border: (10px double #0000FF)]
+      RenderBlock {P} at (20,0) size 764x90 [color=#0000FF] [border: none (10px double #0000FF)]
         RenderText {#text} at (10,0) size 354x19
           text run at (10,0) width 354: "\x{21E6} This paragraph should have two blue lines on its left. "
         RenderInline {SPAN} at (0,0) size 745x91 [color=#C0C0C0]
@@ -19,7 +19,7 @@ layer at (0,0) size 800x228
             text run at (536,54) width 181: "text dummy text dummy text"
             text run at (10,72) width 154: "dummy text dummy text"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (20,106) size 764x90 [color=#0000FF] [border: (1px solid #0000FF)]
+      RenderBlock {P} at (20,106) size 764x90 [color=#0000FF] [border: none (1px solid #0000FF)]
         RenderText {#text} at (1,0) size 359x19
           text run at (1,0) width 359: "\x{21E6} This paragraph should have a thin blue line on its left. "
         RenderInline {SPAN} at (0,0) size 759x91 [color=#C0C0C0]
