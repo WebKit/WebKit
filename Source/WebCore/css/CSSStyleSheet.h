@@ -81,6 +81,7 @@ public:
     virtual bool isLoading() const OVERRIDE;
     
     void clearOwnerRule() { m_ownerRule = 0; }
+    CSSStyleSheet* rootStyleSheet() const;
     Document* ownerDocument() const;
     MediaQuerySet* mediaQueries() const { return m_mediaQueries.get(); }
     void setMediaQueries(PassRefPtr<MediaQuerySet>);

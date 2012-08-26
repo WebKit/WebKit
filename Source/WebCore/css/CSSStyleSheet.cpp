@@ -37,6 +37,7 @@
 #include "SVGNames.h"
 #include "SecurityOrigin.h"
 #include "StyleRule.h"
+#include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -283,7 +284,10 @@ unsigned CSSStyleSheet::insertRule(const String& ruleString, unsigned index, Exc
     if (!success) {
         ec = HIERARCHY_REQUEST_ERR;
         return 0;
-    }        
+    }
+    if (rule->isImportRule())
+        static_cast<StyleRuleImport*>(rule.get())->requestStyleSheet(rootStyleSheet(), m_contents->parserContext());
+
     if (!m_childRuleCSSOMWrappers.isEmpty())
         m_childRuleCSSOMWrappers.insert(index, RefPtr<CSSRule>());
 
@@ -370,11 +374,17 @@ CSSStyleSheet* CSSStyleSheet::parentStyleSheet() const
     return m_ownerRule ? m_ownerRule->parentStyleSheet() : 0; 
 }
 
-Document* CSSStyleSheet::ownerDocument() const
+CSSStyleSheet* CSSStyleSheet::rootStyleSheet() const
 {
     const CSSStyleSheet* root = this;
     while (root->parentStyleSheet())
         root = root->parentStyleSheet();
+    return const_cast<CSSStyleSheet*>(root);
+}
+
+Document* CSSStyleSheet::ownerDocument() const
+{
+    const CSSStyleSheet* root = rootStyleSheet();
     return root->ownerNode() ? root->ownerNode()->document() : 0;
 }
 
