@@ -1,5 +1,13 @@
 2012-08-26  Robert Hogan  <robert@webkit.org>
 
+        Suppress 6 failing tests on Qt.
+
+        Unreviewed gardening.
+
+        * platform/qt/TestExpectations:
+
+2012-08-26  Robert Hogan  <robert@webkit.org>
+
         Rebaseline Mac test results after r126683.
 
         Unreviewed gardening.

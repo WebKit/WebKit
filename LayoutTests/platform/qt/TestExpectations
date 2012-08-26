@@ -187,3 +187,12 @@ BUGWK94004 : css2.1/20110323/c541-word-sp-000.htm = IMAGE
 BUGWK94005 : css2.1/20110323/word-spacing-remove-space-003.htm = IMAGE
 BUGWK94005 : css2.1/20110323/word-spacing-remove-space-006.htm = IMAGE
 BUGWK94006 : fast/css/word-spacing-characters-complex-text.html = IMAGE
+
+// I couldn't get 'Tools/Scripts/webkit-patch rebaseline-expectations' to rebaseline these
+// on 2012-08-26 - webkit-patch just hangs indefinitely. Maybe someone else will have more luck on Monday.
+BUGWK84286 : css2.1/t0805-c5519-brdr-r-00-a.html = TEXT
+BUGWK84286 : css2.1/t0805-c5519-brdr-r-01-e.html = TEXT
+BUGWK84286 : css2.1/t0805-c5520-brdr-b-01-e.html = TEXT
+BUGWK84286 : css2.1/t0805-c5521-brdr-l-00-a.html = TEXT
+BUGWK84286 : css2.1/t0805-c5521-brdr-l-01-e.html = TEXT
+BUGWK84286 : css2.1/t0805-c5521-ibrdr-l-00-a.html = TEXT
