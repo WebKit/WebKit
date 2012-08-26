@@ -98,10 +98,8 @@ WebInspector.ParsedURL.completeURL = function(baseURL, href)
     if (href) {
         // Return special URLs as-is.
         var trimmedHref = href.trim();
-        if (trimmedHref.startsWith("data:") || trimmedHref.startsWith("blob:"))
+        if (trimmedHref.startsWith("data:") || trimmedHref.startsWith("blob:") || trimmedHref.startsWith("javascript:"))
             return href;
-        if (!sanitizeHref(trimmedHref))
-            return null; // Sanitize javascript URLs from content
 
         // Return absolute URLs as-is.
         var parsedHref = trimmedHref.asParsedURL();

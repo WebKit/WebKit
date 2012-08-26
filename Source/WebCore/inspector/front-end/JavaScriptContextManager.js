@@ -31,18 +31,31 @@
 /**
  * @constructor
  * @extends {WebInspector.Object}
+ * @param {WebInspector.ResourceTreeModel} resourceTreeModel
  */
-WebInspector.JavaScriptContextManager = function(resourceTreeModel, consoleView)
+WebInspector.JavaScriptContextManager = function(resourceTreeModel)
 {
     resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameAdded, this._frameAdded, this);
     resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
     resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, this._frameDetached, this);
     resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, this._didLoadCachedResources, this);
-    this._consoleView = consoleView;
     this._frameIdToContext = {};
 }
 
+WebInspector.JavaScriptContextManager.Events = {
+    FrameContextAdded: "FrameContextAdded",
+    FrameContextRemoved: "FrameContextRemoved",
+}
+
 WebInspector.JavaScriptContextManager.prototype = {
+    /**
+     * @return {Array.<WebInspector.FrameEvaluationContext>}
+     */
+    contexts: function()
+    {
+        return Object.values(this._frameIdToContext);
+    },
+
     /**
      * @param {WebInspector.ResourceTreeFrame} frame
      * @param {string} securityOrigin
@@ -58,7 +71,7 @@ WebInspector.JavaScriptContextManager.prototype = {
         var frame = event.data;
         var context = new WebInspector.FrameEvaluationContext(frame);
         this._frameIdToContext[frame.id] = context;
-        this._consoleView.addContext(context);
+        this.dispatchEventToListeners(WebInspector.JavaScriptContextManager.Events.FrameContextAdded, context);
     },
 
     _frameNavigated: function(event)
@@ -75,7 +88,7 @@ WebInspector.JavaScriptContextManager.prototype = {
         var context = this._frameIdToContext[frame.id];
         if (!context)
             return;
-        this._consoleView.removeContext(context);
+        this.dispatchEventToListeners(WebInspector.JavaScriptContextManager.Events.FrameContextRemoved, context);
         delete this._frameIdToContext[frame.id];
     },
 

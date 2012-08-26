@@ -484,7 +484,6 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     WebInspector.CSSCompletions.requestCSSNameCompletions();
 
     this.drawer = new WebInspector.Drawer();
-    this.consoleView = new WebInspector.ConsoleView(WebInspector.WorkerManager.isWorkerFrontend());
 
     this.networkManager = new WebInspector.NetworkManager();
     this.resourceTreeModel = new WebInspector.ResourceTreeModel(this.networkManager);
@@ -492,9 +491,10 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPaused, this);
     this.networkLog = new WebInspector.NetworkLog();
     this.domAgent = new WebInspector.DOMAgent();
-    this.javaScriptContextManager = new WebInspector.JavaScriptContextManager(this.resourceTreeModel, this.consoleView);
-
+    this.javaScriptContextManager = new WebInspector.JavaScriptContextManager(this.resourceTreeModel);
     this.scriptSnippetModel = new WebInspector.ScriptSnippetModel();
+
+    this.consoleView = new WebInspector.ConsoleView(WebInspector.WorkerManager.isWorkerFrontend());
 
     InspectorBackend.registerInspectorDispatcher(this);
 

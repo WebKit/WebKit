@@ -704,10 +704,8 @@ WebInspector.TextEditorDelegateForSourceFrame.prototype = {
      */
     createLink: function(hrefValue, isExternal)
     {
-        var targetLocation = hrefValue;
-        if (this._sourceFrame._url && hrefValue && hrefValue.indexOf("://") === -1)
-            targetLocation = WebInspector.ParsedURL.completeURL(this._sourceFrame._url, hrefValue);
-        return WebInspector.linkifyURLAsNode(targetLocation, hrefValue, undefined, isExternal);
+        var targetLocation = WebInspector.ParsedURL.completeURL(this._sourceFrame._url, hrefValue);
+        return WebInspector.linkifyURLAsNode(targetLocation || hrefValue, hrefValue, undefined, isExternal);
     }
 }
 

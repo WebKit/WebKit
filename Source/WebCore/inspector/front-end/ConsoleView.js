@@ -117,6 +117,10 @@ WebInspector.ConsoleView = function(hideContextSelector)
     this.prompt.attach(this.promptElement);
     this.prompt.proxyElement.addEventListener("keydown", this._promptKeyDown.bind(this), false);
     this.prompt.setHistoryData(WebInspector.settings.consoleHistory.get());
+
+    WebInspector.javaScriptContextManager.contexts().forEach(this._addContext, this);
+    WebInspector.javaScriptContextManager.addEventListener(WebInspector.JavaScriptContextManager.Events.FrameContextAdded, this._contextAdded, this);
+    WebInspector.javaScriptContextManager.addEventListener(WebInspector.JavaScriptContextManager.Events.FrameContextRemoved, this._contextRemoved, this);
 }
 
 WebInspector.ConsoleView.Events = {
@@ -130,7 +134,19 @@ WebInspector.ConsoleView.prototype = {
         return [this._clearConsoleButton.element, this._contextSelector.element, this._isolatedWorldSelector.element, this._filterBarElement];
     },
 
-    addContext: function(context)
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _contextAdded: function(event)
+    {
+        var context = /** @type {WebInspector.FrameEvaluationContext} */ event.data;
+        this._addContext(context);
+    },
+
+    /**
+     * @param {WebInspector.FrameEvaluationContext} context
+     */
+    _addContext: function(context)
     {
         var option = document.createElement("option");
         option.text = context.displayName;
@@ -143,8 +159,12 @@ WebInspector.ConsoleView.prototype = {
         this._updateIsolatedWorldSelector();
     },
 
-    removeContext: function(context)
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _contextRemoved: function(event)
     {
+        var context = /** @type {WebInspector.FrameEvaluationContext} */ event.data;
         this._contextSelector.removeOption(context._consoleOption);
         this._updateIsolatedWorldSelector();
     },
@@ -361,6 +381,9 @@ WebInspector.ConsoleView.prototype = {
         delete this._scrollIntoViewTimer;
     },
 
+    /**
+     * @param {WebInspector.Event} event
+     */
     _consoleMessageAdded: function(event)
     {
         this._appendConsoleMessage(event.data);
