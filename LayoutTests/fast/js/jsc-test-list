@@ -207,6 +207,7 @@ fast/js/JSON-stringify-replacer
 fast/js/keywords-and-reserved_words
 fast/js/large-expressions
 fast/js/logical-or-jless
+fast/js/legitimately-captured-argument
 fast/js/math-transforms
 fast/js/math
 fast/js/mod-by-zero

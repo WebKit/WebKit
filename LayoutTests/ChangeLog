@@ -1,3 +1,17 @@
+2012-08-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Don't allocate space for arguments and call frame if arguments aren't captured
+        https://bugs.webkit.org/show_bug.cgi?id=95024
+
+        Reviewed by Geoffrey Garen.
+
+        Test coverage for the case where an argument was legitimately captured.
+
+        * fast/js/jsc-test-list:
+        * fast/js/legitimately-captured-argument-expected.txt: Added.
+        * fast/js/legitimately-captured-argument.html: Added.
+        * fast/js/script-tests/legitimately-captured-argument.js: Added.
+
 2012-08-26  Robert Hogan  <robert@webkit.org>
 
         Suppress 6 failing tests on Qt.
