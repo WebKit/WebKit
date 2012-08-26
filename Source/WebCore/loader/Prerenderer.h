@@ -73,6 +73,7 @@ private:
     Document* document();
     PrerendererClient* client();
 
+    bool m_initializedClient;
     PrerendererClient* m_client;
     HandleVector m_activeHandles;
     HandleVector m_suspendedHandles;

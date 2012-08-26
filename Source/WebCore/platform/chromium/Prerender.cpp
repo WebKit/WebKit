@@ -65,7 +65,6 @@ void Prerender::add()
 
 void Prerender::cancel()
 {
-    ASSERT(WebKit::WebPrerenderingSupport::current());
     WebKit::WebPrerenderingSupport* platform = WebKit::WebPrerenderingSupport::current();
     if (!platform)
         return;

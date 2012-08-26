@@ -51,7 +51,6 @@ const AtomicString& PrerendererClient::supplementName()
 PrerendererClient* PrerendererClient::from(Page* page)
 {
     PrerendererClient* supplement = static_cast<PrerendererClient*>(Supplement<Page>::from(page, supplementName()));
-    ASSERT(supplement);
     return supplement;
 }
 

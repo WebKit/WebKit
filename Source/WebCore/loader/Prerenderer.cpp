@@ -59,6 +59,7 @@ PassOwnPtr<Prerenderer> Prerenderer::create(Document* document)
 
 Prerenderer::Prerenderer(Document* document)
     : ActiveDOMObject(document, this)
+    , m_initializedClient(false)
     , m_client(0)
 {
 }
@@ -80,7 +81,8 @@ PassRefPtr<PrerenderHandle> Prerenderer::render(const KURL& url)
 
     RefPtr<PrerenderHandle> prerenderHandle = PrerenderHandle::create(url, referrer, referrerPolicy);
 
-    client()->willAddPrerender(prerenderHandle.get());
+    if (client())
+        client()->willAddPrerender(prerenderHandle.get());
     prerenderHandle->add();
 
     m_activeHandles.append(prerenderHandle);
@@ -131,8 +133,12 @@ Document* Prerenderer::document()
 
 PrerendererClient* Prerenderer::client()
 {
-    if (!m_client)
+    if (!m_initializedClient) {
+        // We can't initialize the client in our contructor, because the platform might not have
+        // provided our supplement by then.
+        m_initializedClient = true;
         m_client = PrerendererClient::from(document()->page());
+    }
     return m_client;
 }
 
