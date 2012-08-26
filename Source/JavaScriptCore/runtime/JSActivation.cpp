@@ -32,7 +32,6 @@
 #include "Arguments.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
-#include "CopiedSpaceInlineMethods.h"
 
 using namespace std;
 

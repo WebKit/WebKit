@@ -30,9 +30,10 @@
 #define JSActivation_h
 
 #include "CodeBlock.h"
+#include "CopiedSpaceInlineMethods.h"
 #include "JSVariableObject.h"
-#include "SymbolTable.h"
 #include "Nodes.h"
+#include "SymbolTable.h"
 
 namespace JSC {
 

@@ -1,5 +1,12 @@
 2012-08-25  Geoffrey Garen  <ggaren@apple.com>
 
+        Try a little harder to fix the Linux build.
+
+        * runtime/JSActivation.cpp:
+        * runtime/JSActivation.h:
+
+2012-08-25  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix the Linux build.
 
         * runtime/JSActivation.cpp:
