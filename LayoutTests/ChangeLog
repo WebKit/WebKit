@@ -1,3 +1,11 @@
+2012-08-26  Robert Hogan  <robert@webkit.org>
+
+        Suppress test requiring rebaseline after r126683
+
+        Unreviewed, gardening.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-26  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: make ConsoleView listen to the JavaScriptContextManager

@@ -3644,3 +3644,4 @@ BUGWK84286 MAC : tables/mozilla/bugs/bug44505.html = TEXT
 BUGWK84286 MAC : tables/mozilla/bugs/bug68912.html = TEXT
 BUGWK84286 MAC : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = TEXT
 BUGWK84286 MAC : tables/mozilla_expected_failures/collapsing_borders/bug41262-6.html = TEXT
+BUGWK84286 MAC : fast/repaint/control-clip.html = IMAGE+TEXT
