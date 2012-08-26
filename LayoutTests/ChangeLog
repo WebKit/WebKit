@@ -1,3 +1,16 @@
+2012-08-25  David Barton  <dbarton@mathscribe.com>
+
+        Remove { vertical-align: baseline } declarations from mathml.css
+        https://bugs.webkit.org/show_bug.cgi?id=95015
+
+        Reviewed by Eric Seidel.
+
+        Added 1 test to mathml/presentation/subsup.xhtml.
+
+        * mathml/presentation/subsup.xhtml:
+        * platform/mac/mathml/presentation/subsup-expected.png:
+        * platform/mac/mathml/presentation/subsup-expected.txt:
+
 2012-08-25  Philip Rogers  <pdr@google.com>
 
         Roll out r126056 and r126626

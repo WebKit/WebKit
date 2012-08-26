@@ -14,7 +14,6 @@ math {
     padding: 0px;
     margin: 0px;
     text-align: left;
-    vertical-align: baseline;
     padding-left: 1px;
     padding-right: 1px;
 }
@@ -31,7 +30,6 @@ math[display="block"] {
 mrow, mfenced {
     display: inline-block;
     white-space: nowrap;
-    vertical-align: baseline;
 }
 
 mfenced {
@@ -54,7 +52,6 @@ mfrac {
 
 msub, msup {
     display: inline-block;
-    vertical-align: baseline;
 }
 
 msub > * + * {
@@ -69,7 +66,6 @@ msup > * + * {
 
 msubsup {
     display: inline-block;
-    vertical-align: baseline;
 }
 
 msubsup > * {
@@ -83,7 +79,6 @@ msubsup > * + * {
 
 munder, mover, munderover {
     display: inline-block;
-    vertical-align: baseline;
 }
 
 munderover > * + *, mover > * + *, munder > * + * {

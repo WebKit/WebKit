@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x262
-  RenderBlock {html} at (0,0) size 800x262
-    RenderBody {body} at (8,16) size 784x230
+layer at (0,0) size 800x298
+  RenderBlock {html} at (0,0) size 800x298
+    RenderBody {body} at (8,16) size 784x266
       RenderBlock {p} at (0,0) size 784x21
         RenderText {#text} at (0,0) size 36x18
           text run at (0,0) width 36: "both: "
@@ -220,6 +220,35 @@ layer at (0,0) size 800x262
                 RenderInline {mi} at (0,0) size 6x18
                   RenderText {#text} at (0,-7) size 6x18
                     text run at (0,-7) width 6: "n"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,246) size 784x20
+        RenderText {#text} at (0,2) size 26x18
+          text run at (0,2) width 26: "For "
+        RenderInline {a} at (0,0) size 71x18 [color=#0000EE]
+          RenderText {#text} at (26,2) size 71x18
+            text run at (26,2) width 71: "Bug 95015"
+        RenderText {#text} at (97,2) size 430x18
+          text run at (97,2) width 430: " - Remove { vertical-align: baseline } declarations from mathml.css: "
+        RenderMathMLMath {math} at (527,0) size 20x17 [padding: 0 1 0 1]
+          RenderMathMLSubSup {msup} at (1,0) size 18x17
+            RenderMathMLBlock (anonymous, inline-block) at (0,8) size 7x9
+              RenderInline {mi} at (0,0) size 7x24
+                RenderText {#text} at (0,-9) size 7x24
+                  text run at (0,-9) width 7: "x"
+            RenderMathMLSubSup {msubsup} at (7,0) size 11x16
+              RenderMathMLBlock (anonymous, inline-block) at (0,0) size 5x13 [padding: 4 0 0 0]
+                RenderInline {mi} at (0,0) size 5x18
+                  RenderText {#text} at (0,-3) size 5x18
+                    text run at (0,-3) width 5: "y"
+              RenderMathMLBlock (anonymous, inline-block) at (6,0) size 5x16
+                RenderMathMLBlock (anonymous, block) at (0,0) size 5x8
+                  RenderInline {mn} at (0,0) size 5x13
+                    RenderText {#text} at (0,-2) size 5x13
+                      text run at (0,-2) width 5: "2"
+                RenderMathMLBlock (anonymous, block) at (0,8) size 5x8
+                  RenderInline {mn} at (0,0) size 5x13
+                    RenderText {#text} at (0,-2) size 5x13
+                      text run at (0,-2) width 5: "1"
         RenderText {#text} at (0,0) size 0x0
 layer at (238,207) size 5x10 scrollHeight 18
   RenderMathMLBlock (block) {mfenced} at (0,0) size 5x10
