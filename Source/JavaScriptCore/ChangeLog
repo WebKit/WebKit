@@ -1,5 +1,11 @@
 2012-08-25  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the Linux build.
+
+        * runtime/JSActivation.cpp:
+
+2012-08-25  Geoffrey Garen  <ggaren@apple.com>
+
         Don't use malloc / destructors for activation objects
         https://bugs.webkit.org/show_bug.cgi?id=94897
 
