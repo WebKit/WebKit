@@ -2406,7 +2406,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[3].u.operand];
             Identifier identifier = m_codeBlock->identifier(identifierNumber);
-            SymbolTableEntry entry = globalObject->symbolTable().get(identifier.impl());
+            SymbolTableEntry entry = globalObject->symbolTable()->get(identifier.impl());
             if (!entry.couldBeWatched()) {
                 NodeIndex getGlobalVar = addToGraph(
                     GetGlobalVar,
@@ -2459,7 +2459,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             JSGlobalObject* globalObject = codeBlock->globalObject();
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[4].u.operand];
             Identifier identifier = m_codeBlock->identifier(identifierNumber);
-            SymbolTableEntry entry = globalObject->symbolTable().get(identifier.impl());
+            SymbolTableEntry entry = globalObject->symbolTable()->get(identifier.impl());
             if (!entry.couldBeWatched()) {
                 addToGraph(
                     PutGlobalVar,

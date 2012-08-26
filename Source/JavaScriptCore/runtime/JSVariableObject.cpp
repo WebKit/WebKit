@@ -31,9 +31,4 @@
 
 namespace JSC {
 
-void JSVariableObject::destroy(JSCell* cell)
-{
-    static_cast<JSVariableObject*>(cell)->JSVariableObject::~JSVariableObject();
-}
-
 } // namespace JSC

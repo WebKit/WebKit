@@ -1260,7 +1260,7 @@ ResolveResult BytecodeGenerator::resolve(const Identifier& property)
             break;
         }
         JSSymbolTableObject* currentVariableObject = jsCast<JSSymbolTableObject*>(currentScope);
-        SymbolTableEntry entry = currentVariableObject->symbolTable().get(property.impl());
+        SymbolTableEntry entry = currentVariableObject->symbolTable()->get(property.impl());
 
         // Found the property
         if (!entry.isNull()) {
@@ -1327,7 +1327,7 @@ ResolveResult BytecodeGenerator::resolveConstDecl(const Identifier& property)
         if (!currentScope->isVariableObject())
             continue;
         JSSymbolTableObject* currentVariableObject = jsCast<JSSymbolTableObject*>(currentScope);
-        SymbolTableEntry entry = currentVariableObject->symbolTable().get(property.impl());
+        SymbolTableEntry entry = currentVariableObject->symbolTable()->get(property.impl());
         if (entry.isNull())
             continue;
         if (++iter == end)
@@ -1583,7 +1583,7 @@ RegisterID* BytecodeGenerator::emitPutStaticVar(const ResolveResult& resolveResu
         emitOpcode(op_put_global_var_check);
         instructions().append(resolveResult.registerPointer());
         instructions().append(value->index());
-        instructions().append(jsCast<JSGlobalObject*>(resolveResult.globalObject())->symbolTable().get(identifier.impl()).addressOfIsWatched());
+        instructions().append(jsCast<JSGlobalObject*>(resolveResult.globalObject())->symbolTable()->get(identifier.impl()).addressOfIsWatched());
         instructions().append(addConstant(identifier));
         return value;
 

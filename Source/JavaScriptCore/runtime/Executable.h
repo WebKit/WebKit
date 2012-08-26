@@ -662,7 +662,7 @@ namespace JSC {
         size_t parameterCount() const { return m_parameters->size(); } // Excluding 'this'!
         unsigned capturedVariableCount() const { return m_numCapturedVariables; }
         UString paramString() const;
-        SharedSymbolTable* symbolTable() const { return m_symbolTable; }
+        SharedSymbolTable* symbolTable() const { return m_symbolTable.get(); }
 
         void clearCodeIfNotCompiling();
         static void visitChildren(JSCell*, SlotVisitor&);
@@ -723,7 +723,7 @@ namespace JSC {
         Identifier m_name;
         Identifier m_inferredName;
         WriteBarrier<JSString> m_nameValue;
-        SharedSymbolTable* m_symbolTable;
+        WriteBarrier<SharedSymbolTable> m_symbolTable;
     };
 
     inline FunctionExecutable* JSFunction::jsExecutable() const

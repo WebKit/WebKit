@@ -113,7 +113,7 @@ template <typename T> static inline void visitIfNeeded(SlotVisitor& visitor, Wri
 }
 
 JSGlobalObject::JSGlobalObject(JSGlobalData& globalData, Structure* structure, const GlobalObjectMethodTable* globalObjectMethodTable)
-    : JSSegmentedVariableObject(globalData, structure, &m_symbolTable)
+    : JSSegmentedVariableObject(globalData, structure)
     , m_globalScopeChain()
     , m_masqueradesAsUndefinedWatchpoint(adoptRef(new WatchpointSet(InitializedWatching)))
     , m_weakRandom(Options::forceWeakRandomSeed() ? Options::forcedWeakRandomSeed() : static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
@@ -414,9 +414,9 @@ void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
         GlobalPropertyInfo& global = globals[i];
         ASSERT(global.attributes & DontDelete);
         
-        int index = symbolTable().size();
+        int index = symbolTable()->size();
         SymbolTableEntry newEntry(index, global.attributes);
-        symbolTable().add(global.identifier.impl(), newEntry);
+        symbolTable()->add(global.identifier.impl(), newEntry);
         registerAt(index).set(globalData(), this, global.value);
     }
 }

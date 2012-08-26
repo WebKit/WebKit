@@ -65,6 +65,8 @@ namespace JSC {
         template<typename T> friend void* allocateCell(Heap&);
 
     public:
+        static const unsigned StructureFlags = 0;
+
         enum CreatingEarlyCellTag { CreatingEarlyCell };
         JSCell(CreatingEarlyCellTag);
 

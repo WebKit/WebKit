@@ -149,8 +149,6 @@ namespace JSC {
 
         WeakRandom m_weakRandom;
 
-        SymbolTable m_symbolTable;
-
         bool m_evalEnabled;
         bool m_experimentsEnabled;
 
@@ -376,7 +374,7 @@ namespace JSC {
 
     inline bool JSGlobalObject::symbolTableHasProperty(PropertyName propertyName)
     {
-        SymbolTableEntry entry = symbolTable().inlineGet(propertyName.publicName());
+        SymbolTableEntry entry = symbolTable()->inlineGet(propertyName.publicName());
         return !entry.isNull();
     }
 

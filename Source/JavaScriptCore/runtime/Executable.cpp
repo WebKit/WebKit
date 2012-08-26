@@ -140,7 +140,6 @@ FunctionExecutable::FunctionExecutable(JSGlobalData& globalData, const Identifie
     , m_parameters(parameters)
     , m_name(name)
     , m_inferredName(inferredName.isNull() ? globalData.propertyNames->emptyIdentifier : inferredName)
-    , m_symbolTable(0)
 {
 }
 
@@ -151,7 +150,6 @@ FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, 
     , m_parameters(parameters)
     , m_name(name)
     , m_inferredName(inferredName.isNull() ? exec->globalData().propertyNames->emptyIdentifier : inferredName)
-    , m_symbolTable(0)
 {
 }
 
@@ -349,7 +347,7 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
         OwnPtr<CodeBlock> previousCodeBlock = m_programCodeBlock.release();
         ASSERT((jitType == JITCode::bottomTierJIT()) == !previousCodeBlock);
         m_programCodeBlock = adoptPtr(new ProgramCodeBlock(this, GlobalCode, globalObject, source().provider(), previousCodeBlock.release()));
-        OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(programNode.get(), scopeChainNode, &globalObject->symbolTable(), m_programCodeBlock.get(), !!m_programCodeBlock->alternative() ? OptimizingCompilation : FirstCompilation)));
+        OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(programNode.get(), scopeChainNode, globalObject->symbolTable(), m_programCodeBlock.get(), !!m_programCodeBlock->alternative() ? OptimizingCompilation : FirstCompilation)));
         if ((exception = generator->generate())) {
             m_programCodeBlock = static_pointer_cast<ProgramCodeBlock>(m_programCodeBlock->releaseAlternative());
             programNode->destroyData();
@@ -526,7 +524,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
     m_numParametersForCall = m_codeBlockForCall->numParameters();
     ASSERT(m_numParametersForCall);
     m_numCapturedVariables = m_codeBlockForCall->m_numCapturedVars;
-    m_symbolTable = m_codeBlockForCall->sharedSymbolTable();
+    m_symbolTable.set(exec->globalData(), this, m_codeBlockForCall->symbolTable());
 
 #if ENABLE(JIT)
     if (!prepareFunctionForExecution(exec, m_codeBlockForCall, m_jitCodeForCall, m_jitCodeForCallWithArityCheck, m_symbolTable, jitType, bytecodeIndex, CodeForCall))
@@ -569,7 +567,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
     m_numParametersForConstruct = m_codeBlockForConstruct->numParameters();
     ASSERT(m_numParametersForConstruct);
     m_numCapturedVariables = m_codeBlockForConstruct->m_numCapturedVars;
-    m_symbolTable = m_codeBlockForConstruct->sharedSymbolTable();
+    m_symbolTable.set(exec->globalData(), this, m_codeBlockForConstruct->symbolTable());
 
 #if ENABLE(JIT)
     if (!prepareFunctionForExecution(exec, m_codeBlockForConstruct, m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, m_symbolTable, jitType, bytecodeIndex, CodeForConstruct))
@@ -615,6 +613,8 @@ void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ScriptExecutable::visitChildren(thisObject, visitor);
     if (thisObject->m_nameValue)
         visitor.append(&thisObject->m_nameValue);
+    if (thisObject->m_symbolTable)
+        visitor.append(&thisObject->m_symbolTable);
     if (thisObject->m_codeBlockForCall)
         thisObject->m_codeBlockForCall->visitAggregate(visitor);
     if (thisObject->m_codeBlockForConstruct)

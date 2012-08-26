@@ -325,12 +325,28 @@ namespace JSC {
 
     typedef HashMap<RefPtr<StringImpl>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<StringImpl> >, SymbolTableIndexHashTraits> SymbolTable;
 
-    class SharedSymbolTable : public SymbolTable, public RefCounted<SharedSymbolTable> {
-        WTF_MAKE_FAST_ALLOCATED;
+    class SharedSymbolTable : public JSCell, public SymbolTable {
     public:
-        static PassRefPtr<SharedSymbolTable> create() { return adoptRef(new SharedSymbolTable); }
+        static SharedSymbolTable* create(JSGlobalData& globalData)
+        {
+            SharedSymbolTable* sharedSymbolTable = new (NotNull, allocateCell<SharedSymbolTable>(globalData.heap)) SharedSymbolTable(globalData);
+            sharedSymbolTable->finishCreation(globalData);
+            return sharedSymbolTable;
+        }
+        static void destroy(JSCell*);
+
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+        {
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(LeafType, StructureFlags), &s_info);
+        }
+
+        static JS_EXPORTDATA const ClassInfo s_info;
+
     private:
-        SharedSymbolTable() { }
+        SharedSymbolTable(JSGlobalData& globalData)
+            : JSCell(globalData, globalData.sharedSymbolTableStructure.get())
+        {
+        }
     };
     
 } // namespace JSC

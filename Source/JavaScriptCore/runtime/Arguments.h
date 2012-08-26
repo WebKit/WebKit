@@ -49,7 +49,7 @@ namespace JSC {
         bool overrodeCaller;
         bool isStrictMode;
 
-        WriteBarrier<Unknown>* registers;
+        WriteBarrierBase<Unknown>* registers;
         OwnArrayPtr<WriteBarrier<Unknown> > registerArray;
 
         OwnArrayPtr<bool> deletedArguments;
@@ -110,6 +110,7 @@ namespace JSC {
             d->activation.set(globalData, this, activation);
             d->registers = &activation->registerAt(0);
         }
+        void setRegisters(WriteBarrierBase<Unknown>* registers) { d->registers = registers; }
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype) 
         { 
@@ -138,7 +139,7 @@ namespace JSC {
         void createStrictModeCallerIfNecessary(ExecState*);
         void createStrictModeCalleeIfNecessary(ExecState*);
 
-        WriteBarrier<Unknown>& argument(size_t);
+        WriteBarrierBase<Unknown>& argument(size_t);
 
         void init(CallFrame*);
 
@@ -165,7 +166,7 @@ namespace JSC {
     {
     }
 
-    inline WriteBarrier<Unknown>& Arguments::argument(size_t i)
+    inline WriteBarrierBase<Unknown>& Arguments::argument(size_t i)
     {
         return d->registers[CallFrame::argumentOffset(i)];
     }
@@ -177,7 +178,7 @@ namespace JSC {
 
         JSFunction* callee = jsCast<JSFunction*>(callFrame->callee());
         d->numArguments = callFrame->argumentCount();
-        d->registers = reinterpret_cast<WriteBarrier<Unknown>*>(callFrame->registers());
+        d->registers = reinterpret_cast<WriteBarrierBase<Unknown>*>(callFrame->registers());
         d->callee.set(callFrame->globalData(), this, callee);
         d->overrodeLength = false;
         d->overrodeCallee = false;
@@ -197,7 +198,7 @@ namespace JSC {
 
         JSFunction* callee = inlineCallFrame->callee.get();
         d->numArguments = inlineCallFrame->arguments.size() - 1;
-        d->registers = reinterpret_cast<WriteBarrier<Unknown>*>(callFrame->registers()) + inlineCallFrame->stackOffset;
+        d->registers = reinterpret_cast<WriteBarrierBase<Unknown>*>(callFrame->registers()) + inlineCallFrame->stackOffset;
         d->callee.set(callFrame->globalData(), this, callee);
         d->overrodeLength = false;
         d->overrodeCallee = false;

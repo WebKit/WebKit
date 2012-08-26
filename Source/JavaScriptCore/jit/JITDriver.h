@@ -75,7 +75,7 @@ inline bool jitCompileIfAppropriate(ExecState* exec, OwnPtr<CodeBlockType>& code
     return true;
 }
 
-inline bool jitCompileFunctionIfAppropriate(ExecState* exec, OwnPtr<FunctionCodeBlock>& codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, SharedSymbolTable*& symbolTable, JITCode::JITType jitType, unsigned bytecodeIndex, JITCompilationEffort effort)
+inline bool jitCompileFunctionIfAppropriate(ExecState* exec, OwnPtr<FunctionCodeBlock>& codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, WriteBarrier<SharedSymbolTable>& symbolTable, JITCode::JITType jitType, unsigned bytecodeIndex, JITCompilationEffort effort)
 {
     JSGlobalData& globalData = exec->globalData();
     
@@ -99,7 +99,7 @@ inline bool jitCompileFunctionIfAppropriate(ExecState* exec, OwnPtr<FunctionCode
     } else {
         if (codeBlock->alternative()) {
             codeBlock = static_pointer_cast<FunctionCodeBlock>(codeBlock->releaseAlternative());
-            symbolTable = codeBlock->sharedSymbolTable();
+            symbolTable.set(exec->globalData(), codeBlock->ownerExecutable(), codeBlock->symbolTable());
             jitCode = oldJITCode;
             jitCodeWithArityCheck = oldJITCodeWithArityCheck;
             return false;

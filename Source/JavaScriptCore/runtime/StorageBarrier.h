@@ -66,6 +66,8 @@ public:
     
     ConstPropertyStorage get() const { return m_storage; }
     PropertyStorage get() { return m_storage; }
+
+    bool operator!() { return !m_storage; }
     
 private:
     PropertyStorage m_storage;

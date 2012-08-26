@@ -1,3 +1,160 @@
+2012-08-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Don't use malloc / destructors for activation objects
+        https://bugs.webkit.org/show_bug.cgi?id=94897
+
+        Reviewed by Oliver Hunt.
+
+        65% faster on v8-real-earley.
+
+        Lots of boilerplate here, but the jist is this:
+
+        (1) Use CopiedSpace instead of malloc to allocate the activation's
+        backing store.
+
+        (2) Use MarkedSpace instead of ref-counting to allocate the symbol table.
+
+        (3) ==> No more destructor.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::symbolTable):
+        (CodeBlock):
+        (JSC::GlobalCodeBlock::GlobalCodeBlock):
+        (JSC::FunctionCodeBlock::FunctionCodeBlock):
+        (FunctionCodeBlock): SymbolTable is a GC object now, so it gets a write
+        barrier and visit calls instead of ref-counting. I changed all CodeBlocks
+        to use shared symbol tables because the distinction between shared and
+        unshared hurt my head.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::resolve):
+        (JSC::BytecodeGenerator::resolveConstDecl):
+        (JSC::BytecodeGenerator::emitPutStaticVar):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Sometimes, a period just wants
+        to be an arrow. And then C++ is there to accommodate.
+
+        * jit/JITDriver.h:
+        (JSC::jitCompileFunctionIfAppropriate):
+        * runtime/Arguments.h:
+        (ArgumentsData):
+        (JSC::Arguments::setRegisters):
+        (Arguments):
+        (JSC::Arguments::argument):
+        (JSC::Arguments::finishCreation):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        (JSC::FunctionExecutable::visitChildren):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::symbolTable):
+        (FunctionExecutable):
+        * runtime/ExecutionHarness.h:
+        (JSC::prepareFunctionForExecution): I changed from WriteBarrier to
+        WriteBarrierBase so activations could reuse StorageBarrier and PropertyStorage.
+
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::JSActivation):
+        (JSC::JSActivation::finishCreation): Allocate the symbol table here,
+        after we're fully constructed, to avoid GC during initialization.
+
+        (JSC::JSActivation::visitChildren):
+        (JSC::JSActivation::symbolTableGet):
+        (JSC::JSActivation::symbolTablePut):
+        (JSC::JSActivation::getOwnPropertyNames):
+        (JSC::JSActivation::symbolTablePutWithAttributes):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::create):
+        (JSActivation):
+        (JSC::JSActivation::registerOffset):
+        (JSC):
+        (JSC::JSActivation::registerArraySize):
+        (JSC::JSActivation::registerArraySizeInBytes):
+        (JSC::JSActivation::tearOff): Tear-off zero-initializes all uncopied
+        registers. This makes it safe to copyAndAppend the full buffer in
+        visitChildren, without any extra checks.
+
+        * runtime/JSCell.h:
+        (JSCell): Moved a shared default set of flags into this base class, so
+        I could use it in a few places.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData): New structure for symbol tables.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::addStaticGlobals):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::symbolTableHasProperty): We don't need an inline
+        symbol table -- JSSymbolTableObject will GC allocate one for us.
+
+        * runtime/JSObject.h:
+        (JSObject):
+        * runtime/JSSegmentedVariableObject.h:
+        (JSC::JSSegmentedVariableObject::JSSegmentedVariableObject):
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC):
+        (JSC::JSStaticScopeObject::visitChildren): NULL check our register store
+        because finishCreation allocates an object now, so we may get marked
+        before we've assigned to our register store.
+
+        * runtime/JSStaticScopeObject.h:
+        (JSC::JSStaticScopeObject::finishCreation):
+        (JSC::JSStaticScopeObject::JSStaticScopeObject):
+        (JSStaticScopeObject): No more destructor for this object, either, since
+        it no longer embeds a hash table.
+
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::visitChildren):
+        (JSC::JSSymbolTableObject::deleteProperty):
+        (JSC::JSSymbolTableObject::getOwnPropertyNames):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::JSSymbolTableObject::symbolTable):
+        (JSSymbolTableObject):
+        (JSC::JSSymbolTableObject::JSSymbolTableObject):
+        (JSC::JSSymbolTableObject::finishCreation):
+        (JSC::symbolTableGet):
+        (JSC::symbolTablePut):
+        (JSC::symbolTablePutWithAttributes): SymbolTableObject allocates a symbol
+        table automatically if one isn't provided. (Activations provide their
+        own, which they get from compiled code.)
+
+        * runtime/JSVariableObject.cpp:
+        (JSC):
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::registerAt):
+        (JSC::JSVariableObject::addressOfRegisters):
+        (JSVariableObject):
+        (JSC::JSVariableObject::JSVariableObject):
+        (JSC::JSVariableObject::finishCreation): Removed a bunch of obsolete code.
+        Activations manage their registers directly now.
+
+        * runtime/StorageBarrier.h:
+        (StorageBarrier):
+        (JSC::StorageBarrier::operator!):
+
+        * runtime/SymbolTable.cpp:
+        (JSC):
+        (JSC::SharedSymbolTable::destroy):
+        * runtime/SymbolTable.h:
+        (JSC::SharedSymbolTable::create):
+        (SharedSymbolTable):
+        (JSC::SharedSymbolTable::createStructure):
+        (JSC::SharedSymbolTable::SharedSymbolTable): Boilerplat code to
+        make shared symbol table GC-allocated.
+
 2012-08-25  Filip Pizlo  <fpizlo@apple.com>
 
         op_call should have ArrayProfiling for the benefit of array intrinsics

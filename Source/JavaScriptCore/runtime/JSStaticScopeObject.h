@@ -58,19 +58,16 @@ namespace JSC{
         {
             Base::finishCreation(exec->globalData());
             m_registerStore.set(exec->globalData(), this, value);
-            symbolTable().add(identifier.impl(), SymbolTableEntry(-1, attributes));
+            symbolTable()->add(identifier.impl(), SymbolTableEntry(-1, attributes));
         }
         static const unsigned StructureFlags = IsEnvironmentRecord | OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
 
     private:
         JSStaticScopeObject(ExecState* exec)
-            : JSVariableObject(exec->globalData(), exec->globalData().staticScopeStructure.get(), &m_symbolTable, reinterpret_cast<Register*>(&m_registerStore + 1))
+            : JSVariableObject(exec->globalData(), exec->globalData().staticScopeStructure.get(), reinterpret_cast<Register*>(&m_registerStore + 1))
         {
         }
 
-        static void destroy(JSCell*);
-
-        SymbolTable m_symbolTable;
         WriteBarrier<Unknown> m_registerStore;
     };
 

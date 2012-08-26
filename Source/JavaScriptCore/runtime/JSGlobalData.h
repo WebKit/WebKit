@@ -238,6 +238,7 @@ namespace JSC {
         Strong<Structure> programExecutableStructure;
         Strong<Structure> functionExecutableStructure;
         Strong<Structure> regExpStructure;
+        Strong<Structure> sharedSymbolTableStructure;
         Strong<Structure> structureChainStructure;
 
         IdentifierTable* identifierTable;

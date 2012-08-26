@@ -31,6 +31,8 @@
 
 namespace JSC {
 
+const ClassInfo SharedSymbolTable::s_info = { "SharedSymbolTable", 0, 0, 0, CREATE_METHOD_TABLE(SharedSymbolTable) };
+
 SymbolTableEntry& SymbolTableEntry::copySlow(const SymbolTableEntry& other)
 {
     ASSERT(other.isFat());
@@ -38,6 +40,12 @@ SymbolTableEntry& SymbolTableEntry::copySlow(const SymbolTableEntry& other)
     freeFatEntry();
     m_bits = bitwise_cast<intptr_t>(newFatEntry) | FatFlag;
     return *this;
+}
+
+void SharedSymbolTable::destroy(JSCell* cell)
+{
+    SharedSymbolTable* thisObject = jsCast<SharedSymbolTable*>(cell);
+    thisObject->SharedSymbolTable::~SharedSymbolTable();
 }
 
 void SymbolTableEntry::freeFatEntrySlow()

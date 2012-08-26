@@ -314,8 +314,6 @@ namespace JSC {
             return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
-        static const unsigned StructureFlags = 0;
-
         // To instantiate objects you likely want JSFinalObject, below.
         // To create derived types you likely want JSNonFinalObject, below.
         JSObject(JSGlobalData&, Structure*);

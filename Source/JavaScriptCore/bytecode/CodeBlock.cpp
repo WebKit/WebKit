@@ -1678,7 +1678,7 @@ void CodeBlock::dumpStatistics()
 #endif
 }
 
-CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other, SymbolTable* symTab)
+CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     : m_globalObject(other.m_globalObject)
     , m_heap(other.m_heap)
     , m_numCalleeRegisters(other.m_numCalleeRegisters)
@@ -1710,7 +1710,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other, SymbolTable* symTab)
     , m_constantRegisters(other.m_constantRegisters)
     , m_functionDecls(other.m_functionDecls)
     , m_functionExprs(other.m_functionExprs)
-    , m_symbolTable(symTab)
+    , m_symbolTable(*other.m_globalData, other.m_ownerExecutable.get(), other.symbolTable())
     , m_osrExitCounter(0)
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
@@ -1744,7 +1744,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other, SymbolTable* symTab)
     }
 }
 
-CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlobalObject *globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, SymbolTable* symTab, bool isConstructor, PassOwnPtr<CodeBlock> alternative)
+CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlobalObject *globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, bool isConstructor, PassOwnPtr<CodeBlock> alternative)
     : m_globalObject(globalObject->globalData(), ownerExecutable, globalObject)
     , m_heap(&m_globalObject->globalData().heap)
     , m_numCalleeRegisters(0)
@@ -1764,7 +1764,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
 #if ENABLE(VALUE_PROFILER)
     , m_executionEntryCount(0)
 #endif
-    , m_symbolTable(symTab)
+    , m_symbolTable(globalObject->globalData(), ownerExecutable, SharedSymbolTable::create(globalObject->globalData()))
     , m_alternative(alternative)
     , m_osrExitCounter(0)
     , m_optimizationDelayCounter(0)
@@ -2222,6 +2222,7 @@ void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
 {
     visitor.append(&m_globalObject);
     visitor.append(&m_ownerExecutable);
+    visitor.append(&m_symbolTable);
     if (m_rareData) {
         m_rareData->m_evalCodeCache.visitAggregate(visitor);
         size_t regExpCount = m_rareData->m_regexps.size();

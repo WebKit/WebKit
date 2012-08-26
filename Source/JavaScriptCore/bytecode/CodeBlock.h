@@ -118,9 +118,9 @@ namespace JSC {
     public:
         enum CopyParsedBlockTag { CopyParsedBlock };
     protected:
-        CodeBlock(CopyParsedBlockTag, CodeBlock& other, SymbolTable*);
+        CodeBlock(CopyParsedBlockTag, CodeBlock& other);
         
-        CodeBlock(ScriptExecutable* ownerExecutable, CodeType, JSGlobalObject*, PassRefPtr<SourceProvider>, unsigned sourceOffset, SymbolTable*, bool isConstructor, PassOwnPtr<CodeBlock> alternative);
+        CodeBlock(ScriptExecutable* ownerExecutable, CodeType, JSGlobalObject*, PassRefPtr<SourceProvider>, unsigned sourceOffset, bool isConstructor, PassOwnPtr<CodeBlock> alternative);
 
         WriteBarrier<JSGlobalObject> m_globalObject;
         Heap* m_heap;
@@ -949,8 +949,7 @@ namespace JSC {
         StringJumpTable& stringSwitchJumpTable(int tableIndex) { ASSERT(m_rareData); return m_rareData->m_stringSwitchJumpTables[tableIndex]; }
 
 
-        SymbolTable* symbolTable() { return m_symbolTable; }
-        SharedSymbolTable* sharedSymbolTable() { ASSERT(m_codeType == FunctionCode); return static_cast<SharedSymbolTable*>(m_symbolTable); }
+        SharedSymbolTable* symbolTable() { return m_symbolTable.get(); }
 
         EvalCodeCache& evalCodeCache() { createRareDataIfNecessary(); return m_rareData->m_evalCodeCache; }
 
@@ -1361,7 +1360,7 @@ namespace JSC {
         Vector<WriteBarrier<FunctionExecutable> > m_functionDecls;
         Vector<WriteBarrier<FunctionExecutable> > m_functionExprs;
 
-        SymbolTable* m_symbolTable;
+        WriteBarrier<SharedSymbolTable> m_symbolTable;
 
         OwnPtr<CodeBlock> m_alternative;
         
@@ -1423,18 +1422,14 @@ namespace JSC {
     class GlobalCodeBlock : public CodeBlock {
     protected:
         GlobalCodeBlock(CopyParsedBlockTag, GlobalCodeBlock& other)
-            : CodeBlock(CopyParsedBlock, other, &m_unsharedSymbolTable)
-            , m_unsharedSymbolTable(other.m_unsharedSymbolTable)
+            : CodeBlock(CopyParsedBlock, other)
         {
         }
         
         GlobalCodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, PassOwnPtr<CodeBlock> alternative)
-            : CodeBlock(ownerExecutable, codeType, globalObject, sourceProvider, sourceOffset, &m_unsharedSymbolTable, false, alternative)
+            : CodeBlock(ownerExecutable, codeType, globalObject, sourceProvider, sourceOffset, false, alternative)
         {
         }
-
-    private:
-        SymbolTable m_unsharedSymbolTable;
     };
 
     class ProgramCodeBlock : public GlobalCodeBlock {
@@ -1501,25 +1496,13 @@ namespace JSC {
     class FunctionCodeBlock : public CodeBlock {
     public:
         FunctionCodeBlock(CopyParsedBlockTag, FunctionCodeBlock& other)
-            : CodeBlock(CopyParsedBlock, other, other.sharedSymbolTable())
+            : CodeBlock(CopyParsedBlock, other)
         {
-            // The fact that we have to do this is yucky, but is necessary because of the
-            // class hierarchy issues described in the comment block for the main
-            // constructor, below.
-            sharedSymbolTable()->ref();
         }
 
-        // Rather than using the usual RefCounted::create idiom for SharedSymbolTable we just use new
-        // as we need to initialise the CodeBlock before we could initialise any RefPtr to hold the shared
-        // symbol table, so we just pass as a raw pointer with a ref count of 1.  We then manually deref
-        // in the destructor.
         FunctionCodeBlock(FunctionExecutable* ownerExecutable, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, bool isConstructor, PassOwnPtr<CodeBlock> alternative = nullptr)
-            : CodeBlock(ownerExecutable, codeType, globalObject, sourceProvider, sourceOffset, SharedSymbolTable::create().leakRef(), isConstructor, alternative)
+            : CodeBlock(ownerExecutable, codeType, globalObject, sourceProvider, sourceOffset, isConstructor, alternative)
         {
-        }
-        ~FunctionCodeBlock()
-        {
-            sharedSymbolTable()->deref();
         }
         
 #if ENABLE(JIT)

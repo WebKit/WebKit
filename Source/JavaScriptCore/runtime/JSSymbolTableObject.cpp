@@ -36,15 +36,20 @@
 
 namespace JSC {
 
-void JSSymbolTableObject::destroy(JSCell* cell)
+void JSSymbolTableObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    static_cast<JSSymbolTableObject*>(cell)->JSSymbolTableObject::~JSSymbolTableObject();
+    JSSymbolTableObject* thisObject = jsCast<JSSymbolTableObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+    visitor.append(&thisObject->m_symbolTable);
 }
 
 bool JSSymbolTableObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     JSSymbolTableObject* thisObject = jsCast<JSSymbolTableObject*>(cell);
-    if (thisObject->symbolTable().contains(propertyName.publicName()))
+    if (thisObject->symbolTable()->contains(propertyName.publicName()))
         return false;
 
     return JSObject::deleteProperty(thisObject, exec, propertyName);
@@ -53,8 +58,8 @@ bool JSSymbolTableObject::deleteProperty(JSCell* cell, ExecState* exec, Property
 void JSSymbolTableObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSSymbolTableObject* thisObject = jsCast<JSSymbolTableObject*>(object);
-    SymbolTable::const_iterator end = thisObject->symbolTable().end();
-    for (SymbolTable::const_iterator it = thisObject->symbolTable().begin(); it != end; ++it) {
+    SymbolTable::const_iterator end = thisObject->symbolTable()->end();
+    for (SymbolTable::const_iterator it = thisObject->symbolTable()->begin(); it != end; ++it) {
         if (!(it->second.getAttributes() & DontEnum) || (mode == IncludeDontEnumProperties))
             propertyNames.add(Identifier(exec, it->first.get()));
     }

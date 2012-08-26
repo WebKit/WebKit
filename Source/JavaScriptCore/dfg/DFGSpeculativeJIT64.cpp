@@ -3518,7 +3518,7 @@ void SpeculativeJIT::compile(Node& node)
         JSValueOperand value(this, node.child1());
         
         WatchpointSet* watchpointSet =
-            m_jit.globalObjectFor(node.codeOrigin)->symbolTable().get(
+            m_jit.globalObjectFor(node.codeOrigin)->symbolTable()->get(
                 identifier(node.identifierNumberForCheck())->impl()).watchpointSet();
         addSlowPathGenerator(
             slowPathCall(
@@ -3541,7 +3541,7 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case GlobalVarWatchpoint: {
-        m_jit.globalObjectFor(node.codeOrigin)->symbolTable().get(
+        m_jit.globalObjectFor(node.codeOrigin)->symbolTable()->get(
             identifier(node.identifierNumberForCheck())->impl()).addWatchpoint(
                 speculationWatchpoint());
         
