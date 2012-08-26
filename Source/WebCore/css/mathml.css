@@ -12,7 +12,6 @@ math {
     font-family: STIXGeneral, Symbol, "Times New Roman", sans-serif;
     display: inline-block;
     padding: 0px;
-    margin: 0px;
     text-align: left;
     padding-left: 1px;
     padding-right: 1px;
@@ -27,8 +26,11 @@ math[display="block"] {
     margin-right: auto;
 }
 
-mrow, mfenced {
+mo, mrow, mfenced, mfrac, msub, msup, msubsup, munder, mover, munderover, msqrt, mroot {
     display: inline-block;
+}
+
+mrow, mfenced {
     white-space: nowrap;
 }
 
@@ -46,14 +48,6 @@ mi + mrow {
     margin-left: 0.1em;
 }
 
-mfrac {
-    display: inline-block;
-}
-
-msub, msup {
-    display: inline-block;
-}
-
 msub > * + * {
     vertical-align: sub;
     font-size: 0.75em;
@@ -64,21 +58,12 @@ msup > * + * {
     font-size: 0.75em;
 }
 
-msubsup {
-    display: inline-block;
-}
-
 msubsup > * {
-    margin: 0px;
     padding: 0px;
 }
 
 msubsup > * + * {
     font-size: 0.75em;
-}
-
-munder, mover, munderover {
-    display: inline-block;
 }
 
 munderover > * + *, mover > * + *, munder > * + * {
@@ -87,11 +72,6 @@ munderover > * + *, mover > * + *, munder > * + * {
 
 mo, mn, mi, mtext {
     padding: 0px;
-    margin: 0px;
-}
-
-mo {
-    display: inline-block;
 }
 
 math > mo, mrow > mo, mfenced > mo {
@@ -131,7 +111,7 @@ math[mathsize="big"], mstyle[mathsize="big"], mo[mathsize="big"], mn[mathsize="b
 }
  
 annotation, annotation-xml {
-    display:none;
+    display: none;
 }
 
 mphantom {
@@ -146,12 +126,10 @@ merror {
 }
 
 msqrt {
-    display: inline-block;
     white-space: nowrap; /* for the anonymous RenderMathMLRow */
 }
 
 mroot {
-    display: inline-block;
     position: relative;
 }
 
