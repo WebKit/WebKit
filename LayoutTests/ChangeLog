@@ -1,3 +1,14 @@
+2012-08-25  Philip Rogers  <pdr@google.com>
+
+        Roll out r126056 and r126626
+        https://bugs.webkit.org/show_bug.cgi?id=95017
+
+        Reviewed by Dirk Schulze.
+
+        Removing skipped test.
+
+        * platform/mac/Skipped:
+
 2012-08-25  Mark Lam  <mark.lam@apple.com>
 
         Skipping 4 compositing/overflow tests for gardening.

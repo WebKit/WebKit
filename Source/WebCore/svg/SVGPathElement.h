@@ -95,6 +95,8 @@ public:
 
     void pathSegListChanged(SVGPathSegRole);
 
+    virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate);
+
     static const SVGPropertyInfo* dPropertyInfo();
 
     bool isAnimValObserved() const { return m_isAnimValObserved; }
