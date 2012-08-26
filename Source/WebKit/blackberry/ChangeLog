@@ -1,3 +1,31 @@
+2012-08-26  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] ASSERT failed in WebPagePrivate::commitRootLayerIfNeeded()
+        https://bugs.webkit.org/show_bug.cgi?id=94921
+
+        PR 104676
+        As visibility changed due to WebPage::setVisible(true),
+        resumeRootLayerCommit() would call commitRootLayerIfNeeded(), without
+        layouting or rendering. If a one shot drawing sync was pending at this
+        time, it would cause the condition
+        ASSERT(!needsOneShotDrawingSynchronization()) to fail.
+
+        The comment immediately before the assert states that "In case of one
+        shot drawing synchronization, you should first layoutIfNeeded, render,
+        then commit and draw the layers". However, resumeRootLayerCommit() did
+        no such thing.
+
+        Fixed by removing the call to commitRootLayerIfNeeded() from
+        resumeRootLayerCommit(), because the latter is only called in a code
+        path where we're going to layout, render and then commit anyway. These
+        operations will be performed from resumeBackingStore() which is called
+        at the end of setVisible().
+
+        Reviewed by George Staikos.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::resumeRootLayerCommit):
+
 2012-08-24  Adam Treat  <atreat@rim.com>
 
         [BlackBerry] Web pages are zoomed out to much on initial load

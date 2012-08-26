@@ -5895,9 +5895,6 @@ void WebPagePrivate::resumeRootLayerCommit()
 
     m_suspendRootLayerCommit = false;
     m_needsCommit = true;
-
-    // Recreate layer resources if needed.
-    commitRootLayerIfNeeded();
 }
 
 bool WebPagePrivate::needsOneShotDrawingSynchronization()
