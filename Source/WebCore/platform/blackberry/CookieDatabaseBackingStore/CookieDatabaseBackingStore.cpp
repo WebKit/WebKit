@@ -65,9 +65,7 @@ CookieDatabaseBackingStore::CookieDatabaseBackingStore()
     m_dbTimerClient = new BlackBerry::Platform::GenericTimerClient(this);
     m_dbTimer.setClient(m_dbTimerClient);
 
-    pthread_attr_t threadAttrs;
-    pthread_attr_init(&threadAttrs);
-    createThread("cookie_database", threadAttrs);
+    createThread("cookie_database", pthread_attr_default);
 }
 
 CookieDatabaseBackingStore::~CookieDatabaseBackingStore()
