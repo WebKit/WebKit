@@ -44,8 +44,14 @@ WebInspector.ScriptsPanelDescriptor.prototype = {
      */
     appendApplicableItems: function(contextMenu, target)
     {
-        if (!(target instanceof WebInspector.UISourceCode))
-            return;
+        var hasApplicableItems = target instanceof WebInspector.UISourceCode;
+
+        if (!hasApplicableItems && target instanceof WebInspector.RemoteObject) {
+            var remoteObject = /** @type {WebInspector.RemoteObject} */ target;
+            if (remoteObject.type !== "function")
+                return;
+        }
+
         this.panel().appendApplicableItems(contextMenu, target);
     }
 }

@@ -1076,6 +1076,32 @@ WebInspector.ElementsPanel.prototype = {
 
         WebInspector.domAgent.highlightDOMNodeForTwoSeconds(nodeId);
         this.selectDOMNode(node, true);
+    },
+
+    /** 
+     * @param {WebInspector.ContextMenu} contextMenu
+     * @param {Object} target
+     */
+    appendApplicableItems: function(contextMenu, target)
+    {
+        if (!(target instanceof WebInspector.RemoteObject))
+            return;
+        var remoteObject = /** @type {WebInspector.RemoteObject} */ target;
+        if (remoteObject.subtype !== "node")
+            return;
+
+        function selectNode(nodeId)
+        {
+            if (nodeId)
+                WebInspector.domAgent.inspectElement(nodeId);
+        }
+  
+        function revealElement()
+        {
+            remoteObject.pushNodeToFrontend(selectNode);
+        }
+
+        contextMenu.appendItem(WebInspector.UIString("Reveal in Elements Panel"), revealElement.bind(this));
     }
 }
 

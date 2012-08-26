@@ -179,6 +179,7 @@ modules = [
         "dependencies": ["components"],
         "sources": [
             "ElementsPanel.js",
+            "ElementsPanelDescriptor.js",
             "EventListenersSidebarPane.js",
             "MetricsSidebarPane.js",
             "PropertiesSidebarPane.js",

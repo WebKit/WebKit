@@ -389,13 +389,6 @@ WebInspector.ScriptsPanel.prototype = {
         this._showSourceLine(anchor.uiSourceCode, anchor.lineNumber);
     },
 
-    showFunctionDefinition: function(functionLocation)
-    {
-        WebInspector.inspectorView.showPanelForAnchorNavigation(this);
-        var uiLocation = WebInspector.debuggerModel.rawLocationToUILocation(functionLocation);
-        this._showSourceLine(uiLocation.uiSourceCode, uiLocation.lineNumber);
-    },
-
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
      * @param {number} lineNumber
@@ -1086,6 +1079,16 @@ WebInspector.ScriptsPanel.prototype = {
      */
     appendApplicableItems: function(contextMenu, target)
     {
+        this._appendUISourceCodeItems(contextMenu, target);
+        this._appendFunctionItems(contextMenu, target);
+    },
+
+    /** 
+     * @param {WebInspector.ContextMenu} contextMenu
+     * @param {Object} target
+     */
+    _appendUISourceCodeItems: function(contextMenu, target)
+    {
         if (!(target instanceof WebInspector.UISourceCode))
             return;
 
@@ -1093,6 +1096,37 @@ WebInspector.ScriptsPanel.prototype = {
         contextMenu.appendItem(WebInspector.UIString("Local modifications..."), this._showLocalHistory.bind(this, uiSourceCode));
         if (uiSourceCode.resource() && uiSourceCode.resource().request)
             contextMenu.appendApplicableItems(uiSourceCode.resource().request);
+    },
+
+    /** 
+     * @param {WebInspector.ContextMenu} contextMenu
+     * @param {Object} target
+     */
+    _appendFunctionItems: function(contextMenu, target)
+    {
+        if (!(target instanceof WebInspector.RemoteObject))
+            return;
+        var remoteObject = /** @type {WebInspector.RemoteObject} */ target;
+        if (remoteObject.type !== "function")
+            return;
+
+        function didGetDetails(error, response)
+        {
+            if (error) {
+                console.error(error);
+                return;
+            }
+            WebInspector.inspectorView.showPanelForAnchorNavigation(this);
+            var uiLocation = WebInspector.debuggerModel.rawLocationToUILocation(response.location);
+            this._showSourceLine(uiLocation.uiSourceCode, uiLocation.lineNumber);
+        }
+
+        function revealFunction()
+        {
+            DebuggerAgent.getFunctionDetails(remoteObject.objectId, didGetDetails.bind(this));
+        }
+
+        contextMenu.appendItem(WebInspector.UIString("Show function definition"), revealFunction.bind(this));
     },
 
     showGoToSourceDialog: function()

@@ -76030,6 +76030,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ElementsPanelDescriptor.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ElementsTreeOutline.js"
 					>
 				</File>

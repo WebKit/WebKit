@@ -60,8 +60,7 @@ WebInspector.ObjectPropertiesSection.prototype = {
     {
         var contextMenu = new WebInspector.ContextMenu();
         contextMenu.appendApplicableItems(this.object);
-        if (!contextMenu.isEmpty())
-            contextMenu.show(event);
+        contextMenu.show(event);
     },
 
     onpopulate: function()
@@ -234,18 +233,14 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         } else
             this.valueElement.textContent = description;
 
-        if (this.property.value.type === "function")
-            this.valueElement.addEventListener("contextmenu", this._functionContextMenuEventFired.bind(this), false);
-
         if (this.property.wasThrown)
             this.valueElement.addStyleClass("error");
         if (this.property.value.subtype)
             this.valueElement.addStyleClass("console-formatted-" + this.property.value.subtype);
         else if (this.property.value.type)
             this.valueElement.addStyleClass("console-formatted-" + this.property.value.type);
-        if (this.property.value.subtype === "node")
-            this.valueElement.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), false);
 
+        this.valueElement.addEventListener("contextmenu", this._contextMenuFired.bind(this, this.property.value), false);
         this.valueElement.title = description || "";
 
         this.listItemElement.removeChildren();
@@ -256,42 +251,10 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         this.hasChildren = this.property.value.hasChildren && !this.property.wasThrown;
     },
 
-    _contextMenuEventFired: function(event)
+    _contextMenuFired: function(value, event)
     {
-        function selectNode(nodeId)
-        {
-            if (nodeId)
-                WebInspector.domAgent.inspectElement(nodeId);
-        }
-
-        function revealElement()
-        {
-            this.property.value.pushNodeToFrontend(selectNode);
-        }
-
         var contextMenu = new WebInspector.ContextMenu();
-        contextMenu.appendItem(WebInspector.UIString("Reveal in Elements Panel"), revealElement.bind(this));
-        contextMenu.show(event);
-    },
-
-    _functionContextMenuEventFired: function(event)
-    {
-        function didGetDetails(error, response)
-        {
-            if (error) {
-                console.error(error);
-                return;
-            }
-            WebInspector.panel("scripts").showFunctionDefinition(response.location);
-        }
-
-        function revealFunction()
-        {
-            DebuggerAgent.getFunctionDetails(this.property.value.objectId, didGetDetails.bind(this));
-        }
-
-        var contextMenu = new WebInspector.ContextMenu();
-        contextMenu.appendItem(WebInspector.UIString("Show function definition"), revealFunction.bind(this));
+        contextMenu.appendApplicableItems(value);
         contextMenu.show(event);
     },
 

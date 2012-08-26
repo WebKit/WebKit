@@ -57,6 +57,7 @@
     <file>DOMSyntaxHighlighter.js</file>
     <file>Drawer.js</file>
     <file>ElementsPanel.js</file>
+    <file>ElementsPanelDescriptor.js</file>
     <file>ElementsTreeOutline.js</file>
     <file>EmptyView.js</file>
     <file>EventListenersSidebarPane.js</file>

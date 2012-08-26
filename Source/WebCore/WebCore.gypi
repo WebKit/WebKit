@@ -6310,6 +6310,7 @@
             'inspector/front-end/DOMStorage.js',
             'inspector/front-end/DOMSyntaxHighlighter.js',
             'inspector/front-end/Drawer.js',
+            'inspector/front-end/ElementsPanelDescriptor.js',
             'inspector/front-end/ElementsTreeOutline.js',
             'inspector/front-end/EmptyView.js',
             'inspector/front-end/ExtensionAPI.js',
