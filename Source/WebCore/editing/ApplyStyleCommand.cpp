@@ -31,7 +31,7 @@
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
-#include "CSSValueList.h"
+#include "CSSValuePool.h"
 #include "Document.h"
 #include "EditingStyle.h"
 #include "Editor.h"
@@ -399,7 +399,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
             currentFontSize = computedFontSize(node);
         }
         if (currentFontSize != desiredFontSize) {
-            inlineStyleDecl->setProperty(CSSPropertyFontSize, String::number(desiredFontSize) + "px", false);
+            inlineStyleDecl->setProperty(CSSPropertyFontSize, cssValuePool().createValue(desiredFontSize, CSSPrimitiveValue::CSS_PX), false);
             setNodeAttribute(element.get(), styleAttr, inlineStyleDecl->asText());
         }
         if (inlineStyleDecl->isEmpty()) {
