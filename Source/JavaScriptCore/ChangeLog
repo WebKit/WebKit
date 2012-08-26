@@ -1,3 +1,21 @@
+2012-08-26  Filip Pizlo  <fpizlo@apple.com>
+
+        DFGGraph.h has a bogus comment about the nature of StorageAccessData
+        https://bugs.webkit.org/show_bug.cgi?id=95035
+
+        Reviewed by Oliver Hunt.
+
+        The comment is both wrong (storage access instructions don't reference CheckStructure)
+        and highly redundant: of course it's the case that two structures may have the same
+        identifier. Our interference analyses currently don't care about this and make the
+        conservative assumptions when necessary (same identifier, same object -> must be same
+        property; same identifier, may be same object -> may be the same property). Better to
+        remove the bogus comment since the code that operates over this data structure is
+        fairly self-explanatory already.
+
+        * dfg/DFGGraph.h:
+        (StorageAccessData):
+
 2012-08-25  Geoffrey Garen  <ggaren@apple.com>
 
         Try a little harder to fix the Linux build.

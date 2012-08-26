@@ -53,14 +53,6 @@ namespace DFG {
 struct StorageAccessData {
     size_t offset;
     unsigned identifierNumber;
-    
-    // NOTE: the offset and identifierNumber do not by themselves
-    // uniquely identify a property. The identifierNumber and a
-    // Structure* do. If those two match, then the offset should
-    // be the same, as well. For any Node that has a StorageAccessData,
-    // it is possible to retrieve the Structure* by looking at the
-    // first child. It should be a CheckStructure, which has the
-    // Structure*.
 };
 
 struct ResolveGlobalData {
