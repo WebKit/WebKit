@@ -1,5 +1,14 @@
 2012-08-26  Mark Lam  <mark.lam@apple.com>
 
+        Skipping fast/block/float/016.html to green the platform mac bots.
+        https://bugs.webkit.org/show_bug.cgi?id=95028.
+
+        Reviewed by Filip Pizlo.
+
+        * platform/mac/Skipped:
+
+2012-08-26  Mark Lam  <mark.lam@apple.com>
+
         Added test-generated expected results file for a few compositing
         overflow tests.
         https://bugs.webkit.org/show_bug.cgi?id=95023.
