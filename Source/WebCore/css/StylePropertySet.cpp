@@ -126,8 +126,8 @@ void StylePropertySet::copyPropertiesFrom(const StylePropertySet& other)
         return;
     }
 
-    ASSERT(m_mutablePropertyVector->isEmpty());
-    m_mutablePropertyVector->reserveInitialCapacity(other.m_arraySize);
+    m_mutablePropertyVector->clear();
+    m_mutablePropertyVector->reserveCapacity(other.m_arraySize);
     for (unsigned i = 0; i < other.m_arraySize; ++i)
         m_mutablePropertyVector->uncheckedAppend(other.array()[i]);
 }
