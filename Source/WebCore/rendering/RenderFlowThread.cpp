@@ -52,6 +52,8 @@ RenderFlowThread::RenderFlowThread(Node* node)
     , m_regionsHaveUniformLogicalWidth(true)
     , m_regionsHaveUniformLogicalHeight(true)
     , m_overset(true)
+    , m_hasRegionsWithStyling(false)
+    , m_dispatchRegionLayoutUpdateEvent(false)
 {
     ASSERT(node->document()->cssRegionsEnabled());
     setIsAnonymous(false);
