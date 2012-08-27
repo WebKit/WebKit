@@ -108,27 +108,26 @@ static void reportUncaughtException(v8::Handle<v8::Message> message, v8::Handle<
     firstWindow->document()->reportException(errorMessage, message->GetLineNumber(), resource, callStack);
 }
 
-// Returns the owner frame pointer of a DOM wrapper object. It only works for
-// these DOM objects requiring cross-domain access check.
 static Frame* findFrame(v8::Local<v8::Object> host, v8::Local<v8::Value> data)
 {
-    Frame* target = 0;
     WrapperTypeInfo* type = WrapperTypeInfo::unwrap(data);
-    if (V8DOMWindow::info.equals(type)) {
-        v8::Handle<v8::Object> window = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), host);
-        if (window.IsEmpty())
-            return target;
 
-        DOMWindow* targetWindow = V8DOMWindow::toNative(window);
-        target = targetWindow->frame();
-    } else if (V8History::info.equals(type)) {
-        History* history = V8History::toNative(host);
-        target = history->frame();
-    } else if (V8Location::info.equals(type)) {
-        Location* location = V8Location::toNative(host);
-        target = location->frame();
+    if (V8DOMWindow::info.equals(type)) {
+        v8::Handle<v8::Object> windowWrapper = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), host);
+        if (windowWrapper.IsEmpty())
+            return 0;
+        return V8DOMWindow::toNative(windowWrapper)->frame();
     }
-    return target;
+
+    if (V8History::info.equals(type))
+        return V8History::toNative(host)->frame();
+
+    if (V8Location::info.equals(type))
+        return V8Location::toNative(host)->frame();
+
+    // This function can handle only those types listed above.
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 static void reportUnsafeJavaScriptAccess(v8::Local<v8::Object> host, v8::AccessType type, v8::Local<v8::Value> data)
