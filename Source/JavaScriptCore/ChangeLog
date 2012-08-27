@@ -1,3 +1,23 @@
+2012-08-27  Oliver Hunt  <oliver@apple.com>
+
+        Remove opcode definition autogen for now
+        https://bugs.webkit.org/show_bug.cgi?id=95148
+
+        Reviewed by Mark Hahnenberg.
+
+        This isn't worth doing at the moment.
+
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecode/OpcodeDefinitions.h: Removed.
+        * bytecode/opcodes: Removed.
+        * opcode_definition_generator.py: Removed.
+        * opcode_generator.py: Removed.
+        * opcode_parser.py: Removed.
+
 2012-08-27  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove uses of TypedArray ClassInfo from SpeculativeJIT::checkArgumentTypes
