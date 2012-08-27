@@ -32,6 +32,7 @@
 #include "SkDeferredCanvas.h"
 #include <public/WebExternalTextureLayer.h>
 #include <public/WebExternalTextureLayerClient.h>
+#include <wtf/DoublyLinkedList.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -43,7 +44,7 @@ namespace WebCore {
 
 class LayerChromium;
 
-class Canvas2DLayerBridge : public WebKit::WebExternalTextureLayerClient, public SkDeferredCanvas::NotificationClient {
+class Canvas2DLayerBridge : public WebKit::WebExternalTextureLayerClient, public SkDeferredCanvas::NotificationClient, public DoublyLinkedListNode<Canvas2DLayerBridge> {
     WTF_MAKE_NONCOPYABLE(Canvas2DLayerBridge);
 public:
     static PassOwnPtr<Canvas2DLayerBridge> create(PassRefPtr<GraphicsContext3D> context, const IntSize& size, DeferralMode deferralMode, unsigned textureId)
@@ -58,7 +59,14 @@ public:
     virtual WebKit::WebGraphicsContext3D* context() OVERRIDE;
 
     // SkDeferredCanvas::NotificationClient implementation
-    virtual void prepareForDraw();
+    virtual void prepareForDraw() OVERRIDE;
+    virtual void storageAllocatedForRecordingChanged(size_t) OVERRIDE;
+    virtual void flushedDrawCommands() OVERRIDE;
+
+    // Methods used by Canvas2DLayerManager
+    virtual size_t freeMemoryIfPossible(size_t); // virtual for mocking
+    virtual void flush(); // virtual for mocking
+    size_t bytesAllocated() const {return m_bytesAllocated;}
 
     SkCanvas* skCanvas(SkDevice*);
     WebKit::WebLayer* layer();
@@ -66,7 +74,7 @@ public:
 
     unsigned backBufferTexture();
 
-private:
+protected:
     Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D>, const IntSize&, DeferralMode, unsigned textureId);
     SkDeferredCanvas* deferredCanvas();
 
@@ -78,6 +86,11 @@ private:
     SkCanvas* m_canvas;
     OwnPtr<WebKit::WebExternalTextureLayer> m_layer;
     RefPtr<GraphicsContext3D> m_context;
+    size_t m_bytesAllocated;
+
+    friend class WTF::DoublyLinkedListNode<Canvas2DLayerBridge>;
+    Canvas2DLayerBridge* m_next;
+    Canvas2DLayerBridge* m_prev;
 };
 
 }
