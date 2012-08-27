@@ -180,6 +180,7 @@ BUGWKEFL : http/tests/inspector/search/resources-search-match-index.html = TEXT 
 BUGWK93820 : inspector/console/console-format-collections.html = TEXT PASS
 BUGWKEFL : inspector/profiler/heap-snapshot.html = TEXT PASS
 BUGWKEFL : inspector/timeline/timeline-enum-stability.html = TEXT PASS
+BUGWK95066 : inspector/styles/media-queries.html = TEXT PASS
 
 // Aborting application cache downloads is flaky.
 BUGWK87633 : http/tests/appcache/abort-cache-onchecking-manifest-404.html = TEXT PASS

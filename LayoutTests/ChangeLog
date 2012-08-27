@@ -1,3 +1,14 @@
+2012-08-27  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Mark inspector/styles/media-queries.html as flaky for WK1 as well
+        https://bugs.webkit.org/show_bug.cgi?id=95067
+
+        Unreviewed EFL gardening. Mark inspector/styles/media-queries.html as
+        flaky for WK1 as well.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-08-27  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Unreviewed gardening.

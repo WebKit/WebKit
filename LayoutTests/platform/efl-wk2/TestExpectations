@@ -56,7 +56,6 @@ BUGWKEFL : inspector/styles/inject-stylesheet.html = TEXT PASS
 BUGWKEFL : inspector/styles/css-live-edit.html = TEXT PASS
 BUGWKEFL : inspector/styles/styles-cancel-editing.html = TEXT PASS
 BUGWKEFL : inspector/styles/get-set-stylesheet-text.html = TEXT PASS
-BUGWKEFL : inspector/styles/media-queries.html = TEXT PASS
 BUGWKEFL : inspector/styles/lazy-computed-style.html = TEXT PASS
 BUGWKEFL : inspector/styles/add-new-rule-inline-style-csp.html = TEXT PASS
 BUGWKEFL : inspector/styles/styles-commit-editing.html = TEXT PASS
