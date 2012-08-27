@@ -1,3 +1,10 @@
+2012-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix sticky-position test to hide scrollbars.
+
+        * fast/css/sticky/sticky-side-margins-expected.html:
+        * fast/css/sticky/sticky-side-margins.html:
+
 2012-08-27  Victor Carbune  <victor@rosedu.org>
 
         Crash when trying to render empty cues
