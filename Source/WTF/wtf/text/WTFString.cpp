@@ -1,6 +1,6 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -604,11 +604,6 @@ CString String::ascii() const
 
     unsigned length = this->length();
 
-    if (!length) {
-        char* characterBuffer;
-        return CString::newUninitialized(length, characterBuffer);
-    }
-
     if (this->is8Bit()) {
         const LChar* characters = this->characters8();
 
@@ -649,7 +644,7 @@ CString String::latin1() const
     if (is8Bit())
         return CString(reinterpret_cast<const char*>(this->characters8()), length);
 
-    const UChar* characters = this->characters();
+    const UChar* characters = this->characters16();
 
     char* characterBuffer;
     CString result = CString::newUninitialized(length, characterBuffer);

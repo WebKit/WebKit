@@ -1,3 +1,19 @@
+2012-08-27  Benjamin Poulain  <benjamin@webkit.org>
+
+        Even up WTF::String to CString functions
+        https://bugs.webkit.org/show_bug.cgi?id=95008
+
+        Reviewed by Sam Weinig.
+
+        Apply advantages from UString to WTF::String.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::ascii): There is no need to special case the null length, both
+        following branches use CString::newUninitialized(), which create empty string
+        for null length.
+        (WTF::String::latin1): Use characters16() instead of characters() to avoid
+        testing is8Bit() a second time.
+
 2012-08-24  Benjamin Poulain  <benjamin@webkit.org>
 
         Touch Platform.h to solve a build dependency issue
