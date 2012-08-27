@@ -1,3 +1,19 @@
+2012-08-27  Gavin Peters  <gavinp@chromium.org>
+
+        [webkit-patch] Don't crash chrome-channels command when a previously unknown platform shows up.
+        https://bugs.webkit.org/show_bug.cgi?id=95104
+
+        Reviewed by Adam Barth.
+
+        Today I found out this command was broken by the new iOS platform showing up on omahaproxy. Now the webkit-patch chrome-channels command gracefully handles new, previously unknown platforms. Also, it prints iOS in the proper mixed case.
+
+        * Scripts/webkitpy/common/net/omahaproxy.py:
+        (OmahaProxy):
+        (OmahaProxy.get_revisions):
+        * Scripts/webkitpy/common/net/omahaproxy_unittest.py:
+        (OmahaProxyTest):
+        (OmahaProxyTest.test_get_revisions):
+
 2012-08-27  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL][WK2] Free Url_Bar on program exit

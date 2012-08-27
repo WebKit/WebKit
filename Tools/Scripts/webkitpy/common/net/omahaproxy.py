@@ -43,7 +43,8 @@ class OmahaProxy(object):
                         "win": "Windows",
                         "mac": "Mac",
                         "cros": "Chrome OS",
-                        "cf": "Chrome Frame"}
+                        "cf": "Chrome Frame",
+                        "ios": "iOS"}
     chrome_channels = ["canary", "dev", "beta", "stable"]
 
     def __init__(self, url=default_url, browser=None):
@@ -70,7 +71,7 @@ class OmahaProxy(object):
                     row = {
                         "commit": int(version["base_webkit_revision"]),
                         "channel": version["channel"],
-                        "platform": self.chrome_platforms[platform["os"]],
+                        "platform": self.chrome_platforms.get(platform["os"], platform["os"]),
                         "date": version["date"],
                     }
                     assert(version["channel"] in self._chrome_channels)

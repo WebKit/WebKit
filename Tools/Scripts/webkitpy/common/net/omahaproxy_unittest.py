@@ -100,19 +100,33 @@ class OmahaProxyTest(unittest.TestCase):
                  "prev_date": "04\/25\/12",
                  "true_branch": "1084",
                  "channel": "release",
-                 "branch_revision": 134854}]}]"""
+                 "branch_revision": 134854}]},
+        {"os": "weird-platform",
+         "versions": [
+                {"base_webkit_revision": "115688",
+                 "v8_ver": "3.10.6.0",
+                 "wk_ver": "536.10",
+                 "base_trunk_revision": 134666,
+                 "prev_version": "20.0.1123.2",
+                 "version": "20.0.1123.4",
+                 "date": "05\/04\/12",
+                 "prev_date": "05\/02\/12",
+                 "true_branch": "1123",
+                 "channel": "dev",
+                 "branch_revision": 135092}]}]"""
 
     expected_revisions = [
         {"commit": 116185, "channel": "canary", "platform": "Windows", "date": "05/07/12"},
         {"commit": 115687, "channel": "dev", "platform": "Windows", "date": "05/04/12"},
         {"commit": 115688, "channel": "dev", "platform": "Linux", "date": "05/04/12"},
         {"commit": 112327, "channel": "beta", "platform": "Linux", "date": "05/03/12"},
+        {"commit": 115688, "channel": "dev", "platform": "weird-platform", "date": "05/04/12"},
     ]
 
     def test_get_revisions(self):
         omahaproxy = MockOmahaProxy(self.example_omahaproxy_json)
         revisions = omahaproxy.get_revisions()
-        self.assertEqual(len(revisions), 4)
+        self.assertEqual(len(revisions), 5)
         for revision in revisions:
             self.assertTrue("commit" in revision)
             self.assertTrue("channel" in revision)
