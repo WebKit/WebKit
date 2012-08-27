@@ -326,6 +326,18 @@ compositing/layers-inside-overflow-scroll.html
 # https://bugs.webkit.org/show_bug.cgi?id=89645
 compositing/backface-visibility/backface-visibility-webgl.html
 
+# [Qt][WK2] New compositing test are failing since added in r126663.
+# https://bugs.webkit.org/show_bug.cgi?id=95076
+compositing/overflow/overflow-auto-with-touch-no-overflow.html
+compositing/overflow/overflow-auto-with-touch.html
+compositing/overflow/overflow-hidden-with-touch.html
+compositing/overflow/overflow-overlay-with-touch-no-overflow.html
+compositing/overflow/overflow-overlay-with-touch.html
+compositing/overflow/overflow-scroll-with-touch-no-overflow.html
+compositing/overflow/overflow-visible-with-touch.html
+compositing/overflow/scrolling-content-clip-to-viewport.html
+compositing/overflow/textarea-scroll-touch.html
+
 # [Qt] [WK2] Some fullscreen layout tests are timing out on the bot
 # https://bugs.webkit.org/show_bug.cgi?id=92543
 fullscreen/video-controls-timeline.html

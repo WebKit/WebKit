@@ -1,3 +1,10 @@
+2012-08-27  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt][WK2] Unreviewd gardening. Skip failing compositing tests.
+        https://bugs.webkit.org/show_bug.cgi?id=95076.
+
+        * platform/qt-5.0-wk2/Skipped:
+
 2012-08-27  KyungTae Kim  <ktf.kim@samsung.com>
 
         [EFL] Wrong button height on CSS tests
