@@ -1,3 +1,15 @@
+2012-08-27  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Fix exit code status logic in run-chromium-webkit-unit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=95115
+
+        Reviewed by Adam Barth.
+
+        Use VCSUtils utility function to check if webkit_unit_tests terminates normally so we generate a non-zero exit
+        code if the unit tests crash.
+
+        * Scripts/run-chromium-webkit-unit-tests:
+
 2012-08-27  Benjamin Poulain  <benjamin@webkit.org>
 
         Add ECMAScript Number to String conversion to WTF::String

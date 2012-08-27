@@ -32,9 +32,9 @@ use File::Spec;
 use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
+use VCSUtils;
 
 push(@ARGV, "--chromium");
 setConfiguration();
 my $pathToBinary = productDir() . "/webkit_unit_tests";
-# perl's "system" function's return value has to be right shifted by 8 to get the program's exit code.
-exit system ($pathToBinary, @ARGV) >> 8;
+exit exitStatus(system ($pathToBinary, @ARGV));
