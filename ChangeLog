@@ -1,3 +1,14 @@
+2012-08-27  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] remove -fno-rtti option in CMAKE_C_FLAGS
+        https://bugs.webkit.org/show_bug.cgi?id=95089
+
+        Reviewed by Antonio Gomes.
+
+        This option does not make sense for compiling C and gives a warning.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+
 2012-08-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Rename RegisterProtocolHandler API to NavigatorContentUtils
