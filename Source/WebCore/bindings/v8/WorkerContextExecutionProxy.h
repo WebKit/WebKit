@@ -78,7 +78,7 @@ namespace WebCore {
 
     private:
         void initIsolate();
-        bool initContextIfNeeded();
+        bool initializeIfNeeded();
         void dispose();
 
         // Run an already compiled script.

@@ -3374,8 +3374,8 @@ END
 
     if (IsSubType($dataNode, "Document")) {
         push(@implContent, <<END);
-    if (frame && frame->script()->windowShell()->context().IsEmpty() && frame->script()->windowShell()->initContextIfNeeded()) {
-        // initContextIfNeeded may have created a wrapper for the object, retry from the start.
+    if (frame && frame->script()->windowShell()->context().IsEmpty() && frame->script()->windowShell()->initializeIfNeeded()) {
+        // initializeIfNeeded may have created a wrapper for the object, retry from the start.
         return ${className}::wrap(impl.get(), isolate);
     }
 END
@@ -3389,7 +3389,7 @@ END
         push(@implContent, <<END);
     if (impl->frame()) {
         frame = impl->frame();
-        frame->script()->windowShell()->initContextIfNeeded();
+        frame->script()->windowShell()->initializeIfNeeded();
     }
 END
     }

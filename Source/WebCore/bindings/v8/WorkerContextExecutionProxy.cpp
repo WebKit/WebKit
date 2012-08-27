@@ -135,7 +135,7 @@ void WorkerContextExecutionProxy::initIsolate()
     V8PerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
 }
 
-bool WorkerContextExecutionProxy::initContextIfNeeded()
+bool WorkerContextExecutionProxy::initializeIfNeeded()
 {
     // Bail out if the context has already been initialized.
     if (!m_context.IsEmpty())
@@ -206,7 +206,7 @@ ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const St
 {
     v8::HandleScope hs;
 
-    if (!initContextIfNeeded())
+    if (!initializeIfNeeded())
         return ScriptValue();
 
     v8::Context::Scope scope(m_context);

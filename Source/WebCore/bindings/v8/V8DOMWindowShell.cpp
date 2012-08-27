@@ -291,7 +291,7 @@ void V8DOMWindowShell::clearForNavigation()
 // the frame. However, a new inner window is created for the new page.
 // If there are JS code holds a closure to the old inner window,
 // it won't be able to reach the outer window via its global object.
-bool V8DOMWindowShell::initContextIfNeeded()
+bool V8DOMWindowShell::initializeIfNeeded()
 {
     if (!m_context.isEmpty())
         return true;
@@ -527,7 +527,7 @@ void V8DOMWindowShell::updateDocument()
     // reference to this wrapper. We eagerly initialize the JavaScript
     // context for the new document to make property access on the
     // global object wrapper succeed.
-    if (!initContextIfNeeded())
+    if (!initializeIfNeeded())
         return;
 
     // We have a new document and we need to update the cache.
@@ -553,7 +553,7 @@ static v8::Handle<v8::Value> getter(v8::Local<v8::String> property, const v8::Ac
 
 void V8DOMWindowShell::namedItemAdded(HTMLDocument* document, const AtomicString& name)
 {
-    if (!initContextIfNeeded())
+    if (!initializeIfNeeded())
         return;
 
     v8::HandleScope handleScope;
@@ -569,7 +569,7 @@ void V8DOMWindowShell::namedItemRemoved(HTMLDocument* document, const AtomicStri
     if (document->hasNamedItem(name.impl()) || document->hasExtraNamedItem(name.impl()))
         return;
 
-    if (!initContextIfNeeded())
+    if (!initializeIfNeeded())
         return;
 
     v8::HandleScope handleScope;

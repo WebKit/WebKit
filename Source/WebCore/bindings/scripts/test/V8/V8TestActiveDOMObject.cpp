@@ -182,7 +182,7 @@ v8::Handle<v8::Object> V8TestActiveDOMObject::wrapSlow(PassRefPtr<TestActiveDOMO
     Frame* frame = 0;
     if (impl->frame()) {
         frame = impl->frame();
-        frame->script()->windowShell()->initContextIfNeeded();
+        frame->script()->windowShell()->initializeIfNeeded();
     }
 
     // Enter the node's context and create the wrapper in that context.

@@ -71,7 +71,7 @@ public:
     void setContext(v8::Handle<v8::Context>);
     static bool installDOMWindow(v8::Handle<v8::Context> context, DOMWindow*);
 
-    bool initContextIfNeeded();
+    bool initializeIfNeeded();
     void updateDocumentWrapper(v8::Handle<v8::Object> wrapper);
 
     void clearForNavigation();

@@ -334,7 +334,7 @@ void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<Sc
     v8::HandleScope handleScope;
 
     // FIXME: This will need to get reorganized once we have a windowShell for the isolated world.
-    if (!windowShell()->initContextIfNeeded())
+    if (!windowShell()->initializeIfNeeded())
         return;
 
     v8::Local<v8::Array> v8Results;
@@ -424,7 +424,7 @@ v8::Local<v8::Context> ScriptController::currentWorldContext()
 
 v8::Local<v8::Context> ScriptController::mainWorldContext()
 {
-    windowShell()->initContextIfNeeded();
+    windowShell()->initializeIfNeeded();
     return v8::Local<v8::Context>::New(windowShell()->context());
 }
 
@@ -448,7 +448,7 @@ bool ScriptController::matchesCurrentContext()
         if (m_frame != toFrameIfNotDetached(context))
             return false;
     } else {
-        windowShell()->initContextIfNeeded();
+        windowShell()->initializeIfNeeded();
         context = windowShell()->context();
     }
     return context == v8::Context::GetCurrent();
