@@ -233,6 +233,11 @@ void TileCache::setCanHaveScrollbars(bool canHaveScrollbars)
     scheduleTileRevalidation(0);
 }
 
+void TileCache::forceRepaint()
+{
+    setNeedsDisplay();
+}
+
 void TileCache::setTileDebugBorderWidth(float borderWidth)
 {
     if (m_tileDebugBorderWidth == borderWidth)

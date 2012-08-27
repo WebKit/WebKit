@@ -82,7 +82,8 @@ private:
     virtual void visibleRectChanged(const IntRect&) OVERRIDE;
     virtual void setIsInWindow(bool) OVERRIDE;
     virtual void setCanHaveScrollbars(bool) OVERRIDE;
-
+    virtual void forceRepaint() OVERRIDE;
+    
     IntRect bounds() const;
 
     typedef IntPoint TileIndex;

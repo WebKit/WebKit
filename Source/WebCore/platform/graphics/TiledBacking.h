@@ -40,6 +40,7 @@ public:
     virtual void visibleRectChanged(const IntRect&) = 0;
     virtual void setIsInWindow(bool) = 0;
     virtual void setCanHaveScrollbars(bool) = 0;
+    virtual void forceRepaint() = 0;
 
     void setScrollingPerformanceLoggingEnabled(bool flag)  { m_scrollingPerformanceLoggingEnabled = flag; }
     bool scrollingPerformanceLoggingEnabled() const { return m_scrollingPerformanceLoggingEnabled; }

@@ -1,3 +1,16 @@
+2012-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Make Force Repaint work with tiled backing store
+        https://bugs.webkit.org/show_bug.cgi?id=95102
+
+        Reviewed by Dan Bernstein.
+
+        Have forceRepaint() call down to the tiled backing of each FrameView,
+        so they can repaint.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::forceRepaint):
+
 2012-08-27  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt] Fix typo in CoordinatedGraphicsLayer::syncAnimatedProperties
