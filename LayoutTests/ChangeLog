@@ -1,3 +1,11 @@
+2012-08-27  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        Rebaseline to account for font antialiasing differences.
+
+        * platform/chromium-mac-snowleopard/compositing/overflow/remove-overflow-crash2-expected.png: Added.
+
 2012-08-27  Dominic Cooney   <dominicc@chromium.org>
 
         [Chromium] Unreviewed gardening.
