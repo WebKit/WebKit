@@ -1,3 +1,12 @@
+2012-08-27  Leo Yang  <leoyang@rim.com>
+
+        [BlackBerry] Test expectation for fast/js/constructor-length.html
+        https://bugs.webkit.org/show_bug.cgi?id=95125
+
+        Reviewed by Yong Li.
+
+        * platform/blackberry/fast/js/constructor-length-expected.txt: Added.
+
 2012-08-27  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed gardening.
