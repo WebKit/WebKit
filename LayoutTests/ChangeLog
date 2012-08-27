@@ -1,3 +1,15 @@
+2012-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        If both left and right (or top and bottom) are specified for sticky, use left (or top)
+        https://bugs.webkit.org/show_bug.cgi?id=95146
+
+        Reviewed by Dan Bernstein.
+
+        Ref tests for stickies with left and right, or top and bottom specified.
+
+        * fast/css/sticky/sticky-both-sides-expected.html: Added.
+        * fast/css/sticky/sticky-both-sides.html: Added.
+
 2012-08-24  James Robinson  <jamesr@chromium.org>
 
         WebGL should not flip textures on presentation if contents are unchanged

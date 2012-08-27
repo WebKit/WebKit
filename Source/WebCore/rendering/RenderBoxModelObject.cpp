@@ -583,16 +583,6 @@ LayoutSize RenderBoxModelObject::stickyPositionOffset() const
     FloatPoint originalLocation = absoluteStickyBoxRect.location();
 
     // Horizontal position.
-    // FIXME: if left and right are specified, allow right to override left.
-    if (!style()->left().isAuto()) {
-        LayoutUnit leftLimit = viewportRect.x() + valueForLength(style()->left(), viewportRect.width(), view());
-        if (absoluteStickyBoxRect.x() < leftLimit)
-            absoluteStickyBoxRect.setX(leftLimit);
-
-        if (absoluteStickyBoxRect.maxX() > absContainerContentRect.maxX())
-            absoluteStickyBoxRect.setX(absContainerContentRect.maxX() - absoluteStickyBoxRect.width());
-    }
-    
     if (!style()->right().isAuto()) {
         LayoutUnit rightLimit = viewportRect.maxX() - valueForLength(style()->right(), viewportRect.width(), view());
         if (absoluteStickyBoxRect.maxX() > rightLimit)
@@ -602,17 +592,16 @@ LayoutSize RenderBoxModelObject::stickyPositionOffset() const
             absoluteStickyBoxRect.setX(absContainerContentRect.x());
     }
 
-    // Vertical position.
-    // FIXME: if top and bottom are specified, allow bottom to override top.
-    if (!style()->top().isAuto()) {
-        LayoutUnit topLimit = viewportRect.y() + valueForLength(style()->top(), viewportRect.height(), view());
-        if (absoluteStickyBoxRect.y() < topLimit)
-            absoluteStickyBoxRect.setY(topLimit);
+    if (!style()->left().isAuto()) {
+        LayoutUnit leftLimit = viewportRect.x() + valueForLength(style()->left(), viewportRect.width(), view());
+        if (absoluteStickyBoxRect.x() < leftLimit)
+            absoluteStickyBoxRect.setX(leftLimit);
 
-        if (absoluteStickyBoxRect.maxY() > absContainerContentRect.maxY())
-            absoluteStickyBoxRect.setY(absContainerContentRect.maxY() - absoluteStickyBoxRect.height());
+        if (absoluteStickyBoxRect.maxX() > absContainerContentRect.maxX())
+            absoluteStickyBoxRect.setX(absContainerContentRect.maxX() - absoluteStickyBoxRect.width());
     }
-    
+
+    // Vertical position.
     if (!style()->bottom().isAuto()) {
         LayoutUnit bottomLimit = viewportRect.maxY() - valueForLength(style()->bottom(), viewportRect.height(), view());
         if (absoluteStickyBoxRect.maxY() > bottomLimit)
@@ -622,6 +611,15 @@ LayoutSize RenderBoxModelObject::stickyPositionOffset() const
             absoluteStickyBoxRect.setY(absContainerContentRect.y());
     }
 
+    if (!style()->top().isAuto()) {
+        LayoutUnit topLimit = viewportRect.y() + valueForLength(style()->top(), viewportRect.height(), view());
+        if (absoluteStickyBoxRect.y() < topLimit)
+            absoluteStickyBoxRect.setY(topLimit);
+
+        if (absoluteStickyBoxRect.maxY() > absContainerContentRect.maxY())
+            absoluteStickyBoxRect.setY(absContainerContentRect.maxY() - absoluteStickyBoxRect.height());
+    }
+    
     // The sticky offset is physical, so we can just return the delta computed in absolute coords (though it may be wrong with transforms).
     return roundedLayoutSize(absoluteStickyBoxRect.location() - originalLocation);
 }
