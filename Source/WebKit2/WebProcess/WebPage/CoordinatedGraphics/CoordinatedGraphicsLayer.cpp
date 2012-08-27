@@ -512,7 +512,7 @@ void CoordinatedGraphicsLayer::syncAnimatedProperties()
     if (!m_shouldSyncAnimatedProperties)
         return;
 
-    m_shouldSyncAnimatedProperties = true;
+    m_shouldSyncAnimatedProperties = false;
     if (m_effectiveOpacity != opacity())
         m_CoordinatedGraphicsLayerClient->setLayerAnimatedOpacity(id(), m_effectiveOpacity);
     if (m_effectiveTransform != transform())
