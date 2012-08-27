@@ -266,6 +266,13 @@ void CCLayerTreeHostImpl::calculateRenderSurfaceLayerList(CCLayerList& renderSur
     }
 }
 
+void CCLayerTreeHostImpl::FrameData::appendRenderPass(PassOwnPtr<CCRenderPass> renderPass)
+{
+    CCRenderPass* pass = renderPass.get();
+    renderPasses.append(pass);
+    renderPassesById.set(pass->id(), renderPass);
+}
+
 bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
 {
     ASSERT(frame.renderPasses.isEmpty());
@@ -275,22 +282,9 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
     TRACE_EVENT1("cc", "CCLayerTreeHostImpl::calculateRenderPasses", "renderSurfaceLayerList.size()", static_cast<long long unsigned>(frame.renderSurfaceLayerList->size()));
 
     // Create the render passes in dependency order.
-    HashMap<CCRenderSurface*, CCRenderPass*> surfacePassMap;
     for (int surfaceIndex = frame.renderSurfaceLayerList->size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
         CCLayerImpl* renderSurfaceLayer = (*frame.renderSurfaceLayerList)[surfaceIndex];
-        CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
-
-        int renderPassId = renderSurfaceLayer->id();
-        IntRect outputRect = renderSurface->contentRect();
-        const WebTransformationMatrix& transformToRootTarget = renderSurface->screenSpaceTransform();
-        OwnPtr<CCRenderPass> pass = CCRenderPass::create(renderPassId, outputRect, transformToRootTarget);
-        pass->setDamageRect(renderSurface->damageTracker()->currentDamageRect());
-        pass->setFilters(renderSurfaceLayer->filters());
-        pass->setBackgroundFilters(renderSurfaceLayer->backgroundFilters());
-
-        surfacePassMap.add(renderSurface, pass.get());
-        frame.renderPasses.append(pass.get());
-        frame.renderPassesById.add(renderPassId, pass.release());
+        renderSurfaceLayer->renderSurface()->appendRenderPasses(frame);
     }
 
     bool recordMetricsForFrame = true; // FIXME: In the future, disable this when about:tracing is off.
@@ -310,24 +304,25 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
 
     CCLayerIteratorType end = CCLayerIteratorType::end(frame.renderSurfaceLayerList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(frame.renderSurfaceLayerList); it != end; ++it) {
-        CCRenderSurface* renderSurface = it.targetRenderSurfaceLayer()->renderSurface();
-        CCRenderPass* pass = surfacePassMap.get(renderSurface);
+        int targetRenderPassId = it.targetRenderSurfaceLayer()->id();
+        CCRenderPass* targetRenderPass = frame.renderPassesById.get(targetRenderPassId);
         bool hadMissingTiles = false;
 
         occlusionTracker.enterLayer(it);
 
         if (it.representsContributingRenderSurface()) {
-            CCRenderPass* contributingRenderPass = surfacePassMap.get(it->renderSurface());
-            pass->appendQuadsForRenderSurfaceLayer(*it, contributingRenderPass, &occlusionTracker);
+            int contributingRenderPassId = it->id();
+            CCRenderPass* contributingRenderPass = frame.renderPassesById.get(contributingRenderPassId);
+            targetRenderPass->appendQuadsForRenderSurfaceLayer(*it, contributingRenderPass, &occlusionTracker);
         } else if (it.representsItself() && !it->visibleContentRect().isEmpty()) {
             bool hasOcclusionFromOutsideTargetSurface;
             if (occlusionTracker.occluded(*it, it->visibleContentRect(), &hasOcclusionFromOutsideTargetSurface)) {
                 if (hasOcclusionFromOutsideTargetSurface)
-                    pass->setHasOcclusionFromOutsideTargetSurface(hasOcclusionFromOutsideTargetSurface);
+                    targetRenderPass->setHasOcclusionFromOutsideTargetSurface(hasOcclusionFromOutsideTargetSurface);
             } else {
                 it->willDraw(m_resourceProvider.get());
                 frame.willDrawLayers.append(*it);
-                pass->appendQuadsForLayer(*it, &occlusionTracker, hadMissingTiles);
+                targetRenderPass->appendQuadsForLayer(*it, &occlusionTracker, hadMissingTiles);
             }
         }
 
@@ -344,6 +339,7 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
     for (size_t i = 0; i < frame.renderPasses.size(); ++i) {
         for (size_t j = 0; j < frame.renderPasses[i]->quadList().size(); ++j)
             ASSERT(frame.renderPasses[i]->quadList()[j]->sharedQuadStateId() >= 0);
+        ASSERT(frame.renderPassesById.contains(frame.renderPasses[i]->id()));
     }
 #endif
 

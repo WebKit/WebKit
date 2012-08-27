@@ -34,7 +34,9 @@
 #include "CCLayerImpl.h"
 #include "CCMathUtil.h"
 #include "CCQuadSink.h"
+#include "CCRenderPass.h"
 #include "CCRenderPassDrawQuad.h"
+#include "CCRenderPassSink.h"
 #include "CCSharedQuadState.h"
 #include "TextStream.h"
 #include <public/WebTransformationMatrix.h>
@@ -177,6 +179,15 @@ static inline IntRect computeClippedRectInTarget(const CCLayerImpl* owningLayer)
     } else
         clippedRectInTarget.intersect(enclosingIntRect(self->drawableContentRect()));
     return clippedRectInTarget;
+}
+
+void CCRenderSurface::appendRenderPasses(CCRenderPassSink& passSink)
+{
+    OwnPtr<CCRenderPass> pass = CCRenderPass::create(m_owningLayer->id(), m_contentRect, m_screenSpaceTransform);
+    pass->setDamageRect(m_damageTracker->currentDamageRect());
+    pass->setFilters(m_owningLayer->filters());
+    pass->setBackgroundFilters(m_owningLayer->backgroundFilters());
+    passSink.appendRenderPass(pass.release());
 }
 
 void CCRenderSurface::appendQuads(CCQuadSink& quadSink, bool forReplica, int renderPassId)

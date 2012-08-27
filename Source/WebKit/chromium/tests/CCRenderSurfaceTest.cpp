@@ -27,6 +27,7 @@
 #include "CCRenderSurface.h"
 
 #include "CCLayerImpl.h"
+#include "CCRenderPassSink.h"
 #include "CCSharedQuadState.h"
 #include "CCSingleThreadProxy.h"
 #include "MockCCQuadCuller.h"
@@ -131,6 +132,51 @@ TEST(CCRenderSurfaceTest, sanityCheckSurfaceCreatesCorrectSharedQuadState)
     EXPECT_EQ(contentRect, IntRect(sharedQuadState->visibleContentRect));
     EXPECT_EQ(1, sharedQuadState->opacity);
     EXPECT_FALSE(sharedQuadState->opaque);
+}
+
+class TestCCRenderPassSink : public CCRenderPassSink {
+public:
+    virtual void appendRenderPass(PassOwnPtr<CCRenderPass> renderPass) OVERRIDE { m_renderPasses.append(renderPass); }
+
+    const Vector<OwnPtr<CCRenderPass> >& renderPasses() const { return m_renderPasses; }
+
+private:
+    Vector<OwnPtr<CCRenderPass> > m_renderPasses;
+
+};
+
+TEST(CCRenderSurfaceTest, sanityCheckSurfaceCreatesCorrectRenderPass)
+{
+    // This will fake that we are on the correct thread for testing purposes.
+    DebugScopedSetImplThread setImplThread;
+
+    OwnPtr<CCLayerImpl> rootLayer = CCLayerImpl::create(1);
+
+    OwnPtr<CCLayerImpl> owningLayer = CCLayerImpl::create(2);
+    owningLayer->createRenderSurface();
+    ASSERT_TRUE(owningLayer->renderSurface());
+    owningLayer->setRenderTarget(owningLayer.get());
+    CCRenderSurface* renderSurface = owningLayer->renderSurface();
+
+    rootLayer->addChild(owningLayer.release());
+
+    IntRect contentRect = IntRect(IntPoint::zero(), IntSize(50, 50));
+    WebTransformationMatrix origin;
+    origin.translate(30, 40);
+
+    renderSurface->setScreenSpaceTransform(origin);
+    renderSurface->setContentRect(contentRect);
+
+    TestCCRenderPassSink passSink;
+
+    renderSurface->appendRenderPasses(passSink);
+
+    ASSERT_EQ(1u, passSink.renderPasses().size());
+    CCRenderPass* pass = passSink.renderPasses()[0].get();
+
+    EXPECT_EQ(2, pass->id());
+    EXPECT_EQ(contentRect, pass->outputRect());
+    EXPECT_EQ(origin, pass->transformToRootTarget());
 }
 
 } // namespace

@@ -29,6 +29,7 @@
 #include "CCInputHandler.h"
 #include "CCLayerSorter.h"
 #include "CCRenderPass.h"
+#include "CCRenderPassSink.h"
 #include "CCRenderer.h"
 #include "SkColor.h"
 #include <public/WebCompositorOutputSurfaceClient.h>
@@ -85,12 +86,15 @@ public:
     virtual void setActiveGestureAnimation(PassOwnPtr<CCActiveGestureAnimation>) OVERRIDE;
     virtual void scheduleAnimation() OVERRIDE;
 
-    struct FrameData {
+    struct FrameData : public CCRenderPassSink {
         Vector<IntRect> occludingScreenSpaceRects;
         CCRenderPassList renderPasses;
         CCRenderPassIdHashMap renderPassesById;
         CCLayerList* renderSurfaceLayerList;
         CCLayerList willDrawLayers;
+
+        // CCRenderPassSink implementation.
+        virtual void appendRenderPass(PassOwnPtr<CCRenderPass>) OVERRIDE;
     };
 
     // Virtual for testing.

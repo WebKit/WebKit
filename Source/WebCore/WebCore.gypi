@@ -8475,6 +8475,7 @@
             'platform/graphics/chromium/cc/CCRenderPass.h',
             'platform/graphics/chromium/cc/CCRenderPassDrawQuad.cpp',
             'platform/graphics/chromium/cc/CCRenderPassDrawQuad.h',
+            'platform/graphics/chromium/cc/CCRenderPassSink.h',
             'platform/graphics/chromium/cc/CCRenderSurface.cpp',
             'platform/graphics/chromium/cc/CCRenderSurface.h',
             'platform/graphics/chromium/cc/CCRenderSurfaceFilters.cpp',

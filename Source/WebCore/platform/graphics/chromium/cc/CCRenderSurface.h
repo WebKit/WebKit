@@ -41,6 +41,7 @@ namespace WebCore {
 class CCDamageTracker;
 class CCQuadSink;
 class CCRenderPass;
+class CCRenderPassSink;
 class CCLayerImpl;
 class TextStream;
 
@@ -103,6 +104,7 @@ public:
 
     CCDamageTracker* damageTracker() const { return m_damageTracker.get(); }
 
+    void appendRenderPasses(CCRenderPassSink&);
     void appendQuads(CCQuadSink&, bool forReplica, int renderPassId);
 
 private:

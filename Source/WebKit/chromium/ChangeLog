@@ -1,3 +1,14 @@
+2012-08-27  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Have RenderSurface create and add its own generated RenderPass
+        https://bugs.webkit.org/show_bug.cgi?id=94957
+
+        Reviewed by Adrienne Walker.
+
+        Test that a RenderSurface generates the RenderPass that we expect.
+
+        * tests/CCRenderSurfaceTest.cpp:
+
 2012-08-27  Justin Novosad  <junov@chromium.org>
 
         [Chromium] Fixing infinite recursion in Canvas2DLayerManager
