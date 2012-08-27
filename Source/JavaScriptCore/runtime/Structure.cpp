@@ -762,32 +762,24 @@ void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Structure* thisObject = jsCast<Structure*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+
     JSCell::visitChildren(thisObject, visitor);
-    if (thisObject->m_globalObject)
-        visitor.append(&thisObject->m_globalObject);
+    visitor.append(&thisObject->m_globalObject);
     if (!thisObject->isObject())
         thisObject->m_cachedPrototypeChain.clear();
     else {
-        if (thisObject->m_prototype)
-            visitor.append(&thisObject->m_prototype);
-        if (thisObject->m_cachedPrototypeChain)
-            visitor.append(&thisObject->m_cachedPrototypeChain);
+        visitor.append(&thisObject->m_prototype);
+        visitor.append(&thisObject->m_cachedPrototypeChain);
     }
-    if (thisObject->m_previous)
-        visitor.append(&thisObject->m_previous);
-    if (thisObject->m_specificValueInPrevious)
-        visitor.append(&thisObject->m_specificValueInPrevious);
-    if (thisObject->m_enumerationCache)
-        visitor.append(&thisObject->m_enumerationCache);
+    visitor.append(&thisObject->m_previous);
+    visitor.append(&thisObject->m_specificValueInPrevious);
+    visitor.append(&thisObject->m_enumerationCache);
     if (thisObject->m_propertyTable) {
         PropertyTable::iterator end = thisObject->m_propertyTable->end();
-        for (PropertyTable::iterator ptr = thisObject->m_propertyTable->begin(); ptr != end; ++ptr) {
-            if (ptr->specificValue)
-                visitor.append(&ptr->specificValue);
-        }
+        for (PropertyTable::iterator ptr = thisObject->m_propertyTable->begin(); ptr != end; ++ptr)
+            visitor.append(&ptr->specificValue);
     }
-    if (thisObject->m_objectToStringValue)
-        visitor.append(&thisObject->m_objectToStringValue);
+    visitor.append(&thisObject->m_objectToStringValue);
 }
 
 #if DO_PROPERTYMAP_CONSTENCY_CHECK

@@ -39,10 +39,8 @@ void GetterSetter::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     JSCell::visitChildren(thisObject, visitor);
 
-    if (thisObject->m_getter)
-        visitor.append(&thisObject->m_getter);
-    if (thisObject->m_setter)
-        visitor.append(&thisObject->m_setter);
+    visitor.append(&thisObject->m_getter);
+    visitor.append(&thisObject->m_setter);
 }
 
 } // namespace JSC

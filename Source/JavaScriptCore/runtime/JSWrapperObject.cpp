@@ -33,9 +33,9 @@ void JSWrapperObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+
     JSObject::visitChildren(thisObject, visitor);
-    if (thisObject->m_internalValue)
-        visitor.append(&thisObject->m_internalValue);
+    visitor.append(&thisObject->m_internalValue);
 }
 
 } // namespace JSC

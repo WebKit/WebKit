@@ -44,8 +44,7 @@ void JSGlobalThis::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
 
     Base::visitChildren(thisObject, visitor);
-    if (thisObject->m_unwrappedObject)
-        visitor.append(&thisObject->m_unwrappedObject);
+    visitor.append(&thisObject->m_unwrappedObject);
 }
 
 void JSGlobalThis::setUnwrappedObject(JSGlobalData& globalData, JSGlobalObject* globalObject)

@@ -48,8 +48,7 @@ void Arguments::visitChildren(JSCell* cell, SlotVisitor& visitor)
     if (thisObject->d->registerArray)
         visitor.appendValues(thisObject->d->registerArray.get(), thisObject->d->numArguments);
     visitor.append(&thisObject->d->callee);
-    if (thisObject->d->activation)
-        visitor.append(&thisObject->d->activation);
+    visitor.append(&thisObject->d->activation);
 }
 
 void Arguments::destroy(JSCell* cell)

@@ -2293,8 +2293,7 @@ sub GenerateImplementation
                 foreach (@{$dataNode->attributes}) {
                     my $attribute = $_;
                     if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
-                        push(@implContent, "    if (thisObject->m_" . $attribute->signature->name . ")\n");
-                        push(@implContent, "        visitor.append(&thisObject->m_" . $attribute->signature->name . ");\n");
+                        push(@implContent, "    visitor.append(&thisObject->m_" . $attribute->signature->name . ");\n");
                     }
                 }
             }

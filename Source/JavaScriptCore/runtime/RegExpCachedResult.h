@@ -49,8 +49,6 @@ namespace JSC {
         {
             m_lastInput.set(globalData, owner, jsEmptyString(&globalData));
             m_lastRegExp.set(globalData, owner, emptyRegExp);
-            m_reifiedResult.clear();
-            m_reifiedInput.clear();
         }
 
         ALWAYS_INLINE void record(JSGlobalData& globalData, JSObject* owner, RegExp* regExp, JSString* input, MatchResult result)

@@ -1,3 +1,13 @@
+2012-08-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed the NULL checks from visitChildren functions
+        https://bugs.webkit.org/show_bug.cgi?id=95021
+
+        Reviewed by Oliver Hunt.
+
+        As of http://trac.webkit.org/changeset/126624, all values are NULL-checked
+        during GC, so explicit NULL checks aren't needed anymore.
+
 2011-08-26  Geoffrey Garen  <ggaren@apple.com>
 
         Removed a JSC-specific hack from the web inspector

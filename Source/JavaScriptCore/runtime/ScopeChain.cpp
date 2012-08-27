@@ -75,8 +75,8 @@ void ScopeChainNode::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-    if (thisObject->next)
-        visitor.append(&thisObject->next);
+
+    visitor.append(&thisObject->next);
     visitor.append(&thisObject->object);
     visitor.append(&thisObject->globalObject);
     visitor.append(&thisObject->globalThis);

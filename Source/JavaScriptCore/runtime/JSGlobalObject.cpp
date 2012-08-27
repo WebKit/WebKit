@@ -106,12 +106,6 @@ static const int initialTickCountThreshold = 255;
 // Preferred number of milliseconds between each timeout check
 static const int preferredScriptCheckTimeInterval = 1000;
 
-template <typename T> static inline void visitIfNeeded(SlotVisitor& visitor, WriteBarrier<T>* v)
-{
-    if (*v)
-        visitor.append(v);
-}
-
 JSGlobalObject::JSGlobalObject(JSGlobalData& globalData, Structure* structure, const GlobalObjectMethodTable* globalObjectMethodTable)
     : JSSegmentedVariableObject(globalData, structure)
     , m_globalScopeChain()
@@ -353,52 +347,52 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     JSSegmentedVariableObject::visitChildren(thisObject, visitor);
 
-    visitIfNeeded(visitor, &thisObject->m_globalScopeChain);
-    visitIfNeeded(visitor, &thisObject->m_methodCallDummy);
+    visitor.append(&thisObject->m_globalScopeChain);
+    visitor.append(&thisObject->m_methodCallDummy);
 
-    visitIfNeeded(visitor, &thisObject->m_regExpConstructor);
-    visitIfNeeded(visitor, &thisObject->m_errorConstructor);
-    visitIfNeeded(visitor, &thisObject->m_evalErrorConstructor);
-    visitIfNeeded(visitor, &thisObject->m_rangeErrorConstructor);
-    visitIfNeeded(visitor, &thisObject->m_referenceErrorConstructor);
-    visitIfNeeded(visitor, &thisObject->m_syntaxErrorConstructor);
-    visitIfNeeded(visitor, &thisObject->m_typeErrorConstructor);
-    visitIfNeeded(visitor, &thisObject->m_URIErrorConstructor);
+    visitor.append(&thisObject->m_regExpConstructor);
+    visitor.append(&thisObject->m_errorConstructor);
+    visitor.append(&thisObject->m_evalErrorConstructor);
+    visitor.append(&thisObject->m_rangeErrorConstructor);
+    visitor.append(&thisObject->m_referenceErrorConstructor);
+    visitor.append(&thisObject->m_syntaxErrorConstructor);
+    visitor.append(&thisObject->m_typeErrorConstructor);
+    visitor.append(&thisObject->m_URIErrorConstructor);
 
-    visitIfNeeded(visitor, &thisObject->m_evalFunction);
-    visitIfNeeded(visitor, &thisObject->m_callFunction);
-    visitIfNeeded(visitor, &thisObject->m_applyFunction);
-    visitIfNeeded(visitor, &thisObject->m_throwTypeErrorGetterSetter);
+    visitor.append(&thisObject->m_evalFunction);
+    visitor.append(&thisObject->m_callFunction);
+    visitor.append(&thisObject->m_applyFunction);
+    visitor.append(&thisObject->m_throwTypeErrorGetterSetter);
 
-    visitIfNeeded(visitor, &thisObject->m_objectPrototype);
-    visitIfNeeded(visitor, &thisObject->m_functionPrototype);
-    visitIfNeeded(visitor, &thisObject->m_arrayPrototype);
-    visitIfNeeded(visitor, &thisObject->m_booleanPrototype);
-    visitIfNeeded(visitor, &thisObject->m_stringPrototype);
-    visitIfNeeded(visitor, &thisObject->m_numberPrototype);
-    visitIfNeeded(visitor, &thisObject->m_datePrototype);
-    visitIfNeeded(visitor, &thisObject->m_regExpPrototype);
-    visitIfNeeded(visitor, &thisObject->m_errorPrototype);
+    visitor.append(&thisObject->m_objectPrototype);
+    visitor.append(&thisObject->m_functionPrototype);
+    visitor.append(&thisObject->m_arrayPrototype);
+    visitor.append(&thisObject->m_booleanPrototype);
+    visitor.append(&thisObject->m_stringPrototype);
+    visitor.append(&thisObject->m_numberPrototype);
+    visitor.append(&thisObject->m_datePrototype);
+    visitor.append(&thisObject->m_regExpPrototype);
+    visitor.append(&thisObject->m_errorPrototype);
 
-    visitIfNeeded(visitor, &thisObject->m_argumentsStructure);
-    visitIfNeeded(visitor, &thisObject->m_arrayStructure);
-    visitIfNeeded(visitor, &thisObject->m_booleanObjectStructure);
-    visitIfNeeded(visitor, &thisObject->m_callbackConstructorStructure);
-    visitIfNeeded(visitor, &thisObject->m_callbackFunctionStructure);
-    visitIfNeeded(visitor, &thisObject->m_callbackObjectStructure);
-    visitIfNeeded(visitor, &thisObject->m_dateStructure);
-    visitIfNeeded(visitor, &thisObject->m_emptyObjectStructure);
-    visitIfNeeded(visitor, &thisObject->m_nullPrototypeObjectStructure);
-    visitIfNeeded(visitor, &thisObject->m_errorStructure);
-    visitIfNeeded(visitor, &thisObject->m_functionStructure);
-    visitIfNeeded(visitor, &thisObject->m_boundFunctionStructure);
-    visitIfNeeded(visitor, &thisObject->m_namedFunctionStructure);
-    visitIfNeeded(visitor, &thisObject->m_numberObjectStructure);
-    visitIfNeeded(visitor, &thisObject->m_privateNameStructure);
-    visitIfNeeded(visitor, &thisObject->m_regExpMatchesArrayStructure);
-    visitIfNeeded(visitor, &thisObject->m_regExpStructure);
-    visitIfNeeded(visitor, &thisObject->m_stringObjectStructure);
-    visitIfNeeded(visitor, &thisObject->m_internalFunctionStructure);
+    visitor.append(&thisObject->m_argumentsStructure);
+    visitor.append(&thisObject->m_arrayStructure);
+    visitor.append(&thisObject->m_booleanObjectStructure);
+    visitor.append(&thisObject->m_callbackConstructorStructure);
+    visitor.append(&thisObject->m_callbackFunctionStructure);
+    visitor.append(&thisObject->m_callbackObjectStructure);
+    visitor.append(&thisObject->m_dateStructure);
+    visitor.append(&thisObject->m_emptyObjectStructure);
+    visitor.append(&thisObject->m_nullPrototypeObjectStructure);
+    visitor.append(&thisObject->m_errorStructure);
+    visitor.append(&thisObject->m_functionStructure);
+    visitor.append(&thisObject->m_boundFunctionStructure);
+    visitor.append(&thisObject->m_namedFunctionStructure);
+    visitor.append(&thisObject->m_numberObjectStructure);
+    visitor.append(&thisObject->m_privateNameStructure);
+    visitor.append(&thisObject->m_regExpMatchesArrayStructure);
+    visitor.append(&thisObject->m_regExpStructure);
+    visitor.append(&thisObject->m_stringObjectStructure);
+    visitor.append(&thisObject->m_internalFunctionStructure);
 }
 
 ExecState* JSGlobalObject::globalExec()

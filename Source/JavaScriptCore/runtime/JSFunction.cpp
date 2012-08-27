@@ -170,8 +170,7 @@ void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
 
     visitor.append(&thisObject->m_scopeChain);
-    if (thisObject->m_executable)
-        visitor.append(&thisObject->m_executable);
+    visitor.append(&thisObject->m_executable);
 }
 
 CallType JSFunction::getCallData(JSCell* cell, CallData& callData)

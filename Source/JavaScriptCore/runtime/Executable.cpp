@@ -611,10 +611,8 @@ void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     ScriptExecutable::visitChildren(thisObject, visitor);
-    if (thisObject->m_nameValue)
-        visitor.append(&thisObject->m_nameValue);
-    if (thisObject->m_symbolTable)
-        visitor.append(&thisObject->m_symbolTable);
+    visitor.append(&thisObject->m_nameValue);
+    visitor.append(&thisObject->m_symbolTable);
     if (thisObject->m_codeBlockForCall)
         thisObject->m_codeBlockForCall->visitAggregate(visitor);
     if (thisObject->m_codeBlockForConstruct)

@@ -81,11 +81,10 @@ void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+
     Base::visitChildren(thisObject, visitor);
-    if (thisObject->m_regExp)
-        visitor.append(&thisObject->m_regExp);
-    if (UNLIKELY(!thisObject->m_lastIndex.get().isInt32()))
-        visitor.append(&thisObject->m_lastIndex);
+    visitor.append(&thisObject->m_regExp);
+    visitor.append(&thisObject->m_lastIndex);
 }
 
 bool RegExpObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
