@@ -40,7 +40,7 @@ public:
     virtual ~CCScrollbarGeometryFixedThumb();
 
     // Update thumb length from scrollbar
-    void update(WebKit::WebScrollbar*) OVERRIDE;
+    void update(WebKit::WebScrollbar*);
 
     // WebScrollbarThemeGeometry interface
     virtual WebKit::WebScrollbarThemeGeometry* clone() const OVERRIDE;
