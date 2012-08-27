@@ -670,6 +670,8 @@ public:
     void setLayerListMutationAllowed(bool flag) { m_layerListMutationAllowed = flag; }
 #endif
 
+    Node* enclosingElement() const;
+
 private:
     void updateZOrderLists();
     void rebuildZOrderLists();
@@ -822,8 +824,6 @@ private:
     void dirty3DTransformedDescendantStatus();
     // Both updates the status, and returns true if descendants of this have 3d.
     bool update3DTransformedDescendantStatus();
-
-    Node* enclosingElement() const;
 
     void createReflection();
     void removeReflection();
