@@ -1,3 +1,13 @@
+2012-08-27  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: DOM tree search issue with quotation marks
+        https://bugs.webkit.org/show_bug.cgi?id=95065
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/elements/elements-panel-search-expected.txt:
+        * inspector/elements/elements-panel-search.html:
+
 2012-08-27  Dominic Cooney   <dominicc@chromium.org>
 
         [Chromium] Unreviewed gardening.

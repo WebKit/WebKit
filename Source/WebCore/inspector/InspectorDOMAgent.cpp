@@ -809,12 +809,20 @@ void InspectorDOMAgent::performSearch(ErrorString*, const String& whitespaceTrim
     unsigned queryLength = whitespaceTrimmedQuery.length();
     bool startTagFound = !whitespaceTrimmedQuery.find('<');
     bool endTagFound = whitespaceTrimmedQuery.reverseFind('>') + 1 == queryLength;
+    bool startQuoteFound = !whitespaceTrimmedQuery.find('"');
+    bool endQuoteFound = whitespaceTrimmedQuery.reverseFind('"') + 1 == queryLength;
+    bool exactAttributeMatch = startQuoteFound && endQuoteFound;
 
     String tagNameQuery = whitespaceTrimmedQuery;
+    String attributeQuery = whitespaceTrimmedQuery;
     if (startTagFound)
         tagNameQuery = tagNameQuery.right(tagNameQuery.length() - 1);
     if (endTagFound)
         tagNameQuery = tagNameQuery.left(tagNameQuery.length() - 1);
+    if (startQuoteFound)
+        attributeQuery = attributeQuery.right(attributeQuery.length() - 1);
+    if (endQuoteFound)
+        attributeQuery = attributeQuery.left(attributeQuery.length() - 1);
 
     Vector<Document*> docs = documents();
     ListHashSet<Node*> resultCollector;
@@ -854,9 +862,12 @@ void InspectorDOMAgent::performSearch(ErrorString*, const String& whitespaceTrim
                         resultCollector.add(node);
                         break;
                     }
-                    if (attribute->value().find(whitespaceTrimmedQuery) != notFound) {
-                        resultCollector.add(node);
-                        break;
+                    size_t foundPosition = attribute->value().find(attributeQuery);
+                    if (foundPosition != notFound) {
+                        if (!exactAttributeMatch || (!foundPosition && attribute->value().length() == attributeQuery.length())) {
+                            resultCollector.add(node);
+                            break;
+                        }
                     }
                 }
                 break;

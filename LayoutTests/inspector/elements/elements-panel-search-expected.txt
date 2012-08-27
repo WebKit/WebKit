@@ -24,6 +24,9 @@ Running: testExactAttributeName
 Running: testExactAttributeVal_ue
 < i n p u t   v a l u e = " I n p u t V a l " >
 
+Running: testExactAttributeVal_ueWithQuotes
+< d i v   a t t r = " f o o " > < / d i v >
+
 Running: testPartialAttributeVal_ue
 < i n p u t   v a l u e = " I n p u t V a l " >
 

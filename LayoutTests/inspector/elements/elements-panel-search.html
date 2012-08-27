@@ -35,7 +35,7 @@ function test()
 
         function testPlainText(next)
         {
-            WebInspector.domAgent.performSearch("Foo" + "Bar", searchCallback.bind(this, next));
+            WebInspector.domAgent.performSearch("Fo" + "o" + "Bar", searchCallback.bind(this, next));
         },
 
         function testPartialText(next)
@@ -61,6 +61,11 @@ function test()
         function testExactAttributeVal_ue(next)
         {
             WebInspector.domAgent.performSearch("In" + "putVa" + "l", searchCallback.bind(this, next));
+        },
+
+        function testExactAttributeVal_ueWithQuotes(next)
+        {
+            WebInspector.domAgent.performSearch("\"fo" + "o\"", searchCallback.bind(this, next));
         },
 
         function testPartialAttributeVal_ue(next)
@@ -93,6 +98,7 @@ Tests that elements panel search is returning proper results.
 <div attr="foo"></div>
 <div id="terminator"></div>
 <div class="divclass"><span>Found by selector</span></div>
+<span class="foo koo"></span>
 
 </body>
 </html>
