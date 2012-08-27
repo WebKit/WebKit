@@ -1,3 +1,17 @@
+2012-08-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove uses of TypedArray ClassInfo from SpeculativeJIT::checkArgumentTypes
+        https://bugs.webkit.org/show_bug.cgi?id=95112
+
+        Reviewed by Filip Pizlo.
+
+        Removing these checks since we no longer need them.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+
 2012-08-27  Benjamin Poulain  <benjamin@webkit.org>
 
         Add ECMAScript Number to String conversion to WTF::String

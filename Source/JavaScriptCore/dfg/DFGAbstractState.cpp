@@ -108,24 +108,6 @@ void AbstractState::initialize(Graph& graph)
             root->valuesAtHead.argument(i).set(SpecInt32);
         else if (isBooleanSpeculation(prediction))
             root->valuesAtHead.argument(i).set(SpecBoolean);
-        else if (isInt8ArraySpeculation(prediction))
-            root->valuesAtHead.argument(i).set(SpecInt8Array);
-        else if (isInt16ArraySpeculation(prediction))
-            root->valuesAtHead.argument(i).set(SpecInt16Array);
-        else if (isInt32ArraySpeculation(prediction))
-            root->valuesAtHead.argument(i).set(SpecInt32Array);
-        else if (isUint8ArraySpeculation(prediction))
-            root->valuesAtHead.argument(i).set(SpecUint8Array);
-        else if (isUint8ClampedArraySpeculation(prediction))
-            root->valuesAtHead.argument(i).set(SpecUint8ClampedArray);
-        else if (isUint16ArraySpeculation(prediction))
-            root->valuesAtHead.argument(i).set(SpecUint16Array);
-        else if (isUint32ArraySpeculation(prediction))
-            root->valuesAtHead.argument(i).set(SpecUint32Array);
-        else if (isFloat32ArraySpeculation(prediction))
-            root->valuesAtHead.argument(i).set(SpecFloat32Array);
-        else if (isFloat64ArraySpeculation(prediction))
-            root->valuesAtHead.argument(i).set(SpecFloat64Array);
         else if (isCellSpeculation(prediction))
             root->valuesAtHead.argument(i).set(SpecCell);
         else
