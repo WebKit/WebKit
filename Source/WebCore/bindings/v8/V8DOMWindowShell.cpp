@@ -331,6 +331,7 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
     v8::Persistent<v8::Context> result;
 
     // The activeDocumentLoader pointer could be 0 during frame shutdown.
+    // FIXME: Can we remove this check?
     if (!m_frame->loader()->activeDocumentLoader())
         return result;
 
@@ -414,19 +415,6 @@ void V8DOMWindowShell::updateDocumentProperty()
     // FIXME: Should we use a new Local handle here?
     v8::Context::Scope contextScope(m_context.get());
 
-    // If the document has no frame, NodeToV8Object might get the
-    // document wrapper for a document that is about to be deleted.
-    // If the ForceSet below causes a garbage collection, the document
-    // might get deleted and the global handle for the document
-    // wrapper cleared. Using the cleared global handle will lead to
-    // crashes. In this case we clear the cache and let the DOMWindow
-    // accessor handle access to the document.
-    // FIXME: This should not be possible anymore.
-    if (!m_frame->document()->frame()) {
-        clearDocumentProperty();
-        return;
-    }
-
     v8::Handle<v8::Value> documentWrapper = toV8(m_frame->document());
     ASSERT(documentWrapper == m_document.get() || m_document.isEmpty());
     if (m_document.isEmpty())
@@ -459,12 +447,6 @@ void V8DOMWindowShell::setSecurityToken()
 {
     Document* document = m_frame->document();
 
-    // FIXME: This shouldn't be possible anymore.
-    if (!document) {
-        m_context->UseDefaultSecurityToken();
-        return;
-    }
-
     // Ask the document's SecurityOrigin to generate a security token.
     // If two tokens are equal, then the SecurityOrigins canAccess each other.
     // If two tokens are not equal, then we have to call canAccess.
@@ -493,24 +475,11 @@ void V8DOMWindowShell::setSecurityToken()
 
 void V8DOMWindowShell::updateDocument()
 {
-    // FIXME: This shouldn't be possible anymore.
-    if (!m_frame->document())
-        return;
-
     if (m_global.isEmpty())
         return;
-
-    // There is an existing JavaScript wrapper for the global object
-    // of this frame. JavaScript code in other frames might hold a
-    // reference to this wrapper. We eagerly initialize the JavaScript
-    // context for the new document to make property access on the
-    // global object wrapper succeed.
     if (!initializeIfNeeded())
         return;
-
-    // We have a new document and we need to update the cache.
     updateDocumentProperty();
-
     updateSecurityOrigin();
 }
 

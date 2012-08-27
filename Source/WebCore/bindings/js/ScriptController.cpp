@@ -293,9 +293,6 @@ void ScriptController::attachDebugger(JSDOMWindowShell* shell, JSC::Debugger* de
 
 void ScriptController::updateDocument()
 {
-    if (!m_frame->document())
-        return;
-
     for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter) {
         JSLockHolder lock(iter->first->globalData());
         iter->second->window()->updateDocument();
