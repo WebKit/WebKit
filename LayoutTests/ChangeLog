@@ -1,3 +1,12 @@
+2012-08-27  Balazs Ankes  <bank@inf.u-szeged.hu>
+
+        [Qt] New test introduced in r126611 fails: fast/css/image-set-setting.html.
+        https://bugs.webkit.org/show_bug.cgi?id=95054
+
+        Unreviewed gardeing.
+
+        * platform/qt/Skipped:
+
 2012-08-27  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Skip several compositing/overflow test cases
