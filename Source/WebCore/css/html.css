@@ -533,7 +533,7 @@ input::-webkit-datetime-edit-second-field {
 /* Remove focus ring from fields and use highlight color */
 input::-webkit-datetime-edit-ampm-field:focus,
 input::-webkit-datetime-edit-hour-field:focus,
-input::-webkit-datetime-edit-millisecond-fiel:focus,
+input::-webkit-datetime-edit-millisecond-field:focus,
 input::-webkit-datetime-edit-minute-field:focus,
 input::-webkit-datetime-edit-second-field:focus {
   background-color: highlight;

@@ -1,3 +1,18 @@
+2012-08-26  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Focus style of millisecond field in multiple fields time input UI is different from other fields
+        https://bugs.webkit.org/show_bug.cgi?id=95046
+
+        Reviewed by Kent Tamura.
+
+        This patch adds a new test for checking focus style of all fields in
+        multiple fields time input UI.
+
+        We check appearance of focus field in fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic.html
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-focus-style-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-focus-style.html: Added.
+
 2012-08-26  Mark Lam  <mark.lam@apple.com>
 
         Skipping http/tests/security/local-user-CSS-from-remote.html to green mac WK2 bots.
