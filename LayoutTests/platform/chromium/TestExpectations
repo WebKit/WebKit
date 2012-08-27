@@ -2056,8 +2056,7 @@ BUGCR65877 : fast/writing-mode/japanese-ruby-vertical-lr.html = PASS IMAGE+TEXT
 BUGCR65877 : fast/writing-mode/japanese-ruby-vertical-rl.html = PASS IMAGE+TEXT
 BUGCR65877 : fast/writing-mode/japanese-ruby-horizontal-bt.html = PASS IMAGE+TEXT
 BUGCR65877 LINUX : fast/writing-mode/broken-ideographic-font.html = IMAGE+TEXT
-BUGWK95052 WIN SNOWLEOPARD : fast/writing-mode/broken-ideographic-font.html = TEXT
-BUGWK95051 LION : fast/writing-mode/broken-ideographic-font.html = CRASH
+BUGWK95052 WIN : fast/writing-mode/broken-ideographic-font.html = TEXT
 BUGCR65877 LINUX ANDROID WIN : fast/writing-mode/vertical-font-fallback.html = IMAGE+TEXT
 //BUGCR65877 LINUX ANDROID WIN : fast/writing-mode/broken-ideograph-small-caps.html = IMAGE
 BUGCR65877 LINUX ANDROID WIN : fast/writing-mode/Kusa-Makura-background-canvas.html = IMAGE+TEXT
@@ -2643,9 +2642,6 @@ BUGWK92511 SKIP : svg/as-image/animated-svg-repaints-completely-in-hidpi.html = 
 
 // Flaky tests from ~r97647
 BUGWK70298 MAC : fast/table/border-collapsing/cached-69296.html = IMAGE
-
-BUGWK70640 SNOWLEOPARD : fast/multicol/vertical-lr/rules-with-border-before.html = PASS TEXT
-BUGWK70640 SNOWLEOPARD : fast/multicol/vertical-rl/rules-with-border-before.html = PASS TEXT
 
 BUGWK70866 LINUX ANDROID MAC DEBUG : fast/forms/form-associated-element-crash3.html = TIMEOUT PASS
 BUGWK72039 RELEASE : fast/forms/form-associated-element-crash3.html = MISSING PASS
@@ -3472,8 +3468,6 @@ BUGCR67540 BUGWK94735 LINUX : fast/text/emphasis-overlap.html = IMAGE IMAGE+TEXT
 
 BUGWK94793 : fast/notifications/notifications-event-listener-crash.html = TEXT PASS
 
-BUGWK94951 WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements.html = IMAGE PASS
-
 BUGCR144536 WONTFIX ANDROID : fast/dom/HTMLSelectElement/select-selectedOptions.html = TEXT
 BUGCR144536 WONTFIX ANDROID : fast/events/select-element.html = TEXT
 BUGCR144536 WONTFIX ANDROID : fast/forms/listbox-clip.html = TEXT
@@ -3502,9 +3496,6 @@ BUGWK84286 : fast/block/float/avoidance-rtl.html = TEXT
 BUGWK84286 : fast/borders/border-radius-wide-border-01.html = TEXT
 BUGWK84286 : fast/borders/only-one-border-with-width.html = TEXT
 BUGWK84286 : fast/multicol/progression-reverse.html = TEXT
-BUGWK84286 : fast/multicol/vertical-lr/rules-with-border-before.html = TEXT
-BUGWK84286 : fast/multicol/vertical-rl/rules-with-border-before.html = TEXT
-BUGWK84286 : css1/box_properties/border_bottom-expected.png = TEXT
 BUGWK84286 : css2.1/t0805-c5519-brdr-r-00-a.html = TEXT
 BUGWK84286 : css2.1/t0805-c5519-brdr-r-01-e.html = TEXT
 BUGWK84286 : css2.1/t0805-c5520-brdr-b-01-e.html = TEXT
@@ -3637,7 +3628,7 @@ BUGWK84286 MAC : fast/replaced/replaced-breaking.html = TEXT
 BUGWK84286 MAC : fast/selectors/064.html = TEXT
 BUGWK84286 MAC : fast/table/append-cells2.html = TEXT
 BUGWK84286 MAC : fast/table/remove-td-display-none.html = TEXT
-BUGWK84286 MAC : fast/writing-mode/broken-ideographic-font.html = TEXT
+BUGWK84286 SNOWLEOPARD : fast/writing-mode/broken-ideographic-font.html = TEXT
 BUGWK84286 MAC : fast/writing-mode/vertical-font-fallback.html = TEXT
 BUGWK84286 MAC : svg/custom/inline-svg-in-xhtml.xml = TEXT
 BUGWK84286 MAC : tables/mozilla/bugs/bug44505.html = TEXT

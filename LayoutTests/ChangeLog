@@ -1,3 +1,11 @@
+2012-08-27  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening
+
+        Fix test expectation lint errors.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-24  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Incorrect property override computation when !important is involved
