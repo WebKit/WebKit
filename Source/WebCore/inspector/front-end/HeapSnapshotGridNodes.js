@@ -542,7 +542,7 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
         var showHiddenData = WebInspector.settings.showHeapSnapshotObjectsHiddenProperties.get();
         var filter = "function(edge) {\n" +
                      "    return !edge.isInvisible()\n" +
-                     "        && (" + !tree.showRetainingEdges + " || (edge.node().id() !== 1 && !edge.node().isSynthetic()))\n" +
+                     "        && (" + !tree.showRetainingEdges + " || (edge.node().id() !== 1 && !edge.node().isSynthetic() && !edge.isWeak()))\n" +
                      "        && (" + showHiddenData + " || (!edge.isHidden() && !edge.node().isHidden()));\n" +
                      "}\n";
         var snapshot = this._isFromBaseSnapshot ? tree.baseSnapshot : tree.snapshot;
