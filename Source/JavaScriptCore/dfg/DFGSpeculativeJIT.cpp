@@ -3131,14 +3131,7 @@ void SpeculativeJIT::compileGetArgumentsLength(Node& node)
     if (!m_compileOkay)
         return;
     
-    if (!isArgumentsSpeculation(m_state.forNode(node.child1()).m_type)) {
-        speculationCheck(
-            BadType, JSValueSource::unboxedCell(baseReg), node.child1(),
-            m_jit.branchPtr(
-                MacroAssembler::NotEqual,
-                MacroAssembler::Address(baseReg, JSCell::classInfoOffset()),
-                MacroAssembler::TrustedImmPtr(&Arguments::s_info)));
-    }
+    ASSERT(modeAlreadyChecked(m_state.forNode(node.child1()), Array::Arguments));
     
     m_jit.loadPtr(
         MacroAssembler::Address(baseReg, Arguments::offsetOfData()),

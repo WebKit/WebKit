@@ -1,3 +1,14 @@
+2012-08-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove use of ClassInfo from SpeculativeJIT::compileGetByValOnArguments
+        https://bugs.webkit.org/show_bug.cgi?id=95131
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnArguments): We don't need this speculation check. We can replace it 
+        with an assert to guarantee this.
+
 2012-08-27  Oliver Hunt  <oliver@apple.com>
 
         Remove opcode definition autogen for now
