@@ -1,3 +1,21 @@
+2012-08-27  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][Qt] WebAudio support
+        https://bugs.webkit.org/show_bug.cgi?id=94806
+
+        Reviewed by Simon Hausmann.
+
+        New boolean webAudioEnabled WebSetting to be used at runtime to
+        toggle WebAudio support on or off.
+
+        * UIProcess/API/qt/qwebpreferences.cpp:
+        (QWebPreferencesPrivate::testAttribute):
+        (QWebPreferencesPrivate::setAttribute):
+        (QWebPreferences::webAudioEnabled):
+        (QWebPreferences::setWebAudioEnabled):
+        * UIProcess/API/qt/qwebpreferences_p.h:
+        * UIProcess/API/qt/qwebpreferences_p_p.h:
+
 2012-08-27  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt][WK2] REGRESSION(r126067): It made qmltests::DoubleTapToZoom::test_basic() fail

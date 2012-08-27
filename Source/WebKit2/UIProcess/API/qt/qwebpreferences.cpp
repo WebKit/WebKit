@@ -71,6 +71,10 @@ bool QWebPreferencesPrivate::testAttribute(QWebPreferencesPrivate::WebAttribute 
         return WKPreferencesGetCSSCustomFilterEnabled(preferencesRef());
 #endif
 #endif
+#if ENABLE(WEB_AUDIO)
+    case WebAudioEnabled:
+        return WKPreferencesGetWebAudioEnabled(preferencesRef());
+#endif
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -123,6 +127,11 @@ void QWebPreferencesPrivate::setAttribute(QWebPreferencesPrivate::WebAttribute a
         WKPreferencesSetCSSCustomFilterEnabled(preferencesRef(), enable);
         break;
 #endif
+#endif
+#if ENABLE(WEB_AUDIO)
+    case WebAudioEnabled:
+        WKPreferencesSetWebAudioEnabled(preferencesRef(), enable);
+        break;
 #endif
     default:
         ASSERT_NOT_REACHED();
@@ -508,6 +517,25 @@ void QWebPreferences::setWebGLEnabled(bool enable)
 #if ENABLE(WEBGL)
     d->setAttribute(QWebPreferencesPrivate::WebGLEnabled, enable);
     emit webGLEnabledChanged();
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool QWebPreferences::webAudioEnabled() const
+{
+#if ENABLE(WEB_AUDIO)
+    return d->testAttribute(QWebPreferencesPrivate::WebAudioEnabled);
+#else
+    return false;
+#endif
+}
+
+void QWebPreferences::setWebAudioEnabled(bool enable)
+{
+#if ENABLE(WEB_AUDIO)
+    d->setAttribute(QWebPreferencesPrivate::WebAudioEnabled, enable);
+    emit webAudioEnabledChanged();
 #else
     UNUSED_PARAM(enable);
 #endif

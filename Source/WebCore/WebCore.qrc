@@ -15,4 +15,7 @@
     <file alias="deleteButton.png">Resources/deleteButton.png</file>
     <file alias="inputSpeech.png">Resources/inputSpeech.png</file>
 </qresource>
+<qresource prefix="/webkit/resources/audio">
+    <file alias="Composite">platform/audio/resources/Composite.wav</file>
+</qresource>
 </RCC>

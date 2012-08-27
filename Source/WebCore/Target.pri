@@ -3112,6 +3112,18 @@ contains(DEFINES, ENABLE_GAMEPAD=1) {
         platform/qt/GamepadsQt.cpp
 }
 
+contains(DEFINES, WTF_USE_GSTREAMER=1) {
+    HEADERS += \
+            platform/graphics/gstreamer/GRefPtrGStreamer.h \
+            platform/graphics/gstreamer/GStreamerUtilities.h \
+            platform/graphics/gstreamer/GStreamerVersioning.h
+
+    SOURCES += \
+            platform/graphics/gstreamer/GRefPtrGStreamer.cpp \
+            platform/graphics/gstreamer/GStreamerUtilities.cpp \
+            platform/graphics/gstreamer/GStreamerVersioning.cpp
+}
+
 contains(DEFINES, ENABLE_VIDEO=1) {
     SOURCES += \
         html/HTMLAudioElement.cpp \
@@ -3173,10 +3185,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
 
     } else: contains(DEFINES, WTF_USE_GSTREAMER=1) {
         HEADERS += \
-            platform/graphics/gstreamer/GRefPtrGStreamer.h \
             platform/graphics/gstreamer/GStreamerGWorld.h \
-            platform/graphics/gstreamer/GStreamerUtilities.h \
-            platform/graphics/gstreamer/GStreamerVersioning.h \
             platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h \
             platform/graphics/gstreamer/VideoSinkGStreamer.h \
             platform/graphics/gstreamer/WebKitWebSourceGStreamer.h \
@@ -3184,10 +3193,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
             platform/graphics/gstreamer/PlatformVideoWindowPrivate.h \
             platform/graphics/gstreamer/ImageGStreamer.h
         SOURCES += \
-            platform/graphics/gstreamer/GRefPtrGStreamer.cpp \
             platform/graphics/gstreamer/GStreamerGWorld.cpp \
-            platform/graphics/gstreamer/GStreamerUtilities.cpp \
-            platform/graphics/gstreamer/GStreamerVersioning.cpp \
             platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp \
             platform/graphics/gstreamer/VideoSinkGStreamer.cpp \
             platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp \
@@ -3200,6 +3206,187 @@ contains(DEFINES, ENABLE_VIDEO=1) {
 
         SOURCES += \
             platform/graphics/qt/MediaPlayerPrivateQt.cpp
+    }
+}
+
+contains(DEFINES, ENABLE_WEB_AUDIO=1) {
+    HEADERS += \
+        Modules/webaudio/AsyncAudioDecoder.h \
+        Modules/webaudio/AudioBasicInspectorNode.h \
+        Modules/webaudio/AudioBasicProcessorNode.h \
+        Modules/webaudio/AudioBufferCallback.h \
+        Modules/webaudio/AudioBuffer.h \
+        Modules/webaudio/AudioBufferSourceNode.h \
+        Modules/webaudio/AudioChannelMerger.h \
+        Modules/webaudio/AudioChannelSplitter.h \
+        Modules/webaudio/AudioContext.h \
+        Modules/webaudio/AudioDestinationNode.h \
+        Modules/webaudio/AudioGain.h \
+        Modules/webaudio/AudioGainNode.h \
+        Modules/webaudio/AudioListener.h \
+        Modules/webaudio/AudioNode.h \
+        Modules/webaudio/AudioNodeInput.h \
+        Modules/webaudio/AudioNodeOutput.h \
+        Modules/webaudio/AudioPannerNode.h \
+        Modules/webaudio/AudioParam.h \
+        Modules/webaudio/AudioParamTimeline.h \
+        Modules/webaudio/AudioProcessingEvent.h \
+        Modules/webaudio/AudioScheduledSourceNode.h \
+        Modules/webaudio/AudioSourceNode.h \
+        Modules/webaudio/AudioSummingJunction.h \
+        Modules/webaudio/BiquadDSPKernel.h \
+        Modules/webaudio/BiquadFilterNode.h \
+        Modules/webaudio/BiquadProcessor.h \
+        Modules/webaudio/ConvolverNode.h \
+        Modules/webaudio/DefaultAudioDestinationNode.h \
+        Modules/webaudio/DelayDSPKernel.h \
+        Modules/webaudio/DelayNode.h \
+        Modules/webaudio/DelayProcessor.h \
+        Modules/webaudio/DynamicsCompressorNode.h \
+        Modules/webaudio/JavaScriptAudioNode.h \
+        Modules/webaudio/MediaElementAudioSourceNode.h \
+        Modules/webaudio/MediaStreamAudioSourceNode.h \
+        Modules/webaudio/OfflineAudioCompletionEvent.h \
+        Modules/webaudio/OfflineAudioDestinationNode.h \
+        Modules/webaudio/Oscillator.h \
+        Modules/webaudio/RealtimeAnalyser.h \
+        Modules/webaudio/RealtimeAnalyserNode.h \
+        Modules/webaudio/WaveShaperDSPKernel.h \
+        Modules/webaudio/WaveShaperNode.h \
+        Modules/webaudio/WaveShaperProcessor.h \
+        Modules/webaudio/WaveTable.h \
+        platform/audio/AudioArray.h \
+        platform/audio/AudioBus.h \
+        platform/audio/AudioChannel.h \
+        platform/audio/AudioDestination.h \
+        platform/audio/AudioDSPKernel.h \
+        platform/audio/AudioDSPKernelProcessor.h \
+        platform/audio/AudioFIFO.h \
+        platform/audio/AudioFileReader.h \
+        platform/audio/AudioIOCallback.h \
+        platform/audio/AudioProcessor.h \
+        platform/audio/AudioPullFIFO.h \
+        platform/audio/AudioResampler.h \
+        platform/audio/AudioResamplerKernel.h \
+        platform/audio/AudioSourceProviderClient.h \
+        platform/audio/AudioSourceProvider.h \
+        platform/audio/AudioUtilities.h \
+        platform/audio/Biquad.h \
+        platform/audio/Cone.h \
+        platform/audio/DenormalDisabler.h \
+        platform/audio/DirectConvolver.h \
+        platform/audio/Distance.h \
+        platform/audio/DynamicsCompressor.h \
+        platform/audio/DynamicsCompressorKernel.h \
+        platform/audio/EqualPowerPanner.h \
+        platform/audio/FFTConvolver.h \
+        platform/audio/FFTFrame.h \
+        platform/audio/HRTFDatabase.h \
+        platform/audio/HRTFDatabaseLoader.h \
+        platform/audio/HRTFElevation.h \
+        platform/audio/HRTFKernel.h \
+        platform/audio/HRTFPanner.h \
+        platform/audio/MultiChannelResampler.h \
+        platform/audio/Panner.h \
+        platform/audio/ReverbAccumulationBuffer.h \
+        platform/audio/ReverbConvolver.h \
+        platform/audio/ReverbConvolverStage.h \
+        platform/audio/Reverb.h \
+        platform/audio/ReverbInputBuffer.h \
+        platform/audio/SincResampler.h \
+        platform/audio/VectorMath.h \
+        platform/audio/ZeroPole.h
+
+    SOURCES += \
+        bindings/js/JSAudioBufferSourceNodeCustom.cpp \
+        bindings/js/JSAudioContextCustom.cpp \
+        bindings/js/JSDOMWindowWebAudioCustom.cpp \
+        bindings/js/JSJavaScriptAudioNodeCustom.cpp \
+        Modules/webaudio/AsyncAudioDecoder.cpp \
+        Modules/webaudio/AudioBasicInspectorNode.cpp \
+        Modules/webaudio/AudioBasicProcessorNode.cpp \
+        Modules/webaudio/AudioBuffer.cpp \
+        Modules/webaudio/AudioBufferSourceNode.cpp \
+        Modules/webaudio/AudioChannelMerger.cpp \
+        Modules/webaudio/AudioChannelSplitter.cpp \
+        Modules/webaudio/AudioContext.cpp \
+        Modules/webaudio/AudioDestinationNode.cpp \
+        Modules/webaudio/AudioGainNode.cpp \
+        Modules/webaudio/AudioListener.cpp \
+        Modules/webaudio/AudioNode.cpp \
+        Modules/webaudio/AudioNodeInput.cpp \
+        Modules/webaudio/AudioNodeOutput.cpp \
+        Modules/webaudio/AudioPannerNode.cpp \
+        Modules/webaudio/AudioParam.cpp \
+        Modules/webaudio/AudioParamTimeline.cpp \
+        Modules/webaudio/AudioProcessingEvent.cpp \
+        Modules/webaudio/AudioScheduledSourceNode.cpp \
+        Modules/webaudio/AudioSummingJunction.cpp \
+        Modules/webaudio/BiquadDSPKernel.cpp \
+        Modules/webaudio/BiquadFilterNode.cpp \
+        Modules/webaudio/BiquadProcessor.cpp \
+        Modules/webaudio/ConvolverNode.cpp \
+        Modules/webaudio/DefaultAudioDestinationNode.cpp \
+        Modules/webaudio/DelayDSPKernel.cpp \
+        Modules/webaudio/DelayNode.cpp \
+        Modules/webaudio/DelayProcessor.cpp \
+        Modules/webaudio/DynamicsCompressorNode.cpp \
+        Modules/webaudio/JavaScriptAudioNode.cpp \
+        Modules/webaudio/MediaElementAudioSourceNode.cpp \
+        Modules/webaudio/MediaStreamAudioSourceNode.cpp \
+        Modules/webaudio/OfflineAudioCompletionEvent.cpp \
+        Modules/webaudio/OfflineAudioDestinationNode.cpp \
+        Modules/webaudio/Oscillator.cpp \
+        Modules/webaudio/RealtimeAnalyser.cpp \
+        Modules/webaudio/RealtimeAnalyserNode.cpp \
+        Modules/webaudio/WaveShaperDSPKernel.cpp \
+        Modules/webaudio/WaveShaperNode.cpp \
+        Modules/webaudio/WaveShaperProcessor.cpp \
+        Modules/webaudio/WaveTable.cpp \
+        platform/audio/AudioBus.cpp \
+        platform/audio/AudioChannel.cpp \
+        platform/audio/AudioDSPKernelProcessor.cpp \
+        platform/audio/AudioFIFO.cpp \
+        platform/audio/AudioPullFIFO.cpp \
+        platform/audio/AudioResampler.cpp \
+        platform/audio/AudioResamplerKernel.cpp \
+        platform/audio/AudioUtilities.cpp \
+        platform/audio/Biquad.cpp \
+        platform/audio/Cone.cpp \
+        platform/audio/DirectConvolver.cpp \
+        platform/audio/Distance.cpp \
+        platform/audio/DynamicsCompressor.cpp \
+        platform/audio/DynamicsCompressorKernel.cpp \
+        platform/audio/EqualPowerPanner.cpp \
+        platform/audio/FFTConvolver.cpp \
+        platform/audio/FFTFrame.cpp \
+        platform/audio/FFTFrameStub.cpp \
+        platform/audio/HRTFDatabase.cpp \
+        platform/audio/HRTFDatabaseLoader.cpp \
+        platform/audio/HRTFElevation.cpp \
+        platform/audio/HRTFKernel.cpp \
+        platform/audio/HRTFPanner.cpp \
+        platform/audio/MultiChannelResampler.cpp \
+        platform/audio/Panner.cpp \
+        platform/audio/qt/AudioBusQt.cpp \
+        platform/audio/ReverbAccumulationBuffer.cpp \
+        platform/audio/ReverbConvolver.cpp \
+        platform/audio/ReverbConvolverStage.cpp \
+        platform/audio/Reverb.cpp \
+        platform/audio/ReverbInputBuffer.cpp \
+        platform/audio/SincResampler.cpp \
+        platform/audio/VectorMath.cpp \
+        platform/audio/ZeroPole.cpp
+
+    contains(DEFINES, WTF_USE_GSTREAMER=1) {
+        HEADERS += \
+            platform/audio/gstreamer/AudioDestinationGStreamer.h \
+            platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.h
+        SOURCES += \
+            platform/audio/gstreamer/AudioDestinationGStreamer.cpp \
+            platform/audio/gstreamer/AudioFileReaderGStreamer.cpp \
+            platform/audio/gstreamer/FFTFrameGStreamer.cpp \
+            platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp
     }
 }
 

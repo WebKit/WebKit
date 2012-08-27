@@ -1,3 +1,12 @@
+2012-08-27  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][Qt] WebAudio support
+        https://bugs.webkit.org/show_bug.cgi?id=94806
+
+        Reviewed by Simon Hausmann.
+
+        * MiniBrowser/qt/qml/BrowserWindow.qml: Enable WebAudio support.
+
 2012-08-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Rename RegisterProtocolHandler API to NavigatorContentUtils

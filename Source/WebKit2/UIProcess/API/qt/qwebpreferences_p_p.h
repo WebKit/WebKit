@@ -40,7 +40,8 @@ public:
         DnsPrefetchEnabled,
         DeveloperExtrasEnabled,
         WebGLEnabled,
-        CSSCustomFilterEnabled
+        CSSCustomFilterEnabled,
+        WebAudioEnabled
     };
 
     enum FontFamily {

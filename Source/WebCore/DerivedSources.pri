@@ -139,6 +139,7 @@ IDL_BINDINGS += \
     $$PWD/Modules/quota/StorageInfoQuotaCallback.idl \
     $$PWD/Modules/quota/StorageInfoUsageCallback.idl \
     $$PWD/Modules/webaudio/AudioBuffer.idl \
+    $$PWD/Modules/webaudio/AudioBufferCallback.idl \
     $$PWD/Modules/webaudio/AudioBufferSourceNode.idl \
     $$PWD/Modules/webaudio/AudioChannelMerger.idl \
     $$PWD/Modules/webaudio/AudioChannelSplitter.idl \
@@ -152,11 +153,19 @@ IDL_BINDINGS += \
     $$PWD/Modules/webaudio/AudioParam.idl \
     $$PWD/Modules/webaudio/AudioProcessingEvent.idl \
     $$PWD/Modules/webaudio/AudioSourceNode.idl \
+    $$PWD/Modules/webaudio/BiquadFilterNode.idl \
     $$PWD/Modules/webaudio/ConvolverNode.idl \
     $$PWD/Modules/webaudio/DelayNode.idl \
     $$PWD/Modules/webaudio/DOMWindowWebAudio.idl \
+    $$PWD/Modules/webaudio/DynamicsCompressorNode.idl \
     $$PWD/Modules/webaudio/JavaScriptAudioNode.idl \
+    $$PWD/Modules/webaudio/MediaElementAudioSourceNode.idl \
+    $$PWD/Modules/webaudio/MediaStreamAudioSourceNode.idl \
+    $$PWD/Modules/webaudio/OfflineAudioCompletionEvent.idl \
+    $$PWD/Modules/webaudio/Oscillator.idl \
     $$PWD/Modules/webaudio/RealtimeAnalyserNode.idl \
+    $$PWD/Modules/webaudio/WaveShaperNode.idl \
+    $$PWD/Modules/webaudio/WaveTable.idl \
     $$PWD/Modules/webdatabase/DOMWindowWebDatabase.idl \
     $$PWD/Modules/webdatabase/Database.idl \
     $$PWD/Modules/webdatabase/DatabaseCallback.idl \
