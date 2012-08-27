@@ -35,7 +35,7 @@ namespace WebKit {
 
 class WebScrollbarImpl : public WebScrollbar {
 public:
-    WebScrollbarImpl(WebCore::Scrollbar*);
+    explicit WebScrollbarImpl(WebCore::Scrollbar*);
 
     // Implement WebKit::WebScrollbar methods
     virtual bool isOverlay() const OVERRIDE;

@@ -33,6 +33,7 @@
 #include "Scrollbar.h"
 #include "Settings.h"
 #include "TreeSynchronizer.h"
+#include "WebScrollbarImpl.h"
 #include <gtest/gtest.h>
 #include <public/WebScrollbar.h>
 #include <public/WebScrollbarThemeGeometry.h>
@@ -103,7 +104,7 @@ TEST(ScrollbarLayerChromiumTest, resolveScrollLayerPointer)
 
     Settings::setMockScrollbarsEnabled(true);
     {
-        OwnPtr<WebKit::WebScrollbar> scrollbar = WebKit::WebScrollbar::create(mockScrollbar.get());
+        OwnPtr<WebKit::WebScrollbar> scrollbar = adoptPtr(new WebKit::WebScrollbarImpl(mockScrollbar.get()));
         RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
         RefPtr<LayerChromium> child1 = LayerChromium::create();
         RefPtr<LayerChromium> child2 = ScrollbarLayerChromium::create(scrollbar.release(), painter, WebKit::FakeWebScrollbarThemeGeometry::create(), child1->id());
@@ -120,7 +121,7 @@ TEST(ScrollbarLayerChromiumTest, resolveScrollLayerPointer)
     }
 
     { // another traverse order
-        OwnPtr<WebKit::WebScrollbar> scrollbar = WebKit::WebScrollbar::create(mockScrollbar.get());
+        OwnPtr<WebKit::WebScrollbar> scrollbar = adoptPtr(new WebKit::WebScrollbarImpl(mockScrollbar.get()));
         RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
         RefPtr<LayerChromium> child2 = LayerChromium::create();
         RefPtr<LayerChromium> child1 = ScrollbarLayerChromium::create(scrollbar.release(), painter, WebKit::FakeWebScrollbarThemeGeometry::create(), child2->id());
@@ -146,7 +147,7 @@ TEST(ScrollbarLayerChromiumTest, scrollOffsetSynchronization)
 
     Settings::setMockScrollbarsEnabled(true);
 
-    OwnPtr<WebKit::WebScrollbar> scrollbar = WebKit::WebScrollbar::create(mockScrollbar.get());
+    OwnPtr<WebKit::WebScrollbar> scrollbar = adoptPtr(new WebKit::WebScrollbarImpl(mockScrollbar.get()));
     RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
     RefPtr<LayerChromium> contentLayer = LayerChromium::create();
     RefPtr<LayerChromium> scrollbarLayer = ScrollbarLayerChromium::create(scrollbar.release(), painter, WebKit::FakeWebScrollbarThemeGeometry::create(), layerTreeRoot->id());

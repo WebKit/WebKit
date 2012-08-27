@@ -1,3 +1,18 @@
+2012-08-24  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Clean up dependencies of WebScrollbar and WebScrollbarLayer
+        https://bugs.webkit.org/show_bug.cgi?id=94996
+
+        Reviewed by Adrienne Walker.
+
+        Fix up tests for API changes.
+
+        * WebKit.gyp:
+        * src/WebScrollbarLayerImpl.cpp:
+        (WebKit::WebScrollbarLayer::create):
+        * tests/ScrollbarLayerChromiumTest.cpp:
+        (WebCore::TEST):
+
 2012-08-27  Adrienne Walker  <enne@google.com>
 
         [chromium] Prevent scrollbar thumb size from changing during compositor zoom

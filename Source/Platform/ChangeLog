@@ -1,3 +1,19 @@
+2012-08-24  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Clean up dependencies of WebScrollbar and WebScrollbarLayer
+        https://bugs.webkit.org/show_bug.cgi?id=94996
+
+        Reviewed by Adrienne Walker.
+
+        This moves the WebScrollbarLayer::create factory out of #if WEBKIT_IMPLEMENTATION and expresses it in API terms
+        only so anyone who can get a handle on a WebScrollbar can construct the layer. Also removes the ::create() from
+        WebScrollbar, anyone who currently has access to a WebCore::Scrollbar also has access to WebScrollbarImpl.
+
+        * chromium/public/WebScrollbar.h:
+        (WebScrollbar):
+        * chromium/public/WebScrollbarLayer.h:
+        (WebScrollbarLayer):
+
 2012-08-23  James Robinson  <jamesr@chromium.org>
 
         [chromium] Convert WebLayerTreeView interface into pure virtual

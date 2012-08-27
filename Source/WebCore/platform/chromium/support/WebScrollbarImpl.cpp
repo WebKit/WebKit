@@ -31,11 +31,6 @@
 
 namespace WebKit {
 
-PassOwnPtr<WebScrollbar> WebScrollbar::create(WebCore::Scrollbar* scrollbar)
-{
-    return adoptPtr(new WebScrollbarImpl(scrollbar));
-}
-
 WebScrollbarImpl::WebScrollbarImpl(WebCore::Scrollbar* scrollbar)
     : m_scrollbar(scrollbar)
 {

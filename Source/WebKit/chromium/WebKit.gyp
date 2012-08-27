@@ -605,8 +605,6 @@
                 'src/WebScopedMicrotaskSuppression.cpp',
                 'src/WebScopedUserGesture.cpp',
                 'src/WebScriptController.cpp',
-                'src/WebScrollbarImpl.cpp',
-                'src/WebScrollbarImpl.h',
                 'src/WebScrollbarThemeClientImpl.cpp',
                 'src/WebScrollbarThemeClientImpl.h',
                 'src/WebScrollbarThemePainter.cpp',

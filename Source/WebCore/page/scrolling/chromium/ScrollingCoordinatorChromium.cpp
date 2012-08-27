@@ -34,6 +34,7 @@
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
 #include "ScrollbarThemeComposite.h"
+#include "WebScrollbarImpl.h"
 #include "WebScrollbarThemeGeometryNative.h"
 #include <public/WebScrollbar.h>
 #include <public/WebScrollbarLayer.h>
@@ -153,7 +154,7 @@ static PassOwnPtr<WebScrollbarLayer> createScrollbarLayer(Scrollbar* scrollbar, 
     WebKit::WebScrollbarThemePainter painter(themeComposite, scrollbar);
     OwnPtr<WebKit::WebScrollbarThemeGeometry> geometry(WebKit::WebScrollbarThemeGeometryNative::create(themeComposite));
 
-    OwnPtr<WebScrollbarLayer> scrollbarLayer = adoptPtr(WebScrollbarLayer::create(scrollbar, painter, geometry.release()));
+    OwnPtr<WebScrollbarLayer> scrollbarLayer = adoptPtr(WebScrollbarLayer::create(new WebKit::WebScrollbarImpl(scrollbar), painter, geometry.leakPtr()));
     scrollbarLayer->setScrollLayer(scrollLayer);
 
     scrollbarGraphicsLayer->setContentsToMedia(scrollbarLayer->layer());
