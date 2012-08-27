@@ -1,3 +1,12 @@
+2012-08-27  Dominic Cooney   <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        More rebaselines to account for font aliasing differences.
+
+        * platform/chromium-mac-snowleopard/compositing/overflow/nested-scrolling-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/overflow/nested-scrolling-expected.png.
+        * platform/chromium-mac/compositing/overflow/nested-scrolling-expected.png:
+
 2012-08-27  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Mark inspector/styles/media-queries.html as flaky for WK1 as well
