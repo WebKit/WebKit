@@ -3,19 +3,19 @@ Tests that a track appended after the initial track configuration does not chang
 
 EVENT(load) -- <body>
 EXPECTED (track1.readyState == '0') OK
-EXPECTED (track1.track.mode == '0') OK
+EXPECTED (track1.track.mode == 'disabled') OK
 
 EVENT(canplaythrough) -- <video>
 **check initial metadata track state
 EXPECTED (track1.readyState == '0') OK
-EXPECTED (track1.track.mode == '0') OK
+EXPECTED (track1.track.mode == 'disabled') OK
 EXPECTED (track1.track.cues == 'null') OK
-RUN(track1.track.mode = TextTrack.HIDDEN)
+RUN(track1.track.mode = 'hidden')
 
 EVENT(load) -- <track kind='metadata' >
 **check metadata track state
 EXPECTED (track1.readyState == '2') OK
-EXPECTED (track1.track.mode == '1') OK
+EXPECTED (track1.track.mode == 'hidden') OK
 EXPECTED (track1.track.cues.length == '12') OK
 EXPECTED (track1.track.cues[11].startTime == '22') OK
 **add a caption track, configured to load automatically
@@ -29,10 +29,10 @@ RUN(video.appendChild(track2))
 EVENT(load) -- <track kind='captions' >
 **check that metadata track state has not changed
 EXPECTED (track1.readyState == '2') OK
-EXPECTED (track1.track.mode == '1') OK
+EXPECTED (track1.track.mode == 'hidden') OK
 **and that the captions track state is correct
 EXPECTED (track2.readyState == '2') OK
-EXPECTED (track2.track.mode == '2') OK
+EXPECTED (track2.track.mode == 'showing') OK
 
 END OF TEST
 

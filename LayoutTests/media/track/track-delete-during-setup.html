@@ -19,7 +19,7 @@
 
             function canplaythrough()
             {
-                track1.track.mode = TextTrack.HIDDEN;
+                track1.track.mode = "hidden";
                 setTimeout("endTest()", 100);
             }
 
@@ -30,7 +30,7 @@
 
                 track1 = document.querySelectorAll('track')[0]; 
                 testExpected("track1.readyState", HTMLTrackElement.NONE);
-                testExpected("track1.track.mode", TextTrack.DISABLED);
+                testExpected("track1.track.mode", "disabled");
 
                 video.src = findMediaFile("video", "../content/test");
                 consoleWrite("");

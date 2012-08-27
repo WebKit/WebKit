@@ -314,8 +314,8 @@ function enableAllTextTracks()
 {
     findMediaElement();
     for (var i = 0; i < video.textTracks.length; i++) {
-        if (video.textTracks[i].mode == TextTrack.DISABLED)
-            video.textTracks[i].mode = TextTrack.HIDDEN;
+        if (video.textTracks[i].mode == "disabled")
+            video.textTracks[i].mode = "hidden";
     }
 }
 

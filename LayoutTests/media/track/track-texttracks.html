@@ -28,7 +28,7 @@
                 testExpected("video.textTracks[2].kind", "descriptions");
 
                 consoleWrite("<br>** Verify the default parameters of the text track object returned by addTextTrack(). **");
-                testExpected("video.textTracks[2].mode == TextTrack.HIDDEN", true);
+                testExpected("video.textTracks[2].mode == 'hidden'", true);
                 testExpected("video.textTracks[2].cues != null", true);
                 testExpected("video.textTracks[2].cues.length == 0", true);
 

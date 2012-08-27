@@ -36,11 +36,7 @@ module html {
         readonly attribute DOMString label;
         readonly attribute DOMString language;
 
-        const unsigned short DISABLED = 0;
-        const unsigned short HIDDEN = 1;
-        const unsigned short SHOWING = 2;
-        attribute unsigned short mode
-            setter raises (DOMException);
+        attribute DOMString mode;
 
         readonly attribute TextTrackCueList cues;
         readonly attribute TextTrackCueList activeCues;

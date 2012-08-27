@@ -79,9 +79,12 @@ public:
     String language() const { return m_language; }
     void setLanguage(const String& language) { m_language = language; }
 
-    enum Mode { DISABLED = 0, HIDDEN = 1, SHOWING = 2 };
-    Mode mode() const;
-    void setMode(unsigned short, ExceptionCode&);
+    static const AtomicString& disabledKeyword();
+    static const AtomicString& hiddenKeyword();
+    static const AtomicString& showingKeyword();
+
+    String mode() const;
+    void setMode(const String&);
 
     bool showingByDefault() const { return m_showingByDefault; }
     void setShowingByDefault(bool showing) { m_showingByDefault = showing; }
@@ -123,7 +126,7 @@ private:
     String m_kind;
     String m_label;
     String m_language;
-    Mode m_mode;
+    String m_mode;
     TextTrackClient* m_client;
     TextTrackType m_trackType;
     ReadinessState m_readinessState;

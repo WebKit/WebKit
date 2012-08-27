@@ -493,7 +493,7 @@ PassRefPtr<DocumentFragment> TextTrackCue::getCueAsHTML()
 bool TextTrackCue::dispatchEvent(PassRefPtr<Event> event)
 {
     // When a TextTrack's mode is disabled: no cues are active, no events fired.
-    if (!track() || track()->mode() == TextTrack::DISABLED)
+    if (!track() || track()->mode() == TextTrack::disabledKeyword())
         return false;
 
     return EventTarget::dispatchEvent(event);
@@ -506,7 +506,7 @@ bool TextTrackCue::dispatchEvent(PassRefPtr<Event> event, ExceptionCode &ec)
 
 bool TextTrackCue::isActive()
 {
-    return m_isActive && track() && track()->mode() != TextTrack::DISABLED;
+    return m_isActive && track() && track()->mode() != TextTrack::disabledKeyword();
 }
 
 void TextTrackCue::setIsActive(bool active)

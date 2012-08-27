@@ -4,9 +4,5 @@ EXPECTED (HTMLTrackElement.NONE == '0') OK
 EXPECTED (HTMLTrackElement.LOADING == '1') OK
 EXPECTED (HTMLTrackElement.LOADED == '2') OK
 EXPECTED (HTMLTrackElement.ERROR == '3') OK
-
-EXPECTED (TextTrack.DISABLED == '0') OK
-EXPECTED (TextTrack.HIDDEN == '1') OK
-EXPECTED (TextTrack.SHOWING == '2') OK
 END OF TEST
 

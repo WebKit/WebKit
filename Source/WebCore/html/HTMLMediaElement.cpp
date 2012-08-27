@@ -777,7 +777,7 @@ void HTMLMediaElement::loadInternal()
         if (m_textTracks) {
             for (unsigned i = 0; i < m_textTracks->length(); ++i) {
                 TextTrack* track = m_textTracks->item(i);
-                if (track->mode() != TextTrack::DISABLED)
+                if (track->mode() != TextTrack::disabledKeyword())
                     m_textTracksWhenResourceSelectionBegan.append(track);
             }
         }
@@ -1295,7 +1295,7 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
             
             // Mark this track as "configured" so configureNewTextTracks won't change the mode again.
             trackElement->setHasBeenConfigured(true);
-            if (track->mode() != TextTrack::DISABLED) {
+            if (track->mode() != TextTrack::disabledKeyword()) {
                 if (trackElement->readyState() == HTMLTrackElement::LOADED)
                     textTrackAddCues(track, track->cues());
                 else if (trackElement->readyState() == HTMLTrackElement::NONE)
@@ -1314,8 +1314,8 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
 
 void HTMLMediaElement::textTrackKindChanged(TextTrack* track)
 {
-    if (track->kind() != TextTrack::captionsKeyword() && track->kind() != TextTrack::subtitlesKeyword() && track->mode() == TextTrack::SHOWING)
-        track->setMode(TextTrack::HIDDEN, ASSERT_NO_EXCEPTION);
+    if (track->kind() != TextTrack::captionsKeyword() && track->kind() != TextTrack::subtitlesKeyword() && track->mode() == TextTrack::showingKeyword())
+        track->setMode(TextTrack::hiddenKeyword());
 }
 
 void HTMLMediaElement::textTrackAddCues(TextTrack*, const TextTrackCueList* cues) 
@@ -2688,7 +2688,7 @@ PassRefPtr<TextTrack> HTMLMediaElement::addTextTrack(const String& kind, const S
     textTrack->setReadinessState(TextTrack::Loaded);
 
     // ... its text track mode to the text track hidden mode, and its text track list of cues to an empty list ...
-    textTrack->setMode(TextTrack::HIDDEN, ec);
+    textTrack->setMode(TextTrack::hiddenKeyword());
 
     return textTrack.release();
 }
@@ -2713,7 +2713,7 @@ HTMLTrackElement* HTMLMediaElement::showingTrackWithSameKind(HTMLTrackElement* t
             continue;
 
         HTMLTrackElement* showingTrack = static_cast<HTMLTrackElement*>(node);
-        if (showingTrack->kind() == trackElement->kind() && showingTrack->track()->mode() == TextTrack::SHOWING)
+        if (showingTrack->kind() == trackElement->kind() && showingTrack->track()->mode() == TextTrack::showingKeyword())
             return showingTrack;
     }
     
@@ -2864,10 +2864,9 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group) const
     for (size_t i = 0; i < group.tracks.size(); ++i) {
         HTMLTrackElement* trackElement = group.tracks[i];
         RefPtr<TextTrack> textTrack = trackElement->track();
-        ExceptionCode unusedException;
         
         if (trackElementToEnable == trackElement) {
-            textTrack->setMode(TextTrack::SHOWING, unusedException);
+            textTrack->setMode(TextTrack::showingKeyword());
             if (defaultTrack == trackElement)
                 textTrack->setShowingByDefault(true);
         } else {
@@ -2876,18 +2875,17 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group) const
                 // mode is showing by default, the user agent must furthermore change that text track's
                 // text track mode to hidden.
                 textTrack->setShowingByDefault(false);
-                textTrack->setMode(TextTrack::HIDDEN, unusedException);
+                textTrack->setMode(TextTrack::hiddenKeyword());
             } else
-                textTrack->setMode(TextTrack::DISABLED, unusedException);
+                textTrack->setMode(TextTrack::disabledKeyword());
         }
     }
 
     if (trackElementToEnable && group.defaultTrack && group.defaultTrack != trackElementToEnable) {
         RefPtr<TextTrack> textTrack = group.defaultTrack->track();
         if (textTrack && textTrack->showingByDefault()) {
-            ExceptionCode unusedException;
             textTrack->setShowingByDefault(false);
-            textTrack->setMode(TextTrack::HIDDEN, unusedException);
+            textTrack->setMode(TextTrack::hiddenKeyword());
         }
     }
 }
@@ -2922,7 +2920,7 @@ void HTMLMediaElement::configureNewTextTracks()
         else
             currentGroup = &otherTracks;
 
-        if (!currentGroup->visibleTrack && textTrack->mode() == TextTrack::SHOWING)
+        if (!currentGroup->visibleTrack && textTrack->mode() == TextTrack::showingKeyword())
             currentGroup->visibleTrack = trackElement;
         if (!currentGroup->defaultTrack && trackElement->isDefault())
             currentGroup->defaultTrack = trackElement;
@@ -4093,7 +4091,7 @@ void HTMLMediaElement::configureTextTrackDisplay()
 
     bool haveVisibleTextTrack = false;
     for (unsigned i = 0; i < m_textTracks->length(); ++i) {
-        if (m_textTracks->item(i)->mode() == TextTrack::SHOWING) {
+        if (m_textTracks->item(i)->mode() == TextTrack::showingKeyword()) {
             haveVisibleTextTrack = true;
             break;
         }

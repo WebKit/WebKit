@@ -15,7 +15,7 @@ EXPECTED (video.textTracks[1].kind == 'chapters') OK
 EXPECTED (video.textTracks[2].kind == 'descriptions') OK
 
 ** Verify the default parameters of the text track object returned by addTextTrack(). **
-EXPECTED (video.textTracks[2].mode == TextTrack.HIDDEN == 'true') OK
+EXPECTED (video.textTracks[2].mode == 'hidden' == 'true') OK
 EXPECTED (video.textTracks[2].cues != null == 'true') OK
 EXPECTED (video.textTracks[2].cues.length == 0 == 'true') OK
 

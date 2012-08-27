@@ -14,7 +14,7 @@
                 run("textTrack.mode = '" + value + "'");
                 testExpected("textTrack.mode", value);
                 testExpected("video.textTracks[0].mode", value);
-                if (value == TextTrack.DISABLED)
+                if (value == "disabled")
                     testExpected("textTrack.cues", null);
                 else
                     testExpected("textTrack.cues.length", textTrack.cues.length);
@@ -30,38 +30,38 @@
                 textTrack = document.getElementById('track_1').track;
 
                 consoleWrite("<b>++ Test default attribute value</b>");
-                testExpected("textTrack.mode", TextTrack.SHOWING);
-                testExpected("video.textTracks[0].mode", TextTrack.SHOWING);
+                testExpected("textTrack.mode", "showing");
+                testExpected("video.textTracks[0].mode", "showing");
                 consoleWrite("");
 
                 consoleWrite("<b>*** Set to bogus value, should return default</b>");
-                var value = 37;
-                testException("textTrack.mode = '" + value + "'", "DOMException.INVALID_ACCESS_ERR");
-                testExpected("textTrack.mode", TextTrack.SHOWING);
-                testExpected("video.textTracks[0].mode", TextTrack.SHOWING);
+                var value = "bogus";
+                run("textTrack.mode = '" + value + "'");
+                testExpected("textTrack.mode", "showing");
+                testExpected("video.textTracks[0].mode", "showing");
                 consoleWrite("");
 
                 consoleWrite("<b>*** Set to known values</b>");
-                consoleWrite("<b>++ 'TextTrack.DISABLED'</b>");
-                setMode(TextTrack.DISABLED);
+                consoleWrite("<b>++ 'disabled'</b>");
+                setMode("disabled");
 
                 video.src = findMediaFile("video", "../content/test");
                 video.play();
                 // Wait for end of first cue (no events should fire while track is disabled).
                 setTimeout(testHiddenAndShowing, 400);
-                consoleWrite("++ 0 events expected while mode = TextTrack.DISABLED");
+                consoleWrite("++ 0 events expected while mode = disabled");
                 consoleWrite("");
             }
             
             function testHiddenAndShowing()
             {
-                consoleWrite("<b>++ 'TextTrack.HIDDEN'</b>");
-                setMode(TextTrack.HIDDEN);
+                consoleWrite("<b>++ 'hidden'</b>");
+                setMode("hidden");
 
-                consoleWrite("<b>++ 'TextTrack.SHOWING'</b>");
-                setMode(TextTrack.SHOWING);
+                consoleWrite("<b>++ 'showing'</b>");
+                setMode("showing");
 
-                consoleWrite("++ at least " + textTrack.cues.length + " events expected while mode = TextTrack.SHOWING");
+                consoleWrite("++ at least " + textTrack.cues.length + " events expected while mode = showing");
             }
             
             waitForEvent('cuechange',

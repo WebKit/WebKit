@@ -2,36 +2,36 @@ Tests that the TextTrack mode attribute is appropriately set.
 
 
 ++ Test default attribute value
-EXPECTED (textTrack.mode == '2') OK
-EXPECTED (video.textTracks[0].mode == '2') OK
+EXPECTED (textTrack.mode == 'showing') OK
+EXPECTED (video.textTracks[0].mode == 'showing') OK
 
 *** Set to bogus value, should return default
-TEST(textTrack.mode = '37') THROWS(DOMException.INVALID_ACCESS_ERR) OK
-EXPECTED (textTrack.mode == '2') OK
-EXPECTED (video.textTracks[0].mode == '2') OK
+RUN(textTrack.mode = 'bogus')
+EXPECTED (textTrack.mode == 'showing') OK
+EXPECTED (video.textTracks[0].mode == 'showing') OK
 
 *** Set to known values
-++ 'TextTrack.DISABLED'
-RUN(textTrack.mode = '0')
-EXPECTED (textTrack.mode == '0') OK
-EXPECTED (video.textTracks[0].mode == '0') OK
+++ 'disabled'
+RUN(textTrack.mode = 'disabled')
+EXPECTED (textTrack.mode == 'disabled') OK
+EXPECTED (video.textTracks[0].mode == 'disabled') OK
 EXPECTED (textTrack.cues == 'null') OK
 
-++ 0 events expected while mode = TextTrack.DISABLED
+++ 0 events expected while mode = disabled
 
-++ 'TextTrack.HIDDEN'
-RUN(textTrack.mode = '1')
-EXPECTED (textTrack.mode == '1') OK
-EXPECTED (video.textTracks[0].mode == '1') OK
+++ 'hidden'
+RUN(textTrack.mode = 'hidden')
+EXPECTED (textTrack.mode == 'hidden') OK
+EXPECTED (video.textTracks[0].mode == 'hidden') OK
 EXPECTED (textTrack.cues.length == '3') OK
 
-++ 'TextTrack.SHOWING'
-RUN(textTrack.mode = '2')
-EXPECTED (textTrack.mode == '2') OK
-EXPECTED (video.textTracks[0].mode == '2') OK
+++ 'showing'
+RUN(textTrack.mode = 'showing')
+EXPECTED (textTrack.mode == 'showing') OK
+EXPECTED (video.textTracks[0].mode == 'showing') OK
 EXPECTED (textTrack.cues.length == '3') OK
 
-++ at least 3 events expected while mode = TextTrack.SHOWING
+++ at least 3 events expected while mode = showing
 EVENT(cuechange)
 EVENT(cuechange)
 EVENT(cuechange)

@@ -1,3 +1,35 @@
+2012-08-27  Anna Cavender  <annacc@chromium.org>
+
+        TextTrack modes are strings
+        https://bugs.webkit.org/show_bug.cgi?id=85050
+
+        Reviewed by Eric Carlson.
+
+        The spec recently changed away from enumeration to string for the type
+        of TextTrack mode.
+        http://dev.w3.org/html5/spec/media-elements.html#texttrackmode
+
+        Remove check for mode constants as we are no longer using an enum:
+        * media/track/track-constants-expected.txt:
+        * media/track/track-constants.html:
+
+        Update tests to use the new strings rather than the enums:
+        * media/track/track-delete-during-setup-expected.txt:
+        * media/track/track-delete-during-setup.html:
+        * media/track/track-element-dom-change-crash-expected.txt:
+        * media/track/track-element-dom-change-crash.html:
+        * media/track/track-load-from-src-readyState.html:
+        * media/track/track-mode-expected.txt:
+        * media/track/track-mode-not-changed-by-new-track-expected.txt:
+        * media/track/track-mode-not-changed-by-new-track.html:
+        * media/track/track-mode-triggers-loading-expected.txt:
+        * media/track/track-mode-triggers-loading.html:
+        * media/track/track-mode.html:
+        * media/track/track-texttracks-expected.txt:
+        * media/track/track-texttracks.html:
+        * media/video-test.js:
+        (enableAllTextTracks):
+
 2012-08-27  Mike West  <mkwst@chromium.org>
 
         'self' in a CSP directive should match blob: and filesystem: URLs.

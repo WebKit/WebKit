@@ -12,7 +12,7 @@
                 consoleWrite("EVENT(load) -- &lt;track&gt;");
                 consoleWrite("<i>**check metadata track state<" + "/i>");
                 testExpected("track.readyState", HTMLTrackElement.LOADED);
-                testExpected("track.track.mode", TextTrack.HIDDEN);
+                testExpected("track.track.mode", "hidden");
                 testExpected("video.textTracks[0].cues.length", 12);
                 testExpected("video.textTracks[0].cues[11].startTime", 22);
                 consoleWrite("");
@@ -24,9 +24,9 @@
                 consoleWrite("EVENT(canplaythrough) -- &lt;video&gt;");
                 consoleWrite("<i>**change metadata track mode so it loads<" + "/i>");
                 testExpected("track.readyState", HTMLTrackElement.NONE);
-                testExpected("video.textTracks[0].mode", TextTrack.DISABLED);
+                testExpected("video.textTracks[0].mode", "disabled");
                 testExpected("video.textTracks[0].cues", null);
-                run("video.textTracks[0].mode = TextTrack.HIDDEN");
+                run("video.textTracks[0].mode = 'hidden'");
                 consoleWrite("");
             }
 
@@ -38,7 +38,7 @@
                 consoleWrite("<i>**check initial metadata track state<" + "/i>");
                 track = document.querySelectorAll('track')[0]; 
                 testExpected("track.readyState", HTMLTrackElement.NONE);
-                testExpected("video.textTracks[0].mode", TextTrack.DISABLED);
+                testExpected("video.textTracks[0].mode", "disabled");
 
                 video.src = findMediaFile("video", "../content/test");
                 consoleWrite("");

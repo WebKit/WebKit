@@ -12,10 +12,10 @@
                 consoleWrite("EVENT(load) -- &lt;track kind='captions' &gt;");
                 consoleWrite("<i>**check that metadata track state has not changed<" + "/i>");
                 testExpected("track1.readyState", HTMLTrackElement.LOADED);
-                testExpected("track1.track.mode", TextTrack.HIDDEN);
+                testExpected("track1.track.mode", "hidden");
                 consoleWrite("<i>**and that the captions track state is correct<" + "/i>");
                 testExpected("track2.readyState", HTMLTrackElement.LOADED);
-                testExpected("track2.track.mode", TextTrack.SHOWING);
+                testExpected("track2.track.mode", "showing");
                 consoleWrite("");
                 endTest();
             }
@@ -25,7 +25,7 @@
                 consoleWrite("EVENT(load) -- &lt;track kind='metadata' &gt;");
                 consoleWrite("<i>**check metadata track state<" + "/i>");
                 testExpected("track1.readyState", HTMLTrackElement.LOADED);
-                testExpected("track1.track.mode", TextTrack.HIDDEN);
+                testExpected("track1.track.mode", "hidden");
                 testExpected("track1.track.cues.length", 12);
                 testExpected("track1.track.cues[11].startTime", 22);
 
@@ -45,9 +45,9 @@
                 consoleWrite("EVENT(canplaythrough) -- &lt;video&gt;");
                 consoleWrite("<i>**check initial metadata track state<" + "/i>");
                 testExpected("track1.readyState", HTMLTrackElement.NONE);
-                testExpected("track1.track.mode", TextTrack.DISABLED);
+                testExpected("track1.track.mode", "disabled");
                 testExpected("track1.track.cues", null);
-                run("track1.track.mode = TextTrack.HIDDEN");
+                run("track1.track.mode = 'hidden'");
                 consoleWrite("");
             }
 
@@ -58,7 +58,7 @@
 
                 track1 = document.querySelectorAll('track')[0]; 
                 testExpected("track1.readyState", HTMLTrackElement.NONE);
-                testExpected("track1.track.mode", TextTrack.DISABLED);
+                testExpected("track1.track.mode", "disabled");
 
                 video.src = findMediaFile("video", "../content/test");
                 consoleWrite("");
