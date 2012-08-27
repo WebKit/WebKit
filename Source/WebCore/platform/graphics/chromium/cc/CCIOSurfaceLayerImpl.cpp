@@ -96,13 +96,13 @@ void CCIOSurfaceLayerImpl::willDraw(CCResourceProvider* resourceProvider)
     }
 }
 
-void CCIOSurfaceLayerImpl::appendQuads(CCQuadSink& quadSink, bool&)
+void CCIOSurfaceLayerImpl::appendQuads(CCQuadSink& quadSink, CCAppendQuadsData& appendQuadsData)
 {
     CCSharedQuadState* sharedQuadState = quadSink.useSharedQuadState(createSharedQuadState());
-    appendDebugBorderQuad(quadSink, sharedQuadState);
+    appendDebugBorderQuad(quadSink, sharedQuadState, appendQuadsData);
 
     IntRect quadRect(IntPoint(), contentBounds());
-    quadSink.append(CCIOSurfaceDrawQuad::create(sharedQuadState, quadRect, m_ioSurfaceSize, m_ioSurfaceTextureId, CCIOSurfaceDrawQuad::Flipped));
+    quadSink.append(CCIOSurfaceDrawQuad::create(sharedQuadState, quadRect, m_ioSurfaceSize, m_ioSurfaceTextureId, CCIOSurfaceDrawQuad::Flipped), appendQuadsData);
 }
 
 void CCIOSurfaceLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const

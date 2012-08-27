@@ -26,6 +26,7 @@
 
 #include "CCQuadCuller.h"
 
+#include "CCAppendQuadsData.h"
 #include "CCLayerTilingData.h"
 #include "CCMathUtil.h"
 #include "CCOcclusionTracker.h"
@@ -100,8 +101,8 @@ static void appendQuads(CCQuadList& quadList, CCSharedQuadStateList& sharedState
 {
     occlusionTracker.enterLayer(it);
     CCQuadCuller quadCuller(quadList, sharedStateList, layer, &occlusionTracker, false, false);
-    bool hadMissingTiles = false;
-    layer->appendQuads(quadCuller, hadMissingTiles);
+    CCAppendQuadsData data;
+    layer->appendQuads(quadCuller, data);
     occlusionTracker.leaveLayer(it);
     ++it;
 }

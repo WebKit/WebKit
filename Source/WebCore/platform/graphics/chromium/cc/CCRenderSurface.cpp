@@ -190,7 +190,7 @@ void CCRenderSurface::appendRenderPasses(CCRenderPassSink& passSink)
     passSink.appendRenderPass(pass.release());
 }
 
-void CCRenderSurface::appendQuads(CCQuadSink& quadSink, bool forReplica, int renderPassId)
+void CCRenderSurface::appendQuads(CCQuadSink& quadSink, CCAppendQuadsData& appendQuadsData, bool forReplica, int renderPassId)
 {
     ASSERT(!forReplica || m_owningLayer->hasReplica());
 
@@ -204,7 +204,7 @@ void CCRenderSurface::appendQuads(CCQuadSink& quadSink, bool forReplica, int ren
         int green = forReplica ?  debugReplicaBorderColorGreen : debugSurfaceBorderColorGreen;
         int blue = forReplica ? debugReplicaBorderColorBlue : debugSurfaceBorderColorBlue;
         SkColor color = SkColorSetARGB(debugSurfaceBorderAlpha, red, green, blue);
-        quadSink.append(CCDebugBorderDrawQuad::create(sharedQuadState, contentRect(), color, debugSurfaceBorderWidth));
+        quadSink.append(CCDebugBorderDrawQuad::create(sharedQuadState, contentRect(), color, debugSurfaceBorderWidth), appendQuadsData);
     }
 
     // FIXME: By using the same RenderSurface for both the content and its reflection,
@@ -238,7 +238,7 @@ void CCRenderSurface::appendQuads(CCQuadSink& quadSink, bool forReplica, int ren
     IntRect contentsChangedSinceLastFrame = contentsChanged() ? m_contentRect : IntRect();
 
     quadSink.append(CCRenderPassDrawQuad::create(sharedQuadState, contentRect(), renderPassId, forReplica, maskResourceId, contentsChangedSinceLastFrame,
-                                                 maskTexCoordScaleX, maskTexCoordScaleY, maskTexCoordOffsetX, maskTexCoordOffsetY));
+                                                 maskTexCoordScaleX, maskTexCoordScaleY, maskTexCoordOffsetX, maskTexCoordOffsetY), appendQuadsData);
 }
 
 }

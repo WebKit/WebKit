@@ -27,6 +27,7 @@
 #include "CCLayerTreeHostImpl.h"
 
 #include "CCActiveGestureAnimation.h"
+#include "CCAppendQuadsData.h"
 #include "CCDamageTracker.h"
 #include "CCDebugRectHistory.h"
 #include "CCDelayBasedTimeSource.h"
@@ -306,27 +307,30 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(frame.renderSurfaceLayerList); it != end; ++it) {
         int targetRenderPassId = it.targetRenderSurfaceLayer()->id();
         CCRenderPass* targetRenderPass = frame.renderPassesById.get(targetRenderPassId);
-        bool hadMissingTiles = false;
 
         occlusionTracker.enterLayer(it);
+
+        CCAppendQuadsData appendQuadsData;
 
         if (it.representsContributingRenderSurface()) {
             int contributingRenderPassId = it->id();
             CCRenderPass* contributingRenderPass = frame.renderPassesById.get(contributingRenderPassId);
-            targetRenderPass->appendQuadsForRenderSurfaceLayer(*it, contributingRenderPass, &occlusionTracker);
+            targetRenderPass->appendQuadsForRenderSurfaceLayer(*it, contributingRenderPass, &occlusionTracker, appendQuadsData);
         } else if (it.representsItself() && !it->visibleContentRect().isEmpty()) {
             bool hasOcclusionFromOutsideTargetSurface;
-            if (occlusionTracker.occluded(*it, it->visibleContentRect(), &hasOcclusionFromOutsideTargetSurface)) {
-                if (hasOcclusionFromOutsideTargetSurface)
-                    targetRenderPass->setHasOcclusionFromOutsideTargetSurface(hasOcclusionFromOutsideTargetSurface);
-            } else {
+            if (occlusionTracker.occluded(*it, it->visibleContentRect(), &hasOcclusionFromOutsideTargetSurface))
+                appendQuadsData.hadOcclusionFromOutsideTargetSurface |= hasOcclusionFromOutsideTargetSurface;
+            else {
                 it->willDraw(m_resourceProvider.get());
                 frame.willDrawLayers.append(*it);
-                targetRenderPass->appendQuadsForLayer(*it, &occlusionTracker, hadMissingTiles);
+                targetRenderPass->appendQuadsForLayer(*it, &occlusionTracker, appendQuadsData);
             }
         }
 
-        if (hadMissingTiles) {
+        if (appendQuadsData.hadOcclusionFromOutsideTargetSurface)
+            targetRenderPass->setHasOcclusionFromOutsideTargetSurface(true);
+
+        if (appendQuadsData.hadMissingTiles) {
             bool layerHasAnimatingTransform = it->screenSpaceTransformIsAnimating() || it->drawTransformIsAnimating();
             if (layerHasAnimatingTransform)
                 drawFrame = false;

@@ -45,6 +45,8 @@ class CCRenderPassSink;
 class CCLayerImpl;
 class TextStream;
 
+struct CCAppendQuadsData;
+
 class CCRenderSurface {
     WTF_MAKE_NONCOPYABLE(CCRenderSurface);
 public:
@@ -105,7 +107,7 @@ public:
     CCDamageTracker* damageTracker() const { return m_damageTracker.get(); }
 
     void appendRenderPasses(CCRenderPassSink&);
-    void appendQuads(CCQuadSink&, bool forReplica, int renderPassId);
+    void appendQuads(CCQuadSink&, CCAppendQuadsData&, bool forReplica, int renderPassId);
 
 private:
     CCLayerImpl* m_owningLayer;

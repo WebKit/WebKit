@@ -53,31 +53,27 @@ CCRenderPass::CCRenderPass(int id, IntRect outputRect, const WebKit::WebTransfor
     ASSERT(id > 0);
 }
 
-void CCRenderPass::appendQuadsForLayer(CCLayerImpl* layer, CCOcclusionTrackerImpl* occlusionTracker, bool& hadMissingTiles)
+void CCRenderPass::appendQuadsForLayer(CCLayerImpl* layer, CCOcclusionTrackerImpl* occlusionTracker, CCAppendQuadsData& appendQuadsData)
 {
     const bool forSurface = false;
     CCQuadCuller quadCuller(m_quadList, m_sharedQuadStateList, layer, occlusionTracker, layer->hasDebugBorders(), forSurface);
 
-    layer->appendQuads(quadCuller, hadMissingTiles);
-
-    m_hasOcclusionFromOutsideTargetSurface |= quadCuller.hasOcclusionFromOutsideTargetSurface();
+    layer->appendQuads(quadCuller, appendQuadsData);
 }
 
-void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer, const CCRenderPass* contributingRenderPass, CCOcclusionTrackerImpl* occlusionTracker)
+void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer, const CCRenderPass* contributingRenderPass, CCOcclusionTrackerImpl* occlusionTracker, CCAppendQuadsData& appendQuadsData)
 {
     const bool forSurface = true;
     CCQuadCuller quadCuller(m_quadList, m_sharedQuadStateList, layer, occlusionTracker, layer->hasDebugBorders(), forSurface);
 
     bool isReplica = false;
-    layer->renderSurface()->appendQuads(quadCuller, isReplica, contributingRenderPass->id());
+    layer->renderSurface()->appendQuads(quadCuller, appendQuadsData, isReplica, contributingRenderPass->id());
 
     // Add replica after the surface so that it appears below the surface.
     if (layer->hasReplica()) {
         isReplica = true;
-        layer->renderSurface()->appendQuads(quadCuller, isReplica, contributingRenderPass->id());
+        layer->renderSurface()->appendQuads(quadCuller, appendQuadsData, isReplica, contributingRenderPass->id());
     }
-
-    m_hasOcclusionFromOutsideTargetSurface |= quadCuller.hasOcclusionFromOutsideTargetSurface();
 }
 
 void CCRenderPass::appendQuadsToFillScreen(CCLayerImpl* rootLayer, SkColor screenBackgroundColor, const CCOcclusionTrackerImpl& occlusionTracker)

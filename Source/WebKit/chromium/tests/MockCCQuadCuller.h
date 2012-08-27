@@ -44,7 +44,7 @@ public:
         , m_activeSharedQuadStateList(externalSharedQuadStateList)
     { }
 
-    virtual bool append(WTF::PassOwnPtr<CCDrawQuad> newQuad) OVERRIDE
+    virtual bool append(PassOwnPtr<CCDrawQuad> newQuad, CCAppendQuadsData&) OVERRIDE
     {
         OwnPtr<CCDrawQuad> drawQuad = newQuad;
         if (!drawQuad->quadRect().isEmpty()) {

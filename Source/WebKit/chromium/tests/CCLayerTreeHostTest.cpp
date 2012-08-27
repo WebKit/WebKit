@@ -2409,7 +2409,7 @@ public:
     }
     virtual ~EvictionTestLayerImpl() { }
 
-    virtual void appendQuads(CCQuadSink&, bool& hadMissingTiles) OVERRIDE
+    virtual void appendQuads(CCQuadSink& quadSink, CCAppendQuadsData&) OVERRIDE
     {
         ASSERT_TRUE(m_hasTexture);
         ASSERT_NE(0u, layerTreeHostImpl()->resourceProvider()->numResources());

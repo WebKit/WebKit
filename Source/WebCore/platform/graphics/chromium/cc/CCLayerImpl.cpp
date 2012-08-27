@@ -166,13 +166,13 @@ void CCLayerImpl::didDraw(CCResourceProvider*)
 #endif
 }
 
-void CCLayerImpl::appendDebugBorderQuad(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState) const
+void CCLayerImpl::appendDebugBorderQuad(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, CCAppendQuadsData& appendQuadsData) const
 {
     if (!hasDebugBorders())
         return;
 
     IntRect contentRect(IntPoint(), contentBounds());
-    quadList.append(CCDebugBorderDrawQuad::create(sharedQuadState, contentRect, debugBorderColor(), debugBorderWidth()));
+    quadList.append(CCDebugBorderDrawQuad::create(sharedQuadState, contentRect, debugBorderColor(), debugBorderWidth()), appendQuadsData);
 }
 
 CCResourceProvider::ResourceId CCLayerImpl::contentsResourceId() const

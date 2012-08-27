@@ -42,9 +42,7 @@ public:
 
     // CCQuadSink implementation.
     virtual CCSharedQuadState* useSharedQuadState(PassOwnPtr<CCSharedQuadState>) OVERRIDE;
-    virtual bool append(PassOwnPtr<CCDrawQuad>) OVERRIDE;
-
-    bool hasOcclusionFromOutsideTargetSurface() { return m_hasOcclusionFromOutsideTargetSurface; }
+    virtual bool append(PassOwnPtr<CCDrawQuad>, CCAppendQuadsData&) OVERRIDE;
 
 private:
     CCQuadList& m_quadList;
@@ -54,7 +52,6 @@ private:
     const CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>* m_occlusionTracker;
     bool m_showCullingWithDebugBorderQuads;
     bool m_forSurface;
-    bool m_hasOcclusionFromOutsideTargetSurface;
 };
 
 }

@@ -32,6 +32,7 @@ namespace WebCore {
 
 class CCDrawQuad;
 
+struct CCAppendQuadsData;
 struct CCSharedQuadState;
 
 class CCQuadSink {
@@ -43,7 +44,7 @@ public:
     virtual CCSharedQuadState* useSharedQuadState(PassOwnPtr<CCSharedQuadState>) = 0;
 
     // Returns true if the quad is added to the list, and false if the quad is entirely culled.
-    virtual bool append(PassOwnPtr<CCDrawQuad> passDrawQuad) = 0;
+    virtual bool append(PassOwnPtr<CCDrawQuad> passDrawQuad, CCAppendQuadsData&) = 0;
 };
 
 }

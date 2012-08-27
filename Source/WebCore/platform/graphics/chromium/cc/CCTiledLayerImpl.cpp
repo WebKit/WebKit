@@ -29,6 +29,7 @@
 
 #include "CCTiledLayerImpl.h"
 
+#include "CCAppendQuadsData.h"
 #include "CCCheckerboardDrawQuad.h"
 #include "CCDebugBorderDrawQuad.h"
 #include "CCLayerTilingData.h"
@@ -125,7 +126,7 @@ DrawableTile* CCTiledLayerImpl::createTile(int i, int j)
     return addedTile;
 }
 
-void CCTiledLayerImpl::appendQuads(CCQuadSink& quadSink, bool& hadMissingTiles)
+void CCTiledLayerImpl::appendQuads(CCQuadSink& quadSink, CCAppendQuadsData& appendQuadsData)
 {
     const IntRect& contentRect = visibleContentRect();
 
@@ -133,7 +134,7 @@ void CCTiledLayerImpl::appendQuads(CCQuadSink& quadSink, bool& hadMissingTiles)
         return;
 
     CCSharedQuadState* sharedQuadState = quadSink.useSharedQuadState(createSharedQuadState());
-    appendDebugBorderQuad(quadSink, sharedQuadState);
+    appendDebugBorderQuad(quadSink, sharedQuadState, appendQuadsData);
 
     int left, top, right, bottom;
     m_tiler->contentRectToTileIndices(contentRect, left, top, right, bottom);
@@ -149,7 +150,7 @@ void CCTiledLayerImpl::appendQuads(CCQuadSink& quadSink, bool& hadMissingTiles)
                     borderColor = SkColorSetARGB(debugTileBorderAlpha, debugTileBorderMissingTileColorRed, debugTileBorderMissingTileColorGreen, debugTileBorderMissingTileColorBlue);
                 else
                     borderColor = SkColorSetARGB(debugTileBorderAlpha, debugTileBorderColorRed, debugTileBorderColorGreen, debugTileBorderColorBlue);
-                quadSink.append(CCDebugBorderDrawQuad::create(sharedQuadState, tileRect, borderColor, debugTileBorderWidth));
+                quadSink.append(CCDebugBorderDrawQuad::create(sharedQuadState, tileRect, borderColor, debugTileBorderWidth), appendQuadsData);
             }
         }
     }
@@ -170,9 +171,9 @@ void CCTiledLayerImpl::appendQuads(CCQuadSink& quadSink, bool& hadMissingTiles)
 
             if (!tile || !tile->resourceId()) {
                 if (drawCheckerboardForMissingTiles())
-                    hadMissingTiles |= quadSink.append(CCCheckerboardDrawQuad::create(sharedQuadState, tileRect));
+                    appendQuadsData.hadMissingTiles |= quadSink.append(CCCheckerboardDrawQuad::create(sharedQuadState, tileRect), appendQuadsData);
                 else
-                    hadMissingTiles |= quadSink.append(CCSolidColorDrawQuad::create(sharedQuadState, tileRect, backgroundColor()));
+                    appendQuadsData.hadMissingTiles |= quadSink.append(CCSolidColorDrawQuad::create(sharedQuadState, tileRect, backgroundColor()), appendQuadsData);
                 continue;
             }
 
@@ -198,7 +199,7 @@ void CCTiledLayerImpl::appendQuads(CCQuadSink& quadSink, bool& hadMissingTiles)
             bool bottomEdgeAA = j == m_tiler->numTilesY() - 1 && useAA;
 
             const GC3Dint textureFilter = m_tiler->hasBorderTexels() ? GraphicsContext3D::LINEAR : GraphicsContext3D::NEAREST;
-            quadSink.append(CCTileDrawQuad::create(sharedQuadState, tileRect, tileOpaqueRect, tile->resourceId(), textureOffset, textureSize, textureFilter, contentsSwizzled(), leftEdgeAA, topEdgeAA, rightEdgeAA, bottomEdgeAA));
+            quadSink.append(CCTileDrawQuad::create(sharedQuadState, tileRect, tileOpaqueRect, tile->resourceId(), textureOffset, textureSize, textureFilter, contentsSwizzled(), leftEdgeAA, topEdgeAA, rightEdgeAA, bottomEdgeAA), appendQuadsData);
         }
     }
 }

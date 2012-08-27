@@ -41,7 +41,7 @@ public:
 
     void setIOSurfaceProperties(unsigned ioSurfaceId, const IntSize&);
 
-    virtual void appendQuads(CCQuadSink&, bool& hadMissingTiles) OVERRIDE;
+    virtual void appendQuads(CCQuadSink&, CCAppendQuadsData&) OVERRIDE;
 
     virtual void willDraw(CCResourceProvider*) OVERRIDE;
     virtual void didLoseContext() OVERRIDE;

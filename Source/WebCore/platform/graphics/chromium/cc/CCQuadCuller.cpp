@@ -29,6 +29,7 @@
 
 #include "CCQuadCuller.h"
 
+#include "CCAppendQuadsData.h"
 #include "CCDebugBorderDrawQuad.h"
 #include "CCLayerImpl.h"
 #include "CCOcclusionTracker.h"
@@ -56,7 +57,6 @@ CCQuadCuller::CCQuadCuller(CCQuadList& quadList, CCSharedQuadStateList& sharedQu
     , m_occlusionTracker(occlusionTracker)
     , m_showCullingWithDebugBorderQuads(showCullingWithDebugBorderQuads)
     , m_forSurface(forSurface)
-    , m_hasOcclusionFromOutsideTargetSurface(false)
 {
 }
 
@@ -93,7 +93,7 @@ static inline bool appendQuadInternal(PassOwnPtr<CCDrawQuad> passDrawQuad, const
     return keepQuad;
 }
 
-bool CCQuadCuller::append(PassOwnPtr<CCDrawQuad> passDrawQuad)
+bool CCQuadCuller::append(PassOwnPtr<CCDrawQuad> passDrawQuad, CCAppendQuadsData& appendQuadsData)
 {
     ASSERT(passDrawQuad->sharedQuadState() == m_currentSharedQuadState);
     ASSERT(passDrawQuad->sharedQuadStateId() == m_currentSharedQuadState->id);
@@ -107,7 +107,8 @@ bool CCQuadCuller::append(PassOwnPtr<CCDrawQuad> passDrawQuad)
         culledRect = m_occlusionTracker->unoccludedContributingSurfaceContentRect(m_layer, false, passDrawQuad->quadRect(), &hasOcclusionFromOutsideTargetSurface);
     else
         culledRect = m_occlusionTracker->unoccludedContentRect(m_layer, passDrawQuad->quadRect(), &hasOcclusionFromOutsideTargetSurface);
-    m_hasOcclusionFromOutsideTargetSurface |= hasOcclusionFromOutsideTargetSurface;
+
+    appendQuadsData.hadOcclusionFromOutsideTargetSurface |= hasOcclusionFromOutsideTargetSurface;
 
     return appendQuadInternal(passDrawQuad, culledRect, m_quadList, *m_occlusionTracker, m_showCullingWithDebugBorderQuads);
 }
