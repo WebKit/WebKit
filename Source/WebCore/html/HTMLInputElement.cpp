@@ -111,6 +111,9 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* docum
     , m_isActivatedSubmit(false)
     , m_autocomplete(Uninitialized)
     , m_isAutofilled(false)
+#if ENABLE(DATALIST_ELEMENT)
+    , m_hasNonEmptyList(false)
+#endif
     , m_stateRestored(false)
     , m_parsingInProgress(createdByParser)
     , m_valueAttributeWasUpdatedAfterParsing(false)
