@@ -244,8 +244,10 @@ bool CSPSourceList::matches(const KURL& url)
     if (m_allowStar)
         return true;
 
+    KURL effectiveURL = SecurityOrigin::shouldUseInnerURL(url) ? SecurityOrigin::extractInnerURL(url) : url;
+
     for (size_t i = 0; i < m_list.size(); ++i) {
-        if (m_list[i].matches(url))
+        if (m_list[i].matches(effectiveURL))
             return true;
     }
 

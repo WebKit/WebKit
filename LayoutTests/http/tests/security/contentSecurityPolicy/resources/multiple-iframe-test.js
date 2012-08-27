@@ -14,7 +14,9 @@ function test() {
     iframe.src = baseURL + "resources/echo-script-src.pl?" +
                  "should_run=" + escape(current[0]) +
                  "&csp=" + escape(current[1]) +
-                 "&q=" + baseURL + escape(current[2]);
+                 "&q=" + (current[2].match(/^data:/) ?
+                     escape(current[2]) :
+                     baseURL + escape(current[2]));
     if (current[3])
       iframe.src += "&nonce=" + escape(current[3]);
 

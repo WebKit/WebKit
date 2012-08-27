@@ -52,6 +52,19 @@ public:
     static PassRefPtr<SecurityOrigin> createFromString(const String&);
     static PassRefPtr<SecurityOrigin> create(const String& protocol, const String& host, int port);
 
+    // Some URL schemes use nested URLs for their security context. For example,
+    // filesystem URLs look like the following:
+    //
+    //   filesystem:http://example.com/temporary/path/to/file.png
+    //
+    // We're supposed to use "http://example.com" as the origin.
+    //
+    // Generally, we add URL schemes to this list when WebKit support them. For
+    // example, we don't include the "jar" scheme, even though Firefox
+    // understands that "jar" uses an inner URL for it's security origin.
+    static bool shouldUseInnerURL(const KURL&);
+    static KURL extractInnerURL(const KURL&);
+
     // Create a deep copy of this SecurityOrigin. This method is useful
     // when marshalling a SecurityOrigin to another thread.
     PassRefPtr<SecurityOrigin> isolatedCopy() const;

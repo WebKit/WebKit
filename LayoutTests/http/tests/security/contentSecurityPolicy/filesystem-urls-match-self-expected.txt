@@ -1,0 +1,2 @@
+ALERT: PASS (1/1)!
+filesystem: URLs are same-origin with the page in which they were created, and should therefore match the 'self' source in CSP directives.

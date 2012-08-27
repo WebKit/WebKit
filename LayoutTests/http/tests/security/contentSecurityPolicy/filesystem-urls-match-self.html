@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="X-WebKit-CSP" content="script-src 'unsafe-inline' 'self'">
+    </head>
+    <body>
+        <p>
+            filesystem: URLs are same-origin with the page in which they were
+            created, and should therefore match the 'self' source in CSP
+            directives.
+        </p>
+
+        <script>
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+            function pass() {
+                alert("PASS (1/1)!");
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+
+            window.webkitRequestFileSystem(TEMPORARY, 1024*1024 /*1MB*/, function(fs) {
+                fs.root.getFile('pass.js', {create: true}, function(fileEntry) {
+                    fileEntry.createWriter(function(fileWriter) {
+                        fileWriter.onwriteend = function(e) {
+                            var script = document.createElement('script');
+                            script.src =fileEntry.toURL('application/javascript');
+                            document.body.appendChild(script);
+                        };
+
+                        // Create a new Blob and write it to pass.js.
+                        var b = new Blob(['pass();'], {type: 'application/javascript'});
+                        fileWriter.write(b);
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

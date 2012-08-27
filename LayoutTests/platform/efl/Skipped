@@ -1062,6 +1062,7 @@ media/media-can-play-flac-audio.html
 
 # Requires ENABLE(FILE_SYSTEM)
 fast/forms/file/input-file-entries.html
+http/tests/security/contentSecurityPolicy/filesystem-urls-match-self.html
 
 # Transparent image being produced
 fast/frames/transparent-scrollbar.html

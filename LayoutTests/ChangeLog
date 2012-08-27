@@ -1,3 +1,28 @@
+2012-08-27  Mike West  <mkwst@chromium.org>
+
+        'self' in a CSP directive should match blob: and filesystem: URLs.
+        https://bugs.webkit.org/show_bug.cgi?id=94918
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/blob-urls-match-self-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/blob-urls-match-self.html: Added.
+        * http/tests/security/contentSecurityPolicy/filesystem-urls-match-self-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/filesystem-urls-match-self.html: Added.
+            Test the new functionality.
+        * http/tests/security/contentSecurityPolicy/resources/multiple-iframe-test.js:
+        (test):
+            Adding support for data: URLs.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-08-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-08.html: Added.
+            Adding data: URL tests to ensure that grabbing the inner URL of the
+            URL to test doesn't inadvertently regress that behavior.
+        * platform/efl/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+            Skipping filessytem test on ports where it's not enabled.
+
 2012-08-27  Simon Fraser  <simon.fraser@apple.com>
 
         Fix some more sticky ref tests; avoid wrapping at the 800px
