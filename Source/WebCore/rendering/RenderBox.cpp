@@ -206,10 +206,10 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyl
         view()->repaint();
 
     if (FrameView *frameView = view()->frameView()) {
-        bool newStyleIsFixed = newStyle && newStyle->position() == FixedPosition;
-        bool oldStyleIsFixed = oldStyle && oldStyle->position() == FixedPosition;
-        if (newStyleIsFixed != oldStyleIsFixed) {
-            if (newStyleIsFixed)
+        bool newStyleIsViewportConstained = newStyle && newStyle->hasViewportConstrainedPosition();
+        bool oldStyleIsViewportConstrained = oldStyle && oldStyle->hasViewportConstrainedPosition();
+        if (newStyleIsViewportConstained != oldStyleIsViewportConstrained) {
+            if (newStyleIsViewportConstained)
                 frameView->addFixedObject(this);
             else
                 frameView->removeFixedObject(this);
@@ -1577,7 +1577,7 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, La
 
     if (position == AbsolutePosition && o->isInFlowPositioned() && o->isRenderInline())
         topLeft += toRenderInline(o)->offsetForInFlowPositionedInline(this);
-    else if ((position == RelativePosition) && layer()) {
+    else if ((position == RelativePosition || position == StickyPosition) && layer()) {
         // Apply the relative position offset when invalidating a rectangle.  The layer
         // is translated, but the render box isn't, so we need to do this to get the
         // right dirty rect.  Since this is called from RenderObject::setStyle, the relative position

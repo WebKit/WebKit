@@ -1,3 +1,43 @@
+2012-08-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement sticky positioning
+        https://bugs.webkit.org/show_bug.cgi?id=90046
+
+        Reviewed by Ojan Vafai.
+
+        Various ref tests for sticky positioning.
+
+        * fast/css/sticky/inflow-sticky-expected.html: Added.
+        * fast/css/sticky/inflow-sticky.html: Added.
+        * fast/css/sticky/inline-sticky-abspos-child-expected.html: Added.
+        * fast/css/sticky/inline-sticky-abspos-child.html: Added.
+        * fast/css/sticky/inline-sticky-expected.html: Added.
+        * fast/css/sticky/inline-sticky.html: Added.
+        * fast/css/sticky/replaced-sticky-expected.html: Added.
+        * fast/css/sticky/replaced-sticky.html: Added.
+        * fast/css/sticky/sticky-as-positioning-container-expected.html: Added.
+        * fast/css/sticky/sticky-as-positioning-container.html: Added.
+        * fast/css/sticky/sticky-left-expected.html: Added.
+        * fast/css/sticky/sticky-left-percentage-expected.html: Added.
+        * fast/css/sticky/sticky-left-percentage.html: Added.
+        * fast/css/sticky/sticky-left.html: Added.
+        * fast/css/sticky/sticky-margins-expected.html: Added.
+        * fast/css/sticky/sticky-margins.html: Added.
+        * fast/css/sticky/sticky-side-margins-expected.html: Added.
+        * fast/css/sticky/sticky-side-margins.html: Added.
+        * fast/css/sticky/sticky-stacking-context-expected.html: Added.
+        * fast/css/sticky/sticky-stacking-context.html: Added.
+        * fast/css/sticky/sticky-top-expected.html: Added.
+        * fast/css/sticky/sticky-top-margins-expected.html: Added.
+        * fast/css/sticky/sticky-top-margins.html: Added.
+        * fast/css/sticky/sticky-top.html: Added.
+        * fast/css/sticky/sticky-writing-mode-horizontal-bt-expected.html: Added.
+        * fast/css/sticky/sticky-writing-mode-horizontal-bt.html: Added.
+        * fast/css/sticky/sticky-writing-mode-vertical-lr-expected.html: Added.
+        * fast/css/sticky/sticky-writing-mode-vertical-lr.html: Added.
+        * fast/css/sticky/sticky-writing-mode-vertical-rl-expected.html: Added.
+        * fast/css/sticky/sticky-writing-mode-vertical-rl.html: Added.
+
 2012-08-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Debugger should break on failed assertions in Break on exceptions mode.

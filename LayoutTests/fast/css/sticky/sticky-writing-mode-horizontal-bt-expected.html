@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+        overflow: hidden; /* hide scrollbars */
+    }
+    
+    .group {
+        display: inline-block;
+        position: relative;
+        width: 250px;
+        height: 500px;
+    }
+    
+    .container {
+        -webkit-writing-mode: horizontal-bt;
+        width: 200px;
+        height: 400px;
+        border: 10px solid black;
+        padding: 5px;
+    }
+    
+    .box {
+        width: 200px;
+        height: 200px;
+    }
+
+    .sticky {
+        position: relative;
+        background-color: green;
+    }
+</style>
+</head>
+<body>
+    <div class="group" style="top: -100px">
+        <div class="container">
+            <div class="sticky box"></div>
+        </div>
+    </div>
+
+    <div class="group" style="top: 100px">
+        <div class="container">
+            <div class="sticky box" style="top: -15px;"></div>
+        </div>
+    </div>
+
+    <div class="group" style="top: 300px">
+        <div class="container">
+            <div class="sticky box" style="top: -200px;"></div>
+        </div>
+    </div>
+</body>
+</html>

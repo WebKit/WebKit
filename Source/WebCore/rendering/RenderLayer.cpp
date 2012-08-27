@@ -519,10 +519,10 @@ void RenderLayer::updateLayerPositionsAfterScroll(UpdateLayerPositionsAfterScrol
 
     updateLayerPosition();
 
-    if ((flags & HasSeenFixedPositionedAncestor) || renderer()->style()->position() == FixedPosition) {
+    if ((flags & HasSeenViewportConstrainedAncestor) || renderer()->style()->hasViewportConstrainedPosition()) {
         // FIXME: Is it worth passing the offsetFromRoot around like in updateLayerPositions?
         computeRepaintRects();
-        flags |= HasSeenFixedPositionedAncestor;
+        flags |= HasSeenViewportConstrainedAncestor;
     } else if ((flags & HasSeenAncestorWithOverflowClip) && !m_canSkipRepaintRectsUpdateOnScroll) {
         // If we have seen an overflow clip, we should update our repaint rects as clippedOverflowRectForRepaint
         // intersects it with our ancestor overflow clip that may have moved.
@@ -933,7 +933,7 @@ RenderLayer* RenderLayer::stackingContext() const
 static inline bool isPositionedContainer(RenderLayer* layer)
 {
     RenderBoxModelObject* layerRenderer = layer->renderer();
-    return layer->isRootLayer() || layerRenderer->isOutOfFlowPositioned() || layerRenderer->isInFlowPositioned() || layer->hasTransform();
+    return layer->isRootLayer() || layerRenderer->isPositioned() || layer->hasTransform();
 }
 
 static inline bool isFixedPositionedContainer(RenderLayer* layer)
@@ -3996,7 +3996,7 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, RenderRegion*
             if (renderer()->style()->hasBorderRadius())
                 newOverflowClip.setHasRadius(true);
             clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
-            if (renderer()->isOutOfFlowPositioned() || renderer()->isInFlowPositioned())
+            if (renderer()->isPositioned())
                 clipRects.setPosClipRect(intersection(newOverflowClip, clipRects.posClipRect()));
         }
         if (renderer()->hasClip()) {
@@ -4801,8 +4801,7 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
                 || renderer()->isEmbeddedObject()
                 || renderer()->isRenderIFrame()
                 || (renderer()->style()->specifiesColumns() && !isRootLayer()))
-            && !renderer()->isOutOfFlowPositioned()
-            && !renderer()->isInFlowPositioned()
+            && !renderer()->isPositioned()
             && !renderer()->hasTransform()
 #if ENABLE(CSS_FILTERS)
             && !renderer()->hasFilter()

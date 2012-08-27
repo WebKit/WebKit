@@ -3210,7 +3210,7 @@ bool RenderBlock::isSelectionRoot() const
         return false;
         
     if (isBody() || isRoot() || hasOverflowClip()
-        || isInFlowPositioned() || isFloatingOrOutOfFlowPositioned()
+        || isPositioned() || isFloating()
         || isTableCell() || isInlineBlockOrInlineTable()
         || hasTransform() || hasReflection() || hasMask() || isWritingModeRoot())
         return true;
@@ -7362,6 +7362,8 @@ const char* RenderBlock::renderName() const
         return "RenderBlock (generated)";
     if (isRelPositioned())
         return "RenderBlock (relative positioned)";
+    if (isStickyPositioned())
+        return "RenderBlock (sticky positioned)";
     if (isRunIn())
         return "RenderBlock (run-in)";
     return "RenderBlock";

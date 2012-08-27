@@ -44,7 +44,7 @@ public:
 
     // hasAutoZIndex only returns true if the element is positioned or a flex-item since
     // position:static elements that are not flex-items get their z-index coerced to auto.
-    virtual bool requiresLayer() const OVERRIDE { return isRoot() || isOutOfFlowPositioned() || isInFlowPositioned() || isTransparent() || hasOverflowClip() || hasTransform() || hasHiddenBackface() || hasMask() || hasReflection() || hasFilter() || style()->specifiesColumns() || !style()->hasAutoZIndex(); }
+    virtual bool requiresLayer() const OVERRIDE { return isRoot() || isPositioned() || isTransparent() || hasOverflowClip() || hasTransform() || hasHiddenBackface() || hasMask() || hasReflection() || hasFilter() || style()->specifiesColumns() || !style()->hasAutoZIndex(); }
 
     // Use this with caution! No type checking is done!
     RenderBox* firstChildBox() const;
@@ -578,6 +578,8 @@ private:
     // These values are used in shrink-to-fit layout systems.
     // These include tables, positioned objects, floats and flexible boxes.
     virtual void computePreferredLogicalWidths() { setPreferredLogicalWidthsDirty(false); }
+
+    virtual LayoutRect frameRectForStickyPositioning() const OVERRIDE { return frameRect(); }
 
 private:
     // The width/height of the contents + borders + padding.  The x/y location is relative to our container (which is not always our parent).

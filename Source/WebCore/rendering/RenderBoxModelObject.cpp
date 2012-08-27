@@ -456,6 +456,7 @@ void RenderBoxModelObject::updateBoxModelInfoFromStyle()
     setHasBoxDecorations(hasBackground() || styleToUse->hasBorder() || styleToUse->hasAppearance() || styleToUse->boxShadow());
     setInline(styleToUse->isDisplayInlineType());
     setRelPositioned(styleToUse->position() == RelativePosition);
+    setStickyPositioned(styleToUse->position() == StickyPosition);
     setHorizontalWritingMode(styleToUse->isHorizontalWritingMode());
 }
 
@@ -534,6 +535,8 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
         if (!isOutOfFlowPositioned()) {
             if (isRelPositioned())
                 referencePoint.move(relativePositionOffset());
+            else if (isStickyPositioned())
+                referencePoint.move(stickyPositionOffset());
             const RenderObject* curr = parent();
             while (curr != offsetParent) {
                 // FIXME: What are we supposed to do inside SVG content?
@@ -542,7 +545,7 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
                 referencePoint.move(curr->parent()->offsetForColumns(referencePoint));
                 curr = curr->parent();
             }
-            if (offsetParent->isBox() && offsetParent->isBody() && !offsetParent->isRelPositioned() && !offsetParent->isOutOfFlowPositioned())
+            if (offsetParent->isBox() && offsetParent->isBody() && !offsetParent->isPositioned())
                 referencePoint.moveBy(toRenderBox(offsetParent)->topLeftLocation());
         }
     }
@@ -550,10 +553,86 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
     return referencePoint;
 }
 
+LayoutSize RenderBoxModelObject::stickyPositionOffset() const
+{
+    RenderBlock* containingBlock = this->containingBlock();
+
+    LayoutRect viewportRect = view()->frameView()->visibleContentRect();
+    LayoutRect containerContentRect = containingBlock->contentBoxRect();
+
+    LayoutUnit minLeftMargin = minimumValueForLength(style()->marginLeft(), containingBlock->availableLogicalWidth(), view());
+    LayoutUnit minTopMargin = minimumValueForLength(style()->marginTop(), containingBlock->availableLogicalWidth(), view());
+    LayoutUnit minRightMargin = minimumValueForLength(style()->marginRight(), containingBlock->availableLogicalWidth(), view());
+    LayoutUnit minBottomMargin = minimumValueForLength(style()->marginBottom(), containingBlock->availableLogicalWidth(), view());
+
+    // Compute the container-relative area within which the sticky element is allowed to move.
+    containerContentRect.move(minLeftMargin, minTopMargin);
+    containerContentRect.contract(minLeftMargin + minRightMargin, minTopMargin + minBottomMargin);
+    FloatRect absContainerContentRect = containingBlock->localToAbsoluteQuad(FloatRect(containerContentRect)).boundingBox();
+
+    LayoutRect stickyBoxRect = frameRectForStickyPositioning();
+    LayoutRect flippedStickyBoxRect = stickyBoxRect;
+    containingBlock->flipForWritingMode(flippedStickyBoxRect);
+    LayoutPoint stickyLocation = flippedStickyBoxRect.location();
+
+    // FIXME: sucks to call localToAbsolute again, but we can't just offset from the previously computed rect if there are transforms.
+    FloatRect absContainerFrame = containingBlock->localToAbsoluteQuad(FloatRect(FloatPoint(), containingBlock->size())).boundingBox();
+    // We can't call localToAbsolute on |this| because that will recur. FIXME: For now, assume that |this| is not transformed.
+    FloatRect absoluteStickyBoxRect(absContainerFrame.location() + stickyLocation, flippedStickyBoxRect.size());
+
+    FloatPoint originalLocation = absoluteStickyBoxRect.location();
+
+    // Horizontal position.
+    // FIXME: if left and right are specified, allow right to override left.
+    if (!style()->left().isAuto()) {
+        LayoutUnit leftLimit = viewportRect.x() + valueForLength(style()->left(), viewportRect.width(), view());
+        if (absoluteStickyBoxRect.x() < leftLimit)
+            absoluteStickyBoxRect.setX(leftLimit);
+
+        if (absoluteStickyBoxRect.maxX() > absContainerContentRect.maxX())
+            absoluteStickyBoxRect.setX(absContainerContentRect.maxX() - absoluteStickyBoxRect.width());
+    }
+    
+    if (!style()->right().isAuto()) {
+        LayoutUnit rightLimit = viewportRect.maxX() - valueForLength(style()->right(), viewportRect.width(), view());
+        if (absoluteStickyBoxRect.maxX() > rightLimit)
+            absoluteStickyBoxRect.setX(rightLimit - absoluteStickyBoxRect.width());
+            
+        if (absoluteStickyBoxRect.x() < absContainerContentRect.x())
+            absoluteStickyBoxRect.setX(absContainerContentRect.x());
+    }
+
+    // Vertical position.
+    // FIXME: if top and bottom are specified, allow bottom to override top.
+    if (!style()->top().isAuto()) {
+        LayoutUnit topLimit = viewportRect.y() + valueForLength(style()->top(), viewportRect.height(), view());
+        if (absoluteStickyBoxRect.y() < topLimit)
+            absoluteStickyBoxRect.setY(topLimit);
+
+        if (absoluteStickyBoxRect.maxY() > absContainerContentRect.maxY())
+            absoluteStickyBoxRect.setY(absContainerContentRect.maxY() - absoluteStickyBoxRect.height());
+    }
+    
+    if (!style()->bottom().isAuto()) {
+        LayoutUnit bottomLimit = viewportRect.maxY() - valueForLength(style()->bottom(), viewportRect.height(), view());
+        if (absoluteStickyBoxRect.maxY() > bottomLimit)
+            absoluteStickyBoxRect.setY(bottomLimit - absoluteStickyBoxRect.height());
+            
+        if (absoluteStickyBoxRect.y() < absContainerContentRect.y())
+            absoluteStickyBoxRect.setY(absContainerContentRect.y());
+    }
+
+    // The sticky offset is physical, so we can just return the delta computed in absolute coords (though it may be wrong with transforms).
+    return roundedLayoutSize(absoluteStickyBoxRect.location() - originalLocation);
+}
+
 LayoutSize RenderBoxModelObject::offsetForInFlowPosition() const
 {
     if (isRelPositioned())
         return relativePositionOffset();
+
+    if (isStickyPositioned())
+        return stickyPositionOffset();
 
     return LayoutSize();
 }

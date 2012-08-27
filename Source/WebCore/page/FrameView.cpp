@@ -1502,7 +1502,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
     FixedObjectSet::const_iterator end = m_fixedObjects->end();
     for (FixedObjectSet::const_iterator it = m_fixedObjects->begin(); it != end; ++it) {
         RenderObject* renderer = *it;
-        if (renderer->style()->position() != FixedPosition)
+        if (!renderer->style()->hasViewportConstrainedPosition())
             continue;
 #if USE(ACCELERATED_COMPOSITING)
         if (renderer->isComposited())

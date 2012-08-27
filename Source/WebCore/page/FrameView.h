@@ -197,6 +197,7 @@ public:
     void removeSlowRepaintObject();
     bool hasSlowRepaintObjects() const { return m_slowRepaintObjectCount; }
 
+    // This includes position:fixed and sticky objects.
     typedef HashSet<RenderObject*> FixedObjectSet;
     void addFixedObject(RenderObject*);
     void removeFixedObject(RenderObject*);

@@ -1853,7 +1853,7 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
             toRenderBox(this)->removeFloatingOrPositionedChildFromBlockLists();
 
         s_affectsParentBlock = isFloatingOrOutOfFlowPositioned()
-            && (!newStyle->isFloating() && newStyle->position() != AbsolutePosition && newStyle->position() != FixedPosition)
+            && (!newStyle->isFloating() && !newStyle->hasOutOfFlowPosition())
             && parent() && (parent()->isBlockFlow() || parent()->isRenderInline());
 
         // reset style flags
@@ -1861,6 +1861,7 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
             setFloating(false);
             setPositioned(false);
             setRelPositioned(false);
+            setStickyPositioned(false);
         }
         setHorizontalWritingMode(true);
         setPaintBackground(false);
@@ -1966,9 +1967,9 @@ void RenderObject::propagateStyleToAnonymousChildren(bool blockChildrenOnly)
                 newStyle->setColumnSpan(ColumnSpanAll);
         }
 
-        // Preserve the position style of anonymous block continuations as they can have relative position when
-        // they contain block descendants of relative positioned inlines.
-        if (child->isRelPositioned() && toRenderBlock(child)->isAnonymousBlockContinuation())
+        // Preserve the position style of anonymous block continuations as they can have relative or sticky position when
+        // they contain block descendants of relative or sticky positioned inlines.
+        if (child->isInFlowPositioned() && toRenderBlock(child)->isAnonymousBlockContinuation())
             newStyle->setPosition(child->style()->position());
 
         child->setStyle(newStyle.release());
@@ -2898,10 +2899,10 @@ RenderBoxModelObject* RenderObject::offsetParent() const
     //       is one of the following HTML elements: td, th, or table.
     //     * Our own extension: if there is a difference in the effective zoom
 
-    bool skipTables = isOutOfFlowPositioned() || isRelPositioned();
+    bool skipTables = isPositioned();
     float currZoom = style()->effectiveZoom();
     RenderObject* curr = parent();
-    while (curr && (!curr->node() || (!curr->isOutOfFlowPositioned() && !curr->isRelPositioned() && !curr->isBody()))) {
+    while (curr && (!curr->node() || (!curr->isPositioned() && !curr->isBody()))) {
         Node* element = curr->node();
         if (!skipTables && element && (element->hasTagName(tableTag) || element->hasTagName(tdTag) || element->hasTagName(thTag)))
             break;

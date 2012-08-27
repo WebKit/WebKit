@@ -513,8 +513,10 @@ public:
     bool isFloating() const { return m_bitfields.floating(); }
 
     bool isOutOfFlowPositioned() const { return m_bitfields.positioned(); } // absolute or fixed positioning
-    bool isInFlowPositioned() const { return m_bitfields.relPositioned(); } // relative positioning
+    bool isInFlowPositioned() const { return m_bitfields.relPositioned() || m_bitfields.stickyPositioned(); } // relative or sticky positioning
     bool isRelPositioned() const { return m_bitfields.relPositioned(); } // relative positioning
+    bool isStickyPositioned() const { return m_bitfields.stickyPositioned(); }
+    bool isPositioned() const { return m_bitfields.positioned() || m_bitfields.relPositioned() || m_bitfields.stickyPositioned(); }
 
     bool isText() const  { return m_bitfields.isText(); }
     bool isBox() const { return m_bitfields.isBox(); }
@@ -621,6 +623,7 @@ public:
 
     void setPositioned(bool b = true)  { m_bitfields.setPositioned(b);  }
     void setRelPositioned(bool b = true) { m_bitfields.setRelPositioned(b); }
+    void setStickyPositioned(bool b = true) { m_bitfields.setStickyPositioned(b); }
     void setFloating(bool b = true) { m_bitfields.setFloating(b); }
     void setInline(bool b = true) { m_bitfields.setIsInline(b); }
     void setHasBoxDecorations(bool b = true) { m_bitfields.setPaintBackground(b); }
@@ -990,6 +993,7 @@ private:
             , m_floating(false)
             , m_positioned(false)
             , m_relPositioned(false)
+            , m_stickyPositioned(false)
             , m_paintBackground(false)
             , m_isAnonymous(node == node->document())
             , m_isText(false)
@@ -1024,6 +1028,7 @@ private:
 
         ADD_BOOLEAN_BITFIELD(positioned, Positioned);
         ADD_BOOLEAN_BITFIELD(relPositioned, RelPositioned);
+        ADD_BOOLEAN_BITFIELD(stickyPositioned, StickyPositioned);
         ADD_BOOLEAN_BITFIELD(paintBackground, PaintBackground); // if the box has something to paint in the
         // background painting phase (background, border, etc)
 

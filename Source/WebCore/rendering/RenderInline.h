@@ -89,7 +89,8 @@ public:
 protected:
     virtual void willBeDestroyed();
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
 
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
@@ -139,6 +140,8 @@ private:
     virtual const RenderObject* pushMappingToContainer(const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap&) const;
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&);
+
+    virtual LayoutRect frameRectForStickyPositioning() const OVERRIDE { return linesBoundingBox(); }
 
     virtual IntRect borderBoundingBox() const
     {

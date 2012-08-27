@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+        height: 2000px;
+    }
+    
+    .group {
+        display: inline-block;
+        position: relative;
+        width: 200px;
+        height: 500px;
+    }
+    
+    .container {
+        width: 150px;
+        height: 400px;
+        border: 2px solid black;
+        padding: 5px;
+    }
+    
+    .box {
+        width: 120px;
+        height: 120px;
+    }
+
+    .sticky {
+        position: -webkit-sticky;
+        top: 10px;
+        background-color: green;
+    }
+    
+    .indicator {
+        position: absolute;
+        top: 0;
+        left: 37px;
+        background-color: red;
+    }
+</style>
+<script>
+    function doTest()
+    {
+        window.scrollTo(0, 300);
+    }
+    window.addEventListener('load', doTest, false);
+</script>
+</head>
+<body>
+    <!-- auto margins -->
+    <div class="group">
+        <div class="indicator box" style="top: 110px;"></div>
+        <div class="container">
+            <div class="sticky box" style="margin: auto;"></div>
+        </div>
+    </div>
+
+    <!-- px margins -->
+    <div class="group">
+        <div class="indicator box" style="top: 37px;"></div>
+        <div class="container">
+            <div class="sticky box" style="margin: 20px;"></div>
+        </div>
+    </div>
+
+    <!-- % margins -->
+    <div class="group">
+        <div class="indicator box" style="top: 37px;"></div>
+        <div class="container">
+            <div class="sticky box" style="margin: 20%;"></div>
+        </div>
+    </div>
+
+    <!-- % margins -->
+    <div class="group">
+        <div class="indicator box" style="top: 37px;"></div>
+        <div class="container" style="width: 200px;">
+            <div class="sticky box" style="margin: 20%;"></div>
+        </div>
+    </div>
+</body>
+</html>

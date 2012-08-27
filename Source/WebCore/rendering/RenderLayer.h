@@ -575,7 +575,7 @@ public:
 
     enum UpdateLayerPositionsAfterScrollFlag {
         NoFlag = 0,
-        HasSeenFixedPositionedAncestor = 1 << 0,
+        HasSeenViewportConstrainedAncestor = 1 << 0,
         HasSeenAncestorWithOverflowClip = 1 << 1
     };
 
