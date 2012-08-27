@@ -52,6 +52,8 @@ namespace WebCore {
 
 #if USE(CG)
 typedef CGImageRef NativeImagePtr;
+#elif PLATFORM(QT)
+typedef QImage* NativeImagePtr;
 #elif PLATFORM(OPENVG)
 class TiledImageOpenVG;
 typedef TiledImageOpenVG* NativeImagePtr;
@@ -69,8 +71,6 @@ typedef WebCore::NativeImageSkia* NativeImagePtr;
 typedef RefPtr<SharedBitmap> NativeImagePtr;
 #elif PLATFORM(BLACKBERRY)
 typedef void* NativeImagePtr;
-#elif PLATFORM(QT)
-typedef QImage* NativeImagePtr;
 #endif
 
 }
