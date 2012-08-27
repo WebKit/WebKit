@@ -175,9 +175,9 @@ BUGWK94287 MAC WIN : fast/forms/time-multiple-fields/time-multiple-fields-appear
 BUGWK94287 MAC WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes.html = MISSING TEXT IMAGE IMAGE+TEXT PASS
 BUGWK94287 MAC WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance-style.html = MISSING TEXT IMAGE IMAGE+TEXT PASS
 
-// Temporary disabled
-BUGWK94439 MAC : fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic.html = IMAGE PASS
-BUGWK94439 MAC : fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements.html = IMAGE PASS
+// BUG95055: We need to rebaseline for MAC and WIN for multiple fields time input UI
+BUGWK95055 MAC WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic.html = MISSING TEXT IMAGE IMAGE+TEXT PASS
+BUGWK95055 MAC WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements.html = MISSING TEXT IMAGE IMAGE+TEXT PASS
 
 // Proximity Events is not supported.
 BUGWK92942 SKIP : fast/dom/Proximity = PASS
@@ -3464,7 +3464,6 @@ BUGWK94528 MAC : fast/text-autosizing/nested-em-line-height.html = PASS IMAGE
 BUGWK94532 LINUX : fast/forms/formmethod-attribute-button-html.html = PASS MISSING
 
 BUGWK94660 : fast/js/create-lots-of-workers.html = PASS CRASH TIMEOUT
-BUGWK94667 WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic.html = IMAGE
 BUGWK94675 : css3/flexbox/flexitem.html = TEXT
 
 BUGWK94730 MAC : fast/repaint/japanese-rl-selection-repaint-in-regions.html = IMAGE
