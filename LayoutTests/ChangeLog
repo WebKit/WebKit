@@ -1,3 +1,10 @@
+2012-08-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed Chromium gardening.
+
+        * platform/chromium/TestExpectations:
+        Marked fast/text/atsui-bidi-control.html as timing out on SnowLeopard.
+
 2012-08-24  Simon Fraser  <simon.fraser@apple.com>
 
         Implement sticky positioning

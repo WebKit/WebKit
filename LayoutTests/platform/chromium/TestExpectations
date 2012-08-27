@@ -3637,3 +3637,5 @@ BUGWK84286 MAC : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.
 BUGWK84286 MAC : tables/mozilla_expected_failures/collapsing_borders/bug41262-6.html = TEXT
 BUGWK95070 LINUX DEBUG : inspector/styles/media-queries.html = TEXT
 BUGWK95070 WIN LINUX RELEASE : inspector/styles/media-queries.html = PASS TEXT
+
+BUGWK95101 SNOWLEOPARD : fast/text/atsui-bidi-control.html = PASS TIMEOUT
