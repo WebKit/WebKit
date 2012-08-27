@@ -303,6 +303,7 @@ void CCSchedulerStateMachine::beginFrameAborted()
 {
     ASSERT(m_commitState == COMMIT_STATE_FRAME_IN_PROGRESS);
     m_commitState = COMMIT_STATE_IDLE;
+    setNeedsCommit();
 }
 
 void CCSchedulerStateMachine::beginUpdateMoreResourcesComplete(bool morePending)
