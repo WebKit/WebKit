@@ -87,7 +87,6 @@ private:
     void disposeContext();
 
     void setSecurityToken();
-    void clearDocumentWrapper();
 
     // The JavaScript wrapper for the document object is cached on the global
     // object for fast access. UpdateDocumentProperty sets the wrapper

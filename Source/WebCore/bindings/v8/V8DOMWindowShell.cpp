@@ -213,7 +213,7 @@ void V8DOMWindowShell::clearForClose()
         return;
 
     v8::HandleScope handleScope;
-    clearDocumentWrapper();
+    m_document.clear();
     disposeContext();
 }
 
@@ -223,7 +223,7 @@ void V8DOMWindowShell::clearForNavigation()
         return;
 
     v8::HandleScope handleScope;
-    clearDocumentWrapper();
+    m_document.clear();
 
     // FIXME: Should we create a new Local handle here?
     v8::Context::Scope contextScope(m_context.get());
@@ -398,15 +398,7 @@ bool V8DOMWindowShell::installDOMWindow(v8::Handle<v8::Context> context, DOMWind
 
 void V8DOMWindowShell::updateDocumentWrapper(v8::Handle<v8::Object> wrapper)
 {
-    clearDocumentWrapper();
-
-    ASSERT(m_document.isEmpty());
     m_document.set(wrapper);
-}
-
-void V8DOMWindowShell::clearDocumentWrapper()
-{
-    m_document.clear();
 }
 
 void V8DOMWindowShell::updateDocumentProperty()
