@@ -3635,3 +3635,8 @@ BUGWK95070 LINUX DEBUG : inspector/styles/media-queries.html = TEXT
 BUGWK95070 WIN LINUX RELEASE : inspector/styles/media-queries.html = PASS TEXT
 
 BUGWK95101 SNOWLEOPARD : fast/text/atsui-bidi-control.html = PASS TIMEOUT
+
+// Failing due to sub-pixel layout.
+BUGWK95136 : fast/css/sticky/sticky-left-percentage.html = IMAGE
+BUGWK95136 WIN LINUX : fast/css/sticky/sticky-writing-mode-vertical-lr.html = IMAGE
+BUGWK95136 : fast/css/sticky/sticky-writing-mode-vertical-rl.html = IMAGE

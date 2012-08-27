@@ -1,3 +1,10 @@
+2012-08-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+        Marked some position: sticky tests as failing due to sub-pixel layout.
+
 2012-08-27  Mark Lam  <mark.lam@apple.com>
 
         Gardening: Skipping tests due to JSC::Bindings::Instance::createRuntimeObject(JSC::ExecState*) crashes.
