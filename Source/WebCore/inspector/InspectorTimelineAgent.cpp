@@ -36,6 +36,7 @@
 
 #include "Event.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "IdentifiersFactory.h"
 #include "InspectorClient.h"
 #include "InspectorCounters.h"
@@ -65,8 +66,10 @@ static const char Program[] = "Program";
 
 static const char EventDispatch[] = "EventDispatch";
 static const char BeginFrame[] = "BeginFrame";
-static const char Layout[] = "Layout";
+static const char ScheduleStyleRecalculation[] = "ScheduleStyleRecalculation";
 static const char RecalculateStyles[] = "RecalculateStyles";
+static const char InvalidateLayout[] = "InvalidateLayout";
+static const char Layout[] = "Layout";
 static const char Paint[] = "Paint";
 static const char DecodeImage[] = "DecodeImage";
 static const char ResizeImage[] = "ResizeImage";
@@ -227,6 +230,13 @@ void InspectorTimelineAgent::didDispatchEvent()
     didCompleteCurrentRecord(TimelineRecordType::EventDispatch);
 }
 
+void InspectorTimelineAgent::didInvalidateLayout(Frame* frame)
+{
+    if (frame->view()->layoutPending())
+        return;
+    appendRecord(InspectorObject::create(), TimelineRecordType::InvalidateLayout, true, frame);
+}
+
 void InspectorTimelineAgent::willLayout(Frame* frame)
 {
     pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Layout, true, frame);
@@ -235,6 +245,11 @@ void InspectorTimelineAgent::willLayout(Frame* frame)
 void InspectorTimelineAgent::didLayout()
 {
     didCompleteCurrentRecord(TimelineRecordType::Layout);
+}
+
+void InspectorTimelineAgent::didScheduleStyleRecalculation(Frame* frame)
+{
+    appendRecord(InspectorObject::create(), TimelineRecordType::ScheduleStyleRecalculation, true, frame);
 }
 
 void InspectorTimelineAgent::willRecalculateStyle(Frame* frame)

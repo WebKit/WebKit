@@ -2090,7 +2090,7 @@ void FrameView::scheduleRelayout()
         return;
     if (!m_frame->document()->shouldScheduleLayout())
         return;
-
+    InspectorInstrumentation::didInvalidateLayout(m_frame.get());
     // When frame flattening is enabled, the contents of the frame could affect the layout of the parent frames.
     // Also invalidate parent frame starting from the owner element of this frame.
     if (m_frame->ownerRenderer() && isInChildFrameWithFrameFlattening())
@@ -2152,6 +2152,7 @@ void FrameView::scheduleRelayoutOfSubtree(RenderObject* relayoutRoot)
             }
         }
     } else if (m_layoutSchedulingEnabled) {
+        InspectorInstrumentation::didInvalidateLayout(m_frame.get());
         int delay = m_frame->document()->minimumLayoutDelay();
         m_layoutRoot = relayoutRoot;
         ASSERT(!m_layoutRoot->container() || !m_layoutRoot->container()->needsLayout());

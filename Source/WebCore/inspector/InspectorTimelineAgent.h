@@ -96,9 +96,11 @@ public:
     void didBeginFrame();
     void didCancelFrame();
 
+    void didInvalidateLayout(Frame*);
     void willLayout(Frame*);
     void didLayout();
 
+    void didScheduleStyleRecalculation(Frame*);
     void willRecalculateStyle(Frame*);
     void didRecalculateStyle();
 

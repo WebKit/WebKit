@@ -1,3 +1,16 @@
+2012-08-25  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: display cause for style recalculation and layout on Timeline
+        https://bugs.webkit.org/show_bug.cgi?id=95000
+
+        Reviewed by Pavel Feldman.
+
+        - added new events (ScheduleStyleRecalculation and InvlidateLayout)
+        - rebaselined a test due to a new event;
+
+        * inspector/timeline/timeline-enum-stability-expected.txt:
+        * inspector/timeline/timeline-script-tag-1-expected.txt:
+
 2012-08-27  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviwed gardening. Skip test that fails on 32bit release.

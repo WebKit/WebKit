@@ -49,8 +49,10 @@ WebInspector.TimelineModel.RecordType = {
     EventDispatch: "EventDispatch",
 
     BeginFrame: "BeginFrame",
-    Layout: "Layout",
+    ScheduleStyleRecalculation: "ScheduleStyleRecalculation",
     RecalculateStyles: "RecalculateStyles",
+    InvalidateLayout: "InvalidateLayout",
+    Layout: "Layout",
     Paint: "Paint",
     DecodeImage: "DecodeImage",
     ResizeImage: "ResizeImage",

@@ -271,6 +271,12 @@
     background-color: rgba(0, 0, 0, 0.05);
 }
 
+.timeline-tree-item.warning::after {
+    content: url(Images/warningIcon.png);
+    float: right;
+    padding-top: 1px;
+}
+
 .timeline-tree-item .data.dimmed {
     color: rgba(0, 0, 0, 0.7);
 }

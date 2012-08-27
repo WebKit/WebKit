@@ -1112,7 +1112,12 @@ WebInspector.TimelineRecordListRow.prototype = {
         this._record = record;
         this._offset = offset;
 
-        this.element.className = "timeline-tree-item timeline-category-" + record.category.name + (isEven ? " even" : "");
+        this.element.className = "timeline-tree-item timeline-category-" + record.category.name;
+        if (isEven)
+            this.element.addStyleClass("even");
+        if (record.hasWarning)
+            this.element.addStyleClass("warning");
+
         this._typeElement.textContent = record.title;
 
         if (this._dataElement.firstChild)

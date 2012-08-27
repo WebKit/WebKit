@@ -3,9 +3,11 @@ Tests the Timeline API instrumentation of an HTML script tag.
 
 
 ParseHTML
+----> InvalidateLayout
 ParseHTML
 ----> EvaluateScript
 --------> TimeStamp : SCRIPT TAG
+----> InvalidateLayout
 EvaluateScript Properties:
 {
     startTime : <number>

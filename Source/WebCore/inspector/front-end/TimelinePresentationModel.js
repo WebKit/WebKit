@@ -59,7 +59,7 @@ WebInspector.TimelinePresentationModel.categories = function()
 /**
  * @return {!Object.<string, {title: string, category}>}
  */
-WebInspector.TimelinePresentationModel.initRecordStyles_ = function()
+WebInspector.TimelinePresentationModel._initRecordStyles = function()
 {
     if (WebInspector.TimelinePresentationModel._recordStylesMap)
         return WebInspector.TimelinePresentationModel._recordStylesMap;
@@ -72,8 +72,10 @@ WebInspector.TimelinePresentationModel.initRecordStyles_ = function()
     recordStyles[recordTypes.Program] = { title: WebInspector.UIString("Program"), category: categories["program"] };
     recordStyles[recordTypes.EventDispatch] = { title: WebInspector.UIString("Event"), category: categories["scripting"] };
     recordStyles[recordTypes.BeginFrame] = { title: WebInspector.UIString("Frame Start"), category: categories["rendering"] };
-    recordStyles[recordTypes.Layout] = { title: WebInspector.UIString("Layout"), category: categories["rendering"] };
+    recordStyles[recordTypes.ScheduleStyleRecalculation] = { title: WebInspector.UIString("Schedule Style Recalculation"), category: categories["rendering"] };
     recordStyles[recordTypes.RecalculateStyles] = { title: WebInspector.UIString("Recalculate Style"), category: categories["rendering"] };
+    recordStyles[recordTypes.InvalidateLayout] = { title: WebInspector.UIString("Invalidate Layout"), category: categories["rendering"] };
+    recordStyles[recordTypes.Layout] = { title: WebInspector.UIString("Layout"), category: categories["rendering"] };
     recordStyles[recordTypes.Paint] = { title: WebInspector.UIString("Paint"), category: categories["painting"] };
     recordStyles[recordTypes.DecodeImage] = { title: WebInspector.UIString("Image Decode"), category: categories["painting"] };
     recordStyles[recordTypes.ResizeImage] = { title: WebInspector.UIString("Image Resize"), category: categories["painting"] };
@@ -110,7 +112,7 @@ WebInspector.TimelinePresentationModel.initRecordStyles_ = function()
  */
 WebInspector.TimelinePresentationModel.recordStyle = function(record)
 {
-    var recordStyles = WebInspector.TimelinePresentationModel.initRecordStyles_();
+    var recordStyles = WebInspector.TimelinePresentationModel._initRecordStyles();
     var result = recordStyles[record.type];
     if (!result) {
         result = {
@@ -238,7 +240,7 @@ WebInspector.TimelinePresentationModel.prototype = {
     reset: function()
     {
         this._linkifier.reset();
-        this._rootRecord = new WebInspector.TimelinePresentationModel.Record(this, { type: WebInspector.TimelineModel.RecordType.Root }, null, null);
+        this._rootRecord = new WebInspector.TimelinePresentationModel.Record(this, { type: WebInspector.TimelineModel.RecordType.Root }, null, null, false);
         this._sendRequestRecords = {};
         this._scheduledResourceRequests = {};
         this._timerRecords = {};
@@ -246,6 +248,8 @@ WebInspector.TimelinePresentationModel.prototype = {
         this._timeRecords = {};
         this._frames = [];
         this._minimumRecordTime = -1;
+        this._lastInvalidateLayout = {};
+        this._lastScheduleStyleRecalculation = {};
     },
 
     addFrame: function(frame)
@@ -273,19 +277,18 @@ WebInspector.TimelinePresentationModel.prototype = {
 
     _innerAddRecord: function(record, parentRecord)
     {
+        const recordTypes = WebInspector.TimelineModel.RecordType;
+        const hiddenRecords = [
+            recordTypes.MarkDOMContent,
+            recordTypes.MarkLoad,
+            recordTypes.ScheduleStyleRecalculation,
+            recordTypes.InvalidateLayout
+        ];
+        var isHiddenRecord = hiddenRecords.indexOf(record.type) >= 0;
         var connectedToOldRecord = false;
-        var recordTypes = WebInspector.TimelineModel.RecordType;
-
-        switch (record.type) {
-        // No bar entry for load events.
-        case recordTypes.MarkDOMContent:
-        case recordTypes.MarkLoad:
-            parentRecord = null;
-            break;
-        case recordTypes.Time:
+        if (record.type === recordTypes.Time)
             parentRecord = this._rootRecord;
-            break;
-        default:
+        else if (!isHiddenRecord) {
             var newParentRecord = this._findParentRecord(record);
             if (newParentRecord) {
                 parentRecord = newParentRecord;
@@ -313,9 +316,9 @@ WebInspector.TimelinePresentationModel.prototype = {
             }
         }
 
-        var formattedRecord = new WebInspector.TimelinePresentationModel.Record(this, record, parentRecord, scriptDetails);
+        var formattedRecord = new WebInspector.TimelinePresentationModel.Record(this, record, parentRecord, scriptDetails, isHiddenRecord);
 
-        if (record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad)
+        if (isHiddenRecord)
             return formattedRecord;
 
         formattedRecord.collapsed = (parentRecord === this._rootRecord);
@@ -424,16 +427,22 @@ WebInspector.TimelinePresentationModel.prototype.__proto__ = WebInspector.Object
 
 /**
  * @constructor
+ * @param {WebInspector.TimelinePresentationModel} presentationModel
+ * @param {Object} record
+ * @param {WebInspector.TimelinePresentationModel.Record} parentRecord
+ * @param {Object|undefined} scriptDetails
+ * @param {boolean} hidden
  */
-WebInspector.TimelinePresentationModel.Record = function(presentationModel, record, parentRecord, scriptDetails)
+WebInspector.TimelinePresentationModel.Record = function(presentationModel, record, parentRecord, scriptDetails, hidden)
 {
     this._linkifier = presentationModel._linkifier;
     this._aggregatedStats = [];
     this._record = record;
     this._children = [];
-    this.parent = parentRecord;
-    if (parentRecord)
+    if (!hidden && parentRecord) {
+        this.parent = parentRecord;
         parentRecord.children.push(this);
+    }
 
     this._selfTime = this.endTime - this.startTime;
     this._lastChildEndTime = this.endTime;
@@ -445,6 +454,8 @@ WebInspector.TimelinePresentationModel.Record = function(presentationModel, reco
         this.scriptName = scriptDetails.scriptName;
         this.scriptLine = scriptDetails.scriptLine;
     }
+    if (parentRecord && parentRecord.callSiteStackTrace)
+        this.callSiteStackTrace = parentRecord.callSiteStackTrace;
 
     var recordTypes = WebInspector.TimelineModel.RecordType;
     switch (record.type) {
@@ -511,6 +522,30 @@ WebInspector.TimelinePresentationModel.Record = function(presentationModel, reco
             this.intervalDuration = intervalDuration;
             timeRecord.intervalDuration = intervalDuration;
         }
+        break;
+
+    case recordTypes.ScheduleStyleRecalculation:
+        presentationModel._lastScheduleStyleRecalculation[this.frameId] = this;
+        break;
+
+    case recordTypes.RecalculateStyles:
+        var scheduleStyleRecalculationRecord = presentationModel._lastScheduleStyleRecalculation[this.frameId];
+        if (!scheduleStyleRecalculationRecord)
+            break;
+        this.callSiteStackTrace = scheduleStyleRecalculationRecord.stackTrace;
+        break;
+
+    case recordTypes.InvalidateLayout:
+        presentationModel._lastInvalidateLayout[this.frameId] = this;
+        break;
+
+    case recordTypes.Layout:
+        var invalidateLayoutRecord = presentationModel._lastInvalidateLayout[this.frameId];
+        if (invalidateLayoutRecord)
+            this.callSiteStackTrace = invalidateLayoutRecord.stackTrace || invalidateLayoutRecord.callSiteStackTrace;
+        if (this.stackTrace)
+            this.hasWarning = true;
+        presentationModel._lastInvalidateLayout[this.frameId] = null;
         break;
     }
 }
@@ -688,6 +723,10 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
         }
         const recordTypes = WebInspector.TimelineModel.RecordType;
 
+        // The messages may vary per record type;
+        var callSiteStackTraceLabel;
+        var callStackLabel;
+
         switch (this.type) {
             case recordTypes.GCEvent:
                 contentHelper._appendTextRow(WebInspector.UIString("Collected"), Number.bytesToString(this.data["usedHeapSizeDelta"]));
@@ -733,6 +772,15 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
                 contentHelper._appendTextRow(WebInspector.UIString("Dimensions"), WebInspector.UIString("%d × %d", this.data["width"], this.data["height"]));
                 break;
             case recordTypes.RecalculateStyles: // We don't want to see default details.
+                callSiteStackTraceLabel = WebInspector.UIString("Styles invalidated");
+                callStackLabel = WebInspector.UIString("Styles recalculation forced");
+                break;
+            case recordTypes.Layout:
+                callSiteStackTraceLabel = WebInspector.UIString("Layout invalidated");
+                if (this.stackTrace) {
+                    callStackLabel = WebInspector.UIString("Layout forced");
+                    contentHelper._appendTextRow(WebInspector.UIString("Note"), WebInspector.UIString("Forced synchronous layout is a possible performance bottlenck."));
+                }
                 break;
             case recordTypes.Time:
             case recordTypes.TimeEnd:
@@ -751,11 +799,11 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
         if (this.usedHeapSize)
             contentHelper._appendTextRow(WebInspector.UIString("Used Heap Size"), WebInspector.UIString("%s of %s", Number.bytesToString(this.usedHeapSize), Number.bytesToString(this.totalHeapSize)));
 
-        if (this.callSiteStackTrace && this.callSiteStackTrace.length)
-            contentHelper._appendStackTrace(WebInspector.UIString("Call Site stack"), this.callSiteStackTrace, this._linkifyCallFrame.bind(this));
+        if (this.callSiteStackTrace)
+            contentHelper._appendStackTrace(callSiteStackTraceLabel || WebInspector.UIString("Call Site stack"), this.callSiteStackTrace, this._linkifyCallFrame.bind(this));
 
         if (this.stackTrace)
-            contentHelper._appendStackTrace(WebInspector.UIString("Call Stack"), this.stackTrace, this._linkifyCallFrame.bind(this));
+            contentHelper._appendStackTrace(callStackLabel || WebInspector.UIString("Call Stack"), this.stackTrace, this._linkifyCallFrame.bind(this));
 
         callback(contentHelper._contentTable);
     },
@@ -843,7 +891,11 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
      */
     _linkifyTopCallFrame: function(defaultValue)
     {
-        return this.stackTrace ? this._linkifyCallFrame(this.stackTrace[0]) : defaultValue;
+        if (this.stackTrace)
+            return this._linkifyCallFrame(this.stackTrace[0]);
+        if (this.callSiteStackTrace)
+            return this._linkifyCallFrame(this.callSiteStackTrace[0]);
+        return defaultValue;
     },
 
     /**

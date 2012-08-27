@@ -429,6 +429,12 @@ void InspectorInstrumentation::didCancelFrameImpl(InstrumentingAgents* instrumen
         timelineAgent->didCancelFrame();
 }
 
+void InspectorInstrumentation::didInvalidateLayoutImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
+{
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
+        timelineAgent->didInvalidateLayout(frame);
+}
+
 InspectorInstrumentationCookie InspectorInstrumentation::willLayoutImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
 {
     int timelineAgentId = 0;
@@ -526,6 +532,8 @@ void InspectorInstrumentation::didRecalculateStyleImpl(const InspectorInstrument
 
 void InspectorInstrumentation::didScheduleStyleRecalculationImpl(InstrumentingAgents* instrumentingAgents, Document* document)
 {
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
+        timelineAgent->didScheduleStyleRecalculation(document->frame());
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
         resourceAgent->didScheduleStyleRecalculation(document);
 }
