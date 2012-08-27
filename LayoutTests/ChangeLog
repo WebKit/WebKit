@@ -1,3 +1,12 @@
+2012-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix some more sticky ref tests; avoid wrapping at the 800px
+        window width, and remove a margin:auto from a reference.
+
+        * fast/css/sticky/sticky-margins-expected.html:
+        * fast/css/sticky/sticky-margins.html:
+        * fast/css/sticky/sticky-writing-mode-vertical-lr-expected.html:
+
 2012-08-27  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Fix review comments from patch #93119
