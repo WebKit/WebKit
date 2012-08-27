@@ -2495,11 +2495,20 @@ IntSize WebPagePrivate::fixedLayoutSize(bool snapToIncrement) const
     }
 
     if (m_viewMode == Desktop) {
-        // If we detect an overflow larger than the contents size then use that instead since
-        // it'll still be clamped by the maxWidth below...
-        int width = std::max(absoluteVisibleOverflowSize().width(), contentsSize().width());
-        if (m_pendingOrientation != -1 && !m_nestedLayoutFinishedCount)
-            width = 0;
+        int width;
+        if (m_pendingOrientation == -1) {
+            // If we detect an overflow larger than the contents size then use that instead since
+            // it'll still be clamped by the maxWidth below...
+            width = std::max(absoluteVisibleOverflowSize().width(), contentsSize().width());
+        } else {
+            if (!m_nestedLayoutFinishedCount)
+                width = 0;
+            else {
+                // Don't consider absoluteVisibleOverflowSize when we are in the middle of determining final layout size.
+                // See PR #190469.
+                width = contentsSize().width();
+            }
+        }
 
         if (snapToIncrement) {
             // Snap to increments of defaultLayoutWidth / 2.0.
