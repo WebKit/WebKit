@@ -1,5 +1,23 @@
 2012-08-26  Geoffrey Garen  <ggaren@apple.com>
 
+        Don't allocate space for arguments and call frame if arguments aren't captured
+        https://bugs.webkit.org/show_bug.cgi?id=95024
+
+        Reviewed by Phil Pizlo.
+
+        27% on v8-real-earley.
+
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::registerOffset): The offset is zero if we're skipping
+        the arguments and call frame because "offset" means space reserved for
+        those things.
+
+        (JSC::JSActivation::tearOff): Don't copy the scope chain and callee. We
+        don't need them for anything, and we're no longer guaranteed to have
+        space for them.
+
+2012-08-26  Geoffrey Garen  <ggaren@apple.com>
+
         Removed the NULL checks from visitChildren functions
         https://bugs.webkit.org/show_bug.cgi?id=95021
 

@@ -124,6 +124,9 @@ namespace JSC {
 
     inline size_t JSActivation::registerOffset()
     {
+        if (!m_numCapturedArgs)
+            return 0;
+
         size_t capturedArgumentCountIncludingThis = m_numCapturedArgs + 1;
         return CallFrame::offsetFor(capturedArgumentCountIncludingThis);
     }
@@ -154,10 +157,6 @@ namespace JSC {
         int to = CallFrame::thisArgumentOffset(); // Skip 'this' because it's not lexically accessible.
         for (int i = from; i < to; ++i)
             registers[i].set(globalData, this, m_registers[i].get());
-
-        // CallFrame
-        registers[RegisterFile::ScopeChain].set(globalData, this, m_registers[RegisterFile::ScopeChain].get());
-        registers[RegisterFile::Callee].set(globalData, this, m_registers[RegisterFile::Callee].get());
 
         // vars
         from = 0;
