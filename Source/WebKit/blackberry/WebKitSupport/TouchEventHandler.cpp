@@ -351,7 +351,7 @@ void TouchEventHandler::drawTapHighlight()
     // On the client side, this info is being used to hide the tap highlight window on scroll.
     RenderLayer* layer = m_webPage->enclosingFixedPositionedAncestorOrSelfIfFixedPositioned(renderer->enclosingLayer());
     bool shouldHideTapHighlightRightAfterScrolling = !layer->renderer()->isRenderView();
-    shouldHideTapHighlightRightAfterScrolling |= !!m_webPage->m_inRegionScroller->d->node();
+    shouldHideTapHighlightRightAfterScrolling |= !!m_webPage->m_inRegionScroller->d->isActive();
 
     IntPoint framePos(m_webPage->frameOffset(elementFrame));
 

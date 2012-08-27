@@ -42,12 +42,8 @@ class InRegionScrollerPrivate {
 public:
     InRegionScrollerPrivate(WebPagePrivate*);
 
-    void setNode(WebCore::Node*);
-    WebCore::Node* node() const;
     void reset();
-
-    bool canScroll() const;
-    bool hasNode() const;
+    bool isActive() const;
 
     bool setScrollPositionCompositingThread(unsigned camouflagedLayer, const WebCore::IntPoint& scrollPosition);
     bool setScrollPositionWebKitThread(unsigned camouflagedLayer, const WebCore::IntPoint& scrollPosition, bool supportsAcceleratedScrolling);
@@ -55,7 +51,10 @@ public:
     void calculateInRegionScrollableAreasForPoint(const WebCore::IntPoint&);
     const std::vector<Platform::ScrollViewBase*>& activeInRegionScrollableAreas() const;
 
+    void clearDocumentData(const WebCore::Document*);
+
     WebPagePrivate* m_webPage;
+    bool m_needsActiveScrollableAreaCalculation;
 
 private:
     bool setLayerScrollPosition(WebCore::RenderLayer*, const WebCore::IntPoint& scrollPosition);
@@ -66,9 +65,7 @@ private:
 
     void adjustScrollDelta(const WebCore::IntPoint& maxOffset, const WebCore::IntPoint& currentOffset, WebCore::IntSize& delta) const;
 
-    RefPtr<WebCore::Node> m_inRegionScrollStartingNode;
     std::vector<Platform::ScrollViewBase*> m_activeInRegionScrollableAreas;
-    bool m_needsActiveScrollableAreaCalculation;
 };
 
 }

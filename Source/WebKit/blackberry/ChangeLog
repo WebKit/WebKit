@@ -1,5 +1,38 @@
 2012-08-25  Antonio Gomes  <agomes@rim.com>
 
+        [BlackBerry] Remove the 'in region scrollable starting node' concept from InRegionScroller
+        https://bugs.webkit.org/show_bug.cgi?id=95020
+
+        Reviewed by Rob Buis.
+
+        'In-region start scrolling node' is an obsolete concept, and we can remove it
+        in favor of using the information from the cached layers.
+
+        * Api/InRegionScroller.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::reset): Adjusted as it used to clear
+        the cached 'node'.
+        (BlackBerry::WebKit::InRegionScrollerPrivate::isActive): Added method to be
+        checked directly instead of only null-checking the previously cached 'node'.
+        (BlackBerry::WebKit::InRegionScrollerPrivate::clearDocumentData): New method to
+        clear the cached resources if its document is done.
+        (BlackBerry::WebKit::InRegionScrollerPrivate::pushBackInRegionScrollable): Adjusted
+        to not care about the cached 'node' anymore.
+        * Api/InRegionScroller_p.h:
+        (InRegionScrollerPrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::notifyInRegionScrollStopped): Check ::isActive instead
+        of ::hasNode, since the later is gone.
+        (BlackBerry::WebKit::WebPagePrivate::enqueueRenderingOfClippedContentOfScrollableAreaAfterInRegionScrolling):
+        Changed the method signature, given that we do have a cached 'node' to pass in as parameter anymore.
+        (BlackBerry::WebKit::WebPagePrivate::clearDocumentData): Delegate all the related work to InRegionScroller.
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::drawTapHighlight):
+.
+2012-08-25  Antonio Gomes  <agomes@rim.com>
+
         BlackBerry] Shrink the in-region nested scrollable list as soon as we can
         https://bugs.webkit.org/show_bug.cgi?id=95019
 

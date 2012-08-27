@@ -1482,8 +1482,8 @@ void WebPage::scrollBy(const Platform::IntSize& delta)
 
 void WebPagePrivate::notifyInRegionScrollStopped()
 {
-    if (m_inRegionScroller->d->hasNode()) {
-        enqueueRenderingOfClippedContentOfScrollableNodeAfterInRegionScrolling(m_inRegionScroller->d->node());
+    if (m_inRegionScroller->d->isActive()) {
+        enqueueRenderingOfClippedContentOfScrollableAreaAfterInRegionScrolling();
         m_inRegionScroller->d->reset();
     }
 }
@@ -1493,9 +1493,16 @@ void WebPage::notifyInRegionScrollStopped()
     d->notifyInRegionScrollStopped();
 }
 
-void WebPagePrivate::enqueueRenderingOfClippedContentOfScrollableNodeAfterInRegionScrolling(Node* scrolledNode)
+void WebPagePrivate::enqueueRenderingOfClippedContentOfScrollableAreaAfterInRegionScrolling()
 {
-    ASSERT(scrolledNode);
+    // If no scrolling was even performed, bail out.
+    if (m_inRegionScroller->d->m_needsActiveScrollableAreaCalculation)
+        return;
+
+    InRegionScrollableArea* scrollableArea = static_cast<InRegionScrollableArea*>(m_inRegionScroller->d->activeInRegionScrollableAreas()[0]);
+    ASSERT(scrollableArea);
+    Node* scrolledNode = scrollableArea->layer()->enclosingElement();
+
     if (scrolledNode->isDocumentNode()) {
         Frame* frame = static_cast<const Document*>(scrolledNode)->frame();
         ASSERT(frame);
@@ -2549,8 +2556,8 @@ void WebPagePrivate::clearDocumentData(const Document* documentGoingAway)
     if (m_currentBlockZoomAdjustedNode && m_currentBlockZoomAdjustedNode->document() == documentGoingAway)
         m_currentBlockZoomAdjustedNode = 0;
 
-    if (m_inRegionScroller->d->hasNode() && m_inRegionScroller->d->node()->document() == documentGoingAway)
-        m_inRegionScroller->d->reset();
+    if (m_inRegionScroller->d->isActive())
+        m_inRegionScroller->d->clearDocumentData(documentGoingAway);
 
     if (documentGoingAway->frame())
         m_inputHandler->frameUnloaded(documentGoingAway->frame());

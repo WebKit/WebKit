@@ -44,7 +44,6 @@ namespace WebKit {
 static bool canScrollInnerFrame(Frame*);
 static bool canScrollRenderBox(RenderBox*);
 static RenderLayer* parentLayer(RenderLayer*);
-static Node* enclosingLayerNode(RenderLayer*);
 static bool isNonRenderViewFixedPositionedContainer(RenderLayer*);
 
 InRegionScroller::InRegionScroller(WebPagePrivate* webPagePrivate)
@@ -80,34 +79,31 @@ InRegionScrollerPrivate::InRegionScrollerPrivate(WebPagePrivate* webPagePrivate)
 {
 }
 
-void InRegionScrollerPrivate::setNode(WebCore::Node* node)
-{
-    m_inRegionScrollStartingNode = node;
-}
-
-WebCore::Node* InRegionScrollerPrivate::node() const
-{
-    return m_inRegionScrollStartingNode.get();
-}
-
 void InRegionScrollerPrivate::reset()
 {
-    setNode(0);
-
     m_needsActiveScrollableAreaCalculation = false;
     for (size_t i = 0; i < m_activeInRegionScrollableAreas.size(); ++i)
         delete m_activeInRegionScrollableAreas[i];
     m_activeInRegionScrollableAreas.clear();
 }
 
-bool InRegionScrollerPrivate::hasNode() const
+bool InRegionScrollerPrivate::isActive() const
 {
-    return !!m_inRegionScrollStartingNode;
+    return m_activeInRegionScrollableAreas.size() > 0;
 }
 
-bool InRegionScrollerPrivate::canScroll() const
+void InRegionScrollerPrivate::clearDocumentData(const Document* documentGoingAway)
 {
-    return hasNode();
+    if (m_needsActiveScrollableAreaCalculation) {
+        reset();
+        return;
+    }
+
+    InRegionScrollableArea* scrollableArea = static_cast<InRegionScrollableArea*>(m_activeInRegionScrollableAreas[0]);
+    ASSERT(scrollableArea);
+    Node* node = scrollableArea->layer()->enclosingElement();
+    if (node && node->document() == documentGoingAway)
+        reset();
 }
 
 bool InRegionScrollerPrivate::setScrollPositionCompositingThread(unsigned camouflagedLayer, const WebCore::IntPoint& scrollPosition)
@@ -376,17 +372,6 @@ static RenderLayer* parentLayer(RenderLayer* layer)
     return 0;
 }
 
-// FIXME: Make RenderLayer::enclosingElement public so this one can be removed.
-static Node* enclosingLayerNode(RenderLayer* layer)
-{
-    for (RenderObject* r = layer->renderer(); r; r = r->parent()) {
-        if (Node* e = r->node())
-            return e;
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
 static bool isNonRenderViewFixedPositionedContainer(RenderLayer* layer)
 {
     RenderObject* o = layer->renderer();
@@ -402,10 +387,6 @@ void InRegionScrollerPrivate::pushBackInRegionScrollable(InRegionScrollableArea*
 
     scrollableArea->setCanPropagateScrollingToEnclosingScrollable(!isNonRenderViewFixedPositionedContainer(scrollableArea->layer()));
     m_activeInRegionScrollableAreas.push_back(scrollableArea);
-    if (m_activeInRegionScrollableAreas.size() == 1) {
-        // FIXME: Use RenderLayer::renderBox()->node() instead?
-        setNode(enclosingLayerNode(scrollableArea->layer()));
-    }
 }
 
 }
