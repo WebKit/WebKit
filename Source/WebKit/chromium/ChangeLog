@@ -1,5 +1,17 @@
 2012-08-27  Justin Novosad  <junov@chromium.org>
 
+        [Chromium] Fixing infinite recursion in Canvas2DLayerManager
+        https://bugs.webkit.org/show_bug.cgi?id=95110
+
+        Reviewed by Stephen White.
+
+        Breaking recursion cycle by not reporting a change in memory allocation
+        when no memory is freed in FakeCanvas2DLayer::freeMemoryIfPossible.
+
+        * tests/Canvas2DLayerManagerTest.cpp:
+
+2012-08-27  Justin Novosad  <junov@chromium.org>
+
         [Chromium] Implementing a global limit on memory consumed by deferred 2D canvases
         https://bugs.webkit.org/show_bug.cgi?id=94386
 

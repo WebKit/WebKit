@@ -123,7 +123,8 @@ size_t Canvas2DLayerBridge::freeMemoryIfPossible(size_t bytesToFree)
 {
     ASSERT(deferredCanvas());
     size_t bytesFreed = deferredCanvas()->freeMemoryIfPossible(bytesToFree);
-    Canvas2DLayerManager::get().layerAllocatedStorageChanged(this, -((intptr_t)bytesFreed));
+    if (bytesFreed)
+        Canvas2DLayerManager::get().layerAllocatedStorageChanged(this, -((intptr_t)bytesFreed));
     m_bytesAllocated -= bytesFreed;
     return bytesFreed;
 }

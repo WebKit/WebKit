@@ -88,7 +88,8 @@ void Canvas2DLayerManager::layerAllocatedStorageChanged(Canvas2DLayerBridge* lay
         ASSERT((intptr_t)m_bytesAllocated + deltaBytes >= 0); 
         m_bytesAllocated = (intptr_t)m_bytesAllocated + deltaBytes;
     }
-    freeMemoryIfNecessary();
+    if (deltaBytes > 0)
+        freeMemoryIfNecessary();
 }
 
 void Canvas2DLayerManager::layerToBeDestroyed(Canvas2DLayerBridge* layer)

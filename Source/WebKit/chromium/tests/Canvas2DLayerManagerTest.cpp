@@ -57,7 +57,8 @@ public:
         m_freeMemoryIfPossibleCount++;
         size_t bytesFreed = size < m_freeableBytes ? size : m_freeableBytes;
         m_freeableBytes -= bytesFreed;
-        Canvas2DLayerManager::get().layerAllocatedStorageChanged(this, -((intptr_t)bytesFreed));
+        if (bytesFreed)
+            Canvas2DLayerManager::get().layerAllocatedStorageChanged(this, -((intptr_t)bytesFreed));
         m_bytesAllocated -= bytesFreed;
         return bytesFreed;
     }
