@@ -889,12 +889,6 @@ void RenderThemeEfl::adjustButtonStyle(StyleResolver* styleResolver, RenderStyle
     }
 
     adjustSizeConstraints(style, Button);
-
-    if (style->appearance() == PushButtonPart) {
-        style->resetBorder();
-        style->setWhiteSpace(PRE);
-        style->setHeight(Length(Auto));
-    }
 }
 
 bool RenderThemeEfl::paintButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)

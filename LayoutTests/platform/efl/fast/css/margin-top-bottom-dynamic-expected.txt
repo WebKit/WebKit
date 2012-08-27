@@ -33,39 +33,39 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (1,21) size 782x20 [border: (1px dotted #0000FF)]
           RenderText {#text} at (1,1) size 84x19
             text run at (1,1) width 84: "Lorem ipsum"
-      RenderBlock (anonymous) at (0,270) size 784x58
+      RenderBlock (anonymous) at (0,270) size 784x62
         RenderBR {BR} at (0,0) size 0x19
-        RenderButton {INPUT} at (2,20) size 147x36 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (15,8) size 117x18
+        RenderButton {INPUT} at (2,20) size 151x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (17,10) size 117x18
             RenderText at (0,0) size 117x19
               text run at (0,0) width 117: "Negative margin"
-        RenderText {#text} at (151,28) size 4x19
-          text run at (151,28) width 4: " "
-        RenderButton {INPUT} at (157,20) size 140x36 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (15,8) size 110x18
+        RenderText {#text} at (155,30) size 4x19
+          text run at (155,30) width 4: " "
+        RenderButton {INPUT} at (161,20) size 144x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (17,10) size 110x18
             RenderText at (0,0) size 110x19
               text run at (0,0) width 110: "Positive margin"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,344) size 784x18
+      RenderBlock {P} at (0,348) size 784x18
         RenderText {#text} at (0,0) size 445x19
           text run at (0,0) width 445: "Dynamic case (automatically testing positive --> negative --> positive):"
-      RenderBlock {DIV} at (0,378) size 784x72 [border: (1px solid #008000)]
+      RenderBlock {DIV} at (0,382) size 784x72 [border: (1px solid #008000)]
         RenderBlock {DIV} at (1,11) size 782x20 [border: (1px solid #0000FF)]
           RenderText {#text} at (1,1) size 84x19
             text run at (1,1) width 84: "Lorem ipsum"
         RenderBlock {DIV} at (1,41) size 782x20 [border: (1px dotted #0000FF)]
           RenderText {#text} at (1,1) size 84x19
             text run at (1,1) width 84: "Lorem ipsum"
-      RenderBlock (anonymous) at (0,450) size 784x58
+      RenderBlock (anonymous) at (0,454) size 784x62
         RenderBR {BR} at (0,0) size 0x19
-        RenderButton {INPUT} at (2,20) size 147x36 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (15,8) size 117x18
+        RenderButton {INPUT} at (2,20) size 151x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (17,10) size 117x18
             RenderText at (0,0) size 117x19
               text run at (0,0) width 117: "Negative margin"
-        RenderText {#text} at (151,28) size 4x19
-          text run at (151,28) width 4: " "
-        RenderButton {INPUT} at (157,20) size 140x36 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (15,8) size 110x18
+        RenderText {#text} at (155,30) size 4x19
+          text run at (155,30) width 4: " "
+        RenderButton {INPUT} at (161,20) size 144x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (17,10) size 110x18
             RenderText at (0,0) size 110x19
               text run at (0,0) width 110: "Positive margin"
         RenderText {#text} at (0,0) size 0x0

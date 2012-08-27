@@ -560,8 +560,6 @@ BUGWK85484 : fast/forms/textarea-scrolled-type.html = MISSING
 
 BUGWK85493 : fast/css/square-button-appearance.html = TEXT
 
-BUGWK85494 : fast/css/button-height.html = TEXT
-
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = IMAGE IMAGE+TEXT
 
 BUGWK85466 : css3/images/cross-fade-background-size.html = TEXT

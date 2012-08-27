@@ -1,3 +1,67 @@
+2012-08-27  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [EFL] Wrong button height on CSS tests
+        https://bugs.webkit.org/show_bug.cgi?id=85494
+
+        Reviewed by Gyuyoung Kim.
+
+        This patch changes styles of buttons (not to reset border style).
+        Update baselines for tests include buttons.
+        
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/css/continuationCrash-expected.png:
+        * platform/efl/fast/css/continuationCrash-expected.txt:
+        * platform/efl/fast/css/margin-top-bottom-dynamic-expected.png:
+        * platform/efl/fast/css/margin-top-bottom-dynamic-expected.txt:
+        * platform/efl/fast/css/rtl-ordering-expected.png:
+        * platform/efl/fast/css/rtl-ordering-expected.txt:
+        * platform/efl/fast/dom/HTMLTextAreaElement/reset-textarea-expected.png:
+        * platform/efl/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/efl/fast/forms/basic-buttons-expected.png:
+        * platform/efl/fast/forms/basic-buttons-expected.txt:
+        * platform/efl/fast/forms/blankbuttons-expected.png:
+        * platform/efl/fast/forms/blankbuttons-expected.txt:
+        * platform/efl/fast/forms/box-shadow-override-expected.png:
+        * platform/efl/fast/forms/box-shadow-override-expected.txt:
+        * platform/efl/fast/forms/button-positioned-expected.png:
+        * platform/efl/fast/forms/button-positioned-expected.txt:
+        * platform/efl/fast/forms/button-sizes-expected.png:
+        * platform/efl/fast/forms/button-sizes-expected.txt:
+        * platform/efl/fast/forms/button-style-color-expected.png:
+        * platform/efl/fast/forms/button-style-color-expected.txt:
+        * platform/efl/fast/forms/button-table-styles-expected.png:
+        * platform/efl/fast/forms/button-table-styles-expected.txt:
+        * platform/efl/fast/forms/button-text-transform-expected.png:
+        * platform/efl/fast/forms/button-text-transform-expected.txt:
+        * platform/efl/fast/forms/control-restrict-line-height-expected.png:
+        * platform/efl/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/efl/fast/forms/file/file-input-direction-expected.png:
+        * platform/efl/fast/forms/file/file-input-direction-expected.txt:
+        * platform/efl/fast/forms/file/file-input-disabled-expected.png:
+        * platform/efl/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/efl/fast/forms/formmove3-expected.png:
+        * platform/efl/fast/forms/formmove3-expected.txt:
+        * platform/efl/fast/forms/input-appearance-height-expected.png:
+        * platform/efl/fast/forms/input-appearance-height-expected.txt:
+        * platform/efl/fast/forms/input-button-sizes-expected.png:
+        * platform/efl/fast/forms/input-button-sizes-expected.txt:
+        * platform/efl/fast/forms/input-value-expected.png:
+        * platform/efl/fast/forms/input-value-expected.txt:
+        * platform/efl/fast/forms/targeted-frame-submission-expected.png:
+        * platform/efl/fast/forms/targeted-frame-submission-expected.txt:
+        * platform/efl/fast/html/details-replace-summary-child-expected.png:
+        * platform/efl/fast/html/details-replace-summary-child-expected.txt:
+        * platform/efl/fast/html/details-replace-text-expected.png:
+        * platform/efl/fast/html/details-replace-text-expected.txt:
+        * platform/efl/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.png:
+        * platform/efl/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt:
+        * platform/efl/fast/overflow/scrollRevealButton-expected.png:
+        * platform/efl/fast/overflow/scrollRevealButton-expected.txt:
+        * platform/efl/fast/replaced/replaced-breaking-expected.png:
+        * platform/efl/fast/replaced/replaced-breaking-expected.txt:
+        * platform/efl/fast/replaced/width100percent-button-expected.png:
+        * platform/efl/fast/replaced/width100percent-button-expected.txt:
+
 2012-08-27  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: DOM tree search issue with quotation marks

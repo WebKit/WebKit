@@ -22,21 +22,21 @@ layer at (0,0) size 785x1188
                   text run at (0,0) width 88: "overflow:auto"
               RenderBlock {DIV} at (0,18) size 285x600
               RenderBlock {DIV} at (0,768) size 285x500
-          layer at (8,83) size 150x150 clip at (8,83) size 135x150 scrollY 481 scrollHeight 876
+          layer at (8,83) size 150x150 clip at (8,83) size 135x150 scrollY 483 scrollHeight 880
             RenderBlock {DIV} at (0,618) size 150x150
               RenderBlock (anonymous) at (0,0) size 135x18
                 RenderText {#text} at (0,0) size 88x19
                   text run at (0,0) width 88: "overflow:auto"
               RenderBlock {DIV} at (0,18) size 135x500
-              RenderBlock (anonymous) at (0,518) size 135x58
+              RenderBlock (anonymous) at (0,518) size 135x62
                 RenderBR {BR} at (0,0) size 0x19
-                RenderButton {INPUT} at (2,20) size 76x36 [bgcolor=#C0C0C0]
-                  RenderBlock (anonymous) at (15,8) size 46x18
+                RenderButton {INPUT} at (2,20) size 80x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+                  RenderBlock (anonymous) at (17,10) size 46x18
                     RenderText at (0,0) size 46x19
                       text run at (0,0) width 46: "Button"
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {DIV} at (0,576) size 135x300
+              RenderBlock {DIV} at (0,580) size 135x300
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,672) size 769x500
-scrolled to 0,13
+scrolled to 0,15
 frame 'fr' scrolled to 0,91
