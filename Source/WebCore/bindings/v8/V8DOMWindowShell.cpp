@@ -98,14 +98,11 @@ static void reportFatalError(const char* location, const char* message)
 
 static void reportUncaughtException(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
 {
-    // Use the frame where JavaScript is called from.
-    Frame* frame = firstFrame(BindingState::instance());
-    if (!frame)
+    DOMWindow* firstWindow = firstDOMWindow(BindingState::instance());
+    if (!firstWindow->isCurrentlyDisplayedInFrame())
         return;
 
-    v8::Handle<v8::String> errorMessageString = message->Get();
-    ASSERT(!errorMessageString.IsEmpty());
-    String errorMessage = toWebCoreString(errorMessageString);
+    String errorMessage = toWebCoreString(message->Get());
 
     v8::Handle<v8::StackTrace> stackTrace = message->GetStackTrace();
     RefPtr<ScriptCallStack> callStack;
@@ -114,10 +111,9 @@ static void reportUncaughtException(v8::Handle<v8::Message> message, v8::Handle<
         callStack = createScriptCallStack(stackTrace, ScriptCallStack::maxCallStackSizeToCapture);
 
     v8::Handle<v8::Value> resourceName = message->GetScriptResourceName();
-    bool useURL = resourceName.IsEmpty() || !resourceName->IsString();
-    Document* document = frame->document();
-    String resourceNameString = useURL ? document->url() : toWebCoreString(resourceName);
-    document->reportException(errorMessage, message->GetLineNumber(), resourceNameString, callStack);
+    bool shouldUseDocumentURL = resourceName.IsEmpty() || !resourceName->IsString();
+    String resource = shouldUseDocumentURL ? firstWindow->document()->url() : toWebCoreString(resourceName);
+    firstWindow->document()->reportException(errorMessage, message->GetLineNumber(), resource, callStack);
 }
 
 // Returns the owner frame pointer of a DOM wrapper object. It only works for
