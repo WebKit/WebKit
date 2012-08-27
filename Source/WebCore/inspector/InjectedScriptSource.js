@@ -222,12 +222,6 @@ InjectedScript.prototype = {
         var descriptors = this._propertyDescriptors(object, ownProperties);
 
         // Go over properties, wrap object values.
-        if (descriptors.length === 0 && "arguments" in object) {
-            // Fill in JSC scope object.
-            for (var key in object)
-                descriptors.push({ name: key, value: object[key], writable: false, configurable: false, enumerable: true});
-        }
-
         for (var i = 0; i < descriptors.length; ++i) {
             var descriptor = descriptors[i];
             if ("get" in descriptor)

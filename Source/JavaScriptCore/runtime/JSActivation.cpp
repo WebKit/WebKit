@@ -86,10 +86,26 @@ inline bool JSActivation::symbolTableGet(PropertyName propertyName, PropertySlot
     SymbolTableEntry entry = symbolTable()->inlineGet(propertyName.publicName());
     if (entry.isNull())
         return false;
+
+    // Defend against the inspector asking for a var after it has been optimized out.
     if (m_isTornOff && entry.getIndex() >= m_numCapturedVars)
         return false;
 
     slot.setValue(registerAt(entry.getIndex()).get());
+    return true;
+}
+
+inline bool JSActivation::symbolTableGet(PropertyName propertyName, PropertyDescriptor& descriptor)
+{
+    SymbolTableEntry entry = symbolTable()->inlineGet(propertyName.publicName());
+    if (entry.isNull())
+        return false;
+
+    // Defend against the inspector asking for a var after it has been optimized out.
+    if (m_isTornOff && entry.getIndex() >= m_numCapturedVars)
+        return false;
+
+    descriptor.setDescriptor(registerAt(entry.getIndex()).get(), entry.getAttributes());
     return true;
 }
 
@@ -106,6 +122,8 @@ inline bool JSActivation::symbolTablePut(ExecState* exec, PropertyName propertyN
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         return true;
     }
+
+    // Defend against the inspector asking for a var after it has been optimized out.
     if (m_isTornOff && entry.getIndex() >= m_numCapturedVars)
         return false;
 
@@ -116,6 +134,10 @@ inline bool JSActivation::symbolTablePut(ExecState* exec, PropertyName propertyN
 void JSActivation::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSActivation* thisObject = jsCast<JSActivation*>(object);
+
+    if (mode == IncludeDontEnumProperties)
+        propertyNames.add(exec->propertyNames().arguments);
+
     SymbolTable::const_iterator end = thisObject->symbolTable()->end();
     for (SymbolTable::const_iterator it = thisObject->symbolTable()->begin(); it != end; ++it) {
         if (it->second.getAttributes() & DontEnum && mode != IncludeDontEnumProperties)
@@ -148,9 +170,13 @@ inline bool JSActivation::symbolTablePutWithAttributes(JSGlobalData& globalData,
 bool JSActivation::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSActivation* thisObject = jsCast<JSActivation*>(cell);
+
     if (propertyName == exec->propertyNames().arguments) {
-        slot.setCustom(thisObject, thisObject->getArgumentsGetter());
-        return true;
+        // Defend against the inspector asking for the arguments object after it has been optimized out.
+        if (!thisObject->m_isTornOff) {
+            slot.setCustom(thisObject, thisObject->getArgumentsGetter());
+            return true;
+        }
     }
 
     if (thisObject->symbolTableGet(propertyName, slot))
@@ -166,6 +192,26 @@ bool JSActivation::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyNam
     ASSERT(!thisObject->hasGetterSetterProperties());
     ASSERT(thisObject->prototype().isNull());
     return false;
+}
+
+bool JSActivation::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
+{
+    JSActivation* thisObject = jsCast<JSActivation*>(object);
+
+    if (propertyName == exec->propertyNames().arguments) {
+        // Defend against the inspector asking for the arguments object after it has been optimized out.
+        if (!thisObject->m_isTornOff) {
+            PropertySlot slot;
+            JSActivation::getOwnPropertySlot(thisObject, exec, propertyName, slot);
+            descriptor.setDescriptor(slot.getValue(exec, propertyName), DontEnum);
+            return true;
+        }
+    }
+
+    if (thisObject->symbolTableGet(propertyName, descriptor))
+        return true;
+
+    return Base::getOwnPropertyDescriptor(object, exec, propertyName, descriptor);
 }
 
 void JSActivation::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)

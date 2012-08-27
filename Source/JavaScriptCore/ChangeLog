@@ -1,3 +1,33 @@
+2011-08-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed a JSC-specific hack from the web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=95033
+
+        Reviewed by Filip Pizlo.
+
+        Added support for what the web inspector really wanted instead.
+
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::symbolTableGet):
+        (JSC::JSActivation::symbolTablePut): Added some explanation for these
+        checks, which were non-obvious to me.
+
+        (JSC::JSActivation::getOwnPropertySlot): It's impossible to access the
+        arguments property of an activation after it's been torn off, since the
+        only way to tear off an activation is to instantiate a new function,
+        which has its own arguments property in scope. However, the inspector
+        get special access to activations, and may try to perform this access,
+        so we need a special guard to maintain coherence and avoid crashing in
+        case the activation optimized out the arguments property.
+
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::symbolTableGet):
+        (JSC::JSActivation::symbolTablePut):
+        (JSC::JSActivation::getOwnPropertyNames):
+        (JSC::JSActivation::getOwnPropertyDescriptor): Provide getOwnPropertyNames
+        and getOwnPropertyDescriptor implementations, to meet the web inspector's
+        needs. (User code can never call these.)
+
 2012-08-24  Filip Pizlo  <fpizlo@apple.com>
 
         Finally inlining should correctly track the catch context
