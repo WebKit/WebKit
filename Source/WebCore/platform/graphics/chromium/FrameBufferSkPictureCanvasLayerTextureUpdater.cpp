@@ -50,7 +50,7 @@ static PassOwnPtr<SkCanvas> createAcceleratedCanvas(GrContext* grContext,
     textureDesc.fFlags = kRenderTarget_GrPlatformTextureFlag;
     textureDesc.fWidth = canvasSize.width();
     textureDesc.fHeight = canvasSize.height();
-    textureDesc.fConfig = kSkia8888_PM_GrPixelConfig;
+    textureDesc.fConfig = kSkia8888_GrPixelConfig;
     textureDesc.fTextureHandle = textureId;
     SkAutoTUnref<GrTexture> target(grContext->createPlatformTexture(textureDesc));
     SkAutoTUnref<SkDevice> device(new SkGpuDevice(grContext, target.get()));

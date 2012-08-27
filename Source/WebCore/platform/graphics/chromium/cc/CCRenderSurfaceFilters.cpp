@@ -34,7 +34,7 @@
 #include "SkCanvas.h"
 #include "SkColorMatrixFilter.h"
 #include "SkGpuDevice.h"
-#include "SkGrTexturePixelRef.h"
+#include "SkGrPixelRef.h"
 #include "SkMagnifierImageFilter.h"
 #include <public/WebFilterOperation.h>
 #include <public/WebFilterOperations.h>
@@ -265,12 +265,12 @@ public:
         GrPlatformTextureDesc platformTextureDescription;
         platformTextureDescription.fWidth = size.width();
         platformTextureDescription.fHeight = size.height();
-        platformTextureDescription.fConfig = kSkia8888_PM_GrPixelConfig;
+        platformTextureDescription.fConfig = kSkia8888_GrPixelConfig;
         platformTextureDescription.fTextureHandle = textureId;
         SkAutoTUnref<GrTexture> texture(grContext->createPlatformTexture(platformTextureDescription));
         // Place the platform texture inside an SkBitmap.
         m_source.setConfig(SkBitmap::kARGB_8888_Config, size.width(), size.height());
-        m_source.setPixelRef(new SkGrTexturePixelRef(texture.get()))->unref();
+        m_source.setPixelRef(new SkGrPixelRef(texture.get()))->unref();
     }
 
     ~FilterBufferState() { }
@@ -283,7 +283,7 @@ public:
         desc.fSampleCnt = 0;
         desc.fWidth = m_source.width();
         desc.fHeight = m_source.height();
-        desc.fConfig = kSkia8888_PM_GrPixelConfig;
+        desc.fConfig = kSkia8888_GrPixelConfig;
         for (int i = 0; i < scratchCount; ++i) {
             GrAutoScratchTexture scratchTexture(m_grContext, desc, GrContext::kExact_ScratchTexMatch);
             m_scratchTextures[i].reset(scratchTexture.detach());
@@ -308,7 +308,7 @@ public:
         m_canvas.reset(0);
         m_device.reset(0);
 
-        m_source.setPixelRef(new SkGrTexturePixelRef(m_scratchTextures[m_currentTexture].get()))->unref();
+        m_source.setPixelRef(new SkGrPixelRef(m_scratchTextures[m_currentTexture].get()))->unref();
         m_currentTexture = 1 - m_currentTexture;
     }
 
