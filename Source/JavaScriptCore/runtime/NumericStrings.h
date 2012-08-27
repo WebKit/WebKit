@@ -40,7 +40,7 @@ namespace JSC {
             if (d == entry.key && !entry.value.isNull())
                 return entry.value;
             entry.key = d;
-            entry.value = UString::number(d);
+            entry.value = UString::numberToStringECMAScript(d);
             return entry.value;
         }
 

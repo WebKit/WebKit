@@ -430,6 +430,12 @@ String String::number(double number, unsigned flags, unsigned precision)
     return String(numberToFixedWidthString(number, precision, buffer));
 }
 
+String String::numberToStringECMAScript(double number)
+{
+    NumberToStringBuffer buffer;
+    return String(numberToString(number, buffer));
+}
+
 int String::toIntStrict(bool* ok, int base) const
 {
     if (!m_impl) {

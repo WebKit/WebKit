@@ -25,6 +25,9 @@
 
 #include "config.h"
 
+#include <limits>
+#include <wtf/MathExtras.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
@@ -45,5 +48,57 @@ TEST(WTF, StringCreationFromLiteral)
     ASSERT_TRUE(stringWithTemplate.impl()->hasTerminatingNullCharacter());
     ASSERT_TRUE(String("Template Literal") == stringWithTemplate);
 }
+
+static void testNumberToStringECMAScript(double number, const char* reference)
+{
+    CString numberString = String::numberToStringECMAScript(number).latin1();
+    ASSERT_STREQ(reference, numberString.data());
+}
+
+TEST(WTF, StringNumberToStringECMAScriptBoundaries)
+{
+    typedef std::numeric_limits<double> Limits;
+
+    // Infinity.
+    testNumberToStringECMAScript(Limits::infinity(), "Infinity");
+    testNumberToStringECMAScript(-Limits::infinity(), "-Infinity");
+
+    // NaN.
+    testNumberToStringECMAScript(-Limits::quiet_NaN(), "NaN");
+
+    // Zeros.
+    testNumberToStringECMAScript(0, "0");
+    testNumberToStringECMAScript(-0, "0");
+
+    // Min-Max.
+    testNumberToStringECMAScript(Limits::min(), "2.2250738585072014e-308");
+    testNumberToStringECMAScript(Limits::max(), "1.7976931348623157e+308");
+}
+
+TEST(WTF, StringNumberToStringECMAScriptRegularNumbers)
+{
+    // Pi.
+    testNumberToStringECMAScript(piDouble, "3.141592653589793");
+    testNumberToStringECMAScript(piFloat, "3.1415927410125732");
+    testNumberToStringECMAScript(piOverTwoDouble, "1.5707963267948966");
+    testNumberToStringECMAScript(piOverTwoFloat, "1.5707963705062866");
+    testNumberToStringECMAScript(piOverFourDouble, "0.7853981633974483");
+    testNumberToStringECMAScript(piOverFourFloat, "0.7853981852531433");
+
+    // e.
+    const double e = 2.71828182845904523536028747135266249775724709369995;
+    testNumberToStringECMAScript(e, "2.718281828459045");
+
+    // c, speed of light in m/s.
+    const double c = 299792458;
+    testNumberToStringECMAScript(c, "299792458");
+
+    // Golen ratio.
+    const double phi = 1.6180339887498948482;
+    testNumberToStringECMAScript(phi, "1.618033988749895");
+}
+
+
+
 
 } // namespace TestWebKitAPI

@@ -387,7 +387,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(UStringBuilder&
         if (!isfinite(number))
             builder.append("null");
         else
-            builder.append(UString::number(number));
+            builder.append(UString::numberToStringECMAScript(number));
         return StringifySucceeded;
     }
 

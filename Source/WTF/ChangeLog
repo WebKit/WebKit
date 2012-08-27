@@ -1,5 +1,18 @@
 2012-08-27  Benjamin Poulain  <benjamin@webkit.org>
 
+        Add ECMAScript Number to String conversion to WTF::String
+        https://bugs.webkit.org/show_bug.cgi?id=95016
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::numberToStringECMAScript):
+        * wtf/text/WTFString.h:
+        Add the implementation of numberToStringECMAScript(double) from UString to String.
+        This will make it easier to replace UString in the future.
+
+2012-08-27  Benjamin Poulain  <benjamin@webkit.org>
+
         Even up WTF::String to CString functions
         https://bugs.webkit.org/show_bug.cgi?id=95008
 

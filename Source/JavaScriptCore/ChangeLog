@@ -1,3 +1,29 @@
+2012-08-27  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add ECMAScript Number to String conversion to WTF::String
+        https://bugs.webkit.org/show_bug.cgi?id=95016
+
+        Reviewed by Geoffrey Garen.
+
+        Rename UString::number(double) to UString::numberToStringECMAScript(double) to
+        differenciate it from the fixed-width conversion performed by String::number().
+
+        * parser/ParserArena.h:
+        (JSC::IdentifierArena::makeNumericIdentifier):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue):
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToPrecision):
+        (JSC::numberProtoFuncToString):
+        * runtime/NumericStrings.h:
+        (JSC::NumericStrings::add):
+        * runtime/UString.cpp:
+        (JSC::UString::numberToStringECMAScript):
+        * runtime/UString.h:
+        (UString):
+
 2012-08-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Rename RegisterProtocolHandler API to NavigatorContentUtils

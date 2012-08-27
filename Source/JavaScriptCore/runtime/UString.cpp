@@ -90,7 +90,7 @@ UString::UString(const char* characters)
 {
 }
 
-UString UString::number(double d)
+UString UString::numberToStringECMAScript(double d)
 {
     NumberToStringBuffer buffer;
     return UString(numberToString(d, buffer));

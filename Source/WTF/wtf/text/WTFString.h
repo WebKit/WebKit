@@ -231,6 +231,9 @@ public:
 
     WTF_EXPORT_STRING_API static String number(double, unsigned = ShouldRoundSignificantFigures | ShouldTruncateTrailingZeros, unsigned precision = 6);
 
+    // Number to String conversion following the ECMAScript definition.
+    WTF_EXPORT_STRING_API static String numberToStringECMAScript(double);
+
     // Find a single character or string, also with match function & latin1 forms.
     size_t find(UChar c, unsigned start = 0) const
         { return m_impl ? m_impl->find(c, start) : notFound; }

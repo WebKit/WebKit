@@ -117,7 +117,8 @@ public:
     static UString number(unsigned u) { return WTF::numberToStringImpl(u); }
     static UString number(long i) { return WTF::numberToStringImpl(i); }
     static UString number(long long i) { return WTF::numberToStringImpl(i); }
-    JS_EXPORT_PRIVATE static UString number(double);
+
+    static UString numberToStringECMAScript(double);
 
     // Find a single character or string, also with match function & latin1 forms.
     size_t find(UChar c, unsigned start = 0) const

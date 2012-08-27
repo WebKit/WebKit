@@ -382,7 +382,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
 
     // Handle NaN and Infinity.
     if (!isfinite(x))
-        return JSValue::encode(jsString(exec, UString::number(x)));
+        return JSValue::encode(jsString(exec, UString::numberToStringECMAScript(x)));
 
     // Round if the argument is not undefined, always format as exponential.
     char buffer[WTF::NumberToStringBufferLength];
@@ -415,7 +415,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
     // This also covers Ininity, and structure the check so that NaN
     // values are also handled by numberToString
     if (!(fabs(x) < 1e+21))
-        return JSValue::encode(jsString(exec, UString::number(x)));
+        return JSValue::encode(jsString(exec, UString::numberToStringECMAScript(x)));
 
     // The check above will return false for NaN or Infinity, these will be
     // handled by numberToString.
@@ -446,11 +446,11 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
 
     // To precision called with no argument is treated as ToString.
     if (isUndefined)
-        return JSValue::encode(jsString(exec, UString::number(x)));
+        return JSValue::encode(jsString(exec, UString::numberToStringECMAScript(x)));
 
     // Handle NaN and Infinity.
     if (!isfinite(x))
-        return JSValue::encode(jsString(exec, UString::number(x)));
+        return JSValue::encode(jsString(exec, UString::numberToStringECMAScript(x)));
 
     NumberToStringBuffer buffer;
     return JSValue::encode(jsString(exec, UString(numberToFixedPrecisionString(x, significantFigures, buffer))));
@@ -509,7 +509,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
     }
 
     if (!isfinite(doubleValue))
-        return JSValue::encode(jsString(exec, UString::number(doubleValue)));
+        return JSValue::encode(jsString(exec, UString::numberToStringECMAScript(doubleValue)));
 
     RadixBuffer s;
     return JSValue::encode(jsString(exec, toStringWithRadix(s, doubleValue, radix)));
