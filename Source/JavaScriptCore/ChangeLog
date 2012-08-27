@@ -1,3 +1,13 @@
+2012-08-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix for builds without VALUE_PROFILING. I had forgotten that shouldEmitProfiling()
+        is designed to return true if DFG_JIT is disabled. I should be using canBeOptimized() instead.
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+
 2012-08-26  Geoffrey Garen  <ggaren@apple.com>
 
         Don't allocate space for arguments and call frame if arguments aren't captured

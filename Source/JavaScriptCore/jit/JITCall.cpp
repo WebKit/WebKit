@@ -160,7 +160,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         int argCount = instruction[2].u.operand;
         int registerOffset = instruction[3].u.operand;
 
-        if (opcodeID == op_call && shouldEmitProfiling()) {
+        if (opcodeID == op_call && canBeOptimized()) {
             emitGetVirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0), regT0);
             Jump done = emitJumpIfNotJSCell(regT0);
             loadPtr(Address(regT0, JSCell::structureOffset()), regT0);
