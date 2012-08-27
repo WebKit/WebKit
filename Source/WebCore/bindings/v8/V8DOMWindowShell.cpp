@@ -63,17 +63,11 @@
 #include "V8ObjectConstructor.h"
 #include "V8PerContextData.h"
 #include "WorkerContextExecutionProxy.h"
-
 #include <algorithm>
 #include <stdio.h>
 #include <utility>
 #include <v8-debug.h>
 #include <v8.h>
-
-#if ENABLE(JAVASCRIPT_I18N_API)
-#include <v8-i18n/include/extension.h>
-#endif
-
 #include <wtf/Assertions.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -81,16 +75,13 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
+#if ENABLE(JAVASCRIPT_I18N_API)
+#include <v8-i18n/include/extension.h>
+#endif
+
 namespace WebCore {
 
-static void handleFatalErrorInV8()
-{
-    // FIXME: We temporarily deal with V8 internal error situations
-    // such as out-of-memory by crashing the renderer.
-    CRASH();
-}
-
-static void reportFatalErrorInV8(const char* location, const char* message)
+static void reportFatalError(const char* location, const char* message)
 {
     // V8 is shutdown, we cannot use V8 api.
     // The only thing we can do is to disable JavaScript.
@@ -100,10 +91,12 @@ static void reportFatalErrorInV8(const char* location, const char* message)
     memoryUsageMB = MemoryUsageSupport::actualMemoryUsageMB();
 #endif
     printf("V8 error: %s (%s).  Current memory usage: %d MB\n", message, location, memoryUsageMB);
-    handleFatalErrorInV8();
+    // FIXME: We temporarily deal with V8 internal error situations
+    // such as out-of-memory by crashing the renderer.
+    CRASH();
 }
 
-static void v8UncaughtExceptionHandler(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
+static void reportUncaughtException(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
 {
     // Use the frame where JavaScript is called from.
     Frame* frame = firstFrame(BindingState::instance());
@@ -129,7 +122,7 @@ static void v8UncaughtExceptionHandler(v8::Handle<v8::Message> message, v8::Hand
 
 // Returns the owner frame pointer of a DOM wrapper object. It only works for
 // these DOM objects requiring cross-domain access check.
-static Frame* getTargetFrame(v8::Local<v8::Object> host, v8::Local<v8::Value> data)
+static Frame* findFrame(v8::Local<v8::Object> host, v8::Local<v8::Value> data)
 {
     Frame* target = 0;
     WrapperTypeInfo* type = WrapperTypeInfo::unwrap(data);
@@ -152,7 +145,7 @@ static Frame* getTargetFrame(v8::Local<v8::Object> host, v8::Local<v8::Value> da
 
 static void reportUnsafeJavaScriptAccess(v8::Local<v8::Object> host, v8::AccessType type, v8::Local<v8::Value> data)
 {
-    Frame* target = getTargetFrame(host, data);
+    Frame* target = findFrame(host, data);
     if (!target)
         return;
     DOMWindow* targetWindow = target->document()->domWindow();
@@ -169,10 +162,10 @@ static void initializeV8IfNeeded()
     initialized = true;
 
     v8::V8::IgnoreOutOfMemoryException();
-    v8::V8::SetFatalErrorHandler(reportFatalErrorInV8);
+    v8::V8::SetFatalErrorHandler(reportFatalError);
     v8::V8::SetGlobalGCPrologueCallback(&V8GCController::gcPrologue);
     v8::V8::SetGlobalGCEpilogueCallback(&V8GCController::gcEpilogue);
-    v8::V8::AddMessageListener(&v8UncaughtExceptionHandler);
+    v8::V8::AddMessageListener(&reportUncaughtException);
     v8::V8::SetFailedAccessCheckCallbackFunction(reportUnsafeJavaScriptAccess);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     ScriptProfiler::initialize();
@@ -182,6 +175,12 @@ static void initializeV8IfNeeded()
     // FIXME: Remove the following 2 lines when V8 default has changed.
     const char es5ReadonlyFlag[] = "--es5_readonly";
     v8::V8::SetFlagsFromString(es5ReadonlyFlag, sizeof(es5ReadonlyFlag));
+}
+
+static void checkDocumentWrapper(v8::Handle<v8::Object> wrapper, Document* document)
+{
+    ASSERT(V8Document::toNative(wrapper) == document);
+    ASSERT(!document->isHTMLDocument() || (V8Document::toNative(v8::Handle<v8::Object>::Cast(wrapper->GetPrototype())) == document));
 }
 
 PassRefPtr<V8DOMWindowShell> V8DOMWindowShell::create(Frame* frame)
@@ -422,12 +421,6 @@ void V8DOMWindowShell::updateDocumentWrapper(v8::Handle<v8::Object> wrapper)
 void V8DOMWindowShell::clearDocumentWrapper()
 {
     m_document.clear();
-}
-
-static void checkDocumentWrapper(v8::Handle<v8::Object> wrapper, Document* document)
-{
-    ASSERT(V8Document::toNative(wrapper) == document);
-    ASSERT(!document->isHTMLDocument() || (V8Document::toNative(v8::Handle<v8::Object>::Cast(wrapper->GetPrototype())) == document));
 }
 
 void V8DOMWindowShell::updateDocumentWrapperCache()
