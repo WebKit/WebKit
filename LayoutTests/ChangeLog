@@ -1,5 +1,12 @@
 2012-08-27  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
+        [Qt] Unreviwed gardening. Skip test that fails on 32bit release.
+        https://bugs.webkit.org/show_bug.cgi?id=95070
+
+        * platform/qt/Skipped: skip inspector/styles/media-queries.html after r126717.
+
+2012-08-27  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
         [Qt][WK2] Unreviewd gardening. Skip failing compositing tests.
         https://bugs.webkit.org/show_bug.cgi?id=95076.
 
