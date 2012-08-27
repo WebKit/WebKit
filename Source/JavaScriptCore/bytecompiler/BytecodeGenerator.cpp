@@ -188,6 +188,24 @@ JSObject* BytecodeGenerator::generate()
 
     m_scopeNode->emitBytecode(*this);
     
+    for (unsigned i = 0; i < m_tryRanges.size(); ++i) {
+        TryRange& range = m_tryRanges[i];
+        ASSERT(range.tryData->targetScopeDepth != UINT_MAX);
+        HandlerInfo info = {
+            range.start->bind(0, 0), range.end->bind(0, 0),
+            range.tryData->target->bind(0, 0), range.tryData->targetScopeDepth
+#if ENABLE(JIT)
+            ,
+#if ENABLE(LLINT)
+            CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(bitwise_cast<void*>(&llint_op_catch)))
+#else
+            CodeLocationLabel()
+#endif
+#endif
+        };
+        m_codeBlock->addExceptionHandler(info);
+    }
+    
     m_codeBlock->instructions() = RefCountedArray<Instruction>(m_instructions);
 
     if (s_dumpsGeneratedCode)
@@ -2122,6 +2140,7 @@ void BytecodeGenerator::pushFinallyContext(StatementNode* finallyBlock)
         m_scopeContextStack.size(),
         m_switchContextStack.size(),
         m_forInContextStack.size(),
+        m_tryContextStack.size(),
         m_labelScopes.size(),
         m_finallyDepth,
         m_dynamicScopeDepth
@@ -2255,14 +2274,18 @@ PassRefPtr<Label> BytecodeGenerator::emitComplexJumpScopes(Label* target, Contro
         Vector<ControlFlowContext> savedScopeContextStack;
         Vector<SwitchInfo> savedSwitchContextStack;
         Vector<ForInContext> savedForInContextStack;
+        Vector<TryContext> poppedTryContexts;
         SegmentedVector<LabelScope, 8> savedLabelScopes;
         while (topScope > bottomScope && topScope->isFinallyBlock) {
+            RefPtr<Label> beforeFinally = emitLabel(newLabel().get());
+            
             // Save the current state of the world while instating the state of the world
             // for the finally block.
             FinallyContext finallyContext = topScope->finallyContext;
             bool flipScopes = finallyContext.scopeContextStackSize != m_scopeContextStack.size();
             bool flipSwitches = finallyContext.switchContextStackSize != m_switchContextStack.size();
             bool flipForIns = finallyContext.forInContextStackSize != m_forInContextStack.size();
+            bool flipTries = finallyContext.tryContextStackSize != m_tryContextStack.size();
             bool flipLabelScopes = finallyContext.labelScopesSize != m_labelScopes.size();
             int topScopeIndex = -1;
             int bottomScopeIndex = -1;
@@ -2280,6 +2303,19 @@ PassRefPtr<Label> BytecodeGenerator::emitComplexJumpScopes(Label* target, Contro
                 savedForInContextStack = m_forInContextStack;
                 m_forInContextStack.shrink(finallyContext.forInContextStackSize);
             }
+            if (flipTries) {
+                while (m_tryContextStack.size() != finallyContext.tryContextStackSize) {
+                    ASSERT(m_tryContextStack.size() > finallyContext.tryContextStackSize);
+                    TryContext context = m_tryContextStack.last();
+                    m_tryContextStack.removeLast();
+                    TryRange range;
+                    range.start = context.start;
+                    range.end = beforeFinally;
+                    range.tryData = context.tryData;
+                    m_tryRanges.append(range);
+                    poppedTryContexts.append(context);
+                }
+            }
             if (flipLabelScopes) {
                 savedLabelScopes = m_labelScopes;
                 while (m_labelScopes.size() > finallyContext.labelScopesSize)
@@ -2293,6 +2329,8 @@ PassRefPtr<Label> BytecodeGenerator::emitComplexJumpScopes(Label* target, Contro
             // Emit the finally block.
             emitNode(finallyContext.finallyBlock);
             
+            RefPtr<Label> afterFinally = emitLabel(newLabel().get());
+            
             // Restore the state of the world.
             if (flipScopes) {
                 m_scopeContextStack = savedScopeContextStack;
@@ -2303,6 +2341,14 @@ PassRefPtr<Label> BytecodeGenerator::emitComplexJumpScopes(Label* target, Contro
                 m_switchContextStack = savedSwitchContextStack;
             if (flipForIns)
                 m_forInContextStack = savedForInContextStack;
+            if (flipTries) {
+                ASSERT(m_tryContextStack.size() == finallyContext.tryContextStackSize);
+                for (unsigned i = poppedTryContexts.size(); i--;) {
+                    TryContext context = poppedTryContexts[i];
+                    context.start = afterFinally;
+                    m_tryContextStack.append(context);
+                }
+            }
             if (flipLabelScopes)
                 m_labelScopes = savedLabelScopes;
             m_finallyDepth = savedFinallyDepth;
@@ -2362,20 +2408,39 @@ RegisterID* BytecodeGenerator::emitNextPropertyName(RegisterID* dst, RegisterID*
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitCatch(RegisterID* targetRegister, Label* start, Label* end)
+TryData* BytecodeGenerator::pushTry(Label* start)
+{
+    TryData tryData;
+    tryData.target = newLabel();
+    tryData.targetScopeDepth = UINT_MAX;
+    m_tryData.append(tryData);
+    TryData* result = &m_tryData.last();
+    
+    TryContext tryContext;
+    tryContext.start = start;
+    tryContext.tryData = result;
+    
+    m_tryContextStack.append(tryContext);
+    
+    return result;
+}
+
+RegisterID* BytecodeGenerator::popTryAndEmitCatch(TryData* tryData, RegisterID* targetRegister, Label* end)
 {
     m_usesExceptions = true;
-#if ENABLE(JIT)
-#if ENABLE(LLINT)
-    HandlerInfo info = { start->bind(0, 0), end->bind(0, 0), instructions().size(), m_dynamicScopeDepth + m_baseScopeDepth, CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(bitwise_cast<void*>(&llint_op_catch))) };
-#else
-    HandlerInfo info = { start->bind(0, 0), end->bind(0, 0), instructions().size(), m_dynamicScopeDepth + m_baseScopeDepth, CodeLocationLabel() };
-#endif
-#else
-    HandlerInfo info = { start->bind(0, 0), end->bind(0, 0), instructions().size(), m_dynamicScopeDepth + m_baseScopeDepth };
-#endif
+    
+    ASSERT_UNUSED(tryData, m_tryContextStack.last().tryData == tryData);
+    
+    TryRange tryRange;
+    tryRange.start = m_tryContextStack.last().start;
+    tryRange.end = end;
+    tryRange.tryData = m_tryContextStack.last().tryData;
+    m_tryRanges.append(tryRange);
+    m_tryContextStack.removeLast();
+    
+    emitLabel(tryRange.tryData->target.get());
+    tryRange.tryData->targetScopeDepth = m_dynamicScopeDepth + m_baseScopeDepth;
 
-    m_codeBlock->addExceptionHandler(info);
     emitOpcode(op_catch);
     instructions().append(targetRegister->index());
     return targetRegister;

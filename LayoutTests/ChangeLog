@@ -1,3 +1,16 @@
+2012-08-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Finally inlining should correctly track the catch context
+        https://bugs.webkit.org/show_bug.cgi?id=94986
+        <rdar://problem/11753784>
+
+        Reviewed by Sam Weinig.
+
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/throw-from-finally.js: Added.
+        * fast/js/throw-from-finally.html: Added.
+        * fast/js/throw-from-finally-expected.txt: Added.
+
 2012-08-26  Robert Hogan  <robert@webkit.org>
 
         Suppress Mac test requiring rebaseline after r126683.

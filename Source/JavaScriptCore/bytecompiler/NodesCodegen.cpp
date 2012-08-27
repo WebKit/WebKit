@@ -1970,11 +1970,15 @@ RegisterID* TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
     generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine(), column());
 
+    ASSERT(m_catchBlock || m_finallyBlock);
+
     RefPtr<Label> tryStartLabel = generator.newLabel();
+    generator.emitLabel(tryStartLabel.get());
+    
     if (m_finallyBlock)
         generator.pushFinallyContext(m_finallyBlock);
+    TryData* tryData = generator.pushTry(tryStartLabel.get());
 
-    generator.emitLabel(tryStartLabel.get());
     generator.emitNode(dst, m_tryBlock);
 
     if (m_catchBlock) {
@@ -1985,7 +1989,14 @@ RegisterID* TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
         // Uncaught exception path: the catch block.
         RefPtr<Label> here = generator.emitLabel(generator.newLabel().get());
-        RefPtr<RegisterID> exceptionRegister = generator.emitCatch(generator.newTemporary(), tryStartLabel.get(), here.get());
+        RefPtr<RegisterID> exceptionRegister = generator.popTryAndEmitCatch(tryData, generator.newTemporary(), here.get());
+        
+        if (m_finallyBlock) {
+            // If the catch block throws an exception and we have a finally block, then the finally
+            // block should "catch" that exception.
+            tryData = generator.pushTry(here.get());
+        }
+        
         generator.emitPushNewScope(exceptionRegister.get(), m_exceptionIdent, exceptionRegister.get());
         generator.emitNode(dst, m_catchBlock);
         generator.emitPopScope();
@@ -1993,6 +2004,8 @@ RegisterID* TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     }
 
     if (m_finallyBlock) {
+        RefPtr<Label> preFinallyLabel = generator.emitLabel(generator.newLabel().get());
+        
         generator.popFinallyContext();
 
         RefPtr<Label> finallyEndLabel = generator.newLabel();
@@ -2002,8 +2015,7 @@ RegisterID* TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.emitJump(finallyEndLabel.get());
 
         // Uncaught exception path: invoke the finally block, then re-throw the exception.
-        RefPtr<Label> here = generator.emitLabel(generator.newLabel().get());
-        RefPtr<RegisterID> tempExceptionRegister = generator.emitCatch(generator.newTemporary(), tryStartLabel.get(), here.get());
+        RefPtr<RegisterID> tempExceptionRegister = generator.popTryAndEmitCatch(tryData, generator.newTemporary(), preFinallyLabel.get());
         generator.emitNode(dst, m_finallyBlock);
         generator.emitThrow(tempExceptionRegister.get());
 

@@ -302,6 +302,7 @@ fast/js/string-substr
 fast/js/string-trim
 fast/js/string_replace
 fast/js/this-non-object-proto
+fast/js/throw-from-finally
 fast/js/ToNumber
 fast/js/toString-elision-trailing-comma
 fast/js/tostring-exception-in-property-access

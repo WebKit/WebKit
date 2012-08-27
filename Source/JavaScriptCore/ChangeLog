@@ -1,3 +1,38 @@
+2012-08-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Finally inlining should correctly track the catch context
+        https://bugs.webkit.org/show_bug.cgi?id=94986
+        <rdar://problem/11753784>
+
+        Reviewed by Sam Weinig.
+
+        This fixes two behaviors:
+        
+        1) Throwing from a finally block. Previously, we would seem to reenter the finally
+           block - though only once.
+        
+        2) Executing a finally block from some nested context, for example due to a
+           'continue', 'break', or 'return' in the try. This would execute the finally
+           block in the context of of the try block, which could lead to either scope depth
+           mismatches or reexecutions of the finally block on throw, similarly to (1) but
+           for different reasons.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC):
+        (JSC::BytecodeGenerator::pushFinallyContext):
+        (JSC::BytecodeGenerator::emitComplexJumpScopes):
+        (JSC::BytecodeGenerator::pushTry):
+        (JSC::BytecodeGenerator::popTryAndEmitCatch):
+        * bytecompiler/BytecodeGenerator.h:
+        (FinallyContext):
+        (TryData):
+        (JSC):
+        (TryContext):
+        (TryRange):
+        (BytecodeGenerator):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TryNode::emitBytecode):
+
 2012-08-26  Filip Pizlo  <fpizlo@apple.com>
 
         Array type checks and storage accesses should be uniformly represented and available to CSE
