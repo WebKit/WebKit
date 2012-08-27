@@ -1,3 +1,14 @@
+2012-08-24  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Incorrect property override computation when !important is involved
+        https://bugs.webkit.org/show_bug.cgi?id=94923
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/elements/elements-panel-styles-expected.txt:
+        * inspector/elements/resources/elements-panel-styles.css:
+        (.foo, .foo::before):
+
 2012-08-27  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Tests] Using ref image instead ref HTML for fast/forms/time-multiple-fields/time-multiple-fields-appearance-{basic,pseudo-element}.html

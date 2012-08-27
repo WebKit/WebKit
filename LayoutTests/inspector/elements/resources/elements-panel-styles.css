@@ -22,6 +22,7 @@ body {
 .foo, .foo::before {
     content: "[before Foo]";
     color: blue;
+    display: block !important;
 }
 
 .foo::before {

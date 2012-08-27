@@ -1,5 +1,6 @@
 Tests that elements panel shows proper styles in the sidebar panel.
 
+Foo
 [expanded] 
 -webkit-font-smoothing: subpixel-antialiased;
     element.style - subpixel-antialiased 
@@ -14,8 +15,9 @@ border-top-right-radius: 5px;
 color: blue;
     .foo, .foo::before - blue elements-panel-styles.css:22
     /-- overloaded --/ .foo - black elements-panel-styles.css:14
-display: none;
-    element.style - none 
+display: block;
+    /-- overloaded --/ element.style - none 
+    .foo, .foo::before - block !important elements-panel-styles.css:22
     /-- overloaded --/ div - block user agent stylesheet
 font-family: serif;
     #container - serif elements-panel-styles.css:5
@@ -38,7 +40,7 @@ text-align: -webkit-left;
 
 [expanded] 
 element.style  { ()
-display: none;
+/-- overloaded --/ display: none;
 -webkit-font-smoothing: subpixel-antialiased;
 
 ======== Matched CSS Rules ========
@@ -47,12 +49,13 @@ display: none;
 font-style: italic !important;
 
 [expanded] 
-.foo  { (elements-panel-styles.css:40)
+.foo  { (elements-panel-styles.css:41)
 
 [expanded] 
 .foo, .foo::before  { (elements-panel-styles.css:22)
 content: "[before Foo]";
 color: blue;
+display: block !important;
 
 [expanded] 
 .foo  { (elements-panel-styles.css:14)
@@ -92,26 +95,27 @@ body  { (elements-panel-styles.css:1)
 
 ======== Pseudo ::before element ========
 [expanded] 
-.foo::before  { (elements-panel-styles.css:44)
+.foo::before  { (elements-panel-styles.css:45)
 
 [expanded] 
-.foo::before  { (elements-panel-styles.css:27)
+.foo::before  { (elements-panel-styles.css:28)
 color: red;
 
 [expanded] 
 .foo, .foo::before  { (elements-panel-styles.css:22)
 content: "[before Foo]";
 /-- overloaded --/ color: blue;
+display: block !important;
 
 
 ======== Pseudo ::after element ========
 [expanded] 
-.foo::after  { (elements-panel-styles.css:35)
+.foo::after  { (elements-panel-styles.css:36)
 font-family: courier;
 content: "[after Foo 2]";
 
 [expanded] 
-.foo::after  { (elements-panel-styles.css:31)
+.foo::after  { (elements-panel-styles.css:32)
 /-- overloaded --/ content: "[after Foo]";
 color: green;
 
