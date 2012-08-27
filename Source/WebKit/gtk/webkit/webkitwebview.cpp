@@ -3629,9 +3629,9 @@ static void webkit_web_view_init(WebKitWebView* webView)
     WebCore::provideUserMediaTo(priv->corePage, priv->userMediaClient.get());
 #endif
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-    priv->registerProtocolHandlerClient = WebKit::RegisterProtocolHandlerClient::create();
-    WebCore::provideRegisterProtocolHandlerTo(priv->corePage, priv->registerProtocolHandlerClient.get());
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
+    priv->navigatorContentUtilsClient = WebKit::NavigatorContentUtilsClient::create();
+    WebCore::provideNavigatorContentUtilsTo(priv->corePage, priv->navigatorContentUtilsClient.get());
 #endif
 
     if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled()) {

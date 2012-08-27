@@ -20,14 +20,15 @@
 
 module window {
 
+    // http://www.w3.org/TR/html5/system-state-and-capabilities.html#custom-handlers
     interface [
         Supplemental=Navigator
-    ] NavigatorRegisterProtocolHandler {
-        [Conditional=REGISTER_PROTOCOL_HANDLER] void registerProtocolHandler(in DOMString scheme, in DOMString url, in DOMString title)
+    ] NavigatorContentUtils {
+        [Conditional=NAVIGATOR_CONTENT_UTILS] void registerProtocolHandler(in DOMString scheme, in DOMString url, in DOMString title)
             raises(DOMException);
-        [Conditional=REGISTER_PROTOCOL_HANDLER&CUSTOM_SCHEME_HANDLER] DOMString isProtocolHandlerRegistered(in DOMString scheme, in DOMString url)
+        [Conditional=NAVIGATOR_CONTENT_UTILS&CUSTOM_SCHEME_HANDLER] DOMString isProtocolHandlerRegistered(in DOMString scheme, in DOMString url)
             raises(DOMException);
-        [Conditional=REGISTER_PROTOCOL_HANDLER&CUSTOM_SCHEME_HANDLER] void unregisterProtocolHandler(in DOMString scheme, in DOMString url)
+        [Conditional=NAVIGATOR_CONTENT_UTILS&CUSTOM_SCHEME_HANDLER] void unregisterProtocolHandler(in DOMString scheme, in DOMString url)
             raises(DOMException);
     };
 

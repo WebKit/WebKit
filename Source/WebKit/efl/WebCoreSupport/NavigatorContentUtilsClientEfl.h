@@ -25,20 +25,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RegisterProtocolHandlerClientEfl_h
-#define RegisterProtocolHandlerClientEfl_h
+#ifndef NavigatorContentUtilsClientEfl_h
+#define NavigatorContentUtilsClientEfl_h
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-#include "RegisterProtocolHandlerClient.h"
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
+#include "NavigatorContentUtilsClient.h"
 
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
-class RegisterProtocolHandlerClientEfl : public WebCore::RegisterProtocolHandlerClient {
+class NavigatorContentUtilsClientEfl : public WebCore::NavigatorContentUtilsClient {
 public:
-    static PassOwnPtr<RegisterProtocolHandlerClientEfl> create(Evas_Object* view);
+    static PassOwnPtr<NavigatorContentUtilsClientEfl> create(Evas_Object* view);
 
-    ~RegisterProtocolHandlerClientEfl() { }
+    ~NavigatorContentUtilsClientEfl() { }
     virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title);
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
@@ -49,9 +49,9 @@ public:
 private:
     Evas_Object* m_view;
 
-    RegisterProtocolHandlerClientEfl(Evas_Object* view);
+    NavigatorContentUtilsClientEfl(Evas_Object* view);
 };
 }
 
 #endif
-#endif // RegisterProtocolHandlerClientEfl_h
+#endif // NavigatorContentUtilsClientEfl_h

@@ -16,29 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef RegisterProtocolHandlerClientGtk_h
-#define RegisterProtocolHandlerClientGtk_h
+#ifndef NavigatorContentUtilsClientGtk_h
+#define NavigatorContentUtilsClientGtk_h
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-#include "RegisterProtocolHandlerClient.h"
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
+#include "NavigatorContentUtilsClient.h"
 
 #include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 
-class RegisterProtocolHandlerClient : public WebCore::RegisterProtocolHandlerClient {
+class NavigatorContentUtilsClient : public WebCore::NavigatorContentUtilsClient {
 public:
-    static PassOwnPtr<RegisterProtocolHandlerClient> create();
+    static PassOwnPtr<NavigatorContentUtilsClient> create();
 
-    ~RegisterProtocolHandlerClient() { }
+    ~NavigatorContentUtilsClient() { }
 
     virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title);
 
 private:
-    RegisterProtocolHandlerClient();
+    NavigatorContentUtilsClient();
 };
 
 }
 
 #endif
-#endif // RegisterProtocolHandlerClientGtk_h
+#endif // NavigatorContentUtilsClientGtk_h

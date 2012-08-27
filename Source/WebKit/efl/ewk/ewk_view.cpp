@@ -103,8 +103,8 @@
 #include "ColorChooserClient.h"
 #endif
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-#include "RegisterProtocolHandlerClientEfl.h"
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
+#include "NavigatorContentUtilsClientEfl.h"
 #endif
 
 static const float zoomMinimum = 0.05;
@@ -254,8 +254,8 @@ struct _Ewk_View_Private_Data {
 #if ENABLE(INPUT_TYPE_COLOR)
     WebCore::ColorChooserClient* colorChooserClient;
 #endif
-#if ENABLE(REGISTER_PROTOCOL_HANDLER) || ENABLE(CUSTOM_SCHEME_HANDLER)
-    OwnPtr<WebCore::RegisterProtocolHandlerClientEfl> registerProtocolHandlerClient;
+#if ENABLE(NAVIGATOR_CONTENT_UTILS) || ENABLE(CUSTOM_SCHEME_HANDLER)
+    OwnPtr<WebCore::NavigatorContentUtilsClientEfl> navigatorContentUtilsClient;
 #endif
     struct {
         Ewk_Menu menu;
@@ -764,9 +764,9 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     WebCore::provideBatteryTo(priv->page.get(), new BatteryClientEfl(smartData->self));
 #endif
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-    priv->registerProtocolHandlerClient = WebCore::RegisterProtocolHandlerClientEfl::create(smartData->self);
-    WebCore::provideRegisterProtocolHandlerTo(priv->page.get(), priv->registerProtocolHandlerClient.get());
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
+    priv->navigatorContentUtilsClient = WebCore::NavigatorContentUtilsClientEfl::create(smartData->self);
+    WebCore::provideNavigatorContentUtilsTo(priv->page.get(), priv->navigatorContentUtilsClient.get());
 #endif
 
     priv->pageSettings = priv->page->settings();

@@ -854,8 +854,8 @@ private:
 #if ENABLE(MEDIA_STREAM)
     UserMediaClientImpl m_userMediaClientImpl;
 #endif
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-    OwnPtr<RegisterProtocolHandlerClientImpl> m_registerProtocolHandlerClient;
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
+    OwnPtr<NavigatorContentUtilsClientImpl> m_navigatorContentUtilsClient;
 #endif
     OwnPtr<WebCore::ActivePlatformGestureAnimation> m_gestureAnimation;
     WebPoint m_lastWheelPosition;

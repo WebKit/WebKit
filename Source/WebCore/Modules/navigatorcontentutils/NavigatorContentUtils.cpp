@@ -25,9 +25,9 @@
  */
 
 #include "config.h"
-#include "NavigatorRegisterProtocolHandler.h"
+#include "NavigatorContentUtils.h"
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
 
 #include "Document.h"
 #include "ExceptionCode.h"
@@ -110,21 +110,21 @@ static bool verifyProtocolHandlerScheme(const String& scheme, ExceptionCode& ec)
     return false;
 }
 
-NavigatorRegisterProtocolHandler* NavigatorRegisterProtocolHandler::from(Page* page)
+NavigatorContentUtils* NavigatorContentUtils::from(Page* page)
 {
-    return static_cast<NavigatorRegisterProtocolHandler*>(RefCountedSupplement<Page, NavigatorRegisterProtocolHandler>::from(page, NavigatorRegisterProtocolHandler::supplementName()));
+    return static_cast<NavigatorContentUtils*>(RefCountedSupplement<Page, NavigatorContentUtils>::from(page, NavigatorContentUtils::supplementName()));
 }
 
-NavigatorRegisterProtocolHandler::~NavigatorRegisterProtocolHandler()
+NavigatorContentUtils::~NavigatorContentUtils()
 {
 }
 
-PassRefPtr<NavigatorRegisterProtocolHandler> NavigatorRegisterProtocolHandler::create(RegisterProtocolHandlerClient* client)
+PassRefPtr<NavigatorContentUtils> NavigatorContentUtils::create(NavigatorContentUtilsClient* client)
 {
-    return adoptRef(new NavigatorRegisterProtocolHandler(client));
+    return adoptRef(new NavigatorContentUtils(client));
 }
 
-void NavigatorRegisterProtocolHandler::registerProtocolHandler(Navigator* navigator, const String& scheme, const String& url, const String& title, ExceptionCode& ec)
+void NavigatorContentUtils::registerProtocolHandler(Navigator* navigator, const String& scheme, const String& url, const String& title, ExceptionCode& ec)
 {
     if (!navigator->frame())
         return;
@@ -141,22 +141,22 @@ void NavigatorRegisterProtocolHandler::registerProtocolHandler(Navigator* naviga
     if (!verifyProtocolHandlerScheme(scheme, ec))
         return;
 
-    NavigatorRegisterProtocolHandler::from(navigator->frame()->page())->client()->registerProtocolHandler(scheme, baseURL, url, navigator->frame()->displayStringModifiedByEncoding(title));
+    NavigatorContentUtils::from(navigator->frame()->page())->client()->registerProtocolHandler(scheme, baseURL, url, navigator->frame()->displayStringModifiedByEncoding(title));
 }
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
-static String customHandlersStateString(const RegisterProtocolHandlerClient::CustomHandlersState state)
+static String customHandlersStateString(const NavigatorContentUtilsClient::CustomHandlersState state)
 {
     DEFINE_STATIC_LOCAL(const String, newHandler, ("new"));
     DEFINE_STATIC_LOCAL(const String, registeredHandler, ("registered"));
     DEFINE_STATIC_LOCAL(const String, declinedHandler, ("declined"));
 
     switch (state) {
-    case RegisterProtocolHandlerClient::CustomHandlersNew:
+    case NavigatorContentUtilsClient::CustomHandlersNew:
         return newHandler;
-    case RegisterProtocolHandlerClient::CustomHandlersRegistered:
+    case NavigatorContentUtilsClient::CustomHandlersRegistered:
         return registeredHandler;
-    case RegisterProtocolHandlerClient::CustomHandlersDeclined:
+    case NavigatorContentUtilsClient::CustomHandlersDeclined:
         return declinedHandler;
     }
 
@@ -164,7 +164,7 @@ static String customHandlersStateString(const RegisterProtocolHandlerClient::Cus
     return String();
 }
 
-String NavigatorRegisterProtocolHandler::isProtocolHandlerRegistered(Navigator* navigator, const String& scheme, const String& url, ExceptionCode& ec)
+String NavigatorContentUtils::isProtocolHandlerRegistered(Navigator* navigator, const String& scheme, const String& url, ExceptionCode& ec)
 {
     DEFINE_STATIC_LOCAL(const String, declined, ("declined"));
 
@@ -180,10 +180,10 @@ String NavigatorRegisterProtocolHandler::isProtocolHandlerRegistered(Navigator* 
     if (!verifyProtocolHandlerScheme(scheme, ec))
         return declined;
 
-    return customHandlersStateString(NavigatorRegisterProtocolHandler::from(navigator->frame()->page())->client()->isProtocolHandlerRegistered(scheme, baseURL, url));
+    return customHandlersStateString(NavigatorContentUtils::from(navigator->frame()->page())->client()->isProtocolHandlerRegistered(scheme, baseURL, url));
 }
 
-void NavigatorRegisterProtocolHandler::unregisterProtocolHandler(Navigator* navigator, const String& scheme, const String& url, ExceptionCode& ec)
+void NavigatorContentUtils::unregisterProtocolHandler(Navigator* navigator, const String& scheme, const String& url, ExceptionCode& ec)
 {
     if (!navigator->frame())
         return;
@@ -197,22 +197,22 @@ void NavigatorRegisterProtocolHandler::unregisterProtocolHandler(Navigator* navi
     if (!verifyProtocolHandlerScheme(scheme, ec))
         return;
 
-    NavigatorRegisterProtocolHandler::from(navigator->frame()->page())->client()->unregisterProtocolHandler(scheme, baseURL, url);
+    NavigatorContentUtils::from(navigator->frame()->page())->client()->unregisterProtocolHandler(scheme, baseURL, url);
 }
 #endif
 
-const AtomicString& NavigatorRegisterProtocolHandler::supplementName()
+const AtomicString& NavigatorContentUtils::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorRegisterProtocolHandler"));
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorContentUtils"));
     return name;
 }
 
-void provideRegisterProtocolHandlerTo(Page* page, RegisterProtocolHandlerClient* client)
+void provideNavigatorContentUtilsTo(Page* page, NavigatorContentUtilsClient* client)
 {
-    RefCountedSupplement<Page, NavigatorRegisterProtocolHandler>::provideTo(page, NavigatorRegisterProtocolHandler::supplementName(), NavigatorRegisterProtocolHandler::create(client));
+    RefCountedSupplement<Page, NavigatorContentUtils>::provideTo(page, NavigatorContentUtils::supplementName(), NavigatorContentUtils::create(client));
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(REGISTER_PROTOCOL_HANDLER)
+#endif // ENABLE(NAVIGATOR_CONTENT_UTILS)
 

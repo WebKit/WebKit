@@ -1,3 +1,17 @@
+2012-08-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Rename RegisterProtocolHandler API to NavigatorContentUtils
+        https://bugs.webkit.org/show_bug.cgi?id=94920
+
+        Reviewed by Adam Barth.
+
+        Modified configuration files so that they contain renamed NavigatorContentUtils-prefixed files.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2012-08-23  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Disable compilation of WebDOM file for now,

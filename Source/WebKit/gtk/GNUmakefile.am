@@ -211,11 +211,11 @@ webkitgtk_sources += \
 	Source/WebKit/gtk/WebCoreSupport/GtkAdjustmentWatcher.h \
 	Source/WebKit/gtk/WebCoreSupport/InspectorClientGtk.cpp \
 	Source/WebKit/gtk/WebCoreSupport/InspectorClientGtk.h \
+	Source/WebKit/gtk/WebCoreSupport/NavigatorContentUtilsClientGtk.h \
+	Source/WebKit/gtk/WebCoreSupport/NavigatorContentUtilsClientGtk.cpp \
 	Source/WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.h \
 	Source/WebKit/gtk/WebCoreSupport/PlatformStrategiesGtk.h \
 	Source/WebKit/gtk/WebCoreSupport/PlatformStrategiesGtk.cpp \
-	Source/WebKit/gtk/WebCoreSupport/RegisterProtocolHandlerClientGtk.h \
-	Source/WebKit/gtk/WebCoreSupport/RegisterProtocolHandlerClientGtk.cpp \
 	Source/WebKit/gtk/WebCoreSupport/UserMediaClientGtk.cpp \
 	Source/WebKit/gtk/WebCoreSupport/UserMediaClientGtk.h \
 	Source/WebKit/gtk/WebCoreSupport/WebViewInputMethodFilter.cpp \

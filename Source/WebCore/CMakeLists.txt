@@ -8,9 +8,9 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/intents"
     "${WEBCORE_DIR}/Modules/mediasource"
     "${WEBCORE_DIR}/Modules/mediastream"
+    "${WEBCORE_DIR}/Modules/navigatorcontentutils"
     "${WEBCORE_DIR}/Modules/networkinfo"
     "${WEBCORE_DIR}/Modules/notifications"
-    "${WEBCORE_DIR}/Modules/protocolhandler"
     "${WEBCORE_DIR}/Modules/proximity"
     "${WEBCORE_DIR}/Modules/quota"
     "${WEBCORE_DIR}/Modules/vibration"
@@ -227,6 +227,8 @@ SET(WebCore_IDL_FILES
     Modules/mediastream/RTCSessionDescription.idl
     Modules/mediastream/SessionDescription.idl
 
+    Modules/navigatorcontentutils/NavigatorContentUtils.idl
+
     Modules/networkinfo/NavigatorNetworkInfoConnection.idl
     Modules/networkinfo/NetworkInfoConnection.idl
 
@@ -235,8 +237,6 @@ SET(WebCore_IDL_FILES
     Modules/notifications/NotificationCenter.idl
     Modules/notifications/NotificationPermissionCallback.idl
     Modules/notifications/WorkerContextNotifications.idl
-
-    Modules/protocolhandler/NavigatorRegisterProtocolHandler.idl
 
     Modules/proximity/DeviceProximityEvent.idl
 
@@ -860,6 +860,8 @@ SET(WebCore_SOURCES
     Modules/mediastream/UserMediaController.cpp
     Modules/mediastream/UserMediaRequest.cpp
 
+    Modules/navigatorcontentutils/NavigatorContentUtils.cpp
+
     Modules/networkinfo/NavigatorNetworkInfoConnection.cpp
     Modules/networkinfo/NetworkInfo.cpp
     Modules/networkinfo/NetworkInfoConnection.cpp
@@ -870,8 +872,6 @@ SET(WebCore_SOURCES
     Modules/notifications/NotificationController.cpp
     Modules/notifications/Notification.cpp
     Modules/notifications/WorkerContextNotifications.cpp
-
-    Modules/protocolhandler/NavigatorRegisterProtocolHandler.cpp
 
     Modules/proximity/DeviceProximityEvent.cpp
 

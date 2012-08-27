@@ -154,13 +154,13 @@ public:
     virtual bool allowsAcceleratedCompositing() const;
 #endif
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
     virtual void registerProtocolHandler(const String& /*scheme*/, const String& /*baseURL*/, const String& /*url*/, const String& /*title*/);
-#endif
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
     virtual CustomHandlersState isProtocolHandlerRegistered(const String& /*scheme*/, const String& /*baseURL*/, const String& /*url*/);
     virtual void unregisterProtocolHandler(const String& /*scheme*/, const String& /*baseURL*/, const String& /*url*/);
+#endif
 #endif
 
     BlackBerry::WebKit::WebPagePrivate* webPagePrivate() const { return m_webPagePrivate; }

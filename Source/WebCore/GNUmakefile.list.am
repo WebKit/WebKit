@@ -1226,10 +1226,10 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediastream/RTCPeerConnection.idl \
 	$(WebCore)/Modules/mediastream/RTCSessionDescription.idl \
 	$(WebCore)/Modules/mediastream/SessionDescription.idl \
+	$(WebCore)/Modules/navigatorcontentutils/NavigatorContentUtils.idl \
 	$(WebCore)/Modules/notifications/Notification.idl \
 	$(WebCore)/Modules/notifications/NotificationCenter.idl \
 	$(WebCore)/Modules/notifications/NotificationPermissionCallback.idl \
-	$(WebCore)/Modules/protocolhandler/NavigatorRegisterProtocolHandler.idl \
 	$(WebCore)/Modules/quota/DOMWindowQuota.idl \
 	$(WebCore)/Modules/quota/StorageInfo.idl \
 	$(WebCore)/Modules/quota/StorageInfoErrorCallback.idl \
@@ -1927,6 +1927,9 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediastream/UserMediaController.cpp \
 	Source/WebCore/Modules/mediastream/UserMediaRequest.cpp \
 	Source/WebCore/Modules/mediastream/UserMediaRequest.h \
+	Source/WebCore/Modules/navigatorcontentutils/NavigatorContentUtils.cpp \
+	Source/WebCore/Modules/navigatorcontentutils/NavigatorContentUtils.h \
+	Source/WebCore/Modules/navigatorcontentutils/NavigatorContentUtilsClient.h \
 	Source/WebCore/Modules/notifications/DOMWindowNotifications.cpp \
 	Source/WebCore/Modules/notifications/DOMWindowNotifications.h \
 	Source/WebCore/Modules/notifications/NotificationCenter.cpp \
@@ -1939,9 +1942,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/notifications/NotificationPermissionCallback.h \
 	Source/WebCore/Modules/notifications/WorkerContextNotifications.cpp \
 	Source/WebCore/Modules/notifications/WorkerContextNotifications.h \
-	Source/WebCore/Modules/protocolhandler/NavigatorRegisterProtocolHandler.cpp \
-	Source/WebCore/Modules/protocolhandler/NavigatorRegisterProtocolHandler.h \
-	Source/WebCore/Modules/protocolhandler/RegisterProtocolHandlerClient.h \
 	Source/WebCore/Modules/quota/DOMWindowQuota.cpp \
 	Source/WebCore/Modules/quota/DOMWindowQuota.h \
 	Source/WebCore/Modules/quota/StorageInfo.cpp \

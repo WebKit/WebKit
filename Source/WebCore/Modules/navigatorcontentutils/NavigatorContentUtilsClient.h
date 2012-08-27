@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RegisterProtocolHandlerClient_h
-#define RegisterProtocolHandlerClient_h
+#ifndef NavigatorContentUtilsClient_h
+#define NavigatorContentUtilsClient_h
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
 
 #include <wtf/text/WTFString.h>
 
@@ -34,9 +34,9 @@ namespace WebCore {
 
 class Page;
 
-class RegisterProtocolHandlerClient {
+class NavigatorContentUtilsClient {
 public:
-    virtual ~RegisterProtocolHandlerClient() { }
+    virtual ~NavigatorContentUtilsClient() { }
     virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) = 0;
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
@@ -51,9 +51,9 @@ public:
 #endif
 };
 
-void provideRegisterProtocolHandlerTo(Page*, RegisterProtocolHandlerClient*);
+void provideNavigatorContentUtilsTo(Page*, NavigatorContentUtilsClient*);
 
 }
 
-#endif // ENABLE(REGISTER_PROTOCOL_HANDLER)
-#endif // RegisterProtocolHandlerClient_h
+#endif // ENABLE(NAVIGATOR_CONTENT_UTILS)
+#endif // NavigatorContentUtilsClient_h

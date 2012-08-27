@@ -1119,18 +1119,18 @@ void ChromeClientImpl::dashboardRegionsChanged()
 }
 #endif
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-PassOwnPtr<RegisterProtocolHandlerClientImpl> RegisterProtocolHandlerClientImpl::create(WebViewImpl* webView)
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
+PassOwnPtr<NavigatorContentUtilsClientImpl> NavigatorContentUtilsClientImpl::create(WebViewImpl* webView)
 {
-    return adoptPtr(new RegisterProtocolHandlerClientImpl(webView));
+    return adoptPtr(new NavigatorContentUtilsClientImpl(webView));
 }
 
-RegisterProtocolHandlerClientImpl::RegisterProtocolHandlerClientImpl(WebViewImpl* webView)
+NavigatorContentUtilsClientImpl::NavigatorContentUtilsClientImpl(WebViewImpl* webView)
     : m_webView(webView)
 {
 }
 
-void RegisterProtocolHandlerClientImpl::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) 
+void NavigatorContentUtilsClientImpl::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title)
 { 
     m_webView->client()->registerProtocolHandler(scheme, baseURL, url, title);
 } 

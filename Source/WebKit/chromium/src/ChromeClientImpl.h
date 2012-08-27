@@ -33,8 +33,8 @@
 #define ChromeClientImpl_h
 
 #include "ChromeClientChromium.h"
+#include "NavigatorContentUtilsClient.h"
 #include "PopupMenu.h"
-#include "RegisterProtocolHandlerClient.h"
 #include "SearchPopupMenu.h"
 #include "WebNavigationPolicy.h"
 #include <public/WebColor.h>
@@ -237,15 +237,15 @@ private:
 #endif
 };
 
-class RegisterProtocolHandlerClientImpl : public WebCore::RegisterProtocolHandlerClient {
+class NavigatorContentUtilsClientImpl : public WebCore::NavigatorContentUtilsClient {
 public:
-    static PassOwnPtr<RegisterProtocolHandlerClientImpl> create(WebViewImpl*);
-    ~RegisterProtocolHandlerClientImpl() { }
+    static PassOwnPtr<NavigatorContentUtilsClientImpl> create(WebViewImpl*);
+    ~NavigatorContentUtilsClientImpl() { }
 
     virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) OVERRIDE;
 
 private:
-    explicit RegisterProtocolHandlerClientImpl(WebViewImpl*);
+    explicit NavigatorContentUtilsClientImpl(WebViewImpl*);
 
     WebViewImpl* m_webView;
 };

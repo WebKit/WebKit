@@ -24,13 +24,13 @@
  * DAMAGE.
  */
 
-#ifndef NavigatorRegisterProtocolHandler_h
-#define NavigatorRegisterProtocolHandler_h
+#ifndef NavigatorContentUtils_h
+#define NavigatorContentUtils_h
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
 
+#include "NavigatorContentUtilsClient.h"
 #include "RefCountedSupplement.h"
-#include "RegisterProtocolHandlerClient.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,12 +41,12 @@ class Navigator;
 
 typedef int ExceptionCode;
 
-class NavigatorRegisterProtocolHandler : public RefCountedSupplement<Page, NavigatorRegisterProtocolHandler> {
+class NavigatorContentUtils : public RefCountedSupplement<Page, NavigatorContentUtils> {
 public:
-    virtual ~NavigatorRegisterProtocolHandler();
+    virtual ~NavigatorContentUtils();
 
     static const AtomicString& supplementName();
-    static NavigatorRegisterProtocolHandler* from(Page*);
+    static NavigatorContentUtils* from(Page*);
 
     static void registerProtocolHandler(Navigator*, const String& scheme, const String& url, const String& title, ExceptionCode&);
 
@@ -55,20 +55,20 @@ public:
     static void unregisterProtocolHandler(Navigator*, const String& scheme, const String& url, ExceptionCode&);
 #endif
 
-    static PassRefPtr<NavigatorRegisterProtocolHandler> create(RegisterProtocolHandlerClient*);
+    static PassRefPtr<NavigatorContentUtils> create(NavigatorContentUtilsClient*);
 
 private:
-    explicit NavigatorRegisterProtocolHandler(RegisterProtocolHandlerClient* client)
+    explicit NavigatorContentUtils(NavigatorContentUtilsClient* client)
         : m_client(client)
     { }
 
-    RegisterProtocolHandlerClient* client() { return m_client; }
+    NavigatorContentUtilsClient* client() { return m_client; }
 
-    RegisterProtocolHandlerClient* m_client;
+    NavigatorContentUtilsClient* m_client;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(REGISTER_PROTOCOL_HANDLER)
+#endif // ENABLE(NAVIGATOR_CONTENT_UTILS)
 
-#endif // NavigatorRegisterProtocolHandler_h
+#endif // NavigatorContentUtils_h

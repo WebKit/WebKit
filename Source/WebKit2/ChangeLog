@@ -1,3 +1,20 @@
+2012-08-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Rename RegisterProtocolHandler API to NavigatorContentUtils
+        https://bugs.webkit.org/show_bug.cgi?id=94920
+
+        Reviewed by Adam Barth.
+
+        Renaming whatever RegisterProtocolHandler-prefixed to NavigatorContentUtils-prefixed.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebProcess/WebCoreSupport/WebNavigatorContentUtilsClient.h: Renamed from Source/WebKit2/WebProcess/WebCoreSupport/WebRegisterProtocolHandlerClient.h.
+        (WebKit):
+        (WebNavigatorContentUtilsClient):
+        (WebKit::WebNavigatorContentUtilsClient::~WebNavigatorContentUtilsClient):
+        (WebKit::WebNavigatorContentUtilsClient::isProtocolHandlerRegistered):
+        (WebKit::WebNavigatorContentUtilsClient::unregisterProtocolHandler):
+
 2012-08-25  Vivek Galatage  <vivekgalatage@gmail.com>
 
         WinCairo Build Broken due to missing export definitions

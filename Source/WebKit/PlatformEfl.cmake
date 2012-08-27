@@ -78,9 +78,9 @@ IF (ENABLE_BATTERY_STATUS)
   )
 ENDIF ()
 
-IF (ENABLE_REGISTER_PROTOCOL_HANDLER)
+IF (ENABLE_NAVIGATOR_CONTENT_UTILS)
   LIST(APPEND WebKit_INCLUDE_DIRECTORIES
-    "${WEBCORE_DIR}/Modules/protocolhandler"
+    "${WEBCORE_DIR}/Modules/navigatorcontentutils"
   )
 ENDIF ()
 
@@ -98,11 +98,11 @@ LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/FullscreenVideoControllerEfl.cpp
     efl/WebCoreSupport/IconDatabaseClientEfl.cpp
     efl/WebCoreSupport/InspectorClientEfl.cpp
+    efl/WebCoreSupport/NavigatorContentUtilsClientEfl.cpp 
     efl/WebCoreSupport/NetworkInfoClientEfl.cpp
     efl/WebCoreSupport/NotificationPresenterClientEfl.cpp
     efl/WebCoreSupport/PageClientEfl.cpp
     efl/WebCoreSupport/PlatformStrategiesEfl.cpp 
-    efl/WebCoreSupport/RegisterProtocolHandlerClientEfl.cpp 
     efl/WebCoreSupport/StorageTrackerClientEfl.cpp
     efl/WebCoreSupport/VibrationClientEfl.cpp
 

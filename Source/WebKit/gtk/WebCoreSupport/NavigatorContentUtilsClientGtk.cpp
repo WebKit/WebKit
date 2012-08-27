@@ -17,28 +17,28 @@
  */
 
 #include "config.h"
-#include "RegisterProtocolHandlerClientGtk.h"
+#include "NavigatorContentUtilsClientGtk.h"
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
 
 #include "NotImplemented.h"
 #include <wtf/text/CString.h>
 
 namespace WebKit {
 
-PassOwnPtr<RegisterProtocolHandlerClient> RegisterProtocolHandlerClient::create()
+PassOwnPtr<NavigatorContentUtilsClient> NavigatorContentUtilsClient::create()
 {
-    return adoptPtr(new RegisterProtocolHandlerClient);
+    return adoptPtr(new NavigatorContentUtilsClient);
 }
 
-RegisterProtocolHandlerClient::RegisterProtocolHandlerClient()
+NavigatorContentUtilsClient::NavigatorContentUtilsClient()
 {
 }
 
-void RegisterProtocolHandlerClient::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) 
+void NavigatorContentUtilsClient::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title)
 { 
     notImplemented(); 
 } 
 
 }
-#endif // ENABLE(REGISTER_PROTOCOL_HANDLER)
+#endif // ENABLE(NAVIGATOR_CONTENT_UTILS)

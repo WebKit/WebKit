@@ -25207,14 +25207,14 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="protocolhandler"
+				Name="navigatorcontentutils"
 				>
 				<File
-					RelativePath="..\Modules\protocolhandler\NavigatorRegisterProtocolHandler.cpp"
+					RelativePath="..\Modules\navigatorcontentutils\NavigatorContentUtils.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\Modules\protocolhandler\NavigatorRegisterProtocolHandler.h"
+					RelativePath="..\Modules\navigatorcontentutils\NavigatorContentUtils.h"
 					>
 				</File>
 			</Filter>

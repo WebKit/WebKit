@@ -15,8 +15,8 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/Modules/indexeddb \
 	-I$(srcdir)/Source/WebCore/Modules/mediasource \
 	-I$(srcdir)/Source/WebCore/Modules/mediastream \
+	-I$(srcdir)/Source/WebCore/Modules/navigatorcontentutils \
 	-I$(srcdir)/Source/WebCore/Modules/notifications \
-	-I$(srcdir)/Source/WebCore/Modules/protocolhandler \
 	-I$(srcdir)/Source/WebCore/Modules/quota \
 	-I$(srcdir)/Source/WebCore/Modules/webaudio \
 	-I$(srcdir)/Source/WebCore/Modules/webdatabase \
@@ -685,13 +685,13 @@ feature_defines_overrides += ENABLE_MICRODATA=0
 endif  # END ENABLE_MICRODATA
 
 # ---
-# Register Protocol Handler support
+# Navigator Content Utils support
 # ---
-if ENABLE_REGISTER_PROTOCOL_HANDLER
-feature_defines_overrides += ENABLE_REGISTER_PROTOCOL_HANDLER=1
+if ENABLE_NAVIGATOR_CONTENT_UTILS
+feature_defines_overrides += ENABLE_NAVIGATOR_CONTENT_UTILS=1
 else
-feature_defines_overrides += ENABLE_REGISTER_PROTOCOL_HANDLER=0
-endif  # END ENABLE_REGISTER_PROTOCOL_HANDLER
+feature_defines_overrides += ENABLE_NAVIGATOR_CONTENT_UTILS=0
+endif  # END ENABLE_NAVIGATOR_CONTENT_UTILS
 
 # ---
 # DeviceOrientation support
@@ -1120,8 +1120,8 @@ EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/indexeddb/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/mediasource/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/mediastream/*.idl) \
+	$(shell ls $(srcdir)/Source/WebCore/Modules/navigatorcontentutils/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/notifications/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/Modules/protocolhandler/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/quota/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/webaudio/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/webdatabase/*.idl) \

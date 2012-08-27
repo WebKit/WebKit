@@ -1,3 +1,26 @@
+2012-08-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Rename RegisterProtocolHandler API to NavigatorContentUtils
+        https://bugs.webkit.org/show_bug.cgi?id=94920
+
+        Reviewed by Adam Barth.
+
+        Renaming whatever RegisterProtocolHandler-prefixed to NavigatorContentUtils-prefixed.
+        RegisterProtocolHandlerClientImpl is renamed to NavigatorContentUtilsClientImpl.
+
+        * features.gypi:
+        * src/ChromeClientImpl.cpp:
+        (WebKit):
+        (WebKit::NavigatorContentUtilsClientImpl::create):
+        (WebKit::NavigatorContentUtilsClientImpl::NavigatorContentUtilsClientImpl):
+        (WebKit::NavigatorContentUtilsClientImpl::registerProtocolHandler):
+        * src/ChromeClientImpl.h:
+        (NavigatorContentUtilsClientImpl):
+        (WebKit::NavigatorContentUtilsClientImpl::~NavigatorContentUtilsClientImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        * src/WebViewImpl.h:
+
 2012-08-27  Johnny Ding  <jnd@chromium.org>
 
         [Chromium-Android]Move webkit_unit_tests_apk and TestWebKitAPI_apk into a

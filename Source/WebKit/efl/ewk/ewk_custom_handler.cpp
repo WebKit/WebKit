@@ -20,7 +20,7 @@
 #include "config.h"
 #include "ewk_custom_handler_private.h"
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
 /**
  * @internal
  * Register a scheme handler.
@@ -69,4 +69,4 @@ bool ewk_custom_handler_unregister_protocol_handler(Ewk_Custom_Handler_Data* dat
 }
 
 #endif // ENABLE(CUSTOM_SCHEME_HANDLER)
-#endif // ENABLE(REGISTER_PROTOCOL_HANDLER)
+#endif // ENABLE(NAVIGATOR_CONTENT_UTILS)

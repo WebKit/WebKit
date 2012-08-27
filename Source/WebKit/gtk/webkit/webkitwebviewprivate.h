@@ -39,8 +39,8 @@
 #include "UserMediaClientGtk.h"
 #endif
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-#include "RegisterProtocolHandlerClientGtk.h"
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
+#include "NavigatorContentUtilsClientGtk.h"
 #endif
 
 namespace WebKit {
@@ -122,8 +122,8 @@ struct _WebKitWebViewPrivate {
     OwnPtr<WebCore::GeolocationClientMock> geolocationClientMock;
 #endif
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-    OwnPtr<WebKit::RegisterProtocolHandlerClient> registerProtocolHandlerClient;
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
+    OwnPtr<WebKit::NavigatorContentUtilsClient> navigatorContentUtilsClient;
 #endif
 };
 

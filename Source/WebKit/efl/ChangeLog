@@ -1,3 +1,31 @@
+2012-08-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Rename RegisterProtocolHandler API to NavigatorContentUtils
+        https://bugs.webkit.org/show_bug.cgi?id=94920
+
+        Reviewed by Adam Barth.
+
+        Renaming whatever RegisterProtocolHandler-prefixed to NavigatorContentUtils-prefixed.
+        RegisterProtocolHandlerClientEfl is renamed to NavigatorContentUtilsClientEfl.
+
+        * WebCoreSupport/NavigatorContentUtilsClientEfl.cpp: Renamed from Source/WebKit/efl/WebCoreSupport/RegisterProtocolHandlerClientEfl.cpp.
+        (WebCore):
+        (WebCore::customHandlerDataCreate):
+        (WebCore::customHandlerDataDelete):
+        (WebCore::NavigatorContentUtilsClientEfl::create):
+        (WebCore::NavigatorContentUtilsClientEfl::NavigatorContentUtilsClientEfl):
+        (WebCore::NavigatorContentUtilsClientEfl::registerProtocolHandler):
+        (WebCore::NavigatorContentUtilsClientEfl::isProtocolHandlerRegistered):
+        (WebCore::NavigatorContentUtilsClientEfl::unregisterProtocolHandler):
+        * WebCoreSupport/NavigatorContentUtilsClientEfl.h: Renamed from Source/WebKit/efl/WebCoreSupport/RegisterProtocolHandlerClientEfl.h.
+        (NavigatorContentUtilsClientEfl):
+        (WebCore::NavigatorContentUtilsClientEfl::~NavigatorContentUtilsClientEfl):
+        * ewk/ewk_custom_handler.cpp:
+        * ewk/ewk_custom_handler_private.h:
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_new):
+
 2012-08-23  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Remove ewk_tile_matrix_tile_update.

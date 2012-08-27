@@ -23,19 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebRegisterProtocolHandlerClient_h
-#define WebRegisterProtocolHandlerClient_h
+#ifndef WebNavigatorContentUtilsClient_h
+#define WebNavigatorContentUtilsClient_h
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
 
-#include <WebCore/RegisterProtocolHandlerClient.h>
+#include <WebCore/NavigatorContentUtilsClient.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-class WebRegisterProtocolHandlerClient : public WebCore::RegisterProtocolHandlerClient {
+class WebNavigatorContentUtilsClient : public WebCore::NavigatorContentUtilsClient {
 public:
-    virtual ~WebRegisterProtocolHandlerClient() { }
+    virtual ~WebNavigatorContentUtilsClient() { }
 
 private:
     virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) OVERRIDE { }
@@ -48,5 +48,5 @@ private:
 
 }
 
-#endif // ENABLE(REGISTER_PROTOCOL_HANDLER)
-#endif // WebRegisterProtocolHandlerClient_h
+#endif // ENABLE(NAVIGATOR_CONTENT_UTILS)
+#endif // WebNavigatorContentUtilsClient_h

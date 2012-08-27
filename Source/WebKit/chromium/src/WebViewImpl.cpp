@@ -432,8 +432,8 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #if ENABLE(MEDIA_STREAM)
     , m_userMediaClientImpl(this)
 #endif
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-    , m_registerProtocolHandlerClient(RegisterProtocolHandlerClientImpl::create(this))
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
+    , m_navigatorContentUtilsClient(NavigatorContentUtilsClientImpl::create(this))
 #endif
     , m_flingModifier(0)
 {
@@ -464,8 +464,8 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     provideNotification(m_page.get(), notificationPresenterImpl());
 #endif
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-    provideRegisterProtocolHandlerTo(m_page.get(), m_registerProtocolHandlerClient.get());
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
+    provideNavigatorContentUtilsTo(m_page.get(), m_navigatorContentUtilsClient.get());
 #endif
 
     provideContextFeaturesTo(m_page.get(), m_featureSwitchClient.get());

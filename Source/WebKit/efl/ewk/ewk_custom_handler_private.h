@@ -22,7 +22,7 @@
 
 #include "ewk_view.h"
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
 bool ewk_custom_handler_register_protocol_handler(Ewk_Custom_Handler_Data* data);
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
@@ -30,5 +30,5 @@ Ewk_Custom_Handlers_State ewk_custom_handler_is_protocol_handler_registered(Ewk_
 bool ewk_custom_handler_unregister_protocol_handler(Ewk_Custom_Handler_Data* data);
 
 #endif // ENABLE(CUSTOM_SCHEME_HANDLER)
-#endif // ENABLE(REGISTER_PROTOCOL_HANDLER)
+#endif // ENABLE(NAVIGATOR_CONTENT_UTILS)
 #endif // ewk_custom_handler_private_h

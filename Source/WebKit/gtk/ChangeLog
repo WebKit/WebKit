@@ -1,3 +1,27 @@
+2012-08-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Rename RegisterProtocolHandler API to NavigatorContentUtils
+        https://bugs.webkit.org/show_bug.cgi?id=94920
+
+        Reviewed by Adam Barth.
+
+        Renaming whatever RegisterProtocolHandler-prefixed to NavigatorContentUtils-prefixed.
+        RegisterProtocolHandlerClientGtk is renamed to NavigatorContentUtilsClientGtk.
+
+        * GNUmakefile.am:
+        * WebCoreSupport/NavigatorContentUtilsClientGtk.cpp: Renamed from Source/WebKit/gtk/WebCoreSupport/RegisterProtocolHandlerClientGtk.cpp.
+        (WebKit):
+        (WebKit::NavigatorContentUtilsClient::create):
+        (WebKit::NavigatorContentUtilsClient::NavigatorContentUtilsClient):
+        (WebKit::NavigatorContentUtilsClient::registerProtocolHandler):
+        * WebCoreSupport/NavigatorContentUtilsClientGtk.h: Renamed from Source/WebKit/gtk/WebCoreSupport/RegisterProtocolHandlerClientGtk.h.
+        (WebKit):
+        (NavigatorContentUtilsClient):
+        (WebKit::NavigatorContentUtilsClient::~NavigatorContentUtilsClient):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init):
+        * webkit/webkitwebviewprivate.h:
+
 2012-08-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r126306): it broke the plugin process

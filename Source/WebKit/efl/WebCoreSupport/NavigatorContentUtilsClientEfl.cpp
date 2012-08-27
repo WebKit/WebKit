@@ -26,9 +26,9 @@
  */
 
 #include "config.h"
-#include "RegisterProtocolHandlerClientEfl.h"
+#include "NavigatorContentUtilsClientEfl.h"
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
 
 #include "ewk_custom_handler_private.h"
 #include <wtf/text/CString.h>
@@ -53,17 +53,17 @@ static void customHandlerDataDelete(Ewk_Custom_Handler_Data* data)
     delete data;
 }
 
-PassOwnPtr<RegisterProtocolHandlerClientEfl> RegisterProtocolHandlerClientEfl::create(Evas_Object* view)
+PassOwnPtr<NavigatorContentUtilsClientEfl> NavigatorContentUtilsClientEfl::create(Evas_Object* view)
 {
-    return adoptPtr(new RegisterProtocolHandlerClientEfl(view));
+    return adoptPtr(new NavigatorContentUtilsClientEfl(view));
 }
 
-RegisterProtocolHandlerClientEfl::RegisterProtocolHandlerClientEfl(Evas_Object* view)
+NavigatorContentUtilsClientEfl::NavigatorContentUtilsClientEfl(Evas_Object* view)
     : m_view(view)
 {
 }
 
-void RegisterProtocolHandlerClientEfl::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title)
+void NavigatorContentUtilsClientEfl::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title)
 {
     Ewk_Custom_Handler_Data* data = customHandlerDataCreate(m_view, scheme.utf8().data(), baseURL.utf8().data(), url.utf8().data());
     data->title = eina_stringshare_add(title.utf8().data());
@@ -73,16 +73,16 @@ void RegisterProtocolHandlerClientEfl::registerProtocolHandler(const String& sch
 }
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
-RegisterProtocolHandlerClient::CustomHandlersState RegisterProtocolHandlerClientEfl::isProtocolHandlerRegistered(const String& scheme, const String& baseURL, const String& url)
+NavigatorContentUtilsClient::CustomHandlersState NavigatorContentUtilsClientEfl::isProtocolHandlerRegistered(const String& scheme, const String& baseURL, const String& url)
 {
     Ewk_Custom_Handler_Data* data = customHandlerDataCreate(m_view, scheme.utf8().data(), baseURL.utf8().data(), url.utf8().data());
-    RegisterProtocolHandlerClient::CustomHandlersState result = static_cast<CustomHandlersState>(ewk_custom_handler_register_protocol_handler(data));
+    NavigatorContentUtilsClient::CustomHandlersState result = static_cast<CustomHandlersState>(ewk_custom_handler_register_protocol_handler(data));
     customHandlerDataDelete(data);
 
     return result;
 }
 
-void RegisterProtocolHandlerClientEfl::unregisterProtocolHandler(const String& scheme, const String& baseURL, const String& url)
+void NavigatorContentUtilsClientEfl::unregisterProtocolHandler(const String& scheme, const String& baseURL, const String& url)
 {
     Ewk_Custom_Handler_Data* data = customHandlerDataCreate(m_view, scheme.utf8().data(), baseURL.utf8().data(), url.utf8().data());
     ewk_custom_handler_register_protocol_handler(data);
@@ -92,4 +92,4 @@ void RegisterProtocolHandlerClientEfl::unregisterProtocolHandler(const String& s
 
 }
 
-#endif // ENABLE(REGISTER_PROTOCOL_HANDLER)
+#endif // ENABLE(NAVIGATOR_CONTENT_UTILS)
