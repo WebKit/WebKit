@@ -1,3 +1,52 @@
+2012-08-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        More unreviewed rebaselining after r126683.
+
+        * platform/chromium/TestExpectations:
+        Removed 5 tests rebaselined in css2.1.
+
+        * platform/chromium-linux/css2.1/t0805-c5519-brdr-r-00-a-expected.txt:
+        * platform/chromium-linux/css2.1/t0805-c5519-brdr-r-01-e-expected.txt:
+        * platform/chromium-linux/css2.1/t0805-c5520-brdr-b-01-e-expected.txt:
+        * platform/chromium-linux/css2.1/t0805-c5521-brdr-l-00-a-expected.txt:
+        * platform/chromium-linux/css2.1/t0805-c5521-brdr-l-01-e-expected.txt:
+        * platform/chromium-linux/css2.1/t0805-c5521-ibrdr-l-00-a-expected.txt:
+        * platform/chromium-win/css2.1/t0805-c5519-brdr-r-00-a-expected.txt:
+        * platform/chromium-win/css2.1/t0805-c5519-brdr-r-01-e-expected.txt:
+        * platform/chromium-win/css2.1/t0805-c5520-brdr-b-01-e-expected.txt:
+        * platform/chromium-win/css2.1/t0805-c5521-brdr-l-00-a-expected.txt:
+        * platform/chromium-win/css2.1/t0805-c5521-brdr-l-01-e-expected.txt:
+        * platform/chromium-win/css2.1/t0805-c5521-ibrdr-l-00-a-expected.txt:
+        Updated Chromium specific baseline now that we always dump the border top.
+
+        * css2.1/t0805-c5519-brdr-r-00-a-expected.txt: Added.
+        * css2.1/t0805-c5519-brdr-r-01-e-expected.txt: Added.
+        * css2.1/t0805-c5520-brdr-b-01-e-expected.txt: Added.
+        * css2.1/t0805-c5521-brdr-l-00-a-expected.txt: Added.
+        * css2.1/t0805-c5521-brdr-l-01-e-expected.txt: Added.
+        * css2.1/t0805-c5521-ibrdr-l-00-a-expected.txt: Added.
+        * platform/efl/css2.1/t0805-c5519-brdr-r-00-a-expected.txt: Removed.
+        * platform/efl/css2.1/t0805-c5519-brdr-r-01-e-expected.txt: Removed.
+        * platform/efl/css2.1/t0805-c5520-brdr-b-01-e-expected.txt: Removed.
+        * platform/efl/css2.1/t0805-c5521-brdr-l-00-a-expected.txt: Removed.
+        * platform/efl/css2.1/t0805-c5521-brdr-l-01-e-expected.txt: Removed.
+        * platform/efl/css2.1/t0805-c5521-ibrdr-l-00-a-expected.txt: Removed.
+        * platform/gtk/css2.1/t0805-c5519-brdr-r-00-a-expected.txt: Removed.
+        * platform/gtk/css2.1/t0805-c5519-brdr-r-01-e-expected.txt: Removed.
+        * platform/gtk/css2.1/t0805-c5520-brdr-b-01-e-expected.txt: Removed.
+        * platform/gtk/css2.1/t0805-c5521-brdr-l-00-a-expected.txt: Removed.
+        * platform/gtk/css2.1/t0805-c5521-brdr-l-01-e-expected.txt: Removed.
+        * platform/gtk/css2.1/t0805-c5521-ibrdr-l-00-a-expected.txt: Removed.
+        Removed efl + gtk baselines, replaced by the common one.
+
+        * platform/mac-lion/css2.1/t0805-c5519-brdr-r-00-a-expected.txt: Removed.
+        * platform/mac-lion/css2.1/t0805-c5519-brdr-r-01-e-expected.txt: Removed.
+        * platform/mac-lion/css2.1/t0805-c5520-brdr-b-01-e-expected.txt: Removed.
+        * platform/mac-lion/css2.1/t0805-c5521-brdr-l-00-a-expected.txt: Removed.
+        * platform/mac-lion/css2.1/t0805-c5521-brdr-l-01-e-expected.txt: Removed.
+        * platform/mac-lion/css2.1/t0805-c5521-ibrdr-l-00-a-expected.txt: Removed.
+        Removed Mac Lion baseline as it was a duplicate of mac.
+
 2012-08-27  Simon Fraser  <simon.fraser@apple.com>
 
         If both left and right (or top and bottom) are specified for sticky, use left (or top)

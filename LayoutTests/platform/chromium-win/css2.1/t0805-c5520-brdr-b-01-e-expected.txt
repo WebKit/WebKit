@@ -6,7 +6,7 @@ layer at (0,0) size 800x312
       RenderBlock {P} at (0,0) size 784x40
         RenderText {#text} at (0,0) size 470x19
           text run at (0,0) width 470: "There should be a solid blue line directly under every occurrence of the word \""
-        RenderInline {SPAN} at (0,0) size 55x21 [border: (2px solid #0000FF) none]
+        RenderInline {SPAN} at (0,0) size 55x21 [border: none (2px solid #0000FF) none]
           RenderText {#text} at (470,0) size 55x19
             text run at (470,0) width 55: "HERE \x{21E9}"
         RenderText {#text} at (525,0) size 770x39
@@ -33,7 +33,7 @@ layer at (0,0) size 800x312
                 RenderText {#text} at (3,0) size 55x19
                   text run at (3,0) width 55: "HERE \x{21E9}"
       RenderBlock {UL} at (0,154) size 784x126
-        RenderListItem {LI} at (40,0) size 744x82 [border: (2px solid #0000FF) none]
+        RenderListItem {LI} at (40,0) size 744x82 [border: none (2px solid #0000FF) none]
           RenderBlock {UL} at (0,0) size 744x60
             RenderListItem {LI} at (40,0) size 704x20
               RenderListMarker at (-58,0) size 7x19: bullet
@@ -51,11 +51,11 @@ layer at (0,0) size 800x312
           RenderBlock (anonymous) at (0,60) size 744x20
             RenderText {#text} at (0,0) size 55x19
               text run at (0,0) width 55: "HERE \x{21E9}"
-        RenderListItem {LI} at (40,82) size 744x22 [border: (2px solid #0000FF) none]
+        RenderListItem {LI} at (40,82) size 744x22 [border: none (2px solid #0000FF) none]
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 55x19
             text run at (0,0) width 55: "HERE \x{21E9}"
-        RenderListItem {LI} at (40,104) size 744x22 [border: (2px solid #0000FF) none]
+        RenderListItem {LI} at (40,104) size 744x22 [border: none (2px solid #0000FF) none]
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 55x19
             text run at (0,0) width 55: "HERE \x{21E9}"
