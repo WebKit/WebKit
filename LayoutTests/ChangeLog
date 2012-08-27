@@ -1,3 +1,15 @@
+2012-08-27  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: Skipping tests due to JSC::Bindings::Instance::createRuntimeObject(JSC::ExecState*) crashes.
+        https://bugs.webkit.org/show_bug.cgi?id=95116.
+
+        Reviewed by Sam Weinig.
+
+        editing/pasteboard/paste-TIFF.html
+        platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html
+
+        * platform/mac/Skipped:
+
 2012-08-27  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed rebaselining after r126683.

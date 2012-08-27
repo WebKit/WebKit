@@ -1015,6 +1015,11 @@ compositing/overflow/textarea-scroll-touch.html
 # https://bugs.webkit.org/show_bug.cgi?id=95027
 fast/block/float/016.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=93878
+# Due to JSC::Bindings::Instance::createRuntimeObject(JSC::ExecState*) crash:
+editing/pasteboard/paste-TIFF.html
+platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html
+
 # Assorted failures that need investigation
 
 # --- Canvas ---
