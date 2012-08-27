@@ -3442,10 +3442,10 @@ BUGWK94256 DEBUG : fast/block/inline-children-root-linebox-crash.html = PASS CRA
 BUGWK94261 DEBUG : http/tests/inspector/indexeddb/resources-panel.html = PASS CRASH TIMEOUT
 
 // ENABLE_OVERFLOW_SCROLLING is not currently enabled in Chromium.
-BUGWK94353 : compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor.html = TEXT
 BUGWK94353 : compositing/overflow/scrolling-content-clip-to-viewport.html = TEXT
 BUGWK94353 : compositing/overflow/textarea-scroll-touch.html = TEXT
-BUGWK94353 : compositing/overflow/nested-scrolling.html = IMAGE+TEXT
+// Failing on Linux (Content Shell) only now
+BUGWK94353 LINUX : compositing/overflow/nested-scrolling.html = IMAGE+TEXT PASS
 BUGWK94353 : compositing/overflow/overflow-auto-with-touch.html = TEXT
 BUGWK94353 : compositing/overflow/overflow-overlay-with-touch.html = TEXT
 

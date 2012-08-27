@@ -23,6 +23,29 @@
 
         [Chromium] Unreviewed gardening.
 
+        Add missing baselines and rebaseline some minor font rendering
+        differences.
+
+        * platform/chromium-linux/compositing/overflow/nested-scrolling-expected.png:
+        * platform/chromium-linux/compositing/overflow/nested-scrolling-expected.txt:
+        * platform/chromium-mac/compositing/overflow/nested-scrolling-expected.png: Added.
+        * platform/chromium-mac/compositing/overflow/nested-scrolling-expected.txt: Added.
+        * platform/chromium-mac/compositing/overflow/remove-overflow-crash2-expected.png: Added.
+        * platform/chromium-mac/compositing/overflow/remove-overflow-crash2-expected.txt: Added.
+        * platform/chromium-win/compositing/overflow/nested-scrolling-expected.png: Added.
+        * platform/chromium-win/compositing/overflow/nested-scrolling-expected.txt: Added.
+        * platform/chromium-win/compositing/overflow/remove-overflow-crash2-expected.png: Added.
+        * platform/chromium-win/compositing/overflow/remove-overflow-crash2-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor-expected.png: Renamed from LayoutTests/platform/chromium-linux/compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor-expected.png.
+        * platform/chromium/compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor-expected.txt: Renamed from LayoutTests/platform/chromium-linux/compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor-expected.txt.
+        * platform/chromium/compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor-expected.png: Renamed from LayoutTests/platform/chromium-linux/compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor-expected.png.
+        * platform/chromium/compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor-expected.txt: Renamed from LayoutTests/platform/chromium-linux/compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor-expected.txt.
+
+2012-08-27  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
         Update expectations for
         fast/writing-mode/broken-ideographic-font.html after r126683.
 
