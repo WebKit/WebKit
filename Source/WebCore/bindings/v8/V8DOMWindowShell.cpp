@@ -83,16 +83,8 @@ namespace WebCore {
 
 static void reportFatalError(const char* location, const char* message)
 {
-    // V8 is shutdown, we cannot use V8 api.
-    // The only thing we can do is to disable JavaScript.
-    // FIXME: clean up ScriptController and disable JavaScript.
-    int memoryUsageMB = -1;
-#if PLATFORM(CHROMIUM)
-    memoryUsageMB = MemoryUsageSupport::actualMemoryUsageMB();
-#endif
+    int memoryUsageMB = MemoryUsageSupport::actualMemoryUsageMB();
     printf("V8 error: %s (%s).  Current memory usage: %d MB\n", message, location, memoryUsageMB);
-    // FIXME: We temporarily deal with V8 internal error situations
-    // such as out-of-memory by crashing the renderer.
     CRASH();
 }
 
