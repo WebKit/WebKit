@@ -31,6 +31,7 @@
 #define InspectorDebuggerAgent_h
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
+#include "ConsoleTypes.h"
 #include "InjectedScript.h"
 #include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
@@ -78,6 +79,7 @@ public:
 
     void didClearMainFrameWindowObject();
     bool isPaused();
+    void addMessageToConsole(MessageSource, MessageType);
 
     // Part of the protocol.
     virtual void setBreakpointsActive(ErrorString*, bool active);

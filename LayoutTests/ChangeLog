@@ -1,3 +1,13 @@
+2012-08-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Debugger should break on failed assertions in Break on exceptions mode.
+        https://bugs.webkit.org/show_bug.cgi?id=95088
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/debugger/debugger-pause-on-failed-assertion-expected.txt: Added.
+        * inspector/debugger/debugger-pause-on-failed-assertion.html: Added.
+
 2012-08-27  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         [Qt] fast/url/path.html with Qt5 differ results on both WK1 and WK2

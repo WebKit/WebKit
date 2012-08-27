@@ -294,9 +294,11 @@ WebInspector.ScriptsPanel.prototype = {
         } else if (details.reason === WebInspector.DebuggerModel.BreakReason.XHR) {
             this.sidebarPanes.xhrBreakpoints.highlightBreakpoint(details.auxData["breakpointURL"]);
             this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on a XMLHttpRequest."));
-        } else if (details.reason === WebInspector.DebuggerModel.BreakReason.Exception) {
+        } else if (details.reason === WebInspector.DebuggerModel.BreakReason.Exception)
             this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on exception: '%s'.", details.auxData.description));
-        } else {
+        else if (details.reason === WebInspector.DebuggerModel.BreakReason.Assert)
+            this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on assertion."));
+        else {
             function didGetUILocation(uiLocation)
             {
                 var breakpoint = WebInspector.breakpointManager.findBreakpoint(uiLocation.uiSourceCode, uiLocation.lineNumber);

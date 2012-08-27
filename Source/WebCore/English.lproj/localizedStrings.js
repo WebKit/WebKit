@@ -738,3 +738,5 @@ localizedStrings["Styles invalidated"] = "Styles invalidated";
 localizedStrings["Styles recalculation forced"] = "Styles recalculation forced";
 localizedStrings["Layout invalidated"] = "Layout invalidated";
 localizedStrings["Layout forced"] = "Layout forced";
+localizedStrings["Paused on assertion."] = "Paused on assertion.";
+
