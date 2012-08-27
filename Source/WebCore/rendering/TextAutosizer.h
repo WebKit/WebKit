@@ -28,7 +28,7 @@
 
 #if ENABLE(TEXT_AUTOSIZING)
 
-#include "LayoutTypes.h"
+#include "IntSize.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>

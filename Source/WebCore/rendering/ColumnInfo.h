@@ -26,7 +26,7 @@
 #ifndef ColumnInfo_h
 #define ColumnInfo_h
 
-#include "LayoutTypes.h"
+#include "LayoutTypesInlineMethods.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

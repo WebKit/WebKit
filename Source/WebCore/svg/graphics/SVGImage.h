@@ -30,7 +30,6 @@
 #if ENABLE(SVG)
 
 #include "Image.h"
-#include "LayoutTypes.h"
 
 namespace WebCore {
 

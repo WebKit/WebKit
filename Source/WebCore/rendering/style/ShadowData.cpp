@@ -22,6 +22,8 @@
 #include "config.h"
 #include "ShadowData.h"
 
+#include "LayoutTypesInlineMethods.h"
+
 using namespace std;
 
 namespace WebCore {

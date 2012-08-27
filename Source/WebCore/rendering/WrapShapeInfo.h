@@ -32,7 +32,7 @@
 
 #if ENABLE(CSS_EXCLUSIONS)
 
-#include "LayoutTypes.h"
+#include "LayoutTypesInlineMethods.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 

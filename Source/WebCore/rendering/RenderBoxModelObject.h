@@ -24,6 +24,7 @@
 #ifndef RenderBoxModelObject_h
 #define RenderBoxModelObject_h
 
+#include "LayoutTypesInlineMethods.h"
 #include "RenderObject.h"
 #include "ShadowData.h"
 

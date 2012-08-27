@@ -24,6 +24,7 @@
 #include "config.h"
 #include "LengthFunctions.h"
 
+#include "LayoutTypes.h"
 #include "Length.h"
 #include "RenderView.h"
 

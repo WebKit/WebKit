@@ -28,6 +28,7 @@
 #include "EditingBoundary.h"
 #include "EventTarget.h"
 #include "ExceptionCodePlaceholder.h"
+#include "FractionalLayoutRect.h"
 #include "KURLHash.h"
 #include "LayoutTypes.h"
 #include "MutationObserver.h"

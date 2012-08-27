@@ -25,7 +25,7 @@
 #include "FloatQuad.h"
 #include "FloatRect.h"
 #include "HitTestRequest.h"
-#include "LayoutTypes.h"
+#include "LayoutTypesInlineMethods.h"
 #include "TextDirection.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>

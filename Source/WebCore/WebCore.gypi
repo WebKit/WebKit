@@ -551,6 +551,7 @@
             'rendering/InlineTextBox.h',
             'rendering/LayoutState.h',
             'rendering/LayoutTypes.h',
+            'rendering/LayoutTypesInlineMethods.h',
             'rendering/LayoutRepainter.h',
             'rendering/OverlapTestRequestClient.h',
             'rendering/Pagination.h',

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HitTestingTransformState.h"
 
+#include "FractionalLayoutRect.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

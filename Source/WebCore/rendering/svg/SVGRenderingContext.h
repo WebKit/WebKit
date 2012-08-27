@@ -27,7 +27,6 @@
 
 #if ENABLE(SVG)
 #include "ImageBuffer.h"
-#include "LayoutTypes.h"
 #include "PaintInfo.h"
 
 namespace WebCore {

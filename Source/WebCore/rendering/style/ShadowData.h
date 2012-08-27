@@ -26,6 +26,7 @@
 #define ShadowData_h
 
 #include "Color.h"
+#include "FloatRect.h"
 #include "LayoutTypes.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>

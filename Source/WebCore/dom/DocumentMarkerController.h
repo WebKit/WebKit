@@ -28,6 +28,7 @@
 #define DocumentMarkerController_h
 
 #include "DocumentMarker.h"
+#include "IntRect.h"
 #include "LayoutTypes.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>

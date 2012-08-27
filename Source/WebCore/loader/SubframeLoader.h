@@ -32,7 +32,6 @@
 #define SubframeLoader_h
 
 #include "FrameLoaderTypes.h"
-#include "LayoutTypes.h"
 #include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>

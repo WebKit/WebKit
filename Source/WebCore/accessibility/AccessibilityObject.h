@@ -31,6 +31,7 @@
 #define AccessibilityObject_h
 
 #include "FloatQuad.h"
+#include "FractionalLayoutRect.h"
 #include "LayoutTypes.h"
 #include "VisiblePosition.h"
 #include "VisibleSelection.h"

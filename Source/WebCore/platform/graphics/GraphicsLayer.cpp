@@ -31,7 +31,7 @@
 
 #include "FloatPoint.h"
 #include "GraphicsContext.h"
-#include "LayoutTypes.h"
+#include "LayoutTypesInlineMethods.h"
 #include "RotateTransformOperation.h"
 #include "TextStream.h"
 #include <wtf/text/CString.h>

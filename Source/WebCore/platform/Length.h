@@ -24,7 +24,6 @@
 #define Length_h
 
 #include "AnimationUtilities.h"
-#include "LayoutTypes.h"
 #include <wtf/Assertions.h>
 #include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>

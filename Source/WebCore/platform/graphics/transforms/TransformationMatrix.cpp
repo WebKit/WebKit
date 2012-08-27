@@ -31,6 +31,7 @@
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
 #include "FloatQuad.h"
+#include "FractionalLayoutRect.h"
 #include "IntRect.h"
 
 #include <wtf/Assertions.h>
