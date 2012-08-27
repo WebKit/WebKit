@@ -1117,6 +1117,8 @@ WebInspector.TimelineRecordListRow.prototype = {
             this.element.addStyleClass("even");
         if (record.hasWarning)
             this.element.addStyleClass("warning");
+        else if (record.childHasWarning)
+            this.element.addStyleClass("child-warning");
 
         this._typeElement.textContent = record.title;
 

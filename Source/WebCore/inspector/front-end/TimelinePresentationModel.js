@@ -544,7 +544,7 @@ WebInspector.TimelinePresentationModel.Record = function(presentationModel, reco
         if (invalidateLayoutRecord)
             this.callSiteStackTrace = invalidateLayoutRecord.stackTrace || invalidateLayoutRecord.callSiteStackTrace;
         if (this.stackTrace)
-            this.hasWarning = true;
+            this.setHasWarning();
         presentationModel._lastInvalidateLayout[this.frameId] = null;
         break;
     }
@@ -926,6 +926,13 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
     get aggregatedStats()
     {
         return this._aggregatedStats;
+    },
+
+    setHasWarning: function()
+    {
+        this.hasWarning = true;
+        for (var parent = this.parent; parent && !parent.childHasWarning; parent = parent.parent)
+            parent.childHasWarning = true;
     }
 }
 

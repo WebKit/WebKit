@@ -271,10 +271,15 @@
     background-color: rgba(0, 0, 0, 0.05);
 }
 
-.timeline-tree-item.warning::after {
+.timeline-tree-item.warning::after,
+.timeline-tree-item.child-warning::after {
     content: url(Images/warningIcon.png);
     float: right;
     padding-top: 1px;
+}
+
+.timeline-tree-item.child-warning::after {
+    opacity: 0.5;
 }
 
 .timeline-tree-item .data.dimmed {
