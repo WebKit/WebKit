@@ -1,3 +1,13 @@
+2012-08-27  Dominic Cooney   <dominicc@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        Update expectations for inspector/styles/media-queries.html which
+        started failing on Linux (dbg) at r126717 and flaky on Linux, Win
+        at or right after that revision.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-27  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Unreviewed gardening
