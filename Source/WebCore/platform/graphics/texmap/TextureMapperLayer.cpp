@@ -199,7 +199,7 @@ void TextureMapperLayer::paintSelfAndChildren(const TextureMapperPaintOptions& o
     if (shouldClip)
         options.textureMapper->beginClip(TransformationMatrix(options.transform).multiply(m_transform.combined()), layerRect());
 
-    for (int i = 0; i < m_children.size(); ++i)
+    for (size_t i = 0; i < m_children.size(); ++i)
         m_children[i]->paintRecursive(options);
 
     if (shouldClip)
@@ -322,7 +322,7 @@ void TextureMapperLayer::paintSelfAndChildrenWithReplica(const TextureMapperPain
 #if ENABLE(CSS_FILTERS)
 static bool shouldKeepContentTexture(const FilterOperations& filters)
 {
-    for (int i = 0; i < filters.size(); ++i) {
+    for (size_t i = 0; i < filters.size(); ++i) {
         switch (filters.operations().at(i)->getOperationType()) {
         // The drop-shadow filter requires the content texture, because it needs to composite it
         // on top of the blurred shadow color.
