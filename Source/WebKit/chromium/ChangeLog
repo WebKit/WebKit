@@ -1,3 +1,15 @@
+2012-08-27  Johnny Ding  <jnd@chromium.org>
+
+        [Chromium-Android]Move webkit_unit_tests_apk and TestWebKitAPI_apk into a
+        condition block:['OS=="android" and gtest_target_type == "shared_library"'].
+        https://bugs.webkit.org/show_bug.cgi?id=95049
+
+        Reviewed by Adam Barth.
+
+        Move webkit_unit_tests_apk and TestWebKitAPI_apk into block of gtest_target_type == "shared_library"
+
+        * All.gyp:
+
 2012-08-24  Dominic Mazzoni  <dmazzoni@google.com>
 
         Chromium: WebAccessibilityObject should expose updateBackingStore

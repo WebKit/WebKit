@@ -47,8 +47,15 @@
             'conditions': [
                 ['OS=="android"', {
                     'dependencies': [
-                        'WebKitUnitTests.gyp:webkit_unit_tests_apk',
                         '../../../Tools/DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:DumpRenderTree_apk',
+                    ],
+                }],
+                # Special target to wrap a gtest_target_type==shared_library
+                # webkit_unit_tests and TestWebKitAPI into an android apk for
+                # execution. See base.gyp for TODO(jrg)s about this strategy.
+                ['OS=="android" and gtest_target_type == "shared_library"', {
+                    'dependencies': [
+                        'WebKitUnitTests.gyp:webkit_unit_tests_apk',
                         '../../../Tools/TestWebKitAPI/TestWebKitAPI.gyp/TestWebKitAPI.gyp:TestWebKitAPI_apk',
                     ],
                 }],
