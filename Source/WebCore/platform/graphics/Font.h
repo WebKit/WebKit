@@ -53,6 +53,8 @@ class FontSelector;
 class GlyphBuffer;
 class GlyphPageTreeNode;
 class GraphicsContext;
+class RenderText;
+class TextLayout;
 class TextRun;
 
 struct GlyphData;
@@ -101,6 +103,10 @@ public:
 
     float width(const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
     float width(const TextRun&, int& charsConsumed, String& glyphName) const;
+
+    PassOwnPtr<TextLayout> createLayout(RenderText*, float xPos, bool collapseWhiteSpace) const;
+    static void deleteLayout(TextLayout*);
+    static float width(TextLayout&, unsigned from, unsigned len);
 
     int offsetForPosition(const TextRun&, float position, bool includePartialGlyphs) const;
     FloatRect selectionRectForText(const TextRun&, const FloatPoint&, int h, int from = 0, int to = -1) const;
@@ -307,6 +313,12 @@ inline float Font::tabWidth(const SimpleFontData& fontData, unsigned tabSize, fl
     float tabWidth = tabSize * fontData.spaceWidth() + letterSpacing();
     return tabWidth - fmodf(position, tabWidth);
 }
+
+}
+
+namespace WTF {
+
+template <> void deleteOwnedPtr<WebCore::TextLayout>(WebCore::TextLayout*);
 
 }
 

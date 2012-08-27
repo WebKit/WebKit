@@ -36,7 +36,6 @@
 #include "RenderRubyRun.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include "TextBreakIterator.h"
 #include "TrailingFloatsRootInlineBox.h"
 #include "VerticalPositionCache.h"
 #include "break_lines.h"
@@ -1274,6 +1273,15 @@ void RenderBlock::layoutRunsAndFloats(LineLayoutState& layoutState, bool hasInli
     repaintDirtyFloats(layoutState.floats());
 }
 
+RenderBlock::RenderTextInfo::RenderTextInfo()
+    : m_text(0)
+{
+}
+
+RenderBlock::RenderTextInfo::~RenderTextInfo()
+{
+}
+
 void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, InlineBidiResolver& resolver, const InlineIterator& cleanLineStart, const BidiStatus& cleanLineBidiStatus, unsigned consecutiveHyphenatedLines)
 {
     RenderStyle* styleToUse = style();
@@ -1281,7 +1289,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
     LineMidpointState& lineMidpointState = resolver.midpointState();
     InlineIterator end = resolver.position();
     bool checkForEndLineMatch = layoutState.endLine();
-    LineBreakIteratorInfo lineBreakIteratorInfo;
+    RenderTextInfo renderTextInfo;
     VerticalPositionCache verticalPositionCache;
 
     LineBreaker lineBreaker(this);
@@ -1317,7 +1325,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         if (wrapShapeInfo)
             wrapShapeInfo->computeSegmentsForLine(logicalHeight());
 #endif
-        end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), lineBreakIteratorInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines);
+        end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines);
         if (resolver.position().atEnd()) {
             // FIXME: We shouldn't be creating any runs in nextLineBreak to begin with!
             // Once BidiRunList is separated from BidiResolver this will not be needed.
@@ -2017,10 +2025,13 @@ static bool shouldSkipWhitespaceAfterStartObject(RenderBlock* block, RenderObjec
     return false;
 }
 
-static inline float textWidth(RenderText* text, unsigned from, unsigned len, const Font& font, float xPos, bool isFixedPitch, bool collapseWhiteSpace)
+static inline float textWidth(RenderText* text, unsigned from, unsigned len, const Font& font, float xPos, bool isFixedPitch, bool collapseWhiteSpace, TextLayout* layout = 0)
 {
     if (isFixedPitch || (!from && len == text->textLength()) || text->style()->hasTextCombine())
         return text->width(from, len, font, xPos);
+
+    if (layout)
+        return Font::width(*layout, from, len);
 
     TextRun run = RenderBlock::constructTextRun(text, font, text->characters() + from, len, text->style());
     run.setCharactersLength(text->textLength() - from);
@@ -2183,8 +2194,7 @@ void RenderBlock::LineBreaker::reset()
     m_clear = CNONE;
 }
 
-InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resolver, LineInfo& lineInfo,
-    LineBreakIteratorInfo& lineBreakIteratorInfo, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines)
+InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines)
 {
     reset();
 
@@ -2423,6 +2433,13 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                 ASSERT(current.m_pos == t->textLength());
             }
 
+            if (renderTextInfo.m_text != t || renderTextInfo.m_lineBreakIterator.string() != t->characters()) {
+                renderTextInfo.m_text = t;
+                renderTextInfo.m_layout = f.createLayout(t, width.currentWidth(), collapseWhiteSpace);
+                renderTextInfo.m_lineBreakIterator.reset(t->characters(), t->textLength(), style->locale());
+            }
+            TextLayout* textLayout = renderTextInfo.m_layout.get();
+
             for (; current.m_pos < t->textLength(); current.fastIncrementInTextNode()) {
                 bool previousCharacterIsSpace = currentCharacterIsSpace;
                 bool previousCharacterIsWS = currentCharacterIsWS;
@@ -2444,16 +2461,11 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                 if ((breakAll || breakWords) && !midWordBreak) {
                     wrapW += charWidth;
                     bool midWordBreakIsBeforeSurrogatePair = U16_IS_LEAD(c) && current.m_pos + 1 < t->textLength() && U16_IS_TRAIL(t->characters()[current.m_pos + 1]);
-                    charWidth = textWidth(t, current.m_pos, midWordBreakIsBeforeSurrogatePair ? 2 : 1, f, width.committedWidth() + wrapW, isFixedPitch, collapseWhiteSpace);
+                    charWidth = textWidth(t, current.m_pos, midWordBreakIsBeforeSurrogatePair ? 2 : 1, f, width.committedWidth() + wrapW, isFixedPitch, collapseWhiteSpace, textLayout);
                     midWordBreak = width.committedWidth() + wrapW + charWidth > width.availableWidth();
                 }
 
-                if ((lineBreakIteratorInfo.first != t) || (lineBreakIteratorInfo.second.string() != t->characters())) {
-                    lineBreakIteratorInfo.first = t;
-                    lineBreakIteratorInfo.second.reset(t->characters(), t->textLength(), style->locale());
-                }
-
-                bool betweenWords = c == '\n' || (currWS != PRE && !atStart && isBreakable(lineBreakIteratorInfo.second, current.m_pos, current.m_nextBreakablePosition, breakNBSP)
+                bool betweenWords = c == '\n' || (currWS != PRE && !atStart && isBreakable(renderTextInfo.m_lineBreakIterator, current.m_pos, current.m_nextBreakablePosition, breakNBSP)
                     && (style->hyphens() != HyphensNone || (current.previousInSameNode() != softHyphen)));
 
                 if (betweenWords || midWordBreak) {
@@ -2475,9 +2487,9 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
 
                     float additionalTmpW;
                     if (wordTrailingSpaceWidth && currentCharacterIsSpace)
-                        additionalTmpW = textWidth(t, lastSpace, current.m_pos + 1 - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace) - wordTrailingSpaceWidth + lastSpaceWordSpacing;
+                        additionalTmpW = textWidth(t, lastSpace, current.m_pos + 1 - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, textLayout) - wordTrailingSpaceWidth + lastSpaceWordSpacing;
                     else
-                        additionalTmpW = textWidth(t, lastSpace, current.m_pos - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace) + lastSpaceWordSpacing;
+                        additionalTmpW = textWidth(t, lastSpace, current.m_pos - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, textLayout) + lastSpaceWordSpacing;
                     width.addUncommittedWidth(additionalTmpW);
                     if (!appliedStartWidth) {
                         width.addUncommittedWidth(inlineLogicalWidth(current.m_obj, true, false));
@@ -2494,7 +2506,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                         // as candidate width for this line.
                         bool lineWasTooWide = false;
                         if (width.fitsOnLine() && currentCharacterIsWS && currentStyle->breakOnlyAfterWhiteSpace() && !midWordBreak) {
-                            float charWidth = textWidth(t, current.m_pos, 1, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace) + (applyWordSpacing ? wordSpacing : 0);
+                            float charWidth = textWidth(t, current.m_pos, 1, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, textLayout) + (applyWordSpacing ? wordSpacing : 0);
                             // Check if line is too big even without the extra space
                             // at the end of the line. If it is not, do nothing.
                             // If the line needs the extra whitespace to be too long,
@@ -2620,7 +2632,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
             }
 
             // IMPORTANT: current.m_pos is > length here!
-            float additionalTmpW = ignoringSpaces ? 0 : textWidth(t, lastSpace, current.m_pos - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace) + lastSpaceWordSpacing;
+            float additionalTmpW = ignoringSpaces ? 0 : textWidth(t, lastSpace, current.m_pos - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, textLayout) + lastSpaceWordSpacing;
             width.addUncommittedWidth(additionalTmpW + inlineLogicalWidth(current.m_obj, !appliedStartWidth, includeEndWidth));
             includeEndWidth = false;
 

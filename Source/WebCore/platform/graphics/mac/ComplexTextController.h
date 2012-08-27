@@ -44,6 +44,8 @@ class Font;
 class SimpleFontData;
 class TextRun;
 
+enum GlyphIterationStyle { IncludePartialGlyphs, ByWholeGlyphs };
+
 // ComplexTextController is responsible for rendering and measuring glyphs for
 // complex scripts on OS X.
 class ComplexTextController {
@@ -51,7 +53,7 @@ public:
     ComplexTextController(const Font*, const TextRun&, bool mayUseNaturalWritingDirection = false, HashSet<const SimpleFontData*>* fallbackFonts = 0, bool forTextEmphasis = false);
 
     // Advance and emit glyphs up to the specified character.
-    void advance(unsigned to, GlyphBuffer* = 0);
+    void advance(unsigned to, GlyphBuffer* = 0, GlyphIterationStyle = IncludePartialGlyphs);
 
     // Compute the character offset for a given x coordinate.
     int offsetForPosition(float x, bool includePartialGlyphs);
@@ -89,10 +91,12 @@ private:
         unsigned stringLocation() const { return m_stringLocation; }
         size_t stringLength() const { return m_stringLength; }
         ALWAYS_INLINE CFIndex indexAt(size_t i) const;
+        CFIndex indexBegin() const { return m_indexBegin; }
         CFIndex indexEnd() const { return m_indexEnd; }
         CFIndex endOffsetAt(size_t i) const { ASSERT(!m_isMonotonic); return m_glyphEndOffsets[i]; }
         const CGGlyph* glyphs() const { return m_glyphs; }
         const CGSize* advances() const { return m_advances; }
+        bool isLTR() const { return m_isLTR; }
         bool isMonotonic() const { return m_isMonotonic; }
         void setIsNonMonotonic();
 
@@ -107,22 +111,35 @@ private:
         size_t m_stringLength;
         Vector<CFIndex, 64> m_coreTextIndicesVector;
         const CFIndex* m_coreTextIndices;
+        CFIndex m_indexBegin;
         CFIndex m_indexEnd;
         Vector<CFIndex, 64> m_glyphEndOffsets;
         Vector<CGGlyph, 64> m_glyphsVector;
         const CGGlyph* m_glyphs;
         Vector<CGSize, 64> m_advancesVector;
         const CGSize* m_advances;
+        bool m_isLTR;
         bool m_isMonotonic;
     };
+    
+    static unsigned stringBegin(const ComplexTextRun& run) { return run.stringLocation() + run.indexBegin(); }
+    static unsigned stringEnd(const ComplexTextRun& run) { return run.stringLocation() + run.indexEnd(); }
 
     void collectComplexTextRuns();
 
     void collectComplexTextRunsForCharacters(const UChar*, unsigned length, unsigned stringLocation, const SimpleFontData*);
     void adjustGlyphsAndAdvances();
 
+    unsigned indexOfCurrentRun(unsigned& leftmostGlyph);
+    unsigned incrementCurrentRun(unsigned& leftmostGlyph);
+
+    // The default size of this vector was selected as being the smallest power of two greater than
+    // the average (3.5) plus one standard deviation (7.5) of nonzero sizes used on Arabic Wikipedia.
+    Vector<unsigned, 16> m_runIndices;
+
     const Font& m_font;
     const TextRun& m_run;
+    bool m_isLTROnly;
     bool m_mayUseNaturalWritingDirection;
     bool m_forTextEmphasis;
 

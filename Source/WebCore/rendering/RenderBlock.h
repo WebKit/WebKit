@@ -29,6 +29,7 @@
 #include "RenderBox.h"
 #include "RenderLineBoxList.h"
 #include "RootInlineBox.h"
+#include "TextBreakIterator.h"
 #include "TextRun.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/ListHashSet.h>
@@ -42,7 +43,6 @@ namespace WebCore {
 class BidiContext;
 class InlineIterator;
 class LayoutStateMaintainer;
-class LazyLineBreakIterator;
 class LineLayoutState;
 class LineWidth;
 class RenderInline;
@@ -52,6 +52,7 @@ struct BidiRun;
 struct PaintInfo;
 class LineInfo;
 class RenderRubyRun;
+class TextLayout;
 
 template <class Iterator, class Run> class BidiResolver;
 template <class Run> class BidiRunList;
@@ -706,7 +707,16 @@ private:
     LayoutPoint computeLogicalLocationForFloat(const FloatingObject*, LayoutUnit logicalTopOffset) const;
 
     // The following functions' implementations are in RenderBlockLineLayout.cpp.
-    typedef std::pair<RenderText*, LazyLineBreakIterator> LineBreakIteratorInfo;
+    struct RenderTextInfo {
+        // Destruction of m_layout requires TextLayout to be a complete type, so the constructor and destructor are made non-inline to avoid compilation errors.
+        RenderTextInfo();
+        ~RenderTextInfo();
+
+        RenderText* m_text;
+        OwnPtr<TextLayout> m_layout;
+        LazyLineBreakIterator m_lineBreakIterator;
+    };
+
     class LineBreaker {
     public:
         LineBreaker(RenderBlock* block)
@@ -715,7 +725,7 @@ private:
             reset();
         }
 
-        InlineIterator nextLineBreak(InlineBidiResolver&, LineInfo&, LineBreakIteratorInfo&, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines);
+        InlineIterator nextLineBreak(InlineBidiResolver&, LineInfo&, RenderTextInfo&, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines);
 
         bool lineWasHyphenated() { return m_hyphenated; }
         const Vector<RenderBox*>& positionedObjects() { return m_positionedObjects; }

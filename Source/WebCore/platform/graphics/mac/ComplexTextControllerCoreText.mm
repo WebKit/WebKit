@@ -105,7 +105,9 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Simp
     , m_characters(characters)
     , m_stringLocation(stringLocation)
     , m_stringLength(stringLength)
+    , m_indexBegin(runRange.location)
     , m_indexEnd(runRange.location + runRange.length)
+    , m_isLTR(!(CTRunGetStatus(ctRun) & kCTRunStatusRightToLeft))
     , m_isMonotonic(true)
 {
     m_glyphCount = CTRunGetGlyphCount(ctRun);
@@ -138,7 +140,9 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const SimpleFontData* font
     , m_characters(characters)
     , m_stringLocation(stringLocation)
     , m_stringLength(stringLength)
+    , m_indexBegin(0)
     , m_indexEnd(stringLength)
+    , m_isLTR(ltr)
     , m_isMonotonic(true)
 {
     m_coreTextIndicesVector.reserveInitialCapacity(m_stringLength);
