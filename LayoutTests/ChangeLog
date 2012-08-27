@@ -1,3 +1,14 @@
+2012-08-27  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        [Qt] fast/url/path.html with Qt5 differ results on both WK1 and WK2
+        https://bugs.webkit.org/show_bug.cgi?id=77380
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * platform/qt-4.8/fast/url/path-expected.txt: Renamed from LayoutTests/platform/qt/fast/url/path-expected.txt.
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0/Skipped:
+
 2012-08-25  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: display cause for style recalculation and layout on Timeline

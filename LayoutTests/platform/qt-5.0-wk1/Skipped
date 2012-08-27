@@ -27,6 +27,9 @@ fast/events/drag-selects-image.html
 # https://bugs.webkit.org/show_bug.cgi?id=79655
 http/tests/incremental/slow-utf8-text.pl
 
+# https://bugs.webkit.org/show_bug.cgi?id=77380
+fast/url/path.html
+
 # [Qt] REGRESSION: 360 tests started to fail with newer Qt5-WK1
 # https://bugs.webkit.org/show_bug.cgi?id=85631
 fast/css/word-space-extra.html
