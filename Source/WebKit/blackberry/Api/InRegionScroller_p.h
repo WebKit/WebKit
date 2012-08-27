@@ -60,12 +60,15 @@ public:
 private:
     bool setLayerScrollPosition(WebCore::RenderLayer*, const WebCore::IntPoint& scrollPosition);
 
+    void calculateActiveAndShrinkCachedScrollableAreas(WebCore::RenderLayer*);
+
     void pushBackInRegionScrollable(InRegionScrollableArea*);
 
     void adjustScrollDelta(const WebCore::IntPoint& maxOffset, const WebCore::IntPoint& currentOffset, WebCore::IntSize& delta) const;
 
     RefPtr<WebCore::Node> m_inRegionScrollStartingNode;
     std::vector<Platform::ScrollViewBase*> m_activeInRegionScrollableAreas;
+    bool m_needsActiveScrollableAreaCalculation;
 };
 
 }

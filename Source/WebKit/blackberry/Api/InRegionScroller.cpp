@@ -76,6 +76,7 @@ bool InRegionScroller::setScrollPositionWebKitThread(unsigned camouflagedLayer, 
 
 InRegionScrollerPrivate::InRegionScrollerPrivate(WebPagePrivate* webPagePrivate)
     : m_webPage(webPagePrivate)
+    , m_needsActiveScrollableAreaCalculation(false)
 {
 }
 
@@ -93,6 +94,7 @@ void InRegionScrollerPrivate::reset()
 {
     setNode(0);
 
+    m_needsActiveScrollableAreaCalculation = false;
     for (size_t i = 0; i < m_activeInRegionScrollableAreas.size(); ++i)
         delete m_activeInRegionScrollableAreas[i];
     m_activeInRegionScrollableAreas.clear();
@@ -143,13 +145,42 @@ bool InRegionScrollerPrivate::setScrollPositionWebKitThread(unsigned camouflaged
     if (!layer)
         return false;
 
+    calculateActiveAndShrinkCachedScrollableAreas(layer);
+
     // FIXME: Clamp maximum and minimum scroll positions as a last attempt to fix round errors.
     return setLayerScrollPosition(layer, scrollPosition);
+}
+
+void InRegionScrollerPrivate::calculateActiveAndShrinkCachedScrollableAreas(RenderLayer* layer)
+{
+    if (!m_needsActiveScrollableAreaCalculation)
+        return;
+
+    ASSERT(layer);
+    std::vector<Platform::ScrollViewBase*>::iterator end = m_activeInRegionScrollableAreas.end();
+    std::vector<Platform::ScrollViewBase*>::iterator it = m_activeInRegionScrollableAreas.begin();
+    while (it != end) {
+        InRegionScrollableArea* curr = static_cast<InRegionScrollableArea*>(*it);
+
+        if (layer == curr->layer()) {
+            ++it;
+            continue;
+        }
+
+        delete *it;
+        it = m_activeInRegionScrollableAreas.erase(it);
+        // ::erase invalidates the iterators.
+        end = m_activeInRegionScrollableAreas.end();
+    }
+
+    ASSERT(m_activeInRegionScrollableAreas.size() == 1);
+    m_needsActiveScrollableAreaCalculation = false;
 }
 
 void InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint(const WebCore::IntPoint& point)
 {
     ASSERT(m_activeInRegionScrollableAreas.empty());
+    m_needsActiveScrollableAreaCalculation = false;
 
     HitTestResult result = m_webPage->m_mainFrame->eventHandler()->hitTestResultAtPoint(m_webPage->mapFromViewportToContents(point), false /*allowShadowContent*/);
     Node* node = result.innerNonSharedNode();
@@ -189,6 +220,8 @@ void InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint(const Web
 
     if (m_activeInRegionScrollableAreas.empty())
         return;
+
+    m_needsActiveScrollableAreaCalculation = true;
 
     // Post-calculate the visible window rects in reverse hit test order so
     // we account for all and any clipping rects.

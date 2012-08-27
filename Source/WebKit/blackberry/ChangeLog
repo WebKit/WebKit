@@ -1,5 +1,29 @@
 2012-08-25  Antonio Gomes  <agomes@rim.com>
 
+        BlackBerry] Shrink the in-region nested scrollable list as soon as we can
+        https://bugs.webkit.org/show_bug.cgi?id=95019
+
+        Reviewed by Rob Buis.
+
+        We cache all possible nested scrollable in-region layers given a point.
+        It is up to the client to pick a view, based on the scroll position and limits
+        of each layer, and on the direction user swipes its finger.
+        From the point we pick a view on, we stick with it, and any other
+        possibly cached layer can be uncached, as it won't be needed.
+        Patch provides a simple solution to that.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::InRegionScrollerPrivate):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::reset):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::setScrollPositionWebKitThread):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::calculateActiveAndShrinkCachedScrollableAreas):
+        (WebKit):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint):
+        * Api/InRegionScroller_p.h:
+        (InRegionScrollerPrivate):
+
+2012-08-25  Antonio Gomes  <agomes@rim.com>
+
         For convenience, make RenderLayer::enclosingElement a public method.
         https://bugs.webkit.org/show_bug.cgi?id=95018
 
