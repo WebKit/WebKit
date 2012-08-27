@@ -1,3 +1,15 @@
+2012-08-27  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL][WK2] Free Url_Bar on program exit
+        https://bugs.webkit.org/show_bug.cgi?id=95086
+
+        Reviewed by Eric Seidel.
+
+        Fix a memory leak by freeing the Url_Bar on program exit.
+
+        * MiniBrowser/efl/main.c:
+        (main): Call url_bar_del() to free the Url_Bar.
+
 2012-08-27  James Robinson  <jamesr@chromium.org>
 
         [chromium] Fix exit code status logic in run-chromium-webkit-unit-tests

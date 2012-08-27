@@ -291,6 +291,7 @@ int main(int argc, char *argv[])
 
     ecore_main_loop_begin();
 
+    url_bar_del(browser->url_bar);
     ecore_event_handler_del(handle);
     ecore_evas_free(browser->ee);
     free(browser);
