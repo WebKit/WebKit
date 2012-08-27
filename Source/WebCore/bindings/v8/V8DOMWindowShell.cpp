@@ -182,13 +182,11 @@ V8DOMWindowShell::V8DOMWindowShell(Frame* frame)
 
 bool V8DOMWindowShell::isContextInitialized()
 {
-    // m_context, m_global, and m_wrapperBoilerplates should
-    // all be non-empty if if m_context is non-empty.
     ASSERT(m_context.isEmpty() || !m_global.isEmpty());
     return !m_context.isEmpty();
 }
 
-void V8DOMWindowShell::disposeContextHandles()
+void V8DOMWindowShell::disposeContext()
 {
     if (!m_context.isEmpty()) {
         m_frame->loader()->client()->willReleaseScriptContext(m_context.get(), 0);
@@ -216,7 +214,7 @@ void V8DOMWindowShell::clearForClose()
 
     v8::HandleScope handleScope;
     clearDocumentWrapper();
-    disposeContextHandles();
+    disposeContext();
 }
 
 void V8DOMWindowShell::clearForNavigation()
@@ -233,13 +231,13 @@ void V8DOMWindowShell::clearForNavigation()
     // Clear the document wrapper cache before turning on access checks on
     // the old DOMWindow wrapper. This way, access to the document wrapper
     // will be protected by the security checks on the DOMWindow wrapper.
-    clearDocumentWrapperCache();
+    clearDocumentProperty();
 
     v8::Handle<v8::Object> windowWrapper = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), m_global.get());
     ASSERT(!windowWrapper.IsEmpty());
     windowWrapper->TurnOnAccessCheck();
     m_context->DetachGlobal();
-    disposeContextHandles();
+    disposeContext();
 }
 
 // Create a new environment and setup the global object.
@@ -248,11 +246,11 @@ void V8DOMWindowShell::clearForNavigation()
 // allow properties of the JS DOMWindow instance to be shadowed, we
 // use a shadow object as the global object and use the JS DOMWindow
 // instance as the prototype for that shadow object. The JS DOMWindow
-// instance is undetectable from javascript code because the __proto__
+// instance is undetectable from JavaScript code because the __proto__
 // accessors skip that object.
 //
 // The shadow object and the DOMWindow instance are seen as one object
-// from javascript. The javascript object that corresponds to a
+// from JavaScript. The JavaScript object that corresponds to a
 // DOMWindow instance is the shadow object. When mapping a DOMWindow
 // instance to a V8 object, we return the shadow object.
 //
@@ -296,19 +294,19 @@ bool V8DOMWindowShell::initializeIfNeeded()
     if (m_global.isEmpty()) {
         m_global.set(context->Global());
         if (m_global.isEmpty()) {
-            disposeContextHandles();
+            disposeContext();
             return false;
         }
     }
 
     m_perContextData = V8PerContextData::create(m_context.get());
     if (!m_perContextData->init()) {
-        disposeContextHandles();
+        disposeContext();
         return false;
     }
 
     if (!installDOMWindow(context, m_frame->document()->domWindow())) {
-        disposeContextHandles();
+        disposeContext();
         return false;
     }
 
@@ -410,7 +408,7 @@ void V8DOMWindowShell::clearDocumentWrapper()
     m_document.clear();
 }
 
-void V8DOMWindowShell::updateDocumentWrapperCache()
+void V8DOMWindowShell::updateDocumentProperty()
 {
     v8::HandleScope handleScope;
     // FIXME: Should we use a new Local handle here?
@@ -425,7 +423,7 @@ void V8DOMWindowShell::updateDocumentWrapperCache()
     // accessor handle access to the document.
     // FIXME: This should not be possible anymore.
     if (!m_frame->document()->frame()) {
-        clearDocumentWrapperCache();
+        clearDocumentProperty();
         return;
     }
 
@@ -438,7 +436,7 @@ void V8DOMWindowShell::updateDocumentWrapperCache()
     // If instantiation of the document wrapper fails, clear the cache
     // and let the DOMWindow accessor handle access to the document.
     if (documentWrapper.IsEmpty()) {
-        clearDocumentWrapperCache();
+        clearDocumentProperty();
         return;
     }
     ASSERT(documentWrapper->IsObject());
@@ -451,7 +449,7 @@ void V8DOMWindowShell::updateDocumentWrapperCache()
     v8RealGlobal->SetHiddenValue(V8HiddenPropertyName::document(), documentWrapper);
 }
 
-void V8DOMWindowShell::clearDocumentWrapperCache()
+void V8DOMWindowShell::clearDocumentProperty()
 {
     ASSERT(!m_context.isEmpty());
     m_context->Global()->ForceDelete(v8::String::New("document"));
@@ -511,7 +509,7 @@ void V8DOMWindowShell::updateDocument()
         return;
 
     // We have a new document and we need to update the cache.
-    updateDocumentWrapperCache();
+    updateDocumentProperty();
 
     updateSecurityOrigin();
 }

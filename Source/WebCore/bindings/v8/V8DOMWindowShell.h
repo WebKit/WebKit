@@ -84,17 +84,17 @@ public:
 private:
     V8DOMWindowShell(Frame*);
 
-    void disposeContextHandles();
+    void disposeContext();
 
     void setSecurityToken();
     void clearDocumentWrapper();
 
     // The JavaScript wrapper for the document object is cached on the global
-    // object for fast access. UpdateDocumentWrapperCache sets the wrapper
-    // for the current document on the global object. ClearDocumentWrapperCache
+    // object for fast access. UpdateDocumentProperty sets the wrapper
+    // for the current document on the global object. ClearDocumentProperty
     // deletes the document wrapper from the global object.
-    void updateDocumentWrapperCache();
-    void clearDocumentWrapperCache();
+    void updateDocumentProperty();
+    void clearDocumentProperty();
 
     Frame* m_frame;
 
