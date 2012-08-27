@@ -1,3 +1,12 @@
+2012-08-26  Mark Lam  <mark.lam@apple.com>
+
+        Skipping fast/forms/validation-message-user-modify.html to green mac WK2 bots.
+        https://bugs.webkit.org/show_bug.cgi?id=95042.
+
+        Reviewed by Kentaro Hara.
+
+        * platform/mac-wk2/Skipped:
+
 2012-08-26  Filip Pizlo  <fpizlo@apple.com>
 
         Finally inlining should correctly track the catch context
