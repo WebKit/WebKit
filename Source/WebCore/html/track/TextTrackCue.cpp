@@ -473,6 +473,9 @@ PassRefPtr<DocumentFragment> TextTrackCue::getCueAsHTML()
         m_hasInnerTimestamps = false;
         m_documentFragment = WebVTTParser::create(0, m_scriptExecutionContext)->createDocumentFragmentFromCueText(m_content);
 
+        if (!m_documentFragment)
+          return 0;
+
         for (Node *child = m_documentFragment->firstChild(); !m_hasInnerTimestamps && child; child = child->nextSibling()) {
             if (child->nodeName() == "timestamp")
                 m_hasInnerTimestamps = true;
@@ -651,6 +654,9 @@ void TextTrackCue::updateDisplayTree(float movieTime)
 
     DEFINE_STATIC_LOCAL(const AtomicString, trackPastNodesShadowPseudoId, ("-webkit-media-text-track-past-nodes"));
     DEFINE_STATIC_LOCAL(const AtomicString, trackFutureNodesShadowPseudoId, ("-webkit-media-text-track-future-nodes"));
+
+    if (!track()->isRendered())
+      return;
 
     bool isPastNode = true;
 

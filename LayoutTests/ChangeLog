@@ -1,3 +1,15 @@
+2012-08-27  Victor Carbune  <victor@rosedu.org>
+
+        Crash when trying to render empty cues
+        https://bugs.webkit.org/show_bug.cgi?id=94776
+
+        Reviewed by Eric Carlson.
+
+        Added extra safety checks.
+
+        * media/track/track-cue-rendering-empty-cue-crash-expected.txt: Added.
+        * media/track/track-cue-rendering-empty-cue-crash.html: Added.
+
 2012-08-27  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed Chromium gardening.

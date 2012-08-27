@@ -1,0 +1,10 @@
+Tests that having empty cues does not crash the browser.
+
+** Add a text track to the video element **
+** Add an empty cue to the track **
+** Play the video and render the cue **
+
+No crash. PASS.
+
+END OF TEST
+
