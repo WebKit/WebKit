@@ -1,3 +1,38 @@
+2012-08-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed rebaselining after r126683.
+
+        * platform/chromium/TestExpectations:
+        Removed 4 entries that were rebaselined.
+
+        * fast/block/float/avoidance-rtl-expected.txt: Replaced.
+        * fast/borders/border-radius-wide-border-01-expected.txt: Replaced.
+        * fast/borders/only-one-border-with-width-expected.txt: Replaced.
+        * fast/multicol/progression-reverse-expected.txt: Replaced.
+        Common baseline updates now that we always dump the first border.
+
+        * platform/efl/fast/block/float/avoidance-rtl-expected.txt: Removed.
+        * platform/efl/fast/borders/border-radius-wide-border-01-expected.txt: Removed.
+        * platform/efl/fast/borders/only-one-border-with-width-expected.txt: Removed.
+        * platform/efl/fast/multicol/progression-reverse-expected.txt: Removed.
+        * platform/gtk/fast/block/float/avoidance-rtl-expected.txt: Removed.
+        * platform/gtk/fast/borders/border-radius-wide-border-01-expected.txt: Removed.
+        * platform/gtk/fast/borders/only-one-border-with-width-expected.txt: Removed.
+        * platform/gtk/fast/multicol/progression-reverse-expected.txt: Removed.
+        * platform/mac-lion/fast/block/float/avoidance-rtl-expected.txt: Removed.
+        * platform/mac-lion/fast/borders: Removed.
+        * platform/mac-lion/fast/borders/border-radius-wide-border-01-expected.txt: Removed.
+        * platform/mac-lion/fast/borders/only-one-border-with-width-expected.txt: Removed.
+        * platform/mac-lion/fast/multicol/progression-reverse-expected.txt: Removed.
+        * platform/mac/fast/block/float/avoidance-rtl-expected.txt: Removed.
+        * platform/mac/fast/borders/border-radius-wide-border-01-expected.txt: Removed.
+        * platform/mac/fast/borders/only-one-border-with-width-expected.txt: Removed.
+        * platform/mac/fast/multicol/progression-reverse-expected.txt: Removed.
+        * platform/qt/fast/block/float/avoidance-rtl-expected.txt: Removed.
+        * platform/qt/fast/borders/border-radius-wide-border-01-expected.txt: Removed.
+        * platform/qt/fast/borders/only-one-border-with-width-expected.txt: Removed.
+        Removed those baselines now that they can be shared with the common one above.
+
 2012-08-27  Takashi Sakamoto  <tasak@google.com>
 
         ShadowRoot insertion point change aborts css transition

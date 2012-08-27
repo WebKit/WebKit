@@ -3492,10 +3492,6 @@ BUGCR144536 WONTFIX ANDROID : fast/repaint/select-option-background-color.html =
 BUGCR144536 WONTFIX ANDROID : scrollbars/listbox-scrollbar-combinations.html = TEXT
 
 // Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=84286
-BUGWK84286 : fast/block/float/avoidance-rtl.html = TEXT
-BUGWK84286 : fast/borders/border-radius-wide-border-01.html = TEXT
-BUGWK84286 : fast/borders/only-one-border-with-width.html = TEXT
-BUGWK84286 : fast/multicol/progression-reverse.html = TEXT
 BUGWK84286 : css2.1/t0805-c5519-brdr-r-00-a.html = TEXT
 BUGWK84286 : css2.1/t0805-c5519-brdr-r-01-e.html = TEXT
 BUGWK84286 : css2.1/t0805-c5520-brdr-b-01-e.html = TEXT
