@@ -38,6 +38,13 @@
 
 #if PLATFORM(QT)
 #include "NativeImageQt.h"
+#include <QOpenGLContext>
+#elif OS(WINDOWS)
+#include <windows.h>
+#elif OS(MAC_OS_X)
+#include <AGL/agl.h>
+#elif defined(XP_UNIX)
+#include <GL/glx.h>
 #endif
 
 #if USE(CAIRO)
@@ -46,43 +53,70 @@
 #include <cairo.h>
 #endif
 
-#if !USE(TEXMAP_OPENGL_ES_2)
-// FIXME: Move to Extensions3D.h.
-#define GL_TEXTURE_RECTANGLE_ARB 0x84F5
-#define GL_UNSIGNED_INT_8_8_8_8_REV 0x8367
-#define GL_UNPACK_ROW_LENGTH 0x0CF2
-#define GL_UNPACK_SKIP_PIXELS 0x0CF4
-#define GL_UNPACK_SKIP_ROWS 0x0CF3
-#endif
-
+#define GL_CMD(...) do { __VA_ARGS__; ASSERT_ARG(__VA_ARGS__, !glGetError()); } while (0)
 namespace WebCore {
 struct TextureMapperGLData {
     struct SharedGLData : public RefCounted<SharedGLData> {
+#if PLATFORM(QT)
+        typedef QOpenGLContext* GLContext;
+        static GLContext getCurrentGLContext()
+        {
+            return QOpenGLContext::currentContext();
+        }
+#elif OS(WINDOWS)
+        typedef HGLRC GLContext;
+        static GLContext getCurrentGLContext()
+        {
+            return wglGetCurrentContext();
+        }
+#elif OS(MAC_OS_X)
+        typedef AGLContext GLContext;
+        static GLContext getCurrentGLContext()
+        {
+            return aglGetCurrentContext();
+        }
+#elif defined(XP_UNIX)
+        typedef GLXContext GLContext;
+        static GLContext getCurrentGLContext()
+        {
+            return glXGetCurrentContext();
+        }
+#else
+        // Default implementation for unknown opengl.
+        // Returns always increasing number and disables GL context data sharing.
+        typedef unsigned int GLContext;
+        static GLContext getCurrentGLContext()
+        {
+            static GLContext dummyContextCounter = 0;
+            return ++dummyContextCounter;
+        }
 
-        typedef HashMap<PlatformGraphicsContext3D, SharedGLData*> GLContextDataMap;
+#endif
+
+        typedef HashMap<GLContext, SharedGLData*> GLContextDataMap;
         static GLContextDataMap& glContextDataMap()
         {
             static GLContextDataMap map;
             return map;
         }
 
-        static PassRefPtr<SharedGLData> currentSharedGLData(GraphicsContext3D* context)
+        static PassRefPtr<SharedGLData> currentSharedGLData()
         {
-            GLContextDataMap::iterator it = glContextDataMap().find(context->platformGraphicsContext3D());
+            GLContext currentGLConext = getCurrentGLContext();
+            GLContextDataMap::iterator it = glContextDataMap().find(currentGLConext);
             if (it != glContextDataMap().end())
                 return it->second;
 
-            return adoptRef(new SharedGLData(context));
+            return adoptRef(new SharedGLData(getCurrentGLContext()));
         }
 
 
 
         TextureMapperShaderManager textureMapperShaderManager;
 
-        SharedGLData(GraphicsContext3D* context)
-            : textureMapperShaderManager(context)
+        SharedGLData(GLContext glContext)
         {
-            glContextDataMap().add(context->platformGraphicsContext3D(), this);
+            glContextDataMap().add(glContext, this);
         }
 
         ~SharedGLData()
@@ -101,32 +135,30 @@ struct TextureMapperGLData {
 
     SharedGLData& sharedGLData() const
     {
-        return *m_sharedGLData;
+        return *(m_sharedGLData.get());
     }
 
     void initializeStencil();
 
-    TextureMapperGLData(GraphicsContext3D* context)
-        : context(context)
-        , PaintFlags(0)
+    TextureMapperGLData()
+        : PaintFlags(0)
         , previousProgram(0)
         , targetFrameBuffer(0)
         , didModifyStencil(false)
         , previousScissorState(0)
         , previousDepthState(0)
-        , m_sharedGLData(TextureMapperGLData::SharedGLData::currentSharedGLData(this->context))
+        , m_sharedGLData(TextureMapperGLData::SharedGLData::currentSharedGLData())
     { }
 
-    GraphicsContext3D* context;
     TransformationMatrix projectionMatrix;
     TextureMapper::PaintFlags PaintFlags;
-    GC3Dint previousProgram;
-    GC3Dint targetFrameBuffer;
+    GLint previousProgram;
+    GLint targetFrameBuffer;
     bool didModifyStencil;
-    GC3Dint previousScissorState;
-    GC3Dint previousDepthState;
-    GC3Dint viewport[4];
-    GC3Dint previousScissor[4];
+    GLint previousScissorState;
+    GLint previousDepthState;
+    GLint viewport[4];
+    GLint previousScissor[4];
     RefPtr<SharedGLData> m_sharedGLData;
     RefPtr<BitmapTexture> currentSurface;
 };
@@ -150,25 +182,25 @@ void TextureMapperGL::ClipStack::pop()
     clipStack.removeLast();
 }
 
-static void scissorClip(GraphicsContext3D* context, const IntRect& rect)
+static void scissorClip(const IntRect& rect)
 {
     if (rect.isEmpty())
         return;
 
-    GC3Dint viewport[4];
-    context->getIntegerv(GraphicsContext3D::VIEWPORT, viewport);
-    context->scissor(rect.x(), viewport[3] - rect.maxY(), rect.width(), rect.height());
+    GLint viewport[4];
+    GL_CMD(glGetIntegerv(GL_VIEWPORT, viewport));
+    GL_CMD(glScissor(rect.x(), viewport[3] - rect.maxY(), rect.width(), rect.height()));
 }
 
-void TextureMapperGL::ClipStack::apply(GraphicsContext3D* context)
+void TextureMapperGL::ClipStack::apply()
 {
-    scissorClip(context, clipState.scissorBox);
-    context->stencilOp(GraphicsContext3D::KEEP, GraphicsContext3D::KEEP, GraphicsContext3D::KEEP);
-    context->stencilFunc(GraphicsContext3D::EQUAL, clipState.stencilIndex - 1, clipState.stencilIndex - 1);
+    scissorClip(clipState.scissorBox);
+    GL_CMD(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));
+    GL_CMD(glStencilFunc(GL_EQUAL, clipState.stencilIndex - 1, clipState.stencilIndex - 1));
     if (clipState.stencilIndex == 1)
-        context->disable(GraphicsContext3D::STENCIL_TEST);
+        GL_CMD(glDisable(GL_STENCIL_TEST));
     else
-        context->enable(GraphicsContext3D::STENCIL_TEST);
+        GL_CMD(glEnable(GL_STENCIL_TEST));
 }
 
 
@@ -182,8 +214,8 @@ void TextureMapperGLData::initializeStencil()
     if (didModifyStencil)
         return;
 
-    context->clearStencil(0);
-    context->clear(GraphicsContext3D::STENCIL_BUFFER_BIT);
+    GL_CMD(glClearStencil(0));
+    GL_CMD(glClear(GL_STENCIL_BUFFER_BIT));
     didModifyStencil = true;
 }
 
@@ -197,11 +229,10 @@ BitmapTextureGL* toBitmapTextureGL(BitmapTexture* texture)
 
 TextureMapperGL::TextureMapperGL()
     : TextureMapper(OpenGLMode)
+    , m_data(new TextureMapperGLData)
     , m_context(0)
     , m_enableEdgeDistanceAntialiasing(false)
 {
-    m_context3D = GraphicsContext3D::createForCurrentGLContext();
-    m_data = new TextureMapperGLData(m_context3D.get());
 }
 
 TextureMapperGL::ClipStack& TextureMapperGL::clipStack()
@@ -211,9 +242,15 @@ TextureMapperGL::ClipStack& TextureMapperGL::clipStack()
 
 void TextureMapperGL::beginPainting(PaintFlags flags)
 {
-    m_context3D->getIntegerv(GraphicsContext3D::CURRENT_PROGRAM, &data().previousProgram);
-    data().previousScissorState = m_context3D->isEnabled(GraphicsContext3D::SCISSOR_TEST);
-    data().previousDepthState = m_context3D->isEnabled(GraphicsContext3D::DEPTH_TEST);
+    // Make sure that no GL error code stays from previous operations.
+    glGetError();
+
+    if (!initializeOpenGLShims())
+        return;
+
+    GL_CMD(glGetIntegerv(GL_CURRENT_PROGRAM, &data().previousProgram));
+    data().previousScissorState = glIsEnabled(GL_SCISSOR_TEST);
+    data().previousDepthState = glIsEnabled(GL_DEPTH_TEST);
 #if PLATFORM(QT)
     if (m_context) {
         QPainter* painter = m_context->platformContext();
@@ -221,14 +258,14 @@ void TextureMapperGL::beginPainting(PaintFlags flags)
         painter->beginNativePainting();
     }
 #endif
-    m_context3D->disable(GraphicsContext3D::DEPTH_TEST);
-    m_context3D->enable(GraphicsContext3D::SCISSOR_TEST);
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_SCISSOR_TEST);
     data().didModifyStencil = false;
-    m_context3D->depthMask(0);
-    m_context3D->getIntegerv(GraphicsContext3D::VIEWPORT, data().viewport);
-    m_context3D->getIntegerv(GraphicsContext3D::SCISSOR_BOX, data().previousScissor);
+    GL_CMD(glDepthMask(0));
+    GL_CMD(glGetIntegerv(GL_VIEWPORT, data().viewport));
+    GL_CMD(glGetIntegerv(GL_SCISSOR_BOX, data().previousScissor));
     m_clipStack.init(IntRect(0, 0, data().viewport[2], data().viewport[3]));
-    m_context3D->getIntegerv(GraphicsContext3D::FRAMEBUFFER_BINDING, &data().targetFrameBuffer);
+    GL_CMD(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &data().targetFrameBuffer));
     data().PaintFlags = flags;
     bindSurface(0);
 }
@@ -236,22 +273,22 @@ void TextureMapperGL::beginPainting(PaintFlags flags)
 void TextureMapperGL::endPainting()
 {
     if (data().didModifyStencil) {
-        m_context3D->clearStencil(1);
-        m_context3D->clear(GraphicsContext3D::STENCIL_BUFFER_BIT);
+        glClearStencil(1);
+        glClear(GL_STENCIL_BUFFER_BIT);
     }
 
-    m_context3D->useProgram(data().previousProgram);
+    glUseProgram(data().previousProgram);
 
-    m_context3D->scissor(data().previousScissor[0], data().previousScissor[1], data().previousScissor[2], data().previousScissor[3]);
+    glScissor(data().previousScissor[0], data().previousScissor[1], data().previousScissor[2], data().previousScissor[3]);
     if (data().previousScissorState)
-        m_context3D->enable(GraphicsContext3D::SCISSOR_TEST);
+        glEnable(GL_SCISSOR_TEST);
     else
-        m_context3D->disable(GraphicsContext3D::SCISSOR_TEST);
+        glDisable(GL_SCISSOR_TEST);
 
     if (data().previousDepthState)
-        m_context3D->enable(GraphicsContext3D::DEPTH_TEST);
+        glEnable(GL_DEPTH_TEST);
     else
-        m_context3D->disable(GraphicsContext3D::DEPTH_TEST);
+        glDisable(GL_DEPTH_TEST);
 
 #if PLATFORM(QT)
     if (!m_context)
@@ -262,40 +299,40 @@ void TextureMapperGL::endPainting()
 #endif
 }
 
-void TextureMapperGL::drawQuad(const DrawQuad& quadToDraw, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram* shaderProgram, GC3Denum drawingMode, bool needsBlending)
+void TextureMapperGL::drawQuad(const DrawQuad& quadToDraw, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram* shaderProgram, GLenum drawingMode, bool needsBlending)
 {
-    m_context3D->enableVertexAttribArray(shaderProgram->vertexAttrib());
-    m_context3D->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, 0);
+    GL_CMD(glEnableVertexAttribArray(shaderProgram->vertexAttrib()));
+    GL_CMD(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
-    const GC3Dfloat quad[] = {
+    const GLfloat quad[] = {
         quadToDraw.targetRectMappedToUnitSquare.p1().x(), quadToDraw.targetRectMappedToUnitSquare.p1().y(),
         quadToDraw.targetRectMappedToUnitSquare.p2().x(), quadToDraw.targetRectMappedToUnitSquare.p2().y(),
         quadToDraw.targetRectMappedToUnitSquare.p3().x(), quadToDraw.targetRectMappedToUnitSquare.p3().y(),
         quadToDraw.targetRectMappedToUnitSquare.p4().x(), quadToDraw.targetRectMappedToUnitSquare.p4().y()
     };
-    m_context3D->vertexAttribPointer(shaderProgram->vertexAttrib(), 2, GraphicsContext3D::FLOAT, false, 0, GC3Dintptr(quad));
+    GL_CMD(glVertexAttribPointer(shaderProgram->vertexAttrib(), 2, GL_FLOAT, GL_FALSE, 0, quad));
 
     TransformationMatrix matrix = TransformationMatrix(data().projectionMatrix).multiply(modelViewMatrix).multiply(TransformationMatrix(
             quadToDraw.originalTargetRect.width(), 0, 0, 0,
             0, quadToDraw.originalTargetRect.height(), 0, 0,
             0, 0, 1, 0,
             quadToDraw.originalTargetRect.x(), quadToDraw.originalTargetRect.y(), 0, 1));
-    GC3Dfloat m4[] = {
+    const GLfloat m4[] = {
         matrix.m11(), matrix.m12(), matrix.m13(), matrix.m14(),
         matrix.m21(), matrix.m22(), matrix.m23(), matrix.m24(),
         matrix.m31(), matrix.m32(), matrix.m33(), matrix.m34(),
         matrix.m41(), matrix.m42(), matrix.m43(), matrix.m44()
     };
-    m_context3D->uniformMatrix4fv(shaderProgram->matrixLocation(), 1, false, m4);
+    GL_CMD(glUniformMatrix4fv(shaderProgram->matrixLocation(), 1, GL_FALSE, m4));
 
     if (needsBlending) {
-        m_context3D->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA);
-        m_context3D->enable(GraphicsContext3D::BLEND);
+        GL_CMD(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
+        GL_CMD(glEnable(GL_BLEND));
     } else
-        m_context3D->disable(GraphicsContext3D::BLEND);
+        GL_CMD(glDisable(GL_BLEND));
 
-    m_context3D->drawArrays(drawingMode, 0, 4);
-    m_context3D->disableVertexAttribArray(shaderProgram->vertexAttrib());
+    GL_CMD(glDrawArrays(drawingMode, 0, 4));
+    GL_CMD(glDisableVertexAttribArray(shaderProgram->vertexAttrib()));
 }
 
 void TextureMapperGL::drawBorder(const Color& color, float width, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix)
@@ -304,17 +341,17 @@ void TextureMapperGL::drawBorder(const Color& color, float width, const FloatRec
         return;
 
     RefPtr<TextureMapperShaderProgramSolidColor> program = data().sharedGLData().textureMapperShaderManager.solidColorProgram();
-    m_context3D->useProgram(program->id());
+    GL_CMD(glUseProgram(program->id()));
 
     float alpha = color.alpha() / 255.0;
-    m_context3D->uniform4f(program->colorLocation(),
+    GL_CMD(glUniform4f(program->colorLocation(),
                        (color.red() / 255.0) * alpha,
                        (color.green() / 255.0) * alpha,
                        (color.blue() / 255.0) * alpha,
-                       alpha);
-    m_context3D->lineWidth(width);
+                       alpha));
+    GL_CMD(glLineWidth(width));
 
-    drawQuad(targetRect, modelViewMatrix, program.get(), GraphicsContext3D::LINE_LOOP, color.hasAlpha());
+    drawQuad(targetRect, modelViewMatrix, program.get(), GL_LINE_LOOP, color.hasAlpha());
 }
 
 void TextureMapperGL::drawRepaintCounter(int value, int pointSize, const FloatPoint& targetPoint, const TransformationMatrix& modelViewMatrix)
@@ -361,7 +398,7 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const FloatRect&
     drawTexture(textureGL.id(), textureGL.isOpaque() ? 0 : SupportsBlending, textureGL.size(), targetRect, matrix, opacity, mask, exposedEdges);
 }
 
-#if !USE(TEXMAP_OPENGL_ES_2)
+#if defined(GL_ARB_texture_rectangle)
 void TextureMapperGL::drawTextureRectangleARB(uint32_t texture, Flags flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture)
 {
     RefPtr<TextureMapperShaderProgram> program;
@@ -369,36 +406,36 @@ void TextureMapperGL::drawTextureRectangleARB(uint32_t texture, Flags flags, con
         program = data().sharedGLData().textureMapperShaderManager.getShaderProgram(TextureMapperShaderManager::RectOpacityAndMask);
     else
         program = data().sharedGLData().textureMapperShaderManager.getShaderProgram(TextureMapperShaderManager::RectSimple);
-    m_context3D->useProgram(program->id());
+    GL_CMD(glUseProgram(program->id()));
 
-    m_context3D->enableVertexAttribArray(program->vertexAttrib());
-    m_context3D->activeTexture(GraphicsContext3D::TEXTURE0);
-    m_context3D->bindTexture(GL_TEXTURE_RECTANGLE_ARB, texture);
-    m_context3D->uniform1i(program->sourceTextureLocation(), 0);
+    GL_CMD(glEnableVertexAttribArray(program->vertexAttrib()));
+    GL_CMD(glActiveTexture(GL_TEXTURE0));
+    GL_CMD(glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texture));
+    GL_CMD(glUniform1i(program->sourceTextureLocation(), 0));
 
-    m_context3D->uniform1f(program->flipLocation(), !!(flags & ShouldFlipTexture));
-    m_context3D->uniform2f(program->textureSizeLocation(), textureSize.width(), textureSize.height());
+    GL_CMD(glUniform1f(program->flipLocation(), !!(flags & ShouldFlipTexture)));
+    GL_CMD(glUniform2f(program->textureSizeLocation(), textureSize.width(), textureSize.height()));
 
     if (TextureMapperShaderProgram::isValidUniformLocation(program->opacityLocation()))
-        m_context3D->uniform1f(program->opacityLocation(), opacity);
+        GL_CMD(glUniform1f(program->opacityLocation(), opacity));
 
     if (maskTexture && maskTexture->isValid() && TextureMapperShaderProgram::isValidUniformLocation(program->maskTextureLocation())) {
         const BitmapTextureGL* maskTextureGL = static_cast<const BitmapTextureGL*>(maskTexture);
-        m_context3D->activeTexture(GraphicsContext3D::TEXTURE1);
-        m_context3D->bindTexture(GraphicsContext3D::TEXTURE_2D, maskTextureGL->id());
-        m_context3D->uniform1i(program->maskTextureLocation(), 1);
-        m_context3D->activeTexture(GraphicsContext3D::TEXTURE0);
+        GL_CMD(glActiveTexture(GL_TEXTURE1));
+        GL_CMD(glBindTexture(GL_TEXTURE_2D, maskTextureGL->id()));
+        GL_CMD(glUniform1i(program->maskTextureLocation(), 1));
+        GL_CMD(glActiveTexture(GL_TEXTURE0));
     }
 
     bool needsBlending = (flags & SupportsBlending) || opacity < 0.99 || maskTexture;
-    drawQuad(targetRect, modelViewMatrix, program.get(), GraphicsContext3D::TRIANGLE_FAN, needsBlending);
+    drawQuad(targetRect, modelViewMatrix, program.get(), GL_TRIANGLE_FAN, needsBlending);
 }
-#endif // !USE(TEXMAP_OPENGL_ES_2)
+#endif // defined(GL_ARB_texture_rectangle) 
 
 void TextureMapperGL::drawTexture(uint32_t texture, Flags flags, const IntSize& /* textureSize */, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges)
 {
-    bool needsAntialiasing = m_enableEdgeDistanceAntialiasing && !modelViewMatrix.isIntegerTranslation();
-    if (needsAntialiasing && drawTextureWithAntialiasing(texture, flags, targetRect, modelViewMatrix, opacity, maskTexture, exposedEdges))
+    bool needsAntiliaing = m_enableEdgeDistanceAntialiasing && !modelViewMatrix.isIntegerTranslation();
+    if (needsAntiliaing && drawTextureWithAntialiasing(texture, flags, targetRect, modelViewMatrix, opacity, maskTexture, exposedEdges))
        return;
 
     RefPtr<TextureMapperShaderProgram> program;
@@ -406,15 +443,15 @@ void TextureMapperGL::drawTexture(uint32_t texture, Flags flags, const IntSize& 
         program = data().sharedGLData().textureMapperShaderManager.getShaderProgram(TextureMapperShaderManager::OpacityAndMask);
     else
         program = data().sharedGLData().textureMapperShaderManager.getShaderProgram(TextureMapperShaderManager::Simple);
-    m_context3D->useProgram(program->id());
+    GL_CMD(glUseProgram(program->id()));
 
     drawTexturedQuadWithProgram(program.get(), texture, flags, targetRect, modelViewMatrix, opacity, maskTexture);
 }
 
-static TransformationMatrix viewportMatrix(GraphicsContext3D* context3D)
+static TransformationMatrix viewportMatrix()
 {
-    GC3Dint viewport[4];
-    context3D->getIntegerv(GraphicsContext3D::VIEWPORT, viewport);
+    GLint viewport[4];
+    GL_CMD(glGetIntegerv(GL_VIEWPORT, viewport));
 
     TransformationMatrix matrix;
     matrix.translate3d(viewport[0], viewport[1], 0);
@@ -511,7 +548,7 @@ bool TextureMapperGL::drawTextureWithAntialiasing(uint32_t texture, Flags flags,
     // antialiasing. Note here that we are also including the viewport matrix (which
     // translates from normalized device coordinates to screen coordinates), because these
     // values are consumed in the fragment shader, which works in screen coordinates.
-    TransformationMatrix screenSpaceTransform = viewportMatrix(m_context3D.get()).multiply(TransformationMatrix(data().projectionMatrix)).multiply(modelViewMatrix).to2dTransform();
+    TransformationMatrix screenSpaceTransform = viewportMatrix().multiply(TransformationMatrix(data().projectionMatrix)).multiply(modelViewMatrix).to2dTransform();
     if (!screenSpaceTransform.isInvertible())
         return false;
     FloatQuad quadInScreenSpace = screenSpaceTransform.mapQuad(originalTargetRect);
@@ -535,8 +572,8 @@ bool TextureMapperGL::drawTextureWithAntialiasing(uint32_t texture, Flags flags,
     quadToEdgeArray(inflateQuad(quadInScreenSpace.boundingBox(),  inflationDistance), targetQuadEdges + 12);
 
     RefPtr<TextureMapperShaderProgramAntialiasingNoMask> program = data().sharedGLData().textureMapperShaderManager.antialiasingNoMaskProgram();
-    m_context3D->useProgram(program->id());
-    m_context3D->uniform3fv(program->expandedQuadEdgesInScreenSpaceLocation(), 8, targetQuadEdges);
+    GL_CMD(glUseProgram(program->id()));
+    GL_CMD(glUniform3fv(program->expandedQuadEdgesInScreenSpaceLocation(), 8, targetQuadEdges));
 
     drawTexturedQuadWithProgram(program.get(), texture, flags, DrawQuad(originalTargetRect, expandedQuadInTextureCoordinates), modelViewMatrix, opacity, 0 /* maskTexture */);
     return true;
@@ -544,26 +581,26 @@ bool TextureMapperGL::drawTextureWithAntialiasing(uint32_t texture, Flags flags,
 
 void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram* program, uint32_t texture, Flags flags, const DrawQuad& quadToDraw, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture)
 {
-    m_context3D->enableVertexAttribArray(program->vertexAttrib());
-    m_context3D->activeTexture(GraphicsContext3D::TEXTURE0);
-    m_context3D->bindTexture(GraphicsContext3D::TEXTURE_2D, texture);
-    m_context3D->uniform1i(program->sourceTextureLocation(), 0);
+    GL_CMD(glEnableVertexAttribArray(program->vertexAttrib()));
+    GL_CMD(glActiveTexture(GL_TEXTURE0));
+    GL_CMD(glBindTexture(GL_TEXTURE_2D, texture));
+    GL_CMD(glUniform1i(program->sourceTextureLocation(), 0));
 
-    m_context3D->uniform1f(program->flipLocation(), !!(flags & ShouldFlipTexture));
+    GL_CMD(glUniform1f(program->flipLocation(), !!(flags & ShouldFlipTexture)));
 
     if (TextureMapperShaderProgram::isValidUniformLocation(program->opacityLocation()))
-        m_context3D->uniform1f(program->opacityLocation(), opacity);
+        GL_CMD(glUniform1f(program->opacityLocation(), opacity));
 
     if (maskTexture && maskTexture->isValid() && TextureMapperShaderProgram::isValidUniformLocation(program->maskTextureLocation())) {
         const BitmapTextureGL* maskTextureGL = static_cast<const BitmapTextureGL*>(maskTexture);
-        m_context3D->activeTexture(GraphicsContext3D::TEXTURE1);
-        m_context3D->bindTexture(GraphicsContext3D::TEXTURE_2D, maskTextureGL->id());
-        m_context3D->uniform1i(program->maskTextureLocation(), 1);
-        m_context3D->activeTexture(GraphicsContext3D::TEXTURE0);
+        GL_CMD(glActiveTexture(GL_TEXTURE1));
+        GL_CMD(glBindTexture(GL_TEXTURE_2D, maskTextureGL->id()));
+        GL_CMD(glUniform1i(program->maskTextureLocation(), 1));
+        GL_CMD(glActiveTexture(GL_TEXTURE0));
     }
 
     bool needsBlending = (flags & SupportsBlending) || opacity < 0.99 || maskTexture;
-    drawQuad(quadToDraw, modelViewMatrix, program, GraphicsContext3D::TRIANGLE_FAN, needsBlending);
+    drawQuad(quadToDraw, modelViewMatrix, program, GL_TRIANGLE_FAN, needsBlending);
 }
 
 bool BitmapTextureGL::canReuseWith(const IntSize& contentsSize, Flags)
@@ -574,7 +611,7 @@ bool BitmapTextureGL::canReuseWith(const IntSize& contentsSize, Flags)
 #if OS(DARWIN)
 #define DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE GL_UNSIGNED_INT_8_8_8_8_REV
 #else
-#define DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE GraphicsContext3D::UNSIGNED_BYTE
+#define DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE GL_UNSIGNED_BYTE
 #endif
 
 static void swizzleBGRAToRGBA(uint32_t* data, const IntRect& rect, int stride = 0)
@@ -609,42 +646,38 @@ static bool driverSupportsSubImage()
 
 void BitmapTextureGL::didReset()
 {
-    GraphicsContext3D* context3D = m_textureMapper->graphicsContext3D();
-
     if (!m_id)
-        m_id = context3D->createTexture();
+        GL_CMD(glGenTextures(1, &m_id));
 
     m_shouldClear = true;
     if (m_textureSize == contentSize())
         return;
 
-    Platform3DObject format = driverSupportsBGRASwizzling() ? GraphicsContext3D::BGRA : GraphicsContext3D::RGBA;
+    GLuint format = driverSupportsBGRASwizzling() ? GL_BGRA : GL_RGBA;
 
     m_textureSize = contentSize();
-    context3D->bindTexture(GraphicsContext3D::TEXTURE_2D, m_id);
-    context3D->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);
-    context3D->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR);
-    context3D->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
-    context3D->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
-    context3D->texImage2DDirect(GraphicsContext3D::TEXTURE_2D, 0, format, m_textureSize.width(), m_textureSize.height(), 0, format, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, 0);
+    GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id));
+    GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+    GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+    GL_CMD(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_textureSize.width(), m_textureSize.height(), 0, format, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, 0));
 }
 
 
 void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine)
 {
-    GraphicsContext3D* context3D = m_textureMapper->graphicsContext3D();
-
-    Platform3DObject glFormat = GraphicsContext3D::RGBA;
-    context3D->bindTexture(GraphicsContext3D::TEXTURE_2D, m_id);
+    GLuint glFormat = GL_RGBA;
+    GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id));
 
     const unsigned bytesPerPixel = 4;
     if (driverSupportsBGRASwizzling())
-        glFormat = GraphicsContext3D::BGRA;
+        glFormat = GL_BGRA;
     else
         swizzleBGRAToRGBA(reinterpret_cast<uint32_t*>(const_cast<void*>(data)), IntRect(sourceOffset, targetRect.size()), bytesPerLine / bytesPerPixel);
 
     if (bytesPerLine == targetRect.width() / 4 && sourceOffset == IntPoint::zero()) {
-        context3D->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, (const char*)data);
+        GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, (const char*)data));
         return;
     }
 
@@ -662,19 +695,19 @@ void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect
             dst += targetBytesPerLine;
         }
 
-        context3D->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, temporaryData.data());
+        GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, temporaryData.data()));
         return;
     }
 
 #if !defined(TEXMAP_OPENGL_ES_2)
     // Use the OpenGL sub-image extension, now that we know it's available.
-    context3D->pixelStorei(GL_UNPACK_ROW_LENGTH, bytesPerLine / bytesPerPixel);
-    context3D->pixelStorei(GL_UNPACK_SKIP_ROWS, sourceOffset.y());
-    context3D->pixelStorei(GL_UNPACK_SKIP_PIXELS, sourceOffset.x());
-    context3D->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, (const char*)data);
-    context3D->pixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-    context3D->pixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-    context3D->pixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+    GL_CMD(glPixelStorei(GL_UNPACK_ROW_LENGTH, bytesPerLine / bytesPerPixel));
+    GL_CMD(glPixelStorei(GL_UNPACK_SKIP_ROWS, sourceOffset.y()));
+    GL_CMD(glPixelStorei(GL_UNPACK_SKIP_PIXELS, sourceOffset.x()));
+    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, (const char*)data));
+    GL_CMD(glPixelStorei(GL_UNPACK_ROW_LENGTH, 0));
+    GL_CMD(glPixelStorei(GL_UNPACK_SKIP_ROWS, 0));
+    GL_CMD(glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0));
 #endif
 }
 
@@ -710,19 +743,19 @@ void TextureMapperGL::drawFiltered(const BitmapTexture& sourceTexture, const Bit
 
     program->prepare(filter, pass, sourceTexture.contentSize(), static_cast<const BitmapTextureGL&>(contentTexture).id());
 
-    m_context3D->enableVertexAttribArray(program->vertexAttrib());
-    m_context3D->enableVertexAttribArray(program->texCoordAttrib());
-    m_context3D->activeTexture(GraphicsContext3D::TEXTURE0);
-    m_context3D->bindTexture(GraphicsContext3D::TEXTURE_2D, static_cast<const BitmapTextureGL&>(sourceTexture).id());
-    m_context3D->uniform1i(program->textureUniform(), 0);
-    const GC3Dfloat targetVertices[] = {-1, -1, 1, -1, 1, 1, -1, 1};
-    const GC3Dfloat sourceVertices[] = {0, 0, 1, 0, 1, 1, 0, 1};
-    m_context3D->vertexAttribPointer(program->vertexAttrib(), 2, GraphicsContext3D::FLOAT, false, 0, GC3Dintptr(targetVertices));
-    m_context3D->vertexAttribPointer(program->texCoordAttrib(), 2, GraphicsContext3D::FLOAT, false, 0, GC3Dintptr(sourceVertices));
-    m_context3D->disable(GraphicsContext3D::BLEND);
-    m_context3D->drawArrays(GraphicsContext3D::TRIANGLE_FAN, 0, 4);
-    m_context3D->disableVertexAttribArray(program->vertexAttrib());
-    m_context3D->disableVertexAttribArray(program->texCoordAttrib());
+    GL_CMD(glEnableVertexAttribArray(program->vertexAttrib()));
+    GL_CMD(glEnableVertexAttribArray(program->texCoordAttrib()));
+    GL_CMD(glActiveTexture(GL_TEXTURE0));
+    GL_CMD(glBindTexture(GL_TEXTURE_2D, static_cast<const BitmapTextureGL&>(sourceTexture).id()));
+    glUniform1i(program->textureUniform(), 0);
+    const GLfloat targetVertices[] = {-1, -1, 1, -1, 1, 1, -1, 1};
+    const GLfloat sourceVertices[] = {0, 0, 1, 0, 1, 1, 0, 1};
+    GL_CMD(glVertexAttribPointer(program->vertexAttrib(), 2, GL_FLOAT, GL_FALSE, 0, targetVertices));
+    GL_CMD(glVertexAttribPointer(program->texCoordAttrib(), 2, GL_FLOAT, GL_FALSE, 0, sourceVertices));
+    GL_CMD(glDisable(GL_BLEND));
+    GL_CMD(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
+    GL_CMD(glDisableVertexAttribArray(program->vertexAttrib()));
+    GL_CMD(glDisableVertexAttribArray(program->texCoordAttrib()));
 }
 
 PassRefPtr<BitmapTexture> BitmapTextureGL::applyFilters(const BitmapTexture& contentTexture, const FilterOperations& filters)
@@ -763,19 +796,17 @@ void BitmapTextureGL::initializeStencil()
 {
     if (m_rbo)
         return;
-
-    GraphicsContext3D* context3D = m_textureMapper->graphicsContext3D();
-    m_rbo = context3D->createRenderbuffer();
-    context3D->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_rbo);
+    GL_CMD(glGenRenderbuffers(1, &m_rbo));
+    GL_CMD(glBindRenderbuffer(GL_RENDERBUFFER, m_rbo));
 #ifdef TEXMAP_OPENGL_ES_2
-    context3D->renderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::STENCIL_INDEX8, m_textureSize.width(), m_textureSize.height());
+    GL_CMD(glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, m_textureSize.width(), m_textureSize.height()));
 #else
-    context3D->renderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::DEPTH_STENCIL, m_textureSize.width(), m_textureSize.height());
+    GL_CMD(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, m_textureSize.width(), m_textureSize.height()));
 #endif
-    context3D->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, 0);
-    context3D->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_rbo);
-    context3D->clearStencil(0);
-    context3D->clear(GraphicsContext3D::STENCIL_BUFFER_BIT);
+    GL_CMD(glBindRenderbuffer(GL_RENDERBUFFER, 0));
+    GL_CMD(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo));
+    GL_CMD(glClearStencil(0));
+    GL_CMD(glClear(GL_STENCIL_BUFFER_BIT));
 }
 
 void BitmapTextureGL::clearIfNeeded()
@@ -783,12 +814,10 @@ void BitmapTextureGL::clearIfNeeded()
     if (!m_shouldClear)
         return;
 
-    GraphicsContext3D* context3D = m_textureMapper->graphicsContext3D();
-
     m_clipStack.init(IntRect(IntPoint::zero(), m_textureSize));
-    m_clipStack.apply(context3D);
-    context3D->clearColor(0, 0, 0, 0);
-    context3D->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
+    m_clipStack.apply();
+    GL_CMD(glClearColor(0, 0, 0, 0));
+    GL_CMD(glClear(GL_COLOR_BUFFER_BIT));
     m_shouldClear = false;
 }
 
@@ -797,37 +826,33 @@ void BitmapTextureGL::createFboIfNeeded()
     if (m_fbo)
         return;
 
-    GraphicsContext3D* context3D = m_textureMapper->graphicsContext3D();
-    m_fbo = context3D->createFramebuffer();
-    context3D->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
-    context3D->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, id(), 0);
+    GL_CMD(glGenFramebuffers(1, &m_fbo));
+    GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
+    GL_CMD(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, id(), 0));
     m_shouldClear = true;
 }
 
 void BitmapTextureGL::bind()
 {
-    GraphicsContext3D* context3D = m_textureMapper->graphicsContext3D();
-    context3D->bindTexture(GraphicsContext3D::TEXTURE_2D, 0);
+    GL_CMD(glBindTexture(GL_TEXTURE_2D, 0));
     createFboIfNeeded();
-    context3D->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
-    context3D->viewport(0, 0, m_textureSize.width(), m_textureSize.height());
+    GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
+    GL_CMD(glViewport(0, 0, m_textureSize.width(), m_textureSize.height()));
     clearIfNeeded();
     m_textureMapper->data().projectionMatrix = createProjectionMatrix(m_textureSize, true /* mirrored */);
-    m_clipStack.apply(context3D);
+    m_clipStack.apply();
 }
 
 BitmapTextureGL::~BitmapTextureGL()
 {
-    GraphicsContext3D* context3D = m_textureMapper->graphicsContext3D();
-
     if (m_id)
-        context3D->deleteTexture(m_id);
+        GL_CMD(glDeleteTextures(1, &m_id));
 
     if (m_fbo)
-        context3D->deleteFramebuffer(m_fbo);
+        GL_CMD(glDeleteFramebuffers(1, &m_fbo));
 
     if (m_rbo)
-        context3D->deleteRenderbuffer(m_rbo);
+        GL_CMD(glDeleteRenderbuffers(1, &m_rbo));
 }
 
 bool BitmapTextureGL::isValid() const
@@ -847,11 +872,11 @@ TextureMapperGL::~TextureMapperGL()
 
 void TextureMapperGL::bindDefaultSurface()
 {
-    m_context3D->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, data().targetFrameBuffer);
+    GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, data().targetFrameBuffer));
     IntSize viewportSize(data().viewport[2], data().viewport[3]);
     data().projectionMatrix = createProjectionMatrix(viewportSize, data().PaintFlags & PaintingMirrored);
-    m_context3D->viewport(data().viewport[0], data().viewport[1], viewportSize.width(), viewportSize.height());
-    m_clipStack.apply(m_context3D.get());
+    GL_CMD(glViewport(data().viewport[0], data().viewport[1], viewportSize.width(), viewportSize.height()));
+    m_clipStack.apply();
     data().currentSurface.clear();
 }
 
@@ -881,7 +906,7 @@ bool TextureMapperGL::beginScissorClip(const TransformationMatrix& modelViewMatr
         return false;
 
     clipStack().current().scissorBox.intersect(rect);
-    clipStack().apply(m_context3D.get());
+    clipStack().apply();
     return true;
 }
 
@@ -895,10 +920,10 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
 
     RefPtr<TextureMapperShaderProgram> program = data().sharedGLData().textureMapperShaderManager.getShaderProgram(TextureMapperShaderManager::Simple);
 
-    m_context3D->useProgram(program->id());
-    m_context3D->enableVertexAttribArray(program->vertexAttrib());
-    const GC3Dfloat unitRect[] = {0, 0, 1, 0, 1, 1, 0, 1};
-    m_context3D->vertexAttribPointer(program->vertexAttrib(), 2, GraphicsContext3D::FLOAT, false, 0, GC3Dintptr(unitRect));
+    GL_CMD(glUseProgram(program->id()));
+    GL_CMD(glEnableVertexAttribArray(program->vertexAttrib()));
+    const GLfloat unitRect[] = {0, 0, 1, 0, 1, 1, 0, 1};
+    GL_CMD(glVertexAttribPointer(program->vertexAttrib(), 2, GL_FLOAT, GL_FALSE, 0, unitRect));
 
     TransformationMatrix matrix = TransformationMatrix(data().projectionMatrix)
             .multiply(modelViewMatrix)
@@ -907,14 +932,14 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
                 0, 0, 1, 0,
                 targetRect.x(), targetRect.y(), 0, 1));
 
-    const GC3Dfloat m4[] = {
+    const GLfloat m4[] = {
         matrix.m11(), matrix.m12(), matrix.m13(), matrix.m14(),
         matrix.m21(), matrix.m22(), matrix.m23(), matrix.m24(),
         matrix.m31(), matrix.m32(), matrix.m33(), matrix.m34(),
         matrix.m41(), matrix.m42(), matrix.m43(), matrix.m44()
     };
 
-    const GC3Dfloat m4all[] = {
+    const GLfloat m4all[] = {
         2, 0, 0, 0,
         0, 2, 0, 0,
         0, 0, 1, 0,
@@ -923,42 +948,43 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
 
     int& stencilIndex = clipStack().current().stencilIndex;
 
-    m_context3D->enable(GraphicsContext3D::STENCIL_TEST);
+    GL_CMD(glEnable(GL_STENCIL_TEST));
 
     // Make sure we don't do any actual drawing.
-    m_context3D->stencilFunc(GraphicsContext3D::NEVER, stencilIndex, stencilIndex);
+    GL_CMD(glStencilFunc(GL_NEVER, stencilIndex, stencilIndex));
 
     // Operate only on the stencilIndex and above.
-    m_context3D->stencilMask(0xff & ~(stencilIndex - 1));
+    GL_CMD(glStencilMask(0xff & ~(stencilIndex - 1)));
 
     // First clear the entire buffer at the current index.
-    m_context3D->uniformMatrix4fv(program->matrixLocation(), 1, false, const_cast<GC3Dfloat*>(m4all));
-    m_context3D->stencilOp(GraphicsContext3D::ZERO, GraphicsContext3D::ZERO, GraphicsContext3D::ZERO);
-    m_context3D->drawArrays(GraphicsContext3D::TRIANGLE_FAN, 0, 4);
+    GL_CMD(glUniformMatrix4fv(program->matrixLocation(), 1, GL_FALSE, m4all));
+    GL_CMD(glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO));
+    GL_CMD(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
 
     // Now apply the current index to the new quad.
-    m_context3D->stencilOp(GraphicsContext3D::REPLACE, GraphicsContext3D::REPLACE, GraphicsContext3D::REPLACE);
-    m_context3D->uniformMatrix4fv(program->matrixLocation(), 1, false, const_cast<GC3Dfloat*>(m4));
-    m_context3D->drawArrays(GraphicsContext3D::TRIANGLE_FAN, 0, 4);
+    GL_CMD(glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE));
+    GL_CMD(glUniformMatrix4fv(program->matrixLocation(), 1, GL_FALSE, m4));
+    GL_CMD(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
 
     // Clear the state.
-    m_context3D->disableVertexAttribArray(program->vertexAttrib());
-    m_context3D->stencilMask(0);
+    GL_CMD(glDisableVertexAttribArray(program->vertexAttrib()));
+    GL_CMD(glStencilMask(0));
 
     // Increase stencilIndex and apply stencil testing.
     stencilIndex *= 2;
-    clipStack().apply(m_context3D.get());
+    clipStack().apply();
 }
 
 void TextureMapperGL::endClip()
 {
     clipStack().pop();
-    clipStack().apply(m_context3D.get());
+    clipStack().apply();
 }
 
 PassRefPtr<BitmapTexture> TextureMapperGL::createTexture()
 {
-    BitmapTextureGL* texture = new BitmapTextureGL(this);
+    BitmapTextureGL* texture = new BitmapTextureGL();
+    texture->setTextureMapper(this);
     return adoptRef(texture);
 }
 

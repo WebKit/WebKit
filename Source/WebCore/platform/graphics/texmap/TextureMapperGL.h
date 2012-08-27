@@ -23,8 +23,8 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "FloatQuad.h"
-#include "GraphicsContext3D.h"
 #include "IntSize.h"
+#include "OpenGLShims.h"
 #include "TextureMapper.h"
 #include "TransformationMatrix.h"
 
@@ -38,6 +38,7 @@ class TextureMapperShaderProgram;
 class TextureMapperGL : public TextureMapper {
 public:
     static PassOwnPtr<TextureMapperGL> create() { return adoptPtr(new TextureMapperGL); }
+    TextureMapperGL();
     virtual ~TextureMapperGL();
 
     enum Flag {
@@ -53,7 +54,7 @@ public:
     virtual void drawTexture(const BitmapTexture&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges) OVERRIDE;
     virtual void drawTexture(uint32_t texture, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges = AllEdges);
 
-#if !USE(TEXMAP_OPENGL_ES_2)
+#if defined(GL_ARB_texture_rectangle)
     virtual void drawTextureRectangleARB(uint32_t texture, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture);
 #endif
 
@@ -65,7 +66,6 @@ public:
     virtual IntSize maxTextureSize() const OVERRIDE { return IntSize(2000, 2000); }
     virtual PassRefPtr<BitmapTexture> createTexture() OVERRIDE;
     virtual GraphicsContext* graphicsContext() OVERRIDE { return m_context; }
-    inline GraphicsContext3D* graphicsContext3D() const { return m_context3D.get(); }
     virtual void setGraphicsContext(GraphicsContext* context) OVERRIDE { m_context = context; }
 
 #if ENABLE(CSS_FILTERS)
@@ -75,6 +75,7 @@ public:
     void setEnableEdgeDistanceAntialiasing(bool enabled) { m_enableEdgeDistanceAntialiasing = enabled; }
 
 private:
+
     struct ClipState {
         IntRect scissorBox;
         int stencilIndex;
@@ -88,7 +89,7 @@ private:
     public:
         void push();
         void pop();
-        void apply(GraphicsContext3D*);
+        void apply();
         inline ClipState& current() { return clipState; }
         void init(const IntRect&);
 
@@ -108,19 +109,16 @@ private:
         FloatQuad targetRectMappedToUnitSquare;
     };
 
-    TextureMapperGL();
-
     bool drawTextureWithAntialiasing(uint32_t texture, Flags, const FloatRect& originalTargetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges);
     void drawTexturedQuadWithProgram(TextureMapperShaderProgram*, uint32_t texture, Flags, const DrawQuad&, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture);
-    void drawQuad(const DrawQuad&, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram*, GC3Denum drawingMode, bool needsBlending);
+    void drawQuad(const DrawQuad&, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram*, GLenum drawingMode, bool needsBlending);
 
     bool beginScissorClip(const TransformationMatrix&, const FloatRect&);
     void bindDefaultSurface();
     ClipStack& clipStack();
     inline TextureMapperGLData& data() { return *m_data; }
-    GraphicsContext* m_context;
-    RefPtr<GraphicsContext3D> m_context3D;
     TextureMapperGLData* m_data;
+    GraphicsContext* m_context;
     ClipStack m_clipStack;
     bool m_enableEdgeDistanceAntialiasing;
 
@@ -137,7 +135,7 @@ public:
     void initializeStencil();
     ~BitmapTextureGL();
     virtual uint32_t id() const { return m_id; }
-    uint32_t textureTarget() const { return GraphicsContext3D::TEXTURE_2D; }
+    uint32_t textureTarget() const { return GL_TEXTURE_2D; }
     IntSize textureSize() const { return m_textureSize; }
     void setTextureMapper(TextureMapperGL* texmap) { m_textureMapper = texmap; }
     void updateContents(Image*, const IntRect&, const IntPoint&);
@@ -149,22 +147,20 @@ public:
 #endif
 
 private:
-    Platform3DObject m_id;
+    GLuint m_id;
     IntSize m_textureSize;
     IntRect m_dirtyRect;
-    Platform3DObject m_fbo;
-    Platform3DObject m_rbo;
+    GLuint m_fbo;
+    GLuint m_rbo;
     bool m_shouldClear;
-    TextureMapperGL::ClipStack m_clipStack;
     TextureMapperGL* m_textureMapper;
-
-    BitmapTextureGL();
-    BitmapTextureGL(TextureMapperGL* textureMapper)
+    TextureMapperGL::ClipStack m_clipStack;
+    BitmapTextureGL()
         : m_id(0)
         , m_fbo(0)
         , m_rbo(0)
         , m_shouldClear(true)
-        , m_textureMapper(textureMapper)
+        , m_textureMapper(0)
     {
     }
 

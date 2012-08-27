@@ -24,9 +24,9 @@
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 
 #include "FloatQuad.h"
-#include "GraphicsContext3D.h"
 #include "IntSize.h"
-#include "TextureMapperGL.h"
+#include "OpenGLShims.h"
+#include "TextureMapper.h"
 #include "TransformationMatrix.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
@@ -44,40 +44,39 @@ class TextureMapperShaderManager;
 
 class TextureMapperShaderProgram : public RefCounted<TextureMapperShaderProgram> {
 public:
-    Platform3DObject id() { return m_id; }
-    GC3Duint vertexAttrib() { return m_vertexAttrib; }
+    GLuint id() { return m_id; }
+    GLuint vertexAttrib() { return m_vertexAttrib; }
 
-    TextureMapperShaderProgram(GraphicsContext3D*, const char* vertexShaderSource, const char* fragmentShaderSource);
+    TextureMapperShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource);
     virtual ~TextureMapperShaderProgram();
 
     virtual void prepare(float opacity, const BitmapTexture*) { }
-    GC3Dint matrixLocation() const { return m_matrixLocation; }
-    GC3Dint flipLocation() const { return m_flipLocation; }
-    GC3Dint textureSizeLocation() const { return m_textureSizeLocation; }
-    GC3Dint sourceTextureLocation() const { return m_sourceTextureLocation; }
-    GC3Dint maskTextureLocation() const { return m_maskTextureLocation; }
-    GC3Dint opacityLocation() const { return m_opacityLocation; }
+    GLint matrixLocation() const { return m_matrixLocation; }
+    GLint flipLocation() const { return m_flipLocation; }
+    GLint textureSizeLocation() const { return m_textureSizeLocation; }
+    GLint sourceTextureLocation() const { return m_sourceTextureLocation; }
+    GLint maskTextureLocation() const { return m_maskTextureLocation; }
+    GLint opacityLocation() const { return m_opacityLocation; }
 
-    static bool isValidUniformLocation(GC3Dint location) { return location >= 0; }
+    static bool isValidUniformLocation(GLint location) { return location >= 0; }
 
 protected:
-    void getUniformLocation(GC3Dint& var, const char* name);
+    void getUniformLocation(GLint& var, const char* name);
     void initializeProgram();
     virtual void initialize() { }
     const char* vertexShaderSource() const { return m_vertexShaderSource.data(); }
     const char* fragmentShaderSource() const { return m_fragmentShaderSource.data(); }
 
-    GraphicsContext3D* m_context;
-    Platform3DObject m_id;
-    GC3Duint m_vertexAttrib;
-    Platform3DObject m_vertexShader;
-    Platform3DObject m_fragmentShader;
-    GC3Dint m_matrixLocation;
-    GC3Dint m_flipLocation;
-    GC3Dint m_textureSizeLocation;
-    GC3Dint m_sourceTextureLocation;
-    GC3Dint m_opacityLocation;
-    GC3Dint m_maskTextureLocation;
+    GLuint m_id;
+    GLuint m_vertexAttrib;
+    GLuint m_vertexShader;
+    GLuint m_fragmentShader;
+    GLint m_matrixLocation;
+    GLint m_flipLocation;
+    GLint m_textureSizeLocation;
+    GLint m_sourceTextureLocation;
+    GLint m_opacityLocation;
+    GLint m_maskTextureLocation;
 
 private:
     CString m_vertexShaderSource;
@@ -88,36 +87,33 @@ private:
 class StandardFilterProgram : public RefCounted<StandardFilterProgram> {
 public:
     virtual ~StandardFilterProgram();
-    virtual void prepare(const FilterOperation&, unsigned pass, const IntSize&, GC3Duint contentTexture);
-    static PassRefPtr<StandardFilterProgram> create(GraphicsContext3D*, FilterOperation::OperationType, unsigned pass);
-    GC3Duint vertexAttrib() const { return m_vertexAttrib; }
-    GC3Duint texCoordAttrib() const { return m_texCoordAttrib; }
-    GC3Duint textureUniform() const { return m_textureUniformLocation; }
-protected:
-    GraphicsContext3D* m_context;
+    virtual void prepare(const FilterOperation&, unsigned pass, const IntSize&, GLuint contentTexture);
+    static PassRefPtr<StandardFilterProgram> create(FilterOperation::OperationType, unsigned pass);
+    GLuint vertexAttrib() const { return m_vertexAttrib; }
+    GLuint texCoordAttrib() const { return m_texCoordAttrib; }
+    GLuint textureUniform() const { return m_textureUniformLocation; }
 private:
-    StandardFilterProgram();
-    StandardFilterProgram(GraphicsContext3D*, FilterOperation::OperationType, unsigned pass);
-    Platform3DObject m_id;
-    Platform3DObject m_vertexShader;
-    Platform3DObject m_fragmentShader;
-    GC3Duint m_vertexAttrib;
-    GC3Duint m_texCoordAttrib;
-    GC3Duint m_textureUniformLocation;
+    StandardFilterProgram(FilterOperation::OperationType, unsigned pass);
+    GLuint m_id;
+    GLuint m_vertexShader;
+    GLuint m_fragmentShader;
+    GLuint m_vertexAttrib;
+    GLuint m_texCoordAttrib;
+    GLuint m_textureUniformLocation;
     union {
-        GC3Duint amount;
+        GLuint amount;
 
         struct {
-            GC3Duint radius;
-            GC3Duint gaussianKernel;
+            GLuint radius;
+            GLuint gaussianKernel;
         } blur;
 
         struct {
-            GC3Duint blurRadius;
-            GC3Duint color;
-            GC3Duint offset;
-            GC3Duint contentTexture;
-            GC3Duint gaussianKernel;
+            GLuint blurRadius;
+            GLuint color;
+            GLuint offset;
+            GLuint contentTexture;
+            GLuint gaussianKernel;
         } shadow;
     } m_uniformLocations;
 };
@@ -125,89 +121,77 @@ private:
 
 class TextureMapperShaderProgramSimple : public TextureMapperShaderProgram {
 public:
-    static PassRefPtr<TextureMapperShaderProgramSimple> create(GraphicsContext3D* context)
+    static PassRefPtr<TextureMapperShaderProgramSimple> create()
     {
-        return adoptRef(new TextureMapperShaderProgramSimple(context));
+        return adoptRef(new TextureMapperShaderProgramSimple());
     }
 
 protected:
-    TextureMapperShaderProgramSimple(GraphicsContext3D*);
-private:
     TextureMapperShaderProgramSimple();
 };
 
 class TextureMapperShaderProgramRectSimple : public TextureMapperShaderProgram {
 public:
-    static PassRefPtr<TextureMapperShaderProgramRectSimple> create(GraphicsContext3D* context)
+    static PassRefPtr<TextureMapperShaderProgramRectSimple> create()
     {
-        return adoptRef(new TextureMapperShaderProgramRectSimple(context));
+        return adoptRef(new TextureMapperShaderProgramRectSimple());
     }
 
-protected:
-    TextureMapperShaderProgramRectSimple(GraphicsContext3D*);
 private:
     TextureMapperShaderProgramRectSimple();
 };
 
 class TextureMapperShaderProgramOpacityAndMask : public TextureMapperShaderProgram {
 public:
-    static PassRefPtr<TextureMapperShaderProgramOpacityAndMask> create(GraphicsContext3D* context)
+    static PassRefPtr<TextureMapperShaderProgramOpacityAndMask> create()
     {
-        return adoptRef(new TextureMapperShaderProgramOpacityAndMask(context));
+        return adoptRef(new TextureMapperShaderProgramOpacityAndMask());
     }
 
-protected:
-    TextureMapperShaderProgramOpacityAndMask(GraphicsContext3D*);
 private:
     TextureMapperShaderProgramOpacityAndMask();
 };
 
 class TextureMapperShaderProgramRectOpacityAndMask : public TextureMapperShaderProgram {
 public:
-    static PassRefPtr<TextureMapperShaderProgramRectOpacityAndMask> create(GraphicsContext3D* context)
+    static PassRefPtr<TextureMapperShaderProgramRectOpacityAndMask> create()
     {
-        return adoptRef(new TextureMapperShaderProgramRectOpacityAndMask(context));
+        return adoptRef(new TextureMapperShaderProgramRectOpacityAndMask());
     }
 
-protected:
-    TextureMapperShaderProgramRectOpacityAndMask(GraphicsContext3D*);
 private:
     TextureMapperShaderProgramRectOpacityAndMask();
 };
 
 class TextureMapperShaderProgramSolidColor : public TextureMapperShaderProgram {
 public:
-    static PassRefPtr<TextureMapperShaderProgramSolidColor> create(GraphicsContext3D* context)
+    static PassRefPtr<TextureMapperShaderProgramSolidColor> create()
     {
-        return adoptRef(new TextureMapperShaderProgramSolidColor(context));
+        return adoptRef(new TextureMapperShaderProgramSolidColor());
     }
 
-    GC3Dint colorLocation() const { return m_colorLocation; }
+    GLint colorLocation() const { return m_colorLocation; }
 
-protected:
-    TextureMapperShaderProgramSolidColor(GraphicsContext3D*);
 private:
     TextureMapperShaderProgramSolidColor();
-    GC3Dint m_colorLocation;
+    GLint m_colorLocation;
 };
 
 class TextureMapperShaderProgramAntialiasingNoMask : public TextureMapperShaderProgram {
 public:
-    static PassRefPtr<TextureMapperShaderProgramAntialiasingNoMask> create(GraphicsContext3D* context)
+    static PassRefPtr<TextureMapperShaderProgramAntialiasingNoMask> create()
     {
-        return adoptRef(new TextureMapperShaderProgramAntialiasingNoMask(context));
+        return adoptRef(new TextureMapperShaderProgramAntialiasingNoMask());
     }
 
-    GC3Dint expandedQuadVerticesInTextureCoordinatesLocation() { return m_expandedQuadVerticesInTextureCordinatesLocation; }
-    GC3Dint expandedQuadEdgesInScreenSpaceLocation() { return m_expandedQuadEdgesInScreenSpaceLocation; }
+    GLint expandedQuadVerticesInTextureCoordinatesLocation() { return m_expandedQuadVerticesInTextureCordinatesLocation; }
+    GLint expandedQuadEdgesInScreenSpaceLocation() { return m_expandedQuadEdgesInScreenSpaceLocation; }
 
-protected:
-    TextureMapperShaderProgramAntialiasingNoMask(GraphicsContext3D*);
 private:
     TextureMapperShaderProgramAntialiasingNoMask();
 
-    GC3Dint m_expandedQuadVerticesInTextureCordinatesLocation;
-    GC3Dint m_expandedQuadEdgesInScreenSpaceLocation;
+    GLint m_expandedQuadVerticesInTextureCordinatesLocation;
+    GLint m_expandedQuadEdgesInScreenSpaceLocation;
 };
 
 class TextureMapperShaderManager {
@@ -222,8 +206,7 @@ public:
         SolidColor
     };
 
-    TextureMapperShaderManager() { }
-    TextureMapperShaderManager(GraphicsContext3D*);
+    TextureMapperShaderManager();
     virtual ~TextureMapperShaderManager();
 
 #if ENABLE(CSS_FILTERS)
@@ -238,12 +221,12 @@ public:
 private:
     typedef HashMap<ShaderType, RefPtr<TextureMapperShaderProgram>, DefaultHash<int>::Hash, HashTraits<int> > TextureMapperShaderProgramMap;
     TextureMapperShaderProgramMap m_textureMapperShaderProgramMap;
-    GraphicsContext3D* m_context;
 
 #if ENABLE(CSS_FILTERS)
     typedef HashMap<int, RefPtr<StandardFilterProgram> > FilterMap;
     FilterMap m_filterMap;
 #endif
+
 };
 
 }
