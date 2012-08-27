@@ -1,3 +1,17 @@
+2012-08-27  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix failing QML2 auto tests due to conflicting signal declaration
+        https://bugs.webkit.org/show_bug.cgi?id=95059
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Don't define a scaleChanged signal when QQuickItem already declares one to notify about changes
+        in the scale property. As it turns out there is not need for declaring a signal in the test case
+        at all.
+
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_doubleTapToZoom.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_fitToView.qml:
+
 2012-08-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Rename RegisterProtocolHandler API to NavigatorContentUtils
