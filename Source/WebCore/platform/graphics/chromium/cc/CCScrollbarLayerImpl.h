@@ -29,9 +29,9 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "CCLayerImpl.h"
+#include "CCScrollbarGeometryFixedThumb.h"
 #include <public/WebRect.h>
 #include <public/WebScrollbar.h>
-#include <public/WebScrollbarThemeGeometry.h>
 #include <public/WebVector.h>
 
 namespace WebCore {
@@ -42,9 +42,9 @@ class CCScrollbarLayerImpl : public CCLayerImpl {
 public:
     static PassOwnPtr<CCScrollbarLayerImpl> create(int id);
 
-    WebKit::WebScrollbarThemeGeometry* scrollbarGeometry() const { return m_geometry.get(); }
-    void setScrollbarGeometry(PassOwnPtr<WebKit::WebScrollbarThemeGeometry>);
-    void setScrollbarData(const WebKit::WebScrollbar*);
+    CCScrollbarGeometryFixedThumb* scrollbarGeometry() const { return m_geometry.get(); }
+    void setScrollbarGeometry(PassOwnPtr<CCScrollbarGeometryFixedThumb>);
+    void setScrollbarData(WebKit::WebScrollbar*);
 
     void setBackTrackResourceId(CCResourceProvider::ResourceId id) { m_backTrackResourceId = id; }
     void setForeTrackResourceId(CCResourceProvider::ResourceId id) { m_foreTrackResourceId = id; }
@@ -103,7 +103,7 @@ private:
     CCResourceProvider::ResourceId m_foreTrackResourceId;
     CCResourceProvider::ResourceId m_thumbResourceId;
 
-    OwnPtr<WebKit::WebScrollbarThemeGeometry> m_geometry;
+    OwnPtr<CCScrollbarGeometryFixedThumb> m_geometry;
 
     // Data to implement CCScrollbar
     WebKit::WebScrollbar::ScrollbarOverlayStyle m_scrollbarOverlayStyle;

@@ -36,6 +36,7 @@
 #include "CCQuadCuller.h"
 #include "CCRenderPassDrawQuad.h"
 #include "CCRendererGL.h"
+#include "CCScrollbarGeometryFixedThumb.h"
 #include "CCScrollbarLayerImpl.h"
 #include "CCSettings.h"
 #include "CCSingleThreadProxy.h"
@@ -2416,7 +2417,7 @@ public:
         IntSize size(10, 10);
         GC3Denum format = GraphicsContext3D::RGBA;
         CCResourceProvider::TextureUsageHint hint = CCResourceProvider::TextureUsageAny;
-        setScrollbarGeometry(FakeWebScrollbarThemeGeometryNonEmpty::create());
+        setScrollbarGeometry(CCScrollbarGeometryFixedThumb::create(FakeWebScrollbarThemeGeometryNonEmpty::create()));
 
         setBackTrackResourceId(provider->createResource(pool, size, format, hint));
         setForeTrackResourceId(provider->createResource(pool, size, format, hint));

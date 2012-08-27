@@ -65,7 +65,7 @@ void ScrollbarLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     CCScrollbarLayerImpl* scrollbarLayer = static_cast<CCScrollbarLayerImpl*>(layer);
 
     if (!scrollbarLayer->scrollbarGeometry())
-        scrollbarLayer->setScrollbarGeometry(adoptPtr(m_geometry->clone()));
+        scrollbarLayer->setScrollbarGeometry(CCScrollbarGeometryFixedThumb::create(adoptPtr(m_geometry->clone())));
 
     scrollbarLayer->setScrollbarData(m_scrollbar.get());
 
