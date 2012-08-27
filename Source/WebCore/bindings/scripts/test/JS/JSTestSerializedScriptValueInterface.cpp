@@ -356,10 +356,8 @@ void JSTestSerializedScriptValueInterface::visitChildren(JSCell* cell, SlotVisit
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
-    if (thisObject->m_cachedValue)
-        visitor.append(&thisObject->m_cachedValue);
-    if (thisObject->m_cachedReadonlyValue)
-        visitor.append(&thisObject->m_cachedReadonlyValue);
+    visitor.append(&thisObject->m_cachedValue);
+    visitor.append(&thisObject->m_cachedReadonlyValue);
 }
 
 static inline bool isObservable(JSTestSerializedScriptValueInterface* jsTestSerializedScriptValueInterface)
