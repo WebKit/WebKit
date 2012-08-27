@@ -1,3 +1,17 @@
+2012-08-27  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Fix review comments from patch #93119
+        https://bugs.webkit.org/show_bug.cgi?id=95064
+
+        Reviewed by Adam Barth.
+
+        * fast/mediastream/RTCIceCandidate-expected.txt:
+        * fast/mediastream/RTCIceCandidate.html:
+        * fast/mediastream/RTCSessionDescription-expected.txt:
+        * fast/mediastream/RTCSessionDescription.html:
+        * fast/mediastream/constructors-expected.txt:
+        * fast/mediastream/constructors.html:
+
 2012-08-27  Simon Fraser  <simon.fraser@apple.com>
 
         Fix sticky-position test to hide scrollbars.

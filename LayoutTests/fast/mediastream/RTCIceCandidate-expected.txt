@@ -7,6 +7,7 @@ PASS candidate = new RTCIceCandidate(initializer); did not throw exception.
 PASS candidate.candidate is "foo"
 PASS candidate.sdpMid is "bar"
 PASS candidate.sdpMLineIndex is 6
+PASS initializer = JSON.parse(JSON.stringify(candidate)); did not throw exception.
 PASS candidate = new RTCIceCandidate(initializer); did not throw exception.
 PASS candidate.candidate is "foo"
 PASS candidate.sdpMid is "bar"

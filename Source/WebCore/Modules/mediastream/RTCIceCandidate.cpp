@@ -73,17 +73,17 @@ RTCIceCandidate::~RTCIceCandidate()
 {
 }
 
-const String& RTCIceCandidate::candidate()
+const String& RTCIceCandidate::candidate() const
 {
     return m_descriptor->candidate();
 }
 
-const String& RTCIceCandidate::sdpMid()
+const String& RTCIceCandidate::sdpMid() const
 {
     return m_descriptor->sdpMid();
 }
 
-unsigned short RTCIceCandidate::sdpMLineIndex()
+unsigned short RTCIceCandidate::sdpMLineIndex() const
 {
     return m_descriptor->sdpMLineIndex();
 }

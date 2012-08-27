@@ -50,9 +50,9 @@ public:
     static PassRefPtr<RTCIceCandidate> create(PassRefPtr<RTCIceCandidateDescriptor>);
     virtual ~RTCIceCandidate();
 
-    const String& candidate();
-    const String& sdpMid();
-    unsigned short sdpMLineIndex();
+    const String& candidate() const;
+    const String& sdpMid() const;
+    unsigned short sdpMLineIndex() const;
 
     RTCIceCandidateDescriptor* descriptor();
 

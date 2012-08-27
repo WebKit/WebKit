@@ -13,15 +13,23 @@ description("Tests the JSEP PeerConnection related constructors.");
 shouldBeTrue("typeof webkitPeerConnection00 === 'function'");
 shouldBeTrue("typeof SessionDescription === 'function'");
 shouldBeTrue("typeof IceCandidate === 'function'");
+shouldBeTrue("typeof webkitRTCPeerConnection === 'function'");
+shouldBeTrue("typeof RTCSessionDescription === 'function'");
+shouldBeTrue("typeof RTCIceCandidate === 'function'");
+
+shouldThrow("webkitPeerConnection00()");
+shouldThrow("SessionDescription()");
+shouldThrow("IceCandidate()");
+shouldThrow("webkitRTCPeerConnection()");
+shouldThrow("RTCSessionDescription()");
+shouldThrow("RTCIceCandidate()");
 
 shouldNotThrow("new webkitPeerConnection00('STUN foobar.com:12345', function(){});");
-shouldThrow("new webkitPeerConnection00('STUN foobar.com:12345');");
-shouldThrow("new webkitPeerConnection00('STUN foobar.com:12345', null);");
-shouldThrow("new webkitPeerConnection00('STUN foobar.com:12345', undefined);");
-shouldThrow("new webkitPeerConnection00('STUN foobar.com:12345', 'STUN');");
-
 shouldNotThrow("new SessionDescription('');");
 shouldNotThrow("new IceCandidate('', '');");
+shouldNotThrow("new webkitRTCPeerConnection({iceServers:[{uri:'stun://foobar.com:12345'}]}, null);");
+shouldNotThrow("new RTCSessionDescription({type:'offer',sdp:'foobar'});");
+shouldNotThrow("new RTCIceCandidate({candidate:'foo'});");
 
 window.jsTestIsAsync = false;
 </script>

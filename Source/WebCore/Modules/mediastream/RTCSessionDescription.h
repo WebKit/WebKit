@@ -49,10 +49,10 @@ public:
     static PassRefPtr<RTCSessionDescription> create(PassRefPtr<RTCSessionDescriptionDescriptor>);
     virtual ~RTCSessionDescription();
 
-    const String& type();
+    const String& type() const;
     void setType(const String&, ExceptionCode&);
 
-    const String& sdp();
+    const String& sdp() const;
     void setSdp(const String&, ExceptionCode&);
 
     RTCSessionDescriptionDescriptor* descriptor();

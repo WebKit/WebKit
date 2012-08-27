@@ -16,7 +16,8 @@ shouldNotThrow("sessionDescription = new RTCSessionDescription(initializer);");
 shouldBe('sessionDescription.type', '"offer"');
 shouldBe('sessionDescription.sdp', '"foobar"');
 
-initializer = JSON.parse(JSON.stringify(sessionDescription));
+shouldNotThrow('initializer = JSON.parse(JSON.stringify(sessionDescription));');
+
 shouldNotThrow("sessionDescription = new RTCSessionDescription(initializer);");
 shouldBe('sessionDescription.type', '"offer"');
 shouldBe('sessionDescription.sdp', '"foobar"');
