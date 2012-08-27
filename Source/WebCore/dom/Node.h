@@ -355,6 +355,7 @@ public:
         DoNotSetAttached
     };
     void lazyAttach(ShouldSetAttached = SetAttached);
+    void lazyReattach(ShouldSetAttached = SetAttached);
 
     virtual void setFocus(bool = true);
     virtual void setActive(bool f = true, bool /*pause*/ = false) { setFlag(f, IsActiveFlag); }
@@ -874,6 +875,13 @@ inline void Node::reattachIfAttached()
 {
     if (attached())
         reattach();
+}
+
+inline void Node::lazyReattach(ShouldSetAttached shouldSetAttached)
+{
+    if (attached())
+        detach();
+    lazyAttach(shouldSetAttached);
 }
 
 } //namespace

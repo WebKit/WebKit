@@ -83,8 +83,11 @@ void ElementShadow::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> sh
     invalidateDistribution(shadowHost);
     ChildNodeInsertionNotifier(shadowHost).notify(shadowRoot.get());
 
-    if (shadowHost->attached() && !shadowRoot->attached())
-        shadowRoot->attach();
+    // FIXME(94905): ShadowHost should be reattached during recalcStyle.
+    // Set some flag here and recreate shadow hosts' renderer in
+    // Element::recalcStyle.
+    if (shadowHost->attached())
+        shadowHost->lazyReattach();
 
     InspectorInstrumentation::didPushShadowRoot(shadowHost, shadowRoot.get());
 }
@@ -205,8 +208,9 @@ void ElementShadow::invalidateDistribution(Element* host)
     bool needsReattach = needsInvalidation ? m_distributor.invalidate(host) : false;
 
     if (needsReattach && host->attached()) {
-        host->detach();
-        host->lazyAttach();
+        for (Node* n = host->firstChild(); n; n = n->nextSibling())
+            n->lazyReattach();
+        host->setNeedsStyleRecalc();
     }
 
     if (needsInvalidation)
