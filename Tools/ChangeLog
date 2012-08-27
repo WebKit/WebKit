@@ -1,3 +1,15 @@
+2012-08-24  James Robinson  <jamesr@chromium.org>
+
+        WebGL should not flip textures on presentation if contents are unchanged
+        https://bugs.webkit.org/show_bug.cgi?id=94961
+
+        Reviewed by Kenneth Russell.
+
+        Run some compositing webgl tests in threaded mode to catch regressions specific to that mode.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.virtual_test_suites):
+
 2012-08-27  Gavin Peters  <gavinp@chromium.org>
 
         [webkit-patch] Don't crash chrome-channels command when a previously unknown platform shows up.

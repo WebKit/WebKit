@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css" media="screen">
+canvas {
+    margin: 20px;
+    width: 200px;
+    height: 200px;
+    padding: 0 0;
+}
+.border {
+    border: 1px solid black;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitWebGLEnabled", "1");
+
+function initWebGL()
+{
+    var canvas = document.getElementById('canvas');
+    var gl = canvas.getContext("experimental-webgl", {'antialias': false});
+    if (!gl) {
+        alert("No WebGL context found");
+        return null;
+    }
+
+    return gl;
+}
+
+var gl = null;
+
+function init()
+{
+  gl = initWebGL();
+  gl.viewport(0, 0, 200, 200);
+  gl.clearColor(1, 0, 0, 1); // red
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  if (window.testRunner) {
+      testRunner.display();
+      testRunner.dumpAsText(true);
+      drawGreen();
+  } else
+      window.setTimeout(drawGreen, 50);
+}
+
+function drawGreen()
+{
+  gl.clearColor(0, 1, 0, 1); // green
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  if (window.testRunner) {
+      testRunner.display();
+      testRunner.display();
+  } else
+      window.setInterval(function() {
+        document.getElementById('canvas').classList.toggle('border');
+      }, 50);
+}
+
+</script>
+</head>
+<body onload="init()">
+<canvas id="canvas" width="200" height="200"></canvas>
+</body>
+</html>

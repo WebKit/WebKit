@@ -367,6 +367,9 @@ class ChromiumPort(Port):
             VirtualTestSuite('platform/chromium/virtual/threaded/compositing/visibility',
                              'compositing/visibility',
                              ['--enable-threaded-compositing']),
+            VirtualTestSuite('platform/chromium/virtual/threaded/compositing/webgl',
+                             'compositing/webgl',
+                             ['--enable-threaded-compositing']),
         ]
 
     #

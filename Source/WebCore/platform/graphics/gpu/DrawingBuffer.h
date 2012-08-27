@@ -124,6 +124,7 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     PlatformLayer* platformLayer();
     void prepareBackBuffer();
+    void markContentsChanged() { m_contentsChanged = true; }
     bool requiresCopyFromBackToFrontBuffer() const;
     unsigned frontColorBuffer() const;
     void paintCompositedResultsToCanvas(ImageBuffer*);
@@ -163,6 +164,9 @@ private:
     // For multisampling
     Platform3DObject m_multisampleFBO;
     Platform3DObject m_multisampleColorBuffer;
+
+    // True if our contents have been modified since the last presentation of this buffer.
+    bool m_contentsChanged;
 
 #if PLATFORM(CHROMIUM)
     OwnPtr<DrawingBufferPrivate> m_private;

@@ -87,6 +87,7 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
     , m_stencilBuffer(0)
     , m_multisampleFBO(0)
     , m_multisampleColorBuffer(0)
+    , m_contentsChanged(true)
 {
     initialize(size);
 }
@@ -119,6 +120,9 @@ void DrawingBuffer::initialize(const IntSize& size)
 #if USE(ACCELERATED_COMPOSITING)
 void DrawingBuffer::prepareBackBuffer()
 {
+    if (!m_contentsChanged)
+        return;
+
     m_context->makeContextCurrent();
 
     if (multisample())
@@ -138,6 +142,8 @@ void DrawingBuffer::prepareBackBuffer()
         bind();
     else
         restoreFramebufferBinding();
+
+    m_contentsChanged = false;
 }
 
 bool DrawingBuffer::requiresCopyFromBackToFrontBuffer() const

@@ -602,6 +602,9 @@ void WebGLRenderingContext::markContextChanged()
 
     m_context->markContextChanged();
 
+    if (m_drawingBuffer)
+        m_drawingBuffer->markContentsChanged();
+
     m_layerCleared = false;
 #if USE(ACCELERATED_COMPOSITING)
     RenderBox* renderBox = canvas()->renderBox();
