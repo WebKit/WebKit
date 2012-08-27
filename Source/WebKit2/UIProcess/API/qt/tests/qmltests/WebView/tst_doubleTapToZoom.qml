@@ -64,8 +64,8 @@ Item {
             var result;
 
              webView.experimental.evaluateJavaScript(
-                "document.getElementById('" + id + "').getBoundingClientRect();",
-                function(rect) { webView.resultReceived(); result = rect });
+                "JSON.stringify(document.getElementById('" + id + "').getBoundingClientRect());",
+                function(rect) { webView.resultReceived(); result = JSON.parse(rect); });
             resultSpy.wait();
             return result;
         }

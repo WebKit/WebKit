@@ -1,5 +1,16 @@
 2012-08-27  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt][WK2] REGRESSION(r126067): It made qmltests::DoubleTapToZoom::test_basic() fail
+        https://bugs.webkit.org/show_bug.cgi?id=94949
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use JSON to serialize the client rect for the async evaluateJavaScript call.
+
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_doubleTapToZoom.qml:
+
+2012-08-27  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Fix failing QML2 auto tests due to conflicting signal declaration
         https://bugs.webkit.org/show_bug.cgi?id=95059
 
