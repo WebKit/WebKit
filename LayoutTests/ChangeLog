@@ -1,3 +1,15 @@
+2012-08-27  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Skip several compositing/overflow test cases
+        https://bugs.webkit.org/show_bug.cgi?id=95047
+
+        Unreviewed EFL gardening. Skip several compositing/overflow
+        test cases which are failing due to incomplete support
+        for accelerated compositing or missing support for
+        layerTreeAsText().
+
+        * platform/efl/TestExpectations:
+
 2012-08-27  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Unreviewed gardening.
