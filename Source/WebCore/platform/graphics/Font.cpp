@@ -207,7 +207,7 @@ float Font::width(const TextRun& run, int& charsConsumed, String& glyphName) con
     return floatWidthForComplexText(run);
 }
 
-#if !PLATFORM(MAC)
+#if !(PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN)))
 
 PassOwnPtr<TextLayout> Font::createLayout(RenderText*, float, bool) const
 {
