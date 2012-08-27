@@ -63,6 +63,11 @@ void GraphicsSurface::copyFromFramebuffer(uint32_t fbo, const IntRect& sourceRec
     platformCopyFromFramebuffer(fbo, sourceRect);
 }
 
+void GraphicsSurface::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
+{
+    platformPaintToTextureMapper(textureMapper, targetRect, transform, opacity, mask);
+}
+
 uint32_t GraphicsSurface::frontBuffer()
 {
     return platformFrontBuffer();

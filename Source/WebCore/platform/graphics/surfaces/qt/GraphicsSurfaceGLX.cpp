@@ -22,6 +22,7 @@
 
 #if USE(GRAPHICS_SURFACE)
 
+#include "TextureMapperGL.h"
 // Qt headers must be included before glx headers.
 #include <QCoreApplication>
 #include <QOpenGLContext>
@@ -275,6 +276,14 @@ void GraphicsSurface::platformCopyFromFramebuffer(uint32_t originFbo, const IntR
     pGlBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
     pGlBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
     glPopAttrib();
+}
+
+
+void GraphicsSurface::platformPaintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
+{
+    TransformationMatrix adjustedTransform = transform;
+    adjustedTransform.multiply(TransformationMatrix::rectToRect(FloatRect(FloatPoint::zero(), m_size), targetRect));
+    static_cast<TextureMapperGL*>(textureMapper)->drawTexture(platformGetTextureID(), 0, m_size, targetRect, adjustedTransform, opacity, mask);
 }
 
 uint32_t GraphicsSurface::platformFrontBuffer() const

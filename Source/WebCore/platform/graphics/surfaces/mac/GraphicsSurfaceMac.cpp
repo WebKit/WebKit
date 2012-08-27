@@ -21,6 +21,7 @@
 #include "GraphicsSurface.h"
 
 #if USE(GRAPHICS_SURFACE) && OS(DARWIN)
+#include "TextureMapperGL.h"
 #include <CFNumber.h>
 #include <CGLContext.h>
 #include <CGLCurrent.h>
@@ -239,6 +240,13 @@ void GraphicsSurface::platformCopyFromFramebuffer(uint32_t originFbo, const IntR
 
     // Flushing the gl command buffer is necessary to ensure the texture has correctly been bound to the IOSurface.
     glFlush();
+}
+
+void GraphicsSurface::platformPaintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
+{
+    TransformationMatrix adjustedTransform = transform;
+    adjustedTransform.multiply(TransformationMatrix::rectToRect(FloatRect(FloatPoint::zero(), m_size), targetRect));
+    static_cast<TextureMapperGL*>(textureMapper)->drawTextureRectangleARB(m_private->frontBufferTextureID(), 0, m_size, targetRect, adjustedTransform, opacity, mask);
 }
 
 uint32_t GraphicsSurface::platformFrontBuffer() const

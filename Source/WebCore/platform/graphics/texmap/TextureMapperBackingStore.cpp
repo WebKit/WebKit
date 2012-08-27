@@ -58,14 +58,7 @@ PassRefPtr<BitmapTexture> TextureMapperSurfaceBackingStore::texture() const
 
 void TextureMapperSurfaceBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
 {
-    TransformationMatrix adjustedTransform = transform;
-    adjustedTransform.multiply(TransformationMatrix::rectToRect(FloatRect(FloatPoint::zero(), m_graphicsSurfaceSize), targetRect));
-#if OS(DARWIN)
-    // This is specific to the Mac implementation of GraphicsSurface. IOSurface requires GL_TEXTURE_RECTANGLE_ARB to be used.
-    static_cast<TextureMapperGL*>(textureMapper)->drawTextureRectangleARB(m_graphicsSurface->getTextureID(), 0, m_graphicsSurfaceSize, targetRect, adjustedTransform, opacity, mask);
-#else
-    static_cast<TextureMapperGL*>(textureMapper)->drawTexture(m_graphicsSurface->getTextureID(), 0, m_graphicsSurfaceSize, targetRect, adjustedTransform, opacity, mask);
-#endif
+    m_graphicsSurface->paintToTextureMapper(textureMapper, targetRect, transform, opacity, mask);
 }
 
 void TextureMapperSurfaceBackingStore::setSurface(PassRefPtr<GraphicsSurface> surface)

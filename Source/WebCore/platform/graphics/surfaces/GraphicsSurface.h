@@ -38,6 +38,8 @@ typedef uint32_t PlatformGraphicsSurface;
 
 namespace WebCore {
 
+class BitmapTexture;
+class TextureMapper;
 struct GraphicsSurfacePrivate;
 
 class GraphicsSurface : public RefCounted<GraphicsSurface> {
@@ -70,6 +72,7 @@ public:
     static PassRefPtr<GraphicsSurface> create(const IntSize&, Flags, uint64_t token);
     void copyToGLTexture(uint32_t target, uint32_t texture, const IntRect& targetRect, const IntPoint& sourceOffset);
     void copyFromFramebuffer(uint32_t fbo, const IntRect& sourceRect);
+    void paintToTextureMapper(TextureMapper*, const FloatRect& targetRect, const TransformationMatrix&, float opacity, BitmapTexture* mask);
     uint32_t frontBuffer();
     uint32_t swapBuffers();
     uint64_t exportToken();
@@ -89,6 +92,7 @@ protected:
     void platformUnlock();
     void platformCopyToGLTexture(uint32_t target, uint32_t texture, const IntRect&, const IntPoint&);
     void platformCopyFromFramebuffer(uint32_t fbo, const IntRect& sourceRect);
+    void platformPaintToTextureMapper(TextureMapper*, const FloatRect& targetRect, const TransformationMatrix&, float opacity, BitmapTexture* mask);
     uint32_t platformFrontBuffer() const;
     uint32_t platformSwapBuffers();
 
