@@ -55,7 +55,7 @@ public:
         static bool decode(CoreIPC::ArgumentDecoder*, Handle&);
 
 #if USE(GRAPHICS_SURFACE)
-        uint32_t graphicsSurfaceToken() const { return m_graphicsSurfaceToken; }
+        uint64_t graphicsSurfaceToken() const { return m_graphicsSurfaceToken; }
 #endif
 
     private:

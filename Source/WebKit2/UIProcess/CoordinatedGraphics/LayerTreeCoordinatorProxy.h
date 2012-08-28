@@ -88,7 +88,7 @@ protected:
     float m_lastSentScale;
     WebCore::FloatPoint m_lastSentTrajectoryVector;
 #if USE(GRAPHICS_SURFACE)
-    HashMap<uint32_t, RefPtr<ShareableSurface> > m_surfaces;
+    HashMap<uint64_t, RefPtr<ShareableSurface> > m_surfaces;
 #endif
 };
 
