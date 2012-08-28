@@ -374,7 +374,6 @@ http/tests/history/back-with-fragment-change.php
 http/tests/loading/bad-scheme-subframe.html
 http/tests/media/video-play-stall-seek.html
 http/tests/media/video-play-stall.html
-http/tests/misc/acid3.html
 http/tests/misc/policy-delegate-called-twice.html
 http/tests/misc/redirect-to-external-url.html
 http/tests/multipart/policy-ignore-crash.php

@@ -1,5 +1,19 @@
 2012-08-28  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Unskip http/tests/misc/acid3.html test case
+        https://bugs.webkit.org/show_bug.cgi?id=95201
+
+        Unreviewed EFL gardening.
+
+        Unskip http/tests/misc/acid3.html since it is
+        passing consistently for EFL port.
+
+        * platform/efl/Skipped:
+        * platform/efl/http/tests/misc/acid3-expected.png: Added.
+        * platform/efl/http/tests/misc/acid3-expected.txt: Added.
+
+2012-08-28  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Update TestExpectations for fast/canvas/canvas*-shadow.html tests
         https://bugs.webkit.org/show_bug.cgi?id=95196
 
