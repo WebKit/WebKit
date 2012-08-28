@@ -22,6 +22,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+ 
+#ifndef WebTileCacheLayer_h
+#define WebTileCacheLayer_h
 
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/OwnPtr.h>
@@ -41,3 +44,5 @@ namespace WebCore {
 - (void)invalidate;
 
 @end
+
+#endif // WebTileCacheLayer_h
