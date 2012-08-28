@@ -1,3 +1,15 @@
+2012-08-28  Kangil Han  <kangil.han@samsung.com>
+
+        [WK2] SVG animation pause API missing
+        https://bugs.webkit.org/show_bug.cgi?id=63396
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        SVG animation pause API has been replaced by manual call.
+        Therefore, it is not needed anymore.
+
+        * platform/wk2/Skipped:
+
 2012-08-28  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Implement WebPopupMenuProxyEfl to support <select>

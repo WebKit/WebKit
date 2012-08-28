@@ -101,93 +101,8 @@ fast/sub-pixel/size-of-box-with-zoom.html
 fast/sub-pixel/table-rows-no-gaps.html
 fast/sub-pixel/sub-pixel-accumulates-to-layers.html
 
-# CONSOLE MESSAGE: line 0: SVG animation pause API missing!
-# [WK2] SVG animation pause API missing
-# https://bugs.webkit.org/show_bug.cgi?id=63396
-svg/animations/animVal-basics.html
-svg/animations/animate-calcMode-spline-by.html
-svg/animations/animate-calcMode-spline-from-by.html
-svg/animations/animate-calcMode-spline-from-to.html
-svg/animations/animate-calcMode-spline-to.html
-svg/animations/animate-calcMode-spline-values.html
-svg/animations/animate-color-calcMode-discrete.html
-svg/animations/animate-color-fill-currentColor.html
-svg/animations/animate-color-fill-from-by.html
-svg/animations/animate-color-rgba-calcMode-discrete.html
-svg/animations/animate-color-transparent.html
-svg/animations/animate-currentColor.html
-svg/animations/animate-dynamic-update-attributeName.html
-svg/animations/animate-end-attribute.html
-svg/animations/animate-endElement-beginElement.html
-svg/animations/animate-from-to-keyTimes.html
-svg/animations/animate-gradient-transform.html
-svg/animations/animate-inherit-css-property.html
-svg/animations/animate-insert-begin.html
-svg/animations/animate-insert-no-begin.html
-svg/animations/animate-keySplines.html
-svg/animations/animate-mpath-insert.html
-svg/animations/animate-number-calcMode-discrete.html
-svg/animations/animate-number-calcMode-discrete-keyTimes.html
-svg/animations/animate-path-animation-Cc-Ss.html
-svg/animations/animate-path-animation-Ll-Vv-Hh.html
-svg/animations/animate-path-animation-Qq-Tt.html
-svg/animations/animate-path-animation-cC-sS-inverse.html
-svg/animations/animate-path-animation-lL-vV-hH-inverse.html
-svg/animations/animate-path-animation-qQ-tT-inverse.html
-svg/animations/animate-path-nested-transforms.html
-svg/animations/animate-path-to-animation.html
-svg/animations/animate-text-nested-transforms.html
-svg/animations/animateTransform-pattern-transform.html
-svg/animations/svgangle-animation-deg-to-grad.html
-svg/animations/svgangle-animation-deg-to-rad.html
-svg/animations/svgangle-animation-grad-to-deg.html
-svg/animations/svgangle-animation-grad-to-rad.html
-svg/animations/svgangle-animation-rad-to-deg.html
-svg/animations/svgangle-animation-rad-to-grad.html
-svg/animations/svgboolean-animation-1.html
-svg/animations/svginteger-animation-1.html
-svg/animations/svglength-animation-LengthModeHeight.html
-svg/animations/svglength-animation-LengthModeOther.html
-svg/animations/svglength-animation-LengthModeWidth.html
-svg/animations/svglength-animation-invalid-value-1.html
-svg/animations/svglength-animation-invalid-value-2.html
-svg/animations/svglength-animation-invalid-value-3.html
-svg/animations/svglength-animation-number-to-number.html
-svg/animations/svglength-animation-px-to-cm.html
-svg/animations/svglength-animation-px-to-ems.html
-svg/animations/svglength-animation-px-to-exs.html
-svg/animations/svglength-animation-px-to-in.html
-svg/animations/svglength-animation-px-to-number.html
-svg/animations/svglength-animation-px-to-pc.html
-svg/animations/svglength-animation-px-to-percentage.html
-svg/animations/svglength-animation-px-to-pt.html
-svg/animations/svglength-animation-px-to-px.html
-svg/animations/svglength-animation-unitType.html
-svg/animations/svglength-animation-values.html
-svg/animations/svglengthlist-animation-1.html
-svg/animations/svglengthlist-animation-2.html
-svg/animations/svglengthlist-animation-3.html
-svg/animations/svglengthlist-animation-4.html
-svg/animations/svglengthlist-animation-5.html
-svg/animations/svgnumber-animation-1.html
-svg/animations/svgnumber-animation-2.html
-svg/animations/svgnumber-animation-3.html
-svg/animations/svgnumberlist-animation-1.html
-svg/animations/svgnumberlist-animation-2.html
-svg/animations/svgnumberoptionalnumber-animation-1.html
-svg/animations/svgnumberoptionalnumber-animation-2.html
-svg/animations/svgnumberoptionalnumber-animation-3.html
-svg/animations/svgnumberoptionalnumber-animation-4.html
-svg/animations/svgpath-animation-1.html
-svg/animations/svgpointlist-animation-1.html
-svg/animations/svgpointlist-animation-2.html
-svg/animations/svgPreserveAspectRatio-animation-1.html
-svg/animations/svgrect-animation-1.html
-svg/animations/svgrect-animation-2.html
-svg/animations/svgtransform-animation-1.html
-svg/animations/svgtransform-animation-discrete.html
-svg/animations/svgstring-animation-fallback-to-discrete.html
-svg/text/select-text-svgfont.html
+# [WK2][WTR] Rebaseline newly added SVG text test cases
+# https://bugs.webkit.org/show_bug.cgi?id=95190
 svg/text/select-textLength-spacing-squeeze-1.svg
 svg/text/select-textLength-spacing-squeeze-2.svg
 svg/text/select-textLength-spacing-squeeze-3.svg
@@ -213,6 +128,9 @@ svg/text/select-x-list-with-tspans-2.svg
 svg/text/select-x-list-with-tspans-3.svg
 svg/text/select-x-list-with-tspans-4.svg
 svg/text/selection-doubleclick.svg
+# [WK2][WTR] svg/animations/animate-text-nested-transforms.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=95191
+svg/animations/animate-text-nested-transforms.html
 
 # WebKit2 needs layoutTestController.overridePreference
 # <https://bugs.webkit.org/show_bug.cgi?id=42197>
