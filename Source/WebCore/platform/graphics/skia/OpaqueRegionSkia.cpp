@@ -182,6 +182,10 @@ void OpaqueRegionSkia::pushCanvasLayer(const SkPaint* paint)
 
 void OpaqueRegionSkia::popCanvasLayer(const PlatformContextSkia* context)
 {
+    ASSERT(!m_canvasLayerStack.isEmpty());
+    if (m_canvasLayerStack.isEmpty())
+        return;
+
     const CanvasLayerState& canvasLayer = m_canvasLayerStack.last();
     SkRect layerOpaqueRect = canvasLayer.opaqueRect;
     SkPaint layerPaint = canvasLayer.paint;
