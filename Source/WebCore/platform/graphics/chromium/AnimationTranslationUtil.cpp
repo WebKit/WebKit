@@ -113,6 +113,8 @@ WebTransformOperations toWebTransformOperations(const TransformOperations& trans
             break;
         }
         case TransformOperation::IDENTITY:
+            webTransformOperations.appendIdentity();
+            break;
         case TransformOperation::NONE:
             // Do nothing.
             break;
@@ -145,51 +147,9 @@ bool isRotationType(TransformOperation::OperationType transformType)
         || transformType == TransformOperation::ROTATE_3D;
 }
 
-bool causesRotationOfAtLeast180Degrees(const TransformAnimationValue* value, const TransformAnimationValue* lastValue)
-{
-    if (!lastValue)
-        return false;
-
-    const TransformOperations& operations = *value->value();
-    const TransformOperations& lastOperations = *lastValue->value();
-
-    // We'll be doing matrix interpolation in this case. No risk of incorrect rotations here.
-    if (operations.size() && lastOperations.size() && !operations.operationsMatch(lastOperations))
-        return false;
-
-    size_t numOperations = max(operations.size(), lastOperations.size());
-    for (size_t i = 0; i < numOperations; ++i) {
-        float angle = 0;
-        if (i < operations.size()) {
-            if (!isRotationType(operations.operations()[i]->getOperationType()))
-                continue;
-
-            RotateTransformOperation* rotation = static_cast<RotateTransformOperation*>(operations.operations()[i].get());
-            angle = rotation->angle();
-        }
-
-        float lastAngle = 0;
-        if (i < lastOperations.size()) {
-            if (!isRotationType(lastOperations.operations()[i]->getOperationType()))
-                continue;
-
-            RotateTransformOperation* lastRotation = static_cast<RotateTransformOperation*>(lastOperations.operations()[i].get());
-            lastAngle = lastRotation->angle();
-        }
-
-        if (fabs(angle - lastAngle) >= 180)
-            return true;
-    }
-
-    return false;
-}
-
 template <>
 bool appendKeyframeWithStandardTimingFunction<TransformAnimationValue, WebTransformKeyframe, WebTransformAnimationCurve>(WebTransformAnimationCurve* curve, double keyTime, const TransformAnimationValue* value, const TransformAnimationValue* lastValue, WebKit::WebAnimationCurve::TimingFunctionType timingFunctionType, const FloatSize& boxSize)
 {
-    if (causesRotationOfAtLeast180Degrees(value, lastValue))
-        return false;
-
     WebTransformOperations operations = toWebTransformOperations(*value->value(), boxSize);
     if (operations.apply().isInvertible()) {
         curve->add(WebTransformKeyframe(keyTime, operations), timingFunctionType);
@@ -201,9 +161,6 @@ bool appendKeyframeWithStandardTimingFunction<TransformAnimationValue, WebTransf
 template <>
 bool appendKeyframeWithCustomBezierTimingFunction<TransformAnimationValue, WebTransformKeyframe, WebTransformAnimationCurve>(WebTransformAnimationCurve* curve, double keyTime, const TransformAnimationValue* value, const TransformAnimationValue* lastValue, double x1, double y1, double x2, double y2, const FloatSize& boxSize)
 {
-    if (causesRotationOfAtLeast180Degrees(value, lastValue))
-        return false;
-
     WebTransformOperations operations = toWebTransformOperations(*value->value(), boxSize);
     if (operations.apply().isInvertible()) {
         curve->add(WebTransformKeyframe(keyTime, operations), x1, y1, x2, y2);

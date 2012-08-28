@@ -1,3 +1,16 @@
+2012-08-27  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Should accelerate rotations of >= 180 degrees
+        https://bugs.webkit.org/show_bug.cgi?id=94860
+
+        Reviewed by James Robinson.
+
+        When generalizing the keyframe interpolation, it became useful to append an identity transform operation,
+        and to ask a WebTransformOperations object if it isIdentity().
+
+        * chromium/public/WebTransformOperations.h:
+        (WebTransformOperations):
+
 2012-08-24  James Robinson  <jamesr@chromium.org>
 
         [chromium] Clean up dependencies of WebScrollbar and WebScrollbarLayer

@@ -74,6 +74,9 @@ public:
     WEBKIT_EXPORT void appendSkew(double x, double y);
     WEBKIT_EXPORT void appendPerspective(double depth);
     WEBKIT_EXPORT void appendMatrix(const WebTransformationMatrix&);
+    WEBKIT_EXPORT void appendIdentity();
+
+    WEBKIT_EXPORT bool isIdentity() const;
 
 private:
     WEBKIT_EXPORT void reset();

@@ -35,6 +35,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
+using namespace std;
 using namespace WebKit;
 
 TEST(WebTransformOperationTest, transformTypesAreUnique)
@@ -42,19 +43,19 @@ TEST(WebTransformOperationTest, transformTypesAreUnique)
     Vector<OwnPtr<WebTransformOperations> > transforms;
 
     WebTransformOperations* toAdd = new WebTransformOperations();
-    toAdd->appendTranslate(0, 0, 0);
+    toAdd->appendTranslate(1, 0, 0);
     transforms.append(adoptPtr(toAdd));
 
     toAdd = new WebTransformOperations();
-    toAdd->appendRotate(0, 0, 1, 0);
+    toAdd->appendRotate(0, 0, 1, 2);
     transforms.append(adoptPtr(toAdd));
 
     toAdd = new WebTransformOperations();
-    toAdd->appendScale(1, 1, 1);
+    toAdd->appendScale(2, 2, 2);
     transforms.append(adoptPtr(toAdd));
 
     toAdd = new WebTransformOperations();
-    toAdd->appendSkew(0, 0);
+    toAdd->appendSkew(1, 0);
     transforms.append(adoptPtr(toAdd));
 
     toAdd = new WebTransformOperations();
@@ -72,19 +73,19 @@ TEST(WebTransformOperationTest, transformTypesAreUnique)
 TEST(WebTransformOperationTest, matchTypesSameLength)
 {
     WebTransformOperations translates;
-    translates.appendTranslate(0, 0, 0);
-    translates.appendTranslate(0, 0, 0);
-    translates.appendTranslate(0, 0, 0);
+    translates.appendTranslate(1, 0, 0);
+    translates.appendTranslate(1, 0, 0);
+    translates.appendTranslate(1, 0, 0);
 
     WebTransformOperations skews;
-    skews.appendSkew(0, 0);
-    skews.appendSkew(0, 0);
-    skews.appendSkew(0, 0);
+    skews.appendSkew(0, 2);
+    skews.appendSkew(0, 2);
+    skews.appendSkew(0, 2);
 
     WebTransformOperations translates2;
-    translates2.appendTranslate(0, 0, 0);
-    translates2.appendTranslate(0, 0, 0);
-    translates2.appendTranslate(0, 0, 0);
+    translates2.appendTranslate(0, 2, 0);
+    translates2.appendTranslate(0, 2, 0);
+    translates2.appendTranslate(0, 2, 0);
 
     WebTransformOperations translates3 = translates2;
 
@@ -96,20 +97,82 @@ TEST(WebTransformOperationTest, matchTypesSameLength)
 TEST(WebTransformOperationTest, matchTypesDifferentLength)
 {
     WebTransformOperations translates;
-    translates.appendTranslate(0, 0, 0);
-    translates.appendTranslate(0, 0, 0);
-    translates.appendTranslate(0, 0, 0);
+    translates.appendTranslate(1, 0, 0);
+    translates.appendTranslate(1, 0, 0);
+    translates.appendTranslate(1, 0, 0);
 
     WebTransformOperations skews;
-    skews.appendSkew(0, 0);
-    skews.appendSkew(0, 0);
+    skews.appendSkew(2, 0);
+    skews.appendSkew(2, 0);
 
     WebTransformOperations translates2;
-    translates2.appendTranslate(0, 0, 0);
-    translates2.appendTranslate(0, 0, 0);
+    translates2.appendTranslate(0, 2, 0);
+    translates2.appendTranslate(0, 2, 0);
 
     EXPECT_FALSE(translates.matchesTypes(skews));
     EXPECT_FALSE(translates.matchesTypes(translates2));
+}
+
+void getIdentityOperations(Vector<OwnPtr<WebTransformOperations> >* operations)
+{
+    WebTransformOperations* toAdd = new WebTransformOperations();
+    operations->append(adoptPtr(toAdd));
+
+    toAdd = new WebTransformOperations();
+    toAdd->appendTranslate(0, 0, 0);
+    operations->append(adoptPtr(toAdd));
+
+    toAdd = new WebTransformOperations();
+    toAdd->appendTranslate(0, 0, 0);
+    toAdd->appendTranslate(0, 0, 0);
+    operations->append(adoptPtr(toAdd));
+
+    toAdd = new WebTransformOperations();
+    toAdd->appendScale(1, 1, 1);
+    operations->append(adoptPtr(toAdd));
+
+    toAdd = new WebTransformOperations();
+    toAdd->appendScale(1, 1, 1);
+    toAdd->appendScale(1, 1, 1);
+    operations->append(adoptPtr(toAdd));
+
+    toAdd = new WebTransformOperations();
+    toAdd->appendSkew(0, 0);
+    operations->append(adoptPtr(toAdd));
+
+    toAdd = new WebTransformOperations();
+    toAdd->appendSkew(0, 0);
+    toAdd->appendSkew(0, 0);
+    operations->append(adoptPtr(toAdd));
+
+    toAdd = new WebTransformOperations();
+    toAdd->appendRotate(0, 0, 1, 0);
+    operations->append(adoptPtr(toAdd));
+
+    toAdd = new WebTransformOperations();
+    toAdd->appendRotate(0, 0, 1, 0);
+    toAdd->appendRotate(0, 0, 1, 0);
+    operations->append(adoptPtr(toAdd));
+
+    toAdd = new WebTransformOperations();
+    toAdd->appendMatrix(WebTransformationMatrix());
+    operations->append(adoptPtr(toAdd));
+
+    toAdd = new WebTransformOperations();
+    toAdd->appendMatrix(WebTransformationMatrix());
+    toAdd->appendMatrix(WebTransformationMatrix());
+    operations->append(adoptPtr(toAdd));
+}
+
+TEST(WebTransformOperationTest, identityAlwaysMatches)
+{
+    Vector<OwnPtr<WebTransformOperations> > operations;
+    getIdentityOperations(&operations);
+
+    for (size_t i = 0; i < operations.size(); ++i) {
+        for (size_t j = 0; j < operations.size(); ++j)
+            EXPECT_TRUE(operations[i]->matchesTypes(*operations[j]));
+    }
 }
 
 TEST(WebTransformOperationTest, applyTranslate)
@@ -339,3 +402,238 @@ TEST(WebTransformOperationTest, blendWhenTypesDoNotMatch)
 
     EXPECT_TRANSFORMATION_MATRIX_EQ(expected, operationsTo.blend(operationsFrom, progress));
 }
+
+TEST(WebTransformOperationTest, largeRotationsWithSameAxis)
+{
+    WebTransformOperations operationsFrom;
+    operationsFrom.appendRotate(0, 0, 1, 0);
+
+    WebTransformOperations operationsTo;
+    operationsTo.appendRotate(0, 0, 2, 360);
+
+    double progress = 0.5;
+
+    WebTransformationMatrix expected;
+    expected.rotate3d(0, 0, 1, 180);
+
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expected, operationsTo.blend(operationsFrom, progress));
+}
+
+TEST(WebTransformOperationTest, largeRotationsWithSameAxisInDifferentDirection)
+{
+    WebTransformOperations operationsFrom;
+    operationsFrom.appendRotate(0, 0, 1, 180);
+
+    WebTransformOperations operationsTo;
+    operationsTo.appendRotate(0, 0, -1, 180);
+
+    double progress = 0.5;
+
+    WebTransformationMatrix expected;
+
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expected, operationsTo.blend(operationsFrom, progress));
+}
+
+TEST(WebTransformOperationTest, largeRotationsWithDifferentAxes)
+{
+    WebTransformOperations operationsFrom;
+    operationsFrom.appendRotate(0, 0, 1, 180);
+
+    WebTransformOperations operationsTo;
+    operationsTo.appendRotate(0, 1, 0, 180);
+
+    double progress = 0.5;
+    WebTransformationMatrix matrixFrom;
+    matrixFrom.rotate3d(0, 0, 1, 180);
+
+    WebTransformationMatrix matrixTo;
+    matrixTo.rotate3d(0, 1, 0, 180);
+
+    WebTransformationMatrix expected = matrixTo;
+    expected.blend(matrixFrom, progress);
+
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expected, operationsTo.blend(operationsFrom, progress));
+}
+
+TEST(WebTransformOperationTest, blendRotationFromIdentity)
+{
+    Vector<OwnPtr<WebTransformOperations> > identityOperations;
+    getIdentityOperations(&identityOperations);
+
+    for (size_t i = 0; i < identityOperations.size(); ++i) {
+        WebTransformOperations operations;
+        operations.appendRotate(0, 0, 1, 360);
+
+        double progress = 0.5;
+
+        WebTransformationMatrix expected;
+        expected.rotate3d(0, 0, 1, 180);
+
+        EXPECT_TRANSFORMATION_MATRIX_EQ(expected, operations.blend(*identityOperations[i], progress));
+    }
+}
+
+TEST(WebTransformOperationTest, blendTranslationFromIdentity)
+{
+    Vector<OwnPtr<WebTransformOperations> > identityOperations;
+    getIdentityOperations(&identityOperations);
+
+    for (size_t i = 0; i < identityOperations.size(); ++i) {
+        WebTransformOperations operations;
+        operations.appendTranslate(2, 2, 2);
+
+        double progress = 0.5;
+
+        WebTransformationMatrix expected;
+        expected.translate3d(1, 1, 1);
+
+        EXPECT_TRANSFORMATION_MATRIX_EQ(expected, operations.blend(*identityOperations[i], progress));
+    }
+}
+
+TEST(WebTransformOperationTest, blendScaleFromIdentity)
+{
+    Vector<OwnPtr<WebTransformOperations> > identityOperations;
+    getIdentityOperations(&identityOperations);
+
+    for (size_t i = 0; i < identityOperations.size(); ++i) {
+        WebTransformOperations operations;
+        operations.appendScale(3, 3, 3);
+
+        double progress = 0.5;
+
+        WebTransformationMatrix expected;
+        expected.scale3d(2, 2, 2);
+
+        EXPECT_TRANSFORMATION_MATRIX_EQ(expected, operations.blend(*identityOperations[i], progress));
+    }
+}
+
+TEST(WebTransformOperationTest, blendSkewFromIdentity)
+{
+    Vector<OwnPtr<WebTransformOperations> > identityOperations;
+    getIdentityOperations(&identityOperations);
+
+    for (size_t i = 0; i < identityOperations.size(); ++i) {
+        WebTransformOperations operations;
+        operations.appendSkew(2, 2);
+
+        double progress = 0.5;
+
+        WebTransformationMatrix expected;
+        expected.skewX(1);
+        expected.skewY(1);
+
+        EXPECT_TRANSFORMATION_MATRIX_EQ(expected, operations.blend(*identityOperations[i], progress));
+    }
+}
+
+TEST(WebTransformOperationTest, blendPerspectiveFromIdentity)
+{
+    Vector<OwnPtr<WebTransformOperations> > identityOperations;
+    getIdentityOperations(&identityOperations);
+
+    for (size_t i = 0; i < identityOperations.size(); ++i) {
+        WebTransformOperations operations;
+        operations.appendPerspective(1000);
+
+        double progress = 0.5;
+
+        WebTransformationMatrix expected;
+        expected.applyPerspective(500 + 0.5 * numeric_limits<double>::max());
+
+        EXPECT_TRANSFORMATION_MATRIX_EQ(expected, operations.blend(*identityOperations[i], progress));
+    }
+}
+
+TEST(WebTransformOperationTest, blendRotationToIdentity)
+{
+    Vector<OwnPtr<WebTransformOperations> > identityOperations;
+    getIdentityOperations(&identityOperations);
+
+    for (size_t i = 0; i < identityOperations.size(); ++i) {
+        WebTransformOperations operations;
+        operations.appendRotate(0, 0, 1, 360);
+
+        double progress = 0.5;
+
+        WebTransformationMatrix expected;
+        expected.rotate3d(0, 0, 1, 180);
+
+        EXPECT_TRANSFORMATION_MATRIX_EQ(expected, identityOperations[i]->blend(operations, progress));
+    }
+}
+
+TEST(WebTransformOperationTest, blendTranslationToIdentity)
+{
+    Vector<OwnPtr<WebTransformOperations> > identityOperations;
+    getIdentityOperations(&identityOperations);
+
+    for (size_t i = 0; i < identityOperations.size(); ++i) {
+        WebTransformOperations operations;
+        operations.appendTranslate(2, 2, 2);
+
+        double progress = 0.5;
+
+        WebTransformationMatrix expected;
+        expected.translate3d(1, 1, 1);
+
+        EXPECT_TRANSFORMATION_MATRIX_EQ(expected, identityOperations[i]->blend(operations, progress));
+    }
+}
+
+TEST(WebTransformOperationTest, blendScaleToIdentity)
+{
+    Vector<OwnPtr<WebTransformOperations> > identityOperations;
+    getIdentityOperations(&identityOperations);
+
+    for (size_t i = 0; i < identityOperations.size(); ++i) {
+        WebTransformOperations operations;
+        operations.appendScale(3, 3, 3);
+
+        double progress = 0.5;
+
+        WebTransformationMatrix expected;
+        expected.scale3d(2, 2, 2);
+
+        EXPECT_TRANSFORMATION_MATRIX_EQ(expected, identityOperations[i]->blend(operations, progress));
+    }
+}
+
+TEST(WebTransformOperationTest, blendSkewToIdentity)
+{
+    Vector<OwnPtr<WebTransformOperations> > identityOperations;
+    getIdentityOperations(&identityOperations);
+
+    for (size_t i = 0; i < identityOperations.size(); ++i) {
+        WebTransformOperations operations;
+        operations.appendSkew(2, 2);
+
+        double progress = 0.5;
+
+        WebTransformationMatrix expected;
+        expected.skewX(1);
+        expected.skewY(1);
+
+        EXPECT_TRANSFORMATION_MATRIX_EQ(expected, identityOperations[i]->blend(operations, progress));
+    }
+}
+
+TEST(WebTransformOperationTest, blendPerspectiveToIdentity)
+{
+    Vector<OwnPtr<WebTransformOperations> > identityOperations;
+    getIdentityOperations(&identityOperations);
+
+    for (size_t i = 0; i < identityOperations.size(); ++i) {
+        WebTransformOperations operations;
+        operations.appendPerspective(1000);
+
+        double progress = 0.5;
+
+        WebTransformationMatrix expected;
+        expected.applyPerspective(500 + 0.5 * numeric_limits<double>::max());
+
+        EXPECT_TRANSFORMATION_MATRIX_EQ(expected, identityOperations[i]->blend(operations, progress));
+    }
+}
+

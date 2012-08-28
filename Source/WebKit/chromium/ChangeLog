@@ -1,3 +1,36 @@
+2012-08-27  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Should accelerate rotations of >= 180 degrees
+        https://bugs.webkit.org/show_bug.cgi?id=94860
+
+        Reviewed by James Robinson.
+
+        Added new unit tests:
+          WebTransformOperationTest.transformTypesAreUnique
+          WebTransformOperationTest.matchTypesSameLength
+          WebTransformOperationTest.identityAlwaysMatches
+          WebTransformOperationTest.largeRotationsWithSameAxis
+          WebTransformOperationTest.largeRotationsWithSameAxisInDifferentDirection
+          WebTransformOperationTest.largeRotationsWithDifferentAxes
+          WebTransformOperationTest.blendRotationFromIdentity
+          WebTransformOperationTest.blendTranslationFromIdentity
+          WebTransformOperationTest.blendScaleFromIdentity
+          WebTransformOperationTest.blendSkewFromIdentity
+          WebTransformOperationTest.blendPerspectiveFromIdentity
+          WebTransformOperationTest.blendRotationToIdentity
+          WebTransformOperationTest.blendTranslationToIdentity
+          WebTransformOperationTest.blendScaleToIdentity
+          WebTransformOperationTest.blendSkewToIdentity
+          WebTransformOperationTest.blendPerspectiveToIdentity
+          AnimationTranslationUtilTest.createTransformAnimationWithBigRotation
+          AnimationTranslationUtilTest.createTransformAnimationWithBigRotationAndEmptyTransformOperationList
+
+        * tests/AnimationTranslationUtilTest.cpp:
+        (WebKit::TEST):
+        * tests/WebTransformOperationsTest.cpp:
+        (TEST):
+        (getIdentityOperations):
+
 2012-08-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126836.
