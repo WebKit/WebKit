@@ -91,7 +91,7 @@ void FrameLayers::removeLayerByFrame(Frame* frame)
     ASSERT(frame);
     FrameLayerMap::iterator it = m_frameLayers.find(frame);
     if (it != m_frameLayers.end()) {
-        LayerWebKitThread* layer = it->value;
+        LayerWebKitThread* layer = it->second;
         if (layer->superlayer())
             layer->removeFromSuperlayer();
         m_frameLayers.remove(it);
@@ -104,7 +104,7 @@ void FrameLayers::commitOnWebKitThread(double scale)
     ASSERT(m_rootLayer);
     if (!isRootLayerMainFrameLayer()) {
         for (FrameLayerMap::iterator it = m_frameLayers.begin(); it != m_frameLayers.end(); ++it)
-            it->value->setAbsoluteOffset(frameLayerAbsoluteOffset(it->key));
+            it->second->setAbsoluteOffset(frameLayerAbsoluteOffset(it->first));
     }
     m_rootLayer->commitOnWebKitThread(scale);
 }
@@ -112,7 +112,7 @@ void FrameLayers::commitOnWebKitThread(double scale)
 void FrameLayers::calculateRootLayer()
 {
     if (m_frameLayers.size() == 1 && m_frameLayers.begin()->first == m_pagePrivate->m_mainFrame)
-        m_rootLayer = m_frameLayers.begin()->value;
+        m_rootLayer = m_frameLayers.begin()->second;
     else if (m_rootGraphicsLayer)
         m_rootLayer = m_rootGraphicsLayer->platformLayer();
     else

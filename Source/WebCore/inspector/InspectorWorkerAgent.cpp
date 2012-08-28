@@ -204,9 +204,9 @@ void InspectorWorkerAgent::workerContextTerminated(WorkerContextProxy* proxy)
 {
     m_dedicatedWorkers.remove(proxy);
     for (WorkerChannels::iterator it = m_idToChannel.begin(); it != m_idToChannel.end(); ++it) {
-        if (proxy == it->value->proxy()) {
-            m_inspectorFrontend->worker()->workerTerminated(it->key);
-            delete it->value;
+        if (proxy == it->second->proxy()) {
+            m_inspectorFrontend->worker()->workerTerminated(it->first);
+            delete it->second;
             m_idToChannel.remove(it);
             return;
         }
@@ -216,14 +216,14 @@ void InspectorWorkerAgent::workerContextTerminated(WorkerContextProxy* proxy)
 void InspectorWorkerAgent::createWorkerFrontendChannelsForExistingWorkers()
 {
     for (DedicatedWorkers::iterator it = m_dedicatedWorkers.begin(); it != m_dedicatedWorkers.end(); ++it)
-        createWorkerFrontendChannel(it->key, it->value);
+        createWorkerFrontendChannel(it->first, it->second);
 }
 
 void InspectorWorkerAgent::destroyWorkerFrontendChannels()
 {
     for (WorkerChannels::iterator it = m_idToChannel.begin(); it != m_idToChannel.end(); ++it) {
-        it->value->disconnectFromWorkerContext();
-        delete it->value;
+        it->second->disconnectFromWorkerContext();
+        delete it->second;
     }
     m_idToChannel.clear();
 }

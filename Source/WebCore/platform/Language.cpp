@@ -53,7 +53,7 @@ void languageDidChange()
 {
     ObserverMap::iterator end = observerMap().end();
     for (ObserverMap::iterator iter = observerMap().begin(); iter != end; ++iter)
-        iter->value(iter->key);
+        iter->second(iter->first);
 }
 
 String defaultLanguage()

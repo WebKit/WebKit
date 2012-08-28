@@ -126,7 +126,7 @@ void RunLoop::TimerBase::timerFired(RunLoop* runLoop, uint64_t ID)
         return;
     }
 
-    TimerBase* timer = it->value;
+    TimerBase* timer = it->second;
 
     if (!timer->m_isRepeating) {
         runLoop->m_activeTimers.remove(it);

@@ -50,7 +50,7 @@ NSTextAlternatives* AlternativeTextUIController::AlernativeTextContextController
     HashMapType::const_iterator itr = m_alternativesObjectMap.find(context);
     if (itr == m_alternativesObjectMap.end())
         return NULL;
-    return itr->value.get();
+    return itr->second.get();
 }
 
 void AlternativeTextUIController::AlernativeTextContextController::removeAlternativesForContext(uint64_t context)

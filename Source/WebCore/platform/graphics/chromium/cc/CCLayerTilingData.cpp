@@ -153,8 +153,8 @@ void CCLayerTilingData::setBounds(const IntSize& size)
     contentRectToTileIndices(IntRect(IntPoint(), size), left, top, right, bottom);
     Vector<TileMapKey> invalidTileKeys;
     for (TileMap::const_iterator it = m_tiles.begin(); it != m_tiles.end(); ++it) {
-        if (it->key.first > right || it->key.second > bottom)
-            invalidTileKeys.append(it->key);
+        if (it->first.first > right || it->first.second > bottom)
+            invalidTileKeys.append(it->first);
     }
     for (size_t i = 0; i < invalidTileKeys.size(); ++i)
         m_tiles.remove(invalidTileKeys[i]);

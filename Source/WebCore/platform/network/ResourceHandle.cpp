@@ -71,7 +71,7 @@ PassRefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context, co
     BuiltinResourceHandleConstructorMap::iterator protocolMapItem = builtinResourceHandleConstructorMap().find(request.url().protocol());
 
     if (protocolMapItem != builtinResourceHandleConstructorMap().end())
-        return protocolMapItem->value(request, client);
+        return protocolMapItem->second(request, client);
 
     RefPtr<ResourceHandle> newHandle(adoptRef(new ResourceHandle(request, client, defersLoading, shouldContentSniff)));
 

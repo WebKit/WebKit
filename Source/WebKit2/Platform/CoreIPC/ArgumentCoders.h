@@ -75,8 +75,8 @@ template<typename T, typename U> struct ArgumentCoder<std::pair<T, U> > {
 template<typename KeyType, typename ValueType> struct ArgumentCoder<WTF::KeyValuePair<KeyType, ValueType> > {
     static void encode(ArgumentEncoder* encoder, const WTF::KeyValuePair<KeyType, ValueType>& pair)
     {
-        encoder->encode(pair.key);
-        encoder->encode(pair.value);
+        encoder->encode(pair.first);
+        encoder->encode(pair.second);
     }
 
     static bool decode(ArgumentDecoder* decoder, WTF::KeyValuePair<KeyType, ValueType>& pair)
@@ -89,8 +89,8 @@ template<typename KeyType, typename ValueType> struct ArgumentCoder<WTF::KeyValu
         if (!decoder->decode(value))
             return false;
 
-        pair.key = key;
-        pair.value = value;
+        pair.first = key;
+        pair.second = value;
         return true;
     }
 };

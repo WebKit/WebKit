@@ -423,7 +423,7 @@ static String commandNameForSelector(SEL selector)
     static const SelectorNameMap* exceptionMap = createSelectorExceptionMap();
     SelectorNameMap::const_iterator it = exceptionMap->find(selector);
     if (it != exceptionMap->end())
-        return it->value;
+        return it->second;
     
     // Remove the trailing colon.
     // No need to capitalize the command name since Editor command names are
@@ -737,7 +737,7 @@ static void validateCommandCallback(WKStringRef commandName, bool isEnabled, int
 
     // Add this item to the vector of items for a given command that are awaiting validation.
     ValidationMap::AddResult addResult = _data->_validationMap.add(commandName, ValidationVector());
-    addResult.iterator->value.append(item);
+    addResult.iterator->second.append(item);
     if (addResult.isNewEntry) {
         // If we are not already awaiting validation for this command, start the asynchronous validation process.
         // FIXME: Theoretically, there is a race here; when we get the answer it might be old, from a previous time

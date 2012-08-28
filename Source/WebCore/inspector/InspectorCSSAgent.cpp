@@ -187,10 +187,10 @@ inline void SelectorProfile::commitSelector(bool matched)
 
     RuleMatchingStatsMap::AddResult result = m_ruleMatchingStats.add(makeKey(), RuleMatchingStats(m_currentMatchData, matchTimeMs, 1, matched ? 1 : 0));
     if (!result.isNewEntry) {
-        result.iterator->value.totalTime += matchTimeMs;
-        result.iterator->value.hits += 1;
+        result.iterator->second.totalTime += matchTimeMs;
+        result.iterator->second.hits += 1;
         if (matched)
-            result.iterator->value.matches += 1;
+            result.iterator->second.matches += 1;
     }
 }
 
@@ -203,7 +203,7 @@ inline void SelectorProfile::commitSelectorTime()
     if (it == m_ruleMatchingStats.end())
         return;
 
-    it->value.totalTime += processingTimeMs;
+    it->second.totalTime += processingTimeMs;
 }
 
 PassRefPtr<TypeBuilder::CSS::SelectorProfile> SelectorProfile::toInspectorObject() const
@@ -211,12 +211,12 @@ PassRefPtr<TypeBuilder::CSS::SelectorProfile> SelectorProfile::toInspectorObject
     RefPtr<TypeBuilder::Array<TypeBuilder::CSS::SelectorProfileEntry> > selectorProfileData = TypeBuilder::Array<TypeBuilder::CSS::SelectorProfileEntry>::create();
     for (RuleMatchingStatsMap::const_iterator it = m_ruleMatchingStats.begin(); it != m_ruleMatchingStats.end(); ++it) {
         RefPtr<TypeBuilder::CSS::SelectorProfileEntry> entry = TypeBuilder::CSS::SelectorProfileEntry::create()
-            .setSelector(it->value.selector)
-            .setUrl(it->value.url)
-            .setLineNumber(it->value.lineNumber)
-            .setTime(it->value.totalTime)
-            .setHitCount(it->value.hits)
-            .setMatchCount(it->value.matches);
+            .setSelector(it->second.selector)
+            .setUrl(it->second.url)
+            .setLineNumber(it->second.lineNumber)
+            .setTime(it->second.totalTime)
+            .setHitCount(it->second.hits)
+            .setMatchCount(it->second.matches);
         selectorProfileData->addItem(entry.release());
     }
 
@@ -568,7 +568,7 @@ bool InspectorCSSAgent::forcePseudoState(Element* element, CSSSelector::PseudoTy
     if (it == m_nodeIdToForcedPseudoState.end())
         return false;
 
-    unsigned forcedPseudoState = it->value;
+    unsigned forcedPseudoState = it->second;
     switch (pseudoType) {
     case CSSSelector::PseudoActive:
         return forcedPseudoState & PseudoActive;
@@ -809,7 +809,7 @@ void InspectorCSSAgent::forcePseudoState(ErrorString* errorString, int nodeId, c
 
     unsigned forcedPseudoState = computePseudoClassMask(forcedPseudoClasses.get());
     NodeIdToForcedPseudoState::iterator it = m_nodeIdToForcedPseudoState.find(nodeId);
-    unsigned currentForcedPseudoState = it == m_nodeIdToForcedPseudoState.end() ? 0 : it->value;
+    unsigned currentForcedPseudoState = it == m_nodeIdToForcedPseudoState.end() ? 0 : it->second;
     bool needStyleRecalc = forcedPseudoState != currentForcedPseudoState;
     if (!needStyleRecalc)
         return;
@@ -916,7 +916,7 @@ InspectorStyleSheetForInlineStyle* InspectorCSSAgent::asInspectorStyleSheet(Elem
         return inspectorStyleSheet.get();
     }
 
-    return it->value.get();
+    return it->second.get();
 }
 
 Element* InspectorCSSAgent::elementForId(ErrorString* errorString, int nodeId)
@@ -1010,7 +1010,7 @@ InspectorStyleSheet* InspectorCSSAgent::assertStyleSheetForId(ErrorString* error
         *errorString = "No style sheet with given id found";
         return 0;
     }
-    return it->value.get();
+    return it->second.get();
 }
 
 TypeBuilder::CSS::StyleSheetOrigin::Enum InspectorCSSAgent::detectOrigin(CSSStyleSheet* pageStyleSheet, Document* ownerDocument)
@@ -1141,7 +1141,7 @@ void InspectorCSSAgent::didRemoveDOMNode(Node* node)
     if (it == m_nodeToInspectorStyleSheet.end())
         return;
 
-    m_idToInspectorStyleSheet.remove(it->value->id());
+    m_idToInspectorStyleSheet.remove(it->second->id());
     m_nodeToInspectorStyleSheet.remove(node);
 }
 
@@ -1154,7 +1154,7 @@ void InspectorCSSAgent::didModifyDOMAttr(Element* element)
     if (it == m_nodeToInspectorStyleSheet.end())
         return;
 
-    it->value->didModifyElementAttribute();
+    it->second->didModifyElementAttribute();
 }
 
 void InspectorCSSAgent::styleSheetChanged(InspectorStyleSheet* styleSheet)
@@ -1167,7 +1167,7 @@ void InspectorCSSAgent::resetPseudoStates()
 {
     HashSet<Document*> documentsToChange;
     for (NodeIdToForcedPseudoState::iterator it = m_nodeIdToForcedPseudoState.begin(), end = m_nodeIdToForcedPseudoState.end(); it != end; ++it) {
-        Element* element = toElement(m_domAgent->nodeForId(it->key));
+        Element* element = toElement(m_domAgent->nodeForId(it->first));
         if (element && element->ownerDocument())
             documentsToChange.add(element->ownerDocument());
     }

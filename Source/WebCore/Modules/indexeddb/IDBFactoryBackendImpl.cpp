@@ -107,7 +107,7 @@ void IDBFactoryBackendImpl::deleteDatabase(const String& name, PassRefPtr<IDBCal
     if (it != m_databaseBackendMap.end()) {
         // If there are any connections to the database, directly delete the
         // database.
-        it->value->deleteDatabase(callbacks);
+        it->second->deleteDatabase(callbacks);
         return;
     }
 
@@ -134,7 +134,7 @@ PassRefPtr<IDBBackingStore> IDBFactoryBackendImpl::openBackingStore(PassRefPtr<S
     RefPtr<IDBBackingStore> backingStore;
     IDBBackingStoreMap::iterator it2 = m_backingStoreMap.find(fileIdentifier);
     if (it2 != m_backingStoreMap.end())
-        backingStore = it2->value;
+        backingStore = it2->second;
     else {
 #if USE(LEVELDB)
         backingStore = IDBLevelDBBackingStore::open(securityOrigin.get(), dataDirectory, fileIdentifier, this);
@@ -172,7 +172,7 @@ void IDBFactoryBackendImpl::open(const String& name, int64_t version, PassRefPtr
             return;
         }
     } else
-        databaseBackend = it->value;
+        databaseBackend = it->second;
 
     if (version == IDBDatabaseMetadata::NoIntVersion)
         databaseBackend->openConnection(callbacks);

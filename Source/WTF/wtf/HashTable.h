@@ -286,8 +286,8 @@ namespace WTF {
 
     template<typename T, typename U> inline void hashTableSwap(KeyValuePair<T, U>& a, KeyValuePair<T, U>& b)
     {
-        swap(a.key, b.key);
-        swap(a.value, b.value);
+        swap(a.first, b.first);
+        swap(a.second, b.second);
     }
 
     template<typename T, bool useSwap> struct Mover;
@@ -1246,7 +1246,7 @@ namespace WTF {
             ASSERT(entry == it.m_position);
             ++count;
 
-            ValueCheck<Key>::checkConsistency(it->key);
+            ValueCheck<Key>::checkConsistency(it->first);
         }
 
         ASSERT(count == m_keyCount);

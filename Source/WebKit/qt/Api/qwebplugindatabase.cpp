@@ -122,8 +122,8 @@ QList<QWebPluginInfo::MimeType> QWebPluginInfo::mimeTypes() const
 
         for (MIMEToDescriptionsMap::const_iterator it = mimeToDescriptions.begin(); it != end; ++it) {
             MimeType mimeType;
-            mimeType.name = it->key;
-            mimeType.description = it->value;
+            mimeType.name = it->first;
+            mimeType.description = it->second;
 
             QStringList fileExtensions;
             Vector<String> extensions = m_package->mimeToExtensions().get(mimeType.name);

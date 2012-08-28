@@ -193,20 +193,21 @@ namespace WTF {
         }
 
         KeyValuePair(const KeyTypeArg& key, const ValueTypeArg& value)
-            : key(key)
-            , value(value)
+            : first(key)
+            , second(value)
         {
         }
 
         template <typename OtherKeyType, typename OtherValueType>
         KeyValuePair(const KeyValuePair<OtherKeyType, OtherValueType>& other)
-            : key(other.key)
-            , value(other.value)
+            : first(other.first)
+            , second(other.second)
         {
         }
 
-        KeyTypeArg key;
-        ValueTypeArg value;
+        // TODO: Rename these to key and value. See https://bugs.webkit.org/show_bug.cgi?id=82784.
+        KeyTypeArg first;
+        ValueTypeArg second;
     };
 
     template<typename KeyTraitsArg, typename ValueTraitsArg>
@@ -223,8 +224,8 @@ namespace WTF {
 
         static const int minimumTableSize = KeyTraits::minimumTableSize;
 
-        static void constructDeletedValue(TraitType& slot) { KeyTraits::constructDeletedValue(slot.key); }
-        static bool isDeletedValue(const TraitType& value) { return KeyTraits::isDeletedValue(value.key); }
+        static void constructDeletedValue(TraitType& slot) { KeyTraits::constructDeletedValue(slot.first); }
+        static bool isDeletedValue(const TraitType& value) { return KeyTraits::isDeletedValue(value.first); }
     };
 
     template<typename Key, typename Value>

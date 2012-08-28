@@ -69,13 +69,13 @@ IdentifierRep* IdentifierRep::get(int intID)
     
     IntIdentifierMap::AddResult result = intIdentifierMap().add(intID, 0);
     if (result.isNewEntry) {
-        ASSERT(!result.iterator->value);
-        result.iterator->value = new IdentifierRep(intID);
+        ASSERT(!result.iterator->second);
+        result.iterator->second = new IdentifierRep(intID);
         
-        identifierSet().add(result.iterator->value);
+        identifierSet().add(result.iterator->second);
     }
     
-    return result.iterator->value;
+    return result.iterator->second;
 }
 
 typedef HashMap<RefPtr<StringImpl>, IdentifierRep*> StringIdentifierMap;
@@ -95,13 +95,13 @@ IdentifierRep* IdentifierRep::get(const char* name)
     UString string = stringToUString(String::fromUTF8WithLatin1Fallback(name, strlen(name)));
     StringIdentifierMap::AddResult result = stringIdentifierMap().add(string.impl(), 0);
     if (result.isNewEntry) {
-        ASSERT(!result.iterator->value);
-        result.iterator->value = new IdentifierRep(name);
+        ASSERT(!result.iterator->second);
+        result.iterator->second = new IdentifierRep(name);
         
-        identifierSet().add(result.iterator->value);
+        identifierSet().add(result.iterator->second);
     }
     
-    return result.iterator->value;
+    return result.iterator->second;
 }
 
 bool IdentifierRep::isValid(IdentifierRep* identifier)

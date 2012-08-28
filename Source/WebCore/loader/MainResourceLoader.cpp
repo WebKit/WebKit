@@ -368,7 +368,7 @@ void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
 
     HTTPHeaderMap::const_iterator it = r.httpHeaderFields().find(AtomicString("x-frame-options"));
     if (it != r.httpHeaderFields().end()) {
-        String content = it->value;
+        String content = it->second;
         if (m_frame->loader()->shouldInterruptLoadForXFrameOptions(content, r.url())) {
             InspectorInstrumentation::continueAfterXFrameOptionsDenied(m_frame.get(), documentLoader(), identifier(), r);
             DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to display document because display forbidden by X-Frame-Options.\n"));

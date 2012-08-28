@@ -88,11 +88,11 @@ void JSDOMGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     JSDOMStructureMap::iterator end = thisObject->structures().end();
     for (JSDOMStructureMap::iterator it = thisObject->structures().begin(); it != end; ++it)
-        visitor.append(&it->value);
+        visitor.append(&it->second);
 
     JSDOMConstructorMap::iterator end2 = thisObject->constructors().end();
     for (JSDOMConstructorMap::iterator it2 = thisObject->constructors().begin(); it2 != end2; ++it2)
-        visitor.append(&it2->value);
+        visitor.append(&it2->second);
 }
 
 void JSDOMGlobalObject::setCurrentEvent(Event* currentEvent)

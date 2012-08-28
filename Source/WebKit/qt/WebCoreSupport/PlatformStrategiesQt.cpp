@@ -133,8 +133,8 @@ void PlatformStrategiesQt::getPluginInfo(const WebCore::Page* page, Vector<WebCo
         for (MIMEToDescriptionsMap::const_iterator it = mimeToDescriptions.begin(); it != end; ++it) {
             MimeClassInfo mime;
 
-            mime.type = it->key;
-            mime.desc = it->value;
+            mime.type = it->first;
+            mime.desc = it->second;
             mime.extensions = package->mimeToExtensions().get(mime.type);
 
             info.mimes.append(mime);

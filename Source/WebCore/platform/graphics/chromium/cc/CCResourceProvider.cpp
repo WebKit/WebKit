@@ -84,7 +84,7 @@ bool CCResourceProvider::inUseByConsumer(ResourceId id)
     ASSERT(CCProxy::isImplThread());
     ResourceMap::iterator it = m_resources.find(id);
     ASSERT(it != m_resources.end());
-    return !!it->value.lockForReadCount || it->value.exported;
+    return !!it->second.lockForReadCount || it->second.exported;
 }
 
 CCResourceProvider::ResourceId CCResourceProvider::createResource(int pool, const IntSize& size, GC3Denum format, TextureUsageHint hint)
@@ -154,15 +154,15 @@ void CCResourceProvider::deleteResource(ResourceId id)
 {
     ASSERT(CCProxy::isImplThread());
     ResourceMap::iterator it = m_resources.find(id);
-    ASSERT(it != m_resources.end() && !it->value.lockedForWrite && !it->value.lockForReadCount);
+    ASSERT(it != m_resources.end() && !it->second.lockedForWrite && !it->second.lockForReadCount);
 
-    if (it->value.glId && !it->value.external) {
+    if (it->second.glId && !it->second.external) {
         WebGraphicsContext3D* context3d = m_context->context3D();
         ASSERT(context3d);
-        GLC(context3d, context3d->deleteTexture(it->value.glId));
+        GLC(context3d, context3d->deleteTexture(it->second.glId));
     }
-    if (it->value.pixels)
-        delete it->value.pixels;
+    if (it->second.pixels)
+        delete it->second.pixels;
 
     m_resources.remove(it);
 }
@@ -172,8 +172,8 @@ void CCResourceProvider::deleteOwnedResources(int pool)
     ASSERT(CCProxy::isImplThread());
     ResourceIdArray toDelete;
     for (ResourceMap::iterator it = m_resources.begin(); it != m_resources.end(); ++it) {
-        if (it->value.pool == pool && !it->value.external)
-            toDelete.append(it->key);
+        if (it->second.pool == pool && !it->second.external)
+            toDelete.append(it->first);
     }
     for (ResourceIdArray::iterator it = toDelete.begin(); it != toDelete.end(); ++it)
         deleteResource(*it);
@@ -183,24 +183,24 @@ CCResourceProvider::ResourceType CCResourceProvider::resourceType(ResourceId id)
 {
     ResourceMap::iterator it = m_resources.find(id);
     ASSERT(it != m_resources.end());
-    return it->value.type;
+    return it->second.type;
 }
 
 void CCResourceProvider::upload(ResourceId id, const uint8_t* image, const IntRect& imageRect, const IntRect& sourceRect, const IntSize& destOffset)
 {
     ASSERT(CCProxy::isImplThread());
     ResourceMap::iterator it = m_resources.find(id);
-    ASSERT(it != m_resources.end() && !it->value.lockedForWrite && !it->value.lockForReadCount && !it->value.external);
+    ASSERT(it != m_resources.end() && !it->second.lockedForWrite && !it->second.lockForReadCount && !it->second.external);
 
-    if (it->value.glId) {
+    if (it->second.glId) {
         WebGraphicsContext3D* context3d = m_context->context3D();
         ASSERT(context3d);
         ASSERT(m_texSubImage.get());
-        context3d->bindTexture(GraphicsContext3D::TEXTURE_2D, it->value.glId);
-        m_texSubImage->upload(image, imageRect, sourceRect, destOffset, it->value.format, context3d);
+        context3d->bindTexture(GraphicsContext3D::TEXTURE_2D, it->second.glId);
+        m_texSubImage->upload(image, imageRect, sourceRect, destOffset, it->second.format, context3d);
     }
 
-    if (it->value.pixels) {
+    if (it->second.pixels) {
         SkBitmap srcFull;
         srcFull.setConfig(SkBitmap::kARGB_8888_Config, imageRect.width(), imageRect.height());
         srcFull.setPixels(const_cast<uint8_t*>(image));
@@ -238,17 +238,17 @@ const CCResourceProvider::Resource* CCResourceProvider::lockForRead(ResourceId i
 {
     ASSERT(CCProxy::isImplThread());
     ResourceMap::iterator it = m_resources.find(id);
-    ASSERT(it != m_resources.end() && !it->value.lockedForWrite);
-    it->value.lockForReadCount++;
-    return &it->value;
+    ASSERT(it != m_resources.end() && !it->second.lockedForWrite);
+    it->second.lockForReadCount++;
+    return &it->second;
 }
 
 void CCResourceProvider::unlockForRead(ResourceId id)
 {
     ASSERT(CCProxy::isImplThread());
     ResourceMap::iterator it = m_resources.find(id);
-    ASSERT(it != m_resources.end() && it->value.lockForReadCount > 0);
-    it->value.lockForReadCount--;
+    ASSERT(it != m_resources.end() && it->second.lockForReadCount > 0);
+    it->second.lockForReadCount--;
 }
 
 const CCResourceProvider::Resource* CCResourceProvider::lockForWrite(ResourceId id)
@@ -256,8 +256,8 @@ const CCResourceProvider::Resource* CCResourceProvider::lockForWrite(ResourceId 
     ASSERT(CCProxy::isImplThread());
     ResourceMap::iterator it = m_resources.find(id);
     ASSERT(it != m_resources.end() && !it->second.lockedForWrite && !it->second.lockForReadCount && !it->second.external);
-    it->value.lockedForWrite = true;
-    return &it->value;
+    it->second.lockedForWrite = true;
+    return &it->second;
 }
 
 void CCResourceProvider::unlockForWrite(ResourceId id)
@@ -265,7 +265,7 @@ void CCResourceProvider::unlockForWrite(ResourceId id)
     ASSERT(CCProxy::isImplThread());
     ResourceMap::iterator it = m_resources.find(id);
     ASSERT(it != m_resources.end() && it->second.lockedForWrite && !it->second.external);
-    it->value.lockedForWrite = false;
+    it->second.lockedForWrite = false;
 }
 
 CCResourceProvider::ScopedReadLockGL::ScopedReadLockGL(CCResourceProvider* resourceProvider, CCResourceProvider::ResourceId resourceId)
@@ -388,7 +388,7 @@ void CCResourceProvider::destroyChild(int child)
     ASSERT(CCProxy::isImplThread());
     ChildMap::iterator it = m_children.find(child);
     ASSERT(it != m_children.end());
-    deleteOwnedResources(it->value.pool);
+    deleteOwnedResources(it->second.pool);
     m_children.remove(it);
     trimMailboxDeque();
 }
@@ -398,7 +398,7 @@ const CCResourceProvider::ResourceIdMap& CCResourceProvider::getChildToParentMap
     ASSERT(CCProxy::isImplThread());
     ChildMap::const_iterator it = m_children.find(child);
     ASSERT(it != m_children.end());
-    return it->value.childToParentMap;
+    return it->second.childToParentMap;
 }
 
 CCResourceProvider::TransferableResourceList CCResourceProvider::prepareSendToParent(const ResourceIdArray& resources)
@@ -414,7 +414,7 @@ CCResourceProvider::TransferableResourceList CCResourceProvider::prepareSendToPa
     for (ResourceIdArray::const_iterator it = resources.begin(); it != resources.end(); ++it) {
         TransferableResource resource;
         if (transferResource(context3d, *it, &resource)) {
-            m_resources.find(*it)->value.exported = true;
+            m_resources.find(*it)->second.exported = true;
             list.resources.append(resource);
         }
     }
@@ -433,7 +433,7 @@ CCResourceProvider::TransferableResourceList CCResourceProvider::prepareSendToCh
         // FIXME: Implement this path for software compositing.
         return list;
     }
-    Child& childInfo = m_children.find(child)->value;
+    Child& childInfo = m_children.find(child)->second;
     for (ResourceIdArray::const_iterator it = resources.begin(); it != resources.end(); ++it) {
         TransferableResource resource;
         if (!transferResource(context3d, *it, &resource))
@@ -466,7 +466,7 @@ void CCResourceProvider::receiveFromChild(int child, const TransferableResourceL
         // (and is simpler) to wait.
         GLC(context3d, context3d->waitSyncPoint(resources.syncPoint));
     }
-    Child& childInfo = m_children.find(child)->value;
+    Child& childInfo = m_children.find(child)->second;
     for (Vector<TransferableResource>::const_iterator it = resources.resources.begin(); it != resources.resources.end(); ++it) {
         unsigned textureId;
         GLC(context3d, textureId = context3d->createTexture());
@@ -492,7 +492,7 @@ void CCResourceProvider::receiveFromParent(const TransferableResourceList& resou
     if (resources.syncPoint)
         GLC(context3d, context3d->waitSyncPoint(resources.syncPoint));
     for (Vector<TransferableResource>::const_iterator it = resources.resources.begin(); it != resources.resources.end(); ++it) {
-        Resource& resource = m_resources.find(it->id)->value;
+        Resource& resource = m_resources.find(it->id)->second;
         ASSERT(resource.exported);
         resource.exported = false;
         GLC(context3d, context3d->bindTexture(GraphicsContext3D::TEXTURE_2D, resource.glId));
@@ -506,16 +506,16 @@ bool CCResourceProvider::transferResource(WebGraphicsContext3D* context, Resourc
     ASSERT(CCProxy::isImplThread());
     ResourceMap::const_iterator it = m_resources.find(id);
     ASSERT(it != m_resources.end() && !it->second.lockedForWrite && !it->second.lockForReadCount && !it->second.external);
-    if (it->value.exported)
+    if (it->second.exported)
         return false;
     resource->id = id;
-    resource->format = it->value.format;
-    resource->size = it->value.size;
+    resource->format = it->second.format;
+    resource->size = it->second.size;
     if (!m_mailboxes.isEmpty())
         resource->mailbox = m_mailboxes.takeFirst();
     else
         GLC(context, context->genMailboxCHROMIUM(resource->mailbox.name));
-    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, it->value.glId));
+    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, it->second.glId));
     GLC(context, context->produceTextureCHROMIUM(GraphicsContext3D::TEXTURE_2D, resource->mailbox.name));
     return true;
 }
@@ -530,15 +530,15 @@ void CCResourceProvider::trimMailboxDeque()
     size_t maxMailboxCount = 0;
     if (m_context->capabilities().hasParentCompositor) {
         for (ResourceMap::iterator it = m_resources.begin(); it != m_resources.end(); ++it) {
-            if (!it->value.exported && !it->value.external)
+            if (!it->second.exported && !it->second.external)
                 ++maxMailboxCount;
         }
     } else {
         HashSet<int> childPoolSet;
         for (ChildMap::iterator it = m_children.begin(); it != m_children.end(); ++it)
-            childPoolSet.add(it->value.pool);
+            childPoolSet.add(it->second.pool);
         for (ResourceMap::iterator it = m_resources.begin(); it != m_resources.end(); ++it) {
-            if (childPoolSet.contains(it->value.pool))
+            if (childPoolSet.contains(it->second.pool))
                 ++maxMailboxCount;
         }
     }

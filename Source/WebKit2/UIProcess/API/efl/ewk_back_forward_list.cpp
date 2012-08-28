@@ -54,7 +54,7 @@ struct _Ewk_Back_Forward_List {
         ItemsMap::iterator it = wrapperCache.begin();
         ItemsMap::iterator end = wrapperCache.end();
         for (; it != end; ++it)
-            ewk_back_forward_list_item_unref(it->value);
+            ewk_back_forward_list_item_unref(it->second);
     }
 };
 

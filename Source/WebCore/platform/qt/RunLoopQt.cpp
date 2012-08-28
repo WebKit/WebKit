@@ -109,7 +109,7 @@ void RunLoop::TimerBase::timerFired(RunLoop* runLoop, int ID)
 {
     TimerMap::iterator it = runLoop->m_activeTimers.find(ID);
     ASSERT(it != runLoop->m_activeTimers.end());
-    TimerBase* timer = it->value;
+    TimerBase* timer = it->second;
 
     if (!timer->m_isRepeating) {
         // Stop the timer (calling stop would need another hash table lookup).

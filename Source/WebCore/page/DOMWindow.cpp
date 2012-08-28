@@ -248,7 +248,7 @@ bool DOMWindow::dispatchAllPendingBeforeUnloadEvents()
     Vector<RefPtr<DOMWindow> > windows;
     DOMWindowSet::iterator end = set.end();
     for (DOMWindowSet::iterator it = set.begin(); it != end; ++it)
-        windows.append(it->key);
+        windows.append(it->first);
 
     size_t size = windows.size();
     for (size_t i = 0; i < size; ++i) {
@@ -290,7 +290,7 @@ void DOMWindow::dispatchAllPendingUnloadEvents()
     Vector<RefPtr<DOMWindow> > windows;
     DOMWindowSet::iterator end = set.end();
     for (DOMWindowSet::iterator it = set.begin(); it != end; ++it)
-        windows.append(it->key);
+        windows.append(it->first);
 
     size_t size = windows.size();
     for (size_t i = 0; i < size; ++i) {

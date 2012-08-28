@@ -263,14 +263,14 @@ void WebIconDatabase::didFinishURLImport()
     HashMap<uint64_t, String>::iterator end = m_pendingLoadDecisionURLMap.end();
     
     for (; i != end; ++i) {
-        LOG(IconDatabase, "WK2 UIProcess performing delayed callback on callback ID %i for page url %s", (int)i->key, i->value.ascii().data());
-        IconLoadDecision decision = m_iconDatabaseImpl->synchronousLoadDecisionForIconURL(i->value, 0);
+        LOG(IconDatabase, "WK2 UIProcess performing delayed callback on callback ID %i for page url %s", (int)i->first, i->second.ascii().data());
+        IconLoadDecision decision = m_iconDatabaseImpl->synchronousLoadDecisionForIconURL(i->second, 0);
 
         // Decisions should never be unknown after the inital import is complete
         ASSERT(decision != IconLoadUnknown);
 
         // FIXME (Multi-WebProcess): We need to know which connection to send this message to.
-        m_webContext->sendToAllProcesses(Messages::WebIconDatabaseProxy::ReceivedIconLoadDecision(static_cast<int>(decision), i->key));
+        m_webContext->sendToAllProcesses(Messages::WebIconDatabaseProxy::ReceivedIconLoadDecision(static_cast<int>(decision), i->first));
     }
     
     m_pendingLoadDecisionURLMap.clear();

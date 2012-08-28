@@ -272,7 +272,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
     Vector<SVGSMILElement*> animationsToApply;
     ResultElementMap::iterator end = resultsElements.end();
     for (ResultElementMap::iterator it = resultsElements.begin(); it != end; ++it) {
-        SVGSMILElement* animation = it->value.get();
+        SVGSMILElement* animation = it->second.get();
         if (contributingElements.contains(animation))
             animationsToApply.append(animation);
     }

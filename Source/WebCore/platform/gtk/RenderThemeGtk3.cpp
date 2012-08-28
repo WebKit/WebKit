@@ -56,7 +56,7 @@ static void gtkStyleChangedCallback(GObject*, GParamSpec*)
 {
     StyleContextMap::const_iterator end = styleContextMap().end();
     for (StyleContextMap::const_iterator iter = styleContextMap().begin(); iter != end; ++iter)
-        gtk_style_context_invalidate(iter->value.get());
+        gtk_style_context_invalidate(iter->second.get());
 
     Page::scheduleForcedStyleRecalcForAllPages();
 }
@@ -79,7 +79,7 @@ static GtkStyleContext* getStyleContext(GType widgetType)
 {
     StyleContextMap::AddResult result = styleContextMap().add(widgetType, 0);
     if (!result.isNewEntry)
-        return result.iterator->value.get();
+        return result.iterator->second.get();
 
     GtkWidgetPath* path = gtk_widget_path_new();
     gtk_widget_path_append_type(path, widgetType);
@@ -111,7 +111,7 @@ static GtkStyleContext* getStyleContext(GType widgetType)
     gtk_style_context_set_path(context.get(), path);
     gtk_widget_path_free(path);
 
-    result.iterator->value = context;
+    result.iterator->second = context;
     return context.get();
 }
 

@@ -169,7 +169,7 @@ HRESULT WCDataObject::createInstance(WCDataObject** result, const DragDataMap& d
     *result = new WCDataObject;
 
     for (DragDataMap::const_iterator it = dataMap.begin(); it != dataMap.end(); ++it)
-        setClipboardData(*result, it->key, it->value);
+        setClipboardData(*result, it->first, it->second);
     return S_OK;
 }
 

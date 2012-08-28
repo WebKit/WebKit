@@ -171,7 +171,7 @@ DataObjectGtk* DataObjectGtk::forClipboard(GtkClipboard* clipboard)
     }
 
     HashMap<GtkClipboard*, RefPtr<DataObjectGtk> >::iterator it = objectMap.find(clipboard);
-    return it->value.get();
+    return it->second.get();
 }
 
 }

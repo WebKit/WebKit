@@ -53,8 +53,8 @@ void QuotaTracker::getDatabaseSizeAndSpaceAvailableToOrigin(
         MutexLocker lockData(m_dataGuard);
         ASSERT(m_databaseSizes.contains(originIdentifier));
         HashMap<String, SizeMap>::const_iterator it = m_databaseSizes.find(originIdentifier);
-        ASSERT(it->value.contains(databaseName));
-        *databaseSize = it->value.get(databaseName);
+        ASSERT(it->second.contains(databaseName));
+        *databaseSize = it->second.get(databaseName);
 
         if (m_spaceAvailableToOrigins.contains(originIdentifier)) {
             *spaceAvailable = m_spaceAvailableToOrigins.get(originIdentifier);
@@ -72,7 +72,7 @@ void QuotaTracker::updateDatabaseSize(
 {
     MutexLocker lockData(m_dataGuard);
     HashMap<String, SizeMap>::iterator it = m_databaseSizes.add(originIdentifier, SizeMap()).iterator;
-    it->value.set(databaseName, databaseSize);
+    it->second.set(databaseName, databaseSize);
 }
 
 void QuotaTracker::updateSpaceAvailableToOrigin(const String& originIdentifier, unsigned long long spaceAvailable)

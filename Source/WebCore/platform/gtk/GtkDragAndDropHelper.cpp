@@ -70,7 +70,7 @@ void GtkDragAndDropHelper::handleGetDragData(GdkDragContext* context, GtkSelecti
     DraggingDataObjectsMap::iterator iterator = m_draggingDataObjects.find(context);
     if (iterator == m_draggingDataObjects.end())
         return;
-    PasteboardHelper::defaultPasteboardHelper()->fillSelectionData(selectionData, info, iterator->value.get());
+    PasteboardHelper::defaultPasteboardHelper()->fillSelectionData(selectionData, info, iterator->second.get());
 }
 
 struct HandleDragLaterData {
@@ -116,7 +116,7 @@ void GtkDragAndDropHelper::handleDragLeave(GdkDragContext* gdkContext, DragExite
     // the drag-drop signal. We want the actions for drag-leave to happen after
     // those for drag-drop, so schedule them to happen asynchronously here.
     HandleDragLaterData* data = new HandleDragLaterData;
-    data->context = iterator->value;
+    data->context = iterator->second;
     data->context->exitedCallback = exitedCallback;
     data->glue = this;
     g_timeout_add(0, reinterpret_cast<GSourceFunc>(handleDragLeaveLaterCallback), data);
@@ -140,7 +140,7 @@ PassOwnPtr<DragData> GtkDragAndDropHelper::handleDragMotion(GdkDragContext* cont
         m_droppingContexts.set(context, droppingContext);
         queryNewDropContextData(droppingContext, m_widget, time);
     } else {
-        droppingContext = iterator->value;
+        droppingContext = iterator->second;
         droppingContext->lastMotionPosition = position;
     }
 
@@ -162,7 +162,7 @@ PassOwnPtr<DragData> GtkDragAndDropHelper::handleDragDataReceived(GdkDragContext
     if (iterator == m_droppingContexts.end())
         return adoptPtr(static_cast<DragData*>(0));
 
-    DroppingContext* droppingContext = iterator->value;
+    DroppingContext* droppingContext = iterator->second;
     droppingContext->pendingDataRequests--;
     PasteboardHelper::defaultPasteboardHelper()->fillDataObjectFromDropData(selectionData, info, droppingContext->dataObject.get());
 
@@ -185,7 +185,7 @@ PassOwnPtr<DragData> GtkDragAndDropHelper::handleDragDrop(GdkDragContext* contex
     if (iterator == m_droppingContexts.end())
         return adoptPtr(static_cast<DragData*>(0));
 
-    DroppingContext* droppingContext = iterator->value;
+    DroppingContext* droppingContext = iterator->second;
     droppingContext->dropHappened = true;
 
     return adoptPtr(new DragData(droppingContext->dataObject.get(), position, 

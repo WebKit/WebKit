@@ -103,10 +103,10 @@ TEST_F(WebSocketExtensionDispatcherTest, TestParameters)
     EXPECT_EQ(2, m_parsedParameters[0].size());
     HashMap<String, String>::iterator parameter = m_parsedParameters[0].find("max-channels");
     EXPECT_TRUE(parameter != m_parsedParameters[0].end());
-    EXPECT_EQ("4", parameter->value);
+    EXPECT_EQ("4", parameter->second);
     parameter = m_parsedParameters[0].find("flow-control");
     EXPECT_TRUE(parameter != m_parsedParameters[0].end());
-    EXPECT_TRUE(parameter->value.isNull());
+    EXPECT_TRUE(parameter->second.isNull());
 }
 
 TEST_F(WebSocketExtensionDispatcherTest, TestMultiple)
@@ -131,12 +131,12 @@ TEST_F(WebSocketExtensionDispatcherTest, TestMultiple)
         const HashMap<String, String>& parsedParameters = m_parsedParameters[i];
         EXPECT_EQ(expected[i].parameters.size(), m_parsedParameters[i].size());
         for (HashMap<String, String>::const_iterator iterator = expectedParameters.begin(); iterator != expectedParameters.end(); ++iterator) {
-            HashMap<String, String>::const_iterator parsed = parsedParameters.find(iterator->key);
+            HashMap<String, String>::const_iterator parsed = parsedParameters.find(iterator->first);
             EXPECT_TRUE(parsed != parsedParameters.end());
-            if (iterator->value.isNull())
-                EXPECT_TRUE(parsed->value.isNull());
+            if (iterator->second.isNull())
+                EXPECT_TRUE(parsed->second.isNull());
             else
-                EXPECT_EQ(iterator->value, parsed->value);
+                EXPECT_EQ(iterator->second, parsed->second);
         }
     }
 }

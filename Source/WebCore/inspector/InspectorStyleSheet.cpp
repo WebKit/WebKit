@@ -535,7 +535,7 @@ PassRefPtr<TypeBuilder::CSS::CSSStyle> InspectorStyle::styleWithProperties() con
                         shouldInactivate = true;
                     else {
                         bool previousParsedOk;
-                        bool success = activeIt->value->getBoolean(TypeBuilder::CSS::CSSProperty::ParsedOk, &previousParsedOk);
+                        bool success = activeIt->second->getBoolean(TypeBuilder::CSS::CSSProperty::ParsedOk, &previousParsedOk);
                         if (success && !previousParsedOk)
                             shouldInactivate = true;
                     }
@@ -543,7 +543,7 @@ PassRefPtr<TypeBuilder::CSS::CSSStyle> InspectorStyle::styleWithProperties() con
                     propertyNameToPreviousActiveProperty.set(canonicalPropertyName, property);
 
                 if (shouldInactivate) {
-                    activeIt->value->setStatus(TypeBuilder::CSS::CSSProperty::Status::Inactive);
+                    activeIt->second->setStatus(TypeBuilder::CSS::CSSProperty::Status::Inactive);
                     propertyNameToPreviousActiveProperty.set(canonicalPropertyName, property);
                 }
             } else {
@@ -1035,7 +1035,7 @@ PassRefPtr<InspectorStyle> InspectorStyleSheet::inspectorStyleForId(const Inspec
         RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(id, style, this);
         return inspectorStyle.release();
     }
-    return it->value;
+    return it->second;
 }
 
 void InspectorStyleSheet::rememberInspectorStyle(RefPtr<InspectorStyle> inspectorStyle)

@@ -144,7 +144,7 @@ void NetscapePluginHostProxy::pluginHostDied()
   
     PluginInstanceMap::const_iterator end = instances.end();
     for (PluginInstanceMap::const_iterator it = instances.begin(); it != end; ++it)
-        it->value->pluginHostDied();
+        it->second->pluginHostDied();
     
     NetscapePluginHostManager::shared().pluginHostDied(this);
     

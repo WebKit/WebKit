@@ -82,7 +82,7 @@ void DOMWrapperWorld::deallocate(DOMWrapperWorld* world)
         ASSERT_NOT_REACHED();
         return;
     }
-    ASSERT(i->value == world);
+    ASSERT(i->second == world);
 
     map.remove(i);
     isolatedWorldCount--;
@@ -101,9 +101,9 @@ PassRefPtr<DOMWrapperWorld> DOMWrapperWorld::getOrCreateIsolatedWorld(int worldI
     else {
         WorldMap::iterator i = map.find(worldId);
         if (i != map.end()) {
-            ASSERT(i->value->worldId() == worldId);
-            ASSERT(i->value->extensionGroup() == extensionGroup);
-            return i->value;
+            ASSERT(i->second->worldId() == worldId);
+            ASSERT(i->second->extensionGroup() == extensionGroup);
+            return i->second;
         }
     }
 

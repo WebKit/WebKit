@@ -199,8 +199,8 @@ NPError NetscapePlugin::destroyStream(NPStream* stream, NPReason reason)
     NetscapePluginStream* pluginStream = 0;
 
     for (StreamsMap::const_iterator it = m_streams.begin(), end = m_streams.end(); it != end; ++it) {
-        if (it->value->npStream() == stream) {
-            pluginStream = it->value.get();
+        if (it->second->npStream() == stream) {
+            pluginStream = it->second.get();
             break;
         }
     }
@@ -387,7 +387,7 @@ void NetscapePlugin::unscheduleTimer(unsigned timerID)
     if (it == m_timers.end())
         return;
 
-    OwnPtr<Timer> timer = adoptPtr(it->value);
+    OwnPtr<Timer> timer = adoptPtr(it->second);
     m_timers.remove(it);
 
     timer->stop();
@@ -762,8 +762,8 @@ void NetscapePlugin::frameDidFinishLoading(uint64_t requestID)
     if (it == m_pendingURLNotifications.end())
         return;
 
-    String url = it->value.first;
-    void* notificationData = it->value.second;
+    String url = it->second.first;
+    void* notificationData = it->second.second;
 
     m_pendingURLNotifications.remove(it);
     
@@ -778,8 +778,8 @@ void NetscapePlugin::frameDidFail(uint64_t requestID, bool wasCancelled)
     if (it == m_pendingURLNotifications.end())
         return;
 
-    String url = it->value.first;
-    void* notificationData = it->value.second;
+    String url = it->second.first;
+    void* notificationData = it->second.second;
 
     m_pendingURLNotifications.remove(it);
     

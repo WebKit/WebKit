@@ -158,7 +158,7 @@ bool RenderSVGInlineText::characterStartsNewTextChunk(int position) const
     if (it == m_layoutAttributes.characterDataMap().end())
         return false;
 
-    return it->value.x != SVGTextLayoutAttributes::emptyValue() || it->value.y != SVGTextLayoutAttributes::emptyValue();
+    return it->second.x != SVGTextLayoutAttributes::emptyValue() || it->second.y != SVGTextLayoutAttributes::emptyValue();
 }
 
 VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point)

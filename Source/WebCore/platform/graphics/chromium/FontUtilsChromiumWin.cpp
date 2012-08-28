@@ -415,7 +415,7 @@ bool getDerivedFontData(const UChar* family,
         // check it against what we actually want (as is done in
         // FontCacheWin.cpp)
         FontDataCache::AddResult entry = fontDataCache.add(fontKey, FontData());
-        derived = &entry.iterator->value;
+        derived = &entry.iterator->second;
         derived->hfont = CreateFontIndirect(logfont);
         // GetAscent may return kUndefinedAscent, but we still want to
         // cache it so that we won't have to call CreateFontIndirect once
@@ -423,7 +423,7 @@ bool getDerivedFontData(const UChar* family,
         derived->ascent = getAscent(derived->hfont);
         derived->spaceGlyph = getSpaceGlyph(derived->hfont);
     } else {
-        derived = &iter->value;
+        derived = &iter->second;
         // Last time, GetAscent failed so that only HFONT was
         // cached. Try once more assuming that TryPreloadFont
         // was called by a caller between calls.

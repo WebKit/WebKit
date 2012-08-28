@@ -380,7 +380,7 @@ Color RenderThemeMac::systemColor(int cssValueId) const
     {
         HashMap<int, RGBA32>::iterator it = m_systemColorCache.find(cssValueId);
         if (it != m_systemColorCache.end())
-            return it->value;
+            return it->second;
     }
 
     Color color;

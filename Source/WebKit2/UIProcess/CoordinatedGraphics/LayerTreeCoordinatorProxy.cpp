@@ -73,7 +73,7 @@ void LayerTreeCoordinatorProxy::updateTileForLayer(int layerID, int tileID, cons
             surface = ShareableSurface::create(updateInfo.surfaceHandle);
             m_surfaces.add(token, surface);
         } else
-            surface = it->value;
+            surface = it->second;
     } else
         surface = ShareableSurface::create(updateInfo.surfaceHandle);
 #else

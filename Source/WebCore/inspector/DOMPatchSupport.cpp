@@ -237,24 +237,24 @@ DOMPatchSupport::diff(const Vector<OwnPtr<Digest> >& oldList, const Vector<OwnPt
 
     for (size_t i = 0; i < newList.size(); ++i) {
         DiffTable::iterator it = newTable.add(newList[i]->m_sha1, Vector<size_t>()).iterator;
-        it->value.append(i);
+        it->second.append(i);
     }
 
     for (size_t i = 0; i < oldList.size(); ++i) {
         DiffTable::iterator it = oldTable.add(oldList[i]->m_sha1, Vector<size_t>()).iterator;
-        it->value.append(i);
+        it->second.append(i);
     }
 
     for (DiffTable::iterator newIt = newTable.begin(); newIt != newTable.end(); ++newIt) {
-        if (newIt->value.size() != 1)
+        if (newIt->second.size() != 1)
             continue;
 
-        DiffTable::iterator oldIt = oldTable.find(newIt->key);
-        if (oldIt == oldTable.end() || oldIt->value.size() != 1)
+        DiffTable::iterator oldIt = oldTable.find(newIt->first);
+        if (oldIt == oldTable.end() || oldIt->second.size() != 1)
             continue;
 
-        newMap[newIt->value[0]] = make_pair(newList[newIt->value[0]].get(), oldIt->value[0]);
-        oldMap[oldIt->value[0]] = make_pair(oldList[oldIt->value[0]].get(), newIt->value[0]);
+        newMap[newIt->second[0]] = make_pair(newList[newIt->second[0]].get(), oldIt->second[0]);
+        oldMap[oldIt->second[0]] = make_pair(oldList[oldIt->second[0]].get(), newIt->second[0]);
     }
 
     for (size_t i = 0; newList.size() > 0 && i < newList.size() - 1; ++i) {
@@ -364,7 +364,7 @@ bool DOMPatchSupport::innerPatchChildren(ContainerNode* parentNode, const Vector
 
     // 2. Patch nodes marked for merge.
     for (HashMap<Digest*, Digest*>::iterator it = merges.begin(); it != merges.end(); ++it) {
-        if (!innerPatchNode(it->value, it->key, ec))
+        if (!innerPatchNode(it->second, it->first, ec))
             return false;
     }
 
@@ -463,7 +463,7 @@ bool DOMPatchSupport::removeChildAndMoveToNew(Digest* oldDigest, ExceptionCode& 
     // high that it will get merged back into the original DOM during the further patching.
     UnusedNodesMap::iterator it = m_unusedNodesMap.find(oldDigest->m_sha1);
     if (it != m_unusedNodesMap.end()) {
-        Digest* newDigest = it->value;
+        Digest* newDigest = it->second;
         Node* newNode = newDigest->m_node;
         if (!m_domEditor->replaceChild(newNode->parentNode(), oldNode, newNode, ec))
             return false;

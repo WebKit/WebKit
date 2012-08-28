@@ -167,7 +167,7 @@ String CookieManager::generateHtmlFragmentForCookies()
 
     Vector<ParsedCookie*> cookieCandidates;
     for (HashMap<String, CookieMap*>::iterator it = m_managerMap.begin(); it != m_managerMap.end(); ++it)
-        it->value->getAllChildCookies(&cookieCandidates);
+        it->second->getAllChildCookies(&cookieCandidates);
 
     String result;
     ParsedCookie* cookie = 0;
@@ -286,7 +286,7 @@ void CookieManager::removeAllCookies(BackingStoreRemovalPolicy backingStoreRemov
     HashMap<String, CookieMap*>::iterator first = m_managerMap.begin();
     HashMap<String, CookieMap*>::iterator end = m_managerMap.end();
     for (HashMap<String, CookieMap*>::iterator it = first; it != end; ++it)
-        it->value->deleteAllCookiesAndDomains();
+        it->second->deleteAllCookiesAndDomains();
 
     if (backingStoreRemoval == RemoveFromBackingStore)
         m_cookieBackingStore->removeAll();

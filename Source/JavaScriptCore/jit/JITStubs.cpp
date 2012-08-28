@@ -3459,8 +3459,8 @@ MacroAssemblerCodeRef JITThunks::ctiStub(JSGlobalData* globalData, ThunkGenerato
 {
     CTIStubMap::AddResult entry = m_ctiStubMap.add(generator, MacroAssemblerCodeRef());
     if (entry.isNewEntry)
-        entry.iterator->value = generator(globalData);
-    return entry.iterator->value;
+        entry.iterator->second = generator(globalData);
+    return entry.iterator->second;
 }
 
 NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFunction function, NativeFunction constructor)

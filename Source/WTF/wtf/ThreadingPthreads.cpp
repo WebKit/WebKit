@@ -150,8 +150,8 @@ static ThreadIdentifier identifierByPthreadHandle(const pthread_t& pthreadHandle
 
     ThreadMap::iterator i = threadMap().begin();
     for (; i != threadMap().end(); ++i) {
-        if (pthread_equal(i->value->pthreadHandle(), pthreadHandle) && !i->value->hasExited())
-            return i->key;
+        if (pthread_equal(i->second->pthreadHandle(), pthreadHandle) && !i->second->hasExited())
+            return i->first;
     }
 
     return 0;

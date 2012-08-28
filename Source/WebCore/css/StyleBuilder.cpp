@@ -1014,21 +1014,21 @@ public:
         typedef CounterDirectiveMap::iterator Iterator;
         Iterator end = parentMap.end();
         for (Iterator it = parentMap.begin(); it != end; ++it) {
-            CounterDirectives& directives = map.add(it->key, CounterDirectives()).iterator->value;
+            CounterDirectives& directives = map.add(it->first, CounterDirectives()).iterator->second;
             if (counterBehavior == Reset) {
-                directives.m_reset = it->value.m_reset;
-                directives.m_resetValue = it->value.m_resetValue;
+                directives.m_reset = it->second.m_reset;
+                directives.m_resetValue = it->second.m_resetValue;
             } else {
                 // Inheriting a counter-increment means taking the parent's current value for the counter
                 // and adding it to itself.
-                directives.m_increment = it->value.m_increment;
+                directives.m_increment = it->second.m_increment;
                 directives.m_incrementValue = 0;
                 if (directives.m_increment) {
                     float incrementValue = directives.m_incrementValue;
-                    directives.m_incrementValue = clampToInteger(incrementValue + it->value.m_incrementValue);
+                    directives.m_incrementValue = clampToInteger(incrementValue + it->second.m_incrementValue);
                 } else {
                     directives.m_increment = true;
-                    directives.m_incrementValue = it->value.m_incrementValue;
+                    directives.m_incrementValue = it->second.m_incrementValue;
                 }
             }
         }
@@ -1046,9 +1046,9 @@ public:
         Iterator end = map.end();
         for (Iterator it = map.begin(); it != end; ++it)
             if (counterBehavior == Reset)
-                it->value.m_reset = false;
+                it->second.m_reset = false;
             else
-                it->value.m_increment = false;
+                it->second.m_increment = false;
 
         int length = list ? list->length() : 0;
         for (int i = 0; i < length; ++i) {
@@ -1062,7 +1062,7 @@ public:
 
             AtomicString identifier = static_cast<CSSPrimitiveValue*>(pair->first())->getStringValue();
             int value = static_cast<CSSPrimitiveValue*>(pair->second())->getIntValue();
-            CounterDirectives& directives = map.add(identifier.impl(), CounterDirectives()).iterator->value;
+            CounterDirectives& directives = map.add(identifier.impl(), CounterDirectives()).iterator->second;
             if (counterBehavior == Reset) {
                 directives.m_reset = true;
                 directives.m_resetValue = value;

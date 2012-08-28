@@ -46,7 +46,7 @@ WebIDBMetadata::WebIDBMetadata(const WebCore::IDBDatabaseMetadata& metadata)
 
     size_t i = 0;
     for (IDBDatabaseMetadata::ObjectStoreMap::const_iterator storeIterator = metadata.objectStores.begin(); storeIterator != metadata.objectStores.end(); ++storeIterator) {
-        const IDBObjectStoreMetadata& objectStore = storeIterator->value;
+        const IDBObjectStoreMetadata& objectStore = storeIterator->second;
         ObjectStore webObjectStore;
         webObjectStore.name = objectStore.name;
         webObjectStore.keyPath = objectStore.keyPath;
@@ -55,7 +55,7 @@ WebIDBMetadata::WebIDBMetadata(const WebCore::IDBDatabaseMetadata& metadata)
 
         size_t j = 0;
         for (IDBObjectStoreMetadata::IndexMap::const_iterator indexIterator = objectStore.indexes.begin(); indexIterator != objectStore.indexes.end(); ++indexIterator) {
-            const IDBIndexMetadata& index = indexIterator->value;
+            const IDBIndexMetadata& index = indexIterator->second;
             Index webIndex;
             webIndex.name = index.name;
             webIndex.keyPath = index.keyPath;

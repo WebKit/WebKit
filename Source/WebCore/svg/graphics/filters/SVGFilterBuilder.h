@@ -50,7 +50,7 @@ public:
     {
         // Only allowed for effects belongs to this builder.
         ASSERT(m_effectReferences.contains(effect));
-        return m_effectReferences.find(effect)->value;
+        return m_effectReferences.find(effect)->second;
     }
 
     // Required to change the attributes of a filter during an svgAttributeChanged.
@@ -66,7 +66,7 @@ private:
     {
         HashMap<AtomicString, RefPtr<FilterEffect> >::iterator end = m_builtinEffects.end();
         for (HashMap<AtomicString, RefPtr<FilterEffect> >::iterator iterator = m_builtinEffects.begin(); iterator != end; ++iterator)
-             m_effectReferences.add(iterator->value, FilterEffectSet());
+             m_effectReferences.add(iterator->second, FilterEffectSet());
     }
 
     HashMap<AtomicString, RefPtr<FilterEffect> > m_builtinEffects;

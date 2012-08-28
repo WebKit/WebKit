@@ -906,7 +906,7 @@ static PassRefPtr<MutableDictionary> createDictionaryFromHashMap(const HashMap<S
     RefPtr<MutableDictionary> result = MutableDictionary::create();
     HashMap<String, uint64_t>::const_iterator end = map.end();
     for (HashMap<String, uint64_t>::const_iterator it = map.begin(); it != end; ++it)
-        result->set(it->key, RefPtr<WebUInt64>(WebUInt64::create(it->value)).get());
+        result->set(it->first, RefPtr<WebUInt64>(WebUInt64::create(it->second)).get());
     
     return result;
 }

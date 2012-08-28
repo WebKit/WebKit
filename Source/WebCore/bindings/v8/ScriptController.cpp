@@ -128,8 +128,8 @@ void ScriptController::clearScriptObjects()
 {
     PluginObjectMap::iterator it = m_pluginObjects.begin();
     for (; it != m_pluginObjects.end(); ++it) {
-        _NPN_UnregisterObject(it->value);
-        _NPN_ReleaseObject(it->value);
+        _NPN_UnregisterObject(it->second);
+        _NPN_ReleaseObject(it->second);
     }
     m_pluginObjects.clear();
 
@@ -157,7 +157,7 @@ void ScriptController::resetIsolatedWorlds()
 {
     for (IsolatedWorldMap::iterator iter = m_isolatedWorlds.begin();
          iter != m_isolatedWorlds.end(); ++iter) {
-        iter->value->destroy();
+        iter->second->destroy();
     }
     m_isolatedWorlds.clear();
     m_isolatedWorldSecurityOrigins.clear();
@@ -344,7 +344,7 @@ void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<Sc
         if (worldID > 0) {
             IsolatedWorldMap::iterator iter = m_isolatedWorlds.find(worldID);
             if (iter != m_isolatedWorlds.end())
-                isolatedContext = iter->value;
+                isolatedContext = iter->second;
             else {
                 isolatedContext = new V8IsolatedContext(m_frame, DOMWrapperWorld::getOrCreateIsolatedWorld(worldID, extensionGroup));
                 if (isolatedContext->context().IsEmpty()) {
@@ -358,7 +358,7 @@ void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<Sc
 
             IsolatedWorldSecurityOriginMap::iterator securityOriginIter = m_isolatedWorldSecurityOrigins.find(worldID);
             if (securityOriginIter != m_isolatedWorldSecurityOrigins.end())
-                isolatedContext->setSecurityOrigin(securityOriginIter->value);
+                isolatedContext->setSecurityOrigin(securityOriginIter->second);
         } else {
             isolatedContext = new V8IsolatedContext(m_frame, DOMWrapperWorld::getOrCreateIsolatedWorld(worldID, extensionGroup));
             if (isolatedContext->context().IsEmpty()) {
@@ -396,7 +396,7 @@ void ScriptController::setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<Se
     m_isolatedWorldSecurityOrigins.set(worldID, securityOrigin);
     IsolatedWorldMap::iterator iter = m_isolatedWorlds.find(worldID);
     if (iter != m_isolatedWorlds.end())
-        iter->value->setSecurityOrigin(securityOrigin);
+        iter->second->setSecurityOrigin(securityOrigin);
 }
 
 TextPosition ScriptController::eventHandlerPosition() const
@@ -546,8 +546,8 @@ void ScriptController::cleanupScriptObjectsForPlugin(Widget* nativeHandle)
     PluginObjectMap::iterator it = m_pluginObjects.find(nativeHandle);
     if (it == m_pluginObjects.end())
         return;
-    _NPN_UnregisterObject(it->value);
-    _NPN_ReleaseObject(it->value);
+    _NPN_UnregisterObject(it->second);
+    _NPN_ReleaseObject(it->second);
     m_pluginObjects.remove(it);
 }
 
@@ -663,7 +663,7 @@ void ScriptController::collectIsolatedContexts(Vector<std::pair<ScriptState*, Se
 {
     v8::HandleScope handleScope;
     for (IsolatedWorldMap::iterator it = m_isolatedWorlds.begin(); it != m_isolatedWorlds.end(); ++it) {
-        V8IsolatedContext* isolatedContext = it->value;
+        V8IsolatedContext* isolatedContext = it->second;
         if (!isolatedContext->securityOrigin())
             continue;
         v8::Handle<v8::Context> v8Context = isolatedContext->context();

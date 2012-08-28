@@ -42,7 +42,7 @@ public:
         Iterator end = set.end();
         size_t clientIndex = 0;
         for (Iterator current = set.begin(); current != end; ++current)
-            m_clientVector[clientIndex++] = current->key;
+            m_clientVector[clientIndex++] = current->first;
     }
 
     T* next()

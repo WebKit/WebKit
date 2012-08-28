@@ -282,7 +282,7 @@ void ApplicationCacheHost::fillResourceList(ResourceInfoList* resources)
      
     ApplicationCache::ResourceMap::const_iterator end = cache->end();
     for (ApplicationCache::ResourceMap::const_iterator it = cache->begin(); it != end; ++it) {
-        RefPtr<ApplicationCacheResource> resource = it->value;
+        RefPtr<ApplicationCacheResource> resource = it->second;
         unsigned type = resource->type();
         bool isMaster   = type & ApplicationCacheResource::Master;
         bool isManifest = type & ApplicationCacheResource::Manifest;

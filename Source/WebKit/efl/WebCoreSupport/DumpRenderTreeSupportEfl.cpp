@@ -548,7 +548,7 @@ void DumpRenderTreeSupportEfl::evaluateScriptInIsolatedWorld(const Evas_Object* 
     else {
         WTF::HashMap<int, RefPtr<WebCore::DOMWrapperWorld > >::const_iterator it = worldMap.find(worldID);
         if (it != worldMap.end())
-            scriptWorld = (*it).value;
+            scriptWorld = (*it).second;
         else {
             scriptWorld = WebCore::ScriptController::createWorld();
             worldMap.set(worldID, scriptWorld);

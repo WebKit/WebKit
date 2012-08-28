@@ -53,7 +53,7 @@ CoordinatedGraphicsLayer* CoordinatedGraphicsLayer::layerByID(WebKit::WebLayerID
     HashMap<WebLayerID, CoordinatedGraphicsLayer*>::iterator it = table.find(id);
     if (it == table.end())
         return 0;
-    return it->value;
+    return it->second;
 }
 
 static WebLayerID toWebLayerID(GraphicsLayer* layer)

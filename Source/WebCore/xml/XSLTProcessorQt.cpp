@@ -142,7 +142,7 @@ bool XSLTProcessor::transformToString(Node* sourceNode, String&, String& resultS
 
     XSLTProcessor::ParameterMap::iterator end = m_parameters.end();
     for (XSLTProcessor::ParameterMap::iterator it = m_parameters.begin(); it != end; ++it)
-        query.bindVariable(QString(it->key), QXmlItem(QVariant(QString(it->value))));
+        query.bindVariable(QString(it->first), QXmlItem(QVariant(QString(it->second))));
 
     QString source;
     if (sourceIsDocument && ownerDocument->transformSource())

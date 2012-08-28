@@ -344,7 +344,7 @@ static void _ewk_view_priv_loading_resources_clear(LoadingResourcesMap& loadingR
     LoadingResourcesMap::iterator it = loadingResourcesMap.begin();
     LoadingResourcesMap::iterator end = loadingResourcesMap.end();
     for ( ; it != end; ++it)
-        ewk_web_resource_unref(it->value);
+        ewk_web_resource_unref(it->second);
 
     loadingResourcesMap.clear();
 }

@@ -261,7 +261,7 @@ void WebURLResponse::addHTTPHeaderField(const WebString& name, const WebString& 
     HTTPHeaderMap::AddResult result =
         const_cast<HTTPHeaderMap*>(&map)->add(name, valueStr);
     if (!result.isNewEntry)
-        result.iterator->value += ", " + valueStr;
+        result.iterator->second += ", " + valueStr;
 }
 
 void WebURLResponse::clearHTTPHeaderField(const WebString& name)
@@ -275,7 +275,7 @@ void WebURLResponse::visitHTTPHeaderFields(WebHTTPHeaderVisitor* visitor) const
 {
     const HTTPHeaderMap& map = m_private->m_resourceResponse->httpHeaderFields();
     for (HTTPHeaderMap::const_iterator it = map.begin(); it != map.end(); ++it)
-        visitor->visitHeader(it->key, it->value);
+        visitor->visitHeader(it->first, it->second);
 }
 
 double WebURLResponse::lastModifiedDate() const

@@ -111,7 +111,7 @@ typedef WTF::KeyValuePair<FunctionCallHashCount::ValueType, unsigned> NameCountP
 
 static inline bool functionNameCountPairComparator(const NameCountPair& a, const NameCountPair& b)
 {
-    return a.value > b.value;
+    return a.second > b.second;
 }
 
 void Profile::debugPrintDataSampleStyle() const
@@ -128,7 +128,7 @@ void Profile::debugPrintDataSampleStyle() const
 
     std::sort(sortedFunctions.begin(), sortedFunctions.end(), functionNameCountPairComparator);
     for (NameCountPairVector::iterator it = sortedFunctions.begin(); it != sortedFunctions.end(); ++it)
-        dataLog("        %-12d%s\n", (*it).value, UString((*it).key).utf8().data());
+        dataLog("        %-12d%s\n", (*it).second, UString((*it).first).utf8().data());
 
     dataLog("\nSort by top of stack, same collapsed (when >= 5):\n");
 }

@@ -612,8 +612,8 @@ void CachedResource::switchClientsToRevalidatedResource()
     Vector<CachedResourceClient*> clientsToMove;
     HashCountedSet<CachedResourceClient*>::iterator end2 = m_clients.end();
     for (HashCountedSet<CachedResourceClient*>::iterator it = m_clients.begin(); it != end2; ++it) {
-        CachedResourceClient* client = it->key;
-        unsigned count = it->value;
+        CachedResourceClient* client = it->first;
+        unsigned count = it->second;
         while (count) {
             clientsToMove.append(client);
             --count;
@@ -647,9 +647,9 @@ void CachedResource::updateResponseAfterRevalidation(const ResourceResponse& val
     HTTPHeaderMap::const_iterator end = newHeaders.end();
     for (HTTPHeaderMap::const_iterator it = newHeaders.begin(); it != end; ++it) {
         // Don't allow 304 response to update content headers, these can't change but some servers send wrong values.
-        if (it->key.startsWith(contentHeaderPrefix, false))
+        if (it->first.startsWith(contentHeaderPrefix, false))
             continue;
-        m_response.setHTTPHeaderField(it->key, it->value);
+        m_response.setHTTPHeaderField(it->first, it->second);
     }
 }
 

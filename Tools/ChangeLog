@@ -1,3 +1,44 @@
+2012-08-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r126836.
+        http://trac.webkit.org/changeset/126836
+        https://bugs.webkit.org/show_bug.cgi?id=95163
+
+        Broke all Apple ports, EFL, and Qt. (Requested by tkent on
+        #webkit).
+
+        * DumpRenderTree/chromium/MockWebSpeechInputController.cpp:
+        (MockWebSpeechInputController::addMockRecognitionResult):
+        * DumpRenderTree/chromium/NotificationPresenter.cpp:
+        (NotificationPresenter::simulateClick):
+        (NotificationPresenter::show):
+        * DumpRenderTree/chromium/TestRunner/CppBoundClass.cpp:
+        (CppBoundClass::~CppBoundClass):
+        (CppBoundClass::invoke):
+        (CppBoundClass::getProperty):
+        (CppBoundClass::setProperty):
+        (CppBoundClass::bindCallback):
+        (CppBoundClass::bindProperty):
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (applyFontMap):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::printResourceDescription):
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::~AccessibilityController):
+        (AccessibilityController::winNotificationReceived):
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::descriptionSuitableForTestResult):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (worldIDForWorld):
+        (TestRunner::evaluateScriptInIsolatedWorld):
+        * TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionBasic_Bundle.cpp:
+        (TestWebKitAPI::DOMWindowExtensionBasic::willDestroyPage):
+        * TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionNoCache_Bundle.cpp:
+        (TestWebKitAPI::DOMWindowExtensionNoCache::willDestroyPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::worldIDForWorld):
+        (WTR::TestRunner::evaluateScriptInIsolatedWorld):
+
 2012-08-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Rename first/second to key/value in HashMap iterators

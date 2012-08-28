@@ -82,10 +82,10 @@ InjectedScript InjectedScriptManager::injectedScriptForId(int id)
 {
     IdToInjectedScriptMap::iterator it = m_idToInjectedScript.find(id);
     if (it != m_idToInjectedScript.end())
-        return it->value;
+        return it->second;
     for (ScriptStateToId::iterator it = m_scriptStateToId.begin(); it != m_scriptStateToId.end(); ++it) {
-        if (it->value == id)
-            return injectedScriptFor(it->key);
+        if (it->second == id)
+            return injectedScriptFor(it->first);
     }
     return InjectedScript();
 }
@@ -94,7 +94,7 @@ int InjectedScriptManager::injectedScriptIdFor(ScriptState* scriptState)
 {
     ScriptStateToId::iterator it = m_scriptStateToId.find(scriptState);
     if (it != m_scriptStateToId.end())
-        return it->value;
+        return it->second;
     int id = m_nextInjectedScriptId++;
     m_scriptStateToId.set(scriptState, id);
     return id;
@@ -126,11 +126,11 @@ void InjectedScriptManager::discardInjectedScriptsFor(DOMWindow* window)
     Vector<long> idsToRemove;
     IdToInjectedScriptMap::iterator end = m_idToInjectedScript.end();
     for (IdToInjectedScriptMap::iterator it = m_idToInjectedScript.begin(); it != end; ++it) {
-        ScriptState* scriptState = it->value.scriptState();
+        ScriptState* scriptState = it->second.scriptState();
         if (window != domWindowFromScriptState(scriptState))
             continue;
         m_scriptStateToId.remove(scriptState);
-        idsToRemove.append(it->key);
+        idsToRemove.append(it->first);
     }
 
     for (size_t i = 0; i < idsToRemove.size(); i++)
@@ -139,7 +139,7 @@ void InjectedScriptManager::discardInjectedScriptsFor(DOMWindow* window)
     // Now remove script states that have id but no injected script.
     Vector<ScriptState*> scriptStatesToRemove;
     for (ScriptStateToId::iterator it = m_scriptStateToId.begin(); it != m_scriptStateToId.end(); ++it) {
-        ScriptState* scriptState = it->key;
+        ScriptState* scriptState = it->first;
         if (window == domWindowFromScriptState(scriptState))
             scriptStatesToRemove.append(scriptState);
     }
@@ -155,7 +155,7 @@ bool InjectedScriptManager::canAccessInspectedWorkerContext(ScriptState*)
 void InjectedScriptManager::releaseObjectGroup(const String& objectGroup)
 {
     for (IdToInjectedScriptMap::iterator it = m_idToInjectedScript.begin(); it != m_idToInjectedScript.end(); ++it)
-        it->value.releaseObjectGroup(objectGroup);
+        it->second.releaseObjectGroup(objectGroup);
 }
 
 String InjectedScriptManager::injectedScriptSource()
@@ -173,9 +173,9 @@ InjectedScript InjectedScriptManager::injectedScriptFor(ScriptState* inspectedSc
 {
     ScriptStateToId::iterator it = m_scriptStateToId.find(inspectedScriptState);
     if (it != m_scriptStateToId.end()) {
-        IdToInjectedScriptMap::iterator it1 = m_idToInjectedScript.find(it->value);
+        IdToInjectedScriptMap::iterator it1 = m_idToInjectedScript.find(it->second);
         if (it1 != m_idToInjectedScript.end())
-            return it1->value;
+            return it1->second;
     }
 
     if (!m_inspectedStateAccessCheck(inspectedScriptState))

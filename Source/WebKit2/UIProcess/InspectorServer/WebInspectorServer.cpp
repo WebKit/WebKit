@@ -67,7 +67,7 @@ WebInspectorServer::~WebInspectorServer()
     // Close any remaining open connections.
     HashMap<unsigned, WebSocketServerConnection*>::iterator end = m_connectionMap.end();
     for (HashMap<unsigned, WebSocketServerConnection*>::iterator it = m_connectionMap.begin(); it != end; ++it) {
-        WebSocketServerConnection* connection = it->value;
+        WebSocketServerConnection* connection = it->second;
         WebInspectorProxy* client = m_clientMap.get(connection->identifier());
         closeConnection(client, connection);
     }
@@ -78,7 +78,7 @@ int WebInspectorServer::registerPage(WebInspectorProxy* client)
 #ifndef ASSERT_DISABLED
     ClientMap::iterator end = m_clientMap.end();
     for (ClientMap::iterator it = m_clientMap.begin(); it != end; ++it)
-        ASSERT(it->value != client);
+        ASSERT(it->second != client);
 #endif
 
     int pageId = m_nextAvailablePageId++;

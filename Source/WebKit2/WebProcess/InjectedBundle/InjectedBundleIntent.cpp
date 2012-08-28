@@ -79,7 +79,7 @@ PassRefPtr<ImmutableDictionary> InjectedBundleIntent::extras() const
     ImmutableDictionary::MapType wkExtras;
     HashMap<String, String>::const_iterator end = extras.end();
     for (HashMap<String, String>::const_iterator it = extras.begin(); it != end; ++it)
-        wkExtras.set(it->key, WebString::create(it->value));
+        wkExtras.set(it->first, WebString::create(it->second));
 
     return ImmutableDictionary::adopt(wkExtras);
 }
