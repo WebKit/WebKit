@@ -9284,6 +9284,7 @@
 		848522871190173C006EDC7F /* SVGVKernElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGVKernElement.cpp; sourceTree = "<group>"; };
 		848522881190173C006EDC7F /* SVGVKernElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGVKernElement.h; sourceTree = "<group>"; };
 		848522891190173C006EDC7F /* SVGVKernElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGVKernElement.idl; sourceTree = "<group>"; };
+		84894CA815EC489700A40481 /* LayoutTypesInlineMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutTypesInlineMethods.h; sourceTree = "<group>"; };
 		849F77750EFEC6200090849D /* StrokeStyleApplier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StrokeStyleApplier.h; sourceTree = "<group>"; };
 		84A81F3B0FC7DFF000955300 /* SourceAlpha.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SourceAlpha.cpp; path = filters/SourceAlpha.cpp; sourceTree = "<group>"; };
 		84A81F3C0FC7DFF000955300 /* SourceAlpha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SourceAlpha.h; path = filters/SourceAlpha.h; sourceTree = "<group>"; };
@@ -21300,6 +21301,7 @@
 				2D9066040BE141D400956998 /* LayoutState.cpp */,
 				2D9066050BE141D400956998 /* LayoutState.h */,
 				BACF290013B2A0D500781F90 /* LayoutTypes.h */,
+				84894CA815EC489700A40481 /* LayoutTypesInlineMethods.h */,
 				3774ABA30FA21EB400AD7DE9 /* OverlapTestRequestClient.h */,
 				9377AB9F15DEFEEF0031FD04 /* Pagination.h */,
 				0885067D11DA045B00182B98 /* PaintInfo.h */,
