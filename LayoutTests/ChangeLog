@@ -1,3 +1,28 @@
+2012-08-28  Philip Rogers  <pdr@google.com>
+
+        Rebaseline details-nested-2.html and clone-anonymous-block-non-inline-child-crash.html after 126789
+        https://bugs.webkit.org/show_bug.cgi?id=95226
+
+        Reviewed by Abhishek Arya.
+
+        * fast/html/details-nested-2-expected.txt: Added.
+        * fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Replaced.
+        * platform/chromium-linux/fast/html/details-nested-2-expected.txt: Removed.
+        * platform/chromium-linux/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Removed.
+        * platform/chromium-mac/fast/html/details-nested-2-expected.txt:
+        * platform/chromium-mac/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * platform/chromium-win/fast/html/details-nested-2-expected.txt:
+        * platform/chromium-win/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * platform/efl/fast/html/details-nested-2-expected.txt: Removed.
+        * platform/efl/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Removed.
+        * platform/gtk/fast/html/details-nested-2-expected.txt: Removed.
+        * platform/gtk/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Removed.
+        * platform/win-future: Added.
+        * platform/win-future/fast: Added.
+        * platform/win-future/fast/multicol: Added.
+        * platform/win-future/fast/multicol/span: Added.
+        * platform/win-future/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Added.
+
 2012-08-28  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed rebaseline after r126911.
