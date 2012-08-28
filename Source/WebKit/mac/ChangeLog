@@ -1,5 +1,14 @@
 2012-08-28  Jon Lee  <jonlee@apple.com>
 
+        Second build fix to r126909.
+
+        Added needed #else clause.
+
+        * WebView/WebView.mm:
+        (-[WebView _notificationIDForTesting:]):
+
+2012-08-28  Jon Lee  <jonlee@apple.com>
+
         Build fix to r126909.
 
         Needed ENABLE(NOTIFICATIONS) guards.
