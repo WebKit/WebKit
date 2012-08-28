@@ -35,6 +35,8 @@
 #include "CCThreadedTest.h"
 #include "CCTimingFunction.h"
 #include "ContentLayerChromium.h"
+#include "Extensions3DChromium.h"
+#include "FakeWebCompositorOutputSurface.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <public/Platform.h>
@@ -2687,5 +2689,97 @@ private:
 };
 
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestLostContextAfterEvictTextures)
+
+class CompositorFakeWebGraphicsContext3DWithEndQueryCausingLostContext : public WebKit::CompositorFakeWebGraphicsContext3D {
+public:
+    static PassOwnPtr<CompositorFakeWebGraphicsContext3DWithEndQueryCausingLostContext> create(Attributes attrs)
+    {
+        return adoptPtr(new CompositorFakeWebGraphicsContext3DWithEndQueryCausingLostContext(attrs));
+    }
+
+    virtual void setContextLostCallback(WebGraphicsContextLostCallback* callback) { m_contextLostCallback = callback; }
+    virtual bool isContextLost() { return m_isContextLost; }
+
+    virtual void beginQueryEXT(GC3Denum, WebGLId) { }
+    virtual void endQueryEXT(GC3Denum)
+    {
+        // Lose context.
+        if (!m_isContextLost) {
+            m_contextLostCallback->onContextLost();
+            m_isContextLost = true;
+        }
+    }
+    virtual void getQueryObjectuivEXT(WebGLId, GC3Denum pname, GC3Duint* params)
+    {
+        // Context is lost. Result will never be available.
+        if (pname == Extensions3DChromium::QUERY_RESULT_AVAILABLE_EXT)
+            *params = 0;
+    }
+
+private:
+    explicit CompositorFakeWebGraphicsContext3DWithEndQueryCausingLostContext(Attributes attrs)
+        : CompositorFakeWebGraphicsContext3D(attrs)
+        , m_contextLostCallback(0)
+        , m_isContextLost(false) { }
+
+    WebGraphicsContextLostCallback* m_contextLostCallback;
+    bool m_isContextLost;
+};
+
+class CCLayerTreeHostTestLostContextWhileUpdatingResources : public CCLayerTreeHostTest {
+public:
+    CCLayerTreeHostTestLostContextWhileUpdatingResources()
+        : m_parent(ContentLayerChromiumWithUpdateTracking::create(&m_delegate))
+        , m_numChildren(50)
+    {
+        for (int i = 0; i < m_numChildren; i++)
+            m_children.append(ContentLayerChromiumWithUpdateTracking::create(&m_delegate));
+    }
+
+    virtual PassOwnPtr<WebKit::WebCompositorOutputSurface> createOutputSurface()
+    {
+        return FakeWebCompositorOutputSurface::create(CompositorFakeWebGraphicsContext3DWithEndQueryCausingLostContext::create(WebGraphicsContext3D::Attributes()));
+    }
+
+    virtual void beginTest()
+    {
+        m_layerTreeHost->setRootLayer(m_parent);
+        m_layerTreeHost->setViewportSize(IntSize(m_numChildren, 1), IntSize(m_numChildren, 1));
+
+        WebTransformationMatrix identityMatrix;
+        setLayerPropertiesForTesting(m_parent.get(), 0, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(m_numChildren, 1), true);
+        for (int i = 0; i < m_numChildren; i++)
+            setLayerPropertiesForTesting(m_children[i].get(), m_parent.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(i, 0), IntSize(1, 1), false);
+
+        postSetNeedsCommitToMainThread();
+    }
+
+    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl* impl)
+    {
+        endTest();
+    }
+
+    virtual void layout()
+    {
+        m_parent->setNeedsDisplay();
+        for (int i = 0; i < m_numChildren; i++)
+            m_children[i]->setNeedsDisplay();
+    }
+
+    virtual void afterTest()
+    {
+    }
+
+private:
+    MockContentLayerDelegate m_delegate;
+    RefPtr<ContentLayerChromiumWithUpdateTracking> m_parent;
+    int m_numChildren;
+    Vector<RefPtr<ContentLayerChromiumWithUpdateTracking> > m_children;
+};
+
+TEST_F(CCLayerTreeHostTestLostContextWhileUpdatingResources, runMultiThread)
+{
+    runTest(true);
+}
 
 } // namespace
