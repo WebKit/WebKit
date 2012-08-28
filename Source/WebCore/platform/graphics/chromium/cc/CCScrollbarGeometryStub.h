@@ -27,6 +27,7 @@
 #define CCScrollbarGeometryStub_h
 
 #include <public/WebScrollbarThemeGeometry.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

@@ -27,6 +27,7 @@
 #define CCScrollbarGeometryFixedThumb_h
 
 #include "CCScrollbarGeometryStub.h"
+#include "IntSize.h"
 
 namespace WebCore {
 

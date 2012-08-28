@@ -27,6 +27,7 @@
 
 #include "CCScrollbarGeometryFixedThumb.h"
 
+#include <cmath>
 #include <public/WebRect.h>
 #include <public/WebScrollbar.h>
 
