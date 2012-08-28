@@ -7226,6 +7226,7 @@
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorBackendCommands.js',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorFrontend.cpp',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorFrontend.h',
+            '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorOverlayPage.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorTypeBuilder.cpp',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorTypeBuilder.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorProtocolVersion.h',

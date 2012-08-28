@@ -25,6 +25,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/InspectorBackendDispatcher.h \
 	DerivedSources/WebCore/InspectorFrontend.cpp \
 	DerivedSources/WebCore/InspectorFrontend.h \
+	DerivedSources/WebCore/InspectorOverlayPage.h \
 	DerivedSources/WebCore/InspectorTypeBuilder.cpp \
 	DerivedSources/WebCore/InspectorTypeBuilder.h \
 	DerivedSources/WebCore/InspectorProtocolVersion.h \

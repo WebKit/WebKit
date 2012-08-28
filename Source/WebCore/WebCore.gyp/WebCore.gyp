@@ -439,6 +439,30 @@
       ]
     },
     {
+      'target_name': 'inspector_overlay_page',
+      'type': 'none',
+      'actions': [
+        {
+          'action_name': 'generateInspectorOverlayPage',
+          'inputs': [
+            '../inspector/InspectorOverlayPage.html',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/InspectorOverlayPage.h',
+          ],
+          'msvs_cygwin_shell': 0,
+          'action': [
+            '<(perl_exe)',
+            '../inspector/xxd.pl',
+            'InspectorOverlayPage_html',
+            '<@(_inputs)',
+            '<@(_outputs)'
+          ],
+          'message': 'Generating InspectorOverlayPage.h from InspectorOverlayPage.html',
+        },
+      ]
+    },
+    {
       'target_name': 'injected_script_source',
       'type': 'none',
       'actions': [
@@ -1176,6 +1200,7 @@
       'hard_dependency': 1,
       'dependencies': [
         'webcore_bindings_sources',
+        'inspector_overlay_page',
         'inspector_protocol_sources',
         'injected_script_source',
         'injected_webgl_script_source',
@@ -1306,6 +1331,7 @@
         'debugger_script_source',
         'injected_script_source',
         'injected_webgl_script_source',
+        'inspector_overlay_page',
         'inspector_protocol_sources',
         'webcore_bindings_sources',
         '../../ThirdParty/glu/glu.gyp:libtess',

@@ -918,6 +918,8 @@ DerivedSources/WebCore/InspectorFrontend.h: DerivedSources/WebCore/InspectorFron
 DerivedSources/WebCore/InspectorFrontend.cpp: DerivedSources/WebCore/InspectorBackendCommands.js
 DerivedSources/WebCore/InspectorBackendCommands.js: DerivedSources/WebCore/InspectorBackendDispatcher.h
 DerivedSources/WebCore/InspectorBackendDispatcher.h: DerivedSources/WebCore/InspectorBackendDispatcher.cpp
+DerivedSources/WebCore/InspectorOverlayPage.h: $(WebCore)/inspector/InspectorOverlayPage.html
+	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl InspectorOverlayPage_html $(WebCore)/inspector/InspectorOverlayPage.html $(GENSOURCES_WEBCORE)/InspectorOverlayPage.h
 DerivedSources/WebCore/InjectedScriptSource.h: $(WebCore)/inspector/InjectedScriptSource.js
 	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl InjectedScriptSource_js $(WebCore)/inspector/InjectedScriptSource.js $(GENSOURCES_WEBCORE)/InjectedScriptSource.h
 DerivedSources/WebCore/InjectedScriptWebGLModuleSource.h: $(WebCore)/inspector/InjectedScriptWebGLModuleSource.js
@@ -1194,6 +1196,7 @@ EXTRA_DIST += \
 	Source/WebCore/inspector/InjectedScriptWebGLModuleSource.js \
 	Source/WebCore/inspector/Inspector.json \
 	Source/WebCore/inspector/Inspector-1.0.json \
+	Source/WebCore/inspector/InspectorOverlayPage.html \
 	Source/WebCore/inspector/generate-inspector-protocol-version \
 	Source/WebCore/inspector/xxd.pl \
 	Source/WebCore/LICENSE-APPLE \

@@ -1030,6 +1030,11 @@ INSPECTOR_GENERATOR_SCRIPTS = inspector/CodeGeneratorInspector.py
 InspectorFrontend.h : Inspector.json $(INSPECTOR_GENERATOR_SCRIPTS)
 	python $(WebCore)/inspector/CodeGeneratorInspector.py $(WebCore)/inspector/Inspector.json --output_h_dir . --output_cpp_dir .
 
+all : InspectorOverlayPage.h
+
+InspectorOverlayPage.h : InspectorOverlayPage.html
+	perl $(WebCore)/inspector/xxd.pl InspectorOverlayPage_html $(WebCore)/inspector/InspectorOverlayPage.html InspectorOverlayPage.h
+
 all : InjectedScriptSource.h
 
 InjectedScriptSource.h : InjectedScriptSource.js

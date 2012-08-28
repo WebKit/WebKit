@@ -57,6 +57,8 @@ INSPECTOR_JSON = $$PWD/inspector/Inspector.json
 
 INSPECTOR_BACKEND_COMMANDS_QRC = $$PWD/inspector/front-end/InspectorBackendCommands.qrc
 
+INSPECTOR_OVERLAY_PAGE = $$PWD/inspector/InspectorOverlayPage.html
+
 INJECTED_SCRIPT_SOURCE = $$PWD/inspector/InjectedScriptSource.js
 
 INJECTED_SCRIPT_WEBGL_MODULE_SOURCE = $$PWD/inspector/InjectedScriptWebGLModuleSource.js
@@ -782,6 +784,12 @@ inspectorBackendCommands.input = INSPECTOR_BACKEND_COMMANDS_QRC
 inspectorBackendCommands.commands = $$QMAKE_COPY $$toSystemPath($$INSPECTOR_BACKEND_COMMANDS_QRC) ${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}InspectorBackendCommands.qrc
 inspectorBackendCommands.add_output_to_sources = false
 GENERATORS += inspectorBackendCommands
+
+inspectorOverlayPage.output = InspectorOverlayPage.h
+inspectorOverlayPage.input = INSPECTOR_OVERLAY_PAGE
+inspectorOverlayPage.commands = perl $$PWD/inspector/xxd.pl InspectorOverlayPage_html ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
+injectedScriptSource.add_output_to_sources = false
+GENERATORS += inspectorOverlayPage
 
 # GENERATOR 2-a: inspector injected script source compiler
 injectedScriptSource.output = InjectedScriptSource.h

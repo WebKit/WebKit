@@ -88,9 +88,10 @@ public:
     {
         return adoptPtr(new InspectorOverlay(page, client));
     }
+    ~InspectorOverlay();
 
     void paint(GraphicsContext&);
-    void drawOutline(GraphicsContext&, const LayoutRect&, const Color&);
+    void drawOutline(GraphicsContext*, const LayoutRect&, const Color&);
     void getHighlight(Highlight*) const;
 
     void setPausedInDebuggerMessage(const String*);
@@ -105,9 +106,11 @@ private:
     InspectorOverlay(Page*, InspectorClient*);
 
     void update();
-    void drawNodeHighlight(GraphicsContext&);
-    void drawRectHighlight(GraphicsContext&);
-    void drawPausedInDebugger(GraphicsContext&);
+    void drawNodeHighlight(GraphicsContext*);
+    void drawRectHighlight(GraphicsContext*);
+    void drawOverlayPage(GraphicsContext*);
+    Page* overlayPage();
+    void evaluateInOverlay(const String& method, const String& argument);
 
     Page* m_page;
     InspectorClient* m_client;
@@ -115,6 +118,7 @@ private:
     RefPtr<Node> m_highlightNode;
     HighlightConfig m_nodeHighlightConfig;
     OwnPtr<IntRect> m_highlightRect;
+    OwnPtr<Page> m_overlayPage;
     HighlightConfig m_rectHighlightConfig;
 };
 
