@@ -299,9 +299,9 @@ bool ScrollAnimatorNone::PerAxisData::updateDataFromParameters(float step, float
         // This needs to be as minimal as possible while not being intrusive to page up/down.
         double minCoastDelta = m_visibleLength;
 
-        if (abs(remainingDelta) > minCoastDelta) {
+        if (fabs(remainingDelta) > minCoastDelta) {
             double maxCoastDelta = parameters->m_maximumCoastTime * targetMaxCoastVelocity;
-            double coastFactor = min(1., (abs(remainingDelta) - minCoastDelta) / (maxCoastDelta - minCoastDelta));
+            double coastFactor = min(1., (fabs(remainingDelta) - minCoastDelta) / (maxCoastDelta - minCoastDelta));
 
             // We could play with the curve here - linear seems a little soft. Initial testing makes me want to feed into the sustain time more aggressively.
             double coastMinTimeLeft = min(parameters->m_maximumCoastTime, minTimeLeft + coastCurve(parameters->m_coastTimeCurve, coastFactor) * (parameters->m_maximumCoastTime - minTimeLeft));
