@@ -547,7 +547,7 @@ void AccessibilityUIElement::hasPopupGetterCallback(CppVariant* result)
 
 void AccessibilityUIElement::isValidGetterCallback(CppVariant* result)
 {
-    result->set(accessibilityObject().isValid());
+    result->set(!accessibilityObject().isDetached());
 }
 
 void AccessibilityUIElement::orientationGetterCallback(CppVariant* result)

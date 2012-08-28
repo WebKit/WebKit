@@ -89,7 +89,6 @@ public:
     WEBKIT_EXPORT WebString actionVerb() const;
     WEBKIT_EXPORT bool canSetFocusAttribute() const;
     WEBKIT_EXPORT bool canSetValueAttribute() const;
-    WEBKIT_EXPORT bool isValid() const;
 
     WEBKIT_EXPORT unsigned childCount() const;
 

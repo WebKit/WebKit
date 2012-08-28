@@ -1,3 +1,16 @@
+2012-08-28  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Crash due to object getting deleted inside updateBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=94619
+
+        Reviewed by Chris Fleizach.
+
+        Change isValid to !isDetached after deleting isValid from
+        chromium WebAccessibilityObject as being redundant.
+
+        * DumpRenderTree/chromium/TestRunner/AccessibilityUIElementChromium.cpp:
+        (AccessibilityUIElement::isValidGetterCallback):
+
 2012-08-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126914.

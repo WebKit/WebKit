@@ -1,3 +1,94 @@
+2012-08-28  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Crash due to object getting deleted inside updateBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=94619
+
+        Reviewed by Chris Fleizach.
+
+        Chromium now calls updateBackingStoreAndCheckValidity explicitly,
+        so we can now get rid of calls to updateBackingStore in the
+        method implementations, and just make sure we're checking isDetached.
+
+        * public/WebAccessibilityObject.h:
+        (WebAccessibilityObject):
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::axID):
+        (WebKit::WebAccessibilityObject::accessibilityDescription):
+        (WebKit::WebAccessibilityObject::actionVerb):
+        (WebKit::WebAccessibilityObject::canSetFocusAttribute):
+        (WebKit::WebAccessibilityObject::canSetValueAttribute):
+        (WebKit::WebAccessibilityObject::childCount):
+        (WebKit::WebAccessibilityObject::childAt):
+        (WebKit::WebAccessibilityObject::firstChild):
+        (WebKit::WebAccessibilityObject::focusedChild):
+        (WebKit::WebAccessibilityObject::lastChild):
+        (WebKit::WebAccessibilityObject::nextSibling):
+        (WebKit::WebAccessibilityObject::parentObject):
+        (WebKit::WebAccessibilityObject::previousSibling):
+        (WebKit::WebAccessibilityObject::canSetSelectedAttribute):
+        (WebKit::WebAccessibilityObject::isAnchor):
+        (WebKit::WebAccessibilityObject::isAriaReadOnly):
+        (WebKit::WebAccessibilityObject::isButtonStateMixed):
+        (WebKit::WebAccessibilityObject::isChecked):
+        (WebKit::WebAccessibilityObject::isCollapsed):
+        (WebKit::WebAccessibilityObject::isControl):
+        (WebKit::WebAccessibilityObject::isEnabled):
+        (WebKit::WebAccessibilityObject::isFocused):
+        (WebKit::WebAccessibilityObject::isHovered):
+        (WebKit::WebAccessibilityObject::isIndeterminate):
+        (WebKit::WebAccessibilityObject::isLinked):
+        (WebKit::WebAccessibilityObject::isLoaded):
+        (WebKit::WebAccessibilityObject::isMultiSelectable):
+        (WebKit::WebAccessibilityObject::isOffScreen):
+        (WebKit::WebAccessibilityObject::isPasswordField):
+        (WebKit::WebAccessibilityObject::isPressed):
+        (WebKit::WebAccessibilityObject::isReadOnly):
+        (WebKit::WebAccessibilityObject::isRequired):
+        (WebKit::WebAccessibilityObject::isSelected):
+        (WebKit::WebAccessibilityObject::isSelectedOptionActive):
+        (WebKit::WebAccessibilityObject::isVertical):
+        (WebKit::WebAccessibilityObject::isVisible):
+        (WebKit::WebAccessibilityObject::isVisited):
+        (WebKit::WebAccessibilityObject::accessKey):
+        (WebKit::WebAccessibilityObject::ariaHasPopup):
+        (WebKit::WebAccessibilityObject::ariaLiveRegionAtomic):
+        (WebKit::WebAccessibilityObject::ariaLiveRegionBusy):
+        (WebKit::WebAccessibilityObject::ariaLiveRegionRelevant):
+        (WebKit::WebAccessibilityObject::ariaLiveRegionStatus):
+        (WebKit::WebAccessibilityObject::boundingBoxRect):
+        (WebKit::WebAccessibilityObject::estimatedLoadingProgress):
+        (WebKit::WebAccessibilityObject::helpText):
+        (WebKit::WebAccessibilityObject::headingLevel):
+        (WebKit::WebAccessibilityObject::hierarchicalLevel):
+        (WebKit::WebAccessibilityObject::hitTest):
+        (WebKit::WebAccessibilityObject::keyboardShortcut):
+        (WebKit::WebAccessibilityObject::performDefaultAction):
+        (WebKit::WebAccessibilityObject::roleValue):
+        (WebKit::WebAccessibilityObject::selectionEnd):
+        (WebKit::WebAccessibilityObject::selectionStart):
+        (WebKit::WebAccessibilityObject::stringValue):
+        (WebKit::WebAccessibilityObject::title):
+        (WebKit::WebAccessibilityObject::titleUIElement):
+        (WebKit::WebAccessibilityObject::url):
+        (WebKit::WebAccessibilityObject::valueDescription):
+        (WebKit::WebAccessibilityObject::valueForRange):
+        (WebKit::WebAccessibilityObject::maxValueForRange):
+        (WebKit::WebAccessibilityObject::minValueForRange):
+        (WebKit::WebAccessibilityObject::node):
+        (WebKit::WebAccessibilityObject::document):
+        (WebKit::WebAccessibilityObject::accessibilityIsIgnored):
+        (WebKit::WebAccessibilityObject::lineBreaks):
+        (WebKit::WebAccessibilityObject::columnCount):
+        (WebKit::WebAccessibilityObject::rowCount):
+        (WebKit::WebAccessibilityObject::cellForColumnAndRow):
+        (WebKit::WebAccessibilityObject::cellColumnIndex):
+        (WebKit::WebAccessibilityObject::cellColumnSpan):
+        (WebKit::WebAccessibilityObject::cellRowIndex):
+        (WebKit::WebAccessibilityObject::cellRowSpan):
+        (WebKit::WebAccessibilityObject::scrollToMakeVisible):
+        (WebKit::WebAccessibilityObject::scrollToMakeVisibleWithSubFocus):
+        (WebKit::WebAccessibilityObject::scrollToGlobalPoint):
+
 2012-08-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126914.
