@@ -1,5 +1,13 @@
 2012-08-28  Gavin Barraclough  <barraclough@apple.com>
 
+        Rolled out r126928, this broke stuff :'-(
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::resetPatchPutById):
+
+2012-08-28  Gavin Barraclough  <barraclough@apple.com>
+
         PutById uses DataLabel32, not DataLabelCompact
         https://bugs.webkit.org/show_bug.cgi?id=95245
 

@@ -537,8 +537,6 @@ void JIT::compileGetDirectOffset(JSObject* base, RegisterID result, PropertyOffs
 
 void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure* oldStructure, Structure* newStructure, PropertyOffset cachedOffset, StructureChain* chain, ReturnAddressPtr returnAddress, bool direct)
 {
-    peek(regT0, JITSTACKFRAME_ARGS_INDEX);
-
     JumpList failureCases;
     // Check eax is an object of the right Structure.
     failureCases.append(emitJumpIfNotJSCell(regT0));
@@ -1164,7 +1162,7 @@ void JIT::resetPatchPutById(RepatchBuffer& repatchBuffer, StructureStubInfo* stu
     else
         repatchBuffer.relink(stubInfo->callReturnLocation, cti_op_put_by_id);
     repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelPtrAtOffset(stubInfo->patch.baseline.u.put.structureToCompare), reinterpret_cast<void*>(-1));
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(stubInfo->patch.baseline.u.put.displacementLabel), 0);
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(stubInfo->patch.baseline.u.put.displacementLabel), 0);
 }
 
 #endif // USE(JSVALUE64)
