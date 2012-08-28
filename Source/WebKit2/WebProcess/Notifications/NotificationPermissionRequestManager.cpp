@@ -151,6 +151,11 @@ void NotificationPermissionRequestManager::didReceiveNotificationPermissionDecis
     if (!isRequestIDValid(requestID))
         return;
 
+    RefPtr<WebCore::SecurityOrigin> origin = m_idToOriginMap.take(requestID);
+    m_originToIDMap.remove(origin);
+
+    WebProcess::shared().notificationManager().didUpdateNotificationDecision(origin->toString(), allowed);
+
 #if ENABLE(LEGACY_NOTIFICATIONS)
     RefPtr<VoidCallback> voidCallback = m_idToVoidCallbackMap.take(requestID);
     if (voidCallback) {

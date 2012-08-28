@@ -1,5 +1,26 @@
 2012-08-28  Jon Lee  <jonlee@apple.com>
 
+        [WK2] Bugs in maintenance of internal state when user decides whether to grant notification permissions
+        https://bugs.webkit.org/show_bug.cgi?id=95220
+        <rdar://problem/12189895>
+
+        Reviewed by Jessie Berlin.
+
+        A couple of the maps maintained by the request manager should have been cleaned up when the user decided on
+        whether to grant a website permission to post notifications.
+
+        Also, the web process' copy of the permissions was not updated appropriately. This meant that in the
+        permission callback, Notification.permission was not the same value as the permission value included as
+        the first parameter of the callback.
+
+        This first surfaced as part of the work to bring Mac support for web notifications. I have a test that
+        will check for regressions in this area, once all of that has been checked in (bug 77969).
+
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+        (WebKit::NotificationPermissionRequestManager::didReceiveNotificationPermissionDecision):
+
+2012-08-28  Jon Lee  <jonlee@apple.com>
+
         [WK2] Add SPI for injected bundle to manually set permissions
         https://bugs.webkit.org/show_bug.cgi?id=95127
         <rdar://problem/12182635>
