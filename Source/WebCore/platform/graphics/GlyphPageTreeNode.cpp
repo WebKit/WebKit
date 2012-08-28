@@ -29,6 +29,7 @@
 #include "config.h"
 #include "GlyphPageTreeNode.h"
 
+#include "OpenTypeVerticalData.h"
 #include "PlatformString.h"
 #include "SegmentedFontData.h"
 #include "SimpleFontData.h"
@@ -130,7 +131,12 @@ static bool fill(GlyphPage* pageToFill, unsigned offset, unsigned length, UChar*
     if (SimpleFontData::AdditionalFontData* additionalFontData = fontData->fontData())
         return additionalFontData->fillSVGGlyphPage(pageToFill, offset, length, buffer, bufferLength, fontData);
 #endif
-    return pageToFill->fill(offset, length, buffer, bufferLength, fontData);
+    bool hasGlyphs = pageToFill->fill(offset, length, buffer, bufferLength, fontData);
+#if ENABLE(OPENTYPE_VERTICAL)
+    if (hasGlyphs && fontData->verticalData())
+        fontData->verticalData()->substituteWithVerticalGlyphs(fontData, pageToFill, offset, length);
+#endif
+    return hasGlyphs;
 }
 
 void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNumber)

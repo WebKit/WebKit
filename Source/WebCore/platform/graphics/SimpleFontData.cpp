@@ -32,6 +32,7 @@
 
 #include "Font.h"
 #include "FontCache.h"
+#include "OpenTypeVerticalData.h"
 
 #include <wtf/MathExtras.h>
 #include <wtf/UnusedParam.h>
@@ -49,11 +50,20 @@ SimpleFontData::SimpleFontData(const FontPlatformData& platformData, bool isCust
     , m_isLoading(isLoading)
     , m_isTextOrientationFallback(isTextOrientationFallback)
     , m_isBrokenIdeographFallback(false)
+#if ENABLE(OPENTYPE_VERTICAL)
+    , m_verticalData(0)
+#endif
     , m_hasVerticalGlyphs(false)
 {
     platformInit();
     platformGlyphInit();
     platformCharWidthInit();
+#if ENABLE(OPENTYPE_VERTICAL)
+    if (platformData.orientation() == Vertical && !isTextOrientationFallback) {
+        m_verticalData = platformData.verticalData();
+        m_hasVerticalGlyphs = m_verticalData && m_verticalData->hasVerticalMetrics();
+    }
+#endif
 }
 
 SimpleFontData::SimpleFontData(PassOwnPtr<AdditionalFontData> fontData, float fontSize, bool syntheticBold, bool syntheticItalic)
@@ -64,6 +74,9 @@ SimpleFontData::SimpleFontData(PassOwnPtr<AdditionalFontData> fontData, float fo
     , m_isLoading(false)
     , m_isTextOrientationFallback(false)
     , m_isBrokenIdeographFallback(false)
+#if ENABLE(OPENTYPE_VERTICAL)
+    , m_verticalData(0)
+#endif
     , m_hasVerticalGlyphs(false)
 {
     m_fontData->initializeFontData(this, fontSize);

@@ -1844,6 +1844,10 @@
           'sources/': [
             ['exclude', 'Posix\\.cpp$'],
 
+            ['include', 'platform/graphics/opentype/OpenTypeTypes\\.h$'],
+            ['include', 'platform/graphics/opentype/OpenTypeVerticalData\\.cpp$'],
+            ['include', 'platform/graphics/opentype/OpenTypeVerticalData\\.h$'],
+
             # The Chromium Win currently uses GlyphPageTreeNodeChromiumWin.cpp from
             # platform/graphics/chromium, included by regex above, instead.
             ['exclude', 'platform/graphics/skia/FontCacheSkia\\.cpp$'],

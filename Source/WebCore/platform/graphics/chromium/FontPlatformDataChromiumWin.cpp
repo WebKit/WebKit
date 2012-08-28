@@ -191,6 +191,31 @@ SCRIPT_FONTPROPERTIES* FontPlatformData::scriptFontProperties() const
     return m_scriptFontProperties;
 }
 
+#if ENABLE(OPENTYPE_VERTICAL)
+const OpenTypeVerticalData* FontPlatformData::verticalData() const
+{
+    SkFontID id = typeface()->uniqueID();
+    return fontCache()->getVerticalData(id, *this);
+}
+
+PassRefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
+{
+    HWndDC hdc(0);
+    HGDIOBJ oldFont = SelectObject(hdc, hfont());
+
+    DWORD size = GetFontData(hdc, table, 0, 0, 0);
+    RefPtr<SharedBuffer> buffer;
+    if (size != GDI_ERROR) {
+        buffer = SharedBuffer::create(size);
+        DWORD result = GetFontData(hdc, table, 0, (PVOID)buffer->data(), size);
+        ASSERT(result == size);
+    }
+
+    SelectObject(hdc, oldFont);
+    return buffer.release();
+}
+#endif
+
 #ifndef NDEBUG
 String FontPlatformData::description() const
 {

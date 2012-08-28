@@ -390,15 +390,56 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
     // We draw the glyphs in chunks to avoid having to do a heap allocation for
     // the arrays of characters and advances.
     const int kMaxBufferLength = 256;
-    Vector<WORD, kMaxBufferLength> glyphs;
     Vector<int, kMaxBufferLength> advances;
     int glyphIndex = 0;  // The starting glyph of the current chunk.
+
+    float horizontalOffset = point.x(); // The floating point offset of the left side of the current glyph.
+#if ENABLE(OPENTYPE_VERTICAL)
+    const OpenTypeVerticalData* verticalData = font->verticalData();
+    if (verticalData) {
+        Vector<FloatPoint, kMaxBufferLength> translations;
+        Vector<GOFFSET, kMaxBufferLength> offsets;
+
+        // Skia doesn't have matrix for glyph coordinate space, so we rotate back the CTM.
+        AffineTransform savedMatrix = graphicsContext->getCTM();
+        graphicsContext->concatCTM(AffineTransform(0, -1, 1, 0, point.x(), point.y()));
+        graphicsContext->concatCTM(AffineTransform(1, 0, 0, 1, -point.x(), -point.y()));
+
+        const FontMetrics& metrics = font->fontMetrics();
+        SkScalar verticalOriginX = SkFloatToScalar(point.x() + metrics.floatAscent() - metrics.floatAscent(IdeographicBaseline));
+        while (glyphIndex < numGlyphs) {
+            // How many chars will be in this chunk?
+            int curLen = std::min(kMaxBufferLength, numGlyphs - glyphIndex);
+
+            const Glyph* glyphs = glyphBuffer.glyphs(from + glyphIndex);
+            translations.resize(curLen);
+            verticalData->getVerticalTranslationsForGlyphs(font, &glyphs[0], curLen, reinterpret_cast<float*>(&translations[0]));
+            // To position glyphs vertically, we use offsets instead of advances.
+            advances.resize(curLen);
+            advances.fill(0);
+            offsets.resize(curLen);
+            float currentWidth = 0;
+            for (int i = 0; i < curLen; ++i, ++glyphIndex) {
+                offsets[i].du = lroundf(translations[i].x());
+                offsets[i].dv = -lroundf(currentWidth - translations[i].y());
+                currentWidth += glyphBuffer.advanceAt(from + glyphIndex);
+            }
+            SkPoint origin;
+            origin.set(verticalOriginX, SkFloatToScalar(point.y() + horizontalOffset - point.x()));
+            horizontalOffset += currentWidth;
+            paintSkiaText(graphicsContext, font->platformData(), curLen, &glyphs[0], &advances[0], &offsets[0], &origin);
+        }
+
+        graphicsContext->setCTM(savedMatrix);
+        return;
+    }
+#endif
 
     // In order to round all offsets to the correct pixel boundary, this code keeps track of the absolute position
     // of each glyph in floating point units and rounds to integer advances at the last possible moment.
 
-    float horizontalOffset = point.x(); // The floating point offset of the left side of the current glyph.
     int lastHorizontalOffsetRounded = lroundf(horizontalOffset); // The rounded offset of the left side of the last glyph rendered.
+    Vector<WORD, kMaxBufferLength> glyphs;
     while (glyphIndex < numGlyphs) {
         // How many chars will be in this chunk?
         int curLen = std::min(kMaxBufferLength, numGlyphs - glyphIndex);

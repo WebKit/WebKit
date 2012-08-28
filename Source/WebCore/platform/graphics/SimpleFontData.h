@@ -88,7 +88,7 @@ public:
 
     const FontPlatformData& platformData() const { return m_platformData; }
 #if ENABLE(OPENTYPE_VERTICAL)
-    const OpenTypeVerticalData* verticalData() const { return 0; } // FIXME: implement
+    const OpenTypeVerticalData* verticalData() const { return m_verticalData; }
 #endif
 
     SimpleFontData* smallCapsFontData(const FontDescription&) const;
@@ -229,6 +229,9 @@ private:
 
     mutable OwnPtr<GlyphMetricsMap<FloatRect> > m_glyphToBoundsMap;
     mutable GlyphMetricsMap<float> m_glyphToWidthMap;
+#if ENABLE(OPENTYPE_VERTICAL)
+    const OpenTypeVerticalData* m_verticalData;
+#endif
 
     bool m_treatAsFixedPitch;
     bool m_isCustomFont;  // Whether or not we are custom font loaded via @font-face
@@ -317,6 +320,14 @@ ALWAYS_INLINE float SimpleFontData::widthForGlyph(Glyph glyph) const
 
     if (m_fontData)
         width = m_fontData->widthForSVGGlyph(glyph, m_platformData.size());
+#if ENABLE(OPENTYPE_VERTICAL)
+    else if (m_verticalData)
+#if USE(CG) || USE(CAIRO) || PLATFORM(WX) || USE(SKIA_ON_MAC_CHROMIUM)
+        width = m_verticalData->advanceHeight(this, glyph) + m_syntheticBoldOffset;
+#else
+        width = m_verticalData->advanceHeight(this, glyph);
+#endif
+#endif
     else
         width = platformWidthForGlyph(glyph);
 
