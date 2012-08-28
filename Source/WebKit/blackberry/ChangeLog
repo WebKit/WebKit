@@ -1,3 +1,17 @@
+2012-08-28  Parth Patel  <parpatel@rim.com>
+
+        [BlackBerry] Removing unnecessary include of Class BlackBerryPlatformClient
+        https://bugs.webkit.org/show_bug.cgi?id=95113
+
+        Reviewed by Kentaro Hara.
+
+        Refactoring has lead to relocation of many or all methods from Class
+        BlackBerryPlatformClient to other classes. Some files include
+        BlackBerryPlatformClient but does not use its instance thus these
+        includes has to be removed.
+
+        * Api/BackingStore.cpp:
+
 2012-08-28  Andy Chen  <andchen@rim.com>
 
         [BlackBerry] UpdateViewport uses wrong size for frameView

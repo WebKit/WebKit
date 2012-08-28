@@ -28,7 +28,6 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
 
-#include <BlackBerryPlatformClient.h>
 #include <BlackBerryPlatformLog.h>
 #include <BuildInformation.h>
 #include <network/FilterStream.h>

@@ -37,7 +37,6 @@
 #include "WebPage_p.h"
 #include "WebSettings.h"
 
-#include <BlackBerryPlatformClient.h>
 #include <BlackBerryPlatformExecutableMessage.h>
 #include <BlackBerryPlatformGraphics.h>
 #include <BlackBerryPlatformIntRectRegion.h>
