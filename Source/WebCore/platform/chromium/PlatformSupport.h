@@ -133,11 +133,6 @@ public:
     static NPObject* pluginScriptableObject(Widget*);
     static bool popupsAllowed(NPP);
 
-    // Resources ----------------------------------------------------------
-#if ENABLE(WEB_AUDIO)
-    static PassOwnPtr<AudioBus> decodeAudioFileData(const char* data, size_t, double sampleRate);
-#endif
-
     // Screen -------------------------------------------------------------
     static int screenHorizontalDPI(Widget*);
     static int screenVerticalDPI(Widget*);

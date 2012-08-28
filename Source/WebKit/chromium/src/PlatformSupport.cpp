@@ -317,20 +317,6 @@ NPObject* PlatformSupport::pluginScriptableObject(Widget* widget)
     return static_cast<WebPluginContainerImpl*>(widget)->scriptableObject();
 }
 
-// Resources ------------------------------------------------------------------
-
-#if ENABLE(WEB_AUDIO)
-
-PassOwnPtr<AudioBus> PlatformSupport::decodeAudioFileData(const char* data, size_t size, double sampleRate)
-{
-    WebAudioBus webAudioBus;
-    if (webKitPlatformSupport()->loadAudioResource(&webAudioBus, data, size, sampleRate))
-        return webAudioBus.release();
-    return nullptr;
-}
-
-#endif // ENABLE(WEB_AUDIO)
-
 // Theming --------------------------------------------------------------------
 
 #if OS(WINDOWS)
