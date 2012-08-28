@@ -357,10 +357,6 @@ fast/canvas/DrawImageSinglePixelStretch.html
 # https://bugs.webkit.org/show_bug.cgi?id=54251
 http/tests/multipart/invalid-image-data-standalone.html
 
-# HTTP 204 (No Content) should be ignored
-# https://bugs.webkit.org/show_bug.cgi?id=60206
-http/tests/navigation/response204.html
-
 # http/tests/multipart/stop-crash.html fails on GTK and Qt missing multipart/x-mixed-replace support in libsoup
 # https://bugs.webkit.org/show_bug.cgi?id=47060
 http/tests/multipart/stop-crash.html

@@ -45,6 +45,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLFormElement.h"
+#include "HTTPStatusCodes.h"
 #include "IntentRequest.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
@@ -293,6 +294,12 @@ void FrameLoaderClientEfl::dispatchDecidePolicyForResponse(FramePolicyFunction f
     ASSERT(function);
 
     if (resourceRequest.isNull()) {
+        callPolicyFunction(function, PolicyIgnore);
+        return;
+    }
+
+    // Ignore responses with an HTTP status code of 204 (No Content)
+    if (response.httpStatusCode() == HTTPNoContent) {
         callPolicyFunction(function, PolicyIgnore);
         return;
     }

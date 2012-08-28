@@ -138,9 +138,10 @@ BUGWK35220 : inspector/debugger/script-extract-outline.html = TEXT CRASH PASS
 //////////////////////////////////////////////////////////////////////////////////////////
 
 // WebKitTestRunner needs an implementation for testRunner.queueLoad
-BUGWKEFL : fast/dom/navigation-type-back-forward.html = TEXT
-BUGWKEFL : fast/dom/navigation-type-navigate.html = TEXT
-BUGWKEFL : fast/dom/navigation-type-reload.html = TEXT
+BUGWK42674 : fast/dom/navigation-type-back-forward.html = TEXT
+BUGWK42674 : fast/dom/navigation-type-navigate.html = TEXT
+BUGWK42674 : fast/dom/navigation-type-reload.html = TEXT
+BUGWK42674 : http/tests/navigation/response204.html = TEXT
 
 // WebKitTestRunner needs an implementation for testRunner.titleTextDirection
 BUGWK93470 : fast/dom/title-directionality-removeChild.html = TEXT

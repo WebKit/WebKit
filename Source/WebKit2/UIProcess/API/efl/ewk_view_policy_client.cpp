@@ -31,6 +31,7 @@
 #include "ewk_navigation_policy_decision_private.h"
 #include "ewk_view_policy_client_private.h"
 #include "ewk_view_private.h"
+#include <WebCore/HTTPStatusCodes.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -58,6 +59,13 @@ static void decidePolicyForNewWindowAction(WKPageRef page, WKFrameRef frame, WKF
 static void decidePolicyForResponseCallback(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
     const ResourceResponse resourceResponse = toImpl(response)->resourceResponse();
+
+    // Ignore responses with an HTTP status code of 204 (No Content)
+    if (resourceResponse.httpStatusCode() == HTTPNoContent) {
+        WKFramePolicyListenerIgnore(listener);
+        return;
+    }
+
     // If the URL Response has "Content-Disposition: attachment;" header, then
     // we should download it.
     if (resourceResponse.isAttachment()) {

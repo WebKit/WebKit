@@ -1,3 +1,17 @@
+2012-08-28  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] WebKit EFL updates view on HTTP 204 response
+        https://bugs.webkit.org/show_bug.cgi?id=95199
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip http/tests/navigation/response204.html now
+        that EFL port properly ignores responses with
+        HTTP status 204 (No content).
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/Skipped:
+
 2012-08-28  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt][WK1] Gardening after r126873. Skip a newly added failing test.
