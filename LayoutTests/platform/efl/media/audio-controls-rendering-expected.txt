@@ -25,13 +25,13 @@ layer at (8,42) size 300x20 scrollHeight 28
           RenderText {#text} at (0,0) size 55x12
             text run at (0,0) width 55: "00:00 / 00:07"
       RenderSlider {INPUT} at (63,0) size 157x20
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 157x20
-          RenderBlock {DIV} at (0,4) size 145x12
-          RenderBlock {DIV} at (145,4) size 12x12
+        RenderDeprecatedFlexibleBox {DIV} at (2,0) size 153x20
+          RenderBlock {DIV} at (0,4) size 141x12
+          RenderBlock {DIV} at (141,4) size 12x12
     RenderButton {INPUT} at (240,0) size 20x20
     RenderButton {INPUT} at (260,0) size 20x20
     RenderBlock {DIV} at (280,0) size 20x20
-layer at (91,46) size 12x12
+layer at (93,46) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
 layer at (288,42) size 20x20
   RenderButton zI: 2 {INPUT} at (0,0) size 20x20
@@ -46,13 +46,13 @@ layer at (8,80) size 320x20 scrollHeight 28
           RenderText {#text} at (0,0) size 55x12
             text run at (0,0) width 55: "00:00 / 00:07"
       RenderSlider {INPUT} at (63,0) size 177x20
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 177x20
-          RenderBlock {DIV} at (0,4) size 165x12
-          RenderBlock {DIV} at (165,4) size 12x12
+        RenderDeprecatedFlexibleBox {DIV} at (2,0) size 173x20
+          RenderBlock {DIV} at (0,4) size 161x12
+          RenderBlock {DIV} at (161,4) size 12x12
     RenderButton {INPUT} at (260,0) size 20x20
     RenderButton {INPUT} at (280,0) size 20x20
     RenderBlock {DIV} at (300,0) size 20x20
-layer at (91,84) size 12x12
+layer at (93,84) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
 layer at (308,80) size 20x20
   RenderButton zI: 2 {INPUT} at (0,0) size 20x20
@@ -69,13 +69,13 @@ layer at (8,198) size 320x20 scrollHeight 28
           RenderText {#text} at (0,0) size 55x12
             text run at (0,0) width 55: "00:00 / 00:07"
       RenderSlider {INPUT} at (63,0) size 177x20
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 177x20
-          RenderBlock {DIV} at (0,4) size 165x12
-          RenderBlock {DIV} at (165,4) size 12x12
+        RenderDeprecatedFlexibleBox {DIV} at (2,0) size 173x20
+          RenderBlock {DIV} at (0,4) size 161x12
+          RenderBlock {DIV} at (161,4) size 12x12
     RenderButton {INPUT} at (260,0) size 20x20
     RenderButton {INPUT} at (280,0) size 20x20
     RenderBlock {DIV} at (300,0) size 20x20
-layer at (91,202) size 12x12
+layer at (93,202) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
 layer at (308,198) size 20x20
   RenderButton zI: 2 {INPUT} at (0,0) size 20x20

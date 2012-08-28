@@ -69,14 +69,14 @@ layer at (8,228) size 320x20 scrollHeight 28
           RenderText {#text} at (0,0) size 55x12
             text run at (0,0) width 55: "00:00 / 00:06"
       RenderSlider {INPUT} at (63,0) size 157x20
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 157x20
-          RenderBlock {DIV} at (0,4) size 145x12
-          RenderBlock {DIV} at (145,4) size 12x12
+        RenderDeprecatedFlexibleBox {DIV} at (2,0) size 153x20
+          RenderBlock {DIV} at (0,4) size 141x12
+          RenderBlock {DIV} at (141,4) size 12x12
     RenderButton {INPUT} at (240,0) size 20x20
     RenderButton {INPUT} at (260,0) size 20x20
     RenderButton {INPUT} at (280,0) size 20x20
     RenderBlock {DIV} at (300,0) size 20x20
-layer at (109,232) size 12x12
+layer at (110,232) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
 layer at (308,228) size 20x20
   RenderButton zI: 2 {INPUT} at (0,0) size 20x20

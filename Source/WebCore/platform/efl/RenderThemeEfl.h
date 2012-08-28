@@ -58,6 +58,8 @@ enum FormType { // KEEP IN SYNC WITH edjeGroupFromFormType()
     SearchFieldCancelButton,
     SliderVertical,
     SliderHorizontal,
+    SliderThumbVertical,
+    SliderThumbHorizontal,
 #if ENABLE(VIDEO)
     PlayPauseButton,
     MuteUnMuteButton,

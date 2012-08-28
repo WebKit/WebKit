@@ -5,6 +5,7 @@
  * Copyright (C) 2008 INdT - Instituto Nokia de Tecnologia
  * Copyright (C) 2009-2010 ProFUSION embedded systems
  * Copyright (C) 2009-2011 Samsung Electronics
+ * Copyright (c) 2012 Intel Corporation. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -70,8 +71,8 @@ float RenderThemeEfl::defaultFontSize = 16.0f;
 static const int progressAnimationFrames = 10;
 static const double progressAnimationInterval = 0.125;
 
-static const int sliderThumbWidth = 12;
-static const int sliderThumbHeight = 12;
+static const int sliderThumbWidth = 29;
+static const int sliderThumbHeight = 11;
 #if ENABLE(VIDEO)
 static const int mediaSliderHeight = 14;
 static const int mediaSliderThumbWidth = 12;
@@ -340,11 +341,16 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
         Edje_Message_Float_Set* msg = new(buffer.get()) Edje_Message_Float_Set;
         msg->count = 2;
 
-        if (valueRange > 0)
-            msg->val[0] = static_cast<float>((input->valueAsNumber() - input->minimum()) / valueRange);
+        // The first parameter of the message decides if the progress bar
+        // grows from the end of the slider or from the beginning. On vertical
+        // sliders, it should always be the same and will not be affected by
+        // text direction settings.
+        if (object->style()->direction() == RTL || type == SliderVertical)
+            msg->val[0] = 1;
         else
             msg->val[0] = 0;
-        msg->val[1] = 0.1;
+
+        msg->val[1] = input->valueAsNumber() / valueRange;
         edje_object_message_send(entry->o, EDJE_MESSAGE_FLOAT_SET, 0, msg);
 #if ENABLE(PROGRESS_ELEMENT)
     } else if (type == ProgressBar) {
@@ -581,6 +587,8 @@ const char* RenderThemeEfl::edjeGroupFromFormType(FormType type) const
         W("search/cancel_button"),
         W("slider/vertical"),
         W("slider/horizontal"),
+        W("slider/thumb_vertical"),
+        W("slider/thumb_horizontal"),
 #if ENABLE(VIDEO)
         W("mediacontrol/playpause_button"),
         W("mediacontrol/mute_button"),
@@ -762,45 +770,30 @@ bool RenderThemeEfl::paintSliderTrack(RenderObject* object, const PaintInfo& inf
 
 void RenderThemeEfl::adjustSliderTrackStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
-    if (!m_page && element && element->document()->page()) {
-        static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustSliderTrackStyle(styleResolver, style, element);
-        return;
-    }
-
-    const ThemePartDesc* desc;
-    if (style->appearance() == SliderHorizontalPart) {
-        adjustSizeConstraints(style, SliderHorizontal);
-        desc = m_partDescs + static_cast<size_t>(SliderHorizontal);
-    } else {
-        adjustSizeConstraints(style, SliderVertical);
-        desc = m_partDescs + static_cast<size_t>(SliderVertical);
-    }
-    style->resetBorder();
-    if (style->width().value() > 0 && style->width().value() < desc->min.width().value())
-        style->setWidth(desc->min.width());
-    if (style->height().value() > 0 && style->height().value() < desc->min.height().value())
-        style->setHeight(desc->min.height());
+    style->setBoxShadow(nullptr);
 }
 
 void RenderThemeEfl::adjustSliderThumbStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
     RenderTheme::adjustSliderThumbStyle(styleResolver, style, element);
-    adjustSliderTrackStyle(styleResolver, style, element);
+    style->setBoxShadow(nullptr);
 }
 
 void RenderThemeEfl::adjustSliderThumbSize(RenderStyle* style, Element*) const
 {
     ControlPart part = style->appearance();
-    if (part == SliderThumbVerticalPart || part == SliderThumbHorizontalPart) {
+    if (part == SliderThumbVerticalPart) {
         style->setWidth(Length(sliderThumbHeight, Fixed));
         style->setHeight(Length(sliderThumbWidth, Fixed));
-    }
+    } else if (part == SliderThumbHorizontalPart) {
+        style->setWidth(Length(sliderThumbWidth, Fixed));
+        style->setHeight(Length(sliderThumbHeight, Fixed));
 #if ENABLE(VIDEO)
-    else if (part == MediaSliderThumbPart) {
+    } else if (part == MediaSliderThumbPart) {
         style->setWidth(Length(mediaSliderThumbWidth, Fixed));
         style->setHeight(Length(mediaSliderThumbHeight, Fixed));
-    }
 #endif
+    }
 }
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -835,7 +828,11 @@ bool RenderThemeEfl::supportsDataListUI(const AtomicString& type) const
 
 bool RenderThemeEfl::paintSliderThumb(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    // We've already painted it in paintSliderTrack(), no need to do anything here.
+    if (object->style()->appearance() == SliderThumbHorizontalPart)
+        paintThemePart(object, SliderThumbHorizontal, info, rect);
+    else
+        paintThemePart(object, SliderThumbVertical, info, rect);
+
     return false;
 }
 
