@@ -1,3 +1,9 @@
+2012-08-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip a new failing test.
+
+        * platform/qt/Skipped:
+
 2012-08-28  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] New test introduced in r126611 fails: fast/css/image-set-setting.html
