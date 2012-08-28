@@ -163,7 +163,7 @@ void HistoryController::saveDocumentState()
     Document* document = m_frame->document();
     ASSERT(document);
     
-    if (item->isCurrentDocument(document)) {
+    if (item->isCurrentDocument(document) && document->attached()) {
         LOG(Loading, "WebCoreLoading %s: saving form state to %p", m_frame->tree()->uniqueName().string().utf8().data(), item);
         item->setDocumentState(document->formElementsState());
     }
@@ -177,6 +177,22 @@ void HistoryController::saveDocumentAndScrollState()
         frame->loader()->history()->saveDocumentState();
         frame->loader()->history()->saveScrollPositionAndViewStateToItem(frame->loader()->history()->currentItem());
     }
+}
+
+static inline bool isAssociatedToRequestedHistoryItem(const HistoryItem* current, Frame* frame, const HistoryItem* requested)
+{
+    if (requested == current)
+        return true;
+    if (requested)
+        return false;
+    while ((frame = frame->tree()->parent())) {
+        requested = frame->loader()->requestedHistoryItem();
+        if (!requested)
+            continue;
+        if (requested->isAncestorOf(current))
+            return true;
+    }
+    return false;
 }
 
 void HistoryController::restoreDocumentState()
@@ -201,7 +217,7 @@ void HistoryController::restoreDocumentState()
     
     if (!itemToRestore)
         return;
-    if (m_frame->loader()->requestedHistoryItem() == m_currentItem.get() && !m_frame->loader()->documentLoader()->isClientRedirect()) {
+    if (isAssociatedToRequestedHistoryItem(itemToRestore, m_frame, m_frame->loader()->requestedHistoryItem()) && !m_frame->loader()->documentLoader()->isClientRedirect()) {
         LOG(Loading, "WebCoreLoading %s: restoring form state from %p", m_frame->tree()->uniqueName().string().utf8().data(), itemToRestore);
         doc->setStateForNewFormElements(itemToRestore->documentState());
     }

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+</head>
+<body onload="startTest()">
+<input name="name1" id="input1">
+<iframe id="frame1" src="resources/form-state-restore-with-frames-1.html">
+</iframe>
+<form id="form1" action="data:text/html,&lt;script>history.back();&lt;/script>">
+<input type="submit">
+</form>
+
+<script>
+function $(id) {
+    return document.getElementById(id);
+}
+function frame$(frame, id) {
+    return frame.contentDocument.getElementById(id);
+}
+
+function startTest() {
+    if ($('input1').value == 'visited') {
+        shouldBeEqualToString('frame$($("frame1"), "input2").value', 'value2');
+        shouldBeEqualToString('frame$(frame$($("frame1"), "frame2"), "input3").value', 'value3');
+        finishJSTest();
+    } else {
+        setTimeout(function() {
+            $('input1').value = 'visited';
+            frame$($('frame1'), 'input2').value = 'value2';
+            frame$(frame$($('frame1'), 'frame2'), 'input3').value = 'value3';
+            $('form1').submit();
+        }, 0);
+    }
+}
+
+jsTestIsAsync = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>

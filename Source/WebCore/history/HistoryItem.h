@@ -171,6 +171,7 @@ public:
     const HistoryItemVector& children() const;
     bool hasChildren() const;
     void clearChildren();
+    bool isAncestorOf(const HistoryItem*) const;
     
     bool shouldDoSameDocumentNavigationTo(HistoryItem* otherItem) const;
     bool hasSameFrames(HistoryItem* otherItem) const;

@@ -532,6 +532,18 @@ void HistoryItem::clearChildren()
     m_children.clear();
 }
 
+bool HistoryItem::isAncestorOf(const HistoryItem* item) const
+{
+    for (size_t i = 0; i < m_children.size(); ++i) {
+        HistoryItem* child = m_children[i].get();
+        if (child == item)
+            return true;
+        if (child->isAncestorOf(item))
+            return true;
+    }
+    return false;
+}
+
 // We do same-document navigation if going to a different item and if either of the following is true:
 // - The other item corresponds to the same document (for history entries created via pushState or fragment changes).
 // - The other item corresponds to the same set of documents, including frames (for history entries created via regular navigation)
