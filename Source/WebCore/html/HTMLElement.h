@@ -64,6 +64,7 @@ public:
     void insertAdjacentHTML(const String& where, const String& html, ExceptionCode&);
     void insertAdjacentText(const String& where, const String& text, ExceptionCode&);
 
+    virtual bool hasCustomFocusLogic() const;
     virtual bool supportsFocus() const;
 
     String contentEditable() const;

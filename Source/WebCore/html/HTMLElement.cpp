@@ -628,6 +628,11 @@ void HTMLElement::applyAlignmentAttributeToStyle(const Attribute& attribute, Sty
         addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, verticalAlignValue);
 }
 
+bool HTMLElement::hasCustomFocusLogic() const
+{
+    return false;
+}
+
 bool HTMLElement::supportsFocus() const
 {
     return Element::supportsFocus() || (rendererIsEditable() && parentNode() && !parentNode()->rendererIsEditable());

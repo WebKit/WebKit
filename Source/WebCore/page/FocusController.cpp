@@ -163,7 +163,7 @@ static inline void dispatchEventsOnWindowAndFocusedNode(Document* document, bool
 
 static inline bool hasCustomFocusLogic(Node* node)
 {
-    return node->hasTagName(inputTag) || node->hasTagName(textareaTag) || node->hasTagName(videoTag) || node->hasTagName(audioTag);
+    return node->isHTMLElement() && toHTMLElement(node)->hasCustomFocusLogic();
 }
 
 static inline bool isNonFocusableShadowHost(Node* node, KeyboardEvent* event)

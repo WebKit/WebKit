@@ -354,6 +354,7 @@ protected:
 private:
     void createMediaPlayer();
 
+    virtual bool hasCustomFocusLogic() const OVERRIDE;
     virtual bool supportsFocus() const;
     virtual bool isMouseFocusable() const;
     virtual bool rendererIsNeeded(const NodeRenderingContext&);

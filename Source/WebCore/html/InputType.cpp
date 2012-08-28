@@ -511,6 +511,11 @@ bool InputType::canSetStringValue() const
     return true;
 }
 
+bool InputType::hasCustomFocusLogic() const
+{
+    return true;
+}
+
 bool InputType::isKeyboardFocusable(KeyboardEvent* event) const
 {
     return element()->isTextFormControlKeyboardFocusable(event);

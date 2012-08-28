@@ -338,6 +338,12 @@ void HTMLInputElement::stepDown(int n, ExceptionCode& ec)
     m_inputType->stepUp(-n, ec);
 }
 
+
+bool HTMLInputElement::hasCustomFocusLogic() const
+{
+    return m_inputType->hasCustomFocusLogic();
+}
+
 bool HTMLInputElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
     return m_inputType->isKeyboardFocusable(event);

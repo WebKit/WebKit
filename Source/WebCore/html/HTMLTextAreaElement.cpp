@@ -216,6 +216,11 @@ void HTMLTextAreaElement::reset()
     setNonDirtyValue(defaultValue());
 }
 
+bool HTMLTextAreaElement::hasCustomFocusLogic() const
+{
+    return true;
+}
+
 bool HTMLTextAreaElement::isKeyboardFocusable(KeyboardEvent*) const
 {
     // If a given text area can be focused at all, then it will always be keyboard focusable.
