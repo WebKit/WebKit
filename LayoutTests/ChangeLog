@@ -8,6 +8,20 @@
 
 2012-08-28  Roger Fong  <roger_fong@apple.com>
 
+        3 composited-during-animation/compositied-during-transition test results on Windows now match Mac results.
+        https://bugs.webkit.org/show_bug.cgi?id=95162
+
+        Reviewed by Jessie Berlin.
+
+        Failing test results previously checked in here: https://bugs.webkit.org/show_bug.cgi?id=88024.
+        3 of these tests now match Mac test results. Removing failing test results.
+
+        * platform/win/css3/filters/composited-during-animation-expected.txt: Removed.
+        * platform/win/css3/filters/composited-during-animation-layertree-expected.txt: Removed.
+        * platform/win/css3/filters/composited-during-transition-layertree-expected.txt: Removed.
+
+2012-08-28  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Remove Windows specific object-sizing test results.
         https://bugs.webkit.org/show_bug.cgi?id=95160
 
