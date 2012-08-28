@@ -2663,7 +2663,11 @@ BUGWK91415 MAC DEBUG SLOW : fast/frames/calculate-fixed.html = PASS TEXT
 BUGWK91415 MAC RELEASE : fast/frames/calculate-fixed.html = PASS TEXT
 BUGWK91415 WIN DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
 
-BUGWK71278 SLOW WIN : fast/events/dispatch-message-string-data.html = PASS
+BUGWK71278 SLOW : fast/events/dispatch-message-string-data.html = PASS
+
+// For some reason the EWS bots cannot find the results for these tests.
+BUGWK95215 LINUX : http/tests/cache/post-redirect-get.php = PASS MISSING 
+BUGWK95215 LINUX : http/tests/cache/post-with-cached-subresources.php = PASS MISSING
 
 BUGWK71451 SLOW : fast/frames/sandboxed-iframe-navigation-windowopen.html = PASS
 
