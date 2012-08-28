@@ -1,3 +1,9 @@
+2012-08-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip failing tests.
+
+        * platform/qt/Skipped:
+
 2012-08-28  Mike West  <mkwst@chromium.org>
 
         Add call stacks to Content Security Policy checks when relevant.

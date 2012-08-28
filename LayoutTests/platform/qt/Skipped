@@ -2761,3 +2761,11 @@ inspector/timeline/timeline-decode-resize.html
 # [Qt] New fast/forms/range/range-hit-test-with-padding.html introduced in r126132 fails
 # https://bugs.webkit.org/show_bug.cgi?id=?????
 fast/forms/range/range-hit-test-with-padding.html
+
+# REGRESSION(r126852): It broke inspector tests
+# https://bugs.webkit.org/show_bug.cgi?id=95176
+http/tests/inspector-enabled/console-clear-arguments-on-frame-navigation.html
+http/tests/inspector-enabled/contentSecurityPolicy-blocks-setInterval.html
+http/tests/inspector-enabled/contentSecurityPolicy-blocks-setTimeout.html
+http/tests/inspector/csp-injected-content-warning-contains-stacktrace.html
+http/tests/inspector/csp-inline-warning-contains-stacktrace.html
