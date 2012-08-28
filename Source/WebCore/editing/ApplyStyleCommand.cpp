@@ -798,7 +798,11 @@ bool ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle(EditingStyle* styl
 
     RefPtr<Node> next = runStart;
     for (RefPtr<Node> node = next; node && node->inDocument() && node != pastEndNode; node = next) {
-        next = node->traverseNextNode();
+        if (editingIgnoresContent(node.get())) {
+            ASSERT(!node->contains(pastEndNode.get()));
+            next = node->traverseNextSibling();
+        } else
+            next = node->traverseNextNode();
         if (!node->isHTMLElement())
             continue;
 
@@ -1048,7 +1052,12 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle* style, const Position &s
 
     Node* node = start.deprecatedNode();
     while (node) {
-        RefPtr<Node> next = node->traverseNextNode();
+        RefPtr<Node> next;
+        if (editingIgnoresContent(node)) {
+            ASSERT(node == end.deprecatedNode() || !node->contains(end.deprecatedNode()));
+            next = node->traverseNextSibling();
+        } else
+            next = node->traverseNextNode();
         if (node->isHTMLElement() && nodeFullySelected(node, start, end)) {
             RefPtr<HTMLElement> elem = toHTMLElement(node);
             RefPtr<Node> prev = elem->traversePreviousNodePostOrder();

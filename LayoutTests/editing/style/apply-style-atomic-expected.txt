@@ -1,0 +1,17 @@
+Test that WebKit does not crash when we apply style to atomic elements and that the style is not applied inside atomic elements.
+| <a>
+|   href="a"
+|   "<#selection-anchor>1"
+|   <progress>
+|     <a>
+|       style=""
+|       "2"
+|     <shadow:root>
+|       <div>
+|         shadow:pseudoId="-webkit-progress-inner-element"
+|         <div>
+|           shadow:pseudoId="-webkit-progress-bar"
+|           <div>
+|             style="width: -100%;"
+|             shadow:pseudoId="-webkit-progress-value"
+|   <#selection-focus>

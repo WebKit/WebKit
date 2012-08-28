@@ -1,3 +1,13 @@
+2012-08-28  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Crash in EditingStyle::mergeStyle
+        https://bugs.webkit.org/show_bug.cgi?id=94740
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/style/apply-style-atomic-expected.txt: Added.
+        * editing/style/apply-style-atomic.html: Added.
+
 2012-08-28  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Range input ignores padding
