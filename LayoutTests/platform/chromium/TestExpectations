@@ -2755,6 +2755,9 @@ BUGWK94130 : fast/html/marquee-alternate.html = PASS TEXT
 
 BUGWK77314 WIN MAC : fast/events/touch/send-oncancel-event.html = PASS TEXT
 
+// Skipped until setTouchPointRadius get implemented
+BUGWK91012 SKIP : touchadjustment/focusout-on-touch.html = PASS TEXT
+
 // CRASH comes from BUGCR121442
 BUGWK77397 LINUX : plugins/crash-restoring-plugin-page-from-page-cache.html = TIMEOUT CRASH
 BUGWK77397 WIN MAC : plugins/crash-restoring-plugin-page-from-page-cache.html = TIMEOUT

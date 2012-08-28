@@ -2451,8 +2451,8 @@ bool EventHandler::handleGestureTap(const PlatformGestureEvent& gestureEvent)
     // FIXME: Refactor this code to not hit test multiple times. We use the adjusted position to ensure that the correct node is targeted by the later redundant hit tests.
     IntPoint adjustedPoint = gestureEvent.position();
 #if ENABLE(TOUCH_ADJUSTMENT)
-    if (!gestureEvent.area().isEmpty() && !adjustGesturePosition(gestureEvent, adjustedPoint))
-        return false;
+    if (!gestureEvent.area().isEmpty())
+        adjustGesturePosition(gestureEvent, adjustedPoint);
 #endif
 
     PlatformMouseEvent fakeMouseMove(adjustedPoint, gestureEvent.globalPosition(),
