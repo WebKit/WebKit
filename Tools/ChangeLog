@@ -1,3 +1,17 @@
+2012-08-28  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        Implement AccessibilityUIElement::titleUIElement() and AccessibilityUIElement::stringValue()
+        https://bugs.webkit.org/show_bug.cgi?id=95185
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::titleUIElement): Implemented
+        Gets the ATK_RELATION_LABELLED_BY target.
+        (AccessibilityUIElement::stringValue): Implemented for all roles but ATK_ROLE_PANEL.
+        Gets the string from atk_text_get_text(). Will implement for ATK_ROLE_PANEL after
+        bug 95180 is fixed.
+
 2012-08-28  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Crash due to object getting deleted inside updateBackingStore

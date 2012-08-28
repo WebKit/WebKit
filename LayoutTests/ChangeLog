@@ -1,3 +1,22 @@
+2012-08-28  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        Implement AccessibilityUIElement::titleUIElement() and AccessibilityUIElement::stringValue()
+        https://bugs.webkit.org/show_bug.cgi?id=95185
+
+        Reviewed by Chris Fleizach.
+
+        Updated layout test expected results. In all three cases below:
+        1) Remove objects from the tree representation which did not belong,
+        but were included as a side effect of AccessibilityUIElement::stringValue()
+        not having been implemented.
+        2) Add the stringValue() return value to the tree representation.
+        Note that the implementation of AccessibilityUIElement::titleUIElement()
+        will be tested by the existing legend.html layout text. See bug 84137.
+
+        * platform/gtk/accessibility/adjacent-continuations-cause-assertion-failure-expected.txt: Updated.
+        * platform/gtk/accessibility/deleting-iframe-destroys-axcache-expected.txt: Updated.
+        * platform/gtk/accessibility/div-within-anchors-causes-crash-expected.txt: Updated.
+
 2012-08-28  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed gardening, more rebaselining after r126911.

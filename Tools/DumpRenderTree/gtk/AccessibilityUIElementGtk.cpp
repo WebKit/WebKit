@@ -176,8 +176,27 @@ JSStringRef AccessibilityUIElement::attributesOfDocumentLinks()
 
 AccessibilityUIElement AccessibilityUIElement::titleUIElement()
 {
-    // FIXME: implement
-    return 0;
+
+    if (!m_element)
+        return 0;
+
+    AtkRelationSet* set = atk_object_ref_relation_set(ATK_OBJECT(m_element));
+    if (!set)
+        return 0;
+
+    AtkObject* target = 0;
+    int count = atk_relation_set_get_n_relations(set);
+    for (int i = 0; i < count; i++) {
+        AtkRelation* relation = atk_relation_set_get_relation(set, i);
+        if (atk_relation_get_relation_type(relation) == ATK_RELATION_LABELLED_BY) {
+            GPtrArray* targetList = atk_relation_get_target(relation);
+            if (targetList->len)
+                target = static_cast<AtkObject*>(g_ptr_array_index(targetList, 0));
+        }
+        g_object_unref(set);
+    }
+
+    return target ? AccessibilityUIElement(target) : 0;
 }
 
 AccessibilityUIElement AccessibilityUIElement::parentElement()
@@ -252,8 +271,21 @@ JSStringRef AccessibilityUIElement::description()
 
 JSStringRef AccessibilityUIElement::stringValue()
 {
-    // FIXME: implement
-    return JSStringCreateWithCharacters(0, 0);
+    if (!m_element || !ATK_IS_TEXT(m_element))
+        return JSStringCreateWithCharacters(0, 0);
+
+    // FIXME: implement properly for ATK_ROLE_PANEL. Prior to doing so, we need
+    // to fix bug 95180 as well as determine which panels we wish to keep in the
+    // accessible hierarchy. See, for instance, bug 72811.
+    AtkRole role = atk_object_get_role(ATK_OBJECT(m_element));
+    if (role == ATK_ROLE_PANEL)
+        return JSStringCreateWithCharacters(0, 0);
+
+    gchar* text =text = atk_text_get_text(ATK_TEXT(m_element), 0, -1);
+    GOwnPtr<gchar> axValue(g_strdup_printf("AXValue: %s", text));
+    g_free(text);
+
+    return JSStringCreateWithUTF8CString(axValue.get());
 }
 
 JSStringRef AccessibilityUIElement::language()

@@ -8,10 +8,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 AXRole: document frame 
-    AXRole: section 
-    AXRole: section 
-    AXRole: paragraph 
-    AXRole: paragraph 
+    AXRole: section AXValue: y
+    AXRole: section AXValue: End of test
 PASS successfullyParsed is true
 
 TEST COMPLETE
