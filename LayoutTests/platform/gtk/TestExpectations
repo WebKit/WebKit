@@ -1289,6 +1289,8 @@ BUGWK88727 RELEASE : http/tests/xmlhttprequest/origin-exact-matching.html = TEXT
 BUGWK94952 DEBUG : platform/gtk/scrollbars/overflow-scrollbar-horizontal-wheel-scroll.html = TEXT
 BUGWK94952 DEBUG : scrollbars/scroll-rtl-or-bt-layer.html = TEXT
 
+BUGWK87355 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////

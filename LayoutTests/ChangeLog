@@ -1,3 +1,19 @@
+2012-08-28  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding platform-specific baselines required after r126840.
+
+        Adding a platform-specific baseline for a window.performance test
+        and a failure expectation for a Canvas text drawing test, both required
+        after r126846 when memory cache started being cleared between tests
+        for the GTK port.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/overflow/paged-x-div-with-column-gap-expected.txt: Added.
+        * platform/gtk/fast/overflow/paged-x-with-column-gap-expected.txt: Added.
+        * platform/gtk/http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object-expected.txt: Added.
+
 2012-08-28  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] WebKit EFL updates view on HTTP 204 response
