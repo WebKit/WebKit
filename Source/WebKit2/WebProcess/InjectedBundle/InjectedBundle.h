@@ -124,6 +124,8 @@ public:
     String pageSizeAndMarginsInPixels(WebFrame*, int, int, int, int, int, int, int);
     bool isPageBoxVisible(WebFrame*, int);
     void setUserStyleSheetLocation(WebPageGroupProxy*, const String&);
+    void setWebNotificationPermission(WebPage*, const String& originString, bool allowed);
+    void removeAllWebNotificationPermissions(WebPage*);
 
     // UserContent API
     void addUserScript(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserScriptInjectionTime, WebCore::UserContentInjectedFrames);

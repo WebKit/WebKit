@@ -1,3 +1,36 @@
+2012-08-28  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Add SPI for injected bundle to manually set permissions
+        https://bugs.webkit.org/show_bug.cgi?id=95127
+        <rdar://problem/12182635>
+
+        Reviewed by Jessie Berlin.
+
+        This is work toward providing Mac support for web notifications in DRT and WTR (77969).
+
+        Add support functions to WebKit2 which maintain the map of permissions to origins for web notifications.
+        For WebKit1 the map is managed by DumpRenderTree.
+
+        * WebProcess/InjectedBundle/InjectedBundle.h: Add TestRunner SPI.
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setWebNotificationPermission):
+        (WebKit::InjectedBundle::removeAllWebNotificationPermissions):
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h: Expose as WK API. Also, rearrange the ordering of the
+        functions so that it reflects the same order found in InjectedBundle.h.
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+        (WebKit::NotificationPermissionRequestManager::setPermissionLevelForTesting): Manually set the permission
+        level for an origin.
+        (WebKit::NotificationPermissionRequestManager::removeAllPermissionsForTesting):
+        * WebProcess/Notifications/NotificationPermissionRequestManager.h:
+        (NotificationPermissionRequestManager):
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::removeAllPermissionsForTesting): Clear the permission map.
+        * WebProcess/Notifications/WebNotificationManager.h: Promote didUpdateNotificationDecision message as public
+        function, so that NotificationPermissionRequestManager can update the permission map.
+
 2012-08-28  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] WebKit EFL updates view on HTTP 204 response

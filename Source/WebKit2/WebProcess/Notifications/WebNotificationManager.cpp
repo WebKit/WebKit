@@ -105,6 +105,13 @@ NotificationClient::Permission WebNotificationManager::policyForOrigin(WebCore::
     return NotificationClient::PermissionNotAllowed;
 }
 
+void WebNotificationManager::removeAllPermissionsForTesting()
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    m_permissionsMap.clear();
+#endif
+}
+
 bool WebNotificationManager::show(Notification* notification, WebPage* page)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

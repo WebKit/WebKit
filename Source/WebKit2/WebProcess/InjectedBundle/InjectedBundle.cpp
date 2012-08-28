@@ -32,6 +32,7 @@
 #include "InjectedBundleScriptWorld.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "LayerTreeHost.h"
+#include "NotificationPermissionRequestManager.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebApplicationCacheManager.h"
@@ -532,6 +533,26 @@ void InjectedBundle::setUserStyleSheetLocation(WebPageGroupProxy* pageGroup, con
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
     for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
         (*iter)->settings()->setUserStyleSheetLocation(KURL(KURL(), location));
+}
+
+void InjectedBundle::setWebNotificationPermission(WebPage* page, const String& originString, bool allowed)
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    page->notificationPermissionRequestManager()->setPermissionLevelForTesting(originString, allowed ? NotificationClient::PermissionAllowed : NotificationClient::PermissionDenied);
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(originString);
+    UNUSED_PARAM(allowed);
+#endif
+}
+
+void InjectedBundle::removeAllWebNotificationPermissions(WebPage* page)
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    page->notificationPermissionRequestManager()->removeAllPermissionsForTesting();
+#else
+    UNUSED_PARAM(page);
+#endif
 }
 
 } // namespace WebKit

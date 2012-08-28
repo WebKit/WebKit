@@ -128,6 +128,23 @@ NotificationClient::Permission NotificationPermissionRequestManager::permissionL
 #endif
 }
 
+void NotificationPermissionRequestManager::setPermissionLevelForTesting(const String& originString, WebCore::NotificationClient::Permission permission)
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    WebProcess::shared().notificationManager().didUpdateNotificationDecision(originString, permission);
+#else
+    UNUSED_PARAM(originString);
+    UNUSED_PARAM(permission);
+#endif
+}
+
+void NotificationPermissionRequestManager::removeAllPermissionsForTesting()
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    WebProcess::shared().notificationManager().removeAllPermissionsForTesting();
+#endif
+}
+
 void NotificationPermissionRequestManager::didReceiveNotificationPermissionDecision(uint64_t requestID, bool allowed)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
