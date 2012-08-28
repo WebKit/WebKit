@@ -105,6 +105,9 @@ BUGWK86623 : editing/pasteboard/drop-text-without-selection.html = MISSING
 BUGWK86623 : editing/pasteboard/smart-drag-drop.html = MISSING
 BUGWK86623 : editing/pasteboard/subframe-dragndrop-1.html = MISSING
 
+// CSS Sticky (-webkit-sticky) not supported by EFL.
+BUGWK95182 : fast/css/sticky = IMAGE
+
 // Testcase assumes a thumb width of 12px, default there uses 29px.
 BUGWK95071 : fast/forms/range/slider-in-multi-column.html = TEXT
 BUGWK95071 : fast/forms/range/slider-transformed.html = TEXT
@@ -503,6 +506,7 @@ BUGWK86730 : compositing/layer-creation/fixed-position-scroll.html = MISSING
 BUGWK77219 : compositing/backface-visibility/backface-visibility-webgl.html = TEXT
 BUGWK77219 : compositing/visibility/visibility-simple-webgl-layer.html = TEXT
 BUGWK77219 : fast/dom/constructed-objects-prototypes.html = TEXT
+BUGWK77219 : inspector/profiler/webgl-profiler-api-changes.html = TEXT
 
 BUGWK84759 : ietestcenter/css3/multicolumn/column-containing-block-001.htm = IMAGE
 BUGWK84760 : ietestcenter/css3/multicolumn/column-containing-block-002.htm = IMAGE
@@ -582,6 +586,7 @@ BUGWK85594 : fast/dom/navigator-detached-no-crash.html = TEXT
 
 // Incorrect rendering results after r115846
 BUGWK85599 : http/tests/navigation/postredirect-basic.html = TEXT
+BUGWK85599 : http/tests/navigation/postredirect-goback1.html = TEXT
 
 // Interferes with the rAF tests that are enabled
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT

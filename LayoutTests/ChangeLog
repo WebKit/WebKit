@@ -1,3 +1,44 @@
+2012-08-28  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Gardening of failing tests and new baselines
+        https://bugs.webkit.org/show_bug.cgi?id=95195
+
+        Unreviewed gardening.
+
+        * platform/efl/TestExpectations:
+        All CSS Sticky tests after r126774 since we don't support it
+        yet. WebGL inspector also added to the list after r126857 for the same
+        reason.
+
+        * platform/efl/fast/html/details-nested-2-expected.txt:
+        * platform/efl/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Added.
+        Needs new baselines after r126787.
+
+        * platform/efl/fast/block/float/float-avoidance-expected.png:
+        * platform/efl/fast/block/float/float-avoidance-expected.txt:
+        * platform/efl/fast/forms/validation-message-appearance-expected.png:
+        * platform/efl/fast/forms/validation-message-appearance-expected.txt:
+        * platform/efl/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/efl/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/efl/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/efl/http/tests/navigation/javascriptlink-frames-expected.txt:
+        Updated baselines after r126750.
+
+        * platform/efl/fast/dom/HTMLMeterElement/meter-clone-expected.txt: Removed.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-element-crash-expected.txt: Removed.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-element-form-expected.txt: Removed.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-element-markup-expected.txt: Removed.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-element-with-child-crash-expected.txt: Removed.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-percent-size-expected.txt: Removed.
+        * platform/efl/fast/dom/HTMLMeterElement/set-meter-properties-expected.txt: Removed.
+        Removed since they are the same as global expectations.
+
+        * platform/efl/fast/overflow/paged-x-div-with-column-gap-expected.png: Added.
+        * platform/efl/fast/overflow/paged-x-div-with-column-gap-expected.txt: Added.
+        * platform/efl/fast/overflow/paged-x-with-column-gap-expected.png: Added.
+        * platform/efl/fast/overflow/paged-x-with-column-gap-expected.txt: Added.
+        New baselines after r126840.
+
 2012-08-28  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Unskip http/tests/misc/acid3.html test case
