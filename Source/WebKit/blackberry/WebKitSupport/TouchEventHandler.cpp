@@ -140,7 +140,8 @@ void TouchEventHandler::touchEventCancel()
         if (!elementUnderFatFinger || !elementUnderFatFinger->renderer())
             break;
 
-        if (!elementUnderFatFinger->renderer()->style()->affectedByHoverRules())
+        if (!elementUnderFatFinger->renderer()->style()->affectedByHoverRules()
+            && !elementUnderFatFinger->renderer()->style()->affectedByActiveRules())
             break;
 
         HitTestRequest request(HitTestRequest::FingerUp);
