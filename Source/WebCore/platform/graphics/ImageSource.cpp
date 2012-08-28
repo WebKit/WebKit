@@ -198,4 +198,11 @@ bool ImageSource::frameIsCompleteAtIndex(size_t index)
     return buffer && buffer->status() == ImageFrame::FrameComplete;
 }
 
+unsigned ImageSource::frameBytesAtIndex(size_t index) const
+{
+    if (!m_decoder)
+        return 0;
+    return m_decoder->frameBytesAtIndex(index);
+}
+
 }

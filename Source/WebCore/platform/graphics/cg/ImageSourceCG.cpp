@@ -384,6 +384,12 @@ bool ImageSource::frameHasAlphaAtIndex(size_t)
     return true;
 }
 
+unsigned ImageSource::frameBytesAtIndex(size_t index) const
+{
+    IntSize frameSize = frameSizeAtIndex(index, RespectImageOrientation);
+    return frameSize.width() * frameSize.height() * 4;
+}
+
 }
 
 #endif // USE(CG)

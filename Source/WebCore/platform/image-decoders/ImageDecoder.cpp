@@ -286,6 +286,14 @@ bool ImageDecoder::frameHasAlphaAtIndex(size_t index) const
     return true;
 }
 
+unsigned ImageDecoder::frameBytesAtIndex(size_t index) const
+{
+    if (m_frameBufferCache.size() <= index)
+        return 0;
+    // FIXME: Use the dimension of the requested frame.
+    return m_size.area() * sizeof(ImageFrame::PixelData);
+}
+
 void ImageDecoder::prepareScaleDataIfNecessary()
 {
     m_scaled = false;

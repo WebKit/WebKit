@@ -75,6 +75,7 @@ public:
         , m_haveMetadata(false)
         , m_isComplete(false)
         , m_hasAlpha(true) 
+        , m_frameBytes(0)
     {
     }
 
@@ -93,6 +94,7 @@ public:
     bool m_haveMetadata : 1;
     bool m_isComplete : 1;
     bool m_hasAlpha : 1;
+    unsigned m_frameBytes;
 };
 
 // =================================================
@@ -234,8 +236,8 @@ protected:
 
     // Generally called by destroyDecodedData(), destroys whole-image metadata
     // and notifies observers that the memory footprint has (hopefully)
-    // decreased by |framesCleared| times the size (in bytes) of a frame.
-    void destroyMetadataAndNotify(int framesCleared);
+    // decreased by |frameBytesCleared|.
+    void destroyMetadataAndNotify(unsigned frameBytesCleared);
 
     // Whether or not size is available yet.    
     bool isSizeAvailable();
