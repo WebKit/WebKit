@@ -108,7 +108,7 @@ SkBitmap LayerWebKitThread::paintContents(const IntRect& contentsRect, double sc
     OwnPtr<InstrumentedPlatformCanvas> canvas;
 
     if (drawsContent()) { // Layer contents must be drawn into a canvas.
-        IntRect untransformedContentsRect = contentsRect;
+        IntRect untransformedContentsRect = mapFromTransformed(contentsRect, scale);
 
         SkBitmap canvasBitmap;
         canvasBitmap.setConfig(SkBitmap::kARGB_8888_Config, contentsRect.width(), contentsRect.height());
@@ -123,18 +123,8 @@ SkBitmap LayerWebKitThread::paintContents(const IntRect& contentsRect, double sc
         GraphicsContext graphicsContext(&skiaContext);
         graphicsContext.translate(-contentsRect.x(), -contentsRect.y());
 
-        if (scale != 1.0) {
-            TransformationMatrix matrix;
-            matrix.scale(1.0 / scale);
-            untransformedContentsRect = matrix.mapRect(contentsRect);
-
-            // We extract from the contentsRect but draw a slightly larger region than
-            // we were told to, in order to avoid pixels being rendered only partially.
-            const int atLeastOneDevicePixel = static_cast<int>(ceilf(1.0 / scale));
-            untransformedContentsRect.inflate(atLeastOneDevicePixel);
-
+        if (scale != 1.0)
             graphicsContext.scale(FloatSize(scale, scale));
-        }
 
         // RenderLayerBacking doesn't always clip, so we need to do this by ourselves.
         graphicsContext.clip(untransformedContentsRect);
@@ -530,6 +520,24 @@ void LayerWebKitThread::releaseLayerResources()
 
     if (replicaLayer())
         replicaLayer()->releaseLayerResources();
+}
+
+IntRect LayerWebKitThread::mapFromTransformed(const IntRect& contentsRect, double scale)
+{
+    IntRect untransformedContentsRect = contentsRect;
+
+    if (scale != 1.0) {
+        TransformationMatrix matrix;
+        matrix.scale(1.0 / scale);
+        untransformedContentsRect = matrix.mapRect(contentsRect);
+
+        // We extract from the contentsRect but draw a slightly larger region than
+        // we were told to, in order to avoid pixels being rendered only partially.
+        const int atLeastOneDevicePixel = static_cast<int>(ceilf(1.0 / scale));
+        untransformedContentsRect.inflate(atLeastOneDevicePixel);
+    }
+
+    return untransformedContentsRect;
 }
 
 }

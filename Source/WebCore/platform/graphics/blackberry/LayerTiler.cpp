@@ -327,7 +327,7 @@ bool LayerTiler::shouldPerformRenderJob(const TileIndex& index, bool allowPrefil
     // Or if they are visible according to the state that's about to be
     // committed. We do a visibility test using the current transform state.
     IntRect contentRect = rectForTile(index, m_pendingTextureSize);
-    return m_layer->contentsVisible(contentRect);
+    return m_layer->contentsVisible(LayerWebKitThread::mapFromTransformed(contentRect, m_contentsScale));
 }
 
 void LayerTiler::addTextureJob(const TextureJob& job)

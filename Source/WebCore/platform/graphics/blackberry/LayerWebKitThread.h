@@ -162,6 +162,8 @@ public:
 
     void releaseLayerResources();
 
+    static IntRect mapFromTransformed(const IntRect&, double scale);
+
 protected:
     LayerWebKitThread(LayerType, GraphicsLayerBlackBerry* owner);
 
