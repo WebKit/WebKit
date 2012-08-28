@@ -139,7 +139,7 @@ void RenderBox::willBeDestroyed()
 
         if (RenderView* view = this->view()) {
             if (FrameView* frameView = view->frameView()) {
-                if (style()->position() == FixedPosition)
+                if (style()->hasViewportConstrainedPosition())
                     frameView->removeFixedObject(this);
             }
         }

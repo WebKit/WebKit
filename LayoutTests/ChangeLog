@@ -1,3 +1,15 @@
+2012-08-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Regression (r126774): Crash when scrolling after removing sticky element.
+        https://bugs.webkit.org/show_bug.cgi?id=95174
+
+        Reviewed by Abhishek Arya.
+
+        Testcase with JS that removes a position:sticky element, then scrolls.
+
+        * fast/css/sticky/remove-sticky-crash-expected.txt: Added.
+        * fast/css/sticky/remove-sticky-crash.html: Added.
+
 2012-08-28  Robert Hogan  <robert@webkit.org>
 
         Fix up ref-tests added in r126911 to make them more port-friendly.
