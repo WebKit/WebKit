@@ -273,6 +273,7 @@ SOURCES += \
     css/CSSGradientValue.cpp \
     css/CSSImageValue.cpp \
     css/CSSImageGeneratorValue.cpp \
+    css/CSSImageSetValue.cpp \
     css/CSSImportRule.cpp \
     css/CSSInheritedValue.cpp \
     css/CSSInitialValue.cpp \
@@ -1195,6 +1196,7 @@ SOURCES += \
     rendering/style/StyleBackgroundData.cpp \
     rendering/style/StyleBoxData.cpp \
     rendering/style/StyleCachedImage.cpp \
+    rendering/style/StyleCachedImageSet.cpp \
     rendering/style/StyleCachedShader.cpp \
     rendering/style/StyleDeprecatedFlexibleBoxData.cpp \
     rendering/style/StyleFilterData.cpp \

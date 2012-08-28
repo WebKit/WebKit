@@ -1,3 +1,14 @@
+2012-08-28  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] New test introduced in r126611 fails: fast/css/image-set-setting.html
+        https://bugs.webkit.org/show_bug.cgi?id=95054
+
+        Reviewed by Eric Seidel.
+
+        Unskip layout tests for CSS_IMAGE_SET.
+
+        * platform/qt/Skipped:
+
 2012-08-28  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: [WebGL] Add a test to catch new WebGL context states parameters

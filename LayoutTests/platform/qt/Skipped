@@ -441,10 +441,6 @@ css3/filters/filter-property-parsing.html
 css3/filters/filter-property.html
 css3/filters/filter-repaint.html
 
-# CSS image-set support not yet enabled (needs ENABLE_CSS_IMAGE_SET).
-fast/css/image-set-parsing.html
-fast/css/image-set-parsing-invalid.html
-
 # CSS shaders
 css3/filters/custom
 
@@ -2045,10 +2041,6 @@ fast/block/positioning/002.html
 # [Qt] fast/block/positioning/056.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=92733
 fast/block/positioning/056.html
-
-# [Qt] New test introduced in r126611 fails: fast/css/image-set-setting.html
-# https://bugs.webkit.org/show_bug.cgi?id=95054
-fast/css/image-set-setting.html
 
 # ============================================================================= #
 # failing fonts tests
