@@ -1,3 +1,13 @@
+2012-08-28  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [Qt] Keep QT_QPA_PLATFORM_PLUGIN_PATH environment variable in NRWT
+        https://bugs.webkit.org/show_bug.cgi?id=95194
+
+        Reviewed by Simon Hausmann.
+
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort.setup_environ_for_server):
+
 2012-08-28  Andras Becsi  <andras.becsi@nokia.com>
 
         [watchlist] Unreviewed, subscribe to Qt bugs.
