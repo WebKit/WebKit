@@ -1,3 +1,15 @@
+2012-08-28  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Drastically shorten the link highlight duration.
+        https://bugs.webkit.org/show_bug.cgi?id=95216
+
+        Reviewed by James Robinson.
+
+        Parameter change; covered by existing layout tests.
+
+        * src/LinkHighlight.cpp:
+        (WebKit::LinkHighlight::startHighlightAnimation):
+
 2012-08-27  Tien-Ren Chen  <trchen@chromium.org>
 
         [Chromium] Remove stub for WebView::getTouchHighlightQuads()
