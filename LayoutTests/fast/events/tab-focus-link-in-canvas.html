@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<a id="before" href="#">Before</a>
+
+<canvas>
+  <a id="canvas_link" href="#">Canvas Link</a>
+</canvas>
+
+<script>
+description("Ensures that you can tab to focus a link inside a canvas subtree.");
+
+if (window.testRunner && window.eventSender) {
+    testRunner.dumpAsText();
+    testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+
+    document.getElementById('before').focus();
+    shouldBe('document.activeElement.id', '"before"');
+
+    eventSender.keyDown('\t');
+    shouldBe('document.activeElement.id', '"canvas_link"');
+}
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

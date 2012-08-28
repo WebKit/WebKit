@@ -114,6 +114,9 @@ bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
     if (!document()->frame()->eventHandler()->tabsToLinks(event))
         return false;
 
+    if (isInCanvasSubtree())
+        return true;
+
     return hasNonEmptyBoundingBox();
 }
 
