@@ -6552,9 +6552,11 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 
 - (uint64_t)_notificationIDForTesting:(JSValueRef)jsNotification
 {
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     JSContextRef context = [[self mainFrame] globalContext];
     WebCore::Notification* notification = toNotification(toJS(toJS(context), jsNotification));
     return static_cast<WebNotificationClient*>(NotificationController::clientFrom(_private->page))->notificationIDForTesting(notification);
+#endif
 }
 @end
 

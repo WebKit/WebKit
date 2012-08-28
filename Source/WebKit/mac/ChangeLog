@@ -1,3 +1,12 @@
+2012-08-28  Jon Lee  <jonlee@apple.com>
+
+        Build fix to r126909.
+
+        Needed ENABLE(NOTIFICATIONS) guards.
+
+        * WebView/WebView.mm:
+        (-[WebView _notificationIDForTesting:]):
+
 2012-08-28  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Rename first/second to key/value in HashMap iterators
