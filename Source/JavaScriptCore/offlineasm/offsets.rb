@@ -61,7 +61,7 @@ end
 
 #
 # offsetsAndConfigurationIndex(ast, file) ->
-#     [[offsets, index], ...]
+#     {[offsets, index], ...}
 #
 # Parses the offsets from a file and returns a list of offsets and the
 # index of the configuration that is valid in this build target.
@@ -69,7 +69,7 @@ end
 
 def offsetsAndConfigurationIndex(file)
     endiannessMarkerBytes = nil
-    result = []
+    result = {}
     
     def readInt(endianness, bytes)
         if endianness == :little
@@ -155,13 +155,14 @@ def offsetsAndConfigurationIndex(file)
                     | data |
                     offsets << readInt(endianness, data)
                 }
-                result << [offsets, index]
+                if not result.has_key?(offsets)
+                    result[offsets] = index
+                end
             }
         end
     }
     
     raise MissingMagicValuesException unless result.length >= 1
-    raise if result.map{|v| v[1]}.uniq.size < result.map{|v| v[1]}.size
     
     result
 end
