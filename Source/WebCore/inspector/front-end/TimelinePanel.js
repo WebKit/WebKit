@@ -46,6 +46,9 @@ WebInspector.TimelinePanel = function()
     this._model = new WebInspector.TimelineModel();
     this._presentationModel = new WebInspector.TimelinePresentationModel();
 
+    this._overviewModeSetting = WebInspector.settings.createSetting("timelineOverviewMode", WebInspector.TimelineOverviewPane.Mode.Events);
+    this._glueRecordsSetting = WebInspector.settings.createSetting("timelineGlueRecords", true);
+
     this._overviewPane = new WebInspector.TimelineOverviewPane(this._model);
     this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.WindowChanged, this._scheduleRefresh.bind(this, false));
     this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.ModeChanged, this._overviewModeChanged, this);
@@ -145,8 +148,6 @@ WebInspector.TimelinePanel = function()
     this._presentationModel.addFilter(this._overviewPane);
     this._presentationModel.addFilter(new WebInspector.TimelineCategoryFilter()); 
     this._presentationModel.addFilter(new WebInspector.TimelineIsLongFilter(this)); 
-
-    this._overviewModeSetting = WebInspector.settings.createSetting("timelineOverviewMode", WebInspector.TimelineOverviewPane.Mode.Events);
 }
 
 // Define row height, should be in sync with styles for timeline graphs.
@@ -235,8 +236,8 @@ WebInspector.TimelinePanel.prototype = {
         this._statusBarButtons.push(this.garbageCollectButton);
 
         this._glueParentButton = new WebInspector.StatusBarButton(WebInspector.UIString("Glue asynchronous events to causes"), "glue-async-status-bar-item");
-        this._glueParentButton.toggled = true;
-        this._presentationModel.setGlueRecords(true);
+        this._glueParentButton.toggled = this._glueRecordsSetting.get();
+        this._presentationModel.setGlueRecords(this._glueParentButton.toggled);
         this._glueParentButton.addEventListener("click", this._glueParentButtonClicked, this);
         this._statusBarButtons.push(this._glueParentButton);
 
@@ -539,8 +540,10 @@ WebInspector.TimelinePanel.prototype = {
 
     _glueParentButtonClicked: function()
     {
-        this._glueParentButton.toggled = !this._glueParentButton.toggled;
-        this._presentationModel.setGlueRecords(this._glueParentButton.toggled);
+        var newValue = !this._glueParentButton.toggled;
+        this._glueParentButton.toggled = newValue;
+        this._presentationModel.setGlueRecords(newValue);
+        this._glueRecordsSetting.set(newValue);
         this._repopulateRecords();
     },
 
