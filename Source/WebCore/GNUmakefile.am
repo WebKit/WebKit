@@ -802,6 +802,10 @@ feature_defines += $(strip $(foreach bare_define, \
 webcore_cppflags += $(foreach define,$(feature_defines),-D$(define))
 
 
+$(WEBCORE_CSS_PROPERTY_NAMES): $(srcdir)/configure.ac $(srcdir)/Source/WebCore/GNUmakefile.am
+
+$(WEBCORE_CSS_VALUE_KEYWORDS): $(srcdir)/configure.ac $(srcdir)/Source/WebCore/GNUmakefile.am
+
 DerivedSources/WebCore/CSSPropertyNames.cpp: DerivedSources/WebCore/CSSPropertyNames.h
 DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
 	$(AM_V_GEN)
