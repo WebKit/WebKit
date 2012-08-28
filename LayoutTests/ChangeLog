@@ -1,3 +1,11 @@
+2012-08-28  Philip Rogers  <pdr@google.com>
+
+        Rebaselining chromium-mac test results with scrollbars.
+
+        Unreviewed update of test results.
+
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/image-object-in-canvas-expected.png:
+
 2012-08-28  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Remove Windows specific object-sizing test results.
