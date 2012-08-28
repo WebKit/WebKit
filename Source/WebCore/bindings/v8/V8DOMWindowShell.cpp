@@ -368,11 +368,6 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
     return result;
 }
 
-void V8DOMWindowShell::setContext(v8::Handle<v8::Context> context)
-{
-    m_context.set(context);
-}
-
 bool V8DOMWindowShell::installDOMWindow(v8::Handle<v8::Context> context, DOMWindow* window)
 {
     // Create a new JS window object and use it as the prototype for the  shadow global object.
