@@ -60,11 +60,9 @@ class WebString;
 class WebTextFieldDecoratorClient;
 class WebViewClient;
 struct WebActiveWheelFlingParameters;
-struct WebFloatQuad;
 struct WebMediaPlayerAction;
 struct WebPluginAction;
 struct WebPoint;
-struct WebTouchCandidatesInfo;
 
 class WebView : public WebWidget {
 public:
@@ -468,20 +466,6 @@ public:
     // Benchmarking support -------------------------------------------------
 
     virtual WebViewBenchmarkSupport* benchmarkSupport() { return 0; }
-
-
-    // Touch ----------------------------------------------------------------
-
-    // Returns a list of layout bounding boxes of the event target node touched by
-    // the input point with the padding. If no target node is found, an empty
-    // list is returned. If the node is of an inline type, each line box is returned
-    // separately. Otherwise, one bounding box is returned. Also returns information
-    // about the found candidates and their dimension, and the highlight color to use.
-    virtual WebVector<WebFloatQuad> getTouchHighlightQuads(const WebPoint&,
-                                                           int padding,
-                                                           WebTouchCandidatesInfo& outTouchInfo,
-                                                           WebColor& outTapHighlightColor) = 0;
-
 
     // Visibility -----------------------------------------------------------
 

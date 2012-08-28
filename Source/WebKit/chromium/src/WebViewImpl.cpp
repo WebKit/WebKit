@@ -145,7 +145,6 @@
 #include "WebRuntimeFeatures.h"
 #include "WebSettingsImpl.h"
 #include "WebTextInputInfo.h"
-#include "WebTouchCandidatesInfo.h"
 #include "WebViewClient.h"
 #include "WheelEvent.h"
 #include "painting/GraphicsContextBuilder.h"
@@ -793,17 +792,6 @@ void WebViewImpl::startPageScaleAnimation(const IntPoint& targetPosition, bool u
 WebViewBenchmarkSupport* WebViewImpl::benchmarkSupport()
 {
     return &m_benchmarkSupport;
-}
-
-WebVector<WebFloatQuad> WebViewImpl::getTouchHighlightQuads(const WebPoint& point,
-                                                            int padding,
-                                                            WebTouchCandidatesInfo& outTouchInfo,
-                                                            WebColor& outTapHighlightColor)
-{
-    // FIXME: Upstream this function from the chromium-android branch.
-    notImplemented();
-
-    return WebVector<WebFloatQuad>();
 }
 
 bool WebViewImpl::handleKeyEvent(const WebKeyboardEvent& event)

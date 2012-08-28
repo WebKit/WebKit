@@ -1,3 +1,22 @@
+2012-08-27  Tien-Ren Chen  <trchen@chromium.org>
+
+        [Chromium] Remove stub for WebView::getTouchHighlightQuads()
+        https://bugs.webkit.org/show_bug.cgi?id=95164
+
+        Reviewed by Adam Barth.
+
+        Reverts https://bugs.webkit.org/show_bug.cgi?id=92997
+        We're uploading a new implementation that no longer uses this API.
+        See https://bugs.webkit.org/show_bug.cgi?id=94182
+
+        * WebKit.gyp:
+        * public/WebTouchCandidatesInfo.h: Removed.
+        * public/WebView.h:
+        (WebKit):
+        * src/WebViewImpl.cpp:
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-08-27  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Should accelerate rotations of >= 180 degrees
