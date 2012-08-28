@@ -720,6 +720,9 @@ BUGWK86615 : editing/deleting/regional-indicators.html = TEXT
 // Custom font loading delaying text drawing on Canvas
 BUGWK87355 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
 
+// Tests failing due to rounding problems in colors inside pixman
+BUGWK49964 : fast/canvas/canvas-fillPath-shadow.html = TEXT
+
 // Missing spell checking support (Efl's port does not support spell checking, Gtk port uses Enchant library https://bugs.webkit.org/show_bug.cgi?id=61787)
 BUGWK86637 : editing/spelling/grammar.html = TEXT
 BUGWK86637 : editing/spelling/grammar-paste.html = TEXT

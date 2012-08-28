@@ -349,11 +349,6 @@ canvas/philip/tests/2d.path.rect.zero.6.html
 # BUG: Bug in the test itself, as the input box can be big enough for the given coordinates to be inside it.
 fast/forms/input-text-click-outside.html
 
-# Rounding color problems inside pixman
-# https://bugs.webkit.org/show_bug.cgi?id=49964
-fast/canvas/canvas-fillPath-shadow.html
-fast/canvas/canvas-strokePath-shadow.html
-
 # The same bug description applies to the EFL port (gradient instead of solid color in the rectangle).
 # https://bugs.webkit.org/show_bug.cgi?id=58309
 fast/canvas/DrawImageSinglePixelStretch.html

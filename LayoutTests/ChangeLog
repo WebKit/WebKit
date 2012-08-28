@@ -1,3 +1,19 @@
+2012-08-28  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Update TestExpectations for fast/canvas/canvas*-shadow.html tests
+        https://bugs.webkit.org/show_bug.cgi?id=95196
+
+        Unreviewed EFL gardening.
+
+        Unskip fast/canvas/canvas-strokePath-shadow.html since it is passing
+        consistently now and already unskip for GTK in r116122.
+
+        Move fast/canvas/canvas-fillPath-shadow.html from Skipped file to
+        TestExpectations.
+
+        * platform/efl/Skipped:
+        * platform/efl/TestExpectations:
+
 2012-08-28  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][WK2][WTR] Rebaseline newly added SVG text test cases
