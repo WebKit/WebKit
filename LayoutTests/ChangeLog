@@ -1,3 +1,19 @@
+2012-08-27  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: skipping tests due to WebCore::JSEventListener::jsFunction(WebCore::ScriptExecutionContext*) crashes.
+        https://bugs.webkit.org/show_bug.cgi?id=95144.
+
+        Reviewed by Stephanie Lewis.
+
+        fast/events/keyevent-iframe-removed-crash.html
+        fullscreen/full-screen-iframe-zIndex.html
+        fullscreen/full-screen-restrictions.html
+        http/tests/security/MessagePort/event-listener-context.html
+        platform/mac/accessibility/search-with-frames.html
+        svg/custom/use-instanceRoot-as-event-target.xhtml
+
+        * platform/mac/Skipped:
+
 2012-08-27  Julien Chaffraix  <jchaffraix@webkit.org>
 
         More unreviewed rebaselining after r126683.
