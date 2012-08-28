@@ -43,13 +43,13 @@ RenderTextControlMultiLine::~RenderTextControlMultiLine()
         static_cast<HTMLTextAreaElement*>(node())->rendererWillBeDestroyed();
 }
 
-bool RenderTextControlMultiLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+bool RenderTextControlMultiLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
-    if (!RenderTextControl::nodeAtPoint(request, result, pointInContainer, accumulatedOffset, hitTestAction))
+    if (!RenderTextControl::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction))
         return false;
 
     if (result.innerNode() == node() || result.innerNode() == innerTextElement())
-        hitInnerTextElement(result, pointInContainer.point(), accumulatedOffset);
+        hitInnerTextElement(result, locationInContainer.point(), accumulatedOffset);
 
     return true;
 }

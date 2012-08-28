@@ -70,7 +70,7 @@ private:
     virtual void paintObject(PaintInfo&, const LayoutPoint&);
     virtual LayoutRect controlClipRect(const LayoutPoint&) const;
 
-    virtual bool isPointInOverflowControl(HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset);
+    virtual bool isPointInOverflowControl(HitTestResult&, const LayoutPoint& locationInContainer, const LayoutPoint& accumulatedOffset);
 
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0);
     virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0);
@@ -98,7 +98,7 @@ private:
     virtual void setScrollLeft(int);
     virtual void setScrollTop(int);
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
     // ScrollableArea interface.
     virtual int scrollSize(ScrollbarOrientation) const OVERRIDE;

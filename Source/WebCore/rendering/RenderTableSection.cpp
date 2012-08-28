@@ -1363,7 +1363,7 @@ void RenderTableSection::splitColumn(unsigned pos, unsigned first)
 }
 
 // Hit Testing
-bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
+bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
     // If we have no children then we have nothing to do.
     if (!firstChild())
@@ -1373,7 +1373,7 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
     // Just forward to our children always.
     LayoutPoint adjustedLocation = accumulatedOffset + location();
 
-    if (hasOverflowClip() && !pointInContainer.intersects(overflowClipRect(adjustedLocation, pointInContainer.region())))
+    if (hasOverflowClip() && !locationInContainer.intersects(overflowClipRect(adjustedLocation, locationInContainer.region())))
         return false;
 
     if (hasOverflowingCell()) {
@@ -1384,8 +1384,8 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
             // then we can remove this check.
             if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer()) {
                 LayoutPoint childPoint = flipForWritingModeForChild(toRenderBox(child), adjustedLocation);
-                if (child->nodeAtPoint(request, result, pointInContainer, childPoint, action)) {
-                    updateHitTestResult(result, toLayoutPoint(pointInContainer.point() - childPoint));
+                if (child->nodeAtPoint(request, result, locationInContainer, childPoint, action)) {
+                    updateHitTestResult(result, toLayoutPoint(locationInContainer.point() - childPoint));
                     return true;
                 }
             }
@@ -1395,7 +1395,7 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
 
     recalcCellsIfNeeded();
 
-    LayoutRect hitTestRect = pointInContainer.boundingBox();
+    LayoutRect hitTestRect = locationInContainer.boundingBox();
     hitTestRect.moveBy(-adjustedLocation);
 
     LayoutRect tableAlignedRect = logicalRectForWritingModeAndDirection(hitTestRect);
@@ -1415,8 +1415,8 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
                 --i;
                 RenderTableCell* cell = current.cells[i];
                 LayoutPoint cellPoint = flipForWritingModeForChild(cell, adjustedLocation);
-                if (static_cast<RenderObject*>(cell)->nodeAtPoint(request, result, pointInContainer, cellPoint, action)) {
-                    updateHitTestResult(result, pointInContainer.point() - toLayoutSize(cellPoint));
+                if (static_cast<RenderObject*>(cell)->nodeAtPoint(request, result, locationInContainer, cellPoint, action)) {
+                    updateHitTestResult(result, locationInContainer.point() - toLayoutSize(cellPoint));
                     return true;
                 }
             }

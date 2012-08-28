@@ -265,16 +265,16 @@ void RenderEmbeddedObject::viewCleared()
     }
 }
 
-bool RenderEmbeddedObject::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+bool RenderEmbeddedObject::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
-    if (!RenderPart::nodeAtPoint(request, result, pointInContainer, accumulatedOffset, hitTestAction))
+    if (!RenderPart::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction))
         return false;
 
     if (!widget() || !widget()->isPluginViewBase())
         return true;
 
     PluginViewBase* view = static_cast<PluginViewBase*>(widget());
-    IntPoint roundedPoint = pointInContainer.roundedPoint();
+    IntPoint roundedPoint = locationInContainer.roundedPoint();
 
     if (Scrollbar* horizontalScrollbar = view->horizontalScrollbar()) {
         if (horizontalScrollbar->shouldParticipateInHitTesting() && horizontalScrollbar->frameRect().contains(roundedPoint)) {

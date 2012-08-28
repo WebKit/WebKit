@@ -777,9 +777,9 @@ const char* RenderInline::renderName() const
 }
 
 bool RenderInline::nodeAtPoint(const HitTestRequest& request, HitTestResult& result,
-                                const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+                                const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
-    return m_lineBoxes.hitTest(this, request, result, pointInContainer, accumulatedOffset, hitTestAction);
+    return m_lineBoxes.hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 }
 
 VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point)

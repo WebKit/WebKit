@@ -47,7 +47,7 @@ public:
     virtual bool isRenderRegion() const { return true; }
 
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&);
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 

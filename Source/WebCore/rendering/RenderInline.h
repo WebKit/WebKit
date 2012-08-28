@@ -123,7 +123,7 @@ private:
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
     virtual bool requiresLayer() const { return isInFlowPositioned() || isTransparent() || hasMask() || hasFilter(); }
 

@@ -77,7 +77,7 @@ public:
     void computeLogicalHeight();
 
     void paintIntoRegion(PaintInfo&, RenderRegion*, const LayoutPoint& paintOffset);
-    bool hitTestRegion(RenderRegion*, const HitTestRequest&, HitTestResult&, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset);
+    bool hitTestRegion(RenderRegion*, const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset);
 
     bool hasRegions() const { return m_regionList.size(); }
     bool hasValidRegions() const { ASSERT(!m_regionsInvalidated); return m_hasValidRegions; }

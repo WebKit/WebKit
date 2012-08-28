@@ -277,12 +277,12 @@ void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, RenderRegion* regio
     }
 }
 
-bool RenderFlowThread::hitTestRegion(RenderRegion* region, const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
+bool RenderFlowThread::hitTestRegion(RenderRegion* region, const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset)
 {
     LayoutRect regionRect(region->regionRect());
     LayoutRect regionOversetRect = region->regionOversetRect();
     LayoutRect regionClippingRect(accumulatedOffset + (regionOversetRect.location() - regionRect.location()), regionOversetRect.size());
-    if (!regionClippingRect.contains(pointInContainer.point()))
+    if (!regionClippingRect.contains(locationInContainer.point()))
         return false;
 
     LayoutSize renderFlowThreadOffset;
@@ -296,10 +296,10 @@ bool RenderFlowThread::hitTestRegion(RenderRegion* region, const HitTestRequest&
     // Always ignore clipping, since the RenderFlowThread has nothing to do with the bounds of the FrameView.
     HitTestRequest newRequest(request.type() | HitTestRequest::IgnoreClipping);
 
-    // Make a new temporary hitTestPoint in the new region.
-    HitTestPoint newHitTestPoint(pointInContainer, -renderFlowThreadOffset, region);
+    // Make a new temporary HitTestLocation in the new region.
+    HitTestLocation newHitTestLocation(locationInContainer, -renderFlowThreadOffset, region);
 
-    bool isPointInsideFlowThread = layer()->hitTest(newRequest, newHitTestPoint, result);
+    bool isPointInsideFlowThread = layer()->hitTest(newRequest, newHitTestLocation, result);
 
     // FIXME: Should we set result.m_localPoint back to the RenderRegion's coordinate space or leave it in the RenderFlowThread's coordinate
     // space? Right now it's staying in the RenderFlowThread's coordinate space, which may end up being ok. We will know more when we get around to

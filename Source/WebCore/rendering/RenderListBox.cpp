@@ -459,7 +459,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
     }
 }
 
-bool RenderListBox::isPointInOverflowControl(HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
+bool RenderListBox::isPointInOverflowControl(HitTestResult& result, const LayoutPoint& locationInContainer, const LayoutPoint& accumulatedOffset)
 {
     if (!m_vBar || !m_vBar->shouldParticipateInHitTesting())
         return false;
@@ -469,7 +469,7 @@ bool RenderListBox::isPointInOverflowControl(HitTestResult& result, const Layout
                         m_vBar->width(),
                         height() - borderTop() - borderBottom());
 
-    if (vertRect.contains(pointInContainer)) {
+    if (vertRect.contains(locationInContainer)) {
         result.setScrollbar(m_vBar.get());
         return true;
     }
@@ -689,21 +689,21 @@ void RenderListBox::setScrollTop(int newTop)
     scrollToOffsetWithoutAnimation(VerticalScrollbar, index);
 }
 
-bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
-    if (!RenderBlock::nodeAtPoint(request, result, pointInContainer, accumulatedOffset, hitTestAction))
+    if (!RenderBlock::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction))
         return false;
     const Vector<HTMLElement*>& listItems = selectElement()->listItems();
     int size = numItems();
     LayoutPoint adjustedLocation = accumulatedOffset + location();
 
     for (int i = 0; i < size; ++i) {
-        if (itemBoundingBoxRect(adjustedLocation, i).contains(pointInContainer.point())) {
+        if (itemBoundingBoxRect(adjustedLocation, i).contains(locationInContainer.point())) {
             if (Element* node = listItems[i]) {
                 result.setInnerNode(node);
                 if (!result.innerNonSharedNode())
                     result.setInnerNonSharedNode(node);
-                result.setLocalPoint(pointInContainer.point() - toLayoutSize(adjustedLocation));
+                result.setLocalPoint(locationInContainer.point() - toLayoutSize(adjustedLocation));
                 break;
             }
         }

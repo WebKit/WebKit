@@ -234,7 +234,7 @@ public:
 
     void adjustRectForColumns(LayoutRect&) const;
     virtual void adjustForColumns(LayoutSize&, const LayoutPoint&) const;
-    void adjustForColumnRect(LayoutSize& offset, const LayoutPoint& pointInContainer) const;
+    void adjustForColumnRect(LayoutSize& offset, const LayoutPoint& locationInContainer) const;
 
     void addContinuationWithOutline(RenderInline*);
     bool paintsContinuationOutline(RenderInline*);
@@ -443,7 +443,7 @@ protected:
     virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const;
     virtual void adjustInlineDirectionLineBounds(int /* expansionOpportunityCount */, float& /* logicalLeft */, float& /* logicalWidth */) const { }
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
     virtual void computePreferredLogicalWidths();
 
@@ -794,11 +794,11 @@ private:
     LayoutUnit lowestFloatLogicalBottom(FloatingObject::Type = FloatingObject::FloatLeftRight) const; 
     LayoutUnit nextFloatLogicalBottomBelow(LayoutUnit) const;
     
-    virtual bool hitTestColumns(const HitTestRequest&, HitTestResult&, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
-    virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
-    bool hitTestFloats(const HitTestRequest&, HitTestResult&, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset);
+    virtual bool hitTestColumns(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
+    virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
+    bool hitTestFloats(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset);
 
-    virtual bool isPointInOverflowControl(HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset);
+    virtual bool isPointInOverflowControl(HitTestResult&, const LayoutPoint& locationInContainer, const LayoutPoint& accumulatedOffset);
 
     void computeInlinePreferredLogicalWidths();
     void computeBlockPreferredLogicalWidths();

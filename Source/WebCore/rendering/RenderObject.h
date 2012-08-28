@@ -46,7 +46,7 @@ class AffineTransform;
 class AnimationController;
 class Cursor;
 class Document;
-class HitTestPoint;
+class HitTestLocation;
 class HitTestResult;
 class InlineBox;
 class InlineFlowBox;
@@ -660,9 +660,9 @@ public:
 
     bool isComposited() const;
 
-    bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestFilter = HitTestAll);
+    bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestFilter = HitTestAll);
     virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&);
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&);
     VisiblePosition createVisiblePosition(int offset, EAffinity);

@@ -758,25 +758,25 @@ LayoutUnit RenderBox::computeContentBoxLogicalHeight(LayoutUnit height) const
 }
 
 // Hit Testing
-bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
+bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
     LayoutPoint adjustedLocation = accumulatedOffset + location();
 
     // Check kids first.
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
-        if (!child->hasLayer() && child->nodeAtPoint(request, result, pointInContainer, adjustedLocation, action)) {
-            updateHitTestResult(result, pointInContainer.point() - toLayoutSize(adjustedLocation));
+        if (!child->hasLayer() && child->nodeAtPoint(request, result, locationInContainer, adjustedLocation, action)) {
+            updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
             return true;
         }
     }
 
     // Check our bounds next. For this purpose always assume that we can only be hit in the
     // foreground phase (which is true for replaced elements like images).
-    LayoutRect boundsRect = borderBoxRectInRegion(pointInContainer.region());
+    LayoutRect boundsRect = borderBoxRectInRegion(locationInContainer.region());
     boundsRect.moveBy(adjustedLocation);
-    if (visibleToHitTesting() && action == HitTestForeground && pointInContainer.intersects(boundsRect)) {
-        updateHitTestResult(result, pointInContainer.point() - toLayoutSize(adjustedLocation));
-        if (!result.addNodeToRectBasedTestResult(node(), pointInContainer, boundsRect))
+    if (visibleToHitTesting() && action == HitTestForeground && locationInContainer.intersects(boundsRect)) {
+        updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
+        if (!result.addNodeToRectBasedTestResult(node(), locationInContainer, boundsRect))
             return true;
     }
 

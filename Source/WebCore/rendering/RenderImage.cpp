@@ -499,16 +499,16 @@ HTMLMapElement* RenderImage::imageMap() const
     return i ? i->treeScope()->getImageMap(i->fastGetAttribute(usemapAttr)) : 0;
 }
 
-bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
-    HitTestResult tempResult(result.hitTestPoint(), result.shadowContentFilterPolicy());
-    bool inside = RenderReplaced::nodeAtPoint(request, tempResult, pointInContainer, accumulatedOffset, hitTestAction);
+    HitTestResult tempResult(result.hitTestLocation(), result.shadowContentFilterPolicy());
+    bool inside = RenderReplaced::nodeAtPoint(request, tempResult, locationInContainer, accumulatedOffset, hitTestAction);
 
     if (tempResult.innerNode() && node()) {
         if (HTMLMapElement* map = imageMap()) {
             LayoutRect contentBox = contentBoxRect();
             float scaleFactor = 1 / style()->effectiveZoom();
-            LayoutPoint mapLocation = pointInContainer.point() - toLayoutSize(accumulatedOffset) - locationOffset() - toLayoutSize(contentBox.location());
+            LayoutPoint mapLocation = locationInContainer.point() - toLayoutSize(accumulatedOffset) - locationOffset() - toLayoutSize(contentBox.location());
             mapLocation.scale(scaleFactor, scaleFactor);
 
             if (map->mapMouseEvent(mapLocation, contentBox.size(), tempResult))

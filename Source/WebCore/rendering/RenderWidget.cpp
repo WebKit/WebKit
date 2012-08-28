@@ -385,10 +385,10 @@ RenderWidget* RenderWidget::find(const Widget* widget)
     return widgetRendererMap().get(widget);
 }
 
-bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
+bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
     bool hadResult = result.innerNode();
-    bool inside = RenderReplaced::nodeAtPoint(request, result, pointInContainer, accumulatedOffset, action);
+    bool inside = RenderReplaced::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, action);
 
     // Check to see if we are really over the widget itself (and not just in the border/padding area).
     if ((inside || result.isRectBasedTest()) && !hadResult && result.innerNode() == node())

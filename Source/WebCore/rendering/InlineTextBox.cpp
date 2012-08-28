@@ -349,7 +349,7 @@ bool InlineTextBox::isLineBreak() const
     return renderer()->isBR() || (renderer()->style()->preserveNewline() && len() == 1 && (*textRenderer()->text())[start()] == '\n');
 }
 
-bool InlineTextBox::nodeAtPoint(const HitTestRequest&, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit /* lineTop */, LayoutUnit /*lineBottom*/)
+bool InlineTextBox::nodeAtPoint(const HitTestRequest&, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit /* lineTop */, LayoutUnit /*lineBottom*/)
 {
     if (isLineBreak())
         return false;
@@ -357,9 +357,9 @@ bool InlineTextBox::nodeAtPoint(const HitTestRequest&, HitTestResult& result, co
     FloatPoint boxOrigin = locationIncludingFlipping();
     boxOrigin.moveBy(accumulatedOffset);
     FloatRect rect(boxOrigin, size());
-    if (m_truncation != cFullTruncation && visibleToHitTesting() && pointInContainer.intersects(rect)) {
-        renderer()->updateHitTestResult(result, flipForWritingMode(pointInContainer.point() - toLayoutSize(accumulatedOffset)));
-        if (!result.addNodeToRectBasedTestResult(renderer()->node(), pointInContainer, rect))
+    if (m_truncation != cFullTruncation && visibleToHitTesting() && locationInContainer.intersects(rect)) {
+        renderer()->updateHitTestResult(result, flipForWritingMode(locationInContainer.point() - toLayoutSize(accumulatedOffset)));
+        if (!result.addNodeToRectBasedTestResult(renderer()->node(), locationInContainer, rect))
             return true;
     }
     return false;
