@@ -1,3 +1,19 @@
+2012-08-28  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        [webkit-patch] gets stuck into an infinite loop if bugzilla doesn't respond in time.
+        https://bugs.webkit.org/show_bug.cgi?id=94700
+
+        Reviewed by Eric Seidel.
+
+        Interrupting download with a timeout would be a possible solution.
+        I imported the socket module and used the setdefaulttimeout() method.
+        Fixing it is important, because EWS bots need to be restarted regularly
+        because of this bug.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla._get_browser):
+        (Bugzilla.setdefaulttimeout):
+
 2012-08-28  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [Qt] Keep QT_QPA_PLATFORM_PLUGIN_PATH environment variable in NRWT

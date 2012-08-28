@@ -33,6 +33,7 @@
 import mimetypes
 import re
 import StringIO
+import socket
 import urllib
 
 from datetime import datetime # used in timestamp()
@@ -279,6 +280,7 @@ class Bugzilla(object):
 
     def _get_browser(self):
         if not self._browser:
+            self.setdefaulttimeout(600)
             from webkitpy.thirdparty.autoinstalled.mechanize import Browser
             self._browser = Browser()
             # Ignore bugs.webkit.org/robots.txt until we fix it to allow this script.
@@ -289,6 +291,9 @@ class Bugzilla(object):
         self._browser = value
 
     browser = property(_get_browser, _set_browser)
+
+    def setdefaulttimeout(self, value):
+        socket.setdefaulttimeout(value)
 
     def fetch_user(self, user_id):
         self.authenticate()
