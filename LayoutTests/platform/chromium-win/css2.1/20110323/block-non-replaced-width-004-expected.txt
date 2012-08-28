@@ -11,6 +11,6 @@ layer at (8,52) size 784x30
 layer at (692,52) size 100x30
   RenderBlock (relative positioned) {DIV} at (684,0) size 100x30 [bgcolor=#FFA500]
 layer at (642,52) size 140x30
-  RenderBlock (relative positioned) {DIV} at (-50,0) size 140x30 [border: (10px solid #FFA500) none (10px solid #FFA500)]
+  RenderBlock (relative positioned) {DIV} at (-50,0) size 140x30 [border: none (10px solid #FFA500) none (10px solid #FFA500)]
 layer at (642,82) size 150x30
   RenderBlock (positioned) {DIV} at (634,30) size 150x30 [bgcolor=#0000FF]

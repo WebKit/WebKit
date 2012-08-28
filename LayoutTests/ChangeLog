@@ -1,3 +1,138 @@
+2012-08-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Even more unreviewed rebaselining after r126683.
+
+        * platform/chromium/TestExpectations:
+        Rebaselined 30 tests (see the new common baselines below).
+
+        * animations/cross-fade-border-image-source-expected.txt: Renamed from LayoutTests/platform/efl/animations/cross-fade-border-image-source-expected.txt.
+        * css1/box_properties/border_bottom-expected.txt: Renamed from LayoutTests/platform/efl/css1/box_properties/border_bottom-expected.txt.
+        * css1/box_properties/border_bottom_inline-expected.txt: Renamed from LayoutTests/platform/efl/css1/box_properties/border_bottom_inline-expected.txt.
+        * css1/box_properties/border_left-expected.txt: Renamed from LayoutTests/platform/efl/css1/box_properties/border_left-expected.txt.
+        * css1/box_properties/border_left_inline-expected.txt: Renamed from LayoutTests/platform/efl/css1/box_properties/border_left_inline-expected.txt.
+        * css1/box_properties/border_right-expected.txt: Renamed from LayoutTests/platform/efl/css1/box_properties/border_right-expected.txt.
+        * css1/box_properties/border_right_inline-expected.txt: Renamed from LayoutTests/platform/efl/css1/box_properties/border_right_inline-expected.txt.
+        * css1/units/length_units-expected.txt: Renamed from LayoutTests/platform/efl/css1/units/length_units-expected.txt.
+        * css2.1/20110323/absolute-replaced-height-036-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/20110323/absolute-replaced-height-036-expected.txt.
+        * css2.1/20110323/block-non-replaced-height-007-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/20110323/block-non-replaced-height-007-expected.txt.
+        * css2.1/20110323/block-non-replaced-height-008-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/20110323/block-non-replaced-height-008-expected.txt.
+        * css2.1/20110323/block-non-replaced-height-009-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/20110323/block-non-replaced-height-009-expected.txt.
+        * css2.1/20110323/block-non-replaced-height-010-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/20110323/block-non-replaced-height-010-expected.txt.
+        * css2.1/20110323/block-non-replaced-width-001-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/20110323/block-non-replaced-width-001-expected.txt.
+        * css2.1/20110323/block-non-replaced-width-002-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/20110323/block-non-replaced-width-002-expected.txt.
+        * css2.1/20110323/block-non-replaced-width-003-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/20110323/block-non-replaced-width-003-expected.txt.
+        * css2.1/20110323/block-non-replaced-width-004-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/20110323/block-non-replaced-width-004-expected.txt.
+        * css2.1/20110323/block-non-replaced-width-008-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/20110323/block-non-replaced-width-008-expected.txt.
+        * css2.1/20110323/margin-applies-to-008-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/20110323/margin-applies-to-008-expected.txt.
+        * css2.1/20110323/width-non-replaced-inline-001-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/20110323/width-non-replaced-inline-001-expected.txt.
+        * css2.1/t040302-c61-phys-len-00-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t040302-c61-phys-len-00-b-expected.txt.
+        * css2.1/t0804-c5507-padn-r-02-f-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t0804-c5507-padn-r-02-f-expected.txt.
+        * css2.1/t0804-c5508-ipadn-b-03-b-a-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t0804-c5508-ipadn-b-03-b-a-expected.txt.
+        * css2.1/t0804-c5509-padn-l-02-f-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t0804-c5509-padn-l-02-f-expected.txt.
+        * css2.1/t0805-c5519-brdr-r-02-e-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t0805-c5519-brdr-r-02-e-expected.txt.
+        * css2.1/t0805-c5519-ibrdr-r-00-a-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t0805-c5519-ibrdr-r-00-a-expected.txt.
+        * css2.1/t0805-c5520-brdr-b-00-a-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t0805-c5520-brdr-b-00-a-expected.txt.
+        * css2.1/t0805-c5520-ibrdr-b-00-a-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t0805-c5520-ibrdr-b-00-a-expected.txt.
+        * css2.1/t0805-c5521-brdr-l-02-e-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t0805-c5521-brdr-l-02-e-expected.txt.
+        Common baselines for the tests.
+
+        * platform/gtk/animations/cross-fade-border-image-source-expected.txt: Removed.
+        * platform/gtk/css1/box_properties/border_bottom-expected.txt: Removed.
+        * platform/gtk/css1/box_properties/border_bottom_inline-expected.txt: Removed.
+        * platform/gtk/css1/box_properties/border_left-expected.txt: Removed.
+        * platform/gtk/css1/box_properties/border_left_inline-expected.txt: Removed.
+        * platform/gtk/css1/box_properties/border_right-expected.txt: Removed.
+        * platform/gtk/css1/box_properties/border_right_inline-expected.txt: Removed.
+        * platform/gtk/css1/units/length_units-expected.txt: Removed.
+        * platform/gtk/css2.1/20110323/absolute-replaced-height-036-expected.txt: Removed.
+        * platform/gtk/css2.1/20110323/block-non-replaced-height-007-expected.txt: Removed.
+        * platform/gtk/css2.1/20110323/block-non-replaced-height-008-expected.txt: Removed.
+        * platform/gtk/css2.1/20110323/block-non-replaced-height-009-expected.txt: Removed.
+        * platform/gtk/css2.1/20110323/block-non-replaced-height-010-expected.txt: Removed.
+        * platform/gtk/css2.1/20110323/block-non-replaced-width-001-expected.txt: Removed.
+        * platform/gtk/css2.1/20110323/block-non-replaced-width-002-expected.txt: Removed.
+        * platform/gtk/css2.1/20110323/block-non-replaced-width-003-expected.txt: Removed.
+        * platform/gtk/css2.1/20110323/block-non-replaced-width-004-expected.txt: Removed.
+        * platform/gtk/css2.1/20110323/block-non-replaced-width-008-expected.txt: Removed.
+        * platform/gtk/css2.1/20110323/margin-applies-to-008-expected.txt: Removed.
+        * platform/gtk/css2.1/20110323/width-non-replaced-inline-001-expected.txt: Removed.
+        * platform/gtk/css2.1/t040302-c61-phys-len-00-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t0804-c5507-padn-r-02-f-expected.txt: Removed.
+        * platform/gtk/css2.1/t0804-c5508-ipadn-b-03-b-a-expected.txt: Removed.
+        * platform/gtk/css2.1/t0804-c5509-padn-l-02-f-expected.txt: Removed.
+        * platform/gtk/css2.1/t0805-c5519-brdr-r-02-e-expected.txt: Removed.
+        * platform/gtk/css2.1/t0805-c5519-ibrdr-r-00-a-expected.txt: Removed.
+        * platform/gtk/css2.1/t0805-c5520-brdr-b-00-a-expected.txt: Removed.
+        * platform/gtk/css2.1/t0805-c5520-ibrdr-b-00-a-expected.txt: Removed.
+        * platform/gtk/css2.1/t0805-c5521-brdr-l-02-e-expected.txt: Removed.
+        * platform/mac-lion/animations/cross-fade-border-image-source-expected.txt: Removed.
+        * platform/mac-lion/css1/box_properties/border_bottom-expected.txt: Removed.
+        * platform/mac-lion/css1/box_properties/border_bottom_inline-expected.txt: Removed.
+        * platform/mac-lion/css1/box_properties/border_left-expected.txt: Removed.
+        * platform/mac-lion/css1/box_properties/border_left_inline-expected.txt: Removed.
+        * platform/mac-lion/css1/box_properties/border_right-expected.txt: Removed.
+        * platform/mac-lion/css1/box_properties/border_right_inline-expected.txt: Removed.
+        * platform/mac-lion/css1/units/length_units-expected.txt: Removed.
+        * platform/mac-lion/css2.1/20110323/absolute-replaced-height-036-expected.txt: Removed.
+        * platform/mac-lion/css2.1/20110323/block-non-replaced-height-007-expected.txt: Removed.
+        * platform/mac-lion/css2.1/20110323/block-non-replaced-height-008-expected.txt: Removed.
+        * platform/mac-lion/css2.1/20110323/block-non-replaced-height-009-expected.txt: Removed.
+        * platform/mac-lion/css2.1/20110323/block-non-replaced-height-010-expected.txt: Removed.
+        * platform/mac-lion/css2.1/20110323/block-non-replaced-width-001-expected.txt: Removed.
+        * platform/mac-lion/css2.1/20110323/block-non-replaced-width-002-expected.txt: Removed.
+        * platform/mac-lion/css2.1/20110323/block-non-replaced-width-003-expected.txt: Removed.
+        * platform/mac-lion/css2.1/20110323/block-non-replaced-width-004-expected.txt: Removed.
+        * platform/mac-lion/css2.1/20110323/block-non-replaced-width-008-expected.txt: Removed.
+        * platform/mac-lion/css2.1/20110323/margin-applies-to-008-expected.txt: Removed.
+        * platform/mac-lion/css2.1/20110323/width-non-replaced-inline-001-expected.txt: Removed.
+        * platform/mac-lion/css2.1/t040302-c61-phys-len-00-b-expected.txt: Removed.
+        * platform/mac-lion/css2.1/t0804-c5507-padn-r-02-f-expected.txt: Removed.
+        * platform/mac-lion/css2.1/t0804-c5508-ipadn-b-03-b-a-expected.txt: Removed.
+        * platform/mac-lion/css2.1/t0804-c5509-padn-l-02-f-expected.txt: Removed.
+        * platform/mac-lion/css2.1/t0805-c5519-brdr-r-02-e-expected.txt: Removed.
+        * platform/mac-lion/css2.1/t0805-c5519-ibrdr-r-00-a-expected.txt: Removed.
+        * platform/mac-lion/css2.1/t0805-c5520-brdr-b-00-a-expected.txt: Removed.
+        * platform/mac-lion/css2.1/t0805-c5520-ibrdr-b-00-a-expected.txt: Removed.
+        * platform/mac-lion/css2.1/t0805-c5521-brdr-l-02-e-expected.txt: Removed.
+        Removed those baselines as they are properly covered by the fallbacks.
+
+        * platform/chromium-linux-x86/fast/css/line-height-determined-by-primary-font-expected.txt: Copied from LayoutTests/platform/chromium-linux/fast/css/line-height-determined-by-primary-font-expected.txt.
+        * platform/chromium-linux/fast/css/line-height-determined-by-primary-font-expected.txt:
+        * platform/chromium-mac-snowleopard/fast/css/line-height-determined-by-primary-font-expected.txt: Added.
+        * platform/chromium-mac/fast/css/line-height-determined-by-primary-font-expected.txt: Added.
+        * platform/chromium-win-xp/fast/css/line-height-determined-by-primary-font-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/css/line-height-determined-by-primary-font-expected.txt.
+        * platform/chromium-win/animations/cross-fade-border-image-source-expected.txt:
+        * platform/chromium-win/css1/box_properties/border_bottom-expected.txt:
+        * platform/chromium-win/css1/box_properties/border_bottom_inline-expected.txt:
+        * platform/chromium-win/css1/box_properties/border_left-expected.txt:
+        * platform/chromium-win/css1/box_properties/border_left_inline-expected.txt:
+        * platform/chromium-win/css1/box_properties/border_right-expected.txt:
+        * platform/chromium-win/css1/box_properties/border_right_inline-expected.txt:
+        * platform/chromium-win/css1/units/length_units-expected.txt:
+        * platform/chromium-win/css2.1/20110323/absolute-replaced-height-036-expected.txt:
+        * platform/chromium-win/css2.1/20110323/block-non-replaced-height-007-expected.txt:
+        * platform/chromium-win/css2.1/20110323/block-non-replaced-height-008-expected.txt:
+        * platform/chromium-win/css2.1/20110323/block-non-replaced-height-009-expected.txt:
+        * platform/chromium-win/css2.1/20110323/block-non-replaced-height-010-expected.txt:
+        * platform/chromium-win/css2.1/20110323/block-non-replaced-width-001-expected.txt:
+        * platform/chromium-win/css2.1/20110323/block-non-replaced-width-002-expected.txt:
+        * platform/chromium-win/css2.1/20110323/block-non-replaced-width-003-expected.txt:
+        * platform/chromium-win/css2.1/20110323/block-non-replaced-width-004-expected.txt:
+        * platform/chromium-win/css2.1/20110323/block-non-replaced-width-008-expected.txt:
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-008-expected.txt:
+        * platform/chromium-win/css2.1/20110323/width-non-replaced-inline-001-expected.txt:
+        * platform/chromium-win/css2.1/t040302-c61-phys-len-00-b-expected.txt:
+        * platform/chromium-win/css2.1/t0804-c5507-padn-r-02-f-expected.txt:
+        * platform/chromium-win/css2.1/t0804-c5508-ipadn-b-03-b-a-expected.txt:
+        * platform/chromium-win/css2.1/t0804-c5509-padn-l-02-f-expected.txt:
+        * platform/chromium-win/css2.1/t0805-c5519-brdr-r-02-e-expected.txt:
+        * platform/chromium-win/css2.1/t0805-c5519-ibrdr-r-00-a-expected.txt:
+        * platform/chromium-win/css2.1/t0805-c5520-brdr-b-00-a-expected.txt:
+        * platform/chromium-win/css2.1/t0805-c5520-ibrdr-b-00-a-expected.txt:
+        * platform/chromium-win/css2.1/t0805-c5521-brdr-l-02-e-expected.txt:
+        * platform/chromium-win/fast/css/line-height-determined-by-primary-font-expected.txt:
+        Updated Chromium baselines as after r126683 the top border is always dumped.
+
 2012-08-27  Luke Macpherson   <macpherson@chromium.org>
 
         Fix CSSParserValue::createCSSValue() for viewport based units.

@@ -11,10 +11,10 @@ layer at (0,0) size 800x212
           text run at (0,0) width 387: "Hold up a credit card to your display. The distance between the "
           text run at (387,0) width 365: "two vertical bars should be exactly the length of a credit card"
           text run at (0,20) width 72: "(85.60mm)."
-      RenderBlock {DIV} at (0,92) size 784x96 [border: (3px solid #000000)]
-        RenderBlock {DIV} at (326,0) size 458x16 [border: (3px solid #000000)]
-        RenderBlock {DIV} at (326,16) size 458x16 [border: (3px solid #000000)]
-        RenderBlock {DIV} at (326,32) size 458x16 [border: (3px solid #000000)]
-        RenderBlock {DIV} at (326,48) size 458x16 [border: (3px solid #000000)]
-        RenderBlock {DIV} at (326,64) size 458x16 [border: (3px solid #000000)]
-        RenderBlock {DIV} at (326,80) size 458x16 [border: (3px solid #000000)]
+      RenderBlock {DIV} at (0,92) size 784x96 [border: none (3px solid #000000)]
+        RenderBlock {DIV} at (326,0) size 458x16 [border: none (3px solid #000000)]
+        RenderBlock {DIV} at (326,16) size 458x16 [border: none (3px solid #000000)]
+        RenderBlock {DIV} at (326,32) size 458x16 [border: none (3px solid #000000)]
+        RenderBlock {DIV} at (326,48) size 458x16 [border: none (3px solid #000000)]
+        RenderBlock {DIV} at (326,64) size 458x16 [border: none (3px solid #000000)]
+        RenderBlock {DIV} at (326,80) size 458x16 [border: none (3px solid #000000)]

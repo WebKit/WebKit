@@ -7,6 +7,6 @@ layer at (0,0) size 800x90
         RenderText {#text} at (0,0) size 405x19
           text run at (0,0) width 405: "Test passes if the orange and blue boxes below are the same width."
       RenderBlock {DIV} at (0,36) size 100x30
-        RenderBlock {DIV} at (0,0) size 150x30 [bgcolor=#FFA500] [border: (10px solid #FFA500) none (10px solid #FFA500)]
+        RenderBlock {DIV} at (0,0) size 150x30 [bgcolor=#FFA500] [border: none (10px solid #FFA500) none (10px solid #FFA500)]
 layer at (8,82) size 150x30
   RenderBlock (positioned) {DIV} at (8,82) size 150x30 [bgcolor=#0000FF]

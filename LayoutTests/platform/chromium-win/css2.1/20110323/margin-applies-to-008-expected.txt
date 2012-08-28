@@ -7,9 +7,9 @@ layer at (0,0) size 800x80
         RenderText {#text} at (0,0) size 419x19
           text run at (0,0) width 419: "Test passes if there is space between the blue and orange lines below."
       RenderBlock (anonymous) at (0,36) size 784x20
-        RenderInline {DIV} at (0,0) size 181x19 [border: (5px solid #0000FF) none (5px solid #0000FF)]
+        RenderInline {DIV} at (0,0) size 181x19 [border: none (5px solid #0000FF) none (5px solid #0000FF)]
           RenderText {#text} at (0,0) size 0x0
-          RenderInline {DIV} at (0,0) size 71x19 [border: (5px solid #FFA500) none (5px solid #FFA500)]
+          RenderInline {DIV} at (0,0) size 71x19 [border: none (5px solid #FFA500) none (5px solid #FFA500)]
             RenderText {#text} at (60,0) size 61x19
               text run at (60,0) width 61: "Filler Text"
           RenderText {#text} at (0,0) size 0x0
