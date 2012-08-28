@@ -1,3 +1,46 @@
+2012-08-28  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION (r94492): Unstable layout of static block inside text-align: center div
+        https://bugs.webkit.org/show_bug.cgi?id=77754
+
+        Reviewed by David Hyatt.
+
+        * fast/css/align-positioned-object-on-resize-expected.txt: Removed.
+        * fast/css/align-positioned-object-on-resize.html: Removed.
+        * fast/css/bug4860-absolute-inline-child-inherits-alignment-expected.png: Removed.
+        * fast/css/bug4860-absolute-inline-child-inherits-alignment-expected.txt: Removed.
+        * fast/css/bug4860-absolute-inline-child-inherits-alignment.html: Removed.
+            These tests are no longer valid. They expect an out-of-flow block to align with the 
+            center of their parent. The valid behaviour for an out-of-flow element with a center-align
+            parent is take the center of the parent as their start position. The expected behaviour is
+            now covered by center-align-absolute-position.html below.
+            
+        * fast/css/center-align-absolute-position-expected.html: Added.
+        * fast/css/center-align-absolute-position-inline-block-expected.html: Added.
+        * fast/css/center-align-absolute-position-inline-block.html: Added.
+        * fast/css/center-align-absolute-position.html: Added.
+            
+        * fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks.html:
+        * platform/chromium-linux/fast/inline/absolute-positioned-inline-in-centred-block-expected.png:
+        * platform/chromium-linux/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.png:
+           This isn't a very helpful test - but note that the alignment of LTR-RTL centers on an axis. The behaviour
+           now matches FF.
+        * platform/chromium-mac/fast/css/bug4860-absolute-inline-child-inherits-alignment-expected.png: Removed.
+        * platform/chromium-win/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.png:
+        * platform/chromium-win/fast/css/bug4860-absolute-inline-child-inherits-alignment-expected.png: Removed.
+        * platform/chromium-win/fast/inline/absolute-positioned-inline-in-centred-block-expected.txt:
+        * platform/chromium-win/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt:
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.txt:
+        * platform/chromium/fast/css/bug4860-absolute-inline-child-inherits-alignment-expected.txt: Removed.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/qt/fast/css/bug4860-absolute-inline-child-inherits-alignment-expected.png: Removed.
+        * platform/qt/fast/css/bug4860-absolute-inline-child-inherits-alignment-expected.txt: Removed.
+            The rebaselined results on each of these now matches FF.
+
 2012-08-24  Jon Lee  <jonlee@apple.com>
 
         Update TestRunner API for web notifications

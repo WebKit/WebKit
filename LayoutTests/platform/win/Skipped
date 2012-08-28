@@ -2133,3 +2133,10 @@ svg/custom/use-on-symbol-inside-pattern.svg
 tables/mozilla/bugs/bug68912.html 
 tables/mozilla_expected_failures/collapsing_borders/bug41262-6.html
 http/tests/security/referrer-policy-https-origin.html 
+
+# Rebaseline after bug 77754
+fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks.html
+fast/inline/absolute-positioned-inline-in-centred-block.html
+fast/css/absolute-child-with-percent-height-inside-relative-parent.html
+
+

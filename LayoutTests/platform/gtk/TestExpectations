@@ -36,6 +36,9 @@
 // Tests that require new results.
 //////////////////////////////////////////////////////////////////////////////////////////
 
+BUGWK77754 : fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks.html = TEXT
+BUGWK77754 : fast/inline/absolute-positioned-inline-in-centred-block.html = TEXT
+BUGWK77754 : fast/css/absolute-child-with-percent-height-inside-relative-parent.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Expected failures

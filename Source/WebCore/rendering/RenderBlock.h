@@ -200,7 +200,7 @@ public:
             : logicalWidth() - logicalRightOffsetForLine(position, firstLine, logicalHeight);
     }
 
-    LayoutUnit startAlignedOffsetForLine(RenderBox* child, LayoutUnit position, bool firstLine);
+    LayoutUnit startAlignedOffsetForLine(LayoutUnit position, bool firstLine);
     LayoutUnit textIndentOffset() const;
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&);

@@ -925,3 +925,8 @@ BUGWK94878 : fast/forms/menulist-restrict-line-height.html = MISSING
 BUGWK94880 : fast/forms/search-cancel-button-style-sharing.html = MISSING
 BUGWK94880 : fast/forms/search-rtl.html = MISSING
 
+//Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=77754
+BUGWK77754 : fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks.html = TEXT
+BUGWK77754 : fast/inline/absolute-positioned-inline-in-centred-block.html = TEXT
+BUGWK77754 : fast/css/absolute-child-with-percent-height-inside-relative-parent.html = TEXT
+

@@ -921,12 +921,12 @@ static void setStaticPositions(RenderBlock* block, RenderBox* child)
         // A relative positioned inline encloses us. In this case, we also have to determine our
         // position as though we were an inline. Set |staticInlinePosition| and |staticBlockPosition| on the relative positioned
         // inline so that we can obtain the value later.
-        toRenderInline(containerBlock)->layer()->setStaticInlinePosition(block->startAlignedOffsetForLine(child, blockHeight, false));
+        toRenderInline(containerBlock)->layer()->setStaticInlinePosition(block->startAlignedOffsetForLine(blockHeight, false));
         toRenderInline(containerBlock)->layer()->setStaticBlockPosition(blockHeight);
     }
 
     if (child->style()->isOriginalDisplayInlineType())
-        block->setStaticInlinePositionForChild(child, blockHeight, block->startAlignedOffsetForLine(child, blockHeight, false));
+        block->setStaticInlinePositionForChild(child, blockHeight, block->startAlignedOffsetForLine(blockHeight, false));
     else
         block->setStaticInlinePositionForChild(child, blockHeight, block->startOffsetForContent(blockHeight));
     child->layer()->setStaticBlockPosition(blockHeight);
@@ -2889,7 +2889,7 @@ bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObjec
     return true;
 }
 
-LayoutUnit RenderBlock::startAlignedOffsetForLine(RenderBox* child, LayoutUnit position, bool firstLine)
+LayoutUnit RenderBlock::startAlignedOffsetForLine(LayoutUnit position, bool firstLine)
 {
     ETextAlign textAlign = style()->textAlign();
 
@@ -2897,15 +2897,13 @@ LayoutUnit RenderBlock::startAlignedOffsetForLine(RenderBox* child, LayoutUnit p
         return startOffsetForLine(position, firstLine);
 
     // updateLogicalWidthForAlignment() handles the direction of the block so no need to consider it here
-    float logicalLeft;
-    float availableLogicalWidth;
-    logicalLeft = logicalLeftOffsetForLine(logicalHeight(), false);
-    availableLogicalWidth = logicalRightOffsetForLine(logicalHeight(), false) - logicalLeft;
-    float totalLogicalWidth = logicalWidthForChild(child);
+    float totalLogicalWidth = 0;
+    float logicalLeft = logicalLeftOffsetForLine(logicalHeight(), false);
+    float availableLogicalWidth = logicalRightOffsetForLine(logicalHeight(), false) - logicalLeft;
     updateLogicalWidthForAlignment(textAlign, 0, logicalLeft, totalLogicalWidth, availableLogicalWidth, 0);
 
     if (!style()->isLeftToRightDirection())
-        return logicalWidth() - (logicalLeft + totalLogicalWidth);
+        return logicalWidth() - logicalLeft;
     return logicalLeft;
 }
 
