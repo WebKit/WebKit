@@ -919,6 +919,7 @@
 		319E69B513299BBD004AC91A /* WebKitAnimationList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 319E69AF13299BBD004AC91A /* WebKitAnimationList.cpp */; };
 		319E69B613299BBD004AC91A /* WebKitAnimationList.h in Headers */ = {isa = PBXBuildFile; fileRef = 319E69B013299BBD004AC91A /* WebKitAnimationList.h */; };
 		319FBD5F15D2F464009640A6 /* CachedImageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 319FBD5D15D2F444009640A6 /* CachedImageClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		31B801BB15EC58C700CE643D /* LayoutTypesInlineMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 84894CA815EC489700A40481 /* LayoutTypesInlineMethods.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31C0FF210E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31C0FF1B0E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp */; };
 		31C0FF220E4CEB6E007D6FE5 /* WebKitAnimationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C0FF1C0E4CEB6E007D6FE5 /* WebKitAnimationEvent.h */; };
 		31C0FF240E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31C0FF1E0E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp */; };
@@ -25485,6 +25486,7 @@
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
 				9377ABA015DEFEEF0031FD04 /* Pagination.h in Headers */,
 				14476AA815DC4BB100305DB2 /* WritingMode.h in Headers */,
+				31B801BB15EC58C700CE643D /* LayoutTypesInlineMethods.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
