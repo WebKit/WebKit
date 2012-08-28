@@ -188,3 +188,45 @@ TEST_F(EWK2UnitTestBase, ewk_view_form_submission_request)
     ASSERT_TRUE(handled);
     evas_object_smart_callback_del(webView(), "form,submission,request", onFormAboutToBeSubmitted);
 }
+
+static Eina_Bool showPopupMenu(Ewk_View_Smart_Data* smartData, Eina_Rectangle, Ewk_Text_Direction, double, Eina_List* list, int selectedIndex)
+{
+    EXPECT_EQ(selectedIndex, 2);
+
+    Ewk_Popup_Menu_Item* item = static_cast<Ewk_Popup_Menu_Item*>(eina_list_nth(list, 0));
+    EXPECT_EQ(ewk_popup_menu_item_type_get(item), EWK_POPUP_MENU_ITEM);
+    EXPECT_STREQ(ewk_popup_menu_item_text_get(item), "first");
+
+    item = static_cast<Ewk_Popup_Menu_Item*>(eina_list_nth(list, 1));
+    EXPECT_EQ(ewk_popup_menu_item_type_get(item), EWK_POPUP_MENU_ITEM);
+    EXPECT_STREQ(ewk_popup_menu_item_text_get(item), "second");
+
+    item = static_cast<Ewk_Popup_Menu_Item*>(eina_list_nth(list, 2));
+    EXPECT_EQ(ewk_popup_menu_item_type_get(item), EWK_POPUP_MENU_ITEM);
+    EXPECT_STREQ(ewk_popup_menu_item_text_get(item), "third");
+
+    item = static_cast<Ewk_Popup_Menu_Item*>(eina_list_nth(list, 3));
+    EXPECT_EQ(ewk_popup_menu_item_type_get(item), EWK_POPUP_MENU_UNKNOWN);
+    EXPECT_STREQ(ewk_popup_menu_item_text_get(item), 0);
+
+    EXPECT_TRUE(ewk_view_popup_menu_select(smartData->self, 0));
+    return true;
+}
+
+TEST_F(EWK2UnitTestBase, ewk_view_popup_menu_select)
+{
+    const char* selectHTML =
+        "<!doctype html><body><select onchange=\"document.title=this.value;\">"
+        "<option>first</option><option>second</option><option selected>third</option>"
+        "</select></body>";
+
+    ewkViewClass()->popup_menu_show = showPopupMenu;
+
+    ewk_view_html_string_load(webView(), selectHTML, "file:///", 0);
+    waitUntilLoadFinished();
+    mouseClick(30, 20);
+    waitUntilTitleChangedTo("first");
+
+    EXPECT_TRUE(ewk_view_popup_menu_close(webView()));
+    EXPECT_FALSE(ewk_view_popup_menu_select(webView(), 0));
+}

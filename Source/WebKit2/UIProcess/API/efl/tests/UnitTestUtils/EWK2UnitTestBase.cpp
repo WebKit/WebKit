@@ -21,7 +21,6 @@
 #include "EWK2UnitTestBase.h"
 
 #include "EWK2UnitTestEnvironment.h"
-#include <EWebKit2.h>
 #include <Ecore.h>
 #include <glib-object.h>
 #include <wtf/UnusedParam.h>
@@ -42,7 +41,9 @@ static void onLoadFinished(void* userData, Evas_Object* webView, void* eventInfo
 EWK2UnitTestBase::EWK2UnitTestBase()
     : m_ecoreEvas(0)
     , m_webView(0)
+    , m_ewkViewClass(EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION("Browser_View"))
 {
+    ewk_view_smart_class_set(&m_ewkViewClass);
 }
 
 void EWK2UnitTestBase::SetUp()
@@ -60,7 +61,8 @@ void EWK2UnitTestBase::SetUp()
     ecore_evas_show(m_ecoreEvas);
     Evas* evas = ecore_evas_get(m_ecoreEvas);
 
-    m_webView = ewk_view_add(evas);
+    Evas_Smart* smart = evas_smart_class_new(&m_ewkViewClass.sc);
+    m_webView = ewk_view_smart_add(evas, smart, ewk_context_default_get());
     ewk_view_theme_set(m_webView, environment->defaultTheme());
 
     evas_object_resize(m_webView, width, height);
@@ -77,10 +79,15 @@ void EWK2UnitTestBase::TearDown()
 
 void EWK2UnitTestBase::loadUrlSync(const char* url)
 {
+    ewk_view_uri_set(m_webView, url);
+    waitUntilLoadFinished();
+}
+
+void EWK2UnitTestBase::waitUntilLoadFinished()
+{
     bool loadFinished = false;
 
     evas_object_smart_callback_add(m_webView, "load,finished", onLoadFinished, &loadFinished);
-    ewk_view_uri_set(m_webView, url);
 
     while (!loadFinished)
         ecore_main_loop_iterate();

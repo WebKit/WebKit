@@ -1,3 +1,12 @@
+2012-08-28  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Implement WebPopupMenuProxyEfl to support <select>
+        https://bugs.webkit.org/show_bug.cgi?id=88616
+
+        Reviewed by Gyuyoung Kim.
+
+        * platform/efl-wk2/TestExpectations: Unskip fast/forms/select/menulist-popup-crash.html
+
 2012-08-28  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Crash in EditingStyle::mergeStyle

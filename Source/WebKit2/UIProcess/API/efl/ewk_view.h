@@ -83,6 +83,12 @@
 extern "C" {
 #endif
 
+/// Enum values containing text directionality values.
+typedef enum {
+    EWK_TEXT_DIRECTION_RIGHT_TO_LEFT,
+    EWK_TEXT_DIRECTION_LEFT_TO_RIGHT
+} Ewk_Text_Direction;
+
 typedef struct _Ewk_View_Smart_Data Ewk_View_Smart_Data;
 typedef struct _Ewk_View_Smart_Class Ewk_View_Smart_Class;
 
@@ -90,6 +96,9 @@ typedef struct _Ewk_View_Smart_Class Ewk_View_Smart_Class;
 struct _Ewk_View_Smart_Class {
     Evas_Smart_Class sc; /**< all but 'data' is free to be changed. */
     unsigned long version;
+
+    Eina_Bool (*popup_menu_show)(Ewk_View_Smart_Data *sd, Eina_Rectangle rect, Ewk_Text_Direction text_direction, double page_scale_factor, Eina_List *items, int selected_index);
+    Eina_Bool (*popup_menu_hide)(Ewk_View_Smart_Data *sd);
 
     // event handling:
     //  - returns true if handled
@@ -108,7 +117,7 @@ struct _Ewk_View_Smart_Class {
  * The version you have to put into the version field
  * in the @a Ewk_View_Smart_Class structure.
  */
-#define EWK_VIEW_SMART_CLASS_VERSION 1UL
+#define EWK_VIEW_SMART_CLASS_VERSION 2UL
 
 /**
  * Initializer for whole Ewk_View_Smart_Class structure.
@@ -120,7 +129,7 @@ struct _Ewk_View_Smart_Class {
  * @see EWK_VIEW_SMART_CLASS_INIT_VERSION
  * @see EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION
  */
-#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0}
+#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 /**
  * Initializer to zero a whole Ewk_View_Smart_Class structure.
@@ -589,6 +598,27 @@ EAPI Eina_Bool ewk_view_text_find(Evas_Object *o, const char *text, Ewk_Find_Opt
 * @return @c EINA_TRUE on success, @c EINA_FALSE on errors
 */
 EAPI Eina_Bool ewk_view_text_find_highlight_clear(Evas_Object *o);
+
+/**
+ * Selects index of current popup menu.
+ *
+ * @param o view object contains popup menu.
+ * @param index index of item to select
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure (probably
+ *         popup menu is not selected or index is out of range)
+ */
+EAPI Eina_Bool ewk_view_popup_menu_select(Evas_Object *o, unsigned int index);
+
+/**
+ * Closes current popup menu.
+ *
+ * @param o view object contains popup menu.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure (probably
+ *         popup menu is not selected)
+ */
+EAPI Eina_Bool ewk_view_popup_menu_close(Evas_Object *o);
 
 #ifdef __cplusplus
 }

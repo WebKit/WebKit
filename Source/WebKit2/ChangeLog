@@ -1,3 +1,61 @@
+2012-08-28  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Implement WebPopupMenuProxyEfl to support <select>
+        https://bugs.webkit.org/show_bug.cgi?id=88616
+
+        Reviewed by Gyuyoung Kim.
+
+        Implemented popup menu proxy and interface for Efl.
+
+        Applications should implement popup menu by overriding
+        smart class function to support select tag.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h: Included ewk_popup_menu_item.h
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createPopupMenuProxy):
+        * UIProcess/API/efl/ewk_popup_menu_item.cpp: Added.
+        (_Ewk_Popup_Menu_Item):
+        (_Ewk_Popup_Menu_Item::_Ewk_Popup_Menu_Item):
+        (ewk_popup_menu_item_new):
+        (ewk_popup_menu_item_free):
+        (ewk_popup_menu_item_type_get): Added API to retrieve type of item.
+        (ewk_popup_menu_item_text_get): Added API to retrieve text of item.
+        * UIProcess/API/efl/ewk_popup_menu_item.h: Added.
+        * UIProcess/API/efl/ewk_popup_menu_item_private.h: Added.
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::~_Ewk_View_Private_Data):
+        (ewk_view_popup_menu_request): Added to call popup_menu_show, smart class function.
+        (ewk_view_popup_menu_close): Added API to call popup_menu_hide, smart class function.
+        (ewk_view_popup_menu_select): Added API to change selected index.
+        * UIProcess/API/efl/ewk_view.h:
+        Added smart class function for applications to override.
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::EWK2UnitTestBase):
+        (EWK2UnitTest::EWK2UnitTestBase::SetUp):
+        (EWK2UnitTest::EWK2UnitTestBase::loadUrlSync):
+        (EWK2UnitTest::EWK2UnitTestBase::waitUntilLoadFinished):
+        Extracted from loadUrlSync for tests using ewk_view_html_string_load to
+        share onLoadFinished.
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        (EWK2UnitTest::EWK2UnitTestBase::ewkViewClass):
+        Added ewkViewClass to test smart methods such as popup_menu_show.
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (popup_menu_show):
+        (TEST_F): Added a test case for ewk_view_popup_menu_select and related codes.
+        * UIProcess/efl/WebPopupMenuProxyEfl.cpp: Added.
+        (WebKit):
+        (WebKit::WebPopupMenuProxyEfl::WebPopupMenuProxyEfl):
+        (WebKit::WebPopupMenuProxyEfl::showPopupMenu):
+        (WebKit::WebPopupMenuProxyEfl::hidePopupMenu):
+        (WebKit::WebPopupMenuProxyEfl::valueChanged):
+        * UIProcess/efl/WebPopupMenuProxyEfl.h: Added.
+        (WebPopupMenuProxyEfl):
+        (WebKit::WebPopupMenuProxyEfl::create):
+
 2012-08-27  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][WK2] Fix PageClientImpl layer violation

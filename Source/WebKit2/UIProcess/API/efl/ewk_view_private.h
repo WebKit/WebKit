@@ -23,12 +23,19 @@
 
 #include "WebPageProxy.h"
 #include <Evas.h>
+#include <WebCore/TextDirection.h>
 #include <WebKit2/WKBase.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 class Cursor;
 class IntRect;
 class IntSize;
+}
+
+namespace WebKit {
+class WebPopupItem;
+class WebPopupMenuProxyEfl;
 }
 
 typedef struct _Ewk_Download_Job Ewk_Download_Job;
@@ -88,5 +95,7 @@ WebCore::IntSize ewk_view_size_get(const Evas_Object* ewkView);
 bool ewk_view_accelerated_compositing_mode_enter(const Evas_Object* ewkView);
 bool ewk_view_accelerated_compositing_mode_exit(const Evas_Object* ewkView);
 #endif
+
+void ewk_view_popup_menu_request(Evas_Object* ewkView, WebKit::WebPopupMenuProxyEfl* popupMenu, const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebKit::WebPopupItem>& items, int32_t selectedIndex);
 
 #endif // ewk_view_private_h

@@ -38,7 +38,6 @@ BUGWKEFL : inspector/debugger/debugger-suspend-active-dom-objects.html = CRASH
 BUGWKEFL : inspector/debugger/debugger-pause-in-eval-script.html = CRASH
 BUGWKEFL : inspector/debugger/debugger-eval-on-call-frame.html = CRASH
 BUGWKEFL : fast/loader/document-with-fragment-url-1.html = CRASH
-BUGWKEFL : fast/forms/select/menulist-popup-crash.html = CRASH
 BUGWKEFL : fast/forms/fieldset/fieldset-crash.html = CRASH
 BUGWKEFL : fast/events/keyevent-iframe-removed-crash.html = CRASH
 BUGWKEFL : fast/overflow/lots-of-sibling-inline-boxes.html = CRASH

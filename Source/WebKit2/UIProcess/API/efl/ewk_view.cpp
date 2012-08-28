@@ -32,10 +32,14 @@
 #include "WKString.h"
 #include "WKURL.h"
 #include "WebContext.h"
+#include "WebPopupItem.h"
+#include "WebPopupMenuProxyEfl.h"
 #include "ewk_back_forward_list_private.h"
 #include "ewk_context.h"
 #include "ewk_context_private.h"
 #include "ewk_intent_private.h"
+#include "ewk_popup_menu_item.h"
+#include "ewk_popup_menu_item_private.h"
 #include "ewk_private.h"
 #include "ewk_view_find_client_private.h"
 #include "ewk_view_form_client_private.h"
@@ -85,6 +89,9 @@ struct _Ewk_View_Private_Data {
     LoadingResourcesMap loadingResourcesMap;
     Ewk_Back_Forward_List* backForwardList;
 
+    WebPopupMenuProxyEfl* popupMenuProxy;
+    Eina_List* popupMenuItems;
+
 #ifdef HAVE_ECORE_X
     bool isUsingEcoreX;
 #endif
@@ -98,6 +105,8 @@ struct _Ewk_View_Private_Data {
     _Ewk_View_Private_Data()
         : cursorObject(0)
         , backForwardList(0)
+        , popupMenuProxy(0)
+        , popupMenuItems(0)
 #ifdef HAVE_ECORE_X
         , isUsingEcoreX(false)
 #endif
@@ -116,6 +125,10 @@ struct _Ewk_View_Private_Data {
             evas_object_del(cursorObject);
 
         ewk_back_forward_list_free(backForwardList);
+
+        void* item;
+        EINA_LIST_FREE(popupMenuItems, item)
+            ewk_popup_menu_item_free(static_cast<Ewk_Popup_Menu_Item*>(item));
     }
 };
 
@@ -1458,4 +1471,68 @@ void ewk_view_contents_size_changed(const Evas_Object* ewkView, const IntSize& s
 
     priv->viewportHandler->didChangeContentsSize(size);
 #endif
+}
+
+COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_RIGHT_TO_LEFT, RTL);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_LEFT_TO_RIGHT, LTR);
+
+void ewk_view_popup_menu_request(Evas_Object* ewkView, WebPopupMenuProxyEfl* popupMenu, const IntRect& rect, TextDirection textDirection, double pageScaleFactor, const Vector<WebPopupItem>& items, int32_t selectedIndex)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+    EINA_SAFETY_ON_NULL_RETURN(smartData->api);
+
+    ASSERT(popupMenu);
+
+    if (!smartData->api->popup_menu_show)
+        return;
+
+    if (priv->popupMenuProxy)
+        ewk_view_popup_menu_close(ewkView);
+    priv->popupMenuProxy = popupMenu;
+
+    Eina_List* popupItems = 0;
+    size_t size = items.size();
+    for (size_t i = 0; i < size; ++i) {
+        Ewk_Popup_Menu_Item* item = ewk_popup_menu_item_new(items[i].m_type, items[i].m_text.utf8().data());
+        popupItems = eina_list_append(popupItems, item);
+    }
+    priv->popupMenuItems = popupItems;
+
+    smartData->api->popup_menu_show(smartData, rect, static_cast<Ewk_Text_Direction>(textDirection), pageScaleFactor, popupItems, selectedIndex);
+}
+
+Eina_Bool ewk_view_popup_menu_close(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->api, false);
+
+    if (!priv->popupMenuProxy)
+        return false;
+
+    priv->popupMenuProxy = 0;
+
+    if (smartData->api->popup_menu_hide)
+        smartData->api->popup_menu_hide(smartData);
+
+    void* item;
+    EINA_LIST_FREE(priv->popupMenuItems, item)
+        ewk_popup_menu_item_free(static_cast<Ewk_Popup_Menu_Item*>(item));
+
+    return true;
+}
+
+Eina_Bool ewk_view_popup_menu_select(Evas_Object* ewkView, unsigned int selectedIndex)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(priv->popupMenuProxy, false);
+
+    if (selectedIndex >= eina_list_count(priv->popupMenuItems))
+        return false;
+
+    priv->popupMenuProxy->valueChanged(selectedIndex);
+
+    return true;
 }

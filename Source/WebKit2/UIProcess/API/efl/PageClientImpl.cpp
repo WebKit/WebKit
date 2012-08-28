@@ -33,6 +33,7 @@
 #include "WebContextMenuProxy.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
+#include "WebPopupMenuProxyEfl.h"
 #include "WebPreferences.h"
 #include "ewk_context.h"
 #include "ewk_context_private.h"
@@ -195,10 +196,9 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEven
 }
 #endif
 
-PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy*)
+PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy* page)
 {
-    notImplemented();
-    return 0;
+    return WebPopupMenuProxyEfl::create(m_viewWidget, page);
 }
 
 PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy*)
