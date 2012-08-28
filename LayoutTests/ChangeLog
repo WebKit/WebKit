@@ -1,3 +1,113 @@
+2012-08-27  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Filters] Filters should render using sRGB until the specification says how it works
+        https://bugs.webkit.org/show_bug.cgi?id=94372
+
+        Reviewed by Dirk Schulze.
+
+        Added test to check that blur(0) grayscale(0) is the same as grayscale(0) blur(0). 
+        Also rebaselined expected results on Safari Mac, Chromium Mac/Linux.
+
+        * css3/filters/filter-change-repaint-composited-expected.png:
+        * css3/filters/filter-change-repaint-expected.png:
+        * css3/filters/filter-repaint-blur-expected.png:
+        * css3/filters/filter-repaint-child-layers-expected.png:
+        * css3/filters/filter-repaint-composited-fallback-crash-expected.png:
+        * css3/filters/filter-repaint-composited-fallback-expected.png:
+        * css3/filters/filter-repaint-sepia-expected.png:
+        * css3/filters/filter-repaint-shadow-clipped-expected.png:
+        * css3/filters/filter-repaint-shadow-expected.png:
+        * css3/filters/filter-repaint-shadow-rotated-expected.png:
+        * css3/filters/null-effect-check-expected.html: Added.
+        * css3/filters/null-effect-check.html: Added.
+        * css3/filters/remove-filter-rendering-expected.png:
+        * platform/chromium-linux/css3/filters/crash-hw-sw-switch-expected.png:
+        * platform/chromium-linux/css3/filters/custom/custom-filter-shader-cache-expected.png:
+        * platform/chromium-linux/css3/filters/custom/effect-custom-combined-missing-expected.png:
+        * platform/chromium-linux/css3/filters/custom/effect-custom-expected.png:
+        * platform/chromium-linux/css3/filters/custom/filter-repaint-custom-clipped-expected.png:
+        * platform/chromium-linux/css3/filters/custom/filter-repaint-custom-expected.png:
+        * platform/chromium-linux/css3/filters/custom/filter-repaint-custom-rotated-expected.png:
+        * platform/chromium-linux/css3/filters/effect-brightness-clamping-expected.png:
+        * platform/chromium-linux/css3/filters/effect-brightness-expected.png:
+        * platform/chromium-linux/css3/filters/filter-empty-element-crash-expected.png:
+        * platform/chromium-mac/css3/filters/add-filter-rendering-expected.png:
+        * platform/chromium-mac/css3/filters/crash-filter-change-expected.png:
+        * platform/chromium-mac/css3/filters/crash-hw-sw-switch-expected.png:
+        * platform/chromium-mac/css3/filters/custom/custom-filter-shader-cache-expected.png:
+        * platform/chromium-mac/css3/filters/custom/effect-color-check-expected.png:
+        * platform/chromium-mac/css3/filters/custom/effect-custom-combined-missing-expected.png:
+        * platform/chromium-mac/css3/filters/custom/effect-custom-expected.png:
+        * platform/chromium-mac/css3/filters/custom/filter-repaint-custom-clipped-expected.png:
+        * platform/chromium-mac/css3/filters/custom/filter-repaint-custom-expected.png:
+        * platform/chromium-mac/css3/filters/custom/filter-repaint-custom-rotated-expected.png:
+        * platform/chromium-mac/css3/filters/effect-blur-expected.png:
+        * platform/chromium-mac/css3/filters/effect-brightness-clamping-expected.png:
+        * platform/chromium-mac/css3/filters/effect-brightness-expected.png:
+        * platform/chromium-mac/css3/filters/effect-combined-expected.png:
+        * platform/chromium-mac/css3/filters/effect-contrast-expected.png:
+        * platform/chromium-mac/css3/filters/effect-drop-shadow-expected.png:
+        * platform/chromium-mac/css3/filters/effect-grayscale-expected.png:
+        * platform/chromium-mac/css3/filters/effect-hue-rotate-expected.png:
+        * platform/chromium-mac/css3/filters/effect-invert-expected.png:
+        * platform/chromium-mac/css3/filters/effect-opacity-expected.png:
+        * platform/chromium-mac/css3/filters/effect-reference-expected.png:
+        * platform/chromium-mac/css3/filters/effect-reference-external-expected.png:
+        * platform/chromium-mac/css3/filters/effect-reference-hw-expected.png:
+        * platform/chromium-mac/css3/filters/effect-reference-ordering-expected.png:
+        * platform/chromium-mac/css3/filters/effect-saturate-expected.png:
+        * platform/chromium-mac/css3/filters/effect-sepia-expected.png:
+        * platform/chromium-mac/css3/filters/filter-repaint-blur-expected.png: Added.
+        * platform/chromium-mac/css3/filters/filter-repaint-blur-expected.txt: Added.
+        * platform/chromium-mac/css3/filters/filter-repaint-child-layers-expected.png: Added.
+        * platform/chromium-mac/css3/filters/filter-repaint-child-layers-expected.txt: Added.
+        * platform/chromium-mac/css3/filters/filter-repaint-composited-fallback-crash-expected.png: Added.
+        * platform/chromium-mac/css3/filters/filter-repaint-composited-fallback-crash-expected.txt: Added.
+        * platform/chromium-mac/css3/filters/filter-repaint-composited-fallback-expected.png: Added.
+        * platform/chromium-mac/css3/filters/filter-repaint-composited-fallback-expected.txt: Added.
+        * platform/chromium-mac/css3/filters/filter-repaint-expected.png:
+        * platform/chromium-mac/css3/filters/filter-repaint-sepia-expected.png: Copied from LayoutTests/platform/chromium-mac/css3/filters/multiple-filters-invalidation-expected.png.
+        * platform/chromium-mac/css3/filters/filter-repaint-sepia-expected.txt: Added.
+        * platform/chromium-mac/css3/filters/filter-repaint-shadow-clipped-expected.png: Copied from LayoutTests/platform/chromium-mac/css3/filters/custom/filter-repaint-custom-rotated-expected.png.
+        * platform/chromium-mac/css3/filters/filter-repaint-shadow-clipped-expected.txt: Added.
+        * platform/chromium-mac/css3/filters/filter-repaint-shadow-expected.png: Added.
+        * platform/chromium-mac/css3/filters/filter-repaint-shadow-expected.txt: Added.
+        * platform/chromium-mac/css3/filters/filter-repaint-shadow-rotated-expected.png: Copied from LayoutTests/platform/chromium-mac/css3/filters/custom/filter-repaint-custom-rotated-expected.png.
+        * platform/chromium-mac/css3/filters/filter-repaint-shadow-rotated-expected.txt: Added.
+        * platform/chromium-mac/css3/filters/filtered-inline-expected.png:
+        * platform/chromium-mac/css3/filters/multiple-filters-invalidation-expected.png:
+        * platform/chromium-mac/css3/filters/nested-filters-expected.png:
+        * platform/chromium-mac/css3/filters/regions-expanding-expected.png:
+        * platform/chromium-mac/css3/filters/simple-filter-rendering-expected.png:
+        * platform/chromium-win/css3/filters/add-filter-rendering-expected.png:
+        * platform/chromium-win/css3/filters/crash-filter-change-expected.png:
+        * platform/chromium-win/css3/filters/custom/effect-color-check-expected.png:
+        * platform/chromium-win/css3/filters/effect-blur-expected.png:
+        * platform/chromium-win/css3/filters/effect-combined-expected.png:
+        * platform/chromium-win/css3/filters/effect-contrast-expected.png:
+        * platform/chromium-win/css3/filters/effect-drop-shadow-expected.png:
+        * platform/chromium-win/css3/filters/effect-grayscale-expected.png:
+        * platform/chromium-win/css3/filters/effect-hue-rotate-expected.png:
+        * platform/chromium-win/css3/filters/effect-invert-expected.png:
+        * platform/chromium-win/css3/filters/effect-opacity-expected.png:
+        * platform/chromium-win/css3/filters/effect-reference-expected.png:
+        * platform/chromium-win/css3/filters/effect-reference-external-expected.png:
+        * platform/chromium-win/css3/filters/effect-reference-hw-expected.png:
+        * platform/chromium-win/css3/filters/effect-reference-ordering-expected.png:
+        * platform/chromium-win/css3/filters/effect-saturate-expected.png:
+        * platform/chromium-win/css3/filters/effect-sepia-expected.png:
+        * platform/chromium-win/css3/filters/filter-repaint-expected.png:
+        * platform/chromium-win/css3/filters/filtered-inline-expected.png:
+        * platform/chromium-win/css3/filters/multiple-filters-invalidation-expected.png:
+        * platform/chromium-win/css3/filters/nested-filters-expected.png:
+        * platform/chromium-win/css3/filters/regions-expanding-expected.png:
+        * platform/chromium-win/css3/filters/simple-filter-rendering-expected.png:
+        * platform/chromium/TestExpectations: css3/filters directory needs rebaseline on Windows.
+        * platform/chromium/css3/filters/blur-filter-page-scroll-expected.png:
+        * platform/chromium/css3/filters/blur-filter-page-scroll-parents-expected.png:
+        * platform/chromium/css3/filters/blur-filter-page-scroll-self-expected.png:
+        * platform/mac/TestExpectations: Unskipped old failing tests.
+
 2012-08-28  Philip Rogers  <pdr@google.com>
 
         Rebaseline details-nested-2.html and clone-anonymous-block-non-inline-child-crash.html after 126789

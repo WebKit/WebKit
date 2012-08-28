@@ -29,6 +29,7 @@
 
 #include "FilterEffectRenderer.h"
 
+#include "ColorSpace.h"
 #include "Document.h"
 #include "FEColorMatrix.h"
 #include "FEComponentTransfer.h"
@@ -349,6 +350,7 @@ bool FilterEffectRenderer::build(Document* document, const FilterOperations& ope
         if (effect) {
             // Unlike SVG, filters applied here should not clip to their primitive subregions.
             effect->setClipsToBounds(false);
+            effect->setColorSpace(ColorSpaceDeviceRGB);
             
             if (filterOperation->getOperationType() != FilterOperation::REFERENCE) {
                 effect->inputEffects().append(previousEffect);
