@@ -170,6 +170,11 @@ static void checkDocumentWrapper(v8::Handle<v8::Object> wrapper, Document* docum
     ASSERT(!document->isHTMLDocument() || (V8Document::toNative(v8::Handle<v8::Object>::Cast(wrapper->GetPrototype())) == document));
 }
 
+static v8::Handle<v8::Object> toInnerGlobalObject(v8::Handle<v8::Context> context)
+{
+    return v8::Handle<v8::Object>::Cast(context->Global()->GetPrototype());
+}
+
 PassRefPtr<V8DOMWindowShell> V8DOMWindowShell::create(Frame* frame)
 {
     return adoptRef(new V8DOMWindowShell(frame));
@@ -370,24 +375,32 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
 
 bool V8DOMWindowShell::installDOMWindow(v8::Handle<v8::Context> context, DOMWindow* window)
 {
-    // Create a new JS window object and use it as the prototype for the  shadow global object.
-    v8::Handle<v8::Function> windowConstructor = V8DOMWrapper::constructorForType(&V8DOMWindow::info, window);
-    v8::Local<v8::Object> jsWindow = V8ObjectConstructor::newInstance(windowConstructor);
-    // Bail out if allocation failed.
-    if (jsWindow.IsEmpty())
+    v8::Local<v8::Object> windowWrapper = V8ObjectConstructor::newInstance(V8DOMWrapper::constructorForType(&V8DOMWindow::info, window));
+    if (windowWrapper.IsEmpty())
         return false;
 
-    V8DOMWindow::installPerContextProperties(jsWindow, window);
+    V8DOMWindow::installPerContextProperties(windowWrapper, window);
 
-    // Wrap the window.
-    V8DOMWrapper::setDOMWrapper(jsWindow, &V8DOMWindow::info, window);
-    V8DOMWrapper::setDOMWrapper(v8::Handle<v8::Object>::Cast(jsWindow->GetPrototype()), &V8DOMWindow::info, window);
-    V8DOMWrapper::setJSWrapperForDOMObject(PassRefPtr<DOMWindow>(window), jsWindow);
+    V8DOMWrapper::setDOMWrapper(windowWrapper, &V8DOMWindow::info, window);
+    V8DOMWrapper::setDOMWrapper(v8::Handle<v8::Object>::Cast(windowWrapper->GetPrototype()), &V8DOMWindow::info, window);
+    V8DOMWrapper::setJSWrapperForDOMObject(PassRefPtr<DOMWindow>(window), windowWrapper);
 
-    // Insert the window instance as the prototype of the shadow object.
-    v8::Handle<v8::Object> v8RealGlobal = v8::Handle<v8::Object>::Cast(context->Global()->GetPrototype());
-    V8DOMWrapper::setDOMWrapper(v8RealGlobal, &V8DOMWindow::info, window);
-    v8RealGlobal->SetPrototype(jsWindow);
+    // Install the windowWrapper as the prototype of the innerGlobalObject.
+    // The full structure of the global object is as follows:
+    //
+    // outerGlobalObject (Empty object, remains after navigation)
+    //   -- has prototype --> innerGlobalObject (Holds global variables, changes during navigation)
+    //   -- has prototype --> DOMWindow instance
+    //   -- has prototype --> Window.prototype
+    //   -- has prototype --> Object.prototype
+    //
+    // Note: Much of this prototype structure is hidden from web content. The
+    //       outer, inner, and DOMWindow instance all appear to be the same
+    //       JavaScript object.
+    //
+    v8::Handle<v8::Object> innerGlobalObject = toInnerGlobalObject(context);
+    V8DOMWrapper::setDOMWrapper(innerGlobalObject, &V8DOMWindow::info, window);
+    innerGlobalObject->SetPrototype(windowWrapper);
     return true;
 }
 
@@ -417,11 +430,10 @@ void V8DOMWindowShell::updateDocumentProperty()
     ASSERT(documentWrapper->IsObject());
     m_context->Global()->ForceSet(v8::String::New("document"), documentWrapper, static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
 
-    // We also stash a reference to the document on the real global object so that
+    // We also stash a reference to the document on the inner global object so that
     // DOMWindow objects we obtain from JavaScript references are guaranteed to have
     // live Document objects.
-    v8::Handle<v8::Object> v8RealGlobal = v8::Handle<v8::Object>::Cast(m_context->Global()->GetPrototype());
-    v8RealGlobal->SetHiddenValue(V8HiddenPropertyName::document(), documentWrapper);
+    toInnerGlobalObject(m_context.get())->SetHiddenValue(V8HiddenPropertyName::document(), documentWrapper);
 }
 
 void V8DOMWindowShell::clearDocumentProperty()
