@@ -1,3 +1,16 @@
+2012-08-28  Philip Rogers  <pdr@google.com>
+
+        Rebaseline webgl-repaint for slightly different mac results.
+
+        Unreviewed rebaseline of test expectations.
+
+        The mac results have a slightly different shade of green but
+        it is still a passing result.
+
+        * platform/chromium-mac/compositing/webgl/webgl-repaint-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/threaded/compositing/webgl: Added.
+        * platform/chromium-mac/platform/chromium/virtual/threaded/compositing/webgl/webgl-repaint-expected.png: Added.
+
 2012-08-27  Jeffrey Pfau  <jpfau@apple.com>
 
         Make shared workers respect third-party storage blocking setting
