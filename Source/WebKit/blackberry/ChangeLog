@@ -1,5 +1,19 @@
 2012-08-28  Andy Chen  <andchen@rim.com>
 
+        [BlackBerry] UpdateViewport uses wrong size for frameView
+        https://bugs.webkit.org/show_bug.cgi?id=95138
+
+        Reviewed by Antonio Gomes.
+        Internally reviewed by Jakob Petsovits.
+
+        Use actual visible size instead of screen size when updating viewport size,
+        otherwise, frameView size would be too big.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::updateViewportSize):
+
+2012-08-28  Andy Chen  <andchen@rim.com>
+
         [BlackBerry] Pseudo class "active" is broken
         https://bugs.webkit.org/show_bug.cgi?id=95142
 

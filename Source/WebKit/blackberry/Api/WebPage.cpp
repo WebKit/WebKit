@@ -1567,10 +1567,11 @@ void WebPagePrivate::updateViewportSize(bool setFixedReportedSize, bool sendResi
     if (!m_backingStore)
         return;
     ASSERT(m_mainFrame->view());
+    IntSize visibleSize = actualVisibleSize();
     if (setFixedReportedSize)
-        m_mainFrame->view()->setFixedReportedSize(actualVisibleSize());
+        m_mainFrame->view()->setFixedReportedSize(visibleSize);
 
-    IntRect frameRect = IntRect(scrollPosition(), viewportSize());
+    IntRect frameRect = IntRect(scrollPosition(), visibleSize);
     if (frameRect != m_mainFrame->view()->frameRect()) {
         m_mainFrame->view()->setFrameRect(frameRect);
         m_mainFrame->view()->adjustViewSize();
