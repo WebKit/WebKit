@@ -224,7 +224,7 @@ namespace JSC {
         Strong<Structure> activationStructure;
         Strong<Structure> interruptedExecutionErrorStructure;
         Strong<Structure> terminatedExecutionErrorStructure;
-        Strong<Structure> staticScopeStructure;
+        Strong<Structure> nameScopeStructure;
         Strong<Structure> strictEvalActivationStructure;
         Strong<Structure> stringStructure;
         Strong<Structure> notAnObjectStructure;

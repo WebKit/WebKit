@@ -30,12 +30,12 @@
 #include "JSGlobalData.h"
 
 #include "ArgList.h"
-#include "Heap.h"
 #include "CommonIdentifiers.h"
 #include "DebuggerActivation.h"
 #include "FunctionConstructor.h"
 #include "GCActivityCallback.h"
 #include "GetterSetter.h"
+#include "Heap.h"
 #include "HostCallReturnValue.h"
 #include "IncrementalSweeper.h"
 #include "Interpreter.h"
@@ -45,9 +45,9 @@
 #include "JSClassRef.h"
 #include "JSFunction.h"
 #include "JSLock.h"
+#include "JSNameScope.h"
 #include "JSNotAnObject.h"
 #include "JSPropertyNameIterator.h"
-#include "JSStaticScopeObject.h"
 #include "Lexer.h"
 #include "Lookup.h"
 #include "Nodes.h"
@@ -189,7 +189,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     activationStructure.set(*this, JSActivation::createStructure(*this, 0, jsNull()));
     interruptedExecutionErrorStructure.set(*this, InterruptedExecutionError::createStructure(*this, 0, jsNull()));
     terminatedExecutionErrorStructure.set(*this, TerminatedExecutionError::createStructure(*this, 0, jsNull()));
-    staticScopeStructure.set(*this, JSStaticScopeObject::createStructure(*this, 0, jsNull()));
+    nameScopeStructure.set(*this, JSNameScope::createStructure(*this, 0, jsNull()));
     strictEvalActivationStructure.set(*this, StrictEvalActivation::createStructure(*this, 0, jsNull()));
     stringStructure.set(*this, JSString::createStructure(*this, 0, jsNull()));
     notAnObjectStructure.set(*this, JSNotAnObject::createStructure(*this, 0, jsNull()));

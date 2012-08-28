@@ -39,7 +39,7 @@
 #include "JITExceptions.h"
 #include "JSActivation.h"
 #include "JSGlobalData.h"
-#include "JSStaticScopeObject.h"
+#include "JSNameScope.h"
 #include "NameInstance.h"
 #include "Operations.h"
 #include <wtf/InlineASM.h>
@@ -1039,20 +1039,7 @@ EncodedJSValue DFG_OPERATION operationResolve(ExecState* exec, Identifier* prope
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
-    
-    ScopeChainNode* scopeChain = exec->scopeChain();
-    ScopeChainIterator iter = scopeChain->begin();
-    ScopeChainIterator end = scopeChain->end();
-    ASSERT(iter != end);
-
-    do {
-        JSObject* record = iter->get();
-        PropertySlot slot(record);
-        if (record->getPropertySlot(exec, *propertyName, slot))
-            return JSValue::encode(slot.getValue(exec, *propertyName));
-    } while (++iter != end);
-
-    return throwVMError(exec, createUndefinedVariableError(exec, *propertyName));
+    return JSValue::encode(JSScope::resolve(exec, *propertyName));
 }
 
 EncodedJSValue DFG_OPERATION operationResolveBase(ExecState* exec, Identifier* propertyName)
@@ -1060,7 +1047,7 @@ EncodedJSValue DFG_OPERATION operationResolveBase(ExecState* exec, Identifier* p
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
     
-    return JSValue::encode(resolveBase(exec, *propertyName, exec->scopeChain(), false));
+    return JSValue::encode(JSScope::resolveBase(exec, *propertyName, false));
 }
 
 EncodedJSValue DFG_OPERATION operationResolveBaseStrictPut(ExecState* exec, Identifier* propertyName)
@@ -1068,30 +1055,15 @@ EncodedJSValue DFG_OPERATION operationResolveBaseStrictPut(ExecState* exec, Iden
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
     
-    JSValue base = resolveBase(exec, *propertyName, exec->scopeChain(), true);
-    if (!base)
-        throwError(exec, createErrorForInvalidGlobalAssignment(exec, propertyName->ustring()));
-    return JSValue::encode(base);
+    return JSValue::encode(JSScope::resolveBase(exec, *propertyName, true));
 }
 
 EncodedJSValue DFG_OPERATION operationResolveGlobal(ExecState* exec, GlobalResolveInfo* resolveInfo, JSGlobalObject* globalObject, Identifier* propertyName)
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
-    
-    PropertySlot slot(globalObject);
-    if (globalObject->getPropertySlot(exec, *propertyName, slot)) {
-        JSValue result = slot.getValue(exec, *propertyName);
 
-        if (slot.isCacheableValue() && !globalObject->structure()->isUncacheableDictionary() && slot.slotBase() == globalObject) {
-            resolveInfo->structure.set(exec->globalData(), exec->codeBlock()->ownerExecutable(), globalObject->structure());
-            resolveInfo->offset = slot.cachedOffset();
-        }
-
-        return JSValue::encode(result);
-    }
-
-    return throwVMError(exec, createUndefinedVariableError(exec, *propertyName));
+    return JSValue::encode(JSScope::resolveGlobal(exec, *propertyName, globalObject, &resolveInfo->structure, &resolveInfo->offset));
 }
 
 EncodedJSValue DFG_OPERATION operationToPrimitive(ExecState* exec, EncodedJSValue value)
@@ -1265,8 +1237,8 @@ JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState* exec, JSCell* fu
         static_cast<FunctionExecutable*>(functionExecutableAsCell);
     JSFunction *function = functionExecutable->make(exec, exec->scopeChain());
     if (!functionExecutable->name().isNull()) {
-        JSStaticScopeObject* functionScopeObject =
-            JSStaticScopeObject::create(
+        JSNameScope* functionScopeObject =
+            JSNameScope::create(
                 exec, functionExecutable->name(), function, ReadOnly | DontDelete);
         function->setScope(exec->globalData(), function->scope()->push(functionScopeObject));
     }

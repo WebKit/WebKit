@@ -45,11 +45,11 @@
 #include "JSActivation.h"
 #include "JSArray.h"
 #include "JSBoundFunction.h"
+#include "JSNameScope.h"
 #include "JSNotAnObject.h"
 #include "JSPropertyNameIterator.h"
-#include "LiteralParser.h"
-#include "JSStaticScopeObject.h"
 #include "JSString.h"
+#include "LiteralParser.h"
 #include "NameInstance.h"
 #include "ObjectPrototype.h"
 #include "Operations.h"
@@ -91,282 +91,6 @@ static int depth(CodeBlock* codeBlock, ScopeChainNode* sc)
 static NEVER_INLINE JSValue concatenateStrings(ExecState* exec, Register* strings, unsigned count)
 {
     return jsString(exec, strings, count);
-}
-
-NEVER_INLINE bool Interpreter::resolve(CallFrame* callFrame, Instruction* vPC, JSValue& exceptionValue)
-{
-    int dst = vPC[1].u.operand;
-    int property = vPC[2].u.operand;
-
-    ScopeChainNode* scopeChain = callFrame->scopeChain();
-    ScopeChainIterator iter = scopeChain->begin();
-    ScopeChainIterator end = scopeChain->end();
-    ASSERT(iter != end);
-
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    Identifier& ident = codeBlock->identifier(property);
-    do {
-        JSObject* o = iter->get();
-        PropertySlot slot(o);
-        if (o->getPropertySlot(callFrame, ident, slot)) {
-            JSValue result = slot.getValue(callFrame, ident);
-            exceptionValue = callFrame->globalData().exception;
-            if (exceptionValue)
-                return false;
-            callFrame->uncheckedR(dst) = JSValue(result);
-            return true;
-        }
-    } while (++iter != end);
-    exceptionValue = createUndefinedVariableError(callFrame, ident);
-    return false;
-}
-
-NEVER_INLINE bool Interpreter::resolveSkip(CallFrame* callFrame, Instruction* vPC, JSValue& exceptionValue)
-{
-    CodeBlock* codeBlock = callFrame->codeBlock();
-
-    int dst = vPC[1].u.operand;
-    int property = vPC[2].u.operand;
-    int skip = vPC[3].u.operand;
-
-    ScopeChainNode* scopeChain = callFrame->scopeChain();
-    ScopeChainIterator iter = scopeChain->begin();
-    ScopeChainIterator end = scopeChain->end();
-    ASSERT(iter != end);
-    bool checkTopLevel = codeBlock->codeType() == FunctionCode && codeBlock->needsFullScopeChain();
-    ASSERT(skip || !checkTopLevel);
-    if (checkTopLevel && skip--) {
-        if (callFrame->uncheckedR(codeBlock->activationRegister()).jsValue())
-            ++iter;
-    }
-    while (skip--) {
-        ++iter;
-        ASSERT(iter != end);
-    }
-    Identifier& ident = codeBlock->identifier(property);
-    do {
-        JSObject* o = iter->get();
-        PropertySlot slot(o);
-        if (o->getPropertySlot(callFrame, ident, slot)) {
-            JSValue result = slot.getValue(callFrame, ident);
-            exceptionValue = callFrame->globalData().exception;
-            if (exceptionValue)
-                return false;
-            ASSERT(result);
-            callFrame->uncheckedR(dst) = JSValue(result);
-            return true;
-        }
-    } while (++iter != end);
-    exceptionValue = createUndefinedVariableError(callFrame, ident);
-    return false;
-}
-
-NEVER_INLINE bool Interpreter::resolveGlobal(CallFrame* callFrame, Instruction* vPC, JSValue& exceptionValue)
-{
-    int dst = vPC[1].u.operand;
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    JSGlobalObject* globalObject = codeBlock->globalObject();
-    ASSERT(globalObject->isGlobalObject());
-    int property = vPC[2].u.operand;
-    Structure* structure = vPC[3].u.structure.get();
-    int offset = vPC[4].u.operand;
-
-    if (structure == globalObject->structure()) {
-        callFrame->uncheckedR(dst) = JSValue(globalObject->getDirectOffset(offset));
-        return true;
-    }
-
-    Identifier& ident = codeBlock->identifier(property);
-    PropertySlot slot(globalObject);
-    if (globalObject->getPropertySlot(callFrame, ident, slot)) {
-        JSValue result = slot.getValue(callFrame, ident);
-        if (slot.isCacheableValue() && !globalObject->structure()->isUncacheableDictionary() && slot.slotBase() == globalObject) {
-            vPC[3].u.structure.set(callFrame->globalData(), codeBlock->ownerExecutable(), globalObject->structure());
-            vPC[4] = slot.cachedOffset();
-            callFrame->uncheckedR(dst) = JSValue(result);
-            return true;
-        }
-
-        exceptionValue = callFrame->globalData().exception;
-        if (exceptionValue)
-            return false;
-        callFrame->uncheckedR(dst) = JSValue(result);
-        return true;
-    }
-
-    exceptionValue = createUndefinedVariableError(callFrame, ident);
-    return false;
-}
-
-NEVER_INLINE bool Interpreter::resolveGlobalDynamic(CallFrame* callFrame, Instruction* vPC, JSValue& exceptionValue)
-{
-    int dst = vPC[1].u.operand;
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    JSGlobalObject* globalObject = codeBlock->globalObject();
-    ASSERT(globalObject->isGlobalObject());
-    int property = vPC[2].u.operand;
-    Structure* structure = vPC[3].u.structure.get();
-    int offset = vPC[4].u.operand;
-    int skip = vPC[5].u.operand;
-    
-    ScopeChainNode* scopeChain = callFrame->scopeChain();
-    ScopeChainIterator iter = scopeChain->begin();
-    ScopeChainIterator end = scopeChain->end();
-    ASSERT(iter != end);
-    bool checkTopLevel = codeBlock->codeType() == FunctionCode && codeBlock->needsFullScopeChain();
-    ASSERT(skip || !checkTopLevel);
-    if (checkTopLevel && skip--) {
-        if (callFrame->uncheckedR(codeBlock->activationRegister()).jsValue())
-            ++iter;
-    }
-    while (skip--) {
-        JSObject* o = iter->get();
-        if (o->hasCustomProperties()) {
-            Identifier& ident = codeBlock->identifier(property);
-            do {
-                PropertySlot slot(o);
-                if (o->getPropertySlot(callFrame, ident, slot)) {
-                    JSValue result = slot.getValue(callFrame, ident);
-                    exceptionValue = callFrame->globalData().exception;
-                    if (exceptionValue)
-                        return false;
-                    ASSERT(result);
-                    callFrame->uncheckedR(dst) = JSValue(result);
-                    return true;
-                }
-                if (iter == end)
-                    break;
-                o = iter->get();
-                ++iter;
-            } while (true);
-            exceptionValue = createUndefinedVariableError(callFrame, ident);
-            return false;
-        }
-        ++iter;
-    }
-    
-    if (structure == globalObject->structure()) {
-        callFrame->uncheckedR(dst) = JSValue(globalObject->getDirectOffset(offset));
-        ASSERT(callFrame->uncheckedR(dst).jsValue());
-        return true;
-    }
-
-    Identifier& ident = codeBlock->identifier(property);
-    PropertySlot slot(globalObject);
-    if (globalObject->getPropertySlot(callFrame, ident, slot)) {
-        JSValue result = slot.getValue(callFrame, ident);
-        if (slot.isCacheableValue() && !globalObject->structure()->isUncacheableDictionary() && slot.slotBase() == globalObject) {
-            vPC[3].u.structure.set(callFrame->globalData(), codeBlock->ownerExecutable(), globalObject->structure());
-            vPC[4] = slot.cachedOffset();
-            ASSERT(result);
-            callFrame->uncheckedR(dst) = JSValue(result);
-            return true;
-        }
-        
-        exceptionValue = callFrame->globalData().exception;
-        if (exceptionValue)
-            return false;
-        ASSERT(result);
-        callFrame->uncheckedR(dst) = JSValue(result);
-        return true;
-    }
-    
-    exceptionValue = createUndefinedVariableError(callFrame, ident);
-    return false;
-}
-
-NEVER_INLINE void Interpreter::resolveBase(CallFrame* callFrame, Instruction* vPC)
-{
-    int dst = vPC[1].u.operand;
-    int property = vPC[2].u.operand;
-    bool isStrictPut = vPC[3].u.operand;
-    Identifier ident = callFrame->codeBlock()->identifier(property);
-    JSValue result = JSC::resolveBase(callFrame, ident, callFrame->scopeChain(), isStrictPut);
-    if (result) {
-        callFrame->uncheckedR(dst) = result;
-        ASSERT(callFrame->uncheckedR(dst).jsValue());
-    } else
-        callFrame->globalData().exception = createErrorForInvalidGlobalAssignment(callFrame, ident.ustring());
-}
-
-NEVER_INLINE bool Interpreter::resolveBaseAndProperty(CallFrame* callFrame, Instruction* vPC, JSValue& exceptionValue)
-{
-    int baseDst = vPC[1].u.operand;
-    int propDst = vPC[2].u.operand;
-    int property = vPC[3].u.operand;
-
-    ScopeChainNode* scopeChain = callFrame->scopeChain();
-    ScopeChainIterator iter = scopeChain->begin();
-    ScopeChainIterator end = scopeChain->end();
-
-    // FIXME: add scopeDepthIsZero optimization
-
-    ASSERT(iter != end);
-
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    Identifier& ident = codeBlock->identifier(property);
-    JSObject* base;
-    do {
-        base = iter->get();
-        PropertySlot slot(base);
-        if (base->getPropertySlot(callFrame, ident, slot)) {
-            JSValue result = slot.getValue(callFrame, ident);
-            exceptionValue = callFrame->globalData().exception;
-            if (exceptionValue)
-                return false;
-            callFrame->uncheckedR(propDst) = JSValue(result);
-            callFrame->uncheckedR(baseDst) = JSValue(base);
-            return true;
-        }
-        ++iter;
-    } while (iter != end);
-
-    exceptionValue = createUndefinedVariableError(callFrame, ident);
-    return false;
-}
-
-NEVER_INLINE bool Interpreter::resolveThisAndProperty(CallFrame* callFrame, Instruction* vPC, JSValue& exceptionValue)
-{
-    int thisDst = vPC[1].u.operand;
-    int propDst = vPC[2].u.operand;
-    int property = vPC[3].u.operand;
-
-    ScopeChainNode* scopeChain = callFrame->scopeChain();
-    ScopeChainIterator iter = scopeChain->begin();
-    ScopeChainIterator end = scopeChain->end();
-
-    // FIXME: add scopeDepthIsZero optimization
-
-    ASSERT(iter != end);
-
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    Identifier& ident = codeBlock->identifier(property);
-    JSObject* base;
-    do {
-        base = iter->get();
-        ++iter;
-        PropertySlot slot(base);
-        if (base->getPropertySlot(callFrame, ident, slot)) {
-            JSValue result = slot.getValue(callFrame, ident);
-            exceptionValue = callFrame->globalData().exception;
-            if (exceptionValue)
-                return false;
-            callFrame->uncheckedR(propDst) = JSValue(result);
-            // All entries on the scope chain should be EnvironmentRecords (activations etc),
-            // other then 'with' object, which are directly referenced from the scope chain,
-            // and the global object. If we hit either an EnvironmentRecord or a global
-            // object at the end of the scope chain, this is undefined. If we hit a non-
-            // EnvironmentRecord within the scope chain, pass the base as the this value.
-            if (iter == end || base->structure()->typeInfo().isEnvironmentRecord())
-                callFrame->uncheckedR(thisDst) = jsUndefined();
-            else
-                callFrame->uncheckedR(thisDst) = JSValue(base);
-            return true;
-        }
-    } while (iter != end);
-
-    exceptionValue = createUndefinedVariableError(callFrame, ident);
-    return false;
 }
 
 #endif // ENABLE(CLASSIC_INTERPRETER)
@@ -1561,7 +1285,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     JSObject* variableObject;
     for (ScopeChainNode* node = scopeChain; ; node = node->next.get()) {
         ASSERT(node);
-        if (node->object->isVariableObject() && !node->object->isStaticScopeObject()) {
+        if (node->object->isVariableObject() && !node->object->isNameScopeObject()) {
             variableObject = jsCast<JSSymbolTableObject*>(node->object.get());
             break;
         }
@@ -1678,7 +1402,7 @@ NEVER_INLINE ScopeChainNode* Interpreter::createExceptionScope(CallFrame* callFr
     CodeBlock* codeBlock = callFrame->codeBlock();
     Identifier& property = codeBlock->identifier(vPC[2].u.operand);
     JSValue value = callFrame->r(vPC[3].u.operand).jsValue();
-    JSObject* scope = JSStaticScopeObject::create(callFrame, property, value, DontDelete);
+    JSObject* scope = JSNameScope::create(callFrame, property, value, DontDelete);
     callFrame->uncheckedR(dst) = JSValue(scope);
 
     return callFrame->scopeChain()->push(scope);
@@ -2825,8 +2549,13 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
            scope chain, and writes the resulting value to register
            dst. If the property is not found, raises an exception.
         */
-        if (UNLIKELY(!resolve(callFrame, vPC, exceptionValue)))
-            goto vm_throw;
+        int dst = vPC[1].u.operand;
+        int property = vPC[2].u.operand;
+        Identifier& ident = callFrame->codeBlock()->identifier(property);
+
+        JSValue result = JSScope::resolve(callFrame, ident);
+        CHECK_FOR_EXCEPTION();
+        callFrame->uncheckedR(dst) = result;
 
         vPC += OPCODE_LENGTH(op_resolve);
         NEXT_INSTRUCTION();
@@ -2838,11 +2567,16 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
          scope chain skipping the top 'skip' levels, and writes the resulting
          value to register dst. If the property is not found, raises an exception.
          */
-        if (UNLIKELY(!resolveSkip(callFrame, vPC, exceptionValue)))
-            goto vm_throw;
+        int dst = vPC[1].u.operand;
+        int property = vPC[2].u.operand;
+        int skip = vPC[3].u.operand;
+        Identifier& ident = callFrame->codeBlock()->identifier(property);
+
+        JSValue result = JSScope::resolveSkip(callFrame, ident, skip);
+        CHECK_FOR_EXCEPTION();
+        callFrame->uncheckedR(dst) = result;
 
         vPC += OPCODE_LENGTH(op_resolve_skip);
-
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_resolve_global) {
@@ -2853,11 +2587,21 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
            a fast lookup using the case offset, otherwise fall back to a full resolve and
            cache the new structure and offset
          */
-        if (UNLIKELY(!resolveGlobal(callFrame, vPC, exceptionValue)))
-            goto vm_throw;
-        
+        int dst = vPC[1].u.operand;
+        int property = vPC[2].u.operand;
+        Identifier& ident = callFrame->codeBlock()->identifier(property);
+
+        JSValue result = JSScope::resolveGlobal(
+            callFrame,
+            ident,
+            callFrame->lexicalGlobalObject(),
+            &vPC[3].u.structure,
+            &vPC[4].u.operand
+        );
+        CHECK_FOR_EXCEPTION();
+        callFrame->uncheckedR(dst) = result;
+
         vPC += OPCODE_LENGTH(op_resolve_global);
-        
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_resolve_global_dynamic) {
@@ -2871,11 +2615,16 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
          This walks through n levels of the scope chain to verify that none of those levels
          in the scope chain include dynamically added properties.
          */
-        if (UNLIKELY(!resolveGlobalDynamic(callFrame, vPC, exceptionValue)))
-            goto vm_throw;
-        
+        int dst = vPC[1].u.operand;
+        int property = vPC[2].u.operand;
+        int skip = vPC[5].u.operand;
+        Identifier& ident = callFrame->codeBlock()->identifier(property);
+
+        JSValue result = JSScope::resolveGlobalDynamic(callFrame, ident, skip, &vPC[3].u.structure, &vPC[4].u.operand);
+        CHECK_FOR_EXCEPTION();
+        callFrame->uncheckedR(dst) = result;
+
         vPC += OPCODE_LENGTH(op_resolve_global_dynamic);
-        
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_get_global_var) {
@@ -3004,8 +2753,14 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
            outermost scope (which will be the global object) is
            stored in register dst.
         */
-        resolveBase(callFrame, vPC);
+        int dst = vPC[1].u.operand;
+        int property = vPC[2].u.operand;
+        bool isStrict = vPC[3].u.operand;
+        Identifier& ident = callFrame->codeBlock()->identifier(property);
+
+        JSValue result = JSScope::resolveBase(callFrame, ident, isStrict);
         CHECK_FOR_EXCEPTION();
+        callFrame->uncheckedR(dst) = result;
 
         vPC += OPCODE_LENGTH(op_resolve_base);
         NEXT_INSTRUCTION();
@@ -3042,8 +2797,14 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
            resolve, or resolve_base followed by get_by_id, as it
            avoids duplicate hash lookups.
         */
-        if (UNLIKELY(!resolveBaseAndProperty(callFrame, vPC, exceptionValue)))
-            goto vm_throw;
+        int baseDst = vPC[1].u.operand;
+        int propDst = vPC[2].u.operand;
+        int property = vPC[3].u.operand;
+        Identifier& ident = codeBlock->identifier(property);
+
+        JSValue prop = JSScope::resolveWithBase(callFrame, ident, &callFrame->uncheckedR(baseDst));
+        CHECK_FOR_EXCEPTION();
+        callFrame->uncheckedR(propDst) = prop;
 
         vPC += OPCODE_LENGTH(op_resolve_with_base);
         NEXT_INSTRUCTION();
@@ -3058,8 +2819,14 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 
            If the property is not found, raises an exception.
         */
-        if (UNLIKELY(!resolveThisAndProperty(callFrame, vPC, exceptionValue)))
-            goto vm_throw;
+        int thisDst = vPC[1].u.operand;
+        int propDst = vPC[2].u.operand;
+        int property = vPC[3].u.operand;
+        Identifier& ident = codeBlock->identifier(property);
+
+        JSValue prop = JSScope::resolveWithThis(callFrame, ident, &callFrame->uncheckedR(thisDst));
+        CHECK_FOR_EXCEPTION();
+        callFrame->uncheckedR(propDst) = prop;
 
         vPC += OPCODE_LENGTH(op_resolve_with_this);
         NEXT_INSTRUCTION();
@@ -4488,7 +4255,7 @@ skip_id_custom_self:
             does not affect the scope enclosing the FunctionExpression.
          */
         if (!function->name().isNull()) {
-            JSStaticScopeObject* functionScopeObject = JSStaticScopeObject::create(callFrame, function->name(), func, ReadOnly | DontDelete);
+            JSNameScope* functionScopeObject = JSNameScope::create(callFrame, function->name(), func, ReadOnly | DontDelete);
             func->setScope(*globalData, func->scope()->push(functionScopeObject));
         }
 
@@ -5132,7 +4899,7 @@ skip_id_custom_self:
     DEFINE_OPCODE(op_push_new_scope) {
         /* new_scope dst(r) property(id) value(r)
          
-           Constructs a new StaticScopeObject with property set to value.  That scope
+           Constructs a new NameScopeObject with property set to value.  That scope
            object is then pushed onto the ScopeChain.  The scope object is then stored
            in dst for GC.
          */

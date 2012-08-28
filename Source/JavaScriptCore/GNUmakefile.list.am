@@ -547,8 +547,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSPropertyNameIterator.h \
 	Source/JavaScriptCore/runtime/JSSegmentedVariableObject.cpp \
 	Source/JavaScriptCore/runtime/JSSegmentedVariableObject.h \
-	Source/JavaScriptCore/runtime/JSStaticScopeObject.cpp \
-	Source/JavaScriptCore/runtime/JSStaticScopeObject.h \
+	Source/JavaScriptCore/runtime/JSNameScope.cpp \
+	Source/JavaScriptCore/runtime/JSNameScope.h \
+	Source/JavaScriptCore/runtime/JSScope.cpp \
+	Source/JavaScriptCore/runtime/JSScope.h \
 	Source/JavaScriptCore/runtime/JSStringBuilder.h \
 	Source/JavaScriptCore/runtime/JSStringJoiner.cpp \
 	Source/JavaScriptCore/runtime/JSStringJoiner.h \

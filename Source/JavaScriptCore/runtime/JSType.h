@@ -50,9 +50,9 @@ enum JSType {
     ErrorInstanceType,
     GlobalThisType,
 
-    StaticScopeObjectType,
+    NameScopeObjectType,
     // VariableObjectType must be less than MOST of the types of its subclasses and only its subclasses.
-    // We use >=VariableObjectType checks to test for Global & Activation objects, but exclude StaticScopes.
+    // We use >=VariableObjectType checks to test for Global & Activation objects, but exclude NameScopes.
     VariableObjectType,
     GlobalObjectType,
     ActivationObjectType,

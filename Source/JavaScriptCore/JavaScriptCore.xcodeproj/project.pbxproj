@@ -253,7 +253,6 @@
 		0FFFC95F14EF90BB00C72532 /* DFGVirtualRegisterAllocationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFFC95314EF909500C72532 /* DFGVirtualRegisterAllocationPhase.cpp */; };
 		0FFFC96014EF90BD00C72532 /* DFGVirtualRegisterAllocationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFFC95414EF909500C72532 /* DFGVirtualRegisterAllocationPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		140566C4107EC255005DBC8D /* JSAPIValueWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0894D50FAFBA2D00001865 /* JSAPIValueWrapper.cpp */; };
-		140566D1107EC267005DBC8D /* JSStaticScopeObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7E42C190E3938830065A544 /* JSStaticScopeObject.cpp */; };
 		140566D6107EC271005DBC8D /* JSFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A85E0255597D01FF60F7 /* JSFunction.cpp */; };
 		140B7D1D0DC69AF7009C42B8 /* JSActivation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14DA818F0D99FD2000B0A4FB /* JSActivation.cpp */; };
 		140D17D70E8AD4A9000CD17D /* JSBasePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -368,6 +367,10 @@
 		14816E1C154CC56C00B8054C /* BlockAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 14816E1A154CC56C00B8054C /* BlockAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1482B74E0A43032800517CFC /* JSStringRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1482B74C0A43032800517CFC /* JSStringRef.cpp */; };
 		1482B7E40A43076000517CFC /* JSObjectRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1482B7E20A43076000517CFC /* JSObjectRef.cpp */; };
+		14874AE315EBDE4A002E3587 /* JSNameScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14874ADF15EBDE4A002E3587 /* JSNameScope.cpp */; };
+		14874AE415EBDE4A002E3587 /* JSNameScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 14874AE015EBDE4A002E3587 /* JSNameScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14874AE515EBDE4A002E3587 /* JSScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14874AE115EBDE4A002E3587 /* JSScope.cpp */; };
+		14874AE615EBDE4A002E3587 /* JSScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 14874AE215EBDE4A002E3587 /* JSScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		148CD1D8108CF902008163C6 /* JSContextRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 148CD1D7108CF902008163C6 /* JSContextRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		148F21AA107EC53A0042EC2C /* BytecodeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 969A07200ED1CE3300F1F681 /* BytecodeGenerator.cpp */; };
 		148F21B0107EC5410042EC2C /* Lexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8650255597D01FF60F7 /* Lexer.cpp */; };
@@ -1076,6 +1079,10 @@
 		1482B78A0A4305AB00517CFC /* APICast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APICast.h; sourceTree = "<group>"; };
 		1482B7E10A43076000517CFC /* JSObjectRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObjectRef.h; sourceTree = "<group>"; };
 		1482B7E20A43076000517CFC /* JSObjectRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSObjectRef.cpp; sourceTree = "<group>"; };
+		14874ADF15EBDE4A002E3587 /* JSNameScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNameScope.cpp; sourceTree = "<group>"; };
+		14874AE015EBDE4A002E3587 /* JSNameScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNameScope.h; sourceTree = "<group>"; };
+		14874AE115EBDE4A002E3587 /* JSScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScope.cpp; sourceTree = "<group>"; };
+		14874AE215EBDE4A002E3587 /* JSScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScope.h; sourceTree = "<group>"; };
 		148CD1D7108CF902008163C6 /* JSContextRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSContextRefPrivate.h; sourceTree = "<group>"; };
 		149559ED0DDCDDF700648087 /* DebuggerCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebuggerCallFrame.cpp; sourceTree = "<group>"; };
 		1497209014EB831500FEB1B7 /* PassWeak.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PassWeak.h; sourceTree = "<group>"; };
@@ -1348,8 +1355,6 @@
 		A7DCB77912E3D90500911940 /* WriteBarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WriteBarrier.h; sourceTree = "<group>"; };
 		A7E2EA690FB460CF00601F06 /* LiteralParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiteralParser.h; sourceTree = "<group>"; };
 		A7E2EA6A0FB460CF00601F06 /* LiteralParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiteralParser.cpp; sourceTree = "<group>"; };
-		A7E42C180E3938830065A544 /* JSStaticScopeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStaticScopeObject.h; sourceTree = "<group>"; };
-		A7E42C190E3938830065A544 /* JSStaticScopeObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStaticScopeObject.cpp; sourceTree = "<group>"; };
 		A7F8690E0F9584A100558697 /* CachedCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedCall.h; sourceTree = "<group>"; };
 		A7F869EC0F95C2EC00558697 /* CallFrameClosure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallFrameClosure.h; sourceTree = "<group>"; };
 		A7F9935D0FD7325100A0B2D0 /* JSONObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONObject.h; sourceTree = "<group>"; };
@@ -2011,7 +2016,6 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
-				C2D58C3315912FEE0021A844 /* GCActivityCallback.cpp */,
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
 				BCF605120E203EF800B9A64D /* ArgList.h */,
 				BC257DE50E1F51C50016B6C9 /* Arguments.cpp */,
@@ -2066,6 +2070,7 @@
 				BC2680C10E16D4E900A06E92 /* FunctionConstructor.h */,
 				F692A85C0255597D01FF60F7 /* FunctionPrototype.cpp */,
 				F692A85D0255597D01FF60F7 /* FunctionPrototype.h */,
+				C2D58C3315912FEE0021A844 /* GCActivityCallback.cpp */,
 				DDF7ABD211F60ED200108E36 /* GCActivityCallback.h */,
 				BC02E9B80E184545000F9297 /* GetterSetter.cpp */,
 				BC337BDE0E1AF0B80076918A /* GetterSetter.h */,
@@ -2099,6 +2104,8 @@
 				8604F503143CE1C100B295F5 /* JSGlobalThis.h */,
 				65EA4C99092AF9E20093D800 /* JSLock.cpp */,
 				65EA4C9A092AF9E20093D800 /* JSLock.h */,
+				14874ADF15EBDE4A002E3587 /* JSNameScope.cpp */,
+				14874AE015EBDE4A002E3587 /* JSNameScope.h */,
 				A72700780DAC605600E548D7 /* JSNotAnObject.cpp */,
 				A72700770DAC605600E548D7 /* JSNotAnObject.h */,
 				BC22A3980E16E14800AF21C8 /* JSObject.cpp */,
@@ -2107,10 +2114,10 @@
 				A7F9935D0FD7325100A0B2D0 /* JSONObject.h */,
 				A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */,
 				A727FF650DA3053B00E548D7 /* JSPropertyNameIterator.h */,
+				14874AE115EBDE4A002E3587 /* JSScope.cpp */,
+				14874AE215EBDE4A002E3587 /* JSScope.h */,
 				0F919D0E157F3327004A4E7D /* JSSegmentedVariableObject.cpp */,
 				0F919D0F157F3327004A4E7D /* JSSegmentedVariableObject.h */,
-				A7E42C190E3938830065A544 /* JSStaticScopeObject.cpp */,
-				A7E42C180E3938830065A544 /* JSStaticScopeObject.h */,
 				BC02E9B60E1842FA000F9297 /* JSString.cpp */,
 				F692A8620255597D01FF60F7 /* JSString.h */,
 				86E85538111B9968001AF51E /* JSStringBuilder.h */,
@@ -2896,6 +2903,8 @@
 				0F63945515D07057006A597C /* ArrayProfile.h in Headers */,
 				0F63948515E4811B006A597C /* DFGArrayMode.h in Headers */,
 				0F63947815DCE34B006A597C /* DFGStructureAbstractValue.h in Headers */,
+				14874AE415EBDE4A002E3587 /* JSNameScope.h in Headers */,
+				14874AE615EBDE4A002E3587 /* JSScope.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3348,7 +3357,6 @@
 				A7F993600FD7325100A0B2D0 /* JSONObject.cpp in Sources */,
 				95F6E6950E5B5F970091E860 /* JSProfilerPrivate.cpp in Sources */,
 				A727FF6B0DA3092200E548D7 /* JSPropertyNameIterator.cpp in Sources */,
-				140566D1107EC267005DBC8D /* JSStaticScopeObject.cpp in Sources */,
 				147F39D5107EC37600427A48 /* JSString.cpp in Sources */,
 				2600B5A6152BAAA70091EE5F /* JSStringJoiner.cpp in Sources */,
 				1482B74E0A43032800517CFC /* JSStringRef.cpp in Sources */,
@@ -3497,6 +3505,8 @@
 				0F63945415D07055006A597C /* ArrayProfile.cpp in Sources */,
 				0F63948415E48118006A597C /* DFGArrayMode.cpp in Sources */,
 				C21122E115DD9AB300790E3A /* GCThreadSharedData.cpp in Sources */,
+				14874AE315EBDE4A002E3587 /* JSNameScope.cpp in Sources */,
+				14874AE515EBDE4A002E3587 /* JSScope.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

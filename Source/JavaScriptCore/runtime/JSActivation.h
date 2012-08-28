@@ -79,7 +79,7 @@ namespace JSC {
 
     protected:
         void finishCreation(CallFrame*, FunctionExecutable*);
-        static const unsigned StructureFlags = IsEnvironmentRecord | OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | Base::StructureFlags;
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | Base::StructureFlags;
 
     private:
         bool symbolTableGet(PropertyName, PropertySlot&);

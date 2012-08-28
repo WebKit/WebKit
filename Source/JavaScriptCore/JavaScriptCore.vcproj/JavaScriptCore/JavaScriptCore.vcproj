@@ -882,11 +882,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\JSStaticScopeObject.cpp"
+				RelativePath="..\..\runtime\JSNameScope.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\JSStaticScopeObject.h"
+				RelativePath="..\..\runtime\JSNameScope.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSScope.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSScope.h"
 				>
 			</File>
 			<File

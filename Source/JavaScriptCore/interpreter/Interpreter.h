@@ -259,13 +259,6 @@ namespace JSC {
         JSValue execute(CallFrameClosure&);
 
 #if ENABLE(CLASSIC_INTERPRETER)
-        NEVER_INLINE bool resolve(CallFrame*, Instruction*, JSValue& exceptionValue);
-        NEVER_INLINE bool resolveSkip(CallFrame*, Instruction*, JSValue& exceptionValue);
-        NEVER_INLINE bool resolveGlobal(CallFrame*, Instruction*, JSValue& exceptionValue);
-        NEVER_INLINE bool resolveGlobalDynamic(CallFrame*, Instruction*, JSValue& exceptionValue);
-        NEVER_INLINE void resolveBase(CallFrame*, Instruction* vPC);
-        NEVER_INLINE bool resolveBaseAndProperty(CallFrame*, Instruction*, JSValue& exceptionValue);
-        NEVER_INLINE bool resolveThisAndProperty(CallFrame*, Instruction*, JSValue& exceptionValue);
         NEVER_INLINE ScopeChainNode* createExceptionScope(CallFrame*, const Instruction* vPC);
 
         void tryCacheGetByID(CallFrame*, CodeBlock*, Instruction*, JSValue baseValue, const Identifier& propertyName, const PropertySlot&);

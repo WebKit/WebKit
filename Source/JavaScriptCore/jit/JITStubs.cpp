@@ -50,9 +50,9 @@
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "JSGlobalObjectFunctions.h"
+#include "JSNameScope.h"
 #include "JSNotAnObject.h"
 #include "JSPropertyNameIterator.h"
-#include "JSStaticScopeObject.h"
 #include "JSString.h"
 #include "NameInstance.h"
 #include "ObjectPrototype.h"
@@ -2393,7 +2393,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve)
 
     CallFrame* callFrame = stackFrame.callFrame;
 
-    JSValue result = CommonSlowPaths::opResolve(callFrame, stackFrame.args[0].identifier());
+    JSValue result = JSScope::resolve(callFrame, stackFrame.args[0].identifier());
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
@@ -2624,18 +2624,16 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_base)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    return JSValue::encode(JSC::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), stackFrame.callFrame->scopeChain(), false));
+    return JSValue::encode(JSScope::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), false));
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_base_strict_put)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
-    JSValue base = JSC::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), stackFrame.callFrame->scopeChain(), true);
-    if (!base) {
-        stackFrame.globalData->exception = createErrorForInvalidGlobalAssignment(stackFrame.callFrame, stackFrame.args[0].identifier().ustring());
-        VM_THROW_EXCEPTION();
-    }
-    return JSValue::encode(base);
+
+    if (JSValue result = JSScope::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), true))
+        return JSValue::encode(result);
+    VM_THROW_EXCEPTION();
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_ensure_property_exists)
@@ -2657,7 +2655,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_skip)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    JSValue result = CommonSlowPaths::opResolveSkip(stackFrame.callFrame, stackFrame.args[0].identifier(), stackFrame.args[1].int32());
+    JSValue result = JSScope::resolveSkip(stackFrame.callFrame, stackFrame.args[0].identifier(), stackFrame.args[1].int32());
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
@@ -2667,28 +2665,20 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_global)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    JSGlobalObject* globalObject = codeBlock->globalObject();
     Identifier& ident = stackFrame.args[0].identifier();
+    CodeBlock* codeBlock = callFrame->codeBlock();
     unsigned globalResolveInfoIndex = stackFrame.args[1].int32();
-    ASSERT(globalObject->isGlobalObject());
+    GlobalResolveInfo& globalResolveInfo = codeBlock->globalResolveInfo(globalResolveInfoIndex);
 
-    PropertySlot slot(globalObject);
-    if (globalObject->getPropertySlot(callFrame, ident, slot)) {
-        JSValue result = slot.getValue(callFrame, ident);
-        if (slot.isCacheableValue() && !globalObject->structure()->isUncacheableDictionary() && slot.slotBase() == globalObject) {
-            GlobalResolveInfo& globalResolveInfo = codeBlock->globalResolveInfo(globalResolveInfoIndex);
-            globalResolveInfo.structure.set(callFrame->globalData(), codeBlock->ownerExecutable(), globalObject->structure());
-            globalResolveInfo.offset = slot.cachedOffset();
-            return JSValue::encode(result);
-        }
-
-        CHECK_FOR_EXCEPTION_AT_END();
-        return JSValue::encode(result);
-    }
-
-    stackFrame.globalData->exception = createUndefinedVariableError(callFrame, ident);
-    VM_THROW_EXCEPTION();
+    JSValue result = JSScope::resolveGlobal(
+        callFrame,
+        ident,
+        callFrame->lexicalGlobalObject(),
+        &globalResolveInfo.structure,
+        &globalResolveInfo.offset
+    );
+    CHECK_FOR_EXCEPTION();
+    return JSValue::encode(result);
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_div)
@@ -2970,7 +2960,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_with_base)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    JSValue result = CommonSlowPaths::opResolveWithBase(callFrame, stackFrame.args[0].identifier(), callFrame->registers()[stackFrame.args[1].int32()]);
+    JSValue result = JSScope::resolveWithBase(callFrame, stackFrame.args[0].identifier(), &callFrame->registers()[stackFrame.args[1].int32()]);
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
@@ -2980,7 +2970,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_with_this)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    JSValue result = CommonSlowPaths::opResolveWithThis(callFrame, stackFrame.args[0].identifier(), callFrame->registers()[stackFrame.args[1].int32()]);
+    JSValue result = JSScope::resolveWithThis(callFrame, stackFrame.args[0].identifier(), &callFrame->registers()[stackFrame.args[1].int32()]);
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
@@ -3002,7 +2992,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_func_exp)
         does not affect the scope enclosing the FunctionExpression.
      */
     if (!function->name().isNull()) {
-        JSStaticScopeObject* functionScopeObject = JSStaticScopeObject::create(callFrame, function->name(), func, ReadOnly | DontDelete);
+        JSNameScope* functionScopeObject = JSNameScope::create(callFrame, function->name(), func, ReadOnly | DontDelete);
         func->setScope(callFrame->globalData(), func->scope()->push(functionScopeObject));
     }
 
@@ -3271,7 +3261,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_push_new_scope)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    JSObject* scope = JSStaticScopeObject::create(stackFrame.callFrame, stackFrame.args[0].identifier(), stackFrame.args[1].jsValue(), DontDelete);
+    JSObject* scope = JSNameScope::create(stackFrame.callFrame, stackFrame.args[0].identifier(), stackFrame.args[1].jsValue(), DontDelete);
 
     CallFrame* callFrame = stackFrame.callFrame;
     callFrame->setScopeChain(callFrame->scopeChain()->push(scope));

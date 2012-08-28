@@ -31,7 +31,7 @@
 
 #include "JSActivation.h"
 #include "JSGlobalObject.h"
-#include "JSStaticScopeObject.h"
+#include "JSNameScope.h"
 #include "PropertyNameArray.h"
 
 namespace JSC {
@@ -73,22 +73,4 @@ void JSSymbolTableObject::putDirectVirtual(JSObject*, ExecState*, PropertyName, 
     ASSERT_NOT_REACHED();
 }
 
-bool JSSymbolTableObject::isDynamicScope(bool& requiresDynamicChecks) const
-{
-    switch (structure()->typeInfo().type()) {
-    case GlobalObjectType:
-        return static_cast<const JSGlobalObject*>(this)->isDynamicScope(requiresDynamicChecks);
-    case ActivationObjectType:
-        return static_cast<const JSActivation*>(this)->isDynamicScope(requiresDynamicChecks);
-    case StaticScopeObjectType:
-        return static_cast<const JSStaticScopeObject*>(this)->isDynamicScope(requiresDynamicChecks);
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    return false;
-}
-
 } // namespace JSC
-

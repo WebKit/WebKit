@@ -40,7 +40,7 @@ struct GlobalResolveInfo {
     }
     
     WriteBarrier<Structure> structure;
-    unsigned offset;
+    PropertyOffset offset;
     unsigned bytecodeOffset; // Only valid in old JIT code. This means nothing in the DFG.
 };
 

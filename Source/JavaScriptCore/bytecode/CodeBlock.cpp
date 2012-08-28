@@ -40,7 +40,7 @@
 #include "JITStubs.h"
 #include "JSActivation.h"
 #include "JSFunction.h"
-#include "JSStaticScopeObject.h"
+#include "JSNameScope.h"
 #include "JSValue.h"
 #include "LowLevelInterpreter.h"
 #include "MethodCallLinkStatus.h"
@@ -2030,13 +2030,11 @@ void CodeBlock::visitWeakReferences(SlotVisitor& visitor)
     performTracingFixpointIteration(visitor);
 }
 
-#if ENABLE(JIT)
 #if ENABLE(JIT_VERBOSE_OSR)
 static const bool verboseUnlinking = true;
 #else
 static const bool verboseUnlinking = false;
 #endif
-#endif // ENABLE(JIT)
     
 void CodeBlock::finalizeUnconditionally()
 {

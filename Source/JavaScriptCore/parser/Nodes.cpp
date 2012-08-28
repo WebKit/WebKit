@@ -33,7 +33,7 @@
 #include "JIT.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
-#include "JSStaticScopeObject.h"
+#include "JSNameScope.h"
 #include "LabelScope.h"
 #include "Lexer.h"
 #include "Operations.h"

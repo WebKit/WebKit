@@ -1,3 +1,116 @@
+2012-08-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Refactored and consolidated variable resolution functions
+        https://bugs.webkit.org/show_bug.cgi?id=95166
+
+        Reviewed by Filip Pizlo.
+
+        This patch does a few things:
+
+        (1) Introduces a new class, JSScope, which is the base class for all
+        objects that represent a scope in the scope chain.
+
+        (2) Refactors and consolidates duplicate implementations of variable
+        resolution into the JSScope class.
+
+        (3) Renames JSStaticScopeObject to JSNameScope because, as distinct from
+        something like a 'let' scope, JSStaticScopeObject only has storage for a
+        single name.
+
+        These changes makes logical sense to me as-is. I will also use them in an
+        upcoming optimization.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri: Build!
+
+        * bytecode/CodeBlock.cpp:
+        (JSC): Build fix for LLInt-only builds.
+
+        * bytecode/GlobalResolveInfo.h:
+        (GlobalResolveInfo): Use PropertyOffset to be consistent with other parts
+        of the engine.
+
+        * bytecompiler/NodesCodegen.cpp:
+        * dfg/DFGOperations.cpp: Use the shared code in JSScope instead of rolling
+        our own.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::createExceptionScope):
+        (JSC::Interpreter::privateExecute):
+        * interpreter/Interpreter.h: Use the shared code in JSScope instead of rolling
+        our own.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION): Use the shared code in JSScope instead of rolling
+        our own.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (LLInt): Use the shared code in JSScope instead of rolling our own. Note
+        that one of these slow paths calls the wrong helper function. I left it
+        that way to avoid a behavior change in a refactoring patch.
+
+        * parser/Nodes.cpp: Updated for rename.
+
+        * runtime/CommonSlowPaths.h:
+        (CommonSlowPaths): Removed resolve slow paths because were duplicative.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData): Updated for renames.
+
+        * runtime/JSNameScope.cpp: Copied from Source/JavaScriptCore/runtime/JSStaticScopeObject.cpp.
+        (JSC):
+        (JSC::JSNameScope::visitChildren):
+        (JSC::JSNameScope::toThisObject):
+        (JSC::JSNameScope::put):
+        (JSC::JSNameScope::getOwnPropertySlot):
+        * runtime/JSNameScope.h: Copied from Source/JavaScriptCore/runtime/JSStaticScopeObject.h.
+        (JSC):
+        (JSC::JSNameScope::create):
+        (JSC::JSNameScope::createStructure):
+        (JSNameScope):
+        (JSC::JSNameScope::JSNameScope):
+        (JSC::JSNameScope::isDynamicScope): Used do-webcore-rename script here.
+        It is fabulous!
+
+        * runtime/JSObject.h:
+        (JSObject):
+        (JSC::JSObject::isNameScopeObject): More rename.
+
+        * runtime/JSScope.cpp: Added.
+        (JSC):
+        (JSC::JSScope::isDynamicScope):
+        (JSC::JSScope::resolve):
+        (JSC::JSScope::resolveSkip):
+        (JSC::JSScope::resolveGlobal):
+        (JSC::JSScope::resolveGlobalDynamic):
+        (JSC::JSScope::resolveBase):
+        (JSC::JSScope::resolveWithBase):
+        (JSC::JSScope::resolveWithThis):
+        * runtime/JSScope.h: Added.
+        (JSC):
+        (JSScope):
+        (JSC::JSScope::JSScope): All the code here is a port from the
+        Interpreter.cpp implementations of this functionality.
+
+        * runtime/JSStaticScopeObject.cpp: Removed.
+        * runtime/JSStaticScopeObject.h: Removed.
+
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC):
+        * runtime/JSSymbolTableObject.h:
+        (JSSymbolTableObject):
+        * runtime/JSType.h: Updated for rename.
+
+        * runtime/Operations.h:
+        (JSC::resolveBase): Removed because it was duplicative.
+
 2012-08-28  Alban Browaeys <prahal@yahoo.com>
 
         [GTK] LLint build fails with -g -02

@@ -29,15 +29,15 @@
 #ifndef JSSymbolTableObject_h
 #define JSSymbolTableObject_h
 
-#include "JSObject.h"
+#include "JSScope.h"
 #include "PropertyDescriptor.h"
 #include "SymbolTable.h"
 
 namespace JSC {
 
-class JSSymbolTableObject : public JSNonFinalObject {
+class JSSymbolTableObject : public JSScope {
 public:
-    typedef JSNonFinalObject Base;
+    typedef JSScope Base;
     
     SharedSymbolTable* symbolTable() const { return m_symbolTable.get(); }
     
@@ -46,10 +46,8 @@ public:
     JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, ExecState*, PropertyName);
     JS_EXPORT_PRIVATE static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     
-    bool isDynamicScope(bool& requiresDynamicChecks) const;
-    
 protected:
-    static const unsigned StructureFlags = OverridesVisitChildren | OverridesGetPropertyNames | Base::StructureFlags;
+    static const unsigned StructureFlags = IsEnvironmentRecord | OverridesVisitChildren | OverridesGetPropertyNames | Base::StructureFlags;
     
     JSSymbolTableObject(JSGlobalData& globalData, Structure* structure)
         : Base(globalData, structure)

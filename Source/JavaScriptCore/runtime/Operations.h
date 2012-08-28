@@ -347,33 +347,6 @@ namespace JSC {
         }
     }
 
-    ALWAYS_INLINE JSValue resolveBase(CallFrame* callFrame, Identifier& property, ScopeChainNode* scopeChain, bool isStrictPut)
-    {
-        ScopeChainIterator iter = scopeChain->begin();
-        ScopeChainIterator next = iter;
-        ++next;
-        ScopeChainIterator end = scopeChain->end();
-        ASSERT(iter != end);
-
-        PropertySlot slot;
-        JSObject* base;
-        while (true) {
-            base = iter->get();
-            if (next == end) {
-                if (isStrictPut && !base->getPropertySlot(callFrame, property, slot))
-                    return JSValue();
-                return base;
-            }
-            if (base->getPropertySlot(callFrame, property, slot))
-                return base;
-
-            iter = next;
-            ++next;
-        }
-
-        ASSERT_NOT_REACHED();
-        return JSValue();
-    }
 } // namespace JSC
 
 #endif // Operations_h
