@@ -532,7 +532,12 @@ _llint_op_jmp_scopes:
 
 
 _llint_op_loop_if_true:
-    nop
+    traceExecution()
+    jumpTrueOrFalse(
+        macro (value, target) btinz value, target end,
+        _llint_slow_path_jtrue)
+
+
 _llint_op_jtrue:
     traceExecution()
     jumpTrueOrFalse(
@@ -541,7 +546,12 @@ _llint_op_jtrue:
 
 
 _llint_op_loop_if_false:
-    nop
+    traceExecution()
+    jumpTrueOrFalse(
+        macro (value, target) btiz value, target end,
+        _llint_slow_path_jfalse)
+
+
 _llint_op_jfalse:
     traceExecution()
     jumpTrueOrFalse(
@@ -550,7 +560,13 @@ _llint_op_jfalse:
 
 
 _llint_op_loop_if_less:
-    nop
+    traceExecution()
+    compare(
+        macro (left, right, target) bilt left, right, target end,
+        macro (left, right, target) bdlt left, right, target end,
+        _llint_slow_path_jless)
+
+
 _llint_op_jless:
     traceExecution()
     compare(
@@ -568,7 +584,13 @@ _llint_op_jnless:
 
 
 _llint_op_loop_if_greater:
-    nop
+    traceExecution()
+    compare(
+        macro (left, right, target) bigt left, right, target end,
+        macro (left, right, target) bdgt left, right, target end,
+        _llint_slow_path_jgreater)
+
+
 _llint_op_jgreater:
     traceExecution()
     compare(
@@ -586,7 +608,13 @@ _llint_op_jngreater:
 
 
 _llint_op_loop_if_lesseq:
-    nop
+    traceExecution()
+    compare(
+        macro (left, right, target) bilteq left, right, target end,
+        macro (left, right, target) bdlteq left, right, target end,
+        _llint_slow_path_jlesseq)
+
+
 _llint_op_jlesseq:
     traceExecution()
     compare(
@@ -604,7 +632,13 @@ _llint_op_jnlesseq:
 
 
 _llint_op_loop_if_greatereq:
-    nop
+    traceExecution()
+    compare(
+        macro (left, right, target) bigteq left, right, target end,
+        macro (left, right, target) bdgteq left, right, target end,
+        _llint_slow_path_jgreatereq)
+
+
 _llint_op_jgreatereq:
     traceExecution()
     compare(

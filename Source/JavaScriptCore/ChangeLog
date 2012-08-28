@@ -1,3 +1,14 @@
+2012-08-28  Filip Pizlo  <fpizlo@apple.com>
+
+        LLInt should not rely on ordering of global labels
+        https://bugs.webkit.org/show_bug.cgi?id=95221
+
+        Reviewed by Oliver Hunt.
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2012-08-28  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Rename first/second to key/value in HashMap iterators

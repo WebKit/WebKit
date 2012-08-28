@@ -1234,7 +1234,10 @@ _llint_op_put_by_val:
 
 
 _llint_op_loop:
-    nop
+    traceExecution()
+    dispatchInt(8[PB, PC, 8])
+
+
 _llint_op_jmp:
     traceExecution()
     dispatchInt(8[PB, PC, 8])

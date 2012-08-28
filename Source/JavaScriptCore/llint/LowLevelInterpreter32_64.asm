@@ -1397,7 +1397,10 @@ _llint_op_put_by_val:
 
 
 _llint_op_loop:
-    nop
+    traceExecution()
+    dispatchBranch(4[PC])
+
+
 _llint_op_jmp:
     traceExecution()
     dispatchBranch(4[PC])
