@@ -1,3 +1,15 @@
+2012-08-28  Philip Rogers  <pdr@google.com>
+
+        Mark filesystem-url-in-iframe as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=95246
+
+        Marking a test as flaky without review.
+
+        This test is flaky, producing different text output once every few runs.
+        This patch temporarily marks it as flaky until the test can be fixed.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-27  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Filters] Filters should render using sRGB until the specification says how it works
