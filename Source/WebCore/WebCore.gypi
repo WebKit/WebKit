@@ -6448,6 +6448,7 @@
             'inspector/front-end/textEditor.css',
             'inspector/front-end/textPrompt.css',
             'inspector/front-end/timelinePanel.css',
+            'inspector/front-end/webGLProfiler.css',
         ],
         'webinspector_elements_js_files': [
             'inspector/front-end/ElementsPanel.js',
@@ -6524,6 +6525,7 @@
             'inspector/front-end/ProfilesPanel.js',
             'inspector/front-end/ProfileLauncherView.js',
             'inspector/front-end/TopDownProfileDataGridTree.js',
+            'inspector/front-end/WebGLProfileView.js',
         ],
 
         'webinspector_audits_js_files': [

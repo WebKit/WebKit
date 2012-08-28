@@ -58,7 +58,7 @@ var WebInspector = {
         var allDescriptors = [elements, resources, network, scripts, timeline, profiles, audits, console];
         var hiddenPanels = InspectorFrontendHost.hiddenPanels();
         for (var i = 0; i < allDescriptors.length; ++i) {
-            if (hiddenPanels.indexOf(allDescriptors[i].name) === -1)
+            if (hiddenPanels.indexOf(allDescriptors[i].name()) === -1)
                 panelDescriptors.push(allDescriptors[i]);
         }
         return panelDescriptors;

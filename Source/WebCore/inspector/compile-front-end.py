@@ -329,6 +329,7 @@ modules = [
             "ProfilesPanel.js",
             "ProfileLauncherView.js",
             "TopDownProfileDataGridTree.js",
+            "WebGLProfileView.js",
         ]
     },
     {

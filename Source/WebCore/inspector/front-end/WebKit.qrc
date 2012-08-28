@@ -207,6 +207,7 @@
     <file>utilities.js</file>
     <file>View.js</file>
     <file>WatchExpressionsSidebarPane.js</file>
+    <file>WebGLProfileView.js</file>
     <file>WorkerManager.js</file>
     <file>WorkersSidebarPane.js</file>
     <file>Workspace.js</file>
@@ -240,6 +241,7 @@
     <file>textEditor.css</file>
     <file>textPrompt.css</file>
     <file>timelinePanel.css</file>
+    <file>webGLProfiler.css</file>
     <file>Images/applicationCache.png</file>
     <file>Images/back.png</file>
     <file>Images/breakpointBorder.png</file>
