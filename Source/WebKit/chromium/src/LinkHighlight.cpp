@@ -196,7 +196,7 @@ void LinkHighlight::startHighlightAnimation()
 {
     const float startOpacity = 1;
     // FIXME: Should duration be configurable?
-    const float duration = 0.1;
+    const float duration = 0.1f;
 
     m_contentLayer->layer()->setOpacity(startOpacity);
 
