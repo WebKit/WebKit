@@ -8303,6 +8303,8 @@
             '<(PRODUCT_DIR)/DerivedSources/WebCore/XPathGrammar.h',
         ],
         'webcore_platform_support_files': [
+            'platform/chromium/support/CCThreadImpl.cpp',
+            'platform/chromium/support/CCThreadImpl.h',
             'platform/chromium/support/Extensions3DChromium.cpp',
             'platform/chromium/support/GraphicsContext3DChromium.cpp',
             'platform/chromium/support/GraphicsContext3DPrivate.cpp',
@@ -8310,6 +8312,8 @@
             'platform/chromium/support/PlatformGestureCurveFactory.cpp',
             'platform/chromium/support/PlatformGestureCurveFactory.h',
             'platform/chromium/support/WebAudioBus.cpp',
+            'platform/chromium/support/WebCompositorImpl.cpp',
+            'platform/chromium/support/WebCompositorImpl.h',
             'platform/chromium/support/WebData.cpp',
             'platform/chromium/support/WebFlingAnimatorToGestureCurveAdapter.h',
             'platform/chromium/support/WebHTTPBody.cpp',
@@ -8341,10 +8345,6 @@
             'platform/chromium/support/WrappedResourceResponse.h',
         ],
         'webcore_chromium_compositor_files': [
-            'platform/chromium/support/CCThreadImpl.cpp',
-            'platform/chromium/support/CCThreadImpl.h',
-            'platform/chromium/support/WebCompositorImpl.cpp',
-            'platform/chromium/support/WebCompositorImpl.h',
             'platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.cpp',
             'platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.h',
             'platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.cpp',
