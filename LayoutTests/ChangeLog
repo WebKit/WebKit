@@ -1,3 +1,21 @@
+2012-08-27  Jeffrey Pfau  <jpfau@apple.com>
+
+        Make shared workers respect third-party storage blocking setting
+        https://bugs.webkit.org/show_bug.cgi?id=94559
+
+        Reviewed by Adam Barth.
+
+        Created tests for accessing shared workers from a third party and first party when third-party blocking is on and off.
+
+        * http/tests/security/cross-origin-shared-worker-allowed-expected.txt: Added.
+        * http/tests/security/cross-origin-shared-worker-allowed.html: Added.
+        * http/tests/security/cross-origin-shared-worker-expected.txt: Added.
+        * http/tests/security/cross-origin-shared-worker.html: Added.
+        * http/tests/security/resources/cross-origin-iframe-for-shared-worker.html: Added.
+        * http/tests/security/resources/shared-worker.js: Added.
+        (self.addEventListener):
+        * platform/chromium/TestExpectations: Shared workers are not supported in chromium DRT
+
 2012-08-28  Robert Hogan  <robert@webkit.org>
 
         REGRESSION (r94492): Unstable layout of static block inside text-align: center div

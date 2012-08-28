@@ -40,6 +40,7 @@
 #include "MessageChannel.h"
 #include "MessagePort.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 #include "SharedWorkerRepository.h"
 
 namespace WebCore {
@@ -63,6 +64,14 @@ PassRefPtr<SharedWorker> SharedWorker::create(ScriptExecutionContext* context, c
     KURL scriptURL = worker->resolveURL(url, ec);
     if (scriptURL.isEmpty())
         return 0;
+
+    // We don't currently support nested workers, so workers can only be created from documents.
+    ASSERT(context->isDocument());
+    Document* document = static_cast<Document*>(context);
+    if (!document->securityOrigin()->canAccessSharedWorkers(document->topDocument()->securityOrigin())) {
+        ec = SECURITY_ERR;
+        return 0;
+    }
 
     SharedWorkerRepository::connect(worker.get(), remotePort.release(), scriptURL, name, ec);
 

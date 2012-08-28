@@ -525,6 +525,8 @@ WONTFIX SKIP : http/tests/websocket/tests/hybi/workers/shared-worker-simple.html
 WONTFIX SKIP : http/tests/inspector/network/network-shared-worker.html = PASS
 WONTFIX SKIP : http/tests/security/contentSecurityPolicy/shared-worker-connect-src-allowed.html = TEXT
 WONTFIX SKIP : http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked.html = TEXT
+WONTFIX SKIP : http/tests/security/cross-origin-shared-worker.html = TEXT
+WONTFIX SKIP : http/tests/security/cross-origin-shared-worker-allowed.html = TEXT
 WONTFIX SKIP : storage/indexeddb/basics-shared-workers.html = PASS
 
 // test_shell does not support message ports
