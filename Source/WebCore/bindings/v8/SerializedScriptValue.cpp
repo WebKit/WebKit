@@ -108,7 +108,7 @@ public:
     {
         typename HandleToT::iterator result = m_map.find(*handle);
         if (result != m_map.end()) {
-            *valueOut = result->value;
+            *valueOut = result->second;
             return true;
         }
         return false;

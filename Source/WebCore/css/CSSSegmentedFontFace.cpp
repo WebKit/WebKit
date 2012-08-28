@@ -106,7 +106,7 @@ FontData* CSSSegmentedFontFace::getFontData(const FontDescription& fontDescripti
     FontTraitsMask desiredTraitsMask = fontDescription.traitsMask();
     unsigned hashKey = ((fontDescription.computedPixelSize() + 1) << (FontTraitsMaskWidth + 1)) | ((fontDescription.orientation() == Vertical ? 1 : 0) << FontTraitsMaskWidth) | desiredTraitsMask;
 
-    SegmentedFontData*& fontData = m_fontDataTable.add(hashKey, 0).iterator->value;
+    SegmentedFontData*& fontData = m_fontDataTable.add(hashKey, 0).iterator->second;
     if (fontData)
         return fontData;
 

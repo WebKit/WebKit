@@ -156,9 +156,9 @@ typedef void (*SetFontFamilyWrapper)(WebSettings*, const WebString&, UScriptCode
 static void applyFontMap(WebSettings* settings, const WebPreferences::ScriptFontFamilyMap& map, SetFontFamilyWrapper setter)
 {
     for (WebPreferences::ScriptFontFamilyMap::const_iterator iter = map.begin(); iter != map.end(); ++iter) {
-        const WebString& font = iter->value;
+        const WebString& font = iter->second;
         if (!font.isNull() && !font.isEmpty())
-            (*setter)(settings, font, static_cast<UScriptCode>(iter->key));
+            (*setter)(settings, font, static_cast<UScriptCode>(iter->first));
     }
 }
 

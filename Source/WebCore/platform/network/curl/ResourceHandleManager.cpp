@@ -703,8 +703,8 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
         HTTPHeaderMap customHeaders = job->firstRequest().httpHeaderFields();
         HTTPHeaderMap::const_iterator end = customHeaders.end();
         for (HTTPHeaderMap::const_iterator it = customHeaders.begin(); it != end; ++it) {
-            String key = it->key;
-            String value = it->value;
+            String key = it->first;
+            String value = it->second;
             String headerString(key);
             headerString.append(": ");
             headerString.append(value);

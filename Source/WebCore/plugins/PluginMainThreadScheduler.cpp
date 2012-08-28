@@ -49,7 +49,7 @@ void PluginMainThreadScheduler::scheduleCall(NPP npp, MainThreadFunction functio
     if (it == m_callQueueMap.end())
         return;
 
-    it->value.append(Call(function, userData));
+    it->second.append(Call(function, userData));
 
     if (!m_callPending) {
         callOnMainThread(mainThreadCallback, this);
@@ -97,7 +97,7 @@ void PluginMainThreadScheduler::dispatchCalls()
         // Empty all the queues in the original map
         CallQueueMap::iterator end = m_callQueueMap.end();
         for (CallQueueMap::iterator it = m_callQueueMap.begin(); it != end; ++it)
-            it->value.clear();
+            it->second.clear();
     }
 
     m_callPending = false;
@@ -105,7 +105,7 @@ void PluginMainThreadScheduler::dispatchCalls()
 
     CallQueueMap::iterator end = copy.end();
     for (CallQueueMap::iterator it = copy.begin(); it != end; ++it)
-        dispatchCallsForPlugin(it->key, it->value);
+        dispatchCallsForPlugin(it->first, it->second);
 }
 
 void PluginMainThreadScheduler::mainThreadCallback(void* context)

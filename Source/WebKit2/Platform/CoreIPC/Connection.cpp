@@ -102,12 +102,12 @@ PassRefPtr<Connection::SyncMessageState> Connection::SyncMessageState::getOrCrea
     SyncMessageStateMap::AddResult result = syncMessageStateMap().add(runLoop, 0);
 
     if (!result.isNewEntry) {
-        ASSERT(result.iterator->value);
-        return result.iterator->value;
+        ASSERT(result.iterator->second);
+        return result.iterator->second;
     }
 
     RefPtr<SyncMessageState> syncMessageState = adoptRef(new SyncMessageState(runLoop));
-    result.iterator->value = syncMessageState.get();
+    result.iterator->second = syncMessageState.get();
 
     return syncMessageState.release();
 }
@@ -362,10 +362,10 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForMessage(MessageID messageID, uint
         MutexLocker locker(m_waitForMessageMutex);
 
         HashMap<std::pair<unsigned, uint64_t>, ArgumentDecoder*>::iterator it = m_waitForMessageMap.find(messageAndDestination);
-        if (it->value) {
+        if (it->second) {
             // FIXME: m_waitForMessageMap should really hold OwnPtrs to
             // ArgumentDecoders, but HashMap doesn't currently support OwnPtrs.
-            OwnPtr<ArgumentDecoder> arguments = adoptPtr(it->value);
+            OwnPtr<ArgumentDecoder> arguments = adoptPtr(it->second);
             m_waitForMessageMap.remove(it);
             
             return arguments.release();
@@ -539,8 +539,8 @@ void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<Argument
         
         HashMap<std::pair<unsigned, uint64_t>, ArgumentDecoder*>::iterator it = m_waitForMessageMap.find(std::make_pair(messageID.toInt(), incomingMessage.destinationID()));
         if (it != m_waitForMessageMap.end()) {
-            it->value = incomingMessage.releaseArguments().leakPtr();
-            ASSERT(it->value);
+            it->second = incomingMessage.releaseArguments().leakPtr();
+            ASSERT(it->second);
         
             m_waitForMessageCondition.signal();
             return;

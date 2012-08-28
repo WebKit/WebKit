@@ -110,7 +110,7 @@ namespace WebCore {
         bool removeIfPresent(KeyType* key, v8::Persistent<ValueType> value)
         {
             typename HashMap<KeyType*, ValueType*>::iterator it = m_map.find(key);
-            if (it == m_map.end() || it->value != *value)
+            if (it == m_map.end() || it->second != *value)
                 return false;
 
             m_map.remove(it);
@@ -130,7 +130,7 @@ namespace WebCore {
             visitor->startMap();
             typename HashMap<KeyType*, ValueType*>::iterator it = m_map.begin();
             for (; it != m_map.end(); ++it)
-                visitor->visitDOMWrapper(store, it->key, v8::Persistent<ValueType>(it->value));
+                visitor->visitDOMWrapper(store, it->first, v8::Persistent<ValueType>(it->second));
             visitor->endMap();
         }
 

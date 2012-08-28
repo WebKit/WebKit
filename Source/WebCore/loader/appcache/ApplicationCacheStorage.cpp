@@ -137,8 +137,8 @@ ApplicationCacheGroup* ApplicationCacheStorage::findOrCreateCacheGroup(const KUR
     CacheGroupMap::AddResult result = m_cachesInMemory.add(manifestURL, 0);
     
     if (!result.isNewEntry) {
-        ASSERT(result.iterator->value);
-        return result.iterator->value;
+        ASSERT(result.iterator->second);
+        return result.iterator->second;
     }
 
     // Look up the group in the database
@@ -150,7 +150,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::findOrCreateCacheGroup(const KUR
         m_cacheHostSet.add(urlHostHash(manifestURL));
     }
     
-    result.iterator->value = group;
+    result.iterator->second = group;
     
     return group;
 }
@@ -197,7 +197,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const KURL& url
     // Check if a cache already exists in memory.
     CacheGroupMap::const_iterator end = m_cachesInMemory.end();
     for (CacheGroupMap::const_iterator it = m_cachesInMemory.begin(); it != end; ++it) {
-        ApplicationCacheGroup* group = it->value;
+        ApplicationCacheGroup* group = it->second;
 
         ASSERT(!group->isObsolete());
 
@@ -268,7 +268,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const K
     // Check if an appropriate cache already exists in memory.
     CacheGroupMap::const_iterator end = m_cachesInMemory.end();
     for (CacheGroupMap::const_iterator it = m_cachesInMemory.begin(); it != end; ++it) {
-        ApplicationCacheGroup* group = it->value;
+        ApplicationCacheGroup* group = it->second;
         
         ASSERT(!group->isObsolete());
 
@@ -713,13 +713,13 @@ bool ApplicationCacheStorage::store(ApplicationCache* cache, ResourceStorageIDJo
     {
         ApplicationCache::ResourceMap::const_iterator end = cache->end();
         for (ApplicationCache::ResourceMap::const_iterator it = cache->begin(); it != end; ++it) {
-            unsigned oldStorageID = it->value->storageID();
-            if (!store(it->value.get(), cacheStorageID))
+            unsigned oldStorageID = it->second->storageID();
+            if (!store(it->second.get(), cacheStorageID))
                 return false;
 
             // Storing the resource succeeded. Log its old storageID in case
             // it needs to be restored later.
-            storageIDJournal->add(it->value.get(), oldStorageID);
+            storageIDJournal->add(it->second.get(), oldStorageID);
         }
     }
     
@@ -839,9 +839,9 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
     
     HTTPHeaderMap::const_iterator end = resource->response().httpHeaderFields().end();
     for (HTTPHeaderMap::const_iterator it = resource->response().httpHeaderFields().begin(); it!= end; ++it) {
-        stringBuilder.append(it->key);
+        stringBuilder.append(it->first);
         stringBuilder.append((UChar)':');
-        stringBuilder.append(it->value);
+        stringBuilder.append(it->second);
         stringBuilder.append((UChar)'\n');
     }
     
@@ -1241,7 +1241,7 @@ void ApplicationCacheStorage::empty()
     // until a cache update process has been initiated.
     CacheGroupMap::const_iterator end = m_cachesInMemory.end();
     for (CacheGroupMap::const_iterator it = m_cachesInMemory.begin(); it != end; ++it)
-        it->value->clearStorageID();
+        it->second->clearStorageID();
     
     checkForDeletedResources();
 }
@@ -1303,7 +1303,7 @@ bool ApplicationCacheStorage::storeCopyOfCache(const String& cacheDirectory, App
     // Traverse the cache and add copies of all resources.
     ApplicationCache::ResourceMap::const_iterator end = cache->end();
     for (ApplicationCache::ResourceMap::const_iterator it = cache->begin(); it != end; ++it) {
-        ApplicationCacheResource* resource = it->value.get();
+        ApplicationCacheResource* resource = it->second.get();
         
         RefPtr<ApplicationCacheResource> resourceCopy = ApplicationCacheResource::create(resource->url(), resource->response(), resource->type(), resource->data(), resource->path());
         

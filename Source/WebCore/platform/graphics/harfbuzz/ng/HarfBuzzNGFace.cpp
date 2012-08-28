@@ -60,8 +60,8 @@ HarfBuzzNGFace::HarfBuzzNGFace(FontPlatformData* platformData, uint64_t uniqueID
         ASSERT(m_face);
         harfbuzzFaceCache()->set(m_uniqueID, FaceCacheEntry(m_face, 1));
     } else {
-        ++(result.get()->value.second);
-        m_face = result.get()->value.first;
+        ++(result.get()->second.second);
+        m_face = result.get()->second.first;
     }
 }
 
@@ -69,10 +69,10 @@ HarfBuzzNGFace::~HarfBuzzNGFace()
 {
     HarfBuzzNGFaceCache::iterator result = harfbuzzFaceCache()->find(m_uniqueID);
     ASSERT(result != harfbuzzFaceCache()->end());
-    ASSERT(result.get()->value.second > 0);
-    --(result.get()->value.second);
-    if (!(result.get()->value.second)) {
-        hb_face_destroy(result.get()->value.first);
+    ASSERT(result.get()->second.second > 0);
+    --(result.get()->second.second);
+    if (!(result.get()->second.second)) {
+        hb_face_destroy(result.get()->second.first);
         harfbuzzFaceCache()->remove(m_uniqueID);
     }
 }

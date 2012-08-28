@@ -233,7 +233,7 @@ FloatRect CCDamageTracker::trackDamageFromLeftoverRects()
     FloatRect damageRect = FloatRect();
 
     for (RectMap::iterator it = m_currentRectHistory->begin(); it != m_currentRectHistory->end(); ++it)
-        damageRect.unite(it->value);
+        damageRect.unite(it->second);
 
     m_currentRectHistory->clear();
 

@@ -154,7 +154,7 @@ namespace WTF {
     inline typename HashCountedSet<Value, HashFunctions, Traits>::AddResult HashCountedSet<Value, HashFunctions, Traits>::add(const ValueType &value)
     {
         AddResult result = m_impl.add(value, 0);
-        ++result.iterator->value;
+        ++result.iterator->second;
         return result;
     }
     
@@ -170,11 +170,11 @@ namespace WTF {
         if (it == end())
             return false;
 
-        unsigned oldVal = it->value;
+        unsigned oldVal = it->second;
         ASSERT(oldVal);
         unsigned newVal = oldVal - 1;
         if (newVal) {
-            it->value = newVal;
+            it->second = newVal;
             return false;
         }
 
@@ -226,7 +226,7 @@ namespace WTF {
         iterator it = collection.begin();
         iterator end = collection.end();
         for (unsigned i = 0; it != end; ++it, ++i)
-            vector[i] = (*it).key;
+            vector[i] = (*it).first;
     }
 
 

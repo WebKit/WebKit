@@ -48,10 +48,10 @@ PassRefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(Ran
 
     DOMHandleCache::AddResult result = domHandleCache().add(range, 0);
     if (!result.isNewEntry)
-        return PassRefPtr<InjectedBundleRangeHandle>(result.iterator->value);
+        return PassRefPtr<InjectedBundleRangeHandle>(result.iterator->second);
 
     RefPtr<InjectedBundleRangeHandle> rangeHandle = InjectedBundleRangeHandle::create(range);
-    result.iterator->value = rangeHandle.get();
+    result.iterator->second = rangeHandle.get();
     return rangeHandle.release();
 }
 

@@ -225,8 +225,8 @@ static const char** xsltParamArrayFromParameterMap(XSLTProcessor::ParameterMap& 
     XSLTProcessor::ParameterMap::iterator end = parameters.end();
     unsigned index = 0;
     for (XSLTProcessor::ParameterMap::iterator it = parameters.begin(); it != end; ++it) {
-        parameterArray[index++] = fastStrDup(it->key.utf8().data());
-        parameterArray[index++] = fastStrDup(it->value.utf8().data());
+        parameterArray[index++] = fastStrDup(it->first.utf8().data());
+        parameterArray[index++] = fastStrDup(it->second.utf8().data());
     }
     parameterArray[index] = 0;
 

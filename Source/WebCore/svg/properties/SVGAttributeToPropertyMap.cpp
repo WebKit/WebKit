@@ -31,7 +31,7 @@ void SVGAttributeToPropertyMap::addProperties(SVGAttributeToPropertyMap& map)
 {
     AttributeToPropertiesMap::iterator end = map.m_map.end();
     for (AttributeToPropertiesMap::iterator it = map.m_map.begin(); it != end; ++it) {
-        PropertiesVector* vector = it->value;
+        PropertiesVector* vector = it->second;
         ASSERT(vector);
 
         PropertiesVector::iterator vectorEnd = vector->end();
@@ -81,12 +81,12 @@ void SVGAttributeToPropertyMap::synchronizeProperties(SVGElement* contextElement
     ASSERT(contextElement);
     AttributeToPropertiesMap::iterator end = m_map.end();
     for (AttributeToPropertiesMap::iterator it = m_map.begin(); it != end; ++it) {
-        PropertiesVector* vector = it->value;
+        PropertiesVector* vector = it->second;
         ASSERT(vector);
 
         PropertiesVector::iterator vectorEnd = vector->end();
         for (PropertiesVector::iterator vectorIt = vector->begin(); vectorIt != vectorEnd; ++vectorIt)
-            synchronizeProperty(contextElement, it->key, *vectorIt);
+            synchronizeProperty(contextElement, it->first, *vectorIt);
     } 
 }
 

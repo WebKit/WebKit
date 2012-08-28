@@ -1364,10 +1364,10 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseStrictObject
         if (!m_syntaxAlreadyValidated) {
             ObjectValidationMap::AddResult propertyEntry = objectValidator.add(context.getName(property).impl(), context.getType(property));
             if (!propertyEntry.isNewEntry) {
-                failIfTrue(propertyEntry.iterator->value == PropertyNode::Constant);
+                failIfTrue(propertyEntry.iterator->second == PropertyNode::Constant);
                 failIfTrue(context.getType(property) == PropertyNode::Constant);
-                failIfTrue(context.getType(property) & propertyEntry.iterator->value);
-                propertyEntry.iterator->value |= context.getType(property);
+                failIfTrue(context.getType(property) & propertyEntry.iterator->second);
+                propertyEntry.iterator->second |= context.getType(property);
             }
         }
         tail = context.createPropertyList(propertyLocation, property, tail);

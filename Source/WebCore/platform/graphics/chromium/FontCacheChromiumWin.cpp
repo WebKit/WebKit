@@ -223,10 +223,10 @@ static bool LookupAltName(const String& name, String& altName)
         return false;
 
     static int systemCp = ::GetACP();
-    int fontCp = iter->value->codePage;
+    int fontCp = iter->second->codePage;
 
     if ((isAscii && systemCp == fontCp) || (!isAscii && systemCp != fontCp)) {
-        altName = String(iter->value->name);
+        altName = String(iter->second->name);
         return true;
     }
 
@@ -277,7 +277,7 @@ static bool fontContainsCharacter(const FontPlatformData* fontData,
 
     HashMap<const wchar_t*, icu::UnicodeSet*>::iterator it = fontCmapCache->find(family);
     if (it != fontCmapCache->end())
-        return it->value->contains(character);
+        return it->second->contains(character);
 
     HFONT hfont = fontData->hfont();
     HWndDC hdc(0);

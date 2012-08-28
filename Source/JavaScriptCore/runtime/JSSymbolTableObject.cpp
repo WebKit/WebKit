@@ -61,8 +61,8 @@ void JSSymbolTableObject::getOwnPropertyNames(JSObject* object, ExecState* exec,
     JSSymbolTableObject* thisObject = jsCast<JSSymbolTableObject*>(object);
     SymbolTable::const_iterator end = thisObject->symbolTable()->end();
     for (SymbolTable::const_iterator it = thisObject->symbolTable()->begin(); it != end; ++it) {
-        if (!(it->value.getAttributes() & DontEnum) || (mode == IncludeDontEnumProperties))
-            propertyNames.add(Identifier(exec, it->key.get()));
+        if (!(it->second.getAttributes() & DontEnum) || (mode == IncludeDontEnumProperties))
+            propertyNames.add(Identifier(exec, it->first.get()));
     }
     
     JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);

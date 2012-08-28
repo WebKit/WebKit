@@ -49,8 +49,8 @@ QNetworkRequest ResourceRequest::toNetworkRequest(NetworkingContext *context) co
     const HTTPHeaderMap &headers = httpHeaderFields();
     for (HTTPHeaderMap::const_iterator it = headers.begin(), end = headers.end();
          it != end; ++it) {
-        QByteArray name = QString(it->key).toLatin1();
-        QByteArray value = QString(it->value).toLatin1();
+        QByteArray name = QString(it->first).toLatin1();
+        QByteArray value = QString(it->second).toLatin1();
         // QNetworkRequest::setRawHeader() would remove the header if the value is null
         // Make sure to set an empty header instead of null header.
         if (!value.isNull())

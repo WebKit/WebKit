@@ -140,7 +140,7 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
     if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && objectBoundingBox.isEmpty())
         return false;
 
-    OwnPtr<GradientData>& gradientData = m_gradientMap.add(object, nullptr).iterator->value;
+    OwnPtr<GradientData>& gradientData = m_gradientMap.add(object, nullptr).iterator->second;
     if (!gradientData)
         gradientData = adoptPtr(new GradientData);
 

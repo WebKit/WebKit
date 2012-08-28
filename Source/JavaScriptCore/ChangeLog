@@ -1,3 +1,120 @@
+2012-08-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r126914.
+        http://trac.webkit.org/changeset/126914
+        https://bugs.webkit.org/show_bug.cgi?id=95239
+
+        it breaks everything and fixes nothing (Requested by pizlo on
+        #webkit).
+
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::getPrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::setPrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::visitChildren):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getOwnPropertyNames):
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::~OpaqueJSClass):
+        (OpaqueJSClassContextData::OpaqueJSClassContextData):
+        (OpaqueJSClass::contextData):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::EvalCodeCache::visitAggregate):
+        (JSC::CodeBlock::nameForRegister):
+        * bytecode/JumpTable.h:
+        (JSC::StringJumpTable::offsetForValue):
+        (JSC::StringJumpTable::ctiForValue):
+        * bytecode/LazyOperandValueProfile.cpp:
+        (JSC::LazyOperandValueProfileParser::getIfPresent):
+        * bytecode/SamplingTool.cpp:
+        (JSC::SamplingTool::dump):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addVar):
+        (JSC::BytecodeGenerator::addGlobalVar):
+        (JSC::BytecodeGenerator::addConstant):
+        (JSC::BytecodeGenerator::addConstantValue):
+        (JSC::BytecodeGenerator::emitLoad):
+        (JSC::BytecodeGenerator::addStringConstant):
+        (JSC::BytecodeGenerator::emitLazyNewFunction):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode):
+        * debugger/Debugger.cpp:
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        (JSC::DFG::ArgumentsSimplificationPhase::observeBadArgumentsUse):
+        (JSC::DFG::ArgumentsSimplificationPhase::observeProperArgumentsUse):
+        (JSC::DFG::ArgumentsSimplificationPhase::isOKToOptimize):
+        (JSC::DFG::ArgumentsSimplificationPhase::removeArgumentsReferencingPhantomChild):
+        * dfg/DFGAssemblyHelpers.cpp:
+        (JSC::DFG::AssemblyHelpers::decodedCodeMapFor):
+        * dfg/DFGByteCodeCache.h:
+        (JSC::DFG::ByteCodeCache::~ByteCodeCache):
+        (JSC::DFG::ByteCodeCache::get):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::cellConstant):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+        (JSC::DFG::StructureCheckHoistingPhase::noticeStructureCheck):
+        (JSC::DFG::StructureCheckHoistingPhase::noticeClobber):
+        * heap/Heap.cpp:
+        (JSC::Heap::markProtectedObjects):
+        * heap/Heap.h:
+        (JSC::Heap::forEachProtectedCell):
+        * heap/JITStubRoutineSet.cpp:
+        (JSC::JITStubRoutineSet::markSlow):
+        (JSC::JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines):
+        * heap/MarkStack.cpp:
+        (JSC::MarkStack::internalAppend):
+        * heap/Weak.h:
+        (JSC::weakRemove):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::ctiStub):
+        * parser/Parser.cpp:
+        (JSC::::parseStrictObjectLiteral):
+        * profiler/Profile.cpp:
+        (JSC::functionNameCountPairComparator):
+        (JSC::Profile::debugPrintDataSampleStyle):
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::add):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::getOwnPropertyNames):
+        (JSC::JSActivation::symbolTablePutWithAttributes):
+        * runtime/JSArray.cpp:
+        (JSC::SparseArrayValueMap::put):
+        (JSC::SparseArrayValueMap::putDirect):
+        (JSC::SparseArrayValueMap::visitChildren):
+        (JSC::JSArray::enterDictionaryMode):
+        (JSC::JSArray::defineOwnNumericProperty):
+        (JSC::JSArray::getOwnPropertySlotByIndex):
+        (JSC::JSArray::getOwnPropertyDescriptor):
+        (JSC::JSArray::putByIndexBeyondVectorLength):
+        (JSC::JSArray::putDirectIndexBeyondVectorLength):
+        (JSC::JSArray::deletePropertyByIndex):
+        (JSC::JSArray::getOwnPropertyNames):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::sort):
+        (JSC::JSArray::compactForSorting):
+        (JSC::JSArray::checkConsistency):
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::getOwnPropertyNames):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTableGet):
+        (JSC::symbolTablePut):
+        (JSC::symbolTablePutWithAttributes):
+        * runtime/RegExpCache.cpp:
+        (JSC::RegExpCache::invalidateCode):
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::clear):
+        (JSC::WeakGCMap::set):
+        * tools/ProfileTreeNode.h:
+        (JSC::ProfileTreeNode::sampleChild):
+        (JSC::ProfileTreeNode::childCount):
+        (JSC::ProfileTreeNode::dumpInternal):
+        (JSC::ProfileTreeNode::compareEntries):
+
 2012-08-28  Filip Pizlo  <fpizlo@apple.com>
 
         LLInt should not rely on ordering of global labels

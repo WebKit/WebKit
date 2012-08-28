@@ -202,10 +202,10 @@ void TextureCacheCompositingThread::setMemoryUsage(size_t memoryUsage)
 PassRefPtr<Texture> TextureCacheCompositingThread::textureForTiledContents(const SkBitmap& contents, const IntRect& tileRect, const TileIndex& index, bool isOpaque)
 {
     HashMap<ContentsKey, TextureMap>::iterator it = m_cache.add(key(contents), TextureMap()).iterator;
-    TextureMap& map = (*it).value;
+    TextureMap& map = (*it).second;
 
     TextureMap::iterator jt = map.add(index, RefPtr<Texture>()).iterator;
-    RefPtr<Texture> texture = (*jt).value;
+    RefPtr<Texture> texture = (*jt).second;
     if (!texture) {
         texture = createTexture();
 #if DEBUG_TEXTURE_MEMORY_USAGE
@@ -244,7 +244,7 @@ PassRefPtr<Texture> TextureCacheCompositingThread::textureForColor(const Color& 
 #endif
         m_colors.set(color, texture);
     } else
-        texture = (*it).value;
+        texture = (*it).second;
 
     // Color textures can't be evicted, so no need for TextureProtector.
 

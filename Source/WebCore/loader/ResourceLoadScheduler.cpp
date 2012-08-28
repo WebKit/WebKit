@@ -174,7 +174,7 @@ void ResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimumPri
     m_hosts.checkConsistency();
     HostMap::iterator end = m_hosts.end();
     for (HostMap::iterator iter = m_hosts.begin(); iter != end; ++iter)
-        hostsToServe.append(iter->value);
+        hostsToServe.append(iter->second);
 
     int size = hostsToServe.size();
     for (int i = 0; i < size; ++i) {

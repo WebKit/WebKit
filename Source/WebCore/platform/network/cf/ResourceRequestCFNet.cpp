@@ -120,8 +120,8 @@ static inline void setHeaderFields(CFMutableURLRequestRef request, const HTTPHea
 
     HTTPHeaderMap::const_iterator end = requestHeaders.end();
     for (HTTPHeaderMap::const_iterator it = requestHeaders.begin(); it != end; ++it) {
-        CFStringRef key = it->key.createCFString();
-        CFStringRef value = it->value.createCFString();
+        CFStringRef key = it->first.createCFString();
+        CFStringRef value = it->second.createCFString();
         CFURLRequestSetHTTPHeaderFieldValue(request, key, value);
         CFRelease(key);
         CFRelease(value);

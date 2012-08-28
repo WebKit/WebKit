@@ -2947,7 +2947,7 @@ const Vector<RefPtr<CSSStyleSheet> >* Document::pageGroupUserSheets() const
 
     UserStyleSheetMap::const_iterator end = sheetsMap->end();
     for (UserStyleSheetMap::const_iterator it = sheetsMap->begin(); it != end; ++it) {
-        const UserStyleSheetVector* sheets = it->value.get();
+        const UserStyleSheetVector* sheets = it->second.get();
         for (unsigned i = 0; i < sheets->size(); ++i) {
             const UserStyleSheet* sheet = sheets->at(i).get();
             if (sheet->injectedFrames() == InjectInTopFrameOnly && ownerElement())
@@ -4830,10 +4830,10 @@ PassRefPtr<HTMLCollection> Document::windowNamedItems(const AtomicString& name)
 {
     NamedCollectionMap::AddResult result = m_windowNamedItemCollections.add(name, 0);
     if (!result.isNewEntry)
-        return result.iterator->value;
+        return result.iterator->second;
 
     RefPtr<HTMLNameCollection> collection = HTMLNameCollection::create(this, WindowNamedItems, name);
-    result.iterator->value = collection.get();
+    result.iterator->second = collection.get();
     return collection.release();
 }
 
@@ -4841,10 +4841,10 @@ PassRefPtr<HTMLCollection> Document::documentNamedItems(const AtomicString& name
 {
     NamedCollectionMap::AddResult result = m_documentNamedItemCollections.add(name, 0);
     if (!result.isNewEntry)
-        return result.iterator->value;
+        return result.iterator->second;
 
     RefPtr<HTMLNameCollection> collection = HTMLNameCollection::create(this, DocumentNamedItems, name);
-    result.iterator->value = collection.get();
+    result.iterator->second = collection.get();
     return collection.release();
 }
 
@@ -5179,7 +5179,7 @@ CanvasRenderingContext* Document::getCSSCanvasContext(const String& type, const 
 
 HTMLCanvasElement* Document::getCSSCanvasElement(const String& name)
 {
-    RefPtr<HTMLCanvasElement>& element = m_cssCanvasElements.add(name, 0).iterator->value;
+    RefPtr<HTMLCanvasElement>& element = m_cssCanvasElements.add(name, 0).iterator->second;
     if (!element)
         element = HTMLCanvasElement::create(this);
     return element.get();

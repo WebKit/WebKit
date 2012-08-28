@@ -93,8 +93,8 @@ public:
             ImmutableDictionary::MapType::const_iterator it = map.begin();
             ImmutableDictionary::MapType::const_iterator end = map.end();
             for (; it != end; ++it) {
-                encoder->encode(it->key);
-                encoder->encode(Owner(it->value.get()));
+                encoder->encode(it->first);
+                encoder->encode(Owner(it->second.get()));
             }
             return true;
         }

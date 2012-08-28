@@ -105,7 +105,7 @@ void RootObject::invalidate()
     {
         HashMap<RuntimeObject*, JSC::Weak<RuntimeObject> >::iterator end = m_runtimeObjects.end();
         for (HashMap<RuntimeObject*, JSC::Weak<RuntimeObject> >::iterator it = m_runtimeObjects.begin(); it != end; ++it) {
-            RuntimeObject* runtimeObject = it->value.get();
+            RuntimeObject* runtimeObject = it->second.get();
             if (!runtimeObject) // Skip zombies.
                 continue;
             runtimeObject->invalidate();
@@ -129,7 +129,7 @@ void RootObject::invalidate()
 
     ProtectCountSet::iterator end = m_protectCountSet.end();
     for (ProtectCountSet::iterator it = m_protectCountSet.begin(); it != end; ++it)
-        JSC::gcUnprotect(it->key);
+        JSC::gcUnprotect(it->first);
     m_protectCountSet.clear();
 
     rootObjectSet()->remove(this);

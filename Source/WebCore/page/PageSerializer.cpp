@@ -339,7 +339,7 @@ KURL PageSerializer::urlForBlankFrame(Frame* frame)
 {
     HashMap<Frame*, KURL>::iterator iter = m_blankFrameURLs.find(frame);
     if (iter != m_blankFrameURLs.end())
-        return iter->value;
+        return iter->second;
     String url = "wyciwyg://frame/" + String::number(m_blankFrameCounter++);
     KURL fakeURL(ParsedURLString, url);
     m_blankFrameURLs.add(frame, fakeURL);

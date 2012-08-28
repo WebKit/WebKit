@@ -166,7 +166,7 @@ bool PluginDatabase::refresh()
         MIMEToDescriptionsMap::const_iterator map_it = (*it)->mimeToDescriptions().begin();
         MIMEToDescriptionsMap::const_iterator map_end = (*it)->mimeToDescriptions().end();
         for (; map_it != map_end; ++map_it)
-            m_registeredMIMETypes.add(map_it->key);
+            m_registeredMIMETypes.add(map_it->first);
     }
 
     return true;
@@ -247,9 +247,9 @@ String PluginDatabase::MIMETypeForExtension(const String& extension) const
         MIMEToExtensionsMap::const_iterator mime_end = (*it)->mimeToExtensions().end();
 
         for (MIMEToExtensionsMap::const_iterator mime_it = (*it)->mimeToExtensions().begin(); mime_it != mime_end; ++mime_it) {
-            mimeType = mime_it->key;
+            mimeType = mime_it->first;
             PluginPackage* preferredPlugin = m_preferredPlugins.get(mimeType).get();
-            const Vector<String>& extensions = mime_it->value;
+            const Vector<String>& extensions = mime_it->second;
             bool foundMapping = false;
             for (unsigned i = 0; i < extensions.size(); i++) {
                 if (equalIgnoringCase(extensions[i], extension)) {
@@ -339,8 +339,8 @@ void PluginDatabase::remove(PluginPackage* package)
     MIMEToExtensionsMap::const_iterator it = package->mimeToExtensions().begin();
     MIMEToExtensionsMap::const_iterator end = package->mimeToExtensions().end();
     for ( ; it != end; ++it) {
-        PluginPackageByNameMap::iterator packageInMap = m_preferredPlugins.find(it->key);
-        if (packageInMap != m_preferredPlugins.end() && packageInMap->value == package)
+        PluginPackageByNameMap::iterator packageInMap = m_preferredPlugins.find(it->first);
+        if (packageInMap != m_preferredPlugins.end() && packageInMap->second == package)
             m_preferredPlugins.remove(packageInMap);
     }
 

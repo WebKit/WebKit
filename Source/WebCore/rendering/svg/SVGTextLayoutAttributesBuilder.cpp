@@ -149,7 +149,7 @@ void SVGTextLayoutAttributesBuilder::buildCharacterDataMap(RenderSVGText* textRo
         data.y = 0;
         m_characterDataMap.set(1, data);
     } else {
-        SVGCharacterData& data = it->value;
+        SVGCharacterData& data = it->second;
         if (data.x == SVGTextLayoutAttributes::emptyValue())
             data.x = 0;
         if (data.y == SVGTextLayoutAttributes::emptyValue())
@@ -213,7 +213,7 @@ void SVGTextLayoutAttributesBuilder::fillCharacterDataMap(const TextPosition& po
             continue;
         }
 
-        updateCharacterData(i, lastRotation, it->value, lengthContext, xListPtr, yListPtr, dxListPtr, dyListPtr, rotateListPtr);
+        updateCharacterData(i, lastRotation, it->second, lengthContext, xListPtr, yListPtr, dxListPtr, dyListPtr, rotateListPtr);
     }
 
     // The last rotation value always spans the whole scope.
@@ -229,7 +229,7 @@ void SVGTextLayoutAttributesBuilder::fillCharacterDataMap(const TextPosition& po
             continue;
         }
 
-        it->value.rotate = lastRotation;
+        it->second.rotate = lastRotation;
     }
 }
 

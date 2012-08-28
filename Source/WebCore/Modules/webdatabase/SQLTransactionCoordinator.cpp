@@ -78,7 +78,7 @@ void SQLTransactionCoordinator::acquireLock(SQLTransaction* transaction)
         coordinationInfoIterator = m_coordinationInfoMap.add(dbIdentifier, CoordinationInfo()).iterator;
     }
 
-    CoordinationInfo& info = coordinationInfoIterator->value;
+    CoordinationInfo& info = coordinationInfoIterator->second;
     info.pendingTransactions.append(transaction);
     processPendingTransactions(info);
 }
@@ -92,7 +92,7 @@ void SQLTransactionCoordinator::releaseLock(SQLTransaction* transaction)
 
     CoordinationInfoMap::iterator coordinationInfoIterator = m_coordinationInfoMap.find(dbIdentifier);
     ASSERT(coordinationInfoIterator != m_coordinationInfoMap.end());
-    CoordinationInfo& info = coordinationInfoIterator->value;
+    CoordinationInfo& info = coordinationInfoIterator->second;
 
     if (transaction->isReadOnly()) {
         ASSERT(info.activeReadTransactions.contains(transaction));
@@ -110,7 +110,7 @@ void SQLTransactionCoordinator::shutdown()
     // Notify all transactions in progress that the database thread is shutting down
     for (CoordinationInfoMap::iterator coordinationInfoIterator = m_coordinationInfoMap.begin();
          coordinationInfoIterator != m_coordinationInfoMap.end(); ++coordinationInfoIterator) {
-        CoordinationInfo& info = coordinationInfoIterator->value;
+        CoordinationInfo& info = coordinationInfoIterator->second;
         if (info.activeWriteTransaction)
             info.activeWriteTransaction->notifyDatabaseThreadIsShuttingDown();
         for (HashSet<RefPtr<SQLTransaction> >::iterator activeReadTransactionsIterator =

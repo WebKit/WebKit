@@ -105,7 +105,7 @@ struct TextureMapperGLData {
             GLContext currentGLConext = getCurrentGLContext();
             GLContextDataMap::iterator it = glContextDataMap().find(currentGLConext);
             if (it != glContextDataMap().end())
-                return it->value;
+                return it->second;
 
             return adoptRef(new SharedGLData(getCurrentGLContext()));
         }
@@ -124,7 +124,7 @@ struct TextureMapperGLData {
             GLContextDataMap::const_iterator end = glContextDataMap().end();
             GLContextDataMap::iterator it;
             for (it = glContextDataMap().begin(); it != end; ++it) {
-                if (it->value == this)
+                if (it->second == this)
                     break;
             }
 

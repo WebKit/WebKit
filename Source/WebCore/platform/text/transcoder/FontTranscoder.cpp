@@ -66,7 +66,7 @@ FontTranscoder::ConverterType FontTranscoder::converterType(const FontDescriptio
     if (!fontFamily.isNull()) {
         HashMap<AtomicString, ConverterType>::const_iterator found = m_converterTypes.find(fontFamily);
         if (found != m_converterTypes.end())
-            return found->value;
+            return found->second;
     }
 
     // IE's default fonts for Japanese encodings change backslashes into yen signs.

@@ -103,7 +103,7 @@ static PassRefPtr<InspectorObject> buildObjectForHeaders(const HTTPHeaderMap& he
     RefPtr<InspectorObject> headersObject = InspectorObject::create();
     HTTPHeaderMap::const_iterator end = headers.end();
     for (HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it)
-        headersObject->setString(it->key.string(), it->value);
+        headersObject->setString(it->first.string(), it->second);
     return headersObject;
 }
 
@@ -214,8 +214,8 @@ void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentL
         InspectorObject::const_iterator end = headers->end();
         for (InspectorObject::const_iterator it = headers->begin(); it != end; ++it) {
             String value;
-            if (it->value->asString(&value))
-                request.setHTTPHeaderField(it->key, value);
+            if (it->second->asString(&value))
+                request.setHTTPHeaderField(it->first, value);
         }
     }
 

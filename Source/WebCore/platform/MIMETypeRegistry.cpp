@@ -692,7 +692,7 @@ String MIMETypeRegistry::getNormalizedMIMEType(const String& mimeType)
     MIMETypeAssociationMap::const_iterator it = mimeTypeAssociationMap().find(mimeType);
 
     if (it != mimeTypeAssociationMap().end())
-        return it->value;
+        return it->second;
 #endif
     return mimeType;
 }

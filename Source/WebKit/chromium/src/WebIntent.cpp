@@ -188,7 +188,7 @@ WebString WebIntent::extrasValue(const WebString& name) const
     WTF::HashMap<String, String>::const_iterator val = m_private->extras().find(name);
     if (val == m_private->extras().end())
         return WebString();
-    return val->value;
+    return val->second;
 #else
     return WebString();
 #endif

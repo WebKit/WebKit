@@ -67,8 +67,8 @@ void ContextMenu::appendItem(ContextMenuItem& item)
 
     ItemActionMap::const_iterator end = s_itemActions.end();
     for (ItemActionMap::const_iterator it = s_itemActions.begin();  it != end; ++it) {
-        if (it->value == itemDescription.action)
-            idWx = it->key;
+        if (it->second == itemDescription.action)
+            idWx = it->first;
     }
 
     if (itemDescription.subMenu) {

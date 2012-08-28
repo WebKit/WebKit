@@ -70,9 +70,9 @@ void RenderWidget::resumeWidgetHierarchyUpdates()
         widgetNewParentMap().clear();
         WidgetToParentMap::iterator end = map.end();
         for (WidgetToParentMap::iterator it = map.begin(); it != end; ++it) {
-            Widget* child = it->key.get();
+            Widget* child = it->first.get();
             ScrollView* currentParent = child->parent();
-            FrameView* newParent = it->value;
+            FrameView* newParent = it->second;
             if (newParent != currentParent) {
                 if (currentParent)
                     currentParent->removeChild(child);

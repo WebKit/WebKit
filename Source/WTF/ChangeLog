@@ -1,3 +1,61 @@
+2012-08-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r126914.
+        http://trac.webkit.org/changeset/126914
+        https://bugs.webkit.org/show_bug.cgi?id=95239
+
+        it breaks everything and fixes nothing (Requested by pizlo on
+        #webkit).
+
+        * wtf/HashCountedSet.h:
+        (WTF::::add):
+        (WTF::::remove):
+        (WTF::copyToVector):
+        * wtf/HashIterators.h:
+        (WTF::HashTableConstKeysIterator::get):
+        (WTF::HashTableConstValuesIterator::get):
+        (WTF::HashTableKeysIterator::get):
+        (WTF::HashTableValuesIterator::get):
+        * wtf/HashMap.h:
+        (WTF::KeyValuePairKeyExtractor::extract):
+        (WTF::HashMapValueTraits::isEmptyValue):
+        (WTF::HashMapTranslator::translate):
+        (WTF::HashMapTranslatorAdapter::translate):
+        (WTF::::set):
+        (WTF::::get):
+        (WTF::::take):
+        (WTF::operator==):
+        (WTF):
+        (WTF::deleteAllPairSeconds):
+        (WTF::deleteAllValues):
+        (WTF::deleteAllPairFirsts):
+        (WTF::deleteAllKeys):
+        * wtf/HashTable.h:
+        (WTF::hashTableSwap):
+        (WTF::::checkTableConsistencyExceptSize):
+        * wtf/HashTraits.h:
+        (WTF::KeyValuePair::KeyValuePair):
+        (KeyValuePair):
+        (WTF::KeyValuePairHashTraits::constructDeletedValue):
+        (WTF::KeyValuePairHashTraits::isDeletedValue):
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::addFreeSpace):
+        (WTF::MetaAllocator::incrementPageOccupancy):
+        (WTF::MetaAllocator::decrementPageOccupancy):
+        * wtf/RefCountedLeakCounter.cpp:
+        (WTF::RefCountedLeakCounter::~RefCountedLeakCounter):
+        * wtf/RefPtrHashMap.h:
+        (WTF::::set):
+        (WTF::::get):
+        (WTF::::inlineGet):
+        (WTF::::take):
+        * wtf/Spectrum.h:
+        (WTF::Spectrum::add):
+        (WTF::Spectrum::get):
+        (WTF::Spectrum::buildList):
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::identifierByPthreadHandle):
+
 2012-08-28  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Rename first/second to key/value in HashMap iterators

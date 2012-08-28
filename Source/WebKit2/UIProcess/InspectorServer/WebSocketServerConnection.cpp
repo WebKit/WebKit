@@ -106,9 +106,9 @@ void WebSocketServerConnection::sendHTTPResponseHeader(int statusCode, const Str
     builder.append("\r\n");
     HTTPHeaderMap::const_iterator end = headerFields.end();
     for (HTTPHeaderMap::const_iterator it = headerFields.begin(); it != end; ++it) {
-        builder.append(it->key);
+        builder.append(it->first);
         builder.append(": ");
-        builder.append(it->value + "\r\n");
+        builder.append(it->second + "\r\n");
     }
     builder.append("\r\n");
 

@@ -105,17 +105,17 @@ LanguageManager::LanguageManager()
             i = codePageCharsets().set(cpInfo.uiCodePage, name).iterator;
         }
         if (i != codePageCharsets().end()) {
-            HashMap<String, CharsetInfo>::iterator j = knownCharsets().find(String(i->value.data(), i->value.length()));
+            HashMap<String, CharsetInfo>::iterator j = knownCharsets().find(String(i->second.data(), i->second.length()));
             ASSERT(j != knownCharsets().end());
-            CharsetInfo& info = j->value;
-            info.m_name = i->value.data();
+            CharsetInfo& info = j->second;
+            info.m_name = i->second.data();
             info.m_friendlyName = cpInfo.wszDescription;
             info.m_aliases.append(name);
             info.m_aliases.append(String(cpInfo.wszHeaderCharset).latin1());
             info.m_aliases.append(String(cpInfo.wszBodyCharset).latin1());
             String cpName = "cp" + String::number(cpInfo.uiCodePage);
             info.m_aliases.append(cpName.latin1());
-            supportedCharsets().add(i->value.data());
+            supportedCharsets().add(i->second.data());
         }
     }
 }
@@ -126,7 +126,7 @@ static UINT getCodePage(const char* name)
     // saying "==" is not found for const_iterator and iterator
     const HashMap<String, CharsetInfo>& charsets = knownCharsets();
     HashMap<String, CharsetInfo>::const_iterator i = charsets.find(name);
-    return i == charsets.end() ? CP_ACP : i->value.m_codePage;
+    return i == charsets.end() ? CP_ACP : i->second.m_codePage;
 }
 
 static PassOwnPtr<TextCodec> newTextCodecWin(const TextEncoding& encoding, const void*)
@@ -149,9 +149,9 @@ void TextCodecWin::registerExtendedEncodingNames(EncodingNameRegistrar registrar
     for (CharsetSet::iterator i = supportedCharsets().begin(); i != supportedCharsets().end(); ++i) {
         HashMap<String, CharsetInfo>::iterator j = knownCharsets().find(*i);
         if (j != knownCharsets().end()) {
-            registrar(j->value.m_name.data(), j->value.m_name.data());
-            for (Vector<CString>::const_iterator alias = j->value.m_aliases.begin(); alias != j->value.m_aliases.end(); ++alias)
-                registrar(alias->data(), j->value.m_name.data());
+            registrar(j->second.m_name.data(), j->second.m_name.data());
+            for (Vector<CString>::const_iterator alias = j->second.m_aliases.begin(); alias != j->second.m_aliases.end(); ++alias)
+                registrar(alias->data(), j->second.m_name.data());
         }
     }
 }
@@ -162,7 +162,7 @@ void TextCodecWin::registerExtendedCodecs(TextCodecRegistrar registrar)
     for (CharsetSet::iterator i = supportedCharsets().begin(); i != supportedCharsets().end(); ++i) {
         HashMap<String, CharsetInfo>::iterator j = knownCharsets().find(*i);
         if (j != knownCharsets().end())
-            registrar(j->value.m_name.data(), newTextCodecWin, 0);
+            registrar(j->second.m_name.data(), newTextCodecWin, 0);
     }
 }
 
@@ -301,7 +301,7 @@ void TextCodecWin::enumerateSupportedEncodings(EncodingReceiver& receiver)
     languageManager();
     for (CharsetSet::iterator i = supportedCharsets().begin(); i != supportedCharsets().end(); ++i) {
         HashMap<String, CharsetInfo>::iterator j = knownCharsets().find(*i);
-        if (j != knownCharsets().end() && !receiver.receive(j->value.m_name.data(), j->value.m_friendlyName.charactersWithNullTermination(), j->value.m_codePage))
+        if (j != knownCharsets().end() && !receiver.receive(j->second.m_name.data(), j->second.m_friendlyName.charactersWithNullTermination(), j->second.m_codePage))
             break;
     }
 }

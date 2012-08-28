@@ -180,7 +180,7 @@ void DatabaseTracker::interruptAllDatabasesForContext(const ScriptExecutionConte
 
     DatabaseNameMap::const_iterator dbNameMapEndIt = nameMap->end();
     for (DatabaseNameMap::const_iterator dbNameMapIt = nameMap->begin(); dbNameMapIt != dbNameMapEndIt; ++dbNameMapIt) {
-        DatabaseSet* databaseSet = dbNameMapIt->value;
+        DatabaseSet* databaseSet = dbNameMapIt->second;
         DatabaseSet::const_iterator end = databaseSet->end();
         for (DatabaseSet::const_iterator it = databaseSet->begin(); it != end; ++it) {
             if ((*it)->scriptExecutionContext() == context)

@@ -171,8 +171,8 @@ void DOMWindowExtensionBasic::willDestroyPage(WKBundleRef, WKBundlePageRef)
     HashMap<WKBundleDOMWindowExtensionRef, int>::iterator it = m_extensionToRecordMap.begin();
     HashMap<WKBundleDOMWindowExtensionRef, int>::iterator end = m_extensionToRecordMap.end();
     for (; it != end; ++it) {
-        updateExtensionStateRecord(it->key, Removed);
-        WKRelease(it->key);
+        updateExtensionStateRecord(it->first, Removed);
+        WKRelease(it->first);
     }
 
     m_extensionToRecordMap.clear();

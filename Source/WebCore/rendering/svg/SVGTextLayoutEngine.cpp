@@ -475,7 +475,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
         SVGCharacterData data;
         SVGCharacterDataMap::iterator it = characterDataMap.find(m_logicalCharacterOffset + 1);
         if (it != characterDataMap.end())
-            data = it->value;
+            data = it->second;
 
         float x = data.x;
         float y = data.y;

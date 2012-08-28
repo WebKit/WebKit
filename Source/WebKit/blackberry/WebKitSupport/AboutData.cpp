@@ -205,7 +205,7 @@ static void dumpJSCTypeCountSetToTableHTML(String& tableHTML, JSC::TypeCountSet*
         return;
 
     for (JSC::TypeCountSet::const_iterator iter = typeCountSet->begin(); iter != typeCountSet->end(); ++iter)
-        tableHTML += numberToHTMLTr(iter->key, iter->value);
+        tableHTML += numberToHTMLTr(iter->first, iter->second);
 }
 
 static String memoryPage()

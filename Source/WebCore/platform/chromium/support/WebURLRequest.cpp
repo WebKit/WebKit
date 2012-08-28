@@ -195,7 +195,7 @@ void WebURLRequest::visitHTTPHeaderFields(WebHTTPHeaderVisitor* visitor) const
 {
     const HTTPHeaderMap& map = m_private->m_resourceRequest->httpHeaderFields();
     for (HTTPHeaderMap::const_iterator it = map.begin(); it != map.end(); ++it)
-        visitor->visitHeader(it->key, it->value);
+        visitor->visitHeader(it->first, it->second);
 }
 
 WebHTTPBody WebURLRequest::httpBody() const

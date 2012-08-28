@@ -111,7 +111,7 @@ EventTarget* EventRelatedTargetAdjuster::findRelatedTarget(TreeScope* scope)
         parentTreeScopes.append(scope);
         RelatedTargetMap::const_iterator found = m_relatedTargetMap.find(scope);
         if (found != m_relatedTargetMap.end()) {
-            relatedTarget = found->value;
+            relatedTarget = found->second;
             break;
         }
         scope = scope->parentTreeScope();

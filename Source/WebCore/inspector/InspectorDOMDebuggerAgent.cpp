@@ -402,8 +402,8 @@ void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)
     else {
         RefPtr<InspectorObject> xhrBreakpoints = m_state->getObject(DOMDebuggerAgentState::xhrBreakpoints);
         for (InspectorObject::iterator it = xhrBreakpoints->begin(); it != xhrBreakpoints->end(); ++it) {
-            if (url.contains(it->key)) {
-                breakpointURL = it->key;
+            if (url.contains(it->first)) {
+                breakpointURL = it->first;
                 break;
             }
         }

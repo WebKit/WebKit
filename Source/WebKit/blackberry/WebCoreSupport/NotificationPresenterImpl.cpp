@@ -81,7 +81,7 @@ void NotificationPresenterImpl::cancel(Notification* notification)
     if (it == m_notifications.end())
         return;
 
-    m_platformPresenter->cancel(std::string(it->value.utf8().data()));
+    m_platformPresenter->cancel(std::string(it->second.utf8().data()));
     m_notifications.remove(it);
 }
 
@@ -108,12 +108,12 @@ void NotificationPresenterImpl::onPermission(const std::string& domain, bool isA
     String domainString = String::fromUTF8(domain.c_str());
     PermissionRequestMap::iterator it = m_permissionRequests.begin();
     for (; it != m_permissionRequests.end(); ++it) {
-        if (it->key->url().host() != domainString)
+        if (it->first->url().host() != domainString)
             continue;
 
         if (isAllowed) {
             m_allowedDomains.add(domainString);
-            it->value->handleEvent();
+            it->second->handleEvent();
         } else
             m_allowedDomains.remove(domainString);
 
@@ -144,9 +144,9 @@ void NotificationPresenterImpl::notificationClicked(const std::string& id)
     String idString = String::fromUTF8(id.c_str());
     NotificationMap::iterator it = m_notifications.begin();
     for (; it != m_notifications.end(); ++it) {
-        if (it->value == idString && it->key->scriptExecutionContext()) {
-            RefPtr<Notification> notification = it->key;
-            it->key->dispatchEvent(Event::create(eventNames().clickEvent, false, true));
+        if (it->second == idString && it->first->scriptExecutionContext()) {
+            RefPtr<Notification> notification = it->first;
+            it->first->dispatchEvent(Event::create(eventNames().clickEvent, false, true));
             m_notifications.remove(notification);
             return;
         }

@@ -86,7 +86,7 @@ PassRefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader* buffer)
     KeyValueMap::iterator mimeParametersIterator = keyValuePairs.find("content-type");
     if (mimeParametersIterator != keyValuePairs.end()) {
         // FIXME: make ContentTypeParser more flexible so we don't have to synthesize the "Content-Type:".
-        ContentTypeParser contentTypeParser(makeString("Content-Type:", mimeParametersIterator->value));
+        ContentTypeParser contentTypeParser(makeString("Content-Type:", mimeParametersIterator->second));
         mimeHeader->m_contentType = contentTypeParser.mimeType();
         if (!mimeHeader->isMultipart())
             mimeHeader->m_charset = contentTypeParser.charset().stripWhiteSpace();
@@ -105,11 +105,11 @@ PassRefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader* buffer)
 
     mimeParametersIterator = keyValuePairs.find("content-transfer-encoding");
     if (mimeParametersIterator != keyValuePairs.end())
-        mimeHeader->m_contentTransferEncoding = parseContentTransferEncoding(mimeParametersIterator->value);
+        mimeHeader->m_contentTransferEncoding = parseContentTransferEncoding(mimeParametersIterator->second);
 
     mimeParametersIterator = keyValuePairs.find("content-location");
     if (mimeParametersIterator != keyValuePairs.end())
-        mimeHeader->m_contentLocation = mimeParametersIterator->value;
+        mimeHeader->m_contentLocation = mimeParametersIterator->second;
 
     return mimeHeader.release();
 }

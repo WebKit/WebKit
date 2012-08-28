@@ -1,3 +1,21 @@
+2012-08-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r126914.
+        http://trac.webkit.org/changeset/126914
+        https://bugs.webkit.org/show_bug.cgi?id=95239
+
+        it breaks everything and fixes nothing (Requested by pizlo on
+        #webkit).
+
+        * src/WebGeolocationPermissionRequestManager.cpp:
+        (WebGeolocationPermissionRequestManager::remove):
+        * src/WebIDBMetadata.cpp:
+        (WebKit::WebIDBMetadata::WebIDBMetadata):
+        * src/WebIntent.cpp:
+        (WebKit::WebIntent::extrasValue):
+        * tests/WebSocketExtensionDispatcherTest.cpp:
+        (WebCore::TEST_F):
+
 2012-08-28  W. James MacLean  <wjmaclean@chromium.org>
 
         [unreviewed] Compile fix: windows compiler expects float but find double.

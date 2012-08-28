@@ -55,7 +55,7 @@ PassRefPtr<StorageNamespace> StorageNamespaceImpl::localStorageNamespace(const S
         return storageNamespace.release();
     }
 
-    return it->value;
+    return it->second;
 }
 
 PassRefPtr<StorageNamespace> StorageNamespaceImpl::sessionStorageNamespace(unsigned quota)
@@ -97,7 +97,7 @@ PassRefPtr<StorageNamespace> StorageNamespaceImpl::copy()
 
     StorageAreaMap::iterator end = m_storageAreaMap.end();
     for (StorageAreaMap::iterator i = m_storageAreaMap.begin(); i != end; ++i)
-        newNamespace->m_storageAreaMap.set(i->key, i->value->copy());
+        newNamespace->m_storageAreaMap.set(i->first, i->second->copy());
     return newNamespace.release();
 }
 
@@ -131,7 +131,7 @@ void StorageNamespaceImpl::close()
 
     StorageAreaMap::iterator end = m_storageAreaMap.end();
     for (StorageAreaMap::iterator it = m_storageAreaMap.begin(); it != end; ++it)
-        it->value->close();
+        it->second->close();
 
     if (m_syncManager)
         m_syncManager->close();
@@ -154,7 +154,7 @@ void StorageNamespaceImpl::clearAllOriginsForDeletion()
 
     StorageAreaMap::iterator end = m_storageAreaMap.end();
     for (StorageAreaMap::iterator it = m_storageAreaMap.begin(); it != end; ++it)
-        it->value->clearForOriginDeletion();
+        it->second->clearForOriginDeletion();
 }
     
 void StorageNamespaceImpl::sync()
@@ -162,7 +162,7 @@ void StorageNamespaceImpl::sync()
     ASSERT(isMainThread());
     StorageAreaMap::iterator end = m_storageAreaMap.end();
     for (StorageAreaMap::iterator it = m_storageAreaMap.begin(); it != end; ++it)
-        it->value->sync();
+        it->second->sync();
 }
 
 } // namespace WebCore

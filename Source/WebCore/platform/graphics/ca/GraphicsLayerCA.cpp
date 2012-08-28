@@ -477,7 +477,7 @@ void GraphicsLayerCA::moveOrCopyAnimations(MoveOrCopy operation, PlatformCALayer
     // Look for running animations affecting this property.
     AnimationsMap::const_iterator end = m_runningAnimations.end();
     for (AnimationsMap::const_iterator it = m_runningAnimations.begin(); it != end; ++it) {
-        const Vector<LayerPropertyAnimation>& propertyAnimations = it->value;
+        const Vector<LayerPropertyAnimation>& propertyAnimations = it->second;
         size_t numAnimations = propertyAnimations.size();
         for (size_t i = 0; i < numAnimations; ++i) {
             const LayerPropertyAnimation& currAnimation = propertyAnimations[i];
@@ -719,7 +719,7 @@ void GraphicsLayerCA::pauseAnimation(const String& animationName, double timeOff
 
     AnimationsToProcessMap::iterator it = m_animationsToProcess.find(animationName);
     if (it != m_animationsToProcess.end()) {
-        AnimationProcessingAction& processingInfo = it->value;
+        AnimationProcessingAction& processingInfo = it->second;
         // If an animation is scheduled to be removed, don't change the remove to a pause.
         if (processingInfo.action != Remove)
             processingInfo.action = Pause;
@@ -854,7 +854,7 @@ void GraphicsLayerCA::layerDidDisplay(PlatformLayer* layer)
     if (layerCloneMap) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
-            PlatformCALayer* currClone = it->value.get();
+            PlatformCALayer* currClone = it->second.get();
             if (!currClone)
                 continue;
 
@@ -1196,10 +1196,10 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
         if (LayerMap* layerCloneMap = m_structuralLayerClones.get()) {
             LayerMap::const_iterator end = layerCloneMap->end();
             for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
-                PlatformCALayer* clone = it->value.get();
+                PlatformCALayer* clone = it->second.get();
                 FloatPoint clonePosition = layerPosition;
 
-                if (m_replicaLayer && isReplicatedRootClone(it->key)) {
+                if (m_replicaLayer && isReplicatedRootClone(it->first)) {
                     // Maintain the special-case position for the root of a clone subtree,
                     // which we set up in replicatedLayerRoot().
                     clonePosition = positionForCloneRootLayer();
@@ -1223,10 +1223,10 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
     if (LayerMap* layerCloneMap = m_layerClones.get()) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
-            PlatformCALayer* clone = it->value.get();
+            PlatformCALayer* clone = it->second.get();
             FloatPoint clonePosition = adjustedPosition;
 
-            if (!m_structuralLayer && m_replicaLayer && isReplicatedRootClone(it->key)) {
+            if (!m_structuralLayer && m_replicaLayer && isReplicatedRootClone(it->first)) {
                 // Maintain the special-case position for the root of a clone subtree,
                 // which we set up in replicatedLayerRoot().
                 clonePosition = positionForCloneRootLayer();
@@ -1246,8 +1246,8 @@ void GraphicsLayerCA::updateTransform()
     if (LayerMap* layerCloneMap = primaryLayerClones()) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
-            PlatformCALayer* currLayer = it->value.get();
-            if (m_replicaLayer && isReplicatedRootClone(it->key)) {
+            PlatformCALayer* currLayer = it->second.get();
+            if (m_replicaLayer && isReplicatedRootClone(it->first)) {
                 // Maintain the special-case transform for the root of a clone subtree,
                 // which we set up in replicatedLayerRoot().
                 currLayer->setTransform(TransformationMatrix());
@@ -1264,7 +1264,7 @@ void GraphicsLayerCA::updateChildrenTransform()
     if (LayerMap* layerCloneMap = primaryLayerClones()) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it)
-            it->value->setSublayerTransform(m_childrenTransform);
+            it->second->setSublayerTransform(m_childrenTransform);
     }
 }
 
@@ -1275,7 +1275,7 @@ void GraphicsLayerCA::updateMasksToBounds()
     if (LayerMap* layerCloneMap = m_layerClones.get()) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it)
-            it->value->setMasksToBounds(m_masksToBounds);
+            it->second->setMasksToBounds(m_masksToBounds);
     }
 
     updateDebugIndicators();
@@ -1293,7 +1293,7 @@ void GraphicsLayerCA::updateContentsVisibility()
         if (LayerMap* layerCloneMap = m_layerClones.get()) {
             LayerMap::const_iterator end = layerCloneMap->end();
             for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it)
-                it->value->setContents(0);
+                it->second->setContents(0);
         }
     }
 }
@@ -1305,7 +1305,7 @@ void GraphicsLayerCA::updateContentsOpaque()
     if (LayerMap* layerCloneMap = m_layerClones.get()) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it)
-            it->value->setOpaque(m_contentsOpaque);
+            it->second->setOpaque(m_contentsOpaque);
     }
 }
 
@@ -1317,7 +1317,7 @@ void GraphicsLayerCA::updateBackfaceVisibility()
         if (LayerMap* layerCloneMap = m_structuralLayerClones.get()) {
             LayerMap::const_iterator end = layerCloneMap->end();
             for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it)
-                it->value->setDoubleSided(m_backfaceVisibility);
+                it->second->setDoubleSided(m_backfaceVisibility);
         }
     }
 
@@ -1326,7 +1326,7 @@ void GraphicsLayerCA::updateBackfaceVisibility()
     if (LayerMap* layerCloneMap = m_layerClones.get()) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it)
-            it->value->setDoubleSided(m_backfaceVisibility);
+            it->second->setDoubleSided(m_backfaceVisibility);
     }
 }
 
@@ -1338,10 +1338,10 @@ void GraphicsLayerCA::updateFilters()
     if (LayerMap* layerCloneMap = primaryLayerClones()) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
-            if (m_replicaLayer && isReplicatedRootClone(it->key))
+            if (m_replicaLayer && isReplicatedRootClone(it->first))
                 continue;
 
-            it->value->setFilters(m_filters);
+            it->second->setFilters(m_filters);
         }
     }
 }
@@ -1430,7 +1430,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose, floa
     if (m_layerClones) {
         LayerMap::const_iterator end = m_layerClones->end();
         for (LayerMap::const_iterator it = m_layerClones->begin(); it != end; ++it) {
-            PlatformCALayer* currLayer = it->value.get();
+            PlatformCALayer* currLayer = it->second.get();
             currLayer->setPosition(point);
             currLayer->setAnchorPoint(anchorPoint);
             currLayer->setTransform(TransformationMatrix());
@@ -1475,7 +1475,7 @@ void GraphicsLayerCA::updateLayerDrawsContent(float pageScaleFactor, const Float
         if (m_layerClones) {
             LayerMap::const_iterator end = m_layerClones->end();
             for (LayerMap::const_iterator it = m_layerClones->begin(); it != end; ++it)
-                it->value->setContents(0);
+                it->second->setContents(0);
         }
     }
     updateDebugIndicators();
@@ -1526,7 +1526,7 @@ void GraphicsLayerCA::updateContentsImage()
         if (m_contentsLayerClones) {
             LayerMap::const_iterator end = m_contentsLayerClones->end();
             for (LayerMap::const_iterator it = m_contentsLayerClones->begin(); it != end; ++it)
-                it->value->setContents(m_contentsLayer->contents());
+                it->second->setContents(m_contentsLayer->contents());
         }
         
         updateContentsRect();
@@ -1570,8 +1570,8 @@ void GraphicsLayerCA::updateContentsRect()
     if (m_contentsLayerClones) {
         LayerMap::const_iterator end = m_contentsLayerClones->end();
         for (LayerMap::const_iterator it = m_contentsLayerClones->begin(); it != end; ++it) {
-            it->value->setPosition(point);
-            it->value->setBounds(rect);
+            it->second->setPosition(point);
+            it->second->setBounds(rect);
         }
     }
 }
@@ -1586,8 +1586,8 @@ void GraphicsLayerCA::updateMaskLayer()
     if (LayerMap* layerCloneMap = m_layerClones.get()) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {            
-            PlatformCALayer* maskClone = maskLayerCloneMap ? maskLayerCloneMap->get(it->key).get() : 0;
-            it->value->setMask(maskClone);
+            PlatformCALayer* maskClone = maskLayerCloneMap ? maskLayerCloneMap->get(it->first).get() : 0;
+            it->second->setMask(maskClone);
         }
     }
 }
@@ -1651,13 +1651,13 @@ void GraphicsLayerCA::updateLayerAnimations()
     if (m_animationsToProcess.size()) {
         AnimationsToProcessMap::const_iterator end = m_animationsToProcess.end();
         for (AnimationsToProcessMap::const_iterator it = m_animationsToProcess.begin(); it != end; ++it) {
-            const String& currAnimationName = it->key;
+            const String& currAnimationName = it->first;
             AnimationsMap::iterator animationIt = m_runningAnimations.find(currAnimationName);
             if (animationIt == m_runningAnimations.end())
                 continue;
 
-            const AnimationProcessingAction& processingInfo = it->value;
-            const Vector<LayerPropertyAnimation>& animations = animationIt->value;
+            const AnimationProcessingAction& processingInfo = it->second;
+            const Vector<LayerPropertyAnimation>& animations = animationIt->second;
             for (size_t i = 0; i < animations.size(); ++i) {
                 const LayerPropertyAnimation& currAnimation = animations[i];
                 switch (processingInfo.action) {
@@ -1689,7 +1689,7 @@ void GraphicsLayerCA::updateLayerAnimations()
                 animations.append(pendingAnimation);
                 m_runningAnimations.add(pendingAnimation.m_name, animations);
             } else {
-                Vector<LayerPropertyAnimation>& animations = it->value;
+                Vector<LayerPropertyAnimation>& animations = it->second;
                 animations.append(pendingAnimation);
             }
         }
@@ -1714,11 +1714,11 @@ void GraphicsLayerCA::setAnimationOnLayer(PlatformCAAnimation* caAnim, AnimatedP
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
             // Skip immediate replicas, since they move with the original.
-            if (m_replicaLayer && isReplicatedRootClone(it->key))
+            if (m_replicaLayer && isReplicatedRootClone(it->first))
                 continue;
 
-            it->value->removeAnimationForKey(animationID);
-            it->value->addAnimationForKey(animationID, caAnim);
+            it->second->removeAnimationForKey(animationID);
+            it->second->addAnimationForKey(animationID, caAnim);
         }
     }
 }
@@ -1753,10 +1753,10 @@ bool GraphicsLayerCA::removeCAAnimationFromLayer(AnimatedPropertyID property, co
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
             // Skip immediate replicas, since they move with the original.
-            if (m_replicaLayer && isReplicatedRootClone(it->key))
+            if (m_replicaLayer && isReplicatedRootClone(it->first))
                 continue;
 
-            it->value->removeAnimationForKey(animationID);
+            it->second ->removeAnimationForKey(animationID);
         }
     }
     return true;
@@ -1785,9 +1785,9 @@ void GraphicsLayerCA::pauseCAAnimationOnLayer(AnimatedPropertyID property, const
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
             // Skip immediate replicas, since they move with the original.
-            if (m_replicaLayer && isReplicatedRootClone(it->key))
+            if (m_replicaLayer && isReplicatedRootClone(it->first))
                 continue;
-            it->value->addAnimationForKey(animationID, newAnim.get());
+            it->second->addAnimationForKey(animationID, newAnim.get());
         }
     }
 }
@@ -2311,8 +2311,8 @@ void GraphicsLayerCA::suspendAnimations(double time)
     if (LayerMap* layerCloneMap = primaryLayerClones()) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
-            it->value->setSpeed(0);
-            it->value->setTimeOffset(t);
+            it->second->setSpeed(0);
+            it->second->setTimeOffset(t);
         }
     }
 }
@@ -2326,8 +2326,8 @@ void GraphicsLayerCA::resumeAnimations()
     if (LayerMap* layerCloneMap = primaryLayerClones()) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
-            it->value->setSpeed(1);
-            it->value->setTimeOffset(0);
+            it->second->setSpeed(1);
+            it->second->setTimeOffset(0);
         }
     }
 }
@@ -2537,13 +2537,13 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, Pl
     LayerMap::AddResult addResult = clones->add(cloneID, dummy);
     if (!addResult.isNewEntry) {
         // Value was not added, so it exists already.
-        resultLayer = addResult.iterator->value.get();
+        resultLayer = addResult.iterator->second.get();
     } else {
         resultLayer = cloneLayer(sourceLayer, cloneLevel);
 #ifndef NDEBUG
         resultLayer->setName(String::format("Clone %d of layer %p", cloneID[0U], sourceLayer->platformLayer()));
 #endif
-        addResult.iterator->value = resultLayer;
+        addResult.iterator->second = resultLayer;
     }
 
     return resultLayer;
@@ -2735,9 +2735,9 @@ void GraphicsLayerCA::setOpacityInternal(float accumulatedOpacity)
     if (layerCloneMap) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
-            if (m_replicaLayer && isReplicatedRootClone(it->key))
+            if (m_replicaLayer && isReplicatedRootClone(it->first))
                 continue;
-            it->value->setOpacity(m_opacity);
+            it->second->setOpacity(m_opacity);
         }
     }
 }
@@ -2749,10 +2749,10 @@ void GraphicsLayerCA::updateOpacityOnLayer()
     if (LayerMap* layerCloneMap = primaryLayerClones()) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
-            if (m_replicaLayer && isReplicatedRootClone(it->key))
+            if (m_replicaLayer && isReplicatedRootClone(it->first))
                 continue;
 
-            it->value->setOpacity(m_opacity);
+            it->second->setOpacity(m_opacity);
         }
         
     }

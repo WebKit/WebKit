@@ -192,7 +192,7 @@ void IconDatabase::removeAllIcons()
         HashMap<String, PageURLRecord*>::iterator iter = m_pageURLToRecordMap.begin();
         HashMap<String, PageURLRecord*>::iterator end = m_pageURLToRecordMap.end();
         for (; iter != end; ++iter)
-            (*iter).value->setIconRecord(0);
+            (*iter).second->setIconRecord(0);
             
         // Clear the iconURL -> IconRecord map
         m_iconURLToRecordMap.clear();
@@ -785,7 +785,7 @@ size_t IconDatabase::iconRecordCountWithData()
     HashMap<String, IconRecord*>::iterator end = m_iconURLToRecordMap.end();
     
     for (; i != end; ++i)
-        result += ((*i).value->imageDataStatus() == ImageDataStatusPresent);
+        result += ((*i).second->imageDataStatus() == ImageDataStatusPresent);
             
     return result;
 }
@@ -1556,13 +1556,13 @@ void IconDatabase::performPendingRetainAndReleaseOperations()
     }
 
     for (HashCountedSet<String>::const_iterator it = toRetain.begin(), end = toRetain.end(); it != end; ++it) {
-        ASSERT(!it->key.impl() || it->key.impl()->hasOneRef());
-        performRetainIconForPageURL(it->key, it->value);
+        ASSERT(!it->first.impl() || it->first.impl()->hasOneRef());
+        performRetainIconForPageURL(it->first, it->second);
     }
 
     for (HashCountedSet<String>::const_iterator it = toRelease.begin(), end = toRelease.end(); it != end; ++it) {
-        ASSERT(!it->key.impl() || it->key.impl()->hasOneRef());
-        performReleaseIconForPageURL(it->key, it->value);
+        ASSERT(!it->first.impl() || it->first.impl()->hasOneRef());
+        performReleaseIconForPageURL(it->first, it->second);
     }
 }
 

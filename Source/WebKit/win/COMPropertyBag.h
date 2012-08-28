@@ -147,9 +147,9 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::Read(LPC
 
     VARTYPE requestedType = V_VT(pVar);
     V_VT(pVar) = VT_EMPTY;
-    COMVariantSetter<ValueType>::setVariant(pVar, it->value);
+    COMVariantSetter<ValueType>::setVariant(pVar, it->second);
 
-    if (requestedType != COMVariantSetter<ValueType>::variantType(it->value) && requestedType != VT_EMPTY)
+    if (requestedType != COMVariantSetter<ValueType>::variantType(it->second) && requestedType != VT_EMPTY)
         return ::VariantChangeType(pVar, pVar, VARIANT_NOUSEROVERRIDE | VARIANT_ALPHABOOL, requestedType);
 
     return S_OK;
@@ -217,12 +217,12 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::GetPrope
         //pPropBag[j].clsid;    // (CLSID) CLSID of the object. This member is valid only if dwType is PROPBAG2_TYPE_OBJECT.
 
         pPropBag[j].dwType = PROPBAG2_TYPE_DATA;
-        pPropBag[j].vt = COMVariantSetter<ValueType>::variantType(current->value);
+        pPropBag[j].vt = COMVariantSetter<ValueType>::variantType(current->second);
         pPropBag[j].dwHint = iProperty + j;
-        pPropBag[j].pstrName = (LPOLESTR)CoTaskMemAlloc(sizeof(wchar_t)*(current->key.length()+1));
+        pPropBag[j].pstrName = (LPOLESTR)CoTaskMemAlloc(sizeof(wchar_t)*(current->first.length()+1));
         if (!pPropBag[j].pstrName)
             return E_OUTOFMEMORY;
-        wcscpy_s(pPropBag[j].pstrName, current->key.length()+1, static_cast<String>(current->key).charactersWithNullTermination());
+        wcscpy_s(pPropBag[j].pstrName, current->first.length()+1, static_cast<String>(current->first).charactersWithNullTermination());
         ++*pcProperties;
     }
     return S_OK;

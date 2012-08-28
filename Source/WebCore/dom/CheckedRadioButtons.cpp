@@ -185,7 +185,7 @@ void CheckedRadioButtons::addButton(HTMLInputElement* element)
     if (!m_nameToGroupMap)
         m_nameToGroupMap = adoptPtr(new NameToGroupMap);
 
-    OwnPtr<RadioButtonGroup>& group = m_nameToGroupMap->add(element->name().impl(), PassOwnPtr<RadioButtonGroup>()).iterator->value;
+    OwnPtr<RadioButtonGroup>& group = m_nameToGroupMap->add(element->name().impl(), PassOwnPtr<RadioButtonGroup>()).iterator->second;
     if (!group)
         group = RadioButtonGroup::create();
     group->add(element);
@@ -246,8 +246,8 @@ void CheckedRadioButtons::removeButton(HTMLInputElement* element)
     NameToGroupMap::iterator it = m_nameToGroupMap->find(element->name().impl());
     if (it == m_nameToGroupMap->end())
         return;
-    it->value->remove(element);
-    if (it->value->isEmpty()) {
+    it->second->remove(element);
+    if (it->second->isEmpty()) {
         // FIXME: We may skip deallocating the empty RadioButtonGroup for
         // performance improvement. If we do so, we need to change the key type
         // of m_nameToGroupMap from AtomicStringImpl* to RefPtr<AtomicStringImpl>.

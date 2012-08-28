@@ -465,8 +465,8 @@ void JSCallbackObject<Parent>::getOwnPropertyNames(JSObject* object, ExecState* 
             typedef OpaqueJSClassStaticValuesTable::const_iterator iterator;
             iterator end = staticValues->end();
             for (iterator it = staticValues->begin(); it != end; ++it) {
-                StringImpl* name = it->key.get();
-                StaticValueEntry* entry = it->value.get();
+                StringImpl* name = it->first.get();
+                StaticValueEntry* entry = it->second.get();
                 if (entry->getProperty && (!(entry->attributes & kJSPropertyAttributeDontEnum) || (mode == IncludeDontEnumProperties)))
                     propertyNames.add(Identifier(exec, name));
             }
@@ -476,8 +476,8 @@ void JSCallbackObject<Parent>::getOwnPropertyNames(JSObject* object, ExecState* 
             typedef OpaqueJSClassStaticFunctionsTable::const_iterator iterator;
             iterator end = staticFunctions->end();
             for (iterator it = staticFunctions->begin(); it != end; ++it) {
-                StringImpl* name = it->key.get();
-                StaticFunctionEntry* entry = it->value.get();
+                StringImpl* name = it->first.get();
+                StaticFunctionEntry* entry = it->second.get();
                 if (!(entry->attributes & kJSPropertyAttributeDontEnum) || (mode == IncludeDontEnumProperties))
                     propertyNames.add(Identifier(exec, name));
             }

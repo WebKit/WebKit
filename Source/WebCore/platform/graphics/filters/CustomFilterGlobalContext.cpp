@@ -44,7 +44,7 @@ CustomFilterGlobalContext::CustomFilterGlobalContext()
 CustomFilterGlobalContext::~CustomFilterGlobalContext()
 {
     for (CustomFilterCompiledProgramsMap::iterator iter = m_programs.begin(); iter != m_programs.end(); ++iter)
-        iter->value->detachFromGlobalContext();
+        iter->second->detachFromGlobalContext();
 }
 
 void CustomFilterGlobalContext::prepareContextIfNeeded(HostWindow* hostWindow)
@@ -69,7 +69,7 @@ PassRefPtr<CustomFilterCompiledProgram> CustomFilterGlobalContext::getCompiledPr
 
     CustomFilterCompiledProgramsMap::iterator iter = m_programs.find(programInfo);
     if (iter != m_programs.end())
-        return iter->value;
+        return iter->second;
 
     RefPtr<CustomFilterCompiledProgram> compiledProgram = CustomFilterCompiledProgram::create(this, programInfo);
     m_programs.set(programInfo, compiledProgram.get());
@@ -85,7 +85,7 @@ void CustomFilterGlobalContext::removeCompiledProgram(const CustomFilterCompiled
 #ifndef NDEBUG
     // Check that there's no way we could have the same program under a different key.
     for (iter = m_programs.begin(); iter != m_programs.end(); ++iter)
-        ASSERT(iter->value != program);
+        ASSERT(iter->second != program);
 #endif
 }
 

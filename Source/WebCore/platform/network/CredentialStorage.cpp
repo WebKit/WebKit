@@ -147,7 +147,7 @@ bool CredentialStorage::set(const Credential& credential, const KURL& url)
     if (iter == pathToDefaultProtectionSpaceMap().end())
         return false;
     ASSERT(originsWithCredentials().contains(originStringFromURL(url)));
-    protectionSpaceToCredentialMap().set(iter->value, credential);
+    protectionSpaceToCredentialMap().set(iter->second, credential);
     return true;
 }
 
@@ -156,7 +156,7 @@ Credential CredentialStorage::get(const KURL& url)
     PathToDefaultProtectionSpaceMap::iterator iter = findDefaultProtectionSpaceForURL(url);
     if (iter == pathToDefaultProtectionSpaceMap().end())
         return Credential();
-    return protectionSpaceToCredentialMap().get(iter->value);
+    return protectionSpaceToCredentialMap().get(iter->second);
 }
 
 void CredentialStorage::setPrivateMode(bool mode)

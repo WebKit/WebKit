@@ -211,7 +211,7 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
         gFontPlatformDataCache->set(key, result);
         foundResult = result;
     } else {
-        result = it->value;
+        result = it->second;
         foundResult = true;
     }
 
@@ -242,7 +242,7 @@ OpenTypeVerticalData* FontCache::getVerticalData(const FontFileKey& key, const F
     FontVerticalDataCache& fontVerticalDataCache = fontVerticalDataCacheInstance();
     FontVerticalDataCache::iterator result = fontVerticalDataCache.find(key);
     if (result != fontVerticalDataCache.end())
-        return result.get()->value.get();
+        return result.get()->second.get();
 
     OpenTypeVerticalData* verticalData = new OpenTypeVerticalData(platformData);
     if (!verticalData->isOpenType()) {
@@ -332,20 +332,20 @@ SimpleFontData* FontCache::getCachedFontData(const FontPlatformData* platformDat
         return newValue.first;
     }
 
-    if (!result.get()->value.second) {
-        ASSERT(gInactiveFontData->contains(result.get()->value.first));
-        gInactiveFontData->remove(result.get()->value.first);
+    if (!result.get()->second.second) {
+        ASSERT(gInactiveFontData->contains(result.get()->second.first));
+        gInactiveFontData->remove(result.get()->second.first);
     }
 
     if (shouldRetain == Retain)
-        result.get()->value.second++;
-    else if (!result.get()->value.second) {
+        result.get()->second.second++;
+    else if (!result.get()->second.second) {
         // If shouldRetain is DoNotRetain and count is 0, we want to remove the fontData from 
         // gInactiveFontData (above) and re-add here to update LRU position.
-        gInactiveFontData->add(result.get()->value.first);
+        gInactiveFontData->add(result.get()->second.first);
     }
 
-    return result.get()->value.first;
+    return result.get()->second.first;
 }
 
 SimpleFontData* FontCache::getNonRetainedLastResortFallbackFont(const FontDescription& fontDescription)
@@ -361,8 +361,8 @@ void FontCache::releaseFontData(const SimpleFontData* fontData)
     FontDataCache::iterator it = gFontDataCache->find(fontData->platformData());
     ASSERT(it != gFontDataCache->end());
 
-    ASSERT(it->value.second);
-    if (!--it->value.second)
+    ASSERT(it->second.second);
+    if (!--it->second.second)
         gInactiveFontData->add(fontData);
 }
 
@@ -410,8 +410,8 @@ void FontCache::purgeInactiveFontData(int count)
         keysToRemove.reserveInitialCapacity(gFontPlatformDataCache->size());
         FontPlatformDataCache::iterator platformDataEnd = gFontPlatformDataCache->end();
         for (FontPlatformDataCache::iterator platformData = gFontPlatformDataCache->begin(); platformData != platformDataEnd; ++platformData) {
-            if (platformData->value && !gFontDataCache->contains(*platformData->value))
-                keysToRemove.append(platformData->key);
+            if (platformData->second && !gFontDataCache->contains(*platformData->second))
+                keysToRemove.append(platformData->first);
         }
         
         size_t keysToRemoveCount = keysToRemove.size();
@@ -425,20 +425,20 @@ void FontCache::purgeInactiveFontData(int count)
         // Mark & sweep unused verticalData
         FontVerticalDataCache::iterator verticalDataEnd = fontVerticalDataCache.end();
         for (FontVerticalDataCache::iterator verticalData = fontVerticalDataCache.begin(); verticalData != verticalDataEnd; ++verticalData) {
-            if (verticalData->value)
-                verticalData->value->m_inFontCache = false;
+            if (verticalData->second)
+                verticalData->second->m_inFontCache = false;
         }
         FontDataCache::iterator fontDataEnd = gFontDataCache->end();
         for (FontDataCache::iterator fontData = gFontDataCache->begin(); fontData != fontDataEnd; ++fontData) {
-            OpenTypeVerticalData* verticalData = const_cast<OpenTypeVerticalData*>(fontData->value.first->verticalData());
+            OpenTypeVerticalData* verticalData = const_cast<OpenTypeVerticalData*>(fontData->second.first->verticalData());
             if (verticalData)
                 verticalData->m_inFontCache = true;
         }
         Vector<FontFileKey> keysToRemove;
         keysToRemove.reserveInitialCapacity(fontVerticalDataCache.size());
         for (FontVerticalDataCache::iterator verticalData = fontVerticalDataCache.begin(); verticalData != verticalDataEnd; ++verticalData) {
-            if (!verticalData->value || !verticalData->value->m_inFontCache)
-                keysToRemove.append(verticalData->key);
+            if (!verticalData->second || !verticalData->second->m_inFontCache)
+                keysToRemove.append(verticalData->first);
         }
         for (size_t i = 0, count = keysToRemove.size(); i < count; ++i)
             fontVerticalDataCache.take(keysToRemove[i]);

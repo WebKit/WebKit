@@ -149,10 +149,10 @@ void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()
     }
 
     while (!m_pendingGetSitesReplies.isEmpty())
-        didGetSitesWithData(Vector<String>(), m_pendingGetSitesReplies.begin()->key);
+        didGetSitesWithData(Vector<String>(), m_pendingGetSitesReplies.begin()->first);
 
     while (!m_pendingClearSiteDataReplies.isEmpty())
-        didClearSiteData(m_pendingClearSiteDataReplies.begin()->key);
+        didClearSiteData(m_pendingClearSiteDataReplies.begin()->first);
 
     // Tell the plug-in process manager to forget about this plug-in process proxy. This may cause us to be deleted.
     m_pluginProcessManager->removePluginProcessProxy(this);

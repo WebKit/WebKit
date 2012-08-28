@@ -87,7 +87,7 @@ bool WebSocketExtensionDeflateFrame::processResponse(const HashMap<String, Strin
     int windowBits = 15;
     HashMap<String, String>::const_iterator parameter = serverParameters.find("max_window_bits");
     if (parameter != serverParameters.end()) {
-        windowBits = parameter->value.toInt();
+        windowBits = parameter->second.toInt();
         if (windowBits < 8 || windowBits > 15) {
             m_failureReason = "Received invalid max_window_bits parameter";
             return false;
@@ -98,7 +98,7 @@ bool WebSocketExtensionDeflateFrame::processResponse(const HashMap<String, Strin
     WebSocketDeflater::ContextTakeOverMode mode = WebSocketDeflater::TakeOverContext;
     parameter = serverParameters.find("no_context_takeover");
     if (parameter != serverParameters.end()) {
-        if (!parameter->value.isNull()) {
+        if (!parameter->second.isNull()) {
             m_failureReason = "Received invalid no_context_takeover parameter";
             return false;
         }

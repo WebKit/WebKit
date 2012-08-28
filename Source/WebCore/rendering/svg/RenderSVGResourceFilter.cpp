@@ -338,7 +338,7 @@ void RenderSVGResourceFilter::primitiveAttributeChanged(RenderObject* object, co
     SVGFilterPrimitiveStandardAttributes* primitve = static_cast<SVGFilterPrimitiveStandardAttributes*>(object->node());
 
     for (; it != end; ++it) {
-        FilterData* filterData = it->value;
+        FilterData* filterData = it->second;
         if (!filterData->builded)
             continue;
 
@@ -353,7 +353,7 @@ void RenderSVGResourceFilter::primitiveAttributeChanged(RenderObject* object, co
         builder->clearResultsRecursive(effect);
 
         // Repaint the image on the screen.
-        markClientForInvalidation(it->key, RepaintInvalidation);
+        markClientForInvalidation(it->first, RepaintInvalidation);
     }
 }
 

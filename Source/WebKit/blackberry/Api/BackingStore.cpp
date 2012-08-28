@@ -709,8 +709,8 @@ void BackingStorePrivate::setBackingStoreRect(const Platform::IntRect& backingSt
     // our new backing store rect.
     TileMap::const_iterator tileMapEnd = currentMap.end();
     for (TileMap::const_iterator it = currentMap.begin(); it != tileMapEnd; ++it) {
-        TileIndex oldIndex = it->key;
-        BackingStoreTile* tile = it->value;
+        TileIndex oldIndex = it->first;
+        BackingStoreTile* tile = it->second;
 
         // Reset the old index.
         resetTile(oldIndex, tile, false /*resetBackground*/);
@@ -766,8 +766,8 @@ void BackingStorePrivate::setBackingStoreRect(const Platform::IntRect& backingSt
     size_t i = 0;
     TileMap::const_iterator leftOverEnd = leftOverTiles.end();
     for (TileMap::const_iterator it = leftOverTiles.begin(); it != leftOverEnd; ++it) {
-        TileIndex oldIndex = it->key;
-        BackingStoreTile* tile = it->value;
+        TileIndex oldIndex = it->first;
+        BackingStoreTile* tile = it->second;
         if (i >= indexesToFill.size()) {
             ASSERT_NOT_REACHED();
             break;
@@ -1732,7 +1732,7 @@ Platform::IntRect BackingStorePrivate::visibleTilesRect() const
     TileMap::const_iterator end = currentMap.end();
     for (TileMap::const_iterator it = currentMap.begin(); it != end; ++it) {
         TileRect tileRect;
-        tileRect.first = it->key;
+        tileRect.first = it->first;
         tileRect.second = this->tileRect();
         Platform::IntRect tile = mapFromTilesToTransformedContents(tileRect);
         if (tile.intersects(visibleContentsRect()))
@@ -1793,7 +1793,7 @@ void BackingStorePrivate::resetTiles(bool resetBackground)
 
     TileMap::const_iterator end = currentMap.end();
     for (TileMap::const_iterator it = currentMap.begin(); it != end; ++it)
-        resetTile(it->key, it->value, resetBackground);
+        resetTile(it->first, it->second, resetBackground);
 }
 
 void BackingStorePrivate::updateTiles(bool updateVisible, bool immediate)
@@ -1806,10 +1806,10 @@ void BackingStorePrivate::updateTiles(bool updateVisible, bool immediate)
 
     TileMap::const_iterator end = currentMap.end();
     for (TileMap::const_iterator it = currentMap.begin(); it != end; ++it) {
-        bool isVisible = isTileVisible(it->key);
+        bool isVisible = isTileVisible(it->first);
         if (!updateVisible && isVisible)
             continue;
-        updateTile(it->key, immediate);
+        updateTile(it->first, immediate);
     }
 }
 
@@ -1830,8 +1830,8 @@ void BackingStorePrivate::updateTilesForScrollOrNotRenderedRegion(bool checkLoad
 
     TileMap::const_iterator end = currentMap.end();
     for (TileMap::const_iterator it = currentMap.begin(); it != end; ++it) {
-        TileIndex index = it->key;
-        BackingStoreTile* tile = it->value;
+        TileIndex index = it->first;
+        BackingStoreTile* tile = it->second;
         bool isVisible = isTileVisible(index);
         // The rect in transformed contents coordinates.
         Platform::IntRect rect(originOfTile(index), tileSize());
@@ -1974,8 +1974,8 @@ BackingStorePrivate::TileRectList BackingStorePrivate::mapFromTransformedContent
     TileRectList tileRectList;
     TileMap::const_iterator end = tileMap.end();
     for (TileMap::const_iterator it = tileMap.begin(); it != end; ++it) {
-        TileIndex index = it->key;
-        BackingStoreTile* tile = it->value;
+        TileIndex index = it->first;
+        BackingStoreTile* tile = it->second;
 
         // Need to map the rect to tile coordinates.
         Platform::IntRect r = rect;

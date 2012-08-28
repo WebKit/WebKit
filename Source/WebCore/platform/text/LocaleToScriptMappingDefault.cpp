@@ -166,7 +166,7 @@ UScriptCode scriptNameToCode(const String& scriptName)
 
     HashMap<String, UScriptCode>::iterator it = scriptNameCodeMap.find(scriptName.lower());
     if (it != scriptNameCodeMap.end())
-        return it->value;
+        return it->second;
     return USCRIPT_INVALID_CODE;
 }
 
@@ -389,7 +389,7 @@ UScriptCode localeToScriptCodeForFontSelection(const String& locale)
     while (!canonicalLocale.isEmpty()) {
         HashMap<String, UScriptCode>::iterator it = localeScriptMap.find(canonicalLocale);
         if (it != localeScriptMap.end())
-            return it->value;
+            return it->second;
         size_t pos = canonicalLocale.reverseFind('_');
         if (pos == notFound)
             break;

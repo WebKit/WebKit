@@ -63,7 +63,7 @@ public:
     {
         typename MapType::iterator end = m_map.end();
         for (typename MapType::iterator ptr = m_map.begin(); ptr != end; ++ptr)
-            WeakSet::deallocate(ptr->value);
+            WeakSet::deallocate(ptr->second);
         m_map.clear();
     }
 
@@ -80,8 +80,8 @@ public:
         ASSERT_UNUSED(globalData, globalData.apiLock().currentThreadIsHoldingLock());
         typename MapType::AddResult result = m_map.add(key, 0);
         if (!result.isNewEntry)
-            WeakSet::deallocate(result.iterator->value);
-        result.iterator->value = WeakSet::allocate(value, this, FinalizerCallback::finalizerContextFor(key));
+            WeakSet::deallocate(result.iterator->second);
+        result.iterator->second = WeakSet::allocate(value, this, FinalizerCallback::finalizerContextFor(key));
     }
 
     void remove(const KeyType& key)

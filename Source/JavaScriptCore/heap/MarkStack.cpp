@@ -533,7 +533,7 @@ ALWAYS_INLINE void MarkStack::internalAppend(JSValue* slot)
             if (addResult.isNewEntry)
                 string->setHashConstSingleton();
             else {
-                JSValue existingJSValue = addResult.iterator->value;
+                JSValue existingJSValue = addResult.iterator->second;
                 if (value != existingJSValue)
                     jsCast<JSString*>(existingJSValue.asCell())->clearHashConstSingleton();
                 *slot = existingJSValue;

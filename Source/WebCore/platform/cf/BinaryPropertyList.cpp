@@ -229,7 +229,7 @@ void BinaryPropertyListPlan::writeIntegerArray(const int* integers, size_t size)
         return;
     for (size_t i = 0; i < size; ++i)
         writeInteger(integers[i]);
-    addResult.iterator->value = m_currentObjectReference++;
+    addResult.iterator->second = m_currentObjectReference++;
     writeArrayObject(size);
     m_currentAggregateSize = savedAggregateSize;
 }

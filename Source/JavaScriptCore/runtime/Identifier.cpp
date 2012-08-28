@@ -102,7 +102,7 @@ PassRefPtr<StringImpl> Identifier::add(JSGlobalData* globalData, const char* c)
 
     const LiteralIdentifierTable::iterator& iter = literalIdentifierTable.find(c);
     if (iter != literalIdentifierTable.end())
-        return iter->value;
+        return iter->second;
 
     HashSet<StringImpl*>::AddResult addResult = identifierTable.add<const LChar*, IdentifierASCIIStringTranslator>(reinterpret_cast<const LChar*>(c));
 
