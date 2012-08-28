@@ -1,3 +1,18 @@
+2012-08-28  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        Datalist RTL test fails on ports that have progress indicator on the range groove
+        https://bugs.webkit.org/show_bug.cgi?id=95074
+
+        Reviewed by Kent Tamura.
+
+        Updated test case to draw a black box covering the range slider. The
+        ticks can still be seen and hopefully we can keep this test case a ref
+        test.
+
+        * fast/forms/datalist/input-appearance-range-with-datalist-rtl-expected.html:
+        * fast/forms/datalist/input-appearance-range-with-datalist-rtl.html:
+        * platform/efl/TestExpectations:
+
 2012-08-28  Kangil Han  <kangil.han@samsung.com>
 
         [WK2] SVG animation pause API missing

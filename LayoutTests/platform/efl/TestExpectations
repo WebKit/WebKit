@@ -109,9 +109,6 @@ BUGWK86623 : editing/pasteboard/subframe-dragndrop-1.html = MISSING
 BUGWK95071 : fast/forms/range/slider-in-multi-column.html = TEXT
 BUGWK95071 : fast/forms/range/slider-transformed.html = TEXT
 
-// Tests assumes sliders with no progress indicator.
-BUGWK95074 : fast/forms/datalist/input-appearance-range-with-datalist-rtl.html = IMAGE
-
 // The EFL port has no support for webarchives.
 BUGWKEFL SKIP : webarchive = PASS
 BUGWKEFL SKIP : http/tests/webarchive = PASS

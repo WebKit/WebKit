@@ -1,10 +1,21 @@
 <!DOCTYPE html>
 <html>
+<style>
+#mask {
+    position: absolute;
+    left: 0px;
+    top: 18px;
+    background-color: #000000;
+    height: 30px;
+    width: 180px
+}
+</style>
 <body>
 <input type=range list=foo />
 <datalist id=foo>
     <option>90</option>
     <option>100</option>
 </datalist>
+<div id=mask></div>
 </body>
 </html>
