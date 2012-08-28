@@ -1,3 +1,19 @@
+2012-08-28  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed rebaseline after r126911.
+
+        * platform/chromium/TestExpectations:
+        Removed the 3 rebaselined tests.
+
+        * platform/chromium-mac-snowleopard/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.png: Added.
+        * platform/chromium-mac/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.png:
+        * platform/chromium-mac/fast/inline/absolute-positioned-inline-in-centred-block-expected.png:
+        * platform/chromium-mac/fast/inline/absolute-positioned-inline-in-centred-block-expected.txt:
+        * platform/chromium-mac/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.png:
+        * platform/chromium-mac/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt: Added.
+        Added new baselines matching the ones landed for mac.
+
 2012-08-28  Simon Fraser  <simon.fraser@apple.com>
 
         Regression (r126774): Crash when scrolling after removing sticky element.

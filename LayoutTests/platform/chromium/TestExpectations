@@ -2668,7 +2668,7 @@ BUGWK91415 WIN DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
 BUGWK71278 SLOW : fast/events/dispatch-message-string-data.html = PASS
 
 // For some reason the EWS bots cannot find the results for these tests.
-BUGWK95215 LINUX : http/tests/cache/post-redirect-get.php = PASS MISSING 
+BUGWK95215 LINUX : http/tests/cache/post-redirect-get.php = PASS MISSING
 BUGWK95215 LINUX : http/tests/cache/post-with-cached-subresources.php = PASS MISSING
 
 BUGWK71451 SLOW : fast/frames/sandboxed-iframe-navigation-windowopen.html = PASS
@@ -3612,9 +3612,4 @@ BUGWK95101 SNOWLEOPARD : fast/text/atsui-bidi-control.html = PASS TIMEOUT
 BUGWK95136 : fast/css/sticky/sticky-left-percentage.html = IMAGE
 BUGWK95136 WIN LINUX : fast/css/sticky/sticky-writing-mode-vertical-lr.html = IMAGE
 BUGWK95136 : fast/css/sticky/sticky-writing-mode-vertical-rl.html = IMAGE
-
-// Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=77754
-BUGWK77754 MAC WIN : fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks.html = IMAGE+TEXT
-BUGWK77754 MAC WIN : fast/inline/absolute-positioned-inline-in-centred-block.html = IMAGE+TEXT
-BUGWK77754 MAC WIN : fast/css/absolute-child-with-percent-height-inside-relative-parent.html = IMAGE+TEXT
 
