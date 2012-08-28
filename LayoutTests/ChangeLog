@@ -1,3 +1,22 @@
+2012-08-27  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=94848
+        When paged-x/y is specified on the root, columnGap is ignored, and garbage pixels 
+        are likely
+
+        Reviewed by Dan Bernsetin.
+
+        New tests.
+        * fast/overflow/paged-x-div-with-column-gap.html: Added.
+        * fast/overflow/paged-x-with-column-gap.html: Added.
+        * platform/mac/fast/overflow/paged-x-div-with-column-gap-expected.png: Added.
+        * platform/mac/fast/overflow/paged-x-div-with-column-gap-expected.txt: Added.
+        * platform/mac/fast/overflow/paged-x-with-column-gap-expected.png: Added.
+        * platform/mac/fast/overflow/paged-x-with-column-gap-expected.txt: Added.
+
+        Updated results needed for Chromium.
+        * platform/chromium/TestExpectations:
+
 2012-08-27  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r109480): Form state for iframe content is not restored

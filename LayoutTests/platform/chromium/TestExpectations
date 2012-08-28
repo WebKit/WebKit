@@ -3466,6 +3466,9 @@ BUGWK94730 MAC : fast/repaint/japanese-rl-selection-repaint-in-regions.html = IM
 
 BUGCR67540 BUGWK94735 LINUX : fast/text/emphasis-overlap.html = IMAGE IMAGE+TEXT
 
+BUGWK95167 : fast/overflow/paged-x-with-column-gap.html = IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK95167 : fast/overflow/paged-x-div-with-column-gap.html = IMAGE IMAGE+TEXT TEXT MISSING
+
 BUGWK94793 : fast/notifications/notifications-event-listener-crash.html = TEXT PASS
 
 BUGCR144536 WONTFIX ANDROID : fast/dom/HTMLSelectElement/select-selectedOptions.html = TEXT
