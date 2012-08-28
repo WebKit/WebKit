@@ -231,6 +231,7 @@ public:
     const BorderValue& tableStartBorderAdjoiningCell(const RenderTableCell*) const;
     const BorderValue& tableEndBorderAdjoiningCell(const RenderTableCell*) const;
 
+    void addCaption(const RenderTableCaption*);
     void removeCaption(const RenderTableCaption*);
 
 protected:

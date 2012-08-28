@@ -35,6 +35,7 @@ public:
 private:
     virtual bool isTableCaption() const OVERRIDE { return true; }
 
+    virtual void insertedIntoTree() OVERRIDE;
     virtual void willBeRemovedFromTree() OVERRIDE;
 
     RenderTable* table() const;

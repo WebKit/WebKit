@@ -39,6 +39,13 @@ LayoutUnit RenderTableCaption::containingBlockLogicalWidthForContent() const
     return cb->logicalWidth();
 }
 
+void RenderTableCaption::insertedIntoTree()
+{
+    RenderBlock::insertedIntoTree();
+
+    table()->addCaption(this);
+}
+
 void RenderTableCaption::willBeRemovedFromTree()
 {
     RenderBlock::willBeRemovedFromTree();
