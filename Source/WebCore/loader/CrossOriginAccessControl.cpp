@@ -68,7 +68,7 @@ bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&
 
     HTTPHeaderMap::const_iterator end = headerMap.end();
     for (HTTPHeaderMap::const_iterator it = headerMap.begin(); it != end; ++it) {
-        if (!isOnAccessControlSimpleRequestHeaderWhitelist(it->first, it->second))
+        if (!isOnAccessControlSimpleRequestHeaderWhitelist(it->key, it->value))
             return false;
     }
 
@@ -116,14 +116,14 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
     if (requestHeaderFields.size() > 0) {
         StringBuilder headerBuffer;
         HTTPHeaderMap::const_iterator it = requestHeaderFields.begin();
-        headerBuffer.append(it->first);
+        headerBuffer.append(it->key);
         ++it;
 
         HTTPHeaderMap::const_iterator end = requestHeaderFields.end();
         for (; it != end; ++it) {
             headerBuffer.append(',');
             headerBuffer.append(' ');
-            headerBuffer.append(it->first);
+            headerBuffer.append(it->key);
         }
 
         preflightRequest.setHTTPHeaderField("Access-Control-Request-Headers", headerBuffer.toString().lower());

@@ -144,9 +144,9 @@ HRESULT STDMETHODCALLTYPE WebKitStatistics::comClassNameCounts(
     Iterator end = gClassNameCount.end();
     Vector<UChar> vector;
     for (Iterator current = gClassNameCount.begin(); current != end; ++current) {
-        append(vector, String::format("%4u", current->second));
+        append(vector, String::format("%4u", current->value));
         vector.append('\t');
-        append(vector, static_cast<String>(current->first));
+        append(vector, static_cast<String>(current->key));
         vector.append('\n');
     }
     *output = BString(String::adopt(vector)).release();

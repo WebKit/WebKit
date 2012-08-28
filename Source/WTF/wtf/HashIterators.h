@@ -91,7 +91,7 @@ namespace WTF {
     public:
         HashTableConstKeysIterator(const ConstIterator& impl) : m_impl(impl) {}
         
-        const KeyType* get() const { return &(m_impl.get()->first); }
+        const KeyType* get() const { return &(m_impl.get()->key); }
         const KeyType& operator*() const { return *get(); }
         const KeyType* operator->() const { return get(); }
 
@@ -108,7 +108,7 @@ namespace WTF {
     public:
         HashTableConstValuesIterator(const ConstIterator& impl) : m_impl(impl) {}
         
-        const MappedType* get() const { return &(m_impl.get()->second); }
+        const MappedType* get() const { return &(m_impl.get()->value); }
         const MappedType& operator*() const { return *get(); }
         const MappedType* operator->() const { return get(); }
 
@@ -126,7 +126,7 @@ namespace WTF {
     public:
         HashTableKeysIterator(const Iterator& impl) : m_impl(impl) {}
         
-        KeyType* get() const { return &(m_impl.get()->first); }
+        KeyType* get() const { return &(m_impl.get()->key); }
         KeyType& operator*() const { return *get(); }
         KeyType* operator->() const { return get(); }
 
@@ -149,7 +149,7 @@ namespace WTF {
     public:
         HashTableValuesIterator(const Iterator& impl) : m_impl(impl) {}
         
-        MappedType* get() const { return &(m_impl.get()->second); }
+        MappedType* get() const { return &(m_impl.get()->value); }
         MappedType& operator*() const { return *get(); }
         MappedType* operator->() const { return get(); }
 

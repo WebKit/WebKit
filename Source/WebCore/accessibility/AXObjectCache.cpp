@@ -94,7 +94,7 @@ AXObjectCache::~AXObjectCache()
 {
     HashMap<AXID, RefPtr<AccessibilityObject> >::iterator end = m_objects.end();
     for (HashMap<AXID, RefPtr<AccessibilityObject> >::iterator it = m_objects.begin(); it != end; ++it) {
-        AccessibilityObject* obj = (*it).second.get();
+        AccessibilityObject* obj = (*it).value.get();
         detachWrapper(obj);
         obj->detach();
         removeAXID(obj);

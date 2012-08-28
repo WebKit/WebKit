@@ -172,7 +172,7 @@ ParsedCookie* CookieMap::removeOldestCookie()
         CookieLog("CookieMap - looking into subdomains");
 
         for (HashMap<String, CookieMap*>::iterator it = m_subdomains.begin(); it != m_subdomains.end(); ++it) {
-            oldestCookie = it->second->removeOldestCookie();
+            oldestCookie = it->value->removeOldestCookie();
             if (oldestCookie)
                 break;
         }
@@ -214,7 +214,7 @@ void CookieMap::getAllChildCookies(Vector<ParsedCookie*>* stackOfCookies)
     CookieLog("CookieMap - getAllChildCookies in Map - %s", getName().utf8().data());
     getAllCookies(stackOfCookies);
     for (HashMap<String, CookieMap*>::iterator it = m_subdomains.begin(); it != m_subdomains.end(); ++it)
-        it->second->getAllChildCookies(stackOfCookies);
+        it->value->getAllChildCookies(stackOfCookies);
 }
 
 } // namespace WebCore

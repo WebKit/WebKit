@@ -121,7 +121,7 @@ EGLDisplayOpenVG::~EGLDisplayOpenVG()
 
     HashMap<EGLSurface, EGLint>::const_iterator end = m_surfaceConfigIds.end();
     for (HashMap<EGLSurface, EGLint>::const_iterator it = m_surfaceConfigIds.begin(); it != end; ++it)
-        destroySurface((*it).first);
+        destroySurface((*it).key);
 
     eglTerminate(m_display);
     ASSERT_EGL_NO_ERROR();
@@ -338,7 +338,7 @@ void EGLDisplayOpenVG::destroySurface(const EGLSurface& surface)
 
         // ...but only if there's no other surfaces associated to that context.
         for (HashMap<EGLSurface, EGLint>::iterator it = m_surfaceConfigIds.begin(); it != end; ++it) {
-            if ((*it).second == surfaceConfigId) {
+            if ((*it).value == surfaceConfigId) {
                 isContextReferenced = true;
                 break;
             }
@@ -354,7 +354,7 @@ void EGLDisplayOpenVG::destroySurface(const EGLSurface& surface)
 
     HashMap<EGLNativeWindowType, EGLSurface>::iterator end = m_windowSurfaces.end();
     for (HashMap<EGLNativeWindowType, EGLSurface>::iterator it = m_windowSurfaces.begin(); it != end; ++it) {
-        if ((*it).second == surface) {
+        if ((*it).value == surface) {
             m_windowSurfaces.remove(it);
             break;
         }
@@ -409,7 +409,7 @@ EGLContext EGLDisplayOpenVG::contextForSurface(const EGLSurface& surface)
     HashMap<EGLint, EGLContext>::iterator end = m_contexts.end();
 
     for (HashMap<EGLint, EGLContext>::iterator it = m_contexts.begin(); it != end; ++it) {
-        eglMakeCurrent(m_display, surface, surface, (*it).second);
+        eglMakeCurrent(m_display, surface, surface, (*it).value);
         if (eglGetError() == EGL_SUCCESS) {
             // Restore previous surface/context.
             if (currentContext != EGL_NO_CONTEXT) {
@@ -417,8 +417,8 @@ EGLContext EGLDisplayOpenVG::contextForSurface(const EGLSurface& surface)
                 ASSERT_EGL_NO_ERROR();
             }
             // Cool, surface is compatible to one of our existing contexts.
-            m_compatibleConfigIds.set(surfaceConfigId, (*it).first);
-            return (*it).second;
+            m_compatibleConfigIds.set(surfaceConfigId, (*it).key);
+            return (*it).value;
         }
     }
     // Restore previous surface/context.

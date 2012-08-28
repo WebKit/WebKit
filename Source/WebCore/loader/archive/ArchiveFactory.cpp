@@ -95,7 +95,7 @@ void ArchiveFactory::registerKnownArchiveMIMETypes()
     ArchiveMIMETypesMap::iterator end = archiveMIMETypes().end();
 
     for (; i != end; ++i)
-        mimeTypes.add(i->first);
+        mimeTypes.add(i->key);
 }
 
 }

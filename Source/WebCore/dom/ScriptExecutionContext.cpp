@@ -173,9 +173,9 @@ bool ScriptExecutionContext::canSuspendActiveDOMObjects()
     m_iteratingActiveDOMObjects = true;
     HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
     for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
-        ASSERT(iter->first->scriptExecutionContext() == this);
-        ASSERT(iter->first->suspendIfNeededCalled());
-        if (!iter->first->canSuspend()) {
+        ASSERT(iter->key->scriptExecutionContext() == this);
+        ASSERT(iter->key->suspendIfNeededCalled());
+        if (!iter->key->canSuspend()) {
             m_iteratingActiveDOMObjects = false;
             return false;
         }
@@ -190,9 +190,9 @@ void ScriptExecutionContext::suspendActiveDOMObjects(ActiveDOMObject::ReasonForS
     m_iteratingActiveDOMObjects = true;
     HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
     for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
-        ASSERT(iter->first->scriptExecutionContext() == this);
-        ASSERT(iter->first->suspendIfNeededCalled());
-        iter->first->suspend(why);
+        ASSERT(iter->key->scriptExecutionContext() == this);
+        ASSERT(iter->key->suspendIfNeededCalled());
+        iter->key->suspend(why);
     }
     m_iteratingActiveDOMObjects = false;
     m_activeDOMObjectsAreSuspended = true;
@@ -206,9 +206,9 @@ void ScriptExecutionContext::resumeActiveDOMObjects()
     m_iteratingActiveDOMObjects = true;
     HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
     for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
-        ASSERT(iter->first->scriptExecutionContext() == this);
-        ASSERT(iter->first->suspendIfNeededCalled());
-        iter->first->resume();
+        ASSERT(iter->key->scriptExecutionContext() == this);
+        ASSERT(iter->key->suspendIfNeededCalled());
+        iter->key->resume();
     }
     m_iteratingActiveDOMObjects = false;
 }
@@ -220,9 +220,9 @@ void ScriptExecutionContext::stopActiveDOMObjects()
     m_iteratingActiveDOMObjects = true;
     HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
     for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
-        ASSERT(iter->first->scriptExecutionContext() == this);
-        ASSERT(iter->first->suspendIfNeededCalled());
-        iter->first->stop();
+        ASSERT(iter->key->scriptExecutionContext() == this);
+        ASSERT(iter->key->suspendIfNeededCalled());
+        iter->key->stop();
     }
     m_iteratingActiveDOMObjects = false;
 
@@ -380,7 +380,7 @@ void ScriptExecutionContext::adjustMinimumTimerInterval(double oldMinimumTimerIn
 {
     if (minimumTimerInterval() != oldMinimumTimerInterval) {
         for (TimeoutMap::iterator iter = m_timeouts.begin(); iter != m_timeouts.end(); ++iter) {
-            DOMTimer* timer = iter->second;
+            DOMTimer* timer = iter->value;
             timer->adjustMinimumTimerInterval(oldMinimumTimerInterval);
         }
     }

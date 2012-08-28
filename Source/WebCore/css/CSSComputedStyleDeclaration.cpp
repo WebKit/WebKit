@@ -1273,8 +1273,8 @@ static PassRefPtr<CSSValue> counterToCSSValue(const RenderStyle* style, CSSPrope
 
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     for (CounterDirectiveMap::const_iterator it = map->begin(); it != map->end(); ++it) {
-        list->append(cssValuePool().createValue(it->first.get(), CSSPrimitiveValue::CSS_STRING));
-        short number = propertyID == CSSPropertyCounterIncrement ? it->second.m_incrementValue : it->second.m_resetValue;
+        list->append(cssValuePool().createValue(it->key.get(), CSSPrimitiveValue::CSS_STRING));
+        short number = propertyID == CSSPropertyCounterIncrement ? it->value.m_incrementValue : it->value.m_resetValue;
         list->append(cssValuePool().createValue((double)number, CSSPrimitiveValue::CSS_NUMBER));
     }
     return list.release();

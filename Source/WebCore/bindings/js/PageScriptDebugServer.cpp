@@ -82,7 +82,7 @@ void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* pag
     ASSERT_ARG(listener, listener);
     ASSERT_ARG(page, page);
 
-    OwnPtr<ListenerSet>& listeners = m_pageListenersMap.add(page, nullptr).iterator->second;
+    OwnPtr<ListenerSet>& listeners = m_pageListenersMap.add(page, nullptr).iterator->value;
     if (!listeners)
         listeners = adoptPtr(new ListenerSet);
     listeners->add(listener);
@@ -100,7 +100,7 @@ void PageScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* 
     if (it == m_pageListenersMap.end())
         return;
 
-    ListenerSet* listeners = it->second.get();
+    ListenerSet* listeners = it->value.get();
     listeners->remove(listener);
     if (listeners->isEmpty()) {
         m_pageListenersMap.remove(it);

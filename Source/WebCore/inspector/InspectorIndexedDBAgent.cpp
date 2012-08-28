@@ -319,12 +319,12 @@ public:
         RefPtr<TypeBuilder::Array<TypeBuilder::IndexedDB::ObjectStore> > objectStores = TypeBuilder::Array<TypeBuilder::IndexedDB::ObjectStore>::create();
 
         for (IDBDatabaseMetadata::ObjectStoreMap::const_iterator it = databaseMetadata.objectStores.begin(); it != databaseMetadata.objectStores.end(); ++it) {
-            const IDBObjectStoreMetadata& objectStoreMetadata = it->second;
+            const IDBObjectStoreMetadata& objectStoreMetadata = it->value;
 
             RefPtr<TypeBuilder::Array<TypeBuilder::IndexedDB::ObjectStoreIndex> > indexes = TypeBuilder::Array<TypeBuilder::IndexedDB::ObjectStoreIndex>::create();
 
             for (IDBObjectStoreMetadata::IndexMap::const_iterator it = objectStoreMetadata.indexes.begin(); it != objectStoreMetadata.indexes.end(); ++it) {
-                const IDBIndexMetadata& indexMetadata = it->second;
+                const IDBIndexMetadata& indexMetadata = it->value;
 
                 RefPtr<ObjectStoreIndex> objectStoreIndex = ObjectStoreIndex::create()
                     .setName(indexMetadata.name)

@@ -183,7 +183,7 @@ bool ArgumentCoder<ResourceError>::decode(ArgumentDecoder* decoder, ResourceErro
     HashMap<String, String>::const_iterator it = stringUserInfoMap.begin();
     HashMap<String, String>::const_iterator end = stringUserInfoMap.end();
     for (; it != end; ++it)
-        [userInfo setObject:nsString(it->second) forKey:nsString(it->first)];
+        [userInfo setObject:nsString(it->value) forKey:nsString(it->key)];
 
     if (certificate.certificateChain())
         [userInfo setObject:(NSArray *)certificate.certificateChain() forKey:@"NSErrorPeerCertificateChainKey"];

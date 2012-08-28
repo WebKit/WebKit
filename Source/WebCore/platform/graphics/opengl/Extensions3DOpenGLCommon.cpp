@@ -117,7 +117,7 @@ String Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE(Platform3DObject
     if (result == m_context->m_shaderSourceMap.end())
         return "";
 
-    GraphicsContext3D::ShaderSourceEntry& entry = result->second;
+    GraphicsContext3D::ShaderSourceEntry& entry = result->value;
 
     String translatedShaderSource;
     String shaderInfoLog;

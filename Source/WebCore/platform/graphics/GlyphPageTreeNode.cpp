@@ -75,7 +75,7 @@ size_t GlyphPageTreeNode::treeGlyphPageCount()
     if (roots) {
         HashMap<int, GlyphPageTreeNode*>::iterator end = roots->end();
         for (HashMap<int, GlyphPageTreeNode*>::iterator it = roots->begin(); it != end; ++it)
-            count += it->second->pageCount();
+            count += it->value->pageCount();
     }
     
     if (pageZeroRoot)
@@ -89,7 +89,7 @@ size_t GlyphPageTreeNode::pageCount() const
     size_t count = m_page && m_page->owner() == this ? 1 : 0;
     HashMap<const FontData*, GlyphPageTreeNode*>::const_iterator end = m_children.end();
     for (HashMap<const FontData*, GlyphPageTreeNode*>::const_iterator it = m_children.begin(); it != end; ++it)
-        count += it->second->pageCount();
+        count += it->value->pageCount();
 
     return count;
 }
@@ -100,7 +100,7 @@ void GlyphPageTreeNode::pruneTreeCustomFontData(const FontData* fontData)
     if (roots) {
         HashMap<int, GlyphPageTreeNode*>::iterator end = roots->end();
         for (HashMap<int, GlyphPageTreeNode*>::iterator it = roots->begin(); it != end; ++it)
-            it->second->pruneCustomFontData(fontData);
+            it->value->pruneCustomFontData(fontData);
     }
     
     if (pageZeroRoot)
@@ -112,7 +112,7 @@ void GlyphPageTreeNode::pruneTreeFontData(const SimpleFontData* fontData)
     if (roots) {
         HashMap<int, GlyphPageTreeNode*>::iterator end = roots->end();
         for (HashMap<int, GlyphPageTreeNode*>::iterator it = roots->begin(); it != end; ++it)
-            it->second->pruneFontData(fontData);
+            it->value->pruneFontData(fontData);
     }
     
     if (pageZeroRoot)
@@ -368,7 +368,7 @@ void GlyphPageTreeNode::pruneCustomFontData(const FontData* fontData)
         return;
     HashMap<const FontData*, GlyphPageTreeNode*>::iterator end = m_children.end();
     for (HashMap<const FontData*, GlyphPageTreeNode*>::iterator it = m_children.begin(); it != end; ++it)
-        it->second->pruneCustomFontData(fontData);
+        it->value->pruneCustomFontData(fontData);
 }
 
 void GlyphPageTreeNode::pruneFontData(const SimpleFontData* fontData, unsigned level)
@@ -384,7 +384,7 @@ void GlyphPageTreeNode::pruneFontData(const SimpleFontData* fontData, unsigned l
     // Prune any branch that contains this FontData.
     HashMap<const FontData*, GlyphPageTreeNode*>::iterator child = m_children.find(fontData);
     if (child != m_children.end()) {
-        GlyphPageTreeNode* node = child->second;
+        GlyphPageTreeNode* node = child->value;
         m_children.remove(fontData);
         unsigned customFontCount = node->m_customFontCount;
         delete node;
@@ -400,7 +400,7 @@ void GlyphPageTreeNode::pruneFontData(const SimpleFontData* fontData, unsigned l
 
     HashMap<const FontData*, GlyphPageTreeNode*>::iterator end = m_children.end();
     for (HashMap<const FontData*, GlyphPageTreeNode*>::iterator it = m_children.begin(); it != end; ++it)
-        it->second->pruneFontData(fontData, level);
+        it->value->pruneFontData(fontData, level);
 }
 
 #ifndef NDEBUG
@@ -412,8 +412,8 @@ void GlyphPageTreeNode::pruneFontData(const SimpleFontData* fontData, unsigned l
 
         HashMap<const FontData*, GlyphPageTreeNode*>::iterator end = m_children.end();
         for (HashMap<const FontData*, GlyphPageTreeNode*>::iterator it = m_children.begin(); it != end; ++it) {
-            printf("%s\t%p %s\n", indent.data(), it->first, it->first->description().utf8().data());
-            it->second->showSubtree();
+            printf("%s\t%p %s\n", indent.data(), it->key, it->key->description().utf8().data());
+            it->value->showSubtree();
         }
         if (m_systemFallbackChild) {
             printf("%s\t* fallback\n", indent.data());
@@ -431,8 +431,8 @@ void showGlyphPageTrees()
     showGlyphPageTree(0);
     HashMap<int, WebCore::GlyphPageTreeNode*>::iterator end = WebCore::GlyphPageTreeNode::roots->end();
     for (HashMap<int, WebCore::GlyphPageTreeNode*>::iterator it = WebCore::GlyphPageTreeNode::roots->begin(); it != end; ++it) {
-        printf("\nPage %d:\n", it->first);
-        showGlyphPageTree(it->first);
+        printf("\nPage %d:\n", it->key);
+        showGlyphPageTree(it->key);
     }
 }
 

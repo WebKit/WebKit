@@ -249,10 +249,10 @@ void InspectorProfilerAgent::getProfileHeaders(ErrorString*, RefPtr<TypeBuilder:
 
     ProfilesMap::iterator profilesEnd = m_profiles.end();
     for (ProfilesMap::iterator it = m_profiles.begin(); it != profilesEnd; ++it)
-        headers->addItem(createProfileHeader(*it->second));
+        headers->addItem(createProfileHeader(*it->value));
     HeapSnapshotsMap::iterator snapshotsEnd = m_snapshots.end();
     for (HeapSnapshotsMap::iterator it = m_snapshots.begin(); it != snapshotsEnd; ++it)
-        headers->addItem(createSnapshotHeader(*it->second));
+        headers->addItem(createSnapshotHeader(*it->value));
 }
 
 namespace {
@@ -280,16 +280,16 @@ void InspectorProfilerAgent::getProfile(ErrorString* errorString, const String& 
             return;
         }
         profileObject = TypeBuilder::Profiler::Profile::create();
-        profileObject->setHead(it->second->buildInspectorObjectForHead());
-        if (it->second->bottomUpHead())
-            profileObject->setBottomUpHead(it->second->buildInspectorObjectForBottomUpHead());
+        profileObject->setHead(it->value->buildInspectorObjectForHead());
+        if (it->value->bottomUpHead())
+            profileObject->setBottomUpHead(it->value->buildInspectorObjectForBottomUpHead());
     } else if (type == HeapProfileType) {
         HeapSnapshotsMap::iterator it = m_snapshots.find(uid);
         if (it == m_snapshots.end()) {
             *errorString = "Profile wasn't found";
             return;
         }
-        RefPtr<ScriptHeapSnapshot> snapshot = it->second;
+        RefPtr<ScriptHeapSnapshot> snapshot = it->value;
         profileObject = TypeBuilder::Profiler::Profile::create();
         if (m_frontend) {
             OutputStream stream(m_frontend, uid);

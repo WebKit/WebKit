@@ -166,7 +166,7 @@ void WorkQueue::registerEventSourceHandler(int fileDescriptor, int condition, co
         Vector<EventSource*> sources;
         EventSourceIterator it = m_eventSources.find(fileDescriptor);
         if (it != m_eventSources.end()) 
-            sources = it->second;
+            sources = it->value;
 
         sources.append(eventSource);
         m_eventSources.set(fileDescriptor, sources);
@@ -186,7 +186,7 @@ void WorkQueue::unregisterEventSourceHandler(int fileDescriptor)
     ASSERT(m_eventSources.contains(fileDescriptor));
 
     if (it != m_eventSources.end()) {
-        Vector<EventSource*> sources = it->second;
+        Vector<EventSource*> sources = it->value;
         for (unsigned i = 0; i < sources.size(); i++)
             sources[i]->cancel();
 

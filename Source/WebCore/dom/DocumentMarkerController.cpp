@@ -311,7 +311,7 @@ DocumentMarker* DocumentMarkerController::markerContainingPoint(const LayoutPoin
     MarkerMap::iterator end = m_markers.end();
     for (MarkerMap::iterator nodeIterator = m_markers.begin(); nodeIterator != end; ++nodeIterator) {
         // inner loop; process each marker in this node
-        MarkerList* list = nodeIterator->second;
+        MarkerList* list = nodeIterator->value;
         unsigned markerCount = list->size();
         for (unsigned markerIndex = 0; markerIndex < markerCount; ++markerIndex) {
             RenderedDocumentMarker& marker = list->at(markerIndex);
@@ -399,7 +399,7 @@ Vector<IntRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMarker
     MarkerMap::iterator end = m_markers.end();
     for (MarkerMap::iterator nodeIterator = m_markers.begin(); nodeIterator != end; ++nodeIterator) {
         // inner loop; process each marker in this node
-        MarkerList* list = nodeIterator->second;
+        MarkerList* list = nodeIterator->value;
         unsigned markerCount = list->size();
         for (unsigned markerIndex = 0; markerIndex < markerCount; ++markerIndex) {
             const RenderedDocumentMarker& marker = list->at(markerIndex);
@@ -426,7 +426,7 @@ void DocumentMarkerController::removeMarkers(Node* node, DocumentMarker::MarkerT
     
     MarkerMap::iterator iterator = m_markers.find(node);
     if (iterator != m_markers.end())
-        removeMarkersFromList(node, iterator->second, markerTypes);
+        removeMarkersFromList(node, iterator->value, markerTypes);
 }
 
 void DocumentMarkerController::removeMarkers(DocumentMarker::MarkerTypes markerTypes)
@@ -439,7 +439,7 @@ void DocumentMarkerController::removeMarkers(DocumentMarker::MarkerTypes markerT
     MarkerMap markerMapCopy = m_markers;
     MarkerMap::iterator end = markerMapCopy.end();
     for (MarkerMap::iterator i = markerMapCopy.begin(); i != end; ++i)
-        removeMarkersFromList(i->first.get(), i->second, markerTypes);
+        removeMarkersFromList(i->key.get(), i->value, markerTypes);
     m_possiblyExistingMarkerTypes.remove(markerTypes);
 }
 
@@ -495,10 +495,10 @@ void DocumentMarkerController::repaintMarkers(DocumentMarker::MarkerTypes marker
     // outer loop: process each markered node in the document
     MarkerMap::iterator end = m_markers.end();
     for (MarkerMap::iterator i = m_markers.begin(); i != end; ++i) {
-        Node* node = i->first.get();
+        Node* node = i->key.get();
 
         // inner loop: process each marker in the current node
-        MarkerList* list = i->second;
+        MarkerList* list = i->value;
         bool nodeNeedsRepaint = false;
         for (size_t i = 0; i != list->size(); ++i) {
             DocumentMarker marker = list->at(i);
@@ -526,7 +526,7 @@ void DocumentMarkerController::invalidateRenderedRectsForMarkersInRect(const Lay
     for (MarkerMap::iterator i = m_markers.begin(); i != end; ++i) {
 
         // inner loop: process each rect in the current node
-        MarkerList* list = i->second;
+        MarkerList* list = i->value;
         for (size_t listIndex = 0; listIndex < list->size(); ++listIndex)
             list->at(listIndex).invalidate(r);
     }
@@ -675,9 +675,9 @@ void DocumentMarkerController::showMarkers() const
     fprintf(stderr, "%d nodes have markers:\n", m_markers.size());
     MarkerMap::const_iterator end = m_markers.end();
     for (MarkerMap::const_iterator nodeIterator = m_markers.begin(); nodeIterator != end; ++nodeIterator) {
-        Node* node = nodeIterator->first.get();
+        Node* node = nodeIterator->key.get();
         fprintf(stderr, "%p", node);
-        MarkerList* list = nodeIterator->second;
+        MarkerList* list = nodeIterator->value;
         for (unsigned markerIndex = 0; markerIndex < list->size(); ++markerIndex) {
             const DocumentMarker& marker = list->at(markerIndex);
             fprintf(stderr, " %d:[%d:%d](%d)", marker.type(), marker.startOffset(), marker.endOffset(), marker.activeMatch());

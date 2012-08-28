@@ -59,7 +59,7 @@ inline Recompiler::~Recompiler()
     // JavaScript in the inspector.
     SourceProviderMap::const_iterator end = m_sourceProviders.end();
     for (SourceProviderMap::const_iterator iter = m_sourceProviders.begin(); iter != end; ++iter)
-        m_debugger->sourceParsed(iter->second, iter->first, -1, UString());
+        m_debugger->sourceParsed(iter->value, iter->key, -1, UString());
 }
 
 inline void Recompiler::operator()(JSCell* cell)

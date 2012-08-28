@@ -97,7 +97,7 @@ struct _Ewk_Context {
         HashMap<uint64_t, Ewk_Download_Job*>::iterator it = downloadJobs.begin();
         HashMap<uint64_t, Ewk_Download_Job*>::iterator end = downloadJobs.end();
         for ( ; it != end; ++it)
-            ewk_download_job_unref(it->second);
+            ewk_download_job_unref(it->value);
     }
 };
 

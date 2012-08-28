@@ -78,7 +78,7 @@ PassRefPtr<ImmutableDictionary> WebIntentData::extras() const
     ImmutableDictionary::MapType wkExtras;
     HashMap<String, String>::const_iterator end = m_store.extras.end();
     for (HashMap<String, String>::const_iterator it = m_store.extras.begin(); it != end; ++it)
-        wkExtras.set(it->first, WebString::create(it->second));
+        wkExtras.set(it->key, WebString::create(it->value));
 
     return ImmutableDictionary::adopt(wkExtras);
 }

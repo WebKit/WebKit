@@ -261,7 +261,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
             GetterSetterPair pair(node, static_cast<PropertyNode*>(0));
             GetterSetterMap::AddResult result = map.add(node->name().impl(), pair);
             if (!result.isNewEntry)
-                result.iterator->second.second = node;
+                result.iterator->value.second = node;
         }
 
         // Iterate over the remaining properties in the list.
@@ -279,7 +279,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
             ASSERT(node->m_type == PropertyNode::Getter || node->m_type == PropertyNode::Setter);
             GetterSetterMap::iterator it = map.find(node->name().impl());
             ASSERT(it != map.end());
-            GetterSetterPair& pair = it->second;
+            GetterSetterPair& pair = it->value;
 
             // Was this already generated as a part of its partner?
             if (pair.second == node)

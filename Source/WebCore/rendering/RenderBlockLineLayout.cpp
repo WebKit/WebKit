@@ -707,14 +707,14 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     if (!fallbackFonts.isEmpty()) {
         ASSERT(run->m_box->isText());
         GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(toInlineTextBox(run->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).iterator;
-        ASSERT(it->second.first.isEmpty());
-        copyToVector(fallbackFonts, it->second.first);
+        ASSERT(it->value.first.isEmpty());
+        copyToVector(fallbackFonts, it->value.first);
         run->m_box->parent()->clearDescendantsHaveSameLineHeightAndBaseline();
     }
     if ((glyphOverflow.top || glyphOverflow.bottom || glyphOverflow.left || glyphOverflow.right)) {
         ASSERT(run->m_box->isText());
         GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(toInlineTextBox(run->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).iterator;
-        it->second.second = glyphOverflow;
+        it->value.second = glyphOverflow;
         run->m_box->clearKnownToHaveNoOverflow();
     }
 }

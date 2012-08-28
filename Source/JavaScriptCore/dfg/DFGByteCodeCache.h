@@ -132,10 +132,10 @@ public:
         Map::iterator begin = m_map.begin();
         Map::iterator end = m_map.end();
         for (Map::iterator iter = begin; iter != end; ++iter) {
-            if (!iter->second.codeBlock)
+            if (!iter->value.codeBlock)
                 continue;
-            if (iter->second.owned) {
-                delete iter->second.codeBlock;
+            if (iter->value.owned) {
+                delete iter->value.codeBlock;
                 continue;
             }
         }
@@ -145,7 +145,7 @@ public:
     {
         Map::iterator iter = m_map.find(key);
         if (iter != m_map.end())
-            return iter->second.codeBlock;
+            return iter->value.codeBlock;
         
         ByteCodeCacheValue value;
         

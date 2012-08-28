@@ -164,7 +164,7 @@ NPIdentifier _NPN_GetStringIdentifier(const NPUTF8* name)
         StringIdentifierMap* identMap = getStringIdentifierMap();
         StringIdentifierMap::iterator iter = identMap->find(key);
         if (iter != identMap->end())
-            return static_cast<NPIdentifier>(iter->second);
+            return static_cast<NPIdentifier>(iter->value);
 
         size_t nameLen = key.m_length;
 
@@ -211,7 +211,7 @@ NPIdentifier _NPN_GetIntIdentifier(int32_t intId)
     IntIdentifierMap* identMap = getIntIdentifierMap();
     IntIdentifierMap::iterator iter = identMap->find(intId);
     if (iter != identMap->end())
-        return static_cast<NPIdentifier>(iter->second);
+        return static_cast<NPIdentifier>(iter->value);
 
     // We never release identifiers, so this dictionary will grow.
     PrivateIdentifier* identifier = reinterpret_cast<PrivateIdentifier*>(malloc(sizeof(PrivateIdentifier)));
@@ -388,7 +388,7 @@ void _NPN_RegisterObject(NPObject* npObject, NPObject* owner)
         NPObjectMap::iterator ownerEntry = liveObjectMap().find(owner);
         NPObject* parent = 0;
         if (liveObjectMap().end() != ownerEntry)
-            parent = ownerEntry->second;
+            parent = ownerEntry->value;
 
         if (parent)
             owner = parent;
@@ -408,7 +408,7 @@ void _NPN_UnregisterObject(NPObject* npObject)
 
     NPObject* owner = 0;
     if (liveObjectMap().find(npObject) != liveObjectMap().end())
-        owner = liveObjectMap().find(npObject)->second;
+        owner = liveObjectMap().find(npObject)->value;
 
     if (!owner) {
         // Unregistering a owner object; also unregister it's descendants.
@@ -443,7 +443,7 @@ void _NPN_UnregisterObject(NPObject* npObject)
     } else {
         NPRootObjectMap::iterator ownerEntry = rootObjectMap().find(owner);
         if (ownerEntry != rootObjectMap().end()) {
-            NPObjectSet* list = ownerEntry->second;
+            NPObjectSet* list = ownerEntry->value;
             ASSERT(list->find(npObject) != list->end());
             list->remove(npObject);
         }

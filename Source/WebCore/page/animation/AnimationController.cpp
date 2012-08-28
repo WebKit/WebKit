@@ -93,14 +93,14 @@ double AnimationControllerPrivate::updateAnimations(SetChanged callSetChanged/* 
 
     RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
     for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it) {
-        CompositeAnimation* compAnim = it->second.get();
+        CompositeAnimation* compAnim = it->value.get();
         if (!compAnim->suspended() && compAnim->hasAnimations()) {
             double t = compAnim->timeToNextService();
             if (t != -1 && (t < timeToNextService || timeToNextService == -1))
                 timeToNextService = t;
             if (!timeToNextService) {
                 if (callSetChanged == CallSetChanged) {
-                    Node* node = it->first->node();
+                    Node* node = it->key->node();
                     ASSERT(!node || (node->document() && !node->document()->inPageCache()));
                     node->setNeedsStyleRecalc(SyntheticStyleChange);
                     calledSetChanged = true;
@@ -292,9 +292,9 @@ void AnimationControllerPrivate::suspendAnimationsForDocument(Document* document
     
     RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
     for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it) {
-        RenderObject* renderer = it->first;
+        RenderObject* renderer = it->key;
         if (renderer->document() == document) {
-            CompositeAnimation* compAnim = it->second.get();
+            CompositeAnimation* compAnim = it->value.get();
             compAnim->suspendAnimations();
         }
     }
@@ -308,9 +308,9 @@ void AnimationControllerPrivate::resumeAnimationsForDocument(Document* document)
     
     RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
     for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it) {
-        RenderObject* renderer = it->first;
+        RenderObject* renderer = it->key;
         if (renderer->document() == document) {
-            CompositeAnimation* compAnim = it->second.get();
+            CompositeAnimation* compAnim = it->value.get();
             compAnim->resumeAnimations();
         }
     }
@@ -396,8 +396,8 @@ unsigned AnimationControllerPrivate::numberOfActiveAnimations(Document* document
     
     RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
     for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it) {
-        RenderObject* renderer = it->first;
-        CompositeAnimation* compAnim = it->second.get();
+        RenderObject* renderer = it->key;
+        CompositeAnimation* compAnim = it->value.get();
         if (renderer->document() == document)
             count += compAnim->numberOfActiveAnimations();
     }

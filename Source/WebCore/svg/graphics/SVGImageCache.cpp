@@ -44,11 +44,11 @@ SVGImageCache::~SVGImageCache()
 
     ImageDataMap::iterator end = m_imageDataMap.end();
     for (ImageDataMap::iterator it = m_imageDataMap.begin(); it != end; ++it) {
-        // Checks if the client (it->first) is still valid. The client should remove itself from this
+        // Checks if the client (it->key) is still valid. The client should remove itself from this
         // cache before its end of life, otherwise the following ASSERT will crash on pure virtual
         // function call or a general crash.
-        ASSERT(it->first->resourceClientType() == CachedImageClient::expectedType());
-        delete it->second.buffer;
+        ASSERT(it->key->resourceClientType() == CachedImageClient::expectedType());
+        delete it->value.buffer;
     }
 
     m_imageDataMap.clear();
@@ -63,7 +63,7 @@ void SVGImageCache::removeClientFromCache(const CachedImageClient* client)
     if (it == m_imageDataMap.end())
         return;
 
-    delete it->second.buffer;
+    delete it->value.buffer;
     m_imageDataMap.remove(it);
 }
 
@@ -80,14 +80,14 @@ SVGImageCache::SizeAndScales SVGImageCache::requestedSizeAndScales(const CachedI
     SizeAndScalesMap::const_iterator it = m_sizeAndScalesMap.find(client);
     if (it == m_sizeAndScalesMap.end())
         return SizeAndScales();
-    return it->second;
+    return it->value;
 }
 
 void SVGImageCache::imageContentChanged()
 {
     ImageDataMap::iterator end = m_imageDataMap.end();
     for (ImageDataMap::iterator it = m_imageDataMap.begin(); it != end; ++it)
-        it->second.imageNeedsUpdate = true;
+        it->value.imageNeedsUpdate = true;
 
     // If we're in the middle of layout, start redrawing dirty
     // images on a timer; otherwise it's safe to draw immediately.
@@ -103,7 +103,7 @@ void SVGImageCache::redraw()
 {
     ImageDataMap::iterator end = m_imageDataMap.end();
     for (ImageDataMap::iterator it = m_imageDataMap.begin(); it != end; ++it) {
-        ImageData& data = it->second;
+        ImageData& data = it->value;
         if (!data.imageNeedsUpdate)
             continue;
         // If the content changed we redraw using our existing ImageBuffer.
@@ -139,9 +139,9 @@ Image* SVGImageCache::lookupOrCreateBitmapImageForRenderer(const RenderObject* r
     if (sizeIt == m_sizeAndScalesMap.end())
         return Image::nullImage();
 
-    IntSize size = sizeIt->second.size;
-    float zoom = sizeIt->second.zoom;
-    float scale = sizeIt->second.scale;
+    IntSize size = sizeIt->value.size;
+    float zoom = sizeIt->value.zoom;
+    float scale = sizeIt->value.scale;
 
     // FIXME (85335): This needs to take CSS transform scale into account as well.
     Page* page = renderer->document()->page();
@@ -153,7 +153,7 @@ Image* SVGImageCache::lookupOrCreateBitmapImageForRenderer(const RenderObject* r
     // Lookup image for client in cache and eventually update it.
     ImageDataMap::iterator it = m_imageDataMap.find(client);
     if (it != m_imageDataMap.end()) {
-        ImageData& data = it->second;
+        ImageData& data = it->value;
 
         // Common case: image size & zoom remained the same.
         if (data.sizeAndScales.size == size && data.sizeAndScales.zoom == zoom && data.sizeAndScales.scale == scale)

@@ -717,7 +717,7 @@ PassRefPtr<InspectorValue> InspectorObjectBase::get(const String& name) const
     Dictionary::const_iterator it = m_data.find(name);
     if (it == m_data.end())
         return 0;
-    return it->second;
+    return it->value;
 }
 
 void InspectorObjectBase::remove(const String& name)
@@ -739,9 +739,9 @@ void InspectorObjectBase::writeJSON(StringBuilder* output) const
         ASSERT(it != m_data.end());
         if (i)
             output->append(',');
-        doubleQuoteString(it->first, output);
+        doubleQuoteString(it->key, output);
         output->append(':');
-        it->second->writeJSON(output);
+        it->value->writeJSON(output);
     }
     output->append('}');
 }

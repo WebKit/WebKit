@@ -275,7 +275,7 @@ void InspectorDatabaseAgent::enable(ErrorString*)
 
     DatabaseResourcesMap::iterator databasesEnd = m_resources.end();
     for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != databasesEnd; ++it)
-        it->second->bind(m_frontendProvider->frontend());
+        it->value->bind(m_frontendProvider->frontend());
 }
 
 void InspectorDatabaseAgent::disable(ErrorString*)
@@ -333,8 +333,8 @@ void InspectorDatabaseAgent::executeSQL(ErrorString* error, const String& databa
 String InspectorDatabaseAgent::databaseId(Database* database)
 {
     for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != m_resources.end(); ++it) {
-        if (it->second->database() == database)
-            return it->first;
+        if (it->value->database() == database)
+            return it->key;
     }
     return String();
 }
@@ -342,8 +342,8 @@ String InspectorDatabaseAgent::databaseId(Database* database)
 InspectorDatabaseResource* InspectorDatabaseAgent::findByFileName(const String& fileName)
 {
     for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != m_resources.end(); ++it) {
-        if (it->second->database()->fileName() == fileName)
-            return it->second.get();
+        if (it->value->database()->fileName() == fileName)
+            return it->value.get();
     }
     return 0;
 }
@@ -353,7 +353,7 @@ Database* InspectorDatabaseAgent::databaseForId(const String& databaseId)
     DatabaseResourcesMap::iterator it = m_resources.find(databaseId);
     if (it == m_resources.end())
         return 0;
-    return it->second->database();
+    return it->value->database();
 }
 
 } // namespace WebCore

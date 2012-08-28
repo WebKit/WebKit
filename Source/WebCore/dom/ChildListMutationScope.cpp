@@ -192,27 +192,27 @@ void ChildListMutationScope::MutationAccumulationRouter::childAdded(Node* target
 {
     HashMap<Node*, OwnPtr<ChildListMutationScope::MutationAccumulator> >::iterator iter = m_accumulations.find(target);
     ASSERT(iter != m_accumulations.end());
-    if (iter == m_accumulations.end() || !iter->second)
+    if (iter == m_accumulations.end() || !iter->value)
         return;
 
-    iter->second->childAdded(child);
+    iter->value->childAdded(child);
 }
 
 void ChildListMutationScope::MutationAccumulationRouter::willRemoveChild(Node* target, Node* child)
 {
     HashMap<Node*, OwnPtr<ChildListMutationScope::MutationAccumulator> >::iterator iter = m_accumulations.find(target);
     ASSERT(iter != m_accumulations.end());
-    if (iter == m_accumulations.end() || !iter->second)
+    if (iter == m_accumulations.end() || !iter->value)
         return;
 
-    iter->second->willRemoveChild(child);
+    iter->value->willRemoveChild(child);
 }
 
 void ChildListMutationScope::MutationAccumulationRouter::incrementScopingLevel(Node* target)
 {
     ScopingLevelMap::AddResult result = m_scopingLevels.add(target, 1);
     if (!result.isNewEntry) {
-        ++(result.iterator->second);
+        ++(result.iterator->value);
         return;
     }
 
@@ -229,8 +229,8 @@ void ChildListMutationScope::MutationAccumulationRouter::decrementScopingLevel(N
     ScopingLevelMap::iterator iter = m_scopingLevels.find(target);
     ASSERT(iter != m_scopingLevels.end());
 
-    --(iter->second);
-    if (iter->second > 0)
+    --(iter->value);
+    if (iter->value > 0)
         return;
 
     m_scopingLevels.remove(iter);

@@ -285,7 +285,7 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
         if (familyName.isEmpty())
             continue;
 
-        OwnPtr<Vector<RefPtr<CSSFontFace> > >& familyFontFaces = m_fontFaces.add(familyName, nullptr).iterator->second;
+        OwnPtr<Vector<RefPtr<CSSFontFace> > >& familyFontFaces = m_fontFaces.add(familyName, nullptr).iterator->value;
         if (!familyFontFaces) {
             familyFontFaces = adoptPtr(new Vector<RefPtr<CSSFontFace> >);
 
@@ -487,13 +487,13 @@ FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, c
         return fontDataForGenericFamily(m_document, fontDescription, familyName);
     }
 
-    OwnPtr<HashMap<unsigned, RefPtr<CSSSegmentedFontFace> > >& segmentedFontFaceCache = m_fonts.add(family, nullptr).iterator->second;
+    OwnPtr<HashMap<unsigned, RefPtr<CSSSegmentedFontFace> > >& segmentedFontFaceCache = m_fonts.add(family, nullptr).iterator->value;
     if (!segmentedFontFaceCache)
         segmentedFontFaceCache = adoptPtr(new HashMap<unsigned, RefPtr<CSSSegmentedFontFace> >);
 
     FontTraitsMask traitsMask = fontDescription.traitsMask();
 
-    RefPtr<CSSSegmentedFontFace>& face = segmentedFontFaceCache->add(traitsMask, 0).iterator->second;
+    RefPtr<CSSSegmentedFontFace>& face = segmentedFontFaceCache->add(traitsMask, 0).iterator->value;
     if (!face) {
         face = CSSSegmentedFontFace::create(this);
 

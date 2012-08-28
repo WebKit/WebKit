@@ -244,18 +244,18 @@ static HB_FaceRec_* getCachedHarfbuzzFace(FontPlatformData* platformData)
         gHarfbuzzFaceCache->set(uniqueID, entry);
         return entry.first;
     }
-    ++(result.get()->second.second);
-    return result.get()->second.first;
+    ++(result.get()->value.second);
+    return result.get()->value.first;
 }
 
 static void releaseCachedHarfbuzzFace(SkFontID uniqueID)
 {
     HarfbuzzFaceCache::iterator result = gHarfbuzzFaceCache->find(uniqueID);
     ASSERT(result != gHarfbuzzFaceCache->end());
-    ASSERT(result.get()->second.second > 0);
-    --(result.get()->second.second);
-    if (!(result.get()->second.second)) {
-        HB_FreeFace(result.get()->second.first);
+    ASSERT(result.get()->value.second > 0);
+    --(result.get()->value.second);
+    if (!(result.get()->value.second)) {
+        HB_FreeFace(result.get()->value.first);
         gHarfbuzzFaceCache->remove(uniqueID);
     }
 }

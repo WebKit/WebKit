@@ -114,7 +114,7 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
     unsigned hashKey = (fontDescription.computedPixelSize() + 1) << 6 | fontDescription.widthVariant() << 4
                        | (fontDescription.textOrientation() == TextOrientationUpright ? 8 : 0) | (fontDescription.orientation() == Vertical ? 4 : 0) | (syntheticBold ? 2 : 0) | (syntheticItalic ? 1 : 0);
 
-    SimpleFontData*& cachedData = m_fontDataTable.add(hashKey, 0).iterator->second;
+    SimpleFontData*& cachedData = m_fontDataTable.add(hashKey, 0).iterator->value;
     if (cachedData)
         return cachedData;
 

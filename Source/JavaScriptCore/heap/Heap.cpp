@@ -345,7 +345,7 @@ void Heap::markProtectedObjects(HeapRootVisitor& heapRootVisitor)
 {
     ProtectCountSet::iterator end = m_protectedValues.end();
     for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it)
-        heapRootVisitor.visit(&it->first);
+        heapRootVisitor.visit(&it->key);
 }
 
 void Heap::pushTempSortVector(Vector<ValueStringPair>* tempVector)

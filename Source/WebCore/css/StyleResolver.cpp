@@ -498,7 +498,7 @@ void StyleResolver::collectFeatures()
     m_features.add(m_authorStyle->features());
 #if ENABLE(STYLE_SCOPED)
     for (ScopedRuleSetMap::iterator it = m_scopedAuthorStyles.begin(); it != m_scopedAuthorStyles.end(); ++it)
-        m_features.add(it->second->features());
+        m_features.add(it->value->features());
 #endif
     if (m_userStyle)
         m_features.add(m_userStyle->features());
@@ -535,7 +535,7 @@ inline RuleSet* StyleResolver::ruleSetForScope(const ContainerNode* scope) const
     if (!scope->hasScopedHTMLStyleChild())
         return 0;
     ScopedRuleSetMap::const_iterator it = m_scopedAuthorStyles.find(scope);
-    return it != m_scopedAuthorStyles.end() ? it->second.get() : 0; 
+    return it != m_scopedAuthorStyles.end() ? it->value.get() : 0; 
 }
 #endif
 
@@ -558,8 +558,8 @@ void StyleResolver::appendAuthorStylesheets(unsigned firstNew, const Vector<RefP
         if (scope) {
             ScopedRuleSetMap::AddResult addResult = m_scopedAuthorStyles.add(scope, nullptr);
             if (addResult.isNewEntry)
-                addResult.iterator->second = RuleSet::create();
-            addResult.iterator->second->addRulesFromSheet(sheet, *m_medium, this, scope);
+                addResult.iterator->value = RuleSet::create();
+            addResult.iterator->value->addRulesFromSheet(sheet, *m_medium, this, scope);
             continue;
         }
 #endif
@@ -689,10 +689,10 @@ void StyleResolver::sweepMatchedPropertiesCache()
     MatchedPropertiesCache::iterator it = m_matchedPropertiesCache.begin();
     MatchedPropertiesCache::iterator end = m_matchedPropertiesCache.end();
     for (; it != end; ++it) {
-        Vector<MatchedProperties>& matchedProperties = it->second.matchedProperties;
+        Vector<MatchedProperties>& matchedProperties = it->value.matchedProperties;
         for (size_t i = 0; i < matchedProperties.size(); ++i) {
             if (matchedProperties[i].properties->hasOneRef()) {
-                toRemove.append(it->first);
+                toRemove.append(it->key);
                 break;
             }
         }
@@ -1871,7 +1871,7 @@ void StyleResolver::keyframeStylesForAnimation(Element* e, const RenderStyle* el
     if (it == m_keyframesRuleMap.end())
         return;
 
-    const StyleRuleKeyframes* keyframesRule = it->second.get();
+    const StyleRuleKeyframes* keyframesRule = it->value.get();
 
     // Construct and populate the style for each keyframe
     const Vector<RefPtr<StyleKeyframe> >& keyframes = keyframesRule->keyframes();
@@ -2566,7 +2566,7 @@ static void reportAtomRuleMap(MemoryClassInfo* info, const RuleSet::AtomRuleMap&
 {
     info->addHashMap(atomicRuleMap);
     for (RuleSet::AtomRuleMap::const_iterator it = atomicRuleMap.begin(); it != atomicRuleMap.end(); ++it)
-        info->addInstrumentedVector(*it->second);
+        info->addInstrumentedVector(*it->value);
 }
 
 void RuleSet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
@@ -2637,7 +2637,7 @@ void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, const RuleDa
 {
     if (!key)
         return;
-    OwnPtr<Vector<RuleData> >& rules = map.add(key, nullptr).iterator->second;
+    OwnPtr<Vector<RuleData> >& rules = map.add(key, nullptr).iterator->value;
     if (!rules)
         rules = adoptPtr(new Vector<RuleData>);
     rules->append(ruleData);
@@ -2798,7 +2798,7 @@ static inline void shrinkMapVectorsToFit(RuleSet::AtomRuleMap& map)
 {
     RuleSet::AtomRuleMap::iterator end = map.end();
     for (RuleSet::AtomRuleMap::iterator it = map.begin(); it != end; ++it)
-        it->second->shrinkToFit();
+        it->value->shrinkToFit();
 }
 
 void RuleSet::shrinkToFit()
@@ -2944,7 +2944,7 @@ const StyleResolver::MatchedPropertiesCacheItem* StyleResolver::findFromMatchedP
     MatchedPropertiesCache::iterator it = m_matchedPropertiesCache.find(hash);
     if (it == m_matchedPropertiesCache.end())
         return 0;
-    MatchedPropertiesCacheItem& cacheItem = it->second;
+    MatchedPropertiesCacheItem& cacheItem = it->value;
 
     size_t size = matchResult.matchedProperties.size();
     if (size != cacheItem.matchedProperties.size())

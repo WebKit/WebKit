@@ -98,7 +98,7 @@ void DocumentOrderedMap::remove(AtomicStringImpl* key, Element* element)
 
     m_map.checkConsistency();
     Map::iterator cachedItem = m_map.find(key);
-    if (cachedItem != m_map.end() && cachedItem->second == element)
+    if (cachedItem != m_map.end() && cachedItem->value == element)
         m_map.remove(cachedItem);
     else
         m_duplicateCounts.remove(key);

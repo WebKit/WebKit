@@ -1,3 +1,44 @@
+2012-08-28  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Rename first/second to key/value in HashMap iterators
+        https://bugs.webkit.org/show_bug.cgi?id=82784
+
+        Reviewed by Eric Seidel.
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate removeItemFromDateCaches:]):
+        (-[WebHistoryPrivate orderedLastVisitedDays]):
+        (WebHistoryWriter::WebHistoryWriter):
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics javaScriptProtectedObjectTypeCounts]):
+        (+[WebCoreStatistics javaScriptObjectTypeCounts]):
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::hostForPlugin):
+        (WebKit::NetscapePluginHostManager::pluginHostDied):
+        (WebKit::NetscapePluginHostManager::didCreateWindow):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::pluginHostDied):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::LocalObjectMap::idForObject):
+        (WebKit::NetscapePluginInstanceProxy::LocalObjectMap::retain):
+        (WebKit::NetscapePluginInstanceProxy::LocalObjectMap::release):
+        (WebKit::NetscapePluginInstanceProxy::LocalObjectMap::forget):
+        (WebKit::NetscapePluginInstanceProxy::destroy):
+        (WebKit::NetscapePluginInstanceProxy::webFrameDidFinishLoadWithReason):
+        (WebKit::NetscapePluginInstanceProxy::cancelCheckIfAllowedToLoadURL):
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::methodsNamed):
+        (WebKit::ProxyInstance::fieldNamed):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView stopTimers]):
+        (-[WebNetscapePluginView startTimers]):
+        * WebCoreSupport/WebNotificationClient.mm:
+        (WebNotificationClient::show):
+        (WebNotificationClient::clearNotifications):
+        (WebNotificationClient::notificationObjectDestroyed):
+        * WebView/WebHTMLView.mm:
+        (commandNameForSelector):
+
 2012-08-28  Jon Lee  <jonlee@apple.com>
 
         [Mac] Add SPI to WK1 to retrieve internal IDs for web notifications

@@ -3637,7 +3637,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         // released or cancelled it will only appear in the changedTouches list.
         if (pointState != PlatformTouchPoint::TouchReleased && pointState != PlatformTouchPoint::TouchCancelled) {
             touches->append(touch);
-            targetTouchesIterator->second->append(touch);
+            targetTouchesIterator->value->append(touch);
         }
 
         // Now build up the correct list for changedTouches.

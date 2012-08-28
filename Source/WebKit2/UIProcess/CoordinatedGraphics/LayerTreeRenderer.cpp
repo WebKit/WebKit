@@ -183,7 +183,7 @@ void LayerTreeRenderer::adjustPositionForFixedLayers()
 
     LayerMap::iterator end = m_fixedLayers.end();
     for (LayerMap::iterator it = m_fixedLayers.begin(); it != end; ++it)
-        toTextureMapperLayer(it->second)->setScrollPositionDeltaIfNeeded(delta);
+        toTextureMapperLayer(it->value)->setScrollPositionDeltaIfNeeded(delta);
 }
 
 void LayerTreeRenderer::didChangeScrollPosition(const IntPoint& position)
@@ -206,7 +206,7 @@ void LayerTreeRenderer::syncCanvas(WebLayerID id, const WebCore::IntSize& canvas
         canvasBackingStore = TextureMapperSurfaceBackingStore::create();
         m_surfaceBackingStores.set(id, canvasBackingStore);
     } else
-        canvasBackingStore = it->second;
+        canvasBackingStore = it->value;
 
     canvasBackingStore->setGraphicsSurface(graphicsSurfaceToken, canvasSize, frontBuffer);
     layer->setContentsToMedia(canvasBackingStore.get());
@@ -217,7 +217,7 @@ void LayerTreeRenderer::setLayerChildren(WebLayerID id, const Vector<WebLayerID>
 {
     ensureLayer(id);
     LayerMap::iterator it = m_layers.find(id);
-    GraphicsLayer* layer = it->second;
+    GraphicsLayer* layer = it->value;
     Vector<GraphicsLayer*> children;
 
     for (size_t i = 0; i < childIDs.size(); ++i) {
@@ -239,7 +239,7 @@ void LayerTreeRenderer::setLayerFilters(WebLayerID id, const FilterOperations& f
     LayerMap::iterator it = m_layers.find(id);
     ASSERT(it != m_layers.end());
 
-    GraphicsLayer* layer = it->second;
+    GraphicsLayer* layer = it->value;
     layer->setFilters(filters);
 }
 #endif
@@ -250,7 +250,7 @@ void LayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& layerIn
     LayerMap::iterator it = m_layers.find(id);
     ASSERT(it != m_layers.end());
 
-    GraphicsLayer* layer = it->second;
+    GraphicsLayer* layer = it->value;
 
     layer->setReplicatedByLayer(layerByID(layerInfo.replica));
     layer->setMaskLayer(layerByID(layerInfo.mask));
@@ -377,7 +377,7 @@ void LayerTreeRenderer::assignImageToLayer(GraphicsLayer* layer, int64_t imageID
 
     HashMap<int64_t, RefPtr<TextureMapperBackingStore> >::iterator it = m_directlyCompositedImages.find(imageID);
     ASSERT(it != m_directlyCompositedImages.end());
-    layer->setContentsToMedia(it->second.get());
+    layer->setContentsToMedia(it->value.get());
 }
 
 void LayerTreeRenderer::commitTileOperations()

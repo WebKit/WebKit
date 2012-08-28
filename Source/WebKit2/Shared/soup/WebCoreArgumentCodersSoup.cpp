@@ -144,7 +144,7 @@ bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder* decoder, ResourceR
     if (!decoder->decode(headers))
         return false;
     for (HTTPHeaderMap::const_iterator it = headers.begin(), end = headers.end(); it != end; ++it)
-        response.setHTTPHeaderField(it->first, it->second);
+        response.setHTTPHeaderField(it->key, it->value);
 
     uint32_t soupMessageFlags;
     if (!decoder->decode(soupMessageFlags))

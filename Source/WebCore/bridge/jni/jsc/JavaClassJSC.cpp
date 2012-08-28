@@ -107,7 +107,7 @@ JavaClass::~JavaClass()
 
     MethodListMap::const_iterator end = m_methods.end();
     for (MethodListMap::const_iterator it = m_methods.begin(); it != end; ++it) {
-        const MethodList* methodList = it->second;
+        const MethodList* methodList = it->value;
         deleteAllValues(*methodList);
         delete methodList;
     }

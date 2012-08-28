@@ -65,8 +65,8 @@ public:
             iter = m_map.add(rootObject, JSToNPObjectMap()).iterator;
         }
 
-        ASSERT(iter->second.find(jsObject) == iter->second.end());
-        iter->second.add(jsObject, npObject);
+        ASSERT(iter->value.find(jsObject) == iter->value.end());
+        iter->value.add(jsObject, npObject);
     }
 
     void remove(RootObject* rootObject)
@@ -80,9 +80,9 @@ public:
     {
         HashMap<RootObject*, JSToNPObjectMap>::iterator iter = m_map.find(rootObject);
         ASSERT(iter != m_map.end());
-        ASSERT(iter->second.find(jsObject) != iter->second.end());
+        ASSERT(iter->value.find(jsObject) != iter->value.end());
 
-        iter->second.remove(jsObject);
+        iter->value.remove(jsObject);
     }
 
 private:

@@ -460,7 +460,7 @@ static Vector<CachedResource*> cachedResourcesForFrame(Frame* frame)
     const CachedResourceLoader::DocumentResourceMap& allResources = frame->document()->cachedResourceLoader()->allCachedResources();
     CachedResourceLoader::DocumentResourceMap::const_iterator end = allResources.end();
     for (CachedResourceLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it) {
-        CachedResource* cachedResource = it->second.get();
+        CachedResource* cachedResource = it->value.get();
 
         switch (cachedResource->type()) {
         case CachedResource::ImageResource:
@@ -764,7 +764,7 @@ void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWor
         InspectorObject::const_iterator end = scripts->end();
         for (InspectorObject::const_iterator it = scripts->begin(); it != end; ++it) {
             String scriptText;
-            if (it->second->asString(&scriptText))
+            if (it->value->asString(&scriptText))
                 m_injectedScriptManager->injectScript(scriptText, mainWorldScriptState(frame));
         }
     }
@@ -796,8 +796,8 @@ void InspectorPageAgent::frameDetached(Frame* frame)
 {
     HashMap<Frame*, String>::iterator iterator = m_frameToIdentifier.find(frame);
     if (iterator != m_frameToIdentifier.end()) {
-        m_frontend->frameDetached(iterator->second);
-        m_identifierToFrame.remove(iterator->second);
+        m_frontend->frameDetached(iterator->value);
+        m_identifierToFrame.remove(iterator->value);
         m_frameToIdentifier.remove(iterator);
     }
 }

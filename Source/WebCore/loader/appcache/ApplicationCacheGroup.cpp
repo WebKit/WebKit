@@ -777,9 +777,9 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
     if (isUpgradeAttempt) {
         ApplicationCache::ResourceMap::const_iterator end = m_newestCache->end();
         for (ApplicationCache::ResourceMap::const_iterator it = m_newestCache->begin(); it != end; ++it) {
-            unsigned type = it->second->type();
+            unsigned type = it->value->type();
             if (type & ApplicationCacheResource::Master)
-                addEntry(it->first, type);
+                addEntry(it->key, type);
         }
     }
     
@@ -1018,7 +1018,7 @@ void ApplicationCacheGroup::startLoadingEntry()
 
     ASSERT(!m_currentHandle);
     
-    m_currentHandle = createResourceHandle(KURL(ParsedURLString, it->first), m_newestCache ? m_newestCache->resourceForURL(it->first) : 0);
+    m_currentHandle = createResourceHandle(KURL(ParsedURLString, it->key), m_newestCache ? m_newestCache->resourceForURL(it->key) : 0);
 }
 
 void ApplicationCacheGroup::deliverDelayedMainResources()
@@ -1067,7 +1067,7 @@ void ApplicationCacheGroup::addEntry(const String& url, unsigned type)
     EntryMap::AddResult result = m_pendingEntries.add(url, type);
     
     if (!result.isNewEntry)
-        result.iterator->second |= type;
+        result.iterator->value |= type;
 }
 
 void ApplicationCacheGroup::associateDocumentLoaderWithCache(DocumentLoader* loader, ApplicationCache* cache)

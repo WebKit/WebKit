@@ -161,7 +161,7 @@ void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText* text, Measu
             if (data->allCharactersMap) {
                 const SVGCharacterDataMap::const_iterator it = data->allCharactersMap->find(data->valueListPosition + m_textPosition - data->skippedCharacters - surrogatePairCharacters + 1);
                 if (it != data->allCharactersMap->end())
-                    attributes->characterDataMap().set(m_textPosition + 1, it->second);
+                    attributes->characterDataMap().set(m_textPosition + 1, it->value);
             }
             textMetricsValues->append(m_currentMetrics);
         }

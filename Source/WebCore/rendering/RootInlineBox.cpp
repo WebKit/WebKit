@@ -755,8 +755,8 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallb
     GlyphOverflow* glyphOverflow = 0;
     if (box->isText()) {
         GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(toInlineTextBox(box));
-        usedFonts = it == textBoxDataMap.end() ? 0 : &it->second.first;
-        glyphOverflow = it == textBoxDataMap.end() ? 0 : &it->second.second;
+        usedFonts = it == textBoxDataMap.end() ? 0 : &it->value.first;
+        glyphOverflow = it == textBoxDataMap.end() ? 0 : &it->value.second;
     }
         
     bool includeLeading = includeLeadingForBox(box);

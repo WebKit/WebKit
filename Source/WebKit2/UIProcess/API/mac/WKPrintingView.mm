@@ -194,8 +194,8 @@ static BOOL isForcingPreviewUpdate;
 - (uint64_t)_expectedPreviewCallbackForRect:(const IntRect&)rect
 {
     for (HashMap<uint64_t, WebCore::IntRect>::iterator iter = _expectedPreviewCallbacks.begin(); iter != _expectedPreviewCallbacks.end(); ++iter) {
-        if (iter->second  == rect)
-            return iter->first;
+        if (iter->value  == rect)
+            return iter->key;
     }
     return 0;
 }
@@ -229,8 +229,8 @@ static void pageDidDrawToPDF(WKDataRef dataRef, WKErrorRef, void* untypedContext
             ASSERT([view _isPrintingPreview]);
 
             if (data) {
-                HashMap<WebCore::IntRect, Vector<uint8_t> >::AddResult entry = view->_pagePreviews.add(iter->second, Vector<uint8_t>());
-                entry.iterator->second.append(data->bytes(), data->size());
+                HashMap<WebCore::IntRect, Vector<uint8_t> >::AddResult entry = view->_pagePreviews.add(iter->value, Vector<uint8_t>());
+                entry.iterator->value.append(data->bytes(), data->size());
             }
             view->_expectedPreviewCallbacks.remove(context->callbackID);
             bool receivedResponseToLatestRequest = view->_latestExpectedPreviewCallback == context->callbackID;
@@ -494,7 +494,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
         return;
     }
 
-    const Vector<uint8_t>& pdfDataBytes = pagePreviewIterator->second;
+    const Vector<uint8_t>& pdfDataBytes = pagePreviewIterator->value;
     RetainPtr<NSData> pdfData(AdoptNS, [[NSData alloc] initWithBytes:pdfDataBytes.data() length:pdfDataBytes.size()]);
     RetainPtr<PDFDocument> pdfDocument(AdoptNS, [[pdfDocumentClass() alloc] initWithData:pdfData.get()]);
 

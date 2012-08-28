@@ -2258,7 +2258,7 @@ static void extractContentTypeFromPluginVector(const Vector<PluginPackage*>& plu
         MIMEToDescriptionsMap::const_iterator map_it = plugins[i]->mimeToDescriptions().begin();
         MIMEToDescriptionsMap::const_iterator map_end = plugins[i]->mimeToDescriptions().end();
         for (; map_it != map_end; ++map_it)
-            *list << map_it->first;
+            *list << map_it->key;
     }
 }
 

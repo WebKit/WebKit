@@ -74,7 +74,7 @@ void DOMObjectCache::clearByFrame(WebCore::Frame* frame)
     // iterating the cache itself.
     DOMObjectMap::iterator end = domObjects().end();
     for (DOMObjectMap::iterator iter = domObjects().begin(); iter != end; ++iter) {
-        DOMObjectCacheData* data = iter->second;
+        DOMObjectCacheData* data = iter->value;
         ASSERT(data);
         if ((!frame || data->frame == frame) && data->timesReturned)
             toUnref.append(data);

@@ -412,7 +412,7 @@ static inline CCRenderPass* findRenderPassById(int renderPassId, const CCLayerTr
 {
     CCRenderPassIdHashMap::const_iterator it = frame.renderPassesById.find(renderPassId);
     ASSERT(it != frame.renderPassesById.end());
-    return it->second.get();
+    return it->value.get();
 }
 
 static void removeRenderPassesRecursive(int removeRenderPassId, CCLayerTreeHostImpl::FrameData& frame)

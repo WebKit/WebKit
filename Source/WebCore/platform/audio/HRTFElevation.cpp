@@ -79,7 +79,7 @@ static AudioBus* getConcatenatedImpulseResponsesForSubject(const String& subject
         bus = concatenatedImpulseResponses.leakPtr();
         audioBusMap.set(subjectName, bus);
     } else
-        bus = iterator->second;
+        bus = iterator->value;
 
     size_t responseLength = bus->length();
     size_t expectedLength = static_cast<size_t>(TotalNumberOfResponses * ResponseFrameSize);

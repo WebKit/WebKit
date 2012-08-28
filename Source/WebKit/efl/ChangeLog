@@ -1,3 +1,17 @@
+2012-08-28  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Rename first/second to key/value in HashMap iterators
+        https://bugs.webkit.org/show_bug.cgi?id=82784
+
+        Reviewed by Eric Seidel.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::evaluateScriptInIsolatedWorld):
+        * WebCoreSupport/PlatformStrategiesEfl.cpp:
+        (PlatformStrategiesEfl::getPluginInfo):
+        * ewk/ewk_intent.cpp:
+        (ewk_intent_extra_get):
+
 2012-08-28  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] WebKit EFL updates view on HTTP 204 response

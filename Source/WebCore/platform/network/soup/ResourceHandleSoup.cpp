@@ -448,7 +448,7 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer dat
 
         if (hasUnignoredTLSErrors(handle.get())) {
             CertificatesMap::iterator iter = clientCertificates().find(handle->firstRequest().url().host().lower());
-            if (iter == clientCertificates().end() || !iter->second.contains(d->m_response.soupMessageCertificate())) {
+            if (iter == clientCertificates().end() || !iter->value.contains(d->m_response.soupMessageCertificate())) {
                 GOwnPtr<char> uri(soup_uri_to_string(soup_request_get_uri(d->m_soupRequest.get()), FALSE));
                 client->didFail(handle.get(), ResourceError(g_quark_to_string(SOUP_HTTP_ERROR), SOUP_STATUS_SSL_FAILED,
                                                             uri.get(), unacceptableTLSCertificate(),
@@ -819,7 +819,7 @@ void ResourceHandle::setHostAllowsAnyHTTPSCertificate(const String& host)
 
 void ResourceHandle::setClientCertificate(const String& host, GTlsCertificate* certificate)
 {
-    clientCertificates().add(host.lower(), HostTLSCertificateSet()).iterator->second.add(certificate);
+    clientCertificates().add(host.lower(), HostTLSCertificateSet()).iterator->value.add(certificate);
 }
 
 void ResourceHandle::setIgnoreSSLErrors(bool ignoreSSLErrors)

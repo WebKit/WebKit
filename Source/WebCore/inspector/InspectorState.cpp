@@ -80,7 +80,7 @@ bool InspectorState::getBoolean(const String& propertyName)
     InspectorObject::iterator it = m_properties->find(propertyName);
     bool value = false;
     if (it != m_properties->end())
-        it->second->asBoolean(&value);
+        it->value->asBoolean(&value);
     return value;
 }
 
@@ -89,7 +89,7 @@ String InspectorState::getString(const String& propertyName)
     InspectorObject::iterator it = m_properties->find(propertyName);
     String value;
     if (it != m_properties->end())
-        it->second->asString(&value);
+        it->value->asString(&value);
     return value;
 }
 
@@ -98,7 +98,7 @@ long InspectorState::getLong(const String& propertyName)
     InspectorObject::iterator it = m_properties->find(propertyName);
     long value = 0;
     if (it != m_properties->end())
-        it->second->asNumber(&value);
+        it->value->asNumber(&value);
     return value;
 }
 
@@ -107,7 +107,7 @@ double InspectorState::getDouble(const String& propertyName)
     InspectorObject::iterator it = m_properties->find(propertyName);
     double value = 0;
     if (it != m_properties->end())
-        it->second->asNumber(&value);
+        it->value->asNumber(&value);
     return value;
 }
 
@@ -118,7 +118,7 @@ PassRefPtr<InspectorObject> InspectorState::getObject(const String& propertyName
         m_properties->setObject(propertyName, InspectorObject::create());
         it = m_properties->find(propertyName);
     }
-    return it->second->asObject();
+    return it->value->asObject();
 }
 
 } // namespace WebCore

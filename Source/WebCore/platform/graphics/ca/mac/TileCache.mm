@@ -76,7 +76,7 @@ TileCache::~TileCache()
     ASSERT(isMainThread());
 
     for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        WebTileLayer* tileLayer = it->second.get();
+        WebTileLayer* tileLayer = it->value.get();
         [tileLayer setTileCache:0];
     }
 }
@@ -96,7 +96,7 @@ void TileCache::tileCacheLayerBoundsChanged()
 void TileCache::setNeedsDisplay()
 {
     for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
-        [it->second.get() setNeedsDisplay];
+        [it->value.get() setNeedsDisplay];
 }
 
 void TileCache::setNeedsDisplayInRect(const IntRect& rect)
@@ -173,9 +173,9 @@ void TileCache::setScale(CGFloat scale)
     revalidateTiles();
 
     for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        [it->second.get() setContentsScale:deviceScaleFactor];
+        [it->value.get() setContentsScale:deviceScaleFactor];
 
-        IntRect tileRect = rectForTileIndex(it->first);
+        IntRect tileRect = rectForTileIndex(it->key);
         FloatRect scaledTileRect = tileRect;
 
         scaledTileRect.scale(1 / m_scale);
@@ -195,7 +195,7 @@ void TileCache::setAcceleratesDrawing(bool acceleratesDrawing)
     m_acceleratesDrawing = acceleratesDrawing;
 
     for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
-        [it->second.get() setAcceleratesDrawing:m_acceleratesDrawing];
+        [it->value.get() setAcceleratesDrawing:m_acceleratesDrawing];
 #else
     UNUSED_PARAM(acceleratesDrawing);
 #endif
@@ -245,7 +245,7 @@ void TileCache::setTileDebugBorderWidth(float borderWidth)
 
     m_tileDebugBorderWidth = borderWidth;
     for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
-        [it->second.get() setBorderWidth:m_tileDebugBorderWidth];
+        [it->value.get() setBorderWidth:m_tileDebugBorderWidth];
 }
 
 void TileCache::setTileDebugBorderColor(CGColorRef borderColor)
@@ -255,7 +255,7 @@ void TileCache::setTileDebugBorderColor(CGColorRef borderColor)
 
     m_tileDebugBorderColor = borderColor;
     for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
-        [it->second.get() setBorderColor:m_tileDebugBorderColor.get()];
+        [it->value.get() setBorderColor:m_tileDebugBorderColor.get()];
 }
 
 IntRect TileCache::bounds() const
@@ -361,9 +361,9 @@ void TileCache::revalidateTiles()
     Vector<TileIndex> tilesToRemove;
 
     for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        const TileIndex& tileIndex = it->first;
+        const TileIndex& tileIndex = it->key;
 
-        WebTileLayer* tileLayer = it->second.get();
+        WebTileLayer* tileLayer = it->value.get();
 
         if (!rectForTileIndex(tileIndex).intersects(tileCoverageRect)) {
             // Remove this layer.
@@ -391,7 +391,7 @@ void TileCache::revalidateTiles()
             TileIndex tileIndex(x, y);
 
             IntRect tileRect = rectForTileIndex(tileIndex);
-            RetainPtr<WebTileLayer>& tileLayer = m_tiles.add(tileIndex, 0).iterator->second;
+            RetainPtr<WebTileLayer>& tileLayer = m_tiles.add(tileIndex, 0).iterator->value;
             if (!tileLayer) {
                 tileLayer = createTileLayer(tileRect);
                 [m_tileContainerLayer.get() addSublayer:tileLayer.get()];
@@ -411,7 +411,7 @@ void TileCache::revalidateTiles()
 
     m_tileCoverageRect = IntRect();
     for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        const TileIndex& tileIndex = it->first;
+        const TileIndex& tileIndex = it->key;
 
         m_tileCoverageRect.unite(rectForTileIndex(tileIndex));
     }

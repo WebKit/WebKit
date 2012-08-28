@@ -216,7 +216,7 @@ namespace WTF {
         AddResult result = inlineAdd(key, mapped);
         if (!result.isNewEntry) {
             // The inlineAdd call above found an existing hash table entry; we need to set the mapped value.
-            MappedTraits::store(mapped, result.iterator->second);
+            MappedTraits::store(mapped, result.iterator->value);
         }
         return result;
     }
@@ -228,7 +228,7 @@ namespace WTF {
         AddResult result = inlineAdd(key, mapped);
         if (!result.isNewEntry) {
             // The inlineAdd call above found an existing hash table entry; we need to set the mapped value.
-            MappedTraits::store(mapped, result.iterator->second);
+            MappedTraits::store(mapped, result.iterator->value);
         }
         return result;
     }
@@ -254,7 +254,7 @@ namespace WTF {
         ValueType* entry = const_cast<HashTableType&>(m_impl).lookup(key);
         if (!entry)
             return MappedTraits::peek(MappedTraits::emptyValue());
-        return MappedTraits::peek(entry->second);
+        return MappedTraits::peek(entry->value);
     }
 
     template<typename T, typename U, typename V, typename W, typename MappedTraits>
@@ -264,7 +264,7 @@ namespace WTF {
         ValueType* entry = const_cast<HashTableType&>(m_impl).template lookup<Translator>(key);
         if (!entry)
             return MappedTraits::peek(MappedTraits::emptyValue());
-        return MappedTraits::peek(entry->second);
+        return MappedTraits::peek(entry->value);
     }
 
     template<typename T, typename U, typename V, typename W, typename MappedTraits>
@@ -308,7 +308,7 @@ namespace WTF {
         iterator it = find(key);
         if (it == end())
             return MappedTraits::passOut(MappedTraits::emptyValue());
-        MappedPassOutType result = MappedTraits::passOut(it->second);
+        MappedPassOutType result = MappedTraits::passOut(it->value);
         remove(it);
         return result;
     }
@@ -320,7 +320,7 @@ namespace WTF {
         iterator it = find(key);
         if (it == end())
             return MappedTraits::passOut(MappedTraits::emptyValue());
-        MappedPassOutType result = MappedTraits::passOut(it->second);
+        MappedPassOutType result = MappedTraits::passOut(it->value);
         remove(it);
         return result;
     }

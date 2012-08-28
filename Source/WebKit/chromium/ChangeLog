@@ -1,3 +1,19 @@
+2012-08-28  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Rename first/second to key/value in HashMap iterators
+        https://bugs.webkit.org/show_bug.cgi?id=82784
+
+        Reviewed by Eric Seidel.
+
+        * src/WebGeolocationPermissionRequestManager.cpp:
+        (WebGeolocationPermissionRequestManager::remove):
+        * src/WebIDBMetadata.cpp:
+        (WebKit::WebIDBMetadata::WebIDBMetadata):
+        * src/WebIntent.cpp:
+        (WebKit::WebIntent::extrasValue):
+        * tests/WebSocketExtensionDispatcherTest.cpp:
+        (WebCore::TEST_F):
+
 2012-08-28  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Drastically shorten the link highlight duration.

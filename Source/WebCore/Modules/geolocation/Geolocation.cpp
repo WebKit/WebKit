@@ -192,7 +192,7 @@ Geolocation::GeoNotifier* Geolocation::Watchers::find(int id)
     IdToNotifierMap::iterator iter = m_idToNotifierMap.find(id);
     if (iter == m_idToNotifierMap.end())
         return 0;
-    return iter->second.get();
+    return iter->value.get();
 }
 
 void Geolocation::Watchers::remove(int id)
@@ -201,7 +201,7 @@ void Geolocation::Watchers::remove(int id)
     IdToNotifierMap::iterator iter = m_idToNotifierMap.find(id);
     if (iter == m_idToNotifierMap.end())
         return;
-    m_notifierToIdMap.remove(iter->second);
+    m_notifierToIdMap.remove(iter->value);
     m_idToNotifierMap.remove(iter);
 }
 
@@ -210,7 +210,7 @@ void Geolocation::Watchers::remove(GeoNotifier* notifier)
     NotifierToIdMap::iterator iter = m_notifierToIdMap.find(notifier);
     if (iter == m_notifierToIdMap.end())
         return;
-    m_idToNotifierMap.remove(iter->second);
+    m_idToNotifierMap.remove(iter->value);
     m_notifierToIdMap.remove(iter);
 }
 

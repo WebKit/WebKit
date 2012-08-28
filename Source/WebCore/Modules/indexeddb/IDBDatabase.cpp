@@ -108,7 +108,7 @@ PassRefPtr<DOMStringList> IDBDatabase::objectStoreNames() const
 {
     RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
     for (IDBDatabaseMetadata::ObjectStoreMap::const_iterator it = m_metadata.objectStores.begin(); it != m_metadata.objectStores.end(); ++it)
-        objectStoreNames->append(it->first);
+        objectStoreNames->append(it->key);
     objectStoreNames->sort();
     return objectStoreNames.release();
 }

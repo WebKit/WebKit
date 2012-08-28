@@ -124,7 +124,7 @@ void UserMediaClientImpl::cancelUserMediaRequest(UserMediaRequest* request)
     if (it == userMediaRequestsMap().end())
         return;
 
-    webUserMedia()->cancelUserMediaRequest(WebUserMediaRequest(request->audio(), request->video(), it->second.get()));
+    webUserMedia()->cancelUserMediaRequest(WebUserMediaRequest(request->audio(), request->video(), it->value.get()));
     userMediaRequestsMap().remove(it);
 }
 

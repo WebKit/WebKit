@@ -151,7 +151,7 @@ PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, Excep
 
     IDBObjectStoreMap::iterator it = m_objectStoreMap.find(name);
     if (it != m_objectStoreMap.end())
-        return it->second;
+        return it->value;
 
     RefPtr<IDBObjectStoreBackendInterface> objectStoreBackend = m_backend->objectStore(name, ec);
     ASSERT(!objectStoreBackend != !ec); // If we didn't get a store, we should have gotten an exception code. And vice versa.
@@ -162,7 +162,7 @@ PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, Excep
     IDBDatabaseMetadata::ObjectStoreMap::const_iterator mdit = metadata.objectStores.find(name);
     ASSERT(mdit != metadata.objectStores.end());
 
-    RefPtr<IDBObjectStore> objectStore = IDBObjectStore::create(mdit->second, objectStoreBackend, this);
+    RefPtr<IDBObjectStore> objectStore = IDBObjectStore::create(mdit->value, objectStoreBackend, this);
     objectStoreCreated(name, objectStore);
     return objectStore.release();
 }
@@ -182,7 +182,7 @@ void IDBTransaction::objectStoreDeleted(const String& name)
     ASSERT(isVersionChange());
     IDBObjectStoreMap::iterator it = m_objectStoreMap.find(name);
     if (it != m_objectStoreMap.end()) {
-        RefPtr<IDBObjectStore> objectStore = it->second;
+        RefPtr<IDBObjectStore> objectStore = it->value;
         m_objectStoreMap.remove(name);
         objectStore->markDeleted();
         m_objectStoreCleanupMap.set(objectStore, objectStore->metadata());
@@ -290,7 +290,7 @@ void IDBTransaction::onAbort()
 
     if (isVersionChange()) {
         for (IDBObjectStoreMetadataMap::iterator it = m_objectStoreCleanupMap.begin(); it != m_objectStoreCleanupMap.end(); ++it)
-            it->first->setMetadata(it->second);
+            it->key->setMetadata(it->value);
     }
     m_objectStoreCleanupMap.clear();
     closeOpenCursors();
@@ -378,7 +378,7 @@ bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
 
     // Break reference cycles.
     for (IDBObjectStoreMap::iterator it = m_objectStoreMap.begin(); it != m_objectStoreMap.end(); ++it)
-        it->second->transactionFinished();
+        it->value->transactionFinished();
     m_objectStoreMap.clear();
 
     Vector<RefPtr<EventTarget> > targets;

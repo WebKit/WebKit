@@ -1763,7 +1763,7 @@ void WebViewHost::printFrameUserGestureStatus(WebFrame* webframe, const char* ms
 void WebViewHost::printResourceDescription(unsigned identifier)
 {
     ResourceMap::iterator it = m_resourceIdentifierMap.find(identifier);
-    printf("%s", it != m_resourceIdentifierMap.end() ? it->second.c_str() : "<unknown>");
+    printf("%s", it != m_resourceIdentifierMap.end() ? it->value.c_str() : "<unknown>");
 }
 
 void WebViewHost::setPendingExtraData(PassOwnPtr<TestShellExtraData> extraData)
