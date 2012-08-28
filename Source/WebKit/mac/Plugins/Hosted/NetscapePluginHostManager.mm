@@ -73,7 +73,7 @@ NetscapePluginHostProxy* NetscapePluginHostManager::hostForPlugin(const WTF::Str
     
     // The package was already in the map, just return it.
     if (!result.isNewEntry)
-        return result.iterator->second;
+        return result.iterator->value;
         
     mach_port_t clientPort;
     if (mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &clientPort) != KERN_SUCCESS) {
@@ -95,7 +95,7 @@ NetscapePluginHostProxy* NetscapePluginHostManager::hostForPlugin(const WTF::Str
     
     NetscapePluginHostProxy* hostProxy = new NetscapePluginHostProxy(clientPort, pluginHostPort, pluginHostPSN, shouldCacheMissingPropertiesAndMethods);
     
-    result.iterator->second = hostProxy;
+    result.iterator->value = hostProxy;
     
     return hostProxy;
 }
@@ -204,7 +204,7 @@ void NetscapePluginHostManager::pluginHostDied(NetscapePluginHostProxy* pluginHo
 
     // This has O(n) complexity but the number of active plug-in hosts is very small so it shouldn't matter.
     for (PluginHostMap::iterator it = m_pluginHosts.begin(); it != end; ++it) {
-        if (it->second == pluginHost) {
+        if (it->value == pluginHost) {
             m_pluginHosts.remove(it);
             return;
         }
@@ -286,7 +286,7 @@ void NetscapePluginHostManager::didCreateWindow()
     // See if any of our hosts are in full-screen mode.
     PluginHostMap::iterator end = m_pluginHosts.end();
     for (PluginHostMap::iterator it = m_pluginHosts.begin(); it != end; ++it) {
-        NetscapePluginHostProxy* hostProxy = it->second;
+        NetscapePluginHostProxy* hostProxy = it->value;
         
         if (!hostProxy->isMenuBarVisible()) {
             // Make ourselves the front process.

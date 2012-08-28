@@ -155,7 +155,7 @@ void ResourceRequest::doUpdatePlatformRequest()
         [nsRequest setValue:nil forHTTPHeaderField:[oldHeaderFieldNames objectAtIndex:i - 1]];
     HTTPHeaderMap::const_iterator end = httpHeaderFields().end();
     for (HTTPHeaderMap::const_iterator it = httpHeaderFields().begin(); it != end; ++it)
-        [nsRequest setValue:it->second forHTTPHeaderField:it->first];
+        [nsRequest setValue:it->value forHTTPHeaderField:it->key];
 
     // The below check can be removed once we require a version of Foundation with -[NSMutableURLRequest setContentDispositionEncodingFallbackArray:] method.
     static bool supportsContentDispositionEncodingFallbackArray = [NSMutableURLRequest instancesRespondToSelector:@selector(setContentDispositionEncodingFallbackArray:)];

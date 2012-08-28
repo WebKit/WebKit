@@ -181,10 +181,10 @@ void WebSocketExtensionDispatcher::appendAcceptedExtension(const String& extensi
     // FIXME: Should use ListHashSet to keep the order of the parameters.
     for (HashMap<String, String>::const_iterator iterator = extensionParameters.begin(); iterator != extensionParameters.end(); ++iterator) {
         m_acceptedExtensionsBuilder.append("; ");
-        m_acceptedExtensionsBuilder.append(iterator->first);
-        if (!iterator->second.isNull()) {
+        m_acceptedExtensionsBuilder.append(iterator->key);
+        if (!iterator->value.isNull()) {
             m_acceptedExtensionsBuilder.append("=");
-            m_acceptedExtensionsBuilder.append(iterator->second);
+            m_acceptedExtensionsBuilder.append(iterator->value);
         }
     }
 }

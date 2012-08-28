@@ -127,7 +127,7 @@ void WorkerEventQueue::close()
 {
     m_isClosed = true;
     for (EventTaskMap::iterator it = m_eventTaskMap.begin(); it != m_eventTaskMap.end(); ++it) {
-        EventDispatcherTask* task = it->second;
+        EventDispatcherTask* task = it->value;
         task->cancel();
     }
     m_eventTaskMap.clear();

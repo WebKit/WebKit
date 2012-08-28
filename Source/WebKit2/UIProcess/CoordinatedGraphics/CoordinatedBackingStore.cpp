@@ -80,15 +80,15 @@ void CoordinatedBackingStore::updateTile(int id, const IntRect& sourceRect, cons
 {
     HashMap<int, CoordinatedBackingStoreTile>::iterator it = m_tiles.find(id);
     ASSERT(it != m_tiles.end());
-    it->second.incrementRepaintCount();
-    it->second.setBackBuffer(targetRect, sourceRect, backBuffer, offset);
+    it->value.incrementRepaintCount();
+    it->value.setBackBuffer(targetRect, sourceRect, backBuffer, offset);
 }
 
 PassRefPtr<BitmapTexture> CoordinatedBackingStore::texture() const
 {
     HashMap<int, CoordinatedBackingStoreTile>::const_iterator end = m_tiles.end();
     for (HashMap<int, CoordinatedBackingStoreTile>::const_iterator it = m_tiles.begin(); it != end; ++it) {
-        RefPtr<BitmapTexture> texture = it->second.texture();
+        RefPtr<BitmapTexture> texture = it->value.texture();
         if (texture)
             return texture;
     }
@@ -112,7 +112,7 @@ void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper,
     HashMap<int, CoordinatedBackingStoreTile>::iterator end = m_tiles.end();
     FloatRect coveredRect;
     for (HashMap<int, CoordinatedBackingStoreTile>::iterator it = m_tiles.begin(); it != end; ++it) {
-        CoordinatedBackingStoreTile& tile = it->second;
+        CoordinatedBackingStoreTile& tile = it->value;
         if (!tile.texture())
             continue;
 
@@ -156,7 +156,7 @@ void CoordinatedBackingStore::commitTileOperations(TextureMapper* textureMapper)
 
     HashMap<int, CoordinatedBackingStoreTile>::iterator tilesEnd = m_tiles.end();
     for (HashMap<int, CoordinatedBackingStoreTile>::iterator it = m_tiles.begin(); it != tilesEnd; ++it)
-        it->second.swapBuffers(textureMapper);
+        it->value.swapBuffers(textureMapper);
 }
 
 } // namespace WebKit

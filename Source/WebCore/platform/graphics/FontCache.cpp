@@ -211,7 +211,7 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
         gFontPlatformDataCache->set(key, result);
         foundResult = result;
     } else {
-        result = it->second;
+        result = it->value;
         foundResult = true;
     }
 
@@ -332,20 +332,20 @@ SimpleFontData* FontCache::getCachedFontData(const FontPlatformData* platformDat
         return newValue.first;
     }
 
-    if (!result.get()->second.second) {
-        ASSERT(gInactiveFontData->contains(result.get()->second.first));
-        gInactiveFontData->remove(result.get()->second.first);
+    if (!result.get()->value.second) {
+        ASSERT(gInactiveFontData->contains(result.get()->value.first));
+        gInactiveFontData->remove(result.get()->value.first);
     }
 
     if (shouldRetain == Retain)
-        result.get()->second.second++;
-    else if (!result.get()->second.second) {
+        result.get()->value.second++;
+    else if (!result.get()->value.second) {
         // If shouldRetain is DoNotRetain and count is 0, we want to remove the fontData from 
         // gInactiveFontData (above) and re-add here to update LRU position.
-        gInactiveFontData->add(result.get()->second.first);
+        gInactiveFontData->add(result.get()->value.first);
     }
 
-    return result.get()->second.first;
+    return result.get()->value.first;
 }
 
 SimpleFontData* FontCache::getNonRetainedLastResortFallbackFont(const FontDescription& fontDescription)
@@ -361,8 +361,8 @@ void FontCache::releaseFontData(const SimpleFontData* fontData)
     FontDataCache::iterator it = gFontDataCache->find(fontData->platformData());
     ASSERT(it != gFontDataCache->end());
 
-    ASSERT(it->second.second);
-    if (!--it->second.second)
+    ASSERT(it->value.second);
+    if (!--it->value.second)
         gInactiveFontData->add(fontData);
 }
 
@@ -410,8 +410,8 @@ void FontCache::purgeInactiveFontData(int count)
         keysToRemove.reserveInitialCapacity(gFontPlatformDataCache->size());
         FontPlatformDataCache::iterator platformDataEnd = gFontPlatformDataCache->end();
         for (FontPlatformDataCache::iterator platformData = gFontPlatformDataCache->begin(); platformData != platformDataEnd; ++platformData) {
-            if (platformData->second && !gFontDataCache->contains(*platformData->second))
-                keysToRemove.append(platformData->first);
+            if (platformData->value && !gFontDataCache->contains(*platformData->value))
+                keysToRemove.append(platformData->key);
         }
         
         size_t keysToRemoveCount = keysToRemove.size();

@@ -167,7 +167,7 @@ void PlatformCALayer::animationStarted(CFTimeInterval beginTime)
 
     HashMap<String, RefPtr<PlatformCAAnimation> >::const_iterator end = m_animations.end();
     for (HashMap<String, RefPtr<PlatformCAAnimation> >::const_iterator it = m_animations.begin(); it != end; ++it)
-        it->second->setActualStartTimeIfNeeded(cacfBeginTime);
+        it->value->setActualStartTimeIfNeeded(cacfBeginTime);
 
     if (m_owner)
         m_owner->platformCALayerAnimationStarted(beginTime);
@@ -177,8 +177,8 @@ static void resubmitAllAnimations(PlatformCALayer* layer)
 {
     HashMap<String, RefPtr<PlatformCAAnimation> >::const_iterator end = layer->animations().end();
     for (HashMap<String, RefPtr<PlatformCAAnimation> >::const_iterator it = layer->animations().begin(); it != end; ++it) {
-        RetainPtr<CFStringRef> s(AdoptCF, it->first.createCFString());
-        CACFLayerAddAnimation(layer->platformLayer(), s.get(), it->second->platformAnimation());
+        RetainPtr<CFStringRef> s(AdoptCF, it->key.createCFString());
+        CACFLayerAddAnimation(layer->platformLayer(), s.get(), it->value->platformAnimation());
     }
 }
 
@@ -328,7 +328,7 @@ PassRefPtr<PlatformCAAnimation> PlatformCALayer::animationForKey(const String& k
     if (it == m_animations.end())
         return 0;
 
-    return it->second;
+    return it->value;
 }
 
 PlatformCALayer* PlatformCALayer::mask() const

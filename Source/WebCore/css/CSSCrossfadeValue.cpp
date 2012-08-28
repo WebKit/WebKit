@@ -175,7 +175,7 @@ void CSSCrossfadeValue::crossfadeChanged(const IntRect&)
 {
     RenderObjectSizeCountMap::const_iterator end = clients().end();
     for (RenderObjectSizeCountMap::const_iterator curr = clients().begin(); curr != end; ++curr) {
-        RenderObject* client = const_cast<RenderObject*>(curr->first);
+        RenderObject* client = const_cast<RenderObject*>(curr->key);
         client->imageChanged(static_cast<WrappedImagePtr>(this));
     }
 }

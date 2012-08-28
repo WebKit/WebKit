@@ -60,7 +60,7 @@ WrapShapeInfo::~WrapShapeInfo()
 WrapShapeInfo* WrapShapeInfo::ensureWrapShapeInfoForRenderBlock(RenderBlock* block)
 {
     WrapShapeInfoMap::AddResult result = wrapShapeInfoMap().add(block, create(block));
-    return result.iterator->second.get();
+    return result.iterator->value.get();
 }
 
 WrapShapeInfo* WrapShapeInfo::wrapShapeInfoForRenderBlock(const RenderBlock* block)

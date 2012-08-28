@@ -128,7 +128,7 @@ public:
             dataLog("Zeroing the structure to hoist for %s because the ratio is %lf.\n",
                     m_graph.nameOfVariableAccessData(variable), variable->voteRatio());
 #endif
-            iter->second.m_structure = 0;
+            iter->value.m_structure = 0;
         }
         
         // Disable structure check hoisting for variables that cross the OSR entry that
@@ -339,9 +339,9 @@ public:
                     HashMap<VariableAccessData*, CheckData>::iterator iter = m_map.find(variable);
                     if (iter == m_map.end())
                         break;
-                    if (!iter->second.m_structure)
+                    if (!iter->value.m_structure)
                         break;
-                    if (iter->second.m_isClobbered && !iter->second.m_structure->transitionWatchpointSetIsStillValid())
+                    if (iter->value.m_isClobbered && !iter->value.m_structure->transitionWatchpointSetIsStillValid())
                         break;
                     
                     node.ref();
@@ -355,7 +355,7 @@ public:
                     m_graph.append(getLocal);
                     insertionSet.append(indexInBlock + 1, getLocalIndex);
                     
-                    Node checkStructure(CheckStructure, codeOrigin, OpInfo(m_graph.addStructureSet(iter->second.m_structure)), getLocalIndex);
+                    Node checkStructure(CheckStructure, codeOrigin, OpInfo(m_graph.addStructureSet(iter->value.m_structure)), getLocalIndex);
                     checkStructure.ref();
                     NodeIndex checkStructureIndex = m_graph.size();
                     m_graph.append(checkStructure);
@@ -375,9 +375,9 @@ public:
                     HashMap<VariableAccessData*, CheckData>::iterator iter = m_map.find(variable);
                     if (iter == m_map.end())
                         break;
-                    if (!iter->second.m_structure)
+                    if (!iter->value.m_structure)
                         break;
-                    if (iter->second.m_isClobbered && !iter->second.m_structure->transitionWatchpointSetIsStillValid())
+                    if (iter->value.m_isClobbered && !iter->value.m_structure->transitionWatchpointSetIsStillValid())
                         break;
 
                     // First insert a dead SetLocal to tell OSR that the child's value should
@@ -394,7 +394,7 @@ public:
                     m_graph[child1].ref();
                     // Use a ForwardCheckStructure to indicate that we should exit to the
                     // next bytecode instruction rather than reexecuting the current one.
-                    Node checkStructure(ForwardCheckStructure, codeOrigin, OpInfo(m_graph.addStructureSet(iter->second.m_structure)), child1);
+                    Node checkStructure(ForwardCheckStructure, codeOrigin, OpInfo(m_graph.addStructureSet(iter->value.m_structure)), child1);
                     checkStructure.ref();
                     NodeIndex checkStructureIndex = m_graph.size();
                     m_graph.append(checkStructure);
@@ -410,16 +410,16 @@ public:
                     HashMap<VariableAccessData*, CheckData>::iterator iter = m_map.find(child.variableAccessData());
                     if (iter == m_map.end())
                         break;
-                    if (!iter->second.m_structure)
+                    if (!iter->value.m_structure)
                         break;
-                    if (!iter->second.m_isClobbered) {
+                    if (!iter->value.m_isClobbered) {
                         node.setOpAndDefaultFlags(Phantom);
                         ASSERT(node.refCount() == 1);
                         break;
                     }
-                    if (!iter->second.m_structure->transitionWatchpointSetIsStillValid())
+                    if (!iter->value.m_structure->transitionWatchpointSetIsStillValid())
                         break;
-                    ASSERT(iter->second.m_structure == node.structureSet().singletonStructure());
+                    ASSERT(iter->value.m_structure == node.structureSet().singletonStructure());
                     node.convertToStructureTransitionWatchpoint();
                     changed = true;
                     break;
@@ -442,9 +442,9 @@ private:
             m_map.add(variable, CheckData(structure, false));
         if (result.isNewEntry)
             return;
-        if (result.iterator->second.m_structure == structure)
+        if (result.iterator->value.m_structure == structure)
             return;
-        result.iterator->second.m_structure = 0;
+        result.iterator->value.m_structure = 0;
     }
     
     void noticeStructureCheck(VariableAccessData* variable, const StructureSet& set)
@@ -462,7 +462,7 @@ private:
             m_map.find(variable);
         if (iter == m_map.end())
             return;
-        iter->second.m_isClobbered = true;
+        iter->value.m_isClobbered = true;
     }
     
     void clobber(const Operands<VariableAccessData*>& live)

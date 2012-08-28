@@ -159,7 +159,7 @@ IDBDatabaseMetadata IDBDatabaseBackendImpl::metadata() const
 {
     IDBDatabaseMetadata metadata(m_name, m_version, m_intVersion);
     for (ObjectStoreMap::const_iterator it = m_objectStores.begin(); it != m_objectStores.end(); ++it)
-        metadata.objectStores.set(it->first, it->second->metadata());
+        metadata.objectStores.set(it->key, it->value->metadata());
     return metadata;
 }
 

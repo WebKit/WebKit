@@ -238,7 +238,7 @@ static String cachedStorageDirectory(DWORD pathIdentifier)
 
     HashMap<DWORD, String>::iterator it = directories.find(pathIdentifier);
     if (it != directories.end())
-        return it->second;
+        return it->value;
 
     String directory = storageDirectory(pathIdentifier);
     directories.add(pathIdentifier, directory);

@@ -140,11 +140,11 @@ void JSActivation::getOwnPropertyNames(JSObject* object, ExecState* exec, Proper
 
     SymbolTable::const_iterator end = thisObject->symbolTable()->end();
     for (SymbolTable::const_iterator it = thisObject->symbolTable()->begin(); it != end; ++it) {
-        if (it->second.getAttributes() & DontEnum && mode != IncludeDontEnumProperties)
+        if (it->value.getAttributes() & DontEnum && mode != IncludeDontEnumProperties)
             continue;
-        if (it->second.getIndex() >= thisObject->m_numCapturedVars)
+        if (it->value.getIndex() >= thisObject->m_numCapturedVars)
             continue;
-        propertyNames.add(Identifier(exec, it->first.get()));
+        propertyNames.add(Identifier(exec, it->key.get()));
     }
     // Skip the JSVariableObject implementation of getOwnPropertyNames
     JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
@@ -157,7 +157,7 @@ inline bool JSActivation::symbolTablePutWithAttributes(JSGlobalData& globalData,
     SymbolTable::iterator iter = symbolTable()->find(propertyName.publicName());
     if (iter == symbolTable()->end())
         return false;
-    SymbolTableEntry& entry = iter->second;
+    SymbolTableEntry& entry = iter->value;
     ASSERT(!entry.isNull());
     if (entry.getIndex() >= m_numCapturedVars)
         return false;

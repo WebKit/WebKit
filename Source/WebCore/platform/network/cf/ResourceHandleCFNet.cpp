@@ -428,7 +428,7 @@ static CFURLRequestRef makeFinalRequest(const ResourceRequest& request, bool sho
         if (!sslProps)
             sslProps.adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 #if PLATFORM(WIN)
-        wkSetClientCertificateInSSLProperties(sslProps.get(), (clientCert->second).get());
+        wkSetClientCertificateInSSLProperties(sslProps.get(), (clientCert->value).get());
 #endif
     }
 

@@ -40,7 +40,7 @@ void V8PerContextData::dispose()
     {
         WrapperBoilerplateMap::iterator it = m_wrapperBoilerplates.begin();
         for (; it != m_wrapperBoilerplates.end(); ++it) {
-            v8::Persistent<v8::Object> wrapper = it->second;
+            v8::Persistent<v8::Object> wrapper = it->value;
             wrapper.Dispose();
         }
         m_wrapperBoilerplates.clear();
@@ -49,7 +49,7 @@ void V8PerContextData::dispose()
     {
         ConstructorMap::iterator it = m_constructorMap.begin();
         for (; it != m_constructorMap.end(); ++it) {
-            v8::Persistent<v8::Function> wrapper = it->second;
+            v8::Persistent<v8::Function> wrapper = it->value;
             wrapper.Dispose();
         }
         m_constructorMap.clear();

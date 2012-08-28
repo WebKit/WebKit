@@ -1,3 +1,17 @@
+2012-08-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Rename first/second to key/value in HashMap iterators
+        https://bugs.webkit.org/show_bug.cgi?id=82784
+
+        Reviewed by Eric Seidel.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::evaluateScriptInIsolatedWorld):
+        * WebCoreSupport/PlatformStrategiesEfl.cpp:
+        (PlatformStrategiesEfl::getPluginInfo):
+        * ewk/ewk_intent.cpp:
+        (ewk_intent_extra_get):
+
 2012-08-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Rename RegisterProtocolHandler API to NavigatorContentUtils

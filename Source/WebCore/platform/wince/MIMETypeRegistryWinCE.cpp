@@ -101,7 +101,7 @@ String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
     initMIMETypeEntensionMap();
 
     for (HashMap<String, String>::iterator i = mimetypeMap.begin(); i != mimetypeMap.end(); ++i) {
-        if (equalIgnoringCase(i->second, type))
+        if (equalIgnoringCase(i->value, type))
             return i->first;
     }
 

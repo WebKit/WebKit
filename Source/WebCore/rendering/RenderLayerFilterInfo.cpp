@@ -56,7 +56,7 @@ RenderLayerFilterInfo* RenderLayerFilterInfo::filterInfoForRenderLayer(const Ren
     if (!s_filterMap)
         return 0;
     RenderLayerFilterInfoMap::iterator iter = s_filterMap->find(layer);
-    return (iter != s_filterMap->end()) ? iter->second : 0;
+    return (iter != s_filterMap->end()) ? iter->value : 0;
 }
 
 RenderLayerFilterInfo* RenderLayerFilterInfo::createFilterInfoForRenderLayerIfNeeded(RenderLayer* layer)
@@ -67,7 +67,7 @@ RenderLayerFilterInfo* RenderLayerFilterInfo::createFilterInfoForRenderLayerIfNe
     RenderLayerFilterInfoMap::iterator iter = s_filterMap->find(layer);
     if (iter != s_filterMap->end()) {
         ASSERT(layer->hasFilterInfo());
-        return iter->second;
+        return iter->value;
     }
     
     RenderLayerFilterInfo* filter = new RenderLayerFilterInfo(layer);

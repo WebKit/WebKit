@@ -57,7 +57,7 @@ namespace JSC {
             StringOffsetTable::const_iterator loc = offsetTable.find(value);
             if (loc == end)
                 return defaultOffset;
-            return loc->second.branchOffset;
+            return loc->value.branchOffset;
         }
 
 #if ENABLE(JIT)
@@ -67,7 +67,7 @@ namespace JSC {
             StringOffsetTable::const_iterator loc = offsetTable.find(value);
             if (loc == end)
                 return ctiDefault;
-            return loc->second.ctiOffset;
+            return loc->value.ctiOffset;
         }
 #endif
     };

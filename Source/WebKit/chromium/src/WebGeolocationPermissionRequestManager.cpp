@@ -64,7 +64,7 @@ bool WebGeolocationPermissionRequestManager::remove(const WebKit::WebGeolocation
     GeolocationIdMap::iterator it = m_private->m_geolocationIdMap.find(geolocation);
     if (it == m_private->m_geolocationIdMap.end())
         return false;
-    id = it->second;
+    id = it->value;
     m_private->m_geolocationIdMap.remove(it);
     m_private->m_idGeolocationMap.remove(id);
     return true;
@@ -75,7 +75,7 @@ bool WebGeolocationPermissionRequestManager::remove(int id, WebKit::WebGeolocati
     IdGeolocationMap::iterator it = m_private->m_idGeolocationMap.find(id);
     if (it == m_private->m_idGeolocationMap.end())
         return false;
-    Geolocation* geolocation = it->second;
+    Geolocation* geolocation = it->value;
     permissionRequest = WebGeolocationPermissionRequest(geolocation);
     m_private->m_idGeolocationMap.remove(it);
     m_private->m_geolocationIdMap.remove(geolocation);

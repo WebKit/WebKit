@@ -1,3 +1,28 @@
+2012-08-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Rename first/second to key/value in HashMap iterators
+        https://bugs.webkit.org/show_bug.cgi?id=82784
+
+        Reviewed by Eric Seidel.
+
+        * COMPropertyBag.h:
+        (::Read):
+        (::GetPropertyInfo):
+        * WebCoreStatistics.cpp:
+        (WebCoreStatistics::javaScriptProtectedObjectTypeCounts):
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::getPluginInfo):
+        * WebHistory.cpp:
+        (WebHistory::removeItemFromDateCaches):
+        * WebKitCOMAPI.cpp:
+        (classFactory):
+        * WebKitStatistics.cpp:
+        (WebKitStatistics::comClassNameCounts):
+        * WebNotificationCenter.cpp:
+        (WebNotificationCenter::postNotificationInternal):
+        (WebNotificationCenter::addObserver):
+        (WebNotificationCenter::removeObserver):
+
 2012-08-23  Adrienne Walker  <enne@google.com>
 
         Convert ScrollableArea ASSERT_NOT_REACHED virtuals

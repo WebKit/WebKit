@@ -169,7 +169,7 @@ SelectorQuery* SelectorQueryCache::add(const AtomicString& selectors, Document* 
 {
     HashMap<AtomicString, OwnPtr<SelectorQuery> >::iterator it = m_entries.find(selectors);
     if (it != m_entries.end())
-        return it->second.get();
+        return it->value.get();
 
     CSSParser parser(document);
     CSSSelectorList selectorList;

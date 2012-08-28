@@ -89,7 +89,7 @@ String StorageMap::key(unsigned index)
         return String();
 
     setIteratorToIndex(index);
-    return m_iterator->first;
+    return m_iterator->key;
 }
 
 String StorageMap::getItem(const String& key) const
@@ -133,7 +133,7 @@ PassRefPtr<StorageMap> StorageMap::setItem(const String& key, const String& valu
 
     HashMap<String, String>::AddResult addResult = m_map.add(key, value);
     if (!addResult.isNewEntry)
-        addResult.iterator->second = value;
+        addResult.iterator->value = value;
 
     invalidateIterator();
 

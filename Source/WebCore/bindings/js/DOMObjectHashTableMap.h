@@ -39,15 +39,15 @@ public:
     ~DOMObjectHashTableMap()
     {
         for (HashMap<const JSC::HashTable*, JSC::HashTable>::iterator iter = m_map.begin(); iter != m_map.end(); ++iter)
-            iter->second.deleteTable();
+            iter->value.deleteTable();
     }
 
     const JSC::HashTable* get(const JSC::HashTable* staticTable)
     {
         HashMap<const JSC::HashTable*, JSC::HashTable>::iterator iter = m_map.find(staticTable);
         if (iter != m_map.end())
-            return &iter->second;
-        return &m_map.set(staticTable, staticTable->copy()).iterator->second;
+            return &iter->value;
+        return &m_map.set(staticTable, staticTable->copy()).iterator->value;
     }
 
 private:

@@ -99,7 +99,7 @@ NotificationClient::Permission WebNotificationManager::policyForOrigin(WebCore::
     ASSERT(!origin->isUnique());
     HashMap<String, bool>::const_iterator it = m_permissionsMap.find(origin->toRawString());
     if (it != m_permissionsMap.end())
-        return it->second ? NotificationClient::PermissionAllowed : NotificationClient::PermissionDenied;
+        return it->value ? NotificationClient::PermissionAllowed : NotificationClient::PermissionDenied;
 #endif
     
     return NotificationClient::PermissionNotAllowed;
@@ -116,7 +116,7 @@ bool WebNotificationManager::show(Notification* notification, WebPage* page)
     m_notificationIDMap.set(notificationID, notification);
     
     NotificationContextMap::iterator it = m_notificationContextMap.add(notification->scriptExecutionContext(), Vector<uint64_t>()).iterator;
-    it->second.append(notificationID);
+    it->value.append(notificationID);
 
 #if ENABLE(NOTIFICATIONS)
     m_process->connection()->send(Messages::WebPageProxy::ShowNotification(notification->title(), notification->body(), notification->iconURL().string(), notification->tag(), notification->scriptExecutionContext()->securityOrigin()->toString(), notificationID), page->pageID());
@@ -150,7 +150,7 @@ void WebNotificationManager::clearNotifications(WebCore::ScriptExecutionContext*
     if (it == m_notificationContextMap.end())
         return;
     
-    Vector<uint64_t>& notificationIDs = it->second;
+    Vector<uint64_t>& notificationIDs = it->value;
     m_process->connection()->send(Messages::WebNotificationManagerProxy::ClearNotifications(notificationIDs), page->pageID());
     size_t count = notificationIDs.size();
     for (size_t i = 0; i < count; ++i) {
@@ -233,10 +233,10 @@ void WebNotificationManager::removeNotificationFromContextMap(uint64_t notificat
     // This is a helper function for managing the hash maps.
     NotificationContextMap::iterator it = m_notificationContextMap.find(notification->scriptExecutionContext());
     ASSERT(it != m_notificationContextMap.end());
-    size_t index = it->second.find(notificationID);
+    size_t index = it->value.find(notificationID);
     ASSERT(index != notFound);
-    it->second.remove(index);
-    if (it->second.isEmpty())
+    it->value.remove(index);
+    if (it->value.isEmpty())
         m_notificationContextMap.remove(it);
 }
 #endif

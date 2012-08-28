@@ -438,7 +438,7 @@ IntRect RenderView::selectionBounds(bool clipToVisibleContent) const
             selectedObjects.set(os, adoptPtr(new RenderSelectionInfo(os, clipToVisibleContent)));
             RenderBlock* cb = os->containingBlock();
             while (cb && !cb->isRenderView()) {
-                OwnPtr<RenderSelectionInfo>& blockInfo = selectedObjects.add(cb, nullptr).iterator->second;
+                OwnPtr<RenderSelectionInfo>& blockInfo = selectedObjects.add(cb, nullptr).iterator->value;
                 if (blockInfo)
                     break;
                 blockInfo = adoptPtr(new RenderSelectionInfo(cb, clipToVisibleContent));
@@ -453,7 +453,7 @@ IntRect RenderView::selectionBounds(bool clipToVisibleContent) const
     LayoutRect selRect;
     SelectionMap::iterator end = selectedObjects.end();
     for (SelectionMap::iterator i = selectedObjects.begin(); i != end; ++i) {
-        RenderSelectionInfo* info = i->second.get();
+        RenderSelectionInfo* info = i->value.get();
         // RenderSelectionInfo::rect() is in the coordinates of the repaintContainer, so map to page coordinates.
         LayoutRect currRect = info->rect();
         if (RenderBoxModelObject* repaintContainer = info->repaintContainer()) {
@@ -518,7 +518,7 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
             if (blockRepaintMode == RepaintNewXOROld) {
                 RenderBlock* cb = os->containingBlock();
                 while (cb && !cb->isRenderView()) {
-                    OwnPtr<RenderBlockSelectionInfo>& blockInfo = oldSelectedBlocks.add(cb, nullptr).iterator->second;
+                    OwnPtr<RenderBlockSelectionInfo>& blockInfo = oldSelectedBlocks.add(cb, nullptr).iterator->value;
                     if (blockInfo)
                         break;
                     blockInfo = adoptPtr(new RenderBlockSelectionInfo(cb));
@@ -533,7 +533,7 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
     // Now clear the selection.
     SelectedObjectMap::iterator oldObjectsEnd = oldSelectedObjects.end();
     for (SelectedObjectMap::iterator i = oldSelectedObjects.begin(); i != oldObjectsEnd; ++i)
-        i->first->setSelectionStateIfNeeded(SelectionNone);
+        i->key->setSelectionStateIfNeeded(SelectionNone);
 
     // set selection start and end
     m_selectionStart = start;
@@ -571,7 +571,7 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
             newSelectedObjects.set(o, adoptPtr(new RenderSelectionInfo(o, true)));
             RenderBlock* cb = o->containingBlock();
             while (cb && !cb->isRenderView()) {
-                OwnPtr<RenderBlockSelectionInfo>& blockInfo = newSelectedBlocks.add(cb, nullptr).iterator->second;
+                OwnPtr<RenderBlockSelectionInfo>& blockInfo = newSelectedBlocks.add(cb, nullptr).iterator->value;
                 if (blockInfo)
                     break;
                 blockInfo = adoptPtr(new RenderBlockSelectionInfo(cb));
@@ -589,9 +589,9 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
 
     // Have any of the old selected objects changed compared to the new selection?
     for (SelectedObjectMap::iterator i = oldSelectedObjects.begin(); i != oldObjectsEnd; ++i) {
-        RenderObject* obj = i->first;
+        RenderObject* obj = i->key;
         RenderSelectionInfo* newInfo = newSelectedObjects.get(obj);
-        RenderSelectionInfo* oldInfo = i->second.get();
+        RenderSelectionInfo* oldInfo = i->value.get();
         if (!newInfo || oldInfo->rect() != newInfo->rect() || oldInfo->state() != newInfo->state() ||
             (m_selectionStart == obj && oldStartPos != m_selectionStartPos) ||
             (m_selectionEnd == obj && oldEndPos != m_selectionEndPos)) {
@@ -606,14 +606,14 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
     // Any new objects that remain were not found in the old objects dict, and so they need to be updated.
     SelectedObjectMap::iterator newObjectsEnd = newSelectedObjects.end();
     for (SelectedObjectMap::iterator i = newSelectedObjects.begin(); i != newObjectsEnd; ++i)
-        i->second->repaint();
+        i->value->repaint();
 
     // Have any of the old blocks changed?
     SelectedBlockMap::iterator oldBlocksEnd = oldSelectedBlocks.end();
     for (SelectedBlockMap::iterator i = oldSelectedBlocks.begin(); i != oldBlocksEnd; ++i) {
-        RenderBlock* block = i->first;
+        RenderBlock* block = i->key;
         RenderBlockSelectionInfo* newInfo = newSelectedBlocks.get(block);
-        RenderBlockSelectionInfo* oldInfo = i->second.get();
+        RenderBlockSelectionInfo* oldInfo = i->value.get();
         if (!newInfo || oldInfo->rects() != newInfo->rects() || oldInfo->state() != newInfo->state()) {
             oldInfo->repaint();
             if (newInfo) {
@@ -626,7 +626,7 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
     // Any new blocks that remain were not found in the old blocks dict, and so they need to be updated.
     SelectedBlockMap::iterator newBlocksEnd = newSelectedBlocks.end();
     for (SelectedBlockMap::iterator i = newSelectedBlocks.begin(); i != newBlocksEnd; ++i)
-        i->second->repaint();
+        i->value->repaint();
 
     m_frameView->endDeferredRepaints();
 }

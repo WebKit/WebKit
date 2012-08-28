@@ -369,8 +369,8 @@ void LayerTiler::layerVisibilityChanged(LayerCompositingThread*, bool visible)
     }
 
     for (TileMap::iterator it = m_tiles.begin(); it != m_tiles.end(); ++it) {
-        TileIndex index = (*it).first;
-        LayerTile* tile = (*it).second;
+        TileIndex index = (*it).key;
+        LayerTile* tile = (*it).value;
         tile->setVisible(false);
     }
 }
@@ -384,21 +384,21 @@ void LayerTiler::uploadTexturesIfNeeded(LayerCompositingThread*)
 
     TileJobsMap::const_iterator tileJobsIterEnd = tileJobsMap.end();
     for (TileJobsMap::const_iterator tileJobsIter = tileJobsMap.begin(); tileJobsIter != tileJobsIterEnd; ++tileJobsIter) {
-        IntPoint origin = originOfTile(tileJobsIter->first);
+        IntPoint origin = originOfTile(tileJobsIter->key);
 
-        LayerTile* tile = m_tiles.get(tileJobsIter->first);
+        LayerTile* tile = m_tiles.get(tileJobsIter->key);
         if (!tile) {
             if (origin.x() >= m_requiredTextureSize.width() || origin.y() >= m_requiredTextureSize.height())
                 continue;
             tile = new LayerTile();
-            m_tiles.add(tileJobsIter->first, tile);
+            m_tiles.add(tileJobsIter->key, tile);
         }
 
         IntRect tileRect(origin, tileSize());
         tileRect.setWidth(min(m_requiredTextureSize.width() - tileRect.x(), tileRect.width()));
         tileRect.setHeight(min(m_requiredTextureSize.height() - tileRect.y(), tileRect.height()));
 
-        performTileJob(tile, *tileJobsIter->second, tileRect);
+        performTileJob(tile, *tileJobsIter->value, tileRect);
     }
 
     m_textureJobs.clear();
@@ -441,11 +441,11 @@ void LayerTiler::addTileJob(const TileIndex& index, const TextureJob& job, TileJ
         return;
 
     // In this case we leave the previous job.
-    if (job.m_type == TextureJob::DirtyContents && result.iterator->second->m_type == TextureJob::DiscardContents)
+    if (job.m_type == TextureJob::DirtyContents && result.iterator->value->m_type == TextureJob::DiscardContents)
         return;
 
     // Override the previous job.
-    result.iterator->second = &job;
+    result.iterator->value = &job;
 }
 
 void LayerTiler::performTileJob(LayerTile* tile, const TextureJob& job, const IntRect& tileRect)
@@ -630,7 +630,7 @@ void LayerTiler::deleteTextures(LayerCompositingThread*)
     // touching some WebKit thread state.
     if (m_tiles.size()) {
         for (TileMap::iterator it = m_tiles.begin(); it != m_tiles.end(); ++it)
-            (*it).second->discardContents();
+            (*it).value->discardContents();
         m_tiles.clear();
 
         m_contentsDirty = true;
@@ -647,7 +647,7 @@ void LayerTiler::pruneTextures()
     // Prune tiles that are no longer needed.
     Vector<TileIndex> tilesToDelete;
     for (TileMap::iterator it = m_tiles.begin(); it != m_tiles.end(); ++it) {
-        TileIndex index = (*it).first;
+        TileIndex index = (*it).key;
 
         IntPoint origin = originOfTile(index);
         if (origin.x() >= m_requiredTextureSize.width() || origin.y() >= m_requiredTextureSize.height())
@@ -739,7 +739,7 @@ void LayerTiler::bindContentsTexture(LayerCompositingThread*)
     if (m_tiles.size() != 1)
         return;
 
-    const LayerTile* tile = m_tiles.begin()->second;
+    const LayerTile* tile = m_tiles.begin()->value;
 
     ASSERT(tile->hasTexture());
     if (!tile->hasTexture())

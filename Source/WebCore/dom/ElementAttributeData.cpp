@@ -118,7 +118,7 @@ static AttrList* ensureAttrListForElement(Element* element)
     ASSERT(!attrListMap().contains(element));
     element->setHasAttrList();
     AttrListMap::AddResult result = attrListMap().add(element, adoptPtr(new AttrList));
-    return result.iterator->second.get();
+    return result.iterator->value.get();
 }
 
 static void removeAttrListForElement(Element* element)

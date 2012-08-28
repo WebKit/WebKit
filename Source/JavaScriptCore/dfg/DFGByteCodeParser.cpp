@@ -660,9 +660,9 @@ private:
     {
         HashMap<JSCell*, NodeIndex>::AddResult result = m_cellConstantNodes.add(cell, NoNode);
         if (result.isNewEntry)
-            result.iterator->second = addToGraph(WeakJSConstant, OpInfo(cell));
+            result.iterator->value = addToGraph(WeakJSConstant, OpInfo(cell));
         
-        return result.iterator->second;
+        return result.iterator->value;
     }
     
     CodeOrigin currentCodeOrigin()
@@ -3209,7 +3209,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
             IdentifierMap::AddResult result = byteCodeParser->m_identifierMap.add(rep, byteCodeParser->m_codeBlock->numberOfIdentifiers());
             if (result.isNewEntry)
                 byteCodeParser->m_codeBlock->addIdentifier(Identifier(byteCodeParser->m_globalData, rep));
-            m_identifierRemap[i] = result.iterator->second;
+            m_identifierRemap[i] = result.iterator->value;
         }
         for (size_t i = 0; i < codeBlock->numberOfConstantRegisters(); ++i) {
             JSValue value = codeBlock->getConstant(i + FirstConstantRegisterIndex);
@@ -3227,7 +3227,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
                 byteCodeParser->m_codeBlock->addConstant(value);
                 byteCodeParser->m_constants.append(ConstantRecord());
             }
-            m_constantRemap[i] = result.iterator->second;
+            m_constantRemap[i] = result.iterator->value;
         }
         for (unsigned i = 0; i < codeBlock->numberOfGlobalResolveInfos(); ++i)
             byteCodeParser->m_codeBlock->addGlobalResolveInfo(std::numeric_limits<unsigned>::max());

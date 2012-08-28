@@ -323,8 +323,8 @@ void MemoryInstrumentation::addInstrumentedMapEntries(const MapType& map, Object
 {
     typename MapType::const_iterator end = map.end();
     for (typename MapType::const_iterator i = map.begin(); i != end; ++i) {
-        addInstrumentedObject(i->first, ownerObjectType);
-        addInstrumentedObject(i->second, ownerObjectType);
+        addInstrumentedObject(i->key, ownerObjectType);
+        addInstrumentedObject(i->value, ownerObjectType);
     }
 }
 
@@ -333,7 +333,7 @@ void MemoryInstrumentation::addInstrumentedMapValues(const MapType& map, ObjectT
 {
     typename MapType::const_iterator end = map.end();
     for (typename MapType::const_iterator i = map.begin(); i != end; ++i)
-        addInstrumentedObject(i->second, ownerObjectType);
+        addInstrumentedObject(i->value, ownerObjectType);
 }
 
 template<typename ListHashSetType>

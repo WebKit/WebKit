@@ -86,8 +86,8 @@ bool ArgumentCoder<WebCore::DragData>::decode(ArgumentDecoder* decoder, DragData
         MIMEDataHashMap::iterator it = map.begin();
         MIMEDataHashMap::iterator end = map.end();
         for (; it != end; ++it) {
-            QByteArray bytes((char*)it->second.data(), it->second.size());
-            mimeData->setData(it->first, bytes);
+            QByteArray bytes((char*)it->value.data(), it->value.size());
+            mimeData->setData(it->key, bytes);
         }
     }
 

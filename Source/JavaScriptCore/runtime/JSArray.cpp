@@ -204,7 +204,7 @@ inline SparseArrayValueMap::AddResult SparseArrayValueMap::add(JSArray* array, u
 inline void SparseArrayValueMap::put(ExecState* exec, JSArray* array, unsigned i, JSValue value, bool shouldThrow)
 {
     AddResult result = add(array, i);
-    SparseArrayEntry& entry = result.iterator->second;
+    SparseArrayEntry& entry = result.iterator->value;
 
     // To save a separate find & add, we first always add to the sparse map.
     // In the uncommon case that this is a new property, and the array is not
@@ -247,7 +247,7 @@ inline void SparseArrayValueMap::put(ExecState* exec, JSArray* array, unsigned i
 inline bool SparseArrayValueMap::putDirect(ExecState* exec, JSArray* array, unsigned i, JSValue value, bool shouldThrow)
 {
     AddResult result = add(array, i);
-    SparseArrayEntry& entry = result.iterator->second;
+    SparseArrayEntry& entry = result.iterator->value;
 
     // To save a separate find & add, we first always add to the sparse map.
     // In the uncommon case that this is a new property, and the array is not
@@ -313,7 +313,7 @@ inline void SparseArrayValueMap::visitChildren(SlotVisitor& visitor)
 {
     iterator end = m_map.end();
     for (iterator it = m_map.begin(); it != end; ++it)
-        visitor.append(&it->second);
+        visitor.append(&it->value);
 }
 
 void JSArray::allocateSparseMap(JSGlobalData& globalData)
@@ -349,7 +349,7 @@ void JSArray::enterDictionaryMode(JSGlobalData& globalData)
         // This will always be a new entry in the map, so no need to check we can write,
         // and attributes are default so no need to set them.
         if (value)
-            map->add(this, i).iterator->second.set(globalData, this, value);
+            map->add(this, i).iterator->value.set(globalData, this, value);
     }
 
     void* newRawStorage = 0;
@@ -425,7 +425,7 @@ bool JSArray::defineOwnNumericProperty(ExecState* exec, unsigned index, Property
 
     // 1. Let current be the result of calling the [[GetOwnProperty]] internal method of O with property name P.
     SparseArrayValueMap::AddResult result = map->add(this, index);
-    SparseArrayEntry* entryInMap = &result.iterator->second;
+    SparseArrayEntry* entryInMap = &result.iterator->value;
 
     // 2. Let extensible be the value of the [[Extensible]] internal property of O.
     // 3. If current is undefined and extensible is false, then Reject.
@@ -656,7 +656,7 @@ bool JSArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned 
     } else if (SparseArrayValueMap* map = thisObject->m_sparseValueMap) {
         SparseArrayValueMap::iterator it = map->find(i);
         if (it != map->notFound()) {
-            it->second.get(slot);
+            it->value.get(slot);
             return true;
         }
     }
@@ -702,7 +702,7 @@ bool JSArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Proper
         } else if (SparseArrayValueMap* map = thisObject->m_sparseValueMap) {
             SparseArrayValueMap::iterator it = map->find(i);
             if (it != map->notFound()) {
-                it->second.get(descriptor);
+                it->value.get(descriptor);
                 return true;
             }
         }
@@ -834,7 +834,7 @@ void JSArray::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue 
     WriteBarrier<Unknown>* vector = storage->m_vector;
     SparseArrayValueMap::const_iterator end = map->end();
     for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it)
-        vector[it->first].set(globalData, this, it->second.getNonSparseMode());
+        vector[it->key].set(globalData, this, it->value.getNonSparseMode());
     deallocateSparseMap();
 
     // Store the new property into the vector.
@@ -904,7 +904,7 @@ bool JSArray::putDirectIndexBeyondVectorLength(ExecState* exec, unsigned i, JSVa
     WriteBarrier<Unknown>* vector = storage->m_vector;
     SparseArrayValueMap::const_iterator end = map->end();
     for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it)
-        vector[it->first].set(globalData, this, it->second.getNonSparseMode());
+        vector[it->key].set(globalData, this, it->value.getNonSparseMode());
     deallocateSparseMap();
 
     // Store the new property into the vector.
@@ -947,7 +947,7 @@ bool JSArray::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
     } else if (SparseArrayValueMap* map = thisObject->m_sparseValueMap) {
         SparseArrayValueMap::iterator it = map->find(i);
         if (it != map->notFound()) {
-            if (it->second.attributes & DontDelete)
+            if (it->value.attributes & DontDelete)
                 return false;
             map->remove(it);
         }
@@ -985,8 +985,8 @@ void JSArray::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNam
         
         SparseArrayValueMap::const_iterator end = map->end();
         for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
-            if (mode == IncludeDontEnumProperties || !(it->second.attributes & DontEnum))
-                keys.append(static_cast<unsigned>(it->first));
+            if (mode == IncludeDontEnumProperties || !(it->value.attributes & DontEnum))
+                keys.append(static_cast<unsigned>(it->key));
         }
 
         qsort(keys.begin(), keys.size(), sizeof(unsigned), compareKeysForQSort);
@@ -1179,7 +1179,7 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
             keys.reserveCapacity(min(map->size(), static_cast<size_t>(length - newLength)));
             SparseArrayValueMap::const_iterator end = map->end();
             for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
-                unsigned index = static_cast<unsigned>(it->first);
+                unsigned index = static_cast<unsigned>(it->key);
                 if (index < length && index >= newLength)
                     keys.append(index);
             }
@@ -1194,7 +1194,7 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
                     unsigned index = keys[--i];
                     SparseArrayValueMap::iterator it = map->find(index);
                     ASSERT(it != map->notFound());
-                    if (it->second.attributes & DontDelete) {
+                    if (it->value.attributes & DontDelete) {
                         storage->m_length = index + 1;
                         return reject(exec, throwException, "Unable to delete property.");
                     }
@@ -1669,7 +1669,7 @@ void JSArray::sort(ExecState* exec, JSValue compareFunction, CallType callType, 
 
         SparseArrayValueMap::const_iterator end = map->end();
         for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
-            tree.abstractor().m_nodes[numDefined].value = it->second.getNonSparseMode();
+            tree.abstractor().m_nodes[numDefined].value = it->value.getNonSparseMode();
             tree.insert(numDefined);
             ++numDefined;
         }
@@ -1784,7 +1784,7 @@ unsigned JSArray::compactForSorting(JSGlobalData& globalData)
 
         SparseArrayValueMap::const_iterator end = map->end();
         for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it)
-            storage->m_vector[numDefined++].setWithoutWriteBarrier(it->second.getNonSparseMode());
+            storage->m_vector[numDefined++].setWithoutWriteBarrier(it->value.getNonSparseMode());
 
         deallocateSparseMap();
     }
@@ -1831,13 +1831,13 @@ void JSArray::checkConsistency(ConsistencyCheckType type)
     if (m_sparseValueMap) {
         SparseArrayValueMap::const_iterator end = m_sparseValueMap->end();
         for (SparseArrayValueMap::const_iterator it = m_sparseValueMap->begin(); it != end; ++it) {
-            unsigned index = it->first;
+            unsigned index = it->key;
             ASSERT(index < storage->m_length);
             ASSERT(index >= m_vectorLength);
             ASSERT(index <= MAX_ARRAY_INDEX);
-            ASSERT(it->second);
+            ASSERT(it->value);
             if (type != DestructorConsistencyCheck)
-                it->second.getNonSparseMode().isUndefined(); // Likely to crash if the object was deallocated.
+                it->value.getNonSparseMode().isUndefined(); // Likely to crash if the object was deallocated.
         }
     }
 }

@@ -130,9 +130,9 @@ void WebBackForwardListProxy::removeItem(uint64_t itemID)
     if (it == idToHistoryItemMap().end())
         return;
         
-    WebCore::pageCache()->remove(it->second.get());
+    WebCore::pageCache()->remove(it->value.get());
 
-    historyItemToIDMap().remove(it->second);
+    historyItemToIDMap().remove(it->value);
     idToHistoryItemMap().remove(it);
 }
 

@@ -66,7 +66,7 @@ PassRefPtr<DOMStringList> IDBObjectStore::indexNames() const
     IDB_TRACE("IDBObjectStore::indexNames");
     RefPtr<DOMStringList> indexNames = DOMStringList::create();
     for (IDBObjectStoreMetadata::IndexMap::const_iterator it = m_metadata.indexes.begin(); it != m_metadata.indexes.end(); ++it)
-        indexNames->append(it->first);
+        indexNames->append(it->key);
     indexNames->sort();
     return indexNames.release();
 }
@@ -206,8 +206,8 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBObjectStoreBackendInterface::PutMo
     Vector<IndexKeys> indexKeys;
     for (IDBObjectStoreMetadata::IndexMap::const_iterator it = m_metadata.indexes.begin(); it != m_metadata.indexes.end(); ++it) {
         IndexKeys keys;
-        generateIndexKeysForValue(it->second, value, &keys);
-        indexNames.append(it->first);
+        generateIndexKeysForValue(it->value, value, &keys);
+        indexNames.append(it->key);
         indexKeys.append(keys);
     }
     ASSERT(indexKeys.size() == indexNames.size());
@@ -448,7 +448,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec
 
     IDBIndexMap::iterator it = m_indexMap.find(name);
     if (it != m_indexMap.end())
-        return it->second;
+        return it->value;
 
     RefPtr<IDBIndexBackendInterface> indexBackend = m_backend->index(name, ec);
     ASSERT(!indexBackend != !ec); // If we didn't get an index, we should have gotten an exception code. And vice versa.
@@ -458,7 +458,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec
     IDBObjectStoreMetadata::IndexMap::const_iterator mdit = m_metadata.indexes.find(name);
     ASSERT(mdit != m_metadata.indexes.end());
 
-    RefPtr<IDBIndex> index = IDBIndex::create(mdit->second, indexBackend.release(), this, m_transaction.get());
+    RefPtr<IDBIndex> index = IDBIndex::create(mdit->value, indexBackend.release(), this, m_transaction.get());
     m_indexMap.set(name, index);
     return index.release();
 }
@@ -482,7 +482,7 @@ void IDBObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
     if (!ec) {
         IDBIndexMap::iterator it = m_indexMap.find(name);
         if (it != m_indexMap.end()) {
-            it->second->markDeleted();
+            it->value->markDeleted();
             m_indexMap.remove(name);
         }
 

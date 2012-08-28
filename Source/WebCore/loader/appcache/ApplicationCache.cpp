@@ -100,11 +100,11 @@ unsigned ApplicationCache::removeResource(const String& url)
         return 0;
 
     // The resource exists, get its type so we can return it.
-    unsigned type = it->second->type();
+    unsigned type = it->value->type();
 
     m_resources.remove(it);
 
-    m_estimatedSizeInStorage -= it->second->estimatedSizeInStorage();
+    m_estimatedSizeInStorage -= it->value->estimatedSizeInStorage();
 
     return type;
 }    
@@ -180,7 +180,7 @@ void ApplicationCache::clearStorageID()
     
     ResourceMap::const_iterator end = m_resources.end();
     for (ResourceMap::const_iterator it = m_resources.begin(); it != end; ++it)
-        it->second->clearStorageID();
+        it->value->clearStorageID();
 }
     
 void ApplicationCache::deleteCacheForOrigin(SecurityOrigin* origin)
@@ -218,8 +218,8 @@ void ApplicationCache::dump()
     HashMap<String, RefPtr<ApplicationCacheResource> >::const_iterator end = m_resources.end();
     
     for (HashMap<String, RefPtr<ApplicationCacheResource> >::const_iterator it = m_resources.begin(); it != end; ++it) {
-        printf("%s ", it->first.ascii().data());
-        ApplicationCacheResource::dumpType(it->second->type());
+        printf("%s ", it->key.ascii().data());
+        ApplicationCacheResource::dumpType(it->value->type());
     }
 }
 #endif

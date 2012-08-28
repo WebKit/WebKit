@@ -200,7 +200,7 @@ void NPRemoteObjectMap::pluginDestroyed(Plugin* plugin)
 
     // Gather the receivers associated with this plug-in.
     for (HashMap<uint64_t, NPObjectMessageReceiver*>::const_iterator it = m_registeredNPObjects.begin(), end = m_registeredNPObjects.end(); it != end; ++it) {
-        NPObjectMessageReceiver* npObjectMessageReceiver = it->second;
+        NPObjectMessageReceiver* npObjectMessageReceiver = it->value;
         if (npObjectMessageReceiver->plugin() == plugin)
             messageReceivers.append(npObjectMessageReceiver);
     }

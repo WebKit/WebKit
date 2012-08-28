@@ -145,7 +145,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptProtectedObjectTypeCounts
     Iterator end = jsObjectTypeNames->end();
     HashMap<String, int> typeCountMap;
     for (Iterator current = jsObjectTypeNames->begin(); current != end; ++current)
-        typeCountMap.set(current->first, current->second);
+        typeCountMap.set(current->key, current->value);
 
     COMPtr<IPropertyBag2> results(AdoptCOM, COMPropertyBag<int>::createInstance(typeCountMap));
     results.copyRefTo(typeNamesAndCounts);

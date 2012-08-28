@@ -82,7 +82,7 @@ void JITStubRoutineSet::markSlow(uintptr_t address)
     if (iter == m_addressToRoutineMap.end())
         return;
     
-    iter->second->m_mayBeExecuting = true;
+    iter->value->m_mayBeExecuting = true;
 }
 
 void JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines()
@@ -97,7 +97,7 @@ void JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines()
         uintptr_t step = JITStubRoutine::addressStep();
         for (uintptr_t iter = start; iter < end; iter += step) {
             ASSERT(m_addressToRoutineMap.find(iter) != m_addressToRoutineMap.end());
-            ASSERT(m_addressToRoutineMap.find(iter)->second == routine);
+            ASSERT(m_addressToRoutineMap.find(iter)->value == routine);
             m_addressToRoutineMap.remove(iter);
         }
         

@@ -58,8 +58,8 @@ public:
         Cache* cache = animatedPropertyCache();
         const Cache::const_iterator end = cache->end();
         for (Cache::const_iterator it = cache->begin(); it != end; ++it) {
-            if (it->second == this) {
-                cache->remove(it->first);
+            if (it->value == this) {
+                cache->remove(it->key);
                 break;
             }
         }

@@ -100,9 +100,9 @@ static void enumerateGlobalHandles()
 {
     GlobalHandleMap& globalHandleMap = currentGlobalHandleMap();
     for (GlobalHandleMap::iterator it = globalHandleMap.begin(), end = globalHandleMap.end(); it != end; ++it) {
-        GlobalHandleInfo* info = it->second;
+        GlobalHandleInfo* info = it->value;
         UNUSED_PARAM(info);
-        v8::Value* handle = it->first;
+        v8::Value* handle = it->key;
         UNUSED_PARAM(handle);
     }
 }

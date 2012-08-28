@@ -287,9 +287,9 @@ static PassRefPtr<FixedSizeFontData> createFixedSizeFontData(const AtomicString&
     FixedSizeFontDataKey key(family, weight, italic);
     FixedSizeFontCache::AddResult result = g_fixedSizeFontCache.add(key, RefPtr<FixedSizeFontData>());
     if (result.isNewEntry)
-        result.iterator->second = FixedSizeFontData::create(family, weight, italic);
+        result.iterator->value = FixedSizeFontData::create(family, weight, italic);
 
-    return result.iterator->second;
+    return result.iterator->value;
 }
 
 static LONG toGDIFontWeight(FontWeight fontWeight)

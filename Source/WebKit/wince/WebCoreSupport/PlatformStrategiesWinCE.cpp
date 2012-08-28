@@ -94,8 +94,8 @@ void PlatformStrategiesWinCE::getPluginInfo(const Page*, Vector<PluginInfo>& out
         for (MIMEToDescriptionsMap::const_iterator it = mimeToDescriptions.begin(); it != end; ++it) {
             MimeClassInfo mime;
 
-            mime.type = it->first;
-            mime.desc = it->second;
+            mime.type = it->key;
+            mime.desc = it->value;
             mime.extensions = package->mimeToExtensions().get(mime.type);
 
             info.mimes.append(mime);

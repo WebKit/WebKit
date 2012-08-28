@@ -620,7 +620,7 @@ void RenderFlowThread::setRegionRangeForBox(const RenderBox* box, LayoutUnit off
     }
 
     // If nothing changed, just bail.
-    RenderRegionRange& range = it->second;
+    RenderRegionRange& range = it->value;
     if (range.startRegion() == startRegion && range.endRegion() == endRegion)
         return;
 
@@ -650,7 +650,7 @@ void RenderFlowThread::getRegionRangeForBox(const RenderBox* box, RenderRegion*&
     if (it == m_regionRangeMap.end())
         return;
 
-    const RenderRegionRange& range = it->second;
+    const RenderRegionRange& range = it->value;
     startRegion = range.startRegion();
     endRegion = range.endRegion();
     ASSERT(m_regionList.contains(startRegion) && m_regionList.contains(endRegion));

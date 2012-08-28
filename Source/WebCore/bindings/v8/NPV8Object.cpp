@@ -86,7 +86,7 @@ static void freeV8NPObject(NPObject* npObject)
     if (int v8ObjectHash = v8NpObject->v8Object->GetIdentityHash()) {
         V8NPObjectMap::iterator iter = staticV8NPObjectMap()->find(v8ObjectHash);
         if (iter != staticV8NPObjectMap()->end()) {
-            V8NPObjectVector& objects = iter->second;
+            V8NPObjectVector& objects = iter->value;
             for (size_t index = 0; index < objects.size(); ++index) {
                 if (objects.at(index) == v8NpObject) {
                     objects.remove(index);
@@ -161,7 +161,7 @@ NPObject* npCreateV8ScriptObject(NPP npp, v8::Handle<v8::Object> object, DOMWind
     ASSERT(v8ObjectHash);
     V8NPObjectMap::iterator iter = staticV8NPObjectMap()->find(v8ObjectHash);
     if (iter != staticV8NPObjectMap()->end()) {
-        V8NPObjectVector& objects = iter->second;
+        V8NPObjectVector& objects = iter->value;
         for (size_t index = 0; index < objects.size(); ++index) {
             V8NPObject* v8npObject = objects.at(index);
             if (v8npObject->rootObject == root) {
@@ -181,7 +181,7 @@ NPObject* npCreateV8ScriptObject(NPP npp, v8::Handle<v8::Object> object, DOMWind
 #endif
     v8npObject->rootObject = root;
 
-    iter->second.append(v8npObject);
+    iter->value.append(v8npObject);
 
     return reinterpret_cast<NPObject*>(v8npObject);
 }

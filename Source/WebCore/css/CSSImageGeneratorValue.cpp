@@ -57,7 +57,7 @@ void CSSImageGeneratorValue::addClient(RenderObject* renderer, const IntSize& si
     if (it == m_clients.end())
         m_clients.add(renderer, SizeAndCount(size, 1));
     else {
-        SizeAndCount& sizeCount = it->second;
+        SizeAndCount& sizeCount = it->value;
         ++sizeCount.count;
     }
 }
@@ -69,7 +69,7 @@ void CSSImageGeneratorValue::removeClient(RenderObject* renderer)
     ASSERT(it != m_clients.end());
 
     IntSize removedImageSize;
-    SizeAndCount& sizeCount = it->second;
+    SizeAndCount& sizeCount = it->value;
     IntSize size = sizeCount.size;
     if (!size.isEmpty()) {
         m_sizes.remove(size);
@@ -87,7 +87,7 @@ Image* CSSImageGeneratorValue::getImage(RenderObject* renderer, const IntSize& s
 {
     RenderObjectSizeCountMap::iterator it = m_clients.find(renderer);
     if (it != m_clients.end()) {
-        SizeAndCount& sizeCount = it->second;
+        SizeAndCount& sizeCount = it->value;
         IntSize oldSize = sizeCount.size;
         if (oldSize != size) {
             RefPtr<CSSImageGeneratorValue> protect(this);

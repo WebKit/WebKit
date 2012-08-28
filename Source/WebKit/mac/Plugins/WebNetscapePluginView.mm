@@ -710,7 +710,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
     HashMap<uint32_t, PluginTimer*>::const_iterator end = timers->end();
     for (HashMap<uint32_t, PluginTimer*>::const_iterator it = timers->begin(); it != end; ++it) {
-        PluginTimer* timer = it->second;
+        PluginTimer* timer = it->value;
         timer->stop();
     }    
 }
@@ -728,7 +728,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     
     HashMap<uint32_t, PluginTimer*>::const_iterator end = timers->end();
     for (HashMap<uint32_t, PluginTimer*>::const_iterator it = timers->begin(); it != end; ++it) {
-        PluginTimer* timer = it->second;
+        PluginTimer* timer = it->value;
         ASSERT(!timer->isActive());
         timer->start(_isCompletelyObscured);
     }    

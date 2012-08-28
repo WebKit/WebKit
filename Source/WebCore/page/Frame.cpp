@@ -579,7 +579,7 @@ void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
         return;
     UserScriptMap::const_iterator end = userScripts->end();
     for (UserScriptMap::const_iterator it = userScripts->begin(); it != end; ++it)
-        injectUserScriptsForWorld(it->first.get(), *it->second, injectionTime);
+        injectUserScriptsForWorld(it->key.get(), *it->value, injectionTime);
 }
 
 void Frame::injectUserScriptsForWorld(DOMWrapperWorld* world, const UserScriptVector& userScripts, UserScriptInjectionTime injectionTime)

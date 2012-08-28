@@ -147,9 +147,9 @@ void PluginStream::startStream()
 
         HTTPHeaderMap::const_iterator end = m_resourceResponse.httpHeaderFields().end();
         for (HTTPHeaderMap::const_iterator it = m_resourceResponse.httpHeaderFields().begin(); it != end; ++it) {
-            stringBuilder.append(it->first);
+            stringBuilder.append(it->key);
             stringBuilder.append(separator);
-            stringBuilder.append(it->second);
+            stringBuilder.append(it->value);
             stringBuilder.append('\n');
         }
 

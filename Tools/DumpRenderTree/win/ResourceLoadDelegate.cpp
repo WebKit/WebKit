@@ -66,7 +66,7 @@ wstring ResourceLoadDelegate::descriptionSuitableForTestResult(unsigned long ide
     if (it == m_urlMap.end())
         return L"<unknown>";
 
-    return urlSuitableForTestResult(it->second);
+    return urlSuitableForTestResult(it->value);
 }
 
 wstring ResourceLoadDelegate::descriptionSuitableForTestResult(IWebURLRequest* request)

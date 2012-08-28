@@ -93,7 +93,7 @@ unsigned long long OriginUsageRecord::diskUsage()
     HashMap<String, DatabaseEntry>::iterator iDatabase = m_databaseMap.begin();
     HashMap<String, DatabaseEntry>::iterator endDatabase = m_databaseMap.end();
     for (; iDatabase != endDatabase; ++iDatabase)
-        m_cachedDiskUsage += iDatabase->second.size;
+        m_cachedDiskUsage += iDatabase->value.size;
 
     m_cachedDiskUsageIsValid = true;
     return m_cachedDiskUsage;

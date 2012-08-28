@@ -1,3 +1,129 @@
+2012-08-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Rename first/second to key/value in HashMap iterators
+        https://bugs.webkit.org/show_bug.cgi?id=82784
+
+        Reviewed by Eric Seidel.
+
+        * Platform/CoreIPC/ArgumentCoders.h:
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::SyncMessageState::getOrCreate):
+        (CoreIPC::Connection::waitForMessage):
+        (CoreIPC::Connection::processIncomingMessage):
+        * Platform/gtk/WorkQueueGtk.cpp:
+        (WorkQueue::registerEventSourceHandler):
+        (WorkQueue::unregisterEventSourceHandler):
+        * Platform/mac/WorkQueueMac.cpp:
+        (WorkQueue::unregisterMachPortEventHandler):
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::pluginDestroyed):
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::valueForKey):
+        (WebKit::WebPreferencesStore::getBoolValueForKey):
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (CoreIPC::::decode):
+        * Shared/qt/ArgumentCodersQt.cpp:
+        (CoreIPC::::decode):
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (CoreIPC::::decode):
+        * UIProcess/API/efl/ewk_back_forward_list.cpp:
+        (_Ewk_Back_Forward_List::~_Ewk_Back_Forward_List):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (_Ewk_Context::~_Ewk_Context):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_priv_loading_resources_clear):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_get_subresources):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseContainerForall):
+        * UIProcess/API/mac/WKPrintingView.mm:
+        (-[WKPrintingView _expectedPreviewCallbackForRect:]):
+        (pageDidDrawToPDF):
+        (-[WKPrintingView _drawPreview:]):
+        * UIProcess/API/mac/WKView.mm:
+        (commandNameForSelector):
+        (-[WKView validateUserInterfaceItem:]):
+        * UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp:
+        (WebKit::CoordinatedBackingStore::updateTile):
+        (WebKit::CoordinatedBackingStore::texture):
+        (WebKit::CoordinatedBackingStore::paintToTextureMapper):
+        (WebKit::CoordinatedBackingStore::commitTileOperations):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::updateTileForLayer):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::adjustPositionForFixedLayers):
+        (WebKit::LayerTreeRenderer::syncCanvas):
+        (WebKit::LayerTreeRenderer::setLayerChildren):
+        (WebKit::LayerTreeRenderer::setLayerFilters):
+        (WebKit::LayerTreeRenderer::setLayerState):
+        (WebKit::LayerTreeRenderer::assignImageToLayer):
+        * UIProcess/GeolocationPermissionRequestManagerProxy.cpp:
+        (WebKit::GeolocationPermissionRequestManagerProxy::invalidateRequests):
+        * UIProcess/InspectorServer/WebInspectorServer.cpp:
+        (WebKit::WebInspectorServer::~WebInspectorServer):
+        (WebKit::WebInspectorServer::registerPage):
+        * UIProcess/InspectorServer/WebSocketServerConnection.cpp:
+        (WebKit::WebSocketServerConnection::sendHTTPResponseHeader):
+        * UIProcess/InspectorServer/qt/WebInspectorServerQt.cpp:
+        (WebKit::WebInspectorServer::buildPageList):
+        * UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp:
+        (WebKit::NotificationPermissionRequestManagerProxy::invalidateRequests):
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch):
+        * UIProcess/WebContext.cpp:
+        (WebKit::createDictionaryFromHashMap):
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::didFinishURLImport):
+        * UIProcess/WebIntentData.cpp:
+        (WebKit::WebIntentData::extras):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::checkURLReceivedFromWebProcess):
+        (WebKit::WebProcessProxy::addBackForwardItem):
+        (WebKit::WebProcessProxy::frameCountInPage):
+        * WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp:
+        (WebKit::GeolocationPermissionRequestManager::cancelRequestForGeolocation):
+        (WebKit::GeolocationPermissionRequestManager::didReceiveGeolocationPermissionDecision):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::getOrCreate):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::getOrCreate):
+        * WebProcess/InjectedBundle/InjectedBundleIntent.cpp:
+        (WebKit::InjectedBundleIntent::extras):
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::policyForOrigin):
+        (WebKit::WebNotificationManager::show):
+        (WebKit::WebNotificationManager::clearNotifications):
+        (WebKit::WebNotificationManager::removeNotificationFromContextMap):
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::invalidate):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::destroyStream):
+        (WebKit::NetscapePlugin::unscheduleTimer):
+        (WebKit::NetscapePlugin::frameDidFinishLoading):
+        (WebKit::NetscapePlugin::frameDidFail):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::buildHTTPHeaders):
+        (WebKit::PluginView::~PluginView):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::layerByID):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::adoptImageBackingStore):
+        (WebKit::LayerTreeCoordinator::releaseImageBackingStore):
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::removeItem):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::commandNameForSelectorName):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::visitedLinkStateChanged):
+        (WebKit::WebProcess::allVisitedLinkStateChanged):
+        (WebKit::WebProcess::focusedWebPage):
+        (WebKit::WebProcess::createWebPage):
+        (WebKit::WebProcess::webPageGroup):
+        (WebKit::fromCountedSetToHashMap):
+        (WebKit::WebProcess::setTextCheckerState):
+
 2012-08-27  Simon Fraser  <simon.fraser@apple.com>
 
         Make Force Repaint work with tiled backing store

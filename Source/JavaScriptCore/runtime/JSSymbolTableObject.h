@@ -77,7 +77,7 @@ inline bool symbolTableGet(
     SymbolTable::iterator iter = symbolTable.find(propertyName.publicName());
     if (iter == symbolTable.end())
         return false;
-    SymbolTableEntry::Fast entry = iter->second;
+    SymbolTableEntry::Fast entry = iter->value;
     ASSERT(!entry.isNull());
     slot.setValue(object->registerAt(entry.getIndex()).get());
     return true;
@@ -91,7 +91,7 @@ inline bool symbolTableGet(
     SymbolTable::iterator iter = symbolTable.find(propertyName.publicName());
     if (iter == symbolTable.end())
         return false;
-    SymbolTableEntry::Fast entry = iter->second;
+    SymbolTableEntry::Fast entry = iter->value;
     ASSERT(!entry.isNull());
     descriptor.setDescriptor(
         object->registerAt(entry.getIndex()).get(), entry.getAttributes() | DontDelete);
@@ -107,7 +107,7 @@ inline bool symbolTableGet(
     SymbolTable::iterator iter = symbolTable.find(propertyName.publicName());
     if (iter == symbolTable.end())
         return false;
-    SymbolTableEntry::Fast entry = iter->second;
+    SymbolTableEntry::Fast entry = iter->value;
     ASSERT(!entry.isNull());
     slot.setValue(object->registerAt(entry.getIndex()).get());
     slotIsWriteable = !entry.isReadOnly();
@@ -127,7 +127,7 @@ inline bool symbolTablePut(
     if (iter == symbolTable.end())
         return false;
     bool wasFat;
-    SymbolTableEntry::Fast fastEntry = iter->second.getFast(wasFat);
+    SymbolTableEntry::Fast fastEntry = iter->value.getFast(wasFat);
     ASSERT(!fastEntry.isNull());
     if (fastEntry.isReadOnly()) {
         if (shouldThrow)
@@ -135,7 +135,7 @@ inline bool symbolTablePut(
         return true;
     }
     if (UNLIKELY(wasFat))
-        iter->second.notifyWrite();
+        iter->value.notifyWrite();
     object->registerAt(fastEntry.getIndex()).set(globalData, object, value);
     return true;
 }
@@ -150,7 +150,7 @@ inline bool symbolTablePutWithAttributes(
     SymbolTable::iterator iter = object->symbolTable()->find(propertyName.publicName());
     if (iter == object->symbolTable()->end())
         return false;
-    SymbolTableEntry& entry = iter->second;
+    SymbolTableEntry& entry = iter->value;
     ASSERT(!entry.isNull());
     entry.notifyWrite();
     entry.setAttributes(attributes);

@@ -1,3 +1,28 @@
+2012-08-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Rename first/second to key/value in HashMap iterators
+        https://bugs.webkit.org/show_bug.cgi?id=82784
+
+        Reviewed by Eric Seidel.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::setBackingStoreRect):
+        (BlackBerry::WebKit::BackingStorePrivate::visibleTilesRect):
+        (BlackBerry::WebKit::BackingStorePrivate::resetTiles):
+        (BlackBerry::WebKit::BackingStorePrivate::updateTiles):
+        (BlackBerry::WebKit::BackingStorePrivate::updateTilesForScrollOrNotRenderedRegion):
+        (BlackBerry::WebKit::BackingStorePrivate::mapFromTransformedContentsToTiles):
+        * WebCoreSupport/NotificationPresenterImpl.cpp:
+        (WebCore::NotificationPresenterImpl::cancel):
+        (WebCore::NotificationPresenterImpl::onPermission):
+        (WebCore::NotificationPresenterImpl::notificationClicked):
+        * WebKitSupport/AboutData.cpp:
+        (BlackBerry::WebKit::dumpJSCTypeCountSetToTableHTML):
+        * WebKitSupport/FrameLayers.cpp:
+        (BlackBerry::WebKit::FrameLayers::removeLayerByFrame):
+        (BlackBerry::WebKit::FrameLayers::commitOnWebKitThread):
+        (BlackBerry::WebKit::FrameLayers::calculateRootLayer):
+
 2012-08-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126772.

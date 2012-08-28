@@ -915,7 +915,7 @@ AVFWrapper* AVFWrapper::avfWrapperForCallbackContext(void* context)
     if (it == map().end())
         return 0;
 
-    return it->second;
+    return it->value;
 }
 
 void AVFWrapper::scheduleDisconnectAndDelete()

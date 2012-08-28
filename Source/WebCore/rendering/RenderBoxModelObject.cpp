@@ -137,7 +137,7 @@ void ImageQualityController::highQualityRepaintTimerFired(Timer<ImageQualityCont
     if (m_animatedResizeIsActive) {
         m_animatedResizeIsActive = false;
         for (ObjectLayerSizeMap::iterator it = m_objectLayerSizeMap.begin(); it != m_objectLayerSizeMap.end(); ++it)
-            it->first->repaint();
+            it->key->repaint();
     }
 }
 
@@ -162,14 +162,14 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, R
 
     // Look ourselves up in the hashtables.
     ObjectLayerSizeMap::iterator i = m_objectLayerSizeMap.find(object);
-    LayerSizeMap* innerMap = i != m_objectLayerSizeMap.end() ? &i->second : 0;
+    LayerSizeMap* innerMap = i != m_objectLayerSizeMap.end() ? &i->value : 0;
     LayoutSize oldSize;
     bool isFirstResize = true;
     if (innerMap) {
         LayerSizeMap::iterator j = innerMap->find(layer);
         if (j != innerMap->end()) {
             isFirstResize = false;
-            oldSize = j->second;
+            oldSize = j->value;
         }
     }
 

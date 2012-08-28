@@ -150,7 +150,7 @@ SpaceSplitStringData::~SpaceSplitStringData()
 
 PassRefPtr<SpaceSplitStringData> SpaceSplitStringData::create(const AtomicString& string)
 {
-    SpaceSplitStringData*& data = sharedDataMap().add(string, 0).iterator->second;
+    SpaceSplitStringData*& data = sharedDataMap().add(string, 0).iterator->value;
     if (!data) {
         data = new SpaceSplitStringData(string);
         return adoptRef(data);

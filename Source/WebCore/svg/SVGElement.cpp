@@ -68,7 +68,7 @@ SVGElement::~SVGElement()
         SVGElementRareData::SVGElementRareDataMap::iterator it = rareDataMap.find(this);
         ASSERT(it != rareDataMap.end());
 
-        SVGElementRareData* rareData = it->second;
+        SVGElementRareData* rareData = it->value;
         rareData->destroyAnimatedSMILStyleProperties();
         if (SVGCursorElement* cursorElement = rareData->cursorElement())
             cursorElement->removeClient(this);

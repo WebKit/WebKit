@@ -196,8 +196,8 @@ static void pruneBlacklistedCodecs()
         TextEncodingNameMap::const_iterator it = textEncodingNameMap->begin();
         TextEncodingNameMap::const_iterator end = textEncodingNameMap->end();
         for (; it != end; ++it) {
-            if (it->second == atomicName)
-                names.append(it->first);
+            if (it->value == atomicName)
+                names.append(it->key);
         }
 
         size_t length = names.size();
@@ -379,7 +379,7 @@ void dumpTextEncodingNameMap()
     TextEncodingNameMap::const_iterator it = textEncodingNameMap->begin();
     TextEncodingNameMap::const_iterator end = textEncodingNameMap->end();
     for (; it != end; ++it)
-        fprintf(stderr, "'%s' => '%s'\n", it->first, it->second);
+        fprintf(stderr, "'%s' => '%s'\n", it->key, it->value);
 }
 #endif
 

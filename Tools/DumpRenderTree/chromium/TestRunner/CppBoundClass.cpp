@@ -203,10 +203,10 @@ bool CppNPObject::setProperty(NPObject* npObj, NPIdentifier ident, const NPVaria
 CppBoundClass::~CppBoundClass()
 {
     for (MethodList::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
-        delete i->second;
+        delete i->value;
 
     for (PropertyList::iterator i = m_properties.begin(); i != m_properties.end(); ++i)
-        delete i->second;
+        delete i->value;
 
     // Unregister ourselves if we were bound to a frame.
     if (m_boundToFrame)
@@ -237,7 +237,7 @@ bool CppBoundClass::invoke(NPIdentifier ident,
         }
         callback = m_fallbackCallback.get();
     } else
-        callback = (*method).second;
+        callback = (*method).value;
 
     // Build a CppArgumentList argument vector from the NPVariants coming in.
     CppArgumentList cppArguments(argumentCount);
@@ -260,7 +260,7 @@ bool CppBoundClass::getProperty(NPIdentifier ident, NPVariant* result) const
     }
 
     CppVariant cppValue;
-    if (!callback->second->getValue(&cppValue))
+    if (!callback->value->getValue(&cppValue))
         return false;
     cppValue.copyToNPVariant(result);
     return true;
@@ -274,7 +274,7 @@ bool CppBoundClass::setProperty(NPIdentifier ident, const NPVariant* value)
 
     CppVariant cppValue;
     cppValue.set(*value);
-    return (*callback).second->setValue(cppValue);
+    return (*callback).value->setValue(cppValue);
 }
 
 void CppBoundClass::bindCallback(const string& name, Callback* callback)
@@ -282,7 +282,7 @@ void CppBoundClass::bindCallback(const string& name, Callback* callback)
     NPIdentifier ident = WebBindings::getStringIdentifier(name.c_str());
     MethodList::iterator oldCallback = m_methods.find(ident);
     if (oldCallback != m_methods.end()) {
-        delete oldCallback->second;
+        delete oldCallback->value;
         if (!callback) {
             m_methods.remove(oldCallback);
             return;
@@ -309,7 +309,7 @@ void CppBoundClass::bindProperty(const string& name, PropertyCallback* callback)
     NPIdentifier ident = WebBindings::getStringIdentifier(name.c_str());
     PropertyList::iterator oldCallback = m_properties.find(ident);
     if (oldCallback != m_properties.end()) {
-        delete oldCallback->second;
+        delete oldCallback->value;
         if (!callback) {
             m_properties.remove(oldCallback);
             return;

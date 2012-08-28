@@ -83,16 +83,16 @@ void WebInspectorServer::buildPageList(Vector<char>& data, String& contentType)
     builder.append("[ ");
     ClientMap::iterator end = m_clientMap.end();
     for (ClientMap::iterator it = m_clientMap.begin(); it != end; ++it) {
-        WebPageProxy* webPage = it->second->page();
+        WebPageProxy* webPage = it->value->page();
         if (it != m_clientMap.begin())
             builder.append(", ");
-        builder.append("{ \"id\": " + String::number(it->first));
+        builder.append("{ \"id\": " + String::number(it->key));
         builder.append(", \"title\": \"");
         builder.append(webPage->pageTitle());
         builder.append("\", \"url\": \"");
         builder.append(webPage->activeURL());
         builder.append("\", \"inspectorUrl\": \"");
-        builder.append(remoteInspectorPagePath() + String::number(it->first));
+        builder.append(remoteInspectorPagePath() + String::number(it->key));
         builder.append("\" }");
     }
     builder.append(" ]");
