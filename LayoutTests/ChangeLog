@@ -1,3 +1,15 @@
+2012-08-27  Luke Macpherson   <macpherson@chromium.org>
+
+        Fix CSSParserValue::createCSSValue() for viewport based units.
+        https://bugs.webkit.org/show_bug.cgi?id=94772
+
+        Reviewed by Tony Chang.
+
+        Add test that uses variables, calc and viewport units together.
+
+        * fast/css/variables/calc-vw-crash-expected.txt: Added.
+        * fast/css/variables/calc-vw-crash.html: Added.
+
 2012-08-27  Mark Lam  <mark.lam@apple.com>
 
         Gardening: skipping tests due to WebCore::JSEventListener::jsFunction(WebCore::ScriptExecutionContext*) crashes.
