@@ -27,8 +27,8 @@ group {
    max: 11 29;
 
    images {
-      image: "widget/slider/slider_knob_v.png" COMP;
-      image: "widget/slider/slider_knob_press_v.png" COMP;
+      image: "widget/slider/slider_thumb_v.png" COMP;
+      image: "widget/slider/slider_thumb_press_v.png" COMP;
    }
 
    script {
@@ -63,14 +63,14 @@ group {
             state: "default" 0.0;
             min: 11 29;
             image {
-               normal: "widget/slider/slider_knob_v.png";
+               normal: "widget/slider/slider_thumb_v.png";
                border: 6 6 0 0;
             }
          }
          description {
             state: "pressed" 0.0;
             inherit: "default" 0.0;
-            image.normal: "widget/slider/slider_knob_press_v.png";
+            image.normal: "widget/slider/slider_thumb_press_v.png";
          }
       }
    }
@@ -228,8 +228,8 @@ group {
    max: 29 11;
 
    images {
-      image: "widget/slider/slider_knob_h.png" COMP;
-      image: "widget/slider/slider_knob_press_h.png" COMP;
+      image: "widget/slider/slider_thumb_h.png" COMP;
+      image: "widget/slider/slider_thumb_press_h.png" COMP;
    }
 
    script {
@@ -264,14 +264,14 @@ group {
             state: "default" 0.0;
             min: 29 11;
             image {
-               normal: "widget/slider/slider_knob_h.png";
+               normal: "widget/slider/slider_thumb_h.png";
                border: 6 6 0 0;
             }
          }
          description {
             state: "pressed" 0.0;
             inherit: "default" 0.0;
-            image.normal: "widget/slider/slider_knob_press_h.png";
+            image.normal: "widget/slider/slider_thumb_press_h.png";
          }
       }
    }

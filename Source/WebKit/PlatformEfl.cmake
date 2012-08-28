@@ -166,15 +166,15 @@ ADD_CUSTOM_COMMAND(
   COMMAND ${EDJE_CC_EXECUTABLE} -v -id ${WEBKIT_DIR}/efl/DefaultTheme ${WebKit_THEME_DEFINITION} ${WEBKIT_DIR}/efl/DefaultTheme/default.edc ${WebKit_THEME}
   DEPENDS
     ${WEBKIT_DIR}/efl/DefaultTheme/default.edc
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_knob_v.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_knob_press_v.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_v.png
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider.edc
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_knob_press_h.png
-    ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_knob_h.png
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_fill_v.png
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_fill_h.png
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_h.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_thumb_h.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_thumb_press_h.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_thumb_press_v.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_thumb_v.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_v.png
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo_focus_button.png
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/combo_press.png
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/combo/icon.png

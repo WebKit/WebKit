@@ -1,5 +1,21 @@
 2012-08-28  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
+        [EFL] Rename knob images to thumb on the default theme
+        https://bugs.webkit.org/show_bug.cgi?id=95186
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WebKit reefers to these handles as thumb instead of knob. Let's make
+        it coherent on EFL.
+
+        * DefaultTheme/widget/slider/slider.edc:
+        * DefaultTheme/widget/slider/slider_thumb_h.png: Renamed from Source/WebKit/efl/DefaultTheme/widget/slider/slider_knob_h.png.
+        * DefaultTheme/widget/slider/slider_thumb_press_h.png: Renamed from Source/WebKit/efl/DefaultTheme/widget/slider/slider_knob_press_h.png.
+        * DefaultTheme/widget/slider/slider_thumb_press_v.png: Renamed from Source/WebKit/efl/DefaultTheme/widget/slider/slider_knob_press_v.png.
+        * DefaultTheme/widget/slider/slider_thumb_v.png: Renamed from Source/WebKit/efl/DefaultTheme/widget/slider/slider_knob_v.png.
+
+2012-08-28  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
         [EFL] Range input ignores padding
         https://bugs.webkit.org/show_bug.cgi?id=94595
 
