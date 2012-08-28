@@ -1,3 +1,25 @@
+2012-08-28  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Range boundaries should use endOfBlock instead of endOfLine.
+        https://bugs.webkit.org/show_bug.cgi?id=95135
+
+        The original implementation used nextLinePosition to iterate
+        through the field from the start of each line, and was bounded in
+        comparison to the endOfLine. This works fine as long as there aren't any
+        empty lines between paragraphs of text, since these will have
+        startOfLine == endOfLine and break out.
+
+        Also, protect map access with a mutex in case we get a response
+        before updating the map. Further, we should check the Range pointer
+        before using it, since its not guaranteed to be valid.
+
+        Internally reviewed by Mike Fenton.
+
+        Reviewed by Antonio Gomes.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::spellCheckBlock):
+
 2012-08-28  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] One shot drawing synchronization broken
