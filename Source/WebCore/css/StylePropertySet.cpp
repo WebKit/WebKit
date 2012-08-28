@@ -87,15 +87,22 @@ StylePropertySet::StylePropertySet(const CSSProperty* properties, unsigned count
     }
 }
 
-StylePropertySet::StylePropertySet(const StylePropertySet& o)
+StylePropertySet::StylePropertySet(const StylePropertySet& other)
     : RefCounted<StylePropertySet>()
-    , m_cssParserMode(o.m_cssParserMode)
+    , m_cssParserMode(other.m_cssParserMode)
     , m_ownsCSSOMWrapper(false)
     , m_isMutable(true)
     , m_arraySize(0)
     , m_mutablePropertyVector(new Vector<CSSProperty>)
 {
-    copyPropertiesFrom(o);
+    if (other.isMutable())
+        *m_mutablePropertyVector = *other.m_mutablePropertyVector;
+    else {
+        m_mutablePropertyVector->clear();
+        m_mutablePropertyVector->reserveCapacity(other.m_arraySize);
+        for (unsigned i = 0; i < other.m_arraySize; ++i)
+            m_mutablePropertyVector->uncheckedAppend(other.array()[i]);
+    }
 }
 
 StylePropertySet::~StylePropertySet()
@@ -109,27 +116,6 @@ StylePropertySet::~StylePropertySet()
         for (unsigned i = 0; i < m_arraySize; ++i)
             array()[i].~CSSProperty();
     }
-}
-
-void StylePropertySet::setCSSParserMode(CSSParserMode cssParserMode)
-{
-    ASSERT(isMutable());
-    m_cssParserMode = cssParserMode;
-}
-
-void StylePropertySet::copyPropertiesFrom(const StylePropertySet& other)
-{
-    ASSERT(isMutable());
-
-    if (other.isMutable()) {
-        *m_mutablePropertyVector = *other.m_mutablePropertyVector;
-        return;
-    }
-
-    m_mutablePropertyVector->clear();
-    m_mutablePropertyVector->reserveCapacity(other.m_arraySize);
-    for (unsigned i = 0; i < other.m_arraySize; ++i)
-        m_mutablePropertyVector->uncheckedAppend(other.array()[i]);
 }
 
 String StylePropertySet::getPropertyValue(CSSPropertyID propertyID) const

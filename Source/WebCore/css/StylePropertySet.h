@@ -86,15 +86,11 @@ public:
 
     void mergeAndOverrideOnConflict(const StylePropertySet*);
 
-    void setCSSParserMode(CSSParserMode);
     CSSParserMode cssParserMode() const { return static_cast<CSSParserMode>(m_cssParserMode); }
 
     void addSubresourceStyleURLs(ListHashSet<KURL>&, StyleSheetContents* contextStyleSheet) const;
 
     PassRefPtr<StylePropertySet> copy() const;
-
-    // Used by StyledElement::copyNonAttributeProperties().
-    void copyPropertiesFrom(const StylePropertySet&);
 
     void removeEquivalentProperties(const StylePropertySet*);
     void removeEquivalentProperties(const CSSStyleDeclaration*);
