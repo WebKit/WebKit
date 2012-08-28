@@ -123,6 +123,12 @@ typedef struct WKContextConnectionClient WKContextConnectionClient;
 
 enum { kWKContextConnectionClientCurrentVersion = 0 };
 
+enum {
+    kWKProcessModelSharedSecondaryProcess = 0,
+    kWKProcessModelMultipleSecondaryProcesses = 1
+};
+typedef uint32_t WKProcessModel;
+
 WK_EXPORT WKTypeID WKContextGetTypeID();
 
 WK_EXPORT WKContextRef WKContextCreate();
@@ -142,6 +148,9 @@ WK_EXPORT void WKContextAddVisitedLink(WKContextRef context, WKStringRef visited
 
 WK_EXPORT void WKContextSetCacheModel(WKContextRef context, WKCacheModel cacheModel);
 WK_EXPORT WKCacheModel WKContextGetCacheModel(WKContextRef context);
+
+WK_EXPORT void WKContextSetProcessModel(WKContextRef context, WKProcessModel processModel);
+WK_EXPORT WKProcessModel WKContextGetProcessModel(WKContextRef context);
 
 WK_EXPORT void WKContextStartMemorySampler(WKContextRef context, WKDoubleRef interval);
 WK_EXPORT void WKContextStopMemorySampler(WKContextRef context);

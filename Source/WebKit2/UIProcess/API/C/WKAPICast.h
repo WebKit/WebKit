@@ -30,6 +30,7 @@
 #include "CacheModel.h"
 #include "FontSmoothingLevel.h"
 #include "HTTPCookieAcceptPolicy.h"
+#include "ProcessModel.h"
 #include "ResourceCachesToClear.h"
 #include "WebGrammarDetail.h"
 #include "WKContext.h"
@@ -172,6 +173,31 @@ inline WKCacheModel toAPI(CacheModel cacheModel)
     }
     
     return kWKCacheModelDocumentViewer;
+}
+
+inline ProcessModel toProcessModel(WKProcessModel wkProcessModel)
+{
+    switch (wkProcessModel) {
+    case kWKProcessModelSharedSecondaryProcess:
+        return ProcessModelSharedSecondaryProcess;
+    case kWKProcessModelMultipleSecondaryProcesses:
+        return ProcessModelMultipleSecondaryProcesses;
+    }
+
+    ASSERT_NOT_REACHED();
+    return ProcessModelSharedSecondaryProcess;
+}
+
+inline WKProcessModel toAPI(ProcessModel processModel)
+{
+    switch (processModel) {
+    case ProcessModelSharedSecondaryProcess:
+        return kWKProcessModelSharedSecondaryProcess;
+    case ProcessModelMultipleSecondaryProcesses:
+        return kWKProcessModelMultipleSecondaryProcesses;
+    }
+    
+    return kWKProcessModelSharedSecondaryProcess;
 }
 
 inline FontSmoothingLevel toFontSmoothingLevel(WKFontSmoothingLevel wkLevel)

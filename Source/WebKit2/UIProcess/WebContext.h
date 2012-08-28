@@ -89,6 +89,7 @@ public:
     void initializeHistoryClient(const WKContextHistoryClient*);
     void initializeDownloadClient(const WKContextDownloadClient*);
 
+    void setProcessModel(ProcessModel); // Can only be called when there are no processes running.
     ProcessModel processModel() const { return m_processModel; }
 
     // FIXME (Multi-WebProcess): Remove. No code should assume that there is a shared process.

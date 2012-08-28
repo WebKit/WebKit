@@ -255,6 +255,15 @@ void WebContext::initializeDownloadClient(const WKContextDownloadClient* client)
     m_downloadClient.initialize(client);
 }
 
+void WebContext::setProcessModel(ProcessModel processModel)
+{
+    // Guard against API misuse.
+    if (!m_processes.isEmpty())
+        CRASH();
+
+    m_processModel = processModel;
+}
+
 WebProcessProxy* WebContext::deprecatedSharedProcess()
 {
     ASSERT(m_processModel == ProcessModelSharedSecondaryProcess);

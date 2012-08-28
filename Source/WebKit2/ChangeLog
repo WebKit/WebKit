@@ -1,3 +1,25 @@
+2012-08-28  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Expose process model as API
+        https://bugs.webkit.org/show_bug.cgi?id=95228
+
+        Reviewed by Jon Honeycutt.
+
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toProcessModel):
+        (WebKit::toAPI):
+        Convert ProcessModel values.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetProcessModel):
+        (WKContextGetProcessModel):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebContext.cpp: (WebKit::WebContext::setProcessModel):
+        * UIProcess/WebContext.h:
+        Added a setter and a getter. Setting process model is only allowed when there are
+        no processes yet - that's checked with a CRASH to guarantee that clients using
+        production builds of WebKit2 don't misstep.
+
 2012-08-28  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Rename first/second to key/value in HashMap iterators
