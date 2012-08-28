@@ -5486,31 +5486,6 @@ void WebPagePrivate::setCompositorDrawsRootLayer(bool compositorDrawsRootLayer)
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void WebPagePrivate::drawLayersOnCommit()
-{
-    if (!Platform::userInterfaceThreadMessageClient()->isCurrentThread()) {
-        // This method will only be called when the layer appearance changed due to
-        // animations. And only if we don't need a one shot drawing sync.
-        ASSERT(!needsOneShotDrawingSynchronization());
-
-        if (!m_webPage->isVisible())
-            return;
-
-        m_backingStore->d->willDrawLayersOnCommit();
-
-        Platform::userInterfaceThreadMessageClient()->dispatchMessage(
-            Platform::createMethodCallMessage(&WebPagePrivate::drawLayersOnCommit, this));
-        return;
-    }
-
-#if DEBUG_AC_COMMIT
-    Platform::log(Platform::LogLevelCritical, "%s", WTF_PRETTY_FUNCTION);
-#endif
-
-    if (!m_backingStore->d->shouldDirectRenderingToWindow())
-        m_backingStore->d->blitVisibleContents();
-}
-
 void WebPagePrivate::scheduleRootLayerCommit()
 {
     if (!(m_frameLayers && m_frameLayers->hasLayer()) && !m_overlayLayer)
@@ -5759,10 +5734,7 @@ void WebPagePrivate::rootLayerCommitTimerFired(Timer<WebPagePrivate>*)
         }
     }
 
-    // If the web page needs layout, the commit will fail.
-    // No need to draw the layers if nothing changed.
-    if (commitRootLayerIfNeeded())
-        drawLayersOnCommit();
+    commitRootLayerIfNeeded();
 }
 
 void WebPagePrivate::resetCompositingSurface()

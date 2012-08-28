@@ -1,3 +1,41 @@
+2012-08-28  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] One shot drawing synchronization broken
+        https://bugs.webkit.org/show_bug.cgi?id=95179
+
+        Reviewed by Antonio Gomes.
+        Internally reviewed by Arvid Nilsson.
+
+        Make sure no backing store blits happen during one shot drawing
+        synchronization.
+        Since we always blit during commit now, make sure we don't blit if
+        we commit after a render.
+        We no longer need a deferred blit since we don't commit during renderContents
+        now. Instead, we only commit & blit once after a full render job.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::repaint):
+        (BlackBerry::WebKit::BackingStorePrivate::slowScroll):
+        (BlackBerry::WebKit::BackingStorePrivate::renderJob):
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::blitContents):
+        (BlackBerry::WebKit::BackingStorePrivate::renderContents):
+        (WebKit):
+        (BlackBerry::WebKit::BackingStorePrivate::drawAndBlendLayersForDirectRendering):
+        (BlackBerry::WebKit::BackingStorePrivate::didRenderContent):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * Api/WebPage.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::rootLayerCommitTimerFired):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebKitSupport/RenderQueue.cpp:
+        (BlackBerry::WebKit::RenderQueue::renderAllCurrentRegularRenderJobs):
+        (BlackBerry::WebKit::RenderQueue::renderRegularRenderJob):
+        (BlackBerry::WebKit::RenderQueue::visibleScrollJobsCompleted):
+
 2012-08-28  Parth Patel  <parpatel@rim.com>
 
         [BlackBerry] Removing unnecessary include of Class BlackBerryPlatformClient

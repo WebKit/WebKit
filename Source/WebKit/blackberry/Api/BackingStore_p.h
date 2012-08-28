@@ -334,6 +334,8 @@ public:
     BlackBerry::Platform::IntSize surfaceSize() const;
     BlackBerry::Platform::Graphics::Buffer* buffer() const;
 
+    void didRenderContent(const Platform::IntRect& renderedRect);
+
     static WebPage* s_currentBackingStoreOwner;
 
     unsigned m_suspendScreenUpdates;

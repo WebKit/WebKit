@@ -409,7 +409,6 @@ public:
 
     // Thread safe.
     void resetCompositingSurface();
-    void drawLayersOnCommit(); // Including backing store blit.
 
     // Compositing thread.
     void setRootLayerCompositingThread(WebCore::LayerCompositingThread*);
