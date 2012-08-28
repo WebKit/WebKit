@@ -101,33 +101,6 @@ fast/sub-pixel/size-of-box-with-zoom.html
 fast/sub-pixel/table-rows-no-gaps.html
 fast/sub-pixel/sub-pixel-accumulates-to-layers.html
 
-# [WK2][WTR] Rebaseline newly added SVG text test cases
-# https://bugs.webkit.org/show_bug.cgi?id=95190
-svg/text/select-textLength-spacing-squeeze-1.svg
-svg/text/select-textLength-spacing-squeeze-2.svg
-svg/text/select-textLength-spacing-squeeze-3.svg
-svg/text/select-textLength-spacing-squeeze-4.svg
-svg/text/select-textLength-spacing-stretch-1.svg
-svg/text/select-textLength-spacing-stretch-2.svg
-svg/text/select-textLength-spacing-stretch-3.svg
-svg/text/select-textLength-spacing-stretch-4.svg
-svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg
-svg/text/select-textLength-spacingAndGlyphs-squeeze-2.svg
-svg/text/select-textLength-spacingAndGlyphs-squeeze-3.svg
-svg/text/select-textLength-spacingAndGlyphs-squeeze-4.svg
-svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg
-svg/text/select-textLength-spacingAndGlyphs-stretch-2.svg
-svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg
-svg/text/select-textLength-spacingAndGlyphs-stretch-4.svg
-svg/text/select-x-list-1.svg
-svg/text/select-x-list-2.svg
-svg/text/select-x-list-3.svg
-svg/text/select-x-list-4.svg
-svg/text/select-x-list-with-tspans-1.svg
-svg/text/select-x-list-with-tspans-2.svg
-svg/text/select-x-list-with-tspans-3.svg
-svg/text/select-x-list-with-tspans-4.svg
-svg/text/selection-doubleclick.svg
 # [WK2][WTR] svg/animations/animate-text-nested-transforms.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=95191
 svg/animations/animate-text-nested-transforms.html

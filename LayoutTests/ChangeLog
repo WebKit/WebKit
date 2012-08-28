@@ -1,3 +1,39 @@
+2012-08-28  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][WK2][WTR] Rebaseline newly added SVG text test cases
+        https://bugs.webkit.org/show_bug.cgi?id=95190
+
+        Unreviewed, EFL rebaselining.
+
+        Rebaselined svg text test cases.
+
+        * platform/efl/svg/text/select-textLength-spacing-squeeze-1-expected.txt: Added.
+        * platform/efl/svg/text/select-textLength-spacing-squeeze-2-expected.txt: Added.
+        * platform/efl/svg/text/select-textLength-spacing-squeeze-3-expected.txt: Added.
+        * platform/efl/svg/text/select-textLength-spacing-squeeze-4-expected.txt: Added.
+        * platform/efl/svg/text/select-textLength-spacing-stretch-1-expected.txt: Added.
+        * platform/efl/svg/text/select-textLength-spacing-stretch-2-expected.txt: Added.
+        * platform/efl/svg/text/select-textLength-spacing-stretch-3-expected.txt: Added.
+        * platform/efl/svg/text/select-textLength-spacing-stretch-4-expected.txt: Added.
+        * platform/efl/svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.txt: Added.
+        * platform/efl/svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.txt: Added.
+        * platform/efl/svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.txt: Added.
+        * platform/efl/svg/text/select-textLength-spacingAndGlyphs-squeeze-4-expected.txt: Added.
+        * platform/efl/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.txt: Added.
+        * platform/efl/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.txt: Added.
+        * platform/efl/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.txt: Added.
+        * platform/efl/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.txt: Added.
+        * platform/efl/svg/text/select-x-list-1-expected.txt: Added.
+        * platform/efl/svg/text/select-x-list-2-expected.txt: Added.
+        * platform/efl/svg/text/select-x-list-3-expected.txt: Added.
+        * platform/efl/svg/text/select-x-list-4-expected.txt: Added.
+        * platform/efl/svg/text/select-x-list-with-tspans-1-expected.txt: Added.
+        * platform/efl/svg/text/select-x-list-with-tspans-2-expected.txt: Added.
+        * platform/efl/svg/text/select-x-list-with-tspans-3-expected.txt: Added.
+        * platform/efl/svg/text/select-x-list-with-tspans-4-expected.txt: Added.
+        * platform/efl/svg/text/selection-doubleclick-expected.txt: Added.
+        * platform/wk2/Skipped:
+
 2012-08-28  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         [WK2] Send click events to WebCore when the user clicked on a non-special node with TOUCH_ADJUSTMENT enabled.
