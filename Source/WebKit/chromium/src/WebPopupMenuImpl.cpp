@@ -193,7 +193,7 @@ void WebPopupMenuImpl::layout()
 {
 }
 
-void WebPopupMenuImpl::paint(WebCanvas* canvas, const WebRect& rect, PaintOptions)
+void WebPopupMenuImpl::paint(WebCanvas* canvas, const WebRect& rect)
 {
     if (!m_widget)
         return;
