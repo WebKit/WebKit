@@ -71,7 +71,7 @@ void ContentDistributor::distribute(Element* host)
             if (point->doesSelectFromHostChildren())
                 distributeSelectionsTo(point, pool);
             else if (older && !older->assignedTo()) {
-                distributeShadowChildrenTo(point, older);
+                distributeNodeChildrenTo(point, older);
                 older->setAssignedTo(point);
             }
         }
@@ -126,10 +126,10 @@ void ContentDistributor::distributeSelectionsTo(InsertionPoint* insertionPoint, 
     insertionPoint->setDistribution(distribution);
 }
 
-void ContentDistributor::distributeShadowChildrenTo(InsertionPoint* insertionPoint, ShadowRoot* root)
+void ContentDistributor::distributeNodeChildrenTo(InsertionPoint* insertionPoint, ContainerNode* containerNode)
 {
     ContentDistribution distribution;
-    for (Node* node = root->firstChild(); node; node = node->nextSibling()) {
+    for (Node* node = containerNode->firstChild(); node; node = node->nextSibling()) {
         distribution.append(node);
         m_nodeToInsertionPoint.add(node, insertionPoint);
     }

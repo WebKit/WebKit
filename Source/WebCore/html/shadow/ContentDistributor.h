@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+class ContainerNode;
 class Element;
 class InsertionPoint;
 class Node;
@@ -69,7 +70,7 @@ public:
     bool needsInvalidation() const { return m_validity != Invalidated; }
 
     void distributeSelectionsTo(InsertionPoint*, ContentDistribution& pool);
-    void distributeShadowChildrenTo(InsertionPoint*, ShadowRoot*);
+    void distributeNodeChildrenTo(InsertionPoint*, ContainerNode*);
     void invalidateDistributionIn(ContentDistribution*);
 
 private:
