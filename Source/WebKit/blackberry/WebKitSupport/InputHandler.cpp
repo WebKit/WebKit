@@ -541,8 +541,8 @@ void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::TextCheckingReque
         return;
     }
 
-    // Check if field explicitly asked for spellchecking.
-    if (DOMSupport::elementSupportsSpellCheck(m_currentFocusElement.get()) != DOMSupport::On) {
+    // Check if the field should be spellchecked.
+    if (!shouldSpellCheckElement(m_currentFocusElement.get())) {
         spellCheckingRequestCancelled(sequenceId, true /* isSequenceId */);
         return;
     }
@@ -842,8 +842,8 @@ void InputHandler::setElementFocused(Element* element)
     SpellingLog(LogLevelInfo, "InputHandler::setElementFocused Focusing the field took %f seconds.", timer.elapsed());
 #endif
 
-    // Check if the field explicitly asks for spellchecking.
-    if (DOMSupport::elementSupportsSpellCheck(element) != DOMSupport::On)
+    // Check if the field should be spellchecked.
+    if (!shouldSpellCheckElement(element))
         return;
 
     // Spellcheck the field in its entirety.
@@ -853,6 +853,21 @@ void InputHandler::setElementFocused(Element* element)
 #ifdef ENABLE_SPELLING_LOG
     SpellingLog(LogLevelInfo, "InputHandler::setElementFocused Spellchecking the field increased the total time to focus to %f seconds.", timer.elapsed());
 #endif
+}
+
+bool InputHandler::shouldSpellCheckElement(const Element* element) const
+{
+    DOMSupport::AttributeState spellCheckAttr = DOMSupport::elementSupportsSpellCheck(element);
+
+    // Explicitly set to off.
+    if (spellCheckAttr == DOMSupport::Off)
+        return false;
+
+    // Undefined and part of a set of cases which we do not wish to check. This includes user names and email addresses, so we are piggybacking on NoAutocomplete cases.
+    if (spellCheckAttr == DOMSupport::Default && (m_currentFocusElementTextEditMask & NO_AUTO_TEXT))
+        return false;
+
+    return true;
 }
 
 void InputHandler::spellCheckBlock(VisibleSelection& visibleSelection, TextCheckingProcessType textCheckingProcessType)

@@ -1,3 +1,27 @@
+2012-08-28  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Spellcheck should be enabled if undefined in content.
+        https://bugs.webkit.org/show_bug.cgi?id=95139
+
+        Currently we only enable spellcheck if it is defined as such in
+        the web content explicitly.
+        Making this change to enable by default, and only turn off if it is
+        explicitly set, or if we expect the field to be a username, email or
+        url.
+
+        Internally reviewed by Mike Fenton.
+
+        Reviewed by Rob Buis.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::requestCheckingOfString):
+        (BlackBerry::WebKit::InputHandler::setElementFocused):
+        (BlackBerry::WebKit::InputHandler::unlockSequenceMap):
+        (WebKit):
+        (BlackBerry::WebKit::InputHandler::shouldSpellCheckElement):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+
 2012-08-28  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Rename first/second to key/value in HashMap iterators

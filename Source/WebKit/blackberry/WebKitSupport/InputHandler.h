@@ -199,6 +199,7 @@ private:
     PassRefPtr<WebCore::Range> getRangeForSpellCheckWithFineGranularity(WebCore::VisiblePosition startPosition, WebCore::VisiblePosition endPosition);
     void cancelAllSpellCheckingRequests();
     WebCore::SpellChecker* getSpellChecker();
+    bool shouldSpellCheckElement(const WebCore::Element*) const;
 
     WebPagePrivate* m_webPage;
 
