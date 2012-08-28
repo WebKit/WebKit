@@ -171,6 +171,9 @@ static String findPluginMIMETypeFromURL(Page* page, const String& url)
     String extension = url.substring(dotIndex + 1);
 
     PluginData* pluginData = page->pluginData();
+    if (!pluginData)
+        return String();
+
     for (size_t i = 0; i < pluginData->mimes().size(); ++i) {
         const MimeClassInfo& mimeClassInfo = pluginData->mimes()[i];
         for (size_t j = 0; j < mimeClassInfo.extensions.size(); ++j) {
