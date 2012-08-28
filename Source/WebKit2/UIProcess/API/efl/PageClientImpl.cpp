@@ -44,18 +44,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PageClientImpl::PageClientImpl(WebContext* context, WebPageGroup* pageGroup, Evas_Object* viewWidget)
+PageClientImpl::PageClientImpl(Evas_Object* viewWidget)
     : m_viewWidget(viewWidget)
 {
-    m_page = context->createWebPage(this, pageGroup);
-
-#if USE(COORDINATED_GRAPHICS)
-    m_page->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
-    m_page->pageGroup()->preferences()->setForceCompositingMode(true);
-    m_page->setUseFixedLayout(true);
-#endif
-
-    m_page->initializeWebPage();
 }
 
 PageClientImpl::~PageClientImpl()
@@ -65,7 +56,7 @@ PageClientImpl::~PageClientImpl()
 // PageClient
 PassOwnPtr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 {
-    return DrawingAreaProxyImpl::create(m_page.get());
+    return DrawingAreaProxyImpl::create(ewk_view_page_get(m_viewWidget));
 }
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::IntRect& rect)

@@ -1,3 +1,60 @@
+2012-08-27  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][WK2] Fix PageClientImpl layer violation
+        https://bugs.webkit.org/show_bug.cgi?id=94906
+
+        Reviewed by Gyuyoung Kim.
+
+        Given WK2 hierarchy, current PageClientImpl has violated API layer by having WebPageProxy.
+        Subsequently, it has been given WebContext, static singleton object, in its argument unnecessarily.
+        Therefore, this patch moved WebPageProxy from PageClientImpl to Ewk_View_Private_Data.
+        Plus, WebContext was removed from PageClientImpl since it is not needed anymore.
+        As a result, EFL has same form of PageClientImpl with other ports, i.e. gtk+ and mac.
+        From API point of view, nothing has been changed because all things done locally.
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        * UIProcess/API/efl/PageClientImpl.h:
+        (WebKit::PageClientImpl::create):
+        (PageClientImpl):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_smart_focus_in):
+        (_ewk_view_smart_focus_out):
+        (_ewk_view_smart_mouse_wheel):
+        (_ewk_view_smart_mouse_down):
+        (_ewk_view_smart_mouse_up):
+        (_ewk_view_smart_mouse_move):
+        (_ewk_view_smart_key_down):
+        (_ewk_view_smart_key_up):
+        (_ewk_view_smart_calculate):
+        (_ewk_view_smart_color_set):
+        (_ewk_view_initialize):
+        (ewk_view_uri_update):
+        (ewk_view_uri_set):
+        (ewk_view_reload):
+        (ewk_view_reload_bypass_cache):
+        (ewk_view_stop):
+        (ewk_view_title_get):
+        (ewk_view_load_progress_get):
+        (ewk_view_scale_set):
+        (ewk_view_scale_get):
+        (ewk_view_device_pixel_ratio_set):
+        (ewk_view_device_pixel_ratio_get):
+        (ewk_view_theme_set):
+        (ewk_view_back):
+        (ewk_view_forward):
+        (ewk_view_intent_deliver):
+        (ewk_view_back_possible):
+        (ewk_view_forward_possible):
+        (ewk_view_html_string_load):
+        (ewk_view_page_get):
+        (ewk_view_setting_encoding_custom_get):
+        (ewk_view_setting_encoding_custom_set):
+        (ewk_view_text_find):
+        (ewk_view_text_find_highlight_clear):
+
 2012-08-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126836.

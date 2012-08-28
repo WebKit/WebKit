@@ -33,18 +33,17 @@ namespace WebKit {
 
 class PageClientImpl : public PageClient {
 public:
-    static PassOwnPtr<PageClientImpl> create(WebContext* context, WebPageGroup* pageGroup, Evas_Object* viewWidget)
+    static PassOwnPtr<PageClientImpl> create(Evas_Object* viewWidget)
     {
-        return adoptPtr(new PageClientImpl(context, pageGroup, viewWidget));
+        return adoptPtr(new PageClientImpl(viewWidget));
     }
     ~PageClientImpl();
 
     Evas_Object* viewWidget() const { return m_viewWidget; }
 
-    WebPageProxy* page() const { return m_page.get(); }
 
 private:
-    PageClientImpl(WebContext*, WebPageGroup*, Evas_Object*);
+    explicit PageClientImpl(Evas_Object*);
 
     // PageClient
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
@@ -115,7 +114,6 @@ private:
     virtual void didChangeContentsSize(const WebCore::IntSize&);
 
 private:
-    RefPtr<WebPageProxy> m_page;
     Evas_Object* m_viewWidget;
 };
 
