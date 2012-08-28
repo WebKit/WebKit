@@ -305,6 +305,9 @@ BUGWKGTK SKIP : fast/css/image-set-parsing.html = TEXT
 BUGWKGTK SKIP : fast/css/image-set-parsing-invalid.html = TEXT
 BUGWKGTK SKIP : fast/css/image-set-setting.html = TEXT
 
+// CSS Sticky Position is not yet enabled
+BUGWKGTK SKIP : fast/css/sticky = IMAGE TEXT PASS
+
 // For now, Web Audio API is disabled
 BUGWKGTK SKIP : webaudio = TEXT
 
@@ -1306,8 +1309,6 @@ BUGWK88727 RELEASE : http/tests/xmlhttprequest/origin-exact-matching.html = TEXT
 
 BUGWK94952 DEBUG : platform/gtk/scrollbars/overflow-scrollbar-horizontal-wheel-scroll.html = TEXT
 BUGWK94952 DEBUG : scrollbars/scroll-rtl-or-bt-layer.html = TEXT
-
-BUGWKGTK : fast/css/sticky = IMAGE TEXT PASS
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

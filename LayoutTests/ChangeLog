@@ -1,3 +1,12 @@
+2012-08-27  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Skipping the tests in fast/css/sticky. CSS Sticky Position
+        feature is not yet enabled on the GTK port.
+
+        * platform/gtk/TestExpectations:
+
 2012-08-27  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Gardening after r126789. Update expectations and skip a test
