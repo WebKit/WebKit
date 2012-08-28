@@ -2037,10 +2037,6 @@ fast/forms/datalist/range-snap-to-datalist.html
 # https://bugs.webkit.org/show_bug.cgi?id=89760
 fast/forms/number/number-validation-message.html
 
-# [Qt] New fast/css/sticky/parsing-position-sticky.html fails since r123379
-# https://bugs.webkit.org/show_bug.cgi?id=92080
-fast/css/sticky/parsing-position-sticky.html
-
 # [Qt] fast/block/positioning/002.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=92732
 fast/block/positioning/002.html
@@ -2594,6 +2590,13 @@ svg/custom/anchor-on-use.svg
 svg/animations/animateTransform-rotate-around-point.svg
 svg/animations/animateMotion-additive-1.svg
 svg/transforms/transformed-text-fill-gradient.html
+
+# Failing fast/css/sticky/ tests with minor pixel differences
+# https://bugs.webkit.org/show_bug.cgi?id=92080
+fast/css/sticky/inline-sticky-abspos-child.html
+fast/css/sticky/inline-sticky.html
+fast/css/sticky/sticky-writing-mode-vertical-lr.html
+fast/css/sticky/sticky-writing-mode-vertical-rl.html
 
 # REGRESSION(114309) - Exception stack traces aren't complete when the exception starts in native code
 # https://bugs.webkit.org/show_bug.cgi?id=84073
