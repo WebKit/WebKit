@@ -1,3 +1,21 @@
+2012-08-28  Gavin Barraclough  <barraclough@apple.com>
+
+        PutById uses DataLabel32, not DataLabelCompact
+        https://bugs.webkit.org/show_bug.cgi?id=95245
+
+        Reviewed by Geoff Garen.
+
+        JIT::resetPatchPutById calls the the wrong thing on x86-64 – this is moot right now,
+        since they currently both do the same thing, but if we were to ever make compact mean
+        8-bit this could be a real problem. Also, don't rely on the object still being in eax
+        on entry to the transition stub – this isn't very robust.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+            - DataLabelCompact -> DataLabel32
+        (JSC::JIT::resetPatchPutById):
+            - reload regT0 from the stack
+
 2012-08-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126914.
