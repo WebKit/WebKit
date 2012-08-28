@@ -1,3 +1,7 @@
+2012-08-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix: svn add two files I forgot in my last patch.
+
 2012-08-27  Geoffrey Garen  <ggaren@apple.com>
 
         Refactored and consolidated variable resolution functions
