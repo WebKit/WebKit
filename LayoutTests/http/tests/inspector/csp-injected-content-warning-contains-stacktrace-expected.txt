@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: Refused to load the image 'http://127.0.0.1:8000/resources/abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
+
+This test injects a blocked image from JavaScript. The resulting console error should contain a stack trace.
+
+
+Message[0]: csp-injected-content-warning-contains-stacktrace.html:12 Refused to load the image 'http://127.0.0.1:8000/resources/abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
+
+Stack Trace:
+
+    0) http://127.0.0.1:8000/inspector/csp-injected-content-warning-contains-stacktrace.html / thisTest / 12 / 25
+    1) (internal script) /  / (line number) / (column number)
+    2) (internal script) / InjectedScript._evaluateOn / (line number) / (column number)
+    3) (internal script) / InjectedScript._evaluateAndWrap / (line number) / (column number)
+    4) (internal script) / InjectedScript.evaluate / (line number) / (column number)
+

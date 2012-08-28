@@ -222,7 +222,7 @@ JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld* world)
     windowShell->window()->updateDocument();
 
     if (m_frame->document())
-        windowShell->window()->setEvalEnabled(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));   
+        windowShell->window()->setEvalEnabled(m_frame->document()->contentSecurityPolicy()->allowEval(ContentSecurityPolicy::SuppressReport));
 
     if (Page* page = m_frame->page()) {
         attachDebugger(windowShell, page->debugger());

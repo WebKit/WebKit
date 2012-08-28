@@ -320,7 +320,7 @@ bool V8DOMWindowShell::initializeIfNeeded()
     setSecurityToken();
 
     if (m_frame->document())
-        context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
+        context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(ContentSecurityPolicy::SuppressReport));
 
     m_frame->loader()->client()->didCreateScriptContext(m_context.get(), 0, 0);
 

@@ -1,3 +1,20 @@
+2012-08-28  Mike West  <mkwst@chromium.org>
+
+        Add call stacks to Content Security Policy checks when relevant.
+        https://bugs.webkit.org/show_bug.cgi?id=94433
+
+        Reviewed by Adam Barth.
+
+        * http/tests/inspector/csp-injected-content-warning-contains-stacktrace-expected.txt: Added.
+        * http/tests/inspector/csp-injected-content-warning-contains-stacktrace.html: Added.
+        * http/tests/inspector/csp-inline-warning-contains-stacktrace-expected.txt: Added.
+        * http/tests/inspector/csp-inline-warning-contains-stacktrace.html: Added.
+        * http/tests/inspector/resources/csp-inline-test.js: Added.
+        (thisTest):
+        * http/tests/inspector/resources/csp-test.js: Added.
+        (test.addMessage):
+        (test):
+
 2012-08-27  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
