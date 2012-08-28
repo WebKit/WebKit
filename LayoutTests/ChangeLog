@@ -1,3 +1,22 @@
+2012-08-27  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] Using ref image instead ref HTML for fast/forms/time-multiple-fields/time-multiple-fields-appearance-{basic,pseudo-element}.html
+        https://bugs.webkit.org/show_bug.cgi?id=95055
+
+        Unreviewed. Rebaseline for multiple fields time input UI of Chromium-Mac and Chromium-Win.
+
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png: Added.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.txt: Added.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png: Added.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.txt: Added.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+
 2012-08-27  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=94848

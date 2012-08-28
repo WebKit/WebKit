@@ -1,0 +1,303 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {UL} at (0,0) size 784x180
+        RenderListItem {LI} at (40,0) size 744x30
+          RenderListMarker at (-18,4) size 7x19: bullet
+          RenderText {#text} at (0,4) size 67x19
+            text run at (0,4) width 67: "step=none "
+          RenderBlock {INPUT} at (69,2) size 128x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderDeprecatedFlexibleBox {DIV} at (3,3) size 122x20
+              RenderBlock (anonymous) at (0,0) size 104x20
+                RenderBlock {SPAN} at (0,0) size 20x20 [bgcolor=#B5D5FF]
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "--"
+                RenderText {#text} at (20,2) size 8x16
+                  text run at (20,2) width 8: ":"
+                RenderBlock {SPAN} at (28,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "--"
+                RenderText {#text} at (48,2) size 8x16
+                  text run at (48,2) width 8: ":"
+                RenderBlock {SPAN} at (56,0) size 20x20 [color=#808080]
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "00"
+                RenderText {#text} at (76,2) size 8x16
+                  text run at (76,2) width 8: " "
+                RenderInline {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (86,2) size 16x16
+                    text run at (86,2) width 16: "--"
+          RenderText {#text} at (198,4) size 5x19
+            text run at (198,4) width 5: " "
+          RenderBlock {INPUT} at (204,2) size 129x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderDeprecatedFlexibleBox {DIV} at (3,3) size 122x20
+              RenderBlock (anonymous) at (0,0) size 104x20
+                RenderBlock {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "12"
+                RenderText {#text} at (20,2) size 8x16
+                  text run at (20,2) width 8: ":"
+                RenderBlock {SPAN} at (28,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "34"
+                RenderText {#text} at (48,2) size 8x16
+                  text run at (48,2) width 8: ":"
+                RenderBlock {SPAN} at (56,0) size 20x20 [color=#808080]
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "00"
+                RenderText {#text} at (76,2) size 8x16
+                  text run at (76,2) width 8: " "
+                RenderInline {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (86,2) size 16x16
+                    text run at (86,2) width 16: "PM"
+        RenderListItem {LI} at (40,30) size 744x30
+          RenderListMarker at (-18,4) size 7x19: bullet
+          RenderText {#text} at (0,4) size 46x19
+            text run at (0,4) width 46: "step=1 "
+          RenderBlock {INPUT} at (48,2) size 128x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderDeprecatedFlexibleBox {DIV} at (3,3) size 122x20
+              RenderBlock (anonymous) at (0,0) size 104x20
+                RenderBlock {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "--"
+                RenderText {#text} at (20,2) size 8x16
+                  text run at (20,2) width 8: ":"
+                RenderBlock {SPAN} at (28,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "--"
+                RenderText {#text} at (48,2) size 8x16
+                  text run at (48,2) width 8: ":"
+                RenderBlock {SPAN} at (56,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "--"
+                RenderText {#text} at (76,2) size 8x16
+                  text run at (76,2) width 8: " "
+                RenderInline {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (86,2) size 16x16
+                    text run at (86,2) width 16: "--"
+          RenderText {#text} at (177,4) size 5x19
+            text run at (177,4) width 5: " "
+          RenderBlock {INPUT} at (183,2) size 129x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderDeprecatedFlexibleBox {DIV} at (3,3) size 122x20
+              RenderBlock (anonymous) at (0,0) size 104x20
+                RenderBlock {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "12"
+                RenderText {#text} at (20,2) size 8x16
+                  text run at (20,2) width 8: ":"
+                RenderBlock {SPAN} at (28,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "34"
+                RenderText {#text} at (48,2) size 8x16
+                  text run at (48,2) width 8: ":"
+                RenderBlock {SPAN} at (56,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "56"
+                RenderText {#text} at (76,2) size 8x16
+                  text run at (76,2) width 8: " "
+                RenderInline {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (86,2) size 16x16
+                    text run at (86,2) width 16: "PM"
+        RenderListItem {LI} at (40,60) size 744x30
+          RenderListMarker at (-18,4) size 7x19: bullet
+          RenderText {#text} at (0,4) size 82x19
+            text run at (0,4) width 82: "step=0.0001 "
+          RenderBlock {INPUT} at (84,2) size 164x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderDeprecatedFlexibleBox {DIV} at (3,3) size 158x20
+              RenderBlock (anonymous) at (0,0) size 140x20
+                RenderBlock {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "--"
+                RenderText {#text} at (20,2) size 8x16
+                  text run at (20,2) width 8: ":"
+                RenderBlock {SPAN} at (28,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "--"
+                RenderText {#text} at (48,2) size 8x16
+                  text run at (48,2) width 8: ":"
+                RenderBlock {SPAN} at (56,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "--"
+                RenderText {#text} at (76,2) size 8x16
+                  text run at (76,2) width 8: "."
+                RenderBlock {SPAN} at (84,0) size 28x20
+                  RenderText {#text} at (2,2) size 24x16
+                    text run at (2,2) width 24: "---"
+                RenderText {#text} at (112,2) size 8x16
+                  text run at (112,2) width 8: " "
+                RenderInline {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (122,2) size 16x16
+                    text run at (122,2) width 16: "--"
+          RenderText {#text} at (249,4) size 5x19
+            text run at (249,4) width 5: " "
+          RenderBlock {INPUT} at (255,2) size 165x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderDeprecatedFlexibleBox {DIV} at (3,3) size 158x20
+              RenderBlock (anonymous) at (0,0) size 140x20
+                RenderBlock {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "12"
+                RenderText {#text} at (20,2) size 8x16
+                  text run at (20,2) width 8: ":"
+                RenderBlock {SPAN} at (28,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "34"
+                RenderText {#text} at (48,2) size 8x16
+                  text run at (48,2) width 8: ":"
+                RenderBlock {SPAN} at (56,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "56"
+                RenderText {#text} at (76,2) size 8x16
+                  text run at (76,2) width 8: "."
+                RenderBlock {SPAN} at (84,0) size 28x20
+                  RenderText {#text} at (2,2) size 24x16
+                    text run at (2,2) width 24: "789"
+                RenderText {#text} at (112,2) size 8x16
+                  text run at (112,2) width 8: " "
+                RenderInline {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (122,2) size 16x16
+                    text run at (122,2) width 16: "PM"
+        RenderListItem {LI} at (40,90) size 744x30
+          RenderListMarker at (-18,4) size 7x19: bullet
+          RenderText {#text} at (0,4) size 54x19
+            text run at (0,4) width 54: "step=60 "
+          RenderBlock {INPUT} at (56,2) size 128x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderDeprecatedFlexibleBox {DIV} at (3,3) size 122x20
+              RenderBlock (anonymous) at (0,0) size 104x20
+                RenderBlock {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "--"
+                RenderText {#text} at (20,2) size 8x16
+                  text run at (20,2) width 8: ":"
+                RenderBlock {SPAN} at (28,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "--"
+                RenderText {#text} at (48,2) size 8x16
+                  text run at (48,2) width 8: ":"
+                RenderBlock {SPAN} at (56,0) size 20x20 [color=#808080]
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "00"
+                RenderText {#text} at (76,2) size 8x16
+                  text run at (76,2) width 8: " "
+                RenderInline {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (86,2) size 16x16
+                    text run at (86,2) width 16: "--"
+          RenderText {#text} at (185,4) size 5x19
+            text run at (185,4) width 5: " "
+          RenderBlock {INPUT} at (191,2) size 129x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderDeprecatedFlexibleBox {DIV} at (3,3) size 122x20
+              RenderBlock (anonymous) at (0,0) size 104x20
+                RenderBlock {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "12"
+                RenderText {#text} at (20,2) size 8x16
+                  text run at (20,2) width 8: ":"
+                RenderBlock {SPAN} at (28,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "34"
+                RenderText {#text} at (48,2) size 8x16
+                  text run at (48,2) width 8: ":"
+                RenderBlock {SPAN} at (56,0) size 20x20 [color=#808080]
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "00"
+                RenderText {#text} at (76,2) size 8x16
+                  text run at (76,2) width 8: " "
+                RenderInline {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (86,2) size 16x16
+                    text run at (86,2) width 16: "PM"
+        RenderListItem {LI} at (40,120) size 744x30
+          RenderListMarker at (-18,4) size 7x19: bullet
+          RenderText {#text} at (0,4) size 70x19
+            text run at (0,4) width 70: "step=3600 "
+          RenderBlock {INPUT} at (72,2) size 128x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderDeprecatedFlexibleBox {DIV} at (3,3) size 122x20
+              RenderBlock (anonymous) at (0,0) size 104x20
+                RenderBlock {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "--"
+                RenderText {#text} at (20,2) size 8x16
+                  text run at (20,2) width 8: ":"
+                RenderBlock {SPAN} at (28,0) size 20x20 [color=#808080]
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "00"
+                RenderText {#text} at (48,2) size 8x16
+                  text run at (48,2) width 8: ":"
+                RenderBlock {SPAN} at (56,0) size 20x20 [color=#808080]
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "00"
+                RenderText {#text} at (76,2) size 8x16
+                  text run at (76,2) width 8: " "
+                RenderInline {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (86,2) size 16x16
+                    text run at (86,2) width 16: "--"
+          RenderText {#text} at (201,4) size 5x19
+            text run at (201,4) width 5: " "
+          RenderBlock {INPUT} at (207,2) size 129x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderDeprecatedFlexibleBox {DIV} at (3,3) size 122x20
+              RenderBlock (anonymous) at (0,0) size 104x20
+                RenderBlock {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "12"
+                RenderText {#text} at (20,2) size 8x16
+                  text run at (20,2) width 8: ":"
+                RenderBlock {SPAN} at (28,0) size 20x20 [color=#808080]
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "00"
+                RenderText {#text} at (48,2) size 8x16
+                  text run at (48,2) width 8: ":"
+                RenderBlock {SPAN} at (56,0) size 20x20 [color=#808080]
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "00"
+                RenderText {#text} at (76,2) size 8x16
+                  text run at (76,2) width 8: " "
+                RenderInline {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (86,2) size 16x16
+                    text run at (86,2) width 16: "PM"
+        RenderListItem {LI} at (40,150) size 744x30
+          RenderListMarker at (-18,4) size 7x19: bullet
+          RenderText {#text} at (0,4) size 104x19
+            text run at (0,4) width 104: "step mismatched "
+          RenderBlock {INPUT} at (106,2) size 128x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderDeprecatedFlexibleBox {DIV} at (3,3) size 122x20
+              RenderBlock (anonymous) at (0,0) size 104x20
+                RenderBlock {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "12"
+                RenderText {#text} at (20,2) size 8x16
+                  text run at (20,2) width 8: ":"
+                RenderBlock {SPAN} at (28,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "34"
+                RenderText {#text} at (48,2) size 8x16
+                  text run at (48,2) width 8: ":"
+                RenderBlock {SPAN} at (56,0) size 20x20
+                  RenderText {#text} at (2,2) size 16x16
+                    text run at (2,2) width 16: "56"
+                RenderText {#text} at (76,2) size 8x16
+                  text run at (76,2) width 8: " "
+                RenderInline {SPAN} at (0,0) size 20x20
+                  RenderText {#text} at (86,2) size 16x16
+                    text run at (86,2) width 16: "PM"
+layer at (227,13) size 15x20
+  RenderBlock (relative positioned) {DIV} at (106,0) size 16x20
+layer at (362,13) size 15x20
+  RenderBlock (relative positioned) {DIV} at (106,0) size 16x20
+layer at (206,43) size 15x20
+  RenderBlock (relative positioned) {DIV} at (106,0) size 16x20
+layer at (341,43) size 15x20
+  RenderBlock (relative positioned) {DIV} at (106,0) size 16x20
+layer at (278,73) size 15x20
+  RenderBlock (relative positioned) {DIV} at (142,0) size 16x20
+layer at (449,73) size 15x20
+  RenderBlock (relative positioned) {DIV} at (142,0) size 16x20
+layer at (214,103) size 15x20
+  RenderBlock (relative positioned) {DIV} at (106,0) size 16x20
+layer at (349,103) size 15x20
+  RenderBlock (relative positioned) {DIV} at (106,0) size 16x20
+layer at (230,133) size 15x20
+  RenderBlock (relative positioned) {DIV} at (106,0) size 16x20
+layer at (365,133) size 15x20
+  RenderBlock (relative positioned) {DIV} at (106,0) size 16x20
+layer at (264,163) size 15x20
+  RenderBlock (relative positioned) {DIV} at (106,0) size 16x20
