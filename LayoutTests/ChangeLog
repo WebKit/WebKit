@@ -1,3 +1,99 @@
+2012-08-28  Christophe Dumez  <christophe.dumez@intel.com>
+
+        REGRESSION (r124512): Failures in MathML Presentation tests on GTK and EFL
+        https://bugs.webkit.org/show_bug.cgi?id=93073
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Rebaseline MathML presentation tests and several CSS line-box-contain
+        tests for EFL and GTK port.
+
+        Unskip mathml test cases for both ports now that their result
+        looks correct.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/block/lineboxcontain/block-glyphs-replaced-expected.png:
+        * platform/efl/fast/block/lineboxcontain/block-glyphs-replaced-expected.txt:
+        * platform/efl/fast/block/lineboxcontain/glyphs-expected.png:
+        * platform/efl/fast/block/lineboxcontain/glyphs-expected.txt:
+        * platform/efl/mathml/presentation/attributes-expected.png:
+        * platform/efl/mathml/presentation/attributes-expected.txt:
+        * platform/efl/mathml/presentation/fenced-expected.png:
+        * platform/efl/mathml/presentation/fenced-expected.txt:
+        * platform/efl/mathml/presentation/fenced-mi-expected.png:
+        * platform/efl/mathml/presentation/fenced-mi-expected.txt:
+        * platform/efl/mathml/presentation/fractions-expected.png:
+        * platform/efl/mathml/presentation/fractions-expected.txt:
+        * platform/efl/mathml/presentation/fractions-vertical-alignment-expected.png:
+        * platform/efl/mathml/presentation/fractions-vertical-alignment-expected.txt:
+        * platform/efl/mathml/presentation/mo-stretch-expected.png:
+        * platform/efl/mathml/presentation/mo-stretch-expected.txt:
+        * platform/efl/mathml/presentation/mroot-pref-width-expected.png:
+        * platform/efl/mathml/presentation/mroot-pref-width-expected.txt:
+        * platform/efl/mathml/presentation/roots-expected.png:
+        * platform/efl/mathml/presentation/roots-expected.txt:
+        * platform/efl/mathml/presentation/row-alignment-expected.png:
+        * platform/efl/mathml/presentation/row-alignment-expected.txt:
+        * platform/efl/mathml/presentation/sub-expected.png:
+        * platform/efl/mathml/presentation/sub-expected.txt:
+        * platform/efl/mathml/presentation/subsup-expected.png:
+        * platform/efl/mathml/presentation/subsup-expected.txt:
+        * platform/efl/mathml/presentation/sup-expected.png:
+        * platform/efl/mathml/presentation/sup-expected.txt:
+        * platform/efl/mathml/presentation/tables-expected.png:
+        * platform/efl/mathml/presentation/tables-expected.txt:
+        * platform/efl/mathml/presentation/tokenElements-expected.txt:
+        * platform/efl/mathml/presentation/under-expected.png:
+        * platform/efl/mathml/presentation/under-expected.txt:
+        * platform/efl/mathml/presentation/underover-expected.png:
+        * platform/efl/mathml/presentation/underover-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/block/lineboxcontain/block-glyphs-expected.png:
+        * platform/gtk/fast/block/lineboxcontain/block-glyphs-expected.txt:
+        * platform/gtk/fast/block/lineboxcontain/block-glyphs-replaced-expected.png:
+        * platform/gtk/fast/block/lineboxcontain/block-glyphs-replaced-expected.txt:
+        * platform/gtk/fast/block/lineboxcontain/glyphs-expected.png:
+        * platform/gtk/fast/block/lineboxcontain/glyphs-expected.txt:
+        * platform/gtk/mathml/presentation/attributes-expected.png:
+        * platform/gtk/mathml/presentation/attributes-expected.txt:
+        * platform/gtk/mathml/presentation/fenced-expected.png:
+        * platform/gtk/mathml/presentation/fenced-expected.txt:
+        * platform/gtk/mathml/presentation/fenced-mi-expected.png:
+        * platform/gtk/mathml/presentation/fenced-mi-expected.txt:
+        * platform/gtk/mathml/presentation/fractions-expected.png:
+        * platform/gtk/mathml/presentation/fractions-expected.txt:
+        * platform/gtk/mathml/presentation/fractions-vertical-alignment-expected.png:
+        * platform/gtk/mathml/presentation/fractions-vertical-alignment-expected.txt:
+        * platform/gtk/mathml/presentation/mo-expected.png:
+        * platform/gtk/mathml/presentation/mo-expected.txt:
+        * platform/gtk/mathml/presentation/mo-stretch-expected.png:
+        * platform/gtk/mathml/presentation/mo-stretch-expected.txt:
+        * platform/gtk/mathml/presentation/mroot-pref-width-expected.png:
+        * platform/gtk/mathml/presentation/mroot-pref-width-expected.txt:
+        * platform/gtk/mathml/presentation/over-expected.png:
+        * platform/gtk/mathml/presentation/over-expected.txt:
+        * platform/gtk/mathml/presentation/roots-expected.png:
+        * platform/gtk/mathml/presentation/roots-expected.txt:
+        * platform/gtk/mathml/presentation/row-alignment-expected.png:
+        * platform/gtk/mathml/presentation/row-alignment-expected.txt:
+        * platform/gtk/mathml/presentation/row-expected.png:
+        * platform/gtk/mathml/presentation/row-expected.txt:
+        * platform/gtk/mathml/presentation/style-expected.png:
+        * platform/gtk/mathml/presentation/style-expected.txt:
+        * platform/gtk/mathml/presentation/sub-expected.png:
+        * platform/gtk/mathml/presentation/sub-expected.txt:
+        * platform/gtk/mathml/presentation/subsup-expected.png:
+        * platform/gtk/mathml/presentation/subsup-expected.txt:
+        * platform/gtk/mathml/presentation/sup-expected.png:
+        * platform/gtk/mathml/presentation/sup-expected.txt:
+        * platform/gtk/mathml/presentation/tables-expected.png:
+        * platform/gtk/mathml/presentation/tables-expected.txt:
+        * platform/gtk/mathml/presentation/tokenElements-expected.txt:
+        * platform/gtk/mathml/presentation/under-expected.png:
+        * platform/gtk/mathml/presentation/under-expected.txt:
+        * platform/gtk/mathml/presentation/underover-expected.png:
+        * platform/gtk/mathml/presentation/underover-expected.txt:
+
 2012-08-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip a new failing test.

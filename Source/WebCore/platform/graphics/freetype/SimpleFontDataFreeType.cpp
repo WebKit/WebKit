@@ -141,8 +141,18 @@ void SimpleFontData::determinePitch()
     m_treatAsFixedPitch = m_platformData.isFixedPitch();
 }
 
-FloatRect SimpleFontData::platformBoundsForGlyph(Glyph) const
+FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
 {
+    if (!m_platformData.size())
+        return FloatRect();
+
+    cairo_glyph_t cglyph = { glyph, 0, 0 };
+    cairo_text_extents_t extents;
+    cairo_scaled_font_glyph_extents(m_platformData.scaledFont(), &cglyph, 1, &extents);
+
+    if (cairo_scaled_font_status(m_platformData.scaledFont()) == CAIRO_STATUS_SUCCESS)
+        return FloatRect(extents.x_bearing, extents.y_bearing, extents.width, extents.height);
+
     return FloatRect();
 }
 

@@ -827,24 +827,6 @@ BUGWK92352 : css3/flexbox/flex-rounding.html = TEXT
 BUGWK92942 SKIP : fast/dom/Proximity = PASS
 BUGWK92942 SKIP : fast/events/constructors/device-proximity-event-constructor.html = PASS
 
-// These tests are failing after r124512
-BUGWK93073 : mathml/presentation/attributes.xhtml = TEXT
-BUGWK93073 : mathml/presentation/fenced-mi.xhtml = TEXT
-BUGWK93073 : mathml/presentation/fenced.xhtml = TEXT
-BUGWK93073 : mathml/presentation/fractions-vertical-alignment.xhtml = TEXT
-BUGWK93073 : mathml/presentation/fractions.xhtml = TEXT
-BUGWK93073 : mathml/presentation/mo-stretch.html = TEXT
-BUGWK93073 : mathml/presentation/mroot-pref-width.html = TEXT
-BUGWK93073 : mathml/presentation/roots.xhtml = TEXT
-BUGWK93073 : mathml/presentation/row-alignment.xhtml = TEXT
-BUGWK93073 : mathml/presentation/sub.xhtml = TEXT
-BUGWK93073 : mathml/presentation/subsup.xhtml = TEXT
-BUGWK93073 : mathml/presentation/sup.xhtml = TEXT
-BUGWK93073 : mathml/presentation/tables.xhtml = TEXT
-BUGWK93073 : mathml/presentation/tokenElements.xhtml = TEXT
-BUGWK93073 : mathml/presentation/under.xhtml = TEXT
-BUGWK93073 : mathml/presentation/underover.xhtml = TEXT
-
 // Tests are outdated: spaces are not supposed to be collapsed anymore
 // according to spec: http://www.w3.org/TR/2dcontext/#drawing-text-to-the-canvas
 BUGWK61799 : canvas/philip/tests/2d.text.draw.space.collapse.end.html = TEXT
