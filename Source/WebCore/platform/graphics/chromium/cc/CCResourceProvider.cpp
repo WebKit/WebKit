@@ -154,7 +154,9 @@ void CCResourceProvider::deleteResource(ResourceId id)
 {
     ASSERT(CCProxy::isImplThread());
     ResourceMap::iterator it = m_resources.find(id);
-    ASSERT(it != m_resources.end() && !it->second.lockedForWrite && !it->second.lockForReadCount);
+    ASSERT(it != m_resources.end());
+    ASSERT(!it->second.lockedForWrite);
+    ASSERT(!it->second.lockForReadCount);
 
     if (it->second.glId && !it->second.external) {
         WebGraphicsContext3D* context3d = m_context->context3D();
@@ -190,7 +192,10 @@ void CCResourceProvider::upload(ResourceId id, const uint8_t* image, const IntRe
 {
     ASSERT(CCProxy::isImplThread());
     ResourceMap::iterator it = m_resources.find(id);
-    ASSERT(it != m_resources.end() && !it->second.lockedForWrite && !it->second.lockForReadCount && !it->second.external);
+    ASSERT(it != m_resources.end());
+    ASSERT(!it->second.lockedForWrite);
+    ASSERT(!it->second.lockForReadCount);
+    ASSERT(!it->second.external);
 
     if (it->second.glId) {
         WebGraphicsContext3D* context3d = m_context->context3D();
@@ -238,7 +243,8 @@ const CCResourceProvider::Resource* CCResourceProvider::lockForRead(ResourceId i
 {
     ASSERT(CCProxy::isImplThread());
     ResourceMap::iterator it = m_resources.find(id);
-    ASSERT(it != m_resources.end() && !it->second.lockedForWrite);
+    ASSERT(it != m_resources.end());
+    ASSERT(!it->second.lockedForWrite);
     it->second.lockForReadCount++;
     return &it->second;
 }
@@ -247,7 +253,8 @@ void CCResourceProvider::unlockForRead(ResourceId id)
 {
     ASSERT(CCProxy::isImplThread());
     ResourceMap::iterator it = m_resources.find(id);
-    ASSERT(it != m_resources.end() && it->second.lockForReadCount > 0);
+    ASSERT(it != m_resources.end());
+    ASSERT(it->second.lockForReadCount > 0);
     it->second.lockForReadCount--;
 }
 
@@ -255,7 +262,10 @@ const CCResourceProvider::Resource* CCResourceProvider::lockForWrite(ResourceId 
 {
     ASSERT(CCProxy::isImplThread());
     ResourceMap::iterator it = m_resources.find(id);
-    ASSERT(it != m_resources.end() && !it->second.lockedForWrite && !it->second.lockForReadCount && !it->second.external);
+    ASSERT(it != m_resources.end());
+    ASSERT(!it->second.lockedForWrite);
+    ASSERT(!it->second.lockForReadCount);
+    ASSERT(!it->second.external);
     it->second.lockedForWrite = true;
     return &it->second;
 }
@@ -264,7 +274,9 @@ void CCResourceProvider::unlockForWrite(ResourceId id)
 {
     ASSERT(CCProxy::isImplThread());
     ResourceMap::iterator it = m_resources.find(id);
-    ASSERT(it != m_resources.end() && it->second.lockedForWrite && !it->second.external);
+    ASSERT(it != m_resources.end());
+    ASSERT(it->second.lockedForWrite);
+    ASSERT(!it->second.external);
     it->second.lockedForWrite = false;
 }
 
@@ -505,7 +517,10 @@ bool CCResourceProvider::transferResource(WebGraphicsContext3D* context, Resourc
 {
     ASSERT(CCProxy::isImplThread());
     ResourceMap::const_iterator it = m_resources.find(id);
-    ASSERT(it != m_resources.end() && !it->second.lockedForWrite && !it->second.lockForReadCount && !it->second.external);
+    ASSERT(it != m_resources.end());
+    ASSERT(!it->second.lockedForWrite);
+    ASSERT(!it->second.lockForReadCount);
+    ASSERT(!it->second.external);
     if (it->second.exported)
         return false;
     resource->id = id;
