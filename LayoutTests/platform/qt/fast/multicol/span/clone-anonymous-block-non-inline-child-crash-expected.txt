@@ -9,7 +9,6 @@ layer at (8,16) size 784x167
       RenderInline {LABEL} at (0,0) size 95x19
         RenderText {#text} at (0,0) size 95x19
           text run at (0,0) width 95: "Some inline text"
-      RenderInline {LABEL} at (0,0) size 0x0
     RenderBlock (anonymous) at (5,24) size 379x290
       RenderBlock {SUMMARY} at (0,0) size 379x290
         RenderBlock (anonymous) at (0,0) size 379x19

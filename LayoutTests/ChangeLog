@@ -1,3 +1,14 @@
+2012-08-27  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Gardening after r126789. Update expectations and skip a test
+        because of disabled SHADOW_DOM feature.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/html/details-nested-2-expected.txt:
+        * platform/qt/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+
 2012-08-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Enable CSS sticky position

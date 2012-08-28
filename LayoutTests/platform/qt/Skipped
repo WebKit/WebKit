@@ -249,6 +249,7 @@ fast/dom/shadow/shadow-root-new.html
 fast/dom/shadow/shadow-root-resetStyleInheritance.html
 fast/dom/shadow/shadow-ul-li.html
 fast/dom/shadow/tab-order-iframe-and-shadow.html
+fast/dom/shadow/transition-on-shadow-host-with-distributed-node.html
 fast/dom/shadow/user-modify-inheritance.html
 fast/dom/shadow/shadowdom-for-object-complex-shadow.html
 fast/dom/shadow/shadowdom-for-object-only-shadow.html
