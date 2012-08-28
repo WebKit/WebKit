@@ -177,7 +177,7 @@ void RenderFlowThread::layout()
                 LayoutUnit regionLogicalHeight = region->logicalHeightForFlowThreadContent();
     
                 LayoutRect regionRect(style()->direction() == LTR ? ZERO_LAYOUT_UNIT : logicalWidth() - regionLogicalWidth, logicalHeight, regionLogicalWidth, regionLogicalHeight);
-                region->setRegionRect(isHorizontalWritingMode() ? regionRect : regionRect.transposedRect());
+                region->setFlowThreadPortionRect(isHorizontalWritingMode() ? regionRect : regionRect.transposedRect());
                 logicalHeight += regionLogicalHeight;
             }
         }
@@ -236,7 +236,7 @@ void RenderFlowThread::computeLogicalHeight()
     setLogicalHeight(logicalHeight);
 }
 
-void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, RenderRegion* region, const LayoutPoint& paintOffset)
+void RenderFlowThread::paintFlowThreadPortionInRegion(PaintInfo& paintInfo, RenderRegion* region, LayoutRect flowThreadPortionRect, LayoutRect flowThreadPortionOverflowRect, const LayoutPoint& paintOffset) const
 {
     GraphicsContext* context = paintInfo.context;
     if (!context)
@@ -245,9 +245,7 @@ void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, RenderRegion* regio
     // Adjust the clipping rect for the region.
     // paintOffset contains the offset where the painting should occur
     // adjusted with the region padding and border.
-    LayoutRect regionRect(region->regionRect());
-    LayoutRect regionOversetRect(region->regionOversetRect());
-    LayoutRect regionClippingRect(paintOffset + (regionOversetRect.location() - regionRect.location()), regionOversetRect.size());
+    LayoutRect regionClippingRect(paintOffset + (flowThreadPortionOverflowRect.location() - flowThreadPortionRect.location()), flowThreadPortionOverflowRect.size());
 
     PaintInfo info(paintInfo);
     info.rect.intersect(pixelSnappedIntRect(regionClippingRect));
@@ -259,14 +257,14 @@ void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, RenderRegion* regio
 
         // RenderFlowThread should start painting its content in a position that is offset
         // from the region rect's current position. The amount of offset is equal to the location of
-        // region in flow coordinates.
+        // the flow thread portion in the flow thread's local coordinates.
         IntPoint renderFlowThreadOffset;
         if (style()->isFlippedBlocksWritingMode()) {
-            LayoutRect flippedRegionRect(regionRect);
-            flipForWritingMode(flippedRegionRect);
-            renderFlowThreadOffset = roundedIntPoint(paintOffset - flippedRegionRect.location());
+            LayoutRect flippedFlowThreadPortionRect(flowThreadPortionRect);
+            flipForWritingMode(flippedFlowThreadPortionRect);
+            renderFlowThreadOffset = roundedIntPoint(paintOffset - flippedFlowThreadPortionRect.location());
         } else
-            renderFlowThreadOffset = roundedIntPoint(paintOffset - regionRect.location());
+            renderFlowThreadOffset = roundedIntPoint(paintOffset - flowThreadPortionRect.location());
 
         context->translate(renderFlowThreadOffset.x(), renderFlowThreadOffset.y());
         info.rect.moveBy(-renderFlowThreadOffset);
@@ -277,21 +275,19 @@ void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, RenderRegion* regio
     }
 }
 
-bool RenderFlowThread::hitTestRegion(RenderRegion* region, const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset)
+bool RenderFlowThread::hitTestFlowThreadPortionInRegion(RenderRegion* region, LayoutRect flowThreadPortionRect, LayoutRect flowThreadPortionOverflowRect, const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset) const
 {
-    LayoutRect regionRect(region->regionRect());
-    LayoutRect regionOversetRect = region->regionOversetRect();
-    LayoutRect regionClippingRect(accumulatedOffset + (regionOversetRect.location() - regionRect.location()), regionOversetRect.size());
+    LayoutRect regionClippingRect(accumulatedOffset + (flowThreadPortionOverflowRect.location() - flowThreadPortionRect.location()), flowThreadPortionOverflowRect.size());
     if (!regionClippingRect.contains(locationInContainer.point()))
         return false;
 
     LayoutSize renderFlowThreadOffset;
     if (style()->isFlippedBlocksWritingMode()) {
-        LayoutRect flippedRegionRect(regionRect);
-        flipForWritingMode(flippedRegionRect);
-        renderFlowThreadOffset = accumulatedOffset - flippedRegionRect.location();
+        LayoutRect flippedFlowThreadPortionRect(flowThreadPortionRect);
+        flipForWritingMode(flippedFlowThreadPortionRect);
+        renderFlowThreadOffset = accumulatedOffset - flippedFlowThreadPortionRect.location();
     } else
-        renderFlowThreadOffset = accumulatedOffset - regionRect.location();
+        renderFlowThreadOffset = accumulatedOffset - flowThreadPortionRect.location();
 
     // Always ignore clipping, since the RenderFlowThread has nothing to do with the bounds of the FrameView.
     HitTestRequest newRequest(request.type() | HitTestRequest::IgnoreClipping);
@@ -326,18 +322,18 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, 
             continue;
 
         // We only have to issue a repaint in this region if the region rect intersects the repaint rect.
-        LayoutRect flippedRegionRect(region->regionRect());
-        LayoutRect flippedRegionOversetRect(region->regionOversetRect());
-        flipForWritingMode(flippedRegionRect); // Put the region rects into physical coordinates.
-        flipForWritingMode(flippedRegionOversetRect);
+        LayoutRect flippedFlowThreadPortionRect(region->flowThreadPortionRect());
+        LayoutRect flippedFlowThreadPortionOverflowRect(region->flowThreadPortionOverflowRect());
+        flipForWritingMode(flippedFlowThreadPortionRect); // Put the region rects into physical coordinates.
+        flipForWritingMode(flippedFlowThreadPortionOverflowRect);
 
         LayoutRect clippedRect(repaintRect);
-        clippedRect.intersect(flippedRegionOversetRect);
+        clippedRect.intersect(flippedFlowThreadPortionOverflowRect);
         if (clippedRect.isEmpty())
             continue;
 
         // Put the region rect into the region's physical coordinate space.
-        clippedRect.setLocation(region->contentBoxRect().location() + (clippedRect.location() - flippedRegionRect.location()));
+        clippedRect.setLocation(region->contentBoxRect().location() + (clippedRect.location() - flippedFlowThreadPortionRect.location()));
 
         // Now switch to the region's writing mode coordinate space and let it repaint itself.
         region->flipForWritingMode(clippedRect);
@@ -368,7 +364,7 @@ RenderRegion* RenderFlowThread::renderRegionForLine(LayoutUnit position, bool ex
         if (position <= 0)
             return region;
 
-        LayoutRect regionRect = region->regionRect();
+        LayoutRect regionRect = region->flowThreadPortionRect();
 
         if ((useHorizontalWritingMode && position < regionRect.maxY()) || (!useHorizontalWritingMode && position < regionRect.maxX()))
             return region;
@@ -385,7 +381,7 @@ LayoutUnit RenderFlowThread::regionLogicalTopForLine(LayoutUnit position) const
     RenderRegion* region = renderRegionForLine(position);
     if (!region)
         return 0;
-    return isHorizontalWritingMode() ? region->regionRect().y() : region->regionRect().x();
+    return isHorizontalWritingMode() ? region->flowThreadPortionRect().y() : region->flowThreadPortionRect().x();
 }
 
 LayoutUnit RenderFlowThread::regionLogicalWidthForLine(LayoutUnit position) const
@@ -393,7 +389,7 @@ LayoutUnit RenderFlowThread::regionLogicalWidthForLine(LayoutUnit position) cons
     RenderRegion* region = renderRegionForLine(position, true);
     if (!region)
         return contentLogicalWidth();
-    return isHorizontalWritingMode() ? region->regionRect().width() : region->regionRect().height();
+    return isHorizontalWritingMode() ? region->flowThreadPortionRect().width() : region->flowThreadPortionRect().height();
 }
 
 LayoutUnit RenderFlowThread::regionLogicalHeightForLine(LayoutUnit position) const
@@ -401,7 +397,7 @@ LayoutUnit RenderFlowThread::regionLogicalHeightForLine(LayoutUnit position) con
     RenderRegion* region = renderRegionForLine(position);
     if (!region)
         return 0;
-    return isHorizontalWritingMode() ? region->regionRect().height() : region->regionRect().width();
+    return isHorizontalWritingMode() ? region->flowThreadPortionRect().height() : region->flowThreadPortionRect().width();
 }
 
 LayoutUnit RenderFlowThread::regionRemainingLogicalHeightForLine(LayoutUnit position, PageBoundaryRule pageBoundaryRule) const
@@ -410,12 +406,12 @@ LayoutUnit RenderFlowThread::regionRemainingLogicalHeightForLine(LayoutUnit posi
     if (!region)
         return 0;
 
-    LayoutUnit regionLogicalBottom = isHorizontalWritingMode() ? region->regionRect().maxY() : region->regionRect().maxX();
+    LayoutUnit regionLogicalBottom = isHorizontalWritingMode() ? region->flowThreadPortionRect().maxY() : region->flowThreadPortionRect().maxX();
     LayoutUnit remainingHeight = regionLogicalBottom - position;
     if (pageBoundaryRule == IncludePageBoundary) {
         // If IncludePageBoundary is set, the line exactly on the top edge of a
         // region will act as being part of the previous region.
-        LayoutUnit regionHeight = isHorizontalWritingMode() ? region->regionRect().height() : region->regionRect().width();
+        LayoutUnit regionHeight = isHorizontalWritingMode() ? region->flowThreadPortionRect().height() : region->flowThreadPortionRect().width();
         remainingHeight = intMod(remainingHeight, regionHeight);
     }
     return remainingHeight;
@@ -438,7 +434,7 @@ RenderRegion* RenderFlowThread::mapFromFlowToRegion(TransformState& transformSta
     if (!renderRegion)
         return 0;
 
-    LayoutRect flippedRegionRect(renderRegion->regionRect());
+    LayoutRect flippedRegionRect(renderRegion->flowThreadPortionRect());
     flipForWritingMode(flippedRegionRect);
 
     transformState.move(renderRegion->contentBoxRect().location() - flippedRegionRect.location());
@@ -546,7 +542,7 @@ LayoutUnit RenderFlowThread::contentLogicalLeftOfFirstRegion() const
         RenderRegion* region = *iter;
         if (!region->isValid())
             continue;
-        return isHorizontalWritingMode() ? region->regionRect().x() : region->regionRect().y();
+        return isHorizontalWritingMode() ? region->flowThreadPortionRect().x() : region->flowThreadPortionRect().y();
     }
     ASSERT_NOT_REACHED();
     return 0;
@@ -674,8 +670,8 @@ void RenderFlowThread::computeOverflowStateForRegions(LayoutUnit oldClientAfterE
             region->setRegionState(RenderRegion::RegionUndefined);
             continue;
         }
-        LayoutUnit flowMin = height - (isHorizontalWritingMode() ? region->regionRect().y() : region->regionRect().x());
-        LayoutUnit flowMax = height - (isHorizontalWritingMode() ? region->regionRect().maxY() : region->regionRect().maxX());
+        LayoutUnit flowMin = height - (isHorizontalWritingMode() ? region->flowThreadPortionRect().y() : region->flowThreadPortionRect().x());
+        LayoutUnit flowMax = height - (isHorizontalWritingMode() ? region->flowThreadPortionRect().maxY() : region->flowThreadPortionRect().maxX());
         RenderRegion::RegionState previousState = region->regionState();
         RenderRegion::RegionState state = RenderRegion::RegionFit;
         if (flowMin <= 0)

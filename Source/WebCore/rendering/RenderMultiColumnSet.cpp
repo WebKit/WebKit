@@ -75,7 +75,7 @@ unsigned RenderMultiColumnSet::columnCount() const
         return 0;
     
     // Our region rect determines our column count. We have as many columns as needed to fit all the content.
-    LayoutUnit logicalHeightInColumns = flowThread()->isHorizontalWritingMode() ? regionRect().height() : regionRect().width();
+    LayoutUnit logicalHeightInColumns = flowThread()->isHorizontalWritingMode() ? flowThreadPortionRect().height() : flowThreadPortionRect().width();
     return ceil(static_cast<float>(logicalHeightInColumns) / computedColumnHeight());
 }
 
@@ -167,7 +167,7 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
 void RenderMultiColumnSet::paintColumnContents(PaintInfo& /*paintInfo*/, const LayoutPoint& /*paintOffset*/)
 {
     // For each rectangle, set it as the region rectangle and then let flow thread painting do the rest.
-    // We make multiple calls to paintIntoRegion, changing the rectangles each time.
+    // We make multiple calls to paintFlowThreadPortionInRegion, changing the rectangles each time.
     unsigned colCount = columnCount();
     if (!colCount)
         return;

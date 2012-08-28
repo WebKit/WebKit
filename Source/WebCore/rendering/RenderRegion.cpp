@@ -62,7 +62,7 @@ LayoutUnit RenderRegion::logicalHeightForFlowThreadContent() const
     return m_flowThread->isHorizontalWritingMode() ? contentHeight() : contentWidth();
 }
 
-LayoutRect RenderRegion::regionOversetRect() const
+LayoutRect RenderRegion::flowThreadPortionOverflowRect() const
 {
     // FIXME: Would like to just use hasOverflowClip() but we aren't a block yet. When RenderRegion is eliminated and
     // folded into RenderBlock, switch to hasOverflowClip().
@@ -70,7 +70,7 @@ LayoutRect RenderRegion::regionOversetRect() const
     bool clipY = style()->overflowY() != OVISIBLE;
     bool isLastRegionWithRegionOverflowBreak = (isLastRegion() && (style()->regionOverflow() == BreakRegionOverflow));
     if ((clipX && clipY) || !isValid() || !m_flowThread || isLastRegionWithRegionOverflowBreak)
-        return regionRect();
+        return flowThreadPortionRect();
 
     LayoutRect flowThreadOverflow = m_flowThread->visualOverflowRect();
 
@@ -78,16 +78,16 @@ LayoutRect RenderRegion::regionOversetRect() const
     LayoutUnit outlineSize = maximalOutlineSize(PaintPhaseOutline);
     LayoutRect clipRect;
     if (m_flowThread->isHorizontalWritingMode()) {
-        LayoutUnit minY = isFirstRegion() ? (flowThreadOverflow.y() - outlineSize) : regionRect().y();
-        LayoutUnit maxY = isLastRegion() ? max(regionRect().maxY(), flowThreadOverflow.maxY()) + outlineSize : regionRect().maxY();
-        LayoutUnit minX = clipX ? regionRect().x() : (flowThreadOverflow.x() - outlineSize);
-        LayoutUnit maxX = clipX ? regionRect().maxX() : (flowThreadOverflow.maxX() + outlineSize);
+        LayoutUnit minY = isFirstRegion() ? (flowThreadOverflow.y() - outlineSize) : flowThreadPortionRect().y();
+        LayoutUnit maxY = isLastRegion() ? max(flowThreadPortionRect().maxY(), flowThreadOverflow.maxY()) + outlineSize : flowThreadPortionRect().maxY();
+        LayoutUnit minX = clipX ? flowThreadPortionRect().x() : (flowThreadOverflow.x() - outlineSize);
+        LayoutUnit maxX = clipX ? flowThreadPortionRect().maxX() : (flowThreadOverflow.maxX() + outlineSize);
         clipRect = LayoutRect(minX, minY, maxX - minX, maxY - minY);
     } else {
-        LayoutUnit minX = isFirstRegion() ? (flowThreadOverflow.x() - outlineSize) : regionRect().x();
-        LayoutUnit maxX = isLastRegion() ? max(regionRect().maxX(), flowThreadOverflow.maxX()) + outlineSize : regionRect().maxX();
-        LayoutUnit minY = clipY ? regionRect().y() : (flowThreadOverflow.y() - outlineSize);
-        LayoutUnit maxY = clipY ? regionRect().maxY() : (flowThreadOverflow.maxY() + outlineSize);
+        LayoutUnit minX = isFirstRegion() ? (flowThreadOverflow.x() - outlineSize) : flowThreadPortionRect().x();
+        LayoutUnit maxX = isLastRegion() ? max(flowThreadPortionRect().maxX(), flowThreadOverflow.maxX()) + outlineSize : flowThreadPortionRect().maxX();
+        LayoutUnit minY = clipY ? flowThreadPortionRect().y() : (flowThreadOverflow.y() - outlineSize);
+        LayoutUnit maxY = clipY ? flowThreadPortionRect().maxY() : (flowThreadOverflow.maxY() + outlineSize);
         clipRect = LayoutRect(minX, minY, maxX - minX, maxY - minY);
     }
 
@@ -113,7 +113,7 @@ void RenderRegion::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintO
         return;
 
     setRegionObjectsRegionStyle();
-    m_flowThread->paintIntoRegion(paintInfo, this, LayoutPoint(paintOffset.x() + borderLeft() + paddingLeft(), paintOffset.y() + borderTop() + paddingTop()));
+    m_flowThread->paintFlowThreadPortionInRegion(paintInfo, this, flowThreadPortionRect(), flowThreadPortionOverflowRect(), LayoutPoint(paintOffset.x() + borderLeft() + paddingLeft(), paintOffset.y() + borderTop() + paddingTop()));
     restoreRegionObjectsOriginalStyle();
 }
 
@@ -131,7 +131,7 @@ bool RenderRegion::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     boundsRect.moveBy(adjustedLocation);
     if (visibleToHitTesting() && action == HitTestForeground && locationInContainer.intersects(boundsRect)) {
         // Check the contents of the RenderFlowThread.
-        if (m_flowThread && m_flowThread->hitTestRegion(this, request, result, locationInContainer, LayoutPoint(adjustedLocation.x() + borderLeft() + paddingLeft(), adjustedLocation.y() + borderTop() + paddingTop())))
+        if (m_flowThread && m_flowThread->hitTestFlowThreadPortionInRegion(this, flowThreadPortionRect(), flowThreadPortionOverflowRect(), request, result, locationInContainer, LayoutPoint(adjustedLocation.x() + borderLeft() + paddingLeft(), adjustedLocation.y() + borderTop() + paddingTop())))
             return true;
         updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
         if (!result.addNodeToRectBasedTestResult(node(), locationInContainer, boundsRect))
@@ -172,7 +172,7 @@ void RenderRegion::layout()
 {
     RenderReplaced::layout();
     if (m_flowThread && isValid()) {
-        LayoutRect oldRegionRect(regionRect());
+        LayoutRect oldRegionRect(flowThreadPortionRect());
         if (!isHorizontalWritingMode())
             oldRegionRect = oldRegionRect.transposedRect();
         if (oldRegionRect.width() != logicalWidthForFlowThreadContent() || oldRegionRect.height() != logicalHeightForFlowThreadContent())
@@ -287,8 +287,8 @@ LayoutUnit RenderRegion::offsetFromLogicalTopOfFirstPage() const
     if (!m_isValid || !m_flowThread)
         return 0;
     if (m_flowThread->isHorizontalWritingMode())
-        return regionRect().y();
-    return regionRect().x();
+        return flowThreadPortionRect().y();
+    return flowThreadPortionRect().x();
 }
 
 void RenderRegion::setRegionObjectsRegionStyle()

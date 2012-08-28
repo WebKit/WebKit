@@ -51,9 +51,9 @@ public:
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-    void setRegionRect(const LayoutRect& rect) { m_regionRect = rect; }
-    LayoutRect regionRect() const { return m_regionRect; }
-    LayoutRect regionOversetRect() const;
+    void setFlowThreadPortionRect(const LayoutRect& rect) { m_flowThreadPortionRect = rect; }
+    LayoutRect flowThreadPortionRect() const { return m_flowThreadPortionRect; }
+    LayoutRect flowThreadPortionOverflowRect() const;
 
     void attachRegion();
     void detachRegion();
@@ -127,7 +127,7 @@ private:
     // we need to create a dependency tree, so that layout of the
     // regions is always done before the regions themselves.
     RenderNamedFlowThread* m_parentNamedFlowThread;
-    LayoutRect m_regionRect;
+    LayoutRect m_flowThreadPortionRect;
 
     // This map holds unique information about a block that is split across regions.
     // A RenderBoxRegionInfo* tells us about any layout information for a RenderBox that
