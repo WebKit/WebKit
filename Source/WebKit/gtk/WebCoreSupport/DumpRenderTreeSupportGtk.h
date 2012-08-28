@@ -130,6 +130,8 @@ public:
     static GSList* trackedRepaintRects(WebKitWebFrame*);
     static void resetTrackedRepaints(WebKitWebFrame*);
 
+    static void clearMemoryCache();
+
 private:
     static bool s_drtRun;
     static bool s_linksIncludedInTabChain;

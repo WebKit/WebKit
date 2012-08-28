@@ -50,6 +50,7 @@
 #include "JSLock.h"
 #include "JSNodeList.h"
 #include "JSValue.h"
+#include "MemoryCache.h"
 #include "MutationObserver.h"
 #include "NodeList.h"
 #include "PageGroup.h"
@@ -866,4 +867,9 @@ void DumpRenderTreeSupportGtk::resetTrackedRepaints(WebKitWebFrame* frame)
     Frame* coreFrame = core(frame);
     if (coreFrame && coreFrame->view())
         coreFrame->view()->resetTrackedRepaints();
+}
+
+void DumpRenderTreeSupportGtk::clearMemoryCache()
+{
+    memoryCache()->evictResources();
 }
