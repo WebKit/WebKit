@@ -1,3 +1,18 @@
+2012-08-28  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed, rolling out r126852.
+        http://trac.webkit.org/changeset/126852
+        https://bugs.webkit.org/show_bug.cgi?id=94433
+
+        broke qt and mac tests
+
+        * http/tests/inspector/csp-injected-content-warning-contains-stacktrace-expected.txt: Removed.
+        * http/tests/inspector/csp-injected-content-warning-contains-stacktrace.html: Removed.
+        * http/tests/inspector/csp-inline-warning-contains-stacktrace-expected.txt: Removed.
+        * http/tests/inspector/csp-inline-warning-contains-stacktrace.html: Removed.
+        * http/tests/inspector/resources/csp-inline-test.js: Removed.
+        * http/tests/inspector/resources/csp-test.js: Removed.
+
 2012-08-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip failing tests.

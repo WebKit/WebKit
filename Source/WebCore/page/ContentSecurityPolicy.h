@@ -40,6 +40,7 @@ class OrdinalNumber;
 namespace WebCore {
 
 class CSPDirectiveList;
+class ScriptCallStack;
 class DOMStringList;
 class ScriptExecutionContext;
 class SecurityOrigin;
@@ -78,7 +79,7 @@ public:
     bool allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus = SendReport) const;
     bool allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus = SendReport) const;
     bool allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus = SendReport) const;
-    bool allowEval(ReportingStatus = SendReport) const;
+    bool allowEval(PassRefPtr<ScriptCallStack>, ReportingStatus = SendReport) const;
     bool allowScriptNonce(const String& nonce, const String& contextURL, const WTF::OrdinalNumber& contextLine, const KURL& = KURL()) const;
     bool allowPluginType(const String& type, const String& typeAttribute, const KURL&, ReportingStatus = SendReport) const;
 
@@ -103,7 +104,7 @@ public:
     void reportInvalidPluginTypes(const String&) const;
     void reportInvalidSourceExpression(const String& directiveName, const String& source) const;
     void reportUnrecognizedDirective(const String&) const;
-    void reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL, const Vector<KURL>& reportURIs, const String& header, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst()) const;
+    void reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL, const Vector<KURL>& reportURIs, const String& header, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), PassRefPtr<ScriptCallStack> = 0) const;
 
     const KURL& url() const;
     KURL completeURL(const String&) const;
@@ -113,7 +114,7 @@ public:
 private:
     explicit ContentSecurityPolicy(ScriptExecutionContext*);
 
-    void logToConsole(const String& message, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst()) const;
+    void logToConsole(const String& message, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), PassRefPtr<ScriptCallStack> = 0) const;
 
     ScriptExecutionContext* m_scriptExecutionContext;
     bool m_overrideInlineStyleAllowed;

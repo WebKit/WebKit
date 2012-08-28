@@ -55,7 +55,8 @@ PassOwnPtr<ScheduledAction> ScheduledAction::create(ExecState* exec, DOMWrapperW
     JSValue v = exec->argument(0);
     CallData callData;
     if (getCallData(v, callData) == CallTypeNone) {
-        if (policy && !policy->allowEval())
+        RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector(exec));
+        if (policy && !policy->allowEval(callStack.release()))
             return nullptr;
         UString string = v.toString(exec)->value(exec);
         if (exec->hadException())
