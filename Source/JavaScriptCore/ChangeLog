@@ -1,5 +1,19 @@
 2012-08-28  Geoffrey Garen  <ggaren@apple.com>
 
+        GCC warning in JSActivation is causing Mac EWS errors
+        https://bugs.webkit.org/show_bug.cgi?id=95103
+
+        Reviewed by Sam Weinig.
+
+        Try to fix a strict aliasing violation by using bitwise_cast. The
+        union in the cast should signal to the compiler that aliasing between
+        types is happening.
+
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::visitChildren):
+
+2012-08-28  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: svn add two files I forgot in my last patch.
 
 2012-08-27  Geoffrey Garen  <ggaren@apple.com>

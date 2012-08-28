@@ -71,7 +71,7 @@ void JSActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
     if (!registerArray)
         return;
 
-    visitor.copyAndAppend(reinterpret_cast<void**>(&registerArray), thisObject->registerArraySizeInBytes(), reinterpret_cast<JSValue*>(registerArray), thisObject->registerArraySize());
+    visitor.copyAndAppend(bitwise_cast<void**>(&registerArray), thisObject->registerArraySizeInBytes(), reinterpret_cast<JSValue*>(registerArray), thisObject->registerArraySize());
     thisObject->m_registerArray.set(registerArray, StorageBarrier::Unchecked);
     thisObject->m_registers = registerArray + thisObject->registerOffset();
 
