@@ -1,0 +1,11 @@
+Tests deleteEntry command.
+
+errorCode: 2
+errorCode: 8
+errorCode: 0
+errorCode: 0
+errorCode: 0
+errorCode: 1
+backendRootEntry: (null)
+
+

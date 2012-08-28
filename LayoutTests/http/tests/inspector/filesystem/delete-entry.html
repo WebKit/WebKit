@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="../inspector-test.js"></script>
+<script src="filesystem-test.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", runTest);
+function test()
+{
+    var fileSystemRequestManager = new WebInspector.FileSystemRequestManager();
+
+    var testStep = [
+        function()
+        {
+            InspectorTest.createFile("/hoge", testStep.shift());
+        },
+
+        function()
+        {
+            InspectorTest.createDirectory("/fuga", testStep.shift());
+        },
+
+        function()
+        {
+            InspectorTest.createFile("/fuga/piyo", testStep.shift());
+        },
+
+        function()
+        {
+            InspectorTest.createDirectory("/foo", testStep.shift());
+        },
+
+        function()
+        {
+            fileSystemRequestManager.deleteEntry("InvalidURL", testStep.shift());
+        },
+
+        function(errorCode)
+        {
+            InspectorTest.addResult("errorCode: " + errorCode);
+            fileSystemRequestManager.deleteEntry("filesystem:http://127.0.0.1:8000/InvalidType/fuga", testStep.shift());
+        },
+
+        function(errorCode)
+        {
+            InspectorTest.addResult("errorCode: " + errorCode);
+            fileSystemRequestManager.deleteEntry("filesystem:http://127.0.0.1:8000/temporary/hoge", testStep.shift());
+        },
+
+        function(errorCode)
+        {
+            InspectorTest.addResult("errorCode: " + errorCode);
+            fileSystemRequestManager.deleteEntry("filesystem:http://127.0.0.1:8000/temporary/fuga", testStep.shift());
+        },
+
+        function(errorCode)
+        {
+            InspectorTest.addResult("errorCode: " + errorCode);
+            fileSystemRequestManager.deleteEntry("filesystem:http://127.0.0.1:8000/temporary/", testStep.shift());
+        },
+
+        function(errorCode)
+        {
+            InspectorTest.addResult("errorCode: " + errorCode);
+            fileSystemRequestManager.requestFileSystemRoot("http://127.0.0.1:8000", "temporary", testStep.shift());
+        },
+
+        function(errorCode, backendRootEntry)
+        {
+            InspectorTest.dumpFileSystemRootRequestResult(errorCode, backendRootEntry);
+            InspectorTest.completeTest();
+        }
+    ];
+
+    InspectorTest.clearFileSystem(testStep.shift());
+}
+</script>
+</head>
+<body>
+<p>Tests deleteEntry command.</p>
+</body>
+</html>

@@ -1,3 +1,16 @@
+2012-08-27  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Add delete button to FileSystemView
+        https://bugs.webkit.org/show_bug.cgi?id=93940
+
+        Reviewed by Vsevolod Vlasov.
+
+        Adding status bar button to allow user to delete entries in FileSystem
+        for debugging use.
+
+        * http/tests/inspector/filesystem/delete-entry-expected.txt: Added.
+        * http/tests/inspector/filesystem/delete-entry.html: Added.
+
 2012-08-27  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

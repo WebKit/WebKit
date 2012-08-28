@@ -197,7 +197,7 @@ WebInspector.FileSystemModel.prototype = {
      */
     _fileSystemRootReceived: function(origin, type, store, errorCode, backendRootEntry)
     {
-        if (errorCode === 0 && backendRootEntry && this._fileSystemsForOrigin[origin] === store) {
+        if (!errorCode && backendRootEntry && this._fileSystemsForOrigin[origin] === store) {
             var fileSystem = new WebInspector.FileSystemModel.FileSystem(this, origin, type, backendRootEntry);
             store[type] = fileSystem;
             this._fileSystemAdded(fileSystem);
@@ -257,6 +257,42 @@ WebInspector.FileSystemModel.prototype = {
     requestFileContent: function(file, readAsText, start, end, charset, callback)
     {
         this._agentWrapper.requestFileContent(file.url, readAsText, start, end, charset, callback);
+    },
+
+    /**
+     * @param {WebInspector.FileSystemModel.Entry} entry
+     * @param {function(number)=} callback
+     */
+    deleteEntry: function(entry, callback)
+    {
+        var fileSystemModel = this;
+        if (entry === entry.fileSystem.root)
+            this._agentWrapper.deleteEntry(entry.url, hookFileSystemDeletion);
+        else
+            this._agentWrapper.deleteEntry(entry.url, callback);
+
+        function hookFileSystemDeletion(errorCode)
+        {
+            callback(errorCode);
+            if (!errorCode)
+                fileSystemModel._removeFileSystem(entry.fileSystem);
+        }
+    },
+
+    /**
+     * @param {WebInspector.FileSystemModel.FileSystem} fileSystem
+     */
+    _removeFileSystem: function(fileSystem)
+    {
+        var origin = fileSystem.origin;
+        var type = fileSystem.type;
+        if (this._fileSystemsForOrigin[origin] && this._fileSystemsForOrigin[origin][type]) {
+            delete this._fileSystemsForOrigin[origin][type];
+            this._fileSystemRemoved(fileSystem);
+
+            if (Object.isEmpty(this._fileSystemsForOrigin[origin]))
+                delete this._fileSystemsForOrigin[origin];
+        }
     }
 }
 
@@ -367,6 +403,14 @@ WebInspector.FileSystemModel.Entry.prototype = {
     requestMetadata: function(callback)
     {
         this.fileSystemModel.requestMetadata(this, callback);
+    },
+
+    /**
+     * @param {function(number)} callback
+     */
+    deleteEntry: function(callback)
+    {
+        this.fileSystemModel.deleteEntry(this, callback);
     }
 }
 
@@ -459,6 +503,7 @@ WebInspector.FileSystemRequestManager = function()
     this._pendingDirectoryContentRequests = {};
     this._pendingMetadataRequests = {};
     this._pendingFileContentRequests = {};
+    this._pendingDeleteEntryRequests = {};
 
     InspectorBackend.registerFileSystemDispatcher(new WebInspector.FileSystemDispatcher(this));
     FileSystemAgent.enable();
@@ -592,6 +637,37 @@ WebInspector.FileSystemRequestManager.prototype = {
             return;
         delete this._pendingFileContentRequests[requestId];
         callback(errorCode, content, charset);
+    },
+
+    /**
+     * @param {string} url
+     * @param {function(number)=} callback
+     */
+    deleteEntry: function(url, callback)
+    {
+        var store = this._pendingDeleteEntryRequests;
+        FileSystemAgent.deleteEntry(url, requestAccepted);
+
+        function requestAccepted(error, requestId)
+        {
+            if (error)
+                callback(FileError.SECURITY_ERR);
+            else
+                store[requestId] = callback || function() {};
+        }
+    },
+
+    /**
+     * @param {number} requestId
+     * @param {number} errorCode
+     */
+    _deletionCompleted: function(requestId, errorCode)
+    {
+        var callback = /** @type {function(number)} */ this._pendingDeleteEntryRequests[requestId];
+        if (!callback)
+            return;
+        delete this._pendingDeleteEntryRequests[requestId];
+        callback(errorCode);
     }
 }
 
@@ -653,6 +729,6 @@ WebInspector.FileSystemDispatcher.prototype = {
      */
     deletionCompleted: function(requestId, errorCode)
     {
-        console.error("Not implemented");
+        this._agentWrapper._deletionCompleted(requestId, errorCode);
     }
 }
