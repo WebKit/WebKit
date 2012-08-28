@@ -869,7 +869,7 @@
 		31288E740E3005D6003619AE /* WebKitCSSKeyframesRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31288E700E3005D6003619AE /* WebKitCSSKeyframesRule.cpp */; };
 		31288E750E3005D6003619AE /* WebKitCSSKeyframesRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 31288E710E3005D6003619AE /* WebKitCSSKeyframesRule.h */; };
 		3128CA68147331520074C72A /* NotificationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3128CA67147331520074C72A /* NotificationController.cpp */; };
-		3128CA6B147331630074C72A /* NotificationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3128CA6A147331630074C72A /* NotificationController.h */; };
+		3128CA6B147331630074C72A /* NotificationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3128CA6A147331630074C72A /* NotificationController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		312C0C41146DC6CC0016C911 /* Notification.h in Headers */ = {isa = PBXBuildFile; fileRef = 333F704F0FB49CA2008E12A6 /* Notification.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		312D67B11535691F00563D0D /* Dictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 312D67B01535691F00563D0D /* Dictionary.cpp */; };
 		31313F651443B35F006E2A90 /* FilterEffectRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31313F631443B35E006E2A90 /* FilterEffectRenderer.cpp */; };
@@ -952,7 +952,7 @@
 		3314ACEC10892086000F0E56 /* JSExceptionBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 3314ACEA10892086000F0E56 /* JSExceptionBase.h */; };
 		33503C9A10179A74003B47E1 /* NotificationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 33503C9910179A74003B47E1 /* NotificationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33503CA310179AD7003B47E1 /* JSNotification.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33503C9F10179AD7003B47E1 /* JSNotification.cpp */; };
-		33503CA410179AD7003B47E1 /* JSNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 33503CA010179AD7003B47E1 /* JSNotification.h */; };
+		33503CA410179AD7003B47E1 /* JSNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 33503CA010179AD7003B47E1 /* JSNotification.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33503CA510179AD7003B47E1 /* JSNotificationCenter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33503CA110179AD7003B47E1 /* JSNotificationCenter.cpp */; };
 		33503CA610179AD7003B47E1 /* JSNotificationCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 33503CA210179AD7003B47E1 /* JSNotificationCenter.h */; };
 		33503CC010179C1A003B47E1 /* JSDesktopNotificationsCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33503CBF10179C1A003B47E1 /* JSDesktopNotificationsCustom.cpp */; };

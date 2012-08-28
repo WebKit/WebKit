@@ -1,3 +1,31 @@
+2012-08-24  Jon Lee  <jonlee@apple.com>
+
+        Update TestRunner API for web notifications
+        https://bugs.webkit.org/show_bug.cgi?id=95093
+        <rdar://problem/12179649>
+
+        Reviewed by Jessie Berlin.
+
+        This is work toward providing Mac support for web notifications in DRT and WTR (77969).
+
+        Refactor the tests to use the renamed legacy API calls.
+
+        * fast/notifications/notifications-check-permission.html:
+        * fast/notifications/notifications-click-event-focus.html:
+        * fast/notifications/notifications-click-event.html:
+        * fast/notifications/notifications-display-close-events.html:
+        * fast/notifications/notifications-document-close-crash.html: Also, convert from Windows to UNIX line endings.
+        * fast/notifications/notifications-double-show.html:
+        * fast/notifications/notifications-event-stop-propagation.html-disabled:
+        * fast/notifications/notifications-multi-events.html-disabled:
+        * fast/notifications/notifications-no-icon.html:
+        * fast/notifications/notifications-replace.html:
+        * fast/notifications/notifications-rtl.html:
+        * fast/notifications/notifications-with-permission.html:
+        * fast/notifications/notifications-without-permission.html:
+        * fast/notifications/resources/notifications-cancel-request-permission.html:
+        * platform/qt-5.0-wk2/Skipped:
+
 2012-08-28  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Should be able to tab to focus a link in a canvas subtree

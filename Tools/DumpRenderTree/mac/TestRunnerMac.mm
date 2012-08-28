@@ -1163,9 +1163,8 @@ void TestRunner::setBackingScaleFactor(double backingScaleFactor)
     [[mainFrame webView] _setCustomBackingScaleFactor:backingScaleFactor];
 }
 
-void TestRunner::simulateDesktopNotificationClick(JSStringRef title)
+void TestRunner::simulateLegacyWebNotificationClick(JSStringRef jsTitle)
 {
-    // FIXME: Implement.
 }
 
 void TestRunner::resetPageVisibility()
@@ -1187,3 +1186,21 @@ void TestRunner::deliverWebIntent(JSStringRef, JSStringRef, JSStringRef)
 {
     // FIXME: Implement.
 }
+
+
+void TestRunner::grantWebNotificationPermission(JSStringRef jsOrigin)
+{
+}
+
+void TestRunner::denyWebNotificationPermission(JSStringRef jsOrigin)
+{
+}
+
+void TestRunner::removeAllWebNotificationPermissions()
+{
+}
+
+void TestRunner::simulateWebNotificationClick(JSValueRef jsNotification)
+{
+}
+

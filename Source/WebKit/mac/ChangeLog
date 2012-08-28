@@ -1,3 +1,25 @@
+2012-08-28  Jon Lee  <jonlee@apple.com>
+
+        [Mac] Add SPI to WK1 to retrieve internal IDs for web notifications
+        https://bugs.webkit.org/show_bug.cgi?id=95099
+        <rdar://problem/12180186>
+
+        Reviewed by Jessie Berlin.
+
+        This is work toward providing Mac support for web notifications in DRT and WTR (77969).
+
+        Add function to retrieve the internal ID for a notification. This is needed by layout tests to support simulating
+        a user click on a notification.
+
+        * WebCoreSupport/WebNotificationClient.h:
+        (WebNotificationClient):
+        * WebCoreSupport/WebNotificationClient.mm:
+        (WebNotificationClient::notificationIDForTesting): Converts the JS notification to a WebCore notification, and passes
+        that to [WebView _notificationIDForTesting:].
+        * WebView/WebView.mm:
+        (-[WebView _notificationIDForTesting:]): Retrieves the notification ID based on the WebCore notification instance.
+        * WebView/WebViewPrivate.h:
+
 2012-08-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126836.

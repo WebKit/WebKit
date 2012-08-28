@@ -230,6 +230,11 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
 }
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+uint64_t WebNotificationClient::notificationIDForTesting(WebCore::Notification* notification)
+{
+    return [m_notificationMap.get(notification).get() notificationID];
+}
+
 @implementation WebNotificationPolicyListener
 
 #if ENABLE(NOTIFICATIONS)

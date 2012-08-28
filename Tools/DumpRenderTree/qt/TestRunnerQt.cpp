@@ -202,24 +202,34 @@ int TestRunner::windowCount()
     return m_drt->windowCount();
 }
 
-void TestRunner::grantDesktopNotificationPermission(const QString& origin)
+void TestRunner::grantWebNotificationPermission(const QString& origin)
 {
     QWebFrame* frame = m_drt->webPage()->mainFrame();
     m_drt->webPage()->setFeaturePermission(frame, QWebPage::Notifications, QWebPage::PermissionGrantedByUser);
     m_desktopNotificationAllowedOrigins.append(origin);
 }
 
-void TestRunner::ignoreDesktopNotificationPermissionRequests()
+void TestRunner::ignoreLegacyWebNotificationPermissionRequests()
 {
     m_ignoreDesktopNotification = true;
 }
 
-bool TestRunner::checkDesktopNotificationPermission(const QString& origin)
+void TestRunner::denyWebNotificationPermission(const QString& origin)
 {
-    return !m_ignoreDesktopNotification && m_desktopNotificationAllowedOrigins.contains(origin);
+    // FIXME: implement.
 }
 
-void TestRunner::simulateDesktopNotificationClick(const QString& title)
+void TestRunner::removeAllWebNotificationPermissions()
+{
+    // FIXME: implement.
+}
+
+void TestRunner::simulateWebNotificationClick(const QWebElement& notification)
+{
+    // FIXME: implement.
+}
+
+void TestRunner::simulateLegacyWebNotificationClick(const QString& title)
 {
     DumpRenderTreeSupportQt::simulateDesktopNotificationClick(title);
 }

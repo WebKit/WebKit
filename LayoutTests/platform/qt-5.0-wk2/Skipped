@@ -141,7 +141,7 @@ fast/text/format-control.html
 fast/url/anchor.html
 http/tests/websocket/tests/hixie76/bad-sub-protocol-non-ascii.html
 
-# layoutTestController.ignoreDesktopNotificationPermissionRequests is unimplemented
+# layoutTestController.ignoreLegacyWebNotificationPermissionRequests is unimplemented
 fast/notifications
 
 # layoutTestController.setScrollbarPolicy is unimplemented

@@ -6,10 +6,10 @@
             {
                 testRunner.dumpAsText();
                 testRunner.setCanOpenWindows();
-                testRunner.grantDesktopNotificationPermission("file://");
+                testRunner.grantWebNotificationPermission("file://");
                 testRunner.waitUntilDone();
             }
-            
+
             if (!window.webkitNotifications) {
                 log("FAIL: No webkitNotifications interface!");
             }
@@ -28,14 +28,14 @@
                     try
                     {
                         a.push(new WebGLByteArray());
-                    } 
+                    }
                     catch (e) {}
                     a.push(Array(i).join("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
                 }
                 delete a;
                 notification.requestPermission();
             }
-            
+
             function finish()
             {
                 clearInterval(timer);

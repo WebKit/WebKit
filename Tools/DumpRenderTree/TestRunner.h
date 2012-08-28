@@ -136,11 +136,12 @@ public:
     JSRetainPtr<JSStringRef> platformName() const;
 #endif
 
-    void grantDesktopNotificationPermission(JSStringRef origin);
-    bool checkDesktopNotificationPermission(JSStringRef origin);
-    void ignoreDesktopNotificationPermissionRequests();
-    bool areDesktopNotificationPermissionRequestsIgnored() const { return m_areDesktopNotificationPermissionRequestsIgnored; }
-    void simulateDesktopNotificationClick(JSStringRef title);
+    void ignoreLegacyWebNotificationPermissionRequests();
+    void simulateLegacyWebNotificationClick(JSStringRef title);
+    void grantWebNotificationPermission(JSStringRef origin);
+    void denyWebNotificationPermission(JSStringRef origin);
+    void removeAllWebNotificationPermissions();
+    void simulateWebNotificationClick(JSValueRef notification);
 
     bool elementDoesAutoCompleteForElementWithId(JSStringRef id);
 
@@ -417,7 +418,7 @@ private:
     bool m_useDeferredFrameLoading;
     bool m_shouldPaintBrokenImage;
     bool m_shouldStayOnPageAfterHandlingBeforeUnload;
-    bool m_areDesktopNotificationPermissionRequestsIgnored;
+    bool m_areLegacyWebNotificationPermissionRequestsIgnored;
     bool m_customFullScreenBehavior;
 
     std::string m_authenticationUsername;
@@ -430,9 +431,6 @@ private:
     
     // base64 encoded WAV audio data is stored here.
     std::string m_encodedAudioData;
-    
-    // origins which have been granted desktop notification access
-    std::vector<JSStringRef> m_desktopNotificationAllowedOrigins;
 
     std::map<std::string, std::string> m_URLsToRedirect;
     

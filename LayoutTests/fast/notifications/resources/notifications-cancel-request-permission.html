@@ -13,7 +13,7 @@
             }
 
             if (window.testRunner) {
-                testRunner.ignoreDesktopNotificationPermissionRequests();
+                testRunner.ignoreLegacyWebNotificationPermissionRequests();
             }
 
             window.webkitNotifications.requestPermission(

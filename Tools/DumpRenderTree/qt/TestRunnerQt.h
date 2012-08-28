@@ -134,10 +134,12 @@ public Q_SLOTS:
     void provisionalLoad();
     void setCloseRemainingWindowsWhenComplete(bool = false) { }
     int windowCount();
-    void grantDesktopNotificationPermission(const QString& origin);
-    void ignoreDesktopNotificationPermissionRequests();
-    bool checkDesktopNotificationPermission(const QString& origin);
-    void simulateDesktopNotificationClick(const QString& title);
+    void ignoreLegacyWebNotificationPermissionRequests();
+    void simulateLegacyWebNotificationClick(const QString& title);
+    void grantWebNotificationPermission(const QString& origin);
+    void denyWebNotificationPermission(const QString& origin);
+    void removeAllWebNotificationPermissions();
+    void simulateWebNotificationClick(const QWebElement&);
     void display();
     void displayInvalidatedRegion();
     void clearBackForwardList();

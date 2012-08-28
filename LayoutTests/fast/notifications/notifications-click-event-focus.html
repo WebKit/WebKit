@@ -10,7 +10,7 @@
         function runTests()
         {
             if (window.testRunner) {
-                testRunner.grantDesktopNotificationPermission("file://");
+                testRunner.grantWebNotificationPermission("file://");
                 testRunner.dumpAsText();
                 testRunner.waitUntilDone();
                 testRunner.setCanOpenWindows();
@@ -32,7 +32,7 @@
             N.show();
 
             if (window.testRunner) {
-                testRunner.simulateDesktopNotificationClick("New E-mail");
+                testRunner.simulateLegacyWebNotificationClick("New E-mail");
                 testRunner.notifyDone();
             }
         }

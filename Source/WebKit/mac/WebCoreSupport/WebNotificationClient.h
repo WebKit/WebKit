@@ -48,6 +48,11 @@ public:
     WebNotificationClient(WebView *);
     WebView *webView() { return m_webView; }
 
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    // For testing purposes.
+    uint64_t notificationIDForTesting(WebCore::Notification*);
+#endif
+
 private:
     virtual bool show(WebCore::Notification*) OVERRIDE;
     virtual void cancel(WebCore::Notification*) OVERRIDE;

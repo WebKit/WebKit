@@ -739,6 +739,8 @@ Could be worth adding to the API.
 - (void)_notificationDidShow:(uint64_t)notificationID;
 - (void)_notificationDidClick:(uint64_t)notificationID;
 - (void)_notificationsDidClose:(NSArray *)notificationIDs;
+
+- (uint64_t)_notificationIDForTesting:(JSValueRef)jsNotification;
 @end
 
 @interface WebView (WebViewPrivateStyleInfo)

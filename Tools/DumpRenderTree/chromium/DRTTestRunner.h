@@ -234,9 +234,12 @@ public:
 
 #if ENABLE(NOTIFICATIONS)
     // Grants permission for desktop notifications to an origin
-    void grantDesktopNotificationPermission(const CppArgumentList&, CppVariant*);
+    void grantWebNotificationPermission(const CppArgumentList&, CppVariant*);
+    void denyWebNotificationPermission(const CppArgumentList&, CppVariant*);
+    void removeAllWebNotificationPermissions(const CppArgumentList&, CppVariant*);
+    void simulateWebNotificationClick(const CppArgumentList&, CppVariant*);
     // Simulates a click on a desktop notification.
-    void simulateDesktopNotificationClick(const CppArgumentList&, CppVariant*);
+    void simulateLegacyWebNotificationClick(const CppArgumentList&, CppVariant*);
 #endif
 
     void setDomainRelaxationForbiddenForURLScheme(const CppArgumentList&, CppVariant*);

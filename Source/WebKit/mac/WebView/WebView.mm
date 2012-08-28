@@ -143,10 +143,13 @@
 #import <WebCore/JSDocument.h>
 #import <WebCore/JSElement.h>
 #import <WebCore/JSNodeList.h>
+#import <WebCore/JSNotification.h>
 #import <WebCore/Logging.h>
 #import <WebCore/MemoryPressureHandler.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/NodeList.h>
+#import <WebCore/Notification.h>
+#import <WebCore/NotificationController.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageCache.h>
 #import <WebCore/PageGroup.h>
@@ -6545,6 +6548,13 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 - (void)_notificationsDidClose:(NSArray *)notificationIDs
 {
     [[self _notificationProvider] webView:self didCloseNotifications:notificationIDs];
+}
+
+- (uint64_t)_notificationIDForTesting:(JSValueRef)jsNotification
+{
+    JSContextRef context = [[self mainFrame] globalContext];
+    WebCore::Notification* notification = toNotification(toJS(toJS(context), jsNotification));
+    return static_cast<WebNotificationClient*>(NotificationController::clientFrom(_private->page))->notificationIDForTesting(notification);
 }
 @end
 

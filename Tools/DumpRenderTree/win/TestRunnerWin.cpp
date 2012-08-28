@@ -1434,7 +1434,23 @@ void TestRunner::setBackingScaleFactor(double)
 {
 }
 
-void TestRunner::simulateDesktopNotificationClick(JSStringRef title)
+void TestRunner::grantWebNotificationPermission(JSStringRef origin)
+{
+}
+
+void TestRunner::denyWebNotificationPermission(JSStringRef jsOrigin)
+{
+}
+
+void TestRunner::removeAllWebNotificationPermissions()
+{
+}
+
+void TestRunner::simulateWebNotificationClick(JSValueRef jsNotification)
+{
+}
+
+void TestRunner::simulateLegacyWebNotificationClick(JSStringRef title)
 {
     // FIXME: Implement.
 }

@@ -155,7 +155,10 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("execCommand", &DRTTestRunner::execCommand);
     bindMethod("forceRedSelectionColors", &DRTTestRunner::forceRedSelectionColors);
 #if ENABLE(NOTIFICATIONS)
-    bindMethod("grantDesktopNotificationPermission", &DRTTestRunner::grantDesktopNotificationPermission);
+    bindMethod("grantWebNotificationPermission", &DRTTestRunner::grantWebNotificationPermission);
+    bindMethod("denyWebNotificationPermission", &DRTTestRunner::denyWebNotificationPermission);
+    bindMethod("removeAllWebNotificationPermissions", &DRTTestRunner::removeAllWebNotificationPermissions);
+    bindMethod("simulateWebNotificationClick", &DRTTestRunner::simulateWebNotificationClick);
 #endif
     bindMethod("findString", &DRTTestRunner::findString);
     bindMethod("isCommandEnabled", &DRTTestRunner::isCommandEnabled);
@@ -233,7 +236,7 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setAsynchronousSpellCheckingEnabled", &DRTTestRunner::setAsynchronousSpellCheckingEnabled);
     bindMethod("showWebInspector", &DRTTestRunner::showWebInspector);
 #if ENABLE(NOTIFICATIONS)
-    bindMethod("simulateDesktopNotificationClick", &DRTTestRunner::simulateDesktopNotificationClick);
+    bindMethod("simulateLegacyWebNotificationClick", &DRTTestRunner::simulateLegacyWebNotificationClick);
 #endif
     bindMethod("startSpeechInput", &DRTTestRunner::startSpeechInput);
     bindMethod("testRepaint", &DRTTestRunner::testRepaint);
@@ -1178,7 +1181,7 @@ void DRTTestRunner::callShouldCloseOnWebView(const CppArgumentList&, CppVariant*
 }
 
 #if ENABLE(NOTIFICATIONS)
-void DRTTestRunner::grantDesktopNotificationPermission(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::grantWebNotificationPermission(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() != 1 || !arguments[0].isString()) {
         result->set(false);
@@ -1190,7 +1193,25 @@ void DRTTestRunner::grantDesktopNotificationPermission(const CppArgumentList& ar
     result->set(true);
 }
 
-void DRTTestRunner::simulateDesktopNotificationClick(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::denyWebNotificationPermission(const CppArgumentList& arguments, CppVariant* result)
+{
+    // FIXME: Implement.
+    result->setNull();
+}
+
+void DRTTestRunner::removeAllWebNotificationPermissions(const CppArgumentList& arguments, CppVariant* result)
+{
+    // FIXME: Implement.
+    result->setNull();
+}
+
+void DRTTestRunner::simulateWebNotificationClick(const CppArgumentList& arguments, CppVariant* result)
+{
+    // FIXME: Implement.
+    result->setNull();
+}
+
+void DRTTestRunner::simulateLegacyWebNotificationClick(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() != 1 || !arguments[0].isString()) {
         result->set(false);

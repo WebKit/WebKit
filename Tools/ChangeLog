@@ -1,3 +1,50 @@
+2012-08-27  Jon Lee  <jonlee@apple.com>
+
+        Update TestRunner API for web notifications
+        https://bugs.webkit.org/show_bug.cgi?id=95093
+        <rdar://problem/12179649>
+
+        Reviewed by Jessie Berlin.
+
+        This is work toward providing Mac support for web notifications in DRT and WTR (77969).
+
+        Some of the legacy APIs are less than ideal, and not tenable with the WTR infrastructure.
+        This first patch renames the TestRunner calls to use the term "web notifications" instead of
+        "desktop notifications", deprecates a couple API calls that are not used by anyone, and adds
+        additional calls that will be used in the tests that test the standard API.
+
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner): For consistency, rename a couple member variables. Remove unused checkDesktopNotificationPermission()
+        and areDesktopNotificationPermissionRequestsIgnored(). Remove origin mapping since each port implements its own solution.
+        * DumpRenderTree/TestRunner.cpp: Push grantWebNotificationPermission() to individual ports.
+        (TestRunner::TestRunner):
+        (ignoreLegacyWebNotificationPermissionRequestsCallback): Renamed.
+        (simulateLegacyWebNotificationClickCallback): Renamed.
+        (grantWebNotificationPermissionCallback): Renamed.
+        (denyWebNotificationPermissionCallback): Added.
+        (removeAllWebNotificationPermissionsCallback): Added.
+        (simulateWebNotificationClickCallback): Added.
+        (TestRunner::staticFunctions):
+        (TestRunner::ignoreLegacyWebNotificationPermissionRequests):
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner): Added bindings for new APIs.
+        (DRTTestRunner::grantWebNotificationPermission):
+        (DRTTestRunner::denyWebNotificationPermission): Stub.
+        (DRTTestRunner::removeAllWebNotificationPermissions): Stub.
+        (DRTTestRunner::simulateWebNotificationClick): Stub.
+        (DRTTestRunner::simulateLegacyWebNotificationClick):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+
+        Added stubs.
+        * DumpRenderTree/blackberry/TestRunnerBlackBerry.cpp:
+        * DumpRenderTree/efl/TestRunnerEfl.cpp:
+        * DumpRenderTree/gtk/TestRunnerGtk.cpp:
+        * DumpRenderTree/mac/TestRunnerMac.mm: Later patch will contain implementation of this API.
+        * DumpRenderTree/qt/TestRunnerQt.cpp: Added Qt-based stubs.
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+
 2012-08-28  Szilard Ledan  <szledan@inf.u-szeged.hu>
 
         [webkit-patch] gets stuck into an infinite loop if bugzilla doesn't respond in time.
