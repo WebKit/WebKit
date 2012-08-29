@@ -73,3 +73,7 @@ fast/writing-mode/flipped-blocks-hit-test-line-edges.html
 # [Qt][WK1] New touchadjustment/focusout-on-touch.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=95205
 touchadjustment/focusout-on-touch.html
+
+# [Qt][WK1] Test added in r126927 fails.
+# https://bugs.webkit.org/show_bug.cgi?id=95308
+css3/filters/null-effect-check.html

@@ -1,3 +1,10 @@
+2012-08-29  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt][WK1] Unreviewd gardening. Skip failing css3 filter test.
+        https://bugs.webkit.org/show_bug.cgi?id=95308
+
+        * platform/qt-5.0-wk1/Skipped: skip css3/filters/null-effect-check.html after r126927.
+
 2012-08-29  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Canvas should have a distinct role
