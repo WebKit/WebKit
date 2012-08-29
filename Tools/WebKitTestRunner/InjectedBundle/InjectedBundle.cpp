@@ -171,6 +171,7 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
         m_dumpPixels = false;
 
         resetLocalSettings();
+        m_testRunner->removeAllWebNotificationPermissions();
 
         return;
     }
@@ -336,6 +337,13 @@ void InjectedBundle::postSetWindowIsKey(bool isKey)
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetWindowIsKey"));
     WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(isKey));
     WKBundlePostSynchronousMessage(m_bundle, messageName.get(), messageBody.get(), 0);
+}
+
+void InjectedBundle::postSimulateWebNotificationClick(uint64_t notificationID)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SimulateWebNotificationClick"));
+    WKRetainPtr<WKUInt64Ref> messageBody(AdoptWK, WKUInt64Create(notificationID));
+    WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
 }
 
 } // namespace WTR

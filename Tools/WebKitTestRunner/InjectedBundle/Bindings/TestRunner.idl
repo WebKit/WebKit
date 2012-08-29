@@ -160,6 +160,12 @@ module WTR {
 
         // Control full screen behavior.
         void setHasCustomFullScreenBehavior(in boolean value);
+
+        // Web notifications support
+        void grantWebNotificationPermission(in DOMString origin);
+        void denyWebNotificationPermission(in DOMString origin);
+        void removeAllWebNotificationPermissions();
+        void simulateWebNotificationClick(in object notification);
     };
 
 }

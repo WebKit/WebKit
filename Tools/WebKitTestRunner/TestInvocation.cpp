@@ -339,6 +339,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SimulateWebNotificationClick")) {
+        ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());
+        uint64_t notificationID = WKUInt64GetValue(static_cast<WKUInt64Ref>(messageBody));
+        TestController::shared().simulateWebNotificationClick(notificationID);
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 

@@ -684,4 +684,29 @@ void TestRunner::setUserStyleSheetLocation(JSStringRef location)
         setUserStyleSheetEnabled(true);
 }
 
+void TestRunner::grantWebNotificationPermission(JSStringRef origin)
+{
+    WKRetainPtr<WKStringRef> originWK = toWK(origin);
+    WKBundleSetWebNotificationPermission(InjectedBundle::shared().bundle(), InjectedBundle::shared().page()->page(), originWK.get(), true);
+}
+
+void TestRunner::denyWebNotificationPermission(JSStringRef origin)
+{
+    WKRetainPtr<WKStringRef> originWK = toWK(origin);
+    WKBundleSetWebNotificationPermission(InjectedBundle::shared().bundle(), InjectedBundle::shared().page()->page(), originWK.get(), false);
+}
+
+void TestRunner::removeAllWebNotificationPermissions()
+{
+    WKBundleRemoveAllWebNotificationPermissions(InjectedBundle::shared().bundle(), InjectedBundle::shared().page()->page());
+}
+
+void TestRunner::simulateWebNotificationClick(JSValueRef notification)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+    uint64_t notificationID = WKBundleGetWebNotificationID(InjectedBundle::shared().bundle(), context, notification);
+    InjectedBundle::shared().postSimulateWebNotificationClick(notificationID);
+}
+
 } // namespace WTR

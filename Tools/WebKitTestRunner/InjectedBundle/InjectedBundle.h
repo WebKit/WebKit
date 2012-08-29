@@ -88,6 +88,7 @@ public:
     void postFocusWebView();
     void postSetBackingScaleFactor(double);
     void postSetWindowIsKey(bool);
+    void postSimulateWebNotificationClick(uint64_t notificationID);
 
 private:
     InjectedBundle();

@@ -224,6 +224,12 @@ public:
     void setHasCustomFullScreenBehavior(bool value) { m_customFullScreenBehavior = value; }
     bool hasCustomFullScreenBehavior() const { return m_customFullScreenBehavior; }
 
+    // Web notifications.
+    void grantWebNotificationPermission(JSStringRef origin);
+    void denyWebNotificationPermission(JSStringRef origin);
+    void removeAllWebNotificationPermissions();
+    void simulateWebNotificationClick(JSValueRef notification);
+
     JSRetainPtr<JSStringRef> platformName();
 
     void setPageVisibility(JSStringRef state);

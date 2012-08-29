@@ -34,6 +34,7 @@
 		29A8FCDD145F0337009045A6 /* JSAccessibilityTextMarkerRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE1345E7021006AA5A6 /* JSAccessibilityTextMarkerRange.cpp */; };
 		29A8FCE2145F037B009045A6 /* AccessibilityTextMarkerRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE1145F037B009045A6 /* AccessibilityTextMarkerRange.cpp */; };
 		29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */; };
+		3164C8F015D1ADA100EF1FE0 /* WebNotificationProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3164C8EF15D1ADA100EF1FE0 /* WebNotificationProvider.cpp */; };
 		5322FB4313FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5322FB4113FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp */; };
 		5322FB4613FDA0EA0041ABCC /* PixelDumpSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5322FB4413FDA0EA0041ABCC /* PixelDumpSupport.cpp */; };
 		5641E2D014335E95008307E5 /* JSTextInputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5641E2CE14335E95008307E5 /* JSTextInputController.cpp */; };
@@ -120,6 +121,8 @@
 		29A8FCE1345E7021006AA5A6 /* JSAccessibilityTextMarkerRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSAccessibilityTextMarkerRange.cpp; path = DerivedSources/WebKitTestRunner/JSAccessibilityTextMarkerRange.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		29A8FCE1345E7021006AA5A7 /* JSAccessibilityTextMarkerRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSAccessibilityTextMarkerRange.h; path = DerivedSources/WebKitTestRunner/JSAccessibilityTextMarkerRange.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityTextMarkerRangeMac.mm; path = mac/AccessibilityTextMarkerRangeMac.mm; sourceTree = "<group>"; };
+		3110BE0F15BA011400D216AC /* WebNotificationProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebNotificationProvider.h; sourceTree = "<group>"; };
+		3164C8EF15D1ADA100EF1FE0 /* WebNotificationProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNotificationProvider.cpp; sourceTree = "<group>"; };
 		378D442213346D00006A777B /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		41230E16138C78BF00BCCFCA /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4181731B138AD39D0057AAA4 /* WebCoreTestSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreTestSupport.h; path = WebCoreTestSupport/WebCoreTestSupport.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -260,6 +263,8 @@
 				BCD7D2F611921278006DB7EE /* TestInvocation.h */,
 				BCD7D2F711921278006DB7EE /* TestInvocation.cpp */,
 				BC251A1711D16774002EBC01 /* WebKitTestRunnerPrefix.h */,
+				3110BE0F15BA011400D216AC /* WebNotificationProvider.h */,
+				3164C8EF15D1ADA100EF1FE0 /* WebNotificationProvider.cpp */,
 			);
 			name = TestRunner;
 			sourceTree = "<group>";
@@ -567,6 +572,7 @@
 				BCD7D2F811921278006DB7EE /* TestInvocation.cpp in Sources */,
 				BC9192051333E4F8003011DC /* TestInvocationCG.cpp in Sources */,
 				5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */,
+				3164C8F015D1ADA100EF1FE0 /* WebNotificationProvider.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -30,6 +30,8 @@
 #include "StringFunctions.h"
 #include "TestInvocation.h"
 #include <WebKit2/WKContextPrivate.h>
+#include <WebKit2/WKNotification.h>
+#include <WebKit2/WKNotificationManager.h>
 #include <WebKit2/WKNumber.h>
 #include <WebKit2/WKPageGroup.h>
 #include <WebKit2/WKPagePrivate.h>
@@ -333,6 +335,10 @@ void TestController::initialize(int argc, const char* argv[])
     };
     WKContextSetInjectedBundleClient(m_context.get(), &injectedBundleClient);
 
+    WKNotificationManagerRef notificationManager = WKContextGetNotificationManager(m_context.get());
+    WKNotificationProvider notificationKit = m_webNotificationProvider.provider();
+    WKNotificationManagerSetProvider(notificationManager, &notificationKit);
+
     if (testPluginDirectory())
         WKContextSetAdditionalPluginsDirectory(m_context.get(), testPluginDirectory());
 
@@ -500,6 +506,9 @@ bool TestController::resetStateToConsistentValues()
 
     // Re-set to the default backing scale factor by setting the custom scale factor to 0.
     WKPageSetCustomBackingScaleFactor(m_mainWebView->page(), 0);
+
+    // Reset notification permissions
+    m_webNotificationProvider.reset();
 
     // Reset main page back to about:blank
     m_doneResetting = false;
@@ -919,6 +928,11 @@ void TestController::processDidCrash()
 
     if (m_shouldExitWhenWebProcessCrashes)
         exit(1);
+}
+
+void TestController::simulateWebNotificationClick(uint64_t notificationID)
+{
+    m_webNotificationProvider.simulateWebNotificationClick(notificationID);
 }
 
 } // namespace WTR

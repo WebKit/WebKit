@@ -1,3 +1,63 @@
+2012-08-29  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Basic WTR support for web notifications
+        https://bugs.webkit.org/show_bug.cgi?id=95154
+        <rdar://problem/12184492>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Implement WTR support, without platform event output (bug 95233).
+
+        Legacy APIs will not be supported, since many of the tests are skipped
+        on ports that do test notifications, and the issue with using file:// as the origin means a lot of the permissions
+        tests won't work. Bugs 81048 and 81697 will track migrating the existing tests to use the new testRunner API, and move
+        the tests to http/tests/notifications.
+
+        Permissions will be handled only in the injected bundle. This allows tests to set permission synchronously, and not
+        require a chain of setTimeout()'s when writing a notification test. Clicking a notification, however, should
+        be invoked from the UIProcess.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessage): When told to "Reset", clear out all of the permissions.
+        (WTR::InjectedBundle::postSimulateWebNotificationClick): Tell the bundle client to simulate a click based on the
+        notification's internal ID.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::grantWebNotificationPermission): Manually set the permission using WKBundle SPI.
+        (WTR::TestRunner::denyWebNotificationPermission): Manually set the permission using WKBundle SPI.
+        (WTR::TestRunner::removeAllWebNotificationPermissions):
+        (WTR::TestRunner::simulateWebNotificationClick): Post a message through the injected bundle.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
+        Because supporting web notifications goes beyond a couple functions, move all of the logic into a WebNotificationProvider
+        class.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle): When the injected bundle sends a message to simulate a click,
+        TestInvocation forwards that request to the TestController.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize): Set the provider.
+        (WTR::TestController::resetStateToConsistentValues): Tell the provider to reset.
+        (WTR::TestController::simulateWebNotificationClick): Tell the provider to simulate a user clicking on a platform notification.
+        * WebKitTestRunner/TestController.h: Holds an instance to the provider.
+
+        The provider maintains a pointer to one notification manager (presumably the web process associated with WTR), and a set
+        of notification IDs that have been "shown" by the platform. This allows us to simulate a click on a notification.
+        * WebKitTestRunner/WebNotificationProvider.h: Added.
+        * WebKitTestRunner/WebNotificationProvider.cpp: Added.
+        (WTR::WebNotificationProvider::showWebNotification): Adds the notification to set of shown notifications. Notifies provider that
+        the notification got shown.
+        (WTR::WebNotificationProvider::closeWebNotification): Removes the notification from the set. Notifies provider that the notification
+        got closed.
+        (WTR::WebNotificationProvider::addNotificationManager): Maintains one manager, which is fine for testing purposes.
+        (WTR::WebNotificationProvider::removeNotificationManager): Maintains one manager.
+        (WTR::WebNotificationProvider::notificationPermissions): When the web process starts, it maintains an initial set of known
+        permissions. For testing purposes, we always want this set to be empty.
+        (WTR::WebNotificationProvider::simulateWebNotificationClick): Notifies provider that the notification got "clicked".
+        (WTR::WebNotificationProvider::reset): To reset the state, we pretend that we closed all of the platform notifications.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj: Add WebNotificationProvider.
+
 2012-08-29  Kamil Blank  <k.blank@samsung.com>
 
         [EFL] Add setting API for allow universal/file access from file URLs.
