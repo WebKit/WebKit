@@ -329,7 +329,7 @@ void CCThreadProxy::onSwapBuffersCompleteOnImplThread()
 void CCThreadProxy::onVSyncParametersChanged(double monotonicTimebase, double intervalInSeconds)
 {
     ASSERT(isImplThread());
-    TRACE_EVENT0("cc", "CCThreadProxy::onVSyncParametersChanged");
+    TRACE_EVENT2("cc", "CCThreadProxy::onVSyncParametersChanged", "monotonicTimebase", monotonicTimebase, "intervalInSeconds", intervalInSeconds);
     m_schedulerOnImplThread->setTimebaseAndInterval(monotonicTimebase, intervalInSeconds);
 }
 
