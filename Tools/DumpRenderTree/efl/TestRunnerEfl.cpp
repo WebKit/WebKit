@@ -365,16 +365,16 @@ void TestRunner::setSpatialNavigationEnabled(bool flag)
     ewk_view_setting_spatial_navigation_set(browser->mainView(), flag);
 }
 
-void TestRunner::setAllowUniversalAccessFromFileURLs(bool)
+void TestRunner::setAllowUniversalAccessFromFileURLs(bool flag)
 {
-    notImplemented();
+    ewk_view_setting_allow_universal_access_from_file_urls_set(browser->mainView(), flag);
 }
-
-void TestRunner::setAllowFileAccessFromFileURLs(bool)
+ 
+void TestRunner::setAllowFileAccessFromFileURLs(bool flag)
 {
-    notImplemented();
+    ewk_view_setting_allow_file_access_from_file_urls_set(browser->mainView(), flag);
 }
-
+ 
 void TestRunner::setAuthorAndUserStylesEnabled(bool flag)
 {
     DumpRenderTreeSupportEfl::setAuthorAndUserStylesEnabled(browser->mainView(), flag);

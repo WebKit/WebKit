@@ -127,15 +127,6 @@ fast/dom/Window/window-onFocus.html
 fast/events/blur-focus-window-should-blur-focus-element.html
 plugins/netscape-plugin-setwindow-size-2.html
 
-# EFL's LayoutTestController does not implement setAllowUniversalAccessFromFileURLs
-# EFL's LayoutTestController does not implement setAllowAccessFromFileURLs
-fast/files/workers/inline-worker-via-blob-url.html
-fast/forms/formtarget-attribute-button-html.html
-fast/forms/formtarget-attribute-input-html.html
-fast/frames/location-change-no-file-access.html
-fast/xmlhttprequest/xmlhttprequest-no-file-access.html
-fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
-
 # BUG84835: Tests failing because of missing editing delegate callbacks.
 editing/deleting
 editing/inserting

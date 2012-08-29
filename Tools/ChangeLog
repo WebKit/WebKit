@@ -1,3 +1,18 @@
+2012-08-29  Kamil Blank  <k.blank@samsung.com>
+
+        [EFL] Add setting API for allow universal/file access from file URLs.
+        https://bugs.webkit.org/show_bug.cgi?id=83121
+
+        Reviewed by Eric Seidel.
+
+        Implementation of setAllowUniversalAccessFromFileURLs and setAllowFileAccessFromFileURLs.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        * DumpRenderTree/efl/TestRunnerEfl.cpp:
+        (TestRunner::setAllowUniversalAccessFromFileURLs):
+        (TestRunner::setAllowFileAccessFromFileURLs):
+
 2012-08-29  Jon Lee  <jonlee@apple.com>
 
         Update TestRunner API for web notifications

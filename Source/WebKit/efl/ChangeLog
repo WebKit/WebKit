@@ -1,3 +1,24 @@
+2012-08-29  Kamil Blank  <k.blank@samsung.com>
+
+        [EFL] Add setting API for allow universal/file access from file URLs.
+        https://bugs.webkit.org/show_bug.cgi?id=83121
+
+        Reviewed by Eric Seidel.
+
+        Make it possible to enable allow universal/file access from file URLs.
+        Default value for both settings is true.
+
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_new):
+        (ewk_view_setting_allow_universal_access_from_file_urls_set): Function sets if locally loaded documents
+        are allowed to access remote urls.
+        (ewk_view_setting_allow_universal_access_from_file_urls_get):
+        (ewk_view_setting_allow_file_access_from_file_urls_set): Function sets if locally loaded documents
+        are allowed to access other local urls.
+        (ewk_view_setting_allow_file_access_from_file_urls_get):
+        * ewk/ewk_view.h:
+
 2012-08-29  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Add *explicit* keyword to constructors in WebCoreSupport

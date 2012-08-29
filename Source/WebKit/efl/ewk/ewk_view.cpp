@@ -332,6 +332,8 @@ struct _Ewk_View_Private_Data {
         } zoomRange;
         float devicePixelRatio;
         double domTimerInterval;
+        bool allowUniversalAccessFromFileURLs : 1;
+        bool allowFileAccessFromFileURLs : 1;
     } settings;
     struct {
         struct {
@@ -873,6 +875,9 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->settings.devicePixelRatio = devicePixelRatio;
 
     priv->settings.domTimerInterval = priv->pageSettings->defaultMinDOMTimerInterval();
+
+    priv->settings.allowUniversalAccessFromFileURLs = priv->pageSettings->allowUniversalAccessFromFileURLs();
+    priv->settings.allowFileAccessFromFileURLs = priv->pageSettings->allowFileAccessFromFileURLs();
 
     priv->mainFrame = _ewk_view_core_frame_new(smartData, priv, 0).get();
 
@@ -2675,6 +2680,44 @@ Eina_Bool ewk_view_setting_enable_hyperlink_auditing_set(Evas_Object* ewkView, E
         priv->settings.hyperlinkAuditingEnabled = enable;
     }
     return true;
+}
+
+Eina_Bool ewk_view_setting_allow_universal_access_from_file_urls_set(Evas_Object* ewkView, Eina_Bool enable)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    enable = !!enable;
+    if (priv->settings.allowUniversalAccessFromFileURLs != enable) {
+        priv->pageSettings->setAllowUniversalAccessFromFileURLs(enable);
+        priv->settings.allowUniversalAccessFromFileURLs = enable;
+    }
+    return true;
+}
+
+Eina_Bool ewk_view_setting_allow_universal_access_from_file_urls_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    return priv->settings.allowUniversalAccessFromFileURLs;
+}
+
+Eina_Bool ewk_view_setting_allow_file_access_from_file_urls_set(Evas_Object* ewkView, Eina_Bool enable)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    enable = !!enable;
+    if (priv->settings.allowFileAccessFromFileURLs != enable) {
+        priv->pageSettings->setAllowFileAccessFromFileURLs(enable);
+        priv->settings.allowFileAccessFromFileURLs = enable;
+    }
+    return true;
+}
+
+Eina_Bool ewk_view_setting_allow_file_access_from_file_urls_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    return priv->settings.allowFileAccessFromFileURLs;
 }
 
 Ewk_View_Smart_Data* ewk_view_smart_data_get(const Evas_Object* ewkView)

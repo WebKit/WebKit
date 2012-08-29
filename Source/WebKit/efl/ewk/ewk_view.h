@@ -2227,6 +2227,58 @@ EAPI Eina_Bool ewk_view_setting_enable_hyperlink_auditing_get(const Evas_Object 
 EAPI Eina_Bool ewk_view_setting_enable_hyperlink_auditing_set(Evas_Object *o, Eina_Bool enable);
 
 /**
+ * Enables/disables allowing universal access from file URLs.
+ *
+ * This setting specifies whether locally loaded documents are allowed to access remote urls.
+ * By default this setting is enabled.
+ *
+ * @param o view object to set allowing universal access from file URLs
+ * @param enable @c EINA_TRUE to enable universal access from file URLs,
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool    ewk_view_setting_allow_universal_access_from_file_urls_set(Evas_Object *o, Eina_Bool flag);
+
+/**
+ * Gets if allowing universal access from file URLs is enabled.
+ *
+ * @param o view object to query if allowing universal access from file URLs is enabled.
+ *
+ * @return @c EINA_TRUE if allowing universal access from file URLs is enabled, @c EINA_FALSE
+ *         otherwise
+ *
+ * @see ewk_view_setting_allow_universal_access_from_file_urls_set()
+ */
+EAPI Eina_Bool    ewk_view_setting_allow_universal_access_from_file_urls_get(const Evas_Object *o);
+
+/**
+ * Enables/disables allowing file access from file URLs.
+ *
+ * This setting specifies whether locally loaded documents are allowed to access other local urls.
+ * By default this setting is enabled.
+ *
+ * @param o view object to set allowing file access from file URLs
+ * @param enable @c EINA_TRUE to enable file access from file URLs,
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool    ewk_view_setting_allow_file_access_from_file_urls_set(Evas_Object *o, Eina_Bool flag);
+
+/**
+ * Gets if allowing file access from file URLs is enabled.
+ *
+ * @param o view object to query if allowing file access from file URLs is enabled.
+ *
+ * @return @c EINA_TRUE if allowing file access from file URLs is enabled, @c EINA_FALSE
+ *         otherwise
+ *
+ * @see ewk_view_setting_allow_file_access_from_file_urls_set()
+ */
+EAPI Eina_Bool    ewk_view_setting_allow_file_access_from_file_urls_get(const Evas_Object *o);
+
+/**
  * Gets the internal data of @a o.
  *
  * This is similar to evas_object_smart_data_get(), but additionally does type checking.
