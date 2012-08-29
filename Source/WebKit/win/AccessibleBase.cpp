@@ -657,6 +657,7 @@ static long MSAARole(AccessibilityRole role)
         case WebCore::LinkRole:
         case WebCore::WebCoreLinkRole:
             return ROLE_SYSTEM_LINK;
+        case WebCore::CanvasRole:
         case WebCore::ImageMapRole:
         case WebCore::ImageRole:
             return ROLE_SYSTEM_GRAPHIC;

@@ -1,3 +1,15 @@
+2012-08-29  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Canvas should have a distinct role
+        https://bugs.webkit.org/show_bug.cgi?id=95248
+
+        Reviewed by Chris Fleizach.
+
+        Add support for canvas accessibility role.
+
+        * DumpRenderTree/chromium/TestRunner/AccessibilityUIElementChromium.cpp:
+        (roleToString):
+
 2012-08-28  Eric Seidel  <eric@webkit.org>
 
         cr-ews bot doesn't set CWD correctly when zipping layout test results

@@ -1578,7 +1578,8 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { FormRole, NSAccessibilityGroupRole },
         { SpinButtonRole, NSAccessibilityIncrementorRole },
         { FooterRole, NSAccessibilityGroupRole },
-        { ToggleButtonRole, NSAccessibilityButtonRole }
+        { ToggleButtonRole, NSAccessibilityButtonRole },
+        { CanvasRole, NSAccessibilityImageRole }
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
@@ -1599,7 +1600,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 {
     if (m_object->isAttachment())
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityRoleAttribute];
-    NSString* string = roleValueToNSString(m_object->roleValue());
+    AccessibilityRole role = m_object->roleValue();
+    if (role == CanvasRole && m_object->canvasHasFallbackContent())
+        role = GroupRole;
+    NSString* string = roleValueToNSString(role);
     if (string != nil)
         return string;
     return NSAccessibilityUnknownRole;
