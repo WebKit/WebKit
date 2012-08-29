@@ -1,3 +1,12 @@
+2012-08-28  Roger Fong  <roger_fong@apple.com>
+
+        Add minires to list of required cygwin install packages.
+        https://bugs.webkit.org/show_bug.cgi?id=76936
+
+        Reviewed by Tim Horton.
+
+        * CygwinDownloader/cygwin-downloader.py:
+
 2012-08-28  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Upstream layout test expectations (Part 2)
