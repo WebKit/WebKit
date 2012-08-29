@@ -276,11 +276,6 @@ public:
     void setHeight(unsigned);
     void setWidth(unsigned);
 
-    virtual void blur() OVERRIDE;
-    void defaultBlur();
-    void defaultFocus(bool restorePreviousSelection);
-    virtual void focus(bool restorePreviousSelection = true) OVERRIDE;
-
     virtual const AtomicString& name() const OVERRIDE;
 
     static Vector<FileChooserFileInfo> filesFromFileInputFormControlState(const FormControlState&);

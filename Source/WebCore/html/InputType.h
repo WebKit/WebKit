@@ -213,9 +213,6 @@ public:
     virtual bool hasTouchEventHandler() const;
 #endif
 
-    virtual void blur();
-    virtual void focus(bool restorePreviousSelection);
-
     // Shadow tree handling
 
     virtual void createShadowSubtree();
