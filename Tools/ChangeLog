@@ -1,5 +1,11 @@
 2012-08-28  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Adding myself to committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
+2012-08-28  Roger Fong  <roger_fong@apple.com>
+
         Add minires to list of required cygwin install packages.
         https://bugs.webkit.org/show_bug.cgi?id=76936
 

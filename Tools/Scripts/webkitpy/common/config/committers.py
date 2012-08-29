@@ -364,6 +364,7 @@ committers_unable_to_review = [
     Committer("Renata Hodovan", "reni@webkit.org", "reni"),
     Committer("Robert Hogan", ["robert@webkit.org", "robert@roberthogan.net", "lists@roberthogan.net"], "mwenge"),
     Committer("Robert Kroeger", "rjkroege@chromium.org", "rjkroege"),
+    Committer("Roger Fong", "roger_fong@apple.com", "rfong"),
     Committer("Roland Steiner", "rolandsteiner@chromium.org"),
     Committer("Ryuan Choi", "ryuan.choi@samsung.com", "ryuan"),
     Committer("Satish Sampath", "satish@chromium.org"),
