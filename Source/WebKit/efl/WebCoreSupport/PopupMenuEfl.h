@@ -33,7 +33,7 @@ class PopupMenuClient;
 
 class PopupMenuEfl : public PopupMenu {
 public:
-    PopupMenuEfl(PopupMenuClient*);
+    explicit PopupMenuEfl(PopupMenuClient*);
     ~PopupMenuEfl();
 
     virtual void show(const IntRect&, FrameView*, int index);

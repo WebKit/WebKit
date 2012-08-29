@@ -1,5 +1,21 @@
 2012-08-29  Ryuan Choi  <ryuan.choi@samsung.com>
 
+        [EFL] Add *explicit* keyword to constructors in WebCoreSupport
+        https://bugs.webkit.org/show_bug.cgi?id=95307
+
+        Reviewed by Kentaro Hara.
+
+        Added explicit keyword in constructors in order to avoid implicit type conversion.
+
+        * WebCoreSupport/ColorChooserEfl.h:
+        (ColorChooserEfl):
+        * WebCoreSupport/PopupMenuEfl.h:
+        (PopupMenuEfl):
+        * WebCoreSupport/SearchPopupMenuEfl.h:
+        (SearchPopupMenuEfl):
+
+2012-08-29  Ryuan Choi  <ryuan.choi@samsung.com>
+
         [EFL] Move several files to remove webkit1 dependency from WebCore.
         https://bugs.webkit.org/show_bug.cgi?id=95264
 

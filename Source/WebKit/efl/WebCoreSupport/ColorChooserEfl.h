@@ -40,7 +40,7 @@ class ChromeClientEfl;
 
 class ColorChooserEfl : public ColorChooser {
 public:
-    ColorChooserEfl(ChromeClientEfl*);
+    explicit ColorChooserEfl(ChromeClientEfl*);
     ~ColorChooserEfl();
 
     // ColorChooser implementation.
