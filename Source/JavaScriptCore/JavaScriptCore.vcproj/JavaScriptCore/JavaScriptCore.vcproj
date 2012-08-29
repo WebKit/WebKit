@@ -882,6 +882,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\JSWithScope.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSWithScope.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\JSNameScope.cpp"
 				>
 			</File>

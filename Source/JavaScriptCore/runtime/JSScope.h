@@ -34,7 +34,7 @@ class JSScope : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 
-    static JSObject* objectAtScope(ScopeChainNode*);
+    JS_EXPORT_PRIVATE static JSObject* objectAtScope(ScopeChainNode*);
 
     static JSValue resolve(CallFrame*, const Identifier&);
     static JSValue resolveSkip(CallFrame*, const Identifier&, int skip);
@@ -65,11 +65,6 @@ protected:
 inline JSScope::JSScope(JSGlobalData& globalData, Structure* structure)
     : Base(globalData, structure)
 {
-}
-
-inline JSObject* JSScope::objectAtScope(ScopeChainNode* scopeChain)
-{
-    return scopeChain->object.get();
 }
 
 class ScopeChainIterator {

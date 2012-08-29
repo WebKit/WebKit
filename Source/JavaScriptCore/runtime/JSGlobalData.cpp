@@ -48,6 +48,7 @@
 #include "JSNameScope.h"
 #include "JSNotAnObject.h"
 #include "JSPropertyNameIterator.h"
+#include "JSWithScope.h"
 #include "Lexer.h"
 #include "Lookup.h"
 #include "Nodes.h"
@@ -205,6 +206,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     regExpStructure.set(*this, RegExp::createStructure(*this, 0, jsNull()));
     sharedSymbolTableStructure.set(*this, SharedSymbolTable::createStructure(*this, 0, jsNull()));
     structureChainStructure.set(*this, StructureChain::createStructure(*this, 0, jsNull()));
+    withScopeStructure.set(*this, JSWithScope::createStructure(*this, 0, jsNull()));
 
     wtfThreadData().setCurrentIdentifierTable(existingEntryIdentifierTable);
 

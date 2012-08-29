@@ -1,3 +1,57 @@
+2012-08-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Introduced JSWithScope, making all scope objects subclasses of JSScope
+        https://bugs.webkit.org/show_bug.cgi?id=95295
+
+        Reviewed by Filip Pizlo.
+
+        This is a step toward removing ScopeChainNode. With a uniform representation
+        for objects in the scope chain, we can move data from ScopeChainNode
+        into JSScope.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri: Build!
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL): Use an explicit JSWithScope object
+        for 'with' statements. Since 'with' can put any object in the scope
+        chain, we'll need an adapter object to hold the data ScopeChainNode
+        currently holds.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData): Support for JSWithScope.
+
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::objectAtScope):
+        * runtime/JSScope.h: Check for and unwrap JSWithScope.
+
+        * runtime/JSType.h: Support for JSWithScope.
+
+        * runtime/StrictEvalActivation.cpp:
+        (JSC::StrictEvalActivation::StrictEvalActivation):
+        * runtime/StrictEvalActivation.h:
+        (StrictEvalActivation): Inherit from JSScope, to make the scope chain uniform.
+
+        * runtime/JSWithScope.cpp: Added.
+        (JSC::JSWithScope::visitChildren):
+        * runtime/JSWithScope.h: Added.
+        (JSWithScope):
+        (JSC::JSWithScope::create):
+        (JSC::JSWithScope::object):
+        (JSC::JSWithScope::createStructure):
+        (JSC::JSWithScope::JSWithScope): New adapter object. Since this object
+        is never exposed to scripts, it doesn't need any meaningful implementation
+        of property access or other callbacks.
+
 2012-08-29  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed. Build fix for !ENABLE(JIT) after r126962.

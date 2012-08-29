@@ -42,6 +42,7 @@
 #include "JSPropertyNameIterator.h"
 #include "JSString.h"
 #include "JSValue.h"
+#include "JSWithScope.h"
 #include "LLIntCommon.h"
 #include "LLIntExceptions.h"
 #include "LowLevelInterpreter.h"
@@ -1535,7 +1536,7 @@ LLINT_SLOW_PATH_DECL(slow_path_push_scope)
     LLINT_CHECK_EXCEPTION();
     
     LLINT_OP(1) = o;
-    exec->setScopeChain(exec->scopeChain()->push(o));
+    exec->setScopeChain(exec->scopeChain()->push(JSWithScope::create(exec, o)));
     
     LLINT_END();
 }

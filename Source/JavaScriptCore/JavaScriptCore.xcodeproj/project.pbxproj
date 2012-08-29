@@ -140,9 +140,9 @@
 		0F63944015C75F1D006A597C /* DFGStructureCheckHoistingPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F63943C15C75F14006A597C /* DFGStructureCheckHoistingPhase.cpp */; };
 		0F63945415D07055006A597C /* ArrayProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F63945115D07051006A597C /* ArrayProfile.cpp */; };
 		0F63945515D07057006A597C /* ArrayProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F63945215D07051006A597C /* ArrayProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F63947815DCE34B006A597C /* DFGStructureAbstractValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F63947615DCE347006A597C /* DFGStructureAbstractValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F63948415E48118006A597C /* DFGArrayMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F63948115E48114006A597C /* DFGArrayMode.cpp */; };
 		0F63948515E4811B006A597C /* DFGArrayMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F63948215E48114006A597C /* DFGArrayMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F63947815DCE34B006A597C /* DFGStructureAbstractValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F63947615DCE347006A597C /* DFGStructureAbstractValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F66E16B14DF3F1600B7B2E4 /* DFGAdjacencyList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F66E16814DF3F1300B7B2E4 /* DFGAdjacencyList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F66E16C14DF3F1600B7B2E4 /* DFGEdge.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F66E16914DF3F1300B7B2E4 /* DFGEdge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F766D2815A8CC1E008F363E /* JITStubRoutine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F766D2615A8CC1B008F363E /* JITStubRoutine.cpp */; };
@@ -314,6 +314,8 @@
 		1440F8920A508B100005F061 /* JSCallbackFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440F8900A508B100005F061 /* JSCallbackFunction.cpp */; };
 		1440F8AF0A508D200005F061 /* JSCallbackConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440F8AD0A508D200005F061 /* JSCallbackConstructor.cpp */; };
 		1440FCE40A51E46B0005F061 /* JSClassRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440FCE20A51E46B0005F061 /* JSClassRef.cpp */; };
+		1442566115EDE98D0066A49B /* JSWithScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1442565F15EDE98D0066A49B /* JSWithScope.cpp */; };
+		1442566215EDE98D0066A49B /* JSWithScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 1442566015EDE98D0066A49B /* JSWithScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14469DDE107EC7E700650446 /* Lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8680255597D01FF60F7 /* Lookup.cpp */; };
 		14469DDF107EC7E700650446 /* MathObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A86A0255597D01FF60F7 /* MathObject.cpp */; };
 		14469DE0107EC7E700650446 /* NativeErrorConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC02E9080E1839DB000F9297 /* NativeErrorConstructor.cpp */; };
@@ -720,7 +722,7 @@
 		E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE4A331F15BD2E07006F54F3 /* VMInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE4A331D15BD2E07006F54F3 /* VMInspector.cpp */; };
 		FE4A332015BD2E07006F54F3 /* VMInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4A331E15BD2E07006F54F3 /* VMInspector.h */; };
-		FED287B215EC9A5700DA8161 /* LLIntOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = FED287B115EC9A5700DA8161 /* LLIntOpcode.h */;  settings = {ATTRIBUTES = (Private, ); }; };
+		FED287B215EC9A5700DA8161 /* LLIntOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = FED287B115EC9A5700DA8161 /* LLIntOpcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -901,9 +903,9 @@
 		0F63943D15C75F14006A597C /* DFGStructureCheckHoistingPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStructureCheckHoistingPhase.h; path = dfg/DFGStructureCheckHoistingPhase.h; sourceTree = "<group>"; };
 		0F63945115D07051006A597C /* ArrayProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayProfile.cpp; sourceTree = "<group>"; };
 		0F63945215D07051006A597C /* ArrayProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayProfile.h; sourceTree = "<group>"; };
+		0F63947615DCE347006A597C /* DFGStructureAbstractValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStructureAbstractValue.h; path = dfg/DFGStructureAbstractValue.h; sourceTree = "<group>"; };
 		0F63948115E48114006A597C /* DFGArrayMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGArrayMode.cpp; path = dfg/DFGArrayMode.cpp; sourceTree = "<group>"; };
 		0F63948215E48114006A597C /* DFGArrayMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGArrayMode.h; path = dfg/DFGArrayMode.h; sourceTree = "<group>"; };
-		0F63947615DCE347006A597C /* DFGStructureAbstractValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStructureAbstractValue.h; path = dfg/DFGStructureAbstractValue.h; sourceTree = "<group>"; };
 		0F66E16814DF3F1300B7B2E4 /* DFGAdjacencyList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAdjacencyList.h; path = dfg/DFGAdjacencyList.h; sourceTree = "<group>"; };
 		0F66E16914DF3F1300B7B2E4 /* DFGEdge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGEdge.h; path = dfg/DFGEdge.h; sourceTree = "<group>"; };
 		0F766D1C15A5028D008F363E /* JITStubRoutine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubRoutine.h; sourceTree = "<group>"; };
@@ -1062,6 +1064,8 @@
 		1440F8AD0A508D200005F061 /* JSCallbackConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCallbackConstructor.cpp; sourceTree = "<group>"; };
 		1440FCE10A51E46B0005F061 /* JSClassRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSClassRef.h; sourceTree = "<group>"; };
 		1440FCE20A51E46B0005F061 /* JSClassRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSClassRef.cpp; sourceTree = "<group>"; };
+		1442565F15EDE98D0066A49B /* JSWithScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWithScope.cpp; sourceTree = "<group>"; };
+		1442566015EDE98D0066A49B /* JSWithScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWithScope.h; sourceTree = "<group>"; };
 		145722851437E140005FDE26 /* StrongInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StrongInlines.h; sourceTree = "<group>"; };
 		145C507F0D9DF63B0088F6B9 /* CallData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallData.h; sourceTree = "<group>"; };
 		146AAB2A0B66A84900E55F16 /* JSStringRefCF.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSStringRefCF.h; sourceTree = "<group>"; };
@@ -2135,6 +2139,8 @@
 				865A30F0135007E100CDB49E /* JSValueInlineMethods.h */,
 				BC22A39A0E16E14800AF21C8 /* JSVariableObject.cpp */,
 				14F252560D08DD8D004ECFFF /* JSVariableObject.h */,
+				1442565F15EDE98D0066A49B /* JSWithScope.cpp */,
+				1442566015EDE98D0066A49B /* JSWithScope.h */,
 				65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */,
 				65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */,
 				A7E2EA6A0FB460CF00601F06 /* LiteralParser.cpp */,
@@ -2909,6 +2915,7 @@
 				14874AE415EBDE4A002E3587 /* JSNameScope.h in Headers */,
 				14874AE615EBDE4A002E3587 /* JSScope.h in Headers */,
 				FED287B215EC9A5700DA8161 /* LLIntOpcode.h in Headers */,
+				1442566215EDE98D0066A49B /* JSWithScope.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3511,6 +3518,7 @@
 				C21122E115DD9AB300790E3A /* GCThreadSharedData.cpp in Sources */,
 				14874AE315EBDE4A002E3587 /* JSNameScope.cpp in Sources */,
 				14874AE515EBDE4A002E3587 /* JSScope.cpp in Sources */,
+				1442566115EDE98D0066A49B /* JSWithScope.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

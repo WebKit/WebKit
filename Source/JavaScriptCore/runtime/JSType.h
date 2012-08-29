@@ -49,6 +49,7 @@ enum JSType {
     NumberObjectType,
     ErrorInstanceType,
     GlobalThisType,
+    WithScopeType,
 
     NameScopeObjectType,
     // VariableObjectType must be less than MOST of the types of its subclasses and only its subclasses.

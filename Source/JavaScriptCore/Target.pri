@@ -209,6 +209,7 @@ SOURCES += \
     runtime/JSONObject.cpp \
     runtime/JSPropertyNameIterator.cpp \
     runtime/JSSegmentedVariableObject.cpp \
+    runtime/JSWithScope.cpp \
     runtime/JSNameScope.cpp \
     runtime/JSScope.cpp \
     runtime/JSString.cpp \

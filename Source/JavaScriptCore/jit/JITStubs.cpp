@@ -54,6 +54,7 @@
 #include "JSNotAnObject.h"
 #include "JSPropertyNameIterator.h"
 #include "JSString.h"
+#include "JSWithScope.h"
 #include "NameInstance.h"
 #include "ObjectPrototype.h"
 #include "Operations.h"
@@ -3146,7 +3147,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_push_scope)
 
     JSObject* o = stackFrame.args[0].jsValue().toObject(stackFrame.callFrame);
     CHECK_FOR_EXCEPTION();
-    stackFrame.callFrame->setScopeChain(stackFrame.callFrame->scopeChain()->push(o));
+    stackFrame.callFrame->setScopeChain(stackFrame.callFrame->scopeChain()->push(JSWithScope::create(stackFrame.callFrame, o)));
     return o;
 }
 

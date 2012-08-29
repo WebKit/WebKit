@@ -208,6 +208,7 @@ SET(JavaScriptCore_SOURCES
     runtime/JSPropertyNameIterator.cpp
     runtime/JSSegmentedVariableObject.cpp
     runtime/JSNameScope.cpp
+    runtime/JSWithScope.cpp
     runtime/JSScope.cpp
     runtime/JSString.cpp
     runtime/JSStringJoiner.cpp

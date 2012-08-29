@@ -240,6 +240,7 @@ namespace JSC {
         Strong<Structure> regExpStructure;
         Strong<Structure> sharedSymbolTableStructure;
         Strong<Structure> structureChainStructure;
+        Strong<Structure> withScopeStructure;
 
         IdentifierTable* identifierTable;
         CommonIdentifiers* propertyNames;

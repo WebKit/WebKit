@@ -33,7 +33,7 @@ ASSERT_HAS_TRIVIAL_DESTRUCTOR(StrictEvalActivation);
 const ClassInfo StrictEvalActivation::s_info = { "Object", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(StrictEvalActivation) };
 
 StrictEvalActivation::StrictEvalActivation(ExecState* exec)
-    : JSNonFinalObject(exec->globalData(), exec->globalData().strictEvalActivationStructure.get())
+    : Base(exec->globalData(), exec->globalData().strictEvalActivationStructure.get())
 {
 }
 

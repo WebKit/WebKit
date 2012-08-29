@@ -4796,7 +4796,7 @@ skip_id_custom_self:
         CHECK_FOR_EXCEPTION();
 
         callFrame->uncheckedR(scope) = JSValue(o);
-        callFrame->setScopeChain(callFrame->scopeChain()->push(o));
+        callFrame->setScopeChain(callFrame->scopeChain()->push(JSWithScope(callFrame, o)));
 
         vPC += OPCODE_LENGTH(op_push_scope);
         NEXT_INSTRUCTION();

@@ -29,6 +29,7 @@
 #include "JSActivation.h"
 #include "JSGlobalObject.h"
 #include "JSNameScope.h"
+#include "JSWithScope.h"
 
 namespace JSC {
 
@@ -49,6 +50,15 @@ bool JSScope::isDynamicScope(bool& requiresDynamicChecks) const
     }
 
     return false;
+}
+
+JSObject* JSScope::objectAtScope(ScopeChainNode* scopeChain)
+{
+    JSObject* object = scopeChain->object.get();
+    if (object->structure()->typeInfo().type() == WithScopeType)
+        return jsCast<JSWithScope*>(object)->object();
+
+    return object;
 }
 
 JSValue JSScope::resolve(CallFrame* callFrame, const Identifier& identifier)
