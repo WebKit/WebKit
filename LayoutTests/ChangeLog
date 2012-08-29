@@ -1,5 +1,16 @@
 2012-08-29  Dominik Röttsches  <dominik.rottsches@intel.com>
 
+        [EFL] Move known crash issue to TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=95327
+
+        Unreviewed, EFL gardening.
+
+        Moving out x-frame-options-deny-meta-tag-in-body.html with details discussed in bug 94458.
+
+        * platform/efl/TestExpectations: Marked crash issue, discussed in bug 94458.
+
+2012-08-29  Dominik Röttsches  <dominik.rottsches@intel.com>
+
         [EFL] Unreviewed EFL gardening.
 
         EFL requires a newline at the end of the test expectations here.
