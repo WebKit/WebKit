@@ -1,3 +1,12 @@
+2012-08-28  Kenichi Ishibashi  <bashi@chromium.org>
+
+        style->fontMetrics() should be available when setting line-height
+        https://bugs.webkit.org/show_bug.cgi?id=93327
+
+        Reviewed by Darin Adler.
+
+        * fast/canvas/crash-set-font.html: Add a test case that sets both font-size and line-height.
+
 2012-08-28  Philip Rogers  <pdr@google.com>
 
         Unreviewed rebaseline after r126683

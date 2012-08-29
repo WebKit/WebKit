@@ -2060,11 +2060,12 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     styleResolver->applyPropertyToCurrentStyle(CSSPropertyFontVariant, parsedStyle->getPropertyCSSValue(CSSPropertyFontVariant).get());
     styleResolver->applyPropertyToCurrentStyle(CSSPropertyFontWeight, parsedStyle->getPropertyCSSValue(CSSPropertyFontWeight).get());
 
-    // As described in BUG66291, setting font-size on a font may entail a CSSPrimitiveValue::computeLengthDouble call,
+    // As described in BUG66291, setting font-size and line-height on a font may entail a CSSPrimitiveValue::computeLengthDouble call,
     // which assumes the fontMetrics are available for the affected font, otherwise a crash occurs (see http://trac.webkit.org/changeset/96122).
-    // The updateFont() call below updates the fontMetrics and ensures the proper setting of font-size.
+    // The updateFont() calls below update the fontMetrics and ensure the proper setting of font-size and line-height.
     styleResolver->updateFont();
     styleResolver->applyPropertyToCurrentStyle(CSSPropertyFontSize, parsedStyle->getPropertyCSSValue(CSSPropertyFontSize).get());
+    styleResolver->updateFont();
     styleResolver->applyPropertyToCurrentStyle(CSSPropertyLineHeight, parsedStyle->getPropertyCSSValue(CSSPropertyLineHeight).get());
 
     modifiableState().m_font = newStyle->font();
