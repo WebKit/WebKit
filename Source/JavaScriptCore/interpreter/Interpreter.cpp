@@ -2707,7 +2707,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
             ASSERT_UNUSED(end, iter != end);
         }
         ASSERT((*iter)->isVariableObject());
-        JSVariableObject* scope = jsCast<JSVariableObject*>(iter->get());
+        JSVariableObject* scope = jsCast<JSVariableObject*>(iter.get());
         callFrame->uncheckedR(dst) = scope->registerAt(index).get();
         ASSERT(callFrame->r(dst).jsValue());
         vPC += OPCODE_LENGTH(op_get_scoped_var);
@@ -2738,7 +2738,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         }
 
         ASSERT((*iter)->isVariableObject());
-        JSVariableObject* scope = jsCast<JSVariableObject*>(iter->get());
+        JSVariableObject* scope = jsCast<JSVariableObject*>(iter.get());
         ASSERT(callFrame->r(value).jsValue());
         scope->registerAt(index).set(*globalData, scope, callFrame->r(value).jsValue());
         vPC += OPCODE_LENGTH(op_put_scoped_var);
