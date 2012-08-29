@@ -48,7 +48,7 @@ public:
     void viewWillMoveToAnotherWindow();
 
 private:
-    PageClientImpl(WKView*);
+    explicit PageClientImpl(WKView*);
 
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
     virtual void setViewNeedsDisplay(const WebCore::IntRect&);

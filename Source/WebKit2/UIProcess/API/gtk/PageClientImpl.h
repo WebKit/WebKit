@@ -51,7 +51,7 @@ public:
     GtkWidget* viewWidget() { return m_viewWidget; }
 
 private:
-    PageClientImpl(GtkWidget*);
+    explicit PageClientImpl(GtkWidget*);
 
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
     virtual void setViewNeedsDisplay(const WebCore::IntRect&);

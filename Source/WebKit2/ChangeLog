@@ -1,3 +1,17 @@
+2012-08-28  Kangil Han  <kangil.han@samsung.com>
+
+        [WK2] Use explicit constructor in PageClientImpl.
+        https://bugs.webkit.org/show_bug.cgi?id=95170
+
+        Reviewed by Darin Adler.
+
+        Added explicit keyword in constructor of PageClientImpl in order to avoid implicit type conversion.
+
+        * UIProcess/API/gtk/PageClientImpl.h:
+        (PageClientImpl):
+        * UIProcess/API/mac/PageClientImpl.h:
+        (PageClientImpl):
+
 2012-08-28  Rik Cabanier  <cabanier@adobe.com>
 
         Add ENABLE_CSS_COMPOSITING flag to WebKit2 project
