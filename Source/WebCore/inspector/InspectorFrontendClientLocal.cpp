@@ -49,6 +49,7 @@
 #include "PlatformString.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
+#include "ScriptState.h"
 #include "Settings.h"
 #include "Timer.h"
 #include "UserGestureIndicator.h"
@@ -111,7 +112,6 @@ void InspectorFrontendClientLocal::Settings::setProperty(const String&, const St
 InspectorFrontendClientLocal::InspectorFrontendClientLocal(InspectorController* inspectorController, Page* frontendPage, PassOwnPtr<Settings> settings)
     : m_inspectorController(inspectorController)
     , m_frontendPage(frontendPage)
-    , m_frontendScriptState(0)
     , m_settings(settings)
     , m_frontendLoaded(false)
 {
@@ -124,7 +124,6 @@ InspectorFrontendClientLocal::~InspectorFrontendClientLocal()
     if (m_frontendHost)
         m_frontendHost->disconnectClient();
     m_frontendPage = 0;
-    m_frontendScriptState = 0;
     m_inspectorController = 0;
 }
 
@@ -132,10 +131,10 @@ void InspectorFrontendClientLocal::windowObjectCleared()
 {
     if (m_frontendHost)
         m_frontendHost->disconnectClient();
-    // FIXME: don't keep reference to the script state
-    m_frontendScriptState = scriptStateFromPage(debuggerWorld(), m_frontendPage);
+    
+    ScriptState* frontendScriptState = scriptStateFromPage(debuggerWorld(), m_frontendPage);
     m_frontendHost = InspectorFrontendHost::create(this, m_frontendPage);
-    ScriptGlobalObject::set(m_frontendScriptState, "InspectorFrontendHost", m_frontendHost.get());
+    ScriptGlobalObject::set(frontendScriptState, "InspectorFrontendHost", m_frontendHost.get());
 }
 
 void InspectorFrontendClientLocal::frontendLoaded()
