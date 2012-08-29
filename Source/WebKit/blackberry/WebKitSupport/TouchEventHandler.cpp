@@ -144,7 +144,7 @@ void TouchEventHandler::touchEventCancel()
             && !elementUnderFatFinger->renderer()->style()->affectedByActiveRules())
             break;
 
-        HitTestRequest request(HitTestRequest::FingerUp);
+        HitTestRequest request(HitTestRequest::TouchEvent | HitTestRequest::Release);
         // The HitTestResult point is not actually needed.
         HitTestResult result(IntPoint::zero());
         result.setInnerNode(elementUnderFatFinger);

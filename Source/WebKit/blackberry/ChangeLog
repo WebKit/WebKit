@@ -1,3 +1,13 @@
+2012-08-29  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Replace blackberry specific HitTestRequest::FingerUp by TouchEvent + Release
+        https://bugs.webkit.org/show_bug.cgi?id=95383
+
+        Reviewed by Rob Buis.
+
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::touchEventCancel):
+
 2012-08-29  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Adjust wtf include header style
