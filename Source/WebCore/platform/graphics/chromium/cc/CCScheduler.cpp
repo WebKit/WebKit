@@ -33,6 +33,7 @@ namespace WebCore {
 CCScheduler::CCScheduler(CCSchedulerClient* client, PassOwnPtr<CCFrameRateController> frameRateController)
     : m_client(client)
     , m_frameRateController(frameRateController)
+    , m_hasMoreResourceUpdates(false)
     , m_updateMoreResourcesPending(false)
 {
     ASSERT(m_client);
@@ -87,9 +88,10 @@ void CCScheduler::setMainThreadNeedsLayerTextures()
     processScheduledActions();
 }
 
-void CCScheduler::beginFrameComplete()
+void CCScheduler::beginFrameComplete(bool hasResourceUpdates)
 {
     TRACE_EVENT0("cc", "CCScheduler::beginFrameComplete");
+    m_hasMoreResourceUpdates = hasResourceUpdates;
     m_stateMachine.beginFrameComplete();
     processScheduledActions();
 }
@@ -136,13 +138,25 @@ void CCScheduler::vsyncTick()
 {
     if (m_updateMoreResourcesPending) {
         m_updateMoreResourcesPending = false;
-        m_stateMachine.beginUpdateMoreResourcesComplete(m_client->hasMoreResourceUpdates());
+        ASSERT(m_hasMoreResourceUpdates);
+        m_stateMachine.beginUpdateMoreResourcesComplete(true);
     }
     TRACE_EVENT0("cc", "CCScheduler::vsyncTick");
 
     m_stateMachine.didEnterVSync();
     processScheduledActions();
     m_stateMachine.didLeaveVSync();
+}
+
+void CCScheduler::updateResourcesComplete()
+{
+    TRACE_EVENT0("cc", "CCScheduler::updateResourcesComplete");
+    if (m_updateMoreResourcesPending) {
+        m_updateMoreResourcesPending = false;
+        m_stateMachine.beginUpdateMoreResourcesComplete(false);
+    }
+    m_hasMoreResourceUpdates = false;
+    processScheduledActions();
 }
 
 CCSchedulerStateMachine::Action CCScheduler::nextAction()
@@ -174,7 +188,7 @@ void CCScheduler::processScheduledActions()
             m_client->scheduledActionBeginFrame();
             break;
         case CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES:
-            if (m_client->hasMoreResourceUpdates()) {
+            if (m_hasMoreResourceUpdates) {
                 m_client->scheduledActionUpdateMoreResources(m_frameRateController->nextTickTimeIfActivated());
                 m_updateMoreResourcesPending = true;
             } else

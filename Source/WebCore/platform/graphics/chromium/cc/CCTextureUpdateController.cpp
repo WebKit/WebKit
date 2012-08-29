@@ -113,8 +113,9 @@ void CCTextureUpdateController::updateTextures(CCResourceProvider* resourceProvi
         copier->flush();
 }
 
-CCTextureUpdateController::CCTextureUpdateController(CCThread* thread, PassOwnPtr<CCTextureUpdateQueue> queue, CCResourceProvider* resourceProvider, TextureCopier* copier, TextureUploader* uploader)
-    : m_timer(adoptPtr(new CCTimer(thread, this)))
+CCTextureUpdateController::CCTextureUpdateController(CCTextureUpdateControllerClient* client, CCThread* thread, PassOwnPtr<CCTextureUpdateQueue> queue, CCResourceProvider* resourceProvider, TextureCopier* copier, TextureUploader* uploader)
+    : m_client(client)
+    , m_timer(adoptPtr(new CCTimer(thread, this)))
     , m_queue(queue)
     , m_resourceProvider(resourceProvider)
     , m_copier(copier)
@@ -128,34 +129,40 @@ CCTextureUpdateController::~CCTextureUpdateController()
 {
 }
 
-bool CCTextureUpdateController::hasMoreUpdates() const
-{
-    return m_queue->hasMoreUpdates();
-}
-
 void CCTextureUpdateController::updateMoreTextures(double monotonicTimeLimit)
 {
+    ASSERT(monotonicTimeLimit >= m_monotonicTimeLimit);
     m_monotonicTimeLimit = monotonicTimeLimit;
 
-    if (!m_queue->hasMoreUpdates())
+    // Update already in progress.
+    if (m_timer->isActive())
         return;
 
     // Call updateMoreTexturesNow() directly unless it's the first update
     // attempt. This ensures that we empty the update queue in a finite
     // amount of time.
     if (m_firstUpdateAttempt) {
-        updateMoreTexturesIfEnoughTimeRemaining();
+        // Post a 0-delay task when no updates were left. When it runs,
+        // updateTexturesCompleted() will be called.
+        if (!updateMoreTexturesIfEnoughTimeRemaining())
+            m_timer->startOneShot(0);
+
         m_firstUpdateAttempt = false;
     } else
         updateMoreTexturesNow();
 }
 
+void CCTextureUpdateController::discardUploads()
+{
+    // CCTextureUpdateControllerClient::updateTexturesCompleted will be
+    // called when all remaining texture copies are done.
+    m_queue->clearUploads();
+}
+
 void CCTextureUpdateController::onTimerFired()
 {
-    if (!m_queue->hasMoreUpdates())
-        return;
-
-    updateMoreTexturesIfEnoughTimeRemaining();
+    if (!updateMoreTexturesIfEnoughTimeRemaining())
+        m_client->updateTexturesCompleted();
 }
 
 double CCTextureUpdateController::monotonicTimeNow() const
@@ -173,11 +180,16 @@ size_t CCTextureUpdateController::updateMoreTexturesSize() const
     return textureUpdatesPerTick;
 }
 
-void CCTextureUpdateController::updateMoreTexturesIfEnoughTimeRemaining()
+bool CCTextureUpdateController::updateMoreTexturesIfEnoughTimeRemaining()
 {
+    if (!m_queue->hasMoreUpdates())
+        return false;
+
     bool hasTimeRemaining = monotonicTimeNow() < m_monotonicTimeLimit - updateMoreTexturesTime();
     if (hasTimeRemaining)
         updateMoreTexturesNow();
+
+    return true;
 }
 
 void CCTextureUpdateController::updateMoreTexturesNow()

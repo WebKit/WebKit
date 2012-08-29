@@ -1,3 +1,15 @@
+2012-08-28  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Scheduler will never process a commit until it receives a vsync tick.
+        https://bugs.webkit.org/show_bug.cgi?id=94721
+
+        Reviewed by James Robinson.
+
+        * tests/CCSchedulerTest.cpp:
+        (WebKitTests::FakeCCSchedulerClient::reset):
+        (WebKitTests::TEST):
+        * tests/CCTextureUpdateControllerTest.cpp:
+
 2012-08-28  Adam Barth  <abarth@webkit.org>
 
         Fix ASSERT in fast/events/touch/gesture/context-menu-on-two-finger-tap.html
