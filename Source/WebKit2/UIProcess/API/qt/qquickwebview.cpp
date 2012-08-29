@@ -1450,13 +1450,8 @@ QQuickWebPage* QQuickWebViewExperimental::page()
 }
 
 /*!
-    \qmlclass WebView QWebView
+    \qmltype WebView
     \inqmlmodule QtWebKit 3.0
-*/
-
-/*!
-   \qmlmethod WebView(Item parent)
-   \brief Constructs a WebView with a parent.
 */
 
 QQuickWebView::QQuickWebView(QQuickItem* parent)

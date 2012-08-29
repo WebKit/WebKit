@@ -1,3 +1,17 @@
+2012-08-29  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix doc generation with make docs
+        https://bugs.webkit.org/show_bug.cgi?id=95340
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix doc target, similar to what the other Qt 5 modules are using and comment out the indexes
+        line, because cross-referencing doesn't work right now and the use of the QTDIR environment
+        is wrong, too.
+
+        * docs/docs.pri:
+        * docs/qtwebkit.qdocconf:
+
 2012-08-22  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] REGRESSION(r125428): fast/profiler/nested-start-and-stop-profiler.html fails
