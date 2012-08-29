@@ -1,3 +1,23 @@
+2012-08-29  Tony Chang  <tony@chromium.org>
+
+        r126257 broke css3/flexbox/flexitem.html
+        https://bugs.webkit.org/show_bug.cgi?id=94720
+
+        Reviewed by Ojan Vafai.
+
+        Move the failing test case into a new file so we can re-enable the
+        rest of the tests. We probably need to add some debugging information
+        to the failing test case to identify the cause of flakiness.
+
+        * css3/flexbox/flexitem-expected.txt: Remove flaky test case.
+        * css3/flexbox/flexitem-stretch-image-expected.txt: Added.
+        * css3/flexbox/flexitem-stretch-image.html: Added.
+        * css3/flexbox/flexitem.html: Remove flaky test case.
+        * platform/chromium/TestExpectations: Change failure to new test.
+        * platform/efl/TestExpectations: Change failure to new test.
+        * platform/mac/Skipped: Remove so we can get flakiness information.
+        * platform/mac/TestExpectations: Mark new test as flaky.
+
 2012-08-29  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Throw TypeError for invalid version parameters

@@ -855,7 +855,7 @@ BUGWK88729 SKIP : userscripts/window-onerror-for-isolated-world-2.html = PASS
 BUGWK88031 : fast/multicol/span/generated-child-split-flow-crash.html = TEXT
 
 // Flexbox test failing on EFL.
-BUGWK88984 : css3/flexbox/flexitem.html = TEXT
+BUGWK95366 : css3/flexbox/flexitem-stretch-image.html = TEXT
 
 // New test introduced in r122663 failing on GTK and Qt as well
 BUGWK91339 : css2.1/20110323/vertical-align-boxes-001.htm = IMAGE
