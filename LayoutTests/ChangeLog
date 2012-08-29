@@ -1,3 +1,29 @@
+2012-08-29  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Clean up Skipped file
+        https://bugs.webkit.org/show_bug.cgi?id=95306
+
+        Unreviewed EFL gardening.
+
+        Remove from Skipped list several test cases that are now passing
+        consistently on EFL port. Some other tests have been moved to
+        TestExpectations since we need to get rid of the Skipped list
+        progressively.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/Skipped:
+        * platform/efl/TestExpectations:
+        * platform/efl/editing/selection/collapse-selection-in-bidi-expected.txt: Added.
+        * platform/efl/editing/selection/extend-selection-bidi-expected.png: Added.
+        * platform/efl/editing/selection/extend-selection-bidi-expected.txt: Added.
+        * platform/efl/fast/box-shadow/shadow-tiling-artifact-expected.txt: Added.
+        * platform/efl/fast/forms/color/input-color-onchange-event-expected.txt: Added.
+        * platform/efl/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.png: Added.
+        * platform/efl/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.txt: Added.
+        * platform/efl/fast/replaced/object-with-embed-url-param-expected.txt: Added.
+        * platform/efl/fast/text/complex-synthetic-bold-space-width-expected.png: Added.
+        * platform/efl/fast/text/complex-synthetic-bold-space-width-expected.txt: Added.
+
 2012-08-29  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL] Rebaseline after r126864

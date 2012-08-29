@@ -24,7 +24,6 @@ fast/events/touch/gesture
 fast/events/touch/page-scaled-touch-gesture-click.html
 
 # EFL's port requires implementation of ClipboardEfl and DragClientEfl classes in order to suppport drag n drop functionality
-fast/events/drag-and-drop-subframe-dataTransfer.html
 editing/pasteboard/4947130.html
 editing/pasteboard/dataTransfer-setData-getData.html
 editing/selection/4895428-1.html
@@ -99,13 +98,6 @@ editing/text-iterator/basic-iteration.html
 
 # EFL's LayoutTestController does not implement setMediaType
 fast/media/print-restores-previous-mediatype.html
-
-# defined(ENABLE_INPUT_TYPE_COLOR) is disabled
-fast/forms/color/input-color-onchange-event.html
-
-# ENABLE(LINK_PRERENDER) is disabled.
-fast/dom/HTMLLinkElement/prerender-insert-after-stop.html
-fast/dom/HTMLLinkElement/prerender-remove-after-stop.html
 
 # EFL's LayoutTestController does not implement keepWebHistory
 fast/history/visited-generated-content-test.html
@@ -212,10 +204,6 @@ fast/dom/HTMLAnchorElement/anchor-download.html
 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
 fast/dom/HTMLAnchorElement/anchor-nodownload.html
 
-# The EFL port has no support for x-webkit-speech (and addMockSpeechInputResult in LayoutTestController)
-fast/speech
-fast/events/constructors/speech-recognition-event-constructor.html
-
 # The EFL port has no support for plugins
 fast/dom/Window/Plug-ins.html
 fast/frames/iframe-reparenting-plugins.html
@@ -228,32 +216,9 @@ http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
 java
 plugins
 
-# The EFL port has no support for accessibility features
-accessibility
-
-# The EFL port has no support for device motion and orientation
-fast/dom/DeviceMotion
-fast/dom/DeviceOrientation
-fast/dom/Orientation
-fast/dom/Window/window-properties-device-orientation.html
-
-# The EFL port has no support for WebGL (the rest is skipped automatically)
-http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
-http/tests/security/webgl-remote-read-remote-image-allowed.html
-http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
-
-# The EFL port has no support for desktop notifications
-fast/notifications
-
 # The EFL port has no support for user gesture (dumpUserGestureInFrameLoadCallbacks in DRT and in the port itself as well)
 fast/frames/location-redirect-user-gesture.html
 fast/frames/meta-refresh-user-gesture.html
-
-# The EFL port has no support for usermedia
-fast/mediastream
-
-# For now, Web Audio API is disabled
-webaudio
 
 # The EFL port has no support for loading a PDF as an image
 fast/images/pdf-as-background.html
@@ -266,39 +231,12 @@ fast/replaced/pdf-as-image.html
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
-# Fails because of the security policy of the user agent?
-# http://webkit.org/b/79604
-fast/mutation/database-callback-delivery.html
-
-# EXIF orientation support has not yet been implemented for this platform
-# http://webkit.org/b/19688
-fast/images/exif-orientation.html
-fast/images/exif-orientation-css.html
-
 # No CORS support for media elements is implemented yet.
 http/tests/security/video-cross-origin-readback.html
-
-# --------------------------------
-# Tests which are expected to fail
-# --------------------------------
-
-# Deletion UI is a Mail-ism. We don't need to wory about this. (via Chromium)
-editing/deleting/deletionUI-single-instance.html
-fast/dom/Element/id-in-deletebutton.html
-
-# This test is out-dated since r95899.
-# https://bugs.webkit.org/show_bug.cgi?id=65709
-canvas/philip/tests/2d.drawImage.outsidesource.html
-
-# This test verifies that a mismatch reftest will fail as intended if both results are same.
-fast/harness/sample-fail-mismatch-reftest.html
 
 # ----------------------------------------
 # Tests which also fail in other platforms
 # ----------------------------------------
-
-# Should be moved to platform/mac <rdar://5621425> (via win/, chromium/ and wincairo/)
-http/tests/misc/willCacheResponse-delegate-callback.html
 
 # Tests that fail across all platforms. Even though some platforms don't skip these tests, there are platform-specific results generated that make these tests 'pass' (via GTK+).
 canvas/philip/tests/2d.composite.operation.clear.html
@@ -317,13 +255,6 @@ canvas/philip/tests/2d.text.draw.baseline.ideographic.html
 canvas/philip/tests/2d.text.draw.baseline.middle.html
 canvas/philip/tests/2d.text.draw.baseline.top.html
 canvas/philip/tests/type.prototype.html
-
-# Test takes too long in a debug build
-# https://bugs.webkit.org/show_bug.cgi?id=67921
-perf/show-hide-table-rows.html
-
-# This test is too slow to pass
-jquery/manipulation.html
 
 # Other failing Sputnik tests
 sputnik/Unicode/Unicode_510/S7.6_A3.1.html
@@ -404,10 +335,6 @@ compositing/geometry/vertical-scroll-composited.html
 fast/loader/onload-willSendRequest-null-for-script.html
 fast/loader/willSendRequest-null-for-preload.html
 
-# BUG: onresize event is not being emitted for iframes
-fast/dynamic/paused-event-dispatch.html
-fast/frames/flattening/iframe-flattening-crash.html
-
 # BUG: new windows do not have scrollbars
 fast/dom/Window/new-window-opener.html
 
@@ -423,22 +350,10 @@ fast/dom/Window/window-screen-properties.html
 # BUG: wrong test result, window should not have been scrolled
 fast/events/attempt-scroll-with-no-scrollbars.html
 
-# BUG: focus bugs
-fast/events/frame-tab-focus.html
-fast/forms/focus2.html
-
-# BUG: buggy drag'n'drop support in EventSender
-fast/events/drag-in-frames.html
-fast/events/drag-parent-node.html
-
 # BUG: no mouseout event being sent
 fast/events/mouseout-on-window.html
 
 # BUG: encoding-related problems
-fast/text/offsetForPosition-cluster-at-zero.html
-fast/text/regional-indicator-symobls.html
-fast/text/zero-width-characters-complex-script.html
-fast/text/international/thai-offsetForPosition-inside-character.html
 fast/xsl/sort-locale.xml
 
 # BUG: <canvas>'s toDataURL has problems with non-image/png mimetypes
@@ -457,21 +372,12 @@ editing/inserting/caret-position.html
 editing/pasteboard/interchange-newline-1.html
 editing/selection/5825350-1.html
 editing/selection/5825350-2.html
-editing/selection/collapse-selection-in-bidi.html
-editing/selection/extend-selection-bidi.html 
-editing/selection/extend-to-line-boundary.html
 editing/selection/mixed-editability-10.html
 editing/selection/move-left-right.html
 editing/selection/select-bidi-run.html
-fast/box-shadow/shadow-tiling-artifact.html
-fast/canvas/webgl
 fast/dom/horizontal-scrollbar-in-rtl.html
 fast/dom/vertical-scrollbar-in-rtl.html
 fast/events/overflow-viewport-renderer-deleted.html
-fast/events/scale-and-scroll-body.html
-fast/events/scale-and-scroll-iframe-body.html
-fast/events/scale-and-scroll-iframe-window.html
-fast/events/scale-and-scroll-window.html
 fast/forms/listbox-onchange.html
 fast/forms/onselect-textarea.html
 fast/forms/onselect-textfield.html
@@ -486,14 +392,7 @@ fast/repaint/selection-clear.html
 fast/repaint/table-cell-overflow.html
 fast/repaint/text-emphasis-h.html
 fast/replaced/invalid-object-with-fallback.html
-fast/replaced/object-with-embed-url-param.html
-fast/text/complex-synthetic-bold-space-width.html
-fast/text/justification-padding-mid-word.html
 fast/text/midword-break-after-breakable-char.html
-fast/events/tab-focus-anchor.html
-fast/history/back-forward-reset-after-error-handling.html
-fast/repaint/no-caret-repaint-in-non-content-editable-element.html
-http/tests/canvas/webgl/origin-clean-conformance.html
 http/tests/navigation/go-back-to-error-page.html
 loader/go-back-to-different-window-size.html
 userscripts/user-script-plugin-document.html
@@ -700,20 +599,7 @@ svg/as-image/image-respects-deviceScaleFactor.html
 # Skipped until new WebSocket protocol is implemented. http://webkit.org/b/50099
 http/tests/websocket/tests/hybi/
 
-# Pointer Lock is not implemented.
-pointer-lock/
-http/tests/pointer-lock/
-
-# Tests for MediaSource API. Feature is not yet functional.
-# https://bugs.webkit.org/show_bug.cgi?id=64731
-http/tests/media/media-source/
-
-# Encrypted Media Extensions are not enabled.
-media/encrypted-media/
-fast/events/constructors/media-key-event-constructor.html
-
 # Needs a rebaseline
-fast/events/constructors/webgl-context-event-constructor.html
 fast/events/dont-loose-last-event.html
 fast/events/drag-and-drop-set-drag-data-arguments.html
 fast/events/drag-dataTransfer-live-attributes.html
@@ -1022,10 +908,6 @@ animations/additive-transform-animations.html
 animations/animation-border-overflow.html
 animations/animation-add-events-in-handler.html
 animations/cross-fade-webkit-mask-box-image.html
-compositing/webgl/webgl-background-color.html
-compositing/webgl/webgl-no-alpha.html
-compositing/webgl/webgl-nonpremultiplied-blend.html
-compositing/webgl/webgl-reflection.html
 editing/input/caret-at-the-edge-of-input.html
 editing/unsupported-content/list-delete-001.html 
 editing/unsupported-content/list-delete-003.html 

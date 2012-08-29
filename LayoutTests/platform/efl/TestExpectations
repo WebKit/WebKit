@@ -45,6 +45,13 @@ BUGWK83897 SKIP : fast/regions = PASS
 BUGWK83897 SKIP : inspector/styles/protocol-css-regions-commands.html = PASS
 BUGWK83897 SKIP : inspector/styles/region-style-crash.html = PASS
 
+// Deletion UI is a Mail-ism. We don't need to wory about this. (via Chromium)
+BUGWKEFL SKIP : editing/deleting/deletionUI-single-instance.html = PASS
+BUGWKEFL SKIP : fast/dom/Element/id-in-deletebutton.html = PASS
+
+// This test is out-dated since r95899.
+BUGWK65709 : canvas/philip/tests/2d.drawImage.outsidesource.html = TEXT
+
 // Exclusions implementation not complete yet.
 BUGWK83898 SKIP : fast/exclusions = PASS
 
@@ -94,7 +101,10 @@ BUGWK86623 : editing/pasteboard/drop-text-events.html = TEXT
 BUGWK86623 : editing/pasteboard/get-data-text-plain-drop.html = TEXT
 BUGWK86623 : fast/dom/shadow/drop-event-for-input-in-shadow.html = TEXT
 BUGWK86623 : fast/dom/shadow/drop-event-in-shadow.html = TEXT
+BUGWK86623 SKIP : fast/events/drag-and-drop-subframe-dataTransfer.html = TEXT
 BUGWK86623 : fast/events/drag-display-none-element.html = TEXT
+BUGWK86623 : fast/events/drag-in-frames.html = TEXT
+BUGWK86623 : fast/events/drag-parent-node.html = TEXT
 BUGWK86623 : http/tests/local/fileapi/file-last-modified-after-delete.html = TEXT
 
 // Missing drag'n'drop, needs baselines
@@ -111,6 +121,9 @@ BUGWK95182 : fast/css/sticky = IMAGE
 // Testcase assumes a thumb width of 12px, default there uses 29px.
 BUGWK95071 : fast/forms/range/slider-in-multi-column.html = TEXT
 BUGWK95071 : fast/forms/range/slider-transformed.html = TEXT
+
+// TestRunner does not implement handleErrorPages()
+BUGWKEFL : fast/history/back-forward-reset-after-error-handling.html = TEXT
 
 // The EFL port has no support for webarchives.
 BUGWKEFL SKIP : webarchive = PASS
@@ -147,7 +160,18 @@ BUGWK84635 SKIP : fast/dom/HTMLDialogElement = TEXT
 BUGWK85532 SKIP : fast/sub-pixel = MISSING
 
 // DeviceOrientation support is not enabled by default.
+BUGWKEFL SKIP : fast/dom/DeviceOrientation = TEXT
+BUGWKEFL SKIP : fast/dom/Window/window-properties-device-orientation.html = TEXT
 BUGWKEFL SKIP : inspector/device-orientation-success.html = TEXT
+
+// EFL port does not enable ORIENTATION_EVENTS
+BUGWK90928 SKIP : fast/dom/Orientation = TEXT
+
+// EFL port does not implement DeviceMotion
+BUGWK95300 SKIP : fast/dom/DeviceMotion = TEXT
+
+// The EFL port has no support for accessibility features
+BUGWKEFL SKIP : accessibility = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // CRASHES
@@ -505,7 +529,17 @@ BUGWK86730 : compositing/layer-creation/fixed-position-scroll.html = MISSING
 // EFL does not support WebGL
 BUGWK77219 : compositing/backface-visibility/backface-visibility-webgl.html = TEXT
 BUGWK77219 : compositing/visibility/visibility-simple-webgl-layer.html = TEXT
+BUGWK77219 SKIP : compositing/webgl/webgl-background-color.html = MISSING
+BUGWK77219 SKIP : compositing/webgl/webgl-no-alpha.html = MISSING
+BUGWK77219 SKIP : compositing/webgl/webgl-nonpremultiplied-blend.html = MISSING
+BUGWK77219 SKIP : compositing/webgl/webgl-reflection.html = MISSING
+BUGWK77219 SKIP : fast/canvas/webgl = TEXT
 BUGWK77219 : fast/dom/constructed-objects-prototypes.html = TEXT
+BUGWK77219 SKIP : fast/events/constructors/webgl-context-event-constructor.html = TEXT
+BUGWK77219 SKIP : http/tests/canvas/webgl/origin-clean-conformance.html = TEXT
+BUGWK77219 SKIP : http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html = TEXT
+BUGWK77219 SKIP : http/tests/security/webgl-remote-read-remote-image-allowed.html = TEXT
+BUGWK77219 SKIP : http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html = TEXT
 BUGWK77219 : inspector/profiler/webgl-profiler-api-changes.html = TEXT
 
 BUGWK84759 : ietestcenter/css3/multicolumn/column-containing-block-001.htm = IMAGE
@@ -533,11 +567,42 @@ BUGWK88045 : fast/dom/gc-attribute-node.html = TEXT
 BUGWKEFL SKIP : fast/canvas/canvas-toDataURL-webp.html = PASS
 BUGWKEFL SKIP : fast/images/webp-image-decoding.html = PASS
 
+// Requires MEDIA_SOURCE support.
+BUGWK95296 SKIP : http/tests/media/media-source = TEXT
+
+// Requires ENCRYPTED_MEDIA support.
+BUGWK95297 SKIP : media/encrypted-media = TEXT
+BUGWK95297 SKIP : fast/events/constructors/media-key-event-constructor.html = TEXT
+
+// Requires POINTER_LOCK support.
+BUGWK88080 SKIP : pointer-lock = TEXT
+BUGWK88080 SKIP : http/tests/pointer-lock = TEXT
+
+// EXIF orientation support has not yet been implemented for EFL port
+BUGWK95299 SKIP : fast/images/exif-orientation.html = PASS
+BUGWK95299 SKIP : fast/images/exif-orientation-css.html = PASS
+
+// Requires WEB_AUDIO support.
+BUGWK91738 SKIP : webaudio = TEXT
+
+// Requires MEDIA_STREAM support.
+BUGWK87662 SKIP : fast/mediastream = TEXT
+
+// The EFL port has no support for x-webkit-speech
+BUGWK95302 SKIP : fast/speech = TEXT
+BUGWK95302 SKIP : fast/events/constructors/speech-recognition-event-constructor.html = TEXT
+
+// Requires support for Web notifications
+BUGWK73544 SKIP : fast/notifications = TEXT
+
 // This tests fails by one on 32 bits machines due to rounding issues.
 BUGWKEFL : fast/css/percentage-non-integer.html = TEXT PASS
 
 // Test is timeouting, passes in all other platforms.
 BUGWKEFL SKIP : fast/css/device-aspect-ratio.html = PASS
+
+// The test is too slow on Debug bot and randomly fails
+BUGWK61932 DEBUG : jquery/manipulation.html = PASS TEXT TIMEOUT
 
 // These test -apple- prefixed CSS properties, which we don't support.
 WONTFIX SKIP : fast/css/apple-prefix.html = TEXT
