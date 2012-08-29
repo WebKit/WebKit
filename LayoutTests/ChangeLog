@@ -1,3 +1,13 @@
+2012-08-28  Adam Barth  <abarth@webkit.org>
+
+        crypto.getRandomValues should throw an exception when given a big array
+        https://bugs.webkit.org/show_bug.cgi?id=95269
+
+        Reviewed by Eric Seidel.
+
+        * security/crypto-random-values-limits-expected.txt: Added.
+        * security/crypto-random-values-limits.html: Added.
+
 2012-08-28  Tom Sepez  <tsepez@chromium.org>
 
         CSP doesn't turn off eval, etc. in Web Workers

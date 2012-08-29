@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/utilities.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Tests the limits of crypto.randomValues.");
+
+if (!window.ArrayBuffer)
+    debug("This test requres ArrayBuffers to run!");
+
+shouldBe("'crypto' in window", "true");
+shouldBe("'getRandomValues' in window.crypto", "true");
+
+try {
+    var largeArray = new Uint8Array(66000);
+
+    shouldThrow("crypto.getRandomValues(largeArray)");
+} catch(ex) {
+    debug(ex);
+}
+
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
+
+
