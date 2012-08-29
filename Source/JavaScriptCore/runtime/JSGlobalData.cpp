@@ -120,7 +120,11 @@ static bool enableAssembler(ExecutableAllocator& executableAllocator)
 #endif
 
 JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType, HeapType heapType)
-    : heap(this, heapType)
+    :
+#if ENABLE(ASSEMBLER)
+      executableAllocator(*this),
+#endif
+      heap(this, heapType)
     , globalDataType(globalDataType)
     , clientData(0)
     , topCallFrame(CallFrame::noCaller())
@@ -146,9 +150,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , identifierTable(globalDataType == Default ? wtfThreadData().currentIdentifierTable() : createIdentifierTable())
     , propertyNames(new CommonIdentifiers(this))
     , emptyList(new MarkedArgumentBuffer)
-#if ENABLE(ASSEMBLER)
-    , executableAllocator(*this)
-#endif
     , parserArena(adoptPtr(new ParserArena))
     , keywords(adoptPtr(new Keywords(this)))
     , interpreter(0)

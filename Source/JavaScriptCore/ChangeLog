@@ -1,3 +1,19 @@
+2012-08-28  Yong Li  <yoli@rim.com>
+
+        ExecutableAllocator should be destructed after Heap
+        https://bugs.webkit.org/show_bug.cgi?id=95244
+
+        Reviewed by Rob Buis.
+
+        RIM PR# 199364.
+        Make ExecutableAllocator the first member in JSGlobalData.
+        Existing Web Worker tests can show the issue.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+
 2012-08-29  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the Windows build.
@@ -31,9 +47,6 @@
         chain, we'll need an adapter object to hold the data ScopeChainNode
         currently holds.
 
-        * runtime/JSGlobalData.cpp:
-        (JSC::JSGlobalData::JSGlobalData):
-        * runtime/JSGlobalData.h:
         (JSGlobalData): Support for JSWithScope.
 
         * runtime/JSScope.cpp:

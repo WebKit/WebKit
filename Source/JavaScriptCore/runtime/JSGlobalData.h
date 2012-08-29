@@ -193,7 +193,15 @@ namespace JSC {
         JSLock m_apiLock;
 
     public:
-        Heap heap; // The heap is our first data member to ensure that it's destructed after all the objects that reference it.
+#if ENABLE(ASSEMBLER)
+        // executableAllocator should be destructed after the heap, as the heap can call executableAllocator
+        // in its destructor.
+        ExecutableAllocator executableAllocator;
+#endif
+
+        // The heap should be just after executableAllocator and before other members to ensure that it's
+        // destructed after all the objects that reference it.
+        Heap heap;
 
         GlobalDataType globalDataType;
         ClientData* clientData;
@@ -275,10 +283,6 @@ namespace JSC {
         {
             return m_enabledProfiler;
         }
-
-#if ENABLE(ASSEMBLER)
-        ExecutableAllocator executableAllocator;
-#endif
 
 #if !ENABLE(JIT)
         bool canUseJIT() { return false; } // interpreter only
