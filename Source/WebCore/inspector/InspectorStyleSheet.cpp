@@ -737,12 +737,18 @@ String InspectorStyleSheet::finalURL() const
 
 void InspectorStyleSheet::reparseStyleSheet(const String& text)
 {
-    CSSStyleSheet::RuleMutationScope mutationScope(m_pageStyleSheet.get());
-    m_pageStyleSheet->contents()->clearRules();
-    m_pageStyleSheet->contents()->parseString(text);
-    m_pageStyleSheet->clearChildRuleCSSOMWrappers();
-    m_inspectorStyles.clear();
-    fireStyleSheetChanged();
+    {
+        // Have a separate scope for clearRules() (bug 95324).
+        CSSStyleSheet::RuleMutationScope mutationScope(m_pageStyleSheet.get());
+        m_pageStyleSheet->contents()->clearRules();
+    }
+    {
+        CSSStyleSheet::RuleMutationScope mutationScope(m_pageStyleSheet.get());
+        m_pageStyleSheet->contents()->parseString(text);
+        m_pageStyleSheet->clearChildRuleCSSOMWrappers();
+        m_inspectorStyles.clear();
+        fireStyleSheetChanged();
+    }
 }
 
 bool InspectorStyleSheet::setText(const String& text)

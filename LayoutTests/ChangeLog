@@ -1,3 +1,16 @@
+2012-08-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Page with @import and :last-child in an edited stylesheet will crash
+        https://bugs.webkit.org/show_bug.cgi?id=95324
+
+        Reviewed by Antti Koivisto.
+
+        * inspector/styles/import-pseudoclass-crash-expected.txt: Added.
+        * inspector/styles/import-pseudoclass-crash.html: Added.
+        * inspector/styles/resources/import-pseudoclass-crash-empty.css: Added.
+        * inspector/styles/resources/import-pseudoclass-crash.css: Added.
+        (:last-child):
+
 2012-08-29  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Turn workspace into a container of UiSourceCodes put in different projects.

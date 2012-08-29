@@ -1,0 +1,5 @@
+@import url("import-pseudoclass-crash-empty.css");
+
+:last-child {
+  color: #000;
+}
