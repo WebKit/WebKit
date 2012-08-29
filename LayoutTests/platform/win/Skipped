@@ -2139,4 +2139,7 @@ fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks.html
 fast/inline/absolute-positioned-inline-in-centred-block.html
 fast/css/absolute-child-with-percent-height-inside-relative-parent.html
 
-
+# These tests have different results for NRWT and ORWT, skipping on OWRT for now
+editing/deleting/delete-br-004.html
+editing/deleting/delete-br-005.html
+editing/deleting/delete-br-006.html

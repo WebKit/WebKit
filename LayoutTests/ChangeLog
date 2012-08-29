@@ -1,3 +1,13 @@
+2012-08-29  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed Gardening: editing/delete/br-004(5)(6) failing on Windows (old run webkit tests)
+        https://bugs.webkit.org/show_bug.cgi?id=95391
+
+        Looks like NRWT expects different results for these tests than ORWT, as per http://trac.webkit.org/changeset/90490.
+        Adding these three failing tests to skip list to get bots greener.
+
+        * platform/win/Skipped:
+
 2012-08-29  Florin Malita  <fmalita@chromium.org>
 
         Unreviewed, adjusting reftest mask to avoid spurious Mac failures.
