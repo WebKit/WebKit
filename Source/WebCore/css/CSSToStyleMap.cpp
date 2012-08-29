@@ -361,7 +361,7 @@ void CSSToStyleMap::mapAnimationIterationCount(Animation* animation, CSSValue* v
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     if (primitiveValue->getIdent() == CSSValueInfinite)
-        animation->setIterationCount(-1);
+        animation->setIterationCount(Animation::IterationCountInfinite);
     else
         animation->setIterationCount(primitiveValue->getFloatValue());
 }
