@@ -1,3 +1,18 @@
+2012-08-29  Jon Lee  <jonlee@apple.com>
+
+        Update TestRunner API for web notifications
+        https://bugs.webkit.org/show_bug.cgi?id=95093
+        <rdar://problem/12179649>
+
+        Reviewed by Alexey Proskuryakov.
+
+        As it turns out the patch for this accidentally got squashed into the commit for
+        bug 95099 (r126909). This amendment patch adds some comments about the renaming
+        of the older TestRunner API for web notifications.
+
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner):
+
 2012-08-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126972.

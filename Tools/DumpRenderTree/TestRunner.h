@@ -136,7 +136,9 @@ public:
     JSRetainPtr<JSStringRef> platformName() const;
 #endif
 
+    // Legacy here refers to the old TestRunner API for handling web notifications, not the legacy web notification API.
     void ignoreLegacyWebNotificationPermissionRequests();
+    // Legacy here refers to the old TestRunner API for handling web notifications, not the legacy web notification API.
     void simulateLegacyWebNotificationClick(JSStringRef title);
     void grantWebNotificationPermission(JSStringRef origin);
     void denyWebNotificationPermission(JSStringRef origin);
@@ -418,6 +420,7 @@ private:
     bool m_useDeferredFrameLoading;
     bool m_shouldPaintBrokenImage;
     bool m_shouldStayOnPageAfterHandlingBeforeUnload;
+    // FIXME 81697: This variable most likely will be removed once we have migrated the tests from fast/notifications to http/tests/notifications.
     bool m_areLegacyWebNotificationPermissionRequestsIgnored;
     bool m_customFullScreenBehavior;
 
