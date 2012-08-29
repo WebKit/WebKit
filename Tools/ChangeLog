@@ -1,3 +1,14 @@
+2012-08-29  Kevin Funk  <kevin.funk@kdab.com>
+
+        Fix check-webkit-style (and probably others) when WebKit is in a git submodule
+        https://bugs.webkit.org/show_bug.cgi?id=95177
+
+        Reviewed by Dirk Pranke.
+
+        Find the real checkout root by using 'git rev-parse --show-toplevel' instead of '--git-dir'
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+
 2012-08-29  Dirk Pranke  <dpranke@chromium.org>
 
         webkit-patch rebaseline-expectations wrongly touches other platforms' TestExpectations

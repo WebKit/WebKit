@@ -109,8 +109,7 @@ class Git(SCM, SVNRepository):
 
     def find_checkout_root(self, path):
         # "git rev-parse --show-cdup" would be another way to get to the root
-        git_output = self._executive.run_command([self.executable_name, 'rev-parse', '--git-dir'], cwd=(path or "./"))
-        (checkout_root, dot_git) = self._filesystem.split(git_output)
+        checkout_root = self._executive.run_command([self.executable_name, 'rev-parse', '--show-toplevel'], cwd=(path or "./")).strip()
         if not self._filesystem.isabs(checkout_root):  # Sometimes git returns relative paths
             checkout_root = self._filesystem.join(path, checkout_root)
         return checkout_root
