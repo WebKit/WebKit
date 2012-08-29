@@ -579,9 +579,8 @@ void BitmapImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_source);
     info.addMember(m_frameTimer);
     info.addVector(m_frames);
-    int size = frameBytes(m_size);
     for (unsigned i = 0; i < m_frameCount; ++i)
-        info.addRawBuffer(m_frames[i].m_frame, size);
+        info.addRawBuffer(m_frames[i].m_frame, m_frames[i].m_frameBytes);
 }
 
 }
