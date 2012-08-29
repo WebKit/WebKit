@@ -44,7 +44,7 @@ static UInt32 magicNumber()
 
 const String& fileExtension()
 {
-    DEFINE_STATIC_LOCAL(const String, extension, (".download"));
+    DEFINE_STATIC_LOCAL(const String, extension, (ASCIILiteral(".download")));
     return extension;
 }
 

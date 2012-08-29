@@ -147,9 +147,9 @@ void NavigatorContentUtils::registerProtocolHandler(Navigator* navigator, const 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
 static String customHandlersStateString(const NavigatorContentUtilsClient::CustomHandlersState state)
 {
-    DEFINE_STATIC_LOCAL(const String, newHandler, ("new"));
-    DEFINE_STATIC_LOCAL(const String, registeredHandler, ("registered"));
-    DEFINE_STATIC_LOCAL(const String, declinedHandler, ("declined"));
+    DEFINE_STATIC_LOCAL(const String, newHandler, (ASCIILiteral("new")));
+    DEFINE_STATIC_LOCAL(const String, registeredHandler, (ASCIILiteral("registered")));
+    DEFINE_STATIC_LOCAL(const String, declinedHandler, (ASCIILiteral("declined")));
 
     switch (state) {
     case NavigatorContentUtilsClient::CustomHandlersNew:

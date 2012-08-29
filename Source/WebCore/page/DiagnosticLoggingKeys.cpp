@@ -30,55 +30,55 @@ namespace WebCore {
 
 const String& DiagnosticLoggingKeys::mediaLoadedKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, ("mediaLoaded"));
+    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("mediaLoaded")));
     return key;
 }
 
 const String& DiagnosticLoggingKeys::mediaLoadingFailedKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, ("mediaFailedLoading"));
+    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("mediaFailedLoading")));
     return key;
 }
 
 const String& DiagnosticLoggingKeys::pluginLoadedKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, ("pluginLoaded"));
+    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("pluginLoaded")));
     return key;
 }
 
 const String& DiagnosticLoggingKeys::pluginLoadingFailedKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, ("pluginFailedLoading"));
+    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("pluginFailedLoading")));
     return key;
 }
 
 const String& DiagnosticLoggingKeys::pageContainsPluginKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, ("pageContainsPlugin"));
+    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("pageContainsPlugin")));
     return key;
 }
 
 const String& DiagnosticLoggingKeys::pageContainsAtLeastOnePluginKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, ("pageContainsAtLeastOnePlugin"));
+    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("pageContainsAtLeastOnePlugin")));
     return key;
 }
 
 const String& DiagnosticLoggingKeys::passKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, ("pass"));
+    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("pass")));
     return key;
 }
 
 const String& DiagnosticLoggingKeys::failKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, ("fail"));
+    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("fail")));
     return key;
 }
 
 const String& DiagnosticLoggingKeys::noopKey()
 {
-    DEFINE_STATIC_LOCAL(const String, key, ("noop"));
+    DEFINE_STATIC_LOCAL(const String, key, (ASCIILiteral("noop")));
     return key;
 }
 

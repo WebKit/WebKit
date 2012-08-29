@@ -623,7 +623,7 @@ HashSet<String>& MIMETypeRegistry::getUnsupportedTextMIMETypes()
 
 const String& defaultMIMEType()
 {
-    DEFINE_STATIC_LOCAL(const String, defaultMIMEType, ("application/octet-stream"));
+    DEFINE_STATIC_LOCAL(const String, defaultMIMEType, (ASCIILiteral("application/octet-stream")));
     return defaultMIMEType;
 }
 
@@ -637,50 +637,51 @@ static const MIMETypeAssociationMap& mimeTypeAssociationMap()
         return *mimeTypeMap;
 
     mimeTypeMap = new MIMETypeAssociationMap;
-    mimeTypeMap->add("image/x-ms-bmp", "image/bmp");
-    mimeTypeMap->add("image/x-windows-bmp", "image/bmp");
-    mimeTypeMap->add("image/x-bmp", "image/bmp");
-    mimeTypeMap->add("image/x-bitmap", "image/bmp");
-    mimeTypeMap->add("image/x-ms-bitmap", "image/bmp");
-    mimeTypeMap->add("image/jpg", "image/jpeg");
-    mimeTypeMap->add("image/pjpeg", "image/jpeg");
-    mimeTypeMap->add("image/x-png", "image/png");
-    mimeTypeMap->add("image/vnd.rim.png", "image/png");
-    mimeTypeMap->add("image/ico", "image/vnd.microsoft.icon");
-    mimeTypeMap->add("image/icon", "image/vnd.microsoft.icon");
-    mimeTypeMap->add("text/ico", "image/vnd.microsoft.icon");
-    mimeTypeMap->add("application/ico", "image/vnd.microsoft.icon");
-    mimeTypeMap->add("image/x-icon", "image/vnd.microsoft.icon");
-    mimeTypeMap->add("audio/vnd.qcelp", "audio/qcelp");
-    mimeTypeMap->add("audio/qcp", "audio/qcelp");
-    mimeTypeMap->add("audio/vnd.qcp", "audio/qcelp");
-    mimeTypeMap->add("audio/wav", "audio/x-wav");
-    mimeTypeMap->add("audio/mid", "audio/midi");
-    mimeTypeMap->add("audio/sp-midi", "audio/midi");
-    mimeTypeMap->add("audio/x-mid", "audio/midi");
-    mimeTypeMap->add("audio/x-midi", "audio/midi");
-    mimeTypeMap->add("audio/x-mpeg", "audio/mpeg");
-    mimeTypeMap->add("audio/mp3", "audio/mpeg");
-    mimeTypeMap->add("audio/x-mp3", "audio/mpeg");
-    mimeTypeMap->add("audio/mpeg3", "audio/mpeg");
-    mimeTypeMap->add("audio/x-mpeg3", "audio/mpeg");
-    mimeTypeMap->add("audio/mpg3", "audio/mpeg");
-    mimeTypeMap->add("audio/mpg", "audio/mpeg");
-    mimeTypeMap->add("audio/x-mpg", "audio/mpeg");
-    mimeTypeMap->add("audio/m4a", "audio/mp4");
-    mimeTypeMap->add("audio/x-m4a", "audio/mp4");
-    mimeTypeMap->add("audio/x-mp4", "audio/mp4");
-    mimeTypeMap->add("audio/x-aac", "audio/aac");
-    mimeTypeMap->add("audio/x-amr", "audio/amr");
-    mimeTypeMap->add("audio/mpegurl", "audio/x-mpegurl");
-    mimeTypeMap->add("audio/flac", "audio/x-flac");
-    mimeTypeMap->add("video/3gp", "video/3gpp");
-    mimeTypeMap->add("video/avi", "video/x-msvideo");
-    mimeTypeMap->add("video/x-m4v", "video/mp4");
-    mimeTypeMap->add("video/x-quicktime", "video/quicktime");
-    mimeTypeMap->add("application/java", "application/java-archive");
-    mimeTypeMap->add("application/x-java-archive", "application/java-archive");
-    mimeTypeMap->add("application/x-zip-compressed", "application/zip");
+
+    mimeTypeMap->add(ASCIILiteral("image/x-ms-bmp"), ASCIILiteral("image/bmp")));
+    mimeTypeMap->add(ASCIILiteral("image/x-windows-bmp"), ASCIILiteral("image/bmp"));
+    mimeTypeMap->add(ASCIILiteral("image/x-bmp"), ASCIILiteral("image/bmp"));
+    mimeTypeMap->add(ASCIILiteral("image/x-bitmap"), ASCIILiteral("image/bmp"));
+    mimeTypeMap->add(ASCIILiteral("image/x-ms-bitmap"), ASCIILiteral("image/bmp"));
+    mimeTypeMap->add(ASCIILiteral("image/jpg"), ASCIILiteral("image/jpeg"));
+    mimeTypeMap->add(ASCIILiteral("image/pjpeg"), ASCIILiteral("image/jpeg"));
+    mimeTypeMap->add(ASCIILiteral("image/x-png"), ASCIILiteral("image/png"));
+    mimeTypeMap->add(ASCIILiteral("image/vnd.rim.png"), ASCIILiteral("image/png"));
+    mimeTypeMap->add(ASCIILiteral("image/ico"), ASCIILiteral("image/vnd.microsoft.icon"));
+    mimeTypeMap->add(ASCIILiteral("image/icon"), ASCIILiteral("image/vnd.microsoft.icon"));
+    mimeTypeMap->add(ASCIILiteral("text/ico"), ASCIILiteral("image/vnd.microsoft.icon"));
+    mimeTypeMap->add(ASCIILiteral("application/ico"), ASCIILiteral("image/vnd.microsoft.icon"));
+    mimeTypeMap->add(ASCIILiteral("image/x-icon"), ASCIILiteral("image/vnd.microsoft.icon"));
+    mimeTypeMap->add(ASCIILiteral("audio/vnd.qcelp"), ASCIILiteral("audio/qcelp"));
+    mimeTypeMap->add(ASCIILiteral("audio/qcp"), ASCIILiteral("audio/qcelp"));
+    mimeTypeMap->add(ASCIILiteral("audio/vnd.qcp"), ASCIILiteral("audio/qcelp"));
+    mimeTypeMap->add(ASCIILiteral("audio/wav"), ASCIILiteral("audio/x-wav"));
+    mimeTypeMap->add(ASCIILiteral("audio/mid"), ASCIILiteral("audio/midi"));
+    mimeTypeMap->add(ASCIILiteral("audio/sp-midi"), ASCIILiteral("audio/midi"));
+    mimeTypeMap->add(ASCIILiteral("audio/x-mid"), ASCIILiteral("audio/midi"));
+    mimeTypeMap->add(ASCIILiteral("audio/x-midi"), ASCIILiteral("audio/midi"));
+    mimeTypeMap->add(ASCIILiteral("audio/x-mpeg"), ASCIILiteral("audio/mpeg"));
+    mimeTypeMap->add(ASCIILiteral("audio/mp3"), ASCIILiteral("audio/mpeg"));
+    mimeTypeMap->add(ASCIILiteral("audio/x-mp3"), ASCIILiteral("audio/mpeg"));
+    mimeTypeMap->add(ASCIILiteral("audio/mpeg3"), ASCIILiteral("audio/mpeg"));
+    mimeTypeMap->add(ASCIILiteral("audio/x-mpeg3"), ASCIILiteral("audio/mpeg"));
+    mimeTypeMap->add(ASCIILiteral("audio/mpg3"), ASCIILiteral("audio/mpeg"));
+    mimeTypeMap->add(ASCIILiteral("audio/mpg"), ASCIILiteral("audio/mpeg"));
+    mimeTypeMap->add(ASCIILiteral("audio/x-mpg"), ASCIILiteral("audio/mpeg"));
+    mimeTypeMap->add(ASCIILiteral("audio/m4a"), ASCIILiteral("audio/mp4"));
+    mimeTypeMap->add(ASCIILiteral("audio/x-m4a"), ASCIILiteral("audio/mp4"));
+    mimeTypeMap->add(ASCIILiteral("audio/x-mp4"), ASCIILiteral("audio/mp4"));
+    mimeTypeMap->add(ASCIILiteral("audio/x-aac"), ASCIILiteral("audio/aac"));
+    mimeTypeMap->add(ASCIILiteral("audio/x-amr"), ASCIILiteral("audio/amr"));
+    mimeTypeMap->add(ASCIILiteral("audio/mpegurl"), ASCIILiteral("audio/x-mpegurl"));
+    mimeTypeMap->add(ASCIILiteral("audio/flac"), ASCIILiteral("audio/x-flac"));
+    mimeTypeMap->add(ASCIILiteral("video/3gp"), ASCIILiteral("video/3gpp"));
+    mimeTypeMap->add(ASCIILiteral("video/avi"), ASCIILiteral("video/x-msvideo"));
+    mimeTypeMap->add(ASCIILiteral("video/x-m4v"), ASCIILiteral("video/mp4"));
+    mimeTypeMap->add(ASCIILiteral("video/x-quicktime"), ASCIILiteral("video/quicktime"));
+    mimeTypeMap->add(ASCIILiteral("application/java"), ASCIILiteral("application/java-archive"));
+    mimeTypeMap->add(ASCIILiteral("application/x-java-archive"), ASCIILiteral("application/java-archive"));
+    mimeTypeMap->add(ASCIILiteral("application/x-zip-compressed"), ASCIILiteral("application/zip"));
 
     return *mimeTypeMap;
 }

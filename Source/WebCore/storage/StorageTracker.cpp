@@ -242,8 +242,8 @@ void StorageTracker::syncFileSystemAndTrackerDatabase()
     ASSERT(m_isActive);
 
     m_databaseGuard.lock();
-    DEFINE_STATIC_LOCAL(const String, fileMatchPattern, ("*.localstorage"));
-    DEFINE_STATIC_LOCAL(const String, fileExt, (".localstorage"));
+    DEFINE_STATIC_LOCAL(const String, fileMatchPattern, (ASCIILiteral("*.localstorage")));
+    DEFINE_STATIC_LOCAL(const String, fileExt, (ASCIILiteral(".localstorage")));
     static const unsigned fileExtLength = fileExt.length();
     m_databaseGuard.unlock();
 

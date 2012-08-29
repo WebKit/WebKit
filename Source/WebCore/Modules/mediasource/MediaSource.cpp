@@ -55,6 +55,24 @@ MediaSource::MediaSource(ScriptExecutionContext* context)
     m_activeSourceBuffers = SourceBufferList::create(scriptExecutionContext(), m_asyncEventQueue.get());
 }
 
+const String& MediaSource::openKeyword()
+{
+    DEFINE_STATIC_LOCAL(const String, open, (ASCIILiteral("open")));
+    return open;
+}
+
+const String& MediaSource::closedKeyword()
+{
+    DEFINE_STATIC_LOCAL(const String, closed, (ASCIILiteral("closed")));
+    return closed;
+}
+
+const String& MediaSource::endedKeyword()
+{
+    DEFINE_STATIC_LOCAL(const String, ended, (ASCIILiteral("ended")));
+    return ended;
+}
+
 SourceBufferList* MediaSource::sourceBuffers()
 {
     return m_sourceBuffers.get();

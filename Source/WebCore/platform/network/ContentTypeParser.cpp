@@ -157,7 +157,7 @@ size_t ContentTypeParser::parameterCount() const
 
 void ContentTypeParser::parse()
 {
-    DEFINE_STATIC_LOCAL(const String, contentTypeParameterName, ("Content-Type"));
+    DEFINE_STATIC_LOCAL(const String, contentTypeParameterName, (ASCIILiteral("Content-Type")));
 
     if (!m_contentType.startsWith(contentTypeParameterName)) {
         LOG_ERROR("Invalid Content-Type string '%s'", m_contentType.ascii().data());

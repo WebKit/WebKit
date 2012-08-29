@@ -31,16 +31,10 @@ SVGAnimatedBooleanAnimator::SVGAnimatedBooleanAnimator(SVGAnimationElement* anim
 {
 }
 
-static inline bool isTrueString(const String& string)
-{
-    DEFINE_STATIC_LOCAL(const String, trueString, ("true"));
-    return string == trueString;
-}
-
 PassOwnPtr<SVGAnimatedType> SVGAnimatedBooleanAnimator::constructFromString(const String& string)
 {
     OwnPtr<SVGAnimatedType> animtedType = SVGAnimatedType::createBoolean(new bool);
-    animtedType->boolean() = isTrueString(string);
+    animtedType->boolean() = (string == "true"); // wat?
     return animtedType.release();
 }
 

@@ -39,30 +39,28 @@ namespace WebCore {
 
 String CSSWrapShapeRectangle::cssText() const
 {
-    DEFINE_STATIC_LOCAL(const String, rectangleParen, ("rectangle("));
-    DEFINE_STATIC_LOCAL(const String, comma, (", "));
-
     StringBuilder result;
     result.reserveCapacity(32);
-    result.append(rectangleParen);
+
+    result.appendLiteral("rectangle(");
 
     result.append(m_x->cssText());
-    result.append(comma);
+    result.appendLiteral(", ");
 
     result.append(m_y->cssText());
-    result.append(comma);
+    result.appendLiteral(", ");
 
     result.append(m_width->cssText());
-    result.append(comma);
+    result.appendLiteral(", ");
 
     result.append(m_height->cssText());
 
     if (m_radiusX.get()) {
-        result.append(comma);
+        result.appendLiteral(", ");
         result.append(m_radiusX->cssText());
 
         if (m_radiusY.get()) {
-            result.append(comma);
+            result.appendLiteral(", ");
             result.append(m_radiusY->cssText());
         }
     }
@@ -74,18 +72,16 @@ String CSSWrapShapeRectangle::cssText() const
 
 String CSSWrapShapeCircle::cssText() const
 {
-    DEFINE_STATIC_LOCAL(const String, circleParen, ("circle("));
-    DEFINE_STATIC_LOCAL(const String, comma, (", "));
-
     StringBuilder result;
     result.reserveCapacity(32);
-    result.append(circleParen);
+
+    result.appendLiteral("circle(");
 
     result.append(m_centerX->cssText());
-    result.append(comma);
+    result.appendLiteral(", ");
 
     result.append(m_centerY->cssText());
-    result.append(comma);
+    result.appendLiteral(", ");
 
     result.append(m_radius->cssText());
     result.append(')');
@@ -95,21 +91,18 @@ String CSSWrapShapeCircle::cssText() const
 
 String CSSWrapShapeEllipse::cssText() const
 {
-    DEFINE_STATIC_LOCAL(const String, ellipseParen, ("ellipse("));
-    DEFINE_STATIC_LOCAL(const String, comma, (", "));
-
     StringBuilder result;
     result.reserveCapacity(32);
-    result.append(ellipseParen);
+    result.appendLiteral("ellipse(");
 
     result.append(m_centerX->cssText());
-    result.append(comma);
+    result.appendLiteral(", ");
 
     result.append(m_centerY->cssText());
-    result.append(comma);
+    result.appendLiteral(", ");
 
     result.append(m_radiusX->cssText());
-    result.append(comma);
+    result.appendLiteral(", ");
 
     result.append(m_radiusY->cssText());
     result.append(')');
@@ -119,25 +112,21 @@ String CSSWrapShapeEllipse::cssText() const
 
 String CSSWrapShapePolygon::cssText() const
 {
-    DEFINE_STATIC_LOCAL(const String, polygonParenEvenOdd, ("polygon(evenodd, "));
-    DEFINE_STATIC_LOCAL(const String, polygonParenNonZero, ("polygon(nonzero, "));
-    DEFINE_STATIC_LOCAL(const String, comma, (", "));
-    DEFINE_STATIC_LOCAL(const String, space, (" "));
-
     StringBuilder result;
     result.reserveCapacity(32);
+
     if (m_windRule == RULE_EVENODD)
-        result.append(polygonParenEvenOdd);
+        result.appendLiteral("polygon(evenodd, ");
     else
-        result.append(polygonParenNonZero);
+        result.appendLiteral("polygon(nonzero, ");
 
     ASSERT(!(m_values.size() % 2));
 
     for (unsigned i = 0; i < m_values.size(); i += 2) {
         if (i)
-            result.append(comma);
+            result.appendLiteral(", ");
         result.append(m_values.at(i)->cssText());
-        result.append(space);
+        result.append(' ');
         result.append(m_values.at(i + 1)->cssText());
     }
 

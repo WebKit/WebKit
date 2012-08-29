@@ -85,21 +85,21 @@ MediaControlElementType AccessibilityMediaControl::controlType() const
 
 String AccessibilityMediaControl::controlTypeName() const
 {
-    DEFINE_STATIC_LOCAL(const String, mediaEnterFullscreenButtonName, ("EnterFullscreenButton"));
-    DEFINE_STATIC_LOCAL(const String, mediaExitFullscreenButtonName, ("ExitFullscreenButton"));
-    DEFINE_STATIC_LOCAL(const String, mediaMuteButtonName, ("MuteButton"));
-    DEFINE_STATIC_LOCAL(const String, mediaPlayButtonName, ("PlayButton"));
-    DEFINE_STATIC_LOCAL(const String, mediaSeekBackButtonName, ("SeekBackButton"));
-    DEFINE_STATIC_LOCAL(const String, mediaSeekForwardButtonName, ("SeekForwardButton"));
-    DEFINE_STATIC_LOCAL(const String, mediaRewindButtonName, ("RewindButton"));
-    DEFINE_STATIC_LOCAL(const String, mediaReturnToRealtimeButtonName, ("ReturnToRealtimeButton"));
-    DEFINE_STATIC_LOCAL(const String, mediaUnMuteButtonName, ("UnMuteButton"));
-    DEFINE_STATIC_LOCAL(const String, mediaPauseButtonName, ("PauseButton"));
-    DEFINE_STATIC_LOCAL(const String, mediaStatusDisplayName, ("StatusDisplay"));
-    DEFINE_STATIC_LOCAL(const String, mediaCurrentTimeDisplay, ("CurrentTimeDisplay"));
-    DEFINE_STATIC_LOCAL(const String, mediaTimeRemainingDisplay, ("TimeRemainingDisplay"));
-    DEFINE_STATIC_LOCAL(const String, mediaShowClosedCaptionsButtonName, ("ShowClosedCaptionsButton"));
-    DEFINE_STATIC_LOCAL(const String, mediaHideClosedCaptionsButtonName, ("HideClosedCaptionsButton"));
+    DEFINE_STATIC_LOCAL(const String, mediaEnterFullscreenButtonName, (ASCIILiteral("EnterFullscreenButton")));
+    DEFINE_STATIC_LOCAL(const String, mediaExitFullscreenButtonName, (ASCIILiteral("ExitFullscreenButton")));
+    DEFINE_STATIC_LOCAL(const String, mediaMuteButtonName, (ASCIILiteral("MuteButton")));
+    DEFINE_STATIC_LOCAL(const String, mediaPlayButtonName, (ASCIILiteral("PlayButton")));
+    DEFINE_STATIC_LOCAL(const String, mediaSeekBackButtonName, (ASCIILiteral("SeekBackButton")));
+    DEFINE_STATIC_LOCAL(const String, mediaSeekForwardButtonName, (ASCIILiteral("SeekForwardButton")));
+    DEFINE_STATIC_LOCAL(const String, mediaRewindButtonName, (ASCIILiteral("RewindButton")));
+    DEFINE_STATIC_LOCAL(const String, mediaReturnToRealtimeButtonName, (ASCIILiteral("ReturnToRealtimeButton")));
+    DEFINE_STATIC_LOCAL(const String, mediaUnMuteButtonName, (ASCIILiteral("UnMuteButton")));
+    DEFINE_STATIC_LOCAL(const String, mediaPauseButtonName, (ASCIILiteral("PauseButton")));
+    DEFINE_STATIC_LOCAL(const String, mediaStatusDisplayName, (ASCIILiteral("StatusDisplay")));
+    DEFINE_STATIC_LOCAL(const String, mediaCurrentTimeDisplay, (ASCIILiteral("CurrentTimeDisplay")));
+    DEFINE_STATIC_LOCAL(const String, mediaTimeRemainingDisplay, (ASCIILiteral("TimeRemainingDisplay")));
+    DEFINE_STATIC_LOCAL(const String, mediaShowClosedCaptionsButtonName, (ASCIILiteral("ShowClosedCaptionsButton")));
+    DEFINE_STATIC_LOCAL(const String, mediaHideClosedCaptionsButtonName, (ASCIILiteral("HideClosedCaptionsButton")));
 
     switch (controlType()) {
     case MediaEnterFullscreenButton:
@@ -142,7 +142,7 @@ String AccessibilityMediaControl::controlTypeName() const
 
 String AccessibilityMediaControl::title() const
 {
-    DEFINE_STATIC_LOCAL(const String, controlsPanel, ("ControlsPanel"));
+    DEFINE_STATIC_LOCAL(const String, controlsPanel, (ASCIILiteral("ControlsPanel")));
 
     if (controlType() == MediaControlsPanel)
         return localizedMediaControlElementString(controlsPanel);
@@ -237,8 +237,8 @@ bool AccessibilityMediaControlsContainer::controllingVideoElement() const
 
 const String AccessibilityMediaControlsContainer::elementTypeName() const
 {
-    DEFINE_STATIC_LOCAL(const String, videoElement, ("VideoElement"));
-    DEFINE_STATIC_LOCAL(const String, audioElement, ("AudioElement"));
+    DEFINE_STATIC_LOCAL(const String, videoElement, (ASCIILiteral("VideoElement")));
+    DEFINE_STATIC_LOCAL(const String, audioElement, (ASCIILiteral("AudioElement")));
 
     if (controllingVideoElement())
         return videoElement;
@@ -273,7 +273,7 @@ String AccessibilityMediaTimeline::valueDescription() const
 
 String AccessibilityMediaTimeline::helpText() const
 {
-    DEFINE_STATIC_LOCAL(const String, slider, ("Slider"));
+    DEFINE_STATIC_LOCAL(const String, slider, (ASCIILiteral("Slider")));
     return localizedMediaControlElementHelpText(slider);
 }
 

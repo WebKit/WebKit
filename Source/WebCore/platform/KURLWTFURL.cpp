@@ -110,12 +110,10 @@ bool KURL::isValid() const
     return isParsedURLValid;
 }
 
-const String &KURL::string() const
+const String& KURL::string() const
 {
-    if (isNull()) {
-        DEFINE_STATIC_LOCAL(const String, nullString, ());
-        return nullString;
-    }
+    if (isNull())
+        return nullAtom();
 
     if (isValid())
         return m_urlImpl->m_parsedURL.spec().string();

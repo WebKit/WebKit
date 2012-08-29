@@ -135,7 +135,7 @@ public:
 
 private:
     void appendStyleNodeOpenTag(StringBuilder&, StylePropertySet*, Document*, bool isBlock = false);
-    const String styleNodeCloseTag(bool isBlock = false);
+    const String& styleNodeCloseTag(bool isBlock = false);
     virtual void appendText(StringBuilder& out, Text*);
     String renderedText(const Node*, const Range*);
     String stringValueForRange(const Node*, const Range*);
@@ -191,18 +191,19 @@ void StyledMarkupAccumulator::appendStyleNodeOpenTag(StringBuilder& out, StylePr
 {
     // wrappingStyleForSerialization should have removed -webkit-text-decorations-in-effect
     ASSERT(propertyMissingOrEqualToNone(style, CSSPropertyWebkitTextDecorationsInEffect));
-    DEFINE_STATIC_LOCAL(const String, divStyle, ("<div style=\""));
-    DEFINE_STATIC_LOCAL(const String, styleSpanOpen, ("<span style=\""));
-    out.append(isBlock ? divStyle : styleSpanOpen);
+    if (isBlock)
+        out.appendLiteral("<div style=\"");
+    else
+        out.appendLiteral("<span style=\"");
     appendAttributeValue(out, style->asText(), document->isHTMLDocument());
     out.append('\"');
     out.append('>');
 }
 
-const String StyledMarkupAccumulator::styleNodeCloseTag(bool isBlock)
+const String& StyledMarkupAccumulator::styleNodeCloseTag(bool isBlock)
 {
-    DEFINE_STATIC_LOCAL(const String, divClose, ("</div>"));
-    DEFINE_STATIC_LOCAL(const String, styleSpanClose, ("</span>"));
+    DEFINE_STATIC_LOCAL(const String, divClose, (ASCIILiteral("</div>")));
+    DEFINE_STATIC_LOCAL(const String, styleSpanClose, (ASCIILiteral("</span>")));
     return isBlock ? divClose : styleSpanClose;
 }
 
@@ -328,8 +329,7 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, Element* element
         }
 
         if (!newInlineStyle->isEmpty()) {
-            DEFINE_STATIC_LOCAL(const String, stylePrefix, (" style=\""));
-            out.append(stylePrefix);
+            out.appendLiteral(" style=\"");
             appendAttributeValue(out, newInlineStyle->style()->asText(), documentIsHTML);
             out.append('\"');
         }
@@ -549,7 +549,7 @@ static Node* highestAncestorToWrapMarkup(const Range* range, EAnnotateForInterch
 // FIXME: At least, annotation and style info should probably not be included in range.markupString()
 String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterchange shouldAnnotate, bool convertBlocksToInlines, EAbsoluteURLs shouldResolveURLs)
 {
-    DEFINE_STATIC_LOCAL(const String, interchangeNewlineString, ("<br class=\"" AppleInterchangeNewline "\">"));
+    DEFINE_STATIC_LOCAL(const String, interchangeNewlineString, (ASCIILiteral("<br class=\"" AppleInterchangeNewline "\">")));
 
     if (!range)
         return "";

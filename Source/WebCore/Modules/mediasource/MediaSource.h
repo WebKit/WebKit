@@ -44,23 +44,9 @@ namespace WebCore {
 
 class MediaSource : public RefCounted<MediaSource>, public EventTarget, public ContextDestructionObserver {
 public:
-    static const String& openKeyword()
-    {
-        DEFINE_STATIC_LOCAL(const String, open, ("open"));
-        return open;
-    }
-
-    static const String& closedKeyword()
-    {
-        DEFINE_STATIC_LOCAL(const String, closed, ("closed"));
-        return closed;
-    }
-
-    static const String& endedKeyword()
-    {
-        DEFINE_STATIC_LOCAL(const String, ended, ("ended"));
-        return ended;
-    }
+    static const String& openKeyword();
+    static const String& closedKeyword();
+    static const String& endedKeyword();
 
     static PassRefPtr<MediaSource> create(ScriptExecutionContext*);
     virtual ~MediaSource() { }

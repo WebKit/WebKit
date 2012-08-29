@@ -56,19 +56,19 @@ static const int autoSize = 0;
 
 static const String& startKeyword()
 {
-    DEFINE_STATIC_LOCAL(const String, start, ("start"));
+    DEFINE_STATIC_LOCAL(const String, start, (ASCIILiteral("start")));
     return start;
 }
 
 static const String& middleKeyword()
 {
-    DEFINE_STATIC_LOCAL(const String, middle, ("middle"));
+    DEFINE_STATIC_LOCAL(const String, middle, (ASCIILiteral("middle")));
     return middle;
 }
 
 static const String& endKeyword()
 {
-    DEFINE_STATIC_LOCAL(const String, end, ("end"));
+    DEFINE_STATIC_LOCAL(const String, end, (ASCIILiteral("end")));
     return end;
 }
 
@@ -79,13 +79,13 @@ static const String& horizontalKeyword()
 
 static const String& verticalGrowingLeftKeyword()
 {
-    DEFINE_STATIC_LOCAL(const String, verticalrl, ("rl"));
+    DEFINE_STATIC_LOCAL(const String, verticalrl, (ASCIILiteral("rl")));
     return verticalrl;
 }
 
 static const String& verticalGrowingRightKeyword()
 {
-    DEFINE_STATIC_LOCAL(const String, verticallr, ("lr"));
+    DEFINE_STATIC_LOCAL(const String, verticallr, (ASCIILiteral("lr")));
     return verticallr;
 }
 
@@ -650,7 +650,7 @@ void TextTrackCue::updateDisplayTree(float movieTime)
 {
     // The display tree may contain WebVTT timestamp objects representing
     // timestamps (processing instructions), along with displayable nodes.
-    DEFINE_STATIC_LOCAL(const String, timestampTag, ("timestamp"));
+    DEFINE_STATIC_LOCAL(const String, timestampTag, (ASCIILiteral("timestamp")));
 
     DEFINE_STATIC_LOCAL(const AtomicString, trackPastNodesShadowPseudoId, ("-webkit-media-text-track-past-nodes"));
     DEFINE_STATIC_LOCAL(const AtomicString, trackFutureNodesShadowPseudoId, ("-webkit-media-text-track-future-nodes"));
@@ -786,11 +786,11 @@ std::pair<double, double> TextTrackCue::getPositionCoordinates() const
 
 TextTrackCue::CueSetting TextTrackCue::settingName(const String& name)
 {
-    DEFINE_STATIC_LOCAL(const String, verticalKeyword, ("vertical"));
-    DEFINE_STATIC_LOCAL(const String, lineKeyword, ("line"));
-    DEFINE_STATIC_LOCAL(const String, positionKeyword, ("position"));
-    DEFINE_STATIC_LOCAL(const String, sizeKeyword, ("size"));
-    DEFINE_STATIC_LOCAL(const String, alignKeyword, ("align"));
+    DEFINE_STATIC_LOCAL(const String, verticalKeyword, (ASCIILiteral("vertical")));
+    DEFINE_STATIC_LOCAL(const String, lineKeyword, (ASCIILiteral("line")));
+    DEFINE_STATIC_LOCAL(const String, positionKeyword, (ASCIILiteral("position")));
+    DEFINE_STATIC_LOCAL(const String, sizeKeyword, (ASCIILiteral("size")));
+    DEFINE_STATIC_LOCAL(const String, alignKeyword, (ASCIILiteral("align")));
 
     if (name == verticalKeyword)
         return Vertical;
