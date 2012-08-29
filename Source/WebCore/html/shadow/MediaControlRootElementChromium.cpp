@@ -84,6 +84,7 @@ MediaControlRootElementChromium::MediaControlRootElementChromium(Document* docum
     , m_timeline(0)
     , m_panelMuteButton(0)
     , m_volumeSlider(0)
+    , m_toggleClosedCaptionsButton(0)
     , m_fullscreenButton(0)
     , m_panel(0)
     , m_enclosure(0)
@@ -164,6 +165,14 @@ bool MediaControlRootElementChromium::initializeControls(Document* document)
     if (ec)
         return false;
 
+    if (document->page()->theme()->supportsClosedCaptioning()) {
+        RefPtr<MediaControlToggleClosedCaptionsButtonElement> toggleClosedCaptionsButton = MediaControlToggleClosedCaptionsButtonElement::create(document);
+        m_toggleClosedCaptionsButton = toggleClosedCaptionsButton.get();
+        panel->appendChild(toggleClosedCaptionsButton.release(), ec, true);
+        if (ec)
+            return false;
+    }
+
     RefPtr<MediaControlFullscreenButtonElement> fullscreenButton = MediaControlFullscreenButtonElement::create(document, this);
     m_fullscreenButton = fullscreenButton.get();
     panel->appendChild(fullscreenButton.release(), ec, true);
@@ -201,6 +210,8 @@ void MediaControlRootElementChromium::setMediaController(MediaControllerInterfac
         m_panelMuteButton->setMediaController(controller);
     if (m_volumeSlider)
         m_volumeSlider->setMediaController(controller);
+    if (m_toggleClosedCaptionsButton)
+        m_toggleClosedCaptionsButton->setMediaController(controller);
     if (m_fullscreenButton)
         m_fullscreenButton->setMediaController(controller);
     if (m_panel)
@@ -263,6 +274,13 @@ void MediaControlRootElementChromium::reset()
             m_volumeSlider->show();
             m_volumeSlider->setVolume(m_mediaController->volume());
         }
+    }
+
+    if (m_toggleClosedCaptionsButton) {
+        if (m_mediaController->hasClosedCaptions())
+            m_toggleClosedCaptionsButton->show();
+        else
+            m_toggleClosedCaptionsButton->hide();
     }
 
     if (m_mediaController->supportsFullscreen() && m_mediaController->hasVideo())
@@ -332,6 +350,8 @@ void MediaControlRootElementChromium::reportedError()
 
     m_panelMuteButton->hide();
     m_volumeSlider->hide();
+    if (m_toggleClosedCaptionsButton)
+        m_toggleClosedCaptionsButton->hide();
     m_fullscreenButton->hide();
 }
 
@@ -417,6 +437,8 @@ void MediaControlRootElementChromium::stopHideFullscreenControlsTimer()
 
 void MediaControlRootElementChromium::changedClosedCaptionsVisibility()
 {
+    if (m_toggleClosedCaptionsButton)
+        m_toggleClosedCaptionsButton->updateDisplayType();
 }
 
 void MediaControlRootElementChromium::changedMute()
@@ -464,6 +486,9 @@ void MediaControlRootElementChromium::createTextTrackDisplay()
 
     RefPtr<MediaControlTextTrackContainerElement> textDisplayContainer = MediaControlTextTrackContainerElement::create(document());
     m_textDisplayContainer = textDisplayContainer.get();
+
+    if (m_mediaController)
+        m_textDisplayContainer->setMediaController(m_mediaController);
 
     // Insert it before the first controller element so it always displays behind the controls.
     insertBefore(textDisplayContainer.release(), m_enclosure, ASSERT_NO_EXCEPTION, true);

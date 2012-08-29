@@ -131,6 +131,13 @@ bool RenderThemeChromiumSkia::supportsDataListUI(const AtomicString& type) const
     return RenderThemeChromiumCommon::supportsDataListUI(type);
 }
 
+#if ENABLE(VIDEO_TRACK)
+bool RenderThemeChromiumSkia::supportsClosedCaptioning() const
+{
+    return true;
+}
+#endif
+
 Color RenderThemeChromiumSkia::platformActiveSelectionBackgroundColor() const
 {
     return Color(0x1e, 0x90, 0xff);

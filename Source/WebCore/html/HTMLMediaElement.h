@@ -236,12 +236,13 @@ public:
     };
 
     void configureTextTrackGroupForLanguage(const TrackGroup&) const;
-    void configureNewTextTracks();
+    void configureTextTracks();
     void configureTextTrackGroup(const TrackGroup&) const;
 
     bool userIsInterestedInThisTrackKind(String) const;
     bool textTracksAreReady() const;
     void configureTextTrackDisplay();
+    void updateClosedCaptionsControls();
 
     // TextTrackClient
     virtual void textTrackReadyStateChanged(TextTrack*);
@@ -654,6 +655,7 @@ private:
 
     CueList m_currentlyActiveCues;
     int m_ignoreTrackDisplayUpdate;
+    bool m_disableCaptions;
 #endif
 
 #if ENABLE(WEB_AUDIO)

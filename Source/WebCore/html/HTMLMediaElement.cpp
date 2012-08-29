@@ -259,6 +259,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_lastTextTrackUpdateTime(-1)
     , m_textTracks(0)
     , m_ignoreTrackDisplayUpdate(0)
+    , m_disableCaptions(false)
 #endif
 #if ENABLE(WEB_AUDIO)
     , m_audioSourceNode(0)
@@ -594,7 +595,7 @@ void HTMLMediaElement::loadTimerFired(Timer<HTMLMediaElement>*)
 
 #if ENABLE(VIDEO_TRACK)
     if (RuntimeEnabledFeatures::webkitVideoTrackEnabled() && (m_pendingLoadFlags & TextTrackResource))
-        configureNewTextTracks();
+        configureTextTracks();
 #endif
 
     if (m_pendingLoadFlags & MediaResource) {
@@ -741,7 +742,6 @@ void HTMLMediaElement::prepareForLoad()
 
     m_playedTimeRanges = TimeRanges::create();
     m_lastSeekTime = 0;
-    m_closedCaptionsVisible = false;
 
     // The spec doesn't say to block the load event until we actually run the asynchronous section
     // algorithm, but do it now because we won't start that until after the timer fires and the 
@@ -1298,7 +1298,7 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
             if (trackElement->track() != track)
                 continue;
             
-            // Mark this track as "configured" so configureNewTextTracks won't change the mode again.
+            // Mark this track as "configured" so configureTextTracks won't change the mode again.
             trackElement->setHasBeenConfigured(true);
             if (track->mode() != TextTrack::disabledKeyword()) {
                 if (trackElement->readyState() == HTMLTrackElement::LOADED)
@@ -2790,16 +2790,19 @@ bool HTMLMediaElement::userIsInterestedInThisLanguage(const String&) const
 bool HTMLMediaElement::userIsInterestedInThisTrackKind(String kind) const
 {
     // If ... the user has indicated an interest in having a track with this text track kind, text track language, ... 
+    if (m_disableCaptions)
+        return false;
+
     Settings* settings = document()->settings();
     if (!settings)
         return false;
 
     if (kind == TextTrack::subtitlesKeyword())
-        return settings->shouldDisplaySubtitles();
+        return settings->shouldDisplaySubtitles() || m_closedCaptionsVisible;
     if (kind == TextTrack::captionsKeyword())
-        return settings->shouldDisplayCaptions();
+        return settings->shouldDisplayCaptions() || m_closedCaptionsVisible;
     if (kind == TextTrack::descriptionsKeyword())
-        return settings->shouldDisplayTextDescriptions();
+        return settings->shouldDisplayTextDescriptions() || m_closedCaptionsVisible;
 
     return false;
 }
@@ -2895,7 +2898,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group) const
     }
 }
 
-void HTMLMediaElement::configureNewTextTracks()
+void HTMLMediaElement::configureTextTracks()
 {
     TrackGroup captionAndSubtitleTracks(TrackGroup::CaptionsAndSubtitles);
     TrackGroup descriptionTracks(TrackGroup::Description);
@@ -3923,7 +3926,18 @@ PlatformLayer* HTMLMediaElement::platformLayer() const
 
 bool HTMLMediaElement::hasClosedCaptions() const
 {
-    return m_player && m_player->hasClosedCaptions();
+    if (m_player && m_player->hasClosedCaptions())
+        return true;
+
+#if ENABLE(VIDEO_TRACK)
+    if (RuntimeEnabledFeatures::webkitVideoTrackEnabled() && m_textTracks)
+    for (unsigned i = 0; i < m_textTracks->length(); ++i) {
+        if (m_textTracks->item(i)->kind() == TextTrack::captionsKeyword()
+            || m_textTracks->item(i)->kind() == TextTrack::subtitlesKeyword())
+            return true;
+    }
+#endif
+    return false;
 }
 
 bool HTMLMediaElement::closedCaptionsVisible() const
@@ -3935,13 +3949,36 @@ void HTMLMediaElement::setClosedCaptionsVisible(bool closedCaptionVisible)
 {
     LOG(Media, "HTMLMediaElement::setClosedCaptionsVisible(%s)", boolString(closedCaptionVisible));
 
-    if (!m_player ||!hasClosedCaptions())
+    if (!m_player || !hasClosedCaptions())
         return;
 
     m_closedCaptionsVisible = closedCaptionVisible;
     m_player->setClosedCaptionsVisible(closedCaptionVisible);
+
+#if ENABLE(VIDEO_TRACK)
+    if (RuntimeEnabledFeatures::webkitVideoTrackEnabled()) {
+        m_disableCaptions = !m_closedCaptionsVisible;
+        
+        // Mark all track elements as not "configured" so that configureTextTracks()
+        // will reconsider which tracks to display in light of new user preferences
+        // (e.g. default tracks should not be displayed if the user has turned off
+        // captions and non-default tracks should be displayed based on language
+        // preferences if the user has turned captions on).
+        for (Node* node = firstChild(); node; node = node->nextSibling()) {
+            if (!node->hasTagName(trackTag))
+                continue;
+            HTMLTrackElement* trackElement = static_cast<HTMLTrackElement*>(node);
+            if (trackElement->kind() == TextTrack::captionsKeyword()
+                || trackElement->kind() == TextTrack::subtitlesKeyword())
+                trackElement->setHasBeenConfigured(false);
+        }
+
+        configureTextTracks();
+    }
+#else
     if (hasMediaControls())
         mediaControls()->changedClosedCaptionsVisibility();
+#endif
 }
 
 void HTMLMediaElement::setWebkitClosedCaptionsVisible(bool visible)
@@ -4105,12 +4142,24 @@ void HTMLMediaElement::configureTextTrackDisplay()
     if (m_haveVisibleTextTrack == haveVisibleTextTrack)
         return;
     m_haveVisibleTextTrack = haveVisibleTextTrack;
+    m_closedCaptionsVisible = m_haveVisibleTextTrack;
 
     if (!m_haveVisibleTextTrack && !hasMediaControls())
         return;
     if (!hasMediaControls() && !createMediaControls())
         return;
-    mediaControls()->updateTextTrackDisplay();
+
+    updateClosedCaptionsControls();
+}
+
+void HTMLMediaElement::updateClosedCaptionsControls()
+{
+    if (hasMediaControls()) {
+        mediaControls()->changedClosedCaptionsVisibility();
+
+        if (RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+            mediaControls()->updateTextTrackDisplay();
+    }
 }
 #endif
 

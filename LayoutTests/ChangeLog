@@ -1,3 +1,15 @@
+2012-08-29  Anna Cavender  <annacc@chromium.org>
+
+        Create a toggle button for closed captions.
+        https://bugs.webkit.org/show_bug.cgi?id=94395
+
+        Reviewed by Eric Carlson.
+
+        This patch will create a button that toggles any captions or subtitles on or off.
+
+        * media/video-controls-captions-expected.txt: Added.
+        * media/video-controls-captions.html: Added.
+
 2012-08-29  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, chromium test expectations cleanup.

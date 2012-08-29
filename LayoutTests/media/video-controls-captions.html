@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Test closed caption button toggling.</title>
+    <script src=media-file.js></script>
+    <script src=media-controls.js></script>
+    <script src=video-test.js></script>
+    <script>
+        var captionsButtonElement;
+        var captionsButtonCoordinates;
+
+        function startTest()
+        {
+            if (!window.eventSender) {
+                consoleWrite("No eventSender found.");
+                failTest();
+            }
+
+            try {
+                captionsButtonElement = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-toggle-closed-captions-button");
+                captionsButtonCoordinates = mediaControlsButtonCoordinates(video, "toggle-closed-captions-button");
+            } catch (exception) {
+                consoleWrite("Failed to find a closed captions button or its coordinates: " + exception);
+                failTest();
+                return;
+            }
+
+            consoleWrite("");
+            consoleWrite("** Caption button should be visible and enabled because we have a captions track.");
+            testExpected("captionsButtonCoordinates[0]", 0, ">");
+            testExpected("captionsButtonCoordinates[1]", 0, ">");
+            testExpected("captionsButtonElement.disabled", false);
+
+            consoleWrite("");
+            consoleWrite("** The captions track should be listed in textTracks, but not yet loaded. **");
+            testExpected("video.textTracks.length", 1);
+            testExpected("video.textTracks[0].mode", "disabled");
+            checkCaptionsDisplay();
+
+            consoleWrite("");
+            consoleWrite("** Captions track should load and captions should become visible after button is clicked **");
+            clickCCButton();
+        }
+
+        function clickCCButton()
+        {
+            consoleWrite("*** Click the CC button.");
+            eventSender.mouseMoveTo(captionsButtonCoordinates[0], captionsButtonCoordinates[1]);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+        }
+
+        function checkCaptionsDisplay()
+        {
+            // When no tracks are loaded, this should report no text track container,
+            // when tracks are loaded but not visible, should report no cues visible,
+            // when tracks are loaded and visible, should properly check the text.
+            testExpected("textTrackDisplayElement(video, 'display').innerText", "Lorem");
+        }
+
+        function trackLoaded()
+        {
+            checkCaptionsDisplay();
+
+            consoleWrite("");
+            consoleWrite("** Captions should not be visible after button is clicked again **");
+            clickCCButton();
+            checkCaptionsDisplay();
+
+            endTest();
+        }
+
+        function loaded()
+        {
+            findMediaElement();
+            consoleWrite("Set the user language preference so that the track will be chosen when the CC button is clicked.");
+            run("internals.setUserPreferredLanguages(['en'])");
+
+            waitForEvent('canplaythrough', startTest);
+
+            video.src = findMediaFile('video', 'content/counting');
+        }
+    </script>
+</head>
+<body onload="loaded()">
+    <p>Tests that the closed captions button, when toggled, updates the text track display area.</p>
+    <video controls >
+        <track src="track/captions-webvtt/captions-fast.vtt" kind="captions" srclang="en" onload="trackLoaded()">
+    </video>
+
+</body>
+</html>

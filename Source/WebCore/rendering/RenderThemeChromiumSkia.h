@@ -54,6 +54,9 @@ class RenderThemeChromiumSkia : public RenderTheme {
 
         virtual bool supportsDataListUI(const AtomicString& type) const OVERRIDE;
 
+#if ENABLE(VIDEO_TRACK)
+        virtual bool supportsClosedCaptioning() const OVERRIDE;
+#endif
         // The platform selection color.
         virtual Color platformActiveSelectionBackgroundColor() const;
         virtual Color platformInactiveSelectionBackgroundColor() const;

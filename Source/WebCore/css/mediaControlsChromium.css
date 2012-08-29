@@ -178,6 +178,19 @@ input[type="range"]::-webkit-media-slider-thumb {
     margin-right: -7px;
 }
 
+audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button {
+    -webkit-appearance: media-toggle-closed-captions-button;
+    display: -webkit-box;
+    border: none;
+    box-sizing: border-box;
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    margin-left: -5px;
+    margin-right: 9px;
+    padding: 0;
+}
+
 audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {
     -webkit-appearance: media-enter-fullscreen-button;
     display: -webkit-box;

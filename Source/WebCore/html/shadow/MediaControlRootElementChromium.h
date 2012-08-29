@@ -44,6 +44,7 @@ class MediaControlCurrentTimeDisplayElement;
 class MediaControlTimeRemainingDisplayElement;
 class MediaControlTimelineElement;
 class MediaControlVolumeSliderElement;
+class MediaControlToggleClosedCaptionsButtonElement;
 class MediaControlFullscreenButtonElement;
 class MediaControlTimeDisplayElement;
 class MediaControlTimelineContainerElement;
@@ -146,6 +147,7 @@ private:
     MediaControlTimelineElement* m_timeline;
     MediaControlPanelMuteButtonElement* m_panelMuteButton;
     MediaControlVolumeSliderElement* m_volumeSlider;
+    MediaControlToggleClosedCaptionsButtonElement* m_toggleClosedCaptionsButton;
     MediaControlFullscreenButtonElement* m_fullscreenButton;
     MediaControlPanelElement* m_panel;
     MediaControlPanelEnclosureElement* m_enclosure;
