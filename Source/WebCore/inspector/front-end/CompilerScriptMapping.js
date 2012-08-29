@@ -30,17 +30,18 @@
 
 /**
  * @constructor
- * @extends {WebInspector.Object}
  * @implements {WebInspector.SourceMapping}
- * @implements {WebInspector.UISourceCodeProvider}
+ * @param {WebInspector.Workspace} workspace
  */
-WebInspector.CompilerScriptMapping = function()
+WebInspector.CompilerScriptMapping = function(workspace)
 {
+    this._workspace = workspace;
     this._sourceMapByURL = {};
     this._sourceMapForScriptId = {};
     this._scriptForSourceMap = new Map();
     this._sourceMapForUISourceCode = new Map();
     this._uiSourceCodeByURL = {};
+    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
 }
 
 WebInspector.CompilerScriptMapping.prototype = {
@@ -79,7 +80,7 @@ WebInspector.CompilerScriptMapping.prototype = {
             result.push(this._uiSourceCodeByURL[url]);
         return result;
     },
-
+    
     /**
      * @param {WebInspector.SourceMapParser} sourceMap
      * @return {Array.<WebInspector.UISourceCode>}
@@ -131,7 +132,7 @@ WebInspector.CompilerScriptMapping.prototype = {
         script.setSourceMapping(this);
 
         for (var i = 0; i < uiSourceCodeList.length; ++i)
-            this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCodeList[i]);
+            this._workspace.project().addUISourceCode(uiSourceCodeList[i]);
     },
 
     /**
@@ -160,7 +161,7 @@ WebInspector.CompilerScriptMapping.prototype = {
         return sourceMap;
     },
 
-    reset: function()
+    _reset: function()
     {
         this._sourceMapByURL = {};
         this._sourceMapForScriptId = {};
@@ -169,8 +170,6 @@ WebInspector.CompilerScriptMapping.prototype = {
         this._uiSourceCodeByURL = {};
     }
 }
-
-WebInspector.CompilerScriptMapping.prototype.__proto__ = WebInspector.Object.prototype;
 
 /**
  * @constructor

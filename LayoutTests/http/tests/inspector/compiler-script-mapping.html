@@ -125,7 +125,8 @@ function test()
         function testCompilerScriptMapping(next)
         {
             WebInspector.debuggerModel._reset();
-            var mapping = new WebInspector.CompilerScriptMapping();
+            var workspace = new WebInspector.Workspace();
+            var mapping = new WebInspector.CompilerScriptMapping(workspace);
             var script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");
             script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json";
             mapping.addScript(script);
@@ -161,7 +162,8 @@ function test()
         function testInlinedSourceMap(next)
         {
             WebInspector.debuggerModel._reset();
-            var mapping = new WebInspector.CompilerScriptMapping();
+            var workspace = new WebInspector.Workspace();
+            var mapping = new WebInspector.CompilerScriptMapping(workspace);
             var script = InspectorTest.createScriptMock("http://example.com/compiled.js", 0, 0, true, "");
             var sourceMap = {
                 "file":"compiled.js",
@@ -192,20 +194,16 @@ function test()
         {
             WebInspector.settings.sourceMapsEnabled.set(true);
             WebInspector.debuggerModel._reset();
-            var debuggerScriptMapping = new WebInspector.DebuggerScriptMapping();
-            var uiSourceCodeProvider = new WebInspector.CompositeUISourceCodeProvider(debuggerScriptMapping.uiSourceCodeProviders());
-            uiSourceCodeProvider.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCodeAdded);
+            var workspace = new WebInspector.Workspace();
+            var debuggerScriptMapping = new WebInspector.DebuggerScriptMapping(workspace);
 
             var script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");
             script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json_";
             console.error = function() {}; // Error message is platform dependent.
             debuggerScriptMapping._parsedScriptSource({data:script});
-
-            function uiSourceCodeAdded(event)
-            {
-                InspectorTest.addResult(event.data.url);
-                next();
-            }
+            var uiLocation = script.rawLocationToUILocation(0, 0);
+            InspectorTest.addResult(uiLocation.uiSourceCode.url);
+            next();
         }
     ]);
 };

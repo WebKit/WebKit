@@ -120,7 +120,7 @@ function test()
         reset: function()
         {
             InspectorTest.addResult("  Resetting workspace.");
-            this.dispatchEventToListeners(WebInspector.Workspace.Events.WorkspaceReset);
+            this.dispatchEventToListeners(WebInspector.Workspace.Events.ProjectWillReset);
         }
     }
     WorkspaceMock.prototype.__proto__ = WebInspector.Object.prototype;

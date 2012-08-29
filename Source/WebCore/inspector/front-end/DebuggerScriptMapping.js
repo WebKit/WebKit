@@ -31,13 +31,13 @@
 /**
  * @constructor
  */
-WebInspector.DebuggerScriptMapping = function()
+WebInspector.DebuggerScriptMapping = function(workspace)
 {
     this._mappings = [];
   
-    this._resourceMapping = new WebInspector.ResourceScriptMapping();
+    this._resourceMapping = new WebInspector.ResourceScriptMapping(workspace);
     this._mappings.push(this._resourceMapping);
-    this._compilerMapping = new WebInspector.CompilerScriptMapping();
+    this._compilerMapping = new WebInspector.CompilerScriptMapping(workspace);
     this._mappings.push(this._compilerMapping);
     this._snippetMapping = WebInspector.scriptSnippetModel.scriptMapping;
     this._mappings.push(this._snippetMapping);
@@ -47,14 +47,6 @@ WebInspector.DebuggerScriptMapping = function()
 }
 
 WebInspector.DebuggerScriptMapping.prototype = {
-    /**
-     * @return {Array.<WebInspector.UISourceCodeProvider>}
-     */
-    uiSourceCodeProviders: function()
-    {
-        return this._mappings;
-    },
-
     /**
      * @param {WebInspector.Event} event
      */

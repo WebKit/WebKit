@@ -30,18 +30,19 @@
 
 /**
  * @constructor
- * @extends {WebInspector.Object}
- * @implements {WebInspector.UISourceCodeProvider}
  * @implements {WebInspector.SourceMapping}
+ * @param {WebInspector.Workspace} workspace
  */
-WebInspector.StylesUISourceCodeProvider = function()
+WebInspector.StylesUISourceCodeProvider = function(workspace)
 {
+    this._workspace = workspace;
     /**
      * @type {Array.<WebInspector.UISourceCode>}
      */
     this._uiSourceCodes = [];
     this._uiSourceCodeForURL = {};
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
+    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
 }
 
 WebInspector.StylesUISourceCodeProvider.prototype = {
@@ -102,10 +103,10 @@ WebInspector.StylesUISourceCodeProvider.prototype = {
         this._uiSourceCodes.push(uiSourceCode);
         this._uiSourceCodeForURL[resource.url] = uiSourceCode;
         WebInspector.cssModel.setSourceMapping(resource.url, this);
-        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
+        this._workspace.project().addUISourceCode(uiSourceCode);
     },
 
-    reset: function()
+    _reset: function()
     {
         this._uiSourceCodes = [];
         this._uiSourceCodeForURL = {};
@@ -113,5 +114,3 @@ WebInspector.StylesUISourceCodeProvider.prototype = {
         this._populate();
     }
 }
-
-WebInspector.StylesUISourceCodeProvider.prototype.__proto__ = WebInspector.Object.prototype;

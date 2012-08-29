@@ -30,57 +30,70 @@
 
 /**
  * @constructor
- * @extends {WebInspector.Object}
- * @implements {WebInspector.UISourceCodeProvider}
- * @param {Array.<WebInspector.UISourceCodeProvider>} uiSourceCodeProviders
  */
-WebInspector.CompositeUISourceCodeProvider = function(uiSourceCodeProviders)
+WebInspector.WorkspaceController = function(workspace)
 {
-    WebInspector.Object.call(this);
-    this._uiSourceCodeProviders = [];
-    for (var i = 0; i < uiSourceCodeProviders.length; ++i)
-        this._registerUISourceCodeProvider(uiSourceCodeProviders[i]);
+    this._workspace = workspace;
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._mainFrameNavigated, this);
 }
 
-WebInspector.CompositeUISourceCodeProvider.prototype = {
-    /**
-     * @param {WebInspector.UISourceCodeProvider} uiSourceCodeProvider
-     */
-    _registerUISourceCodeProvider: function(uiSourceCodeProvider)
+WebInspector.WorkspaceController.prototype = {
+    _mainFrameNavigated: function()
     {
-        this._uiSourceCodeProviders.push(uiSourceCodeProvider);
-        uiSourceCodeProvider.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this);
-        uiSourceCodeProvider.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, this._handleUISourceCodeReplaced, this);
-        uiSourceCodeProvider.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, this._handleUISourceCodeRemoved, this);
-    },
+        WebInspector.Revision.filterOutStaleRevisions();
+        this._workspace.project().reset();
+    }
+}
 
-    _handleUISourceCodeAdded: function(event)
-    {
-        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, event.data);
-    },
+/**
+ * @type {?WebInspector.WorkspaceController}
+ */
+WebInspector.workspaceController = null;
 
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _handleUISourceCodeReplaced: function(event)
-    {
-        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, event.data);
-    },
+/**
+ * @constructor
+ */
+WebInspector.Project = function(workspace)
+{
+    this._uiSourceCodes = [];
+    this._workspace = workspace;
+}
 
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _handleUISourceCodeRemoved: function(event)
+WebInspector.Project.prototype = {
+    reset: function()
     {
-        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, event.data);
+        this._workspace.dispatchEventToListeners(WebInspector.Workspace.Events.ProjectWillReset, this);
+        this._uiSourceCodes = [];
     },
 
     /**
-     * @return {Array.<WebInspector.UISourceCodeProvider>}
+     * @param {WebInspector.UISourceCode} uiSourceCode
      */
-    uiSourceCodeProviders: function()
+    addUISourceCode: function(uiSourceCode)
     {
-        return this._uiSourceCodeProviders.slice(0);
+        this._uiSourceCodes.push(uiSourceCode);
+        this._workspace.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} oldUISourceCode
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    replaceUISourceCode: function(oldUISourceCode, uiSourceCode)
+    {
+        this._uiSourceCodes.splice(this._uiSourceCodes.indexOf(oldUISourceCode), 1);
+        this._uiSourceCodes.push(uiSourceCode);
+        var data = { oldUISourceCode: oldUISourceCode, uiSourceCode: uiSourceCode };
+        this._workspace.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, data);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    removeUISourceCode: function(uiSourceCode)
+    {
+        this._uiSourceCodes.splice(this._uiSourceCodes.indexOf(uiSourceCode), 1);
+        this._workspace.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, uiSourceCode);
     },
 
     /**
@@ -89,12 +102,9 @@ WebInspector.CompositeUISourceCodeProvider.prototype = {
      */
     uiSourceCodeForURL: function(url)
     {
-        for (var i = 0; i < this._uiSourceCodeProviders.length; ++i) {
-            var uiSourceCodes = this._uiSourceCodeProviders[i].uiSourceCodes();
-            for (var j = 0; j < uiSourceCodes.length; ++j) {
-                if (uiSourceCodes[j].url === url)
-                    return uiSourceCodes[j];
-            }
+        for (var i = 0; i < this._uiSourceCodes.length; ++i) {
+            if (this._uiSourceCodes[i].url === url)
+                return this._uiSourceCodes[i];
         }
         return null;
     },
@@ -104,62 +114,54 @@ WebInspector.CompositeUISourceCodeProvider.prototype = {
      */
     uiSourceCodes: function()
     {
-        var result = [];
-        for (var i = 0; i < this._uiSourceCodeProviders.length; ++i) {
-            var uiSourceCodes = this._uiSourceCodeProviders[i].uiSourceCodes();
-            for (var j = 0; j < uiSourceCodes.length; ++j)
-                result.push(uiSourceCodes[j]);
-        }
-        return result;
+        return this._uiSourceCodes;
     }
 }
 
-WebInspector.CompositeUISourceCodeProvider.prototype.__proto__ = WebInspector.Object.prototype;
-
 /**
  * @constructor
- * @extends {WebInspector.CompositeUISourceCodeProvider}
+ * @implements {WebInspector.UISourceCodeProvider}
+ * @extends {WebInspector.Object}
  */
 WebInspector.Workspace = function()
 {
-    var scriptMapping = new WebInspector.DebuggerScriptMapping();
-    var styleProviders = [new WebInspector.StylesUISourceCodeProvider()];
-    if (WebInspector.experimentsSettings.sass.isEnabled())
-        styleProviders.push(new WebInspector.SASSSourceMapping());
-    var providers = scriptMapping.uiSourceCodeProviders().concat(styleProviders);
-    WebInspector.CompositeUISourceCodeProvider.call(this, providers);
-
-    new WebInspector.PresentationConsoleMessageHelper(this);
-    
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._reset, this);
+    this._project = new WebInspector.Project(this);
 }
 
 WebInspector.Workspace.Events = {
-    UISourceCodeContentCommitted: "uiSourceCodeContentCommitted",
-    WorkspaceReset: "WorkspaceReset"
+    UISourceCodeContentCommitted: "UISourceCodeContentCommitted",
+    ProjectWillReset: "ProjectWillReset"
 }
 
 WebInspector.Workspace.prototype = {
     /**
-     * @param {WebInspector.UISourceCodeProvider} uiSourceCodeProvider
+     * @param {string} url
+     * @return {?WebInspector.UISourceCode}
      */
-    registerUISourceCodeProvider: function(uiSourceCodeProvider)
+    uiSourceCodeForURL: function(url)
     {
-        this._registerUISourceCodeProvider(uiSourceCodeProvider);
+        return this._project.uiSourceCodeForURL(url);
     },
 
-    _reset: function()
+    /**
+     * @return {WebInspector.Project}
+     */
+    project: function()
     {
-        var uiSourceCodeProviders = this.uiSourceCodeProviders();
-        for (var i = 0; i < uiSourceCodeProviders.length; ++i) {
-            uiSourceCodeProviders[i].reset();
-        }
-        WebInspector.Revision.filterOutStaleRevisions();
-        this.dispatchEventToListeners(WebInspector.Workspace.Events.WorkspaceReset, null);
+        // FIXME: support several projects.
+        return this._project;
+    },
+
+    /**
+     * @return {Array.<WebInspector.UISourceCode>}
+     */
+    uiSourceCodes: function()
+    {
+        return this._project.uiSourceCodes();
     }
 }
 
-WebInspector.Workspace.prototype.__proto__ = WebInspector.CompositeUISourceCodeProvider.prototype;
+WebInspector.Workspace.prototype.__proto__ = WebInspector.Object.prototype;
 
 /**
  * @type {?WebInspector.Workspace}

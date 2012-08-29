@@ -1,3 +1,15 @@
+2012-08-29  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Turn workspace into a container of UiSourceCodes put in different projects.
+        https://bugs.webkit.org/show_bug.cgi?id=95335
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/compiler-script-mapping.html:
+        * inspector/debugger/breakpoint-manager.html:
+        * inspector/debugger/script-snippet-model.html:
+        * inspector/debugger/scripts-panel.html:
+
 2012-08-29  Szilard Ledan  <szledan@inf.u-szeged.hu>
 
         [WK2] New fast/events/tab-focus-link-in-canvas fails from r126908

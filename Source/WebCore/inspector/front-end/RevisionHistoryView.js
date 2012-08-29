@@ -57,7 +57,7 @@ WebInspector.RevisionHistoryView = function()
     WebInspector.workspace.addEventListener(WebInspector.Workspace.Events.UISourceCodeContentCommitted, this._revisionAdded, this);
     WebInspector.workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
     WebInspector.workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
-    WebInspector.workspace.addEventListener(WebInspector.Workspace.Events.WorkspaceReset, this._reset, this);
+    WebInspector.workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
 
     this._statusElement = document.createElement("span");
     this._statusElement.textContent = WebInspector.UIString("Local modifications");

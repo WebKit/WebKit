@@ -30,19 +30,16 @@
 
 /**
  * @constructor
- * @extends {WebInspector.Object}
  * @implements {WebInspector.SourceMapping}
- * @implements {WebInspector.UISourceCodeProvider}
+ * @param {WebInspector.Workspace} workspace
  */
-WebInspector.SASSSourceMapping = function()
+WebInspector.SASSSourceMapping = function(workspace)
 {
-    /**
-     * @type {Array.<WebInspector.UISourceCode>}
-     */
-    this._uiSourceCodes = [];
+    this._workspace = workspace;
     this._uiSourceCodeForURL = {};
     this._uiLocations = {};
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
+    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
 }
 
 WebInspector.SASSSourceMapping.prototype = {
@@ -119,8 +116,7 @@ WebInspector.SASSSourceMapping.prototype = {
         if (!uiSourceCode) {
             uiSourceCode = new WebInspector.SASSSource(url);
             this._uiSourceCodeForURL[url] = uiSourceCode;
-            this._uiSourceCodes.push(uiSourceCode);
-            this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
+            this._workspace.project().addUISourceCode(uiSourceCode);
             WebInspector.cssModel.setSourceMapping(rawURL, this);
         }
         var rawLocationString = rawURL + ":" + (rawLine + 1);  // Next line after mapping metainfo
@@ -136,7 +132,7 @@ WebInspector.SASSSourceMapping.prototype = {
         var location = /** @type WebInspector.CSSLocation */ rawLocation;
         var uiLocation = this._uiLocations[location.url + ":" + location.lineNumber];
         if (!uiLocation) {
-            var uiSourceCode = WebInspector.workspace.uiSourceCodeForURL(location.url);
+            var uiSourceCode = this._workspace.uiSourceCodeForURL(location.url);
             uiLocation = new WebInspector.UILocation(uiSourceCode, location.lineNumber, 0);
         }
         return uiLocation;
@@ -154,24 +150,13 @@ WebInspector.SASSSourceMapping.prototype = {
         return new WebInspector.CSSLocation(uiSourceCode.contentURL() || "", lineNumber);
     },
 
-    /**
-     * @return {Array.<WebInspector.UISourceCode>}
-     */
-    uiSourceCodes: function()
+    _reset: function()
     {
-        return this._uiSourceCodes;
-    },
-
-    reset: function()
-    {
-        this._uiSourceCodes = [];
         this._uiSourceCodeForURL = {};
         this._uiLocations = {};
         this._populate();
     }
 }
-
-WebInspector.SASSSourceMapping.prototype.__proto__ = WebInspector.Object.prototype;
 
 /**
  * @constructor

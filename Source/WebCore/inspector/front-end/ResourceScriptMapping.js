@@ -41,6 +41,7 @@ WebInspector.ResourceScriptMapping = function()
     this._rawSourceCodeForURL = {};
     this._rawSourceCodeForDocumentURL = {};
     this._rawSourceCodeForUISourceCode = new Map();
+    WebInspector.workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
 }
 
 WebInspector.ResourceScriptMapping.prototype = {
@@ -164,7 +165,7 @@ WebInspector.ResourceScriptMapping.prototype = {
         if (!uiSourceCode.url)
             return;
         this._rawSourceCodeForUISourceCode.put(uiSourceCode, rawSourceCode);
-        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
+        WebInspector.workspace.project().addUISourceCode(uiSourceCode);
     },
 
     /**
@@ -181,9 +182,7 @@ WebInspector.ResourceScriptMapping.prototype = {
 
         for (var i = 0; i < rawSourceCode._scripts.length; ++i)
             rawSourceCode._scripts[i].setSourceMapping(this);
-
-        var data = { oldUISourceCode: oldUISourceCode, uiSourceCode: uiSourceCode };
-        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, data);
+        WebInspector.workspace.project().replaceUISourceCode(oldUISourceCode, uiSourceCode);
     },
 
     /**
@@ -208,7 +207,7 @@ WebInspector.ResourceScriptMapping.prototype = {
         script.setSourceMapping(this);
     },
 
-    reset: function()
+    _reset: function()
     {
         for (var i = 0; i < this._rawSourceCodes.length; ++i) {
             var rawSourceCode = this._rawSourceCodes[i];

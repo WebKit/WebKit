@@ -47,7 +47,7 @@ WebInspector.BreakpointManager = function(breakpointStorage, debuggerModel, work
     this._sourceFilesWithRestoredBreakpoints = {};
 
     this._debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointResolved, this._breakpointResolved, this);
-    this._workspace.addEventListener(WebInspector.Workspace.Events.WorkspaceReset, this._workspaceReset, this);
+    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._workspaceReset, this);
     this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._uiSourceCodeAdded, this);
 }
 
