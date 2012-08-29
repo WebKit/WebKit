@@ -4376,6 +4376,12 @@ class WebKitStyleTest(CppStyleTestBase):
             'if (UNLIKELY(foo == 0))',
             '')
         self.assert_lint(
+            'if ((a - b) == 0.5)',
+            '')
+        self.assert_lint(
+            'if (0.5 == (a - b))',
+            '')
+        self.assert_lint(
             'if (LIKELY(foo == NULL))',
             'Use 0 instead of NULL.  [readability/null] [5]')
         self.assert_lint(

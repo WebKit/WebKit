@@ -2425,7 +2425,7 @@ def check_for_comparisons_to_zero(clean_lines, line_number, error):
     line = clean_lines.elided[line_number]
 
     # Include NULL here so that users don't have to convert NULL to 0 first and then get this error.
-    if search(r'[=!]=\s*(NULL|0|true|false)\W', line) or search(r'\W(NULL|0|true|false)\s*[=!]=', line):
+    if search(r'[=!]=\s*(NULL|0|true|false)[^\w.]', line) or search(r'[^\w.](NULL|0|true|false)\s*[=!]=', line):
         if not search('LIKELY', line) and not search('UNLIKELY', line):
             error(line_number, 'readability/comparison_to_zero', 5,
                   'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.')
