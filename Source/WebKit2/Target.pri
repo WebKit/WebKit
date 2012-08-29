@@ -36,6 +36,7 @@ HEADERS += \
     PluginProcess/PluginCreationParameters.h \
     PluginProcess/PluginProcess.h \
     PluginProcess/WebProcessConnection.h \
+    Shared/API/c/WKArray.h \
     Shared/API/c/WKBase.h \
     Shared/API/c/WKCertificateInfo.h \
     Shared/API/c/WKConnectionRef.h \
@@ -46,6 +47,7 @@ HEADERS += \
     Shared/API/c/WKGeometry.h \
     Shared/API/c/WKGraphicsContext.h \
     Shared/API/c/WKImage.h \
+    Shared/API/c/WKMutableArray.h \
     Shared/API/c/WKMutableDictionary.h \
     Shared/API/c/WKNumber.h \
     Shared/API/c/WKPageLoadTypes.h \

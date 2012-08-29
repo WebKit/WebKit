@@ -1,5 +1,11 @@
 2012-08-29  Jon Lee  <jonlee@apple.com>
 
+        Build patch for Qt.
+
+        * Target.pri: Export WKArray and WKMutableArray for Qt.
+
+2012-08-29  Jon Lee  <jonlee@apple.com>
+
         Added missing exports for Windows.
 
         * win/WebKit2Generated.make:
