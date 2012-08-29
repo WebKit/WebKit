@@ -1,3 +1,33 @@
+2012-08-28  Joone Hur  <joone.hur@intel.com>
+
+        [EFL] Unreviewed gardening on the 64bit build bot.
+ 
+        The following test cases don't crash so they should be removed from 
+        WK2 TestExpectations file. 
+        inspector/elements/event-listeners-about-blank.html
+        inspector/console/console-assert.html
+        inspector/debugger/debugger-step-out.html
+        inspector/debugger/debugger-suspend-active-dom-objects.html
+        fast/forms/fieldset/fieldset-crash.html
+        fast/events/keyevent-iframe-removed-crash.html
+        
+        The following test cases pass only in WK2 so marked them as pass.
+        fast/loader/opaque-base-url.html 
+        canvas/philip/tests/2d.text.draw.fontface.notinpage.html 
+        editing/execCommand/indent-paragraphs.html 
+        fast/animation/request-animation-frame-during-modal.html 
+        fast/forms/mailto/formenctype-attribute-button-html.html
+        fast/forms/mailto/formenctype-attribute-input-html.html
+        fast/frames/seamless/seamless-inherited-document-style.html
+        fast/js/names.html
+        http/tests/security/cross-frame-access-call.html
+        http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html
+
+        The following test case is marked as known failure.
+        fast/events/tab-focus-link-in-canvas.html
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-08-28  Kenichi Ishibashi  <bashi@chromium.org>
 
         style->fontMetrics() should be available when setting line-height

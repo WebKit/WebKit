@@ -30,17 +30,11 @@
 // CRASHES
 //////////////////////////////////////////////////////////////////////////////////////////
 
-BUGWKEFL : inspector/elements/event-listeners-about-blank.html = CRASH
-BUGWKEFL : inspector/console/console-assert.html  = CRASH
-BUGWKEFL : inspector/debugger/debugger-step-out.html = CRASH
 BUGWKEFL : inspector/debugger/debugger-activation-crash2.html = CRASH
-BUGWKEFL : inspector/debugger/debugger-suspend-active-dom-objects.html = CRASH
 BUGWKEFL : inspector/debugger/debugger-pause-in-eval-script.html = CRASH
 BUGWKEFL : inspector/debugger/debugger-eval-on-call-frame.html = CRASH
 BUGWKEFL : fast/js/dfg-poison-fuzz.html = CRASH
 BUGWKEFL : fast/loader/document-with-fragment-url-1.html = CRASH
-BUGWKEFL : fast/forms/fieldset/fieldset-crash.html = CRASH
-BUGWKEFL : fast/events/keyevent-iframe-removed-crash.html = CRASH
 BUGWKEFL : fast/overflow/lots-of-sibling-inline-boxes.html = CRASH
 BUGWKEFL : fast/dom/register-protocol-handler.html = CRASH
 BUGWKEFL : fast/dom/unregister-protocol-handler.html = CRASH
@@ -171,6 +165,8 @@ BUGWKEFL : fast/events/touch/touch-stale-node-crash.html = TEXT
 BUGWKEFL : fast/events/touch/touch-target-limited.html = TEXT
 BUGWKEFL : fast/events/touch/touch-target.html = TEXT
 
+BUGWKEFL : fast/events/tab-focus-link-in-canvas.html = TEXT
+
 // WebKitTestRunner needs an implementation for testRunner.setViewModeMediaFeature
 BUGWKEFL : fast/media/media-query-list-02.html = TEXT
 BUGWKEFL : fast/media/media-query-list-03.html = TEXT
@@ -221,6 +217,18 @@ BUGWKEFL : http/tests/security/cookies/document-open.html = TEXT
 
 // WebKitTestRunner needs an implementation for testRunner.setStorageDatabaseIdleInterval
 BUGWKEFL : storage/domstorage/storage-close-database-on-idle.html = TEXT
+
+// These test cases pass only in WK2
+BUGWK30724 DEBUG : fast/loader/opaque-base-url.html = PASS 
+BUGWK87355 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS 
+BUGWK84835 : editing/execCommand/indent-paragraphs.html = TEXT PASS 
+BUGWK84589 : fast/animation/request-animation-frame-during-modal.html = TEXT PASS 
+BUGWK87972 : fast/forms/mailto/formenctype-attribute-button-html.html = TEXT PASS
+BUGWK87972 : fast/forms/mailto/formenctype-attribute-input-html.html = TEXT PASS
+BUGWK86182 : fast/frames/seamless/seamless-inherited-document-style.html = TEXT PASS
+BUGWK87088 : fast/js/names.html = TEXT PASS
+BUGWK84589 : http/tests/security/cross-frame-access-call.html = TEXT PASS
+BUGWK94194 : http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html = TEXT PASS
 
 // Unclassified failures
 BUGWKEFL : editing/execCommand/delete-selection-has-style.html = TEXT
