@@ -1,3 +1,13 @@
+2012-08-29  Jessie Berlin  <jberlin@apple.com>
+
+        ASSERTION FAILED: enclosingIntRect(rendererMappedResult) == enclosingIntRect(FloatQuad(result).boundingBox()) : WebCore::FloatRect WebCore::RenderGeometryMap::absoluteRect(const WebCore::FloatRect &) const
+        https://bugs.webkit.org/show_bug.cgi?id=92464
+
+        Skip fast/events/tabindex-focus-blur-all.html since it is manifesting as a crash on the WK2
+        Debug Testers.
+
+        * platform/mac-wk2/Skipped:
+
 2012-08-29  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Unskip 2 willSendRequest tests that are passing consistently
