@@ -1,6 +1,6 @@
 var id = 0;
 try {
-    id = 17;  // Test not yet fully enabled.  Simply pretend that a call to setTimeout() here worked.
+    id = setTimeout("postMessage('handler invoked')", 100);
 } catch(e) {
 }
-postMessage(id === 0 ? "setTimeout blocked" : "setTimout allowed");
+postMessage(id === 0 ? "setTimeout blocked" : "setTimeout allowed");

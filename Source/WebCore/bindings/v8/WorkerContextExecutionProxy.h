@@ -68,6 +68,9 @@ namespace WebCore {
         // events and releases references to their event targets: WorkerContext.
         void trackEvent(Event*);
 
+        // Alow use of eval() and is equivalents in scripts.
+        void setEvalAllowed(bool enable);
+
         // Evaluate a script file in the current execution environment.
         ScriptValue evaluate(const String& script, const String& fileName, const TextPosition& scriptStartPosition, WorkerContextExecutionState*);
 
@@ -94,6 +97,8 @@ namespace WebCore {
         Vector<Event*> m_events;
 
         OwnPtr<V8PerContextData> m_perContextData;
+
+        bool m_disableEvalPending;
     };
 
 } // namespace WebCore

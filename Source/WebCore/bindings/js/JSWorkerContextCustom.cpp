@@ -122,20 +122,22 @@ JSValue JSWorkerContext::importScripts(ExecState* exec)
 
 JSValue JSWorkerContext::setTimeout(ExecState* exec)
 {
-    // FIXME: Should we enforce a Content-Security-Policy on workers?
-    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec), 0);
+    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec), impl()->contentSecurityPolicy());
     if (exec->hadException())
         return jsUndefined();
+    if (!action)
+        return jsNumber(0);
     int delay = exec->argument(1).toInt32(exec);
     return jsNumber(impl()->setTimeout(action.release(), delay));
 }
 
 JSValue JSWorkerContext::setInterval(ExecState* exec)
 {
-    // FIXME: Should we enforce a Content-Security-Policy on workers?
-    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec), 0);
+    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec), impl()->contentSecurityPolicy());
     if (exec->hadException())
         return jsUndefined();
+    if (!action)
+        return jsNumber(0);
     int delay = exec->argument(1).toInt32(exec);
     return jsNumber(impl()->setInterval(action.release(), delay));
 }

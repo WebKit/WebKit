@@ -134,6 +134,7 @@ bool WorkerScriptController::isExecutionForbidden() const
 
 void WorkerScriptController::disableEval()
 {
+    m_proxy->setEvalAllowed(false);
 }
 
 void WorkerScriptController::setException(const ScriptValue& exception)
