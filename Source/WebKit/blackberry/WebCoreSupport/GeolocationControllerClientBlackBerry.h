@@ -22,7 +22,7 @@
 #include <BlackBerryPlatformGeoTracker.h>
 #include <BlackBerryPlatformGeoTrackerListener.h>
 #include <GeolocationClient.h>
-#include <RefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace BlackBerry {
 namespace WebKit {

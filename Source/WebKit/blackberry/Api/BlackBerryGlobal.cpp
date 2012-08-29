@@ -29,7 +29,6 @@
 #include "JSDOMWindow.h"
 #include "JSGlobalData.h"
 #include "Logging.h"
-#include "MainThread.h"
 #include "MemoryCache.h"
 #include "NetworkStateNotifier.h"
 #include "PageCache.h"
@@ -41,6 +40,7 @@
 #include <BlackBerryPlatformExecutableMessage.h>
 #include <BlackBerryPlatformMessageClient.h>
 #include <BlackBerryPlatformSettings.h>
+#include <wtf/MainThread.h>
 
 using namespace WebCore;
 

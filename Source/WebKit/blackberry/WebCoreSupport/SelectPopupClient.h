@@ -23,8 +23,8 @@
 #include "PagePopupClient.h"
 #include "ScopePointer.h"
 #include "Timer.h"
-#include "WTFString.h"
 #include "WebString.h"
+#include <wtf/text/WTFString.h>
 
 namespace BlackBerry {
 namespace WebKit {

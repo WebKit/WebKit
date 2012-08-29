@@ -22,7 +22,6 @@
 #include "BackingStore.h"
 #include "BackingStoreClient.h"
 #include "CSSStyleDeclaration.h"
-#include "CString.h"
 #include "Chrome.h"
 #include "DOMSupport.h"
 #include "DatePickerClient.h"
@@ -68,6 +67,7 @@
 #include <BlackBerryPlatformMisc.h>
 #include <BlackBerryPlatformSettings.h>
 #include <sys/keycodes.h>
+#include <wtf/text/CString.h>
 
 #define ENABLE_INPUT_LOG 0
 #define ENABLE_FOCUS_LOG 0

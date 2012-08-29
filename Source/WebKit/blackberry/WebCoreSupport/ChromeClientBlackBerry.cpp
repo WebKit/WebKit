@@ -23,7 +23,6 @@
 #include "BackingStore.h"
 #include "BackingStoreClient.h"
 #include "BackingStore_p.h"
-#include "CString.h"
 #include "ColorChooser.h"
 #include "DatabaseTracker.h"
 #include "Document.h"
@@ -69,6 +68,8 @@
 #include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformSettings.h>
 #include <BlackBerryPlatformWindow.h>
+
+#include <wtf/text/CString.h>
 
 #define DEBUG_OVERFLOW_DETECTION 0
 

@@ -29,7 +29,6 @@
 #if ENABLE(BATTERY_STATUS)
 #include "BatteryClientBlackBerry.h"
 #endif
-#include "CString.h"
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClientBlackBerry.h"
@@ -165,6 +164,8 @@
 #include <SharedPointer.h>
 #include <sys/keycodes.h>
 #include <unicode/ustring.h> // platform ICU
+
+#include <wtf/text/CString.h>
 
 #ifndef USER_PROCESSES
 #include <memalloc.h>

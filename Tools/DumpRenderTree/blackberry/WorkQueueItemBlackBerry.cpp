@@ -22,8 +22,8 @@
 #include "DumpRenderTreeBlackBerry.h"
 #include "Frame.h"
 #include "KURL.h"
-#include "OwnArrayPtr.h"
 #include "WebPage.h"
+#include <wtf/OwnArrayPtr.h>
 
 using namespace WebCore;
 

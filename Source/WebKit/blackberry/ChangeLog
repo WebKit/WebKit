@@ -1,3 +1,23 @@
+2012-08-29  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Adjust wtf include header style
+        https://bugs.webkit.org/show_bug.cgi?id=95368
+
+        Reviewed by Yong Li.
+
+        Switch to #include <wtf/...> like the other ports.
+
+        * Api/BlackBerryGlobal.cpp:
+        * Api/WebPage.cpp:
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        * WebCoreSupport/GeolocationControllerClientBlackBerry.h:
+        * WebCoreSupport/SelectPopupClient.h:
+        * WebKitSupport/AboutData.cpp:
+        * WebKitSupport/DOMSupport.cpp:
+        * WebKitSupport/GLES2Context.cpp:
+        * WebKitSupport/InPageSearchManager.h:
+        * WebKitSupport/InputHandler.cpp:
+
 2012-08-29  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Remove unused tapGesture in WebPage.cpp

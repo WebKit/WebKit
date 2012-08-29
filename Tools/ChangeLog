@@ -1,3 +1,19 @@
+2012-08-29  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Adjust wtf include header style
+        https://bugs.webkit.org/show_bug.cgi?id=95368
+
+        Reviewed by Yong Li.
+
+        Switch to #include <wtf/...> like the other ports.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        * DumpRenderTree/blackberry/PNGImageEncoder.cpp:
+        * DumpRenderTree/blackberry/PNGImageEncoder.h:
+        * DumpRenderTree/blackberry/PixelDumpSupportBlackBerry.cpp:
+        * DumpRenderTree/blackberry/PixelDumpSupportBlackBerry.h:
+        * DumpRenderTree/blackberry/WorkQueueItemBlackBerry.cpp:
+
 2012-08-29  Roger Fong  <roger_fong@apple.com>
 
         Update cygwin-downloader.zip to match modified downloader script.

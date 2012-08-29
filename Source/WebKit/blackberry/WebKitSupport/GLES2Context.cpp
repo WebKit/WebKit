@@ -32,7 +32,6 @@
 #include "config.h"
 #include "GLES2Context.h"
 
-#include "Assertions.h"
 #include "BackingStoreCompositingSurface.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -41,6 +40,8 @@
 #include "WebPage_p.h"
 
 #include <GLES2/gl2.h>
+
+#include <wtf/Assertions.h>
 
 using BlackBerry::Platform::Graphics::Window;
 

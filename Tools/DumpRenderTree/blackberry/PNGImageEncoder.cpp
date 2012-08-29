@@ -28,7 +28,7 @@ extern "C" {
 #include "png.h"
 }
 
-#include <OwnArrayPtr.h>
+#include <wtf/OwnArrayPtr.h>
 
 // This code is almost a mirror of the code in WebCore/platform/image-encoders/skia/PNGImageEncoder.cpp
 // since we can't include this private WebCore file in a WebKit-client application.

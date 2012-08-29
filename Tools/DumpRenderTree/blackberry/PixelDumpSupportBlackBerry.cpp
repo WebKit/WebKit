@@ -26,9 +26,9 @@
 #include "WebPageClient.h"
 
 #include <BlackBerryPlatformWindow.h>
-#include <MD5.h>
-#include <Vector.h>
 #include <skia/SkDevice.h>
+#include <wtf/MD5.h>
+#include <wtf/Vector.h>
 
 using namespace BlackBerry::WebKit;
 using namespace BlackBerry;

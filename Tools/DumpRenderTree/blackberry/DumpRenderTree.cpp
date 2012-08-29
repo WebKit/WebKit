@@ -23,7 +23,6 @@
 #include "AccessibilityController.h"
 #include "BackForwardController.h"
 #include "BackForwardListImpl.h"
-#include "CString.h"
 #include "Credential.h"
 #include "DatabaseTracker.h"
 #include "DocumentLoader.h"
@@ -42,7 +41,6 @@
 #include "IntSize.h"
 #include "JSDOMBinding.h"
 #include "NotImplemented.h"
-#include "OwnArrayPtr.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PixelDumpSupport.h"
@@ -55,7 +53,6 @@
 #include "TestRunner.h"
 #include "TextAffinity.h"
 #include "Timer.h"
-#include "Vector.h"
 #include "WebCoreTestSupport.h"
 #include "WebPage.h"
 #include "WebPageClient.h"
@@ -67,6 +64,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <wtf/NonCopyingSort.h>
+#include <wtf/OwnArrayPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 #define SDCARD_PATH "/developer"
 

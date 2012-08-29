@@ -20,7 +20,7 @@
 #define InPageSearchManager_h
 
 #include "FindOptions.h"
-#include "WTFString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 class Frame;

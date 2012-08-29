@@ -33,12 +33,13 @@
 #include "RenderTextControl.h"
 #include "TextIterator.h"
 #include "VisibleSelection.h"
-#include "WTFString.h"
 
 #include "htmlediting.h"
 #include "visible_units.h"
 
 #include <limits>
+
+#include <wtf/text/WTFString.h>
 
 using WTF::Vector;
 

@@ -19,10 +19,10 @@
 #ifndef PixelDumpSupportBlackBerry_h
 #define PixelDumpSupportBlackBerry_h
 
-#include <PassRefPtr.h>
-#include <RefCounted.h>
 #include <skia/SkBitmap.h>
 #include <skia/SkCanvas.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 class BitmapContext : public RefCounted<BitmapContext> {
 public:

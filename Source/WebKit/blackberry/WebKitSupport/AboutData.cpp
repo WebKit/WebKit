@@ -20,7 +20,6 @@
 #include "AboutData.h"
 
 #include "AboutTemplate.html.cpp"
-#include "CString.h"
 #include "CacheHelper.h"
 #include "CookieManager.h"
 #include "JSDOMWindow.h"
@@ -39,6 +38,7 @@
 #include <runtime/JSGlobalData.h>
 #include <sys/stat.h>
 #include <sys/utsname.h>
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 
