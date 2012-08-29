@@ -57,7 +57,7 @@ JSValue JSScope::resolve(CallFrame* callFrame, const Identifier& identifier)
     ASSERT(scopeChain);
 
     do {
-        JSObject* scope = scopeChain->object.get();
+        JSObject* scope = JSScope::objectAtScope(scopeChain);
         PropertySlot slot(scope);
         if (scope->getPropertySlot(callFrame, identifier, slot))
             return slot.getValue(callFrame, identifier);
@@ -85,7 +85,7 @@ JSValue JSScope::resolveSkip(CallFrame* callFrame, const Identifier& identifier,
     }
 
     do {
-        JSObject* scope = scopeChain->object.get();
+        JSObject* scope = JSScope::objectAtScope(scopeChain);
         PropertySlot slot(scope);
         if (scope->getPropertySlot(callFrame, identifier, slot))
             return slot.getValue(callFrame, identifier);
@@ -140,7 +140,7 @@ JSValue JSScope::resolveGlobalDynamic(
             scopeChain = scopeChain->next.get();
     }
     while (skip--) {
-        JSObject* scope = scopeChain->object.get();
+        JSObject* scope = JSScope::objectAtScope(scopeChain);
         if (!scope->hasCustomProperties())
             continue;
 
@@ -163,7 +163,7 @@ JSValue JSScope::resolveBase(CallFrame* callFrame, const Identifier& identifier,
     ASSERT(scopeChain);
 
     do {
-        JSObject* scope = scopeChain->object.get();
+        JSObject* scope = JSScope::objectAtScope(scopeChain);
 
         PropertySlot slot(scope);
         if (!scope->getPropertySlot(callFrame, identifier, slot))
@@ -184,7 +184,7 @@ JSValue JSScope::resolveWithBase(CallFrame* callFrame, const Identifier& identif
     ASSERT(scopeChain);
 
     do {
-        JSObject* scope = scopeChain->object.get();
+        JSObject* scope = JSScope::objectAtScope(scopeChain);
 
         PropertySlot slot(scope);
         if (!scope->getPropertySlot(callFrame, identifier, slot))
@@ -207,7 +207,7 @@ JSValue JSScope::resolveWithThis(CallFrame* callFrame, const Identifier& identif
     ASSERT(scopeChain);
 
     do {
-        JSObject* scope = scopeChain->object.get();
+        JSObject* scope = JSScope::objectAtScope(scopeChain);
 
         PropertySlot slot(scope);
         if (!scope->getPropertySlot(callFrame, identifier, slot))

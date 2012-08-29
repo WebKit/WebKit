@@ -465,11 +465,11 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
             oldCodeBlock->createActivation(callFrame);
             scopeChain = callFrame->scopeChain();
         }
-        while (!scopeChain->object->inherits(&JSActivation::s_info))
+        while (!JSScope::objectAtScope(scopeChain)->inherits(&JSActivation::s_info))
             scopeChain = scopeChain->pop();
 
         callFrame->setScopeChain(scopeChain);
-        JSActivation* activation = asActivation(scopeChain->object.get());
+        JSActivation* activation = asActivation(JSScope::objectAtScope(scopeChain));
         activation->tearOff(*scopeChain->globalData);
         if (JSValue arguments = callFrame->uncheckedR(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue())
             asArguments(arguments)->didTearOffActivation(callFrame->globalData(), activation);
@@ -1285,8 +1285,8 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     JSObject* variableObject;
     for (ScopeChainNode* node = scopeChain; ; node = node->next.get()) {
         ASSERT(node);
-        if (node->object->isVariableObject() && !node->object->isNameScopeObject()) {
-            variableObject = jsCast<JSSymbolTableObject*>(node->object.get());
+        if (JSScope::objectAtScope(node)->isVariableObject() && !JSScope::objectAtScope(node)->isNameScopeObject()) {
+            variableObject = jsCast<JSSymbolTableObject*>(JSScope::objectAtScope(node));
             break;
         }
     }

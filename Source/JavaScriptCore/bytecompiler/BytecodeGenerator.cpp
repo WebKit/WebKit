@@ -1272,7 +1272,7 @@ ResolveResult BytecodeGenerator::resolve(const Identifier& property)
     size_t depthOfFirstScopeWithDynamicChecks = 0;
     unsigned flags = 0;
     for (; iter != end; ++iter, ++depth) {
-        JSObject* currentScope = iter->get();
+        JSObject* currentScope = iter.get();
         if (!currentScope->isVariableObject()) {
             flags |= ResolveResult::DynamicFlag;
             break;
@@ -1310,7 +1310,7 @@ ResolveResult BytecodeGenerator::resolve(const Identifier& property)
     }
 
     // Can't locate the property but we're able to avoid a few lookups.
-    JSObject* scope = iter->get();
+    JSObject* scope = iter.get();
     // Step over the function's activation, if it needs one. At this point we
     // know there is no dynamic scope in the function itself, so this is safe to
     // do.
@@ -1341,7 +1341,7 @@ ResolveResult BytecodeGenerator::resolveConstDecl(const Identifier& property)
     ScopeChainIterator end = scopeChain()->end();
     size_t depth = 0;
     for (; iter != end; ++iter, ++depth) {
-        JSObject* currentScope = iter->get();
+        JSObject* currentScope = iter.get();
         if (!currentScope->isVariableObject())
             continue;
         JSSymbolTableObject* currentVariableObject = jsCast<JSSymbolTableObject*>(currentScope);

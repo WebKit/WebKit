@@ -37,7 +37,7 @@ void ScopeChainNode::print()
 {
     ScopeChainIterator scopeEnd = end();
     for (ScopeChainIterator scopeIter = begin(); scopeIter != scopeEnd; ++scopeIter) {
-        JSObject* o = scopeIter->get();
+        JSObject* o = scopeIter.get();
         PropertyNameArray propertyNames(globalObject->globalExec());
         o->methodTable()->getPropertyNames(o, globalObject->globalExec(), propertyNames, ExcludeDontEnumProperties);
         PropertyNameArray::const_iterator propEnd = propertyNames.end();
@@ -60,7 +60,7 @@ int ScopeChainNode::localDepth()
     int scopeDepth = 0;
     ScopeChainIterator iter = this->begin();
     ScopeChainIterator end = this->end();
-    while (!(*iter)->inherits(&JSActivation::s_info)) {
+    while (!iter->inherits(&JSActivation::s_info)) {
         ++iter;
         if (iter == end)
             break;

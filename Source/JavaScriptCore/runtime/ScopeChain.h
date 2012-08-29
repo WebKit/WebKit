@@ -71,7 +71,9 @@ namespace JSC {
         
         JSGlobalData* globalData;
         WriteBarrier<ScopeChainNode> next;
+    private:
         WriteBarrier<JSObject> object;
+    public:
         WriteBarrier<JSGlobalObject> globalObject;
         WriteBarrier<JSObject> globalThis;
 
@@ -93,6 +95,10 @@ namespace JSC {
 
     private:
         friend class LLIntOffsetsExtractor;
+        friend class ScopeChainIterator;
+        friend class JSScope;
+        friend class DFG::SpeculativeJIT;
+        friend class JIT;
         
         static const unsigned StructureFlags = OverridesVisitChildren;
     };
@@ -107,37 +113,6 @@ namespace JSC {
     {
         ASSERT(next);
         return next.get();
-    }
-
-    class ScopeChainIterator {
-    public:
-        ScopeChainIterator(ScopeChainNode* node)
-            : m_node(node)
-        {
-        }
-
-        WriteBarrier<JSObject> const & operator*() const { return m_node->object; }
-        WriteBarrier<JSObject> const * operator->() const { return &(operator*()); }
-    
-        ScopeChainIterator& operator++() { m_node = m_node->next.get(); return *this; }
-
-        // postfix ++ intentionally omitted
-
-        bool operator==(const ScopeChainIterator& other) const { return m_node == other.m_node; }
-        bool operator!=(const ScopeChainIterator& other) const { return m_node != other.m_node; }
-
-    private:
-        ScopeChainNode* m_node;
-    };
-
-    inline ScopeChainIterator ScopeChainNode::begin()
-    {
-        return ScopeChainIterator(this); 
-    }
-
-    inline ScopeChainIterator ScopeChainNode::end()
-    { 
-        return ScopeChainIterator(0); 
     }
 
     ALWAYS_INLINE JSGlobalData& ExecState::globalData() const

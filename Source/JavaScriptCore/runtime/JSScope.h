@@ -34,6 +34,8 @@ class JSScope : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 
+    static JSObject* objectAtScope(ScopeChainNode*);
+
     static JSValue resolve(CallFrame*, const Identifier&);
     static JSValue resolveSkip(CallFrame*, const Identifier&, int skip);
     static JSValue resolveGlobal(
@@ -63,6 +65,42 @@ protected:
 inline JSScope::JSScope(JSGlobalData& globalData, Structure* structure)
     : Base(globalData, structure)
 {
+}
+
+inline JSObject* JSScope::objectAtScope(ScopeChainNode* scopeChain)
+{
+    return scopeChain->object.get();
+}
+
+class ScopeChainIterator {
+public:
+    ScopeChainIterator(ScopeChainNode* node)
+        : m_node(node)
+    {
+    }
+
+    JSObject* get() const { return JSScope::objectAtScope(m_node); }
+    JSObject* operator->() const { return JSScope::objectAtScope(m_node); }
+
+    ScopeChainIterator& operator++() { m_node = m_node->next.get(); return *this; }
+
+    // postfix ++ intentionally omitted
+
+    bool operator==(const ScopeChainIterator& other) const { return m_node == other.m_node; }
+    bool operator!=(const ScopeChainIterator& other) const { return m_node != other.m_node; }
+
+private:
+    ScopeChainNode* m_node;
+};
+
+inline ScopeChainIterator ScopeChainNode::begin()
+{
+    return ScopeChainIterator(this); 
+}
+
+inline ScopeChainIterator ScopeChainNode::end()
+{ 
+    return ScopeChainIterator(0); 
 }
 
 } // namespace JSC

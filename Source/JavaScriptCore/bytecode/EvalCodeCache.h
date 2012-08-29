@@ -47,7 +47,7 @@ namespace JSC {
     public:
         EvalExecutable* tryGet(bool inStrictContext, const UString& evalSource, ScopeChainNode* scopeChain)
         {
-            if (!inStrictContext && evalSource.length() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject())
+            if (!inStrictContext && evalSource.length() < maxCacheableSourceLength && scopeChain->begin()->isVariableObject())
                 return m_cacheMap.get(evalSource.impl()).get();
             return 0;
         }
@@ -59,7 +59,7 @@ namespace JSC {
             if (exceptionValue)
                 return 0;
             
-            if (!inStrictContext && evalSource.length() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject() && m_cacheMap.size() < maxCacheEntries)
+            if (!inStrictContext && evalSource.length() < maxCacheableSourceLength && scopeChain->begin()->isVariableObject() && m_cacheMap.size() < maxCacheEntries)
                 m_cacheMap.set(evalSource.impl(), WriteBarrier<EvalExecutable>(exec->globalData(), owner, evalExecutable));
             
             return evalExecutable;

@@ -1,3 +1,62 @@
+2012-08-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Added JSScope::objectInScope(), and refactored callers to use it
+        https://bugs.webkit.org/show_bug.cgi?id=95281
+
+        Reviewed by Gavin Barraclough.
+
+        This is a step toward removing ScopeChainNode. We need a layer of
+        indirection so that 'with' scopes can proxy for an object.
+        JSScope::objectInScope() will be that layer.
+
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::tryGet):
+        (JSC::EvalCodeCache::getSlow):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::resolve):
+        (JSC::BytecodeGenerator::resolveConstDecl): . vs ->
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::execute):
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::resolve):
+        (JSC::JSScope::resolveSkip):
+        (JSC::JSScope::resolveGlobalDynamic):
+        (JSC::JSScope::resolveBase):
+        (JSC::JSScope::resolveWithBase):
+        (JSC::JSScope::resolveWithThis): Added JSScope::objectAtScope() calls.
+
+        * runtime/JSScope.h:
+        (JSScope):
+        (JSC::JSScope::objectAtScope):
+        (JSC):
+        (ScopeChainIterator):
+        (JSC::ScopeChainIterator::ScopeChainIterator):
+        (JSC::ScopeChainIterator::get):
+        (JSC::ScopeChainIterator::operator->):
+        (JSC::ScopeChainIterator::operator++):
+        (JSC::ScopeChainIterator::operator==):
+        (JSC::ScopeChainIterator::operator!=):
+        (JSC::ScopeChainNode::begin):
+        (JSC::ScopeChainNode::end): I moved ScopeChainIterator to this file
+        to resolve a circular #include problem. Eventually, I'll probably rename
+        it to JSScope::iterator, so I think it belongs here.
+
+        * runtime/ScopeChain.cpp:
+        (JSC::ScopeChainNode::print):
+        (JSC::ScopeChainNode::localDepth): . vs ->
+
+        * runtime/ScopeChain.h:
+        (ScopeChainNode): I made the 'object' data member private because it's
+        no longer safe to access -- you need to call JSScope::objectAtScope()
+        instead.
+
+        The JITs need to be friends because of the private declaration.
+
+        Subtly, JIT/LLInt code is correct without any changes because JIT/LLInt
+        code never compiles direct access to a with scope.
+
 2012-08-28  Mark Lam  <mark.lam@apple.com>
 
         Adding support for adding LLInt opcode extensions.  This will be needed
