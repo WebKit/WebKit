@@ -1,3 +1,16 @@
+2012-08-29  Jessie Berlin  <jberlin@apple.com>
+
+        ASSERTION FAILED: enclosingIntRect(rendererMappedResult) == enclosingIntRect(FloatQuad(result).boundingBox()) : WebCore::FloatRect WebCore::RenderGeometryMap::absoluteRect(const WebCore::FloatRect &) const
+        https://bugs.webkit.org/show_bug.cgi?id=92464
+
+        Saw an instance of fast/events/tabindex-focus-blur-all.html hitting the assertion on Debug
+        WK1 as well. Since it doesn't always happen on Debug WK1, mark it as flakey.
+
+        * platform/mac-wk2/Skipped:
+        Move handling of the test from here ...
+        * platform/mac/TestExpectations:
+        ... to here.
+
 2012-08-29  Brady Eidson  <beidson@apple.com>
 
         REGRESSION: Not sending NPP_SetWindow is causing Flash to not throttle itself

@@ -375,10 +375,6 @@ svg/transforms/change-transform-origin-css.xhtml
 sputnik/Unicode/Unicode_218/S7.6_A2.4.html
 sputnik/Unicode/Unicode_218/S7.6_A5.2_T1.html
 
-# ASSERTs in RenderGeometryMap::absoluteRect
-# https://bugs.webkit.org/show_bug.cgi?id=92464
-fast/events/tabindex-focus-blur-all.html
-
 ### END OF (3) Unclassified failures
 ########################################
 

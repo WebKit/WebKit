@@ -359,3 +359,4 @@ BUGWK77754 : fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-block
 BUGWK77754 : fast/inline/absolute-positioned-inline-in-centred-block.html = TEXT
 BUGWK77754 : fast/css/absolute-child-with-percent-height-inside-relative-parent.html = TEXT
 
+BUGWK92464 DEBUG : fast/events/tabindex-focus-blur-all.html = CRASH PASS
