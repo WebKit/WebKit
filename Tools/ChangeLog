@@ -1,3 +1,18 @@
+2012-08-28  Eric Seidel  <eric@webkit.org>
+
+        cr-ews bot doesn't set CWD correctly when zipping layout test results
+        https://bugs.webkit.org/show_bug.cgi?id=91265
+
+        Reviewed by Kenneth Russell.
+
+        This should make the zips slightly less cumbersome to deal with.
+
+        * Scripts/webkitpy/common/system/workspace.py:
+        (Workspace.create_zip):
+        * Scripts/webkitpy/common/system/workspace_unittest.py:
+        (WorkspaceTest.test_create_zip):
+        (WorkspaceTest.test_create_zip_exception):
+
 2012-08-28  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix the Commiters script

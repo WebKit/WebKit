@@ -65,7 +65,7 @@ class Workspace(object):
         # However, getting the paths, encoding and compression correct could be non-trivial.
         # So, for now we depend on the environment having "zip" installed (likely fails on Win32)
         try:
-            self._executive.run_command(['zip', '-9', '-r', zip_path, source_path])
+            self._executive.run_command(['zip', '-9', '-r', zip_path, '.'], cwd=source_path)
         except ScriptError, e:
             _log.error("Workspace.create_zip failed:\n%s" % e.message_with_output())
             return None

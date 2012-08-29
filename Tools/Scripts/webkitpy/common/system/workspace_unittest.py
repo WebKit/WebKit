@@ -50,7 +50,7 @@ class WorkspaceTest(unittest.TestCase):
 
     def test_create_zip(self):
         workspace = Workspace(None, MockExecutive(should_log=True))
-        expected_stderr = "MOCK run_command: ['zip', '-9', '-r', '/zip/path', '/source/path'], cwd=None\n"
+        expected_stderr = "MOCK run_command: ['zip', '-9', '-r', '/zip/path', '.'], cwd=/source/path\n"
         class MockZipFile(object):
             def __init__(self, path):
                 self.filename = path
@@ -59,7 +59,7 @@ class WorkspaceTest(unittest.TestCase):
 
     def test_create_zip_exception(self):
         workspace = Workspace(None, MockExecutive(should_log=True, should_throw=True))
-        expected_stderr = "MOCK run_command: ['zip', '-9', '-r', '/zip/path', '/source/path'], cwd=None\n"
+        expected_stderr = "MOCK run_command: ['zip', '-9', '-r', '/zip/path', '.'], cwd=/source/path\n"
         class MockZipFile(object):
             def __init__(self, path):
                 self.filename = path
