@@ -2241,7 +2241,8 @@ private:
     RefPtr<LayerChromium> m_rootScrollLayer;
 };
 
-TEST_F(CCLayerTreeHostTestScrollChildLayer, runMultiThread)
+// https://bugs.webkit.org/show_bug.cgi?id=95358
+TEST_F(CCLayerTreeHostTestScrollChildLayer, DISABLED_runMultiThread)
 {
     runTest(true);
 }
