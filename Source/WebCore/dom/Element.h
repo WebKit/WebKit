@@ -303,7 +303,7 @@ public:
 
     virtual void focus(bool restorePreviousSelection = true);
     virtual void updateFocusAppearance(bool restorePreviousSelection);
-    void blur();
+    virtual void blur();
 
     String innerText();
     String outerText();

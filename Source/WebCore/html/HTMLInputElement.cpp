@@ -338,6 +338,25 @@ void HTMLInputElement::stepDown(int n, ExceptionCode& ec)
     m_inputType->stepUp(-n, ec);
 }
 
+void HTMLInputElement::blur()
+{
+    m_inputType->blur();
+}
+
+void HTMLInputElement::defaultBlur()
+{
+    HTMLTextFormControlElement::blur();
+}
+
+void HTMLInputElement::defaultFocus(bool restorePreviousSelection)
+{
+    HTMLTextFormControlElement::focus(restorePreviousSelection);
+}
+
+void HTMLInputElement::focus(bool restorePreviousSelection)
+{
+    m_inputType->focus(restorePreviousSelection);
+}
 
 bool HTMLInputElement::hasCustomFocusLogic() const
 {
