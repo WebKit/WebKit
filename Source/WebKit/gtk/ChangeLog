@@ -1,3 +1,16 @@
+2012-08-28  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Enable the edge distance anti-aliasing for accelerated compositing layers
+        https://bugs.webkit.org/show_bug.cgi?id=95272
+
+        Reviewed by No'am Rosenthal.
+
+        Turn on edge-distance anti-aliasing for GTK+ WebKit1. This
+        improves the quality of layer rendering.
+
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp:
+        (WebKit::AcceleratedCompositingContext::initialize):
+
 2012-08-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126914.

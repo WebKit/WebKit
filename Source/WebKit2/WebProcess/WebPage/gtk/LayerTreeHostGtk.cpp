@@ -114,7 +114,9 @@ void LayerTreeHostGtk::initialize()
 
     // The creation of the TextureMapper needs an active OpenGL context.
     context->makeContextCurrent();
+
     m_textureMapper = TextureMapperGL::create();
+    static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
     toTextureMapperLayer(m_rootLayer.get())->setTextureMapper(m_textureMapper.get());
 
     if (m_webPage->hasPageOverlay())

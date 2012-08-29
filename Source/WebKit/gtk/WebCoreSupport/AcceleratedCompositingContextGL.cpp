@@ -97,8 +97,9 @@ void AcceleratedCompositingContext::initialize()
     // The creation of the TextureMapper needs an active OpenGL context.
     GLContext* context = m_redirectedWindow->context();
     context->makeContextCurrent();
-    m_textureMapper = TextureMapperGL::create();
 
+    m_textureMapper = TextureMapperGL::create();
+    static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
     toTextureMapperLayer(m_rootLayer.get())->setTextureMapper(m_textureMapper.get());
 
     scheduleLayerFlush();
