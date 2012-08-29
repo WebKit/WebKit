@@ -23,24 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LowLevelInterpreter_h
-#define LowLevelInterpreter_h
+#ifndef LLIntOpcode_h
+#define LLIntOpcode_h
 
 #include <wtf/Platform.h>
 
 #if ENABLE(LLINT)
 
-#include "Opcode.h"
-
-#define LLINT_INSTRUCTION_DECL(opcode, length) extern "C" void llint_##opcode();
-    FOR_EACH_OPCODE_ID(LLINT_INSTRUCTION_DECL);
-#undef LLINT_INSTRUCTION_DECL
-
-#define DECLARE_LLINT_NATIVE_HELPER(name, length) extern "C" void name();
-    FOR_EACH_LLINT_NATIVE_HELPER(DECLARE_LLINT_NATIVE_HELPER)
-#undef DECLARE_LLINT_NATIVE_HELPER
+#define FOR_EACH_LLINT_NOJIT_NATIVE_HELPER(macro) \
+    // Nothing to do here. Use the JIT impl instead.
 
 
-#endif // ENABLE(LLINT)
+#define FOR_EACH_LLINT_NATIVE_HELPER(macro) \
+    FOR_EACH_LLINT_NOJIT_NATIVE_HELPER(macro) \
+    \
+    macro(llint_begin, 1) \
+    \
+    macro(llint_program_prologue, 1) \
+    macro(llint_eval_prologue, 1) \
+    macro(llint_function_for_call_prologue, 1) \
+    macro(llint_function_for_construct_prologue, 1) \
+    macro(llint_function_for_call_arity_check, 1) \
+    macro(llint_function_for_construct_arity_check, 1) \
+    macro(llint_generic_return_point, 1) \
+    macro(llint_throw_from_slow_path_trampoline, 1) \
+    macro(llint_throw_during_call_trampoline, 1) \
+    \
+    /* Native call trampolines */ \
+    macro(llint_native_call_trampoline, 1) \
+    macro(llint_native_construct_trampoline, 1) \
+    \
+    macro(llint_end, 1)
 
-#endif // LowLevelInterpreter_h
+
+#define FOR_EACH_LLINT_OPCODE_EXTENSION(macro) // Nothing to add.
+
+#else // !ENABLE(LLINT)
+
+#define FOR_EACH_LLINT_OPCODE_EXTENSION(macro) // Nothing to add.
+
+#endif // !ENABLE(LLINT)
+
+#endif // LLIntOpcode_h

@@ -30,6 +30,8 @@
 #ifndef Opcode_h
 #define Opcode_h
 
+#include "LLIntOpcode.h"
+
 #include <algorithm>
 #include <string.h>
 
@@ -197,6 +199,8 @@ namespace JSC {
         macro(op_debug, 5) \
         macro(op_profile_will_call, 2) \
         macro(op_profile_did_call, 2) \
+        \
+        FOR_EACH_LLINT_OPCODE_EXTENSION(macro) \
         \
         macro(op_end, 2) // end must be the last opcode in the list
 

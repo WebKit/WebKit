@@ -720,6 +720,7 @@
 		E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE4A331F15BD2E07006F54F3 /* VMInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE4A331D15BD2E07006F54F3 /* VMInspector.cpp */; };
 		FE4A332015BD2E07006F54F3 /* VMInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4A331E15BD2E07006F54F3 /* VMInspector.h */; };
+		FED287B215EC9A5700DA8161 /* LLIntOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = FED287B115EC9A5700DA8161 /* LLIntOpcode.h */;  settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1519,6 +1520,7 @@
 		FE4A331D15BD2E07006F54F3 /* VMInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMInspector.cpp; sourceTree = "<group>"; };
 		FE4A331E15BD2E07006F54F3 /* VMInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMInspector.h; sourceTree = "<group>"; };
 		FEB63AA2159B9DA3008932A6 /* Comment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Comment.h; sourceTree = "<group>"; };
+		FED287B115EC9A5700DA8161 /* LLIntOpcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntOpcode.h; path = llint/LLIntOpcode.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1651,6 +1653,7 @@
 		0F46809C14BA7F4D00BFE272 /* llint */ = {
 			isa = PBXGroup;
 			children = (
+				FED287B115EC9A5700DA8161 /* LLIntOpcode.h */,
 				5DDDF44614FEE72200B4FB4D /* LLIntDesiredOffsets.h */,
 				0F0B839514BCF45A00885B4F /* LLIntEntrypoints.cpp */,
 				0F0B839614BCF45A00885B4F /* LLIntEntrypoints.h */,
@@ -2905,6 +2908,7 @@
 				0F63947815DCE34B006A597C /* DFGStructureAbstractValue.h in Headers */,
 				14874AE415EBDE4A002E3587 /* JSNameScope.h in Headers */,
 				14874AE615EBDE4A002E3587 /* JSScope.h in Headers */,
+				FED287B215EC9A5700DA8161 /* LLIntOpcode.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

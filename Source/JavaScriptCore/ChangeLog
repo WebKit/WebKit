@@ -1,3 +1,16 @@
+2012-08-28  Mark Lam  <mark.lam@apple.com>
+
+        Adding support for adding LLInt opcode extensions.  This will be needed
+        by the LLInt C loop interpreter later.
+        https://bugs.webkit.org/show_bug.cgi?id=95277.
+
+        Reviewed by Geoffrey Garen.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/Opcode.h:
+        * llint/LLIntOpcode.h: Added.
+        * llint/LowLevelInterpreter.h:
+
 2012-08-28  Gavin Barraclough  <barraclough@apple.com>
 
         Rolled out r126928, this broke stuff :'-(
