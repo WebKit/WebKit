@@ -38,14 +38,21 @@ var styleElement = document.createElement("style");
 document.head.appendChild(styleElement);
 stylesheet = styleElement.sheet;
 
+// We need a fixed width/height for the object.
+var objectToCheck = document.createElement("div");
+objectToCheck.className = "objectToCheck";
+objectToCheck.style.width = "500px";
+objectToCheck.style.height = "600px";
+document.body.appendChild(objectToCheck);
+
 function testFilterRule(description, rule, expectedValue, expectedTypes, expectedTexts)
 {
     debug("");
     debug(description + " : " + rule);
 
-    stylesheet.insertRule("body { -webkit-filter: " + rule + "; }", 0);
+    stylesheet.insertRule(".objectToCheck { -webkit-filter: " + rule + "; }", 0);
 
-    filterStyle = window.getComputedStyle(document.body);
+    filterStyle = window.getComputedStyle(objectToCheck);
     
     shouldBe("removeBaseURL(filterStyle.getPropertyValue('-webkit-filter'))", "'" + expectedValue + "'");
 
@@ -163,6 +170,22 @@ testFilterRule("Custom with integer parameters",
 testFilterRule("Custom with float parameters",
             "custom(none url(fragment.shader), p1 1.1, p2 2.2 3.3, p3 3.1 4.1 5.1, p4 4.1 5.2 6.3 7.4)",
             "custom(none url(fragment.shader), 1 1 filter-box, p1 1.1, p2 2.2 3.3, p3 3.1 4.1 5.1, p4 4.1 5.2 6.3 7.4)");
+
+testFilterRule("Custom with transform translate parameter",
+            "custom(none url(fragment.shader), p1 translate(10px, 10px))",
+            "custom(none url(fragment.shader), 1 1 filter-box, p1 matrix(1, 0, 0, 1, 10, 10))");
+
+testFilterRule("Custom with multiple transform parameters",
+            "custom(none url(fragment.shader), p1 translate(10px, 10px), p2 scale(2))",
+            "custom(none url(fragment.shader), 1 1 filter-box, p1 matrix(1, 0, 0, 1, 10, 10), p2 matrix(2, 0, 0, 2, 0, 0))");
+
+testFilterRule("Custom with multiple transforms single parameter",
+            "custom(none url(fragment.shader), p1 translate(10px, 10px) scale(2))",
+            "custom(none url(fragment.shader), 1 1 filter-box, p1 matrix(2, 0, 0, 2, 10, 10))");
+
+testFilterRule("Custom with percent transform parameter",
+            "custom(none url(fragment.shader), p1 translate(50%, 50%))",
+            "custom(none url(fragment.shader), 1 1 filter-box, p1 matrix(1, 0, 0, 1, 250, 300))");
 
 testFilterRule("Custom with mesh size and number parameters",
             "custom(none url(fragment.shader), 10 20 filter-box, p1 1, p2 2 3, p3 3 4 5, p4 4 5 6 7)",

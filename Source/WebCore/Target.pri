@@ -2043,6 +2043,7 @@ HEADERS += \
     platform/graphics/filters/CustomFilterOperation.h \
     platform/graphics/filters/CustomFilterParameter.h \
     platform/graphics/filters/CustomFilterProgram.h \
+    platform/graphics/filters/CustomFilterTransformParameter.h \
     platform/graphics/filters/FEBlend.h \
     platform/graphics/filters/FEColorMatrix.h \
     platform/graphics/filters/FEComponentTransfer.h \

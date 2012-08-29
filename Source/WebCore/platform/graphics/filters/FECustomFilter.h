@@ -45,11 +45,12 @@ class Uint8ClampedArray;
 namespace WebCore {
 
 class CachedShader;
+class CustomFilterCompiledProgram;
 class CustomFilterGlobalContext;
 class CustomFilterMesh;
 class CustomFilterNumberParameter;
 class CustomFilterProgram;
-class CustomFilterCompiledProgram;
+class CustomFilterTransformParameter;
 class DrawingBuffer;
 class GraphicsContext3D;
 class IntSize;
@@ -79,6 +80,7 @@ private:
     void resizeContext(const IntSize& newContextSize);
     void bindVertexAttribute(int attributeLocation, unsigned size, unsigned& offset);
     void bindProgramNumberParameters(int uniformLocation, CustomFilterNumberParameter*);
+    void bindProgramTransformParameter(int uniformLocation, CustomFilterTransformParameter*);
     void bindProgramParameters();
     void bindProgramAndBuffers(Uint8ClampedArray* srcPixelArray);
     

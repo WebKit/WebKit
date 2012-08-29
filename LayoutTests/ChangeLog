@@ -1,3 +1,22 @@
+2012-08-29  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Use CSS transform parsing code within CSS Shader
+        https://bugs.webkit.org/show_bug.cgi?id=71401
+
+        Reviewed by Dean Jackson.
+
+        Added test to check for the computed style of the transform parameters of the 
+        custom() function. Also, added a test file to compare the result of applying the transform
+        using CSS Custom Filters and using CSS 3D Transforms.
+
+        * css3/filters/custom/custom-filter-property-computed-style-expected.txt:
+        * css3/filters/custom/effect-custom-transform-parameters-expected.html: Added.
+        * css3/filters/custom/effect-custom-transform-parameters.html: Added.
+        * css3/filters/resources/vertex-transform-parameter.vs: Added.
+        * css3/filters/script-tests/custom-filter-property-computed-style.js:
+        (description):
+        * platform/chromium/css3/filters/custom/custom-filter-property-computed-style-expected.txt:
+
 2012-08-29  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Timeline: avoid "IPC message too big" on save/load

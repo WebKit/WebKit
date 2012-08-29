@@ -38,6 +38,7 @@
 #include "CustomFilterNumberParameter.h"
 #include "CustomFilterParameter.h"
 #include "CustomFilterProgram.h"
+#include "CustomFilterTransformParameter.h"
 #include "DrawingBuffer.h"
 #include "GraphicsContext3D.h"
 #include "ImageData.h"
@@ -269,6 +270,24 @@ void FECustomFilter::bindProgramNumberParameters(int uniformLocation, CustomFilt
     }
 }
 
+void FECustomFilter::bindProgramTransformParameter(int uniformLocation, CustomFilterTransformParameter* transformParameter)
+{
+    TransformationMatrix matrix;
+    if (m_contextSize.width() && m_contextSize.height()) {
+        // The viewport is a box with the size of 1 unit, so we are scalling up here to make sure that translations happen using real pixel
+        // units. At the end we scale back down in order to map it back to the original box. Note that transforms come in reverse order, because it is 
+        // supposed to multiply to the left of the coordinates of the vertices.
+        // Note that the origin (0, 0) of the viewport is in the middle of the context, so there's no need to change the origin of the transform
+        // in order to rotate around the middle of mesh.
+        matrix.scale3d(1.0 / m_contextSize.width(), 1.0 / m_contextSize.height(), 1);
+        transformParameter->applyTransform(matrix, m_contextSize);
+        matrix.scale3d(m_contextSize.width(), m_contextSize.height(), 1);
+    }
+    float glMatrix[16];
+    matrix.toColumnMajorFloatArray(glMatrix);
+    m_context->uniformMatrix4fv(uniformLocation, 1, false, &glMatrix[0]);
+}
+
 void FECustomFilter::bindProgramParameters()
 {
     // FIXME: Find a way to reset uniforms that are not specified in CSS. This is needed to avoid using values
@@ -284,6 +303,9 @@ void FECustomFilter::bindProgramParameters()
         switch (parameter->parameterType()) {
         case CustomFilterParameter::NUMBER:
             bindProgramNumberParameters(uniformLocation, static_cast<CustomFilterNumberParameter*>(parameter));
+            break;
+        case CustomFilterParameter::TRANSFORM:
+            bindProgramTransformParameter(uniformLocation, static_cast<CustomFilterTransformParameter*>(parameter));
             break;
         }
     }

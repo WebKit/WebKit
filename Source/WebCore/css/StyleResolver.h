@@ -263,7 +263,9 @@ public:
     StyleShader* styleShader(CSSValue*);
     StyleShader* cachedOrPendingStyleShaderFromValue(WebKitCSSShaderValue*);
     bool parseCustomFilterParameterList(CSSValue*, CustomFilterParameterList&);
-    PassRefPtr<CustomFilterParameter> parseCustomFilterNumberParamter(const String& name, CSSValueList*);
+    PassRefPtr<CustomFilterParameter> parseCustomFilterParameter(const String& name, CSSValue*);
+    PassRefPtr<CustomFilterParameter> parseCustomFilterNumberParameter(const String& name, CSSValueList*);
+    PassRefPtr<CustomFilterParameter> parseCustomFilterTransformParameter(const String& name, CSSValueList*);
     PassRefPtr<CustomFilterOperation> createCustomFilterOperation(WebKitCSSFilterValue*);
     void loadPendingShaders();
 #endif

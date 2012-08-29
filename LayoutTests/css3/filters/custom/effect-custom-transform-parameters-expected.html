@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+    <head>
+        <script>
+            if (window.testRunner)
+                window.testRunner.waitUntilDone();
+            
+            function runTest()
+            {
+                // We need to take the expected image only after the downloading succeeded.
+                if (window.testRunner)
+                    window.testRunner.notifyDone();
+            }
+        </script>
+        <style>
+        .box {
+            display: inline-block; 
+            border: 1px solid blue; 
+            overflow: hidden;
+            width: 152px; 
+            height: 152px;
+        }
+        .filter {
+            -webkit-transform: perspective(100) translate(10px, 25%);
+            background-color: green;
+            width: 150px; 
+            height: 150px;
+            /* Prevent anti-aliasing artifacts using a small transparent border. */
+            border: 1px solid white;
+        }
+        </style>
+    </head>
+    <body onload="runTest()">
+        <div class="box">
+            <div class="filter"></div>
+        </div>
+    </body>
+</html>

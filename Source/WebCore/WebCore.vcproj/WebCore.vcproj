@@ -31857,6 +31857,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterTransformParameter.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\filters\CustomFilterOperation.cpp"
 						>
 					</File>

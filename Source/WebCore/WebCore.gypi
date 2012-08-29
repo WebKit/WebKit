@@ -3705,6 +3705,7 @@
             'platform/graphics/filters/CustomFilterCompiledProgram.cpp',
             'platform/graphics/filters/CustomFilterCompiledProgram.h',
             'platform/graphics/filters/CustomFilterMesh.cpp',
+            'platform/graphics/filters/CustomFilterTransformParameter.h',
             'platform/graphics/filters/DistantLightSource.cpp',
             'platform/graphics/filters/DistantLightSource.h',
             'platform/graphics/filters/FEBlend.cpp',

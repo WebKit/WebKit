@@ -32,6 +32,7 @@ class CSSPrimitiveValue;
 class CSSValueList;
 class Color;
 class Node;
+class RenderObject;
 class RenderStyle;
 class SVGPaint;
 class ShadowData;
@@ -96,19 +97,14 @@ private:
 
     virtual bool cssPropertyMatches(const CSSProperty*) const;
 
-    PassRefPtr<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, RenderStyle*) const;
+    PassRefPtr<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, const RenderStyle*) const;
     PassRefPtr<CSSPrimitiveValue> currentColorOrValidColor(RenderStyle*, const Color&) const;
 #if ENABLE(SVG)
     PassRefPtr<SVGPaint> adjustSVGPaintForCurrentColor(PassRefPtr<SVGPaint>, RenderStyle*) const;
 #endif
 
-#if ENABLE(CSS_SHADERS)
-    PassRefPtr<CSSValue> valueForCustomFilterNumberParameter(const CustomFilterNumberParameter*) const;
-    PassRefPtr<CSSValue> valueForCustomFilterParameter(const CustomFilterParameter*) const;
-#endif
-
 #if ENABLE(CSS_FILTERS)
-    PassRefPtr<CSSValue> valueForFilter(RenderStyle*) const;
+    PassRefPtr<CSSValue> valueForFilter(const RenderObject*, const RenderStyle*) const;
 #endif
 
     PassRefPtr<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&) const;

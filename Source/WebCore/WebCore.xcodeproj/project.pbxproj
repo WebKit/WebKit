@@ -8630,6 +8630,7 @@
 		50987C24157D676D00BDA835 /* CustomFilterGlobalContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomFilterGlobalContext.cpp; path = filters/CustomFilterGlobalContext.cpp; sourceTree = "<group>"; };
 		50987C25157D676D00BDA835 /* CustomFilterGlobalContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterGlobalContext.h; path = filters/CustomFilterGlobalContext.h; sourceTree = "<group>"; };
 		509CC9FA14C069ED00BBECBD /* CustomFilterParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterParameter.h; path = filters/CustomFilterParameter.h; sourceTree = "<group>"; };
+		509EC10815E848CA00E82581 /* CustomFilterTransformParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterTransformParameter.h; path = filters/CustomFilterTransformParameter.h; sourceTree = "<group>"; };
 		50ACE2CA14B5D79300446666 /* CustomFilterOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterOperation.h; path = filters/CustomFilterOperation.h; sourceTree = "<group>"; };
 		50B42157146976960087E604 /* WebKitCSSShaderValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSShaderValue.h; sourceTree = "<group>"; };
 		50CC089914C6E99C0017AB51 /* CustomFilterNumberParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterNumberParameter.h; path = filters/CustomFilterNumberParameter.h; sourceTree = "<group>"; };
@@ -18133,6 +18134,7 @@
 		A75E8B7F0E1DE2B0007F2481 /* filters */ = {
 			isa = PBXGroup;
 			children = (
+				509EC10815E848CA00E82581 /* CustomFilterTransformParameter.h */,
 				49ECEB5C1499790D00CDD3A4 /* arm */,
 				50D4060F147D49DE00D30BB5 /* CustomFilterCompiledProgram.cpp */,
 				50D40610147D49DE00D30BB5 /* CustomFilterCompiledProgram.h */,
