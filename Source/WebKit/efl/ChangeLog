@@ -1,3 +1,48 @@
+2012-08-29  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Move several files to remove webkit1 dependency from WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=95264
+
+        Reviewed by Gyuyoung Kim.
+
+        ColorChooserEfl.cpp, PopupMenuEfl.cpp and SearchPopupMenuEfl.cpp are WebKit1/Efl
+        specific files and they can not be shared with WebKit2/Efl.
+
+        In order to remove WebKit dependency from WebCore, this patch moves them
+        to WebKit/efl/WebCoreSupport.
+
+        * WebCoreSupport/ColorChooserEfl.cpp: Renamed from Source/WebCore/platform/efl/ColorChooserEfl.cpp.
+        (WebCore):
+        (WebCore::ColorChooserEfl::ColorChooserEfl):
+        (WebCore::ColorChooserEfl::~ColorChooserEfl):
+        (WebCore::ColorChooserEfl::setSelectedColor):
+        (WebCore::ColorChooserEfl::endChooser):
+        * WebCoreSupport/ColorChooserEfl.h: Renamed from Source/WebCore/platform/efl/ColorChooserEfl.h.
+        (WebCore):
+        (ColorChooserEfl):
+        * WebCoreSupport/PopupMenuEfl.cpp: Renamed from Source/WebCore/platform/efl/PopupMenuEfl.cpp.
+        (WebCore):
+        (WebCore::PopupMenuEfl::PopupMenuEfl):
+        (WebCore::PopupMenuEfl::~PopupMenuEfl):
+        (WebCore::PopupMenuEfl::show):
+        (WebCore::PopupMenuEfl::hide):
+        (WebCore::PopupMenuEfl::updateFromElement):
+        (WebCore::PopupMenuEfl::disconnectClient):
+        * WebCoreSupport/PopupMenuEfl.h: Renamed from Source/WebCore/platform/efl/PopupMenuEfl.h.
+        (WebCore):
+        (PopupMenuEfl):
+        (WebCore::PopupMenuEfl::client):
+        * WebCoreSupport/SearchPopupMenuEfl.cpp: Renamed from Source/WebCore/platform/efl/SearchPopupMenuEfl.cpp.
+        (WebCore):
+        (WebCore::SearchPopupMenuEfl::SearchPopupMenuEfl):
+        (WebCore::SearchPopupMenuEfl::popupMenu):
+        (WebCore::SearchPopupMenuEfl::saveRecentSearches):
+        (WebCore::SearchPopupMenuEfl::loadRecentSearches):
+        (WebCore::SearchPopupMenuEfl::enabled):
+        * WebCoreSupport/SearchPopupMenuEfl.h: Renamed from Source/WebCore/platform/efl/SearchPopupMenuEfl.h.
+        (WebCore):
+        (SearchPopupMenuEfl):
+
 2012-08-28  Seokju Kwon  <seokju.kwon@samsung.com>
 
         [EFL] Add support for localization to the Web Inspector

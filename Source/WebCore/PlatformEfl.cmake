@@ -13,7 +13,6 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
   "${WEBCORE_DIR}/platform/network/soup"
   "${WEBCORE_DIR}/platform/text/efl"
   "${WEBCORE_DIR}/plugins/efl"
-  "${WEBKIT_DIR}/efl/WebCoreSupport"
 )
 
 LIST(APPEND WebCore_SOURCES
@@ -23,7 +22,6 @@ LIST(APPEND WebCore_SOURCES
   platform/Cursor.cpp
   platform/efl/BatteryProviderEfl.cpp
   platform/efl/ClipboardEfl.cpp
-  platform/efl/ColorChooserEfl.cpp
   platform/efl/ContextMenuEfl.cpp
   platform/efl/ContextMenuItemEfl.cpp
   platform/efl/CursorEfl.cpp
@@ -46,14 +44,12 @@ LIST(APPEND WebCore_SOURCES
   platform/efl/PlatformMouseEventEfl.cpp
   platform/efl/PlatformScreenEfl.cpp
   platform/efl/PlatformWheelEventEfl.cpp
-  platform/efl/PopupMenuEfl.cpp
   platform/efl/RefPtrEfl.cpp
   platform/efl/RenderThemeEfl.cpp
   platform/efl/RunLoopEfl.cpp
   platform/efl/ScrollViewEfl.cpp
   platform/efl/ScrollbarEfl.cpp
   platform/efl/ScrollbarThemeEfl.cpp
-  platform/efl/SearchPopupMenuEfl.cpp
   platform/efl/SharedBufferEfl.cpp
   platform/efl/SharedTimerEfl.cpp
   platform/efl/SoundEfl.cpp
