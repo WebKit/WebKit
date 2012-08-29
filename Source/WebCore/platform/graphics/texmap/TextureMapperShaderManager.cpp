@@ -30,25 +30,11 @@
 
 namespace WebCore {
 
-#ifndef TEXMAP_OPENGL_ES_2
-#define OES2_PRECISION_DEFINITIONS \
-    "#define lowp\n#define highp\n"
-#define OES2_FRAGMENT_SHADER_DEFAULT_PRECISION
-#else
-#define OES2_PRECISION_DEFINITIONS
-#define OES2_FRAGMENT_SHADER_DEFAULT_PRECISION \
-    "precision mediump float; \n"
-#endif
-
-#define STRINGIFY_VAL(src...) #src
-#define VERTEX_SHADER(src...) OES2_PRECISION_DEFINITIONS\
-                              STRINGIFY_VAL(src)
-#define FRAGMENT_SHADER(src...) OES2_PRECISION_DEFINITIONS\
-                                OES2_FRAGMENT_SHADER_DEFAULT_PRECISION\
-                                STRINGIFY_VAL(src)
+#define STRINGIFY(src...) #src
 
 static const char* fragmentShaderSourceOpacityAndMask =
-    FRAGMENT_SHADER(
+    STRINGIFY(
+        precision mediump float;
         uniform sampler2D s_source;
         uniform sampler2D s_mask;
         uniform lowp float u_opacity;
@@ -64,7 +50,8 @@ static const char* fragmentShaderSourceOpacityAndMask =
     );
 
 static const char* fragmentShaderSourceRectOpacityAndMask =
-    FRAGMENT_SHADER(
+    STRINGIFY(
+        precision mediump float;
         uniform sampler2DRect s_source;
         uniform sampler2DRect s_mask;
         uniform lowp float u_opacity;
@@ -80,7 +67,7 @@ static const char* fragmentShaderSourceRectOpacityAndMask =
     );
 
 static const char* vertexShaderSourceOpacityAndMask =
-    VERTEX_SHADER(
+    STRINGIFY(
         uniform mat4 u_matrix;
         uniform lowp float u_flip;
         attribute vec4 a_vertex;
@@ -95,7 +82,8 @@ static const char* vertexShaderSourceOpacityAndMask =
     );
 
 static const char* fragmentShaderSourceSimple =
-    FRAGMENT_SHADER(
+    STRINGIFY(
+        precision mediump float;
         uniform sampler2D s_source;
         uniform lowp float u_opacity;
         varying highp vec2 v_sourceTexCoord;
@@ -107,7 +95,8 @@ static const char* fragmentShaderSourceSimple =
     );
 
 static const char* fragmentShaderSourceAntialiasingNoMask =
-    FRAGMENT_SHADER(
+    STRINGIFY(
+        precision mediump float;
         uniform sampler2D s_source;
         varying highp vec2 v_sourceTexCoord;
         uniform lowp float u_opacity;
@@ -145,7 +134,8 @@ static const char* fragmentShaderSourceAntialiasingNoMask =
     );
 
 static const char* fragmentShaderSourceRectSimple =
-    FRAGMENT_SHADER(
+    STRINGIFY(
+        precision mediump float;
         uniform sampler2DRect s_source;
         uniform lowp vec2 u_textureSize;
         uniform lowp float u_opacity;
@@ -158,7 +148,7 @@ static const char* fragmentShaderSourceRectSimple =
     );
 
 static const char* vertexShaderSourceSimple =
-    VERTEX_SHADER(
+    STRINGIFY(
         uniform mat4 u_matrix;
         uniform lowp float u_flip;
         attribute vec4 a_vertex;
@@ -171,7 +161,7 @@ static const char* vertexShaderSourceSimple =
     );
 
 static const char* vertexShaderSourceSolidColor =
-    VERTEX_SHADER(
+    STRINGIFY(
         uniform mat4 u_matrix;
         attribute vec4 a_vertex;
         void main(void)
@@ -182,7 +172,8 @@ static const char* vertexShaderSourceSolidColor =
 
 
 static const char* fragmentShaderSourceSolidColor =
-    VERTEX_SHADER(
+    STRINGIFY(
+        precision mediump float;
         uniform vec4 u_color;
         void main(void)
         {
@@ -212,22 +203,22 @@ PassRefPtr<TextureMapperShaderProgram> TextureMapperShaderManager::getShaderProg
 
     switch (shaderType) {
     case Simple:
-        program = TextureMapperShaderProgramSimple::create();
+        program = TextureMapperShaderProgramSimple::create(m_context);
         break;
     case RectSimple:
-        program = TextureMapperShaderProgramRectSimple::create();
+        program = TextureMapperShaderProgramRectSimple::create(m_context);
         break;
     case AntialiasingNoMask:
-        program = TextureMapperShaderProgramAntialiasingNoMask::create();
+        program = TextureMapperShaderProgramAntialiasingNoMask::create(m_context);
         break;
     case OpacityAndMask:
-        program = TextureMapperShaderProgramOpacityAndMask::create();
+        program = TextureMapperShaderProgramOpacityAndMask::create(m_context);
         break;
     case RectOpacityAndMask:
-        program = TextureMapperShaderProgramRectOpacityAndMask::create();
+        program = TextureMapperShaderProgramRectOpacityAndMask::create(m_context);
         break;
     case SolidColor:
-        program = TextureMapperShaderProgramSolidColor::create();
+        program = TextureMapperShaderProgramSolidColor::create(m_context);
         break;
     case Invalid:
         ASSERT_NOT_REACHED();
@@ -236,8 +227,9 @@ PassRefPtr<TextureMapperShaderProgram> TextureMapperShaderManager::getShaderProg
     return program;
 }
 
-TextureMapperShaderProgram::TextureMapperShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource)
-    : m_id(0)
+TextureMapperShaderProgram::TextureMapperShaderProgram(GraphicsContext3D* context, const char* vertexShaderSource, const char* fragmentShaderSource)
+    : m_context(context)
+    , m_id(0)
     , m_vertexAttrib(0)
     , m_vertexShader(0)
     , m_fragmentShader(0)
@@ -256,46 +248,46 @@ void TextureMapperShaderProgram::initializeProgram()
 {
     const char* vertexShaderSourceProgram = vertexShaderSource();
     const char* fragmentShaderSourceProgram = fragmentShaderSource();
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSourceProgram, 0);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSourceProgram, 0);
-    GLuint programID = glCreateProgram();
-    glCompileShader(vertexShader);
-    glCompileShader(fragmentShader);
+    Platform3DObject vertexShader = m_context->createShader(GraphicsContext3D::VERTEX_SHADER);
+    Platform3DObject fragmentShader = m_context->createShader(GraphicsContext3D::FRAGMENT_SHADER);
+    m_context->shaderSource(vertexShader, vertexShaderSourceProgram);
+    m_context->shaderSource(fragmentShader, fragmentShaderSourceProgram);
+    Platform3DObject programID = m_context->createProgram();
+    m_context->compileShader(vertexShader);
+    m_context->compileShader(fragmentShader);
 
-    glAttachShader(programID, vertexShader);
-    glAttachShader(programID, fragmentShader);
-    glLinkProgram(programID);
+    m_context->attachShader(programID, vertexShader);
+    m_context->attachShader(programID, fragmentShader);
+    m_context->linkProgram(programID);
 
-    m_vertexAttrib = glGetAttribLocation(programID, "a_vertex");
+    m_vertexAttrib = m_context->getAttribLocation(programID, "a_vertex");
 
     m_id = programID;
     m_vertexShader = vertexShader;
     m_fragmentShader = fragmentShader;
 }
 
-void TextureMapperShaderProgram::getUniformLocation(GLint &variable, const char* name)
+void TextureMapperShaderProgram::getUniformLocation(GC3Dint &variable, const char* name)
 {
-    variable = glGetUniformLocation(m_id, name);
+    variable = m_context->getUniformLocation(m_id, name);
     ASSERT(variable >= 0);
 }
 
 TextureMapperShaderProgram::~TextureMapperShaderProgram()
 {
-    GLuint programID = m_id;
+    Platform3DObject programID = m_id;
     if (!programID)
         return;
 
-    glDetachShader(programID, m_vertexShader);
-    glDeleteShader(m_vertexShader);
-    glDetachShader(programID, m_fragmentShader);
-    glDeleteShader(m_fragmentShader);
-    glDeleteProgram(programID);
+    m_context->detachShader(programID, m_vertexShader);
+    m_context->deleteShader(m_vertexShader);
+    m_context->detachShader(programID, m_fragmentShader);
+    m_context->deleteShader(m_fragmentShader);
+    m_context->deleteProgram(programID);
 }
 
-TextureMapperShaderProgramSimple::TextureMapperShaderProgramSimple()
-    : TextureMapperShaderProgram(vertexShaderSourceSimple, fragmentShaderSourceSimple)
+TextureMapperShaderProgramSimple::TextureMapperShaderProgramSimple(GraphicsContext3D* context)
+    : TextureMapperShaderProgram(context, vertexShaderSourceSimple, fragmentShaderSourceSimple)
 {
     initializeProgram();
     getUniformLocation(m_flipLocation, "u_flip");
@@ -304,16 +296,16 @@ TextureMapperShaderProgramSimple::TextureMapperShaderProgramSimple()
     getUniformLocation(m_opacityLocation, "u_opacity");
 }
 
-TextureMapperShaderProgramSolidColor::TextureMapperShaderProgramSolidColor()
-    : TextureMapperShaderProgram(vertexShaderSourceSolidColor, fragmentShaderSourceSolidColor)
+TextureMapperShaderProgramSolidColor::TextureMapperShaderProgramSolidColor(GraphicsContext3D* context)
+    : TextureMapperShaderProgram(context, vertexShaderSourceSolidColor, fragmentShaderSourceSolidColor)
 {
     initializeProgram();
     getUniformLocation(m_matrixLocation, "u_matrix");
     getUniformLocation(m_colorLocation, "u_color");
 }
 
-TextureMapperShaderProgramRectSimple::TextureMapperShaderProgramRectSimple()
-    : TextureMapperShaderProgram(vertexShaderSourceSimple, fragmentShaderSourceRectSimple)
+TextureMapperShaderProgramRectSimple::TextureMapperShaderProgramRectSimple(GraphicsContext3D* context)
+    : TextureMapperShaderProgram(context, vertexShaderSourceSimple, fragmentShaderSourceRectSimple)
 {
     initializeProgram();
     getUniformLocation(m_matrixLocation, "u_matrix");
@@ -323,8 +315,8 @@ TextureMapperShaderProgramRectSimple::TextureMapperShaderProgramRectSimple()
     getUniformLocation(m_opacityLocation, "u_opacity");
 }
 
-TextureMapperShaderProgramOpacityAndMask::TextureMapperShaderProgramOpacityAndMask()
-    : TextureMapperShaderProgram(vertexShaderSourceOpacityAndMask, fragmentShaderSourceOpacityAndMask)
+TextureMapperShaderProgramOpacityAndMask::TextureMapperShaderProgramOpacityAndMask(GraphicsContext3D* context)
+    : TextureMapperShaderProgram(context, vertexShaderSourceOpacityAndMask, fragmentShaderSourceOpacityAndMask)
 {
     initializeProgram();
     getUniformLocation(m_matrixLocation, "u_matrix");
@@ -334,8 +326,8 @@ TextureMapperShaderProgramOpacityAndMask::TextureMapperShaderProgramOpacityAndMa
     getUniformLocation(m_opacityLocation, "u_opacity");
 }
 
-TextureMapperShaderProgramRectOpacityAndMask::TextureMapperShaderProgramRectOpacityAndMask()
-    : TextureMapperShaderProgram(vertexShaderSourceOpacityAndMask, fragmentShaderSourceRectOpacityAndMask)
+TextureMapperShaderProgramRectOpacityAndMask::TextureMapperShaderProgramRectOpacityAndMask(GraphicsContext3D* context)
+    : TextureMapperShaderProgram(context, vertexShaderSourceOpacityAndMask, fragmentShaderSourceRectOpacityAndMask)
 {
     initializeProgram();
     getUniformLocation(m_matrixLocation, "u_matrix");
@@ -345,8 +337,8 @@ TextureMapperShaderProgramRectOpacityAndMask::TextureMapperShaderProgramRectOpac
     getUniformLocation(m_opacityLocation, "u_opacity");
 }
 
-TextureMapperShaderProgramAntialiasingNoMask::TextureMapperShaderProgramAntialiasingNoMask()
-    : TextureMapperShaderProgram(vertexShaderSourceSimple, fragmentShaderSourceAntialiasingNoMask)
+TextureMapperShaderProgramAntialiasingNoMask::TextureMapperShaderProgramAntialiasingNoMask(GraphicsContext3D* context)
+    : TextureMapperShaderProgram(context, vertexShaderSourceSimple, fragmentShaderSourceAntialiasingNoMask)
 {
     initializeProgram();
     getUniformLocation(m_matrixLocation, "u_matrix");
@@ -356,9 +348,9 @@ TextureMapperShaderProgramAntialiasingNoMask::TextureMapperShaderProgramAntialia
     getUniformLocation(m_flipLocation, "u_flip");
 }
 
-TextureMapperShaderManager::TextureMapperShaderManager()
+TextureMapperShaderManager::TextureMapperShaderManager(GraphicsContext3D* context)
+    : m_context(context)
 {
-    ASSERT(initializeOpenGLShims());
 }
 
 TextureMapperShaderManager::~TextureMapperShaderManager()
@@ -373,18 +365,19 @@ TextureMapperShaderManager::~TextureMapperShaderManager()
 
 StandardFilterProgram::~StandardFilterProgram()
 {
-    glDetachShader(m_id, m_vertexShader);
-    glDeleteShader(m_vertexShader);
-    glDetachShader(m_id, m_fragmentShader);
-    glDeleteShader(m_fragmentShader);
-    glDeleteProgram(m_id);
+    m_context->detachShader(m_id, m_vertexShader);
+    m_context->deleteShader(m_vertexShader);
+    m_context->detachShader(m_id, m_fragmentShader);
+    m_context->deleteShader(m_fragmentShader);
+    m_context->deleteProgram(m_id);
 }
 
-StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type, unsigned pass)
-    : m_id(0)
+StandardFilterProgram::StandardFilterProgram(GraphicsContext3D* context, FilterOperation::OperationType type, unsigned pass)
+    : m_context(context)
+    , m_id(0)
 {
     const char* vertexShaderSource =
-            VERTEX_SHADER(
+            STRINGIFY(
                 attribute vec4 a_vertex;
                 attribute vec4 a_texCoord;
                 varying highp vec2 v_texCoord;
@@ -396,8 +389,7 @@ StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type
             );
 
 #define STANDARD_FILTER(x...) \
-        OES2_PRECISION_DEFINITIONS\
-        OES2_FRAGMENT_SHADER_DEFAULT_PRECISION\
+        "precision mediump float;\n"\
         "varying highp vec2 v_texCoord;\n"\
         "uniform highp float u_amount;\n"\
         "uniform sampler2D u_texture;\n"\
@@ -490,7 +482,8 @@ StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type
         );
         break;
     case FilterOperation::BLUR:
-        fragmentShaderSource = FRAGMENT_SHADER(
+        fragmentShaderSource = STRINGIFY(
+            precision mediump float;
             varying highp vec2 v_texCoord;
             uniform lowp vec2 u_blurRadius;
             uniform sampler2D u_texture;
@@ -523,7 +516,8 @@ StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type
         switch (pass) {
         case 0: {
             // First pass: horizontal alpha blur.
-            fragmentShaderSource = FRAGMENT_SHADER(
+            fragmentShaderSource = STRINGIFY(
+                precision mediump float;
                 varying highp vec2 v_texCoord;
                 uniform lowp float u_shadowBlurRadius;
                 uniform lowp vec2 u_shadowOffset;
@@ -556,7 +550,8 @@ StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type
             }
         case 1: {
             // Second pass: vertical alpha blur and composite with origin.
-            fragmentShaderSource = FRAGMENT_SHADER(
+            fragmentShaderSource = STRINGIFY(
+                precision mediump float;
                 varying highp vec2 v_texCoord;
                 uniform lowp float u_shadowBlurRadius;
                 uniform lowp vec4 u_shadowColor;
@@ -602,26 +597,25 @@ StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type
 
     if (!fragmentShaderSource)
         return;
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, 0);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, 0);
-    GLuint programID = glCreateProgram();
-    glCompileShader(vertexShader);
-    glCompileShader(fragmentShader);
+    Platform3DObject vertexShader = m_context->createShader(GraphicsContext3D::VERTEX_SHADER);
+    Platform3DObject fragmentShader = m_context->createShader(GraphicsContext3D::FRAGMENT_SHADER);
+    m_context->shaderSource(vertexShader, vertexShaderSource);
+    m_context->shaderSource(fragmentShader, fragmentShaderSource);
+    Platform3DObject programID = m_context->createProgram();
+    m_context->compileShader(vertexShader);
+    m_context->compileShader(fragmentShader);
 #if !LOG_DISABLED
-    GLchar log[100];
-    GLint len;
-    glGetShaderInfoLog(fragmentShader, 100, &len, log);
+    String log;
+    m_context->getShaderInfoLog(fragmentShader);
     WTFLog(&LogCompositing, "%s\n", log);
 #endif
-    glAttachShader(programID, vertexShader);
-    glAttachShader(programID, fragmentShader);
-    glLinkProgram(programID);
+    m_context->attachShader(programID, vertexShader);
+    m_context->attachShader(programID, fragmentShader);
+    m_context->linkProgram(programID);
 
-    m_vertexAttrib = glGetAttribLocation(programID, "a_vertex");
-    m_texCoordAttrib = glGetAttribLocation(programID, "a_texCoord");
-    m_textureUniformLocation = glGetUniformLocation(programID, "u_texture");
+    m_vertexAttrib = m_context->getAttribLocation(programID, "a_vertex");
+    m_texCoordAttrib = m_context->getAttribLocation(programID, "a_texCoord");
+    m_textureUniformLocation = m_context->getUniformLocation(programID, "u_texture");
     switch (type) {
     case FilterOperation::GRAYSCALE:
     case FilterOperation::SEPIA:
@@ -631,21 +625,21 @@ StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type
     case FilterOperation::BRIGHTNESS:
     case FilterOperation::CONTRAST:
     case FilterOperation::OPACITY:
-        m_uniformLocations.amount = glGetUniformLocation(programID, "u_amount");
+        m_uniformLocations.amount = m_context->getUniformLocation(programID, "u_amount");
         break;
     case FilterOperation::BLUR:
-        m_uniformLocations.blur.radius = glGetUniformLocation(programID, "u_blurRadius");
-        m_uniformLocations.blur.gaussianKernel = glGetUniformLocation(programID, "u_gaussianKernel");
+        m_uniformLocations.blur.radius = m_context->getUniformLocation(programID, "u_blurRadius");
+        m_uniformLocations.blur.gaussianKernel = m_context->getUniformLocation(programID, "u_gaussianKernel");
         break;
     case FilterOperation::DROP_SHADOW:
-        m_uniformLocations.shadow.blurRadius = glGetUniformLocation(programID, "u_shadowBlurRadius");
-        m_uniformLocations.shadow.gaussianKernel = glGetUniformLocation(programID, "u_gaussianKernel");
+        m_uniformLocations.shadow.blurRadius = m_context->getUniformLocation(programID, "u_shadowBlurRadius");
+        m_uniformLocations.shadow.gaussianKernel = m_context->getUniformLocation(programID, "u_gaussianKernel");
         if (!pass)
-            m_uniformLocations.shadow.offset = glGetUniformLocation(programID, "u_shadowOffset");
+            m_uniformLocations.shadow.offset = m_context->getUniformLocation(programID, "u_shadowOffset");
         else {
             // We only need the color and the content texture in the second pass, the first pass is only a horizontal alpha blur.
-            m_uniformLocations.shadow.color = glGetUniformLocation(programID, "u_shadowColor");
-            m_uniformLocations.shadow.contentTexture = glGetUniformLocation(programID, "u_contentTexture");
+            m_uniformLocations.shadow.color = m_context->getUniformLocation(programID, "u_shadowColor");
+            m_uniformLocations.shadow.contentTexture = m_context->getUniformLocation(programID, "u_contentTexture");
         }
         break;
     default:
@@ -656,9 +650,9 @@ StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type
     m_fragmentShader = fragmentShader;
 }
 
-PassRefPtr<StandardFilterProgram> StandardFilterProgram::create(FilterOperation::OperationType type, unsigned pass)
+PassRefPtr<StandardFilterProgram> StandardFilterProgram::create(GraphicsContext3D* context, FilterOperation::OperationType type, unsigned pass)
 {
-    RefPtr<StandardFilterProgram> program = adoptRef(new StandardFilterProgram(type, pass));
+    RefPtr<StandardFilterProgram> program = adoptRef(new StandardFilterProgram(context, type, pass));
     if (!program->m_id)
         return 0;
 
@@ -694,21 +688,21 @@ static float* gaussianKernel()
     return kernel;
 }
 
-void StandardFilterProgram::prepare(const FilterOperation& operation, unsigned pass, const IntSize& size, GLuint contentTexture)
+void StandardFilterProgram::prepare(const FilterOperation& operation, unsigned pass, const IntSize& size, GC3Duint contentTexture)
 {
-    glUseProgram(m_id);
+    m_context->useProgram(m_id);
     switch (operation.getOperationType()) {
     case FilterOperation::GRAYSCALE:
     case FilterOperation::SEPIA:
     case FilterOperation::SATURATE:
     case FilterOperation::HUE_ROTATE:
-        glUniform1f(m_uniformLocations.amount, static_cast<const BasicColorMatrixFilterOperation&>(operation).amount());
+        m_context->uniform1f(m_uniformLocations.amount, static_cast<const BasicColorMatrixFilterOperation&>(operation).amount());
         break;
     case FilterOperation::INVERT:
     case FilterOperation::BRIGHTNESS:
     case FilterOperation::CONTRAST:
     case FilterOperation::OPACITY:
-        glUniform1f(m_uniformLocations.amount, static_cast<const BasicComponentTransferFilterOperation&>(operation).amount());
+        m_context->uniform1f(m_uniformLocations.amount, static_cast<const BasicComponentTransferFilterOperation&>(operation).amount());
         break;
     case FilterOperation::BLUR: {
         const BlurFilterOperation& blur = static_cast<const BlurFilterOperation&>(operation);
@@ -720,8 +714,8 @@ void StandardFilterProgram::prepare(const FilterOperation& operation, unsigned p
         else
             radius.setWidth(floatValueForLength(blur.stdDeviation(), size.width()) / size.width());
 
-        glUniform2f(m_uniformLocations.blur.radius, radius.width(), radius.height());
-        glUniform1fv(m_uniformLocations.blur.gaussianKernel, GAUSSIAN_KERNEL_HALF_WIDTH, gaussianKernel());
+        m_context->uniform2f(m_uniformLocations.blur.radius, radius.width(), radius.height());
+        m_context->uniform1fv(m_uniformLocations.blur.gaussianKernel, GAUSSIAN_KERNEL_HALF_WIDTH, gaussianKernel());
         break;
     }
     case FilterOperation::DROP_SHADOW: {
@@ -729,20 +723,20 @@ void StandardFilterProgram::prepare(const FilterOperation& operation, unsigned p
         switch (pass) {
         case 0:
             // First pass: vertical alpha blur.
-            glUniform2f(m_uniformLocations.shadow.offset, float(shadow.location().x()) / float(size.width()), float(shadow.location().y()) / float(size.height()));
-            glUniform1f(m_uniformLocations.shadow.blurRadius, shadow.stdDeviation() / float(size.width()));
-            glUniform1fv(m_uniformLocations.shadow.gaussianKernel, GAUSSIAN_KERNEL_HALF_WIDTH, gaussianKernel());
+            m_context->uniform2f(m_uniformLocations.shadow.offset, float(shadow.location().x()) / float(size.width()), float(shadow.location().y()) / float(size.height()));
+            m_context->uniform1f(m_uniformLocations.shadow.blurRadius, shadow.stdDeviation() / float(size.width()));
+            m_context->uniform1fv(m_uniformLocations.shadow.gaussianKernel, GAUSSIAN_KERNEL_HALF_WIDTH, gaussianKernel());
             break;
         case 1:
             // Second pass: we need the shadow color and the content texture for compositing.
-            glUniform1f(m_uniformLocations.shadow.blurRadius, shadow.stdDeviation() / float(size.height()));
-            glUniform1fv(m_uniformLocations.shadow.gaussianKernel, GAUSSIAN_KERNEL_HALF_WIDTH, gaussianKernel());
-            glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_2D, contentTexture);
-            glUniform1i(m_uniformLocations.shadow.contentTexture, 1);
+            m_context->uniform1f(m_uniformLocations.shadow.blurRadius, shadow.stdDeviation() / float(size.height()));
+            m_context->uniform1fv(m_uniformLocations.shadow.gaussianKernel, GAUSSIAN_KERNEL_HALF_WIDTH, gaussianKernel());
+            m_context->activeTexture(GraphicsContext3D::TEXTURE1);
+            m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, contentTexture);
+            m_context->uniform1i(m_uniformLocations.shadow.contentTexture, 1);
             float r, g, b, a;
             shadow.color().getRGBA(r, g, b, a);
-            glUniform4f(m_uniformLocations.shadow.color, r, g, b, a);
+            m_context->uniform4f(m_uniformLocations.shadow.color, r, g, b, a);
             break;
         }
         break;
@@ -759,7 +753,7 @@ PassRefPtr<StandardFilterProgram> TextureMapperShaderManager::getShaderForFilter
     int key = int(type) | (pass << 16);
     FilterMap::iterator iterator = m_filterMap.find(key);
     if (iterator == m_filterMap.end()) {
-        program = StandardFilterProgram::create(type, pass);
+        program = StandardFilterProgram::create(m_context, type, pass);
         if (!program)
             return 0;
 
