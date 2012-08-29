@@ -64,14 +64,13 @@ public:
     void didDestroyNotification(WebCore::Notification*, WebPage*);
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-    
+    void didUpdateNotificationDecision(const String& originString, bool allowed);
+
     // Looks in local cache for permission. If not found, returns DefaultDenied.
     WebCore::NotificationClient::Permission policyForOrigin(WebCore::SecurityOrigin*) const;
 
-    void didUpdateNotificationDecision(const String& originString, bool allowed);
-
-    // For testing purposes only.
     void removeAllPermissionsForTesting();
+    uint64_t notificationIDForTesting(WebCore::Notification*);
 
 private:
     // Implemented in generated WebNotificationManagerMessageReceiver.cpp

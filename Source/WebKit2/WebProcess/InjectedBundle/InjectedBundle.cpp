@@ -54,6 +54,7 @@
 #include <WebCore/GeolocationController.h>
 #include <WebCore/GeolocationPosition.h>
 #include <WebCore/JSDOMWindow.h>
+#include <WebCore/JSNotification.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PageVisibilityState.h>
@@ -552,6 +553,18 @@ void InjectedBundle::removeAllWebNotificationPermissions(WebPage* page)
     page->notificationPermissionRequestManager()->removeAllPermissionsForTesting();
 #else
     UNUSED_PARAM(page);
+#endif
+}
+
+uint64_t InjectedBundle::webNotificationID(JSContextRef jsContext, JSValueRef jsNotification)
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    WebCore::Notification* notification = toNotification(toJS(toJS(jsContext), jsNotification));
+    if (!notification)
+        return 0;
+    return WebProcess::shared().notificationManager().notificationIDForTesting(notification);
+#else
+    return 0;
 #endif
 }
 

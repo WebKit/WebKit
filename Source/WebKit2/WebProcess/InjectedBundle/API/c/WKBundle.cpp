@@ -270,3 +270,9 @@ void WKBundleRemoveAllWebNotificationPermissions(WKBundleRef bundleRef, WKBundle
 {
     toImpl(bundleRef)->removeAllWebNotificationPermissions(toImpl(pageRef));
 }
+
+uint64_t WKBundleGetWebNotificationID(WKBundleRef bundleRef, JSContextRef context, JSValueRef notification)
+{
+    return toImpl(bundleRef)->webNotificationID(context, notification);
+}
+

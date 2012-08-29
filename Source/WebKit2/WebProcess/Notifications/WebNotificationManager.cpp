@@ -112,6 +112,17 @@ void WebNotificationManager::removeAllPermissionsForTesting()
 #endif
 }
 
+uint64_t WebNotificationManager::notificationIDForTesting(Notification* notification)
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    if (!notification)
+        return 0;
+    return m_notificationMap.get(notification);
+#else
+    return 0;
+#endif
+}
+
 bool WebNotificationManager::show(Notification* notification, WebPage* page)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

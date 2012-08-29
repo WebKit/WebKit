@@ -1,3 +1,32 @@
+2012-08-29  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Add SPI to retrieve internal IDs for web notifications
+        https://bugs.webkit.org/show_bug.cgi?id=95100
+        <rdar://problem/12180208>
+
+        Reviewed by Alexey Proskuryakov.
+
+        This is work toward providing Mac support for web notifications in DRT and WTR (77969).
+
+        Add function to retrieve the internal ID for a notification. This is needed by tests to support simulating
+        a user click on a notification.
+
+        * DerivedSources.pri: Expose JSNotification.h as private header.
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleGetWebNotificationID): Calls into notification manager to get internal ID.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h: Add WKBundleGetWebNotificationID() to be able
+        retrieve notification ID.
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::webNotificationID):
+        (WebKit):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::notificationIDForTesting):
+        (WebKit):
+        * WebProcess/Notifications/WebNotificationManager.h:
+        (WebNotificationManager):
+
 2012-08-28  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Enable the edge distance anti-aliasing for accelerated compositing layers

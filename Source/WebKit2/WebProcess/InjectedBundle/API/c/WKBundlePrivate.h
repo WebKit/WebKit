@@ -102,6 +102,8 @@ WK_EXPORT bool WKBundleIsProcessingUserGesture(WKBundleRef bundle);
 
 WK_EXPORT void WKBundleSetPageVisibilityState(WKBundleRef bundle, WKBundlePageRef page, int state, bool isInitialState);
 
+WK_EXPORT uint64_t WKBundleGetWebNotificationID(WKBundleRef bundle, JSContextRef context, JSValueRef notificaiton);
+
 #ifdef __cplusplus
 }
 #endif
