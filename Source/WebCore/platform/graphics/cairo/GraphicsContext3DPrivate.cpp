@@ -36,15 +36,25 @@ using namespace std;
 
 namespace WebCore {
 
-PassOwnPtr<GraphicsContext3DPrivate> GraphicsContext3DPrivate::create(GraphicsContext3D* context)
+PassOwnPtr<GraphicsContext3DPrivate> GraphicsContext3DPrivate::create(GraphicsContext3D* context, GraphicsContext3D::RenderStyle renderStyle)
 {
-    return adoptPtr(new GraphicsContext3DPrivate(context));
+    return adoptPtr(new GraphicsContext3DPrivate(context, renderStyle));
 }
 
-GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context)
+GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, GraphicsContext3D::RenderStyle renderStyle)
     : m_context(context)
-    , m_glContext(GLContext::createOffscreenContext(GLContext::sharingContext()))
+    , m_renderStyle(renderStyle)
 {
+    switch (renderStyle) {
+    case GraphicsContext3D::RenderOffscreen:
+        m_glContext = GLContext::createOffscreenContext(GLContext::sharingContext());
+        break;
+    case GraphicsContext3D::RenderToCurrentGLContext:
+        break;
+    case GraphicsContext3D::RenderDirectlyToHostWindow:
+        ASSERT_NOT_REACHED();
+        break;
+    }
 }
 
 GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
@@ -66,6 +76,8 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
 {
     if (!m_glContext)
         return;
+
+    ASSERT(m_renderStyle == GraphicsContext3D::RenderOffscreen);
 
     // FIXME: We do not support mask for the moment with TextureMapperImageBuffer.
     if (textureMapper->accelerationMode() != TextureMapper::OpenGLMode) {

@@ -65,7 +65,7 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
     return context.release();
 }
 
-GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, HostWindow*, GraphicsContext3D::RenderStyle)
+GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, HostWindow*, GraphicsContext3D::RenderStyle renderStyle)
     : m_currentWidth(0)
     , m_currentHeight(0)
     , m_attrs(attributes)
@@ -78,37 +78,39 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, H
     , m_multisampleFBO(0)
     , m_multisampleDepthStencilBuffer(0)
     , m_multisampleColorBuffer(0)
-    , m_private(GraphicsContext3DPrivate::create(this))
+    , m_private(GraphicsContext3DPrivate::create(this, renderStyle))
 {
     makeContextCurrent();
 
     validateAttributes();
 
-    // Create a texture to render into.
-    ::glGenTextures(1, &m_texture);
-    ::glBindTexture(GL_TEXTURE_2D, m_texture);
-    ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    ::glBindTexture(GL_TEXTURE_2D, 0);
+    if (renderStyle == RenderOffscreen) {
+        // Create a texture to render into.
+        ::glGenTextures(1, &m_texture);
+        ::glBindTexture(GL_TEXTURE_2D, m_texture);
+        ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        ::glBindTexture(GL_TEXTURE_2D, 0);
 
-    // Create an FBO.
-    ::glGenFramebuffersEXT(1, &m_fbo);
-    ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        // Create an FBO.
+        ::glGenFramebuffersEXT(1, &m_fbo);
+        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
 
-    m_boundFBO = m_fbo;
-    if (!m_attrs.antialias && (m_attrs.stencil || m_attrs.depth))
-        ::glGenRenderbuffersEXT(1, &m_depthStencilBuffer);
-    
-    // Create a multisample FBO.
-    if (m_attrs.antialias) {
-        ::glGenFramebuffersEXT(1, &m_multisampleFBO);
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
-        m_boundFBO = m_multisampleFBO;
-        ::glGenRenderbuffersEXT(1, &m_multisampleColorBuffer);
-        if (m_attrs.stencil || m_attrs.depth)
-            ::glGenRenderbuffersEXT(1, &m_multisampleDepthStencilBuffer);
+        m_boundFBO = m_fbo;
+        if (!m_attrs.antialias && (m_attrs.stencil || m_attrs.depth))
+            ::glGenRenderbuffersEXT(1, &m_depthStencilBuffer);
+
+        // Create a multisample FBO.
+        if (m_attrs.antialias) {
+            ::glGenFramebuffersEXT(1, &m_multisampleFBO);
+            ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
+            m_boundFBO = m_multisampleFBO;
+            ::glGenRenderbuffersEXT(1, &m_multisampleColorBuffer);
+            if (m_attrs.stencil || m_attrs.depth)
+                ::glGenRenderbuffersEXT(1, &m_multisampleDepthStencilBuffer);
+        }
     }
 
     // ANGLE initialization.
@@ -134,6 +136,9 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, H
 
 GraphicsContext3D::~GraphicsContext3D()
 {
+    if (m_private->renderStyle() == RenderToCurrentGLContext)
+        return;
+
     makeContextCurrent();
     ::glDeleteTextures(1, &m_texture);
     if (m_attrs.antialias) {
