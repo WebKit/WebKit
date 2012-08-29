@@ -1,3 +1,15 @@
+2012-08-29  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL] Rebaseline after r126864
+        https://bugs.webkit.org/show_bug.cgi?id=95278
+
+        Unreviewed, rebaseline.
+
+        Updated range with datalist pixel test expectations because slider theme is changed.
+
+        * platform/efl/fast/forms/datalist/input-appearance-range-with-datalist-expected.png:
+        * platform/efl/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png:
+
 2012-08-29  Philip Rogers  <pdr@google.com>
 
         Use SVGImage instead of cached image when drawing without a render tree.
