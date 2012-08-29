@@ -121,7 +121,7 @@ layer at (0,0) size 785x3447
       RenderBlock (anonymous) at (0,518) size 769x24
         RenderText {#text} at (0,5) size 75x18
           text run at (0,5) width 75: "BUTTON: "
-        RenderButton {BUTTON} at (75,2) size 4x15 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+        RenderButton {BUTTON} at (75,2) size 4x15 [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (2,7) size 0x1
             RenderInline {FONT} at (0,0) size 0x0 [color=#008000]
         RenderInline {FONT} at (0,0) size 171x18 [color=#008000]

@@ -1,3 +1,21 @@
+2012-08-29  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Final unreviewed rebaselining after r126683.
+
+        This change is identical to r126944, r126832, r126818, r126793 and r126957 except that it touches around
+        68 files. If you are interested in the details, it's better to check one of those as they are easier to
+        follow.
+
+        This change is massive as it optimizes the baselines from the different ports. The apparent sizes change in the
+        common baselines are expected (I checked them against the other baselines). They don't represent real size changes
+        following r126683 (which shouldn't happen), just that some older change made the size change and we are propagating
+        it to the common baseline.
+
+        * platform/chromium/TestExpectations
+        Removed all the entries related to BUGWK84286.
+
+        [Snipped the long list of touched file]
+
 2012-08-29  Tony Chang  <tony@chromium.org>
 
         r126257 broke css3/flexbox/flexitem.html

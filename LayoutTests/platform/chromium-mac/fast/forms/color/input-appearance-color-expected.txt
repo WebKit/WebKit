@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 456x18
           text run at (0,0) width 456: "List color controls have different appearance if ENABLE(DATALIST)."
         RenderBR {BR} at (456,14) size 0x0
-        RenderBlock {INPUT} at (0,18) size 44x23 [bgcolor=#FFFFFF] [border: (2px inset #000000) none (2px inset #000000)]
+        RenderBlock {INPUT} at (0,18) size 44x23 [bgcolor=#FFFFFF] [border: none (2px inset #000000) none (2px inset #000000)]
           RenderDeprecatedFlexibleBox {DIV} at (3,1) size 38x21
             RenderBlock {DIV} at (2,4) size 34x13 [bgcolor=#000000] [border: (1px solid #777777)]
         RenderBlock {INPUT} at (44,23) size 88x18 [bgcolor=#FFFFFF]
@@ -24,17 +24,17 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 577x18
           text run at (0,0) width 577: "List color controls have different sizes depending on font sizes. Normal color controls don't."
         RenderBR {BR} at (577,14) size 0x0
-        RenderBlock {INPUT} at (0,18) size 44x23 [bgcolor=#FFFFFF] [border: (2px inset #000000) none (2px inset #000000)]
+        RenderBlock {INPUT} at (0,18) size 44x23 [bgcolor=#FFFFFF] [border: none (2px inset #000000) none (2px inset #000000)]
           RenderDeprecatedFlexibleBox {DIV} at (3,1) size 38x21
             RenderBlock {DIV} at (2,4) size 34x13 [bgcolor=#00FF00] [border: (1px solid #777777)]
         RenderText {#text} at (44,27) size 4x18
           text run at (44,27) width 4: " "
-        RenderBlock {INPUT} at (48,18) size 44x23 [bgcolor=#FFFFFF] [border: (2px inset #000000) none (2px inset #000000)]
+        RenderBlock {INPUT} at (48,18) size 44x23 [bgcolor=#FFFFFF] [border: none (2px inset #000000) none (2px inset #000000)]
           RenderDeprecatedFlexibleBox {DIV} at (3,1) size 38x21
             RenderBlock {DIV} at (2,4) size 34x13 [bgcolor=#00FF00] [border: (1px solid #777777)]
         RenderText {#text} at (92,27) size 4x18
           text run at (92,27) width 4: " "
-        RenderBlock {INPUT} at (96,18) size 44x23 [bgcolor=#FFFFFF] [border: (2px inset #000000) none (2px inset #000000)]
+        RenderBlock {INPUT} at (96,18) size 44x23 [bgcolor=#FFFFFF] [border: none (2px inset #000000) none (2px inset #000000)]
           RenderDeprecatedFlexibleBox {DIV} at (3,1) size 38x21
             RenderBlock {DIV} at (2,4) size 34x13 [bgcolor=#00FF00] [border: (1px solid #777777)]
         RenderText {#text} at (140,27) size 4x18
@@ -57,27 +57,27 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 124x22
           text run at (0,0) width 124: "Various Colors"
       RenderBlock (anonymous) at (0,245) size 784x28
-        RenderBlock {INPUT} at (0,0) size 44x23 [bgcolor=#FFFFFF] [border: (2px inset #000000) none (2px inset #000000)]
+        RenderBlock {INPUT} at (0,0) size 44x23 [bgcolor=#FFFFFF] [border: none (2px inset #000000) none (2px inset #000000)]
           RenderDeprecatedFlexibleBox {DIV} at (3,1) size 38x21
             RenderBlock {DIV} at (2,4) size 34x13 [bgcolor=#FF0000] [border: (1px solid #777777)]
         RenderText {#text} at (44,9) size 4x18
           text run at (44,9) width 4: " "
-        RenderBlock {INPUT} at (48,0) size 44x23 [bgcolor=#FFFFFF] [border: (2px inset #000000) none (2px inset #000000)]
+        RenderBlock {INPUT} at (48,0) size 44x23 [bgcolor=#FFFFFF] [border: none (2px inset #000000) none (2px inset #000000)]
           RenderDeprecatedFlexibleBox {DIV} at (3,1) size 38x21
             RenderBlock {DIV} at (2,4) size 34x13 [bgcolor=#00FF00] [border: (1px solid #777777)]
         RenderText {#text} at (92,9) size 4x18
           text run at (92,9) width 4: " "
-        RenderBlock {INPUT} at (96,0) size 44x23 [bgcolor=#FFFFFF] [border: (2px inset #000000) none (2px inset #000000)]
+        RenderBlock {INPUT} at (96,0) size 44x23 [bgcolor=#FFFFFF] [border: none (2px inset #000000) none (2px inset #000000)]
           RenderDeprecatedFlexibleBox {DIV} at (3,1) size 38x21
             RenderBlock {DIV} at (2,4) size 34x13 [bgcolor=#0000FF] [border: (1px solid #777777)]
         RenderText {#text} at (140,9) size 4x18
           text run at (140,9) width 4: " "
-        RenderBlock {INPUT} at (144,0) size 44x23 [bgcolor=#FFFFFF] [border: (2px inset #000000) none (2px inset #000000)]
+        RenderBlock {INPUT} at (144,0) size 44x23 [bgcolor=#FFFFFF] [border: none (2px inset #000000) none (2px inset #000000)]
           RenderDeprecatedFlexibleBox {DIV} at (3,1) size 38x21
             RenderBlock {DIV} at (2,4) size 34x13 [bgcolor=#EC008C] [border: (1px solid #777777)]
         RenderText {#text} at (188,9) size 4x18
           text run at (188,9) width 4: " "
-        RenderBlock {INPUT} at (192,0) size 44x23 [bgcolor=#FFFFFF] [border: (2px inset #000000) none (2px inset #000000)]
+        RenderBlock {INPUT} at (192,0) size 44x23 [bgcolor=#FFFFFF] [border: none (2px inset #000000) none (2px inset #000000)]
           RenderDeprecatedFlexibleBox {DIV} at (3,1) size 38x21
             RenderBlock {DIV} at (2,4) size 34x13 [bgcolor=#40E0D0] [border: (1px solid #777777)]
         RenderText {#text} at (236,9) size 4x18
@@ -110,6 +110,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 117x22
           text run at (0,0) width 117: "Arbitrary Size"
       RenderBlock (anonymous) at (0,332) size 784x31
-        RenderBlock {INPUT} at (0,0) size 100x30 [bgcolor=#FFFFFF] [border: (2px inset #000000) none (2px inset #000000)]
+        RenderBlock {INPUT} at (0,0) size 100x30 [bgcolor=#FFFFFF] [border: none (2px inset #000000) none (2px inset #000000)]
           RenderDeprecatedFlexibleBox {DIV} at (3,1) size 94x28
             RenderBlock {DIV} at (2,4) size 90x20 [bgcolor=#FF0000] [border: (1px solid #777777)]
