@@ -36,6 +36,7 @@
             'Tests/WTF/CString.cpp',
             'Tests/WTF/Functional.cpp',
             'Tests/WTF/HashMap.cpp',
+            'Tests/WTF/MathExtras.cpp',
             'Tests/WTF/MediaTime.cpp',
             'Tests/WTF/RedBlackTree.cpp',
             'Tests/WTF/SaturatedArithmeticOperations.cpp',

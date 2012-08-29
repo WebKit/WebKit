@@ -1,3 +1,22 @@
+2012-08-29  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        The 2d.imageData.object.round canvas test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=40272
+
+        Reviewed by Benjamin Poulain.
+
+        Updating patch to address Benjamin's review comments.
+        Adding a WTF test to test lrint implementation.
+
+        * TestWebKitAPI/CMakeLists.txt: Added MathExtras.cpp test file.
+        * TestWebKitAPI/GNUmakefile.am: Added MathExtras.cpp test file.
+        * TestWebKitAPI/TestWebKitAPI.gypi: Added MathExtras.cpp test file.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added MathExtras.cpp test file.
+        * TestWebKitAPI/Tests/WTF/MathExtras.cpp: Added this test file containing a test for lrint().
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj: Added MathExtras.cpp test file.
+
 2012-08-29  Florin Malita  <fmalita@chromium.org>
 
         Unreviewed, updating Kelly Norton's email address at his request.

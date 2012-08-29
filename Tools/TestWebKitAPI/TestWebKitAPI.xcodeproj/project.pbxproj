@@ -90,6 +90,7 @@
 		A5E2027315B2181900C13E14 /* WindowlessWebViewWithMedia.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5E2027215B2181900C13E14 /* WindowlessWebViewWithMedia.mm */; };
 		A5E2027515B21F6E00C13E14 /* WindowlessWebViewWithMedia.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A5E2027015B2180600C13E14 /* WindowlessWebViewWithMedia.html */; };
 		A7A966DB140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7A966DA140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp */; };
+		B4039F9D15E6D8B3007255D6 /* MathExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4039F9C15E6D8B3007255D6 /* MathExtras.cpp */; };
 		B55F11A01516834F00915916 /* AttributedString.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55F119F1516834F00915916 /* AttributedString.mm */; };
 		B55F11B71517D03300915916 /* attributedStringCustomFont.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = B55F11B01517A2C400915916 /* attributedStringCustomFont.html */; };
 		B55F11BE15191A0600915916 /* Ahem.ttf in Copy Resources */ = {isa = PBXBuildFile; fileRef = B55F11B9151916E600915916 /* Ahem.ttf */; };
@@ -325,6 +326,7 @@
 		A5E2027015B2180600C13E14 /* WindowlessWebViewWithMedia.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = WindowlessWebViewWithMedia.html; sourceTree = "<group>"; };
 		A5E2027215B2181900C13E14 /* WindowlessWebViewWithMedia.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WindowlessWebViewWithMedia.mm; sourceTree = "<group>"; };
 		A7A966DA140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CheckedArithmeticOperations.cpp; path = WTF/CheckedArithmeticOperations.cpp; sourceTree = "<group>"; };
+		B4039F9C15E6D8B3007255D6 /* MathExtras.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MathExtras.cpp; path = WTF/MathExtras.cpp; sourceTree = "<group>"; };
 		B55F119F1516834F00915916 /* AttributedString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttributedString.mm; sourceTree = "<group>"; };
 		B55F11B01517A2C400915916 /* attributedStringCustomFont.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = attributedStringCustomFont.html; sourceTree = "<group>"; };
 		B55F11B9151916E600915916 /* Ahem.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Ahem.ttf; sourceTree = "<group>"; };
@@ -642,6 +644,7 @@
 				1AA9E55714980A9900001A8A /* Functional.cpp */,
 				0BCD833414857CE400EA2003 /* HashMap.cpp */,
 				26B2DFF815BDE599004F691D /* HashSet.cpp */,
+				B4039F9C15E6D8B3007255D6 /* MathExtras.cpp */,
 				14F3B11215E45EAB00210069 /* SaturatedArithmeticOperations.cpp */,
 				266FAFD215E5775200F61D5B /* IntegerToStringConversion.cpp */,
 				81B50192140F232300D9EB58 /* StringBuilder.cpp */,
@@ -925,6 +928,7 @@
 				52CB47411448FB9300873995 /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp in Sources */,
 				33DC8911141953A300747EF7 /* LoadCanceledNoServerRedirectCallback.cpp in Sources */,
 				BC131A9B1171316900B69727 /* main.mm in Sources */,
+				B4039F9D15E6D8B3007255D6 /* MathExtras.cpp in Sources */,
 				CD5497B415857F0C00B5BC30 /* MediaTime.cpp in Sources */,
 				E1220DA0155B25480013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.mm in Sources */,
 				517E7DFC15110EA600D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.mm in Sources */,

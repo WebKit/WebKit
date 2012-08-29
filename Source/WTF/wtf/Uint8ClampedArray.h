@@ -31,9 +31,7 @@
 #include <wtf/Platform.h>
 
 #include <wtf/Uint8Array.h>
-#if COMPILER(MSVC)
 #include <wtf/MathExtras.h>
-#endif
 
 namespace WTF {
 

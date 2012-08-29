@@ -1,3 +1,17 @@
+2012-08-29  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        The 2d.imageData.object.round canvas test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=40272
+
+        Reviewed by Benjamin Poulain.
+
+        Updating previous patch to address Benjamin's comments.
+        #ifdef in Uint8ClampedArray removed, fallback implementation for MSVC on non-X86 added.
+
+        * wtf/MathExtras.h:
+        (lrint): Fallback implementation for non-X86 & MSVC case.
+        * wtf/Uint8ClampedArray.h: Removed #ifdef.
+
 2012-08-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126914.
