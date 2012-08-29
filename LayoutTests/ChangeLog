@@ -1,3 +1,11 @@
+2012-08-29  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Unreviewed EFL gardening.
+
+        Moving fast/forms/color/input-value-sanitization-color.html out as flaky.
+
+        * platform/efl-wk2/TestExpectations: Flakily crashing test marked.
+
 2012-08-29  Florin Malita  <fmalita@chromium.org>
 
         Incorrect large-area clipping

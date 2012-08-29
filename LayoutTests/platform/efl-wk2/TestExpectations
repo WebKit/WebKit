@@ -39,6 +39,7 @@ BUGWKEFL : fast/overflow/lots-of-sibling-inline-boxes.html = CRASH
 BUGWKEFL : fast/dom/register-protocol-handler.html = CRASH
 BUGWKEFL : fast/dom/unregister-protocol-handler.html = CRASH
 BUGWKEFL : http/tests/loading/fire-error-event-script-no-content-type.html = CRASH
+BUGWK95333 DEBUG : fast/forms/color/input-value-sanitization-color.html = CRASH
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // FLAKY TESTS
