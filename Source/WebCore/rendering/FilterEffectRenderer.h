@@ -32,6 +32,7 @@
 #include "FilterEffect.h"
 #include "FilterOperations.h"
 #include "FloatRect.h"
+#include "FractionalLayoutRect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "SVGFilterBuilder.h"
