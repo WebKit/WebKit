@@ -312,6 +312,27 @@ MOCK run_command: ['qmake', '-v'], cwd=None
         command._tests_to_rebaseline = lambda port: {'userscripts/another-test.html': set(['txt']), 'userscripts/images.svg': set(['png'])}
         OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=True), [], tool], expected_logs=expected_logs, expected_stdout=expected_stdout, expected_stderr=expected_stderr_with_optimize)
 
+    def _assert_command(self, command, options=None, args=None, expected_stdout='', expected_stderr='', expected_logs=''):
+        # FIXME: generalize so more tests use this to get rid of boilerplate.
+        options = options or MockOptions(optimize=True, builders=None, suffixes=['txt'], verbose=False)
+        args = args or []
+
+        tool = MockTool()
+        command.bind_to_tool(tool)
+
+        port = tool.port_factory.get('chromium-mac-lion')
+        tool.filesystem.write_text_file(port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), '')
+
+        for port_name in tool.port_factory.all_port_names():
+            port = tool.port_factory.get(port_name)
+            for path in port.expectations_files():
+                tool.filesystem.write_text_file(path, '')
+
+        OutputCapture().assert_outputs(self, command.execute, [options, args, tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr, expected_logs=expected_logs)
+
+    def test_rebaseline_expectations_noop(self):
+        self._assert_command(RebaselineExpectations(), expected_logs='Did not find any tests marked REBASELINE.\n')
+
     def test_overrides_are_included_correctly(self):
         command = RebaselineExpectations()
         tool = MockTool()

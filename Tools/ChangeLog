@@ -1,3 +1,21 @@
+2012-08-29  Dirk Pranke  <dpranke@chromium.org>
+
+        webkit-patch rebaseline-expectations hangs
+        https://bugs.webkit.org/show_bug.cgi?id=95243
+
+        Reviewed by Tony Chang.
+
+        Don't try to run no commands in parallel; report an error
+        instead that we didn't find any tests to rebaseline.
+
+        Filed bug 95387 as well to make sure run_in_parallel() doesn't hang forever.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineExpectations.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (_assert_command):
+        (test_rebaseline_expectations_noop):
+
 2012-08-29  Brady Eidson  <beidson@apple.com>
 
         REGRESSION: Not sending NPP_SetWindow is causing Flash to not throttle itself

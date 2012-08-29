@@ -355,6 +355,10 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
         self._test_list = {}
         for port_name in tool.port_factory.all_port_names():
             self._add_tests_to_rebaseline_for_port(port_name)
+        if not self._test_list:
+            _log.warning("Did not find any tests marked REBASELINE.")
+            return
+
         self._rebaseline(options, self._test_list)
 
         for port_name in tool.port_factory.all_port_names():
