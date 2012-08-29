@@ -92,6 +92,8 @@ class TestExpectationParser(object):
         return expectation_lines
 
     def expectation_for_skipped_test(self, test_name):
+        if not self._port.test_exists(test_name):
+            _log.warning('The following test %s from the Skipped list doesn\'t exist' % test_name)
         expectation_line = TestExpectationLine()
         expectation_line.original_string = test_name
         expectation_line.modifiers = [TestExpectationParser.DUMMY_BUG_MODIFIER, TestExpectationParser.SKIP_MODIFIER]

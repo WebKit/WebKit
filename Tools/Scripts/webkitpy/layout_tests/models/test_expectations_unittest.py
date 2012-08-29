@@ -30,6 +30,7 @@
 import unittest
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.outputcapture import OutputCapture
 
 from webkitpy.layout_tests.models.test_configuration import *
 from webkitpy.layout_tests.models.test_expectations import *
@@ -301,6 +302,18 @@ class SkippedTests(Base):
     def test_skipped_dir_overrides_overrides(self):
         self.check(expectations='', overrides='BUGX : failures/expected/text.html = TEXT\n',
                    skips=['failures/expected'])
+
+    def test_skipped_entry_dont_exist(self):
+        port = MockHost().port_factory.get('qt')
+        expectations_dict = OrderedDict()
+        expectations_dict['expectations'] = ''
+        port.expectations_dict = lambda: expectations_dict
+        port.skipped_layout_tests = lambda tests: set(['foo/bar/baz.html'])
+        capture = OutputCapture()
+        capture.capture_output()
+        exp = TestExpectations(port)
+        _, _, logs = capture.restore_output()
+        self.assertEqual('The following test foo/bar/baz.html from the Skipped list doesn\'t exist\n', logs)
 
 
 class ExpectationSyntaxTests(Base):
