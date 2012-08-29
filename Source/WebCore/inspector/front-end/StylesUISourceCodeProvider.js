@@ -30,52 +30,17 @@
 
 /**
  * @constructor
- * @implements {WebInspector.SourceMapping}
  * @param {WebInspector.Workspace} workspace
  */
 WebInspector.StylesUISourceCodeProvider = function(workspace)
 {
     this._workspace = workspace;
-    /**
-     * @type {Array.<WebInspector.UISourceCode>}
-     */
-    this._uiSourceCodes = [];
-    this._uiSourceCodeForURL = {};
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
     this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
+    this._stylesSourceMapping = new WebInspector.StylesSourceMapping();
 }
 
 WebInspector.StylesUISourceCodeProvider.prototype = {
-    /**
-     * @return {Array.<WebInspector.UISourceCode>}
-     */
-    uiSourceCodes: function()
-    {
-        return this._uiSourceCodes;
-    },
-
-    /**
-     * @param {WebInspector.RawLocation} rawLocation
-     * @return {WebInspector.UILocation}
-     */
-    rawLocationToUILocation: function(rawLocation)
-    {
-        var location = /** @type WebInspector.CSSLocation */ rawLocation;
-        var uiSourceCode = this._uiSourceCodeForURL[location.url];
-        return new WebInspector.UILocation(uiSourceCode, location.lineNumber, 0);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {number} lineNumber
-     * @param {number} columnNumber
-     * @return {WebInspector.RawLocation}
-     */
-    uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
-    {
-        return new WebInspector.CSSLocation(uiSourceCode.contentURL() || "", lineNumber);
-    },
-
     _populate: function()
     {
         function populateFrame(frame)
@@ -100,17 +65,14 @@ WebInspector.StylesUISourceCodeProvider.prototype = {
         if (resource.type !== WebInspector.resourceTypes.Stylesheet)
             return;
         var uiSourceCode = new WebInspector.StyleSource(resource);
-        this._uiSourceCodes.push(uiSourceCode);
-        this._uiSourceCodeForURL[resource.url] = uiSourceCode;
-        WebInspector.cssModel.setSourceMapping(resource.url, this);
+        this._stylesSourceMapping.addUISourceCode(uiSourceCode);
         this._workspace.project().addUISourceCode(uiSourceCode);
     },
 
     _reset: function()
     {
-        this._uiSourceCodes = [];
-        this._uiSourceCodeForURL = {};
-        WebInspector.cssModel.resetSourceMappings();
-        this._populate();
+        this._stylesSourceMapping.reset();
+        // FIXME: We should not populate until the ProjectWillReset event was handled by all listeners. Introduce ProjectDidReset event for that matter.
+        setTimeout(this._populate.bind(this), 0);
     }
 }

@@ -180,6 +180,7 @@
     <file>StatusBarButton.js</file>
     <file>StyleSheetOutlineDialog.js</file>
     <file>StyleSource.js</file>
+    <file>StylesSourceMapping.js</file>
     <file>StylesUISourceCodeProvider.js</file>
     <file>StylesSidebarPane.js</file>
     <file>TabbedEditorContainer.js</file>

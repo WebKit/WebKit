@@ -76598,6 +76598,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\StylesSourceMapping.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\StylesUISourceCodeProvider.js"
 					>
 				</File>

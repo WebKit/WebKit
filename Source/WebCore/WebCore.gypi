@@ -6391,6 +6391,7 @@
             'inspector/front-end/SplitView.js',
             'inspector/front-end/StatusBarButton.js',
             'inspector/front-end/StyleSource.js',
+            'inspector/front-end/StylesSourceMapping.js',
             'inspector/front-end/StylesUISourceCodeProvider.js',
             'inspector/front-end/TabbedPane.js',
             'inspector/front-end/TestController.js',
