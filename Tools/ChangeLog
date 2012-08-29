@@ -1,3 +1,9 @@
+2012-08-29  Florin Malita  <fmalita@chromium.org>
+
+        Unreviewed, updating Kelly Norton's email address at his request.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-08-29  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [NRWT] The nrwt should check the contents of the skipped files with --lint-test-files
