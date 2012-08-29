@@ -448,6 +448,16 @@ RenderObject* InputType::createRenderer(RenderArena*, RenderStyle* style) const
     return RenderObject::createObject(element(), style);
 }
 
+void InputType::blur()
+{
+    element()->defaultBlur();
+}
+
+void InputType::focus(bool restorePreviousSelection)
+{
+    element()->defaultFocus(restorePreviousSelection);
+}
+
 void InputType::createShadowSubtree()
 {
 }
