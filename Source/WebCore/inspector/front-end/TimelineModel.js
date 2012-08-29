@@ -43,6 +43,8 @@ WebInspector.TimelineModel = function()
     WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, this._onRecordAdded, this);
 }
 
+WebInspector.TimelineModel.TransferChunkLengthBytes = 5000000;
+
 WebInspector.TimelineModel.RecordType = {
     Root: "Root",
     Program: "Program",
@@ -117,7 +119,7 @@ WebInspector.TimelineModel.aggregateTimeForRecord = function(total, rawRecord)
 {
     var childrenTime = 0;
     var children = rawRecord["children"] || [];
-    for (var i = 0; i < children.length; ++i)  {
+    for (var i = 0; i < children.length; ++i) {
         WebInspector.TimelineModel.aggregateTimeForRecord(total, children[i]);
         childrenTime += WebInspector.TimelineModel.durationInSeconds(children[i]);
     }
@@ -164,90 +166,15 @@ WebInspector.TimelineModel.prototype = {
     },
 
     /**
-     * @param {WebInspector.Progress} progress
-     * @param {Array.<Object>} data
-     * @param {number} index
-     */
-    _loadNextChunk: function(progress, data, index)
-    {
-        if (progress.isCanceled()) {
-            this.reset();
-            progress.done();
-            return;
-        }
-        progress.setWorked(index);
-
-        for (var i = 0; i < 100 && index < data.length; ++i, ++index)
-            this._addRecord(data[index]);
-
-        if (index !== data.length)
-            setTimeout(this._loadNextChunk.bind(this, progress, data, index), 0);
-        else
-            progress.done();
-    },
-
-    /**
      * @param {!Blob} file
-     * @param {WebInspector.Progress} progress
+     * @param {!WebInspector.Progress} progress
      */
     loadFromFile: function(file, progress)
     {
-        var compositeProgress = new WebInspector.CompositeProgress(progress);
-        var loadingProgress = compositeProgress.createSubProgress(1);
-        var parsingProgress = compositeProgress.createSubProgress(1);
-        var processingProgress = compositeProgress.createSubProgress(1);
-
-        function parseAndImportData(data)
-        {
-            try {
-                var records = JSON.parse(data);
-                parsingProgress.done();
-                this.reset();
-                processingProgress.setTotalWork(records.length);
-                this._loadNextChunk(processingProgress, records, 1);
-            } catch (e) {
-                WebInspector.showErrorMessage("Malformed timeline data.");
-                progress.done();
-            }
-        }
-
-        function onLoad(e)
-        {
-            loadingProgress.done();
-            parsingProgress.setTotalWork(1);
-            setTimeout(parseAndImportData.bind(this, e.target.result), 0);
-        }
-
-        function onError(e)
-        {
-            progress.done();
-            switch(e.target.error.code) {
-            case e.target.error.NOT_FOUND_ERR:
-                WebInspector.showErrorMessage(WebInspector.UIString("File \"%s\" not found.", file.name));
-            break;
-            case e.target.error.NOT_READABLE_ERR:
-                WebInspector.showErrorMessage(WebInspector.UIString("File \"%s\" is not readable", file.name));
-            break;
-            case e.target.error.ABORT_ERR:
-                break;
-            default:
-                WebInspector.showErrorMessage(WebInspector.UIString("An error occurred while reading the file \"%s\"", file.name));
-            }
-        }
-
-        function onProgress(e)
-        {
-            if (e.lengthComputable)
-                loadingProgress.setWorked(e.loaded / e.total);
-        }
-
-        var reader = new FileReader();
-        reader.onload = onLoad.bind(this);
-        reader.onerror = onError;
-        reader.onprogress = onProgress;
-        loadingProgress.setTitle(WebInspector.UIString("Loading\u2026"));
-        loadingProgress.setTotalWork(1);
-        reader.readAsText(file);
+        var delegate = new WebInspector.TimelineModelLoadFromFileDelegate(this, progress);
+        var fileReader = this._createFileReader(file, delegate);
+        var loader = new WebInspector.TimelineModelLoader(this, fileReader, progress);
+        fileReader.start(loader);
     },
 
     /**
@@ -255,46 +182,30 @@ WebInspector.TimelineModel.prototype = {
      */
     loadFromURL: function(url, progress)
     {
-        var compositeProgress = new WebInspector.CompositeProgress(progress);
-        var loadingProgress = compositeProgress.createSubProgress(1);
-        var parsingProgress = compositeProgress.createSubProgress(1);
-        var processingProgress = compositeProgress.createSubProgress(1);
+        var delegate = new WebInspector.TimelineModelLoadFromFileDelegate(this, progress);
+        var urlReader = new WebInspector.ChunkedXHRReader(url, delegate);
+        var loader = new WebInspector.TimelineModelLoader(this, urlReader, progress);
+        urlReader.start(loader);
+    },
 
-        // FIXME: extract parsing routines so that they did not require too many progress objects.
-        function parseAndImportData(data)
-        {
-            try {
-                var records = JSON.parse(data);
-                parsingProgress.done();
-                this.reset();
-                processingProgress.setTotalWork(records.length);
-                this._loadNextChunk(processingProgress, records, 1);
-            } catch (e) {
-                WebInspector.showErrorMessage("Malformed timeline data.");
-                progress.done();
-            }
-        }
-
-        var responseText = loadXHR(url);
-        if (responseText) {
-            loadingProgress.done();
-            parsingProgress.setTotalWork(1);
-            setTimeout(parseAndImportData.bind(this, responseText), 0);
-        }
+    _createFileReader: function(file, delegate)
+    {
+        return new WebInspector.ChunkedFileReader(file, WebInspector.TimelineModel.TransferChunkLengthBytes, delegate);
     },
 
     saveToFile: function()
     {
-        var records = ['[' + JSON.stringify(new String(window.navigator.appVersion))];
-        for (var i = 0; i < this._records.length; ++i)
-            records.push(JSON.stringify(this._records[i]));
-
-        records[records.length - 1] = records[records.length - 1] + "]";
-
         var now = new Date();
         var fileName = "TimelineRawData-" + now.toISO8601Compact() + ".json";
-        WebInspector.fileManager.save(fileName, records.join(",\n"), true);
 
+        var delegate = new WebInspector.TimelineModelWriteToFileDelegate(this._records, window.navigator.appVersion);
+        var writer = this._createFileWriter(fileName, delegate);
+        writer.startTransfer();
+    },
+
+    _createFileWriter: function(fileName, delegate)
+    {
+        return new WebInspector.FileOutputStream(fileName, delegate);
     },
 
     reset: function()
@@ -337,3 +248,192 @@ WebInspector.TimelineModel.prototype = {
 }
 
 WebInspector.TimelineModel.prototype.__proto__ = WebInspector.Object.prototype;
+
+/**
+ * @constructor
+ * @implements {WebInspector.OutputStream}
+ * @param {!WebInspector.TimelineModel} model
+ * @param {!{cancel: function()}} reader
+ * @param {!WebInspector.Progress} progress
+ */
+WebInspector.TimelineModelLoader = function(model, reader, progress)
+{
+    this._model = model;
+    this._reader = reader;
+    this._progress = progress;
+    this._buffer = "";
+}
+
+WebInspector.TimelineModelLoader.prototype = {
+    startTransfer: function()
+    {
+        this._model.reset();
+        this._firstChunk = true;
+        return true;
+    },
+
+    /**
+     * @param {string} chunk
+     */
+    transferChunk: function(chunk)
+    {
+        var data = this._buffer + chunk;
+        var lastIndex = 0;
+        var index;
+        do {
+            index = lastIndex;
+            lastIndex = WebInspector.findBalancedCurlyBrackets(data, index);
+        } while (lastIndex !== -1)
+
+        var json = data.slice(0, index) + "]";
+        this._buffer = data.slice(index);
+
+        if (!index)
+            return;
+
+        // Prepending "0" to turn string into valid JSON.
+        if (!this._firstChunk)
+            json = "[0" + json;
+
+        var items;
+        try {
+            items = /** @type {Array} */ JSON.parse(json);
+        } catch (e) {
+            WebInspector.showErrorMessage("Malformed timeline data.");
+            this._model.reset();
+            this._reader.cancel();
+            this._progress.done();
+            return;
+        }
+
+        if (this._firstChunk) {
+            this._version = items[0];
+            this._firstChunk = false;
+        }
+
+        // Skip 0-th element - it is either version or 0.
+        for (var i = 1, size = items.length; i < size; ++i)
+            this._model._addRecord(items[i]);
+    },
+
+    finishTransfer: function() { },
+
+    dispose: function() { }
+}
+
+/**
+ * @constructor
+ * @implements {WebInspector.OutputStreamDelegate}
+ * @param {!WebInspector.TimelineModel} model
+ * @param {!WebInspector.Progress} progress
+ */
+WebInspector.TimelineModelLoadFromFileDelegate = function(model, progress)
+{
+    this._model = model;
+    this._progress = progress;
+}
+
+WebInspector.TimelineModelLoadFromFileDelegate.prototype = {
+    onTransferStarted: function(reader)
+    {
+        this._progress.setTitle(WebInspector.UIString("Loading\u2026"));
+    },
+
+    onChunkTransferred: function(reader)
+    {
+        if (this._progress.isCanceled()) {
+            reader.cancel();
+            this._progress.done();
+            this._model.reset();
+            return;
+        }
+
+        var totalSize = reader.fileSize();
+        if (totalSize) {
+            this._progress.setTotalWork(totalSize);
+            this._progress.setWorked(reader.loadedSize());
+        }
+    },
+
+    onTransferFinished: function(reader)
+    {
+        this._progress.done();
+    },
+
+    onError: function(reader, event)
+    {
+        this._progress.done();
+        this._model.reset();
+        switch (event.target.error.code) {
+        case FileError.NOT_FOUND_ERR:
+            WebInspector.showErrorMessage(WebInspector.UIString("File \"%s\" not found.", reader.fileName()));
+            break;
+        case FileError.NOT_READABLE_ERR:
+            WebInspector.showErrorMessage(WebInspector.UIString("File \"%s\" is not readable", reader.fileName()));
+            break;
+        case FileError.ABORT_ERR:
+            break;
+        default:
+            WebInspector.showErrorMessage(WebInspector.UIString("An error occurred while reading the file \"%s\"", reader.fileName()));
+        }
+    }
+}
+
+/**
+ * @constructor
+ * @implements WebInspector.OutputStreamDelegate
+ * @param {Array} records
+ * @param {string} version
+ */
+WebInspector.TimelineModelWriteToFileDelegate = function(records, version)
+{
+    this._records = records;
+    this._recordIndex = 0;
+    this._prologue = "[" + JSON.stringify(new String(version));
+}
+
+WebInspector.TimelineModelWriteToFileDelegate.prototype = {
+    onTransferStarted: function(writer)
+    {
+        this._pushChunk(writer);
+    },
+
+    onChunkTransferred: function(writer)
+    {
+        if (this._recordIndex === this._records.length)
+            writer.finishTransfer();
+        else
+            this._pushChunk(writer);
+    },
+
+    onTransferFinished: function(writer) { },
+
+    onError: function(writer, event) { },
+
+    _pushChunk: function(writer)
+    {
+        const separator = ",\n";
+        var data = [];
+        var length = 0;
+
+        if (this._prologue) {
+            data.push(this._prologue);
+            length += this._prologue.length;
+            delete this._prologue;
+        } else
+            data.push("");
+
+        while (this._recordIndex < this._records.length) {
+            var item = JSON.stringify(this._records[this._recordIndex]);
+            var itemLength = item.length + separator.length;
+            if (length + itemLength > WebInspector.TimelineModel.TransferChunkLengthBytes)
+                break;
+            length += itemLength;
+            data.push(item);
+            ++this._recordIndex;
+        }
+        if (this._recordIndex === this._records.length)
+            data.push(data.pop() + "]");
+        writer.transferChunk(data.join(separator));
+    }
+}

@@ -6,38 +6,79 @@
 
 function test()
 {
-    WebInspector.showPanel("timeline");
-    InspectorTest.addSniffer(WebInspector.TimelineModel.prototype, "_loadNextChunk", loadNextChunk);
-    InspectorFrontendHost.save = save;
-    var data = [
-        {"startTime":1310749854316.8408,"data":{"requestId":43,"url":"http://www.webkit.org/","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":1819936,"totalHeapSize":7629120},
-        {"startTime":1310749855118.9329,"data":{"requestId":43,"statusCode":200,"mimeType":"text/html"},"children":[],"endTime":1310749855118.968,"type":"ResourceReceiveResponse","usedHeapSize":1819936,"totalHeapSize":7629120},
-        {"startTime":1310749855136.245,"data":{"requestId":44,"url":"http://www.webkit.org/css/main.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
-        {"startTime":1310749855136.655,"data":{"requestId":45,"url":"http://www.webkit.org/css/green.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
-        {"startTime":1310749855137.023,"data":{"requestId":46,"url":"http://www.webkit.org/css/blue.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
-        {"startTime":1310749855137.342,"data":{"requestId":47,"url":"http://www.webkit.org/css/yellow.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
-        {"startTime":1310749855137.656,"data":{"requestId":48,"url":"http://www.webkit.org/css/pink.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
-        {"startTime":1310749855137.989,"data":{"requestId":49,"url":"http://www.webkit.org/css/purple.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
-        {"startTime":1310749855138.308,"data":{"requestId":50,"url":"http://www.webkit.org/css/gray.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120}];
-
-    var mockProgress = new WebInspector.Progress();
-    WebInspector.panels.timeline._model._loadNextChunk(mockProgress, data, 0);
-
-    function loadNextChunk()
+    function runTestWithDataAndCheck(input, expectedOutput)
     {
-        WebInspector.panels.timeline._model.saveToFile();
-    }
+        WebInspector.showPanel("timeline");
+        var model = new WebInspector.TimelineModel();
 
-    function save(name, saveData, saveAs)
-    {
-        saveData = JSON.parse(saveData);
-        saveData.shift(); // strip version info
-        if (JSON.stringify(data) == JSON.stringify(saveData))
+        function createFileReader(file, delegate)
+        {
+            return new InspectorTest.FakeFileReader(input, delegate, model.saveToFile.bind(model));
+        }
+
+        function createFileWriter(fileName, delegate)
+        {
+            return new InspectorTest.FakeFileWriter(delegate, checkSaveData);
+        }
+
+        function checkSaveData(output)
+        {
+            var saveData = JSON.parse(output);
+            saveData.shift(); // strip version info
+            expectedOutput.shift();
+            InspectorTest.assertEquals(JSON.stringify(expectedOutput), JSON.stringify(saveData), "saved data is not equal to restored");
             InspectorTest.addResult("passed");
-        else
-            InspectorTest.addResult("saved data is not equal to restored");
-        InspectorTest.completeTest();
+            InspectorTest.completeTest();
+        }
+
+        InspectorTest.override(model, "_createFileReader", createFileReader);
+        InspectorTest.override(model, "_createFileWriter", createFileWriter);
+
+        model.loadFromFile({}, new WebInspector.Progress());
     }
+
+    InspectorTest.runTestSuite([
+        function testNormal(next)
+        {
+            var data = ["Version",
+                {"startTime":1310749854316.8408,"data":{"requestId":43,"url":"http://www.webkit.org/","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":1819936,"totalHeapSize":7629120},
+                {"startTime":1310749855118.9329,"data":{"requestId":43,"statusCode":200,"mimeType":"text/html"},"children":[],"endTime":1310749855118.968,"type":"ResourceReceiveResponse","usedHeapSize":1819936,"totalHeapSize":7629120},
+                {"startTime":1310749855136.245,"data":{"requestId":44,"url":"http://www.webkit.org/css/main.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
+                {"startTime":1310749855136.655,"data":{"requestId":45,"url":"http://www.webkit.org/css/green.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
+                {"startTime":1310749855137.023,"data":{"requestId":46,"url":"http://www.webkit.org/css/blue.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
+                {"startTime":1310749855137.342,"data":{"requestId":47,"url":"http://www.webkit.org/css/yellow.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
+                {"startTime":1310749855137.656,"data":{"requestId":48,"url":"http://www.webkit.org/css/pink.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
+                {"startTime":1310749855137.989,"data":{"requestId":49,"url":"http://www.webkit.org/css/purple.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
+                {"startTime":1310749855138.308,"data":{"requestId":50,"url":"http://www.webkit.org/css/gray.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120}
+            ];
+            var input = JSON.stringify(data);
+            runTestWithDataAndCheck(input, data);
+            next();
+        },
+
+        function testIncompatible(next)
+        {
+            var data = ["Version",
+                {"startTime":1310749854316.8408,"data":{"requestId":43,"url":"http://www.webkit.org/","requestMethod":"GET"},"type":"UnknownRecordType","u\"s}e}dHeapSize\\":1819936,"totalHeapSize":7629120}
+            ];
+            var input = JSON.stringify(data);
+            runTestWithDataAndCheck(input, data);
+            next();
+        },
+
+        function testMalformed(next)
+        {
+            var data = ["Version"];
+            // At least 1 record is parsed in first chunk.
+            var input = '["Version",'
+                +'{"startTime":1310749854316.8408,"data":{"requestId":43},"type":"UnknownRecordType"},'
+                +'{"startTime":1310749854316.8508,"data":{"requestId":43},"type":"UnknownRecordType"},'
+                +'{"startTime":1310749854316.8608,"data":{"requestId":43},"type":"UnknownRecordType"},'
+                +'{"startTime":1310749854316.8708,"data":{"requestId":43_MALFORMED_JSON_},"type":"UnknownRecordType"}]';
+            runTestWithDataAndCheck(input, data);
+            next();
+        }
+    ]);
 }
 
 </script>
@@ -46,6 +87,10 @@ function test()
 <body onload="runTest()">
 <p>
 Tests the Timeline save/load functionality.
+</p>
+
+<p>
+Also tests save/load of unknown (incompatible) record types. <a href="https://bugs.webkit.org/show_bug.cgi?id=91714">(Bug 91714)</a>
 </p>
 
 </body>

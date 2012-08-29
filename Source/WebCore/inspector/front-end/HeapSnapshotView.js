@@ -944,7 +944,7 @@ WebInspector.HeapProfileHeader.prototype = {
      */
     _createFileWriter: function(fileName, delegate)
     {
-        return new WebInspector.ChunkedFileWriter(fileName, delegate);
+        return new WebInspector.FileOutputStream(fileName, delegate);
     },
 
     /**
@@ -1019,73 +1019,6 @@ WebInspector.HeapSnapshotLoadFromFileDelegate.prototype = {
         default:
             this._snapshotHeader.sidebarElement.subtitle = WebInspector.UIString("'%s' error %d", source.fileName(), e.target.error.code);
         }
-    }
-}
-
-/**
- * @constructor
- * @implements {WebInspector.OutputStream}
- * @param {!string} fileName
- * @param {!WebInspector.OutputStreamDelegate} delegate
- */
-WebInspector.ChunkedFileWriter = function(fileName, delegate)
-{
-    this._fileName = fileName;
-    this._delegate = delegate;
-}
-
-WebInspector.ChunkedFileWriter.prototype = {
-    /**
-     * @override
-     */
-    startTransfer: function()
-    {
-        WebInspector.fileManager.addEventListener(WebInspector.FileManager.EventTypes.SavedURL, this._onTransferStarted, this);
-        WebInspector.fileManager.save(this._fileName, "", true);
-    },
-
-    /**
-     * @override
-     * @param {string} chunk
-     */
-    transferChunk: function(chunk)
-    {
-        WebInspector.fileManager.append(this._fileName, chunk);
-    },
-
-    /**
-     * @override
-     */
-    finishTransfer: function()
-    {
-        WebInspector.fileManager.removeEventListener(WebInspector.FileManager.EventTypes.AppendedToURL, this._onChunkTransferred, this);
-        this._delegate.onTransferFinished(this);
-    },
-
-    dispose: function()
-    {
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _onTransferStarted: function(event)
-    {
-        if (event.data !== this._fileName)
-            return;
-        this._delegate.onTransferStarted(this);
-        WebInspector.fileManager.removeEventListener(WebInspector.FileManager.EventTypes.SavedURL, this._onTransferStarted, this);
-        WebInspector.fileManager.addEventListener(WebInspector.FileManager.EventTypes.AppendedToURL, this._onChunkTransferred, this);
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _onChunkTransferred: function(event)
-    {
-        if (event.data !== this._fileName)
-            return;
-        this._delegate.onChunkTransferred(this);
     }
 }
 

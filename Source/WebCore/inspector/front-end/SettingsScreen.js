@@ -38,7 +38,7 @@ WebInspector.SettingsScreen = function(onHide)
     WebInspector.HelpScreen.call(this);
     this.element.id = "settings-screen";
 
-    /** @type {!function()} */
+    /** @type {function()} */
     this._onHide = onHide;
 
     this._tabbedPane = new WebInspector.TabbedPane();
@@ -65,7 +65,7 @@ WebInspector.SettingsScreen.Tabs = {
 
 WebInspector.SettingsScreen.prototype = {
     /**
-     * @param {!string} tabId
+     * @param {string} tabId
      */
     selectTab: function(tabId)
     {

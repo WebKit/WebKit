@@ -1,5 +1,0 @@
-Tests the Timeline save/load of unknown (incompatible) record types.
-
-Bug 91714
-passed
-

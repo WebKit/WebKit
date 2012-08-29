@@ -54,22 +54,6 @@ WebInspector.HeapSnapshotLoader.prototype = {
         this._snapshot = {};
     },
 
-    _findBalancedCurlyBrackets: function()
-    {
-        var counter = 0;
-        var openingBracket = "{".charCodeAt(0), closingBracket = "}".charCodeAt(0);
-        for (var i = 0, l = this._json.length; i < l; ++i) {
-            var character = this._json.charCodeAt(i);
-            if (character === openingBracket)
-                ++counter;
-            else if (character === closingBracket) {
-                if (--counter === 0)
-                    return i + 1;
-            }
-        }
-        return -1;
-    },
-
     finishTransfer: function()
     {
         if (this._json)
@@ -148,7 +132,7 @@ WebInspector.HeapSnapshotLoader.prototype = {
             break;
         }
         case "parse-snapshot-info": {
-            var closingBracketIndex = this._findBalancedCurlyBrackets();
+            var closingBracketIndex = WebInspector.findBalancedCurlyBrackets(this._json);
             if (closingBracketIndex === -1)
                 return;
             this._snapshot.snapshot = /** @type {HeapSnapshotHeader} */JSON.parse(this._json.slice(0, closingBracketIndex));

@@ -1,3 +1,15 @@
+2012-08-29  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Timeline: avoid "IPC message too big" on save/load
+        https://bugs.webkit.org/show_bug.cgi?id=91991
+
+        Reviewed by Alexander Pavlov.
+
+        Refactored to adopt workflow.
+
+        * inspector/timeline/timeline-load.html: Turned into test suite to avoid code
+        duplication. Added "malformed input" case.
+
 2012-08-29  Anna Cavender  <annacc@chromium.org>
 
         Create a toggle button for closed captions.
