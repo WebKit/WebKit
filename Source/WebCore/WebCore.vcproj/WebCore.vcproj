@@ -76598,6 +76598,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\StylesUISourceCodeProvider.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\StyleSource.js"
 					>
 				</File>
@@ -76723,6 +76727,14 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\WatchExpressionsSidebarPane.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\webGLProfiler.css"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\WebGLProfileView.js"
 					>
 				</File>
 				<File

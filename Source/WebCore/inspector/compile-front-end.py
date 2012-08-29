@@ -90,6 +90,7 @@ modules = [
             "SnippetStorage.js",
             "SourceMapping.js",
             "StyleSource.js",
+            "StylesUISourceCodeProvider.js",
             "TimelineManager.js",
             "RawSourceCode.js",
             "RemoteObject.js",
