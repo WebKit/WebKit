@@ -3991,7 +3991,10 @@ void WebViewImpl::selectAutofillSuggestionAtIndex(unsigned listIndex)
 
 bool WebViewImpl::detectContentOnTouch(const WebPoint& position, WebInputEvent::Type touchType)
 {
-    ASSERT(touchType == WebInputEvent::GestureTap || touchType == WebInputEvent::GestureLongPress);
+    ASSERT(touchType == WebInputEvent::GestureTap
+           || touchType == WebInputEvent::GestureTwoFingerTap
+           || touchType == WebInputEvent::GestureLongPress);
+
     HitTestResult touchHit = hitTestResultForWindowPos(position);
 
     if (touchHit.isContentEditable())
@@ -4004,7 +4007,7 @@ bool WebViewImpl::detectContentOnTouch(const WebPoint& position, WebInputEvent::
     // Ignore when tapping on links or nodes listening to click events, unless the click event is on the
     // body element, in which case it's unlikely that the original node itself was intended to be clickable.
     for (; node && !node->hasTagName(HTMLNames::bodyTag); node = node->parentNode()) {
-        if (node->isLink() || (touchType != WebInputEvent::GestureLongPress
+        if (node->isLink() || (touchType == WebInputEvent::GestureTap
                 && (node->willRespondToTouchEvents() || node->willRespondToMouseClickEvents()))) {
             return false;
         }
@@ -4014,7 +4017,7 @@ bool WebViewImpl::detectContentOnTouch(const WebPoint& position, WebInputEvent::
     if (!content.isValid())
         return false;
 
-    if (touchType == WebInputEvent::GestureLongPress) {
+    if (touchType != WebInputEvent::GestureTap) {
         // Select the detected content as a block.
         focusedFrame()->selectRange(content.range());
         return true;
