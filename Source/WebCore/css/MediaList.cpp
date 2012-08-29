@@ -27,6 +27,7 @@
 #include "MediaQuery.h"
 #include "MediaQueryExp.h"
 #include "MemoryInstrumentation.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -198,17 +199,17 @@ void MediaQuerySet::addMediaQuery(PassOwnPtr<MediaQuery> mediaQuery)
 
 String MediaQuerySet::mediaText() const
 {
-    String text("");
+    StringBuilder text;
     
     bool first = true;
     for (size_t i = 0; i < m_queries.size(); ++i) {
         if (!first)
-            text += ", ";
+            text.appendLiteral(", ");
         else
             first = false;
-        text += m_queries[i]->cssText();
+        text.append(m_queries[i]->cssText());
     }
-    return text;
+    return text.toString();
 }
 
 void MediaQuerySet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

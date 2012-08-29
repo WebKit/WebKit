@@ -35,22 +35,11 @@
 
 namespace WebCore {
 
-namespace {
-
-String convertedSpaceString()
+static String convertedSpaceString()
 {
-    DEFINE_STATIC_LOCAL(String, convertedSpaceString, ());
-    if (convertedSpaceString.isNull()) {
-        convertedSpaceString = "<span class=\"";
-        convertedSpaceString += AppleConvertedSpace;
-        convertedSpaceString += "\">";
-        convertedSpaceString.append(noBreakSpace);
-        convertedSpaceString += "</span>";
-    }
+    DEFINE_STATIC_LOCAL(String, convertedSpaceString, (String(ASCIILiteral("<span class=\"" AppleConvertedSpace "\">")) + noBreakSpace + "</span>"));
     return convertedSpaceString;
 }
-
-} // end anonymous namespace
 
 String convertHTMLTextToInterchangeFormat(const String& in, const Text* node)
 {

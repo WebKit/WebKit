@@ -29,6 +29,7 @@
 #include "CSSPrimitiveValue.h"
 #include "MemoryInstrumentation.h"
 #include "PlatformString.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -40,37 +41,37 @@ CSSLineBoxContainValue::CSSLineBoxContainValue(unsigned value)
 
 String CSSLineBoxContainValue::customCssText() const
 {
-    String text("");
+    StringBuilder text;
 
     if (m_value & LineBoxContainBlock)
-        text += "block";
+        text.appendLiteral("block");
     if (m_value & LineBoxContainInline) {
         if (!text.isEmpty())
-            text += " ";
-        text += "inline";
+            text.append(' ');
+        text.appendLiteral("inline");
     }
     if (m_value & LineBoxContainFont) {
         if (!text.isEmpty())
-            text += " ";
-        text += "font";
+            text.append(' ');
+        text.appendLiteral("font");
     }
     if (m_value & LineBoxContainGlyphs) {
         if (!text.isEmpty())
-            text += " ";
-        text += "glyphs";
+            text.append(' ');
+        text.appendLiteral("glyphs");
     }
     if (m_value & LineBoxContainReplaced) {
         if (!text.isEmpty())
-            text += " ";
-        text += "replaced";
+            text.append(' ');
+        text.appendLiteral("replaced");
     }
     if (m_value & LineBoxContainInlineBox) {
         if (!text.isEmpty())
-            text += " ";
-        text += "inline-box";
+            text.append(' ');
+        text.appendLiteral("inline-box");
     }
 
-    return text;
+    return text.toString();
 }
 
 void CSSLineBoxContainValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
