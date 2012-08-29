@@ -21,7 +21,10 @@
                 mediaSource.sourceBuffers.addEventListener('webkitaddsourcebuffer', onSourceBufferAdded);
 
                 run("segmentHelper.addSourceBuffer()");
+            }
 
+            function afterSourceBufferAdded()
+            {
                 consoleWrite("");
                 consoleWrite("Test SourceBuffer object type");
                 testExpected("segmentHelper.sourceBuffer instanceof window.SourceBuffer", true);
@@ -64,7 +67,10 @@
                 mediaSource.sourceBuffers.addEventListener('webkitremovesourcebuffer', onSourceBufferRemoved);
 
                 run("mediaSource.removeSourceBuffer(segmentHelper.sourceBuffer)");
+            }
 
+            function afterSourceBufferRemoved()
+            {
                 consoleWrite("Test that addSourceBuffer() throws and error when the MediaSource is not associated with a media element.");
                 var mediaSource2 = new MediaSource();
                 video.src = webkitURL.createObjectURL(mediaSource2);
@@ -83,7 +89,7 @@
 
                 endTest();
             }
-            
+
             function onSourceBufferAdded(event)
             {
                 testExpected("mediaSource.sourceBuffers.length", 1);
@@ -92,6 +98,8 @@
                 consoleWrite("Test SourceBufferList object type:");
                 testExpected("mediaSource.sourceBuffers", event.target);
                 testExpected("mediaSource.sourceBuffers instanceof window.SourceBufferList", true);
+
+                afterSourceBufferAdded();
             }
 
             function onSourceBufferRemoved(event)
@@ -114,6 +122,8 @@
                     consoleWrite("Got expected exception " + e);
                 }
                 testExpected("mediaSource.sourceBuffers.length", 0);
+
+                afterSourceBufferRemoved();
             }
 
             function onLoad()

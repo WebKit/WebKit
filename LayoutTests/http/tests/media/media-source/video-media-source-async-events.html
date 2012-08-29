@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/media-resources/video-test.js"></script>
+        <script type="text/javascript">
+            var eventHandlerDepth = 0;
+
+            function enterHandler(label)
+            {
+                consoleWrite(label);
+
+                if (eventHandlerDepth > 0)
+                    failTest("Unexpected eventHandlerDepth " + eventHandlerDepth);
+
+                eventHandlerDepth++;
+            }
+
+            function exitHandler()
+            {
+                if (eventHandlerDepth <= 0)
+                    failTest("Unexpected eventHandlerDepth " + eventHandlerDepth);
+
+                eventHandlerDepth--;
+            }
+
+            function onSourceOpen(e)
+            {
+                enterHandler("onSourceOpen");
+
+                e.target.addSourceBuffer('video/webm;codecs="vp8"');
+
+                window.setTimeout(e.target.endOfStream.bind(e.target));
+
+                exitHandler();
+            }
+
+            function onAddSourceBuffer(e) {
+                enterHandler("onAddSourceBuffer");
+                exitHandler();
+            }
+
+            function onSourceEnded(e)
+            {
+                enterHandler("onSourceEnded");
+
+                document.querySelector('#v').src = "";
+
+                exitHandler();
+            }
+
+            function onRemoveSourceBuffer(e) {
+                enterHandler("onRemoveSourceBuffer");
+                exitHandler();
+            }
+
+
+            function onSourceClose(e)
+            {
+                enterHandler("onSourceClose");
+                window.setTimeout(endTest, 0);
+                exitHandler();
+            }
+
+            function main()
+            {
+                var video = document.querySelector('#v');
+                var mediaSource = new MediaSource();
+
+                mediaSource.addEventListener('webkitsourceopen', onSourceOpen);
+                mediaSource.addEventListener('webkitsourceended', onSourceEnded);
+                mediaSource.addEventListener('webkitsourceclose', onSourceClose);
+
+                mediaSource.sourceBuffers.addEventListener('webkitaddsourcebuffer', onAddSourceBuffer);
+                mediaSource.activeSourceBuffers.addEventListener('webkitaddsourcebuffer', onAddSourceBuffer);
+
+                mediaSource.sourceBuffers.addEventListener('webkitremovesourcebuffer', onRemoveSourceBuffer);
+                mediaSource.activeSourceBuffers.addEventListener('webkitremovesourcebuffer', onRemoveSourceBuffer);
+
+                video.src = URL.createObjectURL(mediaSource);
+            }
+        </script>
+    </head>
+    <body onload="main()">
+      <video id="v"></video>
+      <p>Verify that all MediaSource &amp; SourceBufferList events are dispatched asynchronously.</p>
+    </body>
+</html>

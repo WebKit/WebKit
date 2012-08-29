@@ -1,0 +1,11 @@
+Verify that all MediaSource & SourceBufferList events are dispatched asynchronously.
+
+onSourceOpen
+onAddSourceBuffer
+onAddSourceBuffer
+onSourceEnded
+onRemoveSourceBuffer
+onRemoveSourceBuffer
+onSourceClose
+END OF TEST
+

@@ -40,12 +40,13 @@
 namespace WebCore {
 
 class SourceBuffer;
+class GenericEventQueue;
 
 class SourceBufferList : public RefCounted<SourceBufferList>, public EventTarget {
 public:
-    static PassRefPtr<SourceBufferList> create(ScriptExecutionContext* context)
+    static PassRefPtr<SourceBufferList> create(ScriptExecutionContext* context, GenericEventQueue* asyncEventQueue)
     {
-        return adoptRef(new SourceBufferList(context));
+        return adoptRef(new SourceBufferList(context, asyncEventQueue));
     }
     virtual ~SourceBufferList() { }
 
@@ -72,7 +73,7 @@ protected:
     virtual EventTargetData* ensureEventTargetData() OVERRIDE;
 
 private:
-    explicit SourceBufferList(ScriptExecutionContext*);
+    SourceBufferList(ScriptExecutionContext*, GenericEventQueue*);
 
     bool contains(size_t id) const;
     void createAndFireEvent(const AtomicString&);
@@ -82,6 +83,7 @@ private:
 
     EventTargetData m_eventTargetData;
     ScriptExecutionContext* m_scriptExecutionContext;
+    GenericEventQueue* m_asyncEventQueue;
 
     Vector<RefPtr<SourceBuffer> > m_list;
     size_t m_lastSourceBufferId;

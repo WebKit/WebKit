@@ -49,9 +49,10 @@ MediaSource::MediaSource(ScriptExecutionContext* context)
     : ContextDestructionObserver(context)
     , m_readyState(closedKeyword())
     , m_player(0)
+    , m_asyncEventQueue(GenericEventQueue::create(this))
 {
-    m_sourceBuffers = SourceBufferList::create(scriptExecutionContext());
-    m_activeSourceBuffers = SourceBufferList::create(scriptExecutionContext());
+    m_sourceBuffers = SourceBufferList::create(scriptExecutionContext(), m_asyncEventQueue.get());
+    m_activeSourceBuffers = SourceBufferList::create(scriptExecutionContext(), m_asyncEventQueue.get());
 }
 
 SourceBufferList* MediaSource::sourceBuffers()
@@ -84,7 +85,7 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
-    
+
     // 4. If the readyState attribute is not in the "open" state then throw an
     // INVALID_STATE_ERR exception and abort these steps.
     if (!m_player || m_readyState != openKeyword()) {
@@ -182,17 +183,17 @@ void MediaSource::setReadyState(const String& state)
         m_sourceBuffers->clear();
         m_activeSourceBuffers->clear();
         m_player = 0;
-        dispatchEvent(Event::create(eventNames().webkitsourcecloseEvent, false, false));
+        scheduleEvent(eventNames().webkitsourcecloseEvent);
         return;
     }
-    
+
     if (oldState == openKeyword() && m_readyState == endedKeyword()) {
-        dispatchEvent(Event::create(eventNames().webkitsourceendedEvent, false, false));
+        scheduleEvent(eventNames().webkitsourceendedEvent);
         return;
     }
 
     if (m_readyState == openKeyword()) {
-        dispatchEvent(Event::create(eventNames().webkitsourceopenEvent, false, false));
+        scheduleEvent(eventNames().webkitsourceopenEvent);
         return;
     }
 }
@@ -299,6 +300,16 @@ EventTargetData* MediaSource::eventTargetData()
 EventTargetData* MediaSource::ensureEventTargetData()
 {
     return &m_eventTargetData;
+}
+
+void MediaSource::scheduleEvent(const AtomicString& eventName)
+{
+    ASSERT(m_asyncEventQueue);
+
+    RefPtr<Event> event = Event::create(eventName, false, false);
+    event->setTarget(this);
+
+    m_asyncEventQueue->enqueueEvent(event.release());
 }
 
 } // namespace WebCore

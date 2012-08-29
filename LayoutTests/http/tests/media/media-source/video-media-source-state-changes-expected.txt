@@ -16,18 +16,18 @@ EVENT(seeking)
 onSecondSeeking
 EVENT(seeked)
 onSecondSeeked
+EVENT(emptied)
 EVENT(webkitsourceclose) : closed
 onFirstSourceClose
-EVENT(emptied)
 EVENT(webkitsourceopen) : open
 onSecondSourceOpen
 EVENT(webkitsourceended) : ended
 onSecondSourceEnded
 EVENT(playing)
 triggerSecondSourceClose
+EVENT(emptied)
 EVENT(webkitsourceclose) : closed
 onSecondSourceClose
-EVENT(emptied)
 EVENT(webkitsourceopen) : open
 onThirdSourceOpen
 END OF TEST

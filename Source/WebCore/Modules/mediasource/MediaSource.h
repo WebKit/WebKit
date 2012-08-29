@@ -34,6 +34,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "ContextDestructionObserver.h"
+#include "GenericEventQueue.h"
 #include "MediaPlayer.h"
 #include "SourceBuffer.h"
 #include "SourceBufferList.h"
@@ -76,7 +77,7 @@ public:
     void endOfStream(const String& error, ExceptionCode&);
 
     void setMediaPlayer(MediaPlayer* player) { m_player = player; }
-    
+
     PassRefPtr<TimeRanges> buffered(const String& id, ExceptionCode&) const;
     void append(const String& id, PassRefPtr<Uint8Array> data, ExceptionCode&);
     void abort(const String& id, ExceptionCode&);
@@ -98,6 +99,8 @@ private:
     virtual void refEventTarget() OVERRIDE { ref(); }
     virtual void derefEventTarget() OVERRIDE { deref(); }
 
+    void scheduleEvent(const AtomicString& eventName);
+
     EventTargetData m_eventTargetData;
 
     String m_readyState;
@@ -105,6 +108,7 @@ private:
 
     RefPtr<SourceBufferList> m_sourceBuffers;
     RefPtr<SourceBufferList> m_activeSourceBuffers;
+    OwnPtr<GenericEventQueue> m_asyncEventQueue;
 };
 
 } // namespace WebCore

@@ -38,8 +38,10 @@
 
 namespace WebCore {
 
-SourceBufferList::SourceBufferList(ScriptExecutionContext* context)
+SourceBufferList::SourceBufferList(ScriptExecutionContext* context,
+                                   GenericEventQueue* asyncEventQueue)
     : m_scriptExecutionContext(context)
+    , m_asyncEventQueue(asyncEventQueue)
     , m_lastSourceBufferId(0)
 {
 }
@@ -63,7 +65,7 @@ void SourceBufferList::add(PassRefPtr<SourceBuffer> buffer)
 }
 
 bool SourceBufferList::remove(SourceBuffer* buffer)
-{    
+{
     size_t index = m_list.find(buffer);
     if (index == notFound)
         return false;
@@ -110,10 +112,12 @@ bool SourceBufferList::contains(size_t id) const
 
 void SourceBufferList::createAndFireEvent(const AtomicString& eventName)
 {
+    ASSERT(m_asyncEventQueue);
+
     RefPtr<Event> event = Event::create(eventName, false, false);
     event->setTarget(this);
 
-    EventTarget::dispatchEvent(event);
+    m_asyncEventQueue->enqueueEvent(event.release());
 }
 
 const AtomicString& SourceBufferList::interfaceName() const

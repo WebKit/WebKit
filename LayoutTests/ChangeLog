@@ -1,3 +1,20 @@
+2012-08-28  Aaron Colwell  <acolwell@chromium.org>
+
+        Make MediaSource event dispatch asynchronous.
+        https://bugs.webkit.org/show_bug.cgi?id=95217
+
+        Reviewed by Eric Carlson.
+
+        - Added a test to verify that MediaSource & SourceBufferList events are dispatched asynchronously.
+        - Updated a few existing tests that were relying on the old synchronous dispatch.
+
+        * http/tests/media/media-source/video-media-source-async-events-expected.txt: Added.
+        * http/tests/media/media-source/video-media-source-async-events.html: Added.
+        * http/tests/media/media-source/video-media-source-event-attributes.html:
+        * http/tests/media/media-source/video-media-source-objects.html:
+        * http/tests/media/media-source/video-media-source-seek-expected.txt:
+        * http/tests/media/media-source/video-media-source-state-changes-expected.txt:
+
 2012-08-28  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed penultimate rebaseline after r126683.
