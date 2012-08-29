@@ -1954,6 +1954,312 @@ TEST(CCLayerTreeHostCommonTest, verifyVisibleRectForPerspectiveUnprojection)
     EXPECT_INT_RECT_EQ(expected, actual);
 }
 
+TEST(CCLayerTreeHostCommonTest, verifyDrawableAndVisibleContentRectsForSimpleLayers)
+{
+    RefPtr<LayerChromium> root = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> child1 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> child2 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> child3 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    root->addChild(child1);
+    root->addChild(child2);
+    root->addChild(child3);
+
+    WebTransformationMatrix identityMatrix;
+    setLayerPropertiesForTesting(root.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(child1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(50, 50), false);
+    setLayerPropertiesForTesting(child2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(75, 75), IntSize(50, 50), false);
+    setLayerPropertiesForTesting(child3.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(125, 125), IntSize(50, 50), false);
+
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), root->renderSurface()->drawableContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), root->drawableContentRect());
+
+    // Layers that do not draw content should have empty visibleContentRects.
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), root->visibleContentRect());
+
+    // layer visibleContentRects are clipped by their targetSurface
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 50), child1->visibleContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 25, 25), child2->visibleContentRect());
+    EXPECT_TRUE(child3->visibleContentRect().isEmpty());
+
+    // layer drawableContentRects are not clipped.
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 50), child1->drawableContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(75, 75, 50, 50), child2->drawableContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(125, 125, 50, 50), child3->drawableContentRect());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyDrawableAndVisibleContentRectsForLayersClippedByLayer)
+{
+    RefPtr<LayerChromium> root = LayerChromium::create();
+    RefPtr<LayerChromium> child = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> grandChild1 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> grandChild2 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> grandChild3 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    root->addChild(child);
+    child->addChild(grandChild1);
+    child->addChild(grandChild2);
+    child->addChild(grandChild3);
+
+    WebTransformationMatrix identityMatrix;
+    setLayerPropertiesForTesting(root.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(grandChild1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(5, 5), IntSize(50, 50), false);
+    setLayerPropertiesForTesting(grandChild2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(75, 75), IntSize(50, 50), false);
+    setLayerPropertiesForTesting(grandChild3.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(125, 125), IntSize(50, 50), false);
+
+    child->setMasksToBounds(true);
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    ASSERT_FALSE(child->renderSurface());
+
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), root->renderSurface()->drawableContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), root->drawableContentRect());
+
+    // Layers that do not draw content should have empty visibleContentRects.
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), root->visibleContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), child->visibleContentRect());
+
+    // All grandchild visibleContentRects should be clipped by child.
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 50), grandChild1->visibleContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 25, 25), grandChild2->visibleContentRect());
+    EXPECT_TRUE(grandChild3->visibleContentRect().isEmpty());
+
+    // All grandchild drawableContentRects should also be clipped by child.
+    EXPECT_INT_RECT_EQ(IntRect(5, 5, 50, 50), grandChild1->drawableContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(75, 75, 25, 25), grandChild2->drawableContentRect());
+    EXPECT_TRUE(grandChild3->drawableContentRect().isEmpty());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyDrawableAndVisibleContentRectsForLayersInUnclippedRenderSurface)
+{
+    RefPtr<LayerChromium> root = LayerChromium::create();
+    RefPtr<LayerChromium> renderSurface1 = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> child1 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> child2 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> child3 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    root->addChild(renderSurface1);
+    renderSurface1->addChild(child1);
+    renderSurface1->addChild(child2);
+    renderSurface1->addChild(child3);
+
+    WebTransformationMatrix identityMatrix;
+    setLayerPropertiesForTesting(root.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(renderSurface1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(3, 4), false);
+    setLayerPropertiesForTesting(child1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(5, 5), IntSize(50, 50), false);
+    setLayerPropertiesForTesting(child2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(75, 75), IntSize(50, 50), false);
+    setLayerPropertiesForTesting(child3.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(125, 125), IntSize(50, 50), false);
+
+    renderSurface1->setForceRenderSurface(true);
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    ASSERT_TRUE(renderSurface1->renderSurface());
+
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), root->renderSurface()->drawableContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), root->drawableContentRect());
+
+    // Layers that do not draw content should have empty visibleContentRects.
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), root->visibleContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), renderSurface1->visibleContentRect());
+
+    // An unclipped surface grows its drawableContentRect to include all drawable regions of the subtree.
+    EXPECT_INT_RECT_EQ(IntRect(5, 5, 170, 170), renderSurface1->renderSurface()->drawableContentRect());
+
+    // All layers that draw content into the unclipped surface are also unclipped.
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 50), child1->visibleContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 50), child2->visibleContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 50), child3->visibleContentRect());
+
+    EXPECT_INT_RECT_EQ(IntRect(5, 5, 50, 50), child1->drawableContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(75, 75, 50, 50), child2->drawableContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(125, 125, 50, 50), child3->drawableContentRect());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyDrawableAndVisibleContentRectsForLayersInClippedRenderSurface)
+{
+    RefPtr<LayerChromium> root = LayerChromium::create();
+    RefPtr<LayerChromium> renderSurface1 = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> child1 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> child2 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> child3 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    root->addChild(renderSurface1);
+    renderSurface1->addChild(child1);
+    renderSurface1->addChild(child2);
+    renderSurface1->addChild(child3);
+
+    WebTransformationMatrix identityMatrix;
+    setLayerPropertiesForTesting(root.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(renderSurface1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(3, 4), false);
+    setLayerPropertiesForTesting(child1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(5, 5), IntSize(50, 50), false);
+    setLayerPropertiesForTesting(child2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(75, 75), IntSize(50, 50), false);
+    setLayerPropertiesForTesting(child3.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(125, 125), IntSize(50, 50), false);
+
+    root->setMasksToBounds(true);
+    renderSurface1->setForceRenderSurface(true);
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    ASSERT_TRUE(renderSurface1->renderSurface());
+
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), root->renderSurface()->drawableContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), root->drawableContentRect());
+
+    // Layers that do not draw content should have empty visibleContentRects.
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), root->visibleContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), renderSurface1->visibleContentRect());
+
+    // A clipped surface grows its drawableContentRect to include all drawable regions of the subtree,
+    // but also gets clamped by the ancestor's clip.
+    EXPECT_INT_RECT_EQ(IntRect(5, 5, 95, 95), renderSurface1->renderSurface()->drawableContentRect());
+
+    // All layers that draw content into the surface have their visibleContentRect clipped by the surface clipRect.
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 50), child1->visibleContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 25, 25), child2->visibleContentRect());
+    EXPECT_TRUE(child3->visibleContentRect().isEmpty());
+
+    // But the drawableContentRects are unclipped.
+    EXPECT_INT_RECT_EQ(IntRect(5, 5, 50, 50), child1->drawableContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(75, 75, 50, 50), child2->drawableContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(125, 125, 50, 50), child3->drawableContentRect());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyDrawableAndVisibleContentRectsForSurfaceHierarchy)
+{
+    // Check that clipping does not propagate down surfaces.
+    RefPtr<LayerChromium> root = LayerChromium::create();
+    RefPtr<LayerChromium> renderSurface1 = LayerChromium::create();
+    RefPtr<LayerChromium> renderSurface2 = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> child1 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> child2 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> child3 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    root->addChild(renderSurface1);
+    renderSurface1->addChild(renderSurface2);
+    renderSurface2->addChild(child1);
+    renderSurface2->addChild(child2);
+    renderSurface2->addChild(child3);
+
+    WebTransformationMatrix identityMatrix;
+    setLayerPropertiesForTesting(root.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(renderSurface1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(3, 4), false);
+    setLayerPropertiesForTesting(renderSurface2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(7, 13), false);
+    setLayerPropertiesForTesting(child1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(5, 5), IntSize(50, 50), false);
+    setLayerPropertiesForTesting(child2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(75, 75), IntSize(50, 50), false);
+    setLayerPropertiesForTesting(child3.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(125, 125), IntSize(50, 50), false);
+
+    root->setMasksToBounds(true);
+    renderSurface1->setForceRenderSurface(true);
+    renderSurface2->setForceRenderSurface(true);
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    ASSERT_TRUE(renderSurface1->renderSurface());
+    ASSERT_TRUE(renderSurface2->renderSurface());
+
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), root->renderSurface()->drawableContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), root->drawableContentRect());
+
+    // Layers that do not draw content should have empty visibleContentRects.
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), root->visibleContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), renderSurface1->visibleContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), renderSurface2->visibleContentRect());
+
+    // A clipped surface grows its drawableContentRect to include all drawable regions of the subtree,
+    // but also gets clamped by the ancestor's clip.
+    EXPECT_INT_RECT_EQ(IntRect(5, 5, 95, 95), renderSurface1->renderSurface()->drawableContentRect());
+
+    // renderSurface1 lives in the "unclipped universe" of renderSurface1, and is only
+    // implicitly clipped by renderSurface1's contentRect. So, renderSurface2 grows to
+    // enclose all drawable content of its subtree.
+    EXPECT_INT_RECT_EQ(IntRect(5, 5, 170, 170), renderSurface2->renderSurface()->drawableContentRect());
+
+    // All layers that draw content into renderSurface2 think they are unclipped.
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 50), child1->visibleContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 50), child2->visibleContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 50), child3->visibleContentRect());
+
+    // drawableContentRects are also unclipped.
+    EXPECT_INT_RECT_EQ(IntRect(5, 5, 50, 50), child1->drawableContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(75, 75, 50, 50), child2->drawableContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(125, 125, 50, 50), child3->drawableContentRect());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyDrawableAndVisibleContentRectsWithTransformOnUnclippedSurface)
+{
+    // Layers that have non-axis aligned bounds (due to transforms) have an expanded,
+    // axis-aligned drawableContentRect and visibleContentRect.
+
+    RefPtr<LayerChromium> root = LayerChromium::create();
+    RefPtr<LayerChromium> renderSurface1 = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> child1 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    root->addChild(renderSurface1);
+    renderSurface1->addChild(child1);
+
+    WebTransformationMatrix identityMatrix;
+    WebTransformationMatrix childRotation;
+    childRotation.rotate(45);
+    setLayerPropertiesForTesting(root.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(renderSurface1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(3, 4), false);
+    setLayerPropertiesForTesting(child1.get(), childRotation, identityMatrix, FloatPoint(0.5, 0.5), FloatPoint(25, 25), IntSize(50, 50), false);
+
+    renderSurface1->setForceRenderSurface(true);
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    ASSERT_TRUE(renderSurface1->renderSurface());
+
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), root->renderSurface()->drawableContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), root->drawableContentRect());
+
+    // Layers that do not draw content should have empty visibleContentRects.
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), root->visibleContentRect());
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), renderSurface1->visibleContentRect());
+
+    // The unclipped surface grows its drawableContentRect to include all drawable regions of the subtree.
+    int diagonalRadius = ceil(sqrt(2.0) * 25);
+    IntRect expectedSurfaceDrawableContent = IntRect(50 - diagonalRadius, 50 - diagonalRadius, diagonalRadius * 2, diagonalRadius * 2);
+    EXPECT_INT_RECT_EQ(expectedSurfaceDrawableContent, renderSurface1->renderSurface()->drawableContentRect());
+
+    // All layers that draw content into the unclipped surface are also unclipped.
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 50, 50), child1->visibleContentRect());
+    EXPECT_INT_RECT_EQ(expectedSurfaceDrawableContent, child1->drawableContentRect());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyDrawableAndVisibleContentRectsWithTransformOnClippedSurface)
+{
+    // Layers that have non-axis aligned bounds (due to transforms) have an expanded,
+    // axis-aligned drawableContentRect and visibleContentRect.
+
+    RefPtr<LayerChromium> root = LayerChromium::create();
+    RefPtr<LayerChromium> renderSurface1 = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> child1 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    root->addChild(renderSurface1);
+    renderSurface1->addChild(child1);
+
+    WebTransformationMatrix identityMatrix;
+    WebTransformationMatrix childRotation;
+    childRotation.rotate(45);
+    setLayerPropertiesForTesting(root.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(50, 50), false);
+    setLayerPropertiesForTesting(renderSurface1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(3, 4), false);
+    setLayerPropertiesForTesting(child1.get(), childRotation, identityMatrix, FloatPoint(0.5, 0.5), FloatPoint(25, 25), IntSize(50, 50), false);
+
+    root->setMasksToBounds(true);
+    renderSurface1->setForceRenderSurface(true);
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    ASSERT_TRUE(renderSurface1->renderSurface());
+
+    // The clipped surface clamps the drawableContentRect that encloses the rotated layer.
+    int diagonalRadius = ceil(sqrt(2.0) * 25);
+    IntRect unclippedSurfaceContent = IntRect(50 - diagonalRadius, 50 - diagonalRadius, diagonalRadius * 2, diagonalRadius * 2);
+    IntRect expectedSurfaceDrawableContent = intersection(unclippedSurfaceContent, IntRect(0, 0, 50, 50));
+    EXPECT_INT_RECT_EQ(expectedSurfaceDrawableContent, renderSurface1->renderSurface()->drawableContentRect());
+
+    // On the clipped surface, only a quarter  of the child1 is visible, but when rotating
+    // it back to  child1's content space, the actual enclosing rect ends up covering the
+    // full left half of child1.
+    EXPECT_INT_RECT_EQ(IntRect(0, 0, 26, 50), child1->visibleContentRect());
+
+    // The child's drawableContentRect is unclipped.
+    EXPECT_INT_RECT_EQ(unclippedSurfaceContent, child1->drawableContentRect());
+}
+
 TEST(CCLayerTreeHostCommonTest, verifyBackFaceCullingWithoutPreserves3d)
 {
     // Verify the behavior of back-face culling when there are no preserve-3d layers. Note

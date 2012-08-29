@@ -1,3 +1,16 @@
+2012-08-29  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Add more unit test coverage for semantics of drawableContentRect and visibleContentRect
+        https://bugs.webkit.org/show_bug.cgi?id=94542
+
+        Reviewed by Adrienne Walker.
+
+        To make upcoming refactors safer, it was appropriate to (finally)
+        add unit tests that check the behavior of drawableContentRect and
+        visibleContentRect computations in calculateDrawTransforms.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+
 2012-08-29  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Link highlight should clear on page navigation.
