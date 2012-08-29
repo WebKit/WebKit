@@ -76,7 +76,8 @@ void SVGImageCache::setRequestedSizeAndScales(const CachedImageClient* client, c
 
 SVGImageCache::SizeAndScales SVGImageCache::requestedSizeAndScales(const CachedImageClient* client) const
 {
-    ASSERT(client);
+    if (!client)
+        return SizeAndScales();
     SizeAndScalesMap::const_iterator it = m_sizeAndScalesMap.find(client);
     if (it == m_sizeAndScalesMap.end())
         return SizeAndScales();
@@ -131,7 +132,9 @@ void SVGImageCache::redrawTimerFired(Timer<SVGImageCache>*)
 
 Image* SVGImageCache::lookupOrCreateBitmapImageForRenderer(const RenderObject* renderer)
 {
-    ASSERT(renderer);
+    if (!renderer)
+        return Image::nullImage();
+
     const CachedImageClient* client = renderer;
 
     // The cache needs to know the size of the renderer before querying an image for it.

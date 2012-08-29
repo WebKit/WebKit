@@ -1,3 +1,13 @@
+2012-08-29  Philip Rogers  <pdr@google.com>
+
+        Use SVGImage instead of cached image when drawing without a render tree.
+        https://bugs.webkit.org/show_bug.cgi?id=95002
+
+        Reviewed by Nikolas Zimmermann.
+
+        * svg/as-image/svg-canvas-draw-image-detached-expected.txt: Added.
+        * svg/as-image/svg-canvas-draw-image-detached.html: Added.
+
 2012-08-22  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] REGRESSION(r125428): fast/profiler/nested-start-and-stop-profiler.html fails
