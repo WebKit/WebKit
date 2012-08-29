@@ -109,7 +109,6 @@ private:
     QPointer<QObject> m_object;
     QObject* m_hashkey;
     mutable QHash<QByteArray, QtRuntimeMethod*> m_methods;
-    WeakMap m_cachedMethods;
     mutable QHash<QString, QtField*> m_fields;
     ValueOwnership m_ownership;
 };
