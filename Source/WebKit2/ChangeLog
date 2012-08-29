@@ -1,5 +1,11 @@
 2012-08-29  Jon Lee  <jonlee@apple.com>
 
+        Added missing exports for Windows.
+
+        * win/WebKit2Generated.make:
+
+2012-08-29  Jon Lee  <jonlee@apple.com>
+
         Windows build fix.
 
         * win/WebKit2Generated.make: Export WKNotificationManager.h.
