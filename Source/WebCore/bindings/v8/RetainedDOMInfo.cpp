@@ -53,7 +53,11 @@ void RetainedDOMInfo::Dispose()
 bool RetainedDOMInfo::IsEquivalent(v8::RetainedObjectInfo* other)
 {
     ASSERT(other);
-    return other == this || static_cast<WebCore::RetainedObjectInfo*>(other)->GetEquivalenceClass() == this->GetEquivalenceClass();
+    if (other == this)
+        return true;
+    if (strcmp(GetLabel(), other->GetLabel()))
+        return false;
+    return static_cast<WebCore::RetainedObjectInfo*>(other)->GetEquivalenceClass() == this->GetEquivalenceClass();
 }
 
 intptr_t RetainedDOMInfo::GetHash()
