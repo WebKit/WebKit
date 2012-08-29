@@ -585,39 +585,43 @@ LayoutSize RenderBoxModelObject::stickyPositionOffset() const
     // Horizontal position.
     if (!style()->right().isAuto()) {
         LayoutUnit rightLimit = viewportRect.maxX() - valueForLength(style()->right(), viewportRect.width(), view());
-        if (absoluteStickyBoxRect.maxX() > rightLimit)
-            absoluteStickyBoxRect.setX(rightLimit - absoluteStickyBoxRect.width());
-            
-        if (absoluteStickyBoxRect.x() < absContainerContentRect.x())
-            absoluteStickyBoxRect.setX(absContainerContentRect.x());
+        LayoutUnit rightDelta = min<float>(0, rightLimit.toFloat() - absoluteStickyBoxRect.maxX());
+        LayoutUnit availableSpace = min<float>(0, absContainerContentRect.x() - absoluteStickyBoxRect.x());
+        if (rightDelta < availableSpace)
+            rightDelta = availableSpace;
+
+        absoluteStickyBoxRect.move(rightDelta, 0);
     }
 
     if (!style()->left().isAuto()) {
         LayoutUnit leftLimit = viewportRect.x() + valueForLength(style()->left(), viewportRect.width(), view());
-        if (absoluteStickyBoxRect.x() < leftLimit)
-            absoluteStickyBoxRect.setX(leftLimit);
+        LayoutUnit leftDelta = max<float>(0, leftLimit.toFloat() - absoluteStickyBoxRect.x());
+        LayoutUnit availableSpace = max<float>(0, absContainerContentRect.maxX() - absoluteStickyBoxRect.maxX());
+        if (leftDelta > availableSpace)
+            leftDelta = availableSpace;
 
-        if (absoluteStickyBoxRect.maxX() > absContainerContentRect.maxX())
-            absoluteStickyBoxRect.setX(absContainerContentRect.maxX() - absoluteStickyBoxRect.width());
+        absoluteStickyBoxRect.move(leftDelta, 0);
     }
 
     // Vertical position.
     if (!style()->bottom().isAuto()) {
         LayoutUnit bottomLimit = viewportRect.maxY() - valueForLength(style()->bottom(), viewportRect.height(), view());
-        if (absoluteStickyBoxRect.maxY() > bottomLimit)
-            absoluteStickyBoxRect.setY(bottomLimit - absoluteStickyBoxRect.height());
-            
-        if (absoluteStickyBoxRect.y() < absContainerContentRect.y())
-            absoluteStickyBoxRect.setY(absContainerContentRect.y());
+        LayoutUnit bottomDelta = min<float>(0, bottomLimit.toFloat() - absoluteStickyBoxRect.maxY());
+        LayoutUnit availableSpace = min<float>(0, absContainerContentRect.y() - absoluteStickyBoxRect.y());
+        if (bottomDelta < availableSpace)
+            bottomDelta = availableSpace;
+
+        absoluteStickyBoxRect.move(0, bottomDelta);
     }
 
     if (!style()->top().isAuto()) {
         LayoutUnit topLimit = viewportRect.y() + valueForLength(style()->top(), viewportRect.height(), view());
-        if (absoluteStickyBoxRect.y() < topLimit)
-            absoluteStickyBoxRect.setY(topLimit);
+        LayoutUnit topDelta = max<float>(0, topLimit.toFloat() - absoluteStickyBoxRect.y());
+        LayoutUnit availableSpace = max<float>(0, absContainerContentRect.maxY() - absoluteStickyBoxRect.maxY());
+        if (topDelta > availableSpace)
+            topDelta = availableSpace;
 
-        if (absoluteStickyBoxRect.maxY() > absContainerContentRect.maxY())
-            absoluteStickyBoxRect.setY(absContainerContentRect.maxY() - absoluteStickyBoxRect.height());
+        absoluteStickyBoxRect.move(0, topDelta);
     }
     
     // The sticky offset is physical, so we can just return the delta computed in absolute coords (though it may be wrong with transforms).
