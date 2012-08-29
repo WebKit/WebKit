@@ -1,3 +1,27 @@
+2012-08-29  Gavin Barraclough  <barraclough@apple.com>
+
+        PutById uses DataLabel32, not DataLabelCompact
+        https://bugs.webkit.org/show_bug.cgi?id=95245
+
+        Reviewed by Geoff Garen.
+
+        JIT::resetPatchPutById calls the the wrong thing on x86-64 – this is moot right now,
+        since they currently both do the same thing, but if we were to ever make compact mean
+        8-bit this could be a real problem. Also, relying on the object still being in eax
+        on entry to the transition stub isn't very robust - added nonArgGPR1 to at least make
+        this explicit.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_put_by_id):
+            - copy regT0 to nonArgGPR1
+        (JSC::JIT::privateCompilePutByIdTransition):
+            - DataLabelCompact -> DataLabel32
+        (JSC::JIT::resetPatchPutById):
+            - reload regT0 from nonArgGPR1
+        * jit/JSInterfaceJIT.h:
+        (JSInterfaceJIT):
+            - added nonArgGPR1
+
 2012-08-28  Yong Li  <yoli@rim.com>
 
         ExecutableAllocator should be destructed after Heap
