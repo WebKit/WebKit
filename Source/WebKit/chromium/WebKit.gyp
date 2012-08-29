@@ -836,6 +836,12 @@
                     'dependencies': [
                         '<(chromium_src_dir)/webkit/compositor/compositor.gyp:webkit_compositor',
                     ],
+                    'sources!': [
+                        '../../WebCore/platform/chromium/support/CCThreadImpl.cpp',
+                        '../../WebCore/platform/chromium/support/CCThreadImpl.h',
+                        '../../WebCore/platform/chromium/support/WebCompositorImpl.cpp',
+                        '../../WebCore/platform/chromium/support/WebCompositorImpl.h',
+                    ],
                 }, { # else: use_libcc_for_compositor==0
                     'sources': [
                         '<@(webkit_compositor_bindings_files)',
