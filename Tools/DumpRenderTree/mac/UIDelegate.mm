@@ -32,6 +32,7 @@
 #import "DumpRenderTree.h"
 #import "DumpRenderTreeDraggingInfo.h"
 #import "EventSendingController.h"
+#import "MockWebNotificationProvider.h"
 #import "TestRunner.h"
 #import <WebKit/WebApplicationCache.h>
 #import <WebKit/WebFramePrivate.h>
@@ -286,6 +287,12 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 {
     printf("MISSING PLUGIN BUTTON PRESSED\n");
     return TRUE;
+}
+
+- (void)webView:(WebView *)webView decidePolicyForNotificationRequestFromOrigin:(WebSecurityOrigin *)origin listener:(id<WebAllowDenyPolicyListener>)listener
+{
+    [(MockWebNotificationProvider *)[webView _notificationProvider] setWebNotificationOrigin:[origin stringValue] permission:YES];
+    [listener allow];
 }
 
 - (void)dealloc

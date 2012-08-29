@@ -32,6 +32,7 @@
 
 #import "EditingDelegate.h"
 #import "MockGeolocationProvider.h"
+#import "MockWebNotificationProvider.h"
 #import "PolicyDelegate.h"
 #import "StorageTrackerDelegate.h"
 #import "UIDelegate.h"
@@ -1163,10 +1164,6 @@ void TestRunner::setBackingScaleFactor(double backingScaleFactor)
     [[mainFrame webView] _setCustomBackingScaleFactor:backingScaleFactor];
 }
 
-void TestRunner::simulateLegacyWebNotificationClick(JSStringRef jsTitle)
-{
-}
-
 void TestRunner::resetPageVisibility()
 {
     // FIXME: Implement.
@@ -1187,20 +1184,32 @@ void TestRunner::deliverWebIntent(JSStringRef, JSStringRef, JSStringRef)
     // FIXME: Implement.
 }
 
-
 void TestRunner::grantWebNotificationPermission(JSStringRef jsOrigin)
 {
+    RetainPtr<CFStringRef> cfOrigin(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, jsOrigin));
+    ASSERT([[mainFrame webView] _notificationProvider] == [MockWebNotificationProvider shared]);
+    [[MockWebNotificationProvider shared] setWebNotificationOrigin:(NSString *)cfOrigin.get() permission:TRUE];
 }
 
 void TestRunner::denyWebNotificationPermission(JSStringRef jsOrigin)
 {
+    RetainPtr<CFStringRef> cfOrigin(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, jsOrigin));
+    ASSERT([[mainFrame webView] _notificationProvider] == [MockWebNotificationProvider shared]);
+    [[MockWebNotificationProvider shared] setWebNotificationOrigin:(NSString *)cfOrigin.get() permission:FALSE];
 }
 
 void TestRunner::removeAllWebNotificationPermissions()
 {
+    [[MockWebNotificationProvider shared] removeAllWebNotificationPermissions];
 }
 
 void TestRunner::simulateWebNotificationClick(JSValueRef jsNotification)
+{
+    uint64_t notificationID = [[mainFrame webView] _notificationIDForTesting:jsNotification];
+    [[MockWebNotificationProvider shared] simulateWebNotificationClick:notificationID];
+}
+
+void TestRunner::simulateLegacyWebNotificationClick(JSStringRef jsTitle)
 {
 }
 

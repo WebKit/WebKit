@@ -1,3 +1,52 @@
+2012-08-29  Jon Lee  <jonlee@apple.com>
+
+        [Mac] Basic DRT support for web notifications
+        https://bugs.webkit.org/show_bug.cgi?id=79492
+        <rdar://problem/10357639>
+
+        Reviewed by Alexey Proskuryakov.
+
+        This patch implements the stubs for web notification support on DRT. Assume that when
+        Notification.requestPermission() is called, the user always chooses to allow it. This can be easily
+        overridden in layout tests with testRunner.denyWebNotificationPermission() when needed.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Add MockWebNotificationProvider.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow): Set MockWebNotificationProvider singleton as the provider for the
+        web view.
+        (resetWebViewToConsistentStateBeforeTesting): Make sure to reset the provider's state between each test.
+
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::grantWebNotificationPermission): Set permission to granted for specified origin.
+        (TestRunner::denyWebNotificationPermission): Set permission to denied for specified origin.
+        (TestRunner::removeAllWebNotificationPermissions):
+        (TestRunner::simulateWebNotificationClick): Retrieve the notification ID from the JS notification object, and
+        simulate the click. This is similar to how WTR performs the click.
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:decidePolicyForNotificationRequestFromOrigin:listener:]): Assume when asked, the
+        user allows web notifications.
+
+        * DumpRenderTree/mac/MockWebNotificationProvider.h: Added. Maintains a list of registered web views, known permissions,
+        a map of notification IDs to WebNotification instances, and a map of the WebViews from which the notifications were dispatched.
+        * DumpRenderTree/mac/MockWebNotificationProvider.mm: Added.
+        (+[MockWebNotificationProvider shared]): The provider is a singleton.
+        (-[MockWebNotificationProvider init]): Instantiate the permissions map.
+        (-[MockWebNotificationProvider registerWebView:]):
+        (-[MockWebNotificationProvider unregisterWebView:]):
+        (-[MockWebNotificationProvider showNotification:fromWebView:]): Add the notification to the maps. Tell the web view that the
+        notification did show.
+        (-[MockWebNotificationProvider cancelNotification:]): Tell the web view the notification did close.
+        (-[MockWebNotificationProvider notificationDestroyed:]): Remove the notification from the maps. Here we don't make a callback.
+        (-[MockWebNotificationProvider clearNotifications:]): Remove the specified notifications from the maps. Here we don't make a callback.
+        (-[MockWebNotificationProvider webView:didShowNotification:]): Delegate callback. Dispatch the show event.
+        (-[MockWebNotificationProvider webView:didClickNotification:]): Delegate callback. Dispatch the click event.
+        (-[MockWebNotificationProvider webView:didCloseNotifications:]): Delegate callback. Dispatch the close event.
+        (-[MockWebNotificationProvider simulateWebNotificationClick:]): Tell the web view we clicked the notification.
+        (-[MockWebNotificationProvider policyForOrigin:]): Look in the permission dictionary.
+        (-[MockWebNotificationProvider setWebNotificationOrigin:permission:]): Set the permission for the origin in the dictionary.
+        (-[MockWebNotificationProvider removeAllWebNotificationPermissions]): Clear the permission map.
+        (-[MockWebNotificationProvider reset]): Remove all mappings and permissions.
+
 2012-08-29  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Adjust wtf include header style

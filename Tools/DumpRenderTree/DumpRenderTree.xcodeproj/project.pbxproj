@@ -60,6 +60,8 @@
 		2D403F06150871F9005358D2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84F608908B136DA00E9745F /* Cocoa.framework */; };
 		2D403F08150871F9005358D2 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23BCB88F0EA57623003C6289 /* OpenGL.framework */; };
 		2D403F1B15087209005358D2 /* LayoutTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D403EA215087142005358D2 /* LayoutTestHelper.m */; };
+		31117B3C15D9A56A00163BC8 /* MockWebNotificationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 31117B3A15D9A56A00163BC8 /* MockWebNotificationProvider.h */; };
+		31117B3D15D9A56A00163BC8 /* MockWebNotificationProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31117B3B15D9A56A00163BC8 /* MockWebNotificationProvider.mm */; };
 		3A5626CB131CA02A002BE6D9 /* StorageTrackerDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3A5626C1131C8B17002BE6D9 /* StorageTrackerDelegate.mm */; };
 		3A5626CC131CA036002BE6D9 /* StorageTrackerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A5626C0131C8B17002BE6D9 /* StorageTrackerDelegate.h */; };
 		417DAA1D137B3E24007C57FB /* WebCoreTestSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 417DAA1C137B3E24007C57FB /* WebCoreTestSupport.h */; };
@@ -263,6 +265,8 @@
 		29CFBA2D12273A1000BC30C0 /* AccessibilityTextMarkerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityTextMarkerMac.mm; path = mac/AccessibilityTextMarkerMac.mm; sourceTree = "<group>"; };
 		2D403EA215087142005358D2 /* LayoutTestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LayoutTestHelper.m; path = mac/LayoutTestHelper.m; sourceTree = "<group>"; };
 		2D403F19150871F9005358D2 /* LayoutTestHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LayoutTestHelper; sourceTree = BUILT_PRODUCTS_DIR; };
+		31117B3A15D9A56A00163BC8 /* MockWebNotificationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MockWebNotificationProvider.h; path = mac/MockWebNotificationProvider.h; sourceTree = "<group>"; };
+		31117B3B15D9A56A00163BC8 /* MockWebNotificationProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MockWebNotificationProvider.mm; path = mac/MockWebNotificationProvider.mm; sourceTree = "<group>"; };
 		32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumpRenderTreePrefix.h; sourceTree = "<group>"; };
 		375F09710DAC3CB600C8B4E5 /* WebKitWeightWatcher100.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher100.ttf; path = fonts/WebKitWeightWatcher100.ttf; sourceTree = "<group>"; };
 		375F09720DAC3CB600C8B4E5 /* WebKitWeightWatcher200.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher200.ttf; path = fonts/WebKitWeightWatcher200.ttf; sourceTree = "<group>"; };
@@ -482,11 +486,11 @@
 		1422A2690AF6F45200E1A883 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				80045AEB147718E7008290A8 /* AccessibilityNotificationHandler.h */,
-				80045AEC147718E7008290A8 /* AccessibilityNotificationHandler.mm */,
 				BCD08B390E1057EF00A7D0C1 /* AccessibilityController.cpp */,
 				BCD08A580E10496B00A7D0C1 /* AccessibilityController.h */,
 				BCD08B700E1059D200A7D0C1 /* AccessibilityControllerMac.mm */,
+				80045AEB147718E7008290A8 /* AccessibilityNotificationHandler.h */,
+				80045AEC147718E7008290A8 /* AccessibilityNotificationHandler.mm */,
 				29CFBA0F122736E600BC30C0 /* AccessibilityTextMarker.cpp */,
 				29CFBA0E122736E600BC30C0 /* AccessibilityTextMarker.h */,
 				29CFBA2D12273A1000BC30C0 /* AccessibilityTextMarkerMac.mm */,
@@ -505,6 +509,8 @@
 				BCA18B220C9B014B00114369 /* TestRunnerMac.mm */,
 				E1B7808511AF1643007E1BC2 /* MockGeolocationProvider.h */,
 				E1B7808711AF1669007E1BC2 /* MockGeolocationProvider.mm */,
+				31117B3A15D9A56A00163BC8 /* MockWebNotificationProvider.h */,
+				31117B3B15D9A56A00163BC8 /* MockWebNotificationProvider.mm */,
 				BCA18B6D0C9B08DB00114369 /* NavigationController.h */,
 				BCA18B6E0C9B08DB00114369 /* NavigationController.m */,
 				BCA18B2F0C9B01B400114369 /* ObjCController.h */,
@@ -736,6 +742,7 @@
 				3A5626CC131CA036002BE6D9 /* StorageTrackerDelegate.h in Headers */,
 				417DAA1D137B3E24007C57FB /* WebCoreTestSupport.h in Headers */,
 				80045AED147718E7008290A8 /* AccessibilityNotificationHandler.h in Headers */,
+				31117B3C15D9A56A00163BC8 /* MockWebNotificationProvider.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -967,6 +974,7 @@
 				3A5626CB131CA02A002BE6D9 /* StorageTrackerDelegate.mm in Sources */,
 				80045AEE147718E7008290A8 /* AccessibilityNotificationHandler.mm in Sources */,
 				9830F31F15C81181005AB206 /* DumpRenderTreeCommon.cpp in Sources */,
+				31117B3D15D9A56A00163BC8 /* MockWebNotificationProvider.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

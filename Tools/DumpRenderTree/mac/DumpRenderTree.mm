@@ -42,6 +42,7 @@
 #import "JavaScriptThreading.h"
 #import "TestRunner.h"
 #import "MockGeolocationProvider.h"
+#import "MockWebNotificationProvider.h"
 #import "NavigationController.h"
 #import "ObjCPlugin.h"
 #import "ObjCPluginFunction.h"
@@ -519,6 +520,7 @@ WebView *createWebViewAndOffscreenWindow()
     [webView setResourceLoadDelegate:resourceLoadDelegate];
     [webView _setGeolocationProvider:[MockGeolocationProvider shared]];
     [webView _setDeviceOrientationProvider:[WebDeviceOrientationProviderMock shared]];
+    [webView _setNotificationProvider:[MockWebNotificationProvider shared]];
 
     // Register the same schemes that Safari does
     [WebView registerURLSchemeAsLocal:@"feed"];
@@ -1269,6 +1271,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [WebView _setAllowsRoundingHacks:NO];
 
     [[MockGeolocationProvider shared] stopTimer];
+    [[MockWebNotificationProvider shared] reset];
     
     // Clear the contents of the general pasteboard
     [[NSPasteboard generalPasteboard] declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
