@@ -1,3 +1,164 @@
+2012-08-28  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed penultimate rebaseline after r126683.
+
+        * platform/chromium/TestExpectations:
+        Removed 38 tests that got rebaselined.
+
+        * editing/execCommand/4580583-1-expected.txt: Renamed from LayoutTests/platform/efl/editing/execCommand/4580583-1-expected.txt.
+        * editing/execCommand/4580583-2-expected.txt: Renamed from LayoutTests/platform/efl/editing/execCommand/4580583-2-expected.txt.
+        * fast/block/float/012-expected.txt: Renamed from LayoutTests/platform/efl/fast/block/float/012-expected.txt.
+        * fast/block/float/013-expected.txt: Renamed from LayoutTests/platform/efl/fast/block/float/013-expected.txt.
+        * fast/block/float/016-expected.txt:
+        * fast/block/margin-collapse/041-expected.txt: Renamed from LayoutTests/platform/efl/fast/block/margin-collapse/041-expected.txt.
+        * fast/block/margin-collapse/043-expected.txt: Renamed from LayoutTests/platform/efl/fast/block/margin-collapse/043-expected.txt.
+        * fast/block/margin-collapse/057-expected.txt: Renamed from LayoutTests/platform/efl/fast/block/margin-collapse/057-expected.txt.
+        * fast/css/acid2-expected.txt:
+        * fast/css/acid2-pixel-expected.txt:
+        * fast/css/border-height-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/border-height-expected.txt.
+        * fast/frames/viewsource-attribute-expected.txt: Renamed from LayoutTests/platform/efl/fast/frames/viewsource-attribute-expected.txt.
+        * fast/frames/viewsource-on-image-file-expected.txt: Renamed from LayoutTests/platform/efl/fast/frames/viewsource-on-image-file-expected.txt.
+        * fast/inline/inline-padding-disables-text-quirk-expected.txt: Renamed from LayoutTests/platform/efl/fast/inline/inline-padding-disables-text-quirk-expected.txt.
+        * fast/inline/inline-text-quirk-bpm-expected.txt: Renamed from LayoutTests/platform/efl/fast/inline/inline-text-quirk-bpm-expected.txt.
+        * fast/layers/scroll-rect-to-visible-expected.txt: Renamed from LayoutTests/platform/efl/fast/layers/scroll-rect-to-visible-expected.txt.
+        * fast/lists/007-expected.txt: Renamed from LayoutTests/platform/efl/fast/lists/007-expected.txt.
+        * fast/multicol/block-axis-horizontal-bt-expected.txt: Renamed from LayoutTests/platform/efl/fast/multicol/block-axis-horizontal-bt-expected.txt.
+        * fast/multicol/block-axis-vertical-lr-expected.txt: Renamed from LayoutTests/platform/efl/fast/multicol/block-axis-vertical-lr-expected.txt.
+        * fast/multicol/block-axis-vertical-rl-expected.txt: Renamed from LayoutTests/platform/efl/fast/multicol/block-axis-vertical-rl-expected.txt.
+        * fast/overflow/overflow-rtl-expected.txt:
+        * fast/overflow/overflow-rtl-inline-scrollbar-expected.txt: Renamed from LayoutTests/platform/efl/fast/overflow/overflow-rtl-inline-scrollbar-expected.txt.
+        * fast/table/border-collapsing/003-expected.txt: Renamed from LayoutTests/platform/efl/fast/table/border-collapsing/003-expected.txt.
+        * fast/table/border-collapsing/003-vertical-expected.txt: Renamed from LayoutTests/platform/efl/fast/table/border-collapsing/003-vertical-expected.txt.
+        * fast/table/border-collapsing/rtl-border-collapsing-expected.txt: Renamed from LayoutTests/platform/efl/fast/table/border-collapsing/rtl-border-collapsing-expected.txt.
+        * fast/table/colgroup-spanning-groups-rules-expected.txt: Renamed from LayoutTests/platform/efl/fast/table/colgroup-spanning-groups-rules-expected.txt.
+        * fast/text/basic/015-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/basic/015-expected.txt.
+        * http/tests/misc/acid2-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/acid2-expected.txt.
+        Common baselines.
+
+        * platform/efl/fast/block/float/016-expected.txt: Removed.
+        * platform/efl/fast/css/acid2-pixel-expected.txt: Removed.
+        * platform/efl/fast/overflow/overflow-rtl-expected.txt: Removed.
+        * platform/efl/http/tests/misc/acid2-expected.txt: Removed.
+        * platform/gtk/editing/execCommand/4580583-1-expected.txt: Removed.
+        * platform/gtk/editing/execCommand/4580583-2-expected.txt: Removed.
+        * platform/gtk/fast/block/float/012-expected.txt: Removed.
+        * platform/gtk/fast/block/float/013-expected.txt: Removed.
+        * platform/gtk/fast/block/float/016-expected.txt: Removed.
+        * platform/gtk/fast/block/margin-collapse/041-expected.txt: Removed.
+        * platform/gtk/fast/block/margin-collapse/043-expected.txt: Removed.
+        * platform/gtk/fast/block/margin-collapse/057-expected.txt: Removed.
+        * platform/gtk/fast/css/acid2-expected.txt: Removed.
+        * platform/gtk/fast/css/acid2-pixel-expected.txt: Removed.
+        * platform/gtk/fast/css/border-height-expected.txt: Removed.
+        * platform/gtk/fast/frames/viewsource-attribute-expected.txt: Removed.
+        * platform/gtk/fast/frames/viewsource-on-image-file-expected.txt: Removed.
+        * platform/gtk/fast/inline/inline-padding-disables-text-quirk-expected.txt: Removed.
+        * platform/gtk/fast/inline/inline-text-quirk-bpm-expected.txt: Removed.
+        * platform/gtk/fast/layers/scroll-rect-to-visible-expected.txt: Removed.
+        * platform/gtk/fast/lists/007-expected.txt: Removed.
+        * platform/gtk/fast/multicol/block-axis-horizontal-bt-expected.txt: Removed.
+        * platform/gtk/fast/multicol/block-axis-vertical-lr-expected.txt: Removed.
+        * platform/gtk/fast/multicol/block-axis-vertical-rl-expected.txt: Removed.
+        * platform/gtk/fast/overflow/overflow-rtl-expected.txt: Removed.
+        * platform/gtk/fast/overflow/overflow-rtl-inline-scrollbar-expected.txt: Removed.
+        * platform/gtk/fast/table/border-collapsing/003-expected.txt: Removed.
+        * platform/gtk/fast/table/border-collapsing/003-vertical-expected.txt: Removed.
+        * platform/gtk/fast/table/border-collapsing/rtl-border-collapsing-expected.txt: Removed.
+        * platform/gtk/fast/table/colgroup-spanning-groups-rules-expected.txt: Removed.
+        * platform/gtk/fast/text/basic/015-expected.txt: Removed.
+        * platform/gtk/http/tests/misc/acid2-expected.txt: Removed.
+        * platform/mac-lion/editing/deleting/type-delete-after-quote-expected.txt: Removed.
+        * platform/mac-lion/editing/execCommand/4580583-1-expected.txt: Removed.
+        * platform/mac-lion/editing/execCommand/4580583-2-expected.txt: Removed.
+        * platform/mac-lion/editing/inserting/5418891-expected.txt: Removed.
+        * platform/mac-lion/editing/inserting/5510537-expected.txt: Removed.
+        * platform/mac-lion/editing/inserting/6703873-expected.txt: Removed.
+        * platform/mac-lion/editing/inserting/break-blockquote-after-delete-expected.txt: Removed.
+        * platform/mac-lion/editing/pasteboard/5006779-expected.txt: Removed.
+        * platform/mac-lion/editing/pasteboard/paste-blockquote-after-blockquote-expected.txt: Removed.
+        * platform/mac-lion/editing/pasteboard/paste-blockquote-into-blockquote-4-expected.txt: Removed.
+        * platform/mac-lion/fast/block/float/012-expected.txt: Removed.
+        * platform/mac-lion/fast/block/float/013-expected.txt: Removed.
+        * platform/mac-lion/fast/block/margin-collapse/041-expected.txt: Removed.
+        * platform/mac-lion/fast/block/margin-collapse/043-expected.txt: Removed.
+        * platform/mac-lion/fast/block/margin-collapse/057-expected.txt: Removed.
+        * platform/mac-lion/fast/css/acid2-expected.txt: Removed.
+        * platform/mac-lion/fast/css/acid2-pixel-expected.txt: Removed.
+        * platform/mac-lion/fast/css/border-height-expected.txt: Removed.
+        * platform/mac-lion/fast/frames/viewsource-attribute-expected.txt: Removed.
+        * platform/mac-lion/fast/frames/viewsource-on-image-file-expected.txt: Removed.
+        * platform/mac-lion/fast/inline/inline-padding-disables-text-quirk-expected.txt: Removed.
+        * platform/mac-lion/fast/inline/inline-text-quirk-bpm-expected.txt: Removed.
+        * platform/mac-lion/fast/layers/scroll-rect-to-visible-expected.txt: Removed.
+        * platform/mac-lion/fast/lists/007-expected.txt: Removed.
+        * platform/mac-lion/fast/multicol/block-axis-horizontal-bt-expected.txt: Removed.
+        * platform/mac-lion/fast/multicol/block-axis-vertical-lr-expected.txt: Removed.
+        * platform/mac-lion/fast/multicol/block-axis-vertical-rl-expected.txt: Removed.
+        * platform/mac-lion/fast/overflow/overflow-rtl-expected.txt: Removed.
+        * platform/mac-lion/fast/overflow/overflow-rtl-inline-scrollbar-expected.txt: Removed.
+        * platform/mac-lion/fast/table/border-collapsing/003-expected.txt: Removed.
+        * platform/mac-lion/fast/table/border-collapsing/003-vertical-expected.txt: Removed.
+        * platform/mac-lion/fast/table/border-collapsing/rtl-border-collapsing-expected.txt: Removed.
+        * platform/mac-lion/fast/table/colgroup-spanning-groups-rules-expected.txt: Removed.
+        * platform/mac-lion/fast/text/basic/015-expected.txt: Removed.
+        * platform/mac-lion/http/tests/misc/acid2-expected.txt: Removed.
+        Removed those baselines so that they properly fallback to the correct ones.
+
+        * platform/chromium-linux-x86/fast/repaint/repaint-across-writing-mode-boundary-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/repaint/repaint-across-writing-mode-boundary-expected.txt.
+        * platform/chromium-linux-x86/fast/text/monospace-width-cache-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/text/monospace-width-cache-expected.txt.
+        * platform/chromium-linux/fast/repaint/repaint-across-writing-mode-boundary-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/repaint/repaint-across-writing-mode-boundary-expected.txt.
+        * platform/chromium-linux/fast/text/monospace-width-cache-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/text/monospace-width-cache-expected.txt.
+        * platform/chromium-mac-snowleopard/editing/inserting/break-blockquote-after-delete-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/repaint/repaint-across-writing-mode-boundary-expected.txt: Copied from LayoutTests/platform/chromium-mac/fast/repaint/repaint-across-writing-mode-boundary-expected.txt.
+        * platform/chromium-mac-snowleopard/fast/text/monospace-width-cache-expected.txt: Added.
+        * platform/chromium-mac/editing/inserting/break-blockquote-after-delete-expected.txt:
+        * platform/chromium-mac/fast/block/float/013-expected.txt:
+        * platform/chromium-mac/fast/block/float/016-expected.txt:
+        * platform/chromium-mac/fast/overflow/overflow-rtl-expected.txt:
+        * platform/chromium-mac/fast/repaint/repaint-across-writing-mode-boundary-expected.txt:
+        * platform/chromium-mac/fast/text/monospace-width-cache-expected.txt: Added.
+        * platform/chromium-win-xp/fast/repaint/repaint-across-writing-mode-boundary-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/repaint/repaint-across-writing-mode-boundary-expected.txt.
+        * platform/chromium-win-xp/fast/text/monospace-width-cache-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/text/monospace-width-cache-expected.txt.
+        * platform/chromium-win/editing/deleting/type-delete-after-quote-expected.txt:
+        * platform/chromium-win/editing/execCommand/4580583-1-expected.txt:
+        * platform/chromium-win/editing/execCommand/4580583-2-expected.txt:
+        * platform/chromium-win/editing/inserting/5418891-expected.txt:
+        * platform/chromium-win/editing/inserting/5510537-expected.txt:
+        * platform/chromium-win/editing/inserting/6703873-expected.txt:
+        * platform/chromium-win/editing/inserting/break-blockquote-after-delete-expected.txt:
+        * platform/chromium-win/editing/pasteboard/5006779-expected.txt:
+        * platform/chromium-win/editing/pasteboard/paste-blockquote-after-blockquote-expected.txt:
+        * platform/chromium-win/editing/pasteboard/paste-blockquote-into-blockquote-4-expected.txt:
+        * platform/chromium-win/fast/block/float/012-expected.txt:
+        * platform/chromium-win/fast/block/float/013-expected.txt:
+        * platform/chromium-win/fast/block/float/016-expected.txt:
+        * platform/chromium-win/fast/block/margin-collapse/041-expected.txt:
+        * platform/chromium-win/fast/block/margin-collapse/043-expected.txt:
+        * platform/chromium-win/fast/block/margin-collapse/057-expected.txt:
+        * platform/chromium-win/fast/css/acid2-expected.txt:
+        * platform/chromium-win/fast/css/acid2-pixel-expected.txt:
+        * platform/chromium-win/fast/css/border-height-expected.txt:
+        * platform/chromium-win/fast/frames/viewsource-attribute-expected.txt:
+        * platform/chromium-win/fast/frames/viewsource-on-image-file-expected.txt:
+        * platform/chromium-win/fast/inline/inline-padding-disables-text-quirk-expected.txt:
+        * platform/chromium-win/fast/inline/inline-text-quirk-bpm-expected.txt:
+        * platform/chromium-win/fast/layers/scroll-rect-to-visible-expected.txt:
+        * platform/chromium-win/fast/lists/007-expected.txt:
+        * platform/chromium-win/fast/multicol/block-axis-horizontal-bt-expected.txt:
+        * platform/chromium-win/fast/multicol/block-axis-vertical-lr-expected.txt:
+        * platform/chromium-win/fast/multicol/block-axis-vertical-rl-expected.txt:
+        * platform/chromium-win/fast/overflow/overflow-rtl-expected.txt:
+        * platform/chromium-win/fast/overflow/overflow-rtl-inline-scrollbar-expected.txt:
+        * platform/chromium-win/fast/repaint/repaint-across-writing-mode-boundary-expected.txt:
+        * platform/chromium-win/fast/table/border-collapsing/003-expected.txt:
+        * platform/chromium-win/fast/table/border-collapsing/003-vertical-expected.txt:
+        * platform/chromium-win/fast/table/border-collapsing/rtl-border-collapsing-expected.txt:
+        * platform/chromium-win/fast/table/colgroup-spanning-groups-rules-expected.txt:
+        * platform/chromium-win/fast/text/basic/015-expected.txt:
+        * platform/chromium-win/fast/text/monospace-width-cache-expected.txt:
+        * platform/chromium-win/http/tests/misc/acid2-expected.txt:
+        Chromium specific updates.
+
 2012-08-28  Simon Fraser  <simon.fraser@apple.com>
 
         Handle sticky that overflows its container
@@ -922,7 +1083,6 @@
         * fast/loader/form-state-restore-with-frames-expected.txt: Added.
         * fast/loader/resources/form-state-restore-with-frames-1.html: Added.
 
->>>>>>> .r126893
 2012-08-27  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in RenderTable::removeCaption

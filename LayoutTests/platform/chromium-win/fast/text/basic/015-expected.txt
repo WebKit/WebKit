@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 458: "The first line should break after the letter u, so that the gray border does not "
           text run at (458,0) width 174: "extend beyond the cyan box."
       RenderBlock {DIV} at (0,214) size 87x42 [border: (1px solid #00FFFF)]
-        RenderInline {SPAN} at (0,0) size 64x39 [border: (30px solid #C0C0C0) none]
+        RenderInline {SPAN} at (0,0) size 64x39 [border: none (30px solid #C0C0C0) none]
           RenderText {#text} at (1,1) size 64x39
             text run at (1,1) width 64: "Loremipsu"
             text run at (1,21) width 11: "m"
@@ -45,7 +45,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 410: "The first line should break after the letter p, so that the text does not "
           text run at (410,0) width 174: "extend beyond the cyan box."
       RenderBlock {DIV} at (0,318) size 87x42 [border: (1px solid #00FFFF)]
-        RenderInline {SPAN} at (0,0) size 81x39 [border: (30px solid #C0C0C0)]
+        RenderInline {SPAN} at (0,0) size 81x39 [border: none (30px solid #C0C0C0)]
           RenderText {#text} at (31,1) size 81x39
             text run at (31,1) width 51: "Loremip"
             text run at (1,21) width 24: "sum"

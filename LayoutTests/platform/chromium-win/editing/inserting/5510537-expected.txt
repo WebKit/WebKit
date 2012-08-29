@@ -13,11 +13,11 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 56x19
             text run at (0,0) width 56: "unquoted"
           RenderBR {BR} at (56,15) size 0x0
-        RenderBlock {BLOCKQUOTE} at (0,20) size 784x20 [color=#0000FF] [border: (2px solid #0000FF)]
+        RenderBlock {BLOCKQUOTE} at (0,20) size 784x20 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderBlock {DIV} at (12,0) size 772x20
             RenderText {#text} at (0,0) size 91x19
               text run at (0,0) width 91: "quote level one"
-        RenderBlock {BLOCKQUOTE} at (0,40) size 784x20 [color=#0000FF] [border: (2px solid #0000FF)]
+        RenderBlock {BLOCKQUOTE} at (0,40) size 784x20 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderBlock {DIV} at (12,0) size 772x20
             RenderText {#text} at (0,0) size 91x19
               text run at (0,0) width 91: "quote level one"
@@ -25,9 +25,9 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 56x19
             text run at (0,0) width 56: "unquoted"
           RenderBR {BR} at (56,15) size 0x0
-        RenderBlock {BLOCKQUOTE} at (0,80) size 784x20 [color=#0000FF] [border: (2px solid #0000FF)]
+        RenderBlock {BLOCKQUOTE} at (0,80) size 784x20 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderBlock {DIV} at (12,0) size 772x20
-            RenderBlock {BLOCKQUOTE} at (0,0) size 772x20 [border: (2px solid #0000FF)]
+            RenderBlock {BLOCKQUOTE} at (0,0) size 772x20 [border: none (2px solid #0000FF)]
               RenderBlock {DIV} at (12,0) size 760x20
                 RenderText {#text} at (0,0) size 92x19
                   text run at (0,0) width 92: "quote level two"

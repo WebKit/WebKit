@@ -5,7 +5,7 @@ layer at (0,0) size 800x8
     RenderBody {BODY} at (8,8) size 784x0
 layer at (8,64) size 800x108
   RenderBlock (positioned) {DIV} at (8,64) size 800x108 [bgcolor=#0000FF]
-    RenderBlock {DIV} at (38,8) size 724x57 [bgcolor=#008000] [border: (2px solid #888878) none]
+    RenderBlock {DIV} at (38,8) size 724x57 [bgcolor=#008000] [border: none (2px solid #888878) none]
       RenderText {#text} at (0,0) size 182x18
         text run at (0,0) width 182: "some other macromedia logo"
     RenderBlock (floating) {DIV} at (0,65) size 132x50 [bgcolor=#FFFF00]
