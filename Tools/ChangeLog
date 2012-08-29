@@ -1,5 +1,16 @@
 2012-08-29  Jon Lee  <jonlee@apple.com>
 
+        WTR build fixes.
+
+        * WebKitTestRunner/CMakeLists.txt:
+        * WebKitTestRunner/GNUmakefile.am:
+        * WebKitTestRunner/Target.pri:
+        * WebKitTestRunner/WebNotificationProvider.cpp:
+        (WTR::WebNotificationProvider::showWebNotification): Make ML happier.
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj:
+
+2012-08-29  Jon Lee  <jonlee@apple.com>
+
         [WK2] Basic WTR support for web notifications
         https://bugs.webkit.org/show_bug.cgi?id=95154
         <rdar://problem/12184492>

@@ -13,7 +13,8 @@ HEADERS += \
     PlatformWebView.h \
     StringFunctions.h \
     TestController.h \
-    TestInvocation.h
+    TestInvocation.h \
+    WebNotificationProvider.h
 
 SOURCES += \
     $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt/QtInitializeTestFonts.cpp \
@@ -23,7 +24,8 @@ SOURCES += \
     qt/TestControllerQt.cpp \
     qt/TestInvocationQt.cpp \
     TestController.cpp \
-    TestInvocation.cpp
+    TestInvocation.cpp \
+    WebNotificationProvider.cpp
 
 DESTDIR = $${ROOT_BUILD_DIR}/bin
 

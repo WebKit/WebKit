@@ -507,6 +507,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\WebNotificationProvider.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\WebNotificationProvider.h"
+			>
+		</File>
+		<File
 			RelativePath="..\WebKitTestRunnerPrefix.h"
 			>
 		</File>

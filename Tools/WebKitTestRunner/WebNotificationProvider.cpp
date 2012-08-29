@@ -85,8 +85,8 @@ void WebNotificationProvider::showWebNotification(WKPageRef, WKNotificationRef n
         return;
 
     uint64_t id = WKNotificationGetID(notification);
-    HashSet<uint64_t>::AddResult result = m_shownNotifications.add(id);
-    ASSERT(result.isNewEntry);
+    ASSERT(!m_shownNotifications.contains(id));
+    m_shownNotifications.add(id);
 
     WKNotificationManagerProviderDidShowNotification(m_notificationManager.get(), WKNotificationGetID(notification));
 }

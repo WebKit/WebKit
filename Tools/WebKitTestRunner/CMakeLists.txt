@@ -8,6 +8,7 @@ SET(WebKitTestRunner_SOURCES
     ${WEBKIT_TESTRUNNER_DIR}/PixelDumpSupport.cpp
     ${WEBKIT_TESTRUNNER_DIR}/TestController.cpp
     ${WEBKIT_TESTRUNNER_DIR}/TestInvocation.cpp
+    ${WEBKIT_TESTRUNNER_DIR}/WebNotificationProvider.cpp
 )
 
 SET(WebKitTestRunner_LIBRARIES
