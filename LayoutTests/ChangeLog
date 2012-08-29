@@ -1,3 +1,33 @@
+2012-08-29  Alex Sakhartchouk  <alexst@chromium.org>
+
+        [chromium] Support high DIP pixel tests with DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=94935
+
+        Reviewed by James Robinson.
+
+        Introducing new expected test results in full resolution and temporarily
+        marking the files on other platforms as expected to fail until I can update them later
+
+        * platform/chromium-linux/fast/hidpi/broken-image-icon-hidpi-expected.png:
+        * platform/chromium-linux/fast/hidpi/broken-image-with-size-hidpi-expected.png:
+        * platform/chromium-linux/fast/hidpi/clip-text-in-hidpi-expected.png:
+        * platform/chromium-linux/fast/hidpi/device-scale-factor-paint-expected.png:
+        * platform/chromium-linux/fast/hidpi/focus-rings-expected.png:
+        * platform/chromium-linux/fast/hidpi/image-set-as-background-expected.png:
+        * platform/chromium-linux/fast/hidpi/image-set-background-dynamic-expected.png:
+        * platform/chromium-linux/fast/hidpi/image-set-background-repeat-expected.png:
+        * platform/chromium-linux/fast/hidpi/image-set-background-repeat-without-size-expected.png:
+        * platform/chromium-linux/fast/hidpi/image-set-border-image-comparison-expected.png:
+        * platform/chromium-linux/fast/hidpi/image-set-border-image-dynamic-expected.png:
+        * platform/chromium-linux/fast/hidpi/image-set-border-image-simple-expected.png:
+        * platform/chromium-linux/fast/hidpi/image-set-in-content-dynamic-expected.png:
+        * platform/chromium-linux/fast/hidpi/image-set-out-of-order-expected.png:
+        * platform/chromium-linux/fast/hidpi/image-set-simple-expected.png:
+        * platform/chromium-linux/fast/hidpi/image-set-without-specified-width-expected.png:
+        * platform/chromium-linux/fast/hidpi/resize-corner-hidpi-expected.png:
+        * platform/chromium-linux/fast/hidpi/video-controls-in-hidpi-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-08-29  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed Gardening: editing/delete/br-004(5)(6) failing on Windows (old run webkit tests)

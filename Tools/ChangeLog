@@ -1,3 +1,22 @@
+2012-08-29  Alex Sakhartchouk  <alexst@chromium.org>
+
+        [chromium] Support high DIP pixel tests with DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=94935
+
+        Reviewed by James Robinson.
+
+        Adding device scale factor into the drt image dumping code
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::reset):
+        (DRTTestRunner::setBackingScaleFactor):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::setDeviceScaleFactor):
+        (WebViewHost::paintInvalidatedRegion):
+        (WebViewHost::canvas):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-08-29  Kevin Funk  <kevin.funk@kdab.com>
 
         Fix check-webkit-style (and probably others) when WebKit is in a git submodule

@@ -98,6 +98,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void setEditCommand(const std::string& name, const std::string& value) OVERRIDE;
     virtual void clearEditCommand() OVERRIDE;
     void setPendingExtraData(PassOwnPtr<TestShellExtraData>);
+    void setDeviceScaleFactor(float);
 
     virtual void setGamepadData(const WebKit::WebGamepads&);
 

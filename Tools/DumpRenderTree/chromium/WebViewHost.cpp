@@ -1771,6 +1771,12 @@ void WebViewHost::setPendingExtraData(PassOwnPtr<TestShellExtraData> extraData)
     m_pendingExtraData = extraData;
 }
 
+void WebViewHost::setDeviceScaleFactor(float deviceScaleFactor)
+{
+    webView()->setDeviceScaleFactor(deviceScaleFactor);
+    discardBackingStore();
+}
+
 void WebViewHost::setGamepadData(const WebGamepads& pads)
 {
     webkit_support::SetGamepadData(pads);
@@ -1836,7 +1842,13 @@ void WebViewHost::paintRect(const WebRect& rect)
     ASSERT(!m_isPainting);
     ASSERT(canvas());
     m_isPainting = true;
-    webWidget()->paint(canvas(), rect);
+    float deviceScaleFactor = webView()->deviceScaleFactor();
+    int scaledX = static_cast<int>(static_cast<float>(rect.x) * deviceScaleFactor);
+    int scaledY = static_cast<int>(static_cast<float>(rect.y) * deviceScaleFactor);
+    int scaledWidth = static_cast<int>(ceil(static_cast<float>(rect.width) * deviceScaleFactor));
+    int scaledHeight = static_cast<int>(ceil(static_cast<float>(rect.height) * deviceScaleFactor));
+    WebRect deviceRect(scaledX, scaledY, scaledWidth, scaledHeight);
+    webWidget()->paint(canvas(), deviceRect);
     m_isPainting = false;
 }
 
@@ -1906,8 +1918,11 @@ SkCanvas* WebViewHost::canvas()
     if (m_canvas)
         return m_canvas.get();
     WebSize widgetSize = webWidget()->size();
+    float deviceScaleFactor = webView()->deviceScaleFactor();
+    int scaledWidth = static_cast<int>(ceil(static_cast<float>(widgetSize.width) * deviceScaleFactor));
+    int scaledHeight = static_cast<int>(ceil(static_cast<float>(widgetSize.height) * deviceScaleFactor));
     resetScrollRect();
-    m_canvas = adoptPtr(skia::CreateBitmapCanvas(widgetSize.width, widgetSize.height, true));
+    m_canvas = adoptPtr(skia::CreateBitmapCanvas(scaledWidth, scaledHeight, true));
     return m_canvas.get();
 }
 

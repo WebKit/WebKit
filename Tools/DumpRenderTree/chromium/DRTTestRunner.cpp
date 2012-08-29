@@ -654,7 +654,7 @@ void DRTTestRunner::reset()
         m_shell->webView()->removeAllUserContent();
         WebKit::WebSize empty;
         m_shell->webView()->disableAutoResizeMode();
-        m_shell->webView()->setDeviceScaleFactor(1);
+        m_shell->webViewHost()->setDeviceScaleFactor(1);
     }
     m_dumpAsText = false;
     m_dumpAsAudio = false;
@@ -2238,7 +2238,7 @@ void DRTTestRunner::setBackingScaleFactor(const CppArgumentList& arguments, CppV
         return;
     
     float value = arguments[0].value.doubleValue;
-    m_shell->webView()->setDeviceScaleFactor(value);
+    m_shell->webViewHost()->setDeviceScaleFactor(value);
 
     OwnArrayPtr<CppVariant> callbackArguments = adoptArrayPtr(new CppVariant[1]);
     callbackArguments[0].set(arguments[1]);
