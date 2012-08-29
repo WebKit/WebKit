@@ -1,3 +1,15 @@
+2012-08-29  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Link highlight should clear on page navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=95129
+
+        Reviewed by James Robinson.
+
+        Modified WebViewImpl to clear link highlight when navigating to new url.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::didCommitLoad):
+
 2012-08-29  James Robinson  <jamesr@chromium.org>
 
         [chromium] CCThreadImpl / WebCompositorImpl shouldn't compile from webkit when use_libcc_for_compositor=1

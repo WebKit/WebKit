@@ -3443,6 +3443,8 @@ void WebViewImpl::didCommitLoad(bool* isNewNavigation, bool isNavigationWithinPa
     if (*isNewNavigation && !isNavigationWithinPage)
         m_pageScaleFactorIsSet = false;
 
+    // Make sure link highlight from previous page is cleared.
+    m_linkHighlight.clear();
     m_gestureAnimation.clear();
     resetSavedScrollAndScaleState();
 }

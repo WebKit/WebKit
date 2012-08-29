@@ -1,3 +1,17 @@
+2012-08-29  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Link highlight should clear on page navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=95129
+
+        Reviewed by James Robinson.
+
+        Modified WebViewImpl to clear link highlight when navigating to new url.
+
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-navigate.html: Added.
+        * platform/chromium-linux/compositing/gestures/resources/gesture-tapHighlight-simple-navigate-destination.html: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-navigate-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-navigate-expected.txt: Added.
+
 2012-08-29  Jessie Berlin  <jberlin@apple.com>
 
         ASSERTION FAILED: enclosingIntRect(rendererMappedResult) == enclosingIntRect(FloatQuad(result).boundingBox()) : WebCore::FloatRect WebCore::RenderGeometryMap::absoluteRect(const WebCore::FloatRect &) const
