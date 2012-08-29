@@ -56,7 +56,6 @@
 
 using namespace WebCore;
 using namespace WebKit;
-using namespace WTF;
 
 namespace WebKitTests {
 
@@ -611,6 +610,8 @@ void CCThreadedTest::runTest(bool threaded)
 
     ASSERT(CCProxy::isMainThread());
     m_mainThreadProxy = CCScopedThreadProxy::create(CCProxy::mainThread());
+
+    initializeSettings(m_settings);
 
     m_beginTask = new BeginTask(this);
     WebKit::Platform::current()->currentThread()->postDelayedTask(m_beginTask, 0); // postDelayedTask takes ownership of the task

@@ -261,6 +261,8 @@ public:
 
     void setFontAtlas(PassOwnPtr<CCFontAtlas>);
 
+    HeadsUpDisplayLayerChromium* hudLayer() const { return m_hudLayer.get(); }
+
 protected:
     CCLayerTreeHost(CCLayerTreeHostClient*, const CCLayerTreeSettings&);
     bool initialize();

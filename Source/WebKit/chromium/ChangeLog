@@ -1,3 +1,26 @@
+2012-08-29  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove HUD layer when rootLayer is set to null
+        https://bugs.webkit.org/show_bug.cgi?id=95257
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * tests/CCHeadsUpDisplayTest.cpp: Added.
+        (CCHeadsUpDisplayTest):
+        (DrawsContentLayerChromium):
+        (DrawsContentLayerChromium::create):
+        (DrawsContentLayerChromium::DrawsContentLayerChromium):
+        (CCHudWithRootLayerChange):
+        (CCHudWithRootLayerChange::CCHudWithRootLayerChange):
+        (TEST_F):
+        * tests/CCLayerTreeHostTest.cpp:
+        * tests/CCThreadedTest.cpp:
+        (WebKitTests::CCThreadedTest::runTest):
+        * tests/CCThreadedTest.h:
+        (WebKitTests::CCThreadedTest::initializeSettings):
+        (CCThreadedTest):
+
 2012-08-29  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Add more unit test coverage for semantics of drawableContentRect and visibleContentRect

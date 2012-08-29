@@ -38,16 +38,13 @@
 #include "Extensions3DChromium.h"
 #include "FakeWebCompositorOutputSurface.h"
 #include <gmock/gmock.h>
-#include <gtest/gtest.h>
 #include <public/Platform.h>
-#include <public/WebThread.h>
 #include <wtf/MainThread.h>
 #include <wtf/OwnArrayPtr.h>
 
 using namespace WebCore;
 using namespace WebKit;
 using namespace WebKitTests;
-using namespace WTF;
 
 #define EXPECT_EQ_RECT(a, b) \
     EXPECT_EQ(a.x(), b.x()); \
