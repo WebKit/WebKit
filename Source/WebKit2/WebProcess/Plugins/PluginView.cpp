@@ -410,7 +410,7 @@ void PluginView::setWindowIsVisible(bool windowIsVisible)
     if (!m_plugin)
         return;
 
-    // FIXME: Implement.
+    m_plugin->windowVisibilityChanged(windowIsVisible);
 }
 
 void PluginView::setWindowIsFocused(bool windowIsFocused)
@@ -785,8 +785,13 @@ void PluginView::viewGeometryDidChange()
     transform.translate(scaledLocationInRootViewCoordinates.x(), scaledLocationInRootViewCoordinates.y());
     transform.scale(pageScaleFactor);
 
-    // FIXME: The clip rect isn't correct.
-    IntRect clipRect = boundsRect();
+    // FIXME: This clip rect isn't correct.
+    // But it is still important distinguish between empty and non-empty rects so we can notify the plug-in when it becomes invisible.
+    // Making the rect actually correct is covered by https://bugs.webkit.org/show_bug.cgi?id=95362
+    IntRect clipRect = clipRectInWindowCoordinates();
+    if (!clipRect.isEmpty())
+        clipRect = boundsRect();
+        
     m_plugin->geometryDidChange(size(), clipRect, transform);
 }
 

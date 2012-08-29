@@ -1,0 +1,62 @@
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.resizeTo(200,500);
+
+var windowWasSetCount = 0;
+
+var windowWasSetCommands = [
+    null, // The plug-in gets setWindow called explicitly during initialization, the clip rect should be empty.
+    null, // The plug-in gets setWindow called during initialization as a side effect of being told its window is visible, the clip rect should be empty.
+    "window.scrollTo(0, 700)",  // This should scroll the plug-in partially into view, the clip rect should be non-empty.
+    "window.scrollTo(0, 0)",    // This should scroll the plug-in back out of view, the clip rect should be empty.
+    "window.scrollTo(0, 1000)", // This should scroll the plug-in fully into view, the clip rect should be non-empty.
+    "window.scrollTo(0, 1300)", // This should scroll the plug-in back out of view, the clip rect should be empty.
+    "finishTest()"];
+
+// Note: These expected results will change once https://bugs.webkit.org/show_bug.cgi?id=95274 is resolved.
+var windowWasSetExpectedResults = [
+    "NPP_SetWindow: NULL window, Rect {0, 0, 200, 100}, Clip Rect {0, 0, 0, 0}, Type 2", 
+    "NPP_SetWindow: NULL window, Rect {0, 0, 200, 100}, Clip Rect {0, 0, 0, 0}, Type 2", 
+    "NPP_SetWindow: NULL window, Rect {0, 0, 200, 100}, Clip Rect {0, 0, 200, 100}, Type 2", 
+    "NPP_SetWindow: NULL window, Rect {0, 0, 200, 100}, Clip Rect {0, 0, 0, 0}, Type 2", 
+    "NPP_SetWindow: NULL window, Rect {0, 0, 200, 100}, Clip Rect {0, 0, 200, 100}, Type 2", 
+    "NPP_SetWindow: NULL window, Rect {0, 0, 200, 100}, Clip Rect {0, 0, 0, 0}, Type 2"];
+    
+function windowWasSet(msg)
+{
+    if (msg == windowWasSetExpectedResults[windowWasSetCount])
+        testPassed("NPP_SetWindow called with expected parameters");
+    else
+        testFailed("NPP_SetWindow called with: " + msg + " but we expected " + windowWasSetExpectedResults[windowWasSetCount] + "... Maybe bug 95362 has been fixed?");
+
+    ++windowWasSetCount;    
+    if (windowWasSetCommands[windowWasSetCount])
+        eval(windowWasSetCommands[windowWasSetCount]);
+}
+
+function finishTest()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+
+</head>
+<body style="margin:0 0 0 0;">
+<div style="width:200px; height:1000px; background-color:red;">a div</div>
+<embed id="TestElement" type="application/x-webkit-test-netscape" test="log-npp-set-window" style="width:200px; height:100px; background-color:yellow;"></embed>
+<div style="width:200px; height:1000px; background-color:red;">another div</div>
+<p id="description"></p>
+<div id="console"></div>
+</body>
+
+<script>
+description("Tests that netscape plugins get appropriate calls to NPP_SetWindow when scrolled out of view or back in to view.");
+</script>

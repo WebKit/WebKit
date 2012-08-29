@@ -510,6 +510,20 @@ void NetscapePlugin::callSetWindow()
     m_hasCalledSetWindow = true;
 }
 
+void NetscapePlugin::callSetWindowInvisible()
+{
+    NPWindow invisibleWindow = m_npWindow;
+    
+    invisibleWindow.window = 0;
+    invisibleWindow.clipRect.top = 0;
+    invisibleWindow.clipRect.left = 0;
+    invisibleWindow.clipRect.bottom = 0;
+    invisibleWindow.clipRect.right = 0;
+    
+    NPP_SetWindow(&invisibleWindow);
+    m_hasCalledSetWindow = true;
+}
+
 bool NetscapePlugin::shouldLoadSrcURL()
 {
     // Check if we should cancel the load

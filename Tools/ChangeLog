@@ -1,3 +1,19 @@
+2012-08-29  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION: Not sending NPP_SetWindow is causing Flash to not throttle itself
+        <rdar://problem/12133021> and https://bugs.webkit.org/show_bug.cgi?id=95274
+
+        Reviewed by Sam Weinig.
+
+        Add a test plug-in that calls back into the page with info on the NPWindow passed
+        in to NPP_SetWindow.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/LogNPPSetWindow.cpp: Added.
+        (LogNPPSetWindow):
+        (LogNPPSetWindow::LogNPPSetWindow):
+        (LogNPPSetWindow::NPP_SetWindow):
+
 2012-08-29  Jon Lee  <jonlee@apple.com>
 
         [Mac] Basic DRT support for web notifications

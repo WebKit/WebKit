@@ -1,3 +1,28 @@
+2012-08-29  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION: Not sending NPP_SetWindow is causing Flash to not throttle itself
+        <rdar://problem/12133021> and https://bugs.webkit.org/show_bug.cgi?id=95274
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]): Previously we'd only update window visibility when the window is hidden.
+          Now we also update window visibility when the window is shown.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::callSetWindowInvisible): Call set window with a manufactured empty clip rect to tell
+          the plug-in that it is complete hidden.
+        (WebKit):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        (NetscapePlugin):
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::windowVisibilityChanged): Call "callSetWindow" or "callSetWindowInvisible" as appropriate.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::setWindowIsVisible): Tell the plugin that its visibility changed.
+        (WebKit::PluginView::viewGeometryDidChange): Grab a clip rect that - although incorrect - at least is correct if
+          the PluginView is completely hidden.
+
 2012-08-29  Jon Lee  <jonlee@apple.com>
 
         Build patch for Qt

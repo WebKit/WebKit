@@ -147,6 +147,7 @@ private:
     NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule);
 
     void callSetWindow();
+    void callSetWindowInvisible();
     bool shouldLoadSrcURL();
     NetscapePluginStream* streamFromID(uint64_t streamID);
     void stopAllStreams();
