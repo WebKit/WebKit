@@ -1,3 +1,11 @@
+2012-08-29  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Unreviewed EFL gardening.
+
+        EFL requires a newline at the end of the test expectations here.
+
+        * platform/efl/fast/events/overflow-viewport-renderer-deleted-expected.txt: Added.
+
 2012-08-29  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Clean up Skipped file
