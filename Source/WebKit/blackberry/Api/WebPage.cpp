@@ -4105,7 +4105,6 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
         tEvent.m_points[i].m_screenPos = d->mapFromTransformed(tEvent.m_points[i].m_screenPos);
     }
 
-    Platform::Gesture tapGesture;
     if (event.hasGesture(Platform::Gesture::SingleTap))
         d->m_pluginMayOpenNewTab = true;
     else if (tEvent.m_type == Platform::TouchEvent::TouchStart || tEvent.m_type == Platform::TouchEvent::TouchCancel)

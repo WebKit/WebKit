@@ -1,3 +1,16 @@
+2012-08-29  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Remove unused tapGesture in WebPage.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=95357
+
+        Reviewed by Rob Buis.
+
+        Remove unused variable tapGesture in WebPage.cpp.
+        Internally reviewed by Gen Mak.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::touchEvent):
+
 2012-08-28  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] crash while trying to scroll any inner frame
