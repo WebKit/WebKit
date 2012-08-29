@@ -1,3 +1,9 @@
+2012-08-29  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, chromium test expectations cleanup.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-29  Kamil Blank  <k.blank@samsung.com>
 
         [EFL] Add setting API for allow universal/file access from file URLs.
