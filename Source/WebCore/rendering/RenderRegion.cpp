@@ -132,6 +132,7 @@ bool RenderRegion::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
 
     // Check our bounds next. For this purpose always assume that we can only be hit in the
     // foreground phase (which is true for replaced elements like images).
+    // FIXME: Once we support overflow, we need to intersect with that and not with the bounds rect.
     LayoutRect boundsRect = borderBoxRectInRegion(locationInContainer.region());
     boundsRect.moveBy(adjustedLocation);
     if (visibleToHitTesting() && action == HitTestForeground && locationInContainer.intersects(boundsRect)) {

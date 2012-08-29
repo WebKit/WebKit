@@ -66,6 +66,7 @@ private:
     virtual void computeLogicalHeight() OVERRIDE;
 
     virtual void paintReplaced(PaintInfo&, const LayoutPoint& paintOffset) OVERRIDE;
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
     virtual LayoutUnit logicalWidthForFlowThreadContent() const OVERRIDE { return m_computedColumnWidth; }
     virtual LayoutUnit logicalHeightForFlowThreadContent() const OVERRIDE { return m_computedColumnHeight; } // FIXME: Will be wrong once we have multiple sets.
