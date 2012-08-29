@@ -19,13 +19,6 @@
         (-[WebNotification dispatchClickEvent]):
         (-[WebNotification dispatchErrorEvent]):
 
-
-        Reviewed by Jessie Berlin.
-
-        * WebView/WebNotification.h: Expose iconURL.
-        * WebView/WebNotification.mm:
-        (-[WebNotification iconURL]):
-
 2012-08-28  Geoffrey Garen  <ggaren@apple.com>
 
         Added JSScope::objectInScope(), and refactored callers to use it
