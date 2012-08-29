@@ -613,15 +613,12 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
             // Layers that are not their own renderTarget will render into the target of their nearest ancestor.
             layer->setRenderTarget(layer->parent()->renderTarget());
         } else {
-            // FIXME: This root layer special case code should eventually go away. But before that is truly possible,
-            //        tests (or code) related to CCOcclusionTracker need to be adjusted so that they do not require
-            //        the rootLayer to clip; the root layer's RenderSurface would already clip and should be enough.
+            // FIXME: This root layer special case code should eventually go away. https://bugs.webkit.org/show_bug.cgi?id=92290
             ASSERT(!layer->parent());
             ASSERT(layer->renderSurface());
             ASSERT(ancestorClipsSubtree);
             layer->renderSurface()->setClipRect(clipRectFromAncestor);
-            subtreeShouldBeClipped = true;
-            clipRectForSubtree = clipRectFromAncestor;
+            subtreeShouldBeClipped = false;
         }
     }
 

@@ -1,3 +1,26 @@
+2012-08-28  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Do not clip root layer's subtree to viewport
+        https://bugs.webkit.org/show_bug.cgi?id=95235
+
+        Reviewed by Adrienne Walker.
+
+        Existing tests updated, and otherwise this change is already
+        covered by layout and unit tests.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebKitTests::CCOcclusionTrackerTestChildInRotatedChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestVisitTargetTwoTimes::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceWithTwoOpaqueChildren::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestOverlappingSurfaceSiblings::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestOverlappingSurfaceSiblingsWithTwoTransforms::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestFilters::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestReplicaWithClipping::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestLargePixelsOccludeInsideClipRect::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceOcclusionTranslatesWithClipping::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceChildOfClippingSurface::runMyTest):
+
 2012-08-29  Julien Chaffraix  <jchaffraix@webkit.org>
 
         [Chromium] CCLayerTreeHostTestScrollChildLayer makes the wrong assumptions

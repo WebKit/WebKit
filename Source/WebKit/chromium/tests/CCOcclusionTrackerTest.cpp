@@ -606,6 +606,7 @@ protected:
         childTransform.translate(-250, -250);
 
         typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
+        parent->setMasksToBounds(true);
         typename Types::LayerType* child = this->createLayer(parent, childTransform, FloatPoint(30, 30), IntSize(500, 500));
         child->setMasksToBounds(true);
         typename Types::ContentLayerType* layer = this->createDrawingLayer(child, this->identityMatrix, FloatPoint(10, 10), IntSize(500, 500), true);
@@ -685,6 +686,7 @@ protected:
         childTransform.translate(-250, -250);
 
         typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
+        parent->setMasksToBounds(true);
         typename Types::LayerType* child = this->createLayer(parent, childTransform, FloatPoint(30, 30), IntSize(500, 500));
         child->setMasksToBounds(true);
         typename Types::ContentLayerType* layer = this->createDrawingLayer(child, this->identityMatrix, FloatPoint(10, 10), IntSize(500, 500), true);
@@ -862,6 +864,7 @@ protected:
         childTransform.translate(-250, -250);
 
         typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
+        parent->setMasksToBounds(true);
         typename Types::LayerType* child = this->createLayer(parent, childTransform, FloatPoint(30, 30), IntSize(500, 500));
         child->setMasksToBounds(true);
         typename Types::ContentLayerType* layer1 = this->createDrawingLayer(child, this->identityMatrix, FloatPoint(10, 10), IntSize(500, 500), true);
@@ -950,6 +953,7 @@ protected:
         childTransform.translate(-250, -250);
 
         typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
+        parent->setMasksToBounds(true);
         typename Types::LayerType* child1 = this->createSurface(parent, childTransform, FloatPoint(30, 30), IntSize(10, 10));
         typename Types::LayerType* child2 = this->createSurface(parent, childTransform, FloatPoint(20, 40), IntSize(10, 10));
         typename Types::ContentLayerType* layer1 = this->createDrawingLayer(child1, this->identityMatrix, FloatPoint(-10, -10), IntSize(510, 510), true);
@@ -1064,6 +1068,7 @@ protected:
         child2Transform.translate(-250, -250);
 
         typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
+        parent->setMasksToBounds(true);
         typename Types::LayerType* child1 = this->createSurface(parent, child1Transform, FloatPoint(30, 20), IntSize(10, 10));
         typename Types::LayerType* child2 = this->createDrawingSurface(parent, child2Transform, FloatPoint(20, 40), IntSize(10, 10), false);
         typename Types::ContentLayerType* layer1 = this->createDrawingLayer(child1, this->identityMatrix, FloatPoint(-10, -20), IntSize(510, 510), true);
@@ -1166,6 +1171,7 @@ protected:
         layerTransform.translate(-250, -250);
 
         typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
+        parent->setMasksToBounds(true);
         typename Types::ContentLayerType* blurLayer = this->createDrawingLayer(parent, layerTransform, FloatPoint(30, 30), IntSize(500, 500), true);
         typename Types::ContentLayerType* opaqueLayer = this->createDrawingLayer(parent, layerTransform, FloatPoint(30, 30), IntSize(500, 500), true);
         typename Types::ContentLayerType* opacityLayer = this->createDrawingLayer(parent, layerTransform, FloatPoint(30, 30), IntSize(500, 500), true);
@@ -1275,6 +1281,7 @@ protected:
     void runMyTest()
     {
         typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(100, 170));
+        parent->setMasksToBounds(true);
         typename Types::LayerType* surface = this->createDrawingSurface(parent, this->identityMatrix, FloatPoint(0, 100), IntSize(50, 50), true);
         this->createReplicaLayer(surface, this->identityMatrix, FloatPoint(50, 50), IntSize());
         this->calcDrawEtc(parent);
@@ -1955,6 +1962,7 @@ protected:
         transform.translate(-50, -50);
 
         typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
+        parent->setMasksToBounds(true);
         typename Types::ContentLayerType* layer = this->createDrawingLayer(parent, transform, FloatPoint(0, 0), IntSize(100, 100), true);
         parent->setPreserves3D(true);
         layer->setPreserves3D(true);
@@ -2221,6 +2229,7 @@ protected:
     void runMyTest()
     {
         typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+        parent->setMasksToBounds(true);
         typename Types::ContentLayerType* surface = this->createDrawingSurface(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(500, 300), false);
         surface->setOpaqueContentsRect(IntRect(0, 0, 400, 200));
         this->calcDrawEtc(parent);
@@ -2462,6 +2471,7 @@ protected:
         // This test verifies that the surface cliprect does not end up empty and clip away the entire unoccluded rect.
 
         typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(80, 200));
+        parent->setMasksToBounds(true);
         typename Types::LayerType* surface = this->createDrawingSurface(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(100, 100), true);
         typename Types::LayerType* surfaceChild = this->createDrawingSurface(surface, this->identityMatrix, FloatPoint(0, 0), IntSize(100, 100), false);
         typename Types::LayerType* topmost = this->createDrawingLayer(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(100, 50), true);

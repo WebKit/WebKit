@@ -672,6 +672,7 @@ TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceListForRenderSurfaceWithClipp
     setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint::zero(), FloatPoint(30, 30), IntSize(10, 10), false);
 
     parent->addChild(renderSurface1);
+    parent->setMasksToBounds(true);
     renderSurface1->addChild(child);
     renderSurface1->setForceRenderSurface(true);
 
