@@ -687,6 +687,7 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
 {
     switch (event.type) {
     case WebInputEvent::GestureFlingStart: {
+        m_client->cancelScheduledContentIntents();
         m_lastWheelPosition = WebPoint(event.x, event.y);
         m_lastWheelGlobalPosition = WebPoint(event.globalX, event.globalY);
         m_flingModifier = event.modifiers;
@@ -702,6 +703,10 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         }
         return false;
     case WebInputEvent::GestureTap: {
+        m_client->cancelScheduledContentIntents();
+        if (detectContentOnTouch(WebPoint(event.x, event.y), event.type))
+            return true;
+
         PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
         RefPtr<WebCore::PopupContainer> selectPopup;
         selectPopup = m_selectPopup;
@@ -722,6 +727,10 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         if (!mainFrameImpl() || !mainFrameImpl()->frameView())
             return false;
 
+        m_client->cancelScheduledContentIntents();
+        if (detectContentOnTouch(WebPoint(event.x, event.y), event.type))
+            return true;
+
         m_page->contextMenuController()->clearContextMenu();
         m_contextMenuAllowed = true;
         PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
@@ -730,6 +739,7 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         return handled;
     }
     case WebInputEvent::GestureTapDown: {
+        m_client->cancelScheduledContentIntents();
         // Queue a highlight animation, then hand off to regular handler.
 #if OS(LINUX)
         enableTouchHighlight(IntPoint(event.x, event.y));
@@ -737,11 +747,12 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
         return mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
     }
+    case WebInputEvent::GestureDoubleTap:
     case WebInputEvent::GestureScrollBegin:
+    case WebInputEvent::GesturePinchBegin:
+        m_client->cancelScheduledContentIntents();
     case WebInputEvent::GestureScrollEnd:
     case WebInputEvent::GestureScrollUpdate:
-    case WebInputEvent::GestureDoubleTap:
-    case WebInputEvent::GesturePinchBegin:
     case WebInputEvent::GesturePinchEnd:
     case WebInputEvent::GesturePinchUpdate: {
         PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
@@ -3990,7 +4001,14 @@ bool WebViewImpl::detectContentOnTouch(const WebPoint& position, WebInputEvent::
     if (!node || !node->isTextNode())
         return false;
 
-    // FIXME: Should we not detect content intents in nodes that have event listeners?
+    // Ignore when tapping on links or nodes listening to click events, unless the click event is on the
+    // body element, in which case it's unlikely that the original node itself was intended to be clickable.
+    for (; node && !node->hasTagName(HTMLNames::bodyTag); node = node->parentNode()) {
+        if (node->isLink() || (touchType != WebInputEvent::GestureLongPress
+                && (node->willRespondToTouchEvents() || node->willRespondToMouseClickEvents()))) {
+            return false;
+        }
+    }
 
     WebContentDetectionResult content = m_client->detectContentAround(touchHit);
     if (!content.isValid())

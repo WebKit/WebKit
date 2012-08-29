@@ -2765,6 +2765,17 @@ bool Node::willRespondToMouseClickEvents()
     return isContentEditable() || hasEventListeners(eventNames().mouseupEvent) || hasEventListeners(eventNames().mousedownEvent) || hasEventListeners(eventNames().clickEvent) || hasEventListeners(eventNames().DOMActivateEvent);
 }
 
+bool Node::willRespondToTouchEvents()
+{
+#if ENABLE(TOUCH_EVENTS)
+    if (disabled())
+        return false;
+    return hasEventListeners(eventNames().touchstartEvent) || hasEventListeners(eventNames().touchmoveEvent) || hasEventListeners(eventNames().touchcancelEvent) || hasEventListeners(eventNames().touchendEvent);
+#else
+    return false;
+#endif
+}
+
 #if ENABLE(MICRODATA)
 DOMSettableTokenList* Node::itemProp()
 {

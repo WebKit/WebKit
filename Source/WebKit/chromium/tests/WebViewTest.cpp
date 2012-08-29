@@ -32,14 +32,18 @@
 #include "WebView.h"
 
 #include "Document.h"
+#include "Element.h"
 #include "FrameTestHelpers.h"
 #include "FrameView.h"
 #include "HTMLDocument.h"
 #include "URLTestHelpers.h"
+#include "WebContentDetectionResult.h"
 #include "WebDocument.h"
+#include "WebElement.h"
 #include "WebFrame.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
+#include "WebInputEvent.h"
 #include "platform/WebSize.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
@@ -415,6 +419,134 @@ TEST_F(WebViewTest, SetCompositionFromExistingText)
     EXPECT_EQ(10, info.selectionEnd);
     EXPECT_EQ(-1, info.compositionStart);
     EXPECT_EQ(-1, info.compositionEnd);
+    webView->close();
+}
+
+class ContentDetectorClient : public WebViewClient {
+public:
+    ContentDetectorClient() { reset(); }
+
+    virtual WebContentDetectionResult detectContentAround(const WebHitTestResult& hitTest) OVERRIDE
+    {
+        m_contentDetectionRequested = true;
+        return m_contentDetectionResult;
+    }
+
+    virtual void scheduleContentIntent(const WebURL& url) OVERRIDE
+    {
+        m_scheduledIntentURL = url;
+    }
+
+    virtual void cancelScheduledContentIntents() OVERRIDE
+    {
+        m_pendingIntentsCancelled = true;
+    }
+
+    void reset()
+    {
+        m_contentDetectionRequested = false;
+        m_pendingIntentsCancelled = false;
+        m_scheduledIntentURL = WebURL();
+        m_contentDetectionResult = WebContentDetectionResult();
+    }
+
+    bool contentDetectionRequested() const { return m_contentDetectionRequested; }
+    bool pendingIntentsCancelled() const { return m_pendingIntentsCancelled; }
+    const WebURL& scheduledIntentURL() const { return m_scheduledIntentURL; }
+    void setContentDetectionResult(const WebContentDetectionResult& result) { m_contentDetectionResult = result; }
+
+private:
+    bool m_contentDetectionRequested;
+    bool m_pendingIntentsCancelled;
+    WebURL m_scheduledIntentURL;
+    WebContentDetectionResult m_contentDetectionResult;
+};
+
+static bool tapElementById(WebView* webView, WebInputEvent::Type type, const WebString& id)
+{
+    ASSERT(webView);
+    RefPtr<WebCore::Element> element = static_cast<PassRefPtr<WebCore::Element> >(webView->mainFrame()->document().getElementById(id));
+    if (!element)
+        return false;
+
+    element->scrollIntoViewIfNeeded();
+    WebCore::IntPoint center = element->screenRect().center();
+
+    WebGestureEvent event;
+    event.type = type;
+    event.x = center.x();
+    event.y = center.y();
+
+    webView->handleInputEvent(event);
+    webkit_support::RunAllPendingMessages();
+    return true;
+}
+
+TEST_F(WebViewTest, DetectContentAroundPosition)
+{
+    URLTestHelpers::registerMockedURLFromBaseURL(WebString::fromUTF8(m_baseURL.c_str()), WebString::fromUTF8("content_listeners.html"));
+
+    ContentDetectorClient client;
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "content_listeners.html", true, 0, &client);
+    webView->resize(WebSize(500, 300));
+    webView->layout();
+    webkit_support::RunAllPendingMessages();
+
+    WebString clickListener = WebString::fromUTF8("clickListener");
+    WebString touchstartListener = WebString::fromUTF8("touchstartListener");
+    WebString mousedownListener = WebString::fromUTF8("mousedownListener");
+    WebString noListener = WebString::fromUTF8("noListener");
+    WebString link = WebString::fromUTF8("link");
+
+    // Ensure content detection is not requested for nodes listening to click,
+    // mouse or touch events when we do simple taps.
+    EXPECT_TRUE(tapElementById(webView, WebInputEvent::GestureTap, clickListener));
+    EXPECT_FALSE(client.contentDetectionRequested());
+    client.reset();
+
+    EXPECT_TRUE(tapElementById(webView, WebInputEvent::GestureTap, touchstartListener));
+    EXPECT_FALSE(client.contentDetectionRequested());
+    client.reset();
+
+    EXPECT_TRUE(tapElementById(webView, WebInputEvent::GestureTap, mousedownListener));
+    EXPECT_FALSE(client.contentDetectionRequested());
+    client.reset();
+
+    // Content detection should still work on click, mouse and touch event listeners for long taps
+    // as long as we're not tapping on links.
+    EXPECT_TRUE(tapElementById(webView, WebInputEvent::GestureLongPress, clickListener));
+    EXPECT_TRUE(client.contentDetectionRequested());
+    client.reset();
+
+    EXPECT_TRUE(tapElementById(webView, WebInputEvent::GestureLongPress, touchstartListener));
+    EXPECT_TRUE(client.contentDetectionRequested());
+    client.reset();
+
+    EXPECT_TRUE(tapElementById(webView, WebInputEvent::GestureLongPress, mousedownListener));
+    EXPECT_TRUE(client.contentDetectionRequested());
+    client.reset();
+
+    EXPECT_TRUE(tapElementById(webView, WebInputEvent::GestureLongPress, link));
+    EXPECT_FALSE(client.contentDetectionRequested());
+    client.reset();
+
+    // Content detection should work normally without these event listeners.
+    // The click listener in the body should be ignored as a special case.
+    EXPECT_TRUE(tapElementById(webView, WebInputEvent::GestureTap, noListener));
+    EXPECT_TRUE(client.contentDetectionRequested());
+    EXPECT_FALSE(client.scheduledIntentURL().isValid());
+
+    WebURL intentURL = toKURL(m_baseURL);
+    client.setContentDetectionResult(WebContentDetectionResult(WebRange(), WebString(), intentURL));
+    EXPECT_TRUE(tapElementById(webView, WebInputEvent::GestureTap, noListener));
+    EXPECT_TRUE(client.scheduledIntentURL() == intentURL);
+
+    // Tapping elsewhere should cancel the scheduled intent.
+    WebGestureEvent event;
+    event.type = WebInputEvent::GestureTap;
+    webView->handleInputEvent(event);
+    webkit_support::RunAllPendingMessages();
+    EXPECT_TRUE(client.pendingIntentsCancelled());
     webView->close();
 }
 
