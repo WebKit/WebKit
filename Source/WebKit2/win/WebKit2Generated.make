@@ -72,6 +72,7 @@ all:
     xcopy /y /d "..\UIProcess\API\C\WKMediaCacheManager.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKNativeEvent.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKNavigationData.h" "%ConfigurationBuildDir%\include\WebKit2"
+    xcopy /y /d "..\UIProcess\API\C\WKNotificationManager.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKOpenPanelParameters.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKOpenPanelResultListener.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKPage.h" "%ConfigurationBuildDir%\include\WebKit2"

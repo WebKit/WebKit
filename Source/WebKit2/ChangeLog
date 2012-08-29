@@ -1,5 +1,11 @@
 2012-08-29  Jon Lee  <jonlee@apple.com>
 
+        Windows build fix.
+
+        * win/WebKit2Generated.make: Export WKNotificationManager.h.
+
+2012-08-29  Jon Lee  <jonlee@apple.com>
+
         [WK2] Add SPI to retrieve internal IDs for web notifications
         https://bugs.webkit.org/show_bug.cgi?id=95100
         <rdar://problem/12180208>
