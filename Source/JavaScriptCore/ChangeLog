@@ -1,3 +1,9 @@
+2012-08-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix the Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Export!
+
 2012-08-28  Geoffrey Garen  <ggaren@apple.com>
 
         Introduced JSWithScope, making all scope objects subclasses of JSScope
