@@ -4,7 +4,7 @@ Tests RawSourceCode class.
 Running: testScriptWithoutResource
 UISourceCode: foo.js
 UISourceCode is content script: true
-Mime type: undefined
+Mime type: text/javascript
 Script source: <script source>
 
 Running: testHTMLWithPendingResource

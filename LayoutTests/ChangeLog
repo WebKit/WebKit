@@ -1,3 +1,18 @@
+2012-08-29  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Minor debugger-test polish.
+        https://bugs.webkit.org/show_bug.cgi?id=95348
+
+        Reviewed by Alexander Pavlov.
+
+        Added meaningful assertion messages to facilitate debugging.
+        Added meaningful mimeType to script mock.
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest.):
+        (initialize_DebuggerTest):
+        * inspector/debugger/raw-source-code-expected.txt:
+
 2012-08-29  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Page with @import and :last-child in an edited stylesheet will crash

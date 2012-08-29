@@ -291,7 +291,7 @@ InspectorTest.createScriptMock = function(url, startLine, startColumn, isContent
     var endLine = startLine + lineCount - 1;
     var endColumn = lineCount === 1 ? startColumn + source.length : source.length - source.lineEndings()[lineCount - 2];
     var script = new WebInspector.Script(scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript);
-    script.requestContent = function(callback) { callback(source); };
+    script.requestContent = function(callback) { callback(source, false, "text/javascript"); };
     WebInspector.debuggerModel._registerScript(script);
     return script;
 }
@@ -300,16 +300,16 @@ InspectorTest._lastScriptId = 0;
 
 InspectorTest.checkRawLocation = function(script, lineNumber, columnNumber, location)
 {
-    InspectorTest.assertEquals(script.scriptId, location.scriptId);
-    InspectorTest.assertEquals(lineNumber, location.lineNumber);
-    InspectorTest.assertEquals(columnNumber, location.columnNumber);
+    InspectorTest.assertEquals(script.scriptId, location.scriptId, "Incorrect scriptId");
+    InspectorTest.assertEquals(lineNumber, location.lineNumber, "Incorrect lineNumber");
+    InspectorTest.assertEquals(columnNumber, location.columnNumber, "Incorrect columnNumber");
 };
 
 InspectorTest.checkUILocation = function(uiSourceCode, lineNumber, columnNumber, location)
 {
-    InspectorTest.assertEquals(uiSourceCode, location.uiSourceCode);
-    InspectorTest.assertEquals(lineNumber, location.lineNumber);
-    InspectorTest.assertEquals(columnNumber, location.columnNumber);
+    InspectorTest.assertEquals(uiSourceCode, location.uiSourceCode, "Incorrect uiSourceCode");
+    InspectorTest.assertEquals(lineNumber, location.lineNumber, "Incorrect lineNumber");
+    InspectorTest.assertEquals(columnNumber, location.columnNumber, "Incorrect columnNumber");
 };
 
 };
