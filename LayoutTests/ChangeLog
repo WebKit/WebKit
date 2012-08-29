@@ -1,3 +1,16 @@
+2012-08-29  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Unskip 2 willSendRequest tests that are passing consistently
+        https://bugs.webkit.org/show_bug.cgi?id=95289
+
+        Unreviewed EFL gardening.
+
+        Unskip the following tests are EFL port:
+        fast/loader/onload-willSendRequest-null-for-script.html
+        fast/loader/willSendRequest-null-for-preload.html
+
+        * platform/efl/Skipped:
+
 2012-08-29  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         '\r's in test expectations files confuse chromium-android layout test driver

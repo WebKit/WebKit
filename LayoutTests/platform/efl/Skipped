@@ -331,10 +331,6 @@ http/tests/multipart/invalid-image-data.html
 compositing/geometry/fixed-position.html
 compositing/geometry/vertical-scroll-composited.html
 
-# Fail due to an extra "CONSOLE MESSAGE: line 1: SyntaxError: Parse error"
-fast/loader/onload-willSendRequest-null-for-script.html
-fast/loader/willSendRequest-null-for-preload.html
-
 # BUG: new windows do not have scrollbars
 fast/dom/Window/new-window-opener.html
 
