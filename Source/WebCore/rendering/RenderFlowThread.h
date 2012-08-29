@@ -94,11 +94,11 @@ public:
 
     void repaintRectangleInRegions(const LayoutRect&, bool immediate);
 
-    LayoutUnit regionLogicalTopForLine(LayoutUnit position) const;
-    LayoutUnit regionLogicalWidthForLine(LayoutUnit position) const;
-    LayoutUnit regionLogicalHeightForLine(LayoutUnit position) const;
-    LayoutUnit regionRemainingLogicalHeightForLine(LayoutUnit position, PageBoundaryRule = IncludePageBoundary) const;
-    RenderRegion* renderRegionForLine(LayoutUnit position, bool extendLastRegion = false) const;
+    LayoutUnit pageLogicalTopForOffset(LayoutUnit) const;
+    LayoutUnit pageLogicalWidthForOffset(LayoutUnit) const;
+    LayoutUnit pageLogicalHeightForOffset(LayoutUnit) const;
+    LayoutUnit pageRemainingLogicalHeightForOffset(LayoutUnit, PageBoundaryRule = IncludePageBoundary) const;
+    RenderRegion* regionAtBlockOffset(LayoutUnit, bool extendLastRegion = false) const;
 
     bool regionsHaveUniformLogicalWidth() const { return m_regionsHaveUniformLogicalWidth; }
     bool regionsHaveUniformLogicalHeight() const { return m_regionsHaveUniformLogicalHeight; }

@@ -150,8 +150,8 @@ void RenderFlowThread::layout()
                 
                 region->deleteAllRenderBoxRegionInfo();
 
-                LayoutUnit regionLogicalWidth = region->logicalWidthForFlowThreadContent();
-                LayoutUnit regionLogicalHeight = region->logicalHeightForFlowThreadContent();
+                LayoutUnit regionLogicalWidth = region->pageLogicalWidth();
+                LayoutUnit regionLogicalHeight = region->pageLogicalHeight();
 
                 if (!m_hasValidRegions)
                     m_hasValidRegions = true;
@@ -173,8 +173,8 @@ void RenderFlowThread::layout()
                 if (!region->isValid())
                     continue;
                     
-                LayoutUnit regionLogicalWidth = region->logicalWidthForFlowThreadContent();
-                LayoutUnit regionLogicalHeight = region->logicalHeightForFlowThreadContent();
+                LayoutUnit regionLogicalWidth = region->pageLogicalWidth();
+                LayoutUnit regionLogicalHeight = region->logicalHeightOfAllFlowThreadContent();
     
                 LayoutRect regionRect(style()->direction() == LTR ? ZERO_LAYOUT_UNIT : logicalWidth() - regionLogicalWidth, logicalHeight, regionLogicalWidth, regionLogicalHeight);
                 region->setFlowThreadPortionRect(isHorizontalWritingMode() ? regionRect : regionRect.transposedRect());
@@ -203,7 +203,7 @@ void RenderFlowThread::computeLogicalWidth()
         if (!region->isValid())
             continue;
         ASSERT(!region->needsLayout());
-        logicalWidth = max(region->logicalWidthForFlowThreadContent(), logicalWidth);
+        logicalWidth = max(region->pageLogicalWidth(), logicalWidth);
     }
     setLogicalWidth(logicalWidth);
 
@@ -213,7 +213,7 @@ void RenderFlowThread::computeLogicalWidth()
         if (!region->isValid())
             continue;
         
-        LayoutUnit regionLogicalWidth = region->logicalWidthForFlowThreadContent();
+        LayoutUnit regionLogicalWidth = region->pageLogicalWidth();
         if (regionLogicalWidth != logicalWidth) {
             LayoutUnit logicalLeft = style()->direction() == LTR ? ZERO_LAYOUT_UNIT : logicalWidth - regionLogicalWidth;
             region->setRenderBoxRegionInfo(this, logicalLeft, regionLogicalWidth, false);
@@ -230,7 +230,7 @@ void RenderFlowThread::computeLogicalHeight()
         if (!region->isValid())
             continue;
         ASSERT(!region->needsLayout());
-        logicalHeight += region->logicalHeightForFlowThreadContent();
+        logicalHeight += region->logicalHeightOfAllFlowThreadContent();
     }
 
     setLogicalHeight(logicalHeight);
@@ -346,7 +346,7 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, 
     }
 }
 
-RenderRegion* RenderFlowThread::renderRegionForLine(LayoutUnit position, bool extendLastRegion) const
+RenderRegion* RenderFlowThread::regionAtBlockOffset(LayoutUnit offset, bool extendLastRegion) const
 {
     ASSERT(!m_regionsInvalidated);
 
@@ -361,12 +361,12 @@ RenderRegion* RenderFlowThread::renderRegionForLine(LayoutUnit position, bool ex
         if (!region->isValid())
             continue;
 
-        if (position <= 0)
+        if (offset <= 0)
             return region;
 
         LayoutRect regionRect = region->flowThreadPortionRect();
 
-        if ((useHorizontalWritingMode && position < regionRect.maxY()) || (!useHorizontalWritingMode && position < regionRect.maxX()))
+        if ((useHorizontalWritingMode && offset < regionRect.maxY()) || (!useHorizontalWritingMode && offset < regionRect.maxX()))
             return region;
 
         if (extendLastRegion)
@@ -376,38 +376,34 @@ RenderRegion* RenderFlowThread::renderRegionForLine(LayoutUnit position, bool ex
     return lastValidRegion;
 }
 
-LayoutUnit RenderFlowThread::regionLogicalTopForLine(LayoutUnit position) const
+LayoutUnit RenderFlowThread::pageLogicalTopForOffset(LayoutUnit offset) const
 {
-    RenderRegion* region = renderRegionForLine(position);
+    RenderRegion* region = regionAtBlockOffset(offset);
     if (!region)
-        return 0;
+        return ZERO_LAYOUT_UNIT;
     return isHorizontalWritingMode() ? region->flowThreadPortionRect().y() : region->flowThreadPortionRect().x();
 }
 
-LayoutUnit RenderFlowThread::regionLogicalWidthForLine(LayoutUnit position) const
+LayoutUnit RenderFlowThread::pageLogicalWidthForOffset(LayoutUnit offset) const
 {
-    RenderRegion* region = renderRegionForLine(position, true);
-    if (!region)
-        return contentLogicalWidth();
-    return isHorizontalWritingMode() ? region->flowThreadPortionRect().width() : region->flowThreadPortionRect().height();
+    RenderRegion* region = regionAtBlockOffset(offset, true);
+    return region ? region->pageLogicalWidth() : contentLogicalWidth();
 }
 
-LayoutUnit RenderFlowThread::regionLogicalHeightForLine(LayoutUnit position) const
+LayoutUnit RenderFlowThread::pageLogicalHeightForOffset(LayoutUnit offset) const
 {
-    RenderRegion* region = renderRegionForLine(position);
-    if (!region)
-        return 0;
-    return isHorizontalWritingMode() ? region->flowThreadPortionRect().height() : region->flowThreadPortionRect().width();
+    RenderRegion* region = regionAtBlockOffset(offset);
+    return region ? region->pageLogicalHeight() : ZERO_LAYOUT_UNIT;
 }
 
-LayoutUnit RenderFlowThread::regionRemainingLogicalHeightForLine(LayoutUnit position, PageBoundaryRule pageBoundaryRule) const
+LayoutUnit RenderFlowThread::pageRemainingLogicalHeightForOffset(LayoutUnit offset, PageBoundaryRule pageBoundaryRule) const
 {
-    RenderRegion* region = renderRegionForLine(position);
+    RenderRegion* region = regionAtBlockOffset(offset);
     if (!region)
-        return 0;
+        return ZERO_LAYOUT_UNIT;
 
     LayoutUnit regionLogicalBottom = isHorizontalWritingMode() ? region->flowThreadPortionRect().maxY() : region->flowThreadPortionRect().maxX();
-    LayoutUnit remainingHeight = regionLogicalBottom - position;
+    LayoutUnit remainingHeight = regionLogicalBottom - offset;
     if (pageBoundaryRule == IncludePageBoundary) {
         // If IncludePageBoundary is set, the line exactly on the top edge of a
         // region will act as being part of the previous region.
@@ -430,7 +426,7 @@ RenderRegion* RenderFlowThread::mapFromFlowToRegion(TransformState& transformSta
     // Note: Using the center in order to avoid rounding errors.
 
     LayoutPoint center = boxRect.center();
-    RenderRegion* renderRegion = renderRegionForLine(isHorizontalWritingMode() ? center.y() : center.x(), true);
+    RenderRegion* renderRegion = regionAtBlockOffset(isHorizontalWritingMode() ? center.y() : center.x(), true);
     if (!renderRegion)
         return 0;
 
@@ -606,8 +602,8 @@ void RenderFlowThread::setRegionRangeForBox(const RenderBox* box, LayoutUnit off
         return;
 
     // FIXME: Not right for differing writing-modes.
-    RenderRegion* startRegion = renderRegionForLine(offsetFromLogicalTopOfFirstPage, true);
-    RenderRegion* endRegion = renderRegionForLine(offsetFromLogicalTopOfFirstPage + box->logicalHeight(), true);
+    RenderRegion* startRegion = regionAtBlockOffset(offsetFromLogicalTopOfFirstPage, true);
+    RenderRegion* endRegion = regionAtBlockOffset(offsetFromLogicalTopOfFirstPage + box->logicalHeight(), true);
     RenderRegionRangeMap::iterator it = m_regionRangeMap.find(box);
     if (it == m_regionRangeMap.end()) {
         m_regionRangeMap.set(box, RenderRegionRange(startRegion, endRegion));

@@ -95,9 +95,17 @@ public:
     RegionState regionState() const { return isValid() ? m_regionState : RegionUndefined; }
     void setRegionState(RegionState regionState) { m_regionState = regionState; }
     
-    virtual LayoutUnit logicalWidthForFlowThreadContent() const;
-    virtual LayoutUnit logicalHeightForFlowThreadContent() const;
-        
+    // These methods represent the width and height of a "page" and for a RenderRegion they are just the
+    // content width and content height of a region. For RenderRegionSets, however, they will be the width and
+    // height of a single column or page in the set.
+    virtual LayoutUnit pageLogicalWidth() const;
+    virtual LayoutUnit pageLogicalHeight() const;
+    
+    // This method represents the logical height of the entire flow thread portion used by the region or set.
+    // For RenderRegions it matches logicalPaginationHeight(), but for sets it is the height of all the pages
+    // or columns added together.
+    virtual LayoutUnit logicalHeightOfAllFlowThreadContent() const;
+
     virtual void expandToEncompassFlowThreadContentsIfNeeded() {};
 
 protected:

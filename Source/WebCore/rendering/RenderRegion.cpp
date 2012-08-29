@@ -52,12 +52,17 @@ RenderRegion::RenderRegion(Node* node, RenderFlowThread* flowThread)
 {
 }
 
-LayoutUnit RenderRegion::logicalWidthForFlowThreadContent() const
+LayoutUnit RenderRegion::pageLogicalWidth() const
 {
     return m_flowThread->isHorizontalWritingMode() ? contentWidth() : contentHeight();
 }
 
-LayoutUnit RenderRegion::logicalHeightForFlowThreadContent() const
+LayoutUnit RenderRegion::pageLogicalHeight() const
+{
+    return m_flowThread->isHorizontalWritingMode() ? contentHeight() : contentWidth();
+}
+
+LayoutUnit RenderRegion::logicalHeightOfAllFlowThreadContent() const
 {
     return m_flowThread->isHorizontalWritingMode() ? contentHeight() : contentWidth();
 }
@@ -181,7 +186,7 @@ void RenderRegion::layout()
         LayoutRect oldRegionRect(flowThreadPortionRect());
         if (!isHorizontalWritingMode())
             oldRegionRect = oldRegionRect.transposedRect();
-        if (oldRegionRect.width() != logicalWidthForFlowThreadContent() || oldRegionRect.height() != logicalHeightForFlowThreadContent())
+        if (oldRegionRect.width() != pageLogicalWidth() || oldRegionRect.height() != logicalHeightOfAllFlowThreadContent())
             m_flowThread->invalidateRegions();
     }
 
