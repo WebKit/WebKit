@@ -108,6 +108,8 @@ static inline QPainter::CompositionMode toQtCompositionMode(CompositeOperator op
         return QPainter::CompositionMode_Darken;
     case CompositePlusLighter:
         return QPainter::CompositionMode_Plus;
+    case CompositeDifference:
+        return QPainter::CompositionMode_Difference;
     default:
         ASSERT_NOT_REACHED();
     }
