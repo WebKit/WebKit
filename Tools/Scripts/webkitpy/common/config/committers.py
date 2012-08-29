@@ -152,7 +152,6 @@ contributors_who_are_not_committers = [
     Contributor("Pravin D", "pravind.2k4@gmail.com", 'pravind'),
     Contributor("Radar WebKit Bug Importer", "webkit-bug-importer@group.apple.com"),
     Contributor("Raul Hudea", "rhudea@adobe.com", "rhudea"),
-    Contributor("Roger Fong", "roger_fong@apple.com", "rfong"),
     Contributor("Roland Takacs", "rtakacs@inf.u-szeged.hu", "rtakacs"),
     Contributor(u"Sami Ky\u00f6stil\u00e4", "skyostil@chromium.org", "skyostil"),
     Contributor("Szilard Ledan-Muntean", "szledan@inf.u-szeged.hu", "szledan"),

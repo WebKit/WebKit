@@ -1,3 +1,13 @@
+2012-08-28  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix the Commiters script
+
+        Unreviewed.
+
+        Remove Roger Fong from the Contributor list, he appears in the Commiter list since r126949.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-08-28  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Adding myself to committers list.
