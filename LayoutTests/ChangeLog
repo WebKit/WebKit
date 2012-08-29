@@ -1,3 +1,20 @@
+2012-08-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r126972.
+        http://trac.webkit.org/changeset/126972
+        https://bugs.webkit.org/show_bug.cgi?id=95349
+
+        accessibility/canvas-description-and-role.html has been
+        failing consistently on several bots and Dominic needs some
+        time to investigate why (Requested by jchaffraix on #webkit).
+
+        * accessibility/canvas-description-and-role.html: Removed.
+        * accessibility/canvas-expected.txt: Renamed from LayoutTests/platform/mac/accessibility/canvas-expected.txt.
+        * accessibility/canvas.html: Renamed from LayoutTests/platform/mac/accessibility/canvas.html.
+        * platform/chromium/accessibility/canvas-description-and-role-expected.txt: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/mac/accessibility/canvas-description-and-role-expected.txt: Removed.
+
 2012-08-29  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Minor debugger-test polish.

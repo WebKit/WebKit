@@ -206,8 +206,6 @@ static string roleToString(WebAccessibilityRole role)
         return result.append("UserInterfaceTooltip");
     case WebAccessibilityRoleToggleButton:
         return result.append("ToggleButton");
-    case WebAccessibilityRoleCanvas:
-        return result.append("Canvas");
     default:
         // Also matches WebAccessibilityRoleUnknown.
         return result.append("Unknown");

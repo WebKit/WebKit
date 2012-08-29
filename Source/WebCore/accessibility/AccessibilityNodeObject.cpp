@@ -306,23 +306,6 @@ bool AccessibilityNodeObject::accessibilityIsIgnored() const
     return m_role == UnknownRole;
 }
 
-bool AccessibilityNodeObject::canvasHasFallbackContent() const
-{
-    Node* node = this->node();
-    if (!node || !node->hasTagName(canvasTag))
-        return false;
-
-    // If it has any children that are elements, we'll assume it might be fallback
-    // content. If it has no children or its only children are not elements
-    // (e.g. just text nodes), it doesn't have fallback content.
-    for (Node* child = node->firstChild(); child; child = child->nextSibling()) {
-        if (child->isElementNode())
-            return true;
-    }
-
-    return false;
-}
-
 bool AccessibilityNodeObject::canSetFocusAttribute() const
 {
     Node* node = this->node();

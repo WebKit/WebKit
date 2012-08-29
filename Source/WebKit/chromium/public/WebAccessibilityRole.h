@@ -49,7 +49,6 @@ enum WebAccessibilityRole {
     WebAccessibilityRoleBrowser,
     WebAccessibilityRoleBusyIndicator,
     WebAccessibilityRoleButton,
-    WebAccessibilityRoleCanvas,
     WebAccessibilityRoleCell, 
     WebAccessibilityRoleCheckBox,
     WebAccessibilityRoleColorWell,

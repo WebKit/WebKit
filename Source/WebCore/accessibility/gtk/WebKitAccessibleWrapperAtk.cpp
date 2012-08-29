@@ -501,7 +501,6 @@ static AtkRole atkRole(AccessibilityRole role)
     case WebCoreLinkRole:
     case ImageMapLinkRole:
         return ATK_ROLE_LINK;
-    case CanvasRole:
     case ImageMapRole:
     case ImageRole:
         return ATK_ROLE_IMAGE;
