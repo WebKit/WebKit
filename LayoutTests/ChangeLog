@@ -1,3 +1,65 @@
+2012-08-28  Philip Rogers  <pdr@google.com>
+
+        Unreviewed rebaseline after r126683
+
+        Unreviewed rebaseline of 8 test expectations after r126683.
+
+        Common baselines: (http/tests/misc/acid2-pixel-expected.txt already existed)
+        * ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-009-expected.txt: Added.
+        * ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-012-expected.txt: Added.
+        * ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-013-expected.txt: Added.
+        * ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-014-expected.txt: Added.
+        * ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-015-expected.txt: Added.
+        * ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-016-expected.txt: Added.
+        * ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-001-expected.txt: Added.
+
+        Chromium-specific baselines:
+        * platform/chromium-win/http/tests/misc/acid2-pixel-expected.txt:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-009-expected.txt:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-012-expected.txt:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-013-expected.txt:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-014-expected.txt:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-015-expected.txt:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-016-expected.txt:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-001-expected.txt:
+
+        Removed entries that no longer need to be rebaselined:
+        * platform/chromium/TestExpectations:
+
+        Removed these baselines so that they fall back to the common ones:
+        * platform/chromium-linux-x86/http/tests/misc: Removed.
+        * platform/chromium-mac/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-009-expected.txt: Removed.
+        * platform/chromium-mac/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-012-expected.txt: Removed.
+        * platform/chromium-mac/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-013-expected.txt: Removed.
+        * platform/chromium-mac/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-014-expected.txt: Removed.
+        * platform/chromium-mac/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-015-expected.txt: Removed.
+        * platform/chromium-mac/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-016-expected.txt: Removed.
+        * platform/chromium-mac/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-001-expected.txt: Removed.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-009-expected.txt: Removed.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-012-expected.txt: Removed.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-013-expected.txt: Removed.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-014-expected.txt: Removed.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-015-expected.txt: Removed.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-016-expected.txt: Removed.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-001-expected.txt: Removed.
+        * platform/gtk/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-009-expected.txt: Removed.
+        * platform/gtk/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-012-expected.txt: Removed.
+        * platform/gtk/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-013-expected.txt: Removed.
+        * platform/gtk/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-014-expected.txt: Removed.
+        * platform/gtk/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-015-expected.txt: Removed.
+        * platform/gtk/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-016-expected.txt: Removed.
+        * platform/gtk/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-001-expected.txt: Removed.
+        * platform/mac-lion/http/tests/misc: Removed.
+        * platform/mac-lion/http/tests/misc/acid2-pixel-expected.txt: Removed.
+        * platform/mac-lion/ietestcenter/css3/bordersbackgrounds: Removed.
+        * platform/mac-lion/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-009-expected.txt: Removed.
+        * platform/mac-lion/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-012-expected.txt: Removed.
+        * platform/mac-lion/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-013-expected.txt: Removed.
+        * platform/mac-lion/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-014-expected.txt: Removed.
+        * platform/mac-lion/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-015-expected.txt: Removed.
+        * platform/mac-lion/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-016-expected.txt: Removed.
+        * platform/mac-lion/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-001-expected.txt: Removed.
+
 2012-08-28  Adam Barth  <abarth@webkit.org>
 
         crypto.getRandomValues should throw an exception when given a big array

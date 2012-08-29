@@ -3530,14 +3530,6 @@ BUGCR145087 ANDROID : compositing/overflow/nested-scrolling.html = TEXT
 BUGCR145087 ANDROID : compositing/reflections/nested-reflection-animated.html = TEXT PASS
 
 // Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=84286
-BUGWK84286 : http/tests/misc/acid2-pixel.html = TEXT
-BUGWK84286 : ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-009.htm = TEXT
-BUGWK84286 : ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-012.htm = TEXT
-BUGWK84286 : ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-013.htm = TEXT
-BUGWK84286 : ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-014.htm = TEXT
-BUGWK84286 : ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-015.htm = TEXT
-BUGWK84286 : ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-016.htm = TEXT
-BUGWK84286 : ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-001.htm = TEXT
 BUGWK84286 : tables/mozilla/core/table_rules.html = TEXT
 BUGWK84286 : tables/mozilla/marvin/x_table_rules_groups.xml = TEXT
 BUGWK84286 : tables/mozilla_expected_failures/collapsing_borders/bug41262-1.html = TEXT
