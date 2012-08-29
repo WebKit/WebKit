@@ -1,3 +1,20 @@
+2012-08-29  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Throw TypeError for invalid version parameters
+        https://bugs.webkit.org/show_bug.cgi?id=95143
+
+        Reviewed by Tony Chang.
+
+        * http/tests/inspector/indexeddb/indexeddb-test.js:
+        Remove 0 as a version parameter now that it will throw TypeError. It
+        should have been a no-op anyway.
+
+        * storage/indexeddb/intversion-bad-parameters-expected.txt: Added.
+        * storage/indexeddb/intversion-bad-parameters.html: Added.
+        * storage/indexeddb/resources/intversion-bad-parameters.js: Added.
+        (test):
+        (deleteSuccess):
+
 2012-08-29  Jessie Berlin  <jberlin@apple.com>
 
         ASSERTION FAILED: enclosingIntRect(rendererMappedResult) == enclosingIntRect(FloatQuad(result).boundingBox()) : WebCore::FloatRect WebCore::RenderGeometryMap::absoluteRect(const WebCore::FloatRect &) const

@@ -167,7 +167,7 @@ function doWithReadWriteTransaction(databaseName, objectStoreName, callback, com
 
 function createDatabase(callback, databaseName)
 {
-    var request = indexedDB.open(databaseName, 0);
+    var request = indexedDB.open(databaseName);
     request.onerror = onIndexedDBError;
     request.onsuccess = closeDatabase;
 

@@ -111,6 +111,12 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, c
         ec = NATIVE_TYPE_ERR;
         return 0;
     }
+    // FIXME: We need to throw an error if script passes -1. Somehow refactor
+    // this to avoid wanting to throw an error with the sentinel.
+    if (!version || version < IDBDatabaseMetadata::NoIntVersion) {
+        ec = NATIVE_TYPE_ERR;
+        return 0;
+    }
     if (!isContextValid(context))
         return 0;
 

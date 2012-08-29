@@ -1,0 +1,29 @@
+Test that bad version parameters cause TypeError
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "intversion-bad-parameters.html"
+indexedDB.deleteDatabase(dbname)
+
+deleteSuccess():
+Expecting TypeError exception from indexedDB.open(dbname, 'stringversion')
+PASS Exception was thrown.
+PASS indexedDB.open(dbname, 'stringversion') threw TypeError: Type error
+Expecting TypeError exception from indexedDB.open(dbname, 0)
+PASS Exception was thrown.
+PASS indexedDB.open(dbname, 0) threw TypeError: Type error
+Expecting TypeError exception from indexedDB.open(dbname, -5)
+PASS Exception was thrown.
+PASS indexedDB.open(dbname, -5) threw TypeError: Type error
+
+FIXME: Using -1 doesn't throw TypeError but it should
+Expecting TypeError exception from request = indexedDB.open(dbname, -1)
+FAIL No exception thrown!
+FAIL Success function called unexpectedly.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
