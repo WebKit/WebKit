@@ -1,3 +1,26 @@
+2012-08-29  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Resolve CMake warnings on overlapping search paths for EFL jhbuild-enabled build
+        https://bugs.webkit.org/show_bug.cgi?id=84707
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Most of the warnings have been fixed now that FindCairo.cmake and
+        FindGLIB.cmake have been rewritten. The remaining one, related to
+        FindFontconfig.cmake, shows up when building on a 64-bit
+        Debian-based systems.
+
+        jhbuild installs libraries into lib64/ by default on 64-bit Linux
+        installations, while CMake does not look for libraries in lib64/
+        when /etc/debian_version exists on the system. The FIND_LIBRARY()
+        would then sometimes end up using the system installation instead of
+        the jhbuild one, causing mismatches and, when pkg-config is not used
+        at all, failing to find libraries altogether.
+
+        * efl/jhbuildrc: Set the CMAKE_LIBRARY_PATH environment variable
+        when use_lib64 is set to force CMake to look into lib64/ regardless
+        of the presence of /etc/debian_version.
+
 2012-08-29  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         The 2d.imageData.object.round canvas test is failing
