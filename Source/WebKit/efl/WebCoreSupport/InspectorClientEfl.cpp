@@ -93,7 +93,7 @@ InspectorFrontendChannel* InspectorClientEfl::openInspectorFrontend(InspectorCon
 
     m_inspectorView = inspectorView;
 
-    String inspectorUri = inspectorFilesPath();
+    String inspectorUri = inspectorFilesPath() + "/inspector.html";
     ewk_view_uri_set(m_inspectorView, inspectorUri.utf8().data());
 
     OwnPtr<InspectorFrontendClientEfl> frontendClient = adoptPtr(new InspectorFrontendClientEfl(m_inspectedView, m_inspectorView, this));
@@ -140,9 +140,9 @@ void InspectorClientEfl::releaseFrontendPage()
 
 String InspectorClientEfl::inspectorFilesPath()
 {
-    String inspectorFilesPath = makeString("file://", WEB_INSPECTOR_INSTALL_DIR, "/inspector.html");
-    if (access(inspectorFilesPath.utf8().data(), R_OK)) // On success, zero is returned
-        inspectorFilesPath = makeString("file://", WEB_INSPECTOR_DIR, "/inspector.html");
+    String inspectorFilesPath = "file://" + String(WEB_INSPECTOR_INSTALL_DIR);
+    if (access(inspectorFilesPath.utf8().data(), R_OK))
+        inspectorFilesPath = "file://" + String(WEB_INSPECTOR_DIR);
 
     return inspectorFilesPath;
 }
@@ -168,8 +168,7 @@ InspectorFrontendClientEfl::~InspectorFrontendClientEfl()
 
 String InspectorFrontendClientEfl::localizedStringsURL()
 {
-    notImplemented();
-    return String();
+    return m_inspectorClient->inspectorFilesPath() + "/localizedStrings.js";
 }
 
 String InspectorFrontendClientEfl::hiddenPanels()

@@ -1,3 +1,18 @@
+2012-08-28  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL] Add support for localization to the Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=92961
+
+        Reviewed by Gyuyoung Kim.
+
+        Implement InspectorFrontendClientEfl::localizedStringsURL()
+        to return the URL of the localizedStrings.js.
+
+        * WebCoreSupport/InspectorClientEfl.cpp:
+        (WebCore::InspectorClientEfl::openInspectorFrontend):
+        (WebCore::InspectorClientEfl::inspectorFilesPath):
+        (WebCore::InspectorFrontendClientEfl::localizedStringsURL):
+
 2012-08-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126914.
