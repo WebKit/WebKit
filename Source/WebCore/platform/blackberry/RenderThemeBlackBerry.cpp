@@ -123,7 +123,7 @@ float RenderThemeBlackBerry::defaultFontSize = 16;
 // sizes (e.g. 15px). So we just use Arial for now.
 const String& RenderThemeBlackBerry::defaultGUIFont()
 {
-    DEFINE_STATIC_LOCAL(String, fontFace, ("Arial"));
+    DEFINE_STATIC_LOCAL(String, fontFace, (ASCIILiteral("Arial")));
     return fontFace;
 }
 

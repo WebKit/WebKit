@@ -232,7 +232,7 @@ void drawElementTitle(GraphicsContext* context, Node* node, RenderObject* render
     DEFINE_STATIC_LOCAL(Color, normalColor, (Color::black));
     DEFINE_STATIC_LOCAL(Color, pxAndBorderColor, (128, 128, 128));
 
-    DEFINE_STATIC_LOCAL(String, pxString, ("px"));
+    DEFINE_STATIC_LOCAL(String, pxString, (ASCIILiteral("px")));
     const static UChar timesUChar[] = { 0x0020, 0x00D7, 0x0020, 0 };
     DEFINE_STATIC_LOCAL(String, timesString, (timesUChar)); // &times; string
 

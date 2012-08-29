@@ -136,7 +136,7 @@ bool Animation::animationsMatch(const Animation* o, bool matchPlayStates) const
 
 const String& Animation::initialAnimationName()
 {
-    DEFINE_STATIC_LOCAL(String, initialValue, ("none"));
+    DEFINE_STATIC_LOCAL(String, initialValue, (ASCIILiteral("none")));
     return initialValue;
 }
 

@@ -910,7 +910,7 @@ String IconDatabase::databasePath() const
 
 String IconDatabase::defaultDatabaseFilename()
 {
-    DEFINE_STATIC_LOCAL(String, defaultDatabaseFilename, ("WebpageIcons.db"));
+    DEFINE_STATIC_LOCAL(String, defaultDatabaseFilename, (ASCIILiteral("WebpageIcons.db")));
     return defaultDatabaseFilename.isolatedCopy();
 }
 

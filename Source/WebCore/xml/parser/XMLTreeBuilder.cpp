@@ -334,11 +334,11 @@ void XMLTreeBuilder::processXMLEntity(const AtomicXMLToken& token)
     DEFINE_STATIC_LOCAL(AtomicString, gt, ("gt"));
     DEFINE_STATIC_LOCAL(AtomicString, lt, ("lt"));
     DEFINE_STATIC_LOCAL(AtomicString, quot, ("quot"));
-    DEFINE_STATIC_LOCAL(String, ampS, ("&"));
-    DEFINE_STATIC_LOCAL(String, aposS, ("'"));
-    DEFINE_STATIC_LOCAL(String, gtS, (">"));
-    DEFINE_STATIC_LOCAL(String, ltS, ("<"));
-    DEFINE_STATIC_LOCAL(String, quotS, ("\""));
+    DEFINE_STATIC_LOCAL(String, ampS, (ASCIILiteral("&")));
+    DEFINE_STATIC_LOCAL(String, aposS, (ASCIILiteral("'")));
+    DEFINE_STATIC_LOCAL(String, gtS, (ASCIILiteral(">")));
+    DEFINE_STATIC_LOCAL(String, ltS, (ASCIILiteral("<")));
+    DEFINE_STATIC_LOCAL(String, quotS, (ASCIILiteral("\"")));
 
     if (token.name() == amp)
         appendToText(ampS.characters(), 1);

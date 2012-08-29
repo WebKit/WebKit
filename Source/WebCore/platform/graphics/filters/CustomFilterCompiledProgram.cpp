@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-#define SHADER(Src) (#Src)
+#define SHADER(Src) (ASCIILiteral(#Src))
 
 String CustomFilterCompiledProgram::defaultVertexShaderString()
 {

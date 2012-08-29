@@ -68,8 +68,8 @@ bool ImageInputType::appendFormData(FormDataList& encoding, bool) const
         return true;
     }
 
-    DEFINE_STATIC_LOCAL(String, dotXString, (".x"));
-    DEFINE_STATIC_LOCAL(String, dotYString, (".y"));
+    DEFINE_STATIC_LOCAL(String, dotXString, (ASCIILiteral(".x")));
+    DEFINE_STATIC_LOCAL(String, dotYString, (ASCIILiteral(".y")));
     encoding.appendData(name + dotXString, m_clickLocation.x());
     encoding.appendData(name + dotYString, m_clickLocation.y());
 

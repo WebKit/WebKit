@@ -57,8 +57,8 @@ MediaStreamTrack::~MediaStreamTrack()
 
 String MediaStreamTrack::kind() const
 {
-    DEFINE_STATIC_LOCAL(String, audioKind, ("audio"));
-    DEFINE_STATIC_LOCAL(String, videoKind, ("video"));
+    DEFINE_STATIC_LOCAL(String, audioKind, (ASCIILiteral("audio")));
+    DEFINE_STATIC_LOCAL(String, videoKind, (ASCIILiteral("video")));
 
     switch (m_component->source()->type()) {
     case MediaStreamSource::TypeAudio:

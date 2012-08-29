@@ -899,7 +899,7 @@ bool CSPDirectiveList::checkSourceAndReportViolation(SourceListDirective* direct
 
 bool CSPDirectiveList::allowJavaScriptURLs(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute JavaScript URL because it violates the following Content Security Policy directive: "));
+    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute JavaScript URL because it violates the following Content Security Policy directive: ")));
     if (reportingStatus == ContentSecurityPolicy::SendReport) {
         return (checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, contextURL, contextLine)
                 && checkNonceAndReportViolation(m_scriptNonce.get(), String(), consoleMessage, contextURL, contextLine));
@@ -911,7 +911,7 @@ bool CSPDirectiveList::allowJavaScriptURLs(const String& contextURL, const WTF::
 
 bool CSPDirectiveList::allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute inline event handler because it violates the following Content Security Policy directive: "));
+    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute inline event handler because it violates the following Content Security Policy directive: ")));
     if (reportingStatus == ContentSecurityPolicy::SendReport) {
         return (checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, contextURL, contextLine)
                 && checkNonceAndReportViolation(m_scriptNonce.get(), String(), consoleMessage, contextURL, contextLine));
@@ -923,7 +923,7 @@ bool CSPDirectiveList::allowInlineEventHandlers(const String& contextURL, const 
 
 bool CSPDirectiveList::allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute inline script because it violates the following Content Security Policy directive: "));
+    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute inline script because it violates the following Content Security Policy directive: ")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
         checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, contextURL, contextLine) :
         checkInline(operativeDirective(m_scriptSrc.get()));
@@ -931,7 +931,7 @@ bool CSPDirectiveList::allowInlineScript(const String& contextURL, const WTF::Or
 
 bool CSPDirectiveList::allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to apply inline style because it violates the following Content Security Policy directive: "));
+    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to apply inline style because it violates the following Content Security Policy directive: ")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
         checkInlineAndReportViolation(operativeDirective(m_styleSrc.get()), consoleMessage, contextURL, contextLine) :
         checkInline(operativeDirective(m_styleSrc.get()));
@@ -939,7 +939,7 @@ bool CSPDirectiveList::allowInlineStyle(const String& contextURL, const WTF::Ord
 
 bool CSPDirectiveList::allowEval(PassRefPtr<ScriptCallStack> callStack, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to evaluate script because it violates the following Content Security Policy directive: "));
+    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to evaluate script because it violates the following Content Security Policy directive: ")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
         checkEvalAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, String(), WTF::OrdinalNumber::beforeFirst(), callStack) :
         checkEval(operativeDirective(m_scriptSrc.get()));
@@ -947,7 +947,7 @@ bool CSPDirectiveList::allowEval(PassRefPtr<ScriptCallStack> callStack, ContentS
 
 bool CSPDirectiveList::allowScriptNonce(const String& nonce, const String& contextURL, const WTF::OrdinalNumber& contextLine, const KURL& url) const
 {
-    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute script because it violates the following Content Security Policy directive: "));
+    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute script because it violates the following Content Security Policy directive: ")));
     if (url.isEmpty())
         return checkNonceAndReportViolation(m_scriptNonce.get(), nonce, consoleMessage, contextURL, contextLine);
     return checkNonceAndReportViolation(m_scriptNonce.get(), nonce, "Refused to load '" + url.string() + "' because it violates the following Content Security Policy directive: ", contextURL, contextLine);
@@ -962,7 +962,7 @@ bool CSPDirectiveList::allowPluginType(const String& type, const String& typeAtt
 
 bool CSPDirectiveList::allowScriptFromSource(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, ("script"));
+    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("script")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
         checkSourceAndReportViolation(operativeDirective(m_scriptSrc.get()), url, type) :
         checkSource(operativeDirective(m_scriptSrc.get()), url);
@@ -970,7 +970,7 @@ bool CSPDirectiveList::allowScriptFromSource(const KURL& url, ContentSecurityPol
 
 bool CSPDirectiveList::allowObjectFromSource(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, ("object"));
+    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("object")));
     if (url.isBlankURL())
         return true;
     return reportingStatus == ContentSecurityPolicy::SendReport ?
@@ -980,7 +980,7 @@ bool CSPDirectiveList::allowObjectFromSource(const KURL& url, ContentSecurityPol
 
 bool CSPDirectiveList::allowChildFrameFromSource(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, ("frame"));
+    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("frame")));
     if (url.isBlankURL())
         return true;
     return reportingStatus == ContentSecurityPolicy::SendReport ?
@@ -990,7 +990,7 @@ bool CSPDirectiveList::allowChildFrameFromSource(const KURL& url, ContentSecurit
 
 bool CSPDirectiveList::allowImageFromSource(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, ("image"));
+    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("image")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
         checkSourceAndReportViolation(operativeDirective(m_imgSrc.get()), url, type) :
         checkSource(operativeDirective(m_imgSrc.get()), url);
@@ -998,7 +998,7 @@ bool CSPDirectiveList::allowImageFromSource(const KURL& url, ContentSecurityPoli
 
 bool CSPDirectiveList::allowStyleFromSource(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, ("style"));
+    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("style")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
         checkSourceAndReportViolation(operativeDirective(m_styleSrc.get()), url, type) :
         checkSource(operativeDirective(m_styleSrc.get()), url);
@@ -1006,7 +1006,7 @@ bool CSPDirectiveList::allowStyleFromSource(const KURL& url, ContentSecurityPoli
 
 bool CSPDirectiveList::allowFontFromSource(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, ("font"));
+    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("font")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
         checkSourceAndReportViolation(operativeDirective(m_fontSrc.get()), url, type) :
         checkSource(operativeDirective(m_fontSrc.get()), url);
@@ -1014,7 +1014,7 @@ bool CSPDirectiveList::allowFontFromSource(const KURL& url, ContentSecurityPolic
 
 bool CSPDirectiveList::allowMediaFromSource(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, ("media"));
+    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("media")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
         checkSourceAndReportViolation(operativeDirective(m_mediaSrc.get()), url, type) :
         checkSource(operativeDirective(m_mediaSrc.get()), url);
@@ -1022,7 +1022,7 @@ bool CSPDirectiveList::allowMediaFromSource(const KURL& url, ContentSecurityPoli
 
 bool CSPDirectiveList::allowConnectToSource(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, ("connect"));
+    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("connect")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
         checkSourceAndReportViolation(operativeDirective(m_connectSrc.get()), url, type) :
         checkSource(operativeDirective(m_connectSrc.get()), url);
@@ -1036,7 +1036,7 @@ void CSPDirectiveList::gatherReportURIs(DOMStringList& list) const
 
 bool CSPDirectiveList::allowFormAction(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, ("form"));
+    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("form")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
         checkSourceAndReportViolation(m_formAction.get(), url, type) :
         checkSource(m_formAction.get(), url);
@@ -1166,21 +1166,21 @@ void CSPDirectiveList::applySandboxPolicy(const String& name, const String& sand
 
 void CSPDirectiveList::addDirective(const String& name, const String& value)
 {
-    DEFINE_STATIC_LOCAL(String, defaultSrc, ("default-src"));
-    DEFINE_STATIC_LOCAL(String, scriptSrc, ("script-src"));
-    DEFINE_STATIC_LOCAL(String, objectSrc, ("object-src"));
-    DEFINE_STATIC_LOCAL(String, frameSrc, ("frame-src"));
-    DEFINE_STATIC_LOCAL(String, imgSrc, ("img-src"));
-    DEFINE_STATIC_LOCAL(String, styleSrc, ("style-src"));
-    DEFINE_STATIC_LOCAL(String, fontSrc, ("font-src"));
-    DEFINE_STATIC_LOCAL(String, mediaSrc, ("media-src"));
-    DEFINE_STATIC_LOCAL(String, connectSrc, ("connect-src"));
-    DEFINE_STATIC_LOCAL(String, sandbox, ("sandbox"));
-    DEFINE_STATIC_LOCAL(String, reportURI, ("report-uri"));
+    DEFINE_STATIC_LOCAL(String, defaultSrc, (ASCIILiteral("default-src")));
+    DEFINE_STATIC_LOCAL(String, scriptSrc, (ASCIILiteral("script-src")));
+    DEFINE_STATIC_LOCAL(String, objectSrc, (ASCIILiteral("object-src")));
+    DEFINE_STATIC_LOCAL(String, frameSrc, (ASCIILiteral("frame-src")));
+    DEFINE_STATIC_LOCAL(String, imgSrc, (ASCIILiteral("img-src")));
+    DEFINE_STATIC_LOCAL(String, styleSrc, (ASCIILiteral("style-src")));
+    DEFINE_STATIC_LOCAL(String, fontSrc, (ASCIILiteral("font-src")));
+    DEFINE_STATIC_LOCAL(String, mediaSrc, (ASCIILiteral("media-src")));
+    DEFINE_STATIC_LOCAL(String, connectSrc, (ASCIILiteral("connect-src")));
+    DEFINE_STATIC_LOCAL(String, sandbox, (ASCIILiteral("sandbox")));
+    DEFINE_STATIC_LOCAL(String, reportURI, (ASCIILiteral("report-uri")));
 #if ENABLE(CSP_NEXT)
-    DEFINE_STATIC_LOCAL(String, formAction, ("form-action"));
-    DEFINE_STATIC_LOCAL(String, pluginTypes, ("plugin-types"));
-    DEFINE_STATIC_LOCAL(String, scriptNonce, ("script-nonce"));
+    DEFINE_STATIC_LOCAL(String, formAction, (ASCIILiteral("form-action")));
+    DEFINE_STATIC_LOCAL(String, pluginTypes, (ASCIILiteral("plugin-types")));
+    DEFINE_STATIC_LOCAL(String, scriptNonce, (ASCIILiteral("script-nonce")));
 #endif
 
     ASSERT(!name.isEmpty());

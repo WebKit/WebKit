@@ -482,7 +482,7 @@ bool XMLTokenizer::nextToken(SegmentedString& source, XMLToken& token)
     END_STATE()
 
     XML_BEGIN_STATE(ProcessingInstructionTargetStartState) {
-        DEFINE_STATIC_LOCAL(String, xmlString, ("xml"));
+        DEFINE_STATIC_LOCAL(String, xmlString, (ASCIILiteral("xml")));
         // FIXME: this probably shouldn't be case-insensitive, but I don't know if people try capitalizing it ever.
         if (cc == 'x' || cc == 'X') {
             SegmentedString::LookAheadResult result = source.lookAheadIgnoringCase(xmlString);
@@ -523,7 +523,7 @@ bool XMLTokenizer::nextToken(SegmentedString& source, XMLToken& token)
     END_STATE()
 
     XML_BEGIN_STATE(XMLDeclBeforeVersionNameState) {
-        DEFINE_STATIC_LOCAL(String, versionString, ("version"));
+        DEFINE_STATIC_LOCAL(String, versionString, (ASCIILiteral("version")));
         if (isTokenizerWhitespace(cc))
             XML_ADVANCE_TO(XMLDeclBeforeVersionNameState);
         else {
@@ -542,7 +542,7 @@ bool XMLTokenizer::nextToken(SegmentedString& source, XMLToken& token)
     EQ_BEFORE_VALUE_STATES(XMLDeclAfterVersionNameState, XMLDeclBeforeVersionValueState, XMLDeclBeforeVersionOnePointState)
 
     XML_BEGIN_STATE(XMLDeclBeforeVersionOnePointState) {
-        DEFINE_STATIC_LOCAL(String, onePointString, ("1."));
+        DEFINE_STATIC_LOCAL(String, onePointString, (ASCIILiteral("1.")));
         SegmentedString::LookAheadResult result = source.lookAhead(onePointString);
         if (result == SegmentedString::DidMatch) {
             source.advanceAndASSERT('1');
@@ -583,8 +583,8 @@ bool XMLTokenizer::nextToken(SegmentedString& source, XMLToken& token)
     END_STATE()
 
     XML_BEGIN_STATE(XMLDeclBeforeEncodingNameState) {
-        DEFINE_STATIC_LOCAL(String, encodingString, ("encoding"));
-        DEFINE_STATIC_LOCAL(String, standaloneString, ("standalone"));
+        DEFINE_STATIC_LOCAL(String, encodingString, (ASCIILiteral("encoding")));
+        DEFINE_STATIC_LOCAL(String, standaloneString, (ASCIILiteral("standalone")));
         if (isTokenizerWhitespace(cc))
             XML_ADVANCE_TO(XMLDeclBeforeEncodingNameState);
         else if (cc == 'e') {
@@ -646,7 +646,7 @@ bool XMLTokenizer::nextToken(SegmentedString& source, XMLToken& token)
     END_STATE()
 
     XML_BEGIN_STATE(XMLDeclBeforeStandaloneNameState) {
-        DEFINE_STATIC_LOCAL(String, standaloneString, ("standalone"));
+        DEFINE_STATIC_LOCAL(String, standaloneString, (ASCIILiteral("standalone")));
         if (isTokenizerWhitespace(cc))
             XML_ADVANCE_TO(XMLDeclBeforeStandaloneNameState);
         else if (cc == 's') {
@@ -666,8 +666,8 @@ bool XMLTokenizer::nextToken(SegmentedString& source, XMLToken& token)
     EQ_BEFORE_VALUE_STATES(XMLDeclAfterStandaloneNameState, XMLDeclBeforeStandaloneValueState, XMLDeclStandaloneValueQuotedState)
 
     XML_BEGIN_STATE(XMLDeclStandaloneValueQuotedState) {
-        DEFINE_STATIC_LOCAL(String, yesString, ("yes\""));
-        DEFINE_STATIC_LOCAL(String, noString, ("no\""));
+        DEFINE_STATIC_LOCAL(String, yesString, (ASCIILiteral("yes\"")));
+        DEFINE_STATIC_LOCAL(String, noString, (ASCIILiteral("no\"")));
         if (cc == 'y') {
             SegmentedString::LookAheadResult result = source.lookAhead(yesString);
             if (result == SegmentedString::DidMatch) {
@@ -765,9 +765,9 @@ bool XMLTokenizer::nextToken(SegmentedString& source, XMLToken& token)
     END_STATE()
 
     XML_BEGIN_STATE(MarkupDeclarationOpenState) {
-        DEFINE_STATIC_LOCAL(String, dashDashString, ("--"));
-        DEFINE_STATIC_LOCAL(String, doctypeString, ("doctype"));
-        DEFINE_STATIC_LOCAL(String, cdataString, ("[CDATA["));
+        DEFINE_STATIC_LOCAL(String, dashDashString, (ASCIILiteral("--")));
+        DEFINE_STATIC_LOCAL(String, doctypeString, (ASCIILiteral("doctype")));
+        DEFINE_STATIC_LOCAL(String, cdataString, (ASCIILiteral("[CDATA[")));
         if (cc == '-') {
             SegmentedString::LookAheadResult result = source.lookAhead(dashDashString);
             if (result == SegmentedString::DidMatch) {
@@ -874,8 +874,8 @@ bool XMLTokenizer::nextToken(SegmentedString& source, XMLToken& token)
             parseError();
             return emitEndOfFile(source);
         }
-        DEFINE_STATIC_LOCAL(String, publicString, ("public"));
-        DEFINE_STATIC_LOCAL(String, systemString, ("system"));
+        DEFINE_STATIC_LOCAL(String, publicString, (ASCIILiteral("public")));
+        DEFINE_STATIC_LOCAL(String, systemString, (ASCIILiteral("system")));
         if (cc == 'P' || cc == 'p') {
             SegmentedString::LookAheadResult result = source.lookAheadIgnoringCase(publicString);
             if (result == SegmentedString::DidMatch) {
@@ -1021,7 +1021,7 @@ bool XMLTokenizer::nextToken(SegmentedString& source, XMLToken& token)
     END_STATE()
 
     XML_BEGIN_STATE(CDATASectionState) {
-        DEFINE_STATIC_LOCAL(String, closeString, ("]]>"));
+        DEFINE_STATIC_LOCAL(String, closeString, (ASCIILiteral("]]>")));
         if (cc == ']') {
             SegmentedString::LookAheadResult result = source.lookAhead(closeString);
             if (result == SegmentedString::DidMatch) {

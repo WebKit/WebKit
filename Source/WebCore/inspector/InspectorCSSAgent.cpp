@@ -133,10 +133,10 @@ private:
 
 static unsigned computePseudoClassMask(InspectorArray* pseudoClassArray)
 {
-    DEFINE_STATIC_LOCAL(String, active, ("active"));
-    DEFINE_STATIC_LOCAL(String, hover, ("hover"));
-    DEFINE_STATIC_LOCAL(String, focus, ("focus"));
-    DEFINE_STATIC_LOCAL(String, visited, ("visited"));
+    DEFINE_STATIC_LOCAL(String, active, (ASCIILiteral("active")));
+    DEFINE_STATIC_LOCAL(String, hover, (ASCIILiteral("hover")));
+    DEFINE_STATIC_LOCAL(String, focus, (ASCIILiteral("focus")));
+    DEFINE_STATIC_LOCAL(String, visited, (ASCIILiteral("visited")));
     if (!pseudoClassArray || !pseudoClassArray->length())
         return PseudoNone;
 

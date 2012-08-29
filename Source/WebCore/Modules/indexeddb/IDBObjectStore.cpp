@@ -519,7 +519,8 @@ PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* contex
 PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, unsigned short direction, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::openCursor");
-    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Numeric direction values are deprecated in IDBObjectStore.openCursor. Use \"next\", \"nextunique\", \"prev\", or \"prevunique\"."));
+    // FIXME: Is this thread-safe?
+    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Numeric direction values are deprecated in IDBObjectStore.openCursor. Use \"next\", \"nextunique\", \"prev\", or \"prevunique\".")));
     context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, consoleMessage);
     const String& directionString = IDBCursor::directionToString(direction, ec);
     if (ec)

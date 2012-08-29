@@ -87,7 +87,8 @@ PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, Pas
 PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, unsigned short direction, ExceptionCode& ec)
 {
     IDB_TRACE("IDBIndex::openCursor");
-    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Numeric direction values are deprecated in IDBIndex.openCursor. Use \"next\", \"nextunique\", \"prev\", or \"prevunique\"."));
+    // FIXME: Is this thread-safe?
+    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Numeric direction values are deprecated in IDBIndex.openCursor. Use \"next\", \"nextunique\", \"prev\", or \"prevunique\".")));
     context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, consoleMessage);
     const String& directionString = IDBCursor::directionToString(direction, ec);
     if (ec)
@@ -170,7 +171,8 @@ PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, 
 PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, unsigned short direction, ExceptionCode& ec)
 {
     IDB_TRACE("IDBIndex::openKeyCursor");
-    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Numeric direction values are deprecated in IDBIndex.openKeyCursor. Use \"next\", \"nextunique\", \"prev\", or \"prevunique\"."));
+    // FIXME: Is this thread-safe?
+    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Numeric direction values are deprecated in IDBIndex.openKeyCursor. Use \"next\", \"nextunique\", \"prev\", or \"prevunique\".")));
     context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, consoleMessage);
     const String& directionString = IDBCursor::directionToString(direction, ec);
     if (ec)

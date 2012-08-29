@@ -594,7 +594,7 @@ PassRefPtr<Array<TypeBuilder::Debugger::CallFrame> > InspectorDebuggerAgent::cur
 
 String InspectorDebuggerAgent::sourceMapURLForScript(const Script& script)
 {
-    DEFINE_STATIC_LOCAL(String, sourceMapHttpHeader, ("X-SourceMap"));
+    DEFINE_STATIC_LOCAL(String, sourceMapHttpHeader, (ASCIILiteral("X-SourceMap")));
 
     String sourceMapURL = ContentSearchUtils::findSourceMapURL(script.source);
     if (!sourceMapURL.isEmpty())

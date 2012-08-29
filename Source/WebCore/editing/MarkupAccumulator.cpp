@@ -235,7 +235,7 @@ bool MarkupAccumulator::shouldAddNamespaceElement(const Element* element)
     if (prefix.isEmpty())
         return !element->hasAttribute(xmlnsAtom);
 
-    DEFINE_STATIC_LOCAL(String, xmlnsWithColon, ("xmlns:"));
+    DEFINE_STATIC_LOCAL(String, xmlnsWithColon, (ASCIILiteral("xmlns:")));
     return !element->hasAttribute(xmlnsWithColon + prefix);
 }
 

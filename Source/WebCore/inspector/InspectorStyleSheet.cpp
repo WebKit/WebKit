@@ -325,7 +325,7 @@ PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSComputedStyleProperty> > Insp
 bool InspectorStyle::setPropertyText(unsigned index, const String& propertyText, bool overwrite, String* oldText, ExceptionCode& ec)
 {
     ASSERT(m_parentStyleSheet);
-    DEFINE_STATIC_LOCAL(String, bogusPropertyName, ("-webkit-boguz-propertee"));
+    DEFINE_STATIC_LOCAL(String, bogusPropertyName, (ASCIILiteral("-webkit-boguz-propertee")));
 
     if (!m_parentStyleSheet->ensureParsedDataReady()) {
         ec = NOT_FOUND_ERR;
@@ -635,7 +635,7 @@ Vector<String> InspectorStyle::longhandProperties(const String& shorthandPropert
 
 NewLineAndWhitespace& InspectorStyle::newLineAndWhitespaceDelimiters() const
 {
-    DEFINE_STATIC_LOCAL(String, defaultPrefix, ("    "));
+    DEFINE_STATIC_LOCAL(String, defaultPrefix, (ASCIILiteral("    ")));
 
     if (m_formatAcquired)
         return m_format;

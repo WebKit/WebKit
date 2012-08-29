@@ -81,7 +81,7 @@ static const float defaultSearchFieldResultsButtonWidth = 18;
 // sizes (e.g. 15px). So, for now we just use Arial.
 const String& RenderThemeChromiumSkia::defaultGUIFont()
 {
-    DEFINE_STATIC_LOCAL(String, fontFace, ("Arial"));
+    DEFINE_STATIC_LOCAL(String, fontFace, (ASCIILiteral("Arial")));
     return fontFace;
 }
 

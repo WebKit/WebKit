@@ -215,7 +215,7 @@ void XSSAuditor::init()
         m_decodedURL = String();
 
     if (DocumentLoader* documentLoader = m_parser->document()->frame()->loader()->documentLoader()) {
-        DEFINE_STATIC_LOCAL(String, XSSProtectionHeader, ("X-XSS-Protection"));
+        DEFINE_STATIC_LOCAL(String, XSSProtectionHeader, (ASCIILiteral("X-XSS-Protection")));
         m_xssProtection = parseXSSProtectionHeader(documentLoader->response().httpHeaderField(XSSProtectionHeader));
 
         FormData* httpBody = documentLoader->originalRequest().httpBody();
@@ -256,7 +256,7 @@ void XSSAuditor::filterToken(HTMLToken& token)
 
     if (didBlockScript) {
         // FIXME: Consider using a more helpful console message.
-        DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request.\n"));
+        DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute a JavaScript script. Source code of script found within request.\n")));
         m_parser->document()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage);
 
         bool didBlockEntirePage = (m_xssProtection == XSSProtectionBlockEnabled);
@@ -433,7 +433,7 @@ bool XSSAuditor::filterFormToken(HTMLToken& token)
 
 bool XSSAuditor::eraseDangerousAttributesIfInjected(HTMLToken& token)
 {
-    DEFINE_STATIC_LOCAL(String, safeJavaScriptURL, ("javascript:void(0)"));
+    DEFINE_STATIC_LOCAL(String, safeJavaScriptURL, (ASCIILiteral("javascript:void(0)")));
 
     bool didBlockScript = false;
     for (size_t i = 0; i < token.attributes().size(); ++i) {

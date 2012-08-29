@@ -50,7 +50,7 @@ WebKit::WebClipboard::Buffer currentPasteboardBuffer()
 #if OS(WINDOWS)
 void replaceNewlinesWithWindowsStyleNewlines(String& str)
 {
-    DEFINE_STATIC_LOCAL(String, windowsNewline, ("\r\n"));
+    DEFINE_STATIC_LOCAL(String, windowsNewline, (ASCIILiteral("\r\n")));
     StringBuilder result;
     for (unsigned index = 0; index < str.length(); ++index) {
         if (str[index] != '\n' || (index > 0 && str[index - 1] == '\r'))
