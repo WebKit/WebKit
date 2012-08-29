@@ -35,6 +35,7 @@
 #include "RotateTransformOperation.h"
 #include "TextStream.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 #ifndef NDEBUG
@@ -323,10 +324,11 @@ void GraphicsLayer::paintGraphicsLayerContents(GraphicsContext& context, const I
 String GraphicsLayer::animationNameForTransition(AnimatedPropertyID property)
 {
     // | is not a valid identifier character in CSS, so this can never conflict with a keyframe identifier.
-    String id = "-|transition";
+    StringBuilder id;
+    id.appendLiteral("-|transition");
     id.append(static_cast<char>(property));
     id.append('-');
-    return id;
+    return id.toString();
 }
 
 void GraphicsLayer::suspendAnimations(double)

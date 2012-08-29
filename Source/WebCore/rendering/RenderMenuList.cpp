@@ -212,7 +212,7 @@ void RenderMenuList::setTextFromOption(int optionIndex)
     int size = listItems.size();
 
     int i = select->optionToListIndex(optionIndex);
-    String text = "";
+    String text = emptyString();
     if (i >= 0 && i < size) {
         Element* element = listItems[i];
         if (element->hasTagName(optionTag)) {

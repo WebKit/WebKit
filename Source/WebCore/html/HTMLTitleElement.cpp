@@ -29,6 +29,7 @@
 #include "RenderStyle.h"
 #include "StyleInheritedData.h"
 #include "Text.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -70,14 +71,14 @@ void HTMLTitleElement::childrenChanged(bool changedByParser, Node* beforeChange,
 
 String HTMLTitleElement::text() const
 {
-    String val = "";
-    
+    StringBuilder result;
+
     for (Node *n = firstChild(); n; n = n->nextSibling()) {
         if (n->isTextNode())
-            val += toText(n)->data();
+            result.append(toText(n)->data());
     }
 
-    return val;
+    return result.toString();
 }
 
 StringWithDirection HTMLTitleElement::textWithDirection()

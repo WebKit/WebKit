@@ -140,7 +140,7 @@ void PluginStream::startStream()
 
     if (m_resourceResponse.isHTTP()) {
         StringBuilder stringBuilder;
-        String separator(": ");
+        String separator = ASCIILiteral(": ");
 
         String statusLine = "HTTP " + String::number(m_resourceResponse.httpStatusCode()) + " OK\n";
         stringBuilder.append(statusLine);

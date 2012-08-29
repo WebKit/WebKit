@@ -51,6 +51,7 @@
 #include "SerializedScriptValue.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableLoader.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -210,20 +211,22 @@ void EventSource::didReceiveResponse(unsigned long, const ResourceResponse& resp
         // If we have a charset, the only allowed value is UTF-8 (case-insensitive).
         responseIsValid = charset.isEmpty() || equalIgnoringCase(charset, "UTF-8");
         if (!responseIsValid) {
-            String message = "EventSource's response has a charset (\"";
-            message += charset;
-            message += "\") that is not UTF-8. Aborting the connection.";
+            StringBuilder message;
+            message.appendLiteral("EventSource's response has a charset (\"");
+            message.append(charset);
+            message.appendLiteral("\") that is not UTF-8. Aborting the connection.");
             // FIXME: We are missing the source line.
-            scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
+            scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message.toString());
         }
     } else {
         // To keep the signal-to-noise ratio low, we only log 200-response with an invalid MIME type.
         if (statusCode == 200 && !mimeTypeIsValid) {
-            String message = "EventSource's response has a MIME type (\"";
-            message += response.mimeType();
-            message += "\") that is not \"text/event-stream\". Aborting the connection.";
+            StringBuilder message;
+            message.appendLiteral("EventSource's response has a MIME type (\"");
+            message.append(response.mimeType());
+            message.appendLiteral("\") that is not \"text/event-stream\". Aborting the connection.");
             // FIXME: We are missing the source line.
-            scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
+            scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message.toString());
         }
     }
 

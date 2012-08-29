@@ -54,7 +54,7 @@ static USet* getSmartSet(bool isPreviousCharacter)
     if (!smartSet) {
         // Whitespace and newline (kCFCharacterSetWhitespaceAndNewline)
         UErrorCode ec = U_ZERO_ERROR;
-        String whitespaceAndNewline = "[[:WSpace:] [\\u000A\\u000B\\u000C\\u000D\\u0085]]";
+        String whitespaceAndNewline = ASCIILiteral("[[:WSpace:] [\\u000A\\u000B\\u000C\\u000D\\u0085]]");
         smartSet = uset_openPattern(whitespaceAndNewline.characters(), whitespaceAndNewline.length(), &ec);
         ASSERT(U_SUCCESS(ec));
 
@@ -71,14 +71,14 @@ static USet* getSmartSet(bool isPreviousCharacter)
         uset_addRange(smartSet, 0x2F800, 0x2F800 + 0x021E); // CJK Compatibility Ideographs (0x2F800 - 0x2FA1D)
 
         if (isPreviousCharacter) {
-            addAllCodePoints(smartSet, "([\"\'#$/-`{");
+            addAllCodePoints(smartSet, ASCIILiteral("([\"\'#$/-`{"));
             preSmartSet = smartSet;
         } else {
-            addAllCodePoints(smartSet, ")].,;:?\'!\"%*-/}");
+            addAllCodePoints(smartSet, ASCIILiteral(")].,;:?\'!\"%*-/}"));
 
             // Punctuation (kCFCharacterSetPunctuation)
             UErrorCode ec = U_ZERO_ERROR;
-            String punctuationClass = "[:P:]";
+            String punctuationClass = ASCIILiteral("[:P:]");
             USet* icuPunct = uset_openPattern(punctuationClass.characters(), punctuationClass.length(), &ec);
             ASSERT(U_SUCCESS(ec));
             uset_addAll(smartSet, icuPunct);

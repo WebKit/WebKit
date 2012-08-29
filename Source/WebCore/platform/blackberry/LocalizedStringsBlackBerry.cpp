@@ -66,7 +66,7 @@ static String platformLanguage()
     // getLocale() returns a POSIX locale which uses '_' to separate language and country.
     // However, we use '-' instead of '_' in WebCore (e.g. en_us should read en-us)
     size_t underscorePosition = lang.find('_');
-    String replaceWith = "-";
+    String replaceWith = ASCIILiteral("-");
     if (underscorePosition != notFound)
         return lang.replace(underscorePosition, replaceWith.length(), replaceWith);
     return lang;

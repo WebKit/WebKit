@@ -145,10 +145,10 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     // Call with 4 arguments instead of 3, pass additional null as the last parameter.
     // By calling the function with 4 arguments, we create a setter on arguments object
     // which would shadow property "3" on the prototype.
-    String code = "(function() {" \
+    String code = ASCIILiteral("(function() {" \
         "with (this[2]) {" \
         "with (this[1]) {" \
-        "with (this[0]) {";
+        "with (this[0]) {");
     code.append("return function(");
     code.append(m_eventParameterName);
     code.append(") {");
@@ -219,7 +219,7 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     if (!toStringTemplate.IsEmpty())
         toStringFunction = toStringTemplate->GetFunction();
     if (!toStringFunction.IsEmpty()) {
-        String toStringResult = "function ";
+        String toStringResult = ASCIILiteral("function ");
         toStringResult.append(m_functionName);
         toStringResult.append("(");
         toStringResult.append(m_eventParameterName);

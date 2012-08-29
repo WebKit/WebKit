@@ -198,7 +198,7 @@ String directoryName(const String& path)
 
 static String bundleName()
 {
-    static String name = "WebKit";
+    DEFINE_STATIC_LOCAL(String, name, (ASCIILiteral("WebKit")));
 
 #if USE(CF)
     static bool initialized;
@@ -224,7 +224,7 @@ static String storageDirectory(DWORD pathIdentifier)
     buffer.resize(wcslen(buffer.data()));
     String directory = String::adopt(buffer);
 
-    static const String companyNameDirectory = "Apple Computer\\";
+    DEFINE_STATIC_LOCAL(String, companyNameDirectory, (ASCIILiteral("Apple Computer\\")));
     directory = pathByAppendingComponent(directory, companyNameDirectory + bundleName());
     if (!makeAllDirectories(directory))
         return String();

@@ -139,7 +139,7 @@ static bool executeToggleStyleInList(Frame* frame, EditorCommandSource source, E
         return false;
 
     RefPtr<CSSValue> selectedCSSValue = selectionStyle->style()->getPropertyCSSValue(propertyID);
-    String newStyle = "none";
+    String newStyle = ASCIILiteral("none");
     if (selectedCSSValue->isValueList()) {
         RefPtr<CSSValueList> selectedCSSValueList = static_cast<CSSValueList*>(selectedCSSValue.get());
         if (!selectedCSSValueList->removeAll(value))

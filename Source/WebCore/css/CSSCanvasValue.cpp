@@ -29,6 +29,7 @@
 #include "ImageBuffer.h"
 #include "MemoryInstrumentation.h"
 #include "RenderObject.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -40,9 +41,11 @@ CSSCanvasValue::~CSSCanvasValue()
 
 String CSSCanvasValue::customCssText() const
 {
-    String result = "-webkit-canvas(";
-    result += m_name  + ")";
-    return result;
+    StringBuilder result;
+    result.appendLiteral("-webkit-canvas(");
+    result.append(m_name);
+    result.append(')');
+    return result.toString();
 }
 
 void CSSCanvasValue::canvasChanged(HTMLCanvasElement*, const FloatRect& changedRect)

@@ -249,7 +249,7 @@ void InspectorConsoleAgent::didFailLoading(unsigned long identifier, const Resou
         return;
     if (error.isCancellation()) // Report failures only.
         return;
-    String message = "Failed to load resource";
+    String message = ASCIILiteral("Failed to load resource");
     if (!error.localizedDescription().isEmpty())
         message += ": " + error.localizedDescription();
     String requestId = IdentifiersFactory::requestId(identifier);

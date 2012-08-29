@@ -229,7 +229,7 @@ PassRefPtr<SessionDescription> PeerConnection00::remoteDescription()
 
 PassRefPtr<IceOptions> PeerConnection00::createIceOptions(const Dictionary& dictionary, ExceptionCode& ec)
 {
-    String useCandidates = "";
+    String useCandidates = emptyString();
     dictionary.get("use_candidates", useCandidates);
 
     IceOptions::UseCandidatesOption option;

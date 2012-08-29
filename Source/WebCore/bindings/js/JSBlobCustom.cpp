@@ -76,7 +76,7 @@ EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
         return throwVMError(exec, createTypeError(exec, "First argument of the constructor is not of type Array"));
 
     String type;
-    String endings = "transparent";
+    String endings = ASCIILiteral("transparent");
 
     if (exec->argumentCount() > 1) {
         JSValue blobPropertyBagValue = exec->argument(1);

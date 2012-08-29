@@ -230,6 +230,8 @@ String RSSAtomParser::parseContent(const String& base, xmlNode* node)
     // See: http://tools.ietf.org/html/rfc4287#page-16
 
     BLACKBERRY_ASSERT(node);
+    // Why does Blackberry have its own RSS parser?
+    // FIXME: content should be a StringBuilder.
     String content;
     String type = "default";
     String src;

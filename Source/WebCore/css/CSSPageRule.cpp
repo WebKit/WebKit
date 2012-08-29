@@ -55,14 +55,17 @@ CSSStyleDeclaration* CSSPageRule::style() const
 
 String CSSPageRule::selectorText() const
 {
-    String text = "@page";
+    StringBuilder text;
+    text.appendLiteral("@page");
     const CSSSelector* selector = m_pageRule->selector();
     if (selector) {
         String pageSpecification = selector->selectorText();
-        if (!pageSpecification.isEmpty() && pageSpecification != starAtom)
-            text += " " + pageSpecification;
+        if (!pageSpecification.isEmpty() && pageSpecification != starAtom) {
+            text.append(' ');
+            text.append(pageSpecification);
+        }
     }
-    return text;
+    return text.toString();
 }
 
 void CSSPageRule::setSelectorText(const String& selectorText)

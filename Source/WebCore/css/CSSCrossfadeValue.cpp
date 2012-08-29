@@ -35,6 +35,7 @@
 #include "RenderObject.h"
 #include "StyleCachedImage.h"
 #include "StyleGeneratedImage.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -85,12 +86,15 @@ CSSCrossfadeValue::~CSSCrossfadeValue()
 
 String CSSCrossfadeValue::customCssText() const
 {
-    String result = "-webkit-cross-fade(";
-    result += m_fromValue->cssText() + ", ";
-    result += m_toValue->cssText() + ", ";
-    result += m_percentageValue->cssText();
-    result += ")";
-    return result;
+    StringBuilder result;
+    result.appendLiteral("-webkit-cross-fade(");
+    result.append(m_fromValue->cssText());
+    result.appendLiteral(", ");
+    result.append(m_toValue->cssText());
+    result.appendLiteral(", ");
+    result.append(m_percentageValue->cssText());
+    result.append(')');
+    return result.toString();
 }
 
 IntSize CSSCrossfadeValue::fixedSize(const RenderObject* renderer)

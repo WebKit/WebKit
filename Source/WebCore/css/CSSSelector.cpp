@@ -33,6 +33,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -515,16 +516,16 @@ bool CSSSelector::operator==(const CSSSelector& other)
 
 String CSSSelector::selectorText() const
 {
-    String str = "";
+    StringBuilder str;
 
     const AtomicString& prefix = m_tag.prefix();
     const AtomicString& localName = m_tag.localName();
     if (m_match == CSSSelector::None || !prefix.isNull() || localName != starAtom) {
         if (prefix.isNull())
-            str = localName;
+            str.append(localName);
         else {
-            str = prefix.string();
-            str.append("|");
+            str.append(prefix.string());
+            str.append('|');
             str.append(localName);
         }
     }
@@ -532,82 +533,82 @@ String CSSSelector::selectorText() const
     const CSSSelector* cs = this;
     while (true) {
         if (cs->m_match == CSSSelector::Id) {
-            str += "#";
+            str.append('#');
             serializeIdentifier(cs->value(), str);
         } else if (cs->m_match == CSSSelector::Class) {
-            str += ".";
+            str.append('.');
             serializeIdentifier(cs->value(), str);
         } else if (cs->m_match == CSSSelector::PseudoClass || cs->m_match == CSSSelector::PagePseudoClass) {
-            str += ":";
-            str += cs->value();
+            str.append(':');
+            str.append(cs->value());
 
             switch (cs->pseudoType()) {
             case PseudoNot:
                 if (CSSSelectorList* selectorList = cs->selectorList())
-                    str += selectorList->first()->selectorText();
-                str += ")";
+                    str.append(selectorList->first()->selectorText());
+                str.append(')');
                 break;
             case PseudoLang:
             case PseudoNthChild:
             case PseudoNthLastChild:
             case PseudoNthOfType:
             case PseudoNthLastOfType:
-                str += cs->argument();
-                str += ")";
+                str.append(cs->argument());
+                str.append(')');
                 break;
             case PseudoAny: {
                 CSSSelector* firstSubSelector = cs->selectorList()->first();
                 for (CSSSelector* subSelector = firstSubSelector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
                     if (subSelector != firstSubSelector)
-                        str += ",";
-                    str += subSelector->selectorText();
+                        str.append(',');
+                    str.append(subSelector->selectorText());
                 }
-                str += ")";
+                str.append(')');
                 break;
             }
             default:
                 break;
             }
         } else if (cs->m_match == CSSSelector::PseudoElement) {
-            str += "::";
-            str += cs->value();
+            str.appendLiteral("::");
+            str.append(cs->value());
         } else if (cs->isAttributeSelector()) {
-            str += "[";
+            str.append('[');
             const AtomicString& prefix = cs->attribute().prefix();
             if (!prefix.isNull()) {
                 str.append(prefix);
                 str.append("|");
             }
-            str += cs->attribute().localName();
+            str.append(cs->attribute().localName());
             switch (cs->m_match) {
                 case CSSSelector::Exact:
-                    str += "=";
+                    str.append('=');
                     break;
                 case CSSSelector::Set:
                     // set has no operator or value, just the attrName
-                    str += "]";
+                    str.append(']');
                     break;
                 case CSSSelector::List:
-                    str += "~=";
+                    str.appendLiteral("~=");
                     break;
                 case CSSSelector::Hyphen:
-                    str += "|=";
+                    str.appendLiteral("|=");
                     break;
                 case CSSSelector::Begin:
-                    str += "^=";
+                    str.appendLiteral("^=");
                     break;
                 case CSSSelector::End:
-                    str += "$=";
+                    str.appendLiteral("$=");
                     break;
                 case CSSSelector::Contain:
-                    str += "*=";
+                    str.appendLiteral("*=");
                     break;
                 default:
                     break;
             }
             if (cs->m_match != CSSSelector::Set) {
                 serializeString(cs->value(), str);
-                str += "]";
+                str.append(']');
             }
         }
         if (cs->relation() != CSSSelector::SubSelector || !cs->tagHistory())
@@ -618,19 +619,20 @@ String CSSSelector::selectorText() const
     if (CSSSelector* tagHistory = cs->tagHistory()) {
         String tagHistoryText = tagHistory->selectorText();
         if (cs->relation() == CSSSelector::DirectAdjacent)
-            str = tagHistoryText + " + " + str;
+            return tagHistoryText + " + " + str.toString();
         else if (cs->relation() == CSSSelector::IndirectAdjacent)
-            str = tagHistoryText + " ~ " + str;
+            return tagHistoryText + " ~ " + str.toString();
         else if (cs->relation() == CSSSelector::Child)
-            str = tagHistoryText + " > " + str;
+            return tagHistoryText + " > " + str.toString();
         else if (cs->relation() == CSSSelector::ShadowDescendant)
-            str = tagHistoryText + str;
-        else
+            return tagHistoryText + str.toString();
+        else {
             // Descendant
-            str = tagHistoryText + " " + str;
+            return tagHistoryText + " " + str.toString();
+        }
     }
 
-    return str;
+    return str.toString();
 }
 
 void CSSSelector::setAttribute(const QualifiedName& value)

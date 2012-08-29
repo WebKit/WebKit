@@ -794,7 +794,7 @@ static void fillContainerFromString(ContainerNode* paragraph, const String& stri
 
     Vector<String> tabList;
     string.split('\t', true, tabList);
-    String tabText = "";
+    String tabText = emptyString();
     bool first = true;
     size_t numEntries = tabList.size();
     for (size_t i = 0; i < numEntries; ++i) {
@@ -805,7 +805,7 @@ static void fillContainerFromString(ContainerNode* paragraph, const String& stri
             if (!tabText.isEmpty()) {
                 paragraph->appendChild(createTabSpanElement(document, tabText), ec);
                 ASSERT(!ec);
-                tabText = "";
+                tabText = emptyString();
             }
             RefPtr<Node> textNode = document->createTextNode(stringWithRebalancedWhitespace(s, first, i + 1 == numEntries));
             paragraph->appendChild(textNode.release(), ec);
