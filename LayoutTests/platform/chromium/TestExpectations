@@ -872,14 +872,42 @@ WONTFIX SKIP : fast/js/document-all-between-frames.html = TEXT
 // Chromium doesn't use fullscreen-specific media controls
 WONTFIX SKIP : media/video-controls-fullscreen-volume.html = TEXT
 
-// ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS) isn't enabled for Android (WK94186).
-WONTFIX SKIP ANDROID : fast/forms/time-multiple-fields = PASS
-
 // Test fails because it's trying to load a plugin we don't have. We probably don't need to fix this.
 WONTFIX : platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html = TEXT
 
 // This test is only for GTK which is not applicable to Android.
 WONTFIX ANDROID SKIP : platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html = TEXT
+
+// The following features are not enabled on Android.
+// Some bigger whole directories (plugins, webgl, inspector, etc.) are skipped in chromium_android.py.
+BUGCR145338 WONTFIX ANDROID SKIP : fast/forms/time-multiple-fields = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : fast/forms/color = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : fast/forms/datalist = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : fast/forms/date = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : fast/mediastream = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : fast/notifications = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : fast/speech = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : webaudio = PASS
+
+// Skip tests depending on plugins that is not available on Android.
+// The whole directories of plugins, http/tests/plugins, etc. are skipped in chromium_android.py.
+BUGCR145338 WONTFIX ANDROID SKIP : fast/dom/Window/Plug-ins.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : fast/frames/sandboxed-iframe-about-blank.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : fast/frames/sandboxed-iframe-navigation-allowed.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : fast/frames/sandboxed-iframe-plugins.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : fast/replaced/invalid-object-with-fallback.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : fast/replaced/object-with-embed-url-param.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-data.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-url.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-url.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/object-src-url-allowed.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/object-src-url-blocked.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : platform/chromium/permissionclient/plugin-permission.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : userscripts/user-script-plugin-document.html = PASS
 
 // -----------------------------------------------------------------
 // TESTS TO FIX
@@ -1384,7 +1412,7 @@ BUGWK73912 : accessibility/aria-checkbox-sends-notification.html = TEXT PASS
 WONTFIX : platform/chromium/virtual/gpu/canvas/philip/tests/2d.shadow.blur.low.html = PASS TIMEOUT
 
 // This test is overly-finicky about pixel values.
-BUGWK64876 LINUX ANDROID WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
+BUGWK64876 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
 
 BUGWK75276 : fast/repaint/shadow-multiple-horizontal.html = IMAGE
 BUGWK75276 : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
@@ -1838,8 +1866,8 @@ BUGWK94246 : platform/chromium/virtual/gpu/fast/canvas/canvas-ImageData-behaviou
 
 BUGWK45991 : canvas/philip/tests/2d.pattern.image.broken.html = TEXT
 BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.image.broken.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
-BUGWK45991 LINUX ANDROID WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
+BUGWK45991 LINUX ANDROID WIN : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
 
 // Update canvas/philip in WK r71481
 BUGCR62301 : canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT
@@ -1882,21 +1910,21 @@ BUGWK45991 : canvas/philip/tests/2d.text.measure.width.space.html = TEXT
 BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.measure.width.space.html = TEXT
 
 // These tests fail everywhere we use skia and are most likely skia bugs
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.outside3.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arc.angle.3.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arc.angle.5.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arcTo.shape.curve1.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arcTo.shape.curve2.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
-BUGWK45991 LINUX ANDROID WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.outside3.html = TEXT
-BUGWK45991 LINUX ANDROID WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.path.arc.angle.3.html = TEXT
-BUGWK45991 LINUX ANDROID WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.path.arc.angle.5.html = TEXT
-BUGWK45991 LINUX ANDROID WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html = TEXT
-BUGWK45991 LINUX ANDROID WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html = TEXT
-BUGWK45991 LINUX ANDROID WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = TEXT
+BUGWK45991 LINUX ANDROID WIN : canvas/philip/tests/2d.gradient.radial.outside3.html = TEXT
+BUGWK45991 LINUX ANDROID WIN : canvas/philip/tests/2d.path.arc.angle.3.html = TEXT
+BUGWK45991 LINUX ANDROID WIN : canvas/philip/tests/2d.path.arc.angle.5.html = TEXT
+BUGWK45991 LINUX ANDROID WIN : canvas/philip/tests/2d.path.arcTo.shape.curve1.html = TEXT
+BUGWK45991 LINUX ANDROID WIN : canvas/philip/tests/2d.path.arcTo.shape.curve2.html = TEXT
+BUGWK45991 LINUX ANDROID WIN : canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html = TEXT
+BUGWK45991 LINUX ANDROID WIN : canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html = TEXT
+BUGWK45991 LINUX ANDROID WIN : canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = TEXT
+BUGWK45991 LINUX ANDROID WIN : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.outside3.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.path.arc.angle.3.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.path.arc.angle.5.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = TEXT
 
 // Chromium does not support cancel for notifications permissions.
 BUGWK42798 SKIP : fast/notifications/notifications-cancel-request-permission.html = PASS
@@ -2000,7 +2028,7 @@ BUGWK91431 : platform/chromium/virtual/gpu/fast/canvas/webgl/framebuffer-object-
 BUGWK91431 : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-uniform-arrays.html = TEXT
 BUGWK91431 : platform/chromium/virtual/gpu/fast/canvas/webgl/point-size.html = TEXT
 BUGWK91431 LINUX MAC : fast/canvas/webgl/gl-object-get-calls.html = TEXT
-BUGWK91431 LINUX ANDROID MAC : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-object-get-calls.html = TEXT
+BUGWK91431 LINUX MAC : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-object-get-calls.html = TEXT
 
 // These were not fixed by the Mesa 7.9 upgrade. Need to investigate.
 BUGCR60651 WIN : fast/canvas/webgl/gl-object-get-calls.html = PASS TIMEOUT TEXT
@@ -2168,7 +2196,7 @@ BUGCR67540 LINUX ANDROID WIN SNOWLEOPARD : fast/repaint/text-emphasis-h.html = I
 BUGCR67540 LINUX ANDROID : fast/repaint/text-emphasis-v.html = IMAGE
 
 BUGCR67442 LINUX WIN : fast/canvas/fillText-shadow.html = TEXT
-BUGCR67442 LINUX ANDROID WIN : platform/chromium/virtual/gpu/fast/canvas/fillText-shadow.html = TEXT
+BUGCR67442 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/fillText-shadow.html = TEXT
 
 BUGCR68436 LINUX ANDROID DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT
 BUGCR68436 MAC WIN DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = TIMEOUT TEXT
@@ -3102,7 +3130,7 @@ BUGWK85951 WIN DEBUG : fast/css/hover-update.html = TEXT PASS
 BUGWK85958 : fast/forms/file/file-input-capture.html = TEXT
 
 // Started flaking at around http://trac.webkit.org/changeset/116278.
-BUGWK85950 LINUX ANDROID DEBUG : compositing/geometry/limit-layer-bounds-transformed-overflow.html = PASS TEXT
+BUGWK85950 LINUX DEBUG : compositing/geometry/limit-layer-bounds-transformed-overflow.html = PASS TEXT
 
 BUGWK81416 : fast/dom/wrapper-scope.html = TEXT
 
@@ -3189,7 +3217,7 @@ BUGWK91489 : fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html = IMAGE
 BUGWK87652 SKIP : http/tests/appcache/load-from-appcache-defer-resume-crash.html = PASS
 
 // A few pixels off from the baseline, added by r118567.
-BUGWK87653 WIN LINUX ANDROID : compositing/geometry/composited-in-columns.html = IMAGE+TEXT
+BUGWK87653 WIN LINUX : compositing/geometry/composited-in-columns.html = IMAGE+TEXT
 
 // Fails with a mismatch in $("menulist").selectedIndex
 BUGWK87748 MAC : fast/forms/select/optgroup-clicking.html = TEXT
@@ -3464,6 +3492,8 @@ BUGWK95167 : fast/overflow/paged-x-div-with-column-gap.html = IMAGE IMAGE+TEXT T
 
 BUGWK94793 : fast/notifications/notifications-event-listener-crash.html = TEXT PASS
 
+BUGCR144536 WONTFIX ANDROID : editing/selection/context-menu-on-text.html = TEXT
+BUGCR144536 WONTFIX ANDROID : editing/selection/context-menu-text-selection.html = TEXT
 BUGCR144536 WONTFIX ANDROID : fast/dom/HTMLSelectElement/select-selectedOptions.html = TEXT
 BUGCR144536 WONTFIX ANDROID : fast/events/select-element.html = TEXT
 BUGCR144536 WONTFIX ANDROID : fast/forms/listbox-clip.html = TEXT
@@ -3471,6 +3501,8 @@ BUGCR144536 WONTFIX ANDROID : fast/forms/listbox-deselect-scroll.html = TEXT
 BUGCR144536 WONTFIX ANDROID : fast/forms/listbox-onchange.html = TEXT
 BUGCR144536 WONTFIX ANDROID : fast/forms/listbox-select-all.html = TEXT
 BUGCR144536 WONTFIX ANDROID : fast/forms/listbox-selection.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/listbox-selection-2.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/listbox-typeahead-scroll.html = TEXT
 BUGCR144536 WONTFIX ANDROID : fast/forms/option-mouseevents.html = TEXT
 BUGCR144536 WONTFIX ANDROID : fast/forms/select-cache-desynchronization.html = TEXT
 BUGCR144536 WONTFIX ANDROID : fast/forms/select-clientheight-large-size.html = TEXT
@@ -3482,10 +3514,20 @@ BUGCR144536 WONTFIX ANDROID : fast/forms/select-multiple-elements-with-mouse-dra
 BUGCR144536 WONTFIX ANDROID : fast/forms/select-multiple-elements-with-mouse-drag.html = TEXT
 BUGCR144536 WONTFIX ANDROID : fast/forms/select/listbox-drag-in-non-multiple.html = TEXT
 BUGCR144536 WONTFIX ANDROID : fast/forms/select/listbox-in-multi-column.html = TEXT
+BUGCR144536 WONTFIX ANDROID : fast/forms/select/option-selecting.html = TEXT
 BUGCR144536 WONTFIX ANDROID : fast/forms/select/optgroup-clicking.html = TEXT
 BUGCR144536 WONTFIX ANDROID : fast/forms/select/optgroup-rendering.html = TEXT
 BUGCR144536 WONTFIX ANDROID : fast/repaint/select-option-background-color.html = TEXT
+BUGCR144536 WONTFIX ANDROID : scrollbars/custom-scrollbar-with-incomplete-style.html = TEXT
 BUGCR144536 WONTFIX ANDROID : scrollbars/listbox-scrollbar-combinations.html = TEXT
+
+BUGCR145084 ANDROID : platform/chromium/virtual/gpu/canvas/philip = PASS TEXT
+BUGCR145084 ANDROID : platform/chromium/virtual/gpu/fast/canvas = PASS TEXT TIMEOUT
+
+BUGCR145087 ANDROID : compositing/geometry/composited-in-columns.html = TEXT
+BUGCR145087 ANDROID : compositing/geometry/fixed-position-composited-switch.html = TEXT
+BUGCR145087 ANDROID : compositing/overflow/nested-scrolling.html = TEXT
+BUGCR145087 ANDROID : compositing/reflections/nested-reflection-animated.html = TEXT PASS
 
 // Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=84286
 BUGWK84286 : editing/deleting/type-delete-after-quote.html = TEXT

@@ -1,3 +1,18 @@
+2012-08-28  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Upstream layout test expectations (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=95212
+
+        Reviewed by Adam Barth.
+
+        Update test expectations for Android:
+        - 2d canvas tests (both gpu and non-gpu path)
+        - compositing tests
+        - more WONTFIXes for control behavior tests
+        - skip features not enabled on Android
+
+        * platform/chromium/TestExpectations:
+
 2012-08-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         Implement AccessibilityUIElement::titleUIElement() and AccessibilityUIElement::stringValue()

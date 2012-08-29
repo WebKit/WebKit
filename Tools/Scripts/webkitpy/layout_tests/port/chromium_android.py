@@ -146,7 +146,6 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         'chromium-linux',
         'chromium-win',
         'chromium',
-        'win',
         'mac',
     ]
 
@@ -234,12 +233,8 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def skipped_layout_tests(self, test_list):
         # This method is more convenient to skip whole directories than SKIP in TestExpectations
         # because its higher priority.
-        # Still use TestExpectations to skip individual tests.
-        return self._real_tests([
-            # Only run these tests as virtual gpu tests.
-            'canvas/philip',
-            'fast/canvas',
-
+        # Still use TestExpectations to skip individual tests and small directories.
+        skipped_tests = self._real_tests([
             # Skip tests of other platforms to save time.
             'platform/gtk',
             'platform/mac',
@@ -247,7 +242,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
             'platform/qt',
             'platform/win',
 
-            # Features not supported.
+            # Features not supported: http://crbug.com/145338.
             'compositing/plugins',
             'plugins',
             'http/tests/plugins',
@@ -261,13 +256,14 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
 
             'accessibility',
             'platform/chromium/accessibility',
-
-            'fast/dom/MediaStream',
-            'fast/mediastream',
-            'fast/notifications',
-            'fast/speech',
-            'webaudio',
         ])
+
+        # Skip webgl tests: http://crbug.com/135877.
+        fast_canvas_webgl_tests = self._real_tests(['fast/canvas/webgl'])
+        return (skipped_tests |
+                fast_canvas_webgl_tests |
+                self._real_tests(['http/tests/canvas/webgl']) |
+                set(['platform/chromium/virtual/gpu/' + f for f in fast_canvas_webgl_tests]))
 
     def create_driver(self, worker_number, no_timeout=False):
         # We don't want the default DriverProxy which is not compatible with our driver.

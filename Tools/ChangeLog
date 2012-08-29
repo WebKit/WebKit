@@ -1,3 +1,23 @@
+2012-08-28  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Upstream layout test expectations (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=95212
+
+        Reviewed by Adam Barth.
+
+        - Now run both gpu path and non-gpu path of 2d canvas layout tests
+        because both are used in chromium-android.
+
+        - Exclude all webgl tests because webgl is not enabled yet.
+
+        - Removed 'win' from the baseline fallback list. This was a mistake.
+
+        - Moved some small directories to TestExpectations from skipped_layout_tests().
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort):
+        (ChromiumAndroidPort.skipped_layout_tests):
+
 2012-08-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         Implement AccessibilityUIElement::titleUIElement() and AccessibilityUIElement::stringValue()
