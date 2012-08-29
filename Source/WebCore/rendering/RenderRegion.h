@@ -104,6 +104,8 @@ protected:
     void setRegionObjectsRegionStyle();
     void restoreRegionObjectsOriginalStyle();
 
+    LayoutRect overflowRectForFlowThreadPortion(LayoutRect flowThreadPortionRect, bool isFirstPortion, bool isLastPortion) const;
+
 private:
     virtual const char* renderName() const { return "RenderRegion"; }
 

@@ -64,13 +64,18 @@ LayoutUnit RenderRegion::logicalHeightForFlowThreadContent() const
 
 LayoutRect RenderRegion::flowThreadPortionOverflowRect() const
 {
+    return overflowRectForFlowThreadPortion(flowThreadPortionRect(), isFirstRegion(), isLastRegion());
+}
+
+LayoutRect RenderRegion::overflowRectForFlowThreadPortion(LayoutRect flowThreadPortionRect, bool isFirstPortion, bool isLastPortion) const
+{
     // FIXME: Would like to just use hasOverflowClip() but we aren't a block yet. When RenderRegion is eliminated and
     // folded into RenderBlock, switch to hasOverflowClip().
     bool clipX = style()->overflowX() != OVISIBLE;
     bool clipY = style()->overflowY() != OVISIBLE;
-    bool isLastRegionWithRegionOverflowBreak = (isLastRegion() && (style()->regionOverflow() == BreakRegionOverflow));
+    bool isLastRegionWithRegionOverflowBreak = (isLastPortion && (style()->regionOverflow() == BreakRegionOverflow));
     if ((clipX && clipY) || !isValid() || !m_flowThread || isLastRegionWithRegionOverflowBreak)
-        return flowThreadPortionRect();
+        return flowThreadPortionRect;
 
     LayoutRect flowThreadOverflow = m_flowThread->visualOverflowRect();
 
@@ -78,16 +83,16 @@ LayoutRect RenderRegion::flowThreadPortionOverflowRect() const
     LayoutUnit outlineSize = maximalOutlineSize(PaintPhaseOutline);
     LayoutRect clipRect;
     if (m_flowThread->isHorizontalWritingMode()) {
-        LayoutUnit minY = isFirstRegion() ? (flowThreadOverflow.y() - outlineSize) : flowThreadPortionRect().y();
-        LayoutUnit maxY = isLastRegion() ? max(flowThreadPortionRect().maxY(), flowThreadOverflow.maxY()) + outlineSize : flowThreadPortionRect().maxY();
-        LayoutUnit minX = clipX ? flowThreadPortionRect().x() : (flowThreadOverflow.x() - outlineSize);
-        LayoutUnit maxX = clipX ? flowThreadPortionRect().maxX() : (flowThreadOverflow.maxX() + outlineSize);
+        LayoutUnit minY = isFirstPortion ? (flowThreadOverflow.y() - outlineSize) : flowThreadPortionRect.y();
+        LayoutUnit maxY = isLastPortion ? max(flowThreadPortionRect.maxY(), flowThreadOverflow.maxY()) + outlineSize : flowThreadPortionRect.maxY();
+        LayoutUnit minX = clipX ? flowThreadPortionRect.x() : (flowThreadOverflow.x() - outlineSize);
+        LayoutUnit maxX = clipX ? flowThreadPortionRect.maxX() : (flowThreadOverflow.maxX() + outlineSize);
         clipRect = LayoutRect(minX, minY, maxX - minX, maxY - minY);
     } else {
-        LayoutUnit minX = isFirstRegion() ? (flowThreadOverflow.x() - outlineSize) : flowThreadPortionRect().x();
-        LayoutUnit maxX = isLastRegion() ? max(flowThreadPortionRect().maxX(), flowThreadOverflow.maxX()) + outlineSize : flowThreadPortionRect().maxX();
-        LayoutUnit minY = clipY ? flowThreadPortionRect().y() : (flowThreadOverflow.y() - outlineSize);
-        LayoutUnit maxY = clipY ? flowThreadPortionRect().maxY() : (flowThreadOverflow.maxY() + outlineSize);
+        LayoutUnit minX = isFirstPortion ? (flowThreadOverflow.x() - outlineSize) : flowThreadPortionRect.x();
+        LayoutUnit maxX = isLastPortion ? max(flowThreadPortionRect.maxX(), flowThreadOverflow.maxX()) + outlineSize : flowThreadPortionRect.maxX();
+        LayoutUnit minY = clipY ? flowThreadPortionRect.y() : (flowThreadOverflow.y() - outlineSize);
+        LayoutUnit maxY = clipY ? flowThreadPortionRect.maxY() : (flowThreadOverflow.maxY() + outlineSize);
         clipRect = LayoutRect(minX, minY, maxX - minX, maxY - minY);
     }
 

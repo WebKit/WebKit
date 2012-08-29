@@ -79,6 +79,9 @@ private:
     LayoutRect columnRectAt(unsigned index) const;
     unsigned columnCount() const;
 
+    LayoutRect flowThreadPortionRectAt(unsigned index) const;
+    LayoutRect flowThreadPortionOverflowRect(const LayoutRect& flowThreadPortion, unsigned index, unsigned colCount, int colGap) const;
+
     unsigned m_computedColumnCount;
     LayoutUnit m_computedColumnWidth;
     LayoutUnit m_computedColumnHeight;

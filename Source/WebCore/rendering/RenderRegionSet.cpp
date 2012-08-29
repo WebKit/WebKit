@@ -56,7 +56,7 @@ void RenderRegionSet::expandToEncompassFlowThreadContentsIfNeeded()
     bool isHorizontal = flowThread()->isHorizontalWritingMode();
     LayoutUnit logicalTopOffset = isHorizontal ? rect.y() : rect.x();
     LayoutRect layoutRect = flowThread()->layoutOverflowRect();
-    LayoutUnit logicalHeightWithOverflow = (isHorizontal ? layoutRect.maxY() - flowThread()->y() : layoutRect.maxX() - flowThread()->x()) - logicalTopOffset;
+    LayoutUnit logicalHeightWithOverflow = (isHorizontal ? layoutRect.maxY() : layoutRect.maxX()) - logicalTopOffset;
     setFlowThreadPortionRect(LayoutRect(rect.x(), rect.y(), isHorizontal ? rect.width() : logicalHeightWithOverflow, isHorizontal ? logicalHeightWithOverflow : rect.height()));
 }
 
