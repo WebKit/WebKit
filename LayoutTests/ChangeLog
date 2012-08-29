@@ -1,3 +1,10 @@
+2012-08-29  Florin Malita  <fmalita@chromium.org>
+
+        Unreviewed, adjusting reftest mask to avoid spurious Mac failures.
+
+        * svg/custom/clamped-masking-clipping-expected.svg:
+        * svg/custom/clamped-masking-clipping.svg:
+
 2012-08-29  Tony Chang  <tony@chromium.org>
 
         Unreviewed, mark css3/flexbox/flexitem.html as failing on efl. There
