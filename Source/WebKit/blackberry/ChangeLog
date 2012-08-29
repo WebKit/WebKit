@@ -1,3 +1,19 @@
+2012-08-28  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] crash while trying to scroll any inner frame
+        https://bugs.webkit.org/show_bug.cgi?id=95287
+        PR #198510
+
+        Reviewed by George Staikos.
+
+        Set the starting point of scrolling (slow path only still)
+        for inner frames. It was left over as set to 0 by r126474.
+
+        In practice, patch fixes a crash on gmail.com desktop edition.
+
+        * WebKitSupport/InRegionScrollableArea.cpp:
+        (BlackBerry::WebKit::InRegionScrollableArea::InRegionScrollableArea):
+
 2012-08-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126914.
