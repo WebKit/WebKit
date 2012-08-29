@@ -1,3 +1,31 @@
+2012-08-29  Jon Lee  <jonlee@apple.com>
+
+        [Mac] Add iconURL to WebNotification
+        https://bugs.webkit.org/show_bug.cgi?id=95249
+        <rdar://problem/12192060>
+
+        Reviewed by Jessie Berlin.
+
+        * WebView/WebNotification.h: Expose iconURL.
+        * WebView/WebNotification.mm: Remove unnecessary ASSERTs.
+        (-[WebNotification title]):
+        (-[WebNotification body]):
+        (-[WebNotification tag]):
+        (-[WebNotification iconURL]): Added.
+        (-[WebNotification origin]):
+        (-[WebNotification notificationID]):
+        (-[WebNotification dispatchShowEvent]):
+        (-[WebNotification dispatchCloseEvent]):
+        (-[WebNotification dispatchClickEvent]):
+        (-[WebNotification dispatchErrorEvent]):
+
+
+        Reviewed by Jessie Berlin.
+
+        * WebView/WebNotification.h: Expose iconURL.
+        * WebView/WebNotification.mm:
+        (-[WebNotification iconURL]):
+
 2012-08-28  Geoffrey Garen  <ggaren@apple.com>
 
         Added JSScope::objectInScope(), and refactored callers to use it

@@ -84,7 +84,6 @@ Notification* core(WebNotification *notification)
 - (NSString *)title
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    ASSERT(core(self));
     return core(self)->title();
 #else
     return nil;
@@ -94,7 +93,6 @@ Notification* core(WebNotification *notification)
 - (NSString *)body
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    ASSERT(core(self));
     return core(self)->body();
 #else
     return nil;
@@ -104,8 +102,16 @@ Notification* core(WebNotification *notification)
 - (NSString *)tag
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    ASSERT(core(self));
     return core(self)->tag();
+#else
+    return nil;
+#endif
+}
+
+- (NSString *)iconURL
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    return core(self)->iconURL();
 #else
     return nil;
 #endif
@@ -114,7 +120,6 @@ Notification* core(WebNotification *notification)
 - (WebSecurityOrigin *)origin
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    ASSERT(core(self));
     return [[[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:core(self)->scriptExecutionContext()->securityOrigin()] autorelease];
 #else
     return nil;
@@ -124,7 +129,6 @@ Notification* core(WebNotification *notification)
 - (uint64_t)notificationID
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    ASSERT(core(self));
     return _private->_notificationID;
 #else
     return 0;
@@ -134,7 +138,6 @@ Notification* core(WebNotification *notification)
 - (void)dispatchShowEvent
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    ASSERT(core(self));
     core(self)->dispatchShowEvent();
 #endif
 }
@@ -142,7 +145,6 @@ Notification* core(WebNotification *notification)
 - (void)dispatchCloseEvent
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    ASSERT(core(self));
     core(self)->dispatchCloseEvent();
 #endif
 }
@@ -150,7 +152,6 @@ Notification* core(WebNotification *notification)
 - (void)dispatchClickEvent
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    ASSERT(core(self));
     core(self)->dispatchClickEvent();
 #endif
 }
@@ -158,7 +159,6 @@ Notification* core(WebNotification *notification)
 - (void)dispatchErrorEvent
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    ASSERT(core(self));
     core(self)->dispatchErrorEvent();
 #endif
 }
