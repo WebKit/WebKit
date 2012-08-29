@@ -1,3 +1,18 @@
+2012-08-29  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        '\r's in test expectations files confuse chromium-android layout test driver
+        https://bugs.webkit.org/show_bug.cgi?id=95353
+
+        Reviewed by Adam Barth.
+
+        Modified the test cases not to output '\r's.
+        Removed the '\r's from expectation files.
+
+        * fast/dom/Window/window-property-clearing-expected.txt:
+        * fast/dom/Window/window-property-clearing.html:
+        * fast/dom/simultaneouslyRegsiteredTimerFireOrder-expected.txt:
+        * fast/dom/simultaneouslyRegsiteredTimerFireOrder.html:
+
 2012-08-29  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed gardening.
