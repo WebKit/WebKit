@@ -69,9 +69,11 @@ public:
     void unregisterNamedFlowContentNode(Node*);
     const NamedFlowContentNodes& contentNodes() const { return m_contentNodes; }
     bool hasContentNode(Node* contentNode) const { ASSERT(contentNode); return m_contentNodes.contains(contentNode); }
+    bool isMarkedForDestruction() const;
 
 protected:
-    virtual void willBeDestroyed() OVERRIDE;
+    void setMarkForDestruction();
+    void resetMarkForDestruction();
 
 private:
     virtual const char* renderName() const OVERRIDE;

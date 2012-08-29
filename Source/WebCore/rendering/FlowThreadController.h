@@ -37,7 +37,6 @@
 namespace WebCore {
 
 class RenderFlowThread;
-class RenderFlowThreadContainer;
 class RenderNamedFlowThread;
 
 typedef ListHashSet<RenderNamedFlowThread*> RenderNamedFlowThreadList;
@@ -66,7 +65,6 @@ public:
 
     void registerNamedFlowContentNode(Node*, RenderNamedFlowThread*);
     void unregisterNamedFlowContentNode(Node*);
-    void removeFlowThread(RenderNamedFlowThread*);
 
 protected:
     FlowThreadController(RenderView*);
@@ -74,7 +72,6 @@ protected:
 private:
     RenderView* m_view;
     RenderFlowThread* m_currentRenderFlowThread;
-    RenderFlowThreadContainer* m_flowThreadContainer;
     bool m_isRenderNamedFlowThreadOrderDirty;
     OwnPtr<RenderNamedFlowThreadList> m_renderNamedFlowThreadList;
     // maps a content node to its render flow thread.

@@ -33,7 +33,6 @@
 
 #include "NamedFlowCollection.h"
 #include "RenderFlowThread.h"
-#include "RenderFlowThreadContainer.h"
 #include "RenderNamedFlowThread.h"
 #include "StyleInheritedData.h"
 #include "WebKitNamedFlow.h"
@@ -49,7 +48,6 @@ PassOwnPtr<FlowThreadController> FlowThreadController::create(RenderView* view)
 FlowThreadController::FlowThreadController(RenderView* view)
     : m_view(view)
     , m_currentRenderFlowThread(0)
-    , m_flowThreadContainer(0)
     , m_isRenderNamedFlowThreadOrderDirty(false)
 {
 }
@@ -60,11 +58,6 @@ FlowThreadController::~FlowThreadController()
 
 RenderNamedFlowThread* FlowThreadController::ensureRenderFlowThreadWithName(const AtomicString& name)
 {
-    if (!m_flowThreadContainer) {
-        m_flowThreadContainer = new (m_view->renderArena()) RenderFlowThreadContainer(m_view->document());
-        m_flowThreadContainer->setStyle(RenderFlowThread::createFlowThreadStyle(m_view->style()));
-        m_view->addChild(m_flowThreadContainer);
-    }
     if (!m_renderNamedFlowThreadList)
         m_renderNamedFlowThreadList = adoptPtr(new RenderNamedFlowThreadList());
     else {
@@ -84,8 +77,8 @@ RenderNamedFlowThread* FlowThreadController::ensureRenderFlowThreadWithName(cons
     flowRenderer->setStyle(RenderFlowThread::createFlowThreadStyle(m_view->style()));
     m_renderNamedFlowThreadList->add(flowRenderer);
 
-    // Keep the flow renderer as a child of RenderFlowThreadContainer.
-    m_flowThreadContainer->addChild(flowRenderer);
+    // Keep the flow renderer as a child of RenderView.
+    m_view->addChild(flowRenderer);
 
     setIsRenderNamedFlowThreadOrderDirty(true);
 
@@ -104,6 +97,23 @@ void FlowThreadController::styleDidChange()
 void FlowThreadController::layoutRenderNamedFlowThreads()
 {
     ASSERT(m_renderNamedFlowThreadList);
+
+    // Remove the left-over flow threads.
+    RenderNamedFlowThreadList toRemoveList;
+    for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter) {
+        RenderNamedFlowThread* flowRenderer = *iter;
+        if (flowRenderer->isMarkedForDestruction())
+            toRemoveList.add(flowRenderer);
+    }
+
+    if (toRemoveList.size() > 0)
+        setIsRenderNamedFlowThreadOrderDirty(true);
+
+    for (RenderNamedFlowThreadList::iterator iter = toRemoveList.begin(); iter != toRemoveList.end(); ++iter) {
+        RenderNamedFlowThread* flowRenderer = *iter;
+        m_renderNamedFlowThreadList->remove(flowRenderer);
+        flowRenderer->destroy();
+    }
 
     if (isRenderNamedFlowThreadOrderDirty()) {
         // Arrange the thread list according to dependencies.
@@ -144,12 +154,6 @@ void FlowThreadController::unregisterNamedFlowContentNode(Node* contentNode)
     ASSERT(it->second->hasContentNode(contentNode));
     it->second->unregisterNamedFlowContentNode(contentNode);
     m_mapNamedFlowContentNodes.remove(contentNode);
-}
-
-void FlowThreadController::removeFlowThread(RenderNamedFlowThread* flowThread)
-{
-    m_renderNamedFlowThreadList->remove(flowThread);
-    setIsRenderNamedFlowThreadOrderDirty(true);
 }
 
 } // namespace WebCore
