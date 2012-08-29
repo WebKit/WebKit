@@ -43,21 +43,11 @@ enum {
 };
 
 @interface DOMTestInterface : DOMObject
-#if ENABLE(Condition11) || ENABLE(Condition12)
-- (NSString *)supplementalStr1;
-#endif
-#if ENABLE(Condition11) || ENABLE(Condition12)
-- (NSString *)supplementalStr2;
-- (void)setSupplementalStr2:(NSString *)newSupplementalStr2;
-#endif
-#if ENABLE(Condition11) || ENABLE(Condition12)
-- (NSString *)supplementalStr3;
-- (void)setSupplementalStr3:(NSString *)newSupplementalStr3;
-#endif
-#if ENABLE(Condition11) || ENABLE(Condition12)
-- (DOMNode *)supplementalNode;
-- (void)setSupplementalNode:(DOMNode *)newSupplementalNode;
-#endif
+@property(readonly, copy) NSString *supplementalStr1;
+@property(copy) NSString *supplementalStr2;
+@property(copy) NSString *supplementalStr3;
+@property(retain) DOMNode *supplementalNode;
+
 #if ENABLE(Condition11) || ENABLE(Condition12)
 - (void)supplementalMethod1;
 #endif

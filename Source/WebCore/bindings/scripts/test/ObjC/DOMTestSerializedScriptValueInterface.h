@@ -33,13 +33,12 @@
 @class NSString;
 
 @interface DOMTestSerializedScriptValueInterface : DOMObject
-- (NSString *)value;
-- (void)setValue:(NSString *)newValue;
-- (NSString *)readonlyValue;
-- (NSString *)cachedValue;
-- (void)setCachedValue:(NSString *)newCachedValue;
-- (DOMMessagePortArray *)ports;
-- (NSString *)cachedReadonlyValue;
+@property(retain) NSString *value;
+@property(readonly, retain) NSString *readonlyValue;
+@property(retain) NSString *cachedValue;
+@property(readonly, retain) DOMMessagePortArray *ports;
+@property(readonly, retain) NSString *cachedReadonlyValue;
+
 - (void)acceptTransferList:(NSString *)data transferList:(DOMArray *)transferList;
 - (void)multiTransferList:(NSString *)first tx:(DOMArray *)tx second:(NSString *)second txx:(DOMArray *)txx;
 @end

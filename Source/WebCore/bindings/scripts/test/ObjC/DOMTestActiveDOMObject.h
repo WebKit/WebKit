@@ -32,7 +32,8 @@
 @class NSString;
 
 @interface DOMTestActiveDOMObject : DOMObject
-- (int)excitingAttr;
+@property(readonly) int excitingAttr;
+
 - (void)excitingFunction:(DOMNode *)nextChild;
 - (void)postMessage:(NSString *)message;
 @end

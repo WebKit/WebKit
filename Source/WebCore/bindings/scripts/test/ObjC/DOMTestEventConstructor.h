@@ -31,8 +31,8 @@
 @class NSString;
 
 @interface DOMTestEventConstructor : DOMObject
-- (NSString *)attr1;
-- (NSString *)attr2;
+@property(readonly, copy) NSString *attr1;
+@property(readonly, copy) NSString *attr2;
 @end
 
 #endif
