@@ -462,29 +462,22 @@ BUGY WIN DEBUG : failures/expected/foo.html = CRASH
 
 class RebaseliningTest(Base):
     """Test rebaselining-specific functionality."""
-    def assertRemove(self, input_expectations, tests, expected_expectations, filename):
-        self.parse_exp(input_expectations, is_lint_mode=False)
-        actual_expectations = self._exp.remove_rebaselined_tests(tests, filename)
+    def assertRemove(self, input_expectations, input_overrides, tests, expected_expectations, expected_overrides):
+        self.parse_exp(input_expectations, is_lint_mode=False, overrides=input_overrides)
+        actual_expectations = self._exp.remove_rebaselined_tests(tests, 'expectations')
         self.assertEqual(expected_expectations, actual_expectations)
+        actual_overrides = self._exp.remove_rebaselined_tests(tests, 'overrides')
+        self.assertEqual(expected_overrides, actual_overrides)
 
     def test_remove(self):
         self.assertRemove('BUGX REBASELINE : failures/expected/text.html = TEXT\n'
                           'BUGY : failures/expected/image.html = IMAGE\n'
                           'BUGZ REBASELINE : failures/expected/crash.html = CRASH\n',
+                          'BUGXO : failures/expected/image.html = CRASH\n',
                           ['failures/expected/text.html'],
                           'BUGY : failures/expected/image.html = IMAGE\n'
                           'BUGZ REBASELINE : failures/expected/crash.html = CRASH\n',
-                          'expectations')
-
-        # test that we don't remove lines from the expectations if we're asking for the overrides
-        self.assertRemove('BUGX REBASELINE : failures/expected/text.html = TEXT\n'
-                          'BUGY : failures/expected/image.html = IMAGE\n'
-                          'BUGZ REBASELINE : failures/expected/crash.html = CRASH\n',
-                          ['failures/expected/text.html'],
-                          'BUGX REBASELINE : failures/expected/text.html = TEXT\n'
-                          'BUGY : failures/expected/image.html = IMAGE\n'
-                          'BUGZ REBASELINE : failures/expected/crash.html = CRASH\n',
-                          'overrides')
+                          'BUGXO : failures/expected/image.html = CRASH\n')
 
 
     def test_no_get_rebaselining_failures(self):

@@ -824,10 +824,10 @@ class TestExpectations(object):
     def remove_rebaselined_tests(self, except_these_tests, filename):
         """Returns a copy of the expectations in the file with the tests removed."""
         def without_rebaseline_modifier(expectation):
-            return not (not expectation.is_invalid() and
-                        expectation.name in except_these_tests and
-                        'rebaseline' in expectation.parsed_modifiers and
-                        filename == expectation.filename)
+            return (expectation.filename == filename and
+                    not (not expectation.is_invalid() and
+                         expectation.name in except_these_tests and
+                         'rebaseline' in expectation.parsed_modifiers))
 
         return self.list_to_string(filter(without_rebaseline_modifier, self._expectations))
 
