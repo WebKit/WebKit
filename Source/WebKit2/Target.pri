@@ -399,6 +399,7 @@ SOURCES += \
     Shared/API/c/WKGeometry.cpp \
     Shared/API/c/WKGraphicsContext.cpp \
     Shared/API/c/WKImage.cpp \
+    Shared/API/c/WKMutableArray.cpp \
     Shared/API/c/WKMutableDictionary.cpp \
     Shared/API/c/WKNumber.cpp \
     Shared/API/c/WKRenderLayer.cpp \
