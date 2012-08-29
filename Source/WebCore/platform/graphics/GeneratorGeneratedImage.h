@@ -31,6 +31,7 @@
 #include "Image.h"
 #include "ImageBuffer.h"
 #include "IntSize.h"
+#include "MemoryInstrumentation.h"
 #include "Timer.h"
 #include <wtf/RefPtr.h>
 
@@ -49,6 +50,8 @@ public:
     {
         m_cacheTimer.stop();
     }
+
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 protected:
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator);

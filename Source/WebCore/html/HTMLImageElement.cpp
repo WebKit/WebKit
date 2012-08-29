@@ -421,4 +421,12 @@ inline ImageInnerElement* HTMLImageElement::innerElement() const
     return toImageInnerElement(userAgentShadowRoot()->firstChild());
 }
 
+void HTMLImageElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+    HTMLElement::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_imageLoader);
+    info.addInstrumentedMember(m_form);
+}
+
 }

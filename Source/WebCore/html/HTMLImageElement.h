@@ -89,6 +89,8 @@ public:
 
     virtual bool canContainRangeEndPoint() const { return false; }
 
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
 protected:
     HTMLImageElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
 

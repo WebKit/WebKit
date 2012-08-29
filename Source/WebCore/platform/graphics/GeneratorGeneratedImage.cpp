@@ -85,10 +85,25 @@ void GeneratedImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& 
     intrinsicRatio = FloatSize();
 }
 
+void GeneratedImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceImage);
+    Image::reportMemoryUsage(memoryObjectInfo);
+}
+
 void GeneratorGeneratedImage::invalidateCacheTimerFired(DeferrableOneShotTimer<GeneratorGeneratedImage>*)
 {
     m_cachedImageBuffer.clear();
     m_cachedAdjustedSize = IntSize();
+}
+
+void GeneratorGeneratedImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+    GeneratedImage::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_generator);
+    info.addMember(m_cachedImageBuffer);
+    info.addMember(m_cacheTimer);
 }
 
 }

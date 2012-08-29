@@ -31,6 +31,7 @@
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
+#include "MemoryInstrumentation.h"
 #include "PlatformString.h"
 #include "Timer.h"
 #include <wtf/CurrentTime.h>
@@ -569,6 +570,18 @@ bool BitmapImage::mayFillWithSolidColor()
 Color BitmapImage::solidColor() const
 {
     return m_solidColor;
+}
+
+void BitmapImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceImage);
+    Image::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_source);
+    info.addMember(m_frameTimer);
+    info.addVector(m_frames);
+    int size = frameBytes(m_size);
+    for (unsigned i = 0; i < m_frameCount; ++i)
+        info.addRawBuffer(m_frames[i].m_frame, size);
 }
 
 }

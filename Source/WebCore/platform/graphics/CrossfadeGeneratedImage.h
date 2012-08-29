@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class CSSCrossfadeValue;
+class MemoryObjectInfo;
 
 class CrossfadeGeneratedImage : public GeneratedImage {
 public:
@@ -49,6 +50,8 @@ public:
     virtual bool hasRelativeHeight() const { return false; }
 
     virtual IntSize size() const { return m_crossfadeSize; }
+
+    void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 protected:
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator);

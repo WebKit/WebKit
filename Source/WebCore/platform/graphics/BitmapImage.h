@@ -87,6 +87,7 @@ public:
     // Clear the cached image data on the frame, and (optionally) the metadata.
     // Returns whether there was cached image data to clear.
     bool clear(bool clearMetadata);
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
     NativeImagePtr m_frame;
     ImageOrientation m_orientation;
@@ -179,6 +180,8 @@ public:
 #if !ASSERT_DISABLED
     virtual bool notSolidColor();
 #endif
+
+    void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 private:
     void updateSize() const;
