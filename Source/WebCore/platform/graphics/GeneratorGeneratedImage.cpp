@@ -79,18 +79,6 @@ void GeneratorGeneratedImage::drawPattern(GraphicsContext* destContext, const Fl
     m_cacheTimer.restart();
 }
 
-void GeneratedImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
-{
-    Image::computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
-    intrinsicRatio = FloatSize();
-}
-
-void GeneratedImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceImage);
-    Image::reportMemoryUsage(memoryObjectInfo);
-}
-
 void GeneratorGeneratedImage::invalidateCacheTimerFired(DeferrableOneShotTimer<GeneratorGeneratedImage>*)
 {
     m_cachedImageBuffer.clear();

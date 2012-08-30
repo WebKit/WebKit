@@ -4341,10 +4341,11 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/FractionalLayoutRect.cpp \
 	Source/WebCore/platform/graphics/FractionalLayoutRect.h \
 	Source/WebCore/platform/graphics/FractionalLayoutSize.h \
-	Source/WebCore/platform/graphics/GeneratorGeneratedImage.cpp \
-	Source/WebCore/platform/graphics/GeneratorGeneratedImage.h \
+	Source/WebCore/platform/graphics/GeneratedImage.cpp \
 	Source/WebCore/platform/graphics/GeneratedImage.h \
 	Source/WebCore/platform/graphics/Generator.h \
+	Source/WebCore/platform/graphics/GeneratorGeneratedImage.cpp \
+	Source/WebCore/platform/graphics/GeneratorGeneratedImage.h \
 	Source/WebCore/platform/graphics/Glyph.h \
 	Source/WebCore/platform/graphics/GlyphBuffer.h \
 	Source/WebCore/platform/graphics/GlyphMetricsMap.h \

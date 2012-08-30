@@ -29554,6 +29554,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\GeneratedImage.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\GeneratedImage.h"
 					>
 				</File>

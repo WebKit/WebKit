@@ -1834,6 +1834,7 @@ SET(WebCore_SOURCES
     platform/graphics/FontFeatureSettings.cpp
     platform/graphics/FractionalLayoutBoxExtent.cpp
     platform/graphics/FractionalLayoutRect.cpp
+    platform/graphics/GeneratedImage.cpp
     platform/graphics/GeneratorGeneratedImage.cpp
     platform/graphics/GlyphPageTreeNode.cpp
     platform/graphics/Gradient.cpp

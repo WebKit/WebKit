@@ -3534,6 +3534,7 @@
             'platform/graphics/FractionalLayoutBoxExtent.cpp',
             'platform/graphics/FractionalLayoutRect.cpp',
             'platform/graphics/GeneratorGeneratedImage.cpp',
+            'platform/graphics/GeneratedImage.cpp',
             'platform/graphics/GeneratedImage.h',
             'platform/graphics/GlyphPageTreeNode.cpp',
             'platform/graphics/Gradient.cpp',
