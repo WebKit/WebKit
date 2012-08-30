@@ -108,7 +108,6 @@ private:
     size_t getAttributeItemIndexSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
     void cloneDataFrom(const ElementAttributeData& sourceData, const Element& sourceElement, Element& targetElement);
     void clearAttributes(Element*);
-    void replaceAttribute(size_t index, const Attribute&, Element*);
 
     bool isMutable() const { return m_isMutable; }
     PassOwnPtr<ElementAttributeData> makeMutable() const { return adoptPtr(new ElementAttributeData(*this)); }

@@ -379,17 +379,6 @@ void ElementAttributeData::clearAttributes(Element* element)
     m_mutableAttributeVector->clear();
 }
 
-void ElementAttributeData::replaceAttribute(size_t index, const Attribute& attribute, Element* element)
-{
-    ASSERT(isMutable());
-    ASSERT(element);
-    ASSERT(index < length());
-
-    element->willModifyAttribute(attribute.name(), m_mutableAttributeVector->at(index).value(), attribute.value());
-    (*m_mutableAttributeVector)[index] = attribute;
-    element->didModifyAttribute(attribute);
-}
-
 PassRefPtr<Attr> ElementAttributeData::getAttributeNode(const String& name, bool shouldIgnoreAttributeCase, Element* element) const
 {
     ASSERT(element);

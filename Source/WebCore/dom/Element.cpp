@@ -1439,20 +1439,14 @@ PassRefPtr<Attr> Element::setAttributeNode(Attr* attr, ExceptionCode& ec)
     ElementAttributeData* attributeData = mutableAttributeData();
 
     size_t index = attributeData->getAttributeItemIndex(attr->qualifiedName());
-    Attribute* oldAttribute = index != notFound ? attributeData->attributeItem(index) : 0;
-
-    if (!oldAttribute) {
-        attributeData->addAttribute(Attribute(attr->qualifiedName(), attr->value()), this);
-        attributeData->setAttr(this, attr->qualifiedName(), attr);
-        return 0;
+    if (index != notFound) {
+        if (oldAttr)
+            oldAttr->detachFromElementWithValue(attributeData->attributeItem(index)->value());
+        else
+            oldAttr = Attr::create(document(), attr->qualifiedName(), attributeData->attributeItem(index)->value());
     }
 
-    if (oldAttr)
-        oldAttr->detachFromElementWithValue(oldAttribute->value());
-    else
-        oldAttr = Attr::create(document(), oldAttribute->name(), oldAttribute->value());
-
-    attributeData->replaceAttribute(index, Attribute(attr->name(), attr->value()), this);
+    setAttributeInternal(index, attr->qualifiedName(), attr->value(), NotInSynchronizationOfLazyAttribute);
     attributeData->setAttr(this, attr->qualifiedName(), attr);
     return oldAttr.release();
 }
