@@ -217,8 +217,9 @@ body.inactive .heap-snapshot-sidebar-tree-item.wait.selected .icon {
 }
 
 .heap-snapshot-view .retainers-view-header {
-    background-image: url(Images/statusbarResizerVertical.png), url(Images/statusbarBackground.png);
-    background-repeat: no-repeat, repeat-x;
+    background-image: url(Images/statusbarResizerVertical.png), -webkit-linear-gradient(rgb(253,253,253), rgb(230,230,230) 75%, rgb(230,230,230));
+    border-top: 1px solid rgb(202, 202, 202);
+    background-repeat: no-repeat;
     background-position: right center, center;
     cursor: row-resize;
     height: 23px;
