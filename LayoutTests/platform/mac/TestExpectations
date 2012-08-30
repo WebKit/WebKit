@@ -354,9 +354,6 @@ BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba44
 BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html = PASS TEXT
 BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html = PASS TEXT
 
-// Flexbox test failing on Mac.
-BUGWK95366 : css3/flexbox/flexitem-stretch-image.html = TEXT
-
 //Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=77754
 BUGWK77754 : fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks.html = TEXT
 BUGWK77754 : fast/inline/absolute-positioned-inline-in-centred-block.html = TEXT

@@ -1,3 +1,13 @@
+2012-08-30  Jessie Berlin  <jberlin@apple.com>
+
+        flexitem-stretch-image.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=95366
+
+        Remove the failing test expectations in platform/mac, since this is showing up as passing on
+        all the mac bots.
+
+        * platform/mac/TestExpectations:
+
 2012-08-30  Philip Rogers  <pdr@google.com>
 
         Unreviewed update of test expectations.
