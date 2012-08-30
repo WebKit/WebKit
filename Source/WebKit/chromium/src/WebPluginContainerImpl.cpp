@@ -72,6 +72,8 @@
 #include "WheelEvent.h"
 #include <public/Platform.h>
 #include <public/WebClipboard.h>
+#include <public/WebCompositorSupport.h>
+#include <public/WebExternalTextureLayer.h>
 #include <public/WebRect.h>
 #include <public/WebString.h>
 #include <public/WebURL.h>
@@ -370,7 +372,10 @@ void WebPluginContainerImpl::setBackingTextureId(unsigned textureId)
     ASSERT(!m_ioSurfaceLayer);
 
     if (!m_textureLayer) {
-        m_textureLayer = adoptPtr(WebExternalTextureLayer::create());
+        if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport())
+            m_textureLayer = compositorSupport->createExternalTextureLayer();
+        else
+            m_textureLayer = adoptPtr(WebExternalTextureLayer::create());
         GraphicsLayerChromium::registerContentsLayer(m_textureLayer->layer());
     }
     m_textureLayer->setTextureId(textureId);
@@ -396,7 +401,10 @@ void WebPluginContainerImpl::setBackingIOSurfaceId(int width,
     ASSERT(!m_textureLayer);
 
     if (!m_ioSurfaceLayer) {
-        m_ioSurfaceLayer = adoptPtr(WebIOSurfaceLayer::create());
+        if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport())
+            m_ioSurfaceLayer = compositorSupport->createIOSurfaceLayer();
+        else
+            m_ioSurfaceLayer = adoptPtr(WebIOSurfaceLayer::create());
         GraphicsLayerChromium::registerContentsLayer(m_ioSurfaceLayer->layer());
     }
     m_ioSurfaceLayer->setIOSurfaceProperties(ioSurfaceId, WebSize(width, height));

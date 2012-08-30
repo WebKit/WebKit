@@ -39,7 +39,6 @@
 #include "WebMediaPlayerClient.h"
 #include "WebStreamTextureClient.h"
 #include <public/WebVideoFrameProvider.h>
-#include <public/WebVideoLayer.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -50,6 +49,7 @@ namespace WebKit {
 class WebHelperPluginImpl;
 class WebAudioSourceProvider;
 class WebMediaPlayer;
+class WebVideoLayer;
 
 // This class serves as a bridge between WebCore::MediaPlayer and
 // WebKit::WebMediaPlayer.

@@ -1,3 +1,23 @@
+2012-08-27  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add CompositorSupport interface for constructing compositor classes
+        https://bugs.webkit.org/show_bug.cgi?id=95040
+
+        Reviewed by Darin Fisher.
+
+        * src/LinkHighlight.cpp:
+        (WebKit::LinkHighlight::LinkHighlight):
+        (WebKit::LinkHighlight::startHighlightAnimation):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::readyStateChanged):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebKit):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::setBackingTextureId):
+        (WebKit::WebPluginContainerImpl::setBackingIOSurfaceId):
+        * src/WebPluginContainerImpl.h:
+        (WebKit):
+
 2012-08-30  Gavin Peters  <gavinp@chromium.org>
 
         [chromium] Disable CCLayerTreeHostTestScrollMultipleRedraw.runMultiThread

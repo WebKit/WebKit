@@ -38,7 +38,9 @@
 #include "GraphicsContext3DPrivate.h"
 #include "GraphicsLayerChromium.h"
 #include <algorithm>
+#include <public/Platform.h>
 #include <public/WebCompositor.h>
+#include <public/WebCompositorSupport.h>
 #include <public/WebExternalTextureLayer.h>
 #include <public/WebExternalTextureLayerClient.h>
 #include <public/WebGraphicsContext3D.h>
@@ -163,8 +165,12 @@ class DrawingBufferPrivate : public WebKit::WebExternalTextureLayerClient {
 public:
     explicit DrawingBufferPrivate(DrawingBuffer* drawingBuffer)
         : m_drawingBuffer(drawingBuffer)
-        , m_layer(adoptPtr(WebKit::WebExternalTextureLayer::create(this)))
     {
+        if (WebKit::WebCompositorSupport* compositorSupport = WebKit::Platform::current()->compositorSupport())
+            m_layer = compositorSupport->createExternalTextureLayer(this);
+        else
+            m_layer = adoptPtr(WebKit::WebExternalTextureLayer::create(this));
+
         GraphicsContext3D::Attributes attributes = m_drawingBuffer->graphicsContext3D()->getContextAttributes();
         m_layer->setOpaque(!attributes.alpha);
         m_layer->setPremultipliedAlpha(attributes.premultipliedAlpha);

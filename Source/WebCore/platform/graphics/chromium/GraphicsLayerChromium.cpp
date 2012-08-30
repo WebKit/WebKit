@@ -56,7 +56,9 @@
 #include "PlatformString.h"
 #include "SkMatrix44.h"
 #include "SystemTime.h"
+#include <public/Platform.h>
 #include <public/WebAnimation.h>
+#include <public/WebCompositorSupport.h>
 #include <public/WebFilterOperation.h>
 #include <public/WebFilterOperations.h>
 #include <public/WebFloatPoint.h>
@@ -90,7 +92,12 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
     , m_pageScaleChanged(false)
 {
     m_opaqueRectTrackingContentLayerDelegate = adoptPtr(new OpaqueRectTrackingContentLayerDelegate(this));
-    m_layer = adoptPtr(WebContentLayer::create(m_opaqueRectTrackingContentLayerDelegate.get()));
+
+    if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport())
+        m_layer = compositorSupport->createContentLayer(m_opaqueRectTrackingContentLayerDelegate.get());
+    else
+        m_layer = adoptPtr(WebContentLayer::create(m_opaqueRectTrackingContentLayerDelegate.get()));
+
     m_layer->layer()->setDrawsContent(m_drawsContent && m_contentsVisible);
     if (client)
         deviceOrPageScaleFactorChanged();
@@ -469,8 +476,12 @@ void GraphicsLayerChromium::setContentsToImage(Image* image)
     bool childrenChanged = false;
     if (image) {
         if (m_contentsLayerPurpose != ContentsLayerForImage) {
-            m_imageLayer = adoptPtr(WebImageLayer::create());
+            if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport())
+                m_imageLayer = compositorSupport->createImageLayer();
+            else
+                m_imageLayer = adoptPtr(WebImageLayer::create());
             registerContentsLayer(m_imageLayer->layer());
+
             setupContentsLayer(m_imageLayer->layer());
             m_contentsLayerPurpose = ContentsLayerForImage;
             childrenChanged = true;
@@ -538,7 +549,7 @@ void GraphicsLayerChromium::setContentsToMedia(PlatformLayer* layer)
     setContentsTo(ContentsLayerForVideo, layer);
 }
 
-void GraphicsLayerChromium::setContentsTo(ContentsLayerPurpose purpose, WebKit::WebLayer* layer)
+void GraphicsLayerChromium::setContentsTo(ContentsLayerPurpose purpose, WebLayer* layer)
 {
     bool childrenChanged = false;
     if (layer) {
@@ -573,7 +584,7 @@ bool GraphicsLayerChromium::addAnimation(const KeyframeValueList& values, const 
     if (m_animationIdMap.contains(animationName))
         animationId = m_animationIdMap.get(animationName);
 
-    OwnPtr<WebKit::WebAnimation> toAdd(createWebAnimation(values, animation, animationId, timeOffset, boxSize));
+    OwnPtr<WebAnimation> toAdd(createWebAnimation(values, animation, animationId, timeOffset, boxSize));
 
     if (toAdd) {
         animationId = toAdd->id();
@@ -721,8 +732,11 @@ void GraphicsLayerChromium::updateMasksToBounds()
 void GraphicsLayerChromium::updateLayerPreserves3D()
 {
     if (m_preserves3D && !m_transformLayer) {
-        // Create the transform layer.
-        m_transformLayer = adoptPtr(WebLayer::create());
+        if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport())
+            m_transformLayer = compositorSupport->createLayer();
+        else
+            m_transformLayer = adoptPtr(WebLayer::create());
+
         m_transformLayer->setPreserves3D(true);
         m_transformLayer->setAnimationDelegate(this);
         m_layer->layer()->transferAnimationsTo(m_transformLayer.get());

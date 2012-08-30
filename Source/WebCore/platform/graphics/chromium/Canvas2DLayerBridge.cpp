@@ -34,7 +34,9 @@
 #include "GraphicsContext3DPrivate.h"
 #include "GraphicsLayerChromium.h"
 #include "TraceEvent.h"
+#include <public/Platform.h>
 #include <public/WebCompositor.h>
+#include <public/WebCompositorSupport.h>
 #include <public/WebGraphicsContext3D.h>
 
 using WebKit::WebExternalTextureLayer;
@@ -74,7 +76,11 @@ Canvas2DLayerBridge::Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D> context, 
             grContext->resetContext();
     }
 
-    m_layer = adoptPtr(WebExternalTextureLayer::create(this));
+    if (WebKit::WebCompositorSupport* compositorSupport = WebKit::Platform::current()->compositorSupport())
+        m_layer = compositorSupport->createExternalTextureLayer(this);
+    else
+        m_layer = adoptPtr(WebKit::WebExternalTextureLayer::create(this));
+
     m_layer->setTextureId(textureId);
     m_layer->setRateLimitContext(!WebKit::WebCompositor::threadingEnabled() || m_useDoubleBuffering);
     GraphicsLayerChromium::registerContentsLayer(m_layer->layer());

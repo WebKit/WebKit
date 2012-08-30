@@ -35,7 +35,6 @@
 #include "WebPluginContainer.h"
 #include "Widget.h"
 
-#include <public/WebExternalTextureLayer.h>
 #include <public/WebIOSurfaceLayer.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -67,6 +66,7 @@ struct WebPrintParams;
 class ScrollbarGroup;
 class WebPlugin;
 class WebPluginLoadObserver;
+class WebExternalTextureLayer;
 
 class WebPluginContainerImpl : public WebCore::PluginViewBase, public WebPluginContainer {
 public:

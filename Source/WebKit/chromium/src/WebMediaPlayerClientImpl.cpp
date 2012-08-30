@@ -30,11 +30,13 @@
 #include <public/Platform.h>
 #include <public/WebCString.h>
 #include <public/WebCanvas.h>
+#include <public/WebCompositorSupport.h>
 #include <public/WebMimeRegistry.h>
 #include <public/WebRect.h>
 #include <public/WebSize.h>
 #include <public/WebString.h>
 #include <public/WebURL.h>
+#include <public/WebVideoLayer.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"
@@ -116,7 +118,11 @@ void WebMediaPlayerClientImpl::readyStateChanged()
     m_mediaPlayer->readyStateChanged();
 #if USE(ACCELERATED_COMPOSITING)
     if (hasVideo() && supportsAcceleratedRendering() && !m_videoLayer) {
-        m_videoLayer = adoptPtr(WebVideoLayer::create(this));
+        if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport())
+            m_videoLayer = compositorSupport->createVideoLayer(this);
+        else
+            m_videoLayer = adoptPtr(WebVideoLayer::create(this));
+
         m_videoLayer->layer()->setOpaque(m_opaque);
         GraphicsLayerChromium::registerContentsLayer(m_videoLayer->layer());
     }

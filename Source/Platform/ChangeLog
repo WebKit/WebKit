@@ -1,3 +1,25 @@
+2012-08-27  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add CompositorSupport interface for constructing compositor classes
+        https://bugs.webkit.org/show_bug.cgi?id=95040
+
+        Reviewed by Darin Fisher.
+
+        Adds a WebCompositorSupport interface as a tear-off of PlatformSupport so the embedder can handle provide
+        implementations of compositor interfaces.
+
+        Adds a new WebPassOwnPtr<> type for use when the caller of an API must take ownership of the provided parameter.
+
+        * Platform.gypi:
+        * chromium/public/Platform.h:
+        (WebKit):
+        (WebKit::Platform::compositorSupport):
+        (Platform):
+        * chromium/public/WebCompositorSupport.h: Added.
+        (WebKit):
+        (WebCompositorSupport):
+        (WebKit::WebCompositorSupport::~WebCompositorSupport):
+
 2012-08-30  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Introduce MediaConstraints

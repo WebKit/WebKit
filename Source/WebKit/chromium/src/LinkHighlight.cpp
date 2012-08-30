@@ -41,7 +41,9 @@
 #include "WebFrameImpl.h"
 #include "WebKit.h"
 #include "WebViewImpl.h"
+#include <public/Platform.h>
 #include <public/WebAnimationCurve.h>
+#include <public/WebCompositorSupport.h>
 #include <public/WebFloatAnimationCurve.h>
 #include <public/WebFloatPoint.h>
 #include <public/WebRect.h>
@@ -59,16 +61,20 @@ PassOwnPtr<LinkHighlight> LinkHighlight::create(Node* node, WebViewImpl* owningW
 }
 
 LinkHighlight::LinkHighlight(Node* node, WebViewImpl* owningWebViewImpl)
-    : m_contentLayer(adoptPtr(WebContentLayer::create(this)))
-    , m_clipLayer(adoptPtr(WebLayer::create()))
-    , m_node(node)
+    : m_node(node)
     , m_owningWebViewImpl(owningWebViewImpl)
     , m_currentGraphicsLayer(0)
     , m_geometryNeedsUpdate(false)
 {
     ASSERT(m_node);
     ASSERT(owningWebViewImpl);
-
+    if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport()) {
+        m_contentLayer = compositorSupport->createContentLayer(this);
+        m_clipLayer = compositorSupport->createLayer();
+    } else {
+        m_contentLayer = adoptPtr(WebContentLayer::create(this));
+        m_clipLayer = adoptPtr(WebLayer::create());
+    }
     m_clipLayer->setAnchorPoint(WebFloatPoint());
     m_clipLayer->addChild(m_contentLayer->layer());
     m_contentLayer->layer()->setDrawsContent(false);
@@ -200,13 +206,24 @@ void LinkHighlight::startHighlightAnimation()
 
     m_contentLayer->layer()->setOpacity(startOpacity);
 
-    OwnPtr<WebFloatAnimationCurve> curve = adoptPtr(WebFloatAnimationCurve::create());
+    WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport();
+
+    OwnPtr<WebFloatAnimationCurve> curve;
+    if (compositorSupport)
+        curve = compositorSupport->createFloatAnimationCurve();
+    else
+        curve = adoptPtr(WebFloatAnimationCurve::create());
+
     curve->add(WebFloatKeyframe(0, startOpacity));
     curve->add(WebFloatKeyframe(duration / 2, startOpacity));
     // For layout tests we don't fade out.
     curve->add(WebFloatKeyframe(duration, WebKit::layoutTestMode() ? startOpacity : 0));
 
-    m_animation = adoptPtr(WebAnimation::create(*curve, WebAnimation::TargetPropertyOpacity));
+    if (compositorSupport)
+        m_animation = compositorSupport->createAnimation(*curve, WebAnimation::TargetPropertyOpacity);
+    else
+        m_animation = adoptPtr(WebAnimation::create(*curve, WebAnimation::TargetPropertyOpacity));
+
     m_contentLayer->layer()->setDrawsContent(true);
     m_contentLayer->layer()->addAnimation(m_animation.get());
 
