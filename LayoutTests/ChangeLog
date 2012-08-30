@@ -1,3 +1,15 @@
+2012-08-30  Dirk Pranke  <dpranke@chromium.org>
+
+        Add TestExpectations stubs for apple wk2 ports
+
+        Unreviewed, build fix.
+
+        This adds empty placeholder files so new-run-webkit-tests
+        doesn't get upset if they're missing.
+
+        * platform/mac-wk2/TestExpectations: Added.
+        * platform/win-wk2/TestExpectations: Added.
+
 2012-08-30  Jessie Berlin  <jberlin@apple.com>
 
         flexitem-stretch-image.html is flaky
