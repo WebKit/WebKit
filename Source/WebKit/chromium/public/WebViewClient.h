@@ -72,7 +72,6 @@ class WebKeyboardEvent;
 class WebNode;
 class WebNotificationPresenter;
 class WebRange;
-class WebRect;
 class WebSpeechInputController;
 class WebSpeechInputListener;
 class WebSpeechRecognizer;
@@ -86,6 +85,7 @@ struct WebConsoleMessage;
 struct WebContextMenuData;
 struct WebPoint;
 struct WebPopupMenuInfo;
+struct WebRect;
 struct WebSize;
 struct WebWindowFeatures;
 

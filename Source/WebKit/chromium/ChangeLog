@@ -1,3 +1,17 @@
+2012-08-29  Hironori Bono  <hbono@chromium.org>
+
+        Fix Chromium builds (Win and Mac)
+        https://bugs.webkit.org/show_bug.cgi?id=95421
+
+        Reviewed by James Robinson.
+
+        This change replaces 'class WebRect' with 'struct WebRect' to fix build breaks
+        on the "Chromium Mac Release" and the "Chromium Win Release" bot caused by
+        r127095.
+
+        * public/WebViewClient.h:
+        (WebKit):
+
 2012-08-29  Nat Duca  <nduca@chromium.org>
 
         [chromium] setNeedsAnimate should not cause commitRequested to become true
