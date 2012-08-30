@@ -69,6 +69,7 @@ TestRunner::TestRunner(const std::string& testPathOrURL, const std::string& expe
     , m_dumpIconChanges(false)
     , m_dumpVisitedLinksCallback(false)
     , m_dumpWillCacheResponse(false)
+    , m_dumpWebNotificationCallbacks(false)
     , m_generatePixelResults(true)
     , m_callCloseOnWebViews(true)
     , m_canOpenWindows(false)
@@ -255,6 +256,13 @@ static JSValueRef dumpWillCacheResponseCallback(JSContextRef context, JSObjectRe
 {
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpWillCacheResponse(true);
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef dumpWebNotificationCallbacksCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+    controller->setDumpWebNotificationCallbacks(true);
     return JSValueMakeUndefined(context);
 }
 
@@ -2333,6 +2341,7 @@ JSStaticFunction* TestRunner::staticFunctions()
         { "dumpTitleChanges", dumpTitleChangesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpIconChanges", dumpIconChangesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpWillCacheResponse", dumpWillCacheResponseCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "dumpWebNotificationCallbacks", dumpWebNotificationCallbacksCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "elementDoesAutoCompleteForElementWithId", elementDoesAutoCompleteForElementWithIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "encodeHostName", encodeHostNameCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "evaluateInWebInspector", evaluateInWebInspectorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

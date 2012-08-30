@@ -1,3 +1,29 @@
+2012-08-30  Jon Lee  <jonlee@apple.com>
+
+        [Mac] Add testRunner.dumpWebNotificationCallbacks() to DRT
+        https://bugs.webkit.org/show_bug.cgi?id=95232
+        <rdar://problem/12190776>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add additional output when running test, if testRunner.dumpWebNotificationCallbacks() is called.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::TestRunner):
+        (dumpWebNotificationCallbacksCallback):
+        (TestRunner::staticFunctions):
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner):
+        (TestRunner::dumpWebNotificationCallbacks):
+        (TestRunner::setDumpWebNotificationCallbacks):
+        * DumpRenderTree/mac/MockWebNotificationProvider.mm:
+        (-[WebNotification _drt_descriptionSuitableForTestResult]):
+        (-[MockWebNotificationProvider webView:didShowNotification:]):
+        (-[MockWebNotificationProvider webView:didClickNotification:]):
+        (-[MockWebNotificationProvider webView:didCloseNotifications:]):
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:decidePolicyForNotificationRequestFromOrigin:listener:]):
+
 2012-08-30  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Introduce MediaConstraints

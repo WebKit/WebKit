@@ -291,6 +291,8 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webView:(WebView *)webView decidePolicyForNotificationRequestFromOrigin:(WebSecurityOrigin *)origin listener:(id<WebAllowDenyPolicyListener>)listener
 {
+    if (!done && gTestRunner->dumpWebNotificationCallbacks())
+        printf("REQUESTED WEB NOTIFICATION PERMISSION FOR %s\n", [[origin stringValue] UTF8String]);
     [(MockWebNotificationProvider *)[webView _notificationProvider] setWebNotificationOrigin:[origin stringValue] permission:YES];
     [listener allow];
 }

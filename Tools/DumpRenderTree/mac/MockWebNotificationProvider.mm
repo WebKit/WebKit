@@ -26,8 +26,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "MockWebNotificationProvider.h"
+
+#import "DumpRenderTree.h"
+#import "TestRunner.h"
+#import <WebKit/WebNotification.h>
 #import <WebKit/WebSecurityOriginPrivate.h>
+
+@interface WebNotification (DRTExtras)
+- (NSString *)_drt_descriptionSuitableForTestResult;
+@end
+
+@implementation WebNotification (DRTExtras)
+- (NSString *)_drt_descriptionSuitableForTestResult
+{
+    return [NSString stringWithFormat:@"{title: \"%@\", body: \"%@\", tag: \"%@\", iconURL: %@}", [self title], [self body], [self tag], [self iconURL]];
+}
+@end
 
 @implementation MockWebNotificationProvider
 
@@ -93,12 +109,22 @@
 
 - (void)webView:(WebView *)webView didShowNotification:(uint64_t)notificationID
 {
-    [_notifications.get(notificationID).get() dispatchShowEvent];
+    WebNotification *notification = _notifications.get(notificationID).get();
+    ASSERT(notification);
+
+    if (!done && gTestRunner->dumpWebNotificationCallbacks())
+        printf("SHOWED WEB NOTIFICATION %s\n", [[notification _drt_descriptionSuitableForTestResult] UTF8String]);
+    [notification dispatchShowEvent];
 }
 
 - (void)webView:(WebView *)webView didClickNotification:(uint64_t)notificationID
 {
-    [_notifications.get(notificationID).get() dispatchClickEvent];
+    WebNotification *notification = _notifications.get(notificationID).get();
+    ASSERT(notification);
+
+    if (!done && gTestRunner->dumpWebNotificationCallbacks())
+        printf("CLICKED WEB NOTIFICATION %s\n", [[notification _drt_descriptionSuitableForTestResult] UTF8String]);
+    [notification dispatchClickEvent];
 }
 
 - (void)webView:(WebView *)webView didCloseNotifications:(NSArray *)notificationIDs
@@ -107,7 +133,12 @@
         uint64_t id = [notificationID unsignedLongLongValue];
         NotificationIDMap::iterator it = _notifications.find(id);
         ASSERT(it != _notifications.end());
-        [it->second.get() dispatchCloseEvent];
+
+        WebNotification *notification = it->second.get();
+        if (!done && gTestRunner->dumpWebNotificationCallbacks())
+            printf("CLOSED WEB NOTIFICATION %s\n", [[notification _drt_descriptionSuitableForTestResult] UTF8String]);
+
+        [notification dispatchCloseEvent];
         _notifications.remove(it);
         _notificationViewMap.remove(id);
     }

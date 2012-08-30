@@ -1,5 +1,15 @@
 2012-08-30  Jon Lee  <jonlee@apple.com>
 
+        [Mac] Add testRunner.dumpWebNotificationCallbacks() to DRT
+        https://bugs.webkit.org/show_bug.cgi?id=95232
+        <rdar://problem/12190776>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKit.exp: Export WebNotification class.
+
+2012-08-30  Jon Lee  <jonlee@apple.com>
+
         [Mac] Registering web views for notifications is unbalanced
         https://bugs.webkit.org/show_bug.cgi?id=95465
         <rdar://problem/12206765>
