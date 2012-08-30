@@ -32,6 +32,7 @@
 #include "GrContext.h"
 #include "GraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
+#include "GraphicsLayerChromium.h"
 #include "TraceEvent.h"
 #include <public/WebCompositor.h>
 #include <public/WebGraphicsContext3D.h>
@@ -76,10 +77,12 @@ Canvas2DLayerBridge::Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D> context, 
     m_layer = adoptPtr(WebExternalTextureLayer::create(this));
     m_layer->setTextureId(textureId);
     m_layer->setRateLimitContext(!WebKit::WebCompositor::threadingEnabled() || m_useDoubleBuffering);
+    GraphicsLayerChromium::registerContentsLayer(m_layer->layer());
 }
 
 Canvas2DLayerBridge::~Canvas2DLayerBridge()
 {
+    GraphicsLayerChromium::unregisterContentsLayer(m_layer->layer());
     Canvas2DLayerManager::get().layerToBeDestroyed(this);
     if (SkDeferredCanvas* deferred = deferredCanvas())
         deferred->setNotificationClient(0);

@@ -1,3 +1,18 @@
+2012-08-29  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Register/unregister contents layers with GraphicsLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=95379
+
+        Reviewed by Adrienne Walker.
+
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::~WebMediaPlayerClientImpl):
+        (WebKit::WebMediaPlayerClientImpl::readyStateChanged):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::setBackingTextureId):
+        (WebKit::WebPluginContainerImpl::setBackingIOSurfaceId):
+        (WebKit::WebPluginContainerImpl::~WebPluginContainerImpl):
+
 2012-08-29  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Add WebSettings support for flag to enable/disable gesture tap highlights.

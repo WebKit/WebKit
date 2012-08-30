@@ -36,6 +36,7 @@
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
+#include "GraphicsLayerChromium.h"
 #include <algorithm>
 #include <public/WebCompositor.h>
 #include <public/WebExternalTextureLayer.h>
@@ -167,10 +168,12 @@ public:
         GraphicsContext3D::Attributes attributes = m_drawingBuffer->graphicsContext3D()->getContextAttributes();
         m_layer->setOpaque(!attributes.alpha);
         m_layer->setPremultipliedAlpha(attributes.premultipliedAlpha);
+        GraphicsLayerChromium::registerContentsLayer(m_layer->layer());
     }
 
     virtual ~DrawingBufferPrivate()
     {
+        GraphicsLayerChromium::unregisterContentsLayer(m_layer->layer());
     }
 
     virtual unsigned prepareTexture(WebKit::WebTextureUpdater& updater) OVERRIDE

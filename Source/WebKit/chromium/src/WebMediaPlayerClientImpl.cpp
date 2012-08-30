@@ -12,6 +12,7 @@
 #include "AudioSourceProviderClient.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
+#include "GraphicsLayerChromium.h"
 #include "HTMLMediaElement.h"
 #include "IntSize.h"
 #include "KURL.h"
@@ -97,6 +98,10 @@ WebMediaPlayerClientImpl::~WebMediaPlayerClientImpl()
 #endif
     if (m_helperPlugin)
         closeHelperPlugin();
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_videoLayer)
+        GraphicsLayerChromium::unregisterContentsLayer(m_videoLayer->layer());
+#endif
 }
 
 void WebMediaPlayerClientImpl::networkStateChanged()
@@ -113,6 +118,7 @@ void WebMediaPlayerClientImpl::readyStateChanged()
     if (hasVideo() && supportsAcceleratedRendering() && !m_videoLayer) {
         m_videoLayer = adoptPtr(WebVideoLayer::create(this));
         m_videoLayer->layer()->setOpaque(m_opaque);
+        GraphicsLayerChromium::registerContentsLayer(m_videoLayer->layer());
     }
 #endif
 }

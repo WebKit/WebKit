@@ -110,6 +110,9 @@ public:
 
     virtual void setContentsRect(const IntRect&);
 
+    static void registerContentsLayer(WebKit::WebLayer*);
+    static void unregisterContentsLayer(WebKit::WebLayer*);
+
     virtual void setContentsToImage(Image*);
     virtual void setContentsToMedia(PlatformLayer*);
     virtual void setContentsToCanvas(PlatformLayer*);
@@ -125,7 +128,7 @@ public:
     // Next function for testing purposes.
     LinkHighlightClient* linkHighlight() { return m_linkHighlight; }
 
-    virtual PlatformLayer* platformLayer() const;
+    virtual WebKit::WebLayer* platformLayer() const;
 
     virtual void setDebugBackgroundColor(const Color&);
     virtual void setDebugBorder(const Color&, float borderWidth);
@@ -171,6 +174,8 @@ private:
 
     void setContentsTo(ContentsLayerPurpose, WebKit::WebLayer*);
     void setupContentsLayer(WebKit::WebLayer*);
+    void clearContentsLayerIfUnregistered();
+    WebKit::WebLayer* contentsLayerIfRegistered();
 
     String m_nameBase;
 

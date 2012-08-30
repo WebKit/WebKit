@@ -29,6 +29,7 @@
 
 #include "Frame.h"
 #include "FrameView.h"
+#include "GraphicsLayerChromium.h"
 #include "Page.h"
 #include "Region.h"
 #include "RenderLayerCompositor.h"
@@ -56,7 +57,13 @@ public:
     {
     }
 
-    ~ScrollingCoordinatorPrivate() { }
+    ~ScrollingCoordinatorPrivate()
+    {
+        if (m_horizontalScrollbarLayer)
+            GraphicsLayerChromium::unregisterContentsLayer(m_horizontalScrollbarLayer->layer());
+        if (m_verticalScrollbarLayer)
+            GraphicsLayerChromium::unregisterContentsLayer(m_verticalScrollbarLayer->layer());
+    }
 
     void setScrollLayer(WebLayer* layer)
     {
@@ -157,6 +164,7 @@ static PassOwnPtr<WebScrollbarLayer> createScrollbarLayer(Scrollbar* scrollbar, 
     OwnPtr<WebScrollbarLayer> scrollbarLayer = adoptPtr(WebScrollbarLayer::create(new WebKit::WebScrollbarImpl(scrollbar), painter, geometry.leakPtr()));
     scrollbarLayer->setScrollLayer(scrollLayer);
 
+    GraphicsLayerChromium::registerContentsLayer(scrollbarLayer->layer());
     scrollbarGraphicsLayer->setContentsToMedia(scrollbarLayer->layer());
     scrollbarGraphicsLayer->setDrawsContent(false);
     scrollbarLayer->layer()->setOpaque(scrollbarGraphicsLayer->contentsOpaque());
