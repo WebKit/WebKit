@@ -1,3 +1,22 @@
+2012-08-30  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Remove unneeded force-immediate-repaint from InRegionScroller::setLayerScrollPosition
+        https://bugs.webkit.org/show_bug.cgi?id=95476
+        PR #200704
+
+        Reviewed by Yong Li.
+
+        This code is not needed at this point for neither the fast nor slow in-region
+        scroll codepaths, and it is a huge performance beast as it forces all
+        containers to get full-repainted per scroll call (in webkit thread).
+
+        Patch also take this opportunity to remove an early-return we
+        have in the {i}frame slow scrolling code path so that we can
+        adjust the selection handles in this case as well.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::setLayerScrollPosition):
+
 2012-08-30  Hanna Ma  <Hanma@rim.com>
 
         [BlackBerry] node search does not work with elements on touch start listener

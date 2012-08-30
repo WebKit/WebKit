@@ -289,13 +289,11 @@ bool InRegionScrollerPrivate::setLayerScrollPosition(RenderLayer* layer, const I
             backingStoreClient->setIsScrollNotificationSuppressed(false);
         }
 
-        return true;
-    }
+    } else {
 
-    // RenderBox-based elements case (scrollable boxes (div's, p's, textarea's, etc)).
-    layer->scrollToOffset(scrollPosition.x(), scrollPosition.y());
-    // FIXME_agomes: Please recheck if it is needed still!
-    layer->renderer()->repaint(true);
+        // RenderBox-based elements case (scrollable boxes (div's, p's, textarea's, etc)).
+        layer->scrollToOffset(toSize(scrollPosition));
+    }
 
     m_webPage->m_selectionHandler->selectionPositionChanged();
     // FIXME: We have code in place to handle scrolling and clipping tap highlight
