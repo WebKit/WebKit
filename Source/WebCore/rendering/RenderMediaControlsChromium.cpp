@@ -327,6 +327,17 @@ static bool paintMediaFullscreenButton(RenderObject* object, const PaintInfo& pa
     return paintMediaButton(paintInfo.context, rect, mediaFullscreenButton);
 }
 
+static bool paintMediaClosedCaptionsButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    HTMLMediaElement* mediaElement = toParentMediaElement(object);
+    if (!mediaElement)
+        return false;
+
+    static Image* mediaClosedCaptionButton = platformResource("mediaplayerClosedCaption");
+    return paintMediaButton(paintInfo.context, rect, mediaClosedCaptionButton);
+}
+
+
 bool RenderMediaControlsChromium::paintMediaControlsPart(MediaControlElementType part, RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
     switch (part) {
@@ -336,6 +347,8 @@ bool RenderMediaControlsChromium::paintMediaControlsPart(MediaControlElementType
     case MediaPauseButton:
     case MediaPlayButton:
         return paintMediaPlayButton(object, paintInfo, rect);
+    case MediaShowClosedCaptionsButton:
+        return paintMediaClosedCaptionsButton(object, paintInfo, rect);
     case MediaSlider:
         return paintMediaSlider(object, paintInfo, rect);
     case MediaSliderThumb:
@@ -360,7 +373,6 @@ bool RenderMediaControlsChromium::paintMediaControlsPart(MediaControlElementType
     case MediaRewindButton:
     case MediaReturnToRealtimeButton:
     case MediaStatusDisplay:
-    case MediaShowClosedCaptionsButton:
     case MediaHideClosedCaptionsButton:
     case MediaTextTrackDisplayContainer:
     case MediaTextTrackDisplay:

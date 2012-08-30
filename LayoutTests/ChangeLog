@@ -1,3 +1,14 @@
+2012-08-30  Victor Carbune  <victor@rosedu.org>
+
+        [Chromium] The CC button is not painted
+        https://bugs.webkit.org/show_bug.cgi?id=95395
+
+        Reviewed by Eric Carlson.
+
+        No new tests, the existing ones will need to be rebaselined and include the CC button.
+
+        * platform/chromium/TestExpectations: Marked tests failing accordingly for rebaselining.
+
 2012-08-30  Jessie Berlin  <jberlin@apple.com>
 
         Assertion failure in MessagePort::contextDestroyed in

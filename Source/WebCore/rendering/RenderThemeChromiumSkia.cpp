@@ -434,6 +434,18 @@ bool RenderThemeChromiumSkia::paintMediaSliderThumb(RenderObject* object, const 
 #endif
 }
 
+bool RenderThemeChromiumSkia::paintMediaToggleClosedCaptionsButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+{
+#if ENABLE(VIDEO_TRACK)
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaShowClosedCaptionsButton, o, paintInfo, r);
+#else
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(paintInfo);
+    UNUSED_PARAM(rect);
+    return false;
+#endif
+}
+
 bool RenderThemeChromiumSkia::paintMediaVolumeSliderThumb(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
