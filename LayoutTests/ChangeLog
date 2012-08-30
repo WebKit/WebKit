@@ -1,3 +1,17 @@
+2012-08-30  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Update css3/filters/custom/effect-custom-transform-parameters.html to remove anti-aliasing issues
+        https://bugs.webkit.org/show_bug.cgi?id=95407
+
+        Reviewed by Dean Jackson.
+
+        The initial test had a white border to prevent anti-aliasing effects, but that doesn't seem to
+        help on some platforms. Removed the border in this patch.
+
+        * css3/filters/custom/effect-custom-transform-parameters-expected.html:
+        * css3/filters/custom/effect-custom-transform-parameters.html:
+        * platform/mac-lion/TestExpectations: Un-skipping the test.
+
 2012-08-30  Philip Rogers  <pdr@google.com>
 
         Unreviewed rebaseline after r127101.

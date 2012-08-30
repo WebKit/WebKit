@@ -10,6 +10,3 @@ BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565
 BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html = PASS
 BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html = PASS
 BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html = PASS
-
-# There is a one pixel error on Lion
-BUGWK71401 : css3/filters/custom/effect-custom-transform-parameters.html = IMAGE
