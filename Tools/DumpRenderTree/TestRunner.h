@@ -221,10 +221,7 @@ public:
     
     bool dumpWillCacheResponse() const { return m_dumpWillCacheResponse; }
     void setDumpWillCacheResponse(bool dumpWillCacheResponse) { m_dumpWillCacheResponse = dumpWillCacheResponse; }
-
-    bool dumpWebNotificationCallbacks() const { return m_dumpWebNotificationCallbacks;}
-    void setDumpWebNotificationCallbacks(bool dumpWebNotificationCallbacks) { m_dumpWebNotificationCallbacks = dumpWebNotificationCallbacks; }
-
+    
     bool callCloseOnWebViews() const { return m_callCloseOnWebViews; }
     void setCallCloseOnWebViews(bool callCloseOnWebViews) { m_callCloseOnWebViews = callCloseOnWebViews; }
 
@@ -400,7 +397,6 @@ private:
     bool m_dumpIconChanges;
     bool m_dumpVisitedLinksCallback;
     bool m_dumpWillCacheResponse;
-    bool m_dumpWebNotificationCallbacks;
     bool m_generatePixelResults;
     bool m_callCloseOnWebViews;
     bool m_canOpenWindows;
