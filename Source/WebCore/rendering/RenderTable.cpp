@@ -210,11 +210,6 @@ void RenderTable::removeCaption(const RenderTableCaption* oldCaption)
         return;
 
     m_captions.remove(index);
-
-    // FIXME: The rest of this function is probably not needed since we have 
-    // implemented proper multiple captions support (see bug 58249).
-    if (node())
-        node()->setNeedsStyleRecalc();
 }
 
 void RenderTable::computeLogicalWidth()
