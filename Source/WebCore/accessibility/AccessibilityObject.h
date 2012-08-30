@@ -104,6 +104,7 @@ enum AccessibilityRole {
     BrowserRole,
     BusyIndicatorRole,
     ButtonRole,
+    CanvasRole,
     CellRole, 
     CheckBoxRole,
     ColorWellRole,
@@ -381,6 +382,7 @@ public:
     bool isListItem() const { return roleValue() == ListItemRole; }
     bool isCheckboxOrRadio() const { return isCheckbox() || isRadioButton(); }
     bool isScrollView() const { return roleValue() == ScrollAreaRole; }
+    bool isCanvas() const { return roleValue() == CanvasRole; }
     bool isBlockquote() const;
     bool isLandmark() const;
     
@@ -458,6 +460,7 @@ public:
     virtual const AtomicString& invalidStatus() const;
     bool supportsARIAExpanded() const;
     AccessibilitySortDirection sortDirection() const;
+    virtual bool canvasHasFallbackContent() const { return false; }
     
     // ARIA drag and drop
     virtual bool supportsARIADropping() const { return false; }

@@ -1,3 +1,21 @@
+2012-08-29  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Canvas should have a distinct role
+        https://bugs.webkit.org/show_bug.cgi?id=95248
+
+        Reviewed by Chris Fleizach.
+
+        Add new tests for canvas role.
+
+        * accessibility/canvas.html: Deleted.
+        * accessibility/canvas-expected.txt: Deleted.
+        * accessibility/canvas-description-and-role.html: Added.
+        * platform/chromium/accessibility/canvas-description-and-role-expected.txt: Added.
+        * platform/gtk/TestExpectations:
+        * platform/mac/accessibility/canvas.html: Added.
+        * platform/mac/accessibility/canvas-expected.txt: Added.
+        * platform/mac/accessibility/canvas-description-and-role-expected.txt: Added.
+
 2012-08-29  Michael Saboff  <msaboff@apple.com>
 
         use after free in WebCore::FileReader::doAbort
