@@ -1,10 +1,29 @@
 <!DOCTYPE html>
-<script src="resources/polyfill.js"></script>
+<html>
+<head>
+<style>
+.textarea-like {
+    width: 255px;
+    height: 96px;
+    border: 1px solid black;
+    overflow-y: scroll;
+    position: relative;
+    top: 2px;
+    margin: 2px 2px 2px 2px;
+    padding: 2px 2px 2px 2px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font: -webkit-small-control;
+    font-family: monospace;
+}
+</style>
+</head>
+<body>
 
 <p>A mixed case of a shadow element and content element.</p>
 <form>
-    hogehoge<div style="margin: 20px">
-        <textarea></textarea>
-    </div>    
-    <input id="submit" type="submit" value="Submit">
+    <div class="textarea-like">textarea<p>paragraph<b>bold</b>paragraph</p><div style="margin: 20px">textarea</div></div>
 </form>
+
+</body>
+</html>

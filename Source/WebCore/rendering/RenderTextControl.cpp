@@ -110,13 +110,18 @@ int RenderTextControl::textBlockWidth() const
 {
     Element* innerText = innerTextElement();
     ASSERT(innerText);
-    return width() - borderAndPaddingWidth() - innerText->renderBox()->paddingLeft() - innerText->renderBox()->paddingRight();
+
+    LayoutUnit unitWidth = width() - borderAndPaddingWidth();
+    if (innerText->renderer())
+        unitWidth -= innerText->renderBox()->paddingLeft() + innerText->renderBox()->paddingRight();
+
+    return unitWidth;
 }
 
 void RenderTextControl::updateFromElement()
 {
     Element* innerText = innerTextElement();
-    if (innerText)
+    if (innerText && innerText->renderer())
         updateUserModifyProperty(node(), innerText->renderer()->style());
 }
 
@@ -143,13 +148,14 @@ void RenderTextControl::computeLogicalHeight()
 {
     HTMLElement* innerText = innerTextElement();
     ASSERT(innerText);
-    RenderBox* innerTextBox = innerText->renderBox();
-    LayoutUnit nonContentHeight = innerTextBox->borderAndPaddingHeight() + innerTextBox->marginHeight();
-    setHeight(computeControlHeight(innerTextBox->lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes), nonContentHeight) + borderAndPaddingHeight());
+    if (RenderBox* innerTextBox = innerText->renderBox()) {
+        LayoutUnit nonContentHeight = innerTextBox->borderAndPaddingHeight() + innerTextBox->marginHeight();
+        setHeight(computeControlHeight(innerTextBox->lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes), nonContentHeight) + borderAndPaddingHeight());
 
-    // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.
-    if (style()->overflowX() == OSCROLL ||  (style()->overflowX() == OAUTO && innerText->renderer()->style()->wordWrap() == NormalWordWrap))
-        setHeight(height() + scrollbarThickness());
+        // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.
+        if (style()->overflowX() == OSCROLL ||  (style()->overflowX() == OAUTO && innerText->renderer()->style()->wordWrap() == NormalWordWrap))
+            setHeight(height() + scrollbarThickness());
+    }
 
     RenderBlock::computeLogicalHeight();
 }
@@ -157,6 +163,9 @@ void RenderTextControl::computeLogicalHeight()
 void RenderTextControl::hitInnerTextElement(HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
 {
     HTMLElement* innerText = innerTextElement();
+    if (!innerText->renderer())
+        return;
+
     LayoutPoint adjustedLocation = accumulatedOffset + location();
     LayoutPoint localPoint = pointInContainer - toLayoutSize(adjustedLocation + innerText->renderBox()->location());
     if (hasOverflowClip())
@@ -257,8 +266,9 @@ void RenderTextControl::computePreferredLogicalWidths()
     else {
         // Use average character width. Matches IE.
         AtomicString family = style()->font().family().family();
-        RenderBox* innerTextRenderBox = innerTextElement()->renderBox();
-        m_maxPreferredLogicalWidth = preferredContentWidth(getAvgCharWidth(family)) + innerTextRenderBox->paddingLeft() + innerTextRenderBox->paddingRight();
+        m_maxPreferredLogicalWidth = preferredContentWidth(getAvgCharWidth(family));
+        if (RenderBox* innerTextRenderBox = innerTextElement()->renderBox())
+            m_maxPreferredLogicalWidth += innerTextRenderBox->paddingLeft() + innerTextRenderBox->paddingRight();
     }
 
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {

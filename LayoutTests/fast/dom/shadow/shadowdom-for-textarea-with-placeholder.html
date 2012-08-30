@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="resources/replaced-element-styles.css" type="text/css">
+<script src="resources/polyfill.js"></script>
+</head>
+<body>
+
+<textarea id="host" rows="4" cols="30" placeholder="This is a placeholder text."></textarea>
+
+<script>
+var shadowRoot1 = new WebKitShadowRoot(host);
+shadowRoot1.appendChild(document.createTextNode('before'));
+shadowRoot1.appendChild(document.createElement('shadow'));
+shadowRoot1.appendChild(document.createTextNode('after'));
+</script>
+
+</body>
+</html>

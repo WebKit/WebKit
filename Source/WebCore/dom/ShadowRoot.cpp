@@ -88,7 +88,7 @@ static bool allowsAuthorShadowRoot(Element* element)
     // So we would like to prohibit having a AuthorShadowDOM for a while. The same thing happens to
     // textarea element also.
     // https://bugs.webkit.org/show_bug.cgi?id=92608
-    if (isHTMLInputElement(element) || isHTMLTextAreaElement(element))
+    if (isHTMLInputElement(element))
         return false;
 
     // FIXME: We disable multiple shadow subtrees for SVG for while, because there will be problems to support it.

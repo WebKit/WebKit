@@ -4,11 +4,9 @@
 <p>When the AuthorShadowDOM has only a shadow element, this should be rendered like no Shadow DOM is added.</p>
 <form>
     <textarea id="host">Something in the air</textarea>
-    <input id="submit" type="submit" value="Submit">
 </form>
 
 <script>
-var host = document.getElementById('host');
 var shadowRoot = new WebKitShadowRoot(host);
-shadowRoot.innerHTML = "<shadow></shadow>"
+shadowRoot.appendChild(document.createElement('shadow'));
 </script>

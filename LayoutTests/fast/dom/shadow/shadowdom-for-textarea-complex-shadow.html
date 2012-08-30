@@ -1,14 +1,34 @@
 <!DOCTYPE html>
+<html>
+<head>
+<style>
+textarea {
+   resize: none;
+}
+</style>
+</head>
+<body>
 <script src="resources/polyfill.js"></script>
 
 <p>A mixed case of a shadow element and content element.</p>
 <form>
-    <textarea id="host">hogehoge</textarea>
-    <input id="submit" type="submit" value="Submit">
+    <textarea id="host" rows="6" cols="30">textarea</textarea>
 </form>
 
 <script>
-var host = document.getElementById('host');
+var p = document.createElement('p');
+p.innerHTML = "paragraph<b>bold</b>paragraph";
+host.appendChild(p);
+
 var shadowRoot = new WebKitShadowRoot(host);
-shadowRoot.innerHTML = "<content></content><div style='margin: 20px'><shadow></shadow></div>"
+
+// <content></content><div style="margin: 20px"><shadow></shadow></div>
+shadowRoot.appendChild(document.createElement('content'));
+var div = document.createElement('div');
+div.setAttribute('style', 'margin: 20px');
+div.appendChild(document.createElement('shadow'));
+shadowRoot.appendChild(div);
 </script>
+
+</body>
+</html>
