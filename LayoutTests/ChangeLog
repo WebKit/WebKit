@@ -1,3 +1,12 @@
+2012-08-30  Philip Rogers  <pdr@google.com>
+
+        Unreviewed update of TestExpectations.
+
+        These tests are awaiting a rebaseline after r127168 but have the wrong modifiers on them. They
+        are failing for Image but have Image+Text. Updating to fix that.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-30  Victor Carbune  <victor@rosedu.org>
 
         [Chromium] Layout Test media/track/track-cue-rendering-snap-to-lines-not-set.html is flaky
