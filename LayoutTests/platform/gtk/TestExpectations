@@ -222,6 +222,8 @@ BUGWKGTK SKIP : fast/forms/file/input-file-entries.html = TEXT
 // Requires WebP support.
 BUGWKGTK SKIP : fast/canvas/canvas-toDataURL-webp.html = TEXT
 BUGWKGTK SKIP : fast/images/webp-image-decoding.html = TEXT
+BUGWKGTK SKIP : http/tests/images/webp-partial-load.html = TEXT
+BUGWKGTK SKIP : http/tests/images/webp-progressive-load.html = TEXT
 
 // DataTransferItems is not yet implemented.
 BUGWKGTK SKIP : editing/pasteboard/data-transfer-items.html = TEXT

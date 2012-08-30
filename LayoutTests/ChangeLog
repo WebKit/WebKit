@@ -1,3 +1,30 @@
+2012-08-29  Noel Gordon  <noel.gordon@gmail.com>
+
+        WebPImageDecoder progressive decodes fail to decode valid images
+        https://bugs.webkit.org/show_bug.cgi?id=74062
+
+        Reviewed by Adam Barth.
+
+        Add test for a partial image load, and a test for a complete image load with a
+        pause to cause a progressive/incremental webp image decode.
+
+        * fast/images/resources/large.webp: Added.
+        * http/tests/images/webp-partial-load-expected.txt: Added.
+        * http/tests/images/webp-partial-load.html: Added.
+        * http/tests/images/webp-progressive-load-expected.txt: Added.
+        * http/tests/images/webp-progressive-load.html: Added.
+        * platform/chromium-linux/http/tests/images/webp-partial-load-expected.png: Added.
+        Result differs because the linux DRT network layers returns partial encoded image
+        data from the cache layer in multiples of 2048 bytes until all data is received.
+        * platform/chromium/http/tests/images/webp-partial-load-expected.png: Added.
+        * platform/chromium/http/tests/images/webp-progressive-load-expected.png: Added.
+        * platform/efl/TestExpectations: This port does not support webp images.
+        * platform/gtk/TestExpectations: ditto.
+        * platform/mac/Skipped: ditto.
+        * platform/qt/Skipped: ditto.
+        * platform/win/Skipped: ditto.
+        * platform/wincairo/Skipped: ditto.
+
 2012-08-29  Adam Barth  <abarth@webkit.org>
 
         security/crypto-random-values-limits.html test the exact value that causes us to throw

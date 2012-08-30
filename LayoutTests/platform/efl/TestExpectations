@@ -568,6 +568,8 @@ BUGWK88045 : fast/dom/gc-attribute-node.html = TEXT
 // Requires WebP support.
 BUGWKEFL SKIP : fast/canvas/canvas-toDataURL-webp.html = PASS
 BUGWKEFL SKIP : fast/images/webp-image-decoding.html = PASS
+BUGWKEFL SKIP : http/tests/images/webp-partial-load.html = PASS
+BUGWKEFL SKIP : http/tests/images/webp-progressive-load.html = PASS
 
 // Requires MEDIA_SOURCE support.
 BUGWK95296 SKIP : http/tests/media/media-source = TEXT
