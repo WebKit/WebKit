@@ -1,3 +1,16 @@
+2012-08-30  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding failure expectations for media/video-controls-captions.html
+        and svg/custom/clamped-masking-clipping.svg, the tests have been failing
+        since introduced in r127035 and r126993, respectively.
+
+        Also adding a flakiness expectation for
+        fast/layers/scroll-no-visible-content-but-visible-descendant.html.
+
+        * platform/gtk/TestExpectations:
+
 2012-08-30  Shinya Kawanaka  <shinyak@chromium.org>
 
         AuthorShadowDOM support for textarea element.

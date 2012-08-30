@@ -562,6 +562,8 @@ BUGWK93727 RELEASE : fullscreen/exit-full-screen-iframe.html = TEXT PASS
 BUGWK93727 RELEASE : fullscreen/full-screen-iframe-zIndex.html = TEXT PASS
 BUGWK93727 RELEASE : svg/custom/use-instanceRoot-as-event-target.xhtml = TEXT PASS
 
+BUGWK95430 : fast/layers/scroll-no-visible-content-but-visible-descendant.html = TEXT PASS
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Flaky tests
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -1288,6 +1290,10 @@ BUGWK94952 DEBUG : platform/gtk/scrollbars/overflow-scrollbar-horizontal-wheel-s
 BUGWK94952 DEBUG : scrollbars/scroll-rtl-or-bt-layer.html = TEXT
 
 BUGWK87355 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
+
+BUGWK95428 : media/video-controls-captions.html = TEXT
+
+BUGWK95429 : svg/custom/clamped-masking-clipping.svg = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
