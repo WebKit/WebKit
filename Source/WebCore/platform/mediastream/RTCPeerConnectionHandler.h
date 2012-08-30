@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+class MediaConstraints;
+class RTCConfiguration;
 class RTCPeerConnectionHandlerClient;
 
 class RTCPeerConnectionHandler {
@@ -45,7 +47,7 @@ public:
     static PassOwnPtr<RTCPeerConnectionHandler> create(RTCPeerConnectionHandlerClient*);
     virtual ~RTCPeerConnectionHandler() { }
 
-    virtual bool initialize() = 0;
+    virtual bool initialize(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) = 0;
     virtual void stop() = 0;
 
 protected:

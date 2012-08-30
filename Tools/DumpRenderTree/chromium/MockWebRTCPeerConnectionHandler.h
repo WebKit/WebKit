@@ -42,7 +42,8 @@ class MockWebRTCPeerConnectionHandler : public WebKit::WebRTCPeerConnectionHandl
 public:
     explicit MockWebRTCPeerConnectionHandler(WebKit::WebRTCPeerConnectionHandlerClient*);
 
-    virtual bool initialize() OVERRIDE;
+    virtual bool initialize(const WebKit::WebRTCConfiguration&, const WebKit::WebMediaConstraints&) OVERRIDE;
+
     virtual void stop() OVERRIDE;
 
 private:

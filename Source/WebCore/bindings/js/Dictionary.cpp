@@ -79,6 +79,25 @@ bool Dictionary::getOwnPropertiesAsStringHashMap(WTF::HashMap<String, String>& m
     return true;
 }
 
+bool Dictionary::getOwnPropertyNames(WTF::Vector<String>& names) const
+{
+    if (!m_dictionary.isValid())
+        return false;
+
+    JSObject* object =  m_dictionary.initializerObject();
+    ExecState* exec = m_dictionary.execState();
+
+    PropertyNameArray propertyNames(exec);
+    JSObject::getOwnPropertyNames(object, exec, propertyNames, ExcludeDontEnumProperties);
+    for (PropertyNameArray::const_iterator it = propertyNames.begin(); it != propertyNames.end(); it++) {
+        String stringKey = ustringToString(it->ustring());
+        if (!stringKey.isEmpty())
+            names.append(stringKey);
+    }
+
+    return true;
+}
+
 bool Dictionary::getWithUndefinedOrNullCheck(const String& propertyName, String& value) const
 {
     return m_dictionary.getWithUndefinedOrNullCheck(propertyName, value);

@@ -1,3 +1,13 @@
+2012-08-30  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Introduce MediaConstraints
+        https://bugs.webkit.org/show_bug.cgi?id=95198
+
+        Reviewed by Adam Barth.
+
+        * fast/mediastream/RTCPeerConnection-expected.txt:
+        * fast/mediastream/RTCPeerConnection.html:
+
 2012-08-30  'Pavel Feldman'  <pfeldman@chromium.org>
 
         Fixing two inspector tests that fail on Mac WK1.

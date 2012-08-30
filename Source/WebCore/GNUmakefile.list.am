@@ -1894,6 +1894,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediastream/IceCandidate.h \
 	Source/WebCore/Modules/mediastream/LocalMediaStream.cpp \
 	Source/WebCore/Modules/mediastream/LocalMediaStream.h \
+	Source/WebCore/Modules/mediastream/MediaConstraintsImpl.cpp \
+	Source/WebCore/Modules/mediastream/MediaConstraintsImpl.h \
 	Source/WebCore/Modules/mediastream/MediaStream.cpp \
 	Source/WebCore/Modules/mediastream/MediaStream.h \
 	Source/WebCore/Modules/mediastream/MediaStreamEvent.cpp \
@@ -4525,6 +4527,7 @@ webcore_sources += \
 	Source/WebCore/platform/mediastream/IceCandidateDescriptor.h \
 	Source/WebCore/platform/mediastream/IceOptions.cpp \
 	Source/WebCore/platform/mediastream/IceOptions.h \
+	Source/WebCore/platform/mediastream/MediaConstraints.h \
 	Source/WebCore/platform/mediastream/MediaHints.cpp \
 	Source/WebCore/platform/mediastream/MediaHints.h \
 	Source/WebCore/platform/mediastream/MediaStreamCenter.cpp \

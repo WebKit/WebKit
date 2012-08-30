@@ -46,7 +46,7 @@ public:
     RTCPeerConnectionHandlerChromium(RTCPeerConnectionHandlerClient*);
     virtual ~RTCPeerConnectionHandlerChromium();
 
-    virtual bool initialize() OVERRIDE;
+    virtual bool initialize(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) OVERRIDE;
     virtual void stop() OVERRIDE;
 
     // WebKit::WebRTCPeerConnectionHandlerClient implementation.

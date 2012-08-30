@@ -46,7 +46,7 @@ public:
     RTCPeerConnectionHandlerDummy(RTCPeerConnectionHandlerClient*);
     virtual ~RTCPeerConnectionHandlerDummy();
 
-    virtual bool initialize() OVERRIDE;
+    virtual bool initialize(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) OVERRIDE;
     virtual void stop() OVERRIDE;
 
 private:
@@ -68,7 +68,7 @@ RTCPeerConnectionHandlerDummy::~RTCPeerConnectionHandlerDummy()
 {
 }
 
-bool RTCPeerConnectionHandlerDummy::initialize()
+bool RTCPeerConnectionHandlerDummy::initialize(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>)
 {
     return false;
 }

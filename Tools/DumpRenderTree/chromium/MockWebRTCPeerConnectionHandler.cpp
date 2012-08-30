@@ -33,16 +33,55 @@
 
 #include "MockWebRTCPeerConnectionHandler.h"
 
+#include <public/WebMediaConstraints.h>
 #include <public/WebRTCPeerConnectionHandlerClient.h>
+#include <public/WebString.h>
+#include <public/WebVector.h>
 
 using namespace WebKit;
 
-MockWebRTCPeerConnectionHandler::MockWebRTCPeerConnectionHandler(WebRTCPeerConnectionHandlerClient*)
+MockWebRTCPeerConnectionHandler::MockWebRTCPeerConnectionHandler(WebRTCPeerConnectionHandlerClient* client)
 {
 }
 
-bool MockWebRTCPeerConnectionHandler::initialize()
+static bool isSupportedConstraint(const WebString& constraint)
 {
+    return constraint == "valid_and_supported_1" || constraint == "valid_and_supported_2";
+}
+
+static bool isValidConstraint(const WebString& constraint)
+{
+    return isSupportedConstraint(constraint) || constraint == "valid_but_unsupported_1" || constraint == "valid_but_unsupported_2";
+}
+
+bool MockWebRTCPeerConnectionHandler::initialize(const WebRTCConfiguration&, const WebMediaConstraints& constraints)
+{
+    WebVector<WebString> mandatoryConstraintNames;
+    constraints.getMandatoryConstraintNames(mandatoryConstraintNames);
+    if (mandatoryConstraintNames.size()) {
+        for (size_t i = 0; i < mandatoryConstraintNames.size(); ++i) {
+            if (!isSupportedConstraint(mandatoryConstraintNames[i]))
+                return false;
+            WebString value;
+            constraints.getMandatoryConstraintValue(mandatoryConstraintNames[i], value);
+            if (value != "1")
+                return false;
+        }
+    }
+
+    WebVector<WebString> optionalConstraintNames;
+    constraints.getOptionalConstraintNames(optionalConstraintNames);
+    if (optionalConstraintNames.size()) {
+        for (size_t i = 0; i < optionalConstraintNames.size(); ++i) {
+            if (!isValidConstraint(optionalConstraintNames[i]))
+                return false;
+            WebString value;
+            constraints.getOptionalConstraintValue(optionalConstraintNames[i], value);
+            if (value != "0")
+                return false;
+        }
+    }
+
     return true;
 }
 

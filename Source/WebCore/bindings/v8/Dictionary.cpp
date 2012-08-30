@@ -494,4 +494,26 @@ bool Dictionary::getOwnPropertiesAsStringHashMap(WTF::HashMap<String, String>& h
     return true;
 }
 
+bool Dictionary::getOwnPropertyNames(WTF::Vector<String>& names) const
+{
+    if (!isObject())
+        return false;
+
+    v8::Handle<v8::Object> options = m_options->ToObject();
+    if (options.IsEmpty())
+        return false;
+
+    v8::Local<v8::Array> properties = options->GetOwnPropertyNames();
+    if (properties.IsEmpty())
+        return true;
+    for (uint32_t i = 0; i < properties->Length(); ++i) {
+        v8::Local<v8::String> key = properties->Get(i)->ToString();
+        if (!options->Has(key))
+            continue;
+        names.append(toWebCoreString(key));
+    }
+
+    return true;
+}
+
 } // namespace WebCore

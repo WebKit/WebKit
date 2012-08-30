@@ -37,6 +37,7 @@
 #include "ArrayValue.h"
 #include "Event.h"
 #include "ExceptionCode.h"
+#include "MediaConstraintsImpl.h"
 #include "RTCConfiguration.h"
 #include "ScriptExecutionContext.h"
 
@@ -90,13 +91,17 @@ PassRefPtr<RTCConfiguration> RTCPeerConnection::parseConfiguration(const Diction
     return rtcConfiguration.release();
 }
 
-PassRefPtr<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext* context, const Dictionary& rtcConfiguration, const Dictionary&, ExceptionCode& ec)
+PassRefPtr<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext* context, const Dictionary& rtcConfiguration, const Dictionary& mediaConstraints, ExceptionCode& ec)
 {
     RefPtr<RTCConfiguration> configuration = parseConfiguration(rtcConfiguration, ec);
     if (ec)
         return 0;
 
-    RefPtr<RTCPeerConnection> peerConnection = adoptRef(new RTCPeerConnection(context, configuration.release(), ec));
+    RefPtr<MediaConstraints> constraints = MediaConstraintsImpl::create(mediaConstraints, ec);
+    if (ec)
+        return 0;
+
+    RefPtr<RTCPeerConnection> peerConnection = adoptRef(new RTCPeerConnection(context, configuration.release(), constraints.release(), ec));
     peerConnection->suspendIfNeeded();
     if (ec)
         return 0;
@@ -104,12 +109,12 @@ PassRefPtr<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext* 
     return peerConnection.release();
 }
 
-RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext* context, PassRefPtr<RTCConfiguration>, ExceptionCode& ec)
+RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext* context, PassRefPtr<RTCConfiguration> configuration, PassRefPtr<MediaConstraints> constraints, ExceptionCode& ec)
     : ActiveDOMObject(context, this)
     , m_readyState(ReadyStateNew)
 {
     m_peerHandler = RTCPeerConnectionHandler::create(this);
-    if (!m_peerHandler || !m_peerHandler->initialize())
+    if (!m_peerHandler || !m_peerHandler->initialize(configuration, constraints))
         ec = NOT_SUPPORTED_ERR;
 }
 

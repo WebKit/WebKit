@@ -1,3 +1,24 @@
+2012-08-30  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Introduce MediaConstraints
+        https://bugs.webkit.org/show_bug.cgi?id=95198
+
+        Reviewed by Adam Barth.
+
+        Adds WebMediaConstraints.
+
+        * Platform.gypi:
+        * chromium/public/WebMediaConstraints.h: Copied from Source/Platform/chromium/public/WebRTCPeerConnectionHandler.h.
+        (WebCore):
+        (WebKit):
+        (WebMediaConstraints):
+        (WebKit::WebMediaConstraints::WebMediaConstraints):
+        (WebKit::WebMediaConstraints::~WebMediaConstraints):
+        (WebKit::WebMediaConstraints::operator=):
+        * chromium/public/WebRTCPeerConnectionHandler.h:
+        (WebKit):
+        (WebRTCPeerConnectionHandler):
+
 2012-08-27  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Should accelerate rotations of >= 180 degrees

@@ -34,8 +34,12 @@
 
 #include "RTCPeerConnectionHandlerChromium.h"
 
+#include "MediaConstraints.h"
+#include "RTCConfiguration.h"
 #include "RTCPeerConnectionHandlerClient.h"
 #include <public/Platform.h>
+#include <public/WebMediaConstraints.h>
+#include <public/WebRTCConfiguration.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -55,10 +59,10 @@ RTCPeerConnectionHandlerChromium::~RTCPeerConnectionHandlerChromium()
 {
 }
 
-bool RTCPeerConnectionHandlerChromium::initialize()
+bool RTCPeerConnectionHandlerChromium::initialize(PassRefPtr<RTCConfiguration> configuration, PassRefPtr<MediaConstraints> constraints)
 {
     m_webHandler = adoptPtr(WebKit::Platform::current()->createRTCPeerConnectionHandler(this));
-    return m_webHandler ? m_webHandler->initialize() : false;
+    return m_webHandler ? m_webHandler->initialize(configuration, constraints) : false;
 }
 
 void RTCPeerConnectionHandlerChromium::stop()

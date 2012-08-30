@@ -844,6 +844,7 @@ SET(WebCore_SOURCES
 
     Modules/mediastream/IceCandidate.cpp
     Modules/mediastream/LocalMediaStream.cpp
+    Modules/mediastream/MediaConstraintsImpl.cpp
     Modules/mediastream/MediaStream.cpp
     Modules/mediastream/MediaStreamEvent.cpp
     Modules/mediastream/MediaStreamList.cpp

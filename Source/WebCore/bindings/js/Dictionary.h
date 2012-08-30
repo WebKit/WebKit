@@ -60,7 +60,8 @@ public:
 
     bool isObject() const { return m_dictionary.isValid(); }
     bool isUndefinedOrNull() const { return !m_dictionary.isValid(); }
-    bool getOwnPropertiesAsStringHashMap(WTF::HashMap<String, String>&) const;
+    bool getOwnPropertiesAsStringHashMap(HashMap<String, String>&) const;
+    bool getOwnPropertyNames(Vector<String>&) const;
     bool getWithUndefinedOrNullCheck(const String& propertyName, String& value) const;
 
 private:
