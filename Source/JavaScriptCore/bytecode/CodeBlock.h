@@ -229,12 +229,14 @@ namespace JSC {
         {
             return *(binarySearch<MethodCallLinkInfo, unsigned, getMethodCallLinkInfoBytecodeIndex>(m_methodCallLinkInfos.begin(), m_methodCallLinkInfos.size(), bytecodeIndex));
         }
+#endif // ENABLE(JIT)
 
 #if ENABLE(LLINT)
         Instruction* adjustPCIfAtCallSite(Instruction*);
 #endif
         unsigned bytecodeOffset(ExecState*, ReturnAddressPtr);
 
+#if ENABLE(JIT)
         unsigned bytecodeOffsetForCallAtIndex(unsigned index)
         {
             if (!m_rareData)
@@ -254,6 +256,8 @@ namespace JSC {
         {
             m_incomingCalls.push(incoming);
         }
+#endif // ENABLE(JIT)
+
 #if ENABLE(LLINT)
         void linkIncomingCall(LLIntCallLinkInfo* incoming)
         {
@@ -262,7 +266,6 @@ namespace JSC {
 #endif // ENABLE(LLINT)
         
         void unlinkIncomingCalls();
-#endif // ENABLE(JIT)
 
 #if ENABLE(DFG_JIT) || ENABLE(LLINT)
         void setJITCodeMap(PassOwnPtr<CompactJITCodeMap> jitCodeMap)

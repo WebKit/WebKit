@@ -44,6 +44,8 @@
 #include "Operations.h"
 #include <wtf/InlineASM.h>
 
+#if ENABLE(JIT)
+
 #if ENABLE(DFG_JIT)
 
 #if CPU(X86_64)
@@ -1388,7 +1390,7 @@ extern "C" void DFG_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock)
 } // extern "C"
 } } // namespace JSC::DFG
 
-#endif
+#endif // ENABLE(DFG_JIT)
 
 #if COMPILER(GCC)
 
@@ -1450,3 +1452,4 @@ extern "C" EncodedJSValue HOST_CALL_RETURN_VALUE_OPTION getHostCallReturnValueWi
 
 #endif // COMPILER(GCC)
 
+#endif // ENABLE(JIT)

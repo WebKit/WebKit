@@ -36,6 +36,8 @@
 #include <wtf/AlwaysInline.h>
 #include <wtf/Vector.h>
 
+#if ENABLE(JIT)
+
 namespace JSC {
     class JSInterfaceJIT : public MacroAssembler {
     public:
@@ -333,6 +335,8 @@ namespace JSC {
         return Address(base, (static_cast<unsigned>(virtualRegisterIndex) * sizeof(Register)));
     }
 
-}
+} // namespace JSC
+
+#endif // ENABLE(JIT)
 
 #endif // JSInterfaceJIT_h

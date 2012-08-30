@@ -2577,6 +2577,7 @@ void CodeBlock::unlinkIncomingCalls()
     while (m_incomingCalls.begin() != m_incomingCalls.end())
         m_incomingCalls.begin()->unlink(*m_globalData, repatchBuffer);
 }
+#endif // ENABLE(JIT)
 
 #if ENABLE(LLINT)
 Instruction* CodeBlock::adjustPCIfAtCallSite(Instruction* potentialReturnPC)
@@ -2630,10 +2631,12 @@ Instruction* CodeBlock::adjustPCIfAtCallSite(Instruction* potentialReturnPC)
     // Not a call site. No need to adjust PC. Just return the original.
     return potentialReturnPC;
 }
-#endif
+#endif // ENABLE(LLINT)
 
 unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddress)
 {
+    UNUSED_PARAM(exec);
+    UNUSED_PARAM(returnAddress);
 #if ENABLE(LLINT)
     if (returnAddress.value() >= LLInt::getCodePtr(llint_begin)
         && returnAddress.value() <= LLInt::getCodePtr(llint_end)) {
@@ -2644,20 +2647,23 @@ unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddre
         ASSERT(instruction);
 
         instruction = adjustPCIfAtCallSite(instruction);
-        
         return bytecodeOffset(instruction);
     }
-#else
-    UNUSED_PARAM(exec);
-#endif
+#endif // !ENABLE(LLINT)
+
+#if ENABLE(JIT)
     if (!m_rareData)
         return 1;
     Vector<CallReturnOffsetToBytecodeOffset>& callIndices = m_rareData->m_callReturnIndexVector;
     if (!callIndices.size())
         return 1;
     return binarySearch<CallReturnOffsetToBytecodeOffset, unsigned, getCallReturnOffset>(callIndices.begin(), callIndices.size(), getJITCode().offsetOf(returnAddress.value()))->bytecodeOffset;
-}
+#endif // ENABLE(JIT)
+
+#if !ENABLE(LLINT) && !ENABLE(JIT)
+    return 1;
 #endif
+}
 
 void CodeBlock::clearEvalCache()
 {

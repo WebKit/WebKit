@@ -1,3 +1,64 @@
+2012-08-30  Mark Lam  <mark.lam@apple.com>
+
+        Render unto #ifdef's that which belong to them.
+        https://bugs.webkit.org/show_bug.cgi?id=95482.
+
+        Reviewed by Filip Pizlo.
+
+        Refining / disambiguating between #ifdefs and adding some. For
+        example, ENABLE(JIT) is conflated with ENABLE(LLINT) in some places.
+        Also, we need to add ENABLE(COMPUTED_GOTO_OPCODES) to indicate that we
+        want interpreted opcodes to use COMPUTED GOTOs apart from ENABLE(LLINT)
+        and ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER). Also cleaned up #ifdefs
+        in certain places which were previously incorrect.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC):
+        (JSC::CodeBlock::bytecodeOffset):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * config.h:
+        * dfg/DFGOperations.cpp:
+        * interpreter/AbstractPC.cpp:
+        (JSC::AbstractPC::AbstractPC):
+        * interpreter/CallFrame.h:
+        (ExecState):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::~Interpreter):
+        (JSC::Interpreter::initialize):
+        (JSC::Interpreter::isOpcode):
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::getLineNumberForCallFrame):
+        (JSC::getCallerInfo):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::privateExecute):
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::getOpcode):
+        (JSC::Interpreter::getOpcodeID):
+        (Interpreter):
+        * jit/HostCallReturnValue.h:
+        * jit/JITCode.h:
+        (JITCode):
+        * jit/JITExceptions.cpp:
+        * jit/JITExceptions.h:
+        * jit/JSInterfaceJIT.h:
+        * llint/LLIntData.h:
+        (JSC::LLInt::getOpcode):
+        * llint/LLIntEntrypoints.cpp:
+        (JSC::LLInt::getFunctionEntrypoint):
+        (JSC::LLInt::getEvalEntrypoint):
+        (JSC::LLInt::getProgramEntrypoint):
+        * llint/LLIntOffsetsExtractor.cpp:
+        (JSC::LLIntOffsetsExtractor::dummy):
+        * llint/LLIntSlowPaths.cpp:
+        (LLInt):
+        * runtime/JSGlobalData.cpp:
+        (JSC):
+
 2012-08-30  JungJik Lee  <jungjik.lee@samsung.com>
 
         [EFL][WK2] Add WebMemorySampler feature.

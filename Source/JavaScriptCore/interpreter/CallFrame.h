@@ -103,7 +103,7 @@ namespace JSC  {
         CallFrame& operator=(const Register& r) { *static_cast<Register*>(this) = r; return *this; }
 
         CallFrame* callerFrame() const { return this[RegisterFile::CallerFrame].callFrame(); }
-#if ENABLE(JIT)
+#if ENABLE(JIT) || ENABLE(LLINT)
         ReturnAddressPtr returnPC() const { return ReturnAddressPtr(this[RegisterFile::ReturnPC].vPC()); }
         bool hasReturnPC() const { return !!this[RegisterFile::ReturnPC].vPC(); }
         void clearReturnPC() { registers()[RegisterFile::ReturnPC] = static_cast<Instruction*>(0); }

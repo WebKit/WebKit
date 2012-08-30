@@ -71,7 +71,7 @@ inline Opcode* opcodeMap()
 
 inline Opcode getOpcode(OpcodeID id)
 {
-#if HAVE(COMPUTED_GOTO)
+#if ENABLE(COMPUTED_GOTO_OPCODES)
     return Data::s_opcodeMap[id];
 #else
     return static_cast<Opcode>(id);

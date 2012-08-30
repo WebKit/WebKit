@@ -375,12 +375,13 @@ NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, Intrins
     ASSERT(canUseJIT());
     return jitStubs->hostFunctionStub(this, function, intrinsic != NoIntrinsic ? thunkGeneratorForIntrinsic(intrinsic) : 0, intrinsic);
 }
-#else
+
+#else // !ENABLE(JIT)
 NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, NativeFunction constructor)
 {
     return NativeExecutable::create(*this, function, constructor);
 }
-#endif
+#endif // !ENABLE(JIT)
 
 JSGlobalData::ClientData::~ClientData()
 {

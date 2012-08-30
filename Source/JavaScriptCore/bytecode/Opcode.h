@@ -225,7 +225,7 @@ namespace JSC {
         FOR_EACH_OPCODE_ID(VERIFY_OPCODE_ID);
     #undef VERIFY_OPCODE_ID
 
-#if ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER) || ENABLE(LLINT)
+#if ENABLE(COMPUTED_GOTO_OPCODES)
     typedef void* Opcode;
 #else
     typedef OpcodeID Opcode;

@@ -29,7 +29,7 @@
 #include "JSValue.h"
 #include "MacroAssemblerCodeRef.h"
 
-#if ENABLE(ASSEMBLER)
+#if ENABLE(JIT) || ENABLE(LLINT)
 
 namespace JSC {
 
@@ -50,7 +50,7 @@ ExceptionHandler jitThrow(JSGlobalData*, ExecState*, JSValue exceptionValue, Ret
 
 } // namespace JSC
 
-#endif
+#endif // ENABLE(JIT) || ENABLE(LLINT)
 
 #endif // JITExceptions_h
 

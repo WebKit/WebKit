@@ -36,6 +36,7 @@ namespace JSC {
 AbstractPC::AbstractPC(JSGlobalData& globalData, ExecState* exec)
 {
     UNUSED_PARAM(globalData);
+    UNUSED_PARAM(exec);
     
 #if ENABLE(JIT)
     if (globalData.canUseJIT()) {

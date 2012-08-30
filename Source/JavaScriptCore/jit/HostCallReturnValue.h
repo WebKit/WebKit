@@ -33,7 +33,7 @@
 // Unfortunately this only works on GCC-like compilers. And it's currently only used
 // by LLInt and DFG, which also are restricted to GCC-like compilers. We should
 // probably fix that at some point.
-#if COMPILER(GCC)
+#if COMPILER(GCC) && ENABLE(JIT)
 
 #if CALLING_CONVENTION_IS_STDCALL
 #define HOST_CALL_RETURN_VALUE_OPTION CDECL

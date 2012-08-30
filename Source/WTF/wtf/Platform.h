@@ -978,6 +978,10 @@
 #define ENABLE_COMPUTED_GOTO_CLASSIC_INTERPRETER 1
 #endif
 
+#if (HAVE(COMPUTED_GOTO) && ENABLE(LLINT)) || ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
+#define ENABLE_COMPUTED_GOTO_OPCODES 1
+#endif
+
 /* Regular Expression Tracing - Set to 1 to trace RegExp's in jsc.  Results dumped at exit */
 #define ENABLE_REGEXP_TRACING 0
 

@@ -26,7 +26,7 @@
 #ifndef JITCode_h
 #define JITCode_h
 
-#if ENABLE(JIT)
+#if ENABLE(JIT) || ENABLE(LLINT)
 #include "CallFrame.h"
 #include "JSValue.h"
 #include "Disassembler.h"
@@ -42,7 +42,7 @@ namespace JSC {
 #endif
     
     class JITCode {
-#if ENABLE(JIT)
+#if ENABLE(JIT) || ENABLE(LLINT)
         typedef MacroAssemblerCodeRef CodeRef;
         typedef MacroAssemblerCodePtr CodePtr;
 #else
@@ -77,7 +77,7 @@ namespace JSC {
             return jitType == InterpreterThunk || jitType == BaselineJIT;
         }
         
-#if ENABLE(JIT)
+#if ENABLE(JIT) || ENABLE(LLINT)
         JITCode()
             : m_jitType(None)
         {
@@ -127,12 +127,14 @@ namespace JSC {
             return static_cast<unsigned>(result);
         }
 
+#if ENABLE(JIT)
         // Execute the code!
         inline JSValue execute(RegisterFile* registerFile, CallFrame* callFrame, JSGlobalData* globalData)
         {
             JSValue result = JSValue::decode(ctiTrampoline(m_ref.code().executableAddress(), registerFile, callFrame, 0, 0, globalData));
             return globalData->exception ? jsNull() : result;
         }
+#endif
 
         void* start() const
         {
@@ -182,7 +184,7 @@ namespace JSC {
 
         CodeRef m_ref;
         JITType m_jitType;
-#endif // ENABLE(JIT)
+#endif // ENABLE(JIT) || ENABLE(LLINT)
     };
 
 };

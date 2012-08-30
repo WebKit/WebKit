@@ -194,7 +194,7 @@ namespace JSC {
         Opcode getOpcode(OpcodeID id)
         {
             ASSERT(m_initialized);
-#if ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER) || ENABLE(LLINT)
+#if ENABLE(COMPUTED_GOTO_OPCODES)
             return m_opcodeTable[id];
 #else
             return id;
@@ -204,6 +204,7 @@ namespace JSC {
         OpcodeID getOpcodeID(Opcode opcode)
         {
             ASSERT(m_initialized);
+#if ENABLE(COMPUTED_GOTO_OPCODES)
 #if ENABLE(LLINT)
             ASSERT(isOpcode(opcode));
             return m_opcodeIDTable.get(opcode);
@@ -213,9 +214,10 @@ namespace JSC {
                 return static_cast<OpcodeID>(bitwise_cast<uintptr_t>(opcode));
 
             return m_opcodeIDTable.get(opcode);
-#else
+#endif // ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
+#else // !ENABLE(COMPUTED_GOTO_OPCODES)
             return opcode;
-#endif
+#endif // !ENABLE(COMPUTED_GOTO_OPCODES)
         }
         
         bool classicEnabled()
@@ -287,6 +289,7 @@ namespace JSC {
 
         RegisterFile m_registerFile;
         
+#if ENABLE(COMPUTED_GOTO_OPCODES)
 #if ENABLE(LLINT)
         Opcode* m_opcodeTable; // Maps OpcodeID => Opcode for compiling
         HashMap<Opcode, OpcodeID> m_opcodeIDTable; // Maps Opcode => OpcodeID for decompiling
@@ -294,6 +297,7 @@ namespace JSC {
         Opcode m_opcodeTable[numOpcodeIDs]; // Maps OpcodeID => Opcode for compiling
         HashMap<Opcode, OpcodeID> m_opcodeIDTable; // Maps Opcode => OpcodeID for decompiling
 #endif
+#endif // ENABLE(COMPUTED_GOTO_OPCODES)
 
 #if !ASSERT_DISABLED
         bool m_initialized;

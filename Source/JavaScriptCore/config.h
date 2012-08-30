@@ -57,9 +57,9 @@
 #ifndef _CRT_RAND_S
 #define _CRT_RAND_S
 #endif
-#endif
+#endif // !COMPILER(MSVC7_OR_LOWER) && !OS(WINCE)
 
-#endif
+#endif // OS(WINDOWS)
 
 #define WTF_CHANGES 1
 

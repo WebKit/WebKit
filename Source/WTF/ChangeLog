@@ -1,3 +1,12 @@
+2012-08-30  Mark Lam  <mark.lam@apple.com>
+
+        Render unto #ifdef's that which belong to them.
+        https://bugs.webkit.org/show_bug.cgi?id=95482.
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/Platform.h: Added ENABLE(COMPUTED_GOTO_OPCODES).
+
 2012-08-30  Pratik Solanki  <psolanki@apple.com>
 
         objc_msgSend and IMP should be cast appropriately before using

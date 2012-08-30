@@ -256,6 +256,7 @@ LLINT_SLOW_PATH_DECL(special_trace)
     LLINT_END_IMPL();
 }
 
+#if ENABLE(JIT)
 inline bool shouldJIT(ExecState* exec)
 {
     // You can modify this to turn off JITting without rebuilding the world.
@@ -391,6 +392,7 @@ LLINT_SLOW_PATH_DECL(replace)
         codeBlock->dontJITAnytimeSoon();
     LLINT_END_IMPL();
 }
+#endif // ENABLE(JIT)
 
 LLINT_SLOW_PATH_DECL(register_file_check)
 {

@@ -52,6 +52,7 @@ void getFunctionEntrypoint(JSGlobalData& globalData, CodeSpecializationKind kind
         return;
     }
     
+#if ENABLE(JIT)
     if (kind == CodeForCall) {
         jitCode = JITCode(globalData.getCTIStub(functionForCallEntryThunkGenerator), JITCode::InterpreterThunk);
         arityCheck = globalData.getCTIStub(functionForCallArityCheckThunkGenerator).code();
@@ -61,6 +62,7 @@ void getFunctionEntrypoint(JSGlobalData& globalData, CodeSpecializationKind kind
     ASSERT(kind == CodeForConstruct);
     jitCode = JITCode(globalData.getCTIStub(functionForConstructEntryThunkGenerator), JITCode::InterpreterThunk);
     arityCheck = globalData.getCTIStub(functionForConstructArityCheckThunkGenerator).code();
+#endif // ENABLE(JIT)
 }
 
 void getEvalEntrypoint(JSGlobalData& globalData, JITCode& jitCode)
@@ -69,8 +71,9 @@ void getEvalEntrypoint(JSGlobalData& globalData, JITCode& jitCode)
         jitCode = JITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_eval_prologue), JITCode::InterpreterThunk);
         return;
     }
-    
+#if ENABLE(JIT)    
     jitCode = JITCode(globalData.getCTIStub(evalEntryThunkGenerator), JITCode::InterpreterThunk);
+#endif
 }
 
 void getProgramEntrypoint(JSGlobalData& globalData, JITCode& jitCode)
@@ -79,8 +82,9 @@ void getProgramEntrypoint(JSGlobalData& globalData, JITCode& jitCode)
         jitCode = JITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_program_prologue), JITCode::InterpreterThunk);
         return;
     }
-    
+#if ENABLE(JIT)
     jitCode = JITCode(globalData.getCTIStub(programEntryThunkGenerator), JITCode::InterpreterThunk);
+#endif
 }
 
 } } // namespace JSC::LLInt
