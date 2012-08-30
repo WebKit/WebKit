@@ -27,6 +27,7 @@
 #include "GetByIdStatus.h"
 
 #include "CodeBlock.h"
+#include "JSScope.h"
 #include "LowLevelInterpreter.h"
 
 namespace JSC {
