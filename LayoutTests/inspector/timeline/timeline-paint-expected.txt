@@ -5,15 +5,15 @@ Paint Properties:
     children : <object>
     counters : <object>
     data : {
-        x : 0
-        y : 0
         width : <number>
         height : <number>
+        x : 0
+        y : 0
     }
     endTime : <number>
     frameId : <string>
-    startTime : <number>
     stackTrace : <object>
+    startTime : <number>
     totalHeapSize : <number>
     type : "Paint"
     usedHeapSize : <number>

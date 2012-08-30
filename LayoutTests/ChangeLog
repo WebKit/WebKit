@@ -1,3 +1,10 @@
+2012-08-30  'Pavel Feldman'  <pfeldman@chromium.org>
+
+        Fixing two inspector tests that fail on Mac WK1.
+
+        * inspector/timeline/timeline-animation-frame-expected.txt:
+        * inspector/timeline/timeline-paint-expected.txt:
+
 2012-08-24  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: margin-collapse-clear-012 fails

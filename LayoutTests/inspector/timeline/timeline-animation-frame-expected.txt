@@ -7,8 +7,8 @@ RequestAnimationFrame Properties:
         id : <number>
     }
     frameId : <string>
-    startTime : <number>
     stackTrace : <object>
+    startTime : <number>
     totalHeapSize : <number>
     type : "RequestAnimationFrame"
     usedHeapSize : <number>
@@ -34,8 +34,8 @@ CancelAnimationFrame Properties:
         id : <number>
     }
     frameId : <string>
-    startTime : <number>
     stackTrace : <object>
+    startTime : <number>
     totalHeapSize : <number>
     type : "CancelAnimationFrame"
     usedHeapSize : <number>
