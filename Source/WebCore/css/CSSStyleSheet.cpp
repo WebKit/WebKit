@@ -151,7 +151,7 @@ void CSSStyleSheet::willMutateRules()
     m_contents->setMutable();
 
     // Any existing CSSOM wrappers need to be connected to the copied child rules.
-    reattachChildRuleCSSOMWrappers();
+    reattachCSSOMWrappers();
 }
 
 void CSSStyleSheet::didMutateRules()
@@ -170,8 +170,11 @@ void CSSStyleSheet::didMutate()
     owner->styleResolverChanged(DeferRecalcStyle);
 }
 
-void CSSStyleSheet::reattachChildRuleCSSOMWrappers()
+void CSSStyleSheet::reattachCSSOMWrappers()
 {
+    if (m_ownerRule)
+        m_ownerRule->reattachStyleSheetContents();
+
     for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
         if (!m_childRuleCSSOMWrappers[i])
             continue;

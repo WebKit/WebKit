@@ -149,6 +149,7 @@ void StyleElement::createSheet(Element* e, WTF::OrdinalNumber startLineNumber, c
 {
     ASSERT(e);
     ASSERT(e->inDocument());
+
     Document* document = e->document();
     if (m_sheet) {
         if (m_sheet->isLoading())

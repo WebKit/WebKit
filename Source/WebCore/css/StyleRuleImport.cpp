@@ -72,10 +72,19 @@ void StyleRuleImport::setCSSStyleSheet(const String& url, const KURL& baseURL, c
         parserContext.baseURL = baseURL;
     parserContext.charset = charset;
 
-    m_styleSheet = StyleSheetContents::create(url, parserContext);
-    m_styleSheet->parseAuthorStyleSheet(m_cachedSheet.get(), loadContext->rootStyleSheet.get());
-
+#if ENABLE(PARSED_STYLE_SHEET_CACHING)
+    m_styleSheet = m_cachedSheet->restoreParsedStyleSheet(parserContext);
+#endif
+    if (!m_styleSheet) {
+        m_styleSheet = StyleSheetContents::create(url, parserContext);
+        m_styleSheet->parseAuthorStyleSheet(m_cachedSheet.get(), loadContext->rootStyleSheet.get());
+    }
     loadContext->rootStyleSheet->contents()->checkLoadCompleted();
+
+#if ENABLE(PARSED_STYLE_SHEET_CACHING)
+    if (m_styleSheet->isCacheable())
+        m_cachedSheet->saveParsedStyleSheet(m_styleSheet);
+#endif
 }
 
 bool StyleRuleImport::isLoading() const
@@ -125,6 +134,11 @@ void StyleRuleImport::requestStyleSheet(CSSStyleSheet* rootSheet, const CSSParse
 
     m_loadContext = adoptPtr(new LoadContext(rootSheet, parserContext));
     m_cachedSheet->addClient(this);
+}
+
+void StyleRuleImport::reattachStyleSheetContents(StyleSheetContents* contents)
+{
+    m_styleSheet = contents;
 }
 
 void StyleRuleImport::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

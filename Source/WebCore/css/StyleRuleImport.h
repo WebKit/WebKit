@@ -51,6 +51,8 @@ public:
 
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
+    void reattachStyleSheetContents(StyleSheetContents*);
+
 private:
     StyleRuleImport(const String& href, PassRefPtr<MediaQuerySet>);
 

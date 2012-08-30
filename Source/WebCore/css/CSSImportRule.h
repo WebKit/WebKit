@@ -45,6 +45,8 @@ public:
 
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
+    void reattachStyleSheetContents();
+
 private:
     CSSImportRule(StyleRuleImport*, CSSStyleSheet*);
 

@@ -103,7 +103,6 @@ public:
     void didMutate();
     
     void clearChildRuleCSSOMWrappers();
-    void reattachChildRuleCSSOMWrappers();
 
     StyleSheetContents* contents() const { return m_contents.get(); }
 
@@ -117,6 +116,7 @@ private:
     virtual String type() const { return "text/css"; }
 
     bool canAccessRules() const;
+    void reattachCSSOMWrappers();
     
     RefPtr<StyleSheetContents> m_contents;
     bool m_isInlineStylesheet;
