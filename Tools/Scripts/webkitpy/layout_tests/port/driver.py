@@ -307,18 +307,17 @@ class Driver(object):
             # See http://trac.webkit.org/changeset/65537.
             self._crashed_process_name = self._server_process.name()
             self._crashed_pid = self._server_process.pid()
-        elif (error_line.startswith("#CRASHED - WebProcess")
-            or error_line.startswith("#PROCESS UNRESPONSIVE - WebProcess")):
+        elif (error_line.startswith("#CRASHED - ")
+            or error_line.startswith("#PROCESS UNRESPONSIVE - ")):
             # WebKitTestRunner uses this to report that the WebProcess subprocess crashed.
-            pid = None
-            m = re.search('pid (\d+)', error_line)
-            if m:
-                pid = int(m.group(1))
-            self._crashed_process_name = 'WebProcess'
+            match = re.match('#(?:CRASHED|PROCESS UNRESPONSIVE) - (\S+)', error_line)
+            self._crashed_process_name = match.group(1) if match else 'WebProcess'
+            match = re.search('pid (\d+)', error_line)
+            pid = int(match.group(1)) if match else None
             self._crashed_pid = pid
             # FIXME: delete this after we're sure this code is working :)
-            _log.debug('WebProcess crash, pid = %s, error_line = %s' % (str(pid), error_line))
-            if error_line.startswith("#PROCESS UNRESPONSIVE - WebProcess"):
+            _log.debug('%s crash, pid = %s, error_line = %s' % (self._crashed_process_name, str(pid), error_line))
+            if error_line.startswith("#PROCESS UNRESPONSIVE - "):
                 self._subprocess_was_unresponsive = True
                 # We want to show this since it's not a regular crash and probably we don't have a crash log.
                 self.error_from_test += error_line

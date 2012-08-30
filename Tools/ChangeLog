@@ -1,3 +1,18 @@
+2012-08-30  Jochen Eisinger  <jochen@chromium.org>
+
+        [NRWT] Add support for recognizing arbitrary process names in crash lines
+        https://bugs.webkit.org/show_bug.cgi?id=95435
+
+        Reviewed by Adam Barth.
+
+        When running layout tests in the chromium port using the content shell,
+        we want to be able to report sub-process crashes as well.
+
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver._check_for_driver_crash):
+        * Scripts/webkitpy/layout_tests/port/driver_unittest.py:
+        (DriverTest.test_check_for_driver_crash):
+
 2012-08-29  Zan Dobersek  <zandobersek@gmail.com>
 
         Random test-webkitpy failures on the buildbot

@@ -221,6 +221,12 @@ class DriverTest(unittest.TestCase):
 
         driver._crashed_process_name = None
         driver._crashed_pid = None
+        driver._server_process = FakeServerProcess(False)
+        driver._subprocess_was_unresponsive = False
+        assert_crash(driver, '#CRASHED - renderer (pid 8675)\n', True, 'renderer', 8675)
+
+        driver._crashed_process_name = None
+        driver._crashed_pid = None
         driver._server_process = FakeServerProcess(True)
         driver._subprocess_was_unresponsive = False
         assert_crash(driver, '', True, 'FakeServerProcess', 1234)
