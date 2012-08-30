@@ -1,3 +1,26 @@
+2012-08-29  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Move the handling of UserMedia requests to the client
+        https://bugs.webkit.org/show_bug.cgi?id=95317
+        PR #197283
+
+        Reviewed by George Staikos.
+
+        Internally reviewed by George Staikos.
+
+        Move the logic for user media requests handling to the client, as it requires
+        inputs from users. Also adds a origin field to WebUserMediaRequest.
+
+        * Api/WebPageClient.h:
+        (Platform):
+        * WebCoreSupport/UserMediaClientImpl.cpp:
+        (WebCore::UserMediaClientImpl::UserMediaClientImpl):
+        (WebCore::UserMediaClientImpl::~UserMediaClientImpl):
+        (WebCore::UserMediaClientImpl::requestUserMedia):
+        (WebCore::UserMediaClientImpl::cancelUserMediaRequest):
+        * WebCoreSupport/UserMediaClientImpl.h:
+        (UserMediaClientImpl):
+
 2012-08-29  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Replace blackberry specific HitTestRequest::FingerUp by TouchEvent + Release

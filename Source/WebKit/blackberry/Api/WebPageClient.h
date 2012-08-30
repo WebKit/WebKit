@@ -43,6 +43,7 @@ class GeoTrackerListener;
 class IntRectRegion;
 class NetworkRequest;
 class NetworkStreamFactory;
+class WebUserMediaRequest;
 
 namespace Graphics {
 class Window;
@@ -269,6 +270,9 @@ public:
     virtual void registerProtocolHandler(const WebString& /*scheme*/, const WebString& /*baseURL*/, const WebString& /*url*/, const WebString& /*title*/) = 0;
     virtual ProtocolHandlersState isProtocolHandlerRegistered(const WebString& /*scheme*/, const WebString& /*baseURL*/, const WebString& /*url*/) = 0;
     virtual void unregisterProtocolHandler(const WebString& /*scheme*/, const WebString& /*baseURL*/, const WebString& /*url*/) = 0;
+
+    virtual void requestUserMedia(const Platform::WebUserMediaRequest&) = 0;
+    virtual void cancelUserMediaRequest(const Platform::WebUserMediaRequest&) = 0;
 };
 } // namespace WebKit
 } // namespace BlackBerry

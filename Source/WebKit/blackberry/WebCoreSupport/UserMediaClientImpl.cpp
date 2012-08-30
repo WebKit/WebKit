@@ -21,14 +21,18 @@
 
 #if ENABLE(MEDIA_STREAM)
 #include "MediaStreamDescriptor.h"
+#include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 #include "WebPage.h"
+#include "WebPageClient.h"
 
 #include <BlackBerryPlatformWebMediaStreamDescriptor.h>
-#include <BlackBerryPlatformWebUserMedia.h>
+#include <BlackBerryPlatformWebUserMediaRequest.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/CString.h>
 
 using namespace BlackBerry::Platform;
 
@@ -95,14 +99,13 @@ private:
     RefPtr<UserMediaRequest> m_request;
 };
 
-UserMediaClientImpl::UserMediaClientImpl(BlackBerry::WebKit::WebPage*)
-    : m_webUserMedia(0)
+UserMediaClientImpl::UserMediaClientImpl(BlackBerry::WebKit::WebPage* page)
+    : m_page(page)
 {
 }
 
 UserMediaClientImpl::~UserMediaClientImpl()
 {
-    BlackBerry::Platform::deleteGuardedObject(m_webUserMedia);
 }
 
 void UserMediaClientImpl::pageDestroyed()
@@ -114,7 +117,8 @@ void UserMediaClientImpl::requestUserMedia(PassRefPtr<UserMediaRequest> prpReque
     UserMediaRequest* request = prpRequest.get();
     OwnPtr<WebUserMediaRequestClientImpl> requestClient = adoptPtr(new WebUserMediaRequestClientImpl(prpRequest));
 
-    webUserMedia()->requestUserMedia(WebUserMediaRequest(request->audio(), request->video(), requestClient.get()));
+    SecurityOrigin* origin = request->scriptExecutionContext()->securityOrigin();
+    m_page->client()->requestUserMedia(WebUserMediaRequest(request->audio(), request->video(), origin->toString().utf8().data(), requestClient.get()));
     userMediaRequestsMap().add(request, requestClient.release());
 }
 
@@ -124,15 +128,9 @@ void UserMediaClientImpl::cancelUserMediaRequest(UserMediaRequest* request)
     if (it == userMediaRequestsMap().end())
         return;
 
-    webUserMedia()->cancelUserMediaRequest(WebUserMediaRequest(request->audio(), request->video(), it->second.get()));
+    SecurityOrigin* origin = request->scriptExecutionContext()->securityOrigin();
+    m_page->client()->cancelUserMediaRequest(WebUserMediaRequest(request->audio(), request->video(), origin->toString().utf8().data(), it->second.get()));
     userMediaRequestsMap().remove(it);
-}
-
-BlackBerry::Platform::WebUserMedia* UserMediaClientImpl::webUserMedia()
-{
-    if (!m_webUserMedia)
-        m_webUserMedia = new WebUserMedia;
-    return m_webUserMedia;
 }
 
 }
