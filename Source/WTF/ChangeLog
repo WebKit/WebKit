@@ -1,3 +1,27 @@
+2012-08-30  Yong Li  <yoli@rim.com>
+
+        Vector::shrinkToFit should use realloc when suitable.
+        https://bugs.webkit.org/show_bug.cgi?id=94810
+
+        Reviewed by Benjamin Poulain.
+
+        Only tested on BlackBerry. So it is wrapped with PLATFORM(BLACKBERRY) in the mean time.
+        Use realloc to shrink buffer when inline buffer isn't involved and and canMoveWithMemcpy is true.
+
+        When running the test code attached to the bug, it gives 30-45% performance boost for the large blocks
+        (Every test cycle includes an extra pair of malloc/free, so the boost on shrinkToFit() is even bigger)
+        Performance impact on small blocks is not noticeable. (Tested on BlackBerry)
+
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::shouldReallocateBuffer):
+        (VectorBufferBase):
+        (WTF::VectorBufferBase::reallocateBuffer):
+        (VectorBuffer):
+        (WTF::VectorBuffer::shouldReallocateBuffer):
+        (WTF::VectorBuffer::reallocateBuffer):
+        (WTF::VectorBuffer::inlineBuffer):
+        (WTF::::shrinkCapacity):
+
 2012-08-30  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for COMPILER(MSVC) && !CPU(X86) after r127001.

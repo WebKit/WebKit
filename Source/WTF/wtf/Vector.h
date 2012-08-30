@@ -26,6 +26,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/NotFound.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/UnusedParam.h>
 #include <wtf/ValueCheck.h>
 #include <wtf/VectorTraits.h>
 #include <limits>
@@ -279,6 +280,27 @@ namespace WTF {
             return false;
         }
 
+        bool shouldReallocateBuffer(size_t newCapacity) const
+        {
+#if PLATFORM(BLACKBERRY)
+            // Tested on BlackBerry.
+            return VectorTraits<T>::canMoveWithMemcpy && m_capacity && newCapacity;
+#else
+            // FIXME: Return true on the platforms where realloc() gives better performance.
+            UNUSED_PARAM(newCapacity);
+            return false;
+#endif
+        }
+
+        void reallocateBuffer(size_t newCapacity)
+        {
+            ASSERT(shouldReallocateBuffer(newCapacity));
+            m_capacity = newCapacity;
+            if (newCapacity > std::numeric_limits<size_t>::max() / sizeof(T))
+                CRASH();
+            m_buffer = static_cast<T*>(fastRealloc(m_buffer, newCapacity * sizeof(T)));
+        }
+
         void deallocateBuffer(T* bufferToDeallocate)
         {
             if (!bufferToDeallocate)
@@ -362,6 +384,8 @@ namespace WTF {
 
         using Base::allocateBuffer;
         using Base::tryAllocateBuffer;
+        using Base::shouldReallocateBuffer;
+        using Base::reallocateBuffer;
         using Base::deallocateBuffer;
 
         using Base::buffer;
@@ -423,7 +447,19 @@ namespace WTF {
                 return;
             Base::deallocateBuffer(bufferToDeallocate);
         }
-        
+
+        bool shouldReallocateBuffer(size_t newCapacity) const
+        {
+            // We cannot reallocate the inline buffer.
+            return Base::shouldReallocateBuffer(newCapacity) && std::min(m_capacity, newCapacity) > inlineCapacity;
+        }
+
+        void reallocateBuffer(size_t newCapacity)
+        {
+            ASSERT(shouldReallocateBuffer(newCapacity));
+            Base::reallocateBuffer(newCapacity);
+        }
+
         void swap(VectorBuffer<T, inlineCapacity>& other)
         {
             if (buffer() == inlineBuffer() && other.buffer() == other.inlineBuffer()) {
@@ -470,6 +506,7 @@ namespace WTF {
 
         static const size_t m_inlineBufferSize = inlineCapacity * sizeof(T);
         T* inlineBuffer() { return reinterpret_cast_ptr<T*>(m_inlineBuffer.buffer); }
+        const T* inlineBuffer() const { return reinterpret_cast_ptr<const T*>(m_inlineBuffer.buffer); }
 
         AlignedBuffer<m_inlineBufferSize, WTF_ALIGN_OF(T)> m_inlineBuffer;
     };
@@ -964,6 +1001,11 @@ namespace WTF {
 
         T* oldBuffer = begin();
         if (newCapacity > 0) {
+            if (m_buffer.shouldReallocateBuffer(newCapacity)) {
+                m_buffer.reallocateBuffer(newCapacity);
+                return;
+            }
+
             T* oldEnd = end();
             m_buffer.allocateBuffer(newCapacity);
             if (begin() != oldBuffer)
