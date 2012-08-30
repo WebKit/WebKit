@@ -235,6 +235,9 @@ class ExecutiveTest(unittest.TestCase):
         self.assertEquals([output[1] for output in command_outputs], ["hello\n"] * NUM_PROCESSES)
         self.assertEquals([],  multiprocessing.active_children())
 
+    def test_run_in_parallel_assert_nonempty(self):
+        self.assertRaises(AssertionError, Executive().run_in_parallel, [])
+
 
 def main(platform, stdin, stdout, cmd, args):
     if platform == 'win32' and hasattr(stdout, 'fileno'):

@@ -1,5 +1,21 @@
 2012-08-30  Dirk Pranke  <dpranke@chromium.org>
 
+        executive.run_in_parallel() hangs if given nothing to do
+        https://bugs.webkit.org/show_bug.cgi?id=95387
+
+        Reviewed by Ojan Vafai.
+
+        Check to make sure that Executive.run_in_parallel() requires
+        a non-empty list of commands to execute; passing an empty list
+        seems surely like a programming error.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.run_in_parallel):
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ExecutiveTest.test_run_in_parallel_assert_nonempty):
+
+2012-08-30  Dirk Pranke  <dpranke@chromium.org>
+
         decide what (and how) we should set the tolerance for ref test pixel compares and test for that
         https://bugs.webkit.org/show_bug.cgi?id=94746
 
