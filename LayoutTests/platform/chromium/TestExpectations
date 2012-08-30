@@ -201,6 +201,7 @@ WONTFIX SKIP : platform/qt/plugins/qt-qwidget-plugin.html = PASS
 WONTFIX SKIP : platform/qt/fast/forms = PASS
 WONTFIX MAC WIN : platform/chromium-linux = TEXT IMAGE IMAGE+TEXT MISSING
 WONTFIX SKIP LINUX MAC : platform/win = PASS
+WONTFIX SKIP LINUX WIN MAC : platform/chromium-android = PASS
 
 // These tests are for -apple- and -khtml- prefixes, which we don't support
 WONTFIX SKIP : inspector/styles/vendor-prefixes.html = TIMEOUT

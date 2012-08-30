@@ -1,3 +1,102 @@
+2012-08-30  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Upstream layout test rebaselined expectations
+        https://bugs.webkit.org/show_bug.cgi?id=94885
+
+        Reviewed by Adam Barth.
+
+        We rebaselined tests that
+        - expect different behaviors on Android (but normally don't show FAIL)
+        - have different layout because of precision, font size, etc.
+        - have different layout because of different shadow DOM of the media player
+
+        We don't rebaseline tests that would expect to output FAIL.
+
+        * platform/chromium-android/compositing/layer-creation/overflow-scrolling-touch-expected.txt: Added.
+        * platform/chromium-android/compositing/layer-creation/overflow-scrolling-touch.html: Added.
+        * platform/chromium-android/fast/block/positioning/047-expected.txt: Added.
+        * platform/chromium-android/fast/css/font-family-pictograph-expected.txt: Added.
+        * platform/chromium-android/fast/css/line-height-determined-by-primary-font-expected.txt: Added.
+        * platform/chromium-android/fast/css/text-transform-select-expected.txt: Added.
+        * platform/chromium-android/fast/dom/Orientation/create-event-orientationchange-expected.txt: Added.
+        * platform/chromium-android/fast/dom/Window/window-lookup-precedence-expected.txt: Added.
+        * platform/chromium-android/fast/events/context-onmousedown-event-expected.txt: Added.
+        * platform/chromium-android/fast/events/mouseup-from-button2-expected.txt: Added.
+        * platform/chromium-android/fast/font-boosting/various-tricky-cases-expected.txt: Added.
+        * platform/chromium-android/fast/font-boosting/various-tricky-cases.html: Added.
+        * platform/chromium-android/fast/forms/HTMLOptionElement_label05-expected.txt: Added.
+        * platform/chromium-android/fast/forms/disabled-select-change-index-expected.txt: Added.
+        * platform/chromium-android/fast/forms/form-element-geometry-expected.txt: Added.
+        * platform/chromium-android/fast/forms/hidden-listbox-expected.txt: Added.
+        * platform/chromium-android/fast/forms/implicit-submission-expected.txt: Added.
+        * platform/chromium-android/fast/forms/label/labelable-elements-expected.txt: Added.
+        * platform/chromium-android/fast/forms/listbox-bidi-align-expected.txt: Added.
+        * platform/chromium-android/fast/forms/listbox-scrollbar-incremental-load-expected.txt: Added.
+        * platform/chromium-android/fast/forms/listbox-width-change-expected.txt: Added.
+        * platform/chromium-android/fast/forms/option-strip-whitespace-expected.txt: Added.
+        * platform/chromium-android/fast/forms/select-block-background-expected.txt: Added.
+        * platform/chromium-android/fast/forms/select-change-listbox-size-expected.txt: Added.
+        * platform/chromium-android/fast/forms/select-change-popup-to-listbox-expected.txt: Added.
+        * platform/chromium-android/fast/forms/select-initial-position-expected.txt: Added.
+        * platform/chromium-android/fast/forms/select-list-box-with-height-expected.txt: Added.
+        * platform/chromium-android/fast/forms/select-overflow-scroll-expected.txt: Added.
+        * platform/chromium-android/fast/forms/select-overflow-scroll-inherited-expected.txt: Added.
+        * platform/chromium-android/fast/hidpi/video-controls-in-hidpi-expected.txt: Added.
+        * platform/chromium-android/fast/layers/video-layer-expected.txt: Added.
+        * platform/chromium-android/fast/preloader/script-expected.txt: Added.
+        * platform/chromium-android/fast/repaint/moving-shadow-on-container-expected.txt: Added.
+        * platform/chromium-android/fast/repaint/moving-shadow-on-path-expected.txt: Added.
+        * platform/chromium-android/fast/replaced/replaced-breaking-expected.txt: Added.
+        * platform/chromium-android/fast/text/capitalize-boundaries-expected.txt: Added.
+        * platform/chromium-android/fast/text/cg-fallback-bolding-expected.txt: Added.
+        * platform/chromium-android/fast/text/complex-text-opacity-expected.txt: Added.
+        * platform/chromium-android/fast/text/drawBidiText-expected.txt: Added.
+        * platform/chromium-android/fast/text/international/bidi-listbox-atsui-expected.txt: Added.
+        * platform/chromium-android/fast/text/international/bidi-listbox-expected.txt: Added.
+        * platform/chromium-android/fast/text/international/hindi-spacing-expected.txt: Added.
+        * platform/chromium-android/fast/text/international/thai-line-breaks-expected.txt: Added.
+        * platform/chromium-android/fast/text/updateNewFont-expected.txt: Added.
+        * platform/chromium-android/http/tests/security/contentSecurityPolicy/media-src-blocked-expected.txt: Added.
+        * platform/chromium-android/media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_2-expected.txt: Added.
+        * platform/chromium-android/media/W3C/video/canPlayType/canPlayType_codecs_order_2-expected.txt: Added.
+        * platform/chromium-android/media/W3C/video/canPlayType/canPlayType_codecs_order_3-expected.txt: Added.
+        * platform/chromium-android/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_2-expected.txt: Added.
+        * platform/chromium-android/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3-expected.txt: Added.
+        * platform/chromium-android/media/W3C/video/canPlayType/canPlayType_two_implies_one_3-expected.txt: Added.
+        * platform/chromium-android/media/W3C/video/canPlayType/canPlayType_two_implies_one_4-expected.txt: Added.
+        * platform/chromium-android/media/audio-controls-rendering-expected.txt: Added.
+        * platform/chromium-android/media/controls-after-reload-expected.txt: Added.
+        * platform/chromium-android/media/controls-strict-expected.txt: Added.
+        * platform/chromium-android/media/controls-styling-expected.txt: Added.
+        * platform/chromium-android/media/controls-styling-strict-expected.txt: Added.
+        * platform/chromium-android/media/controls-without-preload-expected.txt: Added.
+        * platform/chromium-android/media/csp-blocks-video-expected.txt: Added.
+        * platform/chromium-android/media/encrypted-media/encrypted-media-can-play-type-expected.txt: Added.
+        * platform/chromium-android/media/media-can-play-mpeg-audio-expected.txt: Added.
+        * platform/chromium-android/media/media-can-play-mpeg4-video-expected.txt: Added.
+        * platform/chromium-android/media/media-can-play-ogg-expected.txt: Added.
+        * platform/chromium-android/media/media-controls-clone-expected.txt: Added.
+        * platform/chromium-android/media/media-document-audio-repaint-expected.txt: Added.
+        * platform/chromium-android/media/track/track-cue-rendering-horizontal-expected.txt: Added.
+        * platform/chromium-android/media/track/track-cue-rendering-vertical-expected.txt: Added.
+        * platform/chromium-android/media/video-controls-rendering-expected.txt: Added.
+        * platform/chromium-android/media/video-currentTime-set-expected.txt: Added.
+        * platform/chromium-android/media/video-display-toggle-expected.txt: Added.
+        * platform/chromium-android/media/video-empty-source-expected.txt: Added.
+        * platform/chromium-android/media/video-no-audio-expected.txt: Added.
+        * platform/chromium-android/media/video-playing-and-pause-expected.txt: Added.
+        * platform/chromium-android/media/video-source-error-expected.txt: Added.
+        * platform/chromium-android/media/video-zoom-controls-expected.txt: Added.
+        * platform/chromium-android/svg/W3C-SVG-1.1/paths-data-03-f-expected.txt: Added.
+        * platform/chromium-android/svg/W3C-SVG-1.1/paths-data-12-t-expected.txt: Added.
+        * platform/chromium-android/svg/css/composite-shadow-example-expected.txt: Added.
+        * platform/chromium-android/svg/css/composite-shadow-with-opacity-expected.txt: Added.
+        * platform/chromium-android/svg/css/stars-with-shadow-expected.txt: Added.
+        * platform/chromium-android/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt: Added.
+        * platform/chromium-android/svg/custom/use-on-symbol-inside-pattern-expected.txt: Added.
+        * platform/chromium-android/transforms/2d/hindi-rotated-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+
 2012-08-30  Tony Chang  <tony@chromium.org>
 
         Make RenderBox::computeInlineDirectionMargins const

@@ -1,0 +1,11 @@
+video.canPlayType() - codecs parameter order
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "" is ""
+
+TEST COMPLETE
+spec reference
+
+

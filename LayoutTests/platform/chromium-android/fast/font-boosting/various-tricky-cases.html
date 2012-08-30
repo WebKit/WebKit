@@ -1,0 +1,212 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+<title>Font Boosting Test Page</title>
+
+<script type="text/javascript">
+if (window.layoutTestController) {
+    internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+    internals.settings.setFontBoostingEnabled(true);
+}
+</script>
+
+<style type="text/css">
+body {
+    font-family: Arial;
+    font-size: 15px;
+}
+#page {
+    width: 980px;
+    margin: 0 auto;
+}
+
+#account-menu {
+    float: right;
+}
+#sitename > img {
+    vertical-align: middle;
+}
+#logo {
+    width: 192px;
+    height: 48px;
+    background: -webkit-gradient(radial, 175  55, 20, 182 70, 50, from(#FF5F98), to(rgba(255,   1, 136, 0)), color-stop(75%, #FF0188)), /* red circle */
+                -webkit-gradient(radial,  80  25, 10,  82 30, 30, from(#A7D30C), to(rgba(  1, 159,  98, 0)), color-stop(90%, #019F62)), /* green circle */
+                -webkit-gradient(radial, 130   0, 15, 137  5, 40, from(#00C9FF), to(rgba(  0, 201, 255, 0)), color-stop(80%, #00B5E2)), /* blue circle */
+                -webkit-gradient(radial,   0 100, 50,   0 90, 90, from(#F4F201), to(rgba(228, 199,   0, 0)), color-stop(80%, #E4C700)); /* yellow circle */
+}
+#menu1 {
+    clear: both;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+#menu1 a {
+    width: 89px;
+    padding: 3px 9px;
+    border-right:1px solid white;
+    background-color: purple;
+    color: white;
+    float: left;
+}
+#menu1 a:hover {
+    background-color: pink;
+    color: purple;
+}
+#menu1 li:nth-child(3) > a {
+    background-color: mediumpurple;
+    color: white;
+    text-decoration: none;
+}
+
+#menu2 > form {
+    float: right;
+    margin-right: 6px;
+}
+
+#menu2 {
+    clear: both;
+    list-style-type: none;
+    margin: 0;
+    padding: 1em 0 0;
+    font-family: Georgia;
+}
+#menu2 > li {
+    display: inline;
+}
+#menu2 > li + li:before {
+    content: " | ";
+}
+
+#wide {
+    clear: both;
+}
+table ol {
+    margin: 0;
+}
+
+#narrow {
+    float: left;
+    width: 320px;
+}
+#narrow > h3 {
+    margin-top: 0;
+}
+
+#medium {
+    margin-left: 340px;
+}
+
+#footer {
+    clear: both;
+    text-align: center;
+    font-size: 0.9em;
+}
+#fineprint {
+    text-align: left;
+    float:left;
+    width: 895px;
+    margin-bottom: 1em;
+}
+#footer-links {
+    clear: both;
+}
+#footer-links > a {
+    padding: 0 6px;
+}
+</style>
+
+</head>
+<body>
+<div id="page">
+
+<div id="header">
+    <div id="account-menu">
+        <a href="#">My Account</a> | <a href="#">Settings</a> | <a href="#">Sign Out</a>
+    </div>
+    <h1 id="sitename"><img id="logo" href="#"/>Font Boosting Test Site</h1>
+    <ul id="menu1">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Products</a></li>
+        <li><a href="#">News</a></li>
+        <li><a href="#">Media</a></li>
+        <li><a href="#">Gallery</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Store Finder</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Help</a></li>
+    </ul>
+    <ul id="menu2">
+        <form action="#" method="GET">
+            <input type="text" value="Search site"/>
+        </form>
+        <li><a href="#">Hardware</a></li>
+        <li><a href="#">Software</a></li>
+        <li><a href="#">Music &amp; Media</a></li>
+        <li><a href="#">Networks</a></li>
+        <li><a href="#">Security</a></li>
+        <li><a href="#">Public Sector</a></li>
+        <li><a href="#">Business</a></li>
+        <li><a href="#">Science</a></li>
+        <li><a href="#">Odds &amp; Sods</a></li>
+    </ul>
+</div>
+<div id="wide">
+    <h2>980px &ndash; Lorem ipsum dolor sit amet, consectetur</h2>
+    <p>Suspendisse luctus leo sed elit porta eu luctus sapien tincidunt. Donec euismod euismod dui, et mollis purus volutpat eget.  Phasellus ullamcorper nulla nec mi adipiscing suscipit. Sed accumsan turpis vitae risus fermentum vehicula. In porttitor, augue eu vestibulum convallis, augue lacus pellentesque urna, sit amet volutpat est lacus quis nibh. Suspendisse nec massa dui. Sed risus nulla, scelerisque ullamcorper consectetur in, congue vel neque.</p>
+    <table>
+        <tr>
+            <td>
+                <ol>
+                    <li>Aenean</li>
+                    <li>Morbi</li>
+                </ol>
+            </td>
+        </tr>
+    </table>
+    <ol>
+        <li>Maecenas</li>
+        <li>Curae</li>
+    </ol>
+    <ul>
+        <li>Etiam in nulla ac nulla rhoncus aliquet et quis justo. Nunc congue nisl a tortor ultricies sit amet lacinia nisi rhoncus.</li>
+        <li>Nullam massa sapien, rhoncus ultrices eleifend vel, molestie non diam.</li>
+    </ul>
+    <p>Etiam luctus orci ut felis auctor ac bibendum ante malesuada. Cras pretium lorem in lectus fringilla condimentum. Mauris eget justo mauris, in placerat enim. Suspendisse ornare congue mollis. Sed hendrerit odio quis tellus consectetur congue. Nunc interdum purus sit amet tellus pulvinar sollicitudin.</p>
+</div>
+<div id="narrow">
+    <h3>320px &ndash; Pellentesque nec vehicula</h3>
+    <p>Proin vel neque augue, id rhoncus risus. Integer quis euismod odio. Curabitur porttitor diam id neque dictum auctor. Duis convallis tempor ipsum, vel interdum risus eleifend at. Phasellus cursus justo quis neque suscipit convallis.</p>
+    <p>Aenean id justo sed felis iaculis hendrerit. Sed aliquet ultricies nisi, in tempus lacinia sit amet.</p>
+</div>
+<div id="medium">
+    <h3>640px &ndash; Praesent nunc ipsum, volutpat vel pretium</p></h3>
+    <p>Cras lacinia gravida neque, sed placerat turpis sodales id. Sed imperdiet, tellus id hendrerit blandit, tortor tellus facilisis dolor, vitae rutrum urna tellus vel leo. Etiam ullamcorper pretium massa, ac tempus elit faucibus quis. In convallis purus non libero sodales convallis. Praesent blandit, mi et dictum placerat, odio nisi gravida est, eget fermentum purus elit sed massa.</p>
+    <p>Vivamus vitae scelerisque sem. Suspendisse lobortis dui eget nunc pharetra semper. Fusce non felis nec mauris eleifend faucibus. Nam ligula turpis, condimentum quis imperdiet ac, vestibulum ac odio. Nullam rutrum suscipit purus. Integer erat metus, elementum et molestie ut, sagittis id urna.</p>
+</div>
+<div id="footer">
+    <div id="fineprint">
+        <span style="padding-left:2px;">
+            <span style="font-size:smaller">*, **, ‡, ‡‡, ‡‡‡, <sup>1</sup>, <sup>2</sup>, <sup>3</sup>, <sup>4</sup>,+, °, °°, †, ††, †††, ^</span>&nbsp;<a href="#">Click here for product disclaimers and legal policies.</a></span><br>
+        <span style="padding-left:2px;">Third-party logos and marks are registered trademarks of their respective owners. All rights reserved.</span>
+    </div>
+    <div id="footer-links">
+        <a href="#">Canada</a>
+        <a href="#">China</a>
+        <a href="#">France</a>
+        <a href="#">Germany</a>
+        <a href="#">Italy</a>
+        <a href="#">Japan</a>
+        <a href="#">United States</a>
+    </div>
+    <div>
+        <a href="#">Conditions of Use &amp; Sale</a> <a href="#">Privacy Notice</a> <span>© 1996-2011, Corporation, Inc. or its affiliates</span>
+    </div>
+</div>
+
+</div>
+</body>
+
+</html>

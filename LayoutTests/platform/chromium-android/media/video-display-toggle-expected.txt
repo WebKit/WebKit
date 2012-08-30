@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 471x19
+        text run at (0,0) width 471: "This tests that toggling the display property won't make the controls disappear."
+      RenderBR {BR} at (471,15) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,28) size 320x240
+  RenderVideo {VIDEO} at (0,20) size 320x240
+layer at (8,28) size 320x240
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x240
+    RenderDeprecatedFlexibleBox {DIV} at (0,0) size 320x205
+      RenderButton {INPUT} at (120,62) size 80x81
+    RenderBlock {DIV} at (0,205) size 320x35
+layer at (13,233) size 310x35 scrollHeight 39
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (5,0) size 310x35 [bgcolor=#141414CC]
+    RenderBlock (anonymous) at (0,0) size 53x35
+      RenderButton {INPUT} at (9,-1) size 35x36
+    RenderSlider {INPUT} at (53,13) size 157x9
+      RenderDeprecatedFlexibleBox {DIV} at (0,0) size 157x8 [border: (1px solid #E6E6E659)]
+        RenderBlock {DIV} at (1,1) size 137x24
+        RenderBlock {DIV} at (131,1) size 32x24
+    RenderDeprecatedFlexibleBox {DIV} at (225,0) size 37x35 [color=#FFFFFF]
+      RenderBlock (anonymous) at (0,0) size 37x35
+        RenderText {#text} at (0,7) size 37x21
+          text run at (0,7) width 37: "0:06"
+    RenderBlock (anonymous) at (271,0) size 39x35
+      RenderButton {INPUT} at (-5,-1) size 35x36
+layer at (60,239) size 32x24
+  RenderBlock (relative positioned) {DIV} at (-7,-8) size 32x24

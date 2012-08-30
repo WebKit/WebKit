@@ -1,0 +1,39 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 701x19
+          text run at (0,0) width 620: "This tests that in a standalone media document with audio content, the media element repaints correctly "
+          text run at (620,0) width 81: "while playing."
+      RenderBlock (anonymous) at (0,36) size 784x334
+        RenderPartObject {IFRAME} at (0,0) size 384x334 [border: (2px inset #000000)]
+          layer at (0,0) size 380x330
+            RenderView at (0,0) size 380x330
+          layer at (0,0) size 380x330
+            RenderBlock {HTML} at (0,0) size 380x330
+              RenderBody {BODY} at (8,8) size 364x314 [bgcolor=#000000]
+          layer at (40,165) size 300x1
+            RenderVideo {VIDEO} at (40,165) size 300x1
+          layer at (40,165) size 300x1
+            RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x1
+              RenderDeprecatedFlexibleBox {DIV} at (0,0) size 300x0
+                RenderButton {INPUT} at (110,0) size 80x80
+              RenderBlock {DIV} at (0,0) size 300x35
+          layer at (45,165) size 290x35 scrollHeight 39
+            RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (5,0) size 290x35 [bgcolor=#141414CC]
+              RenderBlock (anonymous) at (0,0) size 53x35
+                RenderButton {INPUT} at (9,-1) size 35x36
+              RenderSlider {INPUT} at (53,13) size 176x9
+                RenderDeprecatedFlexibleBox {DIV} at (0,0) size 176x8 [border: (1px solid #E6E6E659)]
+                  RenderBlock {DIV} at (1,1) size 156x24
+                  RenderBlock {DIV} at (150,1) size 32x24
+              RenderDeprecatedFlexibleBox {DIV} at (244,0) size 37x35 [color=#FFFFFF]
+                RenderBlock (anonymous) at (0,0) size 37x35
+                  RenderText {#text} at (0,7) size 37x21
+                    text run at (0,7) width 37: "0:00"
+          layer at (170,171) size 32x24
+            RenderBlock (relative positioned) {DIV} at (-7,-8) size 32x24
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

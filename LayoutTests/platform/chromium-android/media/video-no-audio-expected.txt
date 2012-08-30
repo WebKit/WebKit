@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 392x19
+          text run at (0,0) width 392: "Movie with no audio track. The volume button should not render."
+      RenderBlock (anonymous) at (0,36) size 784x288
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,44) size 352x288
+  RenderVideo {VIDEO} at (0,0) size 352x288
+layer at (8,44) size 352x288
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 352x288
+    RenderDeprecatedFlexibleBox {DIV} at (0,0) size 352x253
+      RenderButton {INPUT} at (136,86) size 80x81
+    RenderBlock {DIV} at (0,253) size 352x35
+layer at (13,297) size 342x35 scrollHeight 39
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (5,0) size 342x35 [bgcolor=#141414CC]
+    RenderBlock (anonymous) at (0,0) size 53x35
+      RenderButton {INPUT} at (9,-1) size 35x36
+    RenderSlider {INPUT} at (53,13) size 189x9
+      RenderDeprecatedFlexibleBox {DIV} at (0,0) size 189x8 [border: (1px solid #E6E6E659)]
+        RenderBlock {DIV} at (1,1) size 169x24
+        RenderBlock {DIV} at (163,1) size 32x24
+    RenderDeprecatedFlexibleBox {DIV} at (257,0) size 37x35 [color=#FFFFFF]
+      RenderBlock (anonymous) at (0,0) size 37x35
+        RenderText {#text} at (0,7) size 37x21
+          text run at (0,7) width 37: "0:09"
+    RenderBlock (anonymous) at (303,0) size 39x35
+      RenderButton {INPUT} at (-5,-1) size 35x36
+layer at (60,303) size 32x24
+  RenderBlock (relative positioned) {DIV} at (-7,-8) size 32x24

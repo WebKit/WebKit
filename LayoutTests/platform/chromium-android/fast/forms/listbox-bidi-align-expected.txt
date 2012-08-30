@@ -1,0 +1,114 @@
+layer at (0,0) size 818x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 800x292
+  RenderBlock {HTML} at (0,0) size 800x292
+    RenderBody {BODY} at (8,8) size 784x276
+      RenderBlock (anonymous) at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 556x19
+          text run at (0,0) width 556: "This test verifies the visual alignment of items in a select element while changing text direction."
+        RenderBR {BR} at (556,0) size 0x19
+        RenderText {#text} at (0,20) size 398x19
+          text run at (0,20) width 398: "All the items in the following select elements should be left-aligned."
+      RenderTable {TABLE} at (0,40) size 726x58
+        RenderTableSection {TBODY} at (0,0) size 726x58
+          RenderTableRow {TR} at (0,2) size 726x26
+            RenderTableCell {TD} at (2,2) size 176x26 [r=0 c=0 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 170x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 168x18
+                  RenderBR at (4,1) size 0x16 [bgcolor=#DDDDDD]
+            RenderTableCell {TD} at (180,2) size 182x26 [r=0 c=1 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 176x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 174x18
+                  RenderBR at (4,1) size 0x16 [bgcolor=#DDDDDD]
+            RenderTableCell {TD} at (364,2) size 176x26 [r=0 c=2 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 170x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 168x18
+                  RenderBR at (19,1) size 0x16 [bgcolor=#DDDDDD]
+            RenderTableCell {TD} at (542,2) size 182x26 [r=0 c=3 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 176x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 174x18
+                  RenderBR at (19,1) size 0x16 [bgcolor=#DDDDDD]
+          RenderTableRow {TR} at (0,30) size 726x26
+            RenderTableCell {TD} at (2,30) size 176x26 [r=1 c=0 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 170x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 168x18
+                  RenderBR at (4,1) size 0x16 [bgcolor=#DDDDDD]
+            RenderTableCell {TD} at (180,30) size 182x26 [r=1 c=1 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 176x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 174x18
+                  RenderBR at (4,1) size 0x16 [bgcolor=#DDDDDD]
+      RenderBlock (anonymous) at (0,98) size 784x20
+        RenderText {#text} at (0,0) size 406x19
+          text run at (0,0) width 406: "All the items in the following select elements should be right-aligned."
+      RenderTable {TABLE} at (0,118) size 716x58
+        RenderTableSection {TBODY} at (0,0) size 716x58
+          RenderTableRow {TR} at (0,2) size 716x26
+            RenderTableCell {TD} at (2,2) size 184x26 [r=0 c=0 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 178x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 176x18
+                  RenderBR at (172,1) size 0x16 [bgcolor=#DDDDDD]
+            RenderTableCell {TD} at (188,2) size 169x26 [r=0 c=1 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 163x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 161x18
+                  RenderBR at (157,1) size 0x16 [bgcolor=#DDDDDD]
+            RenderTableCell {TD} at (359,2) size 184x26 [r=0 c=2 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 178x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 176x18
+                  RenderBR at (172,1) size 0x16 [bgcolor=#DDDDDD]
+            RenderTableCell {TD} at (545,2) size 169x26 [r=0 c=3 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 163x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 161x18
+                  RenderBR at (157,1) size 0x16 [bgcolor=#DDDDDD]
+          RenderTableRow {TR} at (0,30) size 716x26
+            RenderTableCell {TD} at (2,30) size 184x26 [r=1 c=0 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 178x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 176x18
+                  RenderBR at (157,1) size 0x16 [bgcolor=#DDDDDD]
+            RenderTableCell {TD} at (188,30) size 169x26 [r=1 c=1 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 163x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 161x18
+                  RenderBR at (142,1) size 0x16 [bgcolor=#DDDDDD]
+      RenderBlock (anonymous) at (0,176) size 784x20
+        RenderText {#text} at (0,0) size 417x19
+          text run at (0,0) width 417: "All the items in the following select elements should be center-aligned."
+      RenderTable {TABLE} at (0,196) size 760x30
+        RenderTableSection {TBODY} at (0,0) size 760x30
+          RenderTableRow {TR} at (0,2) size 760x26
+            RenderTableCell {TD} at (2,2) size 195x26 [r=0 c=0 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 189x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 187x18
+                  RenderBR at (101,1) size 0x16 [bgcolor=#DDDDDD]
+            RenderTableCell {TD} at (199,2) size 180x26 [r=0 c=1 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 174x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 172x18
+                  RenderBR at (93,1) size 1x16 [bgcolor=#DDDDDD]
+            RenderTableCell {TD} at (381,2) size 195x26 [r=0 c=2 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 189x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 187x18
+                  RenderBR at (86,1) size 0x16 [bgcolor=#DDDDDD]
+            RenderTableCell {TD} at (578,2) size 180x26 [r=0 c=3 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 174x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 172x18
+                  RenderBR at (78,1) size 1x16 [bgcolor=#DDDDDD]
+      RenderBlock (anonymous) at (0,226) size 784x20
+        RenderText {#text} at (0,0) size 270x19
+          text run at (0,0) width 270: "The following tables check mixed alignments."
+      RenderTable {TABLE} at (0,246) size 810x30
+        RenderTableSection {TBODY} at (0,0) size 810x30
+          RenderTableRow {TR} at (0,2) size 810x26
+            RenderTableCell {TD} at (2,2) size 189x26 [r=0 c=0 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 183x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 181x18
+                  RenderBR at (177,1) size 0x16 [bgcolor=#DDDDDD]
+            RenderTableCell {TD} at (193,2) size 189x26 [r=0 c=1 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 183x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 181x18
+                  RenderBR at (4,1) size 0x16 [bgcolor=#DDDDDD]
+            RenderTableCell {TD} at (384,2) size 211x26 [r=0 c=2 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 205x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 203x18
+                  RenderBR at (199,1) size 0x16 [bgcolor=#DDDDDD]
+            RenderTableCell {TD} at (597,2) size 211x26 [r=0 c=3 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,3) size 205x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+                RenderBlock (anonymous) at (1,1) size 203x18
+                  RenderBR at (4,1) size 0x16 [bgcolor=#DDDDDD]

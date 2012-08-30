@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 264x19
+          text run at (0,0) width 264: "This tests GraphicsContext::drawBidiText()."
+      RenderMenuList {SELECT} at (2,36) size 331x26 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (1,1) size 329x24
+          RenderBR at (4,1) size 0x21 [bgcolor=#DDDDDD]
+      RenderMenuList {SELECT} at (2,64) size 369x18 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (1,1) size 367x17
+          RenderBR at (4,1) size 0x15 [bgcolor=#DDDDDD]

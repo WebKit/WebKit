@@ -1,0 +1,11 @@
+Test HTMLMediaElement canPlayType() method for ogg media containers.
+
+These tests may be expected to fail if the WebKit port does not support the format.
+
+EXPECTED (video.canPlayType('audio/ogg') == 'maybe') OK
+EXPECTED (video.canPlayType('video/ogg') == 'maybe'), OBSERVED '' FAIL
+EXPECTED (video.canPlayType('audio/ogg; codecs=vorbis') == 'probably') OK
+EXPECTED (video.canPlayType('video/ogg; codecs=theora') == 'probably'), OBSERVED '' FAIL
+EXPECTED (video.canPlayType('video/ogg; codecs=theora,vorbis') == 'probably'), OBSERVED '' FAIL
+END OF TEST
+
