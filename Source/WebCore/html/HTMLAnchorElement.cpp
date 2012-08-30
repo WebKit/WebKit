@@ -41,6 +41,7 @@
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -120,7 +121,7 @@ bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
     return hasNonEmptyBoundingBox();
 }
 
-static void appendServerMapMousePosition(String& url, Event* event)
+static void appendServerMapMousePosition(StringBuilder& url, Event* event)
 {
     if (!event->isMouseEvent())
         return;
@@ -143,10 +144,10 @@ static void appendServerMapMousePosition(String& url, Event* event)
     FloatPoint absolutePosition = renderer->absoluteToLocal(FloatPoint(static_cast<MouseEvent*>(event)->pageX(), static_cast<MouseEvent*>(event)->pageY()));
     int x = absolutePosition.x();
     int y = absolutePosition.y();
-    url += "?";
-    url += String::number(x);
-    url += ",";
-    url += String::number(y);
+    url.append('?');
+    url.append(String::number(x));
+    url.append(',');
+    url.append(String::number(y));
 }
 
 void HTMLAnchorElement::defaultEventHandler(Event* event)
@@ -507,9 +508,10 @@ void HTMLAnchorElement::handleClick(Event* event)
     if (!frame)
         return;
 
-    String url = stripLeadingAndTrailingHTMLSpaces(fastGetAttribute(hrefAttr));
+    StringBuilder url;
+    url.append(stripLeadingAndTrailingHTMLSpaces(fastGetAttribute(hrefAttr)));
     appendServerMapMousePosition(url, event);
-    KURL kurl = document()->completeURL(url);
+    KURL kurl = document()->completeURL(url.toString());
 
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
     if (hasAttribute(downloadAttr)) {

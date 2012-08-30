@@ -72,6 +72,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/Uint8ClampedArray.h>
 #include <wtf/UnusedParam.h>
+#include <wtf/text/StringBuilder.h>
 
 #if USE(CG)
 #include <ApplicationServices/ApplicationServices.h>
@@ -1992,31 +1993,34 @@ String CanvasRenderingContext2D::font() const
     if (!state().m_realizedFont)
         return defaultFont;
 
-    String serializedFont;
+    StringBuilder serializedFont;
     const FontDescription& fontDescription = state().m_font.fontDescription();
 
     if (fontDescription.italic())
-        serializedFont += "italic ";
+        serializedFont.appendLiteral("italic ");
     if (fontDescription.smallCaps() == FontSmallCapsOn)
-        serializedFont += "small-caps ";
+        serializedFont.appendLiteral("small-caps ");
 
-    serializedFont += String::number(fontDescription.computedPixelSize()) + "px";
+    serializedFont.append(String::number(fontDescription.computedPixelSize()));
+    serializedFont.appendLiteral("px");
 
     const FontFamily& firstFontFamily = fontDescription.family();
     for (const FontFamily* fontFamily = &firstFontFamily; fontFamily; fontFamily = fontFamily->next()) {
         if (fontFamily != &firstFontFamily)
-            serializedFont += ",";
+            serializedFont.append(',');
 
+        // FIXME: We should append family directly to serializedFont rather than building a temporary string.
         String family = fontFamily->family();
         if (family.startsWith("-webkit-"))
             family = family.substring(8);
         if (family.contains(' '))
             family = makeString('"', family, '"');
 
-        serializedFont += " " + family;
+        serializedFont.append(' ');
+        serializedFont.append(family);
     }
 
-    return serializedFont;
+    return serializedFont.toString();
 }
 
 void CanvasRenderingContext2D::setFont(const String& newFont)

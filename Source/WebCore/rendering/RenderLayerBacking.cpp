@@ -55,8 +55,8 @@
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "TiledBacking.h"
-
 #include <wtf/CurrentTime.h>
+#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(CSS_FILTERS)
 #include "FilterEffectRenderer.h"
@@ -1710,29 +1710,35 @@ AnimatedPropertyID RenderLayerBacking::cssToGraphicsLayerProperty(CSSPropertyID 
 
 String RenderLayerBacking::nameForLayer() const
 {
-    String name = renderer()->renderName();
+    StringBuilder name;
+    name.append(renderer()->renderName());
     if (Node* node = renderer()->node()) {
-        if (node->isElementNode())
-            name += " " + static_cast<Element*>(node)->tagName();
-        if (node->hasID())
-            name += " id=\'" + static_cast<Element*>(node)->getIdAttribute() + "\'";
+        if (node->isElementNode()) {
+            name.append(' ');
+            name.append(static_cast<Element*>(node)->tagName());
+        }
+        if (node->hasID()) {
+            name.appendLiteral(" id=\'");
+            name.append(static_cast<Element*>(node)->getIdAttribute());
+            name.append('\'');
+        }
 
         if (node->hasClass()) {
+            name.appendLiteral(" class=\'");
             StyledElement* styledElement = static_cast<StyledElement*>(node);
-            String classes;
             for (size_t i = 0; i < styledElement->classNames().size(); ++i) {
                 if (i > 0)
-                    classes += " ";
-                classes += styledElement->classNames()[i];
+                    name.append(' ');
+                name.append(styledElement->classNames()[i]);
             }
-            name += " class=\'" + classes + "\'";
+            name.append('\'');
         }
     }
 
     if (m_owningLayer->isReflection())
-        name += " (reflection)";
+        name.appendLiteral(" (reflection)");
 
-    return name;
+    return name.toString();
 }
 
 CompositingLayerType RenderLayerBacking::compositingLayerType() const

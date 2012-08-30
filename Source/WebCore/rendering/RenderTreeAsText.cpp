@@ -445,14 +445,14 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                 ts << " id=\"" + static_cast<Element*>(node)->getIdAttribute() + "\"";
 
             if (node->hasClass()) {
+                ts << " class=\"";
                 StyledElement* styledElement = static_cast<StyledElement*>(node);
-                String classes;
                 for (size_t i = 0; i < styledElement->classNames().size(); ++i) {
                     if (i > 0)
-                        classes += " ";
-                    classes += styledElement->classNames()[i];
+                        ts << " ";
+                    ts << styledElement->classNames()[i];
                 }
-                ts << " class=\"" + classes + "\"";
+                ts << "\"";
             }
         }
     }
@@ -789,29 +789,36 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
 
 static String nodePosition(Node* node)
 {
-    String result;
+    StringBuilder result;
 
     Element* body = node->document()->body();
     Node* parent;
     for (Node* n = node; n; n = parent) {
         parent = n->parentOrHostNode();
         if (n != node)
-            result += " of ";
+            result.appendLiteral(" of ");
         if (parent) {
             if (body && n == body) {
                 // We don't care what offset body may be in the document.
-                result += "body";
+                result.appendLiteral("body");
                 break;
             }
-            if (n->isShadowRoot())
-                result += "{" + getTagName(n) + "}";
-            else
-                result += "child " + String::number(n->nodeIndex()) + " {" + getTagName(n) + "}";
+            if (n->isShadowRoot()) {
+                result.append('{');
+                result.append(getTagName(n));
+                result.append('}');
+            } else {
+                result.appendLiteral("child ");
+                result.append(String::number(n->nodeIndex()));
+                result.appendLiteral(" {");
+                result.append(getTagName(n));
+                result.append('}');
+            }
         } else
-            result += "document";
+            result.appendLiteral("document");
     }
 
-    return result;
+    return result.toString();
 }
 
 static void writeSelection(TextStream& ts, const RenderObject* o)

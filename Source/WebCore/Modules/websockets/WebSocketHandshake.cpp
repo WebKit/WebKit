@@ -64,14 +64,18 @@ static const char randomCharacterInSecWebSocketKey[] = "!\"#$%&'()*+,-./:;<=>?@A
 
 static String resourceName(const KURL& url)
 {
-    String name = url.path();
+    StringBuilder name;
+    name.append(url.path());
     if (name.isEmpty())
-        name = "/";
-    if (!url.query().isNull())
-        name += "?" + url.query();
-    ASSERT(!name.isEmpty());
-    ASSERT(!name.contains(' '));
-    return name;
+        name.append('/');
+    if (!url.query().isNull()) {
+        name.append('?');
+        name.append(url.query());
+    }
+    String result = name.toString();
+    ASSERT(!result.isEmpty());
+    ASSERT(!result.contains(' '));
+    return result;
 }
 
 static String hostName(const KURL& url, bool secure)
