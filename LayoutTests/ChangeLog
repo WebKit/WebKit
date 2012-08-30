@@ -1,3 +1,19 @@
+2012-08-30  Tony Chang  <tony@chromium.org>
+
+        Make RenderBox::computeInlineDirectionMargins const
+        https://bugs.webkit.org/show_bug.cgi?id=95255
+
+        Reviewed by Ojan Vafai.
+
+        Add test cases for setting margins with perpendicular blocks or flipped text.
+
+        * fast/block/margins-perpendicular-containing-block-expected.txt: Added.
+        * fast/block/margins-perpendicular-containing-block.html: Added.
+        * fast/table/margins-flipped-text-direction-expected.txt: Added.
+        * fast/table/margins-flipped-text-direction.html: Added.
+        * fast/table/margins-perpendicular-containing-block-expected.txt: Added.
+        * fast/table/margins-perpendicular-containing-block.html: Added.
+
 2012-08-30  Aaron Colwell  <acolwell@chromium.org>
 
         Fix a crash in SourceBufferList.remove().

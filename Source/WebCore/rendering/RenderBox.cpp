@@ -1712,7 +1712,13 @@ void RenderBox::computeLogicalWidthInRegion(RenderRegion* region, LayoutUnit off
         LayoutUnit containerLogicalWidthForAutoMargins = containerLogicalWidth;
         if (avoidsFloats() && cb->containsFloats())
             containerLogicalWidthForAutoMargins = containingBlockAvailableLineWidthInRegion(region, offsetFromLogicalTopOfFirstPage);
-        computeInlineDirectionMargins(cb, containerLogicalWidthForAutoMargins, logicalWidth());
+        ComputedMarginValues marginValues;
+        bool hasInvertedDirection =  cb->style()->isLeftToRightDirection() == style()->isLeftToRightDirection();
+        computeInlineDirectionMargins(cb, containerLogicalWidthForAutoMargins, logicalWidth(),
+            hasInvertedDirection ? marginValues.m_start : marginValues.m_end,
+            hasInvertedDirection ? marginValues.m_end : marginValues.m_start);
+        setMarginStart(marginValues.m_start);
+        setMarginEnd(marginValues.m_end);
     }
     
     if (!hasPerpendicularContainingBlock && containerLogicalWidth && containerLogicalWidth != (logicalWidth() + marginStart() + marginEnd())
@@ -1820,7 +1826,7 @@ bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
     return false;
 }
 
-void RenderBox::computeInlineDirectionMargins(RenderBlock* containingBlock, LayoutUnit containerWidth, LayoutUnit childWidth)
+void RenderBox::computeInlineDirectionMargins(RenderBlock* containingBlock, LayoutUnit containerWidth, LayoutUnit childWidth, LayoutUnit& marginStart, LayoutUnit& marginEnd) const
 {
     const RenderStyle* containingBlockStyle = containingBlock->style();
     Length marginStartLength = style()->marginStartUsing(containingBlockStyle);
@@ -1829,8 +1835,8 @@ void RenderBox::computeInlineDirectionMargins(RenderBlock* containingBlock, Layo
 
     if (isFloating() || isInline()) {
         // Inline blocks/tables and floats don't have their margins increased.
-        containingBlock->setMarginStartForChild(this, minimumValueForLength(marginStartLength, containerWidth, renderView));
-        containingBlock->setMarginEndForChild(this, minimumValueForLength(marginEndLength, containerWidth, renderView));
+        marginStart = minimumValueForLength(marginStartLength, containerWidth, renderView);
+        marginEnd = minimumValueForLength(marginEndLength, containerWidth, renderView);
         return;
     }
 
@@ -1841,15 +1847,15 @@ void RenderBox::computeInlineDirectionMargins(RenderBlock* containingBlock, Layo
         LayoutUnit marginStartWidth = minimumValueForLength(marginStartLength, containerWidth, renderView);
         LayoutUnit marginEndWidth = minimumValueForLength(marginEndLength, containerWidth, renderView);
         LayoutUnit centeredMarginBoxStart = max<LayoutUnit>(0, (containerWidth - childWidth - marginStartWidth - marginEndWidth) / 2);
-        containingBlock->setMarginStartForChild(this, centeredMarginBoxStart + marginStartWidth);
-        containingBlock->setMarginEndForChild(this, containerWidth - childWidth - containingBlock->marginStartForChild(this) + marginEndWidth);
+        marginStart = centeredMarginBoxStart + marginStartWidth;
+        marginEnd = containerWidth - childWidth - marginStart + marginEndWidth;
         return;
     } 
     
     // Case Two: The object is being pushed to the start of the containing block's available logical width.
     if (marginEndLength.isAuto() && childWidth < containerWidth) {
-        containingBlock->setMarginStartForChild(this, valueForLength(marginStartLength, containerWidth, renderView));
-        containingBlock->setMarginEndForChild(this, containerWidth - childWidth - containingBlock->marginStartForChild(this));
+        marginStart = valueForLength(marginStartLength, containerWidth, renderView);
+        marginEnd = containerWidth - childWidth - marginStart;
         return;
     } 
     
@@ -1857,15 +1863,15 @@ void RenderBox::computeInlineDirectionMargins(RenderBlock* containingBlock, Layo
     bool pushToEndFromTextAlign = !marginEndLength.isAuto() && ((!containingBlockStyle->isLeftToRightDirection() && containingBlockStyle->textAlign() == WEBKIT_LEFT)
         || (containingBlockStyle->isLeftToRightDirection() && containingBlockStyle->textAlign() == WEBKIT_RIGHT));
     if ((marginStartLength.isAuto() && childWidth < containerWidth) || pushToEndFromTextAlign) {
-        containingBlock->setMarginEndForChild(this, valueForLength(marginEndLength, containerWidth, renderView));
-        containingBlock->setMarginStartForChild(this, containerWidth - childWidth - containingBlock->marginEndForChild(this));
+        marginEnd = valueForLength(marginEndLength, containerWidth, renderView);
+        marginStart = containerWidth - childWidth - marginEnd;
         return;
     } 
     
     // Case Four: Either no auto margins, or our width is >= the container width (css2.1, 10.3.3).  In that case
     // auto margins will just turn into 0.
-    containingBlock->setMarginStartForChild(this, minimumValueForLength(marginStartLength, containerWidth, renderView));
-    containingBlock->setMarginEndForChild(this, minimumValueForLength(marginEndLength, containerWidth, renderView));
+    marginStart = minimumValueForLength(marginStartLength, containerWidth, renderView);
+    marginEnd = minimumValueForLength(marginEndLength, containerWidth, renderView);
 }
 
 RenderBoxRegionInfo* RenderBox::renderBoxRegionInfo(RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage, RenderBoxRegionInfoFlags cacheFlag) const
@@ -1953,6 +1959,32 @@ RenderBoxRegionInfo* RenderBox::renderBoxRegionInfo(RenderRegion* region, Layout
     return new RenderBoxRegionInfo(logicalLeftOffset, logicalWidthInRegion, isShifted);
 }
 
+static bool shouldFlipBeforeAfterMargins(const RenderStyle* containingBlockStyle, const RenderStyle* childStyle)
+{
+    ASSERT(containingBlockStyle->isHorizontalWritingMode() != childStyle->isHorizontalWritingMode());
+    WritingMode childWritingMode = childStyle->writingMode();
+    bool shouldFlip = false;
+    switch (containingBlockStyle->writingMode()) {
+    case TopToBottomWritingMode:
+        shouldFlip = (childWritingMode == RightToLeftWritingMode);
+        break;
+    case BottomToTopWritingMode:
+        shouldFlip = (childWritingMode == RightToLeftWritingMode);
+        break;
+    case RightToLeftWritingMode:
+        shouldFlip = (childWritingMode == BottomToTopWritingMode);
+        break;
+    case LeftToRightWritingMode:
+        shouldFlip = (childWritingMode == BottomToTopWritingMode);
+        break;
+    }
+
+    if (!containingBlockStyle->isLeftToRightDirection())
+        shouldFlip = !shouldFlip;
+
+    return shouldFlip;
+}
+
 void RenderBox::computeLogicalHeight()
 {
     // Cell height is managed by the table and inline non-replaced elements do not support a height property.
@@ -1977,8 +2009,15 @@ void RenderBox::computeLogicalHeight()
 
         // For tables, calculate margins only.
         if (isTable()) {
-            if (hasPerpendicularContainingBlock)
-                computeInlineDirectionMargins(cb, containingBlockLogicalWidthForContent(), logicalHeight());
+            if (hasPerpendicularContainingBlock) {
+                ComputedMarginValues marginValues;
+                bool shouldFlipBeforeAfter = shouldFlipBeforeAfterMargins(cb->style(), style());
+                computeInlineDirectionMargins(cb, containingBlockLogicalWidthForContent(), logicalHeight(),
+                    shouldFlipBeforeAfter ? marginValues.m_after : marginValues.m_before,
+                    shouldFlipBeforeAfter ? marginValues.m_before : marginValues.m_after);
+                setMarginBefore(marginValues.m_before);
+                setMarginAfter(marginValues.m_after);
+            }
             return;
         }
 
@@ -2026,8 +2065,15 @@ void RenderBox::computeLogicalHeight()
 
         setLogicalHeight(heightResult);
         
-        if (hasPerpendicularContainingBlock)
-            computeInlineDirectionMargins(cb, containingBlockLogicalWidthForContent(), heightResult);
+        if (hasPerpendicularContainingBlock) {
+            ComputedMarginValues marginValues;
+            bool shouldFlipBeforeAfter = shouldFlipBeforeAfterMargins(cb->style(), style());
+            computeInlineDirectionMargins(cb, containingBlockLogicalWidthForContent(), heightResult,
+                    shouldFlipBeforeAfter ? marginValues.m_after : marginValues.m_before,
+                    shouldFlipBeforeAfter ? marginValues.m_before : marginValues.m_after);
+            setMarginBefore(marginValues.m_before);
+            setMarginAfter(marginValues.m_after);
+        }
     }
 
     // WinIE quirk: The <html> block always fills the entire canvas in quirks mode.  The <body> always fills the
