@@ -40,6 +40,7 @@
 #include <BlackBerryPlatformMessageClient.h>
 #include <BlackBerryPlatformNavigatorHandler.h>
 #include <BlackBerryPlatformSettings.h>
+#include <network/DomainTools.h>
 #include <stdlib.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
@@ -219,7 +220,14 @@ void CookieManager::getRawCookies(Vector<ParsedCookie*> &stackOfCookies, const K
     }
 
     Vector<String> delimitedHost;
-    requestURL.host().lower().split(".", true, delimitedHost);
+
+    // IP addresses are stored in a particular format (due to ipv6). Reduce the ip address so we can match
+    // it with the one in memory.
+    string canonicalIP = BlackBerry::Platform::getCanonicalIPFormat(requestURL.host().utf8().data());
+    if (!canonicalIP.empty())
+        delimitedHost.append(String(canonicalIP.c_str()));
+    else
+        requestURL.host().lower().split(".", true, delimitedHost);
 
     // Go through all the protocol trees that we need to search for
     // and get all cookies that are valid for this domain
@@ -341,7 +349,7 @@ void CookieManager::checkAndTreatCookie(ParsedCookie* candidateCookie, BackingSt
     // If protocol support domain, we have to traverse the domain tree to find the right
     // cookieMap to handle with
     if (!ignoreDomain)
-        curMap = findOrCreateCookieMap(curMap, candidateCookie->domain(), candidateCookie->hasExpired());
+        curMap = findOrCreateCookieMap(curMap, *candidateCookie);
 
     // Now that we have the proper map for this cookie, we can modify it
     // If cookie does not exist and has expired, delete it
@@ -475,11 +483,16 @@ void CookieManager::setPrivateMode(bool mode)
     }
 }
 
-CookieMap* CookieManager::findOrCreateCookieMap(CookieMap* protocolMap, const String& domain, bool findOnly)
+CookieMap* CookieManager::findOrCreateCookieMap(CookieMap* protocolMap, const ParsedCookie& candidateCookie)
 {
     // Explode the domain with the '.' delimiter
     Vector<String> delimitedHost;
-    domain.split(".", delimitedHost);
+
+    // If the domain is an IP address, don't split it.
+    if (candidateCookie.domainIsIPAddress())
+        delimitedHost.append(candidateCookie.domain());
+    else
+        candidateCookie.domain().split(".", delimitedHost);
 
     CookieMap* curMap = protocolMap;
     size_t hostSize = delimitedHost.size();
@@ -494,7 +507,7 @@ CookieMap* CookieManager::findOrCreateCookieMap(CookieMap* protocolMap, const St
         CookieMap* nextMap = curMap->getSubdomainMap(delimitedHost[i]);
         if (!nextMap) {
             CookieLog("CookieManager - cannot find map\n");
-            if (findOnly)
+            if (candidateCookie.hasExpired())
                 return 0;
             CookieLog("CookieManager - creating %s in currentmap %s\n", delimitedHost[i].utf8().data(), curMap->getName().utf8().data());
             nextMap = new CookieMap(delimitedHost[i]);

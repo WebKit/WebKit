@@ -55,6 +55,14 @@ static inline bool isLightweightSpace(UChar c)
 CookieParser::CookieParser(const KURL& defaultCookieURL)
     : m_defaultCookieURL(defaultCookieURL)
 {
+    m_defaultCookieHost = defaultCookieURL.host();
+    m_defaultDomainIsIPAddress = false;
+    string hostDomainCanonical = BlackBerry::Platform::getCanonicalIPFormat(m_defaultCookieHost.utf8().data()).c_str();
+    if (!hostDomainCanonical.empty()) {
+        m_defaultCookieHost = String(hostDomainCanonical.c_str());
+        m_defaultDomainIsIPAddress = true;
+    } else
+        m_defaultCookieHost = m_defaultCookieHost.startsWith(".") ? m_defaultCookieHost : "." + m_defaultCookieHost;
 }
 
 CookieParser::~CookieParser()
@@ -260,24 +268,38 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
                 // For example: ab.c.com dose not domain match b.c.com;
                 String realDomain = parsedValue[0] == '.' ? parsedValue : "." + parsedValue;
 
-                // The request host should domain match the Domain attribute.
-                // Domain string starts with a dot, so a.b.com should domain match .a.b.com.
-                // add a "." at beginning of host name, because it can handle many cases such as
-                // a.b.com matches b.com, a.b.com matches .B.com and a.b.com matches .A.b.Com
-                // and so on.
-                String hostDomainName = m_defaultCookieURL.host();
-                hostDomainName = hostDomainName.startsWith('.') ? hostDomainName : "." + hostDomainName;
-                if (!hostDomainName.endsWith(realDomain, false))
-                    LOG_AND_DELETE("Invalid cookie %s (domain): it does not domain match the host");
-                // We should check for an embedded dot in the portion of string in the host not in the domain
-                // but to match firefox behaviour we do not.
+                // Try to return an canonical ip address if the domain is an ip
 
-                // Check whether the domain is a top level domain, if it is throw it out
-                // http://publicsuffix.org/list/
-                if (BlackBerry::Platform::isTopLevelDomain(realDomain.utf8().data()))
-                    LOG_AND_DELETE("Invalid cookie %s (domain): it did not pass the top level domain check", cookie.ascii().data());
+                bool isIPAddress = false;
+                // We only check if the current domain is an IP address when the default domain is an IP address
+                // We know if the default domain is not an IP address and the current domain is, it won't suffix match
+                // If it is an IP Address, we should treat it only if it matches the host exactly
+                // We determine the canonical IP format before comparing because IPv6 could be represented in multiple formats
+                if (m_defaultDomainIsIPAddress) {
+                    String realDomainCanonical = String(BlackBerry::Platform::getCanonicalIPFormat(realDomain.utf8().data()).c_str());
+                    if (realDomainCanonical.isEmpty() || realDomainCanonical != m_defaultCookieHost)
+                        LOG_AND_DELETE("Invalid cookie %s (domain): domain is IP but does not match host's IP", cookie.ascii().data());
+                    realDomain = realDomainCanonical;
+                    isIPAddress = true;
+                } else {
+                    // The request host should domain match the Domain attribute.
+                    // Domain string starts with a dot, so a.b.com should domain match .a.b.com.
+                    // add a "." at beginning of host name, because it can handle many cases such as
+                    // a.b.com matches b.com, a.b.com matches .B.com and a.b.com matches .A.b.Com
+                    // and so on.
+                    // We also have to make a special case for IP addresses. If a website tries to set
+                    // a cookie to 61.97, that domain is not an IP address and will end with the m_defaultCookieHost
+                    if (!m_defaultCookieHost.endsWith(realDomain, false))
+                        LOG_AND_DELETE("Invalid cookie %s (domain): it does not domain match the host", cookie.ascii().data());
+                    // We should check for an embedded dot in the portion of string in the host not in the domain
+                    // but to match firefox behaviour we do not.
 
-                res->setDomain(realDomain);
+                    // Check whether the domain is a top level domain, if it is throw it out
+                    // http://publicsuffix.org/list/
+                    if (BlackBerry::Platform::isTopLevelDomain(realDomain.utf8().data()))
+                        LOG_AND_DELETE("Invalid cookie %s (domain): it did not pass the top level domain check", cookie.ascii().data());
+                }
+                res->setDomain(realDomain, isIPAddress);
             } else
                 LOG_AND_DELETE("Invalid cookie %s (domain)", cookie.ascii().data());
             break;
@@ -363,7 +385,7 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
 
     // If no domain was provided, set it to the host
     if (!res->domain())
-        res->setDomain(m_defaultCookieURL.host());
+        res->setDomain(m_defaultCookieHost, m_defaultDomainIsIPAddress);
 
     // According to the Cookie Specificaiton (RFC6265, section 4.1.2.4 and 5.2.4, http://tools.ietf.org/html/rfc6265),
     // If no path was provided or the first character of the path value is not '/', set it to the host's path

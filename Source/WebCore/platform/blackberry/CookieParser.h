@@ -50,6 +50,8 @@ private:
     ParsedCookie* parseOneCookie(const String& cookie, unsigned start, unsigned end, double curTime);
 
     KURL m_defaultCookieURL;
+    String m_defaultCookieHost;
+    bool m_defaultDomainIsIPAddress;
 };
 
 } // namespace WebCore

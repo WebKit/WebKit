@@ -63,7 +63,7 @@ public:
     void setPath(const String& path) { m_path = path; }
 
     const String& domain() const { return m_domain; }
-    void setDomain(const String& domain) { m_domain = domain.lower(); }
+    void setDomain(const String& domain, bool domainIsIPAddress = false) { m_domain = domain.lower(); m_domainIsIPAddress = domainIsIPAddress; }
 
     const String& protocol() const { return m_protocol; }
     void setProtocol(const String& protocol) { m_protocol = protocol; }
@@ -90,6 +90,7 @@ public:
     bool hasExpired() const;
     bool isForceExpired() const { return m_isForceExpired; }
     bool isUnderSizeLimit() const;
+    bool domainIsIPAddress() const { return m_domainIsIPAddress; }
 
     String toString() const;
     String toNameValuePair() const;
@@ -110,6 +111,7 @@ private:
     bool m_isHttpOnly;
     bool m_isSession;
     bool m_isForceExpired;
+    bool m_domainIsIPAddress;
 };
 
 } // namespace WebCore

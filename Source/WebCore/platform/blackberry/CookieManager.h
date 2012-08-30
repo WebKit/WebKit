@@ -114,7 +114,7 @@ private:
 
     void addCookieToMap(CookieMap* targetMap, ParsedCookie* candidateCookie, BackingStoreRemovalPolicy postToBackingStore, CookieFilter = WithHttpOnlyCookies);
 
-    CookieMap* findOrCreateCookieMap(CookieMap* protocolMap, const String& domain, bool findOnly);
+    CookieMap* findOrCreateCookieMap(CookieMap* protocolMap, const ParsedCookie& candidateCookie);
 
     void initiateCookieLimitCleanUp();
     void cookieLimitCleanUp(Timer<CookieManager>*);

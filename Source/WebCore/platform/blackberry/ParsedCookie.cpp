@@ -45,6 +45,7 @@ ParsedCookie::ParsedCookie(double currentTime)
     , m_isHttpOnly(false)
     , m_isSession(true)
     , m_isForceExpired(false)
+    , m_domainIsIPAddress(false)
 {
 }
 
@@ -61,6 +62,7 @@ ParsedCookie::ParsedCookie(const String& name, const String& value, const String
     , m_isHttpOnly(isHttpOnly)
     , m_isSession(false)
     , m_isForceExpired(false)
+    , m_domainIsIPAddress(false)
 {
 }
 
@@ -77,6 +79,7 @@ ParsedCookie::ParsedCookie(const ParsedCookie* cookie)
     , m_isHttpOnly(cookie->m_isHttpOnly)
     , m_isSession(cookie->m_isSession)
     , m_isForceExpired(cookie->m_isForceExpired)
+    , m_domainIsIPAddress(cookie->m_domainIsIPAddress)
 {
 }
 
