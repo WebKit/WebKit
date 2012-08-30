@@ -3,13 +3,13 @@ Tests the DOM content loaded event.
 Page reloaded.
 MarkDOMContent Properties:
 {
-    startTime : <number>
+    counters : <object>
     data : {
     }
-    type : "MarkDOMContent"
     frameId : <string>
-    usedHeapSize : <number>
+    startTime : <number>
     totalHeapSize : <number>
-    counters : <object>
+    type : "MarkDOMContent"
+    usedHeapSize : <number>
 }
 

@@ -3,15 +3,15 @@ Tests the Timeline API instrumentation of a style recalculation event
 Test data
 RecalculateStyles Properties:
 {
-    startTime : <number>
+    children : <object>
+    counters : <object>
     data : {
     }
-    children : <object>
     endTime : <number>
-    type : "RecalculateStyles"
     frameId : <string>
-    usedHeapSize : <number>
+    startTime : <number>
     totalHeapSize : <number>
-    counters : <object>
+    type : "RecalculateStyles"
+    usedHeapSize : <number>
 }
 

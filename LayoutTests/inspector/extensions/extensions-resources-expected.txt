@@ -9,40 +9,40 @@ page resources:
 {
     0 : {
         0 : {
-            url : .../abe.png
-            type : "image"
             getContent : <function>
             setContent : <function>
+            type : "image"
+            url : .../abe.png
         }
         1 : {
-            url : .../audits-style1.css
-            type : "stylesheet"
             getContent : <function>
             setContent : <function>
+            type : "stylesheet"
+            url : .../audits-style1.css
         }
         2 : {
-            url : .../extensions-resources.html
-            type : "document"
             getContent : <function>
             setContent : <function>
+            type : "document"
+            url : .../extensions-resources.html
         }
         3 : {
-            url : .../extensions-test.js
-            type : "script"
             getContent : <function>
             setContent : <function>
+            type : "script"
+            url : .../extensions-test.js
         }
         4 : {
-            url : .../inspector-test.js
-            type : "script"
             getContent : <function>
             setContent : <function>
+            type : "script"
+            url : .../inspector-test.js
         }
         5 : {
-            url : .../test-script.js
-            type : "script"
             getContent : <function>
             setContent : <function>
+            type : "script"
+            url : .../test-script.js
         }
     }
 }
@@ -64,10 +64,10 @@ Debugger was enabled.
 resource added:
 {
     0 : {
-        url : data:application/javascript...
-        type : "script"
         getContent : <function>
         setContent : <function>
+        type : "script"
+        url : data:application/javascript...
     }
 }
 Debugger was disabled.
@@ -75,10 +75,10 @@ RUNNING TEST: extension_testOpenResourceHandler
 handleOpenResource() invoked [this should only appear once!]: 
 {
     0 : {
-        url : .../extensions-resources.html
-        type : "document"
         getContent : <function>
         setContent : <function>
+        type : "document"
+        url : .../extensions-resources.html
     }
     1 : 12
 }

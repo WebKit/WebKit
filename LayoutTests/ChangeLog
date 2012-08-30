@@ -1,3 +1,59 @@
+2012-08-30  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: sort object properties when dumping them in tests
+        https://bugs.webkit.org/show_bug.cgi?id=95459
+
+        Reviewed by Vsevolod Vlasov.
+
+        add/dumpObject used to dump object properties in the natural enumerable order,
+        sorting by property name now.
+
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.addObject):
+        * http/tests/inspector/resource-har-conversion-expected.txt:
+        * http/tests/inspector/resource-har-headers-expected.txt:
+        * http/tests/inspector/resource-har-pages-expected.txt:
+        * http/tests/inspector/resource-parameters-expected.txt:
+        * http/tests/inspector/resources/extension-main.js:
+        * inspector/cookie-parser-expected.txt:
+        * inspector/debugger/script-extract-outline-expected.txt:
+        * inspector/extensions/extensions-api-expected.txt:
+        * inspector/extensions/extensions-audits-api-expected.txt:
+        * inspector/extensions/extensions-console-expected.txt:
+        * inspector/extensions/extensions-panel-expected.txt:
+        * inspector/extensions/extensions-resources-expected.txt:
+        * inspector/extensions/extensions-sidebar-expected.txt:
+        * inspector/filtered-item-selection-dialog-filtering-expected.txt:
+        * inspector/report-protocol-errors-expected.txt:
+        * inspector/runtime/runtime-getProperties-expected.txt:
+        * inspector/runtime/runtime-localStorage-getProperties-expected.txt:
+        * inspector/timeline/timeline-animation-frame-expected.txt:
+        * inspector/timeline/timeline-decode-resize-expected.txt:
+        * inspector/timeline/timeline-dom-content-loaded-event-expected.txt:
+        * inspector/timeline/timeline-enum-stability-expected.txt:
+        * inspector/timeline/timeline-event-dispatch-expected.txt:
+        * inspector/timeline/timeline-injected-script-eval-expected.txt:
+        * inspector/timeline/timeline-layout-expected.txt:
+        * inspector/timeline/timeline-load-event-expected.txt:
+        * inspector/timeline/timeline-mark-timeline-expected.txt:
+        * inspector/timeline/timeline-network-resource-expected.txt:
+        * inspector/timeline/timeline-paint-expected.txt:
+        * inspector/timeline/timeline-parse-html-expected.txt:
+        * inspector/timeline/timeline-recalculate-styles-expected.txt:
+        * inspector/timeline/timeline-script-tag-1-expected.txt:
+        * inspector/timeline/timeline-script-tag-2-expected.txt:
+        * inspector/timeline/timeline-time-stamp-expected.txt:
+        * inspector/timeline/timeline-timer-expected.txt:
+        * inspector/user-metrics-expected.txt:
+        * platform/chromium/http/tests/inspector/resource-har-conversion-expected.txt:
+        * platform/chromium/inspector/timeline/timeline-animation-frame-expected.txt:
+        * platform/chromium/inspector/timeline/timeline-event-dispatch-expected.txt:
+        * platform/chromium/inspector/timeline/timeline-layout-expected.txt:
+        * platform/chromium/inspector/timeline/timeline-network-resource-expected.txt:
+        * platform/chromium/inspector/timeline/timeline-paint-expected.txt:
+        * platform/chromium/inspector/timeline/timeline-parse-html-expected.txt:
+        * platform/chromium/inspector/timeline/timeline-timer-expected.txt:
+
 2012-08-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r127131.

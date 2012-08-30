@@ -129,7 +129,10 @@ InspectorTest.addObject = function(object, customFormatters, prefix, firstLinePr
     prefix = prefix || "";
     firstLinePrefix = firstLinePrefix || prefix;
     InspectorTest.addResult(firstLinePrefix + "{");
-    for (var prop in object) {
+    var propertyNames = Object.keys(object);
+    propertyNames.sort();
+    for (var i = 0; i < propertyNames.length; ++i) {
+        var prop = propertyNames[i];
         if (typeof object.hasOwnProperty === "function" && !object.hasOwnProperty(prop))
             continue;
         var prefixWithName = "    " + prefix + prop + " : ";

@@ -8,8 +8,8 @@ Resource:{
                 value : "request-value"
             }
         ]
-        headersText : "GET http://example.com/inspector-test.js HTTP/1.1\r\nRequest: headers-text"
         headersSize : 72
+        headersText : "GET http://example.com/inspector-test.js HTTP/1.1\r\nRequest: headers-text"
     }
     response : {
         headers : [
@@ -18,55 +18,55 @@ Resource:{
                 value : "response-value"
             }
         ]
-        headersText : "HTTP/1.1 200 OK\r\nResponse: headers-text"
         headersSize : 39
+        headersText : "HTTP/1.1 200 OK\r\nResponse: headers-text"
         resourceSize : 1000
         transferSize : 539
     }
 }
 HAR:{
-    startedDateTime : <object>
-    time : <number>
+    cache : {
+    }
     request : {
-        method : "GET"
-        url : "http://example.com/inspector-test.js"
-        httpVersion : "HTTP/1.1"
+        bodySize : 0
+        cookies : [
+        ]
         headers : [
             {
                 name : "Request"
                 value : "request-value"
             }
         ]
+        headersSize : 72
+        httpVersion : "HTTP/1.1"
+        method : "GET"
         queryString : [
         ]
-        cookies : [
-        ]
-        headersSize : 72
-        bodySize : 0
+        url : "http://example.com/inspector-test.js"
     }
     response : {
-        status : 200
-        statusText : "OK"
-        httpVersion : "HTTP/1.1"
+        bodySize : 500
+        content : {
+            compression : 500
+            mimeType : "text/html"
+            size : 1000
+        }
+        cookies : [
+        ]
         headers : [
             {
                 name : "Response"
                 value : "response-value"
             }
         ]
-        cookies : [
-        ]
-        content : {
-            size : 1000
-            mimeType : "text/html"
-            compression : 500
-        }
-        redirectURL : ""
         headersSize : 39
-        bodySize : 500
+        httpVersion : "HTTP/1.1"
+        redirectURL : ""
+        status : 200
+        statusText : "OK"
     }
-    cache : {
-    }
+    startedDateTime : <object>
+    time : <number>
     timings : <object>
 }
 

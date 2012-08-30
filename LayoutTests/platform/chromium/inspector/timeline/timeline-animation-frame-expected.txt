@@ -2,42 +2,42 @@ Tests the Timeline events for Animation Frame feature
 
 RequestAnimationFrame Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    counters : <object>
     data : {
         id : <number>
     }
-    type : "RequestAnimationFrame"
     frameId : <string>
-    usedHeapSize : <number>
+    stackTrace : <object>
+    startTime : <number>
     totalHeapSize : <number>
-    counters : <object>
+    type : "RequestAnimationFrame"
+    usedHeapSize : <number>
 }
 FireAnimationFrame Properties:
 {
-    startTime : <number>
+    children : <object>
+    counters : <object>
     data : {
         id : <number>
     }
-    children : <object>
     endTime : <number>
-    type : "FireAnimationFrame"
     frameId : <string>
-    usedHeapSize : <number>
+    startTime : <number>
     totalHeapSize : <number>
-    counters : <object>
+    type : "FireAnimationFrame"
+    usedHeapSize : <number>
 }
 CancelAnimationFrame Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    counters : <object>
     data : {
         id : <number>
     }
-    type : "CancelAnimationFrame"
     frameId : <string>
-    usedHeapSize : <number>
+    stackTrace : <object>
+    startTime : <number>
     totalHeapSize : <number>
-    counters : <object>
+    type : "CancelAnimationFrame"
+    usedHeapSize : <number>
 }
 

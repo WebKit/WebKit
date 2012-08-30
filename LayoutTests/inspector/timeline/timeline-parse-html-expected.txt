@@ -3,36 +3,36 @@ Tests the Timeline API instrumentation of ParseHTML
 Test data
 ParseHTML Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    children : <object>
+    counters : <object>
     data : {
+        endLine : 0
         length : 9
         startLine : 0
-        endLine : 0
     }
-    children : <object>
     endTime : <number>
-    type : "ParseHTML"
     frameId : <string>
-    usedHeapSize : <number>
+    stackTrace : <object>
+    startTime : <number>
     totalHeapSize : <number>
-    counters : <object>
+    type : "ParseHTML"
+    usedHeapSize : <number>
 }
 ParseHTML Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    children : <object>
+    counters : <object>
     data : {
+        endLine : 0
         length : 1
         startLine : 0
-        endLine : 0
     }
-    children : <object>
     endTime : <number>
-    type : "ParseHTML"
     frameId : <string>
-    usedHeapSize : <number>
+    stackTrace : <object>
+    startTime : <number>
     totalHeapSize : <number>
-    counters : <object>
+    type : "ParseHTML"
+    usedHeapSize : <number>
 }
 

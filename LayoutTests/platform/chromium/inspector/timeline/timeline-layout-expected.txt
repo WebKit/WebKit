@@ -3,16 +3,16 @@ Tests the Timeline API instrumentation of a Layout event
 Test data
 Layout Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    children : <object>
+    counters : <object>
     data : {
     }
-    children : <object>
     endTime : <number>
-    type : "Layout"
     frameId : <string>
-    usedHeapSize : <number>
+    stackTrace : <object>
+    startTime : <number>
     totalHeapSize : <number>
-    counters : <object>
+    type : "Layout"
+    usedHeapSize : <number>
 }
 

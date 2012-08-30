@@ -6,10 +6,7 @@ Running tests...
 RUNNING TEST: extension_testCreatePanel
 Panel created
 {
-    onShown : {
-        addListener : <function>
-        removeListener : <function>
-    }
+    createStatusBarButton : <function>
     onHidden : {
         addListener : <function>
         removeListener : <function>
@@ -18,7 +15,10 @@ Panel created
         addListener : <function>
         removeListener : <function>
     }
-    createStatusBarButton : <function>
+    onShown : {
+        addListener : <function>
+        removeListener : <function>
+    }
     show : <function>
 }
 Panel shown

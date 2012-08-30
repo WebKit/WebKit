@@ -2,20 +2,20 @@ Tests the Timeline API instrumentation of a paint event
 
 Paint Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    children : <object>
+    counters : <object>
     data : {
+        height : <number>
+        width : <number>
         x : 0
         y : 0
-        width : <number>
-        height : <number>
     }
-    children : <object>
     endTime : <number>
-    type : "Paint"
     frameId : <string>
-    usedHeapSize : <number>
+    stackTrace : <object>
+    startTime : <number>
     totalHeapSize : <number>
-    counters : <object>
+    type : "Paint"
+    usedHeapSize : <number>
 }
 

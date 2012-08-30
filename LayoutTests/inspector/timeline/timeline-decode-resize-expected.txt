@@ -3,198 +3,198 @@ Tests the Timeline API instrumentation of a DecodeImage and ResizeImage events
 
 DecodeImage Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    children : <object>
+    counters : <object>
     data : {
         imageType : "BMP"
     }
-    children : <object>
     endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    totalHeapSize : <number>
     type : "DecodeImage"
     usedHeapSize : <number>
-    totalHeapSize : <number>
-    counters : <object>
 }
 ResizeImage Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    children : <object>
+    counters : <object>
     data : {
         cached : true
     }
-    children : <object>
     endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    totalHeapSize : <number>
     type : "ResizeImage"
     usedHeapSize : <number>
-    totalHeapSize : <number>
-    counters : <object>
 }
 DecodeImage Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    children : <object>
+    counters : <object>
     data : {
         imageType : "GIF"
     }
-    children : <object>
     endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    totalHeapSize : <number>
     type : "DecodeImage"
     usedHeapSize : <number>
-    totalHeapSize : <number>
-    counters : <object>
 }
 ResizeImage Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    children : <object>
+    counters : <object>
     data : {
         cached : true
     }
-    children : <object>
     endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    totalHeapSize : <number>
     type : "ResizeImage"
     usedHeapSize : <number>
-    totalHeapSize : <number>
-    counters : <object>
 }
 DecodeImage Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    children : <object>
+    counters : <object>
     data : {
         imageType : "ICO"
     }
-    children : <object>
     endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    totalHeapSize : <number>
     type : "DecodeImage"
     usedHeapSize : <number>
-    totalHeapSize : <number>
-    counters : <object>
 }
 ResizeImage Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    children : <object>
+    counters : <object>
     data : {
         cached : true
     }
-    children : <object>
     endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    totalHeapSize : <number>
     type : "ResizeImage"
     usedHeapSize : <number>
-    totalHeapSize : <number>
-    counters : <object>
 }
 DecodeImage Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    children : <object>
+    counters : <object>
     data : {
         imageType : "JPEG"
     }
-    children : <object>
     endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    totalHeapSize : <number>
     type : "DecodeImage"
     usedHeapSize : <number>
-    totalHeapSize : <number>
-    counters : <object>
 }
 ResizeImage Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    children : <object>
+    counters : <object>
     data : {
         cached : true
     }
-    children : <object>
     endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    totalHeapSize : <number>
     type : "ResizeImage"
     usedHeapSize : <number>
-    totalHeapSize : <number>
-    counters : <object>
 }
 DecodeImage Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    children : <object>
+    counters : <object>
     data : {
         imageType : "PNG"
     }
-    children : <object>
     endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    totalHeapSize : <number>
     type : "DecodeImage"
     usedHeapSize : <number>
-    totalHeapSize : <number>
-    counters : <object>
 }
 ResizeImage Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    children : <object>
+    counters : <object>
     data : {
         cached : true
     }
-    children : <object>
     endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    totalHeapSize : <number>
     type : "ResizeImage"
     usedHeapSize : <number>
-    totalHeapSize : <number>
-    counters : <object>
 }
 DecodeImage Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    children : <object>
+    counters : <object>
     data : {
         imageType : "WEBP"
     }
-    children : <object>
     endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    totalHeapSize : <number>
     type : "DecodeImage"
     usedHeapSize : <number>
-    totalHeapSize : <number>
-    counters : <object>
 }
 ResizeImage Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    children : <object>
+    counters : <object>
     data : {
         cached : true
     }
-    children : <object>
     endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    totalHeapSize : <number>
     type : "ResizeImage"
     usedHeapSize : <number>
-    totalHeapSize : <number>
-    counters : <object>
 }
 DecodeImage Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    children : <object>
+    counters : <object>
     data : {
         imageType : "PNG"
     }
-    children : <object>
     endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    totalHeapSize : <number>
     type : "DecodeImage"
     usedHeapSize : <number>
-    totalHeapSize : <number>
-    counters : <object>
 }
 ResizeImage Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    children : <object>
+    counters : <object>
     data : {
         cached : false
     }
-    children : <object>
     endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    totalHeapSize : <number>
     type : "ResizeImage"
     usedHeapSize : <number>
-    totalHeapSize : <number>
-    counters : <object>
 }
 

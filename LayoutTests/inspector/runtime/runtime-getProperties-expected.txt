@@ -5,45 +5,45 @@ Running: testSetUp
 
 Running: testGetterAndSetter
 {
+    enumerable : true
     name : "get foo"
     value : {
-        type : "function"
         description : "function () { return 1; }"
         objectId : <string>
+        type : "function"
     }
-    enumerable : true
     writable : false
 }
 {
+    enumerable : true
     name : "set foo"
     value : {
-        type : "function"
         description : "function (value) { }"
         objectId : <string>
+        type : "function"
     }
-    enumerable : true
     writable : false
 }
 
 Running: testGetterOnly
 {
+    enumerable : true
     name : "get foo"
     value : {
-        type : "function"
         description : "function () { return 1; }"
         objectId : <string>
+        type : "function"
     }
-    enumerable : true
     writable : false
 }
 {
+    enumerable : true
     name : "set foo"
     value : {
-        type : "undefined"
         description : "undefined"
         objectId : <undefined>
+        type : "undefined"
     }
-    enumerable : true
     writable : false
 }
 

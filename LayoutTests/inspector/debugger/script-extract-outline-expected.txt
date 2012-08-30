@@ -3,37 +3,37 @@ Tests the script outline extraction functionality.
 {
     chunk : [
         {
+            arguments : "(x, y)"
             line : 0
             name : "first"
-            arguments : "(x, y)"
         }
         {
+            arguments : "(y, z)"
             line : 1
             name : "second"
-            arguments : "(y, z)"
         }
         {
+            arguments : "(arg)"
             line : 4
             name : "Object"
-            arguments : "(arg)"
         }
         {
+            arguments : "(a, b, c, d, e, f)"
             line : 6
             name : "functionOnPrototype"
-            arguments : "(a, b, c, d, e, f)"
         }
         {
+            arguments : "()"
             line : 8
             name : "innerFunction1"
-            arguments : "()"
         }
         {
+            arguments : "(arg1, arg2)"
             line : 9
             name : "innerFunction2"
-            arguments : "(arg1, arg2)"
         }
     ]
-    total : 1
     index : 1
+    total : 1
 }
 

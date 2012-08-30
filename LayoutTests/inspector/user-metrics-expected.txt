@@ -2,28 +2,28 @@ Tests list of user metrics codes and invocations.
 
 recordActionTaken:
 {
-    WindowDocked : 1
-    WindowUndocked : 2
-    ScriptsBreakpointSet : 3
-    TimelineStarted : 4
-    ProfilesCPUProfileTaken : 5
-    ProfilesHeapProfileTaken : 6
     AuditsStarted : 7
     ConsoleEvaluated : 8
+    ProfilesCPUProfileTaken : 5
+    ProfilesHeapProfileTaken : 6
+    ScriptsBreakpointSet : 3
+    TimelineStarted : 4
+    WindowDocked : 1
+    WindowUndocked : 2
 }
 Action taken: WindowDocked
 Action taken: WindowUndocked
 
 recordPanelShown:
 {
-    elements : 1
-    resources : 2
-    network : 3
-    scripts : 4
-    timeline : 5
-    profiles : 6
     audits : 7
     console : 8
+    elements : 1
+    network : 3
+    profiles : 6
+    resources : 2
+    scripts : 4
+    timeline : 5
 }
 Panel shown: profiles
 Panel shown: timeline
@@ -31,14 +31,14 @@ Panel shown: audits
 
 recordSettingChanged:
 {
-    ElementsDOMWrapOn : 1
-    ElementsDOMWrapOff : 2
-    ConsoleMonitorXHROn : 3
     ConsoleMonitorXHROff : 4
-    ConsolePreserveLogOn : 5
+    ConsoleMonitorXHROn : 3
     ConsolePreserveLogOff : 6
-    NetworkShowLargeRowsOn : 7
+    ConsolePreserveLogOn : 5
+    ElementsDOMWrapOff : 2
+    ElementsDOMWrapOn : 1
     NetworkShowLargeRowsOff : 8
+    NetworkShowLargeRowsOn : 7
 }
 Setting changed: ConsoleMonitorXHROn
 Setting changed: ConsoleMonitorXHROff

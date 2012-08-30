@@ -1,8 +1,6 @@
 Check to see that FilteredItemSelectionDialog uses proper regex to filter results.
 
 {
-    title : "Empty query matches everything"
-    query : ""
     input : [
         "a"
         "bc"
@@ -11,10 +9,10 @@ Check to see that FilteredItemSelectionDialog uses proper regex to filter result
         "a"
         "bc"
     ]
+    query : ""
+    title : "Empty query matches everything"
 }
 {
-    title : "Case sensitive matching"
-    query : "aB"
     input : [
         "abc"
         "acB"
@@ -22,10 +20,10 @@ Check to see that FilteredItemSelectionDialog uses proper regex to filter result
     output : [
         "acB"
     ]
+    query : "aB"
+    title : "Case sensitive matching"
 }
 {
-    title : "Case insensitive matching"
-    query : "ab"
     input : [
         "abc"
         "bac"
@@ -35,10 +33,10 @@ Check to see that FilteredItemSelectionDialog uses proper regex to filter result
         "abc"
         "a_B"
     ]
+    query : "ab"
+    title : "Case insensitive matching"
 }
 {
-    title : "Spaces in query"
-    query : "d v "
     input : [
         "div .visible"
         "div.visible "
@@ -46,10 +44,10 @@ Check to see that FilteredItemSelectionDialog uses proper regex to filter result
     output : [
         "div .visible"
     ]
+    query : "d v "
+    title : "Spaces in query"
 }
 {
-    title : "Duplicate symbols in query"
-    query : "aab"
     input : [
         "abab"
         "abaa"
@@ -60,10 +58,10 @@ Check to see that FilteredItemSelectionDialog uses proper regex to filter result
         "abab"
         "caab"
     ]
+    query : "aab"
+    title : "Duplicate symbols in query"
 }
 {
-    title : "Dangerous input escaping"
-    query : "^[]{}()\.$*+?|"
     input : [
         "^[]{}()\.$*+?|"
         "0123456789abcdef"
@@ -71,5 +69,7 @@ Check to see that FilteredItemSelectionDialog uses proper regex to filter result
     output : [
         "^[]{}()\.$*+?|"
     ]
+    query : "^[]{}()\.$*+?|"
+    title : "Dangerous input escaping"
 }
 

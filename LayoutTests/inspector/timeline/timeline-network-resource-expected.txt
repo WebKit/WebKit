@@ -5,48 +5,48 @@ Script resource loaded
 
 ResourceSendRequest Properties:
 {
-    startTime : <number>
-    stackTrace : <object>
+    counters : <object>
     data : {
         requestId : <string>
-        url : <string>
         requestMethod : "GET"
+        url : <string>
     }
-    type : "ResourceSendRequest"
     frameId : <string>
-    usedHeapSize : <number>
+    stackTrace : <object>
+    startTime : <number>
     totalHeapSize : <number>
-    counters : <object>
+    type : "ResourceSendRequest"
+    usedHeapSize : <number>
 }
 
 ResourceReceiveResponse Properties:
 {
-    startTime : <number>
+    children : <object>
+    counters : <object>
     data : {
+        mimeType : <string>
         requestId : <string>
         statusCode : 0
-        mimeType : <string>
     }
-    children : <object>
     endTime : <number>
-    type : "ResourceReceiveResponse"
     frameId : <string>
-    usedHeapSize : <number>
+    startTime : <number>
     totalHeapSize : <number>
-    counters : <object>
+    type : "ResourceReceiveResponse"
+    usedHeapSize : <number>
 }
 
 ResourceFinish Properties:
 {
-    startTime : <number>
-    data : {
-        requestId : <string>
-        didFail : false
-    }
-    type : "ResourceFinish"
-    frameId : <string>
-    usedHeapSize : <number>
-    totalHeapSize : <number>
     counters : <object>
+    data : {
+        didFail : false
+        requestId : <string>
+    }
+    frameId : <string>
+    startTime : <number>
+    totalHeapSize : <number>
+    type : "ResourceFinish"
+    usedHeapSize : <number>
 }
 

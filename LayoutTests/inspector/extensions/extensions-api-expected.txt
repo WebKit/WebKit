@@ -5,7 +5,12 @@ Running tests...
 RUNNING TEST: extension_testAPI
 {
     audits : {
-        addCategory : <function>
+    }
+    console : {
+        onMessageAdded : {
+            addListener : <function>
+            removeListener : <function>
+        }
     }
     inspectedWindow : {
         onResourceAdded : {
@@ -16,9 +21,24 @@ RUNNING TEST: extension_testAPI
             addListener : <function>
             removeListener : <function>
         }
-        reload : <function>
-        eval : <function>
-        getResources : <function>
+    }
+    network : {
+        onFinished : {
+            addListener : <function>
+            removeListener : <function>
+        }
+        onNavigated : {
+            addListener : <function>
+            removeListener : <function>
+        }
+        onRequestFinished : {
+            addListener : <function>
+            removeListener : <function>
+        }
+    }
+    onReset : {
+        addListener : <function>
+        removeListener : <function>
     }
     panels : {
         elements : {
@@ -28,36 +48,8 @@ RUNNING TEST: extension_testAPI
                 removeListener : <function>
             }
         }
-        create : <function>
-        setOpenResourceHandler : <function>
-        SearchAction : {
-            CancelSearch : "cancelSearch"
-            PerformSearch : "performSearch"
-            NextSearchResult : "nextSearchResult"
-            PreviousSearchResult : "previousSearchResult"
-        }
-    }
-    network : {
-        onRequestFinished : {
-            addListener : <function>
-            removeListener : <function>
-        }
-        onFinished : {
-            addListener : <function>
-            removeListener : <function>
-        }
-        onNavigated : {
-            addListener : <function>
-            removeListener : <function>
-        }
-        getHAR : <function>
-        addRequestHeaders : <function>
     }
     resources : {
-        onRequestFinished : {
-            addListener : <function>
-            removeListener : <function>
-        }
         onFinished : {
             addListener : <function>
             removeListener : <function>
@@ -66,8 +58,10 @@ RUNNING TEST: extension_testAPI
             addListener : <function>
             removeListener : <function>
         }
-        getHAR : <function>
-        addRequestHeaders : <function>
+        onRequestFinished : {
+            addListener : <function>
+            removeListener : <function>
+        }
     }
     timeline : {
         onEventRecorded : {
@@ -75,26 +69,6 @@ RUNNING TEST: extension_testAPI
             removeListener : <function>
         }
     }
-    console : {
-        onMessageAdded : {
-            addListener : <function>
-            removeListener : <function>
-        }
-        getMessages : <function>
-        addMessage : <function>
-        Severity : {
-            Tip : "tip"
-            Debug : "debug"
-            Log : "log"
-            Warning : "warning"
-            Error : "error"
-        }
-    }
-    onReset : {
-        addListener : <function>
-        removeListener : <function>
-    }
-    log : <function>
 }
 All tests done.
 

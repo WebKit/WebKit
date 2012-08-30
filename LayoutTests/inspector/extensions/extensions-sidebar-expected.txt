@@ -11,16 +11,16 @@ RUNNING TEST: extension_testSidebarSetObject
 Watch sidebar created, callback arguments dump follows:
 {
     0 : {
-        onShown : {
-            addListener : <function>
-            removeListener : <function>
-        }
         onHidden : {
             addListener : <function>
             removeListener : <function>
         }
-        setHeight : <function>
+        onShown : {
+            addListener : <function>
+            removeListener : <function>
+        }
         setExpression : <function>
+        setHeight : <function>
         setObject : <function>
         setPage : <function>
     }
@@ -29,16 +29,16 @@ Sidebar content: f0: "object"f1: undefinedf2: nullf3: {}f4: []f5: [aa, bb, cc]f6
 RUNNING TEST: extension_testSidebarSetPage
 Sidebar created
 {
-    onShown : {
-        addListener : <function>
-        removeListener : <function>
-    }
     onHidden : {
         addListener : <function>
         removeListener : <function>
     }
-    setHeight : <function>
+    onShown : {
+        addListener : <function>
+        removeListener : <function>
+    }
     setExpression : <function>
+    setHeight : <function>
     setObject : <function>
     setPage : <function>
 }

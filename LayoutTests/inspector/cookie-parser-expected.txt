@@ -28,43 +28,43 @@ name: cookie, value: another value, httpOnly: false, secure: false, session: tru
 source: cooke1 = value; $Path=/; $Domain=.example.com;
 name: cooke1, value: value, httpOnly: false, secure: false, session: true, path: /, domain: .example.com, port: undefined, expires: n/a, size: 46
 {
-    path : "/"
     domain : ".example.com"
+    path : "/"
 }
 source: cooke1 = value; $Path=/; $Domain=.example.com ; Cookie2 = value2; $Path = /foo; $DOMAIN = foo.example.com;
 name: cooke1, value: value, httpOnly: false, secure: false, session: true, path: /, domain: .example.com, port: undefined, expires: n/a, size: 48
 {
-    path : "/"
     domain : ".example.com"
+    path : "/"
 }
 name: Cookie2, value: value2, httpOnly: false, secure: false, session: true, path: /foo, domain: foo.example.com, port: undefined, expires: n/a, size: 58
 {
-    path : "/foo"
     domain : "foo.example.com"
+    path : "/foo"
 }
 source: cooke1 = value; $Path=/; $Domain=.example.com
 Cookie2 = value2; $Path = /foo; $DOMAIN = foo.example.com; 
 name: cooke1, value: value, httpOnly: false, secure: false, session: true, path: /, domain: .example.com, port: undefined, expires: n/a, size: 46
 {
-    path : "/"
     domain : ".example.com"
+    path : "/"
 }
 name: Cookie2, value: value2, httpOnly: false, secure: false, session: true, path: /foo, domain: foo.example.com, port: undefined, expires: n/a, size: 59
 {
-    path : "/foo"
     domain : "foo.example.com"
+    path : "/foo"
 }
 source: $version =1; cooke1 = value; $Path=/; $Domain   =.example.com;  
  Cookie2 = value2; $Path = /foo; $DOMAIN = foo.example.com;
 name: cooke1, value: value, httpOnly: false, secure: false, session: true, path: /, domain: .example.com, port: undefined, expires: n/a, size: 53
 {
-    path : "/"
     domain : ".example.com"
+    path : "/"
 }
 name: Cookie2, value: value2, httpOnly: false, secure: false, session: true, path: /foo, domain: foo.example.com, port: undefined, expires: n/a, size: 58
 {
-    path : "/foo"
     domain : "foo.example.com"
+    path : "/foo"
 }
 source: cookie=value
 name: cookie, value: value, httpOnly: false, secure: false, session: true, path: undefined, domain: undefined, port: undefined, expires: n/a, size: 12
@@ -85,49 +85,49 @@ name: , value: f, httpOnly: false, secure: false, session: true, path: undefined
 source: cooke1 = value; Path=/; Domain=.example.com;
 name: cooke1, value: value, httpOnly: false, secure: false, session: true, path: /, domain: .example.com, port: undefined, expires: n/a, size: 44
 {
-    path : "/"
     domain : ".example.com"
+    path : "/"
 }
 source: cooke1 = value; Path=/; Domain=  .example.com 
 Cookie2 = value2; Path = /foo; Domain = foo.example.com
 name: cooke1, value: value, httpOnly: false, secure: false, session: true, path: /, domain: .example.com, port: undefined, expires: n/a, size: 47
 {
-    path : "/"
     domain : ".example.com"
+    path : "/"
 }
 name: Cookie2, value: value2, httpOnly: false, secure: false, session: true, path: /foo, domain: foo.example.com, port: undefined, expires: n/a, size: 55
 {
-    path : "/foo"
     domain : "foo.example.com"
+    path : "/foo"
 }
 source: cooke1 = value; expires = Mon, Oct 18 2010 17:00 GMT+0000; Domain   =.example.com
 Cookie2 = value2; Path = /foo; DOMAIN = foo.example.com; HttpOnly; Secure; Discard;
 name: cooke1, value: value, httpOnly: false, secure: false, session: true, path: undefined, domain: .example.com, port: undefined, expires: 1287421200000, size: 82
 {
-    expires : "Mon, Oct 18 2010 17:00 GMT+0000"
     domain : ".example.com"
+    expires : "Mon, Oct 18 2010 17:00 GMT+0000"
 }
 name: Cookie2, value: value2, httpOnly: true, secure: true, session: true, path: /foo, domain: foo.example.com, port: undefined, expires: n/a, size: 83
 {
-    path : "/foo"
+    discard : undefined
     domain : "foo.example.com"
     httponly : undefined
+    path : "/foo"
     secure : undefined
-    discard : undefined
 }
 source: cooke1 = value; max-age= 1440; Domain   =.example.com
  Cookie2 = value2; Path = /foo; DOMAIN = foo.example.com; HttpOnly; Secure; Discard;
 name: cooke1, value: value, httpOnly: false, secure: false, session: false, path: undefined, domain: .example.com, port: undefined, expires: 1287422640000, size: 55
 {
-    max-age : "1440"
     domain : ".example.com"
+    max-age : "1440"
 }
 name: Cookie2, value: value2, httpOnly: true, secure: true, session: true, path: /foo, domain: foo.example.com, port: undefined, expires: n/a, size: 83
 {
-    path : "/foo"
+    discard : undefined
     domain : "foo.example.com"
     httponly : undefined
+    path : "/foo"
     secure : undefined
-    discard : undefined
 }
 

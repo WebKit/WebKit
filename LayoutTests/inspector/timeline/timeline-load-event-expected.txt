@@ -3,13 +3,13 @@ Tests the load event.
 Page reloaded.
 MarkLoad Properties:
 {
-    startTime : <number>
+    counters : <object>
     data : {
     }
-    type : "MarkLoad"
     frameId : <string>
-    usedHeapSize : <number>
+    startTime : <number>
     totalHeapSize : <number>
-    counters : <object>
+    type : "MarkLoad"
+    usedHeapSize : <number>
 }
 

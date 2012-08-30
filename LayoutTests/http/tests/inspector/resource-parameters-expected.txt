@@ -3,30 +3,18 @@ Tests that resources panel shows form data parameters.
   
 
 {
-    startedDateTime : <plausible>
-    time : <number>
+    cache : {
+    }
     request : {
-        method : "POST"
-        url : "http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2="
-        httpVersion : "HTTP/1.1"
-        headers : <object>
-        queryString : [
-            {
-                name : "queryParam1"
-                value : "queryValue1"
-            }
-            {
-                name : "queryParam2"
-                value : ""
-            }
-        ]
+        bodySize : <number>
         cookies : [
         ]
+        headers : <object>
         headersSize : <number>
-        bodySize : <number>
+        httpVersion : "HTTP/1.1"
+        method : "POST"
         postData : {
             mimeType : "application/x-www-form-urlencoded"
-            text : "formParam1=formValue1&formParam2="
             params : [
                 {
                     name : "formParam1"
@@ -37,26 +25,38 @@ Tests that resources panel shows form data parameters.
                     value : ""
                 }
             ]
+            text : "formParam1=formValue1&formParam2="
         }
+        queryString : [
+            {
+                name : "queryParam1"
+                value : "queryValue1"
+            }
+            {
+                name : "queryParam2"
+                value : ""
+            }
+        ]
+        url : "http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2="
     }
     response : {
-        status : 200
-        statusText : "OK"
-        httpVersion : "HTTP/1.1"
-        headers : <object>
+        bodySize : <number>
+        content : {
+            compression : <number>
+            mimeType : "application/xml"
+            size : 14
+        }
         cookies : [
         ]
-        content : {
-            size : 14
-            mimeType : "application/xml"
-            compression : <number>
-        }
-        redirectURL : ""
+        headers : <object>
         headersSize : <number>
-        bodySize : <number>
+        httpVersion : "HTTP/1.1"
+        redirectURL : ""
+        status : 200
+        statusText : "OK"
     }
-    cache : {
-    }
+    startedDateTime : <plausible>
+    time : <number>
     timings : <object>
 }
 
