@@ -132,15 +132,15 @@ enum {
 static String webkitPlatform()
 {
 #if PLATFORM(X11)
-    DEFINE_STATIC_LOCAL(const String, uaPlatform, (String("X11; ")));
+    DEFINE_STATIC_LOCAL(const String, uaPlatform, (ASCIILiteral("X11; ")));
 #elif OS(WINDOWS)
     DEFINE_STATIC_LOCAL(const String, uaPlatform, (String("")));
 #elif PLATFORM(MAC)
-    DEFINE_STATIC_LOCAL(const String, uaPlatform, (String("Macintosh; ")));
+    DEFINE_STATIC_LOCAL(const String, uaPlatform, (ASCIILiteral("Macintosh; ")));
 #elif defined(GDK_WINDOWING_DIRECTFB)
-    DEFINE_STATIC_LOCAL(const String, uaPlatform, (String("DirectFB; ")));
+    DEFINE_STATIC_LOCAL(const String, uaPlatform, (ASCIILiteral("DirectFB; ")));
 #else
-    DEFINE_STATIC_LOCAL(const String, uaPlatform, (String("Unknown; ")));
+    DEFINE_STATIC_LOCAL(const String, uaPlatform, (ASCIILiteral("Unknown; ")));
 #endif
 
     return uaPlatform;
@@ -152,9 +152,9 @@ static String webkitOSVersion()
 #if OS(DARWIN)
 
 #if CPU(X86)
-    DEFINE_STATIC_LOCAL(const String, uaOSVersion, (String("Intel Mac OS X")));
+    DEFINE_STATIC_LOCAL(const String, uaOSVersion, (ASCIILiteral("Intel Mac OS X")));
 #else
-    DEFINE_STATIC_LOCAL(const String, uaOSVersion, (String("PPC Mac OS X")));
+    DEFINE_STATIC_LOCAL(const String, uaOSVersion, (ASCIILiteral("PPC Mac OS X")));
 #endif
 
 #elif OS(UNIX)
@@ -167,11 +167,11 @@ static String webkitOSVersion()
     if (uname(&name) != -1)
         uaOSVersion = makeString(name.sysname, ' ', name.machine);
     else
-        uaOSVersion = String("Unknown");
+        uaOSVersion = ASCIILiteral("Unknown");
 #elif OS(WINDOWS)
     DEFINE_STATIC_LOCAL(const String, uaOSVersion, (windowsVersionForUAString()));
 #else
-    DEFINE_STATIC_LOCAL(const String, uaOSVersion, (String("Unknown")));
+    DEFINE_STATIC_LOCAL(const String, uaOSVersion, (ASCIILiteral("Unknown")));
 #endif
 
     return uaOSVersion;

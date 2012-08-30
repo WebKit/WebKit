@@ -1,3 +1,17 @@
+2012-08-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use ASCIILiteral for DEFINE_STATIC_LOCAL string
+        https://bugs.webkit.org/show_bug.cgi?id=95420
+
+        Reviewed by Benjamin Poulain.
+
+        As recommended by http://trac.webkit.org/wiki/EfficientStrings,
+        WebKit needs to use ASCIILiteral for the string of DEFINE_STATIC_LOCAL.
+
+        * webkit/webkitwebsettings.cpp:
+        (webkitPlatform):
+        (webkitOSVersion):
+
 2012-08-29  José Dapena Paz  <jdapena@igalia.com>
 
         [Gtk] Process Gtk 3.4 smooth scroll events properly.
