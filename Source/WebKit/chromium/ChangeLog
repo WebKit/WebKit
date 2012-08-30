@@ -1,3 +1,16 @@
+2012-08-30  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Make webkit_compositor specific unit test compilation conditional on gyp var
+        https://bugs.webkit.org/show_bug.cgi?id=95401
+
+        Reviewed by Dirk Pranke.
+
+        If use_libcc_for_compositor is set, these tests are being compiled and run elsewhere.
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * WebKitUnitTests.gyp:
+
 2012-08-27  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add CompositorSupport interface for constructing compositor classes

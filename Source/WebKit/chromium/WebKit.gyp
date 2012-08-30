@@ -738,6 +738,11 @@
                                       'WARNING_CFLAGS!': ['-Wglobal-constructors'],
                                     },
                                 }],
+                                ['use_libcc_for_compositor==0', {
+                                    'sources': [
+                                        '<@(webkit_compositor_unittest_files)',
+                                    ],
+                                }],
                             ],
                             'msvs_settings': {
                               'VCLinkerTool': {
