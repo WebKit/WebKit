@@ -1,5 +1,19 @@
 2012-08-29  James Robinson  <jamesr@chromium.org>
 
+        Unreviewed, rolling out r126956.
+        http://trac.webkit.org/changeset/126956
+        https://bugs.webkit.org/show_bug.cgi?id=94721
+
+        Breaks several unit tests
+
+        * tests/CCSchedulerTest.cpp:
+        (WebKitTests::FakeCCSchedulerClient::reset):
+        (WebKitTests::FakeCCSchedulerClient::setHasMoreResourceUpdates):
+        (WebKitTests::TEST):
+        * tests/CCTextureUpdateControllerTest.cpp:
+
+2012-08-29  James Robinson  <jamesr@chromium.org>
+
         [chromium] Register/unregister contents layers with GraphicsLayerChromium
         https://bugs.webkit.org/show_bug.cgi?id=95379
 

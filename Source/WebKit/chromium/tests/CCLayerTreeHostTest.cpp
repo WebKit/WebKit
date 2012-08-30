@@ -911,7 +911,7 @@ private:
     int m_scrolls;
 };
 
-TEST_F(CCLayerTreeHostTestScrollSimple, DISABLED_runMultiThread)
+TEST_F(CCLayerTreeHostTestScrollSimple, runMultiThread)
 {
     runTest(true);
 }
@@ -991,7 +991,7 @@ private:
     int m_scrolls;
 };
 
-TEST_F(CCLayerTreeHostTestScrollMultipleRedraw, DISABLED_runMultiThread)
+TEST_F(CCLayerTreeHostTestScrollMultipleRedraw, runMultiThread)
 {
     runTest(true);
 }
@@ -2238,8 +2238,7 @@ private:
     RefPtr<LayerChromium> m_rootScrollLayer;
 };
 
-// https://bugs.webkit.org/show_bug.cgi?id=95358
-TEST_F(CCLayerTreeHostTestScrollChildLayer, DISABLED_runMultiThread)
+TEST_F(CCLayerTreeHostTestScrollChildLayer, runMultiThread)
 {
     runTest(true);
 }

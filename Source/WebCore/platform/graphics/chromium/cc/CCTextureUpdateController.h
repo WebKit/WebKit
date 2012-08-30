@@ -36,30 +36,20 @@ namespace WebCore {
 class TextureCopier;
 class TextureUploader;
 
-class CCTextureUpdateControllerClient {
-public:
-    virtual void updateTexturesCompleted() = 0;
-
-protected:
-    virtual ~CCTextureUpdateControllerClient() { }
-};
-
 class CCTextureUpdateController : public CCTimerClient {
     WTF_MAKE_NONCOPYABLE(CCTextureUpdateController);
 public:
-    static PassOwnPtr<CCTextureUpdateController> create(CCTextureUpdateControllerClient* client, CCThread* thread, PassOwnPtr<CCTextureUpdateQueue> queue, CCResourceProvider* resourceProvider, TextureCopier* copier, TextureUploader* uploader)
+    static PassOwnPtr<CCTextureUpdateController> create(CCThread* thread, PassOwnPtr<CCTextureUpdateQueue> queue, CCResourceProvider* resourceProvider, TextureCopier* copier, TextureUploader* uploader)
     {
-        return adoptPtr(new CCTextureUpdateController(client, thread, queue, resourceProvider, copier, uploader));
+        return adoptPtr(new CCTextureUpdateController(thread, queue, resourceProvider, copier, uploader));
     }
     static size_t maxPartialTextureUpdates();
     static void updateTextures(CCResourceProvider*, TextureCopier*, TextureUploader*, CCTextureUpdateQueue*, size_t count);
 
     virtual ~CCTextureUpdateController();
 
+    bool hasMoreUpdates() const;
     void updateMoreTextures(double monotonicTimeLimit);
-
-    // Discard all remaining uploads.
-    void discardUploads();
 
     // CCTimerClient implementation.
     virtual void onTimerFired() OVERRIDE;
@@ -70,13 +60,11 @@ public:
     virtual size_t updateMoreTexturesSize() const;
 
 protected:
-    CCTextureUpdateController(CCTextureUpdateControllerClient*, CCThread*, PassOwnPtr<CCTextureUpdateQueue>, CCResourceProvider*, TextureCopier*, TextureUploader*);
+    CCTextureUpdateController(CCThread*, PassOwnPtr<CCTextureUpdateQueue>, CCResourceProvider*, TextureCopier*, TextureUploader*);
 
-    // This returns true when there were textures left to update.
-    bool updateMoreTexturesIfEnoughTimeRemaining();
+    void updateMoreTexturesIfEnoughTimeRemaining();
     void updateMoreTexturesNow();
 
-    CCTextureUpdateControllerClient* m_client;
     OwnPtr<CCTimer> m_timer;
     OwnPtr<CCTextureUpdateQueue> m_queue;
     bool m_contentsTexturesPurged;
