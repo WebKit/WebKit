@@ -607,7 +607,7 @@ StandardFilterProgram::StandardFilterProgram(GraphicsContext3D* context, FilterO
 #if !LOG_DISABLED
     String log;
     m_context->getShaderInfoLog(fragmentShader);
-    WTFLog(&LogCompositing, "%s\n", log);
+    WTFLog(&LogCompositing, "%s\n", log.ascii().data());
 #endif
     m_context->attachShader(programID, vertexShader);
     m_context->attachShader(programID, fragmentShader);
