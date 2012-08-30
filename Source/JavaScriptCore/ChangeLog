@@ -1,5 +1,11 @@
 2012-08-30  Geoffrey Garen  <ggaren@apple.com>
 
+        First step toward fixing the Windows build: Remove old symbols.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2012-08-30  Geoffrey Garen  <ggaren@apple.com>
+
         Use one object instead of two for closures, eliminating ScopeChainNode
         https://bugs.webkit.org/show_bug.cgi?id=95501
 

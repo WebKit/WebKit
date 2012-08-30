@@ -166,7 +166,6 @@ EXPORTS
     ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ
     ?equalUTF16WithUTF8@Unicode@WTF@@YA_NPB_W0PBD1@Z
     ?evaluate@DebuggerCallFrame@JSC@@QBE?AVJSValue@2@ABVString@WTF@@AAV32@@Z
-    ?evaluate@JSC@@YA?AVJSValue@1@PAVExecState@1@PAVJSScope@1@ABVSourceCode@1@V21@PAV21@@Z
     ?exclude@Profile@JSC@@QAEXPBVProfileNode@2@@Z
     ?execute@ParallelEnvironment@WTF@@QAEXPAX@Z
     ?expand@MarkStackArray@JSC@@AAEXXZ
@@ -263,7 +262,6 @@ EXPORTS
     ?numberToStringImpl@WTF@@YA?AV?$PassRefPtr@VStringImpl@WTF@@@1@I@Z
     ?numberToStringImpl@WTF@@YA?AV?$PassRefPtr@VStringImpl@WTF@@@1@J@Z
     ?numberToStringImpl@WTF@@YA?AV?$PassRefPtr@VStringImpl@WTF@@@1@K@Z
-    ?objectAtScope@JSScope@JSC@@SAPAVJSObject@2@PAVJSScope@2@@Z
     ?objectCount@Heap@JSC@@QAEIXZ
     ?objectProtoFuncToString@JSC@@YI_JPAVExecState@1@@Z
     ?objectTypeCounts@Heap@JSC@@QAE?AV?$PassOwnPtr@V?$HashCountedSet@PBDU?$PtrHash@PBD@WTF@@U?$HashTraits@PBD@2@@WTF@@@WTF@@XZ
