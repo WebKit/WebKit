@@ -1,0 +1,47 @@
+<!doctype html>
+ <html>
+     <!--
+     Test for https://bugs.webkit.org/show_bug.cgi?id=94472 ([CSSRegions]Add support for text-shadow in region styling).
+     You should not see any red text below.
+     -->
+     <head>
+         <style>
+             body { font-family: monospace; }
+             #p1 { text-shadow: 340px 100px #008000; position: absolute; top: 10px; }
+             #span2 { text-shadow: 340px 100px #008000; position: absolute; top: 50px; }
+             #article3 { text-shadow: 340px 100px #0000ff; position: absolute; top: 90px; }
+             #div3 { text-shadow: 340px 100px #008000; }
+             em { text-shadow: 340px 100px #008000; }
+             #div4 { position: absolute; top: 140px; width: 340px; height: 40px; }
+             #p4 { text-shadow: 340px 100px #0000ff; }
+             #div51 { position: absolute; top: 190px; width: 340px; height: 40px; }
+             #div52 { text-shadow: 340px 100px #0000ff; }
+             #div6 { position: absolute; top: 240px; width: 340px; height: 40px; }
+             #div7 { position: absolute; top: 290px; width: 340px; height: 40px; text-shadow: 340px 100px #0000ff, 0px 100px #0000ff, 340px 0px #0000ff; }
+         </style>
+     </head>
+     <body>
+ 		<p id="p1">P shadow styled in region: #008000.</p>
+ 		<span id="span2">Span shadow styled in region: #008000.</span>
+         <div id="article3">
+             Text shadow styled in region: #0000ff.
+             <div id="div3">Div shadow styled in region: #008000.</div>
+             Text shadow styled in region: #0000ff.
+         </div>       
+
+         <div id="div4">
+            Text without shadow.
+            <p id="p4">P shadow styled in region: #0000ff.</p>
+        </div>
+        <div id="div51">
+            Text without shadow.
+            <div id="div52">Div shadow styled in region: #0000ff.</div>
+        </div>
+        <div id="div6">
+            Text with removed shadow due to region styling.
+        </div>
+        <div id="div7">
+                Text with multiple shadows.
+        </div>
+     </body>
+ </html>

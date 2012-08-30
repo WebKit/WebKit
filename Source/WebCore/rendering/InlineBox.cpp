@@ -28,6 +28,9 @@
 #include "PaintInfo.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
+#include "RenderFlowThread.h"
+#include "RenderRegion.h"
+#include "RenderStyle.h"
 #include "RootInlineBox.h"
 
 #ifndef NDEBUG
@@ -249,6 +252,30 @@ bool InlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
     // own stacking context.  (See Appendix E.2, section 6.4 on inline block/table elements in the CSS2.1
     // specification.)
     return renderer()->hitTest(request, result, locationInContainer, accumulatedOffset);
+}
+
+RenderStyle* InlineBox::styleInRegion(RenderRegion* region)
+{
+    if (!region || !renderer()->inRenderFlowThread())
+        return renderer()->style(isFirstLineStyle());
+    RenderObject* elementRenderer = renderer();
+    while (elementRenderer && (elementRenderer->isAnonymous() || !elementRenderer->node() || !elementRenderer->node()->isElementNode()))
+        elementRenderer = elementRenderer->parent();
+    if (!elementRenderer)
+        return renderer()->style(isFirstLineStyle());
+    // FIXME: We should be taking into account isFirstLine
+    return region->computeStyleInRegion(elementRenderer).get();
+}
+
+RenderRegion* InlineBox::regionDuringLayout()
+{
+    // This assumes that the box has not been positioned yet, so it uses the containing block's current logical height to get the region.
+    if (!renderer()->inRenderFlowThread())
+        return 0;
+    RenderFlowThread* flowThread = renderer()->enclosingRenderFlowThread();
+    ASSERT(flowThread);
+    RenderBlock* containingBlock = renderer()->containingBlock();
+    return flowThread->regionAtBlockOffset(containingBlock->offsetFromLogicalTopOfFirstPage() + containingBlock->logicalHeight());
 }
 
 const RootInlineBox* InlineBox::root() const

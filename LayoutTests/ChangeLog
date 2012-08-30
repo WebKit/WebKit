@@ -1,3 +1,15 @@
+2012-08-30  Andrei Onea  <onea@adobe.com>
+
+        [CSSRegions]Add support for text-shadow in region styling
+        https://bugs.webkit.org/show_bug.cgi?id=94472
+
+        Reviewed by David Hyatt.
+
+        Added test for region styling on the text shadow property.
+
+        * fast/regions/region-style-text-shadow-expected.html: Added.
+        * fast/regions/region-style-text-shadow.html: Added.
+
 2012-08-30  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

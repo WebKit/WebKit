@@ -159,7 +159,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
 
     if (!child->renderer()->isOutOfFlowPositioned()) {
         if (child->isText()) {
-            RenderStyle* childStyle = child->renderer()->style(isFirstLineStyle());
+            RenderStyle* childStyle = child->styleInRegion(child->regionDuringLayout());
             if (childStyle->letterSpacing() < 0 || childStyle->textShadow() || childStyle->textEmphasisMark() != TextEmphasisMarkNone || childStyle->textStrokeWidth())
                 child->clearKnownToHaveNoOverflow();
         } else if (child->renderer()->isReplaced()) {
@@ -820,8 +820,7 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox* textBox, Glyp
     if (textBox->knownToHaveNoOverflow())
         return;
 
-    RenderStyle* style = textBox->renderer()->style(isFirstLineStyle());
-    
+    RenderStyle* style = textBox->styleInRegion(textBox->regionDuringLayout());
     GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(textBox);
     GlyphOverflow* glyphOverflow = it == textBoxDataMap.end() ? 0 : &it->second.second;
     bool isFlippedLine = style->isFlippedLinesWritingMode();

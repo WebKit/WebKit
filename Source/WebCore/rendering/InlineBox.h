@@ -28,6 +28,8 @@ namespace WebCore {
 
 class HitTestRequest;
 class HitTestResult;
+class RenderStyle;
+class RenderRegion;
 class RootInlineBox;
 
 // InlineBox represents a rectangle that occurs on a line.  It corresponds to
@@ -97,6 +99,8 @@ public:
     virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom);
 
+    RenderStyle* styleInRegion(RenderRegion*);
+    RenderRegion* regionDuringLayout();
     // Overloaded new operator.
     void* operator new(size_t, RenderArena*);
 
