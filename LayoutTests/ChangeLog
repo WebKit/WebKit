@@ -1,5 +1,15 @@
 2012-08-30  Philip Rogers  <pdr@google.com>
 
+        Unreviewed update of test expectations.
+
+        These tests just needed platform-specific results.
+
+        * platform/chromium-mac-snowleopard/fast/dom/shadow/shadowdom-for-textarea-complex-shadow-expected.png: Added.
+        * platform/chromium-mac/fast/dom/shadow: Added.
+        * platform/chromium-mac/fast/dom/shadow/shadowdom-for-textarea-complex-shadow-expected.png: Added.
+
+2012-08-30  Philip Rogers  <pdr@google.com>
+
         Unreviewed update of TestExpectations.
 
         These tests are awaiting a rebaseline after r127168 but have the wrong modifiers on them. They
