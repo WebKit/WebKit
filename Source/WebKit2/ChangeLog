@@ -1,3 +1,17 @@
+2012-08-29  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSNPObject doesn't always protect its data when calling into plugin code
+        https://bugs.webkit.org/show_bug.cgi?id=95394
+
+        Reviewed by Brady Eidson.
+
+        We need to use NPRuntimeObjectMap::PluginProtector when calling into plugin code since 
+        there's no telling what the plugin will do, including destroying itself.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::getOwnPropertySlot):
+        (WebKit::JSNPObject::getOwnPropertyDescriptor):
+
 2012-08-30  Mike Sierra  <mike.sierra@nokia.com>
 
         [QT][WK2] webview API doc
