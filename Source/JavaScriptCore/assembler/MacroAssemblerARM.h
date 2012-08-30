@@ -555,7 +555,7 @@ public:
 
     Jump branch32(RelationalCondition cond, RegisterID left, TrustedImm32 right, int useConstantPool = 0)
     {
-        ARMWord tmp = (right.m_value == 0x80000000) ? ARMAssembler::InvalidImmediate : m_assembler.getOp2(-right.m_value);
+        ARMWord tmp = (static_cast<unsigned>(right.m_value) == 0x80000000) ? ARMAssembler::InvalidImmediate : m_assembler.getOp2(-right.m_value);
         if (tmp != ARMAssembler::InvalidImmediate)
             m_assembler.cmn(left, tmp);
         else

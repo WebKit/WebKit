@@ -1,3 +1,17 @@
+2012-08-30  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Eliminate build warnings
+        https://bugs.webkit.org/show_bug.cgi?id=95338
+
+        Reviewed by Filip Pizlo.
+
+        static_cast to the same type to eliminate the build time warnings.
+
+        * assembler/AssemblerBufferWithConstantPool.h:
+        (JSC::AssemblerBufferWithConstantPool::flushWithoutBarrier):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branch32):
+
 2012-08-29  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove use of ClassInfo from compileGetByValOnArguments and compileGetArgumentsLength

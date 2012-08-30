@@ -215,7 +215,7 @@ public:
     void flushWithoutBarrier(bool isForced = false)
     {
         // Flush if constant pool is more than 60% full to avoid overuse of this function.
-        if (isForced || 5 * m_numConsts > 3 * maxPoolSize / sizeof(uint32_t))
+        if (isForced || 5 * static_cast<uint32_t>(m_numConsts) > 3 * maxPoolSize / sizeof(uint32_t))
             flushConstantPool(false);
     }
 
