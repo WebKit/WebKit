@@ -1,3 +1,19 @@
+2012-08-30  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        Build warning : -Wsign-compare on DFGByteCodeParser.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=95418
+
+        Reviewed by Filip Pizlo.
+
+        There is a build warning '-Wsign-compare' on
+        findArgumentPositionForLocal() in DFGByteCodeParser.cpp.
+
+        For removing this warning, casting statement is added explicitly.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::findArgumentPositionForLocal):
+        (JSC::DFG::ByteCodeParser::findArgumentPosition):
+
 2012-08-30  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Set timer client on platform timer used in HeapTimer
