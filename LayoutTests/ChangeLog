@@ -1,3 +1,12 @@
+2012-08-29  Jessie Berlin  <jberlin@apple.com>
+
+        Mountain Lion missing results for media/controls-without-preload.html
+        https://bugs.webkit.org/show_bug.cgi?id=95417
+
+        Add the text results the bots were seeing to get the bots greener.
+
+        * platform/mac/media/controls-without-preload-expected.txt: Added.
+
 2012-08-29  Philip Rogers  <pdr@google.com>
 
         Unreviewed update of circle-in-mask-with-shadow test expectation.
