@@ -742,7 +742,8 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         m_client->cancelScheduledContentIntents();
         // Queue a highlight animation, then hand off to regular handler.
 #if OS(LINUX)
-        enableTouchHighlight(IntPoint(event.x, event.y));
+        if (settingsImpl()->gestureTapHighlightEnabled())
+            enableTouchHighlight(IntPoint(event.x, event.y));
 #endif
         PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
         return mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);

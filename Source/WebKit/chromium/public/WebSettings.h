@@ -103,6 +103,7 @@ public:
     virtual void setForceCompositingMode(bool) = 0;
     virtual void setFrameFlatteningEnabled(bool) = 0;
     virtual void setFullScreenEnabled(bool) = 0;
+    virtual void setGestureTapHighlightEnabled(bool) = 0;
     virtual void setHyperlinkAuditingEnabled(bool) = 0;
     virtual void setImagesEnabled(bool) = 0;
     virtual void setInteractiveFormValidationEnabled(bool) = 0;

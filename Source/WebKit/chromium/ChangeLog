@@ -1,3 +1,23 @@
+2012-08-29  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Add WebSettings support for flag to enable/disable gesture tap highlights.
+        https://bugs.webkit.org/show_bug.cgi?id=95119
+
+        Reviewed by Adam Barth.
+
+        Add support to WebSettings for flag to enable/disable gesture tap highlights. Relies on existing tests.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::WebSettingsImpl):
+        (WebKit::WebSettingsImpl::setGestureTapHighlightEnabled):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+        (WebKit::WebSettingsImpl::gestureTapHighlightEnabled):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+
 2012-08-29  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove HUD layer when rootLayer is set to null

@@ -53,6 +53,7 @@ WebSettingsImpl::WebSettingsImpl(Settings* settings)
     , m_renderVSyncEnabled(true)
     , m_viewportEnabled(false)
     , m_applyDefaultDeviceScaleFactorInCompositor(false)
+    , m_gestureTapHighlightEnabled(true)
     , m_defaultTileSize(WebSize(256, 256))
     , m_maxUntiledLayerSize(WebSize(512, 512))
 {
@@ -634,6 +635,11 @@ void WebSettingsImpl::setSyncXHRInDocumentsEnabled(bool enabled)
 void WebSettingsImpl::setCookieEnabled(bool enabled)
 {
     m_settings->setCookieEnabled(enabled);
+}
+
+void WebSettingsImpl::setGestureTapHighlightEnabled(bool enableHighlight)
+{
+    m_gestureTapHighlightEnabled = enableHighlight;
 }
 
 } // namespace WebKit
