@@ -1,3 +1,13 @@
+2012-08-30  Mark Lam  <mark.lam@apple.com>
+
+        Fix broken classic intrpreter build.
+        https://bugs.webkit.org/show_bug.cgi?id=95484.
+
+        Reviewed by Filip Pizlo.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
 2012-08-30  Byungwoo Lee  <bw80.lee@samsung.com>
 
         Build warning : -Wsign-compare on DFGByteCodeParser.cpp.

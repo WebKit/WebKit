@@ -49,6 +49,7 @@
 #include "JSNotAnObject.h"
 #include "JSPropertyNameIterator.h"
 #include "JSString.h"
+#include "JSWithScope.h"
 #include "LiteralParser.h"
 #include "NameInstance.h"
 #include "ObjectPrototype.h"
@@ -2705,7 +2706,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
             ++iter;
             ASSERT_UNUSED(end, iter != end);
         }
-        ASSERT((*iter)->isVariableObject());
+        ASSERT(iter->isVariableObject());
         JSVariableObject* scope = jsCast<JSVariableObject*>(iter.get());
         callFrame->uncheckedR(dst) = scope->registerAt(index).get();
         ASSERT(callFrame->r(dst).jsValue());
@@ -2736,7 +2737,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
             ASSERT_UNUSED(end, iter != end);
         }
 
-        ASSERT((*iter)->isVariableObject());
+        ASSERT(iter->isVariableObject());
         JSVariableObject* scope = jsCast<JSVariableObject*>(iter.get());
         ASSERT(callFrame->r(value).jsValue());
         scope->registerAt(index).set(*globalData, scope, callFrame->r(value).jsValue());
@@ -4795,7 +4796,7 @@ skip_id_custom_self:
         CHECK_FOR_EXCEPTION();
 
         callFrame->uncheckedR(scope) = JSValue(o);
-        callFrame->setScopeChain(callFrame->scopeChain()->push(JSWithScope(callFrame, o)));
+        callFrame->setScopeChain(callFrame->scopeChain()->push(JSWithScope::create(callFrame, o)));
 
         vPC += OPCODE_LENGTH(op_push_scope);
         NEXT_INSTRUCTION();
