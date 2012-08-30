@@ -1,3 +1,14 @@
+2012-08-30  Jessie Berlin  <jberlin@apple.com>
+
+        Assertion failure in MessagePort::contextDestroyed in
+        http/tests/security/MessagePort/event-listener-context.html, usually attributed to later tests.
+        https://bugs.webkit.org/show_bug.cgi?id=94458
+
+        fast/events/message-port-constructor-for-deleted-document.html also asserts in
+        MessagePort::contextDestroyed, and it is usually attributed to later tests as well. Skip it.
+
+        * platform/mac/TestExpectations:
+
 2012-08-30  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Introduce MediaConstraints
