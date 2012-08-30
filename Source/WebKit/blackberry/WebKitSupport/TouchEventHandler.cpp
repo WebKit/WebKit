@@ -229,7 +229,9 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, bool useFa
             bool shouldRequestSpellCheckOptions = false;
 
             if (m_lastFatFingersResult.isTextInput())
-                shouldRequestSpellCheckOptions = m_webPage->m_inputHandler->shouldRequestSpellCheckingOptionsForPoint(point.m_pos, m_lastFatFingersResult.nodeAsElementIfApplicable(), spellCheckOptionRequest);
+                shouldRequestSpellCheckOptions = m_webPage->m_inputHandler->shouldRequestSpellCheckingOptionsForPoint(point.m_pos
+                                                                                                                      , m_lastFatFingersResult.nodeAsElementIfApplicable(FatFingersResult::ShadowContentNotAllowed)
+                                                                                                                      , spellCheckOptionRequest);
 
             // Apply any suppressed changes. This does not eliminate the need
             // for the show after the handling of fat finger pressed as it may
