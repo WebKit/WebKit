@@ -1,3 +1,43 @@
+2012-08-29  José Dapena Paz  <jdapena@igalia.com>
+
+        [Gtk] Process Gtk 3.4 smooth scroll events properly
+        https://bugs.webkit.org/show_bug.cgi?id=88070
+
+        Added continousMouseScrollBy support in WebKitTestRunner, and added
+        implementation for gtk, and stub for Qt, mac and EFL.
+
+        Added layout tests support for smooth scroll in Gtk 3.4, and use smooth
+        scroll for emulating multi-tick mouseScrollBy events.
+
+        Reviewed by Martin Robinson.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (mouseScrollByCallback):
+        (continuousMouseScrollByCallback):
+        * WebKitTestRunner/EventSenderProxy.h:
+        (EventSenderProxy):
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::mouseScrollBy):
+        (WTR):
+        (WTR::EventSendingController::continuousMouseScrollBy):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        (EventSendingController):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR):
+        (WTR::EventSenderProxy::mouseScrollBy):
+        (WTR::EventSenderProxy::continuousMouseScrollBy):
+        * WebKitTestRunner/efl/EventSenderProxyEfl.cpp:
+        (WTR):
+        (WTR::EventSenderProxy::continuousMouseScrollBy):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::continuousScrollBy):
+        * WebKitTestRunner/qt/EventSenderProxyQt.cpp:
+        (WTR::EventSenderProxy::continuousMouseScrollBy):
+        (WTR):
+
 2012-08-29  Alex Sakhartchouk  <alexst@chromium.org>
 
         [chromium] Support high DIP pixel tests with DumpRenderTree

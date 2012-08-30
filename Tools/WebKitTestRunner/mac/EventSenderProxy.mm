@@ -397,4 +397,10 @@ void EventSenderProxy::mouseScrollBy(int x, int y)
         [targetView scrollWheel:event];
 }
 
+void EventSenderProxy::continuousMouseScrollBy(int x, int y, bool paged)
+{
+    // FIXME: Implement this.
+    return;
+}
+
 } // namespace WTR

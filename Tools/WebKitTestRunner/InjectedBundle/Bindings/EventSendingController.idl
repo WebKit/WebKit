@@ -30,6 +30,7 @@ module WTR {
         void mouseUp(in long buttonNumber, in object modifierArray);
         void mouseMoveTo(in long x, in long y);
         void mouseScrollBy(in long x, in long y);
+        void continuousMouseScrollBy(in long x, in long y, in [Optional] boolean paged);
 
         void leapForward(in long milliseconds);
 

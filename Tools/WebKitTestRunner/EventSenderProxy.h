@@ -55,6 +55,7 @@ public:
     void mouseUp(unsigned button, WKEventModifiers);
     void mouseMoveTo(double x, double y);
     void mouseScrollBy(int x, int y);
+    void continuousMouseScrollBy(int x, int y, bool paged);
 
     void leapForward(int milliseconds);
 

@@ -79,6 +79,9 @@ static unsigned startOfQueue;
 
 static const float zoomMultiplierRatio = 1.2f;
 
+// WebCore and layout tests assume this value.
+static const float pixelsPerScrollTick = 40;
+
 // Key event location code defined in DOM Level 3.
 enum KeyLocationCode {
     DOM_KEY_LOCATION_STANDARD      = 0x00,
@@ -434,15 +437,27 @@ static JSValueRef mouseScrollByCallback(JSContextRef context, JSObjectRef functi
     int vertical = (int)JSValueToNumber(context, arguments[1], exception);
     g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
 
-    // GTK+ doesn't support multiple direction scrolls in the same event!
-    g_return_val_if_fail((!vertical || !horizontal), JSValueMakeUndefined(context));
-
     GdkEvent* event = gdk_event_new(GDK_SCROLL);
     event->scroll.x = lastMousePositionX;
     event->scroll.y = lastMousePositionY;
     event->scroll.time = GDK_CURRENT_TIME;
     event->scroll.window = gtk_widget_get_window(GTK_WIDGET(view));
     g_object_ref(event->scroll.window);
+
+    // GTK+ only supports one tick in each scroll event that is not smooth. For the cases of more than one direction,
+    // and more than one step in a direction, we can only use smooth events, supported from Gtk 3.3.18.
+#if GTK_CHECK_VERSION(3, 3, 18)
+    if ((horizontal && vertical) || horizontal > 1 || horizontal < -1 || vertical > 1 || vertical < -1) {
+        event->scroll.direction = GDK_SCROLL_SMOOTH;
+        event->scroll.delta_x = -horizontal;
+        event->scroll.delta_y = -vertical;
+
+        sendOrQueueEvent(event);
+        return JSValueMakeUndefined(context);
+    }
+#else
+    g_return_val_if_fail((!vertical || !horizontal), JSValueMakeUndefined(context));
+#endif
 
     if (horizontal < 0)
         event->scroll.direction = GDK_SCROLL_RIGHT;
@@ -461,7 +476,34 @@ static JSValueRef mouseScrollByCallback(JSContextRef context, JSObjectRef functi
 
 static JSValueRef continuousMouseScrollByCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    // GTK doesn't support continuous scroll events.
+#if GTK_CHECK_VERSION(3, 3, 18)
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    if (!view)
+        return JSValueMakeUndefined(context);
+
+    if (argumentCount < 2)
+        return JSValueMakeUndefined(context);
+
+    int horizontal = JSValueToNumber(context, arguments[0], exception);
+    g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
+    int vertical = JSValueToNumber(context, arguments[1], exception);
+    g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
+
+    g_return_val_if_fail(argumentCount < 3 || !JSValueToBoolean(context, arguments[2]), JSValueMakeUndefined(context));
+    
+    GdkEvent* event = gdk_event_new(GDK_SCROLL);
+    event->scroll.x = lastMousePositionX;
+    event->scroll.y = lastMousePositionY;
+    event->scroll.time = GDK_CURRENT_TIME;
+    event->scroll.window = gtk_widget_get_window(GTK_WIDGET(view));
+    g_object_ref(event->scroll.window);
+
+    event->scroll.direction = GDK_SCROLL_SMOOTH;
+    event->scroll.delta_x = -horizontal / pixelsPerScrollTick;
+    event->scroll.delta_y = -vertical / pixelsPerScrollTick;
+
+    sendOrQueueEvent(event);
+#endif
     return JSValueMakeUndefined(context);
 }
 

@@ -153,6 +153,14 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event)
     case GDK_SCROLL_RIGHT:
         wheelTicks = FloatSize(-1, 0);
         break;
+#if GTK_CHECK_VERSION(3, 3, 18)
+    case GDK_SCROLL_SMOOTH: {
+            double deltaX, deltaY;
+            gdk_event_get_scroll_deltas(event, &deltaX, &deltaY);
+            wheelTicks = FloatSize(-deltaX, -deltaY);
+        }
+        break;
+#endif
     default:
         ASSERT_NOT_REACHED();
     }

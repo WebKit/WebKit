@@ -384,6 +384,11 @@ void EventSenderProxy::mouseScrollBy(int horizontal, int vertical)
     sendOrQueueEvent(event);
 }
 
+void EventSenderProxy::continuousMouseScrollBy(int horizontal, int vertical, bool paged)
+{
+    notImplemented();
+}
+
 void EventSenderProxy::leapForward(int milliseconds)
 {
     if (m_eventQueue.isEmpty())

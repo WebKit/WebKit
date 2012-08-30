@@ -1,3 +1,19 @@
+2012-08-29  José Dapena Paz  <jdapena@igalia.com>
+
+        [Gtk] Process Gtk 3.4 smooth scroll events properly.
+        https://bugs.webkit.org/show_bug.cgi?id=88070
+
+        Added layout tests support for smooth scroll in Gtk 3.4, and use smooth
+        scroll for emulating multi-tick mouseScrollBy events.
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk-wk2/fast/events/wheelevent-in-horizontal-scrollbar-in-rtl-expected.txt: Added.
+        * platform/gtk-wk2/fast/events/wheelevent-in-vertical-scrollbar-in-rtl-expected.txt: Added.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/events/wheelevent-in-horizontal-scrollbar-in-rtl-expected.txt: Added.
+        * platform/gtk/fast/events/wheelevent-in-vertical-scrollbar-in-rtl-expected.txt: Added.
+
 2012-08-29  Dean Jackson  <dino@apple.com>
 
         Unreviewed gardening for Mac Lion after r127046.
