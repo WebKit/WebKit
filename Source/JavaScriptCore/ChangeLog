@@ -1,3 +1,24 @@
+2012-08-30  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Implement IncrementalSweeper for PLATFORM(BLACKBERRY)
+        https://bugs.webkit.org/show_bug.cgi?id=95469
+
+        Reviewed by Rob Buis.
+
+        RIM PR# 200595.
+        Share most code with USE(CF) and implement timer-related methods
+        for PLATFORM(BLACKBERRY).
+
+        * heap/IncrementalSweeper.cpp:
+        (JSC):
+        (JSC::IncrementalSweeper::IncrementalSweeper):
+        (JSC::IncrementalSweeper::create):
+        (JSC::IncrementalSweeper::scheduleTimer):
+        (JSC::IncrementalSweeper::cancelTimer):
+        (JSC::IncrementalSweeper::doSweep):
+        * heap/IncrementalSweeper.h:
+        (IncrementalSweeper):
+
 2012-08-30  Mark Lam  <mark.lam@apple.com>
 
         Fix broken classic intrpreter build.

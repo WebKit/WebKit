@@ -60,8 +60,12 @@ public:
     void willFinishSweeping();
 
 private:
+#if USE(CF) || PLATFORM(BLACKBERRY)
 #if USE(CF)
     IncrementalSweeper(Heap*, CFRunLoopRef);
+#else
+    IncrementalSweeper(Heap*);
+#endif
     
     void doSweep(double startTime);
     void scheduleTimer();

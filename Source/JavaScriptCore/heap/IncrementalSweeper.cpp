@@ -37,16 +37,13 @@
 
 namespace JSC {
 
+#if USE(CF) || PLATFORM(BLACKBERRY)
+
+static const double sweepTimeSlice = .01; // seconds
+static const double sweepTimeTotal = .10;
+static const double sweepTimeMultiplier = 1.0 / sweepTimeTotal;
+
 #if USE(CF)
-
-static const CFTimeInterval sweepTimeSlice = .01; // seconds
-static const CFTimeInterval sweepTimeTotal = .10;
-static const CFTimeInterval sweepTimeMultiplier = 1.0 / sweepTimeTotal;
-
-void IncrementalSweeper::doWork()
-{
-    doSweep(WTF::monotonicallyIncreasingTime());
-}
     
 IncrementalSweeper::IncrementalSweeper(Heap* heap, CFRunLoopRef runLoop)
     : HeapTimer(heap->globalData(), runLoop)
@@ -70,12 +67,43 @@ void IncrementalSweeper::cancelTimer()
     CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + s_decade);
 }
 
+#elif PLATFORM(BLACKBERRY)
+   
+IncrementalSweeper::IncrementalSweeper(Heap* heap)
+    : HeapTimer(heap->globalData())
+    , m_currentBlockToSweepIndex(0)
+    , m_structuresCanBeSwept(false)
+{
+}
+
+IncrementalSweeper* IncrementalSweeper::create(Heap* heap)
+{
+    return new IncrementalSweeper(heap);
+}
+
+void IncrementalSweeper::scheduleTimer()
+{
+    m_timer.start(sweepTimeSlice * sweepTimeMultiplier);
+}
+
+void IncrementalSweeper::cancelTimer()
+{
+    m_timer.stop();
+}
+
+#endif
+
+void IncrementalSweeper::doWork()
+{
+    doSweep(WTF::monotonicallyIncreasingTime());
+}
+
 void IncrementalSweeper::doSweep(double sweepBeginTime)
 {
     while (m_currentBlockToSweepIndex < m_blocksToSweep.size()) {
         sweepNextBlock();
 
-        CFTimeInterval elapsedTime = WTF::monotonicallyIncreasingTime() - sweepBeginTime;
+        double elapsedTime = WTF::monotonicallyIncreasingTime() - sweepBeginTime;
         if (elapsedTime < sweepTimeSlice)
             continue;
 
