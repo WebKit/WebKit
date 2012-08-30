@@ -1,3 +1,15 @@
+2012-08-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Gardening after r127108
+        https://bugs.webkit.org/show_bug.cgi?id=95438
+
+        Unreviewed gardening.
+
+        Gardening of fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html and 
+        fast/dom/shadow/shadowdom-for-textarea-with-placeholder.html.
+
+        * platform/efl/TestExpectations:
+
 2012-08-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] REGRESSION(r122175): fast/loader/document-destruction-within-unload.html makes the following test assert

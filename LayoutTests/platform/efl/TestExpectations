@@ -774,6 +774,8 @@ BUGWK91487 : fast/dom/shadow/shadowdom-for-select-without-shadow.html = IMAGE
 BUGWK91488 : fast/dom/shadow/shadowdom-for-output-only-shadow.html = IMAGE
 BUGWK91489 : fast/dom/shadow/shadowdom-for-fieldset-complex-shadow.html = IMAGE
 BUGWK91489 : fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html = IMAGE
+BUGWK95439 : fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html = IMAGE
+BUGWK95439 : fast/dom/shadow/shadowdom-for-textarea-with-placeholder.html = IMAGE
 
 // This test is specific to QuickTime media engine.
 BUGWKEFL SKIP : media/video-does-not-loop.html = PASS
