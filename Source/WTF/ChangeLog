@@ -1,3 +1,13 @@
+2012-08-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        Ambiguous operator[]  after r127191 on some compiler
+        https://bugs.webkit.org/show_bug.cgi?id=95509
+
+        Reviewed by Simon Fraser.
+
+        * wtf/text/WTFString.h:
+        (WTF::String::characterAt): At this as a synonym to operator[] to attempt a build fix.
+
 2012-08-30  Mark Lam  <mark.lam@apple.com>
 
         Render unto #ifdef's that which belong to them.

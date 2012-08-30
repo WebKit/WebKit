@@ -449,6 +449,14 @@ public:
     WTF_EXPORT_STRING_API void show() const;
 #endif
 
+    // Workaround for a compiler bug. Use operator[] instead.
+    UChar characterAt(unsigned index) const
+    {
+        if (!m_impl || index >= m_impl->length())
+            return 0;
+        return (*m_impl)[index];
+    }
+
 private:
     RefPtr<StringImpl> m_impl;
 };

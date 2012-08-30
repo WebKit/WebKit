@@ -1,3 +1,20 @@
+2012-08-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        Ambiguous operator[]  after r127191 on some compiler
+        https://bugs.webkit.org/show_bug.cgi?id=95509
+
+        Reviewed by Simon Fraser.
+
+        On some compilers, the operator[] conflicts with the Obj-C++ operators. This attempts to solve
+        the issue.
+
+        * runtime/JSString.h:
+        (JSC::jsSingleCharacterSubstring):
+        (JSC::jsString):
+        (JSC::jsSubstring8):
+        (JSC::jsSubstring):
+        (JSC::jsOwnedString):
+
 2012-08-30  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the Qt build: Remove the inline keyword at the declaration
