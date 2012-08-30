@@ -103,3 +103,7 @@ class WinPortTest(port_testcase.PortTestCase):
         self.assertEquals(port._runtime_feature_list(), None)
         port._executive.run_command = lambda command, cwd=None, error_handler=None: "SupportedFeatures:foo bar"
         self.assertEquals(port._runtime_feature_list(), ['foo', 'bar'])
+
+    def test_expectations_files(self):
+        self.assertEquals(len(self.make_port().expectations_files()), 1)
+        self.assertEquals(len(self.make_port(options=MockOptions(webkit_test_runner=True)).expectations_files()), 2)

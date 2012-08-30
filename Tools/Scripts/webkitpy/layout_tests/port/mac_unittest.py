@@ -49,6 +49,10 @@ class MacTest(port_testcase.PortTestCase):
         super(MacTest, self).test_default_timeout_ms()
         self.assertEquals(self.make_port(options=MockOptions(guard_malloc=True)).default_timeout_ms(), 350000)
 
+    def test_expectations_files(self):
+        self.assertEquals(len(self.make_port().expectations_files()), 1)
+        self.assertEquals(len(self.make_port(options=MockOptions(webkit_test_runner=True)).expectations_files()), 2)
+
     def test_skipped_file_search_paths(self):
         # We should have two skipped files - platform+version and platform; however, we don't
         # have platform+version for either the most recent version or mac-future.
