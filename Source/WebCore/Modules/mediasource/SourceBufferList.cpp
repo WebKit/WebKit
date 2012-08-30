@@ -70,8 +70,8 @@ bool SourceBufferList::remove(SourceBuffer* buffer)
     if (index == notFound)
         return false;
 
-    m_list.remove(index);
     buffer->clear();
+    m_list.remove(index);
     createAndFireEvent(eventNames().webkitremovesourcebufferEvent);
     return true;
 }

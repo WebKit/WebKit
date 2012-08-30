@@ -1,3 +1,16 @@
+2012-08-30  Aaron Colwell  <acolwell@chromium.org>
+
+        Fix a crash in SourceBufferList.remove().
+        https://bugs.webkit.org/show_bug.cgi?id=94950
+
+        Reviewed by Eric Carlson.
+
+        Added a layout test to verify that the application doesn't crash if a SourceBufferList is 
+        holding the only references for its SourceBuffer objects when a MediaSource transitions to "closed".
+
+        * http/tests/media/media-source/video-media-source-sourcebufferlist-crash-expected.txt: Added.
+        * http/tests/media/media-source/video-media-source-sourcebufferlist-crash.html: Added.
+
 2012-08-30  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Remove redundant entries on the Skipped list

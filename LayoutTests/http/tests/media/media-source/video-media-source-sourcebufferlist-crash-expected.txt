@@ -1,0 +1,7 @@
+Verify that we don't crash on close if the MediaSource.sourceBuffers holds the last reference to its SourceBuffer objects.
+
+Calling addSourceBuffer()
+Running garbage collector to cleanup the SourceBuffer reference returned by addSourceBuffer()
+onSourceClose
+END OF TEST
+

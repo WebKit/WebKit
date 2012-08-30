@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/media-resources/video-test.js"></script>
+        <script type="text/javascript">
+            function onSourceOpen(e)
+            {
+                consoleWrite("Calling addSourceBuffer()");
+                e.target.addSourceBuffer('video/webm;codecs="vp8"');
+
+                if (window.GCController) {
+                    consoleWrite("Running garbage collector to cleanup the SourceBuffer reference returned by addSourceBuffer()");
+                    window.GCController.collect();
+                }
+
+                document.querySelector('#v').src = "";
+            }
+
+            function onSourceClose(e)
+            {
+                consoleWrite("onSourceClose");
+                endTest();
+            }
+
+            function main()
+            {
+                var video = document.querySelector('#v');
+                var mediaSource = new WebKitMediaSource();
+
+                mediaSource.addEventListener('webkitsourceopen', onSourceOpen);
+                mediaSource.addEventListener('webkitsourceclose', onSourceClose);
+
+                video.src = URL.createObjectURL(mediaSource);
+            }
+        </script>
+    </head>
+    <body onload="main()">
+      <video id="v"></video>
+      <p>Verify that we don't crash on close if the MediaSource.sourceBuffers holds the last reference to its SourceBuffer objects.</p>
+    </body>
+</html>
