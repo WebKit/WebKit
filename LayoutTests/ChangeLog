@@ -1,3 +1,18 @@
+2012-08-29  Michael Saboff  <msaboff@apple.com>
+
+        use after free in WebCore::FileReader::doAbort
+        https://bugs.webkit.org/show_bug.cgi?id=91004
+
+        Reviewed by Jian Li.
+
+        New tests to check that FileReader::abort doesn't crash or create events before
+        or after reading.
+
+        * fast/files/file-reader-done-reading-abort-expected.txt: Added.
+        * fast/files/file-reader-done-reading-abort.html: Added.
+        * fast/files/file-reader-immediate-abort-expected.txt: Added.
+        * fast/files/file-reader-immediate-abort.html: Added.
+
 2012-08-29  Jessie Berlin  <jberlin@apple.com>
 
         ASSERTION FAILURE in JSC::JSGlobalData::float32ArrayDescriptor when running fast/js/dfg-float64array.html
