@@ -17,9 +17,11 @@ shouldBe("'crypto' in window", "true");
 shouldBe("'getRandomValues' in window.crypto", "true");
 
 try {
-    var largeArray = new Uint8Array(66000);
+    var almostTooLargeArray = new Uint8Array(65536);
+    var tooLargeArray = new Uint8Array(65537);
 
-    shouldThrow("crypto.getRandomValues(largeArray)");
+    shouldNotThrow("crypto.getRandomValues(almostTooLargeArray)");
+    shouldThrow("crypto.getRandomValues(tooLargeArray)");
 } catch(ex) {
     debug(ex);
 }

@@ -1,3 +1,17 @@
+2012-08-29  Adam Barth  <abarth@webkit.org>
+
+        security/crypto-random-values-limits.html test the exact value that causes us to throw
+        https://bugs.webkit.org/show_bug.cgi?id=95403
+
+        Reviewed by Eric Seidel.
+
+        As requested by Darin Adler, this patch makes us test the exact length
+        threshold at which we start throwing an exception. This value is
+        defined in the spec, and we want to make sure we hit it exactly.
+
+        * security/crypto-random-values-limits-expected.txt:
+        * security/crypto-random-values-limits.html:
+
 2012-08-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK1] New test css3/filters/null-effect-check.html added in r126927 fails
