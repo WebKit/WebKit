@@ -234,7 +234,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         # This method is more convenient to skip whole directories than SKIP in TestExpectations
         # because its higher priority.
         # Still use TestExpectations to skip individual tests and small directories.
-        skipped_tests = self._real_tests([
+        return set([
             # Skip tests of other platforms to save time.
             'platform/gtk',
             'platform/mac',
@@ -256,14 +256,14 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
 
             'accessibility',
             'platform/chromium/accessibility',
-        ])
 
-        # Skip webgl tests: http://crbug.com/135877.
-        fast_canvas_webgl_tests = self._real_tests(['fast/canvas/webgl'])
-        return (skipped_tests |
-                fast_canvas_webgl_tests |
-                self._real_tests(['http/tests/canvas/webgl']) |
-                set(['platform/chromium/virtual/gpu/' + f for f in fast_canvas_webgl_tests]))
+            # Skip webgl tests: http://crbug.com/135877.
+            'compositing/webgl',
+            'fast/canvas/webgl',
+            'http/tests/canvas/webgl',
+            'platform/chromium/virtual/gpu/fast/canvas/webgl',
+            'platform/chromium/virtual/threaded/compositing/webgl',
+        ])
 
     def create_driver(self, worker_number, no_timeout=False):
         # We don't want the default DriverProxy which is not compatible with our driver.
