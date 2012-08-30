@@ -1,3 +1,15 @@
+2012-08-30  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Set timer client on platform timer used in HeapTimer
+        https://bugs.webkit.org/show_bug.cgi?id=95464
+
+        Reviewed by Rob Buis.
+
+        Otherwise the timer won't work.
+
+        * heap/HeapTimer.cpp:
+        (JSC::HeapTimer::HeapTimer):
+
 2012-08-30  Julien BRIANCEAU   <jbrianceau@nds.com>
 
         [sh4] Add missing implementation for JavaScriptCore JIT

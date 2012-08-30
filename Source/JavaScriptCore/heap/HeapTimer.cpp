@@ -30,6 +30,7 @@
 #include "JSObject.h"
 #include "JSString.h"
 #include "ScopeChain.h"
+#include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 
 namespace JSC {
@@ -104,6 +105,9 @@ HeapTimer::HeapTimer(JSGlobalData* globalData)
     : m_globalData(globalData)
     , m_timer(this, &HeapTimer::timerDidFire)
 {
+    // FIXME: Implement HeapTimer for other threads.
+    if (WTF::isMainThread() && !m_timer.tryCreateClient())
+        CRASH();
 }
 
 HeapTimer::~HeapTimer()
