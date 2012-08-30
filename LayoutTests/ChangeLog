@@ -24,6 +24,20 @@
 
 2012-08-30  Dirk Pranke  <dpranke@chromium.org>
 
+        Add more TestExpectations stubs for apple ports
+        https://bugs.webkit.org/show_bug.cgi?id=95495
+
+        Reviewed by Ojan Vafai.
+
+        This adds empty placeholder files so new-run-webkit-tests
+        doesn't get upset if they're missing.
+
+        * platform/mac-snowleopard/TestExpectations: Added.
+        * platform/win-xp/TestExpectations: Added.
+        * platform/wk2/TestExpectations: Added.
+
+2012-08-30  Dirk Pranke  <dpranke@chromium.org>
+
         Add TestExpectations stubs for apple wk2 ports
 
         Unreviewed, build fix.

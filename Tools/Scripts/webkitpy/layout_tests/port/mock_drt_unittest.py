@@ -49,7 +49,7 @@ class MockDRTPortTest(port_testcase.PortTestCase):
     def make_port(self, options=mock_options):
         host = MockSystemHost()
         test.add_unit_tests_to_mock_filesystem(host.filesystem)
-        return mock_drt.MockDRTPort(host, port_name='mock-mac', options=options)
+        return mock_drt.MockDRTPort(host, port_name='mock-mac-lion', options=options)
 
     def test_port_name_in_constructor(self):
         self.assertTrue(mock_drt.MockDRTPort(MockSystemHost(), port_name='mock-test'))

@@ -1466,7 +1466,9 @@ class Port(object):
     def _skipped_file_search_paths(self):
         # Unlike baseline_search_path, we only want to search [WK2-PORT, PORT-VERSION, PORT] and any directories
         # included via --additional-platform-directory, not the full casade.
-        # Note order doesn't matter since the Skipped file contents are all combined.
+        # Note order doesn't matter since the Skipped file contents are all combined; however
+        # we use this order explicitly so we can re-use it for TestExpectations files.
+        # FIXME: Update this when we get rid of Skipped files altogether.
 
         search_paths = set([self.port_name])
         if 'future' not in self.name():

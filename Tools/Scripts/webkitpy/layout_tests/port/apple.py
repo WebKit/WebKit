@@ -99,7 +99,4 @@ class ApplePort(Port):
         return configurations
 
     def expectations_files(self):
-        files = [self.path_to_test_expectations_file()]
-        if self.get_option('webkit_test_runner'):
-            files.append(self._filesystem.join(self._webkit_baseline_path(self.port_name + '-wk2'), 'TestExpectations'))
-        return files
+        return [self._filesystem.join(self._webkit_baseline_path(d), 'TestExpectations') for d in self._skipped_file_search_paths()]

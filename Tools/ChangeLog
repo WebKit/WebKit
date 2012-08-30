@@ -1,5 +1,27 @@
 2012-08-30  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt should have TestExpectations everywhere we have Skipped files for apple ports
+        https://bugs.webkit.org/show_bug.cgi?id=95495
+
+        Reviewed by Ojan Vafai.
+
+        This is a follow-on to bug 95370 that adds in support for
+        platform/wk2/TestExpectations and
+        platform/{mac,win}-$version/TestExpectations.
+
+        * Scripts/webkitpy/layout_tests/port/apple.py:
+        (ApplePort.expectations_files):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port._skipped_file_search_paths):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (MacTest.test_expectations_files):
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        (MockDRTPortTest.make_port):
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py:
+        (WinPortTest.test_expectations_files):
+
+2012-08-30  Dirk Pranke  <dpranke@chromium.org>
+
         executive.run_in_parallel() hangs if given nothing to do
         https://bugs.webkit.org/show_bug.cgi?id=95387
 
