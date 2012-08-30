@@ -2772,3 +2772,5 @@ inspector/profiler/webgl-profiler-api-changes.html
 # [Qt][GTK] New svg/custom/clamped-masking-clipping.svg fails
 # https://bugs.webkit.org/show_bug.cgi?id=95432
 svg/custom/clamped-masking-clipping.svg
+
+fast/loader/document-destruction-within-unload.html
