@@ -1,3 +1,15 @@
+2012-08-30  Gavin Peters  <gavinp@chromium.org>
+
+        [chromium] Disable CCLayerTreeHostTestScrollMultipleRedraw.runMultiThread
+        https://bugs.webkit.org/show_bug.cgi?id=95472
+
+        Unreviewed gardening.
+
+        When landing r127079, this test was re-enabled, and has not passed since. I'm disabling it, and created bug 95473 to track fixing this issue.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WebKitTests::TEST_F):
+
 2012-08-30  James Robinson  <jamesr@chromium.org>
 
         [chromium] Clean up some webkit compositor unit tests

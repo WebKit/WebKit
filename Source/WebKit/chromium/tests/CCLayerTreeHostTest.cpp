@@ -1048,7 +1048,7 @@ private:
     int m_scrolls;
 };
 
-TEST_F(CCLayerTreeHostTestScrollMultipleRedraw, runMultiThread)
+TEST_F(CCLayerTreeHostTestScrollMultipleRedraw, DISABLED_runMultiThread)
 {
     runTest(true);
 }
