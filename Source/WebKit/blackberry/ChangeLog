@@ -1,3 +1,17 @@
+2012-08-30  Hanna Ma  <Hanma@rim.com>
+
+        [BlackBerry] node search does not work with elements on touch start listener
+        https://bugs.webkit.org/show_bug.cgi?id=95252
+
+        Reviewed by Antonio Gomes.
+
+        Fix the node search function of web insepctor on elements with touch start listener.
+        Add methods from webPage to check if the node search functionality is enabled before handling touch events.
+        PR194107
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::touchEvent):
+
 2012-08-30  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] One shot drawing sync flag never cleared when there's no layers

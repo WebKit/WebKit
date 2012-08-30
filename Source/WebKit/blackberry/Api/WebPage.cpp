@@ -75,6 +75,7 @@
 #include "InspectorBackendDispatcher.h"
 #include "InspectorClientBlackBerry.h"
 #include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "InspectorOverlay.h"
 #include "JavaScriptDebuggerBlackBerry.h"
 #include "JavaScriptVariant_p.h"
@@ -4094,6 +4095,10 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
         return false;
 
     if (d->m_page->defersLoading())
+        return false;
+
+    // FIXME: this checks if node search on inspector is enabled, though it might not be optimized.
+    if (InspectorInstrumentation::handleMousePress(d->m_mainFrame->page()))
         return false;
 
     PluginView* pluginView = d->m_fullScreenPluginView.get();
