@@ -3627,6 +3627,7 @@
             'platform/graphics/cairo/RefPtrCairo.cpp',
             'platform/graphics/cairo/RefPtrCairo.h',
             'platform/graphics/cairo/TransformationMatrixCairo.cpp',
+            'platform/graphics/cg/BitmapImageCG.cpp',
             'platform/graphics/cg/ColorCG.cpp',
             'platform/graphics/cg/FloatPointCG.cpp',
             'platform/graphics/cg/FloatRectCG.cpp',

@@ -24,19 +24,15 @@
  */
 
 #include "config.h"
-#include "BitmapImage.h"
+#include "Image.h"
 
 #if USE(CG)
 
-#include "AffineTransform.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GraphicsContextCG.h"
 #include "ImageObserver.h"
-#include "PDFDocumentImage.h"
-#include "PlatformString.h"
 #include <ApplicationServices/ApplicationServices.h>
-#include <CoreFoundation/CFArray.h>
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC) || PLATFORM(CHROMIUM)
@@ -48,91 +44,6 @@
 #endif
 
 namespace WebCore {
-
-bool FrameData::clear(bool clearMetadata)
-{
-    if (clearMetadata)
-        m_haveMetadata = false;
-
-    m_orientation = DefaultImageOrientation;
-
-    if (m_frame) {
-        CGImageRelease(m_frame);
-        m_frame = 0;
-        return true;
-    }
-    return false;
-}
-
-// ================================================
-// Image Class
-// ================================================
-
-BitmapImage::BitmapImage(CGImageRef cgImage, ImageObserver* observer)
-    : Image(observer)
-    , m_currentFrame(0)
-    , m_frames(0)
-    , m_frameTimer(0)
-    , m_repetitionCount(cAnimationNone)
-    , m_repetitionCountStatus(Unknown)
-    , m_repetitionsComplete(0)
-    , m_decodedSize(0)
-    , m_decodedPropertiesSize(0)
-    , m_frameCount(1)
-    , m_isSolidColor(false)
-    , m_checkedForSolidColor(false)
-    , m_animationFinished(true)
-    , m_allDataReceived(true)
-    , m_haveSize(true)
-    , m_sizeAvailable(true)
-    , m_haveFrameCount(true)
-{
-    CGFloat width = CGImageGetWidth(cgImage);
-    CGFloat height = CGImageGetHeight(cgImage);
-    m_decodedSize = width * height * 4;
-    m_size = IntSize(width, height);
-
-    // Since we don't have a decoder, we can't figure out the image orientation.
-    // Set m_sizeRespectingOrientation to be the same as m_size so it's not 0x0.
-    m_sizeRespectingOrientation = IntSize(width, height);
-
-    m_frames.grow(1);
-    m_frames[0].m_frame = cgImage;
-    m_frames[0].m_hasAlpha = true;
-    m_frames[0].m_haveMetadata = true;
-
-    checkForSolidColor();
-}
-
-// Drawing Routines
-
-void BitmapImage::checkForSolidColor()
-{
-    m_checkedForSolidColor = true;
-    if (frameCount() > 1) {
-        m_isSolidColor = false;
-        return;
-    }
-
-    CGImageRef image = frameAtIndex(0);
-    
-    // Currently we only check for solid color in the important special case of a 1x1 image.
-    if (image && CGImageGetWidth(image) == 1 && CGImageGetHeight(image) == 1) {
-        unsigned char pixel[4]; // RGBA
-        RetainPtr<CGContextRef> bmap(AdoptCF, CGBitmapContextCreate(pixel, 1, 1, 8, sizeof(pixel), deviceRGBColorSpaceRef(),
-            kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big));
-        if (!bmap)
-            return;
-        GraphicsContext(bmap.get()).setCompositeOperation(CompositeCopy);
-        CGRect dst = { {0, 0}, {1, 1} };
-        CGContextDrawImage(bmap.get(), dst, image);
-        if (pixel[3] == 0)
-            m_solidColor = Color(0, 0, 0, 0);
-        else
-            m_solidColor = Color(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
-        m_isSolidColor = true;
-    }
-}
 
 RetainPtr<CGImageRef> Image::imageWithColorSpace(CGImageRef originalImage, ColorSpace colorSpace)
 {
@@ -154,68 +65,6 @@ RetainPtr<CGImageRef> Image::imageWithColorSpace(CGImageRef originalImage, Color
 
     ASSERT_NOT_REACHED();
     return originalImage;
-}
-
-CGImageRef BitmapImage::getCGImageRef()
-{
-    return frameAtIndex(0);
-}
-
-CGImageRef BitmapImage::getFirstCGImageRefOfSize(const IntSize& size)
-{
-    size_t count = frameCount();
-    for (size_t i = 0; i < count; ++i) {
-        CGImageRef cgImage = frameAtIndex(i);
-        if (cgImage && IntSize(CGImageGetWidth(cgImage), CGImageGetHeight(cgImage)) == size)
-            return cgImage;
-    }
-
-    // Fallback to the default CGImageRef if we can't find the right size
-    return getCGImageRef();
-}
-
-RetainPtr<CFArrayRef> BitmapImage::getCGImageArray()
-{
-    size_t count = frameCount();
-    if (!count)
-        return 0;
-    
-    CFMutableArrayRef array = CFArrayCreateMutable(NULL, count, &kCFTypeArrayCallBacks);
-    for (size_t i = 0; i < count; ++i) {
-        if (CGImageRef currFrame = frameAtIndex(i))
-            CFArrayAppendValue(array, currFrame);
-    }
-    return RetainPtr<CFArrayRef>(AdoptCF, array);
-}
-
-void BitmapImage::draw(GraphicsContext* ctx, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator op)
-{
-    draw(ctx, dstRect, srcRect, styleColorSpace, op, DoNotRespectImageOrientation);
-}
-
-void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp, RespectImageOrientationEnum shouldRespectImageOrientation)
-{
-    startAnimation();
-
-    CGImageRef image = frameAtIndex(m_currentFrame);
-    if (!image) // If it's too early we won't have an image yet.
-        return;
-    
-    if (mayFillWithSolidColor()) {
-        fillWithSolidColor(ctxt, destRect, solidColor(), styleColorSpace, compositeOp);
-        return;
-    }
-
-    FloatSize selfSize = currentFrameSize();
-    ImageOrientation orientation = DefaultImageOrientation;
-
-    if (shouldRespectImageOrientation == RespectImageOrientation)
-        orientation = frameOrientationAtIndex(m_currentFrame);
-
-    ctxt->drawNativeImage(image, selfSize, styleColorSpace, destRect, srcRect, compositeOp, orientation);
-
-    if (imageObserver())
-        imageObserver()->didDraw(this);
 }
 
 static void drawPatternCallback(void* info, CGContextRef context)
@@ -310,7 +159,6 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     if (imageObserver())
         imageObserver()->didDraw(this);
 }
-
 
 }
 
