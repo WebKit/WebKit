@@ -3518,8 +3518,6 @@ BUGWK94532 LINUX : fast/forms/formmethod-attribute-button-html.html = PASS MISSI
 BUGWK94660 : fast/js/create-lots-of-workers.html = PASS CRASH TIMEOUT
 BUGWK95366 DEBUG : css3/flexbox/flexitem-stretch-image.html = TEXT
 
-BUGWK94730 MAC : fast/repaint/japanese-rl-selection-repaint-in-regions.html = IMAGE
-
 BUGCR67540 BUGWK94735 LINUX : fast/text/emphasis-overlap.html = IMAGE IMAGE+TEXT
 
 BUGWK95167 : fast/overflow/paged-x-with-column-gap.html = IMAGE IMAGE+TEXT TEXT MISSING

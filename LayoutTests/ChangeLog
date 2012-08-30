@@ -1,3 +1,14 @@
+2012-08-29  Andrei Bucur  <abucur@adobe.com>
+
+        Layout Test fast/repaint/japanese-rl-selection-repaint-in-regions.html is failing after r126304
+        https://bugs.webkit.org/show_bug.cgi?id=94730
+
+        Reviewed by Dimitri Glazkov.
+
+        Re-enable the japanese-rl-selection-repaint-in-regions.html test for Chromium after the fix was deployed.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-29  Yoshifumi Inoue  <yosin@chromium.org>
 
         Unreviewed. [Chromium] Rebaseline fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic.html for Chromium-Mac and Chromium-Win
