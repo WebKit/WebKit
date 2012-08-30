@@ -1,3 +1,9 @@
+2012-08-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip new failing tests.
+
+        * platform/qt/Skipped:
+
 2012-08-30  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

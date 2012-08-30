@@ -272,6 +272,8 @@ fast/dom/shadow/shadowdom-for-fieldset-without-shadow.html
 fast/dom/shadow/shadowdom-for-keygen-complex-shadow.html
 fast/dom/shadow/shadowdom-for-keygen-only-shadow.html
 fast/dom/shadow/shadowdom-for-keygen-without-shadow.html
+fast/dom/shadow/shadowdom-for-textarea-with-placeholder.html
+fast/dom/shadow/shadowdom-for-textarea.html
 fast/dom/shadow/input-with-validation.html
 fast/dom/shadow/input-with-validation-without-shadow.html
 fast/dom/shadow/shadowdom-for-form-associated-element-useragent.html
@@ -2764,3 +2766,9 @@ http/tests/inspector/csp-inline-warning-contains-stacktrace.html
 # [Qt] New inspector/profiler/webgl-profiler-api-changes.html times out
 # https://bugs.webkit.org/show_bug.cgi?id=95183
 inspector/profiler/webgl-profiler-api-changes.html
+
+# [Qt] New svg/custom/clamped-masking-clipping.svg asserts
+# https://bugs.webkit.org/show_bug.cgi?id=95431
+# [Qt][GTK] New svg/custom/clamped-masking-clipping.svg fails
+# https://bugs.webkit.org/show_bug.cgi?id=95432
+svg/custom/clamped-masking-clipping.svg
