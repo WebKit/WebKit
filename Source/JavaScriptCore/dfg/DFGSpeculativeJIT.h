@@ -2054,12 +2054,10 @@ public:
     bool compilePeepHoleBranch(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, S_DFGOperation_EJJ);
     void compilePeepHoleIntegerBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::RelationalCondition);
     void compilePeepHoleDoubleBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition);
-    void compilePeepHoleObjectEquality(Node&, NodeIndex branchNodeIndex, const ClassInfo*, SpeculatedTypeChecker);
-    void compilePeepHoleObjectToObjectOrOtherEquality(
-        Edge leftChild, Edge rightChild, NodeIndex branchNodeIndex, const ClassInfo*, SpeculatedTypeChecker);
-    void compileObjectEquality(Node&, const ClassInfo*, SpeculatedTypeChecker);
-    void compileObjectToObjectOrOtherEquality(
-        Edge leftChild, Edge rightChild, const ClassInfo*, SpeculatedTypeChecker);
+    void compilePeepHoleObjectEquality(Node&, NodeIndex branchNodeIndex);
+    void compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild, Edge rightChild, NodeIndex branchNodeIndex);
+    void compileObjectEquality(Node&);
+    void compileObjectToObjectOrOtherEquality(Edge leftChild, Edge rightChild);
     void compileValueAdd(Node&);
     void compileObjectOrOtherLogicalNot(Edge value, const ClassInfo*, bool needSpeculationCheck);
     void compileLogicalNot(Node&);

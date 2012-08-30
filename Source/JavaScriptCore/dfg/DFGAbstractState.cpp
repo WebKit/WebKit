@@ -733,45 +733,32 @@ bool AbstractState::execute(unsigned indexInBlock)
                 break;
             }
             
-            if (Node::shouldSpeculateFinalObject(left, right)) {
-                filter = SpecFinalObject;
-                checker = isFinalObjectSpeculation;
-            } else if (Node::shouldSpeculateArray(left, right)) {
-                filter = SpecArray;
-                checker = isArraySpeculation;
-            } else if (left.shouldSpeculateFinalObject() && right.shouldSpeculateFinalObjectOrOther()) {
-                node.setCanExit(
-                    !isFinalObjectSpeculation(forNode(node.child1()).m_type)
-                    || !isFinalObjectOrOtherSpeculation(forNode(node.child2()).m_type));
-                forNode(node.child1()).filter(SpecFinalObject);
-                forNode(node.child2()).filter(SpecFinalObject | SpecOther);
+            if (left.shouldSpeculateString() || right.shouldSpeculateString()) {
+                node.setCanExit(false);
                 break;
-            } else if (right.shouldSpeculateFinalObject() && left.shouldSpeculateFinalObjectOrOther()) {
-                node.setCanExit(
-                    !isFinalObjectOrOtherSpeculation(forNode(node.child1()).m_type)
-                    || !isFinalObjectSpeculation(forNode(node.child2()).m_type));
-                forNode(node.child1()).filter(SpecFinalObject | SpecOther);
-                forNode(node.child2()).filter(SpecFinalObject);
+            } 
+            if (left.shouldSpeculateNonStringCell() && right.shouldSpeculateNonStringCellOrOther()) {
+                node.setCanExit(true);
+                forNode(node.child1()).filter(SpecCell & ~SpecString);
+                forNode(node.child2()).filter((SpecCell & ~SpecString) | SpecOther);
                 break;
-            } else if (left.shouldSpeculateArray() && right.shouldSpeculateArrayOrOther()) {
-                node.setCanExit(
-                    !isArraySpeculation(forNode(node.child1()).m_type)
-                    || !isArrayOrOtherSpeculation(forNode(node.child2()).m_type));
-                forNode(node.child1()).filter(SpecArray);
-                forNode(node.child2()).filter(SpecArray | SpecOther);
-                break;
-            } else if (right.shouldSpeculateArray() && left.shouldSpeculateArrayOrOther()) {
-                node.setCanExit(
-                    !isArrayOrOtherSpeculation(forNode(node.child1()).m_type)
-                    || !isArraySpeculation(forNode(node.child2()).m_type));
-                forNode(node.child1()).filter(SpecArray | SpecOther);
-                forNode(node.child2()).filter(SpecArray);
-                break;
-            } else {
-                filter = SpecTop;
-                checker = isAnySpeculation;
-                clobberWorld(node.codeOrigin, indexInBlock);
             }
+            if (left.shouldSpeculateNonStringCellOrOther() && right.shouldSpeculateNonStringCell()) {
+                node.setCanExit(true);
+                forNode(node.child1()).filter((SpecCell & ~SpecString) | SpecOther);
+                forNode(node.child2()).filter(SpecCell & ~SpecString);
+                break;
+            }
+            if (left.shouldSpeculateNonStringCell() && right.shouldSpeculateNonStringCell()) {
+                node.setCanExit(true);
+                forNode(node.child1()).filter(SpecCell & ~SpecString);
+                forNode(node.child2()).filter(SpecCell & ~SpecString);
+                break;
+            }
+ 
+            filter = SpecTop;
+            checker = isAnySpeculation;
+            clobberWorld(node.codeOrigin, indexInBlock);
         } else {
             filter = SpecTop;
             checker = isAnySpeculation;
@@ -819,22 +806,16 @@ bool AbstractState::execute(unsigned indexInBlock)
             speculateNumberBinary(node);
             break;
         }
-        if (Node::shouldSpeculateFinalObject(
-                m_graph[node.child1()], m_graph[node.child2()])) {
-            node.setCanExit(
-                !isFinalObjectSpeculation(forNode(node.child1()).m_type)
-                || !isFinalObjectSpeculation(forNode(node.child2()).m_type));
-            forNode(node.child1()).filter(SpecFinalObject);
-            forNode(node.child2()).filter(SpecFinalObject);
+        Node& leftNode = m_graph[node.child1()];
+        Node& rightNode = m_graph[node.child2()];
+        if (leftNode.shouldSpeculateString() || rightNode.shouldSpeculateString()) {
+            node.setCanExit(false);
             break;
         }
-        if (Node::shouldSpeculateArray(
-                m_graph[node.child1()], m_graph[node.child2()])) {
-            node.setCanExit(
-                !isArraySpeculation(forNode(node.child1()).m_type)
-                || !isArraySpeculation(forNode(node.child2()).m_type));
-            forNode(node.child1()).filter(SpecArray);
-            forNode(node.child2()).filter(SpecArray);
+        if (leftNode.shouldSpeculateNonStringCell() && rightNode.shouldSpeculateNonStringCell()) {
+            node.setCanExit(true);
+            forNode(node.child1()).filter((SpecCell & ~SpecString) | SpecOther);
+            forNode(node.child2()).filter((SpecCell & ~SpecString) | SpecOther);
             break;
         }
         node.setCanExit(false);

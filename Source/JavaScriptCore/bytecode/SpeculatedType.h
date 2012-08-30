@@ -82,6 +82,16 @@ inline bool isCellSpeculation(SpeculatedType value)
     return !!(value & SpecCell) && !(value & ~SpecCell);
 }
 
+inline bool isNonStringCellSpeculation(SpeculatedType value)
+{
+    return !!(value & (SpecCell & ~SpecString)) && !(value & ~(SpecCell & ~SpecString));
+}
+
+inline bool isNonStringCellOrOtherSpeculation(SpeculatedType value)
+{
+    return !!(value & ((SpecCell & ~SpecString) | SpecOther)) && !(value & ~((SpecCell & ~SpecString) | SpecOther));
+}
+
 inline bool isObjectSpeculation(SpeculatedType value)
 {
     return !!(value & SpecObjectMask) && !(value & ~SpecObjectMask);

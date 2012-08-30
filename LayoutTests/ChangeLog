@@ -1,3 +1,17 @@
+2012-08-24  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove uses of ClassInfo in StrictEq and CompareEq in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=93401
+
+        Reviewed by Filip Pizlo.
+
+        New test to make sure the DFG watchpoint works correctly for these cases.
+
+        * fast/js/document-all-triggers-masquerades-watchpoint-expected.txt: Added.
+        * fast/js/document-all-triggers-masquerades-watchpoint.html: Added.
+        * fast/js/script-tests/document-all-triggers-masquerades-watchpoint.js: Added.
+        (f):
+
 2012-08-30  Philip Rogers  <pdr@google.com>
 
         Unreviewed rebaseline after r127163.

@@ -1072,7 +1072,7 @@ void SpeculativeJIT::compilePeepHoleDoubleBranch(Node& node, NodeIndex branchNod
     jump(notTaken);
 }
 
-void SpeculativeJIT::compilePeepHoleObjectEquality(Node& node, NodeIndex branchNodeIndex, const ClassInfo* classInfo, SpeculatedTypeChecker speculatedTypeChecker)
+void SpeculativeJIT::compilePeepHoleObjectEquality(Node& node, NodeIndex branchNodeIndex)
 {
     Node& branchNode = at(branchNodeIndex);
     BlockIndex taken = branchNode.takenBlockIndex();
@@ -1093,11 +1093,47 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node& node, NodeIndex branchN
     GPRReg op1GPR = op1.gpr();
     GPRReg op2GPR = op2.gpr();
     
-    if (!speculatedTypeChecker(m_state.forNode(node.child1()).m_type))
-        speculationCheck(BadType, JSValueSource::unboxedCell(op1GPR), node.child1().index(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(op1GPR, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(classInfo)));
-    if (!speculatedTypeChecker(m_state.forNode(node.child2()).m_type))
-        speculationCheck(BadType, JSValueSource::unboxedCell(op2GPR), node.child2().index(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(op2GPR, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(classInfo)));
-    
+    if (m_jit.graph().globalObjectFor(node.codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid()) {
+        m_jit.graph().globalObjectFor(node.codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
+        speculationCheck(BadType, JSValueSource::unboxedCell(op1GPR), node.child1().index(), 
+            m_jit.branchPtr(
+                MacroAssembler::Equal, 
+                MacroAssembler::Address(op1GPR, JSCell::structureOffset()), 
+                MacroAssembler::TrustedImmPtr(m_jit.globalData()->stringStructure.get())));
+        speculationCheck(BadType, JSValueSource::unboxedCell(op2GPR), node.child2().index(), 
+            m_jit.branchPtr(
+                MacroAssembler::Equal, 
+                MacroAssembler::Address(op2GPR, JSCell::structureOffset()), 
+                MacroAssembler::TrustedImmPtr(m_jit.globalData()->stringStructure.get())));
+    } else {
+        GPRTemporary structure(this);
+        GPRReg structureGPR = structure.gpr();
+
+        m_jit.loadPtr(MacroAssembler::Address(op1GPR, JSCell::structureOffset()), structureGPR);
+        speculationCheck(BadType, JSValueSource::unboxedCell(op1GPR), node.child1().index(), 
+            m_jit.branchPtr(
+                MacroAssembler::Equal, 
+                structureGPR, 
+                MacroAssembler::TrustedImmPtr(m_jit.globalData()->stringStructure.get())));
+        speculationCheck(BadType, JSValueSource::unboxedCell(op1GPR), node.child1().index(), 
+            m_jit.branchTest8(
+                MacroAssembler::NonZero, 
+                MacroAssembler::Address(structureGPR, Structure::typeInfoFlagsOffset()), 
+                MacroAssembler::TrustedImm32(MasqueradesAsUndefined)));
+
+        m_jit.loadPtr(MacroAssembler::Address(op2GPR, JSCell::structureOffset()), structureGPR);
+        speculationCheck(BadType, JSValueSource::unboxedCell(op2GPR), node.child2().index(), 
+            m_jit.branchPtr(
+                MacroAssembler::Equal, 
+                structureGPR, 
+                MacroAssembler::TrustedImmPtr(m_jit.globalData()->stringStructure.get())));
+        speculationCheck(BadType, JSValueSource::unboxedCell(op2GPR), node.child2().index(), 
+            m_jit.branchTest8(
+                MacroAssembler::NonZero, 
+                MacroAssembler::Address(structureGPR, Structure::typeInfoFlagsOffset()), 
+                MacroAssembler::TrustedImm32(MasqueradesAsUndefined)));
+    }
+
     branchPtr(condition, op1GPR, op2GPR, taken);
     jump(notTaken);
 }
@@ -1151,37 +1187,17 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node& node, MacroAssembler::Relationa
         else if (Node::shouldSpeculateNumber(at(node.child1()), at(node.child2())))
             compilePeepHoleDoubleBranch(node, branchNodeIndex, doubleCondition);
         else if (node.op() == CompareEq) {
-            if (Node::shouldSpeculateFinalObject(
-                    at(node.child1()), at(node.child2()))) {
-                compilePeepHoleObjectEquality(
-                    node, branchNodeIndex, &JSFinalObject::s_info,
-                    isFinalObjectSpeculation);
-            } else if (Node::shouldSpeculateArray(
-                           at(node.child1()), at(node.child2()))) {
-                compilePeepHoleObjectEquality(
-                    node, branchNodeIndex, &JSArray::s_info,
-                    isArraySpeculation);
-            } else if (at(node.child1()).shouldSpeculateFinalObject()
-                       && at(node.child2()).shouldSpeculateFinalObjectOrOther()) {
-                compilePeepHoleObjectToObjectOrOtherEquality(
-                    node.child1(), node.child2(), branchNodeIndex,
-                    &JSFinalObject::s_info, isFinalObjectSpeculation);
-            } else if (at(node.child1()).shouldSpeculateFinalObjectOrOther()
-                       && at(node.child2()).shouldSpeculateFinalObject()) {
-                compilePeepHoleObjectToObjectOrOtherEquality(
-                    node.child2(), node.child1(), branchNodeIndex,
-                    &JSFinalObject::s_info, isFinalObjectSpeculation);
-            } else if (at(node.child1()).shouldSpeculateArray()
-                       && at(node.child2()).shouldSpeculateArrayOrOther()) {
-                compilePeepHoleObjectToObjectOrOtherEquality(
-                    node.child1(), node.child2(), branchNodeIndex,
-                    &JSArray::s_info, isArraySpeculation);
-            } else if (at(node.child1()).shouldSpeculateArrayOrOther()
-                       && at(node.child2()).shouldSpeculateArray()) {
-                compilePeepHoleObjectToObjectOrOtherEquality(
-                    node.child2(), node.child1(), branchNodeIndex,
-                    &JSArray::s_info, isArraySpeculation);
-            } else {
+            if (at(node.child1()).shouldSpeculateString() || at(node.child2()).shouldSpeculateString()) {
+                nonSpeculativePeepholeBranch(node, branchNodeIndex, condition, operation);
+                return true;
+            }
+            if (at(node.child1()).shouldSpeculateNonStringCell() && at(node.child2()).shouldSpeculateNonStringCellOrOther())
+                compilePeepHoleObjectToObjectOrOtherEquality(node.child1(), node.child2(), branchNodeIndex);
+            else if (at(node.child1()).shouldSpeculateNonStringCellOrOther() && at(node.child2()).shouldSpeculateNonStringCell())
+                compilePeepHoleObjectToObjectOrOtherEquality(node.child2(), node.child1(), branchNodeIndex);
+            else if (at(node.child1()).shouldSpeculateNonStringCell() && at(node.child2()).shouldSpeculateNonStringCell())
+                compilePeepHoleObjectEquality(node, branchNodeIndex);
+            else {
                 nonSpeculativePeepholeBranch(node, branchNodeIndex, condition, operation);
                 return true;
             }
@@ -2799,45 +2815,23 @@ bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition con
     }
     
     if (node.op() == CompareEq) {
-        if (Node::shouldSpeculateFinalObject(at(node.child1()), at(node.child2()))) {
-            compileObjectEquality(node, &JSFinalObject::s_info, isFinalObjectSpeculation);
+        if (at(node.child1()).shouldSpeculateString() || at(node.child2()).shouldSpeculateString()) {
+            nonSpeculativeNonPeepholeCompare(node, condition, operation);
             return false;
         }
         
-        if (Node::shouldSpeculateArray(at(node.child1()), at(node.child2()))) {
-            compileObjectEquality(node, &JSArray::s_info, isArraySpeculation);
+        if (at(node.child1()).shouldSpeculateNonStringCell() && at(node.child2()).shouldSpeculateNonStringCellOrOther()) {
+            compileObjectToObjectOrOtherEquality(node.child1(), node.child2());
             return false;
         }
         
-        if (at(node.child1()).shouldSpeculateFinalObject()
-            && at(node.child2()).shouldSpeculateFinalObjectOrOther()) {
-            compileObjectToObjectOrOtherEquality(
-                node.child1(), node.child2(), &JSFinalObject::s_info,
-                isFinalObjectSpeculation);
+        if (at(node.child1()).shouldSpeculateNonStringCellOrOther() && at(node.child2()).shouldSpeculateNonStringCell()) {
+            compileObjectToObjectOrOtherEquality(node.child2(), node.child1());
             return false;
         }
-        
-        if (at(node.child1()).shouldSpeculateFinalObjectOrOther()
-            && at(node.child2()).shouldSpeculateFinalObject()) {
-            compileObjectToObjectOrOtherEquality(
-                node.child2(), node.child1(), &JSFinalObject::s_info,
-                isFinalObjectSpeculation);
-            return false;
-        }
-        
-        if (at(node.child1()).shouldSpeculateArray()
-            && at(node.child2()).shouldSpeculateArrayOrOther()) {
-            compileObjectToObjectOrOtherEquality(
-                node.child1(), node.child2(), &JSArray::s_info,
-                isArraySpeculation);
-            return false;
-        }
-        
-        if (at(node.child1()).shouldSpeculateArrayOrOther()
-            && at(node.child2()).shouldSpeculateArray()) {
-            compileObjectToObjectOrOtherEquality(
-                node.child2(), node.child1(), &JSArray::s_info,
-                isArraySpeculation);
+
+        if (at(node.child1()).shouldSpeculateNonStringCell() && at(node.child2()).shouldSpeculateNonStringCell()) {
+            compileObjectEquality(node);
             return false;
         }
     }
@@ -2970,36 +2964,20 @@ bool SpeculativeJIT::compileStrictEq(Node& node)
         return false;
     }
     
-    // 4) If the operands are predicted final object or array, then do a final object
-    //    or array comparison.
-    
-    if (Node::shouldSpeculateFinalObject(at(node.child1()), at(node.child2()))) {
+    if (at(node.child1()).shouldSpeculateString() || at(node.child2()).shouldSpeculateString())
+        return nonSpeculativeStrictEq(node);
+    if (at(node.child1()).shouldSpeculateNonStringCell() && at(node.child2()).shouldSpeculateNonStringCell()) {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {
             NodeIndex branchNodeIndex = m_jit.graph().m_blocks[m_block]->at(branchIndexInBlock);
-            compilePeepHoleObjectEquality(node, branchNodeIndex, &JSFinalObject::s_info, isFinalObjectSpeculation);
+            compilePeepHoleObjectEquality(node, branchNodeIndex);
             use(node.child1());
             use(node.child2());
             m_indexInBlock = branchIndexInBlock;
             m_compileIndex = branchNodeIndex;
             return true;
         }
-        compileObjectEquality(node, &JSFinalObject::s_info, isFinalObjectSpeculation);
-        return false;
-    }
-    
-    if (Node::shouldSpeculateArray(at(node.child1()), at(node.child2()))) {
-        unsigned branchIndexInBlock = detectPeepHoleBranch();
-        if (branchIndexInBlock != UINT_MAX) {
-            NodeIndex branchNodeIndex = m_jit.graph().m_blocks[m_block]->at(branchIndexInBlock);
-            compilePeepHoleObjectEquality(node, branchNodeIndex, &JSArray::s_info, isArraySpeculation);
-            use(node.child1());
-            use(node.child2());
-            m_indexInBlock = branchIndexInBlock;
-            m_compileIndex = branchNodeIndex;
-            return true;
-        }
-        compileObjectEquality(node, &JSArray::s_info, isArraySpeculation);
+        compileObjectEquality(node);
         return false;
     }
     

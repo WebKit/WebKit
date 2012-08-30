@@ -1,3 +1,40 @@
+2012-08-24  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove uses of ClassInfo in StrictEq and CompareEq in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=93401
+
+        Reviewed by Filip Pizlo.
+
+        Another incremental step in removing the dependence on ClassInfo pointers in object headers.
+
+        * bytecode/SpeculatedType.h:
+        (JSC::isCellOrOtherSpeculation):
+        (JSC):
+        * dfg/DFGAbstractState.cpp: Updated the CFA to reflect the changes to the backend.
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGNode.h:
+        (Node):
+        (JSC::DFG::Node::shouldSpeculateString): Added this new function since it was conspicuously absent.
+        (JSC::DFG::Node::shouldSpeculateNonStringCellOrOther): Also add this function for use in the CFA.
+        * dfg/DFGSpeculativeJIT.cpp: Refactored how we handle CompareEq and CompareStrictEq in the DFG. We now just 
+        check for Strings by comparing the object's Structure to the global Structure for strings. We only 
+        check for MasqueradesAsUndefined if the watchpoint has fired. These changes allow us to remove our 
+        uses of the ClassInfo pointer for compiling these nodes.
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp: Same changes for 32 bit as for 64 bit.
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+
 2012-08-30  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Implement IncrementalSweeper for PLATFORM(BLACKBERRY)

@@ -916,12 +916,27 @@ struct Node {
     {
         return isBooleanSpeculation(prediction());
     }
-    
+   
+    bool shouldSpeculateString()
+    {
+        return isStringSpeculation(prediction());
+    }
+ 
     bool shouldSpeculateFinalObject()
     {
         return isFinalObjectSpeculation(prediction());
     }
     
+    bool shouldSpeculateNonStringCell()
+    {
+        return isNonStringCellSpeculation(prediction());
+    }
+
+    bool shouldSpeculateNonStringCellOrOther()
+    {
+        return isNonStringCellOrOtherSpeculation(prediction());
+    }
+
     bool shouldSpeculateFinalObjectOrOther()
     {
         return isFinalObjectOrOtherSpeculation(prediction());
