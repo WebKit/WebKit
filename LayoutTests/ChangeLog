@@ -1,3 +1,9 @@
+2012-08-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed gardening, unskip now passing tests.
+
+        * platform/qt-5.0-wk2/Skipped:
+
 2012-08-30  Andrei Onea  <onea@adobe.com>
 
         [CSSRegions]Add support for text-shadow in region styling
