@@ -1,3 +1,9 @@
+2012-08-29  Dean Jackson  <dino@apple.com>
+
+        Unreviewed gardening for Mac Lion after r127046.
+
+        * platform/mac-lion/TestExpectations:
+
 2012-08-29  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed Gardening. platform/win/accessibility/single-select-children.html times out on Windows.
