@@ -1,5 +1,11 @@
 2012-08-30  Geoffrey Garen  <ggaren@apple.com>
 
+        Second step toward fixing the Windows build: Add new symbols.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2012-08-30  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix the Qt build: add an #include.
 
         * bytecode/GetByIdStatus.cpp:
