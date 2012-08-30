@@ -77,6 +77,11 @@ namespace WebCore {
         // Returns the listener object, either a function or an object.
         v8::Local<v8::Object> getListenerObject(ScriptExecutionContext* context)
         {
+            // prepareListenerObject can potentially deref this event listener
+            // as it may attempt to compile a function (lazy event listener), get an error
+            // and invoke onerror callback which can execute arbitrary JS code.
+            // Protect this event listener to keep it alive.
+            RefPtr<V8AbstractEventListener> guard(this);
             prepareListenerObject(context);
             return v8::Local<v8::Object>::New(m_listener.get());
         }

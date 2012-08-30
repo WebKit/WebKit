@@ -1,3 +1,18 @@
+2012-08-30  Anton Muhin  <antonm@chromium.org>
+
+        Heap-use-after-free in WebCore::ElementV8Internal::onclickAttrGetter
+        https://bugs.webkit.org/show_bug.cgi?id=94440
+
+        Reviewed by Adam Barth.
+
+        The problem appears due to onerror callback which resets onclick attribute.
+        As a part of changing onclick attribute value, previous event listener
+        gets deref which led to its destruction and hence use-after-free.
+        Refing it in ::getListenerObject helps to prevent this unfortunate scenario.
+
+        * fast/events/set-attribute-listener-window-onerror-crash-expected.txt: Added.
+        * fast/events/set-attribute-listener-window-onerror-crash.html: Added.
+
 2012-08-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Gardening after r127135, r127039
