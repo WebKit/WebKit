@@ -30,7 +30,6 @@
 #include "InitializeThreading.h"
 #include "JSStringRef.h"
 #include "OpaqueJSString.h"
-#include <runtime/UString.h>
 #include <runtime/JSValue.h>
 #include <wtf/OwnArrayPtr.h>
 

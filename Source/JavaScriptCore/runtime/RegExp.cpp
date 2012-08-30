@@ -40,7 +40,7 @@ namespace JSC {
 
 const ClassInfo RegExp::s_info = { "RegExp", 0, 0, 0, CREATE_METHOD_TABLE(RegExp) };
 
-RegExpFlags regExpFlags(const UString& string)
+RegExpFlags regExpFlags(const String& string)
 {
     RegExpFlags flags = NoFlags;
 
@@ -83,7 +83,7 @@ public:
 
     ~RegExpFunctionalTestCollector();
 
-    void outputOneTest(RegExp*, UString, int, int*, int);
+    void outputOneTest(RegExp*, String, int, int*, int);
     void clearRegExp(RegExp* regExp)
     {
         if (regExp == m_lastRegExp)
@@ -93,7 +93,7 @@ public:
 private:
     RegExpFunctionalTestCollector();
 
-    void outputEscapedUString(const UString&, bool escapeSlash = false);
+    void outputEscapedString(const String&, bool escapeSlash = false);
 
     static RegExpFunctionalTestCollector* s_instance;
     FILE* m_file;
@@ -111,12 +111,12 @@ RegExpFunctionalTestCollector* RegExpFunctionalTestCollector::get()
     return s_instance;
 }
 
-void RegExpFunctionalTestCollector::outputOneTest(RegExp* regExp, UString s, int startOffset, int* ovector, int result)
+void RegExpFunctionalTestCollector::outputOneTest(RegExp* regExp, String s, int startOffset, int* ovector, int result)
 {
     if ((!m_lastRegExp) || (m_lastRegExp != regExp)) {
         m_lastRegExp = regExp;
         fputc('/', m_file);
-        outputEscapedUString(regExp->pattern(), true);
+        outputEscapedString(regExp->pattern(), true);
         fputc('/', m_file);
         if (regExp->global())
             fputc('g', m_file);
@@ -128,7 +128,7 @@ void RegExpFunctionalTestCollector::outputOneTest(RegExp* regExp, UString s, int
     }
 
     fprintf(m_file, " \"");
-    outputEscapedUString(s);
+    outputEscapedString(s);
     fprintf(m_file, "\", %d, %d, (", startOffset, result);
     for (unsigned i = 0; i <= regExp->numSubpatterns(); i++) {
         int subpatternBegin = ovector[i * 2];
@@ -159,7 +159,7 @@ RegExpFunctionalTestCollector::~RegExpFunctionalTestCollector()
     s_instance = 0;
 }
 
-void RegExpFunctionalTestCollector::outputEscapedUString(const UString& s, bool escapeSlash)
+void RegExpFunctionalTestCollector::outputEscapedString(const String& s, bool escapeSlash)
 {
     int len = s.length();
     
@@ -217,7 +217,7 @@ void RegExpFunctionalTestCollector::outputEscapedUString(const UString& s, bool 
 }
 #endif
 
-RegExp::RegExp(JSGlobalData& globalData, const UString& patternString, RegExpFlags flags)
+RegExp::RegExp(JSGlobalData& globalData, const String& patternString, RegExpFlags flags)
     : JSCell(globalData, globalData.regExpStructure.get())
     , m_state(NotCompiled)
     , m_patternString(patternString)
@@ -250,14 +250,14 @@ void RegExp::destroy(JSCell* cell)
     thisObject->RegExp::~RegExp();
 }
 
-RegExp* RegExp::createWithoutCaching(JSGlobalData& globalData, const UString& patternString, RegExpFlags flags)
+RegExp* RegExp::createWithoutCaching(JSGlobalData& globalData, const String& patternString, RegExpFlags flags)
 {
     RegExp* regExp = new (NotNull, allocateCell<RegExp>(globalData.heap)) RegExp(globalData, patternString, flags);
     regExp->finishCreation(globalData);
     return regExp;
 }
 
-RegExp* RegExp::create(JSGlobalData& globalData, const UString& patternString, RegExpFlags flags)
+RegExp* RegExp::create(JSGlobalData& globalData, const String& patternString, RegExpFlags flags)
 {
     return globalData.regExpCache()->lookupOrCreate(patternString, flags);
 }
@@ -318,7 +318,7 @@ void RegExp::compileIfNecessary(JSGlobalData& globalData, Yarr::YarrCharSize cha
     compile(&globalData, charSize);
 }
 
-int RegExp::match(JSGlobalData& globalData, const UString& s, unsigned startOffset, Vector<int, 32>& ovector)
+int RegExp::match(JSGlobalData& globalData, const String& s, unsigned startOffset, Vector<int, 32>& ovector)
 {
 #if ENABLE(REGEXP_TRACING)
     m_rtMatchCallCount++;
@@ -440,7 +440,7 @@ void RegExp::compileIfNecessaryMatchOnly(JSGlobalData& globalData, Yarr::YarrCha
     compileMatchOnly(&globalData, charSize);
 }
 
-MatchResult RegExp::match(JSGlobalData& globalData, const UString& s, unsigned startOffset)
+MatchResult RegExp::match(JSGlobalData& globalData, const String& s, unsigned startOffset)
 {
 #if ENABLE(REGEXP_TRACING)
     m_rtMatchCallCount++;
@@ -494,7 +494,7 @@ void RegExp::invalidateCode()
 }
 
 #if ENABLE(YARR_JIT_DEBUG)
-void RegExp::matchCompareWithInterpreter(const UString& s, int startOffset, int* offsetVector, int jitResult)
+void RegExp::matchCompareWithInterpreter(const String& s, int startOffset, int* offsetVector, int jitResult)
 {
     int offsetVectorSize = (m_numSubpatterns + 1) * 2;
     Vector<int, 32> interpreterOvector;

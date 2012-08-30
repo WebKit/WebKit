@@ -26,11 +26,11 @@
 #ifndef YarrSyntaxChecker_h
 #define YarrSyntaxChecker_h
 
-#include <runtime/UString.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Yarr {
 
-const char* checkSyntax(const UString& pattern);
+const char* checkSyntax(const String& pattern);
 
 }} // JSC::YARR
 

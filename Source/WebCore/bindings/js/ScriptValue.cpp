@@ -39,7 +39,6 @@
 
 #include <heap/Strong.h>
 #include <runtime/JSLock.h>
-#include <runtime/UString.h>
 
 using namespace JSC;
 
@@ -50,16 +49,14 @@ bool ScriptValue::getString(ScriptState* scriptState, String& result) const
     if (!m_value)
         return false;
     JSLockHolder lock(scriptState);
-    UString ustring;
-    if (!m_value.get().getString(scriptState, ustring))
+    if (!m_value.get().getString(scriptState, result))
         return false;
-    result = ustringToString(ustring);
     return true;
 }
 
 String ScriptValue::toString(ScriptState* scriptState) const
 {
-    String result = ustringToString(m_value.get().toString(scriptState)->value(scriptState));
+    String result = m_value.get().toString(scriptState)->value(scriptState);
     // Handle the case where an exception is thrown as part of invoking toString on the object.
     if (scriptState->hadException())
         scriptState->clearException();
@@ -138,7 +135,7 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, J
     if (value.isNumber())
         return InspectorBasicValue::create(value.asNumber());
     if (value.isString()) {
-        UString s = value.getString(scriptState);
+        String s = value.getString(scriptState);
         return InspectorString::create(String(s.characters(), s.length()));
     }
     if (value.isObject()) {

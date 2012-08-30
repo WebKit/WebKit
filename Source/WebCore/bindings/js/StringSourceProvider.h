@@ -42,13 +42,13 @@ namespace WebCore {
             return adoptRef(new StringSourceProvider(source, url, startPosition));
         }
 
-        virtual JSC::UString getRange(int start, int end) const OVERRIDE
+        virtual String getRange(int start, int end) const OVERRIDE
         {
             int length = end - start;
             ASSERT(length >= 0);
             ASSERT(start + length <= this->length());
 
-            return JSC::UString(StringImpl::create(m_source.impl(), start, length));
+            return String(StringImpl::create(m_source.impl(), start, length));
         }
 
         const StringImpl* data() const { return m_source.impl(); }
@@ -57,18 +57,13 @@ namespace WebCore {
 
     private:
         StringSourceProvider(const String& source, const String& url, const TextPosition& startPosition)
-            : ScriptSourceProvider(stringToUString(url), startPosition)
+            : ScriptSourceProvider(url, startPosition)
             , m_source(source)
         {
         }
         
         String m_source;
     };
-
-    inline JSC::SourceCode makeSource(const String& source, const String& url = String(), const TextPosition& startPosition = TextPosition::minimumPosition())
-    {
-        return JSC::SourceCode(StringSourceProvider::create(source, url, startPosition), startPosition.m_line.oneBasedInt());
-    }
 
 } // namespace WebCore
 

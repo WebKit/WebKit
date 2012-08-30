@@ -27,7 +27,7 @@
 #define OpaqueJSString_h
 
 #include <wtf/ThreadSafeRefCounted.h>
-#include <runtime/UString.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
     class Identifier;
@@ -46,12 +46,13 @@ struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
         return adoptRef(new OpaqueJSString(characters, length));
     }
 
-    JS_EXPORT_PRIVATE static PassRefPtr<OpaqueJSString> create(const JSC::UString&);
+    JS_EXPORT_PRIVATE static PassRefPtr<OpaqueJSString> create(const String&);
 
     UChar* characters() { return this ? m_characters : 0; }
     unsigned length() { return this ? m_length : 0; }
 
-    JSC::UString ustring() const;
+    // FIXME: rename to string().
+    String ustring() const;
     JSC::Identifier identifier(JSC::JSGlobalData*) const;
 
 private:

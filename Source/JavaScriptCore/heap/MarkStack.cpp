@@ -38,7 +38,6 @@
 #include "ScopeChain.h"
 #include "SlotVisitorInlineMethods.h"
 #include "Structure.h"
-#include "UString.h"
 #include "WriteBarrier.h"
 #include <wtf/Atomics.h>
 #include <wtf/DataLog.h>

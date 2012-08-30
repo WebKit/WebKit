@@ -40,12 +40,12 @@ namespace JSC {
 
 static const char* NonJSExecution = "(idle)";
 
-PassRefPtr<ProfileGenerator> ProfileGenerator::create(ExecState* exec, const UString& title, unsigned uid)
+PassRefPtr<ProfileGenerator> ProfileGenerator::create(ExecState* exec, const String& title, unsigned uid)
 {
     return adoptRef(new ProfileGenerator(exec, title, uid));
 }
 
-ProfileGenerator::ProfileGenerator(ExecState* exec, const UString& title, unsigned uid)
+ProfileGenerator::ProfileGenerator(ExecState* exec, const String& title, unsigned uid)
     : m_origin(exec ? exec->lexicalGlobalObject() : 0)
     , m_profileGroup(exec ? exec->lexicalGlobalObject()->profileGroup() : 0)
 {
@@ -59,7 +59,7 @@ void ProfileGenerator::addParentForConsoleStart(ExecState* exec)
 {
     int lineNumber;
     intptr_t sourceID;
-    UString sourceURL;
+    String sourceURL;
     JSValue function;
 
     exec->interpreter()->retrieveLastCaller(exec, lineNumber, sourceID, sourceURL, function);
@@ -67,7 +67,7 @@ void ProfileGenerator::addParentForConsoleStart(ExecState* exec)
     m_head->insertNode(m_currentNode.get());
 }
 
-const UString& ProfileGenerator::title() const
+const String& ProfileGenerator::title() const
 {
     return m_profile->title();
 }
@@ -135,7 +135,7 @@ void ProfileGenerator::stopProfiling()
     m_currentNode = m_currentNode->parent();
 
    if (double headSelfTime = m_head->selfTime()) {
-        RefPtr<ProfileNode> idleNode = ProfileNode::create(0, CallIdentifier(NonJSExecution, UString(), 0), m_head.get(), m_head.get());
+        RefPtr<ProfileNode> idleNode = ProfileNode::create(0, CallIdentifier(NonJSExecution, String(), 0), m_head.get(), m_head.get());
 
         idleNode->setTotalTime(headSelfTime);
         idleNode->setSelfTime(headSelfTime);

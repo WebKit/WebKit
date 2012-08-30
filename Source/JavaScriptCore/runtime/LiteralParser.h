@@ -29,7 +29,7 @@
 #include "Identifier.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSValue.h"
-#include "UString.h"
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
@@ -67,7 +67,7 @@ struct LiteralParserToken {
     TokenType type;
     const CharType* start;
     const CharType* end;
-    UString stringBuffer;
+    String stringBuffer;
     union {
         double numberToken;
         struct {
@@ -94,7 +94,7 @@ public:
     {
     }
     
-    UString getErrorMessage() 
+    String getErrorMessage()
     { 
         if (!m_lexer.getErrorMessage().isEmpty())
             return String::format("JSON Parse error: %s", m_lexer.getErrorMessage().ascii().data()).impl();
@@ -133,10 +133,10 @@ private:
             return m_currentToken;
         }
         
-        UString getErrorMessage() { return m_lexErrorMessage; }
+        String getErrorMessage() { return m_lexErrorMessage; }
         
     private:
-        UString m_lexErrorMessage;
+        String m_lexErrorMessage;
         template <ParserMode mode> TokenType lex(LiteralParserToken<CharType>&);
         ALWAYS_INLINE TokenType lexIdentifier(LiteralParserToken<CharType>&);
         template <ParserMode mode, char terminator> ALWAYS_INLINE TokenType lexString(LiteralParserToken<CharType>&);
@@ -153,7 +153,7 @@ private:
     ExecState* m_exec;
     typename LiteralParser<CharType>::Lexer m_lexer;
     ParserMode m_mode;
-    UString m_parseErrorMessage;
+    String m_parseErrorMessage;
     static unsigned const MaximumCachableCharacter = 128;
     FixedArray<Identifier, MaximumCachableCharacter> m_shortIdentifiers;
     FixedArray<Identifier, MaximumCachableCharacter> m_recentIdentifiers;

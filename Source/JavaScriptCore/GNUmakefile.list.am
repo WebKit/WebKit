@@ -658,10 +658,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/TimeoutChecker.h \
 	Source/JavaScriptCore/runtime/Tracing.h \
 	Source/JavaScriptCore/runtime/Uint16WithFraction.h \
-	Source/JavaScriptCore/runtime/UString.cpp \
-	Source/JavaScriptCore/runtime/UString.h \
-	Source/JavaScriptCore/runtime/UStringBuilder.h \
-	Source/JavaScriptCore/runtime/UStringConcatenate.h \
 	Source/JavaScriptCore/runtime/WeakGCMap.h \
 	Source/JavaScriptCore/runtime/WeakRandom.h \
 	Source/JavaScriptCore/runtime/WriteBarrier.h \

@@ -458,7 +458,7 @@ const char* ewk_frame_script_execute(Evas_Object* ewkFrame, const char* script)
 
     JSC::ExecState* exec = smartData->frame->script()->globalObject(WebCore::mainThreadNormalWorld())->globalExec();
     JSC::JSLockHolder lock(exec);
-    resultString = WebCore::ustringToString(result.toString(exec)->value(exec));
+    resultString = result.toString(exec)->value(exec);
     return eina_stringshare_add(resultString.utf8().data());
 #else
     notImplemented();

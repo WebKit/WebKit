@@ -85,7 +85,7 @@ EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::constructJSTestE
     if (!executionContext)
         return throwVMError(exec, createReferenceError(exec, "Constructor associated execution context is unavailable"));
 
-    AtomicString eventType = ustringToAtomicString(exec->argument(0).toString(exec)->value(exec));
+    AtomicString eventType = exec->argument(0).toString(exec)->value(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -185,7 +185,7 @@ JSValue jsTestEventConstructorAttr1(ExecState* exec, JSValue slotBase, PropertyN
     JSTestEventConstructor* castedThis = jsCast<JSTestEventConstructor*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestEventConstructor* impl = static_cast<TestEventConstructor*>(castedThis->impl());
-    JSValue result = jsString(exec, impl->attr1());
+    JSValue result = jsStringWithCache(exec, impl->attr1());
     return result;
 }
 
@@ -195,7 +195,7 @@ JSValue jsTestEventConstructorAttr2(ExecState* exec, JSValue slotBase, PropertyN
     JSTestEventConstructor* castedThis = jsCast<JSTestEventConstructor*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestEventConstructor* impl = static_cast<TestEventConstructor*>(castedThis->impl());
-    JSValue result = jsString(exec, impl->attr2());
+    JSValue result = jsStringWithCache(exec, impl->attr2());
     return result;
 }
 

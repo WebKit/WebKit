@@ -55,7 +55,7 @@ ScriptProfile::~ScriptProfile()
 
 String ScriptProfile::title() const
 {
-    return ustringToString(m_profile->title());
+    return m_profile->title();
 }
 
 unsigned int ScriptProfile::uid() const
@@ -80,8 +80,8 @@ static PassRefPtr<InspectorObject> buildInspectorObjectFor(const JSC::ProfileNod
 {
     RefPtr<InspectorObject> result = InspectorObject::create();
 
-    result->setString("functionName", ustringToString(node->functionName()));
-    result->setString("url", ustringToString(node->url()));
+    result->setString("functionName", node->functionName());
+    result->setString("url", node->url());
     result->setNumber("lineNumber", node->lineNumber());
     result->setNumber("totalTime", node->totalTime());
     result->setNumber("selfTime", node->selfTime());

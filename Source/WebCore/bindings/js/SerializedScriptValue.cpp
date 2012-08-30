@@ -386,7 +386,7 @@ private:
         : CloneBase(exec)
         , m_buffer(out)
         , m_blobURLs(blobURLs)
-        , m_emptyIdentifier(exec, UString("", 0))
+        , m_emptyIdentifier(exec, emptyString())
     {
         write(CurrentVersion);
         fillTransferMap(messagePorts, m_transferredMessagePorts);
@@ -523,7 +523,7 @@ private:
         }
     }
 
-    void dumpString(UString str)
+    void dumpString(String str)
     {
         if (str.isEmpty())
             write(EmptyStringTag);
@@ -533,7 +533,7 @@ private:
         }
     }
 
-    void dumpStringObject(UString str)
+    void dumpStringObject(String str)
     {
         if (str.isEmpty())
             write(EmptyStringObjectTag);
@@ -589,7 +589,7 @@ private:
         }
 
         if (value.isString()) {
-            UString str = asString(value)->value(m_exec);
+            String str = asString(value)->value(m_exec);
             dumpString(str);
             return true;
         }
@@ -620,7 +620,7 @@ private:
             if (obj->inherits(&StringObject::s_info)) {
                 if (!startObjectInternal(obj)) // handle duplicates
                     return true;
-                UString str = asString(asStringObject(value)->internalValue())->value(m_exec);
+                String str = asString(asStringObject(value)->internalValue())->value(m_exec);
                 dumpStringObject(str);
                 return true;
             }
@@ -676,7 +676,7 @@ private:
                     flags[flagCount++] = 'm';
                 write(RegExpTag);
                 write(regExp->regExp()->pattern());
-                write(UString(flags, flagCount));
+                write(String(flags, flagCount));
                 return true;
             }
             if (obj->inherits(&JSMessagePort::s_info)) {
@@ -792,7 +792,7 @@ private:
 
     void write(const Identifier& ident)
     {
-        UString str = ident.ustring();
+        const String& str = ident.ustring();
         StringConstantPool::AddResult addResult = m_constantPool.add(str.impl(), m_constantPool.size());
         if (!addResult.isNewEntry) {
             write(StringPoolTag);
@@ -818,20 +818,12 @@ private:
             fail();
     }
 
-    void write(const UString& str)
+    void write(const String& str)
     {
         if (str.isNull())
             write(m_emptyIdentifier);
         else
             write(Identifier(m_exec, str));
-    }
-
-    void write(const String& str)
-    {
-        if (str.isEmpty())
-            write(m_emptyIdentifier);
-        else
-            write(Identifier(m_exec, str.impl()));
     }
 
     void write(const File* file)
@@ -1037,7 +1029,7 @@ public:
         const uint8_t* start = value.begin();
         const uint8_t* end = value.end();
         const uint32_t length = value.size() / sizeof(UChar);
-        UString str;
+        String str;
         if (!CloneDeserializer::readString(start, end, str, length))
             return String();
 
@@ -1057,7 +1049,7 @@ public:
         uint32_t length;
         if (!readLittleEndian(ptr, end, length) || length >= StringPoolTag)
             return String();
-        UString str;
+        String str;
         if (!readString(ptr, end, str, length))
             return String();
         return String(str.impl());
@@ -1077,7 +1069,7 @@ public:
 
 private:
     struct CachedString {
-        CachedString(const UString& string)
+        CachedString(const String& string)
             : m_string(string)
         {
         }
@@ -1088,10 +1080,11 @@ private:
                 m_jsString = JSC::jsString(exec, m_string);
             return m_jsString;
         }
-        const UString& ustring() { return m_string; }
+        // FIXME: rename to string().
+        const String& ustring() { return m_string; }
 
     private:
-        UString m_string;
+        String m_string;
         JSValue m_jsString;
     };
 
@@ -1240,7 +1233,7 @@ private:
         return read(i);
     }
 
-    static bool readString(const uint8_t*& ptr, const uint8_t* end, UString& str, unsigned length)
+    static bool readString(const uint8_t*& ptr, const uint8_t* end, String& str, unsigned length)
     {
         if (length >= numeric_limits<int32_t>::max() / sizeof(UChar))
             return false;
@@ -1250,7 +1243,7 @@ private:
             return false;
 
 #if ASSUME_LITTLE_ENDIAN
-        str = UString(reinterpret_cast<const UChar*>(ptr), length);
+        str = String(reinterpret_cast<const UChar*>(ptr), length);
         ptr += length * sizeof(UChar);
 #else
         Vector<UChar> buffer;
@@ -1260,7 +1253,7 @@ private:
             readLittleEndian(ptr, end, ch);
             buffer.append(ch);
         }
-        str = UString::adopt(buffer);
+        str = String::adopt(buffer);
 #endif
         return true;
     }
@@ -1295,7 +1288,7 @@ private:
             cachedString = CachedStringRef(&m_constantPool, index);
             return true;
         }
-        UString str;
+        String str;
         if (!readString(m_ptr, m_end, str, length)) {
             fail();
             return false;

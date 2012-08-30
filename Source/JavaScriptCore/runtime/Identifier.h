@@ -23,9 +23,9 @@
 
 #include "JSGlobalData.h"
 #include <wtf/ThreadSpecific.h>
-#include "UString.h"
 #include <wtf/WTFThreadData.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
@@ -45,14 +45,15 @@ namespace JSC {
         Identifier(JSGlobalData* globalData, const char (&characters)[charactersCount]) : m_string(add(globalData, characters)) { }
 
         Identifier(ExecState* exec, StringImpl* rep) : m_string(add(exec, rep)) { }
-        Identifier(ExecState* exec, const UString& s) : m_string(add(exec, s.impl())) { }
+        Identifier(ExecState* exec, const String& s) : m_string(add(exec, s.impl())) { }
 
         Identifier(JSGlobalData* globalData, const LChar* s, int length) : m_string(add(globalData, s, length)) { }
         Identifier(JSGlobalData* globalData, const UChar* s, int length) : m_string(add(globalData, s, length)) { }
         Identifier(JSGlobalData* globalData, StringImpl* rep) : m_string(add(globalData, rep)) { } 
-        Identifier(JSGlobalData* globalData, const UString& s) : m_string(add(globalData, s.impl())) { }
+        Identifier(JSGlobalData* globalData, const String& s) : m_string(add(globalData, s.impl())) { }
 
-        const UString& ustring() const { return m_string; }
+        // FIXME: fix this name.
+        const String& ustring() const { return m_string; }
         StringImpl* impl() const { return m_string.impl(); }
         
         const UChar* characters() const { return m_string.characters(); }
@@ -91,7 +92,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE static PassRefPtr<StringImpl> add(ExecState*, const char*);
 
     private:
-        UString m_string;
+        String m_string;
 
         template <typename CharType>
         ALWAYS_INLINE static uint32_t toUInt32FromCharacters(const CharType* characters, unsigned length, bool& ok);

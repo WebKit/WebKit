@@ -255,7 +255,6 @@ SOURCES += \
     runtime/Structure.cpp \
     runtime/SymbolTable.cpp \
     runtime/TimeoutChecker.cpp \
-    runtime/UString.cpp \
     tools/CodeProfile.cpp \
     tools/CodeProfiling.cpp \
     yarr/YarrJIT.cpp \

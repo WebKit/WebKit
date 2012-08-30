@@ -90,7 +90,6 @@ using JSC::ExecState;
 using JSC::Interpreter;
 using JSC::JSLock;
 using JSC::JSObject;
-using JSC::UString;
 
 using namespace std;
 using namespace WTF;

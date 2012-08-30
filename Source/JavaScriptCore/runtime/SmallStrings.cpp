@@ -31,6 +31,7 @@
 #include "JSString.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/StringImpl.h>
 
 namespace JSC {
 

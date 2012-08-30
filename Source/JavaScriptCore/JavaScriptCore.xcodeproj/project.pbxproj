@@ -58,7 +58,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		08DDA5C11264631700751732 /* UStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 08DDA5BB12645F1D00751732 /* UStringBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0776BF14FF002B00102332 /* JITCompilationEffort.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0776BD14FF002800102332 /* JITCompilationEffort.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0B839A14BCF45D00885B4F /* LLIntEntrypoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0B839514BCF45A00885B4F /* LLIntEntrypoints.cpp */; };
 		0F0B839B14BCF46000885B4F /* LLIntEntrypoints.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B839614BCF45A00885B4F /* LLIntEntrypoints.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -331,7 +330,6 @@
 		14469DEB107EC7E700650446 /* StringConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC18C3C00E16EE3300B34460 /* StringConstructor.cpp */; };
 		14469DEC107EC7E700650446 /* StringObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC18C3C20E16EE3300B34460 /* StringObject.cpp */; };
 		14469DED107EC7E700650446 /* StringPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC18C3C50E16EE3300B34460 /* StringPrototype.cpp */; };
-		14469DEE107EC7E700650446 /* UString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8850255597D01FF60F7 /* UString.cpp */; };
 		144836E7132DA7BE005BE785 /* ConservativeRoots.h in Headers */ = {isa = PBXBuildFile; fileRef = 149DAAF212EB559D0083B12B /* ConservativeRoots.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		145722861437E140005FDE26 /* StrongInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 145722851437E140005FDE26 /* StrongInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		146AAB380B66A94400E55F16 /* JSStringRefCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 146AAB370B66A94400E55F16 /* JSStringRefCF.cpp */; };
@@ -663,7 +661,6 @@
 		BC18C4680E16F5CD00B34460 /* StringObject.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C3C30E16EE3300B34460 /* StringObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C46A0E16F5CD00B34460 /* StringPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C3C60E16EE3300B34460 /* StringPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C46B0E16F5CD00B34460 /* SymbolTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A396A60CD2933100B5B4FF /* SymbolTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC18C4760E16F5CD00B34460 /* UString.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8860255597D01FF60F7 /* UString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C47A0E16F5CD00B34460 /* WebKitAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DE3D0F40DD8DDFB00468714 /* WebKitAvailability.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC18C5240E16FC8A00B34460 /* ArrayPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C5230E16FC8A00B34460 /* ArrayPrototype.lut.h */; };
 		BC18C5260E16FCA700B34460 /* StringPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C5250E16FCA700B34460 /* StringPrototype.lut.h */; };
@@ -817,8 +814,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0896C29B1265AAF600B1CDD3 /* UStringConcatenate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UStringConcatenate.h; sourceTree = "<group>"; };
-		08DDA5BB12645F1D00751732 /* UStringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UStringBuilder.h; sourceTree = "<group>"; };
 		0F0776BD14FF002800102332 /* JITCompilationEffort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITCompilationEffort.h; sourceTree = "<group>"; };
 		0F0B839514BCF45A00885B4F /* LLIntEntrypoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntEntrypoints.cpp; path = llint/LLIntEntrypoints.cpp; sourceTree = "<group>"; };
 		0F0B839614BCF45A00885B4F /* LLIntEntrypoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntEntrypoints.h; path = llint/LLIntEntrypoints.h; sourceTree = "<group>"; };
@@ -1518,8 +1513,6 @@
 		F692A87C0255597D01FF60F7 /* RegExpObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RegExpObject.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A87D0255597D01FF60F7 /* RegExp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExp.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		F692A87E0255597D01FF60F7 /* RegExp.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RegExp.h; sourceTree = "<group>"; tabWidth = 8; };
-		F692A8850255597D01FF60F7 /* UString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UString.cpp; sourceTree = "<group>"; tabWidth = 8; };
-		F692A8860255597D01FF60F7 /* UString.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = UString.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8870255597D01FF60F7 /* JSValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSValue.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		FE4A331D15BD2E07006F54F3 /* VMInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMInspector.cpp; sourceTree = "<group>"; };
 		FE4A331E15BD2E07006F54F3 /* VMInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMInspector.h; sourceTree = "<group>"; };
@@ -2235,10 +2228,6 @@
 				5D53726D0E1C546B0021E549 /* Tracing.d */,
 				5D53726E0E1C54880021E549 /* Tracing.h */,
 				866739D113BFDE710023D87C /* Uint16WithFraction.h */,
-				F692A8850255597D01FF60F7 /* UString.cpp */,
-				F692A8860255597D01FF60F7 /* UString.h */,
-				08DDA5BB12645F1D00751732 /* UStringBuilder.h */,
-				0896C29B1265AAF600B1CDD3 /* UStringConcatenate.h */,
 				14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */,
 				1420BE7A10AA6DDB00F455D2 /* WeakRandom.h */,
 				A7DCB77912E3D90500911940 /* WriteBarrier.h */,
@@ -2786,8 +2775,6 @@
 				5D53726F0E1C54880021E549 /* Tracing.h in Headers */,
 				866739D313BFDE710023D87C /* Uint16WithFraction.h in Headers */,
 				0F5F08CF146C7633000472A9 /* UnconditionalFinalizer.h in Headers */,
-				BC18C4760E16F5CD00B34460 /* UString.h in Headers */,
-				08DDA5C11264631700751732 /* UStringBuilder.h in Headers */,
 				0F963B3813FC6FE90002D9B2 /* ValueProfile.h in Headers */,
 				0F426A481460CBB300131F8F /* ValueRecovery.h in Headers */,
 				0F426A491460CBB700131F8F /* VirtualRegister.h in Headers */,
@@ -3433,7 +3420,6 @@
 				BCCF0D0C0EF0B8A500413C8F /* StructureStubInfo.cpp in Sources */,
 				A7386555118697B400540279 /* ThunkGenerators.cpp in Sources */,
 				14A42E3F0F4F60EE00599099 /* TimeoutChecker.cpp in Sources */,
-				14469DEE107EC7E700650446 /* UString.cpp in Sources */,
 				0FC81516140511B500CFA603 /* VTableSpectrum.cpp in Sources */,
 				0FC8150B14043C0E00CFA603 /* WriteBarrierSupport.cpp in Sources */,
 				86704B8412DBA33700A9FE7B /* YarrInterpreter.cpp in Sources */,

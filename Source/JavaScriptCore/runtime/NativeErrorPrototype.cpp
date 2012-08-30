@@ -24,7 +24,6 @@
 #include "JSGlobalObject.h"
 #include "JSString.h"
 #include "NativeErrorConstructor.h"
-#include "UString.h"
 
 namespace JSC {
 
@@ -35,7 +34,7 @@ NativeErrorPrototype::NativeErrorPrototype(ExecState* exec, Structure* structure
 {
 }
 
-void NativeErrorPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject, const UString& nameAndMessage, NativeErrorConstructor* constructor)
+void NativeErrorPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject, const WTF::String& nameAndMessage, NativeErrorConstructor* constructor)
 {
     Base::finishCreation(exec, globalObject);
     putDirect(exec->globalData(), exec->propertyNames().name, jsString(exec, nameAndMessage), DontEnum);

@@ -139,7 +139,7 @@ void JSRopeString::resolveRope(ExecState* exec) const
 }
 
 // Overview: These functions convert a JSString from holding a string in rope form
-// down to a simple UString representation.  It does so by building up the string
+// down to a simple String representation. It does so by building up the string
 // backwards, since we want to avoid recursion, we expect that the tree structure
 // representing the rope is likely imbalanced with more nodes down the left side
 // (since appending to the string is likely more common) - and as such resolving
@@ -214,7 +214,7 @@ void JSRopeString::outOfMemory(ExecState* exec) const
     for (size_t i = 0; i < s_maxInternalRopeLength && m_fibers[i]; ++i)
         m_fibers[i].clear();
     ASSERT(isRope());
-    ASSERT(m_value == UString());
+    ASSERT(m_value.isNull());
     if (exec)
         throwOutOfMemoryError(exec);
 }

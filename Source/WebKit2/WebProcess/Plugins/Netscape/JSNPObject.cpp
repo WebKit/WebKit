@@ -48,7 +48,7 @@ namespace WebKit {
 
 static NPIdentifier npIdentifierFromIdentifier(PropertyName propertyName)
 {
-    UString name(propertyName.publicName());
+    String name(propertyName.publicName());
     if (name.isNull())
         return 0;
     return static_cast<NPIdentifier>(IdentifierRep::get(name.utf8().data()));

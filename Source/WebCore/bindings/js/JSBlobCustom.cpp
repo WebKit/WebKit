@@ -129,7 +129,7 @@ EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
         if (item.inherits(&JSBlob::s_info))
             blobBuilder->append(toBlob(item));
         else {
-            String string = ustringToString(item.toString(exec)->value(exec));
+            String string = item.toString(exec)->value(exec);
             if (exec->hadException())
                 return JSValue::encode(jsUndefined());
             blobBuilder->append(string, endings, ASSERT_NO_EXCEPTION);

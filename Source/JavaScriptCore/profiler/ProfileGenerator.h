@@ -37,15 +37,14 @@ namespace JSC {
     class JSGlobalObject;
     class Profile;
     class ProfileNode;
-    class UString;
     struct CallIdentifier;    
 
     class ProfileGenerator : public RefCounted<ProfileGenerator>  {
     public:
-        static PassRefPtr<ProfileGenerator> create(ExecState*, const UString& title, unsigned uid);
+        static PassRefPtr<ProfileGenerator> create(ExecState*, const WTF::String& title, unsigned uid);
 
         // Members
-        const UString& title() const;
+        const WTF::String& title() const;
         PassRefPtr<Profile> profile() const { return m_profile; }
         JSGlobalObject* origin() const { return m_origin; }
         unsigned profileGroup() const { return m_profileGroup; }
@@ -62,7 +61,7 @@ namespace JSC {
         typedef void (ProfileGenerator::*ProfileFunction)(ExecState* callerOrHandlerCallFrame, const CallIdentifier& callIdentifier);
 
     private:
-        ProfileGenerator(ExecState*, const UString& title, unsigned uid);
+        ProfileGenerator(ExecState*, const WTF::String& title, unsigned uid);
         void addParentForConsoleStart(ExecState*);
 
         void removeProfileStart();

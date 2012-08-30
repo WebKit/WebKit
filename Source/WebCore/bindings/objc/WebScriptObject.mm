@@ -317,7 +317,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     JSLockHolder lock(exec);
     ASSERT(!exec->hadException());
 
-    JSValue function = [self _imp]->get(exec, Identifier(exec, stringToUString(String(name))));
+    JSValue function = [self _imp]->get(exec, Identifier(exec, String(name)));
     CallData callData;
     CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone)
@@ -379,7 +379,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     JSLockHolder lock(exec);
 
     PutPropertySlot slot;
-    [self _imp]->methodTable()->put([self _imp], exec, Identifier(exec, stringToUString(String(key))), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), slot);
+    [self _imp]->methodTable()->put([self _imp], exec, Identifier(exec, String(key)), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), slot);
 
     if (exec->hadException()) {
         addExceptionToConsole(exec);
@@ -404,7 +404,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         // leaving the lock permanently held
         JSLockHolder lock(exec);
         
-        JSValue result = [self _imp]->get(exec, Identifier(exec, stringToUString(String(key))));
+        JSValue result = [self _imp]->get(exec, Identifier(exec, String(key)));
         
         if (exec->hadException()) {
             addExceptionToConsole(exec);
@@ -433,7 +433,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ASSERT(!exec->hadException());
 
     JSLockHolder lock(exec);
-    [self _imp]->methodTable()->deleteProperty([self _imp], exec, Identifier(exec, stringToUString(String(key))));
+    [self _imp]->methodTable()->deleteProperty([self _imp], exec, Identifier(exec, String(key)));
 
     if (exec->hadException()) {
         addExceptionToConsole(exec);
@@ -452,7 +452,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ASSERT(!exec->hadException());
 
     JSLockHolder lock(exec);
-    BOOL result = [self _imp]->hasProperty(exec, Identifier(exec, stringToUString(String(key))));
+    BOOL result = [self _imp]->hasProperty(exec, Identifier(exec, String(key)));
 
     if (exec->hadException()) {
         addExceptionToConsole(exec);
@@ -569,7 +569,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
     if (value.isString()) {
         ExecState* exec = rootObject->globalObject()->globalExec();
-        const UString& u = asString(value)->value(exec);
+        const String& u = asString(value)->value(exec);
         return [NSString stringWithCharacters:u.characters() length:u.length()];
     }
 

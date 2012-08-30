@@ -28,7 +28,6 @@
 #include "RegExp.h"
 #include "RegExpKey.h"
 #include "Strong.h"
-#include "UString.h"
 #include "Weak.h"
 #include <wtf/FixedArray.h>
 #include <wtf/HashMap.h>
@@ -54,7 +53,7 @@ private:
 
     virtual void finalize(Handle<Unknown>, void* context);
 
-    RegExp* lookupOrCreate(const UString& patternString, RegExpFlags);
+    RegExp* lookupOrCreate(const WTF::String& patternString, RegExpFlags);
     void addToStrongCache(RegExp*);
     RegExpCacheMap m_weakCache; // Holds all regular expressions currently live.
     int m_nextEntryInStrongCache;

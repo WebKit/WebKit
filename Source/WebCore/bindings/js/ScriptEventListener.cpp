@@ -103,7 +103,7 @@ String eventListenerHandlerBody(Document* document, EventListener* eventListener
     if (!jsFunction)
         return "";
     ScriptState* scriptState = scriptStateFromNode(jsListener->isolatedWorld(), document);
-    return ustringToString(jsFunction->toString(scriptState)->value(scriptState));
+    return jsFunction->toString(scriptState)->value(scriptState);
 }
 
 bool eventListenerHandlerLocation(Document* document, EventListener* eventListener, String& sourceName, int& lineNumber)
@@ -123,7 +123,7 @@ bool eventListenerHandlerLocation(Document* document, EventListener* eventListen
     if (!funcExecutable)
         return false;
     lineNumber = funcExecutable->lineNo();
-    sourceName = ustringToString(funcExecutable->sourceURL());
+    sourceName = funcExecutable->sourceURL();
     return true;
 }
 

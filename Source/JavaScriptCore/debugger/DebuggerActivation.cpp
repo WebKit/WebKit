@@ -58,7 +58,7 @@ void DebuggerActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_activation);
 }
 
-UString DebuggerActivation::className(const JSObject* object)
+String DebuggerActivation::className(const JSObject* object)
 {
     const DebuggerActivation* thisObject = jsCast<const DebuggerActivation*>(object);
     return thisObject->m_activation->methodTable()->className(thisObject->m_activation.get());

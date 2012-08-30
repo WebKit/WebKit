@@ -73,7 +73,7 @@ void JSStorage::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyN
     JSStorage* thisObject = jsCast<JSStorage*>(object);
     unsigned length = thisObject->m_impl->length();
     for (unsigned i = 0; i < length; ++i)
-        propertyNames.add(Identifier(exec, stringToUString(thisObject->m_impl->key(i))));
+        propertyNames.add(Identifier(exec, thisObject->m_impl->key(i)));
         
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
@@ -91,7 +91,7 @@ bool JSStorage::putDelegate(ExecState* exec, PropertyName propertyName, JSValue 
     if (prototype.isObject() && asObject(prototype)->hasProperty(exec, propertyName))
         return false;
     
-    String stringValue = ustringToString(value.toString(exec)->value(exec));
+    String stringValue = value.toString(exec)->value(exec);
     if (exec->hadException())
         return true;
     

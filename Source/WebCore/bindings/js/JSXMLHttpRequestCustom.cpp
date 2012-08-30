@@ -84,8 +84,8 @@ JSValue JSXMLHttpRequest::open(ExecState* exec)
     if (exec->argumentCount() < 2)
         return throwError(exec, createNotEnoughArgumentsError(exec));
 
-    const KURL& url = impl()->scriptExecutionContext()->completeURL(ustringToString(exec->argument(1).toString(exec)->value(exec)));
-    String method = ustringToString(exec->argument(0).toString(exec)->value(exec));
+    const KURL& url = impl()->scriptExecutionContext()->completeURL(exec->argument(1).toString(exec)->value(exec));
+    String method = exec->argument(0).toString(exec)->value(exec);
 
     ExceptionCode ec = 0;
     if (exec->argumentCount() >= 3) {
@@ -130,16 +130,16 @@ JSValue JSXMLHttpRequest::send(ExecState* exec)
         else if (val.inherits(&JSArrayBufferView::s_info))
             impl()->send(toArrayBufferView(val), ec);
         else
-            impl()->send(ustringToString(val.toString(exec)->value(exec)), ec);
+            impl()->send(val.toString(exec)->value(exec), ec);
     }
 
     int signedLineNumber;
     intptr_t sourceID;
-    UString sourceURL;
+    String sourceURL;
     JSValue function;
     exec->interpreter()->retrieveLastCaller(exec, signedLineNumber, sourceID, sourceURL, function);
     impl()->setLastSendLineNumber(signedLineNumber >= 0 ? signedLineNumber : 0);
-    impl()->setLastSendURL(ustringToString(sourceURL));
+    impl()->setLastSendURL(sourceURL);
 
     setDOMException(exec, ec);
     return jsUndefined();

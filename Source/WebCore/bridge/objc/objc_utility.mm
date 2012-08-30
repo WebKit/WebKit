@@ -147,14 +147,7 @@ ObjcValue convertValueToObjcValue(ExecState* exec, JSValue value, ObjcValueType 
 JSValue convertNSStringToString(ExecState* exec, NSString *nsstring)
 {
     JSLockHolder lock(exec);
-    
-    unichar *chars;
-    unsigned int length = [nsstring length];
-    chars = (unichar *)malloc(sizeof(unichar)*length);
-    [nsstring getCharacters:chars];
-    UString u((const UChar*)chars, length);
-    JSValue aValue = jsString(exec, u);
-    free((void *)chars);
+    JSValue aValue = jsString(exec, String(nsstring));
     return aValue;
 }
 
@@ -311,11 +304,7 @@ ObjcValueType objcValueTypeForType(const char *type)
 JSObject *throwError(ExecState *exec, NSString *message)
 {
     ASSERT(message);
-    size_t length = [message length];
-    unichar *buffer = new unichar[length];
-    [message getCharacters:buffer];
-    JSObject *error = JSC::throwError(exec, JSC::createError(exec, UString(buffer, length)));
-    delete [] buffer;
+    JSObject *error = JSC::throwError(exec, JSC::createError(exec, String(message)));
     return error;
 }
 

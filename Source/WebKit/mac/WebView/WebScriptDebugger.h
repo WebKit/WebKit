@@ -34,18 +34,19 @@
 
 #include <wtf/RetainPtr.h>
 
+namespace WTF {
+class String;
+}
+
 namespace JSC {
     class DebuggerCallFrame;
     class ExecState;
     class JSGlobalObject;
     class JSObject;
     class ArgList;
-    class UString;
 }
 
 @class WebScriptCallFrame;
-
-NSString *toNSString(const JSC::UString&);
 
 class WebScriptDebugger : public JSC::Debugger {
 public:
@@ -53,7 +54,7 @@ public:
 
     void initGlobalCallFrame(const JSC::DebuggerCallFrame&);
 
-    virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const JSC::UString& errorMsg);
+    virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const WTF::String& errorMsg);
     virtual void callEvent(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber);
     virtual void atStatement(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber);
     virtual void returnEvent(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber);

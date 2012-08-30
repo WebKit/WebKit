@@ -56,7 +56,7 @@ namespace JSC {
     ALWAYS_INLINE double parseIntOverflow(const char* s, int length, int radix) { return parseIntOverflow(reinterpret_cast<const LChar*>(s), length, radix); }
     double parseIntOverflow(const UChar*, int length, int radix);
     bool isStrWhiteSpace(UChar);
-    double jsToNumber(const UString& s);
+    double jsToNumber(const WTF::String&);
 
 } // namespace JSC
 

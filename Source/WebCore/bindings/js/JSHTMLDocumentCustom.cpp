@@ -136,15 +136,15 @@ static inline void documentWrite(ExecState* exec, HTMLDocument* document, Newlin
 
     size_t size = exec->argumentCount();
 
-    UString firstString = exec->argument(0).toString(exec)->value(exec);
-    SegmentedString segmentedString = ustringToString(firstString);
+    String firstString = exec->argument(0).toString(exec)->value(exec);
+    SegmentedString segmentedString = firstString;
     if (size != 1) {
         if (!size)
             segmentedString.clear();
         else {
             for (size_t i = 1; i < size; ++i) {
-                UString subsequentString = exec->argument(i).toString(exec)->value(exec);
-                segmentedString.append(SegmentedString(ustringToString(subsequentString)));
+                String subsequentString = exec->argument(i).toString(exec)->value(exec);
+                segmentedString.append(SegmentedString(subsequentString));
             }
         }
     }

@@ -32,18 +32,18 @@
 
 namespace JSC {
 
-PassRefPtr<Profile> Profile::create(const UString& title, unsigned uid)
+PassRefPtr<Profile> Profile::create(const String& title, unsigned uid)
 {
     return adoptRef(new Profile(title, uid));
 }
 
-Profile::Profile(const UString& title, unsigned uid)
+Profile::Profile(const String& title, unsigned uid)
     : m_title(title)
     , m_uid(uid)
 {
     // FIXME: When multi-threading is supported this will be a vector and calls
     // into the profiler will need to know which thread it is executing on.
-    m_head = ProfileNode::create(0, CallIdentifier("Thread_1", UString(), 0), 0, 0);
+    m_head = ProfileNode::create(0, CallIdentifier("Thread_1", String(), 0), 0, 0);
 }
 
 Profile::~Profile()
@@ -128,7 +128,7 @@ void Profile::debugPrintDataSampleStyle() const
 
     std::sort(sortedFunctions.begin(), sortedFunctions.end(), functionNameCountPairComparator);
     for (NameCountPairVector::iterator it = sortedFunctions.begin(); it != sortedFunctions.end(); ++it)
-        dataLog("        %-12d%s\n", (*it).second, UString((*it).first).utf8().data());
+        dataLog("        %-12d%s\n", (*it).second, String((*it).first).utf8().data());
 
     dataLog("\nSort by top of stack, same collapsed (when >= 5):\n");
 }

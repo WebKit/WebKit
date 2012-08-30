@@ -56,7 +56,6 @@ class Identifier;
 class JSGlobalData;
 class ProgramNode;
 class SourceCode;
-class UString;
 
 #define fail() do { if (!m_error) updateErrorMessage(); return 0; } while (0)
 #define failWithToken(tok) do { if (!m_error) updateErrorMessage(tok); return 0; } while (0)
@@ -489,7 +488,7 @@ private:
     }
 
     Parser();
-    UString parseInner();
+    String parseInner();
 
     void didFinishParsing(SourceElements*, ParserArenaData<DeclarationStacks::VarStack>*, 
                           ParserArenaData<DeclarationStacks::FunctionStack>*, CodeFeatures,
@@ -529,9 +528,9 @@ private:
         return result;
     }
     
-    ALWAYS_INLINE UString getToken() {
+    ALWAYS_INLINE String getToken() {
         SourceProvider* sourceProvider = m_source->provider();
-        return UString(sourceProvider->getRange(tokenStart(), tokenEnd()).impl());
+        return sourceProvider->getRange(tokenStart(), tokenEnd());
     }
     
     ALWAYS_INLINE bool match(JSTokenType expected)
@@ -793,7 +792,7 @@ private:
         if (!name) 
             updateErrorMessageSpecialCase(m_token.m_type);
         else 
-            m_errorMessage = UString(String::format("Unexpected token '%s'", name).impl());
+            m_errorMessage = String::format("Unexpected token '%s'", name);
     }
     
     NEVER_INLINE void updateErrorMessage(JSTokenType expectedToken) 
@@ -801,7 +800,7 @@ private:
         m_error = true;
         const char* name = getTokenName(expectedToken);
         if (name)
-            m_errorMessage = UString(String::format("Expected token '%s'", name).impl());
+            m_errorMessage = String::format("Expected token '%s'", name);
         else {
             if (!getTokenName(m_token.m_type))
                 updateErrorMessageSpecialCase(m_token.m_type);
@@ -810,7 +809,7 @@ private:
         } 
     }
     
-    NEVER_INLINE void updateErrorWithNameAndMessage(const char* beforeMsg, UString name, const char* afterMsg) 
+    NEVER_INLINE void updateErrorWithNameAndMessage(const char* beforeMsg, String name, const char* afterMsg)
     {
         m_error = true;
         String prefix(beforeMsg);
@@ -825,7 +824,7 @@ private:
     NEVER_INLINE void updateErrorMessage(const char* msg) 
     {   
         m_error = true;
-        m_errorMessage = UString(msg);
+        m_errorMessage = String(msg);
     }
     
     void startLoop() { currentScope()->startLoop(); }
@@ -938,7 +937,7 @@ private:
     
     StackBounds m_stack;
     bool m_error;
-    UString m_errorMessage;
+    String m_errorMessage;
     JSToken m_token;
     bool m_allowsIn;
     int m_lastLine;
@@ -982,7 +981,7 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(JSGlobalObject* lexicalGlobalObj
     ASSERT(lexicalGlobalObject);
     ASSERT(exception && !*exception);
     int errLine;
-    UString errMsg;
+    String errMsg;
 
     if (ParsedNode::scopeIsFunction)
         m_lexer->setIsReparsing();
@@ -990,13 +989,13 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(JSGlobalObject* lexicalGlobalObj
     m_sourceElements = 0;
 
     errLine = -1;
-    errMsg = UString();
+    errMsg = String();
 
-    UString parseError = parseInner();
+    String parseError = parseInner();
 
     int lineNumber = m_lexer->lineNumber();
     bool lexError = m_lexer->sawError();
-    UString lexErrorMessage = lexError ? m_lexer->getErrorMessage() : UString();
+    String lexErrorMessage = lexError ? m_lexer->getErrorMessage() : String();
     ASSERT(lexErrorMessage.isNull() != lexError);
     m_lexer->clear();
 

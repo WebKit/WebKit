@@ -31,7 +31,6 @@
 #define JumpTable_h
 
 #include "MacroAssembler.h"
-#include "UString.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 

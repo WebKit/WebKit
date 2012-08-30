@@ -31,9 +31,9 @@
 #include "JSString.h"
 #include "Lexer.h"
 #include "StrongInlines.h"
-#include "UStringBuilder.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/dtoa.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 
@@ -344,7 +344,7 @@ template <ParserMode mode, char terminator> ALWAYS_INLINE TokenType LiteralParse
 {
     ++m_ptr;
     const CharType* runStart = m_ptr;
-    UStringBuilder builder;
+    StringBuilder builder;
     do {
         runStart = m_ptr;
         while (m_ptr < m_end && isSafeStringCharacter<mode, CharType, terminator>(*m_ptr))
@@ -400,7 +400,7 @@ template <ParserMode mode, char terminator> ALWAYS_INLINE TokenType LiteralParse
                     } // uNNNN == 5 characters
                     for (int i = 1; i < 5; i++) {
                         if (!isASCIIHexDigit(m_ptr[i])) {
-                            m_lexErrorMessage = String::format("\"\\%s\" is not a valid unicode escape", UString(m_ptr, 5).ascii().data()).impl();
+                            m_lexErrorMessage = String::format("\"\\%s\" is not a valid unicode escape", String(m_ptr, 5).ascii().data()).impl();
                             return TokError;
                         }
                     }
@@ -426,11 +426,11 @@ template <ParserMode mode, char terminator> ALWAYS_INLINE TokenType LiteralParse
     }
 
     if (builder.isEmpty()) {
-        token.stringBuffer = UString();
+        token.stringBuffer = String();
         setParserTokenString<CharType>(token, runStart);
         token.stringLength = m_ptr - runStart;
     } else {
-        token.stringBuffer = builder.toUString();
+        token.stringBuffer = builder.toString();
         if (token.stringBuffer.is8Bit()) {
             token.stringIs8Bit = 1;
             token.stringToken8 = token.stringBuffer.characters8();
@@ -698,9 +698,9 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                     case TokIdentifier: {
                         const LiteralParserToken<CharType>& token = m_lexer.currentToken();
                         if (token.stringIs8Bit)
-                            m_parseErrorMessage = String::format("Unexpected identifier \"%s\"", UString(m_lexer.currentToken().stringToken8, m_lexer.currentToken().stringLength).ascii().data()).impl();
+                            m_parseErrorMessage = String::format("Unexpected identifier \"%s\"", String(m_lexer.currentToken().stringToken8, m_lexer.currentToken().stringLength).ascii().data()).impl();
                         else
-                            m_parseErrorMessage = String::format("Unexpected identifier \"%s\"", UString(m_lexer.currentToken().stringToken16, m_lexer.currentToken().stringLength).ascii().data()).impl();
+                            m_parseErrorMessage = String::format("Unexpected identifier \"%s\"", String(m_lexer.currentToken().stringToken16, m_lexer.currentToken().stringLength).ascii().data()).impl();
                         return JSValue();
                     }
                     case TokColon:

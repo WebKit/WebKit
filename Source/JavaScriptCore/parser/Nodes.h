@@ -279,7 +279,7 @@ namespace JSC {
         uint16_t endOffset() const { return m_endOffset; }
 
     protected:
-        RegisterID* emitThrowReferenceError(BytecodeGenerator&, const UString& message);
+        RegisterID* emitThrowReferenceError(BytecodeGenerator&, const String& message);
 
     private:
         uint32_t m_divot;
@@ -1389,7 +1389,7 @@ namespace JSC {
         }
 
         const SourceCode& source() const { return m_source; }
-        const UString& sourceURL() const { return m_source.provider()->url(); }
+        const String& sourceURL() const { return m_source.provider()->url(); }
         intptr_t sourceID() const { return m_source.providerID(); }
 
         void setFeatures(CodeFeatures features) { m_features = features; }

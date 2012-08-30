@@ -47,7 +47,7 @@ FunctionPrototype::FunctionPrototype(JSGlobalObject* globalObject, Structure* st
 {
 }
 
-void FunctionPrototype::finishCreation(ExecState* exec, const UString& name)
+void FunctionPrototype::finishCreation(ExecState* exec, const String& name)
 {
     Base::finishCreation(exec->globalData(), name);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
@@ -83,7 +83,7 @@ CallType FunctionPrototype::getCallData(JSCell*, CallData& callData)
 // Functions
 
 // Compatibility hack for the Optimost JavaScript library. (See <rdar://problem/6595040>.)
-static inline void insertSemicolonIfNeeded(UString& functionBody)
+static inline void insertSemicolonIfNeeded(String& functionBody)
 {
     ASSERT(functionBody[0] == '{');
     ASSERT(functionBody[functionBody.length() - 1] == '}');
@@ -92,7 +92,7 @@ static inline void insertSemicolonIfNeeded(UString& functionBody)
         UChar ch = functionBody[i];
         if (!Lexer<UChar>::isWhiteSpace(ch) && !Lexer<UChar>::isLineTerminator(ch)) {
             if (ch != ';' && ch != '}')
-                functionBody = makeUString(functionBody.substringSharingImpl(0, i + 1), ";", functionBody.substringSharingImpl(i + 1, functionBody.length() - (i + 1)));
+                functionBody = makeString(functionBody.substringSharingImpl(0, i + 1), ";", functionBody.substringSharingImpl(i + 1, functionBody.length() - (i + 1)));
             return;
         }
     }
@@ -106,7 +106,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
         if (function->isHostFunction())
             return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), "() {\n    [native code]\n}"));
         FunctionExecutable* executable = function->jsExecutable();
-        UString sourceString = executable->source().toString();
+        String sourceString = executable->source().toString();
         insertSemicolonIfNeeded(sourceString);
         return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), "(", executable->paramString(), ") ", sourceString));
     }

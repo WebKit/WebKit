@@ -46,7 +46,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, MicroDataItemValu
         return jsNull();
     if (itemValue->isNode())
         return toJS(exec, globalObject, itemValue->getNode());
-    return jsString(exec, itemValue->getString());
+    return jsStringWithCache(exec, itemValue->getString());
 }
 
 }

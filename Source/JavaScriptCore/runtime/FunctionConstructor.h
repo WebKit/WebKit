@@ -56,10 +56,10 @@ namespace JSC {
         static CallType getCallData(JSCell*, CallData&);
     };
 
-    JSObject* constructFunction(ExecState*, JSGlobalObject*, const ArgList&, const Identifier& functionName, const UString& sourceURL, const WTF::TextPosition&);
+    JSObject* constructFunction(ExecState*, JSGlobalObject*, const ArgList&, const Identifier& functionName, const String& sourceURL, const WTF::TextPosition&);
     JSObject* constructFunction(ExecState*, JSGlobalObject*, const ArgList&);
 
-    JS_EXPORT_PRIVATE JSObject* constructFunctionSkippingEvalEnabledCheck(ExecState*, JSGlobalObject*, const ArgList&, const Identifier&, const UString&, const WTF::TextPosition&);
+    JS_EXPORT_PRIVATE JSObject* constructFunctionSkippingEvalEnabledCheck(ExecState*, JSGlobalObject*, const ArgList&, const Identifier&, const String&, const WTF::TextPosition&);
 
 } // namespace JSC
 

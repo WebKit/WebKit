@@ -50,7 +50,7 @@ namespace JSC {
         return JSRopeString::create(globalData, s1, s2);
     }
 
-    ALWAYS_INLINE JSValue jsString(ExecState* exec, const UString& u1, const UString& u2, const UString& u3)
+    ALWAYS_INLINE JSValue jsString(ExecState* exec, const String& u1, const String& u2, const String& u3)
     {
         JSGlobalData* globalData = &exec->globalData();
 
@@ -221,7 +221,7 @@ namespace JSC {
             return v1.asNumber() < v2.asNumber();
 
         if (isJSString(v1) && isJSString(v2))
-            return asString(v1)->value(callFrame) < asString(v2)->value(callFrame);
+            return codePointCompareLessThan(asString(v1)->value(callFrame), asString(v2)->value(callFrame));
 
         double n1;
         double n2;
@@ -239,7 +239,7 @@ namespace JSC {
 
         if (wasNotString1 | wasNotString2)
             return n1 < n2;
-        return asString(p1)->value(callFrame) < asString(p2)->value(callFrame);
+        return codePointCompareLessThan(asString(p1)->value(callFrame), asString(p2)->value(callFrame));
     }
 
     // See ES5 11.8.3/11.8.4/11.8.5 for definition of leftFirst, this value ensures correct
@@ -255,7 +255,7 @@ namespace JSC {
             return v1.asNumber() <= v2.asNumber();
 
         if (isJSString(v1) && isJSString(v2))
-            return !(asString(v2)->value(callFrame) < asString(v1)->value(callFrame));
+            return !codePointCompareLessThan(asString(v2)->value(callFrame), asString(v1)->value(callFrame));
 
         double n1;
         double n2;
@@ -273,7 +273,7 @@ namespace JSC {
 
         if (wasNotString1 | wasNotString2)
             return n1 <= n2;
-        return !(asString(p2)->value(callFrame) < asString(p1)->value(callFrame));
+        return !codePointCompareLessThan(asString(p2)->value(callFrame), asString(p1)->value(callFrame));
     }
 
     // Fast-path choices here are based on frequency data from SunSpider:

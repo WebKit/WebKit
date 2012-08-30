@@ -55,8 +55,8 @@ namespace JSC {
 
         static const ClassInfo s_info;
 
-        MatchResult performMatch(JSGlobalData&, RegExp*, JSString*, const UString&, int startOffset, int** ovector);
-        MatchResult performMatch(JSGlobalData&, RegExp*, JSString*, const UString&, int startOffset);
+        MatchResult performMatch(JSGlobalData&, RegExp*, JSString*, const String&, int startOffset, int** ovector);
+        MatchResult performMatch(JSGlobalData&, RegExp*, JSString*, const String&, int startOffset);
 
         void setMultiline(bool multiline) { m_multiline = multiline; }
         bool multiline() const { return m_multiline; }
@@ -101,7 +101,7 @@ namespace JSC {
       expression matching through the performMatch function. We use cached results to calculate, 
       e.g., RegExp.lastMatch and RegExp.leftParen.
     */
-    ALWAYS_INLINE MatchResult RegExpConstructor::performMatch(JSGlobalData& globalData, RegExp* regExp, JSString* string, const UString& input, int startOffset, int** ovector)
+    ALWAYS_INLINE MatchResult RegExpConstructor::performMatch(JSGlobalData& globalData, RegExp* regExp, JSString* string, const String& input, int startOffset, int** ovector)
     {
         int position = regExp->match(globalData, input, startOffset, m_ovector);
 
@@ -120,7 +120,7 @@ namespace JSC {
 
         return MatchResult(position, end);
     }
-    ALWAYS_INLINE MatchResult RegExpConstructor::performMatch(JSGlobalData& globalData, RegExp* regExp, JSString* string, const UString& input, int startOffset)
+    ALWAYS_INLINE MatchResult RegExpConstructor::performMatch(JSGlobalData& globalData, RegExp* regExp, JSString* string, const String& input, int startOffset)
     {
         MatchResult result = regExp->match(globalData, input, startOffset);
         if (result)

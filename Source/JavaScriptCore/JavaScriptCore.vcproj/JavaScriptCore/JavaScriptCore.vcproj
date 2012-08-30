@@ -1294,26 +1294,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\UString.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\UString.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\UStringBuilder.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\UStringConcatenate.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\UStringImpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\WeakGCMap.h"
 				>
 			</File>

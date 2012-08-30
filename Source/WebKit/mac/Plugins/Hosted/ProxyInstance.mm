@@ -181,7 +181,7 @@ class ProxyRuntimeMethod : public RuntimeMethod {
 public:
     typedef RuntimeMethod Base;
 
-    static ProxyRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const UString& name, Bindings::MethodList& list)
+    static ProxyRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const String& name, Bindings::MethodList& list)
     {
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // exec-globalData() is also likely wrong.
@@ -204,7 +204,7 @@ private:
     {
     }
 
-    void finishCreation(JSGlobalData& globalData, const UString& name)
+    void finishCreation(JSGlobalData& globalData, const String& name)
     {
         Base::finishCreation(globalData, name);
         ASSERT(inherits(&s_info));
@@ -340,7 +340,7 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
 
         if (identifier->isString()) {
             const char* str = identifier->string();
-            nameArray.add(Identifier(JSDOMWindow::commonJSGlobalData(), stringToUString(String::fromUTF8WithLatin1Fallback(str, strlen(str)))));
+            nameArray.add(Identifier(JSDOMWindow::commonJSGlobalData(), String::fromUTF8WithLatin1Fallback(str, strlen(str))));
         } else
             nameArray.add(Identifier::from(exec, identifier->number()));
     }
@@ -348,7 +348,7 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
 
 MethodList ProxyInstance::methodsNamed(PropertyName propertyName)
 {
-    UString name(propertyName.publicName());
+    String name(propertyName.publicName());
     if (name.isNull())
         return MethodList();
 
@@ -392,7 +392,7 @@ MethodList ProxyInstance::methodsNamed(PropertyName propertyName)
 
 Field* ProxyInstance::fieldNamed(PropertyName propertyName)
 {
-    UString name(propertyName.publicName());
+    String name(propertyName.publicName());
     if (name.isNull())
         return 0;
 

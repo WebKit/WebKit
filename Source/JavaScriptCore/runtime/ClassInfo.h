@@ -75,7 +75,7 @@ namespace JSC {
         typedef void (*GetPropertyNamesFunctionPtr)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         GetPropertyNamesFunctionPtr getPropertyNames;
 
-        typedef UString (*ClassNameFunctionPtr)(const JSObject*);
+        typedef String (*ClassNameFunctionPtr)(const JSObject*);
         ClassNameFunctionPtr className;
 
         typedef bool (*HasInstanceFunctionPtr)(JSObject*, ExecState*, JSValue, JSValue);

@@ -61,7 +61,7 @@ namespace JSC {
 
     };
 
-    UString JSONStringify(ExecState* exec, JSValue value, unsigned indent);
+    String JSONStringify(ExecState*, JSValue, unsigned indent);
 
 } // namespace JSC
 

@@ -100,12 +100,12 @@ public:
 
     // Functions for use after parsing.
     bool sawError() const { return m_error; }
-    UString getErrorMessage() const { return m_lexErrorMessage; }
+    String getErrorMessage() const { return m_lexErrorMessage; }
     void clear();
     void setOffset(int offset)
     {
         m_error = 0;
-        m_lexErrorMessage = UString();
+        m_lexErrorMessage = String();
         m_code = m_codeStart + offset;
         m_buffer8.resize(0);
         m_buffer16.resize(0);
@@ -137,7 +137,7 @@ private:
     int parseFourDigitUnicodeHex();
     void shiftLineTerminator();
 
-    UString invalidCharacterMessage() const;
+    String invalidCharacterMessage() const;
     ALWAYS_INLINE const T* currentCharacter() const;
     ALWAYS_INLINE int currentOffset() const { return m_code - m_codeStart; }
     ALWAYS_INLINE void setOffsetFromCharOffset(const T* charOffset) { setOffset(charOffset - m_codeStart); }
@@ -181,7 +181,7 @@ private:
     bool m_isReparsing;
     bool m_atLineStart;
     bool m_error;
-    UString m_lexErrorMessage;
+    String m_lexErrorMessage;
 
     T m_current;
 

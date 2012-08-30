@@ -320,7 +320,7 @@ namespace JSC {
 
         const SourceCode& source() { return m_source; }
         intptr_t sourceID() const { return m_source.providerID(); }
-        const UString& sourceURL() const { return m_source.provider()->url(); }
+        const String& sourceURL() const { return m_source.provider()->url(); }
         int lineNo() const { return m_firstLine; }
         int lastLine() const { return m_lastLine; }
 
@@ -661,7 +661,7 @@ namespace JSC {
         JSString* nameValue() const { return m_nameValue.get(); }
         size_t parameterCount() const { return m_parameters->size(); } // Excluding 'this'!
         unsigned capturedVariableCount() const { return m_numCapturedVariables; }
-        UString paramString() const;
+        String paramString() const;
         SharedSymbolTable* symbolTable() const { return m_symbolTable.get(); }
 
         void clearCodeIfNotCompiling();

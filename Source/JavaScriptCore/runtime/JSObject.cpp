@@ -154,7 +154,7 @@ void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 #endif
 }
 
-UString JSObject::className(const JSObject* object)
+String JSObject::className(const JSObject* object)
 {
     const ClassInfo* info = object->classInfo();
     ASSERT(info);
@@ -818,7 +818,7 @@ bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName
     return true;
 }
 
-JSObject* throwTypeError(ExecState* exec, const UString& message)
+JSObject* throwTypeError(ExecState* exec, const String& message)
 {
     return throwError(exec, createTypeError(exec, message));
 }

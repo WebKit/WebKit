@@ -1,3 +1,15 @@
+2012-08-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        Replace JSC::UString by WTF::String
+        https://bugs.webkit.org/show_bug.cgi?id=95271
+
+        Reviewed by Geoffrey Garen.
+
+        Update the #includes to use the correct types.
+
+        * WebFrame.cpp:
+        * WebView.cpp:
+
 2012-08-13  Tom Sepez  <tsepez@chromium.org>
 
         [chromium] release FrameLoaderClientImpl::m_pluginWidget refptr upon Plugin Document detach.

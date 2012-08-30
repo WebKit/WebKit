@@ -97,7 +97,7 @@ static inline void convertJSMethodNameToObjc(const CString& jsName, JSNameConver
 
 MethodList ObjcClass::methodsNamed(PropertyName propertyName, Instance*) const
 {
-    UString name(propertyName.publicName());
+    String name(propertyName.publicName());
     if (name.isNull())
         return MethodList();
 
@@ -149,7 +149,7 @@ MethodList ObjcClass::methodsNamed(PropertyName propertyName, Instance*) const
 
 Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) const
 {
-    UString name(propertyName.publicName());
+    String name(propertyName.publicName());
     if (name.isNull())
         return 0;
 

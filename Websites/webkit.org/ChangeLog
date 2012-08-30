@@ -1,3 +1,14 @@
+2012-08-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        Replace JSC::UString by WTF::String
+        https://bugs.webkit.org/show_bug.cgi?id=95271
+
+        Reviewed by Geoffrey Garen.
+
+        Update the coding style to avoid mentioning a class that no longer exist.
+
+        * coding/coding-style.html:
+
 2012-08-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Address one more review comment.

@@ -87,7 +87,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     RefPtr<JSCustomXPathNSResolver> selfProtector(this);
 
     MarkedArgumentBuffer args;
-    args.append(jsString(exec, prefix));
+    args.append(jsStringWithCache(exec, prefix));
 
     m_globalObject->globalData().timeoutChecker.start();
     JSValue retval = JSMainThreadExecState::call(exec, function, callType, callData, m_customResolver.get(), args);
@@ -98,7 +98,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
         reportCurrentException(exec);
     else {
         if (!retval.isUndefinedOrNull())
-            result = ustringToString(retval.toString(exec)->value(exec));
+            result = retval.toString(exec)->value(exec);
     }
 
     Document::updateStyleForAllDocuments();

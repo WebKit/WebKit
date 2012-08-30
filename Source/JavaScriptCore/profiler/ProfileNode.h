@@ -64,8 +64,8 @@ namespace JSC {
         // CallIdentifier members
         ExecState* callerCallFrame() const { return m_callerCallFrame; }
         const CallIdentifier& callIdentifier() const { return m_callIdentifier; }
-        const UString& functionName() const { return m_callIdentifier.m_name; }
-        const UString& url() const { return m_callIdentifier.m_url; }
+        const String& functionName() const { return m_callIdentifier.m_name; }
+        const String& url() const { return m_callIdentifier.m_url; }
         unsigned lineNumber() const { return m_callIdentifier.m_lineNumber; }
 
         // Relationships
@@ -146,8 +146,8 @@ namespace JSC {
         static inline bool selfTimeAscendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b) { return a->selfTime() < b->selfTime(); }
         static inline bool callsDescendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b) { return a->numberOfCalls() > b->numberOfCalls(); }
         static inline bool callsAscendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b) { return a->numberOfCalls() < b->numberOfCalls(); }
-        static inline bool functionNameDescendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b) { return a->functionName() > b->functionName(); }
-        static inline bool functionNameAscendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b) { return a->functionName() < b->functionName(); }
+        static inline bool functionNameDescendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b) { return codePointCompareLessThan(b->functionName(), a->functionName()); }
+        static inline bool functionNameAscendingComparator(const RefPtr<ProfileNode>& a, const RefPtr<ProfileNode>& b) { return codePointCompareLessThan(a->functionName(), b->functionName()); }
 
         ExecState* m_callerCallFrame;
         CallIdentifier m_callIdentifier;

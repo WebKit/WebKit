@@ -39,7 +39,7 @@ public:
 
     static void destroy(JSCell*);
 
-    static RuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& name, Bindings::MethodList& methodList)
+    static RuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const String& name, Bindings::MethodList& methodList)
     {
         RuntimeMethod* method = new (NotNull, allocateCell<RuntimeMethod>(*exec->heap())) RuntimeMethod(globalObject, structure, methodList);
         method->finishCreation(exec->globalData(), name);
@@ -62,7 +62,7 @@ public:
 
 protected:
     RuntimeMethod(JSGlobalObject*, Structure*, Bindings::MethodList&);
-    void finishCreation(JSGlobalData&, const UString&);
+    void finishCreation(JSGlobalData&, const String&);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
     static CallType getCallData(JSCell*, CallData&);
 

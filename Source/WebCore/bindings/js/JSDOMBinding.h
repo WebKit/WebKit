@@ -233,12 +233,12 @@ enum ParameterDefaultPolicy {
     // Convert a DOM implementation exception code into a JavaScript exception in the execution state.
     void setDOMException(JSC::ExecState*, ExceptionCode);
 
-    JSC::JSValue jsString(JSC::ExecState*, const String&); // empty if the string is null
-    JSC::JSValue jsStringSlowCase(JSC::ExecState*, JSStringCache&, StringImpl*);
+    JSC::JSValue jsStringWithCache(JSC::ExecState*, const String&);
+    JSC::JSValue jsStringWithCacheSlowCase(JSC::ExecState*, JSStringCache&, StringImpl*);
     JSC::JSValue jsString(JSC::ExecState*, const KURL&); // empty if the URL is null
-    inline JSC::JSValue jsString(JSC::ExecState* exec, const AtomicString& s)
+    inline JSC::JSValue jsStringWithCache(JSC::ExecState* exec, const AtomicString& s)
     { 
-        return jsString(exec, s.string());
+        return jsStringWithCache(exec, s.string());
     }
         
     JSC::JSValue jsStringOrNull(JSC::ExecState*, const String&); // null if the string is null
@@ -252,11 +252,8 @@ enum ParameterDefaultPolicy {
     JSC::JSValue jsOwnedStringOrNull(JSC::ExecState*, const String&); 
 
     String propertyNameToString(JSC::PropertyName);
-    String ustringToString(const JSC::UString&);
-    JSC::UString stringToUString(const String&);
 
     AtomicString propertyNameToAtomicString(JSC::PropertyName);
-    AtomicString ustringToAtomicString(const JSC::UString&);
     AtomicStringImpl* findAtomicString(JSC::PropertyName);
 
     String valueToStringWithNullCheck(JSC::ExecState*, JSC::JSValue); // null if the value is null
@@ -317,7 +314,7 @@ enum ParameterDefaultPolicy {
     struct JSValueTraits<String> {
         static inline JSC::JSValue arrayJSValue(JSC::ExecState* exec, JSDOMGlobalObject*, const String& value)
         {
-            return jsString(exec, stringToUString(value));
+            return jsStringWithCache(exec, value);
         }
     };
 
@@ -358,7 +355,7 @@ enum ParameterDefaultPolicy {
     struct NativeValueTraits<String> {
         static inline bool arrayNativeValue(JSC::ExecState* exec, JSC::JSValue jsValue, String& indexedValue)
         {
-            indexedValue = ustringToString(jsValue.toString(exec)->value(exec));
+            indexedValue = jsValue.toString(exec)->value(exec);
             return true;
         }
     };
@@ -409,40 +406,27 @@ enum ParameterDefaultPolicy {
     void printErrorMessageForFrame(Frame*, const String& message);
     JSC::JSValue objectToStringFunctionGetter(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
 
-    inline JSC::JSValue jsString(JSC::ExecState* exec, const String& s)
+    inline JSC::JSValue jsStringWithCache(JSC::ExecState* exec, const String& s)
     {
         StringImpl* stringImpl = s.impl();
         if (!stringImpl || !stringImpl->length())
             return jsEmptyString(exec);
 
+        // FIXME: we shouldn't invoke StringImpl::characters().
+        // FIXME: why not just return a SmallStrings when possible?
         if (stringImpl->length() == 1 && stringImpl->characters()[0] <= 0xFF)
-            return jsString(exec, stringToUString(s));
+            return JSC::jsString(exec, s);
 
         JSStringCache& stringCache = currentWorld(exec)->m_stringCache;
         if (JSC::JSString* string = stringCache.get(stringImpl))
             return string;
 
-        return jsStringSlowCase(exec, stringCache, stringImpl);
-    }
-
-    inline String ustringToString(const JSC::UString& u)
-    {
-        return u.impl();
-    }
-
-    inline JSC::UString stringToUString(const String& s)
-    {
-        return JSC::UString(s.impl());
+        return jsStringWithCacheSlowCase(exec, stringCache, stringImpl);
     }
 
     inline String propertyNameToString(JSC::PropertyName propertyName)
     {
         return propertyName.publicName();
-    }
-
-    inline AtomicString ustringToAtomicString(const JSC::UString& u)
-    {
-        return AtomicString(u.impl());
     }
 
     inline AtomicString propertyNameToAtomicString(JSC::PropertyName propertyName)

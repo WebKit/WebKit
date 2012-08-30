@@ -36,7 +36,7 @@ namespace JSC {
             return Structure::create(globalData, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), &s_info);
         }
 
-        static ErrorInstance* create(JSGlobalData& globalData, Structure* structure, const UString& message)
+        static ErrorInstance* create(JSGlobalData& globalData, Structure* structure, const String& message)
         {
             ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(globalData.heap)) ErrorInstance(globalData, structure);
             instance->finishCreation(globalData, message);
@@ -45,7 +45,7 @@ namespace JSC {
 
         static ErrorInstance* create(ExecState* exec, Structure* structure, JSValue message)
         {
-            return create(exec->globalData(), structure, message.isUndefined() ? UString() : message.toString(exec)->value(exec));
+            return create(exec->globalData(), structure, message.isUndefined() ? String() : message.toString(exec)->value(exec));
         }
 
         bool appendSourceToMessage() { return m_appendSourceToMessage; }
@@ -55,7 +55,7 @@ namespace JSC {
     protected:
         explicit ErrorInstance(JSGlobalData&, Structure*);
 
-        void finishCreation(JSGlobalData& globalData, const UString& message)
+        void finishCreation(JSGlobalData& globalData, const String& message)
         {
             Base::finishCreation(globalData);
             ASSERT(inherits(&s_info));

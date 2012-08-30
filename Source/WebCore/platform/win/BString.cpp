@@ -84,14 +84,6 @@ BString::BString(const AtomicString& s)
         m_bstr = SysAllocStringLen(s.characters(), s.length());
 }
 
-BString::BString(const UString& s)
-{
-    if (s.isNull())
-        m_bstr = 0;
-    else
-        m_bstr = SysAllocStringLen(s.characters(), s.length());
-}
-
 #if USE(CF)
 BString::BString(CFStringRef cfstr)
     : m_bstr(0)

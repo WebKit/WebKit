@@ -165,7 +165,7 @@ END
     JSValue listener = exec->argument(1);
     if (!listener.isObject())
         return JSValue::encode(jsUndefined());
-    impl->${functionName}EventListener(ustringToAtomicString(exec->argument(0).toString(exec)->value(exec)), JSEventListener::create(asObject(listener), $wrapperObject, false, currentWorld(exec))$passRefPtrHandling, exec->argument(2).toBoolean(exec));
+    impl->${functionName}EventListener(exec->argument(0).toString(exec)->value(exec), JSEventListener::create(asObject(listener), $wrapperObject, false, currentWorld(exec))$passRefPtrHandling, exec->argument(2).toBoolean(exec));
     return JSValue::encode(jsUndefined());
 END
     return @GenerateEventListenerImpl;
@@ -2845,7 +2845,7 @@ END
             foreach my $param (@params) {
                 my $paramName = $param->name;
                 if ($param->type eq "DOMString") {
-                    push(@implContent, "    args.append(jsString(exec, ${paramName}));\n");
+                    push(@implContent, "    args.append(jsStringWithCache(exec, ${paramName}));\n");
                 } elsif ($param->type eq "boolean") {
                     push(@implContent, "    args.append(jsBoolean(${paramName}));\n");
                 } elsif ($param->type eq "SerializedScriptValue") {
@@ -3051,7 +3051,7 @@ sub JSValueToNative
             return "valueToStringWithNullCheck(exec, $value)"
         }
         # FIXME: Add the case for 'if ($signature->extendedAttributes->{"TreatUndefinedAs"} and $signature->extendedAttributes->{"TreatUndefinedAs"} eq "NullString"))'.
-        return "ustringToString($value.isEmpty() ? UString() : $value.toString(exec)->value(exec))";
+        return "$value.isEmpty() ? String() : $value.toString(exec)->value(exec)";
     }
 
     if ($type eq "DOMObject") {
@@ -3144,7 +3144,7 @@ sub NativeToJSValue
             die "Unknown value for TreatReturnedNullStringAs extended attribute";
         }
         AddToImplIncludes("<runtime/JSString.h>", $conditional);
-        return "jsString(exec, $value)";
+        return "jsStringWithCache(exec, $value)";
     }
 
     my $globalObject;
@@ -3681,7 +3681,7 @@ EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(Exec
     if (!executionContext)
         return throwVMError(exec, createReferenceError(exec, "Constructor associated execution context is unavailable"));
 
-    AtomicString eventType = ustringToAtomicString(exec->argument(0).toString(exec)->value(exec));
+    AtomicString eventType = exec->argument(0).toString(exec)->value(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 

@@ -34,7 +34,6 @@
 #include "RegExp.h"
 #include "RegExpCache.h"
 #include "StringRecursionChecker.h"
-#include "UStringConcatenate.h"
 
 namespace JSC {
 
@@ -110,7 +109,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
             return throwVMError(exec, createTypeError(exec, "Cannot supply flags when constructing one RegExp from another."));
         regExp = asRegExpObject(arg0)->regExp();
     } else {
-        UString pattern = !exec->argumentCount() ? UString("") : arg0.toString(exec)->value(exec);
+        String pattern = !exec->argumentCount() ? String("") : arg0.toString(exec)->value(exec);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
 
@@ -153,7 +152,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
         postfix[index++] = 'i';
     if (thisObject->get(exec, exec->propertyNames().multiline).toBoolean(exec))
         postfix[index] = 'm';
-    UString source = thisObject->get(exec, exec->propertyNames().source).toString(exec)->value(exec);
+    String source = thisObject->get(exec, exec->propertyNames().source).toString(exec)->value(exec);
     // If source is empty, use "/(?:)/" to avoid colliding with comment syntax
     return JSValue::encode(jsMakeNontrivialString(exec, "/", source, postfix));
 }

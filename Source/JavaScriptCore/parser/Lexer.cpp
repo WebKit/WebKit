@@ -368,7 +368,7 @@ Lexer<T>::~Lexer()
 }
 
 template <typename T>
-UString Lexer<T>::invalidCharacterMessage() const
+String Lexer<T>::invalidCharacterMessage() const
 {
     switch (m_current) {
     case 0:
@@ -418,7 +418,7 @@ void Lexer<T>::setCode(const SourceCode& source, ParserArena* arena)
     m_error = false;
     m_atLineStart = true;
     m_columnNumber = 0;
-    m_lexErrorMessage = UString();
+    m_lexErrorMessage = String();
     
     m_buffer8.reserveInitialCapacity(initialReadBufferCapacity);
     m_buffer16.reserveInitialCapacity((m_codeEnd - m_code) / 2);

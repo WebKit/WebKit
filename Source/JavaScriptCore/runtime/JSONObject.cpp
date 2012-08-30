@@ -36,9 +36,8 @@
 #include "LocalScope.h"
 #include "Lookup.h"
 #include "PropertyNameArray.h"
-#include "UStringBuilder.h"
-#include "UStringConcatenate.h"
 #include <wtf/MathExtras.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 
@@ -94,7 +93,7 @@ private:
 
         JSObject* object() const { return m_object.get(); }
 
-        bool appendNextProperty(Stringifier&, UStringBuilder&);
+        bool appendNextProperty(Stringifier&, StringBuilder&);
 
     private:
         Local<JSObject> m_object;
@@ -107,17 +106,17 @@ private:
 
     friend class Holder;
 
-    static void appendQuotedString(UStringBuilder&, const UString&);
+    static void appendQuotedString(StringBuilder&, const String&);
 
     JSValue toJSON(JSValue, const PropertyNameForFunctionCall&);
 
     enum StringifyResult { StringifyFailed, StringifySucceeded, StringifyFailedDueToUndefinedValue };
-    StringifyResult appendStringifiedValue(UStringBuilder&, JSValue, JSObject* holder, const PropertyNameForFunctionCall&);
+    StringifyResult appendStringifiedValue(StringBuilder&, JSValue, JSObject* holder, const PropertyNameForFunctionCall&);
 
     bool willIndent() const;
     void indent();
     void unindent();
-    void startNewLine(UStringBuilder&) const;
+    void startNewLine(StringBuilder&) const;
 
     ExecState* const m_exec;
     const Local<Unknown> m_replacer;
@@ -125,11 +124,11 @@ private:
     PropertyNameArray m_arrayReplacerPropertyNames;
     CallType m_replacerCallType;
     CallData m_replacerCallData;
-    const UString m_gap;
+    const String m_gap;
 
     Vector<Holder, 16> m_holderStack;
-    UString m_repeatedGap;
-    UString m_indent;
+    String m_repeatedGap;
+    String m_indent;
 };
 
 // ------------------------------ helper functions --------------------------------
@@ -148,7 +147,7 @@ static inline JSValue unwrapBoxedPrimitive(ExecState* exec, JSValue value)
     return value;
 }
 
-static inline UString gap(ExecState* exec, JSValue space)
+static inline String gap(ExecState* exec, JSValue space)
 {
     const unsigned maxGapLength = 10;
     space = unwrapBoxedPrimitive(exec, space);
@@ -166,11 +165,11 @@ static inline UString gap(ExecState* exec, JSValue space)
         UChar spaces[maxGapLength];
         for (int i = 0; i < count; ++i)
             spaces[i] = ' ';
-        return UString(spaces, count);
+        return String(spaces, count);
     }
 
     // If the space value is a string, use it as the gap string, otherwise use no gap string.
-    UString spaces = space.getString(exec);
+    String spaces = space.getString(exec);
     if (spaces.length() > maxGapLength) {
         spaces = spaces.substringSharingImpl(0, maxGapLength);
     }
@@ -245,17 +244,17 @@ Local<Unknown> Stringifier::stringify(Handle<Unknown> value)
     PropertyNameForFunctionCall emptyPropertyName(m_exec->globalData().propertyNames->emptyIdentifier);
     object->putDirect(m_exec->globalData(), m_exec->globalData().propertyNames->emptyIdentifier, value.get());
 
-    UStringBuilder result;
+    StringBuilder result;
     if (appendStringifiedValue(result, value.get(), object, emptyPropertyName) != StringifySucceeded)
         return Local<Unknown>(m_exec->globalData(), jsUndefined());
     if (m_exec->hadException())
         return Local<Unknown>(m_exec->globalData(), jsNull());
 
-    return Local<Unknown>(m_exec->globalData(), jsString(m_exec, result.toUString()));
+    return Local<Unknown>(m_exec->globalData(), jsString(m_exec, result.toString()));
 }
 
 template <typename CharType>
-static void appendStringToUStringBuilder(UStringBuilder& builder, const CharType* data, int length)
+static void appendStringToStringBuilder(StringBuilder& builder, const CharType* data, int length)
 {
     for (int i = 0; i < length; ++i) {
         int start = i;
@@ -303,16 +302,16 @@ static void appendStringToUStringBuilder(UStringBuilder& builder, const CharType
     }
 }
     
-void Stringifier::appendQuotedString(UStringBuilder& builder, const UString& value)
+void Stringifier::appendQuotedString(StringBuilder& builder, const String& value)
 {
     int length = value.length();
 
     builder.append('"');
 
     if (value.is8Bit())
-        appendStringToUStringBuilder<LChar>(builder, value.characters8(), length);
+        appendStringToStringBuilder<LChar>(builder, value.characters8(), length);
     else
-        appendStringToUStringBuilder<UChar>(builder, value.characters16(), length);
+        appendStringToStringBuilder<UChar>(builder, value.characters16(), length);
 
     builder.append('"');
 }
@@ -341,7 +340,7 @@ inline JSValue Stringifier::toJSON(JSValue value, const PropertyNameForFunctionC
     return call(m_exec, object, callType, callData, value, args);
 }
 
-Stringifier::StringifyResult Stringifier::appendStringifiedValue(UStringBuilder& builder, JSValue value, JSObject* holder, const PropertyNameForFunctionCall& propertyName)
+Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& builder, JSValue value, JSObject* holder, const PropertyNameForFunctionCall& propertyName)
 {
     // Call the toJSON function.
     value = toJSON(value, propertyName);
@@ -376,7 +375,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(UStringBuilder&
         return StringifySucceeded;
     }
 
-    UString stringValue;
+    String stringValue;
     if (value.getString(m_exec, stringValue)) {
         appendQuotedString(builder, stringValue);
         return StringifySucceeded;
@@ -387,7 +386,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(UStringBuilder&
         if (!isfinite(number))
             builder.append("null");
         else
-            builder.append(UString::numberToStringECMAScript(number));
+            builder.append(String::numberToStringECMAScript(number));
         return StringifySucceeded;
     }
 
@@ -448,7 +447,7 @@ inline void Stringifier::indent()
     // Use a single shared string, m_repeatedGap, so we don't keep allocating new ones as we indent and unindent.
     unsigned newSize = m_indent.length() + m_gap.length();
     if (newSize > m_repeatedGap.length())
-        m_repeatedGap = makeUString(m_repeatedGap, m_gap);
+        m_repeatedGap = makeString(m_repeatedGap, m_gap);
     ASSERT(newSize <= m_repeatedGap.length());
     m_indent = m_repeatedGap.substringSharingImpl(0, newSize);
 }
@@ -459,7 +458,7 @@ inline void Stringifier::unindent()
     m_indent = m_repeatedGap.substringSharingImpl(0, m_indent.length() - m_gap.length());
 }
 
-inline void Stringifier::startNewLine(UStringBuilder& builder) const
+inline void Stringifier::startNewLine(StringBuilder& builder) const
 {
     if (m_gap.isEmpty())
         return;
@@ -477,7 +476,7 @@ inline Stringifier::Holder::Holder(JSGlobalData& globalData, JSObject* object)
 {
 }
 
-bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, UStringBuilder& builder)
+bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBuilder& builder)
 {
     ASSERT(m_index <= m_size);
 
@@ -704,7 +703,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             }
             case ArrayEndVisitMember: {
                 JSArray* array = arrayStack.peek();
-                JSValue filteredValue = callReviver(array, jsString(m_exec, UString::number(indexStack.last())), outValue);
+                JSValue filteredValue = callReviver(array, jsString(m_exec, String::number(indexStack.last())), outValue);
                 if (filteredValue.isUndefined())
                     array->methodTable()->deletePropertyByIndex(array, m_exec, indexStack.last());
                 else
@@ -811,7 +810,7 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
 {
     if (!exec->argumentCount())
         return throwVMError(exec, createError(exec, "JSON.parse requires at least one parameter"));
-    UString source = exec->argument(0).toString(exec)->value(exec);
+    String source = exec->argument(0).toString(exec)->value(exec);
     if (exec->hadException())
         return JSValue::encode(jsNull());
 
@@ -852,12 +851,12 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState* exec)
     return JSValue::encode(Stringifier(exec, replacer, space).stringify(value).get());
 }
 
-UString JSONStringify(ExecState* exec, JSValue value, unsigned indent)
+String JSONStringify(ExecState* exec, JSValue value, unsigned indent)
 {
     LocalScope scope(exec->globalData());
     Local<Unknown> result = Stringifier(exec, Local<Unknown>(exec->globalData(), jsNull()), Local<Unknown>(exec->globalData(), jsNumber(indent))).stringify(Local<Unknown>(exec->globalData(), value));
     if (result.isUndefinedOrNull())
-        return UString();
+        return String();
     return result.getString(exec);
 }
 

@@ -28,8 +28,8 @@
 #ifndef RegExpKey_h
 #define RegExpKey_h
 
-#include "UString.h"
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
@@ -56,7 +56,7 @@ struct RegExpKey {
     {
     }
 
-    RegExpKey(RegExpFlags flags, const UString& pattern)
+    RegExpKey(RegExpFlags flags, const String& pattern)
         : flagsValue(flags)
         , pattern(pattern.impl())
     {

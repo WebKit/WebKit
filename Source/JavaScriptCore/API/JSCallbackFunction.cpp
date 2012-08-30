@@ -49,7 +49,7 @@ JSCallbackFunction::JSCallbackFunction(JSGlobalObject* globalObject, JSObjectCal
 {
 }
 
-void JSCallbackFunction::finishCreation(JSGlobalData& globalData, const UString& name)
+void JSCallbackFunction::finishCreation(JSGlobalData& globalData, const String& name)
 {
     Base::finishCreation(globalData, name);
     ASSERT(inherits(&s_info));

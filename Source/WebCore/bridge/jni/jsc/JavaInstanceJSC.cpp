@@ -93,11 +93,11 @@ JSValue JavaInstance::stringValue(ExecState* exec) const
 
     // Should throw a JS exception, rather than returning ""? - but better than a null dereference.
     if (!stringValue)
-        return jsString(exec, UString());
+        return jsString(exec, String()); // FIXME: why not jsEmptyString(exec)?
 
     JNIEnv* env = getJNIEnv();
     const jchar* c = getUCharactersFromJStringInEnv(env, stringValue);
-    UString u((const UChar*)c, (int)env->GetStringLength(stringValue));
+    String u((const UChar*)c, (int)env->GetStringLength(stringValue));
     releaseUCharactersForJStringInEnv(env, stringValue, c);
     return jsString(exec, u);
 }
@@ -118,7 +118,7 @@ class JavaRuntimeMethod : public RuntimeMethod {
 public:
     typedef RuntimeMethod Base;
 
-    static JavaRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const UString& name, Bindings::MethodList& list)
+    static JavaRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const String& name, Bindings::MethodList& list)
     {
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // We need to pass in the right global object for "i".
@@ -141,7 +141,7 @@ private:
     {
     }
 
-    void finishCreation(JSGlobalData& globalData, const UString& name)
+    void finishCreation(JSGlobalData& globalData, const String& name)
     {
         Base::finishCreation(globalData, name);
         ASSERT(inherits(&s_info));
@@ -187,7 +187,7 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod
     }
 
     const JavaMethod* jMethod = static_cast<const JavaMethod*>(method);
-    LOG(LiveConnect, "JavaInstance::invokeMethod call %s %s on %p", UString(jMethod->name().impl()).utf8().data(), jMethod->signature(), m_instance->instance());
+    LOG(LiveConnect, "JavaInstance::invokeMethod call %s %s on %p", String(jMethod->name().impl()).utf8().data(), jMethod->signature(), m_instance->instance());
 
     Vector<jvalue> jArgs(count);
 

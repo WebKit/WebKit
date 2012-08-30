@@ -73,7 +73,7 @@ CClass* CClass::classForIsA(NPClass* isa)
 
 MethodList CClass::methodsNamed(PropertyName propertyName, Instance* instance) const
 {
-    UString name(propertyName.publicName());
+    String name(propertyName.publicName());
     
     MethodList methodList;
 
@@ -97,7 +97,7 @@ MethodList CClass::methodsNamed(PropertyName propertyName, Instance* instance) c
 
 Field* CClass::fieldNamed(PropertyName propertyName, Instance* instance) const
 {
-    UString name(propertyName.publicName());
+    String name(propertyName.publicName());
     
     Field* aField = _fields.get(name.impl());
     if (aField)

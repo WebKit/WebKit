@@ -258,7 +258,7 @@ double parseDateFromNullTerminatedCharacters(ExecState* exec, const char* dateSt
     return ms - (offset * WTF::msPerMinute);
 }
 
-double parseDate(ExecState* exec, const UString& date)
+double parseDate(ExecState* exec, const String& date)
 {
     if (date == exec->globalData().cachedDateString)
         return exec->globalData().cachedDateStringValue;

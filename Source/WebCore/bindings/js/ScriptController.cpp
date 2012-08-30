@@ -122,7 +122,7 @@ JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld* world)
 ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld* world)
 {
     const SourceCode& jsSourceCode = sourceCode.jsSourceCode();
-    String sourceURL = ustringToString(jsSourceCode.provider()->url());
+    String sourceURL = jsSourceCode.provider()->url();
 
     // evaluate code. Returns the JS return value or 0
     // if there was none, an error occurred or the type couldn't be converted.

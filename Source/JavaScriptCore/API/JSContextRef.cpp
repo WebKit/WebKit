@@ -35,7 +35,7 @@
 #include "JSClassRef.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
-#include "UStringBuilder.h"
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
 #if OS(DARWIN)
@@ -167,9 +167,9 @@ JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)
     JSLockHolder lock(exec);
 
     unsigned count = 0;
-    UStringBuilder builder;
+    StringBuilder builder;
     CallFrame* callFrame = exec;
-    UString functionName;
+    String functionName;
     if (exec->callee()) {
         if (asObject(exec->callee())->inherits(&InternalFunction::s_info)) {
             functionName = asInternalFunction(exec->callee())->name(exec);
@@ -183,10 +183,10 @@ JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)
         ASSERT(callFrame);
         int signedLineNumber;
         intptr_t sourceID;
-        UString urlString;
+        String urlString;
         JSValue function;
         
-        UString levelStr = UString::number(count);
+        String levelStr = String::number(count);
         
         exec->interpreter()->retrieveLastCaller(callFrame, signedLineNumber, sourceID, urlString, function);
 
@@ -208,12 +208,12 @@ JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)
         builder.append("() at ");
         builder.append(urlString);
         builder.append(":");
-        builder.append(UString::number(lineNumber));
+        builder.append(String::number(lineNumber));
         if (!function || ++count == maxStackSize)
             break;
         callFrame = callFrame->callerFrame();
     }
-    return OpaqueJSString::create(builder.toUString()).leakRef();
+    return OpaqueJSString::create(builder.toString()).leakRef();
 }
 
 

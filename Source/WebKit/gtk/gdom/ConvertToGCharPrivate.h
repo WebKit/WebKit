@@ -35,7 +35,7 @@ inline gchar* copyAsGchar(WebCore::KURL const& s)
     return copyAsGchar(s.string());
 }
 
-inline gchar* copyAsGchar(const JSC::UString& s)
+inline gchar* copyAsGchar(const String& s)
 {
     return g_strdup(s.UTF8String().c_str());
 }

@@ -34,7 +34,6 @@
 #include "Nodes.h"
 #include "Parser.h"
 #include "SourceCode.h"
-#include "UString.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringHash.h>
@@ -45,14 +44,14 @@ namespace JSC {
 
     class EvalCodeCache {
     public:
-        EvalExecutable* tryGet(bool inStrictContext, const UString& evalSource, ScopeChainNode* scopeChain)
+        EvalExecutable* tryGet(bool inStrictContext, const String& evalSource, ScopeChainNode* scopeChain)
         {
             if (!inStrictContext && evalSource.length() < maxCacheableSourceLength && scopeChain->begin()->isVariableObject())
                 return m_cacheMap.get(evalSource.impl()).get();
             return 0;
         }
         
-        EvalExecutable* getSlow(ExecState* exec, ScriptExecutable* owner, bool inStrictContext, const UString& evalSource, ScopeChainNode* scopeChain, JSValue& exceptionValue)
+        EvalExecutable* getSlow(ExecState* exec, ScriptExecutable* owner, bool inStrictContext, const String& evalSource, ScopeChainNode* scopeChain, JSValue& exceptionValue)
         {
             EvalExecutable* evalExecutable = EvalExecutable::create(exec, makeSource(evalSource), inStrictContext);
             exceptionValue = evalExecutable->compile(exec, scopeChain);
@@ -65,7 +64,7 @@ namespace JSC {
             return evalExecutable;
         }
         
-        EvalExecutable* get(ExecState* exec, ScriptExecutable* owner, bool inStrictContext, const UString& evalSource, ScopeChainNode* scopeChain, JSValue& exceptionValue)
+        EvalExecutable* get(ExecState* exec, ScriptExecutable* owner, bool inStrictContext, const String& evalSource, ScopeChainNode* scopeChain, JSValue& exceptionValue)
         {
             EvalExecutable* evalExecutable = tryGet(inStrictContext, evalSource, scopeChain);
 

@@ -283,9 +283,9 @@ JSString* JSValue::toStringSlowCase(ExecState* exec) const
     return value.toString(exec);
 }
 
-UString JSValue::toUStringSlowCase(ExecState* exec) const
+String JSValue::toWTFStringSlowCase(ExecState* exec) const
 {
-    return inlineJSValueNotStringtoUString(*this, exec);
+    return inlineJSValueNotStringtoString(*this, exec);
 }
 
 } // namespace JSC

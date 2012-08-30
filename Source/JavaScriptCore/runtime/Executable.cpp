@@ -33,8 +33,8 @@
 #include "JIT.h"
 #include "JITDriver.h"
 #include "Parser.h"
-#include "UStringBuilder.h"
 #include <wtf/Vector.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 
@@ -669,16 +669,16 @@ FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& functio
     return FunctionExecutable::create(exec->globalData(), functionName, functionName, body->source(), body->usesArguments(), body->parameters(), body->isStrictMode(), body->lineNo(), body->lastLine());
 }
 
-UString FunctionExecutable::paramString() const
+String FunctionExecutable::paramString() const
 {
     FunctionParameters& parameters = *m_parameters;
-    UStringBuilder builder;
+    StringBuilder builder;
     for (size_t pos = 0; pos < parameters.size(); ++pos) {
         if (!builder.isEmpty())
             builder.append(", ");
         builder.append(parameters[pos].ustring());
     }
-    return builder.toUString();
+    return builder.toString();
 }
 
 }

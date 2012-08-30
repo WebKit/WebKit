@@ -59,7 +59,7 @@ inline Recompiler::~Recompiler()
     // JavaScript in the inspector.
     SourceProviderMap::const_iterator end = m_sourceProviders.end();
     for (SourceProviderMap::const_iterator iter = m_sourceProviders.begin(); iter != end; ++iter)
-        m_debugger->sourceParsed(iter->second, iter->first, -1, UString());
+        m_debugger->sourceParsed(iter->second, iter->first, -1, String());
 }
 
 inline void Recompiler::operator()(JSCell* cell)
@@ -121,7 +121,7 @@ void Debugger::recompileAllJSFunctions(JSGlobalData* globalData)
     globalData->heap.objectSpace().forEachCell(recompiler);
 }
 
-JSValue evaluateInGlobalCallFrame(const UString& script, JSValue& exception, JSGlobalObject* globalObject)
+JSValue evaluateInGlobalCallFrame(const String& script, JSValue& exception, JSGlobalObject* globalObject)
 {
     CallFrame* globalCallFrame = globalObject->globalExec();
     JSGlobalData& globalData = globalObject->globalData();

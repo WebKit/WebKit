@@ -134,7 +134,7 @@ void ScriptDebugServer::updateCurrentStatementPosition(intptr_t sourceID, int li
     SourceProvider* source = reinterpret_cast<SourceProvider*>(sourceID);
 
     if (m_currentSourceID != sourceID) {
-        String sourceCode = ustringToString(JSC::UString(const_cast<StringImpl*>(source->data())));
+        String sourceCode(const_cast<StringImpl*>(source->data()));
         m_currentSourceCode.clear();
         sourceCode.split("\n", true, m_currentSourceCode);
         m_currentSourceID = sourceID;
@@ -201,7 +201,7 @@ bool ScriptDebugServer::hasBreakpoint(intptr_t sourceID, const TextPosition& pos
         return true;
 
     JSValue exception;
-    JSValue result = m_currentCallFrame->evaluate(stringToUString(breaksVector.at(i).condition), exception);
+    JSValue result = m_currentCallFrame->evaluate(breaksVector.at(i).condition, exception);
     if (exception) {
         // An erroneous condition counts as "false".
         return false;
@@ -316,11 +316,11 @@ void ScriptDebugServer::dispatchDidContinue(ScriptDebugListener* listener)
 
 void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, SourceProvider* sourceProvider, bool isContentScript)
 {
-    String sourceID = ustringToString(JSC::UString::number(sourceProvider->asID()));
+    String sourceID = String::number(sourceProvider->asID());
 
     ScriptDebugListener::Script script;
-    script.url = ustringToString(sourceProvider->url());
-    script.source = ustringToString(JSC::UString(const_cast<StringImpl*>(sourceProvider->data())));
+    script.url = sourceProvider->url();
+    script.source = String(const_cast<StringImpl*>(sourceProvider->data()));
     script.startLine = sourceProvider->startPosition().m_line.zeroBasedInt();
     script.startColumn = sourceProvider->startPosition().m_column.zeroBasedInt();
     script.isContentScript = isContentScript;
@@ -354,8 +354,8 @@ void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, Sou
 
 void ScriptDebugServer::dispatchFailedToParseSource(const ListenerSet& listeners, SourceProvider* sourceProvider, int errorLine, const String& errorMessage)
 {
-    String url = ustringToString(sourceProvider->url());
-    String data = ustringToString(JSC::UString(const_cast<StringImpl*>(sourceProvider->data())));
+    String url = sourceProvider->url();
+    String data = String(const_cast<StringImpl*>(sourceProvider->data()));
     int firstLine = sourceProvider->startPosition().m_line.oneBasedInt();
 
     Vector<ScriptDebugListener*> copy;
@@ -382,7 +382,7 @@ void ScriptDebugServer::detach(JSGlobalObject* globalObject)
     Debugger::detach(globalObject);
 }
 
-void ScriptDebugServer::sourceParsed(ExecState* exec, SourceProvider* sourceProvider, int errorLine, const UString& errorMessage)
+void ScriptDebugServer::sourceParsed(ExecState* exec, SourceProvider* sourceProvider, int errorLine, const String& errorMessage)
 {
     if (m_callingListeners)
         return;
@@ -396,7 +396,7 @@ void ScriptDebugServer::sourceParsed(ExecState* exec, SourceProvider* sourceProv
 
     bool isError = errorLine != -1;
     if (isError)
-        dispatchFailedToParseSource(*listeners, sourceProvider, errorLine, ustringToString(errorMessage));
+        dispatchFailedToParseSource(*listeners, sourceProvider, errorLine, errorMessage);
     else
         dispatchDidParseSource(*listeners, sourceProvider, isContentScript(exec));
 

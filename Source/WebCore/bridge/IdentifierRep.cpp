@@ -28,9 +28,9 @@
 #include "JSDOMBinding.h"
 
 #include "PlatformString.h"
-#include <runtime/UString.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/WTFString.h>
 
 using namespace JSC;
 
@@ -92,7 +92,7 @@ IdentifierRep* IdentifierRep::get(const char* name)
     if (!name)
         return 0;
   
-    UString string = stringToUString(String::fromUTF8WithLatin1Fallback(name, strlen(name)));
+    String string = String::fromUTF8WithLatin1Fallback(name, strlen(name));
     StringIdentifierMap::AddResult result = stringIdentifierMap().add(string.impl(), 0);
     if (result.isNewEntry) {
         ASSERT(!result.iterator->second);

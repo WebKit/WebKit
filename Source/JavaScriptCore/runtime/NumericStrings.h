@@ -26,25 +26,25 @@
 #ifndef NumericStrings_h
 #define NumericStrings_h
 
-#include "UString.h"
 #include <wtf/FixedArray.h>
 #include <wtf/HashFunctions.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
     class NumericStrings {
     public:
-        ALWAYS_INLINE UString add(double d)
+        ALWAYS_INLINE String add(double d)
         {
             CacheEntry<double>& entry = lookup(d);
             if (d == entry.key && !entry.value.isNull())
                 return entry.value;
             entry.key = d;
-            entry.value = UString::numberToStringECMAScript(d);
+            entry.value = String::numberToStringECMAScript(d);
             return entry.value;
         }
 
-        ALWAYS_INLINE UString add(int i)
+        ALWAYS_INLINE String add(int i)
         {
             if (static_cast<unsigned>(i) < cacheSize)
                 return lookupSmallString(static_cast<unsigned>(i));
@@ -52,11 +52,11 @@ namespace JSC {
             if (i == entry.key && !entry.value.isNull())
                 return entry.value;
             entry.key = i;
-            entry.value = UString::number(i);
+            entry.value = String::number(i);
             return entry.value;
         }
 
-        ALWAYS_INLINE UString add(unsigned i)
+        ALWAYS_INLINE String add(unsigned i)
         {
             if (i < cacheSize)
                 return lookupSmallString(static_cast<unsigned>(i));
@@ -64,7 +64,7 @@ namespace JSC {
             if (i == entry.key && !entry.value.isNull())
                 return entry.value;
             entry.key = i;
-            entry.value = UString::number(i);
+            entry.value = String::number(i);
             return entry.value;
         }
     private:
@@ -73,24 +73,24 @@ namespace JSC {
         template<typename T>
         struct CacheEntry {
             T key;
-            UString value;
+            String value;
         };
 
         CacheEntry<double>& lookup(double d) { return doubleCache[WTF::FloatHash<double>::hash(d) & (cacheSize - 1)]; }
         CacheEntry<int>& lookup(int i) { return intCache[WTF::IntHash<int>::hash(i) & (cacheSize - 1)]; }
         CacheEntry<unsigned>& lookup(unsigned i) { return unsignedCache[WTF::IntHash<unsigned>::hash(i) & (cacheSize - 1)]; }
-        ALWAYS_INLINE const UString& lookupSmallString(unsigned i)
+        ALWAYS_INLINE const String& lookupSmallString(unsigned i)
         {
             ASSERT(i < cacheSize);
             if (smallIntCache[i].isNull())
-                smallIntCache[i] = UString::number(i);
+                smallIntCache[i] = String::number(i);
             return smallIntCache[i];
         }
 
         FixedArray<CacheEntry<double>, cacheSize> doubleCache;
         FixedArray<CacheEntry<int>, cacheSize> intCache;
         FixedArray<CacheEntry<unsigned>, cacheSize> unsignedCache;
-        FixedArray<UString, cacheSize> smallIntCache;
+        FixedArray<String, cacheSize> smallIntCache;
     };
 
 } // namespace JSC

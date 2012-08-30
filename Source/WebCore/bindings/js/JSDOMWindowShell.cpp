@@ -85,7 +85,7 @@ void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> domWindow)
 // JSObject methods
 // ----
 
-UString JSDOMWindowShell::className(const JSObject* object)
+String JSDOMWindowShell::className(const JSObject* object)
 {
     const JSDOMWindowShell* thisObject = jsCast<const JSDOMWindowShell*>(object);
     return thisObject->window()->methodTable()->className(thisObject->window());

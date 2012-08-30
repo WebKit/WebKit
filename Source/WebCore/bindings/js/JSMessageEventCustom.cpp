@@ -71,7 +71,7 @@ JSValue JSMessageEvent::data(ExecState* exec) const
         break;
 
     case MessageEvent::DataTypeString:
-        result = jsString(exec, event->dataAsString());
+        result = jsStringWithCache(exec, event->dataAsString());
         break;
 
     case MessageEvent::DataTypeBlob:
@@ -102,11 +102,11 @@ JSValue JSMessageEvent::ports(ExecState* exec) const
 
 static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecState* exec)
 {
-    const UString& typeArg = exec->argument(0).toString(exec)->value(exec);
+    const String& typeArg = exec->argument(0).toString(exec)->value(exec);
     bool canBubbleArg = exec->argument(1).toBoolean(exec);
     bool cancelableArg = exec->argument(2).toBoolean(exec);
-    const UString& originArg = exec->argument(4).toString(exec)->value(exec);
-    const UString& lastEventIdArg = exec->argument(5).toString(exec)->value(exec);
+    const String originArg = exec->argument(4).toString(exec)->value(exec);
+    const String lastEventIdArg = exec->argument(5).toString(exec)->value(exec);
     DOMWindow* sourceArg = toDOMWindow(exec->argument(6));
     OwnPtr<MessagePortArray> messagePorts;
     OwnPtr<ArrayBufferArray> arrayBuffers;
@@ -122,7 +122,7 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
         return jsUndefined();
 
     MessageEvent* event = static_cast<MessageEvent*>(jsEvent->impl());
-    event->initMessageEvent(ustringToAtomicString(typeArg), canBubbleArg, cancelableArg, dataArg, ustringToString(originArg), ustringToString(lastEventIdArg), sourceArg, messagePorts.release());
+    event->initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, sourceArg, messagePorts.release());
     jsEvent->m_data.set(exec->globalData(), jsEvent, dataArg.jsValue());
     return jsUndefined();
 }

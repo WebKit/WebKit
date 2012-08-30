@@ -421,12 +421,12 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
     }
 #endif
 
-    UString locationString = value.toString(exec)->value(exec);
+    String locationString = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
 
     if (Location* location = impl()->location())
-        location->setHref(ustringToString(locationString), activeDOMWindow(exec), firstDOMWindow(exec));
+        location->setHref(locationString, activeDOMWindow(exec), firstDOMWindow(exec));
 }
 
 JSValue JSDOMWindow::event(ExecState* exec) const
@@ -472,7 +472,7 @@ JSValue JSDOMWindow::open(ExecState* exec)
     String urlString = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0));
     if (exec->hadException())
         return jsUndefined();
-    AtomicString frameName = exec->argument(1).isUndefinedOrNull() ? "_blank" : ustringToAtomicString(exec->argument(1).toString(exec)->value(exec));
+    AtomicString frameName = exec->argument(1).isUndefinedOrNull() ? "_blank" : exec->argument(1).toString(exec)->value(exec);
     if (exec->hadException())
         return jsUndefined();
     String windowFeaturesString = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(2));
@@ -641,7 +641,7 @@ JSValue JSDOMWindow::addEventListener(ExecState* exec)
     if (!listener.isObject())
         return jsUndefined();
 
-    impl()->addEventListener(ustringToAtomicString(exec->argument(0).toString(exec)->value(exec)), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)), exec->argument(2).toBoolean(exec));
+    impl()->addEventListener(exec->argument(0).toString(exec)->value(exec), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)), exec->argument(2).toBoolean(exec));
     return jsUndefined();
 }
 
@@ -655,7 +655,7 @@ JSValue JSDOMWindow::removeEventListener(ExecState* exec)
     if (!listener.isObject())
         return jsUndefined();
 
-    impl()->removeEventListener(ustringToAtomicString(exec->argument(0).toString(exec)->value(exec)), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)).get(), exec->argument(2).toBoolean(exec));
+    impl()->removeEventListener(exec->argument(0).toString(exec)->value(exec), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)).get(), exec->argument(2).toBoolean(exec));
     return jsUndefined();
 }
 

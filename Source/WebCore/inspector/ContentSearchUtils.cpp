@@ -144,7 +144,7 @@ static String findMagicComment(const String& content, const String& name)
 {
     String patternString = "//@[\040\t]" + name + "=[\040\t]*([^\\s\'\"]*)[\040\t]*$";
     const char* error = 0;
-    JSC::Yarr::YarrPattern pattern(JSC::UString(patternString.impl()), false, true, &error);
+    JSC::Yarr::YarrPattern pattern(patternString, false, true, &error);
     ASSERT(!error);
     BumpPointerAllocator regexAllocator;
     OwnPtr<JSC::Yarr::BytecodePattern> bytecodePattern = JSC::Yarr::byteCompile(pattern, &regexAllocator);
@@ -153,7 +153,7 @@ static String findMagicComment(const String& content, const String& name)
     ASSERT(pattern.m_numSubpatterns == 1);
     Vector<int, 4> matches;
     matches.resize(4);
-    unsigned result = JSC::Yarr::interpret(bytecodePattern.get(), JSC::UString(content.impl()), 0, reinterpret_cast<unsigned*>(matches.data()));
+    unsigned result = JSC::Yarr::interpret(bytecodePattern.get(), content, 0, reinterpret_cast<unsigned*>(matches.data()));
     if (result == JSC::Yarr::offsetNoMatch)
         return String();
     ASSERT(matches[2] > 0 && matches[3] > 0);

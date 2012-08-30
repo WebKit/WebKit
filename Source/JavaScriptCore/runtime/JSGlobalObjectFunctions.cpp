@@ -34,7 +34,6 @@
 #include "LiteralParser.h"
 #include "Nodes.h"
 #include "Parser.h"
-#include "UStringBuilder.h"
 #include <wtf/dtoa.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,6 +41,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/UTF8.h>
 
 using namespace WTF;
@@ -142,7 +142,7 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
 static JSValue decode(ExecState* exec, const char* doNotUnescape, bool strict)
 {
     JSStringBuilder builder;
-    UString str = exec->argument(0).toString(exec)->value(exec);
+    String str = exec->argument(0).toString(exec)->value(exec);
     
     if (str.is8Bit())
         return decode(exec, str.characters8(), str.length(), doNotUnescape, strict);
@@ -232,7 +232,7 @@ double parseIntOverflow(const UChar* s, int length, int radix)
 // ES5.1 15.1.2.2
 template <typename CharType>
 ALWAYS_INLINE
-static double parseInt(const UString& s, const CharType* data, int radix)
+static double parseInt(const String& s, const CharType* data, int radix)
 {
     // 1. Let inputString be ToString(string).
     // 2. Let S be a newly created substring of inputString consisting of the first character that is not a
@@ -313,7 +313,7 @@ static double parseInt(const UString& s, const CharType* data, int radix)
     return sign * number;
 }
 
-static double parseInt(const UString& s, int radix)
+static double parseInt(const String& s, int radix)
 {
     if (s.is8Bit())
         return parseInt(s, s.characters8(), radix);
@@ -432,7 +432,7 @@ static double toDouble(const CharType* characters, unsigned size)
 }
 
 // See ecma-262 9.3.1
-double jsToNumber(const UString& s)
+double jsToNumber(const String& s)
 {
     unsigned size = s.length();
 
@@ -450,7 +450,7 @@ double jsToNumber(const UString& s)
     return toDouble(s.characters16(), size);
 }
 
-static double parseFloat(const UString& s)
+static double parseFloat(const String& s)
 {
     unsigned size = s.length();
 
@@ -505,7 +505,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
     if (!x.isString())
         return JSValue::encode(x);
 
-    UString s = x.toString(exec)->value(exec);
+    String s = x.toString(exec)->value(exec);
 
     if (s.is8Bit()) {
         LiteralParser<LChar> preparser(exec, s.characters8(), s.length(), NonStrictJSON);
@@ -548,7 +548,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
     }
 
     // If ToString throws, we shouldn't call ToInt32.
-    UString s = value.toString(exec)->value(exec);
+    String s = value.toString(exec)->value(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -615,7 +615,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
         "*+-./@_";
 
     JSStringBuilder builder;
-    UString str = exec->argument(0).toString(exec)->value(exec);
+    String str = exec->argument(0).toString(exec)->value(exec);
     if (str.is8Bit()) {
         const LChar* c = str.characters8();
         for (unsigned k = 0; k < str.length(); k++, c++) {
@@ -653,8 +653,8 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
 {
-    UStringBuilder builder;
-    UString str = exec->argument(0).toString(exec)->value(exec);
+    StringBuilder builder;
+    String str = exec->argument(0).toString(exec)->value(exec);
     int k = 0;
     int len = str.length();
     
@@ -699,7 +699,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
         }
     }
 
-    return JSValue::encode(jsString(exec, builder.toUString()));
+    return JSValue::encode(jsString(exec, builder.toString()));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeError(ExecState* exec)

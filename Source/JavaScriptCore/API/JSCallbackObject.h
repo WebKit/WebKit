@@ -171,7 +171,7 @@ protected:
     static const unsigned StructureFlags = ProhibitsPropertyCaching | OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesHasInstance | OverridesVisitChildren | OverridesGetPropertyNames | Parent::StructureFlags;
 
 private:
-    static UString className(const JSObject*);
+    static String className(const JSObject*);
 
     static void destroy(JSCell*);
 

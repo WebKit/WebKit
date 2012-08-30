@@ -43,7 +43,6 @@
 #include "RegExpCache.h"
 #include "RegExpObject.h"
 #include "SamplingTool.h"
-#include "UStringConcatenate.h"
 #include <wtf/Assertions.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/Threading.h>
@@ -77,7 +76,7 @@ namespace JSC {
 
 // ------------------------------ ThrowableExpressionData --------------------------------
 
-RegisterID* ThrowableExpressionData::emitThrowReferenceError(BytecodeGenerator& generator, const UString& message)
+RegisterID* ThrowableExpressionData::emitThrowReferenceError(BytecodeGenerator& generator, const String& message)
 {
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
     generator.emitThrowReferenceError(message);
@@ -1808,7 +1807,7 @@ static void processClauseList(ClauseListNode* list, Vector<ExpressionNode*, 8>& 
                 typeForTable = SwitchNeither;
                 break;
             }
-            const UString& value = static_cast<StringNode*>(clauseExpression)->value().ustring();
+            const String& value = static_cast<StringNode*>(clauseExpression)->value().ustring();
             if (singleCharacterSwitch &= value.length() == 1) {
                 int32_t intVal = value[0];
                 if (intVal < min_num)

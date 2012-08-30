@@ -54,8 +54,8 @@
 
 #include "JSDOMBinding.h"
 #include <runtime/JSValue.h>
-#include <runtime/UString.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #include "EditorClientWx.h"
 #include "FrameLoaderClientWx.h"

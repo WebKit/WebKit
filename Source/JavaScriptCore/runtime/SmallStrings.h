@@ -26,8 +26,8 @@
 #ifndef SmallStrings_h
 #define SmallStrings_h
 
-#include "UString.h"
 #include <wtf/FixedArray.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 
 #define JSC_COMMON_STRINGS_EACH_NAME(macro) \
@@ -40,6 +40,10 @@
     macro(undefined) \
     macro(string) \
     macro(true)
+
+namespace WTF {
+class StringImpl;
+}
 
 namespace JSC {
 
@@ -71,7 +75,7 @@ namespace JSC {
             return m_singleCharacterStrings[character];
         }
 
-        JS_EXPORT_PRIVATE StringImpl* singleCharacterStringRep(unsigned char character);
+        JS_EXPORT_PRIVATE WTF::StringImpl* singleCharacterStringRep(unsigned char character);
 
         void finalizeSmallStrings();
 

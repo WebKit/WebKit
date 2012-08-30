@@ -638,7 +638,7 @@ void DumpRenderTreeSupportEfl::setSerializeHTTPLoads(bool enabled)
 void DumpRenderTreeSupportEfl::sendWebIntentResponse(Ewk_Intent_Request* request, JSStringRef response)
 {
 #if ENABLE(WEB_INTENTS)
-    JSC::UString responseString = response->ustring();
+    String responseString = response->ustring();
     if (responseString.isNull())
         ewk_intent_request_failure_post(request, WebCore::SerializedScriptValue::create(String::fromUTF8("ERROR")));
     else

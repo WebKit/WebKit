@@ -376,7 +376,7 @@ private:
 };
 
 JS_EXPORT_PRIVATE PassOwnPtr<BytecodePattern> byteCompile(YarrPattern&, BumpPointerAllocator*);
-JS_EXPORT_PRIVATE unsigned interpret(BytecodePattern*, const UString& input, unsigned start, unsigned* output);
+JS_EXPORT_PRIVATE unsigned interpret(BytecodePattern*, const String& input, unsigned start, unsigned* output);
 unsigned interpret(BytecodePattern*, const LChar* input, unsigned length, unsigned start, unsigned* output);
 unsigned interpret(BytecodePattern*, const UChar* input, unsigned length, unsigned start, unsigned* output);
 

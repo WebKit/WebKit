@@ -178,7 +178,7 @@ void NPRuntimeObjectMap::convertJSValueToNPVariant(ExecState* exec, JSValue valu
     ASSERT_NOT_REACHED();
 }
 
-bool NPRuntimeObjectMap::evaluate(NPObject* npObject, const String&scriptString, NPVariant* result)
+bool NPRuntimeObjectMap::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result)
 {
     Strong<JSGlobalObject> globalObject(this->globalObject()->globalData(), this->globalObject());
     if (!globalObject)
@@ -190,7 +190,7 @@ bool NPRuntimeObjectMap::evaluate(NPObject* npObject, const String&scriptString,
     JSValue thisValue = getOrCreateJSObject(globalObject.get(), npObject);
 
     globalObject->globalData().timeoutChecker.start();
-    JSValue resultValue = JSC::evaluate(exec, globalObject->globalScopeChain(), makeSource(UString(scriptString.impl())), thisValue);
+    JSValue resultValue = JSC::evaluate(exec, globalObject->globalScopeChain(), makeSource(scriptString), thisValue);
     globalObject->globalData().timeoutChecker.stop();
 
     convertJSValueToNPVariant(exec, resultValue, *result);
@@ -267,7 +267,7 @@ void NPRuntimeObjectMap::moveGlobalExceptionToExecState(ExecState* exec)
 
     {
         JSLockHolder lock(exec);
-        throwError(exec, createError(exec, stringToUString(globalExceptionString())));
+        throwError(exec, createError(exec, globalExceptionString()));
     }
     
     globalExceptionString() = String();

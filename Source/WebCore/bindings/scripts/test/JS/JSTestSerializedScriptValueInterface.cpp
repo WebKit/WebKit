@@ -92,7 +92,7 @@ EncodedJSValue JSC_HOST_CALL JSTestSerializedScriptValueInterfaceConstructor::co
     JSTestSerializedScriptValueInterfaceConstructor* castedThis = jsCast<JSTestSerializedScriptValueInterfaceConstructor*>(exec->callee());
     if (exec->argumentCount() < 2)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    const String& hello(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).toString(exec)->value(exec)));
+    const String& hello(MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).isEmpty() ? String() : MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).toString(exec)->value(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     RefPtr<SerializedScriptValue> data(SerializedScriptValue::create(exec, MAYBE_MISSING_PARAMETER(exec, 1, DefaultIsUndefined), 0, 0));

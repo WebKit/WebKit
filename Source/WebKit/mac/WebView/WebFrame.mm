@@ -598,7 +598,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
     JSC::ExecState* exec = _private->coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec();
     JSC::JSLockHolder lock(exec);
-    return ustringToString(result.toString(exec)->value(exec));
+    return result.toWTFString(exec);
 }
 
 - (NSRect)_caretRectAtPosition:(const Position&)pos affinity:(NSSelectionAffinity)affinity
@@ -1124,7 +1124,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
     JSC::ExecState* exec = anyWorldGlobalObject->globalExec();
     JSC::JSLockHolder lock(exec);
-    return ustringToString(result.toString(exec)->value(exec));
+    return result.toWTFString(exec);
 }
 
 - (JSGlobalContextRef)_globalContextForScriptWorld:(WebScriptWorld *)world

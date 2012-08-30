@@ -3410,7 +3410,7 @@ DEFINE_STUB_FUNCTION(void, op_throw_reference_error)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    UString message = stackFrame.args[0].jsValue().toString(callFrame)->value(callFrame);
+    String message = stackFrame.args[0].jsValue().toString(callFrame)->value(callFrame);
     stackFrame.globalData->exception = createReferenceError(callFrame, message);
     VM_THROW_EXCEPTION_AT_END();
 }

@@ -30,10 +30,10 @@
 #define SymbolTable_h
 
 #include "JSObject.h"
-#include "UString.h"
 #include "Watchpoint.h"
 #include <wtf/AlwaysInline.h>
 #include <wtf/HashTraits.h>
+#include <wtf/text/StringImpl.h>
 
 namespace JSC {
 

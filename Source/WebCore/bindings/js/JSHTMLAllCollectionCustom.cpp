@@ -70,7 +70,7 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
 
     if (exec->argumentCount() == 1) {
         // Support for document.all(<index>) etc.
-        UString string = exec->argument(0).toString(exec)->value(exec);
+        String string = exec->argument(0).toString(exec)->value(exec);
         unsigned index = toUInt32FromStringImpl(string.impl());
         if (index != PropertyName::NotAnIndex)
             return JSValue::encode(toJS(exec, jsCollection->globalObject(), collection->item(index)));
@@ -80,10 +80,10 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
     }
 
     // The second arg, if set, is the index of the item we want
-    UString string = exec->argument(0).toString(exec)->value(exec);
-    unsigned index = toUInt32FromStringImpl(exec->argument(1).toString(exec)->value(exec).impl());
+    String string = exec->argument(0).toString(exec)->value(exec);
+    unsigned index = toUInt32FromStringImpl(exec->argument(1).toWTFString(exec).impl());
     if (index != PropertyName::NotAnIndex) {
-        if (Node* node = collection->namedItemWithIndex(ustringToAtomicString(string), index))
+        if (Node* node = collection->namedItemWithIndex(string, index))
             return JSValue::encode(toJS(exec, jsCollection->globalObject(), node));
     }
 

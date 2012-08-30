@@ -79,8 +79,8 @@ namespace JSC {
         StackFrameCodeType codeType;
         Strong<ExecutableBase> executable;
         int line;
-        UString sourceURL;
-        UString toString(CallFrame* callFrame) const
+        String sourceURL;
+        String toString(CallFrame* callFrame) const
         {
             StringBuilder traceBuild;
             String functionName = friendlyFunctionName(callFrame);
@@ -233,7 +233,7 @@ namespace JSC {
 
         JSValue retrieveArgumentsFromVMCode(CallFrame*, JSFunction*) const;
         JSValue retrieveCallerFromVMCode(CallFrame*, JSFunction*) const;
-        JS_EXPORT_PRIVATE void retrieveLastCaller(CallFrame*, int& lineNumber, intptr_t& sourceID, UString& sourceURL, JSValue& function) const;
+        JS_EXPORT_PRIVATE void retrieveLastCaller(CallFrame*, int& lineNumber, intptr_t& sourceID, String& sourceURL, JSValue& function) const;
         
         void getArgumentsData(CallFrame*, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);
         
@@ -241,7 +241,7 @@ namespace JSC {
 
         NEVER_INLINE HandlerInfo* throwException(CallFrame*&, JSValue&, unsigned bytecodeOffset);
         NEVER_INLINE void debug(CallFrame*, DebugHookID, int firstLine, int lastLine, int column);
-        static const UString getTraceLine(CallFrame*, StackFrameCodeType, const UString&, int);
+        static const String getTraceLine(CallFrame*, StackFrameCodeType, const String&, int);
         JS_EXPORT_PRIVATE static void getStackTrace(JSGlobalData*, Vector<StackFrame>& results);
         static void addStackTraceIfNecessary(CallFrame*, JSObject* error);
 

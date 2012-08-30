@@ -1265,7 +1265,7 @@ void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecSta
 
     if (value.isString()) {
         [array addObject:[NSNumber numberWithInt:StringValueType]];
-        [array addObject:ustringToString(value.toString(exec)->value(exec))];
+        [array addObject:value.toWTFString(exec)];
     } else if (value.isNumber()) {
         [array addObject:[NSNumber numberWithInt:DoubleValueType]];
         [array addObject:[NSNumber numberWithDouble:value.toNumber(exec)]];
@@ -1672,7 +1672,7 @@ void NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(ExecState* exec
 
     {
         JSLockHolder lock(exec);
-        throwError(exec, createError(exec, stringToUString(globalExceptionString())));
+        throwError(exec, createError(exec, globalExceptionString()));
     }
 
     globalExceptionString() = String();

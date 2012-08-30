@@ -62,7 +62,6 @@
 #include "SamplingTool.h"
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
-#include "UStringConcatenate.h"
 #include <limits.h>
 #include <stdio.h>
 #include <wtf/Threading.h>
@@ -151,7 +150,7 @@ JSValue eval(CallFrame* callFrame)
         return program;
     
     TopCallFrameSetter topCallFrame(callFrame->globalData(), callFrame);
-    UString programSource = asString(program)->value(callFrame);
+    String programSource = asString(program)->value(callFrame);
     if (callFrame->hadException())
         return JSValue();
     
@@ -362,7 +361,7 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     while (it < end) {
         JSValue v = it->jsValue();
         int registerNumber = it - callFrame->registers();
-        UString name = codeBlock->nameForRegister(registerNumber);
+        String name = codeBlock->nameForRegister(registerNumber);
 #if USE(JSVALUE32_64)
         dataLog("[r% 3d %14s]      | %10p | %-16s 0x%llx \n", registerNumber, name.ascii().data(), it, v.description(), JSValue::encode(v));
 #else
@@ -401,7 +400,7 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
         do {
             JSValue v = it->jsValue();
             int registerNumber = it - callFrame->registers();
-            UString name = codeBlock->nameForRegister(registerNumber);
+            String name = codeBlock->nameForRegister(registerNumber);
 #if USE(JSVALUE32_64)
             dataLog("[r% 3d %14s]      | %10p | %-16s 0x%llx \n", registerNumber, name.ascii().data(), it, v.description(), JSValue::encode(v));
 #else
@@ -532,10 +531,10 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
     if (!jsMessage || !jsMessage.isString())
         return;
 
-    UString message = asString(jsMessage)->value(callFrame);
+    String message = asString(jsMessage)->value(callFrame);
 
     if (expressionStart < expressionStop)
-        message =  makeUString(message, " (evaluating '", codeBlock->source()->getRange(expressionStart, expressionStop), "')");
+        message =  makeString(message, " (evaluating '", codeBlock->source()->getRange(expressionStart, expressionStop), "')");
     else {
         // No range information, so give a few characters of context
         const StringImpl* data = codeBlock->source()->data();
@@ -552,7 +551,7 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
             stop++;
         while (stop > expressionStart && isStrWhiteSpace((*data)[stop - 1]))
             stop--;
-        message = makeUString(message, " (near '...", codeBlock->source()->getRange(start, stop), "...')");
+        message = makeString(message, " (near '...", codeBlock->source()->getRange(start, stop), "...')");
     }
 
     exception->putDirect(*globalData, globalData->propertyNames->message, jsString(globalData, message));
@@ -665,7 +664,7 @@ static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, 
     return callerFrame;
 }
 
-static ALWAYS_INLINE const UString getSourceURLFromCallFrame(CallFrame* callFrame) 
+static ALWAYS_INLINE const String getSourceURLFromCallFrame(CallFrame* callFrame)
 {
     ASSERT(!callFrame->hasHostCallFrameFlag());
 #if ENABLE(CLASSIC_INTERPRETER)
@@ -706,13 +705,13 @@ void Interpreter::getStackTrace(JSGlobalData* globalData, Vector<StackFrame>& re
     callFrame = callFrame->trueCallFrameFromVMCode();
 
     while (callFrame && callFrame != CallFrame::noCaller()) {
-        UString sourceURL;
+        String sourceURL;
         if (callFrame->codeBlock()) {
             sourceURL = getSourceURLFromCallFrame(callFrame);
             StackFrame s = { Strong<JSObject>(*globalData, callFrame->callee()), getStackFrameCodeType(callFrame), Strong<ExecutableBase>(*globalData, callFrame->codeBlock()->ownerExecutable()), line, sourceURL};
             results.append(s);
         } else {
-            StackFrame s = { Strong<JSObject>(*globalData, callFrame->callee()), StackFrameNativeCode, Strong<ExecutableBase>(), -1, UString()};
+            StackFrame s = { Strong<JSObject>(*globalData, callFrame->callee()), StackFrameNativeCode, Strong<ExecutableBase>(), -1, String()};
             results.append(s);
         }
         unsigned unusedBytecodeOffset = 0;
@@ -745,7 +744,7 @@ void Interpreter::addStackTraceIfNecessary(CallFrame* callFrame, JSObject* error
             builder.append('\n');
     }
     
-    error->putDirect(*globalData, globalData->propertyNames->stack, jsString(globalData, UString(builder.toString().impl())), ReadOnly | DontDelete);
+    error->putDirect(*globalData, globalData->propertyNames->stack, jsString(globalData, builder.toString()), ReadOnly | DontDelete);
 }
 
 NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSValue& exceptionValue, unsigned bytecodeOffset)
@@ -848,7 +847,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
     DynamicGlobalObjectScope globalObjectScope(*scopeChain->globalData, scopeChain->globalObject.get());
     Vector<JSONPData> JSONPData;
     bool parseResult;
-    const UString programSource = program->source().toString();
+    const String programSource = program->source().toString();
     if (programSource.isNull())
         return jsUndefined();
     if (programSource.is8Bit()) {
@@ -4956,7 +4955,7 @@ skip_id_custom_self:
            original constructor, using constant message as the
            message string. The result is thrown.
         */
-        UString message = callFrame->r(vPC[1].u.operand).jsValue().toString(callFrame)->value(callFrame);
+        String message = callFrame->r(vPC[1].u.operand).jsValue().toString(callFrame)->value(callFrame);
         exceptionValue = JSValue(createReferenceError(callFrame, message));
         goto vm_throw;
     }
@@ -5140,11 +5139,11 @@ JSValue Interpreter::retrieveCallerFromVMCode(CallFrame* callFrame, JSFunction* 
     return caller;
 }
 
-void Interpreter::retrieveLastCaller(CallFrame* callFrame, int& lineNumber, intptr_t& sourceID, UString& sourceURL, JSValue& function) const
+void Interpreter::retrieveLastCaller(CallFrame* callFrame, int& lineNumber, intptr_t& sourceID, String& sourceURL, JSValue& function) const
 {
     function = JSValue();
     lineNumber = -1;
-    sourceURL = UString();
+    sourceURL = String();
 
     CallFrame* callerFrame = callFrame->callerFrame();
     if (callerFrame->hasHostCallFrameFlag())

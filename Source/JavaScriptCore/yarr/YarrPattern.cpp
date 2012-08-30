@@ -820,7 +820,7 @@ private:
     bool m_invertParentheticalAssertion;
 };
 
-const char* YarrPattern::compile(const UString& patternString)
+const char* YarrPattern::compile(const String& patternString)
 {
     YarrPatternConstructor constructor(*this);
 
@@ -853,7 +853,7 @@ const char* YarrPattern::compile(const UString& patternString)
     return 0;
 }
 
-YarrPattern::YarrPattern(const UString& pattern, bool ignoreCase, bool multiline, const char** error)
+YarrPattern::YarrPattern(const String& pattern, bool ignoreCase, bool multiline, const char** error)
     : m_ignoreCase(ignoreCase)
     , m_multiline(multiline)
     , m_containsBackreferences(false)

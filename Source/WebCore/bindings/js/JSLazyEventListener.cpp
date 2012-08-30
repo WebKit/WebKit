@@ -94,10 +94,10 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* exec
     ExecState* exec = globalObject->globalExec();
 
     MarkedArgumentBuffer args;
-    args.append(jsNontrivialString(exec, stringToUString(m_eventParameterName)));
-    args.append(jsString(exec, m_code));
+    args.append(jsNontrivialString(exec, m_eventParameterName));
+    args.append(jsStringWithCache(exec, m_code));
 
-    JSObject* jsFunction = constructFunctionSkippingEvalEnabledCheck(exec, exec->lexicalGlobalObject(), args, Identifier(exec, stringToUString(m_functionName)), stringToUString(m_sourceURL), m_position); // FIXME: is globalExec ok?
+    JSObject* jsFunction = constructFunctionSkippingEvalEnabledCheck(exec, exec->lexicalGlobalObject(), args, Identifier(exec, m_functionName), m_sourceURL, m_position); // FIXME: is globalExec ok?
     if (exec->hadException()) {
         reportCurrentException(exec);
         exec->clearException();

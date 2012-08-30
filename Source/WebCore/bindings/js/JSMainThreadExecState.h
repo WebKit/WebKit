@@ -63,7 +63,7 @@ public:
         String resourceName;
         int lineNumber = 1;
         if (callType == JSC::CallTypeJS) {
-            resourceName = ustringToString(callData.js.functionExecutable->sourceURL());
+            resourceName = callData.js.functionExecutable->sourceURL();
             lineNumber = callData.js.functionExecutable->lineNo();
         } else
             resourceName = "undefined";

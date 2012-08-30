@@ -104,7 +104,7 @@ bool JSTestCallback::callbackWithClass2Param(Class2* class2Param, const String& 
     ExecState* exec = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
     args.append(toJS(exec, m_data->globalObject(), class2Param));
-    args.append(jsString(exec, strArg));
+    args.append(jsStringWithCache(exec, strArg));
 
     bool raisedException = false;
     m_data->invokeCallback(args, &raisedException);

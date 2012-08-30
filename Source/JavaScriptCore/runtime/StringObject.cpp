@@ -138,7 +138,7 @@ void StringObject::getOwnPropertyNames(JSObject* object, ExecState* exec, Proper
     StringObject* thisObject = jsCast<StringObject*>(object);
     int size = thisObject->internalValue()->length();
     for (int i = 0; i < size; ++i)
-        propertyNames.add(Identifier(exec, UString::number(i)));
+        propertyNames.add(Identifier(exec, String::number(i)));
     if (mode == IncludeDontEnumProperties)
         propertyNames.add(exec->propertyNames().length);
     return JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);

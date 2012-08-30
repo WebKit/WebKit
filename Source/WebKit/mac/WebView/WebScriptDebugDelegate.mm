@@ -203,8 +203,8 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     if (!_private->debuggerCallFrame)
         return nil;
 
-    const UString* functionName = _private->debuggerCallFrame->functionName();
-    return functionName ? toNSString(*functionName) : nil;
+    const String* functionName = _private->debuggerCallFrame->functionName();
+    return functionName ? nsStringNilIfEmpty(*functionName) : nil;
 }
 
 // Returns the pending exception for this frame (nil if none).
@@ -242,14 +242,14 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
         DynamicGlobalObjectScope globalObjectScope(globalObject->globalData(), globalObject);
 
         JSValue exception;
-        JSValue result = evaluateInGlobalCallFrame(stringToUString(script), exception, globalObject);
+        JSValue result = evaluateInGlobalCallFrame(script, exception, globalObject);
         if (exception)
             return [self _convertValueToObjcValue:exception];
         return result ? [self _convertValueToObjcValue:result] : nil;        
     }
 
     JSValue exception;
-    JSValue result = _private->debuggerCallFrame->evaluate(stringToUString(script), exception);
+    JSValue result = _private->debuggerCallFrame->evaluate(script, exception);
     if (exception)
         return [self _convertValueToObjcValue:exception];
     return result ? [self _convertValueToObjcValue:result] : nil;

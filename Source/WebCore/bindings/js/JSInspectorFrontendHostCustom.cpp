@@ -68,7 +68,7 @@ JSValue JSInspectorFrontendHost::platform(ExecState* execState)
 #else
     DEFINE_STATIC_LOCAL(const String, platform, (ASCIILiteral("unknown")));
 #endif
-    return jsString(execState, platform);
+    return jsStringWithCache(execState, platform);
 }
 
 JSValue JSInspectorFrontendHost::port(ExecState* execState)
@@ -82,7 +82,7 @@ JSValue JSInspectorFrontendHost::port(ExecState* execState)
 #else
     DEFINE_STATIC_LOCAL(const String, port, (ASCIILiteral("unknown")));
 #endif
-    return jsString(execState, port);
+    return jsStringWithCache(execState, port);
 }
 
 #if ENABLE(CONTEXT_MENUS)
@@ -99,7 +99,7 @@ static void populateContextMenuItems(ExecState* exec, JSArray* array, ContextMen
         if (!type.isString())
             continue;
 
-        String typeString = ustringToString(type.toString(exec)->value(exec));
+        String typeString = type.toString(exec)->value(exec);
         if (typeString == "separator") {
             ContextMenuItem item(SeparatorType,
                                  ContextMenuItemCustomTagNoAction,
@@ -111,12 +111,12 @@ static void populateContextMenuItems(ExecState* exec, JSArray* array, ContextMen
             populateContextMenuItems(exec, subItemsArray, subMenu);
             ContextMenuItem item(SubmenuType,
                                  ContextMenuItemCustomTagNoAction,
-                                 ustringToString(label.toString(exec)->value(exec)),
+                                 label.toString(exec)->value(exec),
                                  &subMenu);
             menu.appendItem(item);
         } else {
             ContextMenuAction typedId = static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + id.toInt32(exec));
-            ContextMenuItem menuItem((typeString == "checkbox" ? CheckableActionType : ActionType), typedId, ustringToString(label.toString(exec)->value(exec)));
+            ContextMenuItem menuItem((typeString == "checkbox" ? CheckableActionType : ActionType), typedId, label.toString(exec)->value(exec));
             if (!enabled.isUndefined())
                 menuItem.setEnabled(enabled.toBoolean(exec));
             if (!checked.isUndefined())

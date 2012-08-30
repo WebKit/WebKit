@@ -29,7 +29,6 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "CachedScript.h"
-#include "JSDOMBinding.h" // for stringToUString
 #include "ScriptSourceProvider.h"
 #include <parser/SourceCode.h>
 
@@ -45,14 +44,14 @@ namespace WebCore {
             m_cachedScript->removeClient(this);
         }
 
-        virtual JSC::UString getRange(int start, int end) const OVERRIDE
+        virtual String getRange(int start, int end) const OVERRIDE
         {
             int length = end - start;
             ASSERT(length >= 0);
             ASSERT(start + length <= this->length());
 
             String script = m_cachedScript->script();
-            return JSC::UString(StringImpl::create(script.impl(), start, length));
+            return String(StringImpl::create(script.impl(), start, length));
         }
 
         const StringImpl* data() const { return m_cachedScript->script().impl(); }
@@ -66,7 +65,7 @@ namespace WebCore {
 
     private:
         CachedScriptSourceProvider(CachedScript* cachedScript)
-            : ScriptSourceProvider(stringToUString(cachedScript->response().url()), TextPosition::minimumPosition(), cachedScript->sourceProviderCache())
+            : ScriptSourceProvider(cachedScript->response().url(), TextPosition::minimumPosition(), cachedScript->sourceProviderCache())
             , m_cachedScript(cachedScript)
         {
             m_cachedScript->addClient(this);

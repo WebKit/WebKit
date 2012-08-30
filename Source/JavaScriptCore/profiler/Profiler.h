@@ -42,23 +42,22 @@ namespace JSC {
     class JSObject;
     class JSValue;
     class ProfileGenerator;
-    class UString;
-    struct CallIdentifier;    
+    struct CallIdentifier;
 
     class Profiler {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         JS_EXPORT_PRIVATE static Profiler* profiler(); 
-        static CallIdentifier createCallIdentifier(ExecState* exec, JSValue, const UString& sourceURL, int lineNumber);
+        static CallIdentifier createCallIdentifier(ExecState*, JSValue, const WTF::String& sourceURL, int lineNumber);
 
-        JS_EXPORT_PRIVATE void startProfiling(ExecState*, const UString& title);
-        JS_EXPORT_PRIVATE PassRefPtr<Profile> stopProfiling(ExecState*, const UString& title);
+        JS_EXPORT_PRIVATE void startProfiling(ExecState*, const WTF::String& title);
+        JS_EXPORT_PRIVATE PassRefPtr<Profile> stopProfiling(ExecState*, const WTF::String& title);
         void stopProfiling(JSGlobalObject*);
 
         void willExecute(ExecState* callerCallFrame, JSValue function);
-        void willExecute(ExecState* callerCallFrame, const UString& sourceURL, int startingLineNumber);
+        void willExecute(ExecState* callerCallFrame, const WTF::String& sourceURL, int startingLineNumber);
         void didExecute(ExecState* callerCallFrame, JSValue function);
-        void didExecute(ExecState* callerCallFrame, const UString& sourceURL, int startingLineNumber);
+        void didExecute(ExecState* callerCallFrame, const WTF::String& sourceURL, int startingLineNumber);
 
         void exceptionUnwind(ExecState* handlerCallFrame);
 

@@ -42,7 +42,7 @@ namespace JSC {
         }
 
         static void visitChildren(JSCell*, SlotVisitor&);
-        static UString className(const JSObject*);
+        static String className(const JSObject*);
         static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
         static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
         static void putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsigned attributes);

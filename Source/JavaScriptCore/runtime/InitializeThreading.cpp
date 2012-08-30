@@ -36,7 +36,6 @@
 #include "JSDateMath.h"
 #include "JSGlobalObject.h"
 #include "LLIntData.h"
-#include "UString.h"
 #include "WriteBarrier.h"
 #include <wtf/dtoa.h>
 #include <wtf/Threading.h>

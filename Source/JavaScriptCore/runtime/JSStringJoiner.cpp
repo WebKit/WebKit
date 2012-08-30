@@ -35,7 +35,7 @@
 namespace JSC {
 
 // The destination is 16bits, at least one string is 16 bits.
-static inline void appendStringToData(UChar*& data, const UString& string)
+static inline void appendStringToData(UChar*& data, const String& string)
 {
     if (string.isNull())
         return;
@@ -57,7 +57,7 @@ static inline void appendStringToData(UChar*& data, const UString& string)
 }
 
 // If the destination is 8bits, we know every string has to be 8bit.
-static inline void appendStringToData(LChar*& data, const UString& string)
+static inline void appendStringToData(LChar*& data, const String& string)
 {
     if (string.isNull())
         return;
@@ -73,7 +73,7 @@ static inline void appendStringToData(LChar*& data, const UString& string)
 }
 
 template<typename CharacterType>
-static inline PassRefPtr<StringImpl> joinStrings(const Vector<UString>& strings, const UString& separator, unsigned outputLength)
+static inline PassRefPtr<StringImpl> joinStrings(const Vector<String>& strings, const String& separator, unsigned outputLength)
 {
     ASSERT(outputLength);
 
@@ -82,7 +82,7 @@ static inline PassRefPtr<StringImpl> joinStrings(const Vector<UString>& strings,
     if (!outputStringImpl)
         return PassRefPtr<StringImpl>();
 
-    const UString firstString = strings.first();
+    const String firstString = strings.first();
     appendStringToData(data, firstString);
 
     for (size_t i = 1; i < strings.size(); ++i) {

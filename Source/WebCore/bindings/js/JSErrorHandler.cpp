@@ -85,8 +85,8 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
         globalObject->setCurrentEvent(event);
 
         MarkedArgumentBuffer args;
-        args.append(jsString(exec, errorEvent->message()));
-        args.append(jsString(exec, errorEvent->filename()));
+        args.append(jsStringWithCache(exec, errorEvent->message()));
+        args.append(jsStringWithCache(exec, errorEvent->filename()));
         args.append(jsNumber(errorEvent->lineno()));
 
         JSGlobalData& globalData = globalObject->globalData();

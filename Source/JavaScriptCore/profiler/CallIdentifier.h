@@ -27,17 +27,17 @@
 #ifndef CallIdentifier_h
 #define CallIdentifier_h
 
-#include <runtime/UString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
     struct CallIdentifier {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        UString m_name;
-        UString m_url;
+        String m_name;
+        String m_url;
         unsigned m_lineNumber;
 
         CallIdentifier()
@@ -45,7 +45,7 @@ namespace JSC {
         {
         }
 
-        CallIdentifier(const UString& name, const UString& url, int lineNumber)
+        CallIdentifier(const String& name, const String& url, int lineNumber)
             : m_name(name)
             , m_url(!url.isNull() ? url : "")
             , m_lineNumber(lineNumber)
@@ -87,7 +87,7 @@ namespace WTF {
     template<> struct HashTraits<JSC::CallIdentifier> : GenericHashTraits<JSC::CallIdentifier> {
         static void constructDeletedValue(JSC::CallIdentifier& slot)
         {
-            new (NotNull, &slot) JSC::CallIdentifier(JSC::UString(), JSC::UString(), std::numeric_limits<unsigned>::max());
+            new (NotNull, &slot) JSC::CallIdentifier(String(), String(), std::numeric_limits<unsigned>::max());
         }
         static bool isDeletedValue(const JSC::CallIdentifier& value)
         {

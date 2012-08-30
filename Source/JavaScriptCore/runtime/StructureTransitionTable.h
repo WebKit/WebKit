@@ -26,11 +26,11 @@
 #ifndef StructureTransitionTable_h
 #define StructureTransitionTable_h
 
-#include "UString.h"
 #include "WeakGCMap.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/StringImpl.h>
 
 namespace JSC {
 

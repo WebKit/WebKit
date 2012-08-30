@@ -27,8 +27,8 @@
 #define JSStringJoiner_h
 
 #include "JSValue.h"
-#include "UString.h"
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
@@ -37,21 +37,21 @@ class ExecState;
 
 class JSStringJoiner {
 public:
-    JSStringJoiner(const UString& separator, size_t stringCount);
+    JSStringJoiner(const String& separator, size_t stringCount);
 
-    void append(const UString&);
+    void append(const String&);
     JSValue build(ExecState*);
 
 private:
-    UString m_separator;
-    Vector<UString> m_strings;
+    String m_separator;
+    Vector<String> m_strings;
 
     unsigned m_cumulatedStringsLength;
     bool m_isValid;
     bool m_is8Bits;
 };
 
-inline JSStringJoiner::JSStringJoiner(const UString& separator, size_t stringCount)
+inline JSStringJoiner::JSStringJoiner(const String& separator, size_t stringCount)
     : m_separator(separator)
     , m_cumulatedStringsLength(0)
     , m_isValid(true)
@@ -61,7 +61,7 @@ inline JSStringJoiner::JSStringJoiner(const UString& separator, size_t stringCou
     m_isValid = m_strings.tryReserveCapacity(stringCount);
 }
 
-inline void JSStringJoiner::append(const UString& str)
+inline void JSStringJoiner::append(const String& str)
 {
     if (!m_isValid)
         return;

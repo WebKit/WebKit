@@ -55,7 +55,7 @@ void RuntimeMethod::destroy(JSCell* cell)
     static_cast<RuntimeMethod*>(cell)->RuntimeMethod::~RuntimeMethod();
 }
 
-void RuntimeMethod::finishCreation(JSGlobalData& globalData, const UString& ident)
+void RuntimeMethod::finishCreation(JSGlobalData& globalData, const String& ident)
 {
     Base::finishCreation(globalData, ident);
     ASSERT(inherits(&s_info));

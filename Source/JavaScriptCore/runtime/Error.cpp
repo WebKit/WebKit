@@ -43,37 +43,37 @@ namespace JSC {
 static const char* linePropertyName = "line";
 static const char* sourceURLPropertyName = "sourceURL";
 
-JSObject* createError(JSGlobalObject* globalObject, const UString& message)
+JSObject* createError(JSGlobalObject* globalObject, const String& message)
 {
     ASSERT(!message.isEmpty());
     return ErrorInstance::create(globalObject->globalData(), globalObject->errorStructure(), message);
 }
 
-JSObject* createEvalError(JSGlobalObject* globalObject, const UString& message)
+JSObject* createEvalError(JSGlobalObject* globalObject, const String& message)
 {
     ASSERT(!message.isEmpty());
     return ErrorInstance::create(globalObject->globalData(), globalObject->evalErrorConstructor()->errorStructure(), message);
 }
 
-JSObject* createRangeError(JSGlobalObject* globalObject, const UString& message)
+JSObject* createRangeError(JSGlobalObject* globalObject, const String& message)
 {
     ASSERT(!message.isEmpty());
     return ErrorInstance::create(globalObject->globalData(), globalObject->rangeErrorConstructor()->errorStructure(), message);
 }
 
-JSObject* createReferenceError(JSGlobalObject* globalObject, const UString& message)
+JSObject* createReferenceError(JSGlobalObject* globalObject, const String& message)
 {
     ASSERT(!message.isEmpty());
     return ErrorInstance::create(globalObject->globalData(), globalObject->referenceErrorConstructor()->errorStructure(), message);
 }
 
-JSObject* createSyntaxError(JSGlobalObject* globalObject, const UString& message)
+JSObject* createSyntaxError(JSGlobalObject* globalObject, const String& message)
 {
     ASSERT(!message.isEmpty());
     return ErrorInstance::create(globalObject->globalData(), globalObject->syntaxErrorConstructor()->errorStructure(), message);
 }
 
-JSObject* createTypeError(JSGlobalObject* globalObject, const UString& message)
+JSObject* createTypeError(JSGlobalObject* globalObject, const String& message)
 {
     ASSERT(!message.isEmpty());
     return ErrorInstance::create(globalObject->globalData(), globalObject->typeErrorConstructor()->errorStructure(), message);
@@ -84,38 +84,38 @@ JSObject* createNotEnoughArgumentsError(JSGlobalObject* globalObject)
     return createTypeError(globalObject, "Not enough arguments");
 }
 
-JSObject* createURIError(JSGlobalObject* globalObject, const UString& message)
+JSObject* createURIError(JSGlobalObject* globalObject, const String& message)
 {
     ASSERT(!message.isEmpty());
     return ErrorInstance::create(globalObject->globalData(), globalObject->URIErrorConstructor()->errorStructure(), message);
 }
 
-JSObject* createError(ExecState* exec, const UString& message)
+JSObject* createError(ExecState* exec, const String& message)
 {
     return createError(exec->lexicalGlobalObject(), message);
 }
 
-JSObject* createEvalError(ExecState* exec, const UString& message)
+JSObject* createEvalError(ExecState* exec, const String& message)
 {
     return createEvalError(exec->lexicalGlobalObject(), message);
 }
 
-JSObject* createRangeError(ExecState* exec, const UString& message)
+JSObject* createRangeError(ExecState* exec, const String& message)
 {
     return createRangeError(exec->lexicalGlobalObject(), message);
 }
 
-JSObject* createReferenceError(ExecState* exec, const UString& message)
+JSObject* createReferenceError(ExecState* exec, const String& message)
 {
     return createReferenceError(exec->lexicalGlobalObject(), message);
 }
 
-JSObject* createSyntaxError(ExecState* exec, const UString& message)
+JSObject* createSyntaxError(ExecState* exec, const String& message)
 {
     return createSyntaxError(exec->lexicalGlobalObject(), message);
 }
 
-JSObject* createTypeError(ExecState* exec, const UString& message)
+JSObject* createTypeError(ExecState* exec, const String& message)
 {
     return createTypeError(exec->lexicalGlobalObject(), message);
 }
@@ -125,7 +125,7 @@ JSObject* createNotEnoughArgumentsError(ExecState* exec)
     return createNotEnoughArgumentsError(exec->lexicalGlobalObject());
 }
 
-JSObject* createURIError(ExecState* exec, const UString& message)
+JSObject* createURIError(ExecState* exec, const String& message)
 {
     return createURIError(exec->lexicalGlobalObject(), message);
 }
@@ -133,7 +133,7 @@ JSObject* createURIError(ExecState* exec, const UString& message)
 JSObject* addErrorInfo(CallFrame* callFrame, JSObject* error, int line, const SourceCode& source)
 {
     JSGlobalData* globalData = &callFrame->globalData();
-    const UString& sourceURL = source.provider()->url();
+    const String& sourceURL = source.provider()->url();
 
     if (line != -1)
         error->putDirect(*globalData, Identifier(globalData, linePropertyName), jsNumber(line), ReadOnly | DontDelete);

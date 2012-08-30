@@ -31,8 +31,8 @@
 #include "Weak.h"
 #include "JSObject.h"
 #include "Protect.h"
-#include "UString.h"
 #include <wtf/HashMap.h>
+#include <wtf/text/WTFString.h>
 
 struct StaticValueEntry {
     WTF_MAKE_FAST_ALLOCATED;
@@ -89,7 +89,7 @@ struct OpaqueJSClass : public ThreadSafeRefCounted<OpaqueJSClass> {
     static PassRefPtr<OpaqueJSClass> createNoAutomaticPrototype(const JSClassDefinition*);
     ~OpaqueJSClass();
     
-    JSC::UString className();
+    String className();
     OpaqueJSClassStaticValuesTable* staticValues(JSC::ExecState*);
     OpaqueJSClassStaticFunctionsTable* staticFunctions(JSC::ExecState*);
     JSC::JSObject* prototype(JSC::ExecState*);
@@ -118,8 +118,8 @@ private:
 
     OpaqueJSClassContextData& contextData(JSC::ExecState*);
 
-    // UStrings in these data members should not be put into any IdentifierTable.
-    JSC::UString m_className;
+    // Strings in these data members should not be put into any IdentifierTable.
+    String m_className;
     OwnPtr<OpaqueJSClassStaticValuesTable> m_staticValues;
     OwnPtr<OpaqueJSClassStaticFunctionsTable> m_staticFunctions;
 };

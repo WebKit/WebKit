@@ -27,9 +27,11 @@
 
 #include <wtf/GregorianDateTime.h>
 
-namespace JSC {
+namespace WTF {
+class String;
+} // namespace WTF
 
-class UString;
+namespace JSC {
 
 enum DateTimeFormat {
     DateTimeFormatDate = 1,
@@ -37,7 +39,7 @@ enum DateTimeFormat {
     DateTimeFormatDateAndTime = DateTimeFormatDate | DateTimeFormatTime
 };
 
-UString formatDateTime(const GregorianDateTime&, DateTimeFormat, bool asUTCVariant);
+WTF::String formatDateTime(const GregorianDateTime&, DateTimeFormat, bool asUTCVariant);
 
 } // namespace JSC
 

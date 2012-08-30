@@ -56,7 +56,7 @@ private:
 
     PassOwnPtr<JSC::Yarr::BytecodePattern> compile(const String& patternString, TextCaseSensitivity caseSensitivity)
     {
-        JSC::Yarr::YarrPattern pattern(JSC::UString(patternString.impl()), (caseSensitivity == TextCaseInsensitive), false, &m_constructionError);
+        JSC::Yarr::YarrPattern pattern(patternString, (caseSensitivity == TextCaseInsensitive), false, &m_constructionError);
         if (m_constructionError) {
             LOG_ERROR("RegularExpression: YARR compile failed with '%s'", m_constructionError);
             return nullptr;
@@ -112,7 +112,7 @@ int RegularExpression::match(const String& str, int startFrom, int* matchLength)
 
     unsigned result;
     if (str.length() <= INT_MAX)
-        result = JSC::Yarr::interpret(d->m_regExpByteCode.get(), JSC::UString(str.impl()), startFrom, offsetVector);
+        result = JSC::Yarr::interpret(d->m_regExpByteCode.get(), str, startFrom, offsetVector);
     else {
         // This code can't handle unsigned offsets. Limit our processing to strings with offsets that 
         // can be represented as ints.

@@ -34,7 +34,7 @@ PassRefPtr<DOMStringList> toDOMStringList(ExecState* exec, JSValue value)
     JSArray* array = asArray(value);
     RefPtr<DOMStringList> stringList = DOMStringList::create();
     for (unsigned i = 0; i < array->length(); ++i)
-        stringList->append(ustringToString(array->getIndex(i).toString(exec)->value(exec)));
+        stringList->append(array->getIndex(i).toString(exec)->value(exec));
 
     return stringList.release();
 }

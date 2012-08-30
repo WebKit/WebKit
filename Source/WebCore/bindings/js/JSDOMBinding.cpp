@@ -48,9 +48,9 @@ const JSC::HashTable* getHashTableForGlobalData(JSGlobalData& globalData, const 
     return DOMObjectHashTableMap::mapFor(globalData).get(staticTable);
 }
 
-JSValue jsStringSlowCase(ExecState* exec, JSStringCache& stringCache, StringImpl* stringImpl)
+JSValue jsStringWithCacheSlowCase(ExecState* exec, JSStringCache& stringCache, StringImpl* stringImpl)
 {
-    JSString* wrapper = jsString(exec, UString(stringImpl));
+    JSString* wrapper = JSC::jsString(exec, String(stringImpl));
     weakAdd(stringCache, stringImpl, PassWeak<JSString>(wrapper, currentWorld(exec)->stringWrapperOwner(), stringImpl));
     return wrapper;
 }
@@ -59,40 +59,40 @@ JSValue jsStringOrNull(ExecState* exec, const String& s)
 {
     if (s.isNull())
         return jsNull();
-    return jsString(exec, s);
+    return jsStringWithCache(exec, s);
 }
 
 JSValue jsOwnedStringOrNull(ExecState* exec, const String& s)
 {
     if (s.isNull())
         return jsNull();
-    return jsOwnedString(exec, stringToUString(s));
+    return jsOwnedString(exec, s);
 }
 
 JSValue jsStringOrUndefined(ExecState* exec, const String& s)
 {
     if (s.isNull())
         return jsUndefined();
-    return jsString(exec, s);
+    return jsStringWithCache(exec, s);
 }
 
 JSValue jsString(ExecState* exec, const KURL& url)
 {
-    return jsString(exec, url.string());
+    return jsStringWithCache(exec, url.string());
 }
 
 JSValue jsStringOrNull(ExecState* exec, const KURL& url)
 {
     if (url.isNull())
         return jsNull();
-    return jsString(exec, url.string());
+    return jsStringWithCache(exec, url.string());
 }
 
 JSValue jsStringOrUndefined(ExecState* exec, const KURL& url)
 {
     if (url.isNull())
         return jsUndefined();
-    return jsString(exec, url.string());
+    return jsStringWithCache(exec, url.string());
 }
 
 AtomicStringImpl* findAtomicString(PropertyName propertyName)
@@ -108,14 +108,14 @@ String valueToStringWithNullCheck(ExecState* exec, JSValue value)
 {
     if (value.isNull())
         return String();
-    return ustringToString(value.toString(exec)->value(exec));
+    return value.toString(exec)->value(exec);
 }
 
 String valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue value)
 {
     if (value.isUndefinedOrNull())
         return String();
-    return ustringToString(value.toString(exec)->value(exec));
+    return value.toString(exec)->value(exec);
 }
 
 JSValue jsDateOrNull(ExecState* exec, double value)
@@ -139,7 +139,7 @@ JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Pass
     JSC::MarkedArgumentBuffer list;
     if (stringList) {
         for (unsigned i = 0; i < stringList->length(); ++i)
-            list.append(jsString(exec, stringList->item(i)));
+            list.append(jsStringWithCache(exec, stringList->item(i)));
     }
     return JSC::constructArray(exec, globalObject, list);
 }
@@ -149,14 +149,14 @@ void reportException(ExecState* exec, JSValue exception)
     if (isTerminatedExecutionException(exception))
         return;
 
-    UString errorMessage = exception.toString(exec)->value(exec);
+    String errorMessage = exception.toString(exec)->value(exec);
     JSObject* exceptionObject = exception.toObject(exec);
     int lineNumber = exceptionObject->get(exec, Identifier(exec, "line")).toInt32(exec);
-    UString exceptionSourceURL = exceptionObject->get(exec, Identifier(exec, "sourceURL")).toString(exec)->value(exec);
+    String exceptionSourceURL = exceptionObject->get(exec, Identifier(exec, "sourceURL")).toString(exec)->value(exec);
     exec->clearException();
 
     if (ExceptionBase* exceptionBase = toExceptionBase(exception))
-        errorMessage = stringToUString(exceptionBase->message() + ": "  + exceptionBase->description());
+        errorMessage = exceptionBase->message() + ": "  + exceptionBase->description();
 
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
     if (JSDOMWindow* window = jsDynamicCast<JSDOMWindow*>(globalObject)) {
@@ -164,7 +164,7 @@ void reportException(ExecState* exec, JSValue exception)
             return;
     }
     ScriptExecutionContext* scriptExecutionContext = globalObject->scriptExecutionContext();
-    scriptExecutionContext->reportException(ustringToString(errorMessage), lineNumber, ustringToString(exceptionSourceURL), 0);
+    scriptExecutionContext->reportException(errorMessage, lineNumber, exceptionSourceURL, 0);
 }
 
 void reportCurrentException(ExecState* exec)

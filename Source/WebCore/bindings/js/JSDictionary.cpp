@@ -101,7 +101,7 @@ void JSDictionary::convertValue(JSC::ExecState* exec, JSC::JSValue value, Dictio
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, String& result)
 {
-    result = ustringToString(value.toString(exec)->value(exec));
+    result = value.toString(exec)->value(exec);
 }
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, Vector<String>& result)
@@ -118,7 +118,7 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, Vector<String>& 
         JSValue itemValue = object->get(exec, i);
         if (exec->hadException())
             return;
-        result.append(ustringToString(itemValue.toString(exec)->value(exec)));
+        result.append(itemValue.toString(exec)->value(exec));
     }
 }
 
@@ -182,7 +182,7 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, HashSet<AtomicSt
         JSValue itemValue = object->get(exec, i);
         if (exec->hadException())
             return;
-        result.add(ustringToAtomicString(itemValue.toString(exec)->value(exec)));
+        result.add(itemValue.toString(exec)->value(exec));
     }
 }
 #endif
@@ -202,7 +202,7 @@ bool JSDictionary::getWithUndefinedOrNullCheck(const String& propertyName, Strin
     if (tryGetProperty(propertyName.utf8().data(), value) != PropertyFound || value.isUndefinedOrNull())
         return false;
 
-    result = ustringToString(value.toString(m_exec)->value(m_exec));
+    result = value.toWTFString(m_exec);
     return true;
 }
 

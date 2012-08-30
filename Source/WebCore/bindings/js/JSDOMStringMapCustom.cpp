@@ -43,7 +43,7 @@ bool JSDOMStringMap::canGetItemsForName(ExecState*, DOMStringMap* impl, Property
 JSValue JSDOMStringMap::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
     JSDOMStringMap* thisObj = jsCast<JSDOMStringMap*>(asObject(slotBase));
-    return jsString(exec, thisObj->impl()->item(propertyNameToAtomicString(propertyName)));
+    return jsStringWithCache(exec, thisObj->impl()->item(propertyNameToAtomicString(propertyName)));
 }
 
 void JSDOMStringMap::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
@@ -53,7 +53,7 @@ void JSDOMStringMap::getOwnPropertyNames(JSObject* object, ExecState* exec, Prop
     thisObject->m_impl->getNames(names);
     size_t length = names.size();
     for (size_t i = 0; i < length; ++i)
-        propertyNames.add(Identifier(exec, stringToUString(names[i])));
+        propertyNames.add(Identifier(exec, names[i]));
 
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
@@ -72,7 +72,7 @@ bool JSDOMStringMap::deleteProperty(JSCell* cell, ExecState* exec, PropertyName 
 
 bool JSDOMStringMap::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&)
 {
-    String stringValue = ustringToString(value.toString(exec)->value(exec));
+    String stringValue = value.toString(exec)->value(exec);
     if (exec->hadException())
         return false;
     ExceptionCode ec = 0;

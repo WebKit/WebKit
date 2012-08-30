@@ -390,7 +390,7 @@ void JSGlobalData::resetDateCache()
 {
     cachedUTCOffset = std::numeric_limits<double>::quiet_NaN();
     dstOffsetCache.reset();
-    cachedDateString = UString();
+    cachedDateString = String();
     cachedDateStringValue = std::numeric_limits<double>::quiet_NaN();
     dateInstanceCache.reset();
 }

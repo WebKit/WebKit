@@ -39,7 +39,7 @@ namespace JSC { namespace Yarr {
 
 template<YarrJITCompileMode compileMode>
 class YarrGenerator : private MacroAssembler {
-    friend void jitCompile(JSGlobalData*, YarrCodeBlock& jitObject, const UString& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline);
+    friend void jitCompile(JSGlobalData*, YarrCodeBlock& jitObject, const String& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline);
 
 #if CPU(ARM)
     static const RegisterID input = ARMRegisters::r0;

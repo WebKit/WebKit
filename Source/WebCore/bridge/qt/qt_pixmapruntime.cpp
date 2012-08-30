@@ -171,8 +171,8 @@ public:
         QBuffer buffer(&byteArray);
         instance->toImage().save(&buffer, "PNG");
         const QString encodedString = QLatin1String("data:image/png;base64,") + QLatin1String(byteArray.toBase64());
-        const UString ustring((UChar*)encodedString.utf16(), encodedString.length());
-        return jsString(exec, ustring);
+        const String ustring((UChar*)encodedString.utf16(), encodedString.length());
+        return JSC::jsString(exec, ustring);
     }
 };
 
@@ -259,7 +259,7 @@ JSValue QtPixmapInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMe
 MethodList QtPixmapClass::methodsNamed(PropertyName identifier, Instance*) const
 {
     MethodList methods;
-    UString ustring(identifier.publicName());
+    String ustring(identifier.publicName());
     if (ustring == QtPixmapToDataUrlMethod::name())
         methods.append(&qt_pixmap_metaData.toDataUrlMethod);
     else if (ustring == QtPixmapToImageDataMethod::name())
@@ -273,7 +273,7 @@ MethodList QtPixmapClass::methodsNamed(PropertyName identifier, Instance*) const
 
 Field* QtPixmapClass::fieldNamed(PropertyName identifier, Instance*) const
 {
-    UString ustring(identifier.publicName());
+    String ustring(identifier.publicName());
     if (ustring == QtPixmapWidthField::name())
         return &qt_pixmap_metaData.widthField;
     if (ustring == QtPixmapHeightField::name())
@@ -283,12 +283,12 @@ Field* QtPixmapClass::fieldNamed(PropertyName identifier, Instance*) const
 
 void QtPixmapInstance::getPropertyNames(ExecState*exec, PropertyNameArray& arr)
 {
-    arr.add(Identifier(exec, UString(QtPixmapToDataUrlMethod::name())));
-    arr.add(Identifier(exec, UString(QtPixmapToImageDataMethod::name())));
-    arr.add(Identifier(exec, UString(QtPixmapAssignToElementMethod::name())));
-    arr.add(Identifier(exec, UString(QtPixmapToStringMethod::name())));
-    arr.add(Identifier(exec, UString(QtPixmapWidthField::name())));
-    arr.add(Identifier(exec, UString(QtPixmapHeightField::name())));
+    arr.add(Identifier(exec, String(QtPixmapToDataUrlMethod::name())));
+    arr.add(Identifier(exec, String(QtPixmapToImageDataMethod::name())));
+    arr.add(Identifier(exec, String(QtPixmapAssignToElementMethod::name())));
+    arr.add(Identifier(exec, String(QtPixmapToStringMethod::name())));
+    arr.add(Identifier(exec, String(QtPixmapWidthField::name())));
+    arr.add(Identifier(exec, String(QtPixmapHeightField::name())));
 }
 
 JSValue QtPixmapInstance::defaultValue(ExecState* exec, PreferredPrimitiveType ptype) const
@@ -308,8 +308,8 @@ JSValue QtPixmapInstance::defaultValue(ExecState* exec, PreferredPrimitiveType p
 JSValue QtPixmapInstance::valueOf(ExecState* exec) const
 {
     const QString stringValue = QString::fromLatin1("[Qt Native Pixmap %1,%2]").arg(width()).arg(height());
-    UString ustring((UChar*)stringValue.utf16(), stringValue.length());
-    return jsString(exec, ustring);
+    String ustring((UChar*)stringValue.utf16(), stringValue.length());
+    return JSC::jsString(exec, ustring);
 }
 
 QtPixmapInstance::QtPixmapInstance(PassRefPtr<RootObject> rootObj, const QVariant& d)

@@ -42,20 +42,6 @@ using namespace WTF::Unicode;
 
 const JSClassDefinition kJSClassDefinitionEmpty = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-static inline UString tryCreateStringFromUTF8(const char* string)
-{
-    if (!string)
-        return UString();
-
-    size_t length = strlen(string);
-    Vector<UChar, 1024> buffer(length);
-    UChar* p = buffer.data();
-    if (conversionOK != convertUTF8ToUTF16(&string, string + length, &p, p + length))
-        return UString();
-
-    return UString(buffer.data(), p - buffer.data());
-}
-
 OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass* protoClass) 
     : parentClass(definition->parentClass)
     , prototypeClass(0)
@@ -70,14 +56,14 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
     , callAsConstructor(definition->callAsConstructor)
     , hasInstance(definition->hasInstance)
     , convertToType(definition->convertToType)
-    , m_className(tryCreateStringFromUTF8(definition->className))
+    , m_className(String::fromUTF8(definition->className))
 {
     initializeThreading();
 
     if (const JSStaticValue* staticValue = definition->staticValues) {
         m_staticValues = adoptPtr(new OpaqueJSClassStaticValuesTable);
         while (staticValue->name) {
-            UString valueName = tryCreateStringFromUTF8(staticValue->name);
+            String valueName = String::fromUTF8(staticValue->name);
             if (!valueName.isNull())
                 m_staticValues->set(valueName.impl(), adoptPtr(new StaticValueEntry(staticValue->getProperty, staticValue->setProperty, staticValue->attributes)));
             ++staticValue;
@@ -87,7 +73,7 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
     if (const JSStaticFunction* staticFunction = definition->staticFunctions) {
         m_staticFunctions = adoptPtr(new OpaqueJSClassStaticFunctionsTable);
         while (staticFunction->name) {
-            UString functionName = tryCreateStringFromUTF8(staticFunction->name);
+            String functionName = String::fromUTF8(staticFunction->name);
             if (!functionName.isNull())
                 m_staticFunctions->set(functionName.impl(), adoptPtr(new StaticFunctionEntry(staticFunction->callAsFunction, staticFunction->attributes)));
             ++staticFunction;
@@ -170,10 +156,10 @@ OpaqueJSClassContextData& OpaqueJSClass::contextData(ExecState* exec)
     return *contextData;
 }
 
-UString OpaqueJSClass::className()
+String OpaqueJSClass::className()
 {
     // Make a deep copy, so that the caller has no chance to put the original into IdentifierTable.
-    return UString(m_className.characters(), m_className.length());
+    return m_className.isolatedCopy();
 }
 
 OpaqueJSClassStaticValuesTable* OpaqueJSClass::staticValues(JSC::ExecState* exec)

@@ -267,6 +267,6 @@ EXPORTS
         ?profilerEnabled@InspectorController@WebCore@@QAE_NXZ
         ?setProfilerEnabled@InspectorController@WebCore@@QAEX_N@Z
 	??1ContextDestructionObserver@WebCore@@MAE@XZ
-        ?jsStringSlowCase@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@AAV?$HashMap@PAVStringImpl@WTF@@V?$Weak@VJSString@JSC@@@JSC@@U?$PtrHash@PAVStringImpl@WTF@@@2@U?$HashTraits@PAVStringImpl@WTF@@@2@U?$HashTraits@V?$Weak@VJSString@JSC@@@JSC@@@2@@WTF@@PAVStringImpl@6@@Z
+        ?jsStringWithCacheSlowCase@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@AAV?$HashMap@PAVStringImpl@WTF@@V?$Weak@VJSString@JSC@@@JSC@@U?$PtrHash@PAVStringImpl@WTF@@@2@U?$HashTraits@PAVStringImpl@WTF@@@2@U?$HashTraits@V?$Weak@VJSString@JSC@@@JSC@@@2@@WTF@@PAVStringImpl@6@@Z
         ?registerURLSchemeAsBypassingContentSecurityPolicy@SchemeRegistry@WebCore@@SAXABVString@WTF@@@Z
         ?removeURLSchemeRegisteredAsBypassingContentSecurityPolicy@SchemeRegistry@WebCore@@SAXABVString@WTF@@@Z

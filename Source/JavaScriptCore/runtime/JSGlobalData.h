@@ -76,7 +76,6 @@ namespace JSC {
     class RegExpCache;
     class Stringifier;
     class Structure;
-    class UString;
 #if ENABLE(REGEXP_TRACING)
     class RegExp;
 #endif
@@ -366,7 +365,7 @@ namespace JSC {
         double cachedUTCOffset;
         DSTOffsetCache dstOffsetCache;
         
-        UString cachedDateString;
+        String cachedDateString;
         double cachedDateStringValue;
 
         int maxReentryDepth;

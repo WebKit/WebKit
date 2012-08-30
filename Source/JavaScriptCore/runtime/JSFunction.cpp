@@ -59,7 +59,7 @@ bool JSFunction::isHostFunctionNonInline() const
     return isHostFunction();
 }
 
-JSFunction* JSFunction::create(ExecState* exec, JSGlobalObject* globalObject, int length, const UString& name, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
+JSFunction* JSFunction::create(ExecState* exec, JSGlobalObject* globalObject, int length, const String& name, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
 {
     NativeExecutable* executable;
 #if !ENABLE(JIT)
@@ -92,7 +92,7 @@ JSFunction::JSFunction(ExecState* exec, FunctionExecutable* executable, ScopeCha
 {
 }
 
-void JSFunction::finishCreation(ExecState* exec, NativeExecutable* executable, int length, const UString& name)
+void JSFunction::finishCreation(ExecState* exec, NativeExecutable* executable, int length, const String& name)
 {
     Base::finishCreation(exec->globalData());
     ASSERT(inherits(&s_info));
@@ -125,29 +125,29 @@ Structure* JSFunction::cacheInheritorID(ExecState* exec)
     return m_cachedInheritorID.get();
 }
 
-const UString& JSFunction::name(ExecState* exec)
+const String& JSFunction::name(ExecState* exec)
 {
     return asString(getDirect(exec->globalData(), exec->globalData().propertyNames->name))->tryGetValue();
 }
 
-const UString JSFunction::displayName(ExecState* exec)
+const String JSFunction::displayName(ExecState* exec)
 {
     JSValue displayName = getDirect(exec->globalData(), exec->globalData().propertyNames->displayName);
     
     if (displayName && isJSString(displayName))
         return asString(displayName)->tryGetValue();
     
-    return UString();
+    return String();
 }
 
-const UString JSFunction::calculatedDisplayName(ExecState* exec)
+const String JSFunction::calculatedDisplayName(ExecState* exec)
 {
-    const UString explicitName = displayName(exec);
+    const String explicitName = displayName(exec);
     
     if (!explicitName.isEmpty())
         return explicitName;
     
-    const UString actualName = name(exec);
+    const String actualName = name(exec);
     if (!actualName.isEmpty() || isHostFunction())
         return actualName;
     
@@ -455,7 +455,7 @@ ConstructType JSFunction::getConstructData(JSCell* cell, ConstructData& construc
 }
     
 
-UString getCalculatedDisplayName(CallFrame* callFrame, JSObject* object)
+String getCalculatedDisplayName(CallFrame* callFrame, JSObject* object)
 {
     if (JSFunction* function = jsDynamicCast<JSFunction*>(object))
         return function->calculatedDisplayName(callFrame);

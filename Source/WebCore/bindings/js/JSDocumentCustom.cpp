@@ -69,12 +69,12 @@ void JSDocument::setLocation(ExecState* exec, JSValue value)
     if (!frame)
         return;
 
-    UString locationString = value.toString(exec)->value(exec);
+    String locationString = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
 
     if (Location* location = frame->document()->domWindow()->location())
-        location->setHref(ustringToString(locationString), activeDOMWindow(exec), firstDOMWindow(exec));
+        location->setHref(locationString, activeDOMWindow(exec), firstDOMWindow(exec));
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Document* document)

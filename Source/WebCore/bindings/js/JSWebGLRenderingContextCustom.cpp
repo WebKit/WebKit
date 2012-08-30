@@ -107,7 +107,7 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebG
     case WebGLGetInfo::kTypeNull:
         return jsNull();
     case WebGLGetInfo::kTypeString:
-        return jsString(exec, info.getString());
+        return jsStringWithCache(exec, info.getString());
     case WebGLGetInfo::kTypeUnsignedInt:
         return jsNumber(info.getUnsignedInt());
     case WebGLGetInfo::kTypeWebGLBuffer:
@@ -254,7 +254,7 @@ JSValue JSWebGLRenderingContext::getExtension(ExecState* exec)
         return throwError(exec, createNotEnoughArgumentsError(exec));
 
     WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());
-    const String& name = ustringToString(exec->argument(0).toString(exec)->value(exec));
+    const String name = exec->argument(0).toString(exec)->value(exec);
     if (exec->hadException())
         return jsUndefined();
     WebGLExtension* extension = context->getExtension(name);
@@ -363,7 +363,7 @@ JSValue JSWebGLRenderingContext::getSupportedExtensions(ExecState* exec)
     Vector<String> value = context->getSupportedExtensions();
     MarkedArgumentBuffer list;
     for (size_t ii = 0; ii < value.size(); ++ii)
-        list.append(jsString(exec, value[ii]));
+        list.append(jsStringWithCache(exec, value[ii]));
     return constructArray(exec, globalObject(), list);
 }
 

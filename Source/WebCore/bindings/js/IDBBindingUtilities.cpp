@@ -39,7 +39,7 @@ PassRefPtr<IDBKey> createIDBKeyFromValue(JSC::ExecState* exec, JSC::JSValue valu
     if (value.isInt32())
         return IDBKey::createNumber(value.toNumber(exec));
     if (value.isString())
-        return IDBKey::createString(ustringToString(value.toString(exec)->value(exec)));
+        return IDBKey::createString(value.toString(exec)->value(exec));
     // FIXME: Implement dates.
     return 0;
 }

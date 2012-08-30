@@ -61,11 +61,11 @@ EncodedJSValue JSC_HOST_CALL JSIntentConstructor::constructJSIntent(ExecState* e
         return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), impl.get())));
     }
 
-    const String& action(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).toString(exec)->value(exec)));
+    const String action(MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).isEmpty() ? String() : MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).toWTFString(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    const String& type(ustringToString(MAYBE_MISSING_PARAMETER(exec, 1, DefaultIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 1, DefaultIsUndefined).toString(exec)->value(exec)));
+    const String type(MAYBE_MISSING_PARAMETER(exec, 1, DefaultIsUndefined).isEmpty() ? String() : MAYBE_MISSING_PARAMETER(exec, 1, DefaultIsUndefined).toWTFString(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 

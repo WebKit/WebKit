@@ -36,7 +36,7 @@
 #include "ScriptValue.h"
 
 #include <runtime/JSLock.h>
-#include <runtime/UString.h>
+#include <wtf/text/WTFString.h>
 
 using namespace JSC;
 
@@ -59,19 +59,13 @@ void ScriptCallArgumentHandler::appendArgument(const ScriptValue& argument)
 void ScriptCallArgumentHandler::appendArgument(const String& argument)
 {
     JSLockHolder lock(m_exec);
-    m_arguments.append(jsString(m_exec, argument));
-}
-
-void ScriptCallArgumentHandler::appendArgument(const JSC::UString& argument)
-{
-    JSLockHolder lock(m_exec);
-    m_arguments.append(jsString(m_exec, argument));
+    m_arguments.append(jsStringWithCache(m_exec, argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(const char* argument)
 {
     JSLockHolder lock(m_exec);
-    m_arguments.append(jsString(m_exec, UString(argument)));
+    m_arguments.append(jsString(m_exec, String(argument)));
 }
 
 void ScriptCallArgumentHandler::appendArgument(JSC::JSValue argument)
@@ -127,7 +121,7 @@ ScriptValue ScriptFunctionCall::call(bool& hadException, bool reportExceptions)
 
     JSLockHolder lock(m_exec);
 
-    JSValue function = thisObject->get(m_exec, Identifier(m_exec, stringToUString(m_name)));
+    JSValue function = thisObject->get(m_exec, Identifier(m_exec, m_name));
     if (m_exec->hadException()) {
         if (reportExceptions)
             reportException(m_exec, m_exec->exception());
@@ -165,7 +159,7 @@ ScriptObject ScriptFunctionCall::construct(bool& hadException, bool reportExcept
 
     JSLockHolder lock(m_exec);
 
-    JSObject* constructor = asObject(thisObject->get(m_exec, Identifier(m_exec, stringToUString(m_name))));
+    JSObject* constructor = asObject(thisObject->get(m_exec, Identifier(m_exec, m_name)));
     if (m_exec->hadException()) {
         if (reportExceptions)
             reportException(m_exec, m_exec->exception());

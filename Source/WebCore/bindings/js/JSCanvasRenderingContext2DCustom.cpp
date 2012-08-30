@@ -44,7 +44,7 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CanvasStyl
         return toJS(exec, globalObject, style->canvasGradient());
     if (style->canvasPattern())
         return toJS(exec, globalObject, style->canvasPattern());
-    return jsString(exec, style->color());
+    return jsStringWithCache(exec, style->color());
 }
 
 static PassRefPtr<CanvasStyle> toHTMLCanvasStyle(ExecState*, JSValue value)
@@ -69,7 +69,7 @@ void JSCanvasRenderingContext2D::setStrokeStyle(ExecState* exec, JSValue value)
 {
     CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
     if (value.isString()) {
-        context->setStrokeColor(ustringToString(asString(value)->value(exec)));
+        context->setStrokeColor(asString(value)->value(exec));
         return;
     }
     context->setStrokeStyle(toHTMLCanvasStyle(exec, value));
@@ -85,7 +85,7 @@ void JSCanvasRenderingContext2D::setFillStyle(ExecState* exec, JSValue value)
 {
     CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
     if (value.isString()) {
-        context->setFillColor(ustringToString(asString(value)->value(exec)));
+        context->setFillColor(asString(value)->value(exec));
         return;
     }
     context->setFillStyle(toHTMLCanvasStyle(exec, value));

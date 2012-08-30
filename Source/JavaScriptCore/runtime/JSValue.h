@@ -44,7 +44,6 @@ namespace JSC {
     class PropertyName;
     class PropertySlot;
     class PutPropertySlot;
-    class UString;
 #if ENABLE(DFG_JIT)
     namespace DFG {
         class AssemblyHelpers;
@@ -197,8 +196,8 @@ namespace JSC {
         bool inherits(const ClassInfo*) const;
         
         // Extracting the value.
-        bool getString(ExecState* exec, UString&) const;
-        UString getString(ExecState* exec) const; // null string if not a string
+        bool getString(ExecState*, WTF::String&) const;
+        WTF::String getString(ExecState*) const; // null string if not a string
         JSObject* getObject() const; // 0 if not an object
 
         // Extracting integer values.
@@ -214,8 +213,8 @@ namespace JSC {
         // been set in the ExecState already.
         double toNumber(ExecState*) const;
         JSString* toString(ExecState*) const;
-        UString toUString(ExecState*) const;
-        UString toUStringInline(ExecState*) const;
+        WTF::String toWTFString(ExecState*) const;
+        WTF::String toWTFStringInline(ExecState*) const;
         JSObject* toObject(ExecState*) const;
         JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
@@ -266,7 +265,7 @@ namespace JSC {
         inline const JSValue asValue() const { return *this; }
         JS_EXPORT_PRIVATE double toNumberSlowCase(ExecState*) const;
         JS_EXPORT_PRIVATE JSString* toStringSlowCase(ExecState*) const;
-        JS_EXPORT_PRIVATE UString toUStringSlowCase(ExecState*) const;
+        JS_EXPORT_PRIVATE WTF::String toWTFStringSlowCase(ExecState*) const;
         JS_EXPORT_PRIVATE JSObject* toObjectSlowCase(ExecState*, JSGlobalObject*) const;
         JS_EXPORT_PRIVATE JSObject* toThisObjectSlowCase(ExecState*) const;
 

@@ -751,7 +751,7 @@ QVariant QWebElement::evaluateJavaScript(const QString& scriptSource)
     if (!setupScriptContext(m_element, thisValue, state, scriptController))
         return QVariant();
     JSC::ScopeChainNode* scopeChain = state->dynamicGlobalObject()->globalScopeChain();
-    JSC::UString script(reinterpret_cast_ptr<const UChar*>(scriptSource.data()), scriptSource.length());
+    String script(reinterpret_cast_ptr<const UChar*>(scriptSource.data()), scriptSource.length());
 
     JSC::JSValue evaluationException;
     JSC::JSValue evaluationResult = JSC::evaluate(state, scopeChain, JSC::makeSource(script), thisValue, &evaluationException);

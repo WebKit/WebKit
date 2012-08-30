@@ -45,7 +45,7 @@
 #include <runtime/JSFunction.h>
 #include <runtime/JSGlobalData.h>
 #include <runtime/JSValue.h>
-#include <runtime/UString.h>
+#include <wtf/text/WTFString.h>
 
 using namespace JSC;
 
@@ -82,11 +82,11 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t m
         ASSERT(callFrame);
         int signedLineNumber;
         intptr_t sourceID;
-        UString urlString;
+        String urlString;
         JSValue function;
 
         exec->interpreter()->retrieveLastCaller(callFrame, signedLineNumber, sourceID, urlString, function);
-        UString functionName;
+        String functionName;
         if (function)
             functionName = jsCast<JSFunction*>(function)->name(exec);
         else {
@@ -96,7 +96,7 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t m
                 break;
         }
         unsigned lineNumber = signedLineNumber >= 0 ? signedLineNumber : 0;
-        frames.append(ScriptCallFrame(ustringToString(functionName), ustringToString(urlString), lineNumber));
+        frames.append(ScriptCallFrame(functionName, urlString, lineNumber));
         if (!function || frames.size() == maxStackSize)
             break;
         callFrame = callFrame->callerFrame();

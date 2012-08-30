@@ -111,10 +111,10 @@ void JSCallbackObject<Parent>::init(ExecState* exec)
 }
 
 template <class Parent>
-UString JSCallbackObject<Parent>::className(const JSObject* object)
+String JSCallbackObject<Parent>::className(const JSObject* object)
 {
     const JSCallbackObject* thisObject = jsCast<const JSCallbackObject*>(object);
-    UString thisClassName = thisObject->classRef()->className();
+    String thisClassName = thisObject->classRef()->className();
     if (!thisClassName.isEmpty())
         return thisClassName;
     

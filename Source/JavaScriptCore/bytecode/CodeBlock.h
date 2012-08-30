@@ -64,7 +64,6 @@
 #include "Nodes.h"
 #include "RegExpObject.h"
 #include "StructureStubInfo.h"
-#include "UString.h"
 #include "UnconditionalFinalizer.h"
 #include "ValueProfile.h"
 #include "Watchpoint.h"
@@ -75,6 +74,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 // Set ENABLE_BYTECODE_COMMENTS to 1 to enable recording bytecode generator
 // comments for the bytecodes that it generates. This will allow
@@ -583,7 +583,7 @@ namespace JSC {
 
         void clearEvalCache();
         
-        UString nameForRegister(int registerNumber);
+        String nameForRegister(int registerNumber);
         
         void addPropertyAccessInstruction(unsigned propertyAccessInstruction)
         {

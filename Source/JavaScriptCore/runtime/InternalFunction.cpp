@@ -39,7 +39,7 @@ InternalFunction::InternalFunction(JSGlobalObject* globalObject, Structure* stru
 {
 }
 
-void InternalFunction::finishCreation(JSGlobalData& globalData, const UString& name)
+void InternalFunction::finishCreation(JSGlobalData& globalData, const String& name)
 {
     Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
@@ -47,19 +47,19 @@ void InternalFunction::finishCreation(JSGlobalData& globalData, const UString& n
     putDirect(globalData, globalData.propertyNames->name, jsString(&globalData, name.isNull() ? "" : name), DontDelete | ReadOnly | DontEnum);
 }
 
-const UString& InternalFunction::name(ExecState* exec)
+const String& InternalFunction::name(ExecState* exec)
 {
     return asString(getDirect(exec->globalData(), exec->globalData().propertyNames->name))->tryGetValue();
 }
 
-const UString InternalFunction::displayName(ExecState* exec)
+const String InternalFunction::displayName(ExecState* exec)
 {
     JSValue displayName = getDirect(exec->globalData(), exec->globalData().propertyNames->displayName);
     
     if (displayName && isJSString(displayName))
         return asString(displayName)->tryGetValue();
     
-    return UString();
+    return String();
 }
 
 CallType InternalFunction::getCallData(JSCell*, CallData&)
@@ -68,9 +68,9 @@ CallType InternalFunction::getCallData(JSCell*, CallData&)
     return CallTypeNone;
 }
 
-const UString InternalFunction::calculatedDisplayName(ExecState* exec)
+const String InternalFunction::calculatedDisplayName(ExecState* exec)
 {
-    const UString explicitName = displayName(exec);
+    const String explicitName = displayName(exec);
     
     if (!explicitName.isEmpty())
         return explicitName;

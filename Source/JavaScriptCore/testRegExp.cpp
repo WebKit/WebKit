@@ -24,11 +24,11 @@
 #include <wtf/CurrentTime.h>
 #include "InitializeThreading.h"
 #include "JSGlobalObject.h"
-#include "UStringBuilder.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wtf/text/StringBuilder.h>
 
 #if !OS(WINDOWS)
 #include <unistd.h>
@@ -63,8 +63,8 @@ struct CommandLine {
 
     bool interactive;
     bool verbose;
-    Vector<UString> arguments;
-    Vector<UString> files;
+    Vector<String> arguments;
+    Vector<String> files;
 };
 
 class StopWatch {
@@ -100,7 +100,7 @@ struct RegExpTest {
     {
     }
 
-    UString subject;
+    String subject;
     int offset;
     int result;
     Vector<int, 32> expectVector;
@@ -108,12 +108,12 @@ struct RegExpTest {
 
 class GlobalObject : public JSGlobalObject {
 private:
-    GlobalObject(JSGlobalData&, Structure*, const Vector<UString>& arguments);
+    GlobalObject(JSGlobalData&, Structure*, const Vector<String>& arguments);
 
 public:
     typedef JSGlobalObject Base;
 
-    static GlobalObject* create(JSGlobalData& globalData, Structure* structure, const Vector<UString>& arguments)
+    static GlobalObject* create(JSGlobalData& globalData, Structure* structure, const Vector<String>& arguments)
     {
         return new (NotNull, allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure, arguments);
     }
@@ -126,7 +126,7 @@ public:
     }
 
 protected:
-    void finishCreation(JSGlobalData& globalData, const Vector<UString>& arguments)
+    void finishCreation(JSGlobalData& globalData, const Vector<String>& arguments)
     {
         Base::finishCreation(globalData);
         UNUSED_PARAM(arguments);
@@ -138,7 +138,7 @@ ASSERT_CLASS_FITS_IN_CELL(GlobalObject);
 
 const ClassInfo GlobalObject::s_info = { "global", &JSGlobalObject::s_info, 0, ExecState::globalObjectTable, CREATE_METHOD_TABLE(GlobalObject) };
 
-GlobalObject::GlobalObject(JSGlobalData& globalData, Structure* structure, const Vector<UString>& arguments)
+GlobalObject::GlobalObject(JSGlobalData& globalData, Structure* structure, const Vector<String>& arguments)
     : JSGlobalObject(globalData, structure)
 {
     finishCreation(globalData, arguments);
@@ -239,7 +239,7 @@ static bool testOneRegExp(JSGlobalData& globalData, RegExp* regexp, RegExpTest* 
     return result;
 }
 
-static int scanString(char* buffer, int bufferLength, UStringBuilder& builder, char termChar)
+static int scanString(char* buffer, int bufferLength, StringBuilder& builder, char termChar)
 {
     bool escape = false;
     
@@ -307,7 +307,7 @@ static int scanString(char* buffer, int bufferLength, UStringBuilder& builder, c
 
 static RegExp* parseRegExpLine(JSGlobalData& globalData, char* line, int lineLength)
 {
-    UStringBuilder pattern;
+    StringBuilder pattern;
     
     if (line[0] != '/')
         return 0;
@@ -319,12 +319,12 @@ static RegExp* parseRegExpLine(JSGlobalData& globalData, char* line, int lineLen
 
     ++i;
 
-    return RegExp::create(globalData, pattern.toUString(), regExpFlags(line + i));
+    return RegExp::create(globalData, pattern.toString(), regExpFlags(line + i));
 }
 
 static RegExpTest* parseTestLine(char* line, int lineLength)
 {
-    UStringBuilder subjectString;
+    StringBuilder subjectString;
     
     if ((line[0] != ' ') || (line[1] != '"'))
         return 0;
@@ -363,7 +363,7 @@ static RegExpTest* parseTestLine(char* line, int lineLength)
     
     RegExpTest* result = new RegExpTest();
     
-    result->subject = subjectString.toUString();
+    result->subject = subjectString.toString();
     result->offset = offset;
     result->result = matchResult;
 
@@ -394,10 +394,10 @@ static RegExpTest* parseTestLine(char* line, int lineLength)
     return result;
 }
 
-static bool runFromFiles(GlobalObject* globalObject, const Vector<UString>& files, bool verbose)
+static bool runFromFiles(GlobalObject* globalObject, const Vector<String>& files, bool verbose)
 {
-    UString script;
-    UString fileName;
+    String script;
+    String fileName;
     Vector<char> scriptBuffer;
     unsigned tests = 0;
     unsigned failures = 0;

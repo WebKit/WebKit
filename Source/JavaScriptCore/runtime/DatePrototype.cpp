@@ -131,7 +131,7 @@ enum LocaleDateTimeFormat { LocaleDateAndTime, LocaleDate, LocaleTime };
 // FIXME: Since this is superior to the strftime-based version, why limit this to PLATFORM(MAC)?
 // Instead we should consider using this whenever USE(CF) is true.
 
-static CFDateFormatterStyle styleFromArgString(const UString& string, CFDateFormatterStyle defaultStyle)
+static CFDateFormatterStyle styleFromArgString(const String& string, CFDateFormatterStyle defaultStyle)
 {
     if (string == "short")
         return kCFDateFormatterShortStyle;
@@ -150,9 +150,9 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance*, double timeInMil
     CFDateFormatterStyle timeStyle = (format != LocaleDate ? kCFDateFormatterLongStyle : kCFDateFormatterNoStyle);
 
     bool useCustomFormat = false;
-    UString customFormatString;
+    String customFormatString;
 
-    UString arg0String = exec->argument(0).toString(exec)->value(exec);
+    String arg0String = exec->argument(0).toString(exec)->value(exec);
     if (arg0String == "custom" && !exec->argument(1).isUndefined()) {
         useCustomFormat = true;
         customFormatString = exec->argument(1).toString(exec)->value(exec);
@@ -190,7 +190,7 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance*, double timeInMil
 
     CFRelease(string);
 
-    return jsNontrivialString(exec, UString(buffer, length));
+    return jsNontrivialString(exec, String(buffer, length));
 }
 
 #elif USE(ICU_UNICODE) && !UCONFIG_NO_FORMATTING
@@ -212,7 +212,7 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance* dateObject, doubl
     if (status != U_ZERO_ERROR)
         return jsEmptyString(exec);
 
-    return jsNontrivialString(exec, UString(buffer, length));
+    return jsNontrivialString(exec, String(buffer, length));
 }
 
 #else
@@ -253,7 +253,7 @@ static JSCell* formatLocaleDate(ExecState* exec, const GregorianDateTime& gdt, L
     if (length)
         length--;
 
-    return jsNontrivialString(exec, UString(buffer.data(), length));
+    return jsNontrivialString(exec, String(buffer.data(), length));
 
 #else // OS(WINDOWS)
 
@@ -322,7 +322,7 @@ static JSCell* formatLocaleDate(ExecState* exec, const GregorianDateTime& gdt, L
     if (length != static_cast<size_t>(-1)) {
         for (size_t i = 0; i < length; ++i)
             buffer[i] = static_cast<UChar>(tempbuffer[i]);
-        return jsNontrivialString(exec, UString(buffer, length));
+        return jsNontrivialString(exec, String(buffer, length));
     }
 #endif
 

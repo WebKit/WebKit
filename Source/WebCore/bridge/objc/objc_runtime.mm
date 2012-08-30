@@ -190,10 +190,10 @@ unsigned int ObjcArray::getLength() const
 
 const ClassInfo ObjcFallbackObjectImp::s_info = { "ObjcFallbackObject", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(ObjcFallbackObjectImp) };
 
-ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSGlobalObject* globalObject, Structure* structure, ObjcInstance* i, const UString& propertyName)
+ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSGlobalObject* globalObject, Structure* structure, ObjcInstance* i, const String& propertyName)
     : JSNonFinalObject(globalObject->globalData(), structure)
     , _instance(i)
-    , _item(propertyName)
+    , m_item(propertyName)
 {
 }
 
@@ -247,8 +247,8 @@ static EncodedJSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec)
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]){
         ObjcClass* objcClass = static_cast<ObjcClass*>(objcInstance->getClass());
         OwnPtr<ObjcMethod> fallbackMethod(adoptPtr(new ObjcMethod(objcClass->isa(), @selector(invokeUndefinedMethodFromWebScript:withArguments:))));
-        const UString& nameIdentifier = static_cast<ObjcFallbackObjectImp*>(exec->callee())->propertyName();
-        RetainPtr<CFStringRef> name(AdoptCF, CFStringCreateWithCharacters(0, nameIdentifier.characters(), nameIdentifier.length()));
+        const String& nameIdentifier = static_cast<ObjcFallbackObjectImp*>(exec->callee())->propertyName();
+        RetainPtr<CFStringRef> name(AdoptCF, nameIdentifier.createCFString());
         fallbackMethod->setJavaScriptName(name.get());
         result = objcInstance->invokeObjcMethod(exec, fallbackMethod.get());
     }
@@ -276,7 +276,7 @@ bool ObjcFallbackObjectImp::deleteProperty(JSCell*, ExecState*, PropertyName)
 JSValue ObjcFallbackObjectImp::defaultValue(const JSObject* object, ExecState* exec, PreferredPrimitiveType)
 {
     const ObjcFallbackObjectImp* thisObject = jsCast<const ObjcFallbackObjectImp*>(object);
-    return thisObject->_instance->getValueOfUndefinedField(exec, Identifier(exec, thisObject->_item));
+    return thisObject->_instance->getValueOfUndefinedField(exec, Identifier(exec, thisObject->m_item));
 }
 
 bool ObjcFallbackObjectImp::toBoolean(ExecState *) const

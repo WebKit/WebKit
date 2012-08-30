@@ -63,7 +63,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState* exec, JSArray* jsArray
                     env->NewStringUTF(""));
                 for (unsigned i = 0; i < length; i++) {
                     JSValue item = jsArray->get(exec, i);
-                    UString stringValue = item.toString(exec)->value(exec);
+                    String stringValue = item.toString(exec)->value(exec);
                     env->SetObjectArrayElement(jarray, i,
                         env->functions->NewString(env, (const jchar *)stringValue.characters(), stringValue.length()));
                 }
@@ -98,7 +98,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState* exec, JSArray* jsArray
             jarray = (jobjectArray)env->NewCharArray(length);
             for (unsigned i = 0; i < length; i++) {
                 JSValue item = jsArray->get(exec, i);
-                UString stringValue = item.toString(exec)->value(exec);
+                String stringValue = item.toString(exec)->value(exec);
                 jchar value = 0;
                 if (stringValue.length() > 0)
                     value = ((const jchar*)stringValue.characters())[0];
@@ -219,7 +219,7 @@ jvalue convertValueToJValue(ExecState* exec, RootObject* rootObject, JSValue val
             // Create an appropriate Java object if target type is java.lang.Object.
             if (!result.l && !strcmp(javaClassName, "java.lang.Object")) {
                 if (value.isString()) {
-                    UString stringValue = asString(value)->value(exec);
+                    String stringValue = asString(value)->value(exec);
                     JNIEnv* env = getJNIEnv();
                     jobject javaString = env->functions->NewString(env, (const jchar*)stringValue.characters(), stringValue.length());
                     result.l = javaString;
@@ -238,7 +238,7 @@ jvalue convertValueToJValue(ExecState* exec, RootObject* rootObject, JSValue val
                     jobject javaBoolean = env->functions->NewObject(env, clazz, constructor, boolValue);
                     result.l = javaBoolean;
                 } else if (value.isUndefined()) {
-                    UString stringValue = "undefined";
+                    String stringValue = "undefined";
                     JNIEnv* env = getJNIEnv();
                     jobject javaString = env->functions->NewString(env, (const jchar*)stringValue.characters(), stringValue.length());
                     result.l = javaString;
@@ -249,7 +249,7 @@ jvalue convertValueToJValue(ExecState* exec, RootObject* rootObject, JSValue val
             // converting from a null.
             if (!result.l && !strcmp(javaClassName, "java.lang.String")) {
                 if (!value.isNull()) {
-                    UString stringValue = value.toString(exec)->value(exec);
+                    String stringValue = value.toString(exec)->value(exec);
                     JNIEnv* env = getJNIEnv();
                     jobject javaString = env->functions->NewString(env, (const jchar*)stringValue.characters(), stringValue.length());
                     result.l = javaString;

@@ -26,9 +26,9 @@
 #ifndef YarrParser_h
 #define YarrParser_h
 
-#include <runtime/UString.h>
 #include "Yarr.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace JSC { namespace Yarr {
@@ -47,7 +47,7 @@ template<class Delegate, typename CharType>
 class Parser {
 private:
     template<class FriendDelegate>
-    friend const char* parse(FriendDelegate& delegate, const UString& pattern, unsigned backReferenceLimit);
+    friend const char* parse(FriendDelegate&, const String& pattern, unsigned backReferenceLimit);
 
     enum ErrorCode {
         NoError,
@@ -228,7 +228,7 @@ private:
         UChar m_character;
     };
 
-    Parser(Delegate& delegate, const UString& pattern, unsigned backReferenceLimit)
+    Parser(Delegate& delegate, const String& pattern, unsigned backReferenceLimit)
         : m_delegate(delegate)
         , m_backReferenceLimit(backReferenceLimit)
         , m_err(NoError)
@@ -868,7 +868,7 @@ private:
  */
 
 template<class Delegate>
-const char* parse(Delegate& delegate, const UString& pattern, unsigned backReferenceLimit = quantifyInfinite)
+const char* parse(Delegate& delegate, const String& pattern, unsigned backReferenceLimit = quantifyInfinite)
 {
     if (pattern.is8Bit())
         return Parser<Delegate, LChar>(delegate, pattern, backReferenceLimit).parse();

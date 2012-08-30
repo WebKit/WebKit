@@ -271,7 +271,7 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
         return asObject(arg0);
     }
 
-    UString pattern = arg0.isUndefined() ? UString("") : arg0.toString(exec)->value(exec);
+    String pattern = arg0.isUndefined() ? String("") : arg0.toString(exec)->value(exec);
     if (exec->hadException())
         return 0;
 

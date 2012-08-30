@@ -181,7 +181,7 @@ bool ObjcInstance::supportsInvokeDefaultMethod() const
 
 class ObjCRuntimeMethod : public RuntimeMethod {
 public:
-    static ObjCRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const UString& name, Bindings::MethodList& list)
+    static ObjCRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const String& name, Bindings::MethodList& list)
     {
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // We need to pass in the right global object for "i".
@@ -206,7 +206,7 @@ private:
     {
     }
 
-    void finishCreation(JSGlobalData& globalData, const UString& name)
+    void finishCreation(JSGlobalData& globalData, const String& name)
     {
         Base::finishCreation(globalData, name);
         ASSERT(inherits(&s_info));
@@ -403,7 +403,7 @@ JSValue ObjcInstance::invokeDefaultMethod(ExecState* exec)
 
 bool ObjcInstance::setValueOfUndefinedField(ExecState* exec, PropertyName propertyName, JSValue aValue)
 {
-    UString name(propertyName.publicName());
+    String name(propertyName.publicName());
     if (name.isNull())
         return false;
 
@@ -435,7 +435,7 @@ bool ObjcInstance::setValueOfUndefinedField(ExecState* exec, PropertyName proper
 
 JSValue ObjcInstance::getValueOfUndefinedField(ExecState* exec, PropertyName propertyName) const
 {
-    UString name(propertyName.publicName());
+    String name(propertyName.publicName());
     if (name.isNull())
         return jsUndefined();
 

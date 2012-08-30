@@ -202,7 +202,7 @@ using namespace JSC::Bindings;
 
 class GlobalImp : public ObjectImp {
 public:
-  virtual UString className() const { return "global"; }
+  virtual String className() const { return "global"; }
 };
 
 #define BufferSize 200000

@@ -73901,14 +73901,6 @@
 					RelativePath="..\ForwardingHeaders\runtime\StringObject.h"
 					>
 				</File>
-				<File
-					RelativePath="..\ForwardingHeaders\runtime\UString.h"
-					>
-				</File>
-				<File
-					RelativePath="..\ForwardingHeaders\runtime\UStringImpl.h"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="yarr"

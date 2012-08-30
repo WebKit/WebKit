@@ -49,13 +49,12 @@
 namespace JSC {
 
 class ExecState;
-class UString;
 
 void msToGregorianDateTime(ExecState*, double, bool outputIsUTC, GregorianDateTime&);
 double gregorianDateTimeToMS(ExecState*, const GregorianDateTime&, double, bool inputIsUTC);
 double getUTCOffset(ExecState*);
 double parseDateFromNullTerminatedCharacters(ExecState*, const char* dateString);
-double parseDate(ExecState*, const UString&);
+double parseDate(ExecState*, const WTF::String&);
 
 } // namespace JSC
 

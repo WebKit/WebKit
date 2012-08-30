@@ -32,7 +32,6 @@ namespace JSC {
     class JSGlobalObject;
     class JSValue;
     class SourceProvider;
-    class UString;
 
     class JS_EXPORT_PRIVATE Debugger {
     public:
@@ -41,7 +40,7 @@ namespace JSC {
         void attach(JSGlobalObject*);
         virtual void detach(JSGlobalObject*);
 
-        virtual void sourceParsed(ExecState*, SourceProvider*, int errorLineNumber, const UString& errorMessage) = 0;
+        virtual void sourceParsed(ExecState*, SourceProvider*, int errorLineNumber, const WTF::String& errorMessage) = 0;
 
         virtual void exception(const DebuggerCallFrame&, intptr_t, int, int, bool) = 0;
         virtual void atStatement(const DebuggerCallFrame&, intptr_t, int, int) = 0;
@@ -60,7 +59,7 @@ namespace JSC {
     };
 
     // This function exists only for backwards compatibility with existing WebScriptDebugger clients.
-    JS_EXPORT_PRIVATE JSValue evaluateInGlobalCallFrame(const UString&, JSValue& exception, JSGlobalObject*);
+    JS_EXPORT_PRIVATE JSValue evaluateInGlobalCallFrame(const WTF::String&, JSValue& exception, JSGlobalObject*);
 
 } // namespace JSC
 

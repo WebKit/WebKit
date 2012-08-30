@@ -1,3 +1,37 @@
+2012-08-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        Replace JSC::UString by WTF::String
+        https://bugs.webkit.org/show_bug.cgi?id=95271
+
+        Reviewed by Geoffrey Garen.
+
+        Having JSC::UString and WTF::String increase the complexity of working on WebKit, and
+        add useless conversions in the bindings. It also cause some code bloat.
+
+        The performance advantages of UString have been ported over in previous patches. This patch
+        is the last step: getting rid of UString.
+
+        In addition to the simplified code, this also reduce the binary size by 15kb on x86_64.
+
+        * API/OpaqueJSString.cpp:
+        (OpaqueJSString::ustring):
+        * runtime/Identifier.h:
+        (JSC::Identifier::ustring):
+        To avoid changing everything at once, the function named ustring() were kept as is. They
+        will be renamed in a follow up patch.
+
+        * runtime/JSString.h:
+        (JSC::JSString::string):
+        (JSC::JSValue::toWTFString):
+        (JSC::inlineJSValueNotStringtoString):
+        (JSC::JSValue::toWTFStringInline):
+        Since JSValue::toString() already exist (and return the JSString), the direct accessor is renamed
+        to ::toWTFString(). We may change ::string() to ::jsString() and ::toWTFString() to ::toString()
+        in the future.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::substituteBackreferencesSlow): Replace the use of UString::getCharacters<>() by String::getCharactersWithUpconvert<>().
+
 2012-08-24  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove uses of ClassInfo in StrictEq and CompareEq in the DFG

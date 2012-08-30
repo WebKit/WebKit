@@ -109,8 +109,8 @@ JSValue JSInjectedScriptHost::internalConstructorName(ExecState* exec)
         return jsUndefined();
 
     JSObject* thisObject = exec->argument(0).toThisObject(exec);
-    UString result = thisObject->methodTable()->className(thisObject);
-    return jsString(exec, result);
+    String result = thisObject->methodTable()->className(thisObject);
+    return jsStringWithCache(exec, result);
 }
 
 JSValue JSInjectedScriptHost::isHTMLAllCollection(ExecState* exec)
@@ -170,7 +170,7 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
     int lineNumber = sourceCode->firstLine();
     if (lineNumber)
         lineNumber -= 1; // In the inspector protocol all positions are 0-based while in SourceCode they are 1-based
-    UString scriptId = UString::number(sourceCode->provider()->asID());
+    String scriptId = String::number(sourceCode->provider()->asID());
 
     JSObject* location = constructEmptyObject(exec);
     location->putDirect(exec->globalData(), Identifier(exec, "lineNumber"), jsNumber(lineNumber));
@@ -178,12 +178,12 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
 
     JSObject* result = constructEmptyObject(exec);
     result->putDirect(exec->globalData(), Identifier(exec, "location"), location);
-    UString name = function->name(exec);
+    String name = function->name(exec);
     if (!name.isEmpty())
-        result->putDirect(exec->globalData(), Identifier(exec, "name"), jsString(exec, name));
-    UString displayName = function->displayName(exec);
+        result->putDirect(exec->globalData(), Identifier(exec, "name"), jsStringWithCache(exec, name));
+    String displayName = function->displayName(exec);
     if (!displayName.isEmpty())
-        result->putDirect(exec->globalData(), Identifier(exec, "displayName"), jsString(exec, displayName));
+        result->putDirect(exec->globalData(), Identifier(exec, "displayName"), jsStringWithCache(exec, displayName));
     // FIXME: provide function scope data in "scopesRaw" property when JSC supports it.
     //     https://bugs.webkit.org/show_bug.cgi?id=87192
     return result;
@@ -260,7 +260,7 @@ JSValue JSInjectedScriptHost::databaseId(ExecState* exec)
 #if ENABLE(SQL_DATABASE)
     Database* database = toDatabase(exec->argument(0));
     if (database)
-        return jsString(exec, impl()->databaseIdImpl(database));
+        return jsStringWithCache(exec, impl()->databaseIdImpl(database));
 #endif
     return jsUndefined();
 }
@@ -271,7 +271,7 @@ JSValue JSInjectedScriptHost::storageId(ExecState* exec)
         return jsUndefined();
     Storage* storage = toStorage(exec->argument(0));
     if (storage)
-        return jsString(exec, impl()->storageIdImpl(storage));
+        return jsStringWithCache(exec, impl()->storageIdImpl(storage));
     return jsUndefined();
 }
 

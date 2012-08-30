@@ -51,13 +51,6 @@ using namespace WebCore;
 - (void)_clearDebuggerCallFrame;
 @end
 
-NSString *toNSString(const UString& s)
-{
-    if (s.isEmpty())
-        return nil;
-    return [NSString stringWithCharacters:reinterpret_cast<const unichar*>(s.characters()) length:s.length()];
-}
-
 static NSString *toNSString(SourceProvider* s)
 {
     if (!s->length())
@@ -65,12 +58,12 @@ static NSString *toNSString(SourceProvider* s)
     return [NSString stringWithCharacters:s->data()->characters() length:s->length()];
 }
 
-// convert UString to NSURL
-static NSURL *toNSURL(const UString& s)
+// Convert String to NSURL.
+static NSURL *toNSURL(const String& s)
 {
     if (s.isEmpty())
         return nil;
-    return KURL(ParsedURLString, ustringToString(s));
+    return KURL(ParsedURLString, s);
 }
 
 static WebFrame *toWebFrame(JSGlobalObject* globalObject)
@@ -105,7 +98,7 @@ void WebScriptDebugger::initGlobalCallFrame(const DebuggerCallFrame& debuggerCal
 }
 
 // callbacks - relay to delegate
-void WebScriptDebugger::sourceParsed(ExecState* exec, SourceProvider* sourceProvider, int errorLine, const UString& errorMsg)
+void WebScriptDebugger::sourceParsed(ExecState* exec, SourceProvider* sourceProvider, int errorLine, const String& errorMsg)
 {
     if (m_callingDelegate)
         return;
@@ -128,7 +121,7 @@ void WebScriptDebugger::sourceParsed(ExecState* exec, SourceProvider* sourceProv
                 CallScriptDebugDelegate(implementations->didParseSourceFunc, webView, @selector(webView:didParseSource:fromURL:sourceId:forWebFrame:), nsSource, [nsURL absoluteString], sourceProvider->asID(), webFrame);
         }
     } else {
-        NSString* nsErrorMessage = toNSString(errorMsg);
+        NSString* nsErrorMessage = nsStringNilIfEmpty(errorMsg);
         NSDictionary *info = [[NSDictionary alloc] initWithObjectsAndKeys:nsErrorMessage, WebScriptErrorDescriptionKey, [NSNumber numberWithUnsignedInt:errorLine], WebScriptErrorLineNumberKey, nil];
         NSError *error = [[NSError alloc] initWithDomain:WebScriptErrorDomain code:WebScriptGeneralErrorCode userInfo:info];
 

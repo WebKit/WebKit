@@ -27,7 +27,6 @@
 #include "JSStringBuilder.h"
 #include "ObjectPrototype.h"
 #include "StringRecursionChecker.h"
-#include "UString.h"
 
 namespace JSC {
 
@@ -97,7 +96,7 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     // 4. If name is undefined, then let name be "Error"; else let name be ToString(name).
-    UString nameString;
+    String nameString;
     if (name.isUndefined())
         nameString = "Error";
     else {
@@ -114,7 +113,7 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
     // (sic)
     // 6. If msg is undefined, then let msg be the empty String; else let msg be ToString(msg).
     // 7. If msg is undefined, then let msg be the empty String; else let msg be ToString(msg).
-    UString messageString;
+    String messageString;
     if (message.isUndefined())
         messageString = "";
     else {

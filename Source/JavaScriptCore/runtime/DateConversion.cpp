@@ -25,10 +25,10 @@
 #include "config.h"
 #include "DateConversion.h"
 
-#include "UString.h"
 #include <wtf/Assertions.h>
 #include <wtf/DateMath.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 #if OS(WINDOWS)
 #include <windows.h>
@@ -62,7 +62,7 @@ void appendNumber<2>(StringBuilder& builder, int value)
     builder.append(static_cast<char>('0' + value % 10));
 }
 
-UString formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool asUTCVariant)
+String formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool asUTCVariant)
 {
     bool appendDate = format & DateTimeFormatDate;
     bool appendTime = format & DateTimeFormatTime;

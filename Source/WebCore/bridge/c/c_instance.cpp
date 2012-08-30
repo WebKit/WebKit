@@ -54,15 +54,13 @@ using namespace WebCore;
 namespace JSC {
 namespace Bindings {
 
-using JSC::UString;
-
-static JSC::UString& globalExceptionString()
+static String& globalExceptionString()
 {
-    DEFINE_STATIC_LOCAL(JSC::UString, exceptionStr, ());
+    DEFINE_STATIC_LOCAL(String, exceptionStr, ());
     return exceptionStr;
 }
 
-void CInstance::setGlobalException(UString exception)
+void CInstance::setGlobalException(String exception)
 {
     globalExceptionString() = exception;
 }
@@ -77,7 +75,7 @@ void CInstance::moveGlobalExceptionToExecState(ExecState* exec)
         throwError(exec, createError(exec, globalExceptionString()));
     }
 
-    globalExceptionString() = UString();
+    globalExceptionString() = String();
 }
 
 CInstance::CInstance(NPObject* o, PassRefPtr<RootObject> rootObject)
@@ -113,7 +111,7 @@ class CRuntimeMethod : public RuntimeMethod {
 public:
     typedef RuntimeMethod Base;
 
-    static CRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const UString& name, Bindings::MethodList& list)
+    static CRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const String& name, Bindings::MethodList& list)
     {
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // We need to pass in the right global object for "i".
@@ -136,7 +134,7 @@ private:
     {
     }
 
-    void finishCreation(JSGlobalData& globalData, const UString& name)
+    void finishCreation(JSGlobalData& globalData, const String& name)
     {
         Base::finishCreation(globalData, name);
         ASSERT(inherits(&s_info));

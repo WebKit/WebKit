@@ -113,7 +113,7 @@ namespace JSC {
     
     inline const Identifier& IdentifierArena::makeNumericIdentifier(JSGlobalData* globalData, double number)
     {
-        m_identifiers.append(Identifier(globalData, UString::numberToStringECMAScript(number)));
+        m_identifiers.append(Identifier(globalData, String::numberToStringECMAScript(number)));
         return m_identifiers.last();
     }
 

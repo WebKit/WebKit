@@ -34,7 +34,7 @@ namespace JSC {
     public:
         typedef InternalFunction Base;
 
-        static NativeErrorConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* prototypeStructure, const UString& name)
+        static NativeErrorConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* prototypeStructure, const String& name)
         {
             NativeErrorConstructor* constructor = new (NotNull, allocateCell<NativeErrorConstructor>(*exec->heap())) NativeErrorConstructor(globalObject, structure);
             constructor->finishCreation(exec, globalObject, prototypeStructure, name);
@@ -51,7 +51,7 @@ namespace JSC {
         Structure* errorStructure() { return m_errorStructure.get(); }
 
     protected:
-        void finishCreation(ExecState* exec, JSGlobalObject* globalObject, Structure* prototypeStructure, const UString& name)
+        void finishCreation(ExecState* exec, JSGlobalObject* globalObject, Structure* prototypeStructure, const String& name)
         {
             Base::finishCreation(exec->globalData(), name);
             ASSERT(inherits(&s_info));

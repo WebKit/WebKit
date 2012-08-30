@@ -520,7 +520,7 @@ namespace JSC {
             emitUnaryNoDstOp(op_throw, exc);
         }
 
-        void emitThrowReferenceError(const UString& message);
+        void emitThrowReferenceError(const String& message);
 
         void emitPushNewScope(RegisterID* dst, const Identifier& property, RegisterID* value);
 

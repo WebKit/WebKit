@@ -65,7 +65,7 @@ namespace JSC {
     class Structure;
     struct HashTable;
 
-    JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*, const UString&);
+    JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*, const String&);
     extern JS_EXPORTDATA const char* StrictModeReadonlyPropertyWriteError;
 
     // ECMA 262-3 8.6.1
@@ -99,7 +99,7 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 
-        JS_EXPORT_PRIVATE static UString className(const JSObject*);
+        JS_EXPORT_PRIVATE static String className(const JSObject*);
 
         JSValue prototype() const;
         void setPrototype(JSGlobalData&, JSValue prototype);
@@ -620,7 +620,7 @@ ALWAYS_INLINE bool JSCell::fastGetOwnPropertySlot(ExecState* exec, PropertyName 
 // identifier. The first time we perform a property access with a given string, try
 // performing the property map lookup without forming an identifier. We detect this
 // case by checking whether the hash has yet been set for this string.
-ALWAYS_INLINE JSValue JSCell::fastGetOwnProperty(ExecState* exec, const UString& name)
+ALWAYS_INLINE JSValue JSCell::fastGetOwnProperty(ExecState* exec, const String& name)
 {
     if (!structure()->typeInfo().overridesGetOwnPropertySlot() && !structure()->hasGetterSetterProperties()) {
         PropertyOffset offset = name.impl()->hasHash()

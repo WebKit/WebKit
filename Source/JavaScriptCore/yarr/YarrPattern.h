@@ -27,10 +27,10 @@
 #ifndef YarrPattern_h
 #define YarrPattern_h
 
-#include <runtime/UString.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace JSC { namespace Yarr {
@@ -316,7 +316,7 @@ struct TermChain {
 };
 
 struct YarrPattern {
-    JS_EXPORT_PRIVATE YarrPattern(const UString& pattern, bool ignoreCase, bool multiline, const char** error);
+    JS_EXPORT_PRIVATE YarrPattern(const String& pattern, bool ignoreCase, bool multiline, const char** error);
 
     ~YarrPattern()
     {
@@ -405,7 +405,7 @@ struct YarrPattern {
     Vector<CharacterClass*> m_userCharacterClasses;
 
 private:
-    const char* compile(const UString& patternString);
+    const char* compile(const String& patternString);
 
     CharacterClass* newlineCached;
     CharacterClass* digitsCached;

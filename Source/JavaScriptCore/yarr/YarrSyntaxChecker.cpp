@@ -50,7 +50,7 @@ public:
     void disjunction() {}
 };
 
-const char* checkSyntax(const UString& pattern)
+const char* checkSyntax(const String& pattern)
 {
     SyntaxChecker syntaxChecker;
     return parse(syntaxChecker, pattern);

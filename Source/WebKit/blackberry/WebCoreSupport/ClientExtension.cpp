@@ -103,7 +103,7 @@ void attachExtensionObjectToFrame(Frame* frame, WebPageClient* client)
     JSObjectRef clientClassObject = JSObjectMake(scriptCtx, clientClass, 0);
     JSObjectSetPrivate(clientClassObject, reinterpret_cast<void*>(client));
 
-    JSC::UString name("qnx");
+    String name("qnx");
 
     JSC::PutPropertySlot slot;
     window->put(window, exec, JSC::Identifier(exec, name), toJS(clientClassObject), slot);

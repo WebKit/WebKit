@@ -61,7 +61,7 @@ EncodedJSValue JSC_HOST_CALL JSWebSocketConstructor::constructJSWebSocket(ExecSt
     if (!exec->argumentCount())
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
 
-    String urlString = ustringToString(exec->argument(0).toString(exec)->value(exec));
+    String urlString = exec->argument(0).toString(exec)->value(exec);
     if (exec->hadException())
         return throwVMError(exec, createSyntaxError(exec, "wrong URL"));
     RefPtr<WebSocket> webSocket = WebSocket::create(context);
@@ -74,14 +74,14 @@ EncodedJSValue JSC_HOST_CALL JSWebSocketConstructor::constructJSWebSocket(ExecSt
             Vector<String> protocols;
             JSArray* protocolsArray = asArray(protocolsValue);
             for (unsigned i = 0; i < protocolsArray->length(); ++i) {
-                String protocol = ustringToString(protocolsArray->getIndex(i).toString(exec)->value(exec));
+                String protocol = protocolsArray->getIndex(i).toString(exec)->value(exec);
                 if (exec->hadException())
                     return JSValue::encode(JSValue());
                 protocols.append(protocol);
             }
             webSocket->connect(urlString, protocols, ec);
         } else {
-            String protocol = ustringToString(protocolsValue.toString(exec)->value(exec));
+            String protocol = protocolsValue.toString(exec)->value(exec);
             if (exec->hadException())
                 return JSValue::encode(JSValue());
             webSocket->connect(urlString, protocol, ec);
@@ -106,7 +106,7 @@ JSValue JSWebSocket::send(ExecState* exec)
     else if (message.inherits(&JSBlob::s_info))
         result = impl()->send(toBlob(message), ec);
     else {
-        String stringMessage = ustringToString(message.toString(exec)->value(exec));
+        String stringMessage = message.toString(exec)->value(exec);
         if (exec->hadException())
             return jsUndefined();
         result = impl()->send(stringMessage, ec);

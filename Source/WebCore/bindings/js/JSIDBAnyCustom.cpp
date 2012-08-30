@@ -65,7 +65,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, IDBAny* idbAny)
     case IDBAny::NullType:
         return jsNull();
     case IDBAny::StringType:
-        return jsString(exec, idbAny->string());
+        return jsStringWithCache(exec, idbAny->string());
     case IDBAny::DOMStringListType:
         return toJS(exec, globalObject, idbAny->domStringList());
     case IDBAny::IDBCursorType:

@@ -49,7 +49,7 @@ JSValue JSSQLTransactionSync::executeSql(ExecState* exec)
         return jsUndefined();
     }
 
-    String sqlStatement = ustringToString(exec->argument(0).toString(exec)->value(exec));
+    String sqlStatement = exec->argument(0).toString(exec)->value(exec);
     if (exec->hadException())
         return jsUndefined();
 
@@ -80,7 +80,7 @@ JSValue JSSQLTransactionSync::executeSql(ExecState* exec)
                 sqlValues.append(value.asNumber());
             else {
                 // Convert the argument to a string and append it
-                sqlValues.append(ustringToString(value.toString(exec)->value(exec)));
+                sqlValues.append(value.toString(exec)->value(exec));
                 if (exec->hadException())
                     return jsUndefined();
             }

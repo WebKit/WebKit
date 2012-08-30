@@ -2539,7 +2539,7 @@ HRESULT WebFrame::stringByEvaluatingJavaScriptInScriptWorld(IWebScriptWorld* iWo
 
     JSC::ExecState* exec = anyWorldGlobalObject->globalExec();
     JSC::JSLockHolder lock(exec);
-    String resultString = ustringToString(result.toString(exec)->value(exec));
+    String resultString = result.toWTFString(exec);
     *evaluationResult = BString(resultString).release();
 
     return S_OK;

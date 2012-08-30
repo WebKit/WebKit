@@ -39,7 +39,7 @@
 #include "LowLevelInterpreter.h"
 #include "ScopeChain.h"
 #include "StrongInlines.h"
-#include "UString.h"
+#include <wtf/text/WTFString.h>
 
 using namespace std;
 
@@ -1158,7 +1158,7 @@ RegisterID* BytecodeGenerator::emitEqualityOp(OpcodeID opcodeID, RegisterID* dst
             && src1->isTemporary()
             && m_codeBlock->isConstantRegisterIndex(src2->index())
             && m_codeBlock->constantRegister(src2->index()).get().isString()) {
-            const UString& value = asString(m_codeBlock->constantRegister(src2->index()).get())->tryGetValue();
+            const String& value = asString(m_codeBlock->constantRegister(src2->index()).get())->tryGetValue();
             if (value == "undefined") {
                 rewindUnaryOp();
                 emitOpcode(op_is_undefined);
@@ -2446,7 +2446,7 @@ RegisterID* BytecodeGenerator::popTryAndEmitCatch(TryData* tryData, RegisterID* 
     return targetRegister;
 }
 
-void BytecodeGenerator::emitThrowReferenceError(const UString& message)
+void BytecodeGenerator::emitThrowReferenceError(const String& message)
 {
     emitOpcode(op_throw_reference_error);
     instructions().append(addConstantValue(jsString(globalData(), message))->index());

@@ -97,7 +97,7 @@ typedef enum {
     Variant = 0,
     Number,
     Boolean,
-    String,
+    RTString,
     Date,
     Array,
     QObj,
@@ -110,7 +110,7 @@ typedef enum {
 #if defined(QTWK_RUNTIME_CONVERSION_DEBUG) || defined(QTWK_RUNTIME_MATCH_DEBUG)
 QDebug operator<<(QDebug dbg, const JSRealType &c)
 {
-     const char *map[] = { "Variant", "Number", "Boolean", "String", "Date",
+     const char *map[] = { "Variant", "Number", "Boolean", "RTString", "Date",
          "Array", "RTObject", "Object", "Null", "RTArray"};
 
      dbg.nospace() << "JSType(" << ((int)c) << ", " <<  map[c] << ")";
@@ -156,7 +156,7 @@ static JSRealType valueRealType(ExecState* exec, JSValue val)
     if (val.isNumber())
         return Number;
     else if (val.isString())
-        return String;
+        return RTString;
     else if (val.isBoolean())
         return Boolean;
     else if (val.isNull())
@@ -176,7 +176,7 @@ static JSRealType valueRealType(ExecState* exec, JSValue val)
         return Object;
     }
 
-    return String; // I don't know.
+    return RTString; // I don't know.
 }
 
 QVariant convertValueToQVariant(ExecState*, JSValue, QMetaType::Type, int*, HashSet<JSObject*>*, int);
@@ -199,7 +199,7 @@ static QVariantMap convertValueToQVariantMap(ExecState* exec, JSObject* object, 
             else {
                 QVariant v = convertValueToQVariant(exec, val, QMetaType::Void, &objdist, visitedObjects, recursionLimit);
                 if (objdist >= 0) {
-                    UString ustring = (*it).ustring();
+                    WTF::String ustring = (*it).ustring();
                     QString id = QString((const QChar*)ustring.impl()->characters(), ustring.length());
                     result.insert(id, v);
                 }
@@ -246,7 +246,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
             case Boolean:
                 hint = QMetaType::Bool;
                 break;
-            case String:
+            case RTString:
             default:
                 hint = QMetaType::QString;
                 break;
@@ -354,9 +354,9 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 else
                     dist = 6;
             } else {
-                UString str = value.toString(exec)->value(exec);
+                WTF::String str = value.toString(exec)->value(exec);
                 ret = QVariant(QChar(str.length() ? *(const ushort*)str.impl()->characters() : 0));
-                if (type == String)
+                if (type == RTString)
                     dist = 3;
                 else
                     dist = 10;
@@ -369,9 +369,9 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                     *distance = 1;
                 return QString();
             } else {
-                UString ustring = value.toString(exec)->value(exec);
+                WTF::String ustring = value.toString(exec)->value(exec);
                 ret = QVariant(QString((const QChar*)ustring.impl()->characters(), ustring.length()));
-                if (type == String)
+                if (type == RTString)
                     dist = 0;
                 else
                     dist = 10;
@@ -450,7 +450,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 int len = rtarray->getLength();
                 for (int i = 0; i < len; ++i) {
                     JSValue val = rtarray->getConcreteArray()->valueAt(exec, i);
-                    UString ustring = val.toString(exec)->value(exec);
+                    WTF::String ustring = val.toString(exec)->value(exec);
                     QString qstring = QString((const QChar*)ustring.impl()->characters(), ustring.length());
 
                     result.append(qstring);
@@ -464,7 +464,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 int len = array->length();
                 for (int i = 0; i < len; ++i) {
                     JSValue val = array->get(exec, i);
-                    UString ustring = val.toString(exec)->value(exec);
+                    WTF::String ustring = val.toString(exec)->value(exec);
                     QString qstring = QString((const QChar*)ustring.impl()->characters(), ustring.length());
 
                     result.append(qstring);
@@ -473,7 +473,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 ret = QVariant(result);
             } else {
                 // Make a single length array
-                UString ustring = value.toString(exec)->value(exec);
+                WTF::String ustring = value.toString(exec)->value(exec);
                 QString qstring = QString((const QChar*)ustring.impl()->characters(), ustring.length());
                 QStringList result;
                 result.append(qstring);
@@ -489,9 +489,9 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 ret = QVariant(QByteArray(reinterpret_cast<const char*>(arr->data()), arr->length()));
                 dist = 0;
             } else {
-                UString ustring = value.toString(exec)->value(exec);
+                WTF::String ustring = value.toString(exec)->value(exec);
                 ret = QVariant(QString((const QChar*)ustring.impl()->characters(), ustring.length()).toLatin1());
-                if (type == String)
+                if (type == RTString)
                     dist = 5;
                 else
                     dist = 10;
@@ -531,8 +531,8 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                     dist = 10;
                 }
 #ifndef QT_NO_DATESTRING
-            } else if (type == String) {
-                UString ustring = value.toString(exec)->value(exec);
+            } else if (type == RTString) {
+                WTF::String ustring = value.toString(exec)->value(exec);
                 QString qstring = QString((const QChar*)ustring.impl()->characters(), ustring.length());
 
                 if (hint == QMetaType::QDateTime) {

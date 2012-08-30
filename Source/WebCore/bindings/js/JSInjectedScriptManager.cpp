@@ -54,7 +54,7 @@ ScriptObject InjectedScriptManager::createInjectedScript(const String& source, S
 {
     JSLockHolder lock(scriptState);
 
-    SourceCode sourceCode = makeSource(stringToUString(source));
+    SourceCode sourceCode = makeSource(source);
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
     JSValue globalThisValue = scriptState->globalThisValue();
 

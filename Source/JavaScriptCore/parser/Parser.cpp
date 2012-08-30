@@ -81,9 +81,9 @@ Parser<LexerType>::~Parser()
 }
 
 template <typename LexerType>
-UString Parser<LexerType>::parseInner()
+String Parser<LexerType>::parseInner()
 {
-    UString parseError = UString();
+    String parseError = String();
     
     unsigned oldFunctionCacheSize = m_functionCache ? m_functionCache->byteSize() : 0;
     ASTBuilder context(const_cast<JSGlobalData*>(m_globalData), const_cast<SourceCode*>(m_source));

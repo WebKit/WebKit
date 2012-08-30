@@ -22,11 +22,11 @@
 #define PropertyMapHashTable_h
 
 #include "PropertyOffset.h"
-#include "UString.h"
 #include "WriteBarrier.h"
 #include <wtf/HashTable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringImpl.h>
 
 
 #ifndef NDEBUG
@@ -44,7 +44,7 @@ extern int numRemoves;
 
 #endif
 
-#define PROPERTY_MAP_DELETED_ENTRY_KEY ((StringImpl*)1) 
+#define PROPERTY_MAP_DELETED_ENTRY_KEY ((StringImpl*)1)
 
 namespace JSC {
 

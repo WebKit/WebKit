@@ -44,7 +44,7 @@ namespace JSC {
 
     JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState*);
 
-    JS_EXPORT_PRIVATE UString getCalculatedDisplayName(CallFrame*, JSObject*);
+    JS_EXPORT_PRIVATE String getCalculatedDisplayName(CallFrame*, JSObject*);
     
     class JSFunction : public JSNonFinalObject {
         friend class JIT;
@@ -55,7 +55,7 @@ namespace JSC {
     public:
         typedef JSNonFinalObject Base;
 
-        JS_EXPORT_PRIVATE static JSFunction* create(ExecState*, JSGlobalObject*, int length, const UString& name, NativeFunction, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
+        JS_EXPORT_PRIVATE static JSFunction* create(ExecState*, JSGlobalObject*, int length, const String& name, NativeFunction, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
 
         static JSFunction* create(ExecState* exec, FunctionExecutable* executable, ScopeChainNode* scopeChain)
         {
@@ -65,9 +65,9 @@ namespace JSC {
             return function;
         }
         
-        JS_EXPORT_PRIVATE const UString& name(ExecState*);
-        JS_EXPORT_PRIVATE const UString displayName(ExecState*);
-        const UString calculatedDisplayName(ExecState*);
+        JS_EXPORT_PRIVATE const String& name(ExecState*);
+        JS_EXPORT_PRIVATE const String displayName(ExecState*);
+        const String calculatedDisplayName(ExecState*);
 
         ScopeChainNode* scope()
         {
@@ -139,7 +139,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE JSFunction(ExecState*, JSGlobalObject*, Structure*);
         JSFunction(ExecState*, FunctionExecutable*, ScopeChainNode*);
         
-        void finishCreation(ExecState*, NativeExecutable*, int length, const UString& name);
+        void finishCreation(ExecState*, NativeExecutable*, int length, const String& name);
         void finishCreation(ExecState*, FunctionExecutable*, ScopeChainNode*);
 
         Structure* cacheInheritorID(ExecState*);

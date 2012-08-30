@@ -166,7 +166,7 @@ void PagePopupBlackBerry::installDomFunction(Frame* frame)
     JSObjectRef clientClassObject = JSObjectMake(context, clientClass, 0);
     JSObjectSetPrivate(clientClassObject, reinterpret_cast<void*>(m_client.get()));
 
-    JSC::UString name("popUp");
+    String name("popUp");
 
     JSC::PutPropertySlot slot;
     window->put(window, exec, JSC::Identifier(exec, name),

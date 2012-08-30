@@ -64,6 +64,7 @@
 #include "Settings.h"
 #include "npruntime_impl.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/text/WTFString.h>
 
 #if OS(WINDOWS) && ENABLE(NETSCAPE_PLUGIN_API)
 #include "PluginMessageThrottlerWin.h"
@@ -81,7 +82,6 @@ using JSC::ExecState;
 using JSC::JSLock;
 using JSC::JSObject;
 using JSC::JSValue;
-using JSC::UString;
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

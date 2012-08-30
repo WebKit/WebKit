@@ -255,7 +255,6 @@ SET(JavaScriptCore_SOURCES
     runtime/StructureChain.cpp
     runtime/SymbolTable.cpp
     runtime/TimeoutChecker.cpp
-    runtime/UString.cpp
 
     tools/CodeProfile.cpp
     tools/CodeProfiling.cpp

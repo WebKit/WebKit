@@ -36,7 +36,7 @@ void CallFrame::dumpCaller()
 {
     int signedLineNumber;
     intptr_t sourceID;
-    UString urlString;
+    String urlString;
     JSValue function;
     
     interpreter()->retrieveLastCaller(this, signedLineNumber, sourceID, urlString, function);

@@ -147,7 +147,7 @@ JSValue JavaField::valueFromInstance(ExecState* exec, const Instance* i) const
         break;
     }
 
-    LOG(LiveConnect, "JavaField::valueFromInstance getting %s = %s", UString(name().impl()).utf8().data(), jsresult.toString(exec)->value(exec).ascii().data());
+    LOG(LiveConnect, "JavaField::valueFromInstance getting %s = %s", String(name().impl()).utf8().data(), jsresult.toString(exec)->value(exec).ascii().data());
 
     return jsresult;
 }
@@ -183,7 +183,7 @@ void JavaField::setValueToInstance(ExecState* exec, const Instance* i, JSValue a
     const JavaInstance* instance = static_cast<const JavaInstance*>(i);
     jvalue javaValue = convertValueToJValue(exec, i->rootObject(), aValue, m_type, typeClassName());
 
-    LOG(LiveConnect, "JavaField::setValueToInstance setting value %s to %s", UString(name().impl()).utf8().data(), aValue.toString(exec)->value(exec).ascii().data());
+    LOG(LiveConnect, "JavaField::setValueToInstance setting value %s to %s", String(name().impl()).utf8().data(), aValue.toString(exec)->value(exec).ascii().data());
 
     switch (m_type) {
     case JavaTypeArray:

@@ -60,10 +60,10 @@ namespace JSC {
         {
         }
 
-        UString toString() const
+        String toString() const
         {
             if (!m_provider)
-                return UString();
+                return String();
             return m_provider->getRange(m_startChar, m_endChar);
         }
         
@@ -90,9 +90,9 @@ namespace JSC {
         int m_firstLine;
     };
 
-    inline SourceCode makeSource(const UString& source, const UString& url = UString(), const TextPosition& startPosition = TextPosition::minimumPosition())
+    inline SourceCode makeSource(const String& source, const String& url = String(), const TextPosition& startPosition = TextPosition::minimumPosition())
     {
-        return SourceCode(UStringSourceProvider::create(source, url, startPosition), startPosition.m_line.oneBasedInt());
+        return SourceCode(StringSourceProvider::create(source, url, startPosition), startPosition.m_line.oneBasedInt());
     }
 
     inline SourceCode SourceCode::subExpression(unsigned openBrace, unsigned closeBrace, int firstLine)

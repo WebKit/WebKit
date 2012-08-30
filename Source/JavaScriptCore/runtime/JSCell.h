@@ -89,8 +89,8 @@ namespace JSC {
         const char* className();
 
         // Extracting the value.
-        JS_EXPORT_PRIVATE bool getString(ExecState* exec, UString&) const;
-        JS_EXPORT_PRIVATE UString getString(ExecState* exec) const; // null string if not a string
+        JS_EXPORT_PRIVATE bool getString(ExecState*, String&) const;
+        JS_EXPORT_PRIVATE String getString(ExecState*) const; // null string if not a string
         JS_EXPORT_PRIVATE JSObject* getObject(); // NULL if not an object
         const JSObject* getObject() const; // NULL if not an object
         
@@ -126,7 +126,7 @@ namespace JSC {
         // call this function, not its slower virtual counterpart. (For integer
         // property names, we want a similar interface with appropriate optimizations.)
         bool fastGetOwnPropertySlot(ExecState*, PropertyName, PropertySlot&);
-        JSValue fastGetOwnProperty(ExecState*, const UString&);
+        JSValue fastGetOwnProperty(ExecState*, const String&);
 
         static ptrdiff_t structureOffset()
         {
@@ -161,7 +161,7 @@ namespace JSC {
         static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
         static NO_RETURN_DUE_TO_ASSERT void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         static NO_RETURN_DUE_TO_ASSERT void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-        static UString className(const JSObject*);
+        static String className(const JSObject*);
         static bool hasInstance(JSObject*, ExecState*, JSValue, JSValue prototypeProperty);
         static NO_RETURN_DUE_TO_ASSERT void putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsigned attributes);
         static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool shouldThrow);
@@ -223,17 +223,17 @@ namespace JSC {
         return isCell() && asCell()->isObject();
     }
 
-    inline bool JSValue::getString(ExecState* exec, UString& s) const
+    inline bool JSValue::getString(ExecState* exec, String& s) const
     {
         return isCell() && asCell()->getString(exec, s);
     }
 
-    inline UString JSValue::getString(ExecState* exec) const
+    inline String JSValue::getString(ExecState* exec) const
     {
-        return isCell() ? asCell()->getString(exec) : UString();
+        return isCell() ? asCell()->getString(exec) : String();
     }
 
-    template <typename Base> UString HandleConverter<Base, Unknown>::getString(ExecState* exec) const
+    template <typename Base> String HandleConverter<Base, Unknown>::getString(ExecState* exec) const
     {
         return jsValue().getString(exec);
     }

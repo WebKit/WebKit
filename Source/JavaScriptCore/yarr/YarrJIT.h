@@ -31,7 +31,6 @@
 #include "JSGlobalData.h"
 #include "MacroAssemblerCodeRef.h"
 #include "MatchResult.h"
-#include "UString.h"
 #include "Yarr.h"
 #include "YarrPattern.h"
 

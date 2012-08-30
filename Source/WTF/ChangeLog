@@ -1,3 +1,19 @@
+2012-08-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        Replace JSC::UString by WTF::String
+        https://bugs.webkit.org/show_bug.cgi?id=95271
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/Platform.h: Useless edit to force a full build. This is needed for some bots for some reason.
+        * wtf/text/WTFString.h: Export a symbol that was exported on UString and needed in WebCore.
+
+        Add String::getCharactersWithUpconvert<>(), which is similar to String::getCharacters<>() but with the same
+        behaviors as UString::getCharacters<>().
+
+        String::getCharactersWithUpconvert<>() is useful when manipulating multiple strings, it allow writting code
+        using 16bits characters if any of the input String is not 8bit.
+
 2012-08-30  Yong Li  <yoli@rim.com>
 
         Vector::shrinkToFit should use realloc when suitable.

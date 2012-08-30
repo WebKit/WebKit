@@ -27,12 +27,12 @@
 #include "config.h"
 #include "YarrInterpreter.h"
 
-#include "UString.h"
 #include "Yarr.h"
 #include "YarrCanonicalizeUCS2.h"
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/DataLog.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #ifndef NDEBUG
 #include <stdio.h>
@@ -1934,7 +1934,7 @@ PassOwnPtr<BytecodePattern> byteCompile(YarrPattern& pattern, BumpPointerAllocat
     return ByteCompiler(pattern).compile(allocator);
 }
 
-unsigned interpret(BytecodePattern* bytecode, const UString& input, unsigned start, unsigned* output)
+unsigned interpret(BytecodePattern* bytecode, const String& input, unsigned start, unsigned* output)
 {
     if (input.is8Bit())
         return Interpreter<LChar>(bytecode, output, input.characters8(), input.length(), start).interpret();

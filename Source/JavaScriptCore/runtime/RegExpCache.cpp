@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-RegExp* RegExpCache::lookupOrCreate(const UString& patternString, RegExpFlags flags)
+RegExp* RegExpCache::lookupOrCreate(const String& patternString, RegExpFlags flags)
 {
     RegExpKey key(flags, patternString);
     if (RegExp* regExp = m_weakCache.get(key))
@@ -63,7 +63,7 @@ void RegExpCache::finalize(Handle<Unknown> handle, void*)
 
 void RegExpCache::addToStrongCache(RegExp* regExp)
 {
-    UString pattern = regExp->pattern();
+    String pattern = regExp->pattern();
     if (pattern.length() > maxStrongCacheablePatternLength)
         return;
     m_strongCache[m_nextEntryInStrongCache].set(*m_globalData, regExp);

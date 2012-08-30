@@ -137,7 +137,7 @@ JSValue jsTestExceptionName(ExecState* exec, JSValue slotBase, PropertyName)
     JSTestException* castedThis = jsCast<JSTestException*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestException* impl = static_cast<TestException*>(castedThis->impl());
-    JSValue result = jsString(exec, impl->name());
+    JSValue result = jsStringWithCache(exec, impl->name());
     return result;
 }
 

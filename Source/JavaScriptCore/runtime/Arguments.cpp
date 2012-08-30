@@ -98,7 +98,7 @@ bool Arguments::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigne
         return true;
     }
 
-    return JSObject::getOwnPropertySlot(thisObject, exec, Identifier(exec, UString::number(i)), slot);
+    return JSObject::getOwnPropertySlot(thisObject, exec, Identifier(exec, String::number(i)), slot);
 }
     
 void Arguments::createStrictModeCallerIfNecessary(ExecState* exec)
@@ -186,7 +186,7 @@ void Arguments::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyN
     Arguments* thisObject = jsCast<Arguments*>(object);
     for (unsigned i = 0; i < thisObject->d->numArguments; ++i) {
         if (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])
-            propertyNames.add(Identifier(exec, UString::number(i)));
+            propertyNames.add(Identifier(exec, String::number(i)));
     }
     if (mode == IncludeDontEnumProperties) {
         propertyNames.add(exec->propertyNames().callee);
@@ -204,7 +204,7 @@ void Arguments::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue va
     }
 
     PutPropertySlot slot(shouldThrow);
-    JSObject::put(thisObject, exec, Identifier(exec, UString::number(i)), value, slot);
+    JSObject::put(thisObject, exec, Identifier(exec, String::number(i)), value, slot);
 }
 
 void Arguments::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
@@ -255,7 +255,7 @@ bool Arguments::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
         }
     }
 
-    return JSObject::deleteProperty(thisObject, exec, Identifier(exec, UString::number(i)));
+    return JSObject::deleteProperty(thisObject, exec, Identifier(exec, String::number(i)));
 }
 
 bool Arguments::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName) 

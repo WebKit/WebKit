@@ -46,7 +46,7 @@ namespace JSC {
         static const ClassInfo s_info;
 
     protected:
-        void finishCreation(ExecState*, const UString& name);
+        void finishCreation(ExecState*, const String& name);
 
     private:
         FunctionPrototype(JSGlobalObject*, Structure*);
