@@ -990,6 +990,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._toggleDebuggerSidebarButton.state = "shown";
         this._toggleDebuggerSidebarButton.title = WebInspector.UIString("Hide debugger");
         this.splitView.showSidebarElement();
+        this.debugSidebarResizeWidgetElement.removeStyleClass("hidden");
         WebInspector.settings.debuggerSidebarHidden.set(false);
     },
 
@@ -1000,6 +1001,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._toggleDebuggerSidebarButton.state = "hidden";
         this._toggleDebuggerSidebarButton.title = WebInspector.UIString("Show debugger");
         this.splitView.hideSidebarElement();
+        this.debugSidebarResizeWidgetElement.addStyleClass("hidden");
         WebInspector.settings.debuggerSidebarHidden.set(true);
     },
 

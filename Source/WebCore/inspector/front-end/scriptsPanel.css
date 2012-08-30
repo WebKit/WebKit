@@ -258,7 +258,6 @@ button.status-bar-item.scripts-navigator-show-hide-button.toggled-overlay
 button.status-bar-item.scripts-debugger-show-hide-button {
     position: absolute;
     top: 0;
-    right: 16px;
     background-image: none;
     height: 16px;
     width: 16px;
@@ -268,7 +267,6 @@ button.status-bar-item.scripts-debugger-show-hide-button {
 
 button.status-bar-item.scripts-debugger-show-hide-button:active {
     top: 1px;
-    right: 15px;
 }
 
 .status-bar-item.scripts-debugger-show-hide-button > .glyph {
@@ -277,8 +275,24 @@ button.status-bar-item.scripts-debugger-show-hide-button:active {
     -webkit-mask-image: url(Images/navigatorShowHideButton.png);
 }
 
+button.status-bar-item.scripts-debugger-show-hide-button.toggled-shown {
+    right: 16px;
+}
+
+button.status-bar-item.scripts-debugger-show-hide-button.toggled-shown:active {
+    right: 15px;
+}
+
 .status-bar-item.scripts-debugger-show-hide-button.toggled-shown > .glyph {
     -webkit-mask-position: 0 -16px;
+}
+
+button.status-bar-item.scripts-debugger-show-hide-button.toggled-hidden {
+    right: 1px;
+}
+
+button.status-bar-item.scripts-debugger-show-hide-button.toggled-hidden:active {
+    right: 0px;
 }
 
 .status-bar-item.scripts-debugger-show-hide-button.toggled-hidden > .glyph {
