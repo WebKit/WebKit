@@ -40,6 +40,12 @@ BUGWK77754 : fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-block
 BUGWK77754 : fast/inline/absolute-positioned-inline-in-centred-block.html = TEXT
 BUGWK77754 : fast/css/absolute-child-with-percent-height-inside-relative-parent.html = TEXT
 
+//Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80394
+BUGWK80394 : fast/block/margin-collapse/empty-clear-blocks.html = IMAGE+TEXT
+BUGWK80394 : fast/block/float/024.html = IMAGE+TEXT
+BUGWK80394 : fast/block/margin-collapse/025.html = TEXT
+BUGWK80394 : fast/block/margin-collapse/block-inside-inline/025.html = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // Expected failures
 //////////////////////////////////////////////////////////////////////////////////////////

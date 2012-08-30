@@ -2082,28 +2082,28 @@ LayoutUnit RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& margin
         // For self-collapsing blocks that clear, they can still collapse their
         // margins with following siblings.  Reset the current margins to represent
         // the self-collapsing block's margins only.
-        // CSS2.1 states:
-        // "An element that has had clearance applied to it never collapses its top margin with its parent block's bottom margin.
-        // Therefore if we are at the bottom of the block, let's go ahead and reset margins to only include the
-        // self-collapsing block's bottom margin.
-        bool atBottomOfBlock = true;
-        for (RenderBox* curr = child->nextSiblingBox(); curr && atBottomOfBlock; curr = curr->nextSiblingBox()) {
-            if (!curr->isFloatingOrOutOfFlowPositioned())
-                atBottomOfBlock = false;
-        }
-        
         MarginValues childMargins = marginValuesForChild(child);
-        if (atBottomOfBlock) {
-            marginInfo.setPositiveMargin(childMargins.positiveMarginAfter());
-            marginInfo.setNegativeMargin(childMargins.negativeMarginAfter());
-        } else {
-            marginInfo.setPositiveMargin(max(childMargins.positiveMarginBefore(), childMargins.positiveMarginAfter()));
-            marginInfo.setNegativeMargin(max(childMargins.negativeMarginBefore(), childMargins.negativeMarginAfter()));
+        marginInfo.setPositiveMargin(max(childMargins.positiveMarginBefore(), childMargins.positiveMarginAfter()));
+        marginInfo.setNegativeMargin(max(childMargins.negativeMarginBefore(), childMargins.negativeMarginAfter()));
+
+        // CSS2.1 states:
+        // "If the top and bottom margins of an element with clearance are adjoining, its margins collapse with 
+        // the adjoining margins of following siblings but that resulting margin does not collapse with the bottom margin of the parent block."
+        // So the parent's bottom margin cannot collapse through this block or any subsequent self-collapsing blocks. Check subsequent siblings
+        // for a block with height - if none is found then don't allow the margins to collapse with the parent.
+        bool wouldCollapseMarginsWithParent = marginInfo.canCollapseMarginAfterWithChildren();
+        for (RenderBox* curr = child->nextSiblingBox(); curr && wouldCollapseMarginsWithParent; curr = curr->nextSiblingBox()) {
+            if (!curr->isFloatingOrOutOfFlowPositioned() && !curr->isSelfCollapsingBlock())
+                wouldCollapseMarginsWithParent = false;
         }
-        
-        // Adjust our height such that we are ready to be collapsed with subsequent siblings (or the bottom
-        // of the parent block).
-        setLogicalHeight(child->logicalTop() - max(ZERO_LAYOUT_UNIT, marginInfo.margin()));
+        if (wouldCollapseMarginsWithParent)
+            marginInfo.setCanCollapseMarginAfterWithChildren(false);
+
+        // CSS2.1: "the amount of clearance is set so that clearance + margin-top = [height of float], i.e., clearance = [height of float] - margin-top"
+        // Move the top of the child box to the bottom of the float ignoring the child's top margin.
+        LayoutUnit collapsedMargin = collapsedMarginBeforeForChild(child);
+        setLogicalHeight(child->logicalTop() - collapsedMargin);
+        heightIncrease -= collapsedMargin;
     } else
         // Increase our height by the amount we had to clear.
         setLogicalHeight(logicalHeight() + heightIncrease);
@@ -2117,8 +2117,14 @@ LayoutUnit RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& margin
         setMaxMarginBeforeValues(oldTopPosMargin, oldTopNegMargin);
         marginInfo.setAtBeforeSideOfBlock(false);
     }
-    
-    return yPos + heightIncrease;
+
+    LayoutUnit logicalTop = yPos + heightIncrease;
+    // After margin collapsing, one of our floats may now intrude into the child. If the child doesn't contain floats of its own it
+    // won't get picked up for relayout even though the logical top estimate was wrong - so add the newly intruding float now.
+    if (containsFloats() && child->isRenderBlock() && !toRenderBlock(child)->containsFloats() && lowestFloatLogicalBottom() > logicalTop)
+        toRenderBlock(child)->addIntrudingFloats(this, logicalLeftOffsetForContent(), logicalTop);
+
+    return logicalTop;
 }
 
 void RenderBlock::marginBeforeEstimateForChild(RenderBox* child, LayoutUnit& positiveMarginBefore, LayoutUnit& negativeMarginBefore) const
@@ -2279,7 +2285,10 @@ void RenderBlock::handleAfterSideOfBlock(LayoutUnit beforeSide, LayoutUnit after
     marginInfo.setAtAfterSideOfBlock(true);
 
     // If we can't collapse with children then go ahead and add in the bottom margin.
+    // Don't do this for ordinary anonymous blocks as only the enclosing box should add in
+    // its margin.
     if (!marginInfo.canCollapseWithMarginAfter() && !marginInfo.canCollapseWithMarginBefore()
+        && (!isAnonymousBlock() || isAnonymousColumnsBlock() || isAnonymousColumnSpanBlock())
         && (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.marginAfterQuirk()))
         setLogicalHeight(logicalHeight() + marginInfo.margin());
         

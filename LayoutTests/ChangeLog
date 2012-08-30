@@ -1,3 +1,51 @@
+2012-08-24  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: margin-collapse-clear-012 fails
+        https://bugs.webkit.org/show_bug.cgi?id=80394
+
+        Reviewed by David Hyatt.
+
+        * css2.1/20110323/margin-collapse-027-expected.html: Added.
+        * css2.1/20110323/margin-collapse-027.htm: Added.
+        * css2.1/20110323/margin-collapse-clear-012-expected.html: Added.
+        * css2.1/20110323/margin-collapse-clear-012.htm: Added.
+        * css2.1/20110323/margin-collapse-clear-013-expected.html: Added.
+        * css2.1/20110323/margin-collapse-clear-013.htm: Added.
+        * css2.1/20110323/margin-collapse-clear-014-expected.html: Added.
+        * css2.1/20110323/margin-collapse-clear-014.htm: Added.
+        * css2.1/20110323/margin-collapse-clear-015-expected.html: Added.
+        * css2.1/20110323/margin-collapse-clear-015.htm: Added.
+        * css2.1/20110323/margin-collapse-clear-016-expected.html: Added.
+        * css2.1/20110323/margin-collapse-clear-016.htm: Added.
+        * css2.1/20110323/margin-collapse-clear-017-expected.html: Added.
+        * css2.1/20110323/margin-collapse-clear-017.htm: Added.
+        * fast/block/margin-collapse/empty-clear-blocks.html:
+          Modified the test to reflect the new expected result. The text in the third paragraph avoids
+          the float rather than sitting underneath it. The text in the third last paragraph is 20 px below
+          the float rather than immediately beneath it. Both of these are a consequence of the revised treatment
+          of clearance when margin collapsing. This is consistent with the spec and FF and Opera.
+        * fast/css/margin-collapse-013-reduction.html: Added.
+           Sourced from https://bugzilla.mozilla.org/show_bug.cgi?id=493380
+        * fast/css/margin-collapse-top-margin-clearance-with-sibling-expected.html: Added.
+        * fast/css/margin-collapse-top-margin-clearance-with-sibling.html: Added.
+            Ensure we only avoid collapsing the margins of a self-collapsing block with the parent if we don't
+            have a subsequent sibling with height.
+        * fast/css/margin-collapse-top-margin-clearance.html: Added.
+
+        * platform/chromium-linux/fast/block/float/024-expected.png:
+        * platform/chromium-linux/fast/block/margin-collapse/empty-clear-blocks-expected.png:
+          These two progress to the same rendering used by FF and Opera. It is a consequence of calculating
+          clearance as "clearance = [height of float] - margin-top" when margin-top is a negative value.
+
+        * platform/chromium-win/fast/block/float/024-expected.txt:
+        * platform/chromium-win/fast/block/margin-collapse/025-expected.txt:
+        * platform/chromium-win/fast/block/margin-collapse/block-inside-inline/025-expected.txt:
+            The change in result for these three is a consequence of self-collapsing blocks with clearance moving their top up past the float by the value
+            of their top margin. Unlike the block-inside-inline case the 'clear' has no intrinsic height so the uncollapsed margin value has
+            no effect on its height.
+
+        * platform/chromium-win/fast/block/margin-collapse/empty-clear-blocks-expected.txt: See the png result above for comment.
+           
 2012-08-30  Rik Cabanier  <cabanier@adobe.com>
 
         Add support for blendmode to webkit rendering engine

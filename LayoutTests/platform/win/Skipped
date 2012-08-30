@@ -2149,3 +2149,10 @@ editing/deleting/delete-br-006.html
 # https://bugs.webkit.org/show_bug.cgi?id=95405
 # Test times out
 platform/win/accessibility/single-select-children.html
+
+# Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80394
+fast/block/float/024.html
+fast/block/margin-collapse/empty-clear-blocks.html
+fast/block/margin-collapse/025.html
+fast/block/margin-collapse/block-inside-inline/025.html
+
