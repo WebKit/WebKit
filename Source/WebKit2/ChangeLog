@@ -1,3 +1,14 @@
+2012-08-30  Mike Sierra  <mike.sierra@nokia.com>
+
+        [QT][WK2] webview API doc
+        https://bugs.webkit.org/show_bug.cgi?id=81701
+
+        Reviewed by Simon Hausmann.
+
+        Various improvements and additions to the documentation of the QML WebView element.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+
 2012-08-29  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][WK2] Replace PageClientImpl with ewk view in constructor of EflViewportHandler.

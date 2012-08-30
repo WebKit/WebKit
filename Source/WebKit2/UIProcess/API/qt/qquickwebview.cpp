@@ -908,22 +908,6 @@ void QQuickWebViewFlickablePrivate::handleMouseEvent(QMouseEvent* event)
     pageView->eventHandler()->handleInputEvent(event);
 }
 
-/*!
-    \qmlsignal WebView::onNavigationRequested(WebNavigationRequest request)
-
-    This signal is emitted for every navigation request. The request object contains url,
-    button and modifiers properties describing the navigation action, e.g. "a middle click
-    with shift key pressed to 'http://qt-project.org'".
-
-    The navigation will be accepted by default. To change that, one can set the action
-    property to WebView.IgnoreRequest to reject the request or WebView.DownloadRequest to
-    trigger a download instead of navigating to the url.
-
-    The request object cannot be used after the signal handler function ends.
-
-    \sa WebNavigationRequest
-*/
-
 QQuickWebViewExperimental::QQuickWebViewExperimental(QQuickWebView *webView)
     : QObject(webView)
     , q_ptr(webView)
@@ -1450,8 +1434,55 @@ QQuickWebPage* QQuickWebViewExperimental::page()
 }
 
 /*!
+    \page index.html
+
+    \title QtWebKit: QML WebView version 3.0
+
+    The WebView API allows QML applications to render regions of dynamic
+    web content. A \e{WebView} component may share the screen with other
+    QML components or encompass the full screen as specified within the
+    QML application.
+
+    QML WebView version 3.0 is incompatible with previous QML WebView API
+    versions.  It allows an application to load pages into the WebView,
+    either by URL or with an HTML string, and navigate within session
+    history.  By default, links to different pages load within the same
+    WebView, but applications may intercept requests to delegate links to
+    other functions.
+
+    This sample QML application loads a web page, responds to session
+    history context, and intercepts requests for external links:
+
+    \code
+    import QtQuick 2.0
+    import QtWebKit 3.0
+
+    Page {
+        WebView {
+            id: webview
+            url: "http://qt-project.org"
+            width: parent.width
+            height: parent.height
+            onNavigationRequested: {
+                // detect URL scheme prefix, most likely an external link
+                var schemaRE = /^\w+:/;
+                if (schemaRE.test(request.url)) {
+                    request.action = WebView.AcceptRequest;
+                } else {
+                    request.action = WebView.IgnoreRequest;
+                    // delegate request.url here
+                }
+            }
+        }
+    }
+    \endcode
+*/
+
+
+/*!
     \qmltype WebView
     \inqmlmodule QtWebKit 3.0
+    \brief A WebView renders web content within a QML application
 */
 
 QQuickWebView::QQuickWebView(QQuickItem* parent)
@@ -1482,24 +1513,49 @@ QQuickWebPage* QQuickWebView::page()
     return d->pageView.data();
 }
 
+/*!
+    \qmlmethod void WebView::goBack()
+
+    Go backward within the browser's session history, if possible.
+    (Equivalent to the \c{window.history.back()} DOM method.)
+
+    \sa WebView::canGoBack
+*/
 void QQuickWebView::goBack()
 {
     Q_D(QQuickWebView);
     d->webPageProxy->goBack();
 }
 
+/*!
+    \qmlmethod void WebView::goForward()
+
+    Go forward within the browser's session history, if possible.
+    (Equivalent to the \c{window.history.forward()} DOM method.)
+*/
 void QQuickWebView::goForward()
 {
     Q_D(QQuickWebView);
     d->webPageProxy->goForward();
 }
 
+/*!
+    \qmlmethod void WebView::stop()
+
+    Stop loading the current page.
+*/
 void QQuickWebView::stop()
 {
     Q_D(QQuickWebView);
     d->webPageProxy->stopLoading();
 }
 
+/*!
+    \qmlmethod void WebView::reload()
+
+    Reload the current page. (Equivalent to the
+    \c{window.location.reload()} DOM method.)
+*/
 void QQuickWebView::reload()
 {
     Q_D(QQuickWebView);
@@ -1520,6 +1576,15 @@ void QQuickWebView::reload()
     d->webPageProxy->reload(reloadFromOrigin);
 }
 
+/*!
+    \qmlproperty url WebView::url
+
+    The location of the currently displaying HTML page. This writable
+    property offers the main interface to load a page into a web view.
+    It functions the same as the \c{window.location} DOM property.
+
+    \sa WebView::loadHtml()
+*/
 QUrl QQuickWebView::url() const
 {
     Q_D(const QQuickWebView);
@@ -1553,6 +1618,24 @@ void QQuickWebView::emitUrlChangeIfNeeded()
     }
 }
 
+/*!
+    \qmlproperty url WebView::icon
+
+    The location of the currently displaying Web site icon, also known as favicon
+    or shortcut icon. This read-only URL corresponds to the image used within a
+    mobile browser application to represent a bookmarked page on the device's home
+    screen.
+
+    This example uses the \c{icon} property to build an \c{Image} element:
+
+    \code
+    Image {
+        id: appIcon
+        source: webView.icon != "" ? webView.icon : "fallbackFavIcon.png";
+        ...
+    }
+    \endcode
+*/
 QUrl QQuickWebView::icon() const
 {
     Q_D(const QQuickWebView);
@@ -1561,23 +1644,34 @@ QUrl QQuickWebView::icon() const
 
 /*!
     \qmlproperty int WebView::loadProgress
-    \brief The progress of loading the current web page.
 
-    The range is from 0 to 100.
+    The amount of the page that has been loaded, expressed as an integer
+    percentage in the range from \c{0} to \c{100}.
 */
-
 int QQuickWebView::loadProgress() const
 {
     Q_D(const QQuickWebView);
     return d->loadProgress();
 }
 
+/*!
+    \qmlproperty bool WebView::canGoBack
+
+    Returns \c{true} if there are prior session history entries, \c{false}
+    otherwise.
+*/
 bool QQuickWebView::canGoBack() const
 {
     Q_D(const QQuickWebView);
     return d->webPageProxy->canGoBack();
 }
 
+/*!
+    \qmlproperty bool WebView::canGoForward
+
+    Returns \c{true} if there are subsequent session history entries,
+    \c{false} otherwise.
+*/
 bool QQuickWebView::canGoForward() const
 {
     Q_D(const QQuickWebView);
@@ -1586,9 +1680,9 @@ bool QQuickWebView::canGoForward() const
 
 /*!
     \qmlproperty bool WebView::loading
-    \brief True if the web view is currently loading a web page, false otherwise.
-*/
 
+    Returns \c{true} if the HTML page is currently loading, \c{false} otherwise.
+*/
 bool QQuickWebView::loading() const
 {
     Q_D(const QQuickWebView);
@@ -1637,9 +1731,10 @@ QRectF QQuickWebView::mapRectFromWebContent(const QRectF& rectInCSSCoordinates) 
 
 /*!
     \qmlproperty string WebView::title
-    \brief The title of the loaded page.
-*/
 
+    The title of the currently displaying HTML page, a read-only value
+    that reflects the contents of the \c{<title>} tag.
+*/
 QString QQuickWebView::title() const
 {
     Q_D(const QQuickWebView);
@@ -1675,7 +1770,7 @@ QVariant QQuickWebView::inputMethodQuery(Qt::InputMethodQuery property) const
 }
 
 /*!
-    \preliminary
+    internal
 
     The experimental module consisting on experimental API which will break
     from version to version.
@@ -1919,8 +2014,14 @@ void QQuickWebView::handleFlickableMouseRelease(const QPointF& position, qint64 
     \qmlmethod void WebView::loadHtml(string html, url baseUrl, url unreachableUrl)
     \brief Loads the specified \a html as the content of the web view.
 
+    (This method offers a lower-level alternative to the \c{url} property,
+    which references HTML pages via URL.)
+
     External objects such as stylesheets or images referenced in the HTML
-    document are located relative to \a baseUrl.
+    document are located relative to \a baseUrl. For example if provided \a html
+    was originally retrieved from \c http://www.example.com/documents/overview.html
+    and that was the base url, then an image referenced with the relative url \c diagram.png
+    would be looked for at \c{http://www.example.com/documents/diagram.png}.
 
     If an \a unreachableUrl is passed it is used as the url for the loaded
     content. This is typically used to display error pages for a failed
@@ -1973,5 +2074,201 @@ void QQuickWebView::setAllowAnyHTTPSCertificateForLocalHost(bool allow)
     d->m_allowAnyHTTPSCertificateForLocalHost = allow;
 }
 
+/*!
+    \qmlsignal WebView::onLoadingChanged(loadRequest)
+
+    Occurs when any page load begins, ends, or fails. Various read-only
+    parameters are available on the \a loadRequest:
+
+    \list
+
+    \li \c{url}: the location of the resource that is loading.
+
+    \li \c{status}: Reflects one of three load states:
+       \c{LoadStartedStatus}, \c{LoadSucceededStatus}, or
+       \c{LoadFailedStatus}. See \c{WebView::LoadStatus}.
+
+    \li \c{errorString}: description of load error.
+
+    \li \c{errorCode}: HTTP error code.
+
+    \li \c{errorDomain}: high-level error types, one of
+    \c{NetworkErrorDomain}, \c{HttpErrorDomain}, \c{InternalErrorDomain},
+    \c{DownloadErrorDomain}, or \c{NoErrorDomain}.  See
+    \l{WebView::ErrorDomain}.
+
+    \endlist
+
+    \sa WebView::loading
+*/
+
+/*!
+    \qmlsignal WebView::onLinkHovered(hoveredUrl, hoveredTitle)
+
+    Within a mouse-driven interface, this signal is emitted when a mouse
+    pointer passes over a link, corresponding to the \c{mouseover} DOM
+    event.  (May also occur in touch interfaces for \c{mouseover} events
+    that are not cancelled with \c{preventDefault()}.)  The \a{hoveredUrl}
+    provides the link's location, and the \a{hoveredTitle} is any avalable
+    link text.
+*/
+
+/*!
+    \qmlsignal WebView::onNavigationRequested(request)
+
+    Occurs for various kinds of navigation.  If the application listens
+    for this signal, it must set the \c{request.action} to either of the
+    following \l{WebView::NavigationRequestAction} enum values:
+
+    \list
+
+    \li \c{AcceptRequest}: Allow navigation to external pages within the
+    web view. This represents the default behavior when no listener is
+    active.
+
+    \li \c{IgnoreRequest}: Suppress navigation to new pages within the web
+    view.  (The listener may then delegate navigation externally to
+    the browser application.)
+
+    \endlist
+
+    The \a{request} also provides the following read-only values:
+
+    \list
+
+    \li \c{url}: The location of the requested page.
+
+    \li \c{navigationType}: contextual information, one of
+    \c{LinkClickedNavigation}, \c{BackForwardNavigation},
+    \c{ReloadNavigation}, \c{FormSubmittedNavigation},
+    \c{FormResubmittedNavigation}, or \c{OtherNavigation} enum values.
+    See \l{WebView::NavigationType}.
+
+    \li \c{keyboardModifiers}: potential states for \l{Qt::KeyboardModifier}.
+
+    \li \c{mouseButton}: potential states for \l{Qt::MouseButton}.
+
+    \endlist
+*/
+
+/*!
+    \qmlproperty enumeration WebView::ErrorDomain
+
+    Details various high-level error types.
+
+    \table
+
+    \header
+    \li Constant
+    \li Description
+
+    \row
+    \li InternalErrorDomain
+    \li Content fails to be interpreted by QtWebKit.
+
+    \row
+    \li NetworkErrorDomain
+    \li Error results from faulty network connection.
+
+    \row
+    \li HttpErrorDomain
+    \li Error is produced by server.
+
+    \row
+    \li DownloadErrorDomain
+    \li Error in saving file.
+
+    \row
+    \li NoErrorDomain
+    \li Unspecified fallback error.
+
+    \endtable
+*/
+
+/*!
+    \qmlproperty enumeration WebView::NavigationType
+
+    Distinguishes context for various navigation actions.
+
+    \table
+
+    \header
+    \li Constant
+    \li Description
+
+    \row
+    \li LinkClickedNavigation
+    \li Navigation via link.
+
+    \row
+    \li FormSubmittedNavigation
+    \li Form data is posted.
+
+    \row
+    \li BackForwardNavigation
+    \li Navigation back and forth within session history.
+
+    \row
+    \li ReloadNavigation
+    \li The current page is reloaded.
+
+    \row
+    \li FormResubmittedNavigation
+    \li Form data is re-posted.
+
+    \row
+    \li OtherNavigation
+    \li Unspecified fallback method of navigation.
+
+    \endtable
+*/
+
+/*!
+    \qmlproperty enumeration WebView::LoadStatus
+
+    Reflects a page's load status.
+
+    \table
+
+    \header
+    \li Constant
+    \li Description
+
+    \row
+    \li LoadStartedStatus
+    \li Page is currently loading.
+
+    \row
+    \li LoadSucceededStatus
+    \li Page has successfully loaded, and is not currently loading.
+
+    \row
+    \li LoadFailedStatus
+    \li Page has failed to load, and is not currently loading.
+
+    \endtable
+*/
+
+/*!
+    \qmlproperty enumeration WebView::NavigationRequestAction
+
+    Specifies a policy when navigating a link to an external page.
+
+    \table
+
+    \header
+    \li Constant
+    \li Description
+
+    \row
+    \li AcceptRequest
+    \li Allow navigation to external pages within the web view.
+
+    \row
+    \li IgnoreRequest
+    \li Suppress navigation to new pages within the web view.
+
+    \endtable
+*/
 
 #include "moc_qquickwebview_p.cpp"
