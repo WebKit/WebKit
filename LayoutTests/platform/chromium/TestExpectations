@@ -3482,9 +3482,6 @@ BUGWK94353 LINUX : compositing/overflow/nested-scrolling.html = IMAGE+TEXT PASS
 BUGWK94353 : compositing/overflow/overflow-auto-with-touch.html = TEXT
 BUGWK94353 : compositing/overflow/overflow-overlay-with-touch.html = TEXT
 
-// Needs a rebaseline.
-BUGWK40272 : svg/css/circle-in-mask-with-shadow.svg = IMAGE
-
 BUGWK90488 SLOW WIN : http/tests/inspector/network-preflight-options.html = PASS
 
 BUGWK94501 WIN : http/tests/inspector/resource-tree/resource-tree-invalid-mime-type-css-content.html = PASS TEXT

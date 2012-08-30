@@ -1,3 +1,12 @@
+2012-08-29  Philip Rogers  <pdr@google.com>
+
+        Unreviewed update of circle-in-mask-with-shadow test expectation.
+
+        * platform/chromium-linux/svg/css/circle-in-mask-with-shadow-expected.png:
+        * platform/chromium-mac/svg/css/circle-in-mask-with-shadow-expected.png: Modified property svn:mime-type.
+        * platform/chromium-win/svg/css/circle-in-mask-with-shadow-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-08-29  Abhishek Arya  <inferno@chromium.org>
 
         Crash in WebCore::StyleSheetContents::checkLoadCompleted.
