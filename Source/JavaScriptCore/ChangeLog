@@ -1,5 +1,11 @@
 2012-08-30  Geoffrey Garen  <ggaren@apple.com>
 
+        Undo Qt build fix guess, since it breaks other builds.
+
+        * runtime/JSArray.h:
+
+2012-08-30  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix the Qt build: add an #include to JSArray.h, since
         it's included by some of the files Qt complains about, and
         some of is functions call the functions Qt complains about.

@@ -21,7 +21,7 @@
 #ifndef JSArray_h
 #define JSArray_h
 
-#include "JSScope.h"
+#include "JSObject.h"
 
 #define CHECK_ARRAY_CONSISTENCY 0
 
