@@ -58,7 +58,12 @@ static String defaultDiskCacheDirectory()
 
 String WebContext::applicationCacheDirectory()
 {
-    return WebCore::cacheStorage().cacheDirectory();
+    const String cacheDirectory = WebCore::cacheStorage().cacheDirectory();
+
+    if (cacheDirectory.isEmpty())
+        return defaultDiskCacheDirectory();
+
+    return cacheDirectory;
 }
 
 void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)

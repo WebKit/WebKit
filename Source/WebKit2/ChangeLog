@@ -1,3 +1,17 @@
+2012-08-29  Luciano Wolf  <luciano.wolf@openbossa.org>
+
+        [Qt][WK2] ApplicationCache LayoutTests failed
+        https://bugs.webkit.org/show_bug.cgi?id=69541
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Returns defaultDiskCacheDirectory when no cache directory was provided.
+        It's used by setOfflineWebApplicationCacheEnabled method that won't work
+        with an invalid cache directory.
+
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit::WebContext::applicationCacheDirectory):
+
 2012-08-29  José Dapena Paz  <jdapena@igalia.com>
 
         [Gtk] Process Gtk 3.4 smooth scroll events properly.

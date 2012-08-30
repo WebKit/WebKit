@@ -148,7 +148,6 @@ fast/notifications
 fast/overflow/scrollbar-restored-and-then-locked.html
 
 # FAIL: Timed out waiting for notifyDone to be called
-http/tests/appcache
 media/video-source-moved.html
 
 # These tests always fail (with and without --singly). It needs investigation.
