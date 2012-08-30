@@ -1,3 +1,15 @@
+2012-08-30  Anton Muhin  <antonm@chromium.org>
+
+        Update test expectations to follow common guidelines.
+        https://bugs.webkit.org/show_bug.cgi?id=95442
+
+        Reviewed by Csaba Osztrogonác.
+
+        Follow up to https://trac.webkit.org/changeset/127117
+
+        * fast/events/set-attribute-listener-window-onerror-crash-expected.txt:
+        * platform/chromium/fast/events/set-attribute-listener-window-onerror-crash-expected.txt: Added.
+
 2012-08-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Gardening after r127108
