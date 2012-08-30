@@ -29,7 +29,7 @@
 #include "Heap.h"
 #include "HeapRootVisitor.h"
 #include "JSObject.h"
-#include "ScopeChain.h"
+
 #include "Structure.h"
 
 namespace JSC {

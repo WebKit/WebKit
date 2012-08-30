@@ -880,7 +880,7 @@ NEVER_INLINE void JITThunks::tryCachePutByID(CallFrame* callFrame, CodeBlock* co
         StructureChain* prototypeChain = structure->prototypeChain(callFrame);
         ASSERT(structure->previousID()->transitionWatchpointSetHasBeenInvalidated());
         stubInfo->initPutByIdTransition(callFrame->globalData(), codeBlock->ownerExecutable(), structure->previousID(), structure, prototypeChain, direct);
-        JIT::compilePutByIdTransition(callFrame->scopeChain()->globalData, codeBlock, stubInfo, structure->previousID(), structure, slot.cachedOffset(), prototypeChain, returnAddress, direct);
+        JIT::compilePutByIdTransition(callFrame->scope()->globalData(), codeBlock, stubInfo, structure->previousID(), structure, slot.cachedOffset(), prototypeChain, returnAddress, direct);
         return;
     }
     
@@ -903,7 +903,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
     JSGlobalData* globalData = &callFrame->globalData();
 
     if (isJSArray(baseValue) && propertyName == callFrame->propertyNames().length) {
-        JIT::compilePatchGetArrayLength(callFrame->scopeChain()->globalData, codeBlock, returnAddress);
+        JIT::compilePatchGetArrayLength(callFrame->scope()->globalData(), codeBlock, returnAddress);
         return;
     }
     
@@ -963,7 +963,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
 
         ASSERT(!structure->isDictionary());
         ASSERT(!slotBaseObject->structure()->isDictionary());
-        JIT::compileGetByIdProto(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, structure, slotBaseObject->structure(), propertyName, slot, offset, returnAddress);
+        JIT::compileGetByIdProto(callFrame->scope()->globalData(), callFrame, codeBlock, stubInfo, structure, slotBaseObject->structure(), propertyName, slot, offset, returnAddress);
         return;
     }
 
@@ -976,7 +976,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
 
     StructureChain* prototypeChain = structure->prototypeChain(callFrame);
     stubInfo->initGetByIdChain(callFrame->globalData(), codeBlock->ownerExecutable(), structure, prototypeChain, count, slot.cachedPropertyType() == PropertySlot::Value);
-    JIT::compileGetByIdChain(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, structure, prototypeChain, count, propertyName, slot, offset, returnAddress);
+    JIT::compileGetByIdChain(callFrame->scope()->globalData(), callFrame, codeBlock, stubInfo, structure, prototypeChain, count, propertyName, slot, offset, returnAddress);
 }
 
 #if !defined(NDEBUG)
@@ -1591,7 +1591,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_method_check)
         // for now.  For now it performs a check on a special object on the global object only used for this
         // purpose.  The object is in no way exposed, and as such the check will always pass.
         if (slot.slotBase() == baseValue) {
-            JIT::patchMethodCallProto(callFrame->globalData(), codeBlock, methodCallLinkInfo, stubInfo, callee, structure, callFrame->scopeChain()->globalObject->methodCallDummy(), STUB_RETURN_ADDRESS);
+            JIT::patchMethodCallProto(callFrame->globalData(), codeBlock, methodCallLinkInfo, stubInfo, callee, structure, callFrame->scope()->globalObject()->methodCallDummy(), STUB_RETURN_ADDRESS);
             return JSValue::encode(result);
         }
     }
@@ -1691,7 +1691,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_method_check_update)
     // useful. We could try to nop it out altogether, but that's a little messy, so lets do something simpler
     // for now. For now it performs a check on a special object on the global object only used for this
     // purpose. The object is in no way exposed, and as such the check will always pass.
-    JIT::patchMethodCallProto(callFrame->globalData(), codeBlock, methodCallLinkInfo, stubInfo, callee, structure, callFrame->scopeChain()->globalObject->methodCallDummy(), STUB_RETURN_ADDRESS);
+    JIT::patchMethodCallProto(callFrame->globalData(), codeBlock, methodCallLinkInfo, stubInfo, callee, structure, callFrame->scope()->globalObject()->methodCallDummy(), STUB_RETURN_ADDRESS);
     return JSValue::encode(result);
 }
 
@@ -1761,7 +1761,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_self_fail)
         }
         if (listIndex < POLYMORPHIC_LIST_CACHE_SIZE) {
             stubInfo->u.getByIdSelfList.listSize++;
-            JIT::compileGetByIdSelfList(callFrame->scopeChain()->globalData, codeBlock, stubInfo, polymorphicStructureList, listIndex, baseValue.asCell()->structure(), ident, slot, slot.cachedOffset());
+            JIT::compileGetByIdSelfList(callFrame->scope()->globalData(), codeBlock, stubInfo, polymorphicStructureList, listIndex, baseValue.asCell()->structure(), ident, slot, slot.cachedOffset());
 
             if (listIndex == (POLYMORPHIC_LIST_CACHE_SIZE - 1))
                 ctiPatchCallByReturnAddress(codeBlock, STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_generic));
@@ -1879,7 +1879,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
         int listIndex;
         PolymorphicAccessStructureList* prototypeStructureList = getPolymorphicAccessStructureListSlot(callFrame->globalData(), codeBlock->ownerExecutable(), stubInfo, listIndex);
         if (listIndex < POLYMORPHIC_LIST_CACHE_SIZE) {
-            JIT::compileGetByIdProtoList(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, prototypeStructureList, listIndex, structure, slotBaseObject->structure(), propertyName, slot, offset);
+            JIT::compileGetByIdProtoList(callFrame->scope()->globalData(), callFrame, codeBlock, stubInfo, prototypeStructureList, listIndex, structure, slotBaseObject->structure(), propertyName, slot, offset);
 
             if (listIndex == (POLYMORPHIC_LIST_CACHE_SIZE - 1))
                 ctiPatchCallByReturnAddress(codeBlock, STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_list_full));
@@ -1891,7 +1891,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
         
         if (listIndex < POLYMORPHIC_LIST_CACHE_SIZE) {
             StructureChain* protoChain = structure->prototypeChain(callFrame);
-            JIT::compileGetByIdChainList(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, prototypeStructureList, listIndex, structure, protoChain, count, propertyName, slot, offset);
+            JIT::compileGetByIdChainList(callFrame->scope()->globalData(), callFrame, codeBlock, stubInfo, prototypeStructureList, listIndex, structure, protoChain, count, propertyName, slot, offset);
 
             if (listIndex == (POLYMORPHIC_LIST_CACHE_SIZE - 1))
                 ctiPatchCallByReturnAddress(codeBlock, STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_list_full));
@@ -2022,8 +2022,8 @@ DEFINE_STUB_FUNCTION(void, optimize)
             return;
         }
         
-        ScopeChainNode* scopeChain = callFrame->scopeChain();
-        JSObject* error = codeBlock->compileOptimized(callFrame, scopeChain, bytecodeIndex);
+        JSScope* scope = callFrame->scope();
+        JSObject* error = codeBlock->compileOptimized(callFrame, scope, bytecodeIndex);
 #if ENABLE(JIT_VERBOSE_OSR)
         if (error)
             dataLog("WARNING: optimized compilation failed.\n");
@@ -2141,7 +2141,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_func)
     STUB_INIT_STACK_FRAME(stackFrame);
     
     ASSERT(stackFrame.callFrame->codeBlock()->codeType() != FunctionCode || !stackFrame.callFrame->codeBlock()->needsFullScopeChain() || stackFrame.callFrame->uncheckedR(stackFrame.callFrame->codeBlock()->activationRegister()).jsValue());
-    return stackFrame.args[0].function()->make(stackFrame.callFrame, stackFrame.callFrame->scopeChain());
+    return stackFrame.args[0].function()->make(stackFrame.callFrame, stackFrame.callFrame->scope());
 }
 
 inline void* jitCompileFor(CallFrame* callFrame, CodeSpecializationKind kind)
@@ -2149,7 +2149,7 @@ inline void* jitCompileFor(CallFrame* callFrame, CodeSpecializationKind kind)
     JSFunction* function = jsCast<JSFunction*>(callFrame->callee());
     ASSERT(!function->isHostFunction());
     FunctionExecutable* executable = function->jsExecutable();
-    ScopeChainNode* callDataScopeChain = function->scope();
+    JSScope* callDataScopeChain = function->scope();
     JSObject* error = executable->compileFor(callFrame, callDataScopeChain, kind);
     if (!error)
         return function;
@@ -2279,7 +2279,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_push_activation)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     JSActivation* activation = JSActivation::create(stackFrame.callFrame->globalData(), stackFrame.callFrame, static_cast<FunctionExecutable*>(stackFrame.callFrame->codeBlock()->ownerExecutable()));
-    stackFrame.callFrame->setScopeChain(stackFrame.callFrame->scopeChain()->push(activation));
+    stackFrame.callFrame->setScope(activation);
     return activation;
 }
 
@@ -2982,7 +2982,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_func_exp)
     CallFrame* callFrame = stackFrame.callFrame;
 
     FunctionExecutable* function = stackFrame.args[0].function();
-    JSFunction* func = function->make(callFrame, callFrame->scopeChain());
+    JSFunction* func = function->make(callFrame, callFrame->scope());
     ASSERT(callFrame->codeBlock()->codeType() != FunctionCode || !callFrame->codeBlock()->needsFullScopeChain() || callFrame->uncheckedR(callFrame->codeBlock()->activationRegister()).jsValue());
 
     /* 
@@ -2994,7 +2994,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_func_exp)
      */
     if (!function->name().isNull()) {
         JSNameScope* functionScopeObject = JSNameScope::create(callFrame, function->name(), func, ReadOnly | DontDelete);
-        func->setScope(callFrame->globalData(), func->scope()->push(functionScopeObject));
+        func->setScope(callFrame->globalData(), functionScopeObject);
     }
 
     return func;
@@ -3095,7 +3095,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_call_eval)
         || !callFrame->callerFrame()->codeBlock()->needsFullScopeChain()
         || callFrame->callerFrame()->uncheckedR(callFrame->callerFrame()->codeBlock()->activationRegister()).jsValue());
 
-    callFrame->setScopeChain(callerFrame->scopeChain());
+    callFrame->setScope(callerFrame->scope());
     callFrame->setReturnPC(static_cast<Instruction*>((STUB_RETURN_ADDRESS).value()));
     callFrame->setCodeBlock(0);
 
@@ -3147,7 +3147,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_push_scope)
 
     JSObject* o = stackFrame.args[0].jsValue().toObject(stackFrame.callFrame);
     CHECK_FOR_EXCEPTION();
-    stackFrame.callFrame->setScopeChain(stackFrame.callFrame->scopeChain()->push(JSWithScope::create(stackFrame.callFrame, o)));
+    stackFrame.callFrame->setScope(JSWithScope::create(stackFrame.callFrame, o));
     return o;
 }
 
@@ -3155,7 +3155,7 @@ DEFINE_STUB_FUNCTION(void, op_pop_scope)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    stackFrame.callFrame->setScopeChain(stackFrame.callFrame->scopeChain()->pop());
+    stackFrame.callFrame->setScope(stackFrame.callFrame->scope()->next());
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_typeof)
@@ -3262,10 +3262,10 @@ DEFINE_STUB_FUNCTION(JSObject*, op_push_new_scope)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    JSObject* scope = JSNameScope::create(stackFrame.callFrame, stackFrame.args[0].identifier(), stackFrame.args[1].jsValue(), DontDelete);
+    JSNameScope* scope = JSNameScope::create(stackFrame.callFrame, stackFrame.args[0].identifier(), stackFrame.args[1].jsValue(), DontDelete);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    callFrame->setScopeChain(callFrame->scopeChain()->push(scope));
+    callFrame->setScope(scope);
     return scope;
 }
 
@@ -3276,10 +3276,10 @@ DEFINE_STUB_FUNCTION(void, op_jmp_scopes)
     unsigned count = stackFrame.args[0].int32();
     CallFrame* callFrame = stackFrame.callFrame;
 
-    ScopeChainNode* tmp = callFrame->scopeChain();
+    JSScope* tmp = callFrame->scope();
     while (count--)
-        tmp = tmp->pop();
-    callFrame->setScopeChain(tmp);
+        tmp = tmp->next();
+    callFrame->setScope(tmp);
 }
 
 DEFINE_STUB_FUNCTION(void, op_put_by_index)

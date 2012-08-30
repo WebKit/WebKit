@@ -37,7 +37,7 @@
 #include "JSFunction.h"
 #include "Interpreter.h"
 #include "LowLevelInterpreter.h"
-#include "ScopeChain.h"
+
 #include "StrongInlines.h"
 #include <wtf/text/WTFString.h>
 
@@ -209,7 +209,7 @@ JSObject* BytecodeGenerator::generate()
     m_codeBlock->instructions() = RefCountedArray<Instruction>(m_instructions);
 
     if (s_dumpsGeneratedCode)
-        m_codeBlock->dump(m_scopeChain->globalObject->globalExec());
+        m_codeBlock->dump(m_scope->globalObject()->globalExec());
 
 #ifdef NDEBUG
     if ((m_codeType == FunctionCode && !m_codeBlock->needsFullScopeChain() && !m_codeBlock->usesArguments()) || m_codeType == EvalCode)
@@ -219,7 +219,7 @@ JSObject* BytecodeGenerator::generate()
     m_codeBlock->shrinkToFit(CodeBlock::EarlyShrink);
 
     if (m_expressionTooDeep)
-        return createOutOfMemoryError(m_scopeChain->globalObject.get());
+        return createOutOfMemoryError(m_scope->globalObject());
     return 0;
 }
 
@@ -260,11 +260,11 @@ void BytecodeGenerator::preserveLastVar()
         m_lastVar = &m_calleeRegisters.last();
 }
 
-BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* scopeChain, SymbolTable* symbolTable, ProgramCodeBlock* codeBlock, CompilationKind compilationKind)
-    : m_shouldEmitDebugHooks(scopeChain->globalObject->debugger())
-    , m_shouldEmitProfileHooks(scopeChain->globalObject->globalObjectMethodTable()->supportsProfiling(scopeChain->globalObject.get()))
-    , m_shouldEmitRichSourceInfo(scopeChain->globalObject->globalObjectMethodTable()->supportsRichSourceInfo(scopeChain->globalObject.get()))
-    , m_scopeChain(*scopeChain->globalData, scopeChain)
+BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, JSScope* scope, SymbolTable* symbolTable, ProgramCodeBlock* codeBlock, CompilationKind compilationKind)
+    : m_shouldEmitDebugHooks(scope->globalObject()->debugger())
+    , m_shouldEmitProfileHooks(scope->globalObject()->globalObjectMethodTable()->supportsProfiling(scope->globalObject()))
+    , m_shouldEmitRichSourceInfo(scope->globalObject()->globalObjectMethodTable()->supportsRichSourceInfo(scope->globalObject()))
+    , m_scope(*scope->globalData(), scope)
     , m_symbolTable(symbolTable)
 #if ENABLE(BYTECODE_COMMENTS)
     , m_currentCommentString(0)
@@ -281,7 +281,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* s
     , m_hasCreatedActivation(true)
     , m_firstLazyFunction(0)
     , m_lastLazyFunction(0)
-    , m_globalData(scopeChain->globalData)
+    , m_globalData(scope->globalData())
     , m_lastOpcodeID(op_end)
 #ifndef NDEBUG
     , m_lastOpcodePosition(0)
@@ -306,7 +306,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* s
     if (compilationKind == OptimizingCompilation)
         return;
 
-    JSGlobalObject* globalObject = scopeChain->globalObject.get();
+    JSGlobalObject* globalObject = scope->globalObject();
     ExecState* exec = globalObject->globalExec();
     
     BatchedTransitionOptimizer optimizer(*m_globalData, globalObject);
@@ -324,7 +324,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* s
         bool propertyDidExist = 
             globalObject->removeDirect(*m_globalData, function->ident()); // Newly declared functions overwrite existing properties.
         
-        JSValue value = JSFunction::create(exec, makeFunction(exec, function), scopeChain);
+        JSValue value = JSFunction::create(exec, makeFunction(exec, function), scope);
         int index = addGlobalVar(
             function->ident(), IsVariable,
             !propertyDidExist ? IsFunctionToSpecialize : NotFunctionOrNotSpecializable);
@@ -341,11 +341,11 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* s
     }
 }
 
-BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainNode* scopeChain, SymbolTable* symbolTable, CodeBlock* codeBlock, CompilationKind)
-    : m_shouldEmitDebugHooks(scopeChain->globalObject->debugger())
-    , m_shouldEmitProfileHooks(scopeChain->globalObject->globalObjectMethodTable()->supportsProfiling(scopeChain->globalObject.get()))
-    , m_shouldEmitRichSourceInfo(scopeChain->globalObject->globalObjectMethodTable()->supportsRichSourceInfo(scopeChain->globalObject.get()))
-    , m_scopeChain(*scopeChain->globalData, scopeChain)
+BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, JSScope* scope, SymbolTable* symbolTable, CodeBlock* codeBlock, CompilationKind)
+    : m_shouldEmitDebugHooks(scope->globalObject()->debugger())
+    , m_shouldEmitProfileHooks(scope->globalObject()->globalObjectMethodTable()->supportsProfiling(scope->globalObject()))
+    , m_shouldEmitRichSourceInfo(scope->globalObject()->globalObjectMethodTable()->supportsRichSourceInfo(scope->globalObject()))
+    , m_scope(*scope->globalData(), scope)
     , m_symbolTable(symbolTable)
 #if ENABLE(BYTECODE_COMMENTS)
     , m_currentCommentString(0)
@@ -362,7 +362,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
     , m_hasCreatedActivation(false)
     , m_firstLazyFunction(0)
     , m_lastLazyFunction(0)
-    , m_globalData(scopeChain->globalData)
+    , m_globalData(scope->globalData())
     , m_lastOpcodeID(op_end)
 #ifndef NDEBUG
     , m_lastOpcodePosition(0)
@@ -508,11 +508,11 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
     }
 }
 
-BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, ScopeChainNode* scopeChain, SymbolTable* symbolTable, EvalCodeBlock* codeBlock, CompilationKind)
-    : m_shouldEmitDebugHooks(scopeChain->globalObject->debugger())
-    , m_shouldEmitProfileHooks(scopeChain->globalObject->globalObjectMethodTable()->supportsProfiling(scopeChain->globalObject.get()))
-    , m_shouldEmitRichSourceInfo(scopeChain->globalObject->globalObjectMethodTable()->supportsRichSourceInfo(scopeChain->globalObject.get()))
-    , m_scopeChain(*scopeChain->globalData, scopeChain)
+BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, JSScope* scope, SymbolTable* symbolTable, EvalCodeBlock* codeBlock, CompilationKind)
+    : m_shouldEmitDebugHooks(scope->globalObject()->debugger())
+    , m_shouldEmitProfileHooks(scope->globalObject()->globalObjectMethodTable()->supportsProfiling(scope->globalObject()))
+    , m_shouldEmitRichSourceInfo(scope->globalObject()->globalObjectMethodTable()->supportsRichSourceInfo(scope->globalObject()))
+    , m_scope(*scope->globalData(), scope)
     , m_symbolTable(symbolTable)
 #if ENABLE(BYTECODE_COMMENTS)
     , m_currentCommentString(0)
@@ -529,7 +529,7 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, ScopeChainNode* scopeCh
     , m_hasCreatedActivation(true)
     , m_firstLazyFunction(0)
     , m_lastLazyFunction(0)
-    , m_globalData(scopeChain->globalData)
+    , m_globalData(scope->globalData())
     , m_lastOpcodeID(op_end)
 #ifndef NDEBUG
     , m_lastOpcodePosition(0)
@@ -1040,7 +1040,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfNotFunctionCall(RegisterID* cond,
 
     emitOpcode(op_jneq_ptr);
     instructions().append(cond->index());
-    instructions().append(Instruction(*m_globalData, m_codeBlock->ownerExecutable(), m_scopeChain->globalObject->callFunction()));
+    instructions().append(Instruction(*m_globalData, m_codeBlock->ownerExecutable(), m_scope->globalObject()->callFunction()));
     instructions().append(target->bind(begin, instructions().size()));
     return target;
 }
@@ -1051,7 +1051,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfNotFunctionApply(RegisterID* cond
 
     emitOpcode(op_jneq_ptr);
     instructions().append(cond->index());
-    instructions().append(Instruction(*m_globalData, m_codeBlock->ownerExecutable(), m_scopeChain->globalObject->applyFunction()));
+    instructions().append(Instruction(*m_globalData, m_codeBlock->ownerExecutable(), m_scope->globalObject()->applyFunction()));
     instructions().append(target->bind(begin, instructions().size()));
     return target;
 }
@@ -1266,8 +1266,8 @@ ResolveResult BytecodeGenerator::resolve(const Identifier& property)
     if (property == propertyNames().arguments || !canOptimizeNonLocals())
         return ResolveResult::dynamicResolve(0);
 
-    ScopeChainIterator iter = m_scopeChain->begin();
-    ScopeChainIterator end = m_scopeChain->end();
+    ScopeChainIterator iter = m_scope->begin();
+    ScopeChainIterator end = m_scope->end();
     size_t depth = 0;
     size_t depthOfFirstScopeWithDynamicChecks = 0;
     unsigned flags = 0;
@@ -1337,8 +1337,8 @@ ResolveResult BytecodeGenerator::resolveConstDecl(const Identifier& property)
     }
 
     // Const declarations in eval code or global code.
-    ScopeChainIterator iter = scopeChain()->begin();
-    ScopeChainIterator end = scopeChain()->end();
+    ScopeChainIterator iter = scope()->begin();
+    ScopeChainIterator end = scope()->end();
     size_t depth = 0;
     for (; iter != end; ++iter, ++depth) {
         JSObject* currentScope = iter.get();

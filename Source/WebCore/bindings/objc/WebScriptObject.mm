@@ -358,7 +358,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     JSLockHolder lock(exec);
     
     [self _rootObject]->globalObject()->globalData().timeoutChecker.start();
-    JSValue returnValue = JSMainThreadExecState::evaluate(exec, [self _rootObject]->globalObject()->globalScopeChain(), makeSource(String(script)), JSC::JSValue(), 0);
+    JSValue returnValue = JSMainThreadExecState::evaluate(exec, makeSource(String(script)), JSC::JSValue(), 0);
     [self _rootObject]->globalObject()->globalData().timeoutChecker.stop();
 
     id resultObj = [WebScriptObject _convertValueToObjcValue:returnValue originRootObject:[self _originRootObject] rootObject:[self _rootObject]];

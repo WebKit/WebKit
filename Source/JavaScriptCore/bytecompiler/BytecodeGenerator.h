@@ -49,7 +49,7 @@ namespace JSC {
 
     class Identifier;
     class Label;
-    class ScopeChainNode;
+    class JSScope;
 
     class CallArguments {
     public:
@@ -261,9 +261,9 @@ namespace JSC {
         JS_EXPORT_PRIVATE static void setDumpsGeneratedCode(bool dumpsGeneratedCode);
         static bool dumpsGeneratedCode();
 
-        BytecodeGenerator(ProgramNode*, ScopeChainNode*, SymbolTable*, ProgramCodeBlock*, CompilationKind);
-        BytecodeGenerator(FunctionBodyNode*, ScopeChainNode*, SymbolTable*, CodeBlock*, CompilationKind);
-        BytecodeGenerator(EvalNode*, ScopeChainNode*, SymbolTable*, EvalCodeBlock*, CompilationKind);
+        BytecodeGenerator(ProgramNode*, JSScope*, SymbolTable*, ProgramCodeBlock*, CompilationKind);
+        BytecodeGenerator(FunctionBodyNode*, JSScope*, SymbolTable*, CodeBlock*, CompilationKind);
+        BytecodeGenerator(EvalNode*, JSScope*, SymbolTable*, EvalCodeBlock*, CompilationKind);
 
         ~BytecodeGenerator();
         
@@ -558,7 +558,7 @@ namespace JSC {
         
         bool isStrictMode() const { return m_codeBlock->isStrictMode(); }
         
-        ScopeChainNode* scopeChain() const { return m_scopeChain.get(); }
+        JSScope* scope() const { return m_scope.get(); }
 
     private:
         friend class Label;
@@ -700,7 +700,7 @@ namespace JSC {
         bool m_shouldEmitProfileHooks;
         bool m_shouldEmitRichSourceInfo;
 
-        Strong<ScopeChainNode> m_scopeChain;
+        Strong<JSScope> m_scope;
         SymbolTable* m_symbolTable;
 
 #if ENABLE(BYTECODE_COMMENTS)

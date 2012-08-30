@@ -357,7 +357,7 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
     JSValue exception;
     StopWatch stopWatch;
     stopWatch.start();
-    evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), jscSource(script.data(), fileName), JSValue(), &exception);
+    evaluate(globalObject->globalExec(), jscSource(script.data(), fileName), JSValue(), &exception);
     stopWatch.stop();
 
     if (!!exception) {
@@ -378,7 +378,7 @@ EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     
     JSValue evaluationException;
-    JSValue result = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), jscSource(script.data(), fileName), JSValue(), &evaluationException);
+    JSValue result = evaluate(globalObject->globalExec(), jscSource(script.data(), fileName), JSValue(), &evaluationException);
     if (evaluationException)
         throwError(exec, evaluationException);
     return JSValue::encode(result);
@@ -550,7 +550,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
         globalData.startSampling();
 
         JSValue evaluationException;
-        JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), jscSource(script, fileName), JSValue(), &evaluationException);
+        JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(script, fileName), JSValue(), &evaluationException);
         success = success && !evaluationException;
         if (dump && !evaluationException)
             printf("End: %s\n", returnValue.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
@@ -596,7 +596,7 @@ static void runInteractive(GlobalObject* globalObject)
         if (line[0])
             add_history(line);
         JSValue evaluationException;
-        JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), jscSource(line, interpreterName), JSValue(), &evaluationException);
+        JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(line, interpreterName), JSValue(), &evaluationException);
         free(line);
 #else
         printf("%s", interactivePrompt);
@@ -613,7 +613,7 @@ static void runInteractive(GlobalObject* globalObject)
         line.append('\0');
 
         JSValue evaluationException;
-        JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), jscSource(line.data(), interpreterName), JSValue(), &evaluationException);
+        JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(line.data(), interpreterName), JSValue(), &evaluationException);
 #endif
         if (evaluationException)
             printf("Exception: %s\n", evaluationException.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());

@@ -52,7 +52,7 @@ namespace JSC {
     class LLIntOffsetsExtractor;
     class ProgramExecutable;
     class Register;
-    class ScopeChainNode;
+    class JSScope;
     class SamplingTool;
     struct CallFrameClosure;
     struct HandlerInfo;
@@ -227,11 +227,11 @@ namespace JSC {
 
         bool isOpcode(Opcode);
 
-        JSValue execute(ProgramExecutable*, CallFrame*, ScopeChainNode*, JSObject* thisObj);
+        JSValue execute(ProgramExecutable*, CallFrame*, JSObject* thisObj);
         JSValue executeCall(CallFrame*, JSObject* function, CallType, const CallData&, JSValue thisValue, const ArgList&);
         JSObject* executeConstruct(CallFrame*, JSObject* function, ConstructType, const ConstructData&, const ArgList&);
-        JSValue execute(EvalExecutable*, CallFrame*, JSValue thisValue, ScopeChainNode*);
-        JSValue execute(EvalExecutable*, CallFrame*, JSValue thisValue, ScopeChainNode*, int globalRegisterOffset);
+        JSValue execute(EvalExecutable*, CallFrame*, JSValue thisValue, JSScope*);
+        JSValue execute(EvalExecutable*, CallFrame*, JSValue thisValue, JSScope*, int globalRegisterOffset);
 
         JSValue retrieveArgumentsFromVMCode(CallFrame*, JSFunction*) const;
         JSValue retrieveCallerFromVMCode(CallFrame*, JSFunction*) const;
@@ -256,12 +256,12 @@ namespace JSC {
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
 
-        CallFrameClosure prepareForRepeatCall(FunctionExecutable*, CallFrame*, JSFunction*, int argumentCountIncludingThis, ScopeChainNode*);
+        CallFrameClosure prepareForRepeatCall(FunctionExecutable*, CallFrame*, JSFunction*, int argumentCountIncludingThis, JSScope*);
         void endRepeatCall(CallFrameClosure&);
         JSValue execute(CallFrameClosure&);
 
 #if ENABLE(CLASSIC_INTERPRETER)
-        NEVER_INLINE ScopeChainNode* createExceptionScope(CallFrame*, const Instruction* vPC);
+        NEVER_INLINE JSScope* createExceptionScope(CallFrame*, const Instruction* vPC);
 
         void tryCacheGetByID(CallFrame*, CodeBlock*, Instruction*, JSValue baseValue, const Identifier& propertyName, const PropertySlot&);
         void uncacheGetByID(CodeBlock*, Instruction* vPC);
@@ -311,9 +311,9 @@ namespace JSC {
         return !thisValue.isObject() || thisValue.toThisObject(exec) == thisValue;
     }
 
-    inline JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue thisValue, ScopeChainNode* scopeChain)
+    inline JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue thisValue, JSScope* scope)
     {
-        return execute(eval, callFrame, thisValue, scopeChain, m_registerFile.size() + 1 + RegisterFile::CallFrameHeaderSize);
+        return execute(eval, callFrame, thisValue, scope, m_registerFile.size() + 1 + RegisterFile::CallFrameHeaderSize);
     }
 
     JSValue eval(CallFrame*);

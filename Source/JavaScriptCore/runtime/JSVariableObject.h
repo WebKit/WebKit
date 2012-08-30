@@ -54,10 +54,17 @@ namespace JSC {
         static size_t offsetOfRegisters() { return OBJECT_OFFSETOF(JSVariableObject, m_registers); }
 
     protected:
-        static const unsigned StructureFlags = JSSymbolTableObject::StructureFlags;
+        static const unsigned StructureFlags = Base::StructureFlags;
 
-        JSVariableObject(JSGlobalData& globalData, Structure* structure, Register* registers)
-            : JSSymbolTableObject(globalData, structure)
+        JSVariableObject(
+            JSGlobalData& globalData,
+            Structure* structure,
+            Register* registers,
+            JSGlobalObject* globalObject,
+            JSObject* globalThis,
+            JSScope* scope
+        )
+            : Base(globalData, structure, globalObject, globalThis, scope)
             , m_registers(reinterpret_cast<WriteBarrierBase<Unknown>*>(registers))
         {
         }

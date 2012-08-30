@@ -314,7 +314,7 @@ jobject JavaJSObject::eval(jstring script) const
     JSLockHolder lock(rootObject->globalObject()->globalData());
     
     rootObject->globalObject()->globalData().timeoutChecker.start();
-    JSValue result = JSC::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), makeSource(JavaString(script).impl()));
+    JSValue result = JSC::evaluate(rootObject->globalObject()->globalExec(), makeSource(JavaString(script).impl()));
     rootObject->globalObject()->globalData().timeoutChecker.stop();
 
     return convertValueToJObject(result);

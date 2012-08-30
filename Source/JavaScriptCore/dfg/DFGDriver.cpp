@@ -28,7 +28,7 @@
 
 #include "JSObject.h"
 #include "JSString.h"
-#include "ScopeChain.h"
+
 
 #if ENABLE(DFG_JIT)
 

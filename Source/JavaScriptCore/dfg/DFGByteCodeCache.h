@@ -141,7 +141,7 @@ public:
         }
     }
     
-    CodeBlock* get(const CodeBlockKey& key, ScopeChainNode* scope)
+    CodeBlock* get(const CodeBlockKey& key, JSScope* scope)
     {
         Map::iterator iter = m_map.find(key);
         if (iter != m_map.end())

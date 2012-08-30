@@ -29,7 +29,6 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #include <runtime/JSObject.h>
-#include <runtime/ScopeChain.h>
 #include "NPRemoteObjectMap.h"
 #include "NPRuntimeObjectMap.h"
 #include "PluginProcessConnectionManager.h"

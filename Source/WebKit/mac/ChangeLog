@@ -1,3 +1,12 @@
+2012-08-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Use one object instead of two for closures, eliminating ScopeChainNode
+        https://bugs.webkit.org/show_bug.cgi?id=95501
+
+        Reviewed by Filip Pizlo.
+
+        Mechanical change to update for JSC interface change.
+
 2012-08-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r127171.

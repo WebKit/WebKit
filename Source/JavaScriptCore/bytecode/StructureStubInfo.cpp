@@ -28,7 +28,7 @@
 
 #include "JSObject.h"
 #include "PolymorphicPutByIdList.h"
-#include "ScopeChain.h"
+
 
 namespace JSC {
 

@@ -33,7 +33,7 @@
 #include "JSObject.h"
 #include "LLIntThunks.h"
 #include "LowLevelInterpreter.h"
-#include "ScopeChain.h"
+
 
 namespace JSC { namespace LLInt {
 

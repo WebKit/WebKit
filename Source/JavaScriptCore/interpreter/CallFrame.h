@@ -33,7 +33,7 @@ namespace JSC  {
     class Arguments;
     class JSActivation;
     class Interpreter;
-    class ScopeChainNode;
+    class JSScope;
 
     // Represents the current state of script execution.
     // Passed as the first argument to most functions.
@@ -42,10 +42,10 @@ namespace JSC  {
         JSValue calleeAsValue() const { return this[RegisterFile::Callee].jsValue(); }
         JSObject* callee() const { return this[RegisterFile::Callee].function(); }
         CodeBlock* codeBlock() const { return this[RegisterFile::CodeBlock].Register::codeBlock(); }
-        ScopeChainNode* scopeChain() const
+        JSScope* scope() const
         {
-            ASSERT(this[RegisterFile::ScopeChain].Register::scopeChain());
-            return this[RegisterFile::ScopeChain].Register::scopeChain();
+            ASSERT(this[RegisterFile::ScopeChain].Register::scope());
+            return this[RegisterFile::ScopeChain].Register::scope();
         }
 
         // Global object in which execution began.
@@ -166,16 +166,16 @@ namespace JSC  {
 #endif
 
         void setCallerFrame(CallFrame* callerFrame) { static_cast<Register*>(this)[RegisterFile::CallerFrame] = callerFrame; }
-        void setScopeChain(ScopeChainNode* scopeChain) { static_cast<Register*>(this)[RegisterFile::ScopeChain] = scopeChain; }
+        void setScope(JSScope* scope) { static_cast<Register*>(this)[RegisterFile::ScopeChain] = scope; }
 
-        ALWAYS_INLINE void init(CodeBlock* codeBlock, Instruction* vPC, ScopeChainNode* scopeChain,
+        ALWAYS_INLINE void init(CodeBlock* codeBlock, Instruction* vPC, JSScope* scope,
             CallFrame* callerFrame, int argc, JSObject* callee)
         {
             ASSERT(callerFrame); // Use noCaller() rather than 0 for the outer host call frame caller.
             ASSERT(callerFrame == noCaller() || callerFrame->removeHostCallFrameFlag()->registerFile()->end() >= this);
 
             setCodeBlock(codeBlock);
-            setScopeChain(scopeChain);
+            setScope(scope);
             setCallerFrame(callerFrame);
             setReturnPC(vPC); // This is either an Instruction* or a pointer into JIT generated code stored as an Instruction*.
             setArgumentCountIncludingThis(argc); // original argument count (for the sake of the "arguments" object)

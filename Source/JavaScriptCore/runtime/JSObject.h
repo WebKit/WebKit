@@ -30,7 +30,7 @@
 #include "JSCell.h"
 #include "PropertySlot.h"
 #include "PutPropertySlot.h"
-#include "ScopeChain.h"
+
 #include "StorageBarrier.h"
 #include "Structure.h"
 #include "JSGlobalData.h"

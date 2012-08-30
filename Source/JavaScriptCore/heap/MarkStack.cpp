@@ -35,7 +35,7 @@
 #include "JSArray.h"
 #include "JSCell.h"
 #include "JSObject.h"
-#include "ScopeChain.h"
+
 #include "SlotVisitorInlineMethods.h"
 #include "Structure.h"
 #include "WriteBarrier.h"

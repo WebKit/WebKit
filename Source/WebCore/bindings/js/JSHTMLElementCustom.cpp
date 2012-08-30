@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "HTMLFormElement.h"
+#include <runtime/JSWithScope.h>
 
 #if ENABLE(MICRODATA)
 #include "JSMicroDataItemValue.h"
@@ -37,19 +38,19 @@ namespace WebCore {
 
 using namespace JSC;
 
-ScopeChainNode* JSHTMLElement::pushEventHandlerScope(ExecState* exec, ScopeChainNode* scope) const
+JSScope* JSHTMLElement::pushEventHandlerScope(ExecState* exec, JSScope* scope) const
 {
     HTMLElement* element = impl();
 
     // The document is put on first, fall back to searching it only after the element and form.
-    scope = scope->push(asObject(toJS(exec, globalObject(), element->ownerDocument())));
+    scope = JSWithScope::create(exec, asObject(toJS(exec, globalObject(), element->ownerDocument())), scope);
 
     // The form is next, searched before the document, but after the element itself.
     if (HTMLFormElement* form = element->form())
-        scope = scope->push(asObject(toJS(exec, globalObject(), form)));
+        scope = JSWithScope::create(exec, asObject(toJS(exec, globalObject(), form)), scope);
 
     // The element is on top, searched first.
-    return scope->push(asObject(toJS(exec, globalObject(), element)));
+    return JSWithScope::create(exec, asObject(toJS(exec, globalObject(), element)), scope);
 }
 
 #if ENABLE(MICRODATA)

@@ -448,7 +448,7 @@ namespace JSC {
         MacroAssemblerCodePtr getJITCodeWithArityCheck() { return m_jitCodeWithArityCheck; }
         JITCode::JITType getJITType() { return m_jitCode.jitType(); }
         ExecutableMemoryHandle* executableMemory() { return getJITCode().getExecutableMemory(); }
-        virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*, unsigned bytecodeIndex) = 0;
+        virtual JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex) = 0;
         virtual void jettison() = 0;
         enum JITCompilationResult { AlreadyCompiled, CouldNotCompile, CompiledSuccessfully };
         JITCompilationResult jitCompile(ExecState* exec)
@@ -934,7 +934,7 @@ namespace JSC {
             if (!codeOrigin.inlineCallFrame)
                 return globalObject();
             // FIXME: if we ever inline based on executable not function, this code will need to change.
-            return codeOrigin.inlineCallFrame->callee->scope()->globalObject.get();
+            return codeOrigin.inlineCallFrame->callee->scope()->globalObject();
         }
 
         // Jump Tables
@@ -1449,7 +1449,7 @@ namespace JSC {
         
 #if ENABLE(JIT)
     protected:
-        virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*, unsigned bytecodeIndex);
+        virtual JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex);
         virtual void jettison();
         virtual bool jitCompileImpl(ExecState*);
         virtual CodeBlock* replacement();
@@ -1484,7 +1484,7 @@ namespace JSC {
         
 #if ENABLE(JIT)
     protected:
-        virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*, unsigned bytecodeIndex);
+        virtual JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex);
         virtual void jettison();
         virtual bool jitCompileImpl(ExecState*);
         virtual CodeBlock* replacement();
@@ -1510,7 +1510,7 @@ namespace JSC {
         
 #if ENABLE(JIT)
     protected:
-        virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*, unsigned bytecodeIndex);
+        virtual JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex);
         virtual void jettison();
         virtual bool jitCompileImpl(ExecState*);
         virtual CodeBlock* replacement();

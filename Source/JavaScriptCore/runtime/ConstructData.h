@@ -38,7 +38,7 @@ namespace JSC {
     class ExecState;
     class FunctionExecutable;
     class JSObject;
-    class ScopeChainNode;
+    class JSScope;
 
     enum ConstructType {
         ConstructTypeNone,
@@ -52,7 +52,7 @@ namespace JSC {
         } native;
         struct {
             FunctionExecutable* functionExecutable;
-            ScopeChainNode* scopeChain;
+            JSScope* scope;
         } js;
     };
 

@@ -135,7 +135,7 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, Script
     m_workerContextWrapper->globalData().timeoutChecker.start();
 
     JSValue evaluationException;
-    JSC::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), sourceCode.jsSourceCode(), m_workerContextWrapper.get(), &evaluationException);
+    JSC::evaluate(exec, sourceCode.jsSourceCode(), m_workerContextWrapper.get(), &evaluationException);
 
     m_workerContextWrapper->globalData().timeoutChecker.stop();
 

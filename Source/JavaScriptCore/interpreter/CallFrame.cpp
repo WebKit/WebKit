@@ -139,7 +139,7 @@ CallFrame* CallFrame::trueCallFrame(AbstractPC pc)
         // Fill in the inlinedCaller
         inlinedCaller->setCodeBlock(machineCodeBlock);
         
-        inlinedCaller->setScopeChain(calleeAsFunction->scope());
+        inlinedCaller->setScope(calleeAsFunction->scope());
         if (nextInlineCallFrame)
             inlinedCaller->setCallerFrame(this + nextInlineCallFrame->stackOffset);
         else

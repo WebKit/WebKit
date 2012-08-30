@@ -32,7 +32,6 @@
 #include "c_instance.h"
 #include "c_utility.h"
 #include "npruntime_impl.h"
-#include <runtime/ScopeChain.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSObject.h>
 

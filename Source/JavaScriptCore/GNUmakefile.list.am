@@ -630,9 +630,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/RegExpPrototype.h \
 	Source/JavaScriptCore/runtime/SamplingCounter.cpp \
 	Source/JavaScriptCore/runtime/SamplingCounter.h \
-	Source/JavaScriptCore/runtime/ScopeChain.cpp \
-	Source/JavaScriptCore/runtime/ScopeChain.h \
-	Source/JavaScriptCore/runtime/ScopeChainMark.h \
 	Source/JavaScriptCore/runtime/SmallStrings.cpp \
 	Source/JavaScriptCore/runtime/SmallStrings.h \
 	Source/JavaScriptCore/runtime/StorageBarrier.h \

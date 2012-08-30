@@ -2529,7 +2529,7 @@ void CodeBlock::createActivation(CallFrame* callFrame)
     ASSERT(!callFrame->uncheckedR(activationRegister()).jsValue());
     JSActivation* activation = JSActivation::create(callFrame->globalData(), callFrame, static_cast<FunctionExecutable*>(ownerExecutable()));
     callFrame->uncheckedR(activationRegister()) = JSValue(activation);
-    callFrame->setScopeChain(callFrame->scopeChain()->push(activation));
+    callFrame->setScope(activation);
 }
 
 unsigned CodeBlock::addOrFindConstant(JSValue v)
@@ -2725,27 +2725,27 @@ CodeBlock* FunctionCodeBlock::replacement()
     return &static_cast<FunctionExecutable*>(ownerExecutable())->generatedBytecodeFor(m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 
-JSObject* ProgramCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode, unsigned bytecodeIndex)
+JSObject* ProgramCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
 {
     if (replacement()->getJITType() == JITCode::nextTierJIT(getJITType()))
         return 0;
-    JSObject* error = static_cast<ProgramExecutable*>(ownerExecutable())->compileOptimized(exec, scopeChainNode, bytecodeIndex);
+    JSObject* error = static_cast<ProgramExecutable*>(ownerExecutable())->compileOptimized(exec, scope, bytecodeIndex);
     return error;
 }
 
-JSObject* EvalCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode, unsigned bytecodeIndex)
+JSObject* EvalCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
 {
     if (replacement()->getJITType() == JITCode::nextTierJIT(getJITType()))
         return 0;
-    JSObject* error = static_cast<EvalExecutable*>(ownerExecutable())->compileOptimized(exec, scopeChainNode, bytecodeIndex);
+    JSObject* error = static_cast<EvalExecutable*>(ownerExecutable())->compileOptimized(exec, scope, bytecodeIndex);
     return error;
 }
 
-JSObject* FunctionCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode, unsigned bytecodeIndex)
+JSObject* FunctionCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
 {
     if (replacement()->getJITType() == JITCode::nextTierJIT(getJITType()))
         return 0;
-    JSObject* error = static_cast<FunctionExecutable*>(ownerExecutable())->compileOptimizedFor(exec, scopeChainNode, bytecodeIndex, m_isConstructor ? CodeForConstruct : CodeForCall);
+    JSObject* error = static_cast<FunctionExecutable*>(ownerExecutable())->compileOptimizedFor(exec, scope, bytecodeIndex, m_isConstructor ? CodeForConstruct : CodeForCall);
     return error;
 }
 

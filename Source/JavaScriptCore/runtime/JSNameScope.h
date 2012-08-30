@@ -64,7 +64,14 @@ protected:
 
 private:
     JSNameScope(ExecState* exec)
-        : Base(exec->globalData(), exec->globalData().nameScopeStructure.get(), reinterpret_cast<Register*>(&m_registerStore + 1))
+        : Base(
+            exec->globalData(),
+            exec->globalData().nameScopeStructure.get(),
+            reinterpret_cast<Register*>(&m_registerStore + 1),
+            exec->lexicalGlobalObject(),
+            exec->globalThisValue(),
+            exec->scope()
+        )
     {
     }
 

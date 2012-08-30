@@ -145,7 +145,7 @@ ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode
     JSValue evaluationException;
 
     exec->globalData().timeoutChecker.start();
-    JSValue returnValue = JSMainThreadExecState::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), jsSourceCode, shell, &evaluationException);
+    JSValue returnValue = JSMainThreadExecState::evaluate(exec, jsSourceCode, shell, &evaluationException);
     exec->globalData().timeoutChecker.stop();
 
     InspectorInstrumentation::didEvaluateScript(cookie);

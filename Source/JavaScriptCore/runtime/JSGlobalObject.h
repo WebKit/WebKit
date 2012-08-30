@@ -77,6 +77,7 @@ namespace JSC {
 
     class JSGlobalObject : public JSSegmentedVariableObject {
     private:
+        typedef JSSegmentedVariableObject Base;
         typedef HashSet<RefPtr<OpaqueJSWeakObjectMap> > WeakMapSet;
 
         struct JSGlobalObjectRareData {
@@ -93,7 +94,6 @@ namespace JSC {
 
         Register m_globalCallFrame[RegisterFile::CallFrameHeaderSize];
 
-        WriteBarrier<ScopeChainNode> m_globalScopeChain;
         WriteBarrier<JSObject> m_methodCallDummy;
 
         WriteBarrier<RegExpConstructor> m_regExpConstructor;
@@ -164,8 +164,6 @@ namespace JSC {
         }
         
     public:
-        typedef JSSegmentedVariableObject Base;
-
         static JSGlobalObject* create(JSGlobalData& globalData, Structure* structure)
         {
             JSGlobalObject* globalObject = new (NotNull, allocateCell<JSGlobalObject>(globalData.heap)) JSGlobalObject(globalData, structure);
@@ -290,8 +288,6 @@ namespace JSC {
         static bool supportsProfiling(const JSGlobalObject*) { return false; }
         static bool supportsRichSourceInfo(const JSGlobalObject*) { return true; }
 
-        ScopeChainNode* globalScopeChain() { return m_globalScopeChain.get(); }
-
         JS_EXPORT_PRIVATE ExecState* globalExec();
 
         static bool shouldInterruptScript(const JSGlobalObject*) { return true; }
@@ -327,7 +323,7 @@ namespace JSC {
         unsigned weakRandomInteger() { return m_weakRandom.getUint32(); }
     protected:
 
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSSegmentedVariableObject::StructureFlags;
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | Base::StructureFlags;
 
         struct GlobalPropertyInfo {
             GlobalPropertyInfo(const Identifier& i, JSValue v, unsigned a)
@@ -366,7 +362,7 @@ namespace JSC {
     inline bool JSGlobalObject::hasOwnPropertyForWrite(ExecState* exec, PropertyName propertyName)
     {
         PropertySlot slot;
-        if (JSSegmentedVariableObject::getOwnPropertySlot(this, exec, propertyName, slot))
+        if (Base::getOwnPropertySlot(this, exec, propertyName, slot))
             return true;
         bool slotIsWriteable;
         return symbolTableGet(this, propertyName, slot, slotIsWriteable);

@@ -244,7 +244,6 @@ SET(JavaScriptCore_SOURCES
     runtime/RegExpMatchesArray.cpp
     runtime/RegExpObject.cpp
     runtime/RegExpPrototype.cpp
-    runtime/ScopeChain.cpp
     runtime/SmallStrings.cpp
     runtime/StrictEvalActivation.cpp
     runtime/StringConstructor.cpp

@@ -51,7 +51,7 @@ bool checkSyntax(ExecState* exec, const SourceCode& source, JSValue* returnedExc
     return true;
 }
 
-JSValue evaluate(ExecState* exec, ScopeChainNode* scopeChain, const SourceCode& source, JSValue thisValue, JSValue* returnedException)
+JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, JSValue* returnedException)
 {
     JSLockHolder lock(exec);
     ASSERT(exec->globalData().identifierTable == wtfThreadData().currentIdentifierTable());
@@ -72,7 +72,7 @@ JSValue evaluate(ExecState* exec, ScopeChainNode* scopeChain, const SourceCode& 
     if (!thisValue || thisValue.isUndefinedOrNull())
         thisValue = exec->dynamicGlobalObject();
     JSObject* thisObj = thisValue.toThisObject(exec);
-    JSValue result = exec->interpreter()->execute(program, exec, scopeChain, thisObj);
+    JSValue result = exec->interpreter()->execute(program, exec, thisObj);
 
     if (exec->hadException()) {
         if (returnedException)

@@ -35,6 +35,19 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSScope);
 
+void JSScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSScope* thisObject = jsCast<JSScope*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+
+    Base::visitChildren(thisObject, visitor);
+    visitor.append(&thisObject->m_next);
+    visitor.append(&thisObject->m_globalObject);
+    visitor.append(&thisObject->m_globalThis);
+}
+
 bool JSScope::isDynamicScope(bool& requiresDynamicChecks) const
 {
     switch (structure()->typeInfo().type()) {
@@ -52,34 +65,48 @@ bool JSScope::isDynamicScope(bool& requiresDynamicChecks) const
     return false;
 }
 
-JSObject* JSScope::objectAtScope(ScopeChainNode* scopeChain)
+JSObject* JSScope::objectAtScope(JSScope* scope)
 {
-    JSObject* object = scopeChain->object.get();
+    JSObject* object = scope;
     if (object->structure()->typeInfo().type() == WithScopeType)
         return jsCast<JSWithScope*>(object)->object();
 
     return object;
 }
 
+int JSScope::localDepth()
+{
+    int scopeDepth = 0;
+    ScopeChainIterator iter = this->begin();
+    ScopeChainIterator end = this->end();
+    while (!iter->inherits(&JSActivation::s_info)) {
+        ++iter;
+        if (iter == end)
+            break;
+        ++scopeDepth;
+    }
+    return scopeDepth;
+}
+
 JSValue JSScope::resolve(CallFrame* callFrame, const Identifier& identifier)
 {
-    ScopeChainNode* scopeChain = callFrame->scopeChain();
-    ASSERT(scopeChain);
+    JSScope* scope = callFrame->scope();
+    ASSERT(scope);
 
     do {
-        JSObject* scope = JSScope::objectAtScope(scopeChain);
-        PropertySlot slot(scope);
-        if (scope->getPropertySlot(callFrame, identifier, slot))
+        JSObject* object = JSScope::objectAtScope(scope);
+        PropertySlot slot(object);
+        if (object->getPropertySlot(callFrame, identifier, slot))
             return slot.getValue(callFrame, identifier);
-    } while ((scopeChain = scopeChain->next.get()));
+    } while ((scope = scope->next()));
 
     return throwError(callFrame, createUndefinedVariableError(callFrame, identifier));
 }
 
 JSValue JSScope::resolveSkip(CallFrame* callFrame, const Identifier& identifier, int skip)
 {
-    ScopeChainNode* scopeChain = callFrame->scopeChain();
-    ASSERT(scopeChain);
+    JSScope* scope = callFrame->scope();
+    ASSERT(scope);
 
     CodeBlock* codeBlock = callFrame->codeBlock();
 
@@ -87,19 +114,19 @@ JSValue JSScope::resolveSkip(CallFrame* callFrame, const Identifier& identifier,
     ASSERT(skip || !checkTopLevel);
     if (checkTopLevel && skip--) {
         if (callFrame->uncheckedR(codeBlock->activationRegister()).jsValue())
-            scopeChain = scopeChain->next.get();
+            scope = scope->next();
     }
     while (skip--) {
-        scopeChain = scopeChain->next.get();
-        ASSERT(scopeChain);
+        scope = scope->next();
+        ASSERT(scope);
     }
 
     do {
-        JSObject* scope = JSScope::objectAtScope(scopeChain);
-        PropertySlot slot(scope);
-        if (scope->getPropertySlot(callFrame, identifier, slot))
+        JSObject* object = JSScope::objectAtScope(scope);
+        PropertySlot slot(object);
+        if (object->getPropertySlot(callFrame, identifier, slot))
             return slot.getValue(callFrame, identifier);
-    } while ((scopeChain = scopeChain->next.get()));
+    } while ((scope = scope->next()));
 
     return throwError(callFrame, createUndefinedVariableError(callFrame, identifier));
 }
@@ -138,8 +165,8 @@ JSValue JSScope::resolveGlobalDynamic(
     PropertyOffset* cachedOffset
 )
 {
-    ScopeChainNode* scopeChain = callFrame->scopeChain();
-    ASSERT(scopeChain);
+    JSScope* scope = callFrame->scope();
+    ASSERT(scope);
 
     CodeBlock* codeBlock = callFrame->codeBlock();
 
@@ -147,15 +174,15 @@ JSValue JSScope::resolveGlobalDynamic(
     ASSERT(skip || !checkTopLevel);
     if (checkTopLevel && skip--) {
         if (callFrame->uncheckedR(codeBlock->activationRegister()).jsValue())
-            scopeChain = scopeChain->next.get();
+            scope = scope->next();
     }
     while (skip--) {
-        JSObject* scope = JSScope::objectAtScope(scopeChain);
-        if (!scope->hasCustomProperties())
+        JSObject* object = JSScope::objectAtScope(scope);
+        if (!object->hasCustomProperties())
             continue;
 
-        PropertySlot slot(scope);
-        if (!scope->getPropertySlot(callFrame, identifier, slot))
+        PropertySlot slot(object);
+        if (!object->getPropertySlot(callFrame, identifier, slot))
             continue;
 
         JSValue result = slot.getValue(callFrame, identifier);
@@ -169,18 +196,18 @@ JSValue JSScope::resolveGlobalDynamic(
 
 JSValue JSScope::resolveBase(CallFrame* callFrame, const Identifier& identifier, bool isStrict)
 {
-    ScopeChainNode* scopeChain = callFrame->scopeChain();
-    ASSERT(scopeChain);
+    JSScope* scope = callFrame->scope();
+    ASSERT(scope);
 
     do {
-        JSObject* scope = JSScope::objectAtScope(scopeChain);
+        JSObject* object = JSScope::objectAtScope(scope);
 
-        PropertySlot slot(scope);
-        if (!scope->getPropertySlot(callFrame, identifier, slot))
+        PropertySlot slot(object);
+        if (!object->getPropertySlot(callFrame, identifier, slot))
             continue;
 
-        return JSValue(scope);
-    } while ((scopeChain = scopeChain->next.get()));
+        return JSValue(object);
+    } while ((scope = scope->next()));
 
     if (!isStrict)
         return callFrame->lexicalGlobalObject();
@@ -190,46 +217,46 @@ JSValue JSScope::resolveBase(CallFrame* callFrame, const Identifier& identifier,
 
 JSValue JSScope::resolveWithBase(CallFrame* callFrame, const Identifier& identifier, Register* base)
 {
-    ScopeChainNode* scopeChain = callFrame->scopeChain();
-    ASSERT(scopeChain);
+    JSScope* scope = callFrame->scope();
+    ASSERT(scope);
 
     do {
-        JSObject* scope = JSScope::objectAtScope(scopeChain);
+        JSObject* object = JSScope::objectAtScope(scope);
 
-        PropertySlot slot(scope);
-        if (!scope->getPropertySlot(callFrame, identifier, slot))
+        PropertySlot slot(object);
+        if (!object->getPropertySlot(callFrame, identifier, slot))
             continue;
 
         JSValue value = slot.getValue(callFrame, identifier);
         if (callFrame->globalData().exception)
             return JSValue();
 
-        *base = JSValue(scope);
+        *base = JSValue(object);
         return value;
-    } while ((scopeChain = scopeChain->next.get()));
+    } while ((scope = scope->next()));
 
     return throwError(callFrame, createUndefinedVariableError(callFrame, identifier));
 }
 
 JSValue JSScope::resolveWithThis(CallFrame* callFrame, const Identifier& identifier, Register* base)
 {
-    ScopeChainNode* scopeChain = callFrame->scopeChain();
-    ASSERT(scopeChain);
+    JSScope* scope = callFrame->scope();
+    ASSERT(scope);
 
     do {
-        JSObject* scope = JSScope::objectAtScope(scopeChain);
+        JSObject* object = JSScope::objectAtScope(scope);
 
-        PropertySlot slot(scope);
-        if (!scope->getPropertySlot(callFrame, identifier, slot))
+        PropertySlot slot(object);
+        if (!object->getPropertySlot(callFrame, identifier, slot))
             continue;
 
         JSValue value = slot.getValue(callFrame, identifier);
         if (callFrame->globalData().exception)
             return JSValue();
 
-        *base = scope->structure()->typeInfo().isEnvironmentRecord() ? jsUndefined() : JSValue(scope);
+        *base = object->structure()->typeInfo().isEnvironmentRecord() ? jsUndefined() : JSValue(object);
         return value;
-    } while ((scopeChain = scopeChain->next.get()));
+    } while ((scope = scope->next()));
 
     return throwError(callFrame, createUndefinedVariableError(callFrame, identifier));
 }

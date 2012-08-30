@@ -77,7 +77,7 @@ JSValue JSJavaScriptCallFrame::scopeChain(ExecState* exec) const
     if (!impl()->scopeChain())
         return jsNull();
 
-    ScopeChainNode* scopeChain = impl()->scopeChain();
+    JSScope* scopeChain = impl()->scopeChain();
     ScopeChainIterator iter = scopeChain->begin();
     ScopeChainIterator end = scopeChain->end();
 
@@ -102,7 +102,7 @@ JSValue JSJavaScriptCallFrame::scopeType(ExecState* exec)
         return jsUndefined();
     int index = exec->argument(0).asInt32();
 
-    ScopeChainNode* scopeChain = impl()->scopeChain();
+    JSScope* scopeChain = impl()->scopeChain();
     ScopeChainIterator end = scopeChain->end();
 
     bool foundLocalScope = false;

@@ -25,7 +25,7 @@
 #define JSFunction_h
 
 #include "InternalFunction.h"
-#include "JSObject.h"
+#include "JSScope.h"
 
 namespace JSC {
 
@@ -57,11 +57,11 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE static JSFunction* create(ExecState*, JSGlobalObject*, int length, const String& name, NativeFunction, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
 
-        static JSFunction* create(ExecState* exec, FunctionExecutable* executable, ScopeChainNode* scopeChain)
+        static JSFunction* create(ExecState* exec, FunctionExecutable* executable, JSScope* scope)
         {
-            JSFunction* function = new (NotNull, allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, executable, scopeChain);
+            JSFunction* function = new (NotNull, allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, executable, scope);
             ASSERT(function->structure()->globalObject());
-            function->finishCreation(exec, executable, scopeChain);
+            function->finishCreation(exec, executable, scope);
             return function;
         }
         
@@ -69,24 +69,24 @@ namespace JSC {
         JS_EXPORT_PRIVATE const String displayName(ExecState*);
         const String calculatedDisplayName(ExecState*);
 
-        ScopeChainNode* scope()
+        JSScope* scope()
         {
             ASSERT(!isHostFunctionNonInline());
-            return m_scopeChain.get();
+            return m_scope.get();
         }
         // This method may be called for host functins, in which case it
         // will return an arbitrary value. This should only be used for
         // optimized paths in which the return value does not matter for
         // host functions, and checking whether the function is a host
         // function is deemed too expensive.
-        ScopeChainNode* scopeUnchecked()
+        JSScope* scopeUnchecked()
         {
-            return m_scopeChain.get();
+            return m_scope.get();
         }
-        void setScope(JSGlobalData& globalData, ScopeChainNode* scopeChain)
+        void setScope(JSGlobalData& globalData, JSScope* scope)
         {
             ASSERT(!isHostFunctionNonInline());
-            m_scopeChain.set(globalData, this, scopeChain);
+            m_scope.set(globalData, this, scope);
         }
 
         ExecutableBase* executable() const { return m_executable.get(); }
@@ -113,7 +113,7 @@ namespace JSC {
 
         static inline size_t offsetOfScopeChain()
         {
-            return OBJECT_OFFSETOF(JSFunction, m_scopeChain);
+            return OBJECT_OFFSETOF(JSFunction, m_scope);
         }
 
         static inline size_t offsetOfExecutable()
@@ -137,10 +137,10 @@ namespace JSC {
         const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
 
         JS_EXPORT_PRIVATE JSFunction(ExecState*, JSGlobalObject*, Structure*);
-        JSFunction(ExecState*, FunctionExecutable*, ScopeChainNode*);
+        JSFunction(ExecState*, FunctionExecutable*, JSScope*);
         
         void finishCreation(ExecState*, NativeExecutable*, int length, const String& name);
-        void finishCreation(ExecState*, FunctionExecutable*, ScopeChainNode*);
+        void finishCreation(ExecState*, FunctionExecutable*, JSScope*);
 
         Structure* cacheInheritorID(ExecState*);
 
@@ -165,7 +165,7 @@ namespace JSC {
         static JSValue lengthGetter(ExecState*, JSValue, PropertyName);
 
         WriteBarrier<ExecutableBase> m_executable;
-        WriteBarrier<ScopeChainNode> m_scopeChain;
+        WriteBarrier<JSScope> m_scope;
         WriteBarrier<Structure> m_cachedInheritorID;
     };
 

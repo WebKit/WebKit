@@ -57,12 +57,12 @@ JavaScriptCallFrame* JavaScriptCallFrame::caller()
     return m_caller.get();
 }
 
-JSC::ScopeChainNode* JavaScriptCallFrame::scopeChain() const
+JSC::JSScope* JavaScriptCallFrame::scopeChain() const
 {
     ASSERT(m_isValid);
     if (!m_isValid)
         return 0;
-    return m_debuggerCallFrame.scopeChain();
+    return m_debuggerCallFrame.scope();
 }
 
 JSC::JSGlobalObject* JavaScriptCallFrame::dynamicGlobalObject() const

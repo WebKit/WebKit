@@ -35,7 +35,7 @@ struct CallFrameClosure {
     FunctionExecutable* functionExecutable;
     JSGlobalData* globalData;
     Register* oldEnd;
-    ScopeChainNode* scopeChain;
+    JSScope* scope;
     int parameterCountIncludingThis;
     int argumentCountIncludingThis;
     
@@ -51,7 +51,7 @@ struct CallFrameClosure {
 
     void resetCallFrame()
     {
-        newCallFrame->setScopeChain(scopeChain);
+        newCallFrame->setScope(scope);
         for (int i = argumentCountIncludingThis; i < parameterCountIncludingThis; ++i)
             newCallFrame->setArgument(i, jsUndefined());
     }

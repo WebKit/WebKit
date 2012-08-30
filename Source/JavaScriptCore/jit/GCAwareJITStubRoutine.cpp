@@ -30,7 +30,7 @@
 
 #include "Heap.h"
 #include "JSGlobalData.h"
-#include "ScopeChain.h"
+
 #include "SlotVisitor.h"
 #include "Structure.h"
 

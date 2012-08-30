@@ -1032,7 +1032,7 @@ void SpeculativeJIT::emitCall(Node& node)
     m_jit.addPtr(TrustedImm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
     
     slowPath = m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleeGPR, targetToCheck, MacroAssembler::TrustedImmPtr(JSValue::encode(JSValue())));
-    m_jit.loadPtr(MacroAssembler::Address(calleeGPR, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), resultGPR);
+    m_jit.loadPtr(MacroAssembler::Address(calleeGPR, OBJECT_OFFSETOF(JSFunction, m_scope)), resultGPR);
     m_jit.storePtr(resultGPR, MacroAssembler::Address(GPRInfo::callFrameRegister, static_cast<ptrdiff_t>(sizeof(Register)) * RegisterFile::ScopeChain));
 
     CodeOrigin codeOrigin = at(m_compileIndex).codeOrigin;
@@ -3266,34 +3266,32 @@ void SpeculativeJIT::compile(Node& node)
             JITCompiler::Jump activationNotCreated;
             if (checkTopLevel)
                 activationNotCreated = m_jit.branchTestPtr(JITCompiler::Zero, JITCompiler::addressFor(static_cast<VirtualRegister>(m_jit.codeBlock()->activationRegister())));
-            m_jit.loadPtr(JITCompiler::Address(resultGPR, OBJECT_OFFSETOF(ScopeChainNode, next)), resultGPR);
+            m_jit.loadPtr(JITCompiler::Address(resultGPR, JSScope::offsetOfNext()), resultGPR);
             activationNotCreated.link(&m_jit);
         }
         while (skip--)
-            m_jit.loadPtr(JITCompiler::Address(resultGPR, OBJECT_OFFSETOF(ScopeChainNode, next)), resultGPR);
+            m_jit.loadPtr(JITCompiler::Address(resultGPR, JSScope::offsetOfNext()), resultGPR);
         
-        m_jit.loadPtr(JITCompiler::Address(resultGPR, OBJECT_OFFSETOF(ScopeChainNode, object)), resultGPR);
-
         cellResult(resultGPR, m_compileIndex);
         break;
     }
     case GetScopedVar: {
-        SpeculateCellOperand scopeChain(this, node.child1());
+        SpeculateCellOperand scope(this, node.child1());
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
-        m_jit.loadPtr(JITCompiler::Address(scopeChain.gpr(), JSVariableObject::offsetOfRegisters()), resultGPR);
+        m_jit.loadPtr(JITCompiler::Address(scope.gpr(), JSVariableObject::offsetOfRegisters()), resultGPR);
         m_jit.loadPtr(JITCompiler::Address(resultGPR, node.varNumber() * sizeof(Register)), resultGPR);
         jsValueResult(resultGPR, m_compileIndex);
         break;
     }
     case PutScopedVar: {
-        SpeculateCellOperand scopeChain(this, node.child1());
+        SpeculateCellOperand scope(this, node.child1());
         GPRTemporary scratchRegister(this);
         GPRReg scratchGPR = scratchRegister.gpr();
-        m_jit.loadPtr(JITCompiler::Address(scopeChain.gpr(), JSVariableObject::offsetOfRegisters()), scratchGPR);
+        m_jit.loadPtr(JITCompiler::Address(scope.gpr(), JSVariableObject::offsetOfRegisters()), scratchGPR);
         JSValueOperand value(this, node.child2());
         m_jit.storePtr(value.gpr(), JITCompiler::Address(scratchGPR, node.varNumber() * sizeof(Register)));
-        writeBarrier(scopeChain.gpr(), value.gpr(), node.child2(), WriteBarrierForVariableAccess, scratchGPR);
+        writeBarrier(scope.gpr(), value.gpr(), node.child2(), WriteBarrierForVariableAccess, scratchGPR);
         noResult(m_compileIndex);
         break;
     }

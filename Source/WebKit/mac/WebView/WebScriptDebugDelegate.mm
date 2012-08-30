@@ -175,18 +175,18 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
         return [NSArray array];
 
 
-    ScopeChainNode* scopeChain = _private->debuggerCallFrame->scopeChain();
-    JSLockHolder lock(scopeChain->globalData);
-    if (!scopeChain->next)  // global frame
+    JSScope* scope = _private->debuggerCallFrame->scope();
+    JSLockHolder lock(scope->globalData());
+    if (!scope->next())  // global frame
         return [NSArray arrayWithObject:_private->globalObject];
 
     NSMutableArray *scopes = [[NSMutableArray alloc] init];
 
-    ScopeChainIterator end = scopeChain->end();
-    for (ScopeChainIterator it = scopeChain->begin(); it != end; ++it) {
+    ScopeChainIterator end = scope->end();
+    for (ScopeChainIterator it = scope->begin(); it != end; ++it) {
         JSObject* object = it.get();
         if (object->isActivationObject())
-            object = DebuggerActivation::create(*scopeChain->globalData, object);
+            object = DebuggerActivation::create(*scope->globalData(), object);
         [scopes addObject:[self _convertValueToObjcValue:object]];
     }
 

@@ -1048,7 +1048,7 @@ void SpeculativeJIT::emitCall(Node& node)
     
     slowPath.append(m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleePayloadGPR, targetToCheck));
     slowPath.append(m_jit.branch32(MacroAssembler::NotEqual, calleeTagGPR, TrustedImm32(JSValue::CellTag)));
-    m_jit.loadPtr(MacroAssembler::Address(calleePayloadGPR, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), resultPayloadGPR);
+    m_jit.loadPtr(MacroAssembler::Address(calleePayloadGPR, OBJECT_OFFSETOF(JSFunction, m_scope)), resultPayloadGPR);
     m_jit.storePtr(resultPayloadGPR, MacroAssembler::Address(GPRInfo::callFrameRegister, static_cast<ptrdiff_t>(sizeof(Register)) * RegisterFile::ScopeChain + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
     m_jit.store32(MacroAssembler::TrustedImm32(JSValue::CellTag), MacroAssembler::Address(GPRInfo::callFrameRegister, static_cast<ptrdiff_t>(sizeof(Register)) * RegisterFile::ScopeChain + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
 
@@ -3247,38 +3247,36 @@ void SpeculativeJIT::compile(Node& node)
             JITCompiler::Jump activationNotCreated;
             if (checkTopLevel)
                 activationNotCreated = m_jit.branchTestPtr(JITCompiler::Zero, JITCompiler::addressFor(static_cast<VirtualRegister>(m_jit.codeBlock()->activationRegister())));
-            m_jit.loadPtr(JITCompiler::Address(resultGPR, OBJECT_OFFSETOF(ScopeChainNode, next)), resultGPR);
+            m_jit.loadPtr(JITCompiler::Address(resultGPR, JSScope::offsetOfNext()), resultGPR);
             activationNotCreated.link(&m_jit);
         }
         while (skip--)
-            m_jit.loadPtr(JITCompiler::Address(resultGPR, OBJECT_OFFSETOF(ScopeChainNode, next)), resultGPR);
+            m_jit.loadPtr(JITCompiler::Address(resultGPR, JSScope::offsetOfNext()), resultGPR);
         
-        m_jit.loadPtr(JITCompiler::Address(resultGPR, OBJECT_OFFSETOF(ScopeChainNode, object)), resultGPR);
-
         cellResult(resultGPR, m_compileIndex);
         break;
     }
     case GetScopedVar: {
-        SpeculateCellOperand scopeChain(this, node.child1());
+        SpeculateCellOperand scope(this, node.child1());
         GPRTemporary resultTag(this);
         GPRTemporary resultPayload(this);
         GPRReg resultTagGPR = resultTag.gpr();
         GPRReg resultPayloadGPR = resultPayload.gpr();
-        m_jit.loadPtr(JITCompiler::Address(scopeChain.gpr(), JSVariableObject::offsetOfRegisters()), resultPayloadGPR);
+        m_jit.loadPtr(JITCompiler::Address(scope.gpr(), JSVariableObject::offsetOfRegisters()), resultPayloadGPR);
         m_jit.load32(JITCompiler::Address(resultPayloadGPR, node.varNumber() * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
         m_jit.load32(JITCompiler::Address(resultPayloadGPR, node.varNumber() * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultPayloadGPR);
         jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex);
         break;
     }
     case PutScopedVar: {
-        SpeculateCellOperand scopeChain(this, node.child1());
+        SpeculateCellOperand scope(this, node.child1());
         GPRTemporary scratchRegister(this);
         GPRReg scratchGPR = scratchRegister.gpr();
-        m_jit.loadPtr(JITCompiler::Address(scopeChain.gpr(), JSVariableObject::offsetOfRegisters()), scratchGPR);
+        m_jit.loadPtr(JITCompiler::Address(scope.gpr(), JSVariableObject::offsetOfRegisters()), scratchGPR);
         JSValueOperand value(this, node.child2());
         m_jit.store32(value.tagGPR(), JITCompiler::Address(scratchGPR, node.varNumber() * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
         m_jit.store32(value.payloadGPR(), JITCompiler::Address(scratchGPR, node.varNumber() * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
-        writeBarrier(scopeChain.gpr(), value.tagGPR(), node.child2(), WriteBarrierForVariableAccess, scratchGPR);
+        writeBarrier(scope.gpr(), value.tagGPR(), node.child2(), WriteBarrierForVariableAccess, scratchGPR);
         noResult(m_compileIndex);
         break;
     }

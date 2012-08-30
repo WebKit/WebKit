@@ -50,7 +50,7 @@ namespace JSC {
 
         CallFrame* callFrame() const { return m_callFrame; }
         JSGlobalObject* dynamicGlobalObject() const { return m_callFrame->dynamicGlobalObject(); }
-        ScopeChainNode* scopeChain() const { return m_callFrame->scopeChain(); }
+        JSScope* scope() const { return m_callFrame->scope(); }
         JS_EXPORT_PRIVATE const String* functionName() const;
         JS_EXPORT_PRIVATE String calculatedFunctionName() const;
         JS_EXPORT_PRIVATE Type type() const;

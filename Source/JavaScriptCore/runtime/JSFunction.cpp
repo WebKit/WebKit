@@ -38,7 +38,6 @@
 #include "ObjectPrototype.h"
 #include "Parser.h"
 #include "PropertyNameArray.h"
-#include "ScopeChainMark.h"
 
 using namespace WTF;
 using namespace Unicode;
@@ -81,14 +80,14 @@ JSFunction* JSFunction::create(ExecState* exec, JSGlobalObject* globalObject, in
 JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
     : Base(exec->globalData(), structure)
     , m_executable()
-    , m_scopeChain(exec->globalData(), this, globalObject->globalScopeChain())
+    , m_scope(exec->globalData(), this, globalObject)
 {
 }
 
-JSFunction::JSFunction(ExecState* exec, FunctionExecutable* executable, ScopeChainNode* scopeChainNode)
-    : Base(exec->globalData(), scopeChainNode->globalObject->functionStructure())
+JSFunction::JSFunction(ExecState* exec, FunctionExecutable* executable, JSScope* scope)
+    : Base(exec->globalData(), scope->globalObject()->functionStructure())
     , m_executable(exec->globalData(), this, executable)
-    , m_scopeChain(exec->globalData(), this, scopeChainNode)
+    , m_scope(exec->globalData(), this, scope)
 {
 }
 
@@ -101,18 +100,18 @@ void JSFunction::finishCreation(ExecState* exec, NativeExecutable* executable, i
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
 
-void JSFunction::finishCreation(ExecState* exec, FunctionExecutable* executable, ScopeChainNode* scopeChainNode)
+void JSFunction::finishCreation(ExecState* exec, FunctionExecutable* executable, JSScope* scope)
 {
     JSGlobalData& globalData = exec->globalData();
     Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
 
     // Switching the structure here is only safe if we currently have the function structure!
-    ASSERT(structure() == scopeChainNode->globalObject->functionStructure());
+    ASSERT(structure() == scope->globalObject()->functionStructure());
     setStructureAndReallocateStorageIfNecessary(
         globalData,
-        scopeChainNode->globalObject->namedFunctionStructure());
-    putDirectOffset(globalData, scopeChainNode->globalObject->functionNameOffset(), executable->nameValue());
+        scope->globalObject()->namedFunctionStructure());
+    putDirectOffset(globalData, scope->globalObject()->functionNameOffset(), executable->nameValue());
 }
 
 Structure* JSFunction::cacheInheritorID(ExecState* exec)
@@ -169,7 +168,7 @@ void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
 
-    visitor.append(&thisObject->m_scopeChain);
+    visitor.append(&thisObject->m_scope);
     visitor.append(&thisObject->m_executable);
 }
 
@@ -181,7 +180,7 @@ CallType JSFunction::getCallData(JSCell* cell, CallData& callData)
         return CallTypeHost;
     }
     callData.js.functionExecutable = thisObject->jsExecutable();
-    callData.js.scopeChain = thisObject->scope();
+    callData.js.scope = thisObject->scope();
     return CallTypeJS;
 }
 
@@ -450,7 +449,7 @@ ConstructType JSFunction::getConstructData(JSCell* cell, ConstructData& construc
         return ConstructTypeHost;
     }
     constructData.js.functionExecutable = thisObject->jsExecutable();
-    constructData.js.scopeChain = thisObject->scope();
+    constructData.js.scope = thisObject->scope();
     return ConstructTypeJS;
 }
     

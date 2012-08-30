@@ -1070,13 +1070,12 @@ void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
         Jump activationNotCreated;
         if (checkTopLevel)
             activationNotCreated = branchTestPtr(Zero, addressFor(m_codeBlock->activationRegister()));
-        loadPtr(Address(regT0, OBJECT_OFFSETOF(ScopeChainNode, next)), regT0);
+        loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);
         activationNotCreated.link(this);
     }
     while (skip--)
-        loadPtr(Address(regT0, OBJECT_OFFSETOF(ScopeChainNode, next)), regT0);
+        loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);
 
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(ScopeChainNode, object)), regT0);
     loadPtr(Address(regT0, JSVariableObject::offsetOfRegisters()), regT0);
     loadPtr(Address(regT0, currentInstruction[2].u.operand * sizeof(Register)), regT0);
     emitValueProfilingSite();
@@ -1096,12 +1095,11 @@ void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
         Jump activationNotCreated;
         if (checkTopLevel)
             activationNotCreated = branchTestPtr(Zero, addressFor(m_codeBlock->activationRegister()));
-        loadPtr(Address(regT1, OBJECT_OFFSETOF(ScopeChainNode, next)), regT1);
+        loadPtr(Address(regT1, JSScope::offsetOfNext()), regT1);
         activationNotCreated.link(this);
     }
     while (skip--)
-        loadPtr(Address(regT1, OBJECT_OFFSETOF(ScopeChainNode, next)), regT1);
-    loadPtr(Address(regT1, OBJECT_OFFSETOF(ScopeChainNode, object)), regT1);
+        loadPtr(Address(regT1, JSScope::offsetOfNext()), regT1);
 
     emitWriteBarrier(regT1, regT0, regT2, regT3, ShouldFilterImmediates, WriteBarrierForVariableAccess);
 

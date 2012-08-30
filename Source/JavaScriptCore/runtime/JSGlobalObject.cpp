@@ -70,7 +70,6 @@
 #include "RegExpMatchesArray.h"
 #include "RegExpObject.h"
 #include "RegExpPrototype.h"
-#include "ScopeChainMark.h"
 #include "StringConstructor.h"
 #include "StringPrototype.h"
 #include "Debugger.h"
@@ -79,7 +78,7 @@
 
 namespace JSC {
 
-const ClassInfo JSGlobalObject::s_info = { "GlobalObject", &JSSegmentedVariableObject::s_info, 0, ExecState::globalObjectTable, CREATE_METHOD_TABLE(JSGlobalObject) };
+const ClassInfo JSGlobalObject::s_info = { "GlobalObject", &Base::s_info, 0, ExecState::globalObjectTable, CREATE_METHOD_TABLE(JSGlobalObject) };
 
 const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptExperimentsEnabled };
 
@@ -107,8 +106,7 @@ static const int initialTickCountThreshold = 255;
 static const int preferredScriptCheckTimeInterval = 1000;
 
 JSGlobalObject::JSGlobalObject(JSGlobalData& globalData, Structure* structure, const GlobalObjectMethodTable* globalObjectMethodTable)
-    : JSSegmentedVariableObject(globalData, structure)
-    , m_globalScopeChain()
+    : Base(globalData, structure, this, this, 0)
     , m_masqueradesAsUndefinedWatchpoint(adoptRef(new WatchpointSet(InitializedWatching)))
     , m_weakRandom(Options::forceWeakRandomSeed() ? Options::forcedWeakRandomSeed() : static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
     , m_evalEnabled(true)
@@ -133,10 +131,9 @@ void JSGlobalObject::destroy(JSCell* cell)
 void JSGlobalObject::init(JSObject* thisValue)
 {
     ASSERT(globalData().apiLock().currentThreadIsHoldingLock());
-    
-    m_globalScopeChain.set(globalData(), this, ScopeChainNode::create(0, this, &globalData(), this, thisValue));
 
-    JSGlobalObject::globalExec()->init(0, 0, m_globalScopeChain.get(), CallFrame::noCaller(), 0, 0);
+    setGlobalThis(globalData(), thisValue);
+    JSGlobalObject::globalExec()->init(0, 0, this, CallFrame::noCaller(), 0, 0);
 
     m_debugger = 0;
 
@@ -150,7 +147,7 @@ void JSGlobalObject::put(JSCell* cell, ExecState* exec, PropertyName propertyNam
 
     if (symbolTablePut(thisObject, exec, propertyName, value, slot.isStrictMode()))
         return;
-    JSSegmentedVariableObject::put(thisObject, exec, propertyName, value, slot);
+    Base::put(thisObject, exec, propertyName, value, slot);
 }
 
 void JSGlobalObject::putDirectVirtual(JSObject* object, ExecState* exec, PropertyName propertyName, JSValue value, unsigned attributes)
@@ -163,7 +160,7 @@ void JSGlobalObject::putDirectVirtual(JSObject* object, ExecState* exec, Propert
 
     JSValue valueBefore = thisObject->getDirect(exec->globalData(), propertyName);
     PutPropertySlot slot;
-    JSSegmentedVariableObject::put(thisObject, exec, propertyName, value, slot);
+    Base::put(thisObject, exec, propertyName, value, slot);
     if (!valueBefore) {
         JSValue valueAfter = thisObject->getDirect(exec->globalData(), propertyName);
         if (valueAfter)
@@ -345,9 +342,8 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-    JSSegmentedVariableObject::visitChildren(thisObject, visitor);
+    Base::visitChildren(thisObject, visitor);
 
-    visitor.append(&thisObject->m_globalScopeChain);
     visitor.append(&thisObject->m_methodCallDummy);
 
     visitor.append(&thisObject->m_regExpConstructor);
@@ -418,7 +414,7 @@ void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
 bool JSGlobalObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(cell);
-    if (getStaticFunctionSlot<JSSegmentedVariableObject>(exec, ExecState::globalObjectTable(exec), thisObject, propertyName, slot))
+    if (getStaticFunctionSlot<Base>(exec, ExecState::globalObjectTable(exec), thisObject, propertyName, slot))
         return true;
     return symbolTableGet(thisObject, propertyName, slot);
 }
@@ -426,7 +422,7 @@ bool JSGlobalObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyN
 bool JSGlobalObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
-    if (getStaticFunctionDescriptor<JSSegmentedVariableObject>(exec, ExecState::globalObjectTable(exec), thisObject, propertyName, descriptor))
+    if (getStaticFunctionDescriptor<Base>(exec, ExecState::globalObjectTable(exec), thisObject, propertyName, descriptor))
         return true;
     return symbolTableGet(thisObject, propertyName, descriptor);
 }

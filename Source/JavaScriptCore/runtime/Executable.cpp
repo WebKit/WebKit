@@ -158,13 +158,13 @@ void FunctionExecutable::destroy(JSCell* cell)
     static_cast<FunctionExecutable*>(cell)->FunctionExecutable::~FunctionExecutable();
 }
 
-JSObject* EvalExecutable::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode, unsigned bytecodeIndex)
+JSObject* EvalExecutable::compileOptimized(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
 {
     ASSERT(exec->globalData().dynamicGlobalObject);
     ASSERT(!!m_evalCodeBlock);
     JSObject* error = 0;
     if (m_evalCodeBlock->getJITType() != JITCode::topTierJIT())
-        error = compileInternal(exec, scopeChainNode, JITCode::nextTierJIT(m_evalCodeBlock->getJITType()), bytecodeIndex);
+        error = compileInternal(exec, scope, JITCode::nextTierJIT(m_evalCodeBlock->getJITType()), bytecodeIndex);
     ASSERT(!!m_evalCodeBlock);
     return error;
 }
@@ -191,7 +191,7 @@ inline const char* samplingDescription(JITCode::JITType jitType)
     }
 }
 
-JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType, unsigned bytecodeIndex)
+JSObject* EvalExecutable::compileInternal(ExecState* exec, JSScope* scope, JITCode::JITType jitType, unsigned bytecodeIndex)
 {
     SamplingRegion samplingRegion(samplingDescription(jitType));
     
@@ -217,12 +217,12 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
         }
         recordParse(evalNode->features(), evalNode->hasCapturedVariables(), evalNode->lineNo(), evalNode->lastLine());
         
-        JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
+        JSGlobalObject* globalObject = scope->globalObject();
         
         OwnPtr<CodeBlock> previousCodeBlock = m_evalCodeBlock.release();
         ASSERT((jitType == JITCode::bottomTierJIT()) == !previousCodeBlock);
-        m_evalCodeBlock = adoptPtr(new EvalCodeBlock(this, globalObject, source().provider(), scopeChainNode->localDepth(), previousCodeBlock.release()));
-        OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(evalNode.get(), scopeChainNode, m_evalCodeBlock->symbolTable(), m_evalCodeBlock.get(), !!m_evalCodeBlock->alternative() ? OptimizingCompilation : FirstCompilation)));
+        m_evalCodeBlock = adoptPtr(new EvalCodeBlock(this, globalObject, source().provider(), scope->localDepth(), previousCodeBlock.release()));
+        OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(evalNode.get(), scope, m_evalCodeBlock->symbolTable(), m_evalCodeBlock.get(), !!m_evalCodeBlock->alternative() ? OptimizingCompilation : FirstCompilation)));
         if ((exception = generator->generate())) {
             m_evalCodeBlock = static_pointer_cast<EvalCodeBlock>(m_evalCodeBlock->releaseAlternative());
             evalNode->destroyData();
@@ -300,13 +300,13 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
     return exception;
 }
 
-JSObject* ProgramExecutable::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode, unsigned bytecodeIndex)
+JSObject* ProgramExecutable::compileOptimized(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
 {
     ASSERT(exec->globalData().dynamicGlobalObject);
     ASSERT(!!m_programCodeBlock);
     JSObject* error = 0;
     if (m_programCodeBlock->getJITType() != JITCode::topTierJIT())
-        error = compileInternal(exec, scopeChainNode, JITCode::nextTierJIT(m_programCodeBlock->getJITType()), bytecodeIndex);
+        error = compileInternal(exec, scope, JITCode::nextTierJIT(m_programCodeBlock->getJITType()), bytecodeIndex);
     ASSERT(!!m_programCodeBlock);
     return error;
 }
@@ -318,7 +318,7 @@ bool ProgramExecutable::jitCompile(ExecState* exec)
 }
 #endif
 
-JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType, unsigned bytecodeIndex)
+JSObject* ProgramExecutable::compileInternal(ExecState* exec, JSScope* scope, JITCode::JITType jitType, unsigned bytecodeIndex)
 {
     SamplingRegion samplingRegion(samplingDescription(jitType));
     
@@ -342,12 +342,12 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
         }
         recordParse(programNode->features(), programNode->hasCapturedVariables(), programNode->lineNo(), programNode->lastLine());
 
-        JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
+        JSGlobalObject* globalObject = scope->globalObject();
     
         OwnPtr<CodeBlock> previousCodeBlock = m_programCodeBlock.release();
         ASSERT((jitType == JITCode::bottomTierJIT()) == !previousCodeBlock);
         m_programCodeBlock = adoptPtr(new ProgramCodeBlock(this, GlobalCode, globalObject, source().provider(), previousCodeBlock.release()));
-        OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(programNode.get(), scopeChainNode, globalObject->symbolTable(), m_programCodeBlock.get(), !!m_programCodeBlock->alternative() ? OptimizingCompilation : FirstCompilation)));
+        OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(programNode.get(), scope, globalObject->symbolTable(), m_programCodeBlock.get(), !!m_programCodeBlock->alternative() ? OptimizingCompilation : FirstCompilation)));
         if ((exception = generator->generate())) {
             m_programCodeBlock = static_pointer_cast<ProgramCodeBlock>(m_programCodeBlock->releaseAlternative());
             programNode->destroyData();
@@ -431,24 +431,24 @@ FunctionCodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKi
     return result;
 }
 
-JSObject* FunctionExecutable::compileOptimizedForCall(ExecState* exec, ScopeChainNode* scopeChainNode, unsigned bytecodeIndex)
+JSObject* FunctionExecutable::compileOptimizedForCall(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
 {
     ASSERT(exec->globalData().dynamicGlobalObject);
     ASSERT(!!m_codeBlockForCall);
     JSObject* error = 0;
     if (m_codeBlockForCall->getJITType() != JITCode::topTierJIT())
-        error = compileForCallInternal(exec, scopeChainNode, JITCode::nextTierJIT(m_codeBlockForCall->getJITType()), bytecodeIndex);
+        error = compileForCallInternal(exec, scope, JITCode::nextTierJIT(m_codeBlockForCall->getJITType()), bytecodeIndex);
     ASSERT(!!m_codeBlockForCall);
     return error;
 }
 
-JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, ScopeChainNode* scopeChainNode, unsigned bytecodeIndex)
+JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
 {
     ASSERT(exec->globalData().dynamicGlobalObject);
     ASSERT(!!m_codeBlockForConstruct);
     JSObject* error = 0;
     if (m_codeBlockForConstruct->getJITType() != JITCode::topTierJIT())
-        error = compileForConstructInternal(exec, scopeChainNode, JITCode::nextTierJIT(m_codeBlockForConstruct->getJITType()), bytecodeIndex);
+        error = compileForConstructInternal(exec, scope, JITCode::nextTierJIT(m_codeBlockForConstruct->getJITType()), bytecodeIndex);
     ASSERT(!!m_codeBlockForConstruct);
     return error;
 }
@@ -470,14 +470,14 @@ FunctionCodeBlock* FunctionExecutable::codeBlockWithBytecodeFor(CodeSpecializati
     return baselineCodeBlockFor(kind);
 }
 
-PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(ScopeChainNode* scopeChainNode, CompilationKind compilationKind, CodeSpecializationKind specializationKind, JSObject*& exception)
+PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(JSScope* scope, CompilationKind compilationKind, CodeSpecializationKind specializationKind, JSObject*& exception)
 {
     if (!!codeBlockFor(specializationKind))
         return adoptPtr(new FunctionCodeBlock(CodeBlock::CopyParsedBlock, *codeBlockFor(specializationKind)));
     
     exception = 0;
-    JSGlobalData* globalData = scopeChainNode->globalData;
-    JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
+    JSGlobalData* globalData = scope->globalData();
+    JSGlobalObject* globalObject = scope->globalObject();
     RefPtr<FunctionBodyNode> body = parse<FunctionBodyNode>(globalData, globalObject, m_source, m_parameters.get(), isStrictMode() ? JSParseStrict : JSParseNormal, FunctionBodyNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, 0, 0, &exception);
 
     if (!body) {
@@ -492,7 +492,7 @@ PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(ScopeChain
     OwnPtr<FunctionCodeBlock> result;
     ASSERT((compilationKind == FirstCompilation) == !codeBlockFor(specializationKind));
     result = adoptPtr(new FunctionCodeBlock(this, FunctionCode, globalObject, source().provider(), source().startOffset(), specializationKind == CodeForConstruct));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(body.get(), scopeChainNode, result->symbolTable(), result.get(), compilationKind)));
+    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(body.get(), scope, result->symbolTable(), result.get(), compilationKind)));
     exception = generator->generate();
     body->destroyData();
     if (exception)
@@ -502,7 +502,7 @@ PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(ScopeChain
     return result.release();
 }
 
-JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType, unsigned bytecodeIndex)
+JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, JSScope* scope, JITCode::JITType jitType, unsigned bytecodeIndex)
 {
     SamplingRegion samplingRegion(samplingDescription(jitType));
     
@@ -514,7 +514,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
 #endif
     ASSERT((jitType == JITCode::bottomTierJIT()) == !m_codeBlockForCall);
     JSObject* exception;
-    OwnPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(scopeChainNode, !!m_codeBlockForCall ? OptimizingCompilation : FirstCompilation, CodeForCall, exception);
+    OwnPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(scope, !!m_codeBlockForCall ? OptimizingCompilation : FirstCompilation, CodeForCall, exception);
     if (!newCodeBlock)
         return exception;
 
@@ -545,7 +545,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
     return 0;
 }
 
-JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType, unsigned bytecodeIndex)
+JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, JSScope* scope, JITCode::JITType jitType, unsigned bytecodeIndex)
 {
     SamplingRegion samplingRegion(samplingDescription(jitType));
     
@@ -557,7 +557,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
     
     ASSERT((jitType == JITCode::bottomTierJIT()) == !m_codeBlockForConstruct);
     JSObject* exception;
-    OwnPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(scopeChainNode, !!m_codeBlockForConstruct ? OptimizingCompilation : FirstCompilation, CodeForConstruct, exception);
+    OwnPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(scope, !!m_codeBlockForConstruct ? OptimizingCompilation : FirstCompilation, CodeForConstruct, exception);
     if (!newCodeBlock)
         return exception;
 

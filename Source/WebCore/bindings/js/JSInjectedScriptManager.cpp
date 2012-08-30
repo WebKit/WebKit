@@ -59,7 +59,7 @@ ScriptObject InjectedScriptManager::createInjectedScript(const String& source, S
     JSValue globalThisValue = scriptState->globalThisValue();
 
     JSValue evaluationException;
-    JSValue evaluationReturnValue = JSMainThreadExecState::evaluate(scriptState, globalObject->globalScopeChain(), sourceCode, globalThisValue, &evaluationException);
+    JSValue evaluationReturnValue = JSMainThreadExecState::evaluate(scriptState, sourceCode, globalThisValue, &evaluationException);
     if (evaluationException)
         return ScriptObject();
 

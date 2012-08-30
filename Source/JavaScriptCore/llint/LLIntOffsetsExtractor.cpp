@@ -45,7 +45,7 @@
 #include "LLIntOfflineAsmConfig.h"
 #include "MarkedSpace.h"
 #include "RegisterFile.h"
-#include "ScopeChain.h"
+
 #include "Structure.h"
 #include "StructureChain.h"
 #include "ValueProfile.h"

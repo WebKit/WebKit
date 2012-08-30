@@ -23,10 +23,10 @@
 
 #include "CallFrame.h"
 #include "JSObject.h"
+#include "JSScope.h"
 #include "NumericStrings.h"
-#include "ScopeChain.h"
-#include <new> // for placement new
-#include <string.h> // for strlen
+#include <new>
+#include <string.h>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>

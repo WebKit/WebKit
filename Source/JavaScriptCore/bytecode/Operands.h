@@ -28,7 +28,7 @@
 
 #include "CallFrame.h"
 #include "JSObject.h"
-#include "ScopeChain.h"
+
 #include <wtf/Vector.h>
 
 namespace JSC {

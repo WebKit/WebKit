@@ -44,7 +44,7 @@ namespace JSC {
     class PropertyListNode;
     class ReadModifyResolveNode;
     class RegisterID;
-    class ScopeChainNode;
+    class JSScope;
     class ScopeNode;
 
     typedef unsigned CodeFeatures;

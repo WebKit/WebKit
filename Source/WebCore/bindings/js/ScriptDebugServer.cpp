@@ -295,7 +295,7 @@ void ScriptDebugServer::updateCallStack(ScriptValue*)
 void ScriptDebugServer::dispatchDidPause(ScriptDebugListener* listener)
 {
     ASSERT(m_paused);
-    JSGlobalObject* globalObject = m_currentCallFrame->scopeChain()->globalObject.get();
+    JSGlobalObject* globalObject = m_currentCallFrame->scopeChain()->globalObject();
     ScriptState* state = globalObject->globalExec();
     JSValue jsCallFrame;
     {

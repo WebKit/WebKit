@@ -69,7 +69,7 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
     callSlowCase.append(emitJumpIfNotType(regT0, regT1, JSFunctionType));
 
     // Finish canonical initialization before JS function call.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scope)), regT1);
     emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     // Also initialize ReturnPC for use by lazy linking and exceptions.
@@ -89,7 +89,7 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
     constructSlowCase.append(emitJumpIfNotType(regT0, regT1, JSFunctionType));
 
     // Finish canonical initialization before JS function call.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scope)), regT1);
     emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     // Also initialize ReturnPC for use by lazy linking and exeptions.
@@ -109,7 +109,7 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
     callSlowCase.append(emitJumpIfNotType(regT0, regT1, JSFunctionType));
 
     // Finish canonical initialization before JS function call.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scope)), regT1);
     emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
@@ -133,7 +133,7 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
     constructSlowCase.append(emitJumpIfNotType(regT0, regT1, JSFunctionType));
 
     // Finish canonical initialization before JS function call.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scope)), regT1);
     emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
@@ -1586,7 +1586,7 @@ void JIT::emit_op_convert_this(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_convert_this(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    void* globalThis = m_codeBlock->globalObject()->globalScopeChain()->globalThis.get();
+    void* globalThis = m_codeBlock->globalObject()->globalThis();
     unsigned thisRegister = currentInstruction[1].u.operand;
 
     linkSlowCase(iter);

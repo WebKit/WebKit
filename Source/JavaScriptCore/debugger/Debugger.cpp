@@ -78,9 +78,9 @@ inline void Recompiler::operator()(JSCell* cell)
     if (!m_functionExecutables.add(executable).isNewEntry)
         return;
 
-    ExecState* exec = function->scope()->globalObject->JSGlobalObject::globalExec();
+    ExecState* exec = function->scope()->globalObject()->JSGlobalObject::globalExec();
     executable->clearCodeIfNotCompiling();
-    if (m_debugger == function->scope()->globalObject->debugger())
+    if (m_debugger == function->scope()->globalObject()->debugger())
         m_sourceProviders.add(executable->source().provider(), exec);
 }
 
@@ -133,7 +133,7 @@ JSValue evaluateInGlobalCallFrame(const String& script, JSValue& exception, JSGl
         return exception;
     }
 
-    JSValue result = globalData.interpreter->execute(eval, globalCallFrame, globalObject, globalCallFrame->scopeChain());
+    JSValue result = globalData.interpreter->execute(eval, globalCallFrame, globalObject, globalCallFrame->scope());
     if (globalData.exception) {
         exception = globalData.exception;
         globalData.exception = JSValue();

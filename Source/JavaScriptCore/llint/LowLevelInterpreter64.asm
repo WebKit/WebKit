@@ -857,14 +857,14 @@ macro getScope(deBruijinIndexOperand, scopeCheck)
     # Need to conditionally skip over one scope.
     btpz [cfr, t1, 8], .noActivation
     scopeCheck(t0, t1)
-    loadp ScopeChainNode::next[t0], t0
+    loadp JSScope::m_next[t0], t0
 .noActivation:
     subi 1, t2
     
     btiz t2, .done
 .loop:
     scopeCheck(t0, t1)
-    loadp ScopeChainNode::next[t0], t0
+    loadp JSScope::m_next[t0], t0
     subi 1, t2
     btinz t2, .loop
 
@@ -878,8 +878,7 @@ _llint_op_resolve_global_dynamic:
     getScope(
         40[PB, PC, 8],
         macro (scope, scratch)
-            loadp ScopeChainNode::object[scope], scratch
-            bpneq JSCell::m_structure[scratch], t3, .opResolveGlobalDynamicSuperSlow
+            bpneq JSCell::m_structure[scope], t3, .opResolveGlobalDynamicSuperSlow
         end)
     resolveGlobal(7, .opResolveGlobalDynamicSlow)
     dispatch(7)
@@ -902,7 +901,6 @@ _llint_op_get_scoped_var:
     getScope(24[PB, PC, 8], macro (scope, scratch) end)
     loadis 8[PB, PC, 8], t1
     loadis 16[PB, PC, 8], t2
-    loadp ScopeChainNode::object[t0], t0
     loadp JSVariableObject::m_registers[t0], t0
     loadp [t0, t2, 8], t3
     storep t3, [cfr, t1, 8]
@@ -918,7 +916,6 @@ _llint_op_put_scoped_var:
     loadConstantOrVariable(t1, t3)
     loadis 8[PB, PC, 8], t1
     writeBarrier(t3)
-    loadp ScopeChainNode::object[t0], t0
     loadp JSVariableObject::m_registers[t0], t0
     storep t3, [t0, t1, 8]
     dispatch(4)
@@ -1455,7 +1452,7 @@ macro doCall(slowPath)
     addi 6, PC
     lshifti 3, t3
     addp cfr, t3
-    loadp JSFunction::m_scopeChain[t2], t0
+    loadp JSFunction::m_scope[t2], t0
     storep t2, Callee[t3]
     storep t0, ScopeChain[t3]
     loadis 16 - 48[PB, PC, 8], t2

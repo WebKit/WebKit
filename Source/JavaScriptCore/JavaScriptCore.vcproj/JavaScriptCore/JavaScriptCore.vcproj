@@ -1194,18 +1194,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\ScopeChain.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\ScopeChain.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\ScopeChainMark.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\SmallStrings.cpp"
 				>
 			</File>

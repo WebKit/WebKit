@@ -24,7 +24,7 @@
 #include "HeapRootVisitor.h"
 #include "JSValue.h"
 #include "JSObject.h"
-#include "ScopeChain.h"
+
 
 using std::min;
 

@@ -25,7 +25,7 @@
 #include "CallFrame.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
-#include "ScopeChain.h"
+
 
 #if USE(PTHREADS)
 #include <pthread.h>

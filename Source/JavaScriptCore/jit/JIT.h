@@ -60,7 +60,7 @@ namespace JSC {
     class Interpreter;
     class Register;
     class RegisterFile;
-    class ScopeChainNode;
+    class JSScope;
     class StructureChain;
 
     struct CallLinkInfo;

@@ -30,7 +30,7 @@
 #include <wtf/InlineASM.h>
 #include "JSObject.h"
 #include "JSValueInlineMethods.h"
-#include "ScopeChain.h"
+
 
 namespace JSC {
 

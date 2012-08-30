@@ -29,7 +29,7 @@
 #include "CallFrame.h"
 #include "JSGlobalData.h"
 #include "JSObject.h"
-#include "ScopeChain.h"
+
 
 namespace JSC {
 

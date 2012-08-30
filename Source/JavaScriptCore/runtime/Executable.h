@@ -42,7 +42,7 @@ namespace JSC {
     class FunctionCodeBlock;
     class LLIntOffsetsExtractor;
     class ProgramCodeBlock;
-    class ScopeChainNode;
+    class JSScope;
     
     enum CompilationKind { FirstCompilation, OptimizingCompilation };
 
@@ -367,17 +367,17 @@ namespace JSC {
 
         static void destroy(JSCell*);
 
-        JSObject* compile(ExecState* exec, ScopeChainNode* scopeChainNode)
+        JSObject* compile(ExecState* exec, JSScope* scope)
         {
             ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_evalCodeBlock)
-                error = compileInternal(exec, scopeChainNode, JITCode::bottomTierJIT());
+                error = compileInternal(exec, scope, JITCode::bottomTierJIT());
             ASSERT(!error == !!m_evalCodeBlock);
             return error;
         }
         
-        JSObject* compileOptimized(ExecState*, ScopeChainNode*, unsigned bytecodeIndex);
+        JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex);
         
 #if ENABLE(JIT)
         void jettisonOptimizedCode(JSGlobalData&);
@@ -418,7 +418,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
         EvalExecutable(ExecState*, const SourceCode&, bool);
 
-        JSObject* compileInternal(ExecState*, ScopeChainNode*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
+        JSObject* compileInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
         static void visitChildren(JSCell*, SlotVisitor&);
 
         OwnPtr<EvalCodeBlock> m_evalCodeBlock;
@@ -438,17 +438,17 @@ namespace JSC {
 
         static void destroy(JSCell*);
 
-        JSObject* compile(ExecState* exec, ScopeChainNode* scopeChainNode)
+        JSObject* compile(ExecState* exec, JSScope* scope)
         {
             ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_programCodeBlock)
-                error = compileInternal(exec, scopeChainNode, JITCode::bottomTierJIT());
+                error = compileInternal(exec, scope, JITCode::bottomTierJIT());
             ASSERT(!error == !!m_programCodeBlock);
             return error;
         }
 
-        JSObject* compileOptimized(ExecState*, ScopeChainNode*, unsigned bytecodeIndex);
+        JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex);
         
 #if ENABLE(JIT)
         void jettisonOptimizedCode(JSGlobalData&);
@@ -485,7 +485,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
         ProgramExecutable(ExecState*, const SourceCode&);
 
-        JSObject* compileInternal(ExecState*, ScopeChainNode*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
+        JSObject* compileInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
         static void visitChildren(JSCell*, SlotVisitor&);
 
         OwnPtr<ProgramCodeBlock> m_programCodeBlock;
@@ -513,9 +513,9 @@ namespace JSC {
 
         static void destroy(JSCell*);
 
-        JSFunction* make(ExecState* exec, ScopeChainNode* scopeChain)
+        JSFunction* make(ExecState* exec, JSScope* scope)
         {
-            return JSFunction::create(exec, this, scopeChain);
+            return JSFunction::create(exec, this, scope);
         }
         
         // Returns either call or construct bytecode. This can be appropriate
@@ -531,19 +531,19 @@ namespace JSC {
         
         FunctionCodeBlock* codeBlockWithBytecodeFor(CodeSpecializationKind);
         
-        PassOwnPtr<FunctionCodeBlock> produceCodeBlockFor(ScopeChainNode*, CompilationKind, CodeSpecializationKind, JSObject*& exception);
+        PassOwnPtr<FunctionCodeBlock> produceCodeBlockFor(JSScope*, CompilationKind, CodeSpecializationKind, JSObject*& exception);
 
-        JSObject* compileForCall(ExecState* exec, ScopeChainNode* scopeChainNode)
+        JSObject* compileForCall(ExecState* exec, JSScope* scope)
         {
             ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_codeBlockForCall)
-                error = compileForCallInternal(exec, scopeChainNode, JITCode::bottomTierJIT());
+                error = compileForCallInternal(exec, scope, JITCode::bottomTierJIT());
             ASSERT(!error == !!m_codeBlockForCall);
             return error;
         }
 
-        JSObject* compileOptimizedForCall(ExecState*, ScopeChainNode*, unsigned bytecodeIndex);
+        JSObject* compileOptimizedForCall(ExecState*, JSScope*, unsigned bytecodeIndex);
         
 #if ENABLE(JIT)
         void jettisonOptimizedCodeForCall(JSGlobalData&);
@@ -561,17 +561,17 @@ namespace JSC {
             return *m_codeBlockForCall;
         }
 
-        JSObject* compileForConstruct(ExecState* exec, ScopeChainNode* scopeChainNode)
+        JSObject* compileForConstruct(ExecState* exec, JSScope* scope)
         {
             ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_codeBlockForConstruct)
-                error = compileForConstructInternal(exec, scopeChainNode, JITCode::bottomTierJIT());
+                error = compileForConstructInternal(exec, scope, JITCode::bottomTierJIT());
             ASSERT(!error == !!m_codeBlockForConstruct);
             return error;
         }
 
-        JSObject* compileOptimizedForConstruct(ExecState*, ScopeChainNode*, unsigned bytecodeIndex);
+        JSObject* compileOptimizedForConstruct(ExecState*, JSScope*, unsigned bytecodeIndex);
         
 #if ENABLE(JIT)
         void jettisonOptimizedCodeForConstruct(JSGlobalData&);
@@ -589,28 +589,28 @@ namespace JSC {
             return *m_codeBlockForConstruct;
         }
         
-        JSObject* compileFor(ExecState* exec, ScopeChainNode* scopeChainNode, CodeSpecializationKind kind)
+        JSObject* compileFor(ExecState* exec, JSScope* scope, CodeSpecializationKind kind)
         {
             ASSERT(exec->callee());
             ASSERT(exec->callee()->inherits(&JSFunction::s_info));
             ASSERT(jsCast<JSFunction*>(exec->callee())->jsExecutable() == this);
 
             if (kind == CodeForCall)
-                return compileForCall(exec, scopeChainNode);
+                return compileForCall(exec, scope);
             ASSERT(kind == CodeForConstruct);
-            return compileForConstruct(exec, scopeChainNode);
+            return compileForConstruct(exec, scope);
         }
         
-        JSObject* compileOptimizedFor(ExecState* exec, ScopeChainNode* scopeChainNode, unsigned bytecodeIndex, CodeSpecializationKind kind)
+        JSObject* compileOptimizedFor(ExecState* exec, JSScope* scope, unsigned bytecodeIndex, CodeSpecializationKind kind)
         {
             ASSERT(exec->callee());
             ASSERT(exec->callee()->inherits(&JSFunction::s_info));
             ASSERT(jsCast<JSFunction*>(exec->callee())->jsExecutable() == this);
             
             if (kind == CodeForCall)
-                return compileOptimizedForCall(exec, scopeChainNode, bytecodeIndex);
+                return compileOptimizedForCall(exec, scope, bytecodeIndex);
             ASSERT(kind == CodeForConstruct);
-            return compileOptimizedForConstruct(exec, scopeChainNode, bytecodeIndex);
+            return compileOptimizedForConstruct(exec, scope, bytecodeIndex);
         }
         
 #if ENABLE(JIT)
@@ -691,8 +691,8 @@ namespace JSC {
         FunctionExecutable(JSGlobalData&, const Identifier& name, const Identifier& inferredName, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool);
         FunctionExecutable(ExecState*, const Identifier& name, const Identifier& inferredName, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool);
 
-        JSObject* compileForCallInternal(ExecState*, ScopeChainNode*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
-        JSObject* compileForConstructInternal(ExecState*, ScopeChainNode*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
+        JSObject* compileForCallInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
+        JSObject* compileForConstructInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
         
         OwnPtr<FunctionCodeBlock>& codeBlockFor(CodeSpecializationKind kind)
         {

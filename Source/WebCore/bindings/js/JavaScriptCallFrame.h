@@ -69,7 +69,7 @@ public:
 
     String functionName() const;
     JSC::DebuggerCallFrame::Type type() const;
-    JSC::ScopeChainNode* scopeChain() const;
+    JSC::JSScope* scopeChain() const;
     JSC::JSGlobalObject* dynamicGlobalObject() const;
     JSC::ExecState* exec() const;
 

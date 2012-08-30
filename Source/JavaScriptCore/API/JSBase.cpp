@@ -53,7 +53,7 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
     SourceCode source = makeSource(script->ustring(), sourceURL->ustring(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber::first()));
 
     JSValue evaluationException;
-    JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), source, jsThisObject, &evaluationException);
+    JSValue returnValue = evaluate(globalObject->globalExec(), source, jsThisObject, &evaluationException);
 
     if (evaluationException) {
         if (exception)

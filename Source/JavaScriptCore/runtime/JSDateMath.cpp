@@ -73,7 +73,7 @@
 #include "JSDateMath.h"
 
 #include "JSObject.h"
-#include "ScopeChain.h"
+#include "JSScope.h"
 
 #include <algorithm>
 #include <limits.h>

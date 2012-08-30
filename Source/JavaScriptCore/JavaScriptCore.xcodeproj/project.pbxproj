@@ -326,7 +326,6 @@
 		14469DE6107EC7E700650446 /* ObjectPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2680C80E16D4E900A06E92 /* ObjectPrototype.cpp */; };
 		14469DE7107EC7E700650446 /* PropertyNameArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65400C0F0A69BAF200509887 /* PropertyNameArray.cpp */; };
 		14469DE8107EC7E700650446 /* PropertySlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65621E6B089E859700760F35 /* PropertySlot.cpp */; };
-		14469DEA107EC7E700650446 /* ScopeChain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9374D3A8038D9D74008635CE /* ScopeChain.cpp */; };
 		14469DEB107EC7E700650446 /* StringConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC18C3C00E16EE3300B34460 /* StringConstructor.cpp */; };
 		14469DEC107EC7E700650446 /* StringObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC18C3C20E16EE3300B34460 /* StringObject.cpp */; };
 		14469DED107EC7E700650446 /* StringPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC18C3C50E16EE3300B34460 /* StringPrototype.cpp */; };
@@ -654,7 +653,6 @@
 		BC18C45B0E16F5CD00B34460 /* RegExpObject.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A87C0255597D01FF60F7 /* RegExpObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C45D0E16F5CD00B34460 /* Register.h in Headers */ = {isa = PBXBuildFile; fileRef = 149B24FF0D8AF6D1009CB8C7 /* Register.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C45E0E16F5CD00B34460 /* RegisterFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D792640DAA03FB001A9F05 /* RegisterFile.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC18C4610E16F5CD00B34460 /* ScopeChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 9374D3A7038D9D74008635CE /* ScopeChain.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4630E16F5CD00B34460 /* SourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E866ED0DD59AFA00A2B2A1 /* SourceProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4640E16F5CD00B34460 /* SourceCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E866EE0DD59AFA00A2B2A1 /* SourceCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4660E16F5CD00B34460 /* StringConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C3C10E16EE3300B34460 /* StringConstructor.h */; };
@@ -1165,7 +1163,6 @@
 		65EA73620BAE35D1001BB560 /* CommonIdentifiers.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CommonIdentifiers.cpp; sourceTree = "<group>"; };
 		65EA73630BAE35D1001BB560 /* CommonIdentifiers.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CommonIdentifiers.h; sourceTree = "<group>"; };
 		704FD35305697E6D003DBED9 /* BooleanObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = BooleanObject.h; sourceTree = "<group>"; tabWidth = 8; };
-		7E2C6C980D31C6B6002D44E2 /* ScopeChainMark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopeChainMark.h; sourceTree = "<group>"; };
 		7E4EE7080EBB7963005934AA /* StructureChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureChain.h; sourceTree = "<group>"; };
 		7E4EE70E0EBB7A5B005934AA /* StructureChain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureChain.cpp; sourceTree = "<group>"; };
 		7EFF00630EC05A9A00AA7C93 /* NodeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeInfo.h; sourceTree = "<group>"; };
@@ -1278,8 +1275,6 @@
 		93345A8812D838C400302BE3 /* StringRecursionChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringRecursionChecker.h; sourceTree = "<group>"; };
 		933A349A038AE7C6008635CE /* Identifier.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Identifier.h; sourceTree = "<group>"; tabWidth = 8; };
 		933A349D038AE80F008635CE /* Identifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Identifier.cpp; sourceTree = "<group>"; tabWidth = 8; };
-		9374D3A7038D9D74008635CE /* ScopeChain.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ScopeChain.h; sourceTree = "<group>"; tabWidth = 8; };
-		9374D3A8038D9D74008635CE /* ScopeChain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScopeChain.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		937B63CC09E766D200A671DD /* DerivedSources.make */ = {isa = PBXFileReference; explicitFileType = sourcecode.make; fileEncoding = 4; path = DerivedSources.make; sourceTree = "<group>"; usesTabs = 1; };
 		938772E5038BFE19008635CE /* JSArray.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JSArray.h; sourceTree = "<group>"; tabWidth = 8; };
 		93ADFCE60CCBD7AC00D30B08 /* JSArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSArray.cpp; sourceTree = "<group>"; };
@@ -2199,9 +2194,6 @@
 				BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */,
 				0F7700911402FF280078EB39 /* SamplingCounter.cpp */,
 				0F77008E1402FDD60078EB39 /* SamplingCounter.h */,
-				9374D3A8038D9D74008635CE /* ScopeChain.cpp */,
-				9374D3A7038D9D74008635CE /* ScopeChain.h */,
-				7E2C6C980D31C6B6002D44E2 /* ScopeChainMark.h */,
 				93303FE80E6A72B500786E6A /* SmallStrings.cpp */,
 				93303FEA0E6A72C000786E6A /* SmallStrings.h */,
 				A781E358141970C700094D90 /* StorageBarrier.h */,
@@ -2745,7 +2737,6 @@
 				869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */,
 				C22B31B9140577D700DB475A /* SamplingCounter.h in Headers */,
 				1429D8860ED21C3D00B89619 /* SamplingTool.h in Headers */,
-				BC18C4610E16F5CD00B34460 /* ScopeChain.h in Headers */,
 				86AE64AA135E5E1C00963012 /* SH4Assembler.h in Headers */,
 				14BA78F113AAB88F005B7C2C /* SlotVisitor.h in Headers */,
 				933040040E6A749400786E6A /* SmallStrings.h in Headers */,
@@ -3407,7 +3398,6 @@
 				1428083A107EC0750013E7B2 /* RegisterFile.cpp in Sources */,
 				0F7700921402FF3C0078EB39 /* SamplingCounter.cpp in Sources */,
 				1429D8850ED21C3D00B89619 /* SamplingTool.cpp in Sources */,
-				14469DEA107EC7E700650446 /* ScopeChain.cpp in Sources */,
 				9330402C0E6A764000786E6A /* SmallStrings.cpp in Sources */,
 				E49DC16B12EF293E00184A1F /* SourceProviderCache.cpp in Sources */,
 				A730B6131250068F009D25B1 /* StrictEvalActivation.cpp in Sources */,

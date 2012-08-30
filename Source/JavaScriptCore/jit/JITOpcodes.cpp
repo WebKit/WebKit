@@ -75,7 +75,7 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
     callSlowCase.append(emitJumpIfNotType(regT0, regT1, JSFunctionType));
 
     // Finish canonical initialization before JS function call.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scope)), regT1);
     emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     // Also initialize ReturnPC for use by lazy linking and exceptions.
@@ -95,7 +95,7 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
     constructSlowCase.append(emitJumpIfNotType(regT0, regT1, JSFunctionType));
 
     // Finish canonical initialization before JS function call.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scope)), regT1);
     emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     // Also initialize ReturnPC for use by lazy linking and exeptions.
@@ -115,7 +115,7 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
     callSlowCase.append(emitJumpIfNotType(regT0, regT1, JSFunctionType));
 
     // Finish canonical initialization before JS function call.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scope)), regT1);
     emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
@@ -138,7 +138,7 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
     constructSlowCase.append(emitJumpIfNotType(regT0, regT1, JSFunctionType));
 
     // Finish canonical initialization before JS function call.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scope)), regT1);
     emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
@@ -1331,7 +1331,7 @@ void JIT::emit_op_profile_did_call(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_convert_this(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    void* globalThis = m_codeBlock->globalObject()->globalScopeChain()->globalThis.get();
+    void* globalThis = m_codeBlock->globalObject()->globalThis();
 
     linkSlowCase(iter);
     if (shouldEmitProfiling())
@@ -1591,15 +1591,13 @@ void JIT::emit_op_resolve_global_dynamic(Instruction* currentInstruction)
         Jump activationNotCreated;
         if (checkTopLevel)
             activationNotCreated = branchTestPtr(Zero, addressFor(m_codeBlock->activationRegister()));
-        loadPtr(Address(regT0, OBJECT_OFFSETOF(ScopeChainNode, object)), regT1);
-        addSlowCase(checkStructure(regT1, m_globalData->activationStructure.get()));
-        loadPtr(Address(regT0, OBJECT_OFFSETOF(ScopeChainNode, next)), regT0);
+        addSlowCase(checkStructure(regT0, m_globalData->activationStructure.get()));
+        loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);
         activationNotCreated.link(this);
     }
     while (skip--) {
-        loadPtr(Address(regT0, OBJECT_OFFSETOF(ScopeChainNode, object)), regT1);
-        addSlowCase(checkStructure(regT1, m_globalData->activationStructure.get()));
-        loadPtr(Address(regT0, OBJECT_OFFSETOF(ScopeChainNode, next)), regT0);
+        addSlowCase(checkStructure(regT0, m_globalData->activationStructure.get()));
+        loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);
     }
     emit_op_resolve_global(currentInstruction, true);
 }

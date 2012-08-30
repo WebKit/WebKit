@@ -901,7 +901,7 @@ static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializ
     ExecState* exec = execCallee->callerFrame();
     JSGlobalData* globalData = &exec->globalData();
 
-    execCallee->setScopeChain(exec->scopeChain());
+    execCallee->setScope(exec->scope());
     execCallee->setCodeBlock(0);
 
     if (kind == CodeForCall) {
@@ -959,7 +959,7 @@ inline char* linkFor(ExecState* execCallee, CodeSpecializationKind kind)
         return reinterpret_cast<char*>(handleHostCall(execCallee, calleeAsValue, kind));
 
     JSFunction* callee = jsCast<JSFunction*>(calleeAsFunctionCell);
-    execCallee->setScopeChain(callee->scopeUnchecked());
+    execCallee->setScope(callee->scopeUnchecked());
     ExecutableBase* executable = callee->executable();
 
     MacroAssemblerCodePtr codePtr;
@@ -1009,7 +1009,7 @@ inline char* virtualFor(ExecState* execCallee, CodeSpecializationKind kind)
         return reinterpret_cast<char*>(handleHostCall(execCallee, calleeAsValue, kind));
     
     JSFunction* function = jsCast<JSFunction*>(calleeAsFunctionCell);
-    execCallee->setScopeChain(function->scopeUnchecked());
+    execCallee->setScope(function->scopeUnchecked());
     ExecutableBase* executable = function->executable();
     if (UNLIKELY(!executable->hasJITCodeFor(kind))) {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
@@ -1128,7 +1128,7 @@ JSCell* DFG_OPERATION operationCreateActivation(ExecState* exec)
     NativeCallFrameTracer tracer(&globalData, exec);
     JSActivation* activation = JSActivation::create(
         globalData, exec, static_cast<FunctionExecutable*>(exec->codeBlock()->ownerExecutable()));
-    exec->setScopeChain(exec->scopeChain()->push(activation));
+    exec->setScope(activation);
     return activation;
 }
 
@@ -1229,7 +1229,7 @@ JSCell* DFG_OPERATION operationNewFunction(ExecState* exec, JSCell* functionExec
     ASSERT(functionExecutable->inherits(&FunctionExecutable::s_info));
     JSGlobalData& globalData = exec->globalData();
     NativeCallFrameTracer tracer(&globalData, exec);
-    return static_cast<FunctionExecutable*>(functionExecutable)->make(exec, exec->scopeChain());
+    return static_cast<FunctionExecutable*>(functionExecutable)->make(exec, exec->scope());
 }
 
 JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState* exec, JSCell* functionExecutableAsCell)
@@ -1237,12 +1237,12 @@ JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState* exec, JSCell* fu
     ASSERT(functionExecutableAsCell->inherits(&FunctionExecutable::s_info));
     FunctionExecutable* functionExecutable =
         static_cast<FunctionExecutable*>(functionExecutableAsCell);
-    JSFunction *function = functionExecutable->make(exec, exec->scopeChain());
+    JSFunction* function = functionExecutable->make(exec, exec->scope());
     if (!functionExecutable->name().isNull()) {
         JSNameScope* functionScopeObject =
             JSNameScope::create(
                 exec, functionExecutable->name(), function, ReadOnly | DontDelete);
-        function->setScope(exec->globalData(), function->scope()->push(functionScopeObject));
+        function->setScope(exec->globalData(), functionScopeObject);
     }
     return function;
 }

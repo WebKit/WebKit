@@ -198,7 +198,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     propertyNameIteratorStructure.set(*this, JSPropertyNameIterator::createStructure(*this, 0, jsNull()));
     getterSetterStructure.set(*this, GetterSetter::createStructure(*this, 0, jsNull()));
     apiWrapperStructure.set(*this, JSAPIValueWrapper::createStructure(*this, 0, jsNull()));
-    scopeChainNodeStructure.set(*this, ScopeChainNode::createStructure(*this, 0, jsNull()));
+    JSScopeStructure.set(*this, JSScope::createStructure(*this, 0, jsNull()));
     executableStructure.set(*this, ExecutableBase::createStructure(*this, 0, jsNull()));
     nativeExecutableStructure.set(*this, NativeExecutable::createStructure(*this, 0, jsNull()));
     evalExecutableStructure.set(*this, EvalExecutable::createStructure(*this, 0, jsNull()));

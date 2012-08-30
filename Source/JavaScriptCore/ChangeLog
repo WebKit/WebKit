@@ -1,3 +1,37 @@
+2012-08-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Use one object instead of two for closures, eliminating ScopeChainNode
+        https://bugs.webkit.org/show_bug.cgi?id=95501
+
+        Reviewed by Filip Pizlo.
+
+        This patch removes ScopeChainNode, and moves all the data and related
+        functions that used to be in ScopeChainNode into JSScope.
+
+        Most of this patch is mechanical changes to use a JSScope* where we used
+        to use a ScopeChainNode*. I've only specifically commented about items
+        that were non-mechanical.
+
+        * runtime/Completion.cpp:
+        (JSC::evaluate):
+        * runtime/Completion.h: Don't require an explicit scope chain argument
+        when evaluating code. Clients never wanted anything other than the
+        global scope, and other arbitrary scopes probably wouldn't work
+        correctly, anyway.
+
+        * runtime/JSScope.cpp:
+        * runtime/JSScope.h:
+        (JSC::JSScope::JSScope): JSScope now requires the data we used to pass to
+        ScopeChainNode, so it can link itself into the scope chain correctly.
+
+        * runtime/JSWithScope.h:
+        (JSC::JSWithScope::create):
+        (JSC::JSWithScope::JSWithScope): JSWithScope gets an extra constructor
+        for specifically supplying your own scope chain. The DOM needs this
+        interface for setting up the scope chain for certain event handlers.
+        Other clients always just push the JSWithScope to the head of the current
+        scope chain.
+
 2012-08-30  Mark Lam  <mark.lam@apple.com>
 
         Render unto #ifdef's that which belong to them.

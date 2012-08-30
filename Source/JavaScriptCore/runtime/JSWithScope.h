@@ -41,6 +41,13 @@ public:
         return withScope;
     }
 
+    static JSWithScope* create(ExecState* exec, JSObject* object, JSScope* next)
+    {
+        JSWithScope* withScope = new (NotNull, allocateCell<JSWithScope>(*exec->heap())) JSWithScope(exec, object, next);
+        withScope->finishCreation(exec->globalData());
+        return withScope;
+    }
+
     JSObject* object() { return m_object.get(); }
 
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -50,14 +57,32 @@ public:
         return Structure::create(globalData, globalObject, proto, TypeInfo(WithScopeType, StructureFlags), &s_info);
     }
 
-    static const ClassInfo s_info;
+    static JS_EXPORTDATA const ClassInfo s_info;
 
 protected:
     static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
 
 private:
     JSWithScope(ExecState* exec, JSObject* object)
-        : Base(exec->globalData(), exec->globalData().withScopeStructure.get())
+        : Base(
+            exec->globalData(),
+            exec->globalData().withScopeStructure.get(),
+            exec->lexicalGlobalObject(),
+            exec->globalThisValue(),
+            exec->scope()
+        )
+        , m_object(exec->globalData(), this, object)
+    {
+    }
+
+    JSWithScope(ExecState* exec, JSObject* object, JSScope* next)
+        : Base(
+            exec->globalData(),
+            exec->globalData().withScopeStructure.get(),
+            exec->lexicalGlobalObject(),
+            exec->globalThisValue(),
+            next
+        )
         , m_object(exec->globalData(), this, object)
     {
     }

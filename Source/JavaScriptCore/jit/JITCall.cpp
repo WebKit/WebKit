@@ -196,7 +196,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     m_callStructureStubCompilationInfo[callLinkInfoIndex].callType = CallLinkInfo::callTypeFor(opcodeID);
     m_callStructureStubCompilationInfo[callLinkInfoIndex].bytecodeIndex = m_bytecodeOffset;
 
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scope)), regT1);
     emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
     m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedCall();
 

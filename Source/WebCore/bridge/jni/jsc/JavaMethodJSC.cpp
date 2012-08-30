@@ -30,7 +30,6 @@
 #if ENABLE(JAVA_BRIDGE)
 
 #include <runtime/JSObject.h>
-#include <runtime/ScopeChain.h>
 #include <wtf/text/StringBuilder.h>
 
 using namespace JSC;

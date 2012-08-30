@@ -27,8 +27,8 @@
 #include "JSStringJoiner.h"
 
 #include "ExceptionHelpers.h"
+#include "JSScope.h"
 #include "JSString.h"
-#include "ScopeChain.h"
 #include <wtf/text/StringImpl.h>
 
 

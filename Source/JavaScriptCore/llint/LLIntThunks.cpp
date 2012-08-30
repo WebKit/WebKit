@@ -32,7 +32,7 @@
 #include "JSObject.h"
 #include "LinkBuffer.h"
 #include "LowLevelInterpreter.h"
-#include "ScopeChain.h"
+
 
 namespace JSC { namespace LLInt {
 

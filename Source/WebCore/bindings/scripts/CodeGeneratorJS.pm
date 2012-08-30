@@ -841,7 +841,7 @@ sub GenerateHeader
     push(@headerContent, "    }\n\n");
 
     # Custom pushEventHandlerScope function
-    push(@headerContent, "    JSC::ScopeChainNode* pushEventHandlerScope(JSC::ExecState*, JSC::ScopeChainNode*) const;\n\n") if $dataNode->extendedAttributes->{"JSCustomPushEventHandlerScope"};
+    push(@headerContent, "    JSC::JSScope* pushEventHandlerScope(JSC::ExecState*, JSC::JSScope*) const;\n\n") if $dataNode->extendedAttributes->{"JSCustomPushEventHandlerScope"};
 
     # Custom call functions
     push(@headerContent, "    static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);\n\n") if $dataNode->extendedAttributes->{"CustomCall"};

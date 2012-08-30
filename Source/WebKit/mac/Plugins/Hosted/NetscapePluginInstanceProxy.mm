@@ -875,7 +875,7 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
 
     UserGestureIndicator gestureIndicator(allowPopups ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
     
-    JSValue result = JSC::evaluate(exec, globalObject->globalScopeChain(), makeSource(script));
+    JSValue result = JSC::evaluate(exec, makeSource(script));
     
     globalObject->globalData().timeoutChecker.stop();
     
