@@ -47,6 +47,11 @@ public:
 
     static const int MaximumCompactPtrAlignedAddressOffset = 60;
 
+    static bool isCompactPtrAlignedAddressOffset(ptrdiff_t value)
+    {
+        return (value >= 0) && (value <= MaximumCompactPtrAlignedAddressOffset);
+    }
+
     enum RelationalCondition {
         Equal = SH4Assembler::EQ,
         NotEqual = SH4Assembler::NE,
@@ -134,6 +139,14 @@ public:
     {
         RegisterID scr = claimScratch();
         load32(src, scr);
+        m_assembler.addlRegReg(scr, dest);
+        releaseScratch(scr);
+    }
+
+    void add32(AbsoluteAddress src, RegisterID dest)
+    {
+        RegisterID scr = claimScratch();
+        load32(src.m_ptr, scr);
         m_assembler.addlRegReg(scr, dest);
         releaseScratch(scr);
     }
@@ -872,6 +885,19 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         ASSERT(address.offset >= 0);
         m_assembler.movlMemRegCompact(address.offset >> 2, address.base, dest);
         return dataLabel;
+    }
+
+    ConvertibleLoadLabel convertibleLoadPtr(Address address, RegisterID dest)
+    {
+        ConvertibleLoadLabel result(this);
+
+        RegisterID scr = claimScratch();
+        m_assembler.movImm8(address.offset, scr);
+        m_assembler.addlRegReg(address.base, scr);
+        m_assembler.movlMemReg(scr, dest);
+        releaseScratch(scr);
+
+        return result;
     }
 
      // Floating-point operations

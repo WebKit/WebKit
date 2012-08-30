@@ -1239,6 +1239,12 @@ public:
         oneShortOp(RTS_OPCODE, false);
     }
 
+    AssemblerLabel labelIgnoringWatchpoints()
+    {
+        m_buffer.ensureSpaceForAnyInstruction();
+        return m_buffer.label();
+    }
+
     AssemblerLabel label()
     {
         m_buffer.ensureSpaceForAnyInstruction();
@@ -2078,6 +2084,30 @@ public:
     static void printInstr(uint16_t opc, unsigned int size, bool isdoubleInst = true) {};
     static void printBlockInstr(uint16_t* first, unsigned int offset, int nbInstr) {};
 #endif
+
+    static void replaceWithLoad(void* instructionStart)
+    {
+        SH4Word* insPtr = reinterpret_cast<SH4Word*>(instructionStart);
+
+        insPtr += 2; // skip MOV and ADD opcodes
+
+        if (((*insPtr) & 0xf00f) != MOVL_READ_RM_OPCODE) {
+            *insPtr = MOVL_READ_RM_OPCODE | (*insPtr & 0x0ff0);
+            cacheFlush(insPtr, sizeof(SH4Word));
+        }
+    }
+
+    static void replaceWithAddressComputation(void* instructionStart)
+    {
+        SH4Word* insPtr = reinterpret_cast<SH4Word*>(instructionStart);
+
+        insPtr += 2; // skip MOV and ADD opcodes
+
+        if (((*insPtr) & 0xf00f) != MOV_OPCODE) {
+            *insPtr = MOV_OPCODE | (*insPtr & 0x0ff0);
+            cacheFlush(insPtr, sizeof(SH4Word));
+        }
+    }
 
 private:
     SH4Buffer m_buffer;

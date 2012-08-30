@@ -1,3 +1,21 @@
+2012-08-30  Julien BRIANCEAU   <jbrianceau@nds.com>
+
+        [sh4] Add missing implementation for JavaScriptCore JIT
+        https://bugs.webkit.org/show_bug.cgi?id=95452
+
+        Reviewed by Oliver Hunt.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::isCompactPtrAlignedAddressOffset):
+        (MacroAssemblerSH4):
+        (JSC::MacroAssemblerSH4::add32):
+        (JSC::MacroAssemblerSH4::convertibleLoadPtr):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::labelIgnoringWatchpoints):
+        (SH4Assembler):
+        (JSC::SH4Assembler::replaceWithLoad):
+        (JSC::SH4Assembler::replaceWithAddressComputation):
+
 2012-08-30  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Eliminate build warnings
