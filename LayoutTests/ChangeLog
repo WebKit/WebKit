@@ -1,3 +1,12 @@
+2012-08-30  Philip Rogers  <pdr@google.com>
+
+        Unreviewed update to test expectations.
+
+        fast/css/font-weight-1.html stopped failing for IMAGE+TEXT and
+        started failing for just IMAGE.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-30  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Add tables/mozilla_expected_failures/ expectations back

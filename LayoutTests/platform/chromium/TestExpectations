@@ -2189,7 +2189,7 @@ BUGCR8729 LINUX ANDROID MAC : http/tests/multipart/invalid-image-data.html = PAS
 BUGCR10370 LINUX ANDROID WIN : fast/css/font-weight-1.html = IMAGE+TEXT
 // Registering the fonts for this test causes other processes (Adium, Firefox)
 // to spin and become unresponsive or crash.
-BUGWK50709 MAC : fast/css/font-weight-1.html = IMAGE+TEXT
+BUGWK50709 MAC : fast/css/font-weight-1.html = IMAGE
 
 /////////////////////////////////////////////////////////////////////////////
 // End DRT failures
