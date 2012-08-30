@@ -3,7 +3,7 @@ Tests MediaSource, SourceBuffer, and SourceBufferList objects.
 EVENT(webkitsourceopen)
 Test MediaSource object type
 EXPECTED (mediaSource == '[object MediaSource]') OK
-EXPECTED (mediaSource instanceof window.MediaSource == 'true') OK
+EXPECTED (mediaSource instanceof window.WebKitMediaSource == 'true') OK
 
 Add a SourceBuffer
 EXPECTED (mediaSource.sourceBuffers.length == '0') OK
@@ -12,11 +12,11 @@ EXPECTED (mediaSource.sourceBuffers.length == '1') OK
 
 Test SourceBufferList object type:
 EXPECTED (mediaSource.sourceBuffers == '[object SourceBufferList]') OK
-EXPECTED (mediaSource.sourceBuffers instanceof window.SourceBufferList == 'true') OK
+EXPECTED (mediaSource.sourceBuffers instanceof window.WebKitSourceBufferList == 'true') OK
 
 Test SourceBuffer object type
-EXPECTED (segmentHelper.sourceBuffer instanceof window.SourceBuffer == 'true') OK
-EXPECTED (mediaSource.sourceBuffers[0] instanceof window.SourceBuffer == 'true') OK
+EXPECTED (segmentHelper.sourceBuffer instanceof window.WebKitSourceBuffer == 'true') OK
+EXPECTED (mediaSource.sourceBuffers[0] instanceof window.WebKitSourceBuffer == 'true') OK
 
 Append init segment
 EXPECTED (mediaSource.sourceBuffers[0].buffered.length == '0') OK

@@ -31,7 +31,7 @@
            {
                consoleWrite("onLoad()");
                video = document.getElementById('v');
-               mediaSource = new MediaSource();
+               mediaSource = new WebKitMediaSource();
                mediaSource.addEventListener('webkitsourceopen', onSourceOpen);
                mediaSource.addEventListener('webkitsourceended', onSourceEnded);
                mediaSource.addEventListener('webkitsourceclose', onSourceClose);

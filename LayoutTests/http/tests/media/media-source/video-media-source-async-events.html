@@ -64,7 +64,7 @@
             function main()
             {
                 var video = document.querySelector('#v');
-                var mediaSource = new MediaSource();
+                var mediaSource = new WebKitMediaSource();
 
                 mediaSource.addEventListener('webkitsourceopen', onSourceOpen);
                 mediaSource.addEventListener('webkitsourceended', onSourceEnded);

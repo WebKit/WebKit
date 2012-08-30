@@ -1,3 +1,21 @@
+2012-08-29  Aaron Colwell  <acolwell@chromium.org>
+
+        Add WebKit prefix to MediaSource, SourceBuffer, & SourceBufferList DOMWindow constructor attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=95247
+
+        Reviewed by Eric Carlson.
+
+        Update MediaSource tests to include the WebKit prefix on MediaSource, SourceBuffer, & SourceBufferTest objects.
+
+        * http/tests/media/media-source/media-source.js:
+        * http/tests/media/media-source/video-media-source-add-and-remove-buffers.html:
+        * http/tests/media/media-source/video-media-source-async-events.html:
+        * http/tests/media/media-source/video-media-source-event-attributes.html:
+        * http/tests/media/media-source/video-media-source-objects-expected.txt:
+        * http/tests/media/media-source/video-media-source-objects.html:
+        * http/tests/media/media-source/video-media-source-play.html:
+        * http/tests/media/media-source/video-media-source-state-changes.html:
+
 2012-08-29  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Canvas should have a distinct role

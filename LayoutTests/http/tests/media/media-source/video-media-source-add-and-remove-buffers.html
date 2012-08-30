@@ -168,7 +168,7 @@
             {
                 findMediaElement();
 
-                mediaSource = new MediaSource();
+                mediaSource = new WebKitMediaSource();
                 waitForEvent('webkitsourceopen', "", false, false, mediaSource);
 
                 segmentHelper.init(video, function(success)

@@ -11,7 +11,7 @@
             {
                 consoleWrite("Test MediaSource object type");
                 testExpected("mediaSource", event.target);
-                testExpected("mediaSource instanceof window.MediaSource", true);
+                testExpected("mediaSource instanceof window.WebKitMediaSource", true);
 
                 consoleWrite("");
                 consoleWrite("Add a SourceBuffer");
@@ -27,8 +27,8 @@
             {
                 consoleWrite("");
                 consoleWrite("Test SourceBuffer object type");
-                testExpected("segmentHelper.sourceBuffer instanceof window.SourceBuffer", true);
-                testExpected("mediaSource.sourceBuffers[0] instanceof window.SourceBuffer", true);
+                testExpected("segmentHelper.sourceBuffer instanceof window.WebKitSourceBuffer", true);
+                testExpected("mediaSource.sourceBuffers[0] instanceof window.WebKitSourceBuffer", true);
 
                 consoleWrite("");
                 consoleWrite("Append init segment");
@@ -72,7 +72,7 @@
             function afterSourceBufferRemoved()
             {
                 consoleWrite("Test that addSourceBuffer() throws and error when the MediaSource is not associated with a media element.");
-                var mediaSource2 = new MediaSource();
+                var mediaSource2 = new WebKitMediaSource();
                 video.src = webkitURL.createObjectURL(mediaSource2);
                 try {
                     mediaSource.addSourceBuffer('video/webm; codecs="vorbis,vp8"');
@@ -97,7 +97,7 @@
                 consoleWrite("");
                 consoleWrite("Test SourceBufferList object type:");
                 testExpected("mediaSource.sourceBuffers", event.target);
-                testExpected("mediaSource.sourceBuffers instanceof window.SourceBufferList", true);
+                testExpected("mediaSource.sourceBuffers instanceof window.WebKitSourceBufferList", true);
 
                 afterSourceBufferAdded();
             }
@@ -130,7 +130,7 @@
             {
                 findMediaElement();
 
-                mediaSource = new MediaSource();
+                mediaSource = new WebKitMediaSource();
 
                 waitForEventAndFail('error');
                 waitForEvent('webkitsourceopen', "", false, false, mediaSource);

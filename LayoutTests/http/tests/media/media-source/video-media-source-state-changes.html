@@ -216,7 +216,7 @@
             {
                 findMediaElement();
 
-                mediaSource = new MediaSource();
+                mediaSource = new WebKitMediaSource();
 
                 waitForEventAndFail('error');
                 waitForEvent('playing');
