@@ -1,3 +1,15 @@
+2012-08-29  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed Gardening. platform/win/accessibility/single-select-children.html times out on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=95405
+
+        This test times out, probably for a similar reason as https://bugs.webkit.org/show_bug.cgi?id=93667.
+        DRT on Windows seems to have a tough time figuring out to continue the test when a select menu has gained focus / is opened.
+
+        Adding to skip list for now to get bots greener.
+
+        * platform/win/Skipped:
+
 2012-08-29  Philip Rogers  <pdr@google.com>
 
        Unreviewed rebaseline after r127035

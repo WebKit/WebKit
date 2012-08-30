@@ -2143,3 +2143,7 @@ fast/css/absolute-child-with-percent-height-inside-relative-parent.html
 editing/deleting/delete-br-004.html
 editing/deleting/delete-br-005.html
 editing/deleting/delete-br-006.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=95405
+# Test times out
+platform/win/accessibility/single-select-children.html
