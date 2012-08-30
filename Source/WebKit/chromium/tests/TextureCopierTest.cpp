@@ -27,7 +27,7 @@
 #include "TextureCopier.h"
 
 #include "FakeWebGraphicsContext3D.h"
-
+#include "GraphicsContext3D.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <wtf/RefPtr.h>
@@ -41,14 +41,13 @@ using testing::_;
 class MockContext : public FakeWebGraphicsContext3D {
 public:
     MOCK_METHOD2(bindFramebuffer, void(WGC3Denum, WebGLId));
-    MOCK_METHOD3(texParameteri, void(GC3Denum target, GC3Denum pname, GC3Dint param));
+    MOCK_METHOD3(texParameteri, void(WGC3Denum target, WGC3Denum pname, WGC3Dint param));
 
-    MOCK_METHOD3(drawArrays, void(GC3Denum mode, GC3Dint first, GC3Dsizei count));
+    MOCK_METHOD3(drawArrays, void(WGC3Denum mode, WGC3Dint first, WGC3Dsizei count));
 };
 
 TEST(TextureCopierTest, testDrawArraysCopy)
 {
-    GraphicsContext3D::Attributes attrs;
     OwnPtr<MockContext> mockContext = adoptPtr(new MockContext);
 
     {

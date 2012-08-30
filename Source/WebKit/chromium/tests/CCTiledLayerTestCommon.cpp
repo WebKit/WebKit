@@ -85,6 +85,11 @@ PassOwnPtr<LayerTextureUpdater::Texture> FakeLayerTextureUpdater::createTexture(
     return adoptPtr(new Texture(this, CCPrioritizedTexture::create(manager)));
 }
 
+LayerTextureUpdater::SampledTexelFormat FakeLayerTextureUpdater::sampledTexelFormat(GC3Denum)
+{
+    return SampledTexelFormatRGBA;
+}
+
 FakeCCTiledLayerImpl::FakeCCTiledLayerImpl(int id)
     : CCTiledLayerImpl(id)
 {
@@ -103,6 +108,11 @@ FakeTiledLayerChromium::FakeTiledLayerChromium(CCPrioritizedTextureManager* text
     setTextureFormat(GraphicsContext3D::RGBA);
     setBorderTexelOption(CCLayerTilingData::NoBorderTexels);
     setIsDrawable(true); // So that we don't get false positives if any of these tests expect to return false from drawsContent() for other reasons.
+}
+
+FakeTiledLayerWithScaledBounds::FakeTiledLayerWithScaledBounds(CCPrioritizedTextureManager* textureManager)
+    : FakeTiledLayerChromium(textureManager)
+{
 }
 
 FakeTiledLayerChromium::~FakeTiledLayerChromium()
@@ -132,9 +142,29 @@ void FakeTiledLayerChromium::setTexturePriorities(const CCPriorityCalculator& ca
     }
 }
 
-FakeTiledLayerWithScaledBounds::FakeTiledLayerWithScaledBounds(CCPrioritizedTextureManager* textureManager)
-    : FakeTiledLayerChromium(textureManager)
+WebCore::CCPrioritizedTextureManager* FakeTiledLayerChromium::textureManager() const
 {
+    return m_textureManager;
+}
+
+WebCore::LayerTextureUpdater* FakeTiledLayerChromium::textureUpdater() const
+{
+    return m_fakeTextureUpdater.get();
+}
+
+WebCore::IntSize FakeTiledLayerWithScaledBounds::contentBounds() const
+{
+    return m_forcedContentBounds;
+}
+
+bool FakeTextureUploader::isBusy()
+{
+    return false;
+}
+
+void FakeTextureUploader::uploadTexture(WebCore::CCResourceProvider* resourceProvider, Parameters upload)
+{
+    upload.texture->updateRect(resourceProvider, upload.sourceRect, upload.destOffset);
 }
 
 } // namespace

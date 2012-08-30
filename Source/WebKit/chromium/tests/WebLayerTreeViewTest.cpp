@@ -35,6 +35,8 @@
 #include <public/WebLayer.h>
 #include <public/WebLayerTreeViewClient.h>
 #include <public/WebThread.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 using namespace WebKit;
 using testing::Mock;

@@ -60,7 +60,7 @@ public:
     virtual ~FakeLayerTextureUpdater();
 
     virtual PassOwnPtr<WebCore::LayerTextureUpdater::Texture> createTexture(WebCore::CCPrioritizedTextureManager*) OVERRIDE;
-    virtual SampledTexelFormat sampledTexelFormat(GC3Denum) OVERRIDE { return SampledTexelFormatRGBA; }
+    virtual SampledTexelFormat sampledTexelFormat(GC3Denum) OVERRIDE;
 
     virtual void prepareToUpdate(const WebCore::IntRect& contentRect, const WebCore::IntSize&, float, float, WebCore::IntRect& resultingOpaqueRect, WebCore::CCRenderingStats&) OVERRIDE;
     // Sets the rect to invalidate during the next call to prepareToUpdate(). After the next
@@ -122,12 +122,12 @@ public:
 
     virtual void setTexturePriorities(const WebCore::CCPriorityCalculator&) OVERRIDE;
 
-    virtual WebCore::CCPrioritizedTextureManager* textureManager() const OVERRIDE { return m_textureManager; }
+    virtual WebCore::CCPrioritizedTextureManager* textureManager() const OVERRIDE;
     FakeLayerTextureUpdater* fakeLayerTextureUpdater() { return m_fakeTextureUpdater.get(); }
     WebCore::FloatRect updateRect() { return m_updateRect; }
 
 protected:
-    virtual WebCore::LayerTextureUpdater* textureUpdater() const OVERRIDE { return m_fakeTextureUpdater.get(); }
+    virtual WebCore::LayerTextureUpdater* textureUpdater() const OVERRIDE;
     virtual void createTextureUpdaterIfNeeded() OVERRIDE { }
 
 private:
@@ -141,7 +141,7 @@ public:
     explicit FakeTiledLayerWithScaledBounds(WebCore::CCPrioritizedTextureManager*);
 
     void setContentBounds(const WebCore::IntSize& contentBounds) { m_forcedContentBounds = contentBounds; }
-    virtual WebCore::IntSize contentBounds() const OVERRIDE { return m_forcedContentBounds; }
+    virtual WebCore::IntSize contentBounds() const OVERRIDE;
 
 protected:
     WebCore::IntSize m_forcedContentBounds;
@@ -149,16 +149,16 @@ protected:
 
 class FakeTextureCopier : public WebCore::TextureCopier {
 public:
-    virtual void copyTexture(Parameters) { }
-    virtual void flush() { }
+    virtual void copyTexture(Parameters) OVERRIDE { }
+    virtual void flush() OVERRIDE { }
 };
 
 class FakeTextureUploader : public WebCore::TextureUploader {
 public:
-    virtual bool isBusy() { return false; }
-    virtual void beginUploads() { }
-    virtual void endUploads() { }
-    virtual void uploadTexture(WebCore::CCResourceProvider* resourceProvider, Parameters upload) { upload.texture->updateRect(resourceProvider, upload.sourceRect, upload.destOffset); }
+    virtual bool isBusy() OVERRIDE;
+    virtual void beginUploads() OVERRIDE { }
+    virtual void endUploads() OVERRIDE { }
+    virtual void uploadTexture(WebCore::CCResourceProvider*, Parameters upload) OVERRIDE;
 };
 
 }

@@ -1,3 +1,52 @@
+2012-08-30  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Clean up some webkit compositor unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=95410
+
+        Reviewed by Adrienne Walker.
+
+        This adds includes that were implicitly being picked up, removes ones that weren't being used, removes
+        dead code, adds OVERRIDE on functions that OVERRIDE, and deinlines virtuals that the chromium clang style
+        plugin is unhappy about.
+
+        * tests/CCAnimationTestCommon.cpp:
+        (WebKitTests::FakeFloatAnimationCurve::duration):
+        (WebKitTests):
+        (WebKitTests::FakeFloatAnimationCurve::getValue):
+        (WebKitTests::FakeTransformTransition::duration):
+        (WebKitTests::FakeFloatTransition::duration):
+        (WebKitTests::FakeLayerAnimationControllerClient::id):
+        (WebKitTests::FakeLayerAnimationControllerClient::setOpacityFromAnimation):
+        (WebKitTests::FakeLayerAnimationControllerClient::opacity):
+        (WebKitTests::FakeLayerAnimationControllerClient::setTransformFromAnimation):
+        (WebKitTests::FakeLayerAnimationControllerClient::transform):
+        * tests/CCAnimationTestCommon.h:
+        (FakeFloatAnimationCurve):
+        (FakeTransformTransition):
+        (FakeFloatTransition):
+        (FakeLayerAnimationControllerClient):
+        * tests/CCTiledLayerTestCommon.cpp:
+        (WebKitTests::FakeLayerTextureUpdater::sampledTexelFormat):
+        (WebKitTests):
+        (WebKitTests::FakeTiledLayerWithScaledBounds::FakeTiledLayerWithScaledBounds):
+        (WebKitTests::FakeTiledLayerChromium::textureManager):
+        (WebKitTests::FakeTiledLayerChromium::textureUpdater):
+        (WebKitTests::FakeTiledLayerWithScaledBounds::contentBounds):
+        (WebKitTests::FakeTextureUploader::isBusy):
+        (WebKitTests::FakeTextureUploader::uploadTexture):
+        * tests/CCTiledLayerTestCommon.h:
+        (FakeLayerTextureUpdater):
+        (FakeTiledLayerChromium):
+        (FakeTiledLayerWithScaledBounds):
+        (FakeTextureUploader):
+        * tests/FakeWebCompositorOutputSurface.h:
+        * tests/TextureCopierTest.cpp:
+        (MockContext):
+        (TEST):
+        * tests/ThrottledTextureUploaderTest.cpp:
+        (WebKit::TEST):
+        * tests/WebLayerTreeViewTest.cpp:
+
 2012-08-29  Hironori Bono  <hbono@chromium.org>
 
         Fix Chromium builds (Win and Mac)

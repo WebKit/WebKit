@@ -28,6 +28,8 @@
 
 #include <public/WebCompositorOutputSurface.h>
 #include <public/WebGraphicsContext3D.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 

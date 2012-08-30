@@ -44,8 +44,8 @@ public:
     FakeFloatAnimationCurve();
     virtual ~FakeFloatAnimationCurve();
 
-    virtual double duration() const OVERRIDE { return 1; }
-    virtual float getValue(double now) const OVERRIDE { return 0; }
+    virtual double duration() const OVERRIDE;
+    virtual float getValue(double now) const OVERRIDE;
     virtual PassOwnPtr<WebCore::CCAnimationCurve> clone() const OVERRIDE;
 };
 
@@ -54,7 +54,7 @@ public:
     FakeTransformTransition(double duration);
     virtual ~FakeTransformTransition();
 
-    virtual double duration() const OVERRIDE { return m_duration; }
+    virtual double duration() const OVERRIDE;
     virtual WebKit::WebTransformationMatrix getValue(double time) const OVERRIDE;
 
     virtual PassOwnPtr<WebCore::CCAnimationCurve> clone() const OVERRIDE;
@@ -68,7 +68,7 @@ public:
     FakeFloatTransition(double duration, float from, float to);
     virtual ~FakeFloatTransition();
 
-    virtual double duration() const OVERRIDE { return m_duration; }
+    virtual double duration() const OVERRIDE;
     virtual float getValue(double time) const OVERRIDE;
 
     virtual PassOwnPtr<WebCore::CCAnimationCurve> clone() const OVERRIDE;
@@ -85,11 +85,11 @@ public:
     virtual ~FakeLayerAnimationControllerClient();
 
     // CCLayerAnimationControllerClient implementation
-    virtual int id() const OVERRIDE { return 0; }
-    virtual void setOpacityFromAnimation(float opacity) OVERRIDE { m_opacity = opacity; }
-    virtual float opacity() const OVERRIDE { return m_opacity; }
-    virtual void setTransformFromAnimation(const WebKit::WebTransformationMatrix& transform) OVERRIDE { m_transform = transform; }
-    virtual const WebKit::WebTransformationMatrix& transform() const OVERRIDE { return m_transform; }
+    virtual int id() const OVERRIDE;
+    virtual void setOpacityFromAnimation(float) OVERRIDE;
+    virtual float opacity() const OVERRIDE;
+    virtual void setTransformFromAnimation(const WebKit::WebTransformationMatrix&) OVERRIDE;
+    virtual const WebKit::WebTransformationMatrix& transform() const OVERRIDE;
 
 private:
     float m_opacity;

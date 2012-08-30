@@ -28,6 +28,7 @@
 
 #include "Extensions3DChromium.h"
 #include "FakeWebGraphicsContext3D.h"
+#include "GraphicsContext3D.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -64,7 +65,6 @@ private:
 
 TEST(ThrottledTextureUploaderTest, IsBusy)
 {
-    GraphicsContext3D::Attributes attrs;
     OwnPtr<FakeWebGraphicsContext3DWithQueryTesting> fakeContext(adoptPtr(new FakeWebGraphicsContext3DWithQueryTesting));
     OwnPtr<ThrottledTextureUploader> uploader = ThrottledTextureUploader::create(fakeContext.get(), 2);
 
