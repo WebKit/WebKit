@@ -1,3 +1,14 @@
+2012-08-30  Rob Buis  <rbuis@rim.com>
+
+        [CMake] Suppress ANGLE compilation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=95377
+
+        Reviewed by Antonio Gomes.
+
+        Change WEBKIT_SET_EXTRA_COMPILER_FLAGS so it has an option to suppress C++ warnings.
+
+        * Source/cmake/WebKitHelpers.cmake:
+
 2012-08-29  Thiago Macieira  <thiago.macieira@intel.com>
 
         Tell git-archive to not export .gitattributes and .gitignore

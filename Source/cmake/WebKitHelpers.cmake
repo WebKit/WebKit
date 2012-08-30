@@ -1,6 +1,9 @@
+INCLUDE(CMakeParseArguments)
 # Sets extra compile flags for a target, depending on the compiler being used.
 # Currently, only GCC is supported.
 MACRO(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
+  SET(options IGNORECXX_WARNINGS)
+  CMAKE_PARSE_ARGUMENTS("OPTION" "IGNORECXX_WARNINGS" "" "" ${ARGN})
   IF (CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     GET_TARGET_PROPERTY(OLD_COMPILE_FLAGS ${_target} COMPILE_FLAGS)
     IF (${OLD_COMPILE_FLAGS} STREQUAL "OLD_COMPILE_FLAGS-NOTFOUND")
@@ -33,11 +36,13 @@ MACRO(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
     SET(OLD_COMPILE_FLAGS "-fno-exceptions -fno-strict-aliasing ${OLD_COMPILE_FLAGS}")
 
     # Enable warnings by default
-    SET(OLD_COMPILE_FLAGS "-W -DANOTHER_BRICK_IN_THE -Wall -Wextra -Wcast-align -Wchar-subscripts -Wformat -Wformat-security -Wmissing-format-attribute -Wno-format-y2k -Wno-parentheses -Wno-unused-parameter -Wpointer-arith  -Wreturn-type -Wundef -Wwrite-strings ${OLD_COMPILE_FLAGS}")
+    IF (NOT ${OPTION_IGNORECXX_WARNINGS})
+        SET(OLD_COMPILE_FLAGS "-W -DANOTHER_BRICK_IN_THE -Wall -Wextra -Wcast-align -Wchar-subscripts -Wformat -Wformat-security -Wmissing-format-attribute -Wno-format-y2k -Wno-parentheses -Wno-unused-parameter -Wpointer-arith  -Wreturn-type -Wundef -Wwrite-strings ${OLD_COMPILE_FLAGS}")
+    ENDIF ()
 
     # Disable C++0x compat warnings for GCC >= 4.6.0 until we build
     # cleanly with that.
-    IF (NOT ${COMPILER_VERSION} VERSION_LESS "4.6.0")
+    IF (NOT ${OPTION_IGNORECXX_WARNINGS} AND NOT ${COMPILER_VERSION} VERSION_LESS "4.6.0")
         SET(OLD_COMPILE_FLAGS "${OLD_COMPILE_FLAGS} -Wno-c++0x-compat")
     ENDIF ()
 
