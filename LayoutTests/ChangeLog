@@ -1,3 +1,23 @@
+2012-08-29  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] Add test case for right-to-left rendering of multiple fields time input UI
+        https://bugs.webkit.org/show_bug.cgi?id=95285
+
+        Reviewed by Kent Tamura.
+
+        This patch adds a new test case of appearance of dir="rtl" case to
+        multiple fields time input UI.
+
+        This patch affects ports which enable both ENABLE_INPUT_TYPE_TIME and
+        ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS.
+
+        Note: I'll do rebaseline for Chromium-Mac and Chromium-Win.
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic.html: Added an input element with dir="rtl".
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png: Updated for a new input element.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.txt: ditto.
+        * platform/chromium/TestExpectations: Disabled time-multiple-fields-appearance-basic.html for Chromium-Mac and Chromium-Win.
+
 2012-08-29  Aaron Colwell  <acolwell@chromium.org>
 
         Add WebKit prefix to MediaSource, SourceBuffer, & SourceBufferList DOMWindow constructor attributes.
