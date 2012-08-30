@@ -72,7 +72,6 @@ fast/events/ondrop-text-html.html
 fast/events/selectstart-by-double-triple-clicks.html
 fast/events/selectstart-by-drag.html
 fast/events/standalone-image-drag-to-editable.html
-fast/events/touch/touch-gesture-click.html
 fast/forms/drag-into-textarea.html
 fast/forms/drag-out-of-textarea.html
 fast/forms/focus-change-on-keypress.html
@@ -197,7 +196,6 @@ fast/dom/HTMLAnchorElement/anchor-nodownload.html
 
 # The EFL port has no support for plugins
 fast/dom/Window/Plug-ins.html
-fast/frames/iframe-reparenting-plugins.html
 fast/frames/sandboxed-iframe-about-blank.html
 fast/frames/sandboxed-iframe-navigation-allowed.html
 fast/frames/sandboxed-iframe-plugins.html
@@ -304,10 +302,6 @@ http/tests/navigation/post-307-response.html
 # Probably related to https://bugs.webkit.org/show_bug.cgi?id=27637
 http/tests/loading/basic-auth-resend-wrong-credentials.html
 
-# Flaky test
-# https://bugs.webkit.org/show_bug.cgi?id=67359
-http/tests/loading/empty-urls.html
-
 # ------------------------------
 # Tests which need investigation
 # ------------------------------
@@ -348,8 +342,6 @@ fast/canvas/canvas-toDataURL-case-insensitive-mimetype.html
 fast/canvas/toDataURL-supportedTypes.html
 
 # BUG: wrong test results that need investigation
-compositing/backface-visibility-hierarchical-transform.html
-compositing/backface-visibility.html
 compositing/checkerboard.html
 compositing/framesets/composited-frame-alignment.html
 compositing/images/direct-pdf-image.html
@@ -542,34 +534,8 @@ mathml/presentation/style.xhtml
 # BUG: tiled backing store takes too long.
 compositing/tiling/crash-huge-layer.html
 
-# BUG: causing infinite ecore errors
-http/tests/websocket/tests/hixie76
-
 # Flaky tests (text diff mismatch)
 http/tests/navigation/document-location-mouseover.html
-http/tests/websocket/tests/hixie76/cross-origin.html
-http/tests/websocket/tests/hixie76/handshake-challenge-randomness.html
-http/tests/websocket/tests/hixie76/handshake-error.html
-http/tests/websocket/tests/hixie76/handshake-fail-by-cross-origin.html
-http/tests/websocket/tests/hixie76/handshake-fail-by-no-connection-header.html
-http/tests/websocket/tests/hixie76/handshake-fail-by-no-cr.html
-http/tests/websocket/tests/hixie76/handshake-fail-by-prepended-null.html
-http/tests/websocket/tests/hixie76/httponly-cookie.pl
-http/tests/websocket/tests/hixie76/long-invalid-header.html
-http/tests/websocket/tests/hixie76/simple.html
-http/tests/websocket/tests/hixie76/sub-protocol-with-space.html
-http/tests/websocket/tests/hixie76/sub-protocol.html
-http/tests/websocket/tests/hixie76/unicode.html
-http/tests/websocket/tests/hixie76/url-no-trailing-slash.html
-http/tests/websocket/tests/hixie76/url-with-credential.html
-http/tests/websocket/tests/hixie76/websocket-protocol-ignored.html
-
-# Unexpected flakiness (tests timed out)
-http/tests/websocket/tests/hixie76/close-on-unload-and-force-gc.html
-http/tests/websocket/tests/hixie76/error-detect.html
-http/tests/websocket/tests/hixie76/null-character.html
-http/tests/websocket/tests/hixie76/url-with-empty-query.html
-http/tests/websocket/tests/hixie76/workers/close-in-onmessage-crash.html
 
 # ------------------------------------
 # Tests for features under development
@@ -589,7 +555,6 @@ http/tests/websocket/tests/hybi/
 # Needs a rebaseline
 fast/events/dont-loose-last-event.html
 fast/events/drag-and-drop-set-drag-data-arguments.html
-fast/events/drag-dataTransfer-live-attributes.html
 fast/events/drag-link.html
 fast/events/moving-text-should-fire-drop-and-dragend-events-2.html
 fast/events/moving-text-should-fire-drop-and-dragend-events.html
@@ -939,7 +904,6 @@ editing/pasteboard/data-transfer-items-drag-drop-string.html
 editing/pasteboard/dataTransfer-setData-getData.html
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
 fast/events/drag-and-drop-subframe-dataTransfer.html
-fast/events/drag-dataTransfer-live-attributes.html
 fast/events/drag-dataTransferItemList-file-handling.html
 fast/events/drag-dataTransferItemList.html
 http/tests/security/dataTransfer-set-data-file-url.html
