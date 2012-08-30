@@ -850,7 +850,7 @@ void Frame::tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea)
         return;
     unsigned size = paintedArea.size();
     // Request repaint from the system
-    for (int n = 0; n < size; ++n)
+    for (unsigned n = 0; n < size; ++n)
         m_page->chrome()->invalidateContentsAndRootView(m_view->contentsToRootView(paintedArea[n]), false);
 }
 

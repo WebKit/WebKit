@@ -53,6 +53,7 @@ PassOwnPtr<GLContext> GLContext::createOffscreenContext(GLContext* sharing)
 #if USE(GLX)
     return GLContextGLX::createContext(0, sharing);
 #endif
+    return nullptr;
 }
 
 // FIXME: This should be a thread local eventually if we
