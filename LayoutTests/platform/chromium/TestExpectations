@@ -3301,9 +3301,6 @@ BUGWK88832 XP : http/tests/xmlhttprequest/origin-exact-matching.html = PASS TIME
 
 BUGCR132898 : http/tests/websocket/tests/hybi/workers/close.html = PASS TEXT
 
-// Flaky
-BUGWK89167 : media/track/track-cue-rendering-snap-to-lines-not-set.html = TEXT PASS
-
 // Timing out on some Windows bots
 BUGWK89510 WIN : gamepad/gamepad-polling-access.html = PASS TIMEOUT
 

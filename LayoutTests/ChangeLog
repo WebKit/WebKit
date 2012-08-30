@@ -1,3 +1,14 @@
+2012-08-30  Victor Carbune  <victor@rosedu.org>
+
+        [Chromium] Layout Test media/track/track-cue-rendering-snap-to-lines-not-set.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=89167
+
+        Reviewed by Eric Carlson.
+
+        Removed possible flaky test from TestExceptations.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-30  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Update css3/filters/custom/effect-custom-transform-parameters.html to remove anti-aliasing issues

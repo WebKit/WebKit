@@ -212,10 +212,6 @@ TextTrackCue::TextTrackCue(ScriptExecutionContext* context, double start, double
     m_displayWritingModeMap[Horizontal] = CSSValueHorizontalTb;
     m_displayWritingModeMap[VerticalGrowingLeft] = CSSValueVerticalRl;
     m_displayWritingModeMap[VerticalGrowingRight] = CSSValueVerticalLr;
-
-    // A text track cue has a text track cue computed line position whose value
-    // is defined in terms of the other aspects of the cue.
-    m_computedLinePosition = calculateComputedLinePosition();
 }
 
 TextTrackCue::~TextTrackCue()
@@ -644,6 +640,10 @@ void TextTrackCue::calculateDisplayParameters()
 
     if (!m_snapToLines && (m_writingDirection == VerticalGrowingLeft || m_writingDirection == VerticalGrowingRight))
         m_displayPosition.first = m_computedLinePosition;
+
+    // A text track cue has a text track cue computed line position whose value
+    // is defined in terms of the other aspects of the cue.
+    m_computedLinePosition = calculateComputedLinePosition();
 }
 
 void TextTrackCue::updateDisplayTree(float movieTime)
