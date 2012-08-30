@@ -1,3 +1,15 @@
+2012-08-30  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Add tables/mozilla_expected_failures/ expectations back
+        https://bugs.webkit.org/show_bug.cgi?id=95483
+
+        Unreviewed gardening.
+
+        It was removed by mistake on r127152. But now I'm moving the tests
+        to TestExpectations since we want to get rid of Skipped.
+
+        * platform/efl/TestExpectations:
+
 2012-08-30  Tony Chang  <tony@chromium.org>
 
         Unreviewed gardening. Update flexitem-stretch-image.html expectations.
