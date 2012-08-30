@@ -124,8 +124,10 @@
 #import <WebKitSystemInterface.h>
 #import <dlfcn.h>
 #import <limits>
+#import <objc/objc-runtime.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
+#import <wtf/ObjcRuntimeExtras.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #import <QuartzCore/QuartzCore.h>
@@ -262,7 +264,7 @@ static IMP oldSetCursorForMouseLocationIMP;
 static void setCursor(NSWindow *self, SEL cmd, NSPoint point)
 {
     if (needsCursorRectsSupportAtPoint(self, point))
-        oldSetCursorForMouseLocationIMP(self, cmd, point);
+        wtfCallIMP(oldSetCursorForMouseLocationIMP, self, cmd, point);
 }
 
 
@@ -296,7 +298,7 @@ static IMP oldSetNeedsDisplayInRectIMP;
 static void setNeedsDisplayInRect(NSView *self, SEL cmd, NSRect invalidRect)
 {
     if (![self _drawnByAncestor]) {
-        oldSetNeedsDisplayInRectIMP(self, cmd, invalidRect);
+        wtfCallIMP(oldSetNeedsDisplayInRectIMP, self, cmd, invalidRect);
         return;
     }
 
@@ -306,14 +308,14 @@ static void setNeedsDisplayInRect(NSView *self, SEL cmd, NSRect invalidRect)
         enclosingWebFrameView = (WebFrameView *)[enclosingWebFrameView superview];
 
     if (!enclosingWebFrameView) {
-        oldSetNeedsDisplayInRectIMP(self, cmd, invalidRect);
+        wtfCallIMP(oldSetNeedsDisplayInRectIMP, self, cmd, invalidRect);
         return;
     }
 
     Frame* coreFrame = core([enclosingWebFrameView webFrame]);
     FrameView* frameView = coreFrame ? coreFrame->view() : 0;
     if (!frameView || !frameView->isEnclosedInCompositingLayer()) {
-        oldSetNeedsDisplayInRectIMP(self, cmd, invalidRect);
+        wtfCallIMP(oldSetNeedsDisplayInRectIMP, self, cmd, invalidRect);
         return;
     }
 

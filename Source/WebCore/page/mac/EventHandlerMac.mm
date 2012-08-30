@@ -50,6 +50,7 @@
 #include "WebCoreSystemInterface.h"
 #include <objc/objc-runtime.h>
 #include <wtf/MainThread.h>
+#include <wtf/ObjcRuntimeExtras.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -412,7 +413,7 @@ static void selfRetainingNSScrollViewScrollWheel(NSScrollView *self, SEL selecto
 
     if (shouldRetainSelf)
         [self retain];
-    originalNSScrollViewScrollWheel(self, selector, event);
+    wtfCallIMP<void>(originalNSScrollViewScrollWheel, self, selector, event);
     if (shouldRetainSelf)
         [self release];
 }

@@ -1,3 +1,20 @@
+2012-08-30  Pratik Solanki  <psolanki@apple.com>
+
+        objc_msgSend and IMP should be cast appropriately before using
+        https://bugs.webkit.org/show_bug.cgi?id=95242
+
+        Reviewed by Benjamin Poulain.
+
+        Add new templates wtfObjcMsgSend and wtfCallIMP that do the appropriate
+        casts to correctly typed function pointers before calling objc_msgSend
+        and IMP methods directly.
+
+        * wtf/Functional.h:
+        (WTF::R): Use wtfObjcMsgSend.
+        * wtf/ObjcRuntimeExtras.h: Added.
+        (wtfObjcMsgSend):
+        (wtfCallIMP):
+
 2012-08-30  Benjamin Poulain  <bpoulain@apple.com>
 
         Replace JSC::UString by WTF::String

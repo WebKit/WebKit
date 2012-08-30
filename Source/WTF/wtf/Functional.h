@@ -34,6 +34,7 @@
 #if PLATFORM(MAC) && COMPILER_SUPPORTS(BLOCKS)
 #include <Block.h>
 #include <objc/objc-runtime.h>
+#include <wtf/ObjcRuntimeExtras.h>
 #endif
 
 namespace WTF {
@@ -634,8 +635,8 @@ public:
         //
         //   dispatch_async(queue, bind(...));
         //
-        id copiedBlock = objc_msgSend((id)block, sel_registerName("copy"));
-        id autoreleasedBlock = objc_msgSend(copiedBlock, sel_registerName("autorelease"));
+        id copiedBlock = wtfObjcMsgSend((id)block, sel_registerName("copy"));
+        id autoreleasedBlock = wtfObjcMsgSend(copiedBlock, sel_registerName("autorelease"));
         return (BlockType)autoreleasedBlock;
     }
 #endif

@@ -29,6 +29,7 @@
 #import "WebDeviceOrientationProvider.h"
 #import "WebViewInternal.h"
 #import <objc/objc-runtime.h>
+#import <wtf/ObjcRuntimeExtras.h>
 
 using namespace WebCore;
 
@@ -70,7 +71,7 @@ id<WebDeviceOrientationProvider> WebDeviceOrientationClient::getProvider() const
     if (!m_provider) {
         m_provider = [m_webView _deviceOrientationProvider];
         if ([m_provider respondsToSelector:@selector(setController:)])
-            objc_msgSend(m_provider, @selector(setController:), m_controller);
+            wtfObjcMsgSend<void>(m_provider, @selector(setController:), m_controller);
     }
     return m_provider;
 }

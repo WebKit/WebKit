@@ -37,6 +37,7 @@
 #import <PDFKit/PDFKit.h>
 #import <WebCore/LocalizedStrings.h>
 #import <objc/runtime.h>
+#import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
@@ -537,7 +538,7 @@ static void PDFViewScrollView_scrollWheel(NSScrollView* self, SEL _cmd, NSEvent 
         }
     }
 
-    oldPDFViewScrollView_scrollWheel(self, _cmd, wheelEvent);
+    wtfCallIMP<void>(oldPDFViewScrollView_scrollWheel, self, _cmd, wheelEvent);
 }
 #endif
 
