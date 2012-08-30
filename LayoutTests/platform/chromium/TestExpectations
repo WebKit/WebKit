@@ -3516,7 +3516,7 @@ BUGWK94528 MAC : fast/text-autosizing/nested-em-line-height.html = PASS IMAGE
 BUGWK94532 LINUX : fast/forms/formmethod-attribute-button-html.html = PASS MISSING
 
 BUGWK94660 : fast/js/create-lots-of-workers.html = PASS CRASH TIMEOUT
-BUGWK95366 DEBUG : css3/flexbox/flexitem-stretch-image.html = TEXT
+BUGWK95366 DEBUG : css3/flexbox/flexitem-stretch-image.html = TEXT PASS
 
 BUGCR67540 BUGWK94735 LINUX : fast/text/emphasis-overlap.html = IMAGE IMAGE+TEXT
 

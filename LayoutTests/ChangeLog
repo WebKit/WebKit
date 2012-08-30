@@ -1,3 +1,10 @@
+2012-08-30  Tony Chang  <tony@chromium.org>
+
+        Unreviewed gardening. Update flexitem-stretch-image.html expectations.
+
+        * platform/chromium/TestExpectations: Mark the test as flaky (passes on Linux and sporadically on Win).
+        * platform/efl/TestExpectations: Remove since the test is passing.
+
 2012-08-30  Jessie Berlin  <jberlin@apple.com>
 
         CSS 2.1 failure: margin-collapse-clear-012 fails
