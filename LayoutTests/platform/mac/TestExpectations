@@ -362,7 +362,7 @@ BUGWK77754 : fast/css/absolute-child-with-percent-height-inside-relative-parent.
 BUGWK92464 DEBUG : fast/events/tabindex-focus-blur-all.html = CRASH PASS
 
 //Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80394
-BUGWK80394 : fast/block/float/024.html = IMAGE+TEXT
+BUGWK80394 : fast/block/float/024.html = TEXT
 BUGWK80394 : fast/block/margin-collapse/empty-clear-blocks.html = IMAGE+TEXT
 BUGWK80394 : fast/block/margin-collapse/025.html = TEXT
 BUGWK80394 : fast/block/margin-collapse/block-inside-inline/025.html = TEXT

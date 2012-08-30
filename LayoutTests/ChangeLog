@@ -1,3 +1,13 @@
+2012-08-30  Jessie Berlin  <jberlin@apple.com>
+
+        CSS 2.1 failure: margin-collapse-clear-012 fails
+        https://bugs.webkit.org/show_bug.cgi?id=80394
+
+        Mark fast/block/float/024.hml as an expected text failure on Mac, not both an image and text
+        failure, since the bots are only seeing it as a text failure.
+
+        * platform/mac/TestExpectations:
+
 2012-08-24  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove uses of ClassInfo in StrictEq and CompareEq in the DFG
