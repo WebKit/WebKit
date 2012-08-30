@@ -32,7 +32,7 @@ namespace WebKit {
 
 const String& WebError::webKitErrorDomain()
 {
-    DEFINE_STATIC_LOCAL(String, webKitErrorDomainString, ("WebKitErrorDomain"));
+    DEFINE_STATIC_LOCAL(String, webKitErrorDomainString, (ASCIILiteral("WebKitErrorDomain")));
     return webKitErrorDomainString;
 }
 

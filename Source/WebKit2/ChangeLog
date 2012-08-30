@@ -1,3 +1,40 @@
+2012-08-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [WK2] Use ASCIILiteral hotness for DEFINE_STATIC_LOCAL string
+        https://bugs.webkit.org/show_bug.cgi?id=95318
+
+        Reviewed by Benjamin Poulain.
+
+        As recommended by http://trac.webkit.org/wiki/EfficientStrings,
+        WebKit2 needs to use ASCIILiteral for the string of DEFINE_STATIC_LOCAL.
+
+        * Shared/WebError.cpp:
+        (WebKit::WebError::webKitErrorDomain):
+        * Shared/WebPreferencesStore.cpp:
+        (WebPreferencesKey):
+        * UIProcess/InspectorServer/WebInspectorServer.cpp:
+        (WebKit::WebInspectorServer::didReceiveWebSocketUpgradeHTTPRequest):
+        * UIProcess/InspectorServer/qt/WebInspectorServerQt.cpp:
+        (WebKit::remoteInspectorPagePath):
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::originKey):
+        (WebKit::WebDatabaseManagerProxy::originQuotaKey):
+        (WebKit::WebDatabaseManagerProxy::originUsageKey):
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsKey):
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsNameKey):
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsDisplayNameKey):
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsExpectedUsageKey):
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsCurrentUsageKey):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::executeEditCommand):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::didBeginEditing):
+        (WebKit::WebEditorClient::respondToChangedContents):
+        (WebKit::WebEditorClient::respondToChangedSelection):
+        (WebKit::WebEditorClient::didEndEditing):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::getWebCoreMemoryCacheStatistics):
+
 2012-08-29  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt][WK2] ApplicationCache LayoutTests failed

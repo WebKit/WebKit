@@ -142,7 +142,7 @@ bool WebInspectorServer::didReceiveWebSocketUpgradeHTTPRequest(WebSocketServerCo
     String path = request->url();
 
     // NOTE: Keep this in sync with WebCore/inspector/front-end/inspector.js.
-    DEFINE_STATIC_LOCAL(const String, inspectorWebSocketConnectionPathPrefix, ("/devtools/page/"));
+    DEFINE_STATIC_LOCAL(const String, inspectorWebSocketConnectionPathPrefix, (ASCIILiteral("/devtools/page/")));
 
     // Unknown path requested.
     if (!path.startsWith(inspectorWebSocketConnectionPathPrefix))

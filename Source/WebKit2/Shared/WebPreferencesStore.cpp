@@ -37,7 +37,7 @@ namespace WebPreferencesKey {
 #define DEFINE_KEY_GETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \
         const String& KeyLower##Key() \
         { \
-            DEFINE_STATIC_LOCAL(String, key, (#KeyUpper)); \
+            DEFINE_STATIC_LOCAL(String, key, (ASCIILiteral(#KeyUpper))); \
             return key; \
         }
 

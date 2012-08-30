@@ -34,7 +34,7 @@ namespace WebKit {
 
 static String remoteInspectorPagePath()
 {
-    DEFINE_STATIC_LOCAL(String, pagePath, ("/webkit/inspector/inspector.html?page="));
+    DEFINE_STATIC_LOCAL(String, pagePath, (ASCIILiteral("/webkit/inspector/inspector.html?page=")));
     return pagePath;
 }
 

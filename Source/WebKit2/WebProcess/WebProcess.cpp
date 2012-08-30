@@ -917,10 +917,10 @@ static void fromCountedSetToHashMap(TypeCountSet* countedSet, HashMap<String, ui
 
 static void getWebCoreMemoryCacheStatistics(Vector<HashMap<String, uint64_t> >& result)
 {
-    DEFINE_STATIC_LOCAL(String, imagesString, ("Images"));
-    DEFINE_STATIC_LOCAL(String, cssString, ("CSS"));
-    DEFINE_STATIC_LOCAL(String, xslString, ("XSL"));
-    DEFINE_STATIC_LOCAL(String, javaScriptString, ("JavaScript"));
+    DEFINE_STATIC_LOCAL(String, imagesString, (ASCIILiteral("Images")));
+    DEFINE_STATIC_LOCAL(String, cssString, (ASCIILiteral("CSS")));
+    DEFINE_STATIC_LOCAL(String, xslString, (ASCIILiteral("XSL")));
+    DEFINE_STATIC_LOCAL(String, javaScriptString, (ASCIILiteral("JavaScript")));
     
     MemoryCache::Statistics memoryCacheStatistics = memoryCache()->getStatistics();
     

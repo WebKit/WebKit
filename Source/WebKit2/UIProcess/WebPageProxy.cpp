@@ -897,7 +897,7 @@ void WebPageProxy::executeEditCommand(const String& commandName)
     if (!isValid())
         return;
 
-    DEFINE_STATIC_LOCAL(String, ignoreSpellingCommandName, ("ignoreSpelling"));
+    DEFINE_STATIC_LOCAL(String, ignoreSpellingCommandName, (ASCIILiteral("ignoreSpelling")));
     if (commandName == ignoreSpellingCommandName)
         ++m_pendingLearnOrIgnoreWordMessageCount;
 

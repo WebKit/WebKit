@@ -40,49 +40,49 @@ namespace WebKit {
 
 String WebDatabaseManagerProxy::originKey()
 {
-    DEFINE_STATIC_LOCAL(String, key, ("WebDatabaseManagerOriginKey"));
+    DEFINE_STATIC_LOCAL(String, key, (ASCIILiteral("WebDatabaseManagerOriginKey")));
     return key;
 }
 
 String WebDatabaseManagerProxy::originQuotaKey()
 {
-    DEFINE_STATIC_LOCAL(String, key, ("WebDatabaseManagerOriginQuotaKey"));
+    DEFINE_STATIC_LOCAL(String, key, (ASCIILiteral("WebDatabaseManagerOriginQuotaKey")));
     return key;
 }
 
 String WebDatabaseManagerProxy::originUsageKey()
 {
-    DEFINE_STATIC_LOCAL(String, key, ("WebDatabaseManagerOriginUsageKey"));
+    DEFINE_STATIC_LOCAL(String, key, (ASCIILiteral("WebDatabaseManagerOriginUsageKey")));
     return key;
 }
 
 String WebDatabaseManagerProxy::databaseDetailsKey()
 {
-    DEFINE_STATIC_LOCAL(String, key, ("WebDatabaseManagerDatabaseDetailsKey"));
+    DEFINE_STATIC_LOCAL(String, key, (ASCIILiteral("WebDatabaseManagerDatabaseDetailsKey")));
     return key;
 }
 
 String WebDatabaseManagerProxy::databaseDetailsNameKey()
 {
-    DEFINE_STATIC_LOCAL(String, key, ("WebDatabaseManagerDatabaseDetailsNameKey"));
+    DEFINE_STATIC_LOCAL(String, key, (ASCIILiteral("WebDatabaseManagerDatabaseDetailsNameKey")));
     return key;
 }
 
 String WebDatabaseManagerProxy::databaseDetailsDisplayNameKey()
 {
-    DEFINE_STATIC_LOCAL(String, key, ("WebDatabaseManagerDatabaseDetailsDisplayNameKey"));
+    DEFINE_STATIC_LOCAL(String, key, (ASCIILiteral("WebDatabaseManagerDatabaseDetailsDisplayNameKey")));
     return key;
 }
 
 String WebDatabaseManagerProxy::databaseDetailsExpectedUsageKey()
 {
-    DEFINE_STATIC_LOCAL(String, key, ("WebDatabaseManagerDatabaseDetailsExpectedUsageKey"));
+    DEFINE_STATIC_LOCAL(String, key, (ASCIILiteral("WebDatabaseManagerDatabaseDetailsExpectedUsageKey")));
     return key;
 }
 
 String WebDatabaseManagerProxy::databaseDetailsCurrentUsageKey()
 {
-    DEFINE_STATIC_LOCAL(String, key, ("WebDatabaseManagerDatabaseDetailsCurrentUsageKey"));
+    DEFINE_STATIC_LOCAL(String, key, (ASCIILiteral("WebDatabaseManagerDatabaseDetailsCurrentUsageKey")));
     return key;
 }
 

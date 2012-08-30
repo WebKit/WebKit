@@ -164,21 +164,21 @@ bool WebEditorClient::shouldMoveRangeAfterDelete(Range*, Range*)
 void WebEditorClient::didBeginEditing()
 {
     // FIXME: What good is a notification name, if it's always the same?
-    DEFINE_STATIC_LOCAL(String, WebViewDidBeginEditingNotification, ("WebViewDidBeginEditingNotification"));
+    DEFINE_STATIC_LOCAL(String, WebViewDidBeginEditingNotification, (ASCIILiteral("WebViewDidBeginEditingNotification")));
     m_page->injectedBundleEditorClient().didBeginEditing(m_page, WebViewDidBeginEditingNotification.impl());
     notImplemented();
 }
 
 void WebEditorClient::respondToChangedContents()
 {
-    DEFINE_STATIC_LOCAL(String, WebViewDidChangeNotification, ("WebViewDidChangeNotification"));
+    DEFINE_STATIC_LOCAL(String, WebViewDidChangeNotification, (ASCIILiteral("WebViewDidChangeNotification")));
     m_page->injectedBundleEditorClient().didChange(m_page, WebViewDidChangeNotification.impl());
     notImplemented();
 }
 
 void WebEditorClient::respondToChangedSelection(Frame* frame)
 {
-    DEFINE_STATIC_LOCAL(String, WebViewDidChangeSelectionNotification, ("WebViewDidChangeSelectionNotification"));
+    DEFINE_STATIC_LOCAL(String, WebViewDidChangeSelectionNotification, (ASCIILiteral("WebViewDidChangeSelectionNotification")));
     m_page->injectedBundleEditorClient().didChangeSelection(m_page, WebViewDidChangeSelectionNotification.impl());
     if (!frame)
         return;
@@ -202,7 +202,7 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
 
 void WebEditorClient::didEndEditing()
 {
-    DEFINE_STATIC_LOCAL(String, WebViewDidEndEditingNotification, ("WebViewDidEndEditingNotification"));
+    DEFINE_STATIC_LOCAL(String, WebViewDidEndEditingNotification, (ASCIILiteral("WebViewDidEndEditingNotification")));
     m_page->injectedBundleEditorClient().didEndEditing(m_page, WebViewDidEndEditingNotification.impl());
     notImplemented();
 }
