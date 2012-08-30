@@ -1,3 +1,9 @@
+2012-08-30  James Robinson  <jamesr@chromium.org>
+
+        Chromium win build fix - fix typo in gypi
+
+        * Platform.gypi:
+
 2012-08-27  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add CompositorSupport interface for constructing compositor classes
