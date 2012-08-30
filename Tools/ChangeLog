@@ -1,3 +1,14 @@
+2012-08-29  Benjamin Poulain  <bpoulain@apple.com>
+
+        REGRESSION(r126780): Crash using StringImpl::is8Bit before checking if there is an impl
+        https://bugs.webkit.org/show_bug.cgi?id=95380
+
+        Reviewed by Michael Saboff.
+
+        * TestWebKitAPI/Tests/WTF/WTFString.cpp:
+        Add very basic tests for String::ascii(). This covers the case of null strings that caused
+        the crash.
+
 2012-08-29  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Canvas should have a distinct role

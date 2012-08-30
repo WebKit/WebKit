@@ -49,6 +49,23 @@ TEST(WTF, StringCreationFromLiteral)
     ASSERT_TRUE(String("Template Literal") == stringWithTemplate);
 }
 
+TEST(WTF, StringASCII)
+{
+    CString output;
+
+    // Null String.
+    output = String().ascii();
+    ASSERT_STREQ("", output.data());
+
+    // Empty String.
+    output = emptyString().ascii();
+    ASSERT_STREQ("", output.data());
+
+    // Regular String.
+    output = String(ASCIILiteral("foobar")).ascii();
+    ASSERT_STREQ("foobar", output.data());
+}
+
 static void testNumberToStringECMAScript(double number, const char* reference)
 {
     CString numberString = String::numberToStringECMAScript(number).latin1();

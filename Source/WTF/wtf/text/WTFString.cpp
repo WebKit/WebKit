@@ -609,6 +609,10 @@ CString String::ascii() const
     // preserved, characters outside of this range are converted to '?'.
 
     unsigned length = this->length();
+    if (!length) { 
+        char* characterBuffer;
+        return CString::newUninitialized(length, characterBuffer);
+    }
 
     if (this->is8Bit()) {
         const LChar* characters = this->characters8();
