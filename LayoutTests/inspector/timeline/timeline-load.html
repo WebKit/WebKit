@@ -28,7 +28,6 @@ function test()
             expectedOutput.shift();
             InspectorTest.assertEquals(JSON.stringify(expectedOutput), JSON.stringify(saveData), "saved data is not equal to restored");
             InspectorTest.addResult("passed");
-            InspectorTest.completeTest();
         }
 
         InspectorTest.override(model, "_createFileReader", createFileReader);
