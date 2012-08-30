@@ -30,6 +30,7 @@
 #include "TextureCacheCompositingThread.h"
 
 #include <BlackBerryPlatformScreen.h>
+#include <BlackBerryPlatformSettings.h>
 #include <GLES2/gl2.h>
 
 using namespace std;
@@ -694,19 +695,9 @@ void LayerTiler::scheduleCommit()
 
 bool LayerTiler::shouldPrefillTile(const TileIndex& index)
 {
-    // For now, we use the heuristic of prefilling the first screenful of tiles.
-    // This gives the correct result only for layers with identity transform,
-    // which is why it's called a heuristic here. This is needed for the case
-    // where the developer actually designed their web page around the use of
-    // accelerated compositing, and expects even offscreen layers to have content.
-    // We oblige them to some degree by prefilling a screenful of tiles.
-    // This is redundant in some other scenarios, i.e. when an offscreen layer
-    // is composited only because of overlapping a flash ad or something like
-    // that, but we're willing to make this tradeoff.
-
-    // Since the tileMultiplier indicates how many tiles fit on the screen,
-    // the following formula can be used:
-    return index.i() < static_cast<unsigned>(tileMultiplier) && index.j() < static_cast<unsigned>(tileMultiplier);
+    IntRect prefillTargetRect = BlackBerry::Platform::Settings::instance()->layerTilerPrefillRect();
+    IntRect tileRect = IntRect(originOfTile(index), tileSize());
+    return prefillTargetRect.intersects(tileRect);
 }
 
 TileIndex LayerTiler::indexOfTile(const WebCore::IntPoint& origin)
