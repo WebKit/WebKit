@@ -1,3 +1,13 @@
+2012-08-30  Philip Rogers  <pdr@google.com>
+
+        Unreviewed rebaseline after r127101.
+
+        The Mac 10.6 results are slightly different--decoding about 10% less of the image.
+        After some discussion with Adam Barth we determined to rebaseline these.
+
+        * platform/chromium-mac-snowleopard/http/tests/images: Added.
+        * platform/chromium-mac-snowleopard/http/tests/images/webp-partial-load-expected.png: Added.
+
 2012-08-30  Victor Carbune  <victor@rosedu.org>
 
         [Chromium] The CC button is not painted
