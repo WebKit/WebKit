@@ -1307,12 +1307,10 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 
     unsigned numVariables = codeBlock->numVariables();
     int numFunctions = codeBlock->numberOfFunctionDecls();
-    bool pushedScope = false;
     if (numVariables || numFunctions) {
         if (codeBlock->isStrictMode()) {
             scope = StrictEvalActivation::create(callFrame);
             variableObject = scope;
-            pushedScope = true;
         }
         // Scope for BatchedTransitionOptimizer
         BatchedTransitionOptimizer optimizer(callFrame->globalData(), variableObject);

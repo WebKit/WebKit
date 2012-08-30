@@ -1,3 +1,10 @@
+2012-08-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Fix the Qt build: Removed a now-dead variable.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+
 2012-08-30  Benjamin Poulain  <bpoulain@apple.com>
 
         Ambiguous operator[]  after r127191 on some compiler
