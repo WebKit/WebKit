@@ -1,3 +1,13 @@
+2012-08-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK1] New test css3/filters/null-effect-check.html added in r126927 fails
+        https://bugs.webkit.org/show_bug.cgi?id=95308
+
+        Reviewed by Simon Hausmann.
+
+        * css3/filters/null-effect-check.html: Modify this reftest not to be dumpAsText() test.
+        * platform/qt-5.0-wk1/Skipped: Unskip the now passing test.
+
 2012-08-29  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Upstream layout test expectations (Part 3)
