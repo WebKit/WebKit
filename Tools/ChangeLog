@@ -1,3 +1,13 @@
+2012-08-30  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Tries to run empty string when calling generate-gtkdoc when not using jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=95499
+
+        Unreviewed. One more fix to avoid trying to run the empty string.
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject):
+
 2012-08-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r127171.
