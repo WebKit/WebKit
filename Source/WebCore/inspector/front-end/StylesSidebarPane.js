@@ -597,10 +597,9 @@ WebInspector.StylesSidebarPane.prototype = {
                 editable = true;
 
             if (computedStyle)
-                var section = new WebInspector.ComputedStylePropertiesSection(styleRule, usedProperties);
+                var section = new WebInspector.ComputedStylePropertiesSection(this, styleRule, usedProperties);
             else
                 var section = new WebInspector.StylePropertiesSection(this, styleRule, editable, styleRule.isInherited, lastWasSeparator);
-            section.pane = this;
             section.expanded = true;
 
             if (computedStyle) {
@@ -669,7 +668,6 @@ WebInspector.StylesSidebarPane.prototype = {
     addBlankSection: function()
     {
         var blankSection = new WebInspector.BlankStylePropertiesSection(this, this.node ? this.node.appropriateSelectorFor(true) : "");
-        blankSection.pane = this;
 
         var elementStyleSection = this.sections[0][1];
         this._sectionsContainer.insertBefore(blankSection.element, elementStyleSection.element.nextSibling);
@@ -934,6 +932,11 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
 }
 
 WebInspector.StylePropertiesSection.prototype = {
+    get pane()
+    {
+        return this._parentPane;
+    },
+
     collapse: function(dontRememberState)
     {
         // Overriding with empty body.
@@ -1317,12 +1320,16 @@ WebInspector.StylePropertiesSection.prototype.__proto__ = WebInspector.Propertie
 /**
  * @constructor
  * @extends {WebInspector.PropertiesSection}
+ * @param {!WebInspector.StylesSidebarPane} parentPane
+ * @param {!Object} styleRule
+ * @param {!Object.<string, boolean>} usedProperties
  */
-WebInspector.ComputedStylePropertiesSection = function(styleRule, usedProperties)
+WebInspector.ComputedStylePropertiesSection = function(parentPane, styleRule, usedProperties)
 {
     WebInspector.PropertiesSection.call(this, "");
     this.headerElement.addStyleClass("hidden");
     this.element.className = "styles-section monospace first-styles-section read-only computed-style";
+    this._parentPane = parentPane;
     this.styleRule = styleRule;
     this._usedProperties = usedProperties;
     this._alwaysShowComputedProperties = { "display": true, "height": true, "width": true };
@@ -1332,6 +1339,11 @@ WebInspector.ComputedStylePropertiesSection = function(styleRule, usedProperties
 }
 
 WebInspector.ComputedStylePropertiesSection.prototype = {
+    get pane()
+    {
+        return this._parentPane;
+    },
+
     collapse: function(dontRememberState)
     {
         // Overriding with empty body.
@@ -1376,7 +1388,7 @@ WebInspector.ComputedStylePropertiesSection.prototype = {
         for (var i = 0; i < uniqueProperties.length; ++i) {
             var property = uniqueProperties[i];
             var inherited = this._isPropertyInherited(property.name);
-            var item = new WebInspector.StylePropertyTreeElement(this, null, this.styleRule, style, property, false, inherited, false);
+            var item = new WebInspector.StylePropertyTreeElement(this, this._parentPane, this.styleRule, style, property, false, inherited, false);
             this.propertiesTreeOutline.appendChild(item);
             this._propertyTreeElements[property.name] = item;
         }
@@ -1694,8 +1706,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 container.appendChild(document.createTextNode("url("));
                 if (self._styleRule.sourceURL)
                     hrefUrl = WebInspector.ParsedURL.completeURL(self._styleRule.sourceURL, hrefUrl);
-                else if (this._parentPane.node)
-                    hrefUrl = this._parentPane.node.resolveURL(hrefUrl);
+                else if (self._parentPane.node)
+                    hrefUrl = self._parentPane.node.resolveURL(hrefUrl);
                 var hasResource = !!WebInspector.resourceForURL(hrefUrl);
                 // FIXME: WebInspector.linkifyURLAsNode() should really use baseURI.
                 container.appendChild(WebInspector.linkifyURLAsNode(hrefUrl, url, undefined, !hasResource));

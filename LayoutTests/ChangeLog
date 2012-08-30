@@ -1,3 +1,14 @@
+2012-08-30  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Some urls in CSS stylesheets cause errors when generating Computed Styles HTML
+        https://bugs.webkit.org/show_bug.cgi?id=95427
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/styles/inject-stylesheet-expected.txt:
+        * inspector/styles/inject-stylesheet.html:
+        * platform/chromium/inspector/styles/inject-stylesheet-expected.txt:
+
 2012-08-30  Keishi Hattori  <keishi@webkit.org>
 
         Tick marks don't match thumb when applying padding or border to input type=range

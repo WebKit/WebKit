@@ -11,7 +11,7 @@
 
 function injectStyleSheet()
 {
-    var styleSheet = "#main { color: red }  #iframeBody { background: red }";
+    var styleSheet = "#main { color: red; -webkit-border-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAAiElEQVR42r2RsQrDMAxEBRdl8SDcX8lQPGg1GBI6lvz/h7QyRRXV0qUULwfvwZ1tenw5PxToRPWMC52eA9+WDnlh3HFQ/xBQl86NFYJqeGflkiogrOvVlIFhqURFVho3x1moGAa3deMs+LS30CAhBN5nNxeT5hbJ1zwmji2k+aF6NENIPf/hs54f0sZFUVAMigAAAABJRU5ErkJggg==) }  #iframeBody { background: red }";
     if (window.testRunner)
         window.testRunner.addUserStyleSheet(styleSheet, true);
 }
@@ -25,12 +25,11 @@ function loadIframe()
 
 function test()
 {
-
     InspectorTest.evaluateInPage("injectStyleSheet()", init);
 
     function init()
     {
-        InspectorTest.selectNodeAndWaitForStyles("main", step0);
+        InspectorTest.selectNodeAndWaitForStylesWithComputed("main", step0);
     }
 
     function step0()
