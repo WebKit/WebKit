@@ -1,3 +1,17 @@
+2012-08-29  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Upstream layout test expectations (Part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=95392
+
+        Reviewed by Adam Barth.
+
+        This part include:
+        - media tests
+        - slow tests
+        - other misc updates
+
+        * platform/chromium/TestExpectations:
+
 2012-08-29  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt][WK2] ApplicationCache LayoutTests failed

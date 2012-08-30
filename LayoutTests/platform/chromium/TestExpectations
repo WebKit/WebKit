@@ -40,7 +40,7 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : http/tests/misc/dns-prefetch-control.html = 
 BUGCR24182 SLOW WIN DEBUG : http/tests/misc/uncacheable-script-repeated.html = PASS
 BUGCR24182 SLOW WIN : http/tests/navigation/slowtimerredirect-basic.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : http/tests/security/xss-DENIED-iframe-src-alias.html = PASS
-BUGCR24182 SLOW WIN : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = PASS
+BUGCR24182 SLOW WIN ANDROID : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = PASS
 BUGCR24182 SLOW WIN : http/tests/xmlhttprequest/supported-xml-content-types.html = PASS
 BUGCR24182 SLOW WIN : http/tests/xmlhttprequest/XMLHttpRequestException.html = PASS
 BUGCR24182 SLOW DEBUG : ietestcenter/Javascript/15.4.4.16-7-c-ii-2.html = PASS
@@ -73,9 +73,14 @@ BUGCR24182 SLOW DEBUG : fast/js/dfg-float64array.html = PASS
 BUGCR24182 SLOW DEBUG : fast/js/dfg-uint8clampedarray.html = PASS
 BUGCR24182 SLOW DEBUG : fast/js/dfg-int32array-overflow-values.html = PASS
 BUGCR24182 SLOW DEBUG : fast/js/dfg-uint32array-overflow-values.html = PASS
-BUGWK93631 SLOW ANDROID DEBUG : fast/js/exception-sequencing-binops.html = PASS
-BUGWK93631 SLOW ANDROID DEBUG : fast/js/exception-sequencing-binops2.html = PASS
-BUGWK93631 SLOW ANDROID DEBUG : fast/js/toInt32UInt32.html = PASS
+BUGWK93631 SLOW ANDROID : fast/js/dfg-inline-many-blocks.html = PASS
+BUGWK93631 SLOW ANDROID : fast/js/dfg-weak-js-constant-silent-fill.html = PASS
+BUGWK93631 SLOW ANDROID : fast/js/exception-sequencing.html = PASS
+BUGWK93631 SLOW ANDROID : fast/js/exception-sequencing-binops.html = PASS
+BUGWK93631 SLOW ANDROID : fast/js/exception-sequencing-binops2.html = PASS
+BUGWK93631 SLOW ANDROID : fast/js/toInt32UInt32.html = PASS
+BUGCR24182 SLOW ANDROID DEBUG : editing/selection/caret-at-bidi-boundary.html = PASS
+BUGCR24182 SLOW ANDROID DEBUG : fast/css/css-selector-deeply-nested.html = PASS
 
 // These tests started being slow when we switched to DRT.
 BUGWK90488 SLOW LINUX WIN DEBUG : inspector = PASS
@@ -890,6 +895,8 @@ BUGCR145338 WONTFIX ANDROID SKIP : fast/forms/date = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : fast/mediastream = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : fast/notifications = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : fast/speech = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : platform/chromium/fast/forms/color = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : platform/chromium/media/video-capture-preview.html = PASS // Uses mediastream
 BUGCR145338 WONTFIX ANDROID SKIP : webaudio = PASS
 
 // Skip tests depending on plugins that is not available on Android.
@@ -904,13 +911,32 @@ BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1
 BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-data.html = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-url.html = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-url.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-allowed.html = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-02.html = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/object-src-none-blocked.html = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/object-src-url-allowed.html = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/object-src-url-blocked.html = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : platform/chromium/permissionclient/plugin-permission.html = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : userscripts/user-script-plugin-document.html = PASS
+
+// Causes server error. Not feasible to fix because this is a behavior of Apache server.
+BUGWK95378 WONTFIX ANDROID SKIP : fast/encoding/percent-escaping.html = PASS
+
+// Tests depending on Bengali, Tamil, Danda fonts
+BUGWK95378 WONTFIX ANDROID SKIP : fast/text/international/bold-bengali.html = PASS
+BUGWK95378 WONTFIX ANDROID SKIP : fast/text/international/complex-character-based-fallback.html = PASS
+
+// The test creates a temporary file via HTTP POST and access the file as a blob. This is unfeasible.
+BUGWK95378 WONTFIX ANDROID SKIP : http/tests/local/fileapi/send-sliced-dragged-file.html = PASS
+
+// The test depends on the same modified time returned from local file api and PHP. This is unfeasible.
+BUGWK95378 WONTFIX ANDROID SKIP : http/tests/local/fileapi/file-last-modified.html = PASS
+
+// Android font lacks some plane2 CJK glyphs to pass this test.
+BUGWK95378 WONTFIX ANDROID SKIP : fast/text/international/plane2.html = PASS
 
 // -----------------------------------------------------------------
 // TESTS TO FIX
@@ -1090,9 +1116,6 @@ BUGWK71792 : editing/spelling/markers.html = TEXT
 
 BUGCR79854 : editing/execCommand/delete-empty-container.html = PASS TEXT
 
-// pulled in from downstream during webkit roll 84350:84431
-BUGCASEQ ANDROID : editing/selection/select-from-textfield-outwards.html = IMAGE+TEXT
-
 BUGWK60120 DEBUG : editing/execCommand/append-node-under-document.html = PASS TEXT
 
 BUGWK61611 LINUX ANDROID WIN : editing/pasteboard/interchange-newline-2.html = TEXT
@@ -1107,6 +1130,7 @@ BUGWK78655 : editing/pasteboard/drag-files-to-editable-element.html = TEXT
 BUGWK66268 WIN LINUX : editing/deleting/regional-indicators.html = TEXT
 
 BUGWK67121 DEBUG SLOW : editing/selection/move-by-word-visually-multi-space.html = PASS
+BUGWK67121 ANDROID RELEASE SLOW : editing/selection/move-by-word-visually-multi-space.html = PASS
 
 // UndoManager is not yet enabled.
 BUGWK87908 SKIP : editing/undomanager = PASS
@@ -1776,7 +1800,7 @@ BUGCR32155 : fast/js/Object-getOwnPropertyNames.html = TEXT
 // Expectations from roll to 53171:53194
 // As of Oct 7, 2010, times out on all platforms when doing DEBUG costing 13 seconds on average. Skipping.
 BUGCR32308 SKIP DEBUG : fast/frames/cached-frame-counter.html = TIMEOUT
-BUGCR32308 WIN RELEASE SLOW : fast/frames/cached-frame-counter.html = PASS
+BUGCR32308 WIN ANDROID RELEASE SLOW : fast/frames/cached-frame-counter.html = PASS
 
 BUGCR33293 SKIP : fast/media/lifetime.html = TIMEOUT
 
@@ -2189,11 +2213,11 @@ BUGCR66751 : http/tests/local/link-stylesheet-load-order.html = PASS TIMEOUT TEX
 
 // The test is just too slow and has never passed since its introduction on Dbg build.
 BUGWK90363 DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS TIMEOUT
+BUGWK90363 ANDROID RELEASE : fast/overflow/lots-of-sibling-inline-boxes.html = PASS TIMEOUT
 
 // WebKit roll 74255:74308
 BUGCR67416 LINUX ANDROID WIN : fast/text/emphasis.html = IMAGE+TEXT
 BUGCR67416 : fast/text/emphasis-vertical.html = IMAGE IMAGE+TEXT
-BUGCR67540 ANDROID : fast/text/emphasis-overlap.html = IMAGE+TEXT
 BUGCR67540 LINUX ANDROID : fast/text/emphasis-avoid-ruby.html = IMAGE
 BUGCR67540 LINUX ANDROID WIN SNOWLEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
 BUGCR67540 LINUX ANDROID : fast/repaint/text-emphasis-v.html = IMAGE
@@ -2256,7 +2280,7 @@ BUGCR71783 LION SNOWLEOPARD : scrollbars/custom-scrollbar-with-incomplete-style.
 /////////////////////////////////////////////////////////////////////////////
 
 
-BUGWK47923 : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
+BUGWK47923 WIN LINUX MAC : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
 
 // Chromium does not support PDF content in <img> tags.
 WONTFIX WIN LINUX ANDROID : compositing/images/direct-pdf-image.html = IMAGE
@@ -2416,9 +2440,6 @@ BUGWK60103 MAC : fast/replaced/border-radius-clip.html = IMAGE+TEXT
 // Need to figure out why this is slow.
 BUGWK60131 SLOW : fast/css/visited-link-hang.html = PASS
 
-// pulled in from downstream during webkit roll 84350:84431
-BUGCASEQ ANDROID : fast/forms/input-text-drag-down.html = IMAGE+TEXT
-
 // Introduced in r84443
 BUGWK59063 : fast/images/animated-gif-restored-from-bfcache.html = TEXT
 
@@ -2577,6 +2598,7 @@ BUGWK67915 LINUX ANDROID WIN : fast/borders/borderRadiusDashed06.html = IMAGE
 BUGWK95365 SKIP : fast/loader/reload-zero-byte-plugin.html = PASS
 
 BUGWK65862 DEBUG SLOW : storage/indexeddb/index-cursor.html = PASS
+BUGWK65862 ANDROID RELEASE SLOW : storage/indexeddb/index-cursor.html = PASS
 
 // Performance issues with border radius clipping on Chromium not yet resolved
 BUGCR97716 : fast/clip/overflow-border-radius-composited.html = IMAGE
@@ -2765,7 +2787,7 @@ BUGWK75083 RELEASE : perf/nested-combined-selectors.html = MISSING
 
 BUGWK75633 : fast/media/viewport-media-query.html = PASS IMAGE+TEXT
 
-BUGWK75716 : fullscreen/video-controls-drag.html = TEXT
+BUGWK75716 LINUX WIN MAC : fullscreen/video-controls-drag.html = TEXT
 
 BUGWK75786 SKIP : compositing/tiled-layers-hidpi.html = TIMEOUT
 
@@ -3239,7 +3261,7 @@ BUGWK91489 : fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html = IMAGE
 BUGWK87652 SKIP : http/tests/appcache/load-from-appcache-defer-resume-crash.html = PASS
 
 // A few pixels off from the baseline, added by r118567.
-BUGWK87653 WIN LINUX : compositing/geometry/composited-in-columns.html = IMAGE+TEXT
+BUGWK87653 WIN LINUX ANDROID : compositing/geometry/composited-in-columns.html = IMAGE+TEXT
 
 // Fails with a mismatch in $("menulist").selectedIndex
 BUGWK87748 MAC : fast/forms/select/optgroup-clicking.html = TEXT
@@ -3394,7 +3416,7 @@ BUGCR131189 : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 BUGCR131189 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
 BUGCR131189 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 
-BUGWK92835 MAC WIN DEBUG SLOW : svg/as-background-image/svg-as-background-5.html = PASS
+BUGWK92835 MAC WIN ANDROID DEBUG SLOW : svg/as-background-image/svg-as-background-5.html = PASS
 
 BUGWK92850 LINUX ANDROID DEBUG : http/tests/websocket/tests/hybi/workers/close-code-and-reason.html = PASS CRASH
 
@@ -3481,7 +3503,7 @@ BUGWK94261 DEBUG : http/tests/inspector/indexeddb/resources-panel.html = PASS CR
 BUGWK94353 : compositing/overflow/scrolling-content-clip-to-viewport.html = TEXT
 BUGWK94353 : compositing/overflow/textarea-scroll-touch.html = TEXT
 // Failing on Linux (Content Shell) only now
-BUGWK94353 LINUX : compositing/overflow/nested-scrolling.html = IMAGE+TEXT PASS
+BUGWK94353 LINUX ANDROID : compositing/overflow/nested-scrolling.html = IMAGE+TEXT PASS
 BUGWK94353 : compositing/overflow/overflow-auto-with-touch.html = TEXT
 BUGWK94353 : compositing/overflow/overflow-overlay-with-touch.html = TEXT
 
@@ -3540,10 +3562,52 @@ BUGCR144536 WONTFIX ANDROID : scrollbars/listbox-scrollbar-combinations.html = T
 BUGCR145084 ANDROID : platform/chromium/virtual/gpu/canvas/philip = PASS TEXT
 BUGCR145084 ANDROID : platform/chromium/virtual/gpu/fast/canvas = PASS TEXT TIMEOUT
 
-BUGCR145087 ANDROID : compositing/geometry/composited-in-columns.html = TEXT
 BUGCR145087 ANDROID : compositing/geometry/fixed-position-composited-switch.html = TEXT
-BUGCR145087 ANDROID : compositing/overflow/nested-scrolling.html = TEXT
+BUGCR145087 ANDROID : compositing/geometry/limit-layer-bounds-opacity-transition.html = TEXT
 BUGCR145087 ANDROID : compositing/reflections/nested-reflection-animated.html = TEXT PASS
+BUGCR145087 ANDROID : compositing/rtl/rtl-fixed-overflow-scrolled.html = TEXT PASS
+BUGCR145087 ANDROID : compositing/rtl/rtl-fixed-overflow.html = TEXT PASS
+BUGCR145087 ANDROID : compositing/rtl/rtl-fixed.html = TEXT PASS
+BUGCR145087 ANDROID : compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html = TEXT PASS
+BUGCR145087 ANDROID : compositing/rtl/rtl-iframe-fixed-overflow.html = TEXT PASS
+BUGCR145087 ANDROID : compositing/rtl/rtl-iframe-fixed.html = TEXT PASS
+
+// Failing media tests on Android.
+BUGCR145590 ANDROID : fullscreen/video-controls-drag.html = TIMEOUT
+BUGCR145590 ANDROID : fullscreen/video-controls-override.html = TIMEOUT
+BUGCR145590 ANDROID : fullscreen/video-controls-timeline.html = TIMEOUT
+BUGCR145590 ANDROID : fullscreen/video-specified-size.html = TIMEOUT
+BUGCR145590 ANDROID : http/tests/appcache/video.html = TEXT
+BUGCR145590 ANDROID : http/tests/media/media-source/video-media-source-abort.html = TIMEOUT
+BUGCR145590 ANDROID : http/tests/media/media-source/video-media-source-add-and-remove-buffers.html = TIMEOUT
+BUGCR145590 ANDROID : http/tests/media/media-source/video-media-source-errors.html = TIMEOUT
+BUGCR145590 ANDROID : http/tests/media/media-source/video-media-source-event-attributes.html = TIMEOUT
+BUGCR145590 ANDROID : http/tests/media/media-source/video-media-source-objects.html = TIMEOUT
+BUGCR145590 ANDROID : http/tests/media/media-source/video-media-source-play.html = TEXT
+BUGCR145590 ANDROID : http/tests/media/media-source/video-media-source-seek.html = TEXT
+BUGCR145590 ANDROID : http/tests/media/media-source/video-media-source-state-changes.html = TEXT
+BUGCR145590 ANDROID : http/tests/media/pdf-served-as-pdf.html = TEXT
+BUGCR145590 ANDROID : http/tests/media/text-served-as-text.html = TEXT
+BUGCR145590 ANDROID : http/tests/media/video-error-abort.html = TEXT
+BUGCR145590 ANDROID : http/tests/media/video-load-suspend.html = TIMEOUT
+BUGCR145590 ANDROID : http/tests/media/video-play-stall-before-meta-data.html = TEXT
+BUGCR145590 ANDROID : http/tests/media/video-throttled-load-metadata.html = TEXT
+BUGCR145590 ANDROID : http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html = TEXT
+BUGCR145590 ANDROID : http/tests/security/video-cross-origin-readback.html = TEXT
+BUGCR145590 ANDROID : media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html = TEXT
+BUGCR145590 ANDROID : media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html = TEXT
+BUGCR145590 ANDROID : media/audio-data-url.html = TEXT
+BUGCR145590 ANDROID : media/audio-repaint.html = TEXT
+BUGCR145590 ANDROID : media/encrypted-media/encrypted-media-events.html = TIMEOUT
+BUGCR145590 ANDROID : media/encrypted-media/encrypted-media-not-loaded.html = TEXT
+BUGCR145590 ANDROID : media/encrypted-media/encrypted-media-syntax.html = TEXT
+BUGCR145590 ANDROID : media/video-aspect-ratio.html = TEXT // 8 videos
+BUGCR145590 ANDROID : media/video-buffered.html = TEXT
+BUGCR145590 ANDROID : media/video-canvas-source.html = TEXT
+BUGCR145590 ANDROID : media/video-error-does-not-exist.html = TEXT
+BUGCR145590 ANDROID : media/video-source-type-params.html = TEXT
+BUGCR145590 ANDROID : platform/chromium/compositing/video-frame-size-change.html = TIMEOUT
+BUGCR145590 ANDROID : platform/chromium/media/video-frame-size-change.html = TIMEOUT
 
 BUGWK95070 LINUX DEBUG : inspector/styles/media-queries.html = TEXT
 BUGWK95070 WIN LINUX RELEASE : inspector/styles/media-queries.html = PASS TEXT
