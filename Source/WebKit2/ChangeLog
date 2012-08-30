@@ -1,3 +1,24 @@
+2012-08-29  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][WK2] Replace PageClientImpl with ewk view in constructor of EflViewportHandler.
+        https://bugs.webkit.org/show_bug.cgi?id=95408
+
+        Reviewed by Gyuyoung Kim.
+
+        To keep consistency of implementation, derived classes(from ewk view) should have view reference.
+        From this, derived classes would have less interference from changes that would happen in port specific classes, i.e. PageClientImpl.
+
+        * UIProcess/API/efl/EflViewportHandler.cpp:
+        (WebKit::EflViewportHandler::EflViewportHandler):
+        (WebKit::EflViewportHandler::drawingArea):
+        (WebKit):
+        (WebKit::EflViewportHandler::updateViewportSize):
+        * UIProcess/API/efl/EflViewportHandler.h:
+        (WebKit::EflViewportHandler::create):
+        (EflViewportHandler):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_initialize):
+
 2012-08-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [WK2] Use ASCIILiteral hotness for DEFINE_STATIC_LOCAL string

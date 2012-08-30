@@ -35,13 +35,13 @@ namespace WebKit {
 
 class EflViewportHandler {
 public:
-    static PassOwnPtr<EflViewportHandler> create(PageClientImpl* pageClientImpl)
+    static PassOwnPtr<EflViewportHandler> create(Evas_Object* viewWidget)
     {
-        return adoptPtr(new EflViewportHandler(pageClientImpl));
+        return adoptPtr(new EflViewportHandler(viewWidget));
     }
     ~EflViewportHandler();
 
-    DrawingAreaProxy* drawingArea() const { return m_pageClientImpl->page()->drawingArea(); }
+    DrawingAreaProxy* drawingArea() const;
     WebCore::IntSize viewSize() { return m_viewportSize; }
 
     void display(const WebCore::IntRect& rect);
@@ -50,9 +50,9 @@ public:
     void didChangeContentsSize(const WebCore::IntSize& size);
 
 private:
-    explicit EflViewportHandler(PageClientImpl*);
+    explicit EflViewportHandler(Evas_Object*);
 
-    PageClientImpl* m_pageClientImpl;
+    Evas_Object* m_viewWidget;
     WebCore::IntRect m_visibleContentRect;
     WebCore::IntSize m_contentsSize;
     WebCore::IntSize m_viewportSize;

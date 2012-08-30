@@ -692,7 +692,7 @@ static void _ewk_view_initialize(Evas_Object* ewkView, Ewk_Context* context, WKP
     priv->backForwardList = ewk_back_forward_list_new(toAPI(priv->pageProxy->backForwardList()));
 
 #if USE(COORDINATED_GRAPHICS)
-    priv->viewportHandler = EflViewportHandler::create(priv->pageClient.get());
+    priv->viewportHandler = EflViewportHandler::create(ewkView);
 #endif
 
     WKPageRef wkPage = toAPI(priv->pageProxy.get());

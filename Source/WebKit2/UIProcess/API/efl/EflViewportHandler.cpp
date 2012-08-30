@@ -31,20 +31,26 @@
 #include "LayerTreeCoordinatorProxy.h"
 #include "LayerTreeRenderer.h"
 #include "TransformationMatrix.h"
+#include "ewk_view_private.h"
 
 using namespace WebCore;
 
 namespace WebKit {
 
-EflViewportHandler::EflViewportHandler(PageClientImpl* pageClientImpl)
-    : m_pageClientImpl(pageClientImpl)
+EflViewportHandler::EflViewportHandler(Evas_Object* viewWidget)
+    : m_viewWidget(viewWidget)
     , m_scaleFactor(1)
 {
-    ASSERT(m_pageClientImpl);
+    ASSERT(m_viewWidget);
 }
 
 EflViewportHandler::~EflViewportHandler()
 {
+}
+
+DrawingAreaProxy* EflViewportHandler::drawingArea() const
+{
+    return ewk_view_page_get(m_viewWidget)->drawingArea();
 }
 
 void EflViewportHandler::display(const IntRect& rect)
@@ -61,7 +67,7 @@ void EflViewportHandler::display(const IntRect& rect)
 void EflViewportHandler::updateViewportSize(const IntSize& viewportSize)
 {
     m_viewportSize = viewportSize;
-    m_pageClientImpl->page()->setViewportSize(viewportSize);
+    ewk_view_page_get(m_viewWidget)->setViewportSize(viewportSize);
     setVisibleContentsRect(m_visibleContentRect.location(), m_scaleFactor, FloatPoint());
 }
 
