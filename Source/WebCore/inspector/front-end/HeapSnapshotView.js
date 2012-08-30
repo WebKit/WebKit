@@ -122,7 +122,7 @@ WebInspector.HeapSnapshotView = function(parent, profile)
     this._profileUid = profile.uid;
 
     this.baseSelectElement = document.createElement("select");
-    this.baseSelectElement.className = "status-bar-item hidden";
+    this.baseSelectElement.className = "status-bar-item";
     this.baseSelectElement.addEventListener("change", this._changeBase.bind(this), false);
     this._updateBaseOptions();
 
@@ -172,7 +172,14 @@ WebInspector.HeapSnapshotView.prototype = {
 
     get statusBarItems()
     {
-        return [this.viewSelectElement, this.baseSelectElement, this.filterSelectElement, this.helpButton.element];
+        function appendArrowImage(element, hidden)
+        {
+            var span = document.createElement("span");
+            span.className = "status-bar-select-container" + (hidden ? " hidden" : "");
+            span.appendChild(element);
+            return span;
+        }
+        return [appendArrowImage(this.viewSelectElement), appendArrowImage(this.baseSelectElement, true), appendArrowImage(this.filterSelectElement), this.helpButton.element];
     },
 
     get profile()
@@ -520,6 +527,19 @@ WebInspector.HeapSnapshotView.prototype = {
         this._changeView(event.target.selectedIndex);
     },
 
+    _updateSelectorsVisibility: function()
+    {
+        if (this.currentView === this.diffView)
+            this.baseSelectElement.parentElement.removeStyleClass("hidden");
+        else
+            this.baseSelectElement.parentElement.addStyleClass("hidden");
+
+        if (this.currentView === this.constructorsView)
+            this.filterSelectElement.parentElement.removeStyleClass("hidden");
+        else
+            this.filterSelectElement.parentElement.addStyleClass("hidden");
+    },
+
     _changeView: function(selectedIndex)
     {
         if (selectedIndex === this.views.current)
@@ -534,17 +554,9 @@ WebInspector.HeapSnapshotView.prototype = {
         this.refreshVisibleData();
         this.dataGrid.updateWidths();
 
-        if (this.currentView === this.diffView)
-            this.baseSelectElement.removeStyleClass("hidden");
-        else
-            this.baseSelectElement.addStyleClass("hidden");
+        this._updateSelectorsVisibility();
 
         this._updateDataSourceAndView();
-
-        if (this.currentView === this.constructorsView)
-            this.filterSelectElement.removeStyleClass("hidden");
-        else
-            this.filterSelectElement.addStyleClass("hidden");
 
         if (!this.currentQuery || !this._searchFinishedCallback || !this._searchResults)
             return;
