@@ -129,6 +129,7 @@ public:
     HTMLElement* speechButtonElement() const;
 #endif
     HTMLElement* sliderThumbElement() const;
+    HTMLElement* sliderTrackElement() const;
     virtual HTMLElement* placeholderElement() const;
 
     bool checked() const { return m_isChecked; }

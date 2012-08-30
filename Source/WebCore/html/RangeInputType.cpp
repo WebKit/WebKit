@@ -330,6 +330,11 @@ HTMLElement* RangeInputType::sliderThumbElement() const
     return sliderThumbElementOf(element());
 }
 
+HTMLElement* RangeInputType::sliderTrackElement() const
+{
+    return sliderTrackElementOf(element());
+}
+
 #if ENABLE(DATALIST_ELEMENT)
 void RangeInputType::listAttributeTargetChanged()
 {

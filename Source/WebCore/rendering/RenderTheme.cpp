@@ -1004,21 +1004,34 @@ void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, 
     IntSize tickSize = sliderTickSize();
     float zoomFactor = o->style()->effectiveZoom();
     FloatRect tickRect;
-    int tickRegionMargin = (thumbSize.width() - tickSize.width()) / 2.0;
     int tickRegionSideMargin = 0;
     int tickRegionWidth = 0;
+    IntRect trackBounds;
+    RenderObject* trackRenderer = input->sliderTrackElement()->renderer();
+    // We can ignoring transforms because transform is handled by the graphics context.
+    if (trackRenderer)
+        trackBounds = trackRenderer->absoluteBoundingBoxRectIgnoringTransforms();
+    IntRect sliderBounds = o->absoluteBoundingBoxRectIgnoringTransforms();
+
+    // Make position relative to the transformed ancestor element.
+    trackBounds.setX(trackBounds.x() - sliderBounds.x() + rect.x());
+    trackBounds.setY(trackBounds.y() - sliderBounds.y() + rect.y());
+
     if (isHorizontal) {
         tickRect.setWidth(floor(tickSize.width() * zoomFactor));
         tickRect.setHeight(floor(tickSize.height() * zoomFactor));
         tickRect.setY(floor(rect.y() + rect.height() / 2.0 + sliderTickOffsetFromTrackCenter() * zoomFactor));
-        tickRegionSideMargin = rect.x() + tickRegionMargin;
-        tickRegionWidth = rect.width() - tickRegionMargin * 2 - tickSize.width() * zoomFactor;
+        if (o->style()->isLeftToRightDirection())
+            tickRegionSideMargin = trackBounds.x() + (thumbSize.width() - tickSize.width() * zoomFactor) / 2.0;
+        else
+            tickRegionSideMargin = trackBounds.x() - thumbSize.width() / 2.0;
+        tickRegionWidth = trackBounds.width();
     } else {
         tickRect.setWidth(floor(tickSize.height() * zoomFactor));
         tickRect.setHeight(floor(tickSize.width() * zoomFactor));
         tickRect.setX(floor(rect.x() + rect.width() / 2.0 + sliderTickOffsetFromTrackCenter() * zoomFactor));
-        tickRegionSideMargin = rect.y() + tickRegionMargin;
-        tickRegionWidth = rect.height() - tickRegionMargin * 2 - tickSize.width() * zoomFactor;
+        tickRegionSideMargin = trackBounds.y() + (thumbSize.width() - tickSize.width() * zoomFactor) / 2.0;
+        tickRegionWidth = trackBounds.height();
     }
     RefPtr<HTMLCollection> options = dataList->options();
     GraphicsContextStateSaver stateSaver(*paintInfo.context);

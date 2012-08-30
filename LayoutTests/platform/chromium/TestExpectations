@@ -180,6 +180,10 @@ BUGWK94287 MAC WIN : fast/forms/time-multiple-fields/time-multiple-fields-appear
 BUGWK94287 MAC WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes.html = MISSING TEXT IMAGE IMAGE+TEXT PASS
 BUGWK94287 MAC WIN : fast/forms/time-multiple-fields/time-multiple-fields-appearance-style.html = MISSING TEXT IMAGE IMAGE+TEXT PASS
 
+BUGWK94916 SNOWLEOPARD WIN LINUX : fast/forms/datalist/input-appearance-range-with-padding-with-datalist.html = MISSING IMAGE
+BUGWK94916 SNOWLEOPARD WIN LINUX : fast/forms/datalist/input-appearance-range-with-transform.html = MISSING IMAGE
+BUGWK94916 SNOWLEOPARD WIN LINUX : fast/forms/datalist/input-appearance-range-with-datalist-zoomed.html = IMAGE
+
 // Proximity Events is not supported.
 BUGWK92942 SKIP : fast/dom/Proximity = PASS
 BUGWK92942 SKIP : fast/events/constructors/device-proximity-event-constructor.html = PASS
