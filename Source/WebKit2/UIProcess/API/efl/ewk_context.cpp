@@ -25,6 +25,7 @@
 #include "VibrationProvider.h"
 #include "WKAPICast.h"
 #include "WKContextSoup.h"
+#include "WKNumber.h"
 #include "WKRetainPtr.h"
 #include "WKString.h"
 #include "ewk_context_download_client_private.h"
@@ -85,6 +86,16 @@ struct _Ewk_Context {
         vibrationProvider = VibrationProvider::create(wkVibrationRef);
 #endif
 
+#if ENABLE(MEMORY_SAMPLER)
+        static bool initializeMemorySampler = false;
+        static const char environmentVariable[] = "SAMPLE_MEMORY";
+
+        if (!initializeMemorySampler && getenv(environmentVariable)) {
+            WKRetainPtr<WKDoubleRef> interval(AdoptWK, WKDoubleCreate(0.0));
+            WKContextStartMemorySampler(context.get(), interval.get());
+            initializeMemorySampler = true;
+        }
+#endif
         ewk_context_request_manager_client_attach(this);
         ewk_context_download_client_attach(this);
     }

@@ -15,6 +15,8 @@ LIST(APPEND WebKit2_SOURCES
     Platform/CoreIPC/unix/ConnectionUnix.cpp
     Platform/CoreIPC/unix/AttachmentUnix.cpp
 
+    Shared/WebMemorySampler.cpp
+
     Shared/API/c/cairo/WKImageCairo.cpp
 
     Shared/API/c/gtk/WKGraphicsContextGtk.cpp
@@ -27,6 +29,8 @@ LIST(APPEND WebKit2_SOURCES
     Shared/efl/NativeWebMouseEventEfl.cpp
     Shared/efl/ProcessExecutablePathEfl.cpp
     Shared/efl/WebEventFactory.cpp
+
+    Shared/linux/WebMemorySamplerLinux.cpp
 
     Shared/soup/PlatformCertificateInfo.cpp
     Shared/soup/WebCoreArgumentCodersSoup.cpp

@@ -1,6 +1,8 @@
 LIST(APPEND JavaScriptCore_SOURCES
     jit/ExecutableAllocatorFixedVMPool.cpp
     jit/ExecutableAllocator.cpp
+
+    runtime/MemoryStatistics.cpp
 )
 
 LIST(APPEND JavaScriptCore_LIBRARIES

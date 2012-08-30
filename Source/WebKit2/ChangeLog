@@ -1,3 +1,28 @@
+2012-08-30  JungJik Lee  <jungjik.lee@samsung.com>
+
+        [EFL][WK2] Add WebMemorySampler feature.
+        https://bugs.webkit.org/show_bug.cgi?id=91214
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add WebMemorySampler feature to EFL port. WebMemorySampler records memory usage of
+        WebProcess and UI Process and also it records application memory status in real time.
+        Included items on the result are JIT, JS heap, fastmalloc bytes and
+        application memory info from /proc/process_id/statm.
+
+        * PlatformEfl.cmake:
+        * Shared/linux/WebMemorySamplerLinux.cpp: Added.
+        (WebKit):
+        (ApplicationMemoryStats):
+        (WebKit::nextToken):
+        (WebKit::appendKeyValuePair):
+        (WebKit::sampleMemoryAllocatedForApplication):
+        (WebKit::WebMemorySampler::processName):
+        (WebKit::WebMemorySampler::sampleWebKit):
+        (WebKit::WebMemorySampler::sendMemoryPressureEvent):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (_Ewk_Context::_Ewk_Context):
+
 2012-08-30  Pratik Solanki  <psolanki@apple.com>
 
         objc_msgSend and IMP should be cast appropriately before using
