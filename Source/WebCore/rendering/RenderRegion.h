@@ -107,7 +107,6 @@ public:
     virtual LayoutUnit logicalHeightOfAllFlowThreadContent() const;
 
     virtual void expandToEncompassFlowThreadContentsIfNeeded() {};
-    PassRefPtr<RenderStyle> computeStyleInRegion(const RenderObject*);
 
 protected:
     void setRegionObjectsRegionStyle();
@@ -123,6 +122,7 @@ private:
 
     virtual void installFlowThread();
 
+    PassRefPtr<RenderStyle> computeStyleInRegion(const RenderObject*);
     void computeChildrenStyleInRegion(const RenderObject*);
     void setObjectStyleInRegion(RenderObject*, PassRefPtr<RenderStyle>, bool objectRegionStyleCached);
     void printRegionObjectsStyles();

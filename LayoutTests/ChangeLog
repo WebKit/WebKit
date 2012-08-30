@@ -1,5 +1,17 @@
 2012-08-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r127131.
+        http://trac.webkit.org/changeset/127131
+        https://bugs.webkit.org/show_bug.cgi?id=95463
+
+        It makes the fast/regions/ test crash on Chromium (Requested
+        by jchaffraix on #webkit).
+
+        * fast/regions/region-style-text-shadow-expected.html: Removed.
+        * fast/regions/region-style-text-shadow.html: Removed.
+
+2012-08-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r127133.
         http://trac.webkit.org/changeset/127133
         https://bugs.webkit.org/show_bug.cgi?id=95462
