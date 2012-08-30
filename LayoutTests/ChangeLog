@@ -1,3 +1,15 @@
+2012-08-29  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Unreviewed. [Chromium] Rebaseline fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic.html for Chromium-Mac and Chromium-Win
+        after changes of https://bugs.webkit.org/show_bug.cgi?id=95285
+
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.txt:
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.txt:
+        * platform/chromium/TestExpectations:
+
 2012-08-29  Noel Gordon  <noel.gordon@gmail.com>
 
         WebPImageDecoder progressive decodes fail to decode valid images
