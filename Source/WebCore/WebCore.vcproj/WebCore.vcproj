@@ -37303,7 +37303,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\CSSWrapShapes.cpp"
+				RelativePath="..\css\CSSBasicShapes.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -37355,7 +37355,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\css\CSSWrapShapes.h"
+				RelativePath="..\css\CSSBasicShapes.h"
 				>
 			</File>
 			<File
@@ -38031,11 +38031,11 @@
 				>
 			</File>
 			<File
-			    RelativePath="..\css\WrapShapeFunctions.cpp"
+			    RelativePath="..\css\BasicShapeFunctions.cpp"
 			    >
 			</File>
 			<File
-			    RelativePath="..\css\WrapShapeFunctions.h"
+			    RelativePath="..\css\BasicShapeFunctions.h"
 			    >
 			</File>
 		</Filter>
@@ -46564,11 +46564,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\rendering\style\WrapShapes.cpp"
+					RelativePath="..\rendering\style\BasicShapes.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\rendering\style\WrapShapes.h"
+					RelativePath="..\rendering\style\BasicShapes.h"
 					>
 				</File>
 			</Filter>

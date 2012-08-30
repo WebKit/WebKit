@@ -29,7 +29,7 @@
 
 #include "config.h"
 
-#include "CSSWrapShapes.h"
+#include "CSSBasicShapes.h"
 
 #include <wtf/text/StringBuilder.h>
 

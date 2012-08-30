@@ -25,13 +25,13 @@
 #ifndef StyleRareNonInheritedData_h
 #define StyleRareNonInheritedData_h
 
+#include "BasicShapes.h"
 #include "CounterDirectives.h"
 #include "CursorData.h"
 #include "DataRef.h"
 #include "FillLayer.h"
 #include "LineClampValue.h"
 #include "NinePieceImage.h"
-#include "WrapShapes.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>

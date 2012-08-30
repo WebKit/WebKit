@@ -27,6 +27,7 @@
 #include "CSSParser.h"
 
 #include "CSSAspectRatioValue.h"
+#include "CSSBasicShapes.h"
 #include "CSSBorderImage.h"
 #include "CSSCanvasValue.h"
 #include "CSSCrossfadeValue.h"
@@ -56,7 +57,6 @@
 #if ENABLE(CSS_VARIABLES)
 #include "CSSVariableValue.h"
 #endif
-#include "CSSWrapShapes.h"
 #include "Counter.h"
 #include "Document.h"
 #include "FloatConversion.h"

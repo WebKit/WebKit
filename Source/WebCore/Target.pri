@@ -255,7 +255,9 @@ SOURCES += \
     Modules/notifications/NotificationCenter.cpp \
     Modules/notifications/NotificationController.cpp \
     Modules/notifications/WorkerContextNotifications.cpp \
+    css/BasicShapeFunctions.cpp \
     css/CSSAspectRatioValue.cpp \
+    css/CSSBasicShapes.cpp \
     css/CSSBorderImageSliceValue.cpp \
     css/CSSBorderImage.cpp \
     css/CSSCalculationValue.cpp \
@@ -300,7 +302,6 @@ SOURCES += \
     css/CSSValue.cpp \
     css/CSSValueList.cpp \
     css/CSSValuePool.cpp \
-    css/CSSWrapShapes.cpp \
     css/FontFeatureValue.cpp \
     css/FontValue.cpp \
     css/LengthFunctions.cpp \
@@ -335,7 +336,6 @@ SOURCES += \
     css/WebKitCSSSVGDocumentValue.cpp \
     css/WebKitCSSShaderValue.cpp \
     css/WebKitCSSTransformValue.cpp \
-    css/WrapShapeFunctions.cpp \
     dom/ActiveDOMObject.cpp \
     dom/Attr.cpp \
     dom/BeforeTextInsertedEvent.cpp \
@@ -1185,6 +1185,7 @@ SOURCES += \
     rendering/RootInlineBox.cpp \
     rendering/ScrollBehavior.cpp \
     rendering/WrapShapeInfo.cpp \
+    rendering/style/BasicShapes.cpp \
     rendering/style/ContentData.cpp \
     rendering/style/CounterDirectives.cpp \
     rendering/style/FillLayer.cpp \
@@ -1212,7 +1213,6 @@ SOURCES += \
     rendering/style/StyleSurroundData.cpp \
     rendering/style/StyleTransformData.cpp \
     rendering/style/StyleVisualData.cpp \
-    rendering/style/WrapShapes.cpp \
     storage/StorageTask.cpp \
     storage/StorageThread.cpp \
     storage/Storage.cpp \
@@ -1404,7 +1404,9 @@ HEADERS += \
     Modules/webdatabase/SQLTransactionSyncCallback.h \
     Modules/webdatabase/WorkerContextWebDatabase.h \
     \
+    css/BasicShapeFunctions.h \
     css/CSSAspectRatioValue.h \
+    css/CSSBasicShapes.h \
     css/CSSBorderImageSliceValue.h \
     css/CSSBorderImage.h \
     css/CSSCalculationValue.h \
@@ -1451,7 +1453,6 @@ HEADERS += \
     css/CSSValueList.h \
     css/CSSValuePool.h \
     css/CSSVariableValue.h \
-    css/CSSWrapShapes.h \
     css/FontFeatureValue.h \
     css/FontValue.h \
     css/LengthFunctions.h \
@@ -1485,7 +1486,6 @@ HEADERS += \
     css/WebKitCSSSVGDocumentValue.h \
     css/WebKitCSSShaderValue.h \
     css/WebKitCSSTransformValue.h \
-    css/WrapShapeFunctions.h \
     dom/ActiveDOMObject.h \
     dom/Attr.h \
     dom/Attribute.h \
@@ -2370,6 +2370,7 @@ HEADERS += \
     rendering/RootInlineBox.h \
     rendering/ScrollBehavior.h \
     rendering/WrapShapeInfo.h \
+    rendering/style/BasicShapes.h \
     rendering/style/ContentData.h \
     rendering/style/CounterDirectives.h \
     rendering/style/CursorData.h \
@@ -2403,7 +2404,6 @@ HEADERS += \
     rendering/style/StyleVisualData.h \
     rendering/style/SVGRenderStyleDefs.h \
     rendering/style/SVGRenderStyle.h \
-    rendering/style/WrapShapes.h \
     rendering/svg/RenderSVGBlock.h \
     rendering/svg/RenderSVGContainer.h \
     rendering/svg/RenderSVGEllipse.h \

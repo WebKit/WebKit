@@ -13,7 +13,7 @@
  *    disclaimer in the documentation and/or other materials
  *    provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER "AS IS" AND ANY
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER “AS IS” AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE
@@ -27,29 +27,20 @@
  * SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef BasicShapeFunctions_h
+#define BasicShapeFunctions_h
 
-#include "WrapShapes.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-void WrapShape::destroy()
-{
-    switch (m_type) {
-    case WRAP_SHAPE_RECTANGLE:
-        delete static_cast<WrapShapeRectangle*>(this);
-        return;
-    case WRAP_SHAPE_CIRCLE:
-        delete static_cast<WrapShapeCircle*>(this);
-        return;
-    case WRAP_SHAPE_ELLIPSE:
-        delete static_cast<WrapShapeEllipse*>(this);
-        return;
-    case WRAP_SHAPE_POLYGON:
-        delete static_cast<WrapShapePolygon*>(this);
-        return;
-    }
-    ASSERT_NOT_REACHED();
-}
+class CSSValue;
+class CSSWrapShape;
+class StyleResolver;
+class WrapShape;
+
+PassRefPtr<CSSValue> valueForWrapShape(const WrapShape*);
+PassRefPtr<WrapShape> wrapShapeForValue(const StyleResolver*, const CSSWrapShape*);
 
 }
+#endif

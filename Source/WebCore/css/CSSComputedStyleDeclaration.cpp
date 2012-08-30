@@ -61,9 +61,9 @@
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(CSS_EXCLUSIONS)
-#include "CSSWrapShapes.h"
-#include "WrapShapeFunctions.h"
-#include "WrapShapes.h"
+#include "BasicShapeFunctions.h"
+#include "BasicShapes.h"
+#include "CSSBasicShapes.h"
 #endif
 
 #if ENABLE(CSS_SHADERS)

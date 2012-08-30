@@ -991,7 +991,9 @@ SET(WebCore_SOURCES
     bindings/generic/BindingSecurity.cpp
     bindings/generic/RuntimeEnabledFeatures.cpp
 
+    css/BasicShapeFunctions.cpp
     css/CSSAspectRatioValue.cpp
+    css/CSSBasicShapes.cpp
     css/CSSBorderImage.cpp
     css/CSSBorderImageSliceValue.cpp
     css/CSSCalculationValue.cpp
@@ -1036,7 +1038,6 @@ SET(WebCore_SOURCES
     css/CSSValue.cpp
     css/CSSValueList.cpp
     css/CSSValuePool.cpp
-    css/CSSWrapShapes.cpp
     css/FontFeatureValue.cpp
     css/FontValue.cpp
     css/LengthFunctions.cpp
@@ -1073,7 +1074,6 @@ SET(WebCore_SOURCES
     css/WebKitCSSSVGDocumentValue.cpp
     css/WebKitCSSShaderValue.cpp
     css/WebKitCSSTransformValue.cpp
-    css/WrapShapeFunctions.cpp
 
     dom/ActiveDOMObject.cpp
     dom/Attr.cpp
@@ -2115,6 +2115,7 @@ SET(WebCore_SOURCES
     rendering/mathml/RenderMathMLSubSup.cpp
     rendering/mathml/RenderMathMLUnderOver.cpp
 
+    rendering/style/BasicShapes.cpp
     rendering/style/ContentData.cpp
     rendering/style/CounterDirectives.cpp
     rendering/style/FillLayer.cpp
@@ -2143,7 +2144,6 @@ SET(WebCore_SOURCES
     rendering/style/StyleVisualData.cpp
     rendering/style/SVGRenderStyle.cpp
     rendering/style/SVGRenderStyleDefs.cpp
-    rendering/style/WrapShapes.cpp
 
     rendering/svg/RenderSVGBlock.cpp
     rendering/svg/RenderSVGContainer.cpp

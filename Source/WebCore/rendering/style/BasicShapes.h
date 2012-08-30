@@ -27,8 +27,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef WrapShapes_h
-#define WrapShapes_h
+#ifndef BasicShapes_h
+#define BasicShapes_h
 
 #include "Length.h"
 #include "WindRule.h"

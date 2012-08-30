@@ -27,8 +27,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef CSSWrapShapes_h
-#define CSSWrapShapes_h
+#ifndef CSSBasicShapes_h
+#define CSSBasicShapes_h
 
 #include "CSSPrimitiveValue.h"
 #include "PlatformString.h"
@@ -170,4 +170,4 @@ private:
 
 } // namespace WebCore
 
-#endif // CSSWrapShapes_h
+#endif // CSSBasicShapes_h

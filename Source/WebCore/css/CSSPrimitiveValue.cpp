@@ -21,12 +21,12 @@
 #include "config.h"
 #include "CSSPrimitiveValue.h"
 
+#include "CSSBasicShapes.h"
 #include "CSSCalculationValue.h"
 #include "CSSHelper.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
-#include "CSSWrapShapes.h"
 #include "CalculationValue.h"
 #include "Color.h"
 #include "Counter.h"
