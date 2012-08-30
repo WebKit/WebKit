@@ -1,5 +1,18 @@
 2012-08-30  Dirk Pranke  <dpranke@chromium.org>
 
+        decide what (and how) we should set the tolerance for ref test pixel compares and test for that
+        https://bugs.webkit.org/show_bug.cgi?id=94746
+
+        Reviewed by Ojan Vafai.
+
+        Add an assertion to diff_image() to check that we are passing
+        tolerance=0 explicitly when diffing ref test results.
+
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.diff_image):
+
+2012-08-30  Dirk Pranke  <dpranke@chromium.org>
+
         NRWT should look in mac-wk2 for a TestExpecations file
         https://bugs.webkit.org/show_bug.cgi?id=95370
 
