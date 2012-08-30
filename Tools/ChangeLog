@@ -1,3 +1,11 @@
+2012-08-30  Leo Yang  <leoyang@rim.com>
+
+        Update my email address.
+
+        Not reviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-08-30  Jochen Eisinger  <jochen@chromium.org>
 
         [NRWT] Add support for recognizing arbitrary process names in crash lines
