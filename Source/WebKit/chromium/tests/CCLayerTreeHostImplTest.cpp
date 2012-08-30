@@ -400,6 +400,24 @@ TEST_F(CCLayerTreeHostImplTest, nonFastScrollableRegionWithOffset)
     EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(10, 10), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollOnMainThread);
 }
 
+TEST_F(CCLayerTreeHostImplTest, maxScrollPositionChangedByDeviceScaleFactor)
+{
+    setupScrollAndContentsLayers(IntSize(100, 100));
+
+    float deviceScaleFactor = 2;
+    IntSize layoutViewport(25, 25);
+    IntSize deviceViewport(layoutViewport);
+    deviceViewport.scale(deviceScaleFactor);
+    m_hostImpl->setViewportSize(layoutViewport, deviceViewport);
+    m_hostImpl->setDeviceScaleFactor(deviceScaleFactor);
+    EXPECT_EQ(m_hostImpl->rootLayer()->maxScrollPosition(), IntSize(25, 25));
+
+    deviceScaleFactor = 1;
+    m_hostImpl->setViewportSize(layoutViewport, layoutViewport);
+    m_hostImpl->setDeviceScaleFactor(deviceScaleFactor);
+    EXPECT_EQ(m_hostImpl->rootLayer()->maxScrollPosition(), IntSize(75, 75));
+}
+
 TEST_F(CCLayerTreeHostImplTest, pinchGesture)
 {
     setupScrollAndContentsLayers(IntSize(100, 100));

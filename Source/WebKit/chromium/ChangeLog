@@ -1,3 +1,14 @@
+2012-08-29  Alex Sakhartchouk  <alexst@chromium.org>
+
+        [chromium] CCLayerTreeHost::finishCommitOnImplThread wrong setter order
+        https://bugs.webkit.org/show_bug.cgi?id=94828
+
+        Reviewed by Adrienne Walker.
+
+        Testing that setDeviceScaleFactor properly changes maxScrollPosition
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-08-29  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r126956.
