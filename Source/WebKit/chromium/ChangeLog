@@ -1,3 +1,14 @@
+2012-08-29  Nat Duca  <nduca@chromium.org>
+
+        [chromium] setNeedsAnimate should not cause commitRequested to become true
+        https://bugs.webkit.org/show_bug.cgi?id=95393
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (CCLayerTreeHostTestSetNeedsAnimateShouldNotSetCommitRequested):
+        (CCLayerTreeHostTestSetNeedsAnimateShouldNotSetCommitRequested::CCLayerTreeHostTestSetNeedsAnimateShouldNotSetCommitRequested):
+
 2012-08-29  Tien-Ren Chen  <trchen@chromium.org>
 
         [chromium] Implement disambiguation popup (a.k.a. Link Preview)

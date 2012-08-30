@@ -517,6 +517,63 @@ TEST_F(CCLayerTreeHostTestAbortFrameWhenInvisible, runMultiThread)
     runTest(true);
 }
 
+// Makes sure that setNedsAnimate does not cause the commitRequested() state to be set.
+class CCLayerTreeHostTestSetNeedsAnimateShouldNotSetCommitRequested : public CCLayerTreeHostTest {
+public:
+    CCLayerTreeHostTestSetNeedsAnimateShouldNotSetCommitRequested()
+        : m_numCommits(0)
+    {
+    }
+
+    virtual void beginTest() OVERRIDE
+    {
+        // The tests start up with a commit pending because we give them a root layer.
+        // We need to wait for the commit to happen before doing anything.
+        EXPECT_TRUE(m_layerTreeHost->commitRequested());
+    }
+
+    virtual void animate(double monotonicTime) OVERRIDE
+    {
+        // We skip the first commit becasue its the commit that populates the
+        // impl thread with a tree.
+        if (!m_numCommits)
+            return;
+
+        m_layerTreeHost->setNeedsAnimate();
+        // Right now, commitRequested is going to be true, because during
+        // beginFrame, we force commitRequested to true to prevent requests from
+        // hitting the impl thread. But, when the next didCommit happens, we should
+        // verify that commitRequested has gone back to false.
+    }
+    virtual void didCommit() OVERRIDE
+    {
+        if (!m_numCommits) {
+            EXPECT_FALSE(m_layerTreeHost->commitRequested());
+            m_layerTreeHost->setNeedsAnimate();
+            EXPECT_FALSE(m_layerTreeHost->commitRequested());
+            m_numCommits++;
+        }
+
+        // Verifies that the setNeedsAnimate we made in ::animate did not
+        // trigger commitRequested.
+        EXPECT_FALSE(m_layerTreeHost->commitRequested());
+        endTest();
+    }
+
+    virtual void afterTest() OVERRIDE
+    {
+    }
+
+private:
+    int m_numCommits;
+};
+
+TEST_F(CCLayerTreeHostTestSetNeedsAnimateShouldNotSetCommitRequested, runMultiThread)
+{
+    runTest(true);
+}
+
+
 
 // Trigger a frame with setNeedsCommit. Then, inside the resulting animate
 // callback, requet another frame using setNeedsAnimate. End the test when

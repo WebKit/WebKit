@@ -147,8 +147,9 @@ private:
     void setNeedsForcedCommitOnImplThread();
 
     // Accessed on main thread only.
-    bool m_animateRequested;
-    bool m_commitRequested;
+    bool m_animateRequested; // Set only when setNeedsAnimate is called.
+    bool m_commitRequested; // Set only when setNeedsCommit is called.
+    bool m_commitRequestSentToImplThread; // Set by setNeedsCommit and setNeedsAnimate.
     bool m_forcedCommitRequested;
     OwnPtr<CCThreadProxyContextRecreationTimer> m_contextRecreationTimer;
     CCLayerTreeHost* m_layerTreeHost;
