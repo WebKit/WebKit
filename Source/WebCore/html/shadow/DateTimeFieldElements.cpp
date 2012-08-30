@@ -32,15 +32,15 @@
 
 namespace WebCore {
 
-DateTimeAMPMFieldElement::DateTimeAMPMFieldElement(Document* document, FieldEventHandler& fieldEventHandler, const Vector<String>& ampmLabels)
-    : DateTimeSymbolicFieldElement(document, fieldEventHandler, ampmLabels)
+DateTimeAMPMFieldElement::DateTimeAMPMFieldElement(Document* document, FieldOwner& fieldOwner, const Vector<String>& ampmLabels)
+    : DateTimeSymbolicFieldElement(document, fieldOwner, ampmLabels)
 {
 }
 
-PassRefPtr<DateTimeAMPMFieldElement> DateTimeAMPMFieldElement::create(Document* document, FieldEventHandler& fieldEventHandler, const Vector<String>& ampmLabels)
+PassRefPtr<DateTimeAMPMFieldElement> DateTimeAMPMFieldElement::create(Document* document, FieldOwner& fieldOwner, const Vector<String>& ampmLabels)
 {
     DEFINE_STATIC_LOCAL(AtomicString, ampmPsuedoId, ("-webkit-datetime-edit-ampm-field"));
-    RefPtr<DateTimeAMPMFieldElement> field = adoptRef(new DateTimeAMPMFieldElement(document, fieldEventHandler, ampmLabels));
+    RefPtr<DateTimeAMPMFieldElement> field = adoptRef(new DateTimeAMPMFieldElement(document, fieldOwner, ampmLabels));
     field->initialize(ampmPsuedoId);
     return field.release();
 }
@@ -57,17 +57,17 @@ double DateTimeAMPMFieldElement::unitInMillisecond() const
 
 // ----------------------------
 
-DateTimeHourFieldElement::DateTimeHourFieldElement(Document* document, FieldEventHandler& fieldEventHandler, int minimum, int maximum)
-    : DateTimeNumericFieldElement(document, fieldEventHandler, minimum, maximum)
+DateTimeHourFieldElement::DateTimeHourFieldElement(Document* document, FieldOwner& fieldOwner, int minimum, int maximum)
+    : DateTimeNumericFieldElement(document, fieldOwner, minimum, maximum)
     , m_alignment(maximum + maximum % 2)
 {
     ASSERT((!minimum && (maximum == 11 || maximum == 23)) || (minimum == 1 && (maximum == 12 || maximum == 24)));
 }
 
-PassRefPtr<DateTimeHourFieldElement> DateTimeHourFieldElement::create(Document* document, FieldEventHandler& fieldEventHandler, int minimum, int maximum)
+PassRefPtr<DateTimeHourFieldElement> DateTimeHourFieldElement::create(Document* document, FieldOwner& fieldOwner, int minimum, int maximum)
 {
     DEFINE_STATIC_LOCAL(AtomicString, hourPsuedoId, ("-webkit-datetime-edit-hour-field"));
-    RefPtr<DateTimeHourFieldElement> field = adoptRef(new DateTimeHourFieldElement(document, fieldEventHandler, minimum, maximum));
+    RefPtr<DateTimeHourFieldElement> field = adoptRef(new DateTimeHourFieldElement(document, fieldOwner, minimum, maximum));
     field->initialize(hourPsuedoId);
     return field.release();
 }
@@ -95,15 +95,15 @@ int DateTimeHourFieldElement::valueAsInteger() const
 
 // ----------------------------
 
-DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement(Document* document, FieldEventHandler& fieldEventHandler)
-    : DateTimeNumericFieldElement(document, fieldEventHandler, 0, 999)
+DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement(Document* document, FieldOwner& fieldOwner)
+    : DateTimeNumericFieldElement(document, fieldOwner, 0, 999)
 {
 }
 
-PassRefPtr<DateTimeMillisecondFieldElement> DateTimeMillisecondFieldElement::create(Document* document, FieldEventHandler& fieldEventHandler)
+PassRefPtr<DateTimeMillisecondFieldElement> DateTimeMillisecondFieldElement::create(Document* document, FieldOwner& fieldOwner)
 {
     DEFINE_STATIC_LOCAL(AtomicString, millisecondPsuedoId, ("-webkit-datetime-edit-millisecond-field"));
-    RefPtr<DateTimeMillisecondFieldElement> field = adoptRef(new DateTimeMillisecondFieldElement(document, fieldEventHandler));
+    RefPtr<DateTimeMillisecondFieldElement> field = adoptRef(new DateTimeMillisecondFieldElement(document, fieldOwner));
     field->initialize(millisecondPsuedoId);
     return field.release();
 }
@@ -120,15 +120,15 @@ double DateTimeMillisecondFieldElement::unitInMillisecond() const
 
 // ----------------------------
 
-DateTimeMinuteFieldElement::DateTimeMinuteFieldElement(Document* document, FieldEventHandler& fieldEventHandler)
-    : DateTimeNumericFieldElement(document, fieldEventHandler, 0, 59)
+DateTimeMinuteFieldElement::DateTimeMinuteFieldElement(Document* document, FieldOwner& fieldOwner)
+    : DateTimeNumericFieldElement(document, fieldOwner, 0, 59)
 {
 }
 
-PassRefPtr<DateTimeMinuteFieldElement> DateTimeMinuteFieldElement::create(Document* document, FieldEventHandler& fieldEventHandler)
+PassRefPtr<DateTimeMinuteFieldElement> DateTimeMinuteFieldElement::create(Document* document, FieldOwner& fieldOwner)
 {
     DEFINE_STATIC_LOCAL(AtomicString, minutePsuedoId, ("-webkit-datetime-edit-minute-field"));
-    RefPtr<DateTimeMinuteFieldElement> field = adoptRef(new DateTimeMinuteFieldElement(document, fieldEventHandler));
+    RefPtr<DateTimeMinuteFieldElement> field = adoptRef(new DateTimeMinuteFieldElement(document, fieldOwner));
     field->initialize(minutePsuedoId);
     return field.release();
 }
@@ -145,15 +145,15 @@ double DateTimeMinuteFieldElement::unitInMillisecond() const
 
 // ----------------------------
 
-DateTimeSecondFieldElement::DateTimeSecondFieldElement(Document* document, FieldEventHandler& fieldEventHandler)
-    : DateTimeNumericFieldElement(document, fieldEventHandler, 0, 59)
+DateTimeSecondFieldElement::DateTimeSecondFieldElement(Document* document, FieldOwner& fieldOwner)
+    : DateTimeNumericFieldElement(document, fieldOwner, 0, 59)
 {
 }
 
-PassRefPtr<DateTimeSecondFieldElement> DateTimeSecondFieldElement::create(Document* document, FieldEventHandler& fieldEventHandler)
+PassRefPtr<DateTimeSecondFieldElement> DateTimeSecondFieldElement::create(Document* document, FieldOwner& fieldOwner)
 {
     DEFINE_STATIC_LOCAL(AtomicString, secondPsuedoId, ("-webkit-datetime-edit-second-field"));
-    RefPtr<DateTimeSecondFieldElement> field = adoptRef(new DateTimeSecondFieldElement(document, fieldEventHandler));
+    RefPtr<DateTimeSecondFieldElement> field = adoptRef(new DateTimeSecondFieldElement(document, fieldOwner));
     field->initialize(secondPsuedoId);
     return field.release();
 }

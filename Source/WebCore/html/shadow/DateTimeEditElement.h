@@ -42,7 +42,7 @@ class StepRange;
 // representing date and time, such as
 //  - Year, Month, Day Of Month
 //  - Hour, Minute, Second, Millisecond, AM/PM
-class DateTimeEditElement : public HTMLDivElement, public DateTimeFieldElement::FieldEventHandler, private SpinButtonElement::SpinButtonOwner {
+class DateTimeEditElement : public HTMLDivElement, public DateTimeFieldElement::FieldOwner, private SpinButtonElement::SpinButtonOwner {
     WTF_MAKE_NONCOPYABLE(DateTimeEditElement);
 
 public:
@@ -99,7 +99,7 @@ private:
     size_t previousFieldIndex() const;
     void updateUIState();
 
-    // DateTimeFieldElement::FieldEventHandler functions.
+    // DateTimeFieldElement::FieldOwner functions.
     virtual void fieldValueChanged() OVERRIDE FINAL;
     virtual void focusOnNextField() OVERRIDE FINAL;
 

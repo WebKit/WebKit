@@ -37,7 +37,7 @@ class DateTimeSymbolicFieldElement : public DateTimeFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeSymbolicFieldElement);
 
 protected:
-    DateTimeSymbolicFieldElement(Document*, FieldEventHandler&, const Vector<String>&);
+    DateTimeSymbolicFieldElement(Document*, FieldOwner&, const Vector<String>&);
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
 
 private:

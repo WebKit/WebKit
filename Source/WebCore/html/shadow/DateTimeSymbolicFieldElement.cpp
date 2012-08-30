@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document* document, FieldEventHandler& fieldEventHandler, const Vector<String>& symbols)
-    : DateTimeFieldElement(document, fieldEventHandler)
+DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document* document, FieldOwner& fieldOwner, const Vector<String>& symbols)
+    : DateTimeFieldElement(document, fieldOwner)
     , m_symbols(symbols)
     , m_selectedIndex(-1)
 {

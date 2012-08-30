@@ -36,10 +36,10 @@ class DateTimeAMPMFieldElement : public DateTimeSymbolicFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeAMPMFieldElement);
 
 public:
-    static PassRefPtr<DateTimeAMPMFieldElement> create(Document*, FieldEventHandler&, const Vector<String>&);
+    static PassRefPtr<DateTimeAMPMFieldElement> create(Document*, FieldOwner&, const Vector<String>&);
 
 private:
-    DateTimeAMPMFieldElement(Document*, FieldEventHandler&, const Vector<String>&);
+    DateTimeAMPMFieldElement(Document*, FieldOwner&, const Vector<String>&);
 
     // DateTimeFieldElement functions.
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
@@ -57,10 +57,10 @@ class DateTimeHourFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeHourFieldElement);
 
 public:
-    static PassRefPtr<DateTimeHourFieldElement> create(Document*, FieldEventHandler&, int minimum, int maximum);
+    static PassRefPtr<DateTimeHourFieldElement> create(Document*, FieldOwner&, int minimum, int maximum);
 
 private:
-    DateTimeHourFieldElement(Document*, FieldEventHandler&, int minimum, int maximum);
+    DateTimeHourFieldElement(Document*, FieldOwner&, int minimum, int maximum);
 
     // DateTimeFieldElement functions.
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
@@ -75,10 +75,10 @@ class DateTimeMillisecondFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeMillisecondFieldElement);
 
 public:
-    static PassRefPtr<DateTimeMillisecondFieldElement> create(Document*, FieldEventHandler&);
+    static PassRefPtr<DateTimeMillisecondFieldElement> create(Document*, FieldOwner&);
 
 private:
-    DateTimeMillisecondFieldElement(Document*, FieldEventHandler&);
+    DateTimeMillisecondFieldElement(Document*, FieldOwner&);
 
     // DateTimeFieldElement functions.
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
@@ -89,10 +89,10 @@ class DateTimeMinuteFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeMinuteFieldElement);
 
 public:
-    static PassRefPtr<DateTimeMinuteFieldElement> create(Document*, FieldEventHandler&);
+    static PassRefPtr<DateTimeMinuteFieldElement> create(Document*, FieldOwner&);
 
 private:
-    DateTimeMinuteFieldElement(Document*, FieldEventHandler&);
+    DateTimeMinuteFieldElement(Document*, FieldOwner&);
 
     // DateTimeFieldElement functions.
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
@@ -103,10 +103,10 @@ class DateTimeSecondFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeSecondFieldElement);
 
 public:
-    static PassRefPtr<DateTimeSecondFieldElement> create(Document*, FieldEventHandler&);
+    static PassRefPtr<DateTimeSecondFieldElement> create(Document*, FieldOwner&);
 
 private:
-    DateTimeSecondFieldElement(Document*, FieldEventHandler&);
+    DateTimeSecondFieldElement(Document*, FieldOwner&);
 
     // DateTimeFieldElement functions.
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;

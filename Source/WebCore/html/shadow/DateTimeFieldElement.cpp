@@ -36,13 +36,13 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-DateTimeFieldElement::FieldEventHandler::~FieldEventHandler()
+DateTimeFieldElement::FieldOwner::~FieldOwner()
 {
 }
 
-DateTimeFieldElement::DateTimeFieldElement(Document* document, FieldEventHandler& fieldEventHandler)
+DateTimeFieldElement::DateTimeFieldElement(Document* document, FieldOwner& fieldOwner)
     : HTMLElement(spanTag, document)
-    , m_fieldEventHandler(&fieldEventHandler)
+    , m_fieldOwner(&fieldOwner)
 {
 }
 
@@ -89,8 +89,8 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent* keyboardEv
 
 void DateTimeFieldElement::focusOnNextField()
 {
-    if (m_fieldEventHandler)
-        m_fieldEventHandler->focusOnNextField();
+    if (m_fieldOwner)
+        m_fieldOwner->focusOnNextField();
 }
 
 void DateTimeFieldElement::initialize(const AtomicString& shadowPseudoId)
@@ -122,8 +122,8 @@ void DateTimeFieldElement::updateVisibleValue(EventBehavior eventBehavior)
 
     textNode->replaceWholeText(newVisibleValue, ASSERT_NO_EXCEPTION);
 
-    if (eventBehavior == DispatchEvent && m_fieldEventHandler)
-        m_fieldEventHandler->fieldValueChanged();
+    if (eventBehavior == DispatchEvent && m_fieldOwner)
+        m_fieldOwner->fieldValueChanged();
 }
 
 double DateTimeFieldElement::valueAsDouble() const
