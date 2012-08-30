@@ -34,13 +34,13 @@
 
 namespace WebCore {
 
+class BasicShape;
+class CSSBasicShape;
 class CSSValue;
-class CSSWrapShape;
 class StyleResolver;
-class WrapShape;
 
-PassRefPtr<CSSValue> valueForWrapShape(const WrapShape*);
-PassRefPtr<WrapShape> wrapShapeForValue(const StyleResolver*, const CSSWrapShape*);
+PassRefPtr<CSSValue> valueForBasicShape(const BasicShape*);
+PassRefPtr<BasicShape> basicShapeForValue(const StyleResolver*, const CSSBasicShape*);
 
 }
 #endif

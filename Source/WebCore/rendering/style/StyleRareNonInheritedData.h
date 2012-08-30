@@ -134,8 +134,8 @@ public:
 
     LengthSize m_pageSize;
 
-    RefPtr<WrapShape> m_wrapShapeInside;
-    RefPtr<WrapShape> m_wrapShapeOutside;
+    RefPtr<BasicShape> m_wrapShapeInside;
+    RefPtr<BasicShape> m_wrapShapeOutside;
     Length m_wrapMargin;
     Length m_wrapPadding;
     

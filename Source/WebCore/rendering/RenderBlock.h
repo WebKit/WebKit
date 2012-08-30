@@ -498,7 +498,7 @@ protected:
 
 private:
 #if ENABLE(CSS_EXCLUSIONS)
-    void updateWrapShapeInfoAfterStyleChange(const WrapShape*, const WrapShape* oldWrapShape);
+    void updateWrapShapeInfoAfterStyleChange(const BasicShape*, const BasicShape* oldWrapShape);
 #endif
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }

@@ -38,13 +38,13 @@
 
 namespace WebCore {
 
-PassRefPtr<CSSValue> valueForWrapShape(const WrapShape* wrapShape)
+PassRefPtr<CSSValue> valueForBasicShape(const BasicShape* basicShape)
 {
-    RefPtr<CSSWrapShape> wrapShapeValue;
-    switch (wrapShape->type()) {
-    case WrapShape::WRAP_SHAPE_RECTANGLE: {
-        const WrapShapeRectangle* rectangle = static_cast<const WrapShapeRectangle*>(wrapShape);
-        RefPtr<CSSWrapShapeRectangle> rectangleValue = CSSWrapShapeRectangle::create();
+    RefPtr<CSSBasicShape> basicShapeValue;
+    switch (basicShape->type()) {
+    case BasicShape::BASIC_SHAPE_RECTANGLE: {
+        const BasicShapeRectangle* rectangle = static_cast<const BasicShapeRectangle*>(basicShape);
+        RefPtr<CSSBasicShapeRectangle> rectangleValue = CSSBasicShapeRectangle::create();
 
         rectangleValue->setX(cssValuePool().createValue(rectangle->x()));
         rectangleValue->setY(cssValuePool().createValue(rectangle->y()));
@@ -56,48 +56,48 @@ PassRefPtr<CSSValue> valueForWrapShape(const WrapShape* wrapShape)
                 rectangleValue->setRadiusY(cssValuePool().createValue(rectangle->cornerRadiusY()));
         }
 
-        wrapShapeValue = rectangleValue.release();
+        basicShapeValue = rectangleValue.release();
         break;
     }
-    case WrapShape::WRAP_SHAPE_CIRCLE: {
-        const WrapShapeCircle* circle = static_cast<const WrapShapeCircle*>(wrapShape);
-        RefPtr<CSSWrapShapeCircle> circleValue = CSSWrapShapeCircle::create();
+    case BasicShape::BASIC_SHAPE_CIRCLE: {
+        const BasicShapeCircle* circle = static_cast<const BasicShapeCircle*>(basicShape);
+        RefPtr<CSSBasicShapeCircle> circleValue = CSSBasicShapeCircle::create();
 
         circleValue->setCenterX(cssValuePool().createValue(circle->centerX()));
         circleValue->setCenterY(cssValuePool().createValue(circle->centerY()));
         circleValue->setRadius(cssValuePool().createValue(circle->radius()));
 
-        wrapShapeValue = circleValue.release();
+        basicShapeValue = circleValue.release();
         break;
     }
-    case WrapShape::WRAP_SHAPE_ELLIPSE: {
-        const WrapShapeEllipse* ellipse = static_cast<const WrapShapeEllipse*>(wrapShape);
-        RefPtr<CSSWrapShapeEllipse> ellipseValue = CSSWrapShapeEllipse::create();
+    case BasicShape::BASIC_SHAPE_ELLIPSE: {
+        const BasicShapeEllipse* ellipse = static_cast<const BasicShapeEllipse*>(basicShape);
+        RefPtr<CSSBasicShapeEllipse> ellipseValue = CSSBasicShapeEllipse::create();
 
         ellipseValue->setCenterX(cssValuePool().createValue(ellipse->centerX()));
         ellipseValue->setCenterY(cssValuePool().createValue(ellipse->centerY()));
         ellipseValue->setRadiusX(cssValuePool().createValue(ellipse->radiusX()));
         ellipseValue->setRadiusY(cssValuePool().createValue(ellipse->radiusY()));
 
-        wrapShapeValue = ellipseValue.release();
+        basicShapeValue = ellipseValue.release();
         break;
     }
-    case WrapShape::WRAP_SHAPE_POLYGON: {
-        const WrapShapePolygon* polygon = static_cast<const WrapShapePolygon*>(wrapShape);
-        RefPtr<CSSWrapShapePolygon> polygonValue = CSSWrapShapePolygon::create();
+    case BasicShape::BASIC_SHAPE_POLYGON: {
+        const BasicShapePolygon* polygon = static_cast<const BasicShapePolygon*>(basicShape);
+        RefPtr<CSSBasicShapePolygon> polygonValue = CSSBasicShapePolygon::create();
 
         polygonValue->setWindRule(polygon->windRule());
         const Vector<Length>& values = polygon->values();
         for (unsigned i = 0; i < values.size(); i += 2)
             polygonValue->appendPoint(cssValuePool().createValue(values.at(i)), cssValuePool().createValue(values.at(i + 1)));
 
-        wrapShapeValue = polygonValue.release();
+        basicShapeValue = polygonValue.release();
         break;
     }
     default:
         break;
     }
-    return cssValuePool().createValue<PassRefPtr<CSSWrapShape> >(wrapShapeValue.release());
+    return cssValuePool().createValue<PassRefPtr<CSSBasicShape> >(basicShapeValue.release());
 }
 
 static Length convertToLength(const StyleResolver* styleResolver, CSSPrimitiveValue* value)
@@ -105,14 +105,14 @@ static Length convertToLength(const StyleResolver* styleResolver, CSSPrimitiveVa
     return value->convertToLength<FixedIntegerConversion | FixedFloatConversion | PercentConversion | ViewportPercentageConversion>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
 }
 
-PassRefPtr<WrapShape> wrapShapeForValue(const StyleResolver* styleResolver, const CSSWrapShape* wrapShapeValue)
+PassRefPtr<BasicShape> basicShapeForValue(const StyleResolver* styleResolver, const CSSBasicShape* basicShapeValue)
 {
-    RefPtr<WrapShape> wrapShape;
+    RefPtr<BasicShape> basicShape;
 
-    switch (wrapShapeValue->type()) {
-    case CSSWrapShape::CSS_WRAP_SHAPE_RECTANGLE: {
-        const CSSWrapShapeRectangle* rectValue = static_cast<const CSSWrapShapeRectangle *>(wrapShapeValue);
-        RefPtr<WrapShapeRectangle> rect = WrapShapeRectangle::create();
+    switch (basicShapeValue->type()) {
+    case CSSBasicShape::CSS_BASIC_SHAPE_RECTANGLE: {
+        const CSSBasicShapeRectangle* rectValue = static_cast<const CSSBasicShapeRectangle *>(basicShapeValue);
+        RefPtr<BasicShapeRectangle> rect = BasicShapeRectangle::create();
 
         rect->setX(convertToLength(styleResolver, rectValue->x()));
         rect->setY(convertToLength(styleResolver, rectValue->y()));
@@ -123,47 +123,47 @@ PassRefPtr<WrapShape> wrapShapeForValue(const StyleResolver* styleResolver, cons
             if (rectValue->radiusY())
                 rect->setCornerRadiusY(convertToLength(styleResolver, rectValue->radiusY()));
         }
-        wrapShape = rect.release();
+        basicShape = rect.release();
         break;
     }
-    case CSSWrapShape::CSS_WRAP_SHAPE_CIRCLE: {
-        const CSSWrapShapeCircle* circleValue = static_cast<const CSSWrapShapeCircle *>(wrapShapeValue);
-        RefPtr<WrapShapeCircle> circle = WrapShapeCircle::create();
+    case CSSBasicShape::CSS_BASIC_SHAPE_CIRCLE: {
+        const CSSBasicShapeCircle* circleValue = static_cast<const CSSBasicShapeCircle *>(basicShapeValue);
+        RefPtr<BasicShapeCircle> circle = BasicShapeCircle::create();
 
         circle->setCenterX(convertToLength(styleResolver, circleValue->centerX()));
         circle->setCenterY(convertToLength(styleResolver, circleValue->centerY()));
         circle->setRadius(convertToLength(styleResolver, circleValue->radius()));
 
-        wrapShape = circle.release();
+        basicShape = circle.release();
         break;
     }
-    case CSSWrapShape::CSS_WRAP_SHAPE_ELLIPSE: {
-        const CSSWrapShapeEllipse* ellipseValue = static_cast<const CSSWrapShapeEllipse *>(wrapShapeValue);
-        RefPtr<WrapShapeEllipse> ellipse = WrapShapeEllipse::create();
+    case CSSBasicShape::CSS_BASIC_SHAPE_ELLIPSE: {
+        const CSSBasicShapeEllipse* ellipseValue = static_cast<const CSSBasicShapeEllipse *>(basicShapeValue);
+        RefPtr<BasicShapeEllipse> ellipse = BasicShapeEllipse::create();
 
         ellipse->setCenterX(convertToLength(styleResolver, ellipseValue->centerX()));
         ellipse->setCenterY(convertToLength(styleResolver, ellipseValue->centerY()));
         ellipse->setRadiusX(convertToLength(styleResolver, ellipseValue->radiusX()));
         ellipse->setRadiusY(convertToLength(styleResolver, ellipseValue->radiusY()));
 
-        wrapShape = ellipse.release();
+        basicShape = ellipse.release();
         break;
     }
-    case CSSWrapShape::CSS_WRAP_SHAPE_POLYGON: {
-        const CSSWrapShapePolygon* polygonValue = static_cast<const CSSWrapShapePolygon *>(wrapShapeValue);
-        RefPtr<WrapShapePolygon> polygon = WrapShapePolygon::create();
+    case CSSBasicShape::CSS_BASIC_SHAPE_POLYGON: {
+        const CSSBasicShapePolygon* polygonValue = static_cast<const CSSBasicShapePolygon *>(basicShapeValue);
+        RefPtr<BasicShapePolygon> polygon = BasicShapePolygon::create();
 
         polygon->setWindRule(polygonValue->windRule());
         const Vector<RefPtr<CSSPrimitiveValue> >& values = polygonValue->values();
         for (unsigned i = 0; i < values.size(); i += 2)
             polygon->appendPoint(convertToLength(styleResolver, values.at(i).get()), convertToLength(styleResolver, values.at(i + 1).get()));
 
-        wrapShape = polygon.release();
+        basicShape = polygon.release();
         break;
     }
     default:
         break;
     }
-    return wrapShape.release();
+    return basicShape.release();
 }
 }

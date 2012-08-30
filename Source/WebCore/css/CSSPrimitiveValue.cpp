@@ -347,7 +347,7 @@ void CSSPrimitiveValue::init(PassRefPtr<CSSCalcValue> c)
     m_value.calc = c.leakRef();
 }
 
-void CSSPrimitiveValue::init(PassRefPtr<CSSWrapShape> shape)
+void CSSPrimitiveValue::init(PassRefPtr<CSSBasicShape> shape)
 {
     m_primitiveUnitType = CSS_SHAPE;
     m_hasCachedCSSText = false;

@@ -38,28 +38,28 @@
 
 namespace WebCore {
 
-class CSSWrapShape : public RefCounted<CSSWrapShape> {
+class CSSBasicShape : public RefCounted<CSSBasicShape> {
 public:
     enum Type {
-        CSS_WRAP_SHAPE_RECTANGLE = 1,
-        CSS_WRAP_SHAPE_CIRCLE = 2,
-        CSS_WRAP_SHAPE_ELLIPSE = 3,
-        CSS_WRAP_SHAPE_POLYGON = 4
+        CSS_BASIC_SHAPE_RECTANGLE = 1,
+        CSS_BASIC_SHAPE_CIRCLE = 2,
+        CSS_BASIC_SHAPE_ELLIPSE = 3,
+        CSS_BASIC_SHAPE_POLYGON = 4
     };
 
     virtual Type type() const = 0;
     virtual String cssText() const = 0;
 
 public:
-    virtual ~CSSWrapShape() { }
+    virtual ~CSSBasicShape() { }
 
 protected:
-    CSSWrapShape() { }
+    CSSBasicShape() { }
 };
 
-class CSSWrapShapeRectangle : public CSSWrapShape {
+class CSSBasicShapeRectangle : public CSSBasicShape {
 public:
-    static PassRefPtr<CSSWrapShapeRectangle> create() { return adoptRef(new CSSWrapShapeRectangle); }
+    static PassRefPtr<CSSBasicShapeRectangle> create() { return adoptRef(new CSSBasicShapeRectangle); }
 
     CSSPrimitiveValue* x() const { return m_x.get(); }
     CSSPrimitiveValue* y() const { return m_y.get(); }
@@ -75,11 +75,11 @@ public:
     void setRadiusX(PassRefPtr<CSSPrimitiveValue> radiusX) { m_radiusX = radiusX; }
     void setRadiusY(PassRefPtr<CSSPrimitiveValue> radiusY) { m_radiusY = radiusY; }
 
-    virtual Type type() const { return CSS_WRAP_SHAPE_RECTANGLE; }
+    virtual Type type() const { return CSS_BASIC_SHAPE_RECTANGLE; }
     virtual String cssText() const;
 
 private:
-    CSSWrapShapeRectangle() { }
+    CSSBasicShapeRectangle() { }
 
     RefPtr<CSSPrimitiveValue> m_y;
     RefPtr<CSSPrimitiveValue> m_x;
@@ -89,9 +89,9 @@ private:
     RefPtr<CSSPrimitiveValue> m_radiusY;
 };
 
-class CSSWrapShapeCircle : public CSSWrapShape {
+class CSSBasicShapeCircle : public CSSBasicShape {
 public:
-    static PassRefPtr<CSSWrapShapeCircle> create() { return adoptRef(new CSSWrapShapeCircle); }
+    static PassRefPtr<CSSBasicShapeCircle> create() { return adoptRef(new CSSBasicShapeCircle); }
 
     CSSPrimitiveValue* centerX() const { return m_centerX.get(); }
     CSSPrimitiveValue* centerY() const { return m_centerY.get(); }
@@ -101,20 +101,20 @@ public:
     void setCenterY(PassRefPtr<CSSPrimitiveValue> centerY) { m_centerY = centerY; }
     void setRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_radius = radius; }
 
-    virtual Type type() const { return CSS_WRAP_SHAPE_CIRCLE; }
+    virtual Type type() const { return CSS_BASIC_SHAPE_CIRCLE; }
     virtual String cssText() const;
 
 private:
-    CSSWrapShapeCircle() { }
+    CSSBasicShapeCircle() { }
 
     RefPtr<CSSPrimitiveValue> m_centerY;
     RefPtr<CSSPrimitiveValue> m_centerX;
     RefPtr<CSSPrimitiveValue> m_radius;
 };
 
-class CSSWrapShapeEllipse : public CSSWrapShape {
+class CSSBasicShapeEllipse : public CSSBasicShape {
 public:
-    static PassRefPtr<CSSWrapShapeEllipse> create() { return adoptRef(new CSSWrapShapeEllipse); }
+    static PassRefPtr<CSSBasicShapeEllipse> create() { return adoptRef(new CSSBasicShapeEllipse); }
 
     CSSPrimitiveValue* centerX() const { return m_centerX.get(); }
     CSSPrimitiveValue* centerY() const { return m_centerY.get(); }
@@ -126,11 +126,11 @@ public:
     void setRadiusX(PassRefPtr<CSSPrimitiveValue> radiusX) { m_radiusX = radiusX; }
     void setRadiusY(PassRefPtr<CSSPrimitiveValue> radiusY) { m_radiusY = radiusY; }
 
-    virtual Type type() const { return CSS_WRAP_SHAPE_ELLIPSE; }
+    virtual Type type() const { return CSS_BASIC_SHAPE_ELLIPSE; }
     virtual String cssText() const;
 
 private:
-    CSSWrapShapeEllipse() { }
+    CSSBasicShapeEllipse() { }
 
     RefPtr<CSSPrimitiveValue> m_centerX;
     RefPtr<CSSPrimitiveValue> m_centerY;
@@ -138,9 +138,9 @@ private:
     RefPtr<CSSPrimitiveValue> m_radiusY;
 };
 
-class CSSWrapShapePolygon : public CSSWrapShape {
+class CSSBasicShapePolygon : public CSSBasicShape {
 public:
-    static PassRefPtr<CSSWrapShapePolygon> create() { return adoptRef(new CSSWrapShapePolygon); }
+    static PassRefPtr<CSSBasicShapePolygon> create() { return adoptRef(new CSSBasicShapePolygon); }
 
     void appendPoint(PassRefPtr<CSSPrimitiveValue> x, PassRefPtr<CSSPrimitiveValue> y)
     {
@@ -155,11 +155,11 @@ public:
     void setWindRule(WindRule w) { m_windRule = w; }
     WindRule windRule() const { return m_windRule; }
 
-    virtual Type type() const { return CSS_WRAP_SHAPE_POLYGON; }
+    virtual Type type() const { return CSS_BASIC_SHAPE_POLYGON; }
     virtual String cssText() const;
 
 private:
-    CSSWrapShapePolygon()
+    CSSBasicShapePolygon()
         : m_windRule(RULE_NONZERO)
     {
     }

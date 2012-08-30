@@ -51,7 +51,7 @@ class CSSProperty;
 class CSSSelectorList;
 class CSSValue;
 class CSSValueList;
-class CSSWrapShape;
+class CSSBasicShape;
 class Document;
 class Element;
 class MediaQueryExp;
@@ -148,11 +148,11 @@ public:
 
     bool parseClipShape(CSSPropertyID, bool important);
 
-    bool parseExclusionShape(bool shapeInside, bool important);
-    PassRefPtr<CSSWrapShape> parseExclusionShapeRectangle(CSSParserValueList* args);
-    PassRefPtr<CSSWrapShape> parseExclusionShapeCircle(CSSParserValueList* args);
-    PassRefPtr<CSSWrapShape> parseExclusionShapeEllipse(CSSParserValueList* args);
-    PassRefPtr<CSSWrapShape> parseExclusionShapePolygon(CSSParserValueList* args);
+    bool parseBasicShape(bool shapeInside, bool important);
+    PassRefPtr<CSSBasicShape> parseBasicShapeRectangle(CSSParserValueList* args);
+    PassRefPtr<CSSBasicShape> parseBasicShapeCircle(CSSParserValueList* args);
+    PassRefPtr<CSSBasicShape> parseBasicShapeEllipse(CSSParserValueList* args);
+    PassRefPtr<CSSBasicShape> parseBasicShapePolygon(CSSParserValueList* args);
 
     bool parseFont(bool important);
     PassRefPtr<CSSValueList> parseFontFamily();

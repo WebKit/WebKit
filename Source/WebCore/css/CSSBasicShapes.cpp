@@ -37,7 +37,7 @@ using namespace WTF;
 
 namespace WebCore {
 
-String CSSWrapShapeRectangle::cssText() const
+String CSSBasicShapeRectangle::cssText() const
 {
     StringBuilder result;
     result.reserveCapacity(32);
@@ -70,7 +70,7 @@ String CSSWrapShapeRectangle::cssText() const
     return result.toString();
 }
 
-String CSSWrapShapeCircle::cssText() const
+String CSSBasicShapeCircle::cssText() const
 {
     StringBuilder result;
     result.reserveCapacity(32);
@@ -89,7 +89,7 @@ String CSSWrapShapeCircle::cssText() const
     return result.toString();
 }
 
-String CSSWrapShapeEllipse::cssText() const
+String CSSBasicShapeEllipse::cssText() const
 {
     StringBuilder result;
     result.reserveCapacity(32);
@@ -110,7 +110,7 @@ String CSSWrapShapeEllipse::cssText() const
     return result.toString();
 }
 
-String CSSWrapShapePolygon::cssText() const
+String CSSBasicShapePolygon::cssText() const
 {
     StringBuilder result;
     result.reserveCapacity(32);

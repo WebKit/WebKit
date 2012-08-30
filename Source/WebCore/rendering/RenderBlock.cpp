@@ -1380,7 +1380,7 @@ void RenderBlock::layout()
 }
 
 #if ENABLE(CSS_EXCLUSIONS)
-void RenderBlock::updateWrapShapeInfoAfterStyleChange(const WrapShape* wrapShape, const WrapShape* oldWrapShape)
+void RenderBlock::updateWrapShapeInfoAfterStyleChange(const BasicShape* wrapShape, const BasicShape* oldWrapShape)
 {
     // FIXME: A future optimization would do a deep comparison for equality.
     if (wrapShape == oldWrapShape)

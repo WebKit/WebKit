@@ -76,8 +76,8 @@ bool WrapShapeInfo::isWrapShapeInfoEnabledForRenderBlock(const RenderBlock* bloc
         return false;
 
     // FIXME: Bug 89707: Enable shape inside for non-rectangular shapes
-    WrapShape* shape = block->style()->wrapShapeInside();
-    return (shape && shape->type() == WrapShape::WRAP_SHAPE_RECTANGLE);
+    BasicShape* shape = block->style()->wrapShapeInside();
+    return (shape && shape->type() == BasicShape::BASIC_SHAPE_RECTANGLE);
 }
 
 void WrapShapeInfo::removeWrapShapeInfoForRenderBlock(const RenderBlock* block)
@@ -104,13 +104,13 @@ void WrapShapeInfo::computeShapeSize(LayoutUnit logicalWidth, LayoutUnit logical
     m_logicalHeight = logicalHeight;
 
     // FIXME: Bug 89993: The wrap shape may come from the parent object
-    WrapShape* shape = m_block->style()->wrapShapeInside();
+    BasicShape* shape = m_block->style()->wrapShapeInside();
 
     ASSERT(shape);
 
     switch (shape->type()) {
-    case WrapShape::WRAP_SHAPE_RECTANGLE: {
-        WrapShapeRectangle* rect = static_cast<WrapShapeRectangle *>(shape);
+    case BasicShape::BASIC_SHAPE_RECTANGLE: {
+        BasicShapeRectangle* rect = static_cast<BasicShapeRectangle *>(shape);
         m_shapeLeft = valueForLength(rect->x(), m_logicalWidth);
         m_shapeWidth = valueForLength(rect->width(), m_logicalWidth);
         m_shapeTop = valueForLength(rect->y(), m_logicalHeight);
@@ -118,9 +118,9 @@ void WrapShapeInfo::computeShapeSize(LayoutUnit logicalWidth, LayoutUnit logical
         break;
     }
     // FIXME: Bug 89707: Enable shape inside for non-rectangular shapes
-    case WrapShape::WRAP_SHAPE_CIRCLE:
-    case WrapShape::WRAP_SHAPE_ELLIPSE:
-    case WrapShape::WRAP_SHAPE_POLYGON: {
+    case BasicShape::BASIC_SHAPE_CIRCLE:
+    case BasicShape::BASIC_SHAPE_ELLIPSE:
+    case BasicShape::BASIC_SHAPE_POLYGON: {
         notImplemented();
         break;
     }

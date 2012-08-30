@@ -1705,10 +1705,10 @@ public:
 };
 
 #if ENABLE(CSS_EXCLUSIONS)
-template <WrapShape* (RenderStyle::*getterFunction)() const, void (RenderStyle::*setterFunction)(PassRefPtr<WrapShape>), WrapShape* (*initialFunction)()>
+template <BasicShape* (RenderStyle::*getterFunction)() const, void (RenderStyle::*setterFunction)(PassRefPtr<BasicShape>), BasicShape* (*initialFunction)()>
 class ApplyPropertyWrapShape {
 public:
-    static void setValue(RenderStyle* style, PassRefPtr<WrapShape> value) { (style->*setterFunction)(value); }
+    static void setValue(RenderStyle* style, PassRefPtr<BasicShape> value) { (style->*setterFunction)(value); }
     static void applyValue(StyleResolver* styleResolver, CSSValue* value)
     {
         if (value->isPrimitiveValue()) {
@@ -1716,14 +1716,14 @@ public:
             if (primitiveValue->getIdent() == CSSValueAuto)
                 setValue(styleResolver->style(), 0);
             else if (primitiveValue->isShape()) {
-                RefPtr<WrapShape> wrapShape = wrapShapeForValue(styleResolver, primitiveValue->getShapeValue());
+                RefPtr<BasicShape> wrapShape = basicShapeForValue(styleResolver, primitiveValue->getShapeValue());
                 setValue(styleResolver->style(), wrapShape.release());
             }
         }
     }
     static PropertyHandler createHandler()
     {
-        PropertyHandler handler = ApplyPropertyDefaultBase<WrapShape*, getterFunction, PassRefPtr<WrapShape>, setterFunction, WrapShape*, initialFunction>::createHandler();
+        PropertyHandler handler = ApplyPropertyDefaultBase<BasicShape*, getterFunction, PassRefPtr<BasicShape>, setterFunction, BasicShape*, initialFunction>::createHandler();
         return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
     }
 };

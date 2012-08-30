@@ -38,7 +38,7 @@ class Quad;
 class RGBColor;
 class Rect;
 class RenderStyle;
-class CSSWrapShape;
+class CSSBasicShape;
 
 struct Length;
 
@@ -284,7 +284,7 @@ public:
 
     DashboardRegion* getDashboardRegionValue() const { return m_primitiveUnitType != CSS_DASHBOARD_REGION ? 0 : m_value.region; }
 
-    CSSWrapShape* getShapeValue() const { return m_primitiveUnitType != CSS_SHAPE ? 0 : m_value.shape; }
+    CSSBasicShape* getShapeValue() const { return m_primitiveUnitType != CSS_SHAPE ? 0 : m_value.shape; }
     
     CSSCalcValue* cssCalcValue() const { return m_primitiveUnitType != CSS_CALC ? 0 : m_value.calc; }
 
@@ -340,7 +340,7 @@ private:
     void init(PassRefPtr<Pair>);
     void init(PassRefPtr<Quad>);
     void init(PassRefPtr<DashboardRegion>); // FIXME: Dashboard region should not be a primitive value.
-    void init(PassRefPtr<CSSWrapShape>);
+    void init(PassRefPtr<CSSBasicShape>);
     void init(PassRefPtr<CSSCalcValue>);
     bool getDoubleValueInternal(UnitTypes targetUnitType, double* result) const;
 
@@ -356,7 +356,7 @@ private:
         unsigned rgbcolor;
         Pair* pair;
         DashboardRegion* region;
-        CSSWrapShape* shape;
+        CSSBasicShape* shape;
         CSSCalcValue* calc;
     } m_value;
 };

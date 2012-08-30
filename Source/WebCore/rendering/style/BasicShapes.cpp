@@ -33,20 +33,20 @@
 
 namespace WebCore {
 
-void WrapShape::destroy()
+void BasicShape::destroy()
 {
     switch (m_type) {
-    case WRAP_SHAPE_RECTANGLE:
-        delete static_cast<WrapShapeRectangle*>(this);
+    case BASIC_SHAPE_RECTANGLE:
+        delete static_cast<BasicShapeRectangle*>(this);
         return;
-    case WRAP_SHAPE_CIRCLE:
-        delete static_cast<WrapShapeCircle*>(this);
+    case BASIC_SHAPE_CIRCLE:
+        delete static_cast<BasicShapeCircle*>(this);
         return;
-    case WRAP_SHAPE_ELLIPSE:
-        delete static_cast<WrapShapeEllipse*>(this);
+    case BASIC_SHAPE_ELLIPSE:
+        delete static_cast<BasicShapeEllipse*>(this);
         return;
-    case WRAP_SHAPE_POLYGON:
-        delete static_cast<WrapShapePolygon*>(this);
+    case BASIC_SHAPE_POLYGON:
+        delete static_cast<BasicShapePolygon*>(this);
         return;
     }
     ASSERT_NOT_REACHED();

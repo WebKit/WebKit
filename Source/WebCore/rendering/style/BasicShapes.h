@@ -38,13 +38,13 @@
 
 namespace WebCore {
 
-class WrapShape : public WTF::RefCountedBase {
+class BasicShape : public WTF::RefCountedBase {
 public:
     enum Type {
-        WRAP_SHAPE_RECTANGLE = 1,
-        WRAP_SHAPE_CIRCLE = 2,
-        WRAP_SHAPE_ELLIPSE = 3,
-        WRAP_SHAPE_POLYGON = 4
+        BASIC_SHAPE_RECTANGLE = 1,
+        BASIC_SHAPE_CIRCLE = 2,
+        BASIC_SHAPE_ELLIPSE = 3,
+        BASIC_SHAPE_POLYGON = 4
     };
     
     void deref() 
@@ -56,7 +56,7 @@ public:
     Type type() const { return m_type; }
 
 protected:
-    WrapShape(Type type)
+    BasicShape(Type type)
         : m_type(type)
     { }
     
@@ -65,9 +65,9 @@ private:
     Type m_type;
 };
 
-class WrapShapeRectangle : public WrapShape {
+class BasicShapeRectangle : public BasicShape {
 public:
-    static PassRefPtr<WrapShapeRectangle> create() { return adoptRef(new WrapShapeRectangle); }
+    static PassRefPtr<BasicShapeRectangle> create() { return adoptRef(new BasicShapeRectangle); }
 
     Length x() const { return m_x; }
     Length y() const { return m_y; }
@@ -84,8 +84,8 @@ public:
     void setCornerRadiusY(Length radiusY) { m_cornerRadiusY = radiusY; }
     
 private:
-    WrapShapeRectangle()
-        : WrapShape(WRAP_SHAPE_RECTANGLE)
+    BasicShapeRectangle()
+        : BasicShape(BASIC_SHAPE_RECTANGLE)
         , m_cornerRadiusX(Undefined)
         , m_cornerRadiusY(Undefined)
     { }
@@ -98,9 +98,9 @@ private:
     Length m_cornerRadiusY;
 };
 
-class WrapShapeCircle : public WrapShape {
+class BasicShapeCircle : public BasicShape {
 public:
-    static PassRefPtr<WrapShapeCircle> create() { return adoptRef(new WrapShapeCircle); }
+    static PassRefPtr<BasicShapeCircle> create() { return adoptRef(new BasicShapeCircle); }
 
     Length centerX() const { return m_centerX; }
     Length centerY() const { return m_centerY; }
@@ -111,8 +111,8 @@ public:
     void setRadius(Length radius) { m_radius = radius; }
 
 private:
-    WrapShapeCircle() 
-        : WrapShape(WRAP_SHAPE_CIRCLE)
+    BasicShapeCircle() 
+        : BasicShape(BASIC_SHAPE_CIRCLE)
     { }
 
     Length m_centerX;
@@ -120,9 +120,9 @@ private:
     Length m_radius;
 };
 
-class WrapShapeEllipse : public WrapShape {
+class BasicShapeEllipse : public BasicShape {
 public:
-    static PassRefPtr<WrapShapeEllipse> create() { return adoptRef(new WrapShapeEllipse); }
+    static PassRefPtr<BasicShapeEllipse> create() { return adoptRef(new BasicShapeEllipse); }
 
     Length centerX() const { return m_centerX; }
     Length centerY() const { return m_centerY; }
@@ -135,8 +135,8 @@ public:
     void setRadiusY(Length radiusY) { m_radiusY = radiusY; }
 
 private:
-    WrapShapeEllipse() 
-        : WrapShape(WRAP_SHAPE_ELLIPSE)
+    BasicShapeEllipse() 
+        : BasicShape(BASIC_SHAPE_ELLIPSE)
     { }
 
     Length m_centerX;
@@ -145,9 +145,9 @@ private:
     Length m_radiusY;
 };
 
-class WrapShapePolygon : public WrapShape {
+class BasicShapePolygon : public BasicShape {
 public:
-    static PassRefPtr<WrapShapePolygon> create() { return adoptRef(new WrapShapePolygon); }
+    static PassRefPtr<BasicShapePolygon> create() { return adoptRef(new BasicShapePolygon); }
 
     WindRule windRule() const { return m_windRule; }
     const Vector<Length>& values() const { return m_values; }
@@ -158,8 +158,8 @@ public:
     void appendPoint(Length x, Length y) { m_values.append(x); m_values.append(y); }
 
 private:
-    WrapShapePolygon()
-        : WrapShape(WRAP_SHAPE_POLYGON)
+    BasicShapePolygon()
+        : BasicShape(BASIC_SHAPE_POLYGON)
         , m_windRule(RULE_NONZERO)
     { }
 
