@@ -562,7 +562,7 @@ BUGWK93727 RELEASE : fullscreen/exit-full-screen-iframe.html = TEXT PASS
 BUGWK93727 RELEASE : fullscreen/full-screen-iframe-zIndex.html = TEXT PASS
 BUGWK93727 RELEASE : svg/custom/use-instanceRoot-as-event-target.xhtml = TEXT PASS
 
-BUGWK95430 : fast/layers/scroll-no-visible-content-but-visible-descendant.html = TEXT PASS
+BUGWK95430 : fast/layers/scroll-no-visible-content-but-visible-descendant.html = IMAGE PASS
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Flaky tests
@@ -1293,7 +1293,7 @@ BUGWK87355 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
 
 BUGWK95428 : media/video-controls-captions.html = TEXT
 
-BUGWK95429 : svg/custom/clamped-masking-clipping.svg = TEXT
+BUGWK95429 : svg/custom/clamped-masking-clipping.svg = IMAGE
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

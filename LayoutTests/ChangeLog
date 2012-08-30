@@ -1,3 +1,15 @@
+2012-08-30  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding a platform-specific baseline that's required after r127117.
+
+        Fixing expectations for a couple of tests that were gardened in r127109.
+        They are both reftests so image failures are occurring.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/events/set-attribute-listener-window-onerror-crash-expected.txt: Added.
+
 2012-08-30  Anton Muhin  <antonm@chromium.org>
 
         Update test expectations to follow common guidelines.
