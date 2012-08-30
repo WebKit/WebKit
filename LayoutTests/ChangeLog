@@ -1,3 +1,14 @@
+2012-08-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Gardening after r127135, r127039
+        https://bugs.webkit.org/show_bug.cgi?id=95433
+
+        Unreviewed gardening.
+
+        Gardening of media/video-controls-captions.html and inspector/timeline/timeline-load.html.
+
+        * platform/efl/TestExpectations:
+
 2012-08-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip new failing tests.

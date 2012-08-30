@@ -997,3 +997,8 @@ BUGWK77754 : fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-block
 BUGWK77754 : fast/inline/absolute-positioned-inline-in-centred-block.html = TEXT
 BUGWK77754 : fast/css/absolute-child-with-percent-height-inside-relative-parent.html = TEXT
 
+// Fails after r127035.
+BUGWK95428 : media/video-controls-captions.html = TEXT
+
+// Fails after r127039.
+BUGWK95414 : inspector/timeline/timeline-load.html = TEXT
