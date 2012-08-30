@@ -1,3 +1,15 @@
+2012-08-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][WTR] Add didReceiveServerRedirectForProvisionalLoadForFrame dumping
+        https://bugs.webkit.org/show_bug.cgi?id=95454
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskipped http/tests/loading/307-after-303-after-post.html.
+        Output for http/tests/loading/redirect-methods.html is improved.
+
+        * platform/wk2/Skipped:
+
 2012-08-30  Andrey Kosyakov  <caseq@chromium.org>
 
         REGRESSION(r127039): It broke inspector/timeline/timeline-load.html fails on many platforms

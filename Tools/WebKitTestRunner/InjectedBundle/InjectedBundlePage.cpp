@@ -723,6 +723,14 @@ void InjectedBundlePage::didStartProvisionalLoadForFrame(WKBundleFrameRef frame)
 
 void InjectedBundlePage::didReceiveServerRedirectForProvisionalLoadForFrame(WKBundleFrameRef frame)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
+    if (!InjectedBundle::shared().testRunner()->shouldDumpFrameLoadCallbacks())
+        return;
+
+    dumpFrameDescriptionSuitableForTestResult(frame);
+    InjectedBundle::shared().stringBuilder()->append(" - didReceiveServerRedirectForProvisionalLoadForFrame\n");
 }
 
 void InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame(WKBundleFrameRef frame, WKErrorRef error)

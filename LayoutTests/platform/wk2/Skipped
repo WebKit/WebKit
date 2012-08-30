@@ -677,10 +677,6 @@ fast/images/support-broken-image-delegate.html
 # WebKitTestRunner needs layoutTestController.setWillSendRequestReturnNullOnRedirect
 http/tests/misc/will-send-request-returns-null-on-redirect.html
 
-# WebKitTestRunner needs ReceiveServerRedirectForProvisionalLoadForFrame logging
-http/tests/loading/307-after-303-after-post.html
-http/tests/loading/redirect-methods.html
-
 # WebKitTestrunner needs layoutTestController.dumpSourceAsWebArchive
 webarchive/doctype.html
 webarchive/archive-empty-frame-source.html
@@ -925,6 +921,9 @@ http/tests/security/video-cross-origin-readback.html
 # Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
 # https://bugs.webkit.org/show_bug.cgi?id=85558
 http/tests/security/contentSecurityPolicy/1.1
+
+# Unexpected redirection happens.
+http/tests/loading/redirect-methods.html
 
 # Should pass now but need to be checked first.
 platform/mac/fast/loader/file-url-mimetypes-2.html
