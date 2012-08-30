@@ -349,6 +349,8 @@ void StyleSheetContents::checkLoadCompleted()
     if (!checkImportedSheetLoadCompleted())
         return;
 
+    RefPtr<StyleSheetContents> protect(this);
+
     ASSERT(hasOneClient());
     ASSERT(!m_clients[0]->parentStyleSheet());
     RefPtr<Node> ownerNode = m_clients[0]->ownerNode();

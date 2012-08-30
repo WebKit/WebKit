@@ -1,3 +1,13 @@
+2012-08-29  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in WebCore::StyleSheetContents::checkLoadCompleted.
+        https://bugs.webkit.org/show_bug.cgi?id=95106
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/style-element-process-crash-expected.txt: Added.
+        * fast/css/style-element-process-crash.html: Added.
+
 2012-08-29  José Dapena Paz  <jdapena@igalia.com>
 
         [Gtk] Process Gtk 3.4 smooth scroll events properly.
