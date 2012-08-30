@@ -218,7 +218,7 @@ inline long int lrint(double flt)
     // If the fractional part is exactly 0.5, we need to check whether
     // the rounded result is even. If it is not we need to add 1 to
     // negative values and subtract one from positive values.
-    if (fabs(intgr - flt) == 0.5 & intgr)
+    if ((fabs(intgr - flt) == 0.5) & intgr)
         intgr -= ((intgr >> 62) | 1); // 1 with the sign of result, i.e. -1 or 1.
 #endif
     return static_cast<long int>(intgr);
