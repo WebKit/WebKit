@@ -37,7 +37,7 @@ static bool shouldReverseAnimationValue(Animation::AnimationDirection direction,
     return false;
 }
 
-static double normalizedAnimationValue(double runningTime, double duration, Animation::AnimationDirection direction)
+static double normalizedAnimationValue(double runningTime, double duration, Animation::AnimationDirection direction, double iterationCount)
 {
     if (!duration)
         return 0;
@@ -45,7 +45,8 @@ static double normalizedAnimationValue(double runningTime, double duration, Anim
     const int loopCount = runningTime / duration;
     const double lastFullLoop = duration * double(loopCount);
     const double remainder = runningTime - lastFullLoop;
-    const double normalized = remainder / duration;
+    // Ignore remainder when we've reached the end of animation.
+    const double normalized = (loopCount == iterationCount) ? 1.0 : (remainder / duration);
 
     return shouldReverseAnimationValue(direction, loopCount) ? 1 - normalized : normalized;
 }
@@ -214,7 +215,7 @@ void GraphicsLayerAnimation::apply(Client* client)
         return;
 
     double totalRunningTime = m_state == PausedState ? m_pauseTime : WTF::currentTime() - m_startTime;
-    double normalizedValue = normalizedAnimationValue(totalRunningTime, m_animation->duration(), m_animation->direction());
+    double normalizedValue = normalizedAnimationValue(totalRunningTime, m_animation->duration(), m_animation->direction(), m_animation->iterationCount());
 
     if (m_animation->iterationCount() != Animation::IterationCountInfinite && totalRunningTime >= m_animation->duration() * m_animation->iterationCount()) {
         setState(StoppedState);
