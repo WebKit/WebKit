@@ -1,5 +1,14 @@
 2012-08-29  Jessie Berlin  <jberlin@apple.com>
 
+        ASSERTION FAILURE in JSC::JSGlobalData::float32ArrayDescriptor when running fast/js/dfg-float64array.html
+        https://bugs.webkit.org/show_bug.cgi?id=95398
+
+        Skip the tests affected by this assertion failure.
+
+        * platform/mac-wk2/Skipped:
+
+2012-08-29  Jessie Berlin  <jberlin@apple.com>
+
         Mountain Lion missing results for media/controls-without-preload.html
         https://bugs.webkit.org/show_bug.cgi?id=95417
 

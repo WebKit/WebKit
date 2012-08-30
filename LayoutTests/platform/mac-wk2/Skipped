@@ -375,6 +375,16 @@ svg/transforms/change-transform-origin-css.xhtml
 sputnik/Unicode/Unicode_218/S7.6_A2.4.html
 sputnik/Unicode/Unicode_218/S7.6_A5.2_T1.html
 
+# Asserts under JSC::DFG::SpeculativeJIT::typedArrayDescriptor
+# https://bugs.webkit.org/show_bug.cgi?id=95398
+fast/js/dfg-int32array.html
+fast/js/dfg-float32array.html
+fast/js/dfg-uint8clampedarray.html
+fast/js/dfg-poison-fuzz.html
+fast/js/dfg-float64array.html
+fast/js/dfg-int32array-overflow-values.html
+fast/js/dfg-inline-function-dot-caller.html
+
 ### END OF (3) Unclassified failures
 ########################################
 
