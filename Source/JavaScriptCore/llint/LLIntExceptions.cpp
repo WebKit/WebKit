@@ -60,7 +60,8 @@ void interpreterThrowInCaller(ExecState* exec, ReturnAddressPtr pc)
 
 Instruction* returnToThrowForThrownException(ExecState* exec)
 {
-    return exec->globalData().llintData.exceptionInstructions();
+    UNUSED_PARAM(exec);
+    return LLInt::exceptionInstructions();
 }
 
 Instruction* returnToThrow(ExecState* exec, Instruction* pc)
@@ -73,7 +74,7 @@ Instruction* returnToThrow(ExecState* exec, Instruction* pc)
     fixupPCforExceptionIfNeeded(exec);
     genericThrow(globalData, exec, globalData->exception, pc - exec->codeBlock()->instructions().begin());
     
-    return globalData->llintData.exceptionInstructions();
+    return LLInt::exceptionInstructions();
 }
 
 void* callToThrow(ExecState* exec, Instruction* pc)
@@ -85,8 +86,8 @@ void* callToThrow(ExecState* exec, Instruction* pc)
 #endif
     fixupPCforExceptionIfNeeded(exec);
     genericThrow(globalData, exec, globalData->exception, pc - exec->codeBlock()->instructions().begin());
-    
-    return bitwise_cast<void*>(&llint_throw_during_call_trampoline);
+
+    return LLInt::getCodePtr(llint_throw_during_call_trampoline);
 }
 
 } } // namespace JSC::LLInt

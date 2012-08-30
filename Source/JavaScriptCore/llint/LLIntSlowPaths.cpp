@@ -871,10 +871,10 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
             pc[4].u.structure.set(
                 globalData, codeBlock->ownerExecutable(), structure);
             if (isInlineOffset(slot.cachedOffset())) {
-                pc[0].u.opcode = bitwise_cast<void*>(&llint_op_get_by_id);
+                pc[0].u.opcode = LLInt::getOpcode(llint_op_get_by_id);
                 pc[5].u.operand = offsetInInlineStorage(slot.cachedOffset()) * sizeof(JSValue) + JSObject::offsetOfInlineStorage();
             } else {
-                pc[0].u.opcode = bitwise_cast<void*>(&llint_op_get_by_id_out_of_line);
+                pc[0].u.opcode = LLInt::getOpcode(llint_op_get_by_id_out_of_line);
                 pc[5].u.operand = offsetInOutOfLineStorage(slot.cachedOffset()) * sizeof(JSValue);
             }
         }
@@ -927,7 +927,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                     
                     // This is needed because some of the methods we call
                     // below may GC.
-                    pc[0].u.opcode = bitwise_cast<void*>(&llint_op_put_by_id);
+                    pc[0].u.opcode = LLInt::getOpcode(llint_op_put_by_id);
 
                     normalizePrototypeChain(exec, baseCell);
                     
@@ -947,24 +947,24 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                     
                     if (pc[8].u.operand) {
                         if (isInlineOffset(slot.cachedOffset()))
-                            pc[0].u.opcode = bitwise_cast<void*>(&llint_op_put_by_id_transition_direct);
+                            pc[0].u.opcode = LLInt::getOpcode(llint_op_put_by_id_transition_direct);
                         else
-                            pc[0].u.opcode = bitwise_cast<void*>(&llint_op_put_by_id_transition_direct_out_of_line);
+                            pc[0].u.opcode = LLInt::getOpcode(llint_op_put_by_id_transition_direct_out_of_line);
                     } else {
                         if (isInlineOffset(slot.cachedOffset()))
-                            pc[0].u.opcode = bitwise_cast<void*>(&llint_op_put_by_id_transition_normal);
+                            pc[0].u.opcode = LLInt::getOpcode(llint_op_put_by_id_transition_normal);
                         else
-                            pc[0].u.opcode = bitwise_cast<void*>(&llint_op_put_by_id_transition_normal_out_of_line);
+                            pc[0].u.opcode = LLInt::getOpcode(llint_op_put_by_id_transition_normal_out_of_line);
                     }
                 }
             } else {
                 pc[4].u.structure.set(
                     globalData, codeBlock->ownerExecutable(), structure);
                 if (isInlineOffset(slot.cachedOffset())) {
-                    pc[0].u.opcode = bitwise_cast<void*>(&llint_op_put_by_id);
+                    pc[0].u.opcode = LLInt::getOpcode(llint_op_put_by_id);
                     pc[5].u.operand = offsetInInlineStorage(slot.cachedOffset()) * sizeof(JSValue) + JSObject::offsetOfInlineStorage();
                 } else {
-                    pc[0].u.opcode = bitwise_cast<void*>(&llint_op_put_by_id_out_of_line);
+                    pc[0].u.opcode = LLInt::getOpcode(llint_op_put_by_id_out_of_line);
                     pc[5].u.operand = offsetInOutOfLineStorage(slot.cachedOffset()) * sizeof(JSValue);
                 }
             }
@@ -1296,7 +1296,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
             execCallee->setCallee(asObject(callee));
             globalData.hostCallReturnValue = JSValue::decode(callData.native.function(execCallee));
             
-            LLINT_CALL_RETURN(execCallee, pc, reinterpret_cast<void*>(getHostCallReturnValue));
+            LLINT_CALL_RETURN(execCallee, pc, LLInt::getCodePtr(getHostCallReturnValue));
         }
         
 #if LLINT_SLOW_PATH_TRACING
@@ -1319,7 +1319,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
         execCallee->setCallee(asObject(callee));
         globalData.hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
 
-        LLINT_CALL_RETURN(execCallee, pc, reinterpret_cast<void*>(getHostCallReturnValue));
+        LLINT_CALL_RETURN(execCallee, pc, LLInt::getCodePtr(getHostCallReturnValue));
     }
     
 #if LLINT_SLOW_PATH_TRACING
@@ -1442,7 +1442,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_eval)
     execCallee->setCallerFrame(exec);
     execCallee->uncheckedR(RegisterFile::Callee) = calleeAsValue;
     execCallee->setScopeChain(exec->scopeChain());
-    execCallee->setReturnPC(bitwise_cast<Instruction*>(&llint_generic_return_point));
+    execCallee->setReturnPC(LLInt::getCodePtr(llint_generic_return_point));
     execCallee->setCodeBlock(0);
     exec->setCurrentVPC(pc + OPCODE_LENGTH(op_call_eval));
     
@@ -1450,7 +1450,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_eval)
         return setUpCall(execCallee, pc, CodeForCall, calleeAsValue);
     
     globalData.hostCallReturnValue = eval(execCallee);
-    LLINT_CALL_RETURN(execCallee, pc, reinterpret_cast<void*>(getHostCallReturnValue));
+    LLINT_CALL_RETURN(execCallee, pc, LLInt::getCodePtr(getHostCallReturnValue));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_tear_off_activation)

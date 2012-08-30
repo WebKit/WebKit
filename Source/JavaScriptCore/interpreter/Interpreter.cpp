@@ -284,9 +284,8 @@ Interpreter::~Interpreter()
 #endif
 }
 
-void Interpreter::initialize(LLInt::Data* llintData, bool canUseJIT)
+void Interpreter::initialize(bool canUseJIT)
 {
-    UNUSED_PARAM(llintData);
     UNUSED_PARAM(canUseJIT);
 
     // If we have LLInt, then we shouldn't be building any kind of classic interpreter.
@@ -295,7 +294,7 @@ void Interpreter::initialize(LLInt::Data* llintData, bool canUseJIT)
 #endif
 
 #if ENABLE(LLINT)
-    m_opcodeTable = llintData->opcodeMap();
+    m_opcodeTable = LLInt::opcodeMap();
     for (int i = 0; i < numOpcodeIDs; ++i)
         m_opcodeIDTable.add(m_opcodeTable[i], static_cast<OpcodeID>(i));
     m_classicEnabled = false;

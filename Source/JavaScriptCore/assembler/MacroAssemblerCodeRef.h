@@ -28,6 +28,7 @@
 
 #include "Disassembler.h"
 #include "ExecutableAllocator.h"
+#include "LLIntData.h"
 #include <wtf/DataLog.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -289,10 +290,13 @@ public:
         return result;
     }
 
-    static MacroAssemblerCodePtr createLLIntCodePtr(void (*function)())
+#if ENABLE(LLINT)
+    static MacroAssemblerCodePtr createLLIntCodePtr(LLIntCode codeId)
     {
-        return createFromExecutableAddress(bitwise_cast<void*>(function));
+        return createFromExecutableAddress(LLInt::getCodePtr(codeId));
     }
+#endif
+
     explicit MacroAssemblerCodePtr(ReturnAddressPtr ra)
         : m_value(ra.value())
     {
@@ -353,12 +357,14 @@ public:
         return MacroAssemblerCodeRef(codePtr);
     }
     
+#if ENABLE(LLINT)
     // Helper for creating self-managed code refs from LLInt.
-    static MacroAssemblerCodeRef createLLIntCodeRef(void (*function)())
+    static MacroAssemblerCodeRef createLLIntCodeRef(LLIntCode codeId)
     {
-        return createSelfManagedCodeRef(MacroAssemblerCodePtr::createFromExecutableAddress(bitwise_cast<void*>(function)));
+        return createSelfManagedCodeRef(MacroAssemblerCodePtr::createFromExecutableAddress(LLInt::getCodePtr(codeId)));
     }
-    
+#endif
+
     ExecutableMemoryHandle* executableMemory() const
     {
         return m_executableMemory.get();

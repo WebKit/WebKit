@@ -197,7 +197,7 @@ JSObject* BytecodeGenerator::generate()
 #if ENABLE(JIT)
             ,
 #if ENABLE(LLINT)
-            CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(bitwise_cast<void*>(&llint_op_catch)))
+            CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(LLInt::getCodePtr(llint_op_catch)))
 #else
             CodeLocationLabel()
 #endif

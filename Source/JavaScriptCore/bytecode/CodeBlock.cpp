@@ -2614,7 +2614,7 @@ Instruction* CodeBlock::adjustPCIfAtCallSite(Instruction* potentialReturnPC)
     opcodeLength = OPCODE_LENGTH(op_call_varargs);
     adjustedPC = potentialReturnPC - opcodeLength;
     if ((returnPCOffset >= opcodeLength)
-        && (adjustedPC->u.pointer == bitwise_cast<void*>(llint_op_call_varargs))) {
+        && (adjustedPC->u.pointer == LLInt::getCodePtr(llint_op_call_varargs))) {
         return adjustedPC;
     }
 
@@ -2622,9 +2622,9 @@ Instruction* CodeBlock::adjustPCIfAtCallSite(Instruction* potentialReturnPC)
     opcodeLength = OPCODE_LENGTH(op_call);
     adjustedPC = potentialReturnPC - opcodeLength;
     if ((returnPCOffset >= opcodeLength)
-        && (adjustedPC->u.pointer == bitwise_cast<void*>(llint_op_call)
-            || adjustedPC->u.pointer == bitwise_cast<void*>(llint_op_construct)
-            || adjustedPC->u.pointer == bitwise_cast<void*>(llint_op_call_eval))) {
+        && (adjustedPC->u.pointer == LLInt::getCodePtr(llint_op_call)
+            || adjustedPC->u.pointer == LLInt::getCodePtr(llint_op_construct)
+            || adjustedPC->u.pointer == LLInt::getCodePtr(llint_op_call_eval))) {
         return adjustedPC;
     }
 
@@ -2636,8 +2636,8 @@ Instruction* CodeBlock::adjustPCIfAtCallSite(Instruction* potentialReturnPC)
 unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddress)
 {
 #if ENABLE(LLINT)
-    if (returnAddress.value() >= bitwise_cast<void*>(&llint_begin)
-        && returnAddress.value() <= bitwise_cast<void*>(&llint_end)) {
+    if (returnAddress.value() >= LLInt::getCodePtr(llint_begin)
+        && returnAddress.value() <= LLInt::getCodePtr(llint_end)) {
         ASSERT(exec->codeBlock());
         ASSERT(exec->codeBlock() == this);
         ASSERT(JITCode::isBaselineCode(getJITType()));

@@ -52,8 +52,8 @@ static ResolveGlobalStatus computeForLLInt(CodeBlock* codeBlock, unsigned byteco
 {
 #if ENABLE(LLINT)
     Instruction* instruction = codeBlock->instructions().begin() + bytecodeIndex;
-    
-    ASSERT(instruction[0].u.opcode == llint_op_resolve_global);
+
+    ASSERT(instruction[0].u.opcode == LLInt::getOpcode(op_resolve_global));
     
     Structure* structure = instruction[3].u.structure.get();
     if (!structure)

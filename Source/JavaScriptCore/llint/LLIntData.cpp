@@ -31,20 +31,25 @@
 #include "BytecodeConventions.h"
 #include "CodeType.h"
 #include "Instruction.h"
-#include "LowLevelInterpreter.h"
 #include "Opcode.h"
 
 namespace JSC { namespace LLInt {
 
-Data::Data()
-    : m_exceptionInstructions(new Instruction[maxOpcodeLength + 1])
-    , m_opcodeMap(new Opcode[numOpcodeIDs])
+Instruction* Data::s_exceptionInstructions = 0;
+Opcode* Data::s_opcodeMap = 0;
+
+void initialize()
 {
+    Data::s_exceptionInstructions = new Instruction[maxOpcodeLength + 1];
+    Data::s_opcodeMap = new Opcode[numOpcodeIDs];
+
     for (int i = 0; i < maxOpcodeLength + 1; ++i)
-        m_exceptionInstructions[i].u.pointer = bitwise_cast<void*>(&llint_throw_from_slow_path_trampoline);
-#define OPCODE_ENTRY(opcode, length) m_opcodeMap[opcode] = bitwise_cast<void*>(&llint_##opcode);
+        Data::s_exceptionInstructions[i].u.pointer =
+            LLInt::getCodePtr(llint_throw_from_slow_path_trampoline);
+    #define OPCODE_ENTRY(opcode, length)                                    \
+        Data::s_opcodeMap[opcode] = LLInt::getCodePtr(llint_##opcode);
     FOR_EACH_OPCODE_ID(OPCODE_ENTRY);
-#undef OPCODE_ENTRY
+    #undef OPCODE_ENTRY
 }
 
 #if COMPILER(CLANG)
@@ -119,12 +124,6 @@ void Data::performAssertions(JSGlobalData& globalData)
 #if COMPILER(CLANG)
 #pragma clang diagnostic pop
 #endif
-
-Data::~Data()
-{
-    delete[] m_exceptionInstructions;
-    delete[] m_opcodeMap;
-}
 
 } } // namespace JSC::LLInt
 

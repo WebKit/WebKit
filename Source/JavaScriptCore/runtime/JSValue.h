@@ -121,7 +121,6 @@ namespace JSC {
         friend class DFG::OSRExitCompiler;
         friend class DFG::SpeculativeJIT;
 #endif
-        friend class LLInt::Data;
 
     public:
 #if USE(JSVALUE32_64)

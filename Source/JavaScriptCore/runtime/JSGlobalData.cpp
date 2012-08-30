@@ -215,13 +215,13 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     jitStubs = adoptPtr(new JITThunks(this));
 #endif
     
-    interpreter->initialize(&llintData, this->canUseJIT());
+    interpreter->initialize(this->canUseJIT());
     
     initializeHostCallReturnValue(); // This is needed to convince the linker not to drop host call return support.
 
     heap.notifyIsSafeToCollect();
     
-    llintData.performAssertions(*this);
+    LLInt::Data::performAssertions(*this);
 }
 
 JSGlobalData::~JSGlobalData()

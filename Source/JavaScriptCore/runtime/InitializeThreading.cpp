@@ -35,6 +35,7 @@
 #include "Identifier.h"
 #include "JSDateMath.h"
 #include "JSGlobalObject.h"
+#include "LLIntData.h"
 #include "UString.h"
 #include "WriteBarrier.h"
 #include <wtf/dtoa.h>
@@ -61,6 +62,9 @@ static void initializeThreadingOnce()
     ExecutableAllocator::initializeAllocator();
 #endif
     RegisterFile::initializeThreading();
+#if ENABLE(LLINT)
+    LLInt::initialize();
+#endif
 }
 
 void initializeThreading()

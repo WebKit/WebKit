@@ -1,3 +1,66 @@
+2012-08-29  Mark Lam  <mark.lam@apple.com>
+
+        Refactoring LLInt::Data.
+        https://bugs.webkit.org/show_bug.cgi?id=95316.
+
+        Reviewed by Geoff Garen.
+
+        This change allows its opcodeMap to be easily queried from any function
+        without needing to go through a GlobalData object.  It also introduces
+        the LLInt::getCodePtr() methods that will be used by the LLInt C loop
+        later to redefine how llint symbols (opcodes and trampoline glue
+        labels) get resolved.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (MacroAssemblerCodePtr):
+        (JSC::MacroAssemblerCodePtr::createLLIntCodePtr):
+        (MacroAssemblerCodeRef):
+        (JSC::MacroAssemblerCodeRef::createLLIntCodeRef):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::adjustPCIfAtCallSite):
+        (JSC::CodeBlock::bytecodeOffset):
+        * bytecode/Opcode.h:
+            Remove the 'const' to simplify things and avoid having to do
+            additional casts and #ifdefs in many places.
+        * bytecode/ResolveGlobalStatus.cpp:
+        (JSC::computeForLLInt):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::initialize):
+        * interpreter/Interpreter.h:
+        (Interpreter):
+        * jit/JITExceptions.cpp:
+        (JSC::genericThrow):
+        * llint/LLIntData.cpp:
+        (LLInt):
+        (JSC::LLInt::initialize):
+        * llint/LLIntData.h:
+        (JSC):
+        (LLInt):
+        (Data):
+        (JSC::LLInt::exceptionInstructions):
+        (JSC::LLInt::opcodeMap):
+        (JSC::LLInt::getOpcode):
+        (JSC::LLInt::getCodePtr):
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntExceptions.cpp:
+        (JSC::LLInt::returnToThrowForThrownException):
+        (JSC::LLInt::returnToThrow):
+        (JSC::LLInt::callToThrow):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::handleHostCall):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce): Initialize the singleton LLInt data.
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData): Removed the now unneeded LLInt::Data instance in
+            JSGlobalData.
+        * runtime/JSValue.h:
+        (JSValue):
+
 2012-08-29  Gavin Barraclough  <barraclough@apple.com>
 
         PutById uses DataLabel32, not DataLabelCompact

@@ -50,7 +50,7 @@ ExceptionHandler genericThrow(JSGlobalData* globalData, ExecState* callFrame, JS
         catchRoutine = handler->nativeCode.executableAddress();
         catchPCForInterpreter = &callFrame->codeBlock()->instructions()[handler->target];
     } else
-        catchRoutine = FunctionPtr(ctiOpThrowNotCaught).value();
+        catchRoutine = FunctionPtr(LLInt::getCodePtr(ctiOpThrowNotCaught)).value();
     
     globalData->callFrameForThrow = callFrame;
     globalData->targetMachinePCForThrow = catchRoutine;

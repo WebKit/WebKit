@@ -187,7 +187,7 @@ namespace JSC {
         Interpreter();
         ~Interpreter();
         
-        void initialize(LLInt::Data*, bool canUseJIT);
+        void initialize(bool canUseJIT);
 
         RegisterFile& registerFile() { return m_registerFile; }
         
