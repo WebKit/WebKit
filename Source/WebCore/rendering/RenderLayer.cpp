@@ -161,6 +161,9 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
 #if ENABLE(CSS_FILTERS)
     , m_hasFilterInfo(false)
 #endif
+#if ENABLE(CSS_COMPOSITING)
+    , m_blendMode(BlendModeNormal)
+#endif
     , m_renderer(renderer)
     , m_parent(0)
     , m_previous(0)
@@ -542,6 +545,18 @@ void RenderLayer::updateLayerPositionsAfterScroll(UpdateLayerPositionsAfterScrol
     if (m_marquee)
         m_marquee->updateMarqueePosition();
 }
+
+#if ENABLE(CSS_COMPOSITING)
+void RenderLayer::updateBlendMode()
+{
+    BlendMode newBlendMode = renderer()->style()->blendMode();
+    if (newBlendMode != m_blendMode) {
+        m_blendMode = newBlendMode;
+        if (backing())
+            backing()->setBlendMode(newBlendMode);
+    }
+}
+#endif
 
 void RenderLayer::updateTransform()
 {
@@ -4421,6 +4436,9 @@ RenderLayerBacking* RenderLayer::ensureBacking()
 #if ENABLE(CSS_FILTERS)
         updateOrRemoveFilterEffect();
 #endif
+#if ENABLE(CSS_COMPOSITING)
+        backing()->setBlendMode(m_blendMode);
+#endif
     }
     return m_backing.get();
 }
@@ -4807,6 +4825,9 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
 #if ENABLE(CSS_FILTERS)
             && !renderer()->hasFilter()
 #endif
+#if ENABLE(CSS_COMPOSITING)
+            && !renderer()->hasBlendMode()
+#endif
             && !isTransparent()
             && !usesCompositedScrolling();
 }
@@ -4960,6 +4981,9 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
 
     updateDescendantDependentFlags();
     updateTransform();
+#if ENABLE(CSS_COMPOSITING)
+    updateBlendMode();
+#endif
 
 #if USE(ACCELERATED_COMPOSITING)
     if (compositor()->updateLayerCompositingState(this))

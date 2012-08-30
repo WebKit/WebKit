@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function doTest()
+    {
+        description("Test to make sure a blend mode creates a compositing layer. Test is successful of render tree shows compositing");
+        if (window.testRunner) {
+            var layers = testRunner.layerTreeAsText();
+            if (layers == "")
+                testFailed("no compositing layers");
+            else
+                testPassed("content has compositing layers");
+            document.getElementById("layertree").innerText = layers;
+            testRunner.notifyDone();
+        }
+    }
+    
+    window.addEventListener('load', doTest, false);
+
+</script>
+<img style="-webkit-blend-mode: multiply;" src="resources/reference.png">
+<pre id="layertree"></pre>

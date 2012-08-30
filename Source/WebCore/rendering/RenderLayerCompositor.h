@@ -290,6 +290,7 @@ private:
     bool requiresCompositingForPlugin(RenderObject*) const;
     bool requiresCompositingForFrame(RenderObject*) const;
     bool requiresCompositingForFilters(RenderObject*) const;
+    bool requiresCompositingForBlending(RenderObject* renderer) const;
     bool requiresCompositingForScrollableFrame() const;
     bool requiresCompositingForPosition(RenderObject*, const RenderLayer*) const;
     bool requiresCompositingForOverflowScrolling(const RenderLayer*) const;

@@ -1,0 +1,8 @@
+Test to make sure a blend mode creates a compositing layer. Test is successful of render tree shows compositing
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL no compositing layers
+
+

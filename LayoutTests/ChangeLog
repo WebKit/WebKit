@@ -1,3 +1,17 @@
+2012-08-30  Rik Cabanier  <cabanier@adobe.com>
+
+        Add support for blendmode to webkit rendering engine
+        https://bugs.webkit.org/show_bug.cgi?id=95258
+
+        Reviewed by Simon Fraser.
+
+        Enable test to verify that blending modes introduce a new compositing layer
+
+        * css3/compositing/resources: Added.
+        * css3/compositing/resources/reference.png: Added.
+        * css3/compositing/should-have-compositing-layer-expected.txt: Added.
+        * css3/compositing/should-have-compositing-layer.html: Added.
+
 2012-08-30  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Upstream layout test rebaselined expectations

@@ -1445,7 +1445,8 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) c
         || requiresCompositingForAnimation(renderer)
         || requiresCompositingForFilters(renderer)
         || requiresCompositingForPosition(renderer, layer)
-        || requiresCompositingForOverflowScrolling(layer);
+        || requiresCompositingForOverflowScrolling(layer)
+        || requiresCompositingForBlending(renderer);
 }
 
 bool RenderLayerCompositor::canBeComposited(const RenderLayer* layer) const
@@ -1473,6 +1474,7 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer* layer, co
         || (canRender3DTransforms() && renderer->style()->backfaceVisibility() == BackfaceVisibilityHidden)
         || requiresCompositingForAnimation(renderer)
         || requiresCompositingForFilters(renderer)
+        || requiresCompositingForBlending(renderer)
         || requiresCompositingForPosition(renderer, layer)
         || requiresCompositingForOverflowScrolling(layer)
         || renderer->isTransparent()
@@ -1559,6 +1561,9 @@ const char* RenderLayerCompositor::reasonForCompositing(const RenderLayer* layer
 
         if (renderer->hasFilter())
             return "filter with composited descendants";
+            
+        if (renderer->hasBlendMode())
+            return "blending with composited descendants";
     }
 
     if (layer->indirectCompositingReason() == RenderLayer::IndirectCompositingForPerspective)
@@ -1771,7 +1776,7 @@ bool RenderLayerCompositor::requiresCompositingForIndirectReason(RenderObject* r
 
     // When a layer has composited descendants, some effects, like 2d transforms, filters, masks etc must be implemented
     // via compositing so that they also apply to those composited descdendants.
-    if (hasCompositedDescendants && (layer->transform() || renderer->isTransparent() || renderer->hasMask() || renderer->hasReflection() || renderer->hasFilter())) {
+    if (hasCompositedDescendants && (layer->transform() || renderer->createsGroup() || renderer->hasReflection())) {
         reason = RenderLayer::IndirectCompositingForGraphicalEffect;
         return true;
     }
@@ -1801,6 +1806,16 @@ bool RenderLayerCompositor::requiresCompositingForFilters(RenderObject* renderer
         return false;
 
     return renderer->hasFilter();
+#else
+    UNUSED_PARAM(renderer);
+    return false;
+#endif
+}
+
+bool RenderLayerCompositor::requiresCompositingForBlending(RenderObject* renderer) const
+{
+#if ENABLE(CSS_COMPOSITING)
+    return renderer->hasBlendMode();
 #else
     UNUSED_PARAM(renderer);
     return false;

@@ -2197,6 +2197,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         || style->hasMask()
         || style->boxReflect()
         || style->hasFilter()
+        || style->hasBlendMode()
         || style->position() == StickyPosition
 #ifdef FIXED_POSITION_CREATES_STACKING_CONTEXT
         || style->position() == FixedPosition

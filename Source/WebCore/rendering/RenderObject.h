@@ -567,6 +567,12 @@ public:
     bool hasFilter() const { return false; }
 #endif
 
+#if ENABLE(CSS_COMPOSITING)
+    bool hasBlendMode() const { return style() && style()->hasBlendMode(); }
+#else
+    bool hasBlendMode() const { return false; }
+#endif
+
     inline bool preservesNewline() const;
 
     // The pseudo element style can be cached or uncached.  Use the cached method if the pseudo element doesn't respect
@@ -905,6 +911,9 @@ public:
     bool shouldUseTransformFromContainer(const RenderObject* container) const;
     void getTransformFromContainer(const RenderObject* container, const LayoutSize& offsetInContainer, TransformationMatrix&) const;
     
+    // return true if this object requires a new stacking context
+    bool createsGroup() const { return isTransparent() || hasMask() || hasFilter() || hasBlendMode(); } 
+    
     virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint&) { };
 
     LayoutRect absoluteOutlineBounds() const
@@ -932,7 +941,7 @@ protected:
     void paintFocusRing(GraphicsContext*, const LayoutPoint&, RenderStyle*);
     void paintOutline(GraphicsContext*, const LayoutRect&);
     void addPDFURLRect(GraphicsContext*, const LayoutRect&);
-
+    
     virtual LayoutRect viewRect() const;
 
     void adjustRectForOutlineAndShadow(LayoutRect&) const;

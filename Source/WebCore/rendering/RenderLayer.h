@@ -613,6 +613,12 @@ public:
     bool hasFilter() const { return false; }
 #endif
 
+#if ENABLE(CSS_COMPOSITING)
+    bool hasBlendMode() const { return renderer()->hasBlendMode(); }
+#else
+    bool hasBlendMode() const { return false; }
+#endif
+
     // Overloaded new operator. Derived classes must override operator new
     // in order to allocate out of the RenderArena.
     void* operator new(size_t, RenderArena*);
