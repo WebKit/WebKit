@@ -1140,6 +1140,8 @@ static bool fastDocumentTeardownEnabled()
     [self _clearGlibLoopObserver];
 #endif
 
+    [[self _notificationProvider] unregisterWebView:self];
+
     [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -6517,15 +6519,10 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 @implementation WebView (WebViewNotification)
 - (void)_setNotificationProvider:(id<WebNotificationProvider>)notificationProvider
 {
-    if (_private) {
+    if (_private && !_private->_notificationProvider) {
         _private->_notificationProvider = notificationProvider;
         [_private->_notificationProvider registerWebView:self];
     }
-}
-
-- (void)_notificationControllerDestroyed
-{
-    [[self _notificationProvider] unregisterWebView:self];
 }
 
 - (id<WebNotificationProvider>)_notificationProvider

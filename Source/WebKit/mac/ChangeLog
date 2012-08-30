@@ -1,3 +1,29 @@
+2012-08-30  Jon Lee  <jonlee@apple.com>
+
+        [Mac] Registering web views for notifications is unbalanced
+        https://bugs.webkit.org/show_bug.cgi?id=95465
+        <rdar://problem/12206765>
+
+        Reviewed by Darin Adler.
+
+        Setting the notification provider for a WK1 WebView registers that web view to the
+        provider. When the WebView is closed, WebCore is essentially responsible for
+        unregistering the web view. This leads to an imbalance on Lion since notifications are
+        not supported, and the NotificationController responsible for making the unregistration
+        call doesn't exist.
+
+        Instead, the unregisterWebView method should be called when the web view is closed.
+
+        * WebView/WebViewPrivate.h: Remove _notificationControllerDestroyed, since it is
+        unneeded.
+
+        * WebCoreSupport/WebNotificationClient.mm:
+        (WebNotificationClient::notificationControllerDestroyed):
+        * WebView/WebView.mm:
+        (-[WebView _close]): Unregister the web view from the assigned provider here.
+        (-[WebView _setNotificationProvider:]): Only allow setting the provider once, to avoid
+        registering the web view to multiple providers.
+
 2012-08-29  Jon Lee  <jonlee@apple.com>
 
         [Mac] Add iconURL to WebNotification

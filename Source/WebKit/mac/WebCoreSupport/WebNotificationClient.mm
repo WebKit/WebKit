@@ -160,9 +160,6 @@ void WebNotificationClient::notificationObjectDestroyed(Notification* notificati
 
 void WebNotificationClient::notificationControllerDestroyed()
 {
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    [m_webView _notificationControllerDestroyed];
-#endif
     delete this;
 }
 
