@@ -1,5 +1,13 @@
 2012-08-30  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the Qt build: add an #include to JSArray.h, since
+        it's included by some of the files Qt complains about, and
+        some of is functions call the functions Qt complains about.
+
+        * runtime/JSArray.h:
+
+2012-08-30  Geoffrey Garen  <ggaren@apple.com>
+
         Second step toward fixing the Windows build: Add new symbols.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
