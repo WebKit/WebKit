@@ -85,9 +85,6 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
     if (oldChild->isBox())
         toRenderBox(oldChild)->deleteLineBoxWrapper();
 
-    if (!owner->documentBeingDestroyed() && notifyRenderer)
-        oldChild->willBeRemovedFromTree();
-    
     // If oldChild is the start or end of the selection, then clear the selection to
     // avoid problems of invalid pointers.
     // FIXME: The FrameSelection should be responsible for this when it
@@ -95,7 +92,13 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
     if (!owner->documentBeingDestroyed() && oldChild->isSelectionBorder())
         owner->view()->clearSelection();
 
-    // remove the child
+    if (!owner->documentBeingDestroyed() && notifyRenderer)
+        oldChild->willBeRemovedFromTree();
+
+    // WARNING: There should be no code running between willBeRemovedFromTree and the actual removal below.
+    // This is needed to avoid race conditions where willBeRemovedFromTree would dirty the tree's structure
+    // and the code running here would force an untimely rebuilding, leaving |oldChild| dangling.
+
     if (oldChild->previousSibling())
         oldChild->previousSibling()->setNextSibling(oldChild->nextSibling());
     if (oldChild->nextSibling())
