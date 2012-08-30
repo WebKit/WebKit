@@ -1,5 +1,21 @@
 2012-08-30  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the Qt build: Remove the inline keyword at the declaration
+        site. 
+
+        The Qt compiler seems to be confused, complaining about these functions
+        not being defined in a translation unit, even though no generated code
+        in the unit calls these functions. Maybe removing the keyword at the
+        declaration site will change its mind.
+
+        This shouldn't change the inlining decision at all: the definition is
+        still inline.
+
+        * interpreter/CallFrame.h:
+        (ExecState):
+
+2012-08-30  Geoffrey Garen  <ggaren@apple.com>
+
         Undo Qt build fix guess, since it breaks other builds.
 
         * runtime/JSArray.h:

@@ -53,13 +53,13 @@ namespace JSC  {
 
         // Global object in which the currently executing code was defined.
         // Differs from dynamicGlobalObject() during function calls across web browser frames.
-        inline JSGlobalObject* lexicalGlobalObject() const;
+        JSGlobalObject* lexicalGlobalObject() const;
 
         // Differs from lexicalGlobalObject because this will have DOM window shell rather than
         // the actual DOM window, which can't be "this" for security reasons.
-        inline JSObject* globalThisValue() const;
+        JSObject* globalThisValue() const;
 
-        inline JSGlobalData& globalData() const;
+        JSGlobalData& globalData() const;
 
         // Convenience functions for access to global data.
         // It takes a few memory references to get from a call frame to the global data
@@ -183,9 +183,9 @@ namespace JSC  {
         }
 
         // Read a register from the codeframe (or constant from the CodeBlock).
-        inline Register& r(int);
+        Register& r(int);
         // Read a register for a non-constant 
-        inline Register& uncheckedR(int);
+        Register& uncheckedR(int);
 
         // Access to arguments.
         size_t argumentCount() const { return argumentCountIncludingThis() - 1; }
