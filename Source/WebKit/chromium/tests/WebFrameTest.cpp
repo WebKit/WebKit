@@ -1078,4 +1078,72 @@ TEST_F(WebFrameTest, SelectRange)
     webView->close();
 }
 
+class DisambiguationPopupTestWebViewClient : public WebViewClient {
+public:
+    virtual bool handleDisambiguationPopup(const WebGestureEvent&, const WebVector<WebRect>& targetRects) OVERRIDE
+    {
+        EXPECT_GE(targetRects.size(), 2u);
+        m_triggered = true;
+        return true;
+    }
+
+    bool triggered() const { return m_triggered; }
+    void resetTriggered() { m_triggered = false; }
+    bool m_triggered;
+};
+
+static WebGestureEvent fatTap(int x, int y)
+{
+    WebGestureEvent event;
+    event.type = WebInputEvent::GestureTap;
+    event.x = x;
+    event.y = y;
+    event.boundingBox = WebCore::IntRect(x - 25, y - 25, 50, 50);
+    return event;
+}
+
+TEST_F(WebFrameTest, DisambiguationPopupTest)
+{
+    registerMockedHttpURLLoad("disambiguation_popup.html");
+
+    DisambiguationPopupTestWebViewClient client;
+
+    // Make sure we initialize to minimum scale, even if the window size
+    // only becomes available after the load begins.
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "disambiguation_popup.html", true, 0, &client));
+    webViewImpl->resize(WebSize(1000, 1000));
+    webViewImpl->layout();
+
+    client.resetTriggered();
+    webViewImpl->handleInputEvent(fatTap(0, 0));
+    EXPECT_FALSE(client.triggered());
+
+    client.resetTriggered();
+    webViewImpl->handleInputEvent(fatTap(200, 115));
+    EXPECT_FALSE(client.triggered());
+
+    for (int i = 0; i <= 46; i++) {
+        client.resetTriggered();
+        webViewImpl->handleInputEvent(fatTap(120, 230 + i * 5));
+
+        int j = i % 10;
+        if (j >= 7 && j <= 9)
+            EXPECT_TRUE(client.triggered());
+        else
+            EXPECT_FALSE(client.triggered());
+    }
+
+    for (int i = 0; i <= 46; i++) {
+        client.resetTriggered();
+        webViewImpl->handleInputEvent(fatTap(10 + i * 5, 590));
+
+        int j = i % 10;
+        if (j >= 7 && j <= 9)
+            EXPECT_TRUE(client.triggered());
+        else
+            EXPECT_FALSE(client.triggered());
+    }
+
+}
+
 } // namespace

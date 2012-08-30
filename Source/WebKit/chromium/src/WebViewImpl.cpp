@@ -169,6 +169,7 @@
 
 #if ENABLE(GESTURE_EVENTS)
 #include "PlatformGestureEvent.h"
+#include "TouchDisambiguation.h"
 #endif
 
 #if OS(WINDOWS)
@@ -707,12 +708,23 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         if (detectContentOnTouch(WebPoint(event.x, event.y), event.type))
             return true;
 
-        PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
         RefPtr<WebCore::PopupContainer> selectPopup;
         selectPopup = m_selectPopup;
         hideSelectPopup();
         ASSERT(!m_selectPopup);
+
+        if (!event.boundingBox.isEmpty()) {
+            Vector<IntRect> goodTargets;
+            findGoodTouchTargets(event.boundingBox, mainFrameImpl()->frame(), pageScaleFactor(), goodTargets);
+            // FIXME: replace touch adjustment code when numberOfGoodTargets == 1?
+            // Single candidate case is currently handled by: https://bugs.webkit.org/show_bug.cgi?id=85101
+            if (goodTargets.size() >= 2 && m_client && m_client->handleDisambiguationPopup(event, goodTargets))
+                return true;
+        }
+
+        PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
         bool gestureHandled = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
+
         if (m_selectPopup && m_selectPopup == selectPopup) {
             // That tap triggered a select popup which is the same as the one that
             // was showing before the tap. It means the user tapped the select
@@ -720,6 +732,7 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
             // immediately reopened the select popup. It needs to be closed.
             hideSelectPopup();
         }
+
         return gestureHandled;
     }
     case WebInputEvent::GestureTwoFingerTap:

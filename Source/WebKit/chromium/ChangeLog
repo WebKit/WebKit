@@ -1,3 +1,39 @@
+2012-08-29  Tien-Ren Chen  <trchen@chromium.org>
+
+        [chromium] Implement disambiguation popup (a.k.a. Link Preview)
+        https://bugs.webkit.org/show_bug.cgi?id=94182
+
+        Reviewed by Adam Barth.
+
+        In this new implementation, we add a new WebViewClient::handleDisambiguationPopup delegate.
+        The disambiguation sequence will be initiated by the gesture event handler
+        in WebViewImpl if an ambiguous tap is detected, then
+        m_client->handleDisambiguationPopup will be called, so the embedder can
+        decide whether to swallow the touch event and show a popup.
+
+        New test: WebFrameTest.DisambiguationPopupTest
+
+        * WebKit.gyp:
+        * features.gypi:
+        * public/WebInputEvent.h:
+        (WebGestureEvent):
+        (WebKit::WebGestureEvent::WebGestureEvent):
+        * public/WebTouchCandidatesInfo.h: Removed.
+        * public/WebView.h:
+        (WebKit):
+        * public/WebViewClient.h:
+        (WebKit):
+        (WebViewClient):
+        (WebKit::WebViewClient::triggersLinkPreview):
+        * src/WebInputEvent.cpp:
+        (SameSizeAsWebGestureEvent):
+        * src/WebViewImpl.cpp:
+        (WebKit):
+        (WebKit::WebViewImpl::handleGestureEventWithLinkPreview):
+        (WebKit::WebViewImpl::handleGestureEvent):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-08-29  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Canvas should have a distinct role

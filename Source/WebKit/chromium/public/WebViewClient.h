@@ -62,6 +62,7 @@ class WebFileChooserCompletion;
 class WebFrame;
 class WebGeolocationClient;
 class WebGeolocationService;
+class WebGestureEvent;
 class WebHelperPlugin;
 class WebHitTestResult;
 class WebIconLoadingCompletion;
@@ -71,6 +72,7 @@ class WebKeyboardEvent;
 class WebNode;
 class WebNotificationPresenter;
 class WebRange;
+class WebRect;
 class WebSpeechInputController;
 class WebSpeechInputListener;
 class WebSpeechRecognizer;
@@ -284,6 +286,9 @@ public:
     // After calling WebWidget::layout(), expect to get this notification
     // unless the view did not need a layout.
     virtual void didUpdateLayout() { }
+
+    // Return true to swallow the input event if the embedder will start a disambiguation popup
+    virtual bool handleDisambiguationPopup(const WebGestureEvent&, const WebVector<WebRect>& targetRects) { return false; }
 
     // Session history -----------------------------------------------------
 
