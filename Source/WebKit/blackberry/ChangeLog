@@ -1,3 +1,17 @@
+2012-08-30  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] ASSERT failure in JSC::MarkedAllocator::allocateSlowCase
+        https://bugs.webkit.org/show_bug.cgi?id=95492
+
+        Reviewed by Yong Li.
+
+        PR: 200724
+        Hold the JSLock for the current thread before we call toRef to avoid
+        the ASSERT failure.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::executeJavaScript):
+
 2012-08-30  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Remove unneeded force-immediate-repaint from InRegionScroller::setLayerScrollPosition

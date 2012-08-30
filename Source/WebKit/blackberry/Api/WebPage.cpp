@@ -744,6 +744,7 @@ bool WebPagePrivate::executeJavaScript(const char* scriptUTF8, JavaScriptDataTyp
     JSC::ExecState* exec = m_mainFrame->script()->globalObject(mainThreadNormalWorld())->globalExec();
     JSGlobalContextRef context = toGlobalRef(exec);
 
+    JSC::JSLockHolder lock(exec);
     JSType type = JSValueGetType(context, toRef(exec, value));
 
     switch (type) {
