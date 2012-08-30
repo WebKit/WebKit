@@ -53,7 +53,7 @@ class V8DOMWindowShell : public RefCounted<V8DOMWindowShell> {
 public:
     static PassRefPtr<V8DOMWindowShell> create(Frame*);
 
-    v8::Handle<v8::Context> context() const { return m_context.get(); }
+    v8::Persistent<v8::Context> context() const { return m_context.get(); }
 
     // Update document object of the frame.
     void updateDocument();

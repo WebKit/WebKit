@@ -411,15 +411,21 @@ void ScriptController::finishedWithEvent(Event* event)
 {
 }
 
-v8::Local<v8::Context> ScriptController::currentWorldContext()
+v8::Persistent<v8::Context> ScriptController::unsafeHandleToCurrentWorldContext()
 {
     if (V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered()) {
         RefPtr<SharedPersistent<v8::Context> > context = isolatedContext->sharedContext();
         if (m_frame != toFrameIfNotDetached(context->get()))
-            return v8::Local<v8::Context>();
-        return v8::Local<v8::Context>::New(context->get());
+            return v8::Persistent<v8::Context>();
+        return context->get();
     }
-    return mainWorldContext();
+    windowShell()->initializeIfNeeded();
+    return windowShell()->context();
+}
+
+v8::Local<v8::Context> ScriptController::currentWorldContext()
+{
+    return v8::Local<v8::Context>::New(unsafeHandleToCurrentWorldContext());
 }
 
 v8::Local<v8::Context> ScriptController::mainWorldContext()
@@ -434,24 +440,6 @@ v8::Local<v8::Context> ScriptController::mainWorldContext(Frame* frame)
         return v8::Local<v8::Context>();
 
     return frame->script()->mainWorldContext();
-}
-
-bool ScriptController::matchesCurrentContext()
-{
-    // This method is equivalent to 'return v8::Context::GetCurrent() == contextForCurrentWorld()',
-    // but is written without using contextForCurrentWorld().
-    // Given that this method is used by a hot call path of DOM object constructor,
-    // we want to avoid the overhead of contextForCurrentWorld() creating Local<Context> every time.
-    v8::Handle<v8::Context> context;
-    if (V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered()) {
-        context = isolatedContext->sharedContext()->get();
-        if (m_frame != toFrameIfNotDetached(context))
-            return false;
-    } else {
-        windowShell()->initializeIfNeeded();
-        context = windowShell()->context();
-    }
-    return context == v8::Context::GetCurrent();
 }
 
 // Create a V8 object with an interceptor of NPObjectPropertyGetter.
