@@ -1,3 +1,36 @@
+2012-08-30  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] One shot drawing sync flag never cleared when there's no layers
+        https://bugs.webkit.org/show_bug.cgi?id=95447
+
+        Reviewed by Antonio Gomes.
+
+        PR 199866
+        When we remove the layers, WebKit could tell us we need a one shot
+        drawing sync to repaint the BackingStore with the content that was
+        previously drawn by layers. We also sometimes set the one shot drawing
+        sync flag manually.
+
+        We would bail from commit if there were no layers and not actually
+        perform the osds, so it left the osds flag set forever and the
+        situation prevails, because nobody will ever clear the osds flag.
+
+        The BackingStore surrenders the responsibility of blitting to the AC
+        commit mechanism when a one shot drawing sync is pending, because we
+        want the operations render, commit and blit to happen in the correct
+        order with no intermediate blits.
+
+        So, no commit means no blit, and the result of regular rendering did
+        not show up on screen.
+
+        Fixed by not bailing from commit if there's no layers, instead clearing
+        the "needs commit" and osds flags and performing a blit.
+
+        Reviewed internally by Andrew Lo.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::commitRootLayerIfNeeded):
+
 2012-08-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Use ASCIILiteral for DEFINE_STATIC_LOCAL string

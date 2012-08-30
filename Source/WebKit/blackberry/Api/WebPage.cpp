@@ -5636,7 +5636,9 @@ bool WebPagePrivate::commitRootLayerIfNeeded()
     if (!m_needsCommit)
         return false;
 
-    if (!(m_frameLayers && m_frameLayers->hasLayer()) && !m_overlayLayer)
+    // Don't bail if the layers were removed and we now need a one shot drawing sync as a consequence.
+    if (!(m_frameLayers && m_frameLayers->hasLayer()) && !m_overlayLayer
+     && !m_needsOneShotDrawingSynchronization)
         return false;
 
     FrameView* view = m_mainFrame->view();
