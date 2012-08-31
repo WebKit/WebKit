@@ -897,6 +897,7 @@ BUGCR145338 WONTFIX ANDROID SKIP : fast/forms/date = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : fast/mediastream = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : fast/notifications = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : fast/speech = PASS
+BUGCR145338 WONTFIX ANDROID SKIP : http/tests/notifications = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : platform/chromium/fast/forms/color = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : platform/chromium/media/video-capture-preview.html = PASS // Uses mediastream
 BUGCR145338 WONTFIX ANDROID SKIP : webaudio = PASS
@@ -3635,3 +3636,5 @@ BUGWK80394 MAC WIN : fast/block/float/024.html = IMAGE+TEXT
 BUGWK80394 MAC WIN : fast/block/margin-collapse/025.html = TEXT
 BUGWK80394 MAC WIN : fast/block/margin-collapse/block-inside-inline/025.html = TEXT
 
+// Does not yet support new web notifications TestRunner API
+BUGWK95506 SKIP : http/tests/notifications = PASS

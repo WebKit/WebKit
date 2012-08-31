@@ -832,6 +832,7 @@ fast/dom/Geolocation
 
 # This port doesn't support Notifications.
 fast/notifications
+http/tests/notifications
 
 # These media tests regressed on the bots.  Skipping to make the bots green again.
 # https://bugs.webkit.org/show_bug.cgi?id=28281
@@ -2166,4 +2167,3 @@ http/tests/security/referrer-policy-rel-noreferrer.htm
 # As usual, DRT on Windows has problems knowing how to continue a test when focus moves to a popup window, in this case the file chooser
 # https://bugs.webkit.org/show_bug.cgi?id=87469
 fast/events/domactivate-sets-underlying-click-event-as-handled.html
-

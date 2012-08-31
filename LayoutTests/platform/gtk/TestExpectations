@@ -161,6 +161,7 @@ BUGWKGTK SKIP : fast/dom/DeviceOrientation = TEXT
 
 // Desktop notifications are not supported.
 BUGWKGTK SKIP : fast/notifications = TEXT
+BUGWKGTK SKIP : http/tests/notifications = TEXT
 
 // We lack userscripts support.
 BUGWKGTK SKIP : userscripts = TEXT

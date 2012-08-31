@@ -3509,6 +3509,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\UIProcess\API\C\WKNotificationPermissionRequest.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKNotificationPermissionRequest.h"
+						>
+					</File>
+					<File
 						RelativePath="..\UIProcess\API\C\WKNotificationProvider.h"
 						>
 					</File>

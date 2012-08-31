@@ -598,6 +598,7 @@ BUGWK95302 SKIP : fast/events/constructors/speech-recognition-event-constructor.
 
 // Requires support for Web notifications
 BUGWK73544 SKIP : fast/notifications = TEXT
+BUGWK73544 SKIP : http/tests/notifications = TEXT
 
 // This tests fails by one on 32 bits machines due to rounding issues.
 BUGWKEFL : fast/css/percentage-non-integer.html = TEXT PASS

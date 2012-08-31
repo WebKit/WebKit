@@ -1,5 +1,21 @@
 2012-08-31  Jon Lee  <jonlee@apple.com>
 
+        [Tests] Add basic tests to http/tests/notifications
+        https://bugs.webkit.org/show_bug.cgi?id=95493
+        <rdar://problem/12209303>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add permission request support for WTR.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        (WTR::TestController::decidePolicyForNotificationPermissionRequest): Always allow.
+        * WebKitTestRunner/TestController.h:
+        (TestController):
+
+2012-08-31  Jon Lee  <jonlee@apple.com>
+
         [DRT] Make simulating a web click on a notification a queued task
         https://bugs.webkit.org/show_bug.cgi?id=95546
         <rdar://problem/12214170>

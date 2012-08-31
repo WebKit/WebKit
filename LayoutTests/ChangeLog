@@ -1,3 +1,41 @@
+2012-08-31  Jon Lee  <jonlee@apple.com>
+
+        [Tests] Add basic tests to http/tests/notifications
+        https://bugs.webkit.org/show_bug.cgi?id=95493
+        <rdar://problem/12209303>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/notifications/request-expected.txt: Added.
+        * http/tests/notifications/request.html: Added. This test requests permission. DRT/WTR
+        is expected to accept it, and we verify that both the parameter in the callback function,
+        and Notification.permission, are both set to "granted".
+        * http/tests/notifications/show-expected.txt: Added.
+        * http/tests/notifications/show.html: Added. This test checks that the various permission
+        APIs on TestRunner work.
+
+        Legacy analog to above tests.
+        * http/tests/notifications/legacy/request-expected.txt: Added.
+        * http/tests/notifications/legacy/request.html: Added.
+        * http/tests/notifications/legacy/show-expected.txt: Added.
+        * http/tests/notifications/legacy/show.html: Added.
+
+        * http/tests/resources/js-test-post-async.js: Added. This will be used for most tests since
+        the events are called asynchronously.
+        * http/tests/resources/js-test-pre.js: Updated from fast/js/resources.
+        * http/tests/resources/notifications-test-pre.js: Added. Adds a helper function to complete
+        the test, and defines the domain of http/tests.
+        (testCompleted):
+
+        Skip.
+        * platform/chromium/TestExpectations: Skip on Android. Filed 95506 to bring Chromium support.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped: Filed 95507 to bring Qt support.
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+
 2012-08-31  Philip Rogers  <pdr@google.com>
 
         Unreviewed update of test expectations.

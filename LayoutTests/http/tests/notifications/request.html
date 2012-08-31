@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+if (window.testRunner)
+	testRunner.waitUntilDone();
+
+description("This test checks that a request for permission is made.");
+
+if (window.testRunner) {
+	shouldBeEqualToString("Notification.permission", "default");
+	Notification.requestPermission(function(permission) {
+		if (permission == 'granted')
+			testPassed("permission is granted.");
+		else
+			testFailed("permission should be granted, but is " + permission + ".");
+		shouldBeEqualToString("Notification.permission", "granted");
+		testCompleted();
+	});
+}
+
+setTimeout(testCompleted, 100);
+</script>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+if (window.testRunner)
+	testRunner.waitUntilDone();
+
+description("This test checks that a request for permission is made.");
+
+if (window.testRunner) {
+	shouldBe("window.webkitNotifications.checkPermission()", "1");
+	Notification.requestPermission(function() {
+		shouldBe("window.webkitNotifications.checkPermission()", "0");
+		testCompleted();
+	});
+}
+
+setTimeout(testCompleted, 100);
+</script>

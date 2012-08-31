@@ -59,7 +59,7 @@ public:
     WebCore::NotificationClient::Permission permissionLevel(WebCore::SecurityOrigin*);
 
     // For testing purposes only.
-    void setPermissionLevelForTesting(const String& originString, WebCore::NotificationClient::Permission);
+    void setPermissionLevelForTesting(const String& originString, bool allowed);
     void removeAllPermissionsForTesting();
     
     void didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed);

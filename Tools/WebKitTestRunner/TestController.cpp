@@ -32,6 +32,7 @@
 #include <WebKit2/WKContextPrivate.h>
 #include <WebKit2/WKNotification.h>
 #include <WebKit2/WKNotificationManager.h>
+#include <WebKit2/WKNotificationPermissionRequest.h>
 #include <WebKit2/WKNumber.h>
 #include <WebKit2/WKPageGroup.h>
 #include <WebKit2/WKPagePrivate.h>
@@ -388,7 +389,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // shouldInterruptJavaScript
         createOtherPage,
         0, // mouseDidMoveOverElement
-        0, // decidePolicyForNotificationPermissionRequest
+        decidePolicyForNotificationPermissionRequest, // decidePolicyForNotificationPermissionRequest
         0, // unavailablePluginButtonClicked
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
@@ -950,6 +951,16 @@ void TestController::processDidCrash()
 void TestController::simulateWebNotificationClick(uint64_t notificationID)
 {
     m_webNotificationProvider.simulateWebNotificationClick(notificationID);
+}
+
+void TestController::decidePolicyForNotificationPermissionRequest(WKPageRef page, WKSecurityOriginRef origin, WKNotificationPermissionRequestRef request, const void* clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->decidePolicyForNotificationPermissionRequest(page, origin, request);
+}
+
+void TestController::decidePolicyForNotificationPermissionRequest(WKPageRef, WKSecurityOriginRef, WKNotificationPermissionRequestRef request)
+{
+    WKNotificationPermissionRequestAllow(request);
 }
 
 } // namespace WTR
