@@ -33,48 +33,11 @@
 #include "CustomFilterCompiledProgram.h"
  
 #include "CustomFilterGlobalContext.h"
-#include "CustomFilterProgramInfo.h"
-#include "GraphicsContext3D.h"
 
 namespace WebCore {
 
-#define SHADER(Src) (ASCIILiteral(#Src))
-
-String CustomFilterCompiledProgram::defaultVertexShaderString()
-{
-    DEFINE_STATIC_LOCAL(String, vertexShaderString, SHADER(
-        precision mediump float;
-        attribute vec4 a_position;
-        attribute vec2 a_texCoord;
-        uniform mat4 u_projectionMatrix;
-        varying vec2 v_texCoord;
-        void main()
-        {
-            gl_Position = u_projectionMatrix * a_position;
-            v_texCoord = a_texCoord;
-        }
-    ));
-    return vertexShaderString;
-}
-
-String CustomFilterCompiledProgram::defaultFragmentShaderString()
-{
-    DEFINE_STATIC_LOCAL(String, fragmentShaderString, SHADER(
-        precision mediump float;
-        varying vec2 v_texCoord;
-        uniform sampler2D u_texture;
-        void main()
-        {
-            gl_FragColor = texture2D(u_texture, v_texCoord);
-        }
-    ));
-    return fragmentShaderString;
-}
-
-CustomFilterCompiledProgram::CustomFilterCompiledProgram(CustomFilterGlobalContext* globalContext, const CustomFilterProgramInfo& programInfo)
-    : m_globalContext(globalContext)
-    , m_context(globalContext->context())
-    , m_programInfo(programInfo)
+CustomFilterCompiledProgram::CustomFilterCompiledProgram(PassRefPtr<GraphicsContext3D> context, const String& validatedVertexShader, const String& validatedFragmentShader)
+    : m_context(context)
     , m_program(0)
     , m_positionAttribLocation(-1)
     , m_texAttribLocation(-1)
@@ -87,15 +50,16 @@ CustomFilterCompiledProgram::CustomFilterCompiledProgram(CustomFilterGlobalConte
     , m_samplerLocation(-1)
     , m_samplerSizeLocation(-1)
     , m_contentSamplerLocation(-1)
+    , m_internalTexCoordAttribLocation(-1)
     , m_isInitialized(false)
 {
     m_context->makeContextCurrent();
-    
-    Platform3DObject vertexShader = compileShader(GraphicsContext3D::VERTEX_SHADER, programInfo.vertexShaderString());
+
+    Platform3DObject vertexShader = compileShader(GraphicsContext3D::VERTEX_SHADER, validatedVertexShader);
     if (!vertexShader)
         return;
     
-    Platform3DObject fragmentShader = compileShader(GraphicsContext3D::FRAGMENT_SHADER, programInfo.fragmentShaderString());
+    Platform3DObject fragmentShader = compileShader(GraphicsContext3D::FRAGMENT_SHADER, validatedFragmentShader);
     if (!fragmentShader) {
         m_context->deleteShader(vertexShader);
         return;
@@ -114,26 +78,12 @@ CustomFilterCompiledProgram::CustomFilterCompiledProgram(CustomFilterGlobalConte
     m_isInitialized = true;
 }
 
-String CustomFilterCompiledProgram::getDefaultShaderString(GC3Denum shaderType)
-{
-    switch (shaderType) {
-    case GraphicsContext3D::VERTEX_SHADER:
-        return defaultVertexShaderString();
-    case GraphicsContext3D::FRAGMENT_SHADER:
-        return defaultFragmentShaderString();
-    default:
-        ASSERT_NOT_REACHED();
-        return String();
-    }
-}
-
 Platform3DObject CustomFilterCompiledProgram::compileShader(GC3Denum shaderType, const String& shaderString)
 {
+    ASSERT(!shaderString.isNull());
+
     Platform3DObject shader = m_context->createShader(shaderType);
-    if (shaderString.isNull())
-        m_context->shaderSource(shader, getDefaultShaderString(shaderType));
-    else
-        m_context->shaderSource(shader, shaderString);
+    m_context->shaderSource(shader, shaderString);
     m_context->compileShader(shader);
     
     int compiled = 0;
@@ -177,9 +127,14 @@ void CustomFilterCompiledProgram::initializeParameterLocations()
     m_tileSizeLocation = m_context->getUniformLocation(m_program, "u_tileSize");
     m_meshSizeLocation = m_context->getUniformLocation(m_program, "u_meshSize");
     m_projectionMatrixLocation = m_context->getUniformLocation(m_program, "u_projectionMatrix");
-    m_samplerLocation = m_context->getUniformLocation(m_program, "u_texture");
     m_samplerSizeLocation = m_context->getUniformLocation(m_program, "u_textureSize");
     m_contentSamplerLocation = m_context->getUniformLocation(m_program, "u_contentTexture");
+    m_internalTexCoordAttribLocation = m_context->getAttribLocation(m_program, "css_a_texCoord");
+    m_samplerLocation = m_context->getUniformLocation(m_program, "css_u_texture");
+    // FIXME: Remove texture access via u_texture and change the tests to use blending and compositing.
+    // https://bugs.webkit.org/show_bug.cgi?id=93871
+    if (m_samplerLocation == -1)
+        m_samplerLocation = m_context->getUniformLocation(m_program, "u_texture");
 }
 
 int CustomFilterCompiledProgram::uniformLocationByName(const String& name)
@@ -191,8 +146,6 @@ int CustomFilterCompiledProgram::uniformLocationByName(const String& name)
     
 CustomFilterCompiledProgram::~CustomFilterCompiledProgram()
 {
-    if (m_globalContext)
-        m_globalContext->removeCompiledProgram(this);
     if (m_program) {
         m_context->makeContextCurrent();
         m_context->deleteProgram(m_program);

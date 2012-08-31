@@ -31,17 +31,18 @@
 #define CustomFilterGlobalContext_h
 
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
+#include "ANGLEWebKitBridge.h"
 #include "CustomFilterProgramInfo.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class CustomFilterCompiledProgram;
+class CustomFilterValidatedProgram;
 class HostWindow;
 class GraphicsContext3D;
 
-typedef HashMap<CustomFilterProgramInfo, CustomFilterCompiledProgram*> CustomFilterCompiledProgramsMap;
+typedef HashMap<CustomFilterProgramInfo, CustomFilterValidatedProgram*> CustomFilterValidatedProgramsMap;
 
 class CustomFilterGlobalContext {
 public:
@@ -49,14 +50,32 @@ public:
     ~CustomFilterGlobalContext();
     
     GraphicsContext3D* context() const { return m_context.get(); }
+
+    // CSS shaders not referenced from the CSS mix function should be validated just like regular WebGL shaders.
+    // This ANGLE validator uses the SH_WEBGL_SPEC flag.
+    ANGLEWebKitBridge* webglShaderValidator();
+
+    // CSS shaders referenced from the CSS mix function should be validated slightly differently than WebGL shaders.
+    // This ANGLE validator uses the SH_CSS_SHADERS_SPEC flag.
+    // Under this flag, most notably:
+    // - The "gl_FragColor" built-in is not available.
+    // - Instead, the "css_MixColor" and "css_ColorMatrix" built-ins are available.
+    // - The "css_" prefix is reserved.
+    // - In the translated source that ANGLE returns, ANGLE renames the author's "main" function to "css_main".
+    // The complete details are documented in ANGLE/ShaderLang.h.
+    ANGLEWebKitBridge* mixShaderValidator();
     
     void prepareContextIfNeeded(HostWindow*);
 
-    PassRefPtr<CustomFilterCompiledProgram> getCompiledProgram(const CustomFilterProgramInfo&);
-    void removeCompiledProgram(const CustomFilterCompiledProgram*);
+    PassRefPtr<CustomFilterValidatedProgram> getValidatedProgram(const CustomFilterProgramInfo&);
+    void removeValidatedProgram(const CustomFilterValidatedProgram*);
 private:
+    static PassOwnPtr<ANGLEWebKitBridge> createShaderValidator(ShShaderSpec);
+
     RefPtr<GraphicsContext3D> m_context;
-    CustomFilterCompiledProgramsMap m_programs;
+    OwnPtr<ANGLEWebKitBridge> m_webglShaderValidator;
+    OwnPtr<ANGLEWebKitBridge> m_mixShaderValidator;
+    CustomFilterValidatedProgramsMap m_programs;
 };
 
 } // namespace WebCore

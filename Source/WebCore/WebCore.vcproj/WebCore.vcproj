@@ -31925,6 +31925,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterValidatedProgram.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterValidatedProgram.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\filters\DistantLightSource.cpp"
 						>
 					</File>

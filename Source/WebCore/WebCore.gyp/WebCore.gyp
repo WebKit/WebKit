@@ -1641,7 +1641,6 @@
         ['exclude', 'platform/LinkHash\\.cpp$'],
         ['exclude', 'platform/MIMETypeRegistry\\.cpp$'],
         ['exclude', 'platform/Theme\\.cpp$'],
-        ['exclude', 'platform/graphics/ANGLEWebKitBridge\\.(cpp|h)$'],
         # *NEON.cpp files need special compile options.
         # They are moved to the webcore_arm_neon target.
         ['exclude', 'platform/graphics/filters/arm/.*NEON\\.(cpp|h)'],

@@ -25,7 +25,8 @@
         }
         /* Testing parameters of type transform in vertex-transform-parameter.vs. */
         .filter {
-            -webkit-filter: custom(url('../resources/vertex-transform-parameter.vs'), 
+            -webkit-filter: custom(url('../resources/vertex-transform-parameter.vs')
+                                    mix(url('../resources/empty-shader.fs') normal source-atop), 
                                     transform translate(10px, 20px)
                                   );
             background-color: green;

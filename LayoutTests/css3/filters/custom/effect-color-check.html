@@ -19,9 +19,9 @@
         </script>
     </head>
     <body onload="runTest()">
-        <img style="-webkit-filter: custom(none url('../resources/color-fill.fs'), color 1 0 0 1)" src="../../../compositing/resources/thiswayup.png">
-        <img style="-webkit-filter: custom(none url('../resources/color-fill.fs'), color 0 1 0 1)" src="../../../compositing/resources/thiswayup.png">
-        <img style="-webkit-filter: custom(none url('../resources/color-fill.fs'), color 0 0 1 1)" src="../../../compositing/resources/thiswayup.png">
+        <img style="-webkit-filter: custom(url('../resources/pass-tex-coord.vs') url('../resources/color-fill.fs'), color 1 0 0 1)" src="../../../compositing/resources/thiswayup.png">
+        <img style="-webkit-filter: custom(url('../resources/pass-tex-coord.vs') url('../resources/color-fill.fs'), color 0 1 0 1)" src="../../../compositing/resources/thiswayup.png">
+        <img style="-webkit-filter: custom(url('../resources/pass-tex-coord.vs') url('../resources/color-fill.fs'), color 0 0 1 1)" src="../../../compositing/resources/thiswayup.png">
         <!--
             Testing that the color channels are specified correctly. You should see 3 boxes filled with red, green and blue. The arrow should
             point upside and the text should be written from left to right (no mirror). Also the gradient starts from up - transparent to down - full color.

@@ -1,3 +1,66 @@
+2012-08-30  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Implement normal blend mode and source-atop compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=93869
+
+        Reviewed by Dean Jackson.
+
+        We've added two new special built-in symbols in CSS Shaders, css_MixColor and
+        css_ColorMatrix.
+
+        This change adds custom-filter-composite-source-atop.html, a new test that uses css_MixColor
+        in a shader with the normal blend mode and the source-atop compositing operator.
+
+        This change also adds custom-filter-color-matrix.html, a new test that uses css_ColorMatrix
+        in the shader.
+
+        Authors can read and write to these special built-ins in their shader code. WebKit will
+        premultiply the DOM element texture with css_ColorMatrix. Additionally, WebKit will blend
+        and composite css_MixColor with the DOM element texture, according to the blend mode and
+        compositing operator that the author specifies in CSS.
+
+        For example, the following line of CSS tells WebKit how to blend and composite the
+        css_MixColor from shader.fs:
+        -webkit-filter: custom(none mix(shader.fs normal source-atop));
+
+        * css3/filters/custom/custom-filter-color-matrix-expected.png: Added.
+        * css3/filters/custom/custom-filter-color-matrix-expected.txt: Added.
+        * css3/filters/custom/custom-filter-color-matrix.html: Added.
+        * css3/filters/custom/custom-filter-composite-source-atop-expected.png: Added.
+        * css3/filters/custom/custom-filter-composite-source-atop-expected.txt: Added.
+        * css3/filters/custom/custom-filter-composite-source-atop.html: Added.
+        * css3/filters/custom/custom-filter-shader-cache.html:
+        * css3/filters/custom/effect-color-check.html:
+            Use pass-tex-coord.vs now. Since v_texCoord in not automatically passed in the default
+            shaders anymore, we have to pass it in our own vertex shader. After we implement more
+            blending and compositing modes, we will be able to convert most of the tests to use the
+            CSS mix function. Then, we won't be sampling the DOM element texture directly, so we
+            won't need a tex coord, so we won't need this shader anymore.
+        * css3/filters/custom/effect-custom.html:
+            The default CSS value for <fragmentShader> needs to be specified explicitly until we
+            change it from its current default. This will be fixed in:
+            https://bugs.webkit.org/show_bug.cgi?id=94020
+        * css3/filters/custom/effect-custom-transform-parameters.html:
+            Ditto.
+        * css3/filters/custom/filter-fallback-to-software.html:
+            Ditto.
+        * css3/filters/custom/invalid-custom-filter-shader-expected.html:
+            These tests will not attempt to apply a filter because the programs do not validate.
+            This means we don't need to trigger FilterEffectRenderer with grayscale(0) in
+            the reference file anymore.
+        * css3/filters/resources/composite.fs: Added.
+        * css3/filters/resources/empty-shader.fs: Added.
+        * css3/filters/resources/grayscale-color-matrix.fs: Added.
+        * css3/filters/resources/pass-tex-coord.vs: Added.
+        * platform/chromium/css3/filters/custom/custom-filter-color-matrix-expected.png: Added.
+        * platform/chromium/css3/filters/custom/custom-filter-composite-source-atop-expected.png: Added.
+        * platform/chromium/TestExpectations:
+        * platform/mac-snowleopard/css3/filters/custom/effect-custom-expected.png: Removed.
+            We should use the generic expectation, because this expectation does not show the
+            shaders applied.
+        * platform/mac-snowleopard/css3/filters/custom/effect-custom-parameters-expected.png: Removed.
+            Ditto.
+
 2012-08-30  Jessie Berlin  <jberlin@apple.com>
 
         Remove the failing expectation from some tests that are no longer failing on Lion.

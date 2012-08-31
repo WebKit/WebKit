@@ -75,6 +75,7 @@ public:
 
     const String& vertexShaderString() const { return m_vertexShaderString; }
     const String& fragmentShaderString() const { return m_fragmentShaderString; }
+    const CustomFilterProgramMixSettings& mixSettings() const { return m_mixSettings; }
 private:
     String m_vertexShaderString;
     String m_fragmentShaderString;

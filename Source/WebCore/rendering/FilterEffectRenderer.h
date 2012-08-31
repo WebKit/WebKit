@@ -112,7 +112,7 @@ public:
     bool hasFilterThatMovesPixels() const { return m_hasFilterThatMovesPixels; }
     LayoutRect computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect);
 
-#if ENABLE(CSS_SHADERS)
+#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
     bool hasCustomShaderFilter() const { return m_hasCustomShaderFilter; }
 #endif
 private:

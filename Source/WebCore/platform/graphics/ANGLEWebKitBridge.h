@@ -31,7 +31,7 @@
 
 #if PLATFORM(QT)
 #include "ANGLE/include/GLSLANG/ShaderLang.h"
-#elif !PLATFORM(GTK) && !PLATFORM(EFL) && !PLATFORM(BLACKBERRY)
+#elif !PLATFORM(GTK) && !PLATFORM(EFL) && !PLATFORM(BLACKBERRY) && !PLATFORM(CHROMIUM)
 #include "ANGLE/ShaderLang.h"
 #else
 #include "ShaderLang.h"
@@ -47,13 +47,13 @@ enum ANGLEShaderType {
 class ANGLEWebKitBridge {
 public:
 
-    ANGLEWebKitBridge(ShShaderOutput = SH_GLSL_OUTPUT);
+    ANGLEWebKitBridge(ShShaderOutput = SH_GLSL_OUTPUT, ShShaderSpec = SH_WEBGL_SPEC);
     ~ANGLEWebKitBridge();
     
     ShBuiltInResources getResources() { return m_resources; }
     void setResources(ShBuiltInResources);
     
-    bool validateShaderSource(const char* shaderSource, ANGLEShaderType shaderType, String& translatedShaderSource, String& shaderValidationLog, int extraCompileOptions);
+    bool validateShaderSource(const char* shaderSource, ANGLEShaderType, String& translatedShaderSource, String& shaderValidationLog, int extraCompileOptions = 0);
 
 private:
 
@@ -65,6 +65,7 @@ private:
     ShHandle m_vertexCompiler;
 
     ShShaderOutput m_shaderOutput;
+    ShShaderSpec m_shaderSpec;
 
     ShBuiltInResources m_resources;
 };

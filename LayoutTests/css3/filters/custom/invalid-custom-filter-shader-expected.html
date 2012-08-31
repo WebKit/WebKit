@@ -14,15 +14,6 @@
                     window.testRunner.notifyDone();
             }
         </script>
-        <style>
-            img
-            {
-                /* Note that we use grayscale(0) just to make sure that it triggers the whole FilterEffectRenderer on the images, 
-                otherwise the result will be slightly different because of the precision errors. Having another filter like grayscale(0) 
-                will trigger the same precission errors and will act as a similar pass-through filter. */
-                -webkit-filter: grayscale(0);
-            }
-        </style>
     </head>
     <body onload="notifyDone()">
         <img src="../resources/reference.png" />

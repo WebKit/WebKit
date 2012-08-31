@@ -32,31 +32,22 @@
 
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 
-#include "CustomFilterProgramInfo.h"
-#include "GraphicsTypes3D.h"
+#include "GraphicsContext3D.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class CustomFilterGlobalContext;
-class GraphicsContext3D;
 
-// A specific combination of vertex / fragment shader is only going to be compiled once. The CustomFilterGlobalContext is 
-// caching the compiled programs. CustomFilterGlobalContext has a weak reference to the CustomFilterCompiledProgram, so the 
-// CustomFilterCompiledProgram destructor needs to notify the CustomFilterGlobalContext to remove the program from the cache.
-// FECustomFilter is the reference owner of the CustomFilterCompiledProgram, so a compiled shader is only kept alive as 
-// long as there is at least one visible layer that applies the shader.
 class CustomFilterCompiledProgram: public RefCounted<CustomFilterCompiledProgram> {
 public:
-    static PassRefPtr<CustomFilterCompiledProgram> create(CustomFilterGlobalContext* globalContext, const CustomFilterProgramInfo& programInfo)
+    static PassRefPtr<CustomFilterCompiledProgram> create(PassRefPtr<GraphicsContext3D> context, const String& validatedVertexShader, const String& validatedFragmentShader)
     {
-        return adoptRef(new CustomFilterCompiledProgram(globalContext, programInfo));
+        return adoptRef(new CustomFilterCompiledProgram(context, validatedVertexShader, validatedFragmentShader));
     }
     
     ~CustomFilterCompiledProgram();
-
-    const CustomFilterProgramInfo& programInfo() const { return m_programInfo; }
     
     int positionAttribLocation() const { return m_positionAttribLocation; }
     int texAttribLocation() const { return m_texAttribLocation; }
@@ -69,32 +60,26 @@ public:
     int samplerLocation() const { return m_samplerLocation; }
     int contentSamplerLocation() const { return m_contentSamplerLocation; }
     int samplerSizeLocation() const { return m_samplerSizeLocation; }
+    // FIXME: Get rid of the internal tex coord attribute "css_a_texCoord".
+    // If the author defined "a_texCoord", we should leverage that.
+    // If not, we should write "a_texCoord" in the shader.
+    // This requires us to first get the list of attributes from the vertex shader using ANGLE.
+    // https://bugs.webkit.org/show_bug.cgi?id=94358
+    int internalTexCoordAttribLocation() const { return m_internalTexCoordAttribLocation; }
 
     int uniformLocationByName(const String&);
     
     bool isInitialized() const { return m_isInitialized; }
     
     Platform3DObject program() const { return m_program; }
-
-    // 'detachGlobalContext' is called when the CustomFilterGlobalContext is deleted
-    // and there's no need for the callback anymore. 
-    // Note that CustomFilterGlobalContext doesn't not keep a strong reference to 
-    // the CustomFilterCompiledProgram.
-    void detachFromGlobalContext() { m_globalContext = 0; }
 private:
-    CustomFilterCompiledProgram(CustomFilterGlobalContext*, const CustomFilterProgramInfo&);
+    CustomFilterCompiledProgram(PassRefPtr<GraphicsContext3D>, const String& validatedVertexShader, const String& validatedFragmentShader);
     
     Platform3DObject compileShader(GC3Denum shaderType, const String& shaderString);
     Platform3DObject linkProgram(Platform3DObject vertexShader, Platform3DObject fragmentShader);
     void initializeParameterLocations();
     
-    static String defaultVertexShaderString();
-    static String defaultFragmentShaderString();
-    String getDefaultShaderString(GC3Denum shaderType);
-    
-    CustomFilterGlobalContext* m_globalContext;
     RefPtr<GraphicsContext3D> m_context;
-    CustomFilterProgramInfo m_programInfo;
     Platform3DObject m_program;
     
     int m_positionAttribLocation;
@@ -108,6 +93,9 @@ private:
     int m_samplerLocation;
     int m_samplerSizeLocation;
     int m_contentSamplerLocation;
+    // FIXME: Get rid of the internal tex coord attribute "css_a_texCoord".
+    // https://bugs.webkit.org/show_bug.cgi?id=94358
+    int m_internalTexCoordAttribLocation;
     
     bool m_isInitialized;
 };

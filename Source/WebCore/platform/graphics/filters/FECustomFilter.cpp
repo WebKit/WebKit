@@ -39,6 +39,7 @@
 #include "CustomFilterParameter.h"
 #include "CustomFilterProgram.h"
 #include "CustomFilterTransformParameter.h"
+#include "CustomFilterValidatedProgram.h"
 #include "DrawingBuffer.h"
 #include "GraphicsContext3D.h"
 #include "ImageData.h"
@@ -75,27 +76,30 @@ static void orthogonalProjectionMatrix(TransformationMatrix& matrix, float left,
     matrix.setM44(1.0f);
 }
 
-FECustomFilter::FECustomFilter(Filter* filter, CustomFilterGlobalContext* customFilterGlobalContext, PassRefPtr<CustomFilterProgram> program, const CustomFilterParameterList& parameters,
+FECustomFilter::FECustomFilter(Filter* filter, CustomFilterGlobalContext* customFilterGlobalContext, PassRefPtr<CustomFilterValidatedProgram> validatedProgram, const CustomFilterParameterList& parameters,
                                unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType,
                                CustomFilterOperation::MeshType meshType)
     : FilterEffect(filter)
     , m_globalContext(customFilterGlobalContext)
+    , m_validatedProgram(validatedProgram)
+    , m_compiledProgram(0) // Don't compile the program unless we need to paint.
     , m_frameBuffer(0)
     , m_depthBuffer(0)
     , m_destTexture(0)
-    , m_program(program)
     , m_parameters(parameters)
     , m_meshRows(meshRows)
     , m_meshColumns(meshColumns)
     , m_meshType(meshType)
 {
+    // An FECustomFilter shouldn't have been created unless the program passed validation.
+    ASSERT(m_validatedProgram->isInitialized());
 }
 
-PassRefPtr<FECustomFilter> FECustomFilter::create(Filter* filter, CustomFilterGlobalContext* customFilterGlobalContext, PassRefPtr<CustomFilterProgram> program, const CustomFilterParameterList& parameters,
+PassRefPtr<FECustomFilter> FECustomFilter::create(Filter* filter, CustomFilterGlobalContext* customFilterGlobalContext, PassRefPtr<CustomFilterValidatedProgram> validatedProgram, const CustomFilterParameterList& parameters,
                                            unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType meshBoxType,
                                            CustomFilterOperation::MeshType meshType)
 {
-    return adoptRef(new FECustomFilter(filter, customFilterGlobalContext, program, parameters, meshRows, meshColumns, meshBoxType, meshType));
+    return adoptRef(new FECustomFilter(filter, customFilterGlobalContext, validatedProgram, parameters, meshRows, meshColumns, meshBoxType, meshType));
 }
 
 FECustomFilter::~FECustomFilter()
@@ -196,7 +200,7 @@ bool FECustomFilter::initializeContext()
     if (!m_context)
         return false;
     m_context->makeContextCurrent();
-    m_compiledProgram = m_globalContext->getCompiledProgram(m_program->programInfo());
+    m_compiledProgram = m_validatedProgram->compiledProgram();
 
     // FIXME: Sharing the mesh would just save the time needed to upload it to the GPU, so I assume we could
     // benchmark that for performance.
@@ -241,13 +245,12 @@ void FECustomFilter::resizeContext(const IntSize& newContextSize)
     m_contextSize = newContextSize;
 }
 
-void FECustomFilter::bindVertexAttribute(int attributeLocation, unsigned size, unsigned& offset)
+void FECustomFilter::bindVertexAttribute(int attributeLocation, unsigned size, unsigned offset)
 {
     if (attributeLocation != -1) {
         m_context->vertexAttribPointer(attributeLocation, size, GraphicsContext3D::FLOAT, false, m_mesh->bytesPerVertex(), offset);
         m_context->enableVertexAttribArray(attributeLocation);
     }
-    offset += size * sizeof(float);
 }
 
 void FECustomFilter::bindProgramNumberParameters(int uniformLocation, CustomFilterNumberParameter* numberParameter)
@@ -313,6 +316,8 @@ void FECustomFilter::bindProgramParameters()
 
 void FECustomFilter::bindProgramAndBuffers(Uint8ClampedArray* srcPixelArray)
 {
+    ASSERT(m_compiledProgram->isInitialized());
+
     m_context->useProgram(m_compiledProgram->program());
     
     if (m_compiledProgram->samplerLocation() != -1) {
@@ -337,12 +342,26 @@ void FECustomFilter::bindProgramAndBuffers(Uint8ClampedArray* srcPixelArray)
     m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_mesh->verticesBufferObject());
     m_context->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, m_mesh->elementsBufferObject());
 
-    unsigned offset = 0;
-    bindVertexAttribute(m_compiledProgram->positionAttribLocation(), 4, offset);
-    bindVertexAttribute(m_compiledProgram->texAttribLocation(), 2, offset);
-    bindVertexAttribute(m_compiledProgram->meshAttribLocation(), 2, offset);
+    // FIXME: Ideally, these should be public members of CustomFilterMesh.
+    // https://bugs.webkit.org/show_bug.cgi?id=94755
+    static const unsigned PositionAttribSize = 4;
+    static const unsigned TexAttribSize = 2;
+    static const unsigned MeshAttribSize = 2;
+    static const unsigned TriangleAttribSize = 3;
+
+    static const unsigned PositionAttribOffset = 0;
+    static const unsigned TexAttribOffset = PositionAttribOffset + PositionAttribSize * sizeof(float);
+    static const unsigned MeshAttribOffset = TexAttribOffset + TexAttribSize * sizeof(float);
+    static const unsigned TriangleAttribOffset = MeshAttribOffset + MeshAttribSize * sizeof(float);
+
+    bindVertexAttribute(m_compiledProgram->positionAttribLocation(), PositionAttribSize, PositionAttribOffset);
+    bindVertexAttribute(m_compiledProgram->texAttribLocation(), TexAttribSize, TexAttribOffset);
+    // FIXME: Get rid of the internal tex coord attribute "css_a_texCoord". 
+    // https://bugs.webkit.org/show_bug.cgi?id=94358
+    bindVertexAttribute(m_compiledProgram->internalTexCoordAttribLocation(), TexAttribSize, TexAttribOffset);
+    bindVertexAttribute(m_compiledProgram->meshAttribLocation(), MeshAttribSize, MeshAttribOffset);
     if (m_meshType == CustomFilterOperation::DETACHED)
-        bindVertexAttribute(m_compiledProgram->triangleAttribLocation(), 3, offset);
+        bindVertexAttribute(m_compiledProgram->triangleAttribLocation(), TriangleAttribSize, TriangleAttribOffset);
     
     bindProgramParameters();
 }
