@@ -1,3 +1,19 @@
+2012-08-31  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] ASSERT failure in RenderBlock::checkPositionedObjectsNeedLayout
+        https://bugs.webkit.org/show_bug.cgi?id=95611
+
+        Reviewed by Antonio Gomes.
+
+        PR:200127
+        Remove r118405 now as we already have a new fix webkit/43f8394b for
+        that issue and it is not reproducible anymore after the removal.
+        In this way, we can get rid of this ASSERT failure as well.
+        Thanks Antonio for the suggestion.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+
 2012-08-31  Joshua Netterfield  <jnetterfield@rim.com>
 
         [BlackBerry] Eliminate WebGL IT policy
