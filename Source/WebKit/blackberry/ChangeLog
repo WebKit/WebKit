@@ -1,3 +1,19 @@
+2012-08-31  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [BlackBerry] Eliminate WebGL IT policy
+        https://bugs.webkit.org/show_bug.cgi?id=95604
+        Internal RIM PR #198764
+
+        Reviewed by Rob Buis.
+
+        This is no longer a requirement for the BlackBerry port.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        (BlackBerry::WebKit::WebPage::setWebGLEnabled):
+        * WebKitSupport/AboutData.cpp:
+        (BlackBerry::WebKit::configPage):
+
 2012-08-30  Benjamin Poulain  <bpoulain@apple.com>
 
         Replace JSC::UString by WTF::String

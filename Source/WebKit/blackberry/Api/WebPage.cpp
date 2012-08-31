@@ -153,7 +153,6 @@
 
 #include <BlackBerryPlatformDeviceInfo.h>
 #include <BlackBerryPlatformExecutableMessage.h>
-#include <BlackBerryPlatformITPolicy.h>
 #include <BlackBerryPlatformKeyboardEvent.h>
 #include <BlackBerryPlatformMessageClient.h>
 #include <BlackBerryPlatformMouseEvent.h>
@@ -569,8 +568,7 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     m_inRegionScroller = adoptPtr(new InRegionScroller(this));
 
 #if ENABLE(WEBGL)
-    Platform::Settings* settings = Platform::Settings::instance();
-    m_page->settings()->setWebGLEnabled(settings && settings->isWebGLSupported());
+    m_page->settings()->setWebGLEnabled(true);
 #endif
 #if ENABLE(ACCELERATED_2D_CANVAS)
     m_page->settings()->setCanvasUsesAcceleratedDrawing(true);
@@ -6211,10 +6209,6 @@ void WebPagePrivate::scheduleCompositingRun()
 
 void WebPage::setWebGLEnabled(bool enabled)
 {
-    if (!Platform::ITPolicy::isWebGLEnabled()) {
-        d->m_page->settings()->setWebGLEnabled(false);
-        return;
-    }
     d->m_page->settings()->setWebGLEnabled(enabled);
 }
 

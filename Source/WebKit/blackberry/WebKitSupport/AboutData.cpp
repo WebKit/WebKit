@@ -142,7 +142,6 @@ static String configPage()
     page += numberToHTMLTr("allowCenterScrollAdjustmentForInputFields", settings->allowCenterScrollAdjustmentForInputFields());
     page += numberToHTMLTr("unrestrictedResizeEvents", settings->unrestrictedResizeEvents());
     page += numberToHTMLTr("isBridgeBrowser", settings->isBridgeBrowser());
-    page += numberToHTMLTr("isWebGLSupported", settings->isWebGLSupported());
     page += numberToHTMLTr("showImageLocationOptionsInGCM", settings->showImageLocationOptionsInGCM());
     page += numberToHTMLTr("forceGLES2WindowUsage", settings->forceGLES2WindowUsage());
     page += numberToHTMLTr("maxClickableSpeed", settings->maxClickableSpeed());
