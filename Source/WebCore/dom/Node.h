@@ -27,7 +27,6 @@
 
 #include "EditingBoundary.h"
 #include "EventTarget.h"
-#include "ExceptionCodePlaceholder.h"
 #include "FractionalLayoutRect.h"
 #include "KURLHash.h"
 #include "LayoutTypes.h"
@@ -188,8 +187,7 @@ public:
 
     void remove(ExceptionCode&);
     bool hasChildNodes() const { return firstChild(); }
-    virtual PassRefPtr<Node> cloneNode(bool deep, ExceptionCode&) = 0;
-    PassRefPtr<Node> cloneNode(bool deep) { return cloneNode(deep, ASSERT_NO_EXCEPTION); }
+    virtual PassRefPtr<Node> cloneNode(bool deep) = 0;
     const AtomicString& localName() const { return virtualLocalName(); }
     const AtomicString& namespaceURI() const { return virtualNamespaceURI(); }
     const AtomicString& prefix() const { return virtualPrefix(); }

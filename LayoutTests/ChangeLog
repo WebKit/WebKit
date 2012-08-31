@@ -1,3 +1,13 @@
+2012-08-30  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, rolling out r126127.
+        http://trac.webkit.org/changeset/126127
+
+        This breaks gobject bindings.
+
+        * fast/dom/shadow/shadowroot-clonenode-expected.txt: Removed.
+        * fast/dom/shadow/shadowroot-clonenode.html: Removed.
+
 2012-08-30  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Shift+Tab should focus the last field of multiple fields time input UI

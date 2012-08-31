@@ -139,10 +139,9 @@ String ShadowRoot::nodeName() const
     return "#shadow-root";
 }
 
-PassRefPtr<Node> ShadowRoot::cloneNode(bool, ExceptionCode& ec)
+PassRefPtr<Node> ShadowRoot::cloneNode(bool)
 {
     // ShadowRoot should not be arbitrarily cloned.
-    ec = DATA_CLONE_ERR;
     return 0;
 }
 

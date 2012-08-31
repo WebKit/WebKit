@@ -58,7 +58,7 @@ protected:
 private:
     virtual String nodeName() const;
     virtual NodeType nodeType() const;
-    virtual PassRefPtr<Node> cloneNode(bool deep, ExceptionCode&);
+    virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool childTypeAllowed(NodeType) const;
