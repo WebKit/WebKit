@@ -28,7 +28,13 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    color: rgb(105, 105, 105);
+    color: rgb(95, 95, 95);
+}
+
+.js-outline-dialog span.subtitle {
+    color: rgb(155, 155, 155);
+    padding-right: 2px;
+    float: right;
 }
 
 .js-outline-dialog > .container > div.item.selected {

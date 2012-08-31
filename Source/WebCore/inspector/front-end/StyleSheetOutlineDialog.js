@@ -68,9 +68,18 @@ WebInspector.StyleSheetOutlineDialog.prototype = {
      * @param {number} itemIndex
      * @return {string}
      */
-    itemSubtitleAt: function(itemIndex)
+    itemSuffixAt: function(itemIndex)
     {
         return "";
+    },
+
+    /*
+     * @param {number} itemIndex
+     * @return {string}
+     */
+    itemSubtitleAt: function(itemIndex)
+    {
+        return ":" + (this._rules[itemIndex].sourceLine + 1);
     },
 
     /**
