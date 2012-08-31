@@ -899,7 +899,6 @@
 		};
 		2D403ED8150871F9005358D2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-				515C0CD015EE785700F5A613 /* LogNPPSetWindow.cpp in Sources */,
 			buildActionMask = 2147483647;
 			files = (
 				2D403F1B15087209005358D2 /* LayoutTestHelper.m in Sources */,
@@ -951,6 +950,7 @@
 				29CFBA2E12273A1000BC30C0 /* AccessibilityTextMarkerMac.mm in Sources */,
 				3A5626CB131CA02A002BE6D9 /* StorageTrackerDelegate.mm in Sources */,
 				80045AEE147718E7008290A8 /* AccessibilityNotificationHandler.mm in Sources */,
+				515C0CD015EE785700F5A613 /* LogNPPSetWindow.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
