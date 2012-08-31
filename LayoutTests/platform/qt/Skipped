@@ -137,6 +137,7 @@ compositing/webgl
 http/tests/security/webgl-remote-read-remote-image-allowed.html
 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
+inspector/profiler/webgl
 
 # ENABLE(LINK_PREFETCH) is disabled.
 fast/dom/HTMLLinkElement/link-and-subresource-test.html
@@ -2762,10 +2763,6 @@ http/tests/inspector-enabled/contentSecurityPolicy-blocks-setInterval.html
 http/tests/inspector-enabled/contentSecurityPolicy-blocks-setTimeout.html
 http/tests/inspector/csp-injected-content-warning-contains-stacktrace.html
 http/tests/inspector/csp-inline-warning-contains-stacktrace.html
-
-# [Qt] New inspector/profiler/webgl-profiler-api-changes.html times out
-# https://bugs.webkit.org/show_bug.cgi?id=95183
-inspector/profiler/webgl-profiler-api-changes.html
 
 # [Qt] New svg/custom/clamped-masking-clipping.svg asserts
 # https://bugs.webkit.org/show_bug.cgi?id=95431

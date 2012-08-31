@@ -1,3 +1,17 @@
+2012-08-31  Andrey Adaikin  <aandrey@chromium.org>
+
+        [Qt] New inspector/profiler/webgl-profiler-api-changes.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=95183
+
+        Reviewed by Yury Semikhatsky.
+
+        Move inspector WebGL test(s) to its own folder so that they are easy to blacklist. Skip them for QT where WebGL is disabled at the moment.
+        Drive-by: make the test fail instead of timing out when WebGL is disabled.
+
+        * inspector/profiler/webgl/webgl-profiler-api-changes-expected.txt: Renamed from LayoutTests/inspector/profiler/webgl-profiler-api-changes-expected.txt.
+        * inspector/profiler/webgl/webgl-profiler-api-changes.html: Renamed from LayoutTests/inspector/profiler/webgl-profiler-api-changes.html.
+        * platform/qt/Skipped:
+
 2012-08-31  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Left/Right keys in multiple fields time input UI should move focus physical left/right instead of logical left/right regardless text direction.
