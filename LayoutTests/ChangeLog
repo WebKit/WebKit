@@ -1,5 +1,11 @@
 2012-08-30  Jessie Berlin  <jberlin@apple.com>
 
+        Remove the failing expectation from some tests that are no longer failing on Lion.
+
+        * platform/mac-lion/TestExpectations:
+
+2012-08-30  Jessie Berlin  <jberlin@apple.com>
+
         CSS 2.1 failure: margin-collapse-clear-012 fails
         https://bugs.webkit.org/show_bug.cgi?id=80394
 

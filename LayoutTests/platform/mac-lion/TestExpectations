@@ -1,9 +1,3 @@
-BUGWK85401 : media/video-colorspace-yuv420.html = TEXT
-BUGWK85401 : media/video-colorspace-yuv422.html = TEXT
-
-// Rebaseline required after https://bugs.webkit.org/show_bug.cgi?id=84167
-BUGWK84167 : fast/css-generated-content/nested-tables-with-before-after-content-crash.html = IMAGE+TEXT
-
 // Not known to be flaky on Lion, but known to be flaky on Mountain Lion
 BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = PASS
 BUGWK93560 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html = PASS
