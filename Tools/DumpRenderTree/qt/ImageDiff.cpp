@@ -83,8 +83,10 @@ int main(int argc, char* argv[])
         if (!actualImage.isNull() && !baselineImage.isNull()) {
 
             if (actualImage.size() != baselineImage.size()) {
+                fprintf(stdout, "diff: 100%% failed\n");
                 fprintf(stderr, "error, test and reference image have different properties.\n");
                 fflush(stderr);
+                fflush(stdout);
             } else {
 
                 int w = actualImage.width();
