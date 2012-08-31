@@ -325,14 +325,20 @@ QSize QRawWebView::size() const
 
 void QRawWebView::setSize(const QSize& size)
 {
-    d->m_size = size;
-    d->m_webPageProxy->setViewportSize(size);
-
-
     WebKit::DrawingAreaProxy* drawingArea = d->m_webPageProxy->drawingArea();
     if (!drawingArea)
         return;
 
+    if (d->m_webPageProxy->useFixedLayout())
+        d->m_webPageProxy->setViewportSize(size);
+    else {
+        WebKit::LayerTreeCoordinatorProxy* coordinator = drawingArea->layerTreeCoordinatorProxy();
+        if (!coordinator)
+            return;
+        coordinator->setContentsSize(WebCore::FloatSize(size.width(), size.height()));
+    }
+
+    d->m_size = size;
 
     drawingArea->setSize(d->m_size, WebCore::IntSize());
     drawingArea->setVisibleContentsRect(WebCore::IntRect(WebCore::IntPoint(), d->m_size), 1 /*scale*/, WebCore::FloatPoint());

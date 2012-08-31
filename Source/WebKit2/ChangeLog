@@ -1,5 +1,18 @@
 2012-08-31  Balazs Kelemen  <kbalazs@webkit.org>
 
+        [Qt] ASSERT(m_useFixedLayout) in WebPage when using QRawWebView without setting fixed layout
+        https://bugs.webkit.org/show_bug.cgi?id=95557
+
+        Reviewed by Noam Rosenthal.
+
+        Let QRawWebView work with non-fixed layout size.
+
+        * UIProcess/API/qt/raw/qrawwebview.cpp:
+        (QRawWebView::setSize): Also put the member assigment into
+        the point where the new size is ensured to be committed.
+
+2012-08-31  Balazs Kelemen  <kbalazs@webkit.org>
+
         [Qt] LayerTreeRenderer::callOnMainTread method name is misleading
         https://bugs.webkit.org/show_bug.cgi?id=95558
 
