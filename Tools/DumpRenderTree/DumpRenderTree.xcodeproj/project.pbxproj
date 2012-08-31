@@ -52,6 +52,7 @@
 		1AD4CB2212A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD4CB2012A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp */; };
 		1AD9D2FE12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9D2FD12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp */; };
 		1AFF66BC137DEFD200791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AFF66BB137DEA8300791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp */; };
+		1C5C9B2E15F103AA0035558E /* LogNPPSetWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515C0CCF15EE785700F5A613 /* LogNPPSetWindow.cpp */; };
 		23BCB8900EA57623003C6289 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23BCB88F0EA57623003C6289 /* OpenGL.framework */; };
 		29CFBA10122736E600BC30C0 /* AccessibilityTextMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = 29CFBA0E122736E600BC30C0 /* AccessibilityTextMarker.h */; };
 		29CFBA11122736E600BC30C0 /* AccessibilityTextMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29CFBA0F122736E600BC30C0 /* AccessibilityTextMarker.cpp */; };
@@ -70,7 +71,6 @@
 		515F429C15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515F429B15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp */; };
 		5185F6B210714E07007AA393 /* HistoryDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5185F69F10714A57007AA393 /* HistoryDelegate.mm */; };
 		5185F6B310714E12007AA393 /* HistoryDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5185F69E10714A57007AA393 /* HistoryDelegate.h */; };
-		515C0CD015EE785700F5A613 /* LogNPPSetWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515C0CCF15EE785700F5A613 /* LogNPPSetWindow.cpp */; };
 		53CBB832134E42F3001CE6A4 /* CyclicRedundancyCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53CBB830134E42F3001CE6A4 /* CyclicRedundancyCheck.cpp */; };
 		53CBB833134E42F3001CE6A4 /* CyclicRedundancyCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 53CBB831134E42F3001CE6A4 /* CyclicRedundancyCheck.h */; };
 		5DB9AC970F722C3600684641 /* AHEM____.TTF in Copy Font Files */ = {isa = PBXBuildFile; fileRef = AA7F10C20CB3C1030003BDC9 /* AHEM____.TTF */; };
@@ -271,6 +271,7 @@
 		44A997820FCDE86400580F10 /* WebArchiveDumpSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebArchiveDumpSupport.h; path = cf/WebArchiveDumpSupport.h; sourceTree = "<group>"; };
 		44A997830FCDE86400580F10 /* WebArchiveDumpSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebArchiveDumpSupport.cpp; path = cf/WebArchiveDumpSupport.cpp; sourceTree = "<group>"; };
 		4AD6A11313C8124000EA9737 /* FormValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormValue.cpp; sourceTree = "<group>"; };
+		515C0CCF15EE785700F5A613 /* LogNPPSetWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogNPPSetWindow.cpp; sourceTree = "<group>"; };
 		515F429B15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginScriptableObjectOverridesAllProperties.cpp; sourceTree = "<group>"; };
 		5185F69E10714A57007AA393 /* HistoryDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HistoryDelegate.h; path = mac/HistoryDelegate.h; sourceTree = "<group>"; };
 		5185F69F10714A57007AA393 /* HistoryDelegate.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HistoryDelegate.mm; path = mac/HistoryDelegate.mm; sourceTree = "<group>"; };
@@ -286,7 +287,6 @@
 		A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = DumpRenderTree.h; sourceTree = "<group>"; };
 		A817090308B164D300CCB9FB /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A84F608908B136DA00E9745F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		515C0CCF15EE785700F5A613 /* LogNPPSetWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogNPPSetWindow.cpp; sourceTree = "<group>"; };
 		A8B91AD70CF3B32F008F91FF /* DumpRenderTreePasteboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DumpRenderTreePasteboard.m; path = mac/DumpRenderTreePasteboard.m; sourceTree = "<group>"; };
 		A8B91AD90CF3B32F008F91FF /* DumpRenderTreeWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DumpRenderTreeWindow.mm; path = mac/DumpRenderTreeWindow.mm; sourceTree = "<group>"; };
 		A8B91ADD0CF3B372008F91FF /* DumpRenderTreeWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DumpRenderTreeWindow.h; path = mac/DumpRenderTreeWindow.h; sourceTree = "<group>"; };
@@ -544,7 +544,7 @@
 				C0EC3C9B12787F0500939164 /* NullNPPGetValuePointer.cpp */,
 				C06F9ABB1267A7060058E1F6 /* PassDifferentNPPStruct.cpp */,
 				1AD9D2FD12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp */,
-				515F429B15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp */, 
+				515F429B15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp */,
 				1A1E4296141141C400388758 /* PrivateBrowsing.cpp */,
 			);
 			path = Tests;
@@ -893,7 +893,8 @@
 				1A14C8A51406DE0400B254F7 /* SupportsCarbonEventModel.cpp in Sources */,
 				1A1E4298141141C400388758 /* PrivateBrowsing.cpp in Sources */,
 				1A66C35114576A920099A115 /* ContentsScaleFactor.cpp in Sources */,
-				515F429C15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp in Sources */, 
+				515F429C15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp in Sources */,
+				1C5C9B2E15F103AA0035558E /* LogNPPSetWindow.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -950,7 +951,6 @@
 				29CFBA2E12273A1000BC30C0 /* AccessibilityTextMarkerMac.mm in Sources */,
 				3A5626CB131CA02A002BE6D9 /* StorageTrackerDelegate.mm in Sources */,
 				80045AEE147718E7008290A8 /* AccessibilityNotificationHandler.mm in Sources */,
-				515C0CD015EE785700F5A613 /* LogNPPSetWindow.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
