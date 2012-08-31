@@ -801,12 +801,14 @@ bool InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id, const String
 
 CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode& ec)
 {
-    String styleSheetText;
-    bool success = getText(&styleSheetText);
+    String text;
+    bool success = getText(&text);
     if (!success) {
         ec = NOT_FOUND_ERR;
         return 0;
     }
+    StringBuilder styleSheetText;
+    styleSheetText.append(text);
 
     m_pageStyleSheet->addRule(selector, "", ec);
     if (ec)
@@ -815,13 +817,13 @@ CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode
     CSSStyleRule* rule = InspectorCSSAgent::asCSSStyleRule(m_pageStyleSheet->item(m_pageStyleSheet->length() - 1));
     ASSERT(rule);
 
-    if (styleSheetText.length())
-        styleSheetText += "\n";
+    if (!styleSheetText.isEmpty())
+        styleSheetText.append('\n');
 
-    styleSheetText += selector;
-    styleSheetText += " {}";
+    styleSheetText.append(selector);
+    styleSheetText.appendLiteral(" {}");
     // Using setText() as this operation changes the style sheet rule set.
-    setText(styleSheetText);
+    setText(styleSheetText.toString());
 
     fireStyleSheetChanged();
 

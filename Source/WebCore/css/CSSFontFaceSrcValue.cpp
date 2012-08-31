@@ -33,6 +33,7 @@
 #include "Node.h"
 #include "SVGFontFaceElement.h"
 #include "StyleSheetContents.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -63,16 +64,19 @@ bool CSSFontFaceSrcValue::isSupportedFormat() const
 
 String CSSFontFaceSrcValue::customCssText() const
 {
-    String result;
+    StringBuilder result;
     if (isLocal())
-        result += "local(";
+        result.appendLiteral("local(");
     else
-        result += "url(";
-    result += m_resource;
-    result += ")";
-    if (!m_format.isEmpty())
-        result += " format(" + m_format + ")";
-    return result;
+        result.appendLiteral("url(");
+    result.append(m_resource);
+    result.append(')');
+    if (!m_format.isEmpty()) {
+        result.appendLiteral(" format(");
+        result.append(m_format);
+        result.append(')');
+    }
+    return result.toString();
 }
 
 void CSSFontFaceSrcValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const StyleSheetContents* styleSheet) const

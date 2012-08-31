@@ -38,6 +38,7 @@
 #include "PlatformString.h"
 #include "RenderObject.h"
 #include "StyleResolver.h"
+#include <wtf/text/StringBuilder.h>
 
 using namespace std;
 
@@ -473,51 +474,71 @@ void CSSGradientValue::reportBaseClassMemoryUsage(MemoryObjectInfo* memoryObject
 
 String CSSLinearGradientValue::customCssText() const
 {
-    String result;
+    StringBuilder result;
     if (m_deprecatedType) {
-        result = "-webkit-gradient(linear, ";
-        result += m_firstX->cssText() + " ";
-        result += m_firstY->cssText() + ", ";
-        result += m_secondX->cssText() + " ";
-        result += m_secondY->cssText();
+        result.appendLiteral("-webkit-gradient(linear, ");
+        result.append(m_firstX->cssText());
+        result.append(' ');
+        result.append(m_firstY->cssText());
+        result.appendLiteral(", ");
+        result.append(m_secondX->cssText());
+        result.append(' ');
+        result.append(m_secondY->cssText());
 
         for (unsigned i = 0; i < m_stops.size(); i++) {
             const CSSGradientColorStop& stop = m_stops[i];
-            result += ", ";
-            if (stop.m_position->getDoubleValue(CSSPrimitiveValue::CSS_NUMBER) == 0)
-                result += "from(" + stop.m_color->cssText() + ")";
-            else if (stop.m_position->getDoubleValue(CSSPrimitiveValue::CSS_NUMBER) == 1)
-                result += "to(" + stop.m_color->cssText() + ")";
-            else
-                result += "color-stop(" + String::number(stop.m_position->getDoubleValue(CSSPrimitiveValue::CSS_NUMBER)) + ", " + stop.m_color->cssText() + ")";
+            result.appendLiteral(", ");
+            if (stop.m_position->getDoubleValue(CSSPrimitiveValue::CSS_NUMBER) == 0) {
+                result.appendLiteral("from(");
+                result.append(stop.m_color->cssText());
+                result.append(')');
+            } else if (stop.m_position->getDoubleValue(CSSPrimitiveValue::CSS_NUMBER) == 1) {
+                result.appendLiteral("to(");
+                result.append(stop.m_color->cssText());
+                result.append(')');
+            } else {
+                result.appendLiteral("color-stop(");
+                result.append(String::number(stop.m_position->getDoubleValue(CSSPrimitiveValue::CSS_NUMBER)));
+                result.appendLiteral(", ");
+                result.append(stop.m_color->cssText());
+                result.append(')');
+            }
         }
     } else {
-        result = m_repeating ? "-webkit-repeating-linear-gradient(" : "-webkit-linear-gradient(";
+        if (m_repeating)
+            result.appendLiteral("-webkit-repeating-linear-gradient(");
+        else
+            result.appendLiteral("-webkit-linear-gradient(");
+
         if (m_angle)
-            result += m_angle->cssText();
+            result.append(m_angle->cssText());
         else {
-            if (m_firstX && m_firstY)
-                result += m_firstX->cssText() + " " + m_firstY->cssText();
-            else if (m_firstX || m_firstY) {
+            if (m_firstX && m_firstY) {
+                result.append(m_firstX->cssText());
+                result.append(' ');
+                result.append(m_firstY->cssText());
+            } else if (m_firstX || m_firstY) {
                 if (m_firstX)
-                    result += m_firstX->cssText();
+                    result.append(m_firstX->cssText());
 
                 if (m_firstY)
-                    result += m_firstY->cssText();
+                    result.append(m_firstY->cssText());
             }
         }
 
         for (unsigned i = 0; i < m_stops.size(); i++) {
             const CSSGradientColorStop& stop = m_stops[i];
-            result += ", ";
-            result += stop.m_color->cssText();
-            if (stop.m_position)
-                result += " " + stop.m_position->cssText();
+            result.appendLiteral(", ");
+            result.append(stop.m_color->cssText());
+            if (stop.m_position) {
+                result.append(' ');
+                result.append(stop.m_position->cssText());
+            }
         }
     }
 
-    result += ")";
-    return result;
+    result.append(')');
+    return result.toString();
 }
 
 // Compute the endpoints so that a gradient of the given angle covers a box of the given size.
@@ -622,71 +643,92 @@ void CSSLinearGradientValue::reportDescendantMemoryUsage(MemoryObjectInfo* memor
 
 String CSSRadialGradientValue::customCssText() const
 {
-    String result;
+    StringBuilder result;
 
     if (m_deprecatedType) {
-        result = "-webkit-gradient(radial, ";
-
-        result += m_firstX->cssText() + " ";
-        result += m_firstY->cssText() + ", ";
-        result += m_firstRadius->cssText() + ", ";
-        result += m_secondX->cssText() + " ";
-        result += m_secondY->cssText();
-        result += ", ";
-        result += m_secondRadius->cssText();
+        result.appendLiteral("-webkit-gradient(radial, ");
+        result.append(m_firstX->cssText());
+        result.append(' ');
+        result.append(m_firstY->cssText());
+        result.appendLiteral(", ");
+        result.append(m_firstRadius->cssText());
+        result.appendLiteral(", ");
+        result.append(m_secondX->cssText());
+        result.append(' ');
+        result.append(m_secondY->cssText());
+        result.appendLiteral(", ");
+        result.append(m_secondRadius->cssText());
 
         // FIXME: share?
         for (unsigned i = 0; i < m_stops.size(); i++) {
             const CSSGradientColorStop& stop = m_stops[i];
-            result += ", ";
-            if (stop.m_position->getDoubleValue(CSSPrimitiveValue::CSS_NUMBER) == 0)
-                result += "from(" + stop.m_color->cssText() + ")";
-            else if (stop.m_position->getDoubleValue(CSSPrimitiveValue::CSS_NUMBER) == 1)
-                result += "to(" + stop.m_color->cssText() + ")";
-            else
-                result += "color-stop(" + String::number(stop.m_position->getDoubleValue(CSSPrimitiveValue::CSS_NUMBER)) + ", " + stop.m_color->cssText() + ")";
+            result.appendLiteral(", ");
+            if (stop.m_position->getDoubleValue(CSSPrimitiveValue::CSS_NUMBER) == 0) {
+                result.appendLiteral("from(");
+                result.append(stop.m_color->cssText());
+                result.append(')');
+            } else if (stop.m_position->getDoubleValue(CSSPrimitiveValue::CSS_NUMBER) == 1) {
+                result.appendLiteral("to(");
+                result.append(stop.m_color->cssText());
+                result.append(')');
+            } else {
+                result.appendLiteral("color-stop(");
+                result.append(String::number(stop.m_position->getDoubleValue(CSSPrimitiveValue::CSS_NUMBER)));
+                result.appendLiteral(", ");
+                result.append(stop.m_color->cssText());
+                result.append(')');
+            }
         }
     } else {
-
-        result = m_repeating ? "-webkit-repeating-radial-gradient(" : "-webkit-radial-gradient(";
-        if (m_firstX && m_firstY) {
-            result += m_firstX->cssText() + " " + m_firstY->cssText();
-        } else if (m_firstX)
-            result += m_firstX->cssText();
-         else if (m_firstY)
-            result += m_firstY->cssText();
+        if (m_repeating)
+            result.appendLiteral("-webkit-repeating-radial-gradient(");
         else
-            result += "center";
+            result.appendLiteral("-webkit-radial-gradient(");
 
+        if (m_firstX && m_firstY) {
+            result.append(m_firstX->cssText());
+            result.append(' ');
+            result.append(m_firstY->cssText());
+        } else if (m_firstX)
+            result.append(m_firstX->cssText());
+         else if (m_firstY)
+            result.append(m_firstY->cssText());
+        else
+            result.appendLiteral("center");
 
         if (m_shape || m_sizingBehavior) {
-            result += ", ";
-            if (m_shape)
-                result += m_shape->cssText() + " ";
-            else
-                result += "ellipse ";
+            result.appendLiteral(", ");
+            if (m_shape) {
+                result.append(m_shape->cssText());
+                result.append(' ');
+            } else
+                result.appendLiteral("ellipse ");
 
             if (m_sizingBehavior)
-                result += m_sizingBehavior->cssText();
+                result.append(m_sizingBehavior->cssText());
             else
-                result += "cover";
+                result.appendLiteral("cover");
 
         } else if (m_endHorizontalSize && m_endVerticalSize) {
-            result += ", ";
-            result += m_endHorizontalSize->cssText() + " " + m_endVerticalSize->cssText();
+            result.appendLiteral(", ");
+            result.append(m_endHorizontalSize->cssText());
+            result.append(' ');
+            result.append(m_endVerticalSize->cssText());
         }
 
         for (unsigned i = 0; i < m_stops.size(); i++) {
             const CSSGradientColorStop& stop = m_stops[i];
-            result += ", ";
-            result += stop.m_color->cssText();
-            if (stop.m_position)
-                result += " " + stop.m_position->cssText();
+            result.appendLiteral(", ");
+            result.append(stop.m_color->cssText());
+            if (stop.m_position) {
+                result.append(' ');
+                result.append(stop.m_position->cssText());
+            }
         }
     }
 
-    result += ")";
-    return result;
+    result.append(')');
+    return result.toString();
 }
 
 float CSSRadialGradientValue::resolveRadius(CSSPrimitiveValue* radius, RenderStyle* style, RenderStyle* rootStyle, float* widthOrHeight)

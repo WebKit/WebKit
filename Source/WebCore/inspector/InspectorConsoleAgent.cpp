@@ -47,6 +47,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -249,11 +250,14 @@ void InspectorConsoleAgent::didFailLoading(unsigned long identifier, const Resou
         return;
     if (error.isCancellation()) // Report failures only.
         return;
-    String message = ASCIILiteral("Failed to load resource");
-    if (!error.localizedDescription().isEmpty())
-        message += ": " + error.localizedDescription();
+    StringBuilder message;
+    message.appendLiteral("Failed to load resource");
+    if (!error.localizedDescription().isEmpty()) {
+        message.appendLiteral(": ");
+        message.append(error.localizedDescription());
+    }
     String requestId = IdentifiersFactory::requestId(identifier);
-    addConsoleMessage(adoptPtr(new ConsoleMessage(NetworkMessageSource, LogMessageType, ErrorMessageLevel, message, error.failingURL(), requestId)));
+    addConsoleMessage(adoptPtr(new ConsoleMessage(NetworkMessageSource, LogMessageType, ErrorMessageLevel, message.toString(), error.failingURL(), requestId)));
 }
 
 void InspectorConsoleAgent::setMonitoringXHREnabled(ErrorString*, bool enabled)

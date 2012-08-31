@@ -326,7 +326,7 @@ public:
         m_oldText = oldText.stripWhiteSpace();
         // FIXME: remove this once the model handles this case.
         if (!m_oldText.endsWith(';'))
-            m_oldText += ";";
+            m_oldText.append(';');
         return result;
     }
 

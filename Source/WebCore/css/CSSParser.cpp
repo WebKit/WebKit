@@ -9953,17 +9953,17 @@ void CSSParser::deleteFontFaceOnlyValues()
 StyleKeyframe* CSSParser::createKeyframe(CSSParserValueList* keys)
 {
     // Create a key string from the passed keys
-    String keyString;
+    StringBuilder keyString;
     for (unsigned i = 0; i < keys->size(); ++i) {
         float key = static_cast<float>(keys->valueAt(i)->fValue);
         if (i != 0)
-            keyString += ",";
-        keyString += String::number(key);
-        keyString += "%";
+            keyString.append(',');
+        keyString.append(String::number(key));
+        keyString.append('%');
     }
 
     RefPtr<StyleKeyframe> keyframe = StyleKeyframe::create();
-    keyframe->setKeyText(keyString);
+    keyframe->setKeyText(keyString.toString());
     keyframe->setProperties(createStylePropertySet());
 
     clearProperties();

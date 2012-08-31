@@ -952,9 +952,7 @@ String CSSPrimitiveValue::customCssText() const
             break;
         }
         case CSS_COUNTER_NAME:
-            text = "counter(";
-            text += m_value.string;
-            text += ")";
+            text = "counter(" + String(m_value.string) + ')';
             break;
         case CSS_COUNTER: {
             StringBuilder result;
@@ -1038,30 +1036,34 @@ String CSSPrimitiveValue::customCssText() const
             text = String::adopt(result);
             break;
         }
-        case CSS_PAIR:
-            text = m_value.pair->first()->cssText();
+        case CSS_PAIR: {
+            StringBuilder result;
+            result.append(m_value.pair->first()->cssText());
             if (m_value.pair->second() != m_value.pair->first()) {
-                text += " ";
-                text += m_value.pair->second()->cssText();
+                result.append(' ');
+                result.append(m_value.pair->second()->cssText());
             }
+            text = result.toString();
             break;
+        }
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
-        case CSS_DASHBOARD_REGION:
+        case CSS_DASHBOARD_REGION: {
+            StringBuilder result;
             for (DashboardRegion* region = getDashboardRegionValue(); region; region = region->m_next.get()) {
-                if (!text.isEmpty())
-                    text.append(' ');
+                if (!result.isEmpty())
+                    result.append(' ');
 #if ENABLE(DASHBOARD_SUPPORT) && ENABLE(WIDGET_REGION)
-                text += region->m_cssFunctionName;
+                result.append(region->m_cssFunctionName);
 #elif ENABLE(DASHBOARD_SUPPORT)
-                text += "dashboard-region(";
+                result.appendLiteral("dashboard-region(");
 #else
-                text += "region(";
+                result.appendLiteral("region(");
 #endif
-                text += region->m_label;
+                result.append(region->m_label);
                 if (region->m_isCircle)
-                    text += " circle";
+                    result.appendLiteral(" circle");
                 else if (region->m_isRectangle)
-                    text += " rectangle";
+                    result.appendLiteral(" rectangle");
                 else
                     break;
                 if (region->top()->m_primitiveUnitType == CSS_IDENT && region->top()->getIdent() == CSSValueInvalid) {
@@ -1072,15 +1074,20 @@ String CSSPrimitiveValue::customCssText() const
                     ASSERT(region->bottom()->getIdent() == CSSValueInvalid);
                     ASSERT(region->left()->getIdent() == CSSValueInvalid);
                 } else {
-                    text.append(' ');
-                    text += region->top()->cssText() + " ";
-                    text += region->right()->cssText() + " ";
-                    text += region->bottom()->cssText() + " ";
-                    text += region->left()->cssText();
+                    result.append(' ');
+                    result.append(region->top()->cssText());
+                    result.append(' ');
+                    result.append(region->right()->cssText());
+                    result.append(' ');
+                    result.append(region->bottom()->cssText());
+                    result.append(' ');
+                    result.append(region->left()->cssText());
                 }
-                text += ")";
+                result.append(')');
             }
+            text = result.toString();
             break;
+        }
 #endif
         case CSS_PARSER_OPERATOR: {
             char c = static_cast<char>(m_value.ident);
@@ -1107,9 +1114,7 @@ String CSSPrimitiveValue::customCssText() const
             break;
 #if ENABLE(CSS_VARIABLES)
         case CSS_VARIABLE_NAME:
-            text = "-webkit-var(";
-            text += m_value.string;
-            text += ")";
+            text = "-webkit-var(" + String(m_value.string) + ")";
             break;
 #endif
     }
