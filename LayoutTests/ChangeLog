@@ -1,3 +1,11 @@
+2012-08-31  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding failure expectations for two HTTP security tests.
+
+        * platform/gtk/TestExpectations:
+
 2012-08-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip a new failing test.

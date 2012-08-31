@@ -1301,6 +1301,10 @@ BUGWK95428 : media/video-controls-captions.html = TEXT
 
 BUGWK95429 : svg/custom/clamped-masking-clipping.svg = IMAGE
 
+BUGWK94677 : http/tests/security/contentSecurityPolicy/register-bypassing-scheme = TEXT
+
+BUGWK95530 : http/tests/security/inactive-document-with-empty-security-origin.html = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////
