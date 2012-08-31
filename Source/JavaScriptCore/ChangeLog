@@ -1,3 +1,100 @@
+2012-08-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Shrink activation objects by half
+        https://bugs.webkit.org/show_bug.cgi?id=95591
+
+        Reviewed by Sam Weinig.
+
+        Removed the global object, global data, and global this pointers from
+        JSScope, and changed an int to a bitfield. This gets the JSActivation
+        class down to 64 bytes, which in practice cuts it in half by getting it
+        out of the 128 byte size class.
+
+        Now, it's one extra indirection to get these pointers. These pointers
+        aren't accessed by JIT code, so I thought there would be no cost to the
+        extra indirection. However, some C++-heavy SunSpider tests regressed a
+        bit in an early version of the patch, which added even more indirection.
+        This suggests that calls to exec->globalData() and/or exec->lexicalGlobalObject()
+        are common and probably duplicated in lots of places, and could stand
+        further optimization in C++.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute): Test against the specific activation
+        for our global object, since there's no VM-shared activation structure
+        anymore. This is guaranteed to have the same success rate as the old test
+        because activation scope is fixed at compile time.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::globalData):
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::addAllocator):
+        * heap/WeakSet.h:
+        (WeakSet):
+        (JSC::WeakSet::WeakSet):
+        (JSC::WeakSet::globalData): Store a JSGlobalData* instead of a Heap*
+        because JSGlobalData->Heap is just a constant fold in the addressing
+        mode, while Heap->JSGlobalData is an extra pointer dereference. (These
+        objects should eventually just merge.)
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_resolve_global_dynamic): See DFGAbstractState.cpp.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm: Load the activation structure from
+        the code block instead of the global data because the structure is not
+        VM-shared anymore. (See DFGAbstractState.cpp.)
+
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::JSActivation):
+        * runtime/JSActivation.h:
+        (JSActivation): This is the point of the patch: Remove the data.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData): No longer VM-shared. (See DFGAbstractState.cpp.)
+
+        (JSC::WeakSet::heap): (See WeakSet.h.)
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::setGlobalThis):
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::withScopeStructure):
+        (JSC::JSGlobalObject::strictEvalActivationStructure):
+        (JSC::JSGlobalObject::activationStructure):
+        (JSC::JSGlobalObject::nameScopeStructure):
+        (JSC::JSScope::globalThis):
+        (JSC::JSGlobalObject::globalThis): Data that used to be in the JSScope
+        class goes here now, so it's not duplicated across all activations.
+
+        * runtime/JSNameScope.h:
+        (JSC::JSNameScope::JSNameScope):
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::visitChildren): This is the point of the patch: Remove the data.
+
+        * runtime/JSScope.h:
+        (JSScope):
+        (JSC::JSScope::JSScope):
+        (JSC::JSScope::globalObject):
+        (JSC::JSScope::globalData):
+        * runtime/JSSegmentedVariableObject.h:
+        (JSC::JSSegmentedVariableObject::JSSegmentedVariableObject):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::JSSymbolTableObject::JSSymbolTableObject):
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::JSVariableObject):
+        * runtime/JSWithScope.h:
+        (JSC::JSWithScope::JSWithScope):
+        * runtime/StrictEvalActivation.cpp:
+        (JSC::StrictEvalActivation::StrictEvalActivation): Simplified now that
+        we don't need to pass so much data to JSScope.
+
 2012-08-31  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for WinCE after r127191.

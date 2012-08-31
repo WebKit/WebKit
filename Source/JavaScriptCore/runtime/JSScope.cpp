@@ -44,8 +44,6 @@ void JSScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Base::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_next);
-    visitor.append(&thisObject->m_globalObject);
-    visitor.append(&thisObject->m_globalThis);
 }
 
 bool JSScope::isDynamicScope(bool& requiresDynamicChecks) const

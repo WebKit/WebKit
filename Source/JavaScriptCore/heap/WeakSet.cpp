@@ -27,6 +27,7 @@
 #include "WeakSet.h"
 
 #include "Heap.h"
+#include "JSGlobalData.h"
 
 namespace JSC {
 
@@ -73,7 +74,7 @@ WeakBlock::FreeCell* WeakSet::tryFindAllocator()
 WeakBlock::FreeCell* WeakSet::addAllocator()
 {
     WeakBlock* block = WeakBlock::create();
-    m_heap->didAllocate(WeakBlock::blockSize);
+    heap()->didAllocate(WeakBlock::blockSize);
     m_blocks.append(block);
     WeakBlock::SweepResult sweepResult = block->takeSweepResult();
     ASSERT(!sweepResult.isNull() && sweepResult.freeList);

@@ -60,11 +60,9 @@ namespace JSC {
             JSGlobalData& globalData,
             Structure* structure,
             Register* registers,
-            JSGlobalObject* globalObject,
-            JSObject* globalThis,
             JSScope* scope
         )
-            : Base(globalData, structure, globalObject, globalThis, scope)
+            : Base(globalData, structure, scope)
             , m_registers(reinterpret_cast<WriteBarrierBase<Unknown>*>(registers))
         {
         }

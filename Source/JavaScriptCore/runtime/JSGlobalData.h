@@ -228,17 +228,13 @@ namespace JSC {
         
         Strong<Structure> structureStructure;
         Strong<Structure> debuggerActivationStructure;
-        Strong<Structure> activationStructure;
         Strong<Structure> interruptedExecutionErrorStructure;
         Strong<Structure> terminatedExecutionErrorStructure;
-        Strong<Structure> nameScopeStructure;
-        Strong<Structure> strictEvalActivationStructure;
         Strong<Structure> stringStructure;
         Strong<Structure> notAnObjectStructure;
         Strong<Structure> propertyNameIteratorStructure;
         Strong<Structure> getterSetterStructure;
         Strong<Structure> apiWrapperStructure;
-        Strong<Structure> JSScopeStructure;
         Strong<Structure> executableStructure;
         Strong<Structure> nativeExecutableStructure;
         Strong<Structure> evalExecutableStructure;
@@ -247,7 +243,6 @@ namespace JSC {
         Strong<Structure> regExpStructure;
         Strong<Structure> sharedSymbolTableStructure;
         Strong<Structure> structureChainStructure;
-        Strong<Structure> withScopeStructure;
 
         IdentifierTable* identifierTable;
         CommonIdentifiers* propertyNames;
@@ -473,6 +468,11 @@ namespace JSC {
         m_initializingObjectClass = initializingObjectClass;
     }
 #endif
+
+    inline Heap* WeakSet::heap() const
+    {
+        return &m_globalData->heap;
+    }
 
 } // namespace JSC
 

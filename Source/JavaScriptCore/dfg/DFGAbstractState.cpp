@@ -1171,7 +1171,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         
     case CreateActivation:
         node.setCanExit(false);
-        forNode(nodeIndex).set(m_graph.m_globalData.activationStructure.get());
+        forNode(nodeIndex).set(m_codeBlock->globalObjectFor(node.codeOrigin)->activationStructure());
         m_haveStructures = true;
         break;
         
