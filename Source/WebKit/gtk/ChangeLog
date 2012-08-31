@@ -1,3 +1,16 @@
+2012-08-31  José Dapena Paz  <jdapena@igalia.com>
+
+        [GTK] Assert on ChromeClientGtk::scroll with delta (0, -1).
+        https://bugs.webkit.org/show_bug.cgi?id=95590
+
+        Change the assert to avoid hitting when the delta does not have any
+        value > 0.
+
+        Reviewed by Martin Robinson.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::scroll):
+
 2012-08-30  Benjamin Poulain  <bpoulain@apple.com>
 
         Replace JSC::UString by WTF::String

@@ -651,7 +651,7 @@ void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, con
     AcceleratedCompositingContext* compositingContext = m_webView->priv->acceleratedCompositingContext.get();
     if (compositingContext->enabled()) {
         ASSERT(!rectToScroll.isEmpty());
-        ASSERT(!delta.isEmpty());
+        ASSERT(delta.width() || delta.height());
 
         compositingContext->scrollNonCompositedContents(rectToScroll, delta);
         return;
