@@ -44,6 +44,13 @@ RenderMultiColumnSet::RenderMultiColumnSet(Node* node, RenderFlowThread* flowThr
 {
 }
 
+LayoutUnit RenderMultiColumnSet::pageLogicalTopForOffset(LayoutUnit offset) const
+{
+    LayoutUnit portionLogicalTop = (isHorizontalWritingMode() ? flowThreadPortionRect().y() : flowThreadPortionRect().x());
+    unsigned columnIndex = (offset - portionLogicalTop) / computedColumnHeight();
+    return portionLogicalTop + columnIndex * computedColumnHeight();
+}
+
 void RenderMultiColumnSet::computeLogicalWidth()
 {
     // Our logical width starts off matching the column block itself.

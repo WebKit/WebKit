@@ -104,6 +104,11 @@ LayoutRect RenderRegion::overflowRectForFlowThreadPortion(LayoutRect flowThreadP
     return clipRect;
 }
 
+LayoutUnit RenderRegion::pageLogicalTopForOffset(LayoutUnit /* offset */) const
+{
+    return flowThread()->isHorizontalWritingMode() ? flowThreadPortionRect().y() : flowThreadPortionRect().x();
+}
+
 bool RenderRegion::isFirstRegion() const
 {
     ASSERT(isValid() && m_flowThread);
@@ -186,7 +191,7 @@ void RenderRegion::layout()
         LayoutRect oldRegionRect(flowThreadPortionRect());
         if (!isHorizontalWritingMode())
             oldRegionRect = oldRegionRect.transposedRect();
-        if (oldRegionRect.width() != pageLogicalWidth() || oldRegionRect.height() != logicalHeightOfAllFlowThreadContent())
+        if (oldRegionRect.width() != pageLogicalWidth() || oldRegionRect.height() != pageLogicalHeight())
             m_flowThread->invalidateRegions();
     }
 

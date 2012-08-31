@@ -71,6 +71,8 @@ private:
     virtual LayoutUnit pageLogicalWidth() const OVERRIDE { return m_computedColumnWidth; }
     virtual LayoutUnit pageLogicalHeight() const OVERRIDE { return m_computedColumnHeight; }
 
+    virtual LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const OVERRIDE;
+    
     // FIXME: This will change once we have column sets constrained by enclosing pages, etc.
     virtual LayoutUnit logicalHeightOfAllFlowThreadContent() const OVERRIDE { return m_computedColumnHeight; }
     

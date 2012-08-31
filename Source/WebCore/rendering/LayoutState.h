@@ -57,7 +57,6 @@ public:
     }
 
     LayoutState(LayoutState*, RenderBox*, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, ColumnInfo*);
-    LayoutState(LayoutState*, RenderFlowThread*, bool regionsChanged);
     LayoutState(RenderObject*);
 
     void destroy(RenderArena*);

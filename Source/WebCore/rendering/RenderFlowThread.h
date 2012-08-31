@@ -129,6 +129,8 @@ public:
     // Check if the object is in region and the region is part of this flow thread.
     bool objectInFlowRegion(const RenderObject*, const RenderRegion*) const;
 
+    bool pageLogicalHeightChanged() const { return m_pageLogicalHeightChanged; }
+
 protected:
     virtual const char* renderName() const = 0;
 
@@ -180,6 +182,7 @@ protected:
     bool m_overset;
     bool m_hasRegionsWithStyling;
     bool m_dispatchRegionLayoutUpdateEvent;
+    bool m_pageLogicalHeightChanged;
 };
 
 inline RenderFlowThread* toRenderFlowThread(RenderObject* object)

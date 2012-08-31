@@ -816,11 +816,6 @@ void RenderView::pushLayoutState(RenderObject* root)
     m_layoutState = new (renderArena()) LayoutState(root);
 }
 
-void RenderView::pushLayoutState(RenderFlowThread* flowThread, bool regionsChanged)
-{
-    m_layoutState = new (renderArena()) LayoutState(m_layoutState, flowThread, regionsChanged);
-}
-
 bool RenderView::shouldDisableLayoutStateForSubtree(RenderObject* renderer) const
 {
     RenderObject* o = renderer;

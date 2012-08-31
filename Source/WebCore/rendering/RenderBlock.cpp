@@ -1450,6 +1450,9 @@ void RenderBlock::checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalH
             colInfo->clearForcedBreaks();
 
         colInfo->setPaginationUnit(paginationUnit());
+    } else if (isRenderFlowThread()) {
+        pageLogicalHeight = 1; // This is just a hack to always make sure we have a page logical height.
+        pageLogicalHeightChanged = toRenderFlowThread(this)->pageLogicalHeightChanged();
     }
 }
 
@@ -6889,7 +6892,7 @@ bool RenderBlock::hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule pageBou
     if (!region)
         return false;
     if (region->isLastRegion())
-        return region->style()->regionOverflow() == BreakRegionOverflow
+        return region->isRenderRegionSet() || region->style()->regionOverflow() == BreakRegionOverflow
             || (pageBoundaryRule == IncludePageBoundary && pageOffset == region->offsetFromLogicalTopOfFirstPage());
     return true;
 }

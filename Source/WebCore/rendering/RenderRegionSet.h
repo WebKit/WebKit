@@ -55,6 +55,8 @@ private:
     virtual void expandToEncompassFlowThreadContentsIfNeeded() OVERRIDE;
 
     virtual const char* renderName() const = 0;
+    
+    virtual bool isRenderRegionSet() const OVERRIDE { return true; }
 };
 
 } // namespace WebCore
