@@ -156,8 +156,9 @@ public:
     Color(CGColorRef);
 #endif
 
-    static bool parseHexColor(const String& name, RGBA32& rgb);
-    static bool parseHexColor(const UChar* name, unsigned length, RGBA32& rgb);
+    static bool parseHexColor(const String&, RGBA32&);
+    static bool parseHexColor(const LChar*, unsigned, RGBA32&);
+    static bool parseHexColor(const UChar*, unsigned, RGBA32&);
 
     static const RGBA32 black = 0xFF000000;
     static const RGBA32 white = 0xFFFFFFFF;

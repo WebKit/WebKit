@@ -1,3 +1,16 @@
+2012-08-31  Michael Saboff  <msaboff@apple.com>
+
+        CSS Parser should directly parse 8 bit source strings
+        https://bugs.webkit.org/show_bug.cgi?id=95207
+
+        Reviewed by Geoffrey Garen.
+
+        New test that checks the case that a 16 bit unicode escape in an 8 bit CSS 
+        source is properly handled.
+
+        * fast/css/unicode-escape-in-8bit-string-expected.html: Added.
+        * fast/css/unicode-escape-in-8bit-string.html: Added.
+
 2012-08-31  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [Chromium] javascript-url-stop-loaders.html and zero-length-response.html are flaky on Chromium EWS

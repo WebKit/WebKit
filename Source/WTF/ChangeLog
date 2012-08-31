@@ -1,3 +1,14 @@
+2012-08-31  Michael Saboff  <msaboff@apple.com>
+
+        CSS Parser should directly parse 8 bit source strings
+        https://bugs.webkit.org/show_bug.cgi?id=95207
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/text/StringImpl.h:
+        (WTF::equalIgnoringCase): Added (const char*, const LChar*, unsigned) flavor to support
+        8 bit CSS parser work.
+
 2012-08-30  Benjamin Poulain  <bpoulain@apple.com>
 
         AtomicString(ASCIILiteral) should not compile

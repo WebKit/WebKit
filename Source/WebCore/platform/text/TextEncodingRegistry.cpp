@@ -348,18 +348,30 @@ const char* atomicCanonicalTextEncodingName(const char* name)
     return textEncodingNameMap->get(name);
 }
 
-const char* atomicCanonicalTextEncodingName(const UChar* characters, size_t length)
+template <typename CharacterType>
+const char* atomicCanonicalTextEncodingName(const CharacterType* characters, size_t length)
 {
     char buffer[maxEncodingNameLength + 1];
     size_t j = 0;
     for (size_t i = 0; i < length; ++i) {
-        UChar c = characters[i];
+        CharacterType c = characters[i];
         if (j == maxEncodingNameLength)
             return 0;
         buffer[j++] = c;
     }
     buffer[j] = 0;
     return atomicCanonicalTextEncodingName(buffer);
+}
+
+const char* atomicCanonicalTextEncodingName(const String& alias)
+{
+    if (!alias.length())
+        return 0;
+
+    if (alias.is8Bit())
+        return atomicCanonicalTextEncodingName<LChar>(alias.characters8(), alias.length());
+
+    return atomicCanonicalTextEncodingName<UChar>(alias.characters(), alias.length());
 }
 
 bool noExtendedTextEncodingNameUsed()

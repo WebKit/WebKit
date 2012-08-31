@@ -58,7 +58,7 @@ TextEncoding::TextEncoding(const char* name)
 }
 
 TextEncoding::TextEncoding(const String& name)
-    : m_name(atomicCanonicalTextEncodingName(name.characters(), name.length()))
+    : m_name(atomicCanonicalTextEncodingName(name))
     , m_backslashAsCurrencySymbol(backslashAsCurrencySymbol())
 {
 }

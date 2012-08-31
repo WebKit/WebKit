@@ -28,6 +28,7 @@
 
 #include <memory>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
@@ -41,7 +42,9 @@ namespace WebCore {
 
     // Only TextEncoding should use the following functions directly.
     const char* atomicCanonicalTextEncodingName(const char* alias);
-    const char* atomicCanonicalTextEncodingName(const UChar* aliasCharacters, size_t aliasLength);
+    template <typename CharacterType>
+    const char* atomicCanonicalTextEncodingName(const CharacterType*, size_t);
+    const char* atomicCanonicalTextEncodingName(const String&);
     bool noExtendedTextEncodingNameUsed();
     bool isJapaneseEncoding(const char* canonicalEncodingName);
     bool shouldShowBackslashAsCurrencySymbolIn(const char* canonicalEncodingName);

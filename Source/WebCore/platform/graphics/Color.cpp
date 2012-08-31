@@ -125,7 +125,8 @@ RGBA32 makeRGBAFromCMYKA(float c, float m, float y, float k, float a)
 }
 
 // originally moved here from the CSS parser
-bool Color::parseHexColor(const UChar* name, unsigned length, RGBA32& rgb)
+template <typename CharacterType>
+static inline bool parseHexColorInternal(const CharacterType* name, unsigned length, RGBA32& rgb)
 {
     if (length != 3 && length != 6)
         return false;
@@ -148,8 +149,24 @@ bool Color::parseHexColor(const UChar* name, unsigned length, RGBA32& rgb)
     return true;
 }
 
+bool Color::parseHexColor(const LChar* name, unsigned length, RGBA32& rgb)
+{
+    return parseHexColorInternal(name, length, rgb);
+}
+
+bool Color::parseHexColor(const UChar* name, unsigned length, RGBA32& rgb)
+{
+    return parseHexColorInternal(name, length, rgb);
+}
+
 bool Color::parseHexColor(const String& name, RGBA32& rgb)
 {
+    unsigned length = name.length();
+    
+    if (!length)
+        return false;
+    if (name.is8Bit())
+        return parseHexColor(name.characters8(), name.length(), rgb);
     return parseHexColor(name.characters(), name.length(), rgb);
 }
 
@@ -163,9 +180,12 @@ int differenceSquared(const Color& c1, const Color& c2)
 
 Color::Color(const String& name)
 {
-    if (name[0] == '#')
-        m_valid = parseHexColor(name.characters() + 1, name.length() - 1, m_color);
-    else
+    if (name[0] == '#') {
+        if (name.is8Bit())
+            m_valid = parseHexColor(name.characters8() + 1, name.length() - 1, m_color);
+        else
+            m_valid = parseHexColor(name.characters() + 1, name.length() - 1, m_color);
+    } else
         setNamedColor(name);
 }
 

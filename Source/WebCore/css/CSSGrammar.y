@@ -93,11 +93,6 @@ static inline int cssyyerror(void*, const char*)
     return 1;
 }
 
-static int cssyylex(YYSTYPE* yylval, CSSParser* parser)
-{
-    return parser->lex(yylval);
-}
-
 %}
 
 %expect 63
@@ -509,7 +504,7 @@ NAMESPACE_SYM maybe_space maybe_ns_prefix string_or_uri maybe_space ';' {
 ;
 
 maybe_ns_prefix:
-/* empty */ { $$.characters = 0; }
+/* empty */ { $$.clear(); }
 | IDENT maybe_space { $$ = $1; }
 ;
 
@@ -694,9 +689,9 @@ key:
     | IDENT {
         $$.id = 0; $$.isInt = false; $$.unit = CSSPrimitiveValue::CSS_NUMBER;
         CSSParserString& str = $1;
-        if (equalIgnoringCase("from", str.characters, str.length))
+        if (str.equalIgnoringCase("from"))
             $$.fValue = 0;
-        else if (equalIgnoringCase("to", str.characters, str.length))
+        else if (str.equalIgnoringCase("to"))
             $$.fValue = 100;
         else
             YYERROR;
@@ -976,8 +971,8 @@ selector:
     ;
 
 namespace_selector:
-    /* empty */ '|' { $$.characters = 0; $$.length = 0; }
-    | '*' '|' { static UChar star = '*'; $$.characters = &star; $$.length = 1; }
+    /* empty */ '|' { $$.clear(); }
+    | '*' '|' { static LChar star = '*'; $$.init(&star, 1); }
     | IDENT '|' { $$ = $1; }
 ;
     
@@ -1040,9 +1035,8 @@ element_name:
         $$ = str;
     }
     | '*' {
-        static UChar star = '*';
-        $$.characters = &star;
-        $$.length = 1;
+        static LChar star = '*';
+        $$.init(&star, 1);
     }
   ;
 
@@ -1070,7 +1064,7 @@ specifier:
         $$->setValue($1);
     }
   | HEX {
-        if ($1.characters[0] >= '0' && $1.characters[0] <= '9') {
+        if ($1[0] >= '0' && $1[0] <= '9') {
             $$ = 0;
         } else {
             $$ = parser->createFloatingSelector();

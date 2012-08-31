@@ -43,11 +43,11 @@ template <typename FloatType> static inline bool isValidRange(const FloatType& x
 // We use this generic parseNumber function to allow the Path parsing code to work 
 // at a higher precision internally, without any unnecessary runtime cost or code
 // complexity.
-template <typename FloatType> static bool genericParseNumber(const UChar*& ptr, const UChar* end, FloatType& number, bool skip)
+template <typename CharacterType, typename FloatType> static bool genericParseNumber(const CharacterType*& ptr, const CharacterType* end, FloatType& number, bool skip)
 {
     FloatType integer, decimal, frac, exponent;
     int sign, expsign;
-    const UChar* start = ptr;
+    const CharacterType* start = ptr;
 
     exponent = 0;
     integer = 0;
@@ -69,12 +69,12 @@ template <typename FloatType> static bool genericParseNumber(const UChar*& ptr, 
         return false;
 
     // read the integer part, build right-to-left
-    const UChar* ptrStartIntPart = ptr;
+    const CharacterType* ptrStartIntPart = ptr;
     while (ptr < end && *ptr >= '0' && *ptr <= '9')
         ++ptr; // Advance to first non-digit.
 
     if (ptr != ptrStartIntPart) {
-        const UChar* ptrScanIntPart = ptr - 1;
+        const CharacterType* ptrScanIntPart = ptr - 1;
         FloatType multiplier = 1;
         while (ptrScanIntPart >= ptrStartIntPart) {
             integer += multiplier * static_cast<FloatType>(*(ptrScanIntPart--) - '0');
@@ -142,12 +142,17 @@ template <typename FloatType> static bool genericParseNumber(const UChar*& ptr, 
     return true;
 }
 
-bool parseSVGNumber(UChar*& begin, size_t length, double& number)
+template <typename CharacterType>
+bool parseSVGNumber(CharacterType* begin, size_t length, double& number)
 {
-    const UChar* ptr = begin;
-    const UChar* end = ptr + length;
+    const CharacterType* ptr = begin;
+    const CharacterType* end = ptr + length;
     return genericParseNumber(ptr, end, number, false);
 }
+
+// Explicitly instantiate the two flavors of parseSVGNumber() to satisfy external callers
+template bool parseSVGNumber(LChar* begin, size_t length, double&);
+template bool parseSVGNumber(UChar* begin, size_t length, double&);
 
 bool parseNumber(const UChar*& ptr, const UChar* end, float& number, bool skip) 
 {
