@@ -15,6 +15,13 @@
 
 2012-08-31  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed gardening. Adding fast/css/nested-layers-with-over.html to Windows skip list.
+        https://bugs.webkit.org/show_bug.cgi?id=95388
+
+        * platform/win/Skipped:
+
+2012-08-31  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Adding expected failing results for accessibility/canvas tests.
         https://bugs.webkit.org/show_bug.cgi?id=95598
 

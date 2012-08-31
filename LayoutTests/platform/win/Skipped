@@ -2159,3 +2159,6 @@ http/tests/security/referrer-policy-rel-noreferrer.htm
 # As usual, DRT on Windows has problems knowing how to continue a test when focus moves to a popup window, in this case the file chooser
 # https://bugs.webkit.org/show_bug.cgi?id=87469
 fast/events/domactivate-sets-underlying-click-event-as-handled.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=95388
+fast/css/nested-layers-with-hover.html
