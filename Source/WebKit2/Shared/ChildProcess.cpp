@@ -56,8 +56,8 @@ void ChildProcess::enableTermination()
     m_terminationTimer.startOneShot(m_terminationTimeout);
 }
 
-ChildProcess::ChildProcess(double terminationTimeout)
-    : m_terminationTimeout(terminationTimeout)
+ChildProcess::ChildProcess()
+    : m_terminationTimeout(0)
     , m_terminationCounter(0)
     , m_terminationTimer(RunLoop::main(), this, &ChildProcess::terminationTimerFired)
 {

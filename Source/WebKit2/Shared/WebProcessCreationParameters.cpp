@@ -66,6 +66,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
 #if ENABLE(PLUGIN_PROCESS)
     encoder->encode(disablePluginProcessMessageTimeout);
 #endif
+    encoder->encode(terminationTimeout);
     encoder->encode(languages);
     encoder->encode(textCheckerState);
     encoder->encode(fullKeyboardAccessEnabled);
@@ -139,7 +140,8 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
     if (!decoder->decode(parameters.disablePluginProcessMessageTimeout))
         return false;
 #endif
-
+    if (!decoder->decode(parameters.terminationTimeout))
+        return false;
     if (!decoder->decode(parameters.languages))
         return false;
     if (!decoder->decode(parameters.textCheckerState))

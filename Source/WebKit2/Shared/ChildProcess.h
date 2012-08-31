@@ -60,8 +60,10 @@ public:
     static void didCloseOnConnectionWorkQueue(WorkQueue&, CoreIPC::Connection*);
 
 protected:
-    explicit ChildProcess(double terminationTimeout);
+    explicit ChildProcess();
     ~ChildProcess();
+
+    void setTerminationTimeout(double seconds) { m_terminationTimeout = seconds; }
 
 private:
     void terminationTimerFired();

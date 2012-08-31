@@ -77,6 +77,8 @@ struct WebProcessCreationParameters {
     bool disablePluginProcessMessageTimeout;
 #endif
 
+    double terminationTimeout;
+
     Vector<String> languages;
 
     TextCheckerState textCheckerState;

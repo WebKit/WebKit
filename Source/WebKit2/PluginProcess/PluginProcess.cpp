@@ -65,8 +65,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static const double shutdownTimeout = 15.0;
-
 PluginProcess& PluginProcess::shared()
 {
     DEFINE_STATIC_LOCAL(PluginProcess, pluginProcess, ());
@@ -74,8 +72,7 @@ PluginProcess& PluginProcess::shared()
 }
 
 PluginProcess::PluginProcess()
-    : ChildProcess(shutdownTimeout)
-    , m_supportsAsynchronousPluginInitialization(false)
+    : m_supportsAsynchronousPluginInitialization(false)
 #if PLATFORM(MAC)
     , m_compositingRenderServerPort(MACH_PORT_NULL)
 #endif
@@ -162,6 +159,7 @@ void PluginProcess::initializePluginProcess(const PluginProcessCreationParameter
 
     m_pluginPath = parameters.pluginPath;
     m_supportsAsynchronousPluginInitialization = parameters.supportsAsynchronousPluginInitialization;
+    setTerminationTimeout(parameters.terminationTimeout);
 
     platformInitialize(parameters);
 }

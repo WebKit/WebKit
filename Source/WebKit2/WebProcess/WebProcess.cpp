@@ -133,11 +133,8 @@ WebProcess& WebProcess::shared()
     return process;
 }
 
-static const double shutdownTimeout = 60;
-
 WebProcess::WebProcess()
-    : ChildProcess(shutdownTimeout)
-    , m_inDidClose(false)
+    : m_inDidClose(false)
     , m_shouldTrackVisitedLinks(true)
     , m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
@@ -274,6 +271,8 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 #if ENABLE(PLUGIN_PROCESS)
     m_disablePluginProcessMessageTimeout = parameters.disablePluginProcessMessageTimeout;
 #endif
+
+    setTerminationTimeout(parameters.terminationTimeout);
 }
 
 void WebProcess::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)

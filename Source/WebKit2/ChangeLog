@@ -1,3 +1,46 @@
+2012-08-31  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] WebProcesses should not wait 60 seconds to close in multi-process mode
+        https://bugs.webkit.org/show_bug.cgi?id=95616
+
+        Reviewed by Darin Adler.
+
+        * Shared/ChildProcess.cpp: (WebKit::ChildProcess::ChildProcess):
+        * Shared/ChildProcess.h: (WebKit::ChildProcess::setTerminationTimeout):
+        Expose a setter for timeout instead of taking it at construction time. If a derived
+        class doesn't call the setter, default to 0.
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::PluginProcess):
+        (WebKit::PluginProcess::initializePluginProcess):
+        Use timeout from initialization message.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::initializeWebProcess):
+        Ditto.
+
+        * Shared/Plugins/PluginProcessCreationParameters.cpp:
+        (WebKit::PluginProcessCreationParameters::encode):
+        (WebKit::PluginProcessCreationParameters::decode):
+        * Shared/Plugins/PluginProcessCreationParameters.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        Funnel timeout across process boundary.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp: (WebKit::PluginProcessProxy::didFinishLaunching):
+        Pass timeout as initialization message after launch.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess): Pass timeout as initialization message
+        (unlike plugin process proxy, web process proxy doesn't wait, and relies on the message
+        being queued).
+        (WebKit::WebContext::disconnectProcess): Skip invalidating global managers when
+        one process quits. We still need to do something, but running this code would just
+        result in assertion failures any time a page was closed.
+
 2012-08-31  Brady Eidson  <beidson@apple.com>
 
        REGRESSION (r127252): incomplete repaint on Flash element after pinch to zoom

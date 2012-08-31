@@ -86,6 +86,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static const double sharedSecondaryProcessShutdownTimeout = 60;
+
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webContextCounter, ("WebContext"));
 
 PassRefPtr<WebContext> WebContext::create(const String& injectedBundlePath)
@@ -329,6 +331,8 @@ PassRefPtr<WebProcessProxy> WebContext::createNewWebProcess()
     
     parameters.iconDatabaseEnabled = !iconDatabasePath().isEmpty();
 
+    parameters.terminationTimeout = (m_processModel == ProcessModelSharedSecondaryProcess) ? sharedSecondaryProcessShutdownTimeout : 0;
+
     parameters.textCheckerState = TextChecker::state();
 
     parameters.fullKeyboardAccessEnabled = WebProcessProxy::fullKeyboardAccessEnabled();
@@ -426,6 +430,14 @@ void WebContext::processDidFinishLaunching(WebProcessProxy* process)
 void WebContext::disconnectProcess(WebProcessProxy* process)
 {
     ASSERT(m_processes.contains(process));
+
+    // FIXME (Multi-WebProcess): All the invalidation calls below are still necessary in multi-process mode, but they should only affect data structures pertaining to the process being disconnected.
+    // Clearing everything causes assertion failures, so it's less trouble to skip that for now.
+    if (m_processModel != ProcessModelSharedSecondaryProcess) {
+        RefPtr<WebProcessProxy> protect(process);
+        m_processes.remove(m_processes.find(process));
+        return;
+    }
 
     m_visitedLinkProvider.processDidClose();
 
