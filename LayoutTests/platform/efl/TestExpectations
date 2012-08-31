@@ -542,7 +542,7 @@ BUGWK77219 SKIP : http/tests/canvas/webgl/origin-clean-conformance.html = TEXT
 BUGWK77219 SKIP : http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html = TEXT
 BUGWK77219 SKIP : http/tests/security/webgl-remote-read-remote-image-allowed.html = TEXT
 BUGWK77219 SKIP : http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html = TEXT
-BUGWK77219 : inspector/profiler/webgl-profiler-api-changes.html = TEXT
+BUGWK77219 : inspector/profiler/webgl/webgl-profiler-api-changes.html = TEXT
 
 BUGWK84759 : ietestcenter/css3/multicolumn/column-containing-block-001.htm = IMAGE
 BUGWK84760 : ietestcenter/css3/multicolumn/column-containing-block-002.htm = IMAGE
@@ -1074,12 +1074,14 @@ BUGWK77754 : fast/css/absolute-child-with-percent-height-inside-relative-parent.
 // Fails after r127035.
 BUGWK95428 : media/video-controls-captions.html = TEXT
 
-// Fails after r127039.
-BUGWK95414 : inspector/timeline/timeline-load.html = TEXT
-
 //Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80394
 BUGWK80394 : fast/block/margin-collapse/empty-clear-blocks.html = IMAGE+TEXT
 BUGWK80394 : fast/block/float/024.html = IMAGE+TEXT
 BUGWK80394 : fast/block/margin-collapse/025.html = TEXT
 BUGWK80394 : fast/block/margin-collapse/block-inside-inline/025.html = TEXT
 
+// Started failing on JSC ports after r127202.
+BUGWK95530 : http/tests/security/inactive-document-with-empty-security-origin.html = TEXT
+
+// Fails after r127140.
+BUGWK95551 : fast/forms/datalist/input-appearance-range-with-datalist-rtl.html = IMAGE

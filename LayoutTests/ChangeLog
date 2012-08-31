@@ -1,3 +1,13 @@
+2012-08-31  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Gardening of failing tests and new passes
+        https://bugs.webkit.org/show_bug.cgi?id=95555
+
+        Unreviewed EFL gardening of failing tests and new passes.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/http/tests/misc/willCacheResponse-delegate-callback-expected.txt: Added.
+
 2012-08-31  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Gardening after r127140. Skip a failing reftest.
