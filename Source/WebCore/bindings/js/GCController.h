@@ -26,7 +26,7 @@
 #ifndef GCController_h
 #define GCController_h
 
-#if USE(CF)
+#if USE(CF) || PLATFORM(BLACKBERRY)
 #include <wtf/FastAllocBase.h>
 #include <wtf/Noncopyable.h>
 #else
@@ -50,7 +50,7 @@ namespace WebCore {
     private:
         GCController(); // Use gcController() instead
 
-#if !USE(CF)
+#if !USE(CF) && !PLATFORM(BLACKBERRY)
         void gcTimerFired(Timer<GCController>*);
         Timer<GCController> m_GCTimer;
 #endif
