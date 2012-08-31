@@ -1,3 +1,9 @@
+2012-08-31  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed. Skip http/tests/notifications on Lion, since there is no support.
+
+        * platform/mac-lion/Skipped:
+
 2012-08-31  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Adding expected failing results for accessibility/canvas tests.
