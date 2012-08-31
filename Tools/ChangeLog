@@ -1,3 +1,15 @@
+2012-08-31  Milian Wolff  <milian.wolff@kdab.com>
+
+        [Qt] Support WebKit2/QML on QNX
+        https://bugs.webkit.org/show_bug.cgi?id=95466
+
+        Reviewed by Noam Rosenthal.
+
+        Enable USE(3D_GRAPHICS) on QNX again, paired with the other bug fixes
+        this should finally work now.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-08-30  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Skip compositing/webgl and platform/chromium/virtual/threaded/compositing/webgl tests
