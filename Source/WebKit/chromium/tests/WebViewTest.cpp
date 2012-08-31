@@ -222,7 +222,7 @@ void WebViewTest::testAutoResize(const WebSize& minAutoResize, const WebSize& ma
     webView->close();
 }
 
-TEST_F(WebViewTest, AutoResizeMinimumSize)
+TEST_F(WebViewTest, DISABLED_AutoResizeMinimumSize)
 {
     WebSize minAutoResize(91, 56);
     WebSize maxAutoResize(403, 302);

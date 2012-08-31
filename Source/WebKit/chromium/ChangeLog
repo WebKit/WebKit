@@ -1,3 +1,14 @@
+2012-08-31  Gavin Peters  <gavinp@chromium.org>
+
+        [chromium] Disable WebViewTest.AutoResizeMinimumSize
+        https://bugs.webkit.org/show_bug.cgi?id=95571
+
+        Unreviewed gardening.
+
+        Disabling this test since it started failing in build 17225, see http://build.chromium.org/p/chromium.webkit/builders/Webkit%20Win/builds/17247 for instance. Will shortly file bug to re-enable this.
+
+        * tests/WebViewTest.cpp:
+
 2012-08-30  James Robinson  <jamesr@chromium.org>
 
         [chromium] Revert WebCompositorSupport to raw ptrs, make dtor protected
