@@ -1,3 +1,10 @@
+2012-08-31  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Getting rid of Windows specific results because CSS3 flexbox has been re-enabled here: https://bugs.webkit.org/show_bug.cgi?id=95382
+
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+
 2012-08-31  Jessie Berlin  <jberlin@apple.com>
 
         [Mountain Lion] platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation.html failing.
