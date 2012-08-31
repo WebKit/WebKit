@@ -1,3 +1,14 @@
+2012-08-31  Jessie Berlin  <jberlin@apple.com>
+
+        [Mountain Lion] platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation.html failing.
+        https://bugs.webkit.org/show_bug.cgi?id=95477
+
+        Add Mountain Lion expected (failing?) results and move the ones previously in mac to mac-lion to get the bots greener.
+
+        * platform/mac-lion/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation-expected.png: Renamed from LayoutTests/platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation-expected.png.
+        * platform/mac-lion/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation-expected.txt: Copied from LayoutTests/platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation-expected.txt.
+        * platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation-expected.txt:
+
 2012-08-31  Philip Rogers  <pdr@google.com>
 
         Unreviewed update of fast/js/function-constructor-this-value.html expectations on Chromium
