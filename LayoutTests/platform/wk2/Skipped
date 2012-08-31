@@ -535,7 +535,6 @@ http/tests/loading/bad-server-subframe.html
 http/tests/loading/basic.html
 http/tests/loading/deleted-host-in-resource-load-delegate-callback.html
 http/tests/loading/empty-subframe.html
-http/tests/loading/gmail-assert-on-load.html
 http/tests/loading/load-javascript-after-many-xhrs.html
 http/tests/loading/location-hash-reload-cycle.html
 http/tests/loading/nested_bad_objects.php

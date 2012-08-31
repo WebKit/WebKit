@@ -1,3 +1,16 @@
+2012-08-31  Kangil Han  <kangil.han@samsung.com>
+
+        Remove http/tests/loading/gmail-assert-on-load.html test case from Skipped.
+        https://bugs.webkit.org/show_bug.cgi?id=95562
+
+        Unreviewed gardening.
+
+        Removed http/tests/loading/gmail-assert-on-load.html test case from Skipped files since it has been moved out from http/loading to http/misc, for details see bug 88923.
+
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+
 2012-08-31  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

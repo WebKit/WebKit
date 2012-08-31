@@ -1223,7 +1223,6 @@ fast/text/international/bidi-linebreak-003.html
 fast/text/international/bidi-listbox-atsui.html
 fast/text/international/bidi-listbox.html
 fast/text/international/hindi-spacing.html
-http/tests/loading/gmail-assert-on-load.html
 http/tests/misc/window-dot-stop.html
 http/tests/security/dataTransfer-set-data-file-url.html
 http/tests/xmlhttprequest/abort-should-cancel-load.html
