@@ -277,6 +277,7 @@ private:
     ProcessModel m_processModel;
     
     Vector<RefPtr<WebProcessProxy> > m_processes;
+    bool m_haveInitialEmptyProcess;
 
     RefPtr<WebPageGroup> m_defaultPageGroup;
 

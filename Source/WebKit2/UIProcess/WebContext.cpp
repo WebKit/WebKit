@@ -112,6 +112,7 @@ const Vector<WebContext*>& WebContext::allContexts()
 
 WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePath)
     : m_processModel(processModel)
+    , m_haveInitialEmptyProcess(false)
     , m_defaultPageGroup(WebPageGroup::create())
     , m_injectedBundlePath(injectedBundlePath)
     , m_visitedLinkProvider(this)
@@ -363,8 +364,13 @@ PassRefPtr<WebProcessProxy> WebContext::createNewWebProcess()
 
 void WebContext::warmInitialProcess()  
 {
-    ASSERT(m_processes.isEmpty());
+    if (m_haveInitialEmptyProcess) {
+        ASSERT(!m_processes.isEmpty());
+        return;
+    }
+
     m_processes.append(createNewWebProcess());
+    m_haveInitialEmptyProcess = true;
 }
 
 void WebContext::enableProcessTermination()
@@ -493,8 +499,13 @@ PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient* pageClient, WebPa
         process = m_processes[0];
     } else {
         // FIXME (Multi-WebProcess): Add logic for sharing a process.
-        process = createNewWebProcess();
-        m_processes.append(process);
+        if (m_haveInitialEmptyProcess) {
+            process = m_processes.last();
+            m_haveInitialEmptyProcess = false;
+        } else {
+            process = createNewWebProcess();
+            m_processes.append(process);
+        }
     }
 
     if (!pageGroup)
