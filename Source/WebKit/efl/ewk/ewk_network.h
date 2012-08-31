@@ -59,13 +59,6 @@ EAPI void             ewk_network_proxy_uri_set(const char *proxy);
 EAPI const char      *ewk_network_proxy_uri_get(void);
 
 /**
- * Sets if network backend is online or not.
- * 
- * @param online @c EINA_FALSE if network is disconnected
- */
-EAPI void             ewk_network_state_notifier_online_set(Eina_Bool online);
-
-/**
  * Returns whether HTTPS connections should check the received certificate and error out if it is invalid.
  *
  * By default, HTTPS connections are performed regardless of the validity of the certificate provided.

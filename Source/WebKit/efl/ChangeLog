@@ -1,3 +1,17 @@
+2012-08-31  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Add proper support for navigator.onLine and associated events
+        https://bugs.webkit.org/show_bug.cgi?id=95532
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove ewk_network_state_notifier_online_set() API since
+        the EFL port no longer relies on the client application to
+        provide it with the online state.
+
+        * ewk/ewk_network.cpp:
+        * ewk/ewk_network.h:
+
 2012-08-31  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Simplify FrameLoaderClinetEfl by adding a private method.

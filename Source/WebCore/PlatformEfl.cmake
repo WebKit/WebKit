@@ -72,6 +72,7 @@ LIST(APPEND WebCore_SOURCES
   platform/image-decoders/webp/WEBPImageDecoder.cpp
   platform/linux/GamepadDeviceLinux.cpp
   platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp
+  platform/network/efl/NetworkStateNotifierEfl.cpp
   platform/network/soup/CookieJarSoup.cpp
   platform/network/soup/CookieStorageSoup.cpp
   platform/network/soup/CredentialStorageSoup.cpp
@@ -194,6 +195,7 @@ ENDIF ()
 LIST(APPEND WebCore_LIBRARIES
   ${CAIRO_LIBRARIES}
   ${ECORE_X_LIBRARIES}
+  ${EEZE_LIBRARIES}
   ${EFLDEPS_LIBRARIES}
   ${EVAS_LIBRARIES}
   ${FONTCONFIG_LIBRARIES}
@@ -214,6 +216,7 @@ LIST(APPEND WebCore_LIBRARIES
 LIST(APPEND WebCore_INCLUDE_DIRECTORIES
   ${CAIRO_INCLUDE_DIRS}
   ${ECORE_X_INCLUDE_DIRS}
+  ${EEZE_INCLUDE_DIRS}
   ${EFLDEPS_INCLUDE_DIRS}
   ${EVAS_INCLUDE_DIRS}
   ${FREETYPE_INCLUDE_DIRS}
@@ -319,14 +322,5 @@ IF (ENABLE_WEB_AUDIO)
   FILE(GLOB WEB_AUDIO_DATA "${WEBCORE_DIR}/platform/audio/resources/*.wav")
   INSTALL(FILES ${WEB_AUDIO_DATA} DESTINATION ${WEB_AUDIO_DIR})
   ADD_DEFINITIONS(-DUNINSTALLED_AUDIO_RESOURCES_DIR="${WEBCORE_DIR}/platform/audio/resources")
-ENDIF ()
-
-IF (ENABLE_GAMEPAD OR ENABLE_NETWORK_INFO)
-  LIST(APPEND WebCore_INCLUDE_DIRECTORIES
-    ${EEZE_INCLUDE_DIRS}
-  )
-  LIST(APPEND WebCore_LIBRARIES
-    ${EEZE_LIBRARIES}
-  )
 ENDIF ()
 

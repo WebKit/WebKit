@@ -62,11 +62,6 @@ const char* ewk_network_proxy_uri_get(void)
     return eina_stringshare_add(proxy.utf8().data());
 }
 
-void ewk_network_state_notifier_online_set(Eina_Bool online)
-{
-    WebCore::networkStateNotifier().setOnLine(online);
-}
-
 Eina_Bool ewk_network_tls_certificate_check_get()
 {
     bool checkCertificates = false;
