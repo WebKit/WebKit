@@ -292,6 +292,7 @@ ENDIF ()
 
 LIST(APPEND SCRIPTS_BINDINGS
     ${WEBCORE_DIR}/bindings/scripts/CodeGenerator.pm
+    ${WEBCORE_DIR}/bindings/scripts/CodeGeneratorJS.pm
 )
 
 SET(IDL_INCLUDES "")
