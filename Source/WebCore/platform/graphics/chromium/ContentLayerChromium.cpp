@@ -38,6 +38,7 @@
 #include "BitmapSkPictureCanvasLayerTextureUpdater.h"
 #include "CCLayerTreeHost.h"
 #include "CCSettings.h"
+#include "ContentLayerChromiumClient.h"
 #include "FrameBufferSkPictureCanvasLayerTextureUpdater.h"
 #include "LayerPainterChromium.h"
 #include <public/Platform.h>
@@ -45,34 +46,34 @@
 
 namespace WebCore {
 
-ContentLayerPainter::ContentLayerPainter(ContentLayerDelegate* delegate)
-    : m_delegate(delegate)
+ContentLayerPainter::ContentLayerPainter(ContentLayerChromiumClient* client)
+    : m_client(client)
 {
 }
 
-PassOwnPtr<ContentLayerPainter> ContentLayerPainter::create(ContentLayerDelegate* delegate)
+PassOwnPtr<ContentLayerPainter> ContentLayerPainter::create(ContentLayerChromiumClient* client)
 {
-    return adoptPtr(new ContentLayerPainter(delegate));
+    return adoptPtr(new ContentLayerPainter(client));
 }
 
 void ContentLayerPainter::paint(SkCanvas* canvas, const IntRect& contentRect, FloatRect& opaque)
 {
     double paintStart = currentTime();
-    m_delegate->paintContents(canvas, contentRect, opaque);
+    m_client->paintContents(canvas, contentRect, opaque);
     double paintEnd = currentTime();
     double pixelsPerSec = (contentRect.width() * contentRect.height()) / (paintEnd - paintStart);
     WebKit::Platform::current()->histogramCustomCounts("Renderer4.AccelContentPaintDurationMS", (paintEnd - paintStart) * 1000, 0, 120, 30);
     WebKit::Platform::current()->histogramCustomCounts("Renderer4.AccelContentPaintMegapixPerSecond", pixelsPerSec / 1000000, 10, 210, 30);
 }
 
-PassRefPtr<ContentLayerChromium> ContentLayerChromium::create(ContentLayerDelegate* delegate)
+PassRefPtr<ContentLayerChromium> ContentLayerChromium::create(ContentLayerChromiumClient* client)
 {
-    return adoptRef(new ContentLayerChromium(delegate));
+    return adoptRef(new ContentLayerChromium(client));
 }
 
-ContentLayerChromium::ContentLayerChromium(ContentLayerDelegate* delegate)
+ContentLayerChromium::ContentLayerChromium(ContentLayerChromiumClient* client)
     : TiledLayerChromium()
-    , m_delegate(delegate)
+    , m_client(client)
 {
 }
 
@@ -82,7 +83,7 @@ ContentLayerChromium::~ContentLayerChromium()
 
 bool ContentLayerChromium::drawsContent() const
 {
-    return TiledLayerChromium::drawsContent() && m_delegate;
+    return TiledLayerChromium::drawsContent() && m_client;
 }
 
 void ContentLayerChromium::setTexturePriorities(const CCPriorityCalculator& priorityCalc)
@@ -110,11 +111,11 @@ void ContentLayerChromium::createTextureUpdaterIfNeeded()
     if (m_textureUpdater)
         return;
     if (layerTreeHost()->settings().acceleratePainting)
-        m_textureUpdater = FrameBufferSkPictureCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate));
+        m_textureUpdater = FrameBufferSkPictureCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_client));
     else if (CCSettings::perTilePaintingEnabled())
-        m_textureUpdater = BitmapSkPictureCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate));
+        m_textureUpdater = BitmapSkPictureCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_client));
     else
-        m_textureUpdater = BitmapCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate));
+        m_textureUpdater = BitmapCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_client));
     m_textureUpdater->setOpaque(opaque());
 
     GC3Denum textureFormat = layerTreeHost()->rendererCapabilities().bestTextureFormat;

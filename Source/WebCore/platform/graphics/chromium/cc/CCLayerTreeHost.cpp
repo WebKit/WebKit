@@ -31,6 +31,7 @@
 #include "CCHeadsUpDisplayLayerImpl.h"
 #include "CCLayerAnimationController.h"
 #include "CCLayerIterator.h"
+#include "CCLayerTreeHostClient.h"
 #include "CCLayerTreeHostCommon.h"
 #include "CCLayerTreeHostImpl.h"
 #include "CCOcclusionTracker.h"

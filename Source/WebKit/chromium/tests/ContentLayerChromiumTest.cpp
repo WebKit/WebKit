@@ -29,6 +29,7 @@
 #include "BitmapCanvasLayerTextureUpdater.h"
 #include "CCLayerTreeTestCommon.h"
 #include "CCRenderingStats.h"
+#include "ContentLayerChromiumClient.h"
 #include "GraphicsContext.h"
 #include "OpaqueRectTrackingContentLayerDelegate.h"
 #include "skia/ext/platform_canvas.h"
@@ -69,9 +70,9 @@ private:
     IntRect m_contentRect;
 };
 
-class MockContentLayerDelegate : public ContentLayerDelegate {
+class MockContentLayerChromiumClient : public ContentLayerChromiumClient {
 public:
-    explicit MockContentLayerDelegate(OpaqueRectTrackingContentLayerDelegate* client)
+    explicit MockContentLayerChromiumClient(OpaqueRectTrackingContentLayerDelegate* client)
         : m_client(client)
     {
     }
@@ -98,8 +99,8 @@ TEST(ContentLayerChromiumTest, ContentLayerPainterWithDeviceScale)
     OwnPtr<SkCanvas> canvas = adoptPtr(skia::CreateBitmapCanvas(contentRect.width(), contentRect.height(), false));
     OpaqueRectDrawingGraphicsContextPainter painter(opaqueRectInLayerSpace, contentRect);
     OpaqueRectTrackingContentLayerDelegate opaqueRectTrackingContentLayerDelegate(&painter);
-    MockContentLayerDelegate delegate(&opaqueRectTrackingContentLayerDelegate);
-    RefPtr<BitmapCanvasLayerTextureUpdater> updater = BitmapCanvasLayerTextureUpdater::create(ContentLayerPainter::create(&delegate));
+    MockContentLayerChromiumClient client(&opaqueRectTrackingContentLayerDelegate);
+    RefPtr<BitmapCanvasLayerTextureUpdater> updater = BitmapCanvasLayerTextureUpdater::create(ContentLayerPainter::create(&client));
 
     IntRect resultingOpaqueRect;
     CCRenderingStats stats;

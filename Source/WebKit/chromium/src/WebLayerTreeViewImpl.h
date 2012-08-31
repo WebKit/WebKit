@@ -26,10 +26,14 @@
 #ifndef WebLayerTreeViewImpl_h
 #define WebLayerTreeViewImpl_h
 
-#include "CCLayerTreeHost.h"
+#include "CCLayerTreeHostClient.h"
 #include <public/WebLayerTreeView.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+
+namespace WebCore {
+class CCLayerTreeHost;
+}
 
 namespace WebKit {
 class WebLayer;

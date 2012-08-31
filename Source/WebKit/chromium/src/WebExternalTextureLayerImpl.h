@@ -26,7 +26,7 @@
 #ifndef WebExternalTextureLayerImpl_h
 #define WebExternalTextureLayerImpl_h
 
-#include "TextureLayerChromium.h"
+#include "TextureLayerChromiumClient.h"
 #include <public/WebExternalTextureLayer.h>
 
 namespace WebKit {

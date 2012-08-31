@@ -1,3 +1,30 @@
+2012-08-30  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Put compositor client interfaces in separate headers, normalize naming
+        https://bugs.webkit.org/show_bug.cgi?id=95522
+
+        Reviewed by Adam Barth.
+
+        * src/WebContentLayerImpl.cpp:
+        (WebKit::WebContentLayerImpl::~WebContentLayerImpl):
+        * src/WebContentLayerImpl.h:
+        (WebContentLayerImpl):
+        * src/WebExternalTextureLayerImpl.h:
+        * src/WebLayerTreeViewImpl.h:
+        (WebCore):
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WebKitTests::ContentLayerChromiumWithUpdateTracking::create):
+        (WebKitTests::ContentLayerChromiumWithUpdateTracking::ContentLayerChromiumWithUpdateTracking):
+        (WebKitTests::CCLayerTreeHostTestDeviceScaleFactorScalesViewportAndLayers::CCLayerTreeHostTestDeviceScaleFactorScalesViewportAndLayers):
+        (WebKitTests::CCLayerTreeHostTestAtomicCommit::CCLayerTreeHostTestAtomicCommit):
+        (WebKitTests::CCLayerTreeHostTestAtomicCommitWithPartialUpdate::CCLayerTreeHostTestAtomicCommitWithPartialUpdate):
+        (WebKitTests::CCLayerTreeHostTestLostContextWhileUpdatingResources::CCLayerTreeHostTestLostContextWhileUpdatingResources):
+        (CCLayerTreeHostTestLostContextWhileUpdatingResources):
+        * tests/ContentLayerChromiumTest.cpp:
+        (WebKit::MockContentLayerChromiumClient::MockContentLayerChromiumClient):
+        (WebKit::TEST):
+
 2012-08-31  Gavin Peters  <gavinp@chromium.org>
 
         [chromium] DEPS roll with a test skip.

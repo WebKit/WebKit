@@ -41,39 +41,32 @@ class SkCanvas;
 
 namespace WebCore {
 
+class ContentLayerChromiumClient;
 class FloatRect;
 class IntRect;
 class LayerTextureUpdater;
 
-class ContentLayerDelegate {
-public:
-    virtual void paintContents(SkCanvas*, const IntRect& clip, FloatRect& opaque) = 0;
-
-protected:
-    virtual ~ContentLayerDelegate() { }
-};
-
 class ContentLayerPainter : public LayerPainterChromium {
     WTF_MAKE_NONCOPYABLE(ContentLayerPainter);
 public:
-    static PassOwnPtr<ContentLayerPainter> create(ContentLayerDelegate*);
+    static PassOwnPtr<ContentLayerPainter> create(ContentLayerChromiumClient*);
 
     virtual void paint(SkCanvas*, const IntRect& contentRect, FloatRect& opaque) OVERRIDE;
 
 private:
-    explicit ContentLayerPainter(ContentLayerDelegate*);
+    explicit ContentLayerPainter(ContentLayerChromiumClient*);
 
-    ContentLayerDelegate* m_delegate;
+    ContentLayerChromiumClient* m_client;
 };
 
 // A layer that renders its contents into an SkCanvas.
 class ContentLayerChromium : public TiledLayerChromium {
 public:
-    static PassRefPtr<ContentLayerChromium> create(ContentLayerDelegate*);
+    static PassRefPtr<ContentLayerChromium> create(ContentLayerChromiumClient*);
 
     virtual ~ContentLayerChromium();
 
-    void clearDelegate() { m_delegate = 0; }
+    void clearClient() { m_client = 0; }
 
     virtual bool drawsContent() const OVERRIDE;
     virtual void setTexturePriorities(const CCPriorityCalculator&) OVERRIDE;
@@ -83,14 +76,14 @@ public:
     virtual void setOpaque(bool) OVERRIDE;
 
 protected:
-    explicit ContentLayerChromium(ContentLayerDelegate*);
+    explicit ContentLayerChromium(ContentLayerChromiumClient*);
 
 
 private:
     virtual LayerTextureUpdater* textureUpdater() const OVERRIDE { return m_textureUpdater.get(); }
     virtual void createTextureUpdaterIfNeeded() OVERRIDE;
 
-    ContentLayerDelegate* m_delegate;
+    ContentLayerChromiumClient* m_client;
     RefPtr<LayerTextureUpdater> m_textureUpdater;
 };
 
