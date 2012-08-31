@@ -1,3 +1,10 @@
+2012-08-31  Jessie Berlin  <jberlin@apple.com>
+
+        Mark http/tests/security/inactive-document-with-empty-security-origin.html while Geoff Garen
+        investigates in https://bugs.webkit.org/show_bug.cgi?id=95501 in order to get the bots green.
+
+        * platform/mac/TestExpectations:
+
 2012-08-31  Gavin Peters  <gavinp@chromium.org>
 
         [chromium] Fix platform/chromium/TestExpectations typo

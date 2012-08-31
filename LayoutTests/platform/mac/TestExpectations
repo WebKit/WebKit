@@ -369,3 +369,5 @@ BUGWK80394 : fast/block/margin-collapse/block-inside-inline/025.html = TEXT
 
 // Asserts in MessagePort::contextDestroyed, but the assert usually gets attributed to later tests.
 BUGWK94458 SKIP : fast/events/message-port-constructor-for-deleted-document.html = PASS
+
+BUGWK95501 SKIP : http/tests/security/inactive-document-with-empty-security-origin.html = TIMEOUT
