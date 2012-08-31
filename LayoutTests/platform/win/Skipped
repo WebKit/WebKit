@@ -2156,3 +2156,10 @@ fast/block/margin-collapse/empty-clear-blocks.html
 fast/block/margin-collapse/025.html
 fast/block/margin-collapse/block-inside-inline/025.html
 
+# referrer tests failing, problems connecting to address provided to iframe
+http/tests/security/no-referrer.html
+http/tests/security/referrer-policy-https-always.html
+http/tests/security/referrer-policy-https-default.html
+http/tests/security/referrer-policy-https-never.html
+http/tests/security/referrer-policy-redirect.html
+http/tests/security/referrer-policy-rel-noreferrer.htm

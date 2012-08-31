@@ -1,3 +1,10 @@
+2012-08-30  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed Gardening. http/security/referrer tests fail. Unable to load resources over https.
+        https://bugs.webkit.org/show_bug.cgi?id=73913
+
+        * platform/win/Skipped:
+
 2012-08-30  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] Implement normal blend mode and source-atop compositing mode
