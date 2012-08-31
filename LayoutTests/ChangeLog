@@ -11,6 +11,17 @@
 
 2012-08-30  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed gardening. fast/events/domactivate-sets-underlying-click-event-as-handled.html fails on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=87469
+
+        It looks like any test that involves popup windows of some sort confuses DRT. 
+        It doesn't know to continue the test when focus moves away from the main window.
+        This happens with select menu tests as well when focus is put on the select options popup.
+
+        * platform/win/Skipped:
+
+2012-08-30  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed Gardening. http/security/referrer tests fail. Unable to load resources over https.
         https://bugs.webkit.org/show_bug.cgi?id=73913
 
