@@ -134,16 +134,7 @@ void RenderBox::willBeDestroyed()
 {
     clearOverrideSize();
 
-    if (style()) {
-        RenderBlock::removePercentHeightDescendantIfNeeded(this);
-
-        if (RenderView* view = this->view()) {
-            if (FrameView* frameView = view->frameView()) {
-                if (style()->hasViewportConstrainedPosition())
-                    frameView->removeFixedObject(this);
-            }
-        }
-    }
+    RenderBlock::removePercentHeightDescendantIfNeeded(this);
 
     RenderBoxModelObject::willBeDestroyed();
 }
@@ -204,17 +195,6 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyl
         }
     } else if (newStyle && isBody())
         view()->repaint();
-
-    if (FrameView *frameView = view()->frameView()) {
-        bool newStyleIsViewportConstained = newStyle && newStyle->hasViewportConstrainedPosition();
-        bool oldStyleIsViewportConstrained = oldStyle && oldStyle->hasViewportConstrainedPosition();
-        if (newStyleIsViewportConstained != oldStyleIsViewportConstrained) {
-            if (newStyleIsViewportConstained)
-                frameView->addFixedObject(this);
-            else
-                frameView->removeFixedObject(this);
-        }
-    }
 
     RenderBoxModelObject::styleWillChange(diff, newStyle);
 }

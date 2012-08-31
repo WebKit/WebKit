@@ -1,3 +1,15 @@
+2012-08-31  Simon Fraser  <simon.fraser@apple.com>
+
+        (Regression: r126774): Fix crash when scrolling after removing inline sticky element
+        https://bugs.webkit.org/show_bug.cgi?id=95584
+
+        Reviewed by Dave Hyatt.
+
+        Testcase removes an inline sticky, then scrolls.
+
+        * fast/css/sticky/remove-inline-sticky-crash-expected.txt: Added.
+        * fast/css/sticky/remove-inline-sticky-crash.html: Added.
+
 2012-08-31  Jon Lee  <jonlee@apple.com>
 
         [Tests] Add basic tests to http/tests/notifications

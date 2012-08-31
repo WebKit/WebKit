@@ -155,23 +155,6 @@ static void updateStyleOfAnonymousBlockContinuations(RenderObject* block, const 
     }
 }
 
-void RenderInline::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
-{
-    if (FrameView *frameView = view()->frameView()) {
-        RenderStyle* oldStyle = style();
-        bool newStyleIsSticky = newStyle && newStyle->position() == StickyPosition;
-        bool oldStyleIsSticky = oldStyle && oldStyle->position() == StickyPosition;
-        if (newStyleIsSticky != oldStyleIsSticky) {
-            if (newStyleIsSticky)
-                frameView->addFixedObject(this);
-            else
-                frameView->removeFixedObject(this);
-        }
-    }
-
-    RenderBoxModelObject::styleWillChange(diff, newStyle);
-}
-
 void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBoxModelObject::styleDidChange(diff, oldStyle);
