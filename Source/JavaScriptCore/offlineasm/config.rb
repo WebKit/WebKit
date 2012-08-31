@@ -21,7 +21,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
-$preferredCommentStartColumn = 70
+$preferredCommentStartColumn = 60
 
 
 # Turns on dumping of the count of labels.

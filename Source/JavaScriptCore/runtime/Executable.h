@@ -28,6 +28,7 @@
 
 #include "CallData.h"
 #include "CodeSpecializationKind.h"
+#include "HandlerInfo.h"
 #include "JSFunction.h"
 #include "Interpreter.h"
 #include "Nodes.h"
@@ -201,6 +202,27 @@ namespace JSC {
             return OBJECT_OFFSETOF(ExecutableBase, m_numParametersForConstruct);
         }
 #endif
+
+        MacroAssemblerCodePtr hostCodeEntryFor(CodeSpecializationKind kind)
+        {
+            return generatedJITCodeFor(kind).addressForCall();
+        }
+
+        MacroAssemblerCodePtr jsCodeEntryFor(CodeSpecializationKind kind)
+        {
+            return generatedJITCodeFor(kind).addressForCall();
+        }
+
+        MacroAssemblerCodePtr jsCodeWithArityCheckEntryFor(CodeSpecializationKind kind)
+        {
+            return generatedJITCodeWithArityCheckFor(kind);
+        }
+
+        static void* catchRoutineFor(HandlerInfo* handler, Instruction* catchPCForInterpreter)
+        {
+            UNUSED_PARAM(catchPCForInterpreter);
+            return handler->nativeCode.executableAddress();
+        }
 
     protected:
         ExecutableBase* m_prev;

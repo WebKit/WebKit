@@ -323,7 +323,7 @@ namespace JSC {
         return payload();
     }
 
-#else // USE(JSVALUE32_64)
+#else // !USE(JSVALUE32_64) i.e. USE(JSVALUE64)
 
     // JSValue member functions.
     inline EncodedJSValue JSValue::encode(JSValue value)

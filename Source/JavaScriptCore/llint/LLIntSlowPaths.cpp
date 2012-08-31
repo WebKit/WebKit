@@ -1351,7 +1351,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = 0;
     if (executable->isHostFunction())
-        codePtr = executable->generatedJITCodeFor(kind).addressForCall();
+        codePtr = executable->hostCodeEntryFor(kind);
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
         JSObject* error = functionExecutable->compileFor(execCallee, callee->scope(), kind);
@@ -1360,9 +1360,9 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
         codeBlock = &functionExecutable->generatedBytecodeFor(kind);
         ASSERT(codeBlock);
         if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()))
-            codePtr = functionExecutable->generatedJITCodeWithArityCheckFor(kind);
+            codePtr = functionExecutable->jsCodeWithArityCheckEntryFor(kind);
         else
-            codePtr = functionExecutable->generatedJITCodeFor(kind).addressForCall();
+            codePtr = functionExecutable->jsCodeEntryFor(kind);
     }
     
     if (callLinkInfo) {
@@ -1375,7 +1375,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
         if (codeBlock)
             codeBlock->linkIncomingCall(callLinkInfo);
     }
-    
+
     LLINT_CALL_RETURN(execCallee, pc, codePtr.executableAddress());
 }
 

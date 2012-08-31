@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "JSScope.h"
+#include "LLIntData.h"
 #include "LowLevelInterpreter.h"
 
 namespace JSC {
@@ -40,7 +41,7 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
 #if ENABLE(LLINT)
     Instruction* instruction = profiledBlock->instructions().begin() + bytecodeIndex;
     
-    if (instruction[0].u.opcode == llint_op_method_check)
+    if (instruction[0].u.opcode == LLInt::getOpcode(llint_op_method_check))
         instruction++;
 
     Structure* structure = instruction[4].u.structure.get();

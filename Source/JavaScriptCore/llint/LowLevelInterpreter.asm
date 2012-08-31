@@ -149,6 +149,11 @@ macro traceExecution()
     end
 end
 
+macro callTargetFunction(callLinkInfo)
+    call LLIntCallLinkInfo::machineCodeTarget[callLinkInfo]
+    dispatchAfterCall()
+end
+
 macro slowPathForCall(advance, slowPath)
     callCallSlowPath(
         advance,

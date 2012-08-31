@@ -1,3 +1,46 @@
+2012-08-31  Mark Lam  <mark.lam@apple.com>
+
+        Refactor LLInt and supporting code in preparation for the C Loop backend.
+        https://bugs.webkit.org/show_bug.cgi?id=95531.
+
+        Reviewed by Filip Pizlo.
+
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        * jit/JITExceptions.cpp:
+        (JSC::genericThrow): Use ExecutableBase::catchRoutineFor() to fetch
+            fetch the catch routine for a thrown exception.  This will allow
+            us to redefine that for the C loop later, and still keep this
+            code readable.
+        * llint/LLIntOfflineAsmConfig.h: Moved ASM macros to
+            LowLevelInterpreter.cpp which is the only place they are used. This
+            will make it more convenient to redefine them for the C loop later.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall): Use ExecutableBase's hostCodeEntry()
+            jsCodeEntryFor(), and jsCodeWithArityCheckEntryFor() for computing
+            the entry points to functions being called.
+        * llint/LLIntSlowPaths.h:
+        (SlowPathReturnType):
+        (JSC::LLInt::encodeResult):
+        (LLInt):
+        (JSC::LLInt::decodeResult): Added.  Needed by LLInt C Loop later.
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter.cpp:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/asm.rb: Disambiguate between opcodes and other labels.
+        * offlineasm/config.rb:
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::hostCodeEntryFor): Added.
+        (ExecutableBase):
+        (JSC::ExecutableBase::jsCodeEntryFor): Added.
+        (JSC::ExecutableBase::jsCodeWithArityCheckEntryFor): Added.
+        (JSC::ExecutableBase::catchRoutineFor): Added.
+        * runtime/JSValueInlineMethods.h:
+        (JSC):
+
 2012-08-31  Tony Chang  <tony@chromium.org>
 
         Remove ENABLE_CSS3_FLEXBOX compile time flag

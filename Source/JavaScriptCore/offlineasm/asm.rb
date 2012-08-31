@@ -151,7 +151,11 @@ class Assembler
         @numGlobalLabels += 1
         putsNewlineSpacerIfAppropriate(:global)
         @internalComment = $enableLabelCountComments ? "Global Label #{@numGlobalLabels}" : nil
-        @outp.puts(formatDump("OFFLINE_ASM_GLOBAL_LABEL(#{labelName})", lastComment))
+        if /\Allint_op_/.match(labelName)
+            @outp.puts(formatDump("OFFLINE_ASM_OPCODE_LABEL(op_#{$~.post_match})", lastComment))
+        else
+            @outp.puts(formatDump("OFFLINE_ASM_GLUE_LABEL(#{labelName})", lastComment))
+        end
         @newlineSpacerState = :none # After a global label, we can use another spacer.
     end
     

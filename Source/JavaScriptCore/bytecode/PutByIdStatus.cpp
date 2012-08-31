@@ -27,6 +27,7 @@
 #include "PutByIdStatus.h"
 
 #include "CodeBlock.h"
+#include "LLIntData.h"
 #include "LowLevelInterpreter.h"
 #include "Structure.h"
 #include "StructureChain.h"
@@ -45,8 +46,8 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     if (!structure)
         return PutByIdStatus(NoInformation, 0, 0, 0, invalidOffset);
     
-    if (instruction[0].u.opcode == llint_op_put_by_id
-        || instruction[0].u.opcode == llint_op_put_by_id_out_of_line) {
+    if (instruction[0].u.opcode == LLInt::getOpcode(llint_op_put_by_id)
+        || instruction[0].u.opcode == LLInt::getOpcode(llint_op_put_by_id_out_of_line)) {
         PropertyOffset offset = structure->get(*profiledBlock->globalData(), ident);
         if (!isValidOffset(offset))
             return PutByIdStatus(NoInformation, 0, 0, 0, invalidOffset);
@@ -56,10 +57,10 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     
     ASSERT(structure->transitionWatchpointSetHasBeenInvalidated());
     
-    ASSERT(instruction[0].u.opcode == llint_op_put_by_id_transition_direct
-           || instruction[0].u.opcode == llint_op_put_by_id_transition_normal
-           || instruction[0].u.opcode == llint_op_put_by_id_transition_direct_out_of_line
-           || instruction[0].u.opcode == llint_op_put_by_id_transition_normal_out_of_line);
+    ASSERT(instruction[0].u.opcode == LLInt::getOpcode(llint_op_put_by_id_transition_direct)
+           || instruction[0].u.opcode == LLInt::getOpcode(llint_op_put_by_id_transition_normal)
+           || instruction[0].u.opcode == LLInt::getOpcode(llint_op_put_by_id_transition_direct_out_of_line)
+           || instruction[0].u.opcode == LLInt::getOpcode(llint_op_put_by_id_transition_normal_out_of_line));
     
     Structure* newStructure = instruction[6].u.structure.get();
     StructureChain* chain = instruction[7].u.structureChain.get();

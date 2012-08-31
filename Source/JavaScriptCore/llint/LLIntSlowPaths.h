@@ -44,33 +44,50 @@ namespace LLInt {
 // warnings, or worse, a change in the ABI used to return these types.
 struct SlowPathReturnType {
     void* a;
-    void* b;
+    ExecState* b;
 };
 
-inline SlowPathReturnType encodeResult(void* a, void* b)
+inline SlowPathReturnType encodeResult(void* a, ExecState* b)
 {
     SlowPathReturnType result;
     result.a = a;
     result.b = b;
     return result;
 }
-#else
+
+inline void decodeResult(SlowPathReturnType result, void*& a, ExecState*& b)
+{
+    a = result.a;
+    b = result.b;
+}
+
+#else // USE(JSVALUE32_64)
 typedef int64_t SlowPathReturnType;
 
-inline SlowPathReturnType encodeResult(void* a, void* b)
+typedef union {
+    struct {
+        void* a;
+        ExecState* b;
+    } pair;
+    int64_t i;
+} SlowPathReturnTypeEncoding;
+
+inline SlowPathReturnType encodeResult(void* a, ExecState* b)
 {
-    union {
-        struct {
-            void* a;
-            void* b;
-        } pair;
-        int64_t i;
-    } u;
+    SlowPathReturnTypeEncoding u;
     u.pair.a = a;
     u.pair.b = b;
     return u.i;
 }
-#endif
+
+inline void decodeResult(SlowPathReturnType result, void*& a, ExecState*& b)
+{
+    SlowPathReturnTypeEncoding u;
+    u.i = result;
+    a = u.pair.a;
+    b = u.pair.b;
+}
+#endif // USE(JSVALUE32_64)
 
 extern "C" SlowPathReturnType llint_trace_operand(ExecState*, Instruction*, int fromWhere, int operand);
 extern "C" SlowPathReturnType llint_trace_value(ExecState*, Instruction*, int fromWhere, int operand);
