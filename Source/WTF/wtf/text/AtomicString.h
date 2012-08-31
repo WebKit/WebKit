@@ -155,6 +155,9 @@ public:
     void show() const;
 #endif
 private:
+    // The explicit constructors with AtomicString::ConstructFromLiteral must be used for literals.
+    AtomicString(ASCIILiteral);
+
     String m_string;
     
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> add(const LChar*);
