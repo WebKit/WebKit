@@ -1,3 +1,13 @@
+2012-08-31  Jessie Berlin  <jberlin@apple.com>
+
+        [Lion] css3/filters/composited-during-animation-layertree.html produces empty results
+        https://bugs.webkit.org/show_bug.cgi?id=95622
+
+        Move the empty results to mac-lion and add the ML results to mac to get the bots greener.
+
+        * platform/mac-lion/css3/filters/composited-during-animation-layertree-expected.txt: Copied from LayoutTests/platform/mac/css3/filters/composited-during-animation-layertree-expected.txt.
+        * platform/mac/css3/filters/composited-during-animation-layertree-expected.txt:
+
 2012-08-31  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Getting rid of Windows specific results because CSS3 flexbox has been re-enabled here: https://bugs.webkit.org/show_bug.cgi?id=95382
