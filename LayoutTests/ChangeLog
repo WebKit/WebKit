@@ -1,5 +1,18 @@
 2012-08-31  Jessie Berlin  <jberlin@apple.com>
 
+        [Qt] http/tests/cookies/js-get-and-set-http-only-cookie.html failing since introduction in r119947
+        https://bugs.webkit.org/show_bug.cgi?id=87208
+
+        The .php version was removed in r118166, but the .html version it was replaced with in r119947
+        was separately marked as failing on Qt. Update the Skipped lists so that run-webkit-tests
+        doesn't complain about not being able to find the test on Mac (and so that the comment in the
+        Qt Skipped list is correct).
+
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+
+2012-08-31  Jessie Berlin  <jberlin@apple.com>
+
         fast/workers/storage/interrupt-database-sync.html fails intermittently
         https://bugs.webkit.org/show_bug.cgi?id=49906
 

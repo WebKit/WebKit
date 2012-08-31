@@ -874,9 +874,6 @@ plugins/npruntime/delete-plugin-within-hasProperty-return-false.html
 # https://bugs.webkit.org/show_bug.cgi?id=87199
 compositing/video/video-poster.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=87208  New test http/tests/cookies/js-get-and-set-http-only-cookie.php fails on Mac, GTK, Qt (87208)
-http/tests/cookies/js-get-and-set-http-only-cookie.php
-
 # https://bugs.webkit.org/show_bug.cgi?id=87347
 fast/frames/flattening/iframe-tiny.html
 
