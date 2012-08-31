@@ -3216,7 +3216,8 @@ bool RenderBlock::isSelectionRoot() const
     if (isBody() || isRoot() || hasOverflowClip()
         || isPositioned() || isFloating()
         || isTableCell() || isInlineBlockOrInlineTable()
-        || hasTransform() || hasReflection() || hasMask() || isWritingModeRoot())
+        || hasTransform() || hasReflection() || hasMask() || isWritingModeRoot()
+        || isRenderFlowThread())
         return true;
     
     if (view() && view()->selectionStart()) {
