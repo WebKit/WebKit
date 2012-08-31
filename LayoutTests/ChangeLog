@@ -1,5 +1,15 @@
 2012-08-31  Jessie Berlin  <jberlin@apple.com>
 
+        plugins/npruntime/leak-window-scriptable-object.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=90710
+
+        This test was removed in r91637. Remove it from the Skipped list so that run-webkit-tests
+        doesn't complain about not being able to find the test.
+
+        * platform/mac/Skipped:
+
+2012-08-31  Jessie Berlin  <jberlin@apple.com>
+
         [Qt] http/tests/cookies/js-get-and-set-http-only-cookie.html failing since introduction in r119947
         https://bugs.webkit.org/show_bug.cgi?id=87208
 
