@@ -33,6 +33,7 @@
 #include "MacroAssembler.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringImpl.h>
 
 namespace JSC {
 

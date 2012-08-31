@@ -1,3 +1,9 @@
+2012-08-31  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r127191.
+
+        * bytecode/JumpTable.h:
+
 2012-08-30  Filip Pizlo  <fpizlo@apple.com>
 
         ASSERTION FAILURE in JSC::JSGlobalData::float32ArrayDescriptor when running fast/js/dfg-float64array.html
