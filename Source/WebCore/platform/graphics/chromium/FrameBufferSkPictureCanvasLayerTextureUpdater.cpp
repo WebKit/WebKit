@@ -103,11 +103,16 @@ LayerTextureUpdater::SampledTexelFormat FrameBufferSkPictureCanvasLayerTextureUp
 
 void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(WebGraphicsContext3D* context, GrContext* grContext, CCResourceProvider* resourceProvider, CCPrioritizedTexture* texture, const IntRect& sourceRect, const IntSize& destOffset)
 {
+    texture->acquireBackingTexture(resourceProvider);
+    // Flush the context in which the backing texture is created so that it
+    // is available in other shared contexts. It is important to do here
+    // because the backing texture is created in one context while it is
+    // being written to in another.
+    resourceProvider->flush();
+    CCResourceProvider::ScopedWriteLockGL lock(resourceProvider, texture->resourceId());
+
     // Make sure ganesh uses the correct GL context.
     context->makeContextCurrent();
-
-    texture->acquireBackingTexture(resourceProvider);
-    CCResourceProvider::ScopedWriteLockGL lock(resourceProvider, texture->resourceId());
     // Create an accelerated canvas to draw on.
     OwnPtr<SkCanvas> canvas = createAcceleratedCanvas(grContext, texture->size(), lock.textureId());
 
