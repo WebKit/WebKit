@@ -1,3 +1,9 @@
+2012-08-31  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip a new failing test.
+
+        * platform/qt/Skipped:
+
 2012-08-31  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Gardening of failing tests and new passes
