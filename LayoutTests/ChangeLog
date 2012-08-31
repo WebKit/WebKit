@@ -1,3 +1,10 @@
+2012-08-31  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Adding passing test results for fast/canvas/canvas-strokeRect-alpha-shadow.
+        Test passes on Windows port now but Mac port currently uses expected failing results.
+
+        * platform/win/fast/canvas/canvas-strokeRect-alpha-shadow-expected.txt: Added.
+
 2012-08-31  Philip Rogers  <pdr@google.com>
 
         Unreviewed update of fast/js/function-apply-aliased.html expectations.
