@@ -1,5 +1,23 @@
 2012-08-30  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Revert WebCompositorSupport to raw ptrs, make dtor protected
+        https://bugs.webkit.org/show_bug.cgi?id=95520
+
+        Reviewed by Darin Fisher.
+
+        Adopt the return value of WebCompositorSupport explicitly.
+
+        * src/LinkHighlight.cpp:
+        (WebKit::LinkHighlight::LinkHighlight):
+        (WebKit::LinkHighlight::startHighlightAnimation):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::readyStateChanged):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::setBackingTextureId):
+        (WebKit::WebPluginContainerImpl::setBackingIOSurfaceId):
+
+2012-08-30  James Robinson  <jamesr@chromium.org>
+
         [chromium] Make webkit_compositor specific unit test compilation conditional on gyp var
         https://bugs.webkit.org/show_bug.cgi?id=95401
 

@@ -77,7 +77,7 @@ Canvas2DLayerBridge::Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D> context, 
     }
 
     if (WebKit::WebCompositorSupport* compositorSupport = WebKit::Platform::current()->compositorSupport())
-        m_layer = compositorSupport->createExternalTextureLayer(this);
+        m_layer = adoptPtr(compositorSupport->createExternalTextureLayer(this));
     else
         m_layer = adoptPtr(WebKit::WebExternalTextureLayer::create(this));
 

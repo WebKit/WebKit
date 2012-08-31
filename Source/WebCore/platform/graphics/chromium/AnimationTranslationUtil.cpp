@@ -243,7 +243,7 @@ PassOwnPtr<WebKit::WebAnimation> createWebAnimation(const KeyframeValueList& val
 
     OwnPtr<WebKit::WebAnimation> webAnimation;
     if (WebCompositorSupport* compositorSupport = WebKit::Platform::current()->compositorSupport())
-        webAnimation = compositorSupport->createAnimation(*curve, targetProperty, animationId);
+        webAnimation = adoptPtr(compositorSupport->createAnimation(*curve, targetProperty, animationId));
     else
         webAnimation = adoptPtr(WebKit::WebAnimation::create(*curve, targetProperty, animationId));
 
@@ -264,7 +264,7 @@ PassOwnPtr<WebKit::WebAnimation> createWebAnimation(const KeyframeValueList& val
     if (values.property() == AnimatedPropertyWebkitTransform) {
         OwnPtr<WebTransformAnimationCurve> curve;
         if (WebCompositorSupport* compositorSupport = WebKit::Platform::current()->compositorSupport())
-            curve = compositorSupport->createTransformAnimationCurve();
+            curve = adoptPtr(compositorSupport->createTransformAnimationCurve());
         else
             curve = adoptPtr(WebTransformAnimationCurve::create());
         return createWebAnimation<TransformAnimationValue, WebTransformKeyframe, WebTransformAnimationCurve>(values, animation, animationId, timeOffset, curve.get(), WebKit::WebAnimation::TargetPropertyTransform, FloatSize(boxSize));
@@ -273,7 +273,7 @@ PassOwnPtr<WebKit::WebAnimation> createWebAnimation(const KeyframeValueList& val
     if (values.property() == AnimatedPropertyOpacity) {
         OwnPtr<WebFloatAnimationCurve> curve;
         if (WebCompositorSupport* compositorSupport = WebKit::Platform::current()->compositorSupport())
-            curve = compositorSupport->createFloatAnimationCurve();
+            curve = adoptPtr(compositorSupport->createFloatAnimationCurve());
         else
             curve = adoptPtr(WebFloatAnimationCurve::create());
         return createWebAnimation<FloatAnimationValue, WebFloatKeyframe, WebFloatAnimationCurve>(values, animation, animationId, timeOffset, curve.get(), WebKit::WebAnimation::TargetPropertyOpacity, FloatSize());

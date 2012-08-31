@@ -28,62 +28,62 @@
 
 #include "WebAnimation.h"
 #include "WebCommon.h"
-#include "WebContentLayer.h"
-#include "WebExternalTextureLayer.h"
-#include "WebFloatAnimationCurve.h"
-#include "WebIOSurfaceLayer.h"
-#include "WebImageLayer.h"
-#include "WebLayer.h"
 #include "WebLayerTreeView.h"
-#include "WebPassOwnPtr.h"
-#include "WebScrollbar.h"
-#include "WebScrollbarLayer.h"
-#include "WebScrollbarThemeGeometry.h"
 #include "WebScrollbarThemePainter.h"
-#include "WebSolidColorLayer.h"
-#include "WebTransformAnimationCurve.h"
-#include "WebVideoLayer.h"
 
 namespace WebKit {
 
+class WebAnimationCurve;
+class WebContentLayer;
 class WebContentLayerClient;
+class WebExternalTextureLayer;
 class WebExternalTextureLayerClient;
+class WebFloatAnimationCurve;
+class WebIOSurfaceLayer;
+class WebImageLayer;
+class WebLayer;
+class WebScrollbar;
+class WebScrollbarLayer;
+class WebScrollbarThemeGeometry;
+class WebSolidColorLayer;
+class WebTransformAnimationCurve;
 class WebVideoFrameProvider;
+class WebVideoLayer;
 
 class WebCompositorSupport {
 public:
     // May return 0 if initialization fails.
-    virtual WebPassOwnPtr<WebLayerTreeView> createLayerTreeView(WebLayerTreeViewClient*, const WebLayer& root, const WebLayerTreeView::Settings&) { return WebPassOwnPtr<WebLayerTreeView>(); }
+    virtual WebLayerTreeView* createLayerTreeView(WebLayerTreeViewClient*, const WebLayer& root, const WebLayerTreeView::Settings&) { return 0; }
 
 
     // Layers -------------------------------------------------------
 
-    virtual WebPassOwnPtr<WebLayer> createLayer() { return WebPassOwnPtr<WebLayer>(); }
+    virtual WebLayer* createLayer() { return 0; }
 
-    virtual WebPassOwnPtr<WebContentLayer> createContentLayer(WebContentLayerClient*) { return WebPassOwnPtr<WebContentLayer>(); }
+    virtual WebContentLayer* createContentLayer(WebContentLayerClient*) { return 0; }
 
-    virtual WebPassOwnPtr<WebExternalTextureLayer> createExternalTextureLayer(WebExternalTextureLayerClient* = 0) { return WebPassOwnPtr<WebExternalTextureLayer>(); }
+    virtual WebExternalTextureLayer* createExternalTextureLayer(WebExternalTextureLayerClient* = 0) { return 0; }
 
-    virtual WebPassOwnPtr<WebIOSurfaceLayer> createIOSurfaceLayer() { return WebPassOwnPtr<WebIOSurfaceLayer>(); }
+    virtual WebIOSurfaceLayer* createIOSurfaceLayer() { return 0; }
 
-    virtual WebPassOwnPtr<WebImageLayer> createImageLayer() { return WebPassOwnPtr<WebImageLayer>(); }
+    virtual WebImageLayer* createImageLayer() { return 0; }
 
-    virtual WebPassOwnPtr<WebSolidColorLayer> createSolidColorLayer() { return WebPassOwnPtr<WebSolidColorLayer>(); }
+    virtual WebSolidColorLayer* createSolidColorLayer() { return 0; }
 
-    virtual WebPassOwnPtr<WebVideoLayer> createVideoLayer(WebVideoFrameProvider*) { return WebPassOwnPtr<WebVideoLayer>(); }
+    virtual WebVideoLayer* createVideoLayer(WebVideoFrameProvider*) { return 0; }
 
-    virtual WebPassOwnPtr<WebScrollbarLayer> createScrollbarLayer(WebPassOwnPtr<WebScrollbar>, WebScrollbarThemePainter, WebPassOwnPtr<WebScrollbarThemeGeometry>) { return WebPassOwnPtr<WebScrollbarLayer>(); }
+    virtual WebScrollbarLayer* createScrollbarLayer(WebScrollbar*, WebScrollbarThemePainter, WebScrollbarThemeGeometry*) { return 0; }
 
 
     // Animation ----------------------------------------------------
 
-    virtual WebPassOwnPtr<WebAnimation> createAnimation(const WebAnimationCurve&, WebAnimation::TargetProperty, int animationId = 0) { return WebPassOwnPtr<WebAnimation>(); }
+    virtual WebAnimation* createAnimation(const WebAnimationCurve&, WebAnimation::TargetProperty, int animationId = 0) { return 0; }
 
-    virtual WebPassOwnPtr<WebFloatAnimationCurve> createFloatAnimationCurve() { return WebPassOwnPtr<WebFloatAnimationCurve>(); }
+    virtual WebFloatAnimationCurve* createFloatAnimationCurve() { return 0; }
 
-    virtual WebPassOwnPtr<WebTransformAnimationCurve> createTransformAnimationCurve() { return WebPassOwnPtr<WebTransformAnimationCurve>(); }
+    virtual WebTransformAnimationCurve* createTransformAnimationCurve() { return 0; }
 
-private:
+protected:
     virtual ~WebCompositorSupport() { }
 };
 

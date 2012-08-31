@@ -373,7 +373,7 @@ void WebPluginContainerImpl::setBackingTextureId(unsigned textureId)
 
     if (!m_textureLayer) {
         if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport())
-            m_textureLayer = compositorSupport->createExternalTextureLayer();
+            m_textureLayer = adoptPtr(compositorSupport->createExternalTextureLayer());
         else
             m_textureLayer = adoptPtr(WebExternalTextureLayer::create());
         GraphicsLayerChromium::registerContentsLayer(m_textureLayer->layer());
@@ -402,7 +402,7 @@ void WebPluginContainerImpl::setBackingIOSurfaceId(int width,
 
     if (!m_ioSurfaceLayer) {
         if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport())
-            m_ioSurfaceLayer = compositorSupport->createIOSurfaceLayer();
+            m_ioSurfaceLayer = adoptPtr(compositorSupport->createIOSurfaceLayer());
         else
             m_ioSurfaceLayer = adoptPtr(WebIOSurfaceLayer::create());
         GraphicsLayerChromium::registerContentsLayer(m_ioSurfaceLayer->layer());

@@ -1,5 +1,34 @@
 2012-08-30  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Revert WebCompositorSupport to raw ptrs, make dtor protected
+        https://bugs.webkit.org/show_bug.cgi?id=95520
+
+        Reviewed by Darin Fisher.
+
+        WebPassOwnPtr<T> isn't quite usable from the chromium side - it needs some more work and isn't worth blocking
+        WebCompositorSupport for. Also, the d'tor for WebCompositorSupport needs to be protected, not private, so it can
+        be implemented.
+
+        * Platform.gypi:
+        * chromium/public/WebCompositorSupport.h:
+        (WebKit):
+        (WebKit::WebCompositorSupport::createLayerTreeView):
+        (WebKit::WebCompositorSupport::createLayer):
+        (WebKit::WebCompositorSupport::createContentLayer):
+        (WebKit::WebCompositorSupport::createExternalTextureLayer):
+        (WebKit::WebCompositorSupport::createIOSurfaceLayer):
+        (WebKit::WebCompositorSupport::createImageLayer):
+        (WebKit::WebCompositorSupport::createSolidColorLayer):
+        (WebKit::WebCompositorSupport::createVideoLayer):
+        (WebKit::WebCompositorSupport::createScrollbarLayer):
+        (WebKit::WebCompositorSupport::createAnimation):
+        (WebKit::WebCompositorSupport::createFloatAnimationCurve):
+        (WebKit::WebCompositorSupport::createTransformAnimationCurve):
+        (WebCompositorSupport):
+        * chromium/public/WebPassOwnPtr.h: Removed.
+
+2012-08-30  James Robinson  <jamesr@chromium.org>
+
         Chromium win build fix - fix typo in gypi
 
         * Platform.gypi:

@@ -94,7 +94,7 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
     m_opaqueRectTrackingContentLayerDelegate = adoptPtr(new OpaqueRectTrackingContentLayerDelegate(this));
 
     if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport())
-        m_layer = compositorSupport->createContentLayer(m_opaqueRectTrackingContentLayerDelegate.get());
+        m_layer = adoptPtr(compositorSupport->createContentLayer(m_opaqueRectTrackingContentLayerDelegate.get()));
     else
         m_layer = adoptPtr(WebContentLayer::create(m_opaqueRectTrackingContentLayerDelegate.get()));
 
@@ -477,7 +477,7 @@ void GraphicsLayerChromium::setContentsToImage(Image* image)
     if (image) {
         if (m_contentsLayerPurpose != ContentsLayerForImage) {
             if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport())
-                m_imageLayer = compositorSupport->createImageLayer();
+                m_imageLayer = adoptPtr(compositorSupport->createImageLayer());
             else
                 m_imageLayer = adoptPtr(WebImageLayer::create());
             registerContentsLayer(m_imageLayer->layer());
@@ -733,7 +733,7 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
 {
     if (m_preserves3D && !m_transformLayer) {
         if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport())
-            m_transformLayer = compositorSupport->createLayer();
+            m_transformLayer = adoptPtr(compositorSupport->createLayer());
         else
             m_transformLayer = adoptPtr(WebLayer::create());
 

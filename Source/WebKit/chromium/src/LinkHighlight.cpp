@@ -69,8 +69,8 @@ LinkHighlight::LinkHighlight(Node* node, WebViewImpl* owningWebViewImpl)
     ASSERT(m_node);
     ASSERT(owningWebViewImpl);
     if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport()) {
-        m_contentLayer = compositorSupport->createContentLayer(this);
-        m_clipLayer = compositorSupport->createLayer();
+        m_contentLayer = adoptPtr(compositorSupport->createContentLayer(this));
+        m_clipLayer = adoptPtr(compositorSupport->createLayer());
     } else {
         m_contentLayer = adoptPtr(WebContentLayer::create(this));
         m_clipLayer = adoptPtr(WebLayer::create());
@@ -210,7 +210,7 @@ void LinkHighlight::startHighlightAnimation()
 
     OwnPtr<WebFloatAnimationCurve> curve;
     if (compositorSupport)
-        curve = compositorSupport->createFloatAnimationCurve();
+        curve = adoptPtr(compositorSupport->createFloatAnimationCurve());
     else
         curve = adoptPtr(WebFloatAnimationCurve::create());
 
@@ -220,7 +220,7 @@ void LinkHighlight::startHighlightAnimation()
     curve->add(WebFloatKeyframe(duration, WebKit::layoutTestMode() ? startOpacity : 0));
 
     if (compositorSupport)
-        m_animation = compositorSupport->createAnimation(*curve, WebAnimation::TargetPropertyOpacity);
+        m_animation = adoptPtr(compositorSupport->createAnimation(*curve, WebAnimation::TargetPropertyOpacity));
     else
         m_animation = adoptPtr(WebAnimation::create(*curve, WebAnimation::TargetPropertyOpacity));
 

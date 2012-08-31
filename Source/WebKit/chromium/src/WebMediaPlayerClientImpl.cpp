@@ -119,7 +119,7 @@ void WebMediaPlayerClientImpl::readyStateChanged()
 #if USE(ACCELERATED_COMPOSITING)
     if (hasVideo() && supportsAcceleratedRendering() && !m_videoLayer) {
         if (WebCompositorSupport* compositorSupport = Platform::current()->compositorSupport())
-            m_videoLayer = compositorSupport->createVideoLayer(this);
+            m_videoLayer = adoptPtr(compositorSupport->createVideoLayer(this));
         else
             m_videoLayer = adoptPtr(WebVideoLayer::create(this));
 
