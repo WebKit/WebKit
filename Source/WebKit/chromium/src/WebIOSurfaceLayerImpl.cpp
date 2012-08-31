@@ -35,14 +35,13 @@ namespace WebKit {
 
 WebIOSurfaceLayer* WebIOSurfaceLayer::create()
 {
-    RefPtr<IOSurfaceLayerChromium> layer = IOSurfaceLayerChromium::create();
-    layer->setIsDrawable(true);
-    return new WebIOSurfaceLayerImpl(layer.release());
+    return new WebIOSurfaceLayerImpl();
 }
 
-WebIOSurfaceLayerImpl::WebIOSurfaceLayerImpl(PassRefPtr<IOSurfaceLayerChromium> layer)
-    : m_layer(adoptPtr(new WebLayerImpl(layer)))
+WebIOSurfaceLayerImpl::WebIOSurfaceLayerImpl()
+    : m_layer(adoptPtr(new WebLayerImpl(IOSurfaceLayerChromium::create())))
 {
+    m_layer->layer()->setIsDrawable(true);
 }
 
 WebIOSurfaceLayerImpl::~WebIOSurfaceLayerImpl()

@@ -37,11 +37,11 @@ namespace WebKit {
 
 WebFloatAnimationCurve* WebFloatAnimationCurve::create()
 {
-    return new WebFloatAnimationCurveImpl(WebCore::CCKeyframedFloatAnimationCurve::create());
+    return new WebFloatAnimationCurveImpl();
 }
 
-WebFloatAnimationCurveImpl::WebFloatAnimationCurveImpl(PassOwnPtr<WebCore::CCKeyframedFloatAnimationCurve> curve)
-    : m_curve(curve)
+WebFloatAnimationCurveImpl::WebFloatAnimationCurveImpl()
+    : m_curve(WebCore::CCKeyframedFloatAnimationCurve::create())
 {
 }
 

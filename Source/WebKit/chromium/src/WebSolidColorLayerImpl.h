@@ -28,18 +28,13 @@
 
 #include <public/WebSolidColorLayer.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/PassRefPtr.h>
-
-namespace WebCore {
-class SolidColorLayerChromium;
-}
 
 namespace WebKit {
 class WebLayerImpl;
 
 class WebSolidColorLayerImpl : public WebSolidColorLayer {
 public:
-    explicit WebSolidColorLayerImpl(PassRefPtr<WebCore::SolidColorLayerChromium>);
+    WebSolidColorLayerImpl();
     virtual ~WebSolidColorLayerImpl();
 
     // WebSolidColorLayer implementation.

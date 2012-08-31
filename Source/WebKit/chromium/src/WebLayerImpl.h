@@ -27,6 +27,7 @@
 #define WebLayerImpl_h
 
 #include <public/WebLayer.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -37,6 +38,7 @@ namespace WebKit {
 
 class WebLayerImpl : public WebLayer {
 public:
+    WebLayerImpl();
     explicit WebLayerImpl(PassRefPtr<WebCore::LayerChromium>);
     virtual ~WebLayerImpl();
 

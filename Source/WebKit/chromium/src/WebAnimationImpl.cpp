@@ -41,13 +41,18 @@ namespace WebKit {
 
 WebAnimation* WebAnimation::create(const WebAnimationCurve& curve, TargetProperty targetProperty, int animationId)
 {
-    static int nextGroupId = 1;
-    static int nextAnimationId = 1;
-    return new WebAnimationImpl(curve, targetProperty, animationId ? animationId : nextAnimationId++, nextGroupId++);
+    return new WebAnimationImpl(curve, targetProperty, animationId, 0);
 }
 
 WebAnimationImpl::WebAnimationImpl(const WebAnimationCurve& webCurve, TargetProperty targetProperty, int animationId, int groupId)
 {
+    static int nextAnimationId = 1;
+    static int nextGroupId = 1;
+    if (!animationId)
+        animationId = nextAnimationId++;
+    if (!groupId)
+        groupId = nextGroupId++;
+
     WebAnimationCurve::AnimationCurveType curveType = webCurve.type();
     OwnPtr<WebCore::CCAnimationCurve> curve;
     switch (curveType) {

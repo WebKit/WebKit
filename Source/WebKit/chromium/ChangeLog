@@ -1,3 +1,70 @@
+2012-08-31  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Clean up Web*Layer initialization paths
+        https://bugs.webkit.org/show_bug.cgi?id=95523
+
+        Reviewed by Darin Fisher.
+
+        Constructing a Web*LayerImpl (or other compositor type) wrapper shouldn't require knowledge of the underyling
+        implementation. Also normalizes naming conventions in these files.
+
+        * src/WebAnimationImpl.cpp:
+        (WebKit::WebAnimation::create):
+        (WebKit::WebAnimationImpl::WebAnimationImpl):
+        * src/WebAnimationImpl.h:
+        (WebAnimationImpl):
+        * src/WebContentLayerImpl.cpp:
+        (WebKit::WebContentLayerImpl::WebContentLayerImpl):
+        (WebKit::WebContentLayerImpl::~WebContentLayerImpl):
+        (WebKit::WebContentLayerImpl::layer):
+        (WebKit::WebContentLayerImpl::setDoubleSided):
+        (WebKit::WebContentLayerImpl::setContentsScale):
+        (WebKit::WebContentLayerImpl::setUseLCDText):
+        (WebKit::WebContentLayerImpl::setDrawCheckerboardForMissingTiles):
+        * src/WebContentLayerImpl.h:
+        (WebContentLayerImpl):
+        * src/WebFloatAnimationCurveImpl.cpp:
+        (WebKit::WebFloatAnimationCurve::create):
+        (WebKit::WebFloatAnimationCurveImpl::WebFloatAnimationCurveImpl):
+        * src/WebFloatAnimationCurveImpl.h:
+        (WebFloatAnimationCurveImpl):
+        * src/WebIOSurfaceLayerImpl.cpp:
+        (WebKit::WebIOSurfaceLayer::create):
+        (WebKit::WebIOSurfaceLayerImpl::WebIOSurfaceLayerImpl):
+        * src/WebIOSurfaceLayerImpl.h:
+        (WebIOSurfaceLayerImpl):
+        * src/WebImageLayerImpl.cpp:
+        (WebKit::WebImageLayer::create):
+        (WebKit::WebImageLayerImpl::WebImageLayerImpl):
+        * src/WebImageLayerImpl.h:
+        (WebImageLayerImpl):
+        * src/WebLayerImpl.cpp:
+        (WebKit::WebLayer::create):
+        (WebKit):
+        (WebKit::WebLayerImpl::WebLayerImpl):
+        * src/WebLayerImpl.h:
+        (WebLayerImpl):
+        * src/WebScrollbarLayerImpl.cpp:
+        (WebKit::WebScrollbarLayer::create):
+        (WebKit::WebScrollbarLayerImpl::WebScrollbarLayerImpl):
+        * src/WebScrollbarLayerImpl.h:
+        (WebScrollbarLayerImpl):
+        * src/WebSolidColorLayerImpl.cpp:
+        (WebKit::WebSolidColorLayer::create):
+        (WebKit::WebSolidColorLayerImpl::WebSolidColorLayerImpl):
+        * src/WebSolidColorLayerImpl.h:
+        (WebSolidColorLayerImpl):
+        * src/WebTransformAnimationCurveImpl.cpp:
+        (WebKit::WebTransformAnimationCurve::create):
+        (WebKit::WebTransformAnimationCurveImpl::WebTransformAnimationCurveImpl):
+        * src/WebTransformAnimationCurveImpl.h:
+        (WebTransformAnimationCurveImpl):
+        * src/WebVideoLayerImpl.cpp:
+        (WebKit::WebVideoLayer::create):
+        (WebKit::WebVideoLayerImpl::WebVideoLayerImpl):
+        * src/WebVideoLayerImpl.h:
+        (WebVideoLayerImpl):
+
 2012-08-31  Tony Chang  <tony@chromium.org>
 
         Remove ENABLE_CSS3_FLEXBOX compile time flag

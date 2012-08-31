@@ -37,7 +37,7 @@ namespace WebKit {
 
 class WebAnimationImpl : public WebAnimation {
 public:
-    WebAnimationImpl(const WebAnimationCurve&, TargetProperty, int animationId, int groupId);
+    WebAnimationImpl(const WebAnimationCurve&, TargetProperty, int animationId, int groupId = 0);
     virtual ~WebAnimationImpl();
 
     // WebAnimation implementation

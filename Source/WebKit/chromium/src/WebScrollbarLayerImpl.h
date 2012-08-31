@@ -28,18 +28,13 @@
 
 #include <public/WebScrollbarLayer.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/PassRefPtr.h>
-
-namespace WebCore {
-class ScrollbarLayerChromium;
-}
 
 namespace WebKit {
 class WebLayerImpl;
 
 class WebScrollbarLayerImpl : public WebScrollbarLayer {
 public:
-    explicit WebScrollbarLayerImpl(PassRefPtr<WebCore::ScrollbarLayerChromium>);
+    WebScrollbarLayerImpl(WebScrollbar*, WebScrollbarThemePainter, WebScrollbarThemeGeometry*);
     virtual ~WebScrollbarLayerImpl();
 
     // WebScrollbarLayer implementation.

@@ -35,11 +35,11 @@ namespace WebKit {
 
 WebImageLayer* WebImageLayer::create()
 {
-    return new WebImageLayerImpl(WebCore::ImageLayerChromium::create());
+    return new WebImageLayerImpl();
 }
 
-WebImageLayerImpl::WebImageLayerImpl(PassRefPtr<WebCore::ImageLayerChromium> layer)
-    : m_layer(adoptPtr(new WebLayerImpl(layer)))
+WebImageLayerImpl::WebImageLayerImpl()
+    : m_layer(adoptPtr(new WebLayerImpl(ImageLayerChromium::create())))
 {
 }
 

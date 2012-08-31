@@ -33,11 +33,11 @@ namespace WebKit {
 
 WebVideoLayer* WebVideoLayer::create(WebVideoFrameProvider* provider)
 {
-    return new WebVideoLayerImpl(WebCore::VideoLayerChromium::create(provider));
+    return new WebVideoLayerImpl(provider);
 }
 
-WebVideoLayerImpl::WebVideoLayerImpl(PassRefPtr<WebCore::VideoLayerChromium> layer)
-    : m_layer(adoptPtr(new WebLayerImpl(layer)))
+WebVideoLayerImpl::WebVideoLayerImpl(WebVideoFrameProvider* provider)
+    : m_layer(adoptPtr(new WebLayerImpl(WebCore::VideoLayerChromium::create(provider))))
 {
 }
 

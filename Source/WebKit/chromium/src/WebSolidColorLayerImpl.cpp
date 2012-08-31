@@ -35,11 +35,11 @@ namespace WebKit {
 
 WebSolidColorLayer* WebSolidColorLayer::create()
 {
-    return new WebSolidColorLayerImpl(SolidColorLayerChromium::create());
+    return new WebSolidColorLayerImpl();
 }
 
-WebSolidColorLayerImpl::WebSolidColorLayerImpl(PassRefPtr<SolidColorLayerChromium> layer)
-    : m_layer(adoptPtr(new WebLayerImpl(layer)))
+WebSolidColorLayerImpl::WebSolidColorLayerImpl()
+    : m_layer(adoptPtr(new WebLayerImpl(SolidColorLayerChromium::create())))
 {
     m_layer->layer()->setIsDrawable(true);
 }

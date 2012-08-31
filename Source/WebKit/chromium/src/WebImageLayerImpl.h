@@ -38,7 +38,7 @@ class WebLayerImpl;
 
 class WebImageLayerImpl : public WebImageLayer {
 public:
-    explicit WebImageLayerImpl(PassRefPtr<WebCore::ImageLayerChromium>);
+    WebImageLayerImpl();
     virtual ~WebImageLayerImpl();
 
     // WebImageLayer implementation.

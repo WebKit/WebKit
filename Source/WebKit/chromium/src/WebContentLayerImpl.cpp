@@ -44,40 +44,40 @@ WebContentLayer* WebContentLayer::create(WebContentLayerClient* client)
 }
 
 WebContentLayerImpl::WebContentLayerImpl(WebContentLayerClient* client)
-    : m_webLayerImpl(adoptPtr(new WebLayerImpl(ContentLayerChromium::create(this))))
+    : m_layer(adoptPtr(new WebLayerImpl(ContentLayerChromium::create(this))))
     , m_client(client)
 {
-    m_webLayerImpl->layer()->setIsDrawable(true);
+    m_layer->layer()->setIsDrawable(true);
 }
 
 WebContentLayerImpl::~WebContentLayerImpl()
 {
-    static_cast<ContentLayerChromium*>(m_webLayerImpl->layer())->clearClient();
+    static_cast<ContentLayerChromium*>(m_layer->layer())->clearClient();
 }
 
 WebLayer* WebContentLayerImpl::layer()
 {
-    return m_webLayerImpl.get();
+    return m_layer.get();
 }
 
 void WebContentLayerImpl::setDoubleSided(bool doubleSided)
 {
-    m_webLayerImpl->layer()->setDoubleSided(doubleSided);
+    m_layer->layer()->setDoubleSided(doubleSided);
 }
 
 void WebContentLayerImpl::setContentsScale(float scale)
 {
-    m_webLayerImpl->layer()->setContentsScale(scale);
+    m_layer->layer()->setContentsScale(scale);
 }
 
 void WebContentLayerImpl::setUseLCDText(bool enable)
 {
-    m_webLayerImpl->layer()->setUseLCDText(enable);
+    m_layer->layer()->setUseLCDText(enable);
 }
 
 void WebContentLayerImpl::setDrawCheckerboardForMissingTiles(bool enable)
 {
-    m_webLayerImpl->layer()->setDrawCheckerboardForMissingTiles(enable);
+    m_layer->layer()->setDrawCheckerboardForMissingTiles(enable);
 }
 
 

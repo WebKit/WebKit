@@ -28,16 +28,12 @@
 
 #include <public/WebVideoLayer.h>
 
-namespace WebCore {
-class VideoLayerChromium;
-}
-
 namespace WebKit {
 class WebLayerImpl;
 
 class WebVideoLayerImpl : public WebVideoLayer {
 public:
-    explicit WebVideoLayerImpl(PassRefPtr<WebCore::VideoLayerChromium>);
+    explicit WebVideoLayerImpl(WebVideoFrameProvider*);
     virtual ~WebVideoLayerImpl();
 
     // WebVideoLayer implementation.

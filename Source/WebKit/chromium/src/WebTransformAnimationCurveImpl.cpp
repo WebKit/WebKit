@@ -36,11 +36,11 @@ namespace WebKit {
 
 WebTransformAnimationCurve* WebTransformAnimationCurve::create()
 {
-    return new WebTransformAnimationCurveImpl(WebCore::CCKeyframedTransformAnimationCurve::create());
+    return new WebTransformAnimationCurveImpl();
 }
 
-WebTransformAnimationCurveImpl::WebTransformAnimationCurveImpl(PassOwnPtr<WebCore::CCKeyframedTransformAnimationCurve> curve)
-    : m_curve(curve)
+WebTransformAnimationCurveImpl::WebTransformAnimationCurveImpl()
+    : m_curve(WebCore::CCKeyframedTransformAnimationCurve::create())
 {
 }
 
