@@ -21,6 +21,8 @@
 #include "config.h"
 #include "BooleanObject.h"
 
+#include "JSScope.h"
+
 namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(BooleanObject);

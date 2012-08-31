@@ -1,5 +1,13 @@
 2012-08-30  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the Qt build: add some #includes that, for some reason, only the Qt linker requires.
+
+        * runtime/BooleanObject.cpp:
+        * runtime/ErrorInstance.cpp:
+        * runtime/NameInstance.cpp:
+
+2012-08-30  Geoffrey Garen  <ggaren@apple.com>
+
         Fix the Qt build: Removed a now-dead variable.
 
         * interpreter/Interpreter.cpp:
