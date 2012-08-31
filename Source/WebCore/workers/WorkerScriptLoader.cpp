@@ -48,7 +48,6 @@ namespace WebCore {
 
 WorkerScriptLoader::WorkerScriptLoader()
     : m_client(0)
-    , m_script("")
     , m_failed(false)
     , m_identifier(0)
     , m_finishing(false)
@@ -146,7 +145,7 @@ void WorkerScriptLoader::didReceiveData(const char* data, int len)
     if (len == -1)
         len = strlen(data);
     
-    m_script += m_decoder->decode(data, len);
+    m_script.append(m_decoder->decode(data, len));
 }
 
 void WorkerScriptLoader::didFinishLoading(unsigned long identifier, double)
@@ -157,7 +156,7 @@ void WorkerScriptLoader::didFinishLoading(unsigned long identifier, double)
     }
 
     if (m_decoder)
-        m_script += m_decoder->flush();
+        m_script.append(m_decoder->flush());
 
     m_identifier = identifier;
     notifyFinished();
@@ -178,7 +177,12 @@ void WorkerScriptLoader::notifyError()
     m_failed = true;
     notifyFinished();
 }
-    
+
+String WorkerScriptLoader::script()
+{
+    return m_script.toString();
+}
+
 void WorkerScriptLoader::notifyFinished()
 {
     if (!m_client || m_finishing)
