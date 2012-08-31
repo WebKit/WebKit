@@ -77,7 +77,8 @@ void JSNPObject::finishCreation(JSGlobalObject* globalObject)
 
 JSNPObject::~JSNPObject()
 {
-    ASSERT(!m_npObject);
+    if (m_npObject)
+        invalidate();
 }
 
 void JSNPObject::destroy(JSCell* cell)
