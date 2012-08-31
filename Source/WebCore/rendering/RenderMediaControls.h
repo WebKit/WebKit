@@ -28,12 +28,18 @@
 
 #if ENABLE(VIDEO)
 
-#include "RenderObject.h"
 #include "MediaControlElements.h"
 
 namespace WebCore {
 
+struct PaintInfo;
+
 class HTMLMediaElement;
+class IntRect;
+class IntSize;
+class RenderBox;
+class RenderObject;
+class RenderStyle;
 
 class RenderMediaControls {
 public:

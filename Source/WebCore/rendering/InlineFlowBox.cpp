@@ -36,6 +36,7 @@
 #include "RenderRubyRun.h"
 #include "RenderRubyText.h"
 #include "RenderTableCell.h"
+#include "RenderView.h"
 #include "RootInlineBox.h"
 #include "Text.h"
 

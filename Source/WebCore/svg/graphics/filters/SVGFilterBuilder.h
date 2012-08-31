@@ -24,7 +24,6 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FilterEffect.h"
 #include "PlatformString.h"
-#include "RenderObject.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -32,6 +31,8 @@
 #include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
+
+class RenderObject;
 
 class SVGFilterBuilder : public RefCounted<SVGFilterBuilder> {
 public:

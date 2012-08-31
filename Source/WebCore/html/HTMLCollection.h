@@ -23,7 +23,6 @@
 #ifndef HTMLCollection_h
 #define HTMLCollection_h
 
-#include "Node.h"
 #include "CollectionType.h"
 #include "DynamicNodeList.h"
 #include <wtf/Forward.h>
@@ -35,6 +34,7 @@ namespace WebCore {
 
 class Document;
 class Element;
+class Node;
 class NodeList;
 
 class HTMLCollectionCacheBase : public DynamicNodeListCacheBase {

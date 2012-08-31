@@ -29,6 +29,7 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "CachedScript.h"
+#include "FragmentScriptingPermission.h"
 #include "ScriptableDocumentParser.h"
 #include "XMLToken.h"
 #include "XMLTokenizer.h"
@@ -39,6 +40,7 @@ namespace WebCore {
 
 class ContainerNode;
 class Document;
+class DocumentFragment;
 class ScriptElement;
 class XMLTreeBuilder;
 

@@ -27,7 +27,6 @@
 #ifndef HTMLTreeBuilder_h
 #define HTMLTreeBuilder_h
 
-#include "Element.h"
 #include "FragmentScriptingPermission.h"
 #include "HTMLConstructionSite.h"
 #include "HTMLElementStack.h"
@@ -47,6 +46,7 @@ namespace WebCore {
 class AtomicHTMLToken;
 class Document;
 class DocumentFragment;
+class Element;
 class Frame;
 class HTMLToken;
 class HTMLDocument;

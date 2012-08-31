@@ -28,12 +28,16 @@
 #ifndef RenderMediaControlsChromium_h
 #define RenderMediaControlsChromium_h
 
-#include "RenderObject.h"
 #include "MediaControlElements.h"
 
 namespace WebCore {
 
+struct PaintInfo;
+
 class HTMLMediaElement;
+class IntRect;
+class RenderObject;
+
 class RenderMediaControlsChromium {
 public:
     static bool paintMediaControlsPart(MediaControlElementType, RenderObject*, const PaintInfo&, const IntRect&);

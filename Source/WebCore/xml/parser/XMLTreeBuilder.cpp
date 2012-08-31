@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
+#include "Element.h"
 #include "Frame.h"
 // FIXME: Why are we including HTML entity information in the XML parser?
 #include "HTMLEntitySearch.h"

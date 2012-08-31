@@ -28,7 +28,6 @@
 #define ElementShadow_h
 
 #include "ContentDistributor.h"
-#include "Element.h"
 #include "ExceptionCode.h"
 #include "ShadowRoot.h"
 #include <wtf/DoublyLinkedList.h>

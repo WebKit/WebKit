@@ -32,12 +32,12 @@
 #include "Color.h"
 #include "FloatQuad.h"
 #include "LayoutTypes.h"
-#include "Node.h"
 
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

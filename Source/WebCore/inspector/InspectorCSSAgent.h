@@ -27,7 +27,6 @@
 
 #include "CSSSelector.h"
 #include "ContentSecurityPolicy.h"
-#include "Document.h"
 #include "InspectorBaseAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorStyleSheet.h"
@@ -53,7 +52,9 @@ class InspectorFrontend;
 class InstrumentingAgents;
 class NameNodeMap;
 class Node;
+class NodeList;
 class SelectorProfile;
+class StyleResolver;
 
 #if ENABLE(INSPECTOR)
 

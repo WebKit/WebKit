@@ -29,13 +29,17 @@
 #include "FloatPoint.h"
 #include "FloatQuad.h"
 #include "IntSize.h"
-#include "RenderObject.h"
+#include "LayoutTypesInlineMethods.h"
 #include "TransformationMatrix.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
+class RenderBoxModelObject;
 class RenderLayer;
+class RenderObject;
+class RenderView;
+class TransformState;
 
 // Stores data about how to map from one renderer to its container.
 struct RenderGeometryMapStep {

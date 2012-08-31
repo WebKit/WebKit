@@ -30,11 +30,10 @@
 #ifndef PopupListBox_h
 #define PopupListBox_h
 
-#include "Font.h"
-#include "FontSelector.h"
 #include "FramelessScrollView.h"
-#include "IntRect.h"
 #include "Node.h"
+#include "TextDirection.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -48,7 +47,9 @@ static const int kMinEndOfLinePadding = 2;
 static const int kTextToLabelPadding = 10;
 static const TimeStamp kTypeAheadTimeoutMs = 1000;
 
+class Font;
 class GraphicsContext;
+class IntRect;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 #if ENABLE(GESTURE_EVENTS)

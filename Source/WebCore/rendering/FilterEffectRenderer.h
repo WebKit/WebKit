@@ -35,6 +35,7 @@
 #include "FractionalLayoutRect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "LayoutTypesInlineMethods.h"
 #include "SVGFilterBuilder.h"
 #include "SourceGraphic.h"
 

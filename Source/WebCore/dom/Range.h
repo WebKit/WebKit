@@ -29,7 +29,6 @@
 #include "FloatRect.h"
 #include "FragmentScriptingPermission.h"
 #include "IntRect.h"
-#include "Node.h"
 #include "RangeBoundaryPoint.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -43,6 +42,7 @@ class ContainerNode;
 class Document;
 class DocumentFragment;
 class FloatQuad;
+class Node;
 class NodeWithIndex;
 class Text;
 

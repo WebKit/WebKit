@@ -22,6 +22,7 @@
 #include "config.h"
 #include "RenderQuote.h"
 
+#include "RenderView.h"
 #include <wtf/text/AtomicString.h>
 
 #define U(x) ((const UChar*)L##x)

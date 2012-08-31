@@ -25,9 +25,11 @@
 #ifndef TreeScopeAdopter_h
 #define TreeScopeAdopter_h
 
-#include "Element.h"
+#include "Node.h"
 
 namespace WebCore {
+
+class TreeScope;
 
 class TreeScopeAdopter {
 public:

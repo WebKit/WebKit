@@ -30,6 +30,7 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderStyle.h"
+#include "RenderView.h"
 #include <wtf/StdLibExtras.h>
 
 #ifndef NDEBUG

@@ -27,6 +27,7 @@
 #include "NewXMLDocumentParser.h"
 
 #include "DocumentFragment.h"
+#include "Element.h"
 #include "ScriptElement.h"
 #include "ScriptSourceCode.h"
 #include "SegmentedString.h"

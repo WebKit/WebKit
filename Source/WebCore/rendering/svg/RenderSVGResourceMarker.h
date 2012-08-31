@@ -22,7 +22,6 @@
 
 #if ENABLE(SVG)
 #include "FloatRect.h"
-#include "RenderObject.h"
 #include "RenderSVGResourceContainer.h"
 #include "SVGMarkerElement.h"
 #include "SVGStyledElement.h"
@@ -32,6 +31,7 @@
 namespace WebCore {
 
 class AffineTransform;
+class RenderObject;
 
 class RenderSVGResourceMarker : public RenderSVGResourceContainer {
 public:

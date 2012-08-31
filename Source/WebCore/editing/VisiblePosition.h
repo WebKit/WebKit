@@ -27,7 +27,6 @@
 #define VisiblePosition_h
 
 #include "EditingBoundary.h"
-#include "Node.h"
 #include "Position.h"
 #include "TextDirection.h"
 
@@ -47,6 +46,7 @@ namespace WebCore {
 #define VP_UPSTREAM_IF_POSSIBLE UPSTREAM
 
 class InlineBox;
+class Node;
 
 class VisiblePosition {
 public:

@@ -22,13 +22,14 @@
 #ifndef RenderQuote_h
 #define RenderQuote_h
 
-#include "Document.h"
 #include "QuotesData.h"
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include "RenderText.h"
 
 namespace WebCore {
+
+class Document;
 
 class RenderQuote : public RenderText {
 public:

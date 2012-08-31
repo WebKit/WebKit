@@ -27,7 +27,6 @@
 #ifndef HTMLElementStack_h
 #define HTMLElementStack_h
 
-#include "Element.h"
 #include "HTMLNames.h"
 #include "HTMLStackItem.h"
 #include <wtf/Forward.h>

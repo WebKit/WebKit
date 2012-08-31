@@ -27,7 +27,6 @@
 #ifndef XMLToken_h
 #define XMLToken_h
 
-#include "Element.h"
 #include "MarkupTokenBase.h"
 
 namespace WebCore {

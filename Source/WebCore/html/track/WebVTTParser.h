@@ -33,7 +33,6 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "Document.h"
 #include "DocumentFragment.h"
 #include "HTMLNames.h"
 #include "TextTrackCue.h"
@@ -44,6 +43,8 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+
+class Document;
 
 class WebVTTParserClient {
 public:

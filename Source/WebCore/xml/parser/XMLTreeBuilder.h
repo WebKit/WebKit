@@ -36,6 +36,7 @@ namespace WebCore {
 
 class ContainerNode;
 class Document;
+class DocumentFragment;
 class NewXMLDocumentParser;
 
 class XMLTreeBuilder {

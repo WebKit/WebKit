@@ -33,7 +33,6 @@
 
 #include "CSSSelector.h"
 #include "ConsoleTypes.h"
-#include "Document.h"
 #include "Element.h"
 #include "Frame.h"
 #include "Page.h"
@@ -53,6 +52,7 @@ class CharacterData;
 class DOMWindow;
 class DOMWrapperWorld;
 class Database;
+class Document;
 class Element;
 class EventContext;
 class DocumentLoader;
