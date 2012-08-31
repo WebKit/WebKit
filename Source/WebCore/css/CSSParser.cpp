@@ -3099,7 +3099,7 @@ void CSSParser::storeVariableDeclaration(const CSSParserString& name, PassOwnPtr
     if (!value)
         return;
     
-    ASSERT(name.length > 12);
+    ASSERT(name.length() > 12);
     AtomicString variableName = name.is8Bit() ? AtomicString(name.characters8() + 12, name.length() - 12) : AtomicString(name.characters16() + 12, name.length() - 12);
 
     StringBuilder builder;
