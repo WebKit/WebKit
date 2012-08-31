@@ -188,13 +188,17 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     IdentifierTable* existingEntryIdentifierTable = wtfThreadData().setCurrentIdentifierTable(identifierTable);
     structureStructure.set(*this, Structure::createStructure(*this));
     debuggerActivationStructure.set(*this, DebuggerActivation::createStructure(*this, 0, jsNull()));
+    activationStructure.set(*this, JSActivation::createStructure(*this, 0, jsNull()));
     interruptedExecutionErrorStructure.set(*this, InterruptedExecutionError::createStructure(*this, 0, jsNull()));
     terminatedExecutionErrorStructure.set(*this, TerminatedExecutionError::createStructure(*this, 0, jsNull()));
+    nameScopeStructure.set(*this, JSNameScope::createStructure(*this, 0, jsNull()));
+    strictEvalActivationStructure.set(*this, StrictEvalActivation::createStructure(*this, 0, jsNull()));
     stringStructure.set(*this, JSString::createStructure(*this, 0, jsNull()));
     notAnObjectStructure.set(*this, JSNotAnObject::createStructure(*this, 0, jsNull()));
     propertyNameIteratorStructure.set(*this, JSPropertyNameIterator::createStructure(*this, 0, jsNull()));
     getterSetterStructure.set(*this, GetterSetter::createStructure(*this, 0, jsNull()));
     apiWrapperStructure.set(*this, JSAPIValueWrapper::createStructure(*this, 0, jsNull()));
+    JSScopeStructure.set(*this, JSScope::createStructure(*this, 0, jsNull()));
     executableStructure.set(*this, ExecutableBase::createStructure(*this, 0, jsNull()));
     nativeExecutableStructure.set(*this, NativeExecutable::createStructure(*this, 0, jsNull()));
     evalExecutableStructure.set(*this, EvalExecutable::createStructure(*this, 0, jsNull()));
@@ -203,6 +207,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     regExpStructure.set(*this, RegExp::createStructure(*this, 0, jsNull()));
     sharedSymbolTableStructure.set(*this, SharedSymbolTable::createStructure(*this, 0, jsNull()));
     structureChainStructure.set(*this, StructureChain::createStructure(*this, 0, jsNull()));
+    withScopeStructure.set(*this, JSWithScope::createStructure(*this, 0, jsNull()));
 
     wtfThreadData().setCurrentIdentifierTable(existingEntryIdentifierTable);
 

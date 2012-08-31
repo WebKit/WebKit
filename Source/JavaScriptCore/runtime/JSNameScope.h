@@ -26,7 +26,6 @@
 #ifndef JSNameScope_h
 #define JSNameScope_h
 
-#include "JSGlobalObject.h"
 #include "JSVariableObject.h"
 
 namespace JSC {
@@ -67,8 +66,10 @@ private:
     JSNameScope(ExecState* exec)
         : Base(
             exec->globalData(),
-            exec->lexicalGlobalObject()->nameScopeStructure(),
+            exec->globalData().nameScopeStructure.get(),
             reinterpret_cast<Register*>(&m_registerStore + 1),
+            exec->lexicalGlobalObject(),
+            exec->globalThisValue(),
             exec->scope()
         )
     {

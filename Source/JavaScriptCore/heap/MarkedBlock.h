@@ -121,7 +121,6 @@ namespace JSC {
         void lastChanceToFinalize();
 
         Heap* heap() const;
-        JSGlobalData* globalData() const;
         WeakSet& weakSet();
         
         enum SweepMode { SweepOnly, SweepToFreeList };
@@ -261,11 +260,6 @@ namespace JSC {
     inline Heap* MarkedBlock::heap() const
     {
         return m_weakSet.heap();
-    }
-
-    inline JSGlobalData* MarkedBlock::globalData() const
-    {
-        return m_weakSet.globalData();
     }
 
     inline WeakSet& MarkedBlock::weakSet()

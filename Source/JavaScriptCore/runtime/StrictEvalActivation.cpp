@@ -26,8 +26,6 @@
 #include "config.h"
 #include "StrictEvalActivation.h"
 
-#include "JSGlobalObject.h"
-
 namespace JSC {
 
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(StrictEvalActivation);
@@ -37,7 +35,9 @@ const ClassInfo StrictEvalActivation::s_info = { "Object", &Base::s_info, 0, 0, 
 StrictEvalActivation::StrictEvalActivation(ExecState* exec)
     : Base(
         exec->globalData(),
-        exec->lexicalGlobalObject()->strictEvalActivationStructure(),
+        exec->globalData().strictEvalActivationStructure.get(),
+        exec->lexicalGlobalObject(),
+        exec->globalThisValue(),
         exec->scope()
     )
 {

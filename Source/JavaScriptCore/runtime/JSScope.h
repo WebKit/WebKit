@@ -73,18 +73,25 @@ public:
     JSGlobalObject* globalObject();
     JSGlobalData* globalData();
     JSObject* globalThis();
+    void setGlobalThis(JSGlobalData&, JSObject*);
 
 protected:
-    JSScope(JSGlobalData&, Structure*, JSScope* next);
+    JSScope(JSGlobalData&, Structure*, JSGlobalObject*, JSObject* globalThis, JSScope* next);
     static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
 
 private:
+    JSGlobalData* m_globalData;
     WriteBarrier<JSScope> m_next;
+    WriteBarrier<JSGlobalObject> m_globalObject;
+    WriteBarrier<JSObject> m_globalThis;
 };
 
-inline JSScope::JSScope(JSGlobalData& globalData, Structure* structure, JSScope* next)
+inline JSScope::JSScope(JSGlobalData& globalData, Structure* structure, JSGlobalObject* globalObject, JSObject* globalThis, JSScope* next)
     : Base(globalData, structure)
+    , m_globalData(&globalData)
     , m_next(globalData, this, next, WriteBarrier<JSScope>::MayBeNull)
+    , m_globalObject(globalData, this, globalObject)
+    , m_globalThis(globalData, this, globalThis)
 {
 }
 
@@ -126,12 +133,22 @@ inline JSScope* JSScope::next()
 
 inline JSGlobalObject* JSScope::globalObject()
 { 
-    return structure()->globalObject();
+    return m_globalObject.get();
 }
 
 inline JSGlobalData* JSScope::globalData()
 { 
-    return MarkedBlock::blockFor(this)->globalData();
+    return m_globalData;
+}
+
+inline JSObject* JSScope::globalThis()
+{ 
+    return m_globalThis.get();
+}
+
+inline void JSScope::setGlobalThis(JSGlobalData& globalData, JSObject* globalThis)
+{ 
+    m_globalThis.set(globalData, this, globalThis);
 }
 
 inline Register& Register::operator=(JSScope* scope)

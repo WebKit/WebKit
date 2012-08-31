@@ -873,9 +873,8 @@ end
 
 _llint_op_resolve_global_dynamic:
     traceExecution()
-    loadp CodeBlock[cfr], t3
-    loadp CodeBlock::m_globalObject[t3], t3
-    loadp JSGlobalObject::m_activationStructure[t3], t3
+    loadp JITStackFrame::globalData[sp], t3
+    loadp JSGlobalData::activationStructure[t3], t3
     getScope(
         40[PB, PC, 8],
         macro (scope, scratch)

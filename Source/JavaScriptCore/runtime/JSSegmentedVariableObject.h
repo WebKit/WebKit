@@ -82,8 +82,8 @@ public:
 protected:
     static const unsigned StructureFlags = OverridesVisitChildren | JSSymbolTableObject::StructureFlags;
 
-    JSSegmentedVariableObject(JSGlobalData& globalData, Structure* structure, JSScope* scope)
-        : JSSymbolTableObject(globalData, structure, scope)
+    JSSegmentedVariableObject(JSGlobalData& globalData, Structure* structure, JSGlobalObject* globalObject, JSObject* globalThis, JSScope* scope)
+        : JSSymbolTableObject(globalData, structure, globalObject, globalThis, scope)
     {
     }
 

@@ -38,12 +38,11 @@ public:
     static WeakImpl* allocate(JSValue, WeakHandleOwner* = 0, void* context = 0);
     static void deallocate(WeakImpl*);
 
-    WeakSet(JSGlobalData*);
+    WeakSet(Heap*);
     ~WeakSet();
     void lastChanceToFinalize();
 
     Heap* heap() const;
-    JSGlobalData* globalData() const;
 
     bool isEmpty() const;
 
@@ -62,19 +61,19 @@ private:
     WeakBlock::FreeCell* m_allocator;
     WeakBlock* m_nextAllocator;
     DoublyLinkedList<WeakBlock> m_blocks;
-    JSGlobalData* m_globalData;
+    Heap* m_heap;
 };
 
-inline WeakSet::WeakSet(JSGlobalData* globalData)
+inline WeakSet::WeakSet(Heap* heap)
     : m_allocator(0)
     , m_nextAllocator(0)
-    , m_globalData(globalData)
+    , m_heap(heap)
 {
 }
 
-inline JSGlobalData* WeakSet::globalData() const
+inline Heap* WeakSet::heap() const
 {
-    return m_globalData;
+    return m_heap;
 }
 
 inline bool WeakSet::isEmpty() const

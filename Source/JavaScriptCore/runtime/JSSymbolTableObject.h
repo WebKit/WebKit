@@ -49,8 +49,8 @@ public:
 protected:
     static const unsigned StructureFlags = IsEnvironmentRecord | OverridesVisitChildren | OverridesGetPropertyNames | Base::StructureFlags;
     
-    JSSymbolTableObject(JSGlobalData& globalData, Structure* structure, JSScope* scope)
-        : Base(globalData, structure, scope)
+    JSSymbolTableObject(JSGlobalData& globalData, Structure* structure, JSGlobalObject* globalObject, JSObject* globalThis, JSScope* scope)
+        : Base(globalData, structure, globalObject, globalThis, scope)
     {
     }
 

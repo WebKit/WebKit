@@ -1,5 +1,17 @@
 2012-08-31  Geoffrey Garen  <ggaren@apple.com>
 
+        Not reviewed.
+
+        Rolled out http://trac.webkit.org/changeset/127293 because it broke
+        inspector tests on Windows.
+
+            Shrink activation objects by half
+            https://bugs.webkit.org/show_bug.cgi?id=95591
+
+            Reviewed by Sam Weinig.
+
+2012-08-31  Geoffrey Garen  <ggaren@apple.com>
+
         Shrink activation objects by half
         https://bugs.webkit.org/show_bug.cgi?id=95591
 

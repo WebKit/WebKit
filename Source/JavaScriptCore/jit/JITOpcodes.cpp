@@ -1591,12 +1591,12 @@ void JIT::emit_op_resolve_global_dynamic(Instruction* currentInstruction)
         Jump activationNotCreated;
         if (checkTopLevel)
             activationNotCreated = branchTestPtr(Zero, addressFor(m_codeBlock->activationRegister()));
-        addSlowCase(checkStructure(regT0, m_codeBlock->globalObject()->activationStructure()));
+        addSlowCase(checkStructure(regT0, m_globalData->activationStructure.get()));
         loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);
         activationNotCreated.link(this);
     }
     while (skip--) {
-        addSlowCase(checkStructure(regT0, m_codeBlock->globalObject()->activationStructure()));
+        addSlowCase(checkStructure(regT0, m_globalData->activationStructure.get()));
         loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);
     }
     emit_op_resolve_global(currentInstruction, true);

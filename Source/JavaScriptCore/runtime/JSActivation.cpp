@@ -44,8 +44,10 @@ const ClassInfo JSActivation::s_info = { "JSActivation", &Base::s_info, 0, 0, CR
 JSActivation::JSActivation(CallFrame* callFrame, FunctionExecutable* functionExecutable)
     : Base(
         callFrame->globalData(),
-        callFrame->lexicalGlobalObject()->activationStructure(),
+        callFrame->globalData().activationStructure.get(),
         callFrame->registers(),
+        callFrame->lexicalGlobalObject(),
+        callFrame->globalThisValue(),
         callFrame->scope()
     )
     , m_registerArray(callFrame->globalData(), this, 0)
