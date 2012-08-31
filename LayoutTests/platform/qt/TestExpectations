@@ -54,9 +54,6 @@ BUGWK85203 : ietestcenter/css3/multicolumn/column-containing-block-003.htm = IMA
 BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
 BUGWK85212 : ietestcenter/css3/flexbox/flexbox-layout-002.htm = IMAGE
 
-// Generate results for your platform(s)
-BUGWK85567 : fast/images/png-suite/test.html = IMAGE
-
 // Interferes with the tests that should pass
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
 
@@ -71,43 +68,6 @@ BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 // CSS Variables are not yet enabled.
 BUGWK85580 SKIP : fast/css/variables = PASS
 BUGWK85580 SKIP : inspector/styles/variables = PASS
-
-// Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=6033
-BUGWK6033 : css3/filters/add-filter-rendering.html = PASS IMAGE
-BUGWK6033 : css3/filters/blur-filter-page-scroll-parents.html = PASS IMAGE
-BUGWK6033 : css3/filters/blur-filter-page-scroll.html = PASS IMAGE
-BUGWK6033 : css3/filters/crash-filter-change.html = PASS IMAGE
-BUGWK6033 : css3/filters/crash-hw-sw-switch.html = PASS IMAGE
-BUGWK6033 : css3/filters/custom/custom-filter-shader-cache.html = PASS IMAGE
-BUGWK6033 : css3/filters/custom/effect-color-check.html = PASS IMAGE
-BUGWK6033 : css3/filters/custom/effect-custom-combined-missing.html = PASS IMAGE
-BUGWK6033 : css3/filters/custom/effect-custom.html = PASS IMAGE
-BUGWK6033 : css3/filters/custom/effect-custom-parameters.html = PASS IMAGE
-BUGWK6033 : css3/filters/custom/filter-repaint-custom-clipped.html = PASS IMAGE
-BUGWK6033 : css3/filters/custom/filter-repaint-custom-rotated.html = PASS IMAGE
-BUGWK6033 : css3/filters/custom/filter-repaint-custom.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-blur.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-brightness-clamping.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-brightness.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-combined.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-contrast.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-drop-shadow.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-grayscale.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-hue-rotate.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-invert.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-opacity.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-reference-external.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-reference-hw.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-reference-ordering.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-reference.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-saturate.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-sepia.html = PASS IMAGE
-BUGWK6033 : css3/filters/filtered-inline.html = PASS IMAGE
-BUGWK6033 : css3/filters/multiple-filters-invalidation.html = PASS IMAGE
-BUGWK6033 : css3/filters/nested-filters.html = PASS IMAGE
-BUGWK6033 : css3/filters/regions-expanding.html = PASS IMAGE
-BUGWK6033 : css3/filters/simple-filter-rendering.html = PASS IMAGE
-BUGWK6033 : svg/filters/color-interpolation-filters.svg = PASS MISSING
 
 // UndoManager is not yet enabled.
 BUGWK87908 SKIP : editing/undomanager = PASS
@@ -168,11 +128,6 @@ BUGWK85811 DEBUG : fast/events/message-port-close.html = CRASH
 // Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80219
 BUGWK80219 : compositing/overflow/clip-descendents.html = TEXT
 
-// Require rebaseline after bug 93148
-BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html  = TEXT
-BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.html  = TEXT
-BUGWK93148 : fast/css/nested-layers-with-hover.html = TEXT
-
 BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
 
 BUGWK93654 DEBUG : fast/events/keyevent-iframe-removed-crash.html = CRASH
@@ -187,24 +142,3 @@ BUGWK94004 : css2.1/20110323/c541-word-sp-000.htm = IMAGE
 BUGWK94005 : css2.1/20110323/word-spacing-remove-space-003.htm = IMAGE
 BUGWK94005 : css2.1/20110323/word-spacing-remove-space-006.htm = IMAGE
 BUGWK94006 : fast/css/word-spacing-characters-complex-text.html = IMAGE
-
-// I couldn't get 'Tools/Scripts/webkit-patch rebaseline-expectations' to rebaseline these
-// on 2012-08-26 - webkit-patch just hangs indefinitely. Maybe someone else will have more luck on Monday.
-BUGWK84286 : css2.1/t0805-c5519-brdr-r-00-a.html = TEXT
-BUGWK84286 : css2.1/t0805-c5519-brdr-r-01-e.html = TEXT
-BUGWK84286 : css2.1/t0805-c5520-brdr-b-01-e.html = TEXT
-BUGWK84286 : css2.1/t0805-c5521-brdr-l-00-a.html = TEXT
-BUGWK84286 : css2.1/t0805-c5521-brdr-l-01-e.html = TEXT
-BUGWK84286 : css2.1/t0805-c5521-ibrdr-l-00-a.html = TEXT
-
-//Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=77754
-BUGWK77754 : fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks.html = TEXT
-BUGWK77754 : fast/inline/absolute-positioned-inline-in-centred-block.html = TEXT
-BUGWK77754 : fast/css/absolute-child-with-percent-height-inside-relative-parent.html = TEXT
-
-//Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80394
-BUGWK80394 : fast/block/margin-collapse/empty-clear-blocks.html = IMAGE+TEXT
-BUGWK80394 : fast/block/float/024.html = IMAGE+TEXT
-BUGWK80394 : fast/block/margin-collapse/025.html = TEXT
-BUGWK80394 : fast/block/margin-collapse/block-inside-inline/025.html = TEXT
-

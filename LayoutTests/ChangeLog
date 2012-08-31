@@ -1,3 +1,52 @@
+2012-08-31  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, unskip now passing tests, update expected files.
+
+        * platform/qt-5.0/css2.1/t0805-c5519-brdr-r-01-e-expected.png: Removed.
+        * platform/qt-5.0/css2.1/t0805-c5519-brdr-r-01-e-expected.txt: Removed.
+        * platform/qt-5.0/fast/inline/absolute-positioned-inline-in-centred-block-expected.png: Removed.
+        * platform/qt-5.0/fast/inline/absolute-positioned-inline-in-centred-block-expected.txt: Removed.
+        * platform/qt/Skipped:
+        * platform/qt/TestExpectations:
+        * platform/qt/css2.1/t0805-c5519-brdr-r-00-a-expected.txt:
+        * platform/qt/css2.1/t0805-c5519-brdr-r-01-e-expected.png:
+        * platform/qt/css2.1/t0805-c5519-brdr-r-01-e-expected.txt:
+        * platform/qt/css2.1/t0805-c5520-brdr-b-01-e-expected.txt:
+        * platform/qt/css2.1/t0805-c5521-brdr-l-00-a-expected.txt:
+        * platform/qt/css2.1/t0805-c5521-brdr-l-01-e-expected.txt:
+        * platform/qt/css2.1/t0805-c5521-ibrdr-l-00-a-expected.txt:
+        * platform/qt/css3/filters/blur-filter-page-scroll-expected.png: Added.
+        * platform/qt/css3/filters/blur-filter-page-scroll-expected.txt: Added.
+        * platform/qt/css3/filters/blur-filter-page-scroll-parents-expected.png: Added.
+        * platform/qt/css3/filters/blur-filter-page-scroll-parents-expected.txt: Added.
+        * platform/qt/css3/filters/effect-reference-expected.png: Added.
+        * platform/qt/css3/filters/effect-reference-expected.txt: Added.
+        * platform/qt/css3/filters/effect-reference-external-expected.png: Added.
+        * platform/qt/css3/filters/effect-reference-external-expected.txt: Added.
+        * platform/qt/css3/filters/effect-reference-hw-expected.txt: Added.
+        * platform/qt/css3/filters/effect-reference-ordering-expected.png: Added.
+        * platform/qt/css3/filters/effect-reference-ordering-expected.txt: Added.
+        * platform/qt/fast/block/float/024-expected.png:
+        * platform/qt/fast/block/float/024-expected.txt:
+        * platform/qt/fast/block/margin-collapse/025-expected.png:
+        * platform/qt/fast/block/margin-collapse/025-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/025-expected.png:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/025-expected.txt:
+        * platform/qt/fast/block/margin-collapse/empty-clear-blocks-expected.png:
+        * platform/qt/fast/block/margin-collapse/empty-clear-blocks-expected.txt:
+        * platform/qt/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.png:
+        * platform/qt/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.txt:
+        * platform/qt/fast/css/nested-layers-with-hover-expected.txt:
+        * platform/qt/fast/inline/absolute-positioned-inline-in-centred-block-expected.png:
+        * platform/qt/fast/inline/absolute-positioned-inline-in-centred-block-expected.txt:
+        * platform/qt/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.png:
+        * platform/qt/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt:
+        * platform/qt/svg/filters/color-interpolation-filters-expected.png: Added.
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.png: Added.
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.png: Added.
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.txt:
+
 2012-08-31  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions] Exclusions tests should run without errors in standalone browser

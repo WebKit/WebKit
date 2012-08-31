@@ -1318,6 +1318,17 @@ fast/preloader/document-write-2.html
 # http://trac.webkit.org/changeset/106305
 plugins/crash-restoring-plugin-page-from-page-cache.html
 
+# ERROR: TestRunner::overridePreference() does not support the 'WebKitCSSCustomFilterEnabled' preference
+css3/filters/custom/custom-filter-shader-cache.html
+css3/filters/custom/effect-color-check.html
+css3/filters/custom/effect-custom-combined-missing.html
+css3/filters/custom/effect-custom.html
+css3/filters/custom/effect-custom-parameters.html
+css3/filters/custom/filter-repaint-custom-clipped.html
+css3/filters/custom/filter-repaint-custom-rotated.html
+css3/filters/custom/filter-repaint-custom.html
+
+
 # ReferenceError: Can't find variable: MediaKeyError
 # http://trac.webkit.org/changeset/114067
 fast/events/constructors/media-key-event-constructor.html
