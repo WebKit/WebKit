@@ -407,7 +407,7 @@ void PluginView::webPageDestroyed()
 #if PLATFORM(MAC)    
 void PluginView::setWindowIsVisible(bool windowIsVisible)
 {
-    if (!m_plugin)
+    if (!m_isInitialized || !m_plugin)
         return;
 
     m_plugin->windowVisibilityChanged(windowIsVisible);

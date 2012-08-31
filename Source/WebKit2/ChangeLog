@@ -1,3 +1,19 @@
+2012-08-31  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (127047): Crash in PluginProxy::windowVisibilityChanged when changing tabs
+        <rdar://problem/12211180> and https://bugs.webkit.org/show_bug.cgi?id=95515
+
+        Reviewed by Dan Bernstein.
+
+        Plug-ins created in background tabs don't get initialized until they first become visible,
+        so telling them they are now invisible leads to messaging on behalf of an uninitialized plug-in.
+
+        Many other methods related to visibility and focus only call through if the plug-in is initialized,
+        so setWindowIsVisible should do the same.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::setWindowIsVisible): Only tell initialized plug-ins of window visibility changes.
+
 2012-08-31  Milian Wolff  <milian.wolff@kdab.com>
 
         [Qt] QNX does not support SOCK_SEQPACKET socket type for socketpair in ProcessLauncherQt
