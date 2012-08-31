@@ -104,7 +104,7 @@ private:
     virtual bool showDebugBorders(const WebCore::GraphicsLayer*) const { return false; }
     virtual bool showRepaintCounter(const WebCore::GraphicsLayer*) const { return false; }
     void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect&) { }
-    void callOnMainTread(const Function<void()>&);
+    void dispatchOnMainThread(const Function<void()>&);
     void adjustPositionForFixedLayers();
 
     typedef HashMap<WebLayerID, WebCore::GraphicsLayer*> LayerMap;

@@ -66,7 +66,7 @@ private:
     }
 };
 
-void LayerTreeRenderer::callOnMainTread(const Function<void()>& function)
+void LayerTreeRenderer::dispatchOnMainThread(const Function<void()>& function)
 {
     if (isMainThread())
         function();
@@ -397,7 +397,7 @@ void LayerTreeRenderer::flushLayerChanges()
     commitTileOperations();
 
     // The pending tiles state is on its way for the screen, tell the web process to render the next one.
-    callOnMainThread(bind(&LayerTreeRenderer::renderNextFrame, this));
+    dispatchOnMainThread(bind(&LayerTreeRenderer::renderNextFrame, this));
 }
 
 void LayerTreeRenderer::renderNextFrame()
@@ -458,7 +458,7 @@ void LayerTreeRenderer::purgeGLResources()
 
     setActive(false);
 
-    callOnMainThread(bind(&LayerTreeRenderer::purgeBackingStores, this));
+    dispatchOnMainThread(bind(&LayerTreeRenderer::purgeBackingStores, this));
 }
 
 void LayerTreeRenderer::setAnimatedOpacity(uint32_t id, float opacity)

@@ -1,3 +1,21 @@
+2012-08-31  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] LayerTreeRenderer::callOnMainTread method name is misleading
+        https://bugs.webkit.org/show_bug.cgi?id=95558
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix the typo in the function name so callers will really call this
+        and not WTF::callOnMainThread. Renamed to dispatchOnMainThread to
+        make it clear that these things are not the same.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::dispatchOnMainThread):
+        (WebKit::LayerTreeRenderer::flushLayerChanges):
+        (WebKit::LayerTreeRenderer::purgeGLResources):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (LayerTreeRenderer):
+
 2012-08-31  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (127047): Crash in PluginProxy::windowVisibilityChanged when changing tabs
