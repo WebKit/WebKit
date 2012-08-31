@@ -63,6 +63,7 @@ protected:
 
 private:
     // DateTimeFieldElement functions.
+    virtual void didBlur() OVERRIDE FINAL;
     virtual void handleKeyboardEvent(KeyboardEvent*) OVERRIDE FINAL;
     virtual void setEmptyValue(const DateComponents& dateForReadOnlyField, EventBehavior) OVERRIDE FINAL;
     virtual void stepDown() OVERRIDE FINAL;

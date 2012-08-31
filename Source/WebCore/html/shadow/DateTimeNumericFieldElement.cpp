@@ -72,6 +72,12 @@ DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document* document, Fie
 {
 }
 
+void DateTimeNumericFieldElement::didBlur()
+{
+    m_lastDigitCharTime = 0;
+    DateTimeFieldElement::didBlur();
+}
+
 void DateTimeNumericFieldElement::handleKeyboardEvent(KeyboardEvent* keyboardEvent)
 {
     if (isReadOnly())
