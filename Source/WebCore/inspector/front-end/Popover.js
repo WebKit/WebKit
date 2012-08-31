@@ -217,7 +217,7 @@ WebInspector.PopoverHelper.prototype = {
 
     _mouseDown: function(event)
     {
-        if (this._disableOnClick)
+        if (this._disableOnClick || !event.target.isSelfOrDescendant(this._hoverElement))
             this.hidePopover();
         else {
             this._killHidePopoverTimer();
