@@ -1,5 +1,15 @@
 2012-08-31  Jessie Berlin  <jberlin@apple.com>
 
+        fast/css/align-positioned-object-on-resize.html skipped on Mac platforms
+        https://bugs.webkit.org/show_bug.cgi?id=83489
+
+        This test was removed in r126911. Remove it from the Skipped list.
+
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
+2012-08-31  Jessie Berlin  <jberlin@apple.com>
+
         http/tests/cache/cancel-in-progress-load.html fails on several platforms
         https://bugs.webkit.org/show_bug.cgi?id=87728
 
