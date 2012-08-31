@@ -1,5 +1,17 @@
 2012-08-31  Gavin Peters  <gavinp@chromium.org>
 
+        [chromium] DEPS roll with a test skip.
+        https://bugs.webkit.org/show_bug.cgi?id=95601
+
+        Unreviewed gardening & DEPS roll.
+
+
+        fast/frames/cached-frame-counter.html was never the most stable test, and now it's failing on more platforms. Marking it flaky, along with a DEPS roll (earlier attempts at the DEPS roll failed on this)
+
+        * DEPS:
+
+2012-08-31  Gavin Peters  <gavinp@chromium.org>
+
         [chromium] Disable WebViewTest.AutoResizeMinimumSize
         https://bugs.webkit.org/show_bug.cgi?id=95571
 

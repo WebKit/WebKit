@@ -1802,8 +1802,8 @@ BUGCR32155 : fast/js/Object-getOwnPropertyNames.html = TEXT
 
 // Expectations from roll to 53171:53194
 // As of Oct 7, 2010, times out on all platforms when doing DEBUG costing 13 seconds on average. Skipping.
-BUGCR32308 SKIP DEBUG : fast/frames/cached-frame-counter.html = TIMEOUT
-BUGCR32308 WIN ANDROID RELEASE SLOW : fast/frames/cached-frame-counter.html = PASS
+// As of Aug 31, 2012, now times out in release. Marking flaky everywhere.
+BUGCR32308 : fast/frames/cached-frame-counter.html = TIMEOUT PASS
 
 BUGCR33293 SKIP : fast/media/lifetime.html = TIMEOUT
 
