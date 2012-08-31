@@ -166,7 +166,7 @@ WebCore::Node* QtDRTNodeRuntime::get(const QDRTNode& node)
     return node.m_node;
 }
 
-static QVariant convertJSValueToNodeVariant(JSC::JSObject* object, int *distance, HashSet<JSC::JSObject*>*)
+static QVariant convertJSValueToNodeVariant(JSC::JSObject* object, int *distance, HashSet<JSObjectRef>*)
 {
     if (!object || !object->inherits(&JSNode::s_info))
         return QVariant();
