@@ -1,3 +1,14 @@
+2012-08-31  Gavin Peters  <gavinp@chromium.org>
+
+        [chromium] Fix platform/chromium/TestExpectations typo
+        https://bugs.webkit.org/show_bug.cgi?id=95592
+
+        Unreviewed gardening.
+
+        Unfortunately r127174 contained a typo that broke webkit-lint on our build. See https://bugs.webkit.org/show_bug.cgi?id=95581 .
+
+        * platform/chromium/TestExpectations:
+
 2012-08-31  Jessie Berlin  <jberlin@apple.com>
 
         fast/css/align-positioned-object-on-resize.html skipped on Mac platforms
