@@ -1,3 +1,15 @@
+2012-08-30  Sam Weinig  <sam@webkit.org>
+
+        Allow dynamic mach-lookup extensions in the WebProcess
+        <rdar://problem/12207996>
+
+        Reviewed by Gavin Barraclough.
+
+        Like we allow file read/write dynamic sandbox extensions, we should allow
+        mach-lookup extensions.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2012-08-30  Geoffrey Garen  <ggaren@apple.com>
 
         Use one object instead of two for closures, eliminating ScopeChainNode

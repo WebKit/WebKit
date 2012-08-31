@@ -80,6 +80,9 @@
 ;; Read-write extensions from UIProcess
 (allow file-read* file-write* (extension))
 
+;; Mach lookup extensions from the UIProcess
+(allow mach-lookup (extension "com.apple.app-sandbox.mach"))
+
 ;; Writable preferences and temporary files
 (allow file*
        (home-subpath "/Library/Caches/com.apple.WebProcess")
