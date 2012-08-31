@@ -62,7 +62,8 @@
 extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t);
 #endif
 
-#if defined(SOCK_SEQPACKET) && !defined(Q_OS_MACX)
+// for QNX we need SOCK_DGRAM, see https://bugs.webkit.org/show_bug.cgi?id=95553
+#if defined(SOCK_SEQPACKET) && !defined(Q_OS_MACX) && !OS(QNX)
 #define SOCKET_TYPE SOCK_SEQPACKET
 #else
 #define SOCKET_TYPE SOCK_DGRAM

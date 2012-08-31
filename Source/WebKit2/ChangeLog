@@ -1,3 +1,16 @@
+2012-08-31  Milian Wolff  <milian.wolff@kdab.com>
+
+        [Qt] QNX does not support SOCK_SEQPACKET socket type for socketpair in ProcessLauncherQt
+        https://bugs.webkit.org/show_bug.cgi?id=95553
+
+        Reviewed by Simon Hausmann.
+
+        Calling socketpair with SOCK_SEQPACKET socket type fails on QNX with an error 241 (EPROTOTYPE),
+        as can be seen by the following debug output: "Creation of socket failed with errno: 241".
+        A test app shows that SOCK_DGRAM works properly on QNX, thus use it instead of SOCK_SEQPACKET.
+
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+
 2012-08-30  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         ~JSNPObject should call invalidate() if it hasn't been called already
