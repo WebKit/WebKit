@@ -1,0 +1,14 @@
+This test makes sure that a canvas with and without fallback content each has the right role and description.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL axContainer.childrenCount should be 2. Was 3.
+Canvas 1 description: Description: Canvas label
+Canvas 1 role: graphic
+Canvas 2 description: 
+Canvas 2 role: graphic
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

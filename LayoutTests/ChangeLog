@@ -1,3 +1,14 @@
+2012-08-31  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Adding expected failing results for accessibility/canvas tests.
+        https://bugs.webkit.org/show_bug.cgi?id=95598
+
+        Windows description and role strings don't match up with what is expected on Mac. 
+        Particularly, they do not include the "AX" at the beginning of the descriptions/roles of canvas fallback content.
+
+        * platform/win/accessibility/canvas-description-and-role-expected.txt: Added.
+        * platform/win/accessibility/canvas-fallback-content-expected.txt:
+
 2012-08-31  Gavin Peters  <gavinp@chromium.org>
 
         [chromium] DEPS roll with a test skip.
