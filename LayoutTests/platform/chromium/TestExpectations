@@ -3498,6 +3498,9 @@ BUGWK94492 WIN LINUX : css3/filters/custom/custom-filter-composite-source-atop.h
 // Flaky
 BUGWK95246 : http/tests/security/mixedContent/filesystem-url-in-iframe.html = PASS TEXT
 
+BUGWK95581 : http/tests/xmlhttprequest/zero-length-response.html = TIMEOUT PASS
+BUGWK95581 : http/tests/misc/javascript-url-stop-loaders.htm = TIMEOUT PASS
+
 BUGWK94261 DEBUG : http/tests/inspector/indexeddb/resources-panel.html = PASS CRASH TIMEOUT
 
 // ENABLE_OVERFLOW_SCROLLING is not currently enabled in Chromium.
