@@ -1,3 +1,15 @@
+2012-08-31  Philip Rogers  <pdr@google.com>
+
+        Unreviewed update of fast/js/function-apply-aliased.html expectations.
+
+        fast/js/function-apply-aliased.html has been failing for TEXT for some time but
+        the chromium-mac TestExpectations did not have an entry for mac. This patch
+        updates the expectations to include all platforms.
+
+        The bug (crbug.com/48239) has been updated to reflect this.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-31  Jessie Berlin  <jberlin@apple.com>
 
         LayoutTests/http/tests/websocket/tests/hixie76/frame-lengths.html was removed. Remove it from the Skipped list.

@@ -1981,7 +1981,7 @@ BUGCR47083 : fast/text/hyphenate-limit-lines.html = IMAGE IMAGE+TEXT
 BUGCR47083 : fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
 BUGCR48239 : fast/js/function-apply.html = TEXT
-BUGCR48239 LINUX ANDROID WIN : fast/js/function-apply-aliased.html = PASS TEXT
+BUGCR48239 : fast/js/function-apply-aliased.html = PASS TEXT
 BUGCR48239 : fast/js/function-apply-many-args.html = TIMEOUT TEXT
 
 BUGCR48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
