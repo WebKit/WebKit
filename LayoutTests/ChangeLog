@@ -1,3 +1,12 @@
+2012-08-31  Gavin Peters  <gavinp@chromium.org>
+
+        Unreviewed rebaseline after r127226
+
+        The windows results needed this rebaseline, apparently the original commit omitted these windows diffs per yosin@chromium.org.
+
+        * platform/chromium-win-xp/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png: Added.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png:
+
 2012-08-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] REGRESSION(r127091): It made layout tests extremely slow
