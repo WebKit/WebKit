@@ -1,3 +1,12 @@
+2012-08-31  Philip Rogers  <pdr@google.com>
+
+        Unreviewed update of fast/js/function-constructor-this-value.html expectations on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=95617
+
+        This test was added in r127323 but fails on Chromium ports.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-30  Dirk Schulze  <krit@webkit.org>
 
         Introduce new CSS property for clip-path
