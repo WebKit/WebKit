@@ -1,9 +1,9 @@
 <head>
 <script src="../../../fast/js/resources/js-test-pre.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
 }
 
 window.resizeTo(200,500);
@@ -42,8 +42,8 @@ function windowWasSet(msg)
 
 function finishTest()
 {
-    if (window.testRunner)
-        testRunner.notifyDone();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 
 </script>

@@ -1,3 +1,11 @@
+2012-08-31  Brady Eidson  <beidson@apple.com>
+
+        Rename testRunner to layoutTestController for a test on the branch.
+
+        Rubberstamped by Tim Hatcher.
+
+        * platform/mac-wk2/plugins/npp-setwindow-called-on-scroll.html:
+
 2012-08-31  Timothy Hatcher  <timothy@apple.com>
 
         Merge r127047.
