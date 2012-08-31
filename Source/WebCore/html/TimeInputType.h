@@ -68,11 +68,10 @@ private:
         virtual ~DateTimeEditControlOwnerImpl();
 
     private:
-        virtual void editControlMouseFocus() OVERRIDE FINAL;
+        virtual void didBlurFromControl() OVERRIDE FINAL;
+        virtual void didFocusOnControl() OVERRIDE FINAL;
         virtual void editControlValueChanged() OVERRIDE FINAL;
-        virtual void focusAndSelectEditControlOwner() OVERRIDE FINAL;
         virtual bool isEditControlOwnerDisabled() const OVERRIDE FINAL;
-        virtual bool isEditControlOwnerFocused() const OVERRIDE FINAL;
         virtual bool isEditControlOwnerReadOnly() const OVERRIDE FINAL;
 
         TimeInputType& m_timeInputType;
@@ -81,13 +80,15 @@ private:
     friend class DateTimeEditControlOwnerImpl;
 
     // InputType functions
+    virtual void blur() OVERRIDE FINAL;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE FINAL;
     virtual void createShadowSubtree() OVERRIDE FINAL;
     virtual void destroyShadowSubtree() OVERRIDE FINAL;
     virtual void disabledAttributeChanged() OVERRIDE FINAL;
+    virtual void focus(bool restorePreviousSelection) OVERRIDE FINAL;
     virtual void forwardEvent(Event*) OVERRIDE FINAL;
-    virtual void handleDOMActivateEvent(Event*) OVERRIDE FINAL;
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE FINAL;
+    virtual bool hasCustomFocusLogic() const OVERRIDE FINAL;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE FINAL;
     virtual bool isMouseFocusable() const OVERRIDE FINAL;
     virtual bool isTextField() const OVERRIDE FINAL;

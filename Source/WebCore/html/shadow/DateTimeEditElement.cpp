@@ -195,7 +195,6 @@ DateTimeEditElement::DateTimeEditElement(Document* document, EditControlOwner& e
     : HTMLDivElement(divTag, document)
     , m_editControlOwner(&editControlOwner)
     , m_spinButton(0)
-    , m_focusFieldIndex(invalidFieldIndex)
 {
     DEFINE_STATIC_LOCAL(AtomicString, dateTimeEditPseudoId, ("-webkit-datetime-edit"));
     setShadowPseudoId(dateTimeEditPseudoId);
@@ -218,10 +217,28 @@ void DateTimeEditElement::addField(PassRefPtr<DateTimeFieldElement> field)
     appendChild(field);
 }
 
+void DateTimeEditElement::blurByOwner()
+{
+    if (DateTimeFieldElement* field = focusedField())
+        field->blur();
+}
+
 PassRefPtr<DateTimeEditElement> DateTimeEditElement::create(Document* document, EditControlOwner& editControlOwner)
 {
     RefPtr<DateTimeEditElement> container = adoptRef(new DateTimeEditElement(document, editControlOwner));
     return container.release();
+}
+
+void DateTimeEditElement::didBlurFromField()
+{
+    if (m_editControlOwner)
+        m_editControlOwner->didBlurFromControl();
+}
+
+void DateTimeEditElement::didFocusOnField()
+{
+    if (m_editControlOwner)
+        m_editControlOwner->didFocusOnControl();
 }
 
 void DateTimeEditElement::disabledStateChanged()
@@ -234,73 +251,42 @@ DateTimeFieldElement* DateTimeEditElement::fieldAt(size_t fieldIndex) const
     return fieldIndex < m_fields.size() ? m_fields[fieldIndex] : 0;
 }
 
+size_t DateTimeEditElement::fieldIndexOf(const DateTimeFieldElement& field) const
+{
+    for (size_t fieldIndex = 0; fieldIndex < m_fields.size(); ++fieldIndex) {
+        if (m_fields[fieldIndex] == &field)
+            return fieldIndex;
+    }
+    return invalidFieldIndex;
+}
+
 void DateTimeEditElement::focusAndSelectSpinButtonOwner()
 {
-    if (!m_editControlOwner)
+    if (focusedFieldIndex() != invalidFieldIndex)
         return;
-    m_editControlOwner->focusAndSelectEditControlOwner();
+
+    if (DateTimeFieldElement* field = fieldAt(0))
+        field->focus();
 }
 
-void DateTimeEditElement::focusFieldAt(size_t newFocusFieldIndex)
+void DateTimeEditElement::focusByOwner()
 {
-    if (m_focusFieldIndex == newFocusFieldIndex)
-        return;
-
-    DateTimeFieldElement* const newFocusField = fieldAt(newFocusFieldIndex);
-    if (newFocusField && newFocusField->isReadOnly())
-        return;
-
-    DateTimeFieldElement* const currentFocusField = fieldAt(m_focusFieldIndex);
-
-    if (currentFocusField)
-        currentFocusField->setFocus(false);
-
-    if (!newFocusField) {
-        m_focusFieldIndex = invalidFieldIndex;
-        return;
-    }
-
-    m_focusFieldIndex = newFocusFieldIndex;
-    newFocusField->setFocus(true);
+    if (DateTimeFieldElement* field = fieldAt(0))
+        field->focus();
 }
 
-void DateTimeEditElement::handleKeyboardEvent(KeyboardEvent* keyboardEvent)
+DateTimeFieldElement* DateTimeEditElement::focusedField() const
 {
-    if (isDisabled() || isReadOnly())
-        return;
+    return fieldAt(focusedFieldIndex());
+}
 
-    if (!fieldAt(m_focusFieldIndex))
-        return;
-
-    if (keyboardEvent->type() != eventNames().keydownEvent)
-        return;
-
-    const String& keyIdentifier = keyboardEvent->keyIdentifier();
-
-    if (keyIdentifier == "Left") {
-        keyboardEvent->setDefaultHandled();
-        const size_t fieldIndex = previousFieldIndex();
-        if (fieldAt(fieldIndex))
-            focusFieldAt(fieldIndex);
-        return;
+size_t DateTimeEditElement::focusedFieldIndex() const
+{
+    for (size_t fieldIndex = 0; fieldIndex < m_fields.size(); ++fieldIndex) {
+        if (m_fields[fieldIndex]->focused())
+            return fieldIndex;
     }
-
-    if (keyIdentifier == "Right") {
-        keyboardEvent->setDefaultHandled();
-        const size_t fieldIndex = nextFieldIndex();
-        if (fieldAt(fieldIndex))
-            focusFieldAt(fieldIndex);
-        return;
-    }
-
-    if (keyIdentifier == "U+0009") {
-        const size_t fieldIndex = keyboardEvent->getModifierState("Shift") ? previousFieldIndex() : nextFieldIndex();
-        if (fieldAt(fieldIndex)) {
-            keyboardEvent->setDefaultHandled();
-            focusFieldAt(fieldIndex);
-            return;
-        }
-    }
+    return invalidFieldIndex;
 }
 
 void DateTimeEditElement::fieldValueChanged()
@@ -309,30 +295,34 @@ void DateTimeEditElement::fieldValueChanged()
         m_editControlOwner->editControlValueChanged();
 }
 
-void DateTimeEditElement::focusOnNextField()
+bool DateTimeEditElement::focusOnNextField(const DateTimeFieldElement& field)
 {
-    if (m_focusFieldIndex != invalidFieldIndex)
-        focusFieldAt(nextFieldIndex());
-}
-
-void DateTimeEditElement::handleMouseEvent(MouseEvent* mouseEvent)
-{
-    if (isDisabled() || isReadOnly())
-        return;
-
-    if (mouseEvent->type() != eventNames().mousedownEvent || mouseEvent->button() != LeftButton)
-        return;
-
-    Node* const relatedTarget = mouseEvent->target()->toNode();
-    for (size_t fieldIndex = 0; fieldIndex < m_fields.size(); ++fieldIndex) {
-        if (m_fields[fieldIndex] == relatedTarget) {
-            mouseEvent->setDefaultHandled();
-            focusFieldAt(fieldIndex);
-            if (m_editControlOwner)
-                m_editControlOwner->editControlMouseFocus();
-            break;
+    const size_t startFieldIndex = fieldIndexOf(field);
+    if (startFieldIndex == invalidFieldIndex)
+        return false;
+    for (size_t fieldIndex = startFieldIndex + 1; fieldIndex < m_fields.size(); ++fieldIndex) {
+        if (!m_fields[fieldIndex]->isReadOnly()) {
+            m_fields[fieldIndex]->focus();
+            return true;
         }
     }
+    return false;
+}
+
+bool DateTimeEditElement::focusOnPreviousField(const DateTimeFieldElement& field)
+{
+    const size_t startFieldIndex = fieldIndexOf(field);
+    if (startFieldIndex == invalidFieldIndex)
+        return false;
+    size_t fieldIndex = startFieldIndex;
+    while (fieldIndex > 0) {
+        --fieldIndex;
+        if (!m_fields[fieldIndex]->isReadOnly()) {
+            m_fields[fieldIndex]->focus();
+            return true;
+        }
+    }
+    return false;
 }
 
 bool DateTimeEditElement::isDisabled() const
@@ -347,10 +337,9 @@ bool DateTimeEditElement::isReadOnly() const
 
 void DateTimeEditElement::layout(const StepRange& stepRange, const DateComponents& dateValue)
 {
-    size_t focusFieldIndex = m_focusFieldIndex;
-    DateTimeFieldElement* const focusField = fieldAt(m_focusFieldIndex);
-    const AtomicString focusFieldId = focusField ? focusField->shadowPseudoId() : nullAtom;
-    focusFieldAt(invalidFieldIndex);
+    size_t focusedFieldIndex = this->focusedFieldIndex();
+    DateTimeFieldElement* const focusedField = fieldAt(focusedFieldIndex);
+    const AtomicString focusedFieldId = focusedField ? focusedField->shadowPseudoId() : nullAtom;
 
     DateTimeEditBuilder builder(*this, stepRange, dateValue);
     const String dateTimeFormat = builder.needSecondField() ? localizedTimeFormatText() : localizedShortTimeFormatText();
@@ -361,37 +350,16 @@ void DateTimeEditElement::layout(const StepRange& stepRange, const DateComponent
     m_spinButton = spinButton.get();
     appendChild(spinButton);
 
-    if (focusFieldIndex != invalidFieldIndex) {
+    if (focusedFieldIndex != invalidFieldIndex) {
         for (size_t fieldIndex = 0; fieldIndex < m_fields.size(); ++fieldIndex) {
-            if (m_fields[fieldIndex]->shadowPseudoId() == focusFieldId) {
-                focusFieldIndex = fieldIndex;
+            if (m_fields[fieldIndex]->shadowPseudoId() == focusedFieldId) {
+                focusedFieldIndex = fieldIndex;
                 break;
             }
         }
-        focusFieldAt(std::min(focusFieldIndex, m_fields.size() - 1));
+        if (DateTimeFieldElement* field = fieldAt(std::min(focusedFieldIndex, m_fields.size() - 1)))
+            field->focus();
     }
-}
-
-size_t DateTimeEditElement::nextFieldIndex() const
-{
-    ASSERT(m_focusFieldIndex != invalidFieldIndex);
-    for (size_t fieldIndex = m_focusFieldIndex + 1; fieldIndex < m_fields.size(); ++fieldIndex) {
-        if (!m_fields[fieldIndex]->isReadOnly())
-            return fieldIndex;
-    }
-    return m_fields.size();
-}
-
-size_t DateTimeEditElement::previousFieldIndex() const
-{
-    ASSERT(m_focusFieldIndex != invalidFieldIndex);
-    size_t fieldIndex = m_focusFieldIndex;
-    while (fieldIndex > 0) {
-        --fieldIndex;
-        if (!m_fields[fieldIndex]->isReadOnly())
-            return fieldIndex;
-    }
-    return invalidFieldIndex;
 }
 
 void DateTimeEditElement::readOnlyStateChanged()
@@ -403,34 +371,18 @@ void DateTimeEditElement::resetLayout()
 {
     m_fields.shrink(0);
     m_spinButton = 0;
-    m_focusFieldIndex = invalidFieldIndex;
     removeChildren();
 }
 
 void DateTimeEditElement::defaultEventHandler(Event* event)
 {
-    if (event->type() == eventNames().focusEvent) {
-        if (!isDisabled() && !isReadOnly() && m_focusFieldIndex == invalidFieldIndex)
-            focusFieldAt(0);
-        return;
+    // In case of control owner forward event to control, e.g. DOM
+    // dispatchEvent method.
+    if (DateTimeFieldElement* field = focusedField()) {
+        field->defaultEventHandler(event);
+        if (event->defaultHandled())
+            return;
     }
-
-    if (event->type() == eventNames().blurEvent) {
-        focusFieldAt(invalidFieldIndex);
-        return;
-    }
-
-    if (event->isMouseEvent()) {
-        handleMouseEvent(static_cast<MouseEvent*>(event));
-    } else if (event->isKeyboardEvent())
-        handleKeyboardEvent(static_cast<KeyboardEvent*>(event));
-
-    if (event->defaultHandled())
-        return;
-
-    DateTimeFieldElement* const focusField = fieldAt(m_focusFieldIndex);
-    if (!focusField)
-        return;
 
     if (m_spinButton) {
         m_spinButton->forwardEvent(event);
@@ -438,7 +390,7 @@ void DateTimeEditElement::defaultEventHandler(Event* event)
             return;
     }
 
-    focusField->defaultEventHandler(event);
+    HTMLDivElement::defaultEventHandler(event);
 }
 
 void DateTimeEditElement::setValueAsDate(const StepRange& stepRange, const DateComponents& date)
@@ -465,26 +417,27 @@ bool DateTimeEditElement::shouldSpinButtonRespondToWheelEvents()
     if (!shouldSpinButtonRespondToMouseEvents())
         return false;
 
-    return !m_editControlOwner || m_editControlOwner->isEditControlOwnerFocused();
+    return focusedFieldIndex() != invalidFieldIndex;
 }
 
 void DateTimeEditElement::spinButtonStepDown()
 {
-    if (DateTimeFieldElement* const focusField = fieldAt(m_focusFieldIndex))
-        focusField->stepDown();
+    if (DateTimeFieldElement* const field = focusedField())
+        field->stepDown();
 }
 
 void DateTimeEditElement::spinButtonStepUp()
 {
-    if (DateTimeFieldElement* const focusField = fieldAt(m_focusFieldIndex))
-        focusField->stepUp();
+    if (DateTimeFieldElement* const field = focusedField())
+        field->stepUp();
 }
 
 void DateTimeEditElement::updateUIState()
 {
     if (isDisabled() || isReadOnly()) {
         m_spinButton->releaseCapture();
-        focusFieldAt(invalidFieldIndex);
+        if (DateTimeFieldElement* field = focusedField())
+            field->blur();
     }
 }
 

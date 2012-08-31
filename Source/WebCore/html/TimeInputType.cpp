@@ -124,9 +124,22 @@ TimeInputType::DateTimeEditControlOwnerImpl::~DateTimeEditControlOwnerImpl()
 {
 }
 
-void TimeInputType::DateTimeEditControlOwnerImpl::editControlMouseFocus()
+void TimeInputType::DateTimeEditControlOwnerImpl::didBlurFromControl()
 {
-    m_timeInputType.element()->focus();
+    // We don't need to call blur(). This function is called when control
+    // lost focus.
+
+    // Remove focus ring by CSS "focus" pseudo class.
+    m_timeInputType.element()->setFocus(false);
+}
+
+void TimeInputType::DateTimeEditControlOwnerImpl::didFocusOnControl()
+{
+    // We don't need to call focus(). This function is called when control
+    // got focus.
+
+    // Add focus ring by CSS "focus" pseudo class.
+    m_timeInputType.element()->setFocus(true);
 }
 
 void TimeInputType::DateTimeEditControlOwnerImpl::editControlValueChanged()
@@ -138,21 +151,14 @@ void TimeInputType::DateTimeEditControlOwnerImpl::editControlValueChanged()
     input->dispatchFormControlChangeEvent();
 }
 
-void TimeInputType::DateTimeEditControlOwnerImpl::focusAndSelectEditControlOwner()
+bool TimeInputType::hasCustomFocusLogic() const
 {
-    RefPtr<HTMLInputElement> input(m_timeInputType.element());
-    input->focus();
-    input->select();
+    return false;
 }
 
 bool TimeInputType::DateTimeEditControlOwnerImpl::isEditControlOwnerDisabled() const
 {
     return m_timeInputType.element()->readOnly();
-}
-
-bool TimeInputType::DateTimeEditControlOwnerImpl::isEditControlOwnerFocused() const
-{
-    return m_timeInputType.element()->focused();
 }
 
 bool TimeInputType::DateTimeEditControlOwnerImpl::isEditControlOwnerReadOnly() const
@@ -171,6 +177,12 @@ TimeInputType::~TimeInputType()
 {
     if (m_dateTimeEditElement)
         m_dateTimeEditElement->removeEditControlOwner();
+}
+
+void TimeInputType::blur()
+{
+    if (m_dateTimeEditElement)
+        m_dateTimeEditElement->blurByOwner();
 }
 
 RenderObject* TimeInputType::createRenderer(RenderArena* arena, RenderStyle* style) const
@@ -197,6 +209,12 @@ void TimeInputType::destroyShadowSubtree()
     BaseDateAndTimeInputType::destroyShadowSubtree();
 }
 
+void TimeInputType::focus(bool)
+{
+    if (m_dateTimeEditElement)
+        m_dateTimeEditElement->focusByOwner();
+}
+
 void TimeInputType::forwardEvent(Event* event)
 {
     if (m_dateTimeEditElement)
@@ -214,25 +232,14 @@ void TimeInputType::handleKeydownEvent(KeyboardEvent* event)
     forwardEvent(event);
 }
 
-void TimeInputType::handleDOMActivateEvent(Event* event)
-{
-    if (element()->disabled() || element()->readOnly() || !element()->renderer())
-        return;
-
-    if (m_dateTimeEditElement)
-        m_dateTimeEditElement->focus();
-
-    event->setDefaultHandled();
-}
-
 bool TimeInputType::isKeyboardFocusable(KeyboardEvent*) const
 {
-    return element()->isTextFormControlFocusable();
+    return false;
 }
 
 bool TimeInputType::isMouseFocusable() const
 {
-    return element()->isTextFormControlFocusable();
+    return false;
 }
 
 void TimeInputType::minOrMaxAttributeChanged()

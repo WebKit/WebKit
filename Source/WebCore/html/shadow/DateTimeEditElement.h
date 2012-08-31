@@ -51,11 +51,10 @@ public:
     class EditControlOwner {
     public:
         virtual ~EditControlOwner();
-        virtual void focusAndSelectEditControlOwner() = 0;
-        virtual void editControlMouseFocus() = 0;
+        virtual void didBlurFromControl() = 0;
+        virtual void didFocusOnControl() = 0;
         virtual void editControlValueChanged() = 0;
         virtual bool isEditControlOwnerDisabled() const = 0;
-        virtual bool isEditControlOwnerFocused() const = 0;
         virtual bool isEditControlOwnerReadOnly() const = 0;
     };
 
@@ -63,8 +62,10 @@ public:
 
     virtual ~DateTimeEditElement();
     void addField(PassRefPtr<DateTimeFieldElement>);
+    void blurByOwner();
     virtual void defaultEventHandler(Event*) OVERRIDE;
     void disabledStateChanged();
+    void focusByOwner();
     void readOnlyStateChanged();
     void removeEditControlOwner() { m_editControlOwner = 0; }
     void resetLayout();
@@ -89,19 +90,20 @@ private:
     DateTimeEditElement(Document*, EditControlOwner&);
 
     DateTimeFieldElement* fieldAt(size_t) const;
-    void focusFieldAt(size_t);
-    void handleKeyboardEvent(KeyboardEvent*);
-    void handleMouseEvent(MouseEvent*);
+    size_t fieldIndexOf(const DateTimeFieldElement&) const;
+    DateTimeFieldElement* focusedField() const;
+    size_t focusedFieldIndex() const;
     bool isDisabled() const;
     bool isReadOnly() const;
     void layout(const StepRange&, const DateComponents&);
-    size_t nextFieldIndex() const;
-    size_t previousFieldIndex() const;
     void updateUIState();
 
     // DateTimeFieldElement::FieldOwner functions.
+    virtual void didBlurFromField() OVERRIDE FINAL;
+    virtual void didFocusOnField() OVERRIDE FINAL;
     virtual void fieldValueChanged() OVERRIDE FINAL;
-    virtual void focusOnNextField() OVERRIDE FINAL;
+    virtual bool focusOnNextField(const DateTimeFieldElement&) OVERRIDE FINAL;
+    virtual bool focusOnPreviousField(const DateTimeFieldElement&) OVERRIDE FINAL;
 
     // SpinButtonElement::SpinButtonOwner functions.
     virtual void focusAndSelectSpinButtonOwner() OVERRIDE FINAL;
@@ -113,7 +115,6 @@ private:
     Vector<DateTimeFieldElement*, maximumNumberOfFields> m_fields;
     EditControlOwner* m_editControlOwner;
     SpinButtonElement* m_spinButton;
-    size_t m_focusFieldIndex;
 };
 
 } // namespace WebCore

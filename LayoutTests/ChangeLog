@@ -1,3 +1,17 @@
+2012-08-30  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Shift+Tab should focus the last field of multiple fields time input UI
+        https://bugs.webkit.org/show_bug.cgi?id=95168
+
+        Reviewed by Kent Tamura.
+
+        This patch adds focus and blur event handling test and a new test case
+        for Shift+Tab for multiple fields time input UI.
+
+        * time-multiple-fields-blur-and-focus-events-expected.txt: Added.
+        * time-multiple-fields-blur-and-focus-events.html: Added for blur and focus events handling.
+        * fast/forms/time-multiple-fields/time-multiple-fields-keyboard-events.html: Changed to add a test cases for Shift+Tab.
+
 2012-08-30  Filip Pizlo  <fpizlo@apple.com>
 
         ASSERTION FAILURE in JSC::JSGlobalData::float32ArrayDescriptor when running fast/js/dfg-float64array.html

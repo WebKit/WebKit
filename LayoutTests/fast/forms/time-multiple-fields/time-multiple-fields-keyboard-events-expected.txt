@@ -11,7 +11,7 @@ Left/Right - Move focus field inside element
 Up/Down - Increment/decrement value of focus field
 Tab - Move focus field
 Backspace - Make value empty
- 
+  
 == Digit keys ==
 PASS input.value is "07:56"
 == Left/Right keys ==
@@ -26,6 +26,10 @@ PASS input.value is "14:58"
 PASS input.value is "03:05"
 PASS input.value is "07:05"
 PASS document.activeElement.id is "another"
+== Shfit+Tab key ==
+PASS input.value is "15:00"
+PASS input.value is "15:03"
+PASS document.activeElement.id is "before"
 == Backspace key ==
 PASS input.value is ""
 == Delete key ==

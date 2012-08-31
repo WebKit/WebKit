@@ -16,6 +16,7 @@ Test following keys:
     <li>Tab - Move focus field</li>
     <li>Backspace - Make value empty</li>
 </ul>
+<input id="before">
 <input id="input" type="time">
 <input id="another">
 <div id="console"></div>
@@ -96,6 +97,18 @@ shouldBeEqualToString('input.value', '07:05');
 keyDown('\t');
 keyDown('\t');
 shouldBeEqualToString('document.activeElement.id', 'another');
+
+beginTest('Shfit+Tab key', '03:00');
+another.focus();
+keyDown('\t', ['shiftKey']);
+keyDown('P');
+shouldBeEqualToString('input.value', '15:00');
+keyDown('\t', ['shiftKey']);
+keyDown('3');
+shouldBeEqualToString('input.value', '15:03');
+keyDown('\t', ['shiftKey']);
+keyDown('\t', ['shiftKey']);
+shouldBeEqualToString('document.activeElement.id', 'before');
 
 beginTest('Backspace key', '12:34');
 keyDown("\b");

@@ -49,8 +49,11 @@ public:
     class FieldOwner {
     public:
         virtual ~FieldOwner();
+        virtual void didBlurFromField() = 0;
+        virtual void didFocusOnField() = 0;
         virtual void fieldValueChanged() = 0;
-        virtual void focusOnNextField() = 0;
+        virtual bool focusOnNextField(const DateTimeFieldElement&) = 0;
+        virtual bool focusOnPreviousField(const DateTimeFieldElement&) = 0;
     };
 
     virtual void defaultEventHandler(Event*) OVERRIDE;
@@ -70,6 +73,8 @@ public:
 
 protected:
     DateTimeFieldElement(Document*, FieldOwner&);
+    virtual void didBlur();
+    virtual void didFocus();
     void focusOnNextField();
     virtual void handleKeyboardEvent(KeyboardEvent*) = 0;
     void initialize(const AtomicString&);
@@ -78,6 +83,8 @@ protected:
 
 private:
     void defaultKeyboardEventHandler(KeyboardEvent*);
+    virtual bool isFocusable() const OVERRIDE FINAL;
+    virtual bool supportsFocus() const OVERRIDE FINAL;
 
     FieldOwner* m_fieldOwner;
 };
