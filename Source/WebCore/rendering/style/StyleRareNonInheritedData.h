@@ -138,7 +138,9 @@ public:
     RefPtr<BasicShape> m_wrapShapeOutside;
     Length m_wrapMargin;
     Length m_wrapPadding;
-    
+
+    RefPtr<BasicShape> m_clipPath;
+
     Color m_visitedLinkBackgroundColor;
     Color m_visitedLinkOutlineColor;
     Color m_visitedLinkBorderLeftColor;

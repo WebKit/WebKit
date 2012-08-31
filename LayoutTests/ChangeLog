@@ -1,3 +1,15 @@
+2012-08-30  Dirk Schulze  <krit@webkit.org>
+
+        Introduce new CSS property for clip-path
+        https://bugs.webkit.org/show_bug.cgi?id=95474
+
+        Reviewed by Tim Horton.
+
+        Test parsing behavior of basic shapes on new introduced '-webkit-clip-path' CSS property.
+
+        * fast/masking/parsing-clip-path-shape-expected.txt: Added.
+        * fast/masking/parsing-clip-path-shape.html: Added.
+
 2012-08-31  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.

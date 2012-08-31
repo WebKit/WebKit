@@ -681,6 +681,10 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         if (rareNonInheritedData->m_wrapShapeOutside != other->rareNonInheritedData->m_wrapShapeOutside)
             return StyleDifferenceRepaint;
 
+        if (rareNonInheritedData->m_clipPath != other->rareNonInheritedData->m_clipPath)
+            return StyleDifferenceRepaint;
+
+
 #if USE(ACCELERATED_COMPOSITING)
     if (rareNonInheritedData.get() != other->rareNonInheritedData.get()) {
         if (rareNonInheritedData->m_transformStyle3D != other->rareNonInheritedData->m_transformStyle3D

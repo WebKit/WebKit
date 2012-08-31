@@ -2743,6 +2743,12 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         else
             return parseFontVariantLigatures(important);
         break;
+    case CSSPropertyWebkitClipPath:
+        if (id == CSSValueNone)
+            validPrimitive = true;
+        else if (value->unit == CSSParserValue::Function)
+            return parseBasicShape(propId, important);
+        break;
 #if ENABLE(CSS_EXCLUSIONS)
     case CSSPropertyWebkitShapeInside:
     case CSSPropertyWebkitShapeOutside:
@@ -2751,7 +2757,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         if (id == CSSValueAuto)
             validPrimitive = true;
         else if (value->unit == CSSParserValue::Function)
-            return parseBasicShape((propId == CSSPropertyWebkitShapeInside), important);
+            return parseBasicShape(propId, important);
         break;
     case CSSPropertyWebkitWrapMargin:
     case CSSPropertyWebkitWrapPadding:
@@ -4535,8 +4541,6 @@ bool CSSParser::parseClipShape(CSSPropertyID propId, bool important)
     return false;
 }
 
-#if ENABLE(CSS_EXCLUSIONS)
-
 PassRefPtr<CSSBasicShape> CSSParser::parseBasicShapeRectangle(CSSParserValueList* args)
 {
     ASSERT(args);
@@ -4747,16 +4751,16 @@ PassRefPtr<CSSBasicShape> CSSParser::parseBasicShapePolygon(CSSParserValueList* 
     return shape;
 }
 
-bool CSSParser::parseBasicShape(bool shapeInside, bool important)
+bool CSSParser::parseBasicShape(CSSPropertyID propId, bool important)
 {
     CSSParserValue* value = m_valueList->current();
+    ASSERT(value->unit == CSSParserValue::Function);
     CSSParserValueList* args = value->function->args.get();
 
     if (!args)
         return false;
 
     RefPtr<CSSBasicShape> shape;
-
     if (equalIgnoringCase(value->function->name, "rectangle("))
         shape = parseBasicShapeRectangle(args);
     else if (equalIgnoringCase(value->function->name, "circle("))
@@ -4766,16 +4770,13 @@ bool CSSParser::parseBasicShape(bool shapeInside, bool important)
     else if (equalIgnoringCase(value->function->name, "polygon("))
         shape = parseBasicShapePolygon(args);
 
-    if (shape) {
-        addProperty(shapeInside ? CSSPropertyWebkitShapeInside : CSSPropertyWebkitShapeOutside, cssValuePool().createValue(shape.release()), important);
-        m_valueList->next();
-        return true;
-    }
+    if (!shape)
+        return false;
 
-    return false;
+    addProperty(propId, cssValuePool().createValue(shape.release()), important);
+    m_valueList->next();
+    return true;
 }
-
-#endif
 
 // [ 'font-style' || 'font-variant' || 'font-weight' ]? 'font-size' [ / 'line-height' ]? 'font-family'
 bool CSSParser::parseFont(bool important)

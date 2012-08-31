@@ -150,7 +150,7 @@ public:
 
     bool parseClipShape(CSSPropertyID, bool important);
 
-    bool parseBasicShape(bool shapeInside, bool important);
+    bool parseBasicShape(CSSPropertyID, bool important);
     PassRefPtr<CSSBasicShape> parseBasicShapeRectangle(CSSParserValueList* args);
     PassRefPtr<CSSBasicShape> parseBasicShapeCircle(CSSParserValueList* args);
     PassRefPtr<CSSBasicShape> parseBasicShapeEllipse(CSSParserValueList* args);

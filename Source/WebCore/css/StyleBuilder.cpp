@@ -1704,6 +1704,29 @@ public:
     }
 };
 
+template <BasicShape* (RenderStyle::*getterFunction)() const, void (RenderStyle::*setterFunction)(PassRefPtr<BasicShape>), BasicShape* (*initialFunction)()>
+class ApplyPropertyClipPath {
+public:
+    static void setValue(RenderStyle* style, PassRefPtr<BasicShape> value) { (style->*setterFunction)(value); }
+    static void applyValue(StyleResolver* styleResolver, CSSValue* value)
+    {
+        if (value->isPrimitiveValue()) {
+            CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+            if (primitiveValue->getIdent() == CSSValueNone)
+                setValue(styleResolver->style(), 0);
+            else if (primitiveValue->isShape()) {
+                RefPtr<BasicShape> clipPathShape = basicShapeForValue(styleResolver, primitiveValue->getShapeValue());
+                setValue(styleResolver->style(), clipPathShape.release());
+            }
+        }
+    }
+    static PropertyHandler createHandler()
+    {
+        PropertyHandler handler = ApplyPropertyDefaultBase<BasicShape*, getterFunction, PassRefPtr<BasicShape>, setterFunction, BasicShape*, initialFunction>::createHandler();
+        return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
+    }
+};
+
 #if ENABLE(CSS_EXCLUSIONS)
 template <BasicShape* (RenderStyle::*getterFunction)() const, void (RenderStyle::*setterFunction)(PassRefPtr<BasicShape>), BasicShape* (*initialFunction)()>
 class ApplyPropertyWrapShape {
@@ -2048,6 +2071,8 @@ StyleBuilder::StyleBuilder()
     setPropertyHandler(CSSPropertyWebkitUserDrag, ApplyPropertyDefault<EUserDrag, &RenderStyle::userDrag, EUserDrag, &RenderStyle::setUserDrag, EUserDrag, &RenderStyle::initialUserDrag>::createHandler());
     setPropertyHandler(CSSPropertyWebkitUserModify, ApplyPropertyDefault<EUserModify, &RenderStyle::userModify, EUserModify, &RenderStyle::setUserModify, EUserModify, &RenderStyle::initialUserModify>::createHandler());
     setPropertyHandler(CSSPropertyWebkitUserSelect, ApplyPropertyDefault<EUserSelect, &RenderStyle::userSelect, EUserSelect, &RenderStyle::setUserSelect, EUserSelect, &RenderStyle::initialUserSelect>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitClipPath, ApplyPropertyClipPath<&RenderStyle::clipPath, &RenderStyle::setClipPath, &RenderStyle::initialClipPath>::createHandler());
+
 #if ENABLE(CSS_EXCLUSIONS)
     setPropertyHandler(CSSPropertyWebkitWrap, ApplyPropertyExpanding<SuppressValue, CSSPropertyWebkitWrapFlow, CSSPropertyWebkitWrapMargin, CSSPropertyWebkitWrapPadding>::createHandler());
     setPropertyHandler(CSSPropertyWebkitWrapFlow, ApplyPropertyDefault<WrapFlow, &RenderStyle::wrapFlow, WrapFlow, &RenderStyle::setWrapFlow, WrapFlow, &RenderStyle::initialWrapFlow>::createHandler());

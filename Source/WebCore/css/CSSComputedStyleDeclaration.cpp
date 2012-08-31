@@ -25,7 +25,10 @@
 #include "CSSComputedStyleDeclaration.h"
 
 #include "AnimationController.h"
+#include "BasicShapeFunctions.h"
+#include "BasicShapes.h"
 #include "CSSAspectRatioValue.h"
+#include "CSSBasicShapes.h"
 #include "CSSBorderImage.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSParser.h"
@@ -59,12 +62,6 @@
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/text/StringBuilder.h>
-
-#if ENABLE(CSS_EXCLUSIONS)
-#include "BasicShapeFunctions.h"
-#include "BasicShapes.h"
-#include "CSSBasicShapes.h"
-#endif
 
 #if ENABLE(CSS_SHADERS)
 #include "CustomFilterNumberParameter.h"
@@ -235,6 +232,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitBoxPack,
     CSSPropertyWebkitBoxReflect,
     CSSPropertyWebkitBoxShadow,
+    CSSPropertyWebkitClipPath,
     CSSPropertyWebkitColorCorrection,
     CSSPropertyWebkitColumnBreakAfter,
     CSSPropertyWebkitColumnBreakBefore,
@@ -2403,6 +2401,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return counterToCSSValue(style.get(), propertyID);
         case CSSPropertyCounterReset:
             return counterToCSSValue(style.get(), propertyID);
+        case CSSPropertyWebkitClipPath:
+            if (!style->clipPath())
+                return cssValuePool().createIdentifierValue(CSSValueNone);
+            return valueForBasicShape(style->clipPath());
 #if ENABLE(CSS_REGIONS)
         case CSSPropertyWebkitFlowInto:
             if (style->flowThread().isNull())

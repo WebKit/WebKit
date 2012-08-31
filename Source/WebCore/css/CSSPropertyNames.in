@@ -95,6 +95,7 @@ caption-side
 -epub-caption-side = caption-side
 clear
 clip
+-webkit-clip-path
 content
 counter-increment
 counter-reset

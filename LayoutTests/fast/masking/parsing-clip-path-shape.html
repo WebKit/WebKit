@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<style>
+* { font-size: 16px; }
+div { font-size: 8px; }
+</style>
+<body>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+description('Test that clip-path shapes accept different length units');
+
+function computedStyle(property, value) {
+    var div = document.createElement("div");
+    document.body.appendChild(div);
+    div.style.setProperty(property, value);
+    var computedValue = getComputedStyle(div).getPropertyValue(property);
+    document.body.removeChild(div);
+    return computedValue;
+}
+
+function innerStyle(property, value) {
+    var div = document.createElement("div");
+    div.style.setProperty(property, value);
+    return div.style.getPropertyValue(property);
+}
+
+function testComputed(property, value, expected) {
+    shouldBeEqualToString('computedStyle("' + property + '", "' + value + '")', expected);
+}
+
+function testInner(property, value, expected) {
+    if (expected === null)
+        shouldBeNull('innerStyle("' + property + '", "' + value + '")');
+    else
+        shouldBeEqualToString('innerStyle("' + property + '", "' + value + '")', expected);
+}
+
+function negativeTest(property, value) {
+    testInner(property, value, null);
+    testComputed(property, value, 'none');
+}
+
+// absolute lengths - number serialization, units
+testInner("-webkit-clip-path", "circle(0, 0, 0)", "circle(0px, 0px, 0px)");
+testInner("-webkit-clip-path", "circle(-1px, +1px, 1px)", "circle(-1px, 1px, 1px)");
+testInner("-webkit-clip-path", "circle(-1.5px, +1.5px, 1.5px)", "circle(-1.5px, 1.5px, 1.5px)");
+testInner("-webkit-clip-path", "circle(-.5px, +.5px, .5px)", "circle(-0.5px, 0.5px, 0.5px)");
+
+testInner("-webkit-clip-path", "rectangle(1cm, 1mm, 1in, 1px, 1pt, 1pc)", "rectangle(1cm, 1mm, 1in, 1px, 1pt, 1pc)");
+
+// font-relative lengths - number serialization, units, resolution
+testInner("-webkit-clip-path", "circle(-1em, +1em, 1em)", "circle(-1em, 1em, 1em)");
+testInner("-webkit-clip-path", "circle(-1.5em, +1.5em, 1.5em)", "circle(-1.5em, 1.5em, 1.5em)");
+testInner("-webkit-clip-path", "circle(-.5em, +.5em, .5em)", "circle(-0.5em, 0.5em, 0.5em)");
+
+testInner("-webkit-clip-path", "circle(1ex, 1ex, 1ex)", "circle(1ex, 1ex, 1ex)");
+// FIXME: Add ch test when it is supported
+testInner("-webkit-clip-path", "circle(1rem, 1rem, 1rem)", "circle(1rem, 1rem, 1rem)");
+
+testComputed("-webkit-clip-path", "circle(.5em, 1em, 1.5em)", "circle(4px, 8px, 12px)");
+testComputed("-webkit-clip-path", "circle(.5rem, 1rem, 1.5rem)", "circle(8px, 16px, 24px)");
+
+// viewport-percentage lengths - units, resolution
+testInner("-webkit-clip-path", "circle(1vw, 1vw, 1vw)", "circle(1vw, 1vw, 1vw)");
+testInner("-webkit-clip-path", "circle(1vh, 1vh, 1vh)", "circle(1vh, 1vh, 1vh)");
+testInner("-webkit-clip-path", "circle(1vmin, 1vmin, 1vmin)", "circle(1vmin, 1vmin, 1vmin)");
+
+testComputed("-webkit-clip-path", "circle(.5vw, 1vw, 1.5vw)", "circle(0.5vw, 1vw, 1.5vw)");
+testComputed("-webkit-clip-path", "circle(.5vh, 1vh, 1.5vh)", "circle(0.5vh, 1vh, 1.5vh)");
+testComputed("-webkit-clip-path", "circle(.5vmin, 1vmin, 1.5vmin)", "circle(0.5vmin, 1vmin, 1.5vmin)");
+
+// percentage lengths - units
+testInner("-webkit-clip-path", "circle(100%, 100%, 100%)", "circle(100%, 100%, 100%)");
+testInner("-webkit-clip-path", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)");
+testInner("-webkit-clip-path", "ellipse(100%, 100%, 100%, 100%)", "ellipse(100%, 100%, 100%, 100%)");
+testInner("-webkit-clip-path", "polygon(10% 20%, 30% 40%, 40% 50%)", "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)");
+
+testComputed("-webkit-clip-path", "circle(50%, 100%, 150%)", "circle(50%, 100%, 150%)");
+testComputed("-webkit-clip-path", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)");
+testComputed("-webkit-clip-path", "ellipse(100%, 100%, 100%, 100%)", "ellipse(100%, 100%, 100%, 100%)");
+testComputed("-webkit-clip-path", "polygon(10% 20%, 30% 40%, 40% 50%)", "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)");
+
+// reject non-lengths
+negativeTest("-webkit-clip-path", "circle(1px, 1px, 1)");
+negativeTest("-webkit-clip-path", "circle(1px, 1px, px)");
+negativeTest("-webkit-clip-path", "circle(1px, 1px, 1p)");
+negativeTest("-webkit-clip-path", "circle(1px, 1px, calc())");
+
+// reject negative radiuses
+negativeTest("-webkit-clip-path", "circle(-1.5px, +1.5px, -1.5px)");
+negativeTest("-webkit-clip-path", "rectangle(1cm, 1mm, 1in, 1px, -1pt, 1pc)");
+negativeTest("-webkit-clip-path", "rectangle(1cm, 1mm, 1in, 1px, 1pt, -1pc)");
+negativeTest("-webkit-clip-path", "ellipse(1em, 1em, -1em, 1em)");
+negativeTest("-webkit-clip-path", "ellipse(1em, 1em, 1em, -1em)");
+
+// reject negative height and width
+negativeTest("-webkit-clip-path", "rectangle(1cm, 1mm, -1in, 1px, 1pt, 1pc)");
+negativeTest("-webkit-clip-path", "rectangle(1cm, 1mm, 1in, -1px, 1pt, 1pc)");
+
+// general negative tests
+negativeTest("-webkit-clip-path", "circle(0, 0)");
+negativeTest("-webkit-clip-path", "circle(0)");
+negativeTest("-webkit-clip-path", "circle()");
+negativeTest("-webkit-clip-path", "polygon(0, 0)");
+negativeTest("-webkit-clip-path", "polygon(0 0, 0)");
+negativeTest("-webkit-clip-path", "polygon(0)");
+negativeTest("-webkit-clip-path", "polygon()");
+negativeTest("-webkit-clip-path", "polygon(evenodd)");
+negativeTest("-webkit-clip-path", "polygon(nonzero)");
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

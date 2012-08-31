@@ -1,0 +1,75 @@
+Test that clip-path shapes accept different length units
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS innerStyle("-webkit-clip-path", "circle(0, 0, 0)") is "circle(0px, 0px, 0px)"
+PASS innerStyle("-webkit-clip-path", "circle(-1px, +1px, 1px)") is "circle(-1px, 1px, 1px)"
+PASS innerStyle("-webkit-clip-path", "circle(-1.5px, +1.5px, 1.5px)") is "circle(-1.5px, 1.5px, 1.5px)"
+PASS innerStyle("-webkit-clip-path", "circle(-.5px, +.5px, .5px)") is "circle(-0.5px, 0.5px, 0.5px)"
+PASS innerStyle("-webkit-clip-path", "rectangle(1cm, 1mm, 1in, 1px, 1pt, 1pc)") is "rectangle(1cm, 1mm, 1in, 1px, 1pt, 1pc)"
+PASS innerStyle("-webkit-clip-path", "circle(-1em, +1em, 1em)") is "circle(-1em, 1em, 1em)"
+PASS innerStyle("-webkit-clip-path", "circle(-1.5em, +1.5em, 1.5em)") is "circle(-1.5em, 1.5em, 1.5em)"
+PASS innerStyle("-webkit-clip-path", "circle(-.5em, +.5em, .5em)") is "circle(-0.5em, 0.5em, 0.5em)"
+PASS innerStyle("-webkit-clip-path", "circle(1ex, 1ex, 1ex)") is "circle(1ex, 1ex, 1ex)"
+PASS innerStyle("-webkit-clip-path", "circle(1rem, 1rem, 1rem)") is "circle(1rem, 1rem, 1rem)"
+PASS computedStyle("-webkit-clip-path", "circle(.5em, 1em, 1.5em)") is "circle(4px, 8px, 12px)"
+PASS computedStyle("-webkit-clip-path", "circle(.5rem, 1rem, 1.5rem)") is "circle(8px, 16px, 24px)"
+PASS innerStyle("-webkit-clip-path", "circle(1vw, 1vw, 1vw)") is "circle(1vw, 1vw, 1vw)"
+PASS innerStyle("-webkit-clip-path", "circle(1vh, 1vh, 1vh)") is "circle(1vh, 1vh, 1vh)"
+PASS innerStyle("-webkit-clip-path", "circle(1vmin, 1vmin, 1vmin)") is "circle(1vmin, 1vmin, 1vmin)"
+PASS computedStyle("-webkit-clip-path", "circle(.5vw, 1vw, 1.5vw)") is "circle(0.5vw, 1vw, 1.5vw)"
+PASS computedStyle("-webkit-clip-path", "circle(.5vh, 1vh, 1.5vh)") is "circle(0.5vh, 1vh, 1.5vh)"
+PASS computedStyle("-webkit-clip-path", "circle(.5vmin, 1vmin, 1.5vmin)") is "circle(0.5vmin, 1vmin, 1.5vmin)"
+PASS innerStyle("-webkit-clip-path", "circle(100%, 100%, 100%)") is "circle(100%, 100%, 100%)"
+PASS innerStyle("-webkit-clip-path", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)") is "rectangle(45%, 45%, 90%, 60%, 25%, 10%)"
+PASS innerStyle("-webkit-clip-path", "ellipse(100%, 100%, 100%, 100%)") is "ellipse(100%, 100%, 100%, 100%)"
+PASS innerStyle("-webkit-clip-path", "polygon(10% 20%, 30% 40%, 40% 50%)") is "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)"
+PASS computedStyle("-webkit-clip-path", "circle(50%, 100%, 150%)") is "circle(50%, 100%, 150%)"
+PASS computedStyle("-webkit-clip-path", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)") is "rectangle(45%, 45%, 90%, 60%, 25%, 10%)"
+PASS computedStyle("-webkit-clip-path", "ellipse(100%, 100%, 100%, 100%)") is "ellipse(100%, 100%, 100%, 100%)"
+PASS computedStyle("-webkit-clip-path", "polygon(10% 20%, 30% 40%, 40% 50%)") is "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)"
+PASS innerStyle("-webkit-clip-path", "circle(1px, 1px, 1)") is null
+PASS computedStyle("-webkit-clip-path", "circle(1px, 1px, 1)") is "none"
+PASS innerStyle("-webkit-clip-path", "circle(1px, 1px, px)") is null
+PASS computedStyle("-webkit-clip-path", "circle(1px, 1px, px)") is "none"
+PASS innerStyle("-webkit-clip-path", "circle(1px, 1px, 1p)") is null
+PASS computedStyle("-webkit-clip-path", "circle(1px, 1px, 1p)") is "none"
+PASS innerStyle("-webkit-clip-path", "circle(1px, 1px, calc())") is null
+PASS computedStyle("-webkit-clip-path", "circle(1px, 1px, calc())") is "none"
+PASS innerStyle("-webkit-clip-path", "circle(-1.5px, +1.5px, -1.5px)") is null
+PASS computedStyle("-webkit-clip-path", "circle(-1.5px, +1.5px, -1.5px)") is "none"
+PASS innerStyle("-webkit-clip-path", "rectangle(1cm, 1mm, 1in, 1px, -1pt, 1pc)") is null
+PASS computedStyle("-webkit-clip-path", "rectangle(1cm, 1mm, 1in, 1px, -1pt, 1pc)") is "none"
+PASS innerStyle("-webkit-clip-path", "rectangle(1cm, 1mm, 1in, 1px, 1pt, -1pc)") is null
+PASS computedStyle("-webkit-clip-path", "rectangle(1cm, 1mm, 1in, 1px, 1pt, -1pc)") is "none"
+PASS innerStyle("-webkit-clip-path", "ellipse(1em, 1em, -1em, 1em)") is null
+PASS computedStyle("-webkit-clip-path", "ellipse(1em, 1em, -1em, 1em)") is "none"
+PASS innerStyle("-webkit-clip-path", "ellipse(1em, 1em, 1em, -1em)") is null
+PASS computedStyle("-webkit-clip-path", "ellipse(1em, 1em, 1em, -1em)") is "none"
+PASS innerStyle("-webkit-clip-path", "rectangle(1cm, 1mm, -1in, 1px, 1pt, 1pc)") is null
+PASS computedStyle("-webkit-clip-path", "rectangle(1cm, 1mm, -1in, 1px, 1pt, 1pc)") is "none"
+PASS innerStyle("-webkit-clip-path", "rectangle(1cm, 1mm, 1in, -1px, 1pt, 1pc)") is null
+PASS computedStyle("-webkit-clip-path", "rectangle(1cm, 1mm, 1in, -1px, 1pt, 1pc)") is "none"
+PASS innerStyle("-webkit-clip-path", "circle(0, 0)") is null
+PASS computedStyle("-webkit-clip-path", "circle(0, 0)") is "none"
+PASS innerStyle("-webkit-clip-path", "circle(0)") is null
+PASS computedStyle("-webkit-clip-path", "circle(0)") is "none"
+PASS innerStyle("-webkit-clip-path", "circle()") is null
+PASS computedStyle("-webkit-clip-path", "circle()") is "none"
+PASS innerStyle("-webkit-clip-path", "polygon(0, 0)") is null
+PASS computedStyle("-webkit-clip-path", "polygon(0, 0)") is "none"
+PASS innerStyle("-webkit-clip-path", "polygon(0 0, 0)") is null
+PASS computedStyle("-webkit-clip-path", "polygon(0 0, 0)") is "none"
+PASS innerStyle("-webkit-clip-path", "polygon(0)") is null
+PASS computedStyle("-webkit-clip-path", "polygon(0)") is "none"
+PASS innerStyle("-webkit-clip-path", "polygon()") is null
+PASS computedStyle("-webkit-clip-path", "polygon()") is "none"
+PASS innerStyle("-webkit-clip-path", "polygon(evenodd)") is null
+PASS computedStyle("-webkit-clip-path", "polygon(evenodd)") is "none"
+PASS innerStyle("-webkit-clip-path", "polygon(nonzero)") is null
+PASS computedStyle("-webkit-clip-path", "polygon(nonzero)") is "none"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
