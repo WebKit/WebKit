@@ -137,6 +137,7 @@ public:
     void willPaint(GraphicsContext*, const LayoutRect&);
     void didPaint();
     void didLayout();
+    void didScroll();
 
     // Inspector Controller API
     virtual void setFrontend(InspectorFrontend*);

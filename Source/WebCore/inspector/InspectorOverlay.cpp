@@ -35,19 +35,14 @@
 #include "DocumentLoader.h"
 #include "Element.h"
 #include "EmptyClients.h"
-#include "Font.h"
-#include "FontCache.h"
-#include "FontFamily.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "GraphicsTypes.h"
 #include "InspectorClient.h"
 #include "InspectorOverlayPage.h"
 #include "InspectorValues.h"
 #include "Node.h"
 #include "Page.h"
-#include "Range.h"
 #include "RenderBoxModelObject.h"
 #include "RenderInline.h"
 #include "RenderObject.h"
@@ -55,26 +50,10 @@
 #include "ScriptValue.h"
 #include "Settings.h"
 #include "StyledElement.h"
-#include "TextRun.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 namespace {
-
-#if OS(WINDOWS)
-static const unsigned fontHeightPx = 12;
-#elif OS(MAC_OS_X) || OS(UNIX)
-static const unsigned fontHeightPx = 11;
-#endif
-
-const static int rectInflatePx = 4;
-const static int borderWidthPx = 1;
-const static int tooltipPadding = 4;
-
-const static int arrowTipOffset = 20;
-const static float arrowHeight = 7;
-const static float arrowHalfWidth = 7;
 
 Path quadToPath(const FloatQuad& quad)
 {
@@ -111,256 +90,6 @@ void drawOutlinedQuad(GraphicsContext* context, const FloatQuad& quad, const Col
     context->fillPath(quadPath);
 }
 
-void drawOutlinedQuadWithClip(GraphicsContext* context, const FloatQuad& quad, const FloatQuad& clipQuad, const Color& fillColor)
-{
-    context->save();
-    Path clipQuadPath = quadToPath(clipQuad);
-    context->clipOut(clipQuadPath);
-    drawOutlinedQuad(context, quad, fillColor, Color::transparent);
-    context->restore();
-}
-
-void drawHighlightForBox(GraphicsContext* context, const FloatQuad& contentQuad, const FloatQuad& paddingQuad, const FloatQuad& borderQuad, const FloatQuad& marginQuad, const HighlightConfig& highlightConfig)
-{
-    bool hasMargin = highlightConfig.margin != Color::transparent;
-    bool hasBorder = highlightConfig.border != Color::transparent;
-    bool hasPadding = highlightConfig.padding != Color::transparent;
-    bool hasContent = highlightConfig.content != Color::transparent || highlightConfig.contentOutline != Color::transparent;
-
-    FloatQuad clipQuad;
-    Color clipColor;
-    if (hasMargin && (!hasBorder || marginQuad != borderQuad)) {
-        drawOutlinedQuadWithClip(context, marginQuad, borderQuad, highlightConfig.margin);
-        clipQuad = borderQuad;
-    }
-    if (hasBorder && (!hasPadding || borderQuad != paddingQuad)) {
-        drawOutlinedQuadWithClip(context, borderQuad, paddingQuad, highlightConfig.border);
-        clipQuad = paddingQuad;
-    }
-    if (hasPadding && (!hasContent || paddingQuad != contentQuad)) {
-        drawOutlinedQuadWithClip(context, paddingQuad, contentQuad, highlightConfig.padding);
-        clipQuad = contentQuad;
-    }
-    if (hasContent)
-        drawOutlinedQuad(context, contentQuad, highlightConfig.content, highlightConfig.contentOutline);
-}
-
-void drawHighlightForSVGRenderer(GraphicsContext* context, const Vector<FloatQuad>& absoluteQuads, const HighlightConfig& highlightConfig)
-{
-    for (size_t i = 0; i < absoluteQuads.size(); ++i)
-        drawOutlinedQuad(context, absoluteQuads[i], highlightConfig.content, Color::transparent);
-}
-
-int drawSubstring(const TextRun& globalTextRun, int offset, int length, const Color& textColor, const Font& font, GraphicsContext* context, const LayoutRect& titleRect)
-{
-    context->setFillColor(textColor, ColorSpaceDeviceRGB);
-    context->drawText(font, globalTextRun, IntPoint(titleRect.pixelSnappedX() + rectInflatePx, titleRect.pixelSnappedY() + font.fontMetrics().height()), offset, offset + length);
-    return offset + length;
-}
-
-float calculateArrowTipX(const LayoutRect& anchorBox, const LayoutRect& titleRect)
-{
-    const static int anchorTipOffsetPx = 2;
-
-    int minX = titleRect.x() + arrowHalfWidth;
-    int maxX = titleRect.maxX() - arrowHalfWidth;
-    int anchorX = anchorBox.x();
-    int anchorMaxX = anchorBox.maxX();
-
-    int x = titleRect.x() + arrowTipOffset; // Default tooltip position.
-    if (x < anchorX)
-        x = anchorX + anchorTipOffsetPx;
-    else if (x > anchorMaxX)
-        x = anchorMaxX - anchorTipOffsetPx;
-
-    if (x < minX)
-        x = minX;
-    else if (x > maxX)
-        x = maxX;
-
-    return x;
-}
-
-void setUpFontDescription(FontDescription& fontDescription, WebCore::Settings* settings)
-{
-#define TOOLTIP_FONT_FAMILIES(size, ...) \
-static const unsigned tooltipFontFaceSize = size;\
-static const AtomicString* tooltipFontFace[size] = { __VA_ARGS__ };
-
-#if OS(WINDOWS)
-TOOLTIP_FONT_FAMILIES(2, new AtomicString("Consolas"), new AtomicString("Lucida Console"))
-#elif OS(MAC_OS_X)
-TOOLTIP_FONT_FAMILIES(2, new AtomicString("Menlo"), new AtomicString("Monaco"))
-#elif OS(UNIX)
-TOOLTIP_FONT_FAMILIES(1, new AtomicString("dejavu sans mono"))
-#endif
-// In the default case, we get the settings-provided monospace font.
-
-#undef TOOLTIP_FONT_FAMILIES
-
-    fontDescription.setRenderingMode(settings->fontRenderingMode());
-    fontDescription.setComputedSize(fontHeightPx);
-
-    const AtomicString& fixedFontFamily = settings->fixedFontFamily();
-    if (!fixedFontFamily.isEmpty()) {
-        fontDescription.setGenericFamily(FontDescription::MonospaceFamily);
-        FontFamily* currentFamily = 0;
-        for (unsigned i = 0; i < tooltipFontFaceSize; ++i) {
-            if (!currentFamily) {
-                fontDescription.firstFamily().setFamily(*tooltipFontFace[i]);
-                fontDescription.firstFamily().appendFamily(0);
-                currentFamily = &fontDescription.firstFamily();
-            } else {
-                RefPtr<SharedFontFamily> newFamily = SharedFontFamily::create();
-                newFamily->setFamily(*tooltipFontFace[i]);
-                currentFamily->appendFamily(newFamily);
-                currentFamily = newFamily.get();
-            }
-        }
-        RefPtr<SharedFontFamily> newFamily = SharedFontFamily::create();
-        newFamily->setFamily(fixedFontFamily);
-        currentFamily->appendFamily(newFamily);
-        currentFamily = newFamily.get();
-    }
-}
-
-void drawElementTitle(GraphicsContext* context, Node* node, RenderObject* renderer, const IntRect& boundingBox, const IntRect& anchorBox, const FloatRect& visibleRect, WebCore::Settings* settings)
-{
-    DEFINE_STATIC_LOCAL(Color, backgroundColor, (255, 255, 194));
-    DEFINE_STATIC_LOCAL(Color, tagColor, (136, 18, 128)); // Same as .webkit-html-tag.
-    DEFINE_STATIC_LOCAL(Color, attrColor, (26, 26, 166)); // Same as .webkit-html-attribute-value.
-    DEFINE_STATIC_LOCAL(Color, normalColor, (Color::black));
-    DEFINE_STATIC_LOCAL(Color, pxAndBorderColor, (128, 128, 128));
-
-    DEFINE_STATIC_LOCAL(String, pxString, (ASCIILiteral("px")));
-    const static UChar timesUChar[] = { 0x0020, 0x00D7, 0x0020, 0 };
-    DEFINE_STATIC_LOCAL(String, timesString, (timesUChar)); // &times; string
-
-    FontCachePurgePreventer fontCachePurgePreventer;
-
-    Element* element = static_cast<Element*>(node);
-    bool isXHTML = element->document()->isXHTMLDocument();
-    StringBuilder nodeTitle;
-    nodeTitle.append(isXHTML ? element->nodeName() : element->nodeName().lower());
-    unsigned tagNameLength = nodeTitle.length();
-
-    const AtomicString& idValue = element->getIdAttribute();
-    unsigned idStringLength = 0;
-    String idString;
-    if (!idValue.isNull() && !idValue.isEmpty()) {
-        nodeTitle.append("#");
-        nodeTitle.append(idValue);
-        idStringLength = 1 + idValue.length();
-    }
-
-    HashSet<AtomicString> usedClassNames;
-    unsigned classesStringLength = 0;
-    if (element->hasClass() && element->isStyledElement()) {
-        const SpaceSplitString& classNamesString = static_cast<StyledElement*>(element)->classNames();
-        size_t classNameCount = classNamesString.size();
-        for (size_t i = 0; i < classNameCount; ++i) {
-            const AtomicString& className = classNamesString[i];
-            if (usedClassNames.contains(className))
-                continue;
-            usedClassNames.add(className);
-            nodeTitle.append(".");
-            nodeTitle.append(className);
-            classesStringLength += 1 + className.length();
-        }
-    }
-
-    RenderBoxModelObject* modelObject = renderer->isBoxModelObject() ? toRenderBoxModelObject(renderer) : 0;
-
-    String widthNumberPart = " " + String::number(modelObject ? adjustForAbsoluteZoom(modelObject->pixelSnappedOffsetWidth(), modelObject) : boundingBox.width());
-    nodeTitle.append(widthNumberPart);
-    nodeTitle.append(pxString);
-    nodeTitle.append(timesString);
-    String heightNumberPart = String::number(modelObject ? adjustForAbsoluteZoom(modelObject->pixelSnappedOffsetHeight(), modelObject) : boundingBox.height());
-    nodeTitle.append(heightNumberPart);
-    nodeTitle.append(pxString);
-
-    FontDescription desc;
-    setUpFontDescription(desc, settings);
-    Font font = Font(desc, 0, 0);
-    font.update(0);
-
-    TextRun nodeTitleRun(nodeTitle.toString());
-    IntPoint titleBasePoint = IntPoint(anchorBox.x(), anchorBox.maxY() - 1);
-    titleBasePoint.move(rectInflatePx, rectInflatePx);
-    IntRect titleRect = enclosingIntRect(font.selectionRectForText(nodeTitleRun, titleBasePoint, fontHeightPx));
-    titleRect.inflate(rectInflatePx);
-
-    // The initial offsets needed to compensate for a 1px-thick border stroke (which is not a part of the rectangle).
-    int dx = -borderWidthPx;
-    int dy = borderWidthPx;
-
-    // If the tip sticks beyond the right of visibleRect, right-align the tip with the said boundary.
-    if (titleRect.maxX() + dx > visibleRect.maxX())
-        dx = visibleRect.maxX() - titleRect.maxX();
-
-    // If the tip sticks beyond the left of visibleRect, left-align the tip with the said boundary.
-    if (titleRect.x() + dx < visibleRect.x())
-        dx = visibleRect.x() - titleRect.x() - borderWidthPx;
-
-    // If the tip sticks beyond the bottom of visibleRect, show the tip at top of bounding box.
-    if (titleRect.maxY() + dy > visibleRect.maxY()) {
-        dy = anchorBox.y() - titleRect.maxY() - borderWidthPx;
-        // If the tip still sticks beyond the bottom of visibleRect, bottom-align the tip with the said boundary.
-        if (titleRect.maxY() + dy > visibleRect.maxY())
-            dy = visibleRect.maxY() - titleRect.maxY();
-    }
-
-    // If the tip sticks beyond the top of visibleRect, show the tip at top of visibleRect.
-    if (titleRect.y() + dy < visibleRect.y())
-        dy = visibleRect.y() - titleRect.y() + borderWidthPx;
-
-    titleRect.move(dx, dy);
-
-    bool isArrowAtTop = titleRect.y() > anchorBox.y();
-    titleRect.move(0, tooltipPadding * (isArrowAtTop ? 1 : -1));
-
-    {
-        float arrowTipX = calculateArrowTipX(anchorBox, titleRect);
-        int arrowBaseY = isArrowAtTop ? titleRect.y() : titleRect.maxY();
-        int arrowOppositeY = isArrowAtTop ? titleRect.maxY() : titleRect.y();
-
-        FloatPoint points[8];
-        points[0] = FloatPoint(arrowTipX - arrowHalfWidth, arrowBaseY);
-        points[1] = FloatPoint(arrowTipX, arrowBaseY + arrowHeight * (isArrowAtTop ? -1 : 1));
-        points[2] = FloatPoint(arrowTipX + arrowHalfWidth, arrowBaseY);
-        points[3] = FloatPoint(titleRect.maxX(), arrowBaseY);
-        points[4] = FloatPoint(titleRect.maxX(), arrowOppositeY);
-        points[5] = FloatPoint(titleRect.x(), arrowOppositeY);
-        points[6] = FloatPoint(titleRect.x(), arrowBaseY);
-        points[7] = points[0];
-
-        Path path;
-        path.moveTo(points[0]);
-        for (int i = 1; i < 8; ++i)
-            path.addLineTo(points[i]);
-
-        context->save();
-        context->translate(0.5f, 0.5f);
-        context->setStrokeColor(pxAndBorderColor, ColorSpaceDeviceRGB);
-        context->setFillColor(backgroundColor, ColorSpaceDeviceRGB);
-        context->setStrokeThickness(borderWidthPx);
-        context->fillPath(path);
-        context->strokePath(path);
-        context->restore();
-    }
-
-    int currentPos = 0;
-    currentPos = drawSubstring(nodeTitleRun, currentPos, tagNameLength, tagColor, font, context, titleRect);
-    if (idStringLength)
-        currentPos = drawSubstring(nodeTitleRun, currentPos, idStringLength, attrColor, font, context, titleRect);
-    if (classesStringLength)
-        currentPos = drawSubstring(nodeTitleRun, currentPos, classesStringLength, attrColor, font, context, titleRect);
-    currentPos = drawSubstring(nodeTitleRun, currentPos, widthNumberPart.length(), normalColor, font, context, titleRect);
-    currentPos = drawSubstring(nodeTitleRun, currentPos, pxString.length() + timesString.length(), pxAndBorderColor, font, context, titleRect);
-    currentPos = drawSubstring(nodeTitleRun, currentPos, heightNumberPart.length(), normalColor, font, context, titleRect);
-    drawSubstring(nodeTitleRun, currentPos, pxString.length(), pxAndBorderColor, font, context, titleRect);
-}
-
 static void contentsQuadToPage(const FrameView* mainView, const FrameView* view, FloatQuad& quad)
 {
     quad.setP1(view->contentsToRootView(roundedIntPoint(quad.p1())));
@@ -370,7 +99,7 @@ static void contentsQuadToPage(const FrameView* mainView, const FrameView* view,
     quad += mainView->scrollOffset();
 }
 
-static void getOrDrawNodeHighlight(GraphicsContext* context, Node* node, const HighlightConfig& highlightConfig, Highlight* highlight)
+static void buildNodeHighlight(Node* node, const HighlightConfig& highlightConfig, Highlight* highlight)
 {
     RenderObject* renderer = node->renderer();
     Frame* containingFrame = node->document()->frame();
@@ -378,16 +107,12 @@ static void getOrDrawNodeHighlight(GraphicsContext* context, Node* node, const H
     if (!renderer || !containingFrame)
         return;
 
+    highlight->setColors(highlightConfig);
     FrameView* containingView = containingFrame->view();
     FrameView* mainView = containingFrame->page()->mainFrame()->view();
     IntRect boundingBox = pixelSnappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));
     boundingBox.move(mainView->scrollOffset());
     IntRect titleAnchorBox = boundingBox;
-
-    FloatRect visibleRect = mainView->visibleContentRect();
-    // Don't translate the context if the frame is rendered in page coordinates.
-    if (context && !mainView->delegatesScrolling())
-        context->translate(-visibleRect.x(), -visibleRect.y());
 
     // RenderSVGRoot should be highlighted through the isBox() code path, all other SVG elements should just dump their absoluteQuads().
 #if ENABLE(SVG)
@@ -401,9 +126,6 @@ static void getOrDrawNodeHighlight(GraphicsContext* context, Node* node, const H
         renderer->absoluteQuads(highlight->quads);
         for (size_t i = 0; i < highlight->quads.size(); ++i)
             contentsQuadToPage(mainView, containingView, highlight->quads[i]);
-
-        if (context)
-            drawHighlightForSVGRenderer(context, highlight->quads, highlightConfig);
     } else if (renderer->isBox() || renderer->isRenderInline()) {
         LayoutRect contentBox;
         LayoutRect paddingBox;
@@ -455,39 +177,17 @@ static void getOrDrawNodeHighlight(GraphicsContext* context, Node* node, const H
         highlight->quads.append(absBorderQuad);
         highlight->quads.append(absPaddingQuad);
         highlight->quads.append(absContentQuad);
-
-        if (context)
-            drawHighlightForBox(context, absContentQuad, absPaddingQuad, absBorderQuad, absMarginQuad, highlightConfig);
     }
-
-    // Draw node title if necessary.
-
-    if (!node->isElementNode())
-        return;
-
-    if (context && highlightConfig.showInfo)
-        drawElementTitle(context, node, renderer, pixelSnappedIntRect(boundingBox), pixelSnappedIntRect(titleAnchorBox), visibleRect, containingFrame->settings());
 }
 
-static void getOrDrawRectHighlight(GraphicsContext* context, Page* page, IntRect* rect, const HighlightConfig& highlightConfig, Highlight *highlight)
+static void buildRectHighlight(Page* page, IntRect* rect, const HighlightConfig& highlightConfig, Highlight *highlight)
 {
     if (!page)
         return;
-
+    highlight->setColors(highlightConfig);
     FloatRect highlightRect(*rect);
-
     highlight->type = HighlightTypeRects;
     highlight->quads.append(highlightRect);
-
-    if (context) {
-        FrameView* view = page->mainFrame()->view();
-        if (!view->delegatesScrolling()) {
-            FloatRect visibleRect = view->visibleContentRect();
-            context->translate(-visibleRect.x(), -visibleRect.y());
-        }
-
-        drawOutlinedQuad(context, highlightRect, highlightConfig.content, highlightConfig.contentOutline);
-    }
 }
 
 } // anonymous namespace
@@ -504,12 +204,12 @@ InspectorOverlay::~InspectorOverlay()
 
 void InspectorOverlay::paint(GraphicsContext& context)
 {
-    drawNodeHighlight(&context);
-    drawRectHighlight(&context);
-
-    if (m_pausedInDebuggerMessage.isNull())
+    if (m_pausedInDebuggerMessage.isNull() && !m_highlightNode && !m_highlightRect)
         return;
-    drawOverlayPage(&context);
+    GraphicsContextStateSaver stateSaver(context);
+    FrameView* view = overlayPage()->mainFrame()->view();
+    ASSERT(!view->needsLayout());
+    view->paint(&context, IntRect(0, 0, view->width(), view->height()));
 }
 
 void InspectorOverlay::drawOutline(GraphicsContext* context, const LayoutRect& rect, const Color& color)
@@ -524,19 +224,15 @@ void InspectorOverlay::getHighlight(Highlight* highlight) const
         return;
 
     highlight->type = HighlightTypeRects;
-    if (m_highlightNode) {
-        highlight->setColors(m_nodeHighlightConfig);
-        getOrDrawNodeHighlight(0, m_highlightNode.get(), m_nodeHighlightConfig, highlight);
-    } else {
-        highlight->setColors(m_rectHighlightConfig);
-        getOrDrawRectHighlight(0, m_page, m_highlightRect.get(), m_rectHighlightConfig, highlight);
-    }
+    if (m_highlightNode)
+        buildNodeHighlight(m_highlightNode.get(), m_nodeHighlightConfig, highlight);
+    else
+        buildRectHighlight(m_page, m_highlightRect.get(), m_rectHighlightConfig, highlight);
 }
 
 void InspectorOverlay::setPausedInDebuggerMessage(const String* message)
 {
     m_pausedInDebuggerMessage = message ? *message : String();
-    evaluateInOverlay("setPausedInDebuggerMessage", m_pausedInDebuggerMessage);
     update();
 }
 
@@ -577,34 +273,123 @@ void InspectorOverlay::update()
     FrameView* overlayView = overlayPage()->mainFrame()->view();
     IntRect visibleRect = enclosingIntRect(view->visibleContentRect());
     overlayView->resize(visibleRect.width(), visibleRect.height());
+
+    // Clear canvas and paint things.
+    reset();
+
+    drawNodeHighlight();
+    drawRectHighlight();
+    drawPausedInDebuggerMessage();
+
+    // Position DOM elements.
+    overlayPage()->mainFrame()->document()->recalcStyle(Node::Force);
     if (overlayView->needsLayout())
         overlayView->layout();
+
+    // Kick paint.
     m_client->highlight();
 }
 
-void InspectorOverlay::drawNodeHighlight(GraphicsContext* context)
+static RefPtr<InspectorObject> buildObjectForPoint(const FloatPoint& point)
+{
+    RefPtr<InspectorObject> object = InspectorObject::create();
+    object->setNumber("x", point.x());
+    object->setNumber("y", point.y());
+    return object.release();
+}
+
+static RefPtr<InspectorArray> buildArrayForQuad(const FloatQuad& quad)
+{
+    RefPtr<InspectorArray> array = InspectorArray::create();
+    array->pushObject(buildObjectForPoint(quad.p1()));
+    array->pushObject(buildObjectForPoint(quad.p2()));
+    array->pushObject(buildObjectForPoint(quad.p3()));
+    array->pushObject(buildObjectForPoint(quad.p4()));
+    return array.release();
+}
+
+static RefPtr<InspectorObject> buildObjectForHighlight(FrameView* mainView, const Highlight& highlight)
+{
+    RefPtr<InspectorObject> object = InspectorObject::create();
+    RefPtr<InspectorArray> array = InspectorArray::create();
+    for (size_t i = 0; i < highlight.quads.size(); ++i)
+        array->pushArray(buildArrayForQuad(highlight.quads[i]));
+    object->setArray("quads", array.release());
+    object->setString("contentColor", highlight.contentColor.serialized());
+    object->setString("contentOutlineColor", highlight.contentOutlineColor.serialized());
+    object->setString("paddingColor", highlight.paddingColor.serialized());
+    object->setString("borderColor", highlight.borderColor.serialized());
+    object->setString("marginColor", highlight.marginColor.serialized());
+
+    FloatRect visibleRect = mainView->visibleContentRect();
+    if (!mainView->delegatesScrolling()) {
+        object->setNumber("scrollX", visibleRect.x());
+        object->setNumber("scrollY", visibleRect.y());
+    } else {
+        object->setNumber("scrollX", 0);
+        object->setNumber("scrollY", 0);
+    }
+
+    return object.release();
+}
+
+void InspectorOverlay::drawNodeHighlight()
 {
     if (!m_highlightNode)
         return;
 
     Highlight highlight;
-    getOrDrawNodeHighlight(context, m_highlightNode.get(), m_nodeHighlightConfig, &highlight);
+    buildNodeHighlight(m_highlightNode.get(), m_nodeHighlightConfig, &highlight);
+    RefPtr<InspectorObject> highlightObject = buildObjectForHighlight(m_page->mainFrame()->view(), highlight);
+
+    Node* node = m_highlightNode.get();
+    if (node->isElementNode() && m_nodeHighlightConfig.showInfo && node->renderer() && node->document()->frame()) {
+        RefPtr<InspectorObject> elementInfo = InspectorObject::create();
+        Element* element = toElement(node);
+        bool isXHTML = element->document()->isXHTMLDocument();
+        elementInfo->setString("tagName", isXHTML ? element->nodeName() : element->nodeName().lower());
+        elementInfo->setString("idValue", element->getIdAttribute());
+        HashSet<AtomicString> usedClassNames;
+        if (element->hasClass() && element->isStyledElement()) {
+            String classNames;
+            const SpaceSplitString& classNamesString = static_cast<StyledElement*>(element)->classNames();
+            size_t classNameCount = classNamesString.size();
+            for (size_t i = 0; i < classNameCount; ++i) {
+                const AtomicString& className = classNamesString[i];
+                if (usedClassNames.contains(className))
+                    continue;
+                usedClassNames.add(className);
+                classNames += makeString(".", className);
+            }
+            elementInfo->setString("className", classNames);
+        }
+
+        RenderObject* renderer = node->renderer();
+        Frame* containingFrame = node->document()->frame();
+        FrameView* containingView = containingFrame->view();
+        IntRect boundingBox = pixelSnappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));
+        RenderBoxModelObject* modelObject = renderer->isBoxModelObject() ? toRenderBoxModelObject(renderer) : 0;
+        elementInfo->setString("nodeWidth", String::number(modelObject ? adjustForAbsoluteZoom(modelObject->pixelSnappedOffsetWidth(), modelObject) : boundingBox.width()));
+        elementInfo->setString("nodeHeight", String::number(modelObject ? adjustForAbsoluteZoom(modelObject->pixelSnappedOffsetHeight(), modelObject) : boundingBox.height()));
+        highlightObject->setObject("elementInfo", elementInfo.release());
+    }
+    evaluateInOverlay("drawNodeHighlight", highlightObject);
 }
 
-void InspectorOverlay::drawRectHighlight(GraphicsContext* context)
+void InspectorOverlay::drawRectHighlight()
 {
     if (!m_highlightRect)
         return;
 
     Highlight highlight;
-    getOrDrawRectHighlight(context, m_page, m_highlightRect.get(), m_rectHighlightConfig, &highlight);
+    buildRectHighlight(m_page, m_highlightRect.get(), m_rectHighlightConfig, &highlight);
+    evaluateInOverlay("highlightRect", buildObjectForHighlight(m_page->mainFrame()->view(), highlight));
 }
 
-void InspectorOverlay::drawOverlayPage(GraphicsContext* context)
+void InspectorOverlay::drawPausedInDebuggerMessage()
 {
-    GraphicsContextStateSaver stateSaver(*context);
-    FrameView* view = overlayPage()->mainFrame()->view();
-    view->paint(context, IntRect(0, 0, view->width(), view->height()));
+    if (!m_pausedInDebuggerMessage.isNull())
+        evaluateInOverlay("drawPausedInDebuggerMessage", m_pausedInDebuggerMessage);
 }
 
 Page* InspectorOverlay::overlayPage()
@@ -621,13 +406,6 @@ Page* InspectorOverlay::overlayPage()
     Settings* overlaySettings = m_overlayPage->settings();
 
     overlaySettings->setStandardFontFamily(settings->standardFontFamily());
-#if OS(WINDOWS)
-    overlaySettings->setFixedFontFamily("Consolas");
-#elif OS(MAC_OS_X)
-    overlaySettings->setFixedFontFamily("Menlo");
-#elif OS(UNIX)
-    overlaySettings->setFixedFontFamily("dejavu sans mono");
-#endif
     overlaySettings->setSerifFontFamily(settings->serifFontFamily());
     overlaySettings->setSansSerifFontFamily(settings->sansSerifFontFamily());
     overlaySettings->setCursiveFontFamily(settings->cursiveFontFamily());
@@ -635,8 +413,6 @@ Page* InspectorOverlay::overlayPage()
     overlaySettings->setPictographFontFamily(settings->pictographFontFamily());
     overlaySettings->setMinimumFontSize(settings->minimumFontSize());
     overlaySettings->setMinimumLogicalFontSize(settings->minimumLogicalFontSize());
-    overlaySettings->setDefaultFontSize(settings->defaultFontSize());
-    overlaySettings->setDefaultFixedFontSize(settings->defaultFixedFontSize());
     overlaySettings->setMediaEnabled(false);
     overlaySettings->setScriptEnabled(true);
     overlaySettings->setPluginsEnabled(false);
@@ -653,7 +429,20 @@ Page* InspectorOverlay::overlayPage()
     loader->activeDocumentLoader()->writer()->addData(reinterpret_cast<const char*>(InspectorOverlayPage_html), sizeof(InspectorOverlayPage_html));
     loader->activeDocumentLoader()->writer()->end();
 
+#if OS(WINDOWS)
+    evaluateInOverlay("setPlatform", "windows");
+#elif OS(MAC_OS_X)
+    evaluateInOverlay("setPlatform", "mac");
+#elif OS(UNIX)
+    evaluateInOverlay("setPlatform", "linux");
+#endif
+
     return m_overlayPage.get();
+}
+
+void InspectorOverlay::reset()
+{
+    evaluateInOverlay("reset", "");
 }
 
 void InspectorOverlay::evaluateInOverlay(const String& method, const String& argument)
@@ -661,6 +450,14 @@ void InspectorOverlay::evaluateInOverlay(const String& method, const String& arg
     RefPtr<InspectorArray> command = InspectorArray::create();
     command->pushString(method);
     command->pushString(argument);
+    overlayPage()->mainFrame()->script()->evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ")")));
+}
+
+void InspectorOverlay::evaluateInOverlay(const String& method, PassRefPtr<InspectorValue> argument)
+{
+    RefPtr<InspectorArray> command = InspectorArray::create();
+    command->pushString(method);
+    command->pushValue(argument);
     overlayPage()->mainFrame()->script()->evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ")")));
 }
 

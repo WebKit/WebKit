@@ -95,6 +95,7 @@ void Chrome::invalidateContentsForSlowScroll(const IntRect& updateRect, bool imm
 void Chrome::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
     m_client->scroll(scrollDelta, rectToScroll, clipRect);
+    InspectorInstrumentation::didScroll(m_page);
 }
 
 #if USE(TILED_BACKING_STORE)

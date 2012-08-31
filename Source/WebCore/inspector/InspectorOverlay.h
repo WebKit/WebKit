@@ -44,6 +44,7 @@ namespace WebCore {
 class Color;
 class GraphicsContext;
 class InspectorClient;
+class InspectorValue;
 class IntRect;
 class Node;
 class Page;
@@ -66,12 +67,14 @@ struct Highlight {
     void setColors(const HighlightConfig& highlightConfig)
     {
         contentColor = highlightConfig.content;
+        contentOutlineColor = highlightConfig.contentOutline;
         paddingColor = highlightConfig.padding;
         borderColor = highlightConfig.border;
         marginColor = highlightConfig.margin;
     }
 
     Color contentColor;
+    Color contentOutlineColor;
     Color paddingColor;
     Color borderColor;
     Color marginColor;
@@ -90,6 +93,7 @@ public:
     }
     ~InspectorOverlay();
 
+    void update();
     void paint(GraphicsContext&);
     void drawOutline(GraphicsContext*, const LayoutRect&, const Color&);
     void getHighlight(Highlight*) const;
@@ -105,12 +109,13 @@ public:
 private:
     InspectorOverlay(Page*, InspectorClient*);
 
-    void update();
-    void drawNodeHighlight(GraphicsContext*);
-    void drawRectHighlight(GraphicsContext*);
-    void drawOverlayPage(GraphicsContext*);
+    void drawNodeHighlight();
+    void drawRectHighlight();
+    void drawPausedInDebuggerMessage();
     Page* overlayPage();
+    void reset();
     void evaluateInOverlay(const String& method, const String& argument);
+    void evaluateInOverlay(const String& method, PassRefPtr<InspectorValue> argument);
 
     Page* m_page;
     InspectorClient* m_client;

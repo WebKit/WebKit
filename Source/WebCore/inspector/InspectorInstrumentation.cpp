@@ -249,6 +249,12 @@ void InspectorInstrumentation::mouseDidMoveOverElementImpl(InstrumentingAgents* 
         domAgent->mouseDidMoveOverElement(result, modifierFlags);
 }
 
+void InspectorInstrumentation::didScrollImpl(InstrumentingAgents* instrumentingAgents)
+{
+    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
+        pageAgent->didScroll();
+}
+
 bool InspectorInstrumentation::handleMousePressImpl(InstrumentingAgents* instrumentingAgents)
 {
     if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())

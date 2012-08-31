@@ -145,6 +145,7 @@ public:
     static void didInvalidateLayout(Frame*);
     static InspectorInstrumentationCookie willLayout(Frame*);
     static void didLayout(const InspectorInstrumentationCookie&);
+    static void didScroll(Page*);
     static InspectorInstrumentationCookie willLoadXHR(ScriptExecutionContext*, XMLHttpRequest*);
     static void didLoadXHR(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willPaint(Frame*, GraphicsContext*, const LayoutRect&);
@@ -321,6 +322,7 @@ private:
     static void didInvalidateLayoutImpl(InstrumentingAgents*, Frame*);
     static InspectorInstrumentationCookie willLayoutImpl(InstrumentingAgents*, Frame*);
     static void didLayoutImpl(const InspectorInstrumentationCookie&);
+    static void didScrollImpl(InstrumentingAgents*);
     static InspectorInstrumentationCookie willLoadXHRImpl(InstrumentingAgents*, XMLHttpRequest*, ScriptExecutionContext*);
     static void didLoadXHRImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willPaintImpl(InstrumentingAgents*, GraphicsContext*, const LayoutRect&, Frame*);
@@ -837,6 +839,15 @@ inline void InspectorInstrumentation::didLayout(const InspectorInstrumentationCo
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (cookie.first)
         didLayoutImpl(cookie);
+#endif
+}
+
+inline void InspectorInstrumentation::didScroll(Page* page)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        didScrollImpl(instrumentingAgents);
 #endif
 }
 

@@ -914,6 +914,12 @@ void InspectorPageAgent::didLayout()
 
     if (currentWidth && currentHeight)
         m_client->autoZoomPageToFitWidth();
+    m_overlay->update();
+}
+
+void InspectorPageAgent::didScroll()
+{
+    m_overlay->update();
 }
 
 PassRefPtr<TypeBuilder::Page::Frame> InspectorPageAgent::buildObjectForFrame(Frame* frame)
