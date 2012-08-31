@@ -1,3 +1,12 @@
+2012-08-31  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Unskip plugins/npruntime/delete-plugin-within-* tests on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=95597
+
+        Reviewed by Darin Adler.
+
+        * platform/win/Skipped:
+
 2012-08-31  Jon Lee  <jonlee@apple.com>
 
         Unreviewed. Skip http/tests/notifications on Lion, since there is no support.

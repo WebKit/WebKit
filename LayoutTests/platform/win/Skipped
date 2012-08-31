@@ -1817,14 +1817,6 @@ userscripts/user-script-plugin-document.html
 # https://bugs.webkit.org/show_bug.cgi?id=87858
 fast/js/names.html
 
-# New plugins/npruntime/delete-plugin-within-* tests introduced in r117012 fail/crash
-# https://bugs.webkit.org/show_bug.cgi?id=86443
-plugins/npruntime/delete-plugin-within-getProperty.html
-plugins/npruntime/delete-plugin-within-hasProperty-return-false.html
-plugins/npruntime/delete-plugin-within-hasProperty-return-true.html
-plugins/npruntime/delete-plugin-within-invoke.html
-plugins/npruntime/delete-plugin-within-setProperty.html
-
 # [Win] ASSERT(oldLayoutDelta == view()->layoutDelta()) failed in RenderBlock::layoutBlockChild
 # https://bugs.webkit.org/show_bug.cgi?id=87450
 media/media-volume-slider-rendered-below.html
