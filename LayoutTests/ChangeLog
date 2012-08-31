@@ -1,5 +1,17 @@
 2012-08-31  Jessie Berlin  <jberlin@apple.com>
 
+        compositing/tiling/huge-layer* flakey
+        https://bugs.webkit.org/show_bug.cgi?id=48454
+
+        These tests were disabled in r89631. Remove them from the Skipped list so that
+        run-webkit-tests doesn't try to find them.
+
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+
+2012-08-31  Jessie Berlin  <jberlin@apple.com>
+
         The fast/forms/ file tests were moved in the file sub-directory in r96918. Remove the
         old entries from the Skipped list.
 

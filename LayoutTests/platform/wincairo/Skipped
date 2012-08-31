@@ -915,10 +915,6 @@ animations/3d/transform-origin-vs-functions.html
 compositing/reflections/animation-inside-reflection.html
 compositing/reflections/nested-reflection-animated.html
 
-# Sometimes fail http://webkit.org/b/48454
-compositing/tiling/huge-layer-resize.html
-compositing/tiling/huge-layer-with-layer-children-resize.html
-
 # http://webkit.org/b/48455
 transitions/cancel-transition.html
 

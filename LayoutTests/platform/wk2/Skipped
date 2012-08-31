@@ -551,10 +551,6 @@ http/tests/loading/state-object-security-exception.html
 fast/parser/remove-misnested-iframe-in-beforeload.html
 fast/parser/remove-misnested-iframe-parent-in-beforeload.html
 
-# WebKit2 doesn't support tiled layers
-# <rdar://problem/8735596>
-compositing/tiling/huge-layer-resize.html
-
 # transitions/default-timing-function.html failing on WebKit2 since it was added
 # <https://bugs.webkit.org/show_bug.cgi?id=56531>
 transitions/default-timing-function.html
