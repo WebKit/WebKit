@@ -84,6 +84,7 @@ protected:
 private:
     void defaultKeyboardEventHandler(KeyboardEvent*);
     virtual bool isFocusable() const OVERRIDE FINAL;
+    bool isRTL() const;
     virtual bool supportsFocus() const OVERRIDE FINAL;
 
     FieldOwner* m_fieldOwner;

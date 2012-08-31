@@ -1,3 +1,19 @@
+2012-08-31  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Left/Right keys in multiple fields time input UI should move focus physical left/right instead of logical left/right regardless text direction.
+        https://bugs.webkit.org/show_bug.cgi?id=95434
+
+        Reviewed by Kent Tamura.
+
+        This patch adds a new test case of Left/Right keys navigation on
+        right-to-left text direction for multiple field time input UI.
+
+        This patch affects ports which enable both ENABLE_INPUT_TYPE_TIME and
+        ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS.
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-keyboard-events.html: Changed to have Left/Right keys navigation in
+        right-to-left text direction.
+
 2012-08-30  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Blur from field should reset typeahead buffer in multiple fields time input UI

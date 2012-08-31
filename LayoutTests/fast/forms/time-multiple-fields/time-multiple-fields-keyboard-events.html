@@ -126,6 +126,17 @@ keyDown('rightArrow');
 keyDown('leftArrow');
 keyDown('2');
 shouldBeEqualToString('input.value', '12:02:56');
+
+beginTest('RTL Left/Right keys', '04:56');
+input.setAttribute("dir", "rtl");
+keyDown('1');
+shouldBeEqualToString('input.value', '01:56');
+keyDown('leftArrow');
+keyDown('2');
+shouldBeEqualToString('input.value', '01:02');
+keyDown('rightArrow');
+keyDown('3');
+shouldBeEqualToString('input.value', '03:02');
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

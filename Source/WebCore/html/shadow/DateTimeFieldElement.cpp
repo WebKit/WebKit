@@ -84,7 +84,7 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent* keyboardEv
     if (keyIdentifier == "Left") {
         if (!m_fieldOwner)
             return;
-        if (m_fieldOwner->focusOnPreviousField(*this))
+        if (isRTL() ? m_fieldOwner->focusOnNextField(*this) : m_fieldOwner->focusOnPreviousField(*this))
             keyboardEvent->setDefaultHandled();
         return;
     }
@@ -92,7 +92,7 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent* keyboardEv
     if (keyIdentifier == "Right") {
         if (!m_fieldOwner)
             return;
-        if (m_fieldOwner->focusOnNextField(*this))
+        if (isRTL() ? m_fieldOwner->focusOnPreviousField(*this) : m_fieldOwner->focusOnNextField(*this))
             keyboardEvent->setDefaultHandled();
         return;
     }
@@ -143,6 +143,11 @@ bool DateTimeFieldElement::isFocusable() const
 bool DateTimeFieldElement::isReadOnly() const
 {
     return fastHasAttribute(readonlyAttr);
+}
+
+bool DateTimeFieldElement::isRTL() const
+{
+    return renderer() && renderer()->style()->direction() == RTL;
 }
 
 void DateTimeFieldElement::setReadOnly()
