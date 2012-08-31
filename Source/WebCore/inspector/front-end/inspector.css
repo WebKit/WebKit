@@ -611,7 +611,14 @@ body.drawer-visible #floating-status-bar-container {
     background-color: rgba(0, 0, 0, 0.75);
     -webkit-mask-image: url(Images/statusbarButtonGlyphs.png);
     -webkit-mask-position: -288px -48px;
+    -webkit-mask-size: 320px 72px;
     z-index: 1;
+}
+
+@media (-webkit-min-device-pixel-ratio: 1.5) {
+.long-click-glyph {
+    -webkit-mask-image: url(Images/statusbarButtonGlyphs2x.png);
+}
 }
 
 .long-click-glyph.shadow {
@@ -688,6 +695,13 @@ select.status-bar-item, select.status-bar-item:hover {
 
 .status-bar-item > .glyph {
     -webkit-mask-image: url(Images/statusbarButtonGlyphs.png);
+    -webkit-mask-size: 320px 72px;
+}
+
+@media (-webkit-min-device-pixel-ratio: 1.5) {
+.status-bar-item > .glyph {
+    -webkit-mask-image: url(Images/statusbarButtonGlyphs2x.png);
+}
 }
 
 button.dock-status-bar-item.status-bar-item.toggled-undock .glyph {

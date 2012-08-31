@@ -116,7 +116,14 @@
 .toggle-breakpoints .glyph {
     -webkit-mask-image: url(Images/statusbarButtonGlyphs.png);
     -webkit-mask-position: -32px 0;
+    -webkit-mask-size: 320px 72px;
     background-color: rgb(96, 96, 96) !important;
+}
+
+@media (-webkit-min-device-pixel-ratio: 1.5) {
+.toggle-breakpoints .glyph {
+    -webkit-mask-image: url(Images/statusbarButtonGlyphs2x.png);        
+}
 }
 
 .toggle-breakpoints.toggled-on .glyph {
@@ -157,8 +164,9 @@
 
 .status-bar-item.scripts-navigator-show-hide-button > .glyph {
     background-color: rgba(0, 0, 0, 0.5);
-    -webkit-mask-position: 0 0;
     -webkit-mask-image: url(Images/navigatorShowHideButton.png);
+    -webkit-mask-position: 0 0;
+    -webkit-mask-size: 48px 32px;
 }
 
 .status-bar-item.scripts-navigator-show-hide-button.toggled-pinned > .glyph {
@@ -271,8 +279,9 @@ button.status-bar-item.scripts-debugger-show-hide-button:active {
 
 .status-bar-item.scripts-debugger-show-hide-button > .glyph {
     background-color: rgba(0, 0, 0, 0.5);
-    -webkit-mask-position: 0 0;
     -webkit-mask-image: url(Images/navigatorShowHideButton.png);
+    -webkit-mask-position: 0 0;
+    -webkit-mask-size: 48px 32px;
 }
 
 button.status-bar-item.scripts-debugger-show-hide-button.toggled-shown {

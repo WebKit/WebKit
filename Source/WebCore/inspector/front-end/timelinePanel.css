@@ -486,7 +486,14 @@
     margin-left: 0;
     margin-right: 0;
     -webkit-mask-image: url(Images/statusbarButtonGlyphs.png);
+    -webkit-mask-size: 320px 72px;
     background-color: black;
+}
+
+@media (-webkit-min-device-pixel-ratio: 1.5) {
+#timeline-overview-sidebar .icon {
+    -webkit-mask-image: url(Images/statusbarButtonGlyphs2x.png);
+}
 }
 
 .timeline-overview-sidebar-events .icon {

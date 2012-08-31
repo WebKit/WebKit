@@ -6658,6 +6658,7 @@
             'inspector/front-end/Images/splitviewDimple.png',
             'inspector/front-end/Images/splitviewDividerBackground.png',
             'inspector/front-end/Images/statusbarButtonGlyphs.png',
+            'inspector/front-end/Images/statusbarButtonGlyphs2x.png',
             'inspector/front-end/Images/statusbarResizerHorizontal.png',
             'inspector/front-end/Images/statusbarResizerVertical.png',
             'inspector/front-end/Images/successGreenDot.png',
