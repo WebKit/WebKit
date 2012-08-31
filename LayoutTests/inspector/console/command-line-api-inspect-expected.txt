@@ -6,7 +6,7 @@ Running: testRevealElement
 
 WebInspector.inspect called with: <p>
 WebInspector.inspect's hints are: []
-inspect($('p1')) = 
+inspect($('#p1')) = 
 Selected node id: 'p1'.
 
 Running: testRevealDatabase

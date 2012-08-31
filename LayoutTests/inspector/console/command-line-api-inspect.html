@@ -33,7 +33,7 @@ function test()
         function testRevealElement(next)
         {
             InspectorTest.addSniffer(WebInspector, "_updateFocusedNode", step2);
-            evalAndDump("inspect($('p1'))");
+            evalAndDump("inspect($('#p1'))");
 
             function step2()
             {

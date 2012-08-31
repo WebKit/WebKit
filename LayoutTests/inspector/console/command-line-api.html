@@ -1,18 +1,24 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
 <script src="../../http/tests/inspector/elements-test.js"></script>
 <script>
 
 var test = function()
 {
     var expressions = [
-        "$0.toString()",
+        "String($0)",
         "$3",
-        "keys([3,4]).toString()",
-        "values([3,4]).toString()",
-        "$('foo').toString()",
-        "$$('p#foo').toString()"
+        "String(keys([3,4]))",
+        "String(values([3,4]))",
+        "String($('#foo'))",
+        "String($('#foo', document.body))",
+        "String($('#foo', 'non-node'))",
+        "String($('#foo', $('#bar')))",
+        "String($$('p#foo'))",
+        "String($$('p#foo', document.body))",
+        "String($('foo'))"
     ];
 
     InspectorTest.selectNodeWithId("foo", step1);
@@ -20,12 +26,14 @@ var test = function()
     function step1(node)
     {
         if (!expressions.length) {
+            InspectorTest.dumpConsoleMessages();
             InspectorTest.completeTest();
             return;
         }
         var expression = expressions[0];
         expressions.splice(0, 1);
-        InspectorTest.evaluateInConsoleAndDump(expression, step1);
+        WebInspector.log("\n");
+        InspectorTest.evaluateInConsole(expression, step1);
     }
 }
 
@@ -35,7 +43,7 @@ var test = function()
 <body onload="runTest()">
 <p id="foo">
 Tests that command line api works.
-</p>
+</p><p id="bar"></p>
 
 </body>
 </html>
