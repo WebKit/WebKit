@@ -586,7 +586,7 @@ public:
     RenderView* view() const;
 
     // Returns true if this renderer is rooted, and optionally returns the hosting view (the root of the hierarchy).
-    bool isRooted(RenderView** = 0);
+    bool isRooted(RenderView** = 0) const;
 
     Node* node() const { return isAnonymous() ? 0 : m_node; }
 
@@ -752,14 +752,14 @@ public:
     RenderBoxModelObject* containerForRepaint() const;
     // Actually do the repaint of rect r for this object which has been computed in the coordinate space
     // of repaintContainer. If repaintContainer is 0, repaint via the view.
-    void repaintUsingContainer(RenderBoxModelObject* repaintContainer, const LayoutRect&, bool immediate = false);
+    void repaintUsingContainer(RenderBoxModelObject* repaintContainer, const LayoutRect&, bool immediate = false) const;
     
     // Repaint the entire object.  Called when, e.g., the color of a border changes, or when a border
     // style changes.
-    void repaint(bool immediate = false);
+    void repaint(bool immediate = false) const;
 
     // Repaint a specific subrectangle within a given object.  The rect |r| is in the object's coordinate space.
-    void repaintRectangle(const LayoutRect&, bool immediate = false);
+    void repaintRectangle(const LayoutRect&, bool immediate = false) const;
 
     // Repaint only if our old bounds and new bounds are different. The caller may pass in newBounds and newOutlineBox if they are known.
     bool repaintAfterLayoutIfNeeded(RenderBoxModelObject* repaintContainer, const LayoutRect& oldBounds, const LayoutRect& oldOutlineBox, const LayoutRect* newBoundsPtr = 0, const LayoutRect* newOutlineBoxPtr = 0);

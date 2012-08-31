@@ -1279,7 +1279,7 @@ RenderBoxModelObject* RenderObject::containerForRepaint() const
     return repaintContainer;
 }
 
-void RenderObject::repaintUsingContainer(RenderBoxModelObject* repaintContainer, const LayoutRect& r, bool immediate)
+void RenderObject::repaintUsingContainer(RenderBoxModelObject* repaintContainer, const LayoutRect& r, bool immediate) const
 {
     if (!repaintContainer) {
         view()->repaintViewRectangle(r, immediate);
@@ -1322,7 +1322,7 @@ void RenderObject::repaintUsingContainer(RenderBoxModelObject* repaintContainer,
 #endif
 }
 
-void RenderObject::repaint(bool immediate)
+void RenderObject::repaint(bool immediate) const
 {
     // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
     RenderView* view;
@@ -1336,7 +1336,7 @@ void RenderObject::repaint(bool immediate)
     repaintUsingContainer(repaintContainer ? repaintContainer : view, clippedOverflowRectForRepaint(repaintContainer), immediate);
 }
 
-void RenderObject::repaintRectangle(const LayoutRect& r, bool immediate)
+void RenderObject::repaintRectangle(const LayoutRect& r, bool immediate) const
 {
     // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
     RenderView* view;
@@ -2201,9 +2201,9 @@ LayoutRect RenderObject::localCaretRect(InlineBox*, int, LayoutUnit* extraWidthT
     return LayoutRect();
 }
 
-bool RenderObject::isRooted(RenderView** view)
+bool RenderObject::isRooted(RenderView** view) const
 {
-    RenderObject* o = this;
+    const RenderObject* o = this;
     while (o->parent())
         o = o->parent();
 
@@ -2211,7 +2211,7 @@ bool RenderObject::isRooted(RenderView** view)
         return false;
 
     if (view)
-        *view = toRenderView(o);
+        *view = const_cast<RenderView*>(toRenderView(o));
 
     return true;
 }

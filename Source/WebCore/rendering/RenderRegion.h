@@ -116,11 +116,15 @@ public:
     // Whether or not this region is a set.
     virtual bool isRenderRegionSet() const { return false; }
     
+    virtual void repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate) const;
+
 protected:
     void setRegionObjectsRegionStyle();
     void restoreRegionObjectsOriginalStyle();
 
     LayoutRect overflowRectForFlowThreadPortion(LayoutRect flowThreadPortionRect, bool isFirstPortion, bool isLastPortion) const;
+    void repaintFlowThreadContentRectangle(const LayoutRect& repaintRect, bool immediate, const LayoutRect& flowThreadPortionRect,
+                                           const LayoutRect& flowThreadPortionOverflowRect, const LayoutPoint& regionLocation) const;
 
 private:
     virtual const char* renderName() const { return "RenderRegion"; }

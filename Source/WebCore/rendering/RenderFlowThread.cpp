@@ -317,33 +317,18 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, 
     if (!shouldRepaint(repaintRect) || !hasValidRegionInfo())
         return;
 
+    LayoutStateDisabler layoutStateDisabler(view()); // We can't use layout state to repaint, since the regions are somewhere else.
+
+    // We can't use currentFlowThread as it is possible to have interleaved flow threads and the wrong one could be used.
+    // Let each region figure out the proper enclosing flow thread.
+    CurrentRenderFlowThreadDisabler disabler(view());
+    
     for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
         if (!region->isValid())
             continue;
 
-        // We only have to issue a repaint in this region if the region rect intersects the repaint rect.
-        LayoutRect flippedFlowThreadPortionRect(region->flowThreadPortionRect());
-        LayoutRect flippedFlowThreadPortionOverflowRect(region->flowThreadPortionOverflowRect());
-        flipForWritingMode(flippedFlowThreadPortionRect); // Put the region rects into physical coordinates.
-        flipForWritingMode(flippedFlowThreadPortionOverflowRect);
-
-        LayoutRect clippedRect(repaintRect);
-        clippedRect.intersect(flippedFlowThreadPortionOverflowRect);
-        if (clippedRect.isEmpty())
-            continue;
-
-        // Put the region rect into the region's physical coordinate space.
-        clippedRect.setLocation(region->contentBoxRect().location() + (clippedRect.location() - flippedFlowThreadPortionRect.location()));
-
-        // Now switch to the region's writing mode coordinate space and let it repaint itself.
-        region->flipForWritingMode(clippedRect);
-        LayoutStateDisabler layoutStateDisabler(view()); // We can't use layout state to repaint, since the region is somewhere else.
-
-        // Can't use currentFlowThread as it possible to have imbricated flow threads and the wrong one could be used,
-        // so, we let each region figure out the proper enclosing flow thread
-        CurrentRenderFlowThreadDisabler disabler(view());
-        region->repaintRectangle(clippedRect, immediate);
+        region->repaintFlowThreadContent(repaintRect, immediate);
     }
 }
 

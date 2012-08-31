@@ -209,6 +209,34 @@ void RenderRegion::layout()
     // We'll need to expand RenderBoxRegionInfo to also hold left and right overflow values.
 }
 
+void RenderRegion::repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate) const
+{
+    repaintFlowThreadContentRectangle(repaintRect, immediate, flowThreadPortionRect(), flowThreadPortionOverflowRect(), contentBoxRect().location());
+}
+
+void RenderRegion::repaintFlowThreadContentRectangle(const LayoutRect& repaintRect, bool immediate, const LayoutRect& flowThreadPortionRect, const LayoutRect& flowThreadPortionOverflowRect, const LayoutPoint& regionLocation) const
+{
+    // We only have to issue a repaint in this region if the region rect intersects the repaint rect.
+    LayoutRect flippedFlowThreadPortionRect(flowThreadPortionRect);
+    LayoutRect flippedFlowThreadPortionOverflowRect(flowThreadPortionOverflowRect);
+    flowThread()->flipForWritingMode(flippedFlowThreadPortionRect); // Put the region rects into physical coordinates.
+    flowThread()->flipForWritingMode(flippedFlowThreadPortionOverflowRect);
+
+    LayoutRect clippedRect(repaintRect);
+    clippedRect.intersect(flippedFlowThreadPortionOverflowRect);
+    if (clippedRect.isEmpty())
+        return;
+
+    // Put the region rect into the region's physical coordinate space.
+    clippedRect.setLocation(regionLocation + (clippedRect.location() - flippedFlowThreadPortionRect.location()));
+
+    // Now switch to the region's writing mode coordinate space and let it repaint itself.
+    flipForWritingMode(clippedRect);
+    
+    // Issue the repaint.
+    repaintRectangle(clippedRect, immediate);
+}
+
 void RenderRegion::installFlowThread()
 {
     ASSERT(view());
