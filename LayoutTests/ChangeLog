@@ -1,3 +1,10 @@
+2012-08-31  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed gardening, add Qt-WK2 specific expected
+        file, because this doesn't fail as expected, but passes.
+
+        * platform/qt-5.0-wk2/css3/compositing/should-have-compositing-layer-expected.txt: Added.
+
 2012-08-31  Gavin Peters  <gavinp@chromium.org>
 
         Unreviewed rebaseline after r127226
