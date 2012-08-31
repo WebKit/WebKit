@@ -36,7 +36,7 @@
 #import "WebPreferences.h"
 #import <PDFKit/PDFKit.h>
 #import <WebCore/LocalizedStrings.h>
-#import <objc/runtime.h>
+#import <objc/objc-runtime.h>
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
