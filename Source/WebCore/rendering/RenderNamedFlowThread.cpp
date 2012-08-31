@@ -135,12 +135,45 @@ static bool compareRenderRegions(const RenderRegion* firstRegion, const RenderRe
     ASSERT(firstRegion);
     ASSERT(secondRegion);
 
-    // If the regions have the same region-index, compare their position in dom.
-    ASSERT(firstRegion->node());
-    ASSERT(secondRegion->node());
+    ASSERT(firstRegion->generatingNode());
+    ASSERT(secondRegion->generatingNode());
 
-    unsigned short position = firstRegion->node()->compareDocumentPosition(secondRegion->node());
-    return (position & Node::DOCUMENT_POSITION_FOLLOWING);
+    // If the regions belong to different nodes, compare their position in the DOM.
+    if (firstRegion->generatingNode() != secondRegion->generatingNode()) {
+        unsigned short position = firstRegion->generatingNode()->compareDocumentPosition(secondRegion->generatingNode());
+
+        // If the second region is contained in the first one, the first region is "less" if it's :before.
+        if (position & Node::DOCUMENT_POSITION_CONTAINED_BY) {
+            ASSERT(secondRegion->style()->styleType() == NOPSEUDO);
+            return firstRegion->style()->styleType() == BEFORE;
+        }
+
+        // If the second region contains the first region, the first region is "less" if the second is :after.
+        if (position & Node::DOCUMENT_POSITION_CONTAINS) {
+            ASSERT(firstRegion->style()->styleType() == NOPSEUDO);
+            return secondRegion->style()->styleType() == AFTER;
+        }
+
+        return (position & Node::DOCUMENT_POSITION_FOLLOWING);
+    }
+
+    // FIXME: Currently it's not possible for an element to be both a region and have pseudo-children. The case is covered anyway.
+    switch (firstRegion->style()->styleType()) {
+    case BEFORE:
+        // The second region can be the node or the after pseudo-element (before is smaller than any of those).
+        return true;
+    case AFTER:
+        // The second region can be the node or the before pseudo-element (after is greater than any of those).
+        return false;
+    case NOPSEUDO:
+        // The second region can either be the before or the after pseudo-element (the node is only smaller than the after pseudo-element).
+        return firstRegion->style()->styleType() == AFTER;
+    default:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return true;
 }
 
 void RenderNamedFlowThread::addRegionToThread(RenderRegion* renderRegion)

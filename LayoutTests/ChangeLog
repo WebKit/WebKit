@@ -1,3 +1,24 @@
+2012-08-31  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] It should be possible to specify ::BEFORE/AFTER as regions
+        https://bugs.webkit.org/show_bug.cgi?id=90079
+
+        Reviewed by David Hyatt.
+
+        The new ref-test has a block with both a :before and :after pseudo-elements marked as regions.
+        In the block there's another region.
+
+        The test verifies the content is correctly flowed (the region order is respected) in the region chain:
+        :before region -> child region -> :after region
+
+        As a region a pseudo-element should also be displayed if there's no content property specified in the style sheet.
+
+        * fast/regions/content-flowed-into-pseudo-regions-expected.html: Added.
+        * fast/regions/content-flowed-into-pseudo-regions.html: Added.
+        * fast/regions/resources/region-style.css:
+        (.regionArticleAfter::after, .regionArticleBefore::before):
+        (.borderBoxNoFloat):
+
 2012-08-31  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: Update $ to alias to querySelector rather than getElementById

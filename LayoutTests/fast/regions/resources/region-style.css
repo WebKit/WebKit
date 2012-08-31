@@ -30,10 +30,33 @@
     -webkit-flow-from: article;
 }
 
+.regionArticleAfter::after {
+    display: block;
+    width: 50px;
+    height: 50px;
+    content: 'This text should not be displayed';
+    border: 1px solid black;
+    -webkit-flow-from: article;
+}
+
+.regionArticleBefore::before {
+    display: block;
+    width: 50px;
+    height: 50px;
+    border: 1px solid black;
+    -webkit-flow-from: article;
+}
+
 .borderBox {
     width: 50px;
     height: 50px;
     float: left;
+    border: 1px solid black;
+}
+
+.borderBoxNoFloat {
+    width: 50px;
+    height: 50px;
     border: 1px solid black;
 }
 

@@ -684,7 +684,7 @@ void RenderFlowThread::computeOverflowStateForRegions(LayoutUnit oldClientAfterE
     }
 
     // With the regions overflow state computed we can also set the overset flag for the named flow.
-    // If there are no valid regions in the chain, overset is true
+    // If there are no valid regions in the chain, overset is true.
     m_overset = lastReg ? lastReg->regionState() == RenderRegion::RegionOverset : true;
 }
 

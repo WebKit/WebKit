@@ -699,12 +699,12 @@ static void writeRenderNamedFlowThreads(TextStream& ts, RenderView* renderView, 
                 RenderRegion* renderRegion = *itRR;
                 writeIndent(ts, indent + 2);
                 ts << "RenderRegion";
-                if (renderRegion->node()) {
-                    String tagName = getTagName(renderRegion->node());
+                if (renderRegion->generatingNode()) {
+                    String tagName = getTagName(renderRegion->generatingNode());
                     if (!tagName.isEmpty())
                         ts << " {" << tagName << "}";
-                    if (renderRegion->node()->isElementNode() && renderRegion->node()->hasID()) {
-                        Element* element = static_cast<Element*>(renderRegion->node());
+                    if (renderRegion->generatingNode()->isElementNode() && renderRegion->generatingNode()->hasID()) {
+                        Element* element = static_cast<Element*>(renderRegion->generatingNode());
                         ts << " #" << element->idForStyleResolution();
                     }
                     if (renderRegion->hasCustomRegionStyle())

@@ -150,7 +150,7 @@ bool RenderRegion::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
         if (m_flowThread && m_flowThread->hitTestFlowThreadPortionInRegion(this, flowThreadPortionRect(), flowThreadPortionOverflowRect(), request, result, locationInContainer, LayoutPoint(adjustedLocation.x() + borderLeft() + paddingLeft(), adjustedLocation.y() + borderTop() + paddingTop())))
             return true;
         updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
-        if (!result.addNodeToRectBasedTestResult(node(), locationInContainer, boundsRect))
+        if (!result.addNodeToRectBasedTestResult(generatingNode(), locationInContainer, boundsRect))
             return true;
     }
 
@@ -161,6 +161,8 @@ void RenderRegion::checkRegionStyle()
 {
     ASSERT(m_flowThread);
     bool customRegionStyle = false;
+
+    // FIXME: Region styling doesn't work for pseudo elements.
     if (node()) {
         Element* regionElement = static_cast<Element*>(node());
         customRegionStyle = view()->document()->styleResolver()->checkRegionStyle(regionElement);
@@ -399,6 +401,7 @@ PassRefPtr<RenderStyle> RenderRegion::computeStyleInRegion(const RenderObject* o
     ASSERT(!object->isAnonymous());
     ASSERT(object->node() && object->node()->isElementNode());
 
+    // FIXME: Region styling fails for pseudo-elements because the renderers don't have a node.
     Element* element = toElement(object->node());
     RefPtr<RenderStyle> renderObjectRegionStyle = object->view()->document()->styleResolver()->styleForElement(element, 0, DisallowStyleSharing, MatchAllRules, this);
 
