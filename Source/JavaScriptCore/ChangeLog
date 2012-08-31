@@ -1,3 +1,15 @@
+2012-08-30  Filip Pizlo  <fpizlo@apple.com>
+
+        ASSERTION FAILURE in JSC::JSGlobalData::float32ArrayDescriptor when running fast/js/dfg-float64array.html
+        https://bugs.webkit.org/show_bug.cgi?id=95398
+
+        Reviewed by Mark Hahnenberg.
+
+        Trying to get the build failure to be a bit more informative.
+
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+
 2012-08-30  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the Qt build: add some #includes that, for some reason, only the Qt linker requires.

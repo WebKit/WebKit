@@ -1,3 +1,14 @@
+2012-08-30  Filip Pizlo  <fpizlo@apple.com>
+
+        ASSERTION FAILURE in JSC::JSGlobalData::float32ArrayDescriptor when running fast/js/dfg-float64array.html
+        https://bugs.webkit.org/show_bug.cgi?id=95398
+
+        Reviewed by Mark Hahnenberg.
+
+        Temporarily unskipping tests to figure out what is going.
+
+        * platform/mac-wk2/Skipped:
+
 2012-08-30  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed Gardening. http/security/referrer tests fail. Unable to load resources over https.

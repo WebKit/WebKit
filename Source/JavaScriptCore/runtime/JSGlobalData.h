@@ -420,6 +420,7 @@ namespace JSC {
         { \
             ASSERT(!m_##type##ArrayDescriptor.m_classInfo || m_##type##ArrayDescriptor.m_classInfo == descriptor.m_classInfo); \
             m_##type##ArrayDescriptor = descriptor; \
+            ASSERT(m_##type##ArrayDescriptor.m_classInfo); \
         } \
         const TypedArrayDescriptor& type##ArrayDescriptor() const { ASSERT(m_##type##ArrayDescriptor.m_classInfo); return m_##type##ArrayDescriptor; }
 
