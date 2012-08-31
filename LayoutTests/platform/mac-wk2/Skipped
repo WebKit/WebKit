@@ -156,8 +156,6 @@ fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
 fast/events/wheelevent-direction-inverted-from-device.html
 fast/forms/drag-into-textarea.html
 fast/forms/drag-out-of-textarea.html
-fast/forms/get-file-upload.html
-fast/forms/input-file-re-render.html
 fast/forms/input-readonly-autoscroll.html
 fast/forms/input-text-drag-down.html
 fast/forms/listbox-typeahead-cyrillic.html

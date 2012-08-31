@@ -1,3 +1,10 @@
+2012-08-31  Jessie Berlin  <jberlin@apple.com>
+
+        The fast/forms/ file tests were moved in the file sub-directory in r96918. Remove the
+        old entries from the Skipped list.
+
+        * platform/mac-wk2/Skipped:
+
 2012-08-31  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Unskip plugins/npruntime/delete-plugin-within-* tests on Windows
