@@ -1,3 +1,16 @@
+2012-08-31  Jessie Berlin  <jberlin@apple.com>
+
+        Web Inspector: sort object properties when dumping them in tests
+        https://bugs.webkit.org/show_bug.cgi?id=95459
+
+        Fix the expected results for timeline-paint to actually be in order.
+
+        * inspector/timeline/timeline-paint-expected.txt:
+        'height' comes before 'width' alphabetically.
+        * platform/chromium/inspector/timeline/timeline-paint-expected.txt: Removed.
+        Once the cross-platform results were fixed, this file was identical to the cross-platform
+        file. Remove it.
+
 2012-08-31  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] It should be possible to specify ::BEFORE/AFTER as regions
