@@ -1,3 +1,10 @@
+2012-08-31  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed Gardening. inspector/profiler/webgl/webgl-profiler-api-changes.html fails on Windows.
+        WebGL not enabled on Windows.
+
+        * platform/win/Skipped:
+
 2012-08-31  Jessie Berlin  <jberlin@apple.com>
 
         Mark http/tests/security/inactive-document-with-empty-security-origin.html while Geoff Garen
