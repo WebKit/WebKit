@@ -1,3 +1,28 @@
+2012-08-31  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions] Exclusions tests should run without errors in standalone browser
+        https://bugs.webkit.org/show_bug.cgi?id=95369
+
+        Reviewed by Andreas Kling.
+
+        Adding a check to make sure window.internals exists before accessing it.
+        Without the check, a reference error would occur when trying to run these
+        tests from the browser (as opposed to the test script).
+
+        * fast/exclusions/css-exclusions-disabled.html:
+        * fast/exclusions/script-tests/parsing-wrap-shape-inside.js:
+        * fast/exclusions/script-tests/parsing-wrap-shape-outside.js:
+        * fast/exclusions/script-tests/wrap-flow-parsing.js:
+        * fast/exclusions/script-tests/wrap-margin-parsing.js:
+        * fast/exclusions/script-tests/wrap-padding-parsing.js:
+        * fast/exclusions/script-tests/wrap-parsing.js:
+        * fast/exclusions/script-tests/wrap-through-parsing.js:
+        * fast/exclusions/shape-inside/shape-inside-floats-simple.html:
+        * fast/exclusions/shape-inside/shape-inside-inline-elements.html:
+        * fast/exclusions/shape-inside/shape-inside-overflow.html:
+        * fast/exclusions/shape-inside/shape-inside-percentage-auto.html:
+        * fast/exclusions/shape-inside/shape-inside-text.html:
+
 2012-08-31  Andrey Adaikin  <aandrey@chromium.org>
 
         [Qt] New inspector/profiler/webgl-profiler-api-changes.html times out

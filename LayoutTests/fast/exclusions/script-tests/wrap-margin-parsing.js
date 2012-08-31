@@ -1,6 +1,7 @@
 description('Test parsing of the CSS wrap-margin property.');
 
-internals.settings.setCSSExclusionsEnabled(true);
+if (window.internals)
+    window.internals.settings.setCSSExclusionsEnabled(true);
 
 function test(declaration) {
     var div = document.createElement("div");

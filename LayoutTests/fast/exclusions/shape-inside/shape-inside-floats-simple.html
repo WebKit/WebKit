@@ -2,7 +2,8 @@
 <html>
 <head>
 <script>
-    internals.settings.setCSSExclusionsEnabled(true);
+    if (window.internals)
+        window.internals.settings.setCSSExclusionsEnabled(true);
 </script>
 <style>
     div {

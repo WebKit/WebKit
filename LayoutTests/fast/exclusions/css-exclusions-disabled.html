@@ -6,7 +6,8 @@
 
 description('Test that parsing of css exclusions related properties can be disabled.');
 
-internals.settings.setCSSExclusionsEnabled(false);
+if (window.internals)
+    window.internals.settings.setCSSExclusionsEnabled(false);
 
 function testInlineStyle(property, value) {
     var div = document.createElement("div");

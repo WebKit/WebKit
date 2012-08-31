@@ -1,6 +1,7 @@
 description('Testing the parsing of the -webkit-shape-inside property.');
 
-internals.settings.setCSSExclusionsEnabled(true);
+if (window.internals)
+    window.internals.settings.setCSSExclusionsEnabled(true);
 
 function testCSSText(declaration, expected)
 {
