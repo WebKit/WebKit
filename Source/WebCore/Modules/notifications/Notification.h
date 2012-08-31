@@ -107,10 +107,11 @@ public:
 
     TextDirection direction() const { return dir() == "rtl" ? RTL : LTR; }
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(show);
 #if ENABLE(LEGACY_NOTIFICATIONS)
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(display);
+    EventListener* ondisplay() { return getAttributeEventListener(eventNames().showEvent); }
+    void setOndisplay(PassRefPtr<EventListener> listener) { setAttributeEventListener(eventNames().showEvent, listener); }
 #endif
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(show);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(close);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(click);

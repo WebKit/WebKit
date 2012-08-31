@@ -8,6 +8,7 @@ PASS window.webkitNotifications.createNotification('', 'title 1', 'body'); threw
 Granting permission to http://127.0.0.1:8000
 PASS window.webkitNotifications.checkPermission() is 0
 PASS ondisplay event handler was called
+PASS this.ondisplay is this.onshow
 Denying permission to http://127.0.0.1:8000
 PASS window.webkitNotifications.checkPermission() is 2
 PASS window.webkitNotifications.createNotification('', 'title 3', 'body'); threw exception Error: SECURITY_ERR: DOM Exception 18.

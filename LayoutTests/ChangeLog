@@ -1,3 +1,17 @@
+2012-08-31  Jon Lee  <jonlee@apple.com>
+
+        ondisplay event handlers are not called
+        https://bugs.webkit.org/show_bug.cgi?id=95263
+        <rdar://problem/12193359>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Adjust the test to use the ondisplay handler, to fully test legacy API.
+
+        * http/tests/notifications/legacy/show-expected.txt: Verify that event listener for ondisplay is
+        the same as that for onshow.
+        * http/tests/notifications/legacy/show.html:
+
 2012-08-31  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Adding passing test results for fast/canvas/canvas-strokeRect-alpha-shadow.
