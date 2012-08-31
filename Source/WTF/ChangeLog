@@ -1,3 +1,17 @@
+2012-08-31  Pratik Solanki  <psolanki@apple.com>
+
+        objc_msgSend and IMP should be cast appropriately before using
+        https://bugs.webkit.org/show_bug.cgi?id=95242
+
+        Reviewed by Benjamin Poulain.
+
+        Fix for older compilers. Pass id as the return type to the template
+        instead of relying on default type.
+
+        * wtf/Functional.h:
+        (WTF::R):
+        * wtf/ObjcRuntimeExtras.h:
+
 2012-08-31  Michael Saboff  <msaboff@apple.com>
 
         CSS Parser should directly parse 8 bit source strings

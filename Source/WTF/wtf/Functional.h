@@ -635,8 +635,8 @@ public:
         //
         //   dispatch_async(queue, bind(...));
         //
-        id copiedBlock = wtfObjcMsgSend((id)block, sel_registerName("copy"));
-        id autoreleasedBlock = wtfObjcMsgSend(copiedBlock, sel_registerName("autorelease"));
+        id copiedBlock = wtfObjcMsgSend<id>((id)block, sel_registerName("copy"));
+        id autoreleasedBlock = wtfObjcMsgSend<id>(copiedBlock, sel_registerName("autorelease"));
         return (BlockType)autoreleasedBlock;
     }
 #endif

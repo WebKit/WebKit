@@ -355,7 +355,7 @@ static NSArray *drt_NSFontManager_availableFontFamilies(id self, SEL _cmd)
     if (availableFontFamilies)
         return availableFontFamilies;
     
-    NSArray *availableFamilies = wtfCallIMP(appKitAvailableFontFamiliesIMP, self, _cmd);
+    NSArray *availableFamilies = wtfCallIMP<id>(appKitAvailableFontFamiliesIMP, self, _cmd);
 
     NSMutableSet *prunedFamiliesSet = [NSMutableSet setWithArray:availableFamilies];
     [prunedFamiliesSet intersectSet:allowedFontFamilySet()];

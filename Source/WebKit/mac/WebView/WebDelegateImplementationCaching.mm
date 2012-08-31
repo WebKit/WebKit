@@ -85,7 +85,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector)
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend(delegate, selector, self);
+        return wtfObjcMsgSend<id>(delegate, selector, self);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -97,7 +97,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend(delegate, selector, self, object);
+        return wtfObjcMsgSend<id>(delegate, selector, self, object);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -109,7 +109,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, NSRect r
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend(delegate, selector, self, rect);
+        return wtfObjcMsgSend<id>(delegate, selector, self, rect);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -121,7 +121,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend(delegate, selector, self, object1, object2);
+        return wtfObjcMsgSend<id>(delegate, selector, self, object1, object2);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -133,7 +133,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend(delegate, selector, self, object, boolean);
+        return wtfObjcMsgSend<id>(delegate, selector, self, object, boolean);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -145,7 +145,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend(delegate, selector, self, object1, object2, object3);
+        return wtfObjcMsgSend<id>(delegate, selector, self, object1, object2, object3);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -157,7 +157,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend(delegate, selector, self, object, integer);
+        return wtfObjcMsgSend<id>(delegate, selector, self, object, integer);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -241,7 +241,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
     @try {
-        return wtfCallIMP(implementation, delegate, selector, self);
+        return wtfCallIMP<id>(implementation, delegate, selector, self);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -253,7 +253,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
     @try {
-        return wtfCallIMP(implementation, delegate, selector, self, object);
+        return wtfCallIMP<id>(implementation, delegate, selector, self, object);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -265,7 +265,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
     @try {
-        return wtfCallIMP(implementation, delegate, selector, self, object1, object2);
+        return wtfCallIMP<id>(implementation, delegate, selector, self, object1, object2);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -277,7 +277,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
     @try {
-        return wtfCallIMP(implementation, delegate, selector, self, object1, object2, object3);
+        return wtfCallIMP<id>(implementation, delegate, selector, self, object1, object2, object3);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -289,7 +289,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
     @try {
-        return wtfCallIMP(implementation, delegate, selector, self, object1, object2, object3, object4);
+        return wtfCallIMP<id>(implementation, delegate, selector, self, object1, object2, object3, object4);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -301,7 +301,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
     @try {
-        return wtfCallIMP(implementation, delegate, selector, self, object1, integer, object2);
+        return wtfCallIMP<id>(implementation, delegate, selector, self, object1, integer, object2);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -313,7 +313,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
     @try {
-        return wtfCallIMP(implementation, delegate, selector, self, object1, integer1, integer2, object2);
+        return wtfCallIMP<id>(implementation, delegate, selector, self, object1, integer1, integer2, object2);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -325,7 +325,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
     @try {
-        return wtfCallIMP(implementation, delegate, selector, self, object1, boolean, integer1, integer2, object2);
+        return wtfCallIMP<id>(implementation, delegate, selector, self, object1, boolean, integer1, integer2, object2);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -337,7 +337,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
     @try {
-        return wtfCallIMP(implementation, delegate, selector, self, object1, object2, integer, object3);
+        return wtfCallIMP<id>(implementation, delegate, selector, self, object1, object2, integer, object3);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -349,7 +349,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
     @try {
-        return wtfCallIMP(implementation, delegate, selector, self, object1, integer1, object2, integer2, object3);
+        return wtfCallIMP<id>(implementation, delegate, selector, self, object1, integer1, object2, integer2, object3);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -361,7 +361,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
     @try {
-        return wtfCallIMP(implementation, delegate, selector, self, object1, integer, object2, object3, object4);
+        return wtfCallIMP<id>(implementation, delegate, selector, self, object1, integer, object2, object3, object4);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -373,7 +373,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     if (!delegate)
         return nil;
     @try {
-        return wtfCallIMP(implementation, delegate, selector, self, object1, interval, object2, object3);
+        return wtfCallIMP<id>(implementation, delegate, selector, self, object1, interval, object2, object3);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -578,7 +578,7 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2)
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend(delegate, selector, object1, object2);
+        return wtfObjcMsgSend<id>(delegate, selector, object1, object2);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }
@@ -591,7 +591,7 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id obje
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
     @try {
-        return wtfObjcMsgSend(delegate, selector, object1, object2, object3, object4, object5);
+        return wtfObjcMsgSend<id>(delegate, selector, object1, object2, object3, object4, object5);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }

@@ -1,3 +1,18 @@
+2012-08-31  Pratik Solanki  <psolanki@apple.com>
+
+        objc_msgSend and IMP should be cast appropriately before using
+        https://bugs.webkit.org/show_bug.cgi?id=95242
+
+        Reviewed by Benjamin Poulain.
+
+        Fix for older compilers. Pass id as the return type to the template
+        instead of relying on default type.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (drt_NSFontManager_availableFontFamilies):
+        * WebKitTestRunner/InjectedBundle/mac/ActivateFonts.mm:
+        (WTR::wtr_NSFontManager_availableFontFamilies):
+
 2012-08-31  Zan Dobersek  <zandobersek@gmail.com>
 
         nrwt: use scm instead of calling svn directly to get the revision in json results generator

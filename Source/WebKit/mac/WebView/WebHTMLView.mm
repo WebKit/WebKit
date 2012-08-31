@@ -264,7 +264,7 @@ static IMP oldSetCursorForMouseLocationIMP;
 static void setCursor(NSWindow *self, SEL cmd, NSPoint point)
 {
     if (needsCursorRectsSupportAtPoint(self, point))
-        wtfCallIMP(oldSetCursorForMouseLocationIMP, self, cmd, point);
+        wtfCallIMP<id>(oldSetCursorForMouseLocationIMP, self, cmd, point);
 }
 
 
@@ -298,7 +298,7 @@ static IMP oldSetNeedsDisplayInRectIMP;
 static void setNeedsDisplayInRect(NSView *self, SEL cmd, NSRect invalidRect)
 {
     if (![self _drawnByAncestor]) {
-        wtfCallIMP(oldSetNeedsDisplayInRectIMP, self, cmd, invalidRect);
+        wtfCallIMP<id>(oldSetNeedsDisplayInRectIMP, self, cmd, invalidRect);
         return;
     }
 
@@ -308,14 +308,14 @@ static void setNeedsDisplayInRect(NSView *self, SEL cmd, NSRect invalidRect)
         enclosingWebFrameView = (WebFrameView *)[enclosingWebFrameView superview];
 
     if (!enclosingWebFrameView) {
-        wtfCallIMP(oldSetNeedsDisplayInRectIMP, self, cmd, invalidRect);
+        wtfCallIMP<id>(oldSetNeedsDisplayInRectIMP, self, cmd, invalidRect);
         return;
     }
 
     Frame* coreFrame = core([enclosingWebFrameView webFrame]);
     FrameView* frameView = coreFrame ? coreFrame->view() : 0;
     if (!frameView || !frameView->isEnclosedInCompositingLayer()) {
-        wtfCallIMP(oldSetNeedsDisplayInRectIMP, self, cmd, invalidRect);
+        wtfCallIMP<id>(oldSetNeedsDisplayInRectIMP, self, cmd, invalidRect);
         return;
     }
 
