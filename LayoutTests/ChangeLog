@@ -1,3 +1,16 @@
+2012-08-31  Philip Rogers  <pdr@google.com>
+
+        Mark fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html as failing on mac
+        https://bugs.webkit.org/show_bug.cgi?id=95588
+
+        Unreviewed gardening.
+
+        This test is failing on mac due to the sizing of the textbox: in the
+        expected results there is no scrollbar but in the actual results there
+        is one. This patch marks this test as failing temporarily.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r127182.

@@ -3611,6 +3611,8 @@ BUGCR145590 ANDROID : media/video-source-type-params.html = TEXT
 BUGCR145590 ANDROID : platform/chromium/compositing/video-frame-size-change.html = TIMEOUT
 BUGCR145590 ANDROID : platform/chromium/media/video-frame-size-change.html = TIMEOUT
 
+BUGWK95588 MAC : fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html = IMAGE
+
 BUGWK95070 LINUX DEBUG : inspector/styles/media-queries.html = TEXT
 BUGWK95070 WIN LINUX RELEASE : inspector/styles/media-queries.html = PASS TEXT
 
