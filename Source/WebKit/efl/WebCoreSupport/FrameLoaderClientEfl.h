@@ -211,6 +211,8 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
 
     virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext();
  private:
+    bool isLoadingMainFrame() const { return m_frame == ewk_view_frame_main_get(m_view); }
+
     Evas_Object *m_view;
     Evas_Object *m_frame;
 

@@ -618,7 +618,7 @@ void FrameLoaderClientEfl::dispatchDidChangeLocationWithinPage()
 {
     ewk_frame_uri_changed(m_frame);
 
-    if (ewk_view_frame_main_get(m_view) != m_frame)
+    if (!isLoadingMainFrame())
         return;
     ewk_view_uri_changed(m_view);
 }
@@ -631,7 +631,7 @@ void FrameLoaderClientEfl::dispatchWillClose()
 void FrameLoaderClientEfl::dispatchDidReceiveIcon()
 {
     // IconController loads icons only for the main frame.
-    ASSERT(ewk_view_frame_main_get(m_view) == m_frame);
+    ASSERT(isLoadingMainFrame());
 
     ewk_view_frame_main_icon_received(m_view);
 }
@@ -639,7 +639,7 @@ void FrameLoaderClientEfl::dispatchDidReceiveIcon()
 void FrameLoaderClientEfl::dispatchDidStartProvisionalLoad()
 {
     ewk_frame_load_provisional(m_frame);
-    if (ewk_view_frame_main_get(m_view) == m_frame)
+    if (isLoadingMainFrame())
         ewk_view_load_provisional(m_view);
 }
 
@@ -651,7 +651,7 @@ void FrameLoaderClientEfl::dispatchDidReceiveTitle(const StringWithDirection& ti
     ewkTitle.direction = (title.direction() == LTR) ? EWK_TEXT_DIRECTION_LEFT_TO_RIGHT : EWK_TEXT_DIRECTION_RIGHT_TO_LEFT;
     ewk_frame_title_set(m_frame, &ewkTitle);
 
-    if (ewk_view_frame_main_get(m_view) != m_frame)
+    if (!isLoadingMainFrame())
         return;
     ewk_view_title_set(m_view, &ewkTitle);
 }
@@ -667,7 +667,7 @@ void FrameLoaderClientEfl::dispatchDidCommitLoad()
 {
     ewk_frame_uri_changed(m_frame);
     ewk_frame_load_committed(m_frame);
-    if (ewk_view_frame_main_get(m_view) != m_frame)
+    if (!isLoadingMainFrame())
         return;
     ewk_view_title_set(m_view, 0);
     ewk_view_uri_changed(m_view);
@@ -841,7 +841,7 @@ void FrameLoaderClientEfl::dispatchDidFailProvisionalLoad(const ResourceError& e
     error.frame = m_frame;
 
     ewk_frame_load_provisional_failed(m_frame, &error);
-    if (ewk_view_frame_main_get(m_view) == m_frame)
+    if (isLoadingMainFrame())
         ewk_view_load_provisional_failed(m_view, &error);
 
     dispatchDidFailLoad(err);
@@ -1007,7 +1007,7 @@ void FrameLoaderClientEfl::transitionToCommittedForNewPage()
 
     ewk_frame_view_create_for_view(m_frame, m_view);
 
-    if (m_frame == ewk_view_frame_main_get(m_view)) {
+    if (isLoadingMainFrame()) {
         ewk_view_frame_view_creation_notify(m_view);
         ewk_view_frame_main_cleared(m_view);
     }

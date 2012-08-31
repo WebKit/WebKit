@@ -1,3 +1,26 @@
+2012-08-31  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Simplify FrameLoaderClinetEfl by adding a private method.
+        https://bugs.webkit.org/show_bug.cgi?id=95444
+
+        Reviewed by Gyuyoung Kim.
+
+        In the FrameLoaderClientEfl, the codes which checks that 
+        if current frame is main frame are frequently used.
+        This patch adds a private method and replaces those codes 
+        with the method to simplify.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidChangeLocationWithinPage):
+        (WebCore::FrameLoaderClientEfl::dispatchDidReceiveIcon):
+        (WebCore::FrameLoaderClientEfl::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientEfl::dispatchDidReceiveTitle):
+        (WebCore::FrameLoaderClientEfl::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientEfl::dispatchDidFailProvisionalLoad):
+        (WebCore::FrameLoaderClientEfl::transitionToCommittedForNewPage):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+        (WebCore::FrameLoaderClientEfl::isLoadingMainFrame):
+
 2012-08-30  Benjamin Poulain  <bpoulain@apple.com>
 
         Replace JSC::UString by WTF::String
