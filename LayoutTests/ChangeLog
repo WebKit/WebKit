@@ -1,3 +1,14 @@
+2012-08-31  Jessie Berlin  <jberlin@apple.com>
+
+        fast/workers/storage/interrupt-database-sync.html fails intermittently
+        https://bugs.webkit.org/show_bug.cgi?id=49906
+
+        The test was disabled in r81333, so remove it from the Skipped lists so that run-webkit-tests
+        doesn't complain about not being able to find the test.
+
+        * platform/win-xp/Skipped:
+        * platform/wk2/Skipped:
+
 2012-08-31  Philip Rogers  <pdr@google.com>
 
         Mark fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html as failing on mac

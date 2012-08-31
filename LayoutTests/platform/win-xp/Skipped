@@ -26,9 +26,6 @@ fast/workers/storage/change-version-handle-reuse-worker.html
 # Times out http://webkit.org/b/54291
 media/audio-mpeg4-supported.html
 
-# Intermittent failure https://webkit.org/b/56534
-fast/workers/storage/interrupt-database-sync.html
-
 # layoutTestController.setPluginsEnabled seems to be a no-op on WinXP
 # https://bugs.webkit.org/show_bug.cgi?id=57135
 fast/images/embed-image.html

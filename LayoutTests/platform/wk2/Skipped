@@ -1027,7 +1027,6 @@ fast/loader/hashchange-event.html
 fast/loader/onhashchange-attribute-listeners.html
 fast/loader/stateobjects/popstate-fires-on-history-traversal.html
 fast/overflow/overflow_hidden.html
-fast/workers/storage/interrupt-database-sync.html
 fast/workers/storage/interrupt-database.html
 fast/workers/storage/use-same-database-in-page-and-workers.html
 fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
