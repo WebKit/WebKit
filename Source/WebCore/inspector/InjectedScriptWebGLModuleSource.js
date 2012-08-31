@@ -132,6 +132,95 @@ var TypeUtils = {
 }
 
 /**
+ * @interface
+ */
+function StackTrace()
+{
+}
+
+StackTrace.prototype = {
+    /**
+     * @param {number} index
+     * @return {{sourceURL: string, lineNumber: number, columnNumber: number}}
+     */
+    callFrame: function(index)
+    {
+    }
+}
+
+/**
+ * @param {number=} stackTraceLimit
+ * @param {Function=} topMostFunctionToIgnore
+ * @return {StackTrace}
+ */
+StackTrace.create = function(stackTraceLimit, topMostFunctionToIgnore)
+{
+    if (typeof Error.captureStackTrace === "function")
+        return new StackTraceV8(stackTraceLimit, topMostFunctionToIgnore || arguments.callee);
+    // FIXME: Support JSC, and maybe other browsers.
+    return null;
+}
+
+/**
+ * @constructor
+ * @implements {StackTrace}
+ * @param {number=} stackTraceLimit
+ * @param {Function=} topMostFunctionToIgnore
+ * @see http://code.google.com/p/v8/wiki/JavaScriptStackTraceApi
+ */
+function StackTraceV8(stackTraceLimit, topMostFunctionToIgnore)
+{
+    StackTrace.call(this);
+    var oldStackTraceLimit = Error.stackTraceLimit;
+    if (typeof stackTraceLimit === "number")
+        Error.stackTraceLimit = stackTraceLimit;
+
+    this._error = /** @type {{stack: Array}} */ {};
+    Error.captureStackTrace(this._error, topMostFunctionToIgnore || arguments.callee);
+
+    Error.stackTraceLimit = oldStackTraceLimit;
+}
+
+StackTraceV8.prototype = {
+    /**
+     * @override
+     * @param {number} index
+     * @return {{sourceURL: string, lineNumber: number, columnNumber: number}}
+     */
+    callFrame: function(index)
+    {
+        if (!this._stackTrace)
+            this._prepareStackTrace();
+        return this._stackTrace[index];
+    },
+
+    _prepareStackTrace: function()
+    {
+        var oldPrepareStackTrace = Error.prepareStackTrace;
+        /**
+         * @param {Object} error
+         * @param {Array.<CallSite>} structuredStackTrace
+         * @return {Array.<{sourceURL: string, lineNumber: number, columnNumber: number}>}
+         */
+        Error.prepareStackTrace = function(error, structuredStackTrace)
+        {
+            return structuredStackTrace.map(function(callSite) {
+                return {
+                    sourceURL: callSite.getFileName(),
+                    lineNumber: callSite.getLineNumber(),
+                    columnNumber: callSite.getColumnNumber()
+                };
+            });
+        }
+        this._stackTrace = this._error.stack;
+        Error.prepareStackTrace = oldPrepareStackTrace;
+        delete this._error; // No longer needed, free memory.
+    }
+}
+
+StackTraceV8.prototype.__proto__ = StackTrace.prototype;
+
+/**
  * @constructor
  */
 function Cache()
@@ -190,13 +279,15 @@ Cache.prototype = {
  * @param {string} functionName
  * @param {Array|Arguments} args
  * @param {Resource|*=} result
+ * @param {StackTrace=} stackTrace
  */
-function Call(thisObject, functionName, args, result)
+function Call(thisObject, functionName, args, result, stackTrace)
 {
     this._thisObject = thisObject;
     this._functionName = functionName;
     this._args = Array.prototype.slice.call(args, 0);
     this._result = result;
+    this._stackTrace = stackTrace || null;
 }
 
 Call.prototype = {
@@ -232,6 +323,22 @@ Call.prototype = {
         return this._result;
     },
 
+    /**
+     * @return {StackTrace}
+     */
+    stackTrace: function()
+    {
+        return this._stackTrace;
+    },
+
+    /**
+     * @param {StackTrace} stackTrace
+     */
+    setStackTrace: function(stackTrace)
+    {
+        this._stackTrace = stackTrace;
+    },
+
     freeze: function()
     {
         if (this._freezed)
@@ -256,7 +363,7 @@ Call.prototype = {
         var args = this._args.map(function(obj) {
             return Resource.toReplayable(obj, cache);
         });
-        return new ReplayableCall(thisObject, this._functionName, args, result);
+        return new ReplayableCall(thisObject, this._functionName, args, result, this._stackTrace);
     },
 
     /**
@@ -283,6 +390,7 @@ Call.prototype = {
         this._functionName = replayableCall.functionName();
         this._args = replayArgs;
         this._result = replayResult;
+        this._stackTrace = replayableCall.stackTrace();
         this._freezed = true;
         return this;
     }
@@ -294,13 +402,15 @@ Call.prototype = {
  * @param {string} functionName
  * @param {Array.<ReplayableResource|*>} args
  * @param {ReplayableResource|*} result
+ * @param {StackTrace} stackTrace
  */
-function ReplayableCall(thisObject, functionName, args, result)
+function ReplayableCall(thisObject, functionName, args, result, stackTrace)
 {
     this._thisObject = thisObject;
     this._functionName = functionName;
     this._args = args;
     this._result = result;
+    this._stackTrace = stackTrace;
 }
 
 ReplayableCall.prototype = {
@@ -334,6 +444,14 @@ ReplayableCall.prototype = {
     result: function()
     {
         return this._result;
+    },
+
+    /**
+     * @return {StackTrace}
+     */
+    stackTrace: function()
+    {
+        return this._stackTrace;
     },
 
     /**
@@ -1349,8 +1467,11 @@ WebGLRenderingContextResource.prototype = {
                 manager.captureArguments(resource, arguments);
             var wrapFunction = new WebGLRenderingContextResource.WrapFunction(originalObject, originalFunction, functionName, arguments);
             customWrapFunction.apply(wrapFunction, arguments);
-            if (manager)
-                manager.reportCall(wrapFunction.call());
+            if (manager && manager.capturing()) {
+                var call = wrapFunction.call();
+                call.setStackTrace(StackTrace.create(1, arguments.callee));
+                manager.reportCall(call);
+            }
             return wrapFunction.result();
         };
     },
@@ -1371,7 +1492,8 @@ WebGLRenderingContextResource.prototype = {
                 return originalFunction.apply(originalObject, arguments);
             manager.captureArguments(resource, arguments);
             var result = originalFunction.apply(originalObject, arguments);
-            var call = new Call(resource, functionName, arguments, result);
+            var stackTrace = StackTrace.create(1, arguments.callee);
+            var call = new Call(resource, functionName, arguments, result, stackTrace);
             manager.reportCall(call);
             return result;
         };
@@ -1776,9 +1898,21 @@ InjectedScript.prototype = {
         var calls = traceLog.replayableCalls();
         for (var i = 0, n = calls.length; i < n; ++i) {
             var call = calls[i];
-            result.calls.push({
-                functionName: call.functionName() + "(" + call.args().join(", ") + ") => " + call.result()
+            var args = call.args().map(function(argument) {
+                return argument + "";
             });
+            var stackTrace = call.stackTrace();
+            var callFrame = stackTrace ? stackTrace.callFrame(0) || {} : {};
+            var traceLogItem = {
+                functionName: call.functionName(),
+                arguments: args,
+                sourceURL: callFrame.sourceURL,
+                lineNumber: callFrame.lineNumber,
+                columnNumber: callFrame.columnNumber
+            };
+            if (call.result())
+                traceLogItem.result = call.result() + "";
+            result.calls.push(traceLogItem);
         }
         return result;
     },

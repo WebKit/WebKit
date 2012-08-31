@@ -3149,7 +3149,12 @@
                 "id": "Call",
                 "type": "object",
                 "properties": [
-                    { "name": "functionName", "type": "string" }
+                    { "name": "functionName", "type": "string" },
+                    { "name": "arguments", "type": "array", "items": { "type": "string" } },
+                    { "name": "result", "type": "string", "optional": true },
+                    { "name": "sourceURL", "type": "string", "optional": true },
+                    { "name": "lineNumber", "type": "integer", "optional": true },
+                    { "name": "columnNumber", "type": "integer", "optional": true }
                 ]
             },
             {
@@ -3157,7 +3162,7 @@
                 "type": "object",
                 "properties": [
                     { "name": "id", "$ref": "TraceLogId" },
-                    { "name": "calls", "type": "array", "items": { "$ref": "Call" }}
+                    { "name": "calls", "type": "array", "items": { "$ref": "Call" } }
                 ]
             }
         ],
