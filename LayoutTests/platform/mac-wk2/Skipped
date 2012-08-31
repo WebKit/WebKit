@@ -231,10 +231,6 @@ http/tests/navigation/https-in-page-cache.html
 # https://bugs.webkit.org/show_bug.cgi?id=70245
 http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html
 
-# [WK2] http/tests/websocket/tests/hixie76/frame-lengths.html times out on mac-wk2
-# https://bugs.webkit.org/show_bug.cgi?id=81624
-http/tests/websocket/tests/hixie76/frame-lengths.html
-
 # [WK2] Four http/tests/xmlhttprequest tests fail on mac-wk2
 # https://bugs.webkit.org/show_bug.cgi?id=81627
 http/tests/xmlhttprequest/basic-auth-default.html

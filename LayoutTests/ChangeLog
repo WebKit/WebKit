@@ -1,5 +1,13 @@
 2012-08-31  Jessie Berlin  <jberlin@apple.com>
 
+        LayoutTests/http/tests/websocket/tests/hixie76/frame-lengths.html was removed. Remove it from the Skipped list.
+
+        * platform/mac-wk2/Skipped:
+        * platform/qt-arm/Skipped:
+        * platform/wincairo/Skipped:
+
+2012-08-31  Jessie Berlin  <jberlin@apple.com>
+
         compositing/tiling/huge-layer* flakey
         https://bugs.webkit.org/show_bug.cgi?id=48454
 
