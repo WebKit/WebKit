@@ -100,7 +100,7 @@ static int cssyylex(YYSTYPE* yylval, CSSParser* parser)
 
 %}
 
-%expect 62
+%expect 63
 
 %nonassoc LOWEST_PREC
 
@@ -1550,6 +1550,13 @@ function:
  
 calc_func_term:
   unary_term { $$ = $1; }
+  | VARFUNCTION maybe_space IDENT ')' maybe_space {
+#if ENABLE(CSS_VARIABLES)
+      $$.id = 0;
+      $$.string = $3;
+      $$.unit = CSSPrimitiveValue::CSS_VARIABLE_NAME;
+#endif
+  }
   | unary_operator unary_term { $$ = $2; $$.fValue *= $1; }
   ;
 

@@ -186,6 +186,10 @@ unsigned short CSSPrimitiveValue::primitiveType() const
         return CSSPrimitiveValue::CSS_CALC_PERCENTAGE_WITH_NUMBER;
     case CalcPercentLength:
         return CSSPrimitiveValue::CSS_CALC_PERCENTAGE_WITH_LENGTH;
+#if ENABLE(CSS_VARIABLES)
+    case CalcVariable:
+        return CSSPrimitiveValue::CSS_UNKNOWN; // The type of a calculation containing a variable cannot be known until the value of the variable is determined.
+#endif
     case CalcOther:
         return CSSPrimitiveValue::CSS_UNKNOWN;
     }
@@ -1119,8 +1123,10 @@ String CSSPrimitiveValue::customCssText() const
 #if ENABLE(CSS_VARIABLES)
 String CSSPrimitiveValue::customSerializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
 {
-    if (m_primitiveUnitType == CSS_VARIABLE_NAME && variables.contains(m_value.string))
+    if (isVariableName() && variables.contains(m_value.string))
         return variables.get(m_value.string);
+    if (isCalculated())
+        return cssCalcValue()->customSerializeResolvingVariables(variables);
     return customCssText();
 }
 #endif

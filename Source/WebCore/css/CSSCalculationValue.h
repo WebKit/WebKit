@@ -52,6 +52,9 @@ enum CalculationCategory {
     CalcPercent,
     CalcPercentNumber,
     CalcPercentLength,
+#if ENABLE(CSS_VARIABLES)
+    CalcVariable,
+#endif
     CalcOther
 };
     
@@ -64,6 +67,10 @@ public:
     virtual double doubleValue() const = 0;
     virtual double computeLengthPx(RenderStyle* currentStyle, RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false) const = 0;
     virtual String customCssText() const = 0;
+#if ENABLE(CSS_VARIABLES)
+    virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const = 0;
+    virtual bool hasVariableReference() const = 0;
+#endif
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const = 0;
     
@@ -97,6 +104,10 @@ public:
     double computeLengthPx(RenderStyle* currentStyle, RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false) const;
         
     String customCssText() const;
+#if ENABLE(CSS_VARIABLES)
+    String customSerializeResolvingVariables(const HashMap<AtomicString, String>&) const;
+    bool hasVariableReference() const;
+#endif
 
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
     

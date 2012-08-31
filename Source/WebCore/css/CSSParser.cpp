@@ -1443,6 +1443,11 @@ bool CSSParser::validCalculationUnit(CSSParserValue* value, Units unitflags)
     case CalcPercentNumber:
         b = (unitflags & FPercent) && (unitflags & FNumber);
         break;
+#if ENABLE(CSS_VARIABLES)
+    case CalcVariable:
+        b = true;
+        break;
+#endif
     case CalcOther:
         break;
     }

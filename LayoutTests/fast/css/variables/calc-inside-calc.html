@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<script>
+internals.settings.setCSSVariablesEnabled(true);
+</script>
+<style>
+div {
+  border-color: green;
+  border-style: solid;
+  border-width: -webkit-calc(-webkit-var(a) + 1px);
+  -webkit-var-a: -webkit-calc(1px + 3px);
+}
+</style>
+<div>This text should have the default border width</div>
+</html>

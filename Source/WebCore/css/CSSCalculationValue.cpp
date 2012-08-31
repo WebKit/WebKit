@@ -68,17 +68,19 @@ static CalculationCategory unitCategory(CSSPrimitiveValue::UnitTypes type)
     case CSSPrimitiveValue::CSS_PC:
     case CSSPrimitiveValue::CSS_REMS:
         return CalcLength;
+#if ENABLE(CSS_VARIABLES)
+    case CSSPrimitiveValue::CSS_VARIABLE_NAME:
+        return CalcVariable;
+#endif
     default:
         return CalcOther;
     }
 }
-    
-String CSSCalcValue::customCssText() const
+
+static String buildCssText(const String& expression)
 {
     StringBuilder result;
-    
     result.append("-webkit-calc");
-    String expression = m_expression->customCssText();
     bool expressionHasSingleTerm = expression[0] != '(';
     if (expressionHasSingleTerm)
         result.append('(');
@@ -87,6 +89,23 @@ String CSSCalcValue::customCssText() const
         result.append(')');
     return result.toString(); 
 }
+
+String CSSCalcValue::customCssText() const
+{
+    return buildCssText(m_expression->customCssText());
+}
+
+#if ENABLE(CSS_VARIABLES)
+String CSSCalcValue::customSerializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
+{
+    return buildCssText(m_expression->serializeResolvingVariables(variables));
+}
+
+bool CSSCalcValue::hasVariableReference() const
+{
+    return m_expression->hasVariableReference();
+}
+#endif
 
 void CSSCalcValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
@@ -130,6 +149,18 @@ public:
         return m_value->cssText();
     }
 
+#if ENABLE(CSS_VARIABLES)
+    virtual String serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
+    {
+        return m_value->customSerializeResolvingVariables(variables);
+    }
+    
+    virtual bool hasVariableReference() const
+    {
+        return m_value->isVariableName();
+    }
+#endif
+
     virtual PassOwnPtr<CalcExpressionNode> toCalcValue(RenderStyle* style, RenderStyle* rootStyle, double zoom) const
     {
         switch (m_category) {
@@ -143,6 +174,9 @@ public:
         // Only types that could be part of a Length expression can be converted
         // to a CalcExpressionNode. CalcPercentNumber makes no sense as a Length.
         case CalcPercentNumber:
+#if ENABLE(CSS_VARIABLES)
+        case CalcVariable:
+#endif
         case CalcOther:
             ASSERT_NOT_REACHED();
         }
@@ -158,6 +192,9 @@ public:
         case CalcLength:
         case CalcPercentLength:
         case CalcPercentNumber:
+#if ENABLE(CSS_VARIABLES)
+        case CalcVariable:
+#endif
         case CalcOther:
             ASSERT_NOT_REACHED();
             break;
@@ -175,6 +212,9 @@ public:
             return m_value->getDoubleValue();
         case CalcPercentLength:
         case CalcPercentNumber:
+#if ENABLE(CSS_VARIABLES)
+        case CalcVariable:
+#endif
         case CalcOther:
             ASSERT_NOT_REACHED();
             break;
@@ -191,7 +231,7 @@ public:
 private:
     explicit CSSCalcPrimitiveValue(CSSPrimitiveValue* value, bool isInteger)
         : CSSCalcExpressionNode(unitCategory((CSSPrimitiveValue::UnitTypes)value->primitiveType()), isInteger)
-        , m_value(value)                 
+        , m_value(value)
     {
     }
 
@@ -205,42 +245,50 @@ static const CalculationCategory addSubtractResult[CalcOther][CalcOther] = {
     { CalcPercentNumber, CalcOther,         CalcPercentNumber, CalcPercentNumber, CalcOther },
     { CalcOther,         CalcPercentLength, CalcPercentLength, CalcOther,         CalcPercentLength },
 };    
+
+static CalculationCategory determineCategory(const CSSCalcExpressionNode& leftSide, const CSSCalcExpressionNode& rightSide, CalcOperator op)
+{
+    CalculationCategory leftCategory = leftSide.category();
+    CalculationCategory rightCategory = rightSide.category();
+
+    if (leftCategory == CalcOther || rightCategory == CalcOther)
+        return CalcOther;
+
+#if ENABLE(CSS_VARIABLES)
+    if (leftCategory == CalcVariable || rightCategory == CalcVariable)
+        return CalcVariable;
+#endif
+
+    switch (op) {
+    case CalcAdd:
+    case CalcSubtract:             
+        return addSubtractResult[leftCategory][rightCategory];
+    case CalcMultiply:
+        if (leftCategory != CalcNumber && rightCategory != CalcNumber) 
+            return CalcOther;
+        return leftCategory == CalcNumber ? rightCategory : leftCategory;
+    case CalcDivide:
+        if (rightCategory != CalcNumber || rightSide.isZero())
+            return CalcOther;
+        return leftCategory;
+    }
     
+    ASSERT_NOT_REACHED();
+    return CalcOther;
+}
+
 class CSSCalcBinaryOperation : public CSSCalcExpressionNode {
+
 public:
     static PassRefPtr<CSSCalcBinaryOperation> create(PassRefPtr<CSSCalcExpressionNode> leftSide, PassRefPtr<CSSCalcExpressionNode> rightSide, CalcOperator op)
     {
-        CalculationCategory leftCategory = leftSide->category();
-        CalculationCategory rightCategory = rightSide->category();
-        CalculationCategory newCategory = CalcOther;
+        ASSERT(leftSide->category() != CalcOther && rightSide->category() != CalcOther);
         
-        ASSERT(leftCategory != CalcOther && rightCategory != CalcOther);
-        
-        switch (op) {
-        case CalcAdd:
-        case CalcSubtract:             
-            if (leftCategory == CalcOther || rightCategory == CalcOther)
-                return 0;
-            newCategory = addSubtractResult[leftCategory][rightCategory];
-            break;   
-                
-        case CalcMultiply:
-            if (leftCategory != CalcNumber && rightCategory != CalcNumber) 
-                return 0;
-            
-            newCategory = leftCategory == CalcNumber ? rightCategory : leftCategory;
-            break;
-                
-        case CalcDivide:
-            if (rightCategory != CalcNumber || rightSide->isZero())
-                return 0;
-            newCategory = leftCategory;
-            break;
-        }
-        
+        CalculationCategory newCategory = determineCategory(*leftSide, *rightSide, op);
+
         if (newCategory == CalcOther)
             return 0;
-            
+
         return adoptRef(new CSSCalcBinaryOperation(leftSide, rightSide, op, newCategory));
     }
     
@@ -279,19 +327,36 @@ public:
         info.addInstrumentedMember(m_rightSide);
     }
 
-    virtual String customCssText() const
+    static String buildCssText(const String& leftExpression, const String& rightExpression, CalcOperator op)
     {
         StringBuilder result;
         result.append('(');
-        result.append(m_leftSide->customCssText());
+        result.append(leftExpression);
         result.append(' ');
-        result.append(static_cast<char>(m_operator));
+        result.append(static_cast<char>(op));
         result.append(' ');
-        result.append(m_rightSide->customCssText());
+        result.append(rightExpression);
         result.append(')');
     
-        return result.toString();    
+        return result.toString();  
     }
+
+    virtual String customCssText() const
+    {
+        return buildCssText(m_leftSide->customCssText(), m_rightSide->customCssText(), m_operator);
+    }
+
+#if ENABLE(CSS_VARIABLES)
+    virtual String serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
+    {
+        return buildCssText(m_leftSide->serializeResolvingVariables(variables), m_rightSide->serializeResolvingVariables(variables), m_operator);
+    }
+
+    virtual bool hasVariableReference() const
+    {
+        return m_leftSide->hasVariableReference() || m_rightSide->hasVariableReference();
+    }
+#endif
 
 private:
     CSSCalcBinaryOperation(PassRefPtr<CSSCalcExpressionNode> leftSide, PassRefPtr<CSSCalcExpressionNode> rightSide, CalcOperator op, CalculationCategory category)

@@ -3361,8 +3361,15 @@ static bool createGridPosition(CSSValue* value, Length& position)
 #if ENABLE(CSS_VARIABLES)
 static bool hasVariableReference(CSSValue* value)
 {
-    if (value->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(value)->isVariableName())
-        return true;
+    if (value->isPrimitiveValue()) {
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        if (CSSCalcValue* calcValue = primitiveValue->cssCalcValue())
+            return calcValue->hasVariableReference();
+        return primitiveValue->isVariableName();
+    }
+
+    if (value->isCalculationValue())
+        return static_cast<CSSCalcValue*>(value)->hasVariableReference();
 
     for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
         if (hasVariableReference(i.value()))
