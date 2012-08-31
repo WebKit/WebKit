@@ -33,6 +33,7 @@ import unittest
 from .detection import SCMDetector
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.system.outputcapture import OutputCapture
 
 
 class SCMDetectorTest(unittest.TestCase):
@@ -41,5 +42,7 @@ class SCMDetectorTest(unittest.TestCase):
         executive = MockExecutive(should_log=True)
         detector = SCMDetector(filesystem, executive)
 
-        self.assertEqual(detector.detect_scm_system("/"), None)
+        expected_stderr = "MOCK run_command: ['svn', 'info'], cwd=/\nMOCK run_command: ['git', 'rev-parse', '--is-inside-work-tree'], cwd=/\n"
+        scm = OutputCapture().assert_outputs(self, detector.detect_scm_system, ["/"], expected_stderr=expected_stderr)
+        self.assertEqual(scm, None)
         # FIXME: This should make a synthetic tree and test SVN and Git detection in that tree.

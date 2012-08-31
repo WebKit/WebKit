@@ -34,6 +34,7 @@ import time
 import urllib2
 import xml.dom.minidom
 
+from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.net.file_uploader import FileUploader
 
 # A JSON results generator for generic tests.
@@ -219,6 +220,7 @@ class JSONResultsGeneratorBase(object):
         """
         self._port = port
         self._filesystem = port._filesystem
+        self._executive = port._executive
         self._builder_name = builder_name
         self._build_name = build_name
         self._build_number = build_number
@@ -384,18 +386,9 @@ class JSONResultsGeneratorBase(object):
         Args:
           in_directory: The directory where svn is to be run.
         """
-        if self._filesystem.exists(self._filesystem.join(in_directory, '.svn')):
-            # Note: Not thread safe: http://bugs.python.org/issue2320
-            output = subprocess.Popen(["svn", "info", "--xml"],
-                                      cwd=in_directory,
-                                      shell=(sys.platform == 'win32'),
-                                      stdout=subprocess.PIPE).communicate()[0]
-            try:
-                dom = xml.dom.minidom.parseString(output)
-                return dom.getElementsByTagName('entry')[0].getAttribute(
-                    'revision')
-            except xml.parsers.expat.ExpatError:
-                return ""
+        scm = SCMDetector(self._filesystem, self._executive).detect_scm_system(in_directory)
+        if scm:
+            return scm.svn_revision(in_directory)
         return ""
 
     def _get_archived_json_results(self):

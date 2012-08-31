@@ -66,10 +66,10 @@ class SCMDetector(object):
         if patch_directories == []:
             patch_directories = None
 
-        if SVN.in_working_directory(absolute_path):
+        if SVN.in_working_directory(absolute_path, executive=self._executive):
             return SVN(cwd=absolute_path, patch_directories=patch_directories, filesystem=self._filesystem, executive=self._executive)
 
-        if Git.in_working_directory(absolute_path):
+        if Git.in_working_directory(absolute_path, executive=self._executive):
             return Git(cwd=absolute_path, filesystem=self._filesystem, executive=self._executive)
 
         return None

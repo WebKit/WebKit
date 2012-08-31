@@ -1,3 +1,32 @@
+2012-08-31  Zan Dobersek  <zandobersek@gmail.com>
+
+        nrwt: use scm instead of calling svn directly to get the revision in json results generator
+        https://bugs.webkit.org/show_bug.cgi?id=89616
+
+        Reviewed by Eric Seidel.
+
+        Add the new 'executive' optional function argument to the SCM.in_working_directory
+        class method. This way we get to reuse an Executive instance which is necessary in testing
+        when we're operating with a mock version of the object.
+
+        In JSONResultsGeneratorBase, it's now possible to get the current SVN revision by using
+        the SCMDetector with the generator's FileSystem and Executive instances.
+
+        * Scripts/webkitpy/common/checkout/scm/detection.py:
+        (SCMDetector.detect_scm_system):
+        * Scripts/webkitpy/common/checkout/scm/detection_unittest.py:
+        (SCMDetectorTest.test_detect_scm_system): Update the unit test to capture the mock
+        Executive output and test it against expected output.
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.in_working_directory):
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        (SCM.in_working_directory):
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.in_working_directory):
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        (JSONResultsGeneratorBase.__init__):
+        (JSONResultsGeneratorBase._get_svn_revision):
+
 2012-08-31  Jon Lee  <jonlee@apple.com>
 
         [Tests] Add basic tests to http/tests/notifications
