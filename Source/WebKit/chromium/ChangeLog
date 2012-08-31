@@ -1,3 +1,29 @@
+2012-08-31  Christopher Cameron  <ccameron@chromium.org>
+
+        [chromium] Add main versus impl thread asserts
+        https://bugs.webkit.org/show_bug.cgi?id=95596
+
+        Reviewed by James Robinson.
+
+        Add asserts to prioritized texture manager that specify that a
+        function be called on the main or impl thread.
+
+        Add debug signs that the main thread is blocked to the threaded
+        proxy.
+
+        Add a mechanism to simultaneously set the thread to the impl thread
+        and indicate that the main thread is blocked.
+
+        Update tests that hit asserts in the prioritized texture manager to
+        set their impl thread and main thread blocked state correctly.
+
+        * tests/CCPrioritizedTextureTest.cpp:
+        (WTF::CCPrioritizedTextureTest::CCPrioritizedTextureTest):
+        (WTF::CCPrioritizedTextureTest::~CCPrioritizedTextureTest):
+        (WTF::CCPrioritizedTextureTest::validateTexture):
+        (WTF::TEST_F):
+        * tests/TiledLayerChromiumTest.cpp:
+
 2012-08-30  James Robinson  <jamesr@chromium.org>
 
         [chromium] Put compositor client interfaces in separate headers, normalize naming

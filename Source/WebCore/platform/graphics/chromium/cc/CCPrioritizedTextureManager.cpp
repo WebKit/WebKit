@@ -28,6 +28,7 @@
 
 #include "CCPrioritizedTexture.h"
 #include "CCPriorityCalculator.h"
+#include "CCProxy.h"
 #include "TraceEvent.h"
 #include <algorithm>
 
@@ -58,6 +59,7 @@ CCPrioritizedTextureManager::~CCPrioritizedTextureManager()
 void CCPrioritizedTextureManager::prioritizeTextures()
 {
     TRACE_EVENT0("cc", "CCPrioritizedTextureManager::prioritizeTextures");
+    ASSERT(CCProxy::isMainThread());
 
 #if !ASSERT_DISABLED
     assertInvariants();
@@ -137,6 +139,7 @@ void CCPrioritizedTextureManager::prioritizeTextures()
 
 void CCPrioritizedTextureManager::clearPriorities()
 {
+    ASSERT(CCProxy::isMainThread());
     for (TextureSet::iterator it = m_textures.begin(); it != m_textures.end(); ++it) {
         // FIXME: We should remove this and just set all priorities to
         //        CCPriorityCalculator::lowestPriority() once we have priorities
@@ -148,6 +151,8 @@ void CCPrioritizedTextureManager::clearPriorities()
 
 bool CCPrioritizedTextureManager::requestLate(CCPrioritizedTexture* texture)
 {
+    ASSERT(CCProxy::isMainThread());
+
     // This is already above cutoff, so don't double count it's memory below.
     if (texture->isAbovePriorityCutoff())
         return true;
@@ -170,6 +175,7 @@ bool CCPrioritizedTextureManager::requestLate(CCPrioritizedTexture* texture)
 
 void CCPrioritizedTextureManager::acquireBackingTextureIfNeeded(CCPrioritizedTexture* texture, CCResourceProvider* resourceProvider)
 {
+    ASSERT(CCProxy::isImplThread() && CCProxy::isMainThreadBlocked());
     ASSERT(!texture->isSelfManaged());
     ASSERT(texture->isAbovePriorityCutoff());
     if (texture->backing() || !texture->isAbovePriorityCutoff())
@@ -204,6 +210,7 @@ void CCPrioritizedTextureManager::acquireBackingTextureIfNeeded(CCPrioritizedTex
 
 void CCPrioritizedTextureManager::reduceMemory(size_t limitBytes, CCResourceProvider* resourceProvider)
 {
+    ASSERT(CCProxy::isImplThread() && CCProxy::isMainThreadBlocked());
     if (memoryUseBytes() <= limitBytes)
         return;
     // Destroy backings until we are below the limit,
@@ -218,6 +225,7 @@ void CCPrioritizedTextureManager::reduceMemory(size_t limitBytes, CCResourceProv
 
 void CCPrioritizedTextureManager::reduceMemory(CCResourceProvider* resourceProvider)
 {
+    ASSERT(CCProxy::isImplThread() && CCProxy::isMainThreadBlocked());
     reduceMemory(m_memoryAvailableBytes, resourceProvider);
     ASSERT(memoryUseBytes() <= maxMemoryLimitBytes());
 
@@ -259,6 +267,7 @@ void CCPrioritizedTextureManager::allBackingTexturesWereDeleted()
 
 void CCPrioritizedTextureManager::registerTexture(CCPrioritizedTexture* texture)
 {
+    ASSERT(CCProxy::isMainThread());
     ASSERT(texture);
     ASSERT(!texture->textureManager());
     ASSERT(!texture->backing());
@@ -271,6 +280,7 @@ void CCPrioritizedTextureManager::registerTexture(CCPrioritizedTexture* texture)
 
 void CCPrioritizedTextureManager::unregisterTexture(CCPrioritizedTexture* texture)
 {
+    ASSERT(CCProxy::isMainThread() || (CCProxy::isImplThread() && CCProxy::isMainThreadBlocked()));
     ASSERT(texture);
     ASSERT(m_textures.find(texture) != m_textures.end());
 
@@ -280,9 +290,9 @@ void CCPrioritizedTextureManager::unregisterTexture(CCPrioritizedTexture* textur
     texture->setAbovePriorityCutoff(false);
 }
 
-
 void CCPrioritizedTextureManager::returnBackingTexture(CCPrioritizedTexture* texture)
 {
+    ASSERT(CCProxy::isMainThread() || (CCProxy::isImplThread() && CCProxy::isMainThreadBlocked()));
     if (texture->backing()) {
         // Move the backing texture to the front for eviction/recycling and unlink it.
         m_backings.remove(texture->backing());
@@ -293,8 +303,8 @@ void CCPrioritizedTextureManager::returnBackingTexture(CCPrioritizedTexture* tex
 
 CCPrioritizedTexture::Backing* CCPrioritizedTextureManager::createBacking(IntSize size, GC3Denum format, CCResourceProvider* resourceProvider)
 {
+    ASSERT(CCProxy::isImplThread() && CCProxy::isMainThreadBlocked());
     ASSERT(resourceProvider);
-
     CCResourceProvider::ResourceId resourceId = resourceProvider->createResource(m_pool, size, format, CCResourceProvider::TextureUsageAny);
     CCPrioritizedTexture::Backing* backing = new CCPrioritizedTexture::Backing(resourceId, size, format);
     m_memoryUseBytes += backing->bytes();
@@ -324,6 +334,8 @@ void CCPrioritizedTextureManager::destroyBacking(CCPrioritizedTexture::Backing* 
 #if !ASSERT_DISABLED
 void CCPrioritizedTextureManager::assertInvariants()
 {
+    ASSERT(CCProxy::isMainThread());
+
     // If we hit any of these asserts, there is a bug in this class. To see
     // where the bug is, call this function at the beginning and end of
     // every public function.

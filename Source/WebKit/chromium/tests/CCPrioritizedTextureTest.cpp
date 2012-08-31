@@ -32,6 +32,7 @@
 #include "CCTiledLayerTestCommon.h"
 #include "FakeCCGraphicsContext.h"
 #include <gtest/gtest.h>
+#include <public/WebCompositor.h>
 
 using namespace WebCore;
 using namespace WebKitTests;
@@ -46,14 +47,18 @@ public:
         , m_textureFormat(GraphicsContext3D::RGBA)
         , m_context(WebKit::createFakeCCGraphicsContext())
     {
+        WebKit::WebCompositor::initialize(0);
         DebugScopedSetImplThread implThread;
         m_resourceProvider = CCResourceProvider::create(m_context.get());
     }
 
     virtual ~CCPrioritizedTextureTest()
     {
-        DebugScopedSetImplThread implThread;
-        m_resourceProvider.clear();
+        {
+            DebugScopedSetImplThread implThread;
+            m_resourceProvider.clear();
+        }
+        WebKit::WebCompositor::shutdown();
     }
 
     size_t texturesMemorySize(size_t textureCount)
@@ -68,12 +73,12 @@ public:
 
     bool validateTexture(OwnPtr<CCPrioritizedTexture>& texture, bool requestLate)
     {
-        DebugScopedSetImplThread implThread;
 #if !ASSERT_DISABLED
         texture->textureManager()->assertInvariants();
 #endif
         if (requestLate)
             texture->requestLate();
+        DebugScopedSetImplThreadAndMainThreadBlocked implThreadAndMainThreadBlocked;
         bool success = texture->canAcquireBackingTexture();
         if (success)
             texture->acquireBackingTexture(resourceProvider());
@@ -128,7 +133,7 @@ TEST_F(CCPrioritizedTextureTest, requestTextureExceedingMaxLimit)
     EXPECT_EQ(texturesMemorySize(maxTextures), textureManager->memoryAboveCutoffBytes());
     EXPECT_LE(textureManager->memoryUseBytes(), textureManager->memoryAboveCutoffBytes());
 
-    DebugScopedSetImplThread implThread;
+    DebugScopedSetImplThreadAndMainThreadBlocked implThreadAndMainThreadBlocked;
     textureManager->clearAllMemory(resourceProvider());
 }
 
@@ -149,7 +154,7 @@ TEST_F(CCPrioritizedTextureTest, changeMemoryLimits)
     for (size_t i = 0; i < maxTextures; ++i)
         validateTexture(textures[i], false);
     {
-        DebugScopedSetImplThread implThread;
+        DebugScopedSetImplThreadAndMainThreadBlocked implThreadAndMainThreadBlocked;
         textureManager->reduceMemory(resourceProvider());
     }
 
@@ -162,7 +167,7 @@ TEST_F(CCPrioritizedTextureTest, changeMemoryLimits)
     for (size_t i = 0; i < maxTextures; ++i)
         EXPECT_EQ(validateTexture(textures[i], false), i < 5);
     {
-        DebugScopedSetImplThread implThread;
+        DebugScopedSetImplThreadAndMainThreadBlocked implThreadAndMainThreadBlocked;
         textureManager->reduceMemory(resourceProvider());
     }
 
@@ -175,14 +180,14 @@ TEST_F(CCPrioritizedTextureTest, changeMemoryLimits)
     for (size_t i = 0; i < maxTextures; ++i)
         EXPECT_EQ(validateTexture(textures[i], false), i < 4);
     {
-        DebugScopedSetImplThread implThread;
+        DebugScopedSetImplThreadAndMainThreadBlocked implThreadAndMainThreadBlocked;
         textureManager->reduceMemory(resourceProvider());
     }
 
     EXPECT_EQ(texturesMemorySize(4), textureManager->memoryAboveCutoffBytes());
     EXPECT_LE(textureManager->memoryUseBytes(), textureManager->memoryAboveCutoffBytes());
 
-    DebugScopedSetImplThread implThread;
+    DebugScopedSetImplThreadAndMainThreadBlocked implThreadAndMainThreadBlocked;
     textureManager->clearAllMemory(resourceProvider());
 }
 
@@ -242,7 +247,7 @@ TEST_F(CCPrioritizedTextureTest, textureManagerPartialUpdateTextures)
     EXPECT_FALSE(textures[2]->haveBackingTexture());
     EXPECT_FALSE(textures[3]->haveBackingTexture());
 
-    DebugScopedSetImplThread implThread;
+    DebugScopedSetImplThreadAndMainThreadBlocked implThreadAndMainThreadBlocked;
     textureManager->clearAllMemory(resourceProvider());
 }
 
@@ -282,7 +287,7 @@ TEST_F(CCPrioritizedTextureTest, textureManagerPrioritiesAreEqual)
     EXPECT_EQ(texturesMemorySize(8), textureManager->memoryAboveCutoffBytes());
     EXPECT_LE(textureManager->memoryUseBytes(), textureManager->memoryAboveCutoffBytes());
 
-    DebugScopedSetImplThread implThread;
+    DebugScopedSetImplThreadAndMainThreadBlocked implThreadAndMainThreadBlocked;
     textureManager->clearAllMemory(resourceProvider());
 }
 
@@ -302,7 +307,7 @@ TEST_F(CCPrioritizedTextureTest, textureManagerDestroyedFirst)
     EXPECT_TRUE(texture->haveBackingTexture());
 
     {
-        DebugScopedSetImplThread implThread;
+        DebugScopedSetImplThreadAndMainThreadBlocked implThreadAndMainThreadBlocked;
         textureManager->clearAllMemory(resourceProvider());
     }
     textureManager.clear();
@@ -330,7 +335,7 @@ TEST_F(CCPrioritizedTextureTest, textureMovedToNewManager)
     texture->setTextureManager(0);
 
     {
-        DebugScopedSetImplThread implThread;
+        DebugScopedSetImplThreadAndMainThreadBlocked implThreadAndMainThreadBlocked;
         textureManagerOne->clearAllMemory(resourceProvider());
     }
     textureManagerOne.clear();
@@ -346,7 +351,7 @@ TEST_F(CCPrioritizedTextureTest, textureMovedToNewManager)
     EXPECT_TRUE(texture->canAcquireBackingTexture());
     EXPECT_TRUE(texture->haveBackingTexture());
 
-    DebugScopedSetImplThread implThread;
+    DebugScopedSetImplThreadAndMainThreadBlocked implThreadAndMainThreadBlocked;
     textureManagerTwo->clearAllMemory(resourceProvider());
 }
 
@@ -392,7 +397,7 @@ TEST_F(CCPrioritizedTextureTest, renderSurfacesReduceMemoryAvailableOutsideRootS
     EXPECT_EQ(texturesMemorySize(4), textureManager->memoryForSelfManagedTextures());
     EXPECT_LE(textureManager->memoryUseBytes(), textureManager->memoryAboveCutoffBytes());
 
-    DebugScopedSetImplThread implThread;
+    DebugScopedSetImplThreadAndMainThreadBlocked implThreadAndMainThreadBlocked;
     textureManager->clearAllMemory(resourceProvider());
 }
 
@@ -429,7 +434,7 @@ TEST_F(CCPrioritizedTextureTest, renderSurfacesReduceMemoryAvailableForRequestLa
     EXPECT_EQ(texturesMemorySize(4), textureManager->memoryForSelfManagedTextures());
     EXPECT_LE(textureManager->memoryUseBytes(), textureManager->memoryAboveCutoffBytes());
 
-    DebugScopedSetImplThread implThread;
+    DebugScopedSetImplThreadAndMainThreadBlocked implThreadAndMainThreadBlocked;
     textureManager->clearAllMemory(resourceProvider());
 }
 
@@ -469,7 +474,7 @@ TEST_F(CCPrioritizedTextureTest, whenRenderSurfaceNotAvailableTexturesAlsoNotAva
     EXPECT_EQ(texturesMemorySize(2), textureManager->memoryForSelfManagedTextures());
     EXPECT_LE(textureManager->memoryUseBytes(), textureManager->memoryAboveCutoffBytes());
 
-    DebugScopedSetImplThread implThread;
+    DebugScopedSetImplThreadAndMainThreadBlocked implThreadAndMainThreadBlocked;
     textureManager->clearAllMemory(resourceProvider());
 }
 

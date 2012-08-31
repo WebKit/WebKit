@@ -102,7 +102,7 @@ private:
 };
 
 // For use in the single-threaded case. In debug builds, it pretends that the
-// code is running on the thread to satisfy assertion checks.
+// code is running on the impl thread to satisfy assertion checks.
 class DebugScopedSetImplThread {
 public:
     DebugScopedSetImplThread()
@@ -135,6 +135,15 @@ public:
         CCProxy::setCurrentThreadIsImplThread(true);
 #endif
     }
+};
+
+// For use in the single-threaded case. In debug builds, it pretends that the
+// code is running on the impl thread and that the main thread is blocked to
+// satisfy assertion checks
+class DebugScopedSetImplThreadAndMainThreadBlocked {
+private:
+    DebugScopedSetImplThread m_implThread;
+    DebugScopedSetMainThreadBlocked m_mainThreadBlocked;
 };
 
 } // namespace WebCore
