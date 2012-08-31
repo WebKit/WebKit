@@ -730,15 +730,6 @@ feature_defines_overrides += ENABLE_IFRAME_SEAMLESS=0
 endif  # END ENABLE_IFRAME_SEAMLESS
 
 # ---
-# CSS3 Flexbox support
-# ---
-if ENABLE_CSS3_FLEXBOX
-feature_defines_overrides += ENABLE_CSS3_FLEXBOX=1
-else
-feature_defines_overrides += ENABLE_CSS3_FLEXBOX=0
-endif  # END ENABLE_CSS3_FLEXBOX
-
-# ---
 # CSS3 Text Decoration support
 if ENABLE_CSS3_TEXT_DECORATION
 feature_defines_overrides += ENABLE_CSS3_TEXT_DECORATION=1

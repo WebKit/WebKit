@@ -269,7 +269,6 @@ z-index
 #if defined(ENABLE_CSS_COMPOSITING) && ENABLE_CSS_COMPOSITING
 -webkit-blend-mode
 #endif
-#if defined(ENABLE_CSS3_FLEXBOX) && ENABLE_CSS3_FLEXBOX
 -webkit-align-content
 -webkit-align-items
 -webkit-align-self
@@ -281,7 +280,6 @@ z-index
 -webkit-flex-shrink
 -webkit-flex-wrap
 -webkit-justify-content
-#endif
 -webkit-font-size-delta
 -webkit-grid-columns
 -webkit-grid-rows

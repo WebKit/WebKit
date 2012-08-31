@@ -589,12 +589,8 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         // inline-table | table-row-group | table-header-group | table-footer-group | table-row |
         // table-column-group | table-column | table-cell | table-caption | -webkit-box | -webkit-inline-box | none | inherit
         // -webkit-flex | -webkit-inline-flex | -webkit-grid | -webkit-inline-grid
-        if ((valueID >= CSSValueInline && valueID <= CSSValueWebkitInlineBox) || valueID == CSSValueNone)
+        if ((valueID >= CSSValueInline && valueID <= CSSValueWebkitInlineFlex) || valueID == CSSValueNone)
             return true;
-#if ENABLE(CSS3_FLEXBOX)
-        if (valueID == CSSValueWebkitFlex || valueID == CSSValueWebkitInlineFlex)
-            return true;
-#endif
         if (parserContext.isCSSGridLayoutEnabled && (valueID == CSSValueWebkitGrid || valueID == CSSValueWebkitInlineGrid))
             return true;
         break;
@@ -754,7 +750,6 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueSrgb || valueID == CSSValueDefault)
             return true;
         break;
-#if ENABLE(CSS3_FLEXBOX)
     case CSSPropertyWebkitAlignContent:
          if (valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround || valueID == CSSValueStretch)
              return true;
@@ -779,7 +774,6 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround)
             return true;
         break;
-#endif
     case CSSPropertyWebkitFontKerning:
         if (valueID == CSSValueAuto || valueID == CSSValueNormal || valueID == CSSValueNone)
             return true;
@@ -986,14 +980,12 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitColumnBreakBefore:
     case CSSPropertyWebkitColumnBreakInside:
     case CSSPropertyWebkitColumnRuleStyle:
-#if ENABLE(CSS3_FLEXBOX)
     case CSSPropertyWebkitAlignContent:
     case CSSPropertyWebkitAlignItems:
     case CSSPropertyWebkitAlignSelf:
     case CSSPropertyWebkitFlexDirection:
     case CSSPropertyWebkitFlexWrap:
     case CSSPropertyWebkitJustifyContent:
-#endif
     case CSSPropertyWebkitFontKerning:
     case CSSPropertyWebkitFontSmoothing:
     case CSSPropertyWebkitHyphens:
@@ -2338,7 +2330,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             validPrimitive = true;
         break;
 #endif
-#if ENABLE(CSS3_FLEXBOX)
     case CSSPropertyWebkitFlex: {
         ShorthandScope scope(this, propId);
         if (id == CSSValueNone) {
@@ -2368,7 +2359,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             m_valueList->next();
         }
         break;
-#endif
     case CSSPropertyWebkitMarquee:
         return parseShorthand(propId, webkitMarqueeShorthand(), important);
     case CSSPropertyWebkitMarqueeIncrement:
@@ -2690,10 +2680,8 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyPadding:
         // <padding-width>{1,4} | inherit
         return parse4Values(propId, paddingShorthand().properties(), important);
-#if ENABLE(CSS3_FLEXBOX)
     case CSSPropertyWebkitFlexFlow:
         return parseShorthand(propId, webkitFlexFlowShorthand(), important);
-#endif
     case CSSPropertyFont:
         // [ [ 'font-style' || 'font-variant' || 'font-weight' ]? 'font-size' [ / 'line-height' ]?
         // 'font-family' ] | caption | icon | menu | message-box | small-caption | status-bar | inherit
@@ -2845,14 +2833,12 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitColumnBreakBefore:
     case CSSPropertyWebkitColumnBreakInside:
     case CSSPropertyWebkitColumnRuleStyle:
-#if ENABLE(CSS3_FLEXBOX)
     case CSSPropertyWebkitAlignContent:
     case CSSPropertyWebkitAlignItems:
     case CSSPropertyWebkitAlignSelf:
     case CSSPropertyWebkitFlexDirection:
     case CSSPropertyWebkitFlexWrap:
     case CSSPropertyWebkitJustifyContent:
-#endif
     case CSSPropertyWebkitFontKerning:
     case CSSPropertyWebkitFontSmoothing:
     case CSSPropertyWebkitHyphens:
@@ -5957,8 +5943,6 @@ bool CSSParser::parseReflect(CSSPropertyID propId, bool important)
     return true;
 }
 
-#if ENABLE(CSS3_FLEXBOX)
-
 bool CSSParser::parseFlex(CSSParserValueList* args, bool important)
 {
     if (!args || !args->size() || args->size() > 3)
@@ -6002,8 +5986,6 @@ bool CSSParser::parseFlex(CSSParserValueList* args, bool important)
     addProperty(CSSPropertyWebkitFlexBasis, flexBasis, important);
     return true;
 }
-
-#endif
 
 struct BorderImageParseContext {
     BorderImageParseContext()

@@ -1,3 +1,14 @@
+2012-08-31  Tony Chang  <tony@chromium.org>
+
+        Remove ENABLE_CSS3_FLEXBOX compile time flag
+        https://bugs.webkit.org/show_bug.cgi?id=95382
+
+        Reviewed by Ojan Vafai.
+
+        Everyone is already enabling this by default and the spec has stablized.
+
+        * features.gypi:
+
 2012-08-31  Christopher Cameron  <ccameron@chromium.org>
 
         [chromium] Add main versus impl thread asserts

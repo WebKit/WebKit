@@ -2029,9 +2029,7 @@ static EDisplay equivalentBlockDisplay(EDisplay display, bool isFloating, bool s
     case BLOCK:
     case TABLE:
     case BOX:
-#if ENABLE(CSS3_FLEXBOX)
     case FLEX:
-#endif
     case GRID:
         return display;
 
@@ -2044,10 +2042,8 @@ static EDisplay equivalentBlockDisplay(EDisplay display, bool isFloating, bool s
         return TABLE;
     case INLINE_BOX:
         return BOX;
-#if ENABLE(CSS3_FLEXBOX)
     case INLINE_FLEX:
         return FLEX;
-#endif
     case INLINE_GRID:
         return GRID;
 
@@ -2084,11 +2080,7 @@ static bool doesNotInheritTextDecoration(RenderStyle* style, Element* e)
 
 static bool isDisplayFlexibleBox(EDisplay display)
 {
-#if ENABLE(CSS3_FLEXBOX)
     return display == FLEX || display == INLINE_FLEX;
-#else
-    return false;
-#endif
 }
 
 void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentStyle, Element *e)
@@ -4386,7 +4378,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitColumns:
     case CSSPropertyWebkitColumnSpan:
     case CSSPropertyWebkitColumnWidth:
-#if ENABLE(CSS3_FLEXBOX)
     case CSSPropertyWebkitAlignContent:
     case CSSPropertyWebkitAlignItems:
     case CSSPropertyWebkitAlignSelf:
@@ -4399,7 +4390,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitFlexWrap:
     case CSSPropertyWebkitJustifyContent:
     case CSSPropertyWebkitOrder:
-#endif
 #if ENABLE(CSS_REGIONS)
     case CSSPropertyWebkitFlowFrom:
     case CSSPropertyWebkitFlowInto:

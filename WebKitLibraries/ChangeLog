@@ -1,3 +1,15 @@
+2012-08-29  Tony Chang  <tony@chromium.org>
+
+        Remove ENABLE_CSS3_FLEXBOX compile time flag
+        https://bugs.webkit.org/show_bug.cgi?id=95382
+
+        Reviewed by Ojan Vafai.
+
+        Everyone is already enabling this by default and the spec has stablized.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
 2012-08-15  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css3-text] Add CSS3 Text decoration compile flag

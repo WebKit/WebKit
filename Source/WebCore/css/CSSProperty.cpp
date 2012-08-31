@@ -581,7 +581,6 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
 #if ENABLE(CSS_COMPOSITING)
     case CSSPropertyWebkitBlendMode:
 #endif
-#if ENABLE(CSS3_FLEXBOX)
     case CSSPropertyWebkitAlignContent:
     case CSSPropertyWebkitAlignItems:
     case CSSPropertyWebkitAlignSelf:
@@ -594,7 +593,6 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitFlexWrap:
     case CSSPropertyWebkitJustifyContent:
     case CSSPropertyWebkitOrder:
-#endif
     case CSSPropertyWebkitFontSizeDelta:
     case CSSPropertyWebkitGridColumns:
     case CSSPropertyWebkitGridRows:

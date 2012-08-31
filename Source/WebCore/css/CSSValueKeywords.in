@@ -331,10 +331,8 @@ table-cell
 table-caption
 -webkit-box
 -webkit-inline-box
-#if defined(ENABLE_CSS3_FLEXBOX) && ENABLE_CSS3_FLEXBOX
 -webkit-flex
 -webkit-inline-flex
-#endif
 -webkit-grid
 -webkit-inline-grid
 //none
@@ -492,7 +490,6 @@ block-axis
 single
 multiple
 
-#if defined(ENABLE_CSS3_FLEXBOX) && ENABLE_CSS3_FLEXBOX
 // CSS_PROP_ALIGN_CONTENT
 flex-start
 flex-end
@@ -523,8 +520,6 @@ column-reverse
 // none
 // wrap
 wrap-reverse
-
-#endif
 
 // CSS_PROP_MARQUEE_DIRECTION
 forwards

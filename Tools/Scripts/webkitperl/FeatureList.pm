@@ -49,7 +49,6 @@ my (
     $blobSupport,
     $channelMessagingSupport,
     $cspNextSupport,
-    $css3FlexboxSupport,
     $css3TextDecorationSupport,
     $cssBoxDecorationBreakSupport,
     $cssExclusionsSupport,
@@ -167,9 +166,6 @@ my @features = (
 
     { option => "css-filters", desc => "Toggle CSS Filters support",
       define => "ENABLE_CSS_FILTERS", default => isAppleWebKit() || isBlackBerry(), value => \$cssFiltersSupport },
-
-    { option => "css3-flexbox", desc => "Toggle CSS3 Flexbox support",
-      define => "ENABLE_CSS3_FLEXBOX", default => 1, value => \$css3FlexboxSupport },
 
     { option => "css3-text-decoration", desc => "Toggle CSS3 Text Decoration support",
       define => "ENABLE_CSS3_TEXT_DECORATION", default => isEfl(), value => \$css3TextDecorationSupport },
