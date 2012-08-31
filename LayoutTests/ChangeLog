@@ -1,3 +1,15 @@
+2012-08-31  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r127182.
+        http://trac.webkit.org/changeset/127182
+        https://bugs.webkit.org/show_bug.cgi?id=95587
+
+        Reftests shouldn't be rebaselined (Requested by pdr on
+        #webkit).
+
+        * platform/chromium-mac-snowleopard/fast/dom/shadow/shadowdom-for-textarea-complex-shadow-expected.png: Removed.
+        * platform/chromium-mac/fast/dom/shadow/shadowdom-for-textarea-complex-shadow-expected.png: Removed.
+
 2012-08-31  Michael Saboff  <msaboff@apple.com>
 
         CSS Parser should directly parse 8 bit source strings
