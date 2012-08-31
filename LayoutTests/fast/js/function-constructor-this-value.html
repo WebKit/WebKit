@@ -1,26 +1,26 @@
 <p>This tests verifies that the Function constructor creates functions
-	with the correct 'this' and 'window' in scope.
+    with the correct 'this' and 'window' in scope.
 </p>
 <pre id="console"></pre>
 
 <script>
 function log(s)
 {
-	document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
+    document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
 }
 
 function shouldBe(a, aDescription, b)
 {
-	if (a == b) {
-		log("PASS: " + aDescription + " should be " + b + " and is.");
-		return;
-	}
-	log("FAIL: " + aDescription + " should be " + b + " but instead is " + a + ".");
+    if (a == b) {
+        log("PASS: " + aDescription + " should be " + b + " and is.");
+        return;
+    }
+    log("FAIL: " + aDescription + " should be " + b + " but instead is " + a + ".");
 }
 
 if (window.testRunner) {
-	testRunner.dumpAsText();
-	testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
     testRunner.setCanOpenWindows();
     testRunner.setCloseRemainingWindowsWhenComplete(true);
 }
@@ -33,5 +33,5 @@ shouldBe(result['this'].location.href, "result['this'].location.href", "about:bl
 shouldBe(result['window'].location.href, "result['window'].location.href", "about:blank");
 
 if (window.testRunner)
-	testRunner.notifyDone();
+    testRunner.notifyDone();
 </script>
