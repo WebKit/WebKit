@@ -1206,7 +1206,14 @@ void TestRunner::removeAllWebNotificationPermissions()
 void TestRunner::simulateWebNotificationClick(JSValueRef jsNotification)
 {
     uint64_t notificationID = [[mainFrame webView] _notificationIDForTesting:jsNotification];
-    [[MockWebNotificationProvider shared] simulateWebNotificationClick:notificationID];
+    m_hasPendingWebNotificationClick = true;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (!m_hasPendingWebNotificationClick)
+            return;
+
+        [[MockWebNotificationProvider shared] simulateWebNotificationClick:notificationID];
+        m_hasPendingWebNotificationClick = false;
+    });
 }
 
 void TestRunner::simulateLegacyWebNotificationClick(JSStringRef jsTitle)

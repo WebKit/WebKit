@@ -368,6 +368,8 @@ public:
 
     void setStorageDatabaseIdleInterval(double);
 
+    bool hasPendingWebNotificationClick() const { return m_hasPendingWebNotificationClick; }
+
 private:
     TestRunner(const std::string& testPathOrURL, const std::string& expectedPixelHash);
 
@@ -423,6 +425,7 @@ private:
     // FIXME 81697: This variable most likely will be removed once we have migrated the tests from fast/notifications to http/tests/notifications.
     bool m_areLegacyWebNotificationPermissionRequestsIgnored;
     bool m_customFullScreenBehavior;
+    bool m_hasPendingWebNotificationClick;
 
     std::string m_authenticationUsername;
     std::string m_authenticationPassword; 

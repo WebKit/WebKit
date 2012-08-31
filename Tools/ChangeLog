@@ -1,3 +1,23 @@
+2012-08-31  Jon Lee  <jonlee@apple.com>
+
+        [DRT] Make simulating a web click on a notification a queued task
+        https://bugs.webkit.org/show_bug.cgi?id=95546
+        <rdar://problem/12214170>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Making the web click happen asynchronously better mimics user interaction with the platform.
+
+        * DumpRenderTree/TestRunner.h: Add a flag that determines whether we have a pending notification click.
+        (TestRunner::hasPendingWebNotificationClick): Exposed so that dump() can check that the flag is
+        not set.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dump): Assert that the flag is not set.
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::simulateWebNotificationClick): Set the flag, then add a task to click the
+        notification. In the case where the block gets executed after the flag has been unset, we avoid
+        performing the click.
+
 2012-08-31  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] ImageDiff output is not in the expected form if image dimensions differ

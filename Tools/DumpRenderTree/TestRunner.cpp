@@ -94,6 +94,7 @@ TestRunner::TestRunner(const std::string& testPathOrURL, const std::string& expe
     , m_shouldStayOnPageAfterHandlingBeforeUnload(false)
     , m_areLegacyWebNotificationPermissionRequestsIgnored(false)
     , m_customFullScreenBehavior(false) 
+    , m_hasPendingWebNotificationClick(false)
     , m_testPathOrURL(testPathOrURL)
     , m_expectedPixelHash(expectedPixelHash)
     , m_titleTextDirection("ltr")

@@ -1139,6 +1139,7 @@ bool shouldSetWaitToDumpWatchdog()
 void dump()
 {
     invalidateAnyPreviousWaitToDumpWatchdog();
+    ASSERT(!gTestRunner->hasPendingWebNotificationClick());
 
     if (dumpTree) {
         NSString *resultString = nil;
