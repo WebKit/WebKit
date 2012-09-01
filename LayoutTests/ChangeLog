@@ -1,3 +1,14 @@
+2012-08-31  Nate Chapin  <japhet@chromium.org>
+
+        Unskip fast/loader/document-destruction-within-unload.html
+        on mac and qt.
+        https://bugs.webkit.org/show_bug.cgi?id=66783
+
+        Reviewed by Darin Adler.
+
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+
 2012-08-31  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. CSS_VARIABLES are not enabled on Windows. Adding Windows specific results.

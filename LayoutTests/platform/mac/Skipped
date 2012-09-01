@@ -517,10 +517,6 @@ css3/font-feature-settings-rendering.html
 # This test verifies that a mismatch reftest will fail as intended if both results are same.
 fast/harness/sample-fail-mismatch-reftest.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=66783
-# Makes subsequent test crash
-fast/loader/document-destruction-within-unload.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=67716
 media/media-controls-invalid-url.html
 

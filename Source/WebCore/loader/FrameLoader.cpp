@@ -1614,24 +1614,21 @@ void FrameLoader::setDocumentLoader(DocumentLoader* loader)
 
     m_client->prepareForDataSourceReplacement();
     detachChildren();
+
+    // detachChildren() can trigger this frame's unload event, and therefore
+    // script can run and do just about anything. For example, an unload event that calls
+    // document.write("") on its parent frame can lead to a recursive detachChildren()
+    // invocation for this frame. In that case, we can end up at this point with a
+    // loader that hasn't been deleted but has been detached from its frame. Such a
+    // DocumentLoader has been sufficiently detached that we'll end up in an inconsistent
+    // state if we try to use it.
+    if (loader && !loader->frame())
+        return;
+
     if (m_documentLoader)
         m_documentLoader->detachFromFrame();
 
     m_documentLoader = loader;
-
-    // The following abomination is brought to you by the unload event.
-    // The detachChildren() call above may trigger a child frame's unload event,
-    // which could do something obnoxious like call document.write("") on
-    // the main frame, which results in detaching children while detaching children.
-    // This can cause the new m_documentLoader to be detached from its Frame*, but still
-    // be alive. To make matters worse, DocumentLoaders with a null Frame* aren't supposed
-    // to happen when they're still alive (and many places below us on the stack think the
-    // DocumentLoader is still usable). Ergo, we reattach loader to its Frame, and pretend
-    // like nothing ever happened.
-    if (m_documentLoader && !m_documentLoader->frame()) {
-        ASSERT(!m_documentLoader->isLoading());
-        m_documentLoader->setFrame(m_frame);
-    }
 }
 
 void FrameLoader::setPolicyDocumentLoader(DocumentLoader* loader)
@@ -1805,6 +1802,12 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
 
     setDocumentLoader(m_provisionalDocumentLoader.get());
     setProvisionalDocumentLoader(0);
+
+    if (pdl != m_documentLoader) {
+        ASSERT(m_state == FrameStateComplete);
+        return;
+    }
+
     setState(FrameStateCommittedPage);
 
 #if ENABLE(TOUCH_EVENTS)
