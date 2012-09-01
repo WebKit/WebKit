@@ -244,7 +244,7 @@ inline void SparseArrayValueMap::put(ExecState* exec, JSArray* array, unsigned i
     call(exec, setter, callType, callData, array, args);
 }
 
-inline bool SparseArrayValueMap::putDirect(ExecState* exec, JSArray* array, unsigned i, JSValue value, bool shouldThrow)
+inline bool SparseArrayValueMap::putDirect(ExecState* exec, JSArray* array, unsigned i, JSValue value, PutDirectIndexMode mode)
 {
     AddResult result = add(array, i);
     SparseArrayEntry& entry = result.iterator->second;
@@ -252,9 +252,9 @@ inline bool SparseArrayValueMap::putDirect(ExecState* exec, JSArray* array, unsi
     // To save a separate find & add, we first always add to the sparse map.
     // In the uncommon case that this is a new property, and the array is not
     // extensible, this is not the right thing to have done - so remove again.
-    if (result.isNewEntry && !array->isExtensible()) {
+    if (mode != PutDirectIndexLikePutDirect && result.isNewEntry && !array->isExtensible()) {
         remove(result.iterator);
-        return reject(exec, shouldThrow, "Attempting to define property on object that is not extensible.");
+        return reject(exec, mode == PutDirectIndexShouldThrow, "Attempting to define property on object that is not extensible.");
     }
 
     entry.attributes = 0;
@@ -414,7 +414,7 @@ bool JSArray::defineOwnNumericProperty(ExecState* exec, unsigned index, Property
         // state (i.e. defineOwnProperty could be used to set a value without needing to entering 'SparseMode').
         if (!descriptor.attributes()) {
             ASSERT(!descriptor.isAccessorDescriptor());
-            return putDirectIndex(exec, index, descriptor.value(), throwException);
+            return putDirectIndex(exec, index, descriptor.value(), throwException ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
         }
 
         enterDictionaryMode(exec->globalData());
@@ -844,7 +844,7 @@ void JSArray::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue 
     valueSlot.set(globalData, this, value);
 }
 
-bool JSArray::putDirectIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue value, bool shouldThrow)
+bool JSArray::putDirectIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue value, PutDirectIndexMode mode)
 {
     JSGlobalData& globalData = exec->globalData();
 
@@ -875,17 +875,19 @@ bool JSArray::putDirectIndexBeyondVectorLength(ExecState* exec, unsigned i, JSVa
         // We don't want to, or can't use a vector to hold this property - allocate a sparse map & add the value.
         allocateSparseMap(exec->globalData());
         map = m_sparseValueMap;
-        return map->putDirect(exec, this, i, value, shouldThrow);
+        return map->putDirect(exec, this, i, value, mode);
     }
 
     // Update m_length if necessary.
     unsigned length = storage->m_length;
     if (i >= length) {
         // Prohibit growing the array if length is not writable.
-        if (map->lengthIsReadOnly())
-            return reject(exec, shouldThrow, StrictModeReadonlyPropertyWriteError);
-        if (!isExtensible())
-            return reject(exec, shouldThrow, "Attempting to define property on object that is not extensible.");
+        if (mode != PutDirectIndexLikePutDirect) {
+            if (map->lengthIsReadOnly())
+                return reject(exec, mode == PutDirectIndexShouldThrow, StrictModeReadonlyPropertyWriteError);
+            if (!isExtensible())
+                return reject(exec, mode == PutDirectIndexShouldThrow, "Attempting to define property on object that is not extensible.");
+        }
         length = i + 1;
         storage->m_length = length;
     }
@@ -894,7 +896,7 @@ bool JSArray::putDirectIndexBeyondVectorLength(ExecState* exec, unsigned i, JSVa
     // We will continue  to use a sparse map if SparseMode is set, a vector would be too sparse, or if allocation fails.
     unsigned numValuesInArray = storage->m_numValuesInVector + map->size();
     if (map->sparseMode() || !isDenseEnoughForVector(length, numValuesInArray) || !increaseVectorLength(exec->globalData(), length))
-        return map->putDirect(exec, this, i, value, shouldThrow);
+        return map->putDirect(exec, this, i, value, mode);
 
     // Reread m_storage afterincreaseVectorLength, update m_numValuesInVector.
     storage = m_storage;

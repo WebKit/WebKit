@@ -30,6 +30,8 @@ namespace JSC {
     class JSArray;
     class LLIntOffsetsExtractor;
 
+    enum PutDirectIndexMode { PutDirectIndexLikePutDirect, PutDirectIndexShouldNotThrow, PutDirectIndexShouldThrow };
+
     struct SparseArrayEntry : public WriteBarrier<Unknown> {
         typedef WriteBarrier<Unknown> Base;
 
@@ -87,7 +89,7 @@ namespace JSC {
 
         // These methods may mutate the contents of the map
         void put(ExecState*, JSArray*, unsigned, JSValue, bool shouldThrow);
-        bool putDirect(ExecState*, JSArray*, unsigned, JSValue, bool shouldThrow);
+        bool putDirect(ExecState*, JSArray*, unsigned, JSValue, PutDirectIndexMode);
         AddResult add(JSArray*, unsigned);
         iterator find(unsigned i) { return m_map.find(i); }
         // This should ASSERT the remove is valid (check the result of the find).
@@ -173,14 +175,15 @@ namespace JSC {
         // This is similar to the JSObject::putDirect* methods:
         //  - the prototype chain is not consulted
         //  - accessors are not called.
+        //  - it will ignore extensibility and read-only properties if PutDirectIndexLikePutDirect is passed as the mode (the default).
         // This method creates a property with attributes writable, enumerable and configurable all set to true.
-        bool putDirectIndex(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow = true)
+        bool putDirectIndex(ExecState* exec, unsigned propertyName, JSValue value, PutDirectIndexMode mode = PutDirectIndexLikePutDirect)
         {
             if (canSetIndex(propertyName)) {
                 setIndex(exec->globalData(), propertyName, value);
                 return true;
             }
-            return putDirectIndexBeyondVectorLength(exec, propertyName, value, shouldThrow);
+            return putDirectIndexBeyondVectorLength(exec, propertyName, value, mode);
         }
 
         static JS_EXPORTDATA const ClassInfo s_info;
@@ -302,7 +305,7 @@ namespace JSC {
         void deallocateSparseMap();
 
         void putByIndexBeyondVectorLength(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
-        JS_EXPORT_PRIVATE bool putDirectIndexBeyondVectorLength(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
+        JS_EXPORT_PRIVATE bool putDirectIndexBeyondVectorLength(ExecState*, unsigned propertyName, JSValue, PutDirectIndexMode);
 
         unsigned getNewVectorLength(unsigned desiredLength);
         bool increaseVectorLength(JSGlobalData&, unsigned newLength);

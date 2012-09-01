@@ -3701,7 +3701,7 @@ skip_id_custom_self:
 
         JSValue arrayValue = callFrame->r(base).jsValue();
         ASSERT(isJSArray(arrayValue));
-        asArray(arrayValue)->putDirectIndex(callFrame, property, callFrame->r(value).jsValue(), false);
+        asArray(arrayValue)->putDirectIndex(callFrame, property, callFrame->r(value).jsValue());
 
         vPC += OPCODE_LENGTH(op_put_by_index);
         NEXT_INSTRUCTION();

@@ -939,7 +939,7 @@ static ALWAYS_INLINE bool splitStringByOneCharacterImpl(ExecState* exec, JSArray
         //    through q (exclusive).
         // 2. Call the [[DefineOwnProperty]] internal method of A with arguments ToString(lengthA),
         //    Property Descriptor {[[Value]]: T, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
-        result->putDirectIndex(exec, resultLength, jsSubstring(exec, input, position, matchPosition - position), false);
+        result->putDirectIndex(exec, resultLength, jsSubstring(exec, input, position, matchPosition - position));
         // 3. Increment lengthA by 1.
         // 4. If lengthA == lim, return A.
         if (++resultLength == limitLength)
@@ -993,7 +993,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
         if (separatorValue.isUndefined()) {
             // a. Call the [[DefineOwnProperty]] internal method of A with arguments "0",
             //    Property Descriptor {[[Value]]: S, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
-            result->putDirectIndex(exec, 0, jsStringWithReuse(exec, thisValue, input), false);
+            result->putDirectIndex(exec, 0, jsStringWithReuse(exec, thisValue, input));
             // b. Return A.
             return JSValue::encode(result);
         }
@@ -1006,7 +1006,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
             //    Property Descriptor {[[Value]]: S, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
             // d. Return A.
             if (!reg->match(*globalData, input, 0))
-                result->putDirectIndex(exec, 0, jsStringWithReuse(exec, thisValue, input), false);
+                result->putDirectIndex(exec, 0, jsStringWithReuse(exec, thisValue, input));
             return JSValue::encode(result);
         }
 
@@ -1037,7 +1037,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
             //    through q (exclusive).
             // 2. Call the [[DefineOwnProperty]] internal method of A with arguments ToString(lengthA),
             //    Property Descriptor {[[Value]]: T, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
-            result->putDirectIndex(exec, resultLength, jsSubstring(exec, input, position, matchPosition - position), false);
+            result->putDirectIndex(exec, resultLength, jsSubstring(exec, input, position, matchPosition - position));
             // 3. Increment lengthA by 1.
             // 4. If lengthA == lim, return A.
             if (++resultLength == limit)
@@ -1056,7 +1056,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
                 //   ToString(lengthA), Property Descriptor {[[Value]]: cap[i], [[Writable]]:
                 //   true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
                 int sub = ovector[i * 2];
-                result->putDirectIndex(exec, resultLength, sub < 0 ? jsUndefined() : jsSubstring(exec, input, sub, ovector[i * 2 + 1] - sub), false);
+                result->putDirectIndex(exec, resultLength, sub < 0 ? jsUndefined() : jsSubstring(exec, input, sub, ovector[i * 2 + 1] - sub));
                 // c Increment lengthA by 1.
                 // d If lengthA == lim, return A.
                 if (++resultLength == limit)
@@ -1075,7 +1075,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
         if (separatorValue.isUndefined()) {
             // a.  Call the [[DefineOwnProperty]] internal method of A with arguments "0",
             //     Property Descriptor {[[Value]]: S, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
-            result->putDirectIndex(exec, 0, jsStringWithReuse(exec, thisValue, input), false);
+            result->putDirectIndex(exec, 0, jsStringWithReuse(exec, thisValue, input));
             // b.  Return A.
             return JSValue::encode(result);
         }
@@ -1088,7 +1088,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
             //    Property Descriptor {[[Value]]: S, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
             // d. Return A.
             if (!separator.isEmpty())
-                result->putDirectIndex(exec, 0, jsStringWithReuse(exec, thisValue, input), false);
+                result->putDirectIndex(exec, 0, jsStringWithReuse(exec, thisValue, input));
             return JSValue::encode(result);
         }
 
@@ -1099,7 +1099,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
             ASSERT(limit);
 
             do {
-                result->putDirectIndex(exec, position, jsSingleCharacterSubstring(exec, input, position), false);
+                result->putDirectIndex(exec, position, jsSingleCharacterSubstring(exec, input, position));
             } while (++position < limit);
 
             return JSValue::encode(result);
@@ -1139,7 +1139,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
                 //    through q (exclusive).
                 // 2. Call the [[DefineOwnProperty]] internal method of A with arguments ToString(lengthA),
                 //    Property Descriptor {[[Value]]: T, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
-                result->putDirectIndex(exec, resultLength, jsSubstring(exec, input, position, matchPosition - position), false);
+                result->putDirectIndex(exec, resultLength, jsSubstring(exec, input, position, matchPosition - position));
                 // 3. Increment lengthA by 1.
                 // 4. If lengthA == lim, return A.
                 if (++resultLength == limit)
@@ -1156,7 +1156,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
     //     through s (exclusive).
     // 15. Call the [[DefineOwnProperty]] internal method of A with arguments ToString(lengthA), Property Descriptor
     //     {[[Value]]: T, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
-    result->putDirectIndex(exec, resultLength++, jsSubstring(exec, input, position, input.length() - position), false);
+    result->putDirectIndex(exec, resultLength++, jsSubstring(exec, input, position, input.length() - position));
 
     // 16. Return A.
     return JSValue::encode(result);

@@ -66,9 +66,9 @@ void RegExpMatchesArray::reifyAllProperties(ExecState* exec)
         for (unsigned i = 1; i <= numSubpatterns; ++i) {
             int start = subpatternResults[2 * i];
             if (start >= 0)
-                putDirectIndex(exec, i, jsSubstring(exec, m_input.get(), start, subpatternResults[2 * i + 1] - start), false);
+                putDirectIndex(exec, i, jsSubstring(exec, m_input.get(), start, subpatternResults[2 * i + 1] - start));
             else
-                putDirectIndex(exec, i, jsUndefined(), false);
+                putDirectIndex(exec, i, jsUndefined());
         }
     }
 
@@ -83,7 +83,7 @@ void RegExpMatchesArray::reifyMatchProperty(ExecState* exec)
 {
     ASSERT(m_state == ReifiedNone);
     ASSERT(m_result);
-    putDirectIndex(exec, 0, jsSubstring(exec, m_input.get(), m_result.start, m_result.end - m_result.start), false);
+    putDirectIndex(exec, 0, jsSubstring(exec, m_input.get(), m_result.start, m_result.end - m_result.start));
     m_state = ReifiedMatch;
 }
 

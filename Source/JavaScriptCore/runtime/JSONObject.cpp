@@ -707,7 +707,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 if (filteredValue.isUndefined())
                     array->methodTable()->deletePropertyByIndex(array, m_exec, indexStack.last());
                 else
-                    array->putDirectIndex(m_exec, indexStack.last(), filteredValue, false);
+                    array->putDirectIndex(m_exec, indexStack.last(), filteredValue);
                 if (m_exec->hadException())
                     return jsNull();
                 indexStack.last()++;

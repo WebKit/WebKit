@@ -3291,7 +3291,7 @@ DEFINE_STUB_FUNCTION(void, op_put_by_index)
 
     JSValue arrayValue = stackFrame.args[0].jsValue();
     ASSERT(isJSArray(arrayValue));
-    asArray(arrayValue)->putDirectIndex(callFrame, property, stackFrame.args[2].jsValue(), false);
+    asArray(arrayValue)->putDirectIndex(callFrame, property, stackFrame.args[2].jsValue());
 }
 
 DEFINE_STUB_FUNCTION(void*, op_switch_imm)

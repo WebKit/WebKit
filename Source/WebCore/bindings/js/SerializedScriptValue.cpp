@@ -1315,7 +1315,7 @@ private:
 
     void putProperty(JSArray* array, unsigned index, JSValue value)
     {
-        array->putDirectIndex(m_exec, index, value, false);
+        array->putDirectIndex(m_exec, index, value);
     }
 
     void putProperty(JSObject* object, const Identifier& property, JSValue value)
