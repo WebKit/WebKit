@@ -188,7 +188,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     IdentifierTable* existingEntryIdentifierTable = wtfThreadData().setCurrentIdentifierTable(identifierTable);
     structureStructure.set(*this, Structure::createStructure(*this));
     debuggerActivationStructure.set(*this, DebuggerActivation::createStructure(*this, 0, jsNull()));
-    activationStructure.set(*this, JSActivation::createStructure(*this, 0, jsNull()));
     interruptedExecutionErrorStructure.set(*this, InterruptedExecutionError::createStructure(*this, 0, jsNull()));
     terminatedExecutionErrorStructure.set(*this, TerminatedExecutionError::createStructure(*this, 0, jsNull()));
     nameScopeStructure.set(*this, JSNameScope::createStructure(*this, 0, jsNull()));

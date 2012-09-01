@@ -120,6 +120,10 @@ namespace JSC {
         WriteBarrier<RegExpPrototype> m_regExpPrototype;
         WriteBarrier<ErrorPrototype> m_errorPrototype;
 
+        WriteBarrier<Structure> m_withScopeStructure;
+        WriteBarrier<Structure> m_strictEvalActivationStructure;
+        WriteBarrier<Structure> m_activationStructure;
+        WriteBarrier<Structure> m_nameScopeStructure;
         WriteBarrier<Structure> m_argumentsStructure;
         WriteBarrier<Structure> m_arrayStructure;
         WriteBarrier<Structure> m_booleanObjectStructure;
@@ -248,6 +252,10 @@ namespace JSC {
 
         JSObject* methodCallDummy() const { return m_methodCallDummy.get(); }
 
+        Structure* withScopeStructure() const { return m_withScopeStructure.get(); }
+        Structure* strictEvalActivationStructure() const { return m_strictEvalActivationStructure.get(); }
+        Structure* activationStructure() const { return m_activationStructure.get(); }
+        Structure* nameScopeStructure() const { return m_nameScopeStructure.get(); }
         Structure* argumentsStructure() const { return m_argumentsStructure.get(); }
         Structure* arrayStructure() const { return m_arrayStructure.get(); }
         Structure* booleanObjectStructure() const { return m_booleanObjectStructure.get(); }

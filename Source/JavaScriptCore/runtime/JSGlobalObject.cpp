@@ -30,10 +30,6 @@
 #include "config.h"
 #include "JSGlobalObject.h"
 
-#include "JSCallbackConstructor.h"
-#include "JSCallbackFunction.h"
-#include "JSCallbackObject.h"
-
 #include "Arguments.h"
 #include "ArrayConstructor.h"
 #include "ArrayPrototype.h"
@@ -42,18 +38,25 @@
 #include "CodeBlock.h"
 #include "DateConstructor.h"
 #include "DatePrototype.h"
+#include "Debugger.h"
 #include "Error.h"
 #include "ErrorConstructor.h"
 #include "ErrorPrototype.h"
 #include "FunctionConstructor.h"
 #include "FunctionPrototype.h"
 #include "GetterSetter.h"
+#include "Interpreter.h"
+#include "JSActivation.h"
 #include "JSBoundFunction.h"
+#include "JSCallbackConstructor.h"
+#include "JSCallbackFunction.h"
+#include "JSCallbackObject.h"
 #include "JSFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSLock.h"
+#include "JSNameScope.h"
 #include "JSONObject.h"
-#include "Interpreter.h"
+#include "JSWithScope.h"
 #include "Lookup.h"
 #include "MathObject.h"
 #include "NameConstructor.h"
@@ -70,9 +73,9 @@
 #include "RegExpMatchesArray.h"
 #include "RegExpObject.h"
 #include "RegExpPrototype.h"
+#include "StrictEvalActivation.h"
 #include "StringConstructor.h"
 #include "StringPrototype.h"
-#include "Debugger.h"
 
 #include "JSGlobalObject.lut.h"
 
@@ -207,6 +210,11 @@ void JSGlobalObject::reset(JSValue prototype)
     protoAccessor->setSetter(exec->globalData(), JSFunction::create(exec, this, 0, "", globalFuncProtoSetter));
     m_objectPrototype->putDirectAccessor(exec->globalData(), exec->propertyNames().underscoreProto, protoAccessor, Accessor | DontEnum);
     m_functionPrototype->structure()->setPrototypeWithoutTransition(exec->globalData(), m_objectPrototype.get());
+
+    m_nameScopeStructure.set(exec->globalData(), this, JSNameScope::createStructure(exec->globalData(), this, jsNull()));
+    m_activationStructure.set(exec->globalData(), this, JSActivation::createStructure(exec->globalData(), this, jsNull()));
+    m_strictEvalActivationStructure.set(exec->globalData(), this, StrictEvalActivation::createStructure(exec->globalData(), this, jsNull()));
+    m_withScopeStructure.set(exec->globalData(), this, JSWithScope::createStructure(exec->globalData(), this, jsNull()));
 
     m_emptyObjectStructure.set(exec->globalData(), this, m_objectPrototype->inheritorID(exec->globalData()));
     m_nullPrototypeObjectStructure.set(exec->globalData(), this, createEmptyObjectStructure(exec->globalData(), this, jsNull()));
@@ -370,6 +378,10 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_regExpPrototype);
     visitor.append(&thisObject->m_errorPrototype);
 
+    visitor.append(&thisObject->m_withScopeStructure);
+    visitor.append(&thisObject->m_strictEvalActivationStructure);
+    visitor.append(&thisObject->m_activationStructure);
+    visitor.append(&thisObject->m_nameScopeStructure);
     visitor.append(&thisObject->m_argumentsStructure);
     visitor.append(&thisObject->m_arrayStructure);
     visitor.append(&thisObject->m_booleanObjectStructure);
