@@ -554,5 +554,4 @@ void OpenTypeVerticalData::substituteWithVerticalGlyphs(const SimpleFontData* fo
 }
 
 } // namespace WebCore
-
 #endif // ENABLE(OPENTYPE_VERTICAL)
