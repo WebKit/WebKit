@@ -379,7 +379,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
                 continue;
 
             // Compute the child's vertical margins.
-            child->computeBlockDirectionMargins(this);
+            child->computeAndSetBlockDirectionMargins(this);
 
             if (!child->needsLayout())
                 child->markForPaginationRelayoutIfNeeded();
@@ -684,7 +684,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             }
 
             // Compute the child's vertical margins.
-            child->computeBlockDirectionMargins(this);
+            child->computeAndSetBlockDirectionMargins(this);
 
             // Add in the child's marginTop to our height.
             setHeight(height() + child->marginTop());

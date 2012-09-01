@@ -1984,8 +1984,15 @@ void RenderBox::computeLogicalHeight()
         RenderBlock* cb = containingBlock();
         bool hasPerpendicularContainingBlock = cb->isHorizontalWritingMode() != isHorizontalWritingMode();
     
-        if (!hasPerpendicularContainingBlock)
-            computeBlockDirectionMargins(cb);
+        if (!hasPerpendicularContainingBlock) {
+            ComputedMarginValues marginValues;
+            bool shouldFlipBeforeAfter = cb->style()->writingMode() != style()->writingMode();
+            computeBlockDirectionMargins(cb,
+                shouldFlipBeforeAfter ? marginValues.m_after : marginValues.m_before,
+                shouldFlipBeforeAfter ? marginValues.m_before : marginValues.m_after);
+            setMarginBefore(marginValues.m_before);
+            setMarginAfter(marginValues.m_after);
+        }
 
         // For tables, calculate margins only.
         if (isTable()) {
@@ -2361,13 +2368,13 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h) const
     return containingBlock()->availableLogicalHeight();
 }
 
-void RenderBox::computeBlockDirectionMargins(const RenderBlock* containingBlock)
+void RenderBox::computeBlockDirectionMargins(const RenderBlock* containingBlock, LayoutUnit& marginBefore, LayoutUnit& marginAfter) const
 {
     if (isTableCell()) {
         // FIXME: Not right if we allow cells to have different directionality than the table.  If we do allow this, though,
         // we may just do it with an extra anonymous block inside the cell.
-        setMarginBefore(0);
-        setMarginAfter(0);
+        marginBefore = 0;
+        marginAfter = 0;
         return;
     }
 
@@ -2376,8 +2383,17 @@ void RenderBox::computeBlockDirectionMargins(const RenderBlock* containingBlock)
     LayoutUnit cw = containingBlockLogicalWidthForContent();
     RenderView* renderView = view();
     RenderStyle* containingBlockStyle = containingBlock->style();
-    containingBlock->setMarginBeforeForChild(this, minimumValueForLength(style()->marginBeforeUsing(containingBlockStyle), cw, renderView));
-    containingBlock->setMarginAfterForChild(this, minimumValueForLength(style()->marginAfterUsing(containingBlockStyle), cw, renderView));
+    marginBefore = minimumValueForLength(style()->marginBeforeUsing(containingBlockStyle), cw, renderView);
+    marginAfter = minimumValueForLength(style()->marginAfterUsing(containingBlockStyle), cw, renderView);
+}
+
+void RenderBox::computeAndSetBlockDirectionMargins(const RenderBlock* containingBlock)
+{
+    LayoutUnit marginBefore;
+    LayoutUnit marginAfter;
+    computeBlockDirectionMargins(containingBlock, marginBefore, marginAfter);
+    containingBlock->setMarginBeforeForChild(this, marginBefore);
+    containingBlock->setMarginAfterForChild(this, marginAfter);
 }
 
 LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxModelObject* containingBlock, RenderRegion* region,

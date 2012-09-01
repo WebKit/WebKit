@@ -2164,7 +2164,7 @@ void RenderBlock::marginBeforeEstimateForChild(RenderBox* child, LayoutUnit& pos
 
     // Make sure to update the block margins now for the grandchild box so that we're looking at current values.
     if (grandchildBox->needsLayout()) {
-        grandchildBox->computeBlockDirectionMargins(this); 
+        grandchildBox->computeAndSetBlockDirectionMargins(this);
         grandchildBox->setMarginBeforeQuirk(grandchildBox->style()->marginBefore().quirk());
         grandchildBox->setMarginAfterQuirk(grandchildBox->style()->marginAfter().quirk());
     }
@@ -2411,7 +2411,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
     LayoutUnit oldNegMarginBefore = maxNegativeMarginBefore();
 
     // The child is a normal flow object.  Compute the margins we will use for collapsing now.
-    child->computeBlockDirectionMargins(this);
+    child->computeAndSetBlockDirectionMargins(this);
 
     // Do not allow a collapse if the margin-before-collapse style is set to SEPARATE.
     RenderStyle* childStyle = child->style();
@@ -3761,7 +3761,7 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
         o->layoutIfNeeded();
     else {
         o->computeLogicalWidth();
-        o->computeBlockDirectionMargins(this);
+        o->computeAndSetBlockDirectionMargins(this);
     }
     setLogicalWidthForFloat(newObj, logicalWidthForChild(o) + marginStartForChild(o) + marginEndForChild(o));
 
