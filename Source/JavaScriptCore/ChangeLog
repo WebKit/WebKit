@@ -1,3 +1,28 @@
+2012-08-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled back in a piece of <http://trac.webkit.org/changeset/127293>.
+
+            Shrink activation objects by half
+            https://bugs.webkit.org/show_bug.cgi?id=95591
+
+            Reviewed by Sam Weinig.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock):
+        * heap/MarkedBlock.h:
+        (MarkedBlock):
+        (JSC::MarkedBlock::globalData):
+        (JSC):
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::addAllocator):
+        * heap/WeakSet.h:
+        (WeakSet):
+        (JSC::WeakSet::WeakSet):
+        (JSC::WeakSet::globalData):
+        * runtime/JSGlobalData.h:
+        (JSC::WeakSet::heap):
+        (JSC):
+
 2012-08-31  Mark Lam  <mark.lam@apple.com>
 
         Refactor LLInt and supporting code in preparation for the C Loop backend.

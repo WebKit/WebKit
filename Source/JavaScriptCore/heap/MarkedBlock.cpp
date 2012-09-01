@@ -45,7 +45,7 @@ MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, Heap* heap, si
     , m_cellsNeedDestruction(cellsNeedDestruction)
     , m_onlyContainsStructures(onlyContainsStructures)
     , m_state(New) // All cells start out unmarked.
-    , m_weakSet(heap)
+    , m_weakSet(heap->globalData())
 {
     ASSERT(heap);
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);

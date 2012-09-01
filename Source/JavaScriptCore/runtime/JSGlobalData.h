@@ -474,6 +474,11 @@ namespace JSC {
     }
 #endif
 
+    inline Heap* WeakSet::heap() const
+    {
+        return &m_globalData->heap;
+    }
+
 } // namespace JSC
 
 #endif // JSGlobalData_h
