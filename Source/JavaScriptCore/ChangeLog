@@ -1,5 +1,11 @@
 2012-08-31  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, attempt to fix Windows, take two.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2012-08-31  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, attempt to fix Windows.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
