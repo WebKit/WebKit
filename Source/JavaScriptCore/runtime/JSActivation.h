@@ -96,11 +96,11 @@ namespace JSC {
         size_t registerArraySizeInBytes();
 
         StorageBarrier m_registerArray; // Independent copy of registers, used when a variable object copies its registers out of the register file.
-        int m_numCapturedArgs;
-        int m_numCapturedVars : 30;
-        bool m_isTornOff : 1;
-        bool m_requiresDynamicChecks : 1;
-        int m_argumentsRegister;
+        unsigned m_numCapturedArgs;
+        unsigned m_numCapturedVars : 27;
+        unsigned m_isTornOff : 1;
+        unsigned m_requiresDynamicChecks : 1;
+        int m_argumentsRegister : 3;
     };
 
     JSActivation* asActivation(JSValue);

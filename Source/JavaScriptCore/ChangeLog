@@ -7,6 +7,18 @@
 
             Reviewed by Sam Weinig.
 
+        * runtime/JSActivation.h:
+        (JSActivation):
+
+2012-09-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled back in a piece of <http://trac.webkit.org/changeset/127293>.
+
+            Shrink activation objects by half
+            https://bugs.webkit.org/show_bug.cgi?id=95591
+
+            Reviewed by Sam Weinig.
+
         * runtime/JSActivation.cpp:
         (JSC::JSActivation::JSActivation):
         * runtime/JSGlobalObject.cpp:
