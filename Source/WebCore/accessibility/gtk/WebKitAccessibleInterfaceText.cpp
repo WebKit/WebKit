@@ -537,7 +537,9 @@ static gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint 
 
     if (!ret.length()) {
         // This can happen at least with anonymous RenderBlocks (e.g. body text amongst paragraphs)
-        ret = String(textForObject(coreObject));
+        // In such instances, there may also be embedded objects. The object replacement character
+        // is something ATs want included and we have to account for the fact that it is multibyte.
+        ret = String::fromUTF8(textForObject(coreObject));
         if (!end)
             end = ret.length();
     }

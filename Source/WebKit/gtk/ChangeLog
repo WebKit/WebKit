@@ -1,3 +1,21 @@
+2012-09-01  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [Gtk] Incorrect/unexpected characters in the text of certain accessibles
+        https://bugs.webkit.org/show_bug.cgi?id=95180
+
+        Reviewed by Chris Fleizach.
+
+        Corrected a unit test in which the expected accessible text was wrong as
+        a result of this bug. In particular, the AtkText inserted into an empty
+        text field is expected to be the same text atk_text_get_text() returns.
+        That was not happening -- and presumably not noticed as a result of the
+        hard to read textual representation of the multibyte password field
+        bullets.
+
+        * tests/testatk.c:
+        (testWebkitAtkTextChangedNotifications): Corrected the test and added a
+        comment so that one knows what the multibyte character is.
+
 2012-08-31  José Dapena Paz  <jdapena@igalia.com>
 
         [GTK] Assert on ChromeClientGtk::scroll with delta (0, -1).

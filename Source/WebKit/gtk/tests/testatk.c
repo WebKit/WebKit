@@ -1867,17 +1867,18 @@ static void testWebkitAtkTextChangedNotifications()
                      GINT_TO_POINTER(TEXT_CHANGE_REMOVE));
 
     pos = 0;
+    /* A single bullet character is '\342\200\242' */
     atk_editable_text_insert_text(ATK_EDITABLE_TEXT(passwordEntry), "foobar", 6, &pos);
     g_assert_cmpstr(textChangedResult, ==, "|1|0|6|'\342\200\242\342\200\242\342\200\242\342\200\242\342\200\242\342\200\242'|");
     text = atk_text_get_text(ATK_TEXT(passwordEntry), 0, -1);
-    g_assert_cmpstr(text, ==, "\303\242\302\200\302\242\303\242\302\200\302\242");
+    g_assert_cmpstr(text, ==, "\342\200\242\342\200\242\342\200\242\342\200\242\342\200\242\342\200\242");
     g_free(text);
 
     atk_editable_text_delete_text(ATK_EDITABLE_TEXT(passwordEntry), 2, 4);
     g_assert_cmpstr(textChangedResult, ==, "|2|2|2|'\342\200\242\342\200\242'|");
 
     text = atk_text_get_text(ATK_TEXT(passwordEntry), 0, -1);
-    g_assert_cmpstr(text, ==, "\303\242\302\200\302\242\303\242");
+    g_assert_cmpstr(text, ==, "\342\200\242\342\200\242\342\200\242\342\200\242");
     g_free(text);
 
     pos = 3;
@@ -1885,7 +1886,7 @@ static void testWebkitAtkTextChangedNotifications()
     g_assert_cmpstr(textChangedResult, ==, "|1|3|3|'\342\200\242\342\200\242\342\200\242'|");
 
     text = atk_text_get_text(ATK_TEXT(passwordEntry), 0, -1);
-    g_assert_cmpstr(text, ==, "\303\242\302\200\302\242\303\242\302\200\302\242\303\242");
+    g_assert_cmpstr(text, ==, "\342\200\242\342\200\242\342\200\242\342\200\242\342\200\242\342\200\242\342\200\242");
     g_free(text);
 
     g_free(textChangedResult);

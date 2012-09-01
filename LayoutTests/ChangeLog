@@ -1,3 +1,18 @@
+2012-09-01  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [Gtk] Incorrect/unexpected characters in the text of certain accessibles
+        https://bugs.webkit.org/show_bug.cgi?id=95180
+
+        Reviewed by Chris Fleizach.
+
+        Two new layout tests, plus one updated one.
+
+        * platform/gtk/accessibility/deleting-iframe-destroys-axcache-expected.txt: Indicated replaced objects.
+        * platform/gtk/accessibility/entry-and-password-expected.txt: Added.
+        * platform/gtk/accessibility/entry-and-password.html: Added.
+        * platform/gtk/accessibility/replaced-objects-in-anonymous-blocks-expected.txt: Added.
+        * platform/gtk/accessibility/replaced-objects-in-anonymous-blocks.html: Added.
+
 2012-09-01  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add MediaStream management to RTCPeerConnection

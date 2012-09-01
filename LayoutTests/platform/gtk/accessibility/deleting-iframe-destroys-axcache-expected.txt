@@ -14,10 +14,10 @@ Before:
 AXRole: scroll pane 
     AXRole: document frame 
         AXRole: paragraph AXValue: Before
-        AXRole: panel 
+        AXRole: panel AXValue: <obj>
             AXRole: scroll pane 
                 AXRole: document frame 
-                    AXRole: panel 
+                    AXRole: panel AXValue: <obj>Click me
                         AXRole: push button 
         AXRole: paragraph AXValue: After
         AXRole: paragraph AXValue: End of test
@@ -26,7 +26,7 @@ After:
 AXRole: scroll pane 
     AXRole: document frame 
         AXRole: paragraph AXValue: Before
-        AXRole: panel 
+        AXRole: panel AXValue: 
         AXRole: paragraph AXValue: After
         AXRole: paragraph AXValue: End of test
 
