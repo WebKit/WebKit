@@ -67,8 +67,6 @@ private:
         : Base(
             exec->globalData(),
             exec->lexicalGlobalObject()->withScopeStructure(),
-            exec->lexicalGlobalObject(),
-            exec->globalThisValue(),
             exec->scope()
         )
         , m_object(exec->globalData(), this, object)
@@ -79,8 +77,6 @@ private:
         : Base(
             exec->globalData(),
             exec->lexicalGlobalObject()->withScopeStructure(),
-            exec->lexicalGlobalObject(),
-            exec->globalThisValue(),
             next
         )
         , m_object(exec->globalData(), this, object)

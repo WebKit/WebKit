@@ -94,6 +94,7 @@ namespace JSC {
 
         Register m_globalCallFrame[RegisterFile::CallFrameHeaderSize];
 
+        WriteBarrier<JSObject> m_globalThis;
         WriteBarrier<JSObject> m_methodCallDummy;
 
         WriteBarrier<RegExpConstructor> m_regExpConstructor;
@@ -309,6 +310,7 @@ namespace JSC {
         void resetPrototype(JSGlobalData&, JSValue prototype);
 
         JSGlobalData& globalData() const { return *Heap::heap(this)->globalData(); }
+        JSObject* globalThis() const;
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
@@ -353,6 +355,7 @@ namespace JSC {
         // FIXME: Fold reset into init.
         JS_EXPORT_PRIVATE void init(JSObject* thisValue);
         void reset(JSValue prototype);
+        void setGlobalThis(JSGlobalData&, JSObject* globalThis);
 
         void createThrowTypeError(ExecState*);
 
@@ -491,6 +494,16 @@ namespace JSC {
     inline bool JSGlobalObject::isDynamicScope(bool&) const
     {
         return true;
+    }
+
+    inline JSObject* JSScope::globalThis()
+    { 
+        return globalObject()->globalThis();
+    }
+
+    inline JSObject* JSGlobalObject::globalThis() const
+    { 
+        return m_globalThis.get();
     }
 
 } // namespace JSC

@@ -46,8 +46,6 @@ JSActivation::JSActivation(CallFrame* callFrame, FunctionExecutable* functionExe
         callFrame->globalData(),
         callFrame->lexicalGlobalObject()->activationStructure(),
         callFrame->registers(),
-        callFrame->lexicalGlobalObject(),
-        callFrame->globalThisValue(),
         callFrame->scope()
     )
     , m_registerArray(callFrame->globalData(), this, 0)

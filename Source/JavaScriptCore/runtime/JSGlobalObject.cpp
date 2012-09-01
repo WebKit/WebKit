@@ -109,7 +109,7 @@ static const int initialTickCountThreshold = 255;
 static const int preferredScriptCheckTimeInterval = 1000;
 
 JSGlobalObject::JSGlobalObject(JSGlobalData& globalData, Structure* structure, const GlobalObjectMethodTable* globalObjectMethodTable)
-    : Base(globalData, structure, this, this, 0)
+    : Base(globalData, structure, 0)
     , m_masqueradesAsUndefinedWatchpoint(adoptRef(new WatchpointSet(InitializedWatching)))
     , m_weakRandom(Options::forceWeakRandomSeed() ? Options::forcedWeakRandomSeed() : static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
     , m_evalEnabled(true)
@@ -129,6 +129,11 @@ JSGlobalObject::~JSGlobalObject()
 void JSGlobalObject::destroy(JSCell* cell)
 {
     static_cast<JSGlobalObject*>(cell)->JSGlobalObject::~JSGlobalObject();
+}
+
+void JSGlobalObject::setGlobalThis(JSGlobalData& globalData, JSObject* globalThis)
+{ 
+    m_globalThis.set(globalData, this, globalThis);
 }
 
 void JSGlobalObject::init(JSObject* thisValue)
@@ -352,6 +357,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
 
+    visitor.append(&thisObject->m_globalThis);
     visitor.append(&thisObject->m_methodCallDummy);
 
     visitor.append(&thisObject->m_regExpConstructor);

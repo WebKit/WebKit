@@ -73,25 +73,18 @@ public:
     JSGlobalObject* globalObject();
     JSGlobalData* globalData();
     JSObject* globalThis();
-    void setGlobalThis(JSGlobalData&, JSObject*);
 
 protected:
-    JSScope(JSGlobalData&, Structure*, JSGlobalObject*, JSObject* globalThis, JSScope* next);
+    JSScope(JSGlobalData&, Structure*, JSScope* next);
     static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
 
 private:
-    JSGlobalData* m_globalData;
     WriteBarrier<JSScope> m_next;
-    WriteBarrier<JSGlobalObject> m_globalObject;
-    WriteBarrier<JSObject> m_globalThis;
 };
 
-inline JSScope::JSScope(JSGlobalData& globalData, Structure* structure, JSGlobalObject* globalObject, JSObject* globalThis, JSScope* next)
+inline JSScope::JSScope(JSGlobalData& globalData, Structure* structure, JSScope* next)
     : Base(globalData, structure)
-    , m_globalData(&globalData)
     , m_next(globalData, this, next, WriteBarrier<JSScope>::MayBeNull)
-    , m_globalObject(globalData, this, globalObject)
-    , m_globalThis(globalData, this, globalThis)
 {
 }
 
@@ -133,22 +126,12 @@ inline JSScope* JSScope::next()
 
 inline JSGlobalObject* JSScope::globalObject()
 { 
-    return m_globalObject.get();
+    return structure()->globalObject();
 }
 
 inline JSGlobalData* JSScope::globalData()
 { 
-    return m_globalData;
-}
-
-inline JSObject* JSScope::globalThis()
-{ 
-    return m_globalThis.get();
-}
-
-inline void JSScope::setGlobalThis(JSGlobalData& globalData, JSObject* globalThis)
-{ 
-    m_globalThis.set(globalData, this, globalThis);
+    return Heap::heap(this)->globalData();
 }
 
 inline Register& Register::operator=(JSScope* scope)

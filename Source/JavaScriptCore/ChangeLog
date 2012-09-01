@@ -1,5 +1,46 @@
 2012-09-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Rolled back in a piece of <http://trac.webkit.org/changeset/127293>.
+
+            Shrink activation objects by half
+            https://bugs.webkit.org/show_bug.cgi?id=95591
+
+            Reviewed by Sam Weinig.
+
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::JSActivation):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::setGlobalThis):
+        (JSC):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        (JSC::JSScope::globalThis):
+        (JSC):
+        (JSC::JSGlobalObject::globalThis):
+        * runtime/JSNameScope.h:
+        (JSC::JSNameScope::JSNameScope):
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::visitChildren):
+        * runtime/JSScope.h:
+        (JSScope):
+        (JSC::JSScope::JSScope):
+        (JSC::JSScope::globalObject):
+        (JSC::JSScope::globalData):
+        * runtime/JSSegmentedVariableObject.h:
+        (JSC::JSSegmentedVariableObject::JSSegmentedVariableObject):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::JSSymbolTableObject::JSSymbolTableObject):
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::JSVariableObject):
+        * runtime/JSWithScope.h:
+        (JSC::JSWithScope::JSWithScope):
+        * runtime/StrictEvalActivation.cpp:
+        (JSC::StrictEvalActivation::StrictEvalActivation):
+
+2012-09-01  Geoffrey Garen  <ggaren@apple.com>
+
         Rolled back out a piece of <http://trac.webkit.org/changeset/127293>
         because it broke Window inspector tests.
 

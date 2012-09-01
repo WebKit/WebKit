@@ -69,8 +69,6 @@ private:
             exec->globalData(),
             exec->lexicalGlobalObject()->nameScopeStructure(),
             reinterpret_cast<Register*>(&m_registerStore + 1),
-            exec->lexicalGlobalObject(),
-            exec->globalThisValue(),
             exec->scope()
         )
     {

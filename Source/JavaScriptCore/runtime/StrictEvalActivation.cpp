@@ -38,8 +38,6 @@ StrictEvalActivation::StrictEvalActivation(ExecState* exec)
     : Base(
         exec->globalData(),
         exec->lexicalGlobalObject()->strictEvalActivationStructure(),
-        exec->lexicalGlobalObject(),
-        exec->globalThisValue(),
         exec->scope()
     )
 {
