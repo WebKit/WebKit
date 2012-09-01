@@ -75,4 +75,6 @@ function executeTest() {
     runAnimationTest(expectedValues);
 }
 
+window.clickX = 100;
+window.clickY = 100;
 var successfullyParsed = true;

@@ -45,5 +45,5 @@ function executeTest() {
 }
 
 window.clickX = 310;
-window.clickY = 30;
+window.clickY = 40;
 var successfullyParsed = true;

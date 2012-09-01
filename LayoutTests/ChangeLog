@@ -1,3 +1,21 @@
+2012-08-31  Philip Rogers  <pdr@google.com>
+
+        Fix 6 broken SVG animation tests
+
+        Unreviewed test update.
+
+        Six SVG animation tests were marked as TIMEOUT because they never ran. Each
+        of these tests required a click event to start and the event was not being fired.
+        This patch updates these tests to correctly start, fixing 6 TIMEOUTS.
+
+        * platform/chromium/TestExpectations:
+        * svg/animations/script-tests/animate-path-animation-qQ-tT-inverse.js:
+        * svg/animations/script-tests/animate-path-nested-transforms.js:
+        * svg/animations/script-tests/svgnumberoptionalnumber-animation-1.js:
+        * svg/animations/script-tests/svgnumberoptionalnumber-animation-2.js:
+        * svg/animations/script-tests/svgnumberoptionalnumber-animation-3.js:
+        * svg/animations/script-tests/svgnumberoptionalnumber-animation-4.js:
+
 2012-08-31  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Unreviewed, test expectation update

@@ -3255,14 +3255,6 @@ BUGWK86909 WIN DEBUG : http/tests/security/referrer-policy-redirect-link.html = 
 BUGWK86909 WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/imagedata-contains-uint8clampedarray.html = PASS TIMEOUT
 BUGWK86909 WIN SLOW : platform/chromium/virtual/gpu/fast/canvas/webgl/webgl-composite-modes-repaint.html = PASS
 
-// Animation tests timing out since r117815
-BUGWK87075 : svg/animations/svgnumberoptionalnumber-animation-1.html = PASS TIMEOUT
-BUGWK87075 : svg/animations/animate-path-nested-transforms.html = PASS TIMEOUT
-BUGWK87075 : svg/animations/svgnumberoptionalnumber-animation-2.html = PASS TIMEOUT
-BUGWK87075 : svg/animations/svgnumberoptionalnumber-animation-3.html = PASS TIMEOUT
-BUGWK87075 : svg/animations/animate-path-animation-qQ-tT-inverse.html = PASS TIMEOUT
-BUGWK87075 : svg/animations/svgnumberoptionalnumber-animation-4.html = PASS TIMEOUT
-
 // Ref-tests can't have platform specific results.
 BUGWK87175 SKIP : fast/regions/floats-basic-in-variable-width-regions.html = PASS
 BUGWK87175 SKIP : fast/regions/overflow-in-uniform-regions.html = PASS
