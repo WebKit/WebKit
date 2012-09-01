@@ -58,7 +58,6 @@ BUGCR24182 : jquery/manipulation.html = PASS TIMEOUT
 BUGCR24182 SLOW DEBUG : jquery/offset.html = PASS
 BUGCR24182 LINUX WIN DEBUG : jquery/traversing.html = PASS TIMEOUT
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : svg/dom/baseVal-animVal-crash.html = PASS
-BUGCR24182 SLOW MAC : storage/indexeddb/factory-basics.html = PASS
 BUGCR24182 SLOW DEBUG : css3/flexbox/position-absolute-child.html = PASS
 BUGCR24182 SLOW WIN MAC DEBUG : fast/events/tabindex-focus-blur-all.html = PASS
 BUGCR24182 SLOW WIN SNOWLEOPARD DEBUG : fast/frames/invalid.html = PASS
@@ -81,6 +80,15 @@ BUGWK93631 SLOW ANDROID : fast/js/exception-sequencing-binops2.html = PASS
 BUGWK93631 SLOW ANDROID : fast/js/toInt32UInt32.html = PASS
 BUGCR24182 SLOW ANDROID DEBUG : editing/selection/caret-at-bidi-boundary.html = PASS
 BUGCR24182 SLOW ANDROID DEBUG : fast/css/css-selector-deeply-nested.html = PASS
+// These tests are slow when run with --fully-parallel.
+BUGCR24182 SLOW : storage/indexeddb/database-closepending-flag.html = PASS
+BUGCR24182 SLOW : storage/indexeddb/factory-basics-workers.html = PASS
+BUGCR24182 SLOW : storage/indexeddb/factory-basics.html = PASS
+BUGCR24182 SLOW : storage/indexeddb/factory-deletedatabase-interactions.html = PASS
+BUGCR24182 SLOW : storage/indexeddb/intversion-and-setversion.html = PASS
+BUGCR24182 SLOW : storage/indexeddb/key-generator.html = PASS
+BUGCR24182 SLOW : storage/indexeddb/metadata.html = PASS
+BUGCR24182 SLOW : storage/indexeddb/structured-clone.html = PASS
 
 // These tests started being slow when we switched to DRT.
 BUGWK90488 SLOW LINUX WIN DEBUG : inspector = PASS
