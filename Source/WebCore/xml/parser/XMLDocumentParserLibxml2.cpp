@@ -1332,7 +1332,7 @@ void XMLDocumentParser::doEnd()
         xmlTreeViewer.transformDocumentToTreeView();
 
     if (m_sawXSLTransform) {
-        void* doc = xmlDocPtrForString(document()->cachedResourceLoader(), m_originalSourceForTransform, document()->url().string());
+        void* doc = xmlDocPtrForString(document()->cachedResourceLoader(), m_originalSourceForTransform.toString(), document()->url().string());
         document()->setTransformSource(adoptPtr(new TransformSource(doc)));
 
         document()->setParsing(false); // Make the document think it's done, so it will apply XSL stylesheets.

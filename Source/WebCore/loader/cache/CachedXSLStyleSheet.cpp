@@ -69,11 +69,11 @@ void CachedXSLStyleSheet::data(PassRefPtr<SharedBuffer> data, bool allDataReceiv
     if (!allDataReceived)
         return;
 
-    m_data = data;     
+    m_data = data;
     setEncodedSize(m_data.get() ? m_data->size() : 0);
     if (m_data.get()) {
-        m_sheet = String(m_decoder->decode(m_data->data(), encodedSize()));
-        m_sheet += m_decoder->flush();
+        m_sheet = m_decoder->decode(m_data->data(), encodedSize());
+        m_sheet.append(m_decoder->flush());
     }
     setLoading(false);
     checkNotify();

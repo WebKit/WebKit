@@ -550,22 +550,19 @@ Value FunTranslate::evaluate() const
     String s1 = arg(0)->evaluate().toString();
     String s2 = arg(1)->evaluate().toString();
     String s3 = arg(2)->evaluate().toString();
-    String newString;
+    StringBuilder result;
 
-    // FIXME: Building a String a character at a time is quite slow.
     for (unsigned i1 = 0; i1 < s1.length(); ++i1) {
         UChar ch = s1[i1];
         size_t i2 = s2.find(ch);
         
         if (i2 == notFound)
-            newString += String(&ch, 1);
-        else if (i2 < s3.length()) {
-            UChar c2 = s3[i2];
-            newString += String(&c2, 1);
-        }
+            result.append(ch);
+        else if (i2 < s3.length())
+            result.append(s3[i2]);
     }
 
-    return newString;
+    return result.toString();
 }
 
 Value FunBoolean::evaluate() const

@@ -112,22 +112,20 @@ void XMLDocumentParser::insert(const SegmentedString&)
     ASSERT_NOT_REACHED();
 }
 
-void XMLDocumentParser::append(const SegmentedString& s)
+void XMLDocumentParser::append(const SegmentedString& source)
 {
-    String parseString = s.toString();
-
     if (m_sawXSLTransform || !m_sawFirstElement)
-        m_originalSourceForTransform += parseString;
+        m_originalSourceForTransform.append(source);
 
     if (isStopped() || m_sawXSLTransform)
         return;
 
     if (m_parserPaused) {
-        m_pendingSrc.append(s);
+        m_pendingSrc.append(source);
         return;
     }
 
-    doWrite(parseString);
+    doWrite(source.toString());
 
     // After parsing, go ahead and dispatch image beforeload events.
     ImageLoader::dispatchPendingBeforeLoadEvents();

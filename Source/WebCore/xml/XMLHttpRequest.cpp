@@ -644,8 +644,7 @@ void XMLHttpRequest::send(DOMFormData* body, ExceptionCode& ec)
 
         String contentType = getRequestHeader("Content-Type");
         if (contentType.isEmpty()) {
-            contentType = "multipart/form-data; boundary=";
-            contentType += m_requestEntityBody->boundary().data();
+            contentType = makeString("multipart/form-data; boundary=", m_requestEntityBody->boundary().data());
             setRequestHeaderInternal("Content-Type", contentType);
         }
     }
@@ -920,7 +919,7 @@ void XMLHttpRequest::setRequestHeaderInternal(const AtomicString& name, const St
 {
     HTTPHeaderMap::AddResult result = m_requestHeaders.add(name, value);
     if (!result.isNewEntry)
-        result.iterator->second += ", " + value;
+        result.iterator->second.append(", " + value);
 }
 
 String XMLHttpRequest::getRequestHeader(const AtomicString& name) const

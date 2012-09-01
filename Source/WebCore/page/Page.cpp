@@ -837,7 +837,7 @@ const String& Page::userStyleSheet() const
 
     RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("text/css");
     m_userStyleSheet = decoder->decode(data->data(), data->size());
-    m_userStyleSheet += decoder->flush();
+    m_userStyleSheet.append(decoder->flush());
 
     return m_userStyleSheet;
 }

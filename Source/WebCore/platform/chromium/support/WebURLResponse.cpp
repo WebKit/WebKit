@@ -261,7 +261,7 @@ void WebURLResponse::addHTTPHeaderField(const WebString& name, const WebString& 
     HTTPHeaderMap::AddResult result =
         const_cast<HTTPHeaderMap*>(&map)->add(name, valueStr);
     if (!result.isNewEntry)
-        result.iterator->second += ", " + valueStr;
+        result.iterator->second.append(", " + valueStr);
 }
 
 void WebURLResponse::clearHTTPHeaderField(const WebString& name)

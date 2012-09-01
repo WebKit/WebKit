@@ -137,7 +137,7 @@ bool CachedFont::ensureSVGFontData()
 
         RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("application/xml");
         String svgSource = decoder->decode(m_data->data(), m_data->size());
-        svgSource += decoder->flush();
+        svgSource.append(decoder->flush());
         
         m_externalSVGDocument->setContent(svgSource);
         

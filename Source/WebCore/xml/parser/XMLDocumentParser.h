@@ -177,7 +177,7 @@ public:
 
         FrameView* m_view;
 
-        String m_originalSourceForTransform;
+        SegmentedString m_originalSourceForTransform;
 
 #if USE(QXMLSTREAM)
         QXmlStreamReader m_stream;

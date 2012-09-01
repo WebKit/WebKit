@@ -104,11 +104,11 @@ void InspectorStyleTextEditor::insertProperty(unsigned index, const String& prop
                 textToSet.insert(formatLineFeed, formattingPrependOffset);
         }
         if (!isHTMLLineBreak(m_styleText[propertyStart]))
-            textToSet += formatLineFeed;
+            textToSet.append(formatLineFeed);
     } else {
         String fullPrefix = formatLineFeed + formatPropertyPrefix;
         long fullPrefixLength = fullPrefix.length();
-        textToSet += fullPrefix;
+        textToSet.append(fullPrefix);
         if (insertFirstInSource && (propertyStart < fullPrefixLength || m_styleText.substring(propertyStart - fullPrefixLength, fullPrefixLength) != fullPrefix))
             textToSet.insert(fullPrefix, formattingPrependOffset);
     }

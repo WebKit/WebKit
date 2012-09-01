@@ -30,6 +30,7 @@
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 using std::swap;
 
@@ -150,29 +151,23 @@ AtomicString FrameTree::uniqueChildName(const AtomicString& requestedName) const
             break;
         chain.append(frame);
     }
-    String name;
-    name += framePathPrefix;
-    if (frame)
-        name += frame->tree()->uniqueName().string().substring(framePathPrefixLength,
-            frame->tree()->uniqueName().length() - framePathPrefixLength - framePathSuffixLength);
+    StringBuilder name;
+    name.append(framePathPrefix);
+    if (frame) {
+        name.append(frame->tree()->uniqueName().string().substring(framePathPrefixLength,
+            frame->tree()->uniqueName().length() - framePathPrefixLength - framePathSuffixLength));
+    }
     for (int i = chain.size() - 1; i >= 0; --i) {
         frame = chain[i];
-        name += "/";
-        name += frame->tree()->uniqueName();
+        name.append('/');
+        name.append(frame->tree()->uniqueName());
     }
 
-    // Suffix buffer has more than enough space for:
-    //     10 characters before the number
-    //     a number (20 digits for the largest 64-bit integer)
-    //     6 characters after the number
-    //     trailing null byte
-    // But we still use snprintf just to be extra-safe.
-    char suffix[40];
-    snprintf(suffix, sizeof(suffix), "/<!--frame%u-->-->", childCount());
+    name.appendLiteral("/<!--frame");
+    name.append(String::number(childCount()));
+    name.appendLiteral("-->-->");
 
-    name += suffix;
-
-    return AtomicString(name);
+    return name.toAtomicString();
 }
 
 inline Frame* FrameTree::scopedChild(unsigned index, TreeScope* scope) const
