@@ -19,7 +19,8 @@ AXRole: document frame
             AXRole: document frame 
     AXRole: panel AXValue: <obj>text area<\n>
         AXRole: entry AXValue: text area
-    AXRole: push button 
+    AXRole: section AXValue: Div<\n><obj>button
+        AXRole: push button 
     AXRole: heading AXValue: Heading<\n><obj>button<\n><obj>
         AXRole: push button 
         AXRole: image 
