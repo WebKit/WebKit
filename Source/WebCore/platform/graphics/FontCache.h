@@ -41,8 +41,7 @@
 #include <mlang.h>
 #endif
 
-namespace WebCore
-{
+namespace WebCore {
 
 class Font;
 class FontPlatformData;

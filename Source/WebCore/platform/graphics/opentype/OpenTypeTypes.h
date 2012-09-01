@@ -102,5 +102,4 @@ protected:
 
 } // namespace OpenType
 } // namespace WebCore
-
 #endif // OpenTypeTypes_h
