@@ -2112,10 +2112,10 @@ BUGCR143476 : fast/js/date-parse-test.html = TEXT
 
 // Vertical text needs to be implemented in platforms other than OS X.
 BUGCR65877 LINUX ANDROID : fast/writing-mode/border-vertical-lr.html = IMAGE+TEXT
-BUGCR65877 LINUX ANDROID : fast/writing-mode/japanese-lr-selection.html = IMAGE+TEXT IMAGE
-BUGCR65877 LINUX ANDROID : fast/writing-mode/japanese-rl-selection.html = IMAGE+TEXT IMAGE
-BUGCR65877 LINUX ANDROID : fast/writing-mode/japanese-ruby-vertical-lr.html = PASS IMAGE+TEXT
-BUGCR65877 LINUX ANDROID : fast/writing-mode/japanese-ruby-vertical-rl.html = PASS IMAGE+TEXT
+BUGCR65877 LINUX ANDROID MAC : fast/writing-mode/japanese-lr-selection.html = IMAGE+TEXT IMAGE
+BUGCR65877 LINUX ANDROID MAC : fast/writing-mode/japanese-rl-selection.html = IMAGE+TEXT IMAGE
+BUGCR65877 LINUX ANDROID MAC : fast/writing-mode/japanese-ruby-vertical-lr.html = PASS IMAGE+TEXT
+BUGCR65877 LINUX ANDROID MAC : fast/writing-mode/japanese-ruby-vertical-rl.html = PASS IMAGE+TEXT
 BUGCR65877 LINUX ANDROID : fast/writing-mode/japanese-ruby-horizontal-bt.html = PASS IMAGE+TEXT
 BUGCR65877 LINUX : fast/writing-mode/broken-ideographic-font.html = IMAGE+TEXT
 BUGCR65877 LINUX ANDROID : fast/writing-mode/vertical-font-fallback.html = IMAGE+TEXT
@@ -2150,7 +2150,7 @@ BUGWK51450 WIN : fast/writing-mode/japanese-rl-text-with-broken-font.html = IMAG
 BUGWK51450 WIN : fast/writing-mode/japanese-ruby-vertical-lr.html = IMAGE+TEXT
 BUGWK51450 WIN : fast/writing-mode/japanese-ruby-vertical-rl.html = IMAGE+TEXT
 BUGWK51450 WIN : fast/writing-mode/vertical-align-table-baseline.html = IMAGE
-BUGWK51450 WIN : fast/writing-mode/vertical-font-fallback.html = TEXT
+BUGWK51450 WIN : fast/writing-mode/vertical-font-fallback.html = IMAGE+TEXT
 BUGWK51450 WIN : media/track/track-cue-rendering-vertical.html = IMAGE+TEXT
 
 // New test, introduced by http://trac.webkit.org/changeset/70813 with only platform/mac baselines.
