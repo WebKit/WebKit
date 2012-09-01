@@ -544,7 +544,6 @@ body.drawer-visible #main-panels {
     display: inline-block;
     pointer-events: auto;
     cursor: default;
-    -webkit-flex: 0;
     height: 24px;
     padding: 0;
     margin-left: -1px;
