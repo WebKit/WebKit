@@ -243,6 +243,11 @@ PassRefPtr<StringImpl> RenderQuote::originalText() const
     return StringImpl::empty();
 }
 
+void RenderQuote::updateText()
+{
+    computePreferredLogicalWidths(0);
+}
+
 void RenderQuote::computePreferredLogicalWidths(float lead)
 {
     if (!m_attached)

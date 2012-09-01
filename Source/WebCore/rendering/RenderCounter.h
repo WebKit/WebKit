@@ -48,6 +48,7 @@ private:
     virtual bool isCounter() const;
     virtual PassRefPtr<StringImpl> originalText() const;
     
+    virtual void updateText() OVERRIDE;
     virtual void computePreferredLogicalWidths(float leadWidth);
 
     // Removes the reference to the CounterNode associated with this renderer.

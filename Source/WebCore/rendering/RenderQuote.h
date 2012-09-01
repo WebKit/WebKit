@@ -43,6 +43,8 @@ private:
     virtual const char* renderName() const OVERRIDE { return "RenderQuote"; };
     virtual bool isQuote() const OVERRIDE { return true; };
     virtual PassRefPtr<StringImpl> originalText() const OVERRIDE;
+
+    virtual void updateText() OVERRIDE;
     virtual void computePreferredLogicalWidths(float leadWidth) OVERRIDE;
 
     // We don't override insertedIntoTree to call attachQuote() as it would be attached

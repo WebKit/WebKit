@@ -422,9 +422,9 @@ static inline InlineBox* createInlineBoxForRenderer(RenderObject* obj, bool isRo
 static inline void dirtyLineBoxesForRenderer(RenderObject* o, bool fullLayout)
 {
     if (o->isText()) {
-        if (o->preferredLogicalWidthsDirty() && (o->isCounter() || o->isQuote()))
-            toRenderText(o)->computePreferredLogicalWidths(0); // FIXME: Counters depend on this hack. No clue why. Should be investigated and removed.
-        toRenderText(o)->dirtyLineBoxes(fullLayout);
+        RenderText* renderText = toRenderText(o);
+        renderText->updateTextIfNeeded(); // FIXME: Counters depend on this hack. No clue why. Should be investigated and removed.
+        renderText->dirtyLineBoxes(fullLayout);
     } else
         toRenderInline(o)->dirtyLineBoxes(fullLayout);
 }
@@ -2433,7 +2433,8 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                 ASSERT(current.m_pos == t->textLength());
             }
 
-            if (renderTextInfo.m_text != t || renderTextInfo.m_lineBreakIterator.string() != t->characters()) {
+            if (renderTextInfo.m_text != t) {
+                t->updateTextIfNeeded();
                 renderTextInfo.m_text = t;
                 renderTextInfo.m_layout = f.createLayout(t, width.currentWidth(), collapseWhiteSpace);
                 renderTextInfo.m_lineBreakIterator.reset(t->characters(), t->textLength(), style->locale());
