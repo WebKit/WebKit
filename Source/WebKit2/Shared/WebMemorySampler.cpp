@@ -175,7 +175,7 @@ void WebMemorySampler::appendCurrentMemoryUsageToFile(PlatformFileHandle& file)
         statString.append(m_separator);
         for (size_t i = 0; i < memoryStats.values.size(); ++i) {
             statString.append(m_separator);
-            statString.append(String::format("%lu", memoryStats.values[i]));
+            statString.append(String::number(memoryStats.values[i]));
         }
     }
     statString.append(String("\n"));
