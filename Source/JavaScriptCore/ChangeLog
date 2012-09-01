@@ -1,3 +1,13 @@
+2012-09-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled back out a piece of <http://trac.webkit.org/changeset/127293>
+        because it broke inspector tests on Windows.
+
+            Shrink activation objects by half
+            https://bugs.webkit.org/show_bug.cgi?id=95591
+
+            Reviewed by Sam Weinig.
+
 2012-09-01  Mark Lam  <mark.lam@apple.com>
 
         LLInt C loop backend.
