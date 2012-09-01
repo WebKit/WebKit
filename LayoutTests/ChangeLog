@@ -1,3 +1,20 @@
+2012-08-31  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Make link highlighter use same node selection criteria as Chromium for Android.
+        https://bugs.webkit.org/show_bug.cgi?id=95371
+
+        Reviewed by James Robinson.
+
+        This CL brings the selection criteria for link highlight targets into alignment with Chromium for Android.
+
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-ZIndex.html: Copied from LayoutTests/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-background.html.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-background.html:
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-body.html: Copied from LayoutTests/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-background.html.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-ZIndex-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-ZIndex-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-body-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-body-expected.txt: Added.
+
 2012-08-31  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Adding expected failing results for some fast/css(3) tests.

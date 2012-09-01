@@ -14,8 +14,8 @@ should be white and not grey).
 <script>
 // This test makes sure a GestureTapDown event on the page background doesn't "highlight" the entire viewport.
 function runTest() {
-    // To enable the 'bad behaviour' we are testing, the RenderView must be able to respond to mouse clicks.
-    document.addEventListener("click", function(evt) { });
+    // To enable the 'bad behaviour' we are testing, the RenderBody must be able to respond to mouse clicks.
+    document.body.addEventListener("click", function(evt) { });
     var clientRect = document.getElementById('targetLink').getBoundingClientRect();
     x = 150; // Pick a tap location outside the link area, so we're clicking on the background.
     y = 150;

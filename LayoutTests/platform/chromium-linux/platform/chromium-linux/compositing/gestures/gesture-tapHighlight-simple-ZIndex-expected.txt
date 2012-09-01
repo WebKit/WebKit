@@ -1,0 +1,2 @@
+Target Link.
+This test is successful if no link highlight appears (in particular, the entire viewport should remain unchanged, and the background should be white and not grey).

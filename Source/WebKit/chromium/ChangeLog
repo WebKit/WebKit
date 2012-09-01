@@ -1,3 +1,17 @@
+2012-08-31  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Make link highlighter use same node selection criteria as Chromium for Android.
+        https://bugs.webkit.org/show_bug.cgi?id=95371
+
+        Reviewed by James Robinson.
+
+        This CL brings the selection criteria for link highlight targets into alignment with Chromium for Android.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::highlightConditions):
+        (WebKit::WebViewImpl::bestTouchLinkNode):
+        * tests/data/test_touch_link_highlight.html:
+
 2012-08-31  James Robinson  <jamesr@chromium.org>
 
         [chromium] Consolidate geometry unit testing functions for cc
