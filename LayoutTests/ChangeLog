@@ -1,3 +1,17 @@
+2012-08-31  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Adding expected failing results for some fast/css(3) tests.
+        https://bugs.webkit.org/show_bug.cgi?id=95627.
+
+        * platform/win/fast/css/image-resolution: Added.
+        * platform/win/fast/css/image-resolution/image-resolution-expected.txt: Added.
+        * platform/win/fast/css/image-set-setting-expected.txt: Added.
+        * platform/win/fast/css/parse-border-image-repeat-null-crash-expected.txt: Added.
+        * platform/win/fast/css3-text-decoration: Added.
+        * platform/win/fast/css3-text-decoration/getComputedStyle: Added.
+        * platform/win/fast/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-line-expected.txt: Added.
+        * platform/win/fast/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-style-expected.txt: Added.
+
 2012-08-31  Ojan Vafai  <ojan@chromium.org>
 
         Mark some indexeddb tests as SLOW. They consistently time out for me

@@ -1,0 +1,96 @@
+Test to make sure -webkit-text-decoration-style property returns CSSPrimitiveValue properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Ancestor should not inherit 'dashed' value from parent (fallback to initial 'solid' value):
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style') is null
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be solid. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.webkitTextDecorationStyle should be solid (of type string). Was undefined (of type undefined).
+
+Parent should cointain 'dashed':
+FAIL e.style.webkitTextDecorationStyle should be dashed (of type string). Was undefined (of type undefined).
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be dashed. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be dashed. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.webkitTextDecorationStyle should be dashed (of type string). Was undefined (of type undefined).
+
+JavaScript setter tests for valid, initial, invalid and blank values:
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style') is null
+
+Valid value 'solid':
+PASS e.style.webkitTextDecorationStyle is 'solid'
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be solid. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be solid. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.webkitTextDecorationStyle should be solid (of type string). Was undefined (of type undefined).
+
+Valid value 'double':
+PASS e.style.webkitTextDecorationStyle is 'double'
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be double. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be double. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.webkitTextDecorationStyle should be double (of type string). Was undefined (of type undefined).
+
+Valid value 'dotted':
+PASS e.style.webkitTextDecorationStyle is 'dotted'
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be dotted. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be dotted. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.webkitTextDecorationStyle should be dotted (of type string). Was undefined (of type undefined).
+
+Valid value 'dashed':
+PASS e.style.webkitTextDecorationStyle is 'dashed'
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be dashed. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be dashed. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.webkitTextDecorationStyle should be dashed (of type string). Was undefined (of type undefined).
+
+Valid value 'wavy':
+PASS e.style.webkitTextDecorationStyle is 'wavy'
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be wavy. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be wavy. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.webkitTextDecorationStyle should be wavy (of type string). Was undefined (of type undefined).
+
+Initial value:
+PASS e.style.webkitTextDecorationStyle is 'initial'
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSValue]. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be initial. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be solid. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.webkitTextDecorationStyle should be solid (of type string). Was undefined (of type undefined).
+
+Invalid value (this property accepts one value at a time only):
+FAIL e.style.webkitTextDecorationStyle should be initial. Was double dotted.
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSValue]. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be initial. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be solid. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.webkitTextDecorationStyle should be solid (of type string). Was undefined (of type undefined).
+
+Invalid value (ie. 'unknown'):
+FAIL e.style.webkitTextDecorationStyle should be initial. Was unknown.
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSValue]. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be initial. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be solid. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.webkitTextDecorationStyle should be solid (of type string). Was undefined (of type undefined).
+
+Empty value (resets the property):
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style') is null
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText should be solid. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText')
+FAIL computedStyle.webkitTextDecorationStyle should be solid (of type string). Was undefined (of type undefined).
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
