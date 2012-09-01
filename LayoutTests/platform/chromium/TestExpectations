@@ -3648,7 +3648,7 @@ BUGWK95101 SNOWLEOPARD : fast/text/atsui-bidi-control.html = PASS TIMEOUT
 
 // These need new baselines: both new tests and new CC button has just been added.
 BUGWK95395 : media/track/track-cue-rendering-horizontal.html = IMAGE
-BUGWK95395 : media/track/track-cue-rendering-vertical.html = IMAGE
+BUGWK95395 LINUX MAC : media/track/track-cue-rendering-vertical.html = IMAGE
 
 // Failing due to sub-pixel layout.
 BUGWK95136 : fast/css/sticky/sticky-left-percentage.html = IMAGE
