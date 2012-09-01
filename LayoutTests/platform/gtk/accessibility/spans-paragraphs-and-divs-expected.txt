@@ -1,0 +1,52 @@
+Block span in a link in a paragraph
+Inline span in a link in a paragraph
+
+Block span in a paragraph
+Inline span in a paragraph
+
+Inline span in a link in a paragraph
+Block span in a link in a paragraph
+
+Inline span in a paragraph
+Block span in a paragraph
+Block span in a link in a div
+Inline span in a link in a div
+Block span in a div
+Inline span in a div
+Inline span in a link in a div
+Block span in a link in a div
+Inline span in a div
+Block span in a div
+This tests that paragraphs and divs with anonymous block children are not ignored and have the expected children
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS element.role is 'AXRole: paragraph'
+PASS element.childrenCount is 1
+PASS link.role is 'AXRole: link'
+PASS link.childrenCount is 0
+PASS element.role is 'AXRole: paragraph'
+PASS element.childrenCount is 0
+PASS element.role is 'AXRole: paragraph'
+PASS element.childrenCount is 1
+PASS link.role is 'AXRole: link'
+PASS link.childrenCount is 0
+PASS element.role is 'AXRole: paragraph'
+PASS element.childrenCount is 0
+PASS element.role is 'AXRole: section'
+PASS element.childrenCount is 1
+PASS link.role is 'AXRole: link'
+PASS link.childrenCount is 0
+PASS element.role is 'AXRole: section'
+PASS element.childrenCount is 0
+PASS element.role is 'AXRole: section'
+PASS element.childrenCount is 1
+PASS link.role is 'AXRole: link'
+PASS link.childrenCount is 0
+PASS element.role is 'AXRole: section'
+PASS element.childrenCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
