@@ -33,6 +33,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "MediaStreamDescriptor.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
@@ -48,6 +49,9 @@ public:
     virtual ~RTCPeerConnectionHandler() { }
 
     virtual bool initialize(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) = 0;
+
+    virtual bool addStream(PassRefPtr<MediaStreamDescriptor>, PassRefPtr<MediaConstraints>) = 0;
+    virtual void removeStream(PassRefPtr<MediaStreamDescriptor>) = 0;
     virtual void stop() = 0;
 
 protected:

@@ -467,7 +467,7 @@ bool Dictionary::get(const String& key, ArrayValue& value) const
     return true;
 }
 
-bool Dictionary::getOwnPropertiesAsStringHashMap(WTF::HashMap<String, String>& hashMap) const
+bool Dictionary::getOwnPropertiesAsStringHashMap(HashMap<String, String>& hashMap) const
 {
     if (!isObject())
         return false;
@@ -494,7 +494,7 @@ bool Dictionary::getOwnPropertiesAsStringHashMap(WTF::HashMap<String, String>& h
     return true;
 }
 
-bool Dictionary::getOwnPropertyNames(WTF::Vector<String>& names) const
+bool Dictionary::getOwnPropertyNames(Vector<String>& names) const
 {
     if (!isObject())
         return false;

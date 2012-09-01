@@ -41,6 +41,7 @@
 using namespace WebKit;
 
 MockWebRTCPeerConnectionHandler::MockWebRTCPeerConnectionHandler(WebRTCPeerConnectionHandlerClient* client)
+    : m_client(client)
 {
 }
 
@@ -83,6 +84,17 @@ bool MockWebRTCPeerConnectionHandler::initialize(const WebRTCConfiguration&, con
     }
 
     return true;
+}
+
+bool MockWebRTCPeerConnectionHandler::addStream(const WebMediaStreamDescriptor& stream, const WebMediaConstraints&)
+{
+    m_client->didAddRemoteStream(stream);
+    return true;
+}
+
+void MockWebRTCPeerConnectionHandler::removeStream(const WebMediaStreamDescriptor& stream)
+{
+    m_client->didRemoveRemoteStream(stream);
 }
 
 void MockWebRTCPeerConnectionHandler::stop()

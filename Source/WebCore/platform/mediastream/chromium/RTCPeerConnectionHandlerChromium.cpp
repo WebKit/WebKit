@@ -39,6 +39,7 @@
 #include "RTCPeerConnectionHandlerClient.h"
 #include <public/Platform.h>
 #include <public/WebMediaConstraints.h>
+#include <public/WebMediaStreamDescriptor.h>
 #include <public/WebRTCConfiguration.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -65,6 +66,22 @@ bool RTCPeerConnectionHandlerChromium::initialize(PassRefPtr<RTCConfiguration> c
     return m_webHandler ? m_webHandler->initialize(configuration, constraints) : false;
 }
 
+bool RTCPeerConnectionHandlerChromium::addStream(PassRefPtr<MediaStreamDescriptor> mediaStream, PassRefPtr<MediaConstraints> constraints)
+{
+    if (!m_webHandler)
+        return false;
+
+    return m_webHandler->addStream(mediaStream, constraints);
+}
+
+void RTCPeerConnectionHandlerChromium::removeStream(PassRefPtr<MediaStreamDescriptor> mediaStream)
+{
+    if (!m_webHandler)
+        return;
+
+    m_webHandler->removeStream(mediaStream);
+}
+
 void RTCPeerConnectionHandlerChromium::stop()
 {
     if (!m_webHandler)
@@ -76,6 +93,16 @@ void RTCPeerConnectionHandlerChromium::stop()
 void RTCPeerConnectionHandlerChromium::didChangeReadyState(WebKit::WebRTCPeerConnectionHandlerClient::ReadyState state)
 {
     m_client->didChangeReadyState(static_cast<RTCPeerConnectionHandlerClient::ReadyState>(state));
+}
+
+void RTCPeerConnectionHandlerChromium::didAddRemoteStream(const WebKit::WebMediaStreamDescriptor& webMediaStreamDescriptor)
+{
+    m_client->didAddRemoteStream(webMediaStreamDescriptor);
+}
+
+void RTCPeerConnectionHandlerChromium::didRemoveRemoteStream(const WebKit::WebMediaStreamDescriptor& webMediaStreamDescriptor)
+{
+    m_client->didRemoveRemoteStream(webMediaStreamDescriptor);
 }
 
 } // namespace WebCore

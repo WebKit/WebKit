@@ -32,6 +32,7 @@
 #define WebRTCPeerConnectionHandlerClient_h
 
 namespace WebKit {
+class WebMediaStreamDescriptor;
 
 class WebRTCPeerConnectionHandlerClient {
 public:
@@ -46,6 +47,8 @@ public:
     virtual ~WebRTCPeerConnectionHandlerClient() { }
 
     virtual void didChangeReadyState(ReadyState) = 0;
+    virtual void didAddRemoteStream(const WebMediaStreamDescriptor&) = 0;
+    virtual void didRemoveRemoteStream(const WebMediaStreamDescriptor&) = 0;
 };
 
 } // namespace WebKit

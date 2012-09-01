@@ -89,8 +89,8 @@ public:
     bool get(const String&, Vector<String>&) const;
     bool get(const String&, ArrayValue&) const;
 
-    bool getOwnPropertiesAsStringHashMap(WTF::HashMap<String, String>&) const;
-    bool getOwnPropertyNames(WTF::Vector<String>&) const;
+    bool getOwnPropertiesAsStringHashMap(HashMap<String, String>&) const;
+    bool getOwnPropertyNames(Vector<String>&) const;
 
     bool getWithUndefinedOrNullCheck(const String&, String&) const;
 

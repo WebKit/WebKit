@@ -47,6 +47,9 @@ public:
     virtual ~RTCPeerConnectionHandlerDummy();
 
     virtual bool initialize(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) OVERRIDE;
+
+    virtual bool addStream(PassRefPtr<MediaStreamDescriptor>, PassRefPtr<MediaConstraints>) OVERRIDE;
+    virtual void removeStream(PassRefPtr<MediaStreamDescriptor>) OVERRIDE;
     virtual void stop() OVERRIDE;
 
 private:
@@ -71,6 +74,15 @@ RTCPeerConnectionHandlerDummy::~RTCPeerConnectionHandlerDummy()
 bool RTCPeerConnectionHandlerDummy::initialize(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>)
 {
     return false;
+}
+
+bool RTCPeerConnectionHandlerDummy::addStream(PassRefPtr<MediaStreamDescriptor>, PassRefPtr<MediaConstraints>)
+{
+    return false;
+}
+
+void RTCPeerConnectionHandlerDummy::removeStream(PassRefPtr<MediaStreamDescriptor>)
+{
 }
 
 void RTCPeerConnectionHandlerDummy::stop()

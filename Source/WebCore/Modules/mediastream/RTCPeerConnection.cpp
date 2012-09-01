@@ -38,6 +38,7 @@
 #include "Event.h"
 #include "ExceptionCode.h"
 #include "MediaConstraintsImpl.h"
+#include "MediaStreamEvent.h"
 #include "RTCConfiguration.h"
 #include "ScriptExecutionContext.h"
 
@@ -88,6 +89,7 @@ PassRefPtr<RTCConfiguration> RTCPeerConnection::parseConfiguration(const Diction
 
         rtcConfiguration->appendServer(RTCIceServer::create(url, credential));
     }
+
     return rtcConfiguration.release();
 }
 
@@ -112,6 +114,8 @@ PassRefPtr<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext* 
 RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext* context, PassRefPtr<RTCConfiguration> configuration, PassRefPtr<MediaConstraints> constraints, ExceptionCode& ec)
     : ActiveDOMObject(context, this)
     , m_readyState(ReadyStateNew)
+    , m_localStreams(MediaStreamList::create())
+    , m_remoteStreams(MediaStreamList::create())
 {
     m_peerHandler = RTCPeerConnectionHandler::create(this);
     if (!m_peerHandler || !m_peerHandler->initialize(configuration, constraints))
@@ -141,6 +145,63 @@ String RTCPeerConnection::readyState() const
     return "";
 }
 
+void RTCPeerConnection::addStream(PassRefPtr<MediaStream> prpStream, const Dictionary& mediaConstraints, ExceptionCode& ec)
+{
+    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    RefPtr<MediaStream> stream = prpStream;
+    if (!stream) {
+        ec =  TYPE_MISMATCH_ERR;
+        return;
+    }
+
+    RefPtr<MediaConstraints> constraints = MediaConstraintsImpl::create(mediaConstraints, ec);
+    if (ec)
+        return;
+
+    if (m_localStreams->contains(stream.get()))
+        return;
+
+    m_localStreams->append(stream);
+
+    bool valid = m_peerHandler->addStream(stream->descriptor(), constraints);
+    if (!valid)
+        ec = SYNTAX_ERR;
+}
+
+void RTCPeerConnection::removeStream(MediaStream* stream, ExceptionCode& ec)
+{
+    if (m_readyState == ReadyStateClosed) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    if (!stream) {
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+
+    if (!m_localStreams->contains(stream))
+        return;
+
+    m_localStreams->remove(stream);
+
+    m_peerHandler->removeStream(stream->descriptor());
+}
+
+MediaStreamList* RTCPeerConnection::localStreams() const
+{
+    return m_localStreams.get();
+}
+
+MediaStreamList* RTCPeerConnection::remoteStreams() const
+{
+    return m_remoteStreams.get();
+}
+
 void RTCPeerConnection::close(ExceptionCode& ec)
 {
     if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
@@ -156,6 +217,36 @@ void RTCPeerConnection::didChangeReadyState(ReadyState newState)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
     changeReadyState(newState);
+}
+
+void RTCPeerConnection::didAddRemoteStream(PassRefPtr<MediaStreamDescriptor> streamDescriptor)
+{
+    ASSERT(scriptExecutionContext()->isContextThread());
+
+    if (m_readyState == ReadyStateClosed)
+        return;
+
+    RefPtr<MediaStream> stream = MediaStream::create(scriptExecutionContext(), streamDescriptor);
+    m_remoteStreams->append(stream);
+
+    dispatchEvent(MediaStreamEvent::create(eventNames().addstreamEvent, false, false, stream.release()));
+}
+
+void RTCPeerConnection::didRemoveRemoteStream(MediaStreamDescriptor* streamDescriptor)
+{
+    ASSERT(scriptExecutionContext()->isContextThread());
+    ASSERT(streamDescriptor->owner());
+
+    RefPtr<MediaStream> stream = static_cast<MediaStream*>(streamDescriptor->owner());
+    stream->streamEnded();
+
+    if (m_readyState == ReadyStateClosed)
+        return;
+
+    ASSERT(m_remoteStreams->contains(stream.get()));
+    m_remoteStreams->remove(stream.get());
+
+    dispatchEvent(MediaStreamEvent::create(eventNames().removestreamEvent, false, false, stream.release()));
 }
 
 const AtomicString& RTCPeerConnection::interfaceName() const

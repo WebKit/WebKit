@@ -33,6 +33,7 @@
 
 namespace WebKit {
 class WebMediaConstraints;
+class WebMediaStreamDescriptor;
 class WebRTCConfiguration;
 class WebRTCPeerConnectionHandlerClient;
 
@@ -41,6 +42,9 @@ public:
     virtual ~WebRTCPeerConnectionHandler() { }
 
     virtual bool initialize(const WebRTCConfiguration&, const WebMediaConstraints&) = 0;
+
+    virtual bool addStream(const WebMediaStreamDescriptor&, const WebMediaConstraints&) = 0;
+    virtual void removeStream(const WebMediaStreamDescriptor&) = 0;
     virtual void stop() = 0;
 };
 

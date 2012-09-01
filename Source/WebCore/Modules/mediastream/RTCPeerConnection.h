@@ -37,6 +37,8 @@
 #include "Dictionary.h"
 #include "EventTarget.h"
 #include "ExceptionBase.h"
+#include "MediaStream.h"
+#include "MediaStreamList.h"
 #include "RTCPeerConnectionHandler.h"
 #include "RTCPeerConnectionHandlerClient.h"
 #include <wtf/RefCounted.h>
@@ -53,13 +55,22 @@ public:
 
     String readyState() const;
 
+    MediaStreamList* localStreams() const;
+    MediaStreamList* remoteStreams() const;
+    void addStream(const PassRefPtr<MediaStream>, const Dictionary& mediaConstraints, ExceptionCode&);
+    void removeStream(MediaStream*, ExceptionCode&);
+
     void close(ExceptionCode&);
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(open);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(statechange);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(addstream);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(removestream);
 
     // RTCPeerConnectionHandlerClient
     virtual void didChangeReadyState(ReadyState) OVERRIDE;
+    virtual void didAddRemoteStream(PassRefPtr<MediaStreamDescriptor>) OVERRIDE;
+    virtual void didRemoveRemoteStream(MediaStreamDescriptor*) OVERRIDE;
 
     // EventTarget
     virtual const AtomicString& interfaceName() const OVERRIDE;
@@ -86,6 +97,9 @@ private:
     void changeReadyState(ReadyState);
 
     ReadyState m_readyState;
+
+    RefPtr<MediaStreamList> m_localStreams;
+    RefPtr<MediaStreamList> m_remoteStreams;
 
     OwnPtr<RTCPeerConnectionHandler> m_peerHandler;
 };

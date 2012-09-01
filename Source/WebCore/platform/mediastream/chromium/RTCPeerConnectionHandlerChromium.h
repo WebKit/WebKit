@@ -33,11 +33,16 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "MediaStreamDescriptor.h"
 #include "RTCPeerConnectionHandler.h"
 #include <public/WebRTCPeerConnectionHandler.h>
 #include <public/WebRTCPeerConnectionHandlerClient.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
+
+namespace WebKit {
+class WebMediaStreamDescriptor;
+}
 
 namespace WebCore {
 
@@ -47,10 +52,15 @@ public:
     virtual ~RTCPeerConnectionHandlerChromium();
 
     virtual bool initialize(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) OVERRIDE;
+
+    virtual bool addStream(PassRefPtr<MediaStreamDescriptor>, PassRefPtr<MediaConstraints>) OVERRIDE;
+    virtual void removeStream(PassRefPtr<MediaStreamDescriptor>) OVERRIDE;
     virtual void stop() OVERRIDE;
 
     // WebKit::WebRTCPeerConnectionHandlerClient implementation.
     virtual void didChangeReadyState(WebKit::WebRTCPeerConnectionHandlerClient::ReadyState) OVERRIDE;
+    virtual void didAddRemoteStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
+    virtual void didRemoveRemoteStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
 
 private:
     OwnPtr<WebKit::WebRTCPeerConnectionHandler> m_webHandler;

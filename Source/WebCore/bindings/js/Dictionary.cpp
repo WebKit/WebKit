@@ -54,7 +54,7 @@ JSObject* Dictionary::asJSObject<Notification>(Notification* object) const
 }
 #endif
 
-bool Dictionary::getOwnPropertiesAsStringHashMap(WTF::HashMap<String, String>& map) const
+bool Dictionary::getOwnPropertiesAsStringHashMap(HashMap<String, String>& map) const
 {
     if (!m_dictionary.isValid())
         return false;
@@ -79,7 +79,7 @@ bool Dictionary::getOwnPropertiesAsStringHashMap(WTF::HashMap<String, String>& m
     return true;
 }
 
-bool Dictionary::getOwnPropertyNames(WTF::Vector<String>& names) const
+bool Dictionary::getOwnPropertyNames(Vector<String>& names) const
 {
     if (!m_dictionary.isValid())
         return false;

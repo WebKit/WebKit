@@ -40,11 +40,21 @@ module mediastream {
     ] RTCPeerConnection {
         readonly attribute DOMString readyState;
 
+        readonly attribute MediaStreamList localStreams;
+        readonly attribute MediaStreamList remoteStreams;
+
+        [StrictTypeChecking] void addStream(in MediaStream stream, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints)
+            raises(DOMException);
+        [StrictTypeChecking] void removeStream(in MediaStream stream)
+            raises(DOMException);
+
         void close()
             raises(DOMException);
 
         attribute EventListener onopen;
         attribute EventListener onstatechange;
+        attribute EventListener onaddstream;
+        attribute EventListener onremovestream;
 
         // EventTarget interface
         void addEventListener(in DOMString type,

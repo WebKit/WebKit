@@ -44,10 +44,14 @@ public:
 
     virtual bool initialize(const WebKit::WebRTCConfiguration&, const WebKit::WebMediaConstraints&) OVERRIDE;
 
+    virtual bool addStream(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaConstraints&) OVERRIDE;
+    virtual void removeStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
     virtual void stop() OVERRIDE;
 
 private:
     MockWebRTCPeerConnectionHandler() { }
+
+    WebKit::WebRTCPeerConnectionHandlerClient* m_client;
 };
 
 #endif // ENABLE(MEDIA_STREAM)
