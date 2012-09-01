@@ -27,12 +27,12 @@
 #include "CCLayerTreeHostImpl.h"
 
 #include "CCAnimationTestCommon.h"
+#include "CCGeometryTestUtils.h"
 #include "CCHeadsUpDisplayLayerImpl.h"
 #include "CCIOSurfaceLayerImpl.h"
 #include "CCLayerImpl.h"
 #include "CCLayerTestCommon.h"
 #include "CCLayerTilingData.h"
-#include "CCLayerTreeTestCommon.h"
 #include "CCQuadSink.h"
 #include "CCRenderPassDrawQuad.h"
 #include "CCRendererGL.h"
@@ -2820,7 +2820,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithClipping)
         EXPECT_LT(quadVisibleRect.width(), 100);
 
         // Verify that the render surface texture is *not* clipped.
-        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), frame.renderPasses[0]->outputRect());
+        EXPECT_RECT_EQ(IntRect(0, 0, 100, 100), frame.renderPasses[0]->outputRect());
 
         EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[1]->quadList()[0]->material());
         CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[1]->quadList()[0].get());

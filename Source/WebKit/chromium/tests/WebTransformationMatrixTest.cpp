@@ -26,7 +26,7 @@
 
 #include <public/WebTransformationMatrix.h>
 
-#include "CCLayerTreeTestCommon.h"
+#include "CCGeometryTestUtils.h"
 #include <gtest/gtest.h>
 #include <wtf/MathExtras.h>
 

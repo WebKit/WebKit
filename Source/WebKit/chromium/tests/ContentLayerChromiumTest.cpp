@@ -27,7 +27,7 @@
 #include "ContentLayerChromium.h"
 
 #include "BitmapCanvasLayerTextureUpdater.h"
-#include "CCLayerTreeTestCommon.h"
+#include "CCGeometryTestUtils.h"
 #include "CCRenderingStats.h"
 #include "ContentLayerChromiumClient.h"
 #include "GraphicsContext.h"
@@ -106,7 +106,7 @@ TEST(ContentLayerChromiumTest, ContentLayerPainterWithDeviceScale)
     CCRenderingStats stats;
     updater->prepareToUpdate(contentRect, IntSize(256, 256), contentsScale, contentsScale, resultingOpaqueRect, stats);
 
-    EXPECT_INT_RECT_EQ(opaqueRectInContentSpace, resultingOpaqueRect);
+    EXPECT_RECT_EQ(opaqueRectInContentSpace, resultingOpaqueRect);
 }
 
 } // namespace

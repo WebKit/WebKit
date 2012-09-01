@@ -28,7 +28,7 @@
 
 #include "BitmapCanvasLayerTextureUpdater.h"
 #include "CCAnimationTestCommon.h"
-#include "CCLayerTreeTestCommon.h"
+#include "CCGeometryTestUtils.h"
 #include "CCOverdrawMetrics.h"
 #include "CCRenderingStats.h"
 #include "CCSingleThreadProxy.h" // For DebugScopedSetImplThread
@@ -45,12 +45,6 @@ using namespace WebCore;
 using namespace WebKitTests;
 using namespace WTF;
 using WebKit::WebTransformationMatrix;
-
-#define EXPECT_EQ_RECT(a, b) \
-    EXPECT_EQ(a.x(), b.x()); \
-    EXPECT_EQ(a.y(), b.y()); \
-    EXPECT_EQ(a.width(), b.width()); \
-    EXPECT_EQ(a.height(), b.height());
 
 namespace {
 
@@ -1225,7 +1219,7 @@ TEST_F(TiledLayerChromiumTest, visibleContentOpaqueRegion)
     layer->update(m_queue, &occluded, m_stats);
     updateTextures();
     opaqueContents = layer->visibleContentOpaqueRegion();
-    EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
+    EXPECT_RECT_EQ(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
     EXPECT_EQ(1u, opaqueContents.rects().size());
 
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsPainted(), 20000 * 2, 1);
@@ -1238,7 +1232,7 @@ TEST_F(TiledLayerChromiumTest, visibleContentOpaqueRegion)
     layer->update(m_queue, &occluded, m_stats);
     updateTextures();
     opaqueContents = layer->visibleContentOpaqueRegion();
-    EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
+    EXPECT_RECT_EQ(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
     EXPECT_EQ(1u, opaqueContents.rects().size());
 
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsPainted(), 20000 * 2, 1);
@@ -1253,7 +1247,7 @@ TEST_F(TiledLayerChromiumTest, visibleContentOpaqueRegion)
     layer->update(m_queue, &occluded, m_stats);
     updateTextures();
     opaqueContents = layer->visibleContentOpaqueRegion();
-    EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
+    EXPECT_RECT_EQ(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
     EXPECT_EQ(1u, opaqueContents.rects().size());
 
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsPainted(), 20000 * 2 + 1, 1);
@@ -1268,7 +1262,7 @@ TEST_F(TiledLayerChromiumTest, visibleContentOpaqueRegion)
     layer->update(m_queue, &occluded, m_stats);
     updateTextures();
     opaqueContents = layer->visibleContentOpaqueRegion();
-    EXPECT_EQ_RECT(intersection(IntRect(10, 100, 90, 100), visibleBounds), opaqueContents.bounds());
+    EXPECT_RECT_EQ(intersection(IntRect(10, 100, 90, 100), visibleBounds), opaqueContents.bounds());
     EXPECT_EQ(1u, opaqueContents.rects().size());
 
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsPainted(), 20000 * 2 + 1  + 1, 1);
@@ -1539,14 +1533,14 @@ TEST_F(TiledLayerChromiumTest, nonIntegerContentsScaleIsNotDistortedDuringPaint)
     layer->update(m_queue, 0, m_stats);
     layer->trackingLayerPainter()->resetPaintedRect();
 
-    EXPECT_INT_RECT_EQ(IntRect(), layer->trackingLayerPainter()->paintedRect());
+    EXPECT_RECT_EQ(IntRect(), layer->trackingLayerPainter()->paintedRect());
     updateTextures();
 
     // Invalidate the entire layer in content space. When painting, the rect given to webkit should match the layer's bounds.
     layer->invalidateContentRect(contentRect);
     layer->update(m_queue, 0, m_stats);
 
-    EXPECT_INT_RECT_EQ(layerRect, layer->trackingLayerPainter()->paintedRect());
+    EXPECT_RECT_EQ(layerRect, layer->trackingLayerPainter()->paintedRect());
 }
 
 TEST_F(TiledLayerChromiumTest, nonIntegerContentsScaleIsNotDistortedDuringInvalidation)
@@ -1569,14 +1563,14 @@ TEST_F(TiledLayerChromiumTest, nonIntegerContentsScaleIsNotDistortedDuringInvali
     layer->update(m_queue, 0, m_stats);
     layer->trackingLayerPainter()->resetPaintedRect();
 
-    EXPECT_INT_RECT_EQ(IntRect(), layer->trackingLayerPainter()->paintedRect());
+    EXPECT_RECT_EQ(IntRect(), layer->trackingLayerPainter()->paintedRect());
     updateTextures();
 
     // Invalidate the entire layer in layer space. When painting, the rect given to webkit should match the layer's bounds.
     layer->setNeedsDisplayRect(layerRect);
     layer->update(m_queue, 0, m_stats);
 
-    EXPECT_INT_RECT_EQ(layerRect, layer->trackingLayerPainter()->paintedRect());
+    EXPECT_RECT_EQ(layerRect, layer->trackingLayerPainter()->paintedRect());
 }
 
 } // namespace

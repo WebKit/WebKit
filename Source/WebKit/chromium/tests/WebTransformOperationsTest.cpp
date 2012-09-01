@@ -26,11 +26,9 @@
 
 #include <public/WebTransformOperations.h>
 
-#include <public/WebTransformationMatrix.h>
-
-#include "CCLayerTreeTestCommon.h"
-
+#include "CCGeometryTestUtils.h"
 #include <gtest/gtest.h>
+#include <public/WebTransformationMatrix.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>

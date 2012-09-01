@@ -26,10 +26,10 @@
 
 #include "CCDamageTracker.h"
 
+#include "CCGeometryTestUtils.h"
 #include "CCLayerImpl.h"
 #include "CCLayerSorter.h"
 #include "CCLayerTreeHostCommon.h"
-#include "CCLayerTreeTestCommon.h"
 #include "CCMathUtil.h"
 #include "CCSingleThreadProxy.h"
 #include <gtest/gtest.h>

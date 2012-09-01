@@ -22,10 +22,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCLayerTreeTestCommon_h
-#define CCLayerTreeTestCommon_h
+#ifndef CCGeometryTestUtils_h
+#define CCGeometryTestUtils_h
 
-#include <public/WebTransformationMatrix.h>
+namespace WebKit {
+class WebTransformationMatrix;
+}
 
 namespace WebKitTests {
 
@@ -36,7 +38,7 @@ namespace WebKitTests {
     EXPECT_FLOAT_EQ((expected).size().width(), (actual).size().width()); \
     EXPECT_FLOAT_EQ((expected).size().height(), (actual).size().height())
 
-#define EXPECT_INT_RECT_EQ(expected, actual)                            \
+#define EXPECT_RECT_EQ(expected, actual)                            \
     EXPECT_EQ((expected).location().x(), (actual).location().x());      \
     EXPECT_EQ((expected).location().y(), (actual).location().y());      \
     EXPECT_EQ((expected).size().width(), (actual).size().width());      \
@@ -46,8 +48,8 @@ namespace WebKitTests {
 // in bulk, it causes a significant slow-down in compilation time. This problem
 // exists with both gcc and clang, and bugs have been filed at
 // http://llvm.org/bugs/show_bug.cgi?id=13651 and http://gcc.gnu.org/bugzilla/show_bug.cgi?id=54337
-void ExpectTransformationMatrixEq(WebKit::WebTransformationMatrix expected,
-                                  WebKit::WebTransformationMatrix actual);
+void ExpectTransformationMatrixEq(const WebKit::WebTransformationMatrix& expected,
+                                  const WebKit::WebTransformationMatrix& actual);
 
 #define EXPECT_TRANSFORMATION_MATRIX_EQ(expected, actual)            \
     {                                                                \
@@ -55,6 +57,6 @@ void ExpectTransformationMatrixEq(WebKit::WebTransformationMatrix expected,
         WebKitTests::ExpectTransformationMatrixEq(expected, actual); \
     }
 
-} // namespace
+} // namespace WebKitTests
 
-#endif // CCLayerTreeTestCommon_h
+#endif // CCGeometryTestUtils_h
