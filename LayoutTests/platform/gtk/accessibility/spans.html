@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<h4>
+  <span style="display:block;">first block span</span>
+  <span>inline span</span>
+  <span style="display:block;">second block span</span>
+</h4>
+<h4>
+  <a href="foo">
+      <span style="display:block;">first block span</span>
+      <span>inline span</span>
+      <span style="display:block;">second block span</span>
+  </a>
+</h4>
+<ol>
+  <li>
+    <span style="display:block;">first block span</span>
+    <span>inline span</span>
+    <span style="display:block;">second block span</span>
+  </li>
+  <li>
+    <a href="foo">
+      <span style="display:block;">first block span</span>
+      <span>inline span</span>
+      <span style="display:block;">second block span</span>
+    </a>
+  </li>
+</ol>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This tests that both block spans and inline spans get folded into the parent object");
+
+if (window.layoutController) {
+    testRunner.dumpAsText();
+}
+
+if (window.accessibilityController) {
+    document.getElementById("body").focus();
+    var webArea = accessibilityController.focusedElement;
+
+    var element = webArea.childAtIndex(0);
+    shouldBe("element.role", "'AXRole: heading'");
+    shouldBe("element.childrenCount", "0");
+
+    element = webArea.childAtIndex(1);
+    shouldBe("element.role", "'AXRole: heading'");
+    shouldBe("element.childrenCount", "1");
+
+    var link = element.childAtIndex(0);
+    shouldBe("link.role", "'AXRole: link'");
+    shouldBe("link.childrenCount", "0");
+
+    element = webArea.childAtIndex(2);
+    shouldBe("element.role", "'AXRole: list'");
+    shouldBe("element.childrenCount", "2");
+
+    var item = element.childAtIndex(0);
+    shouldBe("item.role", "'AXRole: list item'");
+    shouldBe("item.childrenCount", "0");
+
+    item = element.childAtIndex(1);
+    shouldBe("item.role", "'AXRole: list item'");
+    shouldBe("item.childrenCount", "1");
+
+    link = item.childAtIndex(0);
+    shouldBe("link.role", "'AXRole: link'");
+    shouldBe("link.childrenCount", "0");
+}
+
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

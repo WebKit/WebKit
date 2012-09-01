@@ -78,6 +78,21 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     if (role == UnknownRole)
         return IgnoreObject;
 
+    // Block spans result in objects of ATK_ROLE_PANEL which are almost always unwanted.
+    // However, if we ignore block spans whose parent is the body, the child controls
+    // will become immediate children of the ATK_ROLE_DOCUMENT_FRAME and any text will
+    // become text within the document frame itself. This ultimately may be what we want
+    // and would largely be consistent with what we see from Gecko. However, ignoring
+    // spans whose parent is the body changes the current behavior we see from WebCore.
+    // Until we have sufficient time to properly analyze these cases, we will defer to
+    // WebCore. We only check that the parent is not aria because we do not expect
+    // anonymous blocks which are aria-related to themselves have an aria role, nor
+    // have we encountered instances where the parent of an anonymous block also lacked
+    // an aria role but the grandparent had one.
+    if (renderer()->isAnonymousBlock() && !parent->renderer()->isBody()
+        && parent->ariaRoleAttribute() == UnknownRole)
+        return IgnoreObject;
+
     return DefaultBehavior;
 }
 

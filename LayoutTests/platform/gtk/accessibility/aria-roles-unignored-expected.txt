@@ -18,7 +18,7 @@ PASS element.role is 'AXRole: label'
 PASS element.role is 'AXRole: heading'
 PASS element.role is 'AXRole: form'
 PASS element.role is 'AXRole: push button'
-PASS element.role is 'AXRole: panel'
+PASS element.role is 'AXRole: section'
 PASS element.role is 'AXRole: entry'
 PASS successfullyParsed is true
 

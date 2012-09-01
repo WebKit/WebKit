@@ -1,0 +1,36 @@
+first block span
+inline span
+second block span
+first block span
+inline span
+second block span
+
+first block span
+inline span
+second block span
+first block span
+inline span
+second block span
+This tests that both block spans and inline spans get folded into the parent object
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS element.role is 'AXRole: heading'
+PASS element.childrenCount is 0
+PASS element.role is 'AXRole: heading'
+PASS element.childrenCount is 1
+PASS link.role is 'AXRole: link'
+PASS link.childrenCount is 0
+PASS element.role is 'AXRole: list'
+PASS element.childrenCount is 2
+PASS item.role is 'AXRole: list item'
+PASS item.childrenCount is 0
+PASS item.role is 'AXRole: list item'
+PASS item.childrenCount is 1
+PASS link.role is 'AXRole: link'
+PASS link.childrenCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

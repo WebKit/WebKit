@@ -820,7 +820,7 @@ static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
 
 static bool roleIsTextType(AccessibilityRole role)
 {
-    return role == ParagraphRole || role == HeadingRole || role == DivRole || role == CellRole;
+    return role == ParagraphRole || role == HeadingRole || role == DivRole || role == CellRole || role == ListItemRole;
 }
 
 static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)

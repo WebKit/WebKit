@@ -14,7 +14,7 @@
 <form>A form with a button <button name="button" value="Button">Click me!</button></form>
 <form role="button">Just a button <button name="button" value="Button">Click me!</button></form>
 
-<div>Just some text inside a div</form>
+<div>Just some text inside a div</div>
 <div role="textbox">This div is contains a textbox (an entry)</div>
 
 <p id="description"></p>
@@ -51,7 +51,7 @@ if (window.accessibilityController) {
 
     // Divs
     element = webArea.childAtIndex(5);
-    shouldBe("element.role", "'AXRole: panel'");
+    shouldBe("element.role", "'AXRole: section'");
     element = webArea.childAtIndex(6);
     shouldBe("element.role", "'AXRole: entry'");
 }
