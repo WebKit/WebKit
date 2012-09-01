@@ -190,8 +190,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     debuggerActivationStructure.set(*this, DebuggerActivation::createStructure(*this, 0, jsNull()));
     interruptedExecutionErrorStructure.set(*this, InterruptedExecutionError::createStructure(*this, 0, jsNull()));
     terminatedExecutionErrorStructure.set(*this, TerminatedExecutionError::createStructure(*this, 0, jsNull()));
-    nameScopeStructure.set(*this, JSNameScope::createStructure(*this, 0, jsNull()));
-    strictEvalActivationStructure.set(*this, StrictEvalActivation::createStructure(*this, 0, jsNull()));
     stringStructure.set(*this, JSString::createStructure(*this, 0, jsNull()));
     notAnObjectStructure.set(*this, JSNotAnObject::createStructure(*this, 0, jsNull()));
     propertyNameIteratorStructure.set(*this, JSPropertyNameIterator::createStructure(*this, 0, jsNull()));
@@ -206,7 +204,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     regExpStructure.set(*this, RegExp::createStructure(*this, 0, jsNull()));
     sharedSymbolTableStructure.set(*this, SharedSymbolTable::createStructure(*this, 0, jsNull()));
     structureChainStructure.set(*this, StructureChain::createStructure(*this, 0, jsNull()));
-    withScopeStructure.set(*this, JSWithScope::createStructure(*this, 0, jsNull()));
 
     wtfThreadData().setCurrentIdentifierTable(existingEntryIdentifierTable);
 

@@ -7,6 +7,26 @@
 
             Reviewed by Sam Weinig.
 
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        * runtime/JSNameScope.h:
+        (JSC::JSNameScope::JSNameScope):
+        * runtime/JSWithScope.h:
+        (JSC::JSWithScope::JSWithScope):
+        * runtime/StrictEvalActivation.cpp:
+        (JSC::StrictEvalActivation::StrictEvalActivation):
+
+2012-08-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled back in a piece of <http://trac.webkit.org/changeset/127293>.
+
+            Shrink activation objects by half
+            https://bugs.webkit.org/show_bug.cgi?id=95591
+
+            Reviewed by Sam Weinig.
+
         * dfg/DFGAbstractState.cpp:
         (JSC::DFG::AbstractState::execute):
         * jit/JITOpcodes.cpp:

@@ -26,7 +26,7 @@
 #ifndef JSWithScope_h
 #define JSWithScope_h
 
-#include "JSScope.h"
+#include "JSGlobalObject.h"
 
 namespace JSC {
 
@@ -66,7 +66,7 @@ private:
     JSWithScope(ExecState* exec, JSObject* object)
         : Base(
             exec->globalData(),
-            exec->globalData().withScopeStructure.get(),
+            exec->lexicalGlobalObject()->withScopeStructure(),
             exec->lexicalGlobalObject(),
             exec->globalThisValue(),
             exec->scope()
@@ -78,7 +78,7 @@ private:
     JSWithScope(ExecState* exec, JSObject* object, JSScope* next)
         : Base(
             exec->globalData(),
-            exec->globalData().withScopeStructure.get(),
+            exec->lexicalGlobalObject()->withScopeStructure(),
             exec->lexicalGlobalObject(),
             exec->globalThisValue(),
             next

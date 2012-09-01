@@ -230,8 +230,6 @@ namespace JSC {
         Strong<Structure> debuggerActivationStructure;
         Strong<Structure> interruptedExecutionErrorStructure;
         Strong<Structure> terminatedExecutionErrorStructure;
-        Strong<Structure> nameScopeStructure;
-        Strong<Structure> strictEvalActivationStructure;
         Strong<Structure> stringStructure;
         Strong<Structure> notAnObjectStructure;
         Strong<Structure> propertyNameIteratorStructure;
@@ -246,7 +244,6 @@ namespace JSC {
         Strong<Structure> regExpStructure;
         Strong<Structure> sharedSymbolTableStructure;
         Strong<Structure> structureChainStructure;
-        Strong<Structure> withScopeStructure;
 
         IdentifierTable* identifierTable;
         CommonIdentifiers* propertyNames;
