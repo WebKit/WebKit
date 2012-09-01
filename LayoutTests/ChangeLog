@@ -1,3 +1,10 @@
+2012-08-31  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. CSS_VARIABLES are not enabled on Windows. Adding Windows specific results.
+
+        * platform/win/fast/css/variables: Added.
+        * platform/win/fast/css/variables/build-supports-variables-expected.txt: Added.
+
 2012-08-31  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Make link highlighter use same node selection criteria as Chromium for Android.
