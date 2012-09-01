@@ -1,3 +1,11 @@
+2012-08-31  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Unreviewed, test expectation update
+
+        * platform/chromium/TestExpectations:
+         - Skip removing-underline-after-accepting-autocorrection-using-punctuation.html. Chromium doesn't support autocorrection yet.
+         - Remove ANDROID entry for http/tests/notifications
+
 2012-08-31  Koji Ishii  <kojiishi@gmail.com>
 
         Glyphs in vertical text tests are rotated 90 degrees clockwise on Chromium Windows

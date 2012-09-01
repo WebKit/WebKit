@@ -611,6 +611,7 @@ WONTFIX SKIP : platform/mac/editing/spelling/autocorrection-delete.html = PASS
 WONTFIX SKIP : platform/mac/editing/spelling/autocorrection-removing-underline-after-paste.html = PASS
 WONTFIX SKIP : platform/mac/editing/spelling/autocorrection-removing-underline.html = PASS
 WONTFIX SKIP : platform/mac/editing/spelling/autocorrection-simple.html = PASS
+WONTFIX SKIP : platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation.html = PASS
 
 // Checks for very kjs-specific garbage collector behavior.
 // Would have to be implemented much differently to work in v8.
@@ -905,7 +906,6 @@ BUGCR145338 WONTFIX ANDROID SKIP : fast/forms/date = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : fast/mediastream = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : fast/notifications = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : fast/speech = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : http/tests/notifications = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : platform/chromium/fast/forms/color = PASS
 BUGCR145338 WONTFIX ANDROID SKIP : platform/chromium/media/video-capture-preview.html = PASS // Uses mediastream
 BUGCR145338 WONTFIX ANDROID SKIP : webaudio = PASS
