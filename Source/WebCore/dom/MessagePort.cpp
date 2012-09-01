@@ -133,9 +133,8 @@ void MessagePort::start()
 
 void MessagePort::close()
 {
-    if (!isEntangled())
-        return;
-    m_entangledChannel->close();
+    if (isEntangled())
+        m_entangledChannel->close();
     m_closed = true;
 }
 

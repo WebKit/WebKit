@@ -1,3 +1,17 @@
+2012-09-01  Li Yin  <li.yin@intel.com>
+
+        fast/events/message-port-clone.html hits ASSERT in Debug (usually in later tests)
+        https://bugs.webkit.org/show_bug.cgi?id=85811
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * platform/gtk/TestExpectations:
+        * platform/mac/Skipped:
+        * platform/qt-4.8/TestExpectations:
+        * platform/qt-mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/Skipped:
+
 2012-09-01  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Upstream layout test expectations (Part 4)

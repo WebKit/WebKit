@@ -1867,10 +1867,6 @@ compositing/backing/no-backing-foreground-layer.html
 # https://bugs.webkit.org/show_bug.cgi?id=88150
 compositing/geometry/clipping-foreground.html
 
-# Asserts in MessagePort::contextDestroyed
-# https://bugs.webkit.org/show_bug.cgi?id=85811
-fast/events/message-port-clone.html
-
 # Require rebaseline after bug 88171
 # https://bugs.webkit.org/show_bug.cgi?id=88171
 fast/block/float/independent-align-positioning.html

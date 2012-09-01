@@ -872,10 +872,6 @@ fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html
 
-# Asserts in MessagePort::contextDestroyed
-# https://bugs.webkit.org/show_bug.cgi?id=85811
-fast/events/message-port-clone.html
-
 # Times out without keyboard interaction
 # https://bugs.webkit.org/show_bug.cgi?id=87748
 fast/forms/select/optgroup-clicking.html

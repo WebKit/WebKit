@@ -443,8 +443,6 @@ BUGWK92942 SKIP : fast/events/constructors/device-proximity-event-constructor.ht
 
 BUGWK74297 DEBUG : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = CRASH PASS
 
-BUGWK85811 DEBUG : fast/events/message-port-close.html = CRASH PASS
-
 BUGWK86443 : plugins/npruntime/delete-plugin-within-getProperty.html = CRASH
 BUGWK86443 DEBUG : plugins/npruntime/delete-plugin-within-invoke.html = CRASH
 
