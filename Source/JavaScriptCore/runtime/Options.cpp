@@ -138,6 +138,11 @@ void Options::initialize()
     ; // Deconfuse editors that do auto indentation
 #endif
     
+#if ENABLE(LLINT_C_LOOP)
+    useJIT() = false;
+    useDFGJIT() = false;
+#endif
+
     // Do range checks where needed and make corrections to the options:
     ASSERT(thresholdForOptimizeAfterLongWarmUp() >= thresholdForOptimizeAfterWarmUp());
     ASSERT(thresholdForOptimizeAfterWarmUp() >= thresholdForOptimizeSoon());

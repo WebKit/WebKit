@@ -31,6 +31,17 @@
 #include <wtf/InlineASM.h>
 #include <wtf/Platform.h>
 
+
+#if ENABLE(LLINT_C_LOOP)
+#define OFFLINE_ASM_C_LOOP 1
+#define OFFLINE_ASM_X86 0
+#define OFFLINE_ASM_ARMv7 0
+#define OFFLINE_ASM_X86_64 0
+
+#else // !ENABLE(LLINT_C_LOOP)
+
+#define OFFLINE_ASM_C_LOOP 0
+
 #if CPU(X86)
 #define OFFLINE_ASM_X86 1
 #else
@@ -48,6 +59,8 @@
 #else
 #define OFFLINE_ASM_X86_64 0
 #endif
+
+#endif // !ENABLE(LLINT_C_LOOP)
 
 #if USE(JSVALUE64)
 #define OFFLINE_ASM_JSVALUE64 1

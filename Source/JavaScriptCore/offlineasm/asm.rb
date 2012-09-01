@@ -96,6 +96,12 @@ class Assembler
         result
     end
     
+    # Puts a C Statement in the output stream.
+    def putc(*line)
+        raise unless @state == :asm
+        @outp.puts(formatDump("    " + line.join(''), lastComment))
+    end
+    
     def formatDump(dumpStr, comment, commentColumns=$preferredCommentStartColumn)
         if comment.length > 0
             "%-#{commentColumns}s %s" % [dumpStr, comment]
@@ -173,6 +179,14 @@ class Assembler
     
     def self.localLabelReference(labelName)
         "\" LOCAL_LABEL_STRING(#{labelName}) \""
+    end
+    
+    def self.cLabelReference(labelName)
+        "#{labelName}"
+    end
+    
+    def self.cLocalLabelReference(labelName)
+        "#{labelName}"
     end
     
     def codeOrigin(text)

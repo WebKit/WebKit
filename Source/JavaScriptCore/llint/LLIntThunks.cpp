@@ -36,6 +36,8 @@
 
 namespace JSC { namespace LLInt {
 
+#if !ENABLE(LLINT_C_LOOP)
+
 static MacroAssemblerCodeRef generateThunkWithJumpTo(JSGlobalData* globalData, void (*target)(), const char *thunkKind)
 {
     JSInterfaceJIT jit;
@@ -77,6 +79,8 @@ MacroAssemblerCodeRef programEntryThunkGenerator(JSGlobalData* globalData)
 {
     return generateThunkWithJumpTo(globalData, llint_program_prologue, "program");
 }
+
+#endif // !ENABLE(LLINT_C_LOOP)
 
 } } // namespace JSC::LLInt
 

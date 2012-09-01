@@ -113,6 +113,8 @@ macro cCall2(function, arg1, arg2)
         poke arg1, 0
         poke arg2, 1
         call function
+    elsif C_LOOP
+        cloopCallSlowPath function, arg1, arg2
     else
         error
     end
@@ -132,6 +134,8 @@ macro cCall4(function, arg1, arg2, arg3, arg4)
         poke arg3, 2
         poke arg4, 3
         call function
+    elsif C_LOOP
+        error
     else
         error
     end
@@ -1823,6 +1827,19 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         loadp JSFunction::m_executable[t1], t1
         move t2, cfr
         call executableOffsetToFunction[t1]
+        restoreReturnAddressBeforeReturn(t3)
+        loadp JITStackFrame::globalData[sp], t3
+    elsif C_LOOP
+        loadp JITStackFrame::globalData[sp], t3
+        storep cfr, JSGlobalData::topCallFrame[t3]
+        move t0, t2
+        preserveReturnAddressAfterCall(t3)
+        storep t3, ReturnPC[cfr]
+        move cfr, t0
+        loadi Callee + PayloadOffset[cfr], t1
+        loadp JSFunction::m_executable[t1], t1
+        move t2, cfr
+        cloopCallNative executableOffsetToFunction[t1]
         restoreReturnAddressBeforeReturn(t3)
         loadp JITStackFrame::globalData[sp], t3
     else  

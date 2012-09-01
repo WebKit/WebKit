@@ -468,7 +468,13 @@ extern "C" {
     void* JIT_STUB cti_vm_throw(STUB_ARGS_DECLARATION) REFERENCED_FROM_ASM WTF_INTERNAL;
 } // extern "C"
 
-#endif // ENABLE(JIT)
+#elif ENABLE(LLINT_C_LOOP)
+
+struct JITStackFrame {
+    JSGlobalData* globalData;
+};
+
+#endif // ENABLE(LLINT_C_LOOP)
 
 } // namespace JSC
 

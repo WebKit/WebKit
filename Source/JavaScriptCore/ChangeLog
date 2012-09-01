@@ -1,3 +1,74 @@
+2012-09-01  Mark Lam  <mark.lam@apple.com>
+
+        LLInt C loop backend.
+        https://bugs.webkit.org/show_bug.cgi?id=91052.
+
+        Reviewed by Filip Pizlo.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::bytecodeOffset):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC):
+        * interpreter/Interpreter.h:
+        * jit/JITStubs.h:
+        (JITStackFrame):
+        (JSC):
+        * llint/LLIntCLoop.cpp: Added.
+        (JSC):
+        (LLInt):
+        (JSC::LLInt::CLoop::initialize):
+        (JSC::LLInt::CLoop::catchRoutineFor):
+        (JSC::LLInt::CLoop::hostCodeEntryFor):
+        (JSC::LLInt::CLoop::jsCodeEntryWithArityCheckFor):
+        (JSC::LLInt::CLoop::jsCodeEntryFor):
+        * llint/LLIntCLoop.h: Added.
+        (JSC):
+        (LLInt):
+        (CLoop):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        * llint/LLIntData.h:
+        (JSC):
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LLIntOpcode.h:
+        * llint/LLIntThunks.cpp:
+        (LLInt):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter.cpp:
+        (LLInt):
+        (JSC::LLInt::Ints2Double):
+        (JSC):
+        (JSC::CLoop::execute):
+        * llint/LowLevelInterpreter.h:
+        (JSC):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/asm.rb:
+        * offlineasm/backends.rb:
+        * offlineasm/cloop.rb: Added.
+        * offlineasm/instructions.rb:
+        * runtime/Executable.h:
+        (ExecutableBase):
+        (JSC::ExecutableBase::hostCodeEntryFor):
+        (JSC::ExecutableBase::jsCodeEntryFor):
+        (JSC::ExecutableBase::jsCodeWithArityCheckEntryFor):
+        (JSC::ExecutableBase::catchRoutineFor):
+        (NativeExecutable):
+        * runtime/JSValue.h:
+        (JSC):
+        (LLInt):
+        (JSValue):
+        * runtime/JSValueInlineMethods.h:
+        (JSC):
+        (JSC::JSValue::JSValue):
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+
 2012-09-01  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled back in a piece of <http://trac.webkit.org/changeset/127293>.

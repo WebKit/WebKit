@@ -110,9 +110,13 @@ end
 
 # Some common utilities.
 macro crash()
-    storei t0, 0xbbadbeef[]
-    move 0, t0
-    call t0
+    if C_LOOP
+        cloopCrash
+    else
+        storei t0, 0xbbadbeef[]
+        move 0, t0
+        call t0
+    end
 end
 
 macro assert(assertion)
@@ -124,7 +128,10 @@ macro assert(assertion)
 end
 
 macro preserveReturnAddressAfterCall(destinationRegister)
-    if ARMv7
+    if C_LOOP
+        # In our case, we're only preserving the bytecode vPC. 
+        move lr, destinationRegister
+    elsif ARMv7
         move lr, destinationRegister
     elsif X86 or X86_64
         pop destinationRegister
@@ -134,7 +141,10 @@ macro preserveReturnAddressAfterCall(destinationRegister)
 end
 
 macro restoreReturnAddressBeforeReturn(sourceRegister)
-    if ARMv7
+    if C_LOOP
+        # In our case, we're only restoring the bytecode vPC. 
+        move sourceRegister, lr
+    elsif ARMv7
         move sourceRegister, lr
     elsif X86 or X86_64
         push sourceRegister
@@ -150,8 +160,12 @@ macro traceExecution()
 end
 
 macro callTargetFunction(callLinkInfo)
-    call LLIntCallLinkInfo::machineCodeTarget[callLinkInfo]
-    dispatchAfterCall()
+    if C_LOOP
+        cloopCallJSFunction LLIntCallLinkInfo::machineCodeTarget[callLinkInfo]
+    else
+        call LLIntCallLinkInfo::machineCodeTarget[callLinkInfo]
+        dispatchAfterCall()
+    end
 end
 
 macro slowPathForCall(advance, slowPath)
@@ -159,7 +173,11 @@ macro slowPathForCall(advance, slowPath)
         advance,
         slowPath,
         macro (callee)
-            call callee
+            if C_LOOP
+                cloopCallJSFunction callee
+            else
+                call callee
+            end
             dispatchAfterCall()
         end)
 end

@@ -50,6 +50,7 @@
 #include "JSPropertyNameIterator.h"
 #include "JSString.h"
 #include "JSWithScope.h"
+#include "LLIntCLoop.h"
 #include "LiteralParser.h"
 #include "NameInstance.h"
 #include "ObjectPrototype.h"
@@ -983,12 +984,16 @@ failedJSONP:
         SamplingTool::CallRecord callRecord(m_sampler.get());
 
         m_reentryDepth++;  
+#if ENABLE(LLINT_C_LOOP)
+        result = LLInt::CLoop::execute(newCallFrame, llint_program_prologue);
+#else // !ENABLE(LLINT_C_LOOP)
 #if ENABLE(JIT)
         if (!classicEnabled())
             result = program->generatedJITCode().execute(&m_registerFile, newCallFrame, scope->globalData());
         else
 #endif // ENABLE(JIT)
             result = privateExecute(Normal, &m_registerFile, newCallFrame);
+#endif // !ENABLE(LLINT_C_LOOP)
 
         m_reentryDepth--;
     }
@@ -1055,12 +1060,17 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
             SamplingTool::CallRecord callRecord(m_sampler.get());
 
             m_reentryDepth++;  
+#if ENABLE(LLINT_C_LOOP)
+            result = LLInt::CLoop::execute(newCallFrame, llint_function_for_call_prologue);
+#else // ENABLE(LLINT_C_LOOP)
 #if ENABLE(JIT)
             if (!classicEnabled())
                 result = callData.js.functionExecutable->generatedJITCodeForCall().execute(&m_registerFile, newCallFrame, callDataScope->globalData());
             else
 #endif // ENABLE(JIT)
                 result = privateExecute(Normal, &m_registerFile, newCallFrame);
+#endif // !ENABLE(LLINT_C_LOOP)
+
             m_reentryDepth--;
         }
 
@@ -1149,12 +1159,16 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
             SamplingTool::CallRecord callRecord(m_sampler.get());
 
             m_reentryDepth++;  
+#if ENABLE(LLINT_C_LOOP)
+            result = LLInt::CLoop::execute(newCallFrame, llint_function_for_construct_prologue);
+#else // !ENABLE(LLINT_C_LOOP)
 #if ENABLE(JIT)
             if (!classicEnabled())
                 result = constructData.js.functionExecutable->generatedJITCodeForConstruct().execute(&m_registerFile, newCallFrame, constructDataScope->globalData());
             else
 #endif // ENABLE(JIT)
                 result = privateExecute(Normal, &m_registerFile, newCallFrame);
+#endif // !ENABLE(LLINT_C_LOOP)
             m_reentryDepth--;
         }
 
@@ -1252,6 +1266,9 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
         SamplingTool::CallRecord callRecord(m_sampler.get());
         
         m_reentryDepth++;  
+#if ENABLE(LLINT_C_LOOP)
+        result = LLInt::CLoop::execute(closure.newCallFrame, llint_function_for_call_prologue);
+#else // !ENABLE(LLINT_C_LOOP)
 #if ENABLE(JIT)
 #if ENABLE(CLASSIC_INTERPRETER)
         if (closure.newCallFrame->globalData().canUseJIT())
@@ -1264,6 +1281,8 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
 #if ENABLE(CLASSIC_INTERPRETER)
             result = privateExecute(Normal, &m_registerFile, closure.newCallFrame);
 #endif
+#endif // !ENABLE(LLINT_C_LOOP)
+
         m_reentryDepth--;
     }
 
@@ -1352,6 +1371,9 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 
         m_reentryDepth++;
         
+#if ENABLE(LLINT_C_LOOP)
+        result = LLInt::CLoop::execute(newCallFrame, llint_eval_prologue);
+#else // !ENABLE(LLINT_C_LOOP)
 #if ENABLE(JIT)
 #if ENABLE(CLASSIC_INTERPRETER)
         if (callFrame->globalData().canUseJIT())
@@ -1364,6 +1386,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 #if ENABLE(CLASSIC_INTERPRETER)
             result = privateExecute(Normal, &m_registerFile, newCallFrame);
 #endif
+#endif // !ENABLE(LLINT_C_LOOP)
         m_reentryDepth--;
     }
 
@@ -1635,6 +1658,8 @@ NEVER_INLINE void Interpreter::uncacheGetByID(CodeBlock*, Instruction* vPC)
 }
 
 #endif // ENABLE(CLASSIC_INTERPRETER)
+
+#if !ENABLE(LLINT_C_LOOP)
 
 JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFile, CallFrame* callFrame)
 {
@@ -5091,6 +5116,9 @@ skip_id_custom_self:
     #undef CHECK_FOR_TIMEOUT
 #endif // ENABLE(CLASSIC_INTERPRETER)
 }
+
+#endif // !ENABLE(LLINT_C_LOOP)
+
 
 JSValue Interpreter::retrieveArgumentsFromVMCode(CallFrame* callFrame, JSFunction* function) const
 {

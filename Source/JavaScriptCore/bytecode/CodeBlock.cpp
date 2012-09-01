@@ -1550,6 +1550,10 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             dumpBytecodeCommentAndNewLine(location);
             break;
         }
+#if ENABLE(LLINT_C_LOOP)
+        default:
+            ASSERT(false); // We should never get here.
+#endif
     }
 }
 
@@ -2638,8 +2642,21 @@ unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddre
     UNUSED_PARAM(exec);
     UNUSED_PARAM(returnAddress);
 #if ENABLE(LLINT)
+#if !ENABLE(LLINT_C_LOOP)
+    // When using the JIT, we could have addresses that are not bytecode
+    // addresses. We check if the return address is in the LLint glue and
+    // opcode handlers range here to ensure that we are looking at bytecode
+    // before attempting to convert the return address into a bytecode offset.
+    //
+    // In the case of the C Loop LLInt, the JIT is disabled, and the only
+    // valid return addresses should be bytecode PCs. So, we can and need to
+    // forego this check because when we do not ENABLE(COMPUTED_GOTO_OPCODES),
+    // then the bytecode "PC"s are actually the opcodeIDs and are not bounded
+    // by llint_begin and llint_end.
     if (returnAddress.value() >= LLInt::getCodePtr(llint_begin)
-        && returnAddress.value() <= LLInt::getCodePtr(llint_end)) {
+        && returnAddress.value() <= LLInt::getCodePtr(llint_end))
+#endif
+    {
         ASSERT(exec->codeBlock());
         ASSERT(exec->codeBlock() == this);
         ASSERT(JITCode::isBaselineCode(getJITType()));

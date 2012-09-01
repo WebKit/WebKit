@@ -227,7 +227,15 @@ ARMv7_INSTRUCTIONS =
      "oris"
     ]
 
-INSTRUCTIONS = MACRO_INSTRUCTIONS + X86_INSTRUCTIONS + ARMv7_INSTRUCTIONS
+CXX_INSTRUCTIONS =
+    [
+     "cloopCrash",           # no operands
+     "cloopCallJSFunction",  # operands: callee
+     "cloopCallNative",      # operands: callee
+     "cloopCallSlowPath",    # operands: callTarget, currentFrame, currentPC
+    ]
+
+INSTRUCTIONS = MACRO_INSTRUCTIONS + X86_INSTRUCTIONS + ARMv7_INSTRUCTIONS + CXX_INSTRUCTIONS
 
 INSTRUCTION_PATTERN = Regexp.new('\\A((' + INSTRUCTIONS.join(')|(') + '))\\Z')
 

@@ -35,7 +35,11 @@ namespace JSC {
 class JSGlobalData;
 struct Instruction;
 
+#if ENABLE(LLINT_C_LOOP)
+typedef OpcodeID LLIntCode;
+#else
 typedef void (*LLIntCode)();
+#endif
 
 namespace LLInt {
 

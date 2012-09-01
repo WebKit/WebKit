@@ -307,6 +307,14 @@ namespace JSC {
         u.asBits.payload = i;
     }
 
+#if ENABLE(LLINT_C_LOOP)
+    inline JSValue::JSValue(int32_t tag, int32_t payload)
+    {
+        u.asBits.tag = tag;
+        u.asBits.payload = payload;
+    }
+#endif
+
     inline bool JSValue::isNumber() const
     {
         return isInt32() || isDouble();

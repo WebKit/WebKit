@@ -275,7 +275,9 @@ namespace JSC {
 
         static CallFrame* findFunctionCallFrameFromVMCode(CallFrame*, JSFunction*);
 
+#if !ENABLE(LLINT_C_LOOP)
         JSValue privateExecute(ExecutionFlag, RegisterFile*, CallFrame*);
+#endif
 
         void dumpRegisters(CallFrame*);
         

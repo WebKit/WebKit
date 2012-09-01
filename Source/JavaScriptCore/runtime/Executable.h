@@ -31,6 +31,7 @@
 #include "HandlerInfo.h"
 #include "JSFunction.h"
 #include "Interpreter.h"
+#include "LLIntCLoop.h"
 #include "Nodes.h"
 #include "SamplingTool.h"
 #include <wtf/PassOwnPtr.h>
@@ -201,28 +202,47 @@ namespace JSC {
             ASSERT(kind == CodeForConstruct);
             return OBJECT_OFFSETOF(ExecutableBase, m_numParametersForConstruct);
         }
-#endif
+#endif // ENABLE(JIT)
 
+#if ENABLE(JIT) || ENABLE(LLINT_C_LOOP)
         MacroAssemblerCodePtr hostCodeEntryFor(CodeSpecializationKind kind)
         {
+            #if ENABLE(JIT)
             return generatedJITCodeFor(kind).addressForCall();
+            #else
+            return LLInt::CLoop::hostCodeEntryFor(kind);
+            #endif
         }
 
         MacroAssemblerCodePtr jsCodeEntryFor(CodeSpecializationKind kind)
         {
+            #if ENABLE(JIT)
             return generatedJITCodeFor(kind).addressForCall();
+            #else
+            return LLInt::CLoop::jsCodeEntryFor(kind);
+            #endif
         }
 
         MacroAssemblerCodePtr jsCodeWithArityCheckEntryFor(CodeSpecializationKind kind)
         {
+            #if ENABLE(JIT)
             return generatedJITCodeWithArityCheckFor(kind);
+            #else
+            return LLInt::CLoop::jsCodeEntryWithArityCheckFor(kind);
+            #endif
         }
 
         static void* catchRoutineFor(HandlerInfo* handler, Instruction* catchPCForInterpreter)
         {
+            #if ENABLE(JIT)
             UNUSED_PARAM(catchPCForInterpreter);
             return handler->nativeCode.executableAddress();
+            #else
+            UNUSED_PARAM(handler);
+            return LLInt::CLoop::catchRoutineFor(catchPCForInterpreter);
+            #endif
         }
+#endif // ENABLE(JIT || ENABLE(LLINT_C_LOOP)
 
     protected:
         ExecutableBase* m_prev;
@@ -258,7 +278,7 @@ namespace JSC {
         }
 #endif
 
-#if ENABLE(CLASSIC_INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT_C_LOOP)
         static NativeExecutable* create(JSGlobalData& globalData, NativeFunction function, NativeFunction constructor)
         {
             ASSERT(!globalData.canUseJIT());

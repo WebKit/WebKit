@@ -31,6 +31,7 @@
 #include "BytecodeConventions.h"
 #include "CodeType.h"
 #include "Instruction.h"
+#include "LLIntCLoop.h"
 #include "Opcode.h"
 
 namespace JSC { namespace LLInt {
@@ -43,13 +44,18 @@ void initialize()
     Data::s_exceptionInstructions = new Instruction[maxOpcodeLength + 1];
     Data::s_opcodeMap = new Opcode[numOpcodeIDs];
 
+    #if ENABLE(LLINT_C_LOOP)
+    CLoop::initialize();
+
+    #else // !ENABLE(LLINT_C_LOOP)
     for (int i = 0; i < maxOpcodeLength + 1; ++i)
         Data::s_exceptionInstructions[i].u.pointer =
             LLInt::getCodePtr(llint_throw_from_slow_path_trampoline);
-    #define OPCODE_ENTRY(opcode, length)                                    \
+    #define OPCODE_ENTRY(opcode, length) \
         Data::s_opcodeMap[opcode] = LLInt::getCodePtr(llint_##opcode);
     FOR_EACH_OPCODE_ID(OPCODE_ENTRY);
     #undef OPCODE_ENTRY
+    #endif // !ENABLE(LLINT_C_LOOP)
 }
 
 #if COMPILER(CLANG)

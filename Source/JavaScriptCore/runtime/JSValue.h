@@ -54,9 +54,11 @@ namespace JSC {
         class SpeculativeJIT;
     }
 #endif
+#if ENABLE(LLINT_C_LOOP)
     namespace LLInt {
-        class Data;
+        class CLoop;
     }
+#endif
 
     struct ClassInfo;
     struct Instruction;
@@ -119,6 +121,9 @@ namespace JSC {
         friend class DFG::JSValueSource;
         friend class DFG::OSRExitCompiler;
         friend class DFG::SpeculativeJIT;
+#endif
+#if ENABLE(LLINT_C_LOOP)
+        friend class LLInt::CLoop;
 #endif
 
     public:
@@ -290,6 +295,14 @@ namespace JSC {
          */
         uint32_t tag() const;
         int32_t payload() const;
+
+#if ENABLE(LLINT_C_LOOP)
+        // This should only be used by the LLInt C Loop interpreter who needs
+        // synthesize JSValue from its "register"s holding tag and payload
+        // values.
+        explicit JSValue(int32_t tag, int32_t payload);
+#endif
+
 #elif USE(JSVALUE64)
         /*
          * On 64-bit platforms USE(JSVALUE64) should be defined, and we use a NaN-encoded
