@@ -1,5 +1,11 @@
 2012-08-31  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, attempt to fix Windows.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2012-08-31  Filip Pizlo  <fpizlo@apple.com>
+
         JSArray::putDirectIndex should by default behave like JSObject::putDirect
         https://bugs.webkit.org/show_bug.cgi?id=95630
 
