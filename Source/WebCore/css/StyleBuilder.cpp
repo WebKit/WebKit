@@ -25,6 +25,8 @@
 #include "config.h"
 #include "StyleBuilder.h"
 
+#include "BasicShapeFunctions.h"
+#include "BasicShapes.h"
 #include "CSSAspectRatioValue.h"
 #include "CSSCalculationValue.h"
 #include "CSSCursorImageValue.h"
@@ -43,11 +45,6 @@
 #include "StyleResolver.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
-
-#if ENABLE(CSS_EXCLUSIONS)
-#include "BasicShapeFunctions.h"
-#include "BasicShapes.h"
-#endif
 
 using namespace std;
 
