@@ -210,9 +210,11 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
                 return False
         return True
 
-    # FIXME: Remove this function when chromium-android is fully upstream.
     def expectations_files(self):
-        android_expectations_file = self.path_from_webkit_base('LayoutTests', 'platform', 'chromium', 'test_expectations_android.txt')
+        # LayoutTests/platform/chromium-android/TestExpectations should contain only the rules to
+        # skip tests for the features not supported or not testable on Android.
+        # Other rules should be in LayoutTests/platform/chromium/TestExpectations.
+        android_expectations_file = self.path_from_webkit_base('LayoutTests', 'platform', 'chromium-android', 'TestExpectations')
         return super(ChromiumAndroidPort, self).expectations_files() + [android_expectations_file]
 
     def start_http_server(self, additional_dirs=None, number_of_servers=0):
@@ -229,41 +231,6 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
 
     def clean_up_test_run(self):
         super(ChromiumAndroidPort, self).stop_http_server()
-
-    def skipped_layout_tests(self, test_list):
-        # This method is more convenient to skip whole directories than SKIP in TestExpectations
-        # because its higher priority.
-        # Still use TestExpectations to skip individual tests and small directories.
-        return set([
-            # Skip tests of other platforms to save time.
-            'platform/gtk',
-            'platform/mac',
-            'platform/mac-wk2',
-            'platform/qt',
-            'platform/win',
-
-            # Features not supported: http://crbug.com/145338.
-            'compositing/plugins',
-            'plugins',
-            'http/tests/plugins',
-            'platform/chromium/compositing/plugins',
-            'platform/chromium/plugins',
-
-            'http/tests/inspector',
-            'http/tests/inspector-enabled',
-            'inspector',
-            'platform/chromium/inspector',
-
-            'accessibility',
-            'platform/chromium/accessibility',
-
-            # Skip webgl tests: http://crbug.com/135877.
-            'compositing/webgl',
-            'fast/canvas/webgl',
-            'http/tests/canvas/webgl',
-            'platform/chromium/virtual/gpu/fast/canvas/webgl',
-            'platform/chromium/virtual/threaded/compositing/webgl',
-        ])
 
     def create_driver(self, worker_number, no_timeout=False):
         # We don't want the default DriverProxy which is not compatible with our driver.

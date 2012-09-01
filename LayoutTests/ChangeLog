@@ -1,3 +1,16 @@
+2012-09-01  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Remove hard-coded skipped directories in chromium_android.py
+        https://bugs.webkit.org/show_bug.cgi?id=95605
+
+        Reviewed by Dirk Pranke.
+
+        Moved the skipping rules for ANDROID into platform/chromium-android/TestExpectations.
+
+        * platform/chromium/TestExpectations:
+        * platform/chromium/test_expectations_android.txt: Removed.
+        * platform/chromium-android/TestExpectations: Added.
+
 2012-09-01  Ned Holbrook  <nholbrook@apple.com>
 
         Regression(r126763): Heap-use-after-free in WebCore::nextBreakablePosition

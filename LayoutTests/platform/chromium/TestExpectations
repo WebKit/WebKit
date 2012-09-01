@@ -894,60 +894,7 @@ WONTFIX SKIP : media/video-controls-fullscreen-volume.html = TEXT
 // Test fails because it's trying to load a plugin we don't have. We probably don't need to fix this.
 WONTFIX : platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html = TEXT
 
-// This test is only for GTK which is not applicable to Android.
-WONTFIX ANDROID SKIP : platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html = TEXT
-
-// The following features are not enabled on Android.
-// Some bigger whole directories (plugins, webgl, inspector, etc.) are skipped in chromium_android.py.
-BUGCR145338 WONTFIX ANDROID SKIP : fast/forms/time-multiple-fields = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : fast/forms/color = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : fast/forms/datalist = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : fast/forms/date = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : fast/mediastream = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : fast/notifications = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : fast/speech = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : platform/chromium/fast/forms/color = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : platform/chromium/media/video-capture-preview.html = PASS // Uses mediastream
-BUGCR145338 WONTFIX ANDROID SKIP : webaudio = PASS
-
-// Skip tests depending on plugins that is not available on Android.
-// The whole directories of plugins, http/tests/plugins, etc. are skipped in chromium_android.py.
-BUGCR145338 WONTFIX ANDROID SKIP : fast/dom/Window/Plug-ins.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : fast/frames/sandboxed-iframe-about-blank.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : fast/frames/sandboxed-iframe-navigation-allowed.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : fast/frames/sandboxed-iframe-plugins.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : fast/replaced/invalid-object-with-fallback.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : fast/replaced/object-with-embed-url-param.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-data.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-url.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-url.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-allowed.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-02.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/object-src-none-blocked.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/object-src-url-allowed.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/contentSecurityPolicy/object-src-url-blocked.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : platform/chromium/permissionclient/plugin-permission.html = PASS
-BUGCR145338 WONTFIX ANDROID SKIP : userscripts/user-script-plugin-document.html = PASS
-
-// Causes server error. Not feasible to fix because this is a behavior of Apache server.
-BUGWK95378 WONTFIX ANDROID SKIP : fast/encoding/percent-escaping.html = PASS
-
-// Tests depending on Bengali, Tamil, Danda fonts
-BUGWK95378 WONTFIX ANDROID SKIP : fast/text/international/bold-bengali.html = PASS
-BUGWK95378 WONTFIX ANDROID SKIP : fast/text/international/complex-character-based-fallback.html = PASS
-
-// The test creates a temporary file via HTTP POST and access the file as a blob. This is unfeasible.
-BUGWK95378 WONTFIX ANDROID SKIP : http/tests/local/fileapi/send-sliced-dragged-file.html = PASS
-
-// The test depends on the same modified time returned from local file api and PHP. This is unfeasible.
-BUGWK95378 WONTFIX ANDROID SKIP : http/tests/local/fileapi/file-last-modified.html = PASS
-
-// Android font lacks some plane2 CJK glyphs to pass this test.
-BUGWK95378 WONTFIX ANDROID SKIP : fast/text/international/plane2.html = PASS
+// Skipping rules for ANDROID are in platform/chromium-android/TestExpectations.
 
 // -----------------------------------------------------------------
 // TESTS TO FIX

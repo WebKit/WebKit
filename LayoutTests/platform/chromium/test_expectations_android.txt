@@ -1,6 +1,0 @@
-// This file should remain empty. It is used by the chromium-android port in
-// its downstream repository to manage test expecations downstream.  When the
-// chromium-android port runs tests on build.webkit.org, test expectations
-// should be put in the Chromium TestExpectations file as normal rather than
-// here.  We will delete this file once we finish upstreaming the
-// chromium-android port.
