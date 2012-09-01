@@ -200,6 +200,11 @@
           'WTF_USE_WEBAUDIO_FFMPEG=1',
         ],
       }],
+      ['OS=="win"', {
+        'feature_defines': [
+          'ENABLE_OPENTYPE_VERTICAL=1',
+        ],
+      }],
       ['enable_web_intents==1', {
         'feature_defines': [
           'ENABLE_WEB_INTENTS=1',

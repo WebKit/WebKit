@@ -1,3 +1,25 @@
+2012-08-31  Koji Ishii  <kojiishi@gmail.com>
+
+        Glyphs in vertical text tests are rotated 90 degrees clockwise on Chromium Windows
+        https://bugs.webkit.org/show_bug.cgi?id=51450
+
+        Reviewed by Tony Chang.
+
+        When writing-mode is vertical-*, Chromium Win does not render glyphs correctly.
+        http://dev.w3.org/csswg/css3-writing-modes/#writing-mode
+        Glyphs are now drawn in the correct orientation, regardless of the leading '@' in the font name,
+        and vertical alternate glyphs (OpenType 'vert' feature) is not enabled.
+        CJK characters drawn at wrong baseline position is also fixed.
+        In addition, fontMetrics().unitsPerEm() and SimpleFontData::platformBoundsForGlyph() were empty
+        in Chromium Win but they were implemented because they were needed to draw vertical flow correctly.
+
+        Note that this patch does not address issues in vertical flow for complex code path.
+        The issue is under discussion with Google people and it will not be fixed in short term.
+
+        Existing tests in fast/writing-mode/* are enabled in LayoutTests/platform/chromium/TestExpectations.
+
+        * features.gypi: ENABLE_OPENTYPE_VERTICAL=1.
+
 2012-08-31  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Make link highlighter use same node selection criteria as Chromium for Android.

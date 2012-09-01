@@ -1,3 +1,29 @@
+2012-08-31  Koji Ishii  <kojiishi@gmail.com>
+
+        Glyphs in vertical text tests are rotated 90 degrees clockwise on Chromium Windows
+        https://bugs.webkit.org/show_bug.cgi?id=51450
+
+        Reviewed by Tony Chang.
+
+        When writing-mode is vertical-*, Chromium Win does not render glyphs correctly.
+        http://dev.w3.org/csswg/css3-writing-modes/#writing-mode
+        Glyphs are now drawn in the correct orientation, regardless of the leading '@' in the font name,
+        and vertical alternate glyphs (OpenType 'vert' feature) is not enabled.
+        CJK characters drawn at wrong baseline position is also fixed.
+        In addition, fontMetrics().unitsPerEm() and SimpleFontData::platformBoundsForGlyph() were empty
+        in Chromium Win but they were implemented because they were needed to draw vertical flow correctly.
+
+        Note that this patch does not address issues in vertical flow for complex code path.
+        The issue is under discussion with Google people and it will not be fixed in short term.
+
+        * fast/text/international/text-spliced-font.html: Added "MS Gothic" to the font list so that Japanese font is chosen on Windows.
+        * fast/writing-mode/border-vertical-lr.html: Ditto.
+        * fast/writing-mode/japanese-lr-selection.html: Ditto.
+        * fast/writing-mode/japanese-lr-text.html: Ditto.
+        * fast/writing-mode/japanese-rl-selection.html: Ditto.
+        * fast/writing-mode/japanese-rl-text.html: Ditto.
+        * platform/chromium/TestExpectations: writing-mode and vertical tests are separated to rebase later.
+
 2012-08-31  Nate Chapin  <japhet@chromium.org>
 
         Unskip fast/loader/document-destruction-within-unload.html

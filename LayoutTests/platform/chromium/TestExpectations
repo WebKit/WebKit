@@ -2111,19 +2111,47 @@ BUGCR143479 : platform/gtk/accessibility/aria-table-hierarchy.html = TEXT
 BUGCR143476 : fast/js/date-parse-test.html = TEXT
 
 // Vertical text needs to be implemented in platforms other than OS X.
-BUGCR65877 LINUX ANDROID WIN : fast/writing-mode/border-vertical-lr.html = IMAGE+TEXT
-BUGCR65877 : fast/writing-mode/japanese-lr-selection.html = IMAGE+TEXT IMAGE
-BUGCR65877 : fast/writing-mode/japanese-rl-selection.html = IMAGE+TEXT IMAGE
-BUGCR65877 : fast/writing-mode/japanese-ruby-vertical-lr.html = PASS IMAGE+TEXT
-BUGCR65877 : fast/writing-mode/japanese-ruby-vertical-rl.html = PASS IMAGE+TEXT
-BUGCR65877 : fast/writing-mode/japanese-ruby-horizontal-bt.html = PASS IMAGE+TEXT
+BUGCR65877 LINUX ANDROID : fast/writing-mode/border-vertical-lr.html = IMAGE+TEXT
+BUGCR65877 LINUX ANDROID : fast/writing-mode/japanese-lr-selection.html = IMAGE+TEXT IMAGE
+BUGCR65877 LINUX ANDROID : fast/writing-mode/japanese-rl-selection.html = IMAGE+TEXT IMAGE
+BUGCR65877 LINUX ANDROID : fast/writing-mode/japanese-ruby-vertical-lr.html = PASS IMAGE+TEXT
+BUGCR65877 LINUX ANDROID : fast/writing-mode/japanese-ruby-vertical-rl.html = PASS IMAGE+TEXT
+BUGCR65877 LINUX ANDROID : fast/writing-mode/japanese-ruby-horizontal-bt.html = PASS IMAGE+TEXT
 BUGCR65877 LINUX : fast/writing-mode/broken-ideographic-font.html = IMAGE+TEXT
-BUGWK95052 WIN : fast/writing-mode/broken-ideographic-font.html = TEXT
-BUGCR65877 LINUX ANDROID WIN : fast/writing-mode/vertical-font-fallback.html = IMAGE+TEXT
+BUGCR65877 LINUX ANDROID : fast/writing-mode/vertical-font-fallback.html = IMAGE+TEXT
 //BUGCR65877 LINUX ANDROID WIN : fast/writing-mode/broken-ideograph-small-caps.html = IMAGE
-BUGCR65877 LINUX ANDROID WIN : fast/writing-mode/Kusa-Makura-background-canvas.html = IMAGE+TEXT
+BUGCR65877 LINUX ANDROID : fast/writing-mode/Kusa-Makura-background-canvas.html = IMAGE+TEXT
 BUGCR65877 WIN : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
 BUGWK53451 LINUX ANDROID : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
+BUGWK94410 LINUX ANDROID WIN : fast/writing-mode/vertical-baseline-alignment.html = IMAGE
+
+// Need rebaseline
+BUGWK51450 WIN : editing/selection/vertical-lr-ltr-extend-line-backward-br.html = IMAGE+TEXT
+BUGWK51450 WIN : editing/selection/vertical-lr-ltr-extend-line-forward-br.html = IMAGE+TEXT
+BUGWK51450 WIN : editing/selection/vertical-rl-ltr-extend-line-backward-br.html = IMAGE+TEXT
+BUGWK51450 WIN : editing/selection/vertical-rl-ltr-extend-line-backward-p.html = IMAGE+TEXT
+BUGWK51450 WIN : editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html = IMAGE+TEXT
+BUGWK51450 WIN : editing/selection/vertical-rl-ltr-extend-line-forward-br.html = IMAGE+TEXT
+BUGWK51450 WIN : editing/selection/vertical-rl-ltr-extend-line-forward-p.html = IMAGE+TEXT
+BUGWK51450 WIN : editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html = IMAGE+TEXT
+BUGWK51450 WIN : fast/dynamic/text-combine.html = IMAGE+TEXT
+BUGWK51450 WIN : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
+BUGWK51450 WIN : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT
+BUGWK51450 WIN : fast/text/international/text-spliced-font.html = IMAGE+TEXT
+BUGWK51450 WIN : fast/writing-mode/Kusa-Makura-background-canvas.html = IMAGE+TEXT
+BUGWK51450 WIN : fast/writing-mode/border-vertical-lr.html = IMAGE+TEXT
+BUGWK51450 WIN : fast/writing-mode/broken-ideographic-font.html = IMAGE+TEXT
+BUGWK51450 WIN : fast/writing-mode/fallback-orientation.html = IMAGE
+BUGWK51450 WIN : fast/writing-mode/japanese-lr-selection.html = IMAGE+TEXT
+BUGWK51450 WIN : fast/writing-mode/japanese-lr-text.html = IMAGE+TEXT
+BUGWK51450 WIN : fast/writing-mode/japanese-rl-selection.html = IMAGE+TEXT
+BUGWK51450 WIN : fast/writing-mode/japanese-rl-text.html = IMAGE+TEXT
+BUGWK51450 WIN : fast/writing-mode/japanese-rl-text-with-broken-font.html = IMAGE+TEXT
+BUGWK51450 WIN : fast/writing-mode/japanese-ruby-vertical-lr.html = IMAGE+TEXT
+BUGWK51450 WIN : fast/writing-mode/japanese-ruby-vertical-rl.html = IMAGE+TEXT
+BUGWK51450 WIN : fast/writing-mode/vertical-align-table-baseline.html = IMAGE
+BUGWK51450 WIN : fast/writing-mode/vertical-font-fallback.html = TEXT
+BUGWK51450 WIN : media/track/track-cue-rendering-vertical.html = IMAGE+TEXT
 
 // New test, introduced by http://trac.webkit.org/changeset/70813 with only platform/mac baselines.
 BUGWK61161 LINUX ANDROID WIN : fast/writing-mode/border-image-horizontal-bt.html = IMAGE+TEXT
@@ -2590,9 +2618,6 @@ BUGWK65124 LINUX ANDROID WIN : fast/repaint/japanese-rl-selection-clear.html = I
 BUGWK65124 WIN : fast/repaint/japanese-rl-selection-repaint.html = IMAGE+TEXT
 BUGWK65124 WIN LINUX ANDROID : fast/repaint/japanese-rl-selection-repaint-in-regions.html = IMAGE+TEXT
 BUGWK65124 WIN LINUX ANDROID : fast/repaint/line-flow-with-floats-in-regions.html = IMAGE+TEXT
-BUGWK65124 WIN : fast/writing-mode/japanese-lr-text.html = IMAGE+TEXT
-BUGWK65124 WIN : fast/writing-mode/japanese-rl-text-with-broken-font.html = IMAGE+TEXT
-BUGWK65124 WIN : fast/writing-mode/japanese-rl-text.html = IMAGE+TEXT
 
 BUGWK65199 LINUX ANDROID WIN SNOWLEOPARD : fast/writing-mode/broken-ideograph-small-caps.html = IMAGE+TEXT
 
