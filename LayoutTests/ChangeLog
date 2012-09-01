@@ -1,3 +1,22 @@
+2012-08-31  Jon Lee  <jonlee@apple.com>
+
+        [Tests] Move fast/notifications/notifications-event-listener-crash.html to http/tests/notifications
+        https://bugs.webkit.org/show_bug.cgi?id=95535
+        <rdar://problem/12213781>
+
+        Reviewed by Jessie Berlin.
+
+        This test is among a few that are being migrated from fast/notifications to http/tests/notifications because of permissions.
+        Since most notifications tests will involve permissions, it is easier to have all of them consolidated in the same directory.
+
+        This test has been slightly modified to take advantage of the new testRunner notifications API. The test itself also does not
+        need to be protected within the window.testRunner check since it does not use that object.
+
+        * fast/notifications/notifications-event-listener-crash-expected.txt: Removed.
+        * fast/notifications/notifications-event-listener-crash.html: Removed.
+        * http/tests/notifications/event-listener-crash-expected.txt: Added.
+        * http/tests/notifications/event-listener-crash.html: Added.
+
 2012-08-31  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Text expectation update
