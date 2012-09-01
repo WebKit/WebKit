@@ -1,3 +1,21 @@
+2012-08-31  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove use of ClassInfo in SpeculativeJIT::emitBranch
+        https://bugs.webkit.org/show_bug.cgi?id=95623
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitNonStringCellOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitNonStringCellOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+
 2012-08-31  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled back in a piece of <http://trac.webkit.org/changeset/127293>.
