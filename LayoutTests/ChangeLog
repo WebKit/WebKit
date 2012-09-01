@@ -1,5 +1,22 @@
 2012-08-31  Jon Lee  <jonlee@apple.com>
 
+        [Tests] Add a test for all notification events
+        https://bugs.webkit.org/show_bug.cgi?id=95609
+        <rdar://problem/12218309>
+
+        Reviewed by Jessie Berlin.
+
+        This test tests for the onshow, onclick, and onclose events. onerror is called only if the
+        origin did not have permission to show the notification, and that is covered in
+        http/tests/notifications/{legacy,}/show.html.
+
+        * http/tests/notifications/events-expected.txt: Added.
+        * http/tests/notifications/events.html: Added.
+        * http/tests/notifications/legacy/events-expected.txt: Added.
+        * http/tests/notifications/legacy/events.html: Added.
+
+2012-08-31  Jon Lee  <jonlee@apple.com>
+
         [Tests] Move fast/notifications/notifications-event-listener-crash.html to http/tests/notifications
         https://bugs.webkit.org/show_bug.cgi?id=95535
         <rdar://problem/12213781>

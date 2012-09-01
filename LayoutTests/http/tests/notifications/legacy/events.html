@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+if (window.testRunner)
+	testRunner.waitUntilDone();
+
+description("This test looks for the dispatch of the event handlers.");
+
+if (window.testRunner) {
+	debug("Granting permission to " + testURL);
+	testRunner.grantWebNotificationPermission(testURL);
+}
+
+shouldBe("webkitNotifications.checkPermission()", "0");
+
+var n = webkitNotifications.createNotification("", "title", "body");
+n.ondisplay = function() {
+	testPassed("ondisplay event handler was called");
+	testRunner.simulateWebNotificationClick(this);
+};
+n.onclick = function() {
+	testPassed("onclick event handler was called");
+	this.cancel();
+};
+n.onclose = function() {
+	testPassed("onclose event handler was called");
+	testCompleted();
+};
+n.onerror = function() {
+	testFailed("onerror event handler should not be called");
+	testCompleted();
+};
+n.show();
+
+setTimeout(testCompleted, 100);
+</script>
