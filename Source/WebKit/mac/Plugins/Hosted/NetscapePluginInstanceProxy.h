@@ -28,6 +28,7 @@
 #ifndef NetscapePluginInstanceProxy_h
 #define NetscapePluginInstanceProxy_h
 
+#include <JavaScriptCore/Identifier.h>
 #include <JavaScriptCore/JSGlobalData.h>
 #include <JavaScriptCore/Strong.h>
 #include <WebCore/Timer.h>

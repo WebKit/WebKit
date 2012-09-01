@@ -1,3 +1,16 @@
+2012-09-01  Mark Lam  <mark.lam@apple.com>
+
+        Added #include <JavaScriptCore/Identifier.h>.
+        https://bugs.webkit.org/show_bug.cgi?id=95641.
+
+        Reviewed by Dan Bernstein.
+
+        The code references JSC::Indentifier but was previously depending on
+        someone else to #include it. This results in build problems when
+        building for the llint C loop configuration.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+
 2012-08-31  Tony Chang  <tony@chromium.org>
 
         Remove ENABLE_CSS3_FLEXBOX compile time flag
