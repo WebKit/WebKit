@@ -1,3 +1,11 @@
+2012-09-01  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed chromium buildfix when use_libcc_for_compositor=1
+
+        This gyp target was renamed downstream.
+
+        * WebKit.gyp:
+
 2012-09-01  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add MediaStream management to RTCPeerConnection
