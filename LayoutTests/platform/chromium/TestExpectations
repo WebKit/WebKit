@@ -2243,7 +2243,7 @@ BUGCR66087 WIN : http/tests/xmlhttprequest/open-async-overload.html = PASS TEXT
 // memory and thus leading to unpredictable results.
 BUGCR66099 SKIP : fast/js/array-sort-modifying-tostring.html = PASS
 
-BUGCR66683 LINUX WIN : fast/canvas/canvas-draw-canvas-on-canvas-shadow.html = TEXT
+BUGCR66683 LINUX ANDROID WIN : fast/canvas/canvas-draw-canvas-on-canvas-shadow.html = TEXT
 BUGCR66683 : platform/chromium/virtual/gpu/fast/canvas/canvas-draw-canvas-on-canvas-shadow.html = TEXT
 BUGCR66686 : fast/loader/user-stylesheet-fast-path.html = TEXT
 
@@ -2261,7 +2261,7 @@ BUGCR67540 LINUX ANDROID : fast/text/emphasis-avoid-ruby.html = IMAGE
 BUGCR67540 LINUX ANDROID WIN SNOWLEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
 BUGCR67540 LINUX ANDROID : fast/repaint/text-emphasis-v.html = IMAGE
 
-BUGCR67442 LINUX WIN : fast/canvas/fillText-shadow.html = TEXT
+BUGCR67442 LINUX ANDROID WIN : fast/canvas/fillText-shadow.html = TEXT
 BUGCR67442 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/fillText-shadow.html = TEXT
 
 BUGCR68436 LINUX ANDROID DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT
@@ -3558,6 +3558,7 @@ BUGWK95167 : fast/overflow/paged-x-div-with-column-gap.html = IMAGE IMAGE+TEXT T
 
 BUGWK94793 : fast/notifications/notifications-event-listener-crash.html = TEXT PASS
 
+// Failing tests because Android has different implementation of HTML controls.
 BUGCR144536 WONTFIX ANDROID : editing/selection/context-menu-on-text.html = TEXT
 BUGCR144536 WONTFIX ANDROID : editing/selection/context-menu-text-selection.html = TEXT
 BUGCR144536 WONTFIX ANDROID : fast/dom/HTMLSelectElement/select-selectedOptions.html = TEXT
@@ -3587,9 +3588,11 @@ BUGCR144536 WONTFIX ANDROID : fast/repaint/select-option-background-color.html =
 BUGCR144536 WONTFIX ANDROID : scrollbars/custom-scrollbar-with-incomplete-style.html = TEXT
 BUGCR144536 WONTFIX ANDROID : scrollbars/listbox-scrollbar-combinations.html = TEXT
 
+// Failing tests with 2d canvas acceleration.
 BUGCR145084 ANDROID : platform/chromium/virtual/gpu/canvas/philip = PASS TEXT
 BUGCR145084 ANDROID : platform/chromium/virtual/gpu/fast/canvas = PASS TEXT TIMEOUT
 
+// Failing compositing tests.
 BUGCR145087 ANDROID : compositing/geometry/fixed-position-composited-switch.html = TEXT
 BUGCR145087 ANDROID : compositing/geometry/limit-layer-bounds-opacity-transition.html = TEXT
 BUGCR145087 ANDROID : compositing/reflections/nested-reflection-animated.html = TEXT PASS

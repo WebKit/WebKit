@@ -1,3 +1,19 @@
+2012-09-01  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Upstream layout test expectations (Part 4)
+        https://bugs.webkit.org/show_bug.cgi?id=95594
+
+        Reviewed by Adam Barth.
+
+        Remove a font boosting test which has been removed in downstream.
+        Update canvas test expectations.
+        Rebaselined one canvas test (only one space diff).
+
+        * platform/chromium-android/fast/canvas/fallback-content-expected.txt: Added.
+        * platform/chromium-android/fast/font-boosting/various-tricky-cases-expected.txt: Removed.
+        * platform/chromium-android/fast/font-boosting/various-tricky-cases.html: Removed.
+        * platform/chromium/TestExpectations:
+
 2012-09-01  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [Gtk] accessibility/replaced-objects-in-anonymous-blocks layout test failure
