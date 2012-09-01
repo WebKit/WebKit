@@ -19,15 +19,10 @@ AXRole: document frame
             AXRole: document frame 
     AXRole: panel AXValue: <obj>text area<\n>
         AXRole: entry AXValue: text area
-    AXRole: panel AXValue: Div<\n>
-    AXRole: panel AXValue: <obj>button<\n>
-        AXRole: push button 
+    AXRole: push button 
     AXRole: heading AXValue: Heading<\n><obj>button<\n><obj>
-        AXRole: panel AXValue: Heading<\n>
-        AXRole: panel AXValue: <obj>button<\n>
-            AXRole: push button 
-        AXRole: panel AXValue: <obj>
-            AXRole: image 
+        AXRole: push button 
+        AXRole: image 
     AXRole: section AXValue: End of test
 This tests that the text associated with replaced objects in an anonymous block is correct.
 

@@ -1,3 +1,9 @@
+2012-09-01  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, rebaselining an accessibility test.
+
+        * platform/gtk/accessibility/replaced-objects-in-anonymous-blocks-expected.txt:
+
 2012-09-01  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [Gtk] No accessible caret-moved events found in certain content
