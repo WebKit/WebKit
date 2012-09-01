@@ -363,7 +363,7 @@ void ElementAttributeData::cloneDataFrom(const ElementAttributeData& sourceData,
     }
 
     if (targetElement.isStyledElement() && sourceData.m_inlineStyleDecl) {
-        m_inlineStyleDecl = sourceData.m_inlineStyleDecl->copy();
+        m_inlineStyleDecl = sourceData.m_inlineStyleDecl->immutableCopyIfNeeded();
         targetElement.setIsStyleAttributeValid(sourceElement.isStyleAttributeValid());
     }
 }

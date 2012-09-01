@@ -61,6 +61,13 @@ PassRefPtr<StylePropertySet> StylePropertySet::createImmutable(const CSSProperty
     return adoptRef(new (slot) StylePropertySet(properties, count, cssParserMode, /* makeMutable */ false));
 }
 
+PassRefPtr<StylePropertySet> StylePropertySet::immutableCopyIfNeeded() const
+{
+    if (!isMutable())
+        return const_cast<StylePropertySet*>(this);
+    return createImmutable(m_mutablePropertyVector->data(), m_mutablePropertyVector->size(), cssParserMode());
+}
+
 StylePropertySet::StylePropertySet(CSSParserMode cssParserMode)
     : m_cssParserMode(cssParserMode)
     , m_ownsCSSOMWrapper(false)
