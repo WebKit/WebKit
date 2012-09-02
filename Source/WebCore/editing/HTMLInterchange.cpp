@@ -35,17 +35,14 @@
 
 namespace WebCore {
 
-static String convertedSpaceString()
-{
-    DEFINE_STATIC_LOCAL(String, convertedSpaceString, (String(ASCIILiteral("<span class=\"" AppleConvertedSpace "\">")) + noBreakSpace + "</span>"));
-    return convertedSpaceString;
-}
-
 String convertHTMLTextToInterchangeFormat(const String& in, const Text* node)
 {
     // Assume all the text comes from node.
     if (node->renderer() && node->renderer()->style()->preserveNewline())
         return in;
+
+    const char convertedSpaceString[] = "<span class=\"" AppleConvertedSpace "\">\xA0</span>";
+    COMPILE_ASSERT((static_cast<unsigned char>('\xA0') == noBreakSpace), ConvertedSpaceStringSpaceIsNoBreakSpace);
 
     StringBuilder s;
 
@@ -64,28 +61,28 @@ String convertHTMLTextToInterchangeFormat(const String& in, const Text* node)
                 unsigned add = count % 3;
                 switch (add) {
                     case 0:
-                        s.append(convertedSpaceString());
+                        s.appendLiteral(convertedSpaceString);
                         s.append(' ');
-                        s.append(convertedSpaceString());
+                        s.appendLiteral(convertedSpaceString);
                         add = 3;
                         break;
                     case 1:
                         if (i == 0 || i + 1 == in.length()) // at start or end of string
-                            s.append(convertedSpaceString());
+                            s.appendLiteral(convertedSpaceString);
                         else
                             s.append(' ');
                         break;
                     case 2:
                         if (i == 0) {
                              // at start of string
-                            s.append(convertedSpaceString());
+                            s.appendLiteral(convertedSpaceString);
                             s.append(' ');
                         } else if (i + 2 == in.length()) {
                              // at end of string
-                            s.append(convertedSpaceString());
-                            s.append(convertedSpaceString());
+                            s.appendLiteral(convertedSpaceString);
+                            s.appendLiteral(convertedSpaceString);
                         } else {
-                            s.append(convertedSpaceString());
+                            s.appendLiteral(convertedSpaceString);
                             s.append(' ');
                         }
                         break;
