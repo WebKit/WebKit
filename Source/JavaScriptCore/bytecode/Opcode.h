@@ -188,9 +188,9 @@ namespace JSC {
         macro(op_get_pnames, 6) \
         macro(op_next_pname, 7) \
         \
-        macro(op_push_scope, 2) \
+        macro(op_push_with_scope, 2) \
         macro(op_pop_scope, 1) \
-        macro(op_push_new_scope, 4) \
+        macro(op_push_name_scope, 4) \
         \
         macro(op_catch, 2) \
         macro(op_throw, 2) \

@@ -1,3 +1,31 @@
+2012-09-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Refactored scope chain opcodes to support optimization for named function expressions
+        https://bugs.webkit.org/show_bug.cgi?id=95658
+
+        Reviewed by Sam Weinig.
+
+        Renamed
+            push_scope => push_with_scope
+            push_new_scope => push_name_scope
+        to clarify the difference between them.
+
+        Changed push_with_scope and push_name_scope not to save the new scope in
+        a temporary register, since doing so made optimization harder.
+
+        (The old behavior was a hold-over from when the scope chain wasn't
+        a GC object, and wouldn't be marked otherwise. Now, the scope chain is
+        marked because it is a GC object pointed to by the call frame.)
+
+        Changed push_name_scope to accept an operand specifying the attributes
+        for the named property, instead of assuming DontDelete, because a named
+        function expression needs ReadOnly|DontDelete.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::highestUsedRegister): Removed this function,
+        which used to be related to preserving saved scope object temporaries,
+        because it had no callers.
+
 2012-09-01  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled back out a piece of <http://trac.webkit.org/changeset/127293>

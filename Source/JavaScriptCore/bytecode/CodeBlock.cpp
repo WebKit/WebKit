@@ -1479,9 +1479,9 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             it += OPCODE_LENGTH(op_next_pname) - 1;
             break;
         }
-        case op_push_scope: {
+        case op_push_with_scope: {
             int r0 = (++it)->u.operand;
-            dataLog("[%4d] push_scope\t %s", location, registerName(exec, r0).data());
+            dataLog("[%4d] push_with_scope\t %s", location, registerName(exec, r0).data());
             dumpBytecodeCommentAndNewLine(location);
             break;
         }
@@ -1490,11 +1490,11 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             dumpBytecodeCommentAndNewLine(location);
             break;
         }
-        case op_push_new_scope: {
-            int r0 = (++it)->u.operand;
+        case op_push_name_scope: {
             int id0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
-            dataLog("[%4d] push_new_scope \t%s, %s, %s", location, registerName(exec, r0).data(), idName(id0, m_identifiers[id0]).data(), registerName(exec, r1).data());
+            unsigned attributes = (++it)->u.operand;
+            dataLog("[%4d] push_name_scope \t%s, %s, %u", location, idName(id0, m_identifiers[id0]).data(), registerName(exec, r1).data(), attributes);
             dumpBytecodeCommentAndNewLine(location);
             break;
         }

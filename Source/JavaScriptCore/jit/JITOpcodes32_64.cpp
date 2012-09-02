@@ -1358,9 +1358,9 @@ void JIT::emit_op_next_pname(Instruction* currentInstruction)
     end.link(this);
 }
 
-void JIT::emit_op_push_scope(Instruction* currentInstruction)
+void JIT::emit_op_push_with_scope(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_push_scope);
+    JITStubCall stubCall(this, cti_op_push_with_scope);
     stubCall.addArgument(currentInstruction[1].u.operand);
     stubCall.call(currentInstruction[1].u.operand);
 }
@@ -1397,12 +1397,13 @@ void JIT::emitSlow_op_to_jsnumber(Instruction* currentInstruction, Vector<SlowCa
     stubCall.call(dst);
 }
 
-void JIT::emit_op_push_new_scope(Instruction* currentInstruction)
+void JIT::emit_op_push_name_scope(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_push_new_scope);
-    stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
-    stubCall.addArgument(currentInstruction[3].u.operand);
-    stubCall.call(currentInstruction[1].u.operand);
+    JITStubCall stubCall(this, cti_op_push_name_scope);
+    stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[1].u.operand)));
+    stubCall.addArgument(currentInstruction[2].u.operand);
+    stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));
+    stubCall.call();
 }
 
 void JIT::emit_op_catch(Instruction* currentInstruction)

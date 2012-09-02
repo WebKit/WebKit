@@ -1530,14 +1530,13 @@ LLINT_SLOW_PATH_DECL(slow_path_next_pname)
     LLINT_END();
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_push_scope)
+LLINT_SLOW_PATH_DECL(slow_path_push_with_scope)
 {
     LLINT_BEGIN();
-    JSValue v = LLINT_OP(1).jsValue();
+    JSValue v = LLINT_OP_C(1).jsValue();
     JSObject* o = v.toObject(exec);
     LLINT_CHECK_EXCEPTION();
     
-    LLINT_OP(1) = o;
     exec->setScope(JSWithScope::create(exec, o));
     
     LLINT_END();
@@ -1550,13 +1549,13 @@ LLINT_SLOW_PATH_DECL(slow_path_pop_scope)
     LLINT_END();
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_push_new_scope)
+LLINT_SLOW_PATH_DECL(slow_path_push_name_scope)
 {
     LLINT_BEGIN();
     CodeBlock* codeBlock = exec->codeBlock();
-    JSNameScope* scope = JSNameScope::create(exec, codeBlock->identifier(pc[2].u.operand), LLINT_OP(3).jsValue(), DontDelete);
+    JSNameScope* scope = JSNameScope::create(exec, codeBlock->identifier(pc[1].u.operand), LLINT_OP(2).jsValue(), pc[3].u.operand);
     exec->setScope(scope);
-    LLINT_RETURN(scope);
+    LLINT_END();
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_throw)

@@ -671,8 +671,8 @@ namespace JSC {
         void emit_op_pre_inc(Instruction*);
         void emit_op_profile_did_call(Instruction*);
         void emit_op_profile_will_call(Instruction*);
-        void emit_op_push_new_scope(Instruction*);
-        void emit_op_push_scope(Instruction*);
+        void emit_op_push_name_scope(Instruction*);
+        void emit_op_push_with_scope(Instruction*);
         void emit_op_put_by_id(Instruction*);
         void emit_op_put_by_index(Instruction*);
         void emit_op_put_by_val(Instruction*);

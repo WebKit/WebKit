@@ -1756,11 +1756,10 @@ RegisterID* ReturnNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 RegisterID* WithNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine(), column());
-    
-    RefPtr<RegisterID> scope = generator.newTemporary();
-    generator.emitNode(scope.get(), m_expr); // scope must be protected until popped
+
+    RefPtr<RegisterID> scope = generator.emitNode(m_expr);
     generator.emitExpressionInfo(m_divot, m_expressionLength, 0);
-    generator.emitPushScope(scope.get());
+    generator.emitPushWithScope(scope.get());
     RegisterID* result = generator.emitNode(dst, m_statement);
     generator.emitPopScope();
     return result;
@@ -1996,7 +1995,7 @@ RegisterID* TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
             tryData = generator.pushTry(here.get());
         }
         
-        generator.emitPushNewScope(exceptionRegister.get(), m_exceptionIdent, exceptionRegister.get());
+        generator.emitPushNameScope(m_exceptionIdent, exceptionRegister.get(), DontDelete);
         generator.emitNode(dst, m_catchBlock);
         generator.emitPopScope();
         generator.emitLabel(catchEndLabel.get());

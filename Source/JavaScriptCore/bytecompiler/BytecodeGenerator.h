@@ -296,8 +296,6 @@ namespace JSC {
         // the next instruction may overwrite it.
         RegisterID* newTemporary();
 
-        RegisterID* highestUsedRegister();
-
         // The same as newTemporary(), but this function returns "suggestion" if
         // "suggestion" is a temporary. This function is helpful in situations
         // where you've put "suggestion" in a RefPtr, but you'd like to allow
@@ -522,9 +520,9 @@ namespace JSC {
 
         void emitThrowReferenceError(const String& message);
 
-        void emitPushNewScope(RegisterID* dst, const Identifier& property, RegisterID* value);
+        void emitPushNameScope(const Identifier& property, RegisterID* value, unsigned attributes);
 
-        RegisterID* emitPushScope(RegisterID* scope);
+        RegisterID* emitPushWithScope(RegisterID* scope);
         void emitPopScope();
 
         void emitDebugHook(DebugHookID, int firstLine, int lastLine, int column);

@@ -642,14 +642,6 @@ RegisterID* BytecodeGenerator::newTemporary()
     return result;
 }
 
-RegisterID* BytecodeGenerator::highestUsedRegister()
-{
-    size_t count = m_codeBlock->m_numCalleeRegisters;
-    while (m_calleeRegisters.size() < count)
-        newRegister();
-    return &m_calleeRegisters.last();
-}
-
 PassRefPtr<LabelScope> BytecodeGenerator::newLabelScope(LabelScope::Type type, const Identifier* name)
 {
     // Reclaim free label scopes.
@@ -2093,15 +2085,14 @@ void BytecodeGenerator::emitToPrimitive(RegisterID* dst, RegisterID* src)
     instructions().append(src->index());
 }
 
-RegisterID* BytecodeGenerator::emitPushScope(RegisterID* scope)
+RegisterID* BytecodeGenerator::emitPushWithScope(RegisterID* scope)
 {
-    ASSERT(scope->isTemporary());
     ControlFlowContext context;
     context.isFinallyBlock = false;
     m_scopeContextStack.append(context);
     m_dynamicScopeDepth++;
 
-    return emitUnaryNoDstOp(op_push_scope, scope);
+    return emitUnaryNoDstOp(op_push_with_scope, scope);
 }
 
 void BytecodeGenerator::emitPopScope()
@@ -2452,17 +2443,17 @@ void BytecodeGenerator::emitThrowReferenceError(const String& message)
     instructions().append(addConstantValue(jsString(globalData(), message))->index());
 }
 
-void BytecodeGenerator::emitPushNewScope(RegisterID* dst, const Identifier& property, RegisterID* value)
+void BytecodeGenerator::emitPushNameScope(const Identifier& property, RegisterID* value, unsigned attributes)
 {
     ControlFlowContext context;
     context.isFinallyBlock = false;
     m_scopeContextStack.append(context);
     m_dynamicScopeDepth++;
 
-    emitOpcode(op_push_new_scope);
-    instructions().append(dst->index());
+    emitOpcode(op_push_name_scope);
     instructions().append(addConstant(property));
     instructions().append(value->index());
+    instructions().append(attributes);
 }
 
 void BytecodeGenerator::beginSwitch(RegisterID* scrutineeRegister, SwitchInfo::SwitchType type)

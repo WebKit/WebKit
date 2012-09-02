@@ -773,9 +773,9 @@ _llint_op_get_pnames:
     dispatch(0) # The slow_path either advances the PC or jumps us to somewhere else.
 
 
-_llint_op_push_scope:
+_llint_op_push_with_scope:
     traceExecution()
-    callSlowPath(_llint_slow_path_push_scope)
+    callSlowPath(_llint_slow_path_push_with_scope)
     dispatch(2)
 
 
@@ -785,9 +785,9 @@ _llint_op_pop_scope:
     dispatch(1)
 
 
-_llint_op_push_new_scope:
+_llint_op_push_name_scope:
     traceExecution()
-    callSlowPath(_llint_slow_path_push_new_scope)
+    callSlowPath(_llint_slow_path_push_name_scope)
     dispatch(4)
 
 
