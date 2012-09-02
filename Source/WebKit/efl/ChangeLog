@@ -1,3 +1,60 @@
+2012-09-01  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Refactoring the DumpRenderTreeSupportEfl
+        https://bugs.webkit.org/show_bug.cgi?id=95544
+
+        Reviewed by Gyuyoung Kim.
+
+        There are lots of repeated codes for getting the WebCore::Frame 
+        and WebCore::Page. To reduce these duplications, simple macros
+        are added.
+
+        No new tests, just refactoring.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::activeAnimationsCount):
+        (DumpRenderTreeSupportEfl::callShouldCloseOnWebView):
+        (DumpRenderTreeSupportEfl::clearFrameName):
+        (DumpRenderTreeSupportEfl::clearOpener):
+        (DumpRenderTreeSupportEfl::elementDoesAutoCompleteForElementWithId):
+        (DumpRenderTreeSupportEfl::frameChildren):
+        (DumpRenderTreeSupportEfl::frameParent):
+        (DumpRenderTreeSupportEfl::layoutFrame):
+        (DumpRenderTreeSupportEfl::numberOfPages):
+        (DumpRenderTreeSupportEfl::pageSizeAndMarginsInPixels):
+        (DumpRenderTreeSupportEfl::pageProperty):
+        (DumpRenderTreeSupportEfl::pauseAnimation):
+        (DumpRenderTreeSupportEfl::pauseTransition):
+        (DumpRenderTreeSupportEfl::pendingUnloadEventCount):
+        (DumpRenderTreeSupportEfl::renderTreeDump):
+        (DumpRenderTreeSupportEfl::responseMimeType):
+        (DumpRenderTreeSupportEfl::selectionRectangle):
+        (DumpRenderTreeSupportEfl::suitableDRTFrameName):
+        (DumpRenderTreeSupportEfl::setDefersLoading):
+        (DumpRenderTreeSupportEfl::setLoadsSiteIconsIgnoringImageLoadingSetting):
+        (DumpRenderTreeSupportEfl::addUserScript):
+        (DumpRenderTreeSupportEfl::clearUserScripts):
+        (DumpRenderTreeSupportEfl::addUserStyleSheet):
+        (DumpRenderTreeSupportEfl::clearUserStyleSheets):
+        (DumpRenderTreeSupportEfl::executeCoreCommandByName):
+        (DumpRenderTreeSupportEfl::findString):
+        (DumpRenderTreeSupportEfl::setCSSGridLayoutEnabled):
+        (DumpRenderTreeSupportEfl::isCommandEnabled):
+        (DumpRenderTreeSupportEfl::setSmartInsertDeleteEnabled):
+        (DumpRenderTreeSupportEfl::setSelectTrailingWhitespaceEnabled):
+        (DumpRenderTreeSupportEfl::evaluateInWebInspector):
+        (DumpRenderTreeSupportEfl::evaluateScriptInIsolatedWorld):
+        (DumpRenderTreeSupportEfl::globalContextRefForFrame):
+        (DumpRenderTreeSupportEfl::setInteractiveFormValidationEnabled):
+        (DumpRenderTreeSupportEfl::setValidationMessageTimerMagnification):
+        (DumpRenderTreeSupportEfl::setAuthorAndUserStylesEnabled):
+        (DumpRenderTreeSupportEfl::setComposition):
+        (DumpRenderTreeSupportEfl::hasComposition):
+        (DumpRenderTreeSupportEfl::compositionRange):
+        (DumpRenderTreeSupportEfl::confirmComposition):
+        (DumpRenderTreeSupportEfl::firstRectForCharacterRange):
+        (DumpRenderTreeSupportEfl::selectedRange):
+
 2012-08-31  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Add proper support for navigator.onLine and associated events
