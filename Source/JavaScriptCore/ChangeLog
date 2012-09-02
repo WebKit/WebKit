@@ -1,5 +1,18 @@
 2012-09-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Fixed failures seen on Linux bots.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_push_with_scope):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_push_with_scope):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h: push_*_scope doesn't have a destination operand anymore.
+        Accordingly, update these places in the baseline JIT, which I missed in my last patch.
+
+2012-09-02  Geoffrey Garen  <ggaren@apple.com>
+
         Refactored scope chain opcodes to support optimization for named function expressions
         https://bugs.webkit.org/show_bug.cgi?id=95658
 

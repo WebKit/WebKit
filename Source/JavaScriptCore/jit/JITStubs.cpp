@@ -3141,14 +3141,13 @@ DEFINE_STUB_FUNCTION(int, has_property)
     return result;
 }
 
-DEFINE_STUB_FUNCTION(JSObject*, op_push_with_scope)
+DEFINE_STUB_FUNCTION(void, op_push_with_scope)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
     JSObject* o = stackFrame.args[0].jsValue().toObject(stackFrame.callFrame);
-    CHECK_FOR_EXCEPTION();
+    CHECK_FOR_EXCEPTION_VOID();
     stackFrame.callFrame->setScope(JSWithScope::create(stackFrame.callFrame, o));
-    return o;
 }
 
 DEFINE_STUB_FUNCTION(void, op_pop_scope)

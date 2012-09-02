@@ -1362,7 +1362,7 @@ void JIT::emit_op_push_with_scope(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_push_with_scope);
     stubCall.addArgument(currentInstruction[1].u.operand);
-    stubCall.call(currentInstruction[1].u.operand);
+    stubCall.call();
 }
 
 void JIT::emit_op_pop_scope(Instruction*)
