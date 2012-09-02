@@ -212,8 +212,8 @@ public:
 
     void beginDeferredRepaints();
     void endDeferredRepaints();
-    void checkStopDelayingDeferredRepaints();
-    void stopDelayingDeferredRepaints();
+    void checkFlushDeferredRepaintsAfterLoadComplete();
+    void flushDeferredRepaints();
     void startDeferredRepaintTimer(double delay);
     void resetDeferredRepaintDelay();
 
@@ -265,7 +265,6 @@ public:
     static double currentPaintTimeStamp() { return sCurrentPaintTimeStamp; } // returns 0 if not painting
     
     void updateLayoutAndStyleIfNeededRecursive();
-    void flushDeferredRepaints();
 
     void incrementVisuallyNonEmptyCharacterCount(unsigned);
     void incrementVisuallyNonEmptyPixelCount(const IntSize&);
@@ -428,9 +427,10 @@ private:
 
     virtual void notifyPageThatContentAreaWillPaint() const;
 
+    bool shouldUseLoadTimeDeferredRepaintDelay() const;
     void deferredRepaintTimerFired(Timer<FrameView>*);
     void doDeferredRepaints();
-    void updateDeferredRepaintDelay();
+    void updateDeferredRepaintDelayAfterRepaint();
     double adjustedDeferredRepaintDelay() const;
 
     bool updateWidgets();
@@ -546,7 +546,7 @@ private:
     OwnPtr<ScrollableAreaSet> m_scrollableAreas;
     OwnPtr<FixedObjectSet> m_fixedObjects;
 
-    static double s_deferredRepaintDelay;
+    static double s_normalDeferredRepaintDelay;
     static double s_initialDeferredRepaintDelayDuringLoading;
     static double s_maxDeferredRepaintDelayDuringLoading;
     static double s_deferredRepaintDelayIncrementDuringLoading;
