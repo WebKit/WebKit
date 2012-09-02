@@ -1,3 +1,18 @@
+2012-09-02  Jessie Berlin  <jberlin@apple.com>
+
+        fast/html/marquee-alternate.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=94130
+
+        Reviewed by Simon Fraser.
+
+        Disable the test because it is flakey on so many platforms. Remove it from the Skipped and
+        TestExpectations files so that run-webkit-tests doesn't go looking for it.
+
+        * fast/html/marquee-alternate.html-disabled: Renamed from LayoutTests/fast/html/marquee-alternate.html.
+        * platform/chromium/TestExpectations:
+        * platform/efl/Skipped:
+        * platform/qt-arm/Skipped:
+
 2012-08-31  Dirk Schulze  <krit@webkit.org>
 
         Use -webkit-clip-path shapes to clip SVG elements

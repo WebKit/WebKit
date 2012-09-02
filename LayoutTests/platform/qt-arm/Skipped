@@ -118,7 +118,6 @@ compositing
 fast/events/click-count.html
 fast/events/dont-loose-last-event.html
 fast/forms/basic-selects.html
-fast/html/marquee-alternate.html
 http/tests/appcache/auth.html
 http/tests/inspector/extensions-ignore-cache.html
 http/tests/inspector/inspect-element.html

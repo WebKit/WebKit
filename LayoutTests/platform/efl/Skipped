@@ -547,7 +547,6 @@ fast/frames/frame-set-scaling-hit.html
 fast/gradients/generated-gradients.html
 fast/gradients/radial-centered.html
 fast/harness/user-preferred-language.html
-fast/html/marquee-alternate.html
 fast/inline-block/contenteditable-baseline.html
 fast/inline/continuation-outlines-with-layers-2.html
 fast/inline/continuation-outlines-with-layers.html
