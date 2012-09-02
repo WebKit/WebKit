@@ -330,8 +330,6 @@ private:
     
     String m_localStorageDirectory;
 
-    RefPtr<SandboxExtension> m_applicationCachePathExtension;
-
 #if ENABLE(PLUGIN_PROCESS)
     PluginProcessConnectionManager m_pluginProcessConnectionManager;
     bool m_disablePluginProcessMessageTimeout;
