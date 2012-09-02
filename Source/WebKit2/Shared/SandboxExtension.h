@@ -99,6 +99,8 @@ public:
     bool consume();
     bool consumePermanently();
 
+    static bool consumePermanently(const Handle&);
+
 private:
     explicit SandboxExtension(const Handle&);
                      

@@ -1,3 +1,50 @@
+2012-09-01  Sam Weinig  <sam@webkit.org>
+
+        Use dynamic sandbox extension rather than sandbox parameters for paths provided by the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=95651
+
+        Reviewed by Dan Bernstein.
+
+        This is the first step to not relying on the initialization message to initialize
+        the sandbox.
+
+        * Shared/SandboxExtension.h:
+        (SandboxExtension):
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::consumePermanently):
+        Add static version of SandboxExtension::consumePermanently which takes a
+        SandboxExtension::Handle. There is no reason to create a SandboxExtension
+        just to consume it forever.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        (WebProcessCreationParameters):
+        Add SandboxExtension::Handles for paths we need access to, and remove
+        webInspectorBaseDirectory, which is unused.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess):
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        Create SandboxExtension::Handles for paths we need access to, and move
+        getting the presenterApplicationPid to platformInitializeWebProcess, since
+        it is Mac only.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        Move setting the presenterApplicationPid to platformInitializeWebProcess.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::initializeSandbox):
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        Replace the use of sandbox parameters for opening access for necessary paths
+        with permanent consumption of sandbox extensions.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+        Remove sandbox rules that are now handled via extensions.
+
 2012-08-31  Byungwoo Lee  <bw80.lee@samsung.com>
 
         Build warning : -Wformat on WebMemorySampler.cpp.

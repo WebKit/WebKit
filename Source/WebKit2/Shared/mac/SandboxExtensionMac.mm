@@ -290,6 +290,19 @@ bool SandboxExtension::consumePermanently()
     return result;
 }
 
+bool SandboxExtension::consumePermanently(const Handle& handle)
+{
+    ASSERT(handle.m_sandboxExtension);
+
+    bool result = WKSandboxExtensionConsume(handle.m_sandboxExtension);
+    
+    // Destroy the extension without invalidating it.
+    WKSandboxExtensionDestroy(handle.m_sandboxExtension);
+    handle.m_sandboxExtension = 0;
+
+    return result;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WEB_PROCESS_SANDBOX)

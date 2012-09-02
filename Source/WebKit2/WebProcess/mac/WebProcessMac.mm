@@ -205,8 +205,6 @@ static void initializeSandbox(const WebProcessCreationParameters& parameters)
 
     // These are read-only.
     appendReadonlySandboxDirectory(sandboxParameters, "WEBKIT2_FRAMEWORK_DIR", [[[NSBundle bundleForClass:NSClassFromString(@"WKView")] bundlePath] stringByDeletingLastPathComponent]);
-    appendReadonlySandboxDirectory(sandboxParameters, "UI_PROCESS_BUNDLE_RESOURCE_DIR", parameters.uiProcessBundleResourcePath);
-    appendReadonlySandboxDirectory(sandboxParameters, "WEBKIT_WEB_INSPECTOR_DIR", parameters.webInspectorBaseDirectory);
 
     // These are read-write getconf paths.
     appendReadwriteConfDirectory(sandboxParameters, "DARWIN_USER_TEMP_DIR", _CS_DARWIN_USER_TEMP_DIR);
@@ -214,10 +212,6 @@ static void initializeSandbox(const WebProcessCreationParameters& parameters)
 
     // These are read-write paths.
     appendReadwriteSandboxDirectory(sandboxParameters, "HOME_DIR", NSHomeDirectory());
-    appendReadwriteSandboxDirectory(sandboxParameters, "WEBKIT_DATABASE_DIR", parameters.databaseDirectory);
-    appendReadwriteSandboxDirectory(sandboxParameters, "WEBKIT_LOCALSTORAGE_DIR", parameters.localStorageDirectory);
-    appendReadwriteSandboxDirectory(sandboxParameters, "WEBKIT_APPLICATION_CACHE_DIR", parameters.applicationCacheDirectory);
-    appendReadwriteSandboxDirectory(sandboxParameters, "NSURL_CACHE_DIR", parameters.nsURLCachePath);
 
     sandboxParameters.append(static_cast<const char*>(0));
 
@@ -258,6 +252,12 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
     initializeSandbox(parameters);
 
+    SandboxExtension::consumePermanently(parameters.uiProcessBundleResourcePathExtensionHandle);
+    SandboxExtension::consumePermanently(parameters.localStorageDirectoryExtensionHandle);
+    SandboxExtension::consumePermanently(parameters.databaseDirectoryExtensionHandle);
+    SandboxExtension::consumePermanently(parameters.applicationCacheDirectoryExtensionHandle);
+    SandboxExtension::consumePermanently(parameters.nsURLCachePathExtensionHandle);
+
     if (!parameters.parentProcessName.isNull()) {
         NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content", "Visible name of the web process. The argument is the application name."), (NSString *)parameters.parentProcessName];
         WKSetVisibleApplicationName((CFStringRef)applicationName);
@@ -276,6 +276,8 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationManager.initialize(parameters.notificationPermissions);
 #endif
+
+    m_presenterApplicationPid = parameters.presenterApplicationPid;
 
     // rdar://9118639 accessibilityFocusedUIElement in NSApplication defaults to use the keyWindow. Since there's
     // no window in WK2, NSApplication needs to use the focused page's focused element.

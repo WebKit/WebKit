@@ -52,8 +52,11 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(injectedBundlePath);
     encoder->encode(injectedBundlePathExtensionHandle);
     encoder->encode(applicationCacheDirectory);
+    encoder->encode(applicationCacheDirectoryExtensionHandle);
     encoder->encode(databaseDirectory);
+    encoder->encode(databaseDirectoryExtensionHandle);
     encoder->encode(localStorageDirectory);
+    encoder->encode(localStorageDirectoryExtensionHandle);
     encoder->encode(urlSchemesRegistererdAsEmptyDocument);
     encoder->encode(urlSchemesRegisteredAsSecure);
     encoder->encode(urlSchemesForWhichDomainRelaxationIsForbidden);
@@ -78,11 +81,12 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(parentProcessName);
     encoder->encode(presenterApplicationPid);
     encoder->encode(nsURLCachePath);
+    encoder->encode(nsURLCachePathExtensionHandle);
     encoder->encode(nsURLCacheMemoryCapacity);
     encoder->encode(nsURLCacheDiskCapacity);
     encoder->encode(acceleratedCompositingPort);
     encoder->encode(uiProcessBundleResourcePath);
-    encoder->encode(webInspectorBaseDirectory);
+    encoder->encode(uiProcessBundleResourcePathExtensionHandle);
 #elif PLATFORM(WIN)
     encoder->encode(shouldPaintNativeControls);
     encoder->encode(cfURLCachePath);
@@ -114,9 +118,15 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
     if (!decoder->decode(parameters.applicationCacheDirectory))
         return false;
+    if (!decoder->decode(parameters.applicationCacheDirectoryExtensionHandle))
+        return false;
     if (!decoder->decode(parameters.databaseDirectory))
         return false;
+    if (!decoder->decode(parameters.databaseDirectoryExtensionHandle))
+        return false;
     if (!decoder->decode(parameters.localStorageDirectory))
+        return false;
+    if (!decoder->decode(parameters.localStorageDirectoryExtensionHandle))
         return false;
     if (!decoder->decode(parameters.urlSchemesRegistererdAsEmptyDocument))
         return false;
@@ -162,6 +172,8 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
     if (!decoder->decode(parameters.nsURLCachePath))
         return false;
+    if (!decoder->decode(parameters.nsURLCachePathExtensionHandle))
+        return false;
     if (!decoder->decode(parameters.nsURLCacheMemoryCapacity))
         return false;
     if (!decoder->decode(parameters.nsURLCacheDiskCapacity))
@@ -170,7 +182,7 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
     if (!decoder->decode(parameters.uiProcessBundleResourcePath))
         return false;
-    if (!decoder->decode(parameters.webInspectorBaseDirectory))
+    if (!decoder->decode(parameters.uiProcessBundleResourcePathExtensionHandle))
         return false;
 #elif PLATFORM(WIN)
     if (!decoder->decode(parameters.shouldPaintNativeControls))

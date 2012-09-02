@@ -307,21 +307,25 @@ PassRefPtr<WebProcessProxy> WebContext::createNewWebProcess()
 
     WebProcessCreationParameters parameters;
 
-    if (!injectedBundlePath().isEmpty()) {
-        parameters.injectedBundlePath = injectedBundlePath();
+    parameters.injectedBundlePath = injectedBundlePath();
+    if (!parameters.injectedBundlePath.isEmpty())
         SandboxExtension::createHandle(parameters.injectedBundlePath, SandboxExtension::ReadOnly, parameters.injectedBundlePathExtensionHandle);
-    }
+
+    parameters.applicationCacheDirectory = applicationCacheDirectory();
+    if (!parameters.applicationCacheDirectory.isEmpty())
+        SandboxExtension::createHandle(parameters.applicationCacheDirectory, SandboxExtension::ReadWrite, parameters.applicationCacheDirectoryExtensionHandle);
+
+    parameters.databaseDirectory = databaseDirectory();
+    if (!parameters.databaseDirectory.isEmpty())
+        SandboxExtension::createHandle(parameters.databaseDirectory, SandboxExtension::ReadWrite, parameters.databaseDirectoryExtensionHandle);
+
+    parameters.localStorageDirectory = localStorageDirectory();
+    if (!parameters.localStorageDirectory.isEmpty())
+        SandboxExtension::createHandle(parameters.localStorageDirectory, SandboxExtension::ReadWrite, parameters.localStorageDirectoryExtensionHandle);
 
     parameters.shouldTrackVisitedLinks = m_historyClient.shouldTrackVisitedLinks();
     parameters.cacheModel = m_cacheModel;
     parameters.languages = userPreferredLanguages();
-    parameters.applicationCacheDirectory = applicationCacheDirectory();
-    parameters.databaseDirectory = databaseDirectory();
-    parameters.localStorageDirectory = localStorageDirectory();
-
-#if PLATFORM(MAC)
-    parameters.presenterApplicationPid = getpid();
-#endif
 
     copyToVector(m_schemesToRegisterAsEmptyDocument, parameters.urlSchemesRegistererdAsEmptyDocument);
     copyToVector(m_schemesToRegisterAsSecure, parameters.urlSchemesRegisteredAsSecure);

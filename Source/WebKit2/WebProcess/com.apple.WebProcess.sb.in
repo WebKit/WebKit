@@ -107,30 +107,6 @@
 (if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
     (allow file* (subpath (param "DARWIN_USER_TEMP_DIR"))))
 
-;; Database directory.
-(if (positive? (string-length (param "WEBKIT_DATABASE_DIR")))
-    (allow file* (subpath (param "WEBKIT_DATABASE_DIR"))))
-
-;; LocalStorage directory.
-(if (positive? (string-length (param "WEBKIT_LOCALSTORAGE_DIR")))
-    (allow file* (subpath (param "WEBKIT_LOCALSTORAGE_DIR"))))
-
-;; ApplicationCache directory.
-(if (positive? (string-length (param "WEBKIT_APPLICATION_CACHE_DIR")))
-    (allow file* (subpath (param "WEBKIT_APPLICATION_CACHE_DIR"))))
-
-;; The Web Inspector directory.
-(if (positive? (string-length (param "WEBKIT_WEB_INSPECTOR_DIR")))
-    (allow file-read* (subpath (param "WEBKIT_WEB_INSPECTOR_DIR"))))
-
-;; The NSURLCache directory.
-(if (positive? (string-length (param "NSURL_CACHE_DIR")))
-    (allow file* (subpath (param "NSURL_CACHE_DIR"))))
-
-;; The bundle resource path of the UI process.
-(if (positive? (string-length (param "UI_PROCESS_BUNDLE_RESOURCE_DIR")))
-    (allow file-read* (subpath (param "UI_PROCESS_BUNDLE_RESOURCE_DIR"))))
-
 ;; IOKit user clients
 (allow iokit-open
        (iokit-connection "IOAccelerator")

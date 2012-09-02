@@ -253,10 +253,6 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 
     for (size_t i = 0; i < parameters.mimeTypesWithCustomRepresentation.size(); ++i)
         m_mimeTypesWithCustomRepresentations.add(parameters.mimeTypesWithCustomRepresentation[i]);
-    
-#if PLATFORM(MAC)
-    m_presenterApplicationPid = parameters.presenterApplicationPid;
-#endif
 
     if (parameters.shouldAlwaysUseComplexTextCodePath)
         setAlwaysUsesComplexTextCodePath(true);

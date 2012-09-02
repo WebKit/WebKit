@@ -75,24 +75,28 @@ String WebContext::applicationCacheDirectory()
 
 void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
+    parameters.presenterApplicationPid = getpid();
+
     if (!omitPDFSupport()) {
         // We want to use a PDF view in the UI process for PDF MIME types.
         HashSet<String, CaseFoldingHash> mimeType = pdfAndPostScriptMIMETypes();
         parameters.mimeTypesWithCustomRepresentation.appendRange(mimeType.begin(), mimeType.end());
     }
 
+    parameters.parentProcessName = [[NSProcessInfo processInfo] processName];    
+
     RetainPtr<CFStringRef> cachePath(AdoptCF, WKCopyFoundationCacheDirectory());
     if (!cachePath)
         cachePath = reinterpret_cast<CFStringRef>(NSHomeDirectory());
 
-    NSURLCache *urlCache = [NSURLCache sharedURLCache];
-
-    parameters.parentProcessName = [[NSProcessInfo processInfo] processName];    
     parameters.nsURLCachePath = [(NSString *)cachePath.get() stringByStandardizingPath];
+    SandboxExtension::createHandle(parameters.nsURLCachePath, SandboxExtension::ReadWrite, parameters.nsURLCachePathExtensionHandle);
+    ASSERT(!parameters.nsURLCachePath.isEmpty());
+
+    NSURLCache *urlCache = [NSURLCache sharedURLCache];
     parameters.nsURLCacheMemoryCapacity = [urlCache memoryCapacity];
     parameters.nsURLCacheDiskCapacity = [urlCache diskCapacity];
 
-    ASSERT(!parameters.nsURLCachePath.isEmpty());
 
 #if ENABLE(PLUGIN_PROCESS)
     parameters.disablePluginProcessMessageTimeout = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitDisablePluginProcessMessageTimeout"];
@@ -110,6 +114,7 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     // FIXME: This should really be configurable; we shouldn't just blindly allow read access to the UI process bundle.
     parameters.uiProcessBundleResourcePath = [[NSBundle mainBundle] resourcePath];
+    SandboxExtension::createHandle(parameters.uiProcessBundleResourcePath, SandboxExtension::ReadOnly, parameters.uiProcessBundleResourcePathExtensionHandle);
 
     parameters.uiProcessBundleIdentifier = String([[NSBundle mainBundle] bundleIdentifier]);
     
