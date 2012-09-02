@@ -1,3 +1,27 @@
+2012-09-02  Byungwoo Lee  <bw80.lee@gmail.com>
+
+        [EFL] Add missing semicolon at the end of some lines.
+        https://bugs.webkit.org/show_bug.cgi?id=95640
+
+        Reviewed by Gyuyoung Kim.
+
+        EWK_VIEW_PRIV_GET_OR_RETURN macro and other related macro can be used
+        without semicolon, because it ends with a semicolon or complete block.
+        This can make a human mistake about missing semicolon.
+
+        Fixed the macros to require semicolon, and added missing semicolons.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_smart_focus_in):
+        (_ewk_view_smart_focus_out):
+        (_ewk_view_smart_mouse_wheel):
+        (_ewk_view_smart_mouse_down):
+        (_ewk_view_smart_mouse_up):
+        (_ewk_view_smart_mouse_move):
+        (_ewk_view_smart_key_down):
+        (_ewk_view_smart_key_up):
+        (_ewk_view_initialize):
+
 2012-09-01  Sam Weinig  <sam@webkit.org>
 
         Remove unused member variable from WebProcess.
