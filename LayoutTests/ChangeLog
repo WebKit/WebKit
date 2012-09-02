@@ -1,3 +1,31 @@
+2012-08-31  Dirk Schulze  <krit@webkit.org>
+
+        Use -webkit-clip-path shapes to clip SVG elements
+        https://bugs.webkit.org/show_bug.cgi?id=95620
+
+        Reviewed by Rob Buis.
+
+        New tests to check behavior of -webkit-clip-path on SVG elements.
+
+        * svg/clip-path/clip-path-shape-circle-1-expected.svg: Added.
+        * svg/clip-path/clip-path-shape-circle-1.svg: Added.
+        * svg/clip-path/clip-path-shape-circle-2-expected.svg: Added.
+        * svg/clip-path/clip-path-shape-circle-2.svg: Added.
+        * svg/clip-path/clip-path-shape-ellipse-1-expected.svg: Added.
+        * svg/clip-path/clip-path-shape-ellipse-1.svg: Added.
+        * svg/clip-path/clip-path-shape-ellipse-2-expected.svg: Added.
+        * svg/clip-path/clip-path-shape-ellipse-2.svg: Added.
+        * svg/clip-path/clip-path-shape-polygon-1-expected.svg: Added.
+        * svg/clip-path/clip-path-shape-polygon-1.svg: Added.
+        * svg/clip-path/clip-path-shape-polygon-2-expected.svg: Added.
+        * svg/clip-path/clip-path-shape-polygon-2.svg: Added.
+        * svg/clip-path/clip-path-shape-polygon-3-expected.svg: Added.
+        * svg/clip-path/clip-path-shape-polygon-3.svg: Added.
+        * svg/clip-path/clip-path-shape-rounded-rect-1-expected.svg: Added.
+        * svg/clip-path/clip-path-shape-rounded-rect-1.svg: Added.
+        * svg/clip-path/clip-path-shape-rounded-rect-2-expected.svg: Added.
+        * svg/clip-path/clip-path-shape-rounded-rect-2.svg: Added.
+
 2012-09-01  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Remove hard-coded skipped directories in chromium_android.py

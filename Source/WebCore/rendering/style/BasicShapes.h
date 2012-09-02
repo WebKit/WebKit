@@ -38,31 +38,26 @@
 
 namespace WebCore {
 
-class BasicShape : public WTF::RefCountedBase {
+class FloatRect;
+class Path;
+
+class BasicShape : public RefCounted<BasicShape> {
 public:
+    virtual ~BasicShape() { }
+
     enum Type {
         BASIC_SHAPE_RECTANGLE = 1,
         BASIC_SHAPE_CIRCLE = 2,
         BASIC_SHAPE_ELLIPSE = 3,
         BASIC_SHAPE_POLYGON = 4
     };
-    
-    void deref() 
-    {
-        if (derefBase())
-            destroy();
-    }
 
-    Type type() const { return m_type; }
+    virtual void path(Path&, const FloatRect&) = 0;
+    virtual WindRule windRule() const { return RULE_NONZERO; }
 
+    virtual Type type() const = 0;
 protected:
-    BasicShape(Type type)
-        : m_type(type)
-    { }
-    
-private:
-    void destroy();
-    Type m_type;
+    BasicShape() { }
 };
 
 class BasicShapeRectangle : public BasicShape {
@@ -82,11 +77,13 @@ public:
     void setHeight(Length height) { m_height = height; }
     void setCornerRadiusX(Length radiusX) { m_cornerRadiusX = radiusX; }
     void setCornerRadiusY(Length radiusY) { m_cornerRadiusY = radiusY; }
-    
+
+    virtual void path(Path&, const FloatRect&);
+
+    virtual Type type() const { return BASIC_SHAPE_RECTANGLE; }
 private:
     BasicShapeRectangle()
-        : BasicShape(BASIC_SHAPE_RECTANGLE)
-        , m_cornerRadiusX(Undefined)
+        : m_cornerRadiusX(Undefined)
         , m_cornerRadiusY(Undefined)
     { }
 
@@ -110,10 +107,11 @@ public:
     void setCenterY(Length centerY) { m_centerY = centerY; }
     void setRadius(Length radius) { m_radius = radius; }
 
+    virtual void path(Path&, const FloatRect&);
+
+    virtual Type type() const { return BASIC_SHAPE_CIRCLE; }
 private:
-    BasicShapeCircle() 
-        : BasicShape(BASIC_SHAPE_CIRCLE)
-    { }
+    BasicShapeCircle() { }
 
     Length m_centerX;
     Length m_centerY;
@@ -134,10 +132,11 @@ public:
     void setRadiusX(Length radiusX) { m_radiusX = radiusX; }
     void setRadiusY(Length radiusY) { m_radiusY = radiusY; }
 
+    virtual void path(Path&, const FloatRect&);
+
+    virtual Type type() const { return BASIC_SHAPE_ELLIPSE; } 
 private:
-    BasicShapeEllipse() 
-        : BasicShape(BASIC_SHAPE_ELLIPSE)
-    { }
+    BasicShapeEllipse() { }
 
     Length m_centerX;
     Length m_centerY;
@@ -149,7 +148,6 @@ class BasicShapePolygon : public BasicShape {
 public:
     static PassRefPtr<BasicShapePolygon> create() { return adoptRef(new BasicShapePolygon); }
 
-    WindRule windRule() const { return m_windRule; }
     const Vector<Length>& values() const { return m_values; }
     Length getXAt(unsigned i) const { return m_values.at(2 * i); }
     Length getYAt(unsigned i) const { return m_values.at(2 * i + 1); }
@@ -157,10 +155,13 @@ public:
     void setWindRule(WindRule windRule) { m_windRule = windRule; }
     void appendPoint(Length x, Length y) { m_values.append(x); m_values.append(y); }
 
+    virtual void path(Path&, const FloatRect&);
+    virtual WindRule windRule() const { return m_windRule; }
+
+    virtual Type type() const { return BASIC_SHAPE_POLYGON; }
 private:
     BasicShapePolygon()
-        : BasicShape(BASIC_SHAPE_POLYGON)
-        , m_windRule(RULE_NONZERO)
+        : m_windRule(RULE_NONZERO)
     { }
 
     WindRule m_windRule;

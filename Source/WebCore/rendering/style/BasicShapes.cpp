@@ -30,26 +30,64 @@
 #include "config.h"
 
 #include "BasicShapes.h"
+#include "FloatRect.h"
+#include "LengthFunctions.h"
+#include "Path.h"
 
 namespace WebCore {
 
-void BasicShape::destroy()
+void BasicShapeRectangle::path(Path& path, const FloatRect& boundingBox)
 {
-    switch (m_type) {
-    case BASIC_SHAPE_RECTANGLE:
-        delete static_cast<BasicShapeRectangle*>(this);
-        return;
-    case BASIC_SHAPE_CIRCLE:
-        delete static_cast<BasicShapeCircle*>(this);
-        return;
-    case BASIC_SHAPE_ELLIPSE:
-        delete static_cast<BasicShapeEllipse*>(this);
-        return;
-    case BASIC_SHAPE_POLYGON:
-        delete static_cast<BasicShapePolygon*>(this);
-        return;
-    }
-    ASSERT_NOT_REACHED();
+    ASSERT(path.isEmpty());
+    path.addRoundedRect(FloatRect(floatValueForLength(m_x, boundingBox.width()) + boundingBox.x(),
+                                  floatValueForLength(m_y, boundingBox.height()) + boundingBox.y(),
+                                  floatValueForLength(m_width, boundingBox.width()),
+                                  floatValueForLength(m_height, boundingBox.height())),
+                        FloatSize(m_cornerRadiusX.isUndefined() ? 0 : floatValueForLength(m_cornerRadiusX, boundingBox.width()),
+                                  m_cornerRadiusY.isUndefined() ? 0 : floatValueForLength(m_cornerRadiusY, boundingBox.height())));
 }
 
+void BasicShapeCircle::path(Path& path, const FloatRect& boundingBox)
+{
+    ASSERT(path.isEmpty());
+    float diagonal = sqrtf((boundingBox.width() * boundingBox.width() + boundingBox.height() * boundingBox.height()) / 2);
+    float centerX = floatValueForLength(m_centerX, boundingBox.width());
+    float centerY = floatValueForLength(m_centerY, boundingBox.height());
+    float radius = floatValueForLength(m_radius, diagonal);
+    path.addEllipse(FloatRect(centerX - radius + boundingBox.x(),
+                              centerY - radius + boundingBox.y(),
+                              radius * 2,
+                              radius * 2));
+}
+
+void BasicShapeEllipse::path(Path& path, const FloatRect& boundingBox)
+{
+    ASSERT(path.isEmpty());
+    float centerX = floatValueForLength(m_centerX, boundingBox.width());
+    float centerY = floatValueForLength(m_centerY, boundingBox.height());
+    float radiusX = floatValueForLength(m_radiusX, boundingBox.width());
+    float radiusY = floatValueForLength(m_radiusY, boundingBox.height());
+    path.addEllipse(FloatRect(centerX - radiusX + boundingBox.x(),
+                              centerY - radiusY + boundingBox.y(),
+                              radiusX * 2,
+                              radiusY * 2));
+}
+
+void BasicShapePolygon::path(Path& path, const FloatRect& boundingBox)
+{
+    ASSERT(path.isEmpty());
+    ASSERT(!(m_values.size() % 2));
+    size_t length = m_values.size();
+    
+    if (!length)
+        return;
+
+    path.moveTo(FloatPoint(floatValueForLength(m_values.at(0), boundingBox.width()),
+                           floatValueForLength(m_values.at(1), boundingBox.width())));
+    for (size_t i = 2; i < length; i = i + 2) {
+        path.addLineTo(FloatPoint(floatValueForLength(m_values.at(i), boundingBox.width()),
+                                  floatValueForLength(m_values.at(i + 1), boundingBox.width())));
+    }
+    path.closeSubpath();
+}
 }
