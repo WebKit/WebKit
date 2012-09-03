@@ -1,3 +1,15 @@
+2012-09-03  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [GTK][EFL] 'dictIter' iterator is not initialized for an inner loop
+        https://bugs.webkit.org/show_bug.cgi?id=95436
+
+        Reviewed by Gustavo Noronha Silva.
+
+        'checkSpellingOfString' from the TextCheckerEnchant class can not mark multiplie words that are misspelled.
+        It's possible to mark misspeled string only by defining its location and length.
+
+        * platform/gtk/TestExpectations: Added spelling-backspace-between-lines.html to TestExpectations.
+
 2012-09-03  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Mark several inspector test as flaky

@@ -78,7 +78,6 @@ void TextCheckerEnchant::checkSpellingOfString(const String& string, int& misspe
 
     CString utf8String = string.utf8();
     const char* cString = utf8String.data();
-    Vector<EnchantDict*>::const_iterator dictIter = m_enchantDictionaries.begin();
 
     for (size_t i = 0; i < numberOfCharacters + 1; i++) {
         // We go through each character until we find the beginning of the word
@@ -100,7 +99,7 @@ void TextCheckerEnchant::checkSpellingOfString(const String& string, int& misspe
             char* cstart = g_utf8_offset_to_pointer(cString, start);
             int numberOfBytes = static_cast<int>(g_utf8_offset_to_pointer(cString, end) - cstart);
 
-            for (; dictIter != m_enchantDictionaries.end(); ++dictIter) {
+            for (Vector<EnchantDict*>::const_iterator dictIter = m_enchantDictionaries.begin(); dictIter != m_enchantDictionaries.end(); ++dictIter) {
                 if (enchant_dict_check(*dictIter, cstart, numberOfBytes)) {
                     misspellingLocation = start;
                     misspellingLength = wordLength;

@@ -1025,6 +1025,9 @@ BUGWK53707 : http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml = T
 BUGWKGTK : editing/spelling/grammar.html = TEXT
 BUGWKGTK SKIP : editing/spelling/grammar-paste.html = TEXT
 
+// TextCheckerEnchant::checkSpellingOfString doesn't return misspelled location and length for multiple words.
+BUGWKGTK : editing/spelling/spelling-backspace-between-lines.html = TEXT
+
 // testRunner::setTextDirection() is not implemented.
 BUGWKGTK : fast/html/set-text-direction.html = TEXT
 
