@@ -43,6 +43,7 @@ typedef struct _Url_Bar {
 Url_Bar *url_bar_add(Evas_Object* webview, int width);
 void url_bar_del(Url_Bar *urlBar);
 void url_bar_url_set(Url_Bar *urlBar, const char *url);
+void url_bar_width_set(Url_Bar *urlBar, int width);
 
 #ifdef __cplusplus
 }

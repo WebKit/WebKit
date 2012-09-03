@@ -155,6 +155,21 @@ static void browserDestroy(Ecore_Evas *ee);
 static void closeWindow(Ecore_Evas *ee);
 static int browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Rectangle geometry, const char *engine, const char *backingStore, unsigned char isFlattening, unsigned char isFullscreen, const char *databasePath);
 
+static ELauncher *
+find_app_from_ee(Ecore_Evas *ee)
+{
+    Eina_List *l;
+    void *data;
+
+    EINA_LIST_FOREACH(windows, l, data)
+    {
+        ELauncher *app = (ELauncher *) data;
+        if (app->ee == ee)
+            return app;
+    }
+    return NULL;
+}
+
 static void
 print_history(Eina_List *list)
 {
@@ -215,19 +230,24 @@ zoom_level_set(Evas_Object *webview, int level)
 static void
 on_ecore_evas_resize(Ecore_Evas *ee)
 {
+    ELauncher *app;
     Evas_Object *webview;
     Evas_Object *bg;
     int w, h;
 
     ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
 
+    /* Resize URL bar */
+    app = find_app_from_ee(ee);
+    url_bar_width_set(app->url_bar, w);
+
     bg = evas_object_name_find(ecore_evas_get(ee), "bg");
     evas_object_move(bg, 0, 0);
     evas_object_resize(bg, w, h);
 
     webview = evas_object_name_find(ecore_evas_get(ee), "browser");
-    evas_object_move(webview, 10, 10);
-    evas_object_resize(webview, w - 20, h - 20);
+    evas_object_move(webview, 0, URL_BAR_HEIGHT);
+    evas_object_resize(webview, w, h - URL_BAR_HEIGHT);
 }
 
 static void
@@ -743,15 +763,11 @@ browserDestroy(Ecore_Evas *ee)
 static void
 closeWindow(Ecore_Evas *ee)
 {
-    Eina_List *l;
-    void *app;
-    EINA_LIST_FOREACH(windows, l, app)
-    {
-        if (((ELauncher*) app)->ee == ee)
-            break;
-    }
+    ELauncher *app;
+
+    app = find_app_from_ee(ee);
     windows = eina_list_remove(windows, app);
-    url_bar_del(((ELauncher *)app)->url_bar);
+    url_bar_del(app->url_bar);
     browserDestroy(ee);
     free(app);
 }

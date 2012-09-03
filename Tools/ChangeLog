@@ -1,3 +1,27 @@
+2012-09-03  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Fix resizing issues related to URL bar in Minibrowser / EWebLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=95670
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix layout issues related to the URL bar in Minibrowser
+        and EWebLauncher when the window is resized.
+
+        The URL bar was not resized accordingly and the Web
+        page was moved behing the URL bar, hiding part of it.
+
+        * EWebLauncher/main.c:
+        (on_ecore_evas_resize):
+        (closeWindow):
+        * EWebLauncher/url_bar.c:
+        (url_bar_width_set):
+        (url_bar_add):
+        * EWebLauncher/url_bar.h:
+        * MiniBrowser/efl/main.c:
+        (on_ecore_evas_resize):
+        (main):
+
 2012-09-01  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Remove hard-coded skipped directories in chromium_android.py

@@ -45,6 +45,8 @@ typedef struct _MiniBrowser {
     Url_Bar *url_bar;
 } MiniBrowser;
 
+MiniBrowser *browser;
+
 static const Ecore_Getopt options = {
     "MiniBrowser",
     "%prog [options] [url]",
@@ -87,13 +89,16 @@ static void on_ecore_evas_resize(Ecore_Evas *ee)
 
     ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
 
+    /* Resize URL bar */
+    url_bar_width_set(browser->url_bar, w);
+
     bg = evas_object_name_find(ecore_evas_get(ee), "bg");
     evas_object_move(bg, 0, 0);
     evas_object_resize(bg, w, h);
 
     webview = evas_object_name_find(ecore_evas_get(ee), "browser");
-    evas_object_move(webview, 0, 0);
-    evas_object_resize(webview, w, h);
+    evas_object_move(webview, 0, URL_BAR_HEIGHT);
+    evas_object_resize(webview, w, h - URL_BAR_HEIGHT);
 }
 
 static void
@@ -283,7 +288,7 @@ int main(int argc, char *argv[])
     else
         url = DEFAULT_URL;
 
-    MiniBrowser *browser = browserCreate(url, engine);
+    browser = browserCreate(url, engine);
     if (!browser)
         return quit(EINA_FALSE, "ERROR: could not create browser.\n");
 

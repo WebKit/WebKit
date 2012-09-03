@@ -26,6 +26,7 @@
 #include "url_bar.h"
 
 #include <Edje.h>
+#include <Ecore_Evas.h>
 #include <Ecore_File.h>
 
 #define PADDING_SIZE 5
@@ -79,6 +80,16 @@ on_urlbar_focus_out(void *data, Evas *e, Evas_Object *obj, void *event_info)
     edje_object_signal_emit(urlBar->entry, "entry,action,unfocus", "entry");
 }
 
+void
+url_bar_width_set(Url_Bar *urlBar, int width)
+{
+    evas_object_move(urlBar->area, 0, 0);
+    evas_object_resize(urlBar->area, width, URL_BAR_HEIGHT);
+
+    evas_object_move(urlBar->entry, PADDING_SIZE, PADDING_SIZE);
+    evas_object_resize(urlBar->entry, width - PADDING_SIZE * 2, URL_BAR_HEIGHT - PADDING_SIZE * 2);
+}
+
 Url_Bar *
 url_bar_add(Evas_Object *webView, int width)
 {
@@ -94,9 +105,6 @@ url_bar_add(Evas_Object *webView, int width)
     url_bar->area = evas_object_rectangle_add(evas);
     evas_object_name_set(url_bar->area, "url_barArea");
     evas_object_color_set(url_bar->area, 255, 255, 255, 255);
-    evas_object_move(url_bar->area, 0, 0);
-    evas_object_resize(url_bar->area, width, URL_BAR_HEIGHT);
-    evas_object_show(url_bar->area);
 
     url_bar->entry = edje_object_add(evas);
     Eina_Bool ret = edje_object_file_set(url_bar->entry, THEME_DIR"/entry.edj", "control/entry/base/default");
@@ -108,9 +116,12 @@ url_bar_add(Evas_Object *webView, int width)
     }
 
     edje_object_part_text_set(url_bar->entry, "url.text", "");
-    evas_object_move(url_bar->entry, PADDING_SIZE, PADDING_SIZE);
-    evas_object_resize(url_bar->entry, width - PADDING_SIZE * 2, URL_BAR_HEIGHT - PADDING_SIZE * 2);
+
+    /* Set URL bar dimensions and show it */
+    url_bar_width_set(url_bar, width);
+    evas_object_show(url_bar->area);
     evas_object_show(url_bar->entry);
+
     evas_object_event_callback_add(url_bar->entry, EVAS_CALLBACK_MOUSE_DOWN, on_urlbar_mouse_down, url_bar);
     evas_object_event_callback_add(url_bar->entry, EVAS_CALLBACK_KEY_DOWN, on_urlbar_key_down, url_bar);
     evas_object_event_callback_add(url_bar->entry, EVAS_CALLBACK_FOCUS_OUT, on_urlbar_focus_out, url_bar);
