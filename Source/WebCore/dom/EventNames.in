@@ -31,6 +31,7 @@ AudioProcessingEvent conditional=WEB_AUDIO
 OfflineAudioCompletionEvent conditional=WEB_AUDIO
 MediaStreamEvent conditional=MEDIA_STREAM
 MediaStreamTrackEvent conditional=MEDIA_STREAM
+RTCIceCandidateEvent conditional=MEDIA_STREAM
 SpeechInputEvent conditional=INPUT_SPEECH
 SpeechRecognitionError conditional=SCRIPTED_SPEECH
 SpeechRecognitionEvent conditional=SCRIPTED_SPEECH

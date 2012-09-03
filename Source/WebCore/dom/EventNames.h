@@ -227,6 +227,8 @@ namespace WebCore {
     macro(removetrack) \
     macro(mute) \
     macro(unmute) \
+    macro(icechange) \
+    macro(icecandidate) \
     \
     macro(show) \
     \

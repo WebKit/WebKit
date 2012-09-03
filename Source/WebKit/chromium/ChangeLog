@@ -1,3 +1,12 @@
+2012-09-03  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Add Ice-related functionality to RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=95565
+
+        Reviewed by Adam Barth.
+
+        * src/AssertMatchingEnums.cpp:
+
 2012-09-01  James Robinson  <jamesr@chromium.org>
 
         Unreviewed chromium buildfix when use_libcc_for_compositor=1

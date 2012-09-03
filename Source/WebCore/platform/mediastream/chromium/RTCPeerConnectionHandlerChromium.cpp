@@ -36,11 +36,13 @@
 
 #include "MediaConstraints.h"
 #include "RTCConfiguration.h"
+#include "RTCIceCandidateDescriptor.h"
 #include "RTCPeerConnectionHandlerClient.h"
 #include <public/Platform.h>
 #include <public/WebMediaConstraints.h>
 #include <public/WebMediaStreamDescriptor.h>
 #include <public/WebRTCConfiguration.h>
+#include <public/WebRTCICECandidateDescriptor.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -64,6 +66,22 @@ bool RTCPeerConnectionHandlerChromium::initialize(PassRefPtr<RTCConfiguration> c
 {
     m_webHandler = adoptPtr(WebKit::Platform::current()->createRTCPeerConnectionHandler(this));
     return m_webHandler ? m_webHandler->initialize(configuration, constraints) : false;
+}
+
+bool RTCPeerConnectionHandlerChromium::updateIce(PassRefPtr<RTCConfiguration> configuration, PassRefPtr<MediaConstraints> constraints)
+{
+    if (!m_webHandler)
+        return false;
+
+    return m_webHandler->updateICE(configuration, constraints);
+}
+
+bool RTCPeerConnectionHandlerChromium::addIceCandidate(PassRefPtr<RTCIceCandidateDescriptor> iceCandidate)
+{
+    if (!m_webHandler)
+        return false;
+
+    return m_webHandler->addICECandidate(iceCandidate);
 }
 
 bool RTCPeerConnectionHandlerChromium::addStream(PassRefPtr<MediaStreamDescriptor> mediaStream, PassRefPtr<MediaConstraints> constraints)
@@ -90,9 +108,19 @@ void RTCPeerConnectionHandlerChromium::stop()
     m_webHandler->stop();
 }
 
+void RTCPeerConnectionHandlerChromium::didGenerateICECandidate(const WebKit::WebRTCICECandidateDescriptor& iceCandidate)
+{
+    m_client->didGenerateIceCandidate(iceCandidate);
+}
+
 void RTCPeerConnectionHandlerChromium::didChangeReadyState(WebKit::WebRTCPeerConnectionHandlerClient::ReadyState state)
 {
     m_client->didChangeReadyState(static_cast<RTCPeerConnectionHandlerClient::ReadyState>(state));
+}
+
+void RTCPeerConnectionHandlerChromium::didChangeICEState(WebKit::WebRTCPeerConnectionHandlerClient::ICEState state)
+{
+    m_client->didChangeIceState(static_cast<RTCPeerConnectionHandlerClient::IceState>(state));
 }
 
 void RTCPeerConnectionHandlerChromium::didAddRemoteStream(const WebKit::WebMediaStreamDescriptor& webMediaStreamDescriptor)

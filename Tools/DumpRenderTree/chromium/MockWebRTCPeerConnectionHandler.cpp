@@ -86,6 +86,18 @@ bool MockWebRTCPeerConnectionHandler::initialize(const WebRTCConfiguration&, con
     return true;
 }
 
+bool MockWebRTCPeerConnectionHandler::updateICE(const WebRTCConfiguration&, const WebMediaConstraints&)
+{
+    m_client->didChangeICEState(WebRTCPeerConnectionHandlerClient::ICEStateGathering);
+    return true;
+}
+
+bool MockWebRTCPeerConnectionHandler::addICECandidate(const WebRTCICECandidateDescriptor& iceCandidate)
+{
+    m_client->didGenerateICECandidate(iceCandidate);
+    return true;
+}
+
 bool MockWebRTCPeerConnectionHandler::addStream(const WebMediaStreamDescriptor& stream, const WebMediaConstraints&)
 {
     m_client->didAddRemoteStream(stream);

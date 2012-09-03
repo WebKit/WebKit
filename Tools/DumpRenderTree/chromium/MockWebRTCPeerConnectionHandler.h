@@ -44,6 +44,8 @@ public:
 
     virtual bool initialize(const WebKit::WebRTCConfiguration&, const WebKit::WebMediaConstraints&) OVERRIDE;
 
+    virtual bool updateICE(const WebKit::WebRTCConfiguration&, const WebKit::WebMediaConstraints&) OVERRIDE;
+    virtual bool addICECandidate(const WebKit::WebRTCICECandidateDescriptor&) OVERRIDE;
     virtual bool addStream(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaConstraints&) OVERRIDE;
     virtual void removeStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
     virtual void stop() OVERRIDE;

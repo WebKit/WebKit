@@ -40,6 +40,9 @@
 #include "MediaConstraintsImpl.h"
 #include "MediaStreamEvent.h"
 #include "RTCConfiguration.h"
+#include "RTCIceCandidate.h"
+#include "RTCIceCandidateDescriptor.h"
+#include "RTCIceCandidateEvent.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -114,6 +117,7 @@ PassRefPtr<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext* 
 RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext* context, PassRefPtr<RTCConfiguration> configuration, PassRefPtr<MediaConstraints> constraints, ExceptionCode& ec)
     : ActiveDOMObject(context, this)
     , m_readyState(ReadyStateNew)
+    , m_iceState(IceStateClosed)
     , m_localStreams(MediaStreamList::create())
     , m_remoteStreams(MediaStreamList::create())
 {
@@ -126,23 +130,85 @@ RTCPeerConnection::~RTCPeerConnection()
 {
 }
 
+void RTCPeerConnection::updateIce(const Dictionary& rtcConfiguration, const Dictionary& mediaConstraints, ExceptionCode& ec)
+{
+    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    RefPtr<RTCConfiguration> configuration = parseConfiguration(rtcConfiguration, ec);
+    if (ec)
+        return;
+
+    RefPtr<MediaConstraints> constraints = MediaConstraintsImpl::create(mediaConstraints, ec);
+    if (ec)
+        return;
+
+    bool valid = m_peerHandler->updateIce(configuration, constraints);
+    if (!valid)
+        ec = SYNTAX_ERR;
+}
+
+void RTCPeerConnection::addIceCandidate(RTCIceCandidate* iceCandidate, ExceptionCode& ec)
+{
+    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    if (!iceCandidate) {
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+
+    bool valid = m_peerHandler->addIceCandidate(iceCandidate->descriptor());
+    if (!valid)
+        ec = SYNTAX_ERR;
+}
+
 String RTCPeerConnection::readyState() const
 {
     switch (m_readyState) {
     case ReadyStateNew:
-        return "new";
+        return ASCIILiteral("new");
     case ReadyStateOpening:
-        return "opening";
+        return ASCIILiteral("opening");
     case ReadyStateActive:
-        return "active";
+        return ASCIILiteral("active");
     case ReadyStateClosing:
-        return "closing";
+        return ASCIILiteral("closing");
     case ReadyStateClosed:
-        return "closed";
+        return ASCIILiteral("closed");
     }
 
     ASSERT_NOT_REACHED();
-    return "";
+    return ASCIILiteral("");
+}
+
+String RTCPeerConnection::iceState() const
+{
+    switch (m_iceState) {
+    case IceStateNew:
+        return ASCIILiteral("new");
+    case IceStateGathering:
+        return ASCIILiteral("gathering");
+    case IceStateWaiting:
+        return ASCIILiteral("waiting");
+    case IceStateChecking:
+        return ASCIILiteral("checking");
+    case IceStateConnected:
+        return ASCIILiteral("connected");
+    case IceStateCompleted:
+        return ASCIILiteral("completed");
+    case IceStateFailed:
+        return ASCIILiteral("failed");
+    case IceStateClosed:
+        return ASCIILiteral("closed");
+    }
+
+    ASSERT_NOT_REACHED();
+    return ASCIILiteral("");
 }
 
 void RTCPeerConnection::addStream(PassRefPtr<MediaStream> prpStream, const Dictionary& mediaConstraints, ExceptionCode& ec)
@@ -209,14 +275,32 @@ void RTCPeerConnection::close(ExceptionCode& ec)
         return;
     }
 
+    changeIceState(IceStateClosed);
     changeReadyState(ReadyStateClosed);
     stop();
+}
+
+void RTCPeerConnection::didGenerateIceCandidate(PassRefPtr<RTCIceCandidateDescriptor> iceCandidateDescriptor)
+{
+    ASSERT(scriptExecutionContext()->isContextThread());
+    if (!iceCandidateDescriptor)
+        dispatchEvent(RTCIceCandidateEvent::create(false, false, 0));
+    else {
+        RefPtr<RTCIceCandidate> iceCandidate = RTCIceCandidate::create(iceCandidateDescriptor);
+        dispatchEvent(RTCIceCandidateEvent::create(false, false, iceCandidate.release()));
+    }
 }
 
 void RTCPeerConnection::didChangeReadyState(ReadyState newState)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
     changeReadyState(newState);
+}
+
+void RTCPeerConnection::didChangeIceState(IceState newState)
+{
+    ASSERT(scriptExecutionContext()->isContextThread());
+    changeIceState(newState);
 }
 
 void RTCPeerConnection::didAddRemoteStream(PassRefPtr<MediaStreamDescriptor> streamDescriptor)
@@ -261,6 +345,7 @@ ScriptExecutionContext* RTCPeerConnection::scriptExecutionContext() const
 
 void RTCPeerConnection::stop()
 {
+    m_iceState = IceStateClosed;
     m_readyState = ReadyStateClosed;
 
     if (m_peerHandler) {
@@ -301,6 +386,15 @@ void RTCPeerConnection::changeReadyState(ReadyState readyState)
     }
 
     dispatchEvent(Event::create(eventNames().statechangeEvent, false, false));
+}
+
+void RTCPeerConnection::changeIceState(IceState iceState)
+{
+    if (iceState == m_iceState || m_readyState == ReadyStateClosed)
+        return;
+
+    m_iceState = iceState;
+    dispatchEvent(Event::create(eventNames().icechangeEvent, false, false));
 }
 
 } // namespace WebCore

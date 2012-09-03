@@ -48,6 +48,8 @@ public:
 
     virtual bool initialize(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) OVERRIDE;
 
+    virtual bool updateIce(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) OVERRIDE;
+    virtual bool addIceCandidate(PassRefPtr<RTCIceCandidateDescriptor>) OVERRIDE;
     virtual bool addStream(PassRefPtr<MediaStreamDescriptor>, PassRefPtr<MediaConstraints>) OVERRIDE;
     virtual void removeStream(PassRefPtr<MediaStreamDescriptor>) OVERRIDE;
     virtual void stop() OVERRIDE;
@@ -83,6 +85,16 @@ bool RTCPeerConnectionHandlerDummy::addStream(PassRefPtr<MediaStreamDescriptor>,
 
 void RTCPeerConnectionHandlerDummy::removeStream(PassRefPtr<MediaStreamDescriptor>)
 {
+}
+
+bool RTCPeerConnectionHandlerDummy::updateIce(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>)
+{
+    return false;
+}
+
+bool RTCPeerConnectionHandlerDummy::addIceCandidate(PassRefPtr<RTCIceCandidateDescriptor>)
+{
+    return false;
 }
 
 void RTCPeerConnectionHandlerDummy::stop()

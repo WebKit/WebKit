@@ -39,6 +39,7 @@
 #include "ExceptionBase.h"
 #include "MediaStream.h"
 #include "MediaStreamList.h"
+#include "RTCIceCandidate.h"
 #include "RTCPeerConnectionHandler.h"
 #include "RTCPeerConnectionHandlerClient.h"
 #include <wtf/RefCounted.h>
@@ -55,20 +56,33 @@ public:
 
     String readyState() const;
 
+    void updateIce(const Dictionary& rtcConfiguration, const Dictionary& mediaConstraints, ExceptionCode&);
+
+    void addIceCandidate(RTCIceCandidate*, ExceptionCode&);
+
+    String iceState() const;
+
     MediaStreamList* localStreams() const;
+
     MediaStreamList* remoteStreams() const;
+
     void addStream(const PassRefPtr<MediaStream>, const Dictionary& mediaConstraints, ExceptionCode&);
+
     void removeStream(MediaStream*, ExceptionCode&);
 
     void close(ExceptionCode&);
 
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(icecandidate);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(open);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(statechange);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(addstream);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(removestream);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(icechange);
 
     // RTCPeerConnectionHandlerClient
+    virtual void didGenerateIceCandidate(PassRefPtr<RTCIceCandidateDescriptor>) OVERRIDE;
     virtual void didChangeReadyState(ReadyState) OVERRIDE;
+    virtual void didChangeIceState(IceState) OVERRIDE;
     virtual void didAddRemoteStream(PassRefPtr<MediaStreamDescriptor>) OVERRIDE;
     virtual void didRemoveRemoteStream(MediaStreamDescriptor*) OVERRIDE;
 
@@ -95,8 +109,10 @@ private:
     EventTargetData m_eventTargetData;
 
     void changeReadyState(ReadyState);
+    void changeIceState(IceState);
 
     ReadyState m_readyState;
+    IceState m_iceState;
 
     RefPtr<MediaStreamList> m_localStreams;
     RefPtr<MediaStreamList> m_remoteStreams;

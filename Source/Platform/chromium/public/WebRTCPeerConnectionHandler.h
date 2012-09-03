@@ -35,6 +35,7 @@ namespace WebKit {
 class WebMediaConstraints;
 class WebMediaStreamDescriptor;
 class WebRTCConfiguration;
+class WebRTCICECandidateDescriptor;
 class WebRTCPeerConnectionHandlerClient;
 
 class WebRTCPeerConnectionHandler {
@@ -43,6 +44,8 @@ public:
 
     virtual bool initialize(const WebRTCConfiguration&, const WebMediaConstraints&) = 0;
 
+    virtual bool updateICE(const WebRTCConfiguration&, const WebMediaConstraints&) = 0;
+    virtual bool addICECandidate(const WebRTCICECandidateDescriptor&) = 0;
     virtual bool addStream(const WebMediaStreamDescriptor&, const WebMediaConstraints&) = 0;
     virtual void removeStream(const WebMediaStreamDescriptor&) = 0;
     virtual void stop() = 0;

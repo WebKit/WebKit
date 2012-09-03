@@ -44,9 +44,9 @@ public:
     static PassRefPtr<RTCIceCandidateDescriptor> create(const String& candidate, const String& sdpMid, unsigned short sdpMLineIndex);
     virtual ~RTCIceCandidateDescriptor();
 
-    const String& candidate() { return m_candidate; }
-    const String& sdpMid() { return m_sdpMid; }
-    unsigned short sdpMLineIndex() { return m_sdpMLineIndex; }
+    const String& candidate() const { return m_candidate; }
+    const String& sdpMid() const { return m_sdpMid; }
+    unsigned short sdpMLineIndex() const { return m_sdpMLineIndex; }
 
 private:
     RTCIceCandidateDescriptor(const String& candidate, const String& sdpMid, unsigned short sdpMLineIndex);

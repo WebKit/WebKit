@@ -1,0 +1,16 @@
+Tests the RTCPeerConnection Ice functionality.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pc = new webkitRTCPeerConnection(null, null); did not throw exception.
+PASS onIceChange was called.
+PASS pc.iceState is "gathering"
+PASS onIceCandidate was called.
+PASS event.candidate.candidate is "nano nano"
+PASS onIceChange2 was called.
+PASS pc.iceState is "closed"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests the RTCPeerConnection Ice functionality.");
+
+var pc = null;
+
+function onIceChange2()
+{
+    testPassed("onIceChange2 was called.");
+    shouldBe('pc.iceState', '"closed"');
+
+    finishJSTest();
+}
+
+function onIceCandidate(event)
+{
+    testPassed("onIceCandidate was called.");
+    shouldBe('event.candidate.candidate', '"nano nano"');
+
+    pc.onicechange = onIceChange2;
+    pc.close();
+}
+
+function onIceChange1()
+{
+    testPassed("onIceChange was called.");
+    shouldBe('pc.iceState', '"gathering"');
+
+    pc.onicecandidate = onIceCandidate;
+    pc.addIceCandidate(new RTCIceCandidate({candidate:"nano nano"}));
+}
+
+shouldNotThrow('pc = new webkitRTCPeerConnection(null, null);');
+pc.onicechange = onIceChange1;
+pc.updateIce();
+
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
