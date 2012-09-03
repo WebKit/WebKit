@@ -76318,6 +76318,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\NetworkUISourceCodeProvider.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\NetworkRequest.js"
 					>
 				</File>
@@ -76391,10 +76395,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\PropertiesSidebarPane.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\RawSourceCode.js"
 					>
 				</File>
 				<File
@@ -76627,10 +76627,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\StylesSourceMapping.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\StylesUISourceCodeProvider.js"
 					>
 				</File>
 				<File

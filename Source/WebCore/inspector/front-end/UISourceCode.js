@@ -36,15 +36,13 @@
  * @param {string} url
  * @param {WebInspector.Resource} resource
  * @param {WebInspector.ContentProvider} contentProvider
- * @param {WebInspector.SourceMapping=} sourceMapping
  */
-WebInspector.UISourceCode = function(url, resource, contentProvider, sourceMapping)
+WebInspector.UISourceCode = function(url, resource, contentProvider)
 {
     this._url = url;
     this._resource = resource;
     this._parsedURL = new WebInspector.ParsedURL(url);
     this._contentProvider = contentProvider;
-    this._sourceMapping = sourceMapping;
     this.isContentScript = false;
     /**
      * @type Array.<function(?string,boolean,string)>
@@ -384,6 +382,8 @@ WebInspector.UISourceCode.prototype = {
      */
     uiLocationToRawLocation: function(lineNumber, columnNumber)
     {
+        if (!this._sourceMapping)
+            return null;
         var location = this._formatterMapping.formattedToOriginal(lineNumber, columnNumber);
         return this._sourceMapping.uiLocationToRawLocation(this, location[0], location[1]);
     },
@@ -535,6 +535,14 @@ WebInspector.UISourceCode.prototype = {
     {
         // overridden by subclasses.
         return null;
+    },
+
+    /**
+     * @param {WebInspector.SourceMapping} sourceMapping
+     */
+    setSourceMapping: function(sourceMapping)
+    {
+        this._sourceMapping = sourceMapping;
     },
 
     formattedChanged: function()

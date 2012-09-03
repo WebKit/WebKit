@@ -1,0 +1,50 @@
+Tests NetworkUISourceCodeProvider class.
+
+
+Running: testDocumentResourceWithPendingRequest
+Creating request.
+Finishing request.
+UISourceCode: http://fake.url/2
+UISourceCode is editable: false
+UISourceCode is content script: false
+Mime type: text/html
+UISourceCode content: <document request content>
+
+Running: testDocumentResource
+Creating resource.
+UISourceCode: http://fake.url/3
+UISourceCode is editable: false
+UISourceCode is content script: false
+Mime type: text/html
+UISourceCode content: <document resource content>
+
+Running: testScriptResourceWithPendingRequest
+Creating request.
+Finishing request.
+UISourceCode: http://fake.url/4
+UISourceCode is editable: true
+UISourceCode is content script: false
+Mime type: text/javascript
+UISourceCode content: <script request content>
+
+Running: testScriptResource
+Creating resource.
+UISourceCode: http://fake.url/5
+UISourceCode is editable: true
+UISourceCode is content script: false
+Mime type: text/javascript
+UISourceCode content: <script resource content>
+
+Running: testStylesheetResourceWithPendingRequest
+Creating request.
+UISourceCode: http://fake.url/6
+Finishing request.
+Mime type: text/css
+UISourceCode content: <stylesheet request content>
+
+Running: testStylesheetResource
+Creating resource.
+UISourceCode: http://fake.url/7
+Mime type: text/css
+UISourceCode content: <stylesheet resource content>
+

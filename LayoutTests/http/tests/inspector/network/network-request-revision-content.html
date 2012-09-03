@@ -14,7 +14,7 @@ function loadStylesheet()
 function test()
 {
     InspectorTest.addConsoleSniffer(step2, true);
-    InspectorTest.addSniffer(WebInspector.StylesUISourceCodeProvider.prototype, "_resourceAdded", true);
+    InspectorTest.addSniffer(WebInspector.NetworkUISourceCodeProvider.prototype, "_resourceAdded", true);
     InspectorTest.evaluateInPage("loadStylesheet()");
 
     var resource;

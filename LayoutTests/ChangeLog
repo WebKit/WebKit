@@ -1,3 +1,39 @@
+2012-09-03  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Create JavaScriptSources based on network resources.
+        https://bugs.webkit.org/show_bug.cgi?id=95352
+
+        Reviewed by Pavel Feldman.
+
+        Removed raw-source-code.html test as RawSourceCode was removed by this patch.
+        Added resource-script-mapping.html to test script <-> uiSourceCode binding behavior.
+        Added network-uisourcecode-provider.html to test uiSourceCode creation behavior.
+        Updated dynamic-script-tag.html to better match expected behavior.
+
+        * http/tests/inspector/network/network-request-revision-content.html:
+        * http/tests/inspector/workspace-test.js: Added.
+        (initialize_WorkspaceTest.InspectorTest.createWorkspace):
+        (initialize_WorkspaceTest.InspectorTest.waitForWorkspaceUISourceCodeReplacedEvent.uiSourceCodeReplaced):
+        (initialize_WorkspaceTest.InspectorTest.waitForWorkspaceUISourceCodeReplacedEvent):
+        (initialize_WorkspaceTest.InspectorTest.waitForWorkspaceUISourceCodeAddedEvent.uiSourceCodeAdded):
+        (initialize_WorkspaceTest.InspectorTest.waitForWorkspaceUISourceCodeAddedEvent):
+        (initialize_WorkspaceTest.InspectorTest.addMockUISourceCodeToWorkspace):
+        (initialize_WorkspaceTest.InspectorTest._defaultUISourceCodeProviderEventHandler):
+        (initialize_WorkspaceTest.InspectorTest.dumpUISourceCode.didRequestContent):
+        (initialize_WorkspaceTest.InspectorTest.dumpUISourceCode):
+        (initialize_WorkspaceTest):
+        * inspector/debugger/breakpoint-manager.html:
+        * inspector/debugger/dynamic-script-tag-expected.txt:
+        * inspector/debugger/dynamic-script-tag.html:
+        * inspector/debugger/network-uisourcecode-provider-expected.txt: Added.
+        * inspector/debugger/network-uisourcecode-provider.html: Added.
+        * inspector/debugger/raw-source-code-expected.txt: Removed.
+        * inspector/debugger/raw-source-code.html: Removed.
+        * inspector/debugger/resource-script-mapping-expected.txt: Added.
+        * inspector/debugger/resource-script-mapping.html: Added.
+        * inspector/debugger/scripts-panel.html:
+        * inspector/debugger/source-frame-count.html:
+
 2012-09-03  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add Ice-related functionality to RTCPeerConnection
