@@ -1,0 +1,151 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {H1} at (0,0) size 784x37
+        RenderText {#text} at (0,0) size 259x37
+          text run at (0,0) width 259: "Input Type \"time\""
+      RenderBlock {H2} at (0,58) size 784x29
+        RenderText {#text} at (0,0) size 153x28
+          text run at (0,0) width 153: "Pseudo Classes"
+      RenderTable {TABLE} at (0,106) size 206x183
+        RenderTableSection {TBODY} at (0,0) size 206x182
+          RenderTableRow {TR} at (0,2) size 206x28
+            RenderTableCell {TH} at (2,6) size 106x20 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 104x18
+                text run at (1,1) width 104: ":enabled, :valid"
+            RenderTableCell {TD} at (110,2) size 94x28 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {INPUT} at (3,2) size 88x24 [color=#008000] [bgcolor=#FFFFFF] [border: (2px inset #008000)]
+                RenderDeprecatedFlexibleBox {DIV} at (3,3) size 82x17
+                  RenderBlock (anonymous) at (0,0) size 66x17
+                    RenderBlock {SPAN} at (0,0) size 18x17
+                      RenderText {#text} at (2,2) size 14x13
+                        text run at (2,2) width 14: "12"
+                    RenderText {#text} at (17,2) size 8x13
+                      text run at (17,2) width 8: ":"
+                    RenderBlock {SPAN} at (24,0) size 18x17
+                      RenderText {#text} at (2,2) size 14x13
+                        text run at (2,2) width 14: "34"
+                    RenderText {#text} at (41,2) size 8x13
+                      text run at (41,2) width 8: " "
+                    RenderInline {SPAN} at (0,0) size 17x17
+                      RenderText {#text} at (49,2) size 15x13
+                        text run at (49,2) width 15: "PM"
+          RenderTableRow {TR} at (0,32) size 206x28
+            RenderTableCell {TH} at (2,36) size 106x20 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (22,1) size 62x18
+                text run at (22,1) width 62: ":disabled"
+            RenderTableCell {TD} at (110,32) size 94x28 [r=1 c=1 rs=1 cs=1]
+              RenderBlock {INPUT} at (3,2) size 88x24 [color=#808080] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+                RenderDeprecatedFlexibleBox {DIV} at (3,3) size 82x17
+                  RenderBlock (anonymous) at (0,0) size 66x17
+                    RenderBlock {SPAN} at (0,0) size 18x17
+                      RenderText {#text} at (2,2) size 14x13
+                        text run at (2,2) width 14: "12"
+                    RenderText {#text} at (17,2) size 8x13
+                      text run at (17,2) width 8: ":"
+                    RenderBlock {SPAN} at (24,0) size 18x17
+                      RenderText {#text} at (2,2) size 14x13
+                        text run at (2,2) width 14: "34"
+                    RenderText {#text} at (41,2) size 8x13
+                      text run at (41,2) width 8: " "
+                    RenderInline {SPAN} at (0,0) size 17x17
+                      RenderText {#text} at (49,2) size 15x13
+                        text run at (49,2) width 15: "PM"
+          RenderTableRow {TR} at (0,62) size 206x28
+            RenderTableCell {TH} at (2,66) size 106x20 [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (27,1) size 52x18
+                text run at (27,1) width 52: ":invalid"
+            RenderTableCell {TD} at (110,62) size 94x28 [r=2 c=1 rs=1 cs=1]
+              RenderBlock {INPUT} at (3,2) size 88x24 [color=#FFC0CB] [bgcolor=#FFFFFF] [border: (2px inset #FFC0CB)]
+                RenderDeprecatedFlexibleBox {DIV} at (3,3) size 82x17
+                  RenderBlock (anonymous) at (0,0) size 66x17
+                    RenderBlock {SPAN} at (0,0) size 18x17
+                      RenderText {#text} at (2,2) size 14x13
+                        text run at (2,2) width 14: "12"
+                    RenderText {#text} at (17,2) size 8x13
+                      text run at (17,2) width 8: ":"
+                    RenderBlock {SPAN} at (24,0) size 18x17
+                      RenderText {#text} at (2,2) size 14x13
+                        text run at (2,2) width 14: "34"
+                    RenderText {#text} at (41,2) size 8x13
+                      text run at (41,2) width 8: " "
+                    RenderInline {SPAN} at (0,0) size 17x17
+                      RenderText {#text} at (49,2) size 15x13
+                        text run at (49,2) width 15: "PM"
+          RenderTableRow {TR} at (0,92) size 206x28
+            RenderTableCell {TH} at (2,96) size 106x20 [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (22,1) size 62x18
+                text run at (22,1) width 62: ":in-range"
+            RenderTableCell {TD} at (110,92) size 94x28 [r=3 c=1 rs=1 cs=1]
+              RenderBlock {INPUT} at (3,2) size 88x24 [color=#008000] [bgcolor=#FFFFFF] [border: (2px inset #008000)]
+                RenderDeprecatedFlexibleBox {DIV} at (3,3) size 82x17
+                  RenderBlock (anonymous) at (0,0) size 66x17
+                    RenderBlock {SPAN} at (0,0) size 18x17
+                      RenderText {#text} at (2,2) size 14x13
+                        text run at (2,2) width 14: "12"
+                    RenderText {#text} at (17,2) size 8x13
+                      text run at (17,2) width 8: ":"
+                    RenderBlock {SPAN} at (24,0) size 18x17
+                      RenderText {#text} at (2,2) size 14x13
+                        text run at (2,2) width 14: "34"
+                    RenderText {#text} at (41,2) size 8x13
+                      text run at (41,2) width 8: " "
+                    RenderInline {SPAN} at (0,0) size 17x17
+                      RenderText {#text} at (49,2) size 15x13
+                        text run at (49,2) width 15: "PM"
+          RenderTableRow {TR} at (0,122) size 206x28
+            RenderTableCell {TH} at (2,126) size 106x20 [r=4 c=0 rs=1 cs=1]
+              RenderText {#text} at (8,1) size 90x18
+                text run at (8,1) width 90: ":out-of-range"
+            RenderTableCell {TD} at (110,122) size 94x28 [r=4 c=1 rs=1 cs=1]
+              RenderBlock {INPUT} at (3,2) size 88x24 [color=#FF0000] [bgcolor=#FFFFFF] [border: (2px inset #FF0000)]
+                RenderDeprecatedFlexibleBox {DIV} at (3,3) size 82x17
+                  RenderBlock (anonymous) at (0,0) size 66x17
+                    RenderBlock {SPAN} at (0,0) size 18x17
+                      RenderText {#text} at (2,2) size 14x13
+                        text run at (2,2) width 14: "12"
+                    RenderText {#text} at (17,2) size 8x13
+                      text run at (17,2) width 8: ":"
+                    RenderBlock {SPAN} at (24,0) size 18x17
+                      RenderText {#text} at (2,2) size 14x13
+                        text run at (2,2) width 14: "34"
+                    RenderText {#text} at (41,2) size 8x13
+                      text run at (41,2) width 8: " "
+                    RenderInline {SPAN} at (0,0) size 17x17
+                      RenderText {#text} at (49,2) size 15x13
+                        text run at (49,2) width 15: "PM"
+          RenderTableRow {TR} at (0,152) size 206x28
+            RenderTableCell {TH} at (2,156) size 106x20 [r=5 c=0 rs=1 cs=1]
+              RenderText {#text} at (18,1) size 70x18
+                text run at (18,1) width 70: ":read-only"
+            RenderTableCell {TD} at (110,152) size 94x28 [r=5 c=1 rs=1 cs=1]
+              RenderBlock {INPUT} at (3,2) size 88x24 [color=#0000FF] [bgcolor=#FFFFFF] [border: (2px inset #0000FF)]
+                RenderDeprecatedFlexibleBox {DIV} at (3,3) size 82x17
+                  RenderBlock (anonymous) at (0,0) size 66x17
+                    RenderBlock {SPAN} at (0,0) size 18x17
+                      RenderText {#text} at (2,2) size 14x13
+                        text run at (2,2) width 14: "12"
+                    RenderText {#text} at (17,2) size 8x13
+                      text run at (17,2) width 8: ":"
+                    RenderBlock {SPAN} at (24,0) size 18x17
+                      RenderText {#text} at (2,2) size 14x13
+                        text run at (2,2) width 14: "34"
+                    RenderText {#text} at (41,2) size 8x13
+                      text run at (41,2) width 8: " "
+                    RenderInline {SPAN} at (0,0) size 17x17
+                      RenderText {#text} at (49,2) size 15x13
+                        text run at (49,2) width 15: "PM"
+layer at (192,122) size 13x17
+  RenderBlock (relative positioned) {DIV} at (68,0) size 14x17
+layer at (192,152) size 13x17
+  RenderBlock (relative positioned) {DIV} at (68,0) size 14x17
+layer at (192,182) size 13x17
+  RenderBlock (relative positioned) {DIV} at (68,0) size 14x17
+layer at (192,212) size 13x17
+  RenderBlock (relative positioned) {DIV} at (68,0) size 14x17
+layer at (192,242) size 13x17
+  RenderBlock (relative positioned) {DIV} at (68,0) size 14x17
+layer at (192,272) size 13x17
+  RenderBlock (relative positioned) {DIV} at (68,0) size 14x17
