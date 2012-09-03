@@ -1,3 +1,11 @@
+2012-09-02  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Unreviewed test expectation update after r127362
+
+        * platform/chromium/TestExpectations: Moved
+        fast/notifications/notifications-event-listener-crash.html to
+        http/tests/notifications.
+
 2012-09-02  Jessie Berlin  <jberlin@apple.com>
 
         fast/html/marquee-alternate.html is flaky
