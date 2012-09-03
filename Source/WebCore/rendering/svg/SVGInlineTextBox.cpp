@@ -716,7 +716,7 @@ bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult&
             FloatRect rect(boxOrigin, size());
             if (locationInContainer.intersects(rect)) {
                 renderer()->updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
-                if (!result.addNodeToRectBasedTestResult(renderer()->node(), locationInContainer, rect))
+                if (!result.addNodeToRectBasedTestResult(renderer()->node(), request, locationInContainer, rect))
                     return true;
              }
         }

@@ -501,7 +501,7 @@ HTMLMapElement* RenderImage::imageMap() const
 
 bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
-    HitTestResult tempResult(result.hitTestLocation(), result.shadowContentFilterPolicy());
+    HitTestResult tempResult(result.hitTestLocation());
     bool inside = RenderReplaced::nodeAtPoint(request, tempResult, locationInContainer, accumulatedOffset, hitTestAction);
 
     if (tempResult.innerNode() && node()) {

@@ -150,7 +150,7 @@ bool RenderRegion::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
         if (m_flowThread && m_flowThread->hitTestFlowThreadPortionInRegion(this, flowThreadPortionRect(), flowThreadPortionOverflowRect(), request, result, locationInContainer, LayoutPoint(adjustedLocation.x() + borderLeft() + paddingLeft(), adjustedLocation.y() + borderTop() + paddingTop())))
             return true;
         updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
-        if (!result.addNodeToRectBasedTestResult(generatingNode(), locationInContainer, boundsRect))
+        if (!result.addNodeToRectBasedTestResult(generatingNode(), request, locationInContainer, boundsRect))
             return true;
     }
 

@@ -45,8 +45,6 @@ class Node;
 class RenderRegion;
 class Scrollbar;
 
-enum ShadowContentFilterPolicy { DoNotAllowShadowContent, AllowShadowContent };
-
 class HitTestLocation {
 public:
 
@@ -109,8 +107,8 @@ public:
     HitTestResult();
     HitTestResult(const LayoutPoint&);
     // Pass non-negative padding values to perform a rect-based hit test.
-    HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding, ShadowContentFilterPolicy);
-    HitTestResult(const HitTestLocation&, ShadowContentFilterPolicy);
+    HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
+    HitTestResult(const HitTestLocation&);
     HitTestResult(const HitTestResult&);
     ~HitTestResult();
     HitTestResult& operator=(const HitTestResult&);
@@ -125,7 +123,6 @@ public:
     void setToNonShadowAncestor();
 
     const HitTestLocation& hitTestLocation() const { return *this; }
-    ShadowContentFilterPolicy shadowContentFilterPolicy() const { return m_shadowContentFilterPolicy; }
 
     void setInnerNode(Node*);
     void setInnerNonSharedNode(Node*);
@@ -166,8 +163,8 @@ public:
 
     // Returns true if it is rect-based hit test and needs to continue until the rect is fully
     // enclosed by the boundaries of a node.
-    bool addNodeToRectBasedTestResult(Node*, const HitTestLocation& locationInContainer, const LayoutRect& = LayoutRect());
-    bool addNodeToRectBasedTestResult(Node*, const HitTestLocation& locationInContainer, const FloatRect&);
+    bool addNodeToRectBasedTestResult(Node*, const HitTestRequest&, const HitTestLocation& pointInContainer, const LayoutRect& = LayoutRect());
+    bool addNodeToRectBasedTestResult(Node*, const HitTestRequest&, const HitTestLocation& pointInContainer, const FloatRect&);
     void append(const HitTestResult&);
 
     // If m_rectBasedTestResult is 0 then set it to a new NodeSet. Return *m_rectBasedTestResult. Lazy allocation makes
@@ -193,8 +190,6 @@ private:
     RefPtr<Element> m_innerURLElement;
     RefPtr<Scrollbar> m_scrollbar;
     bool m_isOverWidget; // Returns true if we are over a widget (and not in the border/padding area of a RenderWidget for example).
-
-    ShadowContentFilterPolicy m_shadowContentFilterPolicy;
 
     mutable OwnPtr<NodeSet> m_rectBasedTestResult;
 };

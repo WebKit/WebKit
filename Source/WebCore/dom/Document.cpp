@@ -1406,6 +1406,8 @@ PassRefPtr<NodeList> Document::nodesFromRect(int centerX, int centerY, unsigned 
         type |= HitTestRequest::IgnoreClipping;
     else if (!frameView->visibleContentRect().intersects(HitTestResult::rectForPoint(point, topPadding, rightPadding, bottomPadding, leftPadding)))
         return 0;
+    if (allowShadowContent)
+        type |= HitTestRequest::AllowShadowContent;
 
     HitTestRequest request(type);
 
@@ -1416,8 +1418,7 @@ PassRefPtr<NodeList> Document::nodesFromRect(int centerX, int centerY, unsigned 
         return handleZeroPadding(request, result);
     }
 
-    enum ShadowContentFilterPolicy shadowContentFilterPolicy = allowShadowContent ? AllowShadowContent : DoNotAllowShadowContent;
-    HitTestResult result(point, topPadding, rightPadding, bottomPadding, leftPadding, shadowContentFilterPolicy);
+    HitTestResult result(point, topPadding, rightPadding, bottomPadding, leftPadding);
     renderView()->hitTest(request, result);
 
     return StaticHashSetNodeList::adopt(result.rectBasedTestResult());

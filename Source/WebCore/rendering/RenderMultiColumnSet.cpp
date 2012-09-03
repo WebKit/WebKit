@@ -318,7 +318,7 @@ bool RenderMultiColumnSet::nodeAtPoint(const HitTestRequest& request, HitTestRes
     }
     
     updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
-    return !result.addNodeToRectBasedTestResult(node(), locationInContainer, boundsRect);
+    return !result.addNodeToRectBasedTestResult(node(), request, locationInContainer, boundsRect);
 }
 
 void RenderMultiColumnSet::repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate) const

@@ -756,7 +756,7 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
     boundsRect.moveBy(adjustedLocation);
     if (visibleToHitTesting() && action == HitTestForeground && locationInContainer.intersects(boundsRect)) {
         updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
-        if (!result.addNodeToRectBasedTestResult(node(), locationInContainer, boundsRect))
+        if (!result.addNodeToRectBasedTestResult(node(), request, locationInContainer, boundsRect))
             return true;
     }
 

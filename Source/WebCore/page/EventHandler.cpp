@@ -1041,13 +1041,14 @@ DragSourceAction EventHandler::updateDragSourceActionsAllowed() const
     
 HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, bool allowShadowContent, bool ignoreClipping, HitTestScrollbars testScrollbars, HitTestRequest::HitTestRequestType hitType, const LayoutSize& padding)
 {
-    enum ShadowContentFilterPolicy shadowContentFilterPolicy = allowShadowContent ? AllowShadowContent : DoNotAllowShadowContent;
-    HitTestResult result(point, padding.height(), padding.width(), padding.height(), padding.width(), shadowContentFilterPolicy);
+    HitTestResult result(point, padding.height(), padding.width(), padding.height(), padding.width());
 
     if (!m_frame->contentRenderer())
         return result;
     if (ignoreClipping)
         hitType |= HitTestRequest::IgnoreClipping;
+    if (allowShadowContent)
+        hitType |= HitTestRequest::AllowShadowContent;
     m_frame->contentRenderer()->hitTest(HitTestRequest(hitType), result);
 
     while (true) {
@@ -1064,7 +1065,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, bool 
         FrameView* view = static_cast<FrameView*>(widget);
         LayoutPoint widgetPoint(result.localPoint().x() + view->scrollX() - renderWidget->borderLeft() - renderWidget->paddingLeft(), 
             result.localPoint().y() + view->scrollY() - renderWidget->borderTop() - renderWidget->paddingTop());
-        HitTestResult widgetHitTestResult(widgetPoint, padding.height(), padding.width(), padding.height(), padding.width(), shadowContentFilterPolicy);
+        HitTestResult widgetHitTestResult(widgetPoint, padding.height(), padding.width(), padding.height(), padding.width());
         frame->contentRenderer()->hitTest(HitTestRequest(hitType), widgetHitTestResult);
         result = widgetHitTestResult;
 

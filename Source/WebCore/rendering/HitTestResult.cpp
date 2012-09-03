@@ -104,7 +104,6 @@ HitTestLocation::HitTestLocation(const HitTestLocation& other, const LayoutSize&
     , m_boundingBox(other.m_boundingBox)
     , m_transformedPoint(other.m_transformedPoint)
     , m_transformedRect(other.m_transformedRect)
-    , m_region(region)
     , m_isRectBased(other.m_isRectBased)
     , m_isRectilinear(other.m_isRectilinear)
 {
@@ -194,27 +193,23 @@ IntRect HitTestLocation::rectForPoint(const LayoutPoint& point, unsigned topPadd
 
 HitTestResult::HitTestResult() : HitTestLocation()
     , m_isOverWidget(false)
-    , m_shadowContentFilterPolicy(DoNotAllowShadowContent)
 {
 }
 
 HitTestResult::HitTestResult(const LayoutPoint& point) : HitTestLocation(point)
     , m_isOverWidget(false)
-    , m_shadowContentFilterPolicy(DoNotAllowShadowContent)
 {
 }
 
-HitTestResult::HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding, ShadowContentFilterPolicy allowShadowContent)
+HitTestResult::HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
     : HitTestLocation(centerPoint, topPadding, rightPadding, bottomPadding, leftPadding)
     , m_isOverWidget(false)
-    , m_shadowContentFilterPolicy(allowShadowContent)
 {
 }
 
-HitTestResult::HitTestResult(const HitTestLocation& other, ShadowContentFilterPolicy allowShadowContent)
+HitTestResult::HitTestResult(const HitTestLocation& other)
     : HitTestLocation(other)
     , m_isOverWidget(false)
-    , m_shadowContentFilterPolicy(allowShadowContent)
 {
 }
 
@@ -226,7 +221,6 @@ HitTestResult::HitTestResult(const HitTestResult& other)
     , m_innerURLElement(other.URLElement())
     , m_scrollbar(other.scrollbar())
     , m_isOverWidget(other.isOverWidget())
-    , m_shadowContentFilterPolicy(other.shadowContentFilterPolicy())
 {
     // Only copy the NodeSet in case of rect hit test.
     m_rectBasedTestResult = adoptPtr(other.m_rectBasedTestResult ? new NodeSet(*other.m_rectBasedTestResult) : 0);
@@ -248,7 +242,6 @@ HitTestResult& HitTestResult::operator=(const HitTestResult& other)
 
     // Only copy the NodeSet in case of rect hit test.
     m_rectBasedTestResult = adoptPtr(other.m_rectBasedTestResult ? new NodeSet(*other.m_rectBasedTestResult) : 0);
-    m_shadowContentFilterPolicy  = other.shadowContentFilterPolicy();
 
     return *this;
 }
@@ -674,7 +667,7 @@ bool HitTestResult::isContentEditable() const
     return m_innerNonSharedNode->rendererIsEditable();
 }
 
-bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestLocation& locationInContainer, const LayoutRect& rect)
+bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestRequest& request, const HitTestLocation& locationInContainer, const LayoutRect& rect)
 {
     // If it is not a rect-based hit test, this method has to be no-op.
     // Return false, so the hit test stops.
@@ -685,7 +678,7 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestLocati
     if (!node)
         return true;
 
-    if (m_shadowContentFilterPolicy == DoNotAllowShadowContent)
+    if (!request.allowsShadowContent())
         node = node->shadowAncestorNode();
 
     mutableRectBasedTestResult().add(node);
@@ -709,7 +702,7 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestLocati
     return !regionFilled;
 }
 
-bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestLocation& locationInContainer, const FloatRect& rect)
+bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestRequest& request, const HitTestLocation& locationInContainer, const FloatRect& rect)
 {
     // If it is not a rect-based hit test, this method has to be no-op.
     // Return false, so the hit test stops.
@@ -720,7 +713,7 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestLocati
     if (!node)
         return true;
 
-    if (m_shadowContentFilterPolicy == DoNotAllowShadowContent)
+    if (!request.allowsShadowContent())
         node = node->shadowAncestorNode();
 
     mutableRectBasedTestResult().add(node);
