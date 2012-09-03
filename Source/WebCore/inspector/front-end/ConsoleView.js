@@ -44,12 +44,12 @@ WebInspector.ConsoleView = function(hideContextSelector)
     this._clearConsoleButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear console log."), "clear-status-bar-item");
     this._clearConsoleButton.addEventListener("click", this._requestClearMessages, this);
 
-    this._contextSelector = new WebInspector.StatusBarComboBox(this._updateIsolatedWorldSelector.bind(this), "console-context");
-    this._isolatedWorldSelector = new WebInspector.StatusBarComboBox(null, "console-context");
+    this._frameSelector = new WebInspector.StatusBarComboBox(this._frameChanged.bind(this), "console-context");
+    this._contextSelector = new WebInspector.StatusBarComboBox(this._contextChanged.bind(this), "console-context");
 
     if (hideContextSelector) {
+        this._frameSelector.element.addStyleClass("hidden");
         this._contextSelector.element.addStyleClass("hidden");
-        this._isolatedWorldSelector.element.addStyleClass("hidden");
     }
 
     this.messagesElement = document.createElement("div");
@@ -73,14 +73,17 @@ WebInspector.ConsoleView = function(hideContextSelector)
     this._filterBarElement = document.createElement("div");
     this._filterBarElement.className = "scope-bar status-bar-item";
 
-    function createDividerElement() {
+    function createDividerElement()
+    {
         var dividerElement = document.createElement("div");
         dividerElement.addStyleClass("scope-bar-divider");
         this._filterBarElement.appendChild(dividerElement);
     }
 
     var updateFilterHandler = this._updateFilter.bind(this);
-    function createFilterElement(category, label) {
+
+    function createFilterElement(category, label)
+    {
         var categoryElement = document.createElement("li");
         categoryElement.category = category;
         categoryElement.className = category;
@@ -118,9 +121,9 @@ WebInspector.ConsoleView = function(hideContextSelector)
     this.prompt.proxyElement.addEventListener("keydown", this._promptKeyDown.bind(this), false);
     this.prompt.setHistoryData(WebInspector.settings.consoleHistory.get());
 
-    WebInspector.javaScriptContextManager.contexts().forEach(this._addContext, this);
-    WebInspector.javaScriptContextManager.addEventListener(WebInspector.JavaScriptContextManager.Events.FrameContextAdded, this._contextAdded, this);
-    WebInspector.javaScriptContextManager.addEventListener(WebInspector.JavaScriptContextManager.Events.FrameContextRemoved, this._contextRemoved, this);
+    WebInspector.javaScriptContextManager.contextLists().forEach(this._addFrame, this);
+    WebInspector.javaScriptContextManager.addEventListener(WebInspector.JavaScriptContextManager.Events.FrameExecutionContextListAdded, this._frameAdded, this);
+    WebInspector.javaScriptContextManager.addEventListener(WebInspector.JavaScriptContextManager.Events.FrameExecutionContextListRemoved, this._frameRemoved, this);
 }
 
 WebInspector.ConsoleView.Events = {
@@ -131,7 +134,99 @@ WebInspector.ConsoleView.Events = {
 WebInspector.ConsoleView.prototype = {
     get statusBarItems()
     {
-        return [this._clearConsoleButton.element, this._contextSelector.element, this._isolatedWorldSelector.element, this._filterBarElement];
+        return [this._clearConsoleButton.element, this._frameSelector.element, this._contextSelector.element, this._filterBarElement];
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _frameAdded: function(event)
+    {
+        var contextList = /** @type {WebInspector.FrameExecutionContextList} */ event.data;
+        this._addFrame(contextList);
+    },
+
+    /**
+     * @param {WebInspector.FrameExecutionContextList} contextList
+     */
+    _addFrame: function(contextList)
+    {
+        var option = document.createElement("option");
+        option.text = contextList.displayName;
+        option.title = contextList.url;
+        option._contextList = contextList;
+        contextList._consoleOption = option;
+        this._frameSelector.addOption(option);
+        contextList.addEventListener(WebInspector.FrameExecutionContextList.EventTypes.ContextsUpdated, this._frameUpdated, this);
+        contextList.addEventListener(WebInspector.FrameExecutionContextList.EventTypes.ContextAdded, this._contextAdded, this);
+        this._frameChanged();
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _frameRemoved: function(event)
+    {
+        var contextList = /** @type {WebInspector.FrameExecutionContextList} */ event.data;
+        this._frameSelector.removeOption(contextList._consoleOption);
+        this._frameChanged();
+    },
+
+    _frameChanged: function()
+    {
+        var context = this._currentFrame();
+        if (!context) {
+            delete this._currentExecutionContext;
+            this._contextSelector.element.addStyleClass("hidden");
+            return;
+        }
+
+        var executionContexts = context.executionContexts();
+        if (executionContexts.length)
+            this._currentExecutionContext = executionContexts[0];
+
+        if (executionContexts.length === 1) {
+            this._contextSelector.element.addStyleClass("hidden");
+            return;
+        }
+        this._contextSelector.element.removeStyleClass("hidden");
+        this._contextSelector.removeOptions();
+        for (var i = 0; i < executionContexts.length; i++)
+            this._appendContextOption(executionContexts[i]);
+    },
+
+    /**
+     * @param {WebInspector.ExecutionContext} executionContext
+     */
+    _appendContextOption: function(executionContext)
+    {
+        if (!this._currentExecutionContext)
+            this._currentExecutionContext = executionContext;
+        var option = document.createElement("option");
+        option.text = executionContext.name;
+        option.title = executionContext.id;
+        option._executionContext = executionContext;
+        this._contextSelector.addOption(option);
+    },
+
+    /**
+     * @param {Event} event
+     */
+    _contextChanged: function(event)
+    {
+        var option = this._contextSelector.selectedOption();
+        this._currentExecutionContext = option ? option._executionContext : undefined;
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _frameUpdated: function(event)
+    {
+        var contextList = /** {WebInspector.FrameExecutionContextList */ event.data;
+        var option = contextList._consoleOption;
+        option.text = contextList.displayName;
+        option.title = contextList.url;
     },
 
     /**
@@ -139,109 +234,18 @@ WebInspector.ConsoleView.prototype = {
      */
     _contextAdded: function(event)
     {
-        var context = /** @type {WebInspector.FrameEvaluationContext} */ event.data;
-        this._addContext(context);
+        var contextList = /** {WebInspector.FrameExecutionContextList */ event.data;
+        if (contextList === this._currentFrame())
+            this._frameChanged();
     },
 
     /**
-     * @param {WebInspector.FrameEvaluationContext} context
+     * @return {WebInspector.FrameExecutionContextList|undefined}
      */
-    _addContext: function(context)
+    _currentFrame: function()
     {
-        var option = document.createElement("option");
-        option.text = context.displayName;
-        option.title = context.url;
-        option._context = context;
-        context._consoleOption = option;
-        this._contextSelector.addOption(option);
-        context.addEventListener(WebInspector.FrameEvaluationContext.EventTypes.Updated, this._contextUpdated, this);
-        context.addEventListener(WebInspector.FrameEvaluationContext.EventTypes.AddedExecutionContext, this._addedExecutionContext, this);
-        this._updateIsolatedWorldSelector();
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _contextRemoved: function(event)
-    {
-        var context = /** @type {WebInspector.FrameEvaluationContext} */ event.data;
-        this._contextSelector.removeOption(context._consoleOption);
-        this._updateIsolatedWorldSelector();
-    },
-
-    _updateIsolatedWorldSelector: function()
-    {
-        var context = this._currentEvaluationContext();
-        if (!context) {
-            this._isolatedWorldSelector.element.addStyleClass("hidden");
-            return;
-        }
-
-        var isolatedContexts = context.isolatedContexts();
-        if (!isolatedContexts.length) {
-            this._isolatedWorldSelector.element.addStyleClass("hidden");
-            return;
-        }
-        this._isolatedWorldSelector.element.removeStyleClass("hidden");
-        this._isolatedWorldSelector.removeOptions();
-        this._appendIsolatedContextOption(context.mainWorldContext());
-        for (var i = 0; i < isolatedContexts.length; i++)
-            this._appendIsolatedContextOption(isolatedContexts[i]);
-    },
-
-    _appendIsolatedContextOption: function(isolatedContext)
-    {
-        if (!isolatedContext)
-            return;
-        var option = document.createElement("option");
-        option.text = isolatedContext.name;
-        option.title = isolatedContext.id;
-        option._executionContextId = isolatedContext.id;
-        this._isolatedWorldSelector.addOption(option);
-    },
-
-    _contextUpdated: function(event)
-    {
-        var context = event.data;
-        var option = context._consoleOption;
-        option.text = context.displayName;
-        option.title = context.url;
-    },
-
-    _addedExecutionContext: function(event)
-    {
-        var context = event.data;
-        if (context === this._currentEvaluationContext())
-            this._updateIsolatedWorldSelector();
-    },
-
-    _currentEvaluationContextId: function()
-    {
-        var result = this._currentIsolatedContextId();
-        if (result !== undefined)
-            return result;
-        var context = this._currentEvaluationContext();
-        if (context && context.mainWorldContext())
-            return context.mainWorldContext().id;
-        return undefined;
-    },
-
-    _currentEvaluationContext: function()
-    {
-        var option = this._contextSelector.selectedOption();
-        if (!option)
-            return undefined;
-        return option._context;
-    },
-
-    _currentIsolatedContextId: function()
-    {
-        if (this._isolatedWorldSelector.element.hasStyleClass("hidden"))
-            return undefined;
-        var option = this._isolatedWorldSelector.selectedOption();
-        if (!option)
-            return undefined;
-        return option._executionContextId;
+        var option = this._frameSelector.selectedOption();
+        return option ? option._contextList : undefined;
     },
 
     _updateFilter: function(e)
@@ -706,8 +710,7 @@ WebInspector.ConsoleView.prototype = {
             else
                 callback(WebInspector.RemoteObject.fromPayload(result), !!wasThrown);
         }
-        var contextId = this._currentEvaluationContextId();
-        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, contextId, returnByValue, evalCallback);
+        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, this._currentExecutionContext ? this._currentExecutionContext.id : undefined, returnByValue, evalCallback);
     },
 
     evaluateUsingTextPrompt: function(expression, showResultOnly)
@@ -732,8 +735,7 @@ WebInspector.ConsoleView.prototype = {
 
     runScript: function(scriptId)
     {
-        var contextId = WebInspector.consoleView._currentEvaluationContextId();
-        DebuggerAgent.runScript(scriptId, contextId, "console", false, runCallback.bind(this));
+        DebuggerAgent.runScript(scriptId, this._currentExecutionContext ? this._currentExecutionContext.id : undefined, "console", false, runCallback.bind(this));
         WebInspector.userMetrics.ConsoleEvaluated.record();
 
         /**

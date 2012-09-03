@@ -1,3 +1,13 @@
+2012-08-31  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: get rid of context execution id fallback.
+        https://bugs.webkit.org/show_bug.cgi?id=95567
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/console-cd-completions.html:
+        * http/tests/inspector/console-cd.html:
+
 2012-09-03  Yoshifumi Inoue  <yosin@chromium.org>
 
         Unreviewed rebaseline for bug 94287.

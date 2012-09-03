@@ -8,7 +8,7 @@
 function test()
 {
     InspectorTest.showConsolePanel();
-    var selector = WebInspector.consoleView._contextSelector._selectElement;
+    var selector = WebInspector.consoleView._frameSelector._selectElement;
     var option = selector.firstChild;
     while (option) {
         if (option.textContent && option.textContent.indexOf("myIFrame") === 0)
@@ -21,6 +21,8 @@ function test()
         return;
     }
     option.selected = true;
+    WebInspector.consoleView._frameChanged();
+
     InspectorTest.evaluateInConsoleAndDump("foo", finish);
     function finish()
     {
