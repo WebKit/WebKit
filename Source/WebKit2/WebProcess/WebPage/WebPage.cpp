@@ -1562,7 +1562,9 @@ void WebPage::highlightPotentialActivation(const IntPoint& point, const IntSize&
         // pages has a global click handler and we do not want to highlight the body.
         // Instead find the enclosing link or focusable element, or the last enclosing inline element.
         for (Node* node = adjustedNode; node; node = node->parentOrHostNode()) {
-            if (node->isMouseFocusable() || node->isLink()) {
+            if (node->isDocumentNode() || node->isFrameOwnerElement())
+                break;
+            if (node->isMouseFocusable() || node->willRespondToMouseClickEvents()) {
                 activationNode = node;
                 break;
             }

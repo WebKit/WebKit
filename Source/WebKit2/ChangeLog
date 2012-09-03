@@ -1,3 +1,16 @@
+2012-09-03  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Not all activated elements highlighted, but some frames are
+        https://bugs.webkit.org/show_bug.cgi?id=95683
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use the new function Node::willRespondToMouseClickEvents to better determine if the element
+        can be tap-activated and avoid documents and frames completely.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::highlightPotentialActivation):
+
 2012-09-03  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Add ewk_settings.
