@@ -1,3 +1,9 @@
+2012-09-03  Peter Beverloo  <peter@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-09-03  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add Ice-related functionality to RTCPeerConnection
