@@ -1,5 +1,17 @@
 2012-09-03  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] Mark several inspector test as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=95667
+
+        Unreviewed EFL gardening.
+
+        Mark several inspector test cases as flaky on
+        WebKit2 EFL.
+
+        * platform/efl-wk2/TestExpectations:
+
+2012-09-03  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Update TestExpectations for 2 fast/block tests
         https://bugs.webkit.org/show_bug.cgi?id=95666
 
