@@ -649,11 +649,16 @@ Resource.prototype = {
     },
 
     /**
-     * @param {Object} object
+     * @param {!Object} object
      */
     _bindObjectToResource: function(object)
     {
-        object["__resourceObject"] = this;
+        Object.defineProperty(object, "__resourceObject", {
+            value: this,
+            writable: false,
+            enumerable: false,
+            configurable: true
+        });
     }
 }
 
@@ -1438,6 +1443,7 @@ WebGLRenderingContextResource.prototype = {
                     },
                     set: function(value)
                     {
+                        console.error("ASSERT_NOT_REACHED: We assume all WebGLRenderingContext attributes are readonly. Trying to mutate " + property);
                         gl[property] = value;
                     }
                 });
@@ -1447,6 +1453,7 @@ WebGLRenderingContextResource.prototype = {
         for (var property in gl)
             processProperty(property);
 
+        this._bindObjectToResource(proxy);
         return proxy;
     },
 
@@ -1858,7 +1865,7 @@ InjectedScript.prototype = {
      */
     wrapWebGLContext: function(glContext)
     {
-        var resource = Resource.forObject(glContext) || new WebGLRenderingContextResource(glContext, this._constructReplayContext.bind(this, glContext));
+        var resource = Resource.forObject(glContext) || new WebGLRenderingContextResource(glContext, this._constructWebGLReplayContext.bind(this, glContext));
         this._manager.registerResource(resource);
         var proxy = resource.proxyObject();
         return proxy;
@@ -1951,15 +1958,26 @@ InjectedScript.prototype = {
      * @param {WebGLRenderingContext} originalGlContext
      * @return {WebGLRenderingContext}
      */
-    _constructReplayContext: function(originalGlContext)
+    _constructWebGLReplayContext: function(originalGlContext)
     {
         var replayContext = originalGlContext["__replayContext"];
         if (!replayContext) {
             var canvas = originalGlContext.canvas.cloneNode(true);
-            // FIXME: Pass original context id instead of "experimental-webgl".
-            // FIXME: Pass original ContextAttributes to the getContext() method.
-            replayContext = /** @type {WebGLRenderingContext} */ Resource.wrappedObject(canvas.getContext("experimental-webgl"));
-            originalGlContext["__replayContext"] = replayContext;
+            var attributes = originalGlContext.getContextAttributes();
+            var contextIds = ["experimental-webgl", "webkit-3d", "3d"];
+            for (var i = 0, contextId; contextId = contextIds[i]; ++i) {
+                replayContext = canvas.getContext(contextId, attributes);
+                if (replayContext) {
+                    replayContext = /** @type {WebGLRenderingContext} */ Resource.wrappedObject(replayContext);
+                    break;
+                }
+            }
+            Object.defineProperty(originalGlContext, "__replayContext", {
+                value: replayContext,
+                writable: false,
+                enumerable: false,
+                configurable: true
+            });
             this._replayContext = replayContext;
         } else {
             // FIXME: Reset the replay GL state and clear the canvas.
