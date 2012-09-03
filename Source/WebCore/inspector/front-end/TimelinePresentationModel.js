@@ -751,7 +751,7 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
             case recordTypes.ResourceReceiveResponse:
             case recordTypes.ResourceReceivedData:
             case recordTypes.ResourceFinish:
-                contentHelper._appendElementRow(WebInspector.UIString("Resource"), this._linkifyLocation(this.url));
+                contentHelper._appendElementRow(WebInspector.UIString("Resource"), WebInspector.linkifyResourceAsNode(this.url));
                 if (previewElement)
                     contentHelper._appendElementRow(WebInspector.UIString("Preview"), previewElement);
                 if (this.data["requestMethod"])
@@ -870,15 +870,14 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
 
     /**
      * @param {string} url
-     * @param {number=} lineNumber
+     * @param {number} lineNumber
      * @param {number=} columnNumber
      */
     _linkifyLocation: function(url, lineNumber, columnNumber)
     {
         // FIXME(62725): stack trace line/column numbers are one-based.
-        lineNumber = lineNumber ? lineNumber - 1 : lineNumber;
         columnNumber = columnNumber ? columnNumber - 1 : 0;
-        return this._linkifier.linkifyLocation(url, lineNumber, columnNumber, "timeline-details");
+        return this._linkifier.linkifyLocation(url, lineNumber - 1, columnNumber, "timeline-details");
     },
 
     _linkifyCallFrame: function(callFrame)
