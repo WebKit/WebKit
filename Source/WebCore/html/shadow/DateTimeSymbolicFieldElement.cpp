@@ -32,13 +32,27 @@
 #include "RenderStyle.h"
 #include "StyleResolver.h"
 #include "TextRun.h"
+#include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
+static AtomicString makeVisibleEmptyValue(const Vector<String>& symbols)
+{
+    unsigned maximumLength = 0;
+    for (unsigned index = 0; index < symbols.size(); ++index)
+        maximumLength = std::max(maximumLength, numGraphemeClusters(symbols[index]));
+    StringBuilder builder;
+    builder.reserveCapacity(maximumLength);
+    for (unsigned length = 0; length < maximumLength; ++length)
+        builder.append('-');
+    return builder.toAtomicString();
+}
+
 DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document* document, FieldOwner& fieldOwner, const Vector<String>& symbols)
     : DateTimeFieldElement(document, fieldOwner)
     , m_symbols(symbols)
+    , m_visibleEmptyValue(makeVisibleEmptyValue(symbols))
     , m_selectedIndex(-1)
 {
     ASSERT(!symbols.isEmpty());
@@ -117,8 +131,7 @@ int DateTimeSymbolicFieldElement::valueAsInteger() const
 
 String DateTimeSymbolicFieldElement::visibleEmptyValue() const
 {
-    // FIXME: Number of dashs should be maximum length of labels.
-    return "--";
+    return m_visibleEmptyValue;
 }
 
 String DateTimeSymbolicFieldElement::visibleValue() const
