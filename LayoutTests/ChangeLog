@@ -1,3 +1,19 @@
+2012-09-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r127406.
+        http://trac.webkit.org/changeset/127406
+        https://bugs.webkit.org/show_bug.cgi?id=95674
+
+        Expectation images are missing (Requested by yosin1 on
+        #webkit).
+
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png: Removed.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.txt: Removed.
+        * platform/chromium/TestExpectations:
+
 2012-09-03  Yoshifumi Inoue  <yosin@chromium.org>
 
         Unreviewed rebaseline for bug 94287.
