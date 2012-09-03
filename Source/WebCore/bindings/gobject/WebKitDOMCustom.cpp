@@ -69,6 +69,31 @@ webkit_dom_webkit_named_flow_get_overflow(WebKitDOMWebKitNamedFlow* flow)
     return webkit_dom_webkit_named_flow_get_overset(flow);
 }
 
+WebKitDOMDOMTokenList*
+webkit_dom_html_element_get_class_list(WebKitDOMHTMLElement* element)
+{
+    return webkit_dom_element_get_class_list(WEBKIT_DOM_ELEMENT(element));
+}
+
+gchar*
+webkit_dom_element_get_webkit_region_overflow(WebKitDOMElement* element)
+{
+    return webkit_dom_element_get_webkit_region_overset(element);
+}
+
+WebKitDOMNodeList*
+webkit_dom_webkit_named_flow_get_content_nodes(WebKitDOMWebKitNamedFlow* namedFlow)
+{
+    return webkit_dom_webkit_named_flow_get_content(namedFlow);
+
+}
+
+WebKitDOMNodeList*
+webkit_dom_webkit_named_flow_get_regions_by_content_node(WebKitDOMWebKitNamedFlow* namedFlow, WebKitDOMNode* contentNode)
+{
+    return webkit_dom_webkit_named_flow_get_regions_by_content(namedFlow, contentNode);
+}
+
 void
 webkit_dom_html_form_element_dispatch_form_change(WebKitDOMHTMLFormElement* self)
 {
