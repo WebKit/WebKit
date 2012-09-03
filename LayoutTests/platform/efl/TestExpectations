@@ -235,6 +235,7 @@ BUGWKEFL : media/media-controls-clone.html = TEXT PASS
 
 BUGWK93213 : fast/text/international/text-spliced-font.html = TEXT PASS
 BUGWK93214 : http/tests/loading/307-after-303-after-post.html = TIMEOUT PASS
+BUGWK93212 : http/tests/incremental/slow-utf8-text.pl = TIMEOUT PASS
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // FAILING TESTS
@@ -1011,7 +1012,6 @@ BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.ht
 BUGWK93148 : fast/css/nested-layers-with-hover.html = TEXT
 
 BUGWK92956 : http/tests/security/contentSecurityPolicy/object-src-url-blocked.html = TEXT
-BUGWK93212 : http/tests/incremental/slow-utf8-text.pl = TIMEOUT
 
 BUGWK93976 : fast/css-generated-content/quotes-lang.html = IMAGE
 
