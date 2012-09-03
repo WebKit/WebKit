@@ -133,6 +133,17 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
+on_mouse_down(void *data, Evas *e, Evas_Object *webview, void *event_info)
+{
+    Evas_Event_Mouse_Down *ev = (Evas_Event_Mouse_Down *)event_info;
+
+    if (ev->button == 1)
+        evas_object_focus_set(webview, EINA_TRUE);
+    else if (ev->button == 2)
+        evas_object_focus_set(webview, !evas_object_focus_get(webview));
+}
+
+static void
 title_set(Ecore_Evas *ee, const char *title, int progress)
 {
     Eina_Strbuf* buffer;
@@ -241,6 +252,7 @@ static MiniBrowser *browserCreate(const char *url, const char *engine)
     evas_object_smart_callback_add(app->browser, "uri,changed", on_url_changed, app);
 
     evas_object_event_callback_add(app->browser, EVAS_CALLBACK_KEY_DOWN, on_key_down, app);
+    evas_object_event_callback_add(app->browser, EVAS_CALLBACK_MOUSE_DOWN, on_mouse_down, app);
 
     evas_object_size_hint_weight_set(app->browser, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_move(app->browser, 0, URL_BAR_HEIGHT);

@@ -433,8 +433,11 @@ on_url_changed(void* user_data, Evas_Object* webview, void* event_info)
 static void
 on_mouse_down(void* data, Evas* e, Evas_Object* webview, void* event_info)
 {
-    Evas_Event_Mouse_Down *ev = (Evas_Event_Mouse_Down*) event_info;
-    if (ev->button == 2)
+    Evas_Event_Mouse_Down *ev = (Evas_Event_Mouse_Down *)event_info;
+
+    if (ev->button == 1)
+        evas_object_focus_set(webview, EINA_TRUE);
+    else if (ev->button == 2)
         evas_object_focus_set(webview, !evas_object_focus_get(webview));
 }
 

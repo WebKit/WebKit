@@ -1,3 +1,24 @@
+2012-09-03  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Change the focus when the web view is clicked in MiniBrowser and EWebLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=95689
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        In Minibrowser & EWebLauncher, the web view loses the focus when url bar is clicked.
+        So, there are bugs that key events are always generated in url bar although
+        the user clicked the web view.
+
+        This patch recovers the focus of the web view when left button is pressed and
+        adds for MiniBrowser to toggle the focus when middle button is pressed
+        like EWebLauncher already did.
+
+        * EWebLauncher/main.c:
+        (on_mouse_down):
+        * MiniBrowser/efl/main.c:
+        (on_mouse_down):
+        (browserCreate):
+
 2012-09-03  Tao Bai  <michaelbai@chromium.org>
 
         Added ANDROID_GDBSERVER definition for Ant
