@@ -36,15 +36,16 @@
 WebInspector.ResourceScriptMapping = function(workspace)
 {
     this._workspace = workspace;
+    /** @type {Array.<WebInspector.RawSourceCode>} */
+    this._rawSourceCodes = [];
+    /** @type {Object.<string, WebInspector.RawSourceCode>} */
+    this._rawSourceCodeForScriptId = {};
+    /** @type {Object.<string, WebInspector.RawSourceCode>} */
+    this._rawSourceCodeForURL = {};
+    /** @type {Object.<string, WebInspector.RawSourceCode>} */
+    this._rawSourceCodeForDocumentURL = {};
+    this._rawSourceCodeForUISourceCode = new Map();
     this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
-    this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._uiSourceCodeAddedToWorkspace, this);
-
-    /** @type {Object.<string, WebInspector.UISourceCode>} */
-    this._uiSourceCodeForScriptId = {};
-    this._scriptIdForUISourceCode = new Map();
-    this._temporaryUISourceCodes = new Map();
-    /** @type {Object.<string, number>} */
-    this._nextDynamicScriptIndexForURL = {};
 }
 
 WebInspector.ResourceScriptMapping.prototype = {
@@ -55,9 +56,8 @@ WebInspector.ResourceScriptMapping.prototype = {
     rawLocationToUILocation: function(rawLocation)
     {
         var debuggerModelLocation = /** @type {WebInspector.DebuggerModel.Location} */ rawLocation;
-        var script = WebInspector.debuggerModel.scriptForId(debuggerModelLocation.scriptId);
-        var uiSourceCode = this._uiSourceCodeForScriptId[debuggerModelLocation.scriptId];
-        return new WebInspector.UILocation(uiSourceCode, debuggerModelLocation.lineNumber, debuggerModelLocation.columnNumber || 0);
+        var rawSourceCode = this._rawSourceCodeForScriptId[debuggerModelLocation.scriptId];
+        return rawSourceCode.rawLocationToUILocation(debuggerModelLocation);
     },
 
     /**
@@ -68,9 +68,8 @@ WebInspector.ResourceScriptMapping.prototype = {
      */
     uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
     {
-        var scriptId = this._scriptIdForUISourceCode.get(uiSourceCode);
-        var script = WebInspector.debuggerModel.scriptForId(scriptId);
-        return WebInspector.debuggerModel.createRawLocation(script, lineNumber, columnNumber);
+        var rawSourceCode = this._rawSourceCodeForUISourceCode.get(uiSourceCode);
+        return rawSourceCode.uiLocationToRawLocation(uiSourceCode, lineNumber, columnNumber);
     },
 
     /**
@@ -78,147 +77,137 @@ WebInspector.ResourceScriptMapping.prototype = {
      */
     addScript: function(script)
     {
-        console.assert(!this._uiSourceCodeForScriptId[script.scriptId]);
-
-        var isDynamicScript = false;
+        var resource = null;
+        var request = null;
         if (!script.isAnonymousScript()) {
-            var uiSourceCode = this._workspace.uiSourceCodeForURL(script.sourceURL);
-            isDynamicScript = !!uiSourceCode && uiSourceCode.contentType() === WebInspector.resourceTypes.Document && !script.isInlineScript();
-            if (uiSourceCode && !isDynamicScript && !this._temporaryUISourceCodes.get(uiSourceCode))
-                this._bindUISourceCodeToScripts(uiSourceCode, [script]);
+            // First lookup the resource that has already been loaded.
+            resource = WebInspector.resourceForURL(script.sourceURL);
+            // Ignore resource in case it has not yet finished loading.
+            if (resource && resource.request && !resource.request.finished)
+                resource = null;
+            // Only bind inline and standalone scripts.
+            if (resource && !this._shouldBindScriptToContentProvider(script, resource))
+                resource = null;
+            if (!resource) {
+                // When there is no resource, lookup in-flight requests.
+                request = WebInspector.networkManager.inflightRequestForURL(script.sourceURL);
+                // Only bind inline and standalone scripts.
+                if (request && !this._shouldBindScriptToContentProvider(script, request))
+                  request = null;
+            }
         }
-        if (!this._uiSourceCodeForScriptId[script.scriptId])
-            this._addOrReplaceTemporaryUISourceCode(script, isDynamicScript);
+        console.assert(!resource || !request);
 
-        console.assert(this._uiSourceCodeForScriptId[script.scriptId]);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {Array.<WebInspector.Script>} scripts
-     */
-    _bindUISourceCodeToScripts: function(uiSourceCode, scripts)
-    {
-        console.assert(scripts.length);
-
-        for (var i = 0; i < scripts.length; ++i) {
-            this._uiSourceCodeForScriptId[scripts[i].scriptId] = uiSourceCode;
-            scripts[i].setSourceMapping(this);
-        }
-        uiSourceCode.isContentScript = scripts[0].isContentScript;
-        uiSourceCode.setSourceMapping(this);
-        this._scriptIdForUISourceCode.put(uiSourceCode, scripts[0].scriptId);
-    },
-
-    /**
-     * @param {string} sourceURL
-     * @param {boolean} isInlineScript
-     * @return {Array.<WebInspector.Script>}
-     */
-    _scriptsForSourceURL: function(sourceURL, isInlineScript)
-    {
-        function filter(script)
-        {
-            return script.sourceURL === sourceURL && script.isInlineScript() === isInlineScript;
+        var isInlineScript = script.isInlineScript() && (request || resource);
+        // If either of these exists, we bind script to the resource.
+        if (isInlineScript) {
+            var rawSourceCode = this._rawSourceCodeForDocumentURL[script.sourceURL];
+            if (rawSourceCode) {
+                rawSourceCode.addScript(script);
+                this._bindScriptToRawSourceCode(script, rawSourceCode);
+                return;
+            }
         }
 
-        return Object.values(WebInspector.debuggerModel.scripts).filter(filter);
+        var rawSourceCode = new WebInspector.RawSourceCode(script.scriptId, script, resource, request, this);
+        this._rawSourceCodes.push(rawSourceCode);
+        this._bindScriptToRawSourceCode(script, rawSourceCode);
+        if (isInlineScript)
+            this._rawSourceCodeForDocumentURL[script.sourceURL] = rawSourceCode;
+
+        if (rawSourceCode.uiSourceCode())
+            this._uiSourceCodeAdded(rawSourceCode, rawSourceCode.uiSourceCode());
+        rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.UISourceCodeChanged, this._handleUISourceCodeChanged, this);
     },
 
     /**
      * @param {WebInspector.Script} script
-     * @param {boolean} isDynamicScript
+     * @param {WebInspector.ContentProvider} contentProvider
+     * @return {boolean}
      */
-    _addOrReplaceTemporaryUISourceCode: function(script, isDynamicScript)
+    _shouldBindScriptToContentProvider: function(script, contentProvider)
     {
-        var scripts = script.isInlineScript() ? this._scriptsForSourceURL(script.sourceURL, true) : [script];
+        if (script.isInlineScript())
+            return contentProvider.contentType() === WebInspector.resourceTypes.Document;
+        return contentProvider.contentType() === WebInspector.resourceTypes.Script;
+    },
 
-        var oldUISourceCode;
-        for (var i = 0; i < scripts.length; ++i) {
-            oldUISourceCode = this._uiSourceCodeForScriptId[scripts[i].scriptId];
-            if (oldUISourceCode)
-                break;
-        }
-        console.assert(!oldUISourceCode || this._temporaryUISourceCodes.get(oldUISourceCode));
-
-        var contentProvider = script.isInlineScript() ? new WebInspector.ConcatenatedScriptsContentProvider(scripts) : script;
-        var url = script.sourceURL;
-        if (isDynamicScript) {
-            var nextIndex = this._nextDynamicScriptIndexForURL[script.sourceURL] || 1;
-            url += " (" + nextIndex + ")";
-            this._nextDynamicScriptIndexForURL[script.sourceURL] = nextIndex + 1;
-        }
-        var uiSourceCode = new WebInspector.JavaScriptSource(url, null, contentProvider, !script.isInlineScript());
-        this._temporaryUISourceCodes.put(uiSourceCode, uiSourceCode);
-        this._bindUISourceCodeToScripts(uiSourceCode, scripts);
-
-        if (!script.sourceURL)
-            return uiSourceCode;
-
-        if (oldUISourceCode)
-            this._uiSourceCodeReplaced(oldUISourceCode, uiSourceCode);
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _handleUISourceCodeChanged: function(event)
+    {
+        var rawSourceCode = /** @type {WebInspector.RawSourceCode} */ event.target;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data.uiSourceCode;
+        var oldUISourceCode = /** @type {WebInspector.UISourceCode} */ event.data.oldUISourceCode;
+        if (!oldUISourceCode)
+            this._uiSourceCodeAdded(rawSourceCode, uiSourceCode);
         else
-            this._workspace.project().addUISourceCode(uiSourceCode);
-        return uiSourceCode;
-    },
-
-    _uiSourceCodeAddedToWorkspace: function(event)
-    {
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
-        console.assert(!this._scriptIdForUISourceCode.get(uiSourceCode) || this._temporaryUISourceCodes.get(uiSourceCode));
-        if (!uiSourceCode.url || this._temporaryUISourceCodes.get(uiSourceCode))
-            return;
-        this._addUISourceCode(uiSourceCode);
+            this._uiSourceCodeReplaced(rawSourceCode, oldUISourceCode, uiSourceCode);
     },
 
     /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {WebInspector.RawSourceCode} rawSourceCode
+     * @paran {WebInspector.UISourceCode} uiSourceCode
      */
-    _addUISourceCode: function(uiSourceCode)
+    _uiSourceCodeAdded: function(rawSourceCode, uiSourceCode)
     {
-        var isInlineScript;
-        switch (uiSourceCode.contentType()) {
-        case WebInspector.resourceTypes.Document:
-            isInlineScript = true;
-            break;
-        case WebInspector.resourceTypes.Script:
-            isInlineScript = false;
-            break;
-        default:
+        if (!uiSourceCode.url)
             return;
-        }
-
-        var scripts = this._scriptsForSourceURL(uiSourceCode.url, isInlineScript);
-        if (!scripts.length)
-            return;
-
-        var oldUISourceCode = this._uiSourceCodeForScriptId[scripts[0].scriptId];
-        this._bindUISourceCodeToScripts(uiSourceCode, scripts);
-
-        if (oldUISourceCode) {
-            console.assert(this._temporaryUISourceCodes.get(oldUISourceCode));
-            this._uiSourceCodeReplaced(oldUISourceCode, uiSourceCode);
-        }
-
-        console.assert(this._scriptIdForUISourceCode.get(uiSourceCode) && !this._temporaryUISourceCodes.get(uiSourceCode));
+        this._rawSourceCodeForUISourceCode.put(uiSourceCode, rawSourceCode);
+        this._workspace.project().addUISourceCode(uiSourceCode);
     },
 
     /**
+     * @param {WebInspector.RawSourceCode} rawSourceCode
      * @param {WebInspector.UISourceCode} oldUISourceCode
      * @param {WebInspector.UISourceCode} uiSourceCode
      */
-    _uiSourceCodeReplaced: function(oldUISourceCode, uiSourceCode)
+    _uiSourceCodeReplaced: function(rawSourceCode, oldUISourceCode, uiSourceCode)
     {
-        this._temporaryUISourceCodes.remove(oldUISourceCode);
-        this._scriptIdForUISourceCode.remove(oldUISourceCode);
+        if (!uiSourceCode.url)
+            return;
+        this._rawSourceCodeForUISourceCode.remove(oldUISourceCode);
+        this._rawSourceCodeForUISourceCode.put(uiSourceCode, rawSourceCode);
+
+        for (var i = 0; i < rawSourceCode._scripts.length; ++i)
+            rawSourceCode._scripts[i].setSourceMapping(this);
         this._workspace.project().replaceUISourceCode(oldUISourceCode, uiSourceCode);
+    },
+
+    /**
+     * @param {WebInspector.RawSourceCode} rawSourceCode
+     * @paran {WebInspector.UISourceCode} uiSourceCode
+     */
+    _uiSourceCodeRemoved: function(rawSourceCode, uiSourceCode)
+    {
+        if (!uiSourceCode.url)
+            return;
+        this._rawSourceCodeForUISourceCode.remove(uiSourceCode);
+    },
+
+    /**
+     * @param {WebInspector.Script} script
+     * @param {WebInspector.RawSourceCode} rawSourceCode
+     */
+    _bindScriptToRawSourceCode: function(script, rawSourceCode)
+    {
+        this._rawSourceCodeForScriptId[script.scriptId] = rawSourceCode;
+        this._rawSourceCodeForURL[script.sourceURL] = rawSourceCode;
+        script.setSourceMapping(this);
     },
 
     _reset: function()
     {
-        this._uiSourceCodeForScriptId = {};
-        this._scriptIdForUISourceCode.clear();
-        this._temporaryUISourceCodes.clear();
-        this._nextDynamicScriptIndexForURL = {};
-    },
+        for (var i = 0; i < this._rawSourceCodes.length; ++i) {
+            var rawSourceCode = this._rawSourceCodes[i];
+            this._uiSourceCodeRemoved(rawSourceCode, rawSourceCode.uiSourceCode());
+            rawSourceCode.removeAllListeners();
+        }
+        this._rawSourceCodes = [];
+        this._rawSourceCodeForScriptId = {};
+        this._rawSourceCodeForURL = {};
+        this._rawSourceCodeForDocumentURL = {};
+        this._rawSourceCodeForUISourceCode.clear();
+    }
 }

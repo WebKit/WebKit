@@ -111,8 +111,7 @@ function test()
     WorkspaceMock.prototype = {
         _addUISourceCode: function(url)
         {
-            var uiSourceCode = new WebInspector.JavaScriptSource(url, null, null, false);
-            uiSourceCode.setSourceMapping(defaultMapping);
+            var uiSourceCode = new WebInspector.JavaScriptSource(url, null, null, defaultMapping, false);
             uiSourceCodes[url] = uiSourceCode;
             this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
             return uiSourceCode;
