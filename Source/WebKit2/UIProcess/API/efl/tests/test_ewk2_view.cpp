@@ -189,6 +189,12 @@ TEST_F(EWK2UnitTestBase, ewk_view_form_submission_request)
     evas_object_smart_callback_del(webView(), "form,submission,request", onFormAboutToBeSubmitted);
 }
 
+static Eina_Bool selectItemAfterDelayed(void* data)
+{
+    EXPECT_TRUE(ewk_view_popup_menu_select(static_cast<Evas_Object*>(data), 0));
+    return ECORE_CALLBACK_CANCEL;
+}
+
 static Eina_Bool showPopupMenu(Ewk_View_Smart_Data* smartData, Eina_Rectangle, Ewk_Text_Direction, double, Eina_List* list, int selectedIndex)
 {
     EXPECT_EQ(selectedIndex, 2);
@@ -209,7 +215,7 @@ static Eina_Bool showPopupMenu(Ewk_View_Smart_Data* smartData, Eina_Rectangle, E
     EXPECT_EQ(ewk_popup_menu_item_type_get(item), EWK_POPUP_MENU_UNKNOWN);
     EXPECT_STREQ(ewk_popup_menu_item_text_get(item), 0);
 
-    EXPECT_TRUE(ewk_view_popup_menu_select(smartData->self, 0));
+    ecore_timer_add(0, selectItemAfterDelayed, smartData->self);
     return true;
 }
 

@@ -2918,8 +2918,8 @@ void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, co
 
     protectedActivePopupMenu->showPopupMenu(rect, static_cast<TextDirection>(textDirection), m_pageScaleFactor, items, data, selectedIndex);
 
-    // Since Qt doesn't use a nested mainloop the show the popup and get the answer, we need to keep the client pointer valid.
-#if !PLATFORM(QT)
+    // Since Qt and Efl doesn't use a nested mainloop to show the popup and get the answer, we need to keep the client pointer valid.
+#if !PLATFORM(QT) && !PLATFORM(EFL)
     protectedActivePopupMenu->invalidate();
 #endif
     protectedActivePopupMenu = 0;

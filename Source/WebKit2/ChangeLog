@@ -1,3 +1,21 @@
+2012-09-02  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Keep activePopupMenu to call valueChangedForPopupMenu() outside showPopupMenu()
+        https://bugs.webkit.org/show_bug.cgi?id=95355
+
+        Reviewed by Gyuyoung Kim.
+
+        Efl does not have a proper way to support nested loop so that applications
+        may change value after showPopupMenu() is finished.
+
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp: Improved test case to cover this bug.
+        (selectItemAfterDelayed):
+        (showPopupMenu):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showPopupMenu):
+        Guard with !PLATFORM(EFL) to keep the activePopupMenu valid to call valueChangedForPopupMenu
+        outside showPopupMenu().
+
 2012-09-02  Byungwoo Lee  <bw80.lee@gmail.com>
 
         [EFL] Add missing semicolon at the end of some lines.
