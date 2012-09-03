@@ -345,10 +345,10 @@ function _drawRulers(highlight)
 
 function drawNodeHighlight(highlight)
 {
-    _drawGrid(highlight);
-
-    if (!highlight.quads.length)
+    if (!highlight.quads.length) {
+        _drawGrid(highlight);
         return;
+    }
 
     context.save();
 
@@ -387,6 +387,7 @@ function drawNodeHighlight(highlight)
     if (hasContent)
         drawOutlinedQuad(contentQuad, highlight.contentColor, highlight.contentOutlineColor);
 
+    _drawGrid(highlight);
     _drawElementTitle(highlight);
     _drawRulers(highlight);
     context.restore();
