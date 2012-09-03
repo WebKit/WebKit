@@ -71,6 +71,18 @@ WebInspector.ElementsTreeOutline.Events = {
     SelectedNodeChanged: "SelectedNodeChanged"
 }
 
+WebInspector.ElementsTreeOutline.MappedCharToEntity = {
+    "\u00a0": "nbsp",
+    "\u2002": "ensp",
+    "\u2003": "emsp",
+    "\u2009": "thinsp",
+    "\u200b": "#8203",
+    "\u200c": "zwnj",
+    "\u200d": "zwj",
+    "\u200e": "lrm",
+    "\u200f": "rlm"
+}
+
 WebInspector.ElementsTreeOutline.prototype = {
     _createNodeDecorators: function()
     {
@@ -1302,7 +1314,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
         var container = textNode.enclosingNodeOrSelfWithClass("webkit-html-text-node");
         if (container)
-            container.innerText = container.innerText; // Strip the CSS or JS highlighting if present.
+            container.innerText = textNode._originalContent; // Strip the CSS or JS highlighting if present.
         var config = new WebInspector.EditingConfig(this._textNodeEditingCommitted.bind(this), this._editingCancelled.bind(this));
         this._editing = WebInspector.startEditing(textNode, config);
         window.getSelection().setBaseAndExtent(textNode, 0, textNode, 1);
@@ -1703,6 +1715,25 @@ WebInspector.ElementsTreeElement.prototype = {
         parentElement.appendChild(document.createTextNode("\u200B"));
     },
 
+    _convertWhitespaceToEntities: function(text)
+    {
+        var result = "";
+        var lastIndexAfterEntity = 0;
+        var charToEntity = WebInspector.ElementsTreeOutline.MappedCharToEntity;
+        for (var i = 0, size = text.length; i < size; ++i) {
+            var char = text.charAt(i);
+            if (charToEntity[char]) {
+                result += text.substring(lastIndexAfterEntity, i) + "&" + charToEntity[char] + ";";
+                lastIndexAfterEntity = i + 1;
+            }
+        }
+        if (result) {
+            result += text.substring(lastIndexAfterEntity);
+            return result;
+        }
+        return text;
+    },
+
     _nodeTitleInfo: function(linkify)
     {
         var node = this.representedObject;
@@ -1741,7 +1772,8 @@ WebInspector.ElementsTreeElement.prototype = {
                 // create a subtree for them
                 if (showInlineText) {
                     var textNodeElement = info.titleDOM.createChild("span", "webkit-html-text-node");
-                    textNodeElement.textContent = textChild.nodeValue();
+                    textNodeElement.textContent = this._convertWhitespaceToEntities(textChild.nodeValue());
+                    textNodeElement._originalContent = textChild.nodeValue();
                     info.titleDOM.appendChild(document.createTextNode("\u200B"));
                     this._buildTagDOM(info.titleDOM, tagName, true, false);
                     info.hasChildren = false;
@@ -1764,7 +1796,8 @@ WebInspector.ElementsTreeElement.prototype = {
                 } else {
                     info.titleDOM.appendChild(document.createTextNode("\""));
                     var textNodeElement = info.titleDOM.createChild("span", "webkit-html-text-node");
-                    textNodeElement.textContent = node.nodeValue();
+                    textNodeElement.textContent = this._convertWhitespaceToEntities(node.nodeValue());
+                    textNodeElement._originalContent = node.nodeValue();
                     info.titleDOM.appendChild(document.createTextNode("\""));
                 }
                 break;
