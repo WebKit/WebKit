@@ -1,3 +1,13 @@
+2012-09-02  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Unreviewed test expectation update after r127398
+
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-win-xp/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png: Removed.
+
 2012-09-02  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Tests] fast/forms/time-multiple-fields/time-multiple-fields-appearance-*.html should dump text instead of render tree
