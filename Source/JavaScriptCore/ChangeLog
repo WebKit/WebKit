@@ -1,3 +1,9 @@
+2012-09-03  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed. Build fix for ENABLE(CLASSIC_INTERPRETER) after r127393.
+
+        * interpreter/Interpreter.h:
+
 2012-09-02  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed failures seen on Linux bots.

@@ -261,7 +261,7 @@ namespace JSC {
         JSValue execute(CallFrameClosure&);
 
 #if ENABLE(CLASSIC_INTERPRETER)
-        NEVER_INLINE JSScope* createExceptionScope(CallFrame*, const Instruction* vPC);
+        NEVER_INLINE JSScope* createNameScope(CallFrame*, const Instruction* vPC);
 
         void tryCacheGetByID(CallFrame*, CodeBlock*, Instruction*, JSValue baseValue, const Identifier& propertyName, const PropertySlot&);
         void uncacheGetByID(CodeBlock*, Instruction* vPC);
