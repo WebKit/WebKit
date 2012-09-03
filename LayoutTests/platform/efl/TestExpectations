@@ -192,7 +192,6 @@ BUGWK86072 : media/sources-fallback-codecs.html = TEXT PASS
 BUGWK86073 : ietestcenter/css3/flexbox/flexbox-layout-001.htm = IMAGE PASS
 BUGWK86073 : ietestcenter/css3/flexbox/flexbox-layout-003.htm = IMAGE PASS
 BUGWK86074 : media/svg-as-image-with-media-blocked.html = CRASH PASS
-BUGWK86075 : fast/events/message-port-close.html = CRASH PASS
 BUGWK86078 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEXT PASS
 BUGWK86079 : http/tests/misc/link-rel-icon-beforeload.html = TEXT PASS
 BUGWK86081 : loader/navigation-while-deferring-loads.html = TEXT PASS

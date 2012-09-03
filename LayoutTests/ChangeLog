@@ -1,3 +1,11 @@
+2012-09-03  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        Unskipping message-port-close.html after bug 85811 was resolved.
+
+        * platform/efl/TestExpectations:
+
 2012-08-31  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: get rid of context execution id fallback.
