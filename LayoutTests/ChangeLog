@@ -1,3 +1,38 @@
+2012-09-02  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] fast/forms/time-multiple-fields/time-multiple-fields-appearance-*.html should dump text instead of render tree
+        https://bugs.webkit.org/show_bug.cgi?id=95545
+
+        Reviewed by Kent Tamura.
+
+        This patch changes test expectations to text output and pixel images
+        instead of structure of render tree and pixel images for multiple
+        fields time input UI. This patch helps us to avoid rebaseline when
+        we change DOM structure but keep appearance.
+
+        This patch affects ports which enable both ENABLE_INPUT_TYPE_TIME and
+        ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS.
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic.html: Changed to call testRunner.dumpAsText().
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly.html: Changed to call testRunner.dumpAsText().
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes.html: Changed to call testRunner.dumpAsText().
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements.html: Changed to call testRunner.dumpAsText().
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-style.html: Changed to call testRunner.dumpAsText().
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.txt: Removed.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.txt: Removed.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.txt: Removed.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.txt: Removed.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.txt: Removed.
+
 2012-09-02  Kenichi Ishibashi  <bashi@chromium.org>
 
         Unreviewed test expectation update after r127362
