@@ -130,6 +130,7 @@ inline SandboxExtension::~SandboxExtension() { }
 inline bool SandboxExtension::invalidate() { return true; }
 inline bool SandboxExtension::consume() { return true; }
 inline bool SandboxExtension::consumePermanently() { return true; }
+inline bool SandboxExtension::consumePermanently(const Handle&) { return true; }
 #endif
 
 } // namespace WebKit

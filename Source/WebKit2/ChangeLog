@@ -1,3 +1,15 @@
+2012-09-02  Kenichi Ishibashi  <bashi@chromium.org>
+
+        WK2: Build failure on SnowLeopard after r127384
+        https://bugs.webkit.org/show_bug.cgi?id=95665
+
+        Reviewed by Dan Bernstein.
+
+        Add SandboxExtension::consumePermanently(const Handle&) for !ENABLE(WEB_PROCESS_SANDBOX) to fix link error.
+
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::consumePermanently):
+
 2012-09-02  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Keep activePopupMenu to call valueChangedForPopupMenu() outside showPopupMenu()
