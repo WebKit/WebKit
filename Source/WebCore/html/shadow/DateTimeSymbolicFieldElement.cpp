@@ -27,7 +27,11 @@
 #if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
 #include "DateTimeSymbolicFieldElement.h"
 
+#include "FontCache.h"
 #include "KeyboardEvent.h"
+#include "RenderStyle.h"
+#include "StyleResolver.h"
+#include "TextRun.h"
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
@@ -38,6 +42,19 @@ DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document* document, F
     , m_selectedIndex(-1)
 {
     ASSERT(!symbols.isEmpty());
+    setHasCustomCallbacks();
+}
+
+PassRefPtr<RenderStyle> DateTimeSymbolicFieldElement::customStyleForRenderer()
+{
+    FontCachePurgePreventer fontCachePurgePreventer;
+    RefPtr<RenderStyle> originalStyle = document()->styleResolver()->styleForElement(this);
+    RefPtr<RenderStyle> style = RenderStyle::clone(originalStyle.get());
+    float maxiumWidth = style->font().width(visibleEmptyValue());
+    for (unsigned index = 0; index < m_symbols.size(); ++index)
+        maxiumWidth = std::max(maxiumWidth, style->font().width(m_symbols[index]));
+    style->setWidth(Length(maxiumWidth, Fixed));
+    return style.release();
 }
 
 void DateTimeSymbolicFieldElement::handleKeyboardEvent(KeyboardEvent* keyboardEvent)
@@ -98,9 +115,15 @@ int DateTimeSymbolicFieldElement::valueAsInteger() const
     return m_selectedIndex;
 }
 
+String DateTimeSymbolicFieldElement::visibleEmptyValue() const
+{
+    // FIXME: Number of dashs should be maximum length of labels.
+    return "--";
+}
+
 String DateTimeSymbolicFieldElement::visibleValue() const
 {
-    return hasValue() ? m_symbols[m_selectedIndex] : "--";
+    return hasValue() ? m_symbols[m_selectedIndex] : visibleEmptyValue();
 }
 
 } // namespace WebCore
