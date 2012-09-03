@@ -135,7 +135,6 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
 
     /**
      * @param {number} index
-     * @param {string} title
      */
     _createItemElement: function(index)
     {

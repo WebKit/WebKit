@@ -172,6 +172,9 @@ WebInspector.HeapSnapshotView.prototype = {
 
     get statusBarItems()
     {
+        /**
+         * @param {boolean=} hidden
+         */
         function appendArrowImage(element, hidden)
         {
             var span = document.createElement("span");
