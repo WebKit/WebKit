@@ -507,6 +507,8 @@
                         '--ant-args',
                         '-DANDROID_TOOLCHAIN=<(android_toolchain)',
                         '--ant-args',
+                        '-DANDROID_GDBSERVER=<(android_gdbserver)',
+                        '--ant-args',
                         '-DPRODUCT_DIR=<(ant_build_out)',
                         '--ant-args',
                         '-DCHROMIUM_SRC=<(ant_build_to_chromium_src)',

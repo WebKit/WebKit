@@ -1,3 +1,15 @@
+2012-09-03  Tao Bai  <michaelbai@chromium.org>
+
+        Added ANDROID_GDBSERVER definition for Ant
+        https://bugs.webkit.org/show_bug.cgi?id=95265
+
+        Reviewed by Adam Barth.
+
+        ANDROID_GDBSERVER will replace ANDROID_TOOLCHAIN, because the ANDROID_TOOLCHAIN
+        is only used for finding the gdbserver.
+
+        * WebKitUnitTests.gyp:
+
 2012-09-03  Peter Beverloo  <peter@chromium.org>
 
         Unreviewed.  Rolled DEPS.

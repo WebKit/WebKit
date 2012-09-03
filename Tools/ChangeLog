@@ -1,3 +1,16 @@
+2012-09-03  Tao Bai  <michaelbai@chromium.org>
+
+        Added ANDROID_GDBSERVER definition for Ant
+        https://bugs.webkit.org/show_bug.cgi?id=95265
+
+        Reviewed by Adam Barth.
+
+        ANDROID_GDBSERVER will replace ANDROID_TOOLCHAIN, because the ANDROID_TOOLCHAIN
+        is only used for finding the gdbserver.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * TestWebKitAPI/TestWebKitAPI.gyp/TestWebKitAPI.gyp:
+
 2012-09-03  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add Ice-related functionality to RTCPeerConnection
