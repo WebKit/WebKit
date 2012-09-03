@@ -28,6 +28,7 @@
 
 #include "NotImplemented.h"
 #include "PageClientImpl.h"
+#include "WebKitVersion.h"
 #include "WebPageMessages.h"
 #include "WebProcessProxy.h"
 
@@ -51,16 +52,15 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
 #else
     platform = "Unknown";
 #endif
-    version = makeString(String::number(WEBKIT_USER_AGENT_MAJOR_VERSION), '.',
-                         String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+');
+    version = String::number(WEBKIT_MAJOR_VERSION) + '.' + String::number(WEBKIT_MINOR_VERSION) + '+';
     struct utsname name;
     if (uname(&name) != -1)
         osVersion = WTF::String(name.sysname) + " " + WTF::String(name.machine);
     else
         osVersion = "Unknown";
 
-    return makeString("Mozilla/5.0 (", platform, "; ", osVersion, ") AppleWebKit/", version)
-           + makeString(" (KHTML, like Gecko) Version/5.0 Safari/", version);
+    return "Mozilla/5.0 (" + platform + "; " + osVersion + ") AppleWebKit/" + version
+        + " (KHTML, like Gecko) Version/5.0 Safari/" + version;
 }
 
 void WebPageProxy::getEditorCommandsForKeyEvent(Vector<WTF::String>& commandsList)

@@ -25,7 +25,6 @@
 #include "ApplicationCacheStorage.h"
 #include "CrossOriginPreflightResultCache.h"
 #include "DatabaseTracker.h"
-#include "StorageTracker.h"
 #include "FontCache.h"
 #include "FrameView.h"
 #include "IconDatabase.h"
@@ -36,6 +35,8 @@
 #include "PageCache.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
+#include "StorageTracker.h"
+#include "WebKitVersion.h"
 #include "ewk_private.h"
 #include "ewk_util_private.h"
 #include <Eina.h>
@@ -316,8 +317,8 @@ void ewk_settings_repaint_throttling_set(double deferredRepaintDelay, double ini
  */
 const char* ewk_settings_default_user_agent_get()
 {
-    WTF::String uaVersion = makeString(String::number(WEBKIT_USER_AGENT_MAJOR_VERSION), '.', String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+');
-    WTF::String staticUa = makeString("Mozilla/5.0 (", _ewk_settings_webkit_platform_get(), "; ", _ewk_settings_webkit_os_version_get(), ") AppleWebKit/", uaVersion) + makeString(" (KHTML, like Gecko) Version/5.0 Safari/", uaVersion);
+    WTF::String uaVersion = String::number(WEBKIT_MAJOR_VERSION) + '.' + String::number(WEBKIT_MINOR_VERSION) + '+';
+    WTF::String staticUa = "Mozilla/5.0 (" + _ewk_settings_webkit_platform_get() + "; " + _ewk_settings_webkit_os_version_get() + ") AppleWebKit/" + uaVersion + " (KHTML, like Gecko) Version/5.0 Safari/" + uaVersion;
 
     return eina_stringshare_add(staticUa.utf8().data());
 }

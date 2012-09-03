@@ -3,14 +3,6 @@ SET(PROJECT_VERSION_MINOR 1)
 SET(PROJECT_VERSION_PATCH 0)
 SET(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
 
-# -----------------------------------------------------------------------------
-# We mention Safari version because many sites check for it.
-# Sync with Source/WebCore/Configurations/Version.xcconfig whenever Safari is
-# version up.
-# -----------------------------------------------------------------------------
-SET(WEBKIT_USER_AGENT_MAJOR_VERSION 534)
-SET(WEBKIT_USER_AGENT_MINOR_VERSION 16)
-
 ADD_DEFINITIONS(-DBUILDING_EFL__=1)
 ADD_DEFINITIONS(-DWTF_PLATFORM_EFL=1)
 SET(WTF_PLATFORM_EFL 1)

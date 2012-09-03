@@ -1,3 +1,16 @@
+2012-09-03  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Use WebKitVersion.h to get version information
+        https://bugs.webkit.org/show_bug.cgi?id=95669
+
+        Reviewed by Gyuyoung Kim.
+
+        Use WEBKIT_MAJOR_VERSION and WEBKIT_MINOR_VERSION 
+        in the WebKitVersion.h
+
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::standardUserAgent):
+
 2012-09-03  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Skip EWK2UnitTestBase.ewk_cookie_manager_permanent_storage API test

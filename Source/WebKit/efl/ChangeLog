@@ -1,3 +1,18 @@
+2012-09-03  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Use WebKitVersion.h to get version information
+        https://bugs.webkit.org/show_bug.cgi?id=95669
+
+        Reviewed by Gyuyoung Kim.
+
+        Use WEBKIT_MAJOR_VERSION and WEBKIT_MINOR_VERSION 
+        in the WebKitVersion.h
+
+        Relocate the StorageTracker.h to keep the sorted order.
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_default_user_agent_get):
+
 2012-09-01  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Refactoring the DumpRenderTreeSupportEfl
