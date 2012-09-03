@@ -42,5 +42,16 @@ Item {
             // The check below will fail if the previous position was not restored after reload.
             verify(position == webView.contentY)
         }
+
+        function test_wheelScrollEventAfterReload() {
+            scrollSpy.clear()
+            webView.reload()
+            verify(webView.waitForLoadSucceeded())
+            var centerPoint = Qt.point(webView.width / 2, webView.height / 2)
+            test.wheelEvent(webView, centerPoint.x, centerPoint.y, -500);
+            // The signal spy below will time out if the wheel event did not scroll the content.
+            scrollSpy.wait()
+        }
     }
+
 }
