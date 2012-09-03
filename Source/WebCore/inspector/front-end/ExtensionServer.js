@@ -767,7 +767,7 @@ WebInspector.ExtensionServer.prototype = {
             var mainFrame = WebInspector.resourceTreeModel.mainFrame;
             if (!mainFrame)
                 return this._status.E_FAILED("main frame not available yet");
-            var context = WebInspector.javaScriptContextManager.contextByFrameAndSecurityOrigin(mainFrame, securityOrigin);
+            var context = WebInspector.runtimeModel.contextByFrameAndSecurityOrigin(mainFrame, securityOrigin);
             if (!context)
                 return this._status.E_NOTFOUND(securityOrigin);
             contextId = context.id;

@@ -33,7 +33,7 @@
  * @extends {WebInspector.Object}
  * @param {WebInspector.ResourceTreeModel} resourceTreeModel
  */
-WebInspector.JavaScriptContextManager = function(resourceTreeModel)
+WebInspector.RuntimeModel = function(resourceTreeModel)
 {
     resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameAdded, this._frameAdded, this);
     resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
@@ -42,12 +42,12 @@ WebInspector.JavaScriptContextManager = function(resourceTreeModel)
     this._frameIdToContextList = {};
 }
 
-WebInspector.JavaScriptContextManager.Events = {
+WebInspector.RuntimeModel.Events = {
     FrameExecutionContextListAdded: "FrameExecutionContextListAdded",
     FrameExecutionContextListRemoved: "FrameExecutionContextListRemoved",
 }
 
-WebInspector.JavaScriptContextManager.prototype = {
+WebInspector.RuntimeModel.prototype = {
     /**
      * @return {Array.<WebInspector.FrameExecutionContextList>}
      */
@@ -71,7 +71,7 @@ WebInspector.JavaScriptContextManager.prototype = {
         var frame = event.data;
         var context = new WebInspector.FrameExecutionContextList(frame);
         this._frameIdToContextList[frame.id] = context;
-        this.dispatchEventToListeners(WebInspector.JavaScriptContextManager.Events.FrameExecutionContextListAdded, context);
+        this.dispatchEventToListeners(WebInspector.RuntimeModel.Events.FrameExecutionContextListAdded, context);
     },
 
     _frameNavigated: function(event)
@@ -88,7 +88,7 @@ WebInspector.JavaScriptContextManager.prototype = {
         var context = this._frameIdToContextList[frame.id];
         if (!context)
             return;
-        this.dispatchEventToListeners(WebInspector.JavaScriptContextManager.Events.FrameExecutionContextListRemoved, context);
+        this.dispatchEventToListeners(WebInspector.RuntimeModel.Events.FrameExecutionContextListRemoved, context);
         delete this._frameIdToContextList[frame.id];
     },
 
@@ -98,7 +98,7 @@ WebInspector.JavaScriptContextManager.prototype = {
         RuntimeAgent.setReportExecutionContextCreation(true);
     },
 
-    isolatedContextCreated: function(context)
+    _executionContextCreated: function(context)
     {
         var contextList = this._frameIdToContextList[context.frameId];
         // FIXME(85708): this should never happen
@@ -108,27 +108,27 @@ WebInspector.JavaScriptContextManager.prototype = {
     }
 }
 
-WebInspector.JavaScriptContextManager.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.RuntimeModel.prototype.__proto__ = WebInspector.Object.prototype;
 
 /**
- * @type {WebInspector.JavaScriptContextManager}
+ * @type {WebInspector.RuntimeModel}
  */
-WebInspector.javaScriptContextManager = null;
+WebInspector.runtimeModel = null;
 
 /**
  * @constructor
  * @implements {RuntimeAgent.Dispatcher}
- * @param {WebInspector.JavaScriptContextManager} contextManager
+ * @param {WebInspector.RuntimeModel} runtimeModel
  */
-WebInspector.RuntimeDispatcher = function(contextManager)
+WebInspector.RuntimeDispatcher = function(runtimeModel)
 {
-    this._contextManager = contextManager;
+    this._runtimeModel = runtimeModel;
 }
 
 WebInspector.RuntimeDispatcher.prototype = {
-    isolatedContextCreated: function(context)
+    executionContextCreated: function(context)
     {
-        this._contextManager.isolatedContextCreated(context);
+        this._runtimeModel._executionContextCreated(context);
     }
 }
 

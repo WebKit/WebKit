@@ -94,7 +94,6 @@
     <file>InspectorFrontendAPI.js</file>
     <file>InspectorFrontendHostStub.js</file>
     <file>InspectorView.js</file>
-    <file>JavaScriptContextManager.js</file>
     <file>JavaScriptFormatter.js</file>
     <file>JavaScriptSource.js</file>
     <file>JavaScriptSourceFrame.js</file>
@@ -147,6 +146,7 @@
     <file>ResourceWebSocketFrameView.js</file>
     <file>ResourcesPanel.js</file>
     <file>RevisionHistoryView.js</file>
+    <file>RuntimeModel.js</file>
     <file>SASSSourceMapping.js</file>
     <file>ScopeChainSidebarPane.js</file>
     <file>Script.js</file>

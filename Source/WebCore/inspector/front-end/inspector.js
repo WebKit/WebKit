@@ -491,7 +491,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPaused, this);
     this.networkLog = new WebInspector.NetworkLog();
     this.domAgent = new WebInspector.DOMAgent();
-    this.javaScriptContextManager = new WebInspector.JavaScriptContextManager(this.resourceTreeModel);
+    this.runtimeModel = new WebInspector.RuntimeModel(this.resourceTreeModel);
 
     this.consoleView = new WebInspector.ConsoleView(WebInspector.WorkerManager.isWorkerFrontend());
 

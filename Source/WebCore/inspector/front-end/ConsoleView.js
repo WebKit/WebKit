@@ -121,9 +121,9 @@ WebInspector.ConsoleView = function(hideContextSelector)
     this.prompt.proxyElement.addEventListener("keydown", this._promptKeyDown.bind(this), false);
     this.prompt.setHistoryData(WebInspector.settings.consoleHistory.get());
 
-    WebInspector.javaScriptContextManager.contextLists().forEach(this._addFrame, this);
-    WebInspector.javaScriptContextManager.addEventListener(WebInspector.JavaScriptContextManager.Events.FrameExecutionContextListAdded, this._frameAdded, this);
-    WebInspector.javaScriptContextManager.addEventListener(WebInspector.JavaScriptContextManager.Events.FrameExecutionContextListRemoved, this._frameRemoved, this);
+    WebInspector.runtimeModel.contextLists().forEach(this._addFrame, this);
+    WebInspector.runtimeModel.addEventListener(WebInspector.RuntimeModel.Events.FrameExecutionContextListAdded, this._frameAdded, this);
+    WebInspector.runtimeModel.addEventListener(WebInspector.RuntimeModel.Events.FrameExecutionContextListRemoved, this._frameRemoved, this);
 }
 
 WebInspector.ConsoleView.Events = {

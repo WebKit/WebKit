@@ -169,9 +169,9 @@ modules = [
             "FontView.js",
             "ImageView.js",
             "NativeBreakpointsSidebarPane.js",
-            "JavaScriptContextManager.js",
             "ObjectPopoverHelper.js",
             "ObjectPropertiesSection.js",
+            "RuntimeModel.js",
             "SourceFrame.js",
             "ResourceView.js",
         ]
