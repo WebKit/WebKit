@@ -73,6 +73,7 @@
 #include "ewk_context.h"
 #include "ewk_download_job.h"
 #include "ewk_intent.h"
+#include "ewk_settings.h"
 #include "ewk_url_request.h"
 #include "ewk_url_response.h"
 #include "ewk_web_error.h"
@@ -354,6 +355,15 @@ EAPI Eina_Bool ewk_view_reload_bypass_cache(Evas_Object *o);
  * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool    ewk_view_stop(Evas_Object *o);
+
+/**
+ * Gets the Ewk_Settings of this view.
+ *
+ * @param o view object to get Ewk_Settings
+ *
+ * @return the Ewk_Settings of this view or @c NULL on failure
+ */
+EAPI Ewk_Settings *ewk_view_settings_get(const Evas_Object *o);
 
 /**
  * Delivers a Web intent to the view's main frame.

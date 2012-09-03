@@ -32,6 +32,7 @@
 #include "WKString.h"
 #include "WKURL.h"
 #include "WebContext.h"
+#include "WebPageGroup.h"
 #include "WebPopupItem.h"
 #include "WebPopupMenuProxyEfl.h"
 #include "ewk_back_forward_list_private.h"
@@ -41,6 +42,7 @@
 #include "ewk_popup_menu_item.h"
 #include "ewk_popup_menu_item_private.h"
 #include "ewk_private.h"
+#include "ewk_settings_private.h"
 #include "ewk_view_find_client_private.h"
 #include "ewk_view_form_client_private.h"
 #include "ewk_view_loader_client_private.h"
@@ -53,6 +55,7 @@
 #include <Edje.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/EflScreenUtilities.h>
+#include <WebKit2/WKPageGroup.h>
 #include <wtf/text/CString.h>
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -88,6 +91,7 @@ struct _Ewk_View_Private_Data {
     Evas_Object* cursorObject;
     LoadingResourcesMap loadingResourcesMap;
     Ewk_Back_Forward_List* backForwardList;
+    OwnPtr<Ewk_Settings> settings;
 
     WebPopupMenuProxyEfl* popupMenuProxy;
     Eina_List* popupMenuItems;
@@ -685,7 +689,10 @@ static void _ewk_view_initialize(Evas_Object* ewkView, Ewk_Context* context, WKP
 
     priv->pageClient = PageClientImpl::create(ewkView);
 
-    priv->pageProxy = toImpl(ewk_context_WKContext_get(context))->createWebPage(priv->pageClient.get(), toImpl(pageGroupRef));
+    if (pageGroupRef)
+        priv->pageProxy = toImpl(ewk_context_WKContext_get(context))->createWebPage(priv->pageClient.get(), toImpl(pageGroupRef));
+    else
+        priv->pageProxy = toImpl(ewk_context_WKContext_get(context))->createWebPage(priv->pageClient.get(), WebPageGroup::create().get());
 #if USE(COORDINATED_GRAPHICS)
     priv->pageProxy->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
     priv->pageProxy->pageGroup()->preferences()->setForceCompositingMode(true);
@@ -694,6 +701,7 @@ static void _ewk_view_initialize(Evas_Object* ewkView, Ewk_Context* context, WKP
     priv->pageProxy->initializeWebPage();
 
     priv->backForwardList = ewk_back_forward_list_new(toAPI(priv->pageProxy->backForwardList()));
+    priv->settings = adoptPtr(new Ewk_Settings(WKPageGroupGetPreferences(WKPageGetPageGroup(toAPI(priv->pageProxy.get())))));
 
 #if USE(COORDINATED_GRAPHICS)
     priv->viewportHandler = EflViewportHandler::create(ewkView);
@@ -849,6 +857,14 @@ Eina_Bool ewk_view_stop(Evas_Object* ewkView)
     priv->pageProxy->stopLoading();
 
     return true;
+}
+
+Ewk_Settings* ewk_view_settings_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
+
+    return priv->settings.get();
 }
 
 /**

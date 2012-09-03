@@ -60,6 +60,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_main.cpp
     UIProcess/API/efl/ewk_navigation_policy_decision.cpp
     UIProcess/API/efl/ewk_popup_menu_item.cpp
+    UIProcess/API/efl/ewk_settings.cpp
     UIProcess/API/efl/ewk_url_request.cpp
     UIProcess/API/efl/ewk_url_response.cpp
     UIProcess/API/efl/ewk_url_scheme_request.cpp
@@ -214,6 +215,7 @@ SET (EWebKit2_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_main.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_navigation_policy_decision.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_popup_menu_item.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_settings.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_url_request.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_url_response.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_url_scheme_request.h"
@@ -279,6 +281,7 @@ SET(EWK2UnitTests_BINARIES
     test_ewk2_download_job
     test_ewk2_eina_shared_string
     test_ewk2_intents
+    test_ewk2_settings
     test_ewk2_view
 )
 

@@ -1,3 +1,38 @@
+2012-09-03  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Add ewk_settings.
+        https://bugs.webkit.org/show_bug.cgi?id=91206
+
+        Reviewed by Gyuyoung Kim.
+
+        Add the ewk_settings which wraps the WKPreferencesRef.
+        The ewk_settings will be created by the ewk_view and it will be
+        destroyed when the ewk_view is destroyed. I make each view to have
+        its own group to make one ewk_settings sets preferences only for
+        one ewk_view.
+        The application can get the ewk_settings from ewk_view using
+        ewk_view_settings_get() API.
+
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/ewk_settings.cpp: Added.
+        (ewk_settings_enable_scripts_set):
+        (ewk_settings_enable_scripts_get):
+        (ewk_settings_auto_load_images_set):
+        (ewk_settings_auto_load_images_get):
+        * UIProcess/API/efl/ewk_settings.h: Added.
+        * UIProcess/API/efl/ewk_settings_private.h: Added.
+        (_Ewk_Settings):
+        (_Ewk_Settings::_Ewk_Settings):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_initialize):
+        (ewk_view_settings_get):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_settings.cpp: Added.
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2012-09-03  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Wheel-events fails temporarily after reload

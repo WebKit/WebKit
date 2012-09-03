@@ -236,3 +236,10 @@ TEST_F(EWK2UnitTestBase, ewk_view_popup_menu_select)
     EXPECT_TRUE(ewk_view_popup_menu_close(webView()));
     EXPECT_FALSE(ewk_view_popup_menu_select(webView(), 0));
 }
+
+TEST_F(EWK2UnitTestBase, ewk_view_settings_get)
+{
+    Ewk_Settings* settings = ewk_view_settings_get(webView());
+    ASSERT_TRUE(settings);
+    ASSERT_EQ(settings, ewk_view_settings_get(webView()));
+}
