@@ -258,7 +258,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_cookies_delete)
     ASSERT_EQ(countHostnamesWithCookies(cookieManager), 0);
 }
 
-TEST_F(EWK2UnitTestBase, ewk_cookie_manager_permanent_storage)
+TEST_F(EWK2UnitTestBase, DISABLED_ewk_cookie_manager_permanent_storage)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallback);

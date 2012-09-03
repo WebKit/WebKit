@@ -1,3 +1,16 @@
+2012-09-03  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Skip EWK2UnitTestBase.ewk_cookie_manager_permanent_storage API test
+        https://bugs.webkit.org/show_bug.cgi?id=95671
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Skip EWK2UnitTestBase.ewk_cookie_manager_permanent_storage
+        API test since it is flaky on the bots.
+
+        * UIProcess/API/efl/tests/test_ewk2_cookie_manager.cpp:
+        (TEST_F):
+
 2012-09-02  Kenichi Ishibashi  <bashi@chromium.org>
 
         WK2: Build failure on SnowLeopard after r127384
