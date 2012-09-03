@@ -1,3 +1,15 @@
+2012-09-03  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Unreviewed rebaseline for bug 94287.
+        Update Chromium-Mac and Chromium-Win images for multiple field time input UI.
+
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png: Added.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png: Added.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.txt: Added.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png: Added.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+
 2012-09-03  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [GTK][EFL] 'dictIter' iterator is not initialized for an inner loop
