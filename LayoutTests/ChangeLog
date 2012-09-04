@@ -1,3 +1,12 @@
+2012-09-04  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        Removing http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html
+        from skipped crashers section, after https://bugs.webkit.org/show_bug.cgi?id=94458#c14
+
+        * platform/efl/TestExpectations: Previously crashing test removed.
+
 2012-09-03  Noel Gordon  <noel.gordon@gmail.com>
 
         http/tests/incremental/partial-jpeg.html is flaky
