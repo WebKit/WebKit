@@ -2124,7 +2124,7 @@ LayoutUnit RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& margin
     LayoutUnit logicalTop = yPos + heightIncrease;
     // After margin collapsing, one of our floats may now intrude into the child. If the child doesn't contain floats of its own it
     // won't get picked up for relayout even though the logical top estimate was wrong - so add the newly intruding float now.
-    if (containsFloats() && child->isRenderBlock() && !toRenderBlock(child)->containsFloats() && lowestFloatLogicalBottom() > logicalTop)
+    if (containsFloats() && child->isRenderBlock() && !toRenderBlock(child)->containsFloats() && !child->avoidsFloats() && lowestFloatLogicalBottom() > logicalTop)
         toRenderBlock(child)->addIntrudingFloats(this, logicalLeftOffsetForContent(), logicalTop);
 
     return logicalTop;
@@ -4511,6 +4511,8 @@ bool RenderBlock::hasOverhangingFloat(RenderBox* renderer)
 
 void RenderBlock::addIntrudingFloats(RenderBlock* prev, LayoutUnit logicalLeftOffset, LayoutUnit logicalTopOffset)
 {
+    ASSERT(!avoidsFloats());
+
     // If the parent or previous sibling doesn't have any floats to add, don't bother.
     if (!prev->m_floatingObjects)
         return;
