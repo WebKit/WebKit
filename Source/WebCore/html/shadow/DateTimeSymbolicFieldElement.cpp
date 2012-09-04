@@ -31,6 +31,7 @@
 #include "KeyboardEvent.h"
 #include "RenderStyle.h"
 #include "StyleResolver.h"
+#include "TextBreakIterator.h"
 #include "TextRun.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/Unicode.h>

@@ -1988,8 +1988,8 @@ SET(WebCore_SOURCES
     platform/text/QuotedPrintable.cpp
     platform/text/RegularExpression.cpp
     platform/text/SegmentedString.cpp
-    platform/text/String.cpp
     platform/text/TextBoundaries.cpp
+    platform/text/TextBreakIterator.cpp
     platform/text/TextCodec.cpp
     platform/text/TextCodecLatin1.cpp
     platform/text/TextCodecUTF16.cpp

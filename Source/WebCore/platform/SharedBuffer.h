@@ -148,7 +148,9 @@ private:
     RetainPtr<CFDataRef> m_cfData;
 #endif
 };
-    
-}
+
+PassRefPtr<SharedBuffer> utf8Buffer(const String&);
+
+} // namespace WebCore
 
 #endif // SharedBuffer_h

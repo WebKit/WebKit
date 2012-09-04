@@ -99,6 +99,7 @@ namespace WebCore {
     class FloatRect;
     class IntSize;
     class ProtectionSpace;
+    class SharedBuffer;
     struct FileChooserSettings;
     struct TextAlternativeWithRange;
     struct TextCheckingResult;

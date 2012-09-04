@@ -28,18 +28,6 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-class SharedBuffer;
-
-PassRefPtr<SharedBuffer> utf8Buffer(const String&);
-// Counts the number of grapheme clusters. A surrogate pair or a sequence
-// of a non-combining character and following combining characters is
-// counted as 1 grapheme cluster.
-unsigned numGraphemeClusters(const String& s);
-// Returns the number of characters which will be less than or equal to
-// the specified grapheme cluster length.
-unsigned numCharactersInGraphemeClusters(const String& s, unsigned);
-
 } // namespace WebCore
 
 #endif

@@ -1062,8 +1062,8 @@ SOURCES += \
     platform/sql/SQLiteTransaction.cpp \
     platform/sql/SQLValue.cpp \
     platform/text/SegmentedString.cpp \
-    platform/text/String.cpp \
     platform/text/TextBoundaries.cpp \
+    platform/text/TextBreakIterator.cpp \
     platform/text/TextCodec.cpp \
     platform/text/TextCodecLatin1.cpp \
     platform/text/TextCodecUserDefined.cpp \

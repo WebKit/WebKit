@@ -20,34 +20,9 @@
  */
 
 #include "config.h"
-#include "PlatformString.h"
-
-#include "SharedBuffer.h"
 #include "TextBreakIterator.h"
-#include <wtf/unicode/UTF8.h>
-#include <wtf/unicode/Unicode.h>
-
-using namespace WTF;
-using namespace WTF::Unicode;
 
 namespace WebCore {
-
-PassRefPtr<SharedBuffer> utf8Buffer(const String& string)
-{
-    // Allocate a buffer big enough to hold all the characters.
-    const int length = string.length();
-    Vector<char> buffer(length * 3);
-
-    // Convert to runs of 8-bit characters.
-    char* p = buffer.data();
-    const UChar* d = string.characters();
-    ConversionResult result = convertUTF16ToUTF8(&d, d + length, &p, p + buffer.size(), true);
-    if (result != conversionOK)
-        return 0;
-
-    buffer.shrink(p - buffer.data());
-    return SharedBuffer::adoptVector(buffer);
-}
 
 unsigned numGraphemeClusters(const String& s)
 {
@@ -65,7 +40,7 @@ unsigned numCharactersInGraphemeClusters(const String& s, unsigned numGraphemeCl
 {
     NonSharedCharacterBreakIterator it(s.characters(), s.length());
     if (!it)
-        return min(s.length(), numGraphemeClusters);
+        return std::min(s.length(), numGraphemeClusters);
 
     for (unsigned i = 0; i < numGraphemeClusters; ++i) {
         if (textBreakNext(it) == TextBreakDone)

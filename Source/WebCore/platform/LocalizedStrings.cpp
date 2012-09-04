@@ -29,13 +29,14 @@
 
 #include "IntSize.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
+#include "TextBreakIterator.h"
 #include <wtf/MathExtras.h>
+#include <wtf/UnusedParam.h>
+#include <wtf/unicode/CharacterNames.h>
+
 #if USE(CF)
 #include <wtf/RetainPtr.h>
 #endif
-#include <wtf/UnusedParam.h>
-#include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(MAC)
 #include "WebCoreSystemInterface.h"

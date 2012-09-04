@@ -64,6 +64,7 @@ class SimpleFontData;
 class SpellChecker;
 class SpellCheckRequest;
 class AlternativeTextController;
+class SharedBuffer;
 class StylePropertySet;
 class Text;
 class TextCheckerClient;

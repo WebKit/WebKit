@@ -115,6 +115,14 @@ private:
     TextBreakIterator* m_iterator;
 };
 
+// Counts the number of grapheme clusters. A surrogate pair or a sequence
+// of a non-combining character and following combining characters is
+// counted as 1 grapheme cluster.
+unsigned numGraphemeClusters(const String&);
+// Returns the number of characters which will be less than or equal to
+// the specified grapheme cluster length.
+unsigned numCharactersInGraphemeClusters(const String&, unsigned);
+
 }
 
 #endif

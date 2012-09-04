@@ -33722,10 +33722,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\text\String.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\text\StringHash.h"
 					>
 				</File>
@@ -33828,6 +33824,26 @@
 				<File
 					RelativePath="..\platform\text\TextBreakIterator.h"
 					>
+				</File>
+				<File
+					RelativePath="..\platform\text\TextBreakIterator.cpp"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Production|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\platform\text\TextBreakIteratorICU.cpp"

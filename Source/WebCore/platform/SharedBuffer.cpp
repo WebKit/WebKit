@@ -30,6 +30,8 @@
 #include "MemoryInstrumentation.h"
 #include "PurgeableBuffer.h"
 #include <wtf/PassOwnPtr.h>
+#include <wtf/unicode/UTF8.h>
+#include <wtf/unicode/Unicode.h>
 
 using namespace std;
 
@@ -330,4 +332,21 @@ inline unsigned SharedBuffer::platformDataSize() const
 
 #endif
 
+PassRefPtr<SharedBuffer> utf8Buffer(const String& string)
+{
+    // Allocate a buffer big enough to hold all the characters.
+    const int length = string.length();
+    Vector<char> buffer(length * 3);
+
+    // Convert to runs of 8-bit characters.
+    char* p = buffer.data();
+    const UChar* d = string.characters();
+    WTF::Unicode::ConversionResult result = WTF::Unicode::convertUTF16ToUTF8(&d, d + length, &p, p + buffer.size(), true);
+    if (result != WTF::Unicode::conversionOK)
+        return 0;
+
+    buffer.shrink(p - buffer.data());
+    return SharedBuffer::adoptVector(buffer);
 }
+
+} // namespace WebCore

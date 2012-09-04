@@ -26,12 +26,12 @@
 #ifndef ApplicationCacheStorage_h
 #define ApplicationCacheStorage_h
 
-#include "PlatformString.h"
 #include "SecurityOriginHash.h"
 #include "SQLiteDatabase.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -40,9 +40,9 @@ class ApplicationCacheGroup;
 class ApplicationCacheHost;
 class ApplicationCacheResource;
 class KURL;
-template <class T>
-class StorageIDJournal;
 class SecurityOrigin;
+class SharedBuffer;
+template <class T> class StorageIDJournal;
 
 class ApplicationCacheStorage {
     WTF_MAKE_NONCOPYABLE(ApplicationCacheStorage); WTF_MAKE_FAST_ALLOCATED;
