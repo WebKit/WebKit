@@ -1,3 +1,13 @@
+2012-09-04  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Output time and thread info in crash log
+        https://bugs.webkit.org/show_bug.cgi?id=95768
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidDriver._get_logcat): Add '-v threadtime' to adb logcat command line to get time and thread info.
+
 2012-09-04  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Change the MediaStreamTrackList track added/removed signaling

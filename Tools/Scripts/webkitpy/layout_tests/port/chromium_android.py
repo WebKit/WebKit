@@ -456,7 +456,7 @@ class ChromiumAndroidDriver(driver.Driver):
                            self._run_adb_command(['shell', 'cat', '/data/tombstones/' + last_tombstone[6]]))
 
     def _get_logcat(self):
-        return self._run_adb_command(['logcat', '-d'])
+        return self._run_adb_command(['logcat', '-d', '-v', 'threadtime'])
 
     def _setup_performance(self):
         # Disable CPU scaling and drop ram cache to reduce noise in tests
