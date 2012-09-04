@@ -55,8 +55,8 @@ public:
     // MediaStreamCenter
     virtual void queryMediaStreamSources(PassRefPtr<MediaStreamSourcesQueryClient>) OVERRIDE;
     virtual void didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, MediaStreamComponent*) OVERRIDE;
-    virtual void didAddMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*) OVERRIDE;
-    virtual void didRemoveMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*) OVERRIDE;
+    virtual bool didAddMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*) OVERRIDE;
+    virtual bool didRemoveMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*) OVERRIDE;
     virtual void didStopLocalMediaStream(MediaStreamDescriptor*) OVERRIDE;
     virtual void didCreateMediaStream(MediaStreamDescriptor*) OVERRIDE;
     virtual String constructSDP(IceCandidateDescriptor*) OVERRIDE;

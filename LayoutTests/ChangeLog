@@ -1,3 +1,12 @@
+2012-09-04  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Change the MediaStreamTrackList track added/removed signaling
+        https://bugs.webkit.org/show_bug.cgi?id=95721
+
+        Reviewed by Adam Barth.
+
+        * fast/mediastream/MediaStreamTrackList.html:
+
 2012-09-04  Christophe Dumez  <christophe.dumez@intel.com>
 
         Automatic features should work in sandboxed iframes if "allow-scripts" flag is set

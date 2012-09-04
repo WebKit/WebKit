@@ -68,6 +68,16 @@ void MediaStreamCenterBlackBerry::didSetMediaStreamTrackEnabled(MediaStreamDescr
 {
 }
 
+bool MediaStreamCenterBlackBerry::didAddMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*)
+{
+    return false;
+}
+
+bool MediaStreamCenterBlackBerry::didRemoveMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*)
+{
+    return false;
+}
+
 void MediaStreamCenterBlackBerry::didStopLocalMediaStream(MediaStreamDescriptor*)
 {
 }

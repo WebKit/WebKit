@@ -57,8 +57,8 @@ public:
 
     // Calls from the DOM objects to notify the platform
     virtual void didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, MediaStreamComponent*) = 0;
-    virtual void didAddMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*) = 0;
-    virtual void didRemoveMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*) = 0;
+    virtual bool didAddMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*) = 0;
+    virtual bool didRemoveMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*) = 0;
     virtual void didStopLocalMediaStream(MediaStreamDescriptor*) = 0;
     virtual void didCreateMediaStream(MediaStreamDescriptor*) = 0;
     virtual String constructSDP(IceCandidateDescriptor*) = 0;

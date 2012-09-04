@@ -88,7 +88,11 @@ void MediaStreamTrackList::add(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionC
         return;
 
     m_trackVector.append(track);
-    MediaStreamCenter::instance().didAddMediaStreamTrack(m_owner->descriptor(), track->component());
+    if (!MediaStreamCenter::instance().didAddMediaStreamTrack(m_owner->descriptor(), track->component())) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
     dispatchEvent(MediaStreamTrackEvent::create(eventNames().addtrackEvent, false, false, track));
 }
 
@@ -110,7 +114,11 @@ void MediaStreamTrackList::remove(PassRefPtr<MediaStreamTrack> prpTrack, Excepti
         return;
 
     m_trackVector.remove(index);
-    MediaStreamCenter::instance().didRemoveMediaStreamTrack(m_owner->descriptor(), track->component());
+    if (!MediaStreamCenter::instance().didRemoveMediaStreamTrack(m_owner->descriptor(), track->component())) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
     dispatchEvent(MediaStreamTrackEvent::create(eventNames().removetrackEvent, false, false, track));
 }
 

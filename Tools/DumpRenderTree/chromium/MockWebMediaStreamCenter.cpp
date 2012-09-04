@@ -64,6 +64,16 @@ void MockWebMediaStreamCenter::didDisableMediaStreamTrack(const WebMediaStreamDe
     component.source().setReadyState(WebMediaStreamSource::ReadyStateMuted);
 }
 
+bool MockWebMediaStreamCenter::didAddMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&)
+{
+    return true;
+};
+
+bool MockWebMediaStreamCenter::didRemoveMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&)
+{
+    return true;
+};
+
 void MockWebMediaStreamCenter::didStopLocalMediaStream(const WebMediaStreamDescriptor& stream)
 {
     WebVector<WebMediaStreamComponent> audioComponents;

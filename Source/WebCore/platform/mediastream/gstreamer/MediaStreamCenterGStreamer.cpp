@@ -68,12 +68,14 @@ void MediaStreamCenterGStreamer::didSetMediaStreamTrackEnabled(MediaStreamDescri
 {
 }
 
-void MediaStreamCenterGStreamer::didAddMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*)
+bool MediaStreamCenterGStreamer::didAddMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*)
 {
+    return false;
 }
 
-void MediaStreamCenterGStreamer::didRemoveMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*)
+bool MediaStreamCenterGStreamer::didRemoveMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*)
 {
+    return false;
 }
 
 void MediaStreamCenterGStreamer::didStopLocalMediaStream(MediaStreamDescriptor*)

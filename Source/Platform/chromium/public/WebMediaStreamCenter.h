@@ -47,6 +47,8 @@ public:
     virtual void queryMediaStreamSources(const WebMediaStreamSourcesRequest&) = 0;
     virtual void didEnableMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&) = 0;
     virtual void didDisableMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&) = 0;
+    virtual bool didAddMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&) { return false; };
+    virtual bool didRemoveMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&) { return false; };
     virtual void didStopLocalMediaStream(const WebMediaStreamDescriptor&) = 0;
     virtual void didCreateMediaStream(WebMediaStreamDescriptor&) = 0;
     virtual WebString constructSDP(const WebICECandidateDescriptor&) = 0;

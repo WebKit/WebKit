@@ -42,14 +42,25 @@ function onAddTrack(e) {
     testPassed('Add track callback succeeded.');
 
     stream1.videoTracks.onremovetrack = onRemoveTrack;
-    stream1.videoTracks.remove(e.track);
+    try {
+        stream1.videoTracks.remove(e.track);
+    } catch (exception) {
+        testFailed("remove threw an exception.");
+        finishJSTest();
+    }
 }
 
 function gotStream2(s) {
     stream2 = s;
 
     stream1.videoTracks.onaddtrack = onAddTrack;
-    stream1.videoTracks.add(stream2.videoTracks[0]);
+
+    try {
+        stream1.videoTracks.add(stream2.videoTracks[0]);
+    } catch (exception) {
+        testFailed("add threw an exception.");
+        finishJSTest();
+    }
 }
 
 function gotStream1(s) {

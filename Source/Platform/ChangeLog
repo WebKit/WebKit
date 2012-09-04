@@ -1,3 +1,16 @@
+2012-09-04  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Change the MediaStreamTrackList track added/removed signaling
+        https://bugs.webkit.org/show_bug.cgi?id=95721
+
+        Reviewed by Adam Barth.
+
+        Adding the signaling to the WebKit interface.
+
+        * chromium/public/WebMediaStreamCenter.h:
+        (WebKit::WebMediaStreamCenter::didAddMediaStreamTrack):
+        (WebKit::WebMediaStreamCenter::didRemoveMediaStreamTrack):
+
 2012-09-03  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add Ice-related functionality to RTCPeerConnection

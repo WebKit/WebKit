@@ -86,12 +86,14 @@ void MediaStreamCenterChromium::didSetMediaStreamTrackEnabled(MediaStreamDescrip
     }
 }
 
-void MediaStreamCenterChromium::didAddMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*)
+bool MediaStreamCenterChromium::didAddMediaStreamTrack(MediaStreamDescriptor* stream, MediaStreamComponent* component)
 {
+    return m_private ? m_private->didAddMediaStreamTrack(stream, component) : false;
 }
 
-void MediaStreamCenterChromium::didRemoveMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*)
+bool MediaStreamCenterChromium::didRemoveMediaStreamTrack(MediaStreamDescriptor* stream, MediaStreamComponent* component)
 {
+    return m_private ? m_private->didRemoveMediaStreamTrack(stream, component) : false;
 }
 
 void MediaStreamCenterChromium::didStopLocalMediaStream(MediaStreamDescriptor* stream)
