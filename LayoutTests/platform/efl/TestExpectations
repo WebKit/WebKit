@@ -543,6 +543,7 @@ BUGWK77219 SKIP : http/tests/security/webgl-remote-read-remote-image-allowed-wit
 BUGWK77219 SKIP : http/tests/security/webgl-remote-read-remote-image-allowed.html = TEXT
 BUGWK77219 SKIP : http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html = TEXT
 BUGWK77219 : inspector/profiler/webgl/webgl-profiler-api-changes.html = TEXT
+BUGWK77219 : inspector/profiler/webgl/webgl-profiler-get-error.html = TEXT
 
 BUGWK84759 : ietestcenter/css3/multicolumn/column-containing-block-001.htm = IMAGE
 BUGWK84760 : ietestcenter/css3/multicolumn/column-containing-block-002.htm = IMAGE
