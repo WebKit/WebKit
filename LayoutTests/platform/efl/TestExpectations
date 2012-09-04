@@ -759,10 +759,6 @@ BUGWK86597 : fullscreen/video-controls-drag.html = TEXT
 BUGWK86187 : media/media-fullscreen-not-in-document.html = TEXT
 BUGWK86187 SKIP : media/media-fullscreen-inline.html = PASS
 
-// ecore_x library is not initialized and calls to it cause crashes
-BUGWK86961 : editing/execCommand/paste-and-match-style-event.html = CRASH
-BUGWK86961 : fast/dom/shadow/cppevent-in-shadow.html = CRASH
-
 // Selection problem in Shadow DOM test (passes on GTK)
 BUGWKEFL : fast/dom/shadow/selections-in-shadow.html = TEXT
 

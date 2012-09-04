@@ -1,5 +1,16 @@
 2012-09-04  Alexander Shalamov  <alexander.shalamov@intel.com>
 
+        [EFL] Check if ecore_x is initialised before calling ecore_x_bell to avoid crash
+        https://bugs.webkit.org/show_bug.cgi?id=86961
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskipped two layout tests that were crashing.
+
+        * platform/efl/TestExpectations:
+
+2012-09-04  Alexander Shalamov  <alexander.shalamov@intel.com>
+
         [EFL][WK2] CSS3 Media Queries functionality is broken
         https://bugs.webkit.org/show_bug.cgi?id=95680
 
