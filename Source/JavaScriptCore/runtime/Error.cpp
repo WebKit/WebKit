@@ -81,7 +81,7 @@ JSObject* createTypeError(JSGlobalObject* globalObject, const String& message)
 
 JSObject* createNotEnoughArgumentsError(JSGlobalObject* globalObject)
 {
-    return createTypeError(globalObject, "Not enough arguments");
+    return createTypeError(globalObject, ASCIILiteral("Not enough arguments"));
 }
 
 JSObject* createURIError(JSGlobalObject* globalObject, const String& message)
@@ -169,12 +169,12 @@ JSObject* throwError(ExecState* exec, JSObject* error)
 
 JSObject* throwTypeError(ExecState* exec)
 {
-    return throwError(exec, createTypeError(exec, "Type error"));
+    return throwError(exec, createTypeError(exec, ASCIILiteral("Type error")));
 }
 
 JSObject* throwSyntaxError(ExecState* exec)
 {
-    return throwError(exec, createSyntaxError(exec, "Syntax error"));
+    return throwError(exec, createSyntaxError(exec, ASCIILiteral("Syntax error")));
 }
 
 ASSERT_CLASS_FITS_IN_CELL(StrictModeTypeErrorFunction);

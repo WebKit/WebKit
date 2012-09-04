@@ -32,7 +32,7 @@ namespace JSC {
         static FunctionPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
             FunctionPrototype* prototype = new (NotNull, allocateCell<FunctionPrototype>(*exec->heap())) FunctionPrototype(globalObject, structure);
-            prototype->finishCreation(exec, "");
+            prototype->finishCreation(exec, String());
             return prototype;
         }
         

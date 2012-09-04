@@ -82,7 +82,7 @@ CallType FunctionConstructor::getCallData(JSCell*, CallData& callData)
 JSObject* constructFunction(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args, const Identifier& functionName, const String& sourceURL, const TextPosition& position)
 {
     if (!globalObject->evalEnabled())
-        return throwError(exec, createEvalError(exec, "Function constructor is disabled"));
+        return throwError(exec, createEvalError(exec, ASCIILiteral("Function constructor is disabled")));
     return constructFunctionSkippingEvalEnabledCheck(exec, globalObject, args, functionName, sourceURL, position);
 }
 
@@ -93,20 +93,20 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(ExecState* exec, JSGlobalObj
     // We also need \n before the closing } to handle // comments at the end of the last line
     String program;
     if (args.isEmpty())
-        program = "(function() { \n})";
+        program = ASCIILiteral("(function() { \n})");
     else if (args.size() == 1)
         program = makeString("(function() { ", args.at(0).toString(exec)->value(exec), "\n})");
     else {
         StringBuilder builder;
-        builder.append("(function(");
+        builder.appendLiteral("(function(");
         builder.append(args.at(0).toString(exec)->value(exec));
         for (size_t i = 1; i < args.size() - 1; i++) {
-            builder.append(",");
+            builder.append(',');
             builder.append(args.at(i).toString(exec)->value(exec));
         }
-        builder.append(") { ");
+        builder.appendLiteral(") { ");
         builder.append(args.at(args.size() - 1).toString(exec)->value(exec));
-        builder.append("\n})");
+        builder.appendLiteral("\n})");
         program = builder.toString();
     }
 

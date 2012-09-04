@@ -1,3 +1,186 @@
+2012-09-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        Improve JSC use of Strings after the UString->String change
+        https://bugs.webkit.org/show_bug.cgi?id=95633
+
+        Reviewed by Geoffrey Garen.
+
+        This patch improve the use of strings in the JSC runtime.
+
+        The initialization of Identifier is left for future patches.
+
+        The improvements are the following:
+        -5% faster to raise one of the modified exception.
+        -3 times faster to execute Boolean::toString()
+
+        Most of the changes are just about using the new methods
+        for string literals.
+
+        With the changes, the binary on x86_64 gets 176 bytes smaller.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::staticFunctionGetter):
+        (JSC::::callbackGetter):
+        * API/JSContextRef.cpp:
+        (JSContextCreateBacktrace):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunctionWithCallback):
+        * bytecode/CodeBlock.cpp:
+        (JSC::valueToSourceString):
+        (JSC::CodeBlock::nameForRegister):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::addStackTraceIfNecessary):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::constructArrayWithSizeQuirk):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::shift):
+        (JSC::unshift):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncReverse):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::booleanProtoFuncToString): Instead of instanciating new strings, reuse the
+        keywords available in SmallStrings. Avoiding the creation of the JSString and StringImpl
+        makes the method significantly faster.
+
+        * runtime/DateConversion.cpp:
+        (JSC::formatDateTime):
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+        (JSC::formateDateInstance):
+        (JSC::dateProtoFuncToISOString):
+        Change the way we use snprintf() for clarity and performance.
+
+        Instead of allocating one extra byte to put a zero "just in case", we use the size returned
+        by snprintf().
+        To prevent any overflow from a programming mistake, we explicitely test for overflow and
+        return an empty string.
+
+        (JSC::dateProtoFuncToJSON):
+        * runtime/Error.cpp:
+        (JSC::createNotEnoughArgumentsError):
+        (JSC::throwTypeError):
+        (JSC::throwSyntaxError):
+        * runtime/Error.h:
+        (JSC::StrictModeTypeErrorFunction::create):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::finishCreation):
+        (JSC::errorProtoFuncToString):
+        Using a null String is correct because (8) uses jsString(), (9) tests for a length of 0.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::InterruptedExecutionError::defaultValue):
+        (JSC::TerminatedExecutionError::defaultValue):
+        (JSC::createStackOverflowError):
+        (JSC::createOutOfMemoryError):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::FunctionExecutable::paramString):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionPrototype.h:
+        (JSC::FunctionPrototype::create):
+        Using a null String for the name is correct because InternalFunction uses jsString()
+        to create the name value.
+
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::finishCreation):
+        There is no need to create an empty string for a null string, jsString() handle both
+        cases as empty JSString.
+
+        * runtime/JSArray.cpp:
+        (JSC::reject):
+        (JSC::SparseArrayValueMap::put):
+        (JSC::JSArray::put):
+        (JSC::JSArray::putByIndexBeyondVectorLength):
+        (JSC::JSArray::putDirectIndexBeyondVectorLength):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::finishCreation): Same issue as InternalFunction::finishCreation.
+
+        (JSC::JSFunction::callerGetter):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSGlobalData.cpp:
+        (JSC::enableAssembler): Use CFSTR() instead of CFStringCreateWithCString().
+        CFStringCreateWithCString() copy the content and may choose to decode the data.
+        CFSTR() is much more efficient.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        JSFunction uses jsString() to create the name, we can use null strings instead
+        of creating empty strings.
+
+        (JSC::JSGlobalObject::createThrowTypeError): ditto.
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode):
+        (JSC::decode):
+        (JSC::globalFuncEval):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue):
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::JSONProtoFuncParse):
+        (JSC::JSONProtoFuncStringify):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::defaultValue):
+        (JSC::JSObject::hasInstance):
+        (JSC::JSObject::defineOwnProperty):
+        * runtime/JSString.cpp:
+        Return an empty JSString to avoid the creation of a temporary empty String.
+
+        (JSC::JSRopeString::getIndexSlowCase):
+        * runtime/JSString.h:
+        (JSC): Remove the versions of jsNontrivialString() taking a char*. All the callers
+        have been replaced by calls using ASCIILiteral.
+
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        * runtime/LiteralParser.cpp:
+        (JSC::::Lexer::lex):
+        (JSC::::Lexer::lexString):
+        (JSC::::Lexer::lexNumber):
+        (JSC::::parse):
+        * runtime/LiteralParser.h:
+        (JSC::LiteralParser::getErrorMessage):
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToPrecision):
+        (JSC::numberProtoFuncToString):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetPrototypeOf):
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        (JSC::objectConstructorGetOwnPropertyNames):
+        (JSC::objectConstructorKeys):
+        (JSC::toPropertyDescriptor):
+        (JSC::objectConstructorDefineProperty):
+        (JSC::objectConstructorDefineProperties):
+        (JSC::objectConstructorCreate):
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorFreeze):
+        (JSC::objectConstructorPreventExtensions):
+        (JSC::objectConstructorIsSealed):
+        (JSC::objectConstructorIsFrozen):
+        (JSC::objectConstructorIsExtensible):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        (JSC::objectProtoFuncToString):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::constructRegExp):
+        * runtime/RegExpObject.cpp:
+        (JSC::reject):
+        (JSC::regExpObjectSource):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::defineOwnProperty):
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSpliceSubstrings):
+        (JSC::jsSpliceSubstringsWithSeparators):
+
 2012-09-04  Filip Pizlo  <fpizlo@apple.com>
 
         DFG GetByVal for JSArrays shouldn't OSR exit every time that the index is out of bound

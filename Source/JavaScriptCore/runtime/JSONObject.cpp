@@ -361,7 +361,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         return StringifyFailedDueToUndefinedValue;
 
     if (value.isNull()) {
-        builder.append("null");
+        builder.appendLiteral("null");
         return StringifySucceeded;
     }
 
@@ -371,7 +371,10 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         return StringifyFailed;
 
     if (value.isBoolean()) {
-        builder.append(value.isTrue() ? "true" : "false");
+        if (value.isTrue())
+            builder.appendLiteral("true");
+        else
+            builder.appendLiteral("false");
         return StringifySucceeded;
     }
 
@@ -384,7 +387,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     if (value.isNumber()) {
         double number = value.asNumber();
         if (!isfinite(number))
-            builder.append("null");
+            builder.appendLiteral("null");
         else
             builder.append(String::numberToStringECMAScript(number));
         return StringifySucceeded;
@@ -398,7 +401,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     CallData callData;
     if (object->methodTable()->getCallData(object, callData) != CallTypeNone) {
         if (holder->inherits(&JSArray::s_info)) {
-            builder.append("null");
+            builder.appendLiteral("null");
             return StringifySucceeded;
         }
         return StringifyFailedDueToUndefinedValue;
@@ -407,7 +410,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     // Handle cycle detection, and put the holder on the stack.
     for (unsigned i = 0; i < m_holderStack.size(); i++) {
         if (m_holderStack[i].object() == object) {
-            throwError(m_exec, createTypeError(m_exec, "JSON.stringify cannot serialize cyclic structures."));
+            throwError(m_exec, createTypeError(m_exec, ASCIILiteral("JSON.stringify cannot serialize cyclic structures.")));
             return StringifyFailed;
         }
     }
@@ -569,7 +572,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
 
     switch (stringifyResult) {
         case StringifyFailed:
-            builder.append("null");
+            builder.appendLiteral("null");
             break;
         case StringifySucceeded:
             break;
@@ -809,7 +812,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
 EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
 {
     if (!exec->argumentCount())
-        return throwVMError(exec, createError(exec, "JSON.parse requires at least one parameter"));
+        return throwVMError(exec, createError(exec, ASCIILiteral("JSON.parse requires at least one parameter")));
     String source = exec->argument(0).toString(exec)->value(exec);
     if (exec->hadException())
         return JSValue::encode(jsNull());
@@ -843,7 +846,7 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState* exec)
 {
     if (!exec->argumentCount())
-        return throwVMError(exec, createError(exec, "No input to stringify"));
+        return throwVMError(exec, createError(exec, ASCIILiteral("No input to stringify")));
     LocalScope scope(exec->globalData());
     Local<Unknown> value(exec->globalData(), exec->argument(0));
     Local<Unknown> replacer(exec->globalData(), exec->argument(1));

@@ -73,7 +73,7 @@ String formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool as
         builder.append(weekdayName[(t.weekDay() + 6) % 7]);
 
         if (asUTCVariant) {
-            builder.append(", ");
+            builder.appendLiteral(", ");
             appendNumber<2>(builder, t.monthDay());
             builder.append(' ');
             builder.append(monthName[t.month()]);
@@ -96,7 +96,7 @@ String formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool as
         appendNumber<2>(builder, t.minute());
         builder.append(':');
         appendNumber<2>(builder, t.second());
-        builder.append(" GMT");
+        builder.appendLiteral(" GMT");
 
         if (!asUTCVariant) {
             int offset = abs(t.utcOffset()) / 60;
@@ -114,7 +114,7 @@ String formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool as
             strftime(timeZoneName, sizeof(timeZoneName), "%Z", &gtm);
 #endif
             if (timeZoneName[0]) {
-                builder.append(" (");
+                builder.appendLiteral(" (");
                 builder.append(timeZoneName);
                 builder.append(')');
             }

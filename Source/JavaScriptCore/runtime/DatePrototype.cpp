@@ -334,7 +334,7 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance* dateObject, doubl
 {
     const GregorianDateTime* gregorianDateTime = dateObject->gregorianDateTime(exec);
     if (!gregorianDateTime)
-        return jsNontrivialString(exec, "Invalid Date");
+        return jsNontrivialString(exec, ASCIILiteral("Invalid Date"));
     return formatLocaleDate(exec, *gregorianDateTime, format);
 }
 
@@ -352,7 +352,7 @@ static EncodedJSValue formateDateInstance(ExecState* exec, DateTimeFormat format
         ? thisDateObj->gregorianDateTimeUTC(exec)
         : thisDateObj->gregorianDateTime(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNontrivialString(exec, "Invalid Date"));
+        return JSValue::encode(jsNontrivialString(exec, String(ASCIILiteral("Invalid Date"))));
 
     return JSValue::encode(jsNontrivialString(exec, formatDateTime(*gregorianDateTime, format, asUTCVariant)));
 }
@@ -548,24 +548,30 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToISOString(ExecState* exec)
     
     DateInstance* thisDateObj = asDateInstance(thisValue); 
     if (!isfinite(thisDateObj->internalNumber()))
-        return throwVMError(exec, createRangeError(exec, "Invalid Date"));
+        return throwVMError(exec, createRangeError(exec, ASCIILiteral("Invalid Date")));
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNontrivialString(exec, "Invalid Date"));
+        return JSValue::encode(jsNontrivialString(exec, String(ASCIILiteral("Invalid Date"))));
     // Maximum amount of space we need in buffer: 7 (max. digits in year) + 2 * 5 (2 characters each for month, day, hour, minute, second) + 4 (. + 3 digits for milliseconds)
     // 6 for formatting and one for null termination = 28. We add one extra character to allow us to force null termination.
-    char buffer[29];
+    char buffer[28];
     // If the year is outside the bounds of 0 and 9999 inclusive we want to use the extended year format (ES 15.9.1.15.1).
     int ms = static_cast<int>(fmod(thisDateObj->internalNumber(), msPerSecond));
     if (ms < 0)
         ms += msPerSecond;
+
+    int charactersWritten;
     if (gregorianDateTime->year() > 9999 || gregorianDateTime->year() < 0)
-        snprintf(buffer, sizeof(buffer) - 1, "%+07d-%02d-%02dT%02d:%02d:%02d.%03dZ", gregorianDateTime->year(), gregorianDateTime->month() + 1, gregorianDateTime->monthDay(), gregorianDateTime->hour(), gregorianDateTime->minute(), gregorianDateTime->second(), ms);
+        charactersWritten = snprintf(buffer, sizeof(buffer), "%+07d-%02d-%02dT%02d:%02d:%02d.%03dZ", gregorianDateTime->year(), gregorianDateTime->month() + 1, gregorianDateTime->monthDay(), gregorianDateTime->hour(), gregorianDateTime->minute(), gregorianDateTime->second(), ms);
     else
-        snprintf(buffer, sizeof(buffer) - 1, "%04d-%02d-%02dT%02d:%02d:%02d.%03dZ", gregorianDateTime->year(), gregorianDateTime->month() + 1, gregorianDateTime->monthDay(), gregorianDateTime->hour(), gregorianDateTime->minute(), gregorianDateTime->second(), ms);
-    buffer[sizeof(buffer) - 1] = 0;
-    return JSValue::encode(jsNontrivialString(exec, buffer));
+        charactersWritten = snprintf(buffer, sizeof(buffer), "%04d-%02d-%02dT%02d:%02d:%02d.%03dZ", gregorianDateTime->year(), gregorianDateTime->month() + 1, gregorianDateTime->monthDay(), gregorianDateTime->hour(), gregorianDateTime->minute(), gregorianDateTime->second(), ms);
+
+    ASSERT(charactersWritten > 0 && static_cast<unsigned>(charactersWritten) < sizeof(buffer));
+    if (static_cast<unsigned>(charactersWritten) >= sizeof(buffer))
+        return JSValue::encode(jsEmptyString(exec));
+
+    return JSValue::encode(jsNontrivialString(exec, String(buffer, charactersWritten)));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToDateString(ExecState* exec)
@@ -1113,13 +1119,13 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToJSON(ExecState* exec)
     CallData callData;
     CallType callType = getCallData(toISOValue, callData);
     if (callType == CallTypeNone)
-        return throwVMError(exec, createTypeError(exec, "toISOString is not a function"));
+        return throwVMError(exec, createTypeError(exec, ASCIILiteral("toISOString is not a function")));
 
     JSValue result = call(exec, asObject(toISOValue), callType, callData, object, exec->emptyList());
     if (exec->hadException())
         return JSValue::encode(jsNull());
     if (result.isObject())
-        return throwVMError(exec, createTypeError(exec, "toISOString did not return a primitive value"));
+        return throwVMError(exec, createTypeError(exec, ASCIILiteral("toISOString did not return a primitive value")));
     return JSValue::encode(result);
 }
 

@@ -742,6 +742,8 @@ void Interpreter::addStackTraceIfNecessary(CallFrame* callFrame, JSObject* error
         globalObject = globalData->dynamicGlobalObject;
     else
         globalObject = error->globalObject();
+
+    // FIXME: JSStringJoiner could be more efficient than StringBuilder here.
     StringBuilder builder;
     for (unsigned i = 0; i < stackTrace.size(); i++) {
         builder.append(String(stackTrace[i].toString(globalObject->globalExec()).impl()));

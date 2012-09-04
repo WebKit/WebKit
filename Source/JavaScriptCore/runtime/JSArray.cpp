@@ -113,7 +113,7 @@ static inline bool isDenseEnoughForVector(unsigned length, unsigned numValues)
 static bool reject(ExecState* exec, bool throwException, const char* message)
 {
     if (throwException)
-        throwTypeError(exec, message);
+        throwTypeError(exec, ASCIILiteral(message));
     return false;
 }
 
@@ -212,14 +212,14 @@ inline void SparseArrayValueMap::put(ExecState* exec, JSArray* array, unsigned i
     if (result.isNewEntry && !array->isExtensible()) {
         remove(result.iterator);
         if (shouldThrow)
-            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+            throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
         return;
     }
 
     if (!(entry.attributes & Accessor)) {
         if (entry.attributes & ReadOnly) {
             if (shouldThrow)
-                throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+                throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
             return;
         }
 
@@ -233,7 +233,7 @@ inline void SparseArrayValueMap::put(ExecState* exec, JSArray* array, unsigned i
     
     if (!setter) {
         if (shouldThrow)
-            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+            throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
         return;
     }
 
@@ -723,7 +723,7 @@ void JSArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSVa
     if (propertyName == exec->propertyNames().length) {
         unsigned newLength = value.toUInt32(exec);
         if (value.toNumber(exec) != static_cast<double>(newLength)) {
-            throwError(exec, createRangeError(exec, "Invalid array length"));
+            throwError(exec, createRangeError(exec, ASCIILiteral("Invalid array length")));
             return;
         }
         thisObject->setLength(exec, newLength, slot.isStrictMode());
@@ -811,7 +811,7 @@ void JSArray::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue 
         // Prohibit growing the array if length is not writable.
         if (map->lengthIsReadOnly() || !isExtensible()) {
             if (shouldThrow)
-                throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+                throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
             return;
         }
         length = i + 1;
@@ -1236,7 +1236,7 @@ JSValue JSArray::pop(ExecState* exec)
     unsigned length = storage->m_length;
     if (!length) {
         if (!isLengthWritable())
-            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+            throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
         return jsUndefined();
     }
 
@@ -1261,7 +1261,7 @@ JSValue JSArray::pop(ExecState* exec)
         return jsUndefined();
     // Call the [[Delete]] internal method of O with arguments indx and true.
     if (!deletePropertyByIndex(this, exec, index)) {
-        throwTypeError(exec, "Unable to delete property.");
+        throwTypeError(exec, ASCIILiteral("Unable to delete property."));
         return jsUndefined();
     }
     // Call the [[Put]] internal method of O with arguments "length", indx, and true.
@@ -1294,7 +1294,7 @@ void JSArray::push(ExecState* exec, JSValue value)
         methodTable()->putByIndex(this, exec, storage->m_length, value, true);
         // Per ES5.1 15.4.4.7 step 6 & 15.4.5.1 step 3.d.
         if (!exec->hadException())
-            throwError(exec, createRangeError(exec, "Invalid array length"));
+            throwError(exec, createRangeError(exec, ASCIILiteral("Invalid array length")));
         return;
     }
 

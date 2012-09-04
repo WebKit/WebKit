@@ -182,7 +182,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
             prototype = obj->prototype();
             if (prototype.isNull()) {
                 if (!thisObject->putDirectInternal<PutModePut>(globalData, propertyName, value, 0, slot, getCallableObject(value)) && slot.isStrictMode())
-                    throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+                    throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
                 return;
             }
         }
@@ -195,7 +195,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
         if (offset != invalidOffset) {
             if (attributes & ReadOnly) {
                 if (slot.isStrictMode())
-                    throwError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
+                    throwError(exec, createTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError)));
                 return;
             }
 
@@ -204,7 +204,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
                 JSObject* setterFunc = asGetterSetter(gs)->setter();        
                 if (!setterFunc) {
                     if (slot.isStrictMode())
-                        throwError(exec, createTypeError(exec, "setting a property that has only a getter"));
+                        throwError(exec, createTypeError(exec, ASCIILiteral("setting a property that has only a getter")));
                     return;
                 }
                 
@@ -229,7 +229,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
     }
     
     if (!thisObject->putDirectInternal<PutModePut>(globalData, propertyName, value, 0, slot, getCallableObject(value)) && slot.isStrictMode())
-        throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+        throwTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
     return;
 }
 
@@ -389,7 +389,7 @@ JSValue JSObject::defaultValue(const JSObject* object, ExecState* exec, Preferre
 
     ASSERT(!exec->hadException());
 
-    return throwError(exec, createTypeError(exec, "No default value"));
+    return throwError(exec, createTypeError(exec, ASCIILiteral("No default value")));
 }
 
 const HashEntry* JSObject::findPropertyHashEntry(ExecState* exec, PropertyName propertyName) const
@@ -409,7 +409,7 @@ bool JSObject::hasInstance(JSObject*, ExecState* exec, JSValue value, JSValue pr
         return false;
 
     if (!proto.isObject()) {
-        throwError(exec, createTypeError(exec, "instanceof called on an object with an invalid prototype property."));
+        throwError(exec, createTypeError(exec, ASCIILiteral("instanceof called on an object with an invalid prototype property.")));
         return false;
     }
 
@@ -718,7 +718,7 @@ bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName
         // unless extensions are prevented!
         if (!object->isExtensible()) {
             if (throwException)
-                throwError(exec, createTypeError(exec, "Attempting to define property on object that is not extensible."));
+                throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to define property on object that is not extensible.")));
             return false;
         }
         PropertyDescriptor oldDescriptor;
@@ -736,12 +736,12 @@ bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName
     if (!current.configurable()) {
         if (descriptor.configurable()) {
             if (throwException)
-                throwError(exec, createTypeError(exec, "Attempting to configurable attribute of unconfigurable property."));
+                throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to configurable attribute of unconfigurable property.")));
             return false;
         }
         if (descriptor.enumerablePresent() && descriptor.enumerable() != current.enumerable()) {
             if (throwException)
-                throwError(exec, createTypeError(exec, "Attempting to change enumerable attribute of unconfigurable property."));
+                throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to change enumerable attribute of unconfigurable property.")));
             return false;
         }
     }
@@ -759,7 +759,7 @@ bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName
     if (descriptor.isDataDescriptor() != current.isDataDescriptor()) {
         if (!current.configurable()) {
             if (throwException)
-                throwError(exec, createTypeError(exec, "Attempting to change access mechanism for an unconfigurable property."));
+                throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to change access mechanism for an unconfigurable property.")));
             return false;
         }
         object->methodTable()->deleteProperty(object, exec, propertyName);
@@ -771,13 +771,13 @@ bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName
         if (!current.configurable()) {
             if (!current.writable() && descriptor.writable()) {
                 if (throwException)
-                    throwError(exec, createTypeError(exec, "Attempting to change writable attribute of unconfigurable property."));
+                    throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to change writable attribute of unconfigurable property.")));
                 return false;
             }
             if (!current.writable()) {
                 if (descriptor.value() && !sameValue(exec, current.value(), descriptor.value())) {
                     if (throwException)
-                        throwError(exec, createTypeError(exec, "Attempting to change value of a readonly property."));
+                        throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to change value of a readonly property.")));
                     return false;
                 }
             }
@@ -793,12 +793,12 @@ bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName
     if (!current.configurable()) {
         if (descriptor.setterPresent() && !(current.setterPresent() && JSValue::strictEqual(exec, current.setter(), descriptor.setter()))) {
             if (throwException)
-                throwError(exec, createTypeError(exec, "Attempting to change the setter of an unconfigurable property."));
+                throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to change the setter of an unconfigurable property.")));
             return false;
         }
         if (descriptor.getterPresent() && !(current.getterPresent() && JSValue::strictEqual(exec, current.getter(), descriptor.getter()))) {
             if (throwException)
-                throwError(exec, createTypeError(exec, "Attempting to change the getter of an unconfigurable property."));
+                throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to change the getter of an unconfigurable property.")));
             return false;
         }
     }

@@ -53,7 +53,7 @@ static JSValue encode(ExecState* exec, const char* doNotEscape)
 {
     CString cstr = exec->argument(0).toString(exec)->value(exec).utf8(true);
     if (!cstr.data())
-        return throwError(exec, createURIError(exec, "String contained an illegal UTF-16 sequence."));
+        return throwError(exec, createURIError(exec, ASCIILiteral("String contained an illegal UTF-16 sequence.")));
 
     JSStringBuilder builder;
     const char* p = cstr.data();
@@ -114,7 +114,7 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
             }
             if (charLen == 0) {
                 if (strict)
-                    return throwError(exec, createURIError(exec, "URI error"));
+                    return throwError(exec, createURIError(exec, ASCIILiteral("URI error")));
                 // The only case where we don't use "strict" mode is the "unescape" function.
                 // For that, it's good to support the wonky "%u" syntax for compatibility with WinIE.
                 if (k <= length - 6 && p[1] == 'u'
@@ -499,7 +499,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
     JSObject* thisObject = exec->hostThisValue().toThisObject(exec);
     JSObject* unwrappedObject = thisObject->unwrappedObject();
     if (!unwrappedObject->isGlobalObject() || jsCast<JSGlobalObject*>(unwrappedObject)->evalFunction() != exec->callee())
-        return throwVMError(exec, createEvalError(exec, "The \"this\" value passed to eval must be the global object from which eval originated"));
+        return throwVMError(exec, createEvalError(exec, ASCIILiteral("The \"this\" value passed to eval must be the global object from which eval originated")));
 
     JSValue x = exec->argument(0);
     if (!x.isString())

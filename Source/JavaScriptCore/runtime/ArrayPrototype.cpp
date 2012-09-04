@@ -205,13 +205,13 @@ static inline void shift(ExecState* exec, JSObject* thisObj, unsigned header, un
             if (exec->hadException())
                 return;
         } else if (!thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, to)) {
-            throwTypeError(exec, "Unable to delete property.");
+            throwTypeError(exec, ASCIILiteral("Unable to delete property."));
             return;
         }
     }
     for (unsigned k = length; k > length - count; --k) {
         if (!thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, k - 1)) {
-            throwTypeError(exec, "Unable to delete property.");
+            throwTypeError(exec, ASCIILiteral("Unable to delete property."));
             return;
         }
     }
@@ -243,7 +243,7 @@ static inline void unshift(ExecState* exec, JSObject* thisObj, unsigned header, 
                 return;
             thisObj->methodTable()->putByIndex(thisObj, exec, to, value, true);
         } else if (!thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, to)) {
-            throwTypeError(exec, "Unable to delete property.");
+            throwTypeError(exec, ASCIILiteral("Unable to delete property."));
             return;
         }
         if (exec->hadException())
@@ -491,7 +491,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
         if (!thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, length - 1)) {
-            throwTypeError(exec, "Unable to delete property.");
+            throwTypeError(exec, ASCIILiteral("Unable to delete property."));
             return JSValue::encode(jsUndefined());
         }
         putProperty(exec, thisObj, exec->propertyNames().length, jsNumber(length - 1));
@@ -553,7 +553,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
             if (exec->hadException())
                 return JSValue::encode(jsUndefined());
         } else if (!thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, k)) {
-            throwTypeError(exec, "Unable to delete property.");
+            throwTypeError(exec, ASCIILiteral("Unable to delete property."));
             return JSValue::encode(jsUndefined());
         }
 
@@ -562,7 +562,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
             if (exec->hadException())
                 return JSValue::encode(jsUndefined());
         } else if (!thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, lk1)) {
-            throwTypeError(exec, "Unable to delete property.");
+            throwTypeError(exec, ASCIILiteral("Unable to delete property."));
             return JSValue::encode(jsUndefined());
         }
     }

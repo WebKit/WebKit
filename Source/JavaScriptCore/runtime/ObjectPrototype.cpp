@@ -157,7 +157,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(ExecState* exec)
     JSValue get = exec->argument(1);
     CallData callData;
     if (getCallData(get, callData) == CallTypeNone)
-        return throwVMError(exec, createSyntaxError(exec, "invalid getter usage"));
+        return throwVMError(exec, createSyntaxError(exec, ASCIILiteral("invalid getter usage")));
 
     PropertyDescriptor descriptor;
     descriptor.setGetter(get);
@@ -177,7 +177,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(ExecState* exec)
     JSValue set = exec->argument(1);
     CallData callData;
     if (getCallData(set, callData) == CallTypeNone)
-        return throwVMError(exec, createSyntaxError(exec, "invalid setter usage"));
+        return throwVMError(exec, createSyntaxError(exec, ASCIILiteral("invalid setter usage")));
 
     PropertyDescriptor descriptor;
     descriptor.setSetter(set);
@@ -247,7 +247,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.isUndefinedOrNull())
-        return JSValue::encode(jsNontrivialString(exec, thisValue.isUndefined() ? "[object Undefined]" : "[object Null]"));
+        return JSValue::encode(jsNontrivialString(exec, String(thisValue.isUndefined() ? ASCIILiteral("[object Undefined]") : ASCIILiteral("[object Null]"))));
     JSObject* thisObject = thisValue.toObject(exec);
 
     JSString* result = thisObject->structure()->objectToStringValue();

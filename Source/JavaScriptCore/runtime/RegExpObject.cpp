@@ -130,7 +130,7 @@ void RegExpObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyN
 static bool reject(ExecState* exec, bool throwException, const char* message)
 {
     if (throwException)
-        throwTypeError(exec, message);
+        throwTypeError(exec, ASCIILiteral(message));
     return false;
 }
 
@@ -191,7 +191,7 @@ JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, PropertyName)
     // source cannot ever validly be "". If the source is empty, return a different Pattern
     // that would match the same thing.
     if (!length)
-        return jsString(exec, "(?:)");
+        return jsNontrivialString(exec, ASCIILiteral("(?:)"));
 
     // early return for strings that don't contain a forwards slash and LineTerminator
     for (unsigned i = 0; i < length; ++i) {
@@ -251,9 +251,9 @@ JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, PropertyName)
             else if (ch == '\r')
                 result.append('r');
             else if (ch == 0x2028)
-                result.append("u2028");
+                result.appendLiteral("u2028");
             else
-                result.append("u2029");
+                result.appendLiteral("u2029");
         } else
             result.append(ch);
 

@@ -75,7 +75,7 @@ static String escapeQuotes(const String& str)
 static String valueToSourceString(ExecState* exec, JSValue val)
 {
     if (!val)
-        return "0";
+        return ASCIILiteral("0");
 
     if (val.isString())
         return makeString("\"", escapeQuotes(val.toString(exec)->value(exec)), "\"");
@@ -3032,14 +3032,14 @@ String CodeBlock::nameForRegister(int registerNumber)
             return String(ptr->first);
     }
     if (needsActivation() && registerNumber == activationRegister())
-        return "activation";
+        return ASCIILiteral("activation");
     if (registerNumber == thisRegister())
-        return "this";
+        return ASCIILiteral("this");
     if (usesArguments()) {
         if (registerNumber == argumentsRegister())
-            return "arguments";
+            return ASCIILiteral("arguments");
         if (unmodifiedArgumentsRegister(argumentsRegister()) == registerNumber)
-            return "real arguments";
+            return ASCIILiteral("real arguments");
     }
     if (registerNumber < 0) {
         int argumentPosition = -registerNumber;

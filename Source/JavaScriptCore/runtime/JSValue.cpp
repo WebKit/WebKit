@@ -143,7 +143,7 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
                 JSObject* setterFunc = asGetterSetter(gs)->setter();        
                 if (!setterFunc) {
                     if (slot.isStrictMode())
-                        throwError(exec, createTypeError(exec, "setting a property that has only a getter"));
+                        throwError(exec, createTypeError(exec, ASCIILiteral("setting a property that has only a getter")));
                     return;
                 }
                 

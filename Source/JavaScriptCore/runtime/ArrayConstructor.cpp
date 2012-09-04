@@ -85,7 +85,7 @@ static inline JSObject* constructArrayWithSizeQuirk(ExecState* exec, const ArgLi
     if (args.size() == 1 && args.at(0).isNumber()) {
         uint32_t n = args.at(0).toUInt32(exec);
         if (n != args.at(0).toNumber(exec))
-            return throwError(exec, createRangeError(exec, "Array size is not a small enough positive integer."));
+            return throwError(exec, createRangeError(exec, ASCIILiteral("Array size is not a small enough positive integer.")));
         return constructEmptyArray(exec, globalObject, n);
     }
 

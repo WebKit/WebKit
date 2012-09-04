@@ -225,7 +225,7 @@ JSString* JSRopeString::getIndexSlowCase(ExecState* exec, unsigned i)
     resolveRope(exec);
     // Return a safe no-value result, this should never be used, since the excetion will be thrown.
     if (exec->exception())
-        return jsString(exec, "");
+        return jsEmptyString(exec);
     ASSERT(!isRope());
     ASSERT(i < m_value.length());
     return jsSingleCharacterSubstring(exec, m_value, i);

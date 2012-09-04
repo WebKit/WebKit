@@ -106,7 +106,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
     
     if (arg0.inherits(&RegExpObject::s_info)) {
         if (!arg1.isUndefined())
-            return throwVMError(exec, createTypeError(exec, "Cannot supply flags when constructing one RegExp from another."));
+            return throwVMError(exec, createTypeError(exec, ASCIILiteral("Cannot supply flags when constructing one RegExp from another.")));
         regExp = asRegExpObject(arg0)->regExp();
     } else {
         String pattern = !exec->argumentCount() ? String("") : arg0.toString(exec)->value(exec);
@@ -119,7 +119,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
             if (exec->hadException())
                 return JSValue::encode(jsUndefined());
             if (flags == InvalidFlags)
-                return throwVMError(exec, createSyntaxError(exec, "Invalid flags supplied to RegExp constructor."));
+                return throwVMError(exec, createSyntaxError(exec, ASCIILiteral("Invalid flags supplied to RegExp constructor.")));
         }
         regExp = RegExp::create(exec->globalData(), pattern, flags);
     }

@@ -173,9 +173,9 @@ JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)
     if (exec->callee()) {
         if (asObject(exec->callee())->inherits(&InternalFunction::s_info)) {
             functionName = asInternalFunction(exec->callee())->name(exec);
-            builder.append("#0 ");
+            builder.appendLiteral("#0 ");
             builder.append(functionName);
-            builder.append("() ");
+            builder.appendLiteral("() ");
             count++;
         }
     }

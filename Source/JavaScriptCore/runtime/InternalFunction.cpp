@@ -44,7 +44,7 @@ void InternalFunction::finishCreation(JSGlobalData& globalData, const String& na
     Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
     ASSERT(methodTable()->getCallData != InternalFunction::s_info.methodTable.getCallData);
-    putDirect(globalData, globalData.propertyNames->name, jsString(&globalData, name.isNull() ? "" : name), DontDelete | ReadOnly | DontEnum);
+    putDirect(globalData, globalData.propertyNames->name, jsString(&globalData, name), DontDelete | ReadOnly | DontEnum);
 }
 
 const String& InternalFunction::name(ExecState* exec)

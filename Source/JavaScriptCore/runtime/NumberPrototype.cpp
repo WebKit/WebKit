@@ -378,7 +378,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
     int decimalPlacesInExponent;
     bool isUndefined;
     if (!getIntegerArgumentInRange(exec, 0, 20, decimalPlacesInExponent, isUndefined))
-        return throwVMError(exec, createRangeError(exec, "toExponential() argument must be between 0 and 20"));
+        return throwVMError(exec, createRangeError(exec, ASCIILiteral("toExponential() argument must be between 0 and 20")));
 
     // Handle NaN and Infinity.
     if (!isfinite(x))
@@ -409,7 +409,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
     int decimalPlaces;
     bool isUndefined; // This is ignored; undefined treated as 0.
     if (!getIntegerArgumentInRange(exec, 0, 20, decimalPlaces, isUndefined))
-        return throwVMError(exec, createRangeError(exec, "toFixed() argument must be between 0 and 20"));
+        return throwVMError(exec, createRangeError(exec, ASCIILiteral("toFixed() argument must be between 0 and 20")));
 
     // 15.7.4.5.7 states "If x >= 10^21, then let m = ToString(x)"
     // This also covers Ininity, and structure the check so that NaN
@@ -442,7 +442,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
     int significantFigures;
     bool isUndefined;
     if (!getIntegerArgumentInRange(exec, 1, 21, significantFigures, isUndefined))
-        return throwVMError(exec, createRangeError(exec, "toPrecision() argument must be between 1 and 21"));
+        return throwVMError(exec, createRangeError(exec, ASCIILiteral("toPrecision() argument must be between 1 and 21")));
 
     // To precision called with no argument is treated as ToString.
     if (isUndefined)
@@ -497,7 +497,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
 
     int32_t radix = extractRadixFromArgs(exec);
     if (radix < 2 || radix > 36)
-        return throwVMError(exec, createRangeError(exec, "toString() radix argument must be between 2 and 36"));
+        return throwVMError(exec, createRangeError(exec, ASCIILiteral("toString() radix argument must be between 2 and 36")));
 
     int32_t integerValue = static_cast<int32_t>(doubleValue);
     if (integerValue == doubleValue)
