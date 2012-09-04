@@ -349,6 +349,7 @@ void InspectorProfilerAgent::restore()
     restoreEnablement();
 
     // Revisit this.
+    m_headersRequested = true;
     resetFrontendProfiles();
     if (m_state->getBoolean(ProfilerAgentState::userInitiatedProfiling))
         start();
