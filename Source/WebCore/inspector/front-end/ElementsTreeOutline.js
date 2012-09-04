@@ -76,11 +76,16 @@ WebInspector.ElementsTreeOutline.MappedCharToEntity = {
     "\u2002": "ensp",
     "\u2003": "emsp",
     "\u2009": "thinsp",
-    "\u200b": "#8203",
+    "\u200b": "#8203", // ZWSP
     "\u200c": "zwnj",
     "\u200d": "zwj",
     "\u200e": "lrm",
-    "\u200f": "rlm"
+    "\u200f": "rlm",
+    "\u202a": "#8234", // LRE
+    "\u202b": "#8235", // RLE
+    "\u202c": "#8236", // PDF
+    "\u202d": "#8237", // LRO
+    "\u202e": "#8238" // RLO
 }
 
 WebInspector.ElementsTreeOutline.prototype = {
