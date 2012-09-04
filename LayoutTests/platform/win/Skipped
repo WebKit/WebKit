@@ -1472,7 +1472,7 @@ fast/events/constructors/webgl-context-event-constructor.html
 http/tests/security/webgl-remote-read-remote-image-allowed.html
 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
-inspector/profiler/webgl/webgl-profiler-api-changes.html
+inspector/profiler/webgl
 
 # Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
 fast/dom/HTMLAnchorElement/anchor-nodownload.html
