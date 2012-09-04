@@ -623,8 +623,8 @@ QVariant convertValueToQVariant(JSContextRef context, JSValueRef value, QMetaTyp
                 ret = QVariant::fromValue(convertToList<int>(context, type, object, value, &dist, exception));
                 break;
             }
-            if (QtPixmapInstance::canHandle(static_cast<QMetaType::Type>(hint))) {
-                ret = QtPixmapInstance::variantFromObject(toJS(object), static_cast<QMetaType::Type>(hint));
+            if (QtPixmapRuntime::canHandle(static_cast<QMetaType::Type>(hint))) {
+                ret = QtPixmapRuntime::toQt(context, object, static_cast<QMetaType::Type>(hint), exception);
             } else if (customRuntimeConversions()->contains(hint)) {
                 ret = customRuntimeConversions()->value(hint).toVariantFunc(toJS(object), &dist, visitedObjects);
                 if (dist == 0)
@@ -740,10 +740,8 @@ JSValueRef convertQVariantToValue(JSContextRef context, PassRefPtr<RootObject> r
         return toRef(exec, QtInstance::getQtInstance(obj, root, QtInstance::QtOwnership)->createRuntimeObject(exec));
     }
 
-    if (QtPixmapInstance::canHandle(static_cast<QMetaType::Type>(variant.type()))) {
-        ExecState* exec = toJS(context);
-        return toRef(exec, QtPixmapInstance::createPixmapRuntimeObject(exec, root, variant));
-    }
+    if (QtPixmapRuntime::canHandle(static_cast<QMetaType::Type>(variant.type())))
+        return QtPixmapRuntime::toJS(context, variant, exception);
 
     if (customRuntimeConversions()->contains(type)) {
         if (!root->globalObject()->inherits(&JSDOMWindow::s_info))

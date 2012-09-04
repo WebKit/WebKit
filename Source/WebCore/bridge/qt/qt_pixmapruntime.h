@@ -21,31 +21,20 @@
 #define qt_pixmapruntime_h
 
 #include "BridgeJSC.h"
+#include "JavaScript.h"
 #include <QVariant>
 
 namespace JSC {
 
 namespace Bindings {
 
-class QtPixmapInstance : public Instance {
-    QVariant data;
+class QtPixmapRuntime {
 public:
-    QtPixmapInstance(PassRefPtr<RootObject> rootObj, const QVariant& newData);
-    virtual Class* getClass() const;
-    virtual JSValue getMethod(ExecState*, PropertyName);
-    virtual JSValue invokeMethod(ExecState*, RuntimeMethod*);
-    virtual void getPropertyNames(ExecState*, PropertyNameArray&);
-
-    virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
-    virtual JSValue valueOf(ExecState*) const;
-    int width() const;
-    int height() const;
-    QPixmap toPixmap();
-    QImage toImage();
-    RuntimeObject* newRuntimeObject(ExecState*);
-    static JSObject* createPixmapRuntimeObject(ExecState*, PassRefPtr<RootObject>, const QVariant&);
-    static QVariant variantFromObject(JSObject*, QMetaType::Type hint);
+    static JSObjectRef toJS(JSContextRef, const QVariant&, JSValueRef* exception);
+    static QVariant toQt(JSContextRef, JSObjectRef, QMetaType::Type hint, JSValueRef* exception);
     static bool canHandle(QMetaType::Type hint);
+
+    static JSClassRef getClassRef();
 };
 
 }
