@@ -536,7 +536,6 @@
 				1A5CC1F3137DD2EC00A5D7E7 /* GetURLWithJavaScriptURL.cpp */,
 				1A3E28A91311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp */,
 				1AD4CB2012A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp */,
-				515C0CCF15EE785700F5A613 /* LogNPPSetWindow.cpp */,
 				1ACF898B132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp */,
 				C031182A134E4A2B00919757 /* NPPSetWindowCalledDuringDestruction.cpp */,
 				1A24BAA8120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp */,

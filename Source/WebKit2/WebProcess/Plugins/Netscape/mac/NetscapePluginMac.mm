@@ -912,12 +912,9 @@ void NetscapePlugin::windowAndViewFramesChanged(const IntRect& windowFrameInScre
     }
 }
     
-void NetscapePlugin::windowVisibilityChanged(bool visible)
+void NetscapePlugin::windowVisibilityChanged(bool)
 {
-    if (visible)
-        callSetWindow();
-    else
-        callSetWindowInvisible();
+    // FIXME: Implement.
 }
 
 uint64_t NetscapePlugin::pluginComplexTextInputIdentifier() const
