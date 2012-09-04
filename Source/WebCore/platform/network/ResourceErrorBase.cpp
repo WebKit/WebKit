@@ -42,6 +42,7 @@ ResourceError ResourceErrorBase::copy() const
     errorCopy.m_localizedDescription = m_localizedDescription.isolatedCopy();
     errorCopy.m_isNull = m_isNull;
     errorCopy.m_isCancellation = m_isCancellation;
+    errorCopy.m_isTimeout = m_isTimeout;
     platformCopy(errorCopy);
     return errorCopy;
 }
@@ -72,6 +73,9 @@ bool ResourceErrorBase::compare(const ResourceError& a, const ResourceError& b)
         return false;
 
     if (a.isCancellation() != b.isCancellation())
+        return false;
+
+    if (a.isTimeout() != b.isTimeout())
         return false;
 
     return platformCompare(a, b);

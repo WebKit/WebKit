@@ -49,6 +49,9 @@ public:
     void setIsCancellation(bool isCancellation) { m_isCancellation = isCancellation; }
     bool isCancellation() const { return m_isCancellation; }
 
+    void setIsTimeout(bool isTimeout) { m_isTimeout = isTimeout; }
+    bool isTimeout() const { return m_isTimeout; }
+
     static bool compare(const ResourceError&, const ResourceError&);
 
 protected:
@@ -56,6 +59,7 @@ protected:
         : m_errorCode(0)
         , m_isNull(true)
         , m_isCancellation(false)
+        , m_isTimeout(false)
     {
     }
 
@@ -66,6 +70,7 @@ protected:
         , m_localizedDescription(localizedDescription)
         , m_isNull(false)
         , m_isCancellation(false)
+        , m_isTimeout(false)
     {
     }
 
@@ -86,6 +91,7 @@ protected:
     String m_localizedDescription;
     bool m_isNull;
     bool m_isCancellation;
+    bool m_isTimeout;
 };
 
 inline bool operator==(const ResourceError& a, const ResourceError& b) { return ResourceErrorBase::compare(a, b); }
