@@ -853,12 +853,10 @@ bool AbstractState::execute(unsigned indexInBlock)
             forNode(nodeIndex).makeTop();
             break;
         case Array::JSArray:
-            forNode(node.child2()).filter(SpecInt32);
-            forNode(nodeIndex).makeTop();
-            break;
         case Array::JSArrayOutOfBounds:
+            // FIXME: We should have more conservative handling of the out-of-bounds
+            // case.
             forNode(node.child2()).filter(SpecInt32);
-            clobberWorld(node.codeOrigin, indexInBlock);
             forNode(nodeIndex).makeTop();
             break;
         case Array::Int8Array:

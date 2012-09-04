@@ -58,8 +58,6 @@ inline const char* exitKindToString(ExitKind kind)
         return "Overflow";
     case NegativeZero:
         return "NegativeZero";
-    case OutOfBounds:
-        return "OutOfBounds";
     case InadequateCoverage:
         return "InadequateCoverage";
     case ArgumentsEscaped:
