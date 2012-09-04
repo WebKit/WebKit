@@ -465,7 +465,7 @@ void FatFingers::getPaddings(unsigned& top, unsigned& right, unsigned& bottom, u
 FatFingers::CachedResultsStrategy FatFingers::cachingStrategy() const
 {
     switch (m_matchingApproach) {
-    case ClickableElement:
+    case ClickableByDefault:
         return GetFromRenderTree;
     case MadeClickableByTheWebpage:
         return GetFromCache;

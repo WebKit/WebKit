@@ -1,3 +1,15 @@
+2012-09-04  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] FatFingers::cachingStrategy uses incorrect enum value
+        https://bugs.webkit.org/show_bug.cgi?id=95783
+
+        Reviewed by Antonio Gomes.
+
+        Use the correct enum values.
+
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::cachingStrategy):
+
 2012-09-04  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Use child/ScrollableContent layer's position instead of parent/ScrollLayer's boundsOrigin
