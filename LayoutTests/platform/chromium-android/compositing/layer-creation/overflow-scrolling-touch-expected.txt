@@ -14,15 +14,11 @@
           (drawsContent 1)
           (children 4
             (GraphicsLayer
-              (bounds 185.00 185.00)
+              (bounds 200.00 200.00)
               (children 1
                 (GraphicsLayer
-                  (children 1
-                    (GraphicsLayer
-                      (bounds 1050.00 1050.00)
-                      (drawsContent 1)
-                    )
-                  )
+                  (bounds 1050.00 1050.00)
+                  (drawsContent 1)
                 )
               )
             )

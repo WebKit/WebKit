@@ -28,6 +28,7 @@ BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-mis
 BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-url.html = PASS
 BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-url.html = PASS
 BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-allowed.html = PASS
+BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-blocked.html = PASS
 BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html = PASS
 BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-02.html = PASS
 BUGCR145338 SKIP : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = PASS

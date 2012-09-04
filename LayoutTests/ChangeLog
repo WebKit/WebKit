@@ -1,3 +1,11 @@
+2012-09-04  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Unreviewed. Update test expectations for Android.
+
+        * platform/chromium-android/TestExpectations:
+        * platform/chromium-android/compositing/layer-creation/overflow-scrolling-touch-expected.txt:
+        * platform/chromium/TestExpectations:
+
 2012-09-04  Robert Hogan  <robert@webkit.org>
 
         Regression(r127163): Heap-use-after-free in WebCore::RenderBoxModelObject::hasSelfPaintingLayer

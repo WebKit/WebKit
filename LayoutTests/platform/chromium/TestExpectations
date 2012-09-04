@@ -3298,7 +3298,8 @@ BUGWK90003 WIN DEBUG : fast/js/repeat-cached-vm-reentry.html = TIMEOUT PASS
 
 // Flaky. It also times out very frequently on Windows and Linux debug build.
 BUGWK90207 SLOW WIN DEBUG : fast/forms/select/select-state-restore.html = PASS TEXT
-BUGWK90207 SLOW LINUX ANDROID DEBUG : fast/forms/select/select-state-restore.html = PASS TEXT
+BUGWK90207 SLOW LINUX DEBUG : fast/forms/select/select-state-restore.html = PASS TEXT
+BUGWK90207 ANDROID : fast/forms/select/select-state-restore.html = PASS TEXT TIMEOUT
 BUGWK90207 WIN RELEASE : fast/forms/select/select-state-restore.html = PASS TIMEOUT
 
 // Flaky
@@ -3548,11 +3549,13 @@ BUGCR145590 ANDROID : fullscreen/video-specified-size.html = TIMEOUT
 BUGCR145590 ANDROID : http/tests/appcache/video.html = TEXT
 BUGCR145590 ANDROID : http/tests/media/media-source/video-media-source-abort.html = TIMEOUT
 BUGCR145590 ANDROID : http/tests/media/media-source/video-media-source-add-and-remove-buffers.html = TIMEOUT
+BUGCR145590 ANDROID : http/tests/media/media-source/video-media-source-async-events.html = TIMEOUT
 BUGCR145590 ANDROID : http/tests/media/media-source/video-media-source-errors.html = TIMEOUT
 BUGCR145590 ANDROID : http/tests/media/media-source/video-media-source-event-attributes.html = TIMEOUT
 BUGCR145590 ANDROID : http/tests/media/media-source/video-media-source-objects.html = TIMEOUT
 BUGCR145590 ANDROID : http/tests/media/media-source/video-media-source-play.html = TEXT
 BUGCR145590 ANDROID : http/tests/media/media-source/video-media-source-seek.html = TEXT
+BUGCR145590 ANDROID : http/tests/media/media-source/video-media-source-sourcebufferlist-crash.html = TIMEOUT
 BUGCR145590 ANDROID : http/tests/media/media-source/video-media-source-state-changes.html = TEXT
 BUGCR145590 ANDROID : http/tests/media/pdf-served-as-pdf.html = TEXT
 BUGCR145590 ANDROID : http/tests/media/text-served-as-text.html = TEXT
@@ -3565,14 +3568,16 @@ BUGCR145590 ANDROID : http/tests/security/video-cross-origin-readback.html = TEX
 BUGCR145590 ANDROID : media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html = TEXT
 BUGCR145590 ANDROID : media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html = TEXT
 BUGCR145590 ANDROID : media/audio-data-url.html = TEXT
-BUGCR145590 ANDROID : media/audio-repaint.html = TEXT
+BUGCR145590 ANDROID : media/audio-repaint.html = TEXT TIMEOUT
 BUGCR145590 ANDROID : media/encrypted-media/encrypted-media-events.html = TIMEOUT
 BUGCR145590 ANDROID : media/encrypted-media/encrypted-media-not-loaded.html = TEXT
 BUGCR145590 ANDROID : media/encrypted-media/encrypted-media-syntax.html = TEXT
+BUGCR145590 ANDROID : media/track/track-default-attribute.html = TIMEOUT PASS
 BUGCR145590 ANDROID : media/video-aspect-ratio.html = TEXT // 8 videos
 BUGCR145590 ANDROID : media/video-buffered.html = TEXT
 BUGCR145590 ANDROID : media/video-canvas-source.html = TEXT
 BUGCR145590 ANDROID : media/video-error-does-not-exist.html = TEXT
+BUGCR145590 ANDROID : media/video-source-error-no-candidate.html = TIMEOUT PASS
 BUGCR145590 ANDROID : media/video-source-type-params.html = TEXT
 BUGCR145590 ANDROID : platform/chromium/compositing/video-frame-size-change.html = TIMEOUT
 BUGCR145590 ANDROID : platform/chromium/media/video-frame-size-change.html = TIMEOUT
@@ -3605,3 +3610,11 @@ BUGWK80394 MAC WIN : fast/block/margin-collapse/block-inside-inline/025.html = T
 
 // Does not yet support new web notifications TestRunner API
 BUGWK95506 SKIP : http/tests/notifications = PASS
+
+// The test font doesn't contain the glyph that Android uses to detect Arabic.
+BUGCR146399 ANDROID : platform/chromium-linux/fast/text/international/arabic-vertical-offset.html = TEXT
+
+// Ref tests produce little image difference on Android.
+BUGCR146401 ANDROID : css3/filters/custom/effect-custom-transform-parameters.html = IMAGE
+BUGCR146401 ANDROID : css3/filters/custom/filter-fallback-to-software.html = IMAGE
+BUGCR146401 ANDROID : fast/css/sticky/sticky-writing-mode-vertical-lr.html = IMAGE
