@@ -660,11 +660,13 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         IntSize scrollOffset = m_owningLayer->scrolledContentOffset();
 
         m_scrollingLayer->setPosition(FloatPoint() + (paddingBox.location() - localCompositingBounds.location()));
+
         m_scrollingLayer->setSize(paddingBox.size());
         m_scrollingContentsLayer->setPosition(FloatPoint(-scrollOffset.width(), -scrollOffset.height()));
 
         IntSize oldScrollingLayerOffset = m_scrollingLayer->offsetFromRenderer();
         m_scrollingLayer->setOffsetFromRenderer(IntPoint() - paddingBox.location());
+
         bool paddingBoxOffsetChanged = oldScrollingLayerOffset != m_scrollingLayer->offsetFromRenderer();
 
         IntSize scrollSize(m_owningLayer->scrollWidth(), m_owningLayer->scrollHeight());

@@ -319,16 +319,6 @@ bool GraphicsLayerBlackBerry::setFilters(const FilterOperations& filters)
 }
 #endif
 
-void GraphicsLayerBlackBerry::setBoundsOrigin(const FloatPoint& origin)
-{
-    if (origin == m_boundsOrigin)
-        return;
-
-    GraphicsLayer::setBoundsOrigin(origin);
-    updateBoundsOrigin();
-
-}
-
 void GraphicsLayerBlackBerry::setBackgroundColor(const Color& color)
 {
     if (m_backgroundColorSet && m_backgroundColor == color)
@@ -712,11 +702,6 @@ void GraphicsLayerBlackBerry::updateAnchorPoint()
     primaryLayer()->setAnchorPoint(FloatPoint(m_anchorPoint.x(), m_anchorPoint.y()));
     primaryLayer()->setAnchorPointZ(m_anchorPoint.z());
     updateLayerPosition();
-}
-
-void GraphicsLayerBlackBerry::updateBoundsOrigin()
-{
-    primaryLayer()->setBoundsOrigin(m_boundsOrigin);
 }
 
 void GraphicsLayerBlackBerry::updateTransform()

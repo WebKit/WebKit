@@ -1,3 +1,24 @@
+2012-09-04  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Use child/ScrollableContent layer's position instead of parent/ScrollLayer's boundsOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=95778
+        PR #202252
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Arvid Nilsson.
+
+        Upstream has switch away from using the parent scroll layer's bounds origin
+        in order to translate contents of all its child layers. Instead now, it directly
+        sets the scroll position of the child scrollable contents layer.
+
+        Source/WebKit/blackberry:
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::setScrollPositionCompositingThread):
+        * WebKitSupport/InRegionScrollableArea.cpp:
+        (BlackBerry::WebKit::InRegionScrollableArea::InRegionScrollableArea):
+
+        No new tests, since it is a catch-up with upstreaming code.
+
 2012-09-04  George Staikos  <staikos@webkit.org>
 
         [BlackBerry] Fix memory leak in InputHandler

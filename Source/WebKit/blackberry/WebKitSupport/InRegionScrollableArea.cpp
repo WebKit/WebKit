@@ -97,8 +97,8 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
         if (m_layer->usesCompositedScrolling()) {
             m_supportsCompositedScrolling = true;
             ASSERT(m_layer->backing()->hasScrollingLayer());
-            m_camouflagedCompositedScrollableLayer = reinterpret_cast<unsigned>(m_layer->backing()->scrollingLayer()->platformLayer());
-            m_cachedCompositedScrollableLayer = m_layer->backing()->scrollingLayer()->platformLayer();
+            m_camouflagedCompositedScrollableLayer = reinterpret_cast<unsigned>(m_layer->backing()->scrollingContentsLayer()->platformLayer());
+            m_cachedCompositedScrollableLayer = m_layer->backing()->scrollingContentsLayer()->platformLayer();
             ASSERT(!m_cachedNonCompositedScrollableNode);
         } else {
             m_camouflagedCompositedScrollableLayer = reinterpret_cast<unsigned>(m_layer->enclosingElement());

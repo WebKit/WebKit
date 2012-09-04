@@ -107,8 +107,6 @@ public:
 
     void setPosition(const FloatPoint& position) { m_position = position; setNeedsCommit(); }
 
-    void setBoundsOrigin(const FloatPoint& boundsOrigin) { m_boundsOrigin = boundsOrigin; setNeedsCommit(); }
-
     const LayerWebKitThread* rootLayer() const;
 
     void removeAllSublayers();

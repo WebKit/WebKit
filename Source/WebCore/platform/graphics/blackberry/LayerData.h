@@ -141,8 +141,6 @@ public:
 
     FloatPoint position() const { return m_position; }
 
-    FloatPoint boundsOrigin() const { return m_boundsOrigin; }
-
     // This is currently only used for perspective transform, see GraphicsLayer::setChildrenTransform()
     const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
 
@@ -190,7 +188,6 @@ protected:
     IntSize m_bounds;
     FloatPoint m_position;
     FloatPoint m_anchorPoint;
-    FloatPoint m_boundsOrigin;
     Color m_backgroundColor;
     Color m_borderColor;
 

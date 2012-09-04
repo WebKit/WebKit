@@ -808,7 +808,6 @@ void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const T
     // The matrix passed down to the sublayers is therefore:
     // M[s] = M * Tr[-center]
     localMatrix.translate3d(-bounds.width() * 0.5, -bounds.height() * 0.5, 0);
-    localMatrix.translate(-layer->boundsOrigin().x(), -layer->boundsOrigin().y());
 
     const Vector<RefPtr<LayerCompositingThread> >& sublayers = layer->getSublayers();
     for (size_t i = 0; i < sublayers.size(); i++)
