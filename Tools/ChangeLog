@@ -74,6 +74,24 @@
         (WebViewHost):
         (WebViewHost::setPointerLockWillRespondAsynchronously):
 
+2012-09-04  Ojan Vafai  <ojan@chromium.org>
+
+        Move content shell bots to their own builder group
+        https://bugs.webkit.org/show_bug.cgi?id=95765
+
+        Reviewed by Adam Barth.
+
+        In their current state of instability, they add too much noise. Once they get more stable,
+        we can add them back to the regular group or just have them replace the other bots.
+
+        Also, fix the filter for Apple Windows bots since some of them are now "Apple Win ...".
+
+        * TestResultServer/static-dashboards/builders.js:
+        (isWebkitTestRunner):
+        (isChromiumContentShellTestRunner):
+        (isChromiumWebkitTipOfTreeTestRunner):
+        (loadBuildersList):
+
 2012-09-03  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Change the focus when the web view is clicked in MiniBrowser and EWebLauncher

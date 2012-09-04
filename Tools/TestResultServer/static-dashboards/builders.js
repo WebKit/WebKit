@@ -165,14 +165,19 @@ function isWebkitTestRunner(builder)
 {
     if (builder.indexOf('Tests') != -1) {
         // Apple Windows bots still run old-run-webkit-tests, so they don't upload data.
-        return builder.indexOf('Windows') == -1 || (builder.indexOf('Qt') != -1 && builder.indexOf('Chromium') != -1);
+        return builder.indexOf('Win') == -1 || (builder.indexOf('Qt') != -1 && builder.indexOf('Chromium') != -1);
     }
     return builder.indexOf('GTK') != -1 || builder == 'Qt Linux Release';
 }
 
+function isChromiumContentShellTestRunner(builder)
+{
+    return builder.indexOf('(Content Shell)') != -1;
+}
+
 function isChromiumWebkitTipOfTreeTestRunner(builder)
 {
-    return (builder.indexOf('Webkit') != -1 && builder.indexOf('Builder') == -1 && builder.indexOf('(deps)') == -1 && builder.indexOf('ASAN') == -1) || builder.indexOf('(Content Shell)') != -1;
+    return builder.indexOf('Webkit') != -1 && builder.indexOf('Builder') == -1 && builder.indexOf('(deps)') == -1 && builder.indexOf('ASAN') == -1;
 }
 
 function isChromiumWebkitDepsTestRunner(builder)
@@ -250,6 +255,11 @@ function loadBuildersList(groupName, testType) {
 
     case 'layout-tests':
         switch(groupName) {
+        case 'Content Shell @ToT - chromium.org':
+            var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
+            requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, isChromiumContentShellTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup);
+            break;
+
         case '@ToT - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
             requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, isChromiumWebkitTipOfTreeTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup);
@@ -296,6 +306,7 @@ var LAYOUT_TESTS_BUILDER_GROUPS = {
     '@ToT - chromium.org': null,
     '@ToT - webkit.org': null,
     '@DEPS - chromium.org': null,
+    'Content Shell @ToT - chromium.org': null,
 };
 
 var CHROMIUM_GPU_TESTS_BUILDER_GROUPS = {
