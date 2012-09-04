@@ -232,6 +232,8 @@ void IDBRequest::setResultCursor(PassRefPtr<IDBCursor> cursor, PassRefPtr<IDBKey
 void IDBRequest::finishCursor()
 {
     m_cursorFinished = true;
+    if (m_readyState != PENDING)
+        m_hasPendingActivity = false;
 }
 
 bool IDBRequest::shouldEnqueueEvent() const
