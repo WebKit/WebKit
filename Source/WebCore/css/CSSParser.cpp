@@ -156,14 +156,24 @@ namespace WebCore {
 static const unsigned INVALID_NUM_PARSED_PROPERTIES = UINT_MAX;
 static const double MAX_SCALE = 1000000;
 
-static bool equal(const CSSParserString& a, const char* b)
+template <unsigned N>
+static bool equal(const CSSParserString& a, const char (&b)[N])
 {
-    return a.is8Bit() ? WTF::equal(a.characters8(), reinterpret_cast<const LChar*>(b), a.length()) : WTF::equal(a.characters16(), reinterpret_cast<const LChar*>(b), a.length());
+    unsigned length = N - 1; // Ignore the trailing null character
+    if (a.length() != length)
+        return false;
+
+    return a.is8Bit() ? WTF::equal(a.characters8(), reinterpret_cast<const LChar*>(b), length) : WTF::equal(a.characters16(), reinterpret_cast<const LChar*>(b), length);
 }
 
-static bool equalIgnoringCase(const CSSParserString& a, const char* b)
+template <unsigned N>
+static bool equalIgnoringCase(const CSSParserString& a, const char (&b)[N])
 {
-    return a.is8Bit() ? WTF::equalIgnoringCase(b, a.characters8(), a.length()) : WTF::equalIgnoringCase(b, a.characters16(), a.length());
+    unsigned length = N - 1; // Ignore the trailing null character
+    if (a.length() != length)
+        return false;
+
+    return a.is8Bit() ? WTF::equalIgnoringCase(b, a.characters8(), length) : WTF::equalIgnoringCase(b, a.characters16(), length);
 }
 
 static bool hasPrefix(const char* string, unsigned length, const char* prefix)
@@ -4333,7 +4343,7 @@ bool CSSParser::parseDashboardRegions(CSSPropertyID propId, bool important)
         }
         bool validFunctionName = false;
 #if ENABLE(DASHBOARD_SUPPORT)
-        static const char* const dashboardRegionFunctionName = "dashboard-region(";
+        static const char dashboardRegionFunctionName[] = "dashboard-region(";
         if (equalIgnoringCase(value->function->name, dashboardRegionFunctionName)) {
             validFunctionName = true;
 #if ENABLE(DASHBOARD_SUPPORT) && ENABLE(WIDGET_REGION)
@@ -4343,7 +4353,7 @@ bool CSSParser::parseDashboardRegions(CSSPropertyID propId, bool important)
         }
 #endif
 #if ENABLE(WIDGET_REGION)
-        static const char* const widgetRegionFunctionName = "region(";
+        static const char widgetRegionFunctionName[] = "region(";
         if (equalIgnoringCase(value->function->name, widgetRegionFunctionName)) {
             validFunctionName = true;
 #if ENABLE(DASHBOARD_SUPPORT) && ENABLE(WIDGET_REGION)

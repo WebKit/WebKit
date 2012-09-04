@@ -1,3 +1,15 @@
+2012-09-04  Michael Saboff  <msaboff@apple.com>
+
+        equal() in CSSParser.cpp should check the length of characters
+        https://bugs.webkit.org/show_bug.cgi?id=95706
+
+        Added test from duplicate defect https://bugs.webkit.org/show_bug.cgi?id=95634.
+
+        Reviewed by Abhishek Arya.
+
+        * fast/css/crash-comparing-equal-expected.txt: Added.
+        * fast/css/crash-comparing-equal.html: Added.
+
 2012-09-04  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed gardening. meda/video-controls-captions.html fails on Windows after it was introduced in http://trac.webkit.org/changeset/127035.
