@@ -97,6 +97,7 @@ public:
     void beginFrameAborted();
 
     void setMaxFramesPending(int);
+    void setSwapBuffersCompleteSupported(bool);
     void didSwapBuffersComplete();
 
     void didLoseContext();

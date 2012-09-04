@@ -888,8 +888,8 @@ void CCThreadProxy::initializeRendererOnImplThread(CCCompletionEvent* completion
     *initializeSucceeded = m_layerTreeHostImpl->initializeRenderer(m_contextBeforeInitializationOnImplThread.release(), textureUploader);
     if (*initializeSucceeded) {
         *capabilities = m_layerTreeHostImpl->rendererCapabilities();
-        if (capabilities->usingSwapCompleteCallback)
-            m_schedulerOnImplThread->setMaxFramesPending(2);
+        m_schedulerOnImplThread->setSwapBuffersCompleteSupported(
+                capabilities->usingSwapCompleteCallback);
     }
 
     completion->signal();

@@ -106,6 +106,11 @@ void CCScheduler::setMaxFramesPending(int maxFramesPending)
     m_frameRateController->setMaxFramesPending(maxFramesPending);
 }
 
+void CCScheduler::setSwapBuffersCompleteSupported(bool supported)
+{
+    m_frameRateController->setSwapBuffersCompleteSupported(supported);
+}
+
 void CCScheduler::didSwapBuffersComplete()
 {
     TRACE_EVENT0("cc", "CCScheduler::didSwapBuffersComplete");
