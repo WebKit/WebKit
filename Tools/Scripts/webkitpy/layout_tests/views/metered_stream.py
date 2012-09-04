@@ -32,6 +32,8 @@ import os
 import sys
 import time
 
+from webkitpy.common.memoized import memoized
+
 
 LOG_HANDLER_NAME = 'MeteredStreamLogHandler'
 
@@ -119,6 +121,21 @@ class MeteredStream(object):
             self._stream.write('\n')
             self._last_partial_line = ''
             self._stream.flush()
+
+    @memoized
+    def number_of_columns(self):
+        if not self._isatty:
+            return sys.maxint
+        try:
+            import fcntl
+            import struct
+            import termios
+            packed = fcntl.ioctl(self._stream.fileno(), termios.TIOCGWINSZ, '\0' * 8)
+            _, columns, _, _ = struct.unpack('HHHH', packed)
+            return columns
+        except:
+            return sys.maxint
+
 
 class _LogHandler(logging.Handler):
     def __init__(self, meter):

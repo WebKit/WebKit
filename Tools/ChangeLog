@@ -1,3 +1,28 @@
+2012-09-04  Tony Chang  <tony@chromium.org>
+
+        Elide test names when running new-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=95626
+
+        Reviewed by Dirk Pranke.
+
+        When the test name exceeds the number of terminal columns, it leaves
+        text on the screen. Avoid this by eliding the test name when running
+        tests. This is similar to what ninja does when compiling.
+
+        * Scripts/webkitpy/layout_tests/views/metered_stream.py:
+        (MeteredStream):
+        (MeteredStream.number_of_columns): Helper method to get number of
+        terminal columns. Won't work on Win32 python, but meh.
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer._test_status_line): New method for eliding the text. Doesn't use \u2026
+        because stderr appears to be ascii only.
+        (Printer.print_started_test): Route through _test_status_line.
+        (Printer.print_finished_test): Route through _test_status_line.
+        (Printer._print_test_trace): Route through _test_status_line.
+        (Printer._print_baseline): Route through _test_status_line.
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (test_test_status_line): Test for _test_status_line.
+
 2012-09-04  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Print API missing documentation when generating gtkdoc

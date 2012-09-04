@@ -31,6 +31,7 @@
 
 import optparse
 import StringIO
+import sys
 import time
 import unittest
 
@@ -247,6 +248,32 @@ BUGX : failures/expected/timeout.html = TIMEOUT
         # FIXME: Test that print_unexpected_results() produces the printer the
         # buildbot is expecting.
         pass
+
+    def test_test_status_line(self):
+        printer, _, _ = self.get_printer()
+        printer._meter.number_of_columns = lambda: 80
+        actual = printer._test_status_line('fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html', ' passed')
+        self.assertEquals(80, len(actual))
+        self.assertEquals(actual, '[0/0] fast/dom/HTMLFormElement/associa...after-index-assertion-fail1.html passed')
+
+        printer._meter.number_of_columns = lambda: 89
+        actual = printer._test_status_line('fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html', ' passed')
+        self.assertEquals(89, len(actual))
+        self.assertEquals(actual, '[0/0] fast/dom/HTMLFormElement/associated-...ents-after-index-assertion-fail1.html passed')
+
+        printer._meter.number_of_columns = lambda: sys.maxint
+        actual = printer._test_status_line('fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html', ' passed')
+        self.assertEquals(90, len(actual))
+        self.assertEquals(actual, '[0/0] fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html passed')
+
+        printer._meter.number_of_columns = lambda: 18
+        actual = printer._test_status_line('fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html', ' passed')
+        self.assertEquals(18, len(actual))
+        self.assertEquals(actual, '[0/0] f...l passed')
+
+        printer._meter.number_of_columns = lambda: 10
+        actual = printer._test_status_line('fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html', ' passed')
+        self.assertEquals(actual, '[0/0] associated-elements-after-index-assertion-fail1.html passed')
 
     def test_details(self):
         printer, err, _ = self.get_printer(['--details'])

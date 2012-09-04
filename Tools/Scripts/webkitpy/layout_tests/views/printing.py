@@ -324,6 +324,22 @@ class Printer(object):
         self._print_quiet(summary)
         self._print_quiet("")
 
+    def _test_status_line(self, test_name, suffix):
+        format_string = '[%d/%d] %s%s'
+        status_line = format_string % (self.num_completed, self.num_tests, test_name, suffix)
+        if len(status_line) > self._meter.number_of_columns():
+            overflow_columns = len(status_line) - self._meter.number_of_columns()
+            ellipsis = '...'
+            if len(test_name) < overflow_columns + len(ellipsis) + 2:
+                # We don't have enough space even if we elide, just show the test filename.
+                fs = self._port.host.filesystem
+                test_name = fs.split(test_name)[1]
+            else:
+                new_length = len(test_name) - overflow_columns - len(ellipsis)
+                prefix = int(new_length / 2)
+                test_name = test_name[:prefix] + ellipsis + test_name[-(new_length - prefix):]
+        return format_string % (self.num_completed, self.num_tests, test_name, suffix)
+
     def print_started_test(self, test_name):
         self._running_tests.append(test_name)
         if len(self._running_tests) > 1:
@@ -334,7 +350,7 @@ class Printer(object):
             write = self._meter.write_update
         else:
             write = self._meter.write_throttled_update
-        write('[%d/%d] %s%s' % (self.num_completed, self.num_tests, test_name, suffix))
+        write(self._test_status_line(test_name, suffix))
 
     def print_finished_test(self, result, expected, exp_str, got_str):
         self.num_completed += 1
@@ -346,7 +362,7 @@ class Printer(object):
             suffix = ' ' + desc[1]
             if not expected:
                 suffix += ' unexpectedly' + desc[2]
-            self.writeln("[%d/%d] %s%s" % (self.num_completed, self.num_tests, test_name, suffix))
+            self.writeln(self._test_status_line(test_name, suffix))
         elif self.num_completed == self.num_tests:
             self._meter.write_update('')
         else:
@@ -358,13 +374,13 @@ class Printer(object):
                 self._completed_tests.append([test_name, suffix])
 
             for test_name, suffix in self._completed_tests:
-                self._meter.write_throttled_update('[%d/%d] %s%s' % (self.num_completed, self.num_tests, test_name, suffix))
+                self._meter.write_throttled_update(self._test_status_line(test_name, suffix))
             self._completed_tests = []
         self._running_tests.remove(test_name)
 
     def _print_test_trace(self, result, exp_str, got_str):
         test_name = result.test_name
-        self._print_default('[%d/%d] %s' % (self.num_completed, self.num_tests, test_name))
+        self._print_default(self._test_status_line(test_name, ''))
 
         base = self._port.lookup_virtual_test_base(test_name)
         if base:
@@ -388,8 +404,6 @@ class Printer(object):
             relpath = '<none>'
         self._print_default('  %s: %s' % (extension[1:], relpath))
 
-    def _print_progress(self, result_summary, retrying, test_list):
-        """Print progress through the tests as determined by --print."""
     def _print_unexpected_results(self, unexpected_results):
         # Prints to the buildbot stream
         passes = {}
