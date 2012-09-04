@@ -1,3 +1,50 @@
+2012-09-04  Satish Sampath  <satish@chromium.org>
+
+        Run git commands within the checkout directory
+        https://bugs.webkit.org/show_bug.cgi?id=95742
+
+        Reviewed by Eric Seidel.
+
+        git commands run from scm/git.py are sometimes run with cwd set to the
+        checkout_root and other times with whatever directory was the default cwd.
+        Instead all these should run with the checkout root set as the cwd
+        (except where we explicitly need a different path)
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git._run_git):
+        (Git.find_checkout_root):
+        (Git.discard_local_commits):
+        (Git.local_commits):
+        (Git.working_directory_is_clean):
+        (Git.clean_working_directory):
+        (Git.add_list):
+        (Git.delete_list):
+        (Git.exists):
+        (Git._current_branch):
+        (Git._changes_files_for_commit):
+        (Git.revisions_changing_file):
+        (Git.svn_revision):
+        (Git._run_git_svn_find_rev):
+        (Git.contents_at_revision):
+        (Git.diff_for_file):
+        (Git.show_head):
+        (Git.committer_email_for_revision):
+        (Git.apply_reverse_diff):
+        (Git.revert_files):
+        (Git.commit_with_message):
+        (Git._commit_on_branch):
+        (Git.svn_commit_log):
+        (Git.last_svn_commit_log):
+        (Git.svn_blame):
+        (Git._branch_ref_exists):
+        (Git.delete_branch):
+        (Git.remote_merge_base):
+        (Git.commit_locally_with_message):
+        (Git.push_local_commits_to_server):
+        (Git.commit_ids_from_commitish_arguments):
+        (Git.commit_message_for_local_commit):
+        (Git.files_changed_summary_for_commit):
+
 2012-09-04  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add the async createOffer functionality to RTCPeerConnection
