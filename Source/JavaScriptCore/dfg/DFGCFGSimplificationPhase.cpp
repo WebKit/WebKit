@@ -659,10 +659,8 @@ private:
                 if (node.flags() & NodeHasVarArgs) {
                     for (unsigned childIdx = node.firstChild();
                          childIdx < node.firstChild() + node.numChildren();
-                         ++childIdx) {
-                        if (!!m_graph.m_varArgChildren[childIdx])
-                            fixPossibleGetLocal(firstBlock, m_graph.m_varArgChildren[childIdx], changeRef);
-                    }
+                         ++childIdx)
+                        fixPossibleGetLocal(firstBlock, m_graph.m_varArgChildren[childIdx], changeRef);
                 } else if (!!node.child1()) {
                     fixPossibleGetLocal(firstBlock, node.children.child1(), changeRef);
                     if (!!node.child2()) {

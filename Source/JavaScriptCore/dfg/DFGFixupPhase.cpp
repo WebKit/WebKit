@@ -74,9 +74,6 @@ private:
         
         switch (op) {
         case GetById: {
-            if (m_graph.m_fixpointState > BeforeFixpoint)
-                break;
-            
             Node* nodePtr = &node;
             
             if (!isInt32Speculation(m_graph[m_compileIndex].prediction()))
@@ -93,7 +90,8 @@ private:
                     fromObserved(arrayProfile->observedArrayModes(), false),
                     m_graph[node.child1()].prediction(),
                     m_graph[m_compileIndex].prediction());                    
-                if (modeSupportsLength(arrayMode) && arrayProfile->hasDefiniteStructure()) {
+                if (modeSupportsLength(arrayMode)
+                    && arrayProfile->hasDefiniteStructure()) {
                     m_graph.ref(nodePtr->child1());
                     Node checkStructure(CheckStructure, nodePtr->codeOrigin, OpInfo(m_graph.addStructureSet(arrayProfile->expectedStructure())), nodePtr->child1().index());
                     checkStructure.ref();
@@ -115,16 +113,17 @@ private:
             nodePtr->clearFlags(NodeMustGenerate);
             m_graph.deref(m_compileIndex);
             nodePtr->setArrayMode(arrayMode);
-            
-            NodeIndex storage = checkArray(arrayMode, nodePtr->codeOrigin, nodePtr->child1().index(), lengthNeedsStorage, nodePtr->shouldGenerate());
-            if (storage == NoNode)
-                break;
-            
-            nodePtr = &m_graph[m_compileIndex];
-            nodePtr->children.child2() = Edge(storage);
             break;
         }
         case GetIndexedPropertyStorage: {
+            node.setArrayMode(
+                refineArrayMode(
+                    node.arrayMode(),
+                    m_graph[node.child1()].prediction(),
+                    m_graph[node.child2()].prediction()));
+            // Predictions should only become more, rather than less, refined. Hence
+            // if we were ever able to CSE the storage pointer for this operation,
+            // then we should always continue to be able to do so.
             ASSERT(canCSEStorage(node.arrayMode()));
             break;
         }
@@ -137,17 +136,28 @@ private:
                     m_graph[node.child1()].prediction(),
                     m_graph[node.child2()].prediction()));
             
-            blessArrayOperation(node.child1(), 2);
+            if (canCSEStorage(node.arrayMode())) {
+                if (node.child3()) {
+                    ASSERT(m_graph[node.child3()].op() == GetIndexedPropertyStorage);
+                    ASSERT(modesCompatibleForStorageLoad(m_graph[node.child3()].arrayMode(), node.arrayMode()));
+                } else {
+                    // Make sure we don't use the node reference after we do the append.
+                    Node getIndexedPropertyStorage(
+                        GetIndexedPropertyStorage, node.codeOrigin, OpInfo(node.arrayMode()),
+                        node.child1().index(), node.child2().index());
+                    NodeIndex getIndexedPropertyStorageIndex = m_graph.size();
+                    node.children.child3() = Edge(getIndexedPropertyStorageIndex);
+                    m_graph.append(getIndexedPropertyStorage);
+                    m_graph.ref(getIndexedPropertyStorageIndex); // Once because it's MustGenerate.
+                    m_graph.ref(getIndexedPropertyStorageIndex); // And again because it's referenced from the GetByVal.
+                    m_insertionSet.append(m_indexInBlock, getIndexedPropertyStorageIndex);
+                }
+            } else {
+                // See above. Continued fixup of the graph should not regress our ability
+                // to speculate.
+                ASSERT(!node.child3());
+            }
             break;
-        }
-            
-        case ArrayPush: {
-            blessArrayOperation(node.child1(), 2);
-            break;
-        }
-            
-        case ArrayPop: {
-            blessArrayOperation(node.child1(), 1);
         }
             
         case ValueToInt32: {
@@ -320,18 +330,11 @@ private:
             Edge child1 = m_graph.varArgChild(node, 0);
             Edge child2 = m_graph.varArgChild(node, 1);
             Edge child3 = m_graph.varArgChild(node, 2);
-
             node.setArrayMode(
                 refineArrayMode(
-                    node.arrayMode(),
-                    m_graph[child1].prediction(),
-                    m_graph[child2].prediction()));
+                    node.arrayMode(), m_graph[child1].prediction(), m_graph[child2].prediction()));
             
-            blessArrayOperation(child1, 3);
-            
-            Node* nodePtr = &m_graph[m_compileIndex];
-            
-            switch (modeForPut(nodePtr->arrayMode())) {
+            switch (modeForPut(node.arrayMode())) {
             case Array::Int8Array:
             case Array::Int16Array:
             case Array::Int32Array:
@@ -363,59 +366,6 @@ private:
         }
         dataLog("\n");
 #endif
-    }
-    
-    NodeIndex checkArray(Array::Mode arrayMode, CodeOrigin codeOrigin, NodeIndex array, bool (*storageCheck)(Array::Mode) = canCSEStorage, bool shouldGenerate = true)
-    {
-        ASSERT(modeIsSpecific(arrayMode));
-        
-        m_graph.ref(array);
-        Node checkArray(CheckArray, codeOrigin, OpInfo(arrayMode), array);
-        checkArray.ref();
-        NodeIndex checkArrayIndex = m_graph.size();
-        m_graph.append(checkArray);
-        m_insertionSet.append(m_indexInBlock, checkArrayIndex);
-
-        if (!storageCheck(arrayMode))
-            return NoNode;
-        
-        if (shouldGenerate)
-            m_graph.ref(array);
-        Node getIndexedPropertyStorage(
-            GetIndexedPropertyStorage, codeOrigin, OpInfo(arrayMode), array);
-        if (shouldGenerate)
-            getIndexedPropertyStorage.ref();
-        NodeIndex getIndexedPropertyStorageIndex = m_graph.size();
-        m_graph.append(getIndexedPropertyStorage);
-        m_insertionSet.append(m_indexInBlock, getIndexedPropertyStorageIndex);
-        
-        return getIndexedPropertyStorageIndex;
-    }
-    
-    void blessArrayOperation(Edge base, unsigned storageChildIdx)
-    {
-        if (m_graph.m_fixpointState > BeforeFixpoint)
-            return;
-            
-        Node* nodePtr = &m_graph[m_compileIndex];
-        
-        if (nodePtr->arrayMode() == Array::ForceExit) {
-            Node forceExit(ForceOSRExit, nodePtr->codeOrigin);
-            forceExit.ref();
-            NodeIndex forceExitIndex = m_graph.size();
-            m_graph.append(forceExit);
-            m_insertionSet.append(m_indexInBlock, forceExitIndex);
-            return;
-        }
-        
-        if (!modeIsSpecific(nodePtr->arrayMode()))
-            return;
-            
-        NodeIndex storage = checkArray(nodePtr->arrayMode(), nodePtr->codeOrigin, base.index());
-        if (storage == NoNode)
-            return;
-            
-        m_graph.child(m_graph[m_compileIndex], storageChildIdx) = Edge(storage);
     }
     
     void fixIntEdge(Edge& edge)

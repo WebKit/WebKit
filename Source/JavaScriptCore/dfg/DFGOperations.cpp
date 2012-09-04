@@ -575,14 +575,6 @@ EncodedJSValue DFG_OPERATION operationArrayPush(ExecState* exec, EncodedJSValue 
     return JSValue::encode(jsNumber(array->length()));
 }
 
-EncodedJSValue DFG_OPERATION operationArrayPop(ExecState* exec, JSArray* array)
-{
-    JSGlobalData* globalData = &exec->globalData();
-    NativeCallFrameTracer tracer(globalData, exec);
-    
-    return JSValue::encode(array->pop(exec));
-}
-        
 EncodedJSValue DFG_OPERATION operationRegExpExec(ExecState* exec, JSCell* base, JSCell* argument)
 {
     JSGlobalData& globalData = exec->globalData();
@@ -609,6 +601,14 @@ size_t DFG_OPERATION operationRegExpTest(ExecState* exec, JSCell* base, JSCell* 
     ASSERT(argument->isString() || argument->isObject());
     JSString* input = argument->isString() ? asString(argument) : asObject(argument)->toString(exec);
     return asRegExpObject(base)->test(exec, input);
+}
+        
+EncodedJSValue DFG_OPERATION operationArrayPop(ExecState* exec, JSArray* array)
+{
+    JSGlobalData* globalData = &exec->globalData();
+    NativeCallFrameTracer tracer(globalData, exec);
+    
+    return JSValue::encode(array->pop(exec));
 }
         
 void DFG_OPERATION operationPutByIdStrict(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName)
