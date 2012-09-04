@@ -1660,6 +1660,9 @@ bool InputHandler::openSelectPopup(HTMLSelectElement* select)
     // Fail to create HTML popup, use the old path
     if (!m_webPage->m_page->chrome()->client()->openPagePopup(selectClient, elementRectInRootView))
         m_webPage->m_client->openPopupList(multiple, size, labels, enableds, itemTypes, selecteds);
+    delete[] enableds;
+    delete[] itemTypes;
+    delete[] selecteds;
     return true;
 }
 
