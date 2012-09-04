@@ -1,3 +1,22 @@
+2012-09-04  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Print API missing documentation when generating gtkdoc
+        https://bugs.webkit.org/show_bug.cgi?id=95703
+
+        Reviewed by Carlos Garcia Campos.
+
+        Print out API missing documentation when generating gtkdoc. This makes it
+        easier to fix documentation errors.
+
+        * gtk/generate-gtkdoc:
+        (print_missing_api): Added.
+        (generate_doc): Inline the rebase step, since it now reports an error
+        when you try to rebase without generating documentation first.
+        * gtk/gtkdoc.py:
+        (GTKDoc.rebase_installed_docs): Raise an error when rebasing without
+        generating documentation first to enable a small cleanup at the caller.
+        (GTKDoc.api_missing_documentation): Added.
+
 2012-09-04  Vincent Scheib  <scheib@chromium.org>
 
         [Chromium] Allow asyncronous response of pointer lock requests in layout tests.

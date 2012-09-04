@@ -137,17 +137,19 @@ def get_webkit1_options(gtk_version):
     })
     return options
 
-def generate_doc(pkg_config_path, options):
-    generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, options)
-    generator.generate(html='--skip-html' not in sys.argv)
-    return generator.saw_warnings
-
-def rebase_installed_docs(pkg_config_path, options):
-    if not os.path.isdir(options['output_dir']):
-        print "Documentation was not generated"
+def print_missing_api(generator):
+    missing_api = generator.api_missing_documentation()
+    if not missing_api:
         return
-    generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, options)
-    generator.rebase_installed_docs()
+    print "\nThe following API are missing documentation:"
+    for api in missing_api:
+        print "\t%s" % api
+
+def generate_doc(generator):
+    generator.generate(html='--skip-html' not in sys.argv)
+    if generator.saw_warnings:
+        print_missing_api(generator)
+    return generator.saw_warnings
 
 configure_logging()
 
@@ -165,22 +167,23 @@ if not os.path.exists(pkg_config_path):
     pkg_config_path = common.build_path('Source', 'WebKit', 'gtk', 'webkit-1.0.pc')
 if os.path.exists(pkg_config_path):
     options = get_webkit1_options(common.gtk_version_of_pkg_config_file(pkg_config_path))
+    generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, options)
     if '--rebase' not in sys.argv:
         print "Generating WebKit1 documentation..."
-        saw_webkit1_warnings = generate_doc(pkg_config_path, options)
+        saw_webkit1_warnings = generate_doc(generator)
     else:
         print "Rebasing WebKit1 documentation..."
-        rebase_installed_docs(pkg_config_path, options)
+        generator.rebase_installed_docs()
 
 # WebKit2 might not be enabled, so check for the pkg-config file before building documentation.
 pkg_config_path = common.build_path('Source', 'WebKit2', 'webkit2gtk-3.0.pc')
 if os.path.exists(pkg_config_path):
-    options = get_webkit2_options()
+    generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, get_webkit2_options())
     if '--rebase' not in sys.argv:
         print "\nGenerating WebKit2 documentation..."
-        saw_webkit2_warnings = generate_doc(pkg_config_path, options)
+        saw_webkit2_warnings = generate_doc(generator)
     else:
         print "\nRebasing WebKit2 documentation..."
-        rebase_installed_docs(pkg_config_path, options)
+        generator.rebase_installed_docs()
 
 sys.exit(saw_webkit1_warnings or saw_webkit2_warnings)
