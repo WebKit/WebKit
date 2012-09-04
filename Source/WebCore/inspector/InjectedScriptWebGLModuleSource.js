@@ -339,6 +339,14 @@ Call.prototype = {
         this._stackTrace = stackTrace;
     },
 
+    /**
+     * @param {*} result
+     */
+    setResult: function(result)
+    {
+        this._result = result;
+    },
+
     freeze: function()
     {
         if (this._freezed)
@@ -895,6 +903,8 @@ WebGLProgramResource.prototype = {
         var gl = glResource.wrappedObject();
         var program = this.wrappedObject();
 
+        var originalErrors = glResource.getAllErrors();
+
         var uniforms = [];
         var uniformsCount = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
         for (var i = 0; i < uniformsCount; ++i) {
@@ -912,6 +922,8 @@ WebGLProgramResource.prototype = {
             });
         }
         data.uniforms = uniforms;
+
+        glResource.restoreErrors(originalErrors);
     },
 
     /**
@@ -1215,6 +1227,79 @@ WebGLRenderingContextResource.prototype = {
     },
 
     /**
+     * @return {Array.<number>}
+     */
+    getAllErrors: function()
+    {
+        var errors = [];
+        var gl = this.wrappedObject();
+        if (gl) {
+            while (true) {
+                var error = gl.getError();
+                if (error === gl.NO_ERROR)
+                    break;
+                this.clearError(error);
+                errors.push(error);
+            }
+        }
+        if (this._customErrors) {
+            for (var key in this._customErrors) {
+                var error = Number(key);
+                errors.push(error);
+            }
+            delete this._customErrors;
+        }
+        return errors;
+    },
+
+    /**
+     * @param {Array.<number>} errors
+     */
+    restoreErrors: function(errors)
+    {
+        var gl = this.wrappedObject();
+        if (gl) {
+            var wasError = false;
+            while (gl.getError() !== gl.NO_ERROR)
+                wasError = true;
+            console.assert(!wasError, "Error(s) while capturing current WebGL state.");
+        }
+        if (!errors.length)
+            delete this._customErrors;
+        else {
+            this._customErrors = {};
+            for (var i = 0, n = errors.length; i < n; ++i)
+                this._customErrors[errors[i]] = true;
+        }
+    },
+
+    /**
+     * @param {number} error
+     */
+    clearError: function(error)
+    {
+        if (this._customErrors)
+            delete this._customErrors[error];
+    },
+
+    /**
+     * @return {number}
+     */
+    nextError: function()
+    {
+        if (this._customErrors) {
+            for (var key in this._customErrors) {
+                var error = Number(key);
+                delete this._customErrors[error];
+                return error;
+            }
+        }
+        delete this._customErrors;
+        var gl = this.wrappedObject();
+        return gl ? gl.NO_ERROR : 0;
+    },
+
+    /**
      * @override
      * @param {Object} data
      * @param {Cache} cache
@@ -1224,7 +1309,7 @@ WebGLRenderingContextResource.prototype = {
         var gl = this.wrappedObject();
         data.replayContextCallback = this._replayContextCallback;
 
-        // FIXME: Save the getError() status and restore it after taking the GL state snapshot.
+        var originalErrors = this.getAllErrors();
 
         // Take a full GL state snapshot.
         var glState = {};
@@ -1233,7 +1318,6 @@ WebGLRenderingContextResource.prototype = {
         });
         WebGLRenderingContextResource.StateParameters.forEach(function(parameter) {
             glState[parameter] = Resource.toReplayable(gl.getParameter(gl[parameter]), cache);
-            // FIXME: Call while(gl.getError() != gl.NO_ERROR) {...} to check if a particular parameter is supported.
         });
 
         // VERTEX_ATTRIB_ARRAYS
@@ -1266,6 +1350,8 @@ WebGLRenderingContextResource.prototype = {
         gl.activeTexture(currentTextureBinding);
 
         data.glState = glState;
+
+        this.restoreErrors(originalErrors);
     },
 
     /**
@@ -1546,6 +1632,16 @@ WebGLRenderingContextResource.WrapFunction.prototype = {
         if (!this._call)
             this._call = new Call(this._glResource, this._functionName, this._args, this.result());
         return this._call;
+    },
+
+    /**
+     * @param {*} result
+     */
+    _overrideResult: function(result)
+    {
+        var call = this.call();
+        call.setResult(result);
+        this._result = result;
     }
 }
 
@@ -1626,6 +1722,20 @@ WebGLRenderingContextResource.wrapFunctions = function()
         customWrapFunction("framebufferRenderbuffer");
         customWrapFunction("framebufferTexture2D");
         customWrapFunction("renderbufferStorage");
+
+        /** @this WebGLRenderingContextResource.WrapFunction */
+        wrapFunctions["getError"] = function()
+        {
+            var gl = this._originalObject;
+            var error = this.result();
+            if (error !== gl.NO_ERROR)
+                this._glResource.clearError(error);
+            else {
+                error = this._glResource.nextError();
+                if (error !== gl.NO_ERROR)
+                    this._overrideResult(error);
+            }
+        }
 
         WebGLRenderingContextResource._wrapFunctions = wrapFunctions;
     }

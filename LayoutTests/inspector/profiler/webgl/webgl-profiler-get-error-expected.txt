@@ -1,0 +1,3 @@
+Tests WebGL getError() status.
+
+Bug 95443
