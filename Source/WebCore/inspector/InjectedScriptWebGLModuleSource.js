@@ -1456,19 +1456,20 @@ WebGLRenderingContextResource.prototype = {
         if (resource)
             return resource;
         var gl = this.wrappedObject();
-        var bindingTarget;
+        var bindingParameter;
         var bindMethodName;
+        var bindMethodTarget = target;
         switch (target) {
         case gl.ARRAY_BUFFER:
-            bindingTarget = gl.ARRAY_BUFFER_BINDING;
+            bindingParameter = gl.ARRAY_BUFFER_BINDING;
             bindMethodName = "bindBuffer";
             break;
         case gl.ELEMENT_ARRAY_BUFFER:
-            bindingTarget = gl.ELEMENT_ARRAY_BUFFER_BINDING;
+            bindingParameter = gl.ELEMENT_ARRAY_BUFFER_BINDING;
             bindMethodName = "bindBuffer";
             break;
         case gl.TEXTURE_2D:
-            bindingTarget = gl.TEXTURE_BINDING_2D;
+            bindingParameter = gl.TEXTURE_BINDING_2D;
             bindMethodName = "bindTexture";
             break;
         case gl.TEXTURE_CUBE_MAP:
@@ -1478,24 +1479,25 @@ WebGLRenderingContextResource.prototype = {
         case gl.TEXTURE_CUBE_MAP_NEGATIVE_Y:
         case gl.TEXTURE_CUBE_MAP_POSITIVE_Z:
         case gl.TEXTURE_CUBE_MAP_NEGATIVE_Z:
-            bindingTarget = gl.TEXTURE_BINDING_CUBE_MAP;
+            bindingParameter = gl.TEXTURE_BINDING_CUBE_MAP;
+            bindMethodTarget = gl.TEXTURE_CUBE_MAP;
             bindMethodName = "bindTexture";
             break;
         case gl.FRAMEBUFFER:
-            bindingTarget = gl.FRAMEBUFFER_BINDING;
+            bindingParameter = gl.FRAMEBUFFER_BINDING;
             bindMethodName = "bindFramebuffer";
             break;
         case gl.RENDERBUFFER:
-            bindingTarget = gl.RENDERBUFFER_BINDING;
+            bindingParameter = gl.RENDERBUFFER_BINDING;
             bindMethodName = "bindRenderbuffer";
             break;
         default:
             console.error("ASSERT_NOT_REACHED: unknown binding target " + target);
             return null;
         }
-        resource = Resource.forObject(gl.getParameter(bindingTarget));
+        resource = Resource.forObject(gl.getParameter(bindingParameter));
         if (resource)
-            resource.pushBinding(target, bindMethodName);
+            resource.pushBinding(bindMethodTarget, bindMethodName);
         return resource;
     },
 
