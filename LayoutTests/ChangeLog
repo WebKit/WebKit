@@ -1,3 +1,14 @@
+2012-09-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r127447.
+        http://trac.webkit.org/changeset/127447
+        https://bugs.webkit.org/show_bug.cgi?id=95726
+
+        Mistake, did not reliably pass yet. (Requested by drott on
+        #webkit).
+
+        * platform/efl/TestExpectations:
+
 2012-09-04  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: [WebGL] Save gl.getError() status before taking a WebGL state snapshot and restore it afterwards
