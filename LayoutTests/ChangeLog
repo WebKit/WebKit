@@ -1,3 +1,12 @@
+2012-09-04  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed gardening. editing/style/apply-style-atomic.html fails on Windows since introduced in http://trac.webkit.org/changeset/126865.
+        Test added to skip list.
+
+        https://bugs.webkit.org/show_bug.cgi?id=95795
+
+        * platform/win/Skipped:
+
 2012-09-04  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] Implement multiply, screen, darken, lighten, difference, exclusion blend modes.

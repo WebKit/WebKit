@@ -2165,3 +2165,6 @@ fast/css/nested-layers-with-hover.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=95428
 media/video-controls-captions.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=95795
+editing/style/apply-style-atomic.html
