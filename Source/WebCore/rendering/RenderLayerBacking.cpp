@@ -671,10 +671,14 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         if (scrollSize != m_scrollingContentsLayer->size() || paddingBoxOffsetChanged)
             m_scrollingContentsLayer->setNeedsDisplay();
 
+        IntSize scrollingContentsOffset = paddingBox.location() - IntPoint() - scrollOffset;
+        if (scrollingContentsOffset != m_scrollingContentsLayer->offsetFromRenderer() || scrollSize != m_scrollingContentsLayer->size())
+            compositor()->scrollingLayerDidChange(m_owningLayer);
+
         m_scrollingContentsLayer->setSize(scrollSize);
         // FIXME: Scrolling the content layer does not need to trigger a repaint. The offset will be compensated away during painting.
         // FIXME: The paint offset and the scroll offset should really be separate concepts.
-        m_scrollingContentsLayer->setOffsetFromRenderer(paddingBox.location() - IntPoint() - scrollOffset);
+        m_scrollingContentsLayer->setOffsetFromRenderer(scrollingContentsOffset);
     }
 
     m_graphicsLayer->setContentsRect(contentsBox());
@@ -917,6 +921,8 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
         updateInternalHierarchy();
         m_graphicsLayer->setPaintingPhase(paintingPhaseForPrimaryLayer());
         m_graphicsLayer->setNeedsDisplay();
+        if (renderer()->view())
+            compositor()->scrollingLayerDidChange(m_owningLayer);
     }
 
     return layerChanged;

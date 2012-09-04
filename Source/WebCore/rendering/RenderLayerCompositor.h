@@ -192,6 +192,8 @@ public:
     void frameViewDidChangeSize();
     void frameViewDidScroll();
 
+    void scrollingLayerDidChange(RenderLayer*);
+
     String layerTreeAsText(bool showDebugInfo = false);
 
     // These are named to avoid conflicts with the functions in GraphicsLayerClient

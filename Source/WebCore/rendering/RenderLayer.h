@@ -363,7 +363,6 @@ public:
     void paintResizer(GraphicsContext*, const IntPoint&, const IntRect& damageRect);
 
     void updateScrollInfoAfterLayout();
-    bool usesCompositedScrolling() const;
 
     bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
     void autoscroll();
@@ -635,9 +634,11 @@ public:
     virtual GraphicsLayer* layerForHorizontalScrollbar() const;
     virtual GraphicsLayer* layerForVerticalScrollbar() const;
     virtual GraphicsLayer* layerForScrollCorner() const;
+    virtual bool usesCompositedScrolling() const OVERRIDE;
 #else
     bool isComposited() const { return false; }
     bool hasCompositedMask() const { return false; }
+    bool usesCompositedScrolling() const { return false; }
 #endif
 
     bool paintsWithTransparency(PaintBehavior paintBehavior) const

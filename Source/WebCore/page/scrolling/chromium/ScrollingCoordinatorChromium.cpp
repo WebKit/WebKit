@@ -246,4 +246,9 @@ void ScrollingCoordinator::setLayerIsFixedToContainerLayer(GraphicsLayer* layer,
         scrollableLayer->setFixedToContainerLayer(enable);
 }
 
+void ScrollingCoordinator::scrollableAreaScrollLayerDidChange(ScrollableArea*, GraphicsLayer*)
+{
+    // FIXME: Implement.
+}
+
 }

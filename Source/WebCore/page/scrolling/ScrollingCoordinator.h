@@ -48,6 +48,7 @@ class FrameView;
 class GraphicsLayer;
 class Page;
 class Region;
+class ScrollableArea;
 class ScrollingCoordinatorPrivate;
 class ScrollingTreeState;
 
@@ -91,6 +92,9 @@ public:
 
     // Should be called whenever the vertical scrollbar layer for the given frame view changes.
     void frameViewVerticalScrollbarLayerDidChange(FrameView*, GraphicsLayer* verticalScrollbarLayer);
+
+    // Should be called whenever the scrollable layer for the given scroll area changes.
+    void scrollableAreaScrollLayerDidChange(ScrollableArea*, GraphicsLayer*);
 
     // Requests that the scrolling coordinator updates the scroll position of the given frame view. If this function returns true, it means that the
     // position will be updated asynchronously. If it returns false, the caller should update the scrolling position itself.

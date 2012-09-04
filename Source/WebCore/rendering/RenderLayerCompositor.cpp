@@ -1092,6 +1092,13 @@ void RenderLayerCompositor::frameViewDidScroll()
     m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
 }
 
+void RenderLayerCompositor::scrollingLayerDidChange(RenderLayer* layer)
+{
+    RenderLayerBacking* backing = layer->backing();
+    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+        scrollingCoordinator->scrollableAreaScrollLayerDidChange(layer, backing ? backing->scrollingContentsLayer() : 0);
+}
+
 String RenderLayerCompositor::layerTreeAsText(bool showDebugInfo)
 {
     updateCompositingLayers(CompositingUpdateAfterLayout);

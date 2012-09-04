@@ -1567,9 +1567,9 @@ void RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, LayoutR
     rect.move(-delta.x(), -delta.y());
 }
 
+#if USE(ACCELERATED_COMPOSITING)
 bool RenderLayer::usesCompositedScrolling() const
 {
-#if USE(ACCELERATED_COMPOSITING)
     if (!scrollsOverflow() || !allowsScrolling())
         return false;
 
@@ -1578,10 +1578,8 @@ bool RenderLayer::usesCompositedScrolling() const
 #else
     return false;
 #endif
-#else
-    return false;
-#endif
 }
+#endif
 
 static inline int adjustedScrollDelta(int beginningDelta) {
     // This implemention matches Firefox's.

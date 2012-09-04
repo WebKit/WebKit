@@ -169,6 +169,7 @@ public:
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual TiledBacking* tiledBacking() { return 0; }
+    virtual bool usesCompositedScrolling() const { return false; }
 #endif
 
 protected:

@@ -83,6 +83,10 @@ void ScrollingCoordinator::setLayerIsContainerForFixedPositionLayers(GraphicsLay
 void ScrollingCoordinator::setLayerIsFixedToContainerLayer(GraphicsLayer*, bool)
 {
 }
+
+void ScrollingCoordinator::scrollableAreaScrollLayerDidChange(ScrollableArea*, GraphicsLayer*)
+{
+}
 #endif // !ENABLE(THREADED_SCROLLING)
 
 }

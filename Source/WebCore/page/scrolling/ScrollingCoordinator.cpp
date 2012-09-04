@@ -118,6 +118,11 @@ static Region computeNonFastScrollableRegion(Frame* frame, const IntPoint& frame
     if (const FrameView::ScrollableAreaSet* scrollableAreas = frameView->scrollableAreas()) {
         for (FrameView::ScrollableAreaSet::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
             ScrollableArea* scrollableArea = *it;
+#if USE(ACCELERATED_COMPOSITING)
+            // Composited scrollable areas can be scrolled off the main thread.
+            if (scrollableArea->usesCompositedScrolling())
+                continue;
+#endif
             IntRect box = scrollableArea->scrollableAreaBoundingBox();
             box.moveBy(offset);
             nonFastScrollableRegion.unite(box);
@@ -487,6 +492,11 @@ void ScrollingCoordinator::setLayerIsContainerForFixedPositionLayers(GraphicsLay
 void ScrollingCoordinator::setLayerIsFixedToContainerLayer(GraphicsLayer*, bool)
 {
     // FIXME: Implement!
+}
+
+void ScrollingCoordinator::scrollableAreaScrollLayerDidChange(ScrollableArea*, GraphicsLayer*)
+{
+    // FIXME: Implement.
 }
 #endif // !ENABLE(THREADED_SCROLLING)
 
