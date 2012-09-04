@@ -1,3 +1,16 @@
+2012-09-04  Jeffrey Pfau  <jpfau@apple.com>
+
+        Make plugins respect third-party storage blocking setting
+        https://bugs.webkit.org/show_bug.cgi?id=94888
+
+        Reviewed by Brady Eidson.
+
+        Plugins that are in a third-party context should be put into private browsing mode so their storage is temporary.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::isPrivateBrowsingEnabled): Put the plugin into private browsing mode if it is in a third-party context.
+        (WebKit::PluginView::privateBrowsingStateChanged): Make sure a plugin doesn't leave private browsing mode if it's in a third-party context.
+
 2012-09-04  Pekka Vuorela  <pvuorela@iki.fi>
 
         [Qt] Remove use of deprecated QInputMethod method

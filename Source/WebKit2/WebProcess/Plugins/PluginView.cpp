@@ -583,6 +583,9 @@ void PluginView::privateBrowsingStateChanged(bool privateBrowsingEnabled)
     if (!m_isInitialized || !m_plugin)
         return;
 
+    if (!privateBrowsingEnabled && !frame()->document()->securityOrigin()->canAccessPluginStorage(frame()->tree()->top()->document()->securityOrigin()))
+        return;
+
     m_plugin->privateBrowsingStateChanged(privateBrowsingEnabled);
 }
 
@@ -1271,6 +1274,9 @@ bool PluginView::isPrivateBrowsingEnabled()
 {
     // If we can't get the real setting, we'll assume that private browsing is enabled.
     if (!frame())
+        return true;
+
+    if (!frame()->document()->securityOrigin()->canAccessPluginStorage(frame()->tree()->top()->document()->securityOrigin()))
         return true;
 
     Settings* settings = frame()->settings();
