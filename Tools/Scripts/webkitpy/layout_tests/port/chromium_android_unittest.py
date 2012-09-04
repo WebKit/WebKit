@@ -194,18 +194,18 @@ class ChromiumAndroidDriverTest(unittest.TestCase):
         self.assertEquals(self.driver._get_crash_log('out bar\nout baz\n', 'err bar\nerr baz\n', newer_than=None),
             ('err bar\n'
              'err baz\n'
-             '********* Tombstone file:\n'
+             '********* [123456789ABCDEF0] Tombstone file:\n'
              '-rw------- 1000 1000 45316 2012-04-27 16:33 tombstone_03\n'
              '/data/tombstones/tombstone_03\n'
              'mock_contents\n',
              u'crash log for foo (pid 1234):\n'
              u'STDOUT: out bar\n'
              u'STDOUT: out baz\n'
-             u'STDOUT: ********* Logcat:\n'
+             u'STDOUT: ********* [123456789ABCDEF0] Logcat:\n'
              u'STDOUT: logcat contents\n'
              u'STDERR: err bar\n'
              u'STDERR: err baz\n'
-             u'STDERR: ********* Tombstone file:\n'
+             u'STDERR: ********* [123456789ABCDEF0] Tombstone file:\n'
              u'STDERR: -rw------- 1000 1000 45316 2012-04-27 16:33 tombstone_03\n'
              u'STDERR: /data/tombstones/tombstone_03\n'
              u'STDERR: mock_contents\n'))
@@ -213,14 +213,14 @@ class ChromiumAndroidDriverTest(unittest.TestCase):
         self.driver._crashed_process_name = None
         self.driver._crashed_pid = None
         self.assertEquals(self.driver._get_crash_log(None, None, newer_than=None),
-            ('********* Tombstone file:\n'
+            ('********* [123456789ABCDEF0] Tombstone file:\n'
              '-rw------- 1000 1000 45316 2012-04-27 16:33 tombstone_03\n'
              '/data/tombstones/tombstone_03\n'
              'mock_contents\n',
              u'crash log for <unknown process name> (pid <unknown>):\n'
-             u'STDOUT: ********* Logcat:\n'
+             u'STDOUT: ********* [123456789ABCDEF0] Logcat:\n'
              u'STDOUT: logcat contents\n'
-             u'STDERR: ********* Tombstone file:\n'
+             u'STDERR: ********* [123456789ABCDEF0] Tombstone file:\n'
              u'STDERR: -rw------- 1000 1000 45316 2012-04-27 16:33 tombstone_03\n'
              u'STDERR: /data/tombstones/tombstone_03\n'
              u'STDERR: mock_contents\n'))
