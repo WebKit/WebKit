@@ -31,11 +31,13 @@
 #include <Eeze.h>
 #include <Eeze_Net.h>
 #include <asm/types.h>
-#include <linux/netlink.h>
-#include <linux/rtnetlink.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
+
+// Must come at the end so that sys/socket.h is included first.
+#include <linux/netlink.h>
+#include <linux/rtnetlink.h>
 
 static const char udevLoopBackInterfaceSysPath[] = "lo";
 static const char udevOperstateAttribute[] = "operstate";
