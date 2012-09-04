@@ -1,5 +1,13 @@
 2012-09-04  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Unreviewed tests fix.
+
+        * http/tests/inspector/workspace-test.js:
+        * inspector/debugger/dynamic-script-tag-expected.txt:
+        * inspector/debugger/dynamic-script-tag.html:
+
+2012-09-04  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Create JavaScriptSources based on network resources.
         https://bugs.webkit.org/show_bug.cgi?id=95352
 

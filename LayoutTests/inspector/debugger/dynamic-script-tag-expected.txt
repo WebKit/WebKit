@@ -2,20 +2,20 @@ Tests that inline scripts and document.write scripts get different uiSourceCodes
 
 Debugger was enabled.
 Dumping scripts:
-script1: file:///usr/local/google/home/vsevik/chromium/src/third_party/WebKit/LayoutTests/inspector/debugger/dynamic-script-tag.html
+script1: LayoutTests/inspector/debugger/dynamic-script-tag.html
 Is anonymous:false
 Is inline script:false
-script2: file:///usr/local/google/home/vsevik/chromium/src/third_party/WebKit/LayoutTests/inspector/debugger/dynamic-script-tag.html
+script2: LayoutTests/inspector/debugger/dynamic-script-tag.html
 Is anonymous:false
 Is inline script:false
 Dumping uiSourceCodes:
-UISourceCode: file:///usr/local/google/home/vsevik/chromium/src/third_party/WebKit/LayoutTests/inspector/debugger/dynamic-script-tag.html (1)
+UISourceCode: LayoutTests/inspector/debugger/dynamic-script-tag.html (1)
 UISourceCode is editable: true
 UISourceCode is content script: false
 Mime type: text/javascript
 UISourceCode content: function foo() { }
 UI resource: null
-UISourceCode: file:///usr/local/google/home/vsevik/chromium/src/third_party/WebKit/LayoutTests/inspector/debugger/dynamic-script-tag.html (2)
+UISourceCode: LayoutTests/inspector/debugger/dynamic-script-tag.html (2)
 UISourceCode is editable: true
 UISourceCode is content script: false
 Mime type: text/javascript

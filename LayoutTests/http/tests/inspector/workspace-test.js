@@ -50,7 +50,8 @@ InspectorTest._defaultUISourceCodeProviderEventHandler = function(event)
 
 InspectorTest.dumpUISourceCode = function(uiSourceCode, callback)
 {
-    InspectorTest.addResult("UISourceCode: " + uiSourceCode.url);
+    var url = uiSourceCode.url.replace(/.*LayoutTests/, "LayoutTests");
+    InspectorTest.addResult("UISourceCode: " + url);
     if (uiSourceCode instanceof WebInspector.JavaScriptSource) {
         InspectorTest.addResult("UISourceCode is editable: " + uiSourceCode._isEditable);
         InspectorTest.addResult("UISourceCode is content script: " + uiSourceCode.isContentScript);

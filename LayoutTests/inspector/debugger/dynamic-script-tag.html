@@ -49,7 +49,8 @@ var test = function()
         InspectorTest.addResult("Dumping scripts:");
         for (var i = 0; i < scripts.length; ++i) {
             var script = scripts[i];
-            InspectorTest.addResult("script" + (i+1) + ": " + script.sourceURL);
+            var url = script.sourceURL.replace(/.*LayoutTests/, "LayoutTests");
+            InspectorTest.addResult("script" + (i+1) + ": " + url);
             InspectorTest.addResult("Is anonymous:" + script.isAnonymousScript());
             InspectorTest.addResult("Is inline script:" + script.isInlineScript());
             uiSourceCodes.push(script.rawLocationToUILocation(0, 0).uiSourceCode);
