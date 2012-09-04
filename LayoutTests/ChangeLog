@@ -1,3 +1,16 @@
+2012-09-04  Tim Horton  <timothy_horton@apple.com>
+
+        ASSERTion failure when SVG element is removed from document and readded
+        https://bugs.webkit.org/show_bug.cgi?id=95517
+        <rdar://problem/12175583>
+
+        Reviewed by Brady Eidson.
+
+        Add a test that ensures that removing an SVG element from the document
+        and readding it continues SMIL animations.
+
+        * svg/animations/reinserting-svg-into-document.html: Added.
+
 2012-09-04  Vincent Scheib  <scheib@chromium.org>
 
         [Chromium] Allow asyncronous response of pointer lock requests in layout tests.

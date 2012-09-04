@@ -1,0 +1,43 @@
+<html>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/SVGAnimationTestCase.js"></script>
+<script>
+function load() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    svg = document.getElementById("svg");
+    rect = document.getElementById("rect");
+
+    setTimeout(function () {
+        svg.setCurrentTime(1);
+
+        document.body.removeChild(svg);
+        document.body.appendChild(svg);
+
+        setTimeout(function () {
+            shouldBeCloseEnough("rect.x.animVal.value", "30", 1);
+
+            svg.setCurrentTime(2);
+
+            shouldBeCloseEnough("rect.x.animVal.value", "60", 1);
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    }, 0);
+};
+</script>
+<body onload="load()">
+    <h1>Reinserting SVG animation into document should continue the animation</h1>
+    <p id="description"></p>
+    <div id="console"></div>
+    <svg id="svg" xmlns="http://www.w3.org/2000/svg">
+        <rect id="rect" x="0" y="0" width="20" height="20">
+            <animate attributeName="x" begin="0" from="0" to="90" dur="3s" fill="freeze" />
+        </rect>
+    </svg>
+</body>
+</html>

@@ -84,6 +84,11 @@ bool SMILTimeContainer::isPaused() const
     return m_pauseTime;
 }
 
+bool SMILTimeContainer::isStarted() const
+{
+    return m_beginTime;
+}
+
 void SMILTimeContainer::begin()
 {
     ASSERT(!m_beginTime);

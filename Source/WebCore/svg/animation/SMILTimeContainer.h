@@ -55,6 +55,7 @@ public:
 
     bool isActive() const;
     bool isPaused() const;
+    bool isStarted() const;
     
     void begin();
     void pause();

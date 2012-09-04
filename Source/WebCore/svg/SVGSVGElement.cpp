@@ -480,7 +480,7 @@ Node::InsertionNotificationRequest SVGSVGElement::insertedInto(ContainerNode* ro
         // Animations are started at the end of document parsing and after firing the load event,
         // but if we miss that train (deferred programmatic element insertion for example) we need
         // to initialize the time container here.
-        if (!document()->parsing() && !document()->processingLoadEvent() && document()->loadEventFinished())
+        if (!document()->parsing() && !document()->processingLoadEvent() && document()->loadEventFinished() && !timeContainer()->isStarted())
             timeContainer()->begin();
     }
     return SVGStyledLocatableElement::insertedInto(rootParent);

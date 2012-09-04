@@ -212,10 +212,10 @@ Node::InsertionNotificationRequest SVGSMILElement::insertedInto(ContainerNode* r
     if (!fastHasAttribute(SVGNames::beginAttr))
         m_beginTimes.append(SMILTimeWithOrigin());
 
-    if (m_isWaitingForFirstInterval) {
+    if (m_isWaitingForFirstInterval)
         resolveFirstInterval();
-        reschedule();
-    }
+
+    reschedule();
 
     return InsertionDone;
 }
