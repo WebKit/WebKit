@@ -1,3 +1,15 @@
+2012-09-04  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        [BlackBerry] Add webplatform and browser to build info
+        https://bugs.webkit.org/show_bug.cgi?id=95715
+
+        Reviewed by George Staikos.
+
+        PR# 202102
+
+        * WebKitSupport/AboutData.cpp:
+        (BlackBerry::WebKit::buildPage):
+
 2012-08-31  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] ASSERT failure in RenderBlock::checkPositionedObjectsNeedLayout

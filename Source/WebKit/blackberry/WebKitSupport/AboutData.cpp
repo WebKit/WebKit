@@ -505,6 +505,8 @@ static String buildPage()
     result.append(String(BlackBerry::Platform::BUILDINFO_WEBKIT));
     result.append(String(BlackBerry::Platform::BUILDINFO_PLATFORM));
     result.append(String(BlackBerry::Platform::BUILDINFO_LIBWEBVIEW));
+    result.append(String(BlackBerry::Platform::BUILDINFO_WEBPLATFORM));
+    result.append(String(BlackBerry::Platform::BUILDINFO_BROWSER));
     result.append(String("</body></html>"));
 
     return result;
