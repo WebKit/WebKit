@@ -1,3 +1,15 @@
+2012-09-04  Jon Lee  <jonlee@apple.com>
+
+        [Qt] REGRESSION(r127321): It made 3 notification test timeout
+        https://bugs.webkit.org/show_bug.cgi?id=95638
+
+        Reviewed by Csaba Osztrogonác.
+
+        Dispatch show event instead of display after r127321.
+
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationPresenterClientQt::sendDisplayEvent):
+
 2012-08-31  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Port convertValueToQVariant to use the JSC C API

@@ -384,7 +384,7 @@ void NotificationPresenterClientQt::sendDisplayEvent(NotificationWrapper* wrappe
 {
     Notification* notification = notificationForWrapper(wrapper);
     if (notification)
-        sendEvent(notification, "display");
+        sendEvent(notification, "show");
 }
 
 
