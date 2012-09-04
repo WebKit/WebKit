@@ -2837,9 +2837,6 @@ BUGV8_1973 : fast/js/caller-property.html = TEXT
 BUGWK78684 : fast/block/basic/fieldset-stretch-to-legend.html = IMAGE+TEXT
 BUGWK78684 : fast/borders/fieldsetBorderRadius.html = IMAGE+TEXT
 
-// New test; landed at r109779 but results look wrong on most Chrome platforms.
-BUGWK91945 : http/tests/incremental/partial-jpeg.html = IMAGE PASS
-
 BUGWK80498 WIN : fast/workers/worker-multi-startup.html = CRASH PASS
 
 BUGWK91946 : platform/chromium/fast/events/rtl-scrollbar.html = TEXT PASS
