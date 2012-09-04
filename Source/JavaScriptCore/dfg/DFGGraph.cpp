@@ -40,6 +40,18 @@ static const char* dfgOpNames[] = {
 #undef STRINGIZE_DFG_OP_ENUM
 };
 
+Graph::Graph(JSGlobalData& globalData, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues)
+    : m_globalData(globalData)
+    , m_codeBlock(codeBlock)
+    , m_profiledBlock(codeBlock->alternative())
+    , m_hasArguments(false)
+    , m_osrEntryBytecodeIndex(osrEntryBytecodeIndex)
+    , m_mustHandleValues(mustHandleValues)
+    , m_fixpointState(BeforeFixpoint)
+{
+    ASSERT(m_profiledBlock);
+}
+
 const char *Graph::opName(NodeType op)
 {
     return dfgOpNames[op];
@@ -179,6 +191,8 @@ void Graph::dump(const char* prefix, NodeIndex nodeIndex)
                 dataLog(", ");
             else
                 hasPrinted = true;
+            if (!m_varArgChildren[childIdx])
+                continue;
             dataLog("%s@%u%s",
                     useKindToString(m_varArgChildren[childIdx].useKind()),
                     m_varArgChildren[childIdx].index(),
@@ -392,8 +406,10 @@ void Graph::dump()
         if (_node.flags() & NodeHasVarArgs) {                           \
             for (unsigned _childIdx = _node.firstChild();               \
                  _childIdx < _node.firstChild() + _node.numChildren();  \
-                 _childIdx++)                                           \
-                thingToDo(m_varArgChildren[_childIdx]);                 \
+                 _childIdx++) {                                         \
+                if (!!m_varArgChildren[_childIdx])                      \
+                    thingToDo(m_varArgChildren[_childIdx]);             \
+            }                                                           \
         } else {                                                        \
             if (!_node.child1()) {                                      \
                 ASSERT(!_node.child2()                                  \
@@ -483,6 +499,8 @@ void Graph::collectGarbage()
             for (unsigned childIdx = node.firstChild();
                  childIdx < node.firstChild() + node.numChildren();
                  ++childIdx) {
+                if (!m_varArgChildren[childIdx])
+                    continue;
                 NodeIndex childNodeIndex = m_varArgChildren[childIdx].index();
                 if (!at(childNodeIndex).ref())
                     continue;

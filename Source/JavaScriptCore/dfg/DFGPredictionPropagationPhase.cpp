@@ -618,7 +618,8 @@ private:
         case GetMyArgumentsLength:
         case GetMyArgumentByVal:
         case PhantomPutStructure:
-        case PhantomArguments: {
+        case PhantomArguments:
+        case CheckArray: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
             ASSERT_NOT_REACHED();
@@ -703,8 +704,10 @@ private:
         if (node.flags() & NodeHasVarArgs) {
             for (unsigned childIdx = node.firstChild();
                  childIdx < node.firstChild() + node.numChildren();
-                 childIdx++)
-                changed |= m_graph[m_graph.m_varArgChildren[childIdx]].mergeFlags(NodeUsedAsValue);
+                 childIdx++) {
+                if (!!m_graph.m_varArgChildren[childIdx])
+                    changed |= m_graph[m_graph.m_varArgChildren[childIdx]].mergeFlags(NodeUsedAsValue);
+            }
         } else {
             if (!node.child1())
                 return changed;
