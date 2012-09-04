@@ -173,16 +173,28 @@ String CustomFilterValidatedProgram::blendFunctionString(BlendMode blendMode)
         expression = "Cs";
         break;
     case BlendModeMultiply:
+        expression = "Cs * Cb";
+        break;
     case BlendModeScreen:
-    case BlendModeOverlay:
+        expression = "Cb + Cs - (Cb * Cs)";
+        break;
     case BlendModeDarken:
+        expression = "min(Cb, Cs)";
+        break;
     case BlendModeLighten:
+        expression = "max(Cb, Cs)";
+        break;
+    case BlendModeDifference:
+        expression = "abs(Cb - Cs)";
+        break;
+    case BlendModeExclusion:
+        expression = "Cb + Cs - 2.0 * Cb * Cs";
+        break;
+    case BlendModeOverlay:
     case BlendModeColorDodge:
     case BlendModeColorBurn:
     case BlendModeHardLight:
     case BlendModeSoftLight:
-    case BlendModeDifference:
-    case BlendModeExclusion:
     case BlendModeHue:
     case BlendModeSaturation:
     case BlendModeColor:

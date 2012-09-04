@@ -1,3 +1,17 @@
+2012-09-04  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Implement multiply, screen, darken, lighten, difference, exclusion blend modes.
+        https://bugs.webkit.org/show_bug.cgi?id=93870
+
+        Reviewed by Dirk Schulze.
+
+        Add test to check that the DOM element texture blends correctly with the css_MixColor
+        variable from the author's shader for each blend mode.
+
+        * css3/filters/custom/custom-filter-blend-modes-expected.html: Added.
+        * css3/filters/custom/custom-filter-blend-modes.html: Added.
+        * css3/filters/resources/mix-color.fs: Added.
+
 2012-09-04  Jeffrey Pfau  <jpfau@apple.com>
 
         Make plugins respect third-party storage blocking setting

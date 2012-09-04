@@ -1,0 +1,186 @@
+<!doctype html>
+<html>
+<head>
+    <title>Tests that custom filter blend modes compute color values correctly.</title>
+    <!-- This test passes if each horizontal pair of squares are exactly the same color. -->
+    <script>
+        if (window.testRunner) {
+            window.testRunner.overridePreference("WebKitCSSCustomFilterEnabled", "1");
+            window.testRunner.overridePreference("WebKitWebGLEnabled", "1");
+        }
+    </script>
+    <style>
+    .pair-of-squares {
+        clear: both;
+    }
+    .pair-of-squares > div {
+        /* Square size. */
+        width: 20px;
+        height: 20px;
+        margin: 2px;
+        float: left;
+    }
+    .destination {
+        /* Destination color */
+        background-color: rgb(100%, 30%, 50%);
+    }
+    /* Blend modes */
+    .normal {
+        -webkit-filter: custom(none mix(url('../resources/mix-color.fs') normal source-atop), mix_color 0.0 0.6 0.5 1.0);
+    }
+    /*
+        The equations below use the symbols and equations defined in the CSS Blending and Compositing spec, where:
+            Co = output color
+            Cs = source color (aka "mix color", "css_MixColor")
+            Cb = destination color (aka "backdrop color", "original DOM element color")
+
+        https://dvcs.w3.org/hg/FXTF/rawfile/tip/compositing/index.html#generalformula
+    */
+    .normal-expected {
+        /*
+            Normal:
+
+            Co = Cs
+
+            r = 0.0
+            g = 0.6
+            b = 0.5
+        */
+        background-color: rgb(0%, 60%, 50%);
+    }
+    .multiply {
+        -webkit-filter: custom(none mix(url('../resources/mix-color.fs') multiply source-atop), mix_color 0.0 0.6 0.5 1.0);
+    }
+    .multiply-expected {
+        /*
+            Multiply:
+
+            Co = Cb * Cs
+
+            r = 1.0 * 0.0 = 0.0
+            g = 0.3 * 0.6 = 0.18
+            b = 0.5 * 0.5 = 0.25
+        */
+        background-color: rgb(0%, 18%, 25%);
+    }
+    .screen {
+        -webkit-filter: custom(none mix(url('../resources/mix-color.fs') screen source-atop), mix_color 0.0 0.6 0.5 1.0);
+    }
+    .screen-expected {
+        /*
+            Screen:
+
+            Co = Cb + Cs - Cb * Cs
+
+            r = 1.0 + 0.0 - 1.0 * 0.0 = 1.0
+            g = 0.3 + 0.6 - 0.3 * 0.6 = 0.72
+            b = 0.5 + 0.5 - 0.5 * 0.5 = 0.75
+
+            The error in the color calculation requires us to use the 8-bit values for:
+            background-color: rgb(100%, 72%, 75%);
+        */
+        background-color: rgb(255, 183, 192);
+    }
+    .darken {
+        -webkit-filter: custom(none mix(url('../resources/mix-color.fs') darken source-atop), mix_color 0.0 0.6 0.5 1.0);
+    }
+    .darken-expected {
+        /*
+            Darken:
+
+            Co = min(Cb, Cs)
+
+            r = min(1.0, 0.0) = 0.0
+            g = min(0.3, 0.6) = 0.3
+            b = min(0.5, 0.5) = 0.5
+        */
+        background-color: rgb(0%, 30%, 50%);
+    }
+    .lighten {
+        -webkit-filter: custom(none mix(url('../resources/mix-color.fs') lighten source-atop), mix_color 0.0 0.6 0.5 1.0);
+    }
+    .lighten-expected {
+        /*
+            Lighten:
+
+            Co = max(Cb, Cs)
+
+            r = max(1.0, 0.0) = 1.0
+            g = max(0.3, 0.6) = 0.6
+            b = max(0.5, 0.5) = 0.5
+        */
+        background-color: rgb(100%, 60%, 50%);
+    }
+    .difference {
+        -webkit-filter: custom(none mix(url('../resources/mix-color.fs') difference source-atop), mix_color 0.0 0.6 0.5 1.0);
+    }
+    .difference-expected {
+        /*
+            Difference:
+
+            Co = abs(Cb - Cs)
+
+            r = abs(1.0 - 0.0) = 1.0
+            g = abs(0.3 - 0.6) = 0.3
+            b = abs(0.5 - 0.5) = 0.0
+
+            The error in the color calculation requires us to use the 8-bit values for:
+            background-color: rgb(100%, 30%, 0%);
+        */
+        background-color: rgb(255, 77, 1);
+    }
+    .exclusion {
+        -webkit-filter: custom(none mix(url('../resources/mix-color.fs') exclusion source-atop), mix_color 0.0 0.6 0.5 1.0);
+    }
+    .exclusion-expected {
+        /*
+            Exclusion:
+
+            Co = Cb + Cs - 2 * Cb * Cs
+
+            r = 1.0 + 0.0 - 2.0 * 1.0 * 0.0 = 1.0
+            g = 0.3 + 0.6 - 2.0 * 0.3 * 0.6 = 0.54
+            b = 0.5 + 0.5 - 2.0 * 0.5 * 0.5 = 0.5
+
+            The error in the color calculation requires us to use the 8-bit values for:
+            background-color: rgb(100%, 54%, 50%); 
+        */
+        background-color: rgb(255, 138, 127);
+    }
+    </style>
+</head>
+<body>
+    <div class="pair-of-squares">
+        <div class="destination normal"></div>
+        <div class="normal-expected"></div>
+    </div>
+    <div class="pair-of-squares">
+        <div class="destination multiply"></div>
+        <div class="multiply-expected"></div>
+    </div>
+    <div class="pair-of-squares">
+        <div class="destination screen"></div>
+        <div class="screen-expected"></div>
+    </div>
+    <div class="pair-of-squares">
+        <div class="destination darken"></div>
+        <div class="darken-expected"></div>
+    </div>
+    <div class="pair-of-squares">
+        <div class="destination lighten"></div>
+        <div class="lighten-expected"></div>
+    </div>
+    <div class="pair-of-squares">
+        <div class="destination difference"></div>
+        <div class="difference-expected"></div>
+    </div>
+    <div class="pair-of-squares">
+        <div class="destination exclusion"></div>
+        <div class="exclusion-expected"></div>
+    </div>
+    <!--
+        If you add more blend modes to this page, be careful not to exceed 600px in 
+        height, since DumpRenderTree compares 800x600 snapshots of this page.
+    -->
+</body>
+</html>
