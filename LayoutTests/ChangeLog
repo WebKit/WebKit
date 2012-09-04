@@ -1,3 +1,14 @@
+2012-09-04  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL][WK2] CSS3 Media Queries functionality is broken
+        https://bugs.webkit.org/show_bug.cgi?id=95680
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskipped passing CSS3 Media Query tests.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-09-04  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: Skip inspector WebGL tests where WebGL is disabled

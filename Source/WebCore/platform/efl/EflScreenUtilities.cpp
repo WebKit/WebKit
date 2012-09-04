@@ -127,23 +127,6 @@ int getDPI()
 #endif
 }
 
-int getPixelDepth(const Evas* evas)
-{
-#ifdef HAVE_ECORE_X
-    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(evas);
-    // FIXME: ecore_evas_software_x11_window_get() can't get Ecore_X_Window during the layout test.
-    // Because, EFL DumpRenderTree doesn't use X11 window by default.
-    // See also, http://trac.webkit.org/browser/trunk/Tools/DumpRenderTree/efl/DumpRenderTree.cpp#L69
-    Ecore_X_Window window = ecore_evas_software_x11_window_get(ecoreEvas);
-    if (!window)
-        return 8;
-
-    return ecore_x_window_depth_get(window);
-#else
-    return 8;
-#endif
-}
-
 bool isUsingEcoreX(const Evas* evas)
 {
 #ifdef HAVE_ECORE_X
