@@ -1,3 +1,15 @@
+2012-09-04  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL] Context menu restore.
+        https://bugs.webkit.org/show_bug.cgi?id=74179
+
+        Reviewed by Gyuyoung Kim.
+
+        Adds context menu support for EFL port using non-CROSS_PLATFORM_CONTEXT_MENUS
+        approach, the same as used in WebKit2.
+
+        * PlatformEfl.cmake: Added ContextMenuClientEfl.cpp file to sources list.
+
 2012-08-29  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Move several files to remove webkit1 dependency from WebCore.

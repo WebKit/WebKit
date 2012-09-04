@@ -21,6 +21,8 @@
 #ifndef ewk_contextmenu_private_h
 #define ewk_contextmenu_private_h
 
+#include "ewk_contextmenu.h"
+
 // forward declarations
 namespace WebCore {
 struct ContextMenu;
@@ -28,11 +30,10 @@ struct ContextMenuItem;
 }
 
 #if ENABLE(CONTEXT_MENUS)
-Ewk_Context_Menu* ewk_context_menu_new(Evas_Object* view, WebCore::ContextMenuController* controller);
+Ewk_Context_Menu* ewk_context_menu_new(Evas_Object* view, WebCore::ContextMenuController* controller, WebCore::ContextMenu* coreMenu);
 bool ewk_context_menu_free(Ewk_Context_Menu* menu);
-void ewk_context_menu_item_append(Ewk_Context_Menu* menu, WebCore::ContextMenuItem& core);
-Ewk_Context_Menu* ewk_context_menu_customize(Ewk_Context_Menu* menu);
+void ewk_context_menu_item_append(Ewk_Context_Menu* menu, const WebCore::ContextMenuItem& core);
 void ewk_context_menu_show(Ewk_Context_Menu* menu);
 #endif
 
-#endif // ewk_context_manu_private_h
+#endif // ewk_context_menu_private_h

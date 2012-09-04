@@ -89,6 +89,7 @@ LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/BatteryClientEfl.cpp
     efl/WebCoreSupport/ChromeClientEfl.cpp
     efl/WebCoreSupport/ColorChooserEfl.cpp
+    efl/WebCoreSupport/ContextMenuClientEfl.cpp
     efl/WebCoreSupport/DeviceOrientationClientEfl.cpp
     efl/WebCoreSupport/DeviceMotionClientEfl.cpp
     efl/WebCoreSupport/DragClientEfl.cpp

@@ -27,6 +27,7 @@
 #include "Bridge.h"
 #include "Chrome.h"
 #include "ChromeClientEfl.h"
+#include "ContextMenuClientEfl.h"
 #include "ContextMenuController.h"
 #include "DocumentLoader.h"
 #include "DragClientEfl.h"
@@ -57,6 +58,7 @@
 #include "ResourceHandle.h"
 #include "Settings.h"
 #include "c_instance.h"
+#include "ewk_contextmenu_private.h"
 #include "ewk_frame.h"
 #include "ewk_frame_private.h"
 #include "ewk_history_private.h"
@@ -360,6 +362,7 @@ struct _Ewk_View_Private_Data {
 #ifdef HAVE_ECORE_X
     bool isUsingEcoreX;
 #endif
+    Ewk_Context_Menu* contextMenu;
 };
 
 #ifndef EWK_TYPE_CHECK
@@ -741,6 +744,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 
     WebCore::Page::PageClients pageClients;
     pageClients.chromeClient = new WebCore::ChromeClientEfl(smartData->self);
+    pageClients.contextMenuClient = new WebCore::ContextMenuClientEfl;
     pageClients.editorClient = new WebCore::EditorClientEfl(smartData->self);
     pageClients.dragClient = new WebCore::DragClientEfl;
 #if ENABLE(INSPECTOR)
@@ -891,6 +895,8 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->isUsingEcoreX = WebCore::isUsingEcoreX(smartData->base.evas);
 #endif
 
+    priv->contextMenu = 0;
+
     return priv;
 }
 
@@ -923,6 +929,9 @@ static void _ewk_view_priv_del(Ewk_View_Private_Data* priv)
 
     if (priv->cursorObject)
         evas_object_del(priv->cursorObject);
+
+    if (priv->contextMenu)
+        ewk_context_menu_free(priv->contextMenu);
 
     delete priv;
 }
@@ -1624,6 +1633,9 @@ Eina_Bool ewk_view_context_menu_forward_event(Evas_Object* ewkView, const Evas_E
     Eina_Bool mouse_press_handled = false;
 
     priv->page->contextMenuController()->clearContextMenu();
+    if (priv->contextMenu)
+        ewk_context_menu_free(priv->contextMenu);
+
     WebCore::Frame* mainFrame = priv->page->mainFrame();
     Evas_Coord x, y;
     evas_object_geometry_get(smartData->self, &x, &y, 0, 0);
@@ -1635,7 +1647,7 @@ Eina_Bool ewk_view_context_menu_forward_event(Evas_Object* ewkView, const Evas_E
             mainFrame->eventHandler()->handleMousePressEvent(event);
     }
 
-    if (mainFrame->eventHandler()->sendContextMenuEvent(event))
+    if (!mainFrame->eventHandler()->sendContextMenuEvent(event))
         return false;
 
     WebCore::ContextMenu* coreMenu =
@@ -1645,6 +1657,12 @@ Eina_Bool ewk_view_context_menu_forward_event(Evas_Object* ewkView, const Evas_E
         // was handled by handleMouseReleaseEvent
         return mouse_press_handled;
     }
+
+    priv->contextMenu = ewk_context_menu_new(ewkView, priv->page->contextMenuController(), coreMenu);
+    if (!priv->contextMenu)
+        return false;
+
+    ewk_context_menu_show(priv->contextMenu);
 
     return true;
 #else

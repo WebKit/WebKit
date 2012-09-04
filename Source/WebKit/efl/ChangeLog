@@ -1,3 +1,38 @@
+2012-09-04  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL] Context menu restore. 
+        https://bugs.webkit.org/show_bug.cgi?id=74179
+
+        Reviewed by Gyuyoung Kim.
+
+        Adds context menu support for EFL port using non-CROSS_PLATFORM_CONTEXT_MENUS
+        approach, the same as used in WebKit2.
+
+        * WebCoreSupport/ContextMenuClientEfl.cpp: Added.
+        (WebCore):
+        (WebCore::ContextMenuClientEfl::contextMenuDestroyed):
+        (WebCore::ContextMenuClientEfl::getCustomMenuFromDefaultItems):
+        (WebCore::ContextMenuClientEfl::contextMenuItemSelected):
+        (WebCore::ContextMenuClientEfl::downloadURL):
+        (WebCore::ContextMenuClientEfl::lookUpInDictionary):
+        (WebCore::ContextMenuClientEfl::speak):
+        (WebCore::ContextMenuClientEfl::isSpeaking):
+        (WebCore::ContextMenuClientEfl::stopSpeaking):
+        (WebCore::ContextMenuClientEfl::searchWithGoogle):
+        * WebCoreSupport/ContextMenuClientEfl.h: Added.
+        (WebCore):
+        (ContextMenuClientEfl):
+        * ewk/ewk_contextmenu.cpp: Removed ewk_context_menu_customize implementation.
+        (ewk_context_menu_destroy): Added freeing context menu. 
+        (ewk_context_menu_new): Added filling ewk_contextmenu list.
+        (ewk_context_menu_item_append):
+        * ewk/ewk_contextmenu_private.h: Removed ewk_context_menu_customize and changed ewk_context_menu_new definition.
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_new):
+        (_ewk_view_priv_del):
+        (ewk_view_context_menu_forward_event):
+
 2012-09-04  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Drop default theme concept
