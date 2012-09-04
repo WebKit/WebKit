@@ -1440,9 +1440,7 @@ void FrameView::addFixedObject(RenderObject* object)
 
 void FrameView::removeFixedObject(RenderObject* object)
 {
-    ASSERT(hasFixedObjects());
-
-    if (m_fixedObjects->contains(object)) {
+    if (m_fixedObjects && m_fixedObjects->contains(object)) {
         m_fixedObjects->remove(object);
         if (Page* page = m_frame->page()) {
             if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())

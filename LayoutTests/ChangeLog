@@ -1,3 +1,15 @@
+2012-09-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Regression: Heap-use-after-free in WebCore::FrameView::scrollContentsFastPath
+        https://bugs.webkit.org/show_bug.cgi?id=95754
+
+        Reviewed by Dave Hyatt.
+
+        Testcase with a position:fixed resizer and scrolling.
+
+        * fast/css/remove-fixed-resizer-crash-expected.txt: Added.
+        * fast/css/remove-fixed-resizer-crash.html: Added.
+
 2012-09-04  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Removing accidentally added executable properties on test files.

@@ -418,17 +418,6 @@ void RenderBoxModelObject::styleWillChange(StyleDifference diff, const RenderSty
         }
     }
 
-    if (FrameView *frameView = view()->frameView()) {
-        bool newStyleIsViewportConstained = newStyle && newStyle->hasViewportConstrainedPosition();
-        bool oldStyleIsViewportConstrained = oldStyle && oldStyle->hasViewportConstrainedPosition();
-        if (newStyleIsViewportConstained != oldStyleIsViewportConstrained) {
-            if (newStyleIsViewportConstained)
-                frameView->addFixedObject(this);
-            else
-                frameView->removeFixedObject(this);
-        }
-    }
-
     RenderObject::styleWillChange(diff, newStyle);
 }
 
@@ -465,6 +454,17 @@ void RenderBoxModelObject::styleDidChange(StyleDifference diff, const RenderStyl
         layer()->styleChanged(diff, oldStyle);
         if (s_hadLayer && layer()->isSelfPaintingLayer() != s_layerWasSelfPainting)
             setChildNeedsLayout(true);
+    }
+
+    if (FrameView *frameView = view()->frameView()) {
+        bool newStyleIsViewportConstained = style()->hasViewportConstrainedPosition();
+        bool oldStyleIsViewportConstrained = oldStyle && oldStyle->hasViewportConstrainedPosition();
+        if (newStyleIsViewportConstained != oldStyleIsViewportConstrained) {
+            if (newStyleIsViewportConstained && layer())
+                frameView->addFixedObject(this);
+            else
+                frameView->removeFixedObject(this);
+        }
     }
 }
 
