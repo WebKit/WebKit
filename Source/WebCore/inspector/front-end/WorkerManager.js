@@ -161,10 +161,16 @@ WebInspector.WorkerManager.prototype = {
 
     _openInspectorWindow: function(workerId, workerIsPaused)
     {
-        var url = window.location.href + "&dedicatedWorkerId=" + workerId;
+        var search = window.location.search;
+        var hash = window.location.hash;
+        var url = window.location.href;
+        // Make sure hash is in rear
+        url = url.replace(hash, "");
+        url += (search ? "&dedicatedWorkerId=" : "?dedicatedWorkerId=") + workerId;
         if (workerIsPaused)
             url += "&workerPaused=true";
         url = url.replace("docked=true&", "");
+        url += hash;
         // Set location=0 just to make sure the front-end will be opened in a separate window, not in new tab.
         var workerInspectorWindow = window.open(url, undefined, "location=0");
         this._workerIdToWindow[workerId] = workerInspectorWindow;
