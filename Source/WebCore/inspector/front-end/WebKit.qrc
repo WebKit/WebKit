@@ -108,6 +108,7 @@
     <file>NavigatorView.js</file>
     <file>NetworkItemView.js</file>
     <file>NetworkLog.js</file>
+    <file>NetworkUISourceCodeProvider.js</file>
     <file>NetworkManager.js</file>
     <file>NetworkPanel.js</file>
     <file>NetworkPanelDescriptor.js</file>
@@ -127,7 +128,6 @@
     <file>ProgressBar.js</file>
     <file>PropertiesSection.js</file>
     <file>PropertiesSidebarPane.js</file>
-    <file>RawSourceCode.js</file>
     <file>RemoteObject.js</file>
     <file>Resource.js</file>
     <file>RequestCookiesView.js</file>
@@ -181,7 +181,6 @@
     <file>StyleSheetOutlineDialog.js</file>
     <file>StyleSource.js</file>
     <file>StylesSourceMapping.js</file>
-    <file>StylesUISourceCodeProvider.js</file>
     <file>StylesSidebarPane.js</file>
     <file>TabbedEditorContainer.js</file>
     <file>TabbedPane.js</file>

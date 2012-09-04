@@ -31,9 +31,12 @@ function test()
 
             function didShowScriptSources()
             {
-                function didCreateSourceFrame(uiSourceCode)
+                var alreadyShownURLs = {};
+                function didCreateSourceFrame()
                 {
-                    sourceFrameCount += 1;
+                    if (!alreadyShownURLs[this._javaScriptSource.url])
+                        sourceFrameCount += 1;
+                    alreadyShownURLs[this._javaScriptSource.url] = true;
                 }
                 InspectorTest.addSniffer(WebInspector.SourceFrame.prototype, "wasShown", didCreateSourceFrame, true);
                 InspectorTest.reloadPage(didReload);

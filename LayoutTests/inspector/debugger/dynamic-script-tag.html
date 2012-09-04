@@ -2,51 +2,85 @@
 <head>
 <script src="../../http/tests/inspector/inspector-test.js"></script>
 <script src="../../http/tests/inspector/debugger-test.js"></script>
-
+<script src="../../http/tests/inspector/workspace-test.js"></script>
 <script>
+document.write("<scrip" + "t>function foo() { }</sc" + "ript>");
 
 function createScriptTag()
 {
-    var script = document.createElement("script");
-    script.innerHTML = "console.log(123)";
-    document.head.appendChild(script);
+    var scriptElement = document.createElement("script");
+    scriptElement.textContent = "function bar() { }";
+    document.head.appendChild(scriptElement);
 }
 
-function test()
+var test = function()
 {
     InspectorTest.startDebuggerTest(step1);
 
+    var scripts;
     function step1()
     {
-        InspectorTest.evaluateInPage("createScriptTag()");
-        WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, step2);
+        InspectorTest.evaluateInPage("createScriptTag()", step2);
     }
-
-    function step2(event)
+    
+    function step2()
     {
-        var script = event.data;
-        script.requestContent(callback);
-        function callback(content)
+        WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, step3);
+        step3();
+    }
+    
+    function step3()
+    {
+        scripts = Object.values(WebInspector.debuggerModel.scripts);
+        function filterOutStandaloneAndInlineScripts(script)
         {
-            if (content !== "console.log(123)")
-                return;
-            InspectorTest.addResult("Is anonymous:" + script.isAnonymousScript());
-            InspectorTest.addResult("Is inline script:" + script.isInlineScript());
-            InspectorTest.addResult(new WebInspector.ParsedURL(script.sourceURL).displayName);
-            // Invoke post source map install.
-            setTimeout(step3.bind(this, script), 0);
+            return !script.isInlineScript() && script.sourceURL.indexOf("dynamic-script-tag.html") !== -1;
+        }
+        scripts = scripts.filter(filterOutStandaloneAndInlineScripts);
+        if (scripts.length >= 2) {
+            WebInspector.debuggerModel.removeEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, step3);
+            step4();
         }
     }
-
-    function step3(script)
+    
+    function step4()
     {
-        var uiLocation = script.rawLocationToUILocation(0, 0);
-        InspectorTest.addResult("UI name: " + uiLocation.uiSourceCode.parsedURL.displayName);
-        InspectorTest.addResult("UI resource: " + uiLocation.uiSourceCode.resource());
-        uiLocation.uiSourceCode.requestContent(callback);
-        function callback(content)
+        var uiSourceCodes = [];
+        InspectorTest.addResult("Dumping scripts:");
+        for (var i = 0; i < scripts.length; ++i) {
+            var script = scripts[i];
+            InspectorTest.addResult("script" + (i+1) + ": " + script.sourceURL);
+            InspectorTest.addResult("Is anonymous:" + script.isAnonymousScript());
+            InspectorTest.addResult("Is inline script:" + script.isInlineScript());
+            uiSourceCodes.push(script.rawLocationToUILocation(0, 0).uiSourceCode);
+        }
+
+        var seenUISourceCodes = new Map();
+        InspectorTest.addResult("Dumping uiSourceCodes:");
+        
+        var index = 0;
+        dumpNextUISourceCode();
+        function dumpNextUISourceCode()
         {
-            InspectorTest.addResult("UI content: " + content);
+            if (index >= uiSourceCodes.length) {
+                uiSourceCodesDumped();
+                return;
+            }
+            var uiSourceCode = uiSourceCodes[index];
+            InspectorTest.dumpUISourceCode(uiSourceCode, uiSourceCodeDumped);
+
+            function uiSourceCodeDumped()
+            {
+                InspectorTest.addResult("UI resource: " + uiSourceCode.resource());
+                InspectorTest.assertTrue(!seenUISourceCodes.get(uiSourceCode), "UISourceCode matches two scripts: " + uiSourceCode.url);
+                seenUISourceCodes.put(uiSourceCode, uiSourceCode);
+                ++index;
+                dumpNextUISourceCode();
+            }
+        }
+        
+        function uiSourceCodesDumped()
+        {
             InspectorTest.completeDebuggerTest();
         }
     }
@@ -54,10 +88,7 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-<p>
-Tests that dynamically added script tag gets its own JavaScriptSource and is not bound to the resource.
+<p>Tests that inline scripts and document.write scripts get different uiSourceCodes with different URLs.
 <a href="https://bugs.webkit.org/show_bug.cgi?id=87119">Bug 87119</a>
-</p>
 </body>
-
 </html>

@@ -1,12 +1,25 @@
-CONSOLE MESSAGE: line 1: 123
-Tests that dynamically added script tag gets its own JavaScriptSource and is not bound to the resource. Bug 87119
+Tests that inline scripts and document.write scripts get different uiSourceCodes with different URLs. Bug 87119
 
 Debugger was enabled.
+Dumping scripts:
+script1: file:///usr/local/google/home/vsevik/chromium/src/third_party/WebKit/LayoutTests/inspector/debugger/dynamic-script-tag.html
 Is anonymous:false
 Is inline script:false
-dynamic-script-tag.html
-UI name: dynamic-script-tag.html
+script2: file:///usr/local/google/home/vsevik/chromium/src/third_party/WebKit/LayoutTests/inspector/debugger/dynamic-script-tag.html
+Is anonymous:false
+Is inline script:false
+Dumping uiSourceCodes:
+UISourceCode: file:///usr/local/google/home/vsevik/chromium/src/third_party/WebKit/LayoutTests/inspector/debugger/dynamic-script-tag.html (1)
+UISourceCode is editable: true
+UISourceCode is content script: false
+Mime type: text/javascript
+UISourceCode content: function foo() { }
 UI resource: null
-UI content: console.log(123)
+UISourceCode: file:///usr/local/google/home/vsevik/chromium/src/third_party/WebKit/LayoutTests/inspector/debugger/dynamic-script-tag.html (2)
+UISourceCode is editable: true
+UISourceCode is content script: false
+Mime type: text/javascript
+UISourceCode content: function bar() { }
+UI resource: null
 Debugger was disabled.
 
