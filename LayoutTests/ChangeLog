@@ -1,3 +1,11 @@
+2012-09-04  Dan Bernstein  <mitz@apple.com>
+
+        Reverted r127468 (the fix for <http://webkit.org/b/93443>) because the test it included caused
+        an assertion failure in Document::updateStyleIfNeeded().
+
+        * inspector/styles/protocol-css-regions-commands-expected.txt:
+        * inspector/styles/protocol-css-regions-commands.html:
+
 2012-09-04  Simon Fraser  <simon.fraser@apple.com>
 
         Regression: Heap-use-after-free in WebCore::FrameView::scrollContentsFastPath

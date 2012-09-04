@@ -231,22 +231,16 @@ void InspectorInstrumentation::willPopShadowRootImpl(InstrumentingAgents* instru
         domAgent->willPopShadowRoot(host, root);
 }
 
-void InspectorInstrumentation::didCreateNamedFlowImpl(InstrumentingAgents* instrumentingAgents, Document* document, WebKitNamedFlow* namedFlow)
+void InspectorInstrumentation::didCreateNamedFlowImpl(InstrumentingAgents* instrumentingAgents, Document* document, const AtomicString& name)
 {
     if (InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent())
-        cssAgent->didCreateNamedFlow(document, namedFlow);
+        cssAgent->didCreateNamedFlow(document, name);
 }
 
-void InspectorInstrumentation::willRemoveNamedFlowImpl(InstrumentingAgents* instrumentingAgents, Document* document, WebKitNamedFlow* namedFlow)
+void InspectorInstrumentation::didRemoveNamedFlowImpl(InstrumentingAgents* instrumentingAgents, Document* document, const AtomicString& name)
 {
     if (InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent())
-        cssAgent->willRemoveNamedFlow(document, namedFlow);
-}
-
-void InspectorInstrumentation::didUpdateRegionLayoutImpl(InstrumentingAgents* instrumentingAgents, Document* document, WebKitNamedFlow* namedFlow)
-{
-    if (InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent())
-        cssAgent->didUpdateRegionLayout(document, namedFlow);
+        cssAgent->didRemoveNamedFlow(document, name);
 }
 
 void InspectorInstrumentation::mouseDidMoveOverElementImpl(InstrumentingAgents* instrumentingAgents, const HitTestResult& result, unsigned modifierFlags)
