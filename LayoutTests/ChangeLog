@@ -1,3 +1,16 @@
+2012-09-04  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [Stable] [GTK] Crash in WebCore::HTMLSelectElement::selectedIndex
+        https://bugs.webkit.org/show_bug.cgi?id=95618
+
+        Reviewed by Martin Robinson.
+
+        New layout test to ensure we don't crash with ATK notifications
+        anymore when changing the selection in an ARIA listbox.
+
+        * platform/gtk/accessibility/aria-listbox-crash-expected.txt: Added.
+        * platform/gtk/accessibility/aria-listbox-crash.html: Added.
+
 2012-09-04  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL] Check if ecore_x is initialised before calling ecore_x_bell to avoid crash

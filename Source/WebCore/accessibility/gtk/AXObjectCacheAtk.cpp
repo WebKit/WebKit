@@ -81,11 +81,16 @@ static void notifyChildrenSelectionChange(AccessibilityObject* object)
     if (!object || !(object->isListBox() || object->isMenuList()))
         return;
 
+    // Only support HTML select elements so far (ARIA selectors not supported).
+    Node* node = object->node();
+    if (!node || !node->hasTagName(HTMLNames::selectTag))
+        return;
+
     // Emit signal from the listbox's point of view first.
     g_signal_emit_by_name(object->wrapper(), "selection-changed");
 
     // Find the item where the selection change was triggered from.
-    HTMLSelectElement* select = toHTMLSelectElement(object->node());
+    HTMLSelectElement* select = toHTMLSelectElement(node);
     if (!select)
         return;
     int changedItemIndex = select->activeSelectionStartListIndex();

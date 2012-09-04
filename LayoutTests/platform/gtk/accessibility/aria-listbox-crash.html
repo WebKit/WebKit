@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+function test()
+{
+  description("This tests that selecting an option in an ARIA listbox doesn't crash.");
+
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    // We focus on the body and get the associated accessibility
+    // object to force the creation of the accessibility hierarchy.
+    if (window.accessibilityController)
+      document.getElementById("body").focus();
+      accessibilityController.focusedElement;
+    }
+
+   // Get references to the list and the items, and change selection.
+   list = document.getElementById('list');
+   preSelectedItem = document.getElementById('list_item_1');
+   targetItem = document.getElementById('list_item_2');
+
+   list.setAttribute('aria-activedescendant', targetItem.id);
+   preSelectedItem.setAttribute('aria-selected', false);
+   targetItem.setAttribute('aria-selected', true);
+
+   // We need to finish on idle to give room for the crash to happen,
+   // since it's supposed to crash because of a notification about the
+   // selection changing and so if we notifyDone() now it would be too
+   // soon and we would skip such emission, not crashing at all.
+   window.setTimeout("testRunner.notifyDone()",0);
+}
+</script>
+</head>
+<body id="body" onload="test();">
+<ul id="list" role="listbox" aria-activedescendant="list_item_1">
+  <li id="list_item_1" role="option" aria-selected="false">foo</li>
+  <li id="list_item_2" role="option" aria-selected="false">bar</li>
+</ul>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
