@@ -68,7 +68,7 @@ bool GraphicsContext3DPrivate::makeContextCurrent()
 
 PlatformGraphicsContext3D GraphicsContext3DPrivate::platformContext()
 {
-    return m_glContext ? m_glContext->platformContext() : 0;
+    return m_glContext ? m_glContext->platformContext() : GLContext::getCurrent()->platformContext();
 }
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
