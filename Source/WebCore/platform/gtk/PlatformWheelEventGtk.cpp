@@ -30,6 +30,7 @@
 #include "Scrollbar.h"
 
 #include <gdk/gdk.h>
+#include <gtk/gtk.h>
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
@@ -69,6 +70,15 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
         case GDK_SCROLL_RIGHT:
             m_deltaX = -delta;
             break;
+#if GTK_CHECK_VERSION(3, 3, 18)
+        case GDK_SCROLL_SMOOTH: {
+                gdouble deltaX, deltaY;
+                gdk_event_get_scroll_deltas(reinterpret_cast<GdkEvent*>(event), &deltaX, &deltaY);
+                m_deltaX = -deltaX;
+                m_deltaY = -deltaY;
+            }
+            break;
+#endif
     }
     m_wheelTicksX = m_deltaX;
     m_wheelTicksY = m_deltaY;

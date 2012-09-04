@@ -306,6 +306,11 @@ void EventSenderProxy::mouseScrollBy(int, int)
     // FIXME: Implement this.
 }
 
+void EventSenderProxy::continuousMouseScrollBy(int, int, bool)
+{
+    // FIXME: Implement this.
+}
+
 void EventSenderProxy::leapForward(int ms)
 {
     eventQueue[endOfQueue].m_delay = ms;

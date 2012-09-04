@@ -51,6 +51,7 @@ public:
     void mouseUp(int button, JSValueRef modifierArray);
     void mouseMoveTo(int x, int y);
     void mouseScrollBy(int x, int y);
+    void continuousMouseScrollBy(int x, int y, bool paged);
     void leapForward(int milliseconds);
 
     void keyDown(JSStringRef key, JSValueRef modifierArray, int location);

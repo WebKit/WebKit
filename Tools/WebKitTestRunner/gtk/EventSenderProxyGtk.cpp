@@ -44,6 +44,9 @@
 
 namespace WTR {
 
+// WebCore and layout tests assume this value
+static const float pixelsPerScrollTick = 40;
+
 // Key event location code defined in DOM Level 3.
 enum KeyLocationCode {
     DOMKeyLocationStandard      = 0x00,
@@ -375,8 +378,21 @@ void EventSenderProxy::mouseScrollBy(int horizontal, int vertical)
     event->scroll.x = m_position.x;
     event->scroll.y = m_position.y;
     event->scroll.time = GDK_CURRENT_TIME;
-    event->scroll.window = gtk_widget_get_window(GTK_WIDGET(m_testController->mainWebView()->platformWindow()));
+    event->scroll.window = gtk_widget_get_window(GTK_WIDGET(m_testController->mainWebView()->platformView()));
     g_object_ref(event->scroll.window);
+    gdk_event_set_device(event, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(event->scroll.window))));
+
+    // For more than one tick in a scroll, we need smooth scroll event
+#if GTK_CHECK_VERSION(3, 3, 18)
+    if ((horizontal && vertical) || horizontal > 1 || horizontal < -1 || vertical > 1 || vertical < -1) {
+        event->scroll.direction = GDK_SCROLL_SMOOTH;
+        event->scroll.delta_x = -horizontal;
+        event->scroll.delta_y = -vertical;
+
+        sendOrQueueEvent(event);
+        return;
+    }
+#endif
 
     if (horizontal < 0)
         event->scroll.direction = GDK_SCROLL_RIGHT;
@@ -390,6 +406,28 @@ void EventSenderProxy::mouseScrollBy(int horizontal, int vertical)
         g_assert_not_reached();
 
     sendOrQueueEvent(event);
+}
+
+void EventSenderProxy::continuousMouseScrollBy(int horizontal, int vertical, bool paged)
+{
+    // Gtk+ does not support paged scroll events.
+    g_return_if_fail(!paged);
+
+#if GTK_CHECK_VERSION(3, 3, 18)
+    GdkEvent* event = gdk_event_new(GDK_SCROLL);
+    event->scroll.x = m_position.x;
+    event->scroll.y = m_position.y;
+    event->scroll.time = GDK_CURRENT_TIME;
+    event->scroll.window = gtk_widget_get_window(GTK_WIDGET(m_testController->mainWebView()->platformView()));
+    g_object_ref(event->scroll.window);
+    gdk_event_set_device(event, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(event->scroll.window))));
+
+    event->scroll.direction = GDK_SCROLL_SMOOTH;
+    event->scroll.delta_x = -horizontal / pixelsPerScrollTick;
+    event->scroll.delta_y = -vertical / pixelsPerScrollTick;
+
+    sendOrQueueEvent(event);
+#endif
 }
 
 void EventSenderProxy::leapForward(int milliseconds)
