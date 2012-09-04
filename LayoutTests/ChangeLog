@@ -1,3 +1,10 @@
+2012-09-04  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Rebaseline Windows expected results for accessibility\canvas-description-and-role-expected.txt.
+        One of the results in the test now passes.
+
+        * platform/win/accessibility/canvas-description-and-role-expected.txt:
+
 2012-09-04  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Unreviewed. Update test expectations for Android.
