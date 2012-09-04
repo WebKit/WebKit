@@ -2162,3 +2162,6 @@ fast/events/domactivate-sets-underlying-click-event-as-handled.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=95388
 fast/css/nested-layers-with-hover.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=95428
+media/video-controls-captions.html

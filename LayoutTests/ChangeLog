@@ -1,3 +1,10 @@
+2012-09-04  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed gardening. meda/video-controls-captions.html fails on Windows after it was introduced in http://trac.webkit.org/changeset/127035.
+        https://bugs.webkit.org/show_bug.cgi?id=95428
+
+        * platform/win/Skipped:
+
 2012-09-04  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add the async createOffer functionality to RTCPeerConnection
