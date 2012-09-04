@@ -104,7 +104,7 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     // anonymous blocks which are aria-related to themselves have an aria role, nor
     // have we encountered instances where the parent of an anonymous block also lacked
     // an aria role but the grandparent had one.
-    if (renderer()->isAnonymousBlock() && !parent->renderer()->isBody()
+    if (renderer() && renderer()->isAnonymousBlock() && !parent->renderer()->isBody()
         && parent->ariaRoleAttribute() == UnknownRole)
         return IgnoreObject;
 
