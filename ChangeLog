@@ -1,3 +1,12 @@
+2012-09-04  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        REGRESSION(r120832): RenderLayer::clampScrollOffset doesn't properly clamp
+        https://bugs.webkit.org/show_bug.cgi?id=95776
+
+        Reviewed by Simon Fraser.
+
+        * ManualTests/select-menu-list-wrongly-positioned.html: Added.
+
 2012-09-04  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL] Context menu restore.

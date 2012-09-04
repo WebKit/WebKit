@@ -1665,8 +1665,8 @@ IntSize RenderLayer::clampScrollOffset(const IntSize& scrollOffset) const
     int maxX = scrollWidth() - box->pixelSnappedClientWidth();
     int maxY = scrollHeight() - box->pixelSnappedClientHeight();
 
-    int x = min(max(scrollOffset.width(), 0), maxX);
-    int y = min(max(scrollOffset.height(), 0), maxY);
+    int x = max(min(scrollOffset.width(), maxX), 0);
+    int y = max(min(scrollOffset.height(), maxY), 0);
     return IntSize(x, y);
 }
 
