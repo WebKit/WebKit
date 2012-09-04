@@ -44,6 +44,7 @@ namespace WTF {
 #define ENABLE_META_ALLOCATOR_PROFILE 0
 
 class MetaAllocatorTracker {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     void notify(MetaAllocatorHandle*);
     void release(MetaAllocatorHandle*);

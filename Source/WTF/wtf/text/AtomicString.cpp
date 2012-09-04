@@ -37,6 +37,7 @@ using namespace Unicode;
 COMPILE_ASSERT(sizeof(AtomicString) == sizeof(String), atomic_string_and_string_must_be_same_size);
 
 class AtomicStringTable {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static AtomicStringTable* create()
     {

@@ -1,3 +1,21 @@
+2012-09-04  Zoltan Horvath  <zoltan@webkit.org>
+
+        Extend the coverage of the Custom Allocation Framework in WTF and in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=95737
+
+        Reviewed by Eric Seidel.
+
+        Add WTF_MAKE_FAST_ALLOCATED macro to the following class declarations because these are instantiated by operator new.
+
+        * wtf/CryptographicallyRandomNumber.cpp: CryptographicallyRandomNumber is instantiated at wtf/CryptographicallyRandomNumber.cpp:162.
+        * wtf/MediaTime.h: MediaTime is instantiated at wtf/MediaTime.cpp:288.
+        * wtf/MetaAllocator.h:
+        (MetaAllocatorTracker): MetaAllocatorTracker is instantiated at JavaScriptCore/tools/CodeProfiling.cpp:120.
+        * wtf/ThreadingPthreads.cpp:
+        (PthreadState): PthreadState is instantiated at wtf/ThreadingPthreads.cpp:165.
+        * wtf/text/AtomicString.cpp:
+        (AtomicStringTable): AtomicStringTable is instantiated at wtf/text/AtomicString.cpp:43.
+
 2012-09-01  Mark Lam  <mark.lam@apple.com>
 
         LLInt C loop backend.

@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "FastAllocBase.h"
+
 #include <cmath>
 #include <limits>
 #include <math.h>
@@ -34,6 +36,7 @@
 namespace WTF {
 
 class WTF_EXPORT_PRIVATE MediaTime {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum {
         Valid = 1 << 0,

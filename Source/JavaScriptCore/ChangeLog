@@ -1,3 +1,27 @@
+2012-09-04  Zoltan Horvath  <zoltan@webkit.org>
+
+        Extend the coverage of the Custom Allocation Framework in WTF and in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=95737
+
+        Reviewed by Eric Seidel.
+
+        Add WTF_MAKE_FAST_ALLOCATED macro to the following class declarations because these are instantiated by operator new.
+
+        * wtf/CryptographicallyRandomNumber.cpp: CryptographicallyRandomNumber is instantiated at wtf/CryptographicallyRandomNumber.cpp:162.
+
+        * heap/MachineStackMarker.cpp:
+        (MachineThreads::Thread): Thread is instantiated at heap/MachineStackMarker.cpp:196.
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (FixedVMPoolExecutableAllocator): FixedVMPoolExecutableAllocator is instantiated at jit/ExecutableAllocatorFixedVMPool.cpp:111
+        * parser/SourceProviderCache.h:
+        (SourceProviderCache): SourceProviderCache is instantiated at parser/SourceProvider.h:49.
+        * parser/SourceProviderCacheItem.h:
+        (SourceProviderCacheItem): SourceProviderCacheItem is instantiated at parser/Parser.cpp:843.
+        * runtime/GCActivityCallback.h:
+        (GCActivityCallback): GCActivityCallback is instantiated at runtime/GCActivityCallback.h:96.
+        * tools/CodeProfile.h:
+        (CodeProfile): CodeProfile is instantiated at JavaScriptCore/tools/CodeProfiling.cpp:140.
+
 2012-09-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove uses of ClassInfo from SpeculativeJIT::compileObjectOrOtherLogicalNot

@@ -33,6 +33,7 @@
 namespace JSC {
 
 class SourceProviderCacheItem {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     SourceProviderCacheItem(int closeBraceLine, int closeBracePos)
         : closeBraceLine(closeBraceLine) 

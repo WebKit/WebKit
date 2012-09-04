@@ -42,6 +42,7 @@ namespace JSC {
 class Heap;
 
 class GCActivityCallback : public HeapTimer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual void didAllocate(size_t) { }
     virtual void willCollect() { }

@@ -62,6 +62,7 @@
 namespace WTF {
 
 class PthreadState {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum JoinableState {
         Joinable, // The default thread state. The thread can be joined on.

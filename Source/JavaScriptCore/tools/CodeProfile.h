@@ -33,6 +33,7 @@
 namespace JSC {
 
 class CodeProfile {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CodeProfile(const SourceCode& source, CodeProfile* parent)
         : m_file(source.provider()->url().utf8())

@@ -107,6 +107,7 @@ static void pthreadSignalHandlerSuspendResume(int signo)
 #endif
 
 class MachineThreads::Thread {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Thread(const PlatformThread& platThread, void* base)
         : platformThread(platThread)

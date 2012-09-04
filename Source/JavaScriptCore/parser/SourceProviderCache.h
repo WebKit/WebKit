@@ -34,6 +34,7 @@
 namespace JSC {
 
 class SourceProviderCache {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     SourceProviderCache() : m_contentByteSize(0) {}
     JS_EXPORT_PRIVATE ~SourceProviderCache();

@@ -48,6 +48,7 @@ namespace JSC {
 uintptr_t startOfFixedExecutableMemoryPool;
 
 class FixedVMPoolExecutableAllocator : public MetaAllocator {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FixedVMPoolExecutableAllocator()
         : MetaAllocator(jitAllocationGranule) // round up all allocations to 32 bytes
