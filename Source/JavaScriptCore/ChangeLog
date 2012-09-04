@@ -1,3 +1,23 @@
+2012-09-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove uses of ClassInfo from SpeculativeJIT::compileObjectOrOtherLogicalNot
+        https://bugs.webkit.org/show_bug.cgi?id=95510
+
+        Reviewed by Oliver Hunt.
+
+        More refactoring to get rid of ClassInfo checks in the DFG.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNonStringCellOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNonStringCellOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+
 2012-09-03  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed. Build fix for ENABLE(CLASSIC_INTERPRETER) after r127393.

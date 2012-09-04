@@ -1835,7 +1835,7 @@ void SpeculativeJIT::compileValueAdd(Node& node)
     jsValueResult(result.gpr(), m_compileIndex);
 }
 
-void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse, const ClassInfo* classInfo, bool needSpeculationCheck)
+void SpeculativeJIT::compileNonStringCellOrOtherLogicalNot(Edge nodeUse, bool needSpeculationCheck)
 {
     JSValueOperand value(this, nodeUse);
     GPRTemporary result(this);
@@ -1843,19 +1843,59 @@ void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse, const ClassInf
     GPRReg resultGPR = result.gpr();
     
     MacroAssembler::Jump notCell = m_jit.branchTestPtr(MacroAssembler::NonZero, valueGPR, GPRInfo::tagMaskRegister);
-    if (needSpeculationCheck)
-        speculationCheck(BadType, JSValueRegs(valueGPR), nodeUse, m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(valueGPR, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(classInfo)));
-    m_jit.move(TrustedImm32(static_cast<int32_t>(ValueFalse)), resultGPR);
+    if (m_jit.graph().globalObjectFor(m_jit.graph()[nodeUse.index()].codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid()) {
+        m_jit.graph().globalObjectFor(m_jit.graph()[nodeUse.index()].codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
+
+        if (needSpeculationCheck) {
+            speculationCheck(BadType, JSValueRegs(valueGPR), nodeUse,
+                m_jit.branchPtr(
+                    MacroAssembler::Equal,
+                    MacroAssembler::Address(valueGPR, JSCell::structureOffset()),
+                    MacroAssembler::TrustedImmPtr(m_jit.globalData()->stringStructure.get())));
+        }
+    } else {
+        GPRTemporary structure(this);
+        GPRReg structureGPR = structure.gpr();
+
+        m_jit.loadPtr(MacroAssembler::Address(valueGPR, JSCell::structureOffset()), structureGPR);
+
+        if (needSpeculationCheck) {
+            speculationCheck(BadType, JSValueRegs(valueGPR), nodeUse,
+                m_jit.branchPtr(
+                    MacroAssembler::Equal,
+                    structureGPR,
+                    MacroAssembler::TrustedImmPtr(m_jit.globalData()->stringStructure.get())));
+        }
+
+        MacroAssembler::Jump isNotMasqueradesAsUndefined = 
+            m_jit.branchTest8(
+                MacroAssembler::Zero, 
+                MacroAssembler::Address(structureGPR, Structure::typeInfoFlagsOffset()), 
+                MacroAssembler::TrustedImm32(MasqueradesAsUndefined));
+
+        speculationCheck(BadType, JSValueRegs(valueGPR), nodeUse, 
+            m_jit.branchPtr(
+                MacroAssembler::Equal, 
+                MacroAssembler::Address(structureGPR, Structure::globalObjectOffset()), 
+                MacroAssembler::TrustedImmPtr(m_jit.graph().globalObjectFor(m_jit.graph()[nodeUse.index()].codeOrigin))));
+
+        isNotMasqueradesAsUndefined.link(&m_jit);
+    }
+    m_jit.move(TrustedImm32(ValueFalse), resultGPR);
     MacroAssembler::Jump done = m_jit.jump();
     
     notCell.link(&m_jit);
-    
+
     if (needSpeculationCheck) {
         m_jit.move(valueGPR, resultGPR);
         m_jit.andPtr(MacroAssembler::TrustedImm32(~TagBitUndefined), resultGPR);
-        speculationCheck(BadType, JSValueRegs(valueGPR), nodeUse, m_jit.branchPtr(MacroAssembler::NotEqual, resultGPR, MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(ValueNull))));
+        speculationCheck(BadType, JSValueRegs(valueGPR), nodeUse, 
+            m_jit.branchPtr(
+                MacroAssembler::NotEqual, 
+                resultGPR, 
+                MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(ValueNull))));
     }
-    m_jit.move(TrustedImm32(static_cast<int32_t>(ValueTrue)), resultGPR);
+    m_jit.move(TrustedImm32(ValueTrue), resultGPR);
     
     done.link(&m_jit);
     
@@ -1864,12 +1904,9 @@ void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse, const ClassInf
 
 void SpeculativeJIT::compileLogicalNot(Node& node)
 {
-    if (at(node.child1()).shouldSpeculateFinalObjectOrOther()) {
-        compileObjectOrOtherLogicalNot(node.child1(), &JSFinalObject::s_info, !isFinalObjectOrOtherSpeculation(m_state.forNode(node.child1()).m_type));
-        return;
-    }
-    if (at(node.child1()).shouldSpeculateArrayOrOther()) {
-        compileObjectOrOtherLogicalNot(node.child1(), &JSArray::s_info, !isArrayOrOtherSpeculation(m_state.forNode(node.child1()).m_type));
+    if (at(node.child1()).shouldSpeculateNonStringCellOrOther()) {
+        compileNonStringCellOrOtherLogicalNot(node.child1(),
+            !isNonStringCellOrOtherSpeculation(m_state.forNode(node.child1()).m_type));
         return;
     }
     if (at(node.child1()).shouldSpeculateInteger()) {
