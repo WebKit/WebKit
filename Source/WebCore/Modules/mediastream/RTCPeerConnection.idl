@@ -38,6 +38,9 @@ module mediastream {
         CallWith=ScriptExecutionContext,
         EventTarget
     ] RTCPeerConnection {
+        void createOffer(in [Callback] RTCSessionDescriptionCallback successCallback, in [Callback,Optional=DefaultIsUndefined] RTCErrorCallback failureCallback, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints)
+            raises(DOMException);
+
         readonly attribute DOMString readyState;
 
         void updateIce(in [Optional=DefaultIsUndefined] Dictionary configuration, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints)

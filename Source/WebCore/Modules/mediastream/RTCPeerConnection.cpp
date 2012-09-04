@@ -40,9 +40,14 @@
 #include "MediaConstraintsImpl.h"
 #include "MediaStreamEvent.h"
 #include "RTCConfiguration.h"
+#include "RTCErrorCallback.h"
 #include "RTCIceCandidate.h"
 #include "RTCIceCandidateDescriptor.h"
 #include "RTCIceCandidateEvent.h"
+#include "RTCSessionDescription.h"
+#include "RTCSessionDescriptionCallback.h"
+#include "RTCSessionDescriptionDescriptor.h"
+#include "RTCSessionDescriptionRequestImpl.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -128,6 +133,26 @@ RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext* context, PassRefPtr
 
 RTCPeerConnection::~RTCPeerConnection()
 {
+}
+
+void RTCPeerConnection::createOffer(PassRefPtr<RTCSessionDescriptionCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback, const Dictionary& mediaConstraints, ExceptionCode& ec)
+{
+    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    if (!successCallback) {
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+
+    RefPtr<MediaConstraints> constraints = MediaConstraintsImpl::create(mediaConstraints, ec);
+    if (ec)
+        return;
+
+    RefPtr<RTCSessionDescriptionRequestImpl> request = RTCSessionDescriptionRequestImpl::create(scriptExecutionContext(), successCallback, errorCallback, this);
+    m_peerHandler->createOffer(request.release(), constraints);
 }
 
 void RTCPeerConnection::updateIce(const Dictionary& rtcConfiguration, const Dictionary& mediaConstraints, ExceptionCode& ec)

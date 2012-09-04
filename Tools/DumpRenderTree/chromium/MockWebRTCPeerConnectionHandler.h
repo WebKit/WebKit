@@ -32,7 +32,11 @@
 #define MockWebRTCPeerConnectionHandler_h
 
 #if ENABLE(MEDIA_STREAM)
+
+#include "Task.h"
 #include <public/WebRTCPeerConnectionHandler.h>
+#include <public/WebRTCSessionDescriptionDescriptor.h>
+#include <public/WebRTCSessionDescriptionRequest.h>
 
 namespace WebKit {
 class WebRTCPeerConnectionHandlerClient;
@@ -44,16 +48,41 @@ public:
 
     virtual bool initialize(const WebKit::WebRTCConfiguration&, const WebKit::WebMediaConstraints&) OVERRIDE;
 
+    virtual void createOffer(const WebKit::WebRTCSessionDescriptionRequest&, const WebKit::WebMediaConstraints&) OVERRIDE;
     virtual bool updateICE(const WebKit::WebRTCConfiguration&, const WebKit::WebMediaConstraints&) OVERRIDE;
     virtual bool addICECandidate(const WebKit::WebRTCICECandidateDescriptor&) OVERRIDE;
     virtual bool addStream(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaConstraints&) OVERRIDE;
     virtual void removeStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
     virtual void stop() OVERRIDE;
 
+    // Task related methods
+    TaskList* taskList() { return &m_taskList; }
+
 private:
     MockWebRTCPeerConnectionHandler() { }
 
     WebKit::WebRTCPeerConnectionHandlerClient* m_client;
+
+    TaskList m_taskList;
+
+    class SuccessCallbackTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
+    public:
+        SuccessCallbackTask(MockWebRTCPeerConnectionHandler*, const WebKit::WebRTCSessionDescriptionRequest&, const WebKit::WebRTCSessionDescriptionDescriptor&);
+        virtual void runIfValid() OVERRIDE;
+
+    private:
+        WebKit::WebRTCSessionDescriptionRequest m_request;
+        WebKit::WebRTCSessionDescriptionDescriptor m_result;
+    };
+
+    class FailureCallbackTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
+    public:
+        FailureCallbackTask(MockWebRTCPeerConnectionHandler*, const WebKit::WebRTCSessionDescriptionRequest&);
+        virtual void runIfValid() OVERRIDE;
+
+    private:
+        WebKit::WebRTCSessionDescriptionRequest m_request;
+    };
 };
 
 #endif // ENABLE(MEDIA_STREAM)

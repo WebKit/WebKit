@@ -38,11 +38,15 @@
 #include "RTCConfiguration.h"
 #include "RTCIceCandidateDescriptor.h"
 #include "RTCPeerConnectionHandlerClient.h"
+#include "RTCSessionDescriptionDescriptor.h"
+#include "RTCSessionDescriptionRequest.h"
 #include <public/Platform.h>
 #include <public/WebMediaConstraints.h>
 #include <public/WebMediaStreamDescriptor.h>
 #include <public/WebRTCConfiguration.h>
 #include <public/WebRTCICECandidateDescriptor.h>
+#include <public/WebRTCSessionDescriptionDescriptor.h>
+#include <public/WebRTCSessionDescriptionRequest.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -66,6 +70,15 @@ bool RTCPeerConnectionHandlerChromium::initialize(PassRefPtr<RTCConfiguration> c
 {
     m_webHandler = adoptPtr(WebKit::Platform::current()->createRTCPeerConnectionHandler(this));
     return m_webHandler ? m_webHandler->initialize(configuration, constraints) : false;
+}
+
+void RTCPeerConnectionHandlerChromium::createOffer(PassRefPtr<RTCSessionDescriptionRequest> request, PassRefPtr<MediaConstraints> constraints)
+{
+    // FIXME: Should the error callback be triggered here?
+    if (!m_webHandler)
+        return;
+
+    m_webHandler->createOffer(request, constraints);
 }
 
 bool RTCPeerConnectionHandlerChromium::updateIce(PassRefPtr<RTCConfiguration> configuration, PassRefPtr<MediaConstraints> constraints)

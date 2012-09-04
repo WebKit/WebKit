@@ -37,6 +37,8 @@ class WebMediaStreamDescriptor;
 class WebRTCConfiguration;
 class WebRTCICECandidateDescriptor;
 class WebRTCPeerConnectionHandlerClient;
+class WebRTCSessionDescriptionDescriptor;
+class WebRTCSessionDescriptionRequest;
 
 class WebRTCPeerConnectionHandler {
 public:
@@ -44,6 +46,7 @@ public:
 
     virtual bool initialize(const WebRTCConfiguration&, const WebMediaConstraints&) = 0;
 
+    virtual void createOffer(const WebRTCSessionDescriptionRequest&, const WebMediaConstraints&) = 0;
     virtual bool updateICE(const WebRTCConfiguration&, const WebMediaConstraints&) = 0;
     virtual bool addICECandidate(const WebRTCICECandidateDescriptor&) = 0;
     virtual bool addStream(const WebMediaStreamDescriptor&, const WebMediaConstraints&) = 0;

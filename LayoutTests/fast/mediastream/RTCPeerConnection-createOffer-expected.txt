@@ -1,0 +1,13 @@
+Tests RTCPeerConnection [add|remove]Stream.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS requestSucceeded was called.
+PASS sessionDescription.type is "offer"
+PASS requestFailed was called.
+PASS errorReason is "TEST_ERROR"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

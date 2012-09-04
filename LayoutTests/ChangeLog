@@ -1,3 +1,13 @@
+2012-09-04  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Add the async createOffer functionality to RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=95734
+
+        Reviewed by Adam Barth.
+
+        * fast/mediastream/RTCPeerConnection-createOffer-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-createOffer.html: Added.
+
 2012-09-04  Dan Bernstein  <mitz@apple.com>
 
         Reverted r127468 (the fix for <http://webkit.org/b/93443>) because the test it included caused

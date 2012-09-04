@@ -1,5 +1,35 @@
 2012-09-04  Tommy Widenflycht  <tommyw@google.com>
 
+        MediaStream API: Add the async createOffer functionality to RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=95734
+
+        Reviewed by Adam Barth.
+
+        * Platform.gypi:
+        * chromium/public/WebRTCPeerConnectionHandler.h:
+        (WebKit):
+        (WebRTCPeerConnectionHandler):
+        * chromium/public/WebRTCSessionDescriptionDescriptor.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebRTCSessionDescriptionDescriptor):
+        (WebKit::WebRTCSessionDescriptionDescriptor::WebRTCSessionDescriptionDescriptor):
+        (WebKit::WebRTCSessionDescriptionDescriptor::~WebRTCSessionDescriptionDescriptor):
+        (WebKit::WebRTCSessionDescriptionDescriptor::operator=):
+        (WebKit::WebRTCSessionDescriptionDescriptor::isNull):
+        * chromium/public/WebRTCSessionDescriptionRequest.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebRTCSessionDescriptionRequest):
+        (ExtraData):
+        (WebKit::WebRTCSessionDescriptionRequest::ExtraData::~ExtraData):
+        (WebKit::WebRTCSessionDescriptionRequest::WebRTCSessionDescriptionRequest):
+        (WebKit::WebRTCSessionDescriptionRequest::~WebRTCSessionDescriptionRequest):
+        (WebKit::WebRTCSessionDescriptionRequest::operator=):
+        (WebKit::WebRTCSessionDescriptionRequest::isNull):
+
+2012-09-04  Tommy Widenflycht  <tommyw@google.com>
+
         MediaStream API: Change the MediaStreamTrackList track added/removed signaling
         https://bugs.webkit.org/show_bug.cgi?id=95721
 

@@ -48,11 +48,15 @@ namespace WebCore {
 
 class MediaConstraints;
 class RTCConfiguration;
+class RTCErrorCallback;
+class RTCSessionDescriptionCallback;
 
 class RTCPeerConnection : public RefCounted<RTCPeerConnection>, public RTCPeerConnectionHandlerClient, public EventTarget, public ActiveDOMObject {
 public:
     static PassRefPtr<RTCPeerConnection> create(ScriptExecutionContext*, const Dictionary& rtcConfiguration, const Dictionary& mediaConstraints, ExceptionCode&);
     ~RTCPeerConnection();
+
+    void createOffer(PassRefPtr<RTCSessionDescriptionCallback>, PassRefPtr<RTCErrorCallback>, const Dictionary& mediaConstraints, ExceptionCode&);
 
     String readyState() const;
 
