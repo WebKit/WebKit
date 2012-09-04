@@ -43,13 +43,32 @@ RenderNamedFlowThread::RenderNamedFlowThread(Node* node, PassRefPtr<WebKitNamedF
 
 RenderNamedFlowThread::~RenderNamedFlowThread()
 {
-    // The RenderNamedFlowThread may be destroyed because the document is discarded. Leave the NamedFlow object in a consistent state by calling mark for destruction.
+    // The flow thread can be destroyed without unregistering the content nodes if the document is destroyed.
+    // This can lead to problems because the nodes are still marked as belonging to a flow thread.
+    clearContentNodes();
+
+    // Also leave the NamedFlow object in a consistent state by calling mark for destruction.
     setMarkForDestruction();
 }
 
 const char* RenderNamedFlowThread::renderName() const
 {    
     return "RenderNamedFlowThread";
+}
+    
+void RenderNamedFlowThread::clearContentNodes()
+{
+    for (NamedFlowContentNodes::iterator it = m_contentNodes.begin(); it != m_contentNodes.end(); ++it) {
+        Node* contentNode = *it;
+        
+        ASSERT(contentNode && contentNode->isElementNode());
+        ASSERT(contentNode->inNamedFlow());
+        ASSERT(contentNode->document() == document());
+        
+        contentNode->clearInNamedFlow();
+    }
+    
+    m_contentNodes.clear();
 }
 
 RenderObject* RenderNamedFlowThread::nextRendererForNode(Node* node) const
@@ -299,6 +318,7 @@ void RenderNamedFlowThread::pushDependencies(RenderNamedFlowThreadList& list)
 void RenderNamedFlowThread::registerNamedFlowContentNode(Node* contentNode)
 {
     ASSERT(contentNode && contentNode->isElementNode());
+    ASSERT(contentNode->document() == document());
 
     contentNode->setInNamedFlow();
 
@@ -321,6 +341,7 @@ void RenderNamedFlowThread::unregisterNamedFlowContentNode(Node* contentNode)
     ASSERT(contentNode && contentNode->isElementNode());
     ASSERT(m_contentNodes.contains(contentNode));
     ASSERT(contentNode->inNamedFlow());
+    ASSERT(contentNode->document() == document());
 
     contentNode->clearInNamedFlow();
     m_contentNodes.remove(contentNode);

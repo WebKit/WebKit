@@ -87,6 +87,7 @@ private:
     void checkInvalidRegions();
     bool canBeDestroyed() const { return m_regionList.isEmpty() && m_contentNodes.isEmpty(); }
     void regionLayoutUpdateEventTimerFired(Timer<RenderNamedFlowThread>*);
+    void clearContentNodes();
 
 private:
     // Observer flow threads have invalid regions that depend on the state of this thread

@@ -1,3 +1,21 @@
+2012-09-04  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Destroying a render named flow thread without unregistering left-over content nodes triggered an assertion.
+        https://bugs.webkit.org/show_bug.cgi?id=95645
+
+        Reviewed by Abhishek Arya.
+
+        Simple test case that triggers an ASSERT in debug mode and causes a crash in release.
+        The ASSERT appears in RenderFlowThreadController::unregisterNamedFlowContentNode
+        ASSERT(it != m_mapNamedFlowContentNodes.end());
+
+        It happens because when a content node is added to an iframe document and then moved back, the iframe's RenderNamedFlowThread is destroyed
+        without calling unregisterNamedFlowContentNode on the node. This triggers the before mentioned assertion after a lazyAttach and a detach
+        in the parent document.
+
+        * fast/regions/moved-content-node-crash-expected.txt: Added.
+        * fast/regions/moved-content-node-crash.html: Added.
+
 2012-09-04  Andrei Poenaru  <poenaru@adobe.com>
 
         Web Inspector: Protocol Extension: Add "regionLayoutUpdate" event
