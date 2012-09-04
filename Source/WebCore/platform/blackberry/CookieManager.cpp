@@ -207,10 +207,22 @@ void CookieManager::getRawCookies(Vector<ParsedCookie*> &stackOfCookies, const K
     Vector<ParsedCookie*> cookieCandidates;
     Vector<CookieMap*> protocolsToSearch;
 
+    // Special Case: If a server sets a "secure" cookie over a non-secure channel and tries to access the cookie
+    // over a secure channel, it will not succeed because the secure protocol isn't mapped to the insecure protocol yet.
+    // Set the map to the non-secure version, so it'll search the mapping for a secure cookie.
+    CookieMap* targetMap = m_managerMap.get(requestURL.protocol());
+    if (!targetMap && isConnectionSecure) {
+        CookieLog("CookieManager - special case: secure protocol are not linked yet.");
+        if (requestURL.protocolIs("https"))
+            targetMap = m_managerMap.get("http");
+        else if (requestURL.protocolIs("wss"))
+            targetMap = m_managerMap.get("ws");
+    }
+
     if (specialCaseForLocal)
         copyValuesToVector(m_managerMap, protocolsToSearch);
     else {
-        protocolsToSearch.append(m_managerMap.get(requestURL.protocol()));
+        protocolsToSearch.append(targetMap);
         // FIXME: this is a hack for webworks apps; RFC 6265 says "Cookies do not provide isolation by scheme"
         // so we should not be checking protocols at all. See PR 135595
         if (m_shouldDumpAllCookies) {
