@@ -1,0 +1,15 @@
+<base href="..">
+<video autoplay controls></video>
+<p>Test that play event fires when "src" set with an autoplay attribute in a sandbox with allows-scripts.</p>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script>
+    testExpected("video.paused", true);
+
+    waitForEvent('play', function () {
+        logResult(true, "PLAY fired");
+        endTest();
+    } );
+
+    video.src = findMediaFile("video", "content/test");
+</script>

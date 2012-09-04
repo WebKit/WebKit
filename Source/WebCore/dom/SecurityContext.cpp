@@ -106,9 +106,10 @@ SandboxFlags SecurityContext::parseSandboxPolicy(const String& policy)
             flags &= ~SandboxOrigin;
         else if (equalIgnoringCase(sandboxToken, "allow-forms"))
             flags &= ~SandboxForms;
-        else if (equalIgnoringCase(sandboxToken, "allow-scripts"))
+        else if (equalIgnoringCase(sandboxToken, "allow-scripts")) {
             flags &= ~SandboxScripts;
-        else if (equalIgnoringCase(sandboxToken, "allow-top-navigation"))
+            flags &= ~SandboxAutomaticFeatures;
+        } else if (equalIgnoringCase(sandboxToken, "allow-top-navigation"))
             flags &= ~SandboxTopNavigation;
         else if (equalIgnoringCase(sandboxToken, "allow-popups"))
             flags &= ~SandboxPopups;

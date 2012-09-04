@@ -1,3 +1,29 @@
+2012-09-04  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Automatic features should work in sandboxed iframes if "allow-scripts" flag is set
+        https://bugs.webkit.org/show_bug.cgi?id=93961
+
+        Reviewed by Adam Barth.
+
+        Add layout tests to check that automatic features (video
+        autoplay and form control autofocus) are allowed / working
+        in sandboxed iframes if the "allow-scripts" flag is set.
+        This behavior is according to the latest specification at:
+        http://dev.w3.org/html5/spec/browsers.html#attr-iframe-sandbox-allow-same-origin
+
+        The tests to check that automatic features are blocked in
+        sandboxed iframes have been removed since they relied on
+        the "allow-scripts" flag to work.
+
+        * fast/forms/autofocus-in-sandbox-with-allow-scripts-expected.txt: Added.
+        * fast/forms/autofocus-in-sandbox-with-allow-scripts.html: Renamed from LayoutTests/fast/forms/no-autofocus-in-sandbox.html.
+        * fast/forms/no-autofocus-in-sandbox-expected.txt: Removed.
+        * media/auto-play-in-sandbox-with-allow-scripts-expected.txt: Added.
+        * media/auto-play-in-sandbox-with-allow-scripts.html: Renamed from LayoutTests/media/no-auto-play-in-sandbox.html.
+        * media/no-auto-play-in-sandbox-expected.txt: Removed.
+        * media/resources/auto-play-in-sandbox-with-allow-scripts-iframe.html: Added.
+        * media/resources/no-auto-play-in-sandbox-iframe.html: Removed.
+
 2012-09-04  Tim Horton  <timothy_horton@apple.com>
 
         ASSERTion failure when SVG element is removed from document and readded
