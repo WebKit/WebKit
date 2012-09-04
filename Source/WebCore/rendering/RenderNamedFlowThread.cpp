@@ -27,6 +27,7 @@
 #include "RenderNamedFlowThread.h"
 
 #include "FlowThreadController.h"
+#include "InspectorInstrumentation.h"
 #include "RenderRegion.h"
 #include "RenderView.h"
 #include "WebKitNamedFlow.h"
@@ -336,6 +337,7 @@ const AtomicString& RenderNamedFlowThread::flowThreadName() const
 void RenderNamedFlowThread::dispatchRegionLayoutUpdateEvent()
 {
     RenderFlowThread::dispatchRegionLayoutUpdateEvent();
+    InspectorInstrumentation::didUpdateRegionLayout(document(), m_namedFlow.get());
 
     if (!m_regionLayoutUpdateEventTimer.isActive() && m_namedFlow->hasEventListeners())
         m_regionLayoutUpdateEventTimer.startOneShot(0);

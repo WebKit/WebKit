@@ -1,3 +1,15 @@
+2012-09-04  Andrei Poenaru  <poenaru@adobe.com>
+
+        Web Inspector: Protocol Extension: Add "regionLayoutUpdate" event
+        https://bugs.webkit.org/show_bug.cgi?id=93443
+
+        Reviewed by Pavel Feldman.
+
+        Validate "regionLayoutUpdate" event.
+
+        * inspector/styles/protocol-css-regions-commands-expected.txt:
+        * inspector/styles/protocol-css-regions-commands.html:
+
 2012-09-04  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [Stable] [GTK] Crash in WebCore::HTMLSelectElement::selectedIndex
