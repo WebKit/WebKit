@@ -4886,6 +4886,10 @@ void Document::finishedParsing()
 
         InspectorInstrumentation::domContentLoadedEventFired(f.get());
     }
+
+    // The ElementAttributeData sharing cache is only used during parsing since
+    // that's when the majority of immutable attribute data will be created.
+    m_immutableAttributeDataCache.clear();
 }
 
 PassRefPtr<XPathExpression> Document::createExpression(const String& expression,
@@ -6171,5 +6175,74 @@ PassRefPtr<UndoManager> Document::undoManager()
     return m_undoManager;
 }
 #endif
+
+class ImmutableAttributeDataCacheKey {
+public:
+    ImmutableAttributeDataCacheKey()
+        : m_localName(0)
+        , m_attributes(0)
+        , m_attributeCount(0)
+    { }
+
+    ImmutableAttributeDataCacheKey(const AtomicString& localName, const Attribute* attributes, unsigned attributeCount)
+        : m_localName(localName.impl())
+        , m_attributes(attributes)
+        , m_attributeCount(attributeCount)
+    { }
+
+    bool operator!=(const ImmutableAttributeDataCacheKey& other) const
+    {
+        if (m_localName != other.m_localName)
+            return true;
+        if (m_attributeCount != other.m_attributeCount)
+            return true;
+        return memcmp(m_attributes, other.m_attributes, sizeof(Attribute) * m_attributeCount);
+    }
+
+    unsigned hash() const
+    {
+        unsigned attributeHash = StringHasher::hashMemory(m_attributes, m_attributeCount * sizeof(Attribute));
+        return WTF::intHash((static_cast<uint64_t>(m_localName->existingHash()) << 32 | attributeHash));
+    }
+
+private:
+    AtomicStringImpl* m_localName;
+    const Attribute* m_attributes;
+    unsigned m_attributeCount;
+};
+
+struct ImmutableAttributeDataCacheEntry {
+    ImmutableAttributeDataCacheKey key;
+    RefPtr<ElementAttributeData> value;
+};
+
+PassRefPtr<ElementAttributeData> Document::cachedImmutableAttributeData(const Element* element, const Vector<Attribute>& attributes)
+{
+    ASSERT(!attributes.isEmpty());
+
+    ImmutableAttributeDataCacheKey cacheKey(element->localName(), attributes.data(), attributes.size());
+    unsigned cacheHash = cacheKey.hash();
+
+    ImmutableAttributeDataCache::iterator cacheIterator = m_immutableAttributeDataCache.add(cacheHash, nullptr).iterator;
+    if (cacheIterator->second && cacheIterator->second->key != cacheKey)
+        cacheHash = 0;
+
+    RefPtr<ElementAttributeData> attributeData;
+    if (cacheHash && cacheIterator->second)
+        attributeData = cacheIterator->second->value;
+    else
+        attributeData = ElementAttributeData::createImmutable(attributes);
+
+    if (!cacheHash || cacheIterator->second)
+        return attributeData.release();
+
+    OwnPtr<ImmutableAttributeDataCacheEntry> newEntry = adoptPtr(new ImmutableAttributeDataCacheEntry);
+    newEntry->key = ImmutableAttributeDataCacheKey(element->localName(), const_cast<const ElementAttributeData*>(attributeData.get())->attributeItem(0), attributeData->length());
+    newEntry->value = attributeData;
+
+    cacheIterator->second = newEntry.release();
+
+    return attributeData.release();
+}
 
 } // namespace WebCore

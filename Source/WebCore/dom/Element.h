@@ -519,7 +519,7 @@ private:
     ElementRareData* elementRareData() const;
     ElementRareData* ensureElementRareData();
 
-    OwnPtr<ElementAttributeData> m_attributeData;
+    RefPtr<ElementAttributeData> m_attributeData;
 };
     
 inline Element* toElement(Node* node)

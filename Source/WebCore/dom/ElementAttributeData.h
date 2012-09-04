@@ -39,11 +39,11 @@ class MemoryObjectInfo;
 
 enum SynchronizationOfLazyAttribute { NotInSynchronizationOfLazyAttribute, InSynchronizationOfLazyAttribute };
 
-class ElementAttributeData {
+class ElementAttributeData : public RefCounted<ElementAttributeData> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<ElementAttributeData> create() { return adoptPtr(new ElementAttributeData); }
-    static PassOwnPtr<ElementAttributeData> createImmutable(const Vector<Attribute>&);
+    static PassRefPtr<ElementAttributeData> create() { return adoptRef(new ElementAttributeData); }
+    static PassRefPtr<ElementAttributeData> createImmutable(const Vector<Attribute>&);
     ~ElementAttributeData();
 
     void clearClass() { m_classNames.clear(); }
@@ -110,15 +110,15 @@ private:
     void clearAttributes(Element*);
 
     bool isMutable() const { return m_isMutable; }
-    PassOwnPtr<ElementAttributeData> makeMutable() const { return adoptPtr(new ElementAttributeData(*this)); }
+    PassRefPtr<ElementAttributeData> makeMutable() const { return adoptRef(new ElementAttributeData(*this)); }
+
+    unsigned m_isMutable : 1;
+    unsigned m_arraySize : 31;
 
     mutable RefPtr<StylePropertySet> m_inlineStyleDecl;
     mutable RefPtr<StylePropertySet> m_attributeStyle;
     mutable SpaceSplitString m_classNames;
     mutable AtomicString m_idForStyleResolution;
-
-    unsigned m_isMutable : 1;
-    unsigned m_arraySize : 31;
 
     union {
         Vector<Attribute, 4>* m_mutableAttributeVector;

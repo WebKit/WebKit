@@ -83,6 +83,7 @@ class DocumentWeakReference;
 class DynamicNodeListCacheBase;
 class EditingText;
 class Element;
+class ElementAttributeData;
 class EntityReference;
 class Event;
 class EventListener;
@@ -205,6 +206,9 @@ enum NodeListInvalidationType {
     InvalidateOnAnyAttrChange,
 };
 const int numNodeListInvalidationTypes = InvalidateOnAnyAttrChange + 1;
+
+struct ImmutableAttributeDataCacheEntry;
+typedef HashMap<unsigned, OwnPtr<ImmutableAttributeDataCacheEntry>, AlreadyHashed> ImmutableAttributeDataCache;
 
 class Document : public ContainerNode, public TreeScope, public ScriptExecutionContext {
 public:
@@ -1183,6 +1187,8 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
+    PassRefPtr<ElementAttributeData> cachedImmutableAttributeData(const Element*, const Vector<Attribute>&);
+
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
 
@@ -1567,6 +1573,8 @@ private:
 #if ENABLE(CSP_NEXT)
     RefPtr<DOMSecurityPolicy> m_domSecurityPolicy;
 #endif
+
+    ImmutableAttributeDataCache m_immutableAttributeDataCache;
 
 #ifndef NDEBUG
     bool m_didDispatchViewportPropertiesChanged;

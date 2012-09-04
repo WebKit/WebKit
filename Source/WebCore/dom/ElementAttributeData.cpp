@@ -39,10 +39,10 @@ static size_t immutableElementAttributeDataSize(unsigned count)
     return sizeof(ElementAttributeData) - sizeof(void*) + sizeof(Attribute) * count;
 }
 
-PassOwnPtr<ElementAttributeData> ElementAttributeData::createImmutable(const Vector<Attribute>& attributes)
+PassRefPtr<ElementAttributeData> ElementAttributeData::createImmutable(const Vector<Attribute>& attributes)
 {
     void* slot = WTF::fastMalloc(immutableElementAttributeDataSize(attributes.size()));
-    return adoptPtr(new (slot) ElementAttributeData(attributes));
+    return adoptRef(new (slot) ElementAttributeData(attributes));
 }
 
 ElementAttributeData::ElementAttributeData()
@@ -62,16 +62,20 @@ ElementAttributeData::ElementAttributeData(const Vector<Attribute>& attributes)
 }
 
 ElementAttributeData::ElementAttributeData(const ElementAttributeData& other)
-    : m_inlineStyleDecl(other.m_inlineStyleDecl)
+    : RefCounted<ElementAttributeData>()
+    , m_isMutable(true)
+    , m_arraySize(0)
+    , m_inlineStyleDecl(other.m_inlineStyleDecl)
     , m_attributeStyle(other.m_attributeStyle)
     , m_classNames(other.m_classNames)
     , m_idForStyleResolution(other.m_idForStyleResolution)
-    , m_isMutable(true)
-    , m_arraySize(0)
     , m_mutableAttributeVector(new Vector<Attribute, 4>)
 {
     // This copy constructor should only be used by makeMutable() to go from immutable to mutable.
     ASSERT(!other.m_isMutable);
+
+    // An immutable ElementAttributeData should never have a mutable inline StylePropertySet attached.
+    ASSERT(!other.m_inlineStyleDecl || !other.m_inlineStyleDecl->isMutable());
 
     const Attribute* otherBuffer = reinterpret_cast<const Attribute*>(&other.m_attributes);
     for (unsigned i = 0; i < other.m_arraySize; ++i)
