@@ -36,7 +36,7 @@ class BatteryController;
 class BatteryClientEfl : public WebCore::BatteryClient, public WebCore::BatteryProviderEflClient {
 public:
     explicit BatteryClientEfl(Evas_Object* view);
-    virtual ~BatteryClientEfl() { }
+    virtual ~BatteryClientEfl();
 
     // BatteryClient interface.
     virtual void startUpdating();

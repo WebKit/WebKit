@@ -32,6 +32,11 @@ BatteryClientEfl::BatteryClientEfl(Evas_Object* view)
 {
 }
 
+BatteryClientEfl::~BatteryClientEfl()
+{
+    m_provider.stopUpdating();
+}
+
 void BatteryClientEfl::startUpdating()
 {
     m_provider.startUpdating();

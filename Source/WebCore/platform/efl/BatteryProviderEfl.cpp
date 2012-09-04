@@ -59,6 +59,9 @@ void BatteryProviderEfl::startUpdating()
 
 void BatteryProviderEfl::stopUpdating()
 {
+    if (!m_timer.isActive())
+        return;
+
     m_timer.stop();
     e_ukit_shutdown();
     e_dbus_shutdown();
