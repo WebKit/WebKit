@@ -1,3 +1,16 @@
+2012-09-04  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Removing accidentally added executable properties on test files.
+
+        * platform/win/accessibility/canvas-description-and-role-expected.txt: Removed property svn:executable.
+        * platform/win/fast/canvas/canvas-strokeRect-alpha-shadow-expected.txt: Removed property svn:executable.
+        * platform/win/fast/css/image-resolution/image-resolution-expected.txt: Removed property svn:executable.
+        * platform/win/fast/css/image-set-setting-expected.txt: Removed property svn:executable.
+        * platform/win/fast/css/parse-border-image-repeat-null-crash-expected.txt: Removed property svn:executable.
+        * platform/win/fast/css/variables/build-supports-variables-expected.txt: Removed property svn:executable.
+        * platform/win/fast/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-line-expected.txt: Removed property svn:executable.
+        * platform/win/fast/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-style-expected.txt: Removed property svn:executable.
+
 2012-09-04  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Change the MediaStreamTrackList track added/removed signaling
