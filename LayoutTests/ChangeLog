@@ -1,3 +1,15 @@
+2012-09-04  Vincent Scheib  <scheib@chromium.org>
+
+        [Chromium] Allow asyncronous response of pointer lock requests in layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=95628
+
+        Reviewed by James Robinson.
+
+        Add testing for testRunner.setPointerLockWillRespondAsynchronously().
+
+        * pointer-lock/pointerlockchange-pointerlockerror-events-expected.txt:
+        * pointer-lock/pointerlockchange-pointerlockerror-events.html:
+
 2012-09-04  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Destroying a render named flow thread without unregistering left-over content nodes triggered an assertion.

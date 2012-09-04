@@ -124,7 +124,9 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("clearAllDatabases", &DRTTestRunner::clearAllDatabases);
     bindMethod("closeWebInspector", &DRTTestRunner::closeWebInspector);
 #if ENABLE(POINTER_LOCK)
+    bindMethod("didAcquirePointerLock", &DRTTestRunner::didAcquirePointerLock);
     bindMethod("didLosePointerLock", &DRTTestRunner::didLosePointerLock);
+    bindMethod("didNotAcquirePointerLock", &DRTTestRunner::didNotAcquirePointerLock);
 #endif
     bindMethod("disableAutoResizeMode", &DRTTestRunner::disableAutoResizeMode);
     bindMethod("disableImageLoading", &DRTTestRunner::disableImageLoading);
@@ -212,7 +214,7 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setPageVisibility", &DRTTestRunner::setPageVisibility);
     bindMethod("setPluginsEnabled", &DRTTestRunner::setPluginsEnabled);
 #if ENABLE(POINTER_LOCK)
-    bindMethod("setPointerLockWillFailAsynchronously", &DRTTestRunner::setPointerLockWillFailAsynchronously);
+    bindMethod("setPointerLockWillRespondAsynchronously", &DRTTestRunner::setPointerLockWillRespondAsynchronously);
     bindMethod("setPointerLockWillFailSynchronously", &DRTTestRunner::setPointerLockWillFailSynchronously);
 #endif
     bindMethod("setPopupBlockingEnabled", &DRTTestRunner::setPopupBlockingEnabled);
@@ -2327,15 +2329,27 @@ void DRTTestRunner::setHasCustomFullScreenBehavior(const CppArgumentList& argume
 }
 
 #if ENABLE(POINTER_LOCK)
+void DRTTestRunner::didAcquirePointerLock(const CppArgumentList&, CppVariant* result)
+{
+    m_shell->webViewHost()->didAcquirePointerLock();
+    result->setNull();
+}
+
+void DRTTestRunner::didNotAcquirePointerLock(const CppArgumentList&, CppVariant* result)
+{
+    m_shell->webViewHost()->didNotAcquirePointerLock();
+    result->setNull();
+}
+
 void DRTTestRunner::didLosePointerLock(const CppArgumentList&, CppVariant* result)
 {
     m_shell->webViewHost()->didLosePointerLock();
     result->setNull();
 }
 
-void DRTTestRunner::setPointerLockWillFailAsynchronously(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::setPointerLockWillRespondAsynchronously(const CppArgumentList&, CppVariant* result)
 {
-    m_shell->webViewHost()->setPointerLockWillFailAsynchronously();
+    m_shell->webViewHost()->setPointerLockWillRespondAsynchronously();
     result->setNull();
 }
 

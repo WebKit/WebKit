@@ -128,8 +128,10 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
 #endif
 
 #if ENABLE(POINTER_LOCK)
+    void didAcquirePointerLock();
+    void didNotAcquirePointerLock();
     void didLosePointerLock();
-    void setPointerLockWillFailAsynchronously() { m_pointerLockPlannedResult = PointerLockWillFailAsync; }
+    void setPointerLockWillRespondAsynchronously() { m_pointerLockPlannedResult = PointerLockWillRespondAsync; }
     void setPointerLockWillFailSynchronously() { m_pointerLockPlannedResult = PointerLockWillFailSync; }
 #endif
 
@@ -340,11 +342,6 @@ private:
     void resetScrollRect();
     void discardBackingStore();
 
-#if ENABLE(POINTER_LOCK)
-    void didAcquirePointerLock();
-    void didNotAcquirePointerLock();
-#endif
-
 #if ENABLE(MEDIA_STREAM)
     WebKit::WebUserMediaClientMock* userMediaClientMock();
     webkit_support::TestMediaStreamClient* testMediaStreamClient();
@@ -449,7 +446,7 @@ private:
     bool m_pointerLocked;
     enum {
         PointerLockWillSucceed,
-        PointerLockWillFailAsync,
+        PointerLockWillRespondAsync,
         PointerLockWillFailSync
     } m_pointerLockPlannedResult;
 #endif

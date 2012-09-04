@@ -416,9 +416,11 @@ public:
     void setAutomaticLinkDetectionEnabled(bool);
 
 #if ENABLE(POINTER_LOCK)
+    void didAcquirePointerLock(const CppArgumentList&, CppVariant*);
+    void didNotAcquirePointerLock(const CppArgumentList&, CppVariant*);
     void didLosePointerLock(const CppArgumentList&, CppVariant*);
     void setPointerLockWillFailSynchronously(const CppArgumentList&, CppVariant*);
-    void setPointerLockWillFailAsynchronously(const CppArgumentList&, CppVariant*);
+    void setPointerLockWillRespondAsynchronously(const CppArgumentList&, CppVariant*);
 #endif
 
     void workerThreadCount(CppVariant*);

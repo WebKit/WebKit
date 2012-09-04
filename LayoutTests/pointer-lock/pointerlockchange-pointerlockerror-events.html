@@ -82,10 +82,25 @@
             targetDiv1.webkitRequestPointerLock();
         },
         function () {
-            shouldBeDefined("testRunner.setPointerLockWillFailAsynchronously");
-            testRunner.setPointerLockWillFailAsynchronously();
+            shouldBeDefined("testRunner.setPointerLockWillRespondAsynchronously");
+            shouldBeDefined("testRunner.didAcquirePointerLock");
+            shouldBeDefined("testRunner.didNotAcquirePointerLock");
+            testRunner.setPointerLockWillRespondAsynchronously();
             expectOnlyErrorEvent("Lock with asynchronous failure.");
             targetDiv1.webkitRequestPointerLock();
+            doNextStep();
+        },
+        function () {
+            testRunner.didNotAcquirePointerLock();
+        },
+        function () {
+            testRunner.setPointerLockWillRespondAsynchronously();
+            expectOnlyChangeEvent("Lock with asynchronous success.");
+            targetDiv1.webkitRequestPointerLock();
+            doNextStep();
+        },
+        function () {
+            testRunner.didAcquirePointerLock();
         },
     ];
     doNextStep();

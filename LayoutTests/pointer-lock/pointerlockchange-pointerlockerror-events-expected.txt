@@ -30,9 +30,13 @@ PASS onwebkitpointerlockchange received after: Unlock targetIframe2 (handler for
 PASS testRunner.setPointerLockWillFailSynchronously is defined.
      Lock with synchronous failure.
 PASS onwebkitpointerlockerror received after: Lock with synchronous failure.
-PASS testRunner.setPointerLockWillFailAsynchronously is defined.
+PASS testRunner.setPointerLockWillRespondAsynchronously is defined.
+PASS testRunner.didAcquirePointerLock is defined.
+PASS testRunner.didNotAcquirePointerLock is defined.
      Lock with asynchronous failure.
 PASS onwebkitpointerlockerror received after: Lock with asynchronous failure.
+     Lock with asynchronous success.
+PASS onwebkitpointerlockchange received after: Lock with asynchronous success.
 PASS successfullyParsed is true
 
 TEST COMPLETE

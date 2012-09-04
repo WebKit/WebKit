@@ -1,3 +1,35 @@
+2012-09-04  Vincent Scheib  <scheib@chromium.org>
+
+        [Chromium] Allow asyncronous response of pointer lock requests in layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=95628
+
+        Reviewed by James Robinson.
+
+        Future tests need the ability to respond asynchronously that
+        pointer lock requests have been accepted or rejected. This patch
+        adds the following:
+            testRunner.setPointerLockWillRespondAsynchronously();
+            testRunner.didAcquirePointerLock();
+            testRunner.didNotAcquirePointerLock();
+
+        Tested in existing test:
+            pointerlockchange-pointerlockerror-events.html
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        (DRTTestRunner::didAcquirePointerLock):
+        (DRTTestRunner::didNotAcquirePointerLock):
+        (DRTTestRunner::setPointerLockWillRespondAsynchronously):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::requestPointerLock):
+        (WebViewHost::didAcquirePointerLock):
+        (WebViewHost::didNotAcquirePointerLock):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+        (WebViewHost::setPointerLockWillRespondAsynchronously):
+
 2012-09-03  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Change the focus when the web view is clicked in MiniBrowser and EWebLauncher
