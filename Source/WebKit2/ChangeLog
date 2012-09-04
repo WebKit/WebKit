@@ -1,3 +1,16 @@
+2012-09-04  Pekka Vuorela  <pvuorela@iki.fi>
+
+        [Qt] Remove use of deprecated QInputMethod method
+        https://bugs.webkit.org/show_bug.cgi?id=95741
+
+        Reviewed by Simon Hausmann.
+
+        Adapt from deprecated QInputMethod::visible() to isVisible().
+
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (WebKit::setInputPanelVisible):
+        (WebKit::QtWebPageEventHandler::inputPanelVisibleChanged):
+
 2012-09-04  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Allow child-frame content in hit-tests.

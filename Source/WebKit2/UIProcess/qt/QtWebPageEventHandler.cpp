@@ -398,7 +398,7 @@ void QtWebPageEventHandler::resetGestureRecognizers()
 
 static void setInputPanelVisible(bool visible)
 {
-    if (qApp->inputMethod()->visible() == visible)
+    if (qApp->inputMethod()->isVisible() == visible)
         return;
 
     qApp->inputMethod()->setVisible(visible);
@@ -410,7 +410,7 @@ void QtWebPageEventHandler::inputPanelVisibleChanged()
         return;
 
     // We only respond to the input panel becoming visible.
-    if (!m_webView->hasActiveFocus() || !qApp->inputMethod()->visible())
+    if (!m_webView->hasActiveFocus() || !qApp->inputMethod()->isVisible())
         return;
 
     const EditorState& editor = m_webPageProxy->editorState();
