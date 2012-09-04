@@ -203,7 +203,6 @@ fast/canvas/webgl/webgl-array-invalid-ranges.html
 fast/canvas/webgl/webgl-specific.html
 fast/harness/override-preferences-2.html
 fast/images/animated-gif-restored-from-bfcache.html
-fast/repaint/no-caret-repaint-in-non-content-editable-element.html
 fast/text/zero-font-size.html
 
 # WTR needs an implementation of applicationCacheDiskUsageForOrigin

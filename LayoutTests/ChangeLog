@@ -1,3 +1,14 @@
+2012-09-03  Kangil Han  <kangil.han@samsung.com>
+
+        [WK2][WTR] Implement WebKitEnableCaretBrowsing attribute in testRunner.overridePreference
+        https://bugs.webkit.org/show_bug.cgi?id=95576
+
+        Reviewed by Maciej Stachowiak.
+
+        Added a line of macro to implement WebKitEnableCaretBrowsing attribute in testRunner.overridePreference
+
+        * platform/wk2/Skipped: Removed fast/repaint/no-caret-repaint-in-non-content-editable-element.html test case.
+
 2012-09-03  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Unreviewed test expectations update after r127410
