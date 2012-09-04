@@ -1,3 +1,18 @@
+2012-09-04  Tien-Ren Chen  <trchen@chromium.org>
+
+        [chromium] Rename WebViewClient::handleDisambiguationPopup
+        https://bugs.webkit.org/show_bug.cgi?id=95529
+
+        Reviewed by Adam Barth.
+
+        Rename it to something more descriptive (WebViewClient::didTapMultipleTargets) before people start using it.
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::didTapMultipleTargets):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+        * tests/WebFrameTest.cpp:
+
 2012-09-03  Tao Bai  <michaelbai@chromium.org>
 
         Added ANDROID_GDBSERVER definition for Ant

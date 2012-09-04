@@ -718,7 +718,7 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
             findGoodTouchTargets(event.boundingBox, mainFrameImpl()->frame(), pageScaleFactor(), goodTargets);
             // FIXME: replace touch adjustment code when numberOfGoodTargets == 1?
             // Single candidate case is currently handled by: https://bugs.webkit.org/show_bug.cgi?id=85101
-            if (goodTargets.size() >= 2 && m_client && m_client->handleDisambiguationPopup(event, goodTargets))
+            if (goodTargets.size() >= 2 && m_client && m_client->didTapMultipleTargets(event, goodTargets))
                 return true;
         }
 

@@ -1080,7 +1080,7 @@ TEST_F(WebFrameTest, SelectRange)
 
 class DisambiguationPopupTestWebViewClient : public WebViewClient {
 public:
-    virtual bool handleDisambiguationPopup(const WebGestureEvent&, const WebVector<WebRect>& targetRects) OVERRIDE
+    virtual bool didTapMultipleTargets(const WebGestureEvent&, const WebVector<WebRect>& targetRects) OVERRIDE
     {
         EXPECT_GE(targetRects.size(), 2u);
         m_triggered = true;

@@ -288,7 +288,7 @@ public:
     virtual void didUpdateLayout() { }
 
     // Return true to swallow the input event if the embedder will start a disambiguation popup
-    virtual bool handleDisambiguationPopup(const WebGestureEvent&, const WebVector<WebRect>& targetRects) { return false; }
+    virtual bool didTapMultipleTargets(const WebGestureEvent&, const WebVector<WebRect>& targetRects) { return false; }
 
     // Session history -----------------------------------------------------
 
