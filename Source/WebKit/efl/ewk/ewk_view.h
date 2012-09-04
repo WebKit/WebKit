@@ -735,7 +735,7 @@ EAPI void         ewk_view_fixed_layout_size_get(const Evas_Object *o, Evas_Coor
  * use this one.
  *
  * @param o view object to change theme
- * @param path theme path, may be @c NULL to reset to the default theme
+ * @param path theme path
  */
 EAPI void         ewk_view_theme_set(Evas_Object *o, const char *path);
 

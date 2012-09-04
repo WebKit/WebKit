@@ -714,8 +714,6 @@ static void _ewk_view_initialize(Evas_Object* ewkView, Ewk_Context* context, WKP
     ewk_view_policy_client_attach(wkPage, ewkView);
     ewk_view_resource_load_client_attach(wkPage, ewkView);
     ewk_view_ui_client_attach(wkPage, ewkView);
-
-    ewk_view_theme_set(ewkView, DEFAULT_THEME_PATH"/default.edj");
 }
 
 static Evas_Object* _ewk_view_add_with_smart(Evas* canvas, Evas_Smart* smart)

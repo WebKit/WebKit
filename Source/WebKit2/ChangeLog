@@ -1,3 +1,16 @@
+2012-09-04  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Drop default theme concept
+        https://bugs.webkit.org/show_bug.cgi?id=94778
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformEfl.cmake: Removed DEFAULT_THEME_PATH definitions.
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_initialize): Removed default theme concept.
+        * UIProcess/API/efl/ewk_view.h:
+        Updated doxygen document not to mention default theme.
+
 2012-09-03  Kangil Han  <kangil.han@samsung.com>
 
         [WK2][WTR] Implement WebKitEnableCaretBrowsing attribute in testRunner.overridePreference
