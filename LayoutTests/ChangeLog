@@ -1,3 +1,27 @@
+2012-09-04  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Allow child-frame content in hit-tests.
+        https://bugs.webkit.org/show_bug.cgi?id=95204
+
+        Reviewed by Antonio Gomes.
+        Touch-Adjustment test by Kevin Ellis
+
+        Two new tests for hit-testing child frame content. One for testing it as an option to
+        nodesFromRect, and one testing its improvement on touch adjustment on iframe boundaries.
+
+        * fast/dom/nodesFromRect/nodesFromRect-child-frame-content-expected.txt: Added.
+        * fast/dom/nodesFromRect/nodesFromRect-child-frame-content.html: Added.
+        * fast/dom/nodesFromRect/resources/child-frame.html: Added.
+        * fast/dom/nodesFromRect/resources/nodesFromRect.js:
+        (check):
+        (checkShadowContent):
+        (checkRect):
+        (nodesFromRectAsString):
+        * touchadjustment/iframe-boundary-expected.txt: Added.
+        * touchadjustment/iframe-boundary.html: Added.
+        * touchadjustment/resources/inner-content-page.html: Added.
+        * touchadjustment/resources/inner-navigation-frame.html: Added.
+
 2012-09-04  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed tests fix.

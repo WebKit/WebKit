@@ -29,6 +29,8 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLFrameElementBase.h"
+#include "HitTestResult.h"
+#include "RenderLayer.h"
 #include "RenderView.h"
 
 namespace WebCore {
@@ -102,6 +104,35 @@ void RenderFrameBase::layoutWithFlattening(bool hasFixedWidth, bool hasFixedHeig
     ASSERT(!childRoot->firstChild() || !childRoot->firstChild()->firstChild() || !childRoot->firstChild()->firstChild()->needsLayout());
 
     setNeedsLayout(false);
+}
+
+bool RenderFrameBase::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
+{
+    if (request.allowsChildFrameContent()) {
+        FrameView* childFrameView = static_cast<FrameView*>(widget());
+        RenderView* childRoot = childFrameView ? static_cast<RenderView*>(childFrameView->frame()->contentRenderer()) : 0;
+
+        if (childRoot) {
+            LayoutPoint adjustedLocation = accumulatedOffset + location();
+            HitTestLocation newHitTestLocation(locationInContainer, -toLayoutSize(adjustedLocation));
+            HitTestRequest newHitTestRequest(request.type() | HitTestRequest::ChildFrameHitTest);
+
+            bool isInsideChildFrame = childRoot->layer()->hitTest(newHitTestRequest, newHitTestLocation, result);
+            if (isInsideChildFrame)
+                return true;
+
+            if (request.shouldTestChildFrameScrollBars()) {
+                // ScrollView scrollbars are not the same as RenderLayer scrollbars tested by RenderLayer::hitTestOverflowControls,
+                // so we need to test ScrollView scrollbars separately here.
+                // FIXME: Consider if this test could be done unconditionally.
+                Scrollbar* frameScrollbar = childFrameView->scrollbarAtPoint(newHitTestLocation.roundedPoint());
+                if (frameScrollbar)
+                    result.setScrollbar(frameScrollbar);
+            }
+        }
+    }
+
+    return RenderPart::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, action);
 }
 
 }

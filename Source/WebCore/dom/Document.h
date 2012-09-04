@@ -379,8 +379,9 @@ public:
      * @param ignoreClipping whether or not to ignore the root scroll frame when retrieving the element.
      *        If false, this method returns null for coordinates outside of the viewport.
      */
-    PassRefPtr<NodeList> nodesFromRect(int centerX, int centerY, unsigned topPadding, unsigned rightPadding,
-                                       unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, bool allowShadowContent) const;
+    PassRefPtr<NodeList> nodesFromRect(int centerX, int centerY,
+                                       unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding,
+                                       bool ignoreClipping, bool allowShadowContent, bool allowChildFrameContent = false) const;
     Element* elementFromPoint(int x, int y) const;
     PassRefPtr<Range> caretRangeFromPoint(int x, int y);
 

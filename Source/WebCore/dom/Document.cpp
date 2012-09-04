@@ -1384,7 +1384,7 @@ String Document::suggestedMIMEType() const
 // * making it receive a rect as parameter, i.e. nodesFromRect(x, y, w, h);
 // * making it receive the expading size of each direction separately,
 //   i.e. nodesFromRect(x, y, topSize, rightSize, bottomSize, leftSize);
-PassRefPtr<NodeList> Document::nodesFromRect(int centerX, int centerY, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, bool allowShadowContent) const
+PassRefPtr<NodeList> Document::nodesFromRect(int centerX, int centerY, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, bool allowShadowContent, bool allowChildFrameContent) const
 {
     // FIXME: Share code between this, elementFromPoint and caretRangeFromPoint.
     if (!renderer())
@@ -1408,6 +1408,8 @@ PassRefPtr<NodeList> Document::nodesFromRect(int centerX, int centerY, unsigned 
         return 0;
     if (allowShadowContent)
         type |= HitTestRequest::AllowShadowContent;
+    if (allowChildFrameContent)
+        type |= HitTestRequest::AllowChildFrameContent;
 
     HitTestRequest request(type);
 

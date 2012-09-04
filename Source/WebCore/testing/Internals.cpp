@@ -966,14 +966,14 @@ unsigned Internals::touchEventHandlerCount(Document* document, ExceptionCode& ec
 }
 
 PassRefPtr<NodeList> Internals::nodesFromRect(Document* document, int x, int y, unsigned topPadding, unsigned rightPadding,
-    unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, bool allowShadowContent, ExceptionCode& ec) const
+    unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, bool allowShadowContent, bool allowChildFrameContent, ExceptionCode& ec) const
 {
     if (!document || !document->frame() || !document->frame()->view()) {
         ec = INVALID_ACCESS_ERR;
         return 0;
     }
 
-    return document->nodesFromRect(x, y, topPadding, rightPadding, bottomPadding, leftPadding, ignoreClipping, allowShadowContent);
+    return document->nodesFromRect(x, y, topPadding, rightPadding, bottomPadding, leftPadding, ignoreClipping, allowShadowContent, allowChildFrameContent);
 }
 
 void Internals::emitInspectorDidBeginFrame()
