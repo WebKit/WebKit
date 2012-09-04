@@ -1,3 +1,14 @@
+2012-09-04  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Provide virtual dtor for DumpRenderTreeClient
+        https://bugs.webkit.org/show_bug.cgi?id=95769
+
+        Reviewed by Yong Li.
+
+        Also remove WTF prefixes.
+
+        * Api/DumpRenderTreeClient.h:
+
 2012-09-04  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         [BlackBerry] Add webplatform and browser to build info

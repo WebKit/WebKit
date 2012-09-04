@@ -42,6 +42,7 @@ class WebPage;
 
 class BLACKBERRY_EXPORT DumpRenderTreeClient {
 public:
+    virtual ~DumpRenderTreeClient() { }
     virtual void runTests() = 0;
 
     // FrameLoaderClient delegates
@@ -53,19 +54,19 @@ public:
     virtual void didFinishLoadForFrame(WebCore::Frame*) = 0;
     virtual void didFinishDocumentLoadForFrame(WebCore::Frame*) = 0;
     virtual void didClearWindowObjectInWorld(WebCore::DOMWrapperWorld*, JSGlobalContextRef, JSObjectRef windowObject) = 0;
-    virtual void didReceiveTitleForFrame(const WTF::String& title, WebCore::Frame*) = 0;
+    virtual void didReceiveTitleForFrame(const String& title, WebCore::Frame*) = 0;
     virtual void didDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&) = 0;
     virtual void didDispatchWillPerformClientRedirect() = 0;
     virtual void didHandleOnloadEventsForFrame(WebCore::Frame*) = 0;
 
     // ChromeClient delegates
-    virtual void addMessageToConsole(const WTF::String& message, unsigned int lineNumber, const WTF::String& sourceID) = 0;
-    virtual void runJavaScriptAlert(const WTF::String& message) = 0;
-    virtual bool runJavaScriptConfirm(const WTF::String& message) = 0;
-    virtual WTF::String runJavaScriptPrompt(const WTF::String& message, const WTF::String& defaultValue) = 0;
-    virtual bool runBeforeUnloadConfirmPanel(const WTF::String& message) = 0;
-    virtual void setStatusText(const WTF::String&) = 0;
-    virtual void exceededDatabaseQuota(WebCore::SecurityOrigin*, const WTF::String& name) = 0;
+    virtual void addMessageToConsole(const String& message, unsigned int lineNumber, const String& sourceID) = 0;
+    virtual void runJavaScriptAlert(const String& message) = 0;
+    virtual bool runJavaScriptConfirm(const String& message) = 0;
+    virtual String runJavaScriptPrompt(const String& message, const String& defaultValue) = 0;
+    virtual bool runBeforeUnloadConfirmPanel(const String& message) = 0;
+    virtual void setStatusText(const String&) = 0;
+    virtual void exceededDatabaseQuota(WebCore::SecurityOrigin*, const String& name) = 0;
     virtual bool allowsOpeningWindow() = 0;
     virtual void windowCreated(WebPage*) = 0;
 
@@ -80,7 +81,7 @@ public:
     virtual bool shouldDeleteDOMRange(WebCore::Range*) = 0;
     virtual bool shouldChangeSelectedDOMRangeToDOMRangeAffinityStillSelecting(WebCore::Range* fromRange, WebCore::Range* toRange, int affinity, bool stillSelecting) = 0;
     virtual bool shouldInsertNode(WebCore::Node*, WebCore::Range*, int insertAction) = 0;
-    virtual bool shouldInsertText(const WTF::String&, WebCore::Range*, int insertAction) = 0;
+    virtual bool shouldInsertText(const String&, WebCore::Range*, int insertAction) = 0;
     virtual bool isSelectTrailingWhitespaceEnabled() const = 0;
     virtual bool didReceiveAuthenticationChallenge(WebCore::Credential&) = 0;
 
