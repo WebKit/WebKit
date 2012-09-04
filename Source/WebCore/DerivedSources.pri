@@ -705,7 +705,8 @@ win_cmd_shell: preprocessIdls.commands = type nul > $$IDL_FILES_TMP $$EOC
 else: preprocessIdls.commands = cat /dev/null > $$IDL_FILES_TMP $$EOC
 for(binding, IDL_BINDINGS) {
     # We need "$$binding" instead of "$$binding ", because Windows' echo writes trailing whitespaces. (http://wkb.ug/88304)
-    preprocessIdls.commands += echo $$binding>> $$IDL_FILES_TMP $$EOC
+    # A space is omitted between "$$IDL_FILES_TMP" and "$$EOC" to also avoid writing trailing whitespace. (http://wkb.ug/95730)
+    preprocessIdls.commands += echo $$binding>> $$IDL_FILES_TMP$$EOC
 }
 preprocessIdls.commands += perl -I$$PWD/bindings/scripts $$preprocessIdls.script \
                                --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" \
