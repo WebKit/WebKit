@@ -104,7 +104,7 @@ public:
     virtual void notifyInRegionScrollingStartingPointChanged(const std::vector<Platform::ScrollViewBase*>&) = 0;
     virtual void notifyNoMouseMoveOrTouchMoveHandlers() = 0;
 
-    virtual void notifyDocumentOnLoad() = 0;
+    virtual void notifyDocumentOnLoad(bool) = 0;
 
     virtual void notifyWindowObjectCleared() = 0;
     virtual WebString invokeClientJavaScriptCallback(const char* const* args, unsigned numArgs) = 0;

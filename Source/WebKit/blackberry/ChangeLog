@@ -1,3 +1,17 @@
+2012-09-04  George Staikos  <staikos@webkit.org>
+
+        [BlackBerry] pass isMainFrame() through to notifyDocumentOnLoad()
+        https://bugs.webkit.org/show_bug.cgi?id=95766
+
+        Reviewed by Rob Buis.
+
+        Passing the frame status through will allow the client to make better
+        decisions about how to act on the onload.
+
+        * Api/WebPageClient.h:
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidHandleOnloadEvents):
+
 2012-09-04  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Provide virtual dtor for DumpRenderTreeClient
