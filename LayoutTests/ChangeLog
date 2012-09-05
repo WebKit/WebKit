@@ -1,3 +1,11 @@
+2012-09-05  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        Adding a platform specififc baseline after r127534.
+
+        * platform/efl/fast/innerHTML/innerHTML-iframe-expected.txt: Added.
+
 2012-09-05  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Provide implementation for WebFrameNetworkingContext
