@@ -1,3 +1,28 @@
+2012-09-05  Andy Chen  <andchen@rim.com>
+
+        [BlackBerry] Implement number of matches and current active match index for find-on-page
+        https://bugs.webkit.org/show_bug.cgi?id=95801
+
+        Reviewed by Antonio Gomes.
+
+        - Calculate current match index for find-on-page
+        - Notify client when number of matches and current match index update.
+        PR 162090 162091.
+        Internally reviewed by Mike Fenton and Joe Mason
+
+        * Api/WebPageClient.h:
+        * WebKitSupport/InPageSearchManager.cpp:
+        (BlackBerry::WebKit::InPageSearchManager::DeferredScopeStringMatches::DeferredScopeStringMatches):
+        (BlackBerry::WebKit::InPageSearchManager::DeferredScopeStringMatches::doTimeout):
+        (InPageSearchManager::DeferredScopeStringMatches):
+        (BlackBerry::WebKit::InPageSearchManager::findNextString):
+        (BlackBerry::WebKit::InPageSearchManager::findAndMarkText):
+        (BlackBerry::WebKit::InPageSearchManager::scopeStringMatches):
+        (BlackBerry::WebKit::InPageSearchManager::scopeStringMatchesSoon):
+        (BlackBerry::WebKit::InPageSearchManager::callScopeStringMatches):
+        * WebKitSupport/InPageSearchManager.h:
+        (InPageSearchManager):
+
 2012-09-04  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] FatFingers::cachingStrategy uses incorrect enum value

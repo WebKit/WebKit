@@ -273,6 +273,7 @@ public:
 
     virtual void requestUserMedia(const Platform::WebUserMediaRequest&) = 0;
     virtual void cancelUserMediaRequest(const Platform::WebUserMediaRequest&) = 0;
+    virtual void updateFindStringResult(int numMatches, int currentIndex) = 0;
 };
 } // namespace WebKit
 } // namespace BlackBerry
