@@ -2173,6 +2173,7 @@ editing/style/apply-style-atomic.html
 inspector/timeline/timeline-decode-resize.html
 
 # Flaky inspector tests
+# https://bugs.webkit.org/show_bug.cgi?id=95802
 http/tests/inspector/appcache/appcache-manifest-with-non-existing-file.html
 http/tests/inspector/console-resource-errors.html
 http/tests/inspector/network/network-initiator-from-console.html
@@ -2182,3 +2183,11 @@ inspector/profiler/heap-snapshot.html
 inspector/profiler/memory-instrumentation-cached-images.html
 inspector/styles/media-queries.html
 inspector/styles/region-style-crash.html
+
+# Flaky http/tests/security tests
+# https://bugs.webkit.org/show_bug.cgi?id=95803
+http/tests/security/local-image-from-remote-whitelisted.html
+http/tests/security/object-literals.html
+http/tests/security/script-with-failed-cors-check-fails-to-load.html
+http/tests/security/xss-DENIED-mime-type-execute-as-html.html
+http/tests/security/xss-DENIED-xsl-external-entity.xml
