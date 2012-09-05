@@ -1,3 +1,15 @@
+2012-09-04  Kangil Han  <kangil.han@samsung.com>
+
+        [WK2] Use explicit constructor in InjectedBundle.
+        https://bugs.webkit.org/show_bug.cgi?id=95746
+
+        Reviewed by Sam Weinig.
+
+        Added explicit keyword in constructor of InjectedBundle in order to avoid implicit type conversion.
+
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+
 2012-09-03  Sam Weinig  <sam@webkit.org>
 
         Part 1 of removing PlatformString.h, move remaining functions to new homes

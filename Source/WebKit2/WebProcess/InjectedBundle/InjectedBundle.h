@@ -166,7 +166,7 @@ public:
     void setPageVisibilityState(WebPage*, int state, bool isInitialState);
 
 private:
-    InjectedBundle(const String&);
+    explicit InjectedBundle(const String&);
 
     virtual Type type() const { return APIType; }
 
