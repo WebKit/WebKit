@@ -789,7 +789,7 @@ GENERATORS += inspectorBackendCommands
 inspectorOverlayPage.output = InspectorOverlayPage.h
 inspectorOverlayPage.input = INSPECTOR_OVERLAY_PAGE
 inspectorOverlayPage.commands = perl $$PWD/inspector/xxd.pl InspectorOverlayPage_html ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
-injectedScriptSource.add_output_to_sources = false
+inspectorOverlayPage.add_output_to_sources = false
 GENERATORS += inspectorOverlayPage
 
 # GENERATOR 2-a: inspector injected script source compiler
