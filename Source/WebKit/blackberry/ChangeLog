@@ -1,3 +1,18 @@
+2012-09-05  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Do not release shared backingstore memory prematurely
+        https://bugs.webkit.org/show_bug.cgi?id=95841
+        PR #202517
+
+        Reviewed by George Staikos.
+
+        The BackingStore memory is shared by all web pages. We should check if
+        the current backingStore is active before create/release this shared memory.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStore::createBackingStoreMemory):
+        (BlackBerry::WebKit::BackingStore::releaseBackingStoreMemory):
+
 2012-09-05  Andy Chen  <andchen@rim.com>
 
         [BlackBerry] Implement number of matches and current active match index for find-on-page

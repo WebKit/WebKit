@@ -2706,12 +2706,14 @@ bool BackingStore::isDirectRenderingToWindow() const
 
 void BackingStore::createBackingStoreMemory()
 {
-    SurfacePool::globalSurfacePool()->createBuffers();
+    if (BackingStorePrivate::s_currentBackingStoreOwner == d->m_webPage)
+        SurfacePool::globalSurfacePool()->createBuffers();
 }
 
 void BackingStore::releaseBackingStoreMemory()
 {
-    SurfacePool::globalSurfacePool()->releaseBuffers();
+    if (BackingStorePrivate::s_currentBackingStoreOwner == d->m_webPage)
+        SurfacePool::globalSurfacePool()->releaseBuffers();
 }
 
 bool BackingStore::defersBlit() const
