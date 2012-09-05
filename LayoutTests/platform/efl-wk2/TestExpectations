@@ -228,7 +228,6 @@ BUGWKEFL : fast/css/bidi-override-in-anonymous-block.html = TEXT
 BUGWKEFL : fast/css/relative-positioned-block-crash.html = TEXT
 BUGWKEFL : fast/dom/Window/mozilla-focus-blur.html = TEXT
 BUGWKEFL : fast/dom/Window/timer-resume-on-navigation-back.html = TEXT
-BUGWKEFL : fast/dom/frame-loading-via-document-write.html = TEXT
 BUGWKEFL : fast/events/node-event-anchor-lock.html = TEXT
 BUGWKEFL : fast/events/pagehide-timeout.html = TEXT
 BUGWKEFL : fast/events/pagehide-xhr-open.html = TEXT

@@ -22,6 +22,9 @@
 
 #include "InjectedBundle.h"
 #include <Ecore.h>
+#include <JavaScriptCore/OpaqueJSString.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WTR {
 
@@ -56,7 +59,28 @@ void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
 
 JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
 {
-    return url;
+    String requestedUrl(url->characters(), url->length());
+    String resourceRoot;
+    String requestedRoot;
+
+    if (requestedUrl.find("LayoutTests") != notFound) {
+        // If the URL contains LayoutTests we need to remap that to
+        // LOCAL_RESOURCE_ROOT which is the path of the LayoutTests directory
+        // within the WebKit source tree.
+        requestedRoot = "/tmp/LayoutTests";
+        resourceRoot = getenv("LOCAL_RESOURCE_ROOT");
+    } else if (requestedUrl.find("tmp") != notFound) {
+        // If the URL is a child of /tmp we need to convert it to be a child
+        // DUMPRENDERTREE_TEMP replace tmp with DUMPRENDERTREE_TEMP
+        requestedRoot = "/tmp";
+        resourceRoot = getenv("DUMPRENDERTREE_TEMP");
+    }
+
+    size_t indexOfRootStart = requestedUrl.reverseFind(requestedRoot);
+    size_t indexOfSeparatorAfterRoot = indexOfRootStart + requestedRoot.length();
+    String fullPathToUrl = "file://" + resourceRoot + requestedUrl.substring(indexOfSeparatorAfterRoot);
+
+    return JSStringCreateWithUTF8CString(fullPathToUrl.utf8().data());
 }
 
 JSRetainPtr<JSStringRef> TestRunner::platformName()
