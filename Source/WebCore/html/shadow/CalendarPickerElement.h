@@ -32,15 +32,18 @@
 #define CalendarPickerElement_h
 
 #if ENABLE(CALENDAR_PICKER)
+
+#include "DateTimeChooser.h"
+#include "DateTimeChooserClient.h"
 #include "HTMLDivElement.h"
-#include "PagePopupClient.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
 class HTMLInputElement;
 class PagePopup;
 
-class CalendarPickerElement : public HTMLDivElement, public PagePopupClient {
+class CalendarPickerElement : public HTMLDivElement, public DateTimeChooserClient {
 public:
     static PassRefPtr<CalendarPickerElement> create(Document*);
     virtual ~CalendarPickerElement();
@@ -48,21 +51,19 @@ public:
     void closePopup();
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
 
+    // DateTimeChooserClient implementation.
+    virtual void didChooseValue(const String&) OVERRIDE;
+    virtual void didEndChooser() OVERRIDE;
+
 private:
     CalendarPickerElement(Document*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
     virtual void defaultEventHandler(Event*) OVERRIDE;
     virtual void detach() OVERRIDE;
 
-    // PagePopupClient functions:
-    virtual IntSize contentSize() OVERRIDE;
-    virtual void writeDocument(DocumentWriter&) OVERRIDE;
-    virtual void setValueAndClosePopup(int, const String&) OVERRIDE;
-    virtual void didClosePopup() OVERRIDE;
-
     HTMLInputElement* hostInput();
 
-    PagePopup* m_popup;
+    OwnPtr<DateTimeChooser> m_chooser;
 };
 
 }

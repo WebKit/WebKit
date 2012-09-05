@@ -42,6 +42,7 @@
 #include "Console.h"
 #include "Cursor.h"
 #include "DatabaseTracker.h"
+#include "DateTimeChooserImpl.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "ExternalPopupMenu.h"
@@ -701,6 +702,13 @@ PassOwnPtr<WebColorChooser> ChromeClientImpl::createWebColorChooser(WebColorChoo
     if (!client)
         return nullptr;
     return adoptPtr(client->createColorChooser(chooserClient, initialColor));
+}
+#endif
+
+#if ENABLE(CALENDAR_PICKER)
+PassOwnPtr<WebCore::DateTimeChooser> ChromeClientImpl::openDateTimeChooser(WebCore::DateTimeChooserClient* pickerClient, const WebCore::DateTimeChooserParameters& parameters)
+{
+    return adoptPtr(new DateTimeChooserImpl(this, pickerClient, parameters));
 }
 #endif
 

@@ -50,6 +50,8 @@ class PopupContainer;
 class PopupMenuClient;
 class RenderBox;
 class SecurityOrigin;
+class DateTimeChooser;
+class DateTimeChooserClient;
 struct WindowFeatures;
 }
 
@@ -143,6 +145,9 @@ public:
 #if ENABLE(INPUT_TYPE_COLOR)
     virtual PassOwnPtr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient*, const WebCore::Color&) OVERRIDE;
     PassOwnPtr<WebColorChooser> createWebColorChooser(WebColorChooserClient*, const WebColor&);
+#endif
+#if ENABLE(CALENDAR_PICKER)
+    virtual PassOwnPtr<WebCore::DateTimeChooser> openDateTimeChooser(WebCore::DateTimeChooserClient*, const WebCore::DateTimeChooserParameters&) OVERRIDE;
 #endif
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
     virtual void loadIconForFiles(const Vector<WTF::String>&, WebCore::FileIconLoader*);

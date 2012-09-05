@@ -28,6 +28,7 @@
 #include "config.h"
 #include "EmptyClients.h"
 
+#include "DateTimeChooser.h"
 #include "DocumentLoader.h"
 #include "FileChooser.h"
 #include "FormState.h"
@@ -98,6 +99,13 @@ PassRefPtr<SearchPopupMenu> EmptyChromeClient::createSearchPopupMenu(PopupMenuCl
 
 #if ENABLE(INPUT_TYPE_COLOR)
 PassOwnPtr<ColorChooser> EmptyChromeClient::createColorChooser(ColorChooserClient*, const Color&)
+{
+    return nullptr;
+}
+#endif
+
+#if ENABLE(CALENDAR_PICKER)
+PassOwnPtr<DateTimeChooser> EmptyChromeClient::openDateTimeChooser(DateTimeChooserClient*, const DateTimeChooserParameters&)
 {
     return nullptr;
 }

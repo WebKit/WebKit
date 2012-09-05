@@ -48,6 +48,8 @@ class NSResponder;
 namespace WebCore {
 
     class AccessibilityObject;
+    class DateTimeChooser;
+    class DateTimeChooserClient;
     class Element;
     class FileChooser;
     class FileIconLoader;
@@ -69,6 +71,7 @@ namespace WebCore {
     class GraphicsContext3D;
     class Widget;
 
+    struct DateTimeChooserParameters;
     struct FrameLoadRequest;
     struct ViewportArguments;
     struct WindowFeatures;
@@ -220,6 +223,10 @@ namespace WebCore {
 
 #if ENABLE(INPUT_TYPE_COLOR)
         virtual PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&) = 0;
+#endif
+
+#if ENABLE(CALENDAR_PICKER)
+        virtual PassOwnPtr<DateTimeChooser> openDateTimeChooser(DateTimeChooserClient*, const DateTimeChooserParameters&) = 0;
 #endif
 
         virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) = 0;

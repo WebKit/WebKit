@@ -337,6 +337,8 @@
             'platform/ThreadGlobalData.h',
             'platform/Timer.h',
             'platform/TreeShared.h',
+            'platform/DateTimeChooser.h',
+            'platform/DateTimeChooserClient.h',
             'platform/VisitedLinkStrategy.h',
             'platform/VisitedLinks.h',
             'platform/Widget.h',

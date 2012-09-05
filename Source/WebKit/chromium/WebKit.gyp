@@ -358,6 +358,8 @@
                 'src/BatteryClientImpl.h',
                 'src/BlobRegistryProxy.cpp',
                 'src/BlobRegistryProxy.h',
+                'src/DateTimeChooserImpl.cpp',
+                'src/DateTimeChooserImpl.h',
                 'src/ChromeClientImpl.cpp',
                 'src/ChromeClientImpl.h',
                 'src/ChromiumCurrentTime.cpp',
