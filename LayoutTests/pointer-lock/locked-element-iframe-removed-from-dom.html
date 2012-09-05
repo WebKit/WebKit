@@ -38,7 +38,7 @@
             expectNoEvents("Remove iframe & immediately lock target2. (iframe handler)", targetIframe1.contentDocument);
             targetIframe1.parentElement.removeChild(targetIframe1);
             targetDiv2.webkitRequestPointerLock();
-            shouldBe("document.webkitPointerLockElement", "targetDiv2");
+            shouldBe("document.webkitPointerLockElement", "null");
             // doNextStep called by event handler.
         },
     ];

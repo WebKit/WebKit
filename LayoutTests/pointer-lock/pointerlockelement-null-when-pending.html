@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../http/tests/resources/js-test-pre.js"></script>
+<script src="../http/tests/resources/pointer-lock/pointer-lock-test-harness.js"></script>
+</head>
+<body>
+<div>
+  <div id="target1"></div>
+</div>
+<script>
+    description("Test pointerLockElement is null when a lock is pending.")
+    window.jsTestIsAsync = true;
+
+    targetDiv1 = document.getElementById("target1");
+
+    todo = [
+        function () {
+            shouldBe("document.webkitPointerLockElement", "null");
+            testRunner.setPointerLockWillRespondAsynchronously();
+            expectOnlyChangeEvent("Lock.");
+            targetDiv1.webkitRequestPointerLock();
+            doNextStep();
+        },
+        function () {
+            shouldBe("document.webkitPointerLockElement", "null");
+            testRunner.didAcquirePointerLock();
+            // doNextStep called from event handler set with expect...
+        },
+        function () {
+            shouldBe("document.webkitPointerLockElement", "targetDiv1");
+            expectOnlyChangeEvent("Unlock.");
+            document.webkitExitPointerLock();
+            shouldBe("document.webkitPointerLockElement", "targetDiv1");
+            // doNextStep called from event handler set with expect...
+        },
+        function () {
+            shouldBe("document.webkitPointerLockElement", "null");
+            doNextStep();
+        },
+    ];
+    doNextStep();
+</script>
+<script src="../http/tests/resources/js-test-post.js"></script>
+</body>
+</html>

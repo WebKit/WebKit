@@ -1,3 +1,17 @@
+2012-09-05  Vincent Scheib  <scheib@chromium.org>
+
+        webkitPointerLockElement returns null when pointer lock request is pending.
+        https://bugs.webkit.org/show_bug.cgi?id=91186
+
+        Reviewed by Dimitri Glazkov.
+
+        * pointer-lock/locked-element-iframe-removed-from-dom-expected.txt:
+        * pointer-lock/locked-element-iframe-removed-from-dom.html:
+             Updated to reflect new behavior of null returned when lock is pending.
+        * pointer-lock/pointerlockelement-null-when-pending-expected.txt: Added.
+        * pointer-lock/pointerlockelement-null-when-pending.html: Added.
+             New test specifically for testing null return when lock is pending.
+
 2012-09-05  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Provide implementation for TestRunner::pathToLocalResource()

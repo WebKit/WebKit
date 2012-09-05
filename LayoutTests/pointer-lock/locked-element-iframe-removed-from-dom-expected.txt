@@ -10,7 +10,7 @@ PASS targetIframe1.contentDocument.webkitPointerLockElement is targetDiv1
 PASS targetDiv1.parentElement.parentElement is targetIframe1.contentDocument.body
      Remove iframe & immediately lock target2. (main document handler)
      Remove iframe & immediately lock target2. (iframe handler)
-PASS document.webkitPointerLockElement is targetDiv2
+PASS document.webkitPointerLockElement is null
 PASS onwebkitpointerlockchange received after: Remove iframe & immediately lock target2. (main document handler)
 PASS successfullyParsed is true
 

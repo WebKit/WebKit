@@ -48,6 +48,7 @@ public:
     void requestPointerUnlock();
     void elementRemoved(Element*);
     void documentDetached(Document*);
+    bool lockPending() const;
     Element* element() const;
 
     void didAcquirePointerLock();
@@ -57,9 +58,11 @@ public:
 
 private:
     explicit PointerLockController(Page*);
+    void clearElement();
     void enqueueEvent(const AtomicString& type, Element*);
     void enqueueEvent(const AtomicString& type, Document*);
     Page* m_page;
+    bool m_lockPending;
     RefPtr<Element> m_element;
     RefPtr<Document> m_documentOfRemovedElementWhileWaitingForUnlock;
 };
