@@ -1,17 +1,11 @@
 End of test
 Before:
 AXRole: document frame 
-    AXRole: link 
-    AXRole: section 
-    AXRole: panel 
-    AXRole: paragraph 
-    AXRole: paragraph 
+    AXRole: link AXValue: 
+    AXRole: section AXValue: End of test
 After:
 AXRole: document frame 
-    AXRole: section 
-    AXRole: panel 
-    AXRole: paragraph 
-    AXRole: paragraph 
+    AXRole: section AXValue: End of test
 This can cause a crash.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
