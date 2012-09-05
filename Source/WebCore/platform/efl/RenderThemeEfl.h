@@ -73,7 +73,7 @@ enum FormType { // KEEP IN SYNC WITH edjeGroupFromFormType()
 
 class RenderThemeEfl : public RenderTheme {
 private:
-    RenderThemeEfl(Page*);
+    explicit RenderThemeEfl(Page*);
     ~RenderThemeEfl();
 
 public:
