@@ -609,11 +609,8 @@ RegisterID* PostfixResolveNode::emitBytecode(BytecodeGenerator& generator, Regis
     ResolveResult resolveResult = generator.resolve(m_ident);
 
     if (RegisterID* local = resolveResult.local()) {
-        if (resolveResult.isReadOnly()) {
-            if (dst == generator.ignoredResult())
-                return 0;
+        if (resolveResult.isReadOnly())
             return generator.emitToJSNumber(generator.finalDestination(dst), local);
-        }
         if (dst == generator.ignoredResult())
             return emitPreIncOrDec(generator, local, m_operator);
         return emitPostIncOrDec(generator, generator.finalDestination(dst), local, m_operator);
@@ -796,9 +793,10 @@ RegisterID* PrefixResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
     if (RegisterID* local = resolveResult.local()) {
         if (resolveResult.isReadOnly()) {
             if (dst == generator.ignoredResult())
-                return 0;
-            RefPtr<RegisterID> r0 = generator.emitLoad(generator.finalDestination(dst), (m_operator == OpPlusPlus) ? 1.0 : -1.0);
-            return generator.emitBinaryOp(op_add, r0.get(), local, r0.get(), OperandTypes());
+                return generator.emitToJSNumber(generator.newTemporary(), local);
+            RefPtr<RegisterID> r0 = generator.emitLoad(generator.tempDestination(dst), (m_operator == OpPlusPlus) ? 1.0 : -1.0);
+            generator.emitBinaryOp(op_add, r0.get(), local, r0.get(), OperandTypes());
+            return generator.moveToDestinationIfNeeded(dst, r0.get());
         }
         emitPreIncOrDec(generator, local, m_operator);
         return generator.moveToDestinationIfNeeded(dst, local);

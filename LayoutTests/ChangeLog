@@ -1,3 +1,25 @@
+2012-09-04  Gavin Barraclough  <barraclough@apple.com>
+
+        inc/dec behave incorrectly operating on a resolved const
+        https://bugs.webkit.org/show_bug.cgi?id=95815
+
+        Reviewed by Geoff Garen.
+
+        Added test cases.
+
+        * fast/js/inc-const-valueOf-expected.txt: Added.
+        * fast/js/inc-const-valueOf.html: Added.
+        * fast/js/script-tests/inc-const-valueOf.js: Added.
+        (testPostIncConstVarWithIgnoredResult.const.a.valueOf):
+        (testPostIncConstVarWithIgnoredResult):
+            test that 'a++' results in a valueOf call, where 'a' is const.
+        (testPreIncConstVarWithIgnoredResult.const.a.valueOf):
+        (testPreIncConstVarWithIgnoredResult):
+            test that '++a' results in a valueOf call, where 'a' is const.
+        (testPreIncConstVarWithAssign.const.a.valueOf):
+        (testPreIncConstVarWithAssign):
+            test that 'b = ++a' does not erroneously update 'b', where 'a' is const.
+
 2012-09-04  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update

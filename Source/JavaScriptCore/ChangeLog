@@ -1,3 +1,25 @@
+2012-09-04  Gavin Barraclough  <barraclough@apple.com>
+
+        inc/dec behave incorrectly operating on a resolved const
+        https://bugs.webkit.org/show_bug.cgi?id=95815
+
+        Reviewed by Geoff Garen.
+
+        There are two bugs here.
+
+        (1) When the value being incremented is const, and the result is ignored, we assume this cannot be observed, and emit no code.
+            However if the value being incremented is not a primitive & has a valueOf conversion, then this should be being called.
+
+        (2) In the case of a pre-increment of a const value where the result is not ignored, we'll move +/-1 to the destination, then
+            add the resolved const value being incremented to this. This is problematic if the destination is a local, and the const
+            value being incremented has a valueOf conversion that throws - the destination will be modified erroneously. Instead, we
+            need to use a temporary location.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PostfixResolveNode::emitBytecode):
+        (JSC::PrefixResolveNode::emitBytecode):
+            - always at least perform a toNumber conversion, use tempDestination when reducing inc/dec to an add +/-1.
+
 2012-09-04  Filip Pizlo  <fpizlo@apple.com>
 
         DFG GetByVal for JSArrays shouldn't OSR exit every time that the index is out of bound
