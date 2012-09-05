@@ -1,3 +1,10 @@
+2012-09-05  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=95827
+
+        * platform/qt/Skipped: skip failing test after r127534.
+
 2012-09-05  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
