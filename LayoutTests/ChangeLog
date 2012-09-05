@@ -1,3 +1,118 @@
+2012-09-04  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update
+
+        Rebaseline vertical-writing tests.
+
+        * platform/chromium-linux-x86/fast/writing-mode/border-vertical-lr-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/writing-mode/japanese-lr-selection-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/writing-mode/japanese-ruby-vertical-lr-expected.png: Added.
+        * platform/chromium-linux-x86/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/writing-mode/japanese-ruby-vertical-rl-expected.png: Added.
+        * platform/chromium-linux-x86/fast/writing-mode/japanese-ruby-vertical-rl-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/writing-mode/vertical-font-fallback-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/writing-mode/broken-ideographic-font-expected.txt.
+        * platform/chromium-linux/fast/writing-mode/Kusa-Makura-background-canvas-expected.png: Added.
+        * platform/chromium-linux/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt: Added.
+        * platform/chromium-linux/fast/writing-mode/border-vertical-lr-expected.png: Added.
+        * platform/chromium-linux/fast/writing-mode/border-vertical-lr-expected.txt: Added.
+        * platform/chromium-linux/fast/writing-mode/japanese-lr-selection-expected.png: Added.
+        * platform/chromium-linux/fast/writing-mode/japanese-lr-selection-expected.txt: Added.
+        * platform/chromium-linux/fast/writing-mode/japanese-rl-selection-expected.png: Added.
+        * platform/chromium-linux/fast/writing-mode/japanese-rl-selection-expected.txt: Added.
+        * platform/chromium-linux/fast/writing-mode/vertical-font-fallback-expected.png: Added.
+        * platform/chromium-linux/fast/writing-mode/vertical-font-fallback-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/writing-mode/broken-ideographic-font-expected.txt.
+        * platform/chromium-mac-snowleopard/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt: Copied from LayoutTests/platform/chromium-mac/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt.
+        * platform/chromium-mac/fast/writing-mode/japanese-lr-selection-expected.png: Added.
+        * platform/chromium-mac/fast/writing-mode/japanese-rl-selection-expected.png: Added.
+        * platform/chromium-mac/fast/writing-mode/japanese-ruby-vertical-lr-expected.png:
+        * platform/chromium-mac/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt:
+        * platform/chromium-mac/fast/writing-mode/japanese-ruby-vertical-rl-expected.png:
+        * platform/chromium-mac/fast/writing-mode/japanese-ruby-vertical-rl-expected.txt:
+        * platform/chromium-win-xp/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt.
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt.
+        * platform/chromium-win-xp/fast/dynamic/text-combine-expected.png:
+        * platform/chromium-win-xp/fast/dynamic/text-combine-expected.txt: Added.
+        * platform/chromium-win-xp/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/chromium-win-xp/fast/ruby/base-shorter-than-text-expected.png:
+        * platform/chromium-win-xp/fast/ruby/base-shorter-than-text-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/ruby/base-shorter-than-text-expected.txt.
+        * platform/chromium-win-xp/fast/text/international/text-spliced-font-expected.png:
+        * platform/chromium-win-xp/fast/text/international/text-spliced-font-expected.txt: Added.
+        * platform/chromium-win-xp/fast/writing-mode/Kusa-Makura-background-canvas-expected.png: Added.
+        * platform/chromium-win-xp/fast/writing-mode/border-vertical-lr-expected.txt: Added.
+        * platform/chromium-win-xp/fast/writing-mode/broken-ideographic-font-expected.txt:
+        * platform/chromium-win-xp/fast/writing-mode/fallback-orientation-expected.png:
+        * platform/chromium-win-xp/fast/writing-mode/japanese-lr-selection-expected.txt: Added.
+        * platform/chromium-win-xp/fast/writing-mode/japanese-lr-text-expected.png: Removed.
+        * platform/chromium-win-xp/fast/writing-mode/japanese-lr-text-expected.txt: Copied from LayoutTests/platform/chromium-linux/fast/writing-mode/japanese-rl-text-with-broken-font-expected.txt.
+        * platform/chromium-win-xp/fast/writing-mode/japanese-rl-text-expected.png: Removed.
+        * platform/chromium-win-xp/fast/writing-mode/japanese-rl-text-expected.txt: Renamed from LayoutTests/platform/chromium-linux/fast/writing-mode/japanese-rl-text-with-broken-font-expected.txt.
+        * platform/chromium-win-xp/fast/writing-mode/japanese-ruby-vertical-lr-expected.png:
+        * platform/chromium-win-xp/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt: Added.
+        * platform/chromium-win-xp/fast/writing-mode/japanese-ruby-vertical-rl-expected.png:
+        * platform/chromium-win-xp/fast/writing-mode/vertical-align-table-baseline-expected.png:
+        * platform/chromium-win-xp/fast/writing-mode/vertical-font-fallback-expected.png: Added.
+        * platform/chromium-win-xp/fast/writing-mode/vertical-font-fallback-expected.txt: Copied from LayoutTests/platform/chromium-win-xp/fast/writing-mode/broken-ideographic-font-expected.txt.
+        * platform/chromium-win-xp/media/track/track-cue-rendering-vertical-expected.png:
+        * platform/chromium-win/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.png:
+        * platform/chromium-win/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt:
+        * platform/chromium-win/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.png:
+        * platform/chromium-win/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.png:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.png:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.png:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt:
+        * platform/chromium-win/fast/dynamic/text-combine-expected.png:
+        * platform/chromium-win/fast/dynamic/text-combine-expected.txt:
+        * platform/chromium-win/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/chromium-win/fast/ruby/base-shorter-than-text-expected.png:
+        * platform/chromium-win/fast/ruby/base-shorter-than-text-expected.txt:
+        * platform/chromium-win/fast/text/international/text-spliced-font-expected.png:
+        * platform/chromium-win/fast/text/international/text-spliced-font-expected.txt:
+        * platform/chromium-win/fast/writing-mode/Kusa-Makura-background-canvas-expected.png:
+        * platform/chromium-win/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt:
+        * platform/chromium-win/fast/writing-mode/border-vertical-lr-expected.png:
+        * platform/chromium-win/fast/writing-mode/border-vertical-lr-expected.txt:
+        * platform/chromium-win/fast/writing-mode/broken-ideographic-font-expected.png:
+        * platform/chromium-win/fast/writing-mode/broken-ideographic-font-expected.txt:
+        * platform/chromium-win/fast/writing-mode/fallback-orientation-expected.png:
+        * platform/chromium-win/fast/writing-mode/japanese-lr-selection-expected.png:
+        * platform/chromium-win/fast/writing-mode/japanese-lr-selection-expected.txt:
+        * platform/chromium-win/fast/writing-mode/japanese-lr-text-expected.png:
+        * platform/chromium-win/fast/writing-mode/japanese-lr-text-expected.txt:
+        * platform/chromium-win/fast/writing-mode/japanese-rl-selection-expected.png:
+        * platform/chromium-win/fast/writing-mode/japanese-rl-selection-expected.txt:
+        * platform/chromium-win/fast/writing-mode/japanese-rl-text-expected.png:
+        * platform/chromium-win/fast/writing-mode/japanese-rl-text-expected.txt:
+        * platform/chromium-win/fast/writing-mode/japanese-rl-text-with-broken-font-expected.png:
+        * platform/chromium-win/fast/writing-mode/japanese-rl-text-with-broken-font-expected.txt: Removed.
+        * platform/chromium-win/fast/writing-mode/japanese-ruby-vertical-lr-expected.png:
+        * platform/chromium-win/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt:
+        * platform/chromium-win/fast/writing-mode/japanese-ruby-vertical-rl-expected.png:
+        * platform/chromium-win/fast/writing-mode/japanese-ruby-vertical-rl-expected.txt:
+        * platform/chromium-win/fast/writing-mode/vertical-align-table-baseline-expected.png:
+        * platform/chromium-win/fast/writing-mode/vertical-font-fallback-expected.png: Added.
+        * platform/chromium-win/fast/writing-mode/vertical-font-fallback-expected.txt:
+        * platform/chromium-win/media/track/track-cue-rendering-vertical-expected.png:
+        * platform/chromium-win/media/track/track-cue-rendering-vertical-expected.txt:
+        * platform/chromium/TestExpectations:
+
 2012-09-04  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Some flaky media/video tests on Windows. Adding to skip list.
