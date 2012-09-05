@@ -1,3 +1,10 @@
+2012-09-04  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectatino update.
+
+        * platform/chromium/TestExpectations:
+        japanese-ruby-vertical-*.html might be flaky on Windows too.
+
 2012-09-04  Dirk Schulze  <krit@webkit.org>
 
         -webkit-clip-path does not apply origin for polygon()
