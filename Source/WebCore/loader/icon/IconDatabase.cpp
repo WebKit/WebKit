@@ -73,6 +73,12 @@ static const int updateTimerDelay = 5;
 
 static bool checkIntegrityOnOpen = false;
 
+#if PLATFORM(GTK)
+// We are not interested in icons that have been unused for more than
+// 30 days, delete them even if they have not been explicitly released.
+static const int notUsedIconExpirationTime = 60*60*24*30;
+#endif
+
 #if !LOG_DISABLED || !ERROR_DISABLED
 static String urlForLogging(const String& url)
 {
@@ -1257,7 +1263,17 @@ void IconDatabase::performURLImport()
 {
     ASSERT_ICON_SYNC_THREAD();
 
-    SQLiteStatement query(m_syncDB, "SELECT PageURL.url, IconInfo.url, IconInfo.stamp FROM PageURL INNER JOIN IconInfo ON PageURL.iconID=IconInfo.iconID;");
+# if PLATFORM(GTK)
+    // Do not import icons not used in the last 30 days. They will be automatically pruned later if nobody retains them.
+    // Note that IconInfo.stamp is only set when the icon data is retrieved from the server (and thus is not updated whether
+    // we use it or not). This code works anyway because the IconDatabase downloads icons again if they are older than 4 days,
+    // so if the timestamp goes back in time more than those 30 days we can be sure that the icon was not used at all.
+    String importQuery = String::format("SELECT PageURL.url, IconInfo.url, IconInfo.stamp FROM PageURL INNER JOIN IconInfo ON PageURL.iconID=IconInfo.iconID WHERE IconInfo.stamp > %.0f;", floor(currentTime() - notUsedIconExpirationTime));
+#else
+    String importQuery("SELECT PageURL.url, IconInfo.url, IconInfo.stamp FROM PageURL INNER JOIN IconInfo ON PageURL.iconID=IconInfo.iconID;");
+#endif
+
+    SQLiteStatement query(m_syncDB, importQuery);
     
     if (query.prepare() != SQLResultOk) {
         LOG_ERROR("Unable to prepare icon url import query");
