@@ -1,3 +1,17 @@
+2012-09-05  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Ignore-metrics includes scroll offsets.
+        https://bugs.webkit.org/show_bug.cgi?id=95845
+
+        Reviewed by Dirk Pranke.
+
+        Strip scroll-offsets the same way scroll-height and scroll-width is stripped.
+
+        * Scripts/old-run-webkit-tests:
+        (stripMetrics):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (DriverOutput):
+
 2012-09-05  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed test fix.

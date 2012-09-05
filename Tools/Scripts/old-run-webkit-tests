@@ -2462,12 +2462,14 @@ sub stripMetrics($$)
         $result =~ s/\([0-9]+px/px/g;
         $result =~ s/ *" *\n +" */ /g;
         $result =~ s/" +$/"/g;
-
         $result =~ s/- /-/g;
         $result =~ s/\n( *)"\s+/\n$1"/g;
         $result =~ s/\s+"\n/"\n/g;
         $result =~ s/scrollWidth [0-9]+/scrollWidth/g;
         $result =~ s/scrollHeight [0-9]+/scrollHeight/g;
+        $result =~ s/scrollX [0-9]+/scrollX/g;
+        $result =~ s/scrollY [0-9]+/scrollY/g;
+        $result =~ s/scrolled to [0-9]+,[0-9]+/scrolled/g;
     }
 
     return ($actual, $expected);

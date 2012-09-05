@@ -66,9 +66,13 @@ class DriverOutput(object):
     strip_patterns.append((re.compile(' *" *\n +" *'), ' '))
     strip_patterns.append((re.compile('" +$'), '"'))
     strip_patterns.append((re.compile('- '), '-'))
+    strip_patterns.append((re.compile('\n( *)"\s+'), '\n\g<1>"'))
     strip_patterns.append((re.compile('\s+"\n'), '"\n'))
     strip_patterns.append((re.compile('scrollWidth [0-9]+'), 'scrollWidth'))
     strip_patterns.append((re.compile('scrollHeight [0-9]+'), 'scrollHeight'))
+    strip_patterns.append((re.compile('scrollX [0-9]+'), 'scrollX'))
+    strip_patterns.append((re.compile('scrollY [0-9]+'), 'scrollY'))
+    strip_patterns.append((re.compile('scrolled to [0-9]+,[0-9]+'), 'scrolled'))
 
     def __init__(self, text, image, image_hash, audio, crash=False,
             test_time=0, timeout=False, error='', crashed_process_name='??',
