@@ -1,3 +1,46 @@
+2012-09-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Merge prefix/postfix nodes
+        https://bugs.webkit.org/show_bug.cgi?id=95898
+
+        Reviewed by Geoff Garen.
+
+        Simplify the AST.
+        This will also mean we have access to m_subscriptHasAssignments when generating a prefix/postfix op applied to a bracket access.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PostfixNode::emitResolve):
+            - was PostfixResolveNode::emitBytecode
+        (JSC::PostfixNode::emitBracket):
+            - was PostfixBracketNode::emitBytecode
+        (JSC::PostfixNode::emitDot):
+            - was PostfixDotNode::emitBytecode
+        (JSC::PostfixNode::emitBytecode):
+            - was PostfixErrorNode::emitBytecode, call resolve/bracket/dot version as appropriate.
+        (JSC::PrefixNode::emitResolve):
+            - was PrefixResolveNode::emitBytecode
+        (JSC::PrefixNode::emitBracket):
+            - was PrefixBracketNode::emitBytecode
+        (JSC::PrefixNode::emitDot):
+            - was PrefixDotNode::emitBytecode
+        (JSC::PrefixNode::emitBytecode):
+            - was PrefixErrorNode::emitBytecode, call resolve/bracket/dot version as appropriate.
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::makePrefixNode):
+            - Just makes a PrefixNode!
+        (JSC::ASTBuilder::makePostfixNode):
+            - Just makes a PostfixNode!
+        * parser/NodeConstructors.h:
+        (JSC::PostfixNode::PostfixNode):
+            - Added, merge of PostfixResolveNode/PostfixBracketNode/PostfixDotNode/PostfixErrorNode.
+        (JSC::PrefixNode::PrefixNode):
+            - Added, merge of PrefixResolveNode/PrefixBracketNode/PrefixDotNode/PrefixErrorNode.
+        * parser/Nodes.h:
+        (PostfixNode):
+            - Added, merge of PostfixResolveNode/PostfixBracketNode/PostfixDotNode/PostfixErrorNode.
+        (PrefixNode):
+            - Added, merge of PrefixResolveNode/PrefixBracketNode/PrefixDotNode/PrefixErrorNode.
+
 2012-09-05  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove use of JSCell::classInfoOffset() from tryCacheGetByID

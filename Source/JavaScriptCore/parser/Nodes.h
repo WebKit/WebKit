@@ -594,55 +594,17 @@ namespace JSC {
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
     };
 
-    class PrePostResolveNode : public ExpressionNode, public ThrowableExpressionData {
+    class PostfixNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        PrePostResolveNode(const JSTokenLocation&, const Identifier&, unsigned divot, unsigned startOffset, unsigned endOffset);
-
-    protected:
-        const Identifier& m_ident;
-    };
-
-    class PostfixResolveNode : public PrePostResolveNode {
-    public:
-        PostfixResolveNode(const JSTokenLocation&, const Identifier&, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
+        PostfixNode(const JSTokenLocation&, ExpressionNode*, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
+        virtual RegisterID* emitResolve(BytecodeGenerator&, RegisterID* = 0);
+        virtual RegisterID* emitBracket(BytecodeGenerator&, RegisterID* = 0);
+        virtual RegisterID* emitDot(BytecodeGenerator&, RegisterID* = 0);
 
-        Operator m_operator;
-    };
-
-    class PostfixBracketNode : public ExpressionNode, public ThrowableSubExpressionData {
-    public:
-        PostfixBracketNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
-
-    private:
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
-
-        ExpressionNode* m_base;
-        ExpressionNode* m_subscript;
-        Operator m_operator;
-    };
-
-    class PostfixDotNode : public ExpressionNode, public ThrowableSubExpressionData {
-    public:
-        PostfixDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
-
-    private:
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
-
-        ExpressionNode* m_base;
-        const Identifier& m_ident;
-        Operator m_operator;
-    };
-
-    class PostfixErrorNode : public ExpressionNode, public ThrowableSubExpressionData {
-    public:
-        PostfixErrorNode(const JSTokenLocation&, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
-
-    private:
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
-
+        ExpressionNode* m_expr;
         Operator m_operator;
     };
 
@@ -720,47 +682,17 @@ namespace JSC {
         ExpressionNode* m_expr;
     };
 
-    class PrefixResolveNode : public PrePostResolveNode {
+    class PrefixNode : public ExpressionNode, public ThrowablePrefixedSubExpressionData {
     public:
-        PrefixResolveNode(const JSTokenLocation&, const Identifier&, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
+        PrefixNode(const JSTokenLocation&, ExpressionNode*, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
+        virtual RegisterID* emitResolve(BytecodeGenerator&, RegisterID* = 0);
+        virtual RegisterID* emitBracket(BytecodeGenerator&, RegisterID* = 0);
+        virtual RegisterID* emitDot(BytecodeGenerator&, RegisterID* = 0);
 
-        Operator m_operator;
-    };
-
-    class PrefixBracketNode : public ExpressionNode, public ThrowablePrefixedSubExpressionData {
-    public:
-        PrefixBracketNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
-
-    private:
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
-
-        ExpressionNode* m_base;
-        ExpressionNode* m_subscript;
-        Operator m_operator;
-    };
-
-    class PrefixDotNode : public ExpressionNode, public ThrowablePrefixedSubExpressionData {
-    public:
-        PrefixDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
-
-    private:
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
-
-        ExpressionNode* m_base;
-        const Identifier& m_ident;
-        Operator m_operator;
-    };
-
-    class PrefixErrorNode : public ExpressionNode, public ThrowableExpressionData {
-    public:
-        PrefixErrorNode(const JSTokenLocation&, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
-
-    private:
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
-
+        ExpressionNode* m_expr;
         Operator m_operator;
     };
 

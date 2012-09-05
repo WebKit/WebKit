@@ -287,40 +287,10 @@ namespace JSC {
     {
     }
 
-    inline PrePostResolveNode::PrePostResolveNode(const JSTokenLocation& location, const Identifier& ident, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location, ResultType::numberType()) // could be reusable for pre?
+    inline PostfixNode::PostfixNode(const JSTokenLocation& location, ExpressionNode* expr, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(location)
         , ThrowableExpressionData(divot, startOffset, endOffset)
-        , m_ident(ident)
-    {
-    }
-
-    inline PostfixResolveNode::PostfixResolveNode(const JSTokenLocation& location, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : PrePostResolveNode(location, ident, divot, startOffset, endOffset)
-        , m_operator(oper)
-    {
-    }
-
-    inline PostfixBracketNode::PostfixBracketNode(const JSTokenLocation& location, ExpressionNode* base, ExpressionNode* subscript, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
-        , ThrowableSubExpressionData(divot, startOffset, endOffset)
-        , m_base(base)
-        , m_subscript(subscript)
-        , m_operator(oper)
-    {
-    }
-
-    inline PostfixDotNode::PostfixDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
-        , ThrowableSubExpressionData(divot, startOffset, endOffset)
-        , m_base(base)
-        , m_ident(ident)
-        , m_operator(oper)
-    {
-    }
-
-    inline PostfixErrorNode::PostfixErrorNode(const JSTokenLocation& location, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
-        , ThrowableSubExpressionData(divot, startOffset, endOffset)
+        , m_expr(expr)
         , m_operator(oper)
     {
     }
@@ -372,33 +342,10 @@ namespace JSC {
     {
     }
 
-    inline PrefixResolveNode::PrefixResolveNode(const JSTokenLocation& location, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : PrePostResolveNode(location, ident, divot, startOffset, endOffset)
-        , m_operator(oper)
-    {
-    }
-
-    inline PrefixBracketNode::PrefixBracketNode(const JSTokenLocation& location, ExpressionNode* base, ExpressionNode* subscript, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+    inline PrefixNode::PrefixNode(const JSTokenLocation& location, ExpressionNode* expr, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
         : ExpressionNode(location)
         , ThrowablePrefixedSubExpressionData(divot, startOffset, endOffset)
-        , m_base(base)
-        , m_subscript(subscript)
-        , m_operator(oper)
-    {
-    }
-
-    inline PrefixDotNode::PrefixDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
-        , ThrowablePrefixedSubExpressionData(divot, startOffset, endOffset)
-        , m_base(base)
-        , m_ident(ident)
-        , m_operator(oper)
-    {
-    }
-
-    inline PrefixErrorNode::PrefixErrorNode(const JSTokenLocation& location, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
-        , ThrowableExpressionData(divot, startOffset, endOffset)
+        , m_expr(expr)
         , m_operator(oper)
     {
     }

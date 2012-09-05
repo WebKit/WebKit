@@ -590,7 +590,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
     return finalDestinationOrIgnored.get();
 }
 
-// ------------------------------ PostfixResolveNode ----------------------------------
+// ------------------------------ PostfixNode ----------------------------------
 
 static RegisterID* emitPreIncOrDec(BytecodeGenerator& generator, RegisterID* srcDst, Operator oper)
 {
@@ -604,9 +604,13 @@ static RegisterID* emitPostIncOrDec(BytecodeGenerator& generator, RegisterID* ds
     return (oper == OpPlusPlus) ? generator.emitPostInc(dst, srcDst) : generator.emitPostDec(dst, srcDst);
 }
 
-RegisterID* PostfixResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+RegisterID* PostfixNode::emitResolve(BytecodeGenerator& generator, RegisterID* dst)
 {
-    ResolveResult resolveResult = generator.resolve(m_ident);
+    ASSERT(m_expr->isResolveNode());
+    ResolveNode* resolve = static_cast<ResolveNode*>(m_expr);
+    const Identifier& ident = resolve->identifier();
+
+    ResolveResult resolveResult = generator.resolve(ident);
 
     if (RegisterID* local = resolveResult.local()) {
         if (resolveResult.isReadOnly()) {
@@ -619,7 +623,7 @@ RegisterID* PostfixResolveNode::emitBytecode(BytecodeGenerator& generator, Regis
     }
 
     if (resolveResult.isStatic() && !resolveResult.isReadOnly()) {
-        RefPtr<RegisterID> value = generator.emitGetStaticVar(generator.newTemporary(), resolveResult, m_ident);
+        RefPtr<RegisterID> value = generator.emitGetStaticVar(generator.newTemporary(), resolveResult, ident);
         RegisterID* oldValue;
         if (dst == generator.ignoredResult()) {
             oldValue = 0;
@@ -627,13 +631,13 @@ RegisterID* PostfixResolveNode::emitBytecode(BytecodeGenerator& generator, Regis
         } else {
             oldValue = emitPostIncOrDec(generator, generator.finalDestination(dst), value.get(), m_operator);
         }
-        generator.emitPutStaticVar(resolveResult, m_ident, value.get());
+        generator.emitPutStaticVar(resolveResult, ident, value.get());
         return oldValue;
     }
     
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
     RefPtr<RegisterID> value = generator.newTemporary();
-    RefPtr<RegisterID> base = generator.emitResolveWithBase(generator.newTemporary(), value.get(), resolveResult, m_ident);
+    RefPtr<RegisterID> base = generator.emitResolveWithBase(generator.newTemporary(), value.get(), resolveResult, ident);
     RegisterID* oldValue;
     if (dst == generator.ignoredResult()) {
         oldValue = 0;
@@ -641,18 +645,21 @@ RegisterID* PostfixResolveNode::emitBytecode(BytecodeGenerator& generator, Regis
     } else {
         oldValue = emitPostIncOrDec(generator, generator.finalDestination(dst), value.get(), m_operator);
     }
-    generator.emitPutById(base.get(), m_ident, value.get());
+    generator.emitPutById(base.get(), ident, value.get());
     return oldValue;
 }
 
-// ------------------------------ PostfixBracketNode ----------------------------------
-
-RegisterID* PostfixBracketNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+RegisterID* PostfixNode::emitBracket(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> base = generator.emitNode(m_base);
-    RefPtr<RegisterID> property = generator.emitNode(m_subscript);
+    ASSERT(m_expr->isBracketAccessorNode());
+    BracketAccessorNode* bracketAccessor = static_cast<BracketAccessorNode*>(m_expr);
+    ExpressionNode* baseNode = bracketAccessor->base();
+    ExpressionNode* subscript = bracketAccessor->subscript();
 
-    generator.emitExpressionInfo(divot() - m_subexpressionDivotOffset, startOffset() - m_subexpressionDivotOffset, m_subexpressionEndOffset);
+    RefPtr<RegisterID> base = generator.emitNode(baseNode);
+    RefPtr<RegisterID> property = generator.emitNode(subscript);
+
+    generator.emitExpressionInfo(bracketAccessor->divot(), bracketAccessor->startOffset(), bracketAccessor->endOffset());
     RefPtr<RegisterID> value = generator.emitGetByVal(generator.newTemporary(), base.get(), property.get());
     RegisterID* oldValue;
     if (dst == generator.ignoredResult()) {
@@ -669,14 +676,17 @@ RegisterID* PostfixBracketNode::emitBytecode(BytecodeGenerator& generator, Regis
     return oldValue;
 }
 
-// ------------------------------ PostfixDotNode ----------------------------------
-
-RegisterID* PostfixDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+RegisterID* PostfixNode::emitDot(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> base = generator.emitNode(m_base);
+    ASSERT(m_expr->isDotAccessorNode());
+    DotAccessorNode* dotAccessor = static_cast<DotAccessorNode*>(m_expr);
+    ExpressionNode* baseNode = dotAccessor->base();
+    const Identifier& ident = dotAccessor->identifier();
 
-    generator.emitExpressionInfo(divot() - m_subexpressionDivotOffset, startOffset() - m_subexpressionDivotOffset, m_subexpressionEndOffset);
-    RefPtr<RegisterID> value = generator.emitGetById(generator.newTemporary(), base.get(), m_ident);
+    RefPtr<RegisterID> base = generator.emitNode(baseNode);
+
+    generator.emitExpressionInfo(dotAccessor->divot(), dotAccessor->startOffset(), dotAccessor->endOffset());
+    RefPtr<RegisterID> value = generator.emitGetById(generator.newTemporary(), base.get(), ident);
     RegisterID* oldValue;
     if (dst == generator.ignoredResult()) {
         oldValue = 0;
@@ -688,14 +698,21 @@ RegisterID* PostfixDotNode::emitBytecode(BytecodeGenerator& generator, RegisterI
         oldValue = (m_operator == OpPlusPlus) ? generator.emitPostInc(generator.finalDestination(dst), value.get()) : generator.emitPostDec(generator.finalDestination(dst), value.get());
     }
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
-    generator.emitPutById(base.get(), m_ident, value.get());
+    generator.emitPutById(base.get(), ident, value.get());
     return oldValue;
 }
 
-// ------------------------------ PostfixErrorNode -----------------------------------
-
-RegisterID* PostfixErrorNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
+RegisterID* PostfixNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    if (m_expr->isResolveNode())
+        return emitResolve(generator, dst);
+
+    if (m_expr->isBracketAccessorNode())
+        return emitBracket(generator, dst);
+
+    if (m_expr->isDotAccessorNode())
+        return emitDot(generator, dst);
+
     return emitThrowReferenceError(generator, m_operator == OpPlusPlus
         ? "Postfix ++ operator applied to value that is not a reference."
         : "Postfix -- operator applied to value that is not a reference.");
@@ -787,11 +804,15 @@ RegisterID* TypeOfValueNode::emitBytecode(BytecodeGenerator& generator, Register
     return generator.emitTypeOf(generator.finalDestination(dst), src.get());
 }
 
-// ------------------------------ PrefixResolveNode ----------------------------------
+// ------------------------------ PrefixNode ----------------------------------
 
-RegisterID* PrefixResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+RegisterID* PrefixNode::emitResolve(BytecodeGenerator& generator, RegisterID* dst)
 {
-    ResolveResult resolveResult = generator.resolve(m_ident);
+    ASSERT(m_expr->isResolveNode());
+    ResolveNode* resolve = static_cast<ResolveNode*>(m_expr);
+    const Identifier& ident = resolve->identifier();
+
+    ResolveResult resolveResult = generator.resolve(ident);
     if (RegisterID* local = resolveResult.local()) {
         if (resolveResult.isReadOnly()) {
             generator.emitReadOnlyExceptionIfNeeded();
@@ -806,29 +827,32 @@ RegisterID* PrefixResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
     }
 
     if (resolveResult.isStatic() && !resolveResult.isReadOnly()) {
-        RefPtr<RegisterID> propDst = generator.emitGetStaticVar(generator.tempDestination(dst), resolveResult, m_ident);
+        RefPtr<RegisterID> propDst = generator.emitGetStaticVar(generator.tempDestination(dst), resolveResult, ident);
         emitPreIncOrDec(generator, propDst.get(), m_operator);
-        generator.emitPutStaticVar(resolveResult, m_ident, propDst.get());
+        generator.emitPutStaticVar(resolveResult, ident, propDst.get());
         return generator.moveToDestinationIfNeeded(dst, propDst.get());
     }
 
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
     RefPtr<RegisterID> propDst = generator.tempDestination(dst);
-    RefPtr<RegisterID> base = generator.emitResolveWithBase(generator.newTemporary(), propDst.get(), resolveResult, m_ident);
+    RefPtr<RegisterID> base = generator.emitResolveWithBase(generator.newTemporary(), propDst.get(), resolveResult, ident);
     emitPreIncOrDec(generator, propDst.get(), m_operator);
-    generator.emitPutById(base.get(), m_ident, propDst.get());
+    generator.emitPutById(base.get(), ident, propDst.get());
     return generator.moveToDestinationIfNeeded(dst, propDst.get());
 }
 
-// ------------------------------ PrefixBracketNode ----------------------------------
-
-RegisterID* PrefixBracketNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+RegisterID* PrefixNode::emitBracket(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> base = generator.emitNode(m_base);
-    RefPtr<RegisterID> property = generator.emitNode(m_subscript);
+    ASSERT(m_expr->isBracketAccessorNode());
+    BracketAccessorNode* bracketAccessor = static_cast<BracketAccessorNode*>(m_expr);
+    ExpressionNode* baseNode = bracketAccessor->base();
+    ExpressionNode* subscript = bracketAccessor->subscript();
+
+    RefPtr<RegisterID> base = generator.emitNode(baseNode);
+    RefPtr<RegisterID> property = generator.emitNode(subscript);
     RefPtr<RegisterID> propDst = generator.tempDestination(dst);
 
-    generator.emitExpressionInfo(divot() + m_subexpressionDivotOffset, m_subexpressionStartOffset, endOffset() - m_subexpressionDivotOffset);
+    generator.emitExpressionInfo(bracketAccessor->divot(), bracketAccessor->startOffset(), bracketAccessor->endOffset());
     RegisterID* value = generator.emitGetByVal(propDst.get(), base.get(), property.get());
     if (m_operator == OpPlusPlus)
         generator.emitPreInc(value);
@@ -839,28 +863,38 @@ RegisterID* PrefixBracketNode::emitBytecode(BytecodeGenerator& generator, Regist
     return generator.moveToDestinationIfNeeded(dst, propDst.get());
 }
 
-// ------------------------------ PrefixDotNode ----------------------------------
-
-RegisterID* PrefixDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+RegisterID* PrefixNode::emitDot(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> base = generator.emitNode(m_base);
+    ASSERT(m_expr->isDotAccessorNode());
+    DotAccessorNode* dotAccessor = static_cast<DotAccessorNode*>(m_expr);
+    ExpressionNode* baseNode = dotAccessor->base();
+    const Identifier& ident = dotAccessor->identifier();
+
+    RefPtr<RegisterID> base = generator.emitNode(baseNode);
     RefPtr<RegisterID> propDst = generator.tempDestination(dst);
 
-    generator.emitExpressionInfo(divot() + m_subexpressionDivotOffset, m_subexpressionStartOffset, endOffset() - m_subexpressionDivotOffset);
-    RegisterID* value = generator.emitGetById(propDst.get(), base.get(), m_ident);
+    generator.emitExpressionInfo(dotAccessor->divot(), dotAccessor->startOffset(), dotAccessor->endOffset());
+    RegisterID* value = generator.emitGetById(propDst.get(), base.get(), ident);
     if (m_operator == OpPlusPlus)
         generator.emitPreInc(value);
     else
         generator.emitPreDec(value);
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
-    generator.emitPutById(base.get(), m_ident, value);
+    generator.emitPutById(base.get(), ident, value);
     return generator.moveToDestinationIfNeeded(dst, propDst.get());
 }
 
-// ------------------------------ PrefixErrorNode -----------------------------------
-
-RegisterID* PrefixErrorNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
+RegisterID* PrefixNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    if (m_expr->isResolveNode())
+        return emitResolve(generator, dst);
+
+    if (m_expr->isBracketAccessorNode())
+        return emitBracket(generator, dst);
+
+    if (m_expr->isDotAccessorNode())
+        return emitDot(generator, dst);
+
     return emitThrowReferenceError(generator, m_operator == OpPlusPlus
         ? "Prefix ++ operator applied to value that is not a reference."
         : "Prefix -- operator applied to value that is not a reference.");
