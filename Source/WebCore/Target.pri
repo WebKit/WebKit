@@ -4171,8 +4171,12 @@ contains(DEFINES, WTF_USE_GRAPHICS_SURFACE=1) {
 
 ALL_IN_ONE_SOURCES += \
     accessibility/AccessibilityAllInOne.cpp \
-    dom/DOMAllInOne.cpp \
     inspector/InspectorAllInOne.cpp
+
+contains(DEFINES, ENABLE_XSLT=1):contains(DEFINES, WTF_USE_LIBXML2=1) {
+    ALL_IN_ONE_SOURCES += \
+        dom/DOMAllInOne.cpp
+}
 
 # These do not compile at the moment:
 #    css/MediaAllInOne.cpp
