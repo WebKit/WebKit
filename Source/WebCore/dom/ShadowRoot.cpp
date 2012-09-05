@@ -145,6 +145,17 @@ PassRefPtr<Node> ShadowRoot::cloneNode(bool)
     return 0;
 }
 
+PassRefPtr<Node> ShadowRoot::cloneNode(bool deep, ExceptionCode& ec)
+{
+    RefPtr<Node> clone = cloneNode(deep);
+    if (!clone) {
+        ec = DATA_CLONE_ERR;
+        return 0;
+    }
+
+    return clone;
+}
+
 String ShadowRoot::innerHTML() const
 {
     return createMarkup(this, ChildrenOnly);

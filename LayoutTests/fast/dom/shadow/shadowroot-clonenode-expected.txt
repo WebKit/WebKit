@@ -1,0 +1,10 @@
+Calling ShadowRoot.cloneNode() should throw a DATA_CLONE_ERR exception.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS shadowRoot.cloneNode() threw exception Error: DATA_CLONE_ERR: DOM Exception 25.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

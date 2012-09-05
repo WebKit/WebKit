@@ -1,3 +1,13 @@
+2012-09-05  MORITA Hajime  <morrita@google.com>
+
+        ShadowRoot.cloneNode() must always throw a DATA_CLONE_ERR exception.
+        https://bugs.webkit.org/show_bug.cgi?id=91704
+
+        Reviewed by Kentaro Hara.
+
+        * fast/dom/shadow/shadowroot-clonenode-expected.txt: Added.
+        * fast/dom/shadow/shadowroot-clonenode.html: Added.
+
 2012-09-05  Christophe Dumez  <christophe.dumez@intel.com>
 
         WKTR doesn't implement dumpWillCacheResponse()

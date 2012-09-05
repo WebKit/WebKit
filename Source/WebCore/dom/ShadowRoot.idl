@@ -39,6 +39,9 @@ module core {
         attribute [TreatNullAs=NullString] DOMString innerHTML
             setter raises(DOMException);
 
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+        Node cloneNode(in [Optional=DefaultIsUndefined] boolean deep) raises(DOMException);
+#endif
         DOMSelection getSelection();
         Element getElementById(in [Optional=DefaultIsUndefined] DOMString elementId);
         NodeList getElementsByClassName(in [Optional=DefaultIsUndefined] DOMString className);

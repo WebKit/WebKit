@@ -93,6 +93,8 @@ public:
     ShadowRootType type() const { return m_type; }
 #endif
 
+    PassRefPtr<Node> cloneNode(bool, ExceptionCode&);
+
 private:
     explicit ShadowRoot(Document*);
     virtual ~ShadowRoot();
