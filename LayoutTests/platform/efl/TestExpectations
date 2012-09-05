@@ -1081,3 +1081,9 @@ BUGWK95530 : http/tests/security/inactive-document-with-empty-security-origin.ht
 
 // Fails after r127140.
 BUGWK95551 : fast/forms/datalist/input-appearance-range-with-datalist-rtl.html = IMAGE
+
+// Fail after they were introduced in r127513
+BUGWK95840 : http/tests/security/cross-origin-plugin-allowed.html = TEXT
+BUGWK95840 : http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html = TEXT
+BUGWK95840 : http/tests/security/cross-origin-plugin-private-browsing-toggled.html = TEXT
+BUGWK95840 : http/tests/security/cross-origin-plugin.html = TEXT
