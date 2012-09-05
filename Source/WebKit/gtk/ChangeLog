@@ -1,3 +1,9 @@
+2012-09-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and configure.ac for 1.9.91 release
+
+        * NEWS: Added release notes for 1.9.91.
+
 2012-08-29  José Dapena Paz  <jdapena@igalia.com>
 
         [Gtk] Process Gtk 3.4 smooth scroll events properly.

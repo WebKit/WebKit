@@ -1,4 +1,14 @@
 =================
+WebKitGTK+ 1.9.91
+=================
+
+What's new in WebKitGTK+ 1.9.91?
+
+  - Fix more API breaks in DOM bindings introduced in previous
+    versions.
+  - Properly process GDK_SMOOTH_SCROLL events.
+
+=================
 WebKitGTK+ 1.9.90
 =================
 
