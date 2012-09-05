@@ -1,3 +1,26 @@
+2012-09-05  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Rebaselining after r126911, r127163 and r127534.
+
+        Adding a platform-specific baseline for accessibility/canvas-description-and-role.html
+        that's required after r127084. The baseline is currently the same as Chromium's,
+        expecting 'AXCanvas' as the AXRole for the canvas element. The GTK port currently
+        reports 'image' as the AXRole - this is probably not intended so the text failure
+        expectation is also added for this test.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/canvas-description-and-role-expected.txt: Added.
+        * platform/gtk/fast/block/float/024-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/025-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/025-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/empty-clear-blocks-expected.txt:
+        * platform/gtk/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.txt: Added.
+        * platform/gtk/fast/inline/absolute-positioned-inline-in-centred-block-expected.txt: Added.
+        * platform/gtk/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt: Added.
+        * platform/gtk/fast/innerHTML/innerHTML-iframe-expected.txt: Added.
+
 2012-09-05  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Tests] We should have interactive validation of required value for the "input" element
