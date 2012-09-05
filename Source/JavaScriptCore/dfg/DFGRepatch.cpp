@@ -252,8 +252,12 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         }
         
         MacroAssembler::JumpList failureCases;
-        
-        failureCases.append(stubJit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSArray::s_info)));
+       
+        stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSCell::structureOffset()), scratchGPR); 
+        failureCases.append(stubJit.branchPtr(
+            MacroAssembler::NotEqual, 
+            MacroAssembler::Address(scratchGPR, Structure::classInfoOffset()), 
+            MacroAssembler::TrustedImmPtr(&JSArray::s_info)));
         
         stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSArray::storageOffset()), scratchGPR);
         stubJit.load32(MacroAssembler::Address(scratchGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)), scratchGPR);

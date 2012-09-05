@@ -1,3 +1,15 @@
+2012-09-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove use of JSCell::classInfoOffset() from tryCacheGetByID
+        https://bugs.webkit.org/show_bug.cgi?id=95860
+
+        Reviewed by Oliver Hunt.
+
+        We should just do the indirection through the Structure instead.
+
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCacheGetByID):
+
 2012-09-05  Geoffrey Garen  <ggaren@apple.com>
 
         Throw exceptions when assigning to const in strict mode
