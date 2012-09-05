@@ -1,3 +1,29 @@
+2012-09-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Refactored callee access in the DFG to support it in the general case
+        https://bugs.webkit.org/show_bug.cgi?id=95887
+
+        Reviewed by Phil Pizlo and Gavin Barraclough.
+
+        To support named function expressions, the DFG needs to understand the
+        callee register being used in arbitrary expressions, and not just
+        create_this.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getDirect): 
+        (JSC::DFG::ByteCodeParser::getCallee): Remap access to the callee register
+        into a GetCallee node. Otherwise, we get confused and think we have a
+        negatively indexed argument.
+
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::remapOperand): Inlining also
+        needs to remap, but to the callee in the inline frame, and not the caller's
+        callee.
+
+        (JSC::DFG::ByteCodeParser::parseBlock): Since we support the callee in
+        the general case now, there's no need to handle it in a special way for
+        create_this.
+
 2012-09-05  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove use of JSCell::classInfoOffset() from virtualForThunkGenerator

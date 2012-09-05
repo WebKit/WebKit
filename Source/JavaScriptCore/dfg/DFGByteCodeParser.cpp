@@ -142,6 +142,9 @@ private:
             return getJSConstant(constant);
         }
 
+        if (operand == RegisterFile::Callee)
+            return getCallee();
+
         // Is this an argument?
         if (operandIsArgument(operand))
             return getArgument(operand);
@@ -519,6 +522,11 @@ private:
         NodeIndex resultIndex = addToGraph(JSConstant, OpInfo(constant));
         m_constants[constant].asJSValue = resultIndex;
         return resultIndex;
+    }
+
+    NodeIndex getCallee()
+    {
+        return addToGraph(GetCallee);
     }
 
     // Helper functions to get/set the this value.
@@ -1126,7 +1134,10 @@ private:
                 ASSERT(result >= FirstConstantRegisterIndex);
                 return result;
             }
-            
+
+            if (operand == RegisterFile::Callee)
+                return m_calleeVR;
+
             return operand + m_inlineCallFrame->stackOffset;
         }
     };
@@ -1835,10 +1846,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_create_this: {
-            if (m_inlineStackTop->m_inlineCallFrame)
-                set(currentInstruction[1].u.operand, addToGraph(CreateThis, getDirect(m_inlineStackTop->m_calleeVR)));
-            else
-                set(currentInstruction[1].u.operand, addToGraph(CreateThis, addToGraph(GetCallee)));
+            set(currentInstruction[1].u.operand, addToGraph(CreateThis, get(RegisterFile::Callee)));
             NEXT_OPCODE(op_create_this);
         }
             
