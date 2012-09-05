@@ -1,3 +1,9 @@
+2012-09-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed: WebInspector: remove accidentally committed speed test.
+
+        * tests/MemoryInstrumentationTest.cpp:
+
 2012-09-05  Sami Kyostila  <skyostil@chromium.org>
 
         [chromium] Wire up scrollable sublayers in ScrollingCoordinatorChromium

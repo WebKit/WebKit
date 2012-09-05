@@ -255,16 +255,5 @@ TEST(MemoryInstrumentationTest, visitStrings)
     }
 }
 
-TEST(MemoryInstrumentationTest, speedTest)
-{
-    VisitedObjects visitedObjects;
-    MemoryInstrumentationImpl impl(visitedObjects);
-    NonVirtualInstrumented nonVirtualInstrumented;
-    for (unsigned i = 0; i < 10000000; ++i) {
-        impl.addRootObject(&nonVirtualInstrumented);
-        visitedObjects.clear();
-    }
-}
-
 } // namespace
 
