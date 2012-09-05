@@ -65,6 +65,7 @@ namespace JSC {
 #define JSC_OPTIONS(v) \
     v(bool, useJIT,    true) \
     v(bool, useDFGJIT, true) \
+    v(bool, useYarrJIT, true) \
     \
     /* showDisassembly implies showDFGDisassembly. */ \
     v(bool, showDisassembly, false) \

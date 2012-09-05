@@ -100,7 +100,7 @@ extern const HashTable stringConstructorTable;
 #if ENABLE(ASSEMBLER) && (ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT))
 static bool enableAssembler(ExecutableAllocator& executableAllocator)
 {
-    if (!executableAllocator.isValid() || !Options::useJIT())
+    if (!executableAllocator.isValid() || (!Options::useJIT() && !Options::useYarrJIT()))
         return false;
 
 #if USE(CF)

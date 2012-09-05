@@ -1,3 +1,18 @@
+2012-09-04  Mark Lam  <mark.lam@apple.com>
+
+        Allow the YarrJIT to use the assembler even when useJIT() is false.
+        Introduce the useYarrJIT() option.
+        https://bugs.webkit.org/show_bug.cgi?id=95809.
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::enableAssembler):
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+        * runtime/Options.h:
+        (JSC):
+
 2012-09-04  Gavin Barraclough  <barraclough@apple.com>
 
         inc/dec behave incorrectly operating on a resolved const
