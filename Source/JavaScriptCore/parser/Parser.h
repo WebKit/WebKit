@@ -735,52 +735,34 @@ private:
     
     ALWAYS_INLINE void updateErrorMessageSpecialCase(JSTokenType expectedToken) 
     {
-        String errorMessage;
         switch (expectedToken) {
         case RESERVED_IF_STRICT:
-            errorMessage = "Use of reserved word '";
-            errorMessage += getToken().impl();
-            errorMessage += "' in strict mode";
-            m_errorMessage = errorMessage.impl();
+            m_errorMessage = "Use of reserved word '" + getToken() + "' in strict mode";
             return;
         case RESERVED:
-            errorMessage = "Use of reserved word '";
-            errorMessage += getToken().impl();
-            errorMessage += "'";
-            m_errorMessage = errorMessage.impl();
+            m_errorMessage = "Use of reserved word '" + getToken() + '\'';
             return;
         case NUMBER: 
-            errorMessage = "Unexpected number '";
-            errorMessage += getToken().impl();
-            errorMessage += "'";
-            m_errorMessage = errorMessage.impl();
+            m_errorMessage = "Unexpected number '" + getToken() + '\'';
             return;
         case IDENT: 
-            errorMessage = "Expected an identifier but found '";
-            errorMessage += getToken().impl();
-            errorMessage += "' instead";
-            m_errorMessage = errorMessage.impl();
+            m_errorMessage = "Expected an identifier but found '" + getToken() + "' instead";
             return;
         case STRING: 
-            errorMessage = "Unexpected string ";
-            errorMessage += getToken().impl();
-            m_errorMessage = errorMessage.impl();
+            m_errorMessage = "Unexpected string " + getToken();
             return;
         case ERRORTOK: 
-            errorMessage = "Unrecognized token '";
-            errorMessage += getToken().impl();
-            errorMessage += "'";
-            m_errorMessage = errorMessage.impl();
+            m_errorMessage = "Unrecognized token '" + getToken() + '\'';
             return;
         case EOFTOK:  
-            m_errorMessage = "Unexpected EOF";
+            m_errorMessage = ASCIILiteral("Unexpected EOF");
             return;
         case RETURN:
-            m_errorMessage = "Return statements are only valid inside functions";
+            m_errorMessage = ASCIILiteral("Return statements are only valid inside functions");
             return;
         default:
             ASSERT_NOT_REACHED();
-            m_errorMessage = "internal error";
+            m_errorMessage = ASCIILiteral("internal error");
             return;
         }
     }
@@ -806,22 +788,16 @@ private:
                 updateErrorMessageSpecialCase(m_token.m_type);
             else
                 updateErrorMessageSpecialCase(expectedToken);
-        } 
+        }
     }
     
     NEVER_INLINE void updateErrorWithNameAndMessage(const char* beforeMsg, String name, const char* afterMsg)
     {
         m_error = true;
-        String prefix(beforeMsg);
-        String postfix(afterMsg);
-        prefix += " '";
-        prefix += name.impl();
-        prefix += "' ";
-        prefix += postfix;
-        m_errorMessage = prefix.impl();
+        m_errorMessage = makeString(beforeMsg, " '", name, "' ", afterMsg);
     }
     
-    NEVER_INLINE void updateErrorMessage(const char* msg) 
+    NEVER_INLINE void updateErrorMessage(const char* msg)
     {   
         m_error = true;
         m_errorMessage = String(msg);

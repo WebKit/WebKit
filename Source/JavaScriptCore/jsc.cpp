@@ -24,7 +24,6 @@
 
 #include "BytecodeGenerator.h"
 #include "Completion.h"
-#include <wtf/CurrentTime.h>
 #include "ExceptionHelpers.h"
 #include "InitializeThreading.h"
 #include "Interpreter.h"
@@ -33,12 +32,14 @@
 #include "JSFunction.h"
 #include "JSLock.h"
 #include "JSString.h"
-#include <wtf/MainThread.h>
 #include "SamplingTool.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wtf/CurrentTime.h>
+#include <wtf/MainThread.h>
+#include <wtf/text/StringBuilder.h>
 
 #if !OS(WINDOWS)
 #include <unistd.h>
@@ -308,17 +309,19 @@ EncodedJSValue JSC_HOST_CALL functionDescribe(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionJSCStack(ExecState* exec)
 {
-    String trace = "--> Stack trace:\n";
+    StringBuilder trace;
+    trace.appendLiteral("--> Stack trace:\n");
+
     Vector<StackFrame> stackTrace;
     Interpreter::getStackTrace(&exec->globalData(), stackTrace);
     int i = 0;
 
     for (Vector<StackFrame>::iterator iter = stackTrace.begin(); iter < stackTrace.end(); iter++) {
         StackFrame level = *iter;
-        trace += String::format("    %i   %s\n", i, level.toString(exec).utf8().data());
+        trace.append(String::format("    %i   %s\n", i, level.toString(exec).utf8().data()));
         i++;
     }
-    fprintf(stderr, "%s", trace.utf8().data());
+    fprintf(stderr, "%s", trace.toString().utf8().data());
     return JSValue::encode(jsUndefined());
 }
 

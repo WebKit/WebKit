@@ -358,7 +358,7 @@ bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, PropertyName propertyNa
 
     String propValue = valueToStringWithNullCheck(exec, value);
     if (propertyInfo.hadPixelOrPosPrefix)
-        propValue += "px";
+        propValue.append("px");
 
     bool important = false;
     if (Settings::shouldRespectPriorityInCSSAttributeSetters()) {
