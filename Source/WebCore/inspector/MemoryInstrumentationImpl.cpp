@@ -50,7 +50,7 @@ void MemoryInstrumentationImpl::processDeferredInstrumentedPointers()
     }
 }
 
-void MemoryInstrumentationImpl::countObjectSize(ObjectType objectType, size_t size)
+void MemoryInstrumentationImpl::countObjectSize(MemoryObjectType objectType, size_t size)
 {
     TypeToSizeMap::AddResult result = m_totalSizes.add(objectType, size);
     if (!result.isNewEntry)

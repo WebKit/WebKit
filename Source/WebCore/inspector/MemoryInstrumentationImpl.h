@@ -46,7 +46,7 @@ public:
     explicit MemoryInstrumentationImpl(VisitedObjects&);
 
     size_t selfSize() const;
-    size_t totalSize(ObjectType objectType) const
+    size_t totalSize(MemoryObjectType objectType) const
     {
         TypeToSizeMap::const_iterator i = m_totalSizes.find(objectType);
         return i == m_totalSizes.end() ? 0 : i->second;
@@ -61,12 +61,12 @@ public:
     }
 
 private:
-    virtual void countObjectSize(ObjectType, size_t) OVERRIDE;
+    virtual void countObjectSize(MemoryObjectType, size_t) OVERRIDE;
     virtual void deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase>) OVERRIDE;
     virtual bool visited(const void*) OVERRIDE;
     virtual void processDeferredInstrumentedPointers() OVERRIDE;
 
-    typedef HashMap<ObjectType, size_t> TypeToSizeMap;
+    typedef HashMap<MemoryObjectType, size_t> TypeToSizeMap;
     TypeToSizeMap m_totalSizes;
     VisitedObjects& m_visitedObjects;
     Vector<OwnPtr<InstrumentedPointerBase> > m_deferredInstrumentedPointers;

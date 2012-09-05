@@ -37,51 +37,71 @@
 
 namespace WebCore {
 
-const char* MemoryInstrumentation::Other = "Other";
-const char* MemoryInstrumentation::DOM = "DOM";
-const char* MemoryInstrumentation::CSS = "CSS";
-const char* MemoryInstrumentation::Binding = "Binding";
-const char* MemoryInstrumentation::Loader = "Loader";
-const char* MemoryInstrumentation::MemoryCacheStructures = "MemoryCacheStructures";
-const char* MemoryInstrumentation::CachedResource = "CachedResource";
-const char* MemoryInstrumentation::CachedResourceCSS = "CachedResourceCSS";
-const char* MemoryInstrumentation::CachedResourceFont = "CachedResourceFont";
-const char* MemoryInstrumentation::CachedResourceImage = "CachedResourceImage";
-const char* MemoryInstrumentation::CachedResourceScript = "CachedResourceScript";
-const char* MemoryInstrumentation::CachedResourceSVG = "CachedResourceSVG";
-const char* MemoryInstrumentation::CachedResourceShader = "CachedResourceShader";
-const char* MemoryInstrumentation::CachedResourceXSLT = "CachedResourceXSLT";
+MemoryObjectType MemoryInstrumentation::Other = "Other";
+MemoryObjectType MemoryInstrumentation::DOM = "DOM";
+MemoryObjectType MemoryInstrumentation::CSS = "CSS";
+MemoryObjectType MemoryInstrumentation::Binding = "Binding";
+MemoryObjectType MemoryInstrumentation::Loader = "Loader";
+MemoryObjectType MemoryInstrumentation::MemoryCacheStructures = "MemoryCacheStructures";
+MemoryObjectType MemoryInstrumentation::CachedResource = "CachedResource";
+MemoryObjectType MemoryInstrumentation::CachedResourceCSS = "CachedResourceCSS";
+MemoryObjectType MemoryInstrumentation::CachedResourceFont = "CachedResourceFont";
+MemoryObjectType MemoryInstrumentation::CachedResourceImage = "CachedResourceImage";
+MemoryObjectType MemoryInstrumentation::CachedResourceScript = "CachedResourceScript";
+MemoryObjectType MemoryInstrumentation::CachedResourceSVG = "CachedResourceSVG";
+MemoryObjectType MemoryInstrumentation::CachedResourceShader = "CachedResourceShader";
+MemoryObjectType MemoryInstrumentation::CachedResourceXSLT = "CachedResourceXSLT";
 
-void MemoryInstrumentation::addInstrumentedObjectImpl(const String* const& string, ObjectType objectType, OwningType owningType)
+template<> void MemoryInstrumentationTraits::addInstrumentedObject<String>(MemoryInstrumentation* instrumentation, const String* const& string, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
 {
-    if (!string || visited(string))
-        return;
-    if (owningType == byPointer)
-        countObjectSize(objectType, sizeof(String));
-    addInstrumentedObjectImpl(string->impl(), objectType, byPointer);
+    MemoryInstrumentationTraits::addInstrumentedObject<const String>(instrumentation, string, ownerObjectType, owningType);
 }
 
-void MemoryInstrumentation::addInstrumentedObjectImpl(const StringImpl* const& stringImpl, ObjectType objectType, OwningType)
+template<> void MemoryInstrumentationTraits::addInstrumentedObject<const String>(MemoryInstrumentation* instrumentation, const String* const& string, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
 {
-    if (!stringImpl || visited(stringImpl))
-        return;
-    countObjectSize(objectType, stringImpl->sizeInBytes());
-}
-
-void MemoryInstrumentation::addInstrumentedObjectImpl(const KURL* const& url, ObjectType objectType, OwningType owningType)
-{
-    if (!url || visited(url))
+    if (!string || instrumentation->visited(string))
         return;
     if (owningType == byPointer)
-        countObjectSize(objectType, sizeof(KURL));
-    addInstrumentedObject(url->string(), objectType);
+        instrumentation->countObjectSize(ownerObjectType, sizeof(String));
+    instrumentation->addInstrumentedObject(string->impl(), ownerObjectType);
+}
+
+template<> void MemoryInstrumentationTraits::addInstrumentedObject<StringImpl>(MemoryInstrumentation* instrumentation, const StringImpl* const& stringImpl, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
+{
+    MemoryInstrumentationTraits::addInstrumentedObject<const StringImpl>(instrumentation, stringImpl, ownerObjectType, owningType);
+}
+
+template<> void MemoryInstrumentationTraits::addInstrumentedObject<const StringImpl>(MemoryInstrumentation* instrumentation, const StringImpl* const& stringImpl, MemoryObjectType ownerObjectType, MemoryOwningType)
+{
+    if (!stringImpl || instrumentation->visited(stringImpl))
+        return;
+    instrumentation->countObjectSize(ownerObjectType, stringImpl->sizeInBytes());
+}
+
+template<> void MemoryInstrumentationTraits::addInstrumentedObject<KURL>(MemoryInstrumentation* instrumentation, const KURL* const& url, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
+{
+    MemoryInstrumentationTraits::addInstrumentedObject<const KURL>(instrumentation, url, ownerObjectType, owningType);
+}
+
+template<> void MemoryInstrumentationTraits::addInstrumentedObject<const KURL>(MemoryInstrumentation* instrumentation, const KURL* const& url, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
+{
+    if (!url || instrumentation->visited(url))
+        return;
+    if (owningType == byPointer)
+        instrumentation->countObjectSize(ownerObjectType, sizeof(KURL));
+    instrumentation->addInstrumentedObject(url->string(), ownerObjectType);
     if (url->innerURL())
-        addInstrumentedObject(url->innerURL(), objectType);
+        instrumentation->addInstrumentedObject(url->innerURL(), ownerObjectType);
 }
 
-void MemoryInstrumentation::addInstrumentedObjectImpl(const AtomicString* const& atomicString, ObjectType objectType, OwningType owningType)
+template<> void MemoryInstrumentationTraits::addInstrumentedObject<AtomicString>(MemoryInstrumentation* instrumentation, const AtomicString* const& atomicString, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
 {
-    addInstrumentedObjectImpl(reinterpret_cast<const String* const>(atomicString), objectType, owningType);
+    MemoryInstrumentationTraits::addInstrumentedObject<const AtomicString>(instrumentation, atomicString, ownerObjectType, owningType);
+}
+
+template<> void MemoryInstrumentationTraits::addInstrumentedObject<const AtomicString>(MemoryInstrumentation* instrumentation, const AtomicString* const& atomicString, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
+{
+    MemoryInstrumentationTraits::addInstrumentedObject<const String>(instrumentation, reinterpret_cast<const String* const>(atomicString), ownerObjectType, owningType);
 }
 
 } // namespace WebCore
