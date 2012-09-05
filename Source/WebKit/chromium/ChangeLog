@@ -1,5 +1,14 @@
 2012-09-05  Peter Beverloo  <peter@chromium.org>
 
+        Unreviewed, rolling out r127590.
+        http://trac.webkit.org/changeset/127590
+
+        Broke the Chromium bots because of a compile error in the compositor.
+
+        * DEPS:
+
+2012-09-05  Peter Beverloo  <peter@chromium.org>
+
         Unreviewed.  Rolled DEPS.
 
         * DEPS:
