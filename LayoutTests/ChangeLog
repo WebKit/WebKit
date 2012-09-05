@@ -1,3 +1,35 @@
+2012-09-05  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] We should have interactive validation of required value for the "input" element
+        https://bugs.webkit.org/show_bug.cgi?id=95817
+
+        Reviewed by Kent Tamura.
+
+        This patch adds tests for required attribute handling on form
+        submission of input types. The test script is parametrized for
+        input type and expected type. Each test file simply call one test
+        script in common-interactive-validation-required.js.
+
+        The test script checks:
+          - Don't submit form when required value isn't presented.
+          - Submit form when required value is presented.
+
+        * fast/forms/date/date-interactive-validation-required-expected.txt: Added.
+        * fast/forms/date/date-interactive-validation-required.html: Added.
+        * fast/forms/datetime/datetime-interactive-validation-required-expected.txt: Added.
+        * fast/forms/datetime/datetime-interactive-validation-required.html: Added.
+        * fast/forms/datetimelocal/datetimelocal-interactive-validation-required-expected.txt: Added.
+        * fast/forms/datetimelocal/datetimelocal-interactive-validation-required.html: Added.
+        * fast/forms/month/month-interactive-validation-required-expected.txt: Added.
+        * fast/forms/month/month-interactive-validation-required.html: Added.
+        * fast/forms/number/number-interactive-validation-required-expected.txt: Added.
+        * fast/forms/number/number-interactive-validation-required.html: Added.
+        * fast/forms/resources/common-interactive-validation-required.js: Added.
+        * fast/forms/time/time-interactive-validation-required-expected.txt: Added.
+        * fast/forms/time/time-interactive-validation-required.html: Added.
+        * fast/forms/week/week-interactive-validation-required-expected.txt: Added.
+        * fast/forms/week/week-interactive-validation-required.html: Added.
+
 2012-09-05  Mike Lawther  <mikelawther@chromium.org>
 
         Moved mac results to be the generic results, and the existing result to be the chromium
