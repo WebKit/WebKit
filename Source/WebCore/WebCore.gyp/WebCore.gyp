@@ -1625,15 +1625,12 @@
       'hard_dependency': 1,
       'sources': [
         '<@(webcore_privateheader_files)',
-        '<@(webcore_files)',
+        '<@(webcore_platform_files)',
 
         # For WebCoreSystemInterface, Mac-only.
         '../../WebKit/mac/WebCoreSupport/WebSystemInterface.mm',
       ],
       'sources/': [
-        ['exclude', '.*'],
-        ['include', 'platform/'],
-
         # FIXME: Figure out how to store these patterns in a variable.
         ['exclude', '(cairo|ca|cf|cg|curl|efl|freetype|gstreamer|gtk|harfbuzz|linux|mac|opengl|openvg|opentype|pango|posix|qt|soup|svg|symbian|texmap|iphone|win|wince|wx)/'],
         ['exclude', '(?<!Chromium)(Cairo|CF|CG|Curl|Gtk|JSC|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|WinCE|Wx)\\.(cpp|mm?)$'],
