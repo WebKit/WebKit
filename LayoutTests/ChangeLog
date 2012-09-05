@@ -1,5 +1,16 @@
 2012-09-04  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Rebaseline tests after http://trac.webkit.org/changeset/127354.
+
+        * platform/win/fast/text/international/text-spliced-font-expected.txt:
+        * platform/win/fast/writing-mode/border-vertical-lr-expected.txt:
+        * platform/win/fast/writing-mode/japanese-lr-selection-expected.txt:
+        * platform/win/fast/writing-mode/japanese-lr-text-expected.txt:
+        * platform/win/fast/writing-mode/japanese-rl-selection-expected.txt:
+        * platform/win/fast/writing-mode/japanese-rl-text-expected.txt:
+
+2012-09-04  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed gardening. editing/style/apply-style-atomic.html fails on Windows since introduced in http://trac.webkit.org/changeset/126865.
         Test added to skip list.
 
