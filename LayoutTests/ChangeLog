@@ -1,3 +1,10 @@
+2012-09-05  Dan Bernstein  <mitz@apple.com>
+
+        Added expected results for this test from r127620 for the Mac port, which does not have
+        OVERFLOW_SCROLLING enabled at this time.
+
+        * platform/mac/compositing/overflow/overflow-with-touch-toggle-expected.txt: Added.
+
 2012-09-05  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Slider progress bar goes crazy with negative ranges
