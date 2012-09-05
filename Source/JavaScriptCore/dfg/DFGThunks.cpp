@@ -219,10 +219,11 @@ static MacroAssemblerCodeRef virtualForThunkGenerator(
             CCallHelpers::NotEqual, GPRInfo::nonArgGPR1,
             CCallHelpers::TrustedImm32(JSValue::CellTag)));
 #endif
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::nonArgGPR0, JSCell::structureOffset()), GPRInfo::nonArgGPR2);
     slowCase.append(
         jit.branchPtr(
             CCallHelpers::NotEqual,
-            CCallHelpers::Address(GPRInfo::nonArgGPR0, JSCell::classInfoOffset()),
+            CCallHelpers::Address(GPRInfo::nonArgGPR2, Structure::classInfoOffset()),
             CCallHelpers::TrustedImmPtr(&JSFunction::s_info)));
     
     // Now we know we have a JSFunction.

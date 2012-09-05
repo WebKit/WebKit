@@ -1,3 +1,15 @@
+2012-09-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove use of JSCell::classInfoOffset() from virtualForThunkGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=95821
+
+        Reviewed by Oliver Hunt.
+
+        We can replace the load of the ClassInfo from the object with a load from the Structure.
+
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::virtualForThunkGenerator):
+
 2012-09-05  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix the uses of String::operator+=() for Mac
