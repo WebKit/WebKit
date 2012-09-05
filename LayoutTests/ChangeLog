@@ -1,3 +1,12 @@
+2012-09-01  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [Gtk] accessibility/replaced-objects-in-anonymous-blocks layout test failure
+        https://bugs.webkit.org/show_bug.cgi?id=95643
+
+        Unreviewed GTK gardening, rebaselining an accessibility test.
+
+        * platform/gtk/accessibility/replaced-objects-in-anonymous-blocks-expected.txt: Corrected.
+
 2012-09-01  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, rebaselining an accessibility test.
