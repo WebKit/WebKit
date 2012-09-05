@@ -562,6 +562,10 @@ static void testWebkitAtkComboBox()
     g_assert(selectedItem == item1);
     g_object_unref(selectedItem);
 
+    /* Check that the menu popup has 0 links and doesn't crash from checking. */
+    gint nLinks = atk_hypertext_get_n_links(ATK_HYPERTEXT(menuPopup));
+    g_assert_cmpint(nLinks, ==, 0);
+
     /* Check the implementations of the AtkAction interface. */
     g_assert(ATK_IS_ACTION(comboBox));
     AtkAction* atkAction = ATK_ACTION(comboBox);
