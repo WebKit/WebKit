@@ -909,8 +909,6 @@ bool BackingStorePrivate::isCurrentVisibleJob(const TileIndex& index, BackingSto
         return true;
 
     // Second check if the individual parts of the non-rendered region are in the regular queue.
-    bool isCurrent = true; // It is true until it isn't :)
-
     IntRectList tileNotRenderedRegionRects = tile->frontBuffer()->notRenderedRegion().rects();
     for (size_t i = 0; i < tileNotRenderedRegionRects.size(); ++i) {
         Platform::IntRect tileNotRenderedRegionRect = tileNotRenderedRegionRects.at(i);
@@ -919,10 +917,11 @@ bool BackingStorePrivate::isCurrentVisibleJob(const TileIndex& index, BackingSto
         // Map to transformed contents coordinates.
         tileNotRenderedRegionRect.move(origin.x(), origin.y());
 
-        isCurrent = m_renderQueue->isCurrentRegularRenderJob(tileNotRenderedRegionRect) ? isCurrent : false;
+        if (!m_renderQueue->isCurrentRegularRenderJob(tileNotRenderedRegionRect))
+            return false;
     }
 
-    return isCurrent;
+    return true;
 }
 
 void BackingStorePrivate::scrollBackingStore(int deltaX, int deltaY)
