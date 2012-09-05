@@ -147,6 +147,9 @@ JavaScriptVariant::~JavaScriptVariant()
 
 JavaScriptVariant& JavaScriptVariant::operator=(const JavaScriptVariant& v)
 {
+    if (&v == this)
+        return *this;
+
     switch (v.type()) {
     case Boolean:
         setBoolean(v.booleanValue());

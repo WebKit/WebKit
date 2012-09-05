@@ -1,3 +1,16 @@
+2012-09-05  Benjamin C Meyer  <bmeyer@rim.com>
+
+        [BlackBerry] JavaScriptVariant can crash when operator= is called with itself
+        https://bugs.webkit.org/show_bug.cgi?id=95859
+
+        Reviewed by George Staikos.
+
+        * Api/JavaScriptVariant.cpp:
+        (BlackBerry::WebKit::JavaScriptVariant::operator=):
+        When JavaScriptVariant contains a string and operator= is
+        called with itself the memory will be free'd in 'this' and
+        then a copy will be attempted from 'that' resulting in a crash.
+
 2012-09-05  Leo Yang  <leoyang@rim.com>
 
         [BlackBerry] Rotation and then reload causes less sized webpage (PR 190469)
