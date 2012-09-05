@@ -614,9 +614,6 @@ void PopupListBox::setOriginalIndex(int index)
 
 int PopupListBox::getRowHeight(int index)
 {
-    int paddingForTouch = 0;
-    if (m_settings.deviceSupportsTouch)
-        paddingForTouch = PopupMenuChromium::optionPaddingForTouch();
     if (index < 0 || m_popupClient->itemStyle(index).isDisplayNone())
         return PopupMenuChromium::minimumRowHeight();
 
@@ -632,7 +629,7 @@ int PopupListBox::getRowHeight(int index)
 
     int linePaddingHeight = m_popupClient->menuStyle().menuType() == PopupMenuStyle::AutofillPopup ? kLinePaddingHeight : 0;
     int calculatedRowHeight = max(fontHeight, iconHeight) + linePaddingHeight * 2;
-    return (max(calculatedRowHeight, PopupMenuChromium::minimumRowHeight()) + paddingForTouch);
+    return max(calculatedRowHeight, PopupMenuChromium::minimumRowHeight());
 }
 
 IntRect PopupListBox::getRowBounds(int index)
