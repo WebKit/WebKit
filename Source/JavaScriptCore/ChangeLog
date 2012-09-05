@@ -1,5 +1,27 @@
 2012-09-05  Geoffrey Garen  <ggaren@apple.com>
 
+        Throw exceptions when assigning to const in strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=95894
+
+        Reviewed by Oliver Hunt.
+
+        Currently, this never happens; but it will start happening once the
+        callee is a local const register. In this patch, there's no change in
+        behavior.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitReadOnlyExceptionIfNeeded): Helper function
+        for doing the throwing.
+        * bytecompiler/BytecodeGenerator.h:
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PostfixResolveNode::emitBytecode):
+        (JSC::PrefixResolveNode::emitBytecode):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode): Call the helper function.
+
+2012-09-05  Geoffrey Garen  <ggaren@apple.com>
+
         Refactored callee access in the DFG to support it in the general case
         https://bugs.webkit.org/show_bug.cgi?id=95887
 

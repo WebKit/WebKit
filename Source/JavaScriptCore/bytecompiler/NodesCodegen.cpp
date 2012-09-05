@@ -609,8 +609,10 @@ RegisterID* PostfixResolveNode::emitBytecode(BytecodeGenerator& generator, Regis
     ResolveResult resolveResult = generator.resolve(m_ident);
 
     if (RegisterID* local = resolveResult.local()) {
-        if (resolveResult.isReadOnly())
+        if (resolveResult.isReadOnly()) {
+            generator.emitReadOnlyExceptionIfNeeded();
             return generator.emitToJSNumber(generator.finalDestination(dst), local);
+        }
         if (dst == generator.ignoredResult())
             return emitPreIncOrDec(generator, local, m_operator);
         return emitPostIncOrDec(generator, generator.finalDestination(dst), local, m_operator);
@@ -792,6 +794,7 @@ RegisterID* PrefixResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
     ResolveResult resolveResult = generator.resolve(m_ident);
     if (RegisterID* local = resolveResult.local()) {
         if (resolveResult.isReadOnly()) {
+            generator.emitReadOnlyExceptionIfNeeded();
             if (dst == generator.ignoredResult())
                 return generator.emitToJSNumber(generator.newTemporary(), local);
             RefPtr<RegisterID> r0 = generator.emitLoad(generator.tempDestination(dst), (m_operator == OpPlusPlus) ? 1.0 : -1.0);
@@ -1210,8 +1213,10 @@ RegisterID* ReadModifyResolveNode::emitBytecode(BytecodeGenerator& generator, Re
     ResolveResult resolveResult = generator.resolve(m_ident);
 
     if (RegisterID *local = resolveResult.local()) {
-        if (resolveResult.isReadOnly())
+        if (resolveResult.isReadOnly()) {
+            generator.emitReadOnlyExceptionIfNeeded();
             return emitReadModifyAssignment(generator, generator.finalDestination(dst), local, m_right, m_operator, OperandTypes(ResultType::unknownType(), m_right->resultDescriptor()));
+        }
         
         if (generator.leftHandSideNeedsCopy(m_rightHasAssignments, m_right->isPure(generator))) {
             RefPtr<RegisterID> result = generator.newTemporary();
@@ -1246,8 +1251,10 @@ RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
     ResolveResult resolveResult = generator.resolve(m_ident);
 
     if (RegisterID *local = resolveResult.local()) {
-        if (resolveResult.isReadOnly())
+        if (resolveResult.isReadOnly()) {
+            generator.emitReadOnlyExceptionIfNeeded();
             return generator.emitNode(dst, m_right);
+        }
         RegisterID* result = generator.emitNode(local, m_right);
         return generator.moveToDestinationIfNeeded(dst, result);
     }

@@ -507,6 +507,8 @@ namespace JSC {
         RegisterID* emitGetPropertyNames(RegisterID* dst, RegisterID* base, RegisterID* i, RegisterID* size, Label* breakTarget);
         RegisterID* emitNextPropertyName(RegisterID* dst, RegisterID* base, RegisterID* i, RegisterID* size, RegisterID* iter, Label* target);
 
+        void emitReadOnlyExceptionIfNeeded();
+
         // Start a try block. 'start' must have been emitted.
         TryData* pushTry(Label* start);
         // End a try block. 'end' must have been emitted.

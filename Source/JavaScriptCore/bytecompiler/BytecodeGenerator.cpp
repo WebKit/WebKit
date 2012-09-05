@@ -2594,4 +2594,13 @@ bool BytecodeGenerator::isArgumentNumber(const Identifier& ident, int argumentNu
     return registerID->index() == CallFrame::argumentOffset(argumentNumber);
 }
 
+void BytecodeGenerator::emitReadOnlyExceptionIfNeeded()
+{
+    if (!isStrictMode())
+        return;
+
+    RefPtr<RegisterID> error = emitLoad(newTemporary(), createTypeError(scope()->globalObject()->globalExec(), StrictModeReadonlyPropertyWriteError));
+    emitThrow(error.get());
+}
+
 } // namespace JSC
