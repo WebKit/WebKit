@@ -24,6 +24,7 @@
 
 #include "CSSValueKeywords.h"
 #include "Element.h"
+#include "FontMetrics.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "LocalWindowsContext.h"
