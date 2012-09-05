@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src=media-file.js></script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description">Clicking middle of volume slider should set the value to middle.</p>
+<div id="console"></div>
+<audio controls id="audio"></audio>
+<script>
+function clickSliderMiddle(input, offsetLeft) {
+    var centerX = input.offsetLeft + input.offsetWidth / 2;
+    var centerY = input.offsetTop + input.offsetHeight / 2;
+    if (!window.eventSender)
+        return;
+    eventSender.mouseMoveTo(centerX, centerY);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function getElementByShadowPseudoIdInShadowRoot(shadowRoot, pseudoId) {
+    var node = shadowRoot.firstChild;
+    while (node) {
+        if (internals.shadowPseudoId(node) === pseudoId)
+            return node;
+        node = node.nextSibling || node.firstChild;
+    }
+    return null;
+}
+
+var mediaElement = document.getElementById("audio");
+var root = internals.shadowRoot(mediaElement);
+var volumeSlider = getElementByShadowPseudoIdInShadowRoot(root, "-webkit-media-controls-volume-slider");
+volumeSlider.min = 0;
+volumeSlider.max = 10;
+volumeSlider.step = 1;
+clickSliderMiddle(volumeSlider);
+shouldBe('volumeSlider.value', '"5"');
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

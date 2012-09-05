@@ -1,0 +1,7 @@
+Clicking middle of volume slider should set the value to middle.
+
+PASS volumeSlider.value is "5"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

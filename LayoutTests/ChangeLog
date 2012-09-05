@@ -1,3 +1,13 @@
+2012-09-04  Keishi Hattori  <keishi@webkit.org>
+
+        REGRESSION(r126132): MediaSlider and MediaVolumeSlider thumbs don't match mouse when dragged
+        https://bugs.webkit.org/show_bug.cgi?id=95701
+
+        Reviewed by Kent Tamura.
+
+        * platform/chromium/media/media-volume-slider-hit-test-expected.txt: Added.
+        * platform/chromium/media/media-volume-slider-hit-test.html: Added.
+
 2012-09-04  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update test expectation
