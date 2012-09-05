@@ -110,6 +110,7 @@
             'chromium/public/WebRTCPeerConnectionHandlerClient.h',
             'chromium/public/WebRTCSessionDescriptionDescriptor.h',
             'chromium/public/WebRTCSessionDescriptionRequest.h',
+            'chromium/public/WebRTCVoidRequest.h',
             'chromium/public/WebRect.h',
             'chromium/public/WebReferrerPolicy.h',
             'chromium/public/WebRenderingStats.h',

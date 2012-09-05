@@ -47,6 +47,7 @@
 #include <public/WebRTCICECandidateDescriptor.h>
 #include <public/WebRTCSessionDescriptionDescriptor.h>
 #include <public/WebRTCSessionDescriptionRequest.h>
+#include <public/WebRTCVoidRequest.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -81,6 +82,22 @@ void RTCPeerConnectionHandlerChromium::createOffer(PassRefPtr<RTCSessionDescript
     m_webHandler->createOffer(request, constraints);
 }
 
+void RTCPeerConnectionHandlerChromium::setLocalDescription(PassRefPtr<RTCVoidRequest> request, PassRefPtr<RTCSessionDescriptionDescriptor> sessionDescription)
+{
+    if (!m_webHandler)
+        return;
+
+    m_webHandler->setLocalDescription(request, sessionDescription);
+}
+
+void RTCPeerConnectionHandlerChromium::setRemoteDescription(PassRefPtr<RTCVoidRequest> request, PassRefPtr<RTCSessionDescriptionDescriptor> sessionDescription)
+{
+    if (!m_webHandler)
+        return;
+
+    m_webHandler->setRemoteDescription(request, sessionDescription);
+}
+
 bool RTCPeerConnectionHandlerChromium::updateIce(PassRefPtr<RTCConfiguration> configuration, PassRefPtr<MediaConstraints> constraints)
 {
     if (!m_webHandler)
@@ -95,6 +112,22 @@ bool RTCPeerConnectionHandlerChromium::addIceCandidate(PassRefPtr<RTCIceCandidat
         return false;
 
     return m_webHandler->addICECandidate(iceCandidate);
+}
+
+PassRefPtr<RTCSessionDescriptionDescriptor> RTCPeerConnectionHandlerChromium::localDescription()
+{
+    if (!m_webHandler)
+        return 0;
+
+    return m_webHandler->localDescription();
+}
+
+PassRefPtr<RTCSessionDescriptionDescriptor> RTCPeerConnectionHandlerChromium::remoteDescription()
+{
+    if (!m_webHandler)
+        return 0;
+
+    return m_webHandler->remoteDescription();
 }
 
 bool RTCPeerConnectionHandlerChromium::addStream(PassRefPtr<MediaStreamDescriptor> mediaStream, PassRefPtr<MediaConstraints> constraints)

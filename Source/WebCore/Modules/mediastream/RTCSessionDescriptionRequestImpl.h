@@ -44,7 +44,7 @@ class RTCSessionDescriptionCallback;
 
 class RTCSessionDescriptionRequestImpl : public RTCSessionDescriptionRequest, public ActiveDOMObject {
 public:
-    static PassRefPtr<RTCSessionDescriptionRequestImpl> create(ScriptExecutionContext*, PassRefPtr<RTCSessionDescriptionCallback>, PassRefPtr<RTCErrorCallback>, PassRefPtr<RTCPeerConnection>);
+    static PassRefPtr<RTCSessionDescriptionRequestImpl> create(ScriptExecutionContext*, PassRefPtr<RTCSessionDescriptionCallback>, PassRefPtr<RTCErrorCallback>);
     virtual ~RTCSessionDescriptionRequestImpl();
 
     virtual void requestSucceeded(PassRefPtr<RTCSessionDescriptionDescriptor>) OVERRIDE;
@@ -54,13 +54,12 @@ public:
     virtual void stop() OVERRIDE;
 
 private:
-    RTCSessionDescriptionRequestImpl(ScriptExecutionContext*, PassRefPtr<RTCSessionDescriptionCallback>, PassRefPtr<RTCErrorCallback>, PassRefPtr<RTCPeerConnection>);
+    RTCSessionDescriptionRequestImpl(ScriptExecutionContext*, PassRefPtr<RTCSessionDescriptionCallback>, PassRefPtr<RTCErrorCallback>);
 
     void clear();
 
     RefPtr<RTCSessionDescriptionCallback> m_successCallback;
     RefPtr<RTCErrorCallback> m_errorCallback;
-    RefPtr<RTCPeerConnection> m_owner;
 };
 
 } // namespace WebCore

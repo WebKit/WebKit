@@ -42,18 +42,17 @@
 
 namespace WebCore {
 
-PassRefPtr<RTCSessionDescriptionRequestImpl> RTCSessionDescriptionRequestImpl::create(ScriptExecutionContext* context, PassRefPtr<RTCSessionDescriptionCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback, PassRefPtr<RTCPeerConnection> owner)
+PassRefPtr<RTCSessionDescriptionRequestImpl> RTCSessionDescriptionRequestImpl::create(ScriptExecutionContext* context, PassRefPtr<RTCSessionDescriptionCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback)
 {
-    RefPtr<RTCSessionDescriptionRequestImpl> request = adoptRef(new RTCSessionDescriptionRequestImpl(context, successCallback, errorCallback, owner));
+    RefPtr<RTCSessionDescriptionRequestImpl> request = adoptRef(new RTCSessionDescriptionRequestImpl(context, successCallback, errorCallback));
     request->suspendIfNeeded();
     return request.release();
 }
 
-RTCSessionDescriptionRequestImpl::RTCSessionDescriptionRequestImpl(ScriptExecutionContext* context, PassRefPtr<RTCSessionDescriptionCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback, PassRefPtr<RTCPeerConnection> owner)
+RTCSessionDescriptionRequestImpl::RTCSessionDescriptionRequestImpl(ScriptExecutionContext* context, PassRefPtr<RTCSessionDescriptionCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback)
     : ActiveDOMObject(context, this)
     , m_successCallback(successCallback)
     , m_errorCallback(errorCallback)
-    , m_owner(owner)
 {
 }
 
@@ -65,7 +64,7 @@ void RTCSessionDescriptionRequestImpl::requestSucceeded(PassRefPtr<RTCSessionDes
 {
     if (m_successCallback) {
         RefPtr<RTCSessionDescription> sessionDescription = RTCSessionDescription::create(descriptor);
-        m_successCallback->handleEvent(sessionDescription.get(), m_owner.get());
+        m_successCallback->handleEvent(sessionDescription.get());
     }
 
     clear();
@@ -74,7 +73,7 @@ void RTCSessionDescriptionRequestImpl::requestSucceeded(PassRefPtr<RTCSessionDes
 void RTCSessionDescriptionRequestImpl::requestFailed(const String& error)
 {
     if (m_errorCallback)
-        m_errorCallback->handleEvent(error, m_owner.get());
+        m_errorCallback->handleEvent(error);
 
     clear();
 }
@@ -88,7 +87,6 @@ void RTCSessionDescriptionRequestImpl::clear()
 {
     m_successCallback.clear();
     m_errorCallback.clear();
-    m_owner.clear();
 }
 
 } // namespace WebCore
