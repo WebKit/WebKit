@@ -33,7 +33,6 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/Language.h>
 #include <WebCore/MemoryCache.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/PageCache.h>
 #include <WebCore/ResourceHandle.h>
 #include <libsoup/soup-cache.h>
@@ -41,10 +40,6 @@
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
-
-#if !OS(WINDOWS)
-#include <unistd.h>
-#endif
 
 namespace WebKit {
 

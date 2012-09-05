@@ -46,6 +46,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include <sys/statvfs.h>
 #include <unistd.h>
 #include <wtf/text/CString.h>
 
@@ -105,6 +106,15 @@ Vector<String> listDirectory(const String& path, const String& filter)
     eina_iterator_free(it);
 
     return matchingEntries;
+}
+
+uint64_t getVolumeFreeSizeForPath(const char* path)
+{
+    struct statvfs buf;
+    if (statvfs(path, &buf) < 0)
+        return 0;
+
+    return buf.f_bavail * buf.f_bsize;
 }
 
 }

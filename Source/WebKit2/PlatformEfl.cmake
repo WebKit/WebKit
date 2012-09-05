@@ -98,9 +98,6 @@ LIST(APPEND WebKit2_SOURCES
     WebProcess/Downloads/efl/DownloadSoupErrorsEfl.cpp
     WebProcess/Downloads/soup/DownloadSoup.cpp
 
-    WebProcess/efl/WebProcessEfl.cpp
-    WebProcess/efl/WebProcessMainEfl.cpp
-
     WebProcess/InjectedBundle/efl/InjectedBundleEfl.cpp
 
     WebProcess/WebCoreSupport/efl/WebContextMenuClientEfl.cpp
@@ -113,6 +110,9 @@ LIST(APPEND WebKit2_SOURCES
     WebProcess/WebPage/efl/WebInspectorEfl.cpp
     WebProcess/WebPage/efl/WebPageEfl.cpp
 
+    WebProcess/efl/WebProcessMainEfl.cpp
+
+    WebProcess/soup/WebProcessSoup.cpp
     WebProcess/soup/WebSoupRequestManager.cpp
     WebProcess/soup/WebKitSoupRequestGeneric.cpp
     WebProcess/soup/WebKitSoupRequestInputStream.cpp
@@ -149,6 +149,7 @@ LIST(APPEND WebKit2_INCLUDE_DIRECTORIES
     ${EFLDEPS_INCLUDE_DIRS}
     ${EFREET_INCLUDE_DIRS}
     ${EVAS_INCLUDE_DIRS}
+    ${LIBSOUP_INCLUDE_DIRS}
     ${LIBXML2_INCLUDE_DIR}
     ${LIBXSLT_INCLUDE_DIRS}
     ${SQLITE_INCLUDE_DIRS}

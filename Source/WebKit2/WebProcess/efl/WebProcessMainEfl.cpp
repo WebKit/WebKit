@@ -26,15 +26,20 @@
 #include "config.h"
 #include "WebProcessMainEfl.h"
 
+#define LIBSOUP_USE_UNSTABLE_REQUEST_API
+
 #include "ProxyResolverSoup.h"
 #include "WKBase.h"
 #include <Ecore.h>
+#include <Efreet.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/RunLoop.h>
 #include <WebKit2/WebProcess.h>
+#include <libsoup/soup-cache.h>
 #include <runtime/InitializeThreading.h>
 #include <unistd.h>
 #include <wtf/MainThread.h>
+#include <wtf/text/CString.h>
 
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedGraphicsLayer.h"
@@ -79,6 +84,13 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
         soup_session_add_feature(session, SOUP_SESSION_FEATURE(resolverEfl));
         g_object_unref(resolverEfl);
     }
+
+    // Set SOUP cache.
+    String soupCacheDirectory = String::fromUTF8(efreet_cache_home_get()) + "/WebKitEfl";
+    SoupCache* soupCache = soup_cache_new(soupCacheDirectory.utf8().data(), SOUP_CACHE_SINGLE_USER);
+    soup_session_add_feature(session, SOUP_SESSION_FEATURE(soupCache));
+    soup_cache_load(soupCache);
+    g_object_unref(soupCache);
 
 #if USE(COORDINATED_GRAPHICS)
     CoordinatedGraphicsLayer::initFactory();

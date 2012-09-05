@@ -937,7 +937,6 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/Geolocation/WebGeolocationManager.h \
 	Source/WebKit2/WebProcess/gtk/WebAuthDialog.cpp \
 	Source/WebKit2/WebProcess/gtk/WebAuthDialog.h \
-	Source/WebKit2/WebProcess/gtk/WebProcessGtk.cpp \
 	Source/WebKit2/WebProcess/gtk/WebProcessMainGtk.cpp \
 	Source/WebKit2/WebProcess/gtk/WebProcessMainGtk.h \
 	Source/WebKit2/WebProcess/IconDatabase/WebIconDatabaseProxy.cpp \
@@ -1068,6 +1067,7 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/ResourceCache/WebResourceCacheManager.cpp \
 	Source/WebKit2/WebProcess/soup/WebSoupRequestManager.cpp \
 	Source/WebKit2/WebProcess/soup/WebSoupRequestManager.h \
+	Source/WebKit2/WebProcess/soup/WebProcessSoup.cpp \
 	Source/WebKit2/WebProcess/soup/WebKitSoupRequestGeneric.cpp \
 	Source/WebKit2/WebProcess/soup/WebKitSoupRequestGeneric.h \
 	Source/WebKit2/WebProcess/soup/WebKitSoupRequestInputStream.cpp \
