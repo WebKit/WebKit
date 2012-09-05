@@ -1,3 +1,19 @@
+2012-09-05  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Test cases for Up/Down key behavior on field which has maximum/minimum in multiple fields time input UI
+        https://bugs.webkit.org/show_bug.cgi?id=95824
+
+        Reviewed by Kent Tamura.
+
+        This patch adds test cases for Up/Down key behavior on field which has
+        maximum/minimum value in multiple fields time input UI.
+
+        This patch affects ports which enable both ENABLE_INPUT_TYPE_TIME and
+        ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS.
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-keyboard-events-expected.txt: Updated expectation for new test cases.
+        * fast/forms/time-multiple-fields/time-multiple-fields-keyboard-events.html: Changed to add test cases for Up key behavior for "23:59:59.999" (11:59:59.999PM in UI) and Down key behavior for "01:00:00.000" (01:00:00.000 AM in UI)
+
 2012-09-05  Dan Bernstein  <mitz@apple.com>
 
         Added Mac-specific expected results for a test added in r127557. The generic results are

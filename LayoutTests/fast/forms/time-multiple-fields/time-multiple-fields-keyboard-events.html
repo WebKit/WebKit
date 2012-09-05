@@ -110,6 +110,28 @@ keyDown('\t', ['shiftKey']);
 keyDown('\t', ['shiftKey']);
 shouldBeEqualToString('document.activeElement.id', 'before');
 
+beginTest('Up key on maximum value', '12:59:59.999');
+keyDown('upArrow');
+keyDown('\t');
+keyDown('upArrow');
+keyDown('\t');
+keyDown('upArrow');
+keyDown('\t');
+keyDown('upArrow');
+shouldBeEqualToString('input.value', '13:00');
+
+beginTest('Down key on minimum value', '01:00');
+input.step = 0.001;
+keyDown('downArrow');
+keyDown('\t');
+keyDown('downArrow');
+keyDown('\t');
+keyDown('downArrow');
+keyDown('\t');
+keyDown('downArrow');
+shouldBeEqualToString('input.value', '00:59:59.999');
+input.step = 60;
+
 beginTest('Backspace key', '12:34');
 keyDown("\b");
 shouldBeEqualToString('input.value', '');
