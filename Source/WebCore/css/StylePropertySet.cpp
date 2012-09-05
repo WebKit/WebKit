@@ -431,7 +431,7 @@ String StylePropertySet::getLayeredShorthandValue(const StylePropertyShorthand& 
 
 String StylePropertySet::getShorthandValue(const StylePropertyShorthand& shorthand) const
 {
-    String res;
+    StringBuilder result;
     for (unsigned i = 0; i < shorthand.length(); ++i) {
         if (!isPropertyImplicit(shorthand.properties()[i])) {
             RefPtr<CSSValue> value = getPropertyCSSValue(shorthand.properties()[i]);
@@ -439,12 +439,14 @@ String StylePropertySet::getShorthandValue(const StylePropertyShorthand& shortha
                 return String();
             if (value->isInitialValue())
                 continue;
-            if (!res.isNull())
-                res += " ";
-            res += value->cssText();
+            if (!result.isEmpty())
+                result.append(' ');
+            result.append(value->cssText());
         }
     }
-    return res;
+    if (result.isEmpty())
+        return String();
+    return result.toString();
 }
 
 // only returns a non-null value if all properties have the same, non-null value

@@ -161,7 +161,7 @@ const char* NetscapePlugin::userAgent()
 
 #if PLUGIN_ARCHITECTURE(MAC)
         if (quirks().contains(PluginQuirks::AppendVersion3UserAgent))
-            userAgent += " Version/3.2.1";
+            userAgent.append(" Version/3.2.1");
 #endif
 
         m_userAgent = userAgent.utf8();

@@ -59,13 +59,13 @@ using namespace WebCore;
 
         if (node->hasClass()) {
             StyledElement* styledElement = static_cast<StyledElement*>(node);
-            String classes;
+            StringBuilder classes;
             for (size_t i = 0; i < styledElement->classNames().size(); ++i) {
                 if (i > 0)
-                    classes += " ";
-                classes += styledElement->classNames()[i];
+                    classes.append(' ');
+                classes.append(styledElement->classNames()[i]);
             }
-            name = [name stringByAppendingFormat:@" class=\"%@\"", (NSString *)classes];
+            name = [name stringByAppendingFormat:@" class=\"%@\"", (NSString *)classes.toString()];
         }
     }
 

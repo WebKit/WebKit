@@ -203,12 +203,8 @@ static HTTPHeaderMap parseRFC822HeaderFields(const char* bytes, unsigned length)
                 value = String(colon, endOfLine - colon);
             
             String oldValue = headerFields.get(lastHeaderKey);
-            if (!oldValue.isNull()) {
-                String tmp = oldValue;
-                tmp += ", ";
-                tmp += value;
-                value = tmp;
-            }
+            if (!oldValue.isNull())
+                value = oldValue + ", " + value;
             
             headerFields.set(lastHeaderKey, value);
         }

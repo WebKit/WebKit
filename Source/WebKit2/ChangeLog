@@ -1,3 +1,18 @@
+2012-09-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        More fixes for String::operator+=() on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=95880
+
+        Reviewed by Adam Barth.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createInspectorPage): This is a legitimate use of append(),
+        there is no other concatenation outside that branch.
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::parseRFC822HeaderFields): Use string operators instead of +=.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::userAgent): Another legitimate use of append().
+
 2012-09-05  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Make visited link tracking work in multi-process mode
