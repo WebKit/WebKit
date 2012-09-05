@@ -1335,40 +1335,40 @@ Color RenderStyle::colorIncludingFallback(int colorProperty, bool visitedLink) c
     EBorderStyle borderStyle = BNONE;
     switch (colorProperty) {
     case CSSPropertyBackgroundColor:
-        return visitedLink ? rareNonInheritedData->m_visitedLinkBackgroundColor : backgroundColor(); // Background color doesn't fall back.
+        return visitedLink ? visitedLinkBackgroundColor() : backgroundColor(); // Background color doesn't fall back.
     case CSSPropertyBorderLeftColor:
-        result = visitedLink ? rareNonInheritedData->m_visitedLinkBorderLeftColor : borderLeftColor();
+        result = visitedLink ? visitedLinkBorderLeftColor() : borderLeftColor();
         borderStyle = borderLeftStyle();
         break;
     case CSSPropertyBorderRightColor:
-        result = visitedLink ? rareNonInheritedData->m_visitedLinkBorderRightColor : borderRightColor();
+        result = visitedLink ? visitedLinkBorderRightColor() : borderRightColor();
         borderStyle = borderRightStyle();
         break;
     case CSSPropertyBorderTopColor:
-        result = visitedLink ? rareNonInheritedData->m_visitedLinkBorderTopColor : borderTopColor();
+        result = visitedLink ? visitedLinkBorderTopColor() : borderTopColor();
         borderStyle = borderTopStyle();
         break;
     case CSSPropertyBorderBottomColor:
-        result = visitedLink ? rareNonInheritedData->m_visitedLinkBorderBottomColor : borderBottomColor();
+        result = visitedLink ? visitedLinkBorderBottomColor() : borderBottomColor();
         borderStyle = borderBottomStyle();
         break;
     case CSSPropertyColor:
-        result = visitedLink ? inherited->visitedLinkColor : color();
+        result = visitedLink ? visitedLinkColor() : color();
         break;
     case CSSPropertyOutlineColor:
-        result = visitedLink ? rareNonInheritedData->m_visitedLinkOutlineColor : outlineColor();
+        result = visitedLink ? visitedLinkOutlineColor() : outlineColor();
         break;
     case CSSPropertyWebkitColumnRuleColor:
-        result = visitedLink ? rareNonInheritedData->m_multiCol->m_visitedLinkColumnRuleColor : columnRuleColor();
+        result = visitedLink ? visitedLinkColumnRuleColor() : columnRuleColor();
         break;
     case CSSPropertyWebkitTextEmphasisColor:
-        result = visitedLink ? rareInheritedData->visitedLinkTextEmphasisColor : textEmphasisColor();
+        result = visitedLink ? visitedLinkTextEmphasisColor() : textEmphasisColor();
         break;
     case CSSPropertyWebkitTextFillColor:
-        result = visitedLink ? rareInheritedData->visitedLinkTextFillColor : textFillColor();
+        result = visitedLink ? visitedLinkTextFillColor() : textFillColor();
         break;
     case CSSPropertyWebkitTextStrokeColor:
-        result = visitedLink ? rareInheritedData->visitedLinkTextStrokeColor : textStrokeColor();
+        result = visitedLink ? visitedLinkTextStrokeColor() : textStrokeColor();
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -1379,7 +1379,7 @@ Color RenderStyle::colorIncludingFallback(int colorProperty, bool visitedLink) c
         if (!visitedLink && (borderStyle == INSET || borderStyle == OUTSET || borderStyle == RIDGE || borderStyle == GROOVE))
             result.setRGB(238, 238, 238);
         else
-            result = visitedLink ? inherited->visitedLinkColor : color();
+            result = visitedLink ? visitedLinkColor() : color();
     }
     return result;
 }
