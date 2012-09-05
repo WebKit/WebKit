@@ -2196,3 +2196,12 @@ http/tests/security/xss-DENIED-xsl-external-entity.xml
 # https://bugs.webkit.org/show_bug.cgi?id=95805
 http/tests/cookies/multiple-cookies.html
 http/tests/cookies/single-quoted-value.html
+
+# Flaky media/video tests
+# https://bugs.webkit.org/show_bug.cgi?id=95806
+media/video-aspect-ratio.html
+media/video-replaces-poster.html
+media/video-set-rate-from-pause.html
+media/video-src-change.html
+media/video-timeupdate-reverse-play.html
+media/W3C/video/src/src_removal_does_not_trigger_loadstart.html
