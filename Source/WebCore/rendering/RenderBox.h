@@ -76,7 +76,7 @@ public:
     LayoutUnit logicalHeight() const { return style()->isHorizontalWritingMode() ? height() : width(); }
 
     LayoutUnit constrainLogicalWidthInRegionByMinMax(LayoutUnit, LayoutUnit, RenderBlock*, RenderRegion* = 0, LayoutUnit offsetFromLogicalTopOfFirstPage = ZERO_LAYOUT_UNIT);
-    LayoutUnit constrainLogicalHeightByMinMax(LayoutUnit);
+    LayoutUnit constrainLogicalHeightByMinMax(LayoutUnit) const;
 
     int pixelSnappedLogicalHeight() const { return style()->isHorizontalWritingMode() ? pixelSnappedHeight() : pixelSnappedWidth(); }
     int pixelSnappedLogicalWidth() const { return style()->isHorizontalWritingMode() ? pixelSnappedWidth() : pixelSnappedHeight(); }
@@ -366,6 +366,7 @@ public:
 
     virtual void computeLogicalWidth();
     virtual void computeLogicalHeight();
+    void computeLogicalHeight(LogicalExtentComputedValues&) const;
 
     RenderBoxRegionInfo* renderBoxRegionInfo(RenderRegion*, LayoutUnit offsetFromLogicalTopOfFirstPage, RenderBoxRegionInfoFlags = CacheRenderBoxRegionInfo) const;
     void computeLogicalWidthInRegion(RenderRegion* = 0, LayoutUnit offsetFromLogicalTopOfFirstPage = ZERO_LAYOUT_UNIT);
@@ -387,9 +388,9 @@ public:
     LayoutUnit shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStart, LayoutUnit childMarginEnd, const RenderBlock* cb, RenderRegion*, LayoutUnit offsetFromLogicalTopOfFirstPage);
 
     LayoutUnit computeLogicalWidthInRegionUsing(SizeType, LayoutUnit availableLogicalWidth, const RenderBlock* containingBlock, RenderRegion*, LayoutUnit offsetFromLogicalTopOfFirstPage);
-    LayoutUnit computeLogicalHeightUsing(SizeType, const Length& height);
+    LayoutUnit computeLogicalHeightUsing(SizeType, const Length& height) const;
     LayoutUnit computeLogicalClientHeight(SizeType, const Length& height);
-    LayoutUnit computeContentLogicalHeightUsing(SizeType, const Length& height);
+    LayoutUnit computeContentLogicalHeightUsing(SizeType, const Length& height) const;
     LayoutUnit computeReplacedLogicalWidthUsing(SizeType, Length width) const;
     LayoutUnit computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, bool includeMaxWidth = true) const;
     LayoutUnit computeReplacedLogicalHeightUsing(SizeType, Length height) const;
@@ -398,7 +399,7 @@ public:
     virtual LayoutUnit computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
     virtual LayoutUnit computeReplacedLogicalHeight() const;
 
-    LayoutUnit computePercentageLogicalHeight(const Length& height);
+    LayoutUnit computePercentageLogicalHeight(const Length& height) const;
 
     // Block flows subclass availableWidth/Height to handle multi column layout (shrinking the width/height available to children when laying out.)
     virtual LayoutUnit availableLogicalWidth() const { return contentLogicalWidth(); }

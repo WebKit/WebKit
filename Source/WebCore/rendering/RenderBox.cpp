@@ -421,7 +421,7 @@ LayoutUnit RenderBox::constrainLogicalWidthInRegionByMinMax(LayoutUnit logicalWi
     return max(logicalWidth, computeLogicalWidthInRegionUsing(MinSize, availableWidth, cb, region, offsetFromLogicalTopOfFirstPage));
 }
 
-LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight)
+LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight) const
 {
     RenderStyle* styleToUse = style();
     if (!styleToUse->logicalMaxHeight().isUndefined()) {
@@ -1967,43 +1967,45 @@ static bool shouldFlipBeforeAfterMargins(const RenderStyle* containingBlockStyle
 
 void RenderBox::computeLogicalHeight()
 {
+    LogicalExtentComputedValues computedValues;
+    computeLogicalHeight(computedValues);
+
+    setLogicalHeight(computedValues.m_extent);
+    setLogicalTop(computedValues.m_position);
+    setMarginBefore(computedValues.m_margins.m_before);
+    setMarginAfter(computedValues.m_margins.m_after);
+}
+
+void RenderBox::computeLogicalHeight(LogicalExtentComputedValues& computedValues) const
+{
+    computedValues.m_extent = logicalHeight();
+    computedValues.m_position = logicalTop();
+
     // Cell height is managed by the table and inline non-replaced elements do not support a height property.
     if (isTableCell() || (isInline() && !isReplaced()))
         return;
 
     Length h;
-    if (isOutOfFlowPositioned()) {
-        LogicalExtentComputedValues computedValues;
+    if (isOutOfFlowPositioned())
         computePositionedLogicalHeight(computedValues);
-
-        setLogicalHeight(computedValues.m_extent);
-        setLogicalTop(computedValues.m_position);
-        setMarginBefore(computedValues.m_margins.m_before);
-        setMarginAfter(computedValues.m_margins.m_after);
-    } else {
+    else {
         RenderBlock* cb = containingBlock();
         bool hasPerpendicularContainingBlock = cb->isHorizontalWritingMode() != isHorizontalWritingMode();
     
         if (!hasPerpendicularContainingBlock) {
-            ComputedMarginValues marginValues;
             bool shouldFlipBeforeAfter = cb->style()->writingMode() != style()->writingMode();
             computeBlockDirectionMargins(cb,
-                shouldFlipBeforeAfter ? marginValues.m_after : marginValues.m_before,
-                shouldFlipBeforeAfter ? marginValues.m_before : marginValues.m_after);
-            setMarginBefore(marginValues.m_before);
-            setMarginAfter(marginValues.m_after);
+                shouldFlipBeforeAfter ? computedValues.m_margins.m_after : computedValues.m_margins.m_before,
+                shouldFlipBeforeAfter ? computedValues.m_margins.m_before : computedValues.m_margins.m_after);
         }
 
         // For tables, calculate margins only.
         if (isTable()) {
             if (hasPerpendicularContainingBlock) {
-                ComputedMarginValues marginValues;
                 bool shouldFlipBeforeAfter = shouldFlipBeforeAfterMargins(cb->style(), style());
                 computeInlineDirectionMargins(cb, containingBlockLogicalWidthForContent(), logicalHeight(),
-                    shouldFlipBeforeAfter ? marginValues.m_after : marginValues.m_before,
-                    shouldFlipBeforeAfter ? marginValues.m_before : marginValues.m_after);
-                setMarginBefore(marginValues.m_before);
-                setMarginAfter(marginValues.m_after);
+                    shouldFlipBeforeAfter ? computedValues.m_margins.m_after : computedValues.m_margins.m_before,
+                    shouldFlipBeforeAfter ? computedValues.m_margins.m_before : computedValues.m_margins.m_after);
             }
             return;
         }
@@ -2050,16 +2052,13 @@ void RenderBox::computeLogicalHeight()
             heightResult = h.value() + borderAndPaddingLogicalHeight();
         }
 
-        setLogicalHeight(heightResult);
+        computedValues.m_extent = heightResult;
         
         if (hasPerpendicularContainingBlock) {
-            ComputedMarginValues marginValues;
             bool shouldFlipBeforeAfter = shouldFlipBeforeAfterMargins(cb->style(), style());
             computeInlineDirectionMargins(cb, containingBlockLogicalWidthForContent(), heightResult,
-                    shouldFlipBeforeAfter ? marginValues.m_after : marginValues.m_before,
-                    shouldFlipBeforeAfter ? marginValues.m_before : marginValues.m_after);
-            setMarginBefore(marginValues.m_before);
-            setMarginAfter(marginValues.m_after);
+                    shouldFlipBeforeAfter ? computedValues.m_margins.m_after : computedValues.m_margins.m_before,
+                    shouldFlipBeforeAfter ? computedValues.m_margins.m_before : computedValues.m_margins.m_after);
         }
     }
 
@@ -2084,15 +2083,15 @@ void RenderBox::computeLogicalHeight()
                 visHeight = view()->viewWidth();
         }
         if (isRoot())
-            setLogicalHeight(max(logicalHeight(), visHeight - margins));
+            computedValues.m_extent = max(computedValues.m_extent, visHeight - margins);
         else {
             LayoutUnit marginsBordersPadding = margins + parentBox()->marginBefore() + parentBox()->marginAfter() + parentBox()->borderAndPaddingLogicalHeight();
-            setLogicalHeight(max(logicalHeight(), visHeight - marginsBordersPadding));
+            computedValues.m_extent = max(computedValues.m_extent, visHeight - marginsBordersPadding);
         }
     }
 }
 
-LayoutUnit RenderBox::computeLogicalHeightUsing(SizeType heightType, const Length& height)
+LayoutUnit RenderBox::computeLogicalHeightUsing(SizeType heightType, const Length& height) const
 {
     LayoutUnit logicalHeight = computeContentLogicalHeightUsing(heightType, height);
     if (logicalHeight != -1)
@@ -2108,7 +2107,7 @@ LayoutUnit RenderBox::computeLogicalClientHeight(SizeType heightType, const Leng
     return std::max(LayoutUnit(0), computeContentBoxLogicalHeight(heightIncludingScrollbar) - scrollbarLogicalHeight());
 }
 
-LayoutUnit RenderBox::computeContentLogicalHeightUsing(SizeType heightType, const Length& height)
+LayoutUnit RenderBox::computeContentLogicalHeightUsing(SizeType heightType, const Length& height) const
 {
     if (height.isAuto())
         return heightType == MinSize ? 0 : -1;
@@ -2121,7 +2120,7 @@ LayoutUnit RenderBox::computeContentLogicalHeightUsing(SizeType heightType, cons
     return -1;
 }
 
-LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height)
+LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
 {
     LayoutUnit result = -1;
     
@@ -2137,7 +2136,7 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height)
             break;
         skippedAutoHeightContainingBlock = true;
         cb = cb->containingBlock();
-        cb->addPercentHeightDescendant(this);
+        cb->addPercentHeightDescendant(const_cast<RenderBox*>(this));
     }
 
     RenderStyle* cbstyle = cb->style();
