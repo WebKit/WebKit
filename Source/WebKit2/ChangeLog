@@ -1,3 +1,15 @@
+2012-09-05  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] QRawWebViewPrivate does not initialize some members
+        https://bugs.webkit.org/show_bug.cgi?id=95709
+
+        Reviewed by Luiz Agostini.
+
+        Don't miss initializing the bool flags.
+
+        * UIProcess/API/qt/raw/qrawwebview.cpp:
+        (QRawWebViewPrivate::QRawWebViewPrivate):
+
 2012-09-04  Kangil Han  <kangil.han@samsung.com>
 
         [WK2] Use explicit constructor in InjectedBundle.

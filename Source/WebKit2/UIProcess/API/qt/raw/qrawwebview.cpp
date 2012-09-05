@@ -240,7 +240,10 @@ PassOwnPtr<WebKit::DrawingAreaProxy> QRawWebViewPrivate::createDrawingAreaProxy(
 }
 
 QRawWebViewPrivate::QRawWebViewPrivate(WebKit::WebContext* context, WebKit::WebPageGroup* pageGroup, QRawWebViewClient* client)
-    : m_client(client)
+    : m_focused(false)
+    , m_visible(false)
+    , m_active(false)
+    , m_client(client)
     , m_webPageProxy(context->createWebPage(this, pageGroup))
 {
     m_webPageProxy->pageGroup()->preferences()->setForceCompositingMode(true);
