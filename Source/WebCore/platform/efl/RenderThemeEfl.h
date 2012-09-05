@@ -102,6 +102,8 @@ public:
     virtual Color platformInactiveSelectionForegroundColor() const { return m_inactiveSelectionForegroundColor; }
     virtual Color platformFocusRingColor() const { return m_focusRingColor; }
 
+    virtual void themeChanged();
+
     // Set platform colors and notify they changed
     void setActiveSelectionColor(int foreR, int foreG, int foreB, int foreA, int backR, int backG, int backB, int backA);
     void setInactiveSelectionColor(int foreR, int foreG, int foreB, int foreA, int backR, int backG, int backB, int backA);
@@ -210,11 +212,10 @@ protected:
     static float defaultFontSize;
 
 private:
-    Evas_Object* edje();
-
+    void createCanvas();
+    void createEdje();
     void applyEdjeColors();
     void applyPartDescriptions();
-
     const char* edjeGroupFromFormType(FormType) const;
     void applyEdjeStateFromForm(Evas_Object*, ControlStates);
     bool paintThemePart(RenderObject*, FormType, const PaintInfo&, const IntRect&);

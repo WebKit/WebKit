@@ -103,6 +103,9 @@ bool RenderThemeEfl::themePartCacheEntryReset(struct ThemePartCacheEntry* entry,
 {
     const char *file, *group;
 
+    ASSERT(entry);
+    ASSERT(m_edje);
+
     edje_object_file_get(m_edje, &file, 0);
     group = edjeGroupFromFormType(type);
     ASSERT(file);
@@ -156,7 +159,7 @@ bool RenderThemeEfl::isFormElementTooLargeToDisplay(const IntSize& elementSize)
 struct RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::cacheThemePartNew(FormType type, const IntSize& size)
 {
     if (isFormElementTooLargeToDisplay(size)) {
-        EINA_LOG_ERR("Cannot render an element of size %dx%d.", size.width(), size.height());
+        EINA_LOG_ERR("cannot render an element of size %dx%d", size.width(), size.height());
         return 0;
     }
 
@@ -308,14 +311,12 @@ void RenderThemeEfl::applyEdjeStateFromForm(Evas_Object* object, ControlStates s
 
 bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const PaintInfo& info, const IntRect& rect)
 {
-    if (!edje()) {
-        EINA_LOG_ERR("Could not paint native HTML part due to missing theme.");
-        return false;
-    }
-
     ThemePartCacheEntry* entry;
     Eina_List* updates;
     cairo_t* cairo;
+
+    ASSERT(m_canvas);
+    ASSERT(m_edje);
 
     entry = cacheThemePartGet(type, rect.size());
     if (!entry)
@@ -437,59 +438,44 @@ void RenderThemeEfl::setThemePath(const String& path)
         return;
 
     m_themePath = path;
-
-    if (m_themePath.isEmpty()) {
-        EINA_LOG_ERR("No theme defined, unable to set theme for HTML Forms.");
-        return;
-    }
-
-    if (!m_canvas) {
-        m_canvas = ecore_evas_buffer_new(1, 1);
-        if (!m_canvas)
-            EINA_LOG_ERR("Could not create canvas.");
-    }
-
-    if (m_edje) {
-        // Get rid of current theme.
-        cacheThemePartFlush();
-        evas_object_del(m_edje);
-        m_edje = 0;
-    }
+    themeChanged();
 }
 
-Evas_Object* RenderThemeEfl::edje()
+void RenderThemeEfl::createCanvas()
 {
-    if (!m_edje) {
-        m_edje = edje_object_add(ecore_evas_get(m_canvas));
-        if (!m_edje) {
-            EINA_LOG_CRIT("Could not create base Edje object.");
-            return 0;
-        }
+    ASSERT(!m_canvas);
+    m_canvas = ecore_evas_buffer_new(1, 1);
+    ASSERT(m_canvas);
+}
 
-        if (!edje_object_file_set(m_edje, m_themePath.utf8().data(), "webkit/base")) {
+void RenderThemeEfl::createEdje()
+{
+    ASSERT(!m_edje);
+    if (m_themePath.isEmpty())
+        EINA_LOG_ERR("No theme defined, unable to set RenderThemeEfl.");
+    else {
+        m_edje = edje_object_add(ecore_evas_get(m_canvas));
+        if (!m_edje)
+            EINA_LOG_ERR("Could not create base edje object.");
+        else if (!edje_object_file_set(m_edje, m_themePath.utf8().data(), "webkit/base")) {
             Edje_Load_Error err = edje_object_load_error_get(m_edje);
             const char* errmsg = edje_load_error_str(err);
-            EINA_LOG_CRIT("Could not set file '%s': %s", m_themePath.utf8().data(),  errmsg);
-
+            EINA_LOG_ERR("Could not set file: %s", errmsg);
             evas_object_del(m_edje);
             m_edje = 0;
-            return 0;
-        }
-
+        } else {
 #define CONNECT(cc, func)                                               \
             edje_object_signal_callback_add(m_edje, "color_class,set",  \
                                             "webkit/"cc, func, this)
 
-        CONNECT("selection/active", renderThemeEflColorClassSelectionActive);
-        CONNECT("selection/inactive", renderThemeEflColorClassSelectionInactive);
-        CONNECT("focus_ring", renderThemeEflColorClassFocusRing);
+            CONNECT("selection/active",
+                    renderThemeEflColorClassSelectionActive);
+            CONNECT("selection/inactive",
+                    renderThemeEflColorClassSelectionInactive);
+            CONNECT("focus_ring", renderThemeEflColorClassFocusRing);
 #undef CONNECT
-
-        applyEdjeColors();
-        applyPartDescriptions();
+        }
     }
-
-    return m_edje;
 }
 
 void RenderThemeEfl::applyEdjeColors()
@@ -625,14 +611,11 @@ void RenderThemeEfl::applyPartDescriptions()
     unsigned int i;
     const char* file;
 
+    ASSERT(m_canvas);
     ASSERT(m_edje);
 
     edje_object_file_get(m_edje, &file, 0);
     ASSERT(file);
-    if (!file) {
-        EINA_LOG_ERR("Could not retrieve Edje theme file.");
-        return;
-    }
 
     object = edje_object_add(ecore_evas_get(m_canvas));
     if (!object) {
@@ -655,6 +638,26 @@ void RenderThemeEfl::applyPartDescriptions()
             applyPartDescription(object, m_partDescs + i);
     }
     evas_object_del(object);
+}
+
+void RenderThemeEfl::themeChanged()
+{
+    cacheThemePartFlush();
+
+    if (!m_canvas) {
+        createCanvas();
+        if (!m_canvas)
+            return;
+    }
+
+    if (!m_edje) {
+        createEdje();
+        if (!m_edje)
+            return;
+    }
+
+    applyEdjeColors();
+    applyPartDescriptions();
 }
 
 RenderThemeEfl::RenderThemeEfl(Page* page)
