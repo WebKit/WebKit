@@ -479,9 +479,13 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(PlatformEvent::Type type, b
     }
 }
 
-void PlatformKeyboardEvent::getCurrentModifierState(bool&, bool&, bool&, bool&)
+void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)
 {
     notImplemented();
+    shiftKey = false;
+    ctrlKey = false;
+    altKey = false;
+    metaKey = false;
 }
 
 } // namespace WebCore
