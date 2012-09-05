@@ -122,6 +122,11 @@ public:
     // we'll return in d0 for simplicity.
     static const FPRReg returnValueFPR = ARMRegisters::d0; // fpRegT0
 
+#if CPU(ARM_HARDFP)
+    static const FPRReg argumentFPR0 = ARMRegisters::d0; // fpRegT0
+    static const FPRReg argumentFPR1 = ARMRegisters::d1; // fpRegT1
+#endif
+
     // FPRReg mapping is direct, the machine regsiter numbers can
     // be used directly as indices into the FPR RegisterBank.
     COMPILE_ASSERT(ARMRegisters::d0 == 0, d0_is_0);

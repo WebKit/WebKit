@@ -456,6 +456,28 @@ public:
         setupTwoStubArgs<FPRInfo::argumentFPR0, FPRInfo::argumentFPR1>(arg1, arg2);
     }
 #elif CPU(ARM)
+#if CPU(ARM_HARDFP)
+    ALWAYS_INLINE void setupArguments(FPRReg arg1)
+    {
+        moveDouble(arg1, FPRInfo::argumentFPR0);
+    }
+
+    ALWAYS_INLINE void setupArguments(FPRReg arg1, FPRReg arg2)
+    {
+        if (arg2 != FPRInfo::argumentFPR0) {
+            moveDouble(arg1, FPRInfo::argumentFPR0);
+            moveDouble(arg2, FPRInfo::argumentFPR1);
+        } else if (arg1 != FPRInfo::argumentFPR1) {
+            moveDouble(arg2, FPRInfo::argumentFPR1);
+            moveDouble(arg1, FPRInfo::argumentFPR0);
+        } else {
+            // Swap arg1, arg2.
+            moveDouble(FPRInfo::argumentFPR0, ARMRegisters::d2);
+            moveDouble(FPRInfo::argumentFPR1, FPRInfo::argumentFPR0);
+            moveDouble(ARMRegisters::d2, FPRInfo::argumentFPR1);
+        }
+    }
+#else
     ALWAYS_INLINE void setupArguments(FPRReg arg1)
     {
         assembler().vmov(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, arg1);
@@ -466,6 +488,7 @@ public:
         assembler().vmov(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, arg1);
         assembler().vmov(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3, arg2);
     }
+#endif // CPU(ARM_HARDFP)
 #else
 #error "DFG JIT not supported on this platform."
 #endif
