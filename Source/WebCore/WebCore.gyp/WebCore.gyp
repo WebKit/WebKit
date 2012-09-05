@@ -1625,7 +1625,7 @@
       'hard_dependency': 1,
       'sources': [
         '<@(webcore_privateheader_files)',
-        '<@(webcore_platform_files)',
+        '<@(webcore_files)',
 
         # For WebCoreSystemInterface, Mac-only.
         '../../WebKit/mac/WebCoreSupport/WebSystemInterface.mm',
