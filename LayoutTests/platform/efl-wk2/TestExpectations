@@ -203,22 +203,6 @@ BUGWKEFL : fast/ruby/rubyDOM-remove-rt2.html = TEXT
 BUGWKEFL : fast/ruby/rubyDOM-remove-text1.html = TEXT
 BUGWKEFL : fast/ruby/rubyDOM-remove-text2.html = TEXT
 
-// Failing Security tests
-BUGWKEFL : http/tests/security/aboutBlank/security-context-grandchildren-lexical.html = TEXT
-BUGWKEFL : http/tests/security/aboutBlank/security-context-grandchildren-write-lexical.html = TEXT
-BUGWKEFL : http/tests/security/aboutBlank/security-context-grandchildren-writeln-lexical.html = TEXT
-BUGWKEFL : http/tests/security/aboutBlank/security-context-grandchildren.html = TEXT
-BUGWKEFL : http/tests/security/aboutBlank/security-context-window-open.html = TEXT
-BUGWKEFL : http/tests/security/aboutBlank/security-context-with-base-tag.html = TEXT
-BUGWKEFL : http/tests/security/aboutBlank/security-context-write.html = TEXT
-BUGWKEFL : http/tests/security/aboutBlank/security-context-writeln.html = TEXT
-BUGWKEFL : http/tests/security/aboutBlank/security-context.html = TEXT
-BUGWKEFL : http/tests/security/cookies/assign-document-url.html = TEXT
-BUGWKEFL : http/tests/security/cookies/base-about-blank.html = TEXT
-BUGWKEFL : http/tests/security/cookies/base-tag.html = TEXT
-BUGWKEFL : http/tests/security/cookies/basic.html = TEXT
-BUGWKEFL : http/tests/security/cookies/document-open.html = TEXT
-
 // WebKitTestRunner needs an implementation for testRunner.setStorageDatabaseIdleInterval
 BUGWKEFL : storage/domstorage/storage-close-database-on-idle.html = TEXT
 
@@ -240,7 +224,6 @@ BUGWKEFL : editing/execCommand/format-block-multiple-paragraphs-in-pre.html = TE
 BUGWKEFL : editing/input/emacs-ctrl-o.html = TEXT
 BUGWKEFL : editing/input/page-up-down-scrolls.html = TEXT
 BUGWKEFL : fast/block/float/float-in-float-hit-testing.html = TEXT
-BUGWKEFL : fast/cookies/local-file-can-set-cookies.html = TEXT
 BUGWKEFL : fast/css/bidi-override-in-anonymous-block.html = TEXT
 BUGWKEFL : fast/css/relative-positioned-block-crash.html = TEXT
 BUGWKEFL : fast/dom/Window/mozilla-focus-blur.html = TEXT

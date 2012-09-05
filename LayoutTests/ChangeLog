@@ -1,3 +1,15 @@
+2012-09-05  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Provide implementation for WebFrameNetworkingContext
+        https://bugs.webkit.org/show_bug.cgi?id=95826
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip several cookie-related test cases for WK2 EFL
+        now that WebFrameNetworkingContext is implemented.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-09-05  MORITA Hajime  <morrita@google.com>
 
         ShadowRoot.cloneNode() must always throw a DATA_CLONE_ERR exception.
