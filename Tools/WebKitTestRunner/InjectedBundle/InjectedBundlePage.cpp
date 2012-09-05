@@ -317,7 +317,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         didReceiveContentLengthForResource,
         didFinishLoadForResource,
         didFailLoadForResource,
-        0, // shouldCacheResponse
+        shouldCacheResponse,
         0 // shouldUseCredentialStorage
     };
     WKBundlePageSetResourceLoadClient(m_page, &resourceLoadClient);
@@ -704,6 +704,11 @@ void InjectedBundlePage::didFinishLoadForResource(WKBundlePageRef page, WKBundle
 void InjectedBundlePage::didFailLoadForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKErrorRef error, const void* clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didFailLoadForResource(page, frame, identifier, error);
+}
+
+bool InjectedBundlePage::shouldCacheResponse(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, const void* clientInfo)
+{
+    return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldCacheResponse(page, frame, identifier);
 }
 
 void InjectedBundlePage::didStartProvisionalLoadForFrame(WKBundleFrameRef frame)
@@ -1202,6 +1207,21 @@ void InjectedBundlePage::didFailLoadForResource(WKBundlePageRef, WKBundleFrameRe
 
     dumpErrorDescriptionSuitableForTestResult(error);
     InjectedBundle::shared().stringBuilder()->append("\n");
+}
+
+bool InjectedBundlePage::shouldCacheResponse(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier)
+{
+    if (!InjectedBundle::shared().isTestRunning())
+        return true;
+
+    if (!InjectedBundle::shared().testRunner()->shouldDumpWillCacheResponse())
+        return true;
+
+    InjectedBundle::shared().stringBuilder()->append(WTF::String::number(identifier));
+    InjectedBundle::shared().stringBuilder()->append(" - willCacheResponse: called\n");
+
+    // The default behavior is the cache the response.
+    return true;
 }
 
 

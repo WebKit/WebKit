@@ -1,3 +1,28 @@
+2012-09-05  Christophe Dumez  <christophe.dumez@intel.com>
+
+        WKTR doesn't implement dumpWillCacheResponse()
+        https://bugs.webkit.org/show_bug.cgi?id=94607
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Define shouldCacheResponse() callback in resource
+        load client and provide implementation for
+        dumpWillCacheResponse() in WebKitTestRunner.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        (WTR::InjectedBundlePage::shouldCacheResponse):
+        (WTR):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        (InjectedBundlePage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::TestRunner):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::dumpWillCacheResponse):
+        (WTR::TestRunner::shouldDumpWillCacheResponse):
+        (TestRunner):
+
 2012-09-05  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         [DRT] LTC:: Move printing related APIs from LayoutTestController to Internals
