@@ -1,3 +1,46 @@
+2012-09-05  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Auto width is not working for Regions
+        https://bugs.webkit.org/show_bug.cgi?id=74135
+
+        Reviewed by Julien Chaffraix.
+
+        It was not possible to flow content into a region having { width: auto; } since in such case, the region width was computed to 0.
+        Now, a region having auto width, will have its width computed following the rules for calculation of widths and margins
+        (http://www.w3.org/TR/CSS2/visudet.html#Computing_widths_and_margins).
+        For those cases in which resolving the width requires measuring of content's min/max-content values, we use the associated named flow min/max-content
+        values (the same for all regions with width auto in a region chain).
+
+        Besides adding new tests, i have modified existing tests that were having regions with width:auto as they were failing after this patch.
+
+        * fast/regions/autowidth-abspos-expected.html: Added.
+        * fast/regions/autowidth-abspos-regionchain-expected.html: Added.
+        * fast/regions/autowidth-abspos-regionchain.html: Added.
+        * fast/regions/autowidth-abspos.html: Added.
+        * fast/regions/autowidth-float-expected.html: Added.
+        * fast/regions/autowidth-float.html: Added.
+        * fast/regions/autowidth-inlineblock-expected.html: Added.
+        * fast/regions/autowidth-inlineblock.html: Added.
+        * fast/regions/autowidth-nonreplaced-abspos-expected.html: Added.
+        * fast/regions/autowidth-nonreplaced-abspos.html: Added.
+        * fast/regions/autowidth-nonreplacedblock-normalflow-expected.html: Added.
+        * fast/regions/autowidth-nonreplacedblock-normalflow.html: Added.
+        * fast/regions/autowidth-normalflow-expected.html: Added.
+        * fast/regions/autowidth-normalflow-maxwidth-expected.html: Added.
+        * fast/regions/autowidth-normalflow-maxwidth.html: Added.
+        * fast/regions/autowidth-normalflow-minmaxwidth-expected.html: Added.
+        * fast/regions/autowidth-normalflow-minmaxwidth.html: Added.
+        * fast/regions/autowidth-normalflow-minwidth-expected.html: Added.
+        * fast/regions/autowidth-normalflow-minwidth.html: Added.
+        * fast/regions/autowidth-normalflow-vertrl-expected.html: Added.
+        * fast/regions/autowidth-normalflow-vertrl.html: Added.
+        * fast/regions/autowidth-normalflow.html: Added.
+        * fast/regions/bottom-overflow-out-of-first-region.html:
+        * fast/regions/flows-dependency-dynamic-remove.html:
+        * fast/regions/flows-dependency-same-flow.html:
+        * fast/regions/render-region-renderer-expected.html:
+        * fast/regions/top-overflow-out-of-second-region.html:
+
 2012-09-05  Brady Eidson  <beidson@apple.com>
 
         Frequent crashes in PluginView::scriptObject under runtimeObjectCustomGetOwnPropertySlot

@@ -496,4 +496,44 @@ void RenderRegion::clearObjectStyleInRegion(const RenderObject* object)
         clearObjectStyleInRegion(child);
 }
 
+// FIXME: when RenderRegion will inherit from RenderBlock instead of RenderReplaced,
+// we should overwrite computePreferredLogicalWidths ( see https://bugs.webkit.org/show_bug.cgi?id=74132 )
+LayoutUnit RenderRegion::minPreferredLogicalWidth() const
+{
+    if (!m_flowThread)
+        return RenderReplaced::minPreferredLogicalWidth();
+
+    // FIXME: Currently, the code handles only the <length> case for min-width. It should also support other values, like percentage, calc
+    // or viewport relative.
+    RenderStyle* styleToUse = style();
+    LayoutUnit minPreferredLogicalWidth = m_flowThread->minPreferredLogicalWidth();
+
+    if (styleToUse->logicalMinWidth().isFixed() && styleToUse->logicalMinWidth().value() > 0)
+        minPreferredLogicalWidth = std::max(minPreferredLogicalWidth, computeContentBoxLogicalWidth(styleToUse->logicalMinWidth().value()));
+
+    if (styleToUse->logicalMaxWidth().isFixed())
+        minPreferredLogicalWidth = std::min(minPreferredLogicalWidth, computeContentBoxLogicalWidth(styleToUse->logicalMaxWidth().value()));
+
+    return minPreferredLogicalWidth + borderAndPaddingLogicalWidth();
+}
+
+LayoutUnit RenderRegion::maxPreferredLogicalWidth() const
+{
+    if (!m_flowThread)
+        return RenderReplaced::maxPreferredLogicalWidth();
+
+    // FIXME: Currently, the code handles only the <length> case for max-width. It should also support other values, like percentage, calc
+    // or viewport relative.
+    RenderStyle* styleToUse = style();
+    LayoutUnit maxPreferredLogicalWidth = m_flowThread->maxPreferredLogicalWidth();
+
+    if (styleToUse->logicalMinWidth().isFixed() && styleToUse->logicalMinWidth().value() > 0)
+        maxPreferredLogicalWidth = std::max(maxPreferredLogicalWidth, computeContentBoxLogicalWidth(styleToUse->logicalMinWidth().value()));
+
+    if (styleToUse->logicalMaxWidth().isFixed())
+        maxPreferredLogicalWidth = std::min(maxPreferredLogicalWidth, computeContentBoxLogicalWidth(styleToUse->logicalMaxWidth().value()));
+
+    return maxPreferredLogicalWidth + borderAndPaddingLogicalWidth();
+}
+
 } // namespace WebCore
