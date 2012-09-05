@@ -1076,8 +1076,16 @@ void FrameLoaderClientBlackBerry::restoreViewState()
     m_webPagePrivate->m_minimumScale = viewState.minimumScale;
     m_webPagePrivate->m_maximumScale = viewState.maximumScale;
     m_webPagePrivate->m_userScalable = viewState.isUserScalable;
+
     // Also, try to keep the users zoom if any.
     double scale = viewState.scale;
+
+    // If it was zoomToFitScale use the new zoomToFitScale because
+    // the new one may be different to the old one due to contents
+    // size change (e.g. after reloaded).
+    if (viewState.isZoomToFitScale)
+        scale = m_webPagePrivate->zoomToFitScale();
+
     bool shouldReflowBlock = viewState.shouldReflowBlock;
     if (m_webPagePrivate->m_userPerformedManualZoom) {
         scale = m_webPagePrivate->currentScale();
