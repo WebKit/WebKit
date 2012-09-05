@@ -350,7 +350,7 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
         else
             msg->val[0] = 0;
 
-        msg->val[1] = input->valueAsNumber() / valueRange;
+        msg->val[1] = (input->valueAsNumber() - input->minimum()) / valueRange;
         edje_object_message_send(entry->o, EDJE_MESSAGE_FLOAT_SET, 0, msg);
 #if ENABLE(PROGRESS_ELEMENT)
     } else if (type == ProgressBar) {
