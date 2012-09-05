@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2006, 2007, 2008, Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -29,24 +29,26 @@
  */
 
 #include "config.h"
-#include "FontPlatformData.h"
+#include "FontPlatformDataHarfBuzz.h"
 
 #include "NotImplemented.h"
 #include "PlatformString.h"
-#include "PlatformSupport.h"
-
 #include "SkAdvancedTypefaceMetrics.h"
 #include "SkFontHost.h"
 #include "SkPaint.h"
 #include "SkTypeface.h"
-
-#include <wtf/text/StringImpl.h> 
 
 #if USE(HARFBUZZ_NG)
 #include "HarfBuzzNGFace.h"
 #else
 #include "HarfBuzzSkia.h"
 #endif
+
+#include <public/linux/WebFontInfo.h>
+#include <public/linux/WebFontRenderStyle.h>
+#include <public/linux/WebSandboxSupport.h>
+#include <public/Platform.h>
+#include <wtf/text/StringImpl.h>
 
 namespace WebCore {
 
@@ -248,7 +250,7 @@ bool FontPlatformData::operator==(const FontPlatformData& a) const
     else
         typefacesEqual = SkTypeface::Equal(m_typeface, a.m_typeface);
 
-    return typefacesEqual 
+    return typefacesEqual
         && m_textSize == a.m_textSize
         && m_fakeBold == a.m_fakeBold
         && m_fakeItalic == a.m_fakeItalic
@@ -296,9 +298,27 @@ HarfbuzzFace* FontPlatformData::harfbuzzFace() const
 }
 #endif
 
+void FontPlatformData::getRenderStyleForStrike(const char* font, int sizeAndStyle)
+{
+    WebKit::WebFontRenderStyle style;
+
+#if OS(ANDROID)
+    style.setDefaults();
+#else
+    if (!font || !*font)
+        style.setDefaults(); // It's probably a webfont. Take the system defaults.
+    else if (WebKit::Platform::current()->sandboxSupport())
+        WebKit::Platform::current()->sandboxSupport()->getRenderStyleForStrike(font, sizeAndStyle, &style);
+    else
+        WebKit::WebFontInfo::renderStyleForStrike(font, sizeAndStyle, &style);
+#endif
+
+    style.toFontRenderStyle(&m_style);
+}
+
 void FontPlatformData::querySystemForRenderStyle()
 {
-    PlatformSupport::getRenderStyleForStrike(m_family.data(), (((int)m_textSize) << 2) | (m_typeface->style() & 3), &m_style);
+    getRenderStyleForStrike(m_family.data(), (((int)m_textSize) << 2) | (m_typeface->style() & 3));
 
     // Fix FontRenderStyle::NoPreference to actual styles.
     if (m_style.useAntiAlias == FontRenderStyle::NoPreference)

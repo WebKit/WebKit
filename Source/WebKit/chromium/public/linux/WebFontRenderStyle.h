@@ -28,36 +28,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFontRenderStyle_h
-#define WebFontRenderStyle_h
-
-#include "../platform/WebCommon.h"
-
-namespace WebCore { struct FontRenderStyle; }
-
-namespace WebKit {
-
-struct WEBKIT_EXPORT WebFontRenderStyle {
-    // Each of the use* members below can take one of three values:
-    //   0: off
-    //   1: on
-    //   2: no preference expressed
-    char useBitmaps; // use embedded bitmap strike if possible
-    char useAutoHint; // use 'auto' hinting (FreeType specific)
-    char useHinting; // hint glyphs to the pixel grid
-    char hintStyle; // level of hinting, 0..3
-    char useAntiAlias; // antialias glyph shapes
-    char useSubpixelRendering; // use subpixel rendering (partially-filled pixels)
-    char useSubpixelPositioning; // use subpixel positioning (fractional X positions for glyphs)
-
-#if WEBKIT_IMPLEMENTATION
-    // Translates the members of this struct to a FontRenderStyle
-    void toFontRenderStyle(WebCore::FontRenderStyle*);
-#endif
-
-    void setDefaults();
-};
-
-} // namespace WebKit
-
-#endif // WebFontRenderStyle_h
+#include "../../../../Platform/chromium/public/linux/WebFontRenderStyle.h"

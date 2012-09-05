@@ -149,6 +149,8 @@
             'chromium/public/WebWorkerRunLoop.h',
             'chromium/public/android/WebSandboxSupport.h',
             'chromium/public/android/WebThemeEngine.h',
+            'chromium/public/linux/WebFontInfo.h',
+            'chromium/public/linux/WebFontRenderStyle.h',
             'chromium/public/linux/WebSandboxSupport.h',
             'chromium/public/linux/WebThemeEngine.h',
             'chromium/public/mac/WebSandboxSupport.h',

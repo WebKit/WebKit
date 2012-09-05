@@ -103,7 +103,6 @@ public:
 #if OS(DARWIN)
     static bool loadFont(NSFont* srcFont, CGFontRef*, uint32_t* fontID);
 #elif OS(UNIX)
-    static void getRenderStyleForStrike(const char* family, int sizeAndStyle, FontRenderStyle* result);
     struct FontFamily {
         String name;
         bool isBold;
