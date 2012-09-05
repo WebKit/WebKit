@@ -54,6 +54,7 @@
 
 namespace WebKit {
 class WebAnimationDelegate;
+class WebLayerScrollClient;
 }
 
 namespace WebCore {
@@ -67,15 +68,6 @@ class CCTextureUpdateQueue;
 class ScrollbarLayerChromium;
 struct CCAnimationEvent;
 struct CCRenderingStats;
-
-// Delegate for handling scroll input for a LayerChromium.
-class LayerChromiumScrollDelegate {
-public:
-    virtual void didScroll(const IntSize&) = 0;
-
-protected:
-    virtual ~LayerChromiumScrollDelegate() { }
-};
 
 // Base class for composited layers. Special layer types are derived from
 // this class.
@@ -175,8 +167,7 @@ public:
     const Region& nonFastScrollableRegion() { return m_nonFastScrollableRegion; }
     void setNonFastScrollableRegion(const Region&);
     void setNonFastScrollableRegionChanged() { m_nonFastScrollableRegionChanged = true; }
-    void setLayerScrollDelegate(LayerChromiumScrollDelegate* layerScrollDelegate) { m_layerScrollDelegate = layerScrollDelegate; }
-    void scrollBy(const IntSize&);
+    void setLayerScrollClient(WebKit::WebLayerScrollClient* layerScrollClient) { m_layerScrollClient = layerScrollClient; }
 
     void setDrawCheckerboardForMissingTiles(bool);
     bool drawCheckerboardForMissingTiles() const { return m_drawCheckerboardForMissingTiles; }
@@ -396,7 +387,7 @@ private:
     float m_contentsScale;
 
     WebKit::WebAnimationDelegate* m_layerAnimationDelegate;
-    LayerChromiumScrollDelegate* m_layerScrollDelegate;
+    WebKit::WebLayerScrollClient* m_layerScrollClient;
 };
 
 void sortLayers(Vector<RefPtr<LayerChromium> >::iterator, Vector<RefPtr<LayerChromium> >::iterator, void*);

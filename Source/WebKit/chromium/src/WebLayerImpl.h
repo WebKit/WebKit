@@ -94,12 +94,15 @@ public:
     virtual void transferAnimationsTo(WebLayer*) OVERRIDE;
     virtual void setForceRenderSurface(bool) OVERRIDE;
     virtual void setScrollPosition(WebPoint) OVERRIDE;
+    virtual WebPoint scrollPosition() const OVERRIDE;
+    virtual void setMaxScrollPosition(WebSize) OVERRIDE;
     virtual void setScrollable(bool) OVERRIDE;
     virtual void setHaveWheelEventHandlers(bool) OVERRIDE;
     virtual void setShouldScrollOnMainThread(bool) OVERRIDE;
     virtual void setNonFastScrollableRegion(const WebVector<WebRect>&) OVERRIDE;
     virtual void setIsContainerForFixedPositionLayers(bool) OVERRIDE;
     virtual void setFixedToContainerLayer(bool) OVERRIDE;
+    virtual void setScrollClient(WebLayerScrollClient*) OVERRIDE;
 
     WebCore::LayerChromium* layer() const;
 

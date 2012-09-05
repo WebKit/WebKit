@@ -79,6 +79,7 @@
             'chromium/public/WebImageLayer.h',
             'chromium/public/WebIOSurfaceLayer.h',
             'chromium/public/WebLayer.h',
+            'chromium/public/WebLayerScrollClient.h',
             'chromium/public/WebLayerTreeView.h',
             'chromium/public/WebLayerTreeViewClient.h',
             'chromium/public/WebLocalizedString.h',

@@ -40,6 +40,7 @@ class SkMatrix44;
 namespace WebKit {
 class WebAnimationDelegate;
 class WebFilterOperations;
+class WebLayerScrollClient;
 class WebTransformationMatrix;
 struct WebFloatPoint;
 struct WebFloatRect;
@@ -165,12 +166,22 @@ public:
 
     // Scrolling
     virtual void setScrollPosition(WebPoint) = 0;
+    virtual WebPoint scrollPosition() const = 0;
+
+    virtual void setMaxScrollPosition(WebSize) = 0;
     virtual void setScrollable(bool) = 0;
     virtual void setHaveWheelEventHandlers(bool) = 0;
     virtual void setShouldScrollOnMainThread(bool) = 0;
     virtual void setNonFastScrollableRegion(const WebVector<WebRect>&) = 0;
     virtual void setIsContainerForFixedPositionLayers(bool) = 0;
     virtual void setFixedToContainerLayer(bool) = 0;
+
+    // The scroll client is notified when the scroll position of the WebLayer
+    // changes. Only a single scroll client can be set for a WebLayer at a time.
+    // The WebLayer does not take ownership of the scroll client, and it is the
+    // responsibility of the client to reset the layer's scroll client before
+    // deleting the scroll client.
+    virtual void setScrollClient(WebLayerScrollClient*) = 0;
 
     // Forces this layer to use a render surface. There is no benefit in doing
     // so, but this is to facilitate benchmarks and tests.

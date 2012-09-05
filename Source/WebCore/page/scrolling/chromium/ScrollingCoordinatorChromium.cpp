@@ -246,9 +246,18 @@ void ScrollingCoordinator::setLayerIsFixedToContainerLayer(GraphicsLayer* layer,
         scrollableLayer->setFixedToContainerLayer(enable);
 }
 
-void ScrollingCoordinator::scrollableAreaScrollLayerDidChange(ScrollableArea*, GraphicsLayer*)
+void ScrollingCoordinator::scrollableAreaScrollLayerDidChange(ScrollableArea* scrollableArea, GraphicsLayer* scrollLayer)
 {
-    // FIXME: Implement.
+    if (!scrollLayer)
+        return;
+    GraphicsLayerChromium* layer = static_cast<GraphicsLayerChromium*>(scrollLayer);
+    layer->setScrollableArea(scrollableArea);
+
+    if (WebLayer* webLayer = scrollLayer->platformLayer()) {
+        webLayer->setScrollable(true);
+        webLayer->setScrollPosition(scrollableArea->scrollPosition());
+        webLayer->setMaxScrollPosition(IntSize(scrollableArea->scrollSize(HorizontalScrollbar), scrollableArea->scrollSize(VerticalScrollbar)));
+    }
 }
 
 }

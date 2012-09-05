@@ -355,6 +355,16 @@ void WebLayerImpl::setScrollPosition(WebPoint position)
     m_layer->setScrollPosition(position);
 }
 
+WebPoint WebLayerImpl::scrollPosition() const
+{
+    return m_layer->scrollPosition();
+}
+
+void WebLayerImpl::setMaxScrollPosition(WebSize maxScrollPosition)
+{
+    m_layer->setMaxScrollPosition(maxScrollPosition);
+}
+
 void WebLayerImpl::setScrollable(bool scrollable)
 {
     m_layer->setScrollable(scrollable);
@@ -389,6 +399,11 @@ void WebLayerImpl::setIsContainerForFixedPositionLayers(bool enable)
 void WebLayerImpl::setFixedToContainerLayer(bool enable)
 {
     m_layer->setFixedToContainerLayer(enable);
+}
+
+void WebLayerImpl::setScrollClient(WebLayerScrollClient* scrollClient)
+{
+    m_layer->setLayerScrollClient(scrollClient);
 }
 
 LayerChromium* WebLayerImpl::layer() const

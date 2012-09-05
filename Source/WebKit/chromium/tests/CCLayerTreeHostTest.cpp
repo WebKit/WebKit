@@ -41,6 +41,8 @@
 #include "FakeWebCompositorOutputSurface.h"
 #include <gmock/gmock.h>
 #include <public/Platform.h>
+#include <public/WebLayerScrollClient.h>
+#include <public/WebSize.h>
 #include <wtf/MainThread.h>
 #include <wtf/OwnArrayPtr.h>
 
@@ -2212,7 +2214,7 @@ private:
 
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestLayerAddedWithAnimation)
 
-class CCLayerTreeHostTestScrollChildLayer : public CCLayerTreeHostTest, public LayerChromiumScrollDelegate {
+class CCLayerTreeHostTestScrollChildLayer : public CCLayerTreeHostTest, public WebLayerScrollClient {
 public:
     CCLayerTreeHostTestScrollChildLayer()
         : m_scrollAmount(2, 1)
@@ -2235,7 +2237,7 @@ public:
         m_rootScrollLayer->setMaxScrollPosition(IntSize(100, 100));
         m_layerTreeHost->rootLayer()->addChild(m_rootScrollLayer);
         m_childLayer = ContentLayerChromium::create(&m_mockDelegate);
-        m_childLayer->setLayerScrollDelegate(this);
+        m_childLayer->setLayerScrollClient(this);
         m_childLayer->setBounds(IntSize(50, 50));
         m_childLayer->setIsDrawable(true);
         m_childLayer->setScrollable(true);
@@ -2248,9 +2250,9 @@ public:
         postSetNeedsCommitToMainThread();
     }
 
-    virtual void didScroll(const IntSize& scrollDelta) OVERRIDE
+    virtual void didScroll() OVERRIDE
     {
-        m_reportedScrollAmount = scrollDelta;
+        m_finalScrollPosition = m_childLayer->scrollPosition();
     }
 
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float) OVERRIDE
@@ -2280,12 +2282,12 @@ public:
 
     virtual void afterTest() OVERRIDE
     {
-        EXPECT_EQ(m_scrollAmount, m_reportedScrollAmount);
+        EXPECT_EQ(IntPoint(m_scrollAmount), m_finalScrollPosition);
     }
 
 private:
     const IntSize m_scrollAmount;
-    IntSize m_reportedScrollAmount;
+    IntPoint m_finalScrollPosition;
     MockContentLayerChromiumClient m_mockDelegate;
     RefPtr<LayerChromium> m_childLayer;
     RefPtr<LayerChromium> m_rootScrollLayer;

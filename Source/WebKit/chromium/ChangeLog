@@ -1,3 +1,26 @@
+2012-09-05  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Wire up scrollable sublayers in ScrollingCoordinatorChromium
+        https://bugs.webkit.org/show_bug.cgi?id=95679
+
+        Reviewed by James Robinson.
+
+        Introduce WebLayerScrollClient for getting notified about scroll events targeting a WebLayer.
+
+        * src/WebLayerImpl.cpp:
+        (WebKit::WebLayerImpl::setMaxScrollPosition):
+        (WebKit):
+        (WebKit::WebLayerImpl::setScrollClient):
+        (WebKit::WebLayerImpl::scrollBy):
+        * src/WebLayerImpl.h:
+        (WebLayerImpl):
+        * tests/CCLayerTreeHostTest.cpp:
+        * tests/GraphicsLayerChromiumTest.cpp:
+        (MockScrollableArea):
+        (WebKit):
+        (WebKit::TEST_F):
+        * tests/WebLayerTest.cpp:
+
 2012-09-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI: extract MemoryObjectType constants from MemoryInstrumentation.

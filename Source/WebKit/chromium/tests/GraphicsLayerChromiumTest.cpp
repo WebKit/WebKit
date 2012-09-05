@@ -33,6 +33,7 @@
 #include "GraphicsLayer.h"
 #include "Matrix3DTransformOperation.h"
 #include "RotateTransformOperation.h"
+#include "ScrollableArea.h"
 #include "TranslateTransformOperation.h"
 #include "WebLayerTreeViewTestCommon.h"
 #include <gtest/gtest.h>
@@ -124,6 +125,40 @@ TEST_F(GraphicsLayerChromiumTest, updateLayerPreserves3DWithAnimations)
 TEST_F(GraphicsLayerChromiumTest, shouldStartWithCorrectContentsScale)
 {
     EXPECT_EQ(2, m_graphicsLayer->contentsScale());
+}
+
+class FakeScrollableArea : public ScrollableArea {
+public:
+    virtual bool isActive() const OVERRIDE { return false; }
+    virtual int scrollSize(ScrollbarOrientation) const OVERRIDE { return 0; }
+    virtual int scrollPosition(Scrollbar*) const OVERRIDE { return 0; }
+    virtual bool isScrollCornerVisible() const OVERRIDE { return false; }
+    virtual IntRect scrollCornerRect() const OVERRIDE { return IntRect(); }
+    virtual int visibleWidth() const OVERRIDE { return 0; }
+    virtual int visibleHeight() const OVERRIDE { return 0; }
+    virtual IntSize contentsSize() const OVERRIDE { return IntSize(); }
+    virtual bool isOnActivePage() const OVERRIDE { return false; }
+    virtual ScrollableArea* enclosingScrollableArea() const OVERRIDE { return 0; }
+    virtual IntRect scrollableAreaBoundingBox() const OVERRIDE { return IntRect(); }
+    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) OVERRIDE { }
+    virtual void invalidateScrollCornerRect(const IntRect&) OVERRIDE { }
+
+    virtual void setScrollOffset(const IntPoint& scrollOffset) OVERRIDE { m_scrollPosition = scrollOffset; }
+    virtual IntPoint scrollPosition() const OVERRIDE { return m_scrollPosition; }
+
+private:
+    IntPoint m_scrollPosition;
+};
+
+TEST_F(GraphicsLayerChromiumTest, applyScrollToScrollableArea)
+{
+    FakeScrollableArea scrollableArea;
+    m_graphicsLayer->setScrollableArea(&scrollableArea);
+
+    WebPoint scrollPosition(7, 9);
+    m_platformLayer->setScrollPosition(scrollPosition);
+
+    EXPECT_EQ(scrollPosition, WebPoint(scrollableArea.scrollPosition()));
 }
 
 } // namespace

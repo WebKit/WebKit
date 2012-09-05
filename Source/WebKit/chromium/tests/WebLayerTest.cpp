@@ -34,6 +34,7 @@
 #include <public/WebExternalTextureLayer.h>
 #include <public/WebFloatPoint.h>
 #include <public/WebFloatRect.h>
+#include <public/WebLayerScrollClient.h>
 #include <public/WebLayerTreeView.h>
 #include <public/WebLayerTreeViewClient.h>
 #include <public/WebRect.h>
@@ -170,6 +171,30 @@ TEST_F(WebLayerTest, Client)
     contentLayer->layer()->setDrawsContent(false);
     Mock::VerifyAndClearExpectations(&m_client);
     EXPECT_FALSE(contentLayer->layer()->drawsContent());
+}
+
+class MockScrollClient : public WebLayerScrollClient {
+public:
+    MOCK_METHOD0(didScroll, void());
+};
+
+TEST_F(WebLayerTest, notifyScrollClient)
+{
+    MockScrollClient scrollClient;
+
+    EXPECT_CALL(scrollClient, didScroll()).Times(0);
+    m_rootLayer->setScrollClient(&scrollClient);
+    Mock::VerifyAndClearExpectations(&scrollClient);
+
+    EXPECT_CALL(scrollClient, didScroll()).Times(1);
+    m_rootLayer->setScrollPosition(WebPoint(14, 19));
+    Mock::VerifyAndClearExpectations(&scrollClient);
+
+    EXPECT_CALL(scrollClient, didScroll()).Times(0);
+    m_rootLayer->setScrollPosition(WebPoint(14, 19));
+    Mock::VerifyAndClearExpectations(&scrollClient);
+
+    m_rootLayer->setScrollClient(0);
 }
 
 }

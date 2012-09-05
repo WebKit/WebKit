@@ -658,7 +658,7 @@ void CCLayerTreeHost::applyScrollAndScale(const CCScrollAndScaleSet& info)
         if (layer == rootScrollLayer)
             rootScrollDelta += info.scrolls[i].scrollDelta;
         else
-            layer->scrollBy(info.scrolls[i].scrollDelta);
+            layer->setScrollPosition(layer->scrollPosition() + info.scrolls[i].scrollDelta);
     }
     if (!rootScrollDelta.isZero() || info.pageScaleDelta != 1)
         m_client->applyScrollAndScale(rootScrollDelta, info.pageScaleDelta);

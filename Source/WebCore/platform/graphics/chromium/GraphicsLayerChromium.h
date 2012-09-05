@@ -41,12 +41,13 @@
 #include <public/WebContentLayer.h>
 #include <public/WebImageLayer.h>
 #include <public/WebLayer.h>
+#include <public/WebLayerScrollClient.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
 
-class LayerChromium;
 class Path;
+class ScrollableArea;
 
 class LinkHighlightClient {
 public:
@@ -58,7 +59,7 @@ protected:
     virtual ~LinkHighlightClient() { }
 };
 
-class GraphicsLayerChromium : public GraphicsLayer, public GraphicsContextPainter, public WebKit::WebAnimationDelegate {
+class GraphicsLayerChromium : public GraphicsLayer, public GraphicsContextPainter, public WebKit::WebAnimationDelegate, public WebKit::WebLayerScrollClient {
 public:
     GraphicsLayerChromium(GraphicsLayerClient*);
     virtual ~GraphicsLayerChromium();
@@ -134,12 +135,18 @@ public:
     virtual void setDebugBorder(const Color&, float borderWidth);
     virtual void deviceOrPageScaleFactorChanged();
 
+    void setScrollableArea(ScrollableArea* scrollableArea) { m_scrollableArea = scrollableArea; }
+    ScrollableArea* scrollableArea() const { return m_scrollableArea; }
+
     // GraphicsContextPainter implementation.
     virtual void paint(GraphicsContext&, const IntRect& clip) OVERRIDE;
 
     // WebAnimationDelegate implementation.
     virtual void notifyAnimationStarted(double startTime) OVERRIDE;
     virtual void notifyAnimationFinished(double finishTime) OVERRIDE;
+
+    // WebLayerScrollClient implementation.
+    virtual void didScroll() OVERRIDE;
 
     WebKit::WebContentLayer* contentLayer() const { return m_layer.get(); }
 
@@ -200,6 +207,8 @@ private:
 
     typedef HashMap<String, int> AnimationIdMap;
     AnimationIdMap m_animationIdMap;
+
+    ScrollableArea* m_scrollableArea;
 };
 
 } // namespace WebCore

@@ -54,6 +54,7 @@
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
 #include "PlatformString.h"
+#include "ScrollableArea.h"
 #include "SkMatrix44.h"
 #include "SystemTime.h"
 #include <public/Platform.h>
@@ -90,6 +91,7 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
     , m_contentsLayerHasBackgroundColor(false)
     , m_inSetChildren(false)
     , m_pageScaleChanged(false)
+    , m_scrollableArea(0)
 {
     m_opaqueRectTrackingContentLayerDelegate = adoptPtr(new OpaqueRectTrackingContentLayerDelegate(this));
 
@@ -99,6 +101,7 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
         m_layer = adoptPtr(WebContentLayer::create(m_opaqueRectTrackingContentLayerDelegate.get()));
 
     m_layer->layer()->setDrawsContent(m_drawsContent && m_contentsVisible);
+    m_layer->layer()->setScrollClient(this);
     if (client)
         deviceOrPageScaleFactorChanged();
     updateDebugIndicators();
@@ -905,6 +908,12 @@ void GraphicsLayerChromium::notifyAnimationStarted(double startTime)
 void GraphicsLayerChromium::notifyAnimationFinished(double)
 {
     // Do nothing.
+}
+
+void GraphicsLayerChromium::didScroll()
+{
+    if (m_scrollableArea)
+        m_scrollableArea->scrollToOffsetWithoutAnimation(IntPoint(m_layer->layer()->scrollPosition()));
 }
 
 } // namespace WebCore
