@@ -3618,3 +3618,7 @@ BUGCR146399 ANDROID : platform/chromium-linux/fast/text/international/arabic-ver
 BUGCR146401 ANDROID : css3/filters/custom/effect-custom-transform-parameters.html = IMAGE
 BUGCR146401 ANDROID : css3/filters/custom/filter-fallback-to-software.html = IMAGE
 BUGCR146401 ANDROID : fast/css/sticky/sticky-writing-mode-vertical-lr.html = IMAGE
+
+// Started failing after r127457
+BUGWK95799 MAC : touchadjustment/iframe-boundary.html = TEXT
+
