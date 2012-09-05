@@ -25,20 +25,20 @@
             }
             .invalid_fragment_shader
             {
-                -webkit-filter: custom(none url('../resources/invalid-shader.vs'));
+                -webkit-filter: custom(none mix(url('../resources/invalid-shader.vs') normal source-atop));
             }
             .both_shaders_but_invalid_vertex_shader
             {
-                -webkit-filter: custom(url('../resources/invalid-shader.vs') url('../resources/color-offset.fs'));
+                -webkit-filter: custom(url('../resources/invalid-shader.vs') mix(url('../resources/color-offset.fs') normal source-atop));
             }
 
             .both_shaders_but_invalid_fragment_shader
             {
-                -webkit-filter: custom(url('../resources/vertex-offset.vs') url('../resources/invalid-shader.vs'));
+                -webkit-filter: custom(url('../resources/vertex-offset.vs') mix(url('../resources/invalid-shader.vs') normal source-atop));
             }
             .both_shaders_invalid
             {
-                -webkit-filter: custom(url('../resources/invalid-shader.vs') url('../resources/invalid-shader.vs'));
+                -webkit-filter: custom(url('../resources/invalid-shader.vs') mix(url('../resources/invalid-shader.vs') normal-source-atop));
             }
         </style>
     </head>

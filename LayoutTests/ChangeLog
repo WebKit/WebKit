@@ -1,3 +1,67 @@
+2012-09-05  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Update custom filter tests to use the new security model
+        https://bugs.webkit.org/show_bug.cgi?id=95760
+
+        Reviewed by Dirk Schulze.
+
+        This patch updates the custom filter tests to not sample u_texture and not write
+        to gl_FragColor. Now, the tests use the new security model by writing to
+        css_MixColor and indirectly blending with the DOM element texture.
+
+        This patch prepares us to remove direct DOM texture access via "u_texture":
+        https://bugs.webkit.org/show_bug.cgi?id=93871
+
+        * css3/filters/custom/custom-filter-css-keyword-as-parameter-name-expected.png:
+        * css3/filters/custom/custom-filter-shader-cache-expected.png:
+        * css3/filters/custom/custom-filter-shader-cache.html:
+            Use the CSS mix function with the updated color-offset.fs.
+        * css3/filters/custom/effect-color-check-expected.png:
+        * css3/filters/custom/effect-color-check.html:
+            Use the CSS mix function with the updated color-fill.fs.
+        * css3/filters/custom/effect-custom-combined-missing-expected.png:
+        * css3/filters/custom/effect-custom-combined-missing.html:
+            Use the CSS mix function with the updated color-offset.fs.           
+        * css3/filters/custom/effect-custom-expected.png:
+        * css3/filters/custom/effect-custom-parameters-expected.png:
+        * css3/filters/custom/effect-custom-parameters.html:
+            Use the mix-color.fs shader instead of color-offset-parameters.fs.
+        * css3/filters/custom/effect-custom.html:
+            Use the CSS mix function with the updated color-offset.fs.
+        * css3/filters/custom/filter-repaint-custom-clipped-expected.png:
+        * css3/filters/custom/filter-repaint-custom-clipped.html:
+            Use the mix-color.fs shader instead of color-add.fs.
+        * css3/filters/custom/filter-repaint-custom-expected.png:
+        * css3/filters/custom/filter-repaint-custom-rotated-expected.png:
+        * css3/filters/custom/filter-repaint-custom-rotated.html:
+            Use the mix-color.fs shader instead of color-add.fs. Fix a small typo in a comment.
+        * css3/filters/custom/filter-repaint-custom.html:
+            Use the mix-color.fs shader instead of color-add.fs.
+        * css3/filters/custom/invalid-custom-filter-shader.html:
+            Use the CSS mix function with the updated color-offset.fs.
+        * css3/filters/custom/missing-custom-filter-shader-expected.png:
+        * css3/filters/custom/missing-custom-filter-shader.html:
+            Use the CSS mix function with the updated color-offset.fs.
+        * css3/filters/resources/color-add.fs:
+            Removed. The mix-color.fs shader can perform this shader's function.
+        * css3/filters/resources/color-fill.fs:
+            Rewrote this shader to write to css_MixColor instead of sampling u_texture and writing
+            to gl_FragColor.
+        * css3/filters/resources/color-offset-parameters.fs:
+            Removed. The mix-color.fs shader can perform this shader's function.
+        * css3/filters/resources/color-offset.fs:
+            Rewrote this shader to write to css_MixColor instead of sampling u_texture and writing
+            to gl_FragColor.
+        * platform/chromium-mac/css3/filters/custom/custom-filter-shader-cache-expected.png:
+        * platform/chromium-mac/css3/filters/custom/effect-color-check-expected.png:
+        * platform/chromium-mac/css3/filters/custom/effect-custom-combined-missing-expected.png:
+        * platform/chromium-mac/css3/filters/custom/effect-custom-expected.png:
+        * platform/chromium-mac/css3/filters/custom/effect-custom-parameters-expected.png:
+        * platform/chromium-mac/css3/filters/custom/filter-repaint-custom-clipped-expected.png:
+        * platform/chromium-mac/css3/filters/custom/filter-repaint-custom-expected.png:
+        * platform/chromium-mac/css3/filters/custom/filter-repaint-custom-rotated-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-09-05  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add the local and remote description functionality to RTCPeerConnection

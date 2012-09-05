@@ -25,11 +25,11 @@
             }
             .fragment_shader
             {
-                -webkit-filter: custom(url('../resources/pass-tex-coord.vs') url('../resources/color-offset.fs'));
+                -webkit-filter: custom(url('../resources/pass-tex-coord.vs') mix(url('../resources/color-offset.fs') normal source-atop));
             }
             .both_shaders
             {
-                -webkit-filter: custom(url('../resources/vertex-offset.vs') url('../resources/color-offset.fs'));
+                -webkit-filter: custom(url('../resources/vertex-offset.vs') mix(url('../resources/color-offset.fs') normal source-atop));
             }
         </style>
     </head>

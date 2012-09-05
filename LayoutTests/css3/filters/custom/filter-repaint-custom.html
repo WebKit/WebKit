@@ -32,7 +32,7 @@
         .shader {
             border-top: 50px solid blue;
             width: 50px;
-            -webkit-filter: custom(url(../resources/vertex-rotate.vs) url(../resources/color-add.fs), rotateBy 90, add 0.1);
+            -webkit-filter: custom(url(../resources/vertex-rotate.vs) mix(url(../resources/mix-color.fs) normal source-atop), rotateBy 90, mix_color 1.0 1.0 1.0 0.1);
         }
     </style>
 

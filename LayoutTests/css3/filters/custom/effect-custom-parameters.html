@@ -20,32 +20,32 @@
         <style>
         /* Testing parameters of type float, vec2 and vec3 in vertex-offset-parameters.vs and vec4 in color-offset-parameters.fs. */
         .filterA {
-            -webkit-filter: custom(url('../resources/vertex-offset-parameters.vs') url('../resources/color-offset-parameters.fs'), 
+            -webkit-filter: custom(url('../resources/vertex-offset-parameters.vs') mix(url('../resources/mix-color.fs') normal source-atop),
                                    perspective 2, 
                                    vertex_offset -0.05 0.1,
                                    rotate 45 -25 -10, 
-                                   color_offset 0.4 0.2 0.5 0.1);
+                                   mix_color 0.4 0.2 0.5 0.5);
         }
         .filterB {
-            -webkit-filter: custom(url('../resources/vertex-offset-parameters.vs') url('../resources/color-offset-parameters.fs'), 
+            -webkit-filter: custom(url('../resources/vertex-offset-parameters.vs') mix(url('../resources/mix-color.fs') normal source-atop),
                                    rotate 45 25 -10,
                                    perspective 10, 
                                    vertex_offset -0.05 0.1,
-                                   color_offset 0.1 0.9 0.5 -0.5);
+                                   mix_color 0.1 0.9 0.5 0.5);
         }
         .filterC {
-            -webkit-filter: custom(url('../resources/vertex-offset-parameters.vs') url('../resources/color-offset-parameters.fs'), 
-                                   color_offset 0 0 0 0,
+            -webkit-filter: custom(url('../resources/vertex-offset-parameters.vs') mix(url('../resources/mix-color.fs') normal source-atop),
+                                   mix_color 0 0 0 0.5,
                                    perspective 2, 
                                    vertex_offset -0.05 0.1,
                                    rotate 45 -25 -10);
         }
         .filterD {
-            -webkit-filter: custom(url('../resources/vertex-offset-parameters.vs') url('../resources/color-offset-parameters.fs'), 
+            -webkit-filter: custom(url('../resources/vertex-offset-parameters.vs') mix(url('../resources/mix-color.fs') normal source-atop),
                                    vertex_offset -0.15 0.1,
                                    rotate 15 -45 10,
                                    perspective 1.5, 
-                                   color_offset 0.4 0.2 0.5 0.1);
+                                   mix_color 0.4 0.2 0.5 0.5);
         }
         </style>
     </head>

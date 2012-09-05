@@ -25,20 +25,20 @@
             }
             .missing_fragment_shader
             {
-                -webkit-filter: custom(none url('../resources/missing-color-offset.fs'));
+                -webkit-filter: custom(none mix(url('../resources/missing-color-offset.fs') normal source-atop));
             }
             .both_shaders_but_missing_vertex_shader
             {
-                -webkit-filter: custom(url('../resources/missing-vertex-offset.vs') url('../resources/color-offset.fs'));
+                -webkit-filter: custom(url('../resources/missing-vertex-offset.vs') mix(url('../resources/color-offset.fs') normal source-atop));
             }
 
             .both_shaders_but_missing_fragment_shader
             {
-                -webkit-filter: custom(url('../resources/vertex-offset.vs') url('../resources/missing-color-offset.fs'));
+                -webkit-filter: custom(url('../resources/vertex-offset.vs') mix(url('../resources/missing-color-offset.fs') normal source-atop));
             }
             .both_shaders_missing
             {
-                -webkit-filter: custom(url('../resources/missing-vertex-offset.vs') url('../resources/missing-color-offset.fs'));
+                -webkit-filter: custom(url('../resources/missing-vertex-offset.vs') mix(url('../resources/missing-color-offset.fs') normal source-atop));
             }
         </style>
     </head>

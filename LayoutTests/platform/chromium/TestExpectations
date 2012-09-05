@@ -3430,6 +3430,14 @@ BUGWK94256 DEBUG : fast/block/inline-children-root-linebox-crash.html = PASS CRA
 // Following tests need baselines on Win and Linux 
 BUGWK94492 WIN LINUX : css3/filters/custom/custom-filter-color-matrix.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 BUGWK94492 WIN LINUX : css3/filters/custom/custom-filter-composite-source-atop.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK94492 WIN LINUX : css3/filters/custom/custom-filter-shader-cache.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK94492 WIN LINUX : css3/filters/custom/effect-color-check.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK94492 WIN LINUX : css3/filters/custom/effect-custom-combined-missing.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK94492 WIN LINUX : css3/filters/custom/effect-custom.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK94492 WIN LINUX : css3/filters/custom/effect-custom-parameters.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK94492 WIN LINUX : css3/filters/custom/filter-repaint-custom-clipped.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK94492 WIN LINUX : css3/filters/custom/filter-repaint-custom.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK94492 WIN LINUX : css3/filters/custom/filter-repaint-custom-rotated.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 
 // Flaky
 BUGWK95246 : http/tests/security/mixedContent/filesystem-url-in-iframe.html = PASS TEXT
