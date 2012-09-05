@@ -1,3 +1,10 @@
+2012-09-05  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Some flaky http/tests/security tests on Windows. Adding to skip list.
+        https://bugs.webkit.org/show_bug.cgi?id=95803
+
+        * platform/win/Skipped:
+
 2012-09-05  Dan Bernstein  <mitz@apple.com>
 
         Added expected results for this test from r127620 for the Mac port, which does not have

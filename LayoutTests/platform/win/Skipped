@@ -2191,6 +2191,15 @@ http/tests/security/object-literals.html
 http/tests/security/script-with-failed-cors-check-fails-to-load.html
 http/tests/security/xss-DENIED-mime-type-execute-as-html.html
 http/tests/security/xss-DENIED-xsl-external-entity.xml
+http/tests/security/contentSecurityPolicy/report-blocked-uri.html
+http/tests/security/cookies/cookie-theft-with-javascript-doc.html
+http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html
+http/tests/security/local-video-poster-from-remote.html
+http/tests/security/local-video-source-from-remote.html
+http/tests/security/location-prototype.html
+http/tests/security/script-crossorigin-loads-correctly.html
+http/tests/security/video-poster-cross-origin-crash.html
+http/tests/security/xss-eval.html
 
 # Flaky http/tests/cookie tests
 # https://bugs.webkit.org/show_bug.cgi?id=95805
