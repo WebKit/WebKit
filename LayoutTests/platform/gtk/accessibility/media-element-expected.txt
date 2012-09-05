@@ -13,10 +13,6 @@ State at 'canplaythrough' event:
 
 
         description: AXDescription: 
-        role: AXRole: panel
-
-
-        description: AXDescription: 
         role: AXRole: slider
 
 

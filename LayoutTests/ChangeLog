@@ -1,5 +1,24 @@
 2012-09-01  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        [Gtk] No accessible caret-moved events found in certain content
+        https://bugs.webkit.org/show_bug.cgi?id=72811
+
+        Part of the bug was due to extraneous accessible objects resulting
+        from unignored inline and block spans.
+
+        Reviewed by Chris Fleizach.
+
+        Added new test, updated the results of one test to reflect the fix,
+        corrected a test with a mismatched element tag.
+
+        * platform/gtk/accessibility/aria-roles-unignored-expected.txt: Corrected results having fixed tag.
+        * platform/gtk/accessibility/aria-roles-unignored.html: Fixed mismatched element tag.
+        * platform/gtk/accessibility/media-element-expected.txt: Updated to reflect removal of extraneous object.
+        * platform/gtk/accessibility/spans-expected.txt: Added.
+        * platform/gtk/accessibility/spans.html: Added.
+
+2012-09-01  Joanmarie Diggs  <jdiggs@igalia.com>
+
         [Gtk] Incorrect/unexpected characters in the text of certain accessibles
         https://bugs.webkit.org/show_bug.cgi?id=95180
 
