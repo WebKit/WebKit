@@ -941,12 +941,12 @@ void RenderView::setFixedPositionedObjectsNeedLayout()
 {
     ASSERT(m_frameView);
 
-    ListHashSet<RenderBox*>* positionedObjects = this->positionedObjects();
+    TrackedRendererListHashSet* positionedObjects = this->positionedObjects();
     if (!positionedObjects)
         return;
 
-    ListHashSet<RenderBox*>::const_iterator end = positionedObjects->end();
-    for (ListHashSet<RenderBox*>::const_iterator it = positionedObjects->begin(); it != end; ++it) {
+    TrackedRendererListHashSet::const_iterator end = positionedObjects->end();
+    for (TrackedRendererListHashSet::const_iterator it = positionedObjects->begin(); it != end; ++it) {
         RenderBox* currBox = *it;
         currBox->setNeedsLayout(true);
     }
