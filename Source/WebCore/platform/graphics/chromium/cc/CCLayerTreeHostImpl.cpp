@@ -168,6 +168,10 @@ void CCLayerTreeHostImpl::commitComplete()
 
 bool CCLayerTreeHostImpl::canDraw()
 {
+    // Note: If you are changing this function or any other function that might
+    // affect the result of canDraw, make sure to call m_client->onCanDrawStateChanged
+    // in the proper places and update the notifyIfCanDrawChanged test.
+
     if (!m_rootLayerImpl) {
         TRACE_EVENT_INSTANT0("cc", "CCLayerTreeHostImpl::canDraw no root layer");
         return false;
@@ -530,6 +534,7 @@ void CCLayerTreeHostImpl::releaseContentsTextures()
     m_resourceProvider->deleteOwnedResources(CCRenderer::ContentPool);
     m_contentsTexturesPurged = true;
     m_client->setNeedsCommitOnImplThread();
+    m_client->onCanDrawStateChanged(canDraw());
 }
 
 void CCLayerTreeHostImpl::setMemoryAllocationLimitBytes(size_t bytes)
@@ -669,6 +674,8 @@ void CCLayerTreeHostImpl::setRootLayer(PassOwnPtr<CCLayerImpl> layer)
         m_currentlyScrollingLayerImpl = CCLayerTreeHostCommon::findLayerInSubtree(m_rootLayerImpl.get(), m_scrollingLayerIdFromPreviousTree);
 
     m_scrollingLayerIdFromPreviousTree = -1;
+
+    m_client->onCanDrawStateChanged(canDraw());
 }
 
 PassOwnPtr<CCLayerImpl> CCLayerTreeHostImpl::detachLayerTree()
@@ -731,7 +738,15 @@ bool CCLayerTreeHostImpl::initializeRenderer(PassOwnPtr<CCGraphicsContext> conte
     if (!m_visible && m_renderer)
          m_renderer->setVisible(m_visible);
 
+    m_client->onCanDrawStateChanged(canDraw());
+
     return m_renderer;
+}
+
+void CCLayerTreeHostImpl::resetContentsTexturesPurged()
+{
+    m_contentsTexturesPurged = false;
+    m_client->onCanDrawStateChanged(canDraw());
 }
 
 void CCLayerTreeHostImpl::setViewportSize(const IntSize& layoutViewportSize, const IntSize& deviceViewportSize)
@@ -746,6 +761,8 @@ void CCLayerTreeHostImpl::setViewportSize(const IntSize& layoutViewportSize, con
 
     if (m_renderer)
         m_renderer->viewportChanged();
+
+    m_client->onCanDrawStateChanged(canDraw());
 }
 
 static void adjustScrollsForPageScaleChange(CCLayerImpl* layerImpl, float pageScaleChange)

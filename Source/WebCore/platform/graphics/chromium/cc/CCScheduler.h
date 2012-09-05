@@ -52,7 +52,6 @@ struct CCScheduledActionDrawAndSwapResult {
 
 class CCSchedulerClient {
 public:
-    virtual bool canDraw() = 0;
     virtual bool hasMoreResourceUpdates() const = 0;
 
     virtual void scheduledActionBeginFrame() = 0;
@@ -80,6 +79,7 @@ public:
     void setCanBeginFrame(bool);
 
     void setVisible(bool);
+    void setCanDraw(bool);
 
     void setNeedsCommit();
 
@@ -114,7 +114,6 @@ public:
 private:
     CCScheduler(CCSchedulerClient*, PassOwnPtr<CCFrameRateController>);
 
-    CCSchedulerStateMachine::Action nextAction();
     void processScheduledActions();
 
     CCSchedulerClient* m_client;

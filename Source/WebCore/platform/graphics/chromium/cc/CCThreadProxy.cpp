@@ -352,6 +352,13 @@ void CCThreadProxy::onVSyncParametersChanged(double monotonicTimebase, double in
     m_schedulerOnImplThread->setTimebaseAndInterval(monotonicTimebase, intervalInSeconds);
 }
 
+void CCThreadProxy::onCanDrawStateChanged(bool canDraw)
+{
+    ASSERT(isImplThread());
+    TRACE_EVENT1("cc", "CCThreadProxy::onCanDrawStateChanged", "canDraw", canDraw);
+    m_schedulerOnImplThread->setCanDraw(canDraw);
+}
+
 void CCThreadProxy::setNeedsCommitOnImplThread()
 {
     ASSERT(isImplThread());
@@ -542,8 +549,10 @@ void CCThreadProxy::beginFrame()
     m_commitRequestSentToImplThread = false;
     m_forcedCommitRequested = false;
 
-    if (!m_layerTreeHost->initializeRendererIfNeeded())
+    if (!m_layerTreeHost->initializeRendererIfNeeded()) {
+        TRACE_EVENT0("cc", "EarlyOut_InitializeFailed");
         return;
+    }
 
     if (request->contentsTexturesWereDeleted)
         m_layerTreeHost->evictAllContentTextures();
@@ -593,6 +602,7 @@ void CCThreadProxy::beginFrameCompleteOnImplThread(CCCompletionEvent* completion
     ASSERT(m_schedulerOnImplThread->commitPending());
 
     if (!m_layerTreeHostImpl) {
+        TRACE_EVENT0("cc", "EarlyOut_NoLayerTree");
         completion->signal();
         return;
     }
@@ -628,14 +638,6 @@ bool CCThreadProxy::hasMoreResourceUpdates() const
     if (!m_currentTextureUpdateControllerOnImplThread)
         return false;
     return m_currentTextureUpdateControllerOnImplThread->hasMoreUpdates();
-}
-
-bool CCThreadProxy::canDraw()
-{
-    ASSERT(isImplThread());
-    if (!m_layerTreeHostImpl)
-        return false;
-    return m_layerTreeHostImpl->canDraw();
 }
 
 void CCThreadProxy::scheduledActionUpdateMoreResources(double monotonicTimeLimit)

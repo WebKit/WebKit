@@ -25,6 +25,8 @@
 #include "config.h"
 
 #include "CCSchedulerStateMachine.h"
+#include "TextStream.h"
+
 
 namespace WebCore {
 
@@ -44,11 +46,36 @@ CCSchedulerStateMachine::CCSchedulerStateMachine()
     , m_insideVSync(false)
     , m_visible(false)
     , m_canBeginFrame(false)
-    , m_canDraw(true)
+    , m_canDraw(false)
     , m_drawIfPossibleFailed(false)
     , m_textureState(LAYER_TEXTURE_STATE_UNLOCKED)
     , m_contextState(CONTEXT_ACTIVE)
 {
+}
+
+String CCSchedulerStateMachine::toString()
+{
+    TextStream ts;
+    ts << "m_commitState = " << m_commitState << "; ";
+    ts << "m_currentFrameNumber = " << m_currentFrameNumber << "; ";
+    ts << "m_lastFrameNumberWhereDrawWasCalled = " << m_lastFrameNumberWhereDrawWasCalled << "; ";
+    ts << "m_consecutiveFailedDraws = " << m_consecutiveFailedDraws << "; ";
+    ts << "m_maximumNumberOfFailedDrawsBeforeDrawIsForced = " << m_maximumNumberOfFailedDrawsBeforeDrawIsForced << "; ";
+    ts << "m_needsRedraw = " << m_needsRedraw << "; ";
+    ts << "m_needsForcedRedraw = " << m_needsForcedRedraw << "; ";
+    ts << "m_needsForcedRedrawAfterNextCommit = " << m_needsForcedRedrawAfterNextCommit << "; ";
+    ts << "m_needsCommit = " << m_needsCommit << "; ";
+    ts << "m_needsForcedCommit = " << m_needsForcedCommit << "; ";
+    ts << "m_mainThreadNeedsLayerTextures = " << m_mainThreadNeedsLayerTextures << "; ";
+    ts << "m_updateMoreResourcesPending = " << m_updateMoreResourcesPending << "; ";
+    ts << "m_insideVSync = " << m_insideVSync << "; ";
+    ts << "m_visible = " << m_visible << "; ";
+    ts << "m_canBeginFrame = " << m_canBeginFrame << "; ";
+    ts << "m_canDraw = " << m_canDraw << "; ";
+    ts << "m_drawIfPossibleFailed = " << m_drawIfPossibleFailed << "; ";
+    ts << "m_textureState = " << m_textureState << "; ";
+    ts << "m_contextState = " << m_contextState << "; ";
+    return ts.release();
 }
 
 bool CCSchedulerStateMachine::hasDrawnThisFrame() const
@@ -230,14 +257,18 @@ void CCSchedulerStateMachine::setMainThreadNeedsLayerTextures()
 
 bool CCSchedulerStateMachine::vsyncCallbackNeeded() const
 {
-    if (!m_visible || m_contextState != CONTEXT_ACTIVE) {
-        if (m_needsForcedRedraw || m_commitState == COMMIT_STATE_UPDATING_RESOURCES)
-            return true;
+    // To prevent live-lock, we must always tick when updating resources.
+    if (m_updateMoreResourcesPending || m_commitState == COMMIT_STATE_UPDATING_RESOURCES)
+        return true;
 
+    // If we can't draw, don't tick until we are notified that we can draw again.
+    if (!m_canDraw)
         return false;
-    }
 
-    return m_needsRedraw || m_needsForcedRedraw || m_commitState == COMMIT_STATE_UPDATING_RESOURCES;
+    if (m_needsForcedRedraw)
+        return true;
+
+    return m_needsRedraw && m_visible && m_contextState == CONTEXT_ACTIVE;
 }
 
 void CCSchedulerStateMachine::didEnterVSync()

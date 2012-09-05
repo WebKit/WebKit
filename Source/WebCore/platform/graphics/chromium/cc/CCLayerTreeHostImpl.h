@@ -57,6 +57,7 @@ public:
     virtual void didLoseContextOnImplThread() = 0;
     virtual void onSwapBuffersCompleteOnImplThread() = 0;
     virtual void onVSyncParametersChanged(double monotonicTimebase, double intervalInSeconds) = 0;
+    virtual void onCanDrawStateChanged(bool canDraw) = 0;
     virtual void setNeedsRedrawOnImplThread() = 0;
     virtual void setNeedsCommitOnImplThread() = 0;
     virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime) = 0;
@@ -160,7 +161,7 @@ public:
     void setSourceFrameNumber(int frameNumber) { m_sourceFrameNumber = frameNumber; }
 
     bool contentsTexturesPurged() const { return m_contentsTexturesPurged; }
-    void resetContentsTexturesPurged() { m_contentsTexturesPurged = false; }
+    void resetContentsTexturesPurged();
     size_t memoryAllocationLimitBytes() const { return m_memoryAllocationLimitBytes; }
 
     void setViewportSize(const IntSize& layoutViewportSize, const IntSize& deviceViewportSize);

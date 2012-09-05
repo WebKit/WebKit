@@ -57,6 +57,16 @@ void CCScheduler::setVisible(bool visible)
     processScheduledActions();
 }
 
+void CCScheduler::setCanDraw(bool canDraw)
+{
+    m_stateMachine.setCanDraw(canDraw);
+
+    // Defer processScheduleActions so we don't recurse and commit/draw
+    // multiple frames. We can call processScheduledActions directly
+    // once it is no longer re-entrant.
+    m_frameRateController->setActive(m_stateMachine.vsyncCallbackNeeded());
+}
+
 void CCScheduler::setNeedsCommit()
 {
     m_stateMachine.setNeedsCommit();
@@ -150,16 +160,10 @@ void CCScheduler::vsyncTick()
     m_stateMachine.didLeaveVSync();
 }
 
-CCSchedulerStateMachine::Action CCScheduler::nextAction()
-{
-    m_stateMachine.setCanDraw(m_client->canDraw());
-    return m_stateMachine.nextAction();
-}
-
 void CCScheduler::processScheduledActions()
 {
     // Early out so we don't spam TRACE_EVENTS with useless processScheduledActions.
-    if (nextAction() == CCSchedulerStateMachine::ACTION_NONE) {
+    if (m_stateMachine.nextAction() == CCSchedulerStateMachine::ACTION_NONE) {
         m_frameRateController->setActive(m_stateMachine.vsyncCallbackNeeded());
         return;
     }
@@ -168,7 +172,7 @@ void CCScheduler::processScheduledActions()
     // setNeedsCommit. Proceeed with caution.
     CCSchedulerStateMachine::Action action;
     do {
-        action = nextAction();
+        action = m_stateMachine.nextAction();
         m_stateMachine.updateState(action);
         TRACE_EVENT1("cc", "CCScheduler::processScheduledActions()", "action", action);
 
