@@ -71,7 +71,6 @@
 		515F429C15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515F429B15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp */; };
 		5185F6B210714E07007AA393 /* HistoryDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5185F69F10714A57007AA393 /* HistoryDelegate.mm */; };
 		5185F6B310714E12007AA393 /* HistoryDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5185F69E10714A57007AA393 /* HistoryDelegate.h */; };
-		515C0CD015EE785700F5A613 /* LogNPPSetWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515C0CCF15EE785700F5A613 /* LogNPPSetWindow.cpp */; };
 		53CBB832134E42F3001CE6A4 /* CyclicRedundancyCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53CBB830134E42F3001CE6A4 /* CyclicRedundancyCheck.cpp */; };
 		53CBB833134E42F3001CE6A4 /* CyclicRedundancyCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 53CBB831134E42F3001CE6A4 /* CyclicRedundancyCheck.h */; };
 		5DB9AC970F722C3600684641 /* AHEM____.TTF in Copy Font Files */ = {isa = PBXBuildFile; fileRef = AA7F10C20CB3C1030003BDC9 /* AHEM____.TTF */; };
@@ -288,7 +287,6 @@
 		A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = DumpRenderTree.h; sourceTree = "<group>"; };
 		A817090308B164D300CCB9FB /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A84F608908B136DA00E9745F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		515C0CCF15EE785700F5A613 /* LogNPPSetWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogNPPSetWindow.cpp; sourceTree = "<group>"; };
 		A8B91AD70CF3B32F008F91FF /* DumpRenderTreePasteboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DumpRenderTreePasteboard.m; path = mac/DumpRenderTreePasteboard.m; sourceTree = "<group>"; };
 		A8B91AD90CF3B32F008F91FF /* DumpRenderTreeWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DumpRenderTreeWindow.mm; path = mac/DumpRenderTreeWindow.mm; sourceTree = "<group>"; };
 		A8B91ADD0CF3B372008F91FF /* DumpRenderTreeWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DumpRenderTreeWindow.h; path = mac/DumpRenderTreeWindow.h; sourceTree = "<group>"; };
@@ -902,7 +900,6 @@
 		};
 		2D403ED8150871F9005358D2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-				515C0CD015EE785700F5A613 /* LogNPPSetWindow.cpp in Sources */,
 			buildActionMask = 2147483647;
 			files = (
 				2D403F1B15087209005358D2 /* LayoutTestHelper.m in Sources */,
