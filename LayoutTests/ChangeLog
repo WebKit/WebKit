@@ -1,3 +1,9 @@
+2012-09-04  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Unreviewed test expectations update after r127534
+
+        * platform/chromium/fast/innerHTML/innerHTML-iframe-expected.txt: Removed.
+
 2012-09-04  Gavin Barraclough  <barraclough@apple.com>
 
         inc/dec behave incorrectly operating on a resolved const
