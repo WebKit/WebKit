@@ -363,8 +363,9 @@ static void willRemoveChildren(ContainerNode* container)
 
         // fire removed from document mutation events.
         dispatchChildRemovalEvents(child);
-        ChildFrameDisconnector(child).disconnect();
     }
+
+    ChildFrameDisconnector(container, ChildFrameDisconnector::DoNotIncludeRoot).disconnect();
 }
 
 void ContainerNode::disconnectDescendantFrames()
@@ -395,13 +396,6 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
     }
 
     RefPtr<Node> child = oldChild;
-    willRemoveChild(child.get());
-
-    // Mutation events might have moved this child into a different parent.
-    if (child->parentNode() != this) {
-        ec = NOT_FOUND_ERR;
-        return false;
-    }
 
     document()->removeFocusedNodeOfSubtree(child.get());
 
@@ -411,6 +405,14 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
 
     // Events fired when blurring currently focused node might have moved this
     // child into a different parent.
+    if (child->parentNode() != this) {
+        ec = NOT_FOUND_ERR;
+        return false;
+    }
+
+    willRemoveChild(child.get());
+
+    // Mutation events might have moved this child into a different parent.
     if (child->parentNode() != this) {
         ec = NOT_FOUND_ERR;
         return false;
@@ -481,16 +483,16 @@ void ContainerNode::removeChildren()
     // The container node can be removed from event handlers.
     RefPtr<ContainerNode> protect(this);
 
-    // Do any prep work needed before actually starting to detach
-    // and remove... e.g. stop loading frames, fire unload events.
-    willRemoveChildren(protect.get());
-
     // exclude this node when looking for removed focusedNode since only children will be removed
     document()->removeFocusedNodeOfSubtree(this, true);
 
 #if ENABLE(FULLSCREEN_API)
     document()->removeFullScreenElementOfSubtree(this, true);
 #endif
+
+    // Do any prep work needed before actually starting to detach
+    // and remove... e.g. stop loading frames, fire unload events.
+    willRemoveChildren(protect.get());
 
     forbidEventDispatch();
     Vector<RefPtr<Node>, 10> removedChildren;

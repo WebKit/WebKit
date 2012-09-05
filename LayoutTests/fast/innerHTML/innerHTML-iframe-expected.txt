@@ -1,1 +1,2 @@
+CONSOLE MESSAGE: line 12: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7: An attempt was made to modify an object where modifications are not allowed.
 PASS: body and iframe cleared without crashing.

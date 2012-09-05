@@ -268,12 +268,36 @@ inline void ChildNodeRemovalNotifier::notify(Node* node)
 
 class ChildFrameDisconnector {
 public:
-    explicit ChildFrameDisconnector(Node* root);
+    enum ShouldIncludeRoot {
+        DoNotIncludeRoot,
+        IncludeRoot
+    };
+
+    explicit ChildFrameDisconnector(Node* root, ShouldIncludeRoot shouldIncludeRoot = IncludeRoot)
+        : m_root(root)
+    {
+        collectDescendant(m_root, shouldIncludeRoot);
+        rootNodes().add(m_root);
+    }
+
+    ~ChildFrameDisconnector()
+    {
+        rootNodes().remove(m_root);
+    }
+
     void disconnect();
 
+    static bool nodeHasDisconnector(Node*);
+
 private:
-    void collectDescendant(Node* root);
+    void collectDescendant(Node* root, ShouldIncludeRoot);
     void collectDescendant(ElementShadow*);
+
+    static HashSet<Node*>& rootNodes()
+    {
+        DEFINE_STATIC_LOCAL(HashSet<Node*>, nodes, ());
+        return nodes;
+    }
 
     class Target {
     public:
@@ -292,16 +316,13 @@ private:
     };
 
     Vector<Target, 10> m_list;
+    Node* m_root;
 };
 
-inline ChildFrameDisconnector::ChildFrameDisconnector(Node* root)
+inline void ChildFrameDisconnector::collectDescendant(Node* root, ShouldIncludeRoot shouldIncludeRoot)
 {
-    collectDescendant(root);
-}
-
-inline void ChildFrameDisconnector::collectDescendant(Node* root)
-{
-    for (Node* node = root; node; node = node->traverseNextNode(root)) {
+    for (Node* node = shouldIncludeRoot == IncludeRoot ? root : root->firstChild(); node;
+            node = node->traverseNextNode(root)) {
         if (!node->isElementNode())
             continue;
         Element* element = toElement(node);
@@ -320,6 +341,20 @@ inline void ChildFrameDisconnector::disconnect()
         if (target.isValid())
             target.disconnect();
     }
+}
+
+inline bool ChildFrameDisconnector::nodeHasDisconnector(Node* node)
+{
+    HashSet<Node*>& nodes = rootNodes();
+
+    if (nodes.isEmpty())
+        return false;
+
+    for (; node; node = node->parentNode())
+        if (nodes.contains(node))
+            return true;
+
+    return false;
 }
 
 } // namespace WebCore
