@@ -1,3 +1,13 @@
+2012-09-05  Brady Eidson  <beidson@apple.com>
+
+        Frequent crashes in PluginView::scriptObject under runtimeObjectCustomGetOwnPropertySlot
+        <rdar://problem/12142226> and https://bugs.webkit.org/show_bug.cgi?id=95026
+
+        Reviewed by Andy Estes.
+
+        * plugins/npp-new-fails-expected.txt: Added.
+        * plugins/npp-new-fails.html: Added.
+
 2012-09-05  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Unreviewed gardening.

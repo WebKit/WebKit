@@ -1,3 +1,23 @@
+2012-09-05  Brady Eidson  <beidson@apple.com>
+
+        Frequent crashes in PluginView::scriptObject under runtimeObjectCustomGetOwnPropertySlot
+        <rdar://problem/12142226> and https://bugs.webkit.org/show_bug.cgi?id=95026
+
+        Reviewed by Andy Estes.
+
+        Add a plug-in that always fails to initialize:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/NPPNewFails.cpp: Added.
+        (NPPNewFails):
+        (NPPNewFails::NPPNewFails):
+        (NPPNewFails::NPP_New):
+
+        Add it to all the project files:
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/CMakeLists.txt:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+
 2012-09-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Fix makefile race condition between derived sources and target

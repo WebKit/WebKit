@@ -1,3 +1,18 @@
+2012-09-05  Brady Eidson  <beidson@apple.com>
+
+        Frequent crashes in PluginView::scriptObject under runtimeObjectCustomGetOwnPropertySlot
+        <rdar://problem/12142226> and https://bugs.webkit.org/show_bug.cgi?id=95026
+
+        Patch partially by Andras Becsi  <andras.becsi@nokia.com>
+
+        Reviewed by Andy Estes.
+
+        If a plug-in fails to initialize then the m_plugin pointer is cleared out.
+        When accessing the script object it is appropriate to unconditionally null check m_plugin.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::scriptObject): Null check m_plugin before trying to use it.
+
 2012-09-05  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Provide implementation for WebFrameNetworkingContext
