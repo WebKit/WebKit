@@ -1,3 +1,14 @@
+2012-09-05  Mike Lawther  <mikelawther@chromium.org>
+
+        Moved mac results to be the generic results, and the existing result to be the chromium
+        platform result. The current result uses subpixel layout, which is not the norm.
+
+        Original results were added in r127557. Mac results were added in r127560.
+
+        * css3/calc/zoom-with-em-expected.txt:
+        * platform/chromium/css3/calc/zoom-with-em-expected.txt: Copied from LayoutTests/css3/calc/zoom-with-em-expected.txt.
+        * platform/mac/css3/calc/zoom-with-em-expected.txt: Removed.
+
 2012-09-05  Yoshifumi Inoue  <yosin@chromium.org>
 
         Test cases for Up/Down key behavior on field which has maximum/minimum in multiple fields time input UI
