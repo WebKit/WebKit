@@ -1,3 +1,11 @@
+2012-09-05  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed test fix.
+
+        Including a plugin source file into the build that was added in r127595.
+
+        * GNUmakefile.am:
+
 2012-09-05  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add the local and remote description functionality to RTCPeerConnection
