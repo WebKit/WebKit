@@ -48,23 +48,22 @@ class MemoryInstrumentation {
 public:
     virtual ~MemoryInstrumentation() { }
 
-    enum ObjectType {
-        Other,
-        DOM,
-        CSS,
-        Binding,
-        Loader,
-        MemoryCacheStructures,
-        CachedResource,
-        CachedResourceCSS,
-        CachedResourceFont,
-        CachedResourceImage,
-        CachedResourceScript,
-        CachedResourceSVG,
-        CachedResourceShader,
-        CachedResourceXSLT,
-        LastTypeEntry
-    };
+    typedef const char* ObjectType;
+
+    static const char* Other;
+    static const char* DOM;
+    static const char* CSS;
+    static const char* Binding;
+    static const char* Loader;
+    static const char* MemoryCacheStructures;
+    static const char* CachedResource;
+    static const char* CachedResourceCSS;
+    static const char* CachedResourceFont;
+    static const char* CachedResourceImage;
+    static const char* CachedResourceScript;
+    static const char* CachedResourceSVG;
+    static const char* CachedResourceShader;
+    static const char* CachedResourceXSLT;
 
     template <typename T> void addRootObject(const T& t)
     {

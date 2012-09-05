@@ -37,6 +37,21 @@
 
 namespace WebCore {
 
+const char* MemoryInstrumentation::Other = "Other";
+const char* MemoryInstrumentation::DOM = "DOM";
+const char* MemoryInstrumentation::CSS = "CSS";
+const char* MemoryInstrumentation::Binding = "Binding";
+const char* MemoryInstrumentation::Loader = "Loader";
+const char* MemoryInstrumentation::MemoryCacheStructures = "MemoryCacheStructures";
+const char* MemoryInstrumentation::CachedResource = "CachedResource";
+const char* MemoryInstrumentation::CachedResourceCSS = "CachedResourceCSS";
+const char* MemoryInstrumentation::CachedResourceFont = "CachedResourceFont";
+const char* MemoryInstrumentation::CachedResourceImage = "CachedResourceImage";
+const char* MemoryInstrumentation::CachedResourceScript = "CachedResourceScript";
+const char* MemoryInstrumentation::CachedResourceSVG = "CachedResourceSVG";
+const char* MemoryInstrumentation::CachedResourceShader = "CachedResourceShader";
+const char* MemoryInstrumentation::CachedResourceXSLT = "CachedResourceXSLT";
+
 void MemoryInstrumentation::addInstrumentedObjectImpl(const String* const& string, ObjectType objectType, OwningType owningType)
 {
     if (!string || visited(string))

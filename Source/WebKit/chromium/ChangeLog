@@ -1,3 +1,20 @@
+2012-09-04  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI: replace ObjectType enum with static const char* string identifiers.
+        https://bugs.webkit.org/show_bug.cgi?id=95739
+
+        Reviewed by Yury Semikhatsky.
+
+        When we go deeper into different parts of browser like skia, chromium itself etc.
+        we can't use a single enum for all reported object types.
+        The current idea is to use plain simple strings as ObjectType identifiers.
+        In the future patches we will extract these identifiers into separate class or namespace
+        and and split it between components.
+
+        * tests/MemoryInstrumentationTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+
 2012-09-04  Keishi Hattori  <keishi@webkit.org>
 
         Move PagePopupClient implementation for input[type=date] to Chromium WebKit layer

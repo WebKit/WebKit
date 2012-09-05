@@ -33,6 +33,7 @@
 
 #include "MemoryInstrumentation.h"
 
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
@@ -47,15 +48,15 @@ public:
     size_t selfSize() const;
     size_t totalSize(ObjectType objectType) const
     {
-        ASSERT(objectType >= 0 && objectType < LastTypeEntry);
-        return m_totalSizes[objectType];
+        TypeToSizeMap::const_iterator i = m_totalSizes.find(objectType);
+        return i == m_totalSizes.end() ? 0 : i->second;
     }
 
     size_t reportedSizeForAllTypes() const
     {
         size_t size = 0;
-        for (int i = 0; i < LastTypeEntry; ++i)
-            size += m_totalSizes[i];
+        for (TypeToSizeMap::const_iterator i = m_totalSizes.begin(); i != m_totalSizes.end(); ++i)
+            size += i->second;
         return size;
     }
 
@@ -65,7 +66,8 @@ private:
     virtual bool visited(const void*) OVERRIDE;
     virtual void processDeferredInstrumentedPointers() OVERRIDE;
 
-    size_t m_totalSizes[LastTypeEntry];
+    typedef HashMap<ObjectType, size_t> TypeToSizeMap;
+    TypeToSizeMap m_totalSizes;
     VisitedObjects& m_visitedObjects;
     Vector<OwnPtr<InstrumentedPointerBase> > m_deferredInstrumentedPointers;
 };
