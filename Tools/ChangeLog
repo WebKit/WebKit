@@ -1,3 +1,16 @@
+2012-09-04  Tim Horton  <timothy_horton@apple.com>
+
+        Have NRWT log more output when crash logs are missing
+        https://bugs.webkit.org/show_bug.cgi?id=95814
+
+        Reviewed by Dan Bernstein.
+
+        Log the stderr and stdout of the test, in order to provide slightly more
+        context when the WebProcess times out while running tests.
+
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.run_test):
+
 2012-09-04  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Include device serial number in ChromiumAndroidDriver log messages

@@ -176,10 +176,14 @@ class Driver(object):
             # If we don't find a crash log use a placeholder error message instead.
             if not crash_log:
                 pid_str = str(self._crashed_pid) if self._crashed_pid else "unknown pid"
-                crash_log = 'no crash log found for %s:%s.' % (self._crashed_process_name, pid_str)
+                crash_log = 'No crash log found for %s:%s.\n' % (self._crashed_process_name, pid_str)
                 # If we were unresponsive append a message informing there may not have been a crash.
                 if self._subprocess_was_unresponsive:
-                    crash_log += '  Process failed to become responsive before timing out.'
+                    crash_log += 'Process failed to become responsive before timing out.\n'
+
+                # Print stdout and stderr to the placeholder crash log; we want as much context as possible.
+                if self.error_from_test:
+                    crash_log += '\nstdout:\n%s\nstderr:\n%s\n' % (text, self.error_from_test)
 
         return DriverOutput(text, image, actual_image_hash, audio,
             crash=crashed, test_time=time.time() - test_begin_time,
