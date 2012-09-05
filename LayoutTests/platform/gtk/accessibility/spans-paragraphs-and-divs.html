@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+  <p>
+    <a href='foo'>
+       <span style='display:block;'>Block span in a link in a paragraph</span>
+       <span>Inline span in a link in a paragraph</span>
+    </a>
+  </p>
+  <p>
+    <span style='display:block;'>Block span in a paragraph</span>
+    <span>Inline span in a paragraph</span>
+  </p>
+  <p>
+    <a href='foo'>
+       <span>Inline span in a link in a paragraph</span>
+       <span style='display:block;'>Block span in a link in a paragraph</span>
+    </a>
+  </p>
+  <p>
+    <span>Inline span in a paragraph</span>
+    <span style='display:block;'>Block span in a paragraph</span>
+  </p>
+  <div>
+    <a href='foo'>
+       <span style='display:block;'>Block span in a link in a div</span>
+       <span>Inline span in a link in a div</span>
+    </a>
+  </div>
+  <div>
+    <span style='display:block;'>Block span in a div</span>
+    <span>Inline span in a div</span>
+  </div>
+  <div>
+    <a href='foo'>
+       <span>Inline span in a link in a div</span>
+       <span style='display:block;'>Block span in a link in a div</span>
+    </a>
+  </div>
+  <div>
+    <span>Inline span in a div</span>
+    <span style='display:block;'>Block span in a div</span>
+  </div>
+
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This tests that paragraphs and divs with anonymous block children are not ignored and have the expected children");
+
+if (window.layoutController) {
+    testRunner.dumpAsText();
+}
+
+if (window.accessibilityController) {
+    document.getElementById("body").focus();
+    var webArea = accessibilityController.focusedElement;
+
+    var element = webArea.childAtIndex(0);
+    shouldBe("element.role", "'AXRole: paragraph'");
+    shouldBe("element.childrenCount", "1");
+
+    var link = element.childAtIndex(0);
+    shouldBe("link.role", "'AXRole: link'");
+    shouldBe("link.childrenCount", "0");
+
+    element = webArea.childAtIndex(1);
+    shouldBe("element.role", "'AXRole: paragraph'");
+    shouldBe("element.childrenCount", "0");
+
+    element = webArea.childAtIndex(2);
+    shouldBe("element.role", "'AXRole: paragraph'");
+    shouldBe("element.childrenCount", "1");
+
+    link = element.childAtIndex(0);
+    shouldBe("link.role", "'AXRole: link'");
+    shouldBe("link.childrenCount", "0");
+
+    element = webArea.childAtIndex(3);
+    shouldBe("element.role", "'AXRole: paragraph'");
+    shouldBe("element.childrenCount", "0");
+
+    element = webArea.childAtIndex(4);
+    shouldBe("element.role", "'AXRole: section'");
+    shouldBe("element.childrenCount", "1");
+
+    link = element.childAtIndex(0);
+    shouldBe("link.role", "'AXRole: link'");
+    shouldBe("link.childrenCount", "0");
+
+    element = webArea.childAtIndex(5);
+    shouldBe("element.role", "'AXRole: section'");
+    shouldBe("element.childrenCount", "0");
+
+    element = webArea.childAtIndex(6);
+    shouldBe("element.role", "'AXRole: section'");
+    shouldBe("element.childrenCount", "1");
+
+    link = element.childAtIndex(0);
+    shouldBe("link.role", "'AXRole: link'");
+    shouldBe("link.childrenCount", "0");
+
+    element = webArea.childAtIndex(7);
+    shouldBe("element.role", "'AXRole: section'");
+    shouldBe("element.childrenCount", "0");
+}
+
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

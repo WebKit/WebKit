@@ -78,6 +78,21 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     if (role == UnknownRole)
         return IgnoreObject;
 
+    // Given a paragraph or div containing a non-nested anonymous block, WebCore
+    // ignores the paragraph or div and includes the block. We want the opposite:
+    // ATs are expecting accessible objects associated with textual elements. They
+    // usually have no need for the anonymous block. And when the wrong objects
+    // get included or ignored, needed accessibility signals do not get emitted.
+    if (role == ParagraphRole || role == DivRole) {
+        AccessibilityObject* child = firstAnonymousBlockChild();
+        if (!child)
+            return DefaultBehavior;
+
+        child = child->firstChild();
+        if (child->isLink() || !child->firstAnonymousBlockChild())
+            return IncludeObject;
+    }
+
     // Block spans result in objects of ATK_ROLE_PANEL which are almost always unwanted.
     // However, if we ignore block spans whose parent is the body, the child controls
     // will become immediate children of the ATK_ROLE_DOCUMENT_FRAME and any text will

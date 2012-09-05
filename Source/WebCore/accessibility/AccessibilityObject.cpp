@@ -1340,6 +1340,15 @@ bool AccessibilityObject::isAncestorOfObject(const AccessibilityObject* axObject
     return this == axObject || axObject->isDescendantOfObject(this);
 }
 
+AccessibilityObject* AccessibilityObject::firstAnonymousBlockChild() const
+{
+    for (AccessibilityObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (child->renderer() && child->renderer()->isAnonymousBlock())
+            return child;
+    }
+    return 0;
+}
+
 typedef HashMap<String, AccessibilityRole, CaseFoldingHash> ARIARoleMap;
 
 struct RoleEntry {

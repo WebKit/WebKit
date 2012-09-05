@@ -582,6 +582,7 @@ public:
     virtual void handleAriaExpandedChanged() { }
     bool isDescendantOfObject(const AccessibilityObject*) const;
     bool isAncestorOfObject(const AccessibilityObject*) const;
+    AccessibilityObject* firstAnonymousBlockChild() const;
     
     static AccessibilityRole ariaRoleToWebCoreRole(const String&);
     const AtomicString& getAttribute(const QualifiedName&) const;
