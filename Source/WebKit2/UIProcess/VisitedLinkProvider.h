@@ -35,6 +35,7 @@
 namespace WebKit {
 
 class WebContext;
+class WebProcessProxy;
     
 class VisitedLinkProvider {
     WTF_MAKE_NONCOPYABLE(VisitedLinkProvider);
@@ -43,15 +44,16 @@ public:
 
     void addVisitedLink(WebCore::LinkHash);
 
-    void processDidFinishLaunching();
-    void processDidClose();
+    void processDidFinishLaunching(WebProcessProxy*);
+    void processDidClose(WebProcessProxy*);
 
 private:
     void pendingVisitedLinksTimerFired();
 
     WebContext* m_context;
     bool m_visitedLinksPopulated;
-    bool m_webProcessHasVisitedLinkState;
+    HashSet<WebProcessProxy*> m_processesWithVisitedLinkState;
+    HashSet<WebProcessProxy*> m_processesWithoutVisitedLinkState;
 
     unsigned m_keyCount;
     unsigned m_tableSize;

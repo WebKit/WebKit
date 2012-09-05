@@ -421,7 +421,7 @@ void WebContext::processDidFinishLaunching(WebProcessProxy* process)
 {
     ASSERT(m_processes.contains(process));
 
-    m_visitedLinkProvider.processDidFinishLaunching();
+    m_visitedLinkProvider.processDidFinishLaunching(process);
 
     // Sometimes the memorySampler gets initialized after process initialization has happened but before the process has finished launching
     // so check if it needs to be started here
@@ -441,6 +441,8 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
 {
     ASSERT(m_processes.contains(process));
 
+    m_visitedLinkProvider.processDidClose(process);
+
     // FIXME (Multi-WebProcess): All the invalidation calls below are still necessary in multi-process mode, but they should only affect data structures pertaining to the process being disconnected.
     // Clearing everything causes assertion failures, so it's less trouble to skip that for now.
     if (m_processModel != ProcessModelSharedSecondaryProcess) {
@@ -448,8 +450,6 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
         m_processes.remove(m_processes.find(process));
         return;
     }
-
-    m_visitedLinkProvider.processDidClose();
 
     // Invalidate all outstanding downloads.
     for (HashMap<uint64_t, RefPtr<DownloadProxy> >::iterator::Values it = m_downloads.begin().values(), end = m_downloads.end().values(); it != end; ++it) {

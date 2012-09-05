@@ -40,16 +40,15 @@ static const int VisitedLinkTableMaxLoad = 2;
 VisitedLinkProvider::VisitedLinkProvider(WebContext* context)
     : m_context(context)
     , m_visitedLinksPopulated(false)
-    , m_webProcessHasVisitedLinkState(false)
     , m_keyCount(0)
     , m_tableSize(0)
     , m_pendingVisitedLinksTimer(RunLoop::main(), this, &VisitedLinkProvider::pendingVisitedLinksTimerFired)
 {
 }
 
-void VisitedLinkProvider::processDidFinishLaunching()
+void VisitedLinkProvider::processDidFinishLaunching(WebProcessProxy* process)
 {
-    m_webProcessHasVisitedLinkState = false;
+    m_processesWithoutVisitedLinkState.add(process);
 
     if (m_keyCount)
         m_pendingVisitedLinksTimer.startOneShot(0);
@@ -70,9 +69,10 @@ void VisitedLinkProvider::addVisitedLink(LinkHash linkHash)
         m_pendingVisitedLinksTimer.startOneShot(0);
 }
 
-void VisitedLinkProvider::processDidClose()
+void VisitedLinkProvider::processDidClose(WebProcessProxy* process)
 {
-    m_pendingVisitedLinksTimer.stop();
+    m_processesWithVisitedLinkState.remove(process);
+    m_processesWithoutVisitedLinkState.remove(process);
 }
 
 static unsigned nextPowerOf2(unsigned v)
@@ -111,18 +111,26 @@ void VisitedLinkProvider::pendingVisitedLinksTimerFired()
     m_pendingVisitedLinks.clear();
 
     unsigned currentTableSize = m_tableSize;
+
+    // Upper bound on needed size - some of the links may be duplicates, in which case we could have done with less.
     unsigned newTableSize = tableSizeForKeyCount(m_keyCount + pendingVisitedLinks.size());
+
+    // Never decrease table size when adding to it, to avoid unneeded churn.
+    newTableSize = std::max(currentTableSize, newTableSize);
 
     // Links that were added.
     Vector<WebCore::LinkHash> addedVisitedLinks;
 
+    // VisitedLinkTable remains internally consistent when adding, so it's OK to modify it in place
+    // even if a web process is accessing it at the same time.
     if (currentTableSize != newTableSize) {
-        // Create a new table.
         RefPtr<SharedMemory> newTableMemory = SharedMemory::create(newTableSize * sizeof(LinkHash));
 
         // We failed to create the shared memory.
-        if (!newTableMemory)
+        if (!newTableMemory) {
+            LOG_ERROR("Could not allocate shared memory for visited link table");
             return;
+        }
 
         memset(newTableMemory->data(), 0, newTableMemory->size());
 
@@ -156,27 +164,36 @@ void VisitedLinkProvider::pendingVisitedLinksTimerFired()
 
     m_keyCount += pendingVisitedLinks.size();
 
-    if (!m_webProcessHasVisitedLinkState || currentTableSize != newTableSize) {
-        // Send the new visited link table.
-        
+
+    for (HashSet<WebProcessProxy*>::iterator iter = m_processesWithVisitedLinkState.begin(); iter != m_processesWithVisitedLinkState.end(); ++iter) {
+        WebProcessProxy* process = *iter;
+        if (currentTableSize != newTableSize) {
+            // In the rare case of needing to resize the table, we'll bypass the VisitedLinkStateChanged optimization,
+            // and unconditionally use AllVisitedLinkStateChanged for the process.
+            m_processesWithoutVisitedLinkState.add(process);
+            continue;
+        }
+
+        if (addedVisitedLinks.size() <= 20)
+            process->send(Messages::WebProcess::VisitedLinkStateChanged(addedVisitedLinks), 0);
+        else
+            process->send(Messages::WebProcess::AllVisitedLinkStateChanged(), 0);
+    }
+
+    for (HashSet<WebProcessProxy*>::iterator iter = m_processesWithoutVisitedLinkState.begin(); iter != m_processesWithoutVisitedLinkState.end(); ++iter) {
+        WebProcessProxy* process = *iter;
+
         SharedMemory::Handle handle;
         if (!m_table.sharedMemory()->createHandle(handle, SharedMemory::ReadOnly))
             return;
 
-        // FIXME (Multi-WebProcess): Encoding a handle will null it out so we need to create a new
-        // handle for every process. Maybe the ArgumentEncoder should handle this.
-        m_context->sendToAllProcesses(Messages::WebProcess::SetVisitedLinkTable(handle));
+        process->send(Messages::WebProcess::SetVisitedLinkTable(handle), 0);
+        process->send(Messages::WebProcess::AllVisitedLinkStateChanged(), 0);
+
+        m_processesWithVisitedLinkState.add(process);
     }
     
-    // We now need to let the web process know that we've added links.
-    if (m_webProcessHasVisitedLinkState && addedVisitedLinks.size() <= 20) {
-        m_context->sendToAllProcesses(Messages::WebProcess::VisitedLinkStateChanged(addedVisitedLinks));
-        return;
-    }
-    
-    // Just recalculate all the visited links.
-    m_context->sendToAllProcesses(Messages::WebProcess::AllVisitedLinkStateChanged());
-    m_webProcessHasVisitedLinkState = true;
+    m_processesWithoutVisitedLinkState.clear();
 }
 
 } // namespace WebKit

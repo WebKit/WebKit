@@ -1,3 +1,27 @@
+2012-09-05  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Make visited link tracking work in multi-process mode
+        https://bugs.webkit.org/show_bug.cgi?id=95869
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/VisitedLinkProvider.h:
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::VisitedLinkProvider::VisitedLinkProvider): m_webProcessHasVisitedLinkState
+        was making no sense in multi-process world, so it was let go.
+        (WebKit::VisitedLinkProvider::processDidFinishLaunching): Track new processes.
+        (WebKit::VisitedLinkProvider::processDidClose): Clean up pointers that are going
+        to become stale.
+        (WebKit::VisitedLinkProvider::pendingVisitedLinksTimerFired): Added comments. Fixed
+        a bug where we would churn table size in some cases. Added debug logging in failure
+        case. Re-implemented messaging code to work with multiple web processes.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::processDidFinishLaunching): Pass process proxy pointer to
+        m_visitedLinkProvider, as it now needs to track processes.
+        (WebKit::WebContext::disconnectProcess): Ditto. Also re-enabled visited link provider
+        cleanup in multi-process mode.
+
 2012-09-05  Brady Eidson  <beidson@apple.com>
 
         Frequent crashes in PluginView::scriptObject under runtimeObjectCustomGetOwnPropertySlot
