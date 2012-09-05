@@ -2600,11 +2600,24 @@ void SpeculativeJIT::compile(Node& node)
             // We will have already speculated that the base is some kind of array,
             // at this point.
             
-            speculationCheck(Uncountable, JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset())));
+            MacroAssembler::Jump outOfBounds = m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset()));
+            if (node.arrayMode() == Array::JSArray)
+                speculationCheck(OutOfBounds, JSValueRegs(), NoNode, outOfBounds);
             
             GPRTemporary result(this);
             m_jit.loadPtr(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])), result.gpr());
-            speculationCheck(Uncountable, JSValueRegs(), NoNode, m_jit.branchTestPtr(MacroAssembler::Zero, result.gpr()));
+            MacroAssembler::Jump hole = m_jit.branchTestPtr(MacroAssembler::Zero, result.gpr());
+            if (node.arrayMode() == Array::JSArray)
+                speculationCheck(OutOfBounds, JSValueRegs(), NoNode, hole);
+            else {
+                MacroAssembler::JumpList slowCases;
+                slowCases.append(outOfBounds);
+                slowCases.append(hole);
+                addSlowPathGenerator(
+                    slowPathCall(
+                        slowCases, this, operationGetByValArrayInt,
+                        result.gpr(), baseReg, propertyReg));
+            }
             
             jsValueResult(result.gpr(), m_compileIndex);
             break;

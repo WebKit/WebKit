@@ -1,3 +1,28 @@
+2012-09-04  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG GetByVal for JSArrays shouldn't OSR exit every time that the index is out of bound
+        https://bugs.webkit.org/show_bug.cgi?id=95717
+
+        Reviewed by Oliver Hunt.
+        
+        Rolling back in after fixing the negative index case.
+
+        Make GetByVal for JSArrayOutOfBounds do meaningful things. The profiling was already
+        there so we should just use it!
+
+        * bytecode/DFGExitProfile.h:
+        (JSC::DFG::exitKindToString):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-09-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r127503.
