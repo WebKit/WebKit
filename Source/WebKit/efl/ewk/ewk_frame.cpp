@@ -1638,7 +1638,7 @@ ssize_t ewk_frame_source_get(const Evas_Object* ewkFrame, char** frameSource)
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame->document(), -1);
     EINA_SAFETY_ON_NULL_RETURN_VAL(frameSource, -1);
 
-    WTF::String source;
+    StringBuilder builder;
     *frameSource = 0; // Saves 0 to pointer until it's not allocated.
 
     if (!smartData->frame->document()->isHTMLDocument()) {
@@ -1654,28 +1654,29 @@ ssize_t ewk_frame_source_get(const Evas_Object* ewkFrame, char** frameSource)
             if (node->hasTagName(WebCore::HTMLNames::htmlTag)) {
                 WebCore::HTMLElement* element = static_cast<WebCore::HTMLElement*>(node);
                 if (element)
-                    source = element->outerHTML();
+                    builder.append(element->outerHTML());
                 break;
             }
         }
 
     // Try to get <head> and <body> tags if <html> tag was not found.
-    if (source.isEmpty()) {
+    if (builder.isEmpty()) {
         if (smartData->frame->document()->head())
-            source = smartData->frame->document()->head()->outerHTML();
+            builder.append(smartData->frame->document()->head()->outerHTML());
 
         if (smartData->frame->document()->body())
-            source += smartData->frame->document()->body()->outerHTML();
+            builder.append(smartData->frame->document()->body()->outerHTML());
     }
 
-    size_t sourceLength = strlen(source.utf8().data());
+    CString utf8String = builder.toString().utf8();
+    size_t sourceLength = utf8String.length();
     *frameSource = static_cast<char*>(malloc(sourceLength + 1));
     if (!*frameSource) {
         CRITICAL("Could not allocate memory.");
         return -1;
     }
 
-    strncpy(*frameSource, source.utf8().data(), sourceLength);
+    strncpy(*frameSource, utf8String.data(), sourceLength);
     (*frameSource)[sourceLength] = '\0';
 
     return sourceLength;
