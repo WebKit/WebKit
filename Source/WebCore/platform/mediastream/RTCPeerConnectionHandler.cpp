@@ -36,6 +36,7 @@
 
 #include "RTCPeerConnectionHandlerClient.h"
 #include "RTCSessionDescriptionDescriptor.h"
+#include "RTCVoidRequest.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -67,6 +68,14 @@ private:
 PassOwnPtr<RTCPeerConnectionHandler> RTCPeerConnectionHandler::create(RTCPeerConnectionHandlerClient* client)
 {
     return adoptPtr(new RTCPeerConnectionHandlerDummy(client));
+}
+
+RTCPeerConnectionHandler::RTCPeerConnectionHandler()
+{
+}
+
+RTCPeerConnectionHandler::~RTCPeerConnectionHandler()
+{
 }
 
 RTCPeerConnectionHandlerDummy::RTCPeerConnectionHandlerDummy(RTCPeerConnectionHandlerClient* client)

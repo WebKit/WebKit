@@ -460,6 +460,7 @@
             'platform/mediastream/RTCConfiguration.h',
             'platform/mediastream/RTCIceCandidateDescriptor.cpp',
             'platform/mediastream/RTCIceCandidateDescriptor.h',
+            'platform/mediastream/RTCPeerConnectionHandler.cpp',
             'platform/mediastream/RTCPeerConnectionHandler.h',
             'platform/mediastream/RTCPeerConnectionHandlerClient.h',
             'platform/mediastream/RTCSessionDescriptionDescriptor.cpp',

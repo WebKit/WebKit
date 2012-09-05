@@ -50,7 +50,7 @@ class RTCVoidRequest;
 class RTCPeerConnectionHandler {
 public:
     static PassOwnPtr<RTCPeerConnectionHandler> create(RTCPeerConnectionHandlerClient*);
-    virtual ~RTCPeerConnectionHandler() { }
+    virtual ~RTCPeerConnectionHandler();
 
     virtual bool initialize(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) = 0;
 
@@ -66,7 +66,7 @@ public:
     virtual void stop() = 0;
 
 protected:
-    RTCPeerConnectionHandler() { }
+    RTCPeerConnectionHandler();
 };
 
 } // namespace WebCore
