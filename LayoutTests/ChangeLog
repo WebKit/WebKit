@@ -1,3 +1,19 @@
+2012-09-05  Sami Kyostila  <skyostil@google.com>
+
+        Enable/disable composited scrolling based on overflow
+        https://bugs.webkit.org/show_bug.cgi?id=95323
+
+        Reviewed by Simon Fraser.
+
+        Added a new test for making sure composited scrolling is enabled when overflow
+        is introduced.
+
+        Note that this test will pass only if OVERFLOW_SCROLLING is enabled.
+
+        * compositing/overflow/overflow-auto-with-touch-toggle-expected.txt: Added.
+        * compositing/overflow/overflow-auto-with-touch-toggle.html: Added.
+        * platform/chromium/TestExpectations:
+
 2012-09-05  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] Update custom filter tests to use the new security model

@@ -2655,6 +2655,12 @@ void RenderLayer::updateScrollInfoAfterLayout()
 
     if (originalScrollOffset != scrollOffset())
         scrollToOffsetWithoutAnimation(toPoint(scrollOffset()));
+
+#if USE(ACCELERATED_COMPOSITING)
+    // Composited scrolling may need to be enabled or disabled if the amount of overflow changed.
+    if (renderer()->view() && compositor()->updateLayerCompositingState(this))
+        compositor()->setCompositingLayersNeedRebuild();
+#endif
 }
 
 void RenderLayer::paintOverflowControls(GraphicsContext* context, const IntPoint& paintOffset, const IntRect& damageRect, bool paintingOverlayControls)
@@ -4847,6 +4853,7 @@ bool RenderLayer::shouldBeSelfPaintingLayer() const
 {
     return !isNormalFlowOnly()
         || hasOverlayScrollbars()
+        || usesCompositedScrolling()
         || renderer()->hasReflection()
         || renderer()->hasMask()
         || renderer()->isTableRow()
