@@ -1,0 +1,40 @@
+Paragraph
+
+button
+
+
+Div
+button
+Heading
+button
+
+
+End of test
+AXRole: document frame 
+    AXRole: paragraph AXValue: Paragraph
+    AXRole: panel AXValue: <obj>button<\n>
+        AXRole: push button 
+    AXRole: panel AXValue: <obj>
+        AXRole: scroll pane 
+            AXRole: document frame 
+    AXRole: panel AXValue: <obj>text area<\n>
+        AXRole: entry AXValue: text area
+    AXRole: panel AXValue: Div<\n>
+    AXRole: panel AXValue: <obj>button<\n>
+        AXRole: push button 
+    AXRole: heading AXValue: Heading<\n><obj>button<\n><obj>
+        AXRole: panel AXValue: Heading<\n>
+        AXRole: panel AXValue: <obj>button<\n>
+            AXRole: push button 
+        AXRole: panel AXValue: <obj>
+            AXRole: image 
+    AXRole: section AXValue: End of test
+This tests that the text associated with replaced objects in an anonymous block is correct.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
