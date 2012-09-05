@@ -3488,6 +3488,9 @@ contains(DEFINES, ENABLE_MATHML=1) {
         rendering/mathml/RenderMathMLSquareRoot.cpp \
         rendering/mathml/RenderMathMLSubSup.cpp \
         rendering/mathml/RenderMathMLUnderOver.cpp
+
+    ALL_IN_ONE_SOURCES +=
+        mathml/MathMLAllInOne.cpp
 }
 
 contains(DEFINES, ENABLE_TEXT_AUTOSIZING=1) {
@@ -3525,6 +3528,54 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/svg/RenderSVGPath.cpp \
         rendering/svg/RenderSVGRect.cpp \
         rendering/svg/RenderSVGShape.cpp \
+        rendering/svg/RenderSVGBlock.cpp \
+        rendering/svg/RenderSVGContainer.cpp \
+        rendering/svg/RenderSVGForeignObject.cpp \
+        rendering/svg/RenderSVGGradientStop.cpp \
+        rendering/svg/RenderSVGHiddenContainer.cpp \
+        rendering/svg/RenderSVGImage.cpp \
+        rendering/svg/RenderSVGInline.cpp \
+        rendering/svg/RenderSVGInlineText.cpp \
+        rendering/svg/RenderSVGModelObject.cpp \
+        rendering/svg/RenderSVGResource.cpp \
+        rendering/svg/RenderSVGResourceClipper.cpp \
+        rendering/svg/RenderSVGResourceContainer.cpp \
+        rendering/svg/RenderSVGResourceFilter.cpp \
+        rendering/svg/RenderSVGResourceFilterPrimitive.cpp \
+        rendering/svg/RenderSVGResourceGradient.cpp \
+        rendering/svg/RenderSVGResourceLinearGradient.cpp \
+        rendering/svg/RenderSVGResourceMarker.cpp \
+        rendering/svg/RenderSVGResourceMasker.cpp \
+        rendering/svg/RenderSVGResourcePattern.cpp \
+        rendering/svg/RenderSVGResourceRadialGradient.cpp \
+        rendering/svg/RenderSVGResourceSolidColor.cpp \
+        rendering/svg/RenderSVGRoot.cpp \
+        rendering/svg/RenderSVGTSpan.cpp \
+        rendering/svg/RenderSVGText.cpp \
+        rendering/svg/RenderSVGTextPath.cpp \
+        rendering/svg/RenderSVGTransformableContainer.cpp \
+        rendering/svg/RenderSVGViewportContainer.cpp \
+        rendering/svg/SVGInlineFlowBox.cpp \
+        rendering/svg/SVGInlineTextBox.cpp \
+        rendering/svg/SVGPathData.cpp \
+        rendering/svg/SVGRenderSupport.cpp \
+        rendering/svg/SVGRenderTreeAsText.cpp \
+        rendering/svg/SVGRenderingContext.cpp \
+        rendering/svg/SVGResources.cpp \
+        rendering/svg/SVGResourcesCache.cpp \
+        rendering/svg/SVGResourcesCycleSolver.cpp \
+        rendering/svg/SVGRootInlineBox.cpp \
+        rendering/svg/SVGTextChunk.cpp \
+        rendering/svg/SVGTextChunkBuilder.cpp \
+        rendering/svg/SVGTextLayoutAttributes.cpp \
+        rendering/svg/SVGTextLayoutAttributesBuilder.cpp \
+        rendering/svg/SVGTextLayoutEngine.cpp \
+        rendering/svg/SVGTextLayoutEngineBaseline.cpp \
+        rendering/svg/SVGTextLayoutEngineSpacing.cpp \
+        rendering/svg/SVGTextMetrics.cpp \
+        rendering/svg/SVGTextMetricsBuilder.cpp \
+        rendering/svg/SVGTextQuery.cpp \
+        rendering/svg/SVGTextRunRenderingContext.cpp \
         svg/animation/SMILTime.cpp \
         svg/animation/SMILTimeContainer.cpp \
         svg/animation/SVGSMILElement.cpp \
@@ -3534,220 +3585,165 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/graphics/SVGImage.cpp \
         svg/graphics/SVGImageCache.cpp \
         svg/properties/SVGAttributeToPropertyMap.cpp \
-        svg/properties/SVGPathSegListPropertyTearOff.cpp
+        svg/properties/SVGPathSegListPropertyTearOff.cpp \
+        svg/SVGDocumentExtensions.cpp \
+        svg/ColorDistance.cpp \
+        svg/SVGAElement.cpp \
+        svg/SVGAltGlyphDefElement.cpp \
+        svg/SVGAltGlyphElement.cpp \
+        svg/SVGAltGlyphItemElement.cpp \
+        svg/SVGAngle.cpp \
+        svg/SVGAnimateColorElement.cpp \
+        svg/SVGAnimatedAngle.cpp \
+        svg/SVGAnimatedBoolean.cpp \
+        svg/SVGAnimatedColor.cpp \
+        svg/SVGAnimatedEnumeration.cpp \
+        svg/SVGAnimatedInteger.cpp \
+        svg/SVGAnimatedIntegerOptionalInteger.cpp \
+        svg/SVGAnimatedLength.cpp \
+        svg/SVGAnimatedLengthList.cpp \
+        svg/SVGAnimatedNumber.cpp \
+        svg/SVGAnimatedNumberList.cpp \
+        svg/SVGAnimatedNumberOptionalNumber.cpp \
+        svg/SVGAnimatedPath.cpp \
+        svg/SVGAnimatedPointList.cpp \
+        svg/SVGAnimatedPreserveAspectRatio.cpp \
+        svg/SVGAnimatedRect.cpp \
+        svg/SVGAnimatedString.cpp \
+        svg/SVGAnimatedTransformList.cpp \
+        svg/SVGAnimatedType.cpp \
+        svg/SVGAnimateElement.cpp \
+        svg/SVGAnimateMotionElement.cpp \
+        svg/SVGAnimateTransformElement.cpp \
+        svg/SVGAnimationElement.cpp \
+        svg/SVGCircleElement.cpp \
+        svg/SVGClipPathElement.cpp \
+        svg/SVGColor.cpp \
+        svg/SVGComponentTransferFunctionElement.cpp \
+        svg/SVGCursorElement.cpp \
+        svg/SVGDefsElement.cpp \
+        svg/SVGDescElement.cpp \
+        svg/SVGDocument.cpp \
+        svg/SVGElement.cpp \
+        svg/SVGElementInstance.cpp \
+        svg/SVGElementInstanceList.cpp \
+        svg/SVGEllipseElement.cpp \
+        svg/SVGException.cpp \
+        svg/SVGExternalResourcesRequired.cpp \
+        svg/SVGFEBlendElement.cpp \
+        svg/SVGFEColorMatrixElement.cpp \
+        svg/SVGFEComponentTransferElement.cpp \
+        svg/SVGFECompositeElement.cpp \
+        svg/SVGFEConvolveMatrixElement.cpp \
+        svg/SVGFEDiffuseLightingElement.cpp \
+        svg/SVGFEDisplacementMapElement.cpp \
+        svg/SVGFEDistantLightElement.cpp \
+        svg/SVGFEDropShadowElement.cpp \
+        svg/SVGFEFloodElement.cpp \
+        svg/SVGFEFuncAElement.cpp \
+        svg/SVGFEFuncBElement.cpp \
+        svg/SVGFEFuncGElement.cpp \
+        svg/SVGFEFuncRElement.cpp \
+        svg/SVGFEGaussianBlurElement.cpp \
+        svg/SVGFEImageElement.cpp \
+        svg/SVGFELightElement.cpp \
+        svg/SVGFEMergeElement.cpp \
+        svg/SVGFEMergeNodeElement.cpp \
+        svg/SVGFEMorphologyElement.cpp \
+        svg/SVGFEOffsetElement.cpp \
+        svg/SVGFEPointLightElement.cpp \
+        svg/SVGFESpecularLightingElement.cpp \
+        svg/SVGFESpotLightElement.cpp \
+        svg/SVGFETileElement.cpp \
+        svg/SVGFETurbulenceElement.cpp \
+        svg/SVGFilterElement.cpp \
+        svg/SVGFilterPrimitiveStandardAttributes.cpp \
+        svg/SVGFitToViewBox.cpp \
+        svg/SVGFontData.cpp \
+        svg/SVGFontElement.cpp \
+        svg/SVGFontFaceElement.cpp \
+        svg/SVGFontFaceFormatElement.cpp \
+        svg/SVGFontFaceNameElement.cpp \
+        svg/SVGFontFaceSrcElement.cpp \
+        svg/SVGFontFaceUriElement.cpp \
+        svg/SVGForeignObjectElement.cpp \
+        svg/SVGGElement.cpp \
+        svg/SVGGlyphElement.cpp \
+        svg/SVGGlyphRefElement.cpp \
+        svg/SVGGradientElement.cpp \
+        svg/SVGHKernElement.cpp \
+        svg/SVGImageElement.cpp \
+        svg/SVGImageLoader.cpp \
+        svg/SVGLangSpace.cpp \
+        svg/SVGLength.cpp \
+        svg/SVGLengthContext.cpp \
+        svg/SVGLengthList.cpp \
+        svg/SVGLinearGradientElement.cpp \
+        svg/SVGLineElement.cpp \
+        svg/SVGLocatable.cpp \
+        svg/SVGMarkerElement.cpp \
+        svg/SVGMaskElement.cpp \
+        svg/SVGMetadataElement.cpp \
+        svg/SVGMissingGlyphElement.cpp \
+        svg/SVGMPathElement.cpp \
+        svg/SVGNumberList.cpp \
+        svg/SVGPaint.cpp \
+        svg/SVGParserUtilities.cpp \
+        svg/SVGPathBlender.cpp \
+        svg/SVGPathBuilder.cpp \
+        svg/SVGPathByteStreamBuilder.cpp \
+        svg/SVGPathByteStreamSource.cpp \
+        svg/SVGPathElement.cpp \
+        svg/SVGPathParser.cpp \
+        svg/SVGPathSegList.cpp \
+        svg/SVGPathSegListBuilder.cpp \
+        svg/SVGPathSegListSource.cpp \
+        svg/SVGPathStringBuilder.cpp \
+        svg/SVGPathStringSource.cpp \
+        svg/SVGPathTraversalStateBuilder.cpp \
+        svg/SVGPathUtilities.cpp \
+        svg/SVGPatternElement.cpp \
+        svg/SVGPointList.cpp \
+        svg/SVGPolyElement.cpp \
+        svg/SVGPolygonElement.cpp \
+        svg/SVGPolylineElement.cpp \
+        svg/SVGPreserveAspectRatio.cpp \
+        svg/SVGRadialGradientElement.cpp \
+        svg/SVGRectElement.cpp \
+        svg/SVGSVGElement.cpp \
+        svg/SVGScriptElement.cpp \
+        svg/SVGSetElement.cpp \
+        svg/SVGStopElement.cpp \
+        svg/SVGStringList.cpp \
+        svg/SVGStylable.cpp \
+        svg/SVGStyleElement.cpp \
+        svg/SVGStyledElement.cpp \
+        svg/SVGStyledLocatableElement.cpp \
+        svg/SVGStyledTransformableElement.cpp \
+        svg/SVGSwitchElement.cpp \
+        svg/SVGSymbolElement.cpp \
+        svg/SVGTRefElement.cpp \
+        svg/SVGTSpanElement.cpp \
+        svg/SVGTests.cpp \
+        svg/SVGTextContentElement.cpp \
+        svg/SVGTextElement.cpp \
+        svg/SVGTextPathElement.cpp \
+        svg/SVGTextPositioningElement.cpp \
+        svg/SVGTitleElement.cpp \
+        svg/SVGTransform.cpp \
+        svg/SVGTransformDistance.cpp \
+        svg/SVGTransformList.cpp \
+        svg/SVGTransformable.cpp \
+        svg/SVGURIReference.cpp \
+        svg/SVGUseElement.cpp \
+        svg/SVGVKernElement.cpp \
+        svg/SVGViewElement.cpp \
+        svg/SVGViewSpec.cpp \
+        svg/SVGZoomAndPan.cpp \
+        svg/SVGZoomEvent.cpp
 
-    use_all_in_one_files {
-         # Using all in one files to avoid memory exhaustion
-         # during the linking phase.
-         SOURCES += \
-              rendering/svg/RenderSVGAllInOne.cpp \
-              svg/SVGAllInOne.cpp
-    } else {
-         SOURCES += \
-              rendering/svg/RenderSVGBlock.cpp \
-              rendering/svg/RenderSVGContainer.cpp \
-              rendering/svg/RenderSVGForeignObject.cpp \
-              rendering/svg/RenderSVGGradientStop.cpp \
-              rendering/svg/RenderSVGHiddenContainer.cpp \
-              rendering/svg/RenderSVGImage.cpp \
-              rendering/svg/RenderSVGInline.cpp \
-              rendering/svg/RenderSVGInlineText.cpp \
-              rendering/svg/RenderSVGModelObject.cpp \
-              rendering/svg/RenderSVGResource.cpp \
-              rendering/svg/RenderSVGResourceClipper.cpp \
-              rendering/svg/RenderSVGResourceContainer.cpp \
-              rendering/svg/RenderSVGResourceFilter.cpp \
-              rendering/svg/RenderSVGResourceFilterPrimitive.cpp \
-              rendering/svg/RenderSVGResourceGradient.cpp \
-              rendering/svg/RenderSVGResourceLinearGradient.cpp \
-              rendering/svg/RenderSVGResourceMarker.cpp \
-              rendering/svg/RenderSVGResourceMasker.cpp \
-              rendering/svg/RenderSVGResourcePattern.cpp \
-              rendering/svg/RenderSVGResourceRadialGradient.cpp \
-              rendering/svg/RenderSVGResourceSolidColor.cpp \
-              rendering/svg/RenderSVGRoot.cpp \
-              rendering/svg/RenderSVGTSpan.cpp \
-              rendering/svg/RenderSVGText.cpp \
-              rendering/svg/RenderSVGTextPath.cpp \
-              rendering/svg/RenderSVGTransformableContainer.cpp \
-              rendering/svg/RenderSVGViewportContainer.cpp \
-              rendering/svg/SVGInlineFlowBox.cpp \
-              rendering/svg/SVGInlineTextBox.cpp \
-              rendering/svg/SVGPathData.cpp \
-              rendering/svg/SVGRenderSupport.cpp \
-              rendering/svg/SVGRenderTreeAsText.cpp \
-              rendering/svg/SVGRenderingContext.cpp \
-              rendering/svg/SVGResources.cpp \
-              rendering/svg/SVGResourcesCache.cpp \
-              rendering/svg/SVGResourcesCycleSolver.cpp \
-              rendering/svg/SVGRootInlineBox.cpp \
-              rendering/svg/SVGTextChunk.cpp \
-              rendering/svg/SVGTextChunkBuilder.cpp \
-              rendering/svg/SVGTextLayoutAttributes.cpp \
-              rendering/svg/SVGTextLayoutAttributesBuilder.cpp \
-              rendering/svg/SVGTextLayoutEngine.cpp \
-              rendering/svg/SVGTextLayoutEngineBaseline.cpp \
-              rendering/svg/SVGTextLayoutEngineSpacing.cpp \
-              rendering/svg/SVGTextMetrics.cpp \
-              rendering/svg/SVGTextMetricsBuilder.cpp \
-              rendering/svg/SVGTextQuery.cpp \
-              rendering/svg/SVGTextRunRenderingContext.cpp \
-              svg/SVGDocumentExtensions.cpp \
-              svg/ColorDistance.cpp \
-              svg/SVGAElement.cpp \
-              svg/SVGAltGlyphDefElement.cpp \
-              svg/SVGAltGlyphElement.cpp \
-              svg/SVGAltGlyphItemElement.cpp \
-              svg/SVGAngle.cpp \
-              svg/SVGAnimateColorElement.cpp \
-              svg/SVGAnimatedAngle.cpp \
-              svg/SVGAnimatedBoolean.cpp \
-              svg/SVGAnimatedColor.cpp \
-              svg/SVGAnimatedEnumeration.cpp \
-              svg/SVGAnimatedInteger.cpp \
-              svg/SVGAnimatedIntegerOptionalInteger.cpp \
-              svg/SVGAnimatedLength.cpp \
-              svg/SVGAnimatedLengthList.cpp \
-              svg/SVGAnimatedNumber.cpp \
-              svg/SVGAnimatedNumberList.cpp \
-              svg/SVGAnimatedNumberOptionalNumber.cpp \
-              svg/SVGAnimatedPath.cpp \
-              svg/SVGAnimatedPointList.cpp \
-              svg/SVGAnimatedPreserveAspectRatio.cpp \
-              svg/SVGAnimatedRect.cpp \
-              svg/SVGAnimatedString.cpp \
-              svg/SVGAnimatedTransformList.cpp \
-              svg/SVGAnimatedType.cpp \
-              svg/SVGAnimateElement.cpp \
-              svg/SVGAnimateMotionElement.cpp \
-              svg/SVGAnimateTransformElement.cpp \
-              svg/SVGAnimationElement.cpp \
-              svg/SVGCircleElement.cpp \
-              svg/SVGClipPathElement.cpp \
-              svg/SVGColor.cpp \
-              svg/SVGComponentTransferFunctionElement.cpp \
-              svg/SVGCursorElement.cpp \
-              svg/SVGDefsElement.cpp \
-              svg/SVGDescElement.cpp \
-              svg/SVGDocument.cpp \
-              svg/SVGElement.cpp \
-              svg/SVGElementInstance.cpp \
-              svg/SVGElementInstanceList.cpp \
-              svg/SVGEllipseElement.cpp \
-              svg/SVGException.cpp \
-              svg/SVGExternalResourcesRequired.cpp \
-              svg/SVGFEBlendElement.cpp \
-              svg/SVGFEColorMatrixElement.cpp \
-              svg/SVGFEComponentTransferElement.cpp \
-              svg/SVGFECompositeElement.cpp \
-              svg/SVGFEConvolveMatrixElement.cpp \
-              svg/SVGFEDiffuseLightingElement.cpp \
-              svg/SVGFEDisplacementMapElement.cpp \
-              svg/SVGFEDistantLightElement.cpp \
-              svg/SVGFEDropShadowElement.cpp \
-              svg/SVGFEFloodElement.cpp \
-              svg/SVGFEFuncAElement.cpp \
-              svg/SVGFEFuncBElement.cpp \
-              svg/SVGFEFuncGElement.cpp \
-              svg/SVGFEFuncRElement.cpp \
-              svg/SVGFEGaussianBlurElement.cpp \
-              svg/SVGFEImageElement.cpp \
-              svg/SVGFELightElement.cpp \
-              svg/SVGFEMergeElement.cpp \
-              svg/SVGFEMergeNodeElement.cpp \
-              svg/SVGFEMorphologyElement.cpp \
-              svg/SVGFEOffsetElement.cpp \
-              svg/SVGFEPointLightElement.cpp \
-              svg/SVGFESpecularLightingElement.cpp \
-              svg/SVGFESpotLightElement.cpp \
-              svg/SVGFETileElement.cpp \
-              svg/SVGFETurbulenceElement.cpp \
-              svg/SVGFilterElement.cpp \
-              svg/SVGFilterPrimitiveStandardAttributes.cpp \
-              svg/SVGFitToViewBox.cpp \
-              svg/SVGFontData.cpp \
-              svg/SVGFontElement.cpp \
-              svg/SVGFontFaceElement.cpp \
-              svg/SVGFontFaceFormatElement.cpp \
-              svg/SVGFontFaceNameElement.cpp \
-              svg/SVGFontFaceSrcElement.cpp \
-              svg/SVGFontFaceUriElement.cpp \
-              svg/SVGForeignObjectElement.cpp \
-              svg/SVGGElement.cpp \
-              svg/SVGGlyphElement.cpp \
-              svg/SVGGlyphRefElement.cpp \
-              svg/SVGGradientElement.cpp \
-              svg/SVGHKernElement.cpp \
-              svg/SVGImageElement.cpp \
-              svg/SVGImageLoader.cpp \
-              svg/SVGLangSpace.cpp \
-              svg/SVGLength.cpp \
-              svg/SVGLengthContext.cpp \
-              svg/SVGLengthList.cpp \
-              svg/SVGLinearGradientElement.cpp \
-              svg/SVGLineElement.cpp \
-              svg/SVGLocatable.cpp \
-              svg/SVGMarkerElement.cpp \
-              svg/SVGMaskElement.cpp \
-              svg/SVGMetadataElement.cpp \
-              svg/SVGMissingGlyphElement.cpp \
-              svg/SVGMPathElement.cpp \
-              svg/SVGNumberList.cpp \
-              svg/SVGPaint.cpp \
-              svg/SVGParserUtilities.cpp \
-              svg/SVGPathBlender.cpp \
-              svg/SVGPathBuilder.cpp \
-              svg/SVGPathByteStreamBuilder.cpp \
-              svg/SVGPathByteStreamSource.cpp \
-              svg/SVGPathElement.cpp \
-              svg/SVGPathParser.cpp \
-              svg/SVGPathSegList.cpp \
-              svg/SVGPathSegListBuilder.cpp \
-              svg/SVGPathSegListSource.cpp \
-              svg/SVGPathStringBuilder.cpp \
-              svg/SVGPathStringSource.cpp \
-              svg/SVGPathTraversalStateBuilder.cpp \
-              svg/SVGPathUtilities.cpp \
-              svg/SVGPatternElement.cpp \
-              svg/SVGPointList.cpp \
-              svg/SVGPolyElement.cpp \
-              svg/SVGPolygonElement.cpp \
-              svg/SVGPolylineElement.cpp \
-              svg/SVGPreserveAspectRatio.cpp \
-              svg/SVGRadialGradientElement.cpp \
-              svg/SVGRectElement.cpp \
-              svg/SVGSVGElement.cpp \
-              svg/SVGScriptElement.cpp \
-              svg/SVGSetElement.cpp \
-              svg/SVGStopElement.cpp \
-              svg/SVGStringList.cpp \
-              svg/SVGStylable.cpp \
-              svg/SVGStyleElement.cpp \
-              svg/SVGStyledElement.cpp \
-              svg/SVGStyledLocatableElement.cpp \
-              svg/SVGStyledTransformableElement.cpp \
-              svg/SVGSwitchElement.cpp \
-              svg/SVGSymbolElement.cpp \
-              svg/SVGTRefElement.cpp \
-              svg/SVGTSpanElement.cpp \
-              svg/SVGTests.cpp \
-              svg/SVGTextContentElement.cpp \
-              svg/SVGTextElement.cpp \
-              svg/SVGTextPathElement.cpp \
-              svg/SVGTextPositioningElement.cpp \
-              svg/SVGTitleElement.cpp \
-              svg/SVGTransform.cpp \
-              svg/SVGTransformDistance.cpp \
-              svg/SVGTransformList.cpp \
-              svg/SVGTransformable.cpp \
-              svg/SVGURIReference.cpp \
-              svg/SVGUseElement.cpp \
-              svg/SVGVKernElement.cpp \
-              svg/SVGViewElement.cpp \
-              svg/SVGViewSpec.cpp \
-              svg/SVGZoomAndPan.cpp \
-              svg/SVGZoomEvent.cpp
-   }
+    ALL_IN_ONE_SOURCES += \
+        svg/SVGAllInOne.cpp
 }
 
 contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1) {
@@ -4172,6 +4168,18 @@ contains(DEFINES, WTF_USE_GRAPHICS_SURFACE=1) {
         SOURCES += platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp
     }
 }
+
+ALL_IN_ONE_SOURCES += \
+    accessibility/AccessibilityAllInOne.cpp \
+    dom/DOMAllInOne.cpp \
+    inspector/InspectorAllInOne.cpp
+
+# These do not compile at the moment:
+#    css/MediaAllInOne.cpp
+#    css/CSSAllInOne.cpp
+#    editing/EditingAllInOne.cpp
+#    html/HTMLElementsAllInOne.cpp
+#    rendering/RenderingAllInOne.cpp
 
 # Make sure the derived sources are built
 include(DerivedSources.pri)

@@ -1,3 +1,16 @@
+2012-09-05  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Automate the use of AllInOne files in the Qt build
+        https://bugs.webkit.org/show_bug.cgi?id=95837
+
+        Reviewed by Tor Arne Vestbø.
+
+        New feature file that implements the all-in-one file automation by
+        adding the requested all-in-one files to SOURCES and removing the files
+        it includes from SOURCES.
+
+        * qmake/mkspecs/features/use_all_in_one_files.prf: Added.
+
 2012-09-04  Tim Horton  <timothy_horton@apple.com>
 
         Have NRWT log more output when crash logs are missing
