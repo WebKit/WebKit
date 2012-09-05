@@ -137,12 +137,22 @@ defineTest(addStrictSubdirOrderBetween) {
     first_base_target = sub-$$replace(firstSubdirFile, [^a-zA-Z0-9_], -)
     second_base_target = sub-$$replace(secondSubdirFile, [^a-zA-Z0-9_], -)
 
+    # Use a custom target for making the derived sources, as the default target
+    # will do 'test -f $(MAKEFILE).DerivedSources || $(QMAKE) ...', which clashes
+    # with the qmake-run of the -qmake_all target, and we end up with a race
+    # and potentially half-written makefiles. The custom target depends explicitly
+    # on -qmake_all, to ensure that we have a makefile, and then calls make.
+    derived_make_for_qmake.target = $${first_base_target}-make_for_qmake
+    derived_make_for_qmake.depends = $${first_base_target}-qmake_all
+    derived_make_for_qmake.commands = $(MAKE) -f $$eval($${firstSubdir}.makefile)
+    QMAKE_EXTRA_TARGETS += derived_make_for_qmake
+
     # This target ensures that running "make qmake_all" will force both qmake and make
     # to be run on the derived sources before running qmake on the target, so that
     # qmake can pick up the right dependencies for the target based on the derived
-    # sources that were generated. Just "make qmake" is non-recursive anyway.
+    # sources that were generated.
     target_make_qmake.target = $${second_base_target}-qmake_all
-    target_make_qmake.depends = $${first_base_target}
+    target_make_qmake.depends = $${derived_make_for_qmake.target}
     QMAKE_EXTRA_TARGETS += target_make_qmake
 
     # Make things work even if qmake -r is used.

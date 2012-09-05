@@ -1,3 +1,23 @@
+2012-09-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Fix makefile race condition between derived sources and target
+
+        r121966 removed too much of the old qmake logic, including the rule
+        that ensured that qmake_all would not trigger dual runs of qmake --
+        one of the derived sources -qmake-all rule, and one for making the
+        derived sources.
+
+        We now follow a similar pattern as before, by introducing a custom
+        target that explicitly depends on the derived sources' qmake-all before
+        doing a manual run of make. That ensures a single qmake run for the derived
+        sources.
+
+        https://bugs.webkit.org/show_bug.cgi?id=93847
+
+        Reviewed by Csaba Osztrogonác.
+
+        * qmake/mkspecs/features/functions.prf:
+
 2012-09-05  Christophe Dumez  <christophe.dumez@intel.com>
 
         WKTR doesn't implement dumpWillCacheResponse()
