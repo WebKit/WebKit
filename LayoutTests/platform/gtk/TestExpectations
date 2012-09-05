@@ -1300,6 +1300,18 @@ BUGWK95530 : http/tests/security/inactive-document-with-empty-security-origin.ht
 
 BUGWK95825 : accessibility/canvas-description-and-role.html = TEXT
 
+// Following tests need baselines
+BUGWK95646 : css3/masking/clip-path-circle.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
+BUGWK95646 : css3/masking/clip-path-ellipse.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
+BUGWK95646 : css3/masking/clip-path-rectangle.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
+BUGWK95646 : css3/masking/clip-path-polygon.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
+BUGWK95646 : css3/masking/clip-path-polygon-evenodd.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
+BUGWK95646 : css3/masking/clip-path-polygon-nonzero.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
+BUGWK95646 : css3/masking/clip-path-circle-filter.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
+BUGWK95646 : css3/masking/clip-path-circle-overflow.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
+BUGWK95646 : css3/masking/clip-path-circle-relative-overflow.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
+BUGWK95646 : css3/masking/clip-path-circle-overflow-hidden.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////

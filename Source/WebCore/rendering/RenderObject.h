@@ -559,6 +559,7 @@ public:
 
     bool hasTransform() const { return m_bitfields.hasTransform(); }
     bool hasMask() const { return style() && style()->hasMask(); }
+    bool hasClipPath() const { return style() && style()->clipPath(); }
     bool hasHiddenBackface() const { return style() && style()->backfaceVisibility() == BackfaceVisibilityHidden; }
 
 #if ENABLE(CSS_FILTERS)

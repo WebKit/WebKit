@@ -3123,6 +3123,18 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
     // Ensure our lists are up-to-date.
     updateLayerListsIfNeeded();
 
+    // Apply clip-path to context.
+    RenderStyle* style = renderer()->style();
+    if (renderer()->hasClipPath() && !context->paintingDisabled() && style) {
+        if (BasicShape* clipShape = style->clipPath()) {
+            // FIXME: Investigate if it is better to store and update a Path object in RenderStyle.
+            // https://bugs.webkit.org/show_bug.cgi?id=95619
+            Path clipPath;
+            clipShape->path(clipPath, calculateLayerBounds(this, rootLayer, 0));
+            transparencyLayerContext->clipPath(clipPath, clipShape->windRule());
+        }
+    }
+
 #if ENABLE(CSS_FILTERS)
     FilterEffectRendererHelper filterPainter(filterRenderer() && paintsWithFilters());
     if (filterPainter.haveFilterEffect() && !context->paintingDisabled()) {
@@ -4820,6 +4832,7 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
                 || (renderer()->style()->specifiesColumns() && !isRootLayer()))
             && !renderer()->isPositioned()
             && !renderer()->hasTransform()
+            && !renderer()->hasClipPath()
 #if ENABLE(CSS_FILTERS)
             && !renderer()->hasFilter()
 #endif

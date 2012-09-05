@@ -1,3 +1,46 @@
+2012-09-01  Dirk Schulze  <krit@webkit.org>
+
+        Use -webkit-clip-path shapes to clip HTML elements
+        https://bugs.webkit.org/show_bug.cgi?id=95646
+
+        Reviewed by Dean Jackson.
+
+        Added new tests for the -webkit-clip-path property applied to HTML content.
+
+        * css3/masking/clip-path-circle-filter.html: Added.
+        * css3/masking/clip-path-circle-overflow.html: Added.
+        * css3/masking/clip-path-circle-relative-overflow.html: Added.
+        * css3/masking/clip-path-circle-overflow-hidden.html: Added.
+        * css3/masking/clip-path-circle.html: Added.
+        * css3/masking/clip-path-ellipse.html: Added.
+        * css3/masking/clip-path-polygon-evenodd.html: Added.
+        * css3/masking/clip-path-polygon-nonzero.html: Added.
+        * css3/masking/clip-path-polygon.html: Added.
+        * css3/masking/clip-path-rectangle.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/css3/masking/clip-path-circle-expected.png: Added.
+        * platform/mac/css3/masking/clip-path-circle-expected.txt: Added.
+        * platform/mac/css3/masking/clip-path-circle-filter-expected.png: Added.
+        * platform/mac/css3/masking/clip-path-circle-filter-expected.txt: Added.
+        * platform/mac/css3/masking/clip-path-circle-overflow-expected.png: Added.
+        * platform/mac/css3/masking/clip-path-circle-overflow-expected.txt: Added.
+        * platform/mac/css3/masking/clip-path-circle-overflow-hidden-expected.png: Added.
+        * platform/mac/css3/masking/clip-path-circle-overflow-hidden-expected.txt: Added.
+        * platform/mac/css3/masking/clip-path-circle-relative-overflow-expected.png: Added.
+        * platform/mac/css3/masking/clip-path-circle-relative-overflow-expected.txt: Added.
+        * platform/mac/css3/masking/clip-path-ellipse-expected.png: Added.
+        * platform/mac/css3/masking/clip-path-ellipse-expected.txt: Added.
+        * platform/mac/css3/masking/clip-path-polygon-evenodd-expected.png: Added.
+        * platform/mac/css3/masking/clip-path-polygon-evenodd-expected.txt: Added.
+        * platform/mac/css3/masking/clip-path-polygon-expected.png: Added.
+        * platform/mac/css3/masking/clip-path-polygon-expected.txt: Added.
+        * platform/mac/css3/masking/clip-path-polygon-nonzero-expected.png: Added.
+        * platform/mac/css3/masking/clip-path-polygon-nonzero-expected.txt: Added.
+        * platform/mac/css3/masking/clip-path-rectangle-expected.png: Added.
+        * platform/mac/css3/masking/clip-path-rectangle-expected.txt: Added.
+
 2012-09-05  Vincent Scheib  <scheib@chromium.org>
 
         webkitPointerLockElement returns null when pointer lock request is pending.
