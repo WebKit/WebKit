@@ -1,3 +1,12 @@
+2012-09-04  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Attempt to fix build failure on Win
+
+        Remove chromium/public/WebOfferAnswerRequest.h from Platform.gypi,
+        which was added in r127501, but doesn't exist. Unreviewed.
+
+        * Platform.gypi:
+
 2012-09-04  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add the async createOffer functionality to RTCPeerConnection

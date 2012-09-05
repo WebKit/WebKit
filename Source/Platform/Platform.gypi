@@ -94,7 +94,6 @@
             'chromium/public/WebMessagePortChannelClient.h',
             'chromium/public/WebMimeRegistry.h',
             'chromium/public/WebNonCopyable.h',
-            'chromium/public/WebOfferAnswerRequest.h',
             'chromium/public/WebPeerConnection00Handler.h',
             'chromium/public/WebPeerConnection00HandlerClient.h',
             'chromium/public/WebPeerConnectionHandler.h',
