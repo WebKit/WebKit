@@ -50,6 +50,7 @@
 #include "platform/WebRect.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
+#include <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
 
@@ -522,14 +523,16 @@ WebString WebAccessibilityObject::keyboardShortcut() const
         // Follow the same order as Mozilla MSAA implementation:
         // Ctrl+Alt+Shift+Meta+key. MSDN states that keyboard shortcut strings
         // should not be localized and defines the separator as "+".
+        StringBuilder modifierStringBuilder;
         if (modifiers & PlatformEvent::CtrlKey)
-            modifierString += "Ctrl+";
+            modifierStringBuilder.appendLiteral("Ctrl+");
         if (modifiers & PlatformEvent::AltKey)
-            modifierString += "Alt+";
+            modifierStringBuilder.appendLiteral("Alt+");
         if (modifiers & PlatformEvent::ShiftKey)
-            modifierString += "Shift+";
+            modifierStringBuilder.appendLiteral("Shift+");
         if (modifiers & PlatformEvent::MetaKey)
-            modifierString += "Win+";
+            modifierStringBuilder.appendLiteral("Win+");
+        modifierString = modifierStringBuilder.toString();
     }
 
     return String(modifierString + accessKey);

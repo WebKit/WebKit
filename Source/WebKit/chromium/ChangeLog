@@ -1,3 +1,17 @@
+2012-09-04  Adam Barth  <abarth@chromium.org>
+
+        Make chromium-linux build without WTF_DEPRECATED_STRING_OPERATORS
+        https://bugs.webkit.org/show_bug.cgi?id=95798
+
+        Reviewed by Eric Seidel.
+
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::keyboardShortcut):
+          - Remove use of WTF::String::operator+=
+        * src/WebPageSerializerImpl.cpp:
+          - Whitelist use of WTF::String::operator+=. Remove this use will take
+            some more careful thought.
+
 2012-09-04  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: remove final createIndex backend glue

@@ -115,7 +115,7 @@ void CustomFilterValidatedProgram::rewriteMixVertexShader()
     // During validation, ANGLE renamed the author's "main" function to "css_main".
     // We write our own "main" function and call "css_main" from it.
     // This makes rewriting easy and ensures that our code runs after all author code.
-    m_validatedVertexShader += SHADER(
+    m_validatedVertexShader.append(SHADER(
         attribute mediump vec2 css_a_texCoord;
         varying mediump vec2 css_v_texCoord;
 
@@ -124,7 +124,7 @@ void CustomFilterValidatedProgram::rewriteMixVertexShader()
             css_main();
             css_v_texCoord = css_a_texCoord;
         }
-    );
+    ));
 }
 
 void CustomFilterValidatedProgram::rewriteMixFragmentShader()
