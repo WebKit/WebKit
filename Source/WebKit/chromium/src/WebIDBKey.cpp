@@ -32,10 +32,6 @@
 
 #include "IDBBindingUtilities.h"
 #include "IDBKey.h"
-#include "IDBKeyPath.h"
-#include "SerializedScriptValue.h"
-#include "WebIDBKeyPath.h"
-#include "platform/WebSerializedScriptValue.h"
 
 using namespace WebCore;
 
@@ -81,19 +77,6 @@ WebIDBKey WebIDBKey::createNull()
     WebIDBKey key;
     key.assignNull();
     return key;
-}
-
-WebIDBKey WebIDBKey::createFromValueAndKeyPath(const WebSerializedScriptValue& serializedScriptValue, const WebIDBKeyPath& idbKeyPath)
-{
-    // FIXME: If key path is empty string, this should return invalid key instead
-    if (serializedScriptValue.isNull())
-        return WebIDBKey::createNull();
-    return createIDBKeyFromSerializedValueAndKeyPath(serializedScriptValue, idbKeyPath);
-}
-
-WebSerializedScriptValue WebIDBKey::injectIDBKeyIntoSerializedValue(const WebIDBKey& key, const WebSerializedScriptValue& value, const WebIDBKeyPath& path)
-{
-    return WebCore::injectIDBKeyIntoSerializedValue(key, value, path);
 }
 
 void WebIDBKey::assign(const WebIDBKey& value)

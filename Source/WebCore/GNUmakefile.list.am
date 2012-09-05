@@ -1849,8 +1849,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBIndex.h \
 	Source/WebCore/Modules/indexeddb/IDBKey.cpp \
 	Source/WebCore/Modules/indexeddb/IDBKey.h \
-	Source/WebCore/Modules/indexeddb/IDBKeyPathBackendImpl.cpp \
-	Source/WebCore/Modules/indexeddb/IDBKeyPathBackendImpl.h \
 	Source/WebCore/Modules/indexeddb/IDBKeyPath.cpp \
 	Source/WebCore/Modules/indexeddb/IDBKeyPath.h \
 	Source/WebCore/Modules/indexeddb/IDBKeyRange.cpp \

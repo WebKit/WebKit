@@ -39,7 +39,6 @@
 #include "IDBIndexBackendImpl.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
-#include "IDBKeyPathBackendImpl.h"
 #include "IDBKeyRange.h"
 #include "IDBTracing.h"
 #include "IDBTransactionBackendImpl.h"
@@ -199,20 +198,6 @@ private:
         if (primaryKey && foundPrimaryKey->isEqual(primaryKey))
             return true;
         return false;
-    }
-
-    PassRefPtr<IDBKey> fetchKeyFromKeyPath(SerializedScriptValue* value)
-    {
-        IDB_TRACE("IndexWriter::fetchKeyFromKeyPath");
-
-        Vector<RefPtr<SerializedScriptValue> > values;
-        values.append(value);
-        Vector<RefPtr<IDBKey> > keys;
-        IDBKeyPathBackendImpl::createIDBKeysFromSerializedValuesAndKeyPath(values, m_indexMetadata.keyPath, keys);
-        if (keys.isEmpty())
-            return 0;
-        ASSERT(keys.size() == 1);
-        return keys[0].release();
     }
 
     const IDBIndexMetadata m_indexMetadata;

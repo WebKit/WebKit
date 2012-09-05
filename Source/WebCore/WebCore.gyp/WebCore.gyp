@@ -2038,7 +2038,6 @@
 
         ['exclude', 'Modules/filesystem/LocalFileSystem\\.cpp$'],
         ['exclude', 'Modules/indexeddb/IDBFactoryBackendInterface\\.cpp$'],
-        ['exclude', 'Modules/indexeddb/IDBKeyPathBackendImpl\\.cpp$'],
         ['exclude', 'Modules/webdatabase/DatabaseTrackerClient\\.h$'],
         ['exclude', 'Modules/webdatabase/DatabaseTracker\\.cpp$'],
         ['exclude', 'Modules/webdatabase/OriginQuotaManager\\.(cpp|h)$'],

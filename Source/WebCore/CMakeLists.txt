@@ -820,7 +820,6 @@ SET(WebCore_SOURCES
     Modules/indexeddb/IDBKey.cpp
     Modules/indexeddb/IDBKeyRange.cpp
     Modules/indexeddb/IDBKeyPath.cpp
-    Modules/indexeddb/IDBKeyPathBackendImpl.cpp
     Modules/indexeddb/IDBLevelDBBackingStore.cpp
     Modules/indexeddb/IDBLevelDBCoding.cpp
     Modules/indexeddb/IDBObjectStore.cpp

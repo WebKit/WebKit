@@ -35,9 +35,6 @@ namespace WebCore { class IDBKey; }
 
 namespace WebKit {
 
-class WebIDBKeyPath;
-class WebSerializedScriptValue;
-
 class WebIDBKey {
 public:
     // Please use one of the factory methods. This is public only to allow WebVector.
@@ -50,8 +47,6 @@ public:
     WEBKIT_EXPORT static WebIDBKey createNumber(double);
     WEBKIT_EXPORT static WebIDBKey createInvalid();
     WEBKIT_EXPORT static WebIDBKey createNull();
-    WEBKIT_EXPORT static WebIDBKey createFromValueAndKeyPath(const WebSerializedScriptValue&, const WebIDBKeyPath&);
-    WEBKIT_EXPORT static WebSerializedScriptValue injectIDBKeyIntoSerializedValue(const WebIDBKey&, const WebSerializedScriptValue&, const WebIDBKeyPath&);
 
     WebIDBKey(const WebIDBKey& e) { assign(e); }
     WebIDBKey& operator=(const WebIDBKey& e)

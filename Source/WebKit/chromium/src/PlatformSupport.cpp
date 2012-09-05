@@ -39,8 +39,6 @@
 #include "WebFileUtilities.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
-#include "WebIDBKey.h"
-#include "WebIDBKeyPath.h"
 #include "WebKit.h"
 #include "WebPluginContainerImpl.h"
 #include "WebPluginListBuilderImpl.h"
@@ -281,23 +279,6 @@ PassRefPtr<IDBFactoryBackendInterface> PlatformSupport::idbFactory()
     // There's no reason why we need to allocate a new proxy each time, but
     // there's also no strong reason not to.
     return IDBFactoryBackendProxy::create();
-}
-
-void PlatformSupport::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue> >& values, const IDBKeyPath& keyPath, Vector<RefPtr<IDBKey> >& keys)
-{
-    WebVector<WebSerializedScriptValue> webValues = values;
-    WebVector<WebIDBKey> webKeys;
-    webKitPlatformSupport()->createIDBKeysFromSerializedValuesAndKeyPath(webValues, keyPath, webKeys);
-
-    size_t webKeysSize = webKeys.size();
-    keys.reserveCapacity(webKeysSize);
-    for (size_t i = 0; i < webKeysSize; ++i)
-        keys.append(PassRefPtr<IDBKey>(webKeys[i]));
-}
-
-PassRefPtr<SerializedScriptValue> PlatformSupport::injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const IDBKeyPath& keyPath)
-{
-    return webKitPlatformSupport()->injectIDBKeyIntoSerializedValue(key, value, keyPath);
 }
 
 // Plugin ---------------------------------------------------------------------

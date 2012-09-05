@@ -3429,8 +3429,6 @@
 		9712A5DC15004EDA0048AF10 /* IDBKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A58315004EDA0048AF10 /* IDBKey.h */; };
 		9712A5DE15004EDA0048AF10 /* IDBKeyPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A58515004EDA0048AF10 /* IDBKeyPath.cpp */; };
 		9712A5DF15004EDA0048AF10 /* IDBKeyPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A58615004EDA0048AF10 /* IDBKeyPath.h */; };
-		9712A5E015004EDA0048AF10 /* IDBKeyPathBackendImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A58715004EDA0048AF10 /* IDBKeyPathBackendImpl.cpp */; };
-		9712A5E115004EDA0048AF10 /* IDBKeyPathBackendImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A58815004EDA0048AF10 /* IDBKeyPathBackendImpl.h */; };
 		9712A5E215004EDA0048AF10 /* IDBKeyRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A58915004EDA0048AF10 /* IDBKeyRange.cpp */; };
 		9712A5E315004EDA0048AF10 /* IDBKeyRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A58A15004EDA0048AF10 /* IDBKeyRange.h */; };
 		9712A5E515004EDA0048AF10 /* IDBLevelDBBackingStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A58C15004EDA0048AF10 /* IDBLevelDBBackingStore.cpp */; };
@@ -10598,8 +10596,6 @@
 		9712A58415004EDA0048AF10 /* IDBKey.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDBKey.idl; path = Modules/indexeddb/IDBKey.idl; sourceTree = "<group>"; };
 		9712A58515004EDA0048AF10 /* IDBKeyPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBKeyPath.cpp; path = Modules/indexeddb/IDBKeyPath.cpp; sourceTree = "<group>"; };
 		9712A58615004EDA0048AF10 /* IDBKeyPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBKeyPath.h; path = Modules/indexeddb/IDBKeyPath.h; sourceTree = "<group>"; };
-		9712A58715004EDA0048AF10 /* IDBKeyPathBackendImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBKeyPathBackendImpl.cpp; path = Modules/indexeddb/IDBKeyPathBackendImpl.cpp; sourceTree = "<group>"; };
-		9712A58815004EDA0048AF10 /* IDBKeyPathBackendImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBKeyPathBackendImpl.h; path = Modules/indexeddb/IDBKeyPathBackendImpl.h; sourceTree = "<group>"; };
 		9712A58915004EDA0048AF10 /* IDBKeyRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBKeyRange.cpp; path = Modules/indexeddb/IDBKeyRange.cpp; sourceTree = "<group>"; };
 		9712A58A15004EDA0048AF10 /* IDBKeyRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBKeyRange.h; path = Modules/indexeddb/IDBKeyRange.h; sourceTree = "<group>"; };
 		9712A58B15004EDA0048AF10 /* IDBKeyRange.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDBKeyRange.idl; path = Modules/indexeddb/IDBKeyRange.idl; sourceTree = "<group>"; };
@@ -17785,8 +17781,6 @@
 				9712A58415004EDA0048AF10 /* IDBKey.idl */,
 				9712A58515004EDA0048AF10 /* IDBKeyPath.cpp */,
 				9712A58615004EDA0048AF10 /* IDBKeyPath.h */,
-				9712A58715004EDA0048AF10 /* IDBKeyPathBackendImpl.cpp */,
-				9712A58815004EDA0048AF10 /* IDBKeyPathBackendImpl.h */,
 				9712A58915004EDA0048AF10 /* IDBKeyRange.cpp */,
 				9712A58A15004EDA0048AF10 /* IDBKeyRange.h */,
 				9712A58B15004EDA0048AF10 /* IDBKeyRange.idl */,
@@ -23639,7 +23633,6 @@
 				9712A5DA15004EDA0048AF10 /* IDBIndexBackendInterface.h in Headers */,
 				9712A5DC15004EDA0048AF10 /* IDBKey.h in Headers */,
 				9712A5DF15004EDA0048AF10 /* IDBKeyPath.h in Headers */,
-				9712A5E115004EDA0048AF10 /* IDBKeyPathBackendImpl.h in Headers */,
 				9712A5E315004EDA0048AF10 /* IDBKeyRange.h in Headers */,
 				9712A5E615004EDA0048AF10 /* IDBLevelDBBackingStore.h in Headers */,
 				9712A5E815004EDA0048AF10 /* IDBLevelDBCoding.h in Headers */,
@@ -26842,7 +26835,6 @@
 				9712A5D815004EDA0048AF10 /* IDBIndexBackendImpl.cpp in Sources */,
 				9712A5DB15004EDA0048AF10 /* IDBKey.cpp in Sources */,
 				9712A5DE15004EDA0048AF10 /* IDBKeyPath.cpp in Sources */,
-				9712A5E015004EDA0048AF10 /* IDBKeyPathBackendImpl.cpp in Sources */,
 				9712A5E215004EDA0048AF10 /* IDBKeyRange.cpp in Sources */,
 				9712A5E515004EDA0048AF10 /* IDBLevelDBBackingStore.cpp in Sources */,
 				9712A5E715004EDA0048AF10 /* IDBLevelDBCoding.cpp in Sources */,
