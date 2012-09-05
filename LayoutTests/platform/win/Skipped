@@ -2171,3 +2171,14 @@ editing/style/apply-style-atomic.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=94374
 inspector/timeline/timeline-decode-resize.html
+
+# Flaky inspector tests
+http/tests/inspector/appcache/appcache-manifest-with-non-existing-file.html
+http/tests/inspector/console-resource-errors.html
+http/tests/inspector/network/network-initiator-from-console.html
+http/tests/inspector/resource-tree/resource-request-content-while-loading.html
+http/tests/inspector/search/resources-search-match-index.html
+inspector/profiler/heap-snapshot.html
+inspector/profiler/memory-instrumentation-cached-images.html
+inspector/styles/media-queries.html
+inspector/styles/region-style-crash.html

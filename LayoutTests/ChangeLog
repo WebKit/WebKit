@@ -1,3 +1,10 @@
+2012-09-04  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Some flaky inspector tests on Windows. Adding to skip list.
+        https://bugs.webkit.org/show_bug.cgi?id=95802
+
+        * platform/win/Skipped:
+
 2012-09-04  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         Frame element doesn't always unload its child frame.
