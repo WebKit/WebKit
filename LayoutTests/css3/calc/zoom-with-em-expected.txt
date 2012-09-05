@@ -1,0 +1,19 @@
+Tests that zooming a calc expression containing 'em' units works correctly
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 310 is 310
+PASS 310 is 310
+PASS 310 is 310
+PASS 310 is 310
+PASS 310 is 310
+PASS 311 is 311
+PASS 310 is 310
+PASS 310 is 310
+PASS 310 is 310
+PASS 310 is 310
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

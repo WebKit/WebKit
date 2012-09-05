@@ -494,6 +494,10 @@ template<> double CSSPrimitiveValue::computeLength(RenderStyle* style, RenderSty
 
 double CSSPrimitiveValue::computeLengthDouble(RenderStyle* style, RenderStyle* rootStyle, float multiplier, bool computingFontSize)
 {
+    if (m_primitiveUnitType == CSS_CALC)
+        // The multiplier and factor is applied to each value in the calc expression individually
+        return m_value.calc->computeLengthPx(style, rootStyle, multiplier, computingFontSize);
+        
     double factor;
 
     switch (primitiveType()) {
@@ -540,18 +544,11 @@ double CSSPrimitiveValue::computeLengthDouble(RenderStyle* style, RenderStyle* r
             return -1.0;
     }
 
-    double computedValue;
-    if (m_primitiveUnitType == CSS_CALC)
-        // The multiplier is passed in as 1.0 here to ensure it is only applied once
-        computedValue = m_value.calc->computeLengthPx(style, rootStyle, 1.0, computingFontSize);
-    else
-        computedValue = getDoubleValue();
-    
     // We do not apply the zoom factor when we are computing the value of the font-size property. The zooming
     // for font sizes is much more complicated, since we have to worry about enforcing the minimum font size preference
     // as well as enforcing the implicit "smart minimum." In addition the CSS property text-size-adjust is used to
     // prevent text from zooming at all. Therefore we will not apply the zoom here if we are computing font-size.
-    double result = computedValue * factor;
+    double result = getDoubleValue() * factor;
     if (computingFontSize || isFontRelativeLength())
         return result;
 

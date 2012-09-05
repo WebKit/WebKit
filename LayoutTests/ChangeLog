@@ -1,3 +1,13 @@
+2012-09-04  Mike Lawther  <mikelawther@chromium.org>
+
+        CSS3 calc: expressions with 'em' units do not zoom correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=95705
+
+        Reviewed by Ojan Vafai.
+
+        * css3/calc/zoom-with-em-expected.txt: Added.
+        * css3/calc/zoom-with-em.html: Added.
+
 2012-09-04  Keishi Hattori  <keishi@webkit.org>
 
         REGRESSION(r126132): MediaSlider and MediaVolumeSlider thumbs don't match mouse when dragged
