@@ -304,7 +304,7 @@ bool StyleRareNonInheritedData::transitionDataEquivalent(const StyleRareNonInher
 
 void StyleRareNonInheritedData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
 #if ENABLE(DASHBOARD_SUPPORT)
     info.addVector(m_dashboardRegions);
 #endif

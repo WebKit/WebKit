@@ -570,7 +570,7 @@ void ResourceResponseBase::lazyInit(InitLevel initLevel) const
 
 void ResourceResponseBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
     info.addInstrumentedMember(m_url);
     info.addInstrumentedMember(m_mimeType);
     info.addInstrumentedMember(m_textEncodingName);

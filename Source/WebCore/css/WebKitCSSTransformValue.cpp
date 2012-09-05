@@ -107,7 +107,7 @@ PassRefPtr<WebKitCSSTransformValue> WebKitCSSTransformValue::cloneForCSSOM() con
 
 void WebKitCSSTransformValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSValueList::reportDescendantMemoryUsage(memoryObjectInfo);
 }
 

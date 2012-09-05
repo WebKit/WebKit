@@ -6123,7 +6123,7 @@ void Document::setContextFeatures(PassRefPtr<ContextFeatures> features)
 
 void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     info.addInstrumentedMember(m_styleResolver);
     ContainerNode::reportMemoryUsage(memoryObjectInfo);
     info.addVector(m_customFonts);

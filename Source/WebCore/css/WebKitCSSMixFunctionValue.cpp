@@ -58,7 +58,7 @@ PassRefPtr<WebKitCSSMixFunctionValue> WebKitCSSMixFunctionValue::cloneForCSSOM()
 
 void WebKitCSSMixFunctionValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSValueList::reportDescendantMemoryUsage(memoryObjectInfo);
 }
 

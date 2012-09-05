@@ -143,7 +143,7 @@ void StyleRuleImport::reattachStyleSheetContents(StyleSheetContents* contents)
 
 void StyleRuleImport::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedMember(m_strHref);
     info.addInstrumentedMember(m_mediaQueries);
     info.addInstrumentedMember(m_styleSheet);

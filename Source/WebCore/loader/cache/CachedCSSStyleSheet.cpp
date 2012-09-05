@@ -205,7 +205,7 @@ void CachedCSSStyleSheet::saveParsedStyleSheet(PassRefPtr<StyleSheetContents> sh
 
 void CachedCSSStyleSheet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceCSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceCSS);
     CachedResource::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_decoder);
     info.addInstrumentedMember(m_parsedStyleSheetCache);

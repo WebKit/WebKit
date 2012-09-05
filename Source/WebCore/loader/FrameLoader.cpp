@@ -3277,7 +3277,7 @@ NetworkingContext* FrameLoader::networkingContext() const
 
 void FrameLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
     info.addInstrumentedMember(m_documentLoader);
     info.addInstrumentedMember(m_provisionalDocumentLoader);
     info.addInstrumentedMember(m_policyDocumentLoader);

@@ -1119,7 +1119,7 @@ unsigned StylePropertySet::averageSizeInBytes()
 void StylePropertySet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     size_t actualSize = m_isMutable ? sizeof(StylePropertySet) : immutableStylePropertySetSize(m_arraySize);
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS, actualSize);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS, actualSize);
     if (m_isMutable)
         info.addVectorPtr(m_mutablePropertyVector);
 

@@ -52,7 +52,7 @@ String CSSBorderImageSliceValue::customCssText() const
 
 void CSSBorderImageSliceValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedMember(m_slices);
 }
 

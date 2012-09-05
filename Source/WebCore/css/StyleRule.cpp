@@ -81,7 +81,7 @@ void StyleRuleBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     case Unknown:
     case Charset:
     case Keyframe:
-        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
         return;
     }
     ASSERT_NOT_REACHED();
@@ -208,7 +208,7 @@ unsigned StyleRule::averageSizeInBytes()
 
 void StyleRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedMember(m_properties);
     info.addInstrumentedMember(m_selectorList);
 }
@@ -271,7 +271,7 @@ void StyleRulePage::setProperties(PassRefPtr<StylePropertySet> properties)
 
 void StyleRulePage::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedMember(m_properties);
     info.addInstrumentedMember(m_selectorList);
 }
@@ -305,7 +305,7 @@ void StyleRuleFontFace::setProperties(PassRefPtr<StylePropertySet> properties)
 
 void StyleRuleFontFace::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedMember(m_properties);
 }
 
@@ -336,7 +336,7 @@ void StyleRuleBlock::wrapperRemoveRule(unsigned index)
 
 void StyleRuleBlock::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedVector(m_childRules);
 }
 
@@ -355,7 +355,7 @@ StyleRuleMedia::StyleRuleMedia(const StyleRuleMedia& o)
 
 void StyleRuleMedia::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedMember(m_mediaQueries);
 }
 
@@ -373,7 +373,7 @@ StyleRuleRegion::StyleRuleRegion(const StyleRuleRegion& o)
 
 void StyleRuleRegion::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedMember(m_selectorList);
 }
 

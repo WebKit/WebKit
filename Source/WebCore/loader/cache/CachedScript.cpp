@@ -129,7 +129,7 @@ void CachedScript::sourceProviderCacheSizeChanged(int delta)
 
 void CachedScript::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceScript);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceScript);
     CachedResource::reportMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_script);
     info.addMember(m_decoder);

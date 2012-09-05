@@ -141,7 +141,7 @@ void CSSCrossfadeValue::loadSubimages(CachedResourceLoader* cachedResourceLoader
 
 void CSSCrossfadeValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSImageGeneratorValue::reportBaseClassMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_fromValue);
     info.addInstrumentedMember(m_toValue);

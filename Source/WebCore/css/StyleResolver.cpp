@@ -741,7 +741,7 @@ void StyleResolver::Features::clear()
 
 void StyleResolver::Features::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addHashSet(idsInRules);
     info.addHashSet(attrsInRules);
     info.addVector(siblingRules);
@@ -2547,7 +2547,7 @@ RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned position, b
 
 void RuleData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
 }
 
 RuleSet::RuleSet()
@@ -2565,7 +2565,7 @@ static void reportAtomRuleMap(MemoryClassInfo* info, const RuleSet::AtomRuleMap&
 
 void RuleSet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     reportAtomRuleMap(&info, m_idRules);
     reportAtomRuleMap(&info, m_classRules);
     reportAtomRuleMap(&info, m_tagRules);
@@ -2579,7 +2579,7 @@ void RuleSet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 
 void RuleSet::RuleSetSelectorPair::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedMember(ruleSet);
 }
 
@@ -5727,25 +5727,25 @@ void StyleResolver::loadPendingResources()
 
 void StyleResolver::MatchedProperties::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedMember(properties);
 }
 
 void StyleResolver::MatchedPropertiesCacheItem::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedVector(matchedProperties);
 }
 
 void MediaQueryResult::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedMember(m_expression);
 }
 
 void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addMember(m_style);
     info.addInstrumentedMember(m_authorStyle);
     info.addInstrumentedMember(m_userStyle);

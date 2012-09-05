@@ -96,7 +96,7 @@ unsigned CharacterData::parserAppendData(const UChar* data, unsigned dataLength,
 
 void CharacterData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     Node::reportMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_data);
 }

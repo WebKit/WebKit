@@ -37,7 +37,7 @@ namespace WebCore {
 
 void SubstituteData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
     info.addInstrumentedMember(m_content);
     info.addInstrumentedMember(m_mimeType);
     info.addInstrumentedMember(m_textEncoding);

@@ -91,7 +91,7 @@ String StyleKeyframe::cssText() const
 
 void StyleKeyframe::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedMember(m_properties);
     info.addInstrumentedMember(m_key);
 }
@@ -118,7 +118,7 @@ CSSStyleDeclaration* WebKitCSSKeyframeRule::style() const
 
 void WebKitCSSKeyframeRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_keyframe);
     info.addInstrumentedMember(m_propertiesCSSOMWrapper);

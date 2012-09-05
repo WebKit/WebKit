@@ -37,20 +37,21 @@
 
 namespace WebCore {
 
-MemoryObjectType MemoryInstrumentation::Other = "Other";
-MemoryObjectType MemoryInstrumentation::DOM = "DOM";
-MemoryObjectType MemoryInstrumentation::CSS = "CSS";
-MemoryObjectType MemoryInstrumentation::Binding = "Binding";
-MemoryObjectType MemoryInstrumentation::Loader = "Loader";
-MemoryObjectType MemoryInstrumentation::MemoryCacheStructures = "MemoryCacheStructures";
-MemoryObjectType MemoryInstrumentation::CachedResource = "CachedResource";
-MemoryObjectType MemoryInstrumentation::CachedResourceCSS = "CachedResourceCSS";
-MemoryObjectType MemoryInstrumentation::CachedResourceFont = "CachedResourceFont";
-MemoryObjectType MemoryInstrumentation::CachedResourceImage = "CachedResourceImage";
-MemoryObjectType MemoryInstrumentation::CachedResourceScript = "CachedResourceScript";
-MemoryObjectType MemoryInstrumentation::CachedResourceSVG = "CachedResourceSVG";
-MemoryObjectType MemoryInstrumentation::CachedResourceShader = "CachedResourceShader";
-MemoryObjectType MemoryInstrumentation::CachedResourceXSLT = "CachedResourceXSLT";
+MemoryObjectType GenericMemoryTypes::Other = "Other";
+
+MemoryObjectType WebCoreMemoryTypes::DOM = "DOM";
+MemoryObjectType WebCoreMemoryTypes::CSS = "CSS";
+MemoryObjectType WebCoreMemoryTypes::Binding = "Binding";
+MemoryObjectType WebCoreMemoryTypes::Loader = "Loader";
+MemoryObjectType WebCoreMemoryTypes::MemoryCacheStructures = "MemoryCacheStructures";
+MemoryObjectType WebCoreMemoryTypes::CachedResource = "CachedResource";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceCSS = "CachedResourceCSS";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceFont = "CachedResourceFont";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceImage = "CachedResourceImage";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceScript = "CachedResourceScript";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceSVG = "CachedResourceSVG";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceShader = "CachedResourceShader";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceXSLT = "CachedResourceXSLT";
 
 template<> void MemoryInstrumentationTraits::addInstrumentedObject<String>(MemoryInstrumentation* instrumentation, const String* const& string, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
 {

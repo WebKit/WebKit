@@ -359,7 +359,7 @@ void FormData::removeGeneratedFilesIfNeeded()
 
 void FormData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
     info.addVector(m_boundary);
 }
 

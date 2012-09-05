@@ -87,7 +87,7 @@ void GeneratorGeneratedImage::invalidateCacheTimerFired(DeferrableOneShotTimer<G
 
 void GeneratorGeneratedImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     GeneratedImage::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_generator);
     info.addMember(m_cachedImageBuffer);

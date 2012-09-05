@@ -200,7 +200,7 @@ void Image::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsic
 
 void Image::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceImage);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceImage);
     info.addInstrumentedMember(m_data);
     info.addMember(m_imageObserver);
 }

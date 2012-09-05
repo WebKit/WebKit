@@ -104,7 +104,7 @@ void CSSPageRule::reattach(StyleRulePage* rule)
 
 void CSSPageRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_pageRule);
     info.addInstrumentedMember(m_propertiesCSSOMWrapper);

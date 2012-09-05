@@ -45,7 +45,7 @@ void GeneratedImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& 
 
 void GeneratedImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceImage);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceImage);
     Image::reportMemoryUsage(memoryObjectInfo);
 }
 

@@ -1,3 +1,22 @@
+2012-09-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI: extract MemoryObjectType constants from MemoryInstrumentation.
+        https://bugs.webkit.org/show_bug.cgi?id=95850
+
+        Reviewed by Yury Semikhatsky.
+
+        I'd like to extract MemoryObjectTypes into separate classes.
+        After that we will be able to move core NMI instrumentation code to WTF.
+
+        * tests/MemoryInstrumentationTest.cpp:
+        (WebCore::Instrumented::reportMemoryUsage):
+        (WebCore::InstrumentedRefPtr::reportMemoryUsage):
+        (WebCore::InstrumentedWithOwnPtr::reportMemoryUsage):
+        (WebCore::InstrumentedOther::reportMemoryUsage):
+        (WebCore::InstrumentedDOM::reportMemoryUsage):
+        (WebCore::TEST):
+        (WebCore::NonVirtualInstrumented::reportMemoryUsage):
+
 2012-09-05  Peter Beverloo  <peter@chromium.org>
 
         Unreviewed, rolling out r127590.

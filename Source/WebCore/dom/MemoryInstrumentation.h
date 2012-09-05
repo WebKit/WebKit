@@ -46,6 +46,12 @@ class MemoryObjectInfo;
 class MemoryInstrumentation;
 
 typedef const char* MemoryObjectType;
+
+class GenericMemoryTypes {
+public:
+    static MemoryObjectType Other;
+};
+
 enum MemoryOwningType {
     byPointer,
     byReference
@@ -61,24 +67,9 @@ class MemoryInstrumentation {
 public:
     virtual ~MemoryInstrumentation() { }
 
-    static MemoryObjectType Other;
-    static MemoryObjectType DOM;
-    static MemoryObjectType CSS;
-    static MemoryObjectType Binding;
-    static MemoryObjectType Loader;
-    static MemoryObjectType MemoryCacheStructures;
-    static MemoryObjectType CachedResource;
-    static MemoryObjectType CachedResourceCSS;
-    static MemoryObjectType CachedResourceFont;
-    static MemoryObjectType CachedResourceImage;
-    static MemoryObjectType CachedResourceScript;
-    static MemoryObjectType CachedResourceSVG;
-    static MemoryObjectType CachedResourceShader;
-    static MemoryObjectType CachedResourceXSLT;
-
-    template<typename T> void addRootObject(const T& t)
+    template <typename T> void addRootObject(const T& t)
     {
-        addInstrumentedObject(t, Other);
+        addInstrumentedObject(t, GenericMemoryTypes::Other);
         processDeferredInstrumentedPointers();
     }
 
@@ -197,7 +188,7 @@ private:
     {
         if (!m_objectSize) {
             m_objectSize = actualSize ? actualSize : sizeof(T);
-            if (objectType != MemoryInstrumentation::Other)
+            if (objectType != GenericMemoryTypes::Other)
                 m_objectType = objectType;
         }
     }
@@ -414,6 +405,23 @@ template<> void MemoryInstrumentationTraits::addObject<const StringImpl>(MemoryI
 
 template<> void MemoryInstrumentationTraits::addObject<AtomicString>(MemoryInstrumentation*, const AtomicString* const&, MemoryObjectType, MemoryOwningType);
 template<> void MemoryInstrumentationTraits::addObject<const AtomicString>(MemoryInstrumentation*, const AtomicString* const&, MemoryObjectType, MemoryOwningType);
+
+class WebCoreMemoryTypes {
+public:
+    static MemoryObjectType DOM;
+    static MemoryObjectType CSS;
+    static MemoryObjectType Binding;
+    static MemoryObjectType Loader;
+    static MemoryObjectType MemoryCacheStructures;
+    static MemoryObjectType CachedResource;
+    static MemoryObjectType CachedResourceCSS;
+    static MemoryObjectType CachedResourceFont;
+    static MemoryObjectType CachedResourceImage;
+    static MemoryObjectType CachedResourceScript;
+    static MemoryObjectType CachedResourceSVG;
+    static MemoryObjectType CachedResourceShader;
+    static MemoryObjectType CachedResourceXSLT;
+};
 
 } // namespace WebCore
 

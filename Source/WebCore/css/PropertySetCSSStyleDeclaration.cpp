@@ -171,7 +171,7 @@ void PropertySetCSSStyleDeclaration::deref()
 
 void PropertySetCSSStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedMember(m_propertySet);
     if (m_cssomCSSValueClones)
         info.addInstrumentedMapEntries(*m_cssomCSSValueClones);
@@ -430,14 +430,14 @@ void StyleRuleCSSStyleDeclaration::reattach(StylePropertySet* propertySet)
 
 void StyleRuleCSSStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     PropertySetCSSStyleDeclaration::reportMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_parentRule);
 }
 
 void InlineCSSStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     PropertySetCSSStyleDeclaration::reportMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_parentElement);
 }

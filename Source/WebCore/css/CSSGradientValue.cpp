@@ -46,7 +46,7 @@ namespace WebCore {
 
 void CSSGradientColorStop::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedMember(m_position);
     info.addInstrumentedMember(m_color);
 }
@@ -463,7 +463,7 @@ bool CSSGradientValue::isCacheable() const
 
 void CSSGradientValue::reportBaseClassMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSImageGeneratorValue::reportBaseClassMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_firstX);
     info.addInstrumentedMember(m_firstY);
@@ -636,7 +636,7 @@ PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderObject* render
 
 void CSSLinearGradientValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSGradientValue::reportBaseClassMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_angle);
 }
@@ -961,7 +961,7 @@ PassRefPtr<Gradient> CSSRadialGradientValue::createGradient(RenderObject* render
 
 void CSSRadialGradientValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSGradientValue::reportBaseClassMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_firstRadius);
     info.addInstrumentedMember(m_secondRadius);

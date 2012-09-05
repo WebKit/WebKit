@@ -1249,7 +1249,7 @@ PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
 
 void CSSPrimitiveValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     switch (m_primitiveUnitType) {
     case CSS_ATTR:
     case CSS_COUNTER_NAME:

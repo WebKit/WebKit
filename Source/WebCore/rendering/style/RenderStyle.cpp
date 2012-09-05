@@ -1597,7 +1597,7 @@ LayoutBoxExtent RenderStyle::imageOutsets(const NinePieceImage& image) const
 
 void RenderStyle::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addMember(m_box);
     info.addMember(visual);
     // FIXME: m_background contains RefPtr<StyleImage> that might need to be instrumented.

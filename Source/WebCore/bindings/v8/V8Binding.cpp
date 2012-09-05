@@ -219,7 +219,7 @@ v8::Persistent<v8::FunctionTemplate> createRawTemplate()
 
 void StringCache::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Binding);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
     info.addHashMap(m_stringCache);
 }
     

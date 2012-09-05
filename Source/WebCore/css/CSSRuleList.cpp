@@ -53,7 +53,7 @@ void StaticCSSRuleList::deref()
 
 void StaticCSSRuleList::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedVector(m_rules);
 }
 

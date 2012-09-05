@@ -446,7 +446,7 @@ bool ResourceRequestBase::isConditional() const
 
 void ResourceRequestBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
     info.addInstrumentedMember(m_url);
     info.addInstrumentedMember(m_firstPartyForCookies);
     info.addInstrumentedMember(m_httpMethod);

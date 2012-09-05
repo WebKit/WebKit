@@ -70,7 +70,7 @@ void CSSReflectValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const Sty
 
 void CSSReflectValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedMember(m_offset);
     info.addInstrumentedMember(m_mask);
 }

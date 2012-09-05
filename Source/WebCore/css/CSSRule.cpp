@@ -212,7 +212,7 @@ const CSSParserContext& CSSRule::parserContext() const
 
 void CSSRule::reportBaseClassMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     if (m_parentIsRule)
         info.addInstrumentedMember(m_parentRule);
     else

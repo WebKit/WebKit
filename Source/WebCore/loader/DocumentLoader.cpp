@@ -357,7 +357,7 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
 
 void DocumentLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
     info.addInstrumentedMember(m_frame);
     info.addInstrumentedMember(m_mainResourceLoader);
     info.addInstrumentedHashSet(m_subresourceLoaders);

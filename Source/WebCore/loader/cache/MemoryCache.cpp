@@ -717,7 +717,7 @@ MemoryCache::Statistics MemoryCache::getStatistics()
 
 void MemoryCache::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::MemoryCacheStructures);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::MemoryCacheStructures);
     info.addHashMap(m_resources);
     CachedResourceMap::const_iterator e = m_resources.end();
     for (CachedResourceMap::const_iterator i = m_resources.begin(); i != e; ++i) {

@@ -803,7 +803,7 @@ void CachedResource::CachedResourceCallback::timerFired(Timer<CachedResourceCall
 
 void CachedResource::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResource);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResource);
     info.addMember(m_resourceRequest);
     info.addHashSet(m_clients);
     info.addInstrumentedMember(m_accept);

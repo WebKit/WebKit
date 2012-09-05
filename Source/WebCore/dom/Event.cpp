@@ -157,7 +157,7 @@ void Event::storeResult(const String&)
 
 void Event::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     info.addInstrumentedMember(m_type);
     info.addMember(m_currentTarget);
     info.addMember(m_target);

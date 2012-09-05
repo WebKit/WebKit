@@ -492,7 +492,7 @@ void StyleSheetContents::removedFromMemoryCache()
 
 void StyleSheetContents::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedMember(m_originalURL);
     info.addInstrumentedMember(m_encodingFromCharsetRule);
     info.addVector(m_importRules);

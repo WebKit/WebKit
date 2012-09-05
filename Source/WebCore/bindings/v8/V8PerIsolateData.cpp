@@ -75,7 +75,7 @@ void V8PerIsolateData::dispose(v8::Isolate* isolate)
 
 void V8PerIsolateData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Binding);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
     info.addHashMap(m_rawTemplates);
     info.addHashMap(m_templates);
     info.addInstrumentedMember(m_stringCache);

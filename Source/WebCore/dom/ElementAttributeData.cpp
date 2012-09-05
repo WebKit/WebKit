@@ -298,7 +298,7 @@ void ElementAttributeData::detachAttrObjectsFromElement(Element* element) const
 void ElementAttributeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     size_t actualSize = m_isMutable ? sizeof(ElementAttributeData) : immutableElementAttributeDataSize(m_arraySize);
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM, actualSize);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM, actualSize);
     info.addInstrumentedMember(m_inlineStyleDecl);
     info.addInstrumentedMember(m_attributeStyle);
     info.addMember(m_classNames);

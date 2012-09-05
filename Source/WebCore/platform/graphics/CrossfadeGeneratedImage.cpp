@@ -110,7 +110,7 @@ void CrossfadeGeneratedImage::drawPattern(GraphicsContext* context, const FloatR
 
 void CrossfadeGeneratedImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     GeneratedImage::reportMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_fromImage);
     info.addInstrumentedMember(m_toImage);

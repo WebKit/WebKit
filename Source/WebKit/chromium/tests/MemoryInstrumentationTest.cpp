@@ -58,7 +58,7 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
         info.addMember(m_notInstrumented);
     }
     NotInstrumented* m_notInstrumented;
@@ -122,7 +122,7 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
         info.addMember(m_notInstrumented);
     }
     NotInstrumented* m_notInstrumented;
@@ -155,7 +155,7 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
         Instrumented::reportMemoryUsage(memoryObjectInfo);
         info.addMember(m_notInstrumentedOwnPtr);
     }
@@ -178,7 +178,7 @@ public:
 
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Other);
+        MemoryClassInfo info(memoryObjectInfo, this, GenericMemoryTypes::Other);
     }
     int m_data;
 };
@@ -189,7 +189,7 @@ public:
 
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
         info.addInstrumentedMember(m_instrumentedOther);
     }
     OwnPtr<InstrumentedOther> m_instrumentedOther;
@@ -202,7 +202,7 @@ TEST(MemoryInstrumentationTest, ownerTypePropagation)
     OwnPtr<InstrumentedDOM> instrumentedDOM(adoptPtr(new InstrumentedDOM));
     impl.addRootObject(instrumentedDOM);
     EXPECT_EQ(sizeof(InstrumentedDOM) + sizeof(InstrumentedOther), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(sizeof(InstrumentedDOM) + sizeof(InstrumentedOther), impl.totalSize(MemoryInstrumentation::DOM));
+    EXPECT_EQ(sizeof(InstrumentedDOM) + sizeof(InstrumentedOther), impl.totalSize(WebCoreMemoryTypes::DOM));
     EXPECT_EQ(2, visitedObjects.size());
 }
 
@@ -210,7 +210,7 @@ class NonVirtualInstrumented {
 public:
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
         info.addInstrumentedMember(m_instrumented);
     }
 

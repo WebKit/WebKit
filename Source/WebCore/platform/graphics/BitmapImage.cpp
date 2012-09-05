@@ -574,7 +574,7 @@ Color BitmapImage::solidColor() const
 
 void BitmapImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceImage);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceImage);
     Image::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_source);
     info.addMember(m_frameTimer);

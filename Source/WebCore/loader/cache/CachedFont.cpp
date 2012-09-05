@@ -209,7 +209,7 @@ void CachedFont::error(CachedResource::Status status)
 
 void CachedFont::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceFont);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceFont);
     CachedResource::reportMemoryUsage(memoryObjectInfo);
 #if ENABLE(SVG_FONTS)
     info.addInstrumentedMember(m_externalSVGDocument);

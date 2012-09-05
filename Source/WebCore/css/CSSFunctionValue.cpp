@@ -54,7 +54,7 @@ String CSSFunctionValue::customCssText() const
 
 void CSSFunctionValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addInstrumentedMember(m_name);
     info.addInstrumentedMember(m_args);
 }

@@ -137,7 +137,7 @@ void SubresourceLoader::cancelIfNotFinishing()
 
 void SubresourceLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
     ResourceLoader::reportMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_resource);
     info.addInstrumentedMember(m_document);

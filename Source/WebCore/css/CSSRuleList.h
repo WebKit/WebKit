@@ -88,7 +88,7 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
     {
-        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
         info.addInstrumentedMember(m_rule);
     }
     

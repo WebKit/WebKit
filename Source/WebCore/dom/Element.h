@@ -436,7 +436,7 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
         ContainerNode::reportMemoryUsage(memoryObjectInfo);
         info.addInstrumentedMember(m_tagName);
         info.addInstrumentedMember(m_attributeData);

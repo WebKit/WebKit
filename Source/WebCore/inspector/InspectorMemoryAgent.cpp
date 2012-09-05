@@ -486,15 +486,15 @@ public:
         size_t totalSize = 0;
 
         RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = TypeBuilder::Array<InspectorMemoryBlock>::create();
-        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(MemoryInstrumentation::MemoryCacheStructures), MemoryBlockName::memoryCacheStructures);
-        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(MemoryInstrumentation::CachedResource), MemoryBlockName::cachedResource);
-        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(MemoryInstrumentation::CachedResourceCSS), MemoryBlockName::cachedResourceCSS);
-        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(MemoryInstrumentation::CachedResourceFont), MemoryBlockName::cachedResourceFont);
-        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(MemoryInstrumentation::CachedResourceImage), MemoryBlockName::cachedResourceImage);
-        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(MemoryInstrumentation::CachedResourceScript), MemoryBlockName::cachedResourceScript);
-        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(MemoryInstrumentation::CachedResourceSVG), MemoryBlockName::cachedResourceSVG);
-        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(MemoryInstrumentation::CachedResourceShader), MemoryBlockName::cachedResourceShader);
-        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(MemoryInstrumentation::CachedResourceXSLT), MemoryBlockName::cachedResourceXSLT);
+        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::MemoryCacheStructures), MemoryBlockName::memoryCacheStructures);
+        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::CachedResource), MemoryBlockName::cachedResource);
+        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::CachedResourceCSS), MemoryBlockName::cachedResourceCSS);
+        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::CachedResourceFont), MemoryBlockName::cachedResourceFont);
+        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::CachedResourceImage), MemoryBlockName::cachedResourceImage);
+        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::CachedResourceScript), MemoryBlockName::cachedResourceScript);
+        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::CachedResourceSVG), MemoryBlockName::cachedResourceSVG);
+        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::CachedResourceShader), MemoryBlockName::cachedResourceShader);
+        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::CachedResourceXSLT), MemoryBlockName::cachedResourceXSLT);
 
         RefPtr<InspectorMemoryBlock> block = InspectorMemoryBlock::create().setName(MemoryBlockName::memoryCache);
         block->setSize(totalSize);
@@ -507,11 +507,11 @@ public:
         size_t totalSize = 0;
 
         RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > domChildren = TypeBuilder::Array<InspectorMemoryBlock>::create();
-        totalSize += addMemoryBlockFor(domChildren.get(), m_memoryInstrumentation.totalSize(MemoryInstrumentation::Other), MemoryBlockName::domTreeOther);
-        totalSize += addMemoryBlockFor(domChildren.get(), m_memoryInstrumentation.totalSize(MemoryInstrumentation::DOM), MemoryBlockName::domTreeDOM);
-        totalSize += addMemoryBlockFor(domChildren.get(), m_memoryInstrumentation.totalSize(MemoryInstrumentation::CSS), MemoryBlockName::domTreeCSS);
-        totalSize += addMemoryBlockFor(domChildren.get(), m_memoryInstrumentation.totalSize(MemoryInstrumentation::Binding), MemoryBlockName::domTreeBinding);
-        totalSize += addMemoryBlockFor(domChildren.get(), m_memoryInstrumentation.totalSize(MemoryInstrumentation::Loader), MemoryBlockName::domTreeLoader);
+        totalSize += addMemoryBlockFor(domChildren.get(), m_memoryInstrumentation.totalSize(GenericMemoryTypes::Other), MemoryBlockName::domTreeOther);
+        totalSize += addMemoryBlockFor(domChildren.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::DOM), MemoryBlockName::domTreeDOM);
+        totalSize += addMemoryBlockFor(domChildren.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::CSS), MemoryBlockName::domTreeCSS);
+        totalSize += addMemoryBlockFor(domChildren.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::Binding), MemoryBlockName::domTreeBinding);
+        totalSize += addMemoryBlockFor(domChildren.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::Loader), MemoryBlockName::domTreeLoader);
 
         RefPtr<InspectorMemoryBlock> dom = InspectorMemoryBlock::create().setName(MemoryBlockName::dom);
         dom->setSize(totalSize);

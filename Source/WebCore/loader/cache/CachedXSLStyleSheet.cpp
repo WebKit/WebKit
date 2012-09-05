@@ -99,7 +99,7 @@ void CachedXSLStyleSheet::error(CachedResource::Status status)
 
 void CachedXSLStyleSheet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceXSLT);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceXSLT);
     CachedResource::reportMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_sheet);
     info.addMember(m_decoder);

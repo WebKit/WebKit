@@ -113,7 +113,7 @@ public:
 
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
         info.addInstrumentedMember(m_parent);
     }
 

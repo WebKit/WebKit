@@ -674,7 +674,7 @@ void Frame::dispatchVisibilityStateChangeEvent()
 
 void Frame::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     info.addInstrumentedMember(m_doc.get());
     info.addInstrumentedMember(m_loader);
 }

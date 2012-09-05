@@ -98,7 +98,7 @@ PassRefPtr<Image> CSSCanvasValue::image(RenderObject* renderer, const IntSize& /
 
 void CSSCanvasValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     CSSImageGeneratorValue::reportBaseClassMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_name);
     info.addInstrumentedMember(m_element);
