@@ -894,15 +894,10 @@ HRESULT STDMETHODCALLTYPE WebFrame::numberOfPages(
     /* [in] */ float pageHeightInPixels,
     /* [retval][out] */ int* result)
 {
-    if (!result)
-        return E_POINTER;
-
-    Frame* coreFrame = core(this);
-    if (!coreFrame)
-        return E_FAIL;
-
-    *result = PrintContext::numberOfPages(coreFrame, FloatSize(pageWidthInPixels, pageHeightInPixels));
-    return S_OK;
+    // TODO: Please remove this function if not needed as this is LTC specific function
+    // and has been moved to Internals.
+    notImplemented();
+    return E_FAIL;
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::scrollOffset(

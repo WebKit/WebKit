@@ -472,12 +472,6 @@ void TestRunner::setScrollbarPolicy(JSStringRef orientation, JSStringRef policy)
     // FIXME: implement
 }
 
-int TestRunner::numberOfPages(float, float)
-{
-    // FIXME: implement
-    return -1;
-}
-
 void TestRunner::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)
 {
 
@@ -523,18 +517,6 @@ void TestRunner::authenticateSession(JSStringRef, JSStringRef, JSStringRef)
 
 void TestRunner::abortModal()
 {
-}
-
-JSRetainPtr<JSStringRef> TestRunner::pageProperty(const char* propertyName, int pageNumber) const
-{
-    // FIXME: Implement
-    return 0;
-}
-
-JSRetainPtr<JSStringRef> TestRunner::pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft) const
-{
-    // FIXME: Implement
-    return 0;
 }
 
 void TestRunner::setAsynchronousSpellCheckingEnabled(bool)

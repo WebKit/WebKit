@@ -123,32 +123,6 @@ JSRetainPtr<JSStringRef> TestRunner::layerTreeAsText() const
     return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString(""));
 }
 
-int TestRunner::numberOfPages(float pageWidth, float pageHeight)
-{
-    return DumpRenderTreeSupportEfl::numberOfPages(browser->mainFrame(), pageWidth, pageHeight);
-}
-
-JSRetainPtr<JSStringRef> TestRunner::pageProperty(const char* propertyName, int pageNumber) const
-{
-    const String property = DumpRenderTreeSupportEfl::pageProperty(browser->mainFrame(), propertyName, pageNumber);
-    if (property.isEmpty())
-        return 0;
-
-    JSRetainPtr<JSStringRef> propertyValue(Adopt, JSStringCreateWithUTF8CString(property.utf8().data()));
-    return propertyValue;
-}
-
-JSRetainPtr<JSStringRef> TestRunner::pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft) const
-{
-    String pageSizeAndMargins = DumpRenderTreeSupportEfl::pageSizeAndMarginsInPixels(browser->mainFrame(), pageNumber, width, height, marginTop, marginRight, marginBottom, marginLeft);
-
-    if (pageSizeAndMargins.isEmpty())
-        return 0;
-
-    JSRetainPtr<JSStringRef> returnValue(Adopt, JSStringCreateWithUTF8CString(pageSizeAndMargins.utf8().data()));
-    return returnValue;
-}
-
 size_t TestRunner::webHistoryItemCount()
 {
     const Ewk_History* history = ewk_view_history_get(browser->mainView());

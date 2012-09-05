@@ -170,12 +170,9 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("markerTextForListItem", &DRTTestRunner::markerTextForListItem);
     bindMethod("notifyDone", &DRTTestRunner::notifyDone);
     bindMethod("numberOfActiveAnimations", &DRTTestRunner::numberOfActiveAnimations);
-    bindMethod("numberOfPages", &DRTTestRunner::numberOfPages);
     bindMethod("numberOfPendingGeolocationPermissionRequests", &DRTTestRunner:: numberOfPendingGeolocationPermissionRequests);
     bindMethod("objCIdentityIsEqual", &DRTTestRunner::objCIdentityIsEqual);
     bindMethod("overridePreference", &DRTTestRunner::overridePreference);
-    bindMethod("pageProperty", &DRTTestRunner::pageProperty);
-    bindMethod("pageSizeAndMarginsInPixels", &DRTTestRunner::pageSizeAndMarginsInPixels);
     bindMethod("pathToLocalResource", &DRTTestRunner::pathToLocalResource);
     bindMethod("pauseAnimationAtTimeOnElementWithId", &DRTTestRunner::pauseAnimationAtTimeOnElementWithId);
     bindMethod("pauseTransitionAtTimeOnElementWithId", &DRTTestRunner::pauseTransitionAtTimeOnElementWithId);
@@ -1694,23 +1691,6 @@ static bool parseCppArgumentInt32(const CppArgumentList& arguments, int argIndex
     return true;
 }
 
-static bool parsePageSizeParameters(const CppArgumentList& arguments,
-                                    int argOffset,
-                                    int* pageWidthInPixels,
-                                    int* pageHeightInPixels)
-{
-    // WebKit is using the window width/height of DumpRenderTree as the
-    // default value of the page size.
-    // FIXME: share the default values with other ports.
-    int argCount = static_cast<int>(arguments.size()) - argOffset;
-    if (argCount && argCount != 2)
-        return false;
-    if (!parseCppArgumentInt32(arguments, argOffset, pageWidthInPixels, 800)
-        || !parseCppArgumentInt32(arguments, argOffset + 1, pageHeightInPixels, 600))
-        return false;
-    return true;
-}
-
 static bool parsePageNumber(const CppArgumentList& arguments, int argOffset, int* pageNumber)
 {
     if (static_cast<int>(arguments.size()) > argOffset + 1)
@@ -1720,53 +1700,10 @@ static bool parsePageNumber(const CppArgumentList& arguments, int argOffset, int
     return true;
 }
 
-static bool parsePageNumberSizeMargins(const CppArgumentList& arguments, int argOffset,
-                                       int* pageNumber, int* width, int* height,
-                                       int* marginTop, int* marginRight, int* marginBottom, int* marginLeft)
-{
-    int argCount = static_cast<int>(arguments.size()) - argOffset;
-    if (argCount && argCount != 7)
-        return false;
-    if (!parseCppArgumentInt32(arguments, argOffset, pageNumber, 0)
-        || !parseCppArgumentInt32(arguments, argOffset + 1, width, 0)
-        || !parseCppArgumentInt32(arguments, argOffset + 2, height, 0)
-        || !parseCppArgumentInt32(arguments, argOffset + 3, marginTop, 0)
-        || !parseCppArgumentInt32(arguments, argOffset + 4, marginRight, 0)
-        || !parseCppArgumentInt32(arguments, argOffset + 5, marginBottom, 0)
-        || !parseCppArgumentInt32(arguments, argOffset + 6, marginLeft, 0))
-        return false;
-    return true;
-}
-
 void DRTTestRunner::setPrinting(const CppArgumentList& arguments, CppVariant* result)
 {
     setIsPrinting(true);
     result->setNull();
-}
-
-void DRTTestRunner::pageSizeAndMarginsInPixels(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->set("");
-    int pageNumber = 0;
-    int width = 0;
-    int height = 0;
-    int marginTop = 0;
-    int marginRight = 0;
-    int marginBottom = 0;
-    int marginLeft = 0;
-    if (!parsePageNumberSizeMargins(arguments, 0, &pageNumber, &width, &height, &marginTop, &marginRight, &marginBottom,
-                                    &marginLeft))
-        return;
-
-    WebFrame* frame = m_shell->webView()->mainFrame();
-    if (!frame)
-        return;
-    WebSize pageSize(width, height);
-    frame->pageSizeAndMarginsInPixels(pageNumber, pageSize, marginTop, marginRight, marginBottom, marginLeft);
-    stringstream resultString;
-    resultString << "(" << pageSize.width << ", " << pageSize.height << ") " << marginTop << " " << marginRight << " "
-                 << marginBottom << " " << marginLeft;
-    result->set(resultString.str());
 }
 
 void DRTTestRunner::hasCustomPageSizeStyle(const CppArgumentList& arguments, CppVariant* result)
@@ -1779,40 +1716,6 @@ void DRTTestRunner::hasCustomPageSizeStyle(const CppArgumentList& arguments, Cpp
     if (!frame)
         return;
     result->set(frame->hasCustomPageSizeStyle(pageIndex));
-}
-
-void DRTTestRunner::pageProperty(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->set("");
-    int pageNumber = 0;
-    if (!parsePageNumber(arguments, 1, &pageNumber))
-        return;
-    if (!arguments[0].isString())
-        return;
-    WebFrame* frame = m_shell->webView()->mainFrame();
-    if (!frame)
-        return;
-    WebSize pageSize(800, 800);
-    frame->printBegin(pageSize);
-    result->set(frame->pageProperty(cppVariantToWebString(arguments[0]), pageNumber).utf8());
-    frame->printEnd();
-}
-
-void DRTTestRunner::numberOfPages(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    int pageWidthInPixels = 0;
-    int pageHeightInPixels = 0;
-    if (!parsePageSizeParameters(arguments, 0, &pageWidthInPixels, &pageHeightInPixels))
-        return;
-
-    WebFrame* frame = m_shell->webView()->mainFrame();
-    if (!frame)
-        return;
-    WebPrintParams printParams(WebSize(pageWidthInPixels, pageHeightInPixels));
-    int numberOfPages = frame->printBegin(printParams);
-    frame->printEnd();
-    result->set(numberOfPages);
 }
 
 void DRTTestRunner::numberOfPendingGeolocationPermissionRequests(const CppArgumentList& arguments, CppVariant* result)

@@ -726,11 +726,6 @@ int TestRunner::workerThreadCount()
     return DumpRenderTreeSupportQt::workerThreadCount();
 }
 
-int TestRunner::numberOfPages(float width, float height)
-{
-    return DumpRenderTreeSupportQt::numberOfPages(m_drt->webPage()->mainFrame(), width, height);
-}
-
 bool TestRunner::callShouldCloseOnWebView()
 {
     return DumpRenderTreeSupportQt::shouldClose(m_drt->webPage()->mainFrame());
@@ -884,17 +879,6 @@ void TestRunner::evaluateScriptInIsolatedWorldAndReturnValue(int worldID, const 
 void TestRunner::evaluateScriptInIsolatedWorld(int worldID, const QString& script)
 {
     DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld(m_drt->webPage()->mainFrame(), worldID, script);
-}
-
-QString TestRunner::pageSizeAndMarginsInPixels(int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
-{
-    return DumpRenderTreeSupportQt::pageSizeAndMarginsInPixels(m_drt->webPage()->mainFrame(), pageIndex,
-                                                               width, height, marginTop, marginRight, marginBottom, marginLeft);
-}
-
-QString TestRunner::pageProperty(const QString& propertyName, int pageNumber)
-{
-    return DumpRenderTreeSupportQt::pageProperty(m_drt->webPage()->mainFrame(), propertyName, pageNumber);
 }
 
 void TestRunner::addUserStyleSheet(const QString& sourceCode)

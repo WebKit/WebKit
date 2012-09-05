@@ -1,3 +1,27 @@
+2012-09-05  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        [DRT] LTC:: Move printing related APIs from LayoutTestController to Internals
+        https://bugs.webkit.org/show_bug.cgi?id=92735
+
+        Reviewed by Hajime Morita.
+
+        Move numberOfPages, pageProperty & pageSizeAndMarginsInPixels in Internals and remove duplicated code from DumprenderTree & WebkitTestRunner.
+        Fixed test cases to use internals API instead of testRunner.
+
+        * printing/numberOfPages-expected.txt:
+        * printing/page-count-layout-overflow.html:
+        * printing/page-count-relayout-shrink.html:
+        * printing/page-count-with-one-word.html:
+        * printing/page-format-data-display-none.html:
+        * printing/page-format-data-expected.txt:
+        * printing/page-format-data.html:
+        * printing/page-rule-selection-expected.txt:
+        * printing/page-rule-selection.html:
+        * printing/resources/paged-media-test-utils.js:
+        (numberOfPagesShouldBe):
+        * printing/script-tests/numberOfPages.js:
+        * printing/zoomed-document.html:
+
 2012-09-05  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Unreviewed gardening after r127513

@@ -13,7 +13,7 @@ if (window.testRunner) {
     // Test the range around A4 portrait paper size
     for (var i = 530; i < 560; i++) {
         for (var j = 730; j < 760; j++) {
-            var numberOfPages = testRunner.numberOfPages(i, j);
+            var numberOfPages = internals.numberOfPages(i, j);
 
             if (numberOfPages != 1) {
                 pass = false;

@@ -145,8 +145,6 @@ public:
     void setAppCacheMaximumSize(uint64_t);
 
     // Printing
-    int numberOfPages(double pageWidthInPixels, double pageHeightInPixels);
-    JSRetainPtr<JSStringRef> pageSizeAndMarginsInPixels(int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft);
     bool isPageBoxVisible(int pageIndex);
 
     void setValueForUser(JSContextRef, JSValueRef element, JSStringRef value);

@@ -325,14 +325,6 @@ bool TestRunner::elementDoesAutoCompleteForElementWithId(JSStringRef id)
     return false;
 }
 
-JSRetainPtr<JSStringRef> TestRunner::pageProperty(const char* propertyName, int pageNumber) const
-{
-    UNUSED_PARAM(propertyName);
-    UNUSED_PARAM(pageNumber);
-    notImplemented();
-    return 0;
-}
-
 void TestRunner::setWaitToDump(bool waitToDump)
 {
     // Change from 30s to 35s because some test cases in multipart need 30 seconds,
@@ -507,18 +499,6 @@ void TestRunner::addUserScript(JSStringRef source, bool runAtStart, bool allFram
 void TestRunner::addUserStyleSheet(JSStringRef, bool)
 {
     notImplemented();
-}
-
-JSRetainPtr<JSStringRef> TestRunner::pageSizeAndMarginsInPixels(int, int, int, int, int, int, int) const
-{
-    notImplemented();
-    return 0;
-}
-
-int TestRunner::numberOfPages(float, float)
-{
-    notImplemented();
-    return -1;
 }
 
 void TestRunner::setScrollbarPolicy(JSStringRef, JSStringRef)

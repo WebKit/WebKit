@@ -127,7 +127,6 @@ public:
     static void clearFrameName(QWebFrame* frame);
     static void overwritePluginDirectories();
     static int numberOfActiveAnimations(QWebFrame*);
-    static int numberOfPages(QWebFrame* frame, float width, float height);
     static bool hasDocumentElement(QWebFrame* frame);
     static bool elementDoesAutoCompleteForElementWithId(QWebFrame* frame, const QString& elementId);
     static void setWindowsBehaviorAsEditingBehavior(QWebPage*);
@@ -179,8 +178,6 @@ public:
 
     static void setCustomPolicyDelegate(bool enabled, bool permissive);
 
-    static QString pageSizeAndMarginsInPixels(QWebFrame* frame, int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft);
-    static QString pageProperty(QWebFrame* frame, const QString& propertyName, int pageNumber);
     static void addUserStyleSheet(QWebPage* page, const QString& sourceCode);
     static void removeUserStyleSheets(QWebPage*);
     static void simulateDesktopNotificationClick(const QString& title);

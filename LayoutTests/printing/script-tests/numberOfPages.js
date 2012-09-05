@@ -1,4 +1,4 @@
-description("Test for testRunner.numberOfPages()");
+description("Test for internals.numberOfPages()");
 
 function test()
 {

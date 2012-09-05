@@ -1170,6 +1170,34 @@ PassRefPtr<DOMStringList> Internals::iconURLs(Document* document) const
     return stringList.release();
 }
 
+int Internals::numberOfPages(float pageWidth, float pageHeight)
+{
+    if (!frame())
+        return -1;
+
+    return PrintContext::numberOfPages(frame(), FloatSize(pageWidth, pageHeight));
+}
+
+String Internals::pageProperty(String propertyName, int pageNumber, ExceptionCode& ec) const
+{
+    if (!frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    return PrintContext::pageProperty(frame(), propertyName.utf8().data(), pageNumber);
+}
+
+String Internals::pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft, ExceptionCode& ec) const
+{
+    if (!frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    return PrintContext::pageSizeAndMarginsInPixels(frame(), pageNumber, width, height, marginTop, marginRight, marginBottom, marginLeft);
+}
+
 #if ENABLE(FULLSCREEN_API)
 void Internals::webkitWillEnterFullScreenForElement(Document* document, Element* element)
 {

@@ -715,141 +715,10 @@ static JSValueRef notifyDoneCallback(JSContextRef context, JSObjectRef function,
     return JSValueMakeUndefined(context);
 }
 
-static bool parsePageParameters(JSContextRef context, int argumentCount, const JSValueRef* arguments, JSValueRef* exception, float& pageWidthInPixels, float& pageHeightInPixels)
-{
-    pageWidthInPixels = TestRunner::maxViewWidth;
-    pageHeightInPixels = TestRunner::maxViewHeight;
-    switch (argumentCount) {
-    case 2:
-        pageWidthInPixels = static_cast<float>(JSValueToNumber(context, arguments[0], exception));
-        if (*exception)
-            return false;
-        pageHeightInPixels = static_cast<float>(JSValueToNumber(context, arguments[1], exception));
-        if (*exception)
-            return false;
-    case 0: // Fall through.
-        break;
-    default:
-        return false;
-    }
-    return true;
-}
-
-// Caller needs to delete[] propertyName.
-static bool parsePagePropertyParameters(JSContextRef context, int argumentCount, const JSValueRef* arguments, JSValueRef* exception, char*& propertyName, int& pageNumber)
-{
-    pageNumber = 0;
-    switch (argumentCount) {
-    case 2:
-        pageNumber = static_cast<float>(JSValueToNumber(context, arguments[1], exception));
-        if (*exception)
-            return false;
-        // Fall through.
-    case 1: {
-        JSRetainPtr<JSStringRef> propertyNameString(Adopt, JSValueToStringCopy(context, arguments[0], exception));
-        if (*exception)
-            return false;
-
-        size_t maxLength = JSStringGetMaximumUTF8CStringSize(propertyNameString.get());
-        propertyName = new char[maxLength + 1];
-        JSStringGetUTF8CString(propertyNameString.get(), propertyName, maxLength + 1);
-        return true;
-    }
-    case 0:
-    default:
-        return false;
-    }
-}
-
-static bool parsePageNumberSizeMarings(JSContextRef context, int argumentCount, const JSValueRef* arguments, JSValueRef* exception, int& pageNumber, int& width, int& height, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft)
-{
-    pageNumber = 0;
-    width = height = 0;
-    marginTop = marginRight = marginBottom = marginLeft = 0;
-
-    switch (argumentCount) {
-    case 7:
-        marginLeft = static_cast<int>(JSValueToNumber(context, arguments[6], exception));
-        if (*exception)
-            return false;
-        // Fall through.
-    case 6:
-        marginBottom = static_cast<int>(JSValueToNumber(context, arguments[5], exception));
-        if (*exception)
-            return false;
-        // Fall through.
-    case 5:
-        marginRight = static_cast<int>(JSValueToNumber(context, arguments[4], exception));
-        if (*exception)
-            return false;
-        // Fall through.
-    case 4:
-        marginTop = static_cast<int>(JSValueToNumber(context, arguments[3], exception));
-        if (*exception)
-            return false;
-        // Fall through.
-    case 3:
-        height = static_cast<int>(JSValueToNumber(context, arguments[2], exception));
-        if (*exception)
-            return false;
-        // Fall through.
-    case 2:
-        width = static_cast<int>(JSValueToNumber(context, arguments[1], exception));
-        if (*exception)
-            return false;
-        // Fall through.
-    case 1:
-        pageNumber = static_cast<int>(JSValueToNumber(context, arguments[0], exception));
-        if (*exception)
-            return false;
-        // Fall through.
-        return true;
-    default:
-        return false;
-    }
-}
-
-static JSValueRef numberOfPagesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    float pageWidthInPixels = 0;
-    float pageHeightInPixels = 0;
-    if (!parsePageParameters(context, argumentCount, arguments, exception, pageWidthInPixels, pageHeightInPixels))
-        return JSValueMakeUndefined(context);
-
-    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeNumber(context, controller->numberOfPages(pageWidthInPixels, pageHeightInPixels));
-}
-
 static JSValueRef numberOfPendingGeolocationPermissionRequestsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     return JSValueMakeNumber(context, controller->numberOfPendingGeolocationPermissionRequests());
-}
-
-static JSValueRef pagePropertyCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    char* propertyName = 0;
-    int pageNumber = 0;
-    if (!parsePagePropertyParameters(context, argumentCount, arguments, exception, propertyName, pageNumber))
-        return JSValueMakeUndefined(context);
-
-    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    JSValueRef value = JSValueMakeString(context, controller->pageProperty(propertyName, pageNumber).get());
-
-    delete[] propertyName;
-    return value;
-}
-
-static JSValueRef pageSizeAndMarginsInPixelsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    int pageNumber = 0;
-    int width = 0, height = 0;
-    int marginTop = 0, marginRight = 0, marginBottom = 0, marginLeft = 0;
-    if (!parsePageNumberSizeMarings(context, argumentCount, arguments, exception, pageNumber, width, height, marginTop, marginRight, marginBottom, marginLeft))
-        return JSValueMakeUndefined(context);
-
-    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeString(context, controller->pageSizeAndMarginsInPixels(pageNumber, width, height, marginTop, marginRight, marginBottom, marginLeft).get());
 }
 
 static JSValueRef queueBackNavigationCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -2347,14 +2216,11 @@ JSStaticFunction* TestRunner::staticFunctions()
         { "isCommandEnabled", isCommandEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "keepWebHistory", keepWebHistoryCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "layerTreeAsText", layerTreeAsTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "numberOfPages", numberOfPagesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "numberOfPendingGeolocationPermissionRequests", numberOfPendingGeolocationPermissionRequestsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "markerTextForListItem", markerTextForListItemCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "notifyDone", notifyDoneCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "numberOfActiveAnimations", numberOfActiveAnimationsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "overridePreference", overridePreferenceCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "pageSizeAndMarginsInPixels", pageSizeAndMarginsInPixelsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "pageProperty", pagePropertyCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pathToLocalResource", pathToLocalResourceCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pauseAnimationAtTimeOnElementWithId", pauseAnimationAtTimeOnElementWithIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pauseTransitionAtTimeOnElementWithId", pauseTransitionAtTimeOnElementWithIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

@@ -17,7 +17,7 @@ function runTest()
         document.body.appendChild(block.cloneNode(true));
 
     testRunner.dumpAsText();
-    var pages = testRunner.numberOfPages();
+    var pages = internals.numberOfPages();
     document.body.textContent = 'Document has ' + pages + ' pages.';
 }
 

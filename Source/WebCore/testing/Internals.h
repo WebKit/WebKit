@@ -27,6 +27,7 @@
 #define Internals_h
 
 #include "ContextDestructionObserver.h"
+#include "ExceptionCodePlaceholder.h"
 #include "NodeList.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
@@ -198,6 +199,10 @@ public:
 
     int pageNumber(Element*, float pageWidth = 800, float pageHeight = 600);
     PassRefPtr<DOMStringList> iconURLs(Document*) const;
+
+    int numberOfPages(float pageWidthInPixels = 800, float pageHeightInPixels = 600);
+    String pageProperty(String, int, ExceptionCode& = ASSERT_NO_EXCEPTION) const;
+    String pageSizeAndMarginsInPixels(int, int, int, int, int, int, int, ExceptionCode& = ASSERT_NO_EXCEPTION) const;
 
 #if ENABLE(FULLSCREEN_API)
     void webkitWillEnterFullScreenForElement(Document*, Element*);

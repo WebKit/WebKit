@@ -22,7 +22,7 @@ if (window.testRunner) {
     testRunner.dumpAsText();
 
     // The test passes if the following line doesn't cause a crash.
-    testRunner.pageSizeAndMarginsInPixels(0, 100, 200, 1, 2, 3, 4);
+    internals.pageSizeAndMarginsInPixels(0, 100, 200, 1, 2, 3, 4);
 
     document.getElementById("output").innerHTML = "PASS";
 }

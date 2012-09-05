@@ -1,3 +1,15 @@
+2012-09-05  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        [DRT] LTC:: Move printing related APIs from LayoutTestController to Internals
+        https://bugs.webkit.org/show_bug.cgi?id=92735
+
+        Reviewed by Hajime Morita.
+
+        Move numberOfPages, pageProperty & pageSizeAndMarginsInPixels in Internals and remove duplicated code from DumprenderTree & WebkitTestRunner.
+        Added symbols for GTK builds for corresponding APIs.
+
+        * Source/autotools/symbols.filter:
+
 2012-09-04  Julien Chaffraix  <jchaffraix@webkit.org>
 
         REGRESSION(r120832): RenderLayer::clampScrollOffset doesn't properly clamp

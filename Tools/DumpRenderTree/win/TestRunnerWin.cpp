@@ -1300,33 +1300,9 @@ void TestRunner::removeAllVisitedLinks()
     sharedHistoryPrivate->removeAllVisitedLinks();
 }
 
-int TestRunner::numberOfPages(float pageWidthInPixels, float pageHeightInPixels)
-{
-    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
-    if (!framePrivate)
-        return 0;
-
-    int pageNumber = -1;
-    if (FAILED(framePrivate->numberOfPages(pageWidthInPixels, pageHeightInPixels, &pageNumber)))
-        pageNumber = -1;
-    return pageNumber;
-}
-
-JSRetainPtr<JSStringRef> TestRunner::pageProperty(const char* propertyName, int pageNumber) const
-{
-    // FIXME: Implement this.
-    return JSRetainPtr<JSStringRef>();
-}
-
 void TestRunner::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)
 {
 
-}
-
-JSRetainPtr<JSStringRef> TestRunner::pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft) const
-{
-    // FIXME: implement
-    return JSRetainPtr<JSStringRef>();
 }
 
 void TestRunner::apiTestGoToCurrentBackForwardItem()

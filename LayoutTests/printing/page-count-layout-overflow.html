@@ -21,7 +21,7 @@ function runTest()
     for (var i = 0; i < 7; i++)
         lines = lines.concat(lines);
     document.body.innerHTML = '<p>' + lines.join('') + '</p>';
-    document.body.textContent = 'When printing, layout overflow must be cleared after current document size is queried: ' +  (testRunner.numberOfPages() > 1 ? 'PASS' : 'FAIL');
+    document.body.textContent = 'When printing, layout overflow must be cleared after current document size is queried: ' +  (internals.numberOfPages() > 1 ? 'PASS' : 'FAIL');
 }
 
 </script>

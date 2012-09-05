@@ -26,9 +26,9 @@ function numberOfPagesShouldBe(expectedNumberOfPages, pageWidthInPixels, pageHei
     // pageWidthInPixels and pageHeightInPixels can be omitted. If omitted, 800x600 is used.
     var actualNumberOfPages;
     if (pageWidthInPixels && pageHeightInPixels)
-        actualNumberOfPages = testRunner.numberOfPages(pageWidthInPixels, pageHeightInPixels);
+        actualNumberOfPages = internals.numberOfPages(pageWidthInPixels, pageHeightInPixels);
     else
-        actualNumberOfPages = testRunner.numberOfPages();
+        actualNumberOfPages = internals.numberOfPages();
 
     if (actualNumberOfPages == expectedNumberOfPages)
         appendResult('PASS: number of pages is ' + actualNumberOfPages);

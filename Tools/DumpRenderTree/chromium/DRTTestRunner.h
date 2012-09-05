@@ -314,18 +314,9 @@ public:
     // Causes layout to happen as if targetted to printed pages.
     void setPrinting(const CppArgumentList&, CppVariant*);
 
-    // Gets the page size and margins for a printed page.
-    void pageSizeAndMarginsInPixels(const CppArgumentList&, CppVariant*);
-
     // Returns true if the current page box has custom page size style for
     // printing.
     void hasCustomPageSizeStyle(const CppArgumentList&, CppVariant*);
-
-    // Gets the page-related property for printed content
-    void pageProperty(const CppArgumentList&, CppVariant*);
-
-    // Gets the number of pages to be printed.
-    void numberOfPages(const CppArgumentList&, CppVariant*);
 
     // Gets the number of geolocation permissions requests pending.
     void numberOfPendingGeolocationPermissionRequests(const CppArgumentList&, CppVariant*);

@@ -13,7 +13,7 @@ if (window.testRunner) {
     // Determine minium page size height where text fits on a single page.
     var height;
     for (var i = 10; i < 100; i += 5) {
-        if (testRunner.numberOfPages(100, i) == 1) {
+        if (internals.numberOfPages(100, i) == 1) {
             height = i;
             break;
         }
@@ -21,7 +21,7 @@ if (window.testRunner) {
     
     // Zoom in and verify that page count does not change.
     for (var i = 0; i < 10; i++) {
-        var numberOfPages = testRunner.numberOfPages(100, height);
+        var numberOfPages = internals.numberOfPages(100, height);
         if (numberOfPages != 1) {
             pass = false;
             msg += 'Got ' + numberOfPages + ' pages, expected 1 page.\n';
