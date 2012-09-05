@@ -2191,3 +2191,8 @@ http/tests/security/object-literals.html
 http/tests/security/script-with-failed-cors-check-fails-to-load.html
 http/tests/security/xss-DENIED-mime-type-execute-as-html.html
 http/tests/security/xss-DENIED-xsl-external-entity.xml
+
+# Flaky http/tests/cookie tests
+# https://bugs.webkit.org/show_bug.cgi?id=95805
+http/tests/cookies/multiple-cookies.html
+http/tests/cookies/single-quoted-value.html
