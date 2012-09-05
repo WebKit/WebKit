@@ -32,6 +32,7 @@ namespace WebCore {
 
     class FontPlatformData;
     class CachedFont;
+    class SharedBuffer;
 
     class CustomFontCache {
     public:
