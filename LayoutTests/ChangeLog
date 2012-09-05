@@ -1,3 +1,11 @@
+2012-09-05  Dan Bernstein  <mitz@apple.com>
+
+        Added Mac-specific expected results for a test added in r127557. The generic results are
+        probably from a build with subpixel layout.
+
+        * platform/mac/css3/calc: Added.
+        * platform/mac/css3/calc/zoom-with-em-expected.txt: Copied from LayoutTests/css3/calc/zoom-with-em-expected.txt.
+
 2012-09-04  Mike Lawther  <mikelawther@chromium.org>
 
         CSS3 calc: expressions with 'em' units do not zoom correctly.
