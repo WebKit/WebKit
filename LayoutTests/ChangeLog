@@ -1,5 +1,12 @@
 2012-09-04  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Adding test inspector/timeline/timeline-decode-resize.html to Windows skip list.
+        It fails on both Windows and Mac: https://bugs.webkit.org/show_bug.cgi?id=94374.
+
+        * platform/win/Skipped:
+
+2012-09-04  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Rebaseline tests after http://trac.webkit.org/changeset/127354.
 
         * platform/win/fast/text/international/text-spliced-font-expected.txt:

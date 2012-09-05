@@ -2168,3 +2168,6 @@ media/video-controls-captions.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=95795
 editing/style/apply-style-atomic.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=94374
+inspector/timeline/timeline-decode-resize.html
