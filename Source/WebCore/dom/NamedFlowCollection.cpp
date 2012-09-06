@@ -81,7 +81,7 @@ PassRefPtr<WebKitNamedFlow> NamedFlowCollection::ensureFlowWithName(const String
     RefPtr<WebKitNamedFlow> newFlow = WebKitNamedFlow::create(this, flowName);
     m_namedFlows.add(newFlow.get());
 
-    InspectorInstrumentation::didCreateNamedFlow(m_document, newFlow->name());
+    InspectorInstrumentation::didCreateNamedFlow(m_document, newFlow.get());
 
     return newFlow.release();
 }
@@ -95,9 +95,9 @@ void NamedFlowCollection::discardNamedFlow(WebKitNamedFlow* namedFlow)
     ASSERT(namedFlow->flowState() == WebKitNamedFlow::FlowStateNull);
     ASSERT(m_namedFlows.contains(namedFlow));
 
-    m_namedFlows.remove(namedFlow);
+    InspectorInstrumentation::willRemoveNamedFlow(m_document, namedFlow);
 
-    InspectorInstrumentation::didRemoveNamedFlow(m_document, namedFlow->name());
+    m_namedFlows.remove(namedFlow);
 }
 
 void NamedFlowCollection::documentDestroyed()

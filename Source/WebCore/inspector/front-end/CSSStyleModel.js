@@ -39,6 +39,8 @@ WebInspector.CSSStyleModel = function()
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.UndoRedoRequested, this._undoRedoRequested, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.UndoRedoCompleted, this._undoRedoCompleted, this);
     this._resourceBinding = new WebInspector.CSSStyleModelResourceBinding(this);
+    this._namedFlowCollections = {};
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.DocumentUpdated, this._resetNamedFlowCollections, this);
     InspectorBackend.registerCSSDispatcher(new WebInspector.CSSDispatcher(this));
     CSSAgent.enable();
 }
@@ -58,7 +60,8 @@ WebInspector.CSSStyleModel.Events = {
     StyleSheetChanged: "StyleSheetChanged",
     MediaQueryResultChanged: "MediaQueryResultChanged",
     NamedFlowCreated: "NamedFlowCreated",
-    NamedFlowRemoved: "NamedFlowRemoved"
+    NamedFlowRemoved: "NamedFlowRemoved",
+    RegionLayoutUpdated: "RegionLayoutUpdated"
 }
 
 WebInspector.CSSStyleModel.prototype = {
@@ -172,10 +175,16 @@ WebInspector.CSSStyleModel.prototype = {
 
     /**
      * @param {DOMAgent.NodeId} nodeId
-     * @param {function(?Array.<WebInspector.NamedFlow>)} userCallback
+     * @param {function(Object)} userCallback
      */
-    getNamedFlowCollectionAsync: function(nodeId, userCallback)
+    getNamedFlowCollectionAsync: function(documentNodeId, userCallback)
     {
+        var namedFlowCollection = this._namedFlowCollections[documentNodeId];
+        if (namedFlowCollection) {
+            userCallback(namedFlowCollection.namedFlowMap);
+            return;
+        }
+
         /**
          * @param {function(?Array.<WebInspector.NamedFlow>)} userCallback
          * @param {?Protocol.Error} error
@@ -185,11 +194,14 @@ WebInspector.CSSStyleModel.prototype = {
         {
             if (error || !namedFlowPayload)
                 userCallback(null);
-            else
-                userCallback(WebInspector.NamedFlow.parsePayloadArray(namedFlowPayload));
+            else {
+                var namedFlowCollection = new WebInspector.NamedFlowCollection(namedFlowPayload);
+                this._namedFlowCollections[documentNodeId] = namedFlowCollection;
+                userCallback(namedFlowCollection.namedFlowMap);
+            }
         }
 
-        CSSAgent.getNamedFlowCollection(nodeId, callback.bind(this, userCallback));
+        CSSAgent.getNamedFlowCollection(documentNodeId, callback.bind(this, userCallback));
     },
 
     /**
@@ -197,22 +209,27 @@ WebInspector.CSSStyleModel.prototype = {
      * @param {string} flowName
      * @param {function(?WebInspector.NamedFlow)} userCallback
      */
-    getFlowByNameAsync: function(nodeId, flowName, userCallback)
+    getFlowByNameAsync: function(documentNodeId, flowName, userCallback)
     {
-        /**
-         * @param {function(?WebInspector.NamedFlow)} userCallback
-         * @param {?Protocol.Error} error
-         * @param {?CSSAgent.NamedFlow=} namedFlowPayload
-         */
-        function callback(userCallback, error, namedFlowPayload)
-        {
-            if (error || !namedFlowPayload)
-                userCallback(null);
-            else
-                userCallback(WebInspector.NamedFlow.parsePayload(namedFlowPayload));
+        var namedFlowCollection = this._namedFlowCollections[documentNodeId];
+        if (namedFlowCollection) {
+            userCallback(namedFlowCollection.flowByName(flowName));
+            return;
         }
 
-        CSSAgent.getFlowByName(nodeId, flowName, callback.bind(this, userCallback));
+        /**
+         * @param {function(?WebInspector.NamedFlow)} userCallback
+         * @param {?CSSAgent.NamedFlow=} namedFlowMap
+         */
+        function callback(userCallback, namedFlowMap)
+        {
+            if (!namedFlowMap)
+                userCallback(null);
+            else
+                userCallback(this._namedFlowCollections[documentNodeId].flowByName(flowName));
+        }
+
+        this.getNamedFlowCollectionAsync(documentNodeId, callback.bind(this, userCallback));
     },
 
     /**
@@ -350,51 +367,48 @@ WebInspector.CSSStyleModel.prototype = {
     },
 
     /**
-     * @param {DOMAgent.NodeId} documentNodeId
-     * @param {string} name
+     * @param {CSSAgent.NamedFlow} namedFlowPayload
      */
-    _namedFlowCreated: function(documentNodeId, name)
+    _namedFlowCreated: function(namedFlowPayload)
     {
-        if (!this.hasEventListeners(WebInspector.CSSStyleModel.Events.NamedFlowCreated))
+        var namedFlow = WebInspector.NamedFlow.parsePayload(namedFlowPayload);
+        var namedFlowCollection = this._namedFlowCollections[namedFlow.documentNodeId];
+
+        if (!namedFlowCollection)
             return;
 
-        /**
-        * @param {WebInspector.DOMDocument} root
-        */
-        function callback(root)
-        {
-            // FIXME: At the moment we only want support for NamedFlows in the main document
-            if (documentNodeId !== root.id)
-                return;
-
-            this.dispatchEventToListeners(WebInspector.CSSStyleModel.Events.NamedFlowCreated, { documentNodeId: documentNodeId, name: name });
-        }
-
-        WebInspector.domAgent.requestDocument(callback.bind(this));
+        namedFlowCollection.appendNamedFlow(namedFlow);
+        this.dispatchEventToListeners(WebInspector.CSSStyleModel.Events.NamedFlowCreated, namedFlow);
     },
 
     /**
      * @param {DOMAgent.NodeId} documentNodeId
-     * @param {string} name
+     * @param {string} flowName
      */
-    _namedFlowRemoved: function(documentNodeId, name)
+    _namedFlowRemoved: function(documentNodeId, flowName)
     {
-        if (!this.hasEventListeners(WebInspector.CSSStyleModel.Events.NamedFlowRemoved))
+        var namedFlowCollection = this._namedFlowCollections[documentNodeId];
+
+        if (!namedFlowCollection)
             return;
 
-        /**
-        * @param {WebInspector.DOMDocument} root
-        */
-        function callback(root)
-        {
-            // FIXME: At the moment we only want support for NamedFlows in the main document
-            if (documentNodeId !== root.id)
-                return;
+        namedFlowCollection.removeNamedFlow(flowName);
+        this.dispatchEventToListeners(WebInspector.CSSStyleModel.Events.NamedFlowRemoved, { documentNodeId: documentNodeId, flowName: flowName });
+    },
 
-            this.dispatchEventToListeners(WebInspector.CSSStyleModel.Events.NamedFlowRemoved, { documentNodeId: documentNodeId, name: name });
-        }
+    /**
+     * @param {CSSAgent.NamedFlow} namedFlowPayload
+     */
+    _regionLayoutUpdated: function(namedFlowPayload)
+    {
+        var namedFlow = WebInspector.NamedFlow.parsePayload(namedFlowPayload);
+        var namedFlowCollection = this._namedFlowCollections[namedFlow.documentNodeId];
 
-        WebInspector.domAgent.requestDocument(callback.bind(this));
+        if (!namedFlowCollection)
+            return;
+
+        namedFlowCollection.appendNamedFlow(namedFlow);
+        this.dispatchEventToListeners(WebInspector.CSSStyleModel.Events.RegionLayoutUpdated, namedFlow);
     },
 
     /**
@@ -461,6 +475,11 @@ WebInspector.CSSStyleModel.prototype = {
     resetSourceMappings: function()
     {
         this._sourceMappings = {};
+    },
+
+    _resetNamedFlowCollections: function()
+    {
+        this._namedFlowCollections = {};
     },
 
     /**
@@ -1326,21 +1345,28 @@ WebInspector.CSSDispatcher.prototype = {
     },
 
     /**
-     * @param {DOMAgent.NodeId} documentNodeId
-     * @param {string} name
+     * @param {CSSAgent.NamedFlow} namedFlowPayload
      */
-    namedFlowCreated: function(documentNodeId, name)
+    namedFlowCreated: function(namedFlowPayload)
     {
-        this._cssModel._namedFlowCreated(documentNodeId, name);
+        this._cssModel._namedFlowCreated(namedFlowPayload);
     },
 
     /**
      * @param {DOMAgent.NodeId} documentNodeId
-     * @param {string} name
+     * @param {string} flowName
      */
-    namedFlowRemoved: function(documentNodeId, name)
+    namedFlowRemoved: function(documentNodeId, flowName)
     {
-        this._cssModel._namedFlowRemoved(documentNodeId, name);
+        this._cssModel._namedFlowRemoved(documentNodeId, flowName);
+    },
+
+    /**
+     * @param {CSSAgent.NamedFlow} namedFlowPayload
+     */
+    regionLayoutUpdated: function(namedFlowPayload)
+    {
+        this._cssModel._regionLayoutUpdated(namedFlowPayload);
     }
 }
 
@@ -1350,7 +1376,7 @@ WebInspector.CSSDispatcher.prototype = {
  */
 WebInspector.NamedFlow = function(payload)
 {
-    this.nodeId = payload.documentNodeId;
+    this.documentNodeId = payload.documentNodeId;
     this.name = payload.name;
     this.overset = payload.overset;
     this.content = payload.content;
@@ -1367,20 +1393,49 @@ WebInspector.NamedFlow.parsePayload = function(payload)
 }
 
 /**
- * @param {?Array.<CSSAgent.NamedFlow>=} namedFlowPayload
- * @return {?Array.<WebInspector.NamedFlow>}
+ * @constructor
+ * @param {Array.<CSSAgent.NamedFlow>} payload
  */
-WebInspector.NamedFlow.parsePayloadArray = function(namedFlowPayload)
+WebInspector.NamedFlowCollection = function(payload)
 {
-    if (!namedFlowPayload)
-        return null;
+    this.namedFlowMap = {};
 
-    var parsedArray = [];
-    for (var i = 0; i < namedFlowPayload.length; ++i)
-        parsedArray[i] = WebInspector.NamedFlow.parsePayload(namedFlowPayload[i]);
-    return parsedArray;
+    for (var i = 0; i < payload.length; ++i) {
+        var namedFlow = WebInspector.NamedFlow.parsePayload(payload[i]);
+        this.namedFlowMap[namedFlow.name] = namedFlow;
+    }
 }
 
+WebInspector.NamedFlowCollection.prototype = {
+    /**
+     * @param {WebInspector.NamedFlow} namedFlow
+     */
+    appendNamedFlow: function(namedFlow)
+    {
+        this.namedFlowMap[namedFlow.name] = namedFlow;
+    },
+
+    /**
+     * @param {string} flowName
+     */
+    removeNamedFlow: function(flowName)
+    {
+        delete this.namedFlowMap[flowName];
+    },
+
+    /**
+     * @param {string} flowName
+     * @return {WebInspector.NamedFlow}
+     */
+    flowByName: function(flowName)
+    {
+        var namedFlow = this.namedFlowMap[flowName];
+
+        if (!namedFlow)
+            return null;
+        return namedFlow;
+    }
+}
 /**
  * @type {WebInspector.CSSStyleModel}
  */
