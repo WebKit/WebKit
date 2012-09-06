@@ -1,0 +1,13 @@
+Tests that cues are properly removed from the active cue list when their track changes mode to disabled.
+
+EVENT(canplaythrough)
+** Set the mode of the text track to showing. **
+** Seek to a time with a caption. **
+EVENT(seeked)
+** Set the mode of the text track to hidden, then showing again. **
+** Set the mode of the text track to disabled. **
+
+No crash. PASS.
+
+END OF TEST
+

@@ -1,3 +1,16 @@
+2012-09-06  Anna Cavender  <annacc@chromium.org>
+
+        ASSERT reached when TextTrack.mode is set to DISABLED.
+        https://bugs.webkit.org/show_bug.cgi?id=94651
+
+        Reviewed by Eric Carlson.
+
+        This patch ensures that cues that have already been added to the
+        cueTree in HTMLMediaElement, are not added again.
+
+        * media/track/track-mode-disabled-crash-expected.txt: Added.
+        * media/track/track-mode-disabled-crash.html: Added.
+
 2012-09-06  Geoffrey Garen  <ggaren@apple.com>
 
         Unskipped fast/dom/HTMLScriptElement/script-reexecution-pretty-diff.html

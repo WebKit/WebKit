@@ -1347,7 +1347,9 @@ void HTMLMediaElement::textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue> cue)
     // zero-length cues.
     double endTime = max(cue->startTime(), cue->endTime());
 
-    m_cueTree.add(m_cueTree.createInterval(cue->startTime(), endTime, cue.get()));
+    CueIntervalTree::IntervalType interval = m_cueTree.createInterval(cue->startTime(), endTime, cue.get());
+    if (!m_cueTree.contains(interval))
+        m_cueTree.add(interval);
     updateActiveTextTrackCues(currentTime());
 }
 
