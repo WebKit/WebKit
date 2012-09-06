@@ -2645,6 +2645,8 @@ BUGWK94935 WIN ANDROID MAC : fast/hidpi/image-set-border-image-dynamic.html = IM
 BUGWK94935 WIN ANDROID MAC : fast/hidpi/image-set-out-of-order.html = IMAGE
 BUGWK94935 WIN ANDROID MAC : fast/hidpi/resize-corner-hidpi.html = IMAGE
 
+BUGWK95847 LINUX WIN ANDROID MAC : fast/hidpi/gradient-with-scaled-ancestor.html = IMAGE
+
 // Flaky tests from ~r97647
 BUGWK70298 MAC : fast/table/border-collapsing/cached-69296.html = IMAGE
 

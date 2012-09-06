@@ -1,3 +1,15 @@
+2012-09-06  Alex Sakhartchouk  <alexst@chromium.org>
+
+        gradient-with-scaled-ancestor.html is not calling setDeviceScaleFactor
+        https://bugs.webkit.org/show_bug.cgi?id=95847
+
+        Reviewed by Beth Dakin.
+
+        Setting the device scale factor in the layout test and updating expectations until we can rebase 
+
+        * fast/hidpi/gradient-with-scaled-ancestor.html:
+        * platform/chromium/TestExpectations:
+
 2012-09-06  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION(r127712): It broke http/tests/xmlhttprequest/basic-auth.html on JSC platforms
