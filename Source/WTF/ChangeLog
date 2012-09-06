@@ -1,3 +1,14 @@
+2012-09-06  Lauro Neto  <lauro.neto@openbossa.org>
+
+        [Qt] Deprecate String += operator
+        https://bugs.webkit.org/show_bug.cgi?id=95895
+
+        Reviewed by Benjamin Poulain.
+
+        Remove Qt from WTF_DEPRECATED_STRING_OPERATORS guard.
+
+        * wtf/Platform.h:
+
 2012-09-06  Michael Saboff  <msaboff@apple.com>
 
         ENH: Add Logging to StringImpl to track String Types

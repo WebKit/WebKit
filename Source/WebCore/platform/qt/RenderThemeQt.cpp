@@ -539,7 +539,7 @@ String RenderThemeQt::extraMediaControlsStyleSheet()
     String result = String(mediaControlsQtUserAgentStyleSheet, sizeof(mediaControlsQtUserAgentStyleSheet));
 
     if (m_page && m_page->chrome()->requiresFullscreenForVideoPlayback())
-        result += String(mediaControlsQtFullscreenUserAgentStyleSheet, sizeof(mediaControlsQtFullscreenUserAgentStyleSheet));
+        result.append(String(mediaControlsQtFullscreenUserAgentStyleSheet, sizeof(mediaControlsQtFullscreenUserAgentStyleSheet)));
 
     return result;
 }
