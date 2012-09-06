@@ -56,11 +56,11 @@ Success
 2.0 DOMDocumentFragment transformToFragment(in DOMNode source, in DOMDocument output):
 
 2.1 fragment with undefined source:
-****Failure**** (expected exception, instead got result: "undefined")
+****Failure**** (expected exception, instead got result: "null")
 2.2 fragment with undefined output document:
 Success
 2.3 use non-DOMDocument output parameter:
-****Failure**** (expected exception, instead got result: "undefined")
+****Failure**** (expected exception, instead got result: "null")
 2.4 transform to same fragment twice:
 Success
 2.5 transformed fragment containing only text:
@@ -71,7 +71,7 @@ Success
 3.0 DOMDocument transformToDocument(in DOMNode source):
 
 3.1 use non-DOMDocument output parameter:
-****Failure**** (expected exception, instead got result: "undefined")
+****Failure**** (expected exception, instead got result: "null")
 3.2 transform twice:
 Success
 

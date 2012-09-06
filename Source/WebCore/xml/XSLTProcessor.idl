@@ -37,9 +37,9 @@ module xml {
         Constructor
     ] XSLTProcessor {
         
-        [Custom] void importStylesheet(in Node stylesheet);
-        [Custom] DocumentFragment transformToFragment(in Node source, in Document docVal);
-        [Custom] Document transformToDocument(in Node source);
+        void importStylesheet(in [Optional=DefaultIsUndefined] Node stylesheet);
+        DocumentFragment transformToFragment(in [Optional=DefaultIsUndefined] Node source, in [Optional=DefaultIsUndefined] Document docVal);
+        Document transformToDocument(in [Optional=DefaultIsUndefined] Node source);
 
         [Custom] void setParameter(in DOMString namespaceURI, in DOMString localName, in DOMString value);
         [Custom, TreatReturnedNullStringAs=Undefined] DOMString getParameter(in DOMString namespaceURI, in DOMString localName);

@@ -48,56 +48,6 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8XSLTProcessor::importStylesheetCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.XSLTProcessor.importStylesheet");
-    if (!V8Node::HasInstance(args[0]))
-        return v8::Undefined();
-
-    XSLTProcessor* imp = V8XSLTProcessor::toNative(args.Holder());
-
-    Node* node = V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0]));
-    imp->importStylesheet(node);
-    return v8::Undefined();
-}
-
-
-v8::Handle<v8::Value> V8XSLTProcessor::transformToFragmentCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.XSLTProcessor.transformToFragment");
-    if (!V8Node::HasInstance(args[0]) || !V8Document::HasInstance(args[1]))
-        return v8::Undefined();
-
-    XSLTProcessor* imp = V8XSLTProcessor::toNative(args.Holder());
-
-    Node* source = V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0]));
-    Document* owner = V8Document::toNative(v8::Handle<v8::Object>::Cast(args[1]));
-    RefPtr<DocumentFragment> result = imp->transformToFragment(source, owner);
-    return toV8(result.release(), args.GetIsolate());
-}
-
-
-v8::Handle<v8::Value> V8XSLTProcessor::transformToDocumentCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.XSLTProcessor.transformToDocument");
-
-    if (!V8Node::HasInstance(args[0]))
-        return v8::Undefined();
-
-    XSLTProcessor* imp = V8XSLTProcessor::toNative(args.Holder());
-
-    Node* source = V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0]));
-    if (!source)
-        return v8::Undefined();
-
-    RefPtr<Document> result = imp->transformToDocument(source);
-    if (!result)
-        return v8::Undefined();
-
-    return toV8(result.release(), args.GetIsolate());
-}
-
-
 v8::Handle<v8::Value> V8XSLTProcessor::setParameterCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XSLTProcessor.setParameter");
@@ -113,7 +63,6 @@ v8::Handle<v8::Value> V8XSLTProcessor::setParameterCallback(const v8::Arguments&
 
     return v8::Undefined();
 }
-
 
 v8::Handle<v8::Value> V8XSLTProcessor::getParameterCallback(const v8::Arguments& args)
 {

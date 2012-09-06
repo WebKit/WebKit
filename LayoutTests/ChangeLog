@@ -1,3 +1,17 @@
+2012-09-06  Adam Barth  <abarth@chromium.org>
+
+        Three XSLTProcessor functions don't need to be [Custom]
+        https://bugs.webkit.org/show_bug.cgi?id=95899
+
+        Reviewed by Kentaro Hara.
+
+        Update results to show that we return null rather than undefined on a
+        type error.
+
+        * fast/xsl/transform-xhr-doc-expected.txt:
+        * fast/xsl/xslt-processor-expected.txt:
+        * platform/chromium/fast/xsl/transform-xhr-doc-expected.txt:
+
 2012-09-06  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip the failing tests.

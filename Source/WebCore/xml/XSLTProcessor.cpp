@@ -110,6 +110,9 @@ PassRefPtr<Document> XSLTProcessor::createDocumentFromSource(const String& sourc
 
 PassRefPtr<Document> XSLTProcessor::transformToDocument(Node* sourceNode)
 {
+    if (!sourceNode)
+        return 0;
+
     String resultMIMEType;
     String resultString;
     String resultEncoding;
@@ -120,6 +123,9 @@ PassRefPtr<Document> XSLTProcessor::transformToDocument(Node* sourceNode)
 
 PassRefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Node* sourceNode, Document* outputDoc)
 {
+    if (!sourceNode || !outputDoc)
+        return 0;
+
     String resultMIMEType;
     String resultString;
     String resultEncoding;

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 20: TypeError: 'undefined' is not an object (evaluating 'doc.documentElement')
+CONSOLE MESSAGE: line 20: TypeError: 'null' is not an object (evaluating 'doc.documentElement')
 Test for bug 10313: xsl:import doesn't work in stylesheets loaded via XMLHttpRequest.
 
 It's nice that this hasn't crashed, but the XSL transformation has failed.

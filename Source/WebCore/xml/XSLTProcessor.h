@@ -51,7 +51,11 @@ public:
     PassRefPtr<Document> createDocumentFromSource(const String& source, const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, Frame* frame);
     
     // DOM methods
-    void importStylesheet(PassRefPtr<Node> style) { m_stylesheetRootNode = style; }
+    void importStylesheet(PassRefPtr<Node> style)
+    {
+        if (style)
+            m_stylesheetRootNode = style;
+    }
     PassRefPtr<DocumentFragment> transformToFragment(Node* source, Document* ouputDoc);
     PassRefPtr<Document> transformToDocument(Node* source);
     
