@@ -37,6 +37,15 @@
     Date:               12 november 1997
 */
 
+// These test cases should not be testing for a particular
+// whitespace formatting (this is implementation defined).
+// Strip out whitespace, or in the case of whitespace
+// abutting a word character reduce to a single space.
+function simplify(str)
+{
+    return str.replace(/\s+/g, " ").replace(/ (\W)/g, "$1").replace(/(\W) /g, "$1").trim();
+}
+
     var SECTION = "tostring-2";
     var VERSION = "JS1_2";
     startTest();
@@ -72,22 +81,26 @@ function ReallyDoesntEqual( a, b ) {
     return a !== b;
 }
 
+// Modified to match expected results; JSC won't automatically insert redundant braces into the result.
 var testor = new TestFunction( "TestOr", "a",  tab+"if (a == null || a == void 0) {\n"+
     tab +tab+"return 0;\n"+tab+"} else {\n"+tab+tab+"return a;\n"+tab+"}" );
 function TestOr( a ) {
- if ( a == null || a == void 0 )
+ if ( a == null || a == void 0 ) {
     return 0;
- else
+ } else {
     return a;
+ }
 }
 
+// Modified to match expected results; JSC won't automatically insert redundant braces into the result.
 var testand = new TestFunction( "TestAnd", "a", tab+"if (a != null && a != void 0) {\n"+
     tab+tab+"return a;\n" + tab+ "} else {\n"+tab+tab+"return 0;\n"+tab+"}" );
 function TestAnd( a ) {
- if ( a != null && a != void 0 )
+ if ( a != null && a != void 0 ) {
     return a;
- else
+ } else {
     return 0;
+ }
 }
 
 var or = new TestFunction( "Or", "a, b", tab + "return a | b;" );
@@ -107,48 +120,48 @@ function XOr( a, b ) {
 
     testcases[testcases.length] = new TestCase( SECTION,
         "Equals.toString()",
-        equals.valueOf(),
-        Equals.toString() );
+        simplify(equals.valueOf()),
+        simplify(Equals.toString()) );
 
     testcases[testcases.length] = new TestCase( SECTION,
         "ReallyEquals.toString()",
-        reallyequals.valueOf(),
-        ReallyEquals.toString() );
+        simplify(reallyequals.valueOf()),
+        simplify(ReallyEquals.toString()) );
 
     testcases[testcases.length] = new TestCase( SECTION,
         "DoesntEqual.toString()",
-        doesntequal.valueOf(),
-        DoesntEqual.toString() );
+        simplify(doesntequal.valueOf()),
+        simplify(DoesntEqual.toString()) );
 
     testcases[testcases.length] = new TestCase( SECTION,
         "ReallyDoesntEqual.toString()",
-        reallydoesntequal.valueOf(),
-        ReallyDoesntEqual.toString() );
+        simplify(reallydoesntequal.valueOf()),
+        simplify(ReallyDoesntEqual.toString()) );
 
     testcases[testcases.length] = new TestCase( SECTION,
         "TestOr.toString()",
-        testor.valueOf(),
-        TestOr.toString() );
+        simplify(testor.valueOf()),
+        simplify(TestOr.toString()) );
 
     testcases[testcases.length] = new TestCase( SECTION,
         "TestAnd.toString()",
-        testand.valueOf(),
-        TestAnd.toString() );
+        simplify(testand.valueOf()),
+        simplify(TestAnd.toString()) );
 
     testcases[testcases.length] = new TestCase( SECTION,
         "Or.toString()",
-        or.valueOf(),
-        Or.toString() );
+        simplify(or.valueOf()),
+        simplify(Or.toString()) );
 
     testcases[testcases.length] = new TestCase( SECTION,
         "And.toString()",
-        and.valueOf(),
-        And.toString() );
+        simplify(and.valueOf()),
+        simplify(And.toString()) );
 
     testcases[testcases.length] = new TestCase( SECTION,
         "XOr.toString()",
-        xor.valueOf(),
-        XOr.toString() );
+        simplify(xor.valueOf()),
+        simplify(XOr.toString()) );
 
     test();
 

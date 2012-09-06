@@ -1,3 +1,26 @@
+2012-09-06  Gavin Barraclough  <barraclough@apple.com>
+
+        JS test suite puts incorrect limitations on Function.toString()
+        https://bugs.webkit.org/show_bug.cgi?id=3975
+
+        Reviewed by Geoff Garen.
+
+        The result of function toString is implementation defined;
+        these test cases were looking for specific whitespace formatting
+        that matches mozilla's, and for redundant braces to be inserted
+        around if/else blocks. Stop that.
+
+        * tests/mozilla/expected.html:
+        * tests/mozilla/js1_2/function/tostring-1.js:
+        (simplify):
+            - reduce whitespace differences
+        * tests/mozilla/js1_2/function/tostring-2.js:
+        (simplify):
+            - reduce whitespace differences
+        (TestOr):
+        (TestAnd):
+            - added braces to match expected output
+
 2012-09-06  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Performance regressions on 32-bit platforms with revisions 125637 and 126387

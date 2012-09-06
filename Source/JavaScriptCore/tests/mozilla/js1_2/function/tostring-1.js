@@ -34,6 +34,15 @@
     Date:               12 november 1997
 */
 
+// These test cases should not be testing for a particular
+// whitespace formatting (this is implementation defined).
+// Strip out whitespace, or in the case of whitespace
+// abutting a word character reduce to a single space.
+function simplify(str)
+{
+    return str.replace(/\s+/g, " ").replace(/ (\W)/g, "$1").replace(/(\W) /g, "$1").trim();
+}
+
     var SECTION = "tostring-1";
     var VERSION = "JS1_2";
     startTest();
@@ -60,28 +69,28 @@
 
     testcases[tc++] = new TestCase( SECTION,
                                     "stub.toString()",
-                                    t1.valueOf(),
-                                    stub.toString() );
+                                    simplify(t1.valueOf()),
+                                    simplify(stub.toString()) );
 
     testcases[tc++] = new TestCase( SECTION,
                                     "ToString.toString()",
-                                    t2.valueOf(),
-                                    ToString.toString() );
+                                    simplify(t2.valueOf()),
+                                    simplify(ToString.toString()) );
 
     testcases[tc++] = new TestCase( SECTION,
                                     "Add.toString()",
-                                    t3.valueOf(),
-                                    Add.toString() );
+                                    simplify(t3.valueOf()),
+                                    simplify(Add.toString()) );
 
     testcases[tc++] = new TestCase( SECTION,
                                     "noop.toString()",
-                                    t4.toString(),
-                                    noop.toString() );
+                                    simplify(t4.toString()),
+                                    simplify(noop.toString()) );
 
     testcases[tc++] = new TestCase( SECTION,
                                     "f.toString()",
-                                    t5.toString(),
-                                    f.toString() );
+                                    simplify(t5.toString()),
+                                    simplify(f.toString()) );
     test();
 
 function noop( value ) {
