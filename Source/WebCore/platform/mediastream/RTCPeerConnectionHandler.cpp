@@ -81,7 +81,7 @@ RTCPeerConnectionHandler::~RTCPeerConnectionHandler()
 RTCPeerConnectionHandlerDummy::RTCPeerConnectionHandlerDummy(RTCPeerConnectionHandlerClient* client)
     : m_client(client)
 {
-    ASSERT(m_client);
+    ASSERT_UNUSED(m_client, m_client);
 }
 
 RTCPeerConnectionHandlerDummy::~RTCPeerConnectionHandlerDummy()
