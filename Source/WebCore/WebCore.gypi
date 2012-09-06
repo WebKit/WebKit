@@ -2280,6 +2280,7 @@
             'bindings/v8/V8Callback.h',
             'bindings/v8/V8Collection.cpp',
             'bindings/v8/V8Collection.h',
+            'bindings/v8/V8DependentRetained.h',
             'bindings/v8/V8DOMConfiguration.cpp',
             'bindings/v8/V8DOMConfiguration.h',
             'bindings/v8/V8DOMMap.cpp',

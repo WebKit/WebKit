@@ -113,6 +113,8 @@ public:
     int incrementRecursionLevel() { return ++m_recursionLevel; }
     int decrementRecursionLevel() { return --m_recursionLevel; }
 
+    int nextDependentRetainedId() { return m_nextDependentRetainedId++; }
+
 #ifndef NDEBUG
     GlobalHandleMap& globalHandleMap() { return m_globalHandleMap; }
 
@@ -155,6 +157,7 @@ private:
     friend class ConstructorMode;
 
     int m_recursionLevel;
+    int m_nextDependentRetainedId;
 
 #ifndef NDEBUG
     GlobalHandleMap m_globalHandleMap;
