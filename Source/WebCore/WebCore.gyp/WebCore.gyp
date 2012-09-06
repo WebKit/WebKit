@@ -1848,6 +1848,10 @@
           'sources/': [
             ['exclude', 'Posix\\.cpp$'],
 
+            ['include', '/opentype/'],
+            ['include', '/SkiaFontWin\\.cpp$'],
+            ['include', '/TransparencyWin\\.cpp$'],
+
             # The Chromium Win currently uses GlyphPageTreeNodeChromiumWin.cpp from
             # platform/graphics/chromium, included by regex above, instead.
             ['exclude', 'platform/graphics/skia/FontCacheSkia\\.cpp$'],
@@ -2084,19 +2088,6 @@
         # on link time code generation builds.
         ['OS=="win" and buildtype=="Official"', {
           'msvs_shard': 10,
-        }],
-        ['OS=="win"', {
-          'sources/': [
-            ['exclude', 'Posix\\.cpp$'],
-            ['include', '/opentype/'],
-            ['include', '/SkiaFontWin\\.cpp$'],
-            ['include', '/TransparencyWin\\.cpp$'],
-          ],
-        },{ # OS!="win"
-          'sources/': [
-            ['exclude', 'Win\\.cpp$'],
-            ['exclude', '/(Windows|Uniscribe)[^/]*\\.cpp$']
-          ],
         }],
         ['os_posix == 1 and OS != "mac" and gcc_version == 42', {
           # Due to a bug in gcc 4.2.1 (the current version on hardy), we get
