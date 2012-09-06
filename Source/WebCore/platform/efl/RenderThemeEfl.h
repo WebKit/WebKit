@@ -96,18 +96,14 @@ public:
     // controls that need to do this.
     virtual LayoutUnit baselinePosition(const RenderObject*) const;
 
-    virtual Color platformActiveSelectionBackgroundColor() const { return m_activeSelectionBackgroundColor; }
-    virtual Color platformInactiveSelectionBackgroundColor() const { return m_inactiveSelectionBackgroundColor; }
-    virtual Color platformActiveSelectionForegroundColor() const { return m_activeSelectionForegroundColor; }
-    virtual Color platformInactiveSelectionForegroundColor() const { return m_inactiveSelectionForegroundColor; }
-    virtual Color platformFocusRingColor() const { return m_focusRingColor; }
+    virtual Color platformActiveSelectionBackgroundColor() const;
+    virtual Color platformInactiveSelectionBackgroundColor() const;
+    virtual Color platformActiveSelectionForegroundColor() const;
+    virtual Color platformInactiveSelectionForegroundColor() const;
+    virtual Color platformFocusRingColor() const;
 
-    virtual void themeChanged();
-
-    // Set platform colors and notify they changed
-    void setActiveSelectionColor(int foreR, int foreG, int foreB, int foreA, int backR, int backG, int backB, int backA);
-    void setInactiveSelectionColor(int foreR, int foreG, int foreB, int foreA, int backR, int backG, int backB, int backA);
-    void setFocusRingColor(int r, int g, int b, int a);
+    // Set platform colors; remember to call platformColorDidChange after.
+    void setColorFromThemeClass(const char* colorClass);
 
     void setButtonTextColor(int foreR, int foreG, int foreB, int foreA, int backR, int backG, int backB, int backA);
     void setComboTextColor(int foreR, int foreG, int foreB, int foreA, int backR, int backG, int backB, int backA);
@@ -115,7 +111,6 @@ public:
     void setSearchTextColor(int foreR, int foreG, int foreB, int foreA, int backR, int backG, int backB, int backA);
 
     void adjustSizeConstraints(RenderStyle*, FormType) const;
-
 
     // System fonts.
     virtual void systemFont(int propId, FontDescription&) const;
@@ -209,14 +204,19 @@ public:
 
     void setThemePath(const String&);
     String themePath() { return m_themePath; }
+
 protected:
     static float defaultFontSize;
 
 private:
-    void createCanvas();
-    void createEdje();
-    void applyEdjeColors();
-    void applyPartDescriptions();
+    bool loadTheme();
+    ALWAYS_INLINE bool loadThemeIfNeeded() const
+    {
+        return m_edje || const_cast<RenderThemeEfl*>(this)->loadTheme();
+    }
+
+    void applyPartDescriptionsFrom(Evas_Object*);
+
     const char* edjeGroupFromFormType(FormType) const;
     void applyEdjeStateFromForm(Evas_Object*, ControlStates);
     bool paintThemePart(RenderObject*, FormType, const PaintInfo&, const IntRect&);

@@ -79,8 +79,16 @@ static const int mediaSliderThumbWidth = 12;
 static const int mediaSliderThumbHeight = 12;
 #endif
 
+#define _ASSERT_ON_RELEASE_RETURN(o, fmt, ...) \
+    do { if (!o) { EINA_LOG_CRIT(fmt, ## __VA_ARGS__); ASSERT(o); return; } } while (0)
+#define _ASSERT_ON_RELEASE_RETURN_VAL(o, val, fmt, ...) \
+    do { if (!o) { EINA_LOG_CRIT(fmt, ## __VA_ARGS__); ASSERT(o); return val; } } while (0)
+
 void RenderThemeEfl::adjustSizeConstraints(RenderStyle* style, FormType type) const
 {
+    loadThemeIfNeeded();
+    _ASSERT_ON_RELEASE_RETURN(m_edje, "Could not paint native HTML part due to missing theme.");
+
     const struct ThemePartDesc* desc = m_partDescs + (size_t)type;
 
     if (style->minWidth().isIntrinsic())
@@ -114,8 +122,7 @@ bool RenderThemeEfl::themePartCacheEntryReset(struct ThemePartCacheEntry* entry,
     if (!edje_object_file_set(entry->o, file, group)) {
         Edje_Load_Error err = edje_object_load_error_get(entry->o);
         const char *errmsg = edje_load_error_str(err);
-        EINA_LOG_ERR("Could not load '%s' from theme %s: %s",
-                     group, file, errmsg);
+        EINA_LOG_ERR("Could not load '%s' from theme %s: %s", group, file, errmsg);
         return false;
     }
     return true;
@@ -159,7 +166,7 @@ bool RenderThemeEfl::isFormElementTooLargeToDisplay(const IntSize& elementSize)
 struct RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::cacheThemePartNew(FormType type, const IntSize& size)
 {
     if (isFormElementTooLargeToDisplay(size)) {
-        EINA_LOG_ERR("cannot render an element of size %dx%d", size.width(), size.height());
+        EINA_LOG_ERR("Cannot render an element of size %dx%d.", size.width(), size.height());
         return 0;
     }
 
@@ -311,12 +318,12 @@ void RenderThemeEfl::applyEdjeStateFromForm(Evas_Object* object, ControlStates s
 
 bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const PaintInfo& info, const IntRect& rect)
 {
+    loadThemeIfNeeded();
+    _ASSERT_ON_RELEASE_RETURN_VAL(m_edje, false, "Could not paint native HTML part due to missing theme.");
+
     ThemePartCacheEntry* entry;
     Eina_List* updates;
     cairo_t* cairo;
-
-    ASSERT(m_canvas);
-    ASSERT(m_edje);
 
     entry = cacheThemePartGet(type, rect.size());
     if (!entry)
@@ -399,37 +406,44 @@ PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
     return fallback;
 }
 
-static void renderThemeEflColorClassSelectionActive(void* data, Evas_Object* object, const char* signal, const char* source)
+static void applyColorCallback(void* data, Evas_Object*, const char* /* signal */, const char* colorClass)
 {
-    RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
-    int fr, fg, fb, fa, br, bg, bb, ba;
-
-    if (!edje_object_color_class_get(object, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
-        return;
-
-    that->setActiveSelectionColor(fr, fg, fb, fa, br, bg, bb, ba);
+    RenderThemeEfl* that = static_cast<RenderThemeEfl*>(data);
+    that->setColorFromThemeClass(colorClass);
+    that->platformColorsDidChange(); // Triggers relayout.
 }
 
-static void renderThemeEflColorClassSelectionInactive(void* data, Evas_Object* object, const char* signal, const char* source)
+static void fillColorsFromEdjeClass(Evas_Object* o, const char* colorClass, Color* color1, Color* color2 = 0, Color* color3 = 0)
 {
-    RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
-    int fr, fg, fb, fa, br, bg, bb, ba;
+    int r1, g1, b1, a1;
+    int r2, g2, b2, a2;
+    int r3, g3, b3, a3;
 
-    if (!edje_object_color_class_get(object, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
-        return;
+    bool ok = edje_object_color_class_get(o, colorClass, &r1, &g1, &b1, &a1, &r2, &g2, &b2, &a2, &r3, &g3, &b3, &a3);
+    _ASSERT_ON_RELEASE_RETURN(ok, "Could not get color class '%s'\n", colorClass);
 
-    that->setInactiveSelectionColor(fr, fg, fb, fa, br, bg, bb, ba);
+    if (color1)
+        color1->setRGB(makeRGBA(r1, g1, b1, a1));
+    if (color2)
+        color2->setRGB(makeRGBA(r2, g2, b2, a2));
+    if (color3)
+        color3->setRGB(makeRGBA(r3, g3, b3, a3));
 }
 
-static void renderThemeEflColorClassFocusRing(void* data, Evas_Object* object, const char* signal, const char* source)
+void RenderThemeEfl::setColorFromThemeClass(const char* colorClass)
 {
-    RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
-    int fr, fg, fb, fa;
+    ASSERT(m_edje);
 
-    if (!edje_object_color_class_get(object, source, &fr, &fg, &fb, &fa, 0, 0, 0, 0, 0, 0, 0, 0))
-        return;
-
-    that->setFocusRingColor(fr, fg, fb, fa);
+    if (!strcmp("webkit/selection/active", colorClass))
+        fillColorsFromEdjeClass(m_edje, colorClass, &m_activeSelectionForegroundColor, &m_activeSelectionBackgroundColor);
+    else if (!strcmp("webkit/selection/inactive", colorClass))
+        fillColorsFromEdjeClass(m_edje, colorClass, &m_inactiveSelectionForegroundColor, &m_inactiveSelectionBackgroundColor);
+    else if (!strcmp("webkit/focus_ring", colorClass)) {
+        fillColorsFromEdjeClass(m_edje, colorClass, &m_focusRingColor);
+        // platformFocusRingColor() is only used for the default theme (without page)
+        // The following is ugly, but no other way to do it unless we change it to use page themes as much as possible.
+        RenderTheme::setCustomFocusRingColor(m_focusRingColor);
+    }
 }
 
 void RenderThemeEfl::setThemePath(const String& path)
@@ -438,72 +452,56 @@ void RenderThemeEfl::setThemePath(const String& path)
         return;
 
     m_themePath = path;
-    themeChanged();
+
+    if (m_themePath.isEmpty()) {
+        EINA_LOG_ERR("No theme defined, unable to set theme for HTML Forms.");
+        return;
+    }
+
+    if (!m_canvas) {
+        m_canvas = ecore_evas_buffer_new(1, 1);
+        if (!m_canvas)
+            EINA_LOG_ERR("Could not create canvas.");
+    }
+
+    loadTheme();
 }
 
-void RenderThemeEfl::createCanvas()
+bool RenderThemeEfl::loadTheme()
 {
-    ASSERT(!m_canvas);
-    m_canvas = ecore_evas_buffer_new(1, 1);
-    ASSERT(m_canvas);
-}
+    Evas_Object* o = edje_object_add(ecore_evas_get(m_canvas));
+    _ASSERT_ON_RELEASE_RETURN_VAL(o, false, "Could not create new base Edje object.");
 
-void RenderThemeEfl::createEdje()
-{
-    ASSERT(!m_edje);
-    if (m_themePath.isEmpty())
-        EINA_LOG_ERR("No theme defined, unable to set RenderThemeEfl.");
-    else {
-        m_edje = edje_object_add(ecore_evas_get(m_canvas));
-        if (!m_edje)
-            EINA_LOG_ERR("Could not create base edje object.");
-        else if (!edje_object_file_set(m_edje, m_themePath.utf8().data(), "webkit/base")) {
-            Edje_Load_Error err = edje_object_load_error_get(m_edje);
-            const char* errmsg = edje_load_error_str(err);
-            EINA_LOG_ERR("Could not set file: %s", errmsg);
-            evas_object_del(m_edje);
-            m_edje = 0;
-        } else {
-#define CONNECT(cc, func)                                               \
-            edje_object_signal_callback_add(m_edje, "color_class,set",  \
-                                            "webkit/"cc, func, this)
+    if (!edje_object_file_set(o, m_themePath.utf8().data(), "webkit/base")) {
+        Edje_Load_Error err = edje_object_load_error_get(o);
+        const char* errmsg = edje_load_error_str(err);
+        EINA_LOG_ERR("Could not set file '%s': %s", m_themePath.utf8().data(),  errmsg);
+        evas_object_del(o);
+        return false; // Keep current theme.
+    }
 
-            CONNECT("selection/active",
-                    renderThemeEflColorClassSelectionActive);
-            CONNECT("selection/inactive",
-                    renderThemeEflColorClassSelectionInactive);
-            CONNECT("focus_ring", renderThemeEflColorClassFocusRing);
-#undef CONNECT
-        }
+    // Get rid of existing theme.
+    if (m_edje) {
+        cacheThemePartFlush();
+        evas_object_del(m_edje);
     }
-}
 
-void RenderThemeEfl::applyEdjeColors()
-{
-    int fr, fg, fb, fa, br, bg, bb, ba;
-    ASSERT(m_edje);
-#define COLOR_GET(cls)                                                  \
-    edje_object_color_class_get(m_edje, "webkit/"cls,                   \
-                                &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, \
-                                0, 0, 0, 0)
+    // Set new loaded theme, and apply it.
+    m_edje = o;
 
-    if (COLOR_GET("selection/active")) {
-        m_activeSelectionForegroundColor = Color(fr, fg, fb, fa);
-        m_activeSelectionBackgroundColor = Color(br, bg, bb, ba);
-    }
-    if (COLOR_GET("selection/inactive")) {
-        m_inactiveSelectionForegroundColor = Color(fr, fg, fb, fa);
-        m_inactiveSelectionBackgroundColor = Color(br, bg, bb, ba);
-    }
-    if (COLOR_GET("focus_ring")) {
-        m_focusRingColor = Color(fr, fg, fb, fa);
-        // webkit just use platformFocusRingColor() for default theme (without page)
-        // this is ugly, but no other way to do it unless we change
-        // it to use page themes as much as possible.
-        RenderTheme::setCustomFocusRingColor(m_focusRingColor);
-    }
-#undef COLOR_GET
-    platformColorsDidChange();
+    edje_object_signal_callback_add(m_edje, "color_class,set", "webkit/selection/active", applyColorCallback, this);
+    edje_object_signal_callback_add(m_edje, "color_class,set", "webkit/selection/inactive", applyColorCallback, this);
+    edje_object_signal_callback_add(m_edje, "color_class,set", "webkit/focus_ring", applyColorCallback, this);
+
+    applyPartDescriptionsFrom(m_edje);
+
+    setColorFromThemeClass("webkit/selection/active");
+    setColorFromThemeClass("webkit/selection/inactive");
+    setColorFromThemeClass("webkit/focus_ring");
+
+    platformColorsDidChange(); // Schedules a relayout, do last.
+
+    return true;
 }
 
 void RenderThemeEfl::applyPartDescriptionFallback(struct ThemePartDesc* desc)
@@ -605,17 +603,20 @@ const char* RenderThemeEfl::edjeGroupFromFormType(FormType type) const
     return groups[type];
 }
 
-void RenderThemeEfl::applyPartDescriptions()
+void RenderThemeEfl::applyPartDescriptionsFrom(Evas_Object* o)
 {
     Evas_Object* object;
     unsigned int i;
     const char* file;
 
-    ASSERT(m_canvas);
-    ASSERT(m_edje);
+    ASSERT(o);
 
-    edje_object_file_get(m_edje, &file, 0);
+    edje_object_file_get(o, &file, 0);
     ASSERT(file);
+    if (!file) {
+        EINA_LOG_ERR("Could not retrieve Edje theme file.");
+        return;
+    }
 
     object = edje_object_add(ecore_evas_get(m_canvas));
     if (!object) {
@@ -638,26 +639,6 @@ void RenderThemeEfl::applyPartDescriptions()
             applyPartDescription(object, m_partDescs + i);
     }
     evas_object_del(object);
-}
-
-void RenderThemeEfl::themeChanged()
-{
-    cacheThemePartFlush();
-
-    if (!m_canvas) {
-        createCanvas();
-        if (!m_canvas)
-            return;
-    }
-
-    if (!m_edje) {
-        createEdje();
-        if (!m_edje)
-            return;
-    }
-
-    applyEdjeColors();
-    applyPartDescriptions();
 }
 
 RenderThemeEfl::RenderThemeEfl(Page* page)
@@ -687,30 +668,6 @@ RenderThemeEfl::~RenderThemeEfl()
             evas_object_del(m_edje);
         ecore_evas_free(m_canvas);
     }
-}
-
-void RenderThemeEfl::setActiveSelectionColor(int foreR, int foreG, int foreB, int foreA, int backR, int backG, int backB, int backA)
-{
-    m_activeSelectionForegroundColor = Color(foreR, foreG, foreB, foreA);
-    m_activeSelectionBackgroundColor = Color(backR, backG, backB, backA);
-    platformColorsDidChange();
-}
-
-void RenderThemeEfl::setInactiveSelectionColor(int foreR, int foreG, int foreB, int foreA, int backR, int backG, int backB, int backA)
-{
-    m_inactiveSelectionForegroundColor = Color(foreR, foreG, foreB, foreA);
-    m_inactiveSelectionBackgroundColor = Color(backR, backG, backB, backA);
-    platformColorsDidChange();
-}
-
-void RenderThemeEfl::setFocusRingColor(int r, int g, int b, int a)
-{
-    m_focusRingColor = Color(r, g, b, a);
-    // webkit just use platformFocusRingColor() for default theme (without page)
-    // this is ugly, but no other way to do it unless we change
-    // it to use page themes as much as possible.
-    RenderTheme::setCustomFocusRingColor(m_focusRingColor);
-    platformColorsDidChange();
 }
 
 static bool supportsFocus(ControlPart appearance)
@@ -752,6 +709,36 @@ LayoutUnit RenderThemeEfl::baselinePosition(const RenderObject* object) const
         return toRenderBox(object)->marginTop() + toRenderBox(object)->height() - 3;
 
     return RenderTheme::baselinePosition(object);
+}
+
+Color RenderThemeEfl::platformActiveSelectionBackgroundColor() const
+{
+    loadThemeIfNeeded();
+    return m_activeSelectionBackgroundColor;
+}
+
+Color RenderThemeEfl::platformInactiveSelectionBackgroundColor() const
+{
+    loadThemeIfNeeded();
+    return m_inactiveSelectionBackgroundColor;
+}
+
+Color RenderThemeEfl::platformActiveSelectionForegroundColor() const
+{
+    loadThemeIfNeeded();
+    return m_activeSelectionForegroundColor;
+}
+
+Color RenderThemeEfl::platformInactiveSelectionForegroundColor() const
+{
+    loadThemeIfNeeded();
+    return m_inactiveSelectionForegroundColor;
+}
+
+Color RenderThemeEfl::platformFocusRingColor() const
+{
+    loadThemeIfNeeded();
+    return m_focusRingColor;
 }
 
 bool RenderThemeEfl::paintSliderTrack(RenderObject* object, const PaintInfo& info, const IntRect& rect)
@@ -842,7 +829,10 @@ void RenderThemeEfl::adjustCheckboxStyle(StyleResolver* styleResolver, RenderSty
         static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustCheckboxStyle(styleResolver, style, element);
         return;
     }
+
     adjustSizeConstraints(style, CheckBox);
+    ASSERT(m_edje);
+
     style->resetBorder();
 
     const struct ThemePartDesc *desc = m_partDescs + (size_t)CheckBox;
@@ -863,7 +853,10 @@ void RenderThemeEfl::adjustRadioStyle(StyleResolver* styleResolver, RenderStyle*
         static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustRadioStyle(styleResolver, style, element);
         return;
     }
+
     adjustSizeConstraints(style, RadioButton);
+    ASSERT(m_edje);
+
     style->resetBorder();
 
     const struct ThemePartDesc *desc = m_partDescs + (size_t)RadioButton;
@@ -1086,12 +1079,13 @@ bool RenderThemeEfl::paintProgressBar(RenderObject* object, const PaintInfo& inf
 #if ENABLE(VIDEO)
 bool RenderThemeEfl::emitMediaButtonSignal(FormType formType, MediaControlElementType mediaElementType, const IntRect& rect)
 {
+    loadThemeIfNeeded();
+    _ASSERT_ON_RELEASE_RETURN_VAL(m_edje, false, "Could not paint native HTML part due to missing theme.");
+
     ThemePartCacheEntry* entry;
 
     entry = cacheThemePartGet(formType, rect.size());
-    ASSERT(entry);
-    if (!entry)
-        return false;
+    _ASSERT_ON_RELEASE_RETURN_VAL(entry, false, "Could not paint native HTML part due to missing theme part.");
 
     if (mediaElementType == MediaPlayButton)
         edje_object_signal_emit(entry->o, "play", "");
@@ -1280,4 +1274,8 @@ bool RenderThemeEfl::paintMediaCurrentTime(RenderObject* object, const PaintInfo
     return true;
 }
 #endif
+
+#undef _ASSERT_ON_RELEASE_RETURN
+#undef _ASSERT_ON_RELEASE_RETURN_VAL
+
 }
