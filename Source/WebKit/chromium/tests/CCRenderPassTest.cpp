@@ -74,8 +74,8 @@ TEST(CCRenderPassTest, copyShouldBeIdenticalExceptIdAndQuads)
     WebFilterOperations filters;
     WebFilterOperations backgroundFilters;
 
-    filters.append(WebFilterOperation::createGrayscaleFilter(0.2));
-    backgroundFilters.append(WebFilterOperation::createInvertFilter(0.2));
+    filters.append(WebFilterOperation::createGrayscaleFilter(0.2f));
+    backgroundFilters.append(WebFilterOperation::createInvertFilter(0.2f));
 
     pass->setDamageRect(damageRect);
     pass->setHasTransparentBackground(hasTransparentBackground);

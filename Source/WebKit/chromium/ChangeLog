@@ -1,3 +1,10 @@
+2012-09-06  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Win build fix attempt after r127715
+
+        * tests/CCRenderPassTest.cpp:
+        (WebCore::TEST):
+
 2012-09-06  Peter Beverloo  <peter@chromium.org>
 
         Unreviewed.  Rolled DEPS.
