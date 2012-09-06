@@ -1,3 +1,32 @@
+2012-09-06  Michael Saboff  <msaboff@apple.com>
+
+        ENH: Add Logging to StringImpl to track String Types
+        https://bugs.webkit.org/show_bug.cgi?id=95807
+
+        Reviewed by Benjamin Poulain.
+
+        Added StringsStats class that keeps track of the number of strings, number of 8 and 16 bit
+        strings as well as the number of 8 bit strings up converted to 16 bits. The number of characrters
+        for each type is also accumulated. These statistics are output via DataLog every 5000
+        calls to StringImpl destructor. The 5000 can be adjusted via s_printStringStatsFrequency.
+        This StringStats code is disabled by default and enabled by defining STRING_STATS in
+        wtf/text/StringImpl.h.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringStats::removeString):
+        (WTF::StringStats::printStats):
+        (WTF::StringImpl::~StringImpl):
+        (WTF::StringImpl::getData16SlowCase):
+        * wtf/text/StringImpl.h:
+        (WTF::StringStats::add8BitString):
+        (StringStats):
+        (WTF::StringStats::add16BitString):
+        (WTF::StringStats::addUpconvertedString):
+        (WTF::StringImpl::StringImpl):
+        (StringImpl):
+        (WTF::StringImpl::isSubString):
+        (WTF::StringImpl::stringStats):
+
 2012-09-06  Patrick Gansterer  <paroga@webkit.org>
 
         Fix export macros in IntegerToStringConversion.h

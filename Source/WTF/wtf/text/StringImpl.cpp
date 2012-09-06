@@ -32,6 +32,9 @@
 #include <wtf/WTFThreadData.h>
 #include <wtf/unicode/CharacterNames.h>
 
+#ifdef STRING_STATS
+#include <wtf/DataLog.h>
+#endif
 
 using namespace std;
 
@@ -41,9 +44,68 @@ using namespace Unicode;
 
 COMPILE_ASSERT(sizeof(StringImpl) == 2 * sizeof(int) + 3 * sizeof(void*), StringImpl_should_stay_small);
 
+#ifdef STRING_STATS
+StringStats StringImpl::m_stringStats;
+
+static unsigned StringStats::s_stringRemovesTillPrintStats = StringStats::s_printStringStatsFrequency;
+
+void StringStats::removeString(StringImpl* string)
+{
+    unsigned length = string->length();
+    bool isSubString = string->isSubString();
+
+    --m_totalNumberStrings;
+
+    if (string->has16BitShadow()) {
+        --m_numberUpconvertedStrings;
+        if (!isSubString)
+            m_totalUpconvertedData -= length;
+    }
+
+    if (string->is8Bit()) {
+        --m_number8BitStrings;
+        if (!isSubString)
+            m_total8BitData -= length;
+    } else {
+        --m_number16BitStrings;
+        if (!isSubString)
+            m_total16BitData -= length;
+    }
+
+    if (!--s_stringRemovesTillPrintStats) {
+        s_stringRemovesTillPrintStats = s_printStringStatsFrequency;
+        printStats();
+    }
+}
+
+void StringStats::printStats()
+{
+    dataLog("String stats for process id %d:\n", getpid());
+
+    unsigned long long totalNumberCharacters = m_total8BitData + m_total16BitData;
+    double percent8Bit = m_totalNumberStrings ? ((double)m_number8BitStrings * 100) / (double)m_totalNumberStrings : 0.0;
+    double average8bitLength = m_number8BitStrings ? (double)m_total8BitData / (double)m_number8BitStrings : 0.0;
+    dataLog("%8u (%5.2f%%) 8 bit        %12llu chars  %12llu bytes  avg length %6.1f\n", m_number8BitStrings, percent8Bit, m_total8BitData, m_total8BitData, average8bitLength);
+
+    double percent16Bit = m_totalNumberStrings ? ((double)m_number16BitStrings * 100) / (double)m_totalNumberStrings : 0.0;
+    double average16bitLength = m_number16BitStrings ? (double)m_total16BitData / (double)m_number16BitStrings : 0.0;
+    dataLog("%8u (%5.2f%%) 16 bit       %12llu chars  %12llu bytes  avg length %6.1f\n", m_number16BitStrings, percent16Bit, m_total16BitData, m_total16BitData * 2, average16bitLength);
+
+    double percentUpconverted = m_totalNumberStrings ? ((double)m_numberUpconvertedStrings * 100) / (double)m_number8BitStrings : 0.0;
+    double averageUpconvertedLength = m_numberUpconvertedStrings ? (double)m_totalUpconvertedData / (double)m_numberUpconvertedStrings : 0.0;
+    dataLog("%8u (%5.2f%%) upconverted  %12llu chars  %12llu bytes  avg length %6.1f\n", m_numberUpconvertedStrings, percentUpconverted, m_totalUpconvertedData, m_totalUpconvertedData * 2, averageUpconvertedLength);
+
+    double averageLength = m_totalNumberStrings ? (double)totalNumberCharacters / (double)m_totalNumberStrings : 0.0;
+    dataLog("%8u Total                 %12llu chars  %12llu bytes  avg length %6.1f\n", m_totalNumberStrings, totalNumberCharacters, m_total8BitData + (m_total16BitData + m_totalUpconvertedData) * 2, averageLength);
+}
+#endif
+
+
 StringImpl::~StringImpl()
 {
     ASSERT(!isStatic());
+
+    STRING_STATS_REMOVE_STRING(this);
 
     if (isAtomic())
         AtomicString::remove(this);
@@ -221,6 +283,8 @@ const UChar* StringImpl::getData16SlowCase() const
         return m_substringBuffer->characters() + offset;
     }
 
+    STRING_STATS_ADD_UPCONVERTED_STRING(m_length);
+    
     unsigned len = length();
     if (hasTerminatingNullCharacter())
         len++;
