@@ -1,3 +1,22 @@
+2012-09-05  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Large integer versions not persisted correctly
+        https://bugs.webkit.org/show_bug.cgi?id=95873
+
+        Reviewed by Tony Chang.
+
+        Verify large integer versions that encode differently as Ints vs. VarInts.
+
+        * storage/indexeddb/intversion-encoding-expected.txt: Added.
+        * storage/indexeddb/intversion-encoding.html: Added.
+        * storage/indexeddb/resources/intversion-encoding.js: Added.
+        (test):
+        (openFirstTime.request.onupgradeneeded):
+        (openFirstTime.request.onsuccess):
+        (openFirstTime):
+        (openSecondTime.request.onsuccess):
+        (openSecondTime):
+
 2012-09-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r127596.

@@ -88,6 +88,16 @@ static bool putInt(DBOrTransaction* db, const Vector<char>& key, int64_t value)
 }
 
 template <typename DBOrTransaction>
+static bool getVarInt(DBOrTransaction* db, const Vector<char>& key, int64_t& foundInt)
+{
+    Vector<char> result;
+    if (!db->get(key, result))
+        return false;
+
+    return decodeVarInt(result.begin(), result.end(), foundInt) == result.end();
+}
+
+template <typename DBOrTransaction>
 static bool putVarInt(DBOrTransaction* db, const Vector<char>& key, int64_t value)
 {
     return db->put(key, encodeVarInt(value));
@@ -284,7 +294,7 @@ bool IDBLevelDBBackingStore::getIDBDatabaseMetaData(const String& name, String& 
     if (!ok)
         return false;
 
-    ok = getInt(m_db.get(), DatabaseMetaDataKey::encode(foundId, DatabaseMetaDataKey::UserIntVersion), foundIntVersion);
+    ok = getVarInt(m_db.get(), DatabaseMetaDataKey::encode(foundId, DatabaseMetaDataKey::UserIntVersion), foundIntVersion);
     if (!ok)
         return false;
     if (foundIntVersion == IDBDatabaseMetadata::DefaultIntVersion)
