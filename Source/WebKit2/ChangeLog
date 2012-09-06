@@ -1,3 +1,22 @@
+2012-09-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] [WK2] Crash when navigating between pages
+        https://bugs.webkit.org/show_bug.cgi?id=95949
+
+        Reviewed by Martin Robinson.
+
+        Do not trust isMainResource parameter in
+        webkitWebViewResourceLoadStarted(), because it's always true for
+        all subresources of pages loaded from the history cache. We can
+        simply assume that the first resource loaded for the main frame
+        is the main web view resource.
+
+        * UIProcess/API/gtk/WebKitResourceLoadClient.cpp:
+        (didInitiateLoadForResource):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewResourceLoadStarted):
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+
 2012-09-06  Balazs Kelemen  <kbalazs@webkit.org>
 
         [WK2] Crash in WebPageProxy::showPopupMenu if PageClient does not implement createPopupMenuProxy
