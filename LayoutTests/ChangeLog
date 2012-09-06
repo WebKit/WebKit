@@ -1,3 +1,10 @@
+2012-09-06  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed gardening. Skip failing test: fast/dom/HTMLScriptElement/script-reexecution.html
+        https://bugs.webkit.org/show_bug.cgi?id=95944
+
+        * platform/win/Skipped:
+
 2012-09-06  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add the local and remote description functionality to RTCPeerConnection

@@ -2214,3 +2214,6 @@ media/video-set-rate-from-pause.html
 media/video-src-change.html
 media/video-timeupdate-reverse-play.html
 media/W3C/video/src/src_removal_does_not_trigger_loadstart.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=95944
+fast/dom/HTMLScriptElement/script-reexecution.html
