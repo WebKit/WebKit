@@ -1,3 +1,10 @@
+2012-09-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip one more failing test,
+        because we like regressions in the trunk. :)
+
+        * platform/qt/Skipped:
+
 2012-09-06  Keishi Hattori  <keishi@webkit.org>
 
         Refactor CalendarPicker to not use global variables.

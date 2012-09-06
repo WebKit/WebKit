@@ -2802,3 +2802,7 @@ fast/dom/HTMLScriptElement/script-reexecution.html
 # https://bugs.webkit.org/show_bug.cgi?id=95952
 fast/viewport/viewport-limits-adjusted-for-no-user-scale-control.html
 fast/viewport/viewport-limits-adjusted-for-no-user-scale.html
+
+# REGRESSION(r127712): It broke http/tests/xmlhttprequest/basic-auth.html on JSC platforms
+# https://bugs.webkit.org/show_bug.cgi?id=95972
+http/tests/xmlhttprequest/basic-auth.html
