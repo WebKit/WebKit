@@ -1133,12 +1133,8 @@ static inline HTTPHeaderMap parseRFC822HeaderFields(const Vector<char>& buffer, 
                     value = String(colon, eol - colon);
 
                 String oldValue = headerFields.get(lastKey);
-                if (!oldValue.isNull()) {
-                    String tmp = oldValue;
-                    tmp += ", ";
-                    tmp += value;
-                    value = tmp;
-                }
+                if (!oldValue.isNull())
+                    value = oldValue + ", " + value;
 
                 headerFields.set(lastKey, value);
             }
