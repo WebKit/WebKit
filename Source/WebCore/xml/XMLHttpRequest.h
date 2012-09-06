@@ -83,10 +83,10 @@ public:
     State readyState() const;
     bool withCredentials() const { return m_includeCredentials; }
     void setWithCredentials(bool, ExceptionCode&);
-    void open(const String& method, const KURL&, ExceptionCode&);
-    void open(const String& method, const KURL&, bool async, ExceptionCode&);
-    void open(const String& method, const KURL&, bool async, const String& user, ExceptionCode&);
-    void open(const String& method, const KURL&, bool async, const String& user, const String& password, ExceptionCode&);
+    void open(const String& method, const String& url, ExceptionCode&);
+    void open(const String& method, const String& url, bool async, ExceptionCode&);
+    void open(const String& method, const String& url, bool async, const String& user, ExceptionCode&);
+    void open(const String& method, const String& url, bool async, const String& user, const String& password, ExceptionCode&);
     void send(ExceptionCode&);
     void send(Document*, ExceptionCode&);
     void send(const String&, ExceptionCode&);
@@ -137,6 +137,8 @@ public:
 
 private:
     XMLHttpRequest(ScriptExecutionContext*, PassRefPtr<SecurityOrigin>);
+
+    void internalOpen(const String& method, const KURL&, bool async, ExceptionCode&);
 
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
