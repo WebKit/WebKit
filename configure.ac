@@ -615,22 +615,6 @@ AC_ARG_ENABLE(channel_messaging,
               [],[enable_channel_messaging="yes"])
 AC_MSG_RESULT([$enable_channel_messaging])
 
-# check whether to enable legacy notifications
-AC_MSG_CHECKING([whether to enable legacy notifications])
-AC_ARG_ENABLE(legacy_notifications,
-              AC_HELP_STRING([--enable-legacy-notifications],
-                             [enable legacy notifications [default=no]]),
-              [],[enable_legacy_notifications="no"])
-AC_MSG_RESULT([$enable_legacy_notifications])
-
-# check whether to enable notifications
-AC_MSG_CHECKING([whether to enable notifications])
-AC_ARG_ENABLE(notifications,
-              AC_HELP_STRING([--enable-notifications],
-                             [enable notifications [default=no]]),
-              [],[enable_notifications="no"])
-AC_MSG_RESULT([$enable_notifications])
-
 # check whether to enable the meter tag
 AC_MSG_CHECKING([whether to enable HTML5 meter tag])
 AC_ARG_ENABLE(meter_tag,
@@ -638,22 +622,6 @@ AC_ARG_ENABLE(meter_tag,
                              [enable HTML5 meter [default=yes]]),
               [],[enable_meter_tag="yes"])
 AC_MSG_RESULT([$enable_meter_tag])
-
-# check whether to enable HTML5 Microdata support
-AC_MSG_CHECKING([whether to enable HTML5 Microdata support])
-AC_ARG_ENABLE(microdata,
-              AC_HELP_STRING([--enable-microdata],
-                             [enable HTML5 microdata support [default=no]]),
-              [],[enable_microdata="no"])
-AC_MSG_RESULT([$enable_microdata])
-
-# check whether to enable page visibility API.
-AC_MSG_CHECKING([whether to enable Page Visibility API support])
-AC_ARG_ENABLE(page_visibility_api,
-              AC_HELP_STRING([--enable-page-visibility-api],
-                             [enable page visibility api[default=no]]),
-              [],[enable_page_visibility_api="no"])
-AC_MSG_RESULT([$enable_page_visibility_api])
 
 # check whether to enable the progress tag
 AC_MSG_CHECKING([whether to enable HTML5 progress tag])
@@ -684,14 +652,6 @@ if test "$enable_gamepad" = "yes" && test "$os_linux" = no; then
    enable_gamepad=no;
 fi
 
-# check whether to build with data transfer items support
-AC_MSG_CHECKING([whether to enable HTML5 data transfer items support])
-AC_ARG_ENABLE(data_transfer_items,
-              AC_HELP_STRING([--enable-data-transfer-items],
-                             [enable HTML5 data transfer items support [default=no]]),
-              [],[enable_data_transfer_items="no"])
-AC_MSG_RESULT([$enable_data_transfer_items])
-
 # check whether to enable DOM mutation observer support
 AC_MSG_CHECKING([whether to enable DOM mutation observer support])
 AC_ARG_ENABLE(mutation_observers,
@@ -708,30 +668,6 @@ AC_ARG_ENABLE(indexed_database,
               [],[enable_indexed_database="no"])
 AC_MSG_RESULT([$enable_indexed_database])
 
-# check whether to enable the color input
-AC_MSG_CHECKING([whether to enable the color input])
-AC_ARG_ENABLE(input_type_color,
-              AC_HELP_STRING([--enable-input-type-color],
-                             [enable the color input [default=no]]),
-              [],[enable_input_type_color="no"])
-AC_MSG_RESULT([$enable_input_type_color])
-
-# check whether to enable the speech input API
-AC_MSG_CHECKING([whether to enable the speech input API])
-AC_ARG_ENABLE(input_speech,
-              AC_HELP_STRING([--enable-input-speech],
-                             [enable the speech input API [default=no]]),
-              [],[enable_input_speech="no"])
-AC_MSG_RESULT([$enable_input_speech])
-
-# check whether to enable the scripted speech API
-AC_MSG_CHECKING([whether to enable the scripted speech API])
-AC_ARG_ENABLE(scripted_speech,
-              AC_HELP_STRING([--enable-scripted-speech],
-                             [enable the scripted speech API [default=no]]),
-              [],[enable_scripted_speech="no"])
-AC_MSG_RESULT([$enable_scripted_speech])
-
 # check whether to build with SQL database support
 AC_MSG_CHECKING([whether to enable SQL client-side database storage support])
 AC_ARG_ENABLE(sql_database,
@@ -747,14 +683,6 @@ AC_ARG_ENABLE(icon_database,
                              [enable icon database [default=yes]]),
               [],[enable_icon_database="yes"])
 AC_MSG_RESULT([$enable_icon_database])
-
-# check whether to enable HTML5 datalist support
-AC_MSG_CHECKING([whether to enable HTML5 datalist support])
-AC_ARG_ENABLE(datalist,
-              AC_HELP_STRING([--enable-datalist],
-                             [enable HTML5 datalist support [default=yes]]),
-              [],[enable_datalist="yes"])
-AC_MSG_RESULT([$enable_datalist])
 
 # check whether to enable HTML5 iframe seamless attribute support
 AC_MSG_CHECKING([whether to enable HTML5 iframe seamless attribute support])
@@ -784,22 +712,6 @@ AC_ARG_ENABLE(video_track,
                              [enable HTML5 video track support [default=no]]),
               [],[enable_video_track=$enable_unstable_features])
 AC_MSG_RESULT([$enable_video_track])
-
-# check whether to enable media source support
-AC_MSG_CHECKING([whether to enable media source support])
-AC_ARG_ENABLE(media_source,
-              AC_HELP_STRING([--enable-media-source],
-                             [enable support for media source [default=no]]),
-              [], [enable_media_source="no"])
-AC_MSG_RESULT([$enable_media_source])
-
-# check whether to enable media statistics support
-AC_MSG_CHECKING([whether to enable media statistics support])
-AC_ARG_ENABLE(media_statistics,
-              AC_HELP_STRING([--enable-media-statistics],
-                             [enable support for media statistics [default=no]]),
-              [], [enable_media_statistics="no"])
-AC_MSG_RESULT([$enable_media_statistics])
 
 # check whether to enable Javascript Fullscreen API support
 AC_MSG_CHECKING([whether to enable Fullscreen API support])
@@ -881,38 +793,6 @@ AC_ARG_ENABLE(workers,
               [],[enable_workers="yes"])
 AC_MSG_RESULT([$enable_workers])
 
-# check whether to enable directory upload support
-AC_MSG_CHECKING([whether to enable directory upload support])
-AC_ARG_ENABLE(directory_upload,
-              AC_HELP_STRING([--enable-directory-upload],
-                             [enable support for directory upload [default=no]]),
-              [], [enable_directory_upload="no"])
-AC_MSG_RESULT([$enable_directory_upload])
-
-# check whether to enable HTML5 FileSystem API support
-AC_MSG_CHECKING([whether to enable HTML5 FileSystem API support])
-AC_ARG_ENABLE(file_system,
-              AC_HELP_STRING([--enable-file-system],
-                             [enable support for HTML5 FileSystem API [default=no]]),
-              [], [enable_file_system="no"])
-AC_MSG_RESULT([$enable_file_system])
-
-# check whether to enable HTML5 <style scoped> support
-AC_MSG_CHECKING([whether to enable HTML5 <style scoped> support])
-AC_ARG_ENABLE(style_scoped,
-              AC_HELP_STRING([--enable-style-scoped],
-                             [enable support for HTML5 <style scoped> [default=no]]),
-              [], [enable_style_scoped="no"])
-AC_MSG_RESULT([$enable_style_scoped])
-
-# check whether to enable Quota API support
-AC_MSG_CHECKING([whether to enable Quota API support])
-AC_ARG_ENABLE(quota,
-              AC_HELP_STRING([--enable-quota],
-                             [enable support for Quota API [default=no]]),
-              [], [enable_quota="no"])
-AC_MSG_RESULT([$enable_quota])
-
 # turn off svg features if --disable-svg is requested
 if test "$enable_svg" = "no"; then
    enable_svg_fonts=no
@@ -988,14 +868,6 @@ AC_ARG_ENABLE(legacy_webkit_blob_builder,
               [],[enable_legacy_webkit_blob_builder="yes"])
 AC_MSG_RESULT([$legacy_webkit_blob_builder])
 
-# check whether to enable Fast Mobile Scrolling support
-AC_MSG_CHECKING([whether to enable Fast Mobile Scrolling])
-AC_ARG_ENABLE(fast_mobile_scrolling,
-              AC_HELP_STRING([--enable-fast-mobile-scrolling],
-                             [enable support for Fast Mobile Scrolling [default=no]]),
-              [],[enable_fast_mobile_scrolling="no"])
-AC_MSG_RESULT([$enable_fast_mobile_scrolling])
-
 # check whether to enable code coverage
 AC_MSG_CHECKING([whether to enable code coverage support])
 AC_ARG_ENABLE(coverage,
@@ -1003,14 +875,6 @@ AC_ARG_ENABLE(coverage,
                              [enable code coverage support [default=no]]),
               [],[enable_coverage="no"])
 AC_MSG_RESULT([$enable_coverage])
-
-# check whether to enable CSS3 text decoration support
-AC_MSG_CHECKING([whether to enable CSS3 text decoration support])
-AC_ARG_ENABLE(css3_text_decoration,
-              AC_HELP_STRING([--enable-css3-text-decoration],
-                             [enable CSS3 text decoration support [default=no]]),
-              [],[enable_css3_text_decoration=$enable_unstable_features])
-AC_MSG_RESULT([$enable_css3_text_decoration])
 
 # check whether to enable FastMalloc
 AC_MSG_CHECKING([whether to enable optimized memory allocator])
@@ -1076,14 +940,6 @@ AC_ARG_ENABLE([introspection],
   [],[enable_introspection=no])
 AC_MSG_RESULT([$enable_introspection])
 
-# check whether to enable animation API
-AC_MSG_CHECKING([whether to enable Animation API support])
-AC_ARG_ENABLE(animation_api,
-              AC_HELP_STRING([--enable-animation-api],
-                             [enable support for Animation API (experimental) [default=no]]),
-              [], [enable_animation_api="no"])
-AC_MSG_RESULT([$enable_animation_api])
-
 # check whether to enable requestAnimationFrame support
 AC_MSG_CHECKING([whether to enable requestAnimationFrame support])
 AC_ARG_ENABLE(request_animation_frame,
@@ -1091,38 +947,6 @@ AC_ARG_ENABLE(request_animation_frame,
                              [enable support for requestAnimationFrame (experimental) [default=yes]]),
               [],[enable_request_animation_frame="yes"])
 AC_MSG_RESULT([$enable_request_animation_frame])
-
-# check whether to enable touch icon loading 
-AC_MSG_CHECKING([whether to enable touch icon loading])
-AC_ARG_ENABLE(touch_icon_loading,
-              AC_HELP_STRING([--enable-touch-icon-loading],
-                             [enable support for loading touch icons [default=no]]),
-              [], [enable_touch_icon_loading="no"])
-AC_MSG_RESULT([$enable_touch_icon_loading])
-
-# check whether to enable Register Protocol Handler support
-AC_MSG_CHECKING([whether to enable Register Protocol Handler])
-AC_ARG_ENABLE(register_protocol_handler,
-              AC_HELP_STRING([--enable-register-protocol-handler],
-                             [enable support for Register Protocol Handler (experimental) [default=no]]),
-              [],[enable_register_protocol_handler="no"])
-AC_MSG_RESULT([$enable_register_protocol_handler])
-
-# check whether to enable DeviceOrientation support
-AC_MSG_CHECKING([whether to enable DeviceOrientation])
-AC_ARG_ENABLE(device_orientation,
-              AC_HELP_STRING([--enable-device-orientation],
-                             [enable support for DeviceOrientation (experimental and incomplete) [default=no]]),
-              [],[enable_device_orientation="no"])
-AC_MSG_RESULT([$enable_device_orientation])
-
-# check whether to enable Text Autosizing support
-AC_MSG_CHECKING([whether to enable Text Autosizing])
-AC_ARG_ENABLE(text_autosizing,
-              AC_HELP_STRING([--enable-text-autosizing],
-                             [enable support for Text Autosizing (incomplete) [default=no]]),
-              [],[enable_text_autosizing="no"])
-AC_MSG_RESULT([$enable_text_autosizing])
 
 # check whether to enable CSS Exclusions support
 AC_MSG_CHECKING([whether to enable CSS Exclusions])
@@ -1139,22 +963,6 @@ AC_ARG_ENABLE(css_regions,
                              [enable support for CSS Regions [default=yes]]),
               [],[enable_css_regions="yes"])
 AC_MSG_RESULT([$enable_css_regions])
-
-# check whether to enable CSS Filters support
-AC_MSG_CHECKING([whether to enable CSS Filters])
-AC_ARG_ENABLE(css_filters,
-              AC_HELP_STRING([--enable-css-filters],
-                             [enable support for CSS Filters [default=no]]),
-              [],[enable_css_filters="no"])
-AC_MSG_RESULT([$enable_css_filters])
-
-# check whether to enable CSS Compositing support
-AC_MSG_CHECKING([whether to enable CSS Compositing])
-AC_ARG_ENABLE(css_compositing,
-              AC_HELP_STRING([--enable-css-compositing],
-                             [enable support for CSS Compositing[default=no]]),
-              [],[enable_css_compositing="no"])
-AC_MSG_RESULT([$enable_css_compositing])
 
 G_IR_SCANNER=
 G_IR_COMPILER=
@@ -1432,25 +1240,12 @@ AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_webgl" = "yes"])
 AM_CONDITIONAL([ENABLE_BLOB],[test "$enable_blob" = "yes"])
 AM_CONDITIONAL([ENABLE_LEGACY_WEBKIT_BLOB_BUILDER],[test "$enable_legacy_webkit_blob_builder" = "yes"])
 AM_CONDITIONAL([ENABLE_METER_ELEMENT],[test "$enable_meter_tag" = "yes"])
-AM_CONDITIONAL([ENABLE_MICRODATA],[test "$enable_microdata" = "yes"])
-AM_CONDITIONAL([ENABLE_PAGE_VISIBILITY_API],[test "$enable_page_visibility_api" = "yes"])
 AM_CONDITIONAL([ENABLE_PROGRESS_ELEMENT],[test "$enable_progress_tag" = "yes"])
 AM_CONDITIONAL([ENABLE_CHANNEL_MESSAGING],[test "$enable_channel_messaging" = "yes"])
 AM_CONDITIONAL([ENABLE_JAVASCRIPT_DEBUGGER],[test "$enable_javascript_debugger" = "yes"])
 AM_CONDITIONAL([ENABLE_GAMEPAD],[test "$enable_gamepad" = "yes"])
-AM_CONDITIONAL([ENABLE_DIRECTORY_UPLOAD],[test "$enable_directory_upload" = "yes"])
-AM_CONDITIONAL([ENABLE_DATA_TRANSFER_ITEMS],[test "$enable_data_transfer_items" = "yes"])
 AM_CONDITIONAL([ENABLE_SQL_DATABASE],[test "$enable_sql_database" = "yes"])
-AM_CONDITIONAL([ENABLE_DATALIST_ELEMENT],[test "$enable_datalist" = "yes"])
-AM_CONDITIONAL([ENABLE_DETAILS_ELEMENT],[test "$enable_details" = "yes"])
-AM_CONDITIONAL([ENABLE_FAST_MOBILE_SCROLLING],[test "$enable_fast_mobile_scrolling" = "yes"])
-AM_CONDITIONAL([ENABLE_FILE_SYSTEM],[test "$enable_file_system" = "yes"])
-AM_CONDITIONAL([ENABLE_STYLE_SCOPED],[test "$enable_style_scoped" = "yes"])
-AM_CONDITIONAL([ENABLE_QUOTA],[test "$enable_quota" = "yes"])
 AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
-AM_CONDITIONAL([ENABLE_INPUT_TYPE_COLOR],[test "$enable_input_type_color" = "yes"])
-AM_CONDITIONAL([ENABLE_INPUT_SPEECH],[test "$enable_input_speech" = "yes"])
-AM_CONDITIONAL([ENABLE_SCRIPTED_SPEECH],[test "$enable_scripted_speech" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_BOX_DECORATION_BREAK],[test "$enable_css_box_decoration_break" = "yes"])
 AM_CONDITIONAL([ENABLE_FILTERS],[test "$enable_filters" = "yes"])
@@ -1458,18 +1253,12 @@ AM_CONDITIONAL([ENABLE_GEOLOCATION], [test "$enable_geolocation" = "yes"])
 AM_CONDITIONAL([ENABLE_MATHML], [test "$enable_mathml" = "yes"])
 AM_CONDITIONAL([ENABLE_MHTML], [test "$enable_mhtml" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])
-AM_CONDITIONAL([ENABLE_MEDIA_SOURCE],[test "$enable_media_source" = "yes"])
-AM_CONDITIONAL([ENABLE_MEDIA_STATISTICS],[test "$enable_media_statistics" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO_TRACK],[test "$enable_video_track" = "yes"])
 AM_CONDITIONAL([ENABLE_FULLSCREEN_API],[test "$enable_fullscreen_api" = "yes"])
 AM_CONDITIONAL([ENABLE_MEDIA_STREAM],[test "$enable_media_stream" = "yes"])
-AM_CONDITIONAL([ENABLE_LEGACY_NOTIFICATIONS],[test "$enable_legacy_notifications" = "yes"])
-AM_CONDITIONAL([ENABLE_NOTIFICATIONS],[test "$enable_notifications" = "yes"])
-AM_CONDITIONAL([ENABLE_ORIENTATION_EVENTS],[test "$enable_orientation_events" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
-AM_CONDITIONAL([ENABLE_CSS3_TEXT_DECORATION],[test "$enable_css3_text_decoration" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
 AM_CONDITIONAL([ENABLE_WORKERS],[test "$enable_workers" = "yes"])
 AM_CONDITIONAL([ENABLE_SHADOW_DOM],[test "$enable_shadow_dom" = "yes"])
@@ -1482,19 +1271,11 @@ AM_CONDITIONAL([ENABLE_WEBKIT2],[test "$enable_webkit2" = "yes"])
 AM_CONDITIONAL([ENABLE_PLUGIN_PROCESS],[test "$enable_plugin_process" = "yes"])
 AM_CONDITIONAL([ENABLE_SPELLCHECK],[test "$enable_spellcheck" = "yes"])
 AM_CONDITIONAL([ENABLE_LINK_PREFETCH],[test "$enable_link_prefetch" = "yes"])
-AM_CONDITIONAL([ENABLE_ANIMATION_API],[test "$enable_animation_api" = "yes"])
 AM_CONDITIONAL([ENABLE_REQUEST_ANIMATION_FRAME],[test "$enable_request_animation_frame" = "yes"])
-AM_CONDITIONAL([ENABLE_TOUCH_ICON_LOADING],[test "$enable_touch_icon_loading" = "yes"])
-AM_CONDITIONAL([ENABLE_NAVIGATOR_CONTENT_UTILS],[test "$enable_navigator_content_utils" = "yes"])
-AM_CONDITIONAL([ENABLE_DEVICE_ORIENTATION],[test "$enable_device_orientation" = "yes"])
 AM_CONDITIONAL([ENABLE_MUTATION_OBSERVERS],[test "$enable_mutation_observers" = "yes"])
 AM_CONDITIONAL([ENABLE_IFRAME_SEAMLESS],[test "$enable_iframe_seamless" = "yes"])
-AM_CONDITIONAL([ENABLE_TEXT_AUTOSIZING],[test "$enable_text_autosizing" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_EXCLUSIONS],[test "$enable_css_exclusions" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_REGIONS],[test "$enable_css_regions" = "yes"])
-AM_CONDITIONAL([ENABLE_CSS_FILTERS],[test "$enable_css_filters" = "yes"])
-AM_CONDITIONAL([ENABLE_CSS_COMPOSITING],[test "$enable_css_compositing" = "yes"])
-AM_CONDITIONAL([ENABLE_WIDGET_REGION],[test "$enable_widget_region" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
@@ -1548,29 +1329,18 @@ Build configuration:
 Features:
 =======
  Accelerated Compositing                                  : $enable_accelerated_compositing
- Animation API                                            : $enable_animation_api
  Blob support                                             : $enable_blob
- CSS Compositing support                                  : $enable_css_compositing
  CSS Exclusions support                                   : $enable_css_exclusions
- CSS Filters support                                      : $enable_css_filters
  CSS Regions support                                      : $enable_css_regions
  CSS box-decoration-break support                         : $enable_css_box_decoration_break
- CSS3 Text Decoration support                             : $enable_css3_text_decoration
- Color input support                                      : $enable_input_type_color
  DOM mutation observer support                            : $enable_mutation_observers
- DeviceOrientation support                                : $enable_device_orientation
- Directory upload                                         : $enable_directory_upload
- Fast Mobile Scrolling                                    : $enable_fast_mobile_scrolling
  Filters support                                          : $enable_filters
  Fullscreen API support                                   : $enable_fullscreen_api
  Gamepad support                                          : $enable_gamepad
  Geolocation support                                      : $enable_geolocation
- HTML5 FileSystem API support                             : $enable_file_system
  HTML5 channel messaging support                          : $enable_channel_messaging
- HTML5 data transfer items support                        : $enable_data_transfer_items
  HTML5 iframe seamless attribute support                  : $enable_iframe_seamless
  HTML5 meter element support                              : $enable_meter_tag
- HTML5 microdata support                                  : $enable_microdata
  HTML5 progress element support                           : $enable_progress_tag
  HTML5 track element support                              : $enable_video_track
  HTML5 video element support                              : $enable_video
@@ -1581,30 +1351,20 @@ Features:
  Link prefetch support                                    : $enable_link_prefetch
  MHTML support                                            : $enable_mhtml
  MathML support                                           : $enable_mathml
- Media source                                             : $enable_media_source
- Media statistics                                         : $enable_media_statistics
  Media stream support                                     : $enable_media_stream
  Opcode stats                                             : $enable_opcode_stats
- Page Visibility API support                              : $enable_page_visibility_api
- Quota API support                                        : $enable_quota
- Register Protocol Handler support                        : $enable_register_protocol_handler
  RequestAnimationFrame support                            : $enable_request_animation_frame
  SQL client-side database storage support                 : $enable_sql_database
  SVG fonts support                                        : $enable_svg_fonts
  SVG support                                              : $enable_svg
- Scripted speech support                                  : $enable_scripted_speech
  Shadow DOM support                                       : $enable_shadow_dom
  SharedWorkers support                                    : $enable_shared_workers
- Speech input support                                     : $enable_input_speech
  Spellcheck support                                       : $enable_spellcheck
- Text Autosizing support                                  : $enable_text_autosizing
- Touch Icon Loading support                               : $enable_touch_icon_loading
  Web Audio support                                        : $enable_web_audio
  Web Sockets support                                      : $enable_web_sockets
  Web Timing support                                       : $enable_web_timing
  Web Workers support                                      : $enable_workers
  WebGL                                                    : $enable_webgl
- Widget region support                                    : $enable_widget_region
  XSLT support                                             : $enable_xslt
 
 WebKit2 support:

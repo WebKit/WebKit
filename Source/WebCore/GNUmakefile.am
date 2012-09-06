@@ -129,15 +129,6 @@ feature_defines_overrides += ENABLE_CHANNEL_MESSAGING=0
 endif # END ENABLE_CHANNEL_MESSAGING
 
 # ---
-# Fast Mobile Scrolling
-# ---
-if ENABLE_FAST_MOBILE_SCROLLING
-feature_defines_overrides += ENABLE_FAST_MOBILE_SCROLLING=1
-else
-feature_defines_overrides += ENABLE_FAST_MOBILE_SCROLLING=0
-endif # END ENABLE_FAST_MOBILE_SCROLLING
-
-# ---
 # FreeType font backend
 # ---
 if USE_FREETYPE
@@ -162,15 +153,6 @@ if TARGET_WIN32
 webcoregtk_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/graphics/win
 endif # END TARGET_WIN32
-
-# ----
-# HTML Details Element
-# ----
-if ENABLE_DETAILS_ELEMENT
-feature_defines_overrides += ENABLE_DETAILS_ELEMENT=1
-else
-feature_defines_overrides += ENABLE_DETAILS_ELEMENT=0
-endif # END ENABLE_DETAILS_ELEMENT
 
 # ----
 # HTML Meter Element
@@ -218,33 +200,6 @@ feature_defines_overrides += ENABLE_SQL_DATABASE=0
 endif # END ENABLE_SQL_DATABASE
 
 # ----
-# HTML5 datalist Support
-# ----
-if ENABLE_DATALIST_ELEMENT
-feature_defines_overrides += ENABLE_DATALIST_ELEMENT=1
-else
-feature_defines_overrides += ENABLE_DATALIST_ELEMENT=0
-endif # END ENABLE_DATALIST_ELEMENT
-
-# ----
-# HTML5 data transfer items support
-# ----
-if ENABLE_DATA_TRANSFER_ITEMS
-feature_defines_overrides += ENABLE_DATA_TRANSFER_ITEMS=1
-else
-feature_defines_overrides += ENABLE_DATA_TRANSFER_ITEMS=0
-endif # END ENABLE_DATA_TRANSFER_ITEMS
-
-# ----
-# HTML5 <style scoped> support
-# ----
-if ENABLE_STYLE_SCOPED
-feature_defines_overrides += ENABLE_STYLE_SCOPED=1
-else
-feature_defines_overrides += ENABLE_STYLE_SCOPED=0
-endif # END ENABLE_STYLE_SCOPED
-
-# ----
 # Indexed Database API support
 # ----
 if ENABLE_INDEXED_DATABASE
@@ -258,15 +213,6 @@ webcore_cppflags += -DWTF_USE_LEVELDB
 endif # END USE_LEVELDB
 
 # ----
-# Support for <input type="file" directory>
-# ----
-if ENABLE_DIRECTORY_UPLOAD
-feature_defines_overrides += ENABLE_DIRECTORY_UPLOAD=1
-else
-feature_defines_overrides += ENABLE_DIRECTORY_UPLOAD=0
-endif # END ENABLE_DIRECTORY_UPLOAD
-
-# ----
 # DOM mutation observer support
 # ----
 if ENABLE_MUTATION_OBSERVERS
@@ -276,60 +222,6 @@ feature_defines_overrides += ENABLE_MUTATION_OBSERVERS=0
 endif # END ENABLE_MUTATION_OBSERVERS
 
 # ----
-# FileSystem API support
-# ----
-if ENABLE_FILE_SYSTEM
-feature_defines_overrides += ENABLE_FILE_SYSTEM=1
-else
-feature_defines_overrides += ENABLE_FILE_SYSTEM=0
-endif # END ENABLE_FILE_SYSTEM
-
-# ----
-# Quota support
-# ----
-if ENABLE_QUOTA
-feature_defines_overrides += ENABLE_QUOTA=1
-else
-feature_defines_overrides += ENABLE_QUOTA=0
-endif # END ENABLE_QUOTA
-
-# ----
-# Touch Icon Loading
-# ----
-if ENABLE_TOUCH_ICON_LOADING
-feature_defines_overrides += ENABLE_TOUCH_ICON_LOADING=1
-else
-feature_defines_overrides += ENABLE_TOUCH_ICON_LOADING=0
-endif # END ENABLE_TOUCH_ICON_LOADING
-
-# ----
-# Color Input API support
-# ----
-if ENABLE_INPUT_TYPE_COLOR
-feature_defines_overrides += ENABLE_INPUT_TYPE_COLOR=1
-else
-feature_defines_overrides += ENABLE_INPUT_TYPE_COLOR=0
-endif # END ENABLE_INPUT_TYPE_COLOR
-
-# ----
-# Speech Input API support
-# ----
-if ENABLE_INPUT_SPEECH
-feature_defines_overrides += ENABLE_INPUT_SPEECH=1
-else
-feature_defines_overrides += ENABLE_INPUT_SPEECH=0
-endif # END ENABLE_INPUT_SPEECH
-
-# ----
-# Scripted Speech API support
-# ----
-if ENABLE_SCRIPTED_SPEECH
-feature_defines_overrides += ENABLE_SCRIPTED_SPEECH=1
-else
-feature_defines_overrides += ENABLE_SCRIPTED_SPEECH=0
-endif # END ENABLE_SCRIPTED_SPEECH
-
-# ----
 # Icon Database Support
 # ----
 if ENABLE_ICONDATABASE
@@ -337,15 +229,6 @@ feature_defines_overrides += -DENABLE_ICONDATABASE=1
 else
 feature_defines_overrides += -DENABLE_ICONDATABASE=0
 endif # END ENABLE_ICONDATABASE
-
-# ----
-# Orientation Events
-# ----
-if ENABLE_ORIENTATION_EVENTS
-feature_defines_overrides += ENABLE_ORIENTATION_EVENTS=1
-else
-feature_defines_overrides += ENABLE_ORIENTATION_EVENTS=0
-endif # END ENABLE_ORIENTATION_EVENTS
 
 # ----
 # Video Support
@@ -360,24 +243,6 @@ endif # END USE_GSTREAMER
 else
 feature_defines_overrides += ENABLE_VIDEO=0
 endif # END ENABLE_VIDEO
-
-# ----
-# Media Source Support
-# ----
-if ENABLE_MEDIA_SOURCE
-feature_defines_overrides += ENABLE_MEDIA_SOURCE=1
-else
-feature_defines_overrides += ENABLE_MEDIA_SOURCE=0
-endif # END ENABLE_MEDIA_SOURCE
-
-# ----
-# Media Statistics Support
-# ----
-if ENABLE_MEDIA_STATISTICS
-feature_defines_overrides += ENABLE_MEDIA_STATISTICS=1
-else
-feature_defines_overrides += ENABLE_MEDIA_STATISTICS=0
-endif # END ENABLE_MEDIA_STATISTICS
 
 # ----
 # Javascript Fullscreen Support
@@ -484,24 +349,6 @@ feature_defines_overrides += ENABLE_CSS_REGIONS=0
 endif # END ENABLE_CSS_REGIONS
 
 # ----
-# Filters
-# ----
-if ENABLE_CSS_FILTERS
-feature_defines_overrides += ENABLE_CSS_FILTERS=1
-else
-feature_defines_overrides += ENABLE_CSS_FILTERS=0
-endif # END ENABLE_CSS_FILTERS
-
-# ----
-# Compositing
-# ----
-if ENABLE_CSS_COMPOSITING
-feature_defines_overrides += ENABLE_CSS_COMPOSITING=1
-else
-feature_defines_overrides += ENABLE_CSS_COMPOSITING=0
-endif # END ENABLE_CSS_COMPOSITING
-
-# ----
 # Exclusions
 # ----
 if ENABLE_CSS_EXCLUSIONS
@@ -533,15 +380,6 @@ DerivedSources/WebCore/MathMLElementFactory.h: DerivedSources/WebCore/MathMLElem
 DerivedSources/WebCore/MathMLNames.h: DerivedSources/WebCore/MathMLNames.cpp
 DerivedSources/WebCore/MathMLElementFactory.cpp DerivedSources/WebCore/MathMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/mathml/mathtags.in $(WebCore)/mathml/mathattrs.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/mathml/mathtags.in --attrs $(WebCore)/mathml/mathattrs.in --factory --wrapperFactory --outputDir "$(GENSOURCES_WEBCORE)"
-
-# ----
-# Notifications support
-# ----
-if ENABLE_NOTIFICATIONS
-feature_defines_overrides += ENABLE_NOTIFICATIONS=1 ENABLE_LEGACY_NOTIFICATIONS=1
-else
-feature_defines_overrides += ENABLE_NOTIFICATIONS=0 ENABLE_LEGACY_NOTIFICATIONS=0
-endif # END ENABLE_NOTIFICATIONS
 
 # ----
 # SVG Support
@@ -615,15 +453,6 @@ feature_defines_overrides += ENABLE_LEGACY_WEBKIT_BLOB_BUILDER=0
 endif  # END ENABLE_LEGACY_WEBKIT_BLOB_BUILDER
 
 # ---
-# Animation API support
-# ---
-if ENABLE_ANIMATION_API
-feature_defines_overrides += ENABLE_ANIMATION_API=1
-else
-feature_defines_overrides += ENABLE_ANIMATION_API=0
-endif  # END ENABLE_ANIMATION_API
-
-# ---
 # RequestAnimationFrame support
 # ---
 if ENABLE_REQUEST_ANIMATION_FRAME
@@ -676,42 +505,6 @@ feature_defines_overrides += ENABLE_MHTML=0
 endif  # END ENABLE_MHTML
 
 # ---
-# HTML5 Microdata support
-# ---
-if ENABLE_MICRODATA
-feature_defines_overrides += ENABLE_MICRODATA=1
-else
-feature_defines_overrides += ENABLE_MICRODATA=0
-endif  # END ENABLE_MICRODATA
-
-# ---
-# Navigator Content Utils support
-# ---
-if ENABLE_NAVIGATOR_CONTENT_UTILS
-feature_defines_overrides += ENABLE_NAVIGATOR_CONTENT_UTILS=1
-else
-feature_defines_overrides += ENABLE_NAVIGATOR_CONTENT_UTILS=0
-endif  # END ENABLE_NAVIGATOR_CONTENT_UTILS
-
-# ---
-# DeviceOrientation support
-# ---
-if ENABLE_DEVICE_ORIENTATION
-feature_defines_overrides += ENABLE_DEVICE_ORIENTATION=1
-else
-feature_defines_overrides += ENABLE_DEVICE_ORIENTATION=0
-endif  # END ENABLE_DEVICE_ORIENTATION
-
-# ---
-# Text Autosizing support
-# ---
-if ENABLE_TEXT_AUTOSIZING
-feature_defines_overrides += ENABLE_TEXT_AUTOSIZING=1
-else
-feature_defines_overrides += ENABLE_TEXT_AUTOSIZING=0
-endif  # END ENABLE_TEXT_AUTOSIZING
-
-# ---
 # Web Timing support
 # ---
 if ENABLE_WEB_TIMING
@@ -730,14 +523,6 @@ feature_defines_overrides += ENABLE_IFRAME_SEAMLESS=0
 endif  # END ENABLE_IFRAME_SEAMLESS
 
 # ---
-# CSS3 Text Decoration support
-if ENABLE_CSS3_TEXT_DECORATION
-feature_defines_overrides += ENABLE_CSS3_TEXT_DECORATION=1
-else
-feature_defines_overrides += ENABLE_CSS3_TEXT_DECORATION=0
-endif # END ENABLE_CSS3_TEXT_DECORATION
-
-# ---
 # Link prefetch support
 # ---
 if ENABLE_LINK_PREFETCH
@@ -745,15 +530,6 @@ feature_defines_overrides += ENABLE_LINK_PREFETCH=1
 else
 feature_defines_overrides += ENABLE_LINK_PREFETCH=0
 endif  # END ENABLE_LINK_PREFETCH
-
-# ---
-# Widget region support
-# ---
-if ENABLE_WIDGET_REGION
-feature_defines_overrides += ENABLE_WIDGET_REGION=1
-else
-feature_defines_overrides += ENABLE_WIDGET_REGION=0
-endif  # END ENABLE_WIDGET_REGION
 
 # ---
 # Spell check support

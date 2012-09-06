@@ -1,3 +1,16 @@
+2012-09-06  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Remove configuration options for features that are not supported by the Gtk port
+        https://bugs.webkit.org/show_bug.cgi?id=87664
+
+        Reviewed by Martin Robinson.
+
+        Remove configuration options for features that are completely unsupported by the GTK port.
+        They only bloat the configure.ac file. They should be re-added when the feature becomes
+        supported and introduces an external dependency that the users might want to avoid.
+
+        * configure.ac:
+
 2012-09-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix build with ANGLE on platforms that provide EGL/GLESv2

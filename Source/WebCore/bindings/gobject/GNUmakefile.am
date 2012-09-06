@@ -434,17 +434,6 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMTrackEventPrivate.h
 endif
 
-if ENABLE_MICRODATA
-webkitgtk_built_h_api += \
-	$(top_builddir)/DerivedSources/webkit/WebKitDOMHTMLPropertiesCollection.h \
-	$(top_builddir)/DerivedSources/webkit/WebKitDOMPropertyNodeList.h
-webkitgtk_gdom_built_sources += \
-	DerivedSources/webkit/WebKitDOMHTMLPropertiesCollection.cpp \
-	DerivedSources/webkit/WebKitDOMHTMLPropertiesCollectionPrivate.h \
-	DerivedSources/webkit/WebKitDOMPropertyNodeList.cpp \
-	DerivedSources/webkit/WebKitDOMPropertyNodeListPrivate.h
-endif
-
 if ENABLE_WEB_TIMING
 webkitgtk_built_h_api += \
 	$(top_builddir)/DerivedSources/webkit/WebKitDOMPerformance.h \
