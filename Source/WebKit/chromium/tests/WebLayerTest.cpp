@@ -39,6 +39,7 @@
 #include <public/WebLayerTreeViewClient.h>
 #include <public/WebRect.h>
 #include <public/WebSize.h>
+#include <public/WebSolidColorLayer.h>
 
 #include <gmock/gmock.h>
 
@@ -140,7 +141,7 @@ TEST_F(WebLayerTest, Client)
     EXPECT_EQ(point, layer->position());
 
     // Texture layer.
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AnyNumber());
+    EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
     OwnPtr<WebExternalTextureLayer> textureLayer = adoptPtr(WebExternalTextureLayer::create());
     m_rootLayer->addChild(textureLayer->layer());
     Mock::VerifyAndClearExpectations(&m_client);
@@ -171,6 +172,13 @@ TEST_F(WebLayerTest, Client)
     contentLayer->layer()->setDrawsContent(false);
     Mock::VerifyAndClearExpectations(&m_client);
     EXPECT_FALSE(contentLayer->layer()->drawsContent());
+
+    // Solid color layer.
+    EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
+    OwnPtr<WebSolidColorLayer> solidColorLayer = adoptPtr(WebSolidColorLayer::create());
+    m_rootLayer->addChild(solidColorLayer->layer());
+    Mock::VerifyAndClearExpectations(&m_client);
+
 }
 
 class MockScrollClient : public WebLayerScrollClient {
