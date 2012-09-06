@@ -1,3 +1,32 @@
+2012-09-06  Iain Merrick  <husky@chromium.org>
+
+        [chromium] Add WebFrame::moveSelectionStart, moveSelectionEnd, moveCaret
+        https://bugs.webkit.org/show_bug.cgi?id=93998
+
+        Reviewed by Adam Barth.
+
+        These provide the same functionality selectRange(WebPoint, WebPoint),
+        with finer-grained control needed on the Android platform. By passing
+        allowCollapsedSelection=false, we can ensure the selection stays at
+        least one character wide.
+
+        I have reimplemented WebFrameImpl::selectRange(WebPoint, WebPoint) by
+        calling the new methods. The existing test passes, and I've added new
+        tests for the new methods.
+
+        * public/WebFrame.h:
+        (WebFrame):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::selectRange):
+        (WebKit):
+        (WebKit::WebFrameImpl::moveSelectionStart):
+        (WebKit::WebFrameImpl::moveSelectionEnd):
+        (WebKit::WebFrameImpl::moveCaret):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+        * tests/WebFrameTest.cpp:
+        * tests/data/text_selection.html: Added.
+
 2012-09-06  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] Enable different fling behaviour for touchscreen and touchpad

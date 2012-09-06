@@ -170,6 +170,7 @@
 #include "WebSecurityOrigin.h"
 #include "WebViewImpl.h"
 #include "XPathResult.h"
+#include "htmlediting.h"
 #include "markup.h"
 #include "painting/GraphicsContextBuilder.h"
 #include "platform/WebFloatPoint.h"
@@ -1465,22 +1466,67 @@ bool WebFrameImpl::selectWordAroundCaret()
 
 void WebFrameImpl::selectRange(const WebPoint& start, const WebPoint& end)
 {
-    VisiblePosition startPosition = visiblePositionForWindowPoint(start);
-    VisiblePosition endPosition = visiblePositionForWindowPoint(end);
+    if (start == end && moveCaret(start))
+        return;
 
-    // To correctly handle editable boundaries, we adjust the selection by setting its extent
-    // while keeping its base fixed. For a touch-based UI, this means that moving the selection
-    // handles behaves like a drag-select with the mouse, which is what we want here. If both
-    // endpoints changed, we need to set the extent twice.
-    // FIXME: the WebFrame::SelectRange API should explicitly state which endpoint is moving.
-    VisibleSelection newSelection = frame()->selection()->selection();
-    if (startPosition != newSelection.visibleStart())
-        newSelection = VisibleSelection(newSelection.visibleEnd(), startPosition);
-    if (endPosition != newSelection.visibleEnd())
-        newSelection = VisibleSelection(newSelection.visibleStart(), endPosition);
+    if (moveSelectionStart(start, true) && moveSelectionEnd(end, true))
+        return;
 
+    // Failed to move endpoints, probably because there's no current selection.
+    // Just set the selection explicitly (but this won't handle editable boundaries correctly).
+    VisibleSelection newSelection(visiblePositionForWindowPoint(start), visiblePositionForWindowPoint(end));    
     if (frame()->selection()->shouldChangeSelection(newSelection))
         frame()->selection()->setSelection(newSelection, CharacterGranularity);
+}
+
+bool WebFrameImpl::moveSelectionStart(const WebPoint& point, bool allowCollapsedSelection)
+{
+    const VisibleSelection& selection = frame()->selection()->selection();
+    if (selection.isNone())
+        return false;
+
+    VisiblePosition start = visiblePositionForWindowPoint(point);
+    if (!allowCollapsedSelection) {
+        VisiblePosition maxStart = selection.visibleEnd().previous();
+        if (comparePositions(start, maxStart) > 0)
+            start = maxStart;
+    }
+
+    // start is moving, so base=end, extent=start
+    VisibleSelection newSelection = VisibleSelection(selection.visibleEnd(), start);
+    frame()->selection()->setNonDirectionalSelectionIfNeeded(newSelection, CharacterGranularity);
+    return true;
+}
+
+bool WebFrameImpl::moveSelectionEnd(const WebPoint& point, bool allowCollapsedSelection)
+{
+    const VisibleSelection& selection = frame()->selection()->selection();
+    if (selection.isNone())
+        return false;
+
+    VisiblePosition end = visiblePositionForWindowPoint(point);
+    if (!allowCollapsedSelection) {
+        VisiblePosition minEnd = selection.visibleStart().next();
+        if (comparePositions(end, minEnd) < 0)
+            end = minEnd;
+    }
+
+    // end is moving, so base=start, extent=end
+    VisibleSelection newSelection = VisibleSelection(selection.visibleStart(), end);
+    frame()->selection()->setNonDirectionalSelectionIfNeeded(newSelection, CharacterGranularity);
+    return true;
+}
+
+bool WebFrameImpl::moveCaret(const WebPoint& point)
+{
+    FrameSelection* frameSelection = frame()->selection();
+    if (frameSelection->isNone() || !frameSelection->isContentEditable())
+        return false;
+
+    VisiblePosition pos = visiblePositionForWindowPoint(point);
+    frameSelection->setExtent(pos, UserTriggered);
+    frameSelection->setBase(frameSelection->extent(), UserTriggered);
+    return true;
 }
 
 void WebFrameImpl::selectRange(const WebRange& webRange)
