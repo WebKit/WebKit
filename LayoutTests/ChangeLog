@@ -1,3 +1,17 @@
+2012-09-06  Adam Barth  <abarth@webkit.org>
+
+        Chromium should call restrictScaleFactorToInitialScaleIfNotUserScalable unless/until userScalable is supported directly.
+        https://bugs.webkit.org/show_bug.cgi?id=91110
+
+        Reviewed by Tony Chang.
+
+        Test that the scale limits are clamped when user-scalable is set to no.
+
+        * fast/viewport/viewport-limits-adjusted-for-no-user-scale-control-expected.txt: Added.
+        * fast/viewport/viewport-limits-adjusted-for-no-user-scale-control.html: Added.
+        * fast/viewport/viewport-limits-adjusted-for-no-user-scale-expected.txt: Added.
+        * fast/viewport/viewport-limits-adjusted-for-no-user-scale.html: Added.
+
 2012-09-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r127700.

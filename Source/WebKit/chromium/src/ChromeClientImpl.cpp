@@ -653,6 +653,8 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
         args, settings->layoutFallbackWidth(), deviceRect.width, deviceRect.height,
         dpi / ViewportArguments::deprecatedTargetDPI, IntSize(deviceRect.width, deviceRect.height));
 
+    restrictScaleFactorToInitialScaleIfNotUserScalable(computed);
+
     if (m_webView->ignoreViewportTagMaximumScale()) {
         computed.maximumScale = max(computed.maximumScale, m_webView->maxPageScaleFactor);
         computed.userScalable = true;

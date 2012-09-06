@@ -1,0 +1,16 @@
+<head>
+    <meta name="viewport" content="width=device-width, user-scalable=yes, maximum-scale=3, minimum-scale=1">
+    <script>
+        function test() {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                var viewportConfiguation = internals.configurationForViewport(document, 1, 320, 480, 320, 352);
+                if (/userScalable true/.test(viewportConfiguation))
+                    alert("PASS");
+                else
+                    alert("FAIL: " + viewportConfiguation);
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

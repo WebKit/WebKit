@@ -1,3 +1,22 @@
+2012-09-06  Adam Barth  <abarth@webkit.org>
+
+        Chromium should call restrictScaleFactorToInitialScaleIfNotUserScalable unless/until userScalable is supported directly.
+        https://bugs.webkit.org/show_bug.cgi?id=91110
+
+        Reviewed by Tony Chang.
+
+        Prior to this patch, we were ignoring the user-scalable property of
+        viewport meta tags. This patch enforces the user-scalable property by
+        claming the minimum-scale and maximum-scale values, effectively
+        preventing user scaling. This approach isn't perfect, as discussed in
+        https://bugs.webkit.org/show_bug.cgi?id=70609, but it is an improvement
+        over the status quo.
+
+        This approach is also used by EFL, GTK, and Qt.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::dispatchViewportPropertiesDidChange):
+
 2012-09-05  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Add a copy() method to CCDrawQuad and CCSharedQuadState
