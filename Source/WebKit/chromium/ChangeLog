@@ -1,3 +1,17 @@
+2012-09-06  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Put chromium implementations of WTF symbols in separate static library
+        https://bugs.webkit.org/show_bug.cgi?id=95933
+
+        Reviewed by Adam Barth.
+
+        A few symbols from WTF are implemented in chromium on top of the chromium WebKit Platform API. These
+        implementation files are in WebKit/chromium/src and currently link into the webkit target, which in the
+        component build is a DLL. This moves these files into a static library that webkit depends on so targets can
+        statically link in wtf and these support files without depending directly on webkit.
+
+        * WebKit.gyp:
+
 2012-09-06  Iain Merrick  <husky@chromium.org>
 
         [chromium] Add WebFrame::moveSelectionStart, moveSelectionEnd, moveCaret

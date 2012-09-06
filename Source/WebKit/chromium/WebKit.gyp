@@ -71,13 +71,14 @@
             'type': 'static_library',
             'variables': { 'enable_wexit_time_destructors': 1, },
             'dependencies': [
-                '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
                 '../../Platform/Platform.gyp/Platform.gyp:webkit_platform',
+                '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
                 '<(chromium_src_dir)/skia/skia.gyp:skia',
+                '<(chromium_src_dir)/third_party/angle/src/build_angle.gyp:translator_glsl',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
                 '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
-                '<(chromium_src_dir)/third_party/angle/src/build_angle.gyp:translator_glsl',
                 '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
+                'webkit_wtf_support',
             ],
             'export_dependent_settings': [
                 '../../Platform/Platform.gyp/Platform.gyp:webkit_platform',
@@ -362,9 +363,6 @@
                 'src/DateTimeChooserImpl.h',
                 'src/ChromeClientImpl.cpp',
                 'src/ChromeClientImpl.h',
-                'src/ChromiumCurrentTime.cpp',
-                'src/ChromiumOSRandomSource.cpp',
-                'src/ChromiumThreading.cpp',
                 'src/ColorChooserUIController.cpp',
                 'src/ColorChooserUIController.h',
                 'src/CompositionUnderlineBuilder.h',
@@ -860,6 +858,29 @@
                     'sources/': [
                         ['include', '^src/linux/WebFontRendering\\.cpp$'],
                         ['include', '^src/linux/WebFontRenderStyle\\.cpp$'],
+                    ],
+                }],
+            ],
+        },
+        {
+            'target_name': 'webkit_wtf_support',
+            'type': 'static_library',
+            'dependencies': [
+                '../../Platform/Platform.gyp/Platform.gyp:webkit_platform',
+                '../../WTF/WTF.gyp/WTF.gyp:wtf',
+            ],
+            'defines': [
+                'WEBKIT_IMPLEMENTATION=1',
+            ],
+            'sources': [
+                'src/ChromiumCurrentTime.cpp',
+                'src/ChromiumOSRandomSource.cpp',
+                'src/ChromiumThreading.cpp',
+            ],
+            'conditions': [
+                ['component=="shared_library"', {
+                    'defines': [
+                        'WEBKIT_DLL',
                     ],
                 }],
             ],
