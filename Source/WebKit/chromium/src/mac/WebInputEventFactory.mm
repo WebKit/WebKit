@@ -608,7 +608,7 @@ WebKeyboardEvent WebInputEventFactory::keyboardEvent(NSEvent* event)
 
     int windowsKeyCode = windowsKeyCodeForKeyEvent(event);
     result.windowsKeyCode = WebKeyboardEvent::windowsKeyCodeWithoutLocation(windowsKeyCode);
-    result.modifiers |= WebKeyboardEvent::locationModifiersFromKeyCode(windowsKeyCode);
+    result.modifiers |= WebKeyboardEvent::locationModifiersFromWindowsKeyCode(windowsKeyCode);
     result.nativeKeyCode = [event keyCode];
 
     NSString* textStr = textFromEvent(event);

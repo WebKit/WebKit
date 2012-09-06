@@ -1,3 +1,16 @@
+2012-09-06  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Chromium Mac build fix after revision r127711
+        https://bugs.webkit.org/show_bug.cgi?id=95958
+
+        Unreviewed build fix.
+
+        This is a clear typo in the source file, so changing the function to
+        call locationModifiersFromWindowsKeyCode instead.
+
+        * src/mac/WebInputEventFactory.mm:
+        (WebKit::WebInputEventFactory::keyboardEvent):
+
 2012-09-06  Raymes Khoury  <raymes@chromium.org>
 
         Added modifiers to distinguish between left/right Shift/Ctrl/Alt in WebInputEvents
