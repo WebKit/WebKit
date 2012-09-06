@@ -1,3 +1,15 @@
+2012-09-06  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [CMake] Add notifications path to the WebKit2/CMakeLists.txt
+        https://bugs.webkit.org/show_bug.cgi?id=95843
+
+        Reviewed by Laszlo Gombos.
+
+        Add WebCore/Modules/Notifications to the WebKit2_INCLUDE_DIRECTORIES of WebKit2/CMakeLists.txt.
+        There are some build errors when ENABLE_NOTIFICATIONS feature is enabled.
+
+        * CMakeLists.txt:
+
 2012-09-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Various small Windows / MSVC build fixes
