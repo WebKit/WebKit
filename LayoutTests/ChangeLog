@@ -1,3 +1,10 @@
+2012-09-06  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skipping failing test: fast/forms/number/number-interactive-validation-required.html
+        Interactive form validation is not enabled on Windows. It's fine to skip this test.
+
+        * platform/win/Skipped:
+
 2012-09-06  David Barton  <dbarton@mathscribe.com>
 
         mathml.css: Add more { white-space: nowrap } declarations
