@@ -121,10 +121,11 @@ public:
     // graphics context to prevent freeing invalid resources.
     void discardResources();
 
+    void markContentsChanged() { m_contentsChanged = true; }
+
 #if USE(ACCELERATED_COMPOSITING)
     PlatformLayer* platformLayer();
     void prepareBackBuffer();
-    void markContentsChanged() { m_contentsChanged = true; }
     bool requiresCopyFromBackToFrontBuffer() const;
     unsigned frontColorBuffer() const;
     void paintCompositedResultsToCanvas(ImageBuffer*);
