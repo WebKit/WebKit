@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<p>
+Please run this with DumpRenderTree.
+</p>
+Test following mouse actions:
+<ul>
+    <li>Mouse click to focus field</li>
+    <li>Mouse click on spin button</li>
+</ul>
+<input id="input" type="time" style="font-family:ahem; font-size:16px;">
+<div id="console"></div>
+<script>
+description("Multiple fields UI of time input type with mouse events");
+var input = document.getElementById("input");
+
+function keyDown(key, modifiers)
+{
+    if (!window.eventSender)
+        return;
+    eventSender.keyDown(key, modifiers);
+}
+
+function mouseClick()
+{
+    if (!window.eventSender)
+        return;
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function mouseMoveTo(x, y)
+{
+    if (!window.eventSender)
+        return;
+    eventSender.mouseMoveTo(x + input.offsetLeft, y + input.offsetTop);
+}
+
+input.value = "01:23";
+input.blur();
+
+debug('= Focus to hour field =');
+mouseMoveTo(12, 14);
+mouseClick();
+keyDown('upArrow');
+shouldBeEqualToString('input.value', '02:23');
+
+debug('= Focus to minute field =');
+mouseMoveTo(70, 14);
+mouseClick();
+keyDown('upArrow');
+shouldBeEqualToString('input.value', '02:24');
+
+debug('= Click up part of spin button =');
+mouseMoveTo(input.offsetWidth - 10, 8);
+mouseClick();
+shouldBeEqualToString('input.value', '02:25');
+
+debug('= Click down part of spin button =');
+mouseMoveTo(input.offsetWidth - 10, input.offsetHeight - 8);
+mouseClick();
+shouldBeEqualToString('input.value', '02:24');
+
+debug('');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

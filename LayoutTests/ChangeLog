@@ -1,3 +1,23 @@
+2012-09-05  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] We should have mouse events test for multiple fields time input UI
+        https://bugs.webkit.org/show_bug.cgi?id=95829
+
+        Reviewed by Kent Tamura.
+
+        This patch adds test cases of mouse actions on multiple fields time
+        input UI.
+
+        The test checks:
+         - Mouse click to set focus to field under mouse pointer
+         - Mouse click on spin button
+
+        This patch affects ports which enable both ENABLE_INPUT_TYPE_TIME and
+        ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS.
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-mouse-events-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-mouse-events.html: Added.
+
 2012-09-05  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] unreviewed test expectation update
