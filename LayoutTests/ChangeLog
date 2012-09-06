@@ -1,3 +1,19 @@
+2012-09-06  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WKTR] addSelectionKey should be mapped to "Control" modifiers on other OSes than Mac
+        https://bugs.webkit.org/show_bug.cgi?id=95973
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip several test cases that are passing on WebKit2
+        now that "addSelectionKey" is properly mapped to
+        "Control" modifier on other OSes than Mac OS X, in
+        WKTR's EventSender.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/gtk-wk2/Skipped:
+        * platform/win-wk2/Skipped:
+
 2012-09-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         CSS 3 'overflow-wrap' property implementation

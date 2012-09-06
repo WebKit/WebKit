@@ -79,7 +79,6 @@ fast/events/keydown-numpad-keys.html
 fast/forms/implicit-submission.html
 fast/forms/select-type-ahead-non-latin.html
 fast/forms/listbox-typeahead-cyrillic.html
-fast/forms/listbox-selection.html
 fast/forms/listbox-typeahead-greek.html
 fast/forms/legend-access-key.html
 http/tests/xmlhttprequest/workers/abort-exception-assert.html
@@ -216,7 +215,6 @@ svg/custom/mouse-move-on-svg-container-standalone.svg
 svg/custom/mouse-move-on-svg-container.xhtml
 svg/custom/mouse-move-on-svg-root-standalone.svg
 svg/custom/mouse-move-on-svg-root.xhtml
-fast/forms/listbox-deselect-scroll.html
 
 # WebKit2 needs layoutTestController.setSmartInsertDeleteEnabled
 editing/selection/doubleclick-beside-cr-span.html

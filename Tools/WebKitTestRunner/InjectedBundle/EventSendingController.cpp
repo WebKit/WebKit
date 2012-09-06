@@ -49,8 +49,15 @@ static WKEventModifiers parseModifier(JSStringRef modifier)
         return kWKEventModifiersShiftKey;
     if (JSStringIsEqualToUTF8CString(modifier, "altKey"))
         return kWKEventModifiersAltKey;
-    if (JSStringIsEqualToUTF8CString(modifier, "metaKey") || JSStringIsEqualToUTF8CString(modifier, "addSelectionKey"))
+    if (JSStringIsEqualToUTF8CString(modifier, "metaKey"))
         return kWKEventModifiersMetaKey;
+    if (JSStringIsEqualToUTF8CString(modifier, "addSelectionKey")) {
+#if OS(MAC_OS_X)
+        return kWKEventModifiersMetaKey;
+#else
+        return kWKEventModifiersControlKey;
+#endif
+    }
     return 0;
 }
 

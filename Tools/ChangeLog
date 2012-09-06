@@ -1,3 +1,17 @@
+2012-09-06  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WKTR] addSelectionKey should be mapped to "Control" modifiers on other OSes than Mac
+        https://bugs.webkit.org/show_bug.cgi?id=95973
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Correctly map "addSelectionKey" to "Control" modifier
+        in WKTR's EventSender on other OSes than Mac OS X,
+        instead of mapping it to the "Meta" modifier.
+
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::parseModifier):
+
 2012-09-06  Balazs Kelemen  <kbalazs@webkit.org>
 
         [nrwt] Harden against empty stdout/stderr after stopping a crashed/timed out driver
