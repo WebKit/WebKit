@@ -43,6 +43,7 @@
 #include "IDBTracing.h"
 #include "IDBTransactionBackendImpl.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 

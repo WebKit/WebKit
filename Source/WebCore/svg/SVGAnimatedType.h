@@ -24,12 +24,12 @@
 #include "FloatRect.h"
 #include "SVGAngle.h"
 #include "SVGColor.h"
-#include "SVGElement.h"
 #include "SVGLength.h"
 #include "SVGLengthList.h"
 #include "SVGNumberList.h"
 #include "SVGPointList.h"
 #include "SVGPreserveAspectRatio.h"
+#include "SVGPropertyInfo.h"
 #include "SVGTransformList.h"
 
 namespace WebCore {

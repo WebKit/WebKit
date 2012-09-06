@@ -34,7 +34,6 @@
 #include "ColorSpace.h"
 #include "CounterDirectives.h"
 #include "DataRef.h"
-#include "FillLayer.h"
 #include "FontBaseline.h"
 #include "FontDescription.h"
 #include "GraphicsTypes.h"
@@ -75,7 +74,6 @@
 #include <wtf/Vector.h>
 
 #if ENABLE(CSS_FILTERS)
-#include "FilterOperations.h"
 #include "StyleFilterData.h"
 #endif
 
@@ -101,6 +99,10 @@ template<typename T, typename U> inline bool compareEqual(const T& t, const U& u
 namespace WebCore {
 
 using std::max;
+
+#if ENABLE(CSS_FILTERS)
+class FilterOperations;
+#endif
 
 class BorderData;
 class CounterContent;

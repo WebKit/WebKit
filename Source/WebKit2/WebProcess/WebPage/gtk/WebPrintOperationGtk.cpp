@@ -34,6 +34,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformContextCairo.h>
 #include <WebCore/PrintContext.h>
+#include <WebCore/ResourceError.h>
 #include <gtk/gtk.h>
 #include <wtf/Vector.h>
 #include <wtf/gobject/GOwnPtr.h>

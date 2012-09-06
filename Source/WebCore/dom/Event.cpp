@@ -26,6 +26,7 @@
 #include "EventDispatcher.h"
 #include "EventNames.h"
 #include "EventTarget.h"
+#include "MemoryInstrumentation.h"
 #include "UserGestureIndicator.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/text/AtomicString.h>

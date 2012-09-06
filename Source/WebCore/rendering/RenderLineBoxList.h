@@ -30,7 +30,7 @@
 #ifndef RenderLineBoxList_h
 #define RenderLineBoxList_h
 
-#include "RenderBox.h"
+#include "RenderObject.h"
 
 namespace WebCore {
 

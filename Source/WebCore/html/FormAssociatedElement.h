@@ -24,13 +24,18 @@
 #ifndef FormAssociatedElement_h
 #define FormAssociatedElement_h
 
-#include "HTMLElement.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class ContainerNode;
+class Document;
 class FormAttributeTargetObserver;
 class FormDataList;
+class HTMLElement;
 class HTMLFormElement;
+class Node;
+class ShadowRoot;
 class ValidationMessage;
 class ValidityState;
 class VisibleSelection;

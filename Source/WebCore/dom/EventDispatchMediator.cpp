@@ -33,6 +33,7 @@
 
 #include "Event.h"
 #include "EventDispatcher.h"
+#include "Node.h"
 
 namespace WebCore {
 

@@ -22,13 +22,12 @@
 #define SVGURIReference_h
 
 #if ENABLE(SVG)
-#include "SVGElement.h"
+#include "Document.h"
 #include "XLinkNames.h"
 
 namespace WebCore {
 
 class Attribute;
-class Document;
 class Element;
 
 class SVGURIReference {

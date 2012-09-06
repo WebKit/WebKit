@@ -24,17 +24,21 @@
 #ifndef Event_h
 #define Event_h
 
-#include "Clipboard.h"
 #include "DOMTimeStamp.h"
+#include "EventNames.h"
+#include <wtf/HashMap.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
+class Clipboard;
 class EventTarget;
 class EventDispatcher;
 class HTMLIFrameElement;
 class MemoryInstrumentation;
+class MemoryObjectInfo;
 
 struct EventInit {
     EventInit();

@@ -40,8 +40,9 @@
 // FIXME: Eventually this should move to WebCore.
 
 namespace WebCore {
-    class Frame;
-    class HTMLPlugInElement;
+class Frame;
+class HTMLPlugInElement;
+class RenderBoxModelObject;
 }
 
 namespace WebKit {

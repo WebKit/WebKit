@@ -40,12 +40,13 @@
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
-    class Frame;
-    class HTMLFrameOwnerElement;
+class Frame;
+class HTMLFrameOwnerElement;
+class IntRect;
 #if ENABLE(WEB_INTENTS)
-    class Intent;
+class Intent;
 #endif
-    class KURL;
+class KURL;
 }
 
 namespace WebKit {

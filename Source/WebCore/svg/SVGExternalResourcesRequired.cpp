@@ -24,6 +24,7 @@
 #include "SVGExternalResourcesRequired.h"
 
 #include "Attr.h"
+#include "SVGElement.h"
 #include "SVGNames.h"
 
 namespace WebCore {
