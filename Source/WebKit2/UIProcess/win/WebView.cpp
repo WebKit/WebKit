@@ -55,6 +55,7 @@
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <WebCore/WindowsTouch.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(CG)
@@ -1240,14 +1241,14 @@ static void compositionToUnderlines(const Vector<DWORD>& clauses, const Vector<B
 #define APPEND_ARGUMENT_NAME(name) \
     if (lparam & name) { \
         if (needsComma) \
-            result += ", "; \
-            result += #name; \
+            result.appendLiteral(", "); \
+        result.appendLiteral(#name); \
         needsComma = true; \
     }
 
 static String imeCompositionArgumentNames(LPARAM lparam)
 {
-    String result;
+    StringBuilder result;
     bool needsComma = false;
 
     APPEND_ARGUMENT_NAME(GCS_COMPATTR);
@@ -1265,7 +1266,7 @@ static String imeCompositionArgumentNames(LPARAM lparam)
     APPEND_ARGUMENT_NAME(CS_INSERTCHAR);
     APPEND_ARGUMENT_NAME(CS_NOMOVECARET);
 
-    return result;
+    return result.toString();
 }
 
 static String imeRequestName(WPARAM wparam)

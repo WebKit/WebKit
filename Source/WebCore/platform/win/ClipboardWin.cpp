@@ -147,9 +147,7 @@ static String filesystemPathFromUrlOrTitle(const String& url, const String& titl
         return String(static_cast<UChar*>(fsPathBuffer));
     }
 
-    String result(static_cast<UChar*>(fsPathBuffer));
-    result += String(extension);
-    return result;
+    return makeString(static_cast<const UChar*>(fsPathBuffer), extension);
 #endif
 }
 

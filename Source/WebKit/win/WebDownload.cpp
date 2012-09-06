@@ -148,7 +148,7 @@ HRESULT STDMETHODCALLTYPE WebDownload::bundlePathForTargetPath(
     if (bundle[bundle.length()-1] == '/')
         bundle.truncate(1);
 
-    bundle += DownloadBundle::fileExtension();
+    bundle.append(DownloadBundle::fileExtension());
     *bundlePath = SysAllocStringLen(bundle.characters(), bundle.length());
     if (!*bundlePath)
        return E_FAIL;

@@ -362,18 +362,20 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accKeyboardShortcut(VARIANT vChild
 
     static String accessKeyModifiers;
     if (accessKeyModifiers.isNull()) {
+        StringBuilder accessKeyModifiersBuilder;
         unsigned modifiers = EventHandler::accessKeyModifiers();
         // Follow the same order as Mozilla MSAA implementation:
         // Ctrl+Alt+Shift+Meta+key. MSDN states that keyboard shortcut strings
         // should not be localized and defines the separator as "+".
         if (modifiers & PlatformEvent::CtrlKey)
-            accessKeyModifiers += "Ctrl+";
+            accessKeyModifiersBuilder.appendLiteral("Ctrl+");
         if (modifiers & PlatformEvent::AltKey)
-            accessKeyModifiers += "Alt+";
+            accessKeyModifiersBuilder.appendLiteral("Alt+");
         if (modifiers & PlatformEvent::ShiftKey)
-            accessKeyModifiers += "Shift+";
+            accessKeyModifiersBuilder.appendLiteral("Shift+");
         if (modifiers & PlatformEvent::MetaKey)
-            accessKeyModifiers += "Win+";
+            accessKeyModifiersBuilder.appendLiteral("Win+");
+        accessKeyModifiers = accessKeyModifiersBuilder.toString();
     }
     *shortcut = BString(String(accessKeyModifiers + accessKey)).release();
     return S_OK;

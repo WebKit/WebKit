@@ -1,3 +1,19 @@
+2012-09-06  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove String::operator+=() from windows platform code
+        https://bugs.webkit.org/show_bug.cgi?id=95904
+
+        Reviewed by Benjamin Poulain.
+
+        Use StringBuilder and operator+() to concatenate strings instead of operator+=().
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accKeyboardShortcut):
+        * WebDownload.cpp:
+        (WebDownload::bundlePathForTargetPath):
+        * WebView.cpp:
+        (imeCompositionArgumentNames):
+
 2012-09-05  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         [DRT] LTC:: Move printing related APIs from LayoutTestController to Internals
