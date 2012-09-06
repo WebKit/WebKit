@@ -1,0 +1,31 @@
+Tests duration attribute on MediaSource object
+
+Test setting the duration when closed.
+Got expected exception Error: INVALID_STATE_ERR: DOM Exception 11
+Test getting the duration when closed.
+
+running testExpectExceptionOnNegativeDuration
+EVENT(webkitsourceopen)
+Got expected exception Error: INVALID_ACCESS_ERR: DOM Exception 15
+
+running testExpectExceptionOnNaNDuration
+EVENT(webkitsourceopen)
+Got expected exception Error: INVALID_ACCESS_ERR: DOM Exception 15
+
+running testDurationChange
+EVENT(webkitsourceopen)
+EVENT(loadedmetadata)
+EVENT(durationchange)
+
+running testDurationChangeThenOverwriteDuration
+EVENT(webkitsourceopen)
+EVENT(loadedmetadata)
+EVENT(durationchange)
+EVENT(durationchange)
+
+running testDurationChangeTruncates
+EVENT(webkitsourceopen)
+EVENT(loadedmetadata)
+EVENT(durationchange)
+END OF TEST
+

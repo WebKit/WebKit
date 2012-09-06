@@ -266,6 +266,7 @@ public:
     bool sourceRemoveId(const String& id);
     PassRefPtr<TimeRanges> sourceBuffered(const String& id);
     bool sourceAppend(const String& id, const unsigned char* data, unsigned length);
+    void sourceSetDuration(double);
     bool sourceAbort(const String& id);
     enum EndOfStreamStatus { EosNoError, EosNetworkError, EosDecodeError };
     void sourceEndOfStream(EndOfStreamStatus);

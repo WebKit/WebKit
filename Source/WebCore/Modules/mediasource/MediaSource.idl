@@ -43,6 +43,8 @@ module html {
         // Subset of sourceBuffers that provide data for the selected/enabled tracks.
         readonly attribute SourceBufferList activeSourceBuffers;
 
+        attribute double duration setter raises (DOMException);
+
         SourceBuffer addSourceBuffer(in DOMString type) raises (DOMException);
         void removeSourceBuffer(in SourceBuffer buffer) raises (DOMException);
 

@@ -186,6 +186,7 @@ public:
     virtual WebTimeRanges sourceBuffered(const WebString& id) { return WebTimeRanges(); };
     virtual bool sourceAppend(const WebString& id, const unsigned char* data, unsigned length) { return false; }
     virtual bool sourceAbort(const WebString& id) { return false; }
+    virtual void sourceSetDuration(double) { }
     virtual void sourceEndOfStream(EndOfStreamStatus)  { }
     virtual bool sourceSetTimestampOffset(const WebString& id, double offset) { return false; }
 

@@ -84,6 +84,24 @@ SourceBufferList* MediaSource::activeSourceBuffers()
     return m_activeSourceBuffers.get();
 }
 
+double MediaSource::duration() const
+{
+    return m_readyState == closedKeyword() ? std::numeric_limits<float>::quiet_NaN() : m_player->duration();
+}
+
+void MediaSource::setDuration(double duration, ExceptionCode& ec)
+{
+    if (duration < 0.0 || isnan(duration)) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    if (m_readyState != openKeyword()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    m_player->sourceSetDuration(duration);
+}
+
 SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec)
 {
     // 3.1 http://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#dom-addsourcebuffer

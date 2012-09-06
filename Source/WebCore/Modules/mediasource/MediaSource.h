@@ -54,6 +54,9 @@ public:
     SourceBufferList* sourceBuffers();
     SourceBufferList* activeSourceBuffers();
 
+    double duration() const;
+    void setDuration(double, ExceptionCode&);
+
     SourceBuffer* addSourceBuffer(const String& type, ExceptionCode&);
     void removeSourceBuffer(SourceBuffer*, ExceptionCode&);
 

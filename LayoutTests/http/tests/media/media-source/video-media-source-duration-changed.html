@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/media-resources/video-test.js"></script>
+        <script src="/media/resources/media-source/webm/segment-info.js"></script>
+        <script src="media-source.js"></script>
+        <script>
+            var segmentHelper = new MediaSourceTest.SegmentHelper(WebMSegmentInfo.testWebM, true);
+            var defaultSourceMimetype = segmentHelper.segmentInfo.type;
+
+            function expectExceptionOnSetDuration(value, error)
+            {
+                try {
+                    mediaSource.duration = value;
+                    failTest("Expected an exception");
+                } catch (e) {
+                    if (!(e.code == error)) {
+                        failTest("Unexpected exception " + e);
+                        throw e;
+                    }
+                    consoleWrite("Got expected exception " + e);
+                }
+            }
+
+            function testExpectExceptionOnSetDurationWhenClosed(mediaSource)
+            {
+                consoleWrite("Test setting the duration when closed.");
+                expectExceptionOnSetDuration(10, DOMException.INVALID_STATE_ERR);
+            }
+
+            function testExpectNaNOnGetDurationWhenClosed(mediaSource)
+            {
+                consoleWrite("Test getting the duration when closed.");
+                if (!isNaN(mediaSource.duration))
+                    failTest("Unexpected duration value. Expected NaN got " + mediaSource.duration);
+            }
+
+            function testExpectExceptionOnNegativeDuration(runNextTestCase, videoTag)
+            {
+                expectExceptionOnSetDuration(-1, DOMException.INVALID_ACCESS_ERR);
+                runNextTestCase();
+            }
+
+            function testExpectExceptionOnNaNDuration(runNextTestCase, videoTag)
+            {
+                expectExceptionOnSetDuration(NaN, DOMException.INVALID_ACCESS_ERR);
+                runNextTestCase();
+            }
+
+            function testDurationChange(runNextTestCase, videoTag)
+            {
+                segmentHelper.addSourceBuffer();
+                segmentHelper.appendInitSegment();
+
+                waitForEventOnce('loadedmetadata', function() {
+                    waitForEventOnce('durationchange', function() {
+                        MediaSourceTest.expectDuration(videoTag, mediaSource, 10);
+                        var expected_buffered = [];
+                        for (var i = 0; i < mediaSource.sourceBuffers.length; i++)
+                          MediaSourceTest.expectBufferedRange(mediaSource.sourceBuffers[i], expected_buffered);
+                        runNextTestCase();
+                    }, false, false, videoTag);
+                    mediaSource.duration = 10;
+
+                }, false, false, videoTag);
+            }
+
+            function testDurationChangeThenOverwriteDuration(runNextTestCase, videoTag)
+            {
+                segmentHelper.addSourceBuffer();
+                segmentHelper.appendInitSegment();
+
+                waitForEventOnce('loadedmetadata', function() {
+                    waitForEventOnce('durationchange', function() {
+                        MediaSourceTest.expectDuration(videoTag, mediaSource, 1);
+
+                        waitForEventOnce('durationchange', function() {
+                            MediaSourceTest.expectDuration(videoTag, mediaSource, 1.593);
+                            var expected_buffered = [[0, 1.593]];
+                            for (var i = 0; i < mediaSource.sourceBuffers.length; i++)
+                                MediaSourceTest.expectBufferedRange(mediaSource.sourceBuffers[i], expected_buffered);
+                            runNextTestCase();
+                        }, false, false, videoTag);
+                        var segments = segmentHelper.segmentInfo.media;
+                        for (var i = 0; i < segments.length; i++) {
+                            segmentHelper.appendMediaSegment(i);
+                            // Stop appending after exceeding 1s.
+                            if (segments[i].timecode > 1)
+                                break;
+                        }
+
+                    }, false, false, videoTag);
+                    mediaSource.duration = 1;
+
+                }, false, false, videoTag);
+            }
+
+            function testDurationChangeTruncates(runNextTestCase, videoTag)
+            {
+                segmentHelper.addSourceBuffer();
+                segmentHelper.appendInitSegment();
+
+                waitForEventOnce('loadedmetadata', function() {
+                    segmentHelper.appendAllMediaSegments();
+                    var segmentDuration = segmentHelper.segmentInfo.duration;
+                    MediaSourceTest.expectDuration(videoTag, mediaSource, segmentDuration);
+
+                    waitForEventOnce('durationchange', function() {
+                        MediaSourceTest.expectDuration(videoTag, mediaSource, 2);
+                        var expected_buffered = [[0,2]];
+                        for (var i = 0; i < mediaSource.sourceBuffers.length; i++)
+                          MediaSourceTest.expectBufferedRange(mediaSource.sourceBuffers[i], expected_buffered);
+                        runNextTestCase();
+                    }, false, false, videoTag);
+
+                    mediaSource.duration = 2;
+
+                }, false, false, videoTag);
+            }
+
+            function onLoad()
+            {
+                findMediaElement();
+
+                mediaSource = new WebKitMediaSource();
+                waitForEvent('webkitsourceopen', "", false, false, mediaSource);
+
+                testExpectExceptionOnSetDurationWhenClosed(mediaSource);
+                testExpectNaNOnGetDurationWhenClosed(mediaSource);
+
+                segmentHelper.init(video, function(success) {
+                    if (!success) {
+                        failTest("Failed to load segment data");
+                        return;
+                    }
+
+                    var testCases = [
+                        testExpectExceptionOnNegativeDuration,
+                        testExpectExceptionOnNaNDuration,
+                        testDurationChange,
+                        testDurationChangeThenOverwriteDuration,
+                        testDurationChangeTruncates,
+                    ];
+                    MediaSourceTest.startSourceOpenTesting(video, testCases);
+                });
+            }
+        </script>
+    </head>
+    <body onload="onLoad()">
+        <video> </video>
+        <p>Tests duration attribute on MediaSource object</p>
+    </body>
+</html>

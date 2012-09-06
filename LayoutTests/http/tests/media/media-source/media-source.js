@@ -1,7 +1,7 @@
 var MediaSourceTest = {};
 var mediaSource = new WebKitMediaSource();
 
-MediaSourceTest.SegmentHelper = function(segmentInfo)
+MediaSourceTest.SegmentHelper = function(segmentInfo, fullDuration)
 {
     this.MediaSegmentsToLoad = 0;
     this.sourceBuffer = null;
@@ -14,7 +14,7 @@ MediaSourceTest.SegmentHelper = function(segmentInfo)
     // Limit how many media segments we load based on time.
     var maxDuration = 3;
     for (var i in this.segmentInfo.media) {
-        if (this.segmentInfo.media[i].timecode > maxDuration)
+        if (!fullDuration && this.segmentInfo.media[i].timecode > maxDuration)
             break;
         this.MediaSegmentsToLoad++;
     }
@@ -135,6 +135,12 @@ MediaSourceTest.SegmentHelper.prototype.appendInitSegment = function()
 MediaSourceTest.SegmentHelper.prototype.appendMediaSegment = function(index)
 {
     this.sourceBuffer.append(this.mediaSegments[index]);
+};
+
+MediaSourceTest.SegmentHelper.prototype.appendAllMediaSegments = function()
+{
+    for (var i = 0; i < this.mediaSegments.length; i++)
+        this.appendMediaSegment(i);
 };
 
 MediaSourceTest.SegmentHelper.prototype.appendUntilEndOfStream = function(startIndex)
@@ -305,6 +311,37 @@ MediaSourceTest.expectReadyState = function(videoTag, expected)
         failTest("Unexpected ready state. Expected " +
                  MediaSourceTest.getReadyStateName(expected) +
                  " got " + MediaSourceTest.getReadyStateName(videoTag.readyState));
+    }
+};
+
+MediaSourceTest.roundedEquals_ = function(expected, actual)
+{
+    return expected.toFixed(3) == actual.toFixed(3);
+};
+
+MediaSourceTest.expectDuration = function(videoTag, mediaSource, expected)
+{
+    if (!this.roundedEquals_(expected, videoTag.duration))
+        failTest("Unexpected duration. Expected " + expected + " got " + videoTag.duration);
+    if (!this.roundedEquals_(expected, mediaSource.duration))
+        failTest("Unexpected duration. Expected " + expected + " got " + mediaSource.duration);
+};
+
+MediaSourceTest.expectBufferedRange = function(sourceBuffer, expected)
+{
+    if (sourceBuffer.buffered.length != expected.length)
+        failTest("Unexpected number of buffered regions. Expected " + expected.length + " got " + sourceBuffer.buffered.length);
+
+    for (var i = 0; i < expected.length; i++) {
+        var expectedStart = expected[i][0];
+        var expectedEnd = expected[i][1];
+        var actualStart = sourceBuffer.buffered.start(i);
+        var actualEnd = sourceBuffer.buffered.end(i);
+        if (!this.roundedEquals_(expectedStart, actualStart) ||
+            !this.roundedEquals_(expectedEnd, actualEnd)) {
+            failTest("Unexpected buffered region. Expected (" + expectedStart + ", " + expectedEnd + ") got ("
+                     + actualStart + ", " + actualEnd +")");
+        }
     }
 };
 

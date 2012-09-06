@@ -1,3 +1,21 @@
+2012-09-05  Victoria Kirst  <vrk@chromium.org>
+
+        Add the duration attribute to MediaSource
+        https://bugs.webkit.org/show_bug.cgi?id=95149
+
+        Reviewed by Eric Carlson.
+
+        Add support for the duration attribute recently added to the MediaSource spec.
+        http://dev.w3.org/html5/spec/media-elements.html#dom-media-duration
+
+        * public/WebMediaPlayer.h:
+        (WebKit::WebMediaPlayer::sourceSetDuration): Add empty definition.
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::sourceSetDuration): Forward call to m_webMediaPlayer.
+        (WebKit):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+
 2012-09-05  Mihai Parparita  <mihaip@chromium.org>
 
         [Chromium] history.{push,replace}State should no longer be V8EnabledAtRuntime

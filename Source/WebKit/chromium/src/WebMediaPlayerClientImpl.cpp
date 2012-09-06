@@ -443,6 +443,12 @@ bool WebMediaPlayerClientImpl::sourceAbort(const String& id)
     return m_webMediaPlayer->sourceAbort(id);
 }
 
+void WebMediaPlayerClientImpl::sourceSetDuration(double duration)
+{
+    if (m_webMediaPlayer)
+        m_webMediaPlayer->sourceSetDuration(duration);
+}
+
 void WebMediaPlayerClientImpl::sourceEndOfStream(WebCore::MediaPlayer::EndOfStreamStatus status)
 {
     if (m_webMediaPlayer)

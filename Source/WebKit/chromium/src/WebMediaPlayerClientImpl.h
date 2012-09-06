@@ -163,6 +163,7 @@ public:
     virtual WTF::PassRefPtr<WebCore::TimeRanges> sourceBuffered(const String&);
     virtual bool sourceAppend(const String&, const unsigned char* data, unsigned length);
     virtual bool sourceAbort(const String&);
+    virtual void sourceSetDuration(double);
     virtual void sourceEndOfStream(WebCore::MediaPlayer::EndOfStreamStatus);
     virtual bool sourceSetTimestampOffset(const String&, double offset);
 #endif

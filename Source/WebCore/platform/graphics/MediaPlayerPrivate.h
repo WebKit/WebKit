@@ -173,6 +173,7 @@ public:
     virtual bool sourceRemoveId(const String& id) { return false; }
     virtual bool sourceAppend(const String& id, const unsigned char* data, unsigned length) { return false; }
     virtual bool sourceAbort(const String& id) { return false; }
+    virtual void sourceSetDuration(double) { }
     virtual void sourceEndOfStream(MediaPlayer::EndOfStreamStatus) { };
     virtual bool sourceSetTimestampOffset(const String& id, double offset) { return false; }
 #endif
