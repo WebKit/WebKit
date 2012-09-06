@@ -1314,20 +1314,20 @@ void Position::debugPosition(const char* msg) const
 
 void Position::formatForDebugger(char* buffer, unsigned length) const
 {
-    String result;
-    
+    StringBuilder result;
+
     if (isNull())
-        result = "<null>";
+        result.appendLiteral("<null>");
     else {
         char s[1024];
-        result += "offset ";
-        result += String::number(m_offset);
-        result += " of ";
+        result.appendLiteral("offset ");
+        result.append(String::number(m_offset));
+        result.appendLiteral(" of ");
         deprecatedNode()->formatForDebugger(s, sizeof(s));
-        result += s;
+        result.append(s);
     }
-          
-    strncpy(buffer, result.utf8().data(), length - 1);
+
+    strncpy(buffer, result.toString().utf8().data(), length - 1);
 }
 
 void Position::showAnchorTypeAndOffset() const

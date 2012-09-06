@@ -36,6 +36,7 @@
 #include <stdio.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -671,23 +672,23 @@ void VisibleSelection::debugPosition() const
 
 void VisibleSelection::formatForDebugger(char* buffer, unsigned length) const
 {
-    String result;
+    StringBuilder result;
     String s;
-    
+
     if (isNone()) {
-        result = "<none>";
+        result.appendLiteral("<none>");
     } else {
         const int FormatBufferSize = 1024;
         char s[FormatBufferSize];
-        result += "from ";
+        result.appendLiteral("from ");
         start().formatForDebugger(s, FormatBufferSize);
-        result += s;
-        result += " to ";
+        result.append(s);
+        result.appendLiteral(" to ");
         end().formatForDebugger(s, FormatBufferSize);
-        result += s;
+        result.append(s);
     }
 
-    strncpy(buffer, result.utf8().data(), length - 1);
+    strncpy(buffer, result.toString().utf8().data(), length - 1);
 }
 
 void VisibleSelection::showTreeForThis() const

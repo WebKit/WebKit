@@ -2097,15 +2097,17 @@ FloatPoint Node::convertFromPage(const FloatPoint& p) const
 
 #ifndef NDEBUG
 
-static void appendAttributeDesc(const Node* node, String& string, const QualifiedName& name, const char* attrDesc)
+static void appendAttributeDesc(const Node* node, StringBuilder& stringBuilder, const QualifiedName& name, const char* attrDesc)
 {
-    if (node->isElementNode()) {
-        String attr = static_cast<const Element*>(node)->getAttribute(name);
-        if (!attr.isEmpty()) {
-            string += attrDesc;
-            string += attr;
-        }
-    }
+    if (!node->isElementNode())
+        return;
+
+    String attr = static_cast<const Element*>(node)->getAttribute(name);
+    if (attr.isEmpty())
+        return;
+
+    stringBuilder.append(attrDesc);
+    stringBuilder.append(attr);
 }
 
 void Node::showNode(const char* prefix) const
@@ -2118,10 +2120,10 @@ void Node::showNode(const char* prefix) const
         value.replace('\n', "\\n");
         fprintf(stderr, "%s%s\t%p \"%s\"\n", prefix, nodeName().utf8().data(), this, value.utf8().data());
     } else {
-        String attrs = "";
+        StringBuilder attrs;
         appendAttributeDesc(this, attrs, classAttr, " CLASS=");
         appendAttributeDesc(this, attrs, styleAttr, " STYLE=");
-        fprintf(stderr, "%s%s\t%p%s\n", prefix, nodeName().utf8().data(), this, attrs.utf8().data());
+        fprintf(stderr, "%s%s\t%p%s\n", prefix, nodeName().utf8().data(), this, attrs.toString().utf8().data());
     }
 }
 
@@ -2189,16 +2191,18 @@ static void traverseTreeAndMark(const String& baseIndent, const Node* rootNode, 
         if (node == markedNode2)
             fprintf(stderr, "%s", markedLabel2);
 
-        String indent = baseIndent;
+        StringBuilder indent;
+        indent.append(baseIndent);
         for (const Node* tmpNode = node; tmpNode && tmpNode != rootNode; tmpNode = tmpNode->parentOrHostNode())
-            indent += "\t";
-        fprintf(stderr, "%s", indent.utf8().data());
+            indent.append('\t');
+        fprintf(stderr, "%s", indent.toString().utf8().data());
         node->showNode();
+        indent.append('\t');
         if (node->isShadowRoot()) {
             if (ShadowRoot* youngerShadowRoot = toShadowRoot(node)->youngerShadowRoot())
-                traverseTreeAndMark(indent + "\t", youngerShadowRoot, markedNode1, markedLabel1, markedNode2, markedLabel2);
+                traverseTreeAndMark(indent.toString(), youngerShadowRoot, markedNode1, markedLabel1, markedNode2, markedLabel2);
         } else if (ShadowRoot* oldestShadowRoot = oldestShadowRootFor(node))
-            traverseTreeAndMark(indent + "\t", oldestShadowRoot, markedNode1, markedLabel1, markedNode2, markedLabel2);
+            traverseTreeAndMark(indent.toString(), oldestShadowRoot, markedNode1, markedLabel1, markedNode2, markedLabel2);
     }
 }
 
@@ -2218,13 +2222,13 @@ void Node::formatForDebugger(char* buffer, unsigned length) const
 {
     String result;
     String s;
-    
+
     s = nodeName();
-    if (s.length() == 0)
-        result += "<none>";
+    if (s.isEmpty())
+        result = "<none>";
     else
-        result += s;
-          
+        result = s;
+
     strncpy(buffer, result.utf8().data(), length - 1);
 }
 

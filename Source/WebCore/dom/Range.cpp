@@ -1652,31 +1652,30 @@ void Range::textQuads(Vector<FloatQuad>& quads, bool useSelectionHeight, RangeIn
 }
 
 #ifndef NDEBUG
-#define FormatBufferSize 1024
 void Range::formatForDebugger(char* buffer, unsigned length) const
 {
-    String result;
+    StringBuilder result;
     String s;
-    
+
     if (!m_start.container() || !m_end.container())
-        result = "<empty>";
+        result.appendLiteral("<empty>");
     else {
+        const int FormatBufferSize = 1024;
         char s[FormatBufferSize];
-        result += "from offset ";
-        result += String::number(m_start.offset());
-        result += " of ";
+        result.appendLiteral("from offset ");
+        result.append(String::number(m_start.offset()));
+        result.appendLiteral(" of ");
         m_start.container()->formatForDebugger(s, FormatBufferSize);
-        result += s;
-        result += " to offset ";
-        result += String::number(m_end.offset());
-        result += " of ";
+        result.append(s);
+        result.appendLiteral(" to offset ");
+        result.append(String::number(m_end.offset()));
+        result.appendLiteral(" of ");
         m_end.container()->formatForDebugger(s, FormatBufferSize);
-        result += s;
+        result.append(s);
     }
-          
-    strncpy(buffer, result.utf8().data(), length - 1);
+
+    strncpy(buffer, result.toString().utf8().data(), length - 1);
 }
-#undef FormatBufferSize
 #endif
 
 bool areRangesEqual(const Range* a, const Range* b)
