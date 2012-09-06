@@ -66,7 +66,6 @@
                 '<(chromium_src_dir)/base/base.gyp:test_support_base',
                 '<(chromium_src_dir)/third_party/zlib/zlib.gyp:zlib',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
-                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_user_agent',
             ],
             'sources': [
                 'tests/RunAllTests.cpp',
