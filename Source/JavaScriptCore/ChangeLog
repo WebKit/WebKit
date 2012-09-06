@@ -1,3 +1,10 @@
+2012-09-06  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for Interpreter after r127698.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
 2012-09-05  Geoffrey Garen  <ggaren@apple.com>
 
         Named functions should not allocate scope objects for their names

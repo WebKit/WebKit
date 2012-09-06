@@ -4259,7 +4259,7 @@ skip_id_custom_self:
         int shouldCheck = vPC[3].u.operand;
         ASSERT(codeBlock->codeType() != FunctionCode || !codeBlock->needsFullScopeChain() || callFrame->r(codeBlock->activationRegister()).jsValue());
         if (!shouldCheck || !callFrame->r(dst).jsValue())
-            callFrame->uncheckedR(dst) = JSValue(codeBlock->functionDecl(func)->make(callFrame, callFrame->scope()));
+            callFrame->uncheckedR(dst) = JSValue(JSFunction::create(callFrame, codeBlock->functionDecl(func), callFrame->scope()));
 
         vPC += OPCODE_LENGTH(op_new_func);
         NEXT_INSTRUCTION();
@@ -4277,7 +4277,7 @@ skip_id_custom_self:
         
         ASSERT(codeBlock->codeType() != FunctionCode || !codeBlock->needsFullScopeChain() || callFrame->r(codeBlock->activationRegister()).jsValue());
         FunctionExecutable* function = codeBlock->functionExpr(funcIndex);
-        JSFunction* func = function->make(callFrame, callFrame->scope());
+        JSFunction* func = JSFunction::create(callFrame, function, callFrame->scope());
 
         callFrame->uncheckedR(dst) = JSValue(func);
 
