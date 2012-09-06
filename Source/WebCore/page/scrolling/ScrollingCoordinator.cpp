@@ -361,22 +361,22 @@ void ScrollingCoordinator::recomputeWheelEventHandlerCount()
 
 bool ScrollingCoordinator::hasNonLayerFixedObjects(FrameView* frameView)
 {
-    const FrameView::FixedObjectSet* fixedObjects = frameView->fixedObjects();
-    if (!fixedObjects)
+    const FrameView::ViewportConstrainedObjectSet* viewportConstrainedObjects = frameView->viewportConstrainedObjects();
+    if (!viewportConstrainedObjects)
         return false;
 
 #if USE(ACCELERATED_COMPOSITING)
-    for (FrameView::FixedObjectSet::const_iterator it = fixedObjects->begin(), end = fixedObjects->end(); it != end; ++it) {
-        RenderObject* fixedObject = *it;
-        if (!fixedObject->isBoxModelObject() || !fixedObject->hasLayer())
+    for (FrameView::ViewportConstrainedObjectSet::const_iterator it = viewportConstrainedObjects->begin(), end = viewportConstrainedObjects->end(); it != end; ++it) {
+        RenderObject* viewportConstrainedObject = *it;
+        if (!viewportConstrainedObject->isBoxModelObject() || !viewportConstrainedObject->hasLayer())
             return true;
-        RenderBoxModelObject* fixedBoxModelObject = toRenderBoxModelObject(fixedObject);
-        if (!fixedBoxModelObject->layer()->backing())
+        RenderBoxModelObject* viewportConstrainedBoxModelObject = toRenderBoxModelObject(viewportConstrainedObject);
+        if (!viewportConstrainedBoxModelObject->layer()->backing())
             return true;
     }
     return false;
 #else
-    return fixedObjects->size();
+    return viewportConstrainedObjects->size();
 #endif
 }
 
@@ -386,7 +386,7 @@ void ScrollingCoordinator::updateShouldUpdateScrollLayerPositionOnMainThread()
 
     setShouldUpdateScrollLayerPositionOnMainThread(m_forceMainThreadScrollLayerPositionUpdates
         || frameView->hasSlowRepaintObjects()
-        || (!supportsFixedPositionLayers() && frameView->hasFixedObjects())
+        || (!supportsFixedPositionLayers() && frameView->hasViewportConstrainedObjects())
         || (supportsFixedPositionLayers() && hasNonLayerFixedObjects(frameView))
         || m_page->mainFrame()->document()->isImageDocument());
 }

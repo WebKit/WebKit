@@ -352,7 +352,7 @@ void RenderBoxModelObject::willBeDestroyed()
         if (RenderView* view = this->view()) {
             if (FrameView* frameView = view->frameView()) {
                 if (style()->hasViewportConstrainedPosition())
-                    frameView->removeFixedObject(this);
+                    frameView->removeViewportConstrainedObject(this);
             }
         }
     }
@@ -461,9 +461,9 @@ void RenderBoxModelObject::styleDidChange(StyleDifference diff, const RenderStyl
         bool oldStyleIsViewportConstrained = oldStyle && oldStyle->hasViewportConstrainedPosition();
         if (newStyleIsViewportConstained != oldStyleIsViewportConstrained) {
             if (newStyleIsViewportConstained && layer())
-                frameView->addFixedObject(this);
+                frameView->addViewportConstrainedObject(this);
             else
-                frameView->removeFixedObject(this);
+                frameView->removeViewportConstrainedObject(this);
         }
     }
 }

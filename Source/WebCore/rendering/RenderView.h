@@ -193,8 +193,6 @@ public:
 
     IntSize viewportSize() const { return document()->viewportSize(); }
 
-    void setFixedPositionedObjectsNeedLayout();
-
     void setRenderQuoteHead(RenderQuote* head) { m_renderQuoteHead = head; }
     RenderQuote* renderQuoteHead() const { return m_renderQuoteHead; }
 

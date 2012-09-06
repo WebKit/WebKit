@@ -937,19 +937,4 @@ RenderBlock::IntervalArena* RenderView::intervalArena()
     return m_intervalArena.get();
 }
 
-void RenderView::setFixedPositionedObjectsNeedLayout()
-{
-    ASSERT(m_frameView);
-
-    TrackedRendererListHashSet* positionedObjects = this->positionedObjects();
-    if (!positionedObjects)
-        return;
-
-    TrackedRendererListHashSet::const_iterator end = positionedObjects->end();
-    for (TrackedRendererListHashSet::const_iterator it = positionedObjects->begin(); it != end; ++it) {
-        RenderBox* currBox = *it;
-        currBox->setNeedsLayout(true);
-    }
-}
-
 } // namespace WebCore

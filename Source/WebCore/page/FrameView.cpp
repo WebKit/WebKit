@@ -1336,7 +1336,7 @@ void FrameView::adjustMediaTypeForPrinting(bool printing)
 
 bool FrameView::useSlowRepaints(bool considerOverlap) const
 {
-    bool mustBeSlow = m_slowRepaintObjectCount > 0 || (platformWidget() && hasFixedObjects());
+    bool mustBeSlow = m_slowRepaintObjectCount > 0 || (platformWidget() && hasViewportConstrainedObjects());
 
     // FIXME: WidgetMac.mm makes the assumption that useSlowRepaints ==
     // m_contentIsOpaque, so don't take the fast path for composited layers
@@ -1421,13 +1421,13 @@ void FrameView::removeSlowRepaintObject()
     }
 }
 
-void FrameView::addFixedObject(RenderObject* object)
+void FrameView::addViewportConstrainedObject(RenderObject* object)
 {
-    if (!m_fixedObjects)
-        m_fixedObjects = adoptPtr(new FixedObjectSet);
+    if (!m_viewportConstrainedObjects)
+        m_viewportConstrainedObjects = adoptPtr(new ViewportConstrainedObjectSet);
 
-    if (!m_fixedObjects->contains(object)) {
-        m_fixedObjects->add(object);
+    if (!m_viewportConstrainedObjects->contains(object)) {
+        m_viewportConstrainedObjects->add(object);
         if (platformWidget())
             updateCanBlitOnScrollRecursively();
 
@@ -1438,10 +1438,10 @@ void FrameView::addFixedObject(RenderObject* object)
     }
 }
 
-void FrameView::removeFixedObject(RenderObject* object)
+void FrameView::removeViewportConstrainedObject(RenderObject* object)
 {
-    if (m_fixedObjects && m_fixedObjects->contains(object)) {
-        m_fixedObjects->remove(object);
+    if (m_viewportConstrainedObjects && m_viewportConstrainedObjects->contains(object)) {
+        m_viewportConstrainedObjects->remove(object);
         if (Page* page = m_frame->page()) {
             if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
                 scrollingCoordinator->frameViewFixedObjectsDidChange(this);
@@ -1510,7 +1510,7 @@ IntPoint FrameView::currentMousePosition() const
 
 bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
-    if (!m_fixedObjects || m_fixedObjects->isEmpty()) {
+    if (!m_viewportConstrainedObjects || m_viewportConstrainedObjects->isEmpty()) {
         hostWindow()->scroll(scrollDelta, rectToScroll, clipRect);
         return true;
     }
@@ -1519,8 +1519,8 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
 
     // Get the rects of the fixed objects visible in the rectToScroll
     Region regionToUpdate;
-    FixedObjectSet::const_iterator end = m_fixedObjects->end();
-    for (FixedObjectSet::const_iterator it = m_fixedObjects->begin(); it != end; ++it) {
+    ViewportConstrainedObjectSet::const_iterator end = m_viewportConstrainedObjects->end();
+    for (ViewportConstrainedObjectSet::const_iterator it = m_viewportConstrainedObjects->begin(); it != end; ++it) {
         RenderObject* renderer = *it;
         if (!renderer->style()->hasViewportConstrainedPosition())
             continue;
@@ -1553,8 +1553,8 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
 
     // 2) update the area of fixed objects that has been invalidated
     Vector<IntRect> subRectsToUpdate = regionToUpdate.rects();
-    size_t fixObjectsCount = subRectsToUpdate.size();
-    for (size_t i = 0; i < fixObjectsCount; ++i) {
+    size_t viewportConstrainedObjectsCount = subRectsToUpdate.size();
+    for (size_t i = 0; i < viewportConstrainedObjectsCount; ++i) {
         IntRect updateRect = subRectsToUpdate[i];
         IntRect scrolledRect = updateRect;
         scrolledRect.move(scrollDelta);
@@ -1774,9 +1774,8 @@ void FrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
     bool visibleContentSizeDidChange = false;
     if (visibleContentRect.size() != this->fixedVisibleContentRect().size()) {
         // When the viewport size changes or the content is scaled, we need to
-        // reposition the fixed positioned elements.
-        if (RenderView* root = rootRenderer(this))
-            root->setFixedPositionedObjectsNeedLayout();
+        // reposition the fixed and sticky positioned elements.
+        setViewportConstrainedObjectsNeedLayout();
         visibleContentSizeDidChange = true;
     }
 
@@ -1794,6 +1793,19 @@ void FrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
     }
     frame()->loader()->client()->didChangeScrollOffset();
 }
+
+void FrameView::setViewportConstrainedObjectsNeedLayout()
+{
+    if (!hasViewportConstrainedObjects())
+        return;
+
+    ViewportConstrainedObjectSet::const_iterator end = m_viewportConstrainedObjects->end();
+    for (ViewportConstrainedObjectSet::const_iterator it = m_viewportConstrainedObjects->begin(); it != end; ++it) {
+        RenderObject* renderer = *it;
+        renderer->setNeedsLayout(true);
+    }
+}
+
 
 void FrameView::scrollPositionChangedViaPlatformWidget()
 {
@@ -1819,7 +1831,7 @@ void FrameView::repaintFixedElementsAfterScrolling()
 {
     // For fixed position elements, update widget positions and compositing layers after scrolling,
     // but only if we're not inside of layout.
-    if (!m_nestedLayoutCount && hasFixedObjects()) {
+    if (!m_nestedLayoutCount && hasViewportConstrainedObjects()) {
         if (RenderView* root = rootRenderer(this)) {
             root->updateWidgetPositions();
             root->layer()->updateLayerPositionsAfterScroll();
@@ -1830,7 +1842,7 @@ void FrameView::repaintFixedElementsAfterScrolling()
 void FrameView::updateFixedElementsAfterScrolling()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_nestedLayoutCount <= 1 && hasFixedObjects()) {
+    if (m_nestedLayoutCount <= 1 && hasViewportConstrainedObjects()) {
         if (RenderView* root = rootRenderer(this)) {
             root->compositor()->updateCompositingLayers(CompositingUpdateOnScroll);
         }
