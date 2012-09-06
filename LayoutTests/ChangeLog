@@ -1,3 +1,13 @@
+2012-09-05  Matt Falkenhagen  <falken@chromium.org>
+
+        Vertically center non-anchored <dialog> elements
+        https://bugs.webkit.org/show_bug.cgi?id=90670
+
+        Reviewed by Ojan Vafai.
+
+        * fast/dom/HTMLDialogElement/non-anchored-dialog-positioning-expected.txt: Added.
+        * fast/dom/HTMLDialogElement/non-anchored-dialog-positioning.html: Added.
+
 2012-09-05  Kenichi Ishibashi  <bashi@chromium.org>
 
         Unreviewed, rolling out r127612, r127660, and r127664.

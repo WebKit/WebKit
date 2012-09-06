@@ -311,6 +311,9 @@ public:
     virtual bool isBlockFlow() const { return false; }
     virtual bool isBoxModelObject() const { return false; }
     virtual bool isCounter() const { return false; }
+#if ENABLE(DIALOG_ELEMENT)
+    virtual bool isDialog() const { return false; }
+#endif
     virtual bool isQuote() const { return false; }
 
 #if ENABLE(DETAILS_ELEMENT)

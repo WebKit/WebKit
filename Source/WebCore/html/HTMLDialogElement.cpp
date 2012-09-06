@@ -29,6 +29,7 @@
 #if ENABLE(DIALOG_ELEMENT)
 
 #include "ExceptionCode.h"
+#include "RenderDialog.h"
 
 namespace WebCore {
 
@@ -69,6 +70,11 @@ bool HTMLDialogElement::isPresentationAttribute(const QualifiedName& name) const
         return true;
 
     return HTMLElement::isPresentationAttribute(name);
+}
+
+RenderObject* HTMLDialogElement::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderDialog(this);
 }
 
 }

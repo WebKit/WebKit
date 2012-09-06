@@ -1,0 +1,20 @@
+Tests default positioning of non-anchored dialogs.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS dialog.getBoundingClientRect().top is expectedTop
+PASS dialog.getBoundingClientRect().top is expectedTop
+PASS dialog.getBoundingClientRect().top is 0
+PASS dialog.getBoundingClientRect().top is expectedTop
+PASS dialog.getBoundingClientRect().top is expectedTop
+PASS dialog.getBoundingClientRect().top is expectedTop
+PASS dialog.offsetTop is plainDiv.offsetTop
+PASS dialog.offsetBottom is plainDiv.offsetBottom
+PASS dialog.offsetTop is plainDiv.offsetTop
+PASS dialog.offsetTop is expectedTop
+PASS dialog.offsetTop is expectedTop
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

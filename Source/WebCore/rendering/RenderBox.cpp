@@ -1354,9 +1354,6 @@ const RenderObject* RenderBox::pushMappingToContainer(const RenderBoxModelObject
 
 void RenderBox::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState& transformState) const
 {
-    // We don't expect absoluteToLocal() to be called during layout (yet)
-    ASSERT(!view() || !view()->layoutStateEnabled());
-    
     bool isFixedPos = style()->position() == FixedPosition;
     bool hasTransform = hasLayer() && layer()->transform();
     if (hasTransform) {

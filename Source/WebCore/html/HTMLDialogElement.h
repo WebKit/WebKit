@@ -45,6 +45,7 @@ public:
 private:
     HTMLDialogElement(const QualifiedName&, Document*);
 
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
 };
 

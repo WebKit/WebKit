@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.filler {
+    height: 20000px;
+}
+</style>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+if (window.internals)
+    internals.settings.setDialogElementEnabled(true);
+
+function checkTopOfViewport(dialog) {
+    shouldBe('dialog.getBoundingClientRect().top', '0');
+}
+
+function checkCentered(dialog) {
+    expectedTop = (window.innerHeight - dialog.offsetHeight) / 2;
+    shouldBe('dialog.getBoundingClientRect().top', 'expectedTop');
+}
+</script>
+</head>
+<body>
+    <dialog id="mydialog">It is my dialog.</dialog>
+    <div class="filler" id="fillerDiv"></div>
+</body>
+<script>
+description("Tests default positioning of non-anchored dialogs.");
+
+dialog = document.getElementById('mydialog');
+
+// Dialog should be centered in the viewport.
+dialog.show();
+checkCentered(dialog);
+dialog.close();
+
+// Dialog should still be centered if shown after window is scrolled.
+window.scroll(0, 500);
+dialog.show();
+checkCentered(dialog);
+dialog.close();
+
+// A tall dialog should be positioned at the top of the viewport.
+var dialogInner = document.createElement('div');
+dialogInner.className = 'filler';
+dialog.appendChild(dialogInner);
+dialog.show();
+checkTopOfViewport(dialog);
+dialog.close();
+dialog.removeChild(dialogInner);
+
+// Add the horizontal scrollbar. The dialog should be centered regardless of the presence of scrollbars.
+var fillerDiv = document.getElementById('fillerDiv');
+fillerDiv.style.width = '4000px';
+dialog.show();
+checkCentered(dialog);
+dialog.close();
+fillerDiv.style.width = 'auto';
+
+// Test that centering works when dialog is inside positioned containers.
+var container = document.createElement('div');
+container.style.position = 'absolute';
+container.style.top = '800px;'
+container.style.height= '50px;'
+container.style.width = '90%';
+dialog.parentNode.removeChild(dialog);
+document.body.appendChild(container);
+container.appendChild(dialog);
+dialog.show();
+checkCentered(dialog);
+dialog.close();
+container.removeChild(dialog);
+
+var container2 = document.createElement('div');
+// FIXME: This test fails for position = 'relative'.
+container2.style.position = 'absolute';
+container2.style.top = '20px';
+container2.style.height = '30px';
+container.appendChild(container2);
+container2.appendChild(dialog);
+dialog.show();
+checkCentered(dialog);
+dialog.close();
+
+// Test that setting top manually is the same as for a plain div.
+var plainDiv = document.createElement('div');
+container2.appendChild(plainDiv);
+plainDiv.style.position = 'absolute';
+plainDiv.style.top = '50px';
+dialog.style.top = '50px';
+dialog.show();
+shouldBe('dialog.offsetTop', 'plainDiv.offsetTop');
+dialog.close();
+
+// Test that setting bottom manually is the same as for a plain div.
+dialog.style.top = 'auto';
+plainDiv.style.top = 'auto';
+dialog.style.bottom = '50px';
+plainDiv.style.bottom = '50px';
+dialog.show();
+shouldBe('dialog.offsetBottom', 'plainDiv.offsetBottom');
+dialog.close();
+
+// Test that fixed position has the usual behavior.
+plainDiv.style.position = 'fixed';
+plainDiv.style.top = '50px';
+dialog.style.position = 'fixed';
+dialog.style.top = '50px';
+dialog.show();
+shouldBe('dialog.offsetTop', 'plainDiv.offsetTop');
+dialog.close();
+
+// Test that static position has the usual behavior.
+plainDiv.style.position = 'static';
+plainDiv.style.top = 'auto';
+var expectedTop = plainDiv.offsetTop;
+plainDiv.parentNode.removeChild(plainDiv);
+dialog.style.position = 'static';
+dialog.style.top = 'auto';
+dialog.show();
+shouldBe('dialog.offsetTop', 'expectedTop');
+dialog.close();
+dialog.parentNode.removeChild(dialog);
+
+// Test that relative position has the usual behavior.
+container2.appendChild(plainDiv);
+plainDiv.style.position = 'relative';
+plainDiv.style.top = '50px';
+expectedTop = plainDiv.offsetTop;
+plainDiv.parentNode.removeChild(plainDiv);
+container2.appendChild(dialog);
+dialog.style.position = 'relative';
+dialog.style.top = '50px';
+dialog.show();
+shouldBe('dialog.offsetTop', 'expectedTop');
+dialog.close();
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
