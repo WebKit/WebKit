@@ -189,6 +189,13 @@ TEST_F(EWK2UnitTestBase, ewk_view_form_submission_request)
     evas_object_smart_callback_del(webView(), "form,submission,request", onFormAboutToBeSubmitted);
 }
 
+static inline void checkBasicPopupMenuItem(Ewk_Popup_Menu_Item* item, const char* title, bool enabled)
+{
+    EXPECT_EQ(ewk_popup_menu_item_type_get(item), EWK_POPUP_MENU_ITEM);
+    EXPECT_STREQ(ewk_popup_menu_item_text_get(item), title);
+    EXPECT_EQ(ewk_popup_menu_item_enabled_get(item), enabled);
+}
+
 static Eina_Bool selectItemAfterDelayed(void* data)
 {
     EXPECT_TRUE(ewk_view_popup_menu_select(static_cast<Evas_Object*>(data), 0));
@@ -200,18 +207,32 @@ static Eina_Bool showPopupMenu(Ewk_View_Smart_Data* smartData, Eina_Rectangle, E
     EXPECT_EQ(selectedIndex, 2);
 
     Ewk_Popup_Menu_Item* item = static_cast<Ewk_Popup_Menu_Item*>(eina_list_nth(list, 0));
-    EXPECT_EQ(ewk_popup_menu_item_type_get(item), EWK_POPUP_MENU_ITEM);
-    EXPECT_STREQ(ewk_popup_menu_item_text_get(item), "first");
+    checkBasicPopupMenuItem(item, "first", true);
+    EXPECT_EQ(ewk_popup_menu_item_text_direction_get(item), EWK_TEXT_DIRECTION_LEFT_TO_RIGHT);
+    EXPECT_STREQ(ewk_popup_menu_item_tooltip_get(item), "");
+    EXPECT_STREQ(ewk_popup_menu_item_accessibility_text_get(item), "");
+    EXPECT_FALSE(ewk_popup_menu_item_is_label_get(item));
+    EXPECT_FALSE(ewk_popup_menu_item_selected_get(item));
 
     item = static_cast<Ewk_Popup_Menu_Item*>(eina_list_nth(list, 1));
-    EXPECT_EQ(ewk_popup_menu_item_type_get(item), EWK_POPUP_MENU_ITEM);
-    EXPECT_STREQ(ewk_popup_menu_item_text_get(item), "second");
+    checkBasicPopupMenuItem(item, "second", false);
+    EXPECT_EQ(ewk_popup_menu_item_enabled_get(item), false);
 
     item = static_cast<Ewk_Popup_Menu_Item*>(eina_list_nth(list, 2));
-    EXPECT_EQ(ewk_popup_menu_item_type_get(item), EWK_POPUP_MENU_ITEM);
-    EXPECT_STREQ(ewk_popup_menu_item_text_get(item), "third");
+    checkBasicPopupMenuItem(item, "third", true);
+    EXPECT_EQ(ewk_popup_menu_item_text_direction_get(item), EWK_TEXT_DIRECTION_RIGHT_TO_LEFT);
+    EXPECT_STREQ(ewk_popup_menu_item_tooltip_get(item), "tooltip");
+    EXPECT_STREQ(ewk_popup_menu_item_accessibility_text_get(item), "aria");
+    EXPECT_TRUE(ewk_popup_menu_item_selected_get(item));
 
     item = static_cast<Ewk_Popup_Menu_Item*>(eina_list_nth(list, 3));
+    checkBasicPopupMenuItem(item, "label", false);
+    EXPECT_TRUE(ewk_popup_menu_item_is_label_get(item));
+
+    item = static_cast<Ewk_Popup_Menu_Item*>(eina_list_nth(list, 4));
+    checkBasicPopupMenuItem(item, "    forth", true);
+
+    item = static_cast<Ewk_Popup_Menu_Item*>(eina_list_nth(list, 5));
     EXPECT_EQ(ewk_popup_menu_item_type_get(item), EWK_POPUP_MENU_UNKNOWN);
     EXPECT_STREQ(ewk_popup_menu_item_text_get(item), 0);
 
@@ -223,7 +244,8 @@ TEST_F(EWK2UnitTestBase, ewk_view_popup_menu_select)
 {
     const char* selectHTML =
         "<!doctype html><body><select onchange=\"document.title=this.value;\">"
-        "<option>first</option><option>second</option><option selected>third</option>"
+        "<option>first</option><option disabled>second</option><option selected dir=\"rtl\" title=\"tooltip\" aria-label=\"aria\">third</option>"
+        "<optgroup label=\"label\"><option>forth</option></optgroup>"
         "</select></body>";
 
     ewkViewClass()->popup_menu_show = showPopupMenu;

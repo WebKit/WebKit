@@ -1511,10 +1511,8 @@ void ewk_view_popup_menu_request(Evas_Object* ewkView, WebPopupMenuProxyEfl* pop
 
     Eina_List* popupItems = 0;
     size_t size = items.size();
-    for (size_t i = 0; i < size; ++i) {
-        Ewk_Popup_Menu_Item* item = ewk_popup_menu_item_new(items[i].m_type, items[i].m_text.utf8().data());
-        popupItems = eina_list_append(popupItems, item);
-    }
+    for (size_t i = 0; i < size; ++i)
+        popupItems = eina_list_append(popupItems, ewk_popup_menu_item_new(items[i]));
     priv->popupMenuItems = popupItems;
 
     smartData->api->popup_menu_show(smartData, rect, static_cast<Ewk_Text_Direction>(textDirection), pageScaleFactor, popupItems, selectedIndex);

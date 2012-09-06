@@ -28,7 +28,7 @@
 
 #include "WebPopupItem.h"
 
-Ewk_Popup_Menu_Item* ewk_popup_menu_item_new(WebKit::WebPopupItem::Type type, const char* text);
+Ewk_Popup_Menu_Item* ewk_popup_menu_item_new(const WebKit::WebPopupItem& item);
 void ewk_popup_menu_item_free(Ewk_Popup_Menu_Item* item);
 
 #endif // ewk_popup_menu_item_private_h

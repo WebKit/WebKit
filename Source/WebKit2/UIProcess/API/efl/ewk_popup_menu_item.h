@@ -31,6 +31,7 @@
 #ifndef ewk_popup_menu_item_h
 #define ewk_popup_menu_item_h
 
+#include "ewk_view.h"
 #include <Eina.h>
 
 #ifdef __cplusplus
@@ -69,6 +70,78 @@ EAPI Ewk_Popup_Menu_Item_Type ewk_popup_menu_item_type_get(const Ewk_Popup_Menu_
  */
 EAPI const char *ewk_popup_menu_item_text_get(const Ewk_Popup_Menu_Item *item);
     
+/**
+ * Returns text direction of the popup menu item.
+ *
+ * @param item the popup menu item instance
+ *
+ * @return the text direction of the @a item.
+ */
+EAPI Ewk_Text_Direction ewk_popup_menu_item_text_direction_get(const Ewk_Popup_Menu_Item *item);
+
+/**
+ * Returns whether the popup menu item has text direction override.
+ *
+ * @param item the popup menu item instance
+ *
+ * @return @c EINA_TRUE if the popup menu item has text direction override,
+ *         @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool ewk_popup_menu_item_text_direction_override_get(const Ewk_Popup_Menu_Item *item);
+
+/**
+ * Returns tooltip of the popup menu item.
+ *
+ * @param item the popup menu item instance
+ *
+ * @return the tooltip of the @a item or @c NULL in case of error. This pointer is
+ *         guaranteed to be eina_stringshare, so whenever possible
+ *         save yourself some cpu cycles and use
+ *         eina_stringshare_ref() instead of eina_stringshare_add() or
+ *         strdup()
+ */
+EAPI const char *ewk_popup_menu_item_tooltip_get(const Ewk_Popup_Menu_Item *item);
+
+/**
+ * Returns accessibility text of the popup menu item.
+ *
+ * @param item the popup menu item instance
+ *
+ * @return the accessibility text of the @a item or @c NULL in case of error.
+ *         This pointer is guaranteed to be eina_stringshare, so whenever
+ *         possible save yourself some cpu cycles and use
+ *         eina_stringshare_ref() instead of eina_stringshare_add() or
+ *         strdup()
+ */
+EAPI const char *ewk_popup_menu_item_accessibility_text_get(const Ewk_Popup_Menu_Item *item);
+
+/**
+ * Returns whether the popup menu item is enabled or not.
+ *
+ * @param item the popup menu item instance
+ *
+ * @return @c EINA_TRUE if ther popup menu item is enabled, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool ewk_popup_menu_item_enabled_get(const Ewk_Popup_Menu_Item *item);
+
+/**
+ * Returns whether the popup menu item is label or not.
+ *
+ * @param item the popup menu item instance
+ *
+ * @return @c EINA_TRUE if the popup menu item is label, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool ewk_popup_menu_item_is_label_get(const Ewk_Popup_Menu_Item *item);
+
+/**
+ * Returns whether the popup menu item is selected or not.
+ *
+ * @param item the popup menu item instance
+ *
+ * @return @c EINA_TRUE if the popup menu item is selected, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool ewk_popup_menu_item_selected_get(const Ewk_Popup_Menu_Item *item);
+
 #ifdef __cplusplus
 }
 #endif
