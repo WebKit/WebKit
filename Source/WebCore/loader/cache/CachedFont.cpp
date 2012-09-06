@@ -198,15 +198,6 @@ void CachedFont::checkNotify()
          c->fontLoaded(this);
 }
 
-
-void CachedFont::error(CachedResource::Status status)
-{
-    setStatus(status);
-    ASSERT(errorOccurred());
-    setLoading(false);
-    checkNotify();
-}
-
 void CachedFont::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceFont);

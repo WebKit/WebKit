@@ -254,7 +254,7 @@ public:
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
 protected:
-    void checkNotify();
+    virtual void checkNotify();
 
     void setEncodedSize(unsigned);
     void setDecodedSize(unsigned);

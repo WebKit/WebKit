@@ -385,12 +385,8 @@ void CachedImage::error(CachedResource::Status status)
 {
     checkShouldPaintBrokenImage();
     clear();
-    setStatus(status);
-    ASSERT(errorOccurred());
-    m_data.clear();
+    CachedResource::error(status);
     notifyObservers();
-    setLoading(false);
-    checkNotify();
 }
 
 void CachedImage::setResponse(const ResourceResponse& response)
