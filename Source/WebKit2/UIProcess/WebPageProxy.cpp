@@ -2911,6 +2911,9 @@ void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, co
 
     m_activePopupMenu = m_pageClient->createPopupMenuProxy(this);
 
+    if (!m_activePopupMenu)
+        return;
+
     // Since showPopupMenu() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer()->stop();
 
