@@ -1,3 +1,15 @@
+2012-09-05  Andrei Poenaru  <poenaru@adobe.com>
+
+        Web Inspector: Protocol Extension: Add "regionLayoutUpdate" event
+        https://bugs.webkit.org/show_bug.cgi?id=93443
+
+        Reviewed by Alexander Pavlov.
+
+        Validate "regionLayoutUpdate" event.
+
+        * inspector/styles/protocol-css-regions-commands-expected.txt:
+        * inspector/styles/protocol-css-regions-commands.html:
+
 2012-09-03  Geoffrey Garen  <ggaren@apple.com>
 
         Named functions should not allocate scope objects for their names
