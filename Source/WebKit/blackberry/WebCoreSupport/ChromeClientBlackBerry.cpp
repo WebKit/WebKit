@@ -49,7 +49,6 @@
 #include "PageGroupLoadDeferrer.h"
 #include "PagePopupBlackBerry.h"
 #include "PagePopupClient.h"
-#include "PlatformString.h"
 #include "PopupMenuBlackBerry.h"
 #include "RenderView.h"
 #include "SVGZoomAndPan.h"
@@ -70,6 +69,7 @@
 #include <BlackBerryPlatformWindow.h>
 
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #define DEBUG_OVERFLOW_DETECTION 0
 

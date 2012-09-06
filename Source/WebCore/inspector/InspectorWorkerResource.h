@@ -33,10 +33,10 @@
 
 #if ENABLE(WORKERS) && ENABLE(INSPECTOR)
 
-#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

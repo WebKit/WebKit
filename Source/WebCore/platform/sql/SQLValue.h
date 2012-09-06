@@ -29,8 +29,8 @@
 #ifndef SQLValue_h
 #define SQLValue_h
 
-#include "PlatformString.h"
 #include <wtf/Threading.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

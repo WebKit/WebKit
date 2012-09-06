@@ -32,7 +32,8 @@
 
 #include "ContextMenuItem.h"
 #include "PlatformMenuDescription.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
+
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
 #elif PLATFORM(WIN)

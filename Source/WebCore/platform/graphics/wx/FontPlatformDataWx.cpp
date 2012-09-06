@@ -27,10 +27,10 @@
 #include "FontPlatformData.h"
 
 #include "FontDescription.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 #include <wx/defs.h>
-#include <wx/gdicmn.h>
 #include <wx/font.h>
+#include <wx/gdicmn.h>
 
 namespace WebCore {
 

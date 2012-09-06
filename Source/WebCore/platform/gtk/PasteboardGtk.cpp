@@ -29,7 +29,6 @@
 #include "HTMLParserIdioms.h"
 #include "KURL.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
 #include "TextResourceDecoder.h"
 #include "Image.h"
 #include "RenderImage.h"
@@ -37,6 +36,7 @@
 #include <gtk/gtk.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(SVG)
 #include "SVGNames.h"

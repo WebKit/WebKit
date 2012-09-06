@@ -106,7 +106,6 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/Page.h>
-#import <WebCore/PlatformString.h>
 #import <WebCore/PluginViewBase.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceHandle.h>
@@ -123,6 +122,7 @@
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/PassRefPtr.h>
+#import <wtf/text/WTFString.h>
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #import <WebCore/HTMLMediaElement.h>

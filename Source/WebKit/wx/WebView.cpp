@@ -47,7 +47,6 @@
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
-#include "PlatformString.h"
 #include "PlatformWheelEvent.h"
 #include "RenderObject.h"
 #include "RenderView.h"

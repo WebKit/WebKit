@@ -22,7 +22,7 @@
 #include "CSSInitialValue.h"
 
 #include "MemoryInstrumentation.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

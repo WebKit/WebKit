@@ -23,9 +23,9 @@
 #define FEDisplacementMap_h
 
 #if ENABLE(FILTERS)
-#include "PlatformString.h"
 #include "FilterEffect.h"
 #include "Filter.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

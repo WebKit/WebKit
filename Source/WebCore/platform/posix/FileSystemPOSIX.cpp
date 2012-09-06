@@ -30,7 +30,6 @@
 #include "FileSystem.h"
 
 #include "FileMetadata.h"
-#include "PlatformString.h"
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -41,6 +40,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -31,10 +31,10 @@
 #include "DOMStringList.h"
 #include "IDBFactoryBackendInterface.h"
 #include "IDBOpenDBRequest.h"
-#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(INDEXED_DATABASE)
 

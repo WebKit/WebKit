@@ -19,7 +19,8 @@
  */
 
 #include "config.h"
-#include "PlatformString.h"
+
+#include <wtf/text/WTFString.h>
 
 #if USE(CF)
 

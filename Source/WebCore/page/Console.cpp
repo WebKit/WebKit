@@ -39,7 +39,6 @@
 #include "MemoryInfo.h"
 #include "Page.h"
 #include "PageGroup.h"
-#include "PlatformString.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptProfile.h"
@@ -48,6 +47,7 @@
 #include <stdio.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(CHROMIUM)
 #include "TraceEvent.h"

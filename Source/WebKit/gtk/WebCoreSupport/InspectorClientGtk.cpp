@@ -25,13 +25,13 @@
 #include "InspectorController.h"
 #include "NotImplemented.h"
 #include "Page.h"
-#include "PlatformString.h"
 #include "webkitversion.h"
 #include "webkitwebinspector.h"
 #include "webkitwebinspectorprivate.h"
 #include "webkitwebview.h"
 #include "webkitwebviewprivate.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

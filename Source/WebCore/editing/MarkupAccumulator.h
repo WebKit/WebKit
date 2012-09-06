@@ -26,7 +26,6 @@
 #ifndef MarkupAccumulator_h
 #define MarkupAccumulator_h
 
-#include "PlatformString.h"
 #include "markup.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>

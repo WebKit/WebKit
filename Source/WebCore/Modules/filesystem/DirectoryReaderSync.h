@@ -34,9 +34,9 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "DirectoryReaderBase.h"
-#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

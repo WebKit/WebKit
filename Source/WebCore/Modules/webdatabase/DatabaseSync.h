@@ -34,8 +34,9 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "AbstractDatabase.h"
-#include "PlatformString.h"
 #include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
+
 #ifndef NDEBUG
 #include "SecurityOrigin.h"
 #endif

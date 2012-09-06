@@ -34,10 +34,9 @@
 #if ENABLE(INSPECTOR)
 
 #include "InspectorValues.h"
-#include "PlatformString.h"
-
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

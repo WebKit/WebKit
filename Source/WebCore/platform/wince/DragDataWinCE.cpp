@@ -22,7 +22,6 @@
 #include "DragData.h"
 
 #include "DocumentFragment.h"
-#include "PlatformString.h"
 #include "Range.h"
 
 namespace WebCore {

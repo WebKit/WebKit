@@ -20,10 +20,10 @@
 #define DNSPrefetchBlackBerry_H
 
 #include "config.h"
-#include "PlatformString.h"
 
 #include <BlackBerryPlatformCommonFunctions.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

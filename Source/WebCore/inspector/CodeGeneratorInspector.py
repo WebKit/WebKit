@@ -1809,8 +1809,8 @@ $code    sendIfActive(jsonMessage, ErrorString());
 
 #include "InspectorTypeBuilder.h"
 #include "InspectorValues.h"
-#include <PlatformString.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

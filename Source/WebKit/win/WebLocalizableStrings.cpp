@@ -28,9 +28,9 @@
 
 #include "WebLocalizableStrings.h"
 
-#include <WebCore/PlatformString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
@@ -39,8 +39,6 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 class LocalizedString;
-
-using namespace WebCore;
 
 WebLocalizableStringsBundle WebKitLocalizableStringsBundle = { "com.apple.WebKit", 0 };
 

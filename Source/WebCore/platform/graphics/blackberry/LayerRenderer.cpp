@@ -38,7 +38,6 @@
 
 #include "LayerCompositingThread.h"
 #include "LayerFilterRenderer.h"
-#include "PlatformString.h"
 #include "TextureCacheCompositingThread.h"
 
 #include <BlackBerryPlatformGraphics.h>
@@ -46,6 +45,7 @@
 #include <EGL/egl.h>
 #include <limits>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #define ENABLE_SCISSOR 1
 

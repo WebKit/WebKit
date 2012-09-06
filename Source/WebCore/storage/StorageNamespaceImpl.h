@@ -26,13 +26,12 @@
 #ifndef StorageNamespaceImpl_h
 #define StorageNamespaceImpl_h
 
-#include "PlatformString.h"
 #include "SecurityOriginHash.h"
 #include "StorageArea.h"
 #include "StorageNamespace.h"
-
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

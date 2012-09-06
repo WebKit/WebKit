@@ -45,7 +45,6 @@
 #include "PageGroup.h"
 #include "PageScriptDebugServer.h"
 #include "painting/GraphicsContextBuilder.h"
-#include "PlatformString.h"
 #include "RenderView.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
@@ -67,6 +66,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 using namespace std;

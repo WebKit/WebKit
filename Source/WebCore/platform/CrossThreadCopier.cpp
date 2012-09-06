@@ -33,13 +33,12 @@
 #include "CrossThreadCopier.h"
 
 #include "KURL.h"
-#include "PlatformString.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SerializedScriptValue.h"
-
 #include <wtf/Assertions.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

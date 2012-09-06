@@ -24,11 +24,11 @@
 #include "GOwnPtrSoup.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
-#include "PlatformString.h"
 #include "SoupURIUtils.h"
 
 #include <libsoup/soup.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 using namespace std;
 

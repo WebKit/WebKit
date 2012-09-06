@@ -36,8 +36,8 @@
 #include "GraphicsTypes.h"
 #include "ImageBuffer.h"
 #include "Path.h"
-#include "PlatformString.h"
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "GraphicsLayer.h"

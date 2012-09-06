@@ -41,11 +41,11 @@
 #include "InspectorFrontendHost.h"
 #include "JSEvent.h"
 #include "MouseEvent.h"
-#include "PlatformString.h"
 #include <runtime/JSArray.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSObject.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 using namespace JSC;
 

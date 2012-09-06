@@ -41,7 +41,6 @@
 #include "ExceptionCode.h"
 #include "MemoryCache.h"
 #include "MessageEvent.h"
-#include "PlatformString.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"

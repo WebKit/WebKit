@@ -27,8 +27,8 @@
 #define KURL_h
 
 #include "KURLWTFURLImpl.h"
-#include "PlatformString.h"
 #include <wtf/HashMap.h>
+#include <wtf/text/WTFString.h>
 
 #if USE(CF)
 typedef const struct __CFURL* CFURLRef;

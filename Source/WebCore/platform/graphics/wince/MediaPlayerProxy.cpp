@@ -30,7 +30,6 @@
 #include "JSPluginElementFunctions.h"
 #include "MediaPlayer.h"
 #include "Node.h"
-#include "PlatformString.h"
 #include "PluginView.h"
 #include "RenderPartObject.h"
 #include "RenderWidget.h"
@@ -40,6 +39,7 @@
 #include "c_runtime.h"
 #include "npruntime_impl.h"
 #include <runtime/Identifier.h>
+#include <wtf/text/WTFString.h>
 
 using namespace JSC;
 

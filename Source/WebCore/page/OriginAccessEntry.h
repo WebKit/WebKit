@@ -31,7 +31,7 @@
 #ifndef OriginAccessEntry_h
 #define OriginAccessEntry_h
 
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

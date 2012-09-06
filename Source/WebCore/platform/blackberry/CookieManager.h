@@ -29,14 +29,10 @@
 
 #include "CookieMap.h"
 #include "ParsedCookie.h"
-#include "PlatformString.h"
 #include "Timer.h"
 #include <BlackBerryPlatformGuardedPointer.h>
 #include <wtf/HashMap.h>
-
-namespace WTF {
-class String;
-}
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

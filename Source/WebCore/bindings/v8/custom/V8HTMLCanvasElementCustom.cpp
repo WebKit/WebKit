@@ -35,7 +35,6 @@
 #include "CanvasContextAttributes.h"
 #include "CanvasRenderingContext.h"
 #include "HTMLCanvasElement.h"
-#include "PlatformString.h"
 #include "WebGLContextAttributes.h"
 #include "V8Binding.h"
 #include "V8CanvasRenderingContext2D.h"
@@ -45,6 +44,7 @@
 #include "V8WebGLRenderingContext.h"
 #endif
 #include <wtf/MathExtras.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -24,9 +24,9 @@
 #import "config.h"
 #import "FontPlatformData.h"
 
-#import "PlatformString.h"
 #import "WebCoreSystemInterface.h"
 #import <AppKit/NSFont.h>
+#import <wtf/text/WTFString.h>
 
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
 #import "HarfBuzzNGFace.h"

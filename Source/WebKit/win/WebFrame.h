@@ -37,12 +37,12 @@
 #include <WebCore/FrameWin.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/KURL.h>
-#include <WebCore/PlatformString.h>
 #include <WebCore/ResourceHandleClient.h>
 
 #include <WTF/RefPtr.h>
 #include <WTF/HashMap.h>
 #include <WTF/OwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
     class AuthenticationChallenge;

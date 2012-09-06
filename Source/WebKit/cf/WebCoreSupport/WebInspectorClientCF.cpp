@@ -53,11 +53,11 @@
 #include <WebCore/Frame.h>
 #include <WebCore/InspectorFrontendClientLocal.h>
 #include <WebCore/Page.h>
-#include <WebCore/PlatformString.h>
 
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 
@@ -115,7 +115,7 @@ void WebInspectorClient::setInspectorStartsAttached(bool attached)
     storeSetting(inspectorStartsAttachedSetting, attached ? "true" : "false");
 }
 
-WTF::PassOwnPtr<WebCore::InspectorFrontendClientLocal::Settings> WebInspectorClient::createFrontendSettings()
+PassOwnPtr<WebCore::InspectorFrontendClientLocal::Settings> WebInspectorClient::createFrontendSettings()
 {
     class InspectorFrontendSettingsCF : public WebCore::InspectorFrontendClientLocal::Settings {
     public:

@@ -22,8 +22,8 @@
 
 #include "CSSPrimitiveValue.h"
 #include "MemoryInstrumentation.h"
-#include "PlatformString.h"
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

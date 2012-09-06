@@ -25,9 +25,9 @@
 #include "CachedResourceLoader.h"
 #include "MemoryInstrumentation.h"
 #include "TreeScope.h"
-#include "PlatformString.h"
 #include <wtf/MathExtras.h>
 #include <wtf/UnusedParam.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(SVG)
 #include "SVGCursorElement.h"

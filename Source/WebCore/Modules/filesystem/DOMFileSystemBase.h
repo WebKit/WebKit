@@ -37,9 +37,9 @@
 #include "FileSystemFlags.h"
 #include "FileSystemType.h"
 #include "KURL.h"
-#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

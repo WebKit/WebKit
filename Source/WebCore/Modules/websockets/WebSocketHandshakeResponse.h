@@ -34,8 +34,8 @@
 #if ENABLE(WEB_SOCKETS)
 
 #include "HTTPHeaderMap.h"
-#include "PlatformString.h"
 #include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -26,11 +26,10 @@
 #ifndef StorageSyncManager_h
 #define StorageSyncManager_h
 
-#include "PlatformString.h"
-
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

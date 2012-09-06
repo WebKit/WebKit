@@ -30,7 +30,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "ExceptionCode.h"
-#include "PlatformString.h"
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

@@ -24,8 +24,8 @@
 
 #include "GraphicsContext.h"
 #include "LocalWindowsContext.h"
-#include "PlatformString.h"
 #include <windows.h>
+#include <wtf/text/WTFString.h>
 
 #if OS(WINCE)
 // SHGFI_SHELLICONSIZE is not available on WINCE

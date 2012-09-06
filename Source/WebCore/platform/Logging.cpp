@@ -25,7 +25,8 @@
 
 #include "config.h"
 #include "Logging.h"
-#include "PlatformString.h"
+
+#include <wtf/text/WTFString.h>
 
 #if !LOG_DISABLED
 

@@ -27,9 +27,9 @@
 #define PlatformSupport_h
 
 #include "KURL.h"
-#include "PlatformString.h"
 
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 // V8 bindings use the ARRAYSIZE_UNSAFE macro. This macro was copied
 // from http://src.chromium.org/viewvc/chrome/trunk/src/base/basictypes.h

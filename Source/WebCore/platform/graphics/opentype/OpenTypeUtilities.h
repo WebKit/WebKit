@@ -27,9 +27,9 @@
 #ifndef OpenTypeUtilities_h
 #define OpenTypeUtilities_h
 
-#include "PlatformString.h"
 #include <windows.h>
 #include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

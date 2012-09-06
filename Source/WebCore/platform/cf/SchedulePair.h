@@ -29,10 +29,11 @@
 #ifndef SchedulePair_h
 #define SchedulePair_h
 
-#include "PlatformString.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
 OBJC_CLASS NSRunLoop;

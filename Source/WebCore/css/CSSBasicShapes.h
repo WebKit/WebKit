@@ -31,10 +31,10 @@
 #define CSSBasicShapes_h
 
 #include "CSSPrimitiveValue.h"
-#include "PlatformString.h"
 #include "WindRule.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

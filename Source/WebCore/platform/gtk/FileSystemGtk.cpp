@@ -24,7 +24,6 @@
 #include "FileSystem.h"
 
 #include "FileMetadata.h"
-#include "PlatformString.h"
 #include "UUID.h"
 #include <gio/gio.h>
 #include <glib.h>
@@ -33,6 +32,7 @@
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/gobject/GlibUtilities.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

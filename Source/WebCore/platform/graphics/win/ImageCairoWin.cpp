@@ -31,7 +31,7 @@
 #include <cairo-win32.h>
 
 #include <windows.h>
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

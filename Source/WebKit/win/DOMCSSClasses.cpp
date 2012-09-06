@@ -27,7 +27,7 @@
 #include "WebKitDLL.h"
 #include "DOMCSSClasses.h"
 
-#include <WebCore/PlatformString.h>
+#include <wtf/text/WTFString.h>
 
 // DOMCSSStyleDeclaration - DOMCSSStyleDeclaration ----------------------------
 

@@ -27,7 +27,6 @@
 
 #if ENABLE(UNDO_MANAGER)
 
-#include "PlatformString.h"
 #include "QualifiedName.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>

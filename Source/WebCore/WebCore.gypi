@@ -514,7 +514,6 @@
             'platform/text/DecodeEscapeSequences.h',
             'platform/text/LineBreakIteratorPoolICU.h',
             'platform/text/LineEnding.h',
-            'platform/text/PlatformString.h',
             'platform/text/QuotedPrintable.h',
             'platform/text/RegularExpression.h',
             'platform/text/SegmentedString.h',

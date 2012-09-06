@@ -20,7 +20,7 @@
 #ifndef ErrorsGtk_h
 #define ErrorsGtk_h
 
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

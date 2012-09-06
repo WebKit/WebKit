@@ -31,11 +31,11 @@
 #include "GraphicsContext.h"
 #include "ImageDecoder.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
 #include "SharedBuffer.h"
 #include "TransformationMatrix.h"
 #include "WinceGraphicsExtras.h"
 #include <wtf/OwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 #include <windows.h>
 

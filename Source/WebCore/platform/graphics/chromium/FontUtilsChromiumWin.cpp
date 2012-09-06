@@ -34,12 +34,12 @@
 #include <limits>
 
 #include "HWndDC.h"
-#include "PlatformString.h"
 #include "UniscribeHelper.h"
 #include <unicode/locid.h>
 #include <unicode/uchar.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -33,11 +33,11 @@
 
 #include "FileMetadata.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
 
 #include <public/Platform.h>
 #include <public/WebFileInfo.h>
 #include <public/WebFileUtilities.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

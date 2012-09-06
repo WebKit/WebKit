@@ -36,7 +36,7 @@
 #include "AsyncFileSystem.h"
 #include "AsyncFileWriter.h"
 #include "FileMetadata.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

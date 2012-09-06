@@ -29,10 +29,9 @@
 #ifndef PageURLRecord_h
 #define PageURLRecord_h
 
-#include "PlatformString.h"
-
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

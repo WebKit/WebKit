@@ -37,7 +37,6 @@
 #include "DatabaseThread.h"
 #include "ExceptionCode.h"
 #include "Logging.h"
-#include "PlatformString.h"
 #include "ScriptExecutionContext.h"
 #include "SQLError.h"
 #include "SQLiteTransaction.h"
@@ -53,6 +52,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 // There's no way of knowing exactly how much more space will be required when a statement hits the quota limit.
 // For now, we'll arbitrarily choose currentQuota + 1mb.

@@ -35,11 +35,11 @@
 #include "IDBObjectStoreBackendInterface.h"
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
-#include "PlatformString.h"
 #include "SerializedScriptValue.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(INDEXED_DATABASE)
 

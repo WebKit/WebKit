@@ -28,11 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FileSystem.h"
+#import "config.h"
+#import "FileSystem.h"
 
 #import <Foundation/NSFileManager.h>
-#include "PlatformString.h"
+#import <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -27,8 +27,8 @@
 #include "config.h"
 #include "TextCodec.h"
 
-#include "PlatformString.h"
 #include <wtf/StringExtras.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

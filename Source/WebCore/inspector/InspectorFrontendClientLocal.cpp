@@ -46,7 +46,6 @@
 #include "InspectorFrontendHost.h"
 #include "InspectorPageAgent.h"
 #include "Page.h"
-#include "PlatformString.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
 #include "ScriptState.h"
@@ -56,6 +55,7 @@
 #include "WindowFeatures.h"
 #include <wtf/Deque.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

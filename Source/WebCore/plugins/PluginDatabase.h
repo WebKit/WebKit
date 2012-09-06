@@ -28,11 +28,11 @@
 #ifndef PluginDatabase_h
 #define PluginDatabase_h
 
-#include "PlatformString.h"
 #include "PluginPackage.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
     class Element;

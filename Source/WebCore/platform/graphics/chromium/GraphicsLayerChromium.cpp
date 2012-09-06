@@ -53,7 +53,6 @@
 #include "Image.h"
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
-#include "PlatformString.h"
 #include "ScrollableArea.h"
 #include "SkMatrix44.h"
 #include "SystemTime.h"
@@ -71,6 +70,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 using namespace std;
 using namespace WebKit;

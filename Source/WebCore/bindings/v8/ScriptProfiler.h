@@ -31,12 +31,12 @@
 #ifndef ScriptProfiler_h
 #define ScriptProfiler_h
 
-#include "PlatformString.h"
 #include "ScriptHeapSnapshot.h"
 #include "ScriptProfile.h"
 #include "ScriptState.h"
 
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

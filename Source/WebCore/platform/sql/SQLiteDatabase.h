@@ -27,9 +27,9 @@
 #ifndef SQLiteDatabase_h
 #define SQLiteDatabase_h
 
-#include "PlatformString.h"
-#include <wtf/text/CString.h>
 #include <wtf/Threading.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #if COMPILER(MSVC)
 #pragma warning(disable: 4800)

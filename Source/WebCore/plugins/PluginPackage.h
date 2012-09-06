@@ -28,13 +28,13 @@
 #define PluginPackage_h
 
 #include "FileSystem.h"
-#include "PlatformString.h"
 #include "PluginQuirkSet.h"
 #include "Timer.h"
 #include "npruntime_internal.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
     typedef HashMap<String, String> MIMEToDescriptionsMap;

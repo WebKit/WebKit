@@ -24,10 +24,10 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "Path.h"
-#include "PlatformString.h"
 #include "WinCEGraphicsExtras.h"
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 #include <windows.h>
 

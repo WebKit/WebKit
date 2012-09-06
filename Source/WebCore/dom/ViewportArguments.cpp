@@ -34,8 +34,8 @@
 #include "Frame.h"
 #include "IntSize.h"
 #include "Page.h"
-#include "PlatformString.h"
 #include "ScriptableDocumentParser.h"
+#include <wtf/text/WTFString.h>
 
 using namespace std;
 

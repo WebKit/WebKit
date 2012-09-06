@@ -31,10 +31,10 @@
 #define PolicyChecker_h
 
 #include "FrameLoaderTypes.h"
-#include "PlatformString.h"
 #include "PolicyCallback.h"
 #include "ResourceRequest.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -34,10 +34,10 @@
 
 #include "IntPoint.h"
 #include "KURL.h"
-#include "PlatformString.h"
 
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 #include "ViewportArguments.h"
 

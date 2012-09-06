@@ -29,9 +29,9 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTokenizer.h"
-#include "PlatformString.h"
 #include "TextCodec.h"
 #include "TextEncodingRegistry.h"
+#include <wtf/text/WTFString.h>
 
 using namespace WTF;
 

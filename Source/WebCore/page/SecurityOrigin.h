@@ -29,8 +29,8 @@
 #ifndef SecurityOrigin_h
 #define SecurityOrigin_h
 
-#include "PlatformString.h"
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

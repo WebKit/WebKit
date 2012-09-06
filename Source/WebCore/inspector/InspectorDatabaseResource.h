@@ -33,10 +33,10 @@
 
 #if ENABLE(SQL_DATABASE) && ENABLE(INSPECTOR)
 #include "InspectorFrontend.h"
-#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 class Database;

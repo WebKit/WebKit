@@ -33,8 +33,9 @@
 #if ENABLE(BLOB)
 
 #include "FileStream.h"
+
 #include "FileSystem.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

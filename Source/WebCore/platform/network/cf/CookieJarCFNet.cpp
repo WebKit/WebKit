@@ -32,11 +32,11 @@
 #include "CookieStorageCFNet.h"
 #include "Document.h"
 #include "KURL.h"
-#include "PlatformString.h"
 #include "ResourceHandle.h"
 #include "SoftLinking.h"
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(WIN)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>

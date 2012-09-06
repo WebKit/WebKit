@@ -33,7 +33,6 @@
 
 #if ENABLE(WORKERS)
 
-#include "PlatformString.h"
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
 #include "ThreadableLoaderClientWrapper.h"
@@ -43,6 +42,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

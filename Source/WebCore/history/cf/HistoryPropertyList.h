@@ -27,8 +27,8 @@
 #define HistoryPropertyList_h
 
 #include "BinaryPropertyList.h"
-#include "PlatformString.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

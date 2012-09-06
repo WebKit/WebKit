@@ -27,10 +27,10 @@
 #define PublicURLManager_h
 
 #if ENABLE(BLOB)
-#include "PlatformString.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadableBlobRegistry.h"
 #include <wtf/HashSet.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(MEDIA_STREAM)
 #include "MediaStream.h"

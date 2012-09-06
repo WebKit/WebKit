@@ -293,7 +293,7 @@ static void appendASCII(const String& base, const char* rel, size_t len, CharBuf
     buffer[buffer.size() - 1] = '\0';
 }
 
-// FIXME: Move to PlatformString.h eventually.
+// FIXME: Move to WTFString.h eventually.
 // Returns the index of the first index in string |s| of any of the characters
 // in |toFind|. |toFind| should be a null-terminated string, all characters up
 // to the null will be searched. Returns int if not found.

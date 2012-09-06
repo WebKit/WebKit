@@ -25,7 +25,7 @@
 
 #include "CSSRule.h"
 #include "MediaList.h"
-#include "PlatformString.h" // needed so bindings will compile
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

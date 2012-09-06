@@ -33,11 +33,11 @@
 
 #include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
-#include "PlatformString.h"
 
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(INSPECTOR)
 

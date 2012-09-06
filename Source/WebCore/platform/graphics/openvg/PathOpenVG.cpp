@@ -26,12 +26,12 @@
 #include "NotImplemented.h"
 #include "PainterOpenVG.h"
 #include "PlatformPathOpenVG.h"
-#include "PlatformString.h"
 #include "StrokeStyleApplier.h"
 #include "VGUtils.h"
 
 #include <openvg.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/WTFString.h>
 
 #define WEBKIT_VG_PATH_CAPABILITIES VG_PATH_CAPABILITY_ALL
 

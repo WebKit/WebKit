@@ -36,9 +36,9 @@
 #include <WebCore/FontDescription.h>
 #include <WebCore/FontSelector.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/PlatformString.h>
 #include <WebCore/StringTruncator.h>
 #include <WebCore/WebCoreTextRenderer.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #include <CoreGraphics/CoreGraphics.h>

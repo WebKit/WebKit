@@ -31,11 +31,11 @@
 #include "config.h"
 #include "DateComponents.h"
 
-#include "PlatformString.h"
 #include <limits.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/WTFString.h>
 
 using namespace std;
 

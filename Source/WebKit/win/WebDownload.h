@@ -28,8 +28,8 @@
 
 #include "WebKit.h"
 #include <WebCore/COMPtr.h>
-#include <WebCore/PlatformString.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/WTFString.h>
 
 #if USE(CFNETWORK)
 #include <CFNetwork/CFURLDownloadPriv.h>

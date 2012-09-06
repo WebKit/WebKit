@@ -33,7 +33,6 @@
 
 #if ENABLE(WEB_SOCKETS) && ENABLE(WORKERS)
 
-#include "PlatformString.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannelClient.h"
@@ -43,6 +42,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

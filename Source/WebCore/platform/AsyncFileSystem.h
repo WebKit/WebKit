@@ -35,9 +35,9 @@
 
 #include "FileSystemType.h"
 #include "KURL.h"
-#include "PlatformString.h"
 #include "Timer.h"
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -22,7 +22,6 @@
 #define FormDataBuilder_h
 
 #include "FormData.h"
-#include "PlatformString.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {

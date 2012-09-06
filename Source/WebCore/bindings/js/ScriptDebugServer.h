@@ -33,10 +33,8 @@
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
 #include "ScriptDebugListener.h"
-#include "PlatformString.h"
 #include "ScriptBreakpoint.h"
 #include "Timer.h"
-
 #include <debugger/Debugger.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>

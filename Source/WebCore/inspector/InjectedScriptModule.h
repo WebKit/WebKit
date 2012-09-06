@@ -32,8 +32,8 @@
 #define InjectedScriptModule_h
 
 #include "InjectedScriptBase.h"
-#include "PlatformString.h"
 #include "ScriptState.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

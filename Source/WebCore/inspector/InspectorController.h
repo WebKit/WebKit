@@ -31,10 +31,10 @@
 #ifndef InspectorController_h
 #define InspectorController_h
 
-#include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

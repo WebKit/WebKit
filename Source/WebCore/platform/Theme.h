@@ -31,8 +31,8 @@
 #include "IntRect.h"
 #include "LengthBox.h"
 #include "LengthSize.h"
-#include "PlatformString.h"
 #include "ThemeTypes.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

@@ -34,10 +34,10 @@
 #include "CachedResourceHandle.h"
 #include "CachedScript.h"
 #include "KURL.h"
-#include "PlatformString.h"
 #include <v8.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/TextPosition.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

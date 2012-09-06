@@ -31,11 +31,11 @@
 #ifndef ScriptArguments_h
 #define ScriptArguments_h
 
-#include "PlatformString.h"
 #include "ScriptState.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

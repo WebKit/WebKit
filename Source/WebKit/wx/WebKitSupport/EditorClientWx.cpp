@@ -38,12 +38,12 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
-#include "PlatformString.h"
 #include "WebFrame.h"
 #include "WebFramePrivate.h"
 #include "WebView.h"
 #include "WebViewPrivate.h"
 #include "WindowsKeyboardCodes.h"
+#include <wtf/text/WTFString.h>
 
 #include <stdio.h>
 

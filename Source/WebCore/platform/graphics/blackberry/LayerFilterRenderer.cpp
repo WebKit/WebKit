@@ -26,7 +26,6 @@
 #include "LayerCompositingThread.h"
 #include "LayerRenderer.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
 #include "TextureCacheCompositingThread.h"
 
 #include <BlackBerryPlatformGraphics.h>
@@ -35,6 +34,7 @@
 
 #include <cstring>
 #include <limits>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

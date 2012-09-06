@@ -28,7 +28,6 @@
 
 #include "KURL.h"
 #include "SharedBuffer.h"
-#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 

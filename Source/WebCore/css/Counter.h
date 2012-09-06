@@ -22,7 +22,7 @@
 #define Counter_h
 
 #include "CSSPrimitiveValue.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

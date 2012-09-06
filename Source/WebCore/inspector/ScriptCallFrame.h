@@ -35,8 +35,8 @@
 #include "InspectorTypeBuilder.h"
 #endif
 
-#include "PlatformString.h"
 #include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

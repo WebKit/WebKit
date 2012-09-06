@@ -32,7 +32,6 @@
 #include "FontPlatformDataHarfBuzz.h"
 
 #include "NotImplemented.h"
-#include "PlatformString.h"
 #include "SkAdvancedTypefaceMetrics.h"
 #include "SkFontHost.h"
 #include "SkPaint.h"
@@ -49,6 +48,7 @@
 #include <public/linux/WebSandboxSupport.h>
 #include <public/Platform.h>
 #include <wtf/text/StringImpl.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

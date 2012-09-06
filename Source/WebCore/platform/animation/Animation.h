@@ -26,11 +26,11 @@
 #define Animation_h
 
 #include "CSSPropertyNames.h"
-#include "PlatformString.h"
 #include "RenderStyleConstants.h"
 #include "TimingFunction.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

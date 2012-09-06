@@ -33,10 +33,10 @@
 #include "config.h"
 #include "HTTPParsers.h"
 
-#include "PlatformString.h"
 #include <wtf/DateMath.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 using namespace WTF;

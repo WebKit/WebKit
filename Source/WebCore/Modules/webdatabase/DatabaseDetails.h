@@ -31,8 +31,8 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "PlatformString.h"
 #include <wtf/Threading.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

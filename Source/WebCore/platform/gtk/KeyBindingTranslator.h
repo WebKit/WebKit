@@ -20,8 +20,8 @@
 #define KeyBindingTranslator_h
 
 #include "GRefPtrGtk.h"
-#include "PlatformString.h"
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 typedef struct _GdkEventKey GdkEventKey;
 

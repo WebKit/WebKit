@@ -25,11 +25,11 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
-#include "PlatformString.h"
 #include "FontDescription.h"
 #include <cairo-ft.h>
 #include <cairo.h>
 #include <fontconfig/fcfreetype.h>
+#include <wtf/text/WTFString.h>
 
 #if !PLATFORM(EFL)
 #include <gdk/gdk.h>

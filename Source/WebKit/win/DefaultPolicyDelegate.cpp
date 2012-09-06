@@ -28,9 +28,7 @@
 #include "DefaultPolicyDelegate.h"
 
 #include <WebCore/COMPtr.h>
-#include <WebCore/PlatformString.h>
-
-using namespace WebCore;
+#include <wtf/text/WTFString.h>
 
 // FIXME: move this enum to a separate header file when other code begins to use it.
 typedef enum WebExtraNavigationType {

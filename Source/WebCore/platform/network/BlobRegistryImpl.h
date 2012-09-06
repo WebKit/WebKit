@@ -34,10 +34,10 @@
 #include "BlobData.h"
 #include "BlobRegistry.h"
 #include "BlobStorageData.h"
-#include "PlatformString.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

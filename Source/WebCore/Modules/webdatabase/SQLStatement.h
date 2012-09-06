@@ -30,12 +30,12 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "PlatformString.h"
 #include "SQLCallbackWrapper.h"
 #include "SQLResultSet.h"
 #include "SQLValue.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

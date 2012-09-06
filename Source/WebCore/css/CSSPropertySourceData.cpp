@@ -36,7 +36,6 @@
 
 #include "CSSPropertySourceData.h"
 
-#include "PlatformString.h"
 #include <wtf/StaticConstructors.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>

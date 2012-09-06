@@ -31,12 +31,12 @@
 #ifndef CSSPropertySourceData_h
 #define CSSPropertySourceData_h
 
-#include "PlatformString.h"
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

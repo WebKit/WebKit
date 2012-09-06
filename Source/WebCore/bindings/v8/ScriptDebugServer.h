@@ -33,7 +33,6 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
-#include "PlatformString.h"
 #include "ScopedPersistent.h"
 #include "ScriptBreakpoint.h"
 #include "Timer.h"
@@ -43,6 +42,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

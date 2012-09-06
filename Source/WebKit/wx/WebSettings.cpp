@@ -29,8 +29,8 @@
 #include "config.h"
 #include "WebSettings.h"
 
-#include "PlatformString.h"
 #include "Settings.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 

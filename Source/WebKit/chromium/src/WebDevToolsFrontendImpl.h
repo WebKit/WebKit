@@ -31,11 +31,11 @@
 #ifndef WebDevToolsFrontendImpl_h
 #define WebDevToolsFrontendImpl_h
 
-#include "PlatformString.h"
 #include "WebDevToolsFrontend.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 

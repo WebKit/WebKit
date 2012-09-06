@@ -53,7 +53,6 @@
 #include "KURL.h"
 #include "MediaError.h"
 #include "Page.h"
-#include "PlatformString.h"
 #include "RenderWidget.h"
 #include "Settings.h"
 #include "TextBreakIterator.h"
@@ -75,6 +74,7 @@
 #include "platform/WebVector.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

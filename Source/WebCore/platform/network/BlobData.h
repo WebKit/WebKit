@@ -33,9 +33,9 @@
 
 #include "FileSystem.h"
 #include "KURL.h"
-#include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

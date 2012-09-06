@@ -23,7 +23,6 @@
 
 #include "CSSParserValues.h"
 #include "MemoryInstrumentation.h"
-#include "PlatformString.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 

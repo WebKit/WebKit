@@ -27,8 +27,8 @@
 #include "CSSBorderImageSliceValue.h"
 
 #include "MemoryInstrumentation.h"
-#include "PlatformString.h"
 #include "Rect.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

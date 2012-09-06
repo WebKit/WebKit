@@ -32,7 +32,7 @@
 #define TimelineRecordFactory_h
 
 #include "LayoutTypes.h"
-#include "PlatformString.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

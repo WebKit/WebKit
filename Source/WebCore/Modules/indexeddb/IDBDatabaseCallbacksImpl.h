@@ -27,8 +27,8 @@
 #define IDBDatabaseCallbacksImpl_h
 
 #include "IDBDatabaseCallbacks.h"
-#include "PlatformString.h"
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(INDEXED_DATABASE)
 

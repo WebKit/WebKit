@@ -29,7 +29,7 @@
 #include "KURL.h"
 #include "Page.h"
 #include "PageGroup.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 #include <QSharedData>
 #include <QDebug>

@@ -28,8 +28,8 @@
 #define StyleMedia_h
 
 #include "DOMWindowProperty.h"
-#include "PlatformString.h"
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -25,9 +25,8 @@
 
 #include "config.h"
 #include "IdentifierRep.h"
-#include "JSDOMBinding.h"
 
-#include "PlatformString.h"
+#include "JSDOMBinding.h"
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>

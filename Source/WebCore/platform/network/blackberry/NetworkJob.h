@@ -20,7 +20,6 @@
 #define NetworkJob_h
 
 #include "DeferredData.h"
-#include "PlatformString.h"
 #include "ProtectionSpace.h"
 #include "ResourceHandle.h"
 #include "ResourceResponse.h"
@@ -29,6 +28,7 @@
 #include <network/FilterStream.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace BlackBerry {
 namespace Platform {

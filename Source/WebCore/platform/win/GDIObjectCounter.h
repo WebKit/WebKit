@@ -37,7 +37,7 @@
 
 #ifndef NDEBUG
 
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

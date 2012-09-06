@@ -31,8 +31,8 @@
 #ifndef SQLiteFileSystem_h
 #define SQLiteFileSystem_h
 
-#include "PlatformString.h"
 #include <wtf/Threading.h>
+#include <wtf/text/WTFString.h>
 
 struct sqlite3;
 

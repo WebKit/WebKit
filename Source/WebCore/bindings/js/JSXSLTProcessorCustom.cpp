@@ -38,9 +38,9 @@
 #include "JSDocumentFragment.h"
 #include "JSNode.h"
 #include "Node.h"
-#include "PlatformString.h"
 #include "XSLTProcessor.h"
 #include "JSDOMBinding.h"
+#include <wtf/text/WTFString.h>
 
 using namespace JSC;
 

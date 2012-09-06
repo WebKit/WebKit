@@ -30,9 +30,9 @@
 #define IDBMetadata_h
 
 #include "IDBKeyPath.h"
-#include "PlatformString.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(INDEXED_DATABASE)
 

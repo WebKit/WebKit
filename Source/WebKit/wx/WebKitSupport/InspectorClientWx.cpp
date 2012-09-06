@@ -28,7 +28,7 @@
 
 #include "NotImplemented.h"
 #include "Page.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

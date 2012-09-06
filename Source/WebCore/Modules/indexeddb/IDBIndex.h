@@ -33,8 +33,8 @@
 #include "IDBMetadata.h"
 #include "IDBObjectStore.h"
 #include "IDBRequest.h"
-#include "PlatformString.h"
 #include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(INDEXED_DATABASE)
 

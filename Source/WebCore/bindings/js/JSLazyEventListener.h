@@ -21,8 +21,8 @@
 #define JSLazyEventListener_h
 
 #include "JSEventListener.h"
-#include "PlatformString.h"
 #include <wtf/text/TextPosition.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

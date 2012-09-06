@@ -20,11 +20,10 @@
 #ifndef MediaQueryListListener_h
 #define MediaQueryListListener_h
 
-#include "PlatformString.h"
 #include "ScriptState.h"
 #include "ScriptValue.h"
-
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

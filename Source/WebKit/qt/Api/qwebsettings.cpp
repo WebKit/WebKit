@@ -36,7 +36,6 @@
 #include "PageCache.h"
 #include "Settings.h"
 #include "KURL.h"
-#include "PlatformString.h"
 #include "IconDatabase.h"
 #include "PluginDatabase.h"
 #include "Image.h"
@@ -44,6 +43,7 @@
 #include "ApplicationCacheStorage.h"
 #include "DatabaseTracker.h"
 #include "FileSystem.h"
+#include <wtf/text/WTFString.h>
 
 #include <QApplication>
 #include <QStandardPaths>

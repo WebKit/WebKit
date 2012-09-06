@@ -29,16 +29,14 @@
 
 #include "WebNotification.h"
 #include <WebCore/COMPtr.h>
-#include <WebCore/PlatformString.h>
+#include <utility>
+#include <wchar.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
-#include <utility>
-#include <wchar.h>
-
-using namespace WebCore;
+#include <wtf/text/WTFString.h>
 
 typedef std::pair<COMPtr<IUnknown>, COMPtr<IWebNotificationObserver> > ObjectObserverPair;
 typedef Vector<ObjectObserverPair> ObjectObserverList;

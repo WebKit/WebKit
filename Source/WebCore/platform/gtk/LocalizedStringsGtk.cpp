@@ -34,8 +34,8 @@
 #include <wtf/gobject/GOwnPtr.h>
 #include "IntSize.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>

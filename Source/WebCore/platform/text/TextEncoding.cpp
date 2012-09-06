@@ -28,9 +28,13 @@
 #include "config.h"
 #include "TextEncoding.h"
 
-#include "PlatformString.h"
 #include "TextCodec.h"
 #include "TextEncodingRegistry.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
+
 #if USE(ICU_UNICODE)
 #include <unicode/unorm.h>
 #elif USE(QT4_UNICODE)
@@ -39,9 +43,6 @@
 #include <glib.h>
 #include <wtf/gobject/GOwnPtr.h>
 #endif
-#include <wtf/text/CString.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 

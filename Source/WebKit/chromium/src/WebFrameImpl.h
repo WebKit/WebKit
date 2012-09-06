@@ -36,10 +36,10 @@
 
 #include "Frame.h"
 #include "FrameLoaderClientImpl.h"
-#include "PlatformString.h"
 #include <wtf/Compiler.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 class GraphicsContext;

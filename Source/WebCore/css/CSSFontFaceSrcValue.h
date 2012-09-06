@@ -28,8 +28,8 @@
 
 #include "CSSValue.h"
 #include "CachedResourceHandle.h"
-#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

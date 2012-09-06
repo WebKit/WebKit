@@ -32,7 +32,7 @@
 #include "Archive.h"
 #include "ArchiveResource.h"
 #include "KURL.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>

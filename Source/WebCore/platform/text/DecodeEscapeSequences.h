@@ -30,7 +30,6 @@
 #ifndef DecodeEscapeSequences_h
 #define DecodeEscapeSequences_h
 
-#include "PlatformString.h"
 #include "TextEncoding.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>

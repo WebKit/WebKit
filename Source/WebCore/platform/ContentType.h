@@ -27,7 +27,7 @@
 #ifndef ContentType_h
 #define ContentType_h
 
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

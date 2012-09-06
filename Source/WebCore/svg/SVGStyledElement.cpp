@@ -28,7 +28,6 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
-#include "PlatformString.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceClipper.h"
@@ -46,6 +45,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

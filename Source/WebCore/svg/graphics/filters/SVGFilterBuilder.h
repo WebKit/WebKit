@@ -23,12 +23,12 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FilterEffect.h"
-#include "PlatformString.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

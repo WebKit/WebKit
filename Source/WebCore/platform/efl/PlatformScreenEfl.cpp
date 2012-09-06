@@ -36,11 +36,11 @@
 #include "PlatformScreen.h"
 
 #include "NotImplemented.h"
-#include "PlatformString.h"
 #include "Widget.h"
 
 #include <Ecore_Evas.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #ifdef HAVE_ECORE_X
 #include <Ecore_X.h>

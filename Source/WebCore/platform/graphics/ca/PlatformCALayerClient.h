@@ -31,13 +31,13 @@
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "PlatformCAAnimation.h"
-#include "PlatformString.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

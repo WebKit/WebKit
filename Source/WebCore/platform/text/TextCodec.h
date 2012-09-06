@@ -32,9 +32,8 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/unicode/Unicode.h>
-
-#include "PlatformString.h"
 
 namespace WebCore {
     class TextEncoding;

@@ -28,14 +28,13 @@
 #import "WebFrameInternal.h"
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoaderClient.h>
-#import <WebCore/PlatformString.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderLayerBacking.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/StyledElement.h>
+#import <wtf/text/WTFString.h>
 
 using namespace WebCore;
-
 
 @interface WebRenderLayer(Private)
 

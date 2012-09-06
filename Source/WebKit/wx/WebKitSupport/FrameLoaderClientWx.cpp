@@ -43,7 +43,6 @@
 #include "HTMLFrameOwnerElement.h"
 #include "NotImplemented.h"
 #include "Page.h"
-#include "PlatformString.h"
 #include "PluginView.h"
 #include "ProgressTracker.h"
 #include "RenderPart.h"
@@ -56,6 +55,7 @@
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 #include <stdio.h>
 #if OS(UNIX)

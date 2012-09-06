@@ -31,8 +31,8 @@
 #ifndef ScriptProfileNode_h
 #define ScriptProfileNode_h
 
-#include "PlatformString.h"
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace v8 {
 class CpuProfileNode;

@@ -34,8 +34,8 @@
 #if ENABLE(INSPECTOR) && ENABLE(INDEXED_DATABASE)
 
 #include "InspectorBaseAgent.h"
-#include "PlatformString.h"
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

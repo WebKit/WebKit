@@ -30,7 +30,7 @@
 #ifndef ScriptBreakpoint_h
 #define ScriptBreakpoint_h
 
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

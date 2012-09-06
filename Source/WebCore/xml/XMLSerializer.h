@@ -20,8 +20,9 @@
 #ifndef XMLSerializer_h
 #define XMLSerializer_h
 
+#include <wtf/Forward.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include "PlatformString.h"
 
 namespace WebCore {
 

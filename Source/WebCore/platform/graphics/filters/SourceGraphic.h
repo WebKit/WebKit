@@ -23,9 +23,7 @@
 
 #if ENABLE(FILTERS)
 #include "FilterEffect.h"
-
 #include "Filter.h"
-#include "PlatformString.h"
 
 namespace WebCore {
 

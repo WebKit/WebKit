@@ -33,10 +33,10 @@
 
 #if ENABLE(MICRODATA)
 
-#include "PlatformString.h"
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

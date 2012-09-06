@@ -26,10 +26,10 @@
 #include "config.h"
 #include "TextCodecUTF16.h"
 
-#include "PlatformString.h"
+#include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuffer.h>
-#include <wtf/PassOwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 using namespace std;
 

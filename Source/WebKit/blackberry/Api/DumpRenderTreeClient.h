@@ -21,8 +21,8 @@
 
 #include "BlackBerryGlobal.h"
 
-#include "PlatformString.h"
 #include <JavaScriptCore/JSObjectRef.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 class Credential;

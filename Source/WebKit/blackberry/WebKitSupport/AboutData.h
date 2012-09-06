@@ -19,7 +19,7 @@
 #ifndef AboutData_h
 #define AboutData_h
 
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace BlackBerry {
 namespace WebKit {

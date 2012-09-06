@@ -23,7 +23,7 @@
 #define CSSCharsetRule_h
 
 #include "CSSRule.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

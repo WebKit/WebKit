@@ -33,13 +33,13 @@
 #include <WebCore/InspectorClient.h>
 #include <WebCore/InspectorFrontendChannel.h>
 #include <WebCore/InspectorFrontendClientLocal.h>
-#include <WebCore/PlatformString.h>
 #include <WebCore/WindowMessageListener.h>
+#include <windows.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/text/StringHash.h>
-#include <windows.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -23,8 +23,8 @@
 
 #import "GraphicsContext.h"
 #import "LocalCurrentGraphicsContext.h"
-#import "PlatformString.h"
 #import <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

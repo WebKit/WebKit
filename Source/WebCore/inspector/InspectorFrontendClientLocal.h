@@ -32,9 +32,9 @@
 #define InspectorFrontendClientLocal_h
 
 #include "InspectorFrontendClient.h"
-#include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

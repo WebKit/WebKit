@@ -54,7 +54,6 @@
 #include "MutationObserver.h"
 #include "NodeList.h"
 #include "PageGroup.h"
-#include "PlatformString.h"
 #include "PrintContext.h"
 #include "RenderListItem.h"
 #include "RenderTreeAsText.h"
@@ -73,6 +72,7 @@
 #include "webkitwebview.h"
 #include "webkitwebviewprivate.h"
 #include <JavaScriptCore/APICast.h>
+#include <wtf/text/WTFString.h>
 
 using namespace JSC;
 using namespace WebCore;

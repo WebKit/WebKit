@@ -29,11 +29,11 @@
 #ifndef TextCodecWin_h
 #define TextCodecWin_h
 
-#include "PlatformString.h"
 #include "TextCodec.h"
 #include "TextEncoding.h"
 #include <windows.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

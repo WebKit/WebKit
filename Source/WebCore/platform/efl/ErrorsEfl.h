@@ -26,7 +26,7 @@
 #ifndef ErrorsEfl_h
 #define ErrorsEfl_h
 
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

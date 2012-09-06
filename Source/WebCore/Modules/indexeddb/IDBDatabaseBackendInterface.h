@@ -26,9 +26,9 @@
 #ifndef IDBDatabaseBackendInterface_h
 #define IDBDatabaseBackendInterface_h
 
-#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(INDEXED_DATABASE)
 

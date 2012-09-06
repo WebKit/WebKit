@@ -42,11 +42,11 @@
 #include "IntPoint.h"
 #include "KURL.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
 #include "Range.h"
 #include "RenderImage.h"
 #include "markup.h"
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 #include <QGuiApplication>
 #include <QClipboard>

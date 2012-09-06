@@ -26,9 +26,9 @@
 #define InspectorStyleTextEditor_h
 
 #include "CSSPropertySourceData.h"
-#include "PlatformString.h"
 
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

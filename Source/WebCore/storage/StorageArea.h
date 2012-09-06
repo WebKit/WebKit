@@ -26,10 +26,10 @@
 #ifndef StorageArea_h
 #define StorageArea_h
 
-#include "PlatformString.h"
-
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -339,8 +339,9 @@ def main():
     output_file.write("""
 #ifndef InspectorProtocolVersion_h
 #define InspectorProtocolVersion_h
-#include "PlatformString.h"
+
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

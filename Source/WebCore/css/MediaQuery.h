@@ -29,10 +29,10 @@
 #ifndef MediaQuery_h
 #define MediaQuery_h
 
-#include "PlatformString.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 class MediaQueryExp;

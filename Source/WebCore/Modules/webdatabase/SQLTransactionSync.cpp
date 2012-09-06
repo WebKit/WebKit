@@ -36,7 +36,6 @@
 #include "DatabaseAuthorizer.h"
 #include "DatabaseContext.h"
 #include "DatabaseSync.h"
-#include "PlatformString.h"
 #include "SQLException.h"
 #include "SQLResultSet.h"
 #include "SQLStatementSync.h"
@@ -47,6 +46,7 @@
 #include "ScriptExecutionContext.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

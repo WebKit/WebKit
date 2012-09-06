@@ -33,7 +33,6 @@
 #include "Frame.h"
 #include "NPObjectWrapper.h"
 #include <wtf/OwnArrayPtr.h>
-#include "PlatformString.h"
 #include "ScriptSourceCode.h"
 #include "UserGestureIndicator.h"
 #include "V8Binding.h"
@@ -45,6 +44,7 @@
 
 #include <stdio.h>
 #include <wtf/StringExtras.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

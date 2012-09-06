@@ -25,8 +25,8 @@
 
 #if !LOG_DISABLED
 
-#include "PlatformString.h"
 #include <Eina.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

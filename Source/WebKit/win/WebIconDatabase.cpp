@@ -28,19 +28,19 @@
 #include "WebIconDatabase.h"
 
 #include "CFDictionaryPropertyBag.h"
-#include "WebPreferences.h"
 #include "WebNotificationCenter.h"
-#include <WebCore/BitmapInfo.h>
+#include "WebPreferences.h"
+#include "shlobj.h"
 #include <WebCore/BString.h>
+#include <WebCore/BitmapInfo.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/HWndDC.h>
 #include <WebCore/IconDatabase.h>
 #include <WebCore/Image.h>
-#include <WebCore/PlatformString.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/MainThread.h>
-#include "shlobj.h"
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 using namespace WTF;

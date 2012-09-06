@@ -46,7 +46,6 @@
 #include "KURL.h"
 #include "NavigationAction.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
 #include "PopupMenuClient.h"
 #include "PopupMenuGtk.h"
 #include "RefPtrCairo.h"
@@ -72,6 +71,7 @@
 #include <gtk/gtk.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(SQL_DATABASE)
 #include "DatabaseTracker.h"

@@ -29,9 +29,9 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "Event.h"
-#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

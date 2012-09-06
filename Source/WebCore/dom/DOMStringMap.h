@@ -26,9 +26,9 @@
 #ifndef DOMStringMap_h
 #define DOMStringMap_h
 
-#include "PlatformString.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

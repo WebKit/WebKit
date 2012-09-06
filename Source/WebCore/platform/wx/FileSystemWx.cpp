@@ -40,8 +40,8 @@
 #include <wx/filename.h>
 
 #include "NotImplemented.h"
-#include "PlatformString.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #if OS(DARWIN)
 #include <CoreFoundation/CoreFoundation.h>

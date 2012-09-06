@@ -35,7 +35,7 @@
 
 #include "DOMFileSystemSync.h"
 #include "EntryBase.h"
-#include "PlatformString.h"
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 

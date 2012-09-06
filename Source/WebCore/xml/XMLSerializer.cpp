@@ -23,6 +23,7 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "markup.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

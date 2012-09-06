@@ -37,8 +37,8 @@
 #include "Frame.h"
 #include "KURL.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
 #include "markup.h"
+#include <wtf/text/WTFString.h>
 
 #include <public/Platform.h>
 #include <public/WebFileUtilities.h>

@@ -25,8 +25,8 @@
 #if ENABLE(FILTERS)
 #include "FilterEffect.h"
 
-#include "PlatformString.h"
 #include "Filter.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

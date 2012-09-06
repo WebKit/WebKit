@@ -30,11 +30,11 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
-#include "PlatformString.h"
 #include "SpeechGrammarList.h"
 #include <wtf/Compiler.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

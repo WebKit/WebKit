@@ -21,7 +21,7 @@
 
 #include "DOMImplementation.h"
 #include "Document.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

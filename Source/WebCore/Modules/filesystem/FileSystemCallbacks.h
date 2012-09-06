@@ -35,9 +35,9 @@
 
 #include "AsyncFileSystemCallbacks.h"
 #include "FileSystemType.h"
-#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

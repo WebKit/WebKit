@@ -32,9 +32,9 @@
 
 #include "IntSize.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
 #include <QCoreApplication>
 #include <wtf/MathExtras.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

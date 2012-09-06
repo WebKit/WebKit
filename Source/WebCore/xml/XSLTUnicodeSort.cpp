@@ -31,9 +31,9 @@
 
 #if ENABLE(XSLT)
 
-#include "PlatformString.h"
 #include <libxslt/templates.h>
 #include <libxslt/xsltutils.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/unicode/Collator.h>
 
 #if PLATFORM(MAC)

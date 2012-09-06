@@ -30,13 +30,12 @@
 #define IconRecord_h
 
 #include "PageURLRecord.h"
-#include <wtf/RefCounted.h>
 #include "SharedBuffer.h"
-
-#include "PlatformString.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 #if OS(SOLARIS)
 #include <sys/types.h> // For time_t structure.

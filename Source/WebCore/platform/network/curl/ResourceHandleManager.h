@@ -29,7 +29,6 @@
 #define ResourceHandleManager_h
 
 #include "Frame.h"
-#include "PlatformString.h"
 #include "Timer.h"
 #include "ResourceHandleClient.h"
 
@@ -41,6 +40,7 @@
 #include <curl/curl.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

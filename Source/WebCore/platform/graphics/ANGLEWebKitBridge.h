@@ -26,8 +26,8 @@
 #ifndef ANGLEWebKitBridge_h
 #define ANGLEWebKitBridge_h
 
-#include "PlatformString.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #if !PLATFORM(GTK) && !PLATFORM(EFL) && !PLATFORM(BLACKBERRY) && !PLATFORM(CHROMIUM) && !PLATFORM(QT)
 #include "ANGLE/ShaderLang.h"

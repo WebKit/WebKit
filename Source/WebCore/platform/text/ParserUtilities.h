@@ -22,7 +22,7 @@
 #ifndef ParserUtilities_h
 #define ParserUtilities_h
 
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

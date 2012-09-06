@@ -27,8 +27,8 @@
 #ifndef XPathValue_h
 #define XPathValue_h
 
-#include "PlatformString.h"
 #include "XPathNodeSet.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -32,8 +32,8 @@
 
 #include <gtest/gtest.h>
 
-#include "PlatformString.h"
 #include "UniscribeHelper.h"
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

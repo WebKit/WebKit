@@ -33694,10 +33694,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\text\PlatformString.h"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\text\QuotedPrintable.cpp"
 					>
 				</File>

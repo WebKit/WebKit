@@ -29,10 +29,10 @@
 #include "BitmapImage.h"
 #include "BitmapInfo.h"
 #include "GraphicsContextCG.h"
-#include "PlatformString.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <windows.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

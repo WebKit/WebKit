@@ -29,10 +29,10 @@
 #include "WebKit.h"
 #include <WebCore/COMPtr.h>
 #include <WebCore/KURL.h>
-#include <WebCore/PlatformString.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 class WebResource : public IWebResource {
 public:

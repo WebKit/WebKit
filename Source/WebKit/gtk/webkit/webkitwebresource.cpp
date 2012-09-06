@@ -22,7 +22,6 @@
 
 #include "ArchiveResource.h"
 #include "KURL.h"
-#include "PlatformString.h"
 #include "SharedBuffer.h"
 #include "webkitenumtypes.h"
 #include "webkitglobalsprivate.h"
@@ -33,6 +32,7 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 /**
  * SECTION:webkitwebresource

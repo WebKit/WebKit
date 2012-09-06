@@ -28,9 +28,9 @@
 
 #if !LOG_DISABLED
 
-#include "PlatformString.h"
 #include <windows.h>
 #include <wtf/OwnArrayPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -47,7 +47,6 @@
 #import <WebCore/Image.h>
 #import <WebCore/KURL.h>
 #import <WebCore/PageCache.h>
-#import <WebCore/PlatformString.h>
 #import <WebCore/RunLoop.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -55,6 +54,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/text/WTFString.h>
 
 // Private keys used in the WebHistoryItem's dictionary representation.
 // see 3245793 for explanation of "lastVisitedDate"

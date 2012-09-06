@@ -33,7 +33,6 @@
 #include "HashTools.h"
 #include "JSCSSValue.h"
 #include "JSNode.h"
-#include "PlatformString.h"
 #include "Settings.h"
 #include "StylePropertySet.h"
 #include <runtime/StringPrototype.h>

@@ -36,7 +36,7 @@
 #include "InspectorController.h"
 #include "InspectorFrontendClient.h"
 #include "InspectorFrontendHost.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 #include "V8Binding.h"
 #include "V8MouseEvent.h"

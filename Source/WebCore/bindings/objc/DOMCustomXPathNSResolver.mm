@@ -27,7 +27,7 @@
 #include "DOMCustomXPathNSResolver.h"
 
 #include "BlockExceptions.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

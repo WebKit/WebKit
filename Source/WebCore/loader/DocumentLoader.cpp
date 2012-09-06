@@ -49,12 +49,12 @@
 #include "MainResourceLoader.h"
 #include "MemoryInstrumentation.h"
 #include "Page.h"
-#include "PlatformString.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/unicode/Unicode.h>
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)

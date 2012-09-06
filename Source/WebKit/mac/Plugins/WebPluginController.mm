@@ -54,12 +54,12 @@
 #import <WebCore/HTMLMediaElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/MediaPlayerProxy.h>
-#import <WebCore/PlatformString.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <objc/objc-runtime.h>
 #import <runtime/JSLock.h>
+#import <wtf/text/WTFString.h>
 
 using namespace WebCore;
 using namespace HTMLNames;

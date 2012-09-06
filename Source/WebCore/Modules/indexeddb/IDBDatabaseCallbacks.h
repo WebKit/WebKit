@@ -28,8 +28,8 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "PlatformString.h"
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

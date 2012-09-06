@@ -27,8 +27,6 @@
 #include "WebKitDLL.h"
 #include "WebCookieManager.h"
 
-using namespace WebCore;
-
 // WebCookieManager -------------------------------------------------------
 
 WebCookieManager* WebCookieManager::createInstance()

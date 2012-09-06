@@ -41,8 +41,8 @@
 #include "FileStreamClient.h"
 #include "FileThread.h"
 #include "FileThreadTask.h"
-#include "PlatformString.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

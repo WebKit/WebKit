@@ -36,10 +36,9 @@
 #include "AsyncFileSystem.h"
 #include "DOMFilePath.h"
 #include "DOMFileSystemBase.h"
-#include "PlatformString.h"
 #include "SecurityOrigin.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

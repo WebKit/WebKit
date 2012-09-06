@@ -28,8 +28,8 @@
 
 #include "Coordinates.h"
 #include "Event.h"
-#include "PlatformString.h"
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

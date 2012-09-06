@@ -35,10 +35,10 @@
 #include "IntSizeHash.h"
 #include "MemoryInstrumentation.h"
 #include "NodeRenderStyle.h"
-#include "PlatformString.h"
 #include "RenderObject.h"
 #include "StyleResolver.h"
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 using namespace std;
 

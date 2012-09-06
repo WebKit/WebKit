@@ -4917,7 +4917,6 @@
 		B2C3DA240D006C1D00EF6F26 /* BidiContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9F30D006C1D00EF6F26 /* BidiContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA250D006C1D00EF6F26 /* BidiResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9F40D006C1D00EF6F26 /* BidiResolver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA2A0D006C1D00EF6F26 /* CharsetData.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9FA0D006C1D00EF6F26 /* CharsetData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B2C3DA2B0D006C1D00EF6F26 /* PlatformString.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9FB0D006C1D00EF6F26 /* PlatformString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA2C0D006C1D00EF6F26 /* RegularExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D9FC0D006C1D00EF6F26 /* RegularExpression.cpp */; };
 		B2C3DA2D0D006C1D00EF6F26 /* RegularExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9FD0D006C1D00EF6F26 /* RegularExpression.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA2E0D006C1D00EF6F26 /* SegmentedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D9FE0D006C1D00EF6F26 /* SegmentedString.cpp */; };
@@ -12191,7 +12190,6 @@
 		B2C3D9F30D006C1D00EF6F26 /* BidiContext.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BidiContext.h; sourceTree = "<group>"; };
 		B2C3D9F40D006C1D00EF6F26 /* BidiResolver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BidiResolver.h; sourceTree = "<group>"; };
 		B2C3D9FA0D006C1D00EF6F26 /* CharsetData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CharsetData.h; sourceTree = "<group>"; };
-		B2C3D9FB0D006C1D00EF6F26 /* PlatformString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlatformString.h; sourceTree = "<group>"; };
 		B2C3D9FC0D006C1D00EF6F26 /* RegularExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RegularExpression.cpp; sourceTree = "<group>"; };
 		B2C3D9FD0D006C1D00EF6F26 /* RegularExpression.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RegularExpression.h; sourceTree = "<group>"; };
 		B2C3D9FE0D006C1D00EF6F26 /* SegmentedString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SegmentedString.cpp; sourceTree = "<group>"; };
@@ -19985,7 +19983,6 @@
 				F544F78615CFB2A800AF33A8 /* NumberLocalizer.cpp */,
 				F544F78715CFB2A800AF33A8 /* NumberLocalizer.h */,
 				BC76AC110DD7AD5C00415F34 /* ParserUtilities.h */,
-				B2C3D9FB0D006C1D00EF6F26 /* PlatformString.h */,
 				379E371413736A6600B9E919 /* QuotedPrintable.cpp */,
 				379E371513736A6600B9E919 /* QuotedPrintable.h */,
 				B2C3D9FC0D006C1D00EF6F26 /* RegularExpression.cpp */,
@@ -24545,7 +24542,6 @@
 				C598905814E9C29900E8D18B /* PlatformPasteboard.h in Headers */,
 				BCEC01D70C274EB4009F4EC9 /* PlatformScreen.h in Headers */,
 				1AD8F81B11CAB9E900E93E54 /* PlatformStrategies.h in Headers */,
-				B2C3DA2B0D006C1D00EF6F26 /* PlatformString.h in Headers */,
 				935C476B09AC4D4F00A6AAB4 /* PlatformWheelEvent.h in Headers */,
 				A9C6E4F40D745E48006442E9 /* PluginData.h in Headers */,
 				97205ABC1239292700B17380 /* PluginDocument.h in Headers */,

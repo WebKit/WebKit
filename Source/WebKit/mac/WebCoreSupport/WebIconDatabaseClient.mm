@@ -29,7 +29,7 @@
 #import "WebIconDatabaseClient.h"
 
 #import "WebIconDatabaseInternal.h"
-#import <WebCore/PlatformString.h>
+#import <wtf/text/WTFString.h>
 
 #if ENABLE(ICONDATABASE)
 

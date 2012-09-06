@@ -27,9 +27,9 @@
 #include "BString.h"
 
 #include "KURL.h"
-#include "PlatformString.h"
 #include <windows.h>
 #include <wtf/text/AtomicString.h>
+#include <wtf/text/WTFString.h>
 
 #if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>

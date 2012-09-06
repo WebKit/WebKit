@@ -28,8 +28,8 @@
 
 #import "FloatRect.h"
 #import "GraphicsContext.h"
-#import "PlatformString.h"
 #import "SharedBuffer.h"
+#import <wtf/text/WTFString.h>
 
 @interface WebCoreBundleFinder : NSObject
 @end

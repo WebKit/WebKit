@@ -34,13 +34,13 @@
 #include "DedicatedWorkerContext.h"
 #include "InspectorInstrumentation.h"
 #include "KURL.h"
-#include "PlatformString.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "ThreadGlobalData.h"
 
 #include <utility>
 #include <wtf/Noncopyable.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(SQL_DATABASE)
 #include "DatabaseTask.h"

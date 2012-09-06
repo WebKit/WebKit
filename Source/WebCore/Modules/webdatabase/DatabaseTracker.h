@@ -31,10 +31,10 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "PlatformString.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 #if !PLATFORM(CHROMIUM)
 #include "DatabaseDetails.h"

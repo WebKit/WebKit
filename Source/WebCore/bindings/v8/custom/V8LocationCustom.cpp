@@ -37,11 +37,11 @@
 #include "FrameLoader.h"
 #include "KURL.h"
 #include "Location.h"
-#include "PlatformString.h"
 #include "V8Binding.h"
 #include "V8DOMWindow.h"
 #include "V8EventListener.h"
 #include "V8Utilities.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -28,9 +28,9 @@
 #import "DOMInternal.h" // import first to make the private/public trick work
 #import "DOMXPath.h"
 
-#import "PlatformString.h"
 #import "WebScriptObjectPrivate.h"
 #import "XPathNSResolver.h"
+#import <wtf/text/WTFString.h>
 
 //------------------------------------------------------------------------------------------
 // DOMNativeXPathNSResolver

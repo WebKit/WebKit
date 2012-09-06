@@ -32,9 +32,9 @@
 #if ENABLE(INSPECTOR) && ENABLE(SQL_DATABASE)
 
 #include "InspectorBaseAgent.h"
-#include "PlatformString.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

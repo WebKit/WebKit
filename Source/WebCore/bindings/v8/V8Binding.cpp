@@ -36,7 +36,6 @@
 #include "Element.h"
 #include "Frame.h"
 #include "MemoryInstrumentation.h"
-#include "PlatformString.h"
 #include "PlatformSupport.h"
 #include "QualifiedName.h"
 #include "Settings.h"
@@ -58,6 +57,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

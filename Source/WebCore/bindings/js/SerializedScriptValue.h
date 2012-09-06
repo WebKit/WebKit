@@ -27,7 +27,6 @@
 #ifndef SerializedScriptValue_h
 #define SerializedScriptValue_h
 
-#include "PlatformString.h"
 #include "ScriptState.h"
 #include <heap/Strong.h>
 #include <runtime/JSValue.h>
@@ -35,6 +34,7 @@
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef const struct OpaqueJSValue* JSValueRef;

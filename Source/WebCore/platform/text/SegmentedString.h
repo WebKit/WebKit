@@ -20,10 +20,10 @@
 #ifndef SegmentedString_h
 #define SegmentedString_h
 
-#include "PlatformString.h"
 #include <wtf/Deque.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextPosition.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

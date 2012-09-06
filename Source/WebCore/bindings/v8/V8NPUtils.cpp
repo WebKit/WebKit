@@ -33,12 +33,12 @@
 
 #include "DOMWindow.h"
 #include "Frame.h"
-#include "PlatformString.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 #include "NPV8Object.h"
 #include "V8Binding.h"
 #include "V8NPObject.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -53,7 +53,6 @@
 #include "OfflineAudioCompletionEvent.h"
 #include "OfflineAudioDestinationNode.h"
 #include "Oscillator.h"
-#include "PlatformString.h"
 #include "RealtimeAnalyserNode.h"
 #include "ScriptCallStack.h"
 #include "WaveShaperNode.h"
@@ -83,6 +82,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 // FIXME: check the proper way to reference an undefined thread ID
 const int UndefinedThreadIdentifier = 0xffffffff;

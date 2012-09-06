@@ -30,8 +30,8 @@
 #include "Page.h"
 #include "Settings.h"
 #include "StorageArea.h"
-#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

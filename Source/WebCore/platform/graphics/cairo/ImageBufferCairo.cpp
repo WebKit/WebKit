@@ -38,11 +38,11 @@
 #include "NotImplemented.h"
 #include "Pattern.h"
 #include "PlatformContextCairo.h"
-#include "PlatformString.h"
 #include "RefPtrCairo.h"
 #include <cairo.h>
 #include <wtf/Vector.h>
 #include <wtf/text/Base64.h>
+#include <wtf/text/WTFString.h>
 
 using namespace std;
 

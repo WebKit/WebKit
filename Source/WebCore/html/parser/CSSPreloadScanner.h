@@ -27,7 +27,6 @@
 #ifndef CSSPreloadScanner_h
 #define CSSPreloadScanner_h
 
-#include "PlatformString.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

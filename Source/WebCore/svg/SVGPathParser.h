@@ -25,11 +25,11 @@
 #define SVGPathParser_h
 
 #if ENABLE(SVG)
-#include "PlatformString.h"
 #include "SVGPathConsumer.h"
 #include "SVGPathSeg.h"
 #include "SVGPathSource.h"
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -36,13 +36,13 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "NativeImageQt.h"
-#include "PlatformString.h"
 #include "StrokeStyleApplier.h"
 #include <QPainterPath>
 #include <QTransform>
 #include <QString>
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

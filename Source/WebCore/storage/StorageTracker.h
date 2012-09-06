@@ -26,12 +26,12 @@
 #ifndef StorageTracker_h
 #define StorageTracker_h
 
-#include "PlatformString.h"
 #include "SQLiteDatabase.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

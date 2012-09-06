@@ -31,9 +31,9 @@
 #include "SmartReplace.h"
 
 #if !USE(CF) && USE(ICU_UNICODE)
-#include "PlatformString.h"
 #include <unicode/uset.h>
 #include <wtf/Assertions.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -27,7 +27,6 @@
 #include "EventHandler.h"
 #include "GraphicsContext.h"
 #include "KURL.h"
-#include "PlatformString.h"
 #if ENABLE(ORIENTATION_EVENTS)
 #include "qorientationsensor.h"
 #endif // ENABLE(ORIENTATION_EVENTS).
@@ -35,6 +34,7 @@
 #include "wtf/RefPtr.h"
 #include "Frame.h"
 #include "ViewportArguments.h"
+#include <wtf/text/WTFString.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "texmap/TextureMapper.h"

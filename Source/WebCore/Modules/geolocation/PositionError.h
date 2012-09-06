@@ -26,9 +26,9 @@
 #ifndef PositionError_h
 #define PositionError_h
 
-#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
     

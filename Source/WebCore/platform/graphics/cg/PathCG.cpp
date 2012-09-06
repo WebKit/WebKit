@@ -33,11 +33,11 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
-#include "PlatformString.h"
 #include "StrokeStyleApplier.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC) || PLATFORM(CHROMIUM)
 #include "WebCoreSystemInterface.h"

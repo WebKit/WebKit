@@ -31,13 +31,13 @@
 #include "InspectorStyleTextEditor.h"
 #include "InspectorTypeBuilder.h"
 #include "InspectorValues.h"
-#include "PlatformString.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 class ParsedStyleSheet;
 

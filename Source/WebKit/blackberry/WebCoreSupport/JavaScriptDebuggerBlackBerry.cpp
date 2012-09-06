@@ -24,10 +24,10 @@
 
 #include "JavaScriptCallFrame.h"
 #include "PageScriptDebugServer.h"
-#include "PlatformString.h"
 #include "ScriptBreakpoint.h"
 #include "SourceCode.h"
 #include "WebPage_p.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

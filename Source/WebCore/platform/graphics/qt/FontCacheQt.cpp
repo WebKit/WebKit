@@ -28,11 +28,11 @@
 #include "FontDescription.h"
 #include "FontPlatformData.h"
 #include "Font.h"
-#include "PlatformString.h"
 #include <utility>
 #include <wtf/ListHashSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 #include <QFont>
 #include <QFontDatabase>

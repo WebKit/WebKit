@@ -43,7 +43,6 @@
 #include "Node.h"
 #include "Page.h"
 #include "Pasteboard.h"
-#include "PlatformString.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -59,6 +58,7 @@
 #include "WebViewImpl.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

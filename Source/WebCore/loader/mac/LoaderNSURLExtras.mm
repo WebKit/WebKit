@@ -35,8 +35,8 @@
 #import "KURL.h"
 #import "LocalizedStrings.h"
 #import "MIMETypeRegistry.h"
-#import "PlatformString.h"
 #import "WebCoreNSStringExtras.h"
+#import <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

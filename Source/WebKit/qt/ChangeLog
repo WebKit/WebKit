@@ -1,3 +1,21 @@
+2012-09-05  Sam Weinig  <sam@webkit.org>
+
+        Part 2 of removing PlatformString.h, remove PlatformString.h
+        https://bugs.webkit.org/show_bug.cgi?id=95931
+
+        Reviewed by Adam Barth.
+
+        Remove PlatformString.h
+
+        * Api/qwebdatabase_p.h:
+        * Api/qwebframe_p.h:
+        * Api/qwebhistory.cpp:
+        * Api/qwebhistoryinterface.cpp:
+        * Api/qwebpage_p.h:
+        * Api/qwebsettings.cpp:
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/InspectorClientQt.cpp:
+
 2012-09-05  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         [DRT] LTC:: Move printing related APIs from LayoutTestController to Internals

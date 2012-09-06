@@ -21,10 +21,10 @@
 
 #include "IntSize.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
 #include <LocaleHandler.h>
 #include <LocalizeResource.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

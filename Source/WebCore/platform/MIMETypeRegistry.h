@@ -26,10 +26,10 @@
 #ifndef MIMETypeRegistry_h
 #define MIMETypeRegistry_h
 
-#include "PlatformString.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

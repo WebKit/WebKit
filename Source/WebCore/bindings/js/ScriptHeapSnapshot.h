@@ -31,8 +31,8 @@
 #ifndef ScriptHeapSnapshot_h
 #define ScriptHeapSnapshot_h
 
-#include "PlatformString.h"
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -30,7 +30,6 @@
 #include "PlatformCAAnimation.h"
 
 #include "FloatConversion.h"
-#include "PlatformString.h"
 #include "TimingFunction.h"
 #include <QuartzCore/CACFAnimation.h>
 #include <QuartzCore/CACFTiming.h>
@@ -38,6 +37,7 @@
 #include <QuartzCore/CACFValueFunction.h>
 #include <QuartzCore/CACFVector.h>
 #include <wtf/UnusedParam.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

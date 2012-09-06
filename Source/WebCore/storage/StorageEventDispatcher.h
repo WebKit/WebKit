@@ -30,8 +30,8 @@
 #ifndef StorageEventDispatcher_h
 #define StorageEventDispatcher_h
 
-#include "PlatformString.h"
 #include "StorageArea.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

@@ -26,10 +26,10 @@
 #ifndef WebKitCSSMatrix_h
 #define WebKitCSSMatrix_h
 
-#include "PlatformString.h"
 #include "TransformationMatrix.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

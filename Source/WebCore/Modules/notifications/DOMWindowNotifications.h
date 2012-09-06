@@ -30,8 +30,8 @@
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #include "DOMWindowProperty.h"
-#include "PlatformString.h"
 #include "Supplementable.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

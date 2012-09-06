@@ -26,11 +26,11 @@
 #ifndef SpeechRecognitionClientProxy_h
 #define SpeechRecognitionClientProxy_h
 
-#include "PlatformString.h"
 #include "SpeechRecognitionClient.h"
 #include "WebSpeechRecognizerClient.h"
 #include <wtf/Compiler.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 

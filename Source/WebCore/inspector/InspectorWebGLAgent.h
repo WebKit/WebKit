@@ -36,10 +36,10 @@
 #include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorTypeBuilder.h"
-#include "PlatformString.h"
 #include "ScriptState.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

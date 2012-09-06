@@ -37,7 +37,6 @@
 #include "KeyboardCodes.h"
 #include "KeyboardEvent.h"
 #include "PlatformKeyboardEvent.h"
-#include "PlatformString.h"
 #include "RenderObject.h"
 #include "Settings.h"
 #include "SpellChecker.h"
@@ -61,6 +60,7 @@
 #include "WebTextCheckingResult.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

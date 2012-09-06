@@ -32,11 +32,11 @@
 #import <WebCore/AlternativeTextClient.h>
 #import <WebCore/LayerFlushScheduler.h>
 #import <WebCore/LayerFlushSchedulerClient.h>
-#import <WebCore/PlatformString.h>
 #import <WebCore/WebCoreKeyboardUIMode.h>
 #import <wtf/HashMap.h>
 #import <wtf/PassOwnPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/WTFString.h>
 
 namespace WebCore {
 class AlternativeTextUIController;

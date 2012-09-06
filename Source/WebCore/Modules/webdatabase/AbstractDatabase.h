@@ -31,10 +31,11 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "PlatformString.h"
 #include "SQLiteDatabase.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/WTFString.h>
+
 #if !LOG_DISABLED || !ERROR_DISABLED
 #include "SecurityOrigin.h"
 #endif

@@ -38,9 +38,9 @@
 #include "InjectedScriptModule.h"
 #include "InspectorValues.h"
 #include "Node.h"
-#include "PlatformString.h"
 #include "ScriptFunctionCall.h"
 #include "SerializedScriptValue.h"
+#include <wtf/text/WTFString.h>
 
 using WebCore::TypeBuilder::Array;
 using WebCore::TypeBuilder::Debugger::CallFrame;

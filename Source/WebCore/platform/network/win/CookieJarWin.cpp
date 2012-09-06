@@ -28,11 +28,11 @@
 
 #include "Cookie.h"
 #include "KURL.h"
-#include "PlatformString.h"
 #include "Document.h"
 #include "ResourceHandle.h"
 #include <windows.h>
 #include <Wininet.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

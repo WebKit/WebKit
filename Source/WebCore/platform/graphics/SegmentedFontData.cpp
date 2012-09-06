@@ -26,9 +26,9 @@
 #include "config.h"
 #include "SegmentedFontData.h"
 
-#include "PlatformString.h"
 #include "SimpleFontData.h"
 #include <wtf/Assertions.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

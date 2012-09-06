@@ -28,10 +28,10 @@
 #include "Image.h"
 #include "KURL.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
 #include "RenderImage.h"
 #include "markup.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

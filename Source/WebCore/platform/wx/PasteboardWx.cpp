@@ -32,7 +32,7 @@
 #include "KURL.h"
 #include "markup.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 #include <wx/defs.h>
 #include <wx/dataobj.h>

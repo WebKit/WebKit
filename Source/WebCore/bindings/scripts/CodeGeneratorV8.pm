@@ -164,7 +164,7 @@ sub AddIncludesForType
     }
 
     if ($type eq "CanvasGradient" or $type eq "XPathNSResolver") {
-        AddToImplIncludes("PlatformString.h");
+        AddToImplIncludes("wtf/text/WTFString.h");
     }
 
     if ($type eq "CSSStyleSheet" or $type eq "StyleSheet") {

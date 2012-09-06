@@ -21,9 +21,9 @@
 #include "Language.h"
 
 #include <wtf/gobject/GOwnPtr.h>
-#include "PlatformString.h"
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #include <glib.h>
 #include <locale.h>

@@ -31,7 +31,6 @@
 #include "ClipboardUtilitiesWin.h"
 #include "Frame.h"
 #include "DocumentFragment.h"
-#include "PlatformString.h"
 #include "Markup.h"
 #include "TextEncoding.h"
 #include <objidl.h>
@@ -41,6 +40,7 @@
 #include <wtf/Hashmap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -27,8 +27,8 @@
 #include "NativeXPathNSResolver.h"
 
 #include "Node.h"
-#include "PlatformString.h"
 #include "XMLNames.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

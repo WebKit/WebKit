@@ -30,7 +30,6 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "PlatformString.h"
 #include "SQLTransaction.h"
 #include <wtf/Forward.h>
 

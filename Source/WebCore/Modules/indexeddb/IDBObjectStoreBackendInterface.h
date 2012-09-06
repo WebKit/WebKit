@@ -27,8 +27,8 @@
 #define IDBObjectStoreBackendInterface_h
 
 #include "IDBCursor.h"
-#include "PlatformString.h"
 #include <wtf/Threading.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(INDEXED_DATABASE)
 

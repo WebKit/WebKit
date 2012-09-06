@@ -21,11 +21,11 @@
 #include "webkitsecurityorigin.h"
 
 #include "DatabaseTracker.h"
-#include "PlatformString.h"
 #include "webkitglobalsprivate.h"
 #include "webkitsecurityoriginprivate.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 /**
  * SECTION:webkitsecurityorigin

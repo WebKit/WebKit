@@ -27,7 +27,7 @@
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
 
 #include "LengthBox.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

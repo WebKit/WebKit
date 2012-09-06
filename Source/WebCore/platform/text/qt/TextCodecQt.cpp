@@ -27,9 +27,10 @@
 #include "config.h"
 #if USE(QT4_UNICODE)
 #include "TextCodecQt.h"
-#include "PlatformString.h"
-#include <wtf/text/CString.h>
+
 #include <qset.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

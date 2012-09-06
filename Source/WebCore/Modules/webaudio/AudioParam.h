@@ -32,11 +32,11 @@
 #include "AudioContext.h"
 #include "AudioParamTimeline.h"
 #include "AudioSummingJunction.h"
-#include "PlatformString.h"
 #include <sys/types.h>
 #include <wtf/Float32Array.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

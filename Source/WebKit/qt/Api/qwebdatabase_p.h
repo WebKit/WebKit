@@ -22,9 +22,9 @@
 #include <QString>
 #include <QtCore/qshareddata.h>
 
-#include "PlatformString.h"
 #include "SecurityOrigin.h"
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 
 class QWebDatabasePrivate : public QSharedData {

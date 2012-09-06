@@ -24,10 +24,10 @@
 #include "GRefPtrGtk.h"
 #include "IntPoint.h"
 #include "IntSize.h"
-#include "PlatformString.h"
 #include <wtf/FastAllocBase.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 typedef struct _GdkEventKey GdkEventKey;
 

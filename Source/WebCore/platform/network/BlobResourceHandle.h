@@ -34,10 +34,10 @@
 #if ENABLE(BLOB)
 
 #include "FileStreamClient.h"
-#include "PlatformString.h"
 #include "ResourceHandle.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

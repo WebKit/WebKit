@@ -38,7 +38,6 @@
 #include "InspectorServerQt.h"
 #include "NotImplemented.h"
 #include "Page.h"
-#include "PlatformString.h"
 #include "ScriptDebugServer.h"
 #include "qwebinspector.h"
 #include "qwebinspector_p.h"

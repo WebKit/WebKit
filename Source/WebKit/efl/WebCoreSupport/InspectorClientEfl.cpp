@@ -24,9 +24,9 @@
 #if ENABLE(INSPECTOR)
 #include "InspectorController.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
 #include "ewk_view_private.h"
 #include <unistd.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

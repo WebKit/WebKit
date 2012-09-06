@@ -32,10 +32,10 @@
 #include "ChromeClient.h"
 #include "FloatRect.h"
 #include "KURL.h"
-#include "PlatformString.h"
 #include "QtPlatformPlugin.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 QT_BEGIN_NAMESPACE
 class QEventLoop;

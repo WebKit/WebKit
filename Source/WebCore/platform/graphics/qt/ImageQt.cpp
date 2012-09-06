@@ -38,9 +38,9 @@
 #include "GraphicsContext.h"
 #include "ImageObserver.h"
 #include "NativeImageQt.h"
-#include "PlatformString.h"
 #include "ShadowBlur.h"
 #include "StillImageQt.h"
+#include <wtf/text/WTFString.h>
 
 #include <QCoreApplication>
 #include <QDebug>

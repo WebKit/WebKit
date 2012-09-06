@@ -22,9 +22,9 @@
 #include "config.h"
 #include "TextBreakIterator.h"
 
-#include "PlatformString.h"
 #include <wtf/Atomics.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/unicode/Unicode.h>
 
 using namespace WTF;

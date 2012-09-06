@@ -32,10 +32,10 @@
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
 #include "MemoryInstrumentation.h"
-#include "PlatformString.h"
 #include "Timer.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

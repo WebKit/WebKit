@@ -35,7 +35,6 @@
 #include "Event.h"
 #include "Node.h"
 #include "NodeFilter.h"
-#include "PlatformString.h"
 #include "V8CustomXPathNSResolver.h"
 #include "V8DOMMap.h"
 #include "V8IsolatedContext.h"
@@ -44,6 +43,7 @@
 #include <v8.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

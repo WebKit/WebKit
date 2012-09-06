@@ -23,7 +23,6 @@
 
 #include "CSSValueList.h"
 #include "MemoryInstrumentation.h"
-#include "PlatformString.h"
 #include "RenderStyleConstants.h"
 #include "StylePropertyShorthand.h"
 

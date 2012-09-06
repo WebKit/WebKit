@@ -33,10 +33,10 @@
 
 #include "KURL.h"
 #include "Pasteboard.h"
-#include "PlatformString.h"
 
 #include <public/WebClipboard.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

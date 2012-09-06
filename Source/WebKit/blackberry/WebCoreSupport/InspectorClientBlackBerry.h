@@ -23,8 +23,8 @@
 #include "InspectorClient.h"
 #include "InspectorFrontendChannel.h"
 #include "InspectorOverlay.h"
-#include "PlatformString.h"
 #include <wtf/HashMap.h>
+#include <wtf/text/WTFString.h>
 
 namespace BlackBerry {
 namespace WebKit {

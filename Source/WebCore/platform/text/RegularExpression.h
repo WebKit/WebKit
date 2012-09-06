@@ -26,7 +26,7 @@
 #ifndef RegularExpression_h
 #define RegularExpression_h
 
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -27,7 +27,6 @@
 #ifndef CookieDatabaseBackingStore_h
 #define CookieDatabaseBackingStore_h
 
-#include "PlatformString.h"
 #include "SQLiteDatabase.h"
 #include "Timer.h"
 
@@ -38,6 +37,7 @@
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

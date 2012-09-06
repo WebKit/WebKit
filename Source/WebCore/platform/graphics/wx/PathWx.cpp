@@ -30,8 +30,8 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
 #include "StrokeStyleApplier.h" 
+#include <wtf/text/WTFString.h>
 
 #include <stdio.h>
 

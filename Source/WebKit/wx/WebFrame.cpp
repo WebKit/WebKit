@@ -42,7 +42,6 @@
 #include "HTMLFrameOwnerElement.h"
 #include "markup.h"
 #include "Page.h"
-#include "PlatformString.h"
 #include "PrintContext.h"
 #include "RenderTreeAsText.h"
 #include "RenderObject.h"

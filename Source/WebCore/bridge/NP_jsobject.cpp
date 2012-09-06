@@ -29,7 +29,6 @@
 
 #include "NP_jsobject.h"
 
-#include "PlatformString.h"
 #include "PluginView.h"
 #include "StringSourceProvider.h"
 #include "c_utility.h"
@@ -45,6 +44,7 @@
 #include <runtime/PropertyNameArray.h>
 #include <parser/SourceCode.h>
 #include <runtime/Completion.h>
+#include <wtf/text/WTFString.h>
 
 using namespace JSC;
 using namespace JSC::Bindings;

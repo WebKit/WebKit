@@ -43,7 +43,6 @@
 #include "MessagePort.h"
 #include "NotImplemented.h"
 #include "PageGroup.h"
-#include "PlatformString.h"
 #include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginHash.h"
@@ -57,6 +56,7 @@
 #include "WorkerScriptLoaderClient.h"
 #include <wtf/HashSet.h>
 #include <wtf/Threading.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

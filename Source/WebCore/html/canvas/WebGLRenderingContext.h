@@ -29,7 +29,6 @@
 #include "CanvasRenderingContext.h"
 #include "DrawingBuffer.h"
 #include "GraphicsContext3D.h"
-#include "PlatformString.h"
 #include "Timer.h"
 #include "WebGLGetInfo.h"
 
@@ -37,6 +36,7 @@
 #include <wtf/Int32Array.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/Uint8Array.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -24,8 +24,8 @@
 #include "FloatRect.h"
 #include "NotImplemented.h"
 #include "PlatformPathWinCE.h"
-#include "PlatformString.h"
 #include <wtf/OwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

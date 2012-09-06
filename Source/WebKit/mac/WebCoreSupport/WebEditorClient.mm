@@ -60,7 +60,6 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/PlatformKeyboardEvent.h>
-#import <WebCore/PlatformString.h>
 #import <WebCore/RunLoop.h>
 #import <WebCore/SpellChecker.h>
 #import <WebCore/UndoStep.h>
@@ -69,6 +68,7 @@
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/PassRefPtr.h>
+#import <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

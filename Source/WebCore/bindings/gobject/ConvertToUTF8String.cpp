@@ -22,8 +22,8 @@
 #include "ConvertToUTF8String.h"
 
 #include "KURL.h"
-#include "PlatformString.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #include <glib.h>
 

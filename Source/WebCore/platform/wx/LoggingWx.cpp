@@ -28,9 +28,9 @@
 
 #if !LOG_DISABLED
 
-#include "PlatformString.h"
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #include <wx/defs.h>
 #include <wx/utils.h>

@@ -33,10 +33,10 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
-#include "PlatformString.h"
 #include "ScopedPersistent.h"
 #include <v8-debug.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -28,7 +28,7 @@
 #include "FrameView.h"
 #include "HostWindow.h"
 #include "PopupMenuClient.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 #include <wx/defs.h>
 #if __WXMSW__

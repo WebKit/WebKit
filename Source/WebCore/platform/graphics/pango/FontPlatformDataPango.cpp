@@ -25,11 +25,11 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
-#include "PlatformString.h"
 #include "FontDescription.h"
-#include <wtf/text/CString.h>
-#include <cairo.h>
 #include <assert.h>
+#include <cairo.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #include <pango/pango.h>
 #include <pango/pangocairo.h>

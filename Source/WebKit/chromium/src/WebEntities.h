@@ -31,8 +31,8 @@
 #ifndef WebEntities_h
 #define WebEntities_h
 
-#include "PlatformString.h"
 #include <wtf/HashMap.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 

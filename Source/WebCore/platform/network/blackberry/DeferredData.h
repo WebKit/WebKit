@@ -19,11 +19,11 @@
 #ifndef DeferredData_h
 #define DeferredData_h
 
-#include "PlatformString.h"
 #include "Timer.h"
 
 #include <wtf/Deque.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

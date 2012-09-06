@@ -19,7 +19,8 @@
  */
 
 #include "config.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
+
 #include <CoreFoundation/CFString.h>
 
 namespace WTF {

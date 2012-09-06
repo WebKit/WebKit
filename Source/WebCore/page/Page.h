@@ -27,7 +27,6 @@
 #include "PageVisibilityState.h"
 #include "Pagination.h"
 #include "PlatformScreen.h"
-#include "PlatformString.h"
 #include "Region.h"
 #include "Supplementable.h"
 #include "ViewportArguments.h"
@@ -35,6 +34,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/text/WTFString.h>
 
 #if OS(SOLARIS)
 #include <sys/time.h> // For time_t structure.

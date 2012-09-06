@@ -24,7 +24,6 @@
 #define ResourceLoadScheduler_h
 
 #include "FrameLoaderTypes.h"
-#include "PlatformString.h"
 #include "ResourceLoaderOptions.h"
 #include "ResourceLoadPriority.h"
 #include "Timer.h"

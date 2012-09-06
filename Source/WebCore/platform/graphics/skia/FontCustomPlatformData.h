@@ -40,8 +40,8 @@
 #include <wtf/Noncopyable.h>
 
 #if OS(WINDOWS)
-#include "PlatformString.h"
 #include <windows.h>
+#include <wtf/text/WTFString.h>
 #elif OS(UNIX)
 #include "SkTypeface.h"
 #endif

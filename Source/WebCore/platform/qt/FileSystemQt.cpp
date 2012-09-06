@@ -34,16 +34,17 @@
 #include "FileSystem.h"
 
 #include "FileMetadata.h"
-#include "PlatformString.h"
 #include <QDateTime>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QTemporaryFile>
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
+
 #if !defined(Q_OS_WIN)
 #include <sys/statvfs.h>
 #endif
-#include <wtf/text/CString.h>
 
 namespace WebCore {
 

@@ -25,7 +25,7 @@
 #include <QCoreApplication>
 
 #include "PageGroup.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 
 static QWebHistoryInterface* default_interface;

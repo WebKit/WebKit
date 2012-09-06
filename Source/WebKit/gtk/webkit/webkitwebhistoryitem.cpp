@@ -23,12 +23,12 @@
 
 #include "HistoryItem.h"
 #include "KURL.h"
-#include "PlatformString.h"
 #include "webkitglobalsprivate.h"
 #include "webkitwebhistoryitemprivate.h"
 #include <glib.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 /**
  * SECTION:webkitwebhistoryitem

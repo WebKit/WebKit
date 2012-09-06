@@ -26,9 +26,9 @@
 #ifndef StorageTask_h
 #define StorageTask_h
 
-#include "PlatformString.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Threading.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

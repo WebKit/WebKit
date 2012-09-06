@@ -35,13 +35,13 @@
 #include "Frame.h"
 #include "InspectorFrontendHost.h"
 #include "Page.h"
-#include "PlatformString.h"
 #include "ScriptController.h"
 #include "V8InspectorFrontendHost.h"
 #include "WebDevToolsFrontendClient.h"
 #include "WebDevToolsFrontendImpl.h"
 #include "platform/WebFloatPoint.h"
 #include "platform/WebString.h"
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

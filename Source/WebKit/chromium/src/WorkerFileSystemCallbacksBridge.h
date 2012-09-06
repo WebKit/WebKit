@@ -33,7 +33,6 @@
 
 #if ENABLE(FILE_SYSTEM) && ENABLE(WORKERS)
 
-#include "PlatformString.h"
 #include "ScriptExecutionContext.h"
 #include "WebFileError.h"
 #include "platform/WebVector.h"
@@ -41,6 +40,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 class WorkerLoaderProxy;

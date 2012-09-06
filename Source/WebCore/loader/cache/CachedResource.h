@@ -25,18 +25,18 @@
 
 #include "CachePolicy.h"
 #include "FrameLoaderTypes.h"
-#include "PlatformString.h"
 #include "PurgePriority.h"
-#include "ResourceLoaderOptions.h"
 #include "ResourceLoadPriority.h"
+#include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "Timer.h"
+#include <time.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
-#include <time.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

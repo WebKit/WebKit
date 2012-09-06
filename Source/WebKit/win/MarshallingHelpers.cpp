@@ -29,8 +29,8 @@
 
 #include <WebCore/IntRect.h>
 #include <WebCore/KURL.h>
-#include <WebCore/PlatformString.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

@@ -26,8 +26,7 @@
 #ifndef StorageNamespace_h
 #define StorageNamespace_h
 
-#include "PlatformString.h"
-
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 

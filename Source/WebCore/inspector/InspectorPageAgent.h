@@ -38,10 +38,10 @@
 #include "GeolocationPosition.h"
 #include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
-#include "PlatformString.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

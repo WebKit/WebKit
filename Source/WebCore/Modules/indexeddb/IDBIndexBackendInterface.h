@@ -26,9 +26,9 @@
 #ifndef IDBIndexBackendInterface_h
 #define IDBIndexBackendInterface_h
 
-#include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(INDEXED_DATABASE)
 

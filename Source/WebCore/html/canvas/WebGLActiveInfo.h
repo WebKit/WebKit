@@ -27,9 +27,9 @@
 #define WebGLActiveInfo_h
 
 #include "GraphicsContext3D.h"
-#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

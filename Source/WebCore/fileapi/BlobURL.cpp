@@ -33,9 +33,9 @@
 #include "BlobURL.h"
 
 #include "KURL.h"
-#include "PlatformString.h"
 #include "SecurityOrigin.h"
 #include "UUID.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -27,9 +27,9 @@
 #import "KeyEventCocoa.h"
 
 #import "Logging.h"
-#import "PlatformString.h"
 #import "WindowsKeyboardCodes.h"
 #import <wtf/ASCIICType.h>
+#import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS)
 #import "KeyEventCodesIOS.h"

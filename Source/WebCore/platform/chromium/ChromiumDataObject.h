@@ -32,12 +32,12 @@
 #define ChromiumDataObject_h
 
 #include "ChromiumDataObjectItem.h"
-#include "PlatformString.h"
 #include "Supplementable.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

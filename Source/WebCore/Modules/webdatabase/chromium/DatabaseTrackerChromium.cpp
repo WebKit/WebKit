@@ -36,12 +36,12 @@
 #include "AbstractDatabase.h"
 #include "DatabaseObserver.h"
 #include "QuotaTracker.h"
-#include "PlatformString.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginHash.h"
 #include "SQLiteFileSystem.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

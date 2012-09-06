@@ -37,12 +37,12 @@
 #include "c_instance.h"
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSLock.h>
-#include "PlatformString.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
 #include <wtf/Assertions.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Bindings {
 

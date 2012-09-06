@@ -21,12 +21,12 @@
 #define ScheduledAction_h
 
 #include "JSDOMBinding.h"
-#include "PlatformString.h"
 #include <heap/Strong.h>
 #include <heap/StrongInlines.h>
 #include <runtime/JSCell.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
     class JSGlobalObject;

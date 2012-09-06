@@ -31,13 +31,13 @@
 #ifndef ScriptValue_h
 #define ScriptValue_h
 
-#include "PlatformString.h"
 #include "SerializedScriptValue.h"
 #include "ScriptState.h"
 #include <heap/Strong.h>
 #include <heap/StrongInlines.h>
 #include <runtime/JSValue.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

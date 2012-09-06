@@ -36,11 +36,11 @@
 #include "IntPoint.h"
 #include "JSNode.h"
 #include "Node.h"
-#include "PlatformString.h"
 #include <runtime/ArrayPrototype.h>
 #include <runtime/Error.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 using namespace JSC;
 

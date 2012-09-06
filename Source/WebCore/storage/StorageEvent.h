@@ -27,7 +27,7 @@
 #define StorageEvent_h
 
 #include "Event.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

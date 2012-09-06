@@ -23,11 +23,10 @@
 #include "SVGFilterBuilder.h"
 
 #include "FilterEffect.h"
-#include "PlatformString.h"
 #include "SourceAlpha.h"
 #include "SourceGraphic.h"
-
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -27,20 +27,19 @@
 #ifndef WebGLGetInfo_h
 #define WebGLGetInfo_h
 
-#include "PlatformString.h"
 #include "WebGLBuffer.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLTexture.h"
 #include "WebGLVertexArrayObjectOES.h"
-
 #include <wtf/Float32Array.h>
 #include <wtf/Int32Array.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Uint32Array.h>
 #include <wtf/Uint8Array.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

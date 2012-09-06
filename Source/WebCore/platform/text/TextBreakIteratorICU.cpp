@@ -23,8 +23,8 @@
 #include "TextBreakIterator.h"
 
 #include "LineBreakIteratorPoolICU.h"
-#include "PlatformString.h"
 #include <wtf/Atomics.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WTF;
 using namespace std;

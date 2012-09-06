@@ -26,12 +26,12 @@
 #define Cache_h
 
 #include "CachedResource.h"
-#include "PlatformString.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore  {
 

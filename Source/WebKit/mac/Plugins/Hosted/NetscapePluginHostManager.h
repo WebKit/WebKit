@@ -28,10 +28,10 @@
 #ifndef NetscapePluginHostManager_h
 #define NetscapePluginHostManager_h
 
-#import <WebCore/PlatformString.h>
 #import <wtf/HashMap.h>
 #import <wtf/PassRefPtr.h>
 #import <wtf/text/StringHash.h>
+#import <wtf/text/WTFString.h>
 
 @class WebHostedNetscapePluginView;
 
@@ -44,7 +44,7 @@ class NetscapePluginHostManager {
 public:
     static NetscapePluginHostManager& shared();
     
-    PassRefPtr<NetscapePluginInstanceProxy> instantiatePlugin(const WTF::String& pluginPath, cpu_type_t pluginArchitecture, const WTF::String& bundleIdentifier, WebHostedNetscapePluginView *, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL, bool fullFrame, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled);
+    PassRefPtr<NetscapePluginInstanceProxy> instantiatePlugin(const String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier, WebHostedNetscapePluginView *, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL, bool fullFrame, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled);
 
     void pluginHostDied(NetscapePluginHostProxy*);
 
@@ -53,19 +53,19 @@ public:
     void didCreateWindow();
     
 private:
-    NetscapePluginHostProxy* hostForPlugin(const WTF::String& pluginPath, cpu_type_t pluginArchitecture, const WTF::String& bundleIdentifier);
+    NetscapePluginHostProxy* hostForPlugin(const String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier);
 
     NetscapePluginHostManager();
     ~NetscapePluginHostManager();
     
-    bool spawnPluginHost(const WTF::String& pluginPath, cpu_type_t pluginArchitecture, mach_port_t clientPort, mach_port_t& pluginHostPort, ProcessSerialNumber& pluginHostPSN);
+    bool spawnPluginHost(const String& pluginPath, cpu_type_t pluginArchitecture, mach_port_t clientPort, mach_port_t& pluginHostPort, ProcessSerialNumber& pluginHostPSN);
     
     bool initializeVendorPort();
     
     mach_port_t m_pluginVendorPort;
     
     // FIXME: This should really be a HashMap of RetainPtrs, but that doesn't work right now.
-    typedef HashMap<WTF::String, NetscapePluginHostProxy*> PluginHostMap;
+    typedef HashMap<String, NetscapePluginHostProxy*> PluginHostMap;
     PluginHostMap m_pluginHosts;
 };
     

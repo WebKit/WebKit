@@ -30,7 +30,6 @@
 #include "FileSystem.h"
 #include "KURL.h"
 #include "NetscapePlugInStreamLoader.h"
-#include "PlatformString.h"
 #include "PluginQuirkSet.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -42,6 +41,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
     class Frame;

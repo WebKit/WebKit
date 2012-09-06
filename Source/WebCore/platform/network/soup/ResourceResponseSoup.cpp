@@ -24,9 +24,9 @@
 #include <wtf/gobject/GOwnPtr.h>
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
-#include "PlatformString.h"
 #include "SoupURIUtils.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 using namespace std;
 

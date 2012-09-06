@@ -52,9 +52,9 @@
 #import <Foundation/Foundation.h>
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/Console.h>
-#import <WebCore/Cursor.h>
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
+#import <WebCore/Cursor.h>
 #import <WebCore/Element.h>
 #import <WebCore/FileChooser.h>
 #import <WebCore/FileIconLoader.h>
@@ -71,7 +71,6 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformScreen.h>
-#import <WebCore/PlatformString.h>
 #import <WebCore/PopupMenuMac.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/SearchPopupMenuMac.h>
@@ -79,6 +78,7 @@
 #import <WebCore/WindowFeatures.h>
 #import <wtf/PassRefPtr.h>
 #import <wtf/Vector.h>
+#import <wtf/text/WTFString.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #import <WebCore/GraphicsLayer.h>

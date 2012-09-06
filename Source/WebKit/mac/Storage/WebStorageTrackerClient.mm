@@ -27,10 +27,10 @@
 
 #import "WebSecurityOriginInternal.h"
 #import "WebStorageManagerPrivate.h"
-#import <WebCore/PlatformString.h>
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

@@ -26,8 +26,8 @@
 #import "config.h"
 #import "ImageSourceCG.h"
 
-#import "PlatformString.h"
-#import "wtf/RetainPtr.h"
+#import <wtf/RetainPtr.h>
+#import <wtf/text/WTFString.h>
 
 namespace WebCore {
 

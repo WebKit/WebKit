@@ -34,7 +34,6 @@
 #include "FontCache.h"
 #include "FontDescription.h"
 #include "HWndDC.h"
-#include "PlatformString.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <mlang.h>
@@ -43,6 +42,7 @@
 #include <winsock2.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

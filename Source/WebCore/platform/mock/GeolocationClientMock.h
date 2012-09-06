@@ -32,12 +32,11 @@
 #define GeolocationClientMock_h
 
 #include "GeolocationClient.h"
-#include "PlatformString.h"
 #include "Timer.h"
-
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

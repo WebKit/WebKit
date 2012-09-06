@@ -32,9 +32,9 @@
 #import <WebCore/Font.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/FontPlatformData.h>
-#import <WebCore/PlatformString.h>
 #import <WebCore/StringTruncator.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

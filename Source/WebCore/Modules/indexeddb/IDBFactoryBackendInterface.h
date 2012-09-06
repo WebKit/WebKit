@@ -29,9 +29,9 @@
 #define IDBFactoryBackendInterface_h
 
 #include "IDBCallbacks.h"
-#include "PlatformString.h"
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(INDEXED_DATABASE)
 

@@ -27,11 +27,11 @@
 #ifndef SharedBuffer_h
 #define SharedBuffer_h
 
-#include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 #if USE(CF)
 #include <wtf/RetainPtr.h>

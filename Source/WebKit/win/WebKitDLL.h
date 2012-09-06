@@ -34,7 +34,7 @@
 #include <windows.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/text/StringHash.h>
-#include <WebCore/PlatformString.h>
+#include <wtf/text/WTFString.h>
 
 #ifdef WEBKIT_EXPORTS
 #define WEBKIT_API __declspec(dllexport)

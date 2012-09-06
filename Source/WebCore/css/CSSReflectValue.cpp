@@ -28,7 +28,6 @@
 
 #include "CSSPrimitiveValue.h"
 #include "MemoryInstrumentation.h"
-#include "PlatformString.h"
 #include <wtf/text/StringBuilder.h>
 
 using namespace std;

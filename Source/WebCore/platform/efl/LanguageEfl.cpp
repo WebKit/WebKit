@@ -29,10 +29,9 @@
 #include "config.h"
 #include "Language.h"
 
-#include "PlatformString.h"
-
 #include <locale.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

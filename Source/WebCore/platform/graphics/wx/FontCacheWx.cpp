@@ -32,7 +32,7 @@
 #include "FontPlatformData.h"
 #include "NotImplemented.h"
 #include "SimpleFontData.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
 
 #include <wx/defs.h>
 #include <wx/fontenum.h>

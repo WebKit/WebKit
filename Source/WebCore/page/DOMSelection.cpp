@@ -36,11 +36,11 @@
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "Node.h"
-#include "PlatformString.h"
 #include "Range.h"
 #include "TextIterator.h"
 #include "TreeScope.h"
 #include "htmlediting.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -219,7 +219,7 @@ sub AddIncludesForTypeInImpl
     }
 
     if ($type eq "CanvasGradient" or $type eq "XPathNSResolver" or $type eq "MessagePort") {
-        $implIncludes{"PlatformString.h"} = 1;
+        $implIncludes{"<wtf/text/WTFString.h>"} = 1;
     }
 
     if ($type eq "Document") {
@@ -281,7 +281,7 @@ sub AddIncludesForSVGAnimatedType
     if ($type eq "Point" or $type eq "Rect") {
         $implIncludes{"Float$type.h"} = 1;
     } elsif ($type eq "String") {
-        $implIncludes{"PlatformString.h"} = 1;
+        $implIncludes{"<wtf/text/WTFString.h>"} = 1;
     }
 }
 

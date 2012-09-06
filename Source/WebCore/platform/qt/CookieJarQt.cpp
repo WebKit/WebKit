@@ -29,15 +29,13 @@
 #include "config.h"
 #include "CookieJarQt.h"
 
-#include "CookieJar.h"
-
 #include "Cookie.h"
+#include "CookieJar.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "KURL.h"
 #include "NetworkingContext.h"
-#include "PlatformString.h"
 #include "ThirdPartyCookiesQt.h"
 #include <QDateTime>
 #include <QNetworkAccessManager>
@@ -45,6 +43,7 @@
 #include <QSqlQuery>
 #include <QStringList>
 #include <QVariant>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

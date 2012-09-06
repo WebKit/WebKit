@@ -46,7 +46,6 @@
 #include "KURL.h"
 #include "NavigationAction.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
 #include "PopupMenuEfl.h"
 #include "SearchPopupMenuEfl.h"
 #include "SecurityOrigin.h"
@@ -61,6 +60,7 @@
 #include <Ecore_Evas.h>
 #include <Evas.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "NotificationPresenterClientEfl.h"

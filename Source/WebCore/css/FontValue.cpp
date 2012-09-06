@@ -23,7 +23,6 @@
 #include "CSSValueList.h"
 #include "CSSPrimitiveValue.h"
 #include "MemoryInstrumentation.h"
-#include "PlatformString.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

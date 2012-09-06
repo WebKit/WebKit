@@ -27,9 +27,9 @@
 #define IDBTransactionBackendInterface_h
 
 #include "IDBCallbacks.h"
-#include "PlatformString.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/Threading.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(INDEXED_DATABASE)
 

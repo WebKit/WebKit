@@ -32,11 +32,11 @@
 #include "IntRect.h"
 #include "ImageSource.h"
 #include "PlatformScreen.h"
-#include "PlatformString.h"
 #include "SharedBuffer.h"
 #include <wtf/Assertions.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 #if USE(SKIA)
 #include "NativeImageSkia.h"

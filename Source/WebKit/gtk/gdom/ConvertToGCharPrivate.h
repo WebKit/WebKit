@@ -21,9 +21,9 @@
 #define ConvertToGCharPrivate_h
 
 #include "KURL.h"
-#include "PlatformString.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/AtomicString.h>
+#include <wtf/text/WTFString.h>
 
 inline gchar* copyAsGchar(WTF::String const& s)
 {

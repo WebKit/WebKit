@@ -28,9 +28,8 @@
 #include "JSUint8ClampedArray.h"
 
 #include "ImageData.h"
-#include "PlatformString.h"
-
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/WTFString.h>
 
 using namespace JSC;
 

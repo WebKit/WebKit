@@ -40,7 +40,6 @@
 #include "Icon.h"
 #include "NavigationAction.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
 #include "SecurityOrigin.h"
 #include "PopupMenuWx.h"
 #include "SearchPopupMenuWx.h"
@@ -58,6 +57,7 @@
 #include "WebBrowserShell.h"
 #include "WebView.h"
 #include "WebViewPrivate.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

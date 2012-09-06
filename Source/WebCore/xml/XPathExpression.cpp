@@ -29,13 +29,13 @@
 
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "PlatformString.h"
 #include "XPathException.h"
 #include "XPathExpressionNode.h"
 #include "XPathNSResolver.h"
 #include "XPathParser.h"
 #include "XPathResult.h"
 #include "XPathUtil.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -30,8 +30,8 @@
 #include "WebKitSystemBits.h"
 
 #include <CoreFoundation/CoreFoundation.h>
-#include <WebCore/PlatformString.h>
 #include <windows.h>
+#include <wtf/text/WTFString.h>
 
 unsigned long long WebMemorySize()
 {

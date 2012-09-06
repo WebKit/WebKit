@@ -31,7 +31,6 @@
 #include "GraphicsContext.h"
 #include "PlatformCAAnimation.h"
 #include "PlatformCALayerClient.h"
-#include "PlatformString.h"
 #include <QuartzCore/CABase.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
@@ -40,6 +39,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

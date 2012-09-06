@@ -27,7 +27,6 @@
 #define Coordinates_h
 
 #include "Event.h"
-#include "PlatformString.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

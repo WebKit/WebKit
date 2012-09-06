@@ -24,12 +24,12 @@
 #include "Font.h"
 #include "FontCache.h"
 #include "FontData.h"
-#include "PlatformString.h"
 #include "SimpleFontData.h"
 #include "UnicodeRange.h"
 #include "wtf/OwnPtr.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 #include <windows.h>
 #include <mlang.h>

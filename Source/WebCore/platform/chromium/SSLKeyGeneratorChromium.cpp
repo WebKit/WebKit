@@ -31,11 +31,11 @@
 #include "config.h"
 #include "SSLKeyGenerator.h"
 
-#include "PlatformString.h"
 
 #include <public/Platform.h>
 #include <public/WebString.h>
 #include <public/WebURL.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

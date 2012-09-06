@@ -28,7 +28,8 @@
 #include "NavigatorBase.h"
 
 #include "NetworkStateNotifier.h"
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
+
 #if OS(LINUX)
 #include "sys/utsname.h"
 #include <wtf/StdLibExtras.h>

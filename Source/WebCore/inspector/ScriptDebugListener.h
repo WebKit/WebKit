@@ -32,9 +32,9 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
-#include "PlatformString.h"
 #include "ScriptState.h"
 #include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 class ScriptValue;
