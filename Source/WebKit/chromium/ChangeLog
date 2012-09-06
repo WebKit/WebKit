@@ -1,3 +1,11 @@
+2012-09-05  Nate Chapin  <japhet@chromium.org>
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=91685
+
+        Reviewed by Adam Barth.
+
+        * tests/WebFrameTest.cpp:
+
 2012-09-05  Rick Byers  <rbyers@chromium.org>
 
         Use new type-specific WebGestureEvent fields

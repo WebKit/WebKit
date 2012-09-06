@@ -45,6 +45,7 @@
 #include "WebFormElement.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
+#include "WebHistoryItem.h"
 #include "WebRange.h"
 #include "WebScriptSource.h"
 #include "WebSearchableFormData.h"
@@ -54,6 +55,7 @@
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 #include "platform/WebFloatRect.h"
+#include "platform/WebURLResponse.h"
 #include "v8.h"
 #include <gtest/gtest.h>
 #include <webkit/support/webkit_support.h>
@@ -1144,6 +1146,65 @@ TEST_F(WebFrameTest, DisambiguationPopupTest)
             EXPECT_FALSE(client.triggered());
     }
 
+}
+
+class TestSubstituteDataWebFrameClient : public WebFrameClient {
+public:
+    TestSubstituteDataWebFrameClient()
+        : m_commitCalled(false)
+    {
+    }
+
+    virtual void didFailProvisionalLoad(WebFrame* frame, const WebURLError& error)
+    {
+        frame->loadHTMLString("This should appear", toKURL("data:text/html,chromewebdata"), error.unreachableURL, true);
+        webkit_support::RunAllPendingMessages();
+    }
+
+    virtual void didCommitProvisionalLoad(WebFrame* frame, bool)
+    {
+        if (frame->dataSource()->response().url() != WebURL(URLTestHelpers::toKURL("about:blank")))
+            m_commitCalled = true;
+    }
+
+    bool commitCalled() const { return m_commitCalled; }
+
+private:
+    bool m_commitCalled;
+};
+
+TEST_F(WebFrameTest, ReplaceNavigationAfterHistoryNavigation)
+{
+    TestSubstituteDataWebFrameClient webFrameClient;
+
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad("about:blank", true, &webFrameClient);
+    webkit_support::RunAllPendingMessages();
+    WebFrame* frame = webView->mainFrame();
+
+    // Load a url as a history navigation that will return an error. TestSubstituteDataWebFrameClient
+    // will start a SubstituteData load in response to the load failure, which should get fully committed.
+    // Due to https://bugs.webkit.org/show_bug.cgi?id=91685, FrameLoader::didReceiveData() wasn't getting
+    // called in this case, which resulted in the SubstituteData document not getting displayed.
+    WebURLError error;
+    error.reason = 1337;
+    error.domain = "WebFrameTest";
+    std::string errorURL = "http://0.0.0.0";
+    WebURLResponse response;
+    response.initialize();
+    response.setURL(URLTestHelpers::toKURL(errorURL));
+    response.setMIMEType("text/html");
+    response.setHTTPStatusCode(500);
+    WebHistoryItem errorHistoryItem;
+    errorHistoryItem.initialize();
+    errorHistoryItem.setURLString(WebString::fromUTF8(errorURL.c_str(), errorURL.length()));
+    errorHistoryItem.setOriginalURLString(WebString::fromUTF8(errorURL.c_str(), errorURL.length()));
+    webkit_support::RegisterMockedErrorURL(URLTestHelpers::toKURL(errorURL), response, error);
+    frame->loadHistoryItem(errorHistoryItem);
+    webkit_support::ServeAsynchronousMockedRequests();
+
+    WebString text = frame->contentAsText(std::numeric_limits<size_t>::max());
+    EXPECT_EQ("This should appear", std::string(text.utf8().data()));
+    EXPECT_TRUE(webFrameClient.commitCalled());
 }
 
 } // namespace

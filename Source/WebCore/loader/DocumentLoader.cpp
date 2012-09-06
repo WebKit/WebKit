@@ -336,7 +336,9 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
             m_frame->document()->setBaseURLOverride(m_archive->mainResource()->url());
 #endif
 
-        if (!frameLoader()->isReplacing())
+        // Call receivedFirstData() exactly once per load. We should only reach this point multiple times
+        // for multipart loads, and isReplacing() will be true after the first time.
+        if (!m_mainResourceLoader || !m_mainResourceLoader->isLoadingMultipartContent() || !frameLoader()->isReplacing())
             frameLoader()->receivedFirstData();
 
         bool userChosen = true;
