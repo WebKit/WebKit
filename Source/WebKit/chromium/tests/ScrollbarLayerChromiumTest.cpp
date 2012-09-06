@@ -30,8 +30,6 @@
 #include "CCScrollbarLayerImpl.h"
 #include "CCSingleThreadProxy.h"
 #include "FakeWebScrollbarThemeGeometry.h"
-#include "Scrollbar.h"
-#include "Settings.h"
 #include "TreeSynchronizer.h"
 #include "WebScrollbarImpl.h"
 #include <gtest/gtest.h>
@@ -43,68 +41,37 @@ using namespace WebCore;
 
 namespace {
 
-class MockScrollbar : public Scrollbar {
+class FakeWebScrollbar : public WebKit::WebScrollbar {
 public:
-    virtual int x() const { return 0; }
-    virtual int y() const { return 0; }
-    virtual int width() const { return 0; }
-    virtual int height() const { return 0; }
-    virtual IntSize size() const { return IntSize(); }
-    virtual IntPoint location() const { return IntPoint(); }
+    static PassOwnPtr<FakeWebScrollbar> create() { return adoptPtr(new FakeWebScrollbar()); }
 
-    virtual ScrollView* parent() const { return 0; }
-    virtual ScrollView* root() const { return 0; }
-
-    virtual void setFrameRect(const IntRect&) { }
-    virtual IntRect frameRect() const { return IntRect(); }
-
-    virtual void invalidate() { }
-    virtual void invalidateRect(const IntRect&) { }
-
-    virtual ScrollbarOverlayStyle scrollbarOverlayStyle() const { return ScrollbarOverlayStyleDefault; }
-    virtual void getTickmarks(Vector<IntRect>&) const { }
-    virtual bool isScrollableAreaActive() const { return false; }
-    virtual bool isScrollViewScrollbar() const { return false; }
-
-    virtual IntPoint convertFromContainingWindow(const IntPoint& windowPoint) { return windowPoint; }
-
-    virtual bool isCustomScrollbar() const { return false; }
-    virtual ScrollbarOrientation orientation() const { return HorizontalScrollbar; }
-
-    virtual int value() const { return 0; }
-    virtual float currentPos() const { return 0; }
-    virtual int visibleSize() const { return 1; }
-    virtual int totalSize() const { return 1; }
-    virtual int maximum() const { return 0; }
-    virtual ScrollbarControlSize controlSize() const { return RegularScrollbar; }
-
-    virtual int lineStep() const { return 0; }
-    virtual int pageStep() const { return 0; }
-
-    virtual ScrollbarPart pressedPart() const { return NoPart; }
-    virtual ScrollbarPart hoveredPart() const { return NoPart; }
-
-    virtual void styleChanged() { }
-
-    virtual bool enabled() const { return false; }
-    virtual void setEnabled(bool) { }
-
-    virtual bool isOverlayScrollbar() const { return false; }
-
-    MockScrollbar() : Scrollbar(0, HorizontalScrollbar, RegularScrollbar) { }
-    virtual ~MockScrollbar() { }
+    // WebScrollbar implementation
+    virtual bool isOverlay() const OVERRIDE { return false; }
+    virtual int value() const OVERRIDE { return 0; }
+    virtual WebKit::WebPoint location() const OVERRIDE { return WebKit::WebPoint(); }
+    virtual WebKit::WebSize size() const OVERRIDE { return WebKit::WebSize(); }
+    virtual bool enabled() const OVERRIDE { return true; }
+    virtual int maximum() const OVERRIDE { return 0; }
+    virtual int totalSize() const OVERRIDE { return 0; }
+    virtual bool isScrollViewScrollbar() const OVERRIDE { return false; }
+    virtual bool isScrollableAreaActive() const OVERRIDE { return true; }
+    virtual void getTickmarks(WebKit::WebVector<WebKit::WebRect>&) const OVERRIDE { }
+    virtual ScrollbarControlSize controlSize() const OVERRIDE { return WebScrollbar::RegularScrollbar; }
+    virtual ScrollbarPart pressedPart() const OVERRIDE { return WebScrollbar::NoPart; }
+    virtual ScrollbarPart hoveredPart() const OVERRIDE { return WebScrollbar::NoPart; }
+    virtual ScrollbarOverlayStyle scrollbarOverlayStyle() const OVERRIDE { return WebScrollbar::ScrollbarOverlayStyleDefault; }
+    virtual bool isCustomScrollbar() const OVERRIDE { return false; }
+    virtual Orientation orientation() const OVERRIDE { return WebScrollbar::Horizontal; }
 };
 
 TEST(ScrollbarLayerChromiumTest, resolveScrollLayerPointer)
 {
     DebugScopedSetImplThread impl;
 
-    RefPtr<MockScrollbar> mockScrollbar = adoptRef(new MockScrollbar);
-    WebKit::WebScrollbarThemePainter painter(0, mockScrollbar.get());
+    WebKit::WebScrollbarThemePainter painter(0, 0);
 
-    Settings::setMockScrollbarsEnabled(true);
     {
-        OwnPtr<WebKit::WebScrollbar> scrollbar = adoptPtr(new WebKit::WebScrollbarImpl(mockScrollbar.get()));
+        OwnPtr<WebKit::WebScrollbar> scrollbar(FakeWebScrollbar::create());
         RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
         RefPtr<LayerChromium> child1 = LayerChromium::create();
         RefPtr<LayerChromium> child2 = ScrollbarLayerChromium::create(scrollbar.release(), painter, WebKit::FakeWebScrollbarThemeGeometry::create(), child1->id());
@@ -121,7 +88,7 @@ TEST(ScrollbarLayerChromiumTest, resolveScrollLayerPointer)
     }
 
     { // another traverse order
-        OwnPtr<WebKit::WebScrollbar> scrollbar = adoptPtr(new WebKit::WebScrollbarImpl(mockScrollbar.get()));
+        OwnPtr<WebKit::WebScrollbar> scrollbar(FakeWebScrollbar::create());
         RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
         RefPtr<LayerChromium> child2 = LayerChromium::create();
         RefPtr<LayerChromium> child1 = ScrollbarLayerChromium::create(scrollbar.release(), painter, WebKit::FakeWebScrollbarThemeGeometry::create(), child2->id());
@@ -142,12 +109,9 @@ TEST(ScrollbarLayerChromiumTest, scrollOffsetSynchronization)
 {
     DebugScopedSetImplThread impl;
 
-    RefPtr<MockScrollbar> mockScrollbar = adoptRef(new MockScrollbar);
-    WebKit::WebScrollbarThemePainter painter(0, mockScrollbar.get());
+    WebKit::WebScrollbarThemePainter painter(0, 0);
 
-    Settings::setMockScrollbarsEnabled(true);
-
-    OwnPtr<WebKit::WebScrollbar> scrollbar = adoptPtr(new WebKit::WebScrollbarImpl(mockScrollbar.get()));
+    OwnPtr<WebKit::WebScrollbar> scrollbar(FakeWebScrollbar::create());
     RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
     RefPtr<LayerChromium> contentLayer = LayerChromium::create();
     RefPtr<LayerChromium> scrollbarLayer = ScrollbarLayerChromium::create(scrollbar.release(), painter, WebKit::FakeWebScrollbarThemeGeometry::create(), layerTreeRoot->id());

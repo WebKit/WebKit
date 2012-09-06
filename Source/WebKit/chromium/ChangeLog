@@ -1,3 +1,17 @@
+2012-09-06  Adrienne Walker  <enne@google.com>
+
+        [chromium] Remove Scrollbar/Settings dependencies from ScrollbarLayerChromiumTest
+        https://bugs.webkit.org/show_bug.cgi?id=95994
+
+        Reviewed by James Robinson.
+
+        This compositor test shouldn't depend on code outside the compositor.
+
+        * tests/ScrollbarLayerChromiumTest.cpp:
+        (WebCore::FakeWebScrollbar::create):
+        (FakeWebScrollbar):
+        (WebCore::TEST):
+
 2012-09-06  James Robinson  <jamesr@chromium.org>
 
         [chromium] Put chromium implementations of WTF symbols in separate static library
