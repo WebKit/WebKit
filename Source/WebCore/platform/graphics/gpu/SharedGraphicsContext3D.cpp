@@ -28,8 +28,8 @@
 
 #include "SharedGraphicsContext3D.h"
 
-#include "CCProxy.h"
 #include "Extensions3D.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
@@ -89,19 +89,19 @@ static PassRefPtr<GraphicsContext3D> getOrCreateContextForImplThread(ContextOper
 
 PassRefPtr<GraphicsContext3D> SharedGraphicsContext3D::getForImplThread()
 {
-    ASSERT(CCProxy::isImplThread());
+    ASSERT(!isMainThread());
     return getOrCreateContextForImplThread(Get);
 }
 
 bool SharedGraphicsContext3D::haveForImplThread()
 {
-    ASSERT(CCProxy::isMainThread());
+    ASSERT(isMainThread());
     return getOrCreateContextForImplThread(Get);
 }
 
 bool SharedGraphicsContext3D::createForImplThread()
 {
-    ASSERT(CCProxy::isMainThread());
+    ASSERT(isMainThread());
     return getOrCreateContextForImplThread(Create);
 }
 
