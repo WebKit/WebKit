@@ -1659,15 +1659,6 @@ ssize_t ewk_frame_source_get(const Evas_Object* ewkFrame, char** frameSource)
             }
         }
 
-    // Try to get <head> and <body> tags if <html> tag was not found.
-    if (builder.isEmpty()) {
-        if (smartData->frame->document()->head())
-            builder.append(smartData->frame->document()->head()->outerHTML());
-
-        if (smartData->frame->document()->body())
-            builder.append(smartData->frame->document()->body()->outerHTML());
-    }
-
     CString utf8String = builder.toString().utf8();
     size_t sourceLength = utf8String.length();
     *frameSource = static_cast<char*>(malloc(sourceLength + 1));
