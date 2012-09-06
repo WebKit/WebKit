@@ -76,7 +76,10 @@ void PlatformWebView::focus()
 
 WKRect PlatformWebView::windowFrame()
 {
-    return WKRectMake(0, 0, 0, 0);
+    Evas_Coord x, y, width, height;
+    evas_object_geometry_get(m_view, &x, &y, &width, &height);
+
+    return WKRectMake(x, y, width, height);
 }
 
 void PlatformWebView::setWindowFrame(WKRect frame)
