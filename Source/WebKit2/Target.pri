@@ -889,7 +889,7 @@ contains(DEFINES, ENABLE_TOUCH_EVENTS=1) {
 
 contains(DEFINES, ENABLE_GEOLOCATION=1): QT += location
 
-contains(DEFINES, WTF_USE_3D_GRAPHICS=1): WEBKIT += ANGLE
+contains(DEFINES, WTF_USE_3D_GRAPHICS=1): WEBKIT += angle
 
 plugin_backend_xlib {
     DEFINES += XP_UNIX
