@@ -119,6 +119,7 @@
             'tests/CCAnimationTestCommon.h',
             'tests/CCDamageTrackerTest.cpp',
             'tests/CCDelayBasedTimeSourceTest.cpp',
+            'tests/CCDrawQuadTest.cpp',
             'tests/CCFrameRateControllerTest.cpp',
             'tests/CCGeometryTestUtils.cpp',
             'tests/CCGeometryTestUtils.h',

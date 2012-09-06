@@ -46,4 +46,11 @@ CCSharedQuadState::CCSharedQuadState(const WebKit::WebTransformationMatrix& quad
 {
 }
 
+PassOwnPtr<CCSharedQuadState> CCSharedQuadState::copy() const
+{
+    OwnPtr<CCSharedQuadState> copiedState(create(quadTransform, visibleContentRect, clippedRectInTarget, opacity, opaque));
+    copiedState->id = id;
+    return copiedState.release();
+}
+
 }

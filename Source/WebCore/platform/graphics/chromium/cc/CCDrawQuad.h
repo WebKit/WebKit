@@ -80,6 +80,8 @@ public:
     // looking at the material type).
     unsigned size() const;
 
+    PassOwnPtr<CCDrawQuad> copy(const CCSharedQuadState* copiedSharedQuadState) const;
+
     const CCSharedQuadState* sharedQuadState() const { return m_sharedQuadState; }
     int sharedQuadStateId() const { return m_sharedQuadStateId; }
     void setSharedQuadState(const CCSharedQuadState*);
