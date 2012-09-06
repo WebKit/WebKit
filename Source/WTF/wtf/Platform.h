@@ -1185,6 +1185,10 @@
 #define WTF_USE_ZLIB 1
 #endif
 
+#if PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(WIN)
+#define WTF_DEPRECATED_STRING_OPERATORS
+#endif
+
 #if PLATFORM(QT)
 #include <qglobal.h>
 #if defined(QT_OPENGL_ES_2) && !defined(WTF_USE_OPENGL_ES_2)

@@ -1,3 +1,18 @@
+2012-09-06  Adam Barth  <abarth@chromium.org>
+
+        Remove WTF::String::operator+=
+        https://bugs.webkit.org/show_bug.cgi?id=95797
+
+        Reviewed by Sam Weinig.
+
+        This patch encloses WTF::String::operator+= in an ifdef so that we can
+        gradually remove it from the various port-specific files. The ifdef
+        lets us whitelist use of operator+= in individual files during the
+        transition.
+
+        * wtf/Platform.h
+        * wtf/text/WTFString.h:
+
 2012-09-05  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         DFG JIT doesn't work properly on ARM hardfp
