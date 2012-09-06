@@ -46,8 +46,6 @@
     # binary and increasing the speed of gdb.
     'enable_svg%': 1,
 
-    # If set to 1, links against the cc library from the chromium repository
-    # instead of the compositor implementation files in platform/graphics/chromium
     'use_libcc_for_compositor%': 0,
 
     'enable_wexit_time_destructors': 1,
@@ -2214,11 +2212,7 @@
             'webcore_svg',
           ],
         }],
-        ['use_libcc_for_compositor==1', {
-          'dependencies': [
-            '<(chromium_src_dir)/cc/cc.gyp:cc'
-          ],
-        }, { # use_libcc_for_compositor==0
+        ['use_libcc_for_compositor==0', {
           'dependencies': [
             'webcore_chromium_compositor'
           ],

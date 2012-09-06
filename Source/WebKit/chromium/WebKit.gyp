@@ -54,7 +54,7 @@
         # stored as is. Otherwise, a concatenated file is stored.
         'debug_devtools%': 0,
 
-        # If set to 1, links against the compositor bindings from the chromium repository
+        # If set to 1, uses the compositor bindings provided by PlatformSupport
         # instead of the compositor-implementation binding files in WebKit/chromium/src.
         'use_libcc_for_compositor%': 0,
 
@@ -838,9 +838,6 @@
                     },
                 }],
                 ['use_libcc_for_compositor==1', {
-                    'dependencies': [
-                        '<(chromium_src_dir)/webkit/compositor_bindings/compositor_bindings.gyp:webkit_compositor_bindings',
-                    ],
                     'sources!': [
                         '../../WebCore/platform/chromium/support/CCThreadImpl.cpp',
                         '../../WebCore/platform/chromium/support/CCThreadImpl.h',
