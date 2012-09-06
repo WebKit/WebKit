@@ -7,7 +7,7 @@
 function test()
 {
     var mockContentsMap = {};
-    var lastResouceId = 1;
+    var lastResourceId = 0;
 
     NetworkAgent.getResponseBody = function(requestId, callback)
     {
@@ -19,10 +19,10 @@ function test()
         callback(undefined, mockContentsMap[url], false);
     }
 
-    function createResourceMock(type, withPendingRequest, content)
+    function createResourceMock(type, content)
     {
         var documentURL = "http://fake.url";
-        var resourceId = ++lastResouceId + "";
+        var resourceId = ++lastResourceId + "";
         var url = documentURL + "/" + resourceId;
         var frameId = "frame-id";
         var loaderId = "loader-id";
@@ -39,13 +39,7 @@ function test()
             break;
         }
 
-        if (withPendingRequest) {
-            var request = new WebInspector.NetworkRequest(resourceId, url, "http://fake.url", frameId, loaderId);
-            request.type = type;
-            request.mimeType = mimeType;
-            mockContentsMap[resourceId] = content;
-        }
-        var resource = new WebInspector.Resource(request, url, documentURL, frameId, loaderId, type, mimeType);
+        var resource = new WebInspector.Resource(null, url, documentURL, frameId, loaderId, type, mimeType);
         mockContentsMap[url] = content;
         WebInspector.resourceTreeModel.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, resource);
 
@@ -67,46 +61,12 @@ function test()
     }
 
     InspectorTest.runTestSuite([
-        function testDocumentResourceWithPendingRequest(next)
-        {
-            var networkUISourceCodeProvider = createNetworkUISourceCodeProvider();
-
-            InspectorTest.addResult("Creating request.");
-            var resource = createResourceMock(WebInspector.resourceTypes.Document, true, "<document request content>");
-
-            InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(uiSourceCodeAdded);
-            InspectorTest.addResult("Finishing request.");
-            finishResource(resource);
-
-            function uiSourceCodeAdded(uiSourceCode)
-            {
-                InspectorTest.dumpUISourceCode(uiSourceCode, next);
-            }
-        },
-
         function testDocumentResource(next)
         {
             var networkUISourceCodeProvider = createNetworkUISourceCodeProvider();
             InspectorTest.addResult("Creating resource.");
             InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(uiSourceCodeAdded);
-            var resource = createResourceMock(WebInspector.resourceTypes.Document, false, "<document resource content>");
-
-            function uiSourceCodeAdded(uiSourceCode)
-            {
-                InspectorTest.dumpUISourceCode(uiSourceCode, next);
-            }
-        },
-
-        function testScriptResourceWithPendingRequest(next)
-        {
-            var networkUISourceCodeProvider = createNetworkUISourceCodeProvider();
-
-            InspectorTest.addResult("Creating request.");
-            var resource = createResourceMock(WebInspector.resourceTypes.Script, true, "<script request content>");
-
-            InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(uiSourceCodeAdded);
-            InspectorTest.addResult("Finishing request.");
-            finishResource(resource);
+            var resource = createResourceMock(WebInspector.resourceTypes.Document, "<document resource content>");
 
             function uiSourceCodeAdded(uiSourceCode)
             {
@@ -119,35 +79,11 @@ function test()
             var networkUISourceCodeProvider = createNetworkUISourceCodeProvider();
             InspectorTest.addResult("Creating resource.");
             InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(uiSourceCodeAdded);
-            var resource = createResourceMock(WebInspector.resourceTypes.Script, false, "<script resource content>");
+            var resource = createResourceMock(WebInspector.resourceTypes.Script, "<script resource content>");
 
             function uiSourceCodeAdded(uiSourceCode)
             {
                 InspectorTest.dumpUISourceCode(uiSourceCode, next);
-            }
-        },
-
-        function testStylesheetResourceWithPendingRequest(next)
-        {
-            var endTestCallsLeft = 2;
-            var networkUISourceCodeProvider = createNetworkUISourceCodeProvider();
-            InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(uiSourceCodeAdded);
-            InspectorTest.addResult("Creating request.");
-            var resource = createResourceMock(WebInspector.resourceTypes.Stylesheet, true, "<stylesheet request content>");
-            InspectorTest.addResult("Finishing request.");
-            finishResource(resource);
-            endTest();
-
-            function uiSourceCodeAdded(uiSourceCode)
-            {
-                InspectorTest.dumpUISourceCode(uiSourceCode, endTest);
-            }
-
-            function endTest()
-            {
-                if (--endTestCallsLeft)
-                    return;
-                next();
             }
         },
 
@@ -156,7 +92,7 @@ function test()
             var networkUISourceCodeProvider = createNetworkUISourceCodeProvider();
             InspectorTest.addResult("Creating resource.");
             InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(uiSourceCodeAdded);
-            var resource = createResourceMock(WebInspector.resourceTypes.Stylesheet, false, "<stylesheet resource content>");
+            var resource = createResourceMock(WebInspector.resourceTypes.Stylesheet, "<stylesheet resource content>");
 
             function uiSourceCodeAdded(uiSourceCode)
             {

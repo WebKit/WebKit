@@ -36,8 +36,8 @@ WebInspector.NetworkUISourceCodeProvider = function(workspace)
 {
     this._workspace = workspace;
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
-    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
-    this._stylesSourceMapping = new WebInspector.StylesSourceMapping();
+    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._projectWillReset, this);
+    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectDidReset, this._projectDidReset, this);
 
     this._uiSourceCodeForResource = {};
 }
@@ -59,76 +59,38 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
     },
 
     /**
-     * @param {WebInspector.Resource} resource
-     */
-    _styleResourceAdded: function(resource)
-    {
-        var uiSourceCode = new WebInspector.StyleSource(resource);
-        this._stylesSourceMapping.addUISourceCode(uiSourceCode);
-        this._addUISourceCode(uiSourceCode);
-    },
-
-    /**
-     * @param {WebInspector.Resource} resource
-     */
-    _scriptResourceAdded: function(resource)
-    {
-        if (resource.request && !resource.request.finished) {
-            resource.request.addEventListener(WebInspector.NetworkRequest.Events.FinishedLoading, resourceFinished, this);
-            return;
-        }
-        this._addJavaScriptSource(resource);
-        
-        function resourceFinished()
-        {
-            resource.request.removeEventListener(WebInspector.NetworkRequest.Events.FinishedLoading, resourceFinished, this);
-            this._addJavaScriptSource(resource);
-        }
-    },
-
-    /**
-     * @param {WebInspector.Resource} resource
-     */
-    _addJavaScriptSource: function(resource)
-    {
-        if (this._uiSourceCodeForResource[resource.url])
-            return;
-        var isDocument = resource.type === WebInspector.resourceTypes.Document;
-        var uiSourceCode = new WebInspector.JavaScriptSource(resource.url, resource, resource, !isDocument);
-        this._uiSourceCodeForResource[resource.url] = uiSourceCode;
-        this._addUISourceCode(uiSourceCode);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    _addUISourceCode: function(uiSourceCode)
-    {
-        this._workspace.project().addUISourceCode(uiSourceCode);
-    },
-
-    /**
      * @param {WebInspector.Event} event
      */
     _resourceAdded: function(event)
     {
         var resource = /** @type {WebInspector.Resource} */ event.data;
+        if (this._uiSourceCodeForResource[resource.url])
+            return;
+        var uiSourceCode;
         switch (resource.type) {
         case WebInspector.resourceTypes.Stylesheet:
-            this._styleResourceAdded(resource);
+            uiSourceCode = new WebInspector.StyleSource(resource);
             break;
         case WebInspector.resourceTypes.Document:
-        case WebInspector.resourceTypes.Script:
-            this._scriptResourceAdded(resource);
+            uiSourceCode = new WebInspector.JavaScriptSource(resource.url, resource, resource, false);
             break;
+        case WebInspector.resourceTypes.Script:
+            uiSourceCode = new WebInspector.JavaScriptSource(resource.url, resource, resource, true);
+            break;
+        }
+        if (uiSourceCode) {
+            this._uiSourceCodeForResource[resource.url] = uiSourceCode;
+            this._workspace.project().addUISourceCode(uiSourceCode);
         }
     },
 
-    _reset: function()
+    _projectWillReset: function()
     {
         this._uiSourceCodeForResource = {};
-        this._stylesSourceMapping.reset();
-        // FIXME: We should not populate until the ProjectWillReset event was handled by all listeners. Introduce ProjectDidReset event for that matter.
-        setTimeout(this._populate.bind(this), 0);
+    },
+
+    _projectDidReset: function()
+    {
+        this._populate();
     }
 }

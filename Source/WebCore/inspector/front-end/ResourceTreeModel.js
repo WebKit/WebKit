@@ -35,8 +35,7 @@
  */
 WebInspector.ResourceTreeModel = function(networkManager)
 {
-    networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestUpdated, this._onRequestUpdated, this);
-    networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestFinished, this._onRequestUpdated, this);
+    networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestFinished, this._onRequestFinished, this);
     networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestUpdateDropped, this._onRequestUpdateDropped, this);
 
     WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._consoleMessageAdded, this);
@@ -172,7 +171,7 @@ WebInspector.ResourceTreeModel.prototype = {
     /**
      * @param {WebInspector.Event} event
      */
-    _onRequestUpdated: function(event)
+    _onRequestFinished: function(event)
     {
         if (!this._cachedResourcesProcessed)
             return;

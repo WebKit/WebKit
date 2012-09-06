@@ -7,14 +7,13 @@ function loadStylesheet()
     var css = document.createElement("link");
     css.rel = "stylesheet";
     css.type = "text/css";
-    css.href = "resource/style.css";
+    css.href = "resources/style.css";
     document.head.appendChild(css);
 }
 
 function test()
 {
-    InspectorTest.addConsoleSniffer(step2, true);
-    InspectorTest.addSniffer(WebInspector.NetworkUISourceCodeProvider.prototype, "_resourceAdded", true);
+    WebInspector.workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, step2);
     InspectorTest.evaluateInPage("loadStylesheet()");
 
     var resource;

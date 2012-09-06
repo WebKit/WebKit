@@ -43,7 +43,8 @@ WebInspector.ScriptSnippetModel = function(workspace)
     this._snippetStorage = new WebInspector.SnippetStorage("script", "Script snippet #");
     this._lastSnippetEvaluationIndexSetting = WebInspector.settings.createSetting("lastSnippetEvaluationIndex", 0);
     this._snippetScriptMapping = new WebInspector.SnippetScriptMapping(this);
-    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
+    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._projectWillReset, this);
+    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectDidReset, this._projectDidReset, this);
     this._loadSnippets();
 }
 
@@ -352,13 +353,17 @@ WebInspector.ScriptSnippetModel.prototype = {
         return snippetId;
     },
 
-    _reset: function()
+    _projectWillReset: function()
     {
         var removedUISourceCodes = this._releasedUISourceCodes();
         this._uiSourceCodeForScriptId = {};
         this._scriptForUISourceCode = new Map();
         this._snippetJavaScriptSourceForSnippetId = {};
-        setTimeout(this._loadSnippets.bind(this), 0);
+    },
+
+    _projectDidReset: function()
+    {
+        this._loadSnippets();
     }
 }
 

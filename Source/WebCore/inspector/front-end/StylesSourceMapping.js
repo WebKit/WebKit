@@ -31,22 +31,18 @@
 /**
  * @constructor
  * @implements {WebInspector.SourceMapping}
-*/
-WebInspector.StylesSourceMapping = function()
+ * @param {WebInspector.Workspace} workspace
+ */
+WebInspector.StylesSourceMapping = function(workspace)
 {
+    this._workspace = workspace;
+    this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
+    this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._uiSourceCodeAddedToWorkspace, this);
+
     this._uiSourceCodeForURL = {};
 }
 
 WebInspector.StylesSourceMapping.prototype = {
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    addUISourceCode: function(uiSourceCode)
-    {
-        this._uiSourceCodeForURL[uiSourceCode.url] = uiSourceCode;
-        WebInspector.cssModel.setSourceMapping(uiSourceCode.url, this);
-    },
-
     /**
      * @param {WebInspector.RawLocation} rawLocation
      * @return {WebInspector.UILocation}
@@ -69,7 +65,28 @@ WebInspector.StylesSourceMapping.prototype = {
         return new WebInspector.CSSLocation(uiSourceCode.contentURL() || "", lineNumber);
     },
 
-    reset: function()
+    _uiSourceCodeAddedToWorkspace: function(event)
+    {
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
+        if (!uiSourceCode.url || this._uiSourceCodeForURL[uiSourceCode.url])
+            return;
+        if (uiSourceCode.contentType() !== WebInspector.resourceTypes.StyleSheet)
+            return;
+            
+        this._addUISourceCode(uiSourceCode);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _addUISourceCode: function(uiSourceCode)
+    {
+        this._uiSourceCodeForURL[uiSourceCode.url] = uiSourceCode;
+        uiSourceCode.setSourceMapping(this);
+        WebInspector.cssModel.setSourceMapping(uiSourceCode.url, this);
+    },
+
+    _reset: function()
     {
         this._uiSourceCodeForURL = {};
         WebInspector.cssModel.resetSourceMappings();

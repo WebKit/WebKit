@@ -64,6 +64,7 @@ function test()
         function testReset(next)
         {
             var workspace = new WebInspector.Workspace();
+            var workspaceController = new WebInspector.WorkspaceController(workspace);
             var panel = new WebInspector.ScriptsPanel(workspace);
             panel.show();
 
@@ -77,7 +78,7 @@ function test()
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
-            workspace.project().reset();
+            workspaceController._mainFrameNavigated();
             workspace.project().addUISourceCode(uiSourceCodeBar);
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 

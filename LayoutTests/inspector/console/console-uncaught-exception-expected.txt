@@ -4,7 +4,7 @@ CONSOLE MESSAGE: line 6: Error: Exception in setTimeout callback.
 Tests that uncaught exceptions are logged into console.Bug 47250.
 
 
-Error: Exception in inline script. uncaught-in-iframe.html:18
-Error: Exception in 'load' event listener. uncaught-in-iframe.html:11
+Error: Exception in inline script. resources/uncaught-in-iframe.html:18
+Error: Exception in 'load' event listener. resources/uncaught-in-iframe.html:11
 Error: Exception in setTimeout callback. uncaught-in-iframe.html:6
 

@@ -15,6 +15,7 @@ function test()
     WebInspector.experimentsSettings.snippetsSupport = {};
     WebInspector.experimentsSettings.snippetsSupport.isEnabled = function() { return true; };
     var workspace = new WebInspector.Workspace();
+    var workspaceController = new WebInspector.WorkspaceController(workspace);
     WebInspector.scriptSnippetModel = new WebInspector.ScriptSnippetModel(workspace);
 
     InspectorTest.runDebuggerTestSuite([
@@ -27,11 +28,11 @@ function test()
             WebInspector.scriptSnippetModel.renameScriptSnippet(snippetJavaScriptSource, snippetName);
             workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCodeAdded);
             InspectorTest.addResult("Resetting snippet script mapping.");
-            workspace.project().reset();
-            InspectorTest.assertTrue(!workspace.uiSourceCodes().length, "Snippets script mapping should not have any uiSourceCodes after reset.");
+            workspaceController._mainFrameNavigated();
 
             function uiSourceCodeAdded(event)
             {
+                InspectorTest.assertEquals(1, workspace.uiSourceCodes().length, "Only one snippet uiSourceCode should be present after project navigation.");
                 var uiSourceCode = event.data;
                 if (uiSourceCode.url.indexOf(snippetName) === -1)
                     return;

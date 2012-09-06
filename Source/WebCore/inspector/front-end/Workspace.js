@@ -41,7 +41,9 @@ WebInspector.WorkspaceController.prototype = {
     _mainFrameNavigated: function()
     {
         WebInspector.Revision.filterOutStaleRevisions();
+        this._workspace.dispatchEventToListeners(WebInspector.Workspace.Events.ProjectWillReset, this._workspace.project());
         this._workspace.project().reset();
+        this._workspace.dispatchEventToListeners(WebInspector.Workspace.Events.ProjectDidReset, this._workspace.project());
     }
 }
 
@@ -62,7 +64,6 @@ WebInspector.Project = function(workspace)
 WebInspector.Project.prototype = {
     reset: function()
     {
-        this._workspace.dispatchEventToListeners(WebInspector.Workspace.Events.ProjectWillReset, this);
         this._uiSourceCodes = [];
     },
 
@@ -131,7 +132,8 @@ WebInspector.Workspace = function()
 
 WebInspector.Workspace.Events = {
     UISourceCodeContentCommitted: "UISourceCodeContentCommitted",
-    ProjectWillReset: "ProjectWillReset"
+    ProjectWillReset: "ProjectWillReset",
+    ProjectDidReset: "ProjectDidReset"
 }
 
 WebInspector.Workspace.prototype = {

@@ -1,3 +1,18 @@
+2012-09-04  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Fix inconsistencies in NetworkUISourceCodeProvider implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=95752
+
+        Reviewed by Alexander Pavlov.
+
+        * http/tests/inspector/network/network-request-revision-content-expected.txt:
+        * http/tests/inspector/network/network-request-revision-content.html:
+        * inspector/console/console-uncaught-exception-expected.txt:
+        * inspector/debugger/network-uisourcecode-provider-expected.txt:
+        * inspector/debugger/network-uisourcecode-provider.html:
+        * inspector/debugger/script-snippet-model.html:
+        * inspector/debugger/scripts-panel.html:
+
 2012-09-06  Adam Barth  <abarth@webkit.org>
 
         Chromium should call restrictScaleFactorToInitialScaleIfNotUserScalable unless/until userScalable is supported directly.
