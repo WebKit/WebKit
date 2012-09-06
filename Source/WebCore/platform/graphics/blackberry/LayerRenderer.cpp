@@ -49,7 +49,6 @@
 
 #define ENABLE_SCISSOR 1
 
-#define DEBUG_SHADER_COMPILATION 0
 #define DEBUG_LAYER_ANIMATIONS 0 // Show running animations as green.
 #define DEBUG_CLIPPING 0
 
@@ -76,12 +75,10 @@ GLuint LayerRenderer::loadShader(GLenum type, const char* shaderSource)
     GLint compiled;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
     if (!compiled) {
-#if DEBUG_SHADER_COMPILATION
         char infoLog[2048];
         GLsizei length;
         glGetShaderInfoLog(shader, 2048, &length, infoLog);
-        fprintf(stderr, "Failed to compile shader: %s", infoLog);
-#endif
+        BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical, "Failed to compile shader:\n%s\nlog: %s", shaderSource, infoLog);
         glDeleteShader(shader);
         return 0;
     }
@@ -1131,43 +1128,31 @@ bool LayerRenderer::initializeSharedGLObjects()
 
     m_layerProgramObject[LayerData::LayerProgramShaderRGBA] =
         loadShaderProgram(vertexShaderString, fragmentShaderStringRGBA);
-    if (!m_layerProgramObject[LayerData::LayerProgramShaderRGBA]) {
+    if (!m_layerProgramObject[LayerData::LayerProgramShaderRGBA])
         LOG_ERROR("Failed to create shader program for RGBA layers");
-        return false;
-    }
 
     m_layerProgramObject[LayerData::LayerProgramShaderBGRA] =
         loadShaderProgram(vertexShaderString, fragmentShaderStringBGRA);
-    if (!m_layerProgramObject[LayerData::LayerProgramShaderBGRA]) {
+    if (!m_layerProgramObject[LayerData::LayerProgramShaderBGRA])
         LOG_ERROR("Failed to create shader program for BGRA layers");
-        return false;
-    }
 
     m_layerMaskProgramObject[LayerData::LayerProgramShaderRGBA] =
         loadShaderProgram(vertexShaderString, fragmentShaderStringMaskRGBA);
-    if (!m_layerMaskProgramObject[LayerData::LayerProgramShaderRGBA]) {
+    if (!m_layerMaskProgramObject[LayerData::LayerProgramShaderRGBA])
         LOG_ERROR("Failed to create shader mask program for RGBA layers");
-        return false;
-    }
 
     m_layerMaskProgramObject[LayerData::LayerProgramShaderBGRA] =
         loadShaderProgram(vertexShaderString, fragmentShaderStringMaskBGRA);
-    if (!m_layerMaskProgramObject[LayerData::LayerProgramShaderBGRA]) {
+    if (!m_layerMaskProgramObject[LayerData::LayerProgramShaderBGRA])
         LOG_ERROR("Failed to create shader mask program for BGRA layers");
-        return false;
-    }
 
     m_colorProgramObject = loadShaderProgram(colorVertexShaderString, colorFragmentShaderString);
-    if (!m_colorProgramObject) {
+    if (!m_colorProgramObject)
         LOG_ERROR("Failed to create shader program for debug borders");
-        return false;
-    }
 
     m_checkerProgramObject = loadShaderProgram(colorVertexShaderString, checkerFragmentShaderString.data());
-    if (!m_checkerProgramObject) {
+    if (!m_checkerProgramObject)
         LOG_ERROR("Failed to create shader program for checkerboard pattern");
-        return false;
-    }
 
     // Specify the attrib location for the position and make it the same for all programs to
     // avoid binding re-binding the vertex attributes.
