@@ -1,3 +1,17 @@
+2012-09-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix build with ANGLE on platforms that provide EGL/GLESv2
+        https://bugs.webkit.org/show_bug.cgi?id=95965
+
+        Reviewed by Tor Arne Vestbø.
+
+        Add build rules to build ANGLE as a static library for the Qt port.
+
+        * ANGLE.pri: Added.
+        * ANGLE.pro: Added.
+        * DerivedSources.pri: Added.
+        * Target.pri: Added.
+
 2012-08-24  Joshua Netterfield  <jnetterfield@rim.com>
 
         [CSS Shaders] [ANGLE] RenameFunction::RenameFunction may store references to temporary string

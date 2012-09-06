@@ -1,3 +1,15 @@
+2012-09-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix build with ANGLE on platforms that provide EGL/GLESv2
+        https://bugs.webkit.org/show_bug.cgi?id=95965
+
+        Reviewed by Tor Arne Vestbø.
+
+        Depend on ANGLE if necessary, due to the use WebCore types that pull in ANGLE
+        headers (GraphicsContext3D.h in particular).
+
+        * Target.pri:
+
 2012-09-06  Andras Becsi  <andras.becsi@nokia.com>
 
         [WK2] Make [Qt]ViewportHandler cross platform

@@ -152,4 +152,5 @@ contains(DEFINES, ENABLE_GEOLOCATION=1) {
         $$PWD/qt/WebCoreSupport/GeolocationClientQt.cpp
 }
 
+contains(DEFINES, WTF_USE_3D_GRAPHICS=1): WEBKIT += angle
 

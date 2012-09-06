@@ -950,35 +950,3 @@ webkitversion.clean = ${QMAKE_FUNC_FILE_OUT_PATH}/WebKitVersion.h
 webkitversion.add_output_to_sources = false
 GENERATORS += webkitversion
 
-# Generator 12: Angle parsers
-contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
-
-    ANGLE_DIR = $$replace(PWD, "WebCore", "ThirdParty/ANGLE")
-
-    ANGLE_FLEX_SOURCES = \
-        $$ANGLE_DIR/src/compiler/glslang.l \
-        $$ANGLE_DIR/src/compiler/preprocessor/new/Tokenizer.l
-
-    angleflex.output = ${QMAKE_FILE_BASE}_lex.cpp
-    angleflex.input = ANGLE_FLEX_SOURCES
-    angleflex.commands = flex --noline --nounistd --outfile=${QMAKE_FILE_OUT} ${QMAKE_FILE_IN}
-    *g++*: angleflex.variable_out = ANGLE_SOURCES
-    GENERATORS += angleflex
-
-    ANGLE_BISON_SOURCES = \
-        $$ANGLE_DIR/src/compiler/glslang.y \
-        $$ANGLE_DIR/src/compiler/preprocessor/new/ExpressionParser.y
-
-    anglebison_decl.output = ${QMAKE_FILE_BASE}_tab.h
-    anglebison_decl.input = ANGLE_BISON_SOURCES
-    anglebison_decl.commands = bison --no-lines --skeleton=yacc.c --defines=${QMAKE_FILE_OUT} --output=${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}${QMAKE_FILE_OUT_BASE}.cpp ${QMAKE_FILE_IN}
-    anglebison_decl.variable_out = GENERATED_FILES
-    GENERATORS += anglebison_decl
-
-    anglebison_impl.input = ANGLE_BISON_SOURCES
-    anglebison_impl.commands = $$escape_expand(\\n)
-    anglebison_impl.depends = ${QMAKE_FILE_BASE}_tab.h
-    anglebison_impl.output = ${QMAKE_FILE_BASE}_tab.cpp
-    *g++*: anglebison_impl.variable_out = ANGLE_SOURCES
-    GENERATORS += anglebison_impl
-}

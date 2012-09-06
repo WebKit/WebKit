@@ -49,6 +49,12 @@ JavaScriptCore.file = Source/JavaScriptCore/JavaScriptCore.pro
 JavaScriptCore.makefile = Makefile.JavaScriptCore
 SUBDIRS += JavaScriptCore
 
+contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
+    ANGLE.file = Source/ThirdParty/ANGLE/ANGLE.pro
+    ANGLE.makefile = Makefile.ANGLE
+    SUBDIRS += ANGLE
+}
+
 WebCore.file = Source/WebCore/WebCore.pro
 WebCore.makefile = Makefile.WebCore
 SUBDIRS += WebCore

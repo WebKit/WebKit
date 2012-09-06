@@ -85,6 +85,8 @@ WEBKIT += webcore
 
 !no_webkit1: WEBKIT += webkit1
 
+contains(DEFINES, WTF_USE_3D_GRAPHICS=1): WEBKIT += angle
+
 qnx {
     # see: https://bugs.webkit.org/show_bug.cgi?id=93460
     # the gcc 4.4.2 used in the qnx bbndk cannot cope with

@@ -158,7 +158,7 @@ contains(QT, webkit) {
 
 # Reorder libraries so that the link and include order is correct,
 # and make sure the case matches the original case.
-libraries = WebKit1 WebKit2 WebCore JavaScriptCore WTF
+libraries = WebKit1 WebKit2 WebCore ANGLE JavaScriptCore WTF
 for(library, libraries) {
     contains(WEBKIT, $$lower($$library)) {
         WEBKIT -= $$lower($$library)

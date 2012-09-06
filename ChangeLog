@@ -1,3 +1,15 @@
+2012-09-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix build with ANGLE on platforms that provide EGL/GLESv2
+        https://bugs.webkit.org/show_bug.cgi?id=95965
+
+        Reviewed by Tor Arne Vestbø.
+
+        Add ANGLE as separate static library to the build and dependencies.
+
+        * Source/api.pri:
+        * WebKit.pro:
+
 2012-09-05  George Staikos  <staikos@webkit.org>
 
         [BlackBerry] Match th ebuild flags from the platform library
