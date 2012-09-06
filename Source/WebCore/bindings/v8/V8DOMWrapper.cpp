@@ -197,7 +197,7 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(Frame* frame, WrapperTyp
         // Avoid setting the DOM wrapper for failed allocations.
         setDOMWrapper(instance, type, impl);
         if (type == &V8HTMLDocument::info)
-            instance = V8HTMLDocument::WrapInShadowObject(instance, static_cast<Node*>(impl));
+            instance = V8HTMLDocument::wrapInShadowObject(instance, static_cast<Node*>(impl));
     }
     return instance;
 }
