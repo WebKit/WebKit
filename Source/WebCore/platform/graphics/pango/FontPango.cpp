@@ -292,7 +292,7 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
     PangoLayout* layout = pango_cairo_create_layout(cr);
     setPangoAttributes(this, run, layout);
 
-    gchar* utf8 = convertUniCharToUTF8(run.characters(), run.length(), 0, run.length());
+    gchar* utf8 = convertUniCharToUTF8(run.characters16(), run.length(), 0, run.length());
     pango_layout_set_text(layout, utf8, -1);
 
     // Our layouts are single line
@@ -380,7 +380,7 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
     PangoLayout* layout = getDefaultPangoLayout(run);
     setPangoAttributes(this, run, layout);
 
-    gchar* utf8 = convertUniCharToUTF8(run.characters(), run.length(), 0, run.length());
+    gchar* utf8 = convertUniCharToUTF8(run.characters16(), run.length(), 0, run.length());
     pango_layout_set_text(layout, utf8, -1);
 
     int width;
@@ -405,7 +405,7 @@ int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat, bool
     PangoLayout* layout = getDefaultPangoLayout(run);
     setPangoAttributes(this, run, layout);
 
-    gchar* utf8 = convertUniCharToUTF8(run.characters(), run.length(), 0, run.length());
+    gchar* utf8 = convertUniCharToUTF8(run.characters16(), run.length(), 0, run.length());
     pango_layout_set_text(layout, utf8, -1);
 
     int index, trailing;
@@ -430,7 +430,7 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint
     PangoLayout* layout = getDefaultPangoLayout(run);
     setPangoAttributes(this, run, layout);
 
-    gchar* utf8 = convertUniCharToUTF8(run.characters(), run.length(), 0, run.length());
+    gchar* utf8 = convertUniCharToUTF8(run.characters16(), run.length(), 0, run.length());
     pango_layout_set_text(layout, utf8, -1);
 
     char* start = g_utf8_offset_to_pointer(utf8, from);

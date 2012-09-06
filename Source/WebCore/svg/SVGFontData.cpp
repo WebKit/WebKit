@@ -134,7 +134,7 @@ bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& gly
     ASSERT(int(run.charactersLength()) >= currentCharacter);
 
     // Associate text with arabic forms, if needed.
-    String remainingTextInRun(run.data(currentCharacter), run.charactersLength() - currentCharacter);
+    String remainingTextInRun(run.data16(currentCharacter), run.charactersLength() - currentCharacter);
     remainingTextInRun = Font::normalizeSpaces(remainingTextInRun.characters(), remainingTextInRun.length());
     if (mirror)
         remainingTextInRun = createStringWithMirroredCharacters(remainingTextInRun.characters(), remainingTextInRun.length());

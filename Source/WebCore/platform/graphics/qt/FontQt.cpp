@@ -178,7 +178,7 @@ static void drawQtGlyphRun(GraphicsContext* context, const QGlyphRun& qtGlyphRun
 
 void Font::drawComplexText(GraphicsContext* ctx, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
-    String sanitized = Font::normalizeSpaces(run.characters(), run.length());
+    String sanitized = Font::normalizeSpaces(run.characters16(), run.length());
     const QString string = fromRawDataWithoutRef(sanitized);
     QTextLayout layout(string);
     layout.setRawFont(rawFont());
@@ -201,7 +201,7 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
 
     if (run.length() == 1 && treatAsSpace(run[0]))
         return primaryFont()->spaceWidth() + run.expansion();
-    String sanitized = Font::normalizeSpaces(run.characters(), run.length());
+    String sanitized = Font::normalizeSpaces(run.characters16(), run.length());
     QString string = fromRawDataWithoutRef(sanitized);
 
     QTextLayout layout(string);
@@ -217,7 +217,7 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
 
 int Font::offsetForPositionForComplexText(const TextRun& run, float position, bool) const
 {
-    String sanitized = Font::normalizeSpaces(run.characters(), run.length());
+    String sanitized = Font::normalizeSpaces(run.characters16(), run.length());
     QString string = fromRawDataWithoutRef(sanitized);
 
     QTextLayout layout(string);
@@ -229,7 +229,7 @@ int Font::offsetForPositionForComplexText(const TextRun& run, float position, bo
 
 FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint& pt, int h, int from, int to) const
 {
-    String sanitized = Font::normalizeSpaces(run.characters(), run.length());
+    String sanitized = Font::normalizeSpaces(run.characters16(), run.length());
     QString string = fromRawDataWithoutRef(sanitized);
 
     QTextLayout layout(string);

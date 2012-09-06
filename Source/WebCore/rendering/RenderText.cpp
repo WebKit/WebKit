@@ -1879,7 +1879,7 @@ int RenderText::nextOffset(int current) const
 
 bool RenderText::computeCanUseSimpleFontCodePath() const
 {
-    if (isAllASCII())
+    if (isAllASCII() || m_text.is8Bit())
         return true;
     return Font::characterRangeCodePath(characters(), length()) == Font::Simple;
 }

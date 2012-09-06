@@ -413,8 +413,7 @@ void GraphicsContext::drawBidiText(const Font& font, const TextRun& run, const F
     FloatPoint currPoint = point;
     BidiCharacterRun* bidiRun = bidiRuns.firstRun();
     while (bidiRun) {
-        TextRun subrun = run;
-        subrun.setText(run.data(bidiRun->start()), bidiRun->stop() - bidiRun->start());
+        TextRun subrun = run.subRun(bidiRun->start(), bidiRun->stop() - bidiRun->start());
         bool isRTL = bidiRun->level() % 2;
         subrun.setDirection(isRTL ? RTL : LTR);
         subrun.setDirectionalOverride(bidiRun->dirOverride(false));

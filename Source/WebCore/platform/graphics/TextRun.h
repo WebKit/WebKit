@@ -58,9 +58,9 @@ public:
 
     typedef unsigned RoundingHacks;
 
-    TextRun(const UChar* c, int len, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
-        : m_characters(c)
-        , m_charactersLength(len)
+#if PLATFORM(MAC)
+    TextRun(const LChar* c, unsigned len, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
+        : m_charactersLength(len)
         , m_len(len)
         , m_xpos(xpos)
 #if ENABLE(SVG)
@@ -68,6 +68,7 @@ public:
 #endif
         , m_expansion(expansion)
         , m_expansionBehavior(expansionBehavior)
+        , m_is8Bit(true)
         , m_allowTabs(false)
         , m_direction(direction)
         , m_directionalOverride(directionalOverride)
@@ -77,11 +78,34 @@ public:
         , m_disableSpacing(false)
         , m_tabSize(0)
     {
+        m_data.characters8 = c;
     }
+#endif
 
+    TextRun(const UChar* c, unsigned len, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
+        : m_charactersLength(len)
+        , m_len(len)
+        , m_xpos(xpos)
+#if ENABLE(SVG)
+        , m_horizontalGlyphStretch(1)
+#endif
+        , m_expansion(expansion)
+        , m_expansionBehavior(expansionBehavior)
+        , m_is8Bit(false)
+        , m_allowTabs(false)
+        , m_direction(direction)
+        , m_directionalOverride(directionalOverride)
+        , m_characterScanForCodePath(characterScanForCodePath)
+        , m_applyRunRounding((roundingHacks & RunRounding) && s_allowsRoundingHacks)
+        , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
+        , m_disableSpacing(false)
+        , m_tabSize(0)
+    {
+        m_data.characters16 = c;
+    }
+    
     TextRun(const String& s, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
-        : m_characters(s.characters())
-        , m_charactersLength(s.length())
+        : m_charactersLength(s.length())
         , m_len(s.length())
         , m_xpos(xpos)
 #if ENABLE(SVG)
@@ -98,17 +122,52 @@ public:
         , m_disableSpacing(false)
         , m_tabSize(0)
     {
+#if PLATFORM(MAC)
+        if (m_charactersLength && s.is8Bit()) {
+            m_data.characters16 = s.characters();
+            m_is8Bit = false;
+// FIXME: Change this to:
+//          m_data.characters8 = s.characters8();
+//          m_is8Bit = true;
+// when other 8 bit rendering changes are landed.
+        } else {
+            m_data.characters16 = s.characters();
+            m_is8Bit = false;
+        }
+#else
+        m_data.characters16 = s.characters();
+        m_is8Bit = false;
+#endif
     }
 
-    UChar operator[](int i) const { ASSERT(i >= 0 && i < m_len); return m_characters[i]; }
-    const UChar* data(int i) const { ASSERT(i >= 0 && i < m_len); return &m_characters[i]; }
+    TextRun subRun(unsigned startOffset, unsigned length) const
+    {
+        ASSERT(startOffset < m_len);
 
-    const UChar* characters() const { return m_characters; }
+        TextRun result = *this;
+
+        if (is8Bit())
+            result.setText(data8(startOffset), length);
+        else
+            result.setText(data16(startOffset), length);
+
+        return result;
+    }
+
+    UChar operator[](unsigned i) const { ASSERT(i < m_len); return is8Bit() ? m_data.characters8[i] :m_data.characters16[i]; }
+    const LChar* data8(unsigned i) const { ASSERT(i < m_len); ASSERT(is8Bit()); return &m_data.characters8[i]; }
+    const UChar* data16(unsigned i) const { ASSERT(i < m_len); ASSERT(!is8Bit()); return &m_data.characters16[i]; }
+
+    const LChar* characters8() const { ASSERT(is8Bit()); return m_data.characters8; }
+    const UChar* characters16() const { ASSERT(!is8Bit()); return m_data.characters16; }
+    
+    bool is8Bit() const { return m_is8Bit; }
     int length() const { return m_len; }
     int charactersLength() const { return m_charactersLength; }
 
-    void setText(const UChar* c, int len) { m_characters = c; m_len = len; }
-    void setCharactersLength(int charactersLength) { m_charactersLength = charactersLength; }
+    void setText(const LChar* c, unsigned len) { m_data.characters8 = c; m_len = len; m_is8Bit = true;}
+    void setText(const UChar* c, unsigned len) { m_data.characters16 = c; m_len = len; m_is8Bit = false;}
+    void setCharactersLength(unsigned charactersLength) { m_charactersLength = charactersLength; }
 
 #if ENABLE(SVG)
     float horizontalGlyphStretch() const { return m_horizontalGlyphStretch; }
@@ -159,9 +218,12 @@ public:
 private:
     static bool s_allowsRoundingHacks;
 
-    const UChar* m_characters;
-    int m_charactersLength; // Marks the end of the m_characters buffer. Default equals to m_len.
-    int m_len;
+    union {
+        const LChar* characters8;
+        const UChar* characters16;
+    } m_data;
+    unsigned m_charactersLength; // Marks the end of the characters buffer. Default equals to m_len.
+    unsigned m_len;
 
     // m_xpos is the x position relative to the left start of the text line, not relative to the left
     // start of the containing block. In the case of right alignment or center alignment, left start of
@@ -173,6 +235,7 @@ private:
 
     float m_expansion;
     ExpansionBehavior m_expansionBehavior : 2;
+    unsigned m_is8Bit : 1;
     unsigned m_allowTabs : 1;
     unsigned m_direction : 1;
     unsigned m_directionalOverride : 1; // Was this direction set by an override character.

@@ -244,15 +244,26 @@ int Font::offsetForPosition(const TextRun& run, float x, bool includePartialGlyp
     return offsetForPositionForComplexText(run, x, includePartialGlyphs);
 }
 
-String Font::normalizeSpaces(const UChar* characters, unsigned length)
+template <typename CharacterType>
+static inline String normalizeSpacesInternal(const CharacterType* characters, unsigned length)
 {
     StringBuilder normalized;
     normalized.reserveCapacity(length);
 
     for (unsigned i = 0; i < length; ++i)
-        normalized.append(normalizeSpaces(characters[i]));
+        normalized.append(Font::normalizeSpaces(characters[i]));
 
     return normalized.toString();
+}
+
+String Font::normalizeSpaces(const LChar* characters, unsigned length)
+{
+    return normalizeSpacesInternal(characters, length);
+}
+
+String Font::normalizeSpaces(const UChar* characters, unsigned length)
+{
+    return normalizeSpacesInternal(characters, length);
 }
 
 static bool shouldUseFontSmoothing = true;
@@ -297,8 +308,11 @@ Font::CodePath Font::codePath(const TextRun& run) const
     if (!run.characterScanForCodePath())
         return Simple;
 
+    if (run.is8Bit())
+        return Simple;
+
     // Start from 0 since drawing and highlighting also measure the characters before run->from.
-    return characterRangeCodePath(run.characters(), run.length());
+    return characterRangeCodePath(run.characters16(), run.length());
 }
 
 Font::CodePath Font::characterRangeCodePath(const UChar* characters, unsigned len)
@@ -555,6 +569,29 @@ bool Font::isCJKIdeographOrSymbol(UChar32 c)
         return true;
 
     return isCJKIdeograph(c);
+}
+
+unsigned Font::expansionOpportunityCount(const LChar* characters, size_t length, TextDirection direction, bool& isAfterExpansion)
+{
+    unsigned count = 0;
+    if (direction == LTR) {
+        for (size_t i = 0; i < length; ++i) {
+            if (treatAsSpace(characters[i])) {
+                count++;
+                isAfterExpansion = true;
+            } else
+                isAfterExpansion = false;
+        }
+    } else {
+        for (size_t i = length; i > 0; --i) {
+            if (treatAsSpace(characters[i - 1])) {
+                count++;
+                isAfterExpansion = true;
+            } else
+                isAfterExpansion = false;
+        }
+    }
+    return count;
 }
 
 unsigned Font::expansionOpportunityCount(const UChar* characters, size_t length, TextDirection direction, bool& isAfterExpansion)

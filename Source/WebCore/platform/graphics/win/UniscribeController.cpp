@@ -109,7 +109,7 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
         return;
 
     // Itemize the string.
-    const UChar* cp = m_run.data(m_currentCharacter);
+    const UChar* cp = m_run.data16(m_currentCharacter);
     unsigned baseCharacter = m_currentCharacter;
 
     // We break up itemization of the string by fontData and (if needed) the use of small caps.
@@ -330,7 +330,7 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
                 }
 
                 // Account for word-spacing.
-                if (characterIndex > 0 && !Font::treatAsSpace(*m_run.data(characterIndex - 1)) && m_font.wordSpacing())
+                if (characterIndex > 0 && !Font::treatAsSpace(*m_run.data16(characterIndex - 1)) && m_font.wordSpacing())
                     advance += m_font.wordSpacing();
             }
         }

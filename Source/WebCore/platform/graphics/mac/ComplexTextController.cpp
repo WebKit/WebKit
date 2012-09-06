@@ -147,7 +147,7 @@ ComplexTextController::ComplexTextController(const Font* font, const TextRun& ru
         m_expansionPerOpportunity = 0;
     else {
         bool isAfterExpansion = m_afterExpansion;
-        unsigned expansionOpportunityCount = Font::expansionOpportunityCount(m_run.characters(), m_end, m_run.ltr() ? LTR : RTL, isAfterExpansion);
+        unsigned expansionOpportunityCount = Font::expansionOpportunityCount(m_run.characters16(), m_end, m_run.ltr() ? LTR : RTL, isAfterExpansion);
         if (isAfterExpansion && !m_run.allowsTrailingExpansion())
             expansionOpportunityCount--;
 
@@ -289,7 +289,7 @@ void ComplexTextController::collectComplexTextRuns()
         return;
 
     // We break up glyph run generation for the string by FontData.
-    const UChar* cp = m_run.characters();
+    const UChar* cp = m_run.characters16();
 
     if (m_font.isSmallCaps())
         m_smallCapsBuffer.resize(m_end);
@@ -635,7 +635,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                         m_afterExpansion = false;
 
                     // Account for word-spacing.
-                    if (treatAsSpace && characterIndex > 0 && !Font::treatAsSpace(*m_run.data(characterIndex - 1)) && m_font.wordSpacing())
+                    if (treatAsSpace && characterIndex > 0 && !Font::treatAsSpace(m_run[characterIndex - 1]) && m_font.wordSpacing())
                         advance.width += m_font.wordSpacing();
                 } else
                     m_afterExpansion = false;

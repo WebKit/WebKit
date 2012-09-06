@@ -172,7 +172,7 @@ HarfBuzzShaper::HarfBuzzShaper(const Font* font, const TextRun& run)
 {
     m_normalizedBuffer = adoptArrayPtr(new UChar[m_run.length() + 1]);
     m_normalizedBufferLength = m_run.length();
-    normalizeCharacters(m_run.characters(), m_normalizedBuffer.get(), m_normalizedBufferLength);
+    normalizeCharacters(m_run.characters16(), m_normalizedBuffer.get(), m_normalizedBufferLength);
     setPadding(m_run.expansion());
     setFontFeatures();
 }

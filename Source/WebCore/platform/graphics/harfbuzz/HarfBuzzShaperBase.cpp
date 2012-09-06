@@ -97,7 +97,7 @@ void HarfBuzzShaperBase::setNormalizedBuffer(NormalizeMode normalizeMode)
     for (int i = 0; i < m_run.length(); ++i) {
         UChar ch = m_run[i];
         if (::ublock_getCode(ch) == UBLOCK_COMBINING_DIACRITICAL_MARKS) {
-            icu::Normalizer::normalize(icu::UnicodeString(m_run.characters(),
+            icu::Normalizer::normalize(icu::UnicodeString(m_run.characters16(),
                                        m_run.length()), UNORM_NFC, 0 /* no options */,
                                        normalizedString, error);
             if (U_FAILURE(error))
@@ -109,7 +109,7 @@ void HarfBuzzShaperBase::setNormalizedBuffer(NormalizeMode normalizeMode)
     const UChar* sourceText;
     if (normalizedString.isEmpty()) {
         m_normalizedBufferLength = m_run.length();
-        sourceText = m_run.characters();
+        sourceText = m_run.characters16();
     } else {
         m_normalizedBufferLength = normalizedString.length();
         sourceText = normalizedString.getBuffer();
