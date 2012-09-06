@@ -1,3 +1,15 @@
+2012-09-05  Jason Liu  <jason.liu@torchmobile.com.cn>
+
+        [BlackBerry] Remove feature about:cache/disable and about:cache/enable
+        https://bugs.webkit.org/show_bug.cgi?id=95820
+
+        Reviewed by Rob Buis.
+
+        Remove this feature since we need to add a button in settings.
+
+        * WebKitSupport/AboutData.cpp:
+        (BlackBerry::WebKit::cachePage):
+
 2012-09-05  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Remove deprecated dialog connections.

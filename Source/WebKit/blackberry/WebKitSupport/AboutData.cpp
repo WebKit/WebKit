@@ -467,17 +467,7 @@ static String cachePage(String cacheCommand)
         result.append(String(key.data()));
         result.append(String("<hr>"));
         result.append(String(BlackBerry::Platform::generateHtmlFragmentForCacheHeaders(key).data()));
-    }
-#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
-    else if (equalIgnoringCase(cacheCommand, "/disable")) {
-        settings->setDiskCacheEnabled(false);
-        result.append("Http disk cache is disabled.");
-    } else if (equalIgnoringCase(cacheCommand, "/enable")) {
-        settings->setDiskCacheEnabled(true);
-        result.append("Http disk cache is enabled.");
-    }
-#endif
-    else {
+    } else {
         // Unknown cache command.
         return String();
     }
