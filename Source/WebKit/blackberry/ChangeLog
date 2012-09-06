@@ -1,3 +1,24 @@
+2012-09-06  Genevieve Mak  <gmak@rim.com>
+
+        Add data-blackberry-webworks-context attribute and set the custom context when
+        getting context.
+        https://bugs.webkit.org/show_bug.cgi?id=95993
+
+        Reviewed by Antonio Gomes.
+
+        PR #193726
+        Reviewed Internally by Mike Fenton.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+            - Check for custom WebWorks context and add it if there.
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::webWorksContext):
+        (DOMSupport):
+        * WebKitSupport/DOMSupport.h:
+            - Add a method that checks a given element for the data-webworks-context
+              attribute and returns its value if present.
+
 2012-09-06  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Allow overscroll to composited scroll layers

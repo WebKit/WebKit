@@ -63,6 +63,7 @@ AttributeState elementSupportsAutocomplete(const WebCore::Element*);
 AttributeState elementSupportsSpellCheck(const WebCore::Element*);
 
 WTF::String inputElementText(WebCore::Element*);
+WTF::String webWorksContext(const WebCore::Element*);
 
 WebCore::HTMLTextFormControlElement* toTextControlElement(WebCore::Node*);
 

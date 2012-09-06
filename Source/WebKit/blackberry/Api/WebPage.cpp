@@ -2417,6 +2417,13 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
 
     if (node->isElementNode()) {
         Element* element = static_cast<Element*>(node->shadowAncestorNode());
+
+        String webWorksContext(DOMSupport::webWorksContext(element));
+        if (!webWorksContext.stripWhiteSpace().isEmpty()) {
+            context.setFlag(Platform::WebContext::IsWebWorksContext);
+            context.setWebWorksContext(webWorksContext.utf8().data());
+        }
+
         if (DOMSupport::isTextBasedContentEditableElement(element)) {
             if (!canStartSelection) {
                 // Input fields host node is by spec non-editable unless the field itself has content editable enabled.

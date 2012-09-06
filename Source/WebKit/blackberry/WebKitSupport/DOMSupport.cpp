@@ -116,6 +116,18 @@ WTF::String inputElementText(Element* element)
     return elementText;
 }
 
+WTF::String webWorksContext(const WebCore::Element* element)
+{
+    if (!element)
+        return WTF::String();
+
+    DEFINE_STATIC_LOCAL(QualifiedName, webworksContextAttr, (nullAtom, "data-blackberry-webworks-context", nullAtom));
+    if (element->fastHasAttribute(webworksContextAttr))
+        return element->fastGetAttribute(webworksContextAttr);
+
+    return WTF::String();
+}
+
 bool isElementTypePlugin(const Element* element)
 {
     if (!element)
