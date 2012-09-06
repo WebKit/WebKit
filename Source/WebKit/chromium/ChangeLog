@@ -1,3 +1,21 @@
+2012-09-06  Adrienne Walker  <enne@google.com>
+
+        [chromium] Remove GraphicsContext references from ContentLayerChromiumTest
+        https://bugs.webkit.org/show_bug.cgi?id=96002
+
+        Reviewed by James Robinson.
+
+        This is a compositor unit test, so it shouldn't reference things
+        outside of the compositor like GraphicsContext. The
+        OpaqueRectTrackingContentLayerDelegateTest already tests opaque
+        tracking right at the time of paint. This test is about verifying that
+        transformed canvases work properly, so can just fake the opaque rect
+        coming back from the paint.
+
+        * tests/ContentLayerChromiumTest.cpp:
+        (WebKit::MockContentLayerChromiumClient::MockContentLayerChromiumClient):
+        (WebKit::TEST):
+
 2012-09-06  Jeff Timanus  <twiz@chromium.org>
 
         [Chromium] Remove contentsScale and related logic from GraphicsLayerChromium.
