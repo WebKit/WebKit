@@ -287,7 +287,7 @@ void CookieManager::getRawCookies(Vector<ParsedCookie*> &stackOfCookies, const K
         String path = cookie->path();
         CookieLog("CookieManager - comparing cookie path %s (len %d) to request path %s (len %d)", path.utf8().data(), path.length(), requestURL.path().utf8().data(), path.length());
         if (!equalIgnoringCase(path, requestURL.path()) && !path.endsWith("/", false))
-            path += "/";
+            path = path + "/";
 
         // Only secure connections have access to secure cookies. Unless specialCaseForLocal is true
         // Get the cookies filtering out HttpOnly cookies if requested.

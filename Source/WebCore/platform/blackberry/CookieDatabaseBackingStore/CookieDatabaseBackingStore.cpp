@@ -138,23 +138,25 @@ void CookieDatabaseBackingStore::upgradeTableIfNeeded(const String& databaseFiel
     commands.append(renameQuery);
 
     // Recreate the cookie table using the new database and primary key fields
-    String createTableQuery("CREATE TABLE ");
-    createTableQuery += m_tableName;
-    createTableQuery += " (" + databaseFields + ", " + primaryKeyFields + ");";
-    commands.append(createTableQuery);
+    StringBuilder createTableQuery;
+    createTableQuery.append("CREATE TABLE ");
+    createTableQuery.append(m_tableName);
+    createTableQuery.append(" (" + databaseFields + ", " + primaryKeyFields + ");");
+    commands.append(createTableQuery.toString());
 
     // Copy the old data into the new table. If a column does not exists,
     // we have to put a '' in the select statement to make the number of columns
     // equal in the insert statement.
-    String migrationQuery("INSERT OR REPLACE INTO ");
-    migrationQuery += m_tableName;
-    migrationQuery += " SELECT *";
+    StringBuilder migrationQuery;
+    migrationQuery.append("INSERT OR REPLACE INTO ");
+    migrationQuery.append(m_tableName);
+    migrationQuery.append(" SELECT *");
     if (!creationTimeExists)
-        migrationQuery += ",''";
+        migrationQuery.append(",''");
     if (!protocolExists)
-        migrationQuery += ",''";
-    migrationQuery += " FROM Backup_" + m_tableName;
-    commands.append(migrationQuery);
+        migrationQuery.append(",''");
+    migrationQuery.append(" FROM Backup_" + m_tableName);
+    commands.append(migrationQuery.toString());
 
     // The new columns will be blank, set the new values.
     if (!creationTimeExists) {
@@ -224,46 +226,50 @@ void CookieDatabaseBackingStore::invokeOpen(const String& cookieJar)
     upgradeTableIfNeeded(databaseFields, primaryKeyFields);
 
     // Create table if not exsist in case that the upgradeTableIfNeeded() failed accidentally.
-    String createTableQuery("CREATE TABLE IF NOT EXISTS ");
-    createTableQuery += m_tableName;
+    StringBuilder createTableQuery;
+    createTableQuery.append("CREATE TABLE IF NOT EXISTS ");
+    createTableQuery.append(m_tableName);
     // This table schema is compliant with Mozilla's.
-    createTableQuery += " (" + databaseFields + ", " + primaryKeyFields+");";
+    createTableQuery.append(" (" + databaseFields + ", " + primaryKeyFields+");");
 
     m_db.setBusyTimeout(1000);
 
-    if (!m_db.executeCommand(createTableQuery)) {
+    if (!m_db.executeCommand(createTableQuery.toString())) {
         LOG_ERROR("Could not create the table to store the cookies into. No cookie will be stored!");
         LOG_ERROR("SQLite Error Message: %s", m_db.lastErrorMsg());
         close();
         return;
     }
 
-    String insertQuery("INSERT OR REPLACE INTO ");
-    insertQuery += m_tableName;
-    insertQuery += " (name, value, host, path, expiry, lastAccessed, isSecure, isHttpOnly, creationTime, protocol) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10);";
+    StringBuilder insertQuery;
+    insertQuery.append("INSERT OR REPLACE INTO ");
+    insertQuery.append(m_tableName);
+    insertQuery.append(" (name, value, host, path, expiry, lastAccessed, isSecure, isHttpOnly, creationTime, protocol) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10);");
 
-    m_insertStatement = new SQLiteStatement(m_db, insertQuery);
+    m_insertStatement = new SQLiteStatement(m_db, insertQuery.toString());
     if (m_insertStatement->prepare()) {
         LOG_ERROR("Cannot save cookies");
         LOG_ERROR("SQLite Error Message: %s", m_db.lastErrorMsg());
     }
 
-    String updateQuery("UPDATE ");
-    updateQuery += m_tableName;
+    StringBuilder updateQuery;
+    updateQuery.append("UPDATE ");
+    updateQuery.append(m_tableName);
     // The where statement is chosen to match CookieMap key.
-    updateQuery += " SET name = ?1, value = ?2, host = ?3, path = ?4, expiry = ?5, lastAccessed = ?6, isSecure = ?7, isHttpOnly = ?8, creationTime = ?9, protocol = ?10 where name = ?1 and host = ?3 and path = ?4;";
-    m_updateStatement = new SQLiteStatement(m_db, updateQuery);
+    updateQuery.append(" SET name = ?1, value = ?2, host = ?3, path = ?4, expiry = ?5, lastAccessed = ?6, isSecure = ?7, isHttpOnly = ?8, creationTime = ?9, protocol = ?10 where name = ?1 and host = ?3 and path = ?4;");
+    m_updateStatement = new SQLiteStatement(m_db, updateQuery.toString());
 
     if (m_updateStatement->prepare()) {
         LOG_ERROR("Cannot update cookies");
         LOG_ERROR("SQLite Error Message: %s", m_db.lastErrorMsg());
     }
 
-    String deleteQuery("DELETE FROM ");
-    deleteQuery += m_tableName;
+    StringBuilder deleteQuery;
+    deleteQuery.append("DELETE FROM ");
+    deleteQuery.append(m_tableName);
     // The where statement is chosen to match CookieMap key.
-    deleteQuery += " WHERE name=?1 and host=?2 and path=?3 and protocol=?4;";
-    m_deleteStatement = new SQLiteStatement(m_db, deleteQuery);
+    deleteQuery.append(" WHERE name=?1 and host=?2 and path=?3 and protocol=?4;");
+    m_deleteStatement = new SQLiteStatement(m_db, deleteQuery.toString());
 
     if (m_deleteStatement->prepare()) {
         LOG_ERROR("Cannot delete cookies");
@@ -335,11 +341,12 @@ void CookieDatabaseBackingStore::invokeRemoveAll()
         m_changedCookies.clear();
     }
 
-    String deleteQuery("DELETE FROM ");
-    deleteQuery += m_tableName;
-    deleteQuery += ";";
+    StringBuilder deleteQuery;
+    deleteQuery.append("DELETE FROM ");
+    deleteQuery.append(m_tableName);
+    deleteQuery.append(";");
 
-    SQLiteStatement deleteStatement(m_db, deleteQuery);
+    SQLiteStatement deleteStatement(m_db, deleteQuery.toString());
     if (deleteStatement.prepare()) {
         LOG_ERROR("Could not prepare DELETE * statement");
         LOG_ERROR("SQLite Error Message: %s", m_db.lastErrorMsg());
