@@ -31,8 +31,8 @@
 #include "CCTexture.h"
 #include "CCTiledLayerTestCommon.h"
 #include "FakeCCGraphicsContext.h"
+#include "WebCompositorInitializer.h"
 #include <gtest/gtest.h>
-#include <public/WebCompositor.h>
 
 using namespace WebCore;
 using namespace WebKitTests;
@@ -45,20 +45,17 @@ public:
     CCPrioritizedTextureTest()
         : m_textureSize(256, 256)
         , m_textureFormat(GraphicsContext3D::RGBA)
+        , m_compositorInitializer(0)
         , m_context(WebKit::createFakeCCGraphicsContext())
     {
-        WebKit::WebCompositor::initialize(0);
         DebugScopedSetImplThread implThread;
         m_resourceProvider = CCResourceProvider::create(m_context.get());
     }
 
     virtual ~CCPrioritizedTextureTest()
     {
-        {
-            DebugScopedSetImplThread implThread;
-            m_resourceProvider.clear();
-        }
-        WebKit::WebCompositor::shutdown();
+        DebugScopedSetImplThread implThread;
+        m_resourceProvider.clear();
     }
 
     size_t texturesMemorySize(size_t textureCount)
@@ -93,6 +90,7 @@ public:
 protected:
     const IntSize m_textureSize;
     const GC3Denum m_textureFormat;
+    WebCompositorInitializer m_compositorInitializer;
     OwnPtr<CCGraphicsContext> m_context;
     OwnPtr<CCResourceProvider> m_resourceProvider;
 };

@@ -30,8 +30,8 @@
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "ImageBuffer.h"
+#include "WebCompositorInitializer.h"
 #include <public/Platform.h>
-#include <public/WebCompositor.h>
 #include <public/WebThread.h>
 
 #include <gmock/gmock.h>
@@ -81,7 +81,7 @@ protected:
         OwnPtr<WebThread> thread;
         if (threadMode == Threaded)
             thread = adoptPtr(WebKit::Platform::current()->createThread("Canvas2DLayerBridgeTest"));
-        WebCompositor::initialize(thread.get());
+        WebKitTests::WebCompositorInitializer initializer(thread.get());
 
         WebGLId backTextureId = 1;
         WebGLId frontTextureId = 1;
@@ -109,8 +109,6 @@ protected:
             EXPECT_CALL(mainMock, flush());
         }
         bridge.clear();
-
-        WebCompositor::shutdown();
     }
 };
 

@@ -30,14 +30,14 @@
 #include "CCActiveGestureAnimation.h"
 #include "CCInputHandler.h"
 #include "CCSingleThreadProxy.h"
+#include "WebCompositorInitializer.h"
 #include "WebCompositorInputHandlerClient.h"
 #include "WebInputEvent.h"
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 #include <public/WebCompositor.h>
 #include <public/WebFloatPoint.h>
 #include <public/WebPoint.h>
-
-#include <gmock/gmock.h>
-#include <gtest/gtest.h>
 #include <wtf/OwnPtr.h>
 
 using namespace WebKit;
@@ -93,7 +93,7 @@ public:
 
 TEST(WebCompositorInputHandlerImpl, fromIdentifier)
 {
-    WebCompositor::initialize(0);
+    WebKitTests::WebCompositorInitializer initializer(0);
     WebCore::DebugScopedSetImplThread alwaysImplThread;
 
     // Before creating any WebCompositorInputHandlers, lookups for any value should fail and not crash.
@@ -114,26 +114,13 @@ TEST(WebCompositorInputHandlerImpl, fromIdentifier)
 
     // After the compositor is destroyed, its entry should be removed from the map.
     EXPECT_EQ(0, WebCompositorInputHandler::fromIdentifier(compositorIdentifier));
-    WebCompositor::shutdown();
 }
-
-class WebCompositorInitializer {
-public:
-    WebCompositorInitializer()
-    {
-        WebCompositor::initialize(0);
-    }
-
-    ~WebCompositorInitializer()
-    {
-        WebCompositor::shutdown();
-    }
-};
 
 class WebCompositorInputHandlerImplTest : public testing::Test {
 public:
     WebCompositorInputHandlerImplTest()
-        : m_expectedDisposition(DidHandle)
+        : m_initializer(0)
+        , m_expectedDisposition(DidHandle)
     {
         m_inputHandler = WebCompositorInputHandlerImpl::create(&m_mockCCInputHandlerClient);
         m_inputHandler->setClient(&m_mockClient);
@@ -178,7 +165,7 @@ protected:
     MockWebCompositorInputHandlerClient m_mockClient;
     WebGestureEvent gesture;
     WebCore::DebugScopedSetImplThread alwaysImplThread;
-    WebCompositorInitializer initializer;
+    WebKitTests::WebCompositorInitializer m_initializer;
 
     enum ExpectedDisposition { DidHandle, DidNotHandle, DropEvent };
     ExpectedDisposition m_expectedDisposition;

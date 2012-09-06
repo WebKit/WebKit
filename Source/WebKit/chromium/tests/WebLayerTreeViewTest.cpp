@@ -31,7 +31,7 @@
 #include "WebLayerTreeViewTestCommon.h"
 #include <gmock/gmock.h>
 #include <public/Platform.h>
-#include <public/WebCompositor.h>
+#include <public/WebCompositorSupport.h>
 #include <public/WebLayer.h>
 #include <public/WebLayerTreeViewClient.h>
 #include <public/WebThread.h>
@@ -73,7 +73,7 @@ public:
 
         m_rootLayer.clear();
         m_view.clear();
-        WebKit::WebCompositor::shutdown();
+        WebKit::Platform::current()->compositorSupport()->shutdown();
     }
 
 protected:
@@ -90,7 +90,7 @@ protected:
 
     virtual void initializeCompositor() OVERRIDE
     {
-        WebKit::WebCompositor::initialize(0);
+        WebKit::Platform::current()->compositorSupport()->initialize(0);
     }
 
     virtual WebLayerTreeViewClient* client() OVERRIDE
@@ -169,7 +169,7 @@ protected:
     virtual void initializeCompositor() OVERRIDE
     {
         m_webThread = adoptPtr(WebKit::Platform::current()->createThread("WebLayerTreeViewTest"));
-        WebCompositor::initialize(m_webThread.get());
+        WebKit::Platform::current()->compositorSupport()->initialize(m_webThread.get());
     }
 
     virtual WebLayerTreeViewClient* client() OVERRIDE

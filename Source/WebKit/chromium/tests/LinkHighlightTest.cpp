@@ -30,10 +30,10 @@
 #include "IntRect.h"
 #include "Node.h"
 #include "URLTestHelpers.h"
+#include "WebCompositorInitializer.h"
 #include "WebFrame.h"
 #include "WebViewImpl.h"
 #include <gtest/gtest.h>
-#include <public/WebCompositor.h>
 #include <public/WebContentLayer.h>
 #include <public/WebFloatPoint.h>
 #include <public/WebSize.h>
@@ -47,7 +47,7 @@ namespace {
 #if ENABLE(GESTURE_EVENTS)
 TEST(LinkHighlightTest, verifyWebViewImplIntegration)
 {
-    WebCompositor::initialize(0);
+    WebKitTests::WebCompositorInitializer compositorInitializer(0);
 
     const std::string baseURL("http://www.test.com/");
     const std::string fileName("test_touch_link_highlight.html");
@@ -82,7 +82,6 @@ TEST(LinkHighlightTest, verifyWebViewImplIntegration)
     ASSERT_TRUE(webViewImpl->linkHighlight());
 
     webViewImpl->close();
-    WebCompositor::shutdown();
 }
 #endif
 

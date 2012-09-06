@@ -37,8 +37,8 @@
 #include "FakeCCGraphicsContext.h"
 #include "FakeCCLayerTreeHostClient.h"
 #include "LayerPainterChromium.h"
+#include "WebCompositorInitializer.h"
 #include <gtest/gtest.h>
-#include <public/WebCompositor.h>
 #include <public/WebTransformationMatrix.h>
 
 using namespace WebCore;
@@ -70,11 +70,11 @@ private:
 class TiledLayerChromiumTest : public testing::Test {
 public:
     TiledLayerChromiumTest()
-        : m_context(WebKit::createFakeCCGraphicsContext())
+        : m_compositorInitializer(0)
+        , m_context(WebKit::createFakeCCGraphicsContext())
         , m_textureManager(CCPrioritizedTextureManager::create(60*1024*1024, 1024, CCRenderer::ContentPool))
         , m_occlusion(0)
     {
-        WebKit::WebCompositor::initialize(0);
         DebugScopedSetImplThreadAndMainThreadBlocked implThreadAndMainThreadBlocked;
         m_resourceProvider = CCResourceProvider::create(m_context.get());
     }
@@ -82,11 +82,8 @@ public:
     virtual ~TiledLayerChromiumTest()
     {
         textureManagerClearAllMemory(m_textureManager.get(), m_resourceProvider.get());
-        {
-            DebugScopedSetImplThreadAndMainThreadBlocked implThreadAndMainThreadBlocked;
-            m_resourceProvider.clear();
-        }
-        WebKit::WebCompositor::shutdown();
+        DebugScopedSetImplThreadAndMainThreadBlocked implThreadAndMainThreadBlocked;
+        m_resourceProvider.clear();
     }
 
     // Helper classes and functions that set the current thread to be the impl thread
@@ -171,6 +168,7 @@ public:
     }
 
 public:
+    WebKitTests::WebCompositorInitializer m_compositorInitializer;
     OwnPtr<CCGraphicsContext> m_context;
     OwnPtr<CCResourceProvider> m_resourceProvider;
     CCTextureUpdateQueue m_queue;

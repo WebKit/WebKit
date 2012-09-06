@@ -1,3 +1,18 @@
+2012-09-06  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Use WebCompositorSupport functions instead of WebCompositor statics
+        https://bugs.webkit.org/show_bug.cgi?id=96007
+
+        Reviewed by Adrienne Walker.
+
+        Fixes initialization / settings code to use WebCompositorSupport.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        (TestShell::setPerTilePaintingEnabled):
+
 2012-09-06  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Provide implementation for PlatformWebView::windowFrame()

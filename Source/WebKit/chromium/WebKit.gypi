@@ -102,6 +102,7 @@
             'tests/URLTestHelpers.cpp',
             'tests/URLTestHelpers.h',
             'tests/WebCompositorInputHandlerImplTest.cpp',
+            'tests/WebCompositorInitializer.h',
             'tests/WebFrameTest.cpp',
             'tests/WebMediaPlayerClientImplTest.cpp',
             'tests/WebPageNewSerializerTest.cpp',

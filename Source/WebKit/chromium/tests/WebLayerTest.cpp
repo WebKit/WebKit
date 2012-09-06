@@ -26,9 +26,9 @@
 #include <public/WebLayer.h>
 
 #include "CompositorFakeWebGraphicsContext3D.h"
+#include "WebCompositorInitializer.h"
 #include "WebLayerImpl.h"
 #include "WebLayerTreeViewTestCommon.h"
-#include <public/WebCompositor.h>
 #include <public/WebContentLayer.h>
 #include <public/WebContentLayerClient.h>
 #include <public/WebExternalTextureLayer.h>
@@ -59,10 +59,13 @@ public:
 
 class WebLayerTest : public Test {
 public:
+    WebLayerTest()
+        : m_compositorInitializer(0)
+    {
+    }
+
     virtual void SetUp()
     {
-        // Initialize without threading support.
-        WebKit::WebCompositor::initialize(0);
         m_rootLayer = adoptPtr(WebLayer::create());
         EXPECT_CALL(m_client, scheduleComposite()).Times(AnyNumber());
         EXPECT_TRUE(m_view = adoptPtr(WebLayerTreeView::create(&m_client, *m_rootLayer, WebLayerTreeView::Settings())));
@@ -75,10 +78,10 @@ public:
         EXPECT_CALL(m_client, scheduleComposite()).Times(AnyNumber());
         m_rootLayer.clear();
         m_view.clear();
-        WebKit::WebCompositor::shutdown();
     }
 
 protected:
+    WebKitTests::WebCompositorInitializer m_compositorInitializer;
     MockWebLayerTreeViewClient m_client;
     OwnPtr<WebLayer> m_rootLayer;
     OwnPtr<WebLayerTreeView> m_view;

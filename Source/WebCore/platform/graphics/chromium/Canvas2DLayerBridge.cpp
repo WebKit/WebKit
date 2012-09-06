@@ -35,7 +35,6 @@
 #include "GraphicsLayerChromium.h"
 #include "TraceEvent.h"
 #include <public/Platform.h>
-#include <public/WebCompositor.h>
 #include <public/WebCompositorSupport.h>
 #include <public/WebGraphicsContext3D.h>
 
@@ -47,11 +46,6 @@ namespace WebCore {
 
 Canvas2DLayerBridge::Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D> context, const IntSize& size, DeferralMode deferralMode, unsigned textureId)
     : m_deferralMode(deferralMode)
-    // FIXME: We currently turn off double buffering when canvas rendering is
-    // deferred. What we should be doing is to use a smarter heuristic based
-    // on GPU resource monitoring and other factors to chose between single
-    // and double buffering.
-    , m_useDoubleBuffering(WebKit::WebCompositor::isThreadingEnabled() && deferralMode == NonDeferred)
     , m_frontBufferTexture(0)
     , m_backBufferTexture(textureId)
     , m_size(size)
@@ -61,6 +55,13 @@ Canvas2DLayerBridge::Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D> context, 
     , m_next(0)
     , m_prev(0)
 {
+    bool compositorThreadingEnabled = WebKit::Platform::current()->compositorSupport()->isThreadingEnabled();
+    // FIXME: We currently turn off double buffering when canvas rendering is
+    // deferred. What we should be doing is to use a smarter heuristic based
+    // on GPU resource monitoring and other factors to chose between single
+    // and double buffering.
+    m_useDoubleBuffering = compositorThreadingEnabled && deferralMode == NonDeferred;
+
     if (m_useDoubleBuffering) {
         m_context->makeContextCurrent();
         GLC(m_context.get(), m_frontBufferTexture = m_context->createTexture());
@@ -82,7 +83,7 @@ Canvas2DLayerBridge::Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D> context, 
         m_layer = adoptPtr(WebKit::WebExternalTextureLayer::create(this));
 
     m_layer->setTextureId(textureId);
-    m_layer->setRateLimitContext(!WebKit::WebCompositor::isThreadingEnabled() || m_useDoubleBuffering);
+    m_layer->setRateLimitContext(!compositorThreadingEnabled || m_useDoubleBuffering);
     GraphicsLayerChromium::registerContentsLayer(m_layer->layer());
 }
 

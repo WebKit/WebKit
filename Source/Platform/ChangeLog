@@ -1,3 +1,15 @@
+2012-09-06  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Use WebCompositorSupport functions instead of WebCompositor statics
+        https://bugs.webkit.org/show_bug.cgi?id=96007
+
+        Reviewed by Adrienne Walker.
+
+        Updates comment to reference WebCompositorSupport instead of WebCompositor.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebLayerTreeView):
+
 2012-09-06  Jeff Timanus  <twiz@chromium.org>
 
         [Chromium] Remove contentsScale and related logic from GraphicsLayerChromium.

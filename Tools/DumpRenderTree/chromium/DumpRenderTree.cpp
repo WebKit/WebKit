@@ -34,7 +34,7 @@
 #include "MockWebKitPlatformSupport.h"
 #include "TestShell.h"
 #include "webkit/support/webkit_support.h"
-#include <public/WebCompositor.h>
+#include <public/WebCompositorSupport.h>
 #include <v8/include/v8-testing.h>
 #include <v8/include/v8.h>
 #include <wtf/OwnPtr.h>
@@ -259,7 +259,7 @@ int main(int argc, char* argv[])
     }
 
     // Shutdown WebCompositor after TestShell is destructed properly.
-    WebKit::WebCompositor::shutdown();
+    WebKit::Platform::current()->compositorSupport()->shutdown();
 
     return EXIT_SUCCESS;
 }

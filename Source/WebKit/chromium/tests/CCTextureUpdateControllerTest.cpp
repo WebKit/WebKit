@@ -31,8 +31,8 @@
 #include "CCTiledLayerTestCommon.h"
 #include "FakeWebCompositorOutputSurface.h"
 #include "FakeWebGraphicsContext3D.h"
+#include "WebCompositorInitializer.h"
 #include <gtest/gtest.h>
-#include <public/WebCompositor.h>
 #include <public/WebThread.h>
 #include <wtf/RefPtr.h>
 
@@ -95,21 +95,23 @@ public:
 class CCTextureUpdateControllerTest : public Test {
 public:
     CCTextureUpdateControllerTest()
-    : m_queue(adoptPtr(new CCTextureUpdateQueue))
-    , m_uploader(this)
-    , m_fullUploadCountExpected(0)
-    , m_partialCountExpected(0)
-    , m_totalUploadCountExpected(0)
-    , m_maxUploadCountPerUpdate(0)
-    , m_numBeginUploads(0)
-    , m_numEndUploads(0)
-    , m_numConsecutiveFlushes(0)
-    , m_numDanglingUploads(0)
-    , m_numTotalUploads(0)
-    , m_numTotalFlushes(0)
-    , m_numPreviousUploads(0)
-    , m_numPreviousFlushes(0)
-    { }
+        : m_queue(adoptPtr(new CCTextureUpdateQueue))
+        , m_uploader(this)
+        , m_compositorInitializer(m_thread.get())
+        , m_fullUploadCountExpected(0)
+        , m_partialCountExpected(0)
+        , m_totalUploadCountExpected(0)
+        , m_maxUploadCountPerUpdate(0)
+        , m_numBeginUploads(0)
+        , m_numEndUploads(0)
+        , m_numConsecutiveFlushes(0)
+        , m_numDanglingUploads(0)
+        , m_numTotalUploads(0)
+        , m_numTotalFlushes(0)
+        , m_numPreviousUploads(0)
+        , m_numPreviousFlushes(0)
+    {
+    }
 
 public:
     void onFlush()
@@ -170,17 +172,9 @@ public:
 protected:
     virtual void SetUp()
     {
-        OwnPtr<WebThread> thread;
-        WebCompositor::initialize(thread.get());
-
         m_context = FakeWebCompositorOutputSurface::create(adoptPtr(new WebGraphicsContext3DForUploadTest(this)));
         DebugScopedSetImplThread implThread;
         m_resourceProvider = CCResourceProvider::create(m_context.get());
-    }
-
-    virtual void TearDown()
-    {
-        WebCompositor::shutdown();
     }
 
     void appendFullUploadsToUpdateQueue(int count)
@@ -218,6 +212,9 @@ protected:
     TextureForUploadTest m_texture;
     FakeTextureCopier m_copier;
     TextureUploaderForUploadTest m_uploader;
+    OwnPtr<WebThread> m_thread;
+    WebCompositorInitializer m_compositorInitializer;
+
 
     // Properties / expectations of this test
     int m_fullUploadCountExpected;

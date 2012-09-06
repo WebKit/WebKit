@@ -133,7 +133,7 @@ public:
     virtual bool commitRequested() const = 0;
 
     // Triggers a compositing pass. If the compositor thread was not
-    // enabled via WebCompositor::initialize, the compositing pass happens
+    // enabled via WebCompositorSupport::initialize, the compositing pass happens
     // immediately. If it is enabled, the compositing pass will happen at a
     // later time. Before the compositing pass happens (i.e. before composite()
     // returns when the compositor thread is disabled), WebContentLayers will be

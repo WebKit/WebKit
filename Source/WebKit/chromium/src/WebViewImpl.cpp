@@ -124,7 +124,6 @@
 #include "WebAccessibilityObject.h"
 #include "WebActiveWheelFlingParameters.h"
 #include "WebAutofillClient.h"
-#include "WebCompositorImpl.h"
 #include "WebDevToolsAgentImpl.h"
 #include "WebDevToolsAgentPrivate.h"
 #include "WebFrameImpl.h"
@@ -148,8 +147,8 @@
 #include "WheelEvent.h"
 #include "painting/GraphicsContextBuilder.h"
 #include <public/Platform.h>
-#include <public/WebCompositor.h>
 #include <public/WebCompositorOutputSurface.h>
+#include <public/WebCompositorSupport.h>
 #include <public/WebDragData.h>
 #include <public/WebFloatPoint.h>
 #include <public/WebGraphicsContext3D.h>
@@ -1819,7 +1818,7 @@ void WebViewImpl::themeChanged()
 void WebViewImpl::composite(bool)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (WebCompositor::isThreadingEnabled())
+    if (Platform::current()->compositorSupport()->isThreadingEnabled())
         m_layerTreeView->setNeedsRedraw();
     else {
         ASSERT(isAcceleratedCompositingActive());
@@ -3735,7 +3734,7 @@ WebCore::GraphicsLayer* WebViewImpl::rootGraphicsLayer()
 void WebViewImpl::scheduleAnimation()
 {
     if (isAcceleratedCompositingActive()) {
-        if (WebCompositor::isThreadingEnabled()) {
+        if (Platform::current()->compositorSupport()->isThreadingEnabled()) {
             ASSERT(m_layerTreeView);
             m_layerTreeView->setNeedsAnimate();
         } else
@@ -3968,7 +3967,7 @@ void WebViewImpl::didRecreateOutputSurface(bool success)
 
 void WebViewImpl::scheduleComposite()
 {
-    ASSERT(!WebCompositor::isThreadingEnabled());
+    ASSERT(!Platform::current()->compositorSupport()->isThreadingEnabled());
     m_client->scheduleComposite();
 }
 

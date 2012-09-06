@@ -53,7 +53,7 @@
 #include "webkit/support/webkit_support.h"
 #include "webkit/support/webkit_support_gfx.h"
 #include <public/Platform.h>
-#include <public/WebCompositor.h>
+#include <public/WebCompositorSupport.h>
 #include <public/WebPoint.h>
 #include <public/WebSize.h>
 #include <public/WebString.h>
@@ -162,11 +162,9 @@ void TestShell::initialize()
 
     WTF::initializeThreading();
 
-    if (m_threadedCompositingEnabled) {
+    if (m_threadedCompositingEnabled)
         m_webCompositorThread = adoptPtr(WebKit::Platform::current()->createThread("Compositor"));
-        WebCompositor::initialize(m_webCompositorThread.get());
-    } else
-        WebCompositor::initialize(0);
+    WebKit::Platform::current()->compositorSupport()->initialize(m_webCompositorThread.get());
 
     createMainWindow();
 }
@@ -381,7 +379,7 @@ void TestShell::testTimedOut()
 
 void TestShell::setPerTilePaintingEnabled(bool enabled)
 {
-    WebCompositor::setPerTilePaintingEnabled(enabled);
+    Platform::current()->compositorSupport()->setPerTilePaintingEnabled(enabled);
 }
 
 static string dumpDocumentText(WebFrame* frame)

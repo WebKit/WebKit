@@ -37,7 +37,8 @@
 #include "TranslateTransformOperation.h"
 #include "WebLayerTreeViewTestCommon.h"
 #include <gtest/gtest.h>
-#include <public/WebCompositor.h>
+#include <public/Platform.h>
+#include <public/WebCompositorSupport.h>
 #include <public/WebFloatAnimationCurve.h>
 #include <public/WebGraphicsContext3D.h>
 #include <public/WebLayerTreeView.h>
@@ -63,8 +64,8 @@ public:
     GraphicsLayerChromiumTest()
     {
         // For these tests, we will enable threaded animations.
-        WebCompositor::setAcceleratedAnimationEnabled(true);
-        WebCompositor::initialize(0);
+        Platform::current()->compositorSupport()->setAcceleratedAnimationEnabled(true);
+        Platform::current()->compositorSupport()->initialize(0);
         m_graphicsLayer = static_pointer_cast<GraphicsLayerChromium>(GraphicsLayer::create(&m_client));
         m_platformLayer = m_graphicsLayer->platformLayer();
         m_layerTreeView = adoptPtr(WebLayerTreeView::create(&m_layerTreeViewClient, *m_platformLayer, WebLayerTreeView::Settings()));
@@ -75,7 +76,7 @@ public:
     {
         m_graphicsLayer.clear();
         m_layerTreeView.clear();
-        WebCompositor::shutdown();
+        Platform::current()->compositorSupport()->shutdown();
     }
 
 protected:
