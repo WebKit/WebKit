@@ -1,3 +1,14 @@
+2012-09-06  Alok Priyadarshi  <alokp@chromium.org>
+
+        [chromium] Remove failures for acceletared-drawing tests.
+
+        Unreviewed.
+
+        Update chromium TestExpectations to remove failures for accelerated-painting.
+        They were fixed in r127294.
+
+        * platform/chromium/TestExpectations:
+
 2012-09-06  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Classify several test cases in TestExpectations
