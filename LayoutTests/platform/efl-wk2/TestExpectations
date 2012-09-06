@@ -219,17 +219,19 @@ BUGWK87088 : fast/js/names.html = TEXT PASS
 BUGWK84589 : http/tests/security/cross-frame-access-call.html = TEXT PASS
 BUGWK94194 : http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html = TEXT PASS
 
+// Missing undo-redo support
+BUGWK92504 : editing/execCommand/delete-selection-has-style.html = TEXT
+BUGWK92504 : editing/execCommand/format-block-multiple-paragraphs-in-pre.html = TEXT
+BUGWK92504 : fast/css/relative-positioned-block-crash.html = TEXT
+BUGWK92504 : fast/forms/plaintext-mode-1.html = TEXT
+
 // Unclassified failures
-BUGWKEFL : editing/execCommand/delete-selection-has-style.html = TEXT
-BUGWKEFL : editing/execCommand/format-block-multiple-paragraphs-in-pre.html = TEXT
 BUGWKEFL : editing/input/emacs-ctrl-o.html = TEXT
 BUGWKEFL : fast/block/float/float-in-float-hit-testing.html = TEXT
 BUGWKEFL : fast/css/bidi-override-in-anonymous-block.html = TEXT
-BUGWKEFL : fast/css/relative-positioned-block-crash.html = TEXT
 BUGWKEFL : fast/dom/Window/mozilla-focus-blur.html = TEXT
 BUGWKEFL : fast/forms/autocomplete-off-with-default-value-does-not-clear.html = TEXT
 BUGWKEFL : fast/forms/legend-access-key.html = TEXT
-BUGWKEFL : fast/forms/plaintext-mode-1.html = TEXT
 BUGWKEFL : fast/forms/select-writing-direction-natural.html = TEXT
 BUGWKEFL : fast/forms/validation-message-in-relative-body.html = TEXT
 BUGWKEFL : fast/frames/flattening/iframe-tiny.html = TEXT

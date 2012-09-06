@@ -1,3 +1,16 @@
+2012-09-06  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Classify several test cases in TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=95947
+
+        Unreviewed EFL gardening.
+
+        Update TestExpectations to classify a few test case failures
+        as being caused by lack on undo/redo stack implementation
+        in EFL WK2.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-09-06  Andrei Poenaru  <poenaru@adobe.com>
 
         Web Inspector: Protocol Extension: Add "regionLayoutUpdate" event
