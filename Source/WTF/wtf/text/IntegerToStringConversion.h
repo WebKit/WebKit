@@ -24,13 +24,15 @@
 #include "StringImpl.h"
 
 namespace WTF {
-WTF_EXPORT_STRING_API PassRefPtr<StringImpl> numberToStringImpl(int);
-WTF_EXPORT_STRING_API PassRefPtr<StringImpl> numberToStringImpl(long);
-WTF_EXPORT_STRING_API PassRefPtr<StringImpl> numberToStringImpl(long long);
 
-WTF_EXPORT_STRING_API PassRefPtr<StringImpl> numberToStringImpl(unsigned);
-WTF_EXPORT_STRING_API PassRefPtr<StringImpl> numberToStringImpl(unsigned long);
-WTF_EXPORT_STRING_API PassRefPtr<StringImpl> numberToStringImpl(unsigned long long);
-}
+WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> numberToStringImpl(int);
+WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> numberToStringImpl(long);
+WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> numberToStringImpl(long long);
+
+WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> numberToStringImpl(unsigned);
+WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> numberToStringImpl(unsigned long);
+WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> numberToStringImpl(unsigned long long);
+
+} // namespace WTF
 
 #endif // IntegerToStringConversion_h

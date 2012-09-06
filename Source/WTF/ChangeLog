@@ -1,3 +1,16 @@
+2012-09-06  Patrick Gansterer  <paroga@webkit.org>
+
+        Fix export macros in IntegerToStringConversion.h
+        https://bugs.webkit.org/show_bug.cgi?id=95900
+
+        Reviewed by Benjamin Poulain.
+
+        The WTF_EXPORT_STRING_API must be used only for symbols which are compiled
+        on windows in "non-WTF" binaries too. Since this isn't valid for the
+        IntegerToStringConversion function replace it with WTF_EXPORT_PRIVATE.
+
+        * wtf/text/IntegerToStringConversion.h:
+
 2012-09-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Various small Windows / MSVC build fixes
