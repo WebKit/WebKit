@@ -1,3 +1,14 @@
+2012-09-06  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Add a customized copy() method to CCRenderPassDrawQuad
+        https://bugs.webkit.org/show_bug.cgi?id=95871
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCDrawQuadTest.cpp:
+        (WebCore):
+        (WebCore::TEST):
+
 2012-09-06  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed Web Inspector: test fix.

@@ -99,6 +99,9 @@ unsigned CCDrawQuad::size() const
 
 PassOwnPtr<CCDrawQuad> CCDrawQuad::copy(const CCSharedQuadState* copiedSharedQuadState) const
 {
+    // RenderPass quads have their own copy() method.
+    ASSERT(material() != RenderPass);
+
     unsigned bytes = size();
     ASSERT(bytes);
 

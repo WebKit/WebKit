@@ -112,6 +112,12 @@ void compareDrawQuad(CCDrawQuad* quad, CCDrawQuad* copy, CCSharedQuadState* copy
     compareDrawQuad(quad.get(), copy.get(), copySharedState.get()); \
     const Type* copyQuad = Type::materialCast(copy.get());
 
+#define SETUP_AND_COPY_QUAD_1(Type, quad, a) \
+    quad->setQuadVisibleRect(quadVisibleRect); \
+    OwnPtr<CCDrawQuad> copy(quad->copy(copySharedState.get(), a));    \
+    compareDrawQuad(quad.get(), copy.get(), copySharedState.get()); \
+    const Type* copyQuad = Type::materialCast(copy.get());
+
 #define CREATE_QUAD_0(Type) \
     QUAD_DATA \
     OwnPtr<Type> quad(Type::create(sharedState.get(), quadRect)); \
@@ -157,6 +163,11 @@ void compareDrawQuad(CCDrawQuad* quad, CCDrawQuad* copy, CCSharedQuadState* copy
     QUAD_DATA \
     OwnPtr<Type> quad(Type::create(sharedState.get(), quadRect, a, b, c, d, e, f, g, h)); \
     SETUP_AND_COPY_QUAD(Type, quad);
+
+#define CREATE_QUAD_8_1(Type, a, b, c, d, e, f, g, h, copyA) \
+    QUAD_DATA \
+    OwnPtr<Type> quad(Type::create(sharedState.get(), quadRect, a, b, c, d, e, f, g, h)); \
+    SETUP_AND_COPY_QUAD_1(Type, quad, copyA);
 
 #define CREATE_QUAD_9(Type, a, b, c, d, e, f, g, h, i) \
     QUAD_DATA \
@@ -208,9 +219,11 @@ TEST(CCDrawQuadTest, copyRenderPassDrawQuad)
     float maskTexCoordOffsetX = -45;
     float maskTexCoordOffsetY = -21;
 
+    int copiedRenderPassId = 235;
+
     CREATE_SHARED_STATE();
-    CREATE_QUAD_8(CCRenderPassDrawQuad, renderPassId, isReplica, maskResourceId, contentsChangedSinceLastFrame, maskTexCoordScaleX, maskTexCoordScaleY, maskTexCoordOffsetX, maskTexCoordOffsetY);
-    EXPECT_EQ(renderPassId, copyQuad->renderPassId());
+    CREATE_QUAD_8_1(CCRenderPassDrawQuad, renderPassId, isReplica, maskResourceId, contentsChangedSinceLastFrame, maskTexCoordScaleX, maskTexCoordScaleY, maskTexCoordOffsetX, maskTexCoordOffsetY, copiedRenderPassId);
+    EXPECT_EQ(copiedRenderPassId, copyQuad->renderPassId());
     EXPECT_EQ(isReplica, copyQuad->isReplica());
     EXPECT_EQ(maskResourceId, copyQuad->maskResourceId());
     EXPECT_RECT_EQ(contentsChangedSinceLastFrame, copyQuad->contentsChangedSinceLastFrame());

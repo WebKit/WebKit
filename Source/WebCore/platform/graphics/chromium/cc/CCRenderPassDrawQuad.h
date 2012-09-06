@@ -51,6 +51,8 @@ public:
     float maskTexCoordOffsetX() const { return m_maskTexCoordOffsetX; }
     float maskTexCoordOffsetY() const { return m_maskTexCoordOffsetY; }
 
+    PassOwnPtr<CCRenderPassDrawQuad> copy(const CCSharedQuadState* copiedSharedQuadState, int copiedRenderPassId) const;
+
 private:
     CCRenderPassDrawQuad(const CCSharedQuadState*, const IntRect&, int renderPassId, bool isReplica, CCResourceProvider::ResourceId maskResourceId, const IntRect& contentsChangedSinceLastFrame, float maskTexCoordScaleX, float maskTexCoordScaleY, float maskTexCoordOffsetX, float maskTexCoordOffsetY);
 

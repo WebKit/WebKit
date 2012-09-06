@@ -54,4 +54,17 @@ const CCRenderPassDrawQuad* CCRenderPassDrawQuad::materialCast(const CCDrawQuad*
     return static_cast<const CCRenderPassDrawQuad*>(quad);
 }
 
+PassOwnPtr<CCRenderPassDrawQuad> CCRenderPassDrawQuad::copy(const CCSharedQuadState* copiedSharedQuadState, int copiedRenderPassId) const
+{
+    unsigned bytes = size();
+    ASSERT(bytes);
+
+    OwnPtr<CCRenderPassDrawQuad> copyQuad(adoptPtr(reinterpret_cast<CCRenderPassDrawQuad*>(new char[bytes])));
+    memcpy(copyQuad.get(), this, bytes);
+    copyQuad->setSharedQuadState(copiedSharedQuadState);
+    copyQuad->m_renderPassId = copiedRenderPassId;
+
+    return copyQuad.release();
+}
+
 }
