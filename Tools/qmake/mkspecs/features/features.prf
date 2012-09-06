@@ -149,8 +149,13 @@ haveQtModule(sensors) {
 # HTML5 Media Support
 !contains(DEFINES, ENABLE_VIDEO=.) {
     mac:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
-        DEFINES += ENABLE_VIDEO=1
-        DEFINES += WTF_USE_QTKIT=1
+        DARWIN_VERSION = $$split(QMAKE_HOST.version, ".")
+        DARWIN_MAJOR_VERSION = $$first(DARWIN_VERSION)
+        # QTKIT support requires 10.7 or newer
+        greaterThan(DARWIN_MAJOR_VERSION, 10) {
+            DEFINES += ENABLE_VIDEO=1
+            DEFINES += WTF_USE_QTKIT=1
+        }
     } else: linux-*:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
         !contains(QT_CONFIG, no-pkg-config):system(pkg-config --exists glib-2.0 gio-2.0 \'gstreamer-0.10 >= 0.10.30\' \'gstreamer-plugins-base-0.10 >= 0.10.30\'): {
             DEFINES += ENABLE_VIDEO=1

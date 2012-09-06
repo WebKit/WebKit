@@ -1,3 +1,15 @@
+2012-09-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix build on Mac OS X 10.6
+        https://bugs.webkit.org/show_bug.cgi?id=95200
+
+        Reviewed by Tor Arne Vestbø.
+
+        The build on Mac OS X 10.6 is broken when using QuickTime. Enable it only for
+        10.7 and newer.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-09-06  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WKTR] addSelectionKey should be mapped to "Control" modifiers on other OSes than Mac
