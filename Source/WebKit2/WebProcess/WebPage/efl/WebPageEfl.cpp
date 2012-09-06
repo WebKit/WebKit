@@ -62,8 +62,48 @@ static inline void scroll(Page* page, ScrollDirection direction, ScrollGranulari
 
 bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboardEvent)
 {
-    notImplemented();
-    return false;
+    if (keyboardEvent.type() != WebEvent::KeyDown && keyboardEvent.type() != WebEvent::RawKeyDown)
+        return false;
+
+    switch (keyboardEvent.windowsVirtualKeyCode()) {
+    case VK_BACK:
+        if (keyboardEvent.shiftKey())
+            m_page->goForward();
+        else
+            m_page->goBack();
+        break;
+    case VK_SPACE:
+        scroll(m_page.get(), keyboardEvent.shiftKey() ? ScrollUp : ScrollDown, ScrollByPage);
+        break;
+    case VK_LEFT:
+        scroll(m_page.get(), ScrollLeft, ScrollByLine);
+        break;
+    case VK_RIGHT:
+        scroll(m_page.get(), ScrollRight, ScrollByLine);
+        break;
+    case VK_UP:
+        scroll(m_page.get(), ScrollUp, ScrollByLine);
+        break;
+    case VK_DOWN:
+        scroll(m_page.get(), ScrollDown, ScrollByLine);
+        break;
+    case VK_HOME:
+        scroll(m_page.get(), ScrollUp, ScrollByDocument);
+        break;
+    case VK_END:
+        scroll(m_page.get(), ScrollDown, ScrollByDocument);
+        break;
+    case VK_PRIOR:
+        scroll(m_page.get(), ScrollUp, ScrollByPage);
+        break;
+    case VK_NEXT:
+        scroll(m_page.get(), ScrollDown, ScrollByPage);
+        break;
+    default:
+        return false;
+    }
+
+    return true;
 }
 
 bool WebPage::platformHasLocalDataForURL(const KURL&)

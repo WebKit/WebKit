@@ -1,3 +1,16 @@
+2012-09-06  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Provide implementation for WebPage::performDefaultBehaviorForKeyEvent()
+        https://bugs.webkit.org/show_bug.cgi?id=95943
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip several test cases that are passing now that EFL WK2
+        has a proper implementation for
+        WebPage::performDefaultBehaviorForKeyEvent().
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-09-06  Mike Lawther  <mikelawther@chromium.org>
 
         Rewrite zooming test to no longer output pixel numbers

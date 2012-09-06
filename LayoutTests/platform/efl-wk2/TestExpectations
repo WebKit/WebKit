@@ -222,13 +222,10 @@ BUGWK94194 : http/tests/security/frameNavigation/inactive-function-in-popup-navi
 BUGWKEFL : editing/execCommand/delete-selection-has-style.html = TEXT
 BUGWKEFL : editing/execCommand/format-block-multiple-paragraphs-in-pre.html = TEXT
 BUGWKEFL : editing/input/emacs-ctrl-o.html = TEXT
-BUGWKEFL : editing/input/page-up-down-scrolls.html = TEXT
 BUGWKEFL : fast/block/float/float-in-float-hit-testing.html = TEXT
 BUGWKEFL : fast/css/bidi-override-in-anonymous-block.html = TEXT
 BUGWKEFL : fast/css/relative-positioned-block-crash.html = TEXT
 BUGWKEFL : fast/dom/Window/mozilla-focus-blur.html = TEXT
-BUGWKEFL : fast/events/node-event-anchor-lock.html = TEXT
-BUGWKEFL : fast/events/scroll-after-click-on-tab-index.html = TEXT
 BUGWKEFL : fast/forms/autocomplete-off-with-default-value-does-not-clear.html = TEXT
 BUGWKEFL : fast/forms/legend-access-key.html = TEXT
 BUGWKEFL : fast/forms/listbox-deselect-scroll.html = TEXT
@@ -238,7 +235,6 @@ BUGWKEFL : fast/forms/select-multiple-elements-with-mouse-drag-with-options-less
 BUGWKEFL : fast/forms/select-writing-direction-natural.html = TEXT
 BUGWKEFL : fast/forms/validation-message-in-relative-body.html = TEXT
 BUGWKEFL : fast/frames/flattening/iframe-tiny.html = TEXT
-BUGWKEFL : fast/repaint/fixed-move-after-keyboard-scroll.html = TEXT
 BUGWKEFL : fast/replaced/no-focus-ring-embed.html = TEXT
 BUGWKEFL : fast/replaced/no-focus-ring-object.html = TEXT
 BUGWKEFL : fast/viewport/viewport-128.html = TEXT
