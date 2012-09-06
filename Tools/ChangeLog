@@ -1,3 +1,28 @@
+2012-09-06  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Add the local and remote description functionality to RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=95839
+
+        Reviewed by Adam Barth.
+
+        In addition to adding the new methods to MockWebRTCPeerConnectionHandler I cleaned
+        up the task definitions a bit. There was no need to have them in the header file.
+
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.cpp:
+        (RTCSessionDescriptionRequestSuccededTask):
+        (RTCSessionDescriptionRequestSuccededTask::RTCSessionDescriptionRequestSuccededTask):
+        (RTCSessionDescriptionRequestFailedTask):
+        (RTCSessionDescriptionRequestFailedTask::RTCSessionDescriptionRequestFailedTask):
+        (RTCVoidRequestTask):
+        (RTCVoidRequestTask::RTCVoidRequestTask):
+        (MockWebRTCPeerConnectionHandler::createOffer):
+        (MockWebRTCPeerConnectionHandler::setLocalDescription):
+        (MockWebRTCPeerConnectionHandler::setRemoteDescription):
+        (MockWebRTCPeerConnectionHandler::localDescription):
+        (MockWebRTCPeerConnectionHandler::remoteDescription):
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.h:
+        (MockWebRTCPeerConnectionHandler):
+
 2012-09-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix build on Mac OS X 10.6

@@ -49,6 +49,10 @@ public:
     virtual bool initialize(const WebKit::WebRTCConfiguration&, const WebKit::WebMediaConstraints&) OVERRIDE;
 
     virtual void createOffer(const WebKit::WebRTCSessionDescriptionRequest&, const WebKit::WebMediaConstraints&) OVERRIDE;
+    virtual void setLocalDescription(const WebKit::WebRTCVoidRequest&, const WebKit::WebRTCSessionDescriptionDescriptor&) OVERRIDE;
+    virtual void setRemoteDescription(const WebKit::WebRTCVoidRequest&, const WebKit::WebRTCSessionDescriptionDescriptor&) OVERRIDE;
+    virtual WebKit::WebRTCSessionDescriptionDescriptor localDescription() OVERRIDE;
+    virtual WebKit::WebRTCSessionDescriptionDescriptor remoteDescription() OVERRIDE;
     virtual bool updateICE(const WebKit::WebRTCConfiguration&, const WebKit::WebMediaConstraints&) OVERRIDE;
     virtual bool addICECandidate(const WebKit::WebRTCICECandidateDescriptor&) OVERRIDE;
     virtual bool addStream(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaConstraints&) OVERRIDE;
@@ -62,27 +66,9 @@ private:
     MockWebRTCPeerConnectionHandler() { }
 
     WebKit::WebRTCPeerConnectionHandlerClient* m_client;
-
     TaskList m_taskList;
-
-    class SuccessCallbackTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
-    public:
-        SuccessCallbackTask(MockWebRTCPeerConnectionHandler*, const WebKit::WebRTCSessionDescriptionRequest&, const WebKit::WebRTCSessionDescriptionDescriptor&);
-        virtual void runIfValid() OVERRIDE;
-
-    private:
-        WebKit::WebRTCSessionDescriptionRequest m_request;
-        WebKit::WebRTCSessionDescriptionDescriptor m_result;
-    };
-
-    class FailureCallbackTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
-    public:
-        FailureCallbackTask(MockWebRTCPeerConnectionHandler*, const WebKit::WebRTCSessionDescriptionRequest&);
-        virtual void runIfValid() OVERRIDE;
-
-    private:
-        WebKit::WebRTCSessionDescriptionRequest m_request;
-    };
+    WebKit::WebRTCSessionDescriptionDescriptor m_localDescription;
+    WebKit::WebRTCSessionDescriptionDescriptor m_remoteDescription;
 };
 
 #endif // ENABLE(MEDIA_STREAM)

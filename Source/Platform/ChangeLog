@@ -1,3 +1,25 @@
+2012-09-06  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Add the local and remote description functionality to RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=95839
+
+        Reviewed by Adam Barth.
+
+        * Platform.gypi:
+        * chromium/public/WebRTCPeerConnectionHandler.h:
+        (WebKit):
+        (WebRTCPeerConnectionHandler):
+        * chromium/public/WebRTCVoidRequest.h: Copied from Source/Platform/chromium/public/WebRTCPeerConnectionHandler.h.
+        (WebCore):
+        (WebKit):
+        (WebRTCVoidRequest):
+        (ExtraData):
+        (WebKit::WebRTCVoidRequest::ExtraData::~ExtraData):
+        (WebKit::WebRTCVoidRequest::WebRTCVoidRequest):
+        (WebKit::WebRTCVoidRequest::~WebRTCVoidRequest):
+        (WebKit::WebRTCVoidRequest::operator=):
+        (WebKit::WebRTCVoidRequest::isNull):
+
 2012-09-05  Kenichi Ishibashi  <bashi@chromium.org>
 
         Unreviewed, rolling out r127612, r127660, and r127664.

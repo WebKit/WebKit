@@ -49,7 +49,9 @@ namespace WebCore {
 class MediaConstraints;
 class RTCConfiguration;
 class RTCErrorCallback;
+class RTCSessionDescription;
 class RTCSessionDescriptionCallback;
+class VoidCallback;
 
 class RTCPeerConnection : public RefCounted<RTCPeerConnection>, public RTCPeerConnectionHandlerClient, public EventTarget, public ActiveDOMObject {
 public:
@@ -57,6 +59,12 @@ public:
     ~RTCPeerConnection();
 
     void createOffer(PassRefPtr<RTCSessionDescriptionCallback>, PassRefPtr<RTCErrorCallback>, const Dictionary& mediaConstraints, ExceptionCode&);
+
+    void setLocalDescription(PassRefPtr<RTCSessionDescription>, PassRefPtr<VoidCallback>, PassRefPtr<RTCErrorCallback>, ExceptionCode&);
+    PassRefPtr<RTCSessionDescription> localDescription(ExceptionCode&);
+
+    void setRemoteDescription(PassRefPtr<RTCSessionDescription>, PassRefPtr<VoidCallback>, PassRefPtr<RTCErrorCallback>, ExceptionCode&);
+    PassRefPtr<RTCSessionDescription> remoteDescription(ExceptionCode&);
 
     String readyState() const;
 

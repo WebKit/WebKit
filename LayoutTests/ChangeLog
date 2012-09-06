@@ -1,3 +1,16 @@
+2012-09-06  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Add the local and remote description functionality to RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=95839
+
+        Reviewed by Adam Barth.
+
+        * fast/mediastream/RTCPeerConnection-createOffer.html:
+        * fast/mediastream/RTCPeerConnection-localDescription-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-localDescription.html: Copied from LayoutTests/fast/mediastream/RTCPeerConnection-createOffer.html.
+        * fast/mediastream/RTCPeerConnection-remoteDescription-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-remoteDescription.html: Copied from LayoutTests/fast/mediastream/RTCPeerConnection-createOffer.html.
+
 2012-09-06  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

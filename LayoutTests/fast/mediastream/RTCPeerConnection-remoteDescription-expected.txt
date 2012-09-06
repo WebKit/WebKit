@@ -1,0 +1,14 @@
+Tests RTCPeerConnection remoteDescription.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pc.setRemoteDescription(sessionDescription, requestSucceeded1, requestFailed1); did not throw exception.
+PASS requestSucceeded was called.
+PASS pc.setRemoteDescription(sessionDescription, requestSucceeded2, requestFailed2); did not throw exception.
+PASS requestFailed was called.
+PASS pc.remoteDescription.sdp is "sdp1"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

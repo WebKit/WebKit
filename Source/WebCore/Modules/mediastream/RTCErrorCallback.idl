@@ -34,7 +34,7 @@ module mediastream {
         Conditional=MEDIA_STREAM,
         Callback
     ] RTCErrorCallback {
-        boolean handleEvent(in DOMString errorInformation, in RTCPeerConnection source);
+        boolean handleEvent(in DOMString errorInformation);
     };
 
 }
