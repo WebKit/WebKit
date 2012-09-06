@@ -1900,6 +1900,19 @@
       ],
     },
     {
+      'target_name': 'webcore_platform_geometry',
+      'type': 'static_library',
+      'dependencies': [
+        'webcore_prerequisites',
+      ],
+      'defines': [
+        'WEBKIT_IMPLEMENTATION=1',
+      ],
+      'sources': [
+        '<@(webcore_platform_geometry_files)',
+      ],
+    },
+    {
       'target_name': 'webcore_chromium_compositor',
       'type': 'static_library',
       'dependencies': [
@@ -2130,6 +2143,7 @@
         'webcore_dom',
         'webcore_html',
         'webcore_platform',
+        'webcore_platform_geometry',
         'webcore_remaining',
         'webcore_rendering',
         # Exported.
