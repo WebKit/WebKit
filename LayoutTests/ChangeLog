@@ -1,3 +1,40 @@
+2012-09-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r127596.
+        http://trac.webkit.org/changeset/127596
+        https://bugs.webkit.org/show_bug.cgi?id=95928
+
+        newly added tests are failing (Requested by bashi1 on
+        #webkit).
+
+        * fast/regions/autowidth-abspos-expected.html: Removed.
+        * fast/regions/autowidth-abspos-regionchain-expected.html: Removed.
+        * fast/regions/autowidth-abspos-regionchain.html: Removed.
+        * fast/regions/autowidth-abspos.html: Removed.
+        * fast/regions/autowidth-float-expected.html: Removed.
+        * fast/regions/autowidth-float.html: Removed.
+        * fast/regions/autowidth-inlineblock-expected.html: Removed.
+        * fast/regions/autowidth-inlineblock.html: Removed.
+        * fast/regions/autowidth-nonreplaced-abspos-expected.html: Removed.
+        * fast/regions/autowidth-nonreplaced-abspos.html: Removed.
+        * fast/regions/autowidth-nonreplacedblock-normalflow-expected.html: Removed.
+        * fast/regions/autowidth-nonreplacedblock-normalflow.html: Removed.
+        * fast/regions/autowidth-normalflow-expected.html: Removed.
+        * fast/regions/autowidth-normalflow-maxwidth-expected.html: Removed.
+        * fast/regions/autowidth-normalflow-maxwidth.html: Removed.
+        * fast/regions/autowidth-normalflow-minmaxwidth-expected.html: Removed.
+        * fast/regions/autowidth-normalflow-minmaxwidth.html: Removed.
+        * fast/regions/autowidth-normalflow-minwidth-expected.html: Removed.
+        * fast/regions/autowidth-normalflow-minwidth.html: Removed.
+        * fast/regions/autowidth-normalflow-vertrl-expected.html: Removed.
+        * fast/regions/autowidth-normalflow-vertrl.html: Removed.
+        * fast/regions/autowidth-normalflow.html: Removed.
+        * fast/regions/bottom-overflow-out-of-first-region.html:
+        * fast/regions/flows-dependency-dynamic-remove.html:
+        * fast/regions/flows-dependency-same-flow.html:
+        * fast/regions/render-region-renderer-expected.html:
+        * fast/regions/top-overflow-out-of-second-region.html:
+
 2012-09-05  Michelangelo De Simone  <michelangelo@webkit.org>
 
         Parse the array() function for custom filters
