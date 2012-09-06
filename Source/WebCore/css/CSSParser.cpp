@@ -636,6 +636,11 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueAuto || valueID == CSSValueNone || (valueID >= CSSValueInset && valueID <= CSSValueDouble))
             return true;
         break;
+    case CSSPropertyOverflowWrap: // normal | break-word
+    case CSSPropertyWordWrap:
+        if (valueID == CSSValueNormal || valueID == CSSValueBreakWord)
+            return true;
+        break;
     case CSSPropertyOverflowX: // visible | hidden | scroll | auto | marquee | overlay | inherit
         if (valueID == CSSValueVisible || valueID == CSSValueHidden || valueID == CSSValueScroll || valueID == CSSValueAuto || valueID == CSSValueOverlay || valueID == CSSValueWebkitMarquee)
             return true;
@@ -917,10 +922,6 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueNormal || valueID == CSSValueBreakAll || valueID == CSSValueBreakWord)
             return true;
         break;
-    case CSSPropertyWordWrap: // normal | break-word
-        if (valueID == CSSValueNormal || valueID == CSSValueBreakWord)
-            return true;
-        break;
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -948,6 +949,7 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyListStylePosition:
     case CSSPropertyListStyleType:
     case CSSPropertyOutlineStyle:
+    case CSSPropertyOverflowWrap:
     case CSSPropertyOverflowX:
     case CSSPropertyOverflowY:
     case CSSPropertyPageBreakAfter:
@@ -2807,6 +2809,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyListStylePosition:
     case CSSPropertyListStyleType:
     case CSSPropertyOutlineStyle:
+    case CSSPropertyOverflowWrap:
     case CSSPropertyOverflowX:
     case CSSPropertyOverflowY:
     case CSSPropertyPageBreakAfter:

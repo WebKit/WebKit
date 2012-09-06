@@ -202,8 +202,8 @@ enum EWordBreak {
     NormalWordBreak, BreakAllWordBreak, BreakWordBreak
 };
 
-enum EWordWrap {
-    NormalWordWrap, BreakWordWrap
+enum EOverflowWrap {
+    NormalOverflowWrap, BreakOverflowWrap
 };
 
 enum ENBSPMode {

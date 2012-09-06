@@ -69,7 +69,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textSecurity(RenderStyle::initialTextSecurity())
     , userModify(READ_ONLY)
     , wordBreak(RenderStyle::initialWordBreak())
-    , wordWrap(RenderStyle::initialWordWrap())
+    , overflowWrap(RenderStyle::initialOverflowWrap())
     , nbspMode(NBNORMAL)
     , khtmlLineBreak(LBNORMAL)
     , textSizeAdjust(RenderStyle::initialTextSizeAdjust())
@@ -131,7 +131,7 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , textSecurity(o.textSecurity)
     , userModify(o.userModify)
     , wordBreak(o.wordBreak)
-    , wordWrap(o.wordWrap)
+    , overflowWrap(o.overflowWrap)
     , nbspMode(o.nbspMode)
     , khtmlLineBreak(o.khtmlLineBreak)
     , textSizeAdjust(o.textSizeAdjust)
@@ -212,7 +212,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && textSecurity == o.textSecurity
         && userModify == o.userModify
         && wordBreak == o.wordBreak
-        && wordWrap == o.wordWrap
+        && overflowWrap == o.overflowWrap
         && nbspMode == o.nbspMode
         && khtmlLineBreak == o.khtmlLineBreak
 #if ENABLE(OVERFLOW_SCROLLING)

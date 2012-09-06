@@ -342,7 +342,7 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const 
     adjustInnerTextStyle(startStyle, textBlockStyle.get());
 
     textBlockStyle->setWhiteSpace(PRE);
-    textBlockStyle->setWordWrap(NormalWordWrap);
+    textBlockStyle->setOverflowWrap(NormalOverflowWrap);
     textBlockStyle->setOverflowX(OHIDDEN);
     textBlockStyle->setOverflowY(OHIDDEN);
     textBlockStyle->setTextOverflow(textShouldBeTruncated() ? TextOverflowEllipsis : TextOverflowClip);

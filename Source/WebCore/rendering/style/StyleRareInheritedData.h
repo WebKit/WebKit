@@ -84,7 +84,7 @@ public:
     unsigned textSecurity : 2; // ETextSecurity
     unsigned userModify : 2; // EUserModify (editing)
     unsigned wordBreak : 2; // EWordBreak
-    unsigned wordWrap : 1; // EWordWrap 
+    unsigned overflowWrap : 1; // EOverflowWrap
     unsigned nbspMode : 1; // ENBSPMode
     unsigned khtmlLineBreak : 1; // EKHTMLLineBreak
     unsigned textSizeAdjust : 1; // An Apple extension.

@@ -1,3 +1,18 @@
+2012-09-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        CSS 3 'overflow-wrap' property implementation
+        https://bugs.webkit.org/show_bug.cgi?id=94475
+
+        Reviewed by Ojan Vafai.
+
+        Added 'overflow-wrap' property implementation according to
+        http://www.w3.org/TR/2012/WD-css3-text-20120814/#overflow-wrap.
+        New ref-test is added to check the simularity
+        in behaviour of 'overflow-wrap' and 'word-wrap' properties.
+
+        * fast/text/overflow-wrap-expected.html: Added.
+        * fast/text/overflow-wrap.html: Added.
+
 2012-09-06  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Update TestExpectations for fast/events/tab-focus-link-in-canvas.html

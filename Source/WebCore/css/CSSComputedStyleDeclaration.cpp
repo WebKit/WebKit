@@ -158,6 +158,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyOutlineColor,
     CSSPropertyOutlineStyle,
     CSSPropertyOutlineWidth,
+    CSSPropertyOverflowWrap,
     CSSPropertyOverflowX,
     CSSPropertyOverflowY,
     CSSPropertyPaddingBottom,
@@ -1925,6 +1926,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return zoomAdjustedPixelValue(style->outlineWidth(), style.get());
         case CSSPropertyOverflow:
             return cssValuePool().createValue(max(style->overflowX(), style->overflowY()));
+        case CSSPropertyOverflowWrap:
+            return cssValuePool().createValue(style->overflowWrap());
         case CSSPropertyOverflowX:
             return cssValuePool().createValue(style->overflowX());
         case CSSPropertyOverflowY:
@@ -2071,7 +2074,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
         case CSSPropertyWordSpacing:
             return zoomAdjustedPixelValue(style->wordSpacing(), style.get());
         case CSSPropertyWordWrap:
-            return cssValuePool().createValue(style->wordWrap());
+            return cssValuePool().createValue(style->overflowWrap());
         case CSSPropertyWebkitLineBreak:
             return cssValuePool().createValue(style->khtmlLineBreak());
         case CSSPropertyWebkitNbspMode:
