@@ -8,16 +8,17 @@
 <div id="console"></div>
 <input type=date id=date value="0002-02-02">
 <script>
-function sendKey(input, keyName) {
+function sendKey(element, keyName) {
     var event = document.createEvent('KeyboardEvent');
     event.initKeyboardEvent('keydown', true, true, document.defaultView, keyName);
-    input.dispatchEvent(event);
+    element.dispatchEvent(event);
 }
 
 function finishTest() {
     pickerWindow.removeEventListener('resize', finishTest);
-    sendKey(pickerWindow.global.daysTable._daysContainer, 'Right');
-    sendKey(pickerWindow.global.daysTable._daysContainer, 'Enter');
+    var daysContainer = pickerWindow.document.getElementsByClassName("days-area")[0];
+    sendKey(daysContainer, 'Right');
+    sendKey(daysContainer, 'Enter');
     shouldBe('document.getElementById("date").value', '"0002-02-03"');
     setTimeout(function() { finishJSTest(); }, 0);
 }

@@ -76,3 +76,37 @@ function getScrollbarWidth() {
     }
     return window.scrollbarWidth;
 }
+
+/**
+ * @constructor
+ * @param {!Element} element
+ * @param {!Object} config
+ */
+function Picker(element, config) {
+    this._element = element;
+    this._config = config;
+}
+
+/**
+ * @enum {number}
+ */
+Picker.Actions = {
+    SetValue: 0,
+    Cancel: -1,
+    ChooseOtherColor: -2
+};
+
+/**
+ * @param {!string} value
+ */
+Picker.prototype.submitValue = function(value) {
+    window.pagePopupController.setValueAndClosePopup(Picker.Actions.SetValue, value);
+}
+
+Picker.prototype.handleCancel = function() {
+    window.pagePopupController.setValueAndClosePopup(Picker.Actions.Cancel, "");
+}
+
+Picker.prototype.chooseOtherColor = function() {
+    window.pagePopupController.setValueAndClosePopup(Picker.Actions.ChooseOtherColor, "");
+}

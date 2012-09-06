@@ -74,29 +74,8 @@ function validateArguments(args) {
     return null;
 }
 
-var Actions = {
-    ChooseOtherColor: -2,
-    Cancel: -1,
-    SetValue: 0
-};
-
-/**
- * @param {string} value
- */
-function submitValue(value) {
-    window.pagePopupController.setValueAndClosePopup(Actions.SetValue, value);
-}
-
-function handleCancel() {
-    window.pagePopupController.setValueAndClosePopup(Actions.Cancel, "");
-}
-
-function chooseOtherColor() {
-    window.pagePopupController.setValueAndClosePopup(Actions.ChooseOtherColor, "");
-}
-
 function ColorPicker(element, config) {
-    this._element = element;
+    Picker.call(this, element, config);
     this._config = config;
     if (this._config.values.length === 0)
         this._config.values = DefaultColorPalette;
@@ -106,6 +85,7 @@ function ColorPicker(element, config) {
     this._element.addEventListener("mousemove", bind(this._handleMouseMove, this));
     this._element.addEventListener("mousedown", bind(this._handleMouseDown, this));
 }
+ColorPicker.prototype = Object.create(Picker.prototype);
 
 var SwatchBorderBoxWidth = 24; // keep in sync with CSS
 var SwatchBorderBoxHeight = 24; // keep in sync with CSS
@@ -130,7 +110,7 @@ ColorPicker.prototype._layout = function() {
     container.style.maxHeight = (SwatchBorderBoxHeight * SwatchesMaxRow) + "px";
     this._element.appendChild(container);
     var otherButton = createElement("button", "other-color", this._config.otherColorLabel);
-    otherButton.addEventListener("click", chooseOtherColor, false);
+    otherButton.addEventListener("click", this.chooseOtherColor.bind(this), false);
     this._element.appendChild(otherButton);
     this._container = container;
     this._otherButton = otherButton;
@@ -158,7 +138,7 @@ ColorPicker.prototype._handleMouseDown = function(event) {
 ColorPicker.prototype._handleKeyDown = function(event) {
     var key = event.keyIdentifier;
     if (key === "U+001B") // ESC
-        handleCancel();
+        this.handleCancel();
     else if (key == "Left" || key == "Up" || key == "Right" || key == "Down") {
         var selectedElement = document.activeElement;
         var index = 0;
@@ -194,7 +174,7 @@ ColorPicker.prototype._handleKeyDown = function(event) {
 
 ColorPicker.prototype._handleSwatchClick = function(event) {
     if (event.target.classList.contains("color-swatch"))
-        submitValue(event.target.dataset.value);
+        this.submitValue(event.target.dataset.value);
 };
 
 if (window.dialogArguments) {
