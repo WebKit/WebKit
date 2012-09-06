@@ -623,7 +623,6 @@ BUGWKGTK : accessibility/aria-scrollbar-role.html = TEXT
 BUGWKGTK : accessibility/aria-text-role.html = TEXT
 BUGWKGTK : accessibility/aria-used-on-image-maps.html = TEXT
 BUGWKGTK : accessibility/button-press-action.html = TEXT
-BUGWKGTK : accessibility/canvas-description-and-role.html = TEXT
 BUGWKGTK : accessibility/canvas-fallback-content.html = TEXT
 BUGWKGTK : accessibility/editable-webarea-context-menu-point.html = TEXT
 BUGWKGTK : accessibility/ellipsis-text.html = TEXT
@@ -1294,23 +1293,16 @@ BUGWK95428 : media/video-controls-captions.html = TEXT
 
 BUGWK95429 : svg/custom/clamped-masking-clipping.svg = IMAGE
 
-BUGWK94677 : http/tests/security/contentSecurityPolicy/register-bypassing-scheme = TEXT
+BUGWK94677 : http/tests/security/contentSecurityPolicy/register-bypassing-scheme.html = TEXT
 
 BUGWK95530 : http/tests/security/inactive-document-with-empty-security-origin.html = TEXT
 
 BUGWK95825 : accessibility/canvas-description-and-role.html = TEXT
 
-// Following tests need baselines
-BUGWK95646 : css3/masking/clip-path-circle.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
-BUGWK95646 : css3/masking/clip-path-ellipse.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
-BUGWK95646 : css3/masking/clip-path-rectangle.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
-BUGWK95646 : css3/masking/clip-path-polygon.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
-BUGWK95646 : css3/masking/clip-path-polygon-evenodd.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
-BUGWK95646 : css3/masking/clip-path-polygon-nonzero.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
-BUGWK95646 : css3/masking/clip-path-circle-filter.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
-BUGWK95646 : css3/masking/clip-path-circle-overflow.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
-BUGWK95646 : css3/masking/clip-path-circle-relative-overflow.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
-BUGWK95646 : css3/masking/clip-path-circle-overflow-hidden.html = PASS IMAGE IMAGE+TEXT TEXT MISSING 
+BUGWK95944 : fast/dom/HTMLScriptElement/script-reexecution.html = TEXT
+
+BUGWK95952 : fast/viewport/viewport-limits-adjusted-for-no-user-scale-control.html = TEXT
+BUGWK95952 : fast/viewport/viewport-limits-adjusted-for-no-user-scale.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

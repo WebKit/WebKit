@@ -1,3 +1,36 @@
+2012-09-06  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Generating required platform-specific baselines after r127608.
+
+        Adding failure expectations for regressions introduced in r127698 and r127704.
+
+        Fixing and removing duplicate expectations to get the file to pass linting.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/css3/masking: Added.
+        * platform/gtk/css3/masking/clip-path-circle-expected.png: Added.
+        * platform/gtk/css3/masking/clip-path-circle-expected.txt: Added.
+        * platform/gtk/css3/masking/clip-path-circle-filter-expected.png: Added.
+        * platform/gtk/css3/masking/clip-path-circle-filter-expected.txt: Added.
+        * platform/gtk/css3/masking/clip-path-circle-overflow-expected.png: Added.
+        * platform/gtk/css3/masking/clip-path-circle-overflow-expected.txt: Added.
+        * platform/gtk/css3/masking/clip-path-circle-overflow-hidden-expected.png: Added.
+        * platform/gtk/css3/masking/clip-path-circle-overflow-hidden-expected.txt: Added.
+        * platform/gtk/css3/masking/clip-path-circle-relative-overflow-expected.png: Added.
+        * platform/gtk/css3/masking/clip-path-circle-relative-overflow-expected.txt: Added.
+        * platform/gtk/css3/masking/clip-path-ellipse-expected.png: Added.
+        * platform/gtk/css3/masking/clip-path-ellipse-expected.txt: Added.
+        * platform/gtk/css3/masking/clip-path-polygon-evenodd-expected.png: Added.
+        * platform/gtk/css3/masking/clip-path-polygon-evenodd-expected.txt: Added.
+        * platform/gtk/css3/masking/clip-path-polygon-expected.png: Added.
+        * platform/gtk/css3/masking/clip-path-polygon-expected.txt: Added.
+        * platform/gtk/css3/masking/clip-path-polygon-nonzero-expected.png: Added.
+        * platform/gtk/css3/masking/clip-path-polygon-nonzero-expected.txt: Added.
+        * platform/gtk/css3/masking/clip-path-rectangle-expected.png: Added.
+        * platform/gtk/css3/masking/clip-path-rectangle-expected.txt: Added.
+
 2012-09-06  Alex Sakhartchouk  <alexst@chromium.org>
 
         gradient-with-scaled-ancestor.html is not calling setDeviceScaleFactor
