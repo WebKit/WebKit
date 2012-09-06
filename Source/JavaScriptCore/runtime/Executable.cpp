@@ -133,16 +133,24 @@ void ProgramExecutable::destroy(JSCell* cell)
 
 const ClassInfo FunctionExecutable::s_info = { "FunctionExecutable", &ScriptExecutable::s_info, 0, 0, CREATE_METHOD_TABLE(FunctionExecutable) };
 
-FunctionExecutable::FunctionExecutable(JSGlobalData& globalData, FunctionBodyNode* node)
-    : ScriptExecutable(globalData.functionExecutableStructure.get(), globalData, node->source(), node->isStrictMode())
+FunctionExecutable::FunctionExecutable(JSGlobalData& globalData, const Identifier& name, const Identifier& inferredName, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool inStrictContext)
+    : ScriptExecutable(globalData.functionExecutableStructure.get(), globalData, source, inStrictContext)
     , m_numCapturedVariables(0)
-    , m_forceUsesArguments(node->usesArguments())
-    , m_parameters(node->parameters())
-    , m_name(node->ident())
-    , m_inferredName(node->inferredName().isNull() ? globalData.propertyNames->emptyIdentifier : node->inferredName())
+    , m_forceUsesArguments(forceUsesArguments)
+    , m_parameters(parameters)
+    , m_name(name)
+    , m_inferredName(inferredName.isNull() ? globalData.propertyNames->emptyIdentifier : inferredName)
 {
-    m_firstLine = node->lineNo();
-    m_lastLine = node->lastLine();
+}
+
+FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, const Identifier& inferredName, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool inStrictContext)
+    : ScriptExecutable(exec->globalData().functionExecutableStructure.get(), exec, source, inStrictContext)
+    , m_numCapturedVariables(0)
+    , m_forceUsesArguments(forceUsesArguments)
+    , m_parameters(parameters)
+    , m_name(name)
+    , m_inferredName(inferredName.isNull() ? exec->globalData().propertyNames->emptyIdentifier : inferredName)
+{
 }
 
 void FunctionExecutable::destroy(JSCell* cell)
@@ -202,7 +210,7 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, JSScope* scope, JITCo
     } else {
         if (!lexicalGlobalObject->evalEnabled())
             return throwError(exec, createEvalError(exec, ASCIILiteral("Eval is disabled")));
-        RefPtr<EvalNode> evalNode = parse<EvalNode>(globalData, lexicalGlobalObject, m_source, 0, Identifier(), isStrictMode() ? JSParseStrict : JSParseNormal, EvalNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, lexicalGlobalObject->debugger(), exec, &exception);
+        RefPtr<EvalNode> evalNode = parse<EvalNode>(globalData, lexicalGlobalObject, m_source, 0, isStrictMode() ? JSParseStrict : JSParseNormal, EvalNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, lexicalGlobalObject->debugger(), exec, &exception);
         if (!evalNode) {
             ASSERT(exception);
             return exception;
@@ -285,7 +293,7 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
     JSObject* exception = 0;
     JSGlobalData* globalData = &exec->globalData();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
-    RefPtr<ProgramNode> programNode = parse<ProgramNode>(globalData, lexicalGlobalObject, m_source, 0, Identifier(), JSParseNormal, ProgramNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, lexicalGlobalObject->debugger(), exec, &exception);
+    RefPtr<ProgramNode> programNode = parse<ProgramNode>(globalData, lexicalGlobalObject, m_source, 0, JSParseNormal, ProgramNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, lexicalGlobalObject->debugger(), exec, &exception);
     if (programNode)
         return 0;
     ASSERT(exception);
@@ -327,7 +335,7 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, JSScope* scope, JI
         newCodeBlock->setAlternative(static_pointer_cast<CodeBlock>(m_programCodeBlock.release()));
         m_programCodeBlock = newCodeBlock.release();
     } else {
-        RefPtr<ProgramNode> programNode = parse<ProgramNode>(globalData, lexicalGlobalObject, m_source, 0, Identifier(), isStrictMode() ? JSParseStrict : JSParseNormal, ProgramNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, lexicalGlobalObject->debugger(), exec, &exception);
+        RefPtr<ProgramNode> programNode = parse<ProgramNode>(globalData, lexicalGlobalObject, m_source, 0, isStrictMode() ? JSParseStrict : JSParseNormal, ProgramNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, lexicalGlobalObject->debugger(), exec, &exception);
         if (!programNode) {
             ASSERT(exception);
             return exception;
@@ -470,18 +478,7 @@ PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(JSScope* s
     exception = 0;
     JSGlobalData* globalData = scope->globalData();
     JSGlobalObject* globalObject = scope->globalObject();
-    RefPtr<FunctionBodyNode> body = parse<FunctionBodyNode>(
-        globalData,
-        globalObject,
-        m_source,
-        m_parameters.get(),
-        name(),
-        isStrictMode() ? JSParseStrict : JSParseNormal,
-        FunctionBodyNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode,
-        0,
-        0,
-        &exception
-    );
+    RefPtr<FunctionBodyNode> body = parse<FunctionBodyNode>(globalData, globalObject, m_source, m_parameters.get(), isStrictMode() ? JSParseStrict : JSParseNormal, FunctionBodyNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, 0, 0, &exception);
 
     if (!body) {
         ASSERT(exception);
@@ -650,16 +647,16 @@ void FunctionExecutable::unlinkCalls()
 #endif
 }
 
-FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& name, ExecState* exec, Debugger* debugger, const SourceCode& source, JSObject** exception)
+FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& functionName, ExecState* exec, Debugger* debugger, const SourceCode& source, JSObject** exception)
 {
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
-    RefPtr<ProgramNode> program = parse<ProgramNode>(&exec->globalData(), lexicalGlobalObject, source, 0, Identifier(), JSParseNormal, ProgramNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, debugger, exec, exception);
+    RefPtr<ProgramNode> program = parse<ProgramNode>(&exec->globalData(), lexicalGlobalObject, source, 0, JSParseNormal, ProgramNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, debugger, exec, exception);
     if (!program) {
         ASSERT(*exception);
         return 0;
     }
 
-    // This function assumes an input string that would result in a single anonymous function expression.
+    // Uses of this function that would not result in a single function expression are invalid.
     StatementNode* exprStatement = program->singleStatement();
     ASSERT(exprStatement);
     ASSERT(exprStatement->isExprStatement());
@@ -668,11 +665,8 @@ FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& name, E
     ASSERT(funcExpr->isFuncExprNode());
     FunctionBodyNode* body = static_cast<FuncExprNode*>(funcExpr)->body();
     ASSERT(body);
-    ASSERT(body->ident().isNull());
 
-    FunctionExecutable* functionExecutable = FunctionExecutable::create(exec->globalData(), body);
-    functionExecutable->m_nameValue.set(exec->globalData(), functionExecutable, jsString(&exec->globalData(), name.ustring()));
-    return functionExecutable;
+    return FunctionExecutable::create(exec->globalData(), functionName, functionName, body->source(), body->usesArguments(), body->parameters(), body->isStrictMode(), body->lineNo(), body->lastLine());
 }
 
 String FunctionExecutable::paramString() const

@@ -208,11 +208,6 @@ struct Scope {
     bool isFunction() { return m_isFunction; }
     bool isFunctionBoundary() { return m_isFunctionBoundary; }
 
-    void declareCallee(const Identifier* ident)
-    {
-        m_declaredVariables.add(ident->ustring().impl());
-    }
-
     bool declareVariable(const Identifier* ident)
     {
         bool isValidStrictMode = m_globalData->propertyNames->eval != *ident && m_globalData->propertyNames->arguments != *ident;
@@ -387,7 +382,7 @@ class Parser {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    Parser(JSGlobalData*, const SourceCode&, FunctionParameters*, const Identifier&, JSParserStrictness, JSParserMode);
+    Parser(JSGlobalData*, const SourceCode&, FunctionParameters*, JSParserStrictness, JSParserMode);
     ~Parser();
 
     template <class ParsedNode>
@@ -1025,17 +1020,17 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(JSGlobalObject* lexicalGlobalObj
 }
 
 template <class ParsedNode>
-PassRefPtr<ParsedNode> parse(JSGlobalData* globalData, JSGlobalObject* lexicalGlobalObject, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode, Debugger* debugger, ExecState* execState, JSObject** exception)
+PassRefPtr<ParsedNode> parse(JSGlobalData* globalData, JSGlobalObject* lexicalGlobalObject, const SourceCode& source, FunctionParameters* parameters, JSParserStrictness strictness, JSParserMode parserMode, Debugger* debugger, ExecState* execState, JSObject** exception)
 {
     SamplingRegion samplingRegion("Parsing");
 
     ASSERT(source.provider()->data());
 
     if (source.provider()->data()->is8Bit()) {
-        Parser< Lexer<LChar> > parser(globalData, source, parameters, name, strictness, parserMode);
+        Parser< Lexer<LChar> > parser(globalData, source, parameters, strictness, parserMode);
         return parser.parse<ParsedNode>(lexicalGlobalObject, debugger, execState, exception);
     }
-    Parser< Lexer<UChar> > parser(globalData, source, parameters, name, strictness, parserMode);
+    Parser< Lexer<UChar> > parser(globalData, source, parameters, strictness, parserMode);
     return parser.parse<ParsedNode>(lexicalGlobalObject, debugger, execState, exception);
 }
 

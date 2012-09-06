@@ -1,3 +1,13 @@
+2012-09-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled out <http://trac.webkit.org/changeset/127698> because it broke
+        fast/dom/HTMLScriptElement/script-reexecution-pretty-diff.html
+
+            Named functions should not allocate scope objects for their names
+            https://bugs.webkit.org/show_bug.cgi?id=95659
+
+            Reviewed by Oliver Hunt.
+
 2012-09-06  Mark Lam  <mark.lam@apple.com>
 
         Renamed useYarrJIT() option to useRegExpJIT(). Also fixed regression in
@@ -25,97 +35,6 @@
 
         * interpreter/Interpreter.cpp:
         (JSC::Interpreter::privateExecute):
-
-2012-09-05  Geoffrey Garen  <ggaren@apple.com>
-
-        Named functions should not allocate scope objects for their names
-        https://bugs.webkit.org/show_bug.cgi?id=95659
-
-        Reviewed by Oliver Hunt.
-
-        In most cases, we can merge a function expression's name into its symbol
-        table. This reduces memory footprint per closure from three objects
-        (function + activation + name scope) to two (function + activation),
-        speeds up closure allocation, and speeds up recursive calls.
-
-        In the case of a named function expression that contains a non-strict
-        eval, the rules are so bat-poop crazy that I don't know how to model
-        them without an extra object. Since functions now default to not having
-        such an object, this case needs to allocate the object on function
-        entry.
-
-        Therefore, this patch makes the slow case a bit slower so the fast case
-        can be faster and more memory-efficient. (Note that the slow case already
-        allocates an activation on entry, and until recently also allocated a
-        scope chain node on entry, so adding one allocation on entry shouldn't
-        break the bank.)
-
-        * bytecode/CodeBlock.cpp:
-        (JSC::CodeBlock::CodeBlock): Caught a missed initializer. No behavior change.
-
-        * bytecompiler/BytecodeGenerator.cpp:
-        (JSC::BytecodeGenerator::BytecodeGenerator): Put the callee in static scope
-        during compilation so it doesn't need to be in dynamic scope at runtime.
-
-        (JSC::BytecodeGenerator::resolveCallee):
-        (JSC::BytecodeGenerator::addCallee): Helper functions for either statically
-        resolving the callee or adding a dynamic scope that will resolve to it,
-        depending on whether you're in the fast path.
-
-        We move the callee into a var location if it's captured because activations
-        prefer to have contiguous ranges of captured variables.
-
-        * bytecompiler/BytecodeGenerator.h:
-        (JSC::BytecodeGenerator::registerFor):
-        (BytecodeGenerator):
-
-        * dfg/DFGOperations.cpp:
-        * interpreter/Interpreter.cpp:
-        (JSC::Interpreter::privateExecute):
-        * jit/JITStubs.cpp:
-        (JSC::DEFINE_STUB_FUNCTION):
-        * llint/LLIntSlowPaths.cpp:
-        (JSC::LLInt::LLINT_SLOW_PATH_DECL): This is the point of the patch: remove
-        one allocation in the case of a named function expression.
-
-        * parser/Parser.cpp:
-        (JSC::::Parser):
-        * parser/Parser.h:
-        (JSC::Scope::declareCallee):
-        (Scope):
-        (Parser):
-        (JSC::parse):
-        * runtime/Executable.cpp:
-        (JSC::EvalExecutable::compileInternal):
-        (JSC::ProgramExecutable::checkSyntax):
-        (JSC::ProgramExecutable::compileInternal):
-        (JSC::FunctionExecutable::produceCodeBlockFor):
-        (JSC::FunctionExecutable::fromGlobalCode): Pipe the callee's name through
-        the parser so we get accurate information on whether the callee was captured.
-
-        (JSC::FunctionExecutable::FunctionExecutable):
-        (JSC::EvalExecutable::compileInternal):
-        (JSC::ProgramExecutable::checkSyntax):
-        (JSC::ProgramExecutable::compileInternal):
-        (JSC::FunctionExecutable::produceCodeBlockFor):
-        (JSC::FunctionExecutable::fromGlobalCode):
-        * runtime/Executable.h:
-        (JSC::FunctionExecutable::create):
-        (FunctionExecutable):
-        (JSC::FunctionExecutable::finishCreation): I had to refactor function
-        creation to support the following function constructor quirk: the function
-        gets a name, but its name is not in lexical scope.
-
-        To simplify this, FunctionExecutable now automatically extracts all the
-        data it needs from the parsed node. The special "fromGlobalCode" path
-        used by the function constructor creates an anonymous function, and then
-        quirkily sets the value used by the .name property to be non-null, even
-        though the parsed name is null.
-
-        * runtime/JSNameScope.h:
-        (JSC::JSNameScope::create):
-        (JSC::JSNameScope::JSNameScope): Added support for explicitly specifying
-        your container scope. The compiler uses this for named function expressions.
 
 2012-09-05  Gavin Barraclough  <barraclough@apple.com>
 

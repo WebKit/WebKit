@@ -539,16 +539,27 @@ namespace JSC {
     public:
         typedef ScriptExecutable Base;
 
-        static FunctionExecutable* create(JSGlobalData& globalData, FunctionBodyNode* node)
+        static FunctionExecutable* create(ExecState* exec, const Identifier& name, const Identifier& inferredName, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool isInStrictContext, int firstLine, int lastLine)
         {
-            FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(globalData.heap)) FunctionExecutable(globalData, node);
-            executable->finishCreation(globalData);
+            FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(*exec->heap())) FunctionExecutable(exec, name, inferredName, source, forceUsesArguments, parameters, isInStrictContext);
+            executable->finishCreation(exec->globalData(), name, firstLine, lastLine);
             return executable;
         }
-        static FunctionExecutable* fromGlobalCode(const Identifier& name, ExecState*, Debugger*, const SourceCode&, JSObject** exception);
+
+        static FunctionExecutable* create(JSGlobalData& globalData, const Identifier& name, const Identifier& inferredName, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool isInStrictContext, int firstLine, int lastLine)
+        {
+            FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(globalData.heap)) FunctionExecutable(globalData, name, inferredName, source, forceUsesArguments, parameters, isInStrictContext);
+            executable->finishCreation(globalData, name, firstLine, lastLine);
+            return executable;
+        }
 
         static void destroy(JSCell*);
 
+        JSFunction* make(ExecState* exec, JSScope* scope)
+        {
+            return JSFunction::create(exec, this, scope);
+        }
+        
         // Returns either call or construct bytecode. This can be appropriate
         // for answering questions that that don't vary between call and construct --
         // for example, argumentsRegister().
@@ -697,6 +708,7 @@ namespace JSC {
 
         void clearCodeIfNotCompiling();
         static void visitChildren(JSCell*, SlotVisitor&);
+        static FunctionExecutable* fromGlobalCode(const Identifier&, ExecState*, Debugger*, const SourceCode&, JSObject** exception);
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
         {
             return Structure::create(globalData, globalObject, proto, TypeInfo(FunctionExecutableType, StructureFlags), &s_info);
@@ -709,14 +721,17 @@ namespace JSC {
         void clearCode();
 
     protected:
-        void finishCreation(JSGlobalData& globalData)
+        void finishCreation(JSGlobalData& globalData, const Identifier& name, int firstLine, int lastLine)
         {
             Base::finishCreation(globalData);
-            m_nameValue.set(globalData, this, jsString(&globalData, name().ustring()));
+            m_firstLine = firstLine;
+            m_lastLine = lastLine;
+            m_nameValue.set(globalData, this, jsString(&globalData, name.ustring()));
         }
 
     private:
-        FunctionExecutable(JSGlobalData&, FunctionBodyNode*);
+        FunctionExecutable(JSGlobalData&, const Identifier& name, const Identifier& inferredName, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool);
+        FunctionExecutable(ExecState*, const Identifier& name, const Identifier& inferredName, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool);
 
         JSObject* compileForCallInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
         JSObject* compileForConstructInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
