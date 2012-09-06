@@ -1731,6 +1731,7 @@ SET(WebCore_SOURCES
     page/animation/ImplicitAnimation.cpp
     page/animation/KeyframeAnimation.cpp
 
+    page/scrolling/ScrollingConstraints.cpp
     page/scrolling/ScrollingCoordinator.cpp
     page/scrolling/ScrollingCoordinatorNone.cpp
 

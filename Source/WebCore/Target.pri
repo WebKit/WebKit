@@ -893,6 +893,7 @@ SOURCES += \
     page/PerformanceTiming.cpp \
     page/PrintContext.cpp \
     page/Screen.cpp \
+    page/scrolling/ScrollingConstraints.cpp \
     page/scrolling/ScrollingCoordinator.cpp \
     page/scrolling/ScrollingCoordinatorNone.cpp \
     page/SecurityOrigin.cpp \

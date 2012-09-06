@@ -27283,6 +27283,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\scrolling\ScrollingConstraints.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\scrolling\ScrollingConstraints.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\scrolling\ScrollingCoordinator.cpp"
 				>
 			</File>

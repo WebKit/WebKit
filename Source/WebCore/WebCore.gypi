@@ -3220,6 +3220,8 @@
             'page/mac/PageMac.cpp',
             'page/qt/DragControllerQt.cpp',
             'page/qt/EventHandlerQt.cpp',
+            'page/scrolling/ScrollingConstraints.cpp',
+            'page/scrolling/ScrollingConstraints.h',
             'page/scrolling/ScrollingCoordinator.cpp',
             'page/scrolling/ScrollingCoordinator.h',
             'page/scrolling/ScrollingThread.cpp',

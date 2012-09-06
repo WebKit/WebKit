@@ -37,6 +37,7 @@
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
+#include "ScrollingConstraints.h"
 #include "Settings.h"
 #include "TransformState.h"
 #include <wtf/CurrentTime.h>
@@ -573,11 +574,10 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
     return referencePoint;
 }
 
-LayoutSize RenderBoxModelObject::stickyPositionOffset() const
+void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewportConstraints& constraints, const FloatRect& viewportRect) const
 {
     RenderBlock* containingBlock = this->containingBlock();
 
-    LayoutRect viewportRect = view()->frameView()->visibleContentRect();
     LayoutRect containerContentRect = containingBlock->contentBoxRect();
 
     LayoutUnit minLeftMargin = minimumValueForLength(style()->marginLeft(), containingBlock->availableLogicalWidth(), view());
@@ -588,7 +588,7 @@ LayoutSize RenderBoxModelObject::stickyPositionOffset() const
     // Compute the container-relative area within which the sticky element is allowed to move.
     containerContentRect.move(minLeftMargin, minTopMargin);
     containerContentRect.contract(minLeftMargin + minRightMargin, minTopMargin + minBottomMargin);
-    FloatRect absContainerContentRect = containingBlock->localToAbsoluteQuad(FloatRect(containerContentRect)).boundingBox();
+    constraints.setAbsoluteContainingBlockRect(containingBlock->localToAbsoluteQuad(FloatRect(containerContentRect)).boundingBox());
 
     LayoutRect stickyBoxRect = frameRectForStickyPositioning();
     LayoutRect flippedStickyBoxRect = stickyBoxRect;
@@ -599,53 +599,38 @@ LayoutSize RenderBoxModelObject::stickyPositionOffset() const
     FloatRect absContainerFrame = containingBlock->localToAbsoluteQuad(FloatRect(FloatPoint(), containingBlock->size())).boundingBox();
     // We can't call localToAbsolute on |this| because that will recur. FIXME: For now, assume that |this| is not transformed.
     FloatRect absoluteStickyBoxRect(absContainerFrame.location() + stickyLocation, flippedStickyBoxRect.size());
-
-    FloatPoint originalLocation = absoluteStickyBoxRect.location();
-
-    // Horizontal position.
-    if (!style()->right().isAuto()) {
-        LayoutUnit rightLimit = viewportRect.maxX() - valueForLength(style()->right(), viewportRect.width(), view());
-        LayoutUnit rightDelta = min<float>(0, rightLimit.toFloat() - absoluteStickyBoxRect.maxX());
-        LayoutUnit availableSpace = min<float>(0, absContainerContentRect.x() - absoluteStickyBoxRect.x());
-        if (rightDelta < availableSpace)
-            rightDelta = availableSpace;
-
-        absoluteStickyBoxRect.move(rightDelta, 0);
-    }
+    constraints.setAbsoluteStickyBoxRect(absoluteStickyBoxRect);
 
     if (!style()->left().isAuto()) {
-        LayoutUnit leftLimit = viewportRect.x() + valueForLength(style()->left(), viewportRect.width(), view());
-        LayoutUnit leftDelta = max<float>(0, leftLimit.toFloat() - absoluteStickyBoxRect.x());
-        LayoutUnit availableSpace = max<float>(0, absContainerContentRect.maxX() - absoluteStickyBoxRect.maxX());
-        if (leftDelta > availableSpace)
-            leftDelta = availableSpace;
-
-        absoluteStickyBoxRect.move(leftDelta, 0);
+        constraints.setLeftOffset(valueForLength(style()->left(), viewportRect.width(), view()));
+        constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeLeft);
     }
 
-    // Vertical position.
-    if (!style()->bottom().isAuto()) {
-        LayoutUnit bottomLimit = viewportRect.maxY() - valueForLength(style()->bottom(), viewportRect.height(), view());
-        LayoutUnit bottomDelta = min<float>(0, bottomLimit.toFloat() - absoluteStickyBoxRect.maxY());
-        LayoutUnit availableSpace = min<float>(0, absContainerContentRect.y() - absoluteStickyBoxRect.y());
-        if (bottomDelta < availableSpace)
-            bottomDelta = availableSpace;
-
-        absoluteStickyBoxRect.move(0, bottomDelta);
+    if (!style()->right().isAuto()) {
+        constraints.setRightOffset(valueForLength(style()->right(), viewportRect.width(), view()));
+        constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeRight);
     }
 
     if (!style()->top().isAuto()) {
-        LayoutUnit topLimit = viewportRect.y() + valueForLength(style()->top(), viewportRect.height(), view());
-        LayoutUnit topDelta = max<float>(0, topLimit.toFloat() - absoluteStickyBoxRect.y());
-        LayoutUnit availableSpace = max<float>(0, absContainerContentRect.maxY() - absoluteStickyBoxRect.maxY());
-        if (topDelta > availableSpace)
-            topDelta = availableSpace;
-
-        absoluteStickyBoxRect.move(0, topDelta);
+        constraints.setTopOffset(valueForLength(style()->top(), viewportRect.height(), view()));
+        constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeTop);
     }
+
+    if (!style()->bottom().isAuto()) {
+        constraints.setBottomOffset(valueForLength(style()->bottom(), viewportRect.height(), view()));
+        constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeBottom);
+    }
+}
+
+LayoutSize RenderBoxModelObject::stickyPositionOffset() const
+{
+    LayoutRect viewportRect = view()->frameView()->visibleContentRect();
+
+    StickyPositionViewportConstraints constraints;
+    computeStickyPositionConstraints(constraints, viewportRect);
     
     // The sticky offset is physical, so we can just return the delta computed in absolute coords (though it may be wrong with transforms).
-    return roundedLayoutSize(absoluteStickyBoxRect.location() - originalLocation);
+    return LayoutSize(constraints.computeStickyOffset(viewportRect));
 }
 
 LayoutSize RenderBoxModelObject::offsetForInFlowPosition() const

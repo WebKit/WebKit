@@ -4030,6 +4030,8 @@ webcore_sources += \
 	Source/WebCore/page/PrintContext.h \
 	Source/WebCore/page/Screen.cpp \
 	Source/WebCore/page/Screen.h \
+	Source/WebCore/page/scrolling/ScrollingConstraints.cpp \
+	Source/WebCore/page/scrolling/ScrollingConstraints.h \
 	Source/WebCore/page/scrolling/ScrollingCoordinator.cpp \
 	Source/WebCore/page/scrolling/ScrollingCoordinator.h \
 	Source/WebCore/page/scrolling/ScrollingCoordinatorNone.cpp \
