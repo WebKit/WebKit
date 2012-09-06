@@ -34,7 +34,7 @@ module mediastream {
         Conditional=MEDIA_STREAM,
         Callback
     ] RTCSessionDescriptionCallback {
-        boolean handleEvent(in RTCSessionDescription sdp);
+        boolean handleEvent(in RTCSessionDescription sdp, in RTCPeerConnection source);
     };
 
 }

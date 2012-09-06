@@ -1,3 +1,17 @@
+2012-09-05  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Unreviewed, rolling out r127612, r127660, and r127664.
+        http://trac.webkit.org/changeset/127612
+        http://trac.webkit.org/changeset/127660
+        http://trac.webkit.org/changeset/127664
+        https://bugs.webkit.org/show_bug.cgi?id=95920
+
+        * Platform.gypi:
+        * chromium/public/WebRTCPeerConnectionHandler.h:
+        (WebKit):
+        (WebRTCPeerConnectionHandler):
+        * chromium/public/WebRTCVoidRequest.h: Removed.
+
 2012-09-05  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move static WebCompositor functions to WebCompositorSupport

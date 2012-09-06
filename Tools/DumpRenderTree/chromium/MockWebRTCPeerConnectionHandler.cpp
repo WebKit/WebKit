@@ -37,71 +37,33 @@
 #include <public/WebRTCPeerConnectionHandlerClient.h>
 #include <public/WebRTCSessionDescriptionDescriptor.h>
 #include <public/WebRTCSessionDescriptionRequest.h>
-#include <public/WebRTCVoidRequest.h>
 #include <public/WebString.h>
 #include <public/WebVector.h>
 
 using namespace WebKit;
 
-class RTCSessionDescriptionRequestSuccededTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
-public:
-    RTCSessionDescriptionRequestSuccededTask(MockWebRTCPeerConnectionHandler* object, const WebKit::WebRTCSessionDescriptionRequest& request, const WebKit::WebRTCSessionDescriptionDescriptor& result)
-        : MethodTask<MockWebRTCPeerConnectionHandler>(object)
-        , m_request(request)
-        , m_result(result)
-    {
-    }
+MockWebRTCPeerConnectionHandler::SuccessCallbackTask::SuccessCallbackTask(MockWebRTCPeerConnectionHandler* object, const WebKit::WebRTCSessionDescriptionRequest& request, const WebRTCSessionDescriptionDescriptor& result)
+    : MethodTask<MockWebRTCPeerConnectionHandler>(object)
+    , m_request(request)
+    , m_result(result)
+{
+}
 
-    virtual void runIfValid() OVERRIDE
-    {
-        m_request.requestSucceeded(m_result);
-    }
+void MockWebRTCPeerConnectionHandler::SuccessCallbackTask::runIfValid()
+{
+    m_request.requestSucceeded(m_result);
+}
 
-private:
-    WebKit::WebRTCSessionDescriptionRequest m_request;
-    WebKit::WebRTCSessionDescriptionDescriptor m_result;
-};
+MockWebRTCPeerConnectionHandler::FailureCallbackTask::FailureCallbackTask(MockWebRTCPeerConnectionHandler* object, const WebKit::WebRTCSessionDescriptionRequest& request)
+    : MethodTask<MockWebRTCPeerConnectionHandler>(object)
+    , m_request(request)
+{
+}
 
-class RTCSessionDescriptionRequestFailedTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
-public:
-    RTCSessionDescriptionRequestFailedTask(MockWebRTCPeerConnectionHandler* object, const WebKit::WebRTCSessionDescriptionRequest& request)
-        : MethodTask<MockWebRTCPeerConnectionHandler>(object)
-        , m_request(request)
-    {
-    }
-
-    virtual void runIfValid() OVERRIDE
-    {
-        m_request.requestFailed("TEST_ERROR");
-    }
-
-private:
-    WebKit::WebRTCSessionDescriptionRequest m_request;
-};
-
-class RTCVoidRequestTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
-public:
-    RTCVoidRequestTask(MockWebRTCPeerConnectionHandler* object, const WebKit::WebRTCVoidRequest& request, bool succeeded)
-        : MethodTask<MockWebRTCPeerConnectionHandler>(object)
-        , m_request(request)
-        , m_succeeded(succeeded)
-    {
-    }
-
-    virtual void runIfValid() OVERRIDE
-    {
-        if (m_succeeded)
-            m_request.requestSucceeded();
-        else
-            m_request.requestFailed("TEST_ERROR");
-    }
-
-private:
-    WebKit::WebRTCVoidRequest m_request;
-    bool m_succeeded;
-};
-
-/////////////////////
+void MockWebRTCPeerConnectionHandler::FailureCallbackTask::runIfValid()
+{
+    m_request.requestFailed("TEST_ERROR");
+}
 
 MockWebRTCPeerConnectionHandler::MockWebRTCPeerConnectionHandler(WebRTCPeerConnectionHandlerClient* client)
     : m_client(client)
@@ -155,37 +117,9 @@ void MockWebRTCPeerConnectionHandler::createOffer(const WebRTCSessionDescription
     if (constraints.getMandatoryConstraintValue("succeed", shouldSucceed) && shouldSucceed == "true") {
         WebRTCSessionDescriptionDescriptor sessionDescription;
         sessionDescription.initialize("offer", "Some SDP here");
-        postTask(new RTCSessionDescriptionRequestSuccededTask(this, request, sessionDescription));
+        postTask(new SuccessCallbackTask(this, request, sessionDescription));
     } else
-        postTask(new RTCSessionDescriptionRequestFailedTask(this, request));
-}
-
-void MockWebRTCPeerConnectionHandler::setLocalDescription(const WebRTCVoidRequest& request, const WebRTCSessionDescriptionDescriptor& localDescription)
-{
-    if (!localDescription.isNull() && localDescription.type() == "offer") {
-        m_localDescription = localDescription;
-        postTask(new RTCVoidRequestTask(this, request, true));
-    } else
-        postTask(new RTCVoidRequestTask(this, request, false));
-}
-
-void MockWebRTCPeerConnectionHandler::setRemoteDescription(const WebRTCVoidRequest& request, const WebRTCSessionDescriptionDescriptor& remoteDescription)
-{
-    if (!remoteDescription.isNull() && remoteDescription.type() == "answer") {
-        m_remoteDescription = remoteDescription;
-        postTask(new RTCVoidRequestTask(this, request, true));
-    } else
-        postTask(new RTCVoidRequestTask(this, request, false));
-}
-
-WebRTCSessionDescriptionDescriptor MockWebRTCPeerConnectionHandler::localDescription()
-{
-    return m_localDescription;
-}
-
-WebRTCSessionDescriptionDescriptor MockWebRTCPeerConnectionHandler::remoteDescription()
-{
-    return m_remoteDescription;
+        postTask(new FailureCallbackTask(this, request));
 }
 
 bool MockWebRTCPeerConnectionHandler::updateICE(const WebRTCConfiguration&, const WebMediaConstraints&)

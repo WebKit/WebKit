@@ -19,7 +19,7 @@ function requestFailed2(reason)
     finishJSTest();
 }
 
-function requestSucceeded2(sd)
+function requestSucceeded2(sd, source)
 {
     testFailed('requestSucceeded was called.');
     finishJSTest();
@@ -31,7 +31,7 @@ function requestFailed1()
     finishJSTest();
 }
 
-function requestSucceeded1(sd)
+function requestSucceeded1(sd, source)
 {
     testPassed('requestSucceeded was called.');
 

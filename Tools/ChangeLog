@@ -1,3 +1,22 @@
+2012-09-05  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Unreviewed, rolling out r127612, r127660, and r127664.
+        http://trac.webkit.org/changeset/127612
+        http://trac.webkit.org/changeset/127660
+        http://trac.webkit.org/changeset/127664
+        https://bugs.webkit.org/show_bug.cgi?id=95920
+
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.cpp:
+        (MockWebRTCPeerConnectionHandler::SuccessCallbackTask::SuccessCallbackTask):
+        (MockWebRTCPeerConnectionHandler::SuccessCallbackTask::runIfValid):
+        (MockWebRTCPeerConnectionHandler::FailureCallbackTask::FailureCallbackTask):
+        (MockWebRTCPeerConnectionHandler::FailureCallbackTask::runIfValid):
+        (MockWebRTCPeerConnectionHandler::createOffer):
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.h:
+        (MockWebRTCPeerConnectionHandler):
+        (SuccessCallbackTask):
+        (FailureCallbackTask):
+
 2012-09-05  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Ignore-metrics includes scroll offsets.

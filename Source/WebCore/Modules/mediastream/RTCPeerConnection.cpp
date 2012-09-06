@@ -48,9 +48,7 @@
 #include "RTCSessionDescriptionCallback.h"
 #include "RTCSessionDescriptionDescriptor.h"
 #include "RTCSessionDescriptionRequestImpl.h"
-#include "RTCVoidRequestImpl.h"
 #include "ScriptExecutionContext.h"
-#include "VoidCallback.h"
 
 namespace WebCore {
 
@@ -153,72 +151,8 @@ void RTCPeerConnection::createOffer(PassRefPtr<RTCSessionDescriptionCallback> su
     if (ec)
         return;
 
-    RefPtr<RTCSessionDescriptionRequestImpl> request = RTCSessionDescriptionRequestImpl::create(scriptExecutionContext(), successCallback, errorCallback);
+    RefPtr<RTCSessionDescriptionRequestImpl> request = RTCSessionDescriptionRequestImpl::create(scriptExecutionContext(), successCallback, errorCallback, this);
     m_peerHandler->createOffer(request.release(), constraints);
-}
-
-void RTCPeerConnection::setLocalDescription(PassRefPtr<RTCSessionDescription> prpSessionDescription, PassRefPtr<VoidCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback, ExceptionCode& ec)
-{
-    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-
-    RefPtr<RTCSessionDescription> sessionDescription = prpSessionDescription;
-    if (!sessionDescription) {
-        ec = TYPE_MISMATCH_ERR;
-        return;
-    }
-
-    RefPtr<RTCVoidRequestImpl> request = RTCVoidRequestImpl::create(scriptExecutionContext(), successCallback, errorCallback);
-    m_peerHandler->setLocalDescription(request.release(), sessionDescription->descriptor());
-}
-
-PassRefPtr<RTCSessionDescription> RTCPeerConnection::localDescription(ExceptionCode& ec)
-{
-    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
-        ec = INVALID_STATE_ERR;
-        return 0;
-    }
-
-    RefPtr<RTCSessionDescriptionDescriptor> descriptor = m_peerHandler->localDescription();
-    if (!descriptor)
-        return 0;
-
-    RefPtr<RTCSessionDescription> desc = RTCSessionDescription::create(descriptor.release());
-    return desc.release();
-}
-
-void RTCPeerConnection::setRemoteDescription(PassRefPtr<RTCSessionDescription> prpSessionDescription, PassRefPtr<VoidCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback, ExceptionCode& ec)
-{
-    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-
-    RefPtr<RTCSessionDescription> sessionDescription = prpSessionDescription;
-    if (!sessionDescription) {
-        ec = TYPE_MISMATCH_ERR;
-        return;
-    }
-
-    RefPtr<RTCVoidRequestImpl> request = RTCVoidRequestImpl::create(scriptExecutionContext(), successCallback, errorCallback);
-    m_peerHandler->setRemoteDescription(request.release(), sessionDescription->descriptor());
-}
-
-PassRefPtr<RTCSessionDescription> RTCPeerConnection::remoteDescription(ExceptionCode& ec)
-{
-    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
-        ec = INVALID_STATE_ERR;
-        return 0;
-    }
-
-    RefPtr<RTCSessionDescriptionDescriptor> descriptor = m_peerHandler->remoteDescription();
-    if (!descriptor)
-        return 0;
-
-    RefPtr<RTCSessionDescription> desc = RTCSessionDescription::create(descriptor.release());
-    return desc.release();
 }
 
 void RTCPeerConnection::updateIce(const Dictionary& rtcConfiguration, const Dictionary& mediaConstraints, ExceptionCode& ec)

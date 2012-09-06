@@ -35,8 +35,6 @@
 #include "RTCPeerConnectionHandler.h"
 
 #include "RTCPeerConnectionHandlerClient.h"
-#include "RTCSessionDescriptionDescriptor.h"
-#include "RTCVoidRequest.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -51,10 +49,6 @@ public:
     virtual bool initialize(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) OVERRIDE;
 
     virtual void createOffer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<MediaConstraints>) OVERRIDE;
-    virtual void setLocalDescription(PassRefPtr<RTCVoidRequest>, PassRefPtr<RTCSessionDescriptionDescriptor>) OVERRIDE;
-    virtual void setRemoteDescription(PassRefPtr<RTCVoidRequest>, PassRefPtr<RTCSessionDescriptionDescriptor>) OVERRIDE;
-    virtual PassRefPtr<RTCSessionDescriptionDescriptor> localDescription() OVERRIDE;
-    virtual PassRefPtr<RTCSessionDescriptionDescriptor> remoteDescription() OVERRIDE;
     virtual bool updateIce(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) OVERRIDE;
     virtual bool addIceCandidate(PassRefPtr<RTCIceCandidateDescriptor>) OVERRIDE;
     virtual bool addStream(PassRefPtr<MediaStreamDescriptor>, PassRefPtr<MediaConstraints>) OVERRIDE;
@@ -70,18 +64,10 @@ PassOwnPtr<RTCPeerConnectionHandler> RTCPeerConnectionHandler::create(RTCPeerCon
     return adoptPtr(new RTCPeerConnectionHandlerDummy(client));
 }
 
-RTCPeerConnectionHandler::RTCPeerConnectionHandler()
-{
-}
-
-RTCPeerConnectionHandler::~RTCPeerConnectionHandler()
-{
-}
-
 RTCPeerConnectionHandlerDummy::RTCPeerConnectionHandlerDummy(RTCPeerConnectionHandlerClient* client)
     : m_client(client)
 {
-    ASSERT_UNUSED(m_client, m_client);
+    ASSERT(m_client);
 }
 
 RTCPeerConnectionHandlerDummy::~RTCPeerConnectionHandlerDummy()
@@ -95,24 +81,6 @@ bool RTCPeerConnectionHandlerDummy::initialize(PassRefPtr<RTCConfiguration>, Pas
 
 void RTCPeerConnectionHandlerDummy::createOffer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<MediaConstraints>)
 {
-}
-
-void RTCPeerConnectionHandlerDummy::setLocalDescription(PassRefPtr<RTCVoidRequest>, PassRefPtr<RTCSessionDescriptionDescriptor>)
-{
-}
-
-void RTCPeerConnectionHandlerDummy::setRemoteDescription(PassRefPtr<RTCVoidRequest>, PassRefPtr<RTCSessionDescriptionDescriptor>)
-{
-}
-
-PassRefPtr<RTCSessionDescriptionDescriptor> RTCPeerConnectionHandlerDummy::localDescription()
-{
-    return 0;
-}
-
-PassRefPtr<RTCSessionDescriptionDescriptor> RTCPeerConnectionHandlerDummy::remoteDescription()
-{
-    return 0;
 }
 
 bool RTCPeerConnectionHandlerDummy::addStream(PassRefPtr<MediaStreamDescriptor>, PassRefPtr<MediaConstraints>)

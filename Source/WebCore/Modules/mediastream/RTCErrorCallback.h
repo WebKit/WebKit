@@ -38,10 +38,12 @@
 
 namespace WebCore {
 
+class RTCPeerConnection;
+
 class RTCErrorCallback : public RefCounted<RTCErrorCallback> {
 public:
     virtual ~RTCErrorCallback() { }
-    virtual bool handleEvent(const String& errorInformation) = 0;
+    virtual bool handleEvent(const String& errorInformation, RTCPeerConnection*) = 0;
 };
 
 } // namespace WebCore

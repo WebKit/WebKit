@@ -37,12 +37,13 @@
 
 namespace WebCore {
 
+class RTCPeerConnection;
 class RTCSessionDescription;
 
 class RTCSessionDescriptionCallback : public RefCounted<RTCSessionDescriptionCallback> {
 public:
     virtual ~RTCSessionDescriptionCallback() { }
-    virtual bool handleEvent(RTCSessionDescription*) = 0;
+    virtual bool handleEvent(RTCSessionDescription*, RTCPeerConnection*) = 0;
 };
 
 } // namespace WebCore
