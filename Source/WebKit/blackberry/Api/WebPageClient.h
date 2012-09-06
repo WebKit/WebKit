@@ -166,9 +166,6 @@ public:
     virtual void resetBackForwardList(unsigned listSize, unsigned currentIndex) = 0;
 
     virtual void openPopupList(bool multiple, int size, const ScopeArray<WebString>& labels, const bool* enableds, const int* itemType, const bool* selecteds) = 0;
-    virtual void openDateTimePopup(int type, const WebString& value, const WebString& min, const WebString& max, double step) = 0;
-    virtual void openColorPopup(const WebString& value) = 0;
-
     virtual bool chooseFilenames(bool allowMultiple, const SharedArray<WebString>& acceptTypes, const SharedArray<WebString>& initialFiles, const WebString& capture, SharedArray<WebString>& chosenFiles) = 0;
 
     virtual void loadPluginForMimetype(int, int width, int height, const SharedArray<WebString>& paramNames, const SharedArray<WebString>& paramValues, const char* url) = 0;

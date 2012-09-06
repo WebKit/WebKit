@@ -959,11 +959,7 @@ bool InputHandler::openDatePopup(HTMLInputElement* element, BlackBerryInputType 
         double step = element->getAttribute(HTMLNames::stepAttr).toDouble();
 
         DatePickerClient* client = new DatePickerClient(type, value, min, max, step,  m_webPage, element);
-        // Fail to create HTML popup, use the old path
-        if (!m_webPage->m_page->chrome()->client()->openPagePopup(client,  WebCore::IntRect()))
-            m_webPage->m_client->openDateTimePopup(type, value, min, max, step);
-
-        return true;
+        return m_webPage->m_page->chrome()->client()->openPagePopup(client,  WebCore::IntRect());
         }
     default: // Other types not supported
         return false;
@@ -981,8 +977,8 @@ bool InputHandler::openColorPopup(HTMLInputElement* element)
     m_currentFocusElement = element;
     m_currentFocusElementType = TextPopup;
 
-    m_webPage->m_client->openColorPopup(element->value());
-    return true;
+    // FIXME: Need to add pagePopup support and the colour dialog.
+    // PR 180778
 }
 
 void InputHandler::setInputValue(const WTF::String& value)
