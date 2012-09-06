@@ -1,5 +1,24 @@
 2012-09-05  Gavin Barraclough  <barraclough@apple.com>
 
+        a = data[a]++; sets the wrong key in data
+        https://bugs.webkit.org/show_bug.cgi?id=91270
+
+        Reviewed by Oliver Hunt.
+
+        Postfix inc/dec is unsafely using finalDestination, can trample base/subscript prior to the result being put.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PostfixNode::emitResolve):
+            - Remove redundant parens.
+        (JSC::PostfixNode::emitBracket):
+        (JSC::PostfixNode::emitDot):
+            - Refactored to use tempDestination instead of finalDestination.
+        (JSC::PrefixNode::emitBracket):
+        (JSC::PrefixNode::emitDot):
+            - Should be using emitPreIncOrDec.
+
+2012-09-05  Gavin Barraclough  <barraclough@apple.com>
+
         Bug, assignment within subscript of prefix/postfix increment of bracket access
         https://bugs.webkit.org/show_bug.cgi?id=95913
 

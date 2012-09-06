@@ -628,9 +628,8 @@ RegisterID* PostfixNode::emitResolve(BytecodeGenerator& generator, RegisterID* d
         if (dst == generator.ignoredResult()) {
             oldValue = 0;
             emitPreIncOrDec(generator, value.get(), m_operator);
-        } else {
+        } else
             oldValue = emitPostIncOrDec(generator, generator.finalDestination(dst), value.get(), m_operator);
-        }
         generator.emitPutStaticVar(resolveResult, ident, value.get());
         return oldValue;
     }
@@ -642,9 +641,8 @@ RegisterID* PostfixNode::emitResolve(BytecodeGenerator& generator, RegisterID* d
     if (dst == generator.ignoredResult()) {
         oldValue = 0;
         emitPreIncOrDec(generator, value.get(), m_operator);
-    } else {
+    } else
         oldValue = emitPostIncOrDec(generator, generator.finalDestination(dst), value.get(), m_operator);
-    }
     generator.emitPutById(base.get(), ident, value.get());
     return oldValue;
 }
@@ -661,19 +659,16 @@ RegisterID* PostfixNode::emitBracket(BytecodeGenerator& generator, RegisterID* d
 
     generator.emitExpressionInfo(bracketAccessor->divot(), bracketAccessor->startOffset(), bracketAccessor->endOffset());
     RefPtr<RegisterID> value = generator.emitGetByVal(generator.newTemporary(), base.get(), property.get());
-    RegisterID* oldValue;
     if (dst == generator.ignoredResult()) {
-        oldValue = 0;
-        if (m_operator == OpPlusPlus)
-            generator.emitPreInc(value.get());
-        else
-            generator.emitPreDec(value.get());
-    } else {
-        oldValue = (m_operator == OpPlusPlus) ? generator.emitPostInc(generator.finalDestination(dst), value.get()) : generator.emitPostDec(generator.finalDestination(dst), value.get());
+        emitPreIncOrDec(generator, value.get(), m_operator);
+        generator.emitExpressionInfo(divot(), startOffset(), endOffset());
+        generator.emitPutByVal(base.get(), property.get(), value.get());
+        return 0;
     }
+    RegisterID* oldValue = emitPostIncOrDec(generator, generator.tempDestination(dst), value.get(), m_operator);
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
     generator.emitPutByVal(base.get(), property.get(), value.get());
-    return oldValue;
+    return generator.moveToDestinationIfNeeded(dst, oldValue);
 }
 
 RegisterID* PostfixNode::emitDot(BytecodeGenerator& generator, RegisterID* dst)
@@ -687,19 +682,16 @@ RegisterID* PostfixNode::emitDot(BytecodeGenerator& generator, RegisterID* dst)
 
     generator.emitExpressionInfo(dotAccessor->divot(), dotAccessor->startOffset(), dotAccessor->endOffset());
     RefPtr<RegisterID> value = generator.emitGetById(generator.newTemporary(), base.get(), ident);
-    RegisterID* oldValue;
     if (dst == generator.ignoredResult()) {
-        oldValue = 0;
-        if (m_operator == OpPlusPlus)
-            generator.emitPreInc(value.get());
-        else
-            generator.emitPreDec(value.get());
-    } else {
-        oldValue = (m_operator == OpPlusPlus) ? generator.emitPostInc(generator.finalDestination(dst), value.get()) : generator.emitPostDec(generator.finalDestination(dst), value.get());
+        emitPreIncOrDec(generator, value.get(), m_operator);
+        generator.emitExpressionInfo(divot(), startOffset(), endOffset());
+        generator.emitPutById(base.get(), ident, value.get());
+        return 0;
     }
+    RegisterID* oldValue = emitPostIncOrDec(generator, generator.tempDestination(dst), value.get(), m_operator);
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
     generator.emitPutById(base.get(), ident, value.get());
-    return oldValue;
+    return generator.moveToDestinationIfNeeded(dst, oldValue);
 }
 
 RegisterID* PostfixNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
@@ -854,10 +846,7 @@ RegisterID* PrefixNode::emitBracket(BytecodeGenerator& generator, RegisterID* ds
 
     generator.emitExpressionInfo(bracketAccessor->divot(), bracketAccessor->startOffset(), bracketAccessor->endOffset());
     RegisterID* value = generator.emitGetByVal(propDst.get(), base.get(), property.get());
-    if (m_operator == OpPlusPlus)
-        generator.emitPreInc(value);
-    else
-        generator.emitPreDec(value);
+    emitPreIncOrDec(generator, value, m_operator);
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
     generator.emitPutByVal(base.get(), property.get(), value);
     return generator.moveToDestinationIfNeeded(dst, propDst.get());
@@ -875,10 +864,7 @@ RegisterID* PrefixNode::emitDot(BytecodeGenerator& generator, RegisterID* dst)
 
     generator.emitExpressionInfo(dotAccessor->divot(), dotAccessor->startOffset(), dotAccessor->endOffset());
     RegisterID* value = generator.emitGetById(propDst.get(), base.get(), ident);
-    if (m_operator == OpPlusPlus)
-        generator.emitPreInc(value);
-    else
-        generator.emitPreDec(value);
+    emitPreIncOrDec(generator, value, m_operator);
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
     generator.emitPutById(base.get(), ident, value);
     return generator.moveToDestinationIfNeeded(dst, propDst.get());
