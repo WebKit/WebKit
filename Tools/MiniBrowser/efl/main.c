@@ -19,6 +19,7 @@
 
 #include "EWebKit2.h"
 #include "url_bar.h"
+#include "url_utils.h"
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Eina.h>
@@ -269,7 +270,6 @@ static MiniBrowser *browserCreate(const char *url, const char *engine)
 
 int main(int argc, char *argv[])
 {
-    const char *url;
     int args = 1;
     char *engine = NULL;
     unsigned char quitOption = 0;
@@ -295,12 +295,13 @@ int main(int argc, char *argv[])
     if (quitOption)
         return quit(EINA_TRUE, NULL);
 
-    if (args < argc)
-        url = argv[args];
-    else
-        url = DEFAULT_URL;
+    if (args < argc) {
+        char *url = url_from_user_input(argv[args]);
+        browser = browserCreate(url, engine);
+        free(url);
+    } else
+        browser = browserCreate(DEFAULT_URL, engine);
 
-    browser = browserCreate(url, engine);
     if (!browser)
         return quit(EINA_FALSE, "ERROR: could not create browser.\n");
 

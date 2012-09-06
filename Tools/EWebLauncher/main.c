@@ -31,6 +31,7 @@
 #include "EWebKit.h"
 
 #include "url_bar.h"
+#include "url_utils.h"
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Ecore_File.h>
@@ -814,7 +815,6 @@ main(int argc, char *argv[])
     const char *default_url = "http://www.google.com/";
 
     Eina_Rectangle geometry = {0, 0, 0, 0};
-    char *url = NULL;
     char *userAgent = NULL;
     const char *tmp;
     const char *proxyUri;
@@ -869,11 +869,6 @@ main(int argc, char *argv[])
     if (quitOption)
         return quit(EINA_TRUE, NULL);
 
-    if (args < argc)
-        url = argv[args];
-    else
-        url = (char*) default_url;
-
     themePath = findThemePath(theme);
     if (!themePath)
         return quit(EINA_FALSE, "ERROR: could not find theme.\n");
@@ -893,7 +888,13 @@ main(int argc, char *argv[])
     if (proxyUri)
         ewk_network_proxy_uri_set(proxyUri);
 
-    browserCreate(url, themePath, userAgent, geometry, engine, backingStore, isFlattening, isFullscreen, path);
+    if (args < argc) {
+        char *url = url_from_user_input(argv[args]);
+        browserCreate(url, themePath, userAgent, geometry, engine, backingStore, isFlattening, isFullscreen, path);
+        free(url);
+    } else
+        browserCreate(default_url, themePath, userAgent, geometry, engine, backingStore, isFlattening, isFullscreen, path);
+
     ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, &windows);
 
     ecore_main_loop_begin();

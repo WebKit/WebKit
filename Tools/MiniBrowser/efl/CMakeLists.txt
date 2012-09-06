@@ -2,6 +2,7 @@ SET(MiniBrowser_DIR "${TOOLS_DIR}/MiniBrowser/efl")
 
 SET(MiniBrowser_SOURCES
     ${TOOLS_DIR}/EWebLauncher/url_bar.c
+    ${TOOLS_DIR}/EWebLauncher/url_utils.c
     ${MiniBrowser_DIR}/main.c
 )
 

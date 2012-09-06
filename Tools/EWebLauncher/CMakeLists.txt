@@ -1,5 +1,6 @@
 SET(EWebLauncher_SOURCES
     ${TOOLS_DIR}/EWebLauncher/url_bar.c
+    ${TOOLS_DIR}/EWebLauncher/url_utils.c
     ${TOOLS_DIR}/EWebLauncher/main.c
 )
 

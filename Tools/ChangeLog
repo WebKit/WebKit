@@ -1,3 +1,29 @@
+2012-09-06  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Sanitize URLs in EWebLauncher / Minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=95849
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Sanitize URLs passed by the user as program
+        argument or typed in the URL bar in order to
+        be more tolerant.
+
+        * EWebLauncher/CMakeLists.txt:
+        * EWebLauncher/main.c:
+        (main):
+        * EWebLauncher/url_bar.c:
+        (_url_bar_url_get_with_protocol):
+        (on_urlbar_key_down):
+        * EWebLauncher/url_utils.c: Added.
+        (has_scheme):
+        (url_from_user_input): Add utility function to construct a
+        URL from user input.
+        * EWebLauncher/url_utils.h: Added.
+        * MiniBrowser/efl/CMakeLists.txt:
+        * MiniBrowser/efl/main.c:
+        (main):
+
 2012-09-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Various small Windows / MSVC build fixes

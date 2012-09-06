@@ -24,23 +24,19 @@
  */
 
 #include "url_bar.h"
+#include "url_utils.h"
 
 #include <Edje.h>
 #include <Ecore_Evas.h>
-#include <Ecore_File.h>
 
 #define PADDING_SIZE 5
 
-static const char *
+static char *
 _url_bar_url_get_with_protocol(Url_Bar *urlBar)
 {
     const char *url = edje_object_part_text_get(urlBar->entry, "url.text");
-    if (ecore_file_exists(url))
-        return eina_stringshare_printf("file://%s", url);
 
-    if (!strstr(url, "://"))
-        return eina_stringshare_printf("http://%s", url);
-    return eina_stringshare_add(url);
+    return url_from_user_input(url);
 }
 
 static void
@@ -52,10 +48,10 @@ on_urlbar_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
     if (!ev->key || strcmp(ev->key, "Return"))
         return;
 
-    const char *url = _url_bar_url_get_with_protocol(urlBar);
+    char *url = _url_bar_url_get_with_protocol(urlBar);
     if (url) {
         ewk_view_uri_set(urlBar->webView, url);
-        eina_stringshare_del(url);
+        free(url);
     }
     evas_object_focus_set(urlBar->webView, EINA_TRUE);
 }
