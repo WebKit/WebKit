@@ -26,6 +26,8 @@
 #ifndef LayerTreeContext_h
 #define LayerTreeContext_h
 
+#include <stdint.h>
+
 namespace CoreIPC {
     class ArgumentDecoder;
     class ArgumentEncoder;

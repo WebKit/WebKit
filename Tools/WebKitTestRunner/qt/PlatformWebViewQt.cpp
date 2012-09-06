@@ -107,7 +107,7 @@ WKPageRef PlatformWebView::page()
 
 void PlatformWebView::focus()
 {
-    m_view->setFocus(Qt::OtherFocusReason);
+    m_view->setFocus(true);
 }
 
 WKRect PlatformWebView::windowFrame()

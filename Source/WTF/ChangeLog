@@ -1,3 +1,15 @@
+2012-09-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Various small Windows / MSVC build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=95934
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        For the Qt build on Windows, do not enable WTF_USE_UNIX_DOMAIN_SOCKETS for
+        WebKit2 IPC.
+
+        * wtf/Platform.h:
+
 2012-09-06  Adam Barth  <abarth@chromium.org>
 
         Remove WTF::String::operator+=

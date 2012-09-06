@@ -1,5 +1,19 @@
 2012-09-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Various small Windows / MSVC build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=95934
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        setFocus takes a boolean as argument: Don't try to implicitly convert
+        an enum to a boolean, MSVC doesn't like that. The intent here is to
+        enable focus, so just pass true.
+
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::PlatformWebView::focus):
+
+2012-09-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Fix build with ANGLE on platforms that provide EGL/GLESv2
         https://bugs.webkit.org/show_bug.cgi?id=95965
 

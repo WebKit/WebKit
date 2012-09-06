@@ -1,5 +1,25 @@
 2012-09-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Various small Windows / MSVC build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=95934
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Shared/LayerTreeContext.h: Include stdint.h due to the use of uint32_t as layer id.
+        * UIProcess/API/qt/qquickwebview_p.h:
+        (WebKit): Fix struct vs. class forward declaration mismatch, causing linking errors.
+        * UIProcess/API/qt/tests/bytearraytestdata.h: Remove export macro from internal test class
+        that is not used anymore. Using the export macro from a DLL when the code in question is not
+        part of the DLL results in the export macro expanding to dllimport, giving incorrect linkage
+        for the unit test.
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        (WebKit::WebProcessMainQt): Removed explicit call to srandom(), which is not available on Windows.
+        The call appears to be unnecessary in the light of the WTF::initializeThreading() call below, which
+        in turn calls WTF::initializeRandomNumberGenerator(), which does the same thing already (and isn't
+        needed on Windows, as per comment in wtf/RandomNumberSeed.h)
+
+2012-09-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Fix build with ANGLE on platforms that provide EGL/GLESv2
         https://bugs.webkit.org/show_bug.cgi?id=95965
 

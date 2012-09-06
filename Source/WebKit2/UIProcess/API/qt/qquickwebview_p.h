@@ -48,7 +48,7 @@ class PlatformWebView;
 }
 
 namespace WebKit {
-class QtRefCountedNetworkRequestData;
+struct QtRefCountedNetworkRequestData;
 class PageViewportControllerClientQt;
 class QtWebPageLoadClient;
 class QtWebPagePolicyClient;

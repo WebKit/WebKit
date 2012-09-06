@@ -30,7 +30,7 @@
 #include <QObject>
 #include <QtQuick/qquickitem.h>
 
-class QWEBKIT_EXPORT ByteArrayTestData : public QObject {
+class ByteArrayTestData : public QObject {
     Q_OBJECT
     Q_PROPERTY(QVariant latin1Data READ latin1Data)
     Q_PROPERTY(QVariant utf8Data READ utf8Data)
