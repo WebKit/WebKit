@@ -1625,7 +1625,7 @@
       'hard_dependency': 1,
       'sources': [
         '<@(webcore_privateheader_files)',
-        '<@(webcore_files)',
+        '<@(webcore_platform_files)',
 
         # For WebCoreSystemInterface, Mac-only.
         '../../WebKit/mac/WebCoreSupport/WebSystemInterface.mm',
@@ -1725,6 +1725,11 @@
               ],
               'action': ['cp', '<@(_inputs)', '<@(_outputs)'],
             },
+          ],
+          'sources': [
+            '../editing/SmartReplaceCF.cpp',
+            '../rendering/RenderThemeMac.mm',
+            '../../WebKit/mac/WebCoreSupport/WebSystemInterface.mm',
           ],
           'sources/': [
             # Additional files from the WebCore Mac build that are presently
