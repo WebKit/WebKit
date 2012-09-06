@@ -484,3 +484,17 @@ http/tests/appcache
 
 # Qt plugins are not supported on WK2
 platform/qt/plugins/qt-qwidget-plugin.html
+
+# [Qt][WK2] New http/tests/security/cross-origin-plugin* tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=95935
+http/tests/security/cross-origin-plugin-allowed.html
+http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html
+http/tests/security/cross-origin-plugin-private-browsing-toggled.html
+http/tests/security/cross-origin-plugin.html
+
+# [Qt][WK2] New fast/forms/number/number-interactive-validation-required.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=95936
+fast/forms/number/number-interactive-validation-required.html
+
+# ENABLE(OVERFLOW_SCROLLING) is disabled (not enabled)
+compositing/overflow/overflow-auto-with-touch-toggle.html

@@ -1,3 +1,10 @@
+2012-09-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip new fasiling tests.
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt/Skipped:
+
 2012-09-05  Lauro Neto  <lauro.neto@openbossa.org>
 
         [Qt] platform/qt/plugins/qt-qwidget-plugin.html fails
