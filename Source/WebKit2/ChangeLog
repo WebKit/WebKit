@@ -1,3 +1,14 @@
+2012-09-06  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] WebMemorySampler.cpp is included twice.
+        https://bugs.webkit.org/show_bug.cgi?id=95910
+
+        Reviewed by Kentaro Hara.
+
+        Now WebMemorySampler.cpp is in CMakeLists.txt and PlatformEfl.cmake.
+
+        * PlatformEfl.cmake: Removed WebMemorySampler.cpp from source lists.
+
 2012-09-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Implement missing feature to support <select> tag
