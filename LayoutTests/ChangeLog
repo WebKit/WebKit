@@ -1,3 +1,10 @@
+2012-09-06  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed rebaseline for Web Inspector NMI test. It was broken at r127738.
+
+        * inspector/profiler/memory-instrumentation-cached-images-expected.txt:
+        * inspector/profiler/memory-instrumentation-cached-images.html:
+
 2012-09-06  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WKTR] addSelectionKey should be mapped to "Control" modifiers on other OSes than Mac
