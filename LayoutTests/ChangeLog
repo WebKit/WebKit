@@ -1,3 +1,17 @@
+2012-09-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Gardening after r127728, r127534
+        https://bugs.webkit.org/show_bug.cgi?id=95975
+
+        Unreviewed gardening.
+
+        Following tests were added to TestExpectations:
+        http/tests/xmlhttprequest/basic-auth.html fails after r127728.
+        fast/innerHTML/innerHTML-iframe.html fails after r127534.
+
+        * platform/efl/fast/innerHTML/innerHTML-iframe-expected.txt: Removed.
+        * platform/efl/TestExpectations:
+
 2012-09-06  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed rebaseline for Web Inspector NMI test. It was broken at r127738.

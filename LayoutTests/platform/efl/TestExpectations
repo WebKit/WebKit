@@ -1107,3 +1107,9 @@ BUGWK95944 : fast/dom/HTMLScriptElement/script-reexecution.html = TEXT
 // Fail after r127704.
 BUGWK95952 : fast/viewport/viewport-limits-adjusted-for-no-user-scale.html = TEXT
 BUGWK95952 : fast/viewport/viewport-limits-adjusted-for-no-user-scale-control.html = TEXT
+
+// Fails after r127534.
+BUGWK95813 : fast/innerHTML/innerHTML-iframe.html = TEXT
+
+// Fails after r127728.
+BUGWK95972 : http/tests/xmlhttprequest/basic-auth.html = TEXT
