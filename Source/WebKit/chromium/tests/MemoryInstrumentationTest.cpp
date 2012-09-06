@@ -227,32 +227,26 @@ TEST(MemoryInstrumentationTest, visitFirstMemberInNonVirtualClass)
     EXPECT_EQ(2, visitedObjects.size());
 }
 
+class StringOwnerInstrumented {
+public:
+    StringOwnerInstrumented() : m_name("string") { }
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+        info.addInstrumentedMember(m_name);
+    }
+
+    String m_name;
+};
+
 TEST(MemoryInstrumentationTest, visitStrings)
 {
-    {
-        VisitedObjects visitedObjects;
-        MemoryInstrumentationImpl impl(visitedObjects);
-        String string("string");
-        impl.addRootObject(string);
-        EXPECT_EQ(string.impl()->sizeInBytes(), impl.reportedSizeForAllTypes());
-        EXPECT_EQ(2, visitedObjects.size());
-    }
-    {
-        VisitedObjects visitedObjects;
-        MemoryInstrumentationImpl impl(visitedObjects);
-        String string("string");
-        impl.addRootObject(&string);
-        EXPECT_EQ(string.impl()->sizeInBytes() + sizeof(String), impl.reportedSizeForAllTypes());
-        EXPECT_EQ(2, visitedObjects.size());
-    }
-    {
-        VisitedObjects visitedObjects;
-        MemoryInstrumentationImpl impl(visitedObjects);
-        AtomicString string("string");
-        impl.addRootObject(&string);
-        EXPECT_EQ(string.impl()->sizeInBytes() + sizeof(AtomicString), impl.reportedSizeForAllTypes());
-        EXPECT_EQ(2, visitedObjects.size());
-    }
+    VisitedObjects visitedObjects;
+    MemoryInstrumentationImpl impl(visitedObjects);
+    StringOwnerInstrumented stringOwnerInstrumented;
+    impl.addRootObject(stringOwnerInstrumented);
+    EXPECT_EQ(stringOwnerInstrumented.m_name.impl()->sizeInBytes(), impl.reportedSizeForAllTypes());
+    EXPECT_EQ(2, visitedObjects.size());
 }
 
 } // namespace

@@ -1,5 +1,16 @@
 2012-09-06  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Unreviewed Web Inspector: test fix.
+
+        * tests/MemoryInstrumentationTest.cpp:
+        (StringOwnerInstrumented):
+        (WebCore::StringOwnerInstrumented::StringOwnerInstrumented):
+        (WebCore::StringOwnerInstrumented::reportMemoryUsage):
+        (WebCore):
+        (WebCore::TEST):
+
+2012-09-06  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Web Inspector: NMI: switch to hierarchical identifiers of MemoryBlockTypes and use these identifiers in protocol.
         https://bugs.webkit.org/show_bug.cgi?id=95957
 
