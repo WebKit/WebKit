@@ -2626,24 +2626,8 @@ BUGWK70066 SKIP : svg/as-image/image-respects-deviceScaleFactor.html = TIMEOUT
 BUGWK92511 SKIP : svg/as-image/animated-svg-repaints-completely-in-hidpi.html = IMAGE+TEXT
 
 // Swidth DRT to high DPI output mode, which temporarily breaks IMAGE
-BUGWK94935 WIN ANDROID MAC : fast/hidpi/broken-image-icon-hidpi.html = IMAGE
-BUGWK94935 WIN ANDROID MAC : fast/hidpi/device-scale-factor-paint.html = IMAGE
-BUGWK94935 WIN ANDROID MAC : fast/hidpi/image-set-as-background.html = IMAGE
-BUGWK94935 WIN ANDROID MAC : fast/hidpi/image-set-background-repeat-without-size.html = IMAGE
-BUGWK94935 WIN ANDROID MAC : fast/hidpi/image-set-border-image-simple.html = IMAGE
-BUGWK94935 WIN ANDROID MAC : fast/hidpi/image-set-simple.html = IMAGE
-BUGWK94935 WIN ANDROID MAC : fast/hidpi/video-controls-in-hidpi.html = IMAGE
-BUGWK94935 WIN ANDROID MAC : fast/hidpi/broken-image-with-size-hidpi.html = IMAGE
-BUGWK94935 WIN ANDROID MAC : fast/hidpi/focus-rings.html = IMAGE
-BUGWK94935 WIN ANDROID MAC : fast/hidpi/image-set-background-dynamic.html = IMAGE
-BUGWK94935 WIN ANDROID MAC : fast/hidpi/image-set-border-image-comparison.html = IMAGE
-BUGWK94935 WIN ANDROID MAC : fast/hidpi/image-set-in-content-dynamic.html = IMAGE
-BUGWK94935 WIN ANDROID MAC : fast/hidpi/image-set-without-specified-width.html = IMAGE
-BUGWK94935 WIN ANDROID MAC : fast/hidpi/clip-text-in-hidpi.html = IMAGE
-BUGWK94935 WIN ANDROID MAC : fast/hidpi/image-set-background-repeat.html = IMAGE
-BUGWK94935 WIN ANDROID MAC : fast/hidpi/image-set-border-image-dynamic.html = IMAGE
-BUGWK94935 WIN ANDROID MAC : fast/hidpi/image-set-out-of-order.html = IMAGE
-BUGWK94935 WIN ANDROID MAC : fast/hidpi/resize-corner-hidpi.html = IMAGE
+BUGCR146756 LINUX WIN ANDROID MAC : fast/hidpi/broken-image-icon-hidpi.html = IMAGE
+BUGCR146756 LINUX WIN ANDROID MAC : fast/hidpi/broken-image-with-size-hidpi.html = IMAGE
 
 BUGWK95847 LINUX WIN ANDROID MAC : fast/hidpi/gradient-with-scaled-ancestor.html = IMAGE
 

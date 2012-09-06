@@ -1,3 +1,68 @@
+2012-09-06  Alex Sakhartchouk  <alexst@chromium.org>
+
+        [chromium] Need to rebaseline chromium tests after hidpi changes
+        https://bugs.webkit.org/show_bug.cgi?id=95579
+
+        Reviewed by James Robinson.
+
+        Adding double resolution files for hidpi tests and updating expectations for broken image tests. 
+
+        * platform/chromium-linux/fast/hidpi/broken-image-icon-hidpi-expected.png: Removed.
+        * platform/chromium-linux/fast/hidpi/broken-image-with-size-hidpi-expected.png: Removed.
+        * platform/chromium-linux/fast/hidpi/device-scale-factor-paint-expected.png: Removed.
+        * platform/chromium-linux/fast/hidpi/focus-rings-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/hidpi/broken-image-icon-hidpi-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/hidpi/broken-image-with-size-hidpi-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/hidpi/clip-text-in-hidpi-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/hidpi/device-scale-factor-paint-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/hidpi/focus-rings-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-as-background-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-background-dynamic-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-background-repeat-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-background-repeat-without-size-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-border-image-comparison-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-border-image-dynamic-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-border-image-simple-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-in-content-dynamic-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-out-of-order-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-simple-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-without-specified-width-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/hidpi/resize-corner-hidpi-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/hidpi/video-controls-in-hidpi-expected.png: Removed.
+        * platform/chromium-mac/fast/hidpi/clip-text-in-hidpi-expected.png:
+        * platform/chromium-mac/fast/hidpi/device-scale-factor-paint-expected.png: Removed.
+        * platform/chromium-mac/fast/hidpi/focus-rings-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-as-background-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-background-dynamic-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-background-repeat-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-background-repeat-without-size-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-border-image-comparison-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-border-image-dynamic-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-border-image-simple-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-in-content-dynamic-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-out-of-order-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-simple-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-without-specified-width-expected.png:
+        * platform/chromium-mac/fast/hidpi/resize-corner-hidpi-expected.png:
+        * platform/chromium-mac/fast/hidpi/video-controls-in-hidpi-expected.png:
+        * platform/chromium-win/fast/hidpi/clip-text-in-hidpi-expected.png:
+        * platform/chromium-win/fast/hidpi/device-scale-factor-paint-expected.png:
+        * platform/chromium-win/fast/hidpi/focus-rings-expected.png:
+        * platform/chromium-win/fast/hidpi/image-set-as-background-expected.png:
+        * platform/chromium-win/fast/hidpi/image-set-background-dynamic-expected.png:
+        * platform/chromium-win/fast/hidpi/image-set-background-repeat-expected.png:
+        * platform/chromium-win/fast/hidpi/image-set-background-repeat-without-size-expected.png:
+        * platform/chromium-win/fast/hidpi/image-set-border-image-comparison-expected.png:
+        * platform/chromium-win/fast/hidpi/image-set-border-image-dynamic-expected.png:
+        * platform/chromium-win/fast/hidpi/image-set-border-image-simple-expected.png:
+        * platform/chromium-win/fast/hidpi/image-set-in-content-dynamic-expected.png:
+        * platform/chromium-win/fast/hidpi/image-set-out-of-order-expected.png:
+        * platform/chromium-win/fast/hidpi/image-set-simple-expected.png:
+        * platform/chromium-win/fast/hidpi/image-set-without-specified-width-expected.png:
+        * platform/chromium-win/fast/hidpi/resize-corner-hidpi-expected.png:
+        * platform/chromium-win/fast/hidpi/video-controls-in-hidpi-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-09-06  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Skipping failing test: fast/forms/number/number-interactive-validation-required.html
