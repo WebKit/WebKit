@@ -67,6 +67,8 @@ WebString WebString::fromUtf8(const char* utf8)
 
 WebString& WebString::operator=(const WebString& str)
 {
+    if (&str == this)
+        return *this;
     if (str.m_impl)
         str.m_impl->ref();
     if (m_impl)

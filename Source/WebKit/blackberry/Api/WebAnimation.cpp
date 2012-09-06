@@ -70,7 +70,8 @@ WebAnimation::~WebAnimation()
 
 WebAnimation& WebAnimation::operator=(const WebAnimation& o)
 {
-    *d = *o.d;
+    if (&o != this)
+        *d = *o.d;
     return *this;
 }
 
