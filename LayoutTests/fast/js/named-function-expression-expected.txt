@@ -1,4 +1,4 @@
-Bug 4698 - kjs does not allow named functions in function expressions.
+Tests variable resolution rules for named function expressions.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -17,6 +17,24 @@ recursion is possible, though
 PASS var ctr = 3; var x = (function Named(a,b){ if(--ctr) return 2 * Named(a,b); else return a + b; }); x(5,6) is 44
 regression test where kjs regarded an anonymous function declaration (which is illegal) as a FunctionExpr
 PASS var hadError = 0; try { eval("function(){ return 2; };"); } catch(e) { hadError = 1; }; hadError; is 1
+
+-----
+
+PASS: (function closure() { return closure == arguments.callee && !this.closure; })() should be true and is.
+PASS: (function closure() { closure = 1; return closure == arguments.callee && !this.closure; })() should be true and is.
+PASS: (function closure(closure) { return closure == 1 && !this.closure; })(1) should be true and is.
+PASS: (function closure() { var closure = 1; return closure == 1 && !this.closure; })() should be true and is.
+PASS: (function closure() { function closure() { }; return closure != arguments.callee && !this.closure; })() should be true and is.
+PASS: (function closure() { return (function() { return closure && !this.closure; })(); })() should be true and is.
+PASS: (function closure() { return (function() { closure = null; return closure && !this.closure; })(); })() should be true and is.
+PASS: (function closure() { return (function() { return closure && !this.closure; }); })()() should be true and is.
+PASS: (function closure() { return (function() { closure = null; return closure && !this.closure; }); })()() should be true and is.
+PASS: (function closure() { eval("var closure"); return closure == undefined && !this.closure; })() should be true and is.
+PASS: (function closure() { eval("function closure() { }"); return closure != arguments.callee && !this.closure; })() should be true and is.
+PASS: (function closure() { eval("var closure;"); closure = 1; return closure == 1 && !this.closure; })() should be true and is.
+PASS: (function closure() { eval("var closure"); delete closure; return closure == arguments.callee && !this.closure; })() should be true and is.
+PASS: (function closure() { eval("function closure() { }"); delete closure; return closure == arguments.callee && !this.closure; })() should be true and is.
+PASS: (function closure() { eval("closure = 1;"); return closure == arguments.callee && !this.closure; })() should be true and is.
 PASS successfullyParsed is true
 
 TEST COMPLETE

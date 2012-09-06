@@ -1243,7 +1243,7 @@ JSCell* DFG_OPERATION operationNewFunction(ExecState* exec, JSCell* functionExec
     ASSERT(functionExecutable->inherits(&FunctionExecutable::s_info));
     JSGlobalData& globalData = exec->globalData();
     NativeCallFrameTracer tracer(&globalData, exec);
-    return static_cast<FunctionExecutable*>(functionExecutable)->make(exec, exec->scope());
+    return JSFunction::create(exec, static_cast<FunctionExecutable*>(functionExecutable), exec->scope());
 }
 
 JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState* exec, JSCell* functionExecutableAsCell)
@@ -1251,14 +1251,7 @@ JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState* exec, JSCell* fu
     ASSERT(functionExecutableAsCell->inherits(&FunctionExecutable::s_info));
     FunctionExecutable* functionExecutable =
         static_cast<FunctionExecutable*>(functionExecutableAsCell);
-    JSFunction* function = functionExecutable->make(exec, exec->scope());
-    if (!functionExecutable->name().isNull()) {
-        JSNameScope* functionScopeObject =
-            JSNameScope::create(
-                exec, functionExecutable->name(), function, ReadOnly | DontDelete);
-        function->setScope(exec->globalData(), functionScopeObject);
-    }
-    return function;
+    return JSFunction::create(exec, functionExecutable, exec->scope());
 }
 
 size_t DFG_OPERATION operationIsObject(ExecState* exec, EncodedJSValue value)

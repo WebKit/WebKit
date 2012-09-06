@@ -1,3 +1,22 @@
+2012-09-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Named functions should not allocate scope objects for their names
+        https://bugs.webkit.org/show_bug.cgi?id=95659
+
+        Reviewed by Oliver Hunt.
+
+        Added coverage for some extra-tricky cases.
+
+        * fast/js/named-function-expression-expected.txt:
+        * fast/js/script-tests/named-function-expression.js:
+        (shouldBeTrueWithDescription): I rolled my own shouldBeTrue() here to avoid the
+        built-in shouldBe()'s eval scoping, which can change the variable
+        resolution rules I'm trying to test.
+
+        * inspector/debugger/debugger-expand-scope-expected.txt: Not sure why this
+        result used to miss the function name scope, but the new result is a
+        progression, so I've updated the expected results.
+
 2012-09-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip new fasiling tests.

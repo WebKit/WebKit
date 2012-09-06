@@ -1,5 +1,5 @@
 description(
-"Bug 4698 - kjs does not allow named functions in function expressions."
+"Tests variable resolution rules for named function expressions."
 );
 
 function Call(lambda) { return lambda(); }
@@ -24,3 +24,105 @@ shouldBe("var ctr = 3; var x = (function Named(a,b){ if(--ctr) return 2 * Named(
 
 debug("regression test where kjs regarded an anonymous function declaration (which is illegal) as a FunctionExpr");
 shouldBe('var hadError = 0; try { eval("function(){ return 2; };"); } catch(e) { hadError = 1; }; hadError;', "1");
+
+debug("\n-----\n");
+
+function shouldBeTrueWithDescription(x, xDescription)
+{
+	if (x) {
+		debug("PASS: " + xDescription + " should be true and is.");
+		return;
+	}
+
+	debug("FAIL: " + xDescription + " should be true but isn't.");
+}
+
+// Recursion.
+shouldBeTrueWithDescription(
+	(function closure() { return closure == arguments.callee && !this.closure; })(),
+	"(function closure() { return closure == arguments.callee && !this.closure; })()"
+);
+
+// Assignment.
+shouldBeTrueWithDescription(
+	(function closure() { closure = 1; return closure == arguments.callee && !this.closure; })(),
+	"(function closure() { closure = 1; return closure == arguments.callee && !this.closure; })()"
+);
+
+// Function name vs parameter.
+shouldBeTrueWithDescription(
+	(function closure(closure) { return closure == 1 && !this.closure; })(1),
+	"(function closure(closure) { return closure == 1 && !this.closure; })(1)"
+);
+
+// Function name vs var.
+shouldBeTrueWithDescription(
+	(function closure() { var closure = 1; return closure == 1 && !this.closure; })(),
+	"(function closure() { var closure = 1; return closure == 1 && !this.closure; })()"
+);
+
+// Function name vs declared function.
+shouldBeTrueWithDescription(
+	(function closure() { function closure() { }; return closure != arguments.callee && !this.closure; })(),
+	"(function closure() { function closure() { }; return closure != arguments.callee && !this.closure; })()"
+);
+
+// Resolve before tear-off.
+shouldBeTrueWithDescription(
+	(function closure() { return (function() { return closure && !this.closure; })(); })(),
+	"(function closure() { return (function() { return closure && !this.closure; })(); })()"
+);
+
+// Resolve assignment before tear-off.
+shouldBeTrueWithDescription(
+	(function closure() { return (function() { closure = null; return closure && !this.closure; })(); })(),
+	"(function closure() { return (function() { closure = null; return closure && !this.closure; })(); })()"
+);
+
+// Resolve after tear-off.
+shouldBeTrueWithDescription(
+	(function closure() { return (function() { return closure && !this.closure; }); })()(),
+	"(function closure() { return (function() { return closure && !this.closure; }); })()()"
+);
+
+// Resolve assignment after tear-off.
+shouldBeTrueWithDescription(
+	(function closure() { return (function() { closure = null; return closure && !this.closure; }); })()(),
+	"(function closure() { return (function() { closure = null; return closure && !this.closure; }); })()()"
+);
+
+// Eval var shadowing (should overwrite).
+shouldBeTrueWithDescription(
+	(function closure() { eval("var closure"); return closure == undefined && !this.closure; })(),
+	"(function closure() { eval(\"var closure\"); return closure == undefined && !this.closure; })()"
+);
+
+// Eval function shadowing (should overwrite).
+shouldBeTrueWithDescription(
+	(function closure() { eval("function closure() { }"); return closure != arguments.callee && !this.closure; })(),
+	"(function closure() { eval(\"function closure() { }\"); return closure != arguments.callee && !this.closure; })()"
+);
+
+// Eval shadowing (should overwrite), followed by put (should overwrite).
+shouldBeTrueWithDescription(
+	(function closure() { eval("var closure;"); closure = 1; return closure == 1 && !this.closure; })(),
+	"(function closure() { eval(\"var closure;\"); closure = 1; return closure == 1 && !this.closure; })()"
+);
+
+// Eval var shadowing, followed by delete (should not overwrite).
+shouldBeTrueWithDescription(
+	(function closure() { eval("var closure"); delete closure; return closure == arguments.callee && !this.closure; })(),
+	"(function closure() { eval(\"var closure\"); delete closure; return closure == arguments.callee && !this.closure; })()"
+);
+
+// Eval function shadowing, followed by delete (should not overwrite).
+shouldBeTrueWithDescription(
+	(function closure() { eval("function closure() { }"); delete closure; return closure == arguments.callee && !this.closure; })(),
+	"(function closure() { eval(\"function closure() { }\"); delete closure; return closure == arguments.callee && !this.closure; })()"
+);
+
+// Eval assignment (should not overwrite).
+shouldBeTrueWithDescription(
+	(function closure() { eval("closure = 1;"); return closure == arguments.callee && !this.closure; })(),
+	"(function closure() { eval(\"closure = 1;\"); return closure == arguments.callee && !this.closure; })()"
+);

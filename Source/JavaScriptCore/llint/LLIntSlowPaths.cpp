@@ -1260,7 +1260,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_func)
 #if LLINT_SLOW_PATH_TRACING
     dataLog("Creating function!\n");
 #endif
-    LLINT_RETURN(codeBlock->functionDecl(pc[2].u.operand)->make(exec, exec->scope()));
+    LLINT_RETURN(JSFunction::create(exec, codeBlock->functionDecl(pc[2].u.operand), exec->scope()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_func_exp)
@@ -1268,12 +1268,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_func_exp)
     LLINT_BEGIN();
     CodeBlock* codeBlock = exec->codeBlock();
     FunctionExecutable* function = codeBlock->functionExpr(pc[2].u.operand);
-    JSFunction* func = function->make(exec, exec->scope());
-    
-    if (!function->name().isNull()) {
-        JSNameScope* functionScopeObject = JSNameScope::create(exec, function->name(), func, ReadOnly | DontDelete);
-        func->setScope(globalData, functionScopeObject);
-    }
+    JSFunction* func = JSFunction::create(exec, function, exec->scope());
     
     LLINT_RETURN(func);
 }

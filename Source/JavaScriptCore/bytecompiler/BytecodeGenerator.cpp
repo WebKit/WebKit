@@ -33,11 +33,11 @@
 
 #include "BatchedTransitionOptimizer.h"
 #include "Comment.h"
+#include "Interpreter.h"
 #include "JSActivation.h"
 #include "JSFunction.h"
-#include "Interpreter.h"
+#include "JSNameScope.h"
 #include "LowLevelInterpreter.h"
-
 #include "StrongInlines.h"
 #include <wtf/text/WTFString.h>
 
@@ -324,7 +324,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, JSScope* scope, S
         bool propertyDidExist = 
             globalObject->removeDirect(*m_globalData, function->ident()); // Newly declared functions overwrite existing properties.
         
-        JSValue value = JSFunction::create(exec, makeFunction(exec, function), scope);
+        JSValue value = JSFunction::create(exec, FunctionExecutable::create(*m_globalData, function), scope);
         int index = addGlobalVar(
             function->ident(), IsVariable,
             !propertyDidExist ? IsFunctionToSpecialize : NotFunctionOrNotSpecializable);
@@ -419,6 +419,8 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, JSScope* sc
         }
     }
 
+    RegisterID* calleeRegister = resolveCallee(functionBody); // May push to the scope chain and/or add a captured var.
+
     const DeclarationStacks::FunctionStack& functionStack = functionBody->functionStack();
     const DeclarationStacks::VarStack& varStack = functionBody->varStack();
 
@@ -456,6 +458,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, JSScope* sc
     }
 
     codeBlock->m_numCapturedVars = codeBlock->m_numVars;
+
     m_firstLazyFunction = codeBlock->m_numVars;
     for (size_t i = 0; i < functionStack.size(); ++i) {
         FunctionBodyNode* function = functionStack[i];
@@ -496,6 +499,9 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, JSScope* sc
         addParameter(parameters[i], nextParameterIndex--);
 
     preserveLastVar();
+
+    // We declare the callee's name last because it should lose to a var, function, and/or parameter declaration.
+    addCallee(functionBody, calleeRegister);
 
     if (isConstructor()) {
         prependComment("'this' because we are a Constructor function");
@@ -549,7 +555,7 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, JSScope* scope, SymbolT
 
     const DeclarationStacks::FunctionStack& functionStack = evalNode->functionStack();
     for (size_t i = 0; i < functionStack.size(); ++i)
-        m_codeBlock->addFunctionDecl(makeFunction(m_globalData, functionStack[i]));
+        m_codeBlock->addFunctionDecl(FunctionExecutable::create(*m_globalData, functionStack[i]));
 
     const DeclarationStacks::VarStack& varStack = evalNode->varStack();
     unsigned numVariables = varStack.size();
@@ -572,6 +578,53 @@ RegisterID* BytecodeGenerator::emitInitLazyRegister(RegisterID* reg)
     emitOpcode(op_init_lazy_reg);
     instructions().append(reg->index());
     return reg;
+}
+
+RegisterID* BytecodeGenerator::resolveCallee(FunctionBodyNode* functionBodyNode)
+{
+    if (functionBodyNode->ident().isNull())
+        return 0;
+
+    m_calleeRegister.setIndex(RegisterFile::Callee);
+
+    // If non-strict eval is in play, we use a separate object in the scope chain for the callee's name.
+    if ((m_codeBlock->usesEval() && !m_codeBlock->isStrictMode()) || m_shouldEmitDebugHooks) {
+        emitOpcode(op_push_name_scope);
+        instructions().append(addConstant(functionBodyNode->ident()));
+        instructions().append(m_calleeRegister.index());
+        instructions().append(ReadOnly | DontDelete);
+
+        // Put a mirror object in compilation scope, so compile-time variable resolution sees the property name we'll see at runtime.
+        m_scope.set(*globalData(),
+            JSNameScope::create(
+                m_scope->globalObject()->globalExec(),
+                functionBodyNode->ident(),
+                jsUndefined(),
+                ReadOnly | DontDelete,
+                m_scope.get()
+            )
+        );
+        return 0;
+    }
+
+    if (!functionBodyNode->captures(functionBodyNode->ident()))
+        return &m_calleeRegister;
+
+    // Move the callee into the captured section of the stack.
+    return emitMove(addVar(), &m_calleeRegister);
+}
+
+void BytecodeGenerator::addCallee(FunctionBodyNode* functionBodyNode, RegisterID* calleeRegister)
+{
+    if (functionBodyNode->ident().isNull())
+        return;
+
+    // If non-strict eval is in play, we use a separate object in the scope chain for the callee's name.
+    if ((m_codeBlock->usesEval() && !m_codeBlock->isStrictMode()) || m_shouldEmitDebugHooks)
+        return;
+
+    ASSERT(calleeRegister);
+    symbolTable().add(functionBodyNode->ident().impl(), SymbolTableEntry(calleeRegister->index(), ReadOnly));
 }
 
 void BytecodeGenerator::addParameter(const Identifier& ident, int parameterIndex)
@@ -1830,14 +1883,14 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
 
 RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionBodyNode* function)
 {
-    return emitNewFunctionInternal(dst, m_codeBlock->addFunctionDecl(makeFunction(m_globalData, function)), false);
+    return emitNewFunctionInternal(dst, m_codeBlock->addFunctionDecl(FunctionExecutable::create(*m_globalData, function)), false);
 }
 
 RegisterID* BytecodeGenerator::emitLazyNewFunction(RegisterID* dst, FunctionBodyNode* function)
 {
     FunctionOffsetMap::AddResult ptr = m_functionOffsets.add(function, 0);
     if (ptr.isNewEntry)
-        ptr.iterator->second = m_codeBlock->addFunctionDecl(makeFunction(m_globalData, function));
+        ptr.iterator->second = m_codeBlock->addFunctionDecl(FunctionExecutable::create(*m_globalData, function));
     return emitNewFunctionInternal(dst, ptr.iterator->second, true);
 }
 
@@ -1862,7 +1915,7 @@ RegisterID* BytecodeGenerator::emitNewRegExp(RegisterID* dst, RegExp* regExp)
 RegisterID* BytecodeGenerator::emitNewFunctionExpression(RegisterID* r0, FuncExprNode* n)
 {
     FunctionBodyNode* function = n->body();
-    unsigned index = m_codeBlock->addFunctionExpr(makeFunction(m_globalData, function));
+    unsigned index = m_codeBlock->addFunctionExpr(FunctionExecutable::create(*m_globalData, function));
     
     createActivationIfNecessary();
     emitOpcode(op_new_func_exp);
@@ -2599,7 +2652,7 @@ void BytecodeGenerator::emitReadOnlyExceptionIfNeeded()
     if (!isStrictMode())
         return;
 
-    RefPtr<RegisterID> error = emitLoad(newTemporary(), createTypeError(scope()->globalObject()->globalExec(), StrictModeReadonlyPropertyWriteError));
+    RefPtr<RegisterID> error = emitLoad(newTemporary(), JSValue(createTypeError(scope()->globalObject()->globalExec(), StrictModeReadonlyPropertyWriteError)));
     emitThrow(error.get());
 }
 
