@@ -481,3 +481,6 @@ http/tests/security/contentSecurityPolicy/object-src-url-blocked.html
 # REGRESSION(r127091): It made layout tests extremely slow
 # https://bugs.webkit.org/show_bug.cgi?id=83038
 http/tests/appcache
+
+# Qt plugins are not supported on WK2
+platform/qt/plugins/qt-qwidget-plugin.html

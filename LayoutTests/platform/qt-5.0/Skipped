@@ -93,10 +93,6 @@ svg/text/scaling-font-with-geometric-precision.html
 # https://bugs.webkit.org/show_bug.cgi?id=91993
 editing/inserting/multiple-lines-selected.html
 
-# [Qt] platform/qt/plugins/qt-qwidget-plugin.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=92141
-platform/qt/plugins/qt-qwidget-plugin.html
-
 # [Qt] svg/clip-path/deep-nested-clip-in-mask{,-panning}.svg failing
 # https://bugs.webkit.org/show_bug.cgi?id=92156
 svg/clip-path/deep-nested-clip-in-mask.svg

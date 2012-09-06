@@ -1,3 +1,19 @@
+2012-09-05  Lauro Neto  <lauro.neto@openbossa.org>
+
+        [Qt] platform/qt/plugins/qt-qwidget-plugin.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=92141
+
+        Reviewed by Simon Hausmann.
+
+        Only Qt WK2 does not support Qt plugins. Moving skip to proper place.
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0/Skipped:
+
+        Updated test to point to a existing image.
+
+        * platform/qt/plugins/qt-qwidget-plugin.html:
+
 2012-09-05  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Large integer versions not persisted correctly
