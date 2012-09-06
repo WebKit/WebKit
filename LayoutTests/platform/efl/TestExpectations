@@ -1104,10 +1104,6 @@ BUGWK95840 : http/tests/security/cross-origin-plugin.html = TEXT
 // Fails after r127698.
 BUGWK95944 : fast/dom/HTMLScriptElement/script-reexecution.html = TEXT
 
-// Fail after r127704.
-BUGWK95952 : fast/viewport/viewport-limits-adjusted-for-no-user-scale.html = TEXT
-BUGWK95952 : fast/viewport/viewport-limits-adjusted-for-no-user-scale-control.html = TEXT
-
 // Fails after r127534.
 BUGWK95813 : fast/innerHTML/innerHTML-iframe.html = TEXT
 

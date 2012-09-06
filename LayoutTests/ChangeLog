@@ -1,3 +1,16 @@
+2012-09-06  Adam Barth  <abarth@webkit.org>
+
+        New tests introduced in r127704 fail
+        https://bugs.webkit.org/show_bug.cgi?id=95952
+
+        Reviewed by Dan Bernstein.
+
+        Use the testRunner rather than layoutTestController because
+        layoutTestControler doesn't exist anymore.
+
+        * fast/viewport/viewport-limits-adjusted-for-no-user-scale-control.html:
+        * fast/viewport/viewport-limits-adjusted-for-no-user-scale.html:
+
 2012-09-06  Alok Priyadarshi  <alokp@chromium.org>
 
         [chromium] Remove failures for acceletared-drawing tests.
