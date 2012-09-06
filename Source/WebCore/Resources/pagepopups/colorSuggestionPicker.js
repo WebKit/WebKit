@@ -81,9 +81,9 @@ function ColorPicker(element, config) {
         this._config.values = DefaultColorPalette;
     this._container = null;
     this._layout();
-    document.body.addEventListener("keydown", bind(this._handleKeyDown, this));
-    this._element.addEventListener("mousemove", bind(this._handleMouseMove, this));
-    this._element.addEventListener("mousedown", bind(this._handleMouseDown, this));
+    document.body.addEventListener("keydown", this._handleKeyDown.bind(this));
+    this._element.addEventListener("mousemove", this._handleMouseMove.bind(this));
+    this._element.addEventListener("mousedown", this._handleMouseDown.bind(this));
 }
 ColorPicker.prototype = Object.create(Picker.prototype);
 
@@ -94,7 +94,7 @@ var SwatchesMaxRow = 4;
 
 ColorPicker.prototype._layout = function() {
     var container = createElement("div", "color-swatch-container");
-    container.addEventListener("click", bind(this._handleSwatchClick, this), false);
+    container.addEventListener("click", this._handleSwatchClick.bind(this), false);
     for (var i = 0; i < this._config.values.length; ++i) {
         var swatch = createElement("button", "color-swatch");
         swatch.dataset.index = i;

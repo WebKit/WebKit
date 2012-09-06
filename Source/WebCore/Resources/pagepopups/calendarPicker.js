@@ -313,7 +313,7 @@ function CalendarPicker(element, config) {
         initialDate = this.maximumDate;
     this.daysTable.selectDate(initialDate);
     this.fixWindowSize();
-    document.body.addEventListener("keydown", bind(this._handleBodyKeyDown, this), false);
+    document.body.addEventListener("keydown", this._handleBodyKeyDown.bind(this), false);
 }
 CalendarPicker.prototype = Object.create(Picker.prototype);
 
@@ -379,14 +379,14 @@ CalendarPicker.prototype._layoutButtons = function() {
     this.today = createElement("input", ClassNames.TodayButton);
     this.today.type = "button";
     this.today.value = this._config.todayLabel;
-    this.today.addEventListener("click", bind(this.handleToday, this), false);
+    this.today.addEventListener("click", this.handleToday.bind(this), false);
     container.appendChild(this.today);
     this.clear = null;
     if (!this._config.required) {
         this.clear = createElement("input", ClassNames.ClearButton);
         this.clear.type = "button";
         this.clear.value = this._config.clearLabel;
-        this.clear.addEventListener("click", bind(this.handleClear, this), false);
+        this.clear.addEventListener("click", this.handleClear.bind(this), false);
         container.appendChild(this.clear);
     }
     this._element.appendChild(container);
@@ -427,23 +427,23 @@ YearMonthController.prototype.attachTo = function(element) {
     innerContainer.appendChild(box);
     // We can't use <select> popup in PagePopup.
     this._monthPopup = createElement("div", ClassNames.MonthSelectorPopup);
-    this._monthPopup.addEventListener("click", bind(this._handleYearMonthChange, this), false);
-    this._monthPopup.addEventListener("keydown", bind(this._handleMonthPopupKey, this), false);
-    this._monthPopup.addEventListener("mousemove", bind(this._handleMouseMove, this), false);
+    this._monthPopup.addEventListener("click", this._handleYearMonthChange.bind(this), false);
+    this._monthPopup.addEventListener("keydown", this._handleMonthPopupKey.bind(this), false);
+    this._monthPopup.addEventListener("mousemove", this._handleMouseMove.bind(this), false);
     this._updateSelectionOnMouseMove = true;
     this._monthPopup.tabIndex = 0;
     this._monthPopupContents = createElement("div", ClassNames.MonthSelectorPopupContents);
     this._monthPopup.appendChild(this._monthPopupContents);
     box.appendChild(this._monthPopup);
     this._month = createElement("div", ClassNames.MonthSelector);
-    this._month.addEventListener("click", bind(this._showPopup, this), false);
+    this._month.addEventListener("click", this._showPopup.bind(this), false);
     box.appendChild(this._month);
 
     this._attachRightButtonsTo(innerContainer);
     element.appendChild(outerContainer);
 
     this._wall = createElement("div", ClassNames.MonthSelectorWall);
-    this._wall.addEventListener("click", bind(this._closePopup, this), false);
+    this._wall.addEventListener("click", this._closePopup.bind(this), false);
     element.appendChild(this._wall);
 
     var maximumYear = this.picker.maximumDate.getUTCFullYear();
@@ -476,20 +476,20 @@ YearMonthController.prototype._attachLeftButtonsTo = function(parent) {
         this._left3 = createElement("input", ClassNames.YearMonthButton);
         this._left3.type = "button";
         this._left3.value = "<<<";
-        this._left3.addEventListener("click", bind(this._handleButtonClick, this), false);
+        this._left3.addEventListener("click", this._handleButtonClick.bind(this), false);
         container.appendChild(this._left3);
     }
 
     this._left2 = createElement("input", ClassNames.YearMonthButton);
     this._left2.type = "button";
     this._left2.value = "<<";
-    this._left2.addEventListener("click", bind(this._handleButtonClick, this), false);
+    this._left2.addEventListener("click", this._handleButtonClick.bind(this), false);
     container.appendChild(this._left2);
 
     this._left1 = createElement("input", ClassNames.YearMonthButton);
     this._left1.type = "button";
     this._left1.value = "<";
-    this._left1.addEventListener("click", bind(this._handleButtonClick, this), false);
+    this._left1.addEventListener("click", this._handleButtonClick.bind(this), false);
     container.appendChild(this._left1);
 };
 
@@ -502,20 +502,20 @@ YearMonthController.prototype._attachRightButtonsTo = function(parent) {
     this._right1 = createElement("input", ClassNames.YearMonthButton);
     this._right1.type = "button";
     this._right1.value = ">";
-    this._right1.addEventListener("click", bind(this._handleButtonClick, this), false);
+    this._right1.addEventListener("click", this._handleButtonClick.bind(this), false);
     container.appendChild(this._right1);
 
     this._right2 = createElement("input", ClassNames.YearMonthButton);
     this._right2.type = "button";
     this._right2.value = ">>";
-    this._right2.addEventListener("click", bind(this._handleButtonClick, this), false);
+    this._right2.addEventListener("click", this._handleButtonClick.bind(this), false);
     container.appendChild(this._right2);
 
     if (YearMonthController.addTenYearsButtons) {
         this._right3 = createElement("input", ClassNames.YearMonthButton);
         this._right3.type = "button";
         this._right3.value = ">>>";
-        this._right3.addEventListener("click", bind(this._handleButtonClick, this), false);
+        this._right3.addEventListener("click", this._handleButtonClick.bind(this), false);
         container.appendChild(this._right3);
     }
 };
@@ -807,10 +807,10 @@ DaysTable._Weeks = 6;
  */
 DaysTable.prototype.attachTo = function(element) {
     this._daysContainer = createElement("table", ClassNames.DaysArea);
-    this._daysContainer.addEventListener("click", bind(this._handleDayClick, this), false);
-    this._daysContainer.addEventListener("mouseover", bind(this._handleMouseOver, this), false);
-    this._daysContainer.addEventListener("mouseout", bind(this._handleMouseOut, this), false);
-    this._daysContainer.addEventListener("webkitTransitionEnd", bind(this._moveInDays, this), false);
+    this._daysContainer.addEventListener("click", this._handleDayClick.bind(this), false);
+    this._daysContainer.addEventListener("mouseover", this._handleMouseOver.bind(this), false);
+    this._daysContainer.addEventListener("mouseout", this._handleMouseOut.bind(this), false);
+    this._daysContainer.addEventListener("webkitTransitionEnd", this._moveInDays.bind(this), false);
     var container = createElement("tr", ClassNames.DayLabelContainer);
     var weekStartDay = global.params.weekStartDay || 0;
     for (var i = 0; i < 7; i++)
@@ -833,7 +833,7 @@ DaysTable.prototype.attachTo = function(element) {
     container = createElement("div", ClassNames.DaysAreaContainer);
     container.appendChild(this._daysContainer);
     container.tabIndex = 0;
-    container.addEventListener("keydown", bind(this._handleKey, this), false);
+    container.addEventListener("keydown", this._handleKey.bind(this), false);
     element.appendChild(container);
 
     container.focus();

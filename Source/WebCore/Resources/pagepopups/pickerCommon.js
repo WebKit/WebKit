@@ -29,12 +29,6 @@ function $(id) {
     return document.getElementById(id);
 }
 
-function bind(func, context) {
-    return function() {
-        return func.apply(context, arguments);
-    };
-}
-
 /**
  * @param {!string} tagName
  * @param {string=} opt_class
