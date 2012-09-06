@@ -1,3 +1,11 @@
+2012-09-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Unskipped fast/dom/HTMLScriptElement/script-reexecution-pretty-diff.html
+        because I rolled out the patch that broke it.
+
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2012-09-06  Alex Sakhartchouk  <alexst@chromium.org>
 
         [chromium] Need to rebaseline chromium tests after hidpi changes
