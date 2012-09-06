@@ -1,5 +1,23 @@
 2012-09-05  Gavin Barraclough  <barraclough@apple.com>
 
+        Bug, assignment within subscript of prefix/postfix increment of bracket access
+        https://bugs.webkit.org/show_bug.cgi?id=95913
+
+        Reviewed by Oliver Hunt.
+
+        javascript:alert((function(){ var a = { x:1 }; var b = { x:1 }; a[a=b,"x"]++; return a.x; })())
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PostfixNode::emitBracket):
+        (JSC::PrefixNode::emitBracket):
+            - Should check for assigments in the subscript when loading the base.
+        * parser/Nodes.h:
+        (JSC::BracketAccessorNode::subscriptHasAssignments):
+        (BracketAccessorNode):
+            - Used by emitBracket methods.
+
+2012-09-05  Gavin Barraclough  <barraclough@apple.com>
+
         Merge prefix/postfix nodes
         https://bugs.webkit.org/show_bug.cgi?id=95898
 

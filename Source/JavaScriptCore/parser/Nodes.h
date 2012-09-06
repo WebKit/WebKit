@@ -461,6 +461,8 @@ namespace JSC {
         ExpressionNode* base() const { return m_base; }
         ExpressionNode* subscript() const { return m_subscript; }
 
+        bool subscriptHasAssignments() const { return m_subscriptHasAssignments; }
+
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 

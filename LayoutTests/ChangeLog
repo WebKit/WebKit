@@ -1,3 +1,19 @@
+2012-09-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Bug, assignment within subscript of prefix/postfix increment of bracket access
+        https://bugs.webkit.org/show_bug.cgi?id=95913
+
+        Reviewed by Oliver Hunt.
+
+        Added test cases.
+
+        * fast/js/inc-bracket-assign-subscript-expected.txt: Added.
+        * fast/js/inc-bracket-assign-subscript.html: Added.
+        * fast/js/script-tests/inc-bracket-assign-subscript.js: Added.
+        (testPreIncBracketAccessWithAssignSubscript):
+        (testPostIncBracketAccessWithAssignSubscript):
+            - Tests a pre/post increment to a bracket access, where subscript contains assignment.
+
 2012-09-05  Dan Bernstein  <mitz@apple.com>
 
         Renamed a misnamed expected result.

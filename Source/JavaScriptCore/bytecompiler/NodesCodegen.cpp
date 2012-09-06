@@ -656,7 +656,7 @@ RegisterID* PostfixNode::emitBracket(BytecodeGenerator& generator, RegisterID* d
     ExpressionNode* baseNode = bracketAccessor->base();
     ExpressionNode* subscript = bracketAccessor->subscript();
 
-    RefPtr<RegisterID> base = generator.emitNode(baseNode);
+    RefPtr<RegisterID> base = generator.emitNodeForLeftHandSide(baseNode, bracketAccessor->subscriptHasAssignments(), subscript->isPure(generator));
     RefPtr<RegisterID> property = generator.emitNode(subscript);
 
     generator.emitExpressionInfo(bracketAccessor->divot(), bracketAccessor->startOffset(), bracketAccessor->endOffset());
@@ -848,7 +848,7 @@ RegisterID* PrefixNode::emitBracket(BytecodeGenerator& generator, RegisterID* ds
     ExpressionNode* baseNode = bracketAccessor->base();
     ExpressionNode* subscript = bracketAccessor->subscript();
 
-    RefPtr<RegisterID> base = generator.emitNode(baseNode);
+    RefPtr<RegisterID> base = generator.emitNodeForLeftHandSide(baseNode, bracketAccessor->subscriptHasAssignments(), subscript->isPure(generator));
     RefPtr<RegisterID> property = generator.emitNode(subscript);
     RefPtr<RegisterID> propDst = generator.tempDestination(dst);
 
