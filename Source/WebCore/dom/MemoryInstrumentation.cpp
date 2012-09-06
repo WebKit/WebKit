@@ -37,21 +37,25 @@
 
 namespace WebCore {
 
-MemoryObjectType GenericMemoryTypes::Other = "Other";
+MemoryObjectType GenericMemoryTypes::Undefined = 0;
 
-MemoryObjectType WebCoreMemoryTypes::DOM = "DOM";
-MemoryObjectType WebCoreMemoryTypes::CSS = "CSS";
-MemoryObjectType WebCoreMemoryTypes::Binding = "Binding";
-MemoryObjectType WebCoreMemoryTypes::Loader = "Loader";
-MemoryObjectType WebCoreMemoryTypes::MemoryCacheStructures = "MemoryCacheStructures";
-MemoryObjectType WebCoreMemoryTypes::CachedResource = "CachedResource";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceCSS = "CachedResourceCSS";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceFont = "CachedResourceFont";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceImage = "CachedResourceImage";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceScript = "CachedResourceScript";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceSVG = "CachedResourceSVG";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceShader = "CachedResourceShader";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceXSLT = "CachedResourceXSLT";
+MemoryObjectType WebCoreMemoryTypes::Page = "Page";
+MemoryObjectType WebCoreMemoryTypes::DOM = "Page.DOM";
+MemoryObjectType WebCoreMemoryTypes::CSS = "Page.CSS";
+MemoryObjectType WebCoreMemoryTypes::Binding = "Page.Binding";
+MemoryObjectType WebCoreMemoryTypes::Loader = "Page.Loader";
+
+MemoryObjectType WebCoreMemoryTypes::MemoryCache = "MemoryCache";
+MemoryObjectType WebCoreMemoryTypes::MemoryCacheStructures = "MemoryCache.InternalStructures";
+MemoryObjectType WebCoreMemoryTypes::CachedResource = "MemoryCache.Resource";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceRaw = "MemoryCache.RawResource";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceCSS = "MemoryCache.CSS";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceFont = "MemoryCache.Font";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceImage = "MemoryCache.Image";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceScript = "MemoryCache.Script";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceSVG = "MemoryCache.SVG";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceShader = "MemoryCache.Shader";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceXSLT = "MemoryCache.XSLT";
 
 template<> void MemoryInstrumentationTraits::addInstrumentedObject<String>(MemoryInstrumentation* instrumentation, const String* const& string, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
 {

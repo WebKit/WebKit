@@ -43,7 +43,7 @@ void CachedResourceHandleBase::setResource(CachedResource* resource)
 
 void CachedResourceHandleBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResource);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::MemoryCacheStructures);
     info.addInstrumentedMember(m_resource);
 }
 

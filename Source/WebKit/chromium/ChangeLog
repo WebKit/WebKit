@@ -1,3 +1,23 @@
+2012-09-06  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI: switch to hierarchical identifiers of MemoryBlockTypes and use these identifiers in protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=95957
+
+        Reviewed by Yury Semikhatsky.
+
+        Now when we use string identifiers as MemoryObjectType we can use them as the identifiers for the protocol
+        instead of MemoryBlockNames hardcoded in InspectorMemoryAgent..
+        At a later stage, when each memory type is counted in MemoryInstrumentation
+        we will build the blocks hierarchy for the front-end automatically.
+
+        * tests/MemoryInstrumentationTest.cpp:
+        (WebCore::InstrumentedUndefined::InstrumentedUndefined):
+        (WebCore::InstrumentedUndefined::reportMemoryUsage):
+        (WebCore::InstrumentedDOM::InstrumentedDOM):
+        (WebCore::InstrumentedDOM::reportMemoryUsage):
+        (InstrumentedDOM):
+        (WebCore::TEST):
+
 2012-09-06  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Win build fix attempt after r127715

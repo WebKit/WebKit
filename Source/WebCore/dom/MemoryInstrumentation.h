@@ -49,7 +49,7 @@ typedef const char* MemoryObjectType;
 
 class GenericMemoryTypes {
 public:
-    static MemoryObjectType Other;
+    static MemoryObjectType Undefined;
 };
 
 enum MemoryOwningType {
@@ -69,7 +69,7 @@ public:
 
     template <typename T> void addRootObject(const T& t)
     {
-        addInstrumentedObject(t, GenericMemoryTypes::Other);
+        addInstrumentedObject(t, GenericMemoryTypes::Undefined);
         processDeferredInstrumentedPointers();
     }
 
@@ -188,7 +188,7 @@ private:
     {
         if (!m_objectSize) {
             m_objectSize = actualSize ? actualSize : sizeof(T);
-            if (objectType != GenericMemoryTypes::Other)
+            if (objectType != GenericMemoryTypes::Undefined)
                 m_objectType = objectType;
         }
     }
@@ -408,12 +408,16 @@ template<> void MemoryInstrumentationTraits::addObject<const AtomicString>(Memor
 
 class WebCoreMemoryTypes {
 public:
+    static MemoryObjectType Page;
     static MemoryObjectType DOM;
     static MemoryObjectType CSS;
     static MemoryObjectType Binding;
     static MemoryObjectType Loader;
+
+    static MemoryObjectType MemoryCache;
     static MemoryObjectType MemoryCacheStructures;
     static MemoryObjectType CachedResource;
+    static MemoryObjectType CachedResourceRaw;
     static MemoryObjectType CachedResourceCSS;
     static MemoryObjectType CachedResourceFont;
     static MemoryObjectType CachedResourceImage;

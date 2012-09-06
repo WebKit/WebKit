@@ -52,6 +52,7 @@ void MemoryInstrumentationImpl::processDeferredInstrumentedPointers()
 
 void MemoryInstrumentationImpl::countObjectSize(MemoryObjectType objectType, size_t size)
 {
+    ASSERT(objectType != GenericMemoryTypes::Undefined);
     TypeToSizeMap::AddResult result = m_totalSizes.add(objectType, size);
     if (!result.isNewEntry)
         result.iterator->second += size;

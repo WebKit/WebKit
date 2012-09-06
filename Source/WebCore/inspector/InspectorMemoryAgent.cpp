@@ -83,27 +83,8 @@ static const char inspectorDOMData[] = "InspectorDOMData";
 static const char inspectorJSHeapData[] = "InspectorJSHeapData";
 static const char processPrivateMemory[] = "ProcessPrivateMemory";
 
-static const char memoryCache[] = "MemoryCache";
-static const char memoryCacheStructures[] = "MemoryCacheStructures";
-static const char cachedResource[] = "CachedResource";
-static const char cachedResourceImage[] = "CachedImages";
-static const char cachedResourceCSS[] = "CachedCssStyleSheets";
-static const char cachedResourceScript[] = "CachedScripts";
-static const char cachedResourceXSL[] = "CachedXslStyleSheets";
-static const char cachedResourceFont[] = "CachedFonts";
-static const char cachedResourceSVG[] = "CachedSVGGraphics";
-static const char cachedResourceShader[] = "CachedShaders";
-static const char cachedResourceXSLT[] = "CachedShadersXSLT";
-
 static const char renderTreeUsed[] = "RenderTreeUsed";
 static const char renderTreeAllocated[] = "RenderTreeAllocated";
-
-static const char dom[] = "DOM";
-static const char domTreeOther[] = "DOMTreeOther";
-static const char domTreeDOM[] = "DOMTreeDOM";
-static const char domTreeCSS[] = "DOMTreeCSS";
-static const char domTreeBinding[] = "DOMTreeBinding";
-static const char domTreeLoader[] = "DOMTreeLoader";
 
 static const char domStorageCache[] = "DOMStorageCache";
 }
@@ -440,14 +421,6 @@ static PassRefPtr<InspectorMemoryBlock> renderTreeInfo(Page* page)
     return renderTreeAllocated.release();
 }
 
-static size_t addMemoryBlockFor(TypeBuilder::Array<InspectorMemoryBlock>* array, size_t size, const char* name)
-{
-    RefPtr<InspectorMemoryBlock> result = InspectorMemoryBlock::create().setName(name);
-    result->setSize(size);
-    array->addItem(result);
-    return size;
-}
-
 namespace {
 
 class DOMTreesIterator : public NodeWrapperVisitor {
@@ -486,34 +459,33 @@ public:
         size_t totalSize = 0;
 
         RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = TypeBuilder::Array<InspectorMemoryBlock>::create();
-        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::MemoryCacheStructures), MemoryBlockName::memoryCacheStructures);
-        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::CachedResource), MemoryBlockName::cachedResource);
-        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::CachedResourceCSS), MemoryBlockName::cachedResourceCSS);
-        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::CachedResourceFont), MemoryBlockName::cachedResourceFont);
-        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::CachedResourceImage), MemoryBlockName::cachedResourceImage);
-        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::CachedResourceScript), MemoryBlockName::cachedResourceScript);
-        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::CachedResourceSVG), MemoryBlockName::cachedResourceSVG);
-        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::CachedResourceShader), MemoryBlockName::cachedResourceShader);
-        totalSize += addMemoryBlockFor(children.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::CachedResourceXSLT), MemoryBlockName::cachedResourceXSLT);
+        totalSize += addMemoryBlockFor(children.get(), WebCoreMemoryTypes::MemoryCacheStructures);
+        totalSize += addMemoryBlockFor(children.get(), WebCoreMemoryTypes::CachedResourceRaw);
+        totalSize += addMemoryBlockFor(children.get(), WebCoreMemoryTypes::CachedResourceCSS);
+        totalSize += addMemoryBlockFor(children.get(), WebCoreMemoryTypes::CachedResourceFont);
+        totalSize += addMemoryBlockFor(children.get(), WebCoreMemoryTypes::CachedResourceImage);
+        totalSize += addMemoryBlockFor(children.get(), WebCoreMemoryTypes::CachedResourceScript);
+        totalSize += addMemoryBlockFor(children.get(), WebCoreMemoryTypes::CachedResourceSVG);
+        totalSize += addMemoryBlockFor(children.get(), WebCoreMemoryTypes::CachedResourceShader);
+        totalSize += addMemoryBlockFor(children.get(), WebCoreMemoryTypes::CachedResourceXSLT);
 
-        RefPtr<InspectorMemoryBlock> block = InspectorMemoryBlock::create().setName(MemoryBlockName::memoryCache);
+        RefPtr<InspectorMemoryBlock> block = InspectorMemoryBlock::create().setName(WebCoreMemoryTypes::MemoryCache);
         block->setSize(totalSize);
         block->setChildren(children.release());
         return block.release();
     }
 
-    PassRefPtr<InspectorMemoryBlock> buildObjectForDOM() const
+    PassRefPtr<InspectorMemoryBlock> buildObjectForPage() const
     {
         size_t totalSize = 0;
 
         RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > domChildren = TypeBuilder::Array<InspectorMemoryBlock>::create();
-        totalSize += addMemoryBlockFor(domChildren.get(), m_memoryInstrumentation.totalSize(GenericMemoryTypes::Other), MemoryBlockName::domTreeOther);
-        totalSize += addMemoryBlockFor(domChildren.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::DOM), MemoryBlockName::domTreeDOM);
-        totalSize += addMemoryBlockFor(domChildren.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::CSS), MemoryBlockName::domTreeCSS);
-        totalSize += addMemoryBlockFor(domChildren.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::Binding), MemoryBlockName::domTreeBinding);
-        totalSize += addMemoryBlockFor(domChildren.get(), m_memoryInstrumentation.totalSize(WebCoreMemoryTypes::Loader), MemoryBlockName::domTreeLoader);
+        totalSize += addMemoryBlockFor(domChildren.get(), WebCoreMemoryTypes::DOM);
+        totalSize += addMemoryBlockFor(domChildren.get(), WebCoreMemoryTypes::CSS);
+        totalSize += addMemoryBlockFor(domChildren.get(), WebCoreMemoryTypes::Binding);
+        totalSize += addMemoryBlockFor(domChildren.get(), WebCoreMemoryTypes::Loader);
 
-        RefPtr<InspectorMemoryBlock> dom = InspectorMemoryBlock::create().setName(MemoryBlockName::dom);
+        RefPtr<InspectorMemoryBlock> dom = InspectorMemoryBlock::create().setName(WebCoreMemoryTypes::Page);
         dom->setSize(totalSize);
         dom->setChildren(domChildren.release());
         return dom.release();
@@ -522,11 +494,21 @@ public:
     void dumpStatistics(TypeBuilder::Array<InspectorMemoryBlock>* children, InspectorDataCounter* inspectorData)
     {
         children->addItem(buildObjectForMemoryCache());
-        children->addItem(buildObjectForDOM());
+        children->addItem(buildObjectForPage());
+
         inspectorData->addComponent(MemoryBlockName::inspectorDOMData, m_memoryInstrumentation.selfSize());
     }
 
 private:
+    size_t addMemoryBlockFor(TypeBuilder::Array<InspectorMemoryBlock>* array, MemoryObjectType typeName) const
+    {
+        RefPtr<InspectorMemoryBlock> result = InspectorMemoryBlock::create().setName(typeName);
+        size_t size = m_memoryInstrumentation.totalSize(typeName);
+        result->setSize(size);
+        array->addItem(result);
+        return size;
+    }
+
     Page* m_page;
     MemoryInstrumentationImpl& m_memoryInstrumentation;
 };

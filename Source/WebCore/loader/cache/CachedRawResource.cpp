@@ -162,7 +162,7 @@ bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const
 
 void CachedRawResource::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResource);
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResourceRaw);
     CachedResource::reportMemoryUsage(memoryObjectInfo);
 }
 

@@ -216,8 +216,9 @@ WebInspector.MemoryBlockViewProperties._initialize = function()
         WebInspector.MemoryBlockViewProperties._standardBlocks[name] = new WebInspector.MemoryBlockViewProperties(fillStyle, name, WebInspector.UIString(description));
     }
     addBlock("hsl(  0,  0%, 100%)", "ProcessPrivateMemory", "Total");
+    addBlock("hsl(  0,  0%,  80%)", "OwnersTypePlaceholder", "OwnersTypePlaceholder");
     addBlock("hsl(  0,  0%,  80%)", "Other", "Other");
-    addBlock("hsl(300, 30%,  80%)", "DOM", "DOM tree structures");
+    addBlock("hsl(300, 30%,  80%)", "Page", "Page's structures");
     addBlock("hsl( 90, 60%,  80%)", "JSHeapAllocated", "JavaScript heap");
     addBlock("hsl( 90, 80%,  80%)", "JSHeapUsed", "Used JavaScript heap");
     addBlock("hsl( 90, 30%,  80%)", "JSExternalResources", "JavaScript external resources");

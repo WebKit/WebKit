@@ -172,27 +172,27 @@ TEST(MemoryInstrumentationTest, ownPtrNotInstrumented)
     EXPECT_EQ(2, visitedObjects.size());
 }
 
-class InstrumentedOther {
+class InstrumentedUndefined {
 public:
-    InstrumentedOther() : m_data(0) { }
+    InstrumentedUndefined() : m_data(0) { }
 
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this, GenericMemoryTypes::Other);
+        MemoryClassInfo info(memoryObjectInfo, this, GenericMemoryTypes::Undefined);
     }
     int m_data;
 };
 
 class InstrumentedDOM {
 public:
-    InstrumentedDOM() : m_instrumentedOther(adoptPtr(new InstrumentedOther)) { }
+    InstrumentedDOM() : m_instrumentedUndefined(adoptPtr(new InstrumentedUndefined)) { }
 
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-        info.addInstrumentedMember(m_instrumentedOther);
+        info.addInstrumentedMember(m_instrumentedUndefined);
     }
-    OwnPtr<InstrumentedOther> m_instrumentedOther;
+    OwnPtr<InstrumentedUndefined> m_instrumentedUndefined;
 };
 
 TEST(MemoryInstrumentationTest, ownerTypePropagation)
@@ -201,8 +201,8 @@ TEST(MemoryInstrumentationTest, ownerTypePropagation)
     MemoryInstrumentationImpl impl(visitedObjects);
     OwnPtr<InstrumentedDOM> instrumentedDOM(adoptPtr(new InstrumentedDOM));
     impl.addRootObject(instrumentedDOM);
-    EXPECT_EQ(sizeof(InstrumentedDOM) + sizeof(InstrumentedOther), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(sizeof(InstrumentedDOM) + sizeof(InstrumentedOther), impl.totalSize(WebCoreMemoryTypes::DOM));
+    EXPECT_EQ(sizeof(InstrumentedDOM) + sizeof(InstrumentedUndefined), impl.reportedSizeForAllTypes());
+    EXPECT_EQ(sizeof(InstrumentedDOM) + sizeof(InstrumentedUndefined), impl.totalSize(WebCoreMemoryTypes::DOM));
     EXPECT_EQ(2, visitedObjects.size());
 }
 
