@@ -50,7 +50,7 @@ WebInspector.TimelinePanel = function()
     this._glueRecordsSetting = WebInspector.settings.createSetting("timelineGlueRecords", true);
 
     this._overviewPane = new WebInspector.TimelineOverviewPane(this._model);
-    this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.WindowChanged, this._scheduleRefresh.bind(this, false));
+    this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.WindowChanged, this._invalidateAndScheduleRefresh.bind(this, false));
     this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.ModeChanged, this._overviewModeChanged, this);
     this._overviewPane.show(this.element);
 
@@ -284,7 +284,7 @@ WebInspector.TimelinePanel.prototype = {
     _onCategoryCheckboxClicked: function(category, event)
     {
         category.hidden = !event.target.checked;
-        this._scheduleRefresh(true);
+        this._invalidateAndScheduleRefresh(true);
     },
 
     /**
@@ -530,7 +530,7 @@ WebInspector.TimelinePanel.prototype = {
         this._showShortEvents = this.toggleFilterButton.toggled;
         this._overviewPane.setShowShortEvents(this._showShortEvents);
         this.toggleFilterButton.element.title = this._showShortEvents ? this._hideShortRecordsTitleText : this._showShortRecordsTitleText;
-        this._scheduleRefresh(true);
+        this._invalidateAndScheduleRefresh(true);
     },
 
     _garbageCollectButtonClicked: function()
@@ -550,16 +550,17 @@ WebInspector.TimelinePanel.prototype = {
     _repopulateRecords: function()
     {
         this._resetPanel();
+        this._automaticallySizeWindow = false;
         var records = this._model.records;
         for (var i = 0; i < records.length; ++i)
             this._innerAddRecordToTimeline(records[i], this._rootRecord());
-        this._scheduleRefresh(false);
+        this._invalidateAndScheduleRefresh(false);
     },
 
     _onTimelineEventRecorded: function(event)
     {
         if (this._innerAddRecordToTimeline(event.data, this._rootRecord()))
-            this._scheduleRefresh(false);
+            this._invalidateAndScheduleRefresh(false);
     },
 
     _innerAddRecordToTimeline: function(record, parentRecord)
@@ -621,7 +622,7 @@ WebInspector.TimelinePanel.prototype = {
     _onRecordsCleared: function()
     {
         this._resetPanel();
-        this._refresh();
+        this._invalidateAndScheduleRefresh(true);
     },
 
     _resetPanel: function()
@@ -667,6 +668,15 @@ WebInspector.TimelinePanel.prototype = {
         this._scheduleRefresh(true);
     },
 
+    _invalidateAndScheduleRefresh: function(preserveBoundaries)
+    {
+        this._presentationModel.invalidateFilteredRecords();
+        this._scheduleRefresh(preserveBoundaries);
+    },
+
+    /**
+     * @param {boolean} preserveBoundaries
+     */
     _scheduleRefresh: function(preserveBoundaries)
     {
         this._closeRecordDetails();
@@ -774,7 +784,7 @@ WebInspector.TimelinePanel.prototype = {
         var width = this._graphRowsElementWidth;
         this._itemsGraphsElement.removeChild(this._graphRowsElement);
         var graphRowElement = this._graphRowsElement.firstChild;
-        var scheduleRefreshCallback = this._scheduleRefresh.bind(this, true);
+        var scheduleRefreshCallback = this._invalidateAndScheduleRefresh.bind(this, true);
         this._itemsGraphsElement.removeChild(this._expandElements);
         this._expandElements.removeChildren();
 

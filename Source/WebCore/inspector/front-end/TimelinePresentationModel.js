@@ -378,8 +378,16 @@ WebInspector.TimelinePresentationModel.prototype = {
         this._glueRecords = glue;
     },
 
+    invalidateFilteredRecords: function()
+    {
+        delete this._filteredRecords;
+    },
+
     filteredRecords: function()
     {
+        if (this._filteredRecords)
+            return this._filteredRecords;
+
         var recordsInWindow = [];
 
         var stack = [{children: this._rootRecord.children, index: 0, parentIsCollapsed: false}];
@@ -410,6 +418,7 @@ WebInspector.TimelinePresentationModel.prototype = {
             }
         }
 
+        this._filteredRecords = recordsInWindow;
         return recordsInWindow;
     },
 
