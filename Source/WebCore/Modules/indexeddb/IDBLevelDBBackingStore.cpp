@@ -138,16 +138,17 @@ public:
 
 static bool setUpMetadata(LevelDBDatabase* db, const String& origin)
 {
+    const int64_t latestSchemaVersion = 1;
     const Vector<char> metaDataKey = SchemaVersionKey::encode();
 
     int64_t schemaVersion = 0;
     if (!getInt(db, metaDataKey, schemaVersion)) {
-        schemaVersion = 0;
-        if (!putInt(db, metaDataKey, schemaVersion))
+        schemaVersion = latestSchemaVersion;
+        if (!putInt(db, metaDataKey, latestSchemaVersion))
             return false;
     } else {
         if (!schemaVersion) {
-            schemaVersion = 1;
+            schemaVersion = latestSchemaVersion;
             RefPtr<LevelDBTransaction> transaction = LevelDBTransaction::create(db);
             transaction->put(metaDataKey, encodeInt(schemaVersion));
 
@@ -176,8 +177,9 @@ static bool setUpMetadata(LevelDBDatabase* db, const String& origin)
                 return false;
             }
         }
-        ASSERT(schemaVersion == 1);
     }
+
+    ASSERT(schemaVersion == latestSchemaVersion);
 
     return true;
 }

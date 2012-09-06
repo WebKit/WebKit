@@ -1,3 +1,26 @@
+2012-09-05  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Integer version lost after first open/close/open cycle
+        https://bugs.webkit.org/show_bug.cgi?id=95864
+
+        Reviewed by Tony Chang.
+
+        Ensure integer versions are persisted across open/close/open cycles.
+
+        Note that although this is a useful and valid test in general, the specific bug that
+        prompted adding this test will only repro if the origin has no pre-existing backing
+        store, which is not guaranteed by DRT or other shells. See http://webkit.org/b/92166
+
+        * storage/indexeddb/intversion-persistence-expected.txt: Added.
+        * storage/indexeddb/intversion-persistence.html: Added.
+        * storage/indexeddb/resources/intversion-persistence.js: Added.
+        (test):
+        (openFirstTime.request.onupgradeneeded):
+        (openFirstTime.request.onsuccess):
+        (openFirstTime):
+        (openSecondTime.request.onsuccess):
+        (openSecondTime):
+
 2012-09-05  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Tests] We should have mouse events test for multiple fields time input UI
