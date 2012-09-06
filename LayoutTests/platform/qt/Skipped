@@ -2793,3 +2793,12 @@ http/tests/notifications
 # Test fails after r127534.
 # https://bugs.webkit.org/show_bug.cgi?id=95827
 fast/innerHTML/innerHTML-iframe.html
+
+# REGRESSION(r127698): It made fast/dom/HTMLScriptElement/script-reexecution.html fail
+# https://bugs.webkit.org/show_bug.cgi?id=95944
+fast/dom/HTMLScriptElement/script-reexecution.html
+
+# New tests introduced in r127704 fail
+# https://bugs.webkit.org/show_bug.cgi?id=95952
+fast/viewport/viewport-limits-adjusted-for-no-user-scale-control.html
+fast/viewport/viewport-limits-adjusted-for-no-user-scale.html
