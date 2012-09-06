@@ -3611,3 +3611,4 @@ BUGCR146401 ANDROID : fast/css/sticky/sticky-writing-mode-vertical-lr.html = IMA
 // Started failing after r127457
 BUGWK95799 MAC : touchadjustment/iframe-boundary.html = TEXT
 
+BUGWK95813 : fast/innerHTML/innerHTML-iframe.html = TEXT PASS
