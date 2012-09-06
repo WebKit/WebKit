@@ -149,10 +149,14 @@ PlatformGestureEventBuilder::PlatformGestureEventBuilder(Widget* widget, const W
         break;
     case WebInputEvent::GestureScrollUpdate:
         m_type = PlatformEvent::GestureScrollUpdate;
+        m_deltaX = e.data.scrollUpdate.deltaX;
+        m_deltaY = e.data.scrollUpdate.deltaY;
         break;
     case WebInputEvent::GestureTap:
         m_type = PlatformEvent::GestureTap;
-        m_area = IntSize(e.boundingBox.width, e.boundingBox.height);
+        m_area = IntSize(e.data.tap.width, e.data.tap.height);
+        // FIXME: PlatformGestureEvent deltaX is overloaded - wkb.ug/93123
+        m_deltaX = static_cast<int>(e.data.tap.tapCount);
         break;
     case WebInputEvent::GestureTapDown:
         m_type = PlatformEvent::GestureTapDown;
@@ -165,7 +169,7 @@ PlatformGestureEventBuilder::PlatformGestureEventBuilder(Widget* widget, const W
         break;
     case WebInputEvent::GestureLongPress:
         m_type = PlatformEvent::GestureLongPress;
-        m_area = IntSize(e.boundingBox.width, e.boundingBox.height);
+        m_area = IntSize(e.data.longPress.width, e.data.longPress.height);
         break;
     case WebInputEvent::GesturePinchBegin:
         m_type = PlatformEvent::GesturePinchBegin;
@@ -175,14 +179,14 @@ PlatformGestureEventBuilder::PlatformGestureEventBuilder(Widget* widget, const W
         break;
     case WebInputEvent::GesturePinchUpdate:
         m_type = PlatformEvent::GesturePinchUpdate;
+        // FIXME: PlatformGestureEvent deltaX is overloaded - wkb.ug/93123
+        m_deltaX = e.data.pinchUpdate.scale;
         break;
     default:
         ASSERT_NOT_REACHED();
     }
     m_position = widget->convertFromContainingWindow(IntPoint(e.x, e.y));
     m_globalPosition = IntPoint(e.globalX, e.globalY);
-    m_deltaX = e.deltaX;
-    m_deltaY = e.deltaY;
     m_timestamp = e.timeStampSeconds;
 
     m_modifiers = 0;
@@ -526,8 +530,11 @@ WebGestureEventBuilder::WebGestureEventBuilder(const Widget* widget, const Gestu
         type = GestureScrollBegin;
     else if (event.type() == eventNames().gesturescrollendEvent)
         type = GestureScrollEnd;
-    else if (event.type() == eventNames().gesturescrollupdateEvent)
+    else if (event.type() == eventNames().gesturescrollupdateEvent) {
         type = GestureScrollUpdate;
+        data.scrollUpdate.deltaX = event.deltaX();
+        data.scrollUpdate.deltaY = event.deltaY();
+    }
 
     timeStampSeconds = event.timeStamp() / millisPerSecond;
     modifiers = getWebInputModifiers(event);
@@ -536,9 +543,6 @@ WebGestureEventBuilder::WebGestureEventBuilder(const Widget* widget, const Gestu
     globalY = event.screenY();
     x = event.absoluteLocation().x() - widget->location().x();
     y = event.absoluteLocation().y() - widget->location().y();
-
-    deltaX = event.deltaX();
-    deltaY = event.deltaY();
 }
 #endif // ENABLE(GESTURE_EVENTS)
 

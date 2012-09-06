@@ -216,7 +216,8 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
             return DidNotHandle;
 
         const WebGestureEvent& gestureEvent = *static_cast<const WebGestureEvent*>(&event);
-        m_inputHandlerClient->scrollBy(IntPoint(gestureEvent.x, gestureEvent.y), IntSize(-gestureEvent.deltaX, -gestureEvent.deltaY));
+        m_inputHandlerClient->scrollBy(IntPoint(gestureEvent.x, gestureEvent.y),
+            IntSize(-gestureEvent.data.scrollUpdate.deltaX, -gestureEvent.data.scrollUpdate.deltaY));
         return DidHandle;
     } else if (event.type == WebInputEvent::GestureScrollEnd) {
         ASSERT(m_expectScrollUpdateEnd);
@@ -246,7 +247,7 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
     } else if (event.type == WebInputEvent::GesturePinchUpdate) {
         ASSERT(m_expectPinchUpdateEnd);
         const WebGestureEvent& gestureEvent = *static_cast<const WebGestureEvent*>(&event);
-        m_inputHandlerClient->pinchGestureUpdate(gestureEvent.deltaX, IntPoint(gestureEvent.x, gestureEvent.y));
+        m_inputHandlerClient->pinchGestureUpdate(gestureEvent.data.pinchUpdate.scale, IntPoint(gestureEvent.x, gestureEvent.y));
         return DidHandle;
     } else if (event.type == WebInputEvent::GestureFlingStart) {
         const WebGestureEvent& gestureEvent = *static_cast<const WebGestureEvent*>(&event);
@@ -267,9 +268,9 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
     switch (scrollStatus) {
     case CCInputHandlerClient::ScrollStarted: {
         TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::handleGestureFling::started");
-        OwnPtr<PlatformGestureCurve> flingCurve = TouchpadFlingPlatformGestureCurve::create(FloatPoint(gestureEvent.deltaX, gestureEvent.deltaY));
+        OwnPtr<PlatformGestureCurve> flingCurve = TouchpadFlingPlatformGestureCurve::create(FloatPoint(gestureEvent.data.flingStart.velocityX, gestureEvent.data.flingStart.velocityY));
         m_wheelFlingAnimation = CCActiveGestureAnimation::create(PlatformGestureToCCGestureAdapter::create(flingCurve.release()), this);
-        m_wheelFlingParameters.delta = WebFloatPoint(gestureEvent.deltaX, gestureEvent.deltaY);
+        m_wheelFlingParameters.delta = WebFloatPoint(gestureEvent.data.flingStart.velocityX, gestureEvent.data.flingStart.velocityY);
         m_wheelFlingParameters.point = WebPoint(gestureEvent.x, gestureEvent.y);
         m_wheelFlingParameters.globalPoint = WebPoint(gestureEvent.globalX, gestureEvent.globalY);
         m_wheelFlingParameters.modifiers = gestureEvent.modifiers;

@@ -1153,12 +1153,12 @@ void EventSender::gestureEvent(WebInputEvent::Type type, const CppArgumentList& 
 
     switch (type) {
     case WebInputEvent::GestureScrollUpdate:
-        event.deltaX = static_cast<float>(arguments[0].toDouble());
-        event.deltaY = static_cast<float>(arguments[1].toDouble());
+        event.data.scrollUpdate.deltaX = static_cast<float>(arguments[0].toDouble());
+        event.data.scrollUpdate.deltaY = static_cast<float>(arguments[1].toDouble());
         event.x = m_currentGestureLocation.x;
         event.y = m_currentGestureLocation.y;
-        m_currentGestureLocation.x = m_currentGestureLocation.x + event.deltaX;
-        m_currentGestureLocation.y = m_currentGestureLocation.y + event.deltaY;
+        m_currentGestureLocation.x = m_currentGestureLocation.x + event.data.scrollUpdate.deltaX;
+        m_currentGestureLocation.y = m_currentGestureLocation.y + event.data.scrollUpdate.deltaY;
         break;
 
     case WebInputEvent::GestureScrollBegin:
@@ -1167,16 +1167,14 @@ void EventSender::gestureEvent(WebInputEvent::Type type, const CppArgumentList& 
         event.y = m_currentGestureLocation.y;
         break;
     case WebInputEvent::GestureScrollEnd:
-        event.deltaX = static_cast<float>(arguments[0].toDouble());
-        event.deltaY = static_cast<float>(arguments[1].toDouble());
         event.x = m_currentGestureLocation.x;
         event.y = m_currentGestureLocation.y;
         break;
     case WebInputEvent::GestureTap:
-        if (arguments.size() >= 3) {
-            // Tap count.
-            event.deltaX = static_cast<float>(arguments[2].toDouble());
-        }
+        if (arguments.size() >= 3)
+            event.data.tap.tapCount = static_cast<float>(arguments[2].toDouble());
+        else
+          event.data.tap.tapCount = 1;
         event.x = point.x;
         event.y = point.y;
         break;
@@ -1232,8 +1230,8 @@ void EventSender::gestureFlingStart(const CppArgumentList& arguments, CppVariant
     event.globalX = event.x;
     event.globalY = event.y;
 
-    event.deltaX = static_cast<float>(arguments[2].toDouble());
-    event.deltaY = static_cast<float>(arguments[3].toDouble());
+    event.data.flingStart.velocityX = static_cast<float>(arguments[2].toDouble());
+    event.data.flingStart.velocityY = static_cast<float>(arguments[3].toDouble());
     event.timeStampSeconds = getCurrentEventTimeSec();
     webview()->handleInputEvent(event);
 }

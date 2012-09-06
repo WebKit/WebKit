@@ -693,7 +693,7 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         m_lastWheelGlobalPosition = WebPoint(event.globalX, event.globalY);
         m_flingModifier = event.modifiers;
         // FIXME: Make the curve parametrizable from the browser.
-        m_gestureAnimation = ActivePlatformGestureAnimation::create(TouchpadFlingPlatformGestureCurve::create(FloatPoint(event.deltaX, event.deltaY)), this);
+        m_gestureAnimation = ActivePlatformGestureAnimation::create(TouchpadFlingPlatformGestureCurve::create(FloatPoint(event.data.flingStart.velocityX, event.data.flingStart.velocityY)), this);
         scheduleAnimation();
         return true;
     }

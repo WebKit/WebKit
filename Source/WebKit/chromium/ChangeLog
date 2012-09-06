@@ -1,3 +1,32 @@
+2012-09-05  Rick Byers  <rbyers@chromium.org>
+
+        Use new type-specific WebGestureEvent fields
+        https://bugs.webkit.org/show_bug.cgi?id=95573
+
+        Reviewed by James Robinson.
+
+        Chromium has been updated to store gesture-type specific details in the
+        new WebGestureEvent fields (crrev.com/152508, crrev.com/154815 and
+        crrev.com/154959), so we can now rely on them.
+
+        * src/WebCompositorInputHandlerImpl.cpp:
+        Update the compositor scroll, pinch and fling handling to use these new fields.
+        (WebKit::WebCompositorInputHandlerImpl::handleInputEventInternal):
+        (WebKit::WebCompositorInputHandlerImpl::handleGestureFling):
+        * src/WebInputEventConversion.cpp:
+        Update PlatformGestureEvent/WebGestureEvent conversion to use the new
+        fields, storing into the existing overloaded PlatformGestureEvent
+        fields (which will be cleaned up in my next CL).
+        (WebKit::PlatformGestureEventBuilder::PlatformGestureEventBuilder):
+        (WebKit::WebGestureEventBuilder::WebGestureEventBuilder):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+        Update fling scrolling implementation for correct location of velocity.
+        * tests/WebCompositorInputHandlerImplTest.cpp:
+        (WebKit::TEST_F):
+        Update tests to use the new fields.
+
+
 2012-09-05  James Robinson  <jamesr@chromium.org>
 
         [chromium] Test WebSolidColorLayer in WebLayerTest.Client unit test
