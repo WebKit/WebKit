@@ -45,93 +45,93 @@ namespace WebKit {
 
 class WebTransformationMatrix {
 public:
-    WebTransformationMatrix();
-    WebTransformationMatrix(double a, double b, double c, double d, double e, double f);
-    WebTransformationMatrix(double m11, double m12, double m13, double m14,
-                            double m21, double m22, double m23, double m24,
-                            double m31, double m32, double m33, double m34,
-                            double m41, double m42, double m43, double m44);
-    WebTransformationMatrix(const WebTransformationMatrix&);
+    WEBKIT_EXPORT WebTransformationMatrix();
+    WEBKIT_EXPORT WebTransformationMatrix(double a, double b, double c, double d, double e, double f);
+    WEBKIT_EXPORT WebTransformationMatrix(double m11, double m12, double m13, double m14,
+                                          double m21, double m22, double m23, double m24,
+                                          double m31, double m32, double m33, double m34,
+                                          double m41, double m42, double m43, double m44);
+    WEBKIT_EXPORT WebTransformationMatrix(const WebTransformationMatrix&);
     ~WebTransformationMatrix() { }
 
     // Operations that return a separate matrix and do not modify this one.
-    WebTransformationMatrix inverse() const;
-    WebTransformationMatrix to2dTransform() const;
+    WEBKIT_EXPORT WebTransformationMatrix inverse() const;
+    WEBKIT_EXPORT WebTransformationMatrix to2dTransform() const;
 
-    WebTransformationMatrix& operator=(const WebTransformationMatrix&);
-    bool operator==(const WebTransformationMatrix&) const;
-    WebTransformationMatrix operator*(const WebTransformationMatrix&) const;
+    WEBKIT_EXPORT WebTransformationMatrix& operator=(const WebTransformationMatrix&);
+    WEBKIT_EXPORT bool operator==(const WebTransformationMatrix&) const;
+    WEBKIT_EXPORT WebTransformationMatrix operator*(const WebTransformationMatrix&) const;
 
     // Operations that modify this matrix
-    void multiply(const WebTransformationMatrix&);
-    void makeIdentity();
-    void translate(double tx, double ty);
-    void translate3d(double tx, double ty, double tz);
-    void translateRight3d(double tx, double ty, double tz);
-    void scale(double s);
-    void scaleNonUniform(double sx, double sy);
-    void scale3d(double sx, double sy, double sz);
-    void rotate(double angle);
-    void rotate3d(double rx, double ry, double rz);
-    void rotate3d(double x, double y, double z, double angle);
-    void skewX(double angle);
-    void skewY(double angle);
-    void applyPerspective(double p);
-    void blend(const WebTransformationMatrix& from, double progress);
+    WEBKIT_EXPORT void multiply(const WebTransformationMatrix&);
+    WEBKIT_EXPORT void makeIdentity();
+    WEBKIT_EXPORT void translate(double tx, double ty);
+    WEBKIT_EXPORT void translate3d(double tx, double ty, double tz);
+    WEBKIT_EXPORT void translateRight3d(double tx, double ty, double tz);
+    WEBKIT_EXPORT void scale(double s);
+    WEBKIT_EXPORT void scaleNonUniform(double sx, double sy);
+    WEBKIT_EXPORT void scale3d(double sx, double sy, double sz);
+    WEBKIT_EXPORT void rotate(double angle);
+    WEBKIT_EXPORT void rotate3d(double rx, double ry, double rz);
+    WEBKIT_EXPORT void rotate3d(double x, double y, double z, double angle);
+    WEBKIT_EXPORT void skewX(double angle);
+    WEBKIT_EXPORT void skewY(double angle);
+    WEBKIT_EXPORT void applyPerspective(double p);
+    WEBKIT_EXPORT void blend(const WebTransformationMatrix& from, double progress);
 
-    bool hasPerspective() const;
-    bool isInvertible() const;
-    bool isBackFaceVisible() const;
-    bool isIdentity() const;
-    bool isIdentityOrTranslation() const;
-    bool isIntegerTranslation() const;
+    WEBKIT_EXPORT bool hasPerspective() const;
+    WEBKIT_EXPORT bool isInvertible() const;
+    WEBKIT_EXPORT bool isBackFaceVisible() const;
+    WEBKIT_EXPORT bool isIdentity() const;
+    WEBKIT_EXPORT bool isIdentityOrTranslation() const;
+    WEBKIT_EXPORT bool isIntegerTranslation() const;
 
-    // Accessors
-    double m11() const;
-    void setM11(double);
-    double m12() const;
-    void setM12(double);
-    double m13() const;
-    void setM13(double);
-    double m14() const;
-    void setM14(double);
-    double m21() const;
-    void setM21(double);
-    double m22() const;
-    void setM22(double);
-    double m23() const;
-    void setM23(double);
-    double m24() const;
-    void setM24(double);
-    double m31() const;
-    void setM31(double);
-    double m32() const;
-    void setM32(double);
-    double m33() const;
-    void setM33(double);
-    double m34() const;
-    void setM34(double);
-    double m41() const;
-    void setM41(double);
-    double m42() const;
-    void setM42(double);
-    double m43() const;
-    void setM43(double);
-    double m44() const;
-    void setM44(double);
+    WEBKIT_EXPORT // Accessors
+    WEBKIT_EXPORT double m11() const;
+    WEBKIT_EXPORT void setM11(double);
+    WEBKIT_EXPORT double m12() const;
+    WEBKIT_EXPORT void setM12(double);
+    WEBKIT_EXPORT double m13() const;
+    WEBKIT_EXPORT void setM13(double);
+    WEBKIT_EXPORT double m14() const;
+    WEBKIT_EXPORT void setM14(double);
+    WEBKIT_EXPORT double m21() const;
+    WEBKIT_EXPORT void setM21(double);
+    WEBKIT_EXPORT double m22() const;
+    WEBKIT_EXPORT void setM22(double);
+    WEBKIT_EXPORT double m23() const;
+    WEBKIT_EXPORT void setM23(double);
+    WEBKIT_EXPORT double m24() const;
+    WEBKIT_EXPORT void setM24(double);
+    WEBKIT_EXPORT double m31() const;
+    WEBKIT_EXPORT void setM31(double);
+    WEBKIT_EXPORT double m32() const;
+    WEBKIT_EXPORT void setM32(double);
+    WEBKIT_EXPORT double m33() const;
+    WEBKIT_EXPORT void setM33(double);
+    WEBKIT_EXPORT double m34() const;
+    WEBKIT_EXPORT void setM34(double);
+    WEBKIT_EXPORT double m41() const;
+    WEBKIT_EXPORT void setM41(double);
+    WEBKIT_EXPORT double m42() const;
+    WEBKIT_EXPORT void setM42(double);
+    WEBKIT_EXPORT double m43() const;
+    WEBKIT_EXPORT void setM43(double);
+    WEBKIT_EXPORT double m44() const;
+    WEBKIT_EXPORT void setM44(double);
 
-    double a() const;
-    void setA(double);
-    double b() const;
-    void setB(double);
-    double c() const;
-    void setC(double);
-    double d() const;
-    void setD(double);
-    double e() const;
-    void setE(double);
-    double f() const;
-    void setF(double);
+    WEBKIT_EXPORT double a() const;
+    WEBKIT_EXPORT void setA(double);
+    WEBKIT_EXPORT double b() const;
+    WEBKIT_EXPORT void setB(double);
+    WEBKIT_EXPORT double c() const;
+    WEBKIT_EXPORT void setC(double);
+    WEBKIT_EXPORT double d() const;
+    WEBKIT_EXPORT void setD(double);
+    WEBKIT_EXPORT double e() const;
+    WEBKIT_EXPORT void setE(double);
+    WEBKIT_EXPORT double f() const;
+    WEBKIT_EXPORT void setF(double);
 
 #if WEBKIT_IMPLEMENTATION
     // Conversions between WebKit::WebTransformationMatrix and WebCore::TransformationMatrix
