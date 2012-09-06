@@ -92,6 +92,7 @@ LayerChromium::LayerChromium()
     , m_drawTransformIsAnimating(false)
     , m_screenSpaceTransformIsAnimating(false)
     , m_contentsScale(1.0)
+    , m_boundsContainPageScale(false)
     , m_layerAnimationDelegate(0)
     , m_layerScrollClient(0)
 {
@@ -617,6 +618,16 @@ void LayerChromium::setContentsScale(float contentsScale)
     if (!needsContentsScale() || m_contentsScale == contentsScale)
         return;
     m_contentsScale = contentsScale;
+
+    setNeedsDisplay();
+}
+
+void LayerChromium::setBoundsContainPageScale(bool boundsContainPageScale)
+{
+    if (boundsContainPageScale == m_boundsContainPageScale)
+        return;
+
+    m_boundsContainPageScale = boundsContainPageScale;
     setNeedsDisplay();
 }
 

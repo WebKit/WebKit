@@ -368,8 +368,8 @@ public:
     virtual void setMaintainsPixelAlignment(bool maintainsAlignment) { m_maintainsPixelAlignment = maintainsAlignment; }
     virtual bool maintainsPixelAlignment() const { return m_maintainsPixelAlignment; }
     
-    void setAppliesPageScale(bool appliesScale = true) { m_appliesPageScale = appliesScale; }
-    bool appliesPageScale() const { return m_appliesPageScale; }
+    virtual void setAppliesPageScale(bool appliesScale = true) { m_appliesPageScale = appliesScale; }
+    virtual bool appliesPageScale() const { return m_appliesPageScale; }
 
     float pageScaleFactor() const { return m_client ? m_client->pageScaleFactor() : 1; }
     float deviceScaleFactor() const { return m_client ? m_client->deviceScaleFactor() : 1; }
@@ -501,4 +501,3 @@ void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer);
 #endif // USE(ACCELERATED_COMPOSITING)
 
 #endif // GraphicsLayer_h
-

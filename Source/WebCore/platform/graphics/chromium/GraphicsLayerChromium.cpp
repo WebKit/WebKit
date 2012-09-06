@@ -90,7 +90,6 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_contentsLayerHasBackgroundColor(false)
     , m_inSetChildren(false)
-    , m_pageScaleChanged(false)
     , m_scrollableArea(0)
 {
     m_opaqueRectTrackingContentLayerDelegate = adoptPtr(new OpaqueRectTrackingContentLayerDelegate(this));
@@ -102,8 +101,6 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
 
     m_layer->layer()->setDrawsContent(m_drawsContent && m_contentsVisible);
     m_layer->layer()->setScrollClient(this);
-    if (client)
-        deviceOrPageScaleFactorChanged();
     updateDebugIndicators();
 }
 
@@ -227,20 +224,10 @@ void GraphicsLayerChromium::setSize(const FloatSize& size)
 
     GraphicsLayer::setSize(clampedSize);
     updateLayerSize();
-
-    if (m_pageScaleChanged) {
-        m_layer->layer()->invalidate();
-        if (m_linkHighlight)
-            m_linkHighlight->invalidate();
-    }
-    m_pageScaleChanged = false;
 }
 
 void GraphicsLayerChromium::setTransform(const TransformationMatrix& transform)
 {
-    // Call this method first to assign contents scale to our layer so the painter can apply the scale transform.
-    updateContentsScale();
-
     GraphicsLayer::setTransform(transform);
     updateTransform();
 }
@@ -759,8 +746,6 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
         // Set the old layer to opacity of 1. Further down we will set the opacity on the transform layer.
         m_layer->layer()->setOpacity(1);
 
-        m_layer->setContentsScale(contentsScale());
-
         // Move this layer to be a child of the transform layer.
         if (parent())
             parent()->platformLayer()->replaceChild(m_layer->layer(), m_transformLayer.get());
@@ -842,15 +827,6 @@ void GraphicsLayerChromium::updateContentsRect()
     contentsLayer->setBounds(IntSize(m_contentsRect.width(), m_contentsRect.height()));
 }
 
-void GraphicsLayerChromium::updateContentsScale()
-{
-    // If page scale is already applied then there's no need to apply it again.
-    if (appliesPageScale())
-        return;
-
-    m_layer->setContentsScale(contentsScale());
-}
-
 void GraphicsLayerChromium::setupContentsLayer(WebLayer* contentsLayer)
 {
     m_contentsLayer = contentsLayer;
@@ -877,20 +853,14 @@ void GraphicsLayerChromium::setupContentsLayer(WebLayer* contentsLayer)
     updateNames();
 }
 
-float GraphicsLayerChromium::contentsScale() const
+void GraphicsLayerChromium::setAppliesPageScale(bool appliesScale)
 {
-    if (!appliesPageScale())
-        return pageScaleFactor() * deviceScaleFactor();
-    return 1;
+    m_layer->setBoundsContainPageScale(appliesScale);
 }
 
-void GraphicsLayerChromium::deviceOrPageScaleFactorChanged()
+bool GraphicsLayerChromium::appliesPageScale() const
 {
-    updateContentsScale();
-    // Invalidations are clamped to the layer's bounds but we receive the scale changed notification before receiving
-    // the new layer bounds. When the scale changes, we really want to invalidate the post-scale layer bounds, so we
-    // remember that the scale has changed and then invalidate the full layer bounds when we receive the new size.
-    m_pageScaleChanged = true;
+    return m_layer->boundsContainPageScale();
 }
 
 void GraphicsLayerChromium::paint(GraphicsContext& context, const IntRect& clip)

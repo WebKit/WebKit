@@ -122,11 +122,6 @@ TEST_F(GraphicsLayerChromiumTest, updateLayerPreserves3DWithAnimations)
     ASSERT_FALSE(m_platformLayer->hasActiveAnimation());
 }
 
-TEST_F(GraphicsLayerChromiumTest, shouldStartWithCorrectContentsScale)
-{
-    EXPECT_EQ(2, m_graphicsLayer->contentsScale());
-}
-
 class FakeScrollableArea : public ScrollableArea {
 public:
     virtual bool isActive() const OVERRIDE { return false; }

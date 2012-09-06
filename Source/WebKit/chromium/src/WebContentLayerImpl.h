@@ -42,7 +42,8 @@ public:
     // WebContentLayer implementation.
     virtual WebLayer* layer() OVERRIDE;
     virtual void setDoubleSided(bool)  OVERRIDE;
-    virtual void setContentsScale(float)  OVERRIDE;
+    virtual void setBoundsContainPageScale(bool) OVERRIDE;
+    virtual bool boundsContainPageScale() const OVERRIDE;
     virtual void setUseLCDText(bool)  OVERRIDE;
     virtual void setDrawCheckerboardForMissingTiles(bool)  OVERRIDE;
 

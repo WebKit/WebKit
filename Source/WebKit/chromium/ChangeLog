@@ -1,3 +1,41 @@
+2012-09-06  Jeff Timanus  <twiz@chromium.org>
+
+        [Chromium] Remove contentsScale and related logic from GraphicsLayerChromium.
+        https://bugs.webkit.org/show_bug.cgi?id=95094
+
+        Reviewed by Adrienne Walker.
+
+        In the short term, the page-scale logic is to be unified in the CCLayerTreeHost class.  This is a first pass to
+        try to remove the page-scale logic from GraphicsLayerChromium.  This change should be a no-op in terms of
+        contentsScale behaviour.
+        This change exports the disregardsPageScale() set of functions from WebContentLayer to LayerChromium.
+
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::NonCompositedContentHost):
+            Inform the layer associated with the NCCH that it is to disregard the page scale factor.
+            Also remove now unused m_deviceScaleFactor and associated routines.
+        (WebKit::NonCompositedContentHost::setViewport):
+        * src/NonCompositedContentHost.h:
+        (NonCompositedContentHost):
+        * src/WebContentLayerImpl.cpp:
+        (WebKit::WebContentLayerImpl::setBoundsContainPageScale):
+        (WebKit):
+        (WebKit::WebContentLayerImpl::boundsContainPageScale):
+        * src/WebContentLayerImpl.h:
+        (WebContentLayerImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::updateLayerTreeViewport):
+        * tests/CCLayerTreeHostTest.cpp:
+        (NoScaleContentLayerChromium):
+        (WebKitTests::NoScaleContentLayerChromium::create):
+        (WebKitTests::NoScaleContentLayerChromium::NoScaleContentLayerChromium):
+        (WebKitTests):
+        (WebKitTests::CCLayerTreeHostTestDeviceScaleFactorScalesViewportAndLayers::CCLayerTreeHostTestDeviceScaleFactorScalesViewportAndLayers):
+            Rebaselined to correspond to the new behaviour.  Because the layers are now assigned a contentsScale, the
+            scale on the draw transforms remain identity.
+        * tests/GraphicsLayerChromiumTest.cpp:
+        (WebKit): Remove now obsolete unit-test.
+
 2012-09-06  Adrienne Walker  <enne@google.com>
 
         [chromium] Remove Scrollbar/Settings dependencies from ScrollbarLayerChromiumTest

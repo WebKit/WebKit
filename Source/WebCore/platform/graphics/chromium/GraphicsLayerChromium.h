@@ -133,7 +133,9 @@ public:
 
     virtual void setDebugBackgroundColor(const Color&);
     virtual void setDebugBorder(const Color&, float borderWidth);
-    virtual void deviceOrPageScaleFactorChanged();
+
+    virtual void setAppliesPageScale(bool appliesScale) OVERRIDE;
+    virtual bool appliesPageScale() const OVERRIDE;
 
     void setScrollableArea(ScrollableArea* scrollableArea) { m_scrollableArea = scrollableArea; }
     ScrollableArea* scrollableArea() const { return m_scrollableArea; }
@@ -152,7 +154,6 @@ public:
 
     // Exposed for tests.
     WebKit::WebLayer* contentsLayer() const { return m_contentsLayer; }
-    float contentsScale() const;
 
 private:
     void updateNames();
@@ -170,7 +171,6 @@ private:
     void updateContentsImage();
     void updateContentsVideo();
     void updateContentsRect();
-    void updateContentsScale();
 
     enum ContentsLayerPurpose {
         NoContentsLayer = 0,
@@ -203,7 +203,6 @@ private:
     ContentsLayerPurpose m_contentsLayerPurpose;
     bool m_contentsLayerHasBackgroundColor : 1;
     bool m_inSetChildren;
-    bool m_pageScaleChanged;
 
     typedef HashMap<String, int> AnimationIdMap;
     AnimationIdMap m_animationIdMap;

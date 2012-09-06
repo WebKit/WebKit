@@ -464,7 +464,6 @@ bool CCLayerTreeHost::initializeRendererIfNeeded()
     return true;
 }
 
-
 void CCLayerTreeHost::updateLayers(CCTextureUpdateQueue& queue, size_t memoryAllocationLimitBytes)
 {
     ASSERT(m_rendererInitialized);
@@ -481,9 +480,36 @@ void CCLayerTreeHost::updateLayers(CCTextureUpdateQueue& queue, size_t memoryAll
     updateLayers(rootLayer(), queue);
 }
 
+static void setScale(LayerChromium* layer, float deviceScaleFactor, float pageScaleFactor)
+{
+    if (layer->boundsContainPageScale())
+        layer->setContentsScale(deviceScaleFactor);
+    else
+        layer->setContentsScale(deviceScaleFactor * pageScaleFactor);
+}
+
+static void updateLayerScale(LayerChromium* layer, float deviceScaleFactor, float pageScaleFactor)
+{
+    setScale(layer, deviceScaleFactor, pageScaleFactor);
+
+    LayerChromium* maskLayer = layer->maskLayer();
+    if (maskLayer)
+        setScale(maskLayer, deviceScaleFactor, pageScaleFactor);
+
+    LayerChromium* replicaMaskLayer = layer->replicaLayer() ? layer->replicaLayer()->maskLayer() : 0;
+    if (replicaMaskLayer)
+        setScale(replicaMaskLayer, deviceScaleFactor, pageScaleFactor);
+
+    const Vector<RefPtr<LayerChromium> >& children = layer->children();
+    for (unsigned int i = 0; i < children.size(); ++i)
+        updateLayerScale(children[i].get(), deviceScaleFactor, pageScaleFactor);
+}
+
 void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdateQueue& queue)
 {
     TRACE_EVENT0("cc", "CCLayerTreeHost::updateLayers");
+
+    updateLayerScale(rootLayer, m_deviceScaleFactor, m_pageScaleFactor);
 
     LayerList updateList;
 

@@ -1279,11 +1279,22 @@ public:
     void notifySyncRequired() { }
 };
 
+class NoScaleContentLayerChromium : public ContentLayerChromium {
+public:
+    static PassRefPtr<NoScaleContentLayerChromium> create(ContentLayerChromiumClient* client) { return adoptRef(new NoScaleContentLayerChromium(client)); }
+
+    virtual bool needsContentsScale() const OVERRIDE { return false; }
+
+private:
+    explicit NoScaleContentLayerChromium(ContentLayerChromiumClient* client)
+        : ContentLayerChromium(client) { }
+};
+
 class CCLayerTreeHostTestDeviceScaleFactorScalesViewportAndLayers : public CCLayerTreeHostTest {
 public:
 
     CCLayerTreeHostTestDeviceScaleFactorScalesViewportAndLayers()
-        : m_rootLayer(ContentLayerChromium::create(&m_client))
+        : m_rootLayer(NoScaleContentLayerChromium::create(&m_client))
         , m_childLayer(ContentLayerChromium::create(&m_client))
     {
     }
@@ -1345,6 +1356,11 @@ public:
         // The root render surface is the size of the viewport.
         EXPECT_RECT_EQ(IntRect(0, 0, 60, 60), root->renderSurface()->contentRect());
 
+        // The content bounds of the child should be scaled.
+        IntSize childBoundsScaled = child->bounds();
+        childBoundsScaled.scale(1.5);
+        EXPECT_EQ(childBoundsScaled, child->contentBounds());
+
         WebTransformationMatrix scaleTransform;
         scaleTransform.scale(impl->deviceScaleFactor());
 
@@ -1355,11 +1371,10 @@ public:
         EXPECT_EQ(rootDrawTransform, root->drawTransform());
         EXPECT_EQ(rootScreenSpaceTransform, root->screenSpaceTransform());
 
-        // The child is at position 2,2, so translate by 2,2 before applying the scale by 2x.
-        WebTransformationMatrix childScreenSpaceTransform = scaleTransform;
-        childScreenSpaceTransform.translate(2, 2);
-        WebTransformationMatrix childDrawTransform = scaleTransform;
-        childDrawTransform.translate(2, 2);
+        // The child is at position 2,2, which is transformed to 3,3 after the scale
+        WebTransformationMatrix childScreenSpaceTransform;
+        childScreenSpaceTransform.translate(3, 3);
+        WebTransformationMatrix childDrawTransform = childScreenSpaceTransform;
 
         EXPECT_EQ(childDrawTransform, child->drawTransform());
         EXPECT_EQ(childScreenSpaceTransform, child->screenSpaceTransform());
@@ -1375,7 +1390,7 @@ public:
 
 private:
     MockContentLayerChromiumClient m_client;
-    RefPtr<ContentLayerChromium> m_rootLayer;
+    RefPtr<NoScaleContentLayerChromium> m_rootLayer;
     RefPtr<ContentLayerChromium> m_childLayer;
 };
 

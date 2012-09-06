@@ -250,6 +250,10 @@ public:
     float contentsScale() const { return m_contentsScale; }
     void setContentsScale(float);
 
+    // When true, the layer's contents are not scaled by the current page scale factor.
+    void setBoundsContainPageScale(bool);
+    bool boundsContainPageScale() const { return m_boundsContainPageScale; }
+
     // Returns true if any of the layer's descendants has content to draw.
     bool descendantDrawsContent();
 
@@ -385,6 +389,7 @@ private:
     // Uses target surface space.
     IntRect m_drawableContentRect;
     float m_contentsScale;
+    bool m_boundsContainPageScale;
 
     WebKit::WebAnimationDelegate* m_layerAnimationDelegate;
     WebKit::WebLayerScrollClient* m_layerScrollClient;

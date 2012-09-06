@@ -1,3 +1,18 @@
+2012-09-06  Jeff Timanus  <twiz@chromium.org>
+
+        [Chromium] Remove contentsScale and related logic from GraphicsLayerChromium.
+        https://bugs.webkit.org/show_bug.cgi?id=95094
+
+        Reviewed by Adrienne Walker.
+
+        In the short term, the page-scale logic is to be unified in the CCLayerTreeHost class.  This is a first pass to
+        try to remove the page-scale logic from GraphicsLayerChromium.  This change should be a no-op in terms of
+        contentsScale behaviour.
+
+        * chromium/public/WebContentLayer.h:
+        (WebContentLayer):
+            Export setBoundsContainPageScale() family of routines.
+
 2012-09-06  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add the local and remote description functionality to RTCPeerConnection

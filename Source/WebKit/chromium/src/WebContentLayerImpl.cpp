@@ -65,9 +65,14 @@ void WebContentLayerImpl::setDoubleSided(bool doubleSided)
     m_layer->layer()->setDoubleSided(doubleSided);
 }
 
-void WebContentLayerImpl::setContentsScale(float scale)
+void WebContentLayerImpl::setBoundsContainPageScale(bool boundsContainPageScale)
 {
-    m_layer->layer()->setContentsScale(scale);
+    return m_layer->layer()->setBoundsContainPageScale(boundsContainPageScale);
+}
+
+bool WebContentLayerImpl::boundsContainPageScale() const
+{
+    return m_layer->layer()->boundsContainPageScale();
 }
 
 void WebContentLayerImpl::setUseLCDText(bool enable)

@@ -45,8 +45,8 @@ public:
     // Defaults to false.
     virtual void setDoubleSided(bool) = 0;
 
-    // Set to apply a scale factor used when painting and drawing this layer's content. Defaults to 1.0.
-    virtual void setContentsScale(float) = 0;
+    virtual void setBoundsContainPageScale(bool) = 0;
+    virtual bool boundsContainPageScale() const = 0;
 
     // Set to render text in this layer with LCD antialiasing. Only set if you know that this layer will be
     // drawn in a way where this makes sense - i.e. opaque background, not rotated or scaled, etc.

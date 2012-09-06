@@ -42,13 +42,13 @@ NonCompositedContentHost::NonCompositedContentHost(WebViewImpl* webView)
     : m_webView(webView)
     , m_opaque(true)
     , m_showDebugBorders(false)
-    , m_deviceScaleFactor(1.0)
 {
     m_graphicsLayer = WebCore::GraphicsLayer::create(this);
 #ifndef NDEBUG
     m_graphicsLayer->setName("non-composited content");
 #endif
     m_graphicsLayer->setDrawsContent(true);
+    m_graphicsLayer->setAppliesPageScale(true);
     WebContentLayer* layer = static_cast<WebCore::GraphicsLayerChromium*>(m_graphicsLayer.get())->contentLayer();
     layer->setUseLCDText(true);
     layer->layer()->setOpaque(true);
@@ -88,7 +88,7 @@ void NonCompositedContentHost::setScrollLayer(WebCore::GraphicsLayer* layer)
     ASSERT(haveScrollLayer());
 }
 
-void NonCompositedContentHost::setViewport(const WebCore::IntSize& viewportSize, const WebCore::IntSize& contentsSize, const WebCore::IntPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, float deviceScale)
+void NonCompositedContentHost::setViewport(const WebCore::IntSize& viewportSize, const WebCore::IntSize& contentsSize, const WebCore::IntPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin)
 {
     if (!haveScrollLayer())
         return;
@@ -102,8 +102,6 @@ void NonCompositedContentHost::setViewport(const WebCore::IntSize& viewportSize,
     // Due to the possibility of pinch zoom, the noncomposited layer is always
     // assumed to be scrollable.
     layer->setScrollable(true);
-    m_deviceScaleFactor = deviceScale;
-    m_graphicsLayer->deviceOrPageScaleFactorChanged();
     m_graphicsLayer->setSize(contentsSize);
 
     // In RTL-style pages, the origin of the initial containing block for the
