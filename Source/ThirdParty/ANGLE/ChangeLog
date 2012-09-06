@@ -1,3 +1,18 @@
+2012-09-06  Andras Becsi  <andras.becsi@nokia.com>
+
+        [ANGLE] Fix the build with gcc 4.7
+        https://bugs.webkit.org/show_bug.cgi?id=95989
+
+        Reviewed by Csaba Osztrogonác.
+
+        The build fails because of a bogus warning about the auto-generated
+        pplval variable. Unfortunately the warning is called -Wuninitialized
+        in gcc 4.6 and -Wmaybe-uninitialized in gcc 4.7 thus we also need to
+        ignore unknown pragmas not to break the build with compilers that do
+        not recognize these options.
+
+        * src/compiler/preprocessor/new/ExpressionParser.y:
+
 2012-09-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix build with ANGLE on platforms that provide EGL/GLESv2
