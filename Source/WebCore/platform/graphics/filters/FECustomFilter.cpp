@@ -187,6 +187,8 @@ bool FECustomFilter::applyShader()
     
     m_context->drawElements(GraphicsContext3D::TRIANGLES, m_mesh->indicesCount(), GraphicsContext3D::UNSIGNED_SHORT, 0);
     
+    unbindVertexAttributes();
+
     ASSERT(static_cast<size_t>(newContextSize.width() * newContextSize.height() * 4) == dstPixelArray->length());
     m_context->readPixels(0, 0, newContextSize.width(), newContextSize.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, dstPixelArray->data());
 
@@ -251,6 +253,12 @@ void FECustomFilter::bindVertexAttribute(int attributeLocation, unsigned size, u
         m_context->vertexAttribPointer(attributeLocation, size, GraphicsContext3D::FLOAT, false, m_mesh->bytesPerVertex(), offset);
         m_context->enableVertexAttribArray(attributeLocation);
     }
+}
+
+void FECustomFilter::unbindVertexAttribute(int attributeLocation)
+{
+    if (attributeLocation != -1)
+        m_context->disableVertexAttribArray(attributeLocation);
 }
 
 void FECustomFilter::bindProgramNumberParameters(int uniformLocation, CustomFilterNumberParameter* numberParameter)
@@ -364,6 +372,16 @@ void FECustomFilter::bindProgramAndBuffers(Uint8ClampedArray* srcPixelArray)
         bindVertexAttribute(m_compiledProgram->triangleAttribLocation(), TriangleAttribSize, TriangleAttribOffset);
     
     bindProgramParameters();
+}
+
+void FECustomFilter::unbindVertexAttributes()
+{
+    unbindVertexAttribute(m_compiledProgram->positionAttribLocation());
+    unbindVertexAttribute(m_compiledProgram->texAttribLocation());
+    unbindVertexAttribute(m_compiledProgram->internalTexCoordAttribLocation());
+    unbindVertexAttribute(m_compiledProgram->meshAttribLocation());
+    if (m_meshType == CustomFilterOperation::DETACHED)
+        unbindVertexAttribute(m_compiledProgram->triangleAttribLocation());
 }
 
 void FECustomFilter::dump()

@@ -80,10 +80,12 @@ private:
     void deleteRenderBuffers();
     void resizeContext(const IntSize& newContextSize);
     void bindVertexAttribute(int attributeLocation, unsigned size, unsigned offset);
+    void unbindVertexAttribute(int attributeLocation);
     void bindProgramNumberParameters(int uniformLocation, CustomFilterNumberParameter*);
     void bindProgramTransformParameter(int uniformLocation, CustomFilterTransformParameter*);
     void bindProgramParameters();
     void bindProgramAndBuffers(Uint8ClampedArray* srcPixelArray);
+    void unbindVertexAttributes();
     
     // No need to keep a reference here. It is owned by the RenderView.
     CustomFilterGlobalContext* m_globalContext;
