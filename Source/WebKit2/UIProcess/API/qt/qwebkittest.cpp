@@ -21,7 +21,7 @@
 #include "config.h"
 #include "qwebkittest_p.h"
 
-#include "QtViewportHandler.h"
+#include "PageViewportControllerClientQt.h"
 #include "qquickwebview_p_p.h"
 #include <QMutableListIterator>
 #include <QTouchEvent>
@@ -148,12 +148,11 @@ static inline QJsonObject toJsonObject(const QSizeF& sizeF)
 QJsonObject QWebKitTest::viewport() const
 {
     QJsonObject viewportData;
-    if (QtViewportHandler* viewportHandler = m_webViewPrivate->viewportHandler()) {
-        viewportData.insert(QLatin1String("initialScale"), viewportHandler->m_rawAttributes.initialScale);
-        viewportData.insert(QLatin1String("layoutSize"), toJsonObject(QSizeF(viewportHandler->m_rawAttributes.layoutSize)));
-        viewportData.insert(QLatin1String("isScalable"), !!viewportHandler->m_rawAttributes.userScalable);
-        viewportData.insert(QLatin1String("minimumScale"), viewportHandler->m_minimumScale);
-        viewportData.insert(QLatin1String("maximumScale"), viewportHandler->m_maximumScale);
+    if (const PageViewportControllerClientQt* const viewportHandler = m_webViewPrivate->pageViewportControllerClient()) {
+        viewportData.insert(QLatin1String("layoutSize"), toJsonObject(viewportHandler->contentsLayoutSize()));
+        viewportData.insert(QLatin1String("isScalable"), viewportHandler->allowsUserScaling());
+        viewportData.insert(QLatin1String("minimumScale"), viewportHandler->minimumContentsScale());
+        viewportData.insert(QLatin1String("maximumScale"), viewportHandler->maximumContentsScale());
     } else {
         viewportData.insert(QLatin1String("initialScale"), 1.0);
         viewportData.insert(QLatin1String("layoutSize"), toJsonObject(QSizeF()));
@@ -166,14 +165,14 @@ QJsonObject QWebKitTest::viewport() const
 
 QVariant QWebKitTest::devicePixelRatio() const
 {
-    if (QtViewportHandler* viewport = m_webViewPrivate->viewportHandler())
-        return viewport->m_devicePixelRatio;
+    if (const PageViewportControllerClientQt* const viewport = m_webViewPrivate->pageViewportControllerClient())
+        return viewport->devicePixelRatio();
     return 1.0;
 }
 
 QVariant QWebKitTest::contentsScale() const
 {
-    if (QtViewportHandler* viewport = m_webViewPrivate->viewportHandler())
-        return viewport->currentCSSScale();
+    if (const PageViewportControllerClientQt* const viewport = m_webViewPrivate->pageViewportControllerClient())
+        return viewport->currentContentsScale();
     return 1.0;
 }

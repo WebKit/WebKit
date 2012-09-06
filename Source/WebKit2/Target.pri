@@ -213,6 +213,8 @@ HEADERS += \
     UIProcess/Notifications/WebNotificationManagerProxy.h \
     UIProcess/Notifications/WebNotificationProvider.h \
     UIProcess/PageClient.h \
+    UIProcess/PageViewportController.h \
+    UIProcess/PageViewportControllerClient.h \
     UIProcess/Plugins/PluginInfoStore.h \
     UIProcess/Plugins/PluginProcessProxy.h \
     UIProcess/Plugins/PluginProcessManager.h \
@@ -553,6 +555,7 @@ SOURCES += \
     UIProcess/Notifications/WebNotification.cpp \
     UIProcess/Notifications/WebNotificationManagerProxy.cpp \
     UIProcess/Notifications/WebNotificationProvider.cpp \
+    UIProcess/PageViewportController.cpp \
     UIProcess/Plugins/PluginInfoStore.cpp \
     UIProcess/Plugins/PluginProcessProxy.cpp \
     UIProcess/Plugins/PluginProcessManager.cpp \
@@ -765,6 +768,7 @@ contains(DEFINES, HAVE_QTQUICK=1) {
         UIProcess/API/qt/qquicknetworkrequest_p.h \
         UIProcess/API/qt/qquickurlschemedelegate_p.h \
         UIProcess/API/qt/qwebkittest_p.h \
+        UIProcess/qt/PageViewportControllerClientQt.h \
         UIProcess/qt/QtWebContext.h \
         UIProcess/qt/QtWebPageEventHandler.h \
         UIProcess/qt/QtGestureRecognizer.h \
@@ -779,7 +783,6 @@ contains(DEFINES, HAVE_QTQUICK=1) {
         UIProcess/qt/QtWebPagePolicyClient.h \
         UIProcess/qt/QtWebPageSGNode.h \
         UIProcess/qt/QtWebPageUIClient.h \
-        UIProcess/qt/QtViewportHandler.h \
         UIProcess/qt/QtWebUndoController.h \
         UIProcess/qt/QtWebIconDatabaseClient.h \
         UIProcess/qt/WebContextMenuProxyQt.h \
@@ -801,6 +804,7 @@ contains(DEFINES, HAVE_QTQUICK=1) {
         UIProcess/API/qt/qquickurlschemedelegate.cpp \
         UIProcess/API/qt/qwebpreferences.cpp \
         UIProcess/API/qt/qwebkittest.cpp \
+        UIProcess/qt/PageViewportControllerClientQt.cpp \
         UIProcess/qt/QtWebError.cpp \
         UIProcess/qt/QtDialogRunner.cpp \
         UIProcess/qt/QtDownloadManager.cpp \
@@ -813,7 +817,6 @@ contains(DEFINES, HAVE_QTQUICK=1) {
         UIProcess/qt/QtPanGestureRecognizer.cpp \
         UIProcess/qt/QtPinchGestureRecognizer.cpp \
         UIProcess/qt/QtTapGestureRecognizer.cpp \
-        UIProcess/qt/QtViewportHandler.cpp \
         UIProcess/qt/WebContextMenuProxyQt.cpp \
         UIProcess/qt/WebGeolocationProviderQt.cpp \
         UIProcess/qt/WebPopupMenuProxyQt.cpp \

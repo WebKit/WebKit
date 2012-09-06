@@ -84,11 +84,6 @@ Item {
 
                 Column {
                     Text {
-                        text: "Initial scale: " + formatScale(test.viewport.initialScale)
-                        font.family: textBox.fontFamily
-                        color: textBox.fontColor
-                    }
-                    Text {
                         text: "Minimum scale: " + formatScale(test.viewport.minimumScale)
                         font.family: textBox.fontFamily
                         color: textBox.fontColor

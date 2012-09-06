@@ -24,7 +24,7 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
-#include "QtViewportHandler.h"
+#include "PageViewportControllerClientQt.h"
 #include "WebPageProxy.h"
 #include "qquickwebpage_p.h"
 #include "qquickwebview_p.h"
@@ -91,7 +91,7 @@ static inline WebCore::DragOperation dropActionToDragOperation(Qt::DropActions a
 
 QtWebPageEventHandler::QtWebPageEventHandler(WKPageRef pageRef, QQuickWebPage* qmlWebPage, QQuickWebView* qmlWebView)
     : m_webPageProxy(toImpl(pageRef))
-    , m_viewportHandler(0)
+    , m_viewportController(0)
     , m_panGestureRecognizer(this)
     , m_pinchGestureRecognizer(this)
     , m_tapGestureRecognizer(this)
@@ -305,9 +305,9 @@ void QtWebPageEventHandler::handleFocusOutEvent(QFocusEvent*)
     m_webPageProxy->viewStateDidChange(WebPageProxy::ViewIsFocused | WebPageProxy::ViewWindowIsActive);
 }
 
-void QtWebPageEventHandler::setViewportHandler(QtViewportHandler* handler)
+void QtWebPageEventHandler::setViewportController(PageViewportControllerClientQt* controller)
 {
-    m_viewportHandler = handler;
+    m_viewportController = controller;
 }
 
 void QtWebPageEventHandler::handleInputMethodEvent(QInputMethodEvent* ev)
@@ -406,7 +406,7 @@ static void setInputPanelVisible(bool visible)
 
 void QtWebPageEventHandler::inputPanelVisibleChanged()
 {
-    if (!m_viewportHandler)
+    if (!m_viewportController)
         return;
 
     // We only respond to the input panel becoming visible.
@@ -415,7 +415,7 @@ void QtWebPageEventHandler::inputPanelVisibleChanged()
 
     const EditorState& editor = m_webPageProxy->editorState();
     if (editor.isContentEditable)
-        m_viewportHandler->focusEditableArea(QRectF(editor.cursorRect), QRectF(editor.editorRect));
+        m_viewportController->focusEditableArea(QRectF(editor.cursorRect), QRectF(editor.editorRect));
 }
 
 void QtWebPageEventHandler::updateTextInputState()
@@ -450,7 +450,7 @@ void QtWebPageEventHandler::doneWithGestureEvent(const WebGestureEvent& event, b
 
 void QtWebPageEventHandler::handleInputEvent(const QInputEvent* event)
 {
-    ASSERT(m_viewportHandler);
+    ASSERT(m_viewportController);
 
     bool isMouseEvent = false;
 
@@ -460,9 +460,9 @@ void QtWebPageEventHandler::handleInputEvent(const QInputEvent* event)
         m_isMouseButtonPressed = true;
         // Fall through.
     case QEvent::TouchBegin:
-        ASSERT(!m_viewportHandler->panGestureActive());
-        ASSERT(!m_viewportHandler->pinchGestureActive());
-        m_viewportHandler->touchBegin();
+        ASSERT(!m_viewportController->panGestureActive());
+        ASSERT(!m_viewportController->pinchGestureActive());
+        m_viewportController->touchBegin();
 
         // The interaction engine might still be animating kinetic scrolling or a scale animation
         // such as double-tap to zoom or the bounce back effect. A touch stops the kinetic scrolling
@@ -477,15 +477,15 @@ void QtWebPageEventHandler::handleInputEvent(const QInputEvent* event)
         // Fall through.
     case QEvent::TouchUpdate:
         // The scale animation can only be interrupted by a pinch gesture, which will then take over.
-        if (m_viewportHandler->scaleAnimationActive() && m_pinchGestureRecognizer.isRecognized())
-            m_viewportHandler->interruptScaleAnimation();
+        if (m_viewportController->scaleAnimationActive() && m_pinchGestureRecognizer.isRecognized())
+            m_viewportController->interruptScaleAnimation();
         break;
     case QEvent::MouseButtonRelease:
         isMouseEvent = true;
         m_isMouseButtonPressed = false;
         // Fall through.
     case QEvent::TouchEnd:
-        m_viewportHandler->touchEnd();
+        m_viewportController->touchEnd();
         break;
     default:
         ASSERT(event->type() == QEvent::MouseButtonDblClick);
@@ -494,7 +494,7 @@ void QtWebPageEventHandler::handleInputEvent(const QInputEvent* event)
 
     // If the scale animation is active we don't pass the event to the recognizers. In the future
     // we would want to queue the event here and repost then when the animation ends.
-    if (m_viewportHandler->scaleAnimationActive())
+    if (m_viewportController->scaleAnimationActive())
         return;
 
     QList<QTouchEvent::TouchPoint> activeTouchPoints;
@@ -568,7 +568,7 @@ void QtWebPageEventHandler::handleInputEvent(const QInputEvent* event)
 #if ENABLE(TOUCH_EVENTS)
 void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEventHandled)
 {
-    if (!m_viewportHandler)
+    if (!m_viewportController)
         return;
 
     if (wasEventHandled || event.type() == WebEvent::TouchCancel) {
@@ -587,12 +587,12 @@ void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event,
 
 void QtWebPageEventHandler::didFindZoomableArea(const IntPoint& target, const IntRect& area)
 {
-    if (!m_viewportHandler)
+    if (!m_viewportController)
         return;
 
     // FIXME: As the find method might not respond immediately during load etc,
     // we should ignore all but the latest request.
-    m_viewportHandler->zoomToAreaGestureEnded(QPointF(target), QRectF(area));
+    m_viewportController->zoomToAreaGestureEnded(QPointF(target), QRectF(area));
 }
 
 void QtWebPageEventHandler::startDrag(const WebCore::DragData& dragData, PassRefPtr<ShareableBitmap> dragImage)

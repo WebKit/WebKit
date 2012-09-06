@@ -23,9 +23,9 @@
 
 #include "DownloadProxy.h"
 #include "DrawingAreaProxyImpl.h"
+#include "PageViewportControllerClientQt.h"
 #include "QtDialogRunner.h"
 #include "QtDownloadManager.h"
-#include "QtViewportHandler.h"
 #include "QtWebContext.h"
 #include "QtWebError.h"
 #include "QtWebIconDatabaseClient.h"
@@ -326,8 +326,9 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
 void QQuickWebViewPrivate::onComponentComplete()
 {
     Q_Q(QQuickWebView);
-    m_viewportHandler.reset(new QtViewportHandler(webPageProxy.get(), q, pageView.data()));
-    pageView->eventHandler()->setViewportHandler(m_viewportHandler.data());
+    m_pageViewportControllerClient.reset(new PageViewportControllerClientQt(q, pageView.data()));
+    m_pageViewportController.reset(new PageViewportController(webPageProxy.get(), m_pageViewportControllerClient.data()));
+    pageView->eventHandler()->setViewportController(m_pageViewportControllerClient.data());
 }
 
 void QQuickWebViewPrivate::setTransparentBackground(bool enable)
@@ -854,11 +855,6 @@ QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate(QQuickWebView* view
     viewport->setAcceptHoverEvents(false);
 }
 
-QQuickWebViewFlickablePrivate::~QQuickWebViewFlickablePrivate()
-{
-    m_viewportHandler->disconnect();
-}
-
 void QQuickWebViewFlickablePrivate::initialize(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
     QQuickWebViewPrivate::initialize(contextRef, pageGroupRef);
@@ -874,29 +870,29 @@ void QQuickWebViewFlickablePrivate::onComponentComplete()
 
 void QQuickWebViewFlickablePrivate::didChangeViewportProperties(const WebCore::ViewportAttributes& newAttributes)
 {
-    if (m_viewportHandler)
-        m_viewportHandler->viewportAttributesChanged(newAttributes);
+    if (m_pageViewportController)
+        m_pageViewportController->didChangeViewportAttributes(newAttributes);
 }
 
 void QQuickWebViewFlickablePrivate::updateViewportSize()
 {
-    // FIXME: Examine why there is not an viewportHandler here in the beginning.
-    if (m_viewportHandler)
-        m_viewportHandler->viewportItemSizeChanged();
+    Q_Q(QQuickWebView);
+
+    if (m_pageViewportController)
+        m_pageViewportController->setViewportSize(QSizeF(q->width(), q->height()));
 }
 
 void QQuickWebViewFlickablePrivate::pageDidRequestScroll(const QPoint& pos)
 {
-    m_viewportHandler->pageContentPositionRequested(pos);
+    if (m_pageViewportController)
+        m_pageViewportController->pageDidRequestScroll(pos);
 }
 
 void QQuickWebViewFlickablePrivate::didChangeContentsSize(const QSize& newSize)
 {
-    Q_Q(QQuickWebView);
-
     pageView->setContentsSize(newSize); // emits contentsSizeChanged()
     QQuickWebViewPrivate::didChangeContentsSize(newSize);
-    m_viewportHandler->pageContentsSizeChanged(newSize, q->boundingRect().size().toSize());
+    m_pageViewportController->didChangeContentsSize(newSize);
 }
 
 void QQuickWebViewFlickablePrivate::handleMouseEvent(QMouseEvent* event)

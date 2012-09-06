@@ -1,3 +1,16 @@
+2012-09-06  Andras Becsi  <andras.becsi@nokia.com>
+
+        [WK2] Make [Qt]ViewportHandler cross platform
+        https://bugs.webkit.org/show_bug.cgi?id=91257
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove initial scale from viewport info item since it is
+        set to -1 after applied thus it does not hold any valuable
+        information.
+
+        * MiniBrowser/qt/qml/ViewportInfoItem.qml:
+
 2012-09-05  Tony Chang  <tony@chromium.org>
 
         [chromium] Remove dependency on webkit_user_agent

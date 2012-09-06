@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2011, 2012 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2011 Benjamin Poulain <benjamin@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -19,38 +19,45 @@
  *
  */
 
-#ifndef QtViewportHandler_h
-#define QtViewportHandler_h
+#ifndef PageViewportControllerClientQt_h
+#define PageViewportControllerClientQt_h
 
-#include <QtCore/QObject>
-#include <QtCore/QRectF>
-#include <QtCore/QVariant>
-#include <QtCore/QVariantAnimation>
-#include <WebCore/ViewportArguments.h>
-#include <wtf/OwnPtr.h>
+#include "PageViewportController.h"
+#include "PageViewportControllerClient.h"
+#include <QObject>
+#include <QPointF>
+#include <QScopedPointer>
+#include <QVariant>
+#include <QVariantAnimation>
 
 QT_BEGIN_NAMESPACE
-class QPointF;
-class QWheelEvent;
-QT_END_NAMESPACE
-
 class QQuickWebPage;
 class QQuickWebView;
+class QRectF;
+QT_END_NAMESPACE
 
 class QWebKitTest;
 
 namespace WebKit {
 
-class WebPageProxy;
-class ViewportUpdateDeferrer;
-
-class QtViewportHandler : public QObject {
+class PageViewportControllerClientQt : public QObject, public PageViewportControllerClient {
     Q_OBJECT
 
 public:
-    QtViewportHandler(WebPageProxy*, QQuickWebView*, QQuickWebPage*);
-    ~QtViewportHandler();
+    PageViewportControllerClientQt(QQuickWebView*, QQuickWebPage*);
+    ~PageViewportControllerClientQt();
 
+    virtual void setContentsPosition(const FloatPoint& localPoint);
+    virtual void setContentsScale(float localScale, bool treatAsInitialValue);
+
+    virtual void didResumeContent();
+    virtual void didChangeContentsSize();
+    virtual void didChangeVisibleContents();
+    virtual void didChangeViewportAttributes();
+
+    virtual void setController(PageViewportController* controller) { m_controller = controller; }
+
+    // Additional methods currently only relevant in the QQuick context.
     void touchBegin();
     void touchEnd();
 
@@ -75,83 +82,25 @@ public:
     void zoomToAreaGestureEnded(const QPointF& touchPoint, const QRectF& targetArea);
     void focusEditableArea(const QRectF& caretArea, const QRectF& targetArea);
 
-    void pageContentPositionRequested(const QPoint& position);
-
-    void viewportItemSizeChanged();
-    void viewportAttributesChanged(const WebCore::ViewportAttributes&);
-    void informVisibleContentChange(const QPointF& trajectory = QPointF());
-    void pageContentsSizeChanged(const QSize& newSize, const QSize& viewportSize);
-
 private Q_SLOTS:
     // Respond to changes of position that are not driven by us.
     void pageItemPositionChanged();
 
     void scaleAnimationStateChanged(QAbstractAnimation::State, QAbstractAnimation::State);
-    void scaleAnimationValueChanged(QVariant value);
 
     void flickMoveStarted(); // Called when panning starts.
     void flickMoveEnded(); //   Called when panning (+ kinetic animation) ends.
 
 private:
-    friend class ViewportUpdateDeferrer;
-    friend class ::QWebKitTest;
-
-    WebPageProxy* const m_webPageProxy;
-    QQuickWebView* const m_viewportItem;
-    QQuickWebPage* const m_pageItem;
-
-    qreal cssScaleFromItem(qreal) const;
-    qreal itemScaleFromCSS(qreal) const;
-    qreal itemCoordFromCSS(qreal) const;
-    QRectF itemRectFromCSS(const QRectF&) const;
-
-    qreal innerBoundedCSSScale(qreal) const;
-    qreal outerBoundedCSSScale(qreal) const;
-
-    void setInitialScaleIfNeeded();
-
-    void setCSSScale(qreal);
-    qreal currentCSSScale() const;
-
-    void setPageItemRectVisible(const QRectF&);
-    void animatePageItemRectVisible(const QRectF&);
-
-    QRectF visibleContentsRect() const;
-    QRectF initialRect() const;
-    QRectF nearestValidBounds() const;
-
-    QRectF computePosRangeForPageItemAtScale(qreal itemScale) const;
-    void scaleContent(const QPointF& centerInCSSCoordinates, qreal cssScale);
-
-    void suspendPageContent();
-    void resumePageContent();
-
-    WebCore::ViewportAttributes m_rawAttributes;
-
-    bool m_allowsUserScaling;
-    qreal m_minimumScale;
-    qreal m_maximumScale;
-    qreal m_devicePixelRatio;
-
-    QSize m_layoutSize;
-
-    int m_suspendCount;
-    bool m_hasSuspendedContent;
-
-    OwnPtr<ViewportUpdateDeferrer> m_scaleUpdateDeferrer;
-    OwnPtr<ViewportUpdateDeferrer> m_scrollUpdateDeferrer;
-    OwnPtr<ViewportUpdateDeferrer> m_touchUpdateDeferrer;
-    OwnPtr<ViewportUpdateDeferrer> m_animationUpdateDeferrer;
-
-    bool m_hadUserInteraction;
-
     class ScaleAnimation : public QVariantAnimation {
+        PageViewportControllerClientQt* m_controllerClient;
     public:
-        ScaleAnimation(QObject* parent = 0)
+        ScaleAnimation(PageViewportControllerClientQt* parent)
             : QVariantAnimation(parent)
+            , m_controllerClient(parent)
         { }
 
-        virtual void updateCurrentValue(const QVariant&) { }
+        virtual void updateCurrentValue(const QVariant&);
     };
 
     struct ScaleStackItem {
@@ -164,6 +113,35 @@ private:
         qreal xPosition;
     };
 
+    friend class ScaleAnimation;
+    friend class ::QWebKitTest;
+
+    PageViewportController* m_controller;
+    QQuickWebView* const m_viewportItem;
+    QQuickWebPage* const m_pageItem;
+
+    bool allowsUserScaling() const;
+    qreal devicePixelRatio() const;
+    qreal minimumContentsScale() const;
+    qreal maximumContentsScale() const;
+    qreal currentContentsScale() const;
+    QSizeF contentsLayoutSize() const;
+
+    float viewportScaleForRect(const QRectF&) const;
+    QRectF visibleContentsRect() const;
+    QRectF nearestValidVisibleContentsRect() const;
+
+    void setContentsRectToNearestValidBounds();
+    void updateViewportController(const QPointF& trajectory = QPointF(), qreal scale = -1);
+    void setContentRectVisiblePositionAtScale(const QPointF& location, qreal itemScale);
+    void animateContentRectVisible(const QRectF& contentRect);
+    void scaleContent(qreal itemScale, const QPointF& centerInCSSCoordinates = QPointF());
+
+    QScopedPointer<ViewportUpdateDeferrer> m_scaleUpdateDeferrer;
+    QScopedPointer<ViewportUpdateDeferrer> m_scrollUpdateDeferrer;
+    QScopedPointer<ViewportUpdateDeferrer> m_touchUpdateDeferrer;
+    QScopedPointer<ViewportUpdateDeferrer> m_animationUpdateDeferrer;
+
     ScaleAnimation* m_scaleAnimation;
     QPointF m_lastPinchCenterInViewportCoordinates;
     QPointF m_lastScrollPosition;
@@ -171,8 +149,9 @@ private:
     qreal m_lastCommittedScale;
     qreal m_zoomOutScale;
     QList<ScaleStackItem> m_scaleStack;
+    bool m_ignoreViewportChanges;
 };
 
 } // namespace WebKit
 
-#endif // QtViewportHandler_h
+#endif // PageViewportControllerClientQt_h

@@ -1,3 +1,173 @@
+2012-09-06  Andras Becsi  <andras.becsi@nokia.com>
+
+        [WK2] Make [Qt]ViewportHandler cross platform
+        https://bugs.webkit.org/show_bug.cgi?id=91257
+
+        Reviewed by Kenneth Rohde Christiansen and Simon Hausmann.
+
+        Since QtViewportHandler includes behaviour that is not platform
+        specific together with hooks to the QtQuick API layer, a platform
+        independent implementation would allow other ports to use the
+        viewport controlling functionality provided.
+
+        This patch removes QtViewportHandler and introduces a platform
+        independent PageViewportController class that is responsible
+        for handling requests from the web process (eg. content size
+        changes, viewport attributes changes and scroll position requests).
+        Requests from the web process are acted on by a platform specific
+        client class which implements the PageViewportControllerClient
+        interface which provides hooks to the platform specific API layer.
+
+        The PageViewportController is also responsible to notify the web
+        process about changes in the viewport state (eg. viewport size,
+        visible rect, content scale and movement trajectory).
+        The client is responsible to delegate these UI changes to the
+        PageViewportController.
+
+        For now only PageViewportControllerClientQt implements the client
+        interface besides providing other QQuick specific functionality
+        (gestures, animations, etc).
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::onComponentComplete):
+        (QQuickWebViewFlickablePrivate::~QQuickWebViewFlickablePrivate):
+        (QQuickWebViewFlickablePrivate::didChangeViewportProperties):
+        (QQuickWebViewFlickablePrivate::updateViewportSize):
+        (QQuickWebViewFlickablePrivate::pageDidRequestScroll):
+        (QQuickWebViewFlickablePrivate::didChangeContentsSize):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        (WebKit):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (WebKit):
+        (QQuickWebViewPrivate::pageViewportControllerClient):
+        (QQuickWebViewPrivate):
+        (QQuickWebViewFlickablePrivate):
+        * UIProcess/API/qt/qwebkittest.cpp:
+        (QWebKitTest::viewport):
+        (QWebKitTest::devicePixelRatio):
+        (QWebKitTest::contentsScale):
+        * UIProcess/PageViewportController.cpp: Added.
+        (WebKit):
+        (WebKit::bound):
+        (WebKit::fuzzyCompare):
+        (WebKit::boundPosition):
+        (WebKit::ViewportUpdateDeferrer::ViewportUpdateDeferrer):
+        (WebKit::ViewportUpdateDeferrer::~ViewportUpdateDeferrer):
+        (WebKit::PageViewportController::PageViewportController):
+        (WebKit::PageViewportController::convertFromViewport):
+        (WebKit::PageViewportController::convertToViewport):
+        (WebKit::PageViewportController::innerBoundedContentsScale):
+        (WebKit::PageViewportController::outerBoundedContentsScale):
+        (WebKit::PageViewportController::didChangeContentsSize):
+        (WebKit::PageViewportController::pageDidRequestScroll):
+        (WebKit::PageViewportController::setViewportSize):
+        (WebKit::PageViewportController::setVisibleContentsRect):
+        (WebKit::PageViewportController::syncVisibleContents):
+        (WebKit::PageViewportController::didChangeViewportAttributes):
+        (WebKit::PageViewportController::suspendContent):
+        (WebKit::PageViewportController::resumeContent):
+        (WebKit::PageViewportController::positionRangeForContentAtScale):
+        * UIProcess/PageViewportController.h: Added.
+        (WebCore):
+        (WebKit):
+        (ViewportUpdateDeferrer):
+        (PageViewportController):
+        (WebKit::PageViewportController::~PageViewportController):
+        (WebKit::PageViewportController::hasSuspendedContent):
+        (WebKit::PageViewportController::hadUserInteraction):
+        (WebKit::PageViewportController::allowsUserScaling):
+        (WebKit::PageViewportController::contentsLayoutSize):
+        (WebKit::PageViewportController::devicePixelRatio):
+        (WebKit::PageViewportController::minimumContentsScale):
+        (WebKit::PageViewportController::maximumContentsScale):
+        (WebKit::PageViewportController::setHadUserInteraction):
+        * UIProcess/PageViewportControllerClient.h: Added.
+        (WebKit):
+        (PageViewportControllerClient):
+        (WebKit::PageViewportControllerClient::PageViewportControllerClient):
+        (WebKit::PageViewportControllerClient::~PageViewportControllerClient):
+        * UIProcess/qt/PageViewportControllerClientQt.cpp: Added.
+        (WebKit):
+        (WebKit::PageViewportControllerClientQt::PageViewportControllerClientQt):
+        (WebKit::PageViewportControllerClientQt::ScaleAnimation::updateCurrentValue):
+        (WebKit::PageViewportControllerClientQt::~PageViewportControllerClientQt):
+        (WebKit::PageViewportControllerClientQt::setContentRectVisiblePositionAtScale):
+        (WebKit::PageViewportControllerClientQt::animateContentRectVisible):
+        (WebKit::PageViewportControllerClientQt::flickMoveStarted):
+        (WebKit::PageViewportControllerClientQt::flickMoveEnded):
+        (WebKit::PageViewportControllerClientQt::pageItemPositionChanged):
+        (WebKit::PageViewportControllerClientQt::scaleAnimationStateChanged):
+        (WebKit::PageViewportControllerClientQt::touchBegin):
+        (WebKit::PageViewportControllerClientQt::touchEnd):
+        (WebKit::PageViewportControllerClientQt::focusEditableArea):
+        (WebKit::PageViewportControllerClientQt::zoomToAreaGestureEnded):
+        (WebKit::PageViewportControllerClientQt::nearestValidVisibleContentsRect):
+        (WebKit::PageViewportControllerClientQt::setContentsPosition):
+        (WebKit::PageViewportControllerClientQt::setContentsScale):
+        (WebKit::PageViewportControllerClientQt::setContentsRectToNearestValidBounds):
+        (WebKit::PageViewportControllerClientQt::didResumeContent):
+        (WebKit::PageViewportControllerClientQt::allowsUserScaling):
+        (WebKit::PageViewportControllerClientQt::devicePixelRatio):
+        (WebKit::PageViewportControllerClientQt::minimumContentsScale):
+        (WebKit::PageViewportControllerClientQt::maximumContentsScale):
+        (WebKit::PageViewportControllerClientQt::currentContentsScale):
+        (WebKit::PageViewportControllerClientQt::contentsLayoutSize):
+        (WebKit::PageViewportControllerClientQt::scrollAnimationActive):
+        (WebKit::PageViewportControllerClientQt::panGestureActive):
+        (WebKit::PageViewportControllerClientQt::panGestureStarted):
+        (WebKit::PageViewportControllerClientQt::panGestureRequestUpdate):
+        (WebKit::PageViewportControllerClientQt::panGestureEnded):
+        (WebKit::PageViewportControllerClientQt::panGestureCancelled):
+        (WebKit::PageViewportControllerClientQt::scaleAnimationActive):
+        (WebKit::PageViewportControllerClientQt::cancelScrollAnimation):
+        (WebKit::PageViewportControllerClientQt::interruptScaleAnimation):
+        (WebKit::PageViewportControllerClientQt::pinchGestureActive):
+        (WebKit::PageViewportControllerClientQt::pinchGestureStarted):
+        (WebKit::PageViewportControllerClientQt::pinchGestureRequestUpdate):
+        (WebKit::PageViewportControllerClientQt::pinchGestureEnded):
+        (WebKit::PageViewportControllerClientQt::pinchGestureCancelled):
+        (WebKit::PageViewportControllerClientQt::visibleContentsRect):
+        (WebKit::PageViewportControllerClientQt::didChangeContentsSize):
+        (WebKit::PageViewportControllerClientQt::didChangeVisibleContents):
+        (WebKit::PageViewportControllerClientQt::didChangeViewportAttributes):
+        (WebKit::PageViewportControllerClientQt::updateViewportController):
+        (WebKit::PageViewportControllerClientQt::scaleContent):
+        (WebKit::PageViewportControllerClientQt::viewportScaleForRect):
+        * UIProcess/qt/PageViewportControllerClientQt.h: Added.
+        (WebKit):
+        (PageViewportControllerClientQt):
+        (WebKit::PageViewportControllerClientQt::setController):
+        (ScaleAnimation):
+        (WebKit::PageViewportControllerClientQt::ScaleAnimation::ScaleAnimation):
+        (WebKit::PageViewportControllerClientQt::ScaleStackItem::ScaleStackItem):
+        (ScaleStackItem):
+        * UIProcess/qt/QtGestureRecognizer.cpp:
+        (WebKit::QtGestureRecognizer::viewportController):
+        * UIProcess/qt/QtGestureRecognizer.h:
+        (WebKit):
+        * UIProcess/qt/QtPanGestureRecognizer.cpp:
+        (WebKit::QtPanGestureRecognizer::update):
+        (WebKit::QtPanGestureRecognizer::finish):
+        (WebKit::QtPanGestureRecognizer::cancel):
+        * UIProcess/qt/QtPinchGestureRecognizer.cpp:
+        (WebKit::QtPinchGestureRecognizer::update):
+        (WebKit::QtPinchGestureRecognizer::finish):
+        (WebKit::QtPinchGestureRecognizer::cancel):
+        * UIProcess/qt/QtViewportHandler.cpp: Removed.
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (WebKit::QtWebPageEventHandler::QtWebPageEventHandler):
+        (WebKit::QtWebPageEventHandler::setViewportController):
+        (WebKit::QtWebPageEventHandler::inputPanelVisibleChanged):
+        (WebKit::QtWebPageEventHandler::handleInputEvent):
+        (WebKit::QtWebPageEventHandler::doneWithTouchEvent):
+        (WebKit::QtWebPageEventHandler::didFindZoomableArea):
+        * UIProcess/qt/QtWebPageEventHandler.h:
+        (WebKit):
+        (QtWebPageEventHandler):
+        (WebKit::QtWebPageEventHandler::viewportController):
+
 2012-09-06  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] WebMemorySampler.cpp is included twice.

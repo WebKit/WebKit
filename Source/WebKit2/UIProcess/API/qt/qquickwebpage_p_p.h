@@ -26,7 +26,6 @@
 
 namespace WebKit {
 class WebPageProxy;
-class QtViewportHandler;
 class QtWebPageEventHandler;
 }
 
