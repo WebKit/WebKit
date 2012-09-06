@@ -1,3 +1,17 @@
+2012-09-06  Mike Lawther  <mikelawther@chromium.org>
+
+        Rewrite zooming test to no longer output pixel numbers
+        https://bugs.webkit.org/show_bug.cgi?id=95922
+
+        Reviewed by Dan Bernstein.
+
+        The original version of this test output pixel sizes, which had different results on 
+        different ports. The test has been rewritten to suppress the pixel size output.
+
+        * css3/calc/zoom-with-em-expected.txt:
+        * css3/calc/zoom-with-em.html:
+        * platform/chromium/css3/calc/zoom-with-em-expected.txt: Removed.
+
 2012-09-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip one more failing test,
