@@ -376,6 +376,11 @@ public:
 
 class WebGestureEvent : public WebInputEvent {
 public:
+    enum SourceDevice {
+        Touchpad,
+        Touchscreen,
+    };
+
     int x;
     int y;
     int globalX;
@@ -409,6 +414,7 @@ public:
       struct {
         float velocityX;
         float velocityY;
+        SourceDevice sourceDevice;
       } flingStart;
 
       struct {

@@ -1,3 +1,26 @@
+2012-09-06  Robert Kroeger  <rjkroege@chromium.org>
+
+        [chromium] Enable different fling behaviour for touchscreen and touchpad
+        https://bugs.webkit.org/show_bug.cgi?id=95756
+
+        Reviewed by James Robinson.
+
+        Add support for a flag on WebGestureEvents that differentiates GestureFlingStart
+        events by their originating device and pass this flag to a factory that produces
+        different device  specific fling curves based on the value of the flag.
+
+        * public/WebActiveWheelFlingParameters.h:
+        (WebActiveWheelFlingParameters): Store source device for transfer to mainthread.
+        (WebKit::WebActiveWheelFlingParameters::WebActiveWheelFlingParameters):
+        * public/WebInputEvent.h: Added source device flag to WebGestureEvent.
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebKit::WebCompositorInputHandlerImpl::handleGestureFling):  Use factory to
+        obtain device-appropriate fling curve.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent): Use factory to obtain device-appropriate
+        fling curve.
+        (WebKit::WebViewImpl::transferActiveWheelFlingAnimation):
+
 2012-09-05  Sam Weinig  <sam@webkit.org>
 
         Part 2 of removing PlatformString.h, remove PlatformString.h

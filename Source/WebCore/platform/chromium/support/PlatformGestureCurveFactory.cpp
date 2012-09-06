@@ -24,12 +24,14 @@
  */
 
 #include "config.h"
+
 #include "PlatformGestureCurveFactory.h"
 
 #include "FloatPoint.h"
 #include "IntRect.h"
 #include "TouchpadFlingPlatformGestureCurve.h"
 #include "WebFlingAnimatorToGestureCurveAdapter.h"
+#include "WebInputEvent.h"
 
 namespace WebKit {
 
@@ -39,15 +41,20 @@ PlatformGestureCurveFactory* PlatformGestureCurveFactory::get()
     return &factory;
 }
 
-PassOwnPtr<WebCore::PlatformGestureCurve> PlatformGestureCurveFactory::createCurve(const WebCore::FloatPoint& point, const WebCore::IntRect& range)
+PassOwnPtr<WebCore::PlatformGestureCurve> PlatformGestureCurveFactory::createCurve(int deviceSource, const WebCore::FloatPoint& point, WebCore::IntPoint cumulativeScroll)
 {
     OwnPtr<WebFlingAnimator> flingAnimator = m_mockFlingAnimator.release();
     if (!flingAnimator)
         flingAnimator = adoptPtr(Platform::current()->createFlingAnimator());
-    if (!flingAnimator)
-        return WebCore::TouchpadFlingPlatformGestureCurve::create(point);
 
-    return WebFlingAnimatorToGestureCurveAdapter::create(point, range, flingAnimator.release());
+    if (flingAnimator)
+        return WebFlingAnimatorToGestureCurveAdapter::create(point, WebCore::IntRect(), flingAnimator.release());
+
+    // FIXME: Add a touch-screen sourced specific curve.
+    if (deviceSource == WebGestureEvent::Touchscreen)
+        return WebCore::TouchpadFlingPlatformGestureCurve::create(point, cumulativeScroll);
+
+    return WebCore::TouchpadFlingPlatformGestureCurve::create(point, cumulativeScroll);
 }
 
 void PlatformGestureCurveFactory::setWebFlingAnimatorForTest(PassOwnPtr<WebFlingAnimator> mockFlingAnimator)

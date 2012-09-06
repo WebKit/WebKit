@@ -26,6 +26,7 @@
 #ifndef WebActiveWheelFlingParameters_h
 #define WebActiveWheelFlingParameters_h
 
+#include "WebInputEvent.h"
 #include "platform/WebCommon.h"
 
 #include "platform/WebFloatPoint.h"
@@ -39,11 +40,13 @@ struct WebActiveWheelFlingParameters {
     WebPoint point;
     WebPoint globalPoint;
     int modifiers;
+    WebGestureEvent::SourceDevice sourceDevice;
     WebSize cumulativeScroll;
     double startTime;
 
     WebActiveWheelFlingParameters()
         : modifiers(0)
+        , sourceDevice(WebGestureEvent::Touchpad)
         , startTime(0)
     {
     }

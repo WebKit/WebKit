@@ -29,8 +29,8 @@
 
 #include "CCActiveGestureAnimation.h"
 #include "CCProxy.h"
+#include "PlatformGestureCurveFactory.h"
 #include "PlatformGestureCurveTarget.h"
-#include "TouchpadFlingPlatformGestureCurve.h"
 #include "TraceEvent.h"
 #include "WebCompositorImpl.h"
 #include "WebCompositorInputHandlerClient.h"
@@ -268,12 +268,13 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
     switch (scrollStatus) {
     case CCInputHandlerClient::ScrollStarted: {
         TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::handleGestureFling::started");
-        OwnPtr<PlatformGestureCurve> flingCurve = TouchpadFlingPlatformGestureCurve::create(FloatPoint(gestureEvent.data.flingStart.velocityX, gestureEvent.data.flingStart.velocityY));
+        OwnPtr<PlatformGestureCurve> flingCurve = PlatformGestureCurveFactory::get()->createCurve(gestureEvent.data.flingStart.sourceDevice, FloatPoint(gestureEvent.data.flingStart.velocityX, gestureEvent.data.flingStart.velocityY));
         m_wheelFlingAnimation = CCActiveGestureAnimation::create(PlatformGestureToCCGestureAdapter::create(flingCurve.release()), this);
         m_wheelFlingParameters.delta = WebFloatPoint(gestureEvent.data.flingStart.velocityX, gestureEvent.data.flingStart.velocityY);
         m_wheelFlingParameters.point = WebPoint(gestureEvent.x, gestureEvent.y);
         m_wheelFlingParameters.globalPoint = WebPoint(gestureEvent.globalX, gestureEvent.globalY);
         m_wheelFlingParameters.modifiers = gestureEvent.modifiers;
+        m_wheelFlingParameters.sourceDevice = gestureEvent.data.flingStart.sourceDevice;
         m_inputHandlerClient->scheduleAnimation();
         return DidHandle;
     }

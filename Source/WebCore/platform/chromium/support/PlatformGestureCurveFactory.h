@@ -36,7 +36,7 @@ class PlatformGestureCurveFactory {
 public:
     static PlatformGestureCurveFactory* get();
 
-    PassOwnPtr<WebCore::PlatformGestureCurve> createCurve(const WebCore::FloatPoint&, const WebCore::IntRect& range);
+    PassOwnPtr<WebCore::PlatformGestureCurve> createCurve(int deviceSource, const WebCore::FloatPoint&, WebCore::IntPoint cumulativeScroll = WebCore::IntPoint());
     void setWebFlingAnimatorForTest(PassOwnPtr<WebFlingAnimator>);
 
 private:

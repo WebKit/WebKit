@@ -119,7 +119,6 @@
 #include "TextFieldDecoratorImpl.h"
 #include "TextIterator.h"
 #include "Timer.h"
-#include "TouchpadFlingPlatformGestureCurve.h"
 #include "TraceEvent.h"
 #include "UserGestureIndicator.h"
 #include "WebAccessibilityObject.h"
@@ -168,6 +167,7 @@
 #include <wtf/Uint8ClampedArray.h>
 
 #if ENABLE(GESTURE_EVENTS)
+#include "PlatformGestureCurveFactory.h"
 #include "PlatformGestureEvent.h"
 #include "TouchDisambiguation.h"
 #endif
@@ -693,7 +693,8 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         m_lastWheelGlobalPosition = WebPoint(event.globalX, event.globalY);
         m_flingModifier = event.modifiers;
         // FIXME: Make the curve parametrizable from the browser.
-        m_gestureAnimation = ActivePlatformGestureAnimation::create(TouchpadFlingPlatformGestureCurve::create(FloatPoint(event.data.flingStart.velocityX, event.data.flingStart.velocityY)), this);
+        OwnPtr<PlatformGestureCurve> flingCurve = PlatformGestureCurveFactory::get()->createCurve(event.data.flingStart.sourceDevice, FloatPoint(event.data.flingStart.velocityX, event.data.flingStart.velocityY));
+        m_gestureAnimation = ActivePlatformGestureAnimation::create(flingCurve.release(), this);
         scheduleAnimation();
         return true;
     }
@@ -785,7 +786,7 @@ void WebViewImpl::transferActiveWheelFlingAnimation(const WebActiveWheelFlingPar
     m_lastWheelPosition = parameters.point;
     m_lastWheelGlobalPosition = parameters.globalPoint;
     m_flingModifier = parameters.modifiers;
-    OwnPtr<PlatformGestureCurve> curve = TouchpadFlingPlatformGestureCurve::create(parameters.delta, IntPoint(parameters.cumulativeScroll));
+    OwnPtr<PlatformGestureCurve> curve = PlatformGestureCurveFactory::get()->createCurve(parameters.sourceDevice, parameters.delta, IntPoint(parameters.cumulativeScroll));
     m_gestureAnimation = ActivePlatformGestureAnimation::create(curve.release(), this, parameters.startTime);
     scheduleAnimation();
 }
