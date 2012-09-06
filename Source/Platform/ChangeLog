@@ -1,3 +1,24 @@
+2012-09-05  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move static WebCompositor functions to WebCompositorSupport
+        https://bugs.webkit.org/show_bug.cgi?id=95785
+
+        Reviewed by Darin Fisher.
+
+        The statics on WebCompositor need to be moved to WebCompositorSupport so the embedder can inject an
+        implementation for these via PlatformSupport. This adds the interface for the statics to WebCompositorSupport.
+        After an implementation of these lands on the chromium side, I'll switch all callers over to use these and
+        remove the WebCompositor interface from the API.
+
+        * chromium/public/WebCompositorSupport.h:
+        (WebCompositorSupport):
+        (WebKit::WebCompositorSupport::initialize):
+        (WebKit::WebCompositorSupport::threadingEnabled):
+        (WebKit::WebCompositorSupport::shutdown):
+        (WebKit::WebCompositorSupport::setPerTilePaintingEnabled):
+        (WebKit::WebCompositorSupport::setPartialSwapEnabled):
+        (WebKit::WebCompositorSupport::setAcceleratedAnimationEnabled):
+
 2012-09-05  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove getRenderStyleForStrike from PlatformSupport

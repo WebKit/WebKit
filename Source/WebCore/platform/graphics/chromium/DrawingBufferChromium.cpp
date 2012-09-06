@@ -84,7 +84,7 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
     , m_fbo(0)
     , m_colorBuffer(0)
     , m_frontColorBuffer(0)
-    , m_separateFrontTexture(m_preserveDrawingBuffer == Preserve || WebKit::WebCompositor::threadingEnabled())
+    , m_separateFrontTexture(m_preserveDrawingBuffer == Preserve || WebKit::WebCompositor::isThreadingEnabled())
     , m_depthStencilBuffer(0)
     , m_depthBuffer(0)
     , m_stencilBuffer(0)

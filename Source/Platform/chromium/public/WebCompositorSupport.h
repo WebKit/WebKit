@@ -46,12 +46,31 @@ class WebScrollbar;
 class WebScrollbarLayer;
 class WebScrollbarThemeGeometry;
 class WebSolidColorLayer;
+class WebThread;
 class WebTransformAnimationCurve;
 class WebVideoFrameProvider;
 class WebVideoLayer;
 
 class WebCompositorSupport {
 public:
+    // Initializes the compositor. Threaded compositing is enabled by passing in
+    // a non-null WebThread. No compositor classes or methods should be used
+    // prior to calling initialize.
+    virtual void initialize(WebThread*) { }
+
+    // Returns whether the compositor was initialized with threading enabled.
+    virtual bool isThreadingEnabled() { return false; }
+
+    // Shuts down the compositor. This must be called when all compositor data
+    // types have been deleted. No compositor classes or methods should be used
+    // after shutdown.
+    virtual void shutdown() { }
+
+    // These may only be called before initialize.
+    virtual void setPerTilePaintingEnabled(bool) { }
+    virtual void setPartialSwapEnabled(bool) { }
+    virtual void setAcceleratedAnimationEnabled(bool) { }
+
     // May return 0 if initialization fails.
     virtual WebLayerTreeView* createLayerTreeView(WebLayerTreeViewClient*, const WebLayer& root, const WebLayerTreeView::Settings&) { return 0; }
 

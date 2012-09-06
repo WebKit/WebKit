@@ -44,7 +44,7 @@ public:
     WEBKIT_EXPORT static void initialize(WebThread*);
 
     // Returns whether the compositor was initialized with threading enabled.
-    WEBKIT_EXPORT static bool threadingEnabled();
+    WEBKIT_EXPORT static bool isThreadingEnabled();
 
     // Shuts down the compositor. This must be called when all compositor data
     // types have been deleted. No compositor classes or methods should be used

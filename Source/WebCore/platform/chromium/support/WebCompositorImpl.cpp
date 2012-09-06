@@ -47,9 +47,9 @@ void WebCompositor::initialize(WebThread* implThread)
     WebCompositorImpl::initialize(implThread);
 }
 
-bool WebCompositor::threadingEnabled()
+bool WebCompositor::isThreadingEnabled()
 {
-    return WebCompositorImpl::threadingEnabled();
+    return WebCompositorImpl::isThreadingEnabled();
 }
 
 void WebCompositor::shutdown()
@@ -90,7 +90,7 @@ void WebCompositorImpl::initialize(WebThread* implThread)
         CCProxy::setImplThread(0);
 }
 
-bool WebCompositorImpl::threadingEnabled()
+bool WebCompositorImpl::isThreadingEnabled()
 {
     return s_implThread;
 }

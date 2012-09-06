@@ -1818,7 +1818,7 @@ void WebViewImpl::themeChanged()
 void WebViewImpl::composite(bool)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (WebCompositor::threadingEnabled())
+    if (WebCompositor::isThreadingEnabled())
         m_layerTreeView->setNeedsRedraw();
     else {
         ASSERT(isAcceleratedCompositingActive());
@@ -3734,7 +3734,7 @@ WebCore::GraphicsLayer* WebViewImpl::rootGraphicsLayer()
 void WebViewImpl::scheduleAnimation()
 {
     if (isAcceleratedCompositingActive()) {
-        if (WebCompositor::threadingEnabled()) {
+        if (WebCompositor::isThreadingEnabled()) {
             ASSERT(m_layerTreeView);
             m_layerTreeView->setNeedsAnimate();
         } else
@@ -3967,7 +3967,7 @@ void WebViewImpl::didRecreateOutputSurface(bool success)
 
 void WebViewImpl::scheduleComposite()
 {
-    ASSERT(!WebCompositor::threadingEnabled());
+    ASSERT(!WebCompositor::isThreadingEnabled());
     m_client->scheduleComposite();
 }
 
