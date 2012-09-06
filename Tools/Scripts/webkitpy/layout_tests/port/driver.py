@@ -169,8 +169,10 @@ class Driver(object):
             # We call stop() even if we crashed or timed out in order to get any remaining stdout/stderr output.
             # In the timeout case, we kill the hung process as well.
             out, err = self._server_process.stop(self._port.driver_stop_timeout() if stop_when_done else 0.0)
-            text += out
-            self.error_from_test += err
+            if out:
+                text += out
+            if err:
+                self.error_from_test += err
             self._server_process = None
 
         crash_log = None

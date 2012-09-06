@@ -1,3 +1,16 @@
+2012-09-06  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [nrwt] Harden against empty stdout/stderr after stopping a crashed/timed out driver
+        https://bugs.webkit.org/show_bug.cgi?id=95710
+
+        Reviewed by Dirk Pranke.
+
+        The stdout / stderr output can be None so make sure
+        we won't raise an exception in this case.
+
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.run_test):
+
 2012-09-06  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Sanitize URLs in EWebLauncher / Minibrowser
