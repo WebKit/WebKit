@@ -1,3 +1,50 @@
+2012-09-06  Raymes Khoury  <raymes@chromium.org>
+
+        Added modifiers to distinguish between left/right Shift/Ctrl/Alt in WebInputEvents
+        https://bugs.webkit.org/show_bug.cgi?id=94142
+
+        Reviewed by Tony Chang.
+
+        Previously we distinguished between left/right Shift/Ctrl/Alt in
+        WebInputEvents by using the location-specific virtual keycodes (e.g.
+        VK_LSHIFT instead of VK_SHIFT. However, the Windows API for key events
+        always returns the non-locational version (e.g. VK_SHIFT).
+        Furthermore, KeyboardEvent also returns
+        non-locational keycodes and separates the location information which
+        matches the behavior described in the DOM3
+        spec http://www.w3.org/TR/DOM-Level-3-Events/#events-keyboardevents. We
+        should be consistent with this in our representation of key events.
+        This patch changes WebInputEvents so they always store the
+        non-locational keycode and location information is stored in
+        modifiers. Since this only changes internal representation, no new
+        tests are added.
+
+        This patch also ensures that when KeyboardEvents are converted back to
+        WebInputEvents location information is preserved (which was not
+        happening before). This is important so that key location information
+        is passed on to plugins. A unittest is added for this.
+
+        * WebKit.gypi:
+        * public/WebInputEvent.h:
+        (WebKeyboardEvent):
+        * src/WebInputEvent.cpp:
+        (WebKit):
+        (WebKit::WebKeyboardEvent::windowsKeyCodeWithoutLocation):
+        (WebKit::WebKeyboardEvent::locationModifiersFromWindowsKeyCode):
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder):
+        (WebKit::WebKeyboardEventBuilder::WebKeyboardEventBuilder):
+        * src/android/WebInputEventFactory.cpp:
+        (WebKit::WebInputEventFactory::keyboardEvent):
+        * src/gtk/WebInputEventFactory.cpp:
+        (WebKit::WebInputEventFactory::keyboardEvent):
+        * src/mac/WebInputEventFactory.mm:
+        (WebKit::WebInputEventFactory::keyboardEvent):
+        * src/win/WebInputEventFactory.cpp:
+        (WebKit::getLocationModifier):
+        (WebKit::WebInputEventFactory::keyboardEvent):
+        * tests/WebInputEventConversionTest.cpp: Added.
+
 2012-09-06  Adam Barth  <abarth@webkit.org>
 
         Chromium should call restrictScaleFactorToInitialScaleIfNotUserScalable unless/until userScalable is supported directly.

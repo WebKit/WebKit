@@ -50,7 +50,9 @@ WebKeyboardEvent WebInputEventFactory::keyboardEvent(WebInputEvent::Type type,
     result.type = type;
     result.modifiers = modifiers;
     result.timeStampSeconds = timeStampSeconds;
-    result.windowsKeyCode = WebCore::windowsKeyCodeForKeyEvent(keycode);
+    int windowsKeyCode = WebCore::windowsKeyCodeForKeyEvent(keycode);
+    result.windowsKeyCode = WebKeyboardEvent::windowsKeyCodeWithoutLocation(windowsKeyCode);
+    result.modifiers |= WebKeyboardEvent::locationModifiersFromWindowsKeyCode(windowsKeyCode);
     result.nativeKeyCode = keycode;
     result.unmodifiedText[0] = unicodeCharacter;
     if (result.windowsKeyCode == WebCore::VKEY_RETURN) {

@@ -42,12 +42,18 @@ static const unsigned long defaultScrollCharsPerWheelDelta = 1;
 
 // WebKeyboardEvent -----------------------------------------------------------
 
-static bool isKeyPad(WPARAM wparam, LPARAM lparam)
+static bool isKeyDown(WPARAM wparam)
 {
-    bool keypad = false;
+    return GetKeyState(wparam) & 0x8000;
+}
+
+static int getLocationModifier(WPARAM wparam, LPARAM lparam)
+{
+    int modifier = 0;
     switch (wparam) {
     case VK_RETURN:
-        keypad = (lparam >> 16) & KF_EXTENDED;
+        if ((lparam >> 16) & KF_EXTENDED)
+            modifier = WebInputEvent::IsKeyPad;
         break;
     case VK_INSERT:
     case VK_DELETE:
@@ -59,7 +65,8 @@ static bool isKeyPad(WPARAM wparam, LPARAM lparam)
     case VK_DOWN:
     case VK_LEFT:
     case VK_RIGHT:
-        keypad = !((lparam >> 16) & KF_EXTENDED);
+        if (!((lparam >> 16) & KF_EXTENDED))
+            modifier = WebInputEvent::IsKeyPad;
         break;
     case VK_NUMLOCK:
     case VK_NUMPAD0:
@@ -78,12 +85,39 @@ static bool isKeyPad(WPARAM wparam, LPARAM lparam)
     case VK_ADD:
     case VK_DECIMAL:
     case VK_CLEAR:
-        keypad = true;
+        modifier = WebInputEvent::IsKeyPad;
         break;
-    default:
-        keypad = false;
+    case VK_SHIFT:
+        if (isKeyDown(VK_LSHIFT))
+            modifier = WebInputEvent::IsLeft;
+        else if (isKeyDown(VK_RSHIFT))
+            modifier = WebInputEvent::IsRight;
+        break;
+    case VK_CONTROL:
+        if (isKeyDown(VK_LCONTROL))
+            modifier = WebInputEvent::IsLeft;
+        else if (isKeyDown(VK_RCONTROL))
+            modifier = WebInputEvent::IsRight;
+        break;
+    case VK_MENU:
+        if (isKeyDown(VK_LMENU))
+            modifier = WebInputEvent::IsLeft;
+        else if (isKeyDown(VK_RMENU))
+            modifier = WebInputEvent::IsRight;
+        break;
+    case VK_LWIN:
+        modifier = WebInputEvent::IsLeft;
+        break;
+    case VK_RWIN:
+        modifier = WebInputEvent::IsRight;
+        break;
     }
-    return keypad;
+
+    ASSERT(!modifier
+           || modifier == WebInputEvent::IsKeyPad
+           || modifier == WebInputEvent::IsLeft
+           || modifier == WebInputEvent::IsRight);
+    return modifier;
 }
 
 // Loads the state for toggle keys into the event.
@@ -153,8 +187,8 @@ WebKeyboardEvent WebInputEventFactory::keyboardEvent(HWND hwnd, UINT message,
 
     if (LOWORD(lparam) > 1)
         result.modifiers |= WebInputEvent::IsAutoRepeat;
-    if (isKeyPad(wparam, lparam))
-        result.modifiers |= WebInputEvent::IsKeyPad;
+
+    result.modifiers |= getLocationModifier(wparam, lparam);
 
     SetToggleKeyState(&result);
     return result;

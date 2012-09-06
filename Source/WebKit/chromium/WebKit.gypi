@@ -175,6 +175,7 @@
             'tests/TreeSynchronizerTest.cpp',
             'tests/WebAnimationTest.cpp',
             'tests/WebFloatAnimationCurveTest.cpp',
+            'tests/WebInputEventConversionTest.cpp',
             'tests/WebLayerTest.cpp',
             'tests/WebLayerTreeViewTest.cpp',
             'tests/WebLayerTreeViewTestCommon.h',

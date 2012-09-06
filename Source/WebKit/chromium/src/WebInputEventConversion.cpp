@@ -227,7 +227,6 @@ PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder(const WebKeyboardEven
     m_unmodifiedText = String(e.unmodifiedText);
     m_keyIdentifier = String(e.keyIdentifier);
     m_autoRepeat = (e.modifiers & WebInputEvent::IsAutoRepeat);
-    m_windowsVirtualKeyCode = e.windowsKeyCode;
     m_nativeVirtualKeyCode = e.nativeKeyCode;
     m_isKeypad = (e.modifiers & WebInputEvent::IsKeyPad);
     m_isSystemKey = e.isSystemKey;
@@ -241,6 +240,28 @@ PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder(const WebKeyboardEven
         m_modifiers |= PlatformEvent::AltKey;
     if (e.modifiers & WebInputEvent::MetaKey)
         m_modifiers |= PlatformEvent::MetaKey;
+
+    // FIXME: PlatformKeyboardEvents expect a locational version of the keycode (e.g. VK_LSHIFT
+    // instead of VK_SHIFT). This should be changed so the location/keycode are stored separately,
+    // as in other places in the code.
+    m_windowsVirtualKeyCode = e.windowsKeyCode;
+    if (e.windowsKeyCode == VK_SHIFT) {
+        if (e.modifiers & WebInputEvent::IsLeft)
+            m_windowsVirtualKeyCode = VK_LSHIFT;
+        else if (e.modifiers & WebInputEvent::IsRight)
+            m_windowsVirtualKeyCode = VK_RSHIFT;
+    } else if (e.windowsKeyCode == VK_CONTROL) {
+        if (e.modifiers & WebInputEvent::IsLeft)
+            m_windowsVirtualKeyCode = VK_LCONTROL;
+        else if (e.modifiers & WebInputEvent::IsRight)
+            m_windowsVirtualKeyCode = VK_RCONTROL;
+    } else if (e.windowsKeyCode == VK_MENU) {
+        if (e.modifiers & WebInputEvent::IsLeft)
+            m_windowsVirtualKeyCode = VK_LMENU;
+        else if (e.modifiers & WebInputEvent::IsRight)
+            m_windowsVirtualKeyCode = VK_RMENU;
+    }
+
 }
 
 void PlatformKeyboardEventBuilder::setKeyType(Type type)
@@ -452,8 +473,12 @@ WebKeyboardEventBuilder::WebKeyboardEventBuilder(const KeyboardEvent& event)
         return; // Skip all other keyboard events.
 
     modifiers = getWebInputModifiers(event);
-    if (event.keyLocation() & KeyboardEvent::DOM_KEY_LOCATION_NUMPAD)
+    if (event.keyLocation() == KeyboardEvent::DOM_KEY_LOCATION_NUMPAD)
         modifiers |= WebInputEvent::IsKeyPad;
+    else if (event.keyLocation() == KeyboardEvent::DOM_KEY_LOCATION_LEFT)
+        modifiers |= WebInputEvent::IsLeft;
+    else if (event.keyLocation() == KeyboardEvent::DOM_KEY_LOCATION_RIGHT)
+        modifiers |= WebInputEvent::IsRight;
 
     timeStampSeconds = event.timeStamp() / millisPerSecond;
     windowsKeyCode = event.keyCode();

@@ -151,6 +151,10 @@ public:
         // event and back will not preserve these flags.
         CapsLockOn       = 1 << 9,
         NumLockOn        = 1 << 10,
+
+        // Left/right modifiers for keyboard events.
+        IsLeft           = 1 << 11,
+        IsRight          = 1 << 12,
     };
 
     static const int InputModifiers = ShiftKey | ControlKey | AltKey | MetaKey;
@@ -237,7 +241,11 @@ public:
     // |windowsKeyCode| is the Windows key code associated with this key
     // event.  Sometimes it's direct from the event (i.e. on Windows),
     // sometimes it's via a mapping function.  If you want a list, see
-    // WebCore/platform/chromium/KeyboardCodes* .
+    // WebCore/platform/chromium/KeyboardCodes* . Note that this should
+    // ALWAYS store the non-locational version of a keycode as this is
+    // what is returned by the Windows API. For example, it should
+    // store VK_SHIFT instead of VK_RSHIFT. The location information
+    // should be stored in |modifiers|.
     int windowsKeyCode;
 
     // The actual key code genenerated by the platform.  The DOM spec runs
@@ -279,6 +287,9 @@ public:
     // Sets keyIdentifier based on the value of windowsKeyCode.  This is
     // handy for generating synthetic keyboard events.
     WEBKIT_EXPORT void setKeyIdentifierFromWindowsKeyCode();
+
+    static int windowsKeyCodeWithoutLocation(int keycode);
+    static int locationModifiersFromWindowsKeyCode(int keycode);
 };
 
 // WebMouseEvent --------------------------------------------------------------

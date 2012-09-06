@@ -383,7 +383,9 @@ WebKeyboardEvent WebInputEventFactory::keyboardEvent(const GdkEventKey* event)
     // The key code tells us which physical key was pressed (for example, the
     // A key went down or up).  It does not determine whether A should be lower
     // or upper case.  This is what text does, which should be the keyval.
-    result.windowsKeyCode = gdkEventToWindowsKeyCode(event);
+    int windowsKeyCode = gdkEventToWindowsKeyCode(event);
+    result.windowsKeyCode = WebKeyboardEvent::windowsKeyCodeWithoutLocation(windowsKeyCode);
+    result.modifiers |= WebKeyboardEvent::locationModifiersFromWindowsKeyCode(windowsKeyCode);
     result.nativeKeyCode = event->hardware_keycode;
 
     if (result.windowsKeyCode == WebCore::VKEY_RETURN)
