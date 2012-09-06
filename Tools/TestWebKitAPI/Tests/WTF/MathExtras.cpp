@@ -40,12 +40,14 @@ TEST(WTF, Lrint)
     EXPECT_EQ(lrint(1.7), 2);
     EXPECT_EQ(lrint(0), 0);
     EXPECT_EQ(lrint(-0), 0);
-    // Largest double number with 0.5 precision and one halfway rounding case below.
-    EXPECT_EQ(lrint(pow(2.0, 52) - 0.5), pow(2.0, 52));
-    EXPECT_EQ(lrint(pow(2.0, 52) - 1.5), pow(2.0, 52) - 2);
-    // Smallest double number with 0.5 precision and one halfway rounding case above.
-    EXPECT_EQ(lrint(-pow(2.0, 52) + 0.5), -pow(2.0, 52));
-    EXPECT_EQ(lrint(-pow(2.0, 52) + 1.5), -pow(2.0, 52) + 2);
+    if (sizeof(long int) == 8) {
+        // Largest double number with 0.5 precision and one halfway rounding case below.
+        EXPECT_EQ(lrint(pow(2.0, 52) - 0.5), pow(2.0, 52));
+        EXPECT_EQ(lrint(pow(2.0, 52) - 1.5), pow(2.0, 52) - 2);
+        // Smallest double number with 0.5 precision and one halfway rounding case above.
+        EXPECT_EQ(lrint(-pow(2.0, 52) + 0.5), -pow(2.0, 52));
+        EXPECT_EQ(lrint(-pow(2.0, 52) + 1.5), -pow(2.0, 52) + 2);
+    }
 }
 
 } // namespace TestWebKitAPI

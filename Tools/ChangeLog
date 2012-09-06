@@ -1,3 +1,15 @@
+2012-09-06  Fady Samuel  <fsamuel@chromium.org>
+
+        Fix WTF.Lrint on 32-bit platforms
+        https://bugs.webkit.org/show_bug.cgi?id=96003
+
+        Reviewed by Benjamin Poulain.
+
+        Fixed failing WTF.Lrint test on 32-bit platforms.
+
+        * TestWebKitAPI/Tests/WTF/MathExtras.cpp:
+        (TestWebKitAPI::TEST):
+
 2012-09-06  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add the local and remote description functionality to RTCPeerConnection
