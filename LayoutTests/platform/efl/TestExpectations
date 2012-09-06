@@ -468,6 +468,7 @@ BUGWK82294 : compositing/overflow/content-gains-scrollbars.html = TEXT
 BUGWK82294 : compositing/overflow/content-loses-scrollbars.html = TEXT
 BUGWK82294 SKIP : compositing/overflow/nested-scrolling.html = MISSING
 BUGWK82294 : compositing/overflow/overflow-auto-with-touch.html = TEXT
+BUGWK82294 : compositing/overflow/overflow-auto-with-touch-toggle.html = TEXT
 BUGWK82294 SKIP : compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor.html = MISSING
 BUGWK82294 : compositing/overflow/overflow-overlay-with-touch.html = TEXT
 BUGWK82294 : compositing/overflow/overflow-scrollbar-layers.html = TEXT
@@ -1099,3 +1100,10 @@ BUGWK95840 : http/tests/security/cross-origin-plugin-allowed.html = TEXT
 BUGWK95840 : http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html = TEXT
 BUGWK95840 : http/tests/security/cross-origin-plugin-private-browsing-toggled.html = TEXT
 BUGWK95840 : http/tests/security/cross-origin-plugin.html = TEXT
+
+// Fails after r127698.
+BUGWK95944 : fast/dom/HTMLScriptElement/script-reexecution.html = TEXT
+
+// Fail after r127704.
+BUGWK95952 : fast/viewport/viewport-limits-adjusted-for-no-user-scale.html = TEXT
+BUGWK95952 : fast/viewport/viewport-limits-adjusted-for-no-user-scale-control.html = TEXT

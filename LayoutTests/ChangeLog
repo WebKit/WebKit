@@ -1,3 +1,18 @@
+2012-09-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Gardening after r127620, r127698 and r127704
+        https://bugs.webkit.org/show_bug.cgi?id=95963
+
+        Unreviewed gardening.
+
+        Following tests were added to TestExpectations:
+        compositing/overflow/overflow-auto-with-touch-toggle.html fails after r127620.
+        fast/dom/HTMLScriptElement/script-reexecution.html fails after r127698.
+        fast/viewport/viewport-limits-adjusted-for-no-user-scale-control.html fails after r127704.
+        fast/viewport/viewport-limits-adjusted-for-no-user-scale.html fails after r127704.
+
+        * platform/efl/TestExpectations:
+
 2012-09-06  Adam Barth  <abarth@chromium.org>
 
         Three XSLTProcessor functions don't need to be [Custom]
