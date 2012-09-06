@@ -205,6 +205,7 @@ public:
     virtual bool paintMediaVolumeSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaCurrentTime(RenderObject*, const PaintInfo&, const IntRect&);
 #endif
+    virtual bool shouldShowPlaceholderWhenFocused() const OVERRIDE { return true; }
 
     void setThemePath(const String&);
     String themePath() { return m_themePath; }
