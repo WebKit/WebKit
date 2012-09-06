@@ -213,7 +213,7 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
 #if ENABLE(VALUE_PROFILER)
     storePtr(regT1, currentInstruction[4].u.arrayProfile->addressOfLastSeenStructure());
 #endif
-    addSlowCase(branchPtr(NotEqual, Address(regT1, JSCell::classInfoOffset()), TrustedImmPtr(&JSArray::s_info)));
+    addSlowCase(branchPtr(NotEqual, Address(regT1, Structure::classInfoOffset()), TrustedImmPtr(&JSArray::s_info)));
     
     loadPtr(Address(regT0, JSArray::storageOffset()), regT3);
     addSlowCase(branch32(AboveOrEqual, regT2, Address(regT0, JSArray::vectorLengthOffset())));

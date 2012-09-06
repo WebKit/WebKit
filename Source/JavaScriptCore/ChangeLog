@@ -1,3 +1,13 @@
+2012-09-06  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Performance regressions on 32-bit platforms with revisions 125637 and 126387
+        https://bugs.webkit.org/show_bug.cgi?id=95953
+
+        Reviewed by Filip Pizlo.
+
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val): Fix the typo.
+
 2012-09-05  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled out <http://trac.webkit.org/changeset/127698> because it broke
