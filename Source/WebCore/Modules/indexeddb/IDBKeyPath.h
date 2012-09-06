@@ -45,8 +45,8 @@ void IDBParseKeyPath(const String&, Vector<String>&, IDBKeyPathParseError&);
 class IDBKeyPath {
 public:
     IDBKeyPath() : m_type(NullType) { }
-    IDBKeyPath(const String&);
-    IDBKeyPath(const Vector<String>& array);
+    explicit IDBKeyPath(const String&);
+    explicit IDBKeyPath(const Vector<String>& array);
 
     enum Type {
         NullType = 0,

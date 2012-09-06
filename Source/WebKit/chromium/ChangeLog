@@ -1,3 +1,14 @@
+2012-09-06  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: make IDBKeyPath's string and array constructors explicit
+        https://bugs.webkit.org/show_bug.cgi?id=96004
+
+        Reviewed by Tony Chang.
+
+        Fix test to use explicit constructor for IDBKeyPath.
+
+        * tests/IDBDatabaseBackendTest.cpp:
+
 2012-09-06  Adrienne Walker  <enne@google.com>
 
         [chromium] Remove GraphicsContext references from ContentLayerChromiumTest

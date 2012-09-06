@@ -57,12 +57,12 @@ TEST(IDBDatabaseBackendTest, BackingStoreRetention)
     EXPECT_GT(backingStore->refCount(), 1);
 
     const bool autoIncrement = false;
-    RefPtr<IDBObjectStoreBackendImpl> store = IDBObjectStoreBackendImpl::create(db.get(), "store", String("keyPath"), autoIncrement);
+    RefPtr<IDBObjectStoreBackendImpl> store = IDBObjectStoreBackendImpl::create(db.get(), "store", IDBKeyPath("keyPath"), autoIncrement);
     EXPECT_GT(backingStore->refCount(), 1);
 
     const bool unique = false;
     const bool multiEntry = false;
-    RefPtr<IDBIndexBackendImpl> index = IDBIndexBackendImpl::create(db.get(), store.get(), "index", String("keyPath"), unique, multiEntry);
+    RefPtr<IDBIndexBackendImpl> index = IDBIndexBackendImpl::create(db.get(), store.get(), "index", IDBKeyPath("keyPath"), unique, multiEntry);
     EXPECT_GT(backingStore->refCount(), 1);
 
     db.clear();
