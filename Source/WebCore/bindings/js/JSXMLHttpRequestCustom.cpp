@@ -79,6 +79,34 @@ void JSXMLHttpRequest::visitChildren(JSCell* cell, SlotVisitor& visitor)
 }
 
 // Custom functions
+JSValue JSXMLHttpRequest::open(ExecState* exec)
+{
+    if (exec->argumentCount() < 2)
+        return throwError(exec, createNotEnoughArgumentsError(exec));
+
+    const KURL& url = impl()->scriptExecutionContext()->completeURL(exec->argument(1).toString(exec)->value(exec));
+    String method = exec->argument(0).toString(exec)->value(exec);
+
+    ExceptionCode ec = 0;
+    if (exec->argumentCount() >= 3) {
+        bool async = exec->argument(2).toBoolean(exec);
+
+        if (exec->argumentCount() >= 4 && !exec->argument(3).isUndefined()) {
+            String user = valueToStringWithNullCheck(exec, exec->argument(3));
+
+            if (exec->argumentCount() >= 5 && !exec->argument(4).isUndefined()) {
+                String password = valueToStringWithNullCheck(exec, exec->argument(4));
+                impl()->open(method, url, async, user, password, ec);
+            } else
+                impl()->open(method, url, async, user, ec);
+        } else
+            impl()->open(method, url, async, ec);
+    } else
+        impl()->open(method, url, ec);
+
+    setDOMException(exec, ec);
+    return jsUndefined();
+}
 
 JSValue JSXMLHttpRequest::send(ExecState* exec)
 {
