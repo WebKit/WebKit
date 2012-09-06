@@ -143,7 +143,7 @@ void Options::initialize()
     useDFGJIT() = false;
 #endif
 #if !ENABLE(YARR_JIT)
-    useYarrJIT() = false;
+    useRegExpJIT() = false;
 #endif
 
     // Do range checks where needed and make corrections to the options:

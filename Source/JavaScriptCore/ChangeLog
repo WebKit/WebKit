@@ -1,3 +1,24 @@
+2012-09-06  Mark Lam  <mark.lam@apple.com>
+
+        Renamed useYarrJIT() option to useRegExpJIT(). Also fixed regression in
+        which inadvertantly allows the ASM llint to use the baseline JIT when
+        useRegExpJIT() is true.
+        https://bugs.webkit.org/show_bug.cgi?id=95918.
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::enableAssembler):
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::canUseJIT):
+        (JSC::JSGlobalData::canUseRegExpJIT):
+        (JSGlobalData):
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+        * runtime/Options.h:
+        (JSC):
+
 2012-09-06  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for Interpreter after r127698.

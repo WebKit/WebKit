@@ -100,7 +100,7 @@ extern const HashTable stringConstructorTable;
 #if ENABLE(ASSEMBLER) && (ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT))
 static bool enableAssembler(ExecutableAllocator& executableAllocator)
 {
-    if (!executableAllocator.isValid() || (!Options::useJIT() && !Options::useYarrJIT()))
+    if (!executableAllocator.isValid() || (!Options::useJIT() && !Options::useRegExpJIT()))
         return false;
 
 #if USE(CF)
@@ -182,6 +182,8 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , m_newStringsSinceLastHashConst(0)
 #if ENABLE(ASSEMBLER) && (ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT))
     , m_canUseAssembler(enableAssembler(executableAllocator))
+    , m_canUseJIT(m_canUseAssembler && Options::useJIT())
+    , m_canUseRegExpJIT(m_canUseAssembler && Options::useRegExpJIT())
 #endif
 #if ENABLE(GC_VALIDATION)
     , m_initializingObjectClass(0)
