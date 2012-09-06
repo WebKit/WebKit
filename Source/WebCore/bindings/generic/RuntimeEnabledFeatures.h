@@ -129,10 +129,6 @@ public:
     static bool webkitAudioContextEnabled() { return isWebAudioEnabled; }
 #endif
 
-    static void setPushStateEnabled(bool isEnabled) { isPushStateEnabled = isEnabled; }
-    static bool pushStateEnabled() { return isPushStateEnabled; }
-    static bool replaceStateEnabled() { return isPushStateEnabled; }
-
 #if ENABLE(TOUCH_EVENTS)
     static bool touchEnabled() { return isTouchEnabled; }
     static void setTouchEnabled(bool isEnabled) { isTouchEnabled = isEnabled; }
@@ -276,7 +272,6 @@ private:
     static bool isGeolocationEnabled;
     static bool isIndexedDBEnabled;
     static bool isWebAudioEnabled;
-    static bool isPushStateEnabled;
     static bool isTouchEnabled;
     static bool isDeviceMotionEnabled;
     static bool isDeviceOrientationEnabled;

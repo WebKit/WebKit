@@ -204,14 +204,13 @@ bool WebRuntimeFeatures::isWebAudioEnabled()
 #endif
 }
 
-void WebRuntimeFeatures::enablePushState(bool enable)
+void WebRuntimeFeatures::enablePushState(bool)
 {
-    RuntimeEnabledFeatures::setPushStateEnabled(enable);
 }
 
 bool WebRuntimeFeatures::isPushStateEnabled(bool enable)
 {
-    return RuntimeEnabledFeatures::pushStateEnabled();
+    return true;
 }
 
 void WebRuntimeFeatures::enableTouch(bool enable)

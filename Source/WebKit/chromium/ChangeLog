@@ -1,3 +1,19 @@
+2012-09-05  Mihai Parparita  <mihaip@chromium.org>
+
+        [Chromium] history.{push,replace}State should no longer be V8EnabledAtRuntime
+        https://bugs.webkit.org/show_bug.cgi?id=95865
+
+        Reviewed by Darin Fisher.
+
+        Make WebRuntimeFeatures::{enablePushState,isPushStateEnabled} into
+        no-ops.
+
+        * public/WebRuntimeFeatures.h:
+        (WebRuntimeFeatures):
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enablePushState):
+        (WebKit::WebRuntimeFeatures::isPushStateEnabled):
+
 2012-09-05  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove getRenderStyleForStrike from PlatformSupport

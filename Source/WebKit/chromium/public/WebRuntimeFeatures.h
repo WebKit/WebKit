@@ -63,7 +63,7 @@ public:
 
     WEBKIT_EXPORT static void enableApplicationCache(bool);
     WEBKIT_EXPORT static bool isApplicationCacheEnabled();
-    
+
     WEBKIT_EXPORT static void enableDataTransferItems(bool);
     WEBKIT_EXPORT static bool isDataTransferItemsEnabled();
 
@@ -76,6 +76,7 @@ public:
     WEBKIT_EXPORT static void enableWebAudio(bool);
     WEBKIT_EXPORT static bool isWebAudioEnabled();
 
+    // TODO: Remove these (since they're no-ops) once Chromium code stops calling them.
     WEBKIT_EXPORT static void enablePushState(bool);
     WEBKIT_EXPORT static bool isPushStateEnabled(bool);
 
@@ -99,7 +100,7 @@ public:
 
     WEBKIT_EXPORT static void enableFileSystem(bool);
     WEBKIT_EXPORT static bool isFileSystemEnabled();
-    
+
     WEBKIT_EXPORT static void enableJavaScriptI18NAPI(bool);
     WEBKIT_EXPORT static bool isJavaScriptI18NAPIEnabled();
 
