@@ -536,6 +536,10 @@ webkit_set_cache_model
 <SUBSECTION ContextMenuItem>
 WebKitContextMenuAction
 webkit_context_menu_item_get_action
+<SUBSECTION SecurityPolicy>
+WebKitSecurityPolicy
+webkit_set_security_policy_for_uri_scheme
+webkit_get_security_policy_for_uri_scheme
 <SUBSECTION Private>
 WEBKITGTK_API_VERSION
 </SECTION>

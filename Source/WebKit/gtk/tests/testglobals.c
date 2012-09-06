@@ -45,6 +45,58 @@ static void test_globals_default_session()
     g_assert(soup_session_get_feature(session, WEBKIT_TYPE_SOUP_AUTH_DIALOG) == NULL);
 }
 
+static void test_globals_security_policy()
+{
+    // Check default policy for well known schemes.
+    WebKitSecurityPolicy policy = webkit_get_security_policy_for_uri_scheme("http");
+    guint mask = WEBKIT_SECURITY_POLICY_CORS_ENABLED;
+    g_assert_cmpuint(policy & mask, ==, mask);
+
+    policy = webkit_get_security_policy_for_uri_scheme("https");
+    mask = WEBKIT_SECURITY_POLICY_SECURE | WEBKIT_SECURITY_POLICY_CORS_ENABLED;
+    g_assert_cmpuint(policy & mask, ==, mask);
+
+    policy = webkit_get_security_policy_for_uri_scheme("file");
+    mask = WEBKIT_SECURITY_POLICY_LOCAL;
+    g_assert_cmpuint(policy & mask, ==, mask);
+
+    policy = webkit_get_security_policy_for_uri_scheme("data");
+    mask = WEBKIT_SECURITY_POLICY_NO_ACCESS_TO_OTHER_SCHEME | WEBKIT_SECURITY_POLICY_SECURE;
+    g_assert_cmpuint(policy & mask, ==, mask);
+
+    policy = webkit_get_security_policy_for_uri_scheme("about");
+    mask = WEBKIT_SECURITY_POLICY_NO_ACCESS_TO_OTHER_SCHEME | WEBKIT_SECURITY_POLICY_SECURE | WEBKIT_SECURITY_POLICY_EMPTY_DOCUMENT;
+    g_assert_cmpuint(policy & mask, ==, mask);
+
+    // Custom scheme.
+    policy = webkit_get_security_policy_for_uri_scheme("foo");
+    g_assert(!policy);
+
+    policy |= WEBKIT_SECURITY_POLICY_LOCAL;
+    webkit_set_security_policy_for_uri_scheme("foo", policy);
+    g_assert_cmpuint(webkit_get_security_policy_for_uri_scheme("foo"), ==, policy);
+
+    policy |= WEBKIT_SECURITY_POLICY_NO_ACCESS_TO_OTHER_SCHEME;
+    webkit_set_security_policy_for_uri_scheme("foo", policy);
+    g_assert_cmpuint(webkit_get_security_policy_for_uri_scheme("foo"), ==, policy);
+
+    policy |= WEBKIT_SECURITY_POLICY_DISPLAY_ISOLATED;
+    webkit_set_security_policy_for_uri_scheme("foo", policy);
+    g_assert_cmpuint(webkit_get_security_policy_for_uri_scheme("foo"), ==, policy);
+
+    policy |= WEBKIT_SECURITY_POLICY_SECURE;
+    webkit_set_security_policy_for_uri_scheme("foo", policy);
+    g_assert_cmpuint(webkit_get_security_policy_for_uri_scheme("foo"), ==, policy);
+
+    policy |= WEBKIT_SECURITY_POLICY_CORS_ENABLED;
+    webkit_set_security_policy_for_uri_scheme("foo", policy);
+    g_assert_cmpuint(webkit_get_security_policy_for_uri_scheme("foo"), ==, policy);
+
+    policy |= WEBKIT_SECURITY_POLICY_EMPTY_DOCUMENT;
+    webkit_set_security_policy_for_uri_scheme("foo", policy);
+    g_assert_cmpuint(webkit_get_security_policy_for_uri_scheme("foo"), ==, policy);
+}
+
 int main(int argc, char** argv)
 {
     gtk_test_init(&argc, &argv, NULL);
@@ -52,6 +104,8 @@ int main(int argc, char** argv)
     g_test_bug_base("https://bugs.webkit.org/");
     g_test_add_func("/webkit/globals/default_session",
                     test_globals_default_session);
+    g_test_add_func("/webkit/globals/security-policy",
+                    test_globals_security_policy);
     return g_test_run();
 }
 

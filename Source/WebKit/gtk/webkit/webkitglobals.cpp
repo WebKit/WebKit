@@ -40,6 +40,7 @@
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
+#include "SchemeRegistry.h"
 #include "webkitapplicationcache.h"
 #include "webkitfavicondatabase.h"
 #include "webkitglobalsprivate.h"
@@ -489,6 +490,71 @@ WebKitContextMenuAction webkit_context_menu_item_get_action(GtkMenuItem* item)
 #else
     return WEBKIT_CONTEXT_MENU_ACTION_NO_ACTION;
 #endif
+}
+
+/**
+ * webkit_set_security_policy_for_uri_scheme:
+ * @scheme: a URI scheme
+ * @policy: a #WebKitSecurityPolicy
+ *
+ * Set the security policy for the given URI scheme.
+ *
+ * Since: 2.0
+ */
+void webkit_set_security_policy_for_uri_scheme(const char *scheme, WebKitSecurityPolicy policy)
+{
+    g_return_if_fail(scheme);
+
+    if (!policy)
+        return;
+
+    String urlScheme = String::fromUTF8(scheme);
+
+    if (policy & WEBKIT_SECURITY_POLICY_LOCAL)
+        SchemeRegistry::registerURLSchemeAsLocal(urlScheme);
+    if (policy & WEBKIT_SECURITY_POLICY_NO_ACCESS_TO_OTHER_SCHEME)
+        SchemeRegistry::registerURLSchemeAsNoAccess(urlScheme);
+    if (policy & WEBKIT_SECURITY_POLICY_DISPLAY_ISOLATED)
+        SchemeRegistry::registerURLSchemeAsDisplayIsolated(urlScheme);
+    if (policy & WEBKIT_SECURITY_POLICY_SECURE)
+        SchemeRegistry::registerURLSchemeAsSecure(urlScheme);
+    if (policy & WEBKIT_SECURITY_POLICY_CORS_ENABLED)
+        SchemeRegistry::registerURLSchemeAsCORSEnabled(urlScheme);
+    if (policy & WEBKIT_SECURITY_POLICY_EMPTY_DOCUMENT)
+        SchemeRegistry::registerURLSchemeAsEmptyDocument(urlScheme);
+}
+
+/**
+ * webkit_get_security_policy_for_uri_scheme:
+ * @scheme: a URI scheme
+ *
+ * Get the security policy for the given URI scheme.
+ *
+ * Returns: a #WebKitSecurityPolicy
+ *
+ * Since: 2.0
+ */
+WebKitSecurityPolicy webkit_get_security_policy_for_uri_scheme(const char *scheme)
+{
+    g_return_val_if_fail(scheme, static_cast<WebKitSecurityPolicy>(0));
+
+    guint policy = 0;
+    String urlScheme = String::fromUTF8(scheme);
+
+    if (SchemeRegistry::shouldTreatURLSchemeAsLocal(urlScheme))
+        policy |= WEBKIT_SECURITY_POLICY_LOCAL;
+    if (SchemeRegistry::shouldTreatURLSchemeAsNoAccess(urlScheme))
+        policy |= WEBKIT_SECURITY_POLICY_NO_ACCESS_TO_OTHER_SCHEME;
+    if (SchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated(urlScheme))
+        policy |= WEBKIT_SECURITY_POLICY_DISPLAY_ISOLATED;
+    if (SchemeRegistry::shouldTreatURLSchemeAsSecure(urlScheme))
+        policy |= WEBKIT_SECURITY_POLICY_SECURE;
+    if (SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(urlScheme))
+        policy |= WEBKIT_SECURITY_POLICY_CORS_ENABLED;
+    if (SchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(urlScheme))
+        policy |= WEBKIT_SECURITY_POLICY_EMPTY_DOCUMENT;
+
+    return static_cast<WebKitSecurityPolicy>(policy);
 }
 
 void webkitInit()

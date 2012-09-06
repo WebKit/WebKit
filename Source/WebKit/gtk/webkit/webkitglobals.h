@@ -142,6 +142,35 @@ typedef enum {
     WEBKIT_CONTEXT_MENU_ACTION_MEDIA_MUTE
 } WebKitContextMenuAction;
 
+/**
+ * WebKitSecurityPolicy:
+ * @WEBKIT_SECURITY_POLICY_LOCAL: Local URI scheme, other non-local pages
+ *   cannot link to or access URIs of this scheme.
+ * @WEBKIT_SECURITY_POLICY_NO_ACCESS_TO_OTHER_SCHEME: Pages loaded with this URI scheme
+ *   cannot access pages loaded with any other URI scheme.
+ * @WEBKIT_SECURITY_POLICY_DISPLAY_ISOLATED: Pages cannot display these URIs
+ *   unless they are from the same scheme.
+ * @WEBKIT_SECURITY_POLICY_SECURE: Secure URI scheme, doesn't generate mixed
+ *   content warnings when included by an HTTPS page.
+ * @WEBKIT_SECURITY_POLICY_CORS_ENABLED: URI scheme that can be sent
+ *   CORS (Cross-origin resource sharing) requests. See W3C CORS specification
+ *   http://www.w3.org/TR/cors/.
+ * @WEBKIT_SECURITY_POLICY_EMPTY_DOCUMENT: Strictly empty documents allowed
+ *   to commit synchronously.
+ *
+ * Flags used to represent the security policy of a URI scheme.
+ *
+ * Since: 2.0
+ */
+typedef enum {
+    WEBKIT_SECURITY_POLICY_LOCAL                     = 1 << 1,
+    WEBKIT_SECURITY_POLICY_NO_ACCESS_TO_OTHER_SCHEME = 1 << 2,
+    WEBKIT_SECURITY_POLICY_DISPLAY_ISOLATED          = 1 << 3,
+    WEBKIT_SECURITY_POLICY_SECURE                    = 1 << 4,
+    WEBKIT_SECURITY_POLICY_CORS_ENABLED              = 1 << 5,
+    WEBKIT_SECURITY_POLICY_EMPTY_DOCUMENT            = 1 << 6
+} WebKitSecurityPolicy;
+
 WEBKIT_API SoupSession*
 webkit_get_default_session                      (void);
 
@@ -170,6 +199,13 @@ webkit_set_text_checker                        (GObject*  checker);
 
 WEBKIT_API WebKitContextMenuAction
 webkit_context_menu_item_get_action            (GtkMenuItem* item);
+
+WEBKIT_API void
+webkit_set_security_policy_for_uri_scheme      (const gchar         *scheme,
+                                                WebKitSecurityPolicy policy);
+
+WEBKIT_API WebKitSecurityPolicy
+webkit_get_security_policy_for_uri_scheme      (const gchar         *scheme);
 
 G_END_DECLS
 
