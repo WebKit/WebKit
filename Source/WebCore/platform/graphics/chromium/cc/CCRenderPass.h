@@ -62,6 +62,9 @@ class CCRenderPass {
 public:
     static PassOwnPtr<CCRenderPass> create(int id, IntRect outputRect, const WebKit::WebTransformationMatrix& transformToRootTarget);
 
+    // A shallow copy of the render pass, which does not include its quads.
+    PassOwnPtr<CCRenderPass> copy(int newId) const;
+
     void appendQuadsForLayer(CCLayerImpl*, CCOcclusionTrackerImpl*, CCAppendQuadsData&);
     void appendQuadsForRenderSurfaceLayer(CCLayerImpl*, const CCRenderPass* contributingRenderPass, CCOcclusionTrackerImpl*, CCAppendQuadsData&);
     void appendQuadsToFillScreen(CCLayerImpl* rootLayer, SkColor screenBackgroundColor, const CCOcclusionTrackerImpl&);

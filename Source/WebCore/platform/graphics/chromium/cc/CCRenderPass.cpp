@@ -53,6 +53,19 @@ CCRenderPass::CCRenderPass(int id, IntRect outputRect, const WebKit::WebTransfor
     ASSERT(id > 0);
 }
 
+PassOwnPtr<CCRenderPass> CCRenderPass::copy(int newId) const
+{
+    ASSERT(newId != m_id);
+
+    OwnPtr<CCRenderPass> copyPass(create(newId, m_outputRect, m_transformToRootTarget));
+    copyPass->setDamageRect(m_damageRect);
+    copyPass->setHasTransparentBackground(m_hasTransparentBackground);
+    copyPass->setHasOcclusionFromOutsideTargetSurface(m_hasOcclusionFromOutsideTargetSurface);
+    copyPass->setFilters(m_filters);
+    copyPass->setBackgroundFilters(m_backgroundFilters);
+    return copyPass.release();
+}
+
 void CCRenderPass::appendQuadsForLayer(CCLayerImpl* layer, CCOcclusionTrackerImpl* occlusionTracker, CCAppendQuadsData& appendQuadsData)
 {
     const bool forSurface = false;

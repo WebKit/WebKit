@@ -140,6 +140,7 @@
             'tests/CCOcclusionTrackerTestCommon.h',
             'tests/CCPrioritizedTextureTest.cpp',
             'tests/CCQuadCullerTest.cpp',
+            'tests/CCRenderPassTest.cpp',
             'tests/CCRenderSurfaceFiltersTest.cpp',
             'tests/CCRenderSurfaceTest.cpp',
             'tests/CCRendererGLTest.cpp',
