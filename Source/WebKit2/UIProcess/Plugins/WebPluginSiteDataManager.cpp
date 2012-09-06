@@ -170,8 +170,7 @@ void WebPluginSiteDataManager::getSitesWithData(PassRefPtr<ArrayCallback> prpCal
     for (size_t i = 0; i < plugins.size(); ++i)
         pluginPaths.append(plugins[i].path);
 
-    // FIXME (Multi-WebProcess): When multi-process is enabled, we must always use a plug-in process for this,
-    // so this code should just be removed.
+    ASSERT(m_webContext->processModel() == ProcessModelSharedSecondaryProcess); // Plugin process is required for multiple WebProcess mode.
     m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebProcess::GetSitesWithPluginData(pluginPaths, callbackID));
 #endif
 }
@@ -233,8 +232,7 @@ void WebPluginSiteDataManager::clearSiteData(ImmutableArray* sites, uint64_t fla
     for (size_t i = 0; i < plugins.size(); ++i)
         pluginPaths.append(plugins[i].path);
 
-    // FIXME (Multi-WebProcess): When multi-process is enabled, we must always use a plug-in process for this,
-    // so this code should just be removed.
+    ASSERT(m_webContext->processModel() == ProcessModelSharedSecondaryProcess); // Plugin process is required for multiple WebProcess mode.
     m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebProcess::ClearPluginSiteData(pluginPaths, sitesVector, flags, maxAgeInSeconds, callbackID));
 #endif
 }

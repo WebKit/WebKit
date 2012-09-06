@@ -68,7 +68,7 @@ void WebResourceCacheManagerProxy::getCacheOrigins(PassRefPtr<ArrayCallback> prp
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
 
-    // FIXME (Multi-WebProcess): When multi-process is enabled, we need to aggregate the callback data from all processes.
+    // FIXME (Multi-WebProcess): <rdar://problem/12239765> When multi-process is enabled, we need to aggregate the callback data from all processes.
     m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::GetCacheOrigins(callbackID));
 }
 
@@ -85,11 +85,13 @@ void WebResourceCacheManagerProxy::clearCacheForOrigin(WebSecurityOrigin* origin
     securityOrigin.host = origin->host();
     securityOrigin.port = origin->port();
 
+    // FIXME (Multi-WebProcess): <rdar://problem/12239765> There is no need to relaunch all processes. One process to take care of persistent cache is enough.
     m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForOrigin(securityOrigin, cachesToClear));
 }
 
 void WebResourceCacheManagerProxy::clearCacheForAllOrigins(ResourceCachesToClear cachesToClear)
 {
+    // FIXME (Multi-WebProcess): <rdar://problem/12239765> There is no need to relaunch all processes. One process to take care of persistent cache is enough.
     m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForAllOrigins(cachesToClear));
 }
 

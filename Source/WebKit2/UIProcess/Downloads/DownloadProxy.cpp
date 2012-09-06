@@ -65,7 +65,7 @@ void DownloadProxy::cancel()
     if (!m_webContext)
         return;
 
-    // FIXME (Multi-WebProcess): Downloads shouldn't be handled in the web process.
+    // FIXME (Multi-WebProcess): <rdar://problem/12239483> Downloads shouldn't be handled in the web process.
     m_webContext->sendToAllProcesses(Messages::WebProcess::CancelDownload(m_downloadID));
 }
 
@@ -98,7 +98,8 @@ void DownloadProxy::didReceiveAuthenticationChallenge(const AuthenticationChalle
     if (!m_webContext)
         return;
 
-    // FIXME (Multi-WebProcess): Get rid of deprecatedSharedProcess.
+    // FIXME (Multi-WebProcess): <rdar://problem/12239483> Downloads shouldn't be handled in the web process.
+    // Once this is fixed, remove WebContext::deprecatedSharedProcess().
     RefPtr<AuthenticationChallengeProxy> authenticationChallengeProxy = AuthenticationChallengeProxy::create(authenticationChallenge, challengeID, m_webContext->deprecatedSharedProcess());
     m_webContext->downloadClient().didReceiveAuthenticationChallenge(m_webContext, this, authenticationChallengeProxy.get());
 }
@@ -194,7 +195,7 @@ void DownloadProxy::startTransfer(const String& filename)
     if (!m_webContext)
         return;
 
-    // FIXME (Multi-WebProcess): Downloads shouldn't be handled in the web process.
+    // FIXME (Multi-WebProcess): <rdar://problem/12239483> Downloads shouldn't be handled in the web process.
     m_webContext->sendToAllProcesses(Messages::WebProcess::StartTransfer(m_downloadID, filename));
 }
 #endif

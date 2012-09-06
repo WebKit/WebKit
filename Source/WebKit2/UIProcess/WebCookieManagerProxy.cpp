@@ -76,7 +76,7 @@ void WebCookieManagerProxy::getHostnamesWithCookies(PassRefPtr<ArrayCallback> pr
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
 
-    // FIXME (Multi-WebProcess): Cookies shouldn't be stored in the web process.
+    // FIXME (Multi-WebProcess): <rdar://problem/12239765> Cookies shouldn't be stored in the web process.
     m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebCookieManager::GetHostnamesWithCookies(callbackID));
 }
     
@@ -145,7 +145,8 @@ void WebCookieManagerProxy::getHTTPCookieAcceptPolicy(PassRefPtr<HTTPCookieAccep
     uint64_t callbackID = callback->callbackID();
     m_httpCookieAcceptPolicyCallbacks.set(callbackID, callback.release());
 
-    // FIXME (Multi-WebProcess): Cookies shouldn't be stored in the web process.
+    // FIXME (Multi-WebProcess): <rdar://problem/12240189> Make cookie policies work with per-tab WebProcess.
+    // We can't ber asking all web processes for this information.
     m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebCookieManager::GetHTTPCookieAcceptPolicy(callbackID));
 }
 
