@@ -38003,6 +38003,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\WebKitCSSArrayFunctionValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\WebKitCSSArrayFunctionValue.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\WebKitCSSFilterValue.cpp"
 				>
 			</File>

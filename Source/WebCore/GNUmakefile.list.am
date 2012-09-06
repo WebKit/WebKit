@@ -2627,6 +2627,8 @@ webcore_sources += \
 	Source/WebCore/css/SVGCSSComputedStyleDeclaration.cpp \
 	Source/WebCore/css/SVGCSSParser.cpp \
 	Source/WebCore/css/SVGCSSStyleSelector.cpp \
+    Source/WebCore/css/WebKitCSSArrayFunctionValue.cpp \
+    Source/WebCore/css/WebKitCSSArrayFunctionValue.h \
 	Source/WebCore/css/WebKitCSSFilterValue.cpp \
 	Source/WebCore/css/WebKitCSSFilterValue.h \
 	Source/WebCore/css/WebKitCSSKeyframeRule.cpp \

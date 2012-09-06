@@ -2645,6 +2645,8 @@
             'css/StyleSheetContents.h',
             'css/StyleSheetList.cpp',
             'css/StyleSheetList.h',
+            'css/WebKitCSSArrayFunctionValue.cpp',
+            'css/WebKitCSSArrayFunctionValue.h',
             'css/WebKitCSSFilterValue.cpp',
             'css/WebKitCSSKeyframeRule.cpp',
             'css/WebKitCSSKeyframeRule.h',

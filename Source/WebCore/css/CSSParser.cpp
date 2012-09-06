@@ -105,6 +105,7 @@
 #endif
 
 #if ENABLE(CSS_SHADERS)
+#include "WebKitCSSArrayFunctionValue.h"
 #include "WebKitCSSMixFunctionValue.h"
 #include "WebKitCSSShaderValue.h"
 #endif
@@ -7503,6 +7504,41 @@ static bool acceptCommaOperator(CSSParserValueList* argsList)
     return true;
 }
 
+PassRefPtr<WebKitCSSArrayFunctionValue> CSSParser::parseCustomFilterArrayFunction(CSSParserValue* value)
+{
+    ASSERT(value->unit == CSSParserValue::Function && value->function);
+
+    if (!equalIgnoringCase(value->function->name, "array("))
+        return 0;
+
+    CSSParserValueList* arrayArgsParserValueList = value->function->args.get();
+    if (!arrayArgsParserValueList || !arrayArgsParserValueList->size())
+        return 0;
+
+    // array() values are comma separated.
+    RefPtr<WebKitCSSArrayFunctionValue> arrayFunction = WebKitCSSArrayFunctionValue::create();
+    while (true) {
+        // We parse pairs <Value, Comma> at each step.
+        CSSParserValue* currentParserValue = arrayArgsParserValueList->current();
+        if (!currentParserValue || !validUnit(currentParserValue, FNumber, CSSStrictMode))
+            return 0;
+
+        RefPtr<CSSValue> arrayValue = cssValuePool().createValue(currentParserValue->fValue, CSSPrimitiveValue::CSS_NUMBER);
+        arrayFunction->append(arrayValue.release());
+
+        CSSParserValue* nextParserValue = arrayArgsParserValueList->next();
+        if (!nextParserValue)
+            break;
+
+        if (!isComma(nextParserValue))
+            return 0;
+
+        arrayArgsParserValueList->next();
+    }
+
+    return arrayFunction;
+}
+
 PassRefPtr<WebKitCSSMixFunctionValue> CSSParser::parseMixFunction(CSSParserValue* value)
 {
     ASSERT(value->unit == CSSParserValue::Function && value->function);
@@ -7671,13 +7707,19 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilter(CSSParserValue* va
 
         RefPtr<CSSValue> parameterValue;
 
-        if (arg->unit == CSSParserValue::Function && arg->function)
+        if (arg->unit == CSSParserValue::Function && arg->function) {
             // TODO: Implement other parameters types parsing.
             // textures: https://bugs.webkit.org/show_bug.cgi?id=71442
             // mat2, mat3, mat4: https://bugs.webkit.org/show_bug.cgi?id=71444
-            // array: https://bugs.webkit.org/show_bug.cgi?id=94226
             // 3d-transform shall be the last to be checked
-            parameterValue = parseCustomFilterTransform(argsList);
+            if (equalIgnoringCase(arg->function->name, "array(")) {
+                parameterValue = parseCustomFilterArrayFunction(arg);
+                // This parsing step only consumes function arguments,
+                // argsList is therefore moved forward explicitely.
+                argsList->next();
+            } else
+                parameterValue = parseCustomFilterTransform(argsList);
+        }
         else {
             RefPtr<CSSValueList> paramValueList = CSSValueList::createSpaceSeparated();
             while ((arg = argsList->current())) {

@@ -288,6 +288,106 @@ Valid transform with invalid characters : custom(none url(shader),someId rotate(
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Empty array() : custom(none url(shader), id array())
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+One comma in array() : custom(none url(shader), id array(,))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Multile commas in array() : custom(none url(shader), id array(,,,))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Multiple commas with a value in array() : custom(none url(shader), id array(,,1,))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+One comma followed by a negative value in array() : custom(none url(shader), id array(,-4))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+One comma followed by a value in array() : custom(none url(shader), id array(,4))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+One negative value followed by a comma in array() : custom(none url(shader), id array(-4,))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+One value followed by a comma in array() : custom(none url(shader), id array(4,))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+A series of correct values followed by a comma in array() : custom(none url(shader), id array(1, 2, 3, 4,))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+A series of correct values followed by a letter in array() : custom(none url(shader), id array(1, 2, 3, 4, x))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Two commas as separator between values in array() : custom(none url(shader), id array(1, 2, , 4))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Leading comma in array() : custom(none url(shader), id array(,1, 2, 3, 4))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Semicolon separated values in array() : custom(none url(shader), id array(1; 2; 3; 4))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Space separated values in array() : custom(none url(shader), id array(1 2 3 4))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Space separated values with comma terminator in array() : custom(none url(shader), id array(1 2 3 4,))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Space separated values with leading comma in array() : custom(none url(shader), id array(, 1 2 3 4))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Invalid unit value in array() : custom(none url(shader), id array(1px))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Invalid unit value in array(), second : custom(none url(shader), id array(none))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Invalid unit value in array(), third : custom(none url(shader), id array(1deg))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Invalid unit value in array(), at the end of a partially valid value list : custom(none url(shader), id array(1, 2, 3, 4px))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

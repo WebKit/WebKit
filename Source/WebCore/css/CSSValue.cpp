@@ -56,6 +56,7 @@
 #include "ShadowValue.h"
 #include "SVGColor.h"
 #include "SVGPaint.h"
+#include "WebKitCSSArrayFunctionValue.h"
 #include "WebKitCSSFilterValue.h"
 #include "WebKitCSSMixFunctionValue.h"
 #include "WebKitCSSShaderValue.h"
@@ -229,6 +230,9 @@ void CSSValue::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
         static_cast<const CSSCalcValue*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
 #if ENABLE(CSS_FILTERS) && ENABLE(CSS_SHADERS)
+    case WebKitCSSArrayFunctionValueClass:
+        static_cast<const WebKitCSSArrayFunctionValue*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
+        return;
     case WebKitCSSMixFunctionValueClass:
         static_cast<const WebKitCSSMixFunctionValue*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
@@ -339,6 +343,8 @@ String CSSValue::cssText() const
     case WebKitCSSFilterClass:
         return static_cast<const WebKitCSSFilterValue*>(this)->customCssText();
 #if ENABLE(CSS_SHADERS)
+    case WebKitCSSArrayFunctionValueClass:
+        return static_cast<const WebKitCSSArrayFunctionValue*>(this)->customCssText();
     case WebKitCSSMixFunctionValueClass:
         return static_cast<const WebKitCSSMixFunctionValue*>(this)->customCssText();
     case WebKitCSSShaderClass:
@@ -473,6 +479,9 @@ void CSSValue::destroy()
         delete static_cast<WebKitCSSFilterValue*>(this);
         return;
 #if ENABLE(CSS_SHADERS)
+    case WebKitCSSArrayFunctionValueClass:
+        delete static_cast<WebKitCSSArrayFunctionValue*>(this);
+        return;
     case WebKitCSSMixFunctionValueClass:
         delete static_cast<WebKitCSSMixFunctionValue*>(this);
         return;
@@ -515,6 +524,8 @@ PassRefPtr<CSSValue> CSSValue::cloneForCSSOM() const
     case WebKitCSSFilterClass:
         return static_cast<const WebKitCSSFilterValue*>(this)->cloneForCSSOM();
 #if ENABLE(CSS_SHADERS)
+    case WebKitCSSArrayFunctionValueClass:
+        return static_cast<const WebKitCSSArrayFunctionValue*>(this)->cloneForCSSOM();
     case WebKitCSSMixFunctionValueClass:
         return static_cast<const WebKitCSSMixFunctionValue*>(this)->cloneForCSSOM();
 #endif

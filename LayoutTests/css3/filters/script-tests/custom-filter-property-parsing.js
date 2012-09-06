@@ -163,3 +163,28 @@ testFilterRule("Custom with one transform",
 testFilterRule("Custom with multiple transforms",
             "custom(none url(fragment.shader), multipleTransform rotate(0deg) perspective(0) scale(0, 0) translate(0px, 0px))",
             "custom(none url(fragment.shader), multipleTransform rotate(0deg) perspective(0) scale(0, 0) translate(0px, 0px))");
+
+testFilterRule("Custom with two separate transforms",
+            "custom(none url(fragment.shader), firstTransform rotate(0deg), secondTransform rotate(0deg))",
+            "custom(none url(fragment.shader), firstTransform rotate(0deg), secondTransform rotate(0deg))");
+
+testFilterRule("Custom with a single element array()",
+            "custom(none url(fragment.shader), t0 array(1))",
+            "custom(none url(fragment.shader), t0 array(1))");
+
+
+testFilterRule("Custom with a single negative element array()",
+            "custom(none url(fragment.shader), t1 array(-1.01))",
+            "custom(none url(fragment.shader), t1 array(-1.01))");
+
+testFilterRule("Custom with multiple elements array()",
+            "custom(none url(fragment.shader), t2 array(1, 2, 3, 4, 5))",
+            "custom(none url(fragment.shader), t2 array(1, 2, 3, 4, 5))");
+
+testFilterRule("Custom with multiple signed float elements array()",
+            "custom(none url(fragment.shader), t3 array(1, -2.2, 3.14, 0.4, 5))",
+            "custom(none url(fragment.shader), t3 array(1, -2.2, 3.14, 0.4, 5))");
+
+testFilterRule("Multiple array()",
+            "custom(none url(fragment.shader), t4 array(1, -2.2, 3.14, 0.4, 5), t5 array(1, 2, 3))",
+            "custom(none url(fragment.shader), t4 array(1, -2.2, 3.14, 0.4, 5), t5 array(1, 2, 3))");

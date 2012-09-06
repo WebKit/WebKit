@@ -535,6 +535,72 @@ PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), multipleTransform rotate(0deg) perspective(0) scale(0, 0) translate(0px, 0px))'
+
+Custom with two separate transforms : custom(none url(fragment.shader), firstTransform rotate(0deg), secondTransform rotate(0deg))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), firstTransform rotate(0deg), secondTransform rotate(0deg))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), firstTransform rotate(0deg), secondTransform rotate(0deg))'
+
+Custom with a single element array() : custom(none url(fragment.shader), t0 array(1))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), t0 array(1))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), t0 array(1))'
+
+Custom with a single negative element array() : custom(none url(fragment.shader), t1 array(-1.01))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), t1 array(-1.01))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), t1 array(-1.01))'
+
+Custom with multiple elements array() : custom(none url(fragment.shader), t2 array(1, 2, 3, 4, 5))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), t2 array(1, 2, 3, 4, 5))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), t2 array(1, 2, 3, 4, 5))'
+
+Custom with multiple signed float elements array() : custom(none url(fragment.shader), t3 array(1, -2.2, 3.14, 0.4, 5))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), t3 array(1, -2.2, 3.14, 0.4, 5))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), t3 array(1, -2.2, 3.14, 0.4, 5))'
+
+Multiple array() : custom(none url(fragment.shader), t4 array(1, -2.2, 3.14, 0.4, 5), t5 array(1, 2, 3))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none url(fragment.shader), t4 array(1, -2.2, 3.14, 0.4, 5), t5 array(1, 2, 3))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), t4 array(1, -2.2, 3.14, 0.4, 5), t5 array(1, 2, 3))'
 PASS successfullyParsed is true
 
 TEST COMPLETE

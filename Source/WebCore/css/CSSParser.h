@@ -66,6 +66,7 @@ class StyleSheetContents;
 class StyledElement;
 
 #if ENABLE(CSS_SHADERS)
+class WebKitCSSArrayFunctionValue;
 class WebKitCSSMixFunctionValue;
 #endif
 
@@ -221,6 +222,7 @@ public:
     PassRefPtr<CSSValueList> parseFilter();
     PassRefPtr<WebKitCSSFilterValue> parseBuiltinFilterArguments(CSSParserValueList*, WebKitCSSFilterValue::FilterOperationType);
 #if ENABLE(CSS_SHADERS)
+    PassRefPtr<WebKitCSSArrayFunctionValue> parseCustomFilterArrayFunction(CSSParserValue*);
     PassRefPtr<WebKitCSSMixFunctionValue> parseMixFunction(CSSParserValue*);
     PassRefPtr<WebKitCSSFilterValue> parseCustomFilter(CSSParserValue*);
     PassRefPtr<CSSValueList> parseCustomFilterTransform(CSSParserValueList*);

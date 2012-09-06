@@ -350,6 +350,8 @@
 		14E8378E09F85D4F00B85AE4 /* JSEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E8378D09F85D4F00B85AE4 /* JSEvent.h */; };
 		14FFE31D0AE1963300136BF5 /* HTMLFrameElementBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 14FFE31B0AE1963300136BF5 /* HTMLFrameElementBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14FFE31E0AE1963300136BF5 /* HTMLFrameElementBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */; };
+		150B923915F08DC400E10986 /* WebKitCSSArrayFunctionValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 150B923715F08DC400E10986 /* WebKitCSSArrayFunctionValue.cpp */; };
+		150B923A15F08DC400E10986 /* WebKitCSSArrayFunctionValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 150B923815F08DC400E10986 /* WebKitCSSArrayFunctionValue.h */; };
 		15C7708D100D3C6B005BA267 /* ValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 15C7708A100D3C6A005BA267 /* ValidityState.h */; };
 		15C7708E100D3C6B005BA267 /* ValidityState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15C7708B100D3C6A005BA267 /* ValidityState.cpp */; };
 		15C77093100D3CA8005BA267 /* JSValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 15C77091100D3CA8005BA267 /* JSValidityState.h */; };
@@ -7388,6 +7390,8 @@
 		14E8378D09F85D4F00B85AE4 /* JSEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSEvent.h; sourceTree = "<group>"; };
 		14FFE31B0AE1963300136BF5 /* HTMLFrameElementBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLFrameElementBase.h; sourceTree = "<group>"; };
 		14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFrameElementBase.cpp; sourceTree = "<group>"; };
+		150B923715F08DC400E10986 /* WebKitCSSArrayFunctionValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSArrayFunctionValue.cpp; sourceTree = "<group>"; };
+		150B923815F08DC400E10986 /* WebKitCSSArrayFunctionValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSArrayFunctionValue.h; sourceTree = "<group>"; };
 		15C77089100D3C6A005BA267 /* ValidityState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ValidityState.idl; sourceTree = "<group>"; };
 		15C7708A100D3C6A005BA267 /* ValidityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidityState.h; sourceTree = "<group>"; };
 		15C7708B100D3C6A005BA267 /* ValidityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValidityState.cpp; sourceTree = "<group>"; };
@@ -21241,6 +21245,8 @@
 				B2227B030D00BFF10071B782 /* SVGCSSStyleSelector.cpp */,
 				B2227B040D00BFF10071B782 /* SVGCSSValueKeywords.in */,
 				BC5EC1760A507E3E006007F5 /* view-source.css */,
+				150B923715F08DC400E10986 /* WebKitCSSArrayFunctionValue.cpp */,
+				150B923815F08DC400E10986 /* WebKitCSSArrayFunctionValue.h */,
 				3106036C14327D2E00ABF4BA /* WebKitCSSFilterValue.cpp */,
 				3106036D14327D2E00ABF4BA /* WebKitCSSFilterValue.h */,
 				3106036E14327D2E00ABF4BA /* WebKitCSSFilterValue.idl */,
@@ -25376,6 +25382,7 @@
 				31C0FF220E4CEB6E007D6FE5 /* WebKitAnimationEvent.h in Headers */,
 				319E69B613299BBD004AC91A /* WebKitAnimationList.h in Headers */,
 				976D6C7C122B8A3D001FD1F7 /* WebKitBlobBuilder.h in Headers */,
+				150B923A15F08DC400E10986 /* WebKitCSSArrayFunctionValue.h in Headers */,
 				3106037014327D2E00ABF4BA /* WebKitCSSFilterValue.h in Headers */,
 				31288E730E3005D6003619AE /* WebKitCSSKeyframeRule.h in Headers */,
 				31288E750E3005D6003619AE /* WebKitCSSKeyframesRule.h in Headers */,
@@ -28473,6 +28480,7 @@
 				31C0FF210E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp in Sources */,
 				319E69B513299BBD004AC91A /* WebKitAnimationList.cpp in Sources */,
 				976D6C7B122B8A3D001FD1F7 /* WebKitBlobBuilder.cpp in Sources */,
+				150B923915F08DC400E10986 /* WebKitCSSArrayFunctionValue.cpp in Sources */,
 				3106036F14327D2E00ABF4BA /* WebKitCSSFilterValue.cpp in Sources */,
 				31288E720E3005D6003619AE /* WebKitCSSKeyframeRule.cpp in Sources */,
 				31288E740E3005D6003619AE /* WebKitCSSKeyframesRule.cpp in Sources */,
