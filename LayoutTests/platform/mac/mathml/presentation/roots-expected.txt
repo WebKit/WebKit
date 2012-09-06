@@ -1,8 +1,8 @@
-layer at (0,0) size 800x600
+layer at (0,0) size 836x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x496
-  RenderBlock {html} at (0,0) size 800x496
-    RenderBody {body} at (8,16) size 784x464
+layer at (0,0) size 800x548
+  RenderBlock {html} at (0,0) size 800x548
+    RenderBody {body} at (8,16) size 784x516
       RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 177x18
           text run at (0,0) width 177: "square root (should be red): "
@@ -180,6 +180,20 @@ layer at (0,0) size 800x496
         RenderText {#text} at (0,34) size 110x18
           text run at (0,34) width 110: "Imbricated roots: "
         RenderMathMLMath {math} at (110,0) size 295x70 [padding: 0 1 0 1]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,480) size 784x36
+        RenderText {#text} at (0,0) size 306x18
+          text run at (0,0) width 306: "Don't wrap this wide line with an implicit mrow:"
+        RenderBR {br} at (306,0) size 0x18
+        RenderMathMLMath {math} at (0,21) size 828x15 [padding: 0 1 0 1]
+          RenderMathMLSquareRoot {msqrt} at (1,0) size 826x15 [intrinsic padding: 3 0 0 12]
+            RenderMathMLRow (anonymous) at (12,3) size 814x12
+              RenderInline {mi} at (0,0) size 407x24
+                RenderText {#text} at (0,-9) size 7x24
+                  text run at (0,-9) width 7: "x"
+              RenderInline {mi} at (0,0) size 407x24
+                RenderText {#text} at (407,-9) size 7x24
+                  text run at (407,-9) width 7: "y"
         RenderText {#text} at (0,0) size 0x0
 layer at (182,170) size 20x19
   RenderMathMLRoot {mroot} at (1,0) size 20x19 [intrinsic padding: 7 0 0 12]

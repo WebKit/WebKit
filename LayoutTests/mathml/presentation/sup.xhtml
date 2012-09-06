@@ -1,6 +1,11 @@
 <html xmlns='http://www.w3.org/1999/xhtml'>
 <head>
 <title>Superscripts</title>
+<style type="text/css">
+	body {
+	   overflow: hidden;
+	}
+</style>
 </head>
 <body>
 <p id='t1'>superscript: 
@@ -8,5 +13,16 @@
 <msup><mi>x</mi><mn>2</mn></msup>
 </math>
 </p>
+
+<p id='t2'>For <a href="https://bugs.webkit.org/show_bug.cgi?id=95404">Bug 95404</a> -
+ mathml.css: Add more { white-space: nowrap } declarations:<br />
+	<math xmlns='http://www.w3.org/1998/Math/MathML'>
+		<msup>
+			<mi style="padding-right: 50vw">x</mi>
+			<mi style="padding-right: 50vw">y</mi>
+		</msup>
+	</math>
+</p>
+
 </body>
 </html>

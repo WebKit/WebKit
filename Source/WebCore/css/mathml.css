@@ -28,9 +28,6 @@ math[display="block"] {
 
 mo, mrow, mfenced, mfrac, msub, msup, msubsup, munder, mover, munderover, msqrt, mroot {
     display: inline-block;
-}
-
-mrow, mfenced {
     white-space: nowrap;
 }
 
@@ -123,10 +120,6 @@ merror {
     font-weight: bold;
     font-family: sans-serif;
     background-color: lightYellow;
-}
-
-msqrt {
-    white-space: nowrap; /* for the anonymous RenderMathMLRow */
 }
 
 mroot {

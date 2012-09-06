@@ -1,3 +1,22 @@
+2012-09-06  David Barton  <dbarton@mathscribe.com>
+
+        mathml.css: Add more { white-space: nowrap } declarations
+        https://bugs.webkit.org/show_bug.cgi?id=95404
+
+        Reviewed by Eric Seidel.
+
+        mathml.css declared { white-space: nowrap } for mrow, mfenced, msqrt. It is also needed
+        for other tags such as msub, msup, msubsup.
+
+        Added a test to mathml/presentation/sup.xhtml, and a regression test to roots.xhtml.
+
+        * mathml/presentation/roots.xhtml:
+        * mathml/presentation/sup.xhtml:
+        * platform/mac/mathml/presentation/roots-expected.png:
+        * platform/mac/mathml/presentation/roots-expected.txt:
+        * platform/mac/mathml/presentation/sup-expected.png:
+        * platform/mac/mathml/presentation/sup-expected.txt:
+
 2012-09-06  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed gardening. Skip failing test: fast/dom/HTMLScriptElement/script-reexecution.html
