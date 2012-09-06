@@ -1,3 +1,10 @@
+2012-09-05  Dan Bernstein  <mitz@apple.com>
+
+        Renamed a misnamed expected result.
+
+        * platform/mac/compositing/overflow/overflow-auto-with-touch-toggle-expected.txt: Copied from LayoutTests/platform/mac/compositing/overflow/overflow-with-touch-toggle-expected.txt.
+        * platform/mac/compositing/overflow/overflow-with-touch-toggle-expected.txt: Removed.
+
 2012-09-05  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Provide implementation for WebProcess functions
