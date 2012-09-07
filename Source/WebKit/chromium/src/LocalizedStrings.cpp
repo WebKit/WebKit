@@ -202,6 +202,53 @@ String AXMenuListActionVerb()
     return String();
 }
     
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+String AXAMPMFieldText()
+{
+    return query(WebLocalizedString::AXAMPMFieldText);
+}
+
+String AXDayOfMonthFieldText()
+{
+    return query(WebLocalizedString::AXDayOfMonthFieldText);
+}
+
+String AXHourFieldText()
+{
+    return query(WebLocalizedString::AXHourFieldText);
+}
+
+String AXMillisecondFieldText()
+{
+    return query(WebLocalizedString::AXMillisecondFieldText);
+}
+
+String AXMinuteFieldText()
+{
+    return query(WebLocalizedString::AXMinuteFieldText);
+}
+
+String AXMonthFieldText()
+{
+    return query(WebLocalizedString::AXMonthFieldText);
+}
+
+String AXSecondFieldText()
+{
+    return query(WebLocalizedString::AXSecondFieldText);
+}
+
+String AXWeekOfYearFieldText()
+{
+    return query(WebLocalizedString::AXWeekOfYearFieldText);
+}
+
+String AXYearFieldText()
+{
+    return query(WebLocalizedString::AXYearFieldText);
+}
+#endif
+
 String missingPluginText()
 {
     return query(WebLocalizedString::MissingPluginText);

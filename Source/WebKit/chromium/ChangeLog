@@ -1,3 +1,30 @@
+2012-09-06  Yoshifumi Inoue  <yosin@chromium.org>
+
+        We should have localized strings of date time fields for accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=96050
+
+        Reviewed by Kent Tamura.
+
+        This patch adds functions for getting localized strings of date time
+        fields for accessibility inside ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS.
+
+        These functions will be used by derived classes of DateTimeFieldElement.
+
+        Note: We'll rename ENABLE_INPUT_TYPE_MULTIPLE_FIELDS to generic name
+        to support "date", "datetime", "month" and "week" multiple fields input
+        UI.
+
+        * src/LocalizedStrings.cpp:
+        (WebCore::AXAMPMFieldText): Added.
+        (WebCore::AXDayOfMonthFieldText): Added.
+        (WebCore::AXHourFieldText): Added.
+        (WebCore::AXMillisecondFieldText): Added.
+        (WebCore::AXMinuteFieldText): Added.
+        (WebCore::AXMonthFieldText): Added.
+        (WebCore::AXSecondFieldText): Added.
+        (WebCore::AXWeekOfYearFieldText): Added.
+        (WebCore::AXYearFieldText): Added.
+
 2012-09-06  James Robinson  <jamesr@chromium.org>
 
         [chromium] Don't link cc in to WebKit.dll when use_libcc_for_compositor=1

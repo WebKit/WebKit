@@ -165,6 +165,18 @@ namespace WebCore {
     String AXMenuListPopupActionVerb();
     String AXLinkActionVerb();
 
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+    String AXAMPMFieldText();
+    String AXDayOfMonthFieldText();
+    String AXHourFieldText();
+    String AXMillisecondFieldText();
+    String AXMinuteFieldText();
+    String AXMonthFieldText();
+    String AXSecondFieldText();
+    String AXWeekOfYearFieldText();
+    String AXYearFieldText();
+#endif
+
     String missingPluginText();
     String crashedPluginText();
     String blockedPluginByContentSecurityPolicyText();

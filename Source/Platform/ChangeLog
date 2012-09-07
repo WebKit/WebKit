@@ -1,3 +1,17 @@
+2012-09-06  Yoshifumi Inoue  <yosin@chromium.org>
+
+        We should have localized strings of date time fields for accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=96050
+
+        Reviewed by Kent Tamura.
+
+        This patch adds localized string enum fields for accessibility support
+        in multiple fields date time related input types for Chromium ports.
+
+        * chromium/public/WebLocalizedString.h: Adds AXAMPMFieldText, AXDayOfMonthField,
+        AXHourFieldText, AXMillisecondFieldText, AXMinuteFieldText, AXMonthField,
+        AXSecondFieldText, AXWeekOfYearFieldText, and AXYearFieldText.
+
 2012-09-06  James Robinson  <jamesr@chromium.org>
 
         [chromium] Export public functions on WebTransformationMatrix so they can be used outside of WebKit.dll
