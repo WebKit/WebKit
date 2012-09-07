@@ -264,6 +264,12 @@ class PortTest(unittest.TestCase):
             [('/tmp/local-baselines', 'fast/test-expected.txt')])
         self.assertEqual(port.baseline_path(), '/foo')
 
+    def test_nonexistant_expectations(self):
+        port = self.make_port(port_name='foo')
+        port.expectations_files = lambda: ['/mock-checkout/LayoutTests/platform/exists/TestExpectations', '/mock-checkout/LayoutTests/platform/nonexistant/TestExpectations']
+        port._filesystem.write_text_file('/mock-checkout/LayoutTests/platform/exists/TestExpectations', '')
+        self.assertEquals('\n'.join(port.expectations_dict().keys()), '/mock-checkout/LayoutTests/platform/exists/TestExpectations')
+
     def test_additional_expectations(self):
         port = self.make_port(port_name='foo')
         port.port_name = 'foo'

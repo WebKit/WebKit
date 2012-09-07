@@ -1006,7 +1006,8 @@ class Port(object):
         expectations = OrderedDict()
 
         for path in self.expectations_files():
-            expectations[path] = self._filesystem.read_text_file(path)
+            if self._filesystem.exists(path):
+                expectations[path] = self._filesystem.read_text_file(path)
 
         for path in self.get_option('additional_expectations', []):
             expanded_path = self._filesystem.expanduser(path)
