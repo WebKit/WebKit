@@ -3811,16 +3811,17 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
 
     // We might need to layout here to get a correct contentsSize so that zoomToFit
     // is calculated correctly.
-    while (needsLayout) {
+    bool stillNeedsLayout = needsLayout;
+    while (stillNeedsLayout) {
         setNeedsLayout();
         requestLayoutIfNeeded();
-        needsLayout = false;
+        stillNeedsLayout = false;
 
         // Emulate the zoomToFitWidthOnLoad algorithm if we're rotating.
         ++m_nestedLayoutFinishedCount;
         if (needsLayoutToFindContentSize) {
             if (setViewMode(viewMode()))
-                needsLayout = true;
+                stillNeedsLayout = true;
         }
     }
     m_nestedLayoutFinishedCount = 0;

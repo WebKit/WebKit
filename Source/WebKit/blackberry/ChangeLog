@@ -1,3 +1,18 @@
+2012-09-07  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Rendering issue after rotation
+        https://bugs.webkit.org/show_bug.cgi?id=96094
+        PR #201930
+
+        Reviewed by George Staikos.
+
+        The cause of the rendering issue is that the BackingStore tiles
+        are not reset after layout. This is a regression of r125680, which
+        overwrites a local variable that are used later in the function.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+
 2012-09-06  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry]  Implement a color picker
