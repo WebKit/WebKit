@@ -27,6 +27,7 @@
 #include "config.h"
 #include "PlatformWebView.h"
 
+#include "EWebKit2.h"
 #include "WebKit2/WKAPICast.h"
 #include <Ecore_Evas.h>
 
@@ -59,6 +60,7 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
     m_window = initEcoreEvas();
     Evas* evas = ecore_evas_get(m_window);
     m_view = toImpl(WKViewCreate(evas, contextRef, pageGroupRef));
+    ewk_view_theme_set(m_view, THEME_DIR"/default.edj");
 }
 
 PlatformWebView::~PlatformWebView()

@@ -11,6 +11,7 @@ SET(ForwardingNetworkHeadersForTestWebKitAPI_NAME forwarding-headersSoupForTestW
 INCLUDE_DIRECTORIES(${LIBSOUP_INCLUDE_DIRS}
     ${WEBKIT2_DIR}/UIProcess/API/C/soup
     ${WEBKIT2_DIR}/UIProcess/API/C/efl
+    ${WEBKIT2_DIR}/UIProcess/API/efl
     ${ECORE_INCLUDE_DIRS}
     ${EINA_INCLUDE_DIRS}
     ${EVAS_INCLUDE_DIRS}
@@ -76,6 +77,8 @@ SET(test_webkit2_api_fail_BINARIES
     ShouldGoToBackForwardListItem
     WKPageGetScaleFactorNotZero
 )
+
+ADD_DEFINITIONS(-DTHEME_DIR="${THEME_BINARY_DIR}")
 
 # Tests disabled because of missing features on the test harness:
 #
