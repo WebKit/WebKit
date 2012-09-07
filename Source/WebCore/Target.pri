@@ -3747,6 +3747,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGZoomEvent.cpp
 
     ALL_IN_ONE_SOURCES += \
+        rendering/svg/RenderSVGAllInOne.cpp \
         svg/SVGAllInOne.cpp
 }
 
@@ -4014,7 +4015,9 @@ contains(DEFINES, WTF_USE_GRAPHICS_SURFACE=1) {
 
 ALL_IN_ONE_SOURCES += \
     accessibility/AccessibilityAllInOne.cpp \
-    inspector/InspectorAllInOne.cpp
+    inspector/InspectorAllInOne.cpp \
+    loader/appcache/ApplicationCacheAllInOne.cpp \
+    rendering/style/StyleAllInOne.cpp
 
 contains(DEFINES, ENABLE_XSLT=1):contains(DEFINES, WTF_USE_LIBXML2=1) {
     ALL_IN_ONE_SOURCES += \
