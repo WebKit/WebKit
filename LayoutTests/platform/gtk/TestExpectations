@@ -180,6 +180,7 @@ BUGWKGTK SKIP : fast/forms/color = TEXT
 
 // ENABLE_INPUT_TYPE_* are not enabled.
 BUGWK29359 : fast/forms/date = TEXT
+BUGWK29359 : fast/forms/date/date-interactive-validation-required.html = PASS
 BUGWK29359 SKIP : fast/forms/date/calendar-picker-appearance-pre-100.html = TEXT
 BUGWK29359 SKIP : fast/forms/date/calendar-picker-appearance.html = TEXT
 BUGWK29359 : fast/forms/date/calendar-picker-type-change-onclick.html = PASS
@@ -190,11 +191,16 @@ BUGWK29359 : fast/css/pseudo-in-range.html = TEXT
 BUGWK29359 : fast/css/pseudo-out-of-range.html = TEXT
 BUGWK29359 : fast/css/pseudo-in-range-invalid-value.html = TEXT
 BUGWK29359 : fast/forms/datetime = TEXT
+BUGWK29359 : fast/forms/datetime/datetime-interactive-validation-required.html = PASS
 BUGWK29359 : fast/forms/datetimelocal = TEXT
+BUGWK29359 : fast/forms/datetimelocal/datetimelocal-interactive-validation-required.html = PASS
 BUGWK29359 : fast/forms/datetimelocal/input-valueasdate-datetimelocal.html = PASS
 BUGWK29359 : fast/forms/month = TEXT
+BUGWK29359 : fast/forms/month/month-interactive-validation-required.html = PASS
 BUGWK29359 : fast/forms/time = TEXT
+BUGWK29359 : fast/forms/time/time-interactive-validation-required.html = PASS
 BUGWK29359 : fast/forms/week = TEXT
+BUGWK29359 : fast/forms/week/week-interactive-validation-required.html = PASS
 
 // ENABLE_GAMEPAD not enabled.
 BUGWKGTK SKIP : gamepad = TEXT
@@ -361,12 +367,15 @@ BUGWK85212 : ietestcenter/css3/flexbox/flexbox-layout-002.htm = IMAGE
 
 // These tests require subpixel layout to be enabled
 BUGWK85532 : fast/sub-pixel = TEXT IMAGE
+BUGWK85532 : fast/sub-pixel/auto-table-layout-should-avoid-text-wrapping.html = PASS
+BUGWK85532 : fast/sub-pixel/block-preferred-widths-with-sub-pixel-floats.html = PASS
 BUGWK85532 : fast/sub-pixel/column-clipping.html = PASS
 BUGWK85532 : fast/sub-pixel/file-upload-control-at-fractional-offset.html = PASS
 BUGWK85532 : fast/sub-pixel/float-containing-block-with-margin.html = PASS
 BUGWK85532 : fast/sub-pixel/float-with-margin-in-container.html = PASS
 BUGWK85532 : fast/sub-pixel/float-with-right-margin-zoom.html = PASS
 BUGWK85532 : fast/sub-pixel/float-wrap-with-subpixel-top.html = PASS
+BUGWK85532 : fast/sub-pixel/inline-block-should-not-wrap.html = PASS
 BUGWK85532 : fast/sub-pixel/inline-block-with-margin.html = PASS
 BUGWK85532 : fast/sub-pixel/size-of-span-with-different-positions.html = PASS
 BUGWK85532 : fast/sub-pixel/table-cells-with-padding-do-not-wrap.html = PASS
@@ -423,9 +432,6 @@ BUGWK84635 SKIP : fast/dom/HTMLDialogElement = TEXT
 // Proximity Events is not supported.
 BUGWK92942 SKIP : fast/dom/Proximity = PASS
 BUGWK92942 SKIP : fast/events/constructors/device-proximity-event-constructor.html = PASS
-
-// Mac and Win does not have global selections.
-WONTFIX MAC WIN : editing/pasteboard/paste-global-selection.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Expected failures
@@ -1299,6 +1305,8 @@ BUGWK95429 : svg/custom/clamped-masking-clipping.svg = IMAGE
 BUGWK94677 : http/tests/security/contentSecurityPolicy/register-bypassing-scheme.html = TEXT
 
 BUGWK95530 : http/tests/security/inactive-document-with-empty-security-origin.html = TEXT
+
+BUGWK88238 : editing/pasteboard/paste-global-selection.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

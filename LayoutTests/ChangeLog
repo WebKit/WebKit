@@ -1,3 +1,13 @@
+2012-09-07  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Add passing expectations for a few specific sub-pixel and various input type
+        tests. These features are not yet supported by the GTK port but we're willing
+        to watch and monitor these tests' behavior.
+
+        * platform/gtk/TestExpectations:
+
 2012-09-07  Sami Kyostila  <skyostil@google.com>
 
         [chromium] Dynamically removing preserve-3d from a layer has no effect
