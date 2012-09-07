@@ -156,6 +156,10 @@ bool ewk_view_accelerated_compositing_object_create(Evas_Object* ewkView, Evas_N
 WebCore::GraphicsContext3D* ewk_view_accelerated_compositing_context_get(Evas_Object* ewkView);
 #endif
 
+#if ENABLE(NOTIFICATIONS)
+void ewk_view_notification_permission_request(Evas_Object* ewkView, const Ewk_Security_Origin* origin);
+#endif
+
 namespace EWKPrivate {
 WebCore::Page *corePage(const Evas_Object *ewkView);
 PlatformPageClient corePageClient(Evas_Object* ewkView);

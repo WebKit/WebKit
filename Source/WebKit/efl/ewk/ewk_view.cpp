@@ -109,6 +109,11 @@
 #include "NavigatorContentUtilsClientEfl.h"
 #endif
 
+#if ENABLE(NOTIFICATIONS)
+#include "NotificationController.h"
+#include "NotificationPresenterClientEfl.h"
+#endif
+
 static const float zoomMinimum = 0.05;
 static const float zoomMaximum = 4.0;
 
@@ -773,6 +778,10 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 #if ENABLE(NAVIGATOR_CONTENT_UTILS)
     priv->navigatorContentUtilsClient = WebCore::NavigatorContentUtilsClientEfl::create(smartData->self);
     WebCore::provideNavigatorContentUtilsTo(priv->page.get(), priv->navigatorContentUtilsClient.get());
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+    WebCore::provideNotification(priv->page.get(), new WebCore::NotificationPresenterClientEfl(smartData->self));
 #endif
 
     priv->pageSettings = priv->page->settings();
@@ -4564,6 +4573,37 @@ void ewk_view_cursor_set(Evas_Object* ewkView, const WebCore::Cursor& cursor)
         ecore_evas_object_cursor_set(ecoreEvas, priv->cursorObject, EVAS_LAYER_MAX, hotspotX, hotspotY);
     }
 }
+
+Eina_Bool ewk_view_notification_permission_store(Evas_Object* ewkView, const char* domain, Eina_Bool permitted)
+{
+#if ENABLE(NOTIFICATIONS)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    static_cast<WebCore::NotificationPresenterClientEfl*>(WebCore::NotificationController::clientFrom(priv->page.get()))->addToPermissionCache(String::fromUTF8(domain), permitted);
+    return true;
+#else
+    return false;
+#endif
+}
+
+Eina_Bool ewk_view_notification_permissions_set(Evas_Object* ewkView, const Ewk_Security_Origin* origin, Eina_Bool permitted)
+{
+#if ENABLE(NOTIFICATIONS)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    static_cast<WebCore::NotificationPresenterClientEfl*>(WebCore::NotificationController::clientFrom(priv->page.get()))->setPermission(origin, permitted);
+    return true;
+#else
+    return false;
+#endif
+}
+
+#if ENABLE(NOTIFICATIONS)
+void ewk_view_notification_permission_request(Evas_Object* ewkView, const Ewk_Security_Origin* origin)
+{
+    evas_object_smart_callback_call(ewkView, "notification,permission,request", const_cast<Ewk_Security_Origin*>(origin));
+}
+#endif
 
 namespace EWKPrivate {
 

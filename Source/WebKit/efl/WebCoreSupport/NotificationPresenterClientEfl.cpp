@@ -20,13 +20,20 @@
 #include "config.h"
 #include "NotificationPresenterClientEfl.h"
 
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS)
 #include "NotImplemented.h"
+#include "Notification.h"
+#include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
+#include "ewk_security_origin_private.h"
+#include "ewk_view_private.h"
 
 namespace WebCore {
 
-NotificationPresenterClientEfl::NotificationPresenterClientEfl()
+NotificationPresenterClientEfl::NotificationPresenterClientEfl(Evas_Object* view)
+    : m_view(view)
 {
+    ASSERT(m_view);
 }
 
 NotificationPresenterClientEfl::~NotificationPresenterClientEfl()
@@ -54,20 +61,42 @@ void NotificationPresenterClientEfl::notificationControllerDestroyed()
     notImplemented();
 }
 
-void NotificationPresenterClientEfl::requestPermission(ScriptExecutionContext* context, PassRefPtr<VoidCallback> callback)
+void NotificationPresenterClientEfl::requestPermission(ScriptExecutionContext* context, PassRefPtr<NotificationPermissionCallback> callback)
 {
-    notImplemented();
+    Ewk_Security_Origin* origin = ewk_security_origin_new(context->securityOrigin());
+    m_pendingPermissionRequests.add(origin, callback);
+    ewk_view_notification_permission_request(m_view, origin);
 }
 
 NotificationClient::Permission NotificationPresenterClientEfl::checkPermission(ScriptExecutionContext* context)
 {
-    notImplemented();
+    PermissionsMap::iterator it = m_cachedPermissions.find(context->securityOrigin()->toString());
+    if (it == m_cachedPermissions.end())
+        return PermissionNotAllowed;
+    if (it->second)
+        return PermissionAllowed;
+
     return PermissionDenied;
 }
 
-void NotificationPresenterClientEfl::cancelRequestsForPermission(ScriptExecutionContext* context)
+void NotificationPresenterClientEfl::addToPermissionCache(const String& domain, const bool isPermitted)
 {
-    notImplemented();
+    PermissionsMap::iterator it = m_cachedPermissions.find(domain);
+    if (it != m_cachedPermissions.end())
+        return;
+    m_cachedPermissions.add(domain, isPermitted);
+}
+
+void NotificationPresenterClientEfl::setPermission(const Ewk_Security_Origin* origin, const bool isPermitted)
+{
+    PermissionRequestMap::iterator it = m_pendingPermissionRequests.find(origin);
+    if (it == m_pendingPermissionRequests.end())
+        return;
+
+    it->second->handleEvent(Notification::permissionString(isPermitted ? NotificationClient::PermissionAllowed : NotificationClient::PermissionDenied));
+    m_pendingPermissionRequests.remove(it);
+    m_cachedPermissions.add(String::fromUTF8(ewk_security_origin_string_get(origin)), isPermitted);
+    ewk_security_origin_free(const_cast<Ewk_Security_Origin*>(origin));
 }
 
 }
