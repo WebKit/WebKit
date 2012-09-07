@@ -2753,7 +2753,7 @@ PassRefPtr<Node> WebPagePrivate::contextNode(TargetDetectionStrategy strategy)
         return result.node(FatFingersResult::ShadowContentNotAllowed);
     }
 
-    HitTestResult result = eventHandler->hitTestResultAtPoint(contentPos, false /*allowShadowContent*/);
+    HitTestResult result = eventHandler->hitTestResultAtPoint(contentPos);
     return result.innerNode();
 }
 
@@ -2825,7 +2825,7 @@ Node* WebPagePrivate::nodeForZoomUnderPoint(const IntPoint& point)
     if (!m_mainFrame)
         return 0;
 
-    HitTestResult result = m_mainFrame->eventHandler()->hitTestResultAtPoint(mapFromTransformed(point), false);
+    HitTestResult result = m_mainFrame->eventHandler()->hitTestResultAtPoint(mapFromTransformed(point));
 
     Node* node = result.innerNonSharedNode();
 
@@ -4035,7 +4035,7 @@ bool WebPagePrivate::handleMouseEvent(PlatformMouseEvent& mouseEvent)
     }
 
     if (!node) {
-        HitTestResult result = eventHandler->hitTestResultAtPoint(mapFromViewportToContents(mouseEvent.position()), false /*allowShadowContent*/);
+        HitTestResult result = eventHandler->hitTestResultAtPoint(mapFromViewportToContents(mouseEvent.position()));
         node = result.innerNode();
     }
 
@@ -5198,7 +5198,7 @@ WebDOMDocument WebPage::document() const
 
 WebDOMNode WebPage::nodeAtPoint(int x, int y)
 {
-    HitTestResult result = d->m_mainFrame->eventHandler()->hitTestResultAtPoint(d->mapFromTransformed(IntPoint(x, y)), false);
+    HitTestResult result = d->m_mainFrame->eventHandler()->hitTestResultAtPoint(d->mapFromTransformed(IntPoint(x, y)));
     Node* node = result.innerNonSharedNode();
     return WebDOMNode(node);
 }

@@ -800,7 +800,7 @@ void QWebPagePrivate::handleSoftwareInputPanel(Qt::MouseButton button, const QPo
         QStyle::RequestSoftwareInputPanel behavior = QStyle::RequestSoftwareInputPanel(
             client->ownerWidget()->style()->styleHint(QStyle::SH_RequestSoftwareInputPanel));
         if (!clickCausedFocus || behavior == QStyle::RSIP_OnMouseClick) {
-            HitTestResult result = frame->eventHandler()->hitTestResultAtPoint(frame->view()->windowToContents(pos), false);
+            HitTestResult result = frame->eventHandler()->hitTestResultAtPoint(frame->view()->windowToContents(pos));
             if (result.isContentEditable()) {
                 QEvent event(QEvent::RequestSoftwareInputPanel);
                 QApplication::sendEvent(client->ownerWidget(), &event);
@@ -1557,7 +1557,7 @@ IntPoint QWebPagePrivate::TouchAdjuster::findCandidatePointForTouch(const IntPoi
     int x = touchPoint.x();
     int y = touchPoint.y();
 
-    RefPtr<NodeList> intersectedNodes = document->nodesFromRect(x, y, m_topPadding, m_rightPadding, m_bottomPadding, m_leftPadding, false /*ignoreClipping*/, false /*allowShadowContent*/);
+    RefPtr<NodeList> intersectedNodes = document->nodesFromRect(x, y, m_topPadding, m_rightPadding, m_bottomPadding, m_leftPadding);
     if (!intersectedNodes)
         return IntPoint();
 
@@ -3363,7 +3363,7 @@ void QWebPage::updatePositionDependentActions(const QPoint &pos)
     d->createMainFrame();
     WebCore::Frame* focusedFrame = d->page->focusController()->focusedOrMainFrame();
 
-    HitTestResult result = focusedFrame->eventHandler()->hitTestResultAtPoint(focusedFrame->view()->windowToContents(pos), /*allowShadowContent*/ false);
+    HitTestResult result = focusedFrame->eventHandler()->hitTestResultAtPoint(focusedFrame->view()->windowToContents(pos));
     if (result.scrollbar())
         d->hitTestResult = QWebHitTestResult();
     else

@@ -37,6 +37,7 @@ public:
         TouchEvent = 1 << 7,
         AllowShadowContent = 1 << 8,
         AllowChildFrameContent = 1 << 9,
+        // FIXME: Get rid of the two options below if possible.
         ChildFrameHitTest = 1 << 10,
         TestChildFrameScrollBars = 1 << 11
     };

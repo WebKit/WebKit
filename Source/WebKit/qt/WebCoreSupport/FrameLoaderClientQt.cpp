@@ -1272,7 +1272,7 @@ void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFun
             if (event->isMouseEvent()) {
                 const MouseEvent* mouseEvent =  static_cast<const MouseEvent*>(event);
                 node = QWebFramePrivate::core(m_webFrame)->eventHandler()->hitTestResultAtPoint(
-                    mouseEvent->absoluteLocation(), false).innerNonSharedNode();
+                    mouseEvent->absoluteLocation()).innerNonSharedNode();
                 break;
             }
         }

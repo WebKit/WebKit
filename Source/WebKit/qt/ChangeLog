@@ -1,5 +1,23 @@
 2012-09-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
+        Simplify hitTestResultAtPoint and nodesFromRect APIs
+        https://bugs.webkit.org/show_bug.cgi?id=95720
+
+        Reviewed by Antonio Gomes.
+
+        Update calls to new API.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::hitTestContent):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::handleSoftwareInputPanel):
+        (QWebPagePrivate::TouchAdjuster::findCandidatePointForTouch):
+        (QWebPage::updatePositionDependentActions):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+
+2012-09-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
         X11 Global Selection
         https://bugs.webkit.org/show_bug.cgi?id=88238
 

@@ -637,7 +637,7 @@ void WebViewImpl::handleMouseUp(Frame& mainFrame, const WebMouseEvent& event)
         FrameView* view = m_page->mainFrame()->view();
         IntPoint clickPoint(m_lastMouseDownPoint.x, m_lastMouseDownPoint.y);
         IntPoint contentPoint = view->windowToContents(clickPoint);
-        HitTestResult hitTestResult = focused->eventHandler()->hitTestResultAtPoint(contentPoint, false, false, ShouldHitTestScrollbars);
+        HitTestResult hitTestResult = focused->eventHandler()->hitTestResultAtPoint(contentPoint, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::TestChildFrameScrollBars);
         // We don't want to send a paste when middle clicking a scroll bar or a
         // link (which will navigate later in the code).  The main scrollbars
         // have to be handled separately.
@@ -1001,9 +1001,8 @@ WebRect WebViewImpl::computeBlockBounds(const WebRect& rect, AutoZoomType zoomTy
 
     // Use the rect-based hit test to find the node.
     IntPoint point = mainFrameImpl()->frameView()->windowToContents(IntPoint(rect.x, rect.y));
-    HitTestResult result = mainFrameImpl()->frame()->eventHandler()->hitTestResultAtPoint(point,
-            false, zoomType == FindInPage, DontHitTestScrollbars, HitTestRequest::Active | HitTestRequest::ReadOnly,
-            IntSize(rect.width, rect.height));
+    HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active | ((zoomType == FindInPage) ? HitTestRequest::IgnoreClipping : 0);
+    HitTestResult result = mainFrameImpl()->frame()->eventHandler()->hitTestResultAtPoint(point, hitType, IntSize(rect.width, rect.height));
 
     Node* node = result.innerNonSharedNode();
     if (!node)

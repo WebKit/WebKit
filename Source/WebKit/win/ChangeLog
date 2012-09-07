@@ -1,3 +1,18 @@
+2012-09-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Simplify hitTestResultAtPoint and nodesFromRect APIs
+        https://bugs.webkit.org/show_bug.cgi?id=95720
+
+        Reviewed by Antonio Gomes.
+
+        Update calls to new API.
+
+        * WebActionPropertyBag.cpp:
+        (WebActionPropertyBag::Read):
+        * WebView.cpp:
+        (WebView::handleContextMenuEvent):
+        (WebView::elementAtPoint):
+
 2012-09-05  Sam Weinig  <sam@webkit.org>
 
         Part 2 of removing PlatformString.h, remove PlatformString.h

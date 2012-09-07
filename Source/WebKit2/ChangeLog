@@ -1,5 +1,28 @@
 2012-09-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
+        Simplify hitTestResultAtPoint and nodesFromRect APIs
+        https://bugs.webkit.org/show_bug.cgi?id=95720
+
+        Reviewed by Antonio Gomes.
+
+        Update calls to new API and update exported symbols.
+
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp:
+        (WebKit::InjectedBundleNavigationAction::InjectedBundleNavigationAction):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::handleContextMenuEvent):
+        (WebKit::WebPage::highlightPotentialActivation): Corrects the misplaced arguments while converting them.
+        (WebKit::WebPage::findZoomableAreaForPoint):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::characterIndexForPoint):
+        (WebKit::WebPage::performDictionaryLookupAtLocation):
+        (WebKit::WebPage::shouldDelayWindowOrderingEvent):
+        (WebKit::WebPage::acceptsFirstMouse):
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
+2012-09-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
         X11 Global Selection
         https://bugs.webkit.org/show_bug.cgi?id=88238
 

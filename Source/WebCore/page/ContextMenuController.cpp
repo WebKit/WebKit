@@ -149,7 +149,7 @@ PassOwnPtr<ContextMenu> ContextMenuController::createContextMenu(Event* event)
     HitTestResult result(mouseEvent->absoluteLocation());
 
     if (Frame* frame = event->target()->toNode()->document()->frame())
-        result = frame->eventHandler()->hitTestResultAtPoint(mouseEvent->absoluteLocation(), false);
+        result = frame->eventHandler()->hitTestResultAtPoint(mouseEvent->absoluteLocation());
 
     if (!result.innerNonSharedNode())
         return nullptr;
