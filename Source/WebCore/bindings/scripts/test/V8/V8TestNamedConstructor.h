@@ -47,33 +47,33 @@ public:
     {
         return reinterpret_cast<TestNamedConstructor*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(TestNamedConstructor*, v8::Isolate* = 0);
+    inline static v8::Handle<v8::Object> wrap(TestNamedConstructor*, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* = 0);
     static void derefObject(void*);
     static void visitDOMWrapper(DOMDataStore*, void*, v8::Persistent<v8::Object>);
     static WrapperTypeInfo info;
     static ActiveDOMObject* toActiveDOMObject(v8::Handle<v8::Object>);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
 private:
-    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestNamedConstructor>, v8::Isolate*);
+    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestNamedConstructor>, v8::Handle<v8::Context> creationContext, v8::Isolate*);
 };
 
-v8::Handle<v8::Object> V8TestNamedConstructor::wrap(TestNamedConstructor* impl, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8TestNamedConstructor::wrap(TestNamedConstructor* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
         v8::Handle<v8::Object> wrapper = getActiveDOMObjectMap(isolate).get(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
-    return V8TestNamedConstructor::wrapSlow(impl, isolate);
+    return V8TestNamedConstructor::wrapSlow(impl, creationContext, isolate);
 }
 
-inline v8::Handle<v8::Value> toV8(TestNamedConstructor* impl, v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(TestNamedConstructor* impl, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* isolate = 0)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
-    return V8TestNamedConstructor::wrap(impl, isolate);
+    return V8TestNamedConstructor::wrap(impl, creationContext, isolate);
 }
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestNamedConstructor > impl, v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestNamedConstructor > impl, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* isolate = 0)
 {
-    return toV8(impl.get(), isolate);
+    return toV8(impl.get(), creationContext, isolate);
 }
 
 }

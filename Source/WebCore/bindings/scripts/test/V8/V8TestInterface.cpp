@@ -120,7 +120,7 @@ static v8::Handle<v8::Value> supplementalNodeAttrGetter(v8::Local<v8::String> na
 {
     INC_STATS("DOM.TestInterface.supplementalNode._get");
     TestInterface* imp = V8TestInterface::toNative(info.Holder());
-    return toV8(TestSupplemental::supplementalNode(imp), info.GetIsolate());
+    return toV8(TestSupplemental::supplementalNode(imp), v8::Handle<v8::Context>(), info.GetIsolate());
 }
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
@@ -168,7 +168,7 @@ static v8::Handle<v8::Value> supplementalMethod2Callback(const v8::Arguments& ar
     RefPtr<TestObj> result = TestSupplemental::supplementalMethod2(scriptContext, imp, strArg, objArg, ec);
     if (UNLIKELY(ec))
         goto fail;
-    return toV8(result.release(), args.GetIsolate());
+    return toV8(result.release(), v8::Handle<v8::Context>(), args.GetIsolate());
     }
     fail:
     return setDOMException(ec, args.GetIsolate());
@@ -344,7 +344,7 @@ ActiveDOMObject* V8TestInterface::toActiveDOMObject(v8::Handle<v8::Object> objec
     return toNative(object);
 }      
 
-v8::Handle<v8::Object> V8TestInterface::wrapSlow(PassRefPtr<TestInterface> impl, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8TestInterface::wrapSlow(PassRefPtr<TestInterface> impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
     Frame* frame = 0;

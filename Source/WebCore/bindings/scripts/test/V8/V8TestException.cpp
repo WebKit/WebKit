@@ -101,7 +101,7 @@ bool V8TestException::HasInstance(v8::Handle<v8::Value> value)
 }
 
 
-v8::Handle<v8::Object> V8TestException::wrapSlow(PassRefPtr<TestException> impl, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8TestException::wrapSlow(PassRefPtr<TestException> impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
     Frame* frame = 0;

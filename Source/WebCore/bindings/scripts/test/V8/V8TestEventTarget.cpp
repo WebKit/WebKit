@@ -55,7 +55,7 @@ static v8::Handle<v8::Value> itemCallback(const v8::Arguments& args)
         ec = INDEX_SIZE_ERR;
         goto fail;
     }
-    return toV8(imp->item(index), args.GetIsolate());
+    return toV8(imp->item(index), v8::Handle<v8::Context>(), args.GetIsolate());
     }
     fail:
     return setDOMException(ec, args.GetIsolate());
@@ -171,7 +171,7 @@ bool V8TestEventTarget::HasInstance(v8::Handle<v8::Value> value)
 }
 
 
-v8::Handle<v8::Object> V8TestEventTarget::wrapSlow(PassRefPtr<TestEventTarget> impl, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8TestEventTarget::wrapSlow(PassRefPtr<TestEventTarget> impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
     Frame* frame = 0;

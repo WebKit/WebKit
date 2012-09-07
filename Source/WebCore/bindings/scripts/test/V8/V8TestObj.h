@@ -41,7 +41,7 @@ public:
     {
         return reinterpret_cast<TestObj*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(TestObj*, v8::Isolate* = 0);
+    inline static v8::Handle<v8::Object> wrap(TestObj*, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* = 0);
     static void derefObject(void*);
     static void visitDOMWrapper(DOMDataStore*, void*, v8::Persistent<v8::Object>);
     static WrapperTypeInfo info;
@@ -54,26 +54,26 @@ public:
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
     static void installPerContextProperties(v8::Handle<v8::Object>, TestObj*);
 private:
-    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestObj>, v8::Isolate*);
+    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestObj>, v8::Handle<v8::Context> creationContext, v8::Isolate*);
 };
 
-v8::Handle<v8::Object> V8TestObj::wrap(TestObj* impl, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8TestObj::wrap(TestObj* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
         v8::Handle<v8::Object> wrapper = getDOMObjectMap(isolate).get(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
-    return V8TestObj::wrapSlow(impl, isolate);
+    return V8TestObj::wrapSlow(impl, creationContext, isolate);
 }
 
-inline v8::Handle<v8::Value> toV8(TestObj* impl, v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(TestObj* impl, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* isolate = 0)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
-    return V8TestObj::wrap(impl, isolate);
+    return V8TestObj::wrap(impl, creationContext, isolate);
 }
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestObj > impl, v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestObj > impl, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* isolate = 0)
 {
-    return toV8(impl.get(), isolate);
+    return toV8(impl.get(), creationContext, isolate);
 }
 
 }

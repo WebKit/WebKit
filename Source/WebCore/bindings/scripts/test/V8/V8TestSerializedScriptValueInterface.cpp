@@ -102,7 +102,7 @@ static v8::Handle<v8::Value> portsAttrGetter(v8::Local<v8::String> name, const v
     MessagePortArray portsCopy(*ports);
     v8::Local<v8::Array> portArray = v8::Array::New(portsCopy.size());
     for (size_t i = 0; i < portsCopy.size(); ++i)
-        portArray->Set(v8Integer(i, info.GetIsolate()), toV8(portsCopy[i].get(), info.GetIsolate()));
+        portArray->Set(v8Integer(i, info.GetIsolate()), toV8(portsCopy[i].get(), info.Holder()->CreationContext(), info.GetIsolate()));
     return portArray;
 }
 
@@ -293,7 +293,7 @@ bool V8TestSerializedScriptValueInterface::HasInstance(v8::Handle<v8::Value> val
 }
 
 
-v8::Handle<v8::Object> V8TestSerializedScriptValueInterface::wrapSlow(PassRefPtr<TestSerializedScriptValueInterface> impl, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8TestSerializedScriptValueInterface::wrapSlow(PassRefPtr<TestSerializedScriptValueInterface> impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
     Frame* frame = 0;

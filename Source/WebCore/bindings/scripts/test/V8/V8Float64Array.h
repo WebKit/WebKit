@@ -42,28 +42,28 @@ public:
     {
         return reinterpret_cast<Float64Array*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(Float64Array*, v8::Isolate* = 0);
+    inline static v8::Handle<v8::Object> wrap(Float64Array*, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* = 0);
     static void derefObject(void*);
     static void visitDOMWrapper(DOMDataStore*, void*, v8::Persistent<v8::Object>);
     static WrapperTypeInfo info;
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
 private:
-    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<Float64Array>, v8::Isolate*);
+    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<Float64Array>, v8::Handle<v8::Context> creationContext, v8::Isolate*);
 };
 
-v8::Handle<v8::Object> V8Float64Array::wrap(Float64Array* impl, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8Float64Array::wrap(Float64Array* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
         v8::Handle<v8::Object> wrapper = getDOMObjectMap(isolate).get(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
-    return V8Float64Array::wrapSlow(impl, isolate);
+    return V8Float64Array::wrapSlow(impl, creationContext, isolate);
 }
 
-v8::Handle<v8::Value> toV8(Float64Array*, v8::Isolate* = 0);
-inline v8::Handle<v8::Value> toV8(PassRefPtr< Float64Array > impl, v8::Isolate* isolate = 0)
+v8::Handle<v8::Value> toV8(Float64Array*, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* = 0);
+inline v8::Handle<v8::Value> toV8(PassRefPtr< Float64Array > impl, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* isolate = 0)
 {
-    return toV8(impl.get(), isolate);
+    return toV8(impl.get(), creationContext, isolate);
 }
 
 }

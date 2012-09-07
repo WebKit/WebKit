@@ -110,7 +110,7 @@ bool V8TestCustomNamedGetter::HasInstance(v8::Handle<v8::Value> value)
 }
 
 
-v8::Handle<v8::Object> V8TestCustomNamedGetter::wrapSlow(PassRefPtr<TestCustomNamedGetter> impl, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8TestCustomNamedGetter::wrapSlow(PassRefPtr<TestCustomNamedGetter> impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
     Frame* frame = 0;

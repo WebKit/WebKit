@@ -41,7 +41,7 @@ public:
     {
         return reinterpret_cast<TestActiveDOMObject*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(TestActiveDOMObject*, v8::Isolate* = 0);
+    inline static v8::Handle<v8::Object> wrap(TestActiveDOMObject*, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* = 0);
     static void derefObject(void*);
     static void visitDOMWrapper(DOMDataStore*, void*, v8::Persistent<v8::Object>);
     static WrapperTypeInfo info;
@@ -49,26 +49,26 @@ public:
     static bool namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType, v8::Local<v8::Value> data);
     static bool indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType, v8::Local<v8::Value> data);
 private:
-    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestActiveDOMObject>, v8::Isolate*);
+    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestActiveDOMObject>, v8::Handle<v8::Context> creationContext, v8::Isolate*);
 };
 
-v8::Handle<v8::Object> V8TestActiveDOMObject::wrap(TestActiveDOMObject* impl, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8TestActiveDOMObject::wrap(TestActiveDOMObject* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
         v8::Handle<v8::Object> wrapper = getDOMObjectMap(isolate).get(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
-    return V8TestActiveDOMObject::wrapSlow(impl, isolate);
+    return V8TestActiveDOMObject::wrapSlow(impl, creationContext, isolate);
 }
 
-inline v8::Handle<v8::Value> toV8(TestActiveDOMObject* impl, v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(TestActiveDOMObject* impl, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* isolate = 0)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
-    return V8TestActiveDOMObject::wrap(impl, isolate);
+    return V8TestActiveDOMObject::wrap(impl, creationContext, isolate);
 }
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestActiveDOMObject > impl, v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestActiveDOMObject > impl, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* isolate = 0)
 {
-    return toV8(impl.get(), isolate);
+    return toV8(impl.get(), creationContext, isolate);
 }
 
 }
