@@ -1,3 +1,11 @@
+2012-09-06  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed, revert part of http://trac.webkit.org/changeset/127698
+        which accidentally didn't get reverted in
+        http://trac.webkit.org/changeset/127774.
+
+        * inspector/debugger/debugger-expand-scope-expected.txt:
+
 2012-09-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Unskip two encoding tests that pass now
