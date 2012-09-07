@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
@@ -40,8 +39,8 @@
 
 namespace WebCore {
 
-template<typename T> class DataRef;
 class KURL;
+class MemoryClassInfo;
 class MemoryObjectInfo;
 class MemoryInstrumentation;
 
@@ -146,12 +145,10 @@ private:
     };
 
     template<typename T> void addInstrumentedObjectImpl(const T* const&, MemoryObjectType, MemoryOwningType);
-    template<typename T> void addInstrumentedObjectImpl(const DataRef<T>* const&, MemoryObjectType, MemoryOwningType);
     template<typename T> void addInstrumentedObjectImpl(const OwnPtr<T>* const&, MemoryObjectType, MemoryOwningType);
     template<typename T> void addInstrumentedObjectImpl(const RefPtr<T>* const&, MemoryObjectType, MemoryOwningType);
 
     template<typename T> void addObjectImpl(const T* const&, MemoryObjectType, MemoryOwningType);
-    template<typename T> void addObjectImpl(const DataRef<T>* const&, MemoryObjectType, MemoryOwningType);
     template<typename T> void addObjectImpl(const OwnPtr<T>* const&, MemoryObjectType, MemoryOwningType);
     template<typename T> void addObjectImpl(const RefPtr<T>* const&, MemoryObjectType, MemoryOwningType);
 };
@@ -175,6 +172,8 @@ public:
         , m_objectType(ownerObjectType)
         , m_objectSize(0)
     { }
+
+    typedef MemoryClassInfo ClassInfo;
 
     MemoryObjectType objectType() const { return m_objectType; }
     size_t objectSize() const { return m_objectSize; }
@@ -201,7 +200,7 @@ private:
 class MemoryClassInfo {
 public:
     template<typename T>
-    MemoryClassInfo(MemoryObjectInfo* memoryObjectInfo, const T*, MemoryObjectType objectType, size_t actualSize = 0)
+    MemoryClassInfo(MemoryObjectInfo* memoryObjectInfo, const T*, MemoryObjectType objectType = 0, size_t actualSize = 0)
         : m_memoryObjectInfo(memoryObjectInfo)
         , m_memoryInstrumentation(memoryObjectInfo->memoryInstrumentation())
     {
@@ -246,14 +245,6 @@ void MemoryInstrumentation::addInstrumentedObjectImpl(const T* const& object, Me
 }
 
 template<typename T>
-void MemoryInstrumentation::addInstrumentedObjectImpl(const DataRef<T>* const& object, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
-{
-    if (owningType == byPointer)
-        countObjectSize(ownerObjectType, sizeof(*object));
-    addInstrumentedObjectImpl(object->get(), ownerObjectType, byPointer);
-}
-
-template<typename T>
 void MemoryInstrumentation::addInstrumentedObjectImpl(const OwnPtr<T>* const& object, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
 {
     if (owningType == byPointer)
@@ -267,14 +258,6 @@ void MemoryInstrumentation::addInstrumentedObjectImpl(const RefPtr<T>* const& ob
     if (owningType == byPointer)
         countObjectSize(ownerObjectType, sizeof(*object));
     addInstrumentedObjectImpl(object->get(), ownerObjectType, byPointer);
-}
-
-template<typename T>
-void MemoryInstrumentation::addObjectImpl(const DataRef<T>* const& object, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
-{
-    if (owningType == byPointer)
-        countObjectSize(ownerObjectType, sizeof(*object));
-    addObjectImpl(object->get(), ownerObjectType, byPointer);
 }
 
 template<typename T>
