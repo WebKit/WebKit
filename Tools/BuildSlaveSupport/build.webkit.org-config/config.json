@@ -291,6 +291,11 @@
                       "slavenames": ["google-linux-android"]
                     },
                     {
+                      "name": "Chromium Android Release (Tests)", "type": "Test", "builddir": "chromium-android-release-tests",
+                      "platform": "chromium-android", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["google-android-tests"]
+                    },
+                    {
                       "name": "WinCairo Release", "type": "BuildAndTest", "builddir": "win-cairo-release",
                       "platform": "wincairo", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["wincairo-1"]
@@ -397,6 +402,9 @@
                     },
                     { "type": "Triggerable", "name": "chromium-linux-perf-tests",
                       "builderNames": ["Chromium Linux Release (Perf)"]
+                    },
+                    { "type": "Triggerable", "name": "chromium-android-release-tests",
+                      "builderNames": ["Chromium Android Release (Tests)"]
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-release-tests-wk2",
                       "builderNames": ["GTK Linux 64-bit Release WK2 (Tests)"]
