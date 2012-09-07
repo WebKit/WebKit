@@ -889,6 +889,9 @@ WONTFIX SKIP : media/video-controls-fullscreen-volume.html = TEXT
 // Test fails because it's trying to load a plugin we don't have. We probably don't need to fix this.
 WONTFIX : platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html = TEXT
 
+// Mac and Win does not have global selection.
+WONTFIX MAC WIN : editing/pasteboard/paste-global-selection.html = TEXT
+
 // Skipping rules for ANDROID are in platform/chromium-android/TestExpectations.
 
 // -----------------------------------------------------------------

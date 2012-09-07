@@ -1033,6 +1033,9 @@ platform/mac/editing/spelling/autocorrection-simple.html
 platform/mac/editing/spelling/delete-autocorrected-word-1.html
 platform/mac/editing/spelling/delete-autocorrected-word-2.html
 
+// Mac does not have global selections.
+editing/pasteboard/paste-global-selection.html
+
 # --- WebGL ---
 # Currently failing WebGL tests <rdar://problem/9355460>
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html

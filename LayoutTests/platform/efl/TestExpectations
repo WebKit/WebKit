@@ -1086,3 +1086,6 @@ BUGWK95840 : http/tests/security/cross-origin-plugin.html = TEXT
 
 // Fails after r127534.
 BUGWK95813 : fast/innerHTML/innerHTML-iframe.html = TEXT
+
+// EFL does not yet support global selection
+BUGWK88238 SKIP : editing/pasteboard/paste-global-selection.html = TEXT

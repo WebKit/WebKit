@@ -58,7 +58,7 @@ Pasteboard::Pasteboard()
 void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
     PasteboardHelper* helper = PasteboardHelper::defaultPasteboardHelper();
-    GtkClipboard* clipboard = helper->getClipboard(frame);
+    GtkClipboard* clipboard = helper->getCurrentClipboard(frame);
 
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
     dataObject->clearAll();
@@ -85,7 +85,7 @@ void Pasteboard::writeURL(const KURL& url, const String& label, Frame* frame)
         return;
 
     PasteboardHelper* helper = PasteboardHelper::defaultPasteboardHelper();
-    GtkClipboard* clipboard = helper->getClipboard(frame);
+    GtkClipboard* clipboard = helper->getCurrentClipboard(frame);
 
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
     dataObject->clearAll();
@@ -197,6 +197,16 @@ String Pasteboard::plainText(Frame* frame)
 
     helper->getClipboardContents(clipboard);
     return dataObject->text();
+}
+
+bool Pasteboard::isSelectionMode() const
+{
+    return PasteboardHelper::defaultPasteboardHelper()->usePrimarySelectionClipboard();
+}
+
+void Pasteboard::setSelectionMode(bool selectionMode)
+{
+    PasteboardHelper::defaultPasteboardHelper()->setUsePrimarySelectionClipboard(selectionMode);
 }
 
 }

@@ -42,6 +42,7 @@
 #include "KeyboardEvent.h"
 #include "NotImplemented.h"
 #include "Page.h"
+#include "Pasteboard.h"
 #include "PlatformKeyboardEvent.h"
 #include "QWebPageClient.h"
 #include "Range.h"
@@ -49,9 +50,11 @@
 #include "SpatialNavigation.h"
 #include "StylePropertySet.h"
 #include "WindowsKeyboardCodes.h"
+#include "qguiapplication.h"
 #include "qwebpage.h"
 #include "qwebpage_p.h"
 
+#include <QClipboard>
 #include <QUndoStack>
 #include <stdio.h>
 #include <wtf/OwnPtr.h>
@@ -209,6 +212,13 @@ void EditorClientQt::respondToChangedSelection(Frame* frame)
 //     char buffer[1024];
 //     selection.formatForDebugger(buffer, sizeof(buffer));
 //     printf("%s\n", buffer);
+
+    if (supportsGlobalSelection() && frame->selection()->isRange()) {
+        bool oldSelectionMode = Pasteboard::generalPasteboard()->isSelectionMode();
+        Pasteboard::generalPasteboard()->setSelectionMode(true);
+        Pasteboard::generalPasteboard()->writeSelection(frame->selection()->toNormalizedRange().get(), frame->editor()->canSmartCopyOrDelete(), frame);
+        Pasteboard::generalPasteboard()->setSelectionMode(oldSelectionMode);
+    }
 
     m_page->d->updateEditorActions();
     emit m_page->selectionChanged();
@@ -630,6 +640,11 @@ void EditorClientQt::setInputMethodState(bool active)
         webPageClient->setInputMethodEnabled(active);
     }
     emit m_page->microFocusChanged();
+}
+
+bool EditorClientQt::supportsGlobalSelection()
+{
+    return qApp->clipboard()->supportsSelection();
 }
 
 }

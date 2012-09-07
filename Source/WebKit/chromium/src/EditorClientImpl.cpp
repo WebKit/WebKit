@@ -849,6 +849,15 @@ void EditorClientImpl::getGuessesForWord(const String& word,
     notImplemented();
 }
 
+bool EditorClientImpl::supportsGlobalSelection()
+{
+#if OS(UNIX) && !OS(DARWIN)
+    return true;
+#else
+    return false;
+#endif
+}
+
 void EditorClientImpl::willSetInputMethodState()
 {
     if (m_webView->client())

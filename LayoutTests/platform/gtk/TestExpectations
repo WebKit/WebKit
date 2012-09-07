@@ -424,6 +424,9 @@ BUGWK84635 SKIP : fast/dom/HTMLDialogElement = TEXT
 BUGWK92942 SKIP : fast/dom/Proximity = PASS
 BUGWK92942 SKIP : fast/events/constructors/device-proximity-event-constructor.html = PASS
 
+// Mac and Win does not have global selections.
+WONTFIX MAC WIN : editing/pasteboard/paste-global-selection.html = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Expected failures
 //////////////////////////////////////////////////////////////////////////////////////////

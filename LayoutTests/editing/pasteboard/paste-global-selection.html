@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+    <script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+    <iframe name="iframe1"></iframe>
+    <iframe name="iframe2"></iframe>
+
+    <p id="description">This test checks that we can set and paste X11-style selections.</p>
+    <div id="console"></div>
+
+    <script>
+
+        var document1 = frames['iframe1'].document;
+        var document2 = frames['iframe2'].document;
+
+        function createEditable(doc, tagName, markup) {
+            var node = doc.createElement(tagName);
+            node.contentEditable = true;
+            node.innerHTML = markup;
+            return node;
+        }
+
+        function testPasteSelection(tagName, originalMarkup1, originalMarkup2, expected) {
+            var node1 = createEditable(document1, tagName, originalMarkup1);
+            var node2 = createEditable(document2, tagName, originalMarkup2);
+            document1.body.appendChild(node1);
+            document2.body.appendChild(node2);
+
+            node1.focus();
+            document1.execCommand("SelectAll", false);
+            node2.focus();
+            testRunner.execCommand("MoveToEndOfLine", '');
+            testRunner.execCommand("PasteGlobalSelection", '');
+
+            confirmedMarkup = node2.innerHTML;
+
+            shouldBe("confirmedMarkup", "'" + expected + "'");
+        }
+
+        testPasteSelection("div", "Test", "Test", "TestTest");
+        testPasteSelection("div", "Hello", "Say", "SayHello");
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

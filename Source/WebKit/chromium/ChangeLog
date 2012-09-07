@@ -1,3 +1,19 @@
+2012-09-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        X11 Global Selection
+        https://bugs.webkit.org/show_bug.cgi?id=88238
+
+        Reviewed by Tony Chang.
+
+        Use new editor command for pasting global selection.
+
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::supportsGlobalSelection):
+        * src/EditorClientImpl.h:
+        (EditorClientImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleMouseUp):
+
 2012-09-07  Yoshifumi Inoue  <yosin@chromium.org>
 
         We should have a localized string of empty for date time field

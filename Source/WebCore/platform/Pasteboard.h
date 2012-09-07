@@ -100,9 +100,12 @@ public:
     PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText);
     String plainText(Frame* = 0);
     
-#if PLATFORM(QT) || PLATFORM(CHROMIUM)
+#if PLATFORM(QT) || PLATFORM(CHROMIUM) || PLATFORM(GTK)
     bool isSelectionMode() const;
-    void setSelectionMode(bool selectionMode);
+    void setSelectionMode(bool);
+#else
+    bool isSelectionMode() const { return false; }
+    void setSelectionMode(bool) { }
 #endif
 
 #if PLATFORM(GTK)

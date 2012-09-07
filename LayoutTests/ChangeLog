@@ -1,3 +1,21 @@
+2012-09-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        X11 Global Selection
+        https://bugs.webkit.org/show_bug.cgi?id=88238
+
+        Reviewed by Tony Chang.
+
+        Adds a test for the new editor-command, and disables it an all platforms where it is not supported.
+
+        * editing/pasteboard/paste-global-selection-expected.txt: Added.
+        * editing/pasteboard/paste-global-selection.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/Skipped:
+        * platform/qt-mac/Skipped:
+        * platform/win/Skipped:
+
 2012-09-06  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Migrate FileSystem to async protocol commands.

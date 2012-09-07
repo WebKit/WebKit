@@ -643,11 +643,7 @@ void WebViewImpl::handleMouseUp(Frame& mainFrame, const WebMouseEvent& event)
         // have to be handled separately.
         if (!hitTestResult.scrollbar() && !hitTestResult.isLiveLink() && focused && !view->scrollbarAtPoint(clickPoint)) {
             Editor* editor = focused->editor();
-            Pasteboard* pasteboard = Pasteboard::generalPasteboard();
-            bool oldSelectionMode = pasteboard->isSelectionMode();
-            pasteboard->setSelectionMode(true);
-            editor->command(AtomicString("Paste")).execute();
-            pasteboard->setSelectionMode(oldSelectionMode);
+            editor->command(AtomicString("PasteGlobalSelection")).execute();
         }
     }
 #endif

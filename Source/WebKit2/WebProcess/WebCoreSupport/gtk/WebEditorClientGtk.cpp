@@ -170,7 +170,7 @@ static void collapseSelection(GtkClipboard* clipboard, Frame* frame)
 }
 #endif
 
-void WebEditorClient::setSelectionPrimaryClipboardIfNeeded(Frame* frame)
+void WebEditorClient::updateGlobalSelection(Frame* frame)
 {
 #if PLATFORM(X11)
     GtkClipboard* clipboard = PasteboardHelper::defaultPasteboardHelper()->getPrimarySelectionClipboard(frame);

@@ -34,6 +34,8 @@
 #include "WebPageProxyMessages.h"
 #include "WebPopupMenu.h"
 #include "WebProcess.h"
+#include <QClipboard>
+#include <QGuiApplication>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
@@ -436,6 +438,21 @@ void WebPage::hidePopupMenu()
 
     m_activePopupMenu->client()->popupDidHide();
     m_activePopupMenu = 0;
+}
+
+bool WebPage::handleMouseReleaseEvent(const PlatformMouseEvent& platformMouseEvent)
+{
+    if (platformMouseEvent.button() != WebCore::MiddleButton)
+        return false;
+
+    if (qApp->clipboard()->supportsSelection()) {
+        WebCore::Frame* focusFrame = m_page->focusController()->focusedOrMainFrame();
+        if (focusFrame) {
+            focusFrame->editor()->command(AtomicString("PasteGlobalSelection")).execute();
+            return true;
+        }
+    }
+    return false;
 }
 
 } // namespace WebKit

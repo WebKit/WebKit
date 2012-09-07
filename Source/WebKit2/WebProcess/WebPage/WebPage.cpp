@@ -1352,6 +1352,10 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page, boo
             return handled;
         }
         case PlatformEvent::MouseReleased:
+#if PLATFORM(QT)
+            if (page->handleMouseReleaseEvent(platformMouseEvent))
+                return true;
+#endif
             return frame->eventHandler()->handleMouseReleaseEvent(platformMouseEvent);
         case PlatformEvent::MouseMoved:
             if (onlyUpdateScrollbars)

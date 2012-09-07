@@ -4,6 +4,9 @@ media/media-can-play-ogg.html
 # requires video.buffered to be able to return multiple timeranges
 http/tests/media/video-buffered.html
 
+// Mac does not have global selection
+editing/pasteboard/paste-global-selection.html
+
 # flakey tests
 http/tests/inspector/resource-tree/resource-tree-document-url.html
 http/tests/inspector/resource-tree/resource-tree-frame-add.html

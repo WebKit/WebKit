@@ -2220,3 +2220,6 @@ fast/forms/number/number-interactive-validation-required.html
 
 # Dialog element is not yet enabled.
 fast/dom/HTMLDialogElement
+
+// Windows does not have global selection.
+editing/pasteboard/paste-global-selection.html

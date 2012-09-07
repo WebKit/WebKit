@@ -49,6 +49,7 @@
 #include "InsertListCommand.h"
 #include "KillRing.h"
 #include "Page.h"
+#include "Pasteboard.h"
 #include "RenderBox.h"
 #include "ReplaceSelectionCommand.h"
 #include "Scrollbar.h"
@@ -916,6 +917,20 @@ static bool executePaste(Frame* frame, Event*, EditorCommandSource source, const
     return true;
 }
 
+static bool executePasteGlobalSelection(Frame* frame, Event*, EditorCommandSource source, const String&)
+{
+    if (!frame->editor()->client()->supportsGlobalSelection())
+        return false;
+    ASSERT_UNUSED(source, source == CommandFromMenuOrKeyBinding);
+    UserTypingGestureIndicator typingGestureIndicator(frame);
+
+    bool oldSelectionMode = Pasteboard::generalPasteboard()->isSelectionMode();
+    Pasteboard::generalPasteboard()->setSelectionMode(true);
+    frame->editor()->paste();
+    Pasteboard::generalPasteboard()->setSelectionMode(oldSelectionMode);
+    return true;
+}
+
 static bool executePasteAndMatchStyle(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
     if (source == CommandFromMenuOrKeyBinding) {
@@ -1544,6 +1559,7 @@ static const CommandMap& createCommandMap()
         { "Paste", { executePaste, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
         { "PasteAndMatchStyle", { executePasteAndMatchStyle, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
         { "PasteAsPlainText", { executePasteAsPlainText, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
+        { "PasteGlobalSelection", { executePasteGlobalSelection, supportedFromMenuOrKeyBinding, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
         { "Print", { executePrint, supported, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Redo", { executeRedo, supported, enabledRedo, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "RemoveFormat", { executeRemoveFormat, supported, enabledRangeInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },

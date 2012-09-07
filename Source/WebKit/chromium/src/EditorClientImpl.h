@@ -113,6 +113,7 @@ public:
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
     virtual void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>);
+    virtual bool supportsGlobalSelection() OVERRIDE;
 
     virtual WebCore::TextCheckerClient* textChecker() { return this; }
 

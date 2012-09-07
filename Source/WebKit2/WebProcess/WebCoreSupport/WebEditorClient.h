@@ -124,7 +124,9 @@ private:
 #if PLATFORM(GTK)
     bool executePendingEditorCommands(WebCore::Frame*, Vector<WTF::String>, bool) OVERRIDE;
     void getEditorCommandsForKeyEvent(const WebCore::KeyboardEvent*, Vector<WTF::String>&) OVERRIDE;
-    void setSelectionPrimaryClipboardIfNeeded(WebCore::Frame*) OVERRIDE;
+#endif
+#if PLATFORM(GTK) || PLATFORM(QT)
+    void updateGlobalSelection(WebCore::Frame*);
 #endif
 
     TextCheckerClient* textChecker()  OVERRIDE { return this; }
@@ -149,6 +151,9 @@ private:
 #if PLATFORM(GTK)
     virtual bool shouldShowUnicodeMenu() OVERRIDE;
 #endif
+
+    virtual bool supportsGlobalSelection() OVERRIDE;
+
     WebPage* m_page;
 };
 
