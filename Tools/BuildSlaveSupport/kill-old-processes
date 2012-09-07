@@ -95,6 +95,7 @@ def main():
         "svn",
         "webkit_unit_tests",
         "WebKitTestRunner",
+        "Xvfb",
     ]
 
     if sys.platform == 'darwin':

@@ -58,11 +58,20 @@ class MockExecutive(object):
         self._should_throw = should_throw
         self._should_throw_when_run = should_throw_when_run or set()
         # FIXME: Once executive wraps os.getpid() we can just use a static pid for "this" process.
-        self._running_pids = [os.getpid()]
+        self._running_pids = {'test-webkitpy': os.getpid()}
         self._proc = None
 
     def check_running_pid(self, pid):
-        return pid in self._running_pids
+        return pid in self._running_pids.values()
+
+    def running_pids(self, process_name_filter):
+        running_pids = []
+        for process_name, process_pid in self._running_pids.iteritems():
+            if process_name_filter(process_name):
+                running_pids.append(process_pid)
+
+        log("MOCK running_pids: %s" % running_pids)
+        return running_pids
 
     def run_and_throw_if_fail(self, args, quiet=False, cwd=None, env=None):
         if self._should_log:

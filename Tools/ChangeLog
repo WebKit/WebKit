@@ -1,3 +1,53 @@
+2012-09-07  Zan Dobersek  <zandobersek@gmail.com>
+
+        [NRWT] XvfbDriver should stop the Xvfb more aggressively
+        https://bugs.webkit.org/show_bug.cgi?id=95097
+
+        Reviewed by Dirk Pranke.
+
+        The Xvfb process is now killed when the XvfbDriver is stopping. Simply
+        terminating the process does not always work as expected, leading to timeouts
+        in run-webkit-tests on the buildbot. The lock file Xvfb creates is also removed
+        as it's not removed by the killed Xvfb process.
+
+        Also included is a thorough unittest for XvfbDriver. Proper starting of the driver
+        is tested in different circumstances - whether pixel tests are enabled or not,
+        with an arbitrary worker number or with an Xorg process already running on the system.
+        The stopping of the driver is tested by checking that the Xvfb process is truly killed
+        and then set to None.
+
+        * BuildSlaveSupport/kill-old-processes:
+        Kill any stale Xvfb processes at the start of the build cycle so no Xvfb
+        is left running, potentially clogging up a display at a certain position.
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockExecutive.__init__):
+        The _running_pids is now a dictionary with process names as keys and pids
+        as values.
+        (MockExecutive.check_running_pid):
+        Check whether the passed-in pid is in the _running_pids dictionary's values.
+        (MockExecutive):
+        (MockExecutive.running_pids):
+        This method returns the list of all the process pids of which the name passes
+        through the process_name_filter.
+        * Scripts/webkitpy/layout_tests/port/xvfbdriver.py:
+        Use the Executive object of the port's host to check for running pids and open
+        new subprocesses or kill them throughout the class.
+        (XvfbDriver._start):
+        Use the _server_process_constructor to make testing the XvfbDriver possible. Also,
+        start the server process after it's created.
+        (XvfbDriver.stop):
+        Now kills the Xvfb process instead of terminating it and waiting for it to close.
+        * Scripts/webkitpy/layout_tests/port/xvfbdriver_unittest.py: Added.
+        (XvfbDriverTest):
+        (XvfbDriverTest.make_driver):
+        (XvfbDriverTest.assertDriverStartSuccessful):
+        (XvfbDriverTest.test_start_no_pixel_tests):
+        (XvfbDriverTest.test_start_pixel_tests):
+        (XvfbDriverTest.test_start_arbitrary_worker_number):
+        (XvfbDriverTest.test_start_existing_xorg_process):
+        (XvfbDriverTest.test_stop):
+        (XvfbDriverTest.test_stop.FakeXvfbProcess):
+
 2012-09-06  Peter Beverloo  <peter@chromium.org>
 
         Introduce the Chromium Android Release (Tests) bot
