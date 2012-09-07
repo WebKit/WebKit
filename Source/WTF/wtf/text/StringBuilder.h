@@ -154,8 +154,11 @@ public:
             return AtomicString();
 
         // If the buffer is sufficiently over-allocated, make a new AtomicString from a copy so its buffer is not so large.
-        if (canShrink())
-            return AtomicString(characters(), length());
+        if (canShrink()) {
+            if (is8Bit())
+                return AtomicString(characters8(), length());
+            return AtomicString(characters16(), length());            
+        }
 
         if (!m_string.isNull())
             return AtomicString(m_string);
