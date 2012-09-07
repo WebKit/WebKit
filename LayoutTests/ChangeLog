@@ -1,3 +1,17 @@
+2012-09-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Unskip two encoding tests that pass now
+        https://bugs.webkit.org/show_bug.cgi?id=96013
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The result for frame-default-enc was incorrect and we succeed in
+        producing the existing cross-platform result. The other test passes
+        just fine.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/encoding/frame-default-enc-expected.txt: Removed.
+
 2012-09-06  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] 2 mathml tests need rebaseline after r127769

@@ -1739,8 +1739,6 @@ fast/forms/text-control-intrinsic-widths.html
 fast/forms/textarea-metrics.html
 fast/history/window-open.html
 fast/dom/Range/range-expand.html
-fast/encoding/frame-default-enc.html
-fast/encoding/invalid-xml.html
 fast/events/attempt-scroll-with-no-scrollbars.html
 fast/events/key-events-in-input-button.html
 fast/forms/radio/input-radio-checked-tab.html
