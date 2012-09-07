@@ -1,3 +1,15 @@
+2012-09-06  Matt Falkenhagen  <falken@chromium.org>
+
+        [Tests] Skip Dialog element tests on Win
+        https://bugs.webkit.org/show_bug.cgi?id=96051
+
+        Reviewed by Hajime Morita.
+
+        Dialog is not yet enabled except on Chromium. Dialog tests should have
+        been added to the Win port's skipped list as part of r122420.
+
+        * platform/win/Skipped:
+
 2012-09-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(127810): It broke inspector/debugger/debugger-expand-scope.html

@@ -2217,3 +2217,6 @@ media/W3C/video/src/src_removal_does_not_trigger_loadstart.html
 
 # Interactive form validation not enabled on Windows
 fast/forms/number/number-interactive-validation-required.html
+
+# Dialog element is not yet enabled.
+fast/dom/HTMLDialogElement
