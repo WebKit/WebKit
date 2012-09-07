@@ -1,3 +1,51 @@
+2012-09-06  Pravin D  <pravind.2k4@gmail.com>
+
+        fast/table/empty-row-crash.html and fast/table/inline-form-assert.html should be dumpAsText tests
+        https://bugs.webkit.org/show_bug.cgi?id=95613
+
+        Reviewed by Julien Chaffraix.
+
+        Modified the test cases empty-row-crash.html and inline-form-assert.html to dumpAsText tests.
+        As the testcases check for crash/assert and not for the correctness of content layout or painting
+        they can be safely modified to dumpAsText tests.
+
+        * fast/table/empty-row-crash-expected.txt: Added.
+         New expected file.
+        * fast/table/empty-row-crash.html:
+         Added a short description about the testcase.
+
+        * fast/table/inline-form-assert-expected.txt: Added.
+         New expected file.
+        * fast/table/inline-form-assert.html:
+
+        * platform/chromium-linux/fast/table/empty-row-crash-expected.png: Removed.
+        * platform/chromium-linux/fast/table/inline-form-assert-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/table/empty-row-crash-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/table/inline-form-assert-expected.png: Removed.
+        * platform/chromium-mac/fast/table/empty-row-crash-expected.png: Removed.
+        * platform/chromium-mac/fast/table/inline-form-assert-expected.png: Removed.
+        * platform/chromium-win/fast/table/empty-row-crash-expected.png: Removed.
+        * platform/chromium-win/fast/table/empty-row-crash-expected.txt: Removed.
+        * platform/chromium-win/fast/table/inline-form-assert-expected.png: Removed.
+        * platform/chromium-win/fast/table/inline-form-assert-expected.txt: Removed.
+        * platform/efl/fast/table/empty-row-crash-expected.png: Removed.
+        * platform/efl/fast/table/empty-row-crash-expected.txt: Removed.
+        * platform/efl/fast/table/inline-form-assert-expected.png: Removed.
+        * platform/efl/fast/table/inline-form-assert-expected.txt: Removed.
+        * platform/gtk/fast/table/empty-row-crash-expected.png: Removed.
+        * platform/gtk/fast/table/empty-row-crash-expected.txt: Removed.
+        * platform/gtk/fast/table/inline-form-assert-expected.png: Removed.
+        * platform/gtk/fast/table/inline-form-assert-expected.txt: Removed.
+        * platform/mac/fast/table/empty-row-crash-expected.png: Removed.
+        * platform/mac/fast/table/empty-row-crash-expected.txt: Removed.
+        * platform/mac/fast/table/inline-form-assert-expected.png: Removed.
+        * platform/mac/fast/table/inline-form-assert-expected.txt: Removed.
+        * platform/qt/fast/table/empty-row-crash-expected.png: Removed.
+        * platform/qt/fast/table/empty-row-crash-expected.txt: Removed.
+        * platform/qt/fast/table/inline-form-assert-expected.png: Removed.
+        * platform/qt/fast/table/inline-form-assert-expected.txt: Removed.
+         Removed obsolete baselines.
+
 2012-09-06  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled back in <http://trac.webkit.org/changeset/127698> with a fix for
