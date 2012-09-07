@@ -1,3 +1,13 @@
+2012-09-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Move RenderView::setFixedPositionedObjectsNeedLayout to FrameView
+        https://bugs.webkit.org/show_bug.cgi?id=96017
+
+        Unreviewed Qt-WK2 buildfix after r127783.
+
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::syncFixedLayers):
+
 2012-09-05  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Annotate multi-process FIXMEs with bug numbers
