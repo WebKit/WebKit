@@ -1,3 +1,13 @@
+2012-09-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Object.prototype.__define{G,S}etter__ with non-callable second parameter should throw TypeError instead of SyntaxError
+        https://bugs.webkit.org/show_bug.cgi?id=93873
+
+        Reviewed by Sam Weinig.
+
+        * fast/js/property-getters-and-setters-expected.txt:
+            - updated results
+
 2012-09-07  Ojan Vafai  <ojan@chromium.org>
 
         Fix the remaining linter errors. These are all cases of paths

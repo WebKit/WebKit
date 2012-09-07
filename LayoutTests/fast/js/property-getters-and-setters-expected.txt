@@ -17,10 +17,10 @@ __lookupGetter__ and __lookupSetter__
 PASS o4.__lookupGetter__('b') is getB
 PASS o4.__lookupSetter__('b') is setB
 __defineGetter__ and __defineSetter__ with various invalid arguments
-PASS o5.__defineSetter__('a', null) threw exception SyntaxError: invalid setter usage.
-PASS o5.__defineSetter__('a', o5) threw exception SyntaxError: invalid setter usage.
-PASS o5.__defineGetter__('a', null) threw exception SyntaxError: invalid getter usage.
-PASS o5.__defineGetter__('a', o5) threw exception SyntaxError: invalid getter usage.
+PASS o5.__defineSetter__('a', null) threw exception TypeError: invalid setter usage.
+PASS o5.__defineSetter__('a', o5) threw exception TypeError: invalid setter usage.
+PASS o5.__defineGetter__('a', null) threw exception TypeError: invalid getter usage.
+PASS o5.__defineGetter__('a', o5) threw exception TypeError: invalid getter usage.
 setters and getters with exceptions
 PASS x = o6.x threw exception Exception in get.
 PASS x is 0

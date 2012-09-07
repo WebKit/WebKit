@@ -157,7 +157,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(ExecState* exec)
     JSValue get = exec->argument(1);
     CallData callData;
     if (getCallData(get, callData) == CallTypeNone)
-        return throwVMError(exec, createSyntaxError(exec, ASCIILiteral("invalid getter usage")));
+        return throwVMError(exec, createTypeError(exec, ASCIILiteral("invalid getter usage")));
 
     PropertyDescriptor descriptor;
     descriptor.setGetter(get);
@@ -177,7 +177,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(ExecState* exec)
     JSValue set = exec->argument(1);
     CallData callData;
     if (getCallData(set, callData) == CallTypeNone)
-        return throwVMError(exec, createSyntaxError(exec, ASCIILiteral("invalid setter usage")));
+        return throwVMError(exec, createTypeError(exec, ASCIILiteral("invalid setter usage")));
 
     PropertyDescriptor descriptor;
     descriptor.setSetter(set);
