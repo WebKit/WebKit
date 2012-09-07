@@ -183,9 +183,9 @@ audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-medi
     display: -webkit-box;
     border: none;
     box-sizing: border-box;
-    width: 25px;
-    height: 25px;
-    line-height: 25px;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
     margin-left: -5px;
     margin-right: 9px;
     padding: 0;

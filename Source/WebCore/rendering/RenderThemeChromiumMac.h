@@ -58,6 +58,7 @@ protected:
     virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
     virtual String formatMediaControlsRemainingTime(float currentTime, float duration) const;
     virtual bool paintMediaFullscreenButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaToggleClosedCaptionsButton(RenderObject*, const PaintInfo&, const IntRect&);
 #endif
 
     virtual bool usesTestModeFocusRingColor() const;

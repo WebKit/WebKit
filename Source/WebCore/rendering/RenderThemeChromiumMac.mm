@@ -233,6 +233,11 @@ bool RenderThemeChromiumMac::paintMediaFullscreenButton(RenderObject* object, co
 {
     return RenderMediaControlsChromium::paintMediaControlsPart(MediaEnterFullscreenButton, object, paintInfo, rect);
 }
+
+bool RenderThemeChromiumMac::paintMediaToggleClosedCaptionsButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaShowClosedCaptionsButton, object, paintInfo, rect);
+}
 #endif
 
 } // namespace WebCore
