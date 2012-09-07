@@ -40,7 +40,7 @@ namespace WebCore {
 
 UniscribeHelperTextRun::UniscribeHelperTextRun(const TextRun& run,
                                                const Font& font)
-    : UniscribeHelper(run.characters(), run.length(), run.rtl(),
+    : UniscribeHelper(run.characters16(), run.length(), run.rtl(),
                       font.primaryFont()->platformData().hfont(),
                       font.primaryFont()->platformData().scriptCache(),
                       font.primaryFont()->platformData().scriptFontProperties(),

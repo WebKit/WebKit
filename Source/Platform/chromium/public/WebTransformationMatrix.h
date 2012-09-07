@@ -86,7 +86,7 @@ public:
     WEBKIT_EXPORT bool isIdentityOrTranslation() const;
     WEBKIT_EXPORT bool isIntegerTranslation() const;
 
-    WEBKIT_EXPORT // Accessors
+    // Accessors
     WEBKIT_EXPORT double m11() const;
     WEBKIT_EXPORT void setM11(double);
     WEBKIT_EXPORT double m12() const;

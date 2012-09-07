@@ -1,3 +1,16 @@
+2012-09-06  Hironori Bono  <hbono@chromium.org>
+
+        A build fix for Chromium Windows
+        https://bugs.webkit.org/show_bug.cgi?id=96062
+
+        Reviewed by James Robinson.
+
+        This change fixes a build break on Chromium Windows (debug) caused by r127796
+        <http://trac.webkit.org/changeset/127796>. It removes a redundant WEBKIT_EXPORT.
+
+        * chromium/public/WebTransformationMatrix.h:
+        (WebTransformationMatrix):
+
 2012-09-06  Yoshifumi Inoue  <yosin@chromium.org>
 
         We should have localized strings of date time fields for accessibility
