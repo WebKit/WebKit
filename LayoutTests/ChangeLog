@@ -1,3 +1,11 @@
+2012-09-07  Fady Samuel  <fsamuel@chromium.org>
+
+        Unreviewed rebaseline for chromium gardening.
+
+        * platform/chromium-win-xp/media/track/track-cue-rendering-vertical-expected.png:
+        * platform/chromium-win/media/track/track-cue-rendering-vertical-expected.png:
+        * platform/chromium-win/media/track/track-cue-rendering-vertical-expected.txt:
+
 2012-09-07  Roger Fong  <roger_fong@apple.com>
 
         http/tests/security/contentSecurityPolicy/blob-urls-match-self.html fails on Windows port.
