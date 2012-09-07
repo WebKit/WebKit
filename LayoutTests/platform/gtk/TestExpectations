@@ -1308,7 +1308,6 @@ BUGWK95530 : http/tests/security/inactive-document-with-empty-security-origin.ht
 
 BUGWK88238 : editing/pasteboard/paste-global-selection.html = TEXT
 
-BUG_OJAN : fast/css/percent-top-value-with-relative-position.html = TEXT IMAGE+TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
