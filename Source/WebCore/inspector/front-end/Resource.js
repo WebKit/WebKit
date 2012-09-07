@@ -311,13 +311,12 @@ WebInspector.Resource.prototype = {
         this._contentRequested = true;
 
         /**
-         * @param {?Protocol.Error} error
          * @param {string} content
          * @param {boolean} contentEncoded
          */
-        function callback(error, content, contentEncoded)
+        function contentLoaded(content, contentEncoded)
         {
-            this._content = error ? null : content;
+            this._content = content;
             this._contentEncoded = contentEncoded;
             var callbacks = this._pendingContentCallbacks.slice();
             for (var i = 0; i < callbacks.length; ++i)
@@ -325,7 +324,34 @@ WebInspector.Resource.prototype = {
             this._pendingContentCallbacks.length = 0;
             delete this._contentRequested;
         }
-        PageAgent.getResourceContent(this.frameId, this.url, callback.bind(this));
+
+        /**
+         * @param {?Protocol.Error} error
+         * @param {string} content
+         * @param {boolean} contentEncoded
+         */
+        function resourceContentLoaded(error, content, contentEncoded)
+        {
+            if (error)
+                console.error("Resource content request failed: " + error);
+            contentLoaded.call(this, error ? null : content, contentEncoded);
+        }
+        
+        if (this.request) {
+            /**
+             * @param {string} content
+             * @param {boolean} contentEncoded
+             * @param {string} mimeType
+             */
+            function requestContentLoaded(content, contentEncoded, mimeType)
+            {
+                contentLoaded.call(this, content, contentEncoded);
+            }
+            
+            this.request.requestContent(requestContentLoaded.bind(this));
+            return;
+        }
+        PageAgent.getResourceContent(this.frameId, this.url, resourceContentLoaded.bind(this));
     },
 
     /**

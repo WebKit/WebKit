@@ -1,3 +1,16 @@
+2012-09-06  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [REGRESSION] Content is not available for dynamically loaded script sometimes.
+        https://bugs.webkit.org/show_bug.cgi?id=95954
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/resource-tree/resource-request-content-after-loading-and-clearing-cache-expected.txt: Added.
+        * http/tests/inspector/resource-tree/resource-request-content-after-loading-and-clearing-cache.html: Added.
+        * http/tests/inspector/resource-tree/resources/dynamic-script.js: Added.
+        (foo):
+        * http/tests/inspector/resources-test.js:
+
 2012-09-07  Dominic Mazzoni  <dmazzoni@google.com>
 
         Unreviewed.

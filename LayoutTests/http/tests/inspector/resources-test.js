@@ -82,7 +82,7 @@ InspectorTest.showResource = function(resourceURL, callback)
     InspectorTest.runAfterResourcesAreFinished([resourceURL], showResourceCallback);
 }
 
-InspectorTest.resourceMatchingURL = function(resourceURL, callback)
+InspectorTest.resourceMatchingURL = function(resourceURL)
 {
     var result = null;
     WebInspector.resourceTreeModel.forAllResources(visit);
