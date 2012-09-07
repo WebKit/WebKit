@@ -1,3 +1,16 @@
+2012-09-06  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Updating baselines for two MathML tests after r127769.
+
+        Removing failure expectations for tests fixed by changes in r127798,
+        rollout in r127774 and rebaseline in r127825.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/mathml/presentation/roots-expected.txt:
+        * platform/gtk/mathml/presentation/sup-expected.txt:
+
 2012-09-06  Matt Falkenhagen  <falken@chromium.org>
 
         [Tests] Skip Dialog element tests on Win

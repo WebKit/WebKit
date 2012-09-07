@@ -1297,13 +1297,6 @@ BUGWK94677 : http/tests/security/contentSecurityPolicy/register-bypassing-scheme
 
 BUGWK95530 : http/tests/security/inactive-document-with-empty-security-origin.html = TEXT
 
-BUGWK95825 : accessibility/canvas-description-and-role.html = TEXT
-
-BUGWK95944 : fast/dom/HTMLScriptElement/script-reexecution.html = TEXT
-
-BUGWK95952 : fast/viewport/viewport-limits-adjusted-for-no-user-scale-control.html = TEXT
-BUGWK95952 : fast/viewport/viewport-limits-adjusted-for-no-user-scale.html = TEXT
-
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////
