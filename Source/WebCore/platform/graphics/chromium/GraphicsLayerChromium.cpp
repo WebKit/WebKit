@@ -752,8 +752,8 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
         m_transformLayer->addChild(m_layer->layer());
 
         updateChildList();
-    } else if (m_preserves3D && !m_transformLayer) {
-        // Relace the transformLayer in the parent with this layer.
+    } else if (!m_preserves3D && m_transformLayer) {
+        // Replace the transformLayer in the parent with this layer.
         m_layer->layer()->removeFromParent();
         if (parent())
             parent()->platformLayer()->replaceChild(m_transformLayer.get(), m_layer->layer());

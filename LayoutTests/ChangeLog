@@ -1,3 +1,16 @@
+2012-09-07  Sami Kyostila  <skyostil@google.com>
+
+        [chromium] Dynamically removing preserve-3d from a layer has no effect
+        https://bugs.webkit.org/show_bug.cgi?id=95732
+
+        Reviewed by James Robinson.
+
+        Add test to verify dynamic removal of preserve-3d CSS attribute.
+
+        * platform/chromium/compositing/preserve-3d-toggle-expected.png: Added.
+        * platform/chromium/compositing/preserve-3d-toggle-expected.txt: Added.
+        * platform/chromium/compositing/preserve-3d-toggle.html: Added.
+
 2012-09-03  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Implement SCSS source highlighter
