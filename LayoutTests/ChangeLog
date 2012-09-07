@@ -1,3 +1,17 @@
+2012-09-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r127780 and r127859.
+        http://trac.webkit.org/changeset/127780
+        http://trac.webkit.org/changeset/127859
+        https://bugs.webkit.org/show_bug.cgi?id=96102
+
+        "inspector/styles/protocol-css-regions-commands.html crashing
+        on Chromium Linux Debug and timing out flakily on Release"
+        (Requested by apavlov on #webkit).
+
+        * inspector/styles/protocol-css-regions-commands-expected.txt:
+        * inspector/styles/protocol-css-regions-commands.html:
+
 2012-09-07  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

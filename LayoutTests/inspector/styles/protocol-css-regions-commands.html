@@ -21,32 +21,24 @@ function createDynamicElements()
 function createNamedFlow()
 {
     var article = document.createElement("article");
-    var div = document.createElement("div");
-
     article.id = "tmpArticle";
-    article.style["-webkit-flow-into"] = "tmpNamedFlow";
-    article.textContent = "This text is from CSS Named Flow \"tmpNamedFlow\"";
-
-    div.id = "tmpDiv";
-    div.style["-webkit-flow-from"] = "tmpNamedFlow";
-    div.style["height"] = "5px";
-    div.style["width"] = "20px";
+    article.style.webkitFlowInto = "tmpNamedFlow";
 
     document.body.appendChild(article);
-    document.body.appendChild(div);
 }
 
 function removeNamedFlow()
 {
-    document.body.removeChild(document.getElementById("tmpArticle"));
-    document.body.removeChild(document.getElementById("tmpDiv"));
+    var article = document.getElementById("tmpArticle");
+
+    document.body.removeChild(article);
 }
 
 function test()
 {
     WebInspector.showPanel("elements");
     InspectorTest.runTestSuite([
-        function testGetNamedFlowCollection(next)
+        function testGetNamedFlowCollection1(next)
         {
             WebInspector.domAgent.requestDocument(documentCallback);
 
@@ -55,19 +47,15 @@ function test()
                 WebInspector.cssModel.getNamedFlowCollectionAsync(document.id, namedFlowCallback);
             }
 
-            function namedFlowCallback(namedFlowMap)
+            function namedFlowCallback(namedFlows)
             {
                 InspectorTest.addResult("=== CSS Named Flows in main document ===");
 
-                if (!namedFlowMap) {
+                if (!namedFlows) {
                     InspectorTest.addResult("[!] Failed to get Named Flows");
                     InspectorTest.completeTest();
                     return;
                 }
-
-                namedFlows = [];
-                for (var flowName in namedFlowMap)
-                    namedFlows.push(namedFlowMap[flowName]);
 
                 namedFlows.sort(function (nf1, nf2) {
                     return ((nf1.name == nf2.name) ? 0 : ((nf1.name > nf2.name) ? 1 : -1));
@@ -80,7 +68,7 @@ function test()
             }
         },
 
-        function testGetNamedFlowCollectionWithInvalidDocument(next)
+        function testGetNamedFlowCollection2(next)
         {
             WebInspector.domAgent.requestDocument(documentCallback);
 
@@ -94,11 +82,11 @@ function test()
                 WebInspector.cssModel.getNamedFlowCollectionAsync(nodeId, namedFlowCallback);
             }
 
-            function namedFlowCallback(namedFlowMap)
+            function namedFlowCallback(namedFlows)
             {
                 InspectorTest.addResult("=== CSS Named Flows in #fake-document ===");
 
-                if (namedFlowMap) {
+                if (namedFlows) {
                     InspectorTest.addResult("[!] Failed");
                     InspectorTest.completeTest();
                     return;
@@ -109,7 +97,7 @@ function test()
             }
         },
 
-        function testGetFlowByName(next)
+        function testGetFlowByName1(next)
         {
             WebInspector.domAgent.requestDocument(documentCallback);
 
@@ -134,7 +122,7 @@ function test()
             }
         },
 
-        function testGetFlowByNameWithInvalidName(next)
+        function testGetFlowByName2(next)
         {
             WebInspector.domAgent.requestDocument(documentCallback);
 
@@ -165,29 +153,15 @@ function test()
 
             function callback(event)
             {
-                if (event.data.name !== "tmpNamedFlow")
-                    return;
-
                 WebInspector.cssModel.removeEventListener(WebInspector.CSSStyleModel.Events.NamedFlowCreated, callback, this);
 
-                InspectorTest.addResult("NamedFlowCreated: \"tmpNamedFlow\"");
-                next();
-            }
-        },
-
-        function testRegionLayoutUpdated(next)
-        {
-            WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.RegionLayoutUpdated, callback, this);
-            InspectorTest.evaluateInPage("document.getElementById(\"region3\").style[\"width\"] = \"200px\"");
-
-            function callback(event)
-            {
-                if (event.data.name !== "flow3")
+                if (event.data.name !== "tmpNamedFlow") {
+                    Inspector.addResult("[!] Failed");
+                    InspectorTest.completeTest();
                     return;
+                }
 
-                WebInspector.cssModel.removeEventListener(WebInspector.CSSStyleModel.Events.RegionLayoutUpdated, callback, this);
-
-                InspectorTest.addResult("RegionLayoutUpdated: \"flow3\"");
+                InspectorTest.addResult("NamedFlowCreated: \"tmpNamedFlow\"");
                 next();
             }
         },
@@ -199,10 +173,12 @@ function test()
 
             function callback(event)
             {
-                if (event.data.flowName !== "tmpNamedFlow")
-                    return;
-
                 WebInspector.cssModel.removeEventListener(WebInspector.CSSStyleModel.Events.NamedFlowRemoved, callback, this);
+                if (event.data.name !== "tmpNamedFlow") {
+                    Inspector.addResult("[!] Failed");
+                    InspectorTest.completeTest();
+                    return;
+                }
 
                 InspectorTest.addResult("NamedFlowRemoved: \"tmpNamedFlow\"");
                 next();
@@ -228,7 +204,6 @@ Tests the following commands and events:
     <li>getFlowByName <a href="https://bugs.webkit.org/show_bug.cgi?id=91855">Bug 91855</a></li>
     <li>namedFlowCreated <a href="https://bugs.webkit.org/show_bug.cgi?id=92739">Bug 92739</a></li>
     <li>namedFlowRemoved <a href="https://bugs.webkit.org/show_bug.cgi?id=92739">Bug 92739</a></li>
-    <li>regionLayoutUpdated <a href="https://bugs.webkit.org/show_bug.cgi?id=93443">Bug 93443</a></li>
 </ul>
 </p>
 
@@ -241,10 +216,8 @@ Tests the following commands and events:
 <div style="-webkit-flow-from: flow2"></div>
 <div style="-webkit-flow-from: flow2"></div>
 
-<article style="-webkit-flow-into: flow3">
-    This text is from CSS Named Flow "flow3".
-</article>
-<div id="region3" style="-webkit-flow-from: flow3; height: 20px; width: 5px"></div>
+<article style="-webkit-flow-into: flow3"></article>
+<div style="-webkit-flow-from: flow3"></div>
 
 <div id="fake-document"></div>
 

@@ -2339,6 +2339,18 @@
                 ],
                 "description": "Returns the Named Flows from the document.",
                 "hidden": true
+            },
+            {
+                "name": "getFlowByName",
+                "parameters": [
+                    { "name": "documentNodeId", "$ref": "DOM.NodeId", "description": "The document node id." },
+                    { "name": "name", "type": "string", "description": "Named Flow identifier." }
+                ],
+                "returns": [
+                    { "name": "namedFlow", "$ref": "NamedFlow", "description": "A Named Flow." }
+                ],
+                "description": "Returns the Named Flow identified by the given name",
+                "hidden": true
             }
         ],
         "events": [
@@ -2356,7 +2368,8 @@
             {
                 "name": "namedFlowCreated",
                 "parameters": [
-                    { "name": "namedFlow", "$ref": "NamedFlow", "description": "The new Named Flow." }
+                    { "name": "documentNodeId", "$ref": "DOM.NodeId", "description": "The document node id." },
+                    { "name": "namedFlow", "type": "string", "description": "Identifier of the new Named Flow." }
                 ],
                 "description": "Fires when a Named Flow is created.",
                 "hidden": true
@@ -2365,17 +2378,9 @@
                 "name": "namedFlowRemoved",
                 "parameters": [
                     { "name": "documentNodeId", "$ref": "DOM.NodeId", "description": "The document node id." },
-                    { "name": "flowName", "type": "string", "description": "Identifier of the removed Named Flow." }
+                    { "name": "namedFlow", "type": "string", "description": "Identifier of the removed Named Flow." }
                 ],
                 "description": "Fires when a Named Flow is removed: has no associated content nodes and regions.",
-                "hidden": true
-            },
-            {
-                "name": "regionLayoutUpdated",
-                "parameters": [
-                    { "name": "namedFlow", "$ref": "NamedFlow", "description": "The Named Flow whose layout may have changed." }
-                ],
-                "description": "Fires when a Named Flow's layout may have changed.",
                 "hidden": true
             }
         ]
