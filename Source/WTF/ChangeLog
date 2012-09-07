@@ -1,3 +1,15 @@
+2012-09-06  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed fix to r127799.
+        https://bugs.webkit.org/show_bug.cgi?id=95807
+
+        Unreviewed fix.
+
+        Removed extraneous "static".  This code is hidden behind STRING_STATS define and 
+        therefore is not enabled by default.
+
+        * wtf/text/StringImpl.cpp:
+
 2012-09-06  Lauro Neto  <lauro.neto@openbossa.org>
 
         [Qt] Deprecate String += operator

@@ -47,7 +47,7 @@ COMPILE_ASSERT(sizeof(StringImpl) == 2 * sizeof(int) + 3 * sizeof(void*), String
 #ifdef STRING_STATS
 StringStats StringImpl::m_stringStats;
 
-static unsigned StringStats::s_stringRemovesTillPrintStats = StringStats::s_printStringStatsFrequency;
+unsigned StringStats::s_stringRemovesTillPrintStats = StringStats::s_printStringStatsFrequency;
 
 void StringStats::removeString(StringImpl* string)
 {
