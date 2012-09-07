@@ -1,3 +1,15 @@
+2012-09-07  Mark Lam  <mark.lam@apple.com>
+
+        Fix a llint C++ interpreter bugs.
+        https://bugs.webkit.org/show_bug.cgi?id=96127.
+
+        Reviewed by Filip Pizlo.
+
+        * llint/LowLevelInterpreter.cpp:
+        (JSC):
+        (JSC::CLoop::execute):
+        * offlineasm/cloop.rb:
+
 2012-09-07  Gavin Barraclough  <barraclough@apple.com>
 
         Object.prototype.__define{G,S}etter__ with non-callable second parameter should throw TypeError instead of SyntaxError

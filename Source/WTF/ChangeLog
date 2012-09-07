@@ -1,3 +1,14 @@
+2012-09-07  Mark Lam  <mark.lam@apple.com>
+
+        Fixed ASSERT() and ASSERT_AT() macros so that they can be used in
+        comma expressions.
+        https://bugs.webkit.org/show_bug.cgi?id=96127.
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/Assertions.h:
+        (wtfAssert):
+
 2012-09-07  Michael Saboff  <msaboff@apple.com>
 
         StringImpl::find(StringImpl*) doesn't handle cases where search and match strings are different bitness

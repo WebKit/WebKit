@@ -244,19 +244,20 @@ inline void assertUnused(T& x) { (void)x; }
 
 #else
 
-#define ASSERT(assertion) do \
-    if (!(assertion)) { \
-        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
-        CRASH(); \
-    } \
-while (0)
+static inline void wtfAssert(bool assertion, const char* file, int line,
+    const char* function, const char* assertionString)
+{
+    if (!assertion) {
+        WTFReportAssertionFailure(file, line, function, assertionString);
+        CRASH();
+    }
+}
 
-#define ASSERT_AT(assertion, file, line, function) do  \
-    if (!(assertion)) { \
-        WTFReportAssertionFailure(file, line, function, #assertion); \
-        CRASH(); \
-    } \
-while (0)
+#define ASSERT(assertion) \
+    wtfAssert(!!(assertion), __FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion)
+
+#define ASSERT_AT(assertion, file, line, function) \
+    wtfAssert(!!(assertion), file, line, function, #assertion)
 
 #define ASSERT_NOT_REACHED() do { \
     WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, 0); \
