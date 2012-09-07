@@ -444,7 +444,7 @@ Page* InspectorOverlay::overlayPage()
 
 void InspectorOverlay::reset()
 {
-    evaluateInOverlay("reset", "");
+    evaluateInOverlay("reset", String::number(m_page->deviceScaleFactor()));
 }
 
 void InspectorOverlay::evaluateInOverlay(const String& method, const String& argument)

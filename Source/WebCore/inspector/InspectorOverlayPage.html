@@ -220,12 +220,15 @@ function quadEquals(quad1, quad2)
         quad1[3].x === quad2[3].x && quad1[3].y === quad2[3].y;
 }
 
-function reset()
+function reset(deviceScaleFactor)
 {
     window.canvas = document.getElementById("canvas");
     window.context = canvas.getContext("2d");
-    canvas.width = document.body.offsetWidth;
-    canvas.height = document.body.offsetHeight;
+    canvas.width = deviceScaleFactor * document.body.offsetWidth;
+    canvas.height = deviceScaleFactor * document.body.offsetHeight;
+    canvas.style.width = document.body.offsetWidth + "px";
+    canvas.style.height = document.body.offsetHeight + "px";
+    context.scale(deviceScaleFactor, deviceScaleFactor);
 
     document.getElementById("paused-in-debugger").style.visibility = "hidden";
     document.getElementById("element-title").style.visibility = "hidden";
