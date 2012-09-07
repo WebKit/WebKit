@@ -1,3 +1,10 @@
+2012-09-07  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed gardening.  Remove platform/chromium-linux/compositing/gestures
+        test skipping. All compositing tests seem to have the same failure.
+
+        * platform/chromium/TestExpectations:
+
 2012-09-07  Ojan Vafai  <ojan@chromium.org>
 
         Fix RenderBox::availableHeight to subtract scrollbars in the right places
