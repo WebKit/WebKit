@@ -1625,7 +1625,12 @@ void RenderBox::computeLogicalWidthInRegion(RenderRegion* region, LayoutUnit off
     if (isOutOfFlowPositioned()) {
         // FIXME: This calculation is not patched for block-flow yet.
         // https://bugs.webkit.org/show_bug.cgi?id=46500
-        computePositionedLogicalWidth(region, offsetFromLogicalTopOfFirstPage);
+        LogicalExtentComputedValues computedValues;
+        computePositionedLogicalWidth(computedValues, region, offsetFromLogicalTopOfFirstPage);
+        setLogicalWidth(computedValues.m_extent);
+        setLogicalLeft(computedValues.m_position);
+        setMarginStart(computedValues.m_margins.m_start);
+        setMarginEnd(computedValues.m_margins.m_end);
         return;
     }
 
@@ -2540,10 +2545,10 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
     }
 }
 
-void RenderBox::computePositionedLogicalWidth(RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage)
+void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& computedValues, RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage) const
 {
     if (isReplaced()) {
-        computePositionedLogicalWidthReplaced(); // FIXME: Patch for regions when we add replaced element support.
+        computePositionedLogicalWidthReplaced(computedValues); // FIXME: Patch for regions when we add replaced element support.
         return;
     }
 
@@ -2578,8 +2583,6 @@ void RenderBox::computePositionedLogicalWidth(RenderRegion* region, LayoutUnit o
     const LayoutUnit bordersPlusPadding = borderAndPaddingLogicalWidth();
     const Length marginLogicalLeft = isHorizontal ? style()->marginLeft() : style()->marginTop();
     const Length marginLogicalRight = isHorizontal ? style()->marginRight() : style()->marginBottom();
-    LayoutUnit& marginLogicalLeftAlias = m_marginBox.mutableLogicalLeft(style()->writingMode());
-    LayoutUnit& marginLogicalRightAlias = m_marginBox.mutableLogicalRight(style()->writingMode());
 
     Length logicalLeftLength = style()->logicalLeft();
     Length logicalRightLength = style()->logicalRight();
@@ -2613,70 +2616,57 @@ void RenderBox::computePositionedLogicalWidth(RenderRegion* region, LayoutUnit o
     computeInlineStaticDistance(logicalLeftLength, logicalRightLength, this, containerBlock, containerLogicalWidth, region);
     
     // Calculate constraint equation values for 'width' case.
-    LayoutUnit logicalWidthResult;
-    LayoutUnit logicalLeftResult;
     computePositionedLogicalWidthUsing(MainOrPreferredSize, style()->logicalWidth(), containerBlock, containerDirection,
                                        containerLogicalWidth, bordersPlusPadding,
                                        logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight,
-                                       logicalWidthResult, marginLogicalLeftAlias, marginLogicalRightAlias, logicalLeftResult);
-    setLogicalWidth(logicalWidthResult);
-    setLogicalLeft(logicalLeftResult);
+                                       computedValues);
 
     // Calculate constraint equation values for 'max-width' case.
     if (!style()->logicalMaxWidth().isUndefined()) {
-        LayoutUnit maxLogicalWidth;
-        LayoutUnit maxMarginLogicalLeft;
-        LayoutUnit maxMarginLogicalRight;
-        LayoutUnit maxLogicalLeftPos;
+        LogicalExtentComputedValues maxValues;
 
         computePositionedLogicalWidthUsing(MaxSize, style()->logicalMaxWidth(), containerBlock, containerDirection,
                                            containerLogicalWidth, bordersPlusPadding,
                                            logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight,
-                                           maxLogicalWidth, maxMarginLogicalLeft, maxMarginLogicalRight, maxLogicalLeftPos);
+                                           maxValues);
 
-        if (logicalWidth() > maxLogicalWidth) {
-            setLogicalWidth(maxLogicalWidth);
-            marginLogicalLeftAlias = maxMarginLogicalLeft;
-            marginLogicalRightAlias = maxMarginLogicalRight;
-            setLogicalLeft(maxLogicalLeftPos);
+        if (computedValues.m_extent > maxValues.m_extent) {
+            computedValues.m_extent = maxValues.m_extent;
+            computedValues.m_position = maxValues.m_position;
+            computedValues.m_margins.m_start = maxValues.m_margins.m_start;
+            computedValues.m_margins.m_end = maxValues.m_margins.m_end;
         }
     }
 
     // Calculate constraint equation values for 'min-width' case.
     if (!style()->logicalMinWidth().isZero()) {
-        LayoutUnit minLogicalWidth;
-        LayoutUnit minMarginLogicalLeft;
-        LayoutUnit minMarginLogicalRight;
-        LayoutUnit minLogicalLeftPos;
+        LogicalExtentComputedValues minValues;
 
         computePositionedLogicalWidthUsing(MinSize, style()->logicalMinWidth(), containerBlock, containerDirection,
                                            containerLogicalWidth, bordersPlusPadding,
                                            logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight,
-                                           minLogicalWidth, minMarginLogicalLeft, minMarginLogicalRight, minLogicalLeftPos);
+                                           minValues);
 
-        if (logicalWidth() < minLogicalWidth) {
-            setLogicalWidth(minLogicalWidth);
-            marginLogicalLeftAlias = minMarginLogicalLeft;
-            marginLogicalRightAlias = minMarginLogicalRight;
-            setLogicalLeft(minLogicalLeftPos);
+        if (computedValues.m_extent < minValues.m_extent) {
+            computedValues.m_extent = minValues.m_extent;
+            computedValues.m_position = minValues.m_position;
+            computedValues.m_margins.m_start = minValues.m_margins.m_start;
+            computedValues.m_margins.m_end = minValues.m_margins.m_end;
         }
     }
 
-    if (stretchesToMinIntrinsicLogicalWidth() && logicalWidth() < minPreferredLogicalWidth() - bordersPlusPadding) {
+    if (stretchesToMinIntrinsicLogicalWidth() && computedValues.m_extent < minPreferredLogicalWidth() - bordersPlusPadding) {
         computePositionedLogicalWidthUsing(MainOrPreferredSize, Length(minPreferredLogicalWidth() - bordersPlusPadding, Fixed), containerBlock, containerDirection,
                                            containerLogicalWidth, bordersPlusPadding,
                                            logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight,
-                                           logicalWidthResult, marginLogicalLeftAlias, marginLogicalRightAlias, logicalLeftResult);
-        setLogicalWidth(logicalWidthResult);
-        setLogicalLeft(logicalLeftResult);
+                                           computedValues);
     }
 
-    // Put logicalWidth() into correct form.
-    setLogicalWidth(logicalWidth() + bordersPlusPadding);
+    computedValues.m_extent += bordersPlusPadding;
     
     // Adjust logicalLeft if we need to for the flipped version of our writing mode in regions.
     if (inRenderFlowThread() && !region && isWritingModeRoot() && isHorizontalWritingMode() == containerBlock->isHorizontalWritingMode()) {
-        LayoutUnit logicalLeftPos = logicalLeft();
+        LayoutUnit logicalLeftPos = computedValues.m_position;
         const RenderBlock* cb = toRenderBlock(containerBlock);
         LayoutUnit cbPageOffset = offsetFromLogicalTopOfFirstPage - logicalTop();
         RenderRegion* cbRegion = cb->regionAtBlockOffset(cbPageOffset);
@@ -2685,7 +2675,7 @@ void RenderBox::computePositionedLogicalWidth(RenderRegion* region, LayoutUnit o
             RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(cbRegion, cbPageOffset);
             if (boxInfo) {
                 logicalLeftPos += boxInfo->logicalLeft();
-                setLogicalLeft(logicalLeftPos);
+                computedValues.m_position = logicalLeftPos;
             }
         }
     }
@@ -2705,7 +2695,7 @@ static void computeLogicalLeftPositionedOffset(LayoutUnit& logicalLeftPos, const
 void RenderBox::computePositionedLogicalWidthUsing(SizeType widthSizeType, Length logicalWidth, const RenderBoxModelObject* containerBlock, TextDirection containerDirection,
                                                    LayoutUnit containerLogicalWidth, LayoutUnit bordersPlusPadding,
                                                    Length logicalLeft, Length logicalRight, Length marginLogicalLeft, Length marginLogicalRight,
-                                                   LayoutUnit& logicalWidthValue, LayoutUnit& marginLogicalLeftValue, LayoutUnit& marginLogicalRightValue, LayoutUnit& logicalLeftPos)
+                                                   LogicalExtentComputedValues& computedValues) const
 {
     if (widthSizeType == MinSize && logicalWidth.isAuto())
         logicalWidth = Length(0, Fixed);
@@ -2720,6 +2710,8 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthSizeType, Lengt
     bool logicalLeftIsAuto = logicalLeft.isAuto();
     bool logicalRightIsAuto = logicalRight.isAuto();
     RenderView* renderView = view();
+    LayoutUnit& marginLogicalLeftValue = style()->isLeftToRightDirection() ? computedValues.m_margins.m_start : computedValues.m_margins.m_end;
+    LayoutUnit& marginLogicalRightValue = style()->isLeftToRightDirection() ? computedValues.m_margins.m_end : computedValues.m_margins.m_start;
 
     if (!logicalLeftIsAuto && !logicalWidthIsAuto && !logicalRightIsAuto) {
         /*-----------------------------------------------------------------------*\
@@ -2738,9 +2730,9 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthSizeType, Lengt
         // case because the value is not used for any further calculations.
 
         logicalLeftValue = valueForLength(logicalLeft, containerLogicalWidth, renderView);
-        logicalWidthValue = computeContentBoxLogicalWidth(valueForLength(logicalWidth, containerLogicalWidth, renderView));
+        computedValues.m_extent = computeContentBoxLogicalWidth(valueForLength(logicalWidth, containerLogicalWidth, renderView));
 
-        const LayoutUnit availableSpace = containerLogicalWidth - (logicalLeftValue + logicalWidthValue + valueForLength(logicalRight, containerLogicalWidth, renderView) + bordersPlusPadding);
+        const LayoutUnit availableSpace = containerLogicalWidth - (logicalLeftValue + computedValues.m_extent + valueForLength(logicalRight, containerLogicalWidth, renderView) + bordersPlusPadding);
 
         // Margins are now the only unknown
         if (marginLogicalLeft.isAuto() && marginLogicalRight.isAuto()) {
@@ -2835,8 +2827,8 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthSizeType, Lengt
             LayoutUnit preferredWidth = maxPreferredLogicalWidth() - bordersPlusPadding;
             LayoutUnit preferredMinWidth = minPreferredLogicalWidth() - bordersPlusPadding;
             LayoutUnit availableWidth = availableSpace - logicalRightValue;
-            logicalWidthValue = min(max(preferredMinWidth, availableWidth), preferredWidth);
-            logicalLeftValue = availableSpace - (logicalWidthValue + logicalRightValue);
+            computedValues.m_extent = min(max(preferredMinWidth, availableWidth), preferredWidth);
+            logicalLeftValue = availableSpace - (computedValues.m_extent + logicalRightValue);
         } else if (!logicalLeftIsAuto && logicalWidthIsAuto && logicalRightIsAuto) {
             // RULE 3: (use shrink-to-fit for width, and no need solve of right)
             logicalLeftValue = valueForLength(logicalLeft, containerLogicalWidth, renderView);
@@ -2845,19 +2837,19 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthSizeType, Lengt
             LayoutUnit preferredWidth = maxPreferredLogicalWidth() - bordersPlusPadding;
             LayoutUnit preferredMinWidth = minPreferredLogicalWidth() - bordersPlusPadding;
             LayoutUnit availableWidth = availableSpace - logicalLeftValue;
-            logicalWidthValue = min(max(preferredMinWidth, availableWidth), preferredWidth);
+            computedValues.m_extent = min(max(preferredMinWidth, availableWidth), preferredWidth);
         } else if (logicalLeftIsAuto && !logicalWidthIsAuto && !logicalRightIsAuto) {
             // RULE 4: (solve for left)
-            logicalWidthValue = computeContentBoxLogicalWidth(valueForLength(logicalWidth, containerLogicalWidth, renderView));
-            logicalLeftValue = availableSpace - (logicalWidthValue + valueForLength(logicalRight, containerLogicalWidth, renderView));
+            computedValues.m_extent = computeContentBoxLogicalWidth(valueForLength(logicalWidth, containerLogicalWidth, renderView));
+            logicalLeftValue = availableSpace - (computedValues.m_extent + valueForLength(logicalRight, containerLogicalWidth, renderView));
         } else if (!logicalLeftIsAuto && logicalWidthIsAuto && !logicalRightIsAuto) {
             // RULE 5: (solve for width)
             logicalLeftValue = valueForLength(logicalLeft, containerLogicalWidth, renderView);
-            logicalWidthValue = availableSpace - (logicalLeftValue + valueForLength(logicalRight, containerLogicalWidth, renderView));
+            computedValues.m_extent = availableSpace - (logicalLeftValue + valueForLength(logicalRight, containerLogicalWidth, renderView));
         } else if (!logicalLeftIsAuto && !logicalWidthIsAuto && logicalRightIsAuto) {
             // RULE 6: (no need solve for right)
             logicalLeftValue = valueForLength(logicalLeft, containerLogicalWidth, renderView);
-            logicalWidthValue = computeContentBoxLogicalWidth(valueForLength(logicalWidth, containerLogicalWidth, renderView));
+            computedValues.m_extent = computeContentBoxLogicalWidth(valueForLength(logicalWidth, containerLogicalWidth, renderView));
         }
     }
 
@@ -2872,13 +2864,13 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthSizeType, Lengt
         InlineFlowBox* firstLine = flow->firstLineBox();
         InlineFlowBox* lastLine = flow->lastLineBox();
         if (firstLine && lastLine && firstLine != lastLine) {
-            logicalLeftPos = logicalLeftValue + marginLogicalLeftValue + lastLine->borderLogicalLeft() + (lastLine->logicalLeft() - firstLine->logicalLeft());
+            computedValues.m_position = logicalLeftValue + marginLogicalLeftValue + lastLine->borderLogicalLeft() + (lastLine->logicalLeft() - firstLine->logicalLeft());
             return;
         }
     }
 
-    logicalLeftPos = logicalLeftValue + marginLogicalLeftValue;
-    computeLogicalLeftPositionedOffset(logicalLeftPos, this, logicalWidthValue, containerBlock, containerLogicalWidth);
+    computedValues.m_position = logicalLeftValue + marginLogicalLeftValue;
+    computeLogicalLeftPositionedOffset(computedValues.m_position, this, computedValues.m_extent, containerBlock, containerLogicalWidth);
 }
 
 static void computeBlockStaticDistance(Length& logicalTop, Length& logicalBottom, const RenderBox* child, const RenderBoxModelObject* containerBlock)
@@ -3150,7 +3142,7 @@ void RenderBox::computePositionedLogicalHeightUsing(SizeType heightSizeType, Len
     computeLogicalTopPositionedOffset(computedValues.m_position, this, logicalHeightValue, containerBlock, containerLogicalHeight);
 }
 
-void RenderBox::computePositionedLogicalWidthReplaced()
+void RenderBox::computePositionedLogicalWidthReplaced(LogicalExtentComputedValues& computedValues) const
 {
     // The following is based off of the W3C Working Draft from April 11, 2006 of
     // CSS 2.1: Section 10.3.8 "Absolutely positioned, replaced elements"
@@ -3174,8 +3166,8 @@ void RenderBox::computePositionedLogicalWidthReplaced()
     Length logicalRight = style()->logicalRight();
     Length marginLogicalLeft = isHorizontal ? style()->marginLeft() : style()->marginTop();
     Length marginLogicalRight = isHorizontal ? style()->marginRight() : style()->marginBottom();
-    LayoutUnit& marginLogicalLeftAlias = m_marginBox.mutableLogicalLeft(style()->writingMode());
-    LayoutUnit& marginLogicalRightAlias = m_marginBox.mutableLogicalRight(style()->writingMode());
+    LayoutUnit& marginLogicalLeftAlias = style()->isLeftToRightDirection() ? computedValues.m_margins.m_start : computedValues.m_margins.m_end;
+    LayoutUnit& marginLogicalRightAlias = style()->isLeftToRightDirection() ? computedValues.m_margins.m_end : computedValues.m_margins.m_start;
 
     /*-----------------------------------------------------------------------*\
      * 1. The used value of 'width' is determined as for inline replaced
@@ -3184,9 +3176,9 @@ void RenderBox::computePositionedLogicalWidthReplaced()
     // NOTE: This value of width is FINAL in that the min/max width calculations
     // are dealt with in computeReplacedWidth().  This means that the steps to produce
     // correct max/min in the non-replaced version, are not necessary.
-    setLogicalWidth(computeReplacedLogicalWidth() + borderAndPaddingLogicalWidth());
+    computedValues.m_extent = computeReplacedLogicalWidth() + borderAndPaddingLogicalWidth();
 
-    const LayoutUnit availableSpace = containerLogicalWidth - logicalWidth();
+    const LayoutUnit availableSpace = containerLogicalWidth - computedValues.m_extent;
 
     /*-----------------------------------------------------------------------*\
      * 2. If both 'left' and 'right' have the value 'auto', then if 'direction'
@@ -3282,7 +3274,7 @@ void RenderBox::computePositionedLogicalWidthReplaced()
         logicalLeftValue = valueForLength(logicalLeft, containerLogicalWidth, renderView);
         // If the containing block is right-to-left, then push the left position as far to the right as possible
         if (containerDirection == RTL) {
-            int totalLogicalWidth = logicalWidth() + logicalLeftValue + logicalRightValue +  marginLogicalLeftAlias + marginLogicalRightAlias;
+            int totalLogicalWidth = computedValues.m_extent + logicalLeftValue + logicalRightValue +  marginLogicalLeftAlias + marginLogicalRightAlias;
             logicalLeftValue = containerLogicalWidth - (totalLogicalWidth - logicalLeftValue);
         }
     }
@@ -3309,14 +3301,14 @@ void RenderBox::computePositionedLogicalWidthReplaced()
         InlineFlowBox* firstLine = flow->firstLineBox();
         InlineFlowBox* lastLine = flow->lastLineBox();
         if (firstLine && lastLine && firstLine != lastLine) {
-            setLogicalLeft(logicalLeftValue + marginLogicalLeftAlias + lastLine->borderLogicalLeft() + (lastLine->logicalLeft() - firstLine->logicalLeft()));
+            computedValues.m_position = logicalLeftValue + marginLogicalLeftAlias + lastLine->borderLogicalLeft() + (lastLine->logicalLeft() - firstLine->logicalLeft());
             return;
         }
     }
 
     LayoutUnit logicalLeftPos = logicalLeftValue + marginLogicalLeftAlias;
-    computeLogicalLeftPositionedOffset(logicalLeftPos, this, logicalWidth(), containerBlock, containerLogicalWidth);
-    setLogicalLeft(logicalLeftPos.round());
+    computeLogicalLeftPositionedOffset(logicalLeftPos, this, computedValues.m_extent, containerBlock, containerLogicalWidth);
+    computedValues.m_position = logicalLeftPos.round();
 }
 
 void RenderBox::computePositionedLogicalHeightReplaced(LogicalExtentComputedValues& computedValues) const

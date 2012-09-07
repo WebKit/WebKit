@@ -562,7 +562,7 @@ protected:
     void paintCustomHighlight(const LayoutPoint&, const AtomicString& type, bool behindText);
 #endif
 
-    void computePositionedLogicalWidth(RenderRegion* = 0, LayoutUnit offsetFromLogicalTopOfFirstPage = 0);
+    void computePositionedLogicalWidth(LogicalExtentComputedValues&, RenderRegion* = 0, LayoutUnit offsetFromLogicalTopOfFirstPage = 0) const;
     
     virtual bool shouldComputeSizeAsReplaced() const { return isReplaced() && !isInlineBlockOrInlineTable(); }
 
@@ -591,14 +591,14 @@ private:
     void computePositionedLogicalWidthUsing(SizeType, Length logicalWidth, const RenderBoxModelObject* containerBlock, TextDirection containerDirection,
                                             LayoutUnit containerLogicalWidth, LayoutUnit bordersPlusPadding,
                                             Length logicalLeft, Length logicalRight, Length marginLogicalLeft, Length marginLogicalRight,
-                                            LayoutUnit& logicalWidthValue, LayoutUnit& marginLogicalLeftValue, LayoutUnit& marginLogicalRightValue, LayoutUnit& logicalLeftPos);
+                                            LogicalExtentComputedValues&) const;
     void computePositionedLogicalHeightUsing(SizeType, Length logicalHeight, const RenderBoxModelObject* containerBlock,
                                              LayoutUnit containerLogicalHeight, LayoutUnit bordersPlusPadding,
                                              Length logicalTop, Length logicalBottom, Length marginLogicalTop, Length marginLogicalBottom,
                                              LogicalExtentComputedValues&) const;
 
     void computePositionedLogicalHeightReplaced(LogicalExtentComputedValues&) const;
-    void computePositionedLogicalWidthReplaced();
+    void computePositionedLogicalWidthReplaced(LogicalExtentComputedValues&) const;
 
     // This function calculates the minimum and maximum preferred widths for an object.
     // These values are used in shrink-to-fit layout systems.

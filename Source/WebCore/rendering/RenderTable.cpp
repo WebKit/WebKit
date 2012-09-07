@@ -216,8 +216,14 @@ void RenderTable::computeLogicalWidth()
 {
     recalcSectionsIfNeeded();
 
-    if (isOutOfFlowPositioned())
-        computePositionedLogicalWidth();
+    if (isOutOfFlowPositioned()) {
+        LogicalExtentComputedValues computedValues;
+        computePositionedLogicalWidth(computedValues);
+        setLogicalWidth(computedValues.m_extent);
+        setLogicalLeft(computedValues.m_position);
+        setMarginStart(computedValues.m_margins.m_start);
+        setMarginEnd(computedValues.m_margins.m_end);
+    }
 
     RenderBlock* cb = containingBlock();
     RenderView* renderView = view();
