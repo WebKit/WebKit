@@ -146,6 +146,11 @@ void Options::initialize()
     useRegExpJIT() = false;
 #endif
 
+#if USE(CF) || OS(UNIX)
+    zombiesAreImmortal() = !!getenv("JSImmortalZombieEnabled");
+    useZombieMode() = zombiesAreImmortal() || !!getenv("JSZombieEnabled");
+#endif
+
     // Do range checks where needed and make corrections to the options:
     ASSERT(thresholdForOptimizeAfterLongWarmUp() >= thresholdForOptimizeAfterWarmUp());
     ASSERT(thresholdForOptimizeAfterWarmUp() >= thresholdForOptimizeSoon());

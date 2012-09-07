@@ -203,7 +203,8 @@ namespace JSC {
         void harvestWeakReferences();
         void finalizeUnconditionalFinalizers();
         void deleteUnmarkedCompiledCode();
-        
+        void zombifyDeadObjects();
+ 
         RegisterFile& registerFile();
         BlockAllocator& blockAllocator();
 

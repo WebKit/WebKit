@@ -1,3 +1,42 @@
+2012-09-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSC should have a zombie mode
+        https://bugs.webkit.org/show_bug.cgi?id=96047
+
+        Reviewed by Geoffrey Garen.
+
+        To aid clients of JSC while they are debugging memory issues, we should add a zombie 
+        mode that scribbles into objects in the MarkedSpace after they are found to be dead 
+        to prevent a sort of "use after free" situation. As a first cut we should support a 
+        mode that just scribbles on objects prior to their being reused (i.e. while they are 
+        "zombies") and a mode in which, in addition to scribbling on zombies, once an object 
+        has been marked its mark bit will never be cleared, thus giving us "immortal" zombies.
+
+        These two modes will be enabled through the use of environment variables. For now these 
+        will be "JSZombieEnabled" and "JSImmortalZombieEnabled". Setting them to any value will 
+        result in the use of the appropriate mode.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collect): Zombifies dead objects at the end of collection if zombie mode is enabled.
+        (ZombifyCellFunctor):
+        (JSC::ZombifyCellFunctor::ZombifyCellFunctor): Sets marked bits for dead objects if in immortal mode and writes 0xbbadbeef into them.
+        (JSC::ZombifyCellFunctor::operator()):
+        (JSC):
+        (ZombifyBlockFunctor):
+        (JSC::ZombifyBlockFunctor::operator()):
+        (JSC::Heap::zombifyDeadObjects): Eagerly sweeps so that we don't write garbage into an object before it 
+        is finalized/destroyed.
+        * heap/Heap.h:
+        (Heap):
+        * heap/MarkedBlock.h:
+        (MarkedBlock):
+        (JSC::MarkedBlock::forEachDeadCell): Used to iterate over dead cells at the end of collection if zombie mode is enabled.
+        (JSC):
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+        * runtime/Options.h:
+        (JSC):
+
 2012-09-05  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled back in <http://trac.webkit.org/changeset/127698> with a fix for
