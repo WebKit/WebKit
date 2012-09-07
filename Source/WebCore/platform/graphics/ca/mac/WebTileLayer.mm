@@ -77,7 +77,7 @@ using namespace WebCore;
     visiblePart.intersect(_tileCache->visibleRect());
 
     if ([self repaintCount] == 1 && !visiblePart.isEmpty())
-        printf("SCROLLING: Filled visible fresh tile. Time: %f Unfilled Pixels: %u\n", WTF::monotonicallyIncreasingTime(), _tileCache->blankPixelCount());
+        WTFLogAlways("SCROLLING: Filled visible fresh tile. Time: %f Unfilled Pixels: %u\n", WTF::monotonicallyIncreasingTime(), _tileCache->blankPixelCount());
 }
 
 @end
