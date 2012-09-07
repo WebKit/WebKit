@@ -184,6 +184,9 @@ BUGWKEFL : fast/media/view-mode-media-feature.html = TEXT
 // WebKitTestRunner needs an implementation for eventSender.scheduleAsynchronousKeyDown
 BUGWKEFL : fast/mutation/end-of-task-delivery.html = TEXT
 
+// testRunner.setUseDeferredFrameLoading() is not implemented in WK2
+BUGWK93980 : http/tests/appcache/load-from-appcache-defer-resume-crash.html = TEXT
+
 // Failing Ruby tests
 BUGWKEFL : fast/ruby/nested-ruby.html = TEXT
 BUGWKEFL : fast/ruby/ruby-beforeafter.html = TEXT
@@ -227,7 +230,6 @@ BUGWKEFL : fast/replaced/no-focus-ring-embed.html = TEXT
 BUGWKEFL : fast/replaced/no-focus-ring-object.html = TEXT
 BUGWKEFL : fast/viewport/viewport-128.html = TEXT
 BUGWKEFL : fast/workers/worker-cloneport.html = TEXT
-BUGWKEFL : http/tests/appcache/load-from-appcache-defer-resume-crash.html = TEXT
 BUGWKEFL : http/tests/inspector/network/network-sidebar-width.html = TEXT
 BUGWKEFL : http/tests/inspector/resource-main-cookies.php = TEXT
 BUGWKEFL : http/tests/misc/acid3.html = TEXT

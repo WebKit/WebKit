@@ -1,3 +1,15 @@
+2012-09-07  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Update TextExpectations for http/tests/appcache/load-from-appcache-defer-resume-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=96091
+
+        Unreviewed EFL gardening.
+
+        Add bug number of http/tests/appcache/load-from-appcache-defer-resume-crash.html
+        in TestExpectations file.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-09-07  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Unskip passing tests on EFL build bot
