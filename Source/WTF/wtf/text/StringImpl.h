@@ -611,6 +611,12 @@ public:
             memcpy(destination, source, numCharacters * sizeof(T));
     }
 
+    ALWAYS_INLINE static void copyChars(UChar* destination, const LChar* source, unsigned numCharacters)
+    {
+        for (unsigned i = 0; i < numCharacters; ++i)
+            destination[i] = source[i];
+    }
+
     // Some string features, like refcounting and the atomicity flag, are not
     // thread-safe. We achieve thread safety by isolation, giving each thread
     // its own copy of the string.

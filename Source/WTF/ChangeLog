@@ -1,5 +1,19 @@
 2012-09-06  Michael Saboff  <msaboff@apple.com>
 
+        16 bit JSRopeString up converts an 8 bit fibers to 16 bits during resolution
+        https://bugs.webkit.org/show_bug.cgi?id=95810
+
+        Reviewed by Benjamin Poulain.
+
+        New copy routine that takes an 8 bit source and a 16 bit destination.  Used when copying
+        the contents of an 8 bit fiber to the 16 bit buffer when resolving a 16 bit rope.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::copyChars):
+        (StringImpl):
+
+2012-09-06  Michael Saboff  <msaboff@apple.com>
+
         Unreviewed fix to r127799.
         https://bugs.webkit.org/show_bug.cgi?id=95807
 

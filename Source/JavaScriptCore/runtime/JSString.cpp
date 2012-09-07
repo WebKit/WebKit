@@ -130,7 +130,10 @@ void JSRopeString::resolveRope(ExecState* exec) const
     for (size_t i = 0; i < s_maxInternalRopeLength && m_fibers[i]; ++i) {
         StringImpl* string = m_fibers[i]->m_value.impl();
         unsigned length = string->length();
-        StringImpl::copyChars(position, string->characters(), length);
+        if (string->is8Bit())
+            StringImpl::copyChars(position, string->characters8(), length);
+        else
+            StringImpl::copyChars(position, string->characters16(), length);
         position += length;
         m_fibers[i].clear();
     }
@@ -202,7 +205,10 @@ void JSRopeString::resolveRopeSlowCase(UChar* buffer) const
         StringImpl* string = static_cast<StringImpl*>(currentFiber->m_value.impl());
         unsigned length = string->length();
         position -= length;
-        StringImpl::copyChars(position, string->characters(), length);
+        if (string->is8Bit())
+            StringImpl::copyChars(position, string->characters8(), length);
+        else
+            StringImpl::copyChars(position, string->characters16(), length);
     }
 
     ASSERT(buffer == position);

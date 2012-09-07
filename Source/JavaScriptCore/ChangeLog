@@ -1,3 +1,16 @@
+2012-09-06  Michael Saboff  <msaboff@apple.com>
+
+        16 bit JSRopeString up converts an 8 bit fibers to 16 bits during resolution
+        https://bugs.webkit.org/show_bug.cgi?id=95810
+
+        Reviewed by Benjamin Poulain.
+
+        Added 8 bit path that copies the contents of an 8 bit fiber to the 16 bit buffer
+        when resolving a 16 bit rope.
+
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::resolveRopeSlowCase):
+
 2012-09-06  Gavin Barraclough  <barraclough@apple.com>
 
         JS test suite puts incorrect limitations on Function.toString()
