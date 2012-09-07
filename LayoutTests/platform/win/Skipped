@@ -2221,5 +2221,8 @@ fast/forms/number/number-interactive-validation-required.html
 # Dialog element is not yet enabled.
 fast/dom/HTMLDialogElement
 
-// Windows does not have global selection.
+# Windows does not have global selection.
 editing/pasteboard/paste-global-selection.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=96133
+http/tests/security/contentSecurityPolicy/blob-urls-match-self.html

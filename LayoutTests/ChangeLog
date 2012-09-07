@@ -1,3 +1,13 @@
+2012-09-07  Roger Fong  <roger_fong@apple.com>
+
+        http/tests/security/contentSecurityPolicy/blob-urls-match-self.html fails on Windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=96133
+
+        Test fails on Windows port since added in http://trac.webkit.org/changeset/126785.
+        Blobs might be completely disabled on Windows. Adding to skip list for now.
+
+        * platform/win/Skipped:
+
 2012-09-07  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed, fix overlapping test expectation.
