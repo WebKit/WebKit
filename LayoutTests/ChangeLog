@@ -1,3 +1,15 @@
+2012-09-03  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Implement SCSS source highlighter
+        https://bugs.webkit.org/show_bug.cgi?id=95585
+
+        Reviewed by Vsevolod Vlasov.
+
+        Test modified to cover the SCSS syntax as well.
+
+        * inspector/syntax-highlight-css-expected.txt:
+        * inspector/syntax-highlight-css.html:
+
 2012-09-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Layout Test touchadjustment/iframe-boundary.html is failing

@@ -83,7 +83,8 @@ WebInspector.SourceTokenizer.Registry = function() {
     this._tokenizerConstructors = {
         "text/css": "SourceCSSTokenizer",
         "text/html": "SourceHTMLTokenizer",
-        "text/javascript": "SourceJavaScriptTokenizer"
+        "text/javascript": "SourceJavaScriptTokenizer",
+        "text/x-scss": "SourceCSSTokenizer"
     };
 }
 

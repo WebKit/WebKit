@@ -241,12 +241,14 @@ WebInspector.CompilerSourceMappingContentProvider.prototype.__proto__ = WebInspe
  * @constructor
  * @implements {WebInspector.ContentProvider}
  * @param {WebInspector.ResourceType} contentType 
- * @param {string} content 
+ * @param {string} content
+ * @param {string=} mimeType
  */
-WebInspector.StaticContentProvider = function(contentType, content)
+WebInspector.StaticContentProvider = function(contentType, content, mimeType)
 {
     this._content = content;
     this._contentType = contentType;
+    this._mimeType = mimeType;
 }
 
 WebInspector.StaticContentProvider.prototype = {
@@ -271,7 +273,7 @@ WebInspector.StaticContentProvider.prototype = {
      */
     requestContent: function(callback)
     {
-        callback(this._content, false, this._contentType.canonicalMimeType());
+        callback(this._content, false, this._mimeType || this._contentType.canonicalMimeType());
     },
 
     /**

@@ -83,6 +83,13 @@ WebInspector.CSSCompletions.requestCSSNameCompletions = function()
     CSSAgent.getSupportedCSSProperties(propertyNamesCallback);
 }
 
+WebInspector.CSSCompletions.cssPropertiesMetainfoKeySet = function()
+{
+    if (!WebInspector.CSSCompletions._cssPropertiesMetainfoKeySet)
+        WebInspector.CSSCompletions._cssPropertiesMetainfoKeySet = WebInspector.CSSCompletions.cssPropertiesMetainfo.keySet();
+    return WebInspector.CSSCompletions._cssPropertiesMetainfoKeySet;
+}
+
 WebInspector.CSSCompletions.prototype = {
     startsWith: function(prefix)
     {
