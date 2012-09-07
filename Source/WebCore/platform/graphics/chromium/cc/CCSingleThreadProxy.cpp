@@ -297,12 +297,14 @@ bool CCSingleThreadProxy::commitAndComposite()
 {
     ASSERT(CCProxy::isMainThread());
 
-
     if (!m_layerTreeHost->initializeRendererIfNeeded())
         return false;
 
-    if (m_layerTreeHostImpl->contentsTexturesPurged())
-        m_layerTreeHost->evictAllContentTextures();
+    if (m_layerTreeHostImpl->contentsTexturesPurged()) {
+        m_layerTreeHost->unlinkAllContentTextures();
+        DebugScopedSetImplThreadAndMainThreadBlocked implAndMainBlocked;
+        m_layerTreeHost->deleteUnlinkedTextures();
+    }
 
     CCTextureUpdateQueue queue;
     m_layerTreeHost->updateLayers(queue, m_layerTreeHostImpl->memoryAllocationLimitBytes());

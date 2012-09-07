@@ -212,11 +212,8 @@ public:
 
     CCPrioritizedTextureManager* contentsTextureManager() const;
 
-    // This will cause contents texture manager to evict all textures, but
-    // without deleting them. This happens after all content textures have
-    // already been deleted on impl, after getting a 0 allocation limit.
-    // Set during a commit, but before updateLayers.
-    void evictAllContentTextures();
+    void unlinkAllContentTextures();
+    void deleteUnlinkedTextures();
 
     bool visible() const { return m_visible; }
     void setVisible(bool);
