@@ -1,3 +1,19 @@
+2012-09-06  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Migrate FileSystem to async protocol commands.
+        https://bugs.webkit.org/show_bug.cgi?id=95985
+
+        Reviewed by Alexander Pavlov.
+
+        * http/tests/inspector/filesystem/delete-entry.html:
+        * http/tests/inspector/filesystem/directory-tree.html:
+        * http/tests/inspector/filesystem/filesystem-test.js:
+        (initialize_FileSystemTest.InspectorTest.MockEntry):
+        * http/tests/inspector/filesystem/request-directory-content.html:
+        * http/tests/inspector/filesystem/request-file-content.html:
+        * http/tests/inspector/filesystem/request-filesystem-root.html:
+        * http/tests/inspector/filesystem/request-metadata.html:
+
 2012-09-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Update TextExpectations for http/tests/appcache/load-from-appcache-defer-resume-crash.html

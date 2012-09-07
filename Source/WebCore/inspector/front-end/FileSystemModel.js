@@ -44,7 +44,7 @@ WebInspector.FileSystemModel = function()
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, this._frameDetached, this);
 
-    this._agentWrapper = new WebInspector.FileSystemRequestManager();
+    FileSystemAgent.enable();
 
     if (WebInspector.resourceTreeModel.mainFrame)
         this._attachFrameRecursively(WebInspector.resourceTreeModel.mainFrame);
@@ -148,7 +148,32 @@ WebInspector.FileSystemModel.prototype = {
 
         var types = ["persistent", "temporary"];
         for (var i = 0; i < types.length; ++i)
-            this._agentWrapper.requestFileSystemRoot(origin, types[i], this._fileSystemRootReceived.bind(this, origin, types[i], this._fileSystemsForOrigin[origin]));
+            this._requestFileSystemRoot(origin, types[i], this._fileSystemRootReceived.bind(this, origin, types[i], this._fileSystemsForOrigin[origin]));
+    },
+
+    /**
+     * @param {string} origin
+     * @param {string} type
+     * @param {function(number, FileSystemAgent.Entry=)} callback
+     */
+    _requestFileSystemRoot: function(origin, type, callback)
+    {
+        /**
+         * @param {?Protocol.Error} error
+         * @param {number} errorCode
+         * @param {FileSystemAgent.Entry=} backendRootEntry
+         */
+        function innerCallback(error, errorCode, backendRootEntry)
+        {
+            if (error) {
+                callback(FileError.SECURITY_ERR);
+                return;
+            }
+            
+            callback(errorCode, backendRootEntry);
+        }
+
+        FileSystemAgent.requestFileSystemRoot(origin, type, innerCallback.bind(this));
     },
 
     /**
@@ -210,7 +235,36 @@ WebInspector.FileSystemModel.prototype = {
      */
     requestDirectoryContent: function(directory, callback)
     {
-        this._agentWrapper.requestDirectoryContent(directory.url, this._directoryContentReceived.bind(this, directory, callback));
+        this._requestDirectoryContent(directory.url, this._directoryContentReceived.bind(this, directory, callback));
+    },
+
+    /**
+     * @param {string} url
+     * @param {function(number, Array.<FileSystemAgent.Entry>=)} callback
+     */
+    _requestDirectoryContent: function(url, callback)
+    {
+        /**
+         * @param {?Protocol.Error} error
+         * @param {number} errorCode
+         * @param {Array.<FileSystemAgent.Entry>=} backendEntries
+         */
+        function innerCallback(error, errorCode, backendEntries)
+        {
+            if (error) {
+                callback(FileError.SECURITY_ERR);
+                return;
+            }
+            
+            if (errorCode !== 0) {
+                callback(errorCode, null);
+                return;
+            }
+
+            callback(errorCode, backendEntries);
+        }
+
+        FileSystemAgent.requestDirectoryContent(url, innerCallback.bind(this));
     },
 
     /**
@@ -221,11 +275,6 @@ WebInspector.FileSystemModel.prototype = {
      */
     _directoryContentReceived: function(parentDirectory, callback, errorCode, backendEntries)
     {
-        if (errorCode !== 0) {
-            callback(errorCode, null);
-            return;
-        }
-
         var entries = [];
         for (var i = 0; i < backendEntries.length; ++i) {
             if (backendEntries[i].isDirectory)
@@ -243,7 +292,22 @@ WebInspector.FileSystemModel.prototype = {
      */
     requestMetadata: function(entry, callback)
     {
-        this._agentWrapper.requestMetadata(entry.url, callback);
+        /**
+         * @param {?Protocol.Error} error
+         * @param {number} errorCode
+         * @param {FileSystemAgent.Metadata=} metadata
+         */
+        function innerCallback(error, errorCode, metadata)
+        {
+            if (error) {
+                callback(FileError.SECURITY_ERR);
+                return;
+            }
+            
+            callback(errorCode, metadata);
+        }
+
+        FileSystemAgent.requestMetadata(entry.url, innerCallback.bind(this));
     },
 
     /**
@@ -256,9 +320,39 @@ WebInspector.FileSystemModel.prototype = {
      */
     requestFileContent: function(file, readAsText, start, end, charset, callback)
     {
-        this._agentWrapper.requestFileContent(file.url, readAsText, start, end, charset, callback);
+        this._requestFileContent(file.url, readAsText, start, end, charset, callback);
     },
 
+    /**
+     * @param {string} url
+     * @param {boolean} readAsText
+     * @param {number=} start
+     * @param {number=} end
+     * @param {string=} charset
+     * @param {function(number, string=, string=)=} callback
+     */
+    _requestFileContent: function(url, readAsText, start, end, charset, callback)
+    {
+        /**
+         * @param {?Protocol.Error} error
+         * @param {number} errorCode
+         * @param {string=} content
+         * @param {string=} charset
+         */
+        function innerCallback(error, errorCode, content, charset)
+        {
+            if (error) {
+                if (callback)
+                    callback(FileError.SECURITY_ERR);
+                return;
+            }
+            
+            if (callback)
+                callback(errorCode, content, charset);
+        }
+
+        FileSystemAgent.requestFileContent(url, readAsText, start, end, charset, innerCallback.bind(this));
+    },
     /**
      * @param {WebInspector.FileSystemModel.Entry} entry
      * @param {function(number)=} callback
@@ -267,9 +361,9 @@ WebInspector.FileSystemModel.prototype = {
     {
         var fileSystemModel = this;
         if (entry === entry.fileSystem.root)
-            this._agentWrapper.deleteEntry(entry.url, hookFileSystemDeletion);
+            this._deleteEntry(entry.url, hookFileSystemDeletion);
         else
-            this._agentWrapper.deleteEntry(entry.url, callback);
+            this._deleteEntry(entry.url, callback);
 
         function hookFileSystemDeletion(errorCode)
         {
@@ -277,6 +371,31 @@ WebInspector.FileSystemModel.prototype = {
             if (!errorCode)
                 fileSystemModel._removeFileSystem(entry.fileSystem);
         }
+    },
+
+    /**
+     * @param {string} url
+     * @param {function(number)=} callback
+     */
+    _deleteEntry: function(url, callback)
+    {
+        /**
+         * @param {?Protocol.Error} error
+         * @param {number} errorCode
+         */
+        function innerCallback(error, errorCode)
+        {
+            if (error) {
+                if (callback)
+                    callback(FileError.SECURITY_ERR);
+                return;
+            }
+            
+            if (callback)
+                callback(errorCode);
+        }
+
+        FileSystemAgent.deleteEntry(url, innerCallback.bind(this));
     },
 
     /**
@@ -493,242 +612,3 @@ WebInspector.FileSystemModel.File.prototype = {
 }
 
 WebInspector.FileSystemModel.File.prototype.__proto__ = WebInspector.FileSystemModel.Entry.prototype;
-
-/**
- * @constructor
- */
-WebInspector.FileSystemRequestManager = function()
-{
-    this._pendingFileSystemRootRequests = {};
-    this._pendingDirectoryContentRequests = {};
-    this._pendingMetadataRequests = {};
-    this._pendingFileContentRequests = {};
-    this._pendingDeleteEntryRequests = {};
-
-    InspectorBackend.registerFileSystemDispatcher(new WebInspector.FileSystemDispatcher(this));
-    FileSystemAgent.enable();
-}
-
-WebInspector.FileSystemRequestManager.prototype = {
-    /**
-     * @param {string} origin
-     * @param {string} type
-     * @param {function(number, FileSystemAgent.Entry=)=} callback
-     */
-    requestFileSystemRoot: function(origin, type, callback)
-    {
-        var store = this._pendingFileSystemRootRequests;
-        FileSystemAgent.requestFileSystemRoot(origin, type, requestAccepted);
-
-        function requestAccepted(error, requestId)
-        {
-            if (error)
-                callback(FileError.SECURITY_ERR);
-            else
-                store[requestId] = callback || function() {};
-        }
-    },
-
-    /**
-     * @param {number} requestId
-     * @param {number} errorCode
-     * @param {FileSystemAgent.Entry=} backendRootEntry
-     */
-    _fileSystemRootReceived: function(requestId, errorCode, backendRootEntry)
-    {
-        var callback = this._pendingFileSystemRootRequests[requestId];
-        if (!callback)
-            return;
-        delete this._pendingFileSystemRootRequests[requestId];
-        callback(errorCode, backendRootEntry);
-    },
-
-    /**
-     * @param {string} url
-     * @param {function(number, Array.<FileSystemAgent.Entry>=)=} callback
-     */
-    requestDirectoryContent: function(url, callback)
-    {
-        var store = this._pendingDirectoryContentRequests;
-        FileSystemAgent.requestDirectoryContent(url, requestAccepted);
-
-        function requestAccepted(error, requestId)
-        {
-            if (error)
-                callback(FileError.SECURITY_ERR);
-            else
-                store[requestId] = callback || function() {};
-        }
-    },
-
-    /**
-     * @param {number} requestId
-     * @param {number} errorCode
-     * @param {Array.<FileSystemAgent.Entry>=} backendEntries
-     */
-    _directoryContentReceived: function(requestId, errorCode, backendEntries)
-    {
-        var callback = /** @type {function(number, Array.<FileSystemAgent.Entry>=)} */ this._pendingDirectoryContentRequests[requestId];
-        if (!callback)
-            return;
-        delete this._pendingDirectoryContentRequests[requestId];
-        callback(errorCode, backendEntries);
-    },
-
-    /**
-     * @param {string} url
-     * @param {function(number, FileSystemAgent.Metadata=)=} callback
-     */
-    requestMetadata: function(url, callback)
-    {
-        var store = this._pendingMetadataRequests;
-        FileSystemAgent.requestMetadata(url, requestAccepted);
-
-        function requestAccepted(error, requestId)
-        {
-            if (error)
-                callback(FileError.SECURITY_ERR);
-            else
-                store[requestId] = callback || function() {};
-        }
-    },
-
-    _metadataReceived: function(requestId, errorCode, metadata)
-    {
-        var callback = this._pendingMetadataRequests[requestId];
-        if (!callback)
-            return;
-        delete this._pendingMetadataRequests[requestId];
-        callback(errorCode, metadata);
-    },
-
-    /**
-     * @param {string} url
-     * @param {boolean} readAsText
-     * @param {number=} start
-     * @param {number=} end
-     * @param {string=} charset
-     * @param {function(number, string=, string=)=} callback
-     */
-    requestFileContent: function(url, readAsText, start, end, charset, callback)
-    {
-        var store = this._pendingFileContentRequests;
-        FileSystemAgent.requestFileContent(url, readAsText, start, end, charset, requestAccepted);
-
-        function requestAccepted(error, requestId)
-        {
-            if (error)
-                callback(FileError.SECURITY_ERR);
-            else
-                store[requestId] = callback || function() {};
-        }
-    },
-
-    /**
-     * @param {number} requestId
-     * @param {number} errorCode
-     * @param {string=} content
-     * @param {string=} charset
-     */
-    _fileContentReceived: function(requestId, errorCode, content, charset)
-    {
-        var callback = /** @type {function(number, string=, string=)} */ this._pendingFileContentRequests[requestId];
-        if (!callback)
-            return;
-        delete this._pendingFileContentRequests[requestId];
-        callback(errorCode, content, charset);
-    },
-
-    /**
-     * @param {string} url
-     * @param {function(number)=} callback
-     */
-    deleteEntry: function(url, callback)
-    {
-        var store = this._pendingDeleteEntryRequests;
-        FileSystemAgent.deleteEntry(url, requestAccepted);
-
-        function requestAccepted(error, requestId)
-        {
-            if (error)
-                callback(FileError.SECURITY_ERR);
-            else
-                store[requestId] = callback || function() {};
-        }
-    },
-
-    /**
-     * @param {number} requestId
-     * @param {number} errorCode
-     */
-    _deletionCompleted: function(requestId, errorCode)
-    {
-        var callback = /** @type {function(number)} */ this._pendingDeleteEntryRequests[requestId];
-        if (!callback)
-            return;
-        delete this._pendingDeleteEntryRequests[requestId];
-        callback(errorCode);
-    }
-}
-
-/**
- * @constructor
- * @implements {FileSystemAgent.Dispatcher}
- * @param {WebInspector.FileSystemRequestManager} agentWrapper
- */
-WebInspector.FileSystemDispatcher = function(agentWrapper)
-{
-    this._agentWrapper = agentWrapper;
-}
-
-WebInspector.FileSystemDispatcher.prototype = {
-    /**
-     * @param {number} requestId
-     * @param {number} errorCode
-     * @param {FileSystemAgent.Entry=} backendRootEntry
-     */
-    fileSystemRootReceived: function(requestId, errorCode, backendRootEntry)
-    {
-        this._agentWrapper._fileSystemRootReceived(requestId, errorCode, backendRootEntry);
-    },
-
-    /**
-     * @param {number} requestId
-     * @param {number} errorCode
-     * @param {Array.<FileSystemAgent.Entry>=} backendEntries
-     */
-    directoryContentReceived: function(requestId, errorCode, backendEntries)
-    {
-        this._agentWrapper._directoryContentReceived(requestId, errorCode, backendEntries);
-    },
-
-    /**
-     * @param {number} requestId
-     * @param {number} errorCode
-     * @param {FileSystemAgent.Metadata=} metadata
-     */
-    metadataReceived: function(requestId, errorCode, metadata)
-    {
-        this._agentWrapper._metadataReceived(requestId, errorCode, metadata);
-    },
-
-    /**
-     * @param {number} requestId
-     * @param {number} errorCode
-     * @param {string=} content
-     * @param {string=} charset
-     */
-    fileContentReceived: function(requestId, errorCode, content, charset)
-    {
-        this._agentWrapper._fileContentReceived(requestId, errorCode, content, charset);
-    },
-
-    /**
-     * @param {number} requestId
-     * @param {number} errorCode
-     */
-    deletionCompleted: function(requestId, errorCode)
-    {
-        this._agentWrapper._deletionCompleted(requestId, errorCode);
-    }
-}

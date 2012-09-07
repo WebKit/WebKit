@@ -8,7 +8,7 @@
 document.addEventListener("DOMContentLoaded", runTest);
 function test()
 {
-    var fileSystemRequestManager = new WebInspector.FileSystemRequestManager();
+    var fileSystemModel = new WebInspector.FileSystemModel;
 
     var testStep = [
         function()
@@ -18,19 +18,19 @@ function test()
 
         function()
         {
-            fileSystemRequestManager.requestMetadata("InvalidURL", testStep.shift());
+            fileSystemModel.requestMetadata(new InspectorTest.MockEntry("InvalidURL"), testStep.shift());
         },
 
         function(errorCode, metadata)
         {
             InspectorTest.dumpMetadataRequestResult(errorCode, metadata);
-            fileSystemRequestManager.requestMetadata("filesystem:http://127.0.0.1:8000/InvalidType", testStep.shift());
+            fileSystemModel.requestMetadata(new InspectorTest.MockEntry("filesystem:http://127.0.0.1:8000/InvalidType"), testStep.shift());
         },
 
         function(errorCode, metadata)
         {
             InspectorTest.dumpMetadataRequestResult(errorCode, metadata);
-            fileSystemRequestManager.requestMetadata("filesystem:http://127.0.0.1:8000/temporary/hoge", testStep.shift());
+            fileSystemModel.requestMetadata(new InspectorTest.MockEntry("filesystem:http://127.0.0.1:8000/temporary/hoge"), testStep.shift());
         },
 
         function(errorCode, metadata)
@@ -41,19 +41,19 @@ function test()
 
         function()
         {
-            fileSystemRequestManager.requestMetadata("filesystem:http://127.0.0.1:8000/temporary/piyo", testStep.shift());
+            fileSystemModel.requestMetadata(new InspectorTest.MockEntry("filesystem:http://127.0.0.1:8000/temporary/piyo"), testStep.shift());
         },
 
         function(errorCode, metadata)
         {
             InspectorTest.dumpMetadataRequestResult(errorCode, metadata);
-            fileSystemRequestManager.requestMetadata("filesystem:http://127.0.0.1:8000/temporary/foo", testStep.shift());
+            fileSystemModel.requestMetadata(new InspectorTest.MockEntry("filesystem:http://127.0.0.1:8000/temporary/foo"), testStep.shift());
         },
 
         function(errorCode, metadata)
         {
             InspectorTest.dumpMetadataRequestResult(errorCode, metadata);
-            fileSystemRequestManager.requestMetadata("filesystem:http://example.com/temporary/bar", testStep.shift());
+            fileSystemModel.requestMetadata(new InspectorTest.MockEntry("filesystem:http://example.com/temporary/bar"), testStep.shift());
         },
 
         function(errorCode)

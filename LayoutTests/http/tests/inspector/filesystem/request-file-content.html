@@ -8,7 +8,7 @@
 document.addEventListener("DOMContentLoaded", runTest);
 function test()
 {
-    var fileSystemRequestManager = new WebInspector.FileSystemRequestManager();
+    var fileSystemModel = new WebInspector.FileSystemModel;
 
     var testStep = [
         function()
@@ -23,37 +23,37 @@ function test()
 
         function()
         {
-            fileSystemRequestManager.requestFileContent("InvalidURL", true, 2, 6, "UTF-8", testStep.shift());
+            fileSystemModel._requestFileContent("InvalidURL", true, 2, 6, "UTF-8", testStep.shift());
         },
 
         function(errorCode, content, charset)
         {
             InspectorTest.dumpFileContentRequestResult(errorCode, content, charset);
-            fileSystemRequestManager.requestFileContent("filesystem:http://127.0.0.1:8000/InvalidType/hoge/fuga.txt", true, 2, 6, "UTF-8", testStep.shift());
+            fileSystemModel._requestFileContent("filesystem:http://127.0.0.1:8000/InvalidType/hoge/fuga.txt", true, 2, 6, "UTF-8", testStep.shift());
         },
 
         function(errorCode, content, charset)
         {
             InspectorTest.dumpFileContentRequestResult(errorCode, content, charset);
-            fileSystemRequestManager.requestFileContent("filesystem:http://127.0.0.1:8000/temporary/hoge/fuga.txt", true, 2, 6, "UTF-8", testStep.shift());
+            fileSystemModel._requestFileContent("filesystem:http://127.0.0.1:8000/temporary/hoge/fuga.txt", true, 2, 6, "UTF-8", testStep.shift());
         },
 
         function(errorCode, content, charset)
         {
             InspectorTest.dumpFileContentRequestResult(errorCode, content, charset);
-            fileSystemRequestManager.requestFileContent("filesystem:http://127.0.0.1:8000/temporary/hoge", true, undefined, undefined, "", testStep.shift());
+            fileSystemModel._requestFileContent("filesystem:http://127.0.0.1:8000/temporary/hoge", true, undefined, undefined, "", testStep.shift());
         },
 
         function(errorCode, content, charset)
         {
             InspectorTest.dumpFileContentRequestResult(errorCode, content, charset);
-            fileSystemRequestManager.requestFileContent("filesystem:http://127.0.0.1:8000/temporary/foo", true, undefined, undefined, "", testStep.shift());
+            fileSystemModel._requestFileContent("filesystem:http://127.0.0.1:8000/temporary/foo", true, undefined, undefined, "", testStep.shift());
         },
 
         function(errorCode, content, charset)
         {
             InspectorTest.dumpFileContentRequestResult(errorCode, content, charset);
-            fileSystemRequestManager.requestFileContent("filesystem:http://example.com/temporary/foo.txt", true, undefined, undefined, "", testStep.shift());
+            fileSystemModel._requestFileContent("filesystem:http://example.com/temporary/foo.txt", true, undefined, undefined, "", testStep.shift());
         },
 
         function(errorCode, content, charset)

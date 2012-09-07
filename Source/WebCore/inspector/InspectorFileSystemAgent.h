@@ -47,33 +47,28 @@ class SecurityOrigin;
 
 class InspectorFileSystemAgent : public InspectorBaseAgent<InspectorFileSystemAgent>, public InspectorBackendDispatcher::FileSystemCommandHandler {
 public:
-    class FrontendProvider;
-
     static PassOwnPtr<InspectorFileSystemAgent> create(InstrumentingAgents*, InspectorPageAgent*, InspectorState*);
     virtual ~InspectorFileSystemAgent();
 
     virtual void enable(ErrorString*) OVERRIDE;
     virtual void disable(ErrorString*) OVERRIDE;
 
-    virtual void requestFileSystemRoot(ErrorString*, const String& origin, const String& typeString, int* requestId) OVERRIDE;
-    virtual void requestDirectoryContent(ErrorString*, const String& url, int* requestId) OVERRIDE;
-    virtual void requestMetadata(ErrorString*, const String& url, int* requestId) OVERRIDE;
-    virtual void requestFileContent(ErrorString*, const String& url, bool readAsText, const int* start, const int* end, const String* charset, int* requestId) OVERRIDE;
-    virtual void deleteEntry(ErrorString*, const String& url, int* requestId) OVERRIDE;
+    virtual void requestFileSystemRoot(ErrorString*, const String& origin, const String& typeString, PassRefPtr<RequestFileSystemRootCallback>) OVERRIDE;
+    virtual void requestDirectoryContent(ErrorString*, const String& url, PassRefPtr<RequestDirectoryContentCallback>) OVERRIDE;
+    virtual void requestMetadata(ErrorString*, const String& url, PassRefPtr<RequestMetadataCallback>) OVERRIDE;
+    virtual void requestFileContent(ErrorString*, const String& url, bool readAsText, const int* start, const int* end, const String* charset, PassRefPtr<RequestFileContentCallback>) OVERRIDE;
+    virtual void deleteEntry(ErrorString*, const String& url, PassRefPtr<DeleteEntryCallback>) OVERRIDE;
 
-    virtual void setFrontend(InspectorFrontend*) OVERRIDE;
     virtual void clearFrontend() OVERRIDE;
     virtual void restore() OVERRIDE;
 
 private:
     InspectorFileSystemAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*);
-    bool assertFrontend(ErrorString*);
+    bool assertEnabled(ErrorString*);
     ScriptExecutionContext* assertScriptExecutionContextForOrigin(ErrorString*, SecurityOrigin*);
 
     InspectorPageAgent* m_pageAgent;
-    RefPtr<FrontendProvider> m_frontendProvider;
     bool m_enabled;
-    int m_nextRequestId;
 };
 
 } // namespace WebCore

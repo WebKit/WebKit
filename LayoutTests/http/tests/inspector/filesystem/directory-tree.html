@@ -20,6 +20,7 @@ function test()
     var fileSystemView = null;
     var directoryTree = null;
 
+    var requestsLeft = 0;
     var testStep = [
         function()
         {
@@ -49,22 +50,30 @@ function test()
 
             fileSystemItem = fileSystemListTreeElement._fileSystemTreeElementByName("filesystem:http://127.0.0.1:8000/temporary");
 
+            InspectorTest.addSniffer(WebInspector.FileSystemModel.prototype, "_directoryContentReceived", testStep.shift(), false);
             fileSystemItem.select();
             fileSystemView = fileSystemItem._fileSystemView;
             directoryTree = fileSystemView._directoryTree;
-
-            InspectorTest.callOnRequestCompleted(testStep.shift());
         },
 
         function() {
             dumpDirectoryTree(directoryTree);
             InspectorTest.addResult("");
 
+            function requestSent()
+            {
+                ++requestsLeft;
+            }
+
+            InspectorTest.addSniffer(WebInspector.FileSystemModel.prototype, "_directoryContentReceived", testStep.shift(), true);
+            InspectorTest.addSniffer(WebInspector.FileSystemModel.prototype, "requestDirectoryContent", requestSent, true);
+
             directoryTree.children[0].expandRecursively();
-            InspectorTest.callOnRequestCompleted(testStep.shift());
         },
 
         function() {
+            if (--requestsLeft)
+                return;
             dumpDirectoryTree(directoryTree);
 
             InspectorTest.clearFileSystem(testStep.shift());

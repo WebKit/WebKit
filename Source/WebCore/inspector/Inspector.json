@@ -1448,11 +1448,6 @@
         "hidden": true,
         "types": [
             {
-                "id": "RequestId",
-                "type": "integer",
-                "description": "Request Identifier to glue a request and its completion event."
-            },
-            {
                 "id": "Entry",
                 "type": "object",
                 "properties": [
@@ -1486,37 +1481,44 @@
             },
             {
                 "name": "requestFileSystemRoot",
+                "async": true,
                 "parameters": [
                     { "name": "origin", "type": "string", "description": "Security origin of requesting FileSystem. One of frames in current page needs to have this security origin." },
                     { "name": "type", "type": "string", "enum": ["temporary", "persistent"], "description": "FileSystem type of requesting FileSystem." }
                 ],
                 "returns": [
-                    { "name": "requestId", "$ref": "RequestId", "description": "Request identifier. Corresponding fileSystemRootReceived event should have same requestId with this." }
+                    { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
+                    { "name": "root", "$ref": "Entry", "optional": true, "description": "Contains root of the requested FileSystem if the command completed successfully." }
                 ],
-                "description": "Returns root directory of the FileSystem as fileSystemRootReceived event, if exists."
+                "description": "Returns root directory of the FileSystem, if exists."
             },
             {
                 "name": "requestDirectoryContent",
+                "async": true,
                 "parameters": [
                     { "name": "url", "type": "string", "description": "URL of the directory that the frontend is requesting to read from." }
                 ],
                 "returns": [
-                    { "name": "requestId", "$ref": "RequestId", "description": "Request identifier. Corresponding directoryContentReceived event should have same requestId with this." }
+                    { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
+                    { "name": "entries", "type": "array", "items": { "$ref": "Entry" }, "optional": true, "description": "Contains all entries on directory if the command completed successfully." }
                 ],
-                "description": "Returns content of the directory as directoryContentReceived event."
+                "description": "Returns content of the directory."
             },
             {
                 "name": "requestMetadata",
+                "async": true,
                 "parameters": [
                     { "name": "url", "type": "string", "description": "URL of the entry that the frontend is requesting to get metadata from." }
                 ],
                 "returns": [
-                    { "name": "requestId", "$ref": "RequestId", "description": "Request identifier. Corresponding metadataReceived event should have same requestId with this." }
+                    { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
+                    { "name": "metadata", "$ref": "Metadata", "optional": true, "description": "Contains metadata of the entry if the command completed successfully." }
                 ],
-                "description": "Returns metadata of the entry as metadataReceived event."
+                "description": "Returns metadata of the entry."
             },
             {
                 "name": "requestFileContent",
+                "async": true,
                 "parameters": [
                     { "name": "url", "type": "string", "description": "URL of the file that the frontend is requesting to read from." },
                     { "name": "readAsText", "type": "boolean", "description": "True if the content should be read as text, otherwise the result will be returned as base64 encoded text." },
@@ -1525,66 +1527,22 @@
                     { "name": "charset", "type": "string", "optional": true, "description": "Overrides charset of the content when content is served as text." }
                 ],
                 "returns": [
-                    { "name": "requestId", "$ref": "RequestId", "description": "Request identifier. Corresponding fileContentReceived event should have same requestId with this." }
-                ],
-                "description": "Returns content of the file as fileContentReceived event. Result should be sliced into [start, end)."
-            },
-            {
-                "name": "deleteEntry",
-                "parameters": [
-                    { "name": "url", "type": "string", "description": "URL of the entry to delete." }
-                ],
-                "returns": [
-                    { "name": "requestId", "$ref": "RequestId", "description": "Request identifier. Corresponding deletionCompleted event should have same requestId with this." }
-                ],
-                "description": "Deletes specified entry. If the entry is a directory, the agent deletes children recursively."
-            }
-        ],
-        "events": [
-            {
-                "name": "fileSystemRootReceived",
-                "parameters": [
-                    { "name": "requestId", "type": "integer", "description": "Request Identifier that was returned by corresponding requestFileSystemRoot command." },
-                    { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
-                    { "name": "root", "$ref": "Entry", "optional": true, "description": "Contains root of the requested FileSystem if the command completed successfully." }
-                ],
-                "description": "Completion event of requestFileSystemRoot command."
-            },
-            {
-                "name": "directoryContentReceived",
-                "parameters": [
-                    { "name": "requestId", "type": "integer", "description": "Request Identifier that was returned by corresponding requestDirectoryContent command." },
-                    { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
-                    { "name": "entries", "type": "array", "items": { "$ref": "Entry" }, "optional": true, "description": "Contains all entries on directory if the command completed successfully." }
-                ],
-                "description": "Completion event of requestDirectoryContent command."
-            },
-            {
-                "name": "metadataReceived",
-                "parameters": [
-                    { "name": "requestId", "type": "integer", "description": "Request Identifier that was returned in response to the corresponding requestMetadata command." },
-                    { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
-                    { "name": "metadata", "$ref": "Metadata", "optional": true, "description": "Contains metadata of the entry if the command completed successfully." }
-                ],
-                "description": "Completion event of requestMetadata command."
-            },
-            {
-                "name": "fileContentReceived",
-                "parameters": [
-                    { "name": "requestId", "type": "integer", "description": "Request Identifier that was returned in response to the corresponding requestFileContent command." },
                     { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
                     { "name": "content", "type": "string", "optional": true, "description": "Content of the file." },
                     { "name": "charset", "type": "string", "optional": true, "description": "Charset of the content if it is served as text." }
                 ],
-                "description": "Completion event of requestFileContent command."
+                "description": "Returns content of the file. Result should be sliced into [start, end)."
             },
             {
-                "name": "deletionCompleted",
+                "name": "deleteEntry",
+                "async": true,
                 "parameters": [
-                    { "name": "requestId", "type": "integer", "description": "Request Identifier that was returned in response to the corresponding deleteEntry command." },
+                    { "name": "url", "type": "string", "description": "URL of the entry to delete." }
+                ],
+                "returns": [
                     { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise errorCode is set to FileError::ErrorCode value." }
                 ],
-                "description": "Completion event of deleteEntry command."
+                "description": "Deletes specified entry. If the entry is a directory, the agent deletes children recursively."
             }
         ]
     },

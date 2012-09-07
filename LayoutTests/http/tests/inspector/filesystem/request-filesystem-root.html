@@ -8,7 +8,7 @@
 document.addEventListener("DOMContentLoaded", runTest);
 function test()
 {
-    var fileSystemRequestManager = new WebInspector.FileSystemRequestManager();
+    var fileSystemModel = new WebInspector.FileSystemModel;
 
     var testStep = [
         function()
@@ -20,19 +20,19 @@ function test()
 
         function()
         {
-            fileSystemRequestManager.requestFileSystemRoot("http://127.0.0.1:8000", "temporary", testStep.shift());
+            fileSystemModel._requestFileSystemRoot("http://127.0.0.1:8000", "temporary", testStep.shift());
         },
 
         function(errorCode, backendRootEntry)
         {
             InspectorTest.dumpFileSystemRootRequestResult(errorCode, backendRootEntry);
-            fileSystemRequestManager.requestFileSystemRoot("http://127.0.0.1:8000", "fizzbuzz", testStep.shift());
+            fileSystemModel._requestFileSystemRoot("http://127.0.0.1:8000", "fizzbuzz", testStep.shift());
         },
 
         function(errorCode, backendRootEntry)
         {
             InspectorTest.dumpFileSystemRootRequestResult(errorCode, backendRootEntry);
-            fileSystemRequestManager.requestFileSystemRoot("http://example.com", "temporary", testStep.shift());
+            fileSystemModel._requestFileSystemRoot("http://example.com", "temporary", testStep.shift());
         },
 
         function(errorCode, backendRootEntry)

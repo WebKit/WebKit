@@ -8,7 +8,7 @@
 document.addEventListener("DOMContentLoaded", runTest);
 function test()
 {
-    var fileSystemRequestManager = new WebInspector.FileSystemRequestManager();
+    var fileSystemModel = new WebInspector.FileSystemModel;
 
     var testStep = [
         function()
@@ -28,31 +28,31 @@ function test()
 
         function()
         {
-            fileSystemRequestManager.requestDirectoryContent("InvalidURL", testStep.shift());
+            fileSystemModel._requestDirectoryContent("InvalidURL", testStep.shift());
         },
 
         function(errorCode, entries)
         {
             InspectorTest.dumpDirectoryContentRequestResult(errorCode, entries);
-            fileSystemRequestManager.requestDirectoryContent("filesystem:http://127.0.0.1:8000/InvalidType/", testStep.shift());
+            fileSystemModel._requestDirectoryContent("filesystem:http://127.0.0.1:8000/InvalidType/", testStep.shift());
         },
 
         function(errorCode, entries)
         {
             InspectorTest.dumpDirectoryContentRequestResult(errorCode, entries);
-            fileSystemRequestManager.requestDirectoryContent("filesystem:http://127.0.0.1:8000/temporary/hoge", testStep.shift());
+            fileSystemModel._requestDirectoryContent("filesystem:http://127.0.0.1:8000/temporary/hoge", testStep.shift());
         },
 
         function(errorCode, entries)
         {
             InspectorTest.dumpDirectoryContentRequestResult(errorCode, entries);
-            fileSystemRequestManager.requestDirectoryContent("filesystem:http://127.0.0.1:8000/temporary/foo", testStep.shift());
+            fileSystemModel._requestDirectoryContent("filesystem:http://127.0.0.1:8000/temporary/foo", testStep.shift());
         },
 
         function(errorCode, entries)
         {
             InspectorTest.dumpDirectoryContentRequestResult(errorCode, entries);
-            fileSystemRequestManager.requestDirectoryContent("filesystem:http://example.com/temporary/", testStep.shift());
+            fileSystemModel._requestDirectoryContent("filesystem:http://example.com/temporary/", testStep.shift());
         },
 
         function(errorCode, entries) {

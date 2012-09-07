@@ -8,7 +8,7 @@
 document.addEventListener("DOMContentLoaded", runTest);
 function test()
 {
-    var fileSystemRequestManager = new WebInspector.FileSystemRequestManager();
+    var fileSystemModel = new WebInspector.FileSystemModel;
 
     var testStep = [
         function()
@@ -33,37 +33,37 @@ function test()
 
         function()
         {
-            fileSystemRequestManager.deleteEntry("InvalidURL", testStep.shift());
+            fileSystemModel._deleteEntry("InvalidURL", testStep.shift());
         },
 
         function(errorCode)
         {
             InspectorTest.addResult("errorCode: " + errorCode);
-            fileSystemRequestManager.deleteEntry("filesystem:http://127.0.0.1:8000/InvalidType/fuga", testStep.shift());
+            fileSystemModel._deleteEntry("filesystem:http://127.0.0.1:8000/InvalidType/fuga", testStep.shift());
         },
 
         function(errorCode)
         {
             InspectorTest.addResult("errorCode: " + errorCode);
-            fileSystemRequestManager.deleteEntry("filesystem:http://127.0.0.1:8000/temporary/hoge", testStep.shift());
+            fileSystemModel._deleteEntry("filesystem:http://127.0.0.1:8000/temporary/hoge", testStep.shift());
         },
 
         function(errorCode)
         {
             InspectorTest.addResult("errorCode: " + errorCode);
-            fileSystemRequestManager.deleteEntry("filesystem:http://127.0.0.1:8000/temporary/fuga", testStep.shift());
+            fileSystemModel._deleteEntry("filesystem:http://127.0.0.1:8000/temporary/fuga", testStep.shift());
         },
 
         function(errorCode)
         {
             InspectorTest.addResult("errorCode: " + errorCode);
-            fileSystemRequestManager.deleteEntry("filesystem:http://127.0.0.1:8000/temporary/", testStep.shift());
+            fileSystemModel._deleteEntry("filesystem:http://127.0.0.1:8000/temporary/", testStep.shift());
         },
 
         function(errorCode)
         {
             InspectorTest.addResult("errorCode: " + errorCode);
-            fileSystemRequestManager.requestFileSystemRoot("http://127.0.0.1:8000", "temporary", testStep.shift());
+            fileSystemModel._requestFileSystemRoot("http://127.0.0.1:8000", "temporary", testStep.shift());
         },
 
         function(errorCode, backendRootEntry)
