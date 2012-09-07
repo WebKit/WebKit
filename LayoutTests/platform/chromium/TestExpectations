@@ -892,6 +892,8 @@ WONTFIX : platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html = TEX
 // Mac and Win does not have global selection.
 WONTFIX MAC WIN : editing/pasteboard/paste-global-selection.html = TEXT
 
+BUGWK96109 SKIP LINUX : editing/pasteboard/paste-global-selection.html = TEXT
+
 // Skipping rules for ANDROID are in platform/chromium-android/TestExpectations.
 
 // -----------------------------------------------------------------
