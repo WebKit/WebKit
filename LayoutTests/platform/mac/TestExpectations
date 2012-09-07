@@ -97,7 +97,7 @@ BUGWK74888 : tables/mozilla/marvin/x_caption_style.xml = TEXT
 BUGWK74888 : tables/mozilla_expected_failures/bugs/bug10140.html = TEXT
 BUGWK74888 : tables/mozilla_expected_failures/bugs/bug10216.html = TEXT
 BUGWK74888 : tables/mozilla_expected_failures/bugs/bug104898.html = TEXT
-BUGWK74888 : tables/mozilla_expected_failures/bugs/bug106966.html = TEXT
+BUGWK74888 BUGWK93148 : tables/mozilla_expected_failures/bugs/bug106966.html = TEXT
 BUGWK74888 : tables/mozilla_expected_failures/bugs/bug14007-2.html = TEXT
 BUGWK74888 : tables/mozilla_expected_failures/bugs/bug29058-2.html = TEXT
 BUGWK74888 : tables/mozilla_expected_failures/bugs/bug3166-11.html = TEXT
@@ -183,7 +183,7 @@ BUGWK69210 : fast/repaint/transform-absolute-in-positioned-container.html = TEXT
 // Tiled-layer compositing tests are flakey.
 BUGWK82546 : compositing/tiling/crash-reparent-tiled-layer.html = PASS TEXT
 
-BUGWK84604 FUTURE : fast/js/global-constructors.html = TEXT
+BUGWK84604 : fast/js/global-constructors.html = TEXT
 
 // Requires rebaseline after bug 83978
 BUGWK83978 SKIP : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = IMAGE+TEXT
@@ -310,21 +310,7 @@ BUGWK91969 : fast/dom/HTMLProgressElement/indeterminate-progress-001.html = TEXT
 // Needs new image to be checked in for all platforms.
 BUGWK93859 : compositing/video/video-controls-layer-creation.html = PASS MISSING
 
-// Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=91970
-BUGWK91970 : fast/dom/HTMLMeterElement/meter-appearances-capacity.html
-BUGWK91970 : fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html
-BUGWK91970 : fast/dom/HTMLMeterElement/meter-boundary-values.html
-BUGWK91970 : fast/dom/HTMLMeterElement/meter-clone.html
-BUGWK91970 : fast/dom/HTMLMeterElement/meter-element-markup.html
-BUGWK91970 : fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html
-BUGWK91970 : fast/dom/HTMLMeterElement/meter-element.html
-BUGWK91970 : fast/dom/HTMLMeterElement/meter-optimums.html
-BUGWK91970 : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html
-BUGWK91970 : fast/dom/HTMLMeterElement/meter-styles.html
-BUGWK91970 : fast/dom/HTMLMeterElement/meter-writing-mode.html
-
 // Require rebaseline after bug 93148
-BUGWK93148 : tables/mozilla_expected_failures/bugs/bug106966.html = TEXT
 BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html = TEXT
 BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.html = TEXT
 BUGWK93148 : fast/css/nested-layers-with-hover.html = TEXT
