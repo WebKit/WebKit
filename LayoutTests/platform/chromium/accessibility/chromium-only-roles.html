@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+
+<div id="container" contentEditable>
+  <hr aria-label="hr">
+  <p aria-label="p"></p>
+  <label aria-label="label"></label>
+  <form aria-label="form"></form>
+  <div aria-label="div"></div>
+</div>
+
+<div id="console"></div>
+<script>
+description("This test makes sure that a generic focusable div can get accessibility focus.");
+
+if (window.testRunner && window.accessibilityController) {
+    window.testRunner.dumpAsText();
+
+    document.getElementById('container').focus();
+    var axContainer = accessibilityController.focusedElement;
+
+    shouldBe('axContainer.childAtIndex(0).role', '"AXRole: AXHorizontalRule"');
+    shouldBe('axContainer.childAtIndex(1).role', '"AXRole: AXParagraph"');
+    shouldBe('axContainer.childAtIndex(2).role', '"AXRole: AXLabel"');
+    shouldBe('axContainer.childAtIndex(3).role', '"AXRole: AXForm"');
+    shouldBe('axContainer.childAtIndex(4).role', '"AXRole: AXDiv"');
+}
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

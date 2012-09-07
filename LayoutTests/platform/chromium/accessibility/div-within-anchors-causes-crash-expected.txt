@@ -2,11 +2,11 @@ End of test
 Before:
 AXRole: AXWebArea AXValue: 
     AXRole: AXLink AXValue: 
-    AXRole: AXGroup AXValue: 
+    AXRole: AXDiv AXValue: 
         AXRole: AXStaticText AXValue: End of test
 After:
 AXRole: AXWebArea AXValue: 
-    AXRole: AXGroup AXValue: 
+    AXRole: AXDiv AXValue: 
         AXRole: AXStaticText AXValue: End of test
 This can cause a crash.
 

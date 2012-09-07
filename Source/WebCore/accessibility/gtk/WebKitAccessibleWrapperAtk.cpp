@@ -476,7 +476,7 @@ static AtkRole atkRole(AccessibilityRole role)
     case SplitGroupRole:
         return ATK_ROLE_SPLIT_PANE;
     case SplitterRole:
-        return ATK_ROLE_SEPARATOR;
+        return ATK_ROLE_UNKNOWN;
     case ColorWellRole:
         return ATK_ROLE_COLOR_CHOOSER;
     case ListRole:
@@ -526,6 +526,8 @@ static AtkRole atkRole(AccessibilityRole role)
         return ATK_ROLE_FORM;
     case CanvasRole:
         return ATK_ROLE_CANVAS;
+    case HorizontalRuleRole:
+        return ATK_ROLE_SEPARATOR;
     default:
         return ATK_ROLE_UNKNOWN;
     }

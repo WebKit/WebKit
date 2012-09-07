@@ -1,5 +1,17 @@
 2012-09-07  Dominic Mazzoni  <dmazzoni@google.com>
 
+        AX: WebCore accessibility roles should be cross-platform
+        https://bugs.webkit.org/show_bug.cgi?id=94870
+
+        Reviewed by Chris Fleizach.
+
+        Add debug strings to Chromium for new accessibility roles.
+
+        * DumpRenderTree/chromium/TestRunner/AccessibilityUIElementChromium.cpp:
+        (roleToString):
+
+2012-09-07  Dominic Mazzoni  <dmazzoni@google.com>
+
         AX: Chromium needs access to canvasHasFallbackContent
         https://bugs.webkit.org/show_bug.cgi?id=96124
 

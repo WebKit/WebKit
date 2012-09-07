@@ -9,10 +9,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 AXRole: AXWebArea AXValue: 
     AXRole: AXStaticText AXValue: x
-    AXRole: AXGroup AXValue: 
+    AXRole: AXDiv AXValue: 
         AXRole: AXStaticText AXValue: y
     AXRole: AXStaticText AXValue: z
-    AXRole: AXGroup AXValue: 
+    AXRole: AXDiv AXValue: 
         AXRole: AXStaticText AXValue: End of test
 PASS successfullyParsed is true
 

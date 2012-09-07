@@ -1496,7 +1496,12 @@ bool AccessibilityObject::isInsideARIALiveRegion() const
 
 bool AccessibilityObject::supportsARIAAttributes() const
 {
-    return supportsARIALiveRegion() || supportsARIADragging() || supportsARIADropping() || supportsARIAFlowTo() || supportsARIAOwns();
+    return supportsARIALiveRegion()
+        || supportsARIADragging()
+        || supportsARIADropping()
+        || supportsARIAFlowTo()
+        || supportsARIAOwns()
+        || hasAttribute(aria_labelAttr);
 }
     
 bool AccessibilityObject::supportsARIALiveRegion() const
