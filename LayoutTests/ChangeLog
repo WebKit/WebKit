@@ -1,3 +1,13 @@
+2012-09-07  Anna Cavender  <annacc@chromium.org>
+
+        Rebaselines for windows due to r127831.
+
+        Unreviewed gardening.
+
+        * platform/chromium-linux/media/track/track-cue-rendering-horizontal-expected.txt: Removed.
+        * platform/chromium-win/media/track/track-cue-rendering-horizontal-expected.png:
+        * platform/chromium-win/media/track/track-cue-rendering-horizontal-expected.txt:
+
 2012-09-06  Anna Cavender  <annacc@chromium.org>
 
         Rebaselines due to r127831.
