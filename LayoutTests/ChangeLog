@@ -1,3 +1,12 @@
+2012-09-07  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Unskip passing tests on EFL build bot
+        https://bugs.webkit.org/show_bug.cgi?id=96089
+
+        Unreviewed EFL gardening, unskip now passing tests.
+
+        * platform/efl/TestExpectations:
+
 2012-09-06  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Migrate IndexedDB to async protocol commands.

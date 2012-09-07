@@ -1084,11 +1084,5 @@ BUGWK95840 : http/tests/security/cross-origin-plugin-private-browsing-toggled-al
 BUGWK95840 : http/tests/security/cross-origin-plugin-private-browsing-toggled.html = TEXT
 BUGWK95840 : http/tests/security/cross-origin-plugin.html = TEXT
 
-// Fails after r127698.
-BUGWK95944 : fast/dom/HTMLScriptElement/script-reexecution.html = TEXT
-
 // Fails after r127534.
 BUGWK95813 : fast/innerHTML/innerHTML-iframe.html = TEXT
-
-// Fails after r127728.
-BUGWK95972 : http/tests/xmlhttprequest/basic-auth.html = TEXT
