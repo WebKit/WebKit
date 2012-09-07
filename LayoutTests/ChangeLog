@@ -1,3 +1,17 @@
+2012-09-07  Sami Kyostila  <skyostil@google.com>
+
+        [chromium] Dynamically removing preserve-3d from a layer has no effect
+        https://bugs.webkit.org/show_bug.cgi?id=95732
+
+        Reviewed by James Robinson.
+
+        Move preserve-3d-toggle.html to the common compositing tests directory because
+        it isn't Chromium-specific.
+
+        * compositing/preserve-3d-toggle-expected.png: Renamed from LayoutTests/platform/chromium/compositing/preserve-3d-toggle-expected.png.
+        * compositing/preserve-3d-toggle-expected.txt: Renamed from LayoutTests/platform/chromium/compositing/preserve-3d-toggle-expected.txt.
+        * compositing/preserve-3d-toggle.html: Renamed from LayoutTests/platform/chromium/compositing/preserve-3d-toggle.html.
+
 2012-09-07  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: add RTCPeerConnection::createAnswer
