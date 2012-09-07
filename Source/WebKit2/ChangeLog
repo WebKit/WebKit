@@ -1,3 +1,16 @@
+2012-09-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] APIClientTraits<WKPageLoaderClient> and APIClientTraits<WKBundlePageLoaderClient> are not initialized properly
+        https://bugs.webkit.org/show_bug.cgi?id=96079
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        APIClientTraits<WKPageLoaderClient> was missing offset for version number 2 and
+        APIClientTraits<WKBundlePageLoaderClient> was missing offset for version number 3.
+
+        * Shared/APIClientTraits.cpp:
+        (WebKit):
+
 2012-09-07  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Add APIs to enable or disable the mouse events of the ewk_view.
