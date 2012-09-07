@@ -213,6 +213,11 @@ String AXDayOfMonthFieldText()
     return query(WebLocalizedString::AXDayOfMonthFieldText);
 }
 
+String AXDateTimeFieldEmptyValueText()
+{
+    return query(WebLocalizedString::AXDateTimeFieldEmptyValueText);
+}
+
 String AXHourFieldText()
 {
     return query(WebLocalizedString::AXHourFieldText);

@@ -168,6 +168,7 @@ namespace WebCore {
 #if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
     String AXAMPMFieldText();
     String AXDayOfMonthFieldText();
+    String AXDateTimeFieldEmptyValueText();
     String AXHourFieldText();
     String AXMillisecondFieldText();
     String AXMinuteFieldText();

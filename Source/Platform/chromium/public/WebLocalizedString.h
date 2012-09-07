@@ -38,6 +38,7 @@ struct WebLocalizedString {
         AXAMPMFieldText,
         AXButtonActionVerb,
         AXCheckedCheckBoxActionVerb,
+        AXDateTimeFieldEmptyValueText,
         AXDayOfMonthFieldText,
         AXHeadingText,
         AXHourFieldText,

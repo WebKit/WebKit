@@ -1,3 +1,17 @@
+2012-09-07  Yoshifumi Inoue  <yosin@chromium.org>
+
+        We should have a localized string of empty for date time field
+        https://bugs.webkit.org/show_bug.cgi?id=96081
+
+        Reviewed by Kent Tamura.
+
+        This patch adds a localized string enum field for empty field value
+        description text for accessibility support in multiple fields date
+        time related input types for Chromium ports.
+
+        * chromium/public/WebLocalizedString.h: Added AXDateTimeFieldEmptyValueText
+        enum field.
+
 2012-09-06  Hironori Bono  <hbono@chromium.org>
 
         A build fix for Chromium Windows
