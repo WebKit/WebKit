@@ -8,16 +8,16 @@
               testRunner.setMockGeolocationPosition(51.478, -0.166, 100);
           }
 
+          var parent = window.parent;
+
           // Make request from remote frame, this frame will be gone by the time the Geolocation
           // object attempts to invoke the callback.
           window.parent.navigator.geolocation.getCurrentPosition(function() {
-              alert('Success callback invoked unexpectedly');
-              if (window.testRunner)
-                  testRunner.notifyDone();
+              parent.testPassed('Success callback invoked');
+              parent.finishJSTest();
           }, function() {
-              alert('Error callback invoked unexpectedly');
-              if (window.testRunner)
-                  testRunner.notifyDone();
+              parent.testFailed('Error callback invoked unexpectedly');
+              parent.finishJSTest();
           });
       }
     </script>

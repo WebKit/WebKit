@@ -3394,34 +3394,26 @@ END
 END
     }
 
-    if (IsNodeSubType($dataNode) || IsVisibleAcrossOrigins($dataNode)) {
-        push(@implContent, <<END);
+    push(@implContent, <<END);
 
-    // Enter the node's context and create the wrapper in that context.
     v8::Handle<v8::Context> context;
-    if (frame) {
-        v8::Handle<v8::Context> underlyingHandle = frame->script()->unsafeHandleToCurrentWorldContext();
-        if (v8::Context::GetCurrent() != underlyingHandle) {
-            // For performance, we enter the context only if the currently running context
-            // is different from the context that we are about to enter.
-            context = v8::Local<v8::Context>::New(underlyingHandle);
-            if (!context.IsEmpty())
-                context->Enter();
-        }
+    if (!creationContext.IsEmpty() && creationContext != v8::Context::GetCurrent()) {
+        // For performance, we enter the context only if the currently running context
+        // is different from the context that we are about to enter.
+        context = v8::Local<v8::Context>::New(creationContext);
+        ASSERT(!context.IsEmpty());
+        context->Enter();
     }
 END
-    }
 
     push(@implContent, <<END);
     wrapper = V8DOMWrapper::instantiateV8Object(frame, &info, impl.get());
 END
-    if (IsNodeSubType($dataNode) || IsVisibleAcrossOrigins($dataNode)) {
-        push(@implContent, <<END);
-    // Exit the node's context if it was entered.
+
+    push(@implContent, <<END);
     if (!context.IsEmpty())
         context->Exit();
 END
-    }
 
     push(@implContent, <<END);
     if (UNLIKELY(wrapper.IsEmpty()))

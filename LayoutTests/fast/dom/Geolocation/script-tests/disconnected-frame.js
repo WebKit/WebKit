@@ -16,11 +16,13 @@ function onIframeUnloaded() {
         testFailed('Success callback invoked unexpectedly');
         finishJSTest();
     }, function(e) {
-        error = e;
-        shouldBe('error.code', '2');
-        shouldBe('error.message', '"Geolocation cannot be used in frameless documents"');
+        testFailed('Error callback invoked unexpectedly');
         finishJSTest();
     });
+    setTimeout(function() {
+        testPassed('No callbacks invoked');
+        finishJSTest();
+    }, 100);
 }
 
 var iframe = document.createElement('iframe');

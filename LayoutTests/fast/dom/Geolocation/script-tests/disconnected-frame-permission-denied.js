@@ -29,12 +29,13 @@ function onIframeUnloaded() {
         testFailed('Success callback invoked unexpectedly');
         finishJSTest();
     }, function(e) {
-        error = e;
-        shouldBe('error.code', 'error.PERMISSION_DENIED');
-        shouldBe('error.message', '"User denied Geolocation"');
-        debug('');
+        testFailed('Error callback invoked unexpectedly');
         finishJSTest();
     });
+    setTimeout(function() {
+        testPassed('No callbacks invoked');
+        finishJSTest();
+    }, 100);
 }
 
 var iframe = document.createElement('iframe');

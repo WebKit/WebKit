@@ -5,11 +5,10 @@ function onFirstIframeLoaded() {
 }
 
 function onSecondIframeLoaded() {
-    // Wait for the callbacks to be invoked
     window.setTimeout(function() {
-        testPassed('No callbacks invoked');
+        testFailed('No callbacks invoked');
         finishJSTest();
-    }, 100);
+    }, 500);
 }
 
 var iframe = document.createElement('iframe');

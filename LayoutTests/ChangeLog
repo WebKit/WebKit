@@ -1,3 +1,28 @@
+2012-09-07  Adam Barth  <abarth@chromium.org>
+
+        Enter the creationContext before creating DOM wrappers
+        https://bugs.webkit.org/show_bug.cgi?id=96044
+
+        Reviewed by Eric Seidel.
+
+        Update the Geolocation tests to show that we now use the correct
+        context for these callback. Specifically, we use the context that
+        cooresponds to the Geolocation object itself, not whatever random
+        context we happened to be in when we first touched the Geolocation
+        object.
+
+        * fast/dom/Geolocation/callback-to-deleted-context-expected.txt:
+        * fast/dom/Geolocation/disconnected-frame-expected.txt:
+        * fast/dom/Geolocation/disconnected-frame-permission-denied-expected.txt:
+        * fast/dom/Geolocation/resources/callback-to-deleted-context-inner1.html:
+        * fast/dom/Geolocation/script-tests/callback-to-deleted-context.js:
+        (onSecondIframeLoaded):
+        * fast/dom/Geolocation/script-tests/disconnected-frame-permission-denied.js:
+        (onIframeUnloaded.setTimeout):
+        * fast/dom/Geolocation/script-tests/disconnected-frame.js:
+        (onIframeUnloaded.setTimeout):
+        (onIframeUnloaded):
+
 2012-09-07  Leo Yang  <leoyang@rim.com>
 
         Appcache fallback URL match should use the longest candidate
