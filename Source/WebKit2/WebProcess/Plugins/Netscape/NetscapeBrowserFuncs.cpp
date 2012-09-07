@@ -37,6 +37,7 @@
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/SharedBuffer.h>
 #include <utility>
+#include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 #include "NetscapeSandboxFunctions.h"
@@ -123,7 +124,7 @@ static const char* findEndOfLine(const char* bytes, unsigned length)
 static String capitalizeRFC822HeaderFieldName(const String& name)
 {
     bool capitalizeCharacter = true;
-    String result;
+    StringBuilder result;
 
     for (unsigned i = 0; i < name.length(); i++) {
         UChar c;
@@ -143,7 +144,7 @@ static String capitalizeRFC822HeaderFieldName(const String& name)
         result.append(c);
     }
 
-    return result;
+    return result.toString();
 }
 
 static HTTPHeaderMap parseRFC822HeaderFields(const char* bytes, unsigned length)

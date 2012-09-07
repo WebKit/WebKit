@@ -1,3 +1,25 @@
+2012-09-06  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Deploy StringBuilder in more places in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=95924
+
+        Reviewed by Benjamin Poulain.
+
+        Deploy StringBuilder to concatenate strings more efficiently.
+
+        * Shared/WebMemorySampler.cpp:
+        (WebKit):
+        (WebKit::WebMemorySampler::WebMemorySampler):
+        (WebKit::WebMemorySampler::stop):
+        (WebKit::WebMemorySampler::writeHeaders):
+        (WebKit::WebMemorySampler::appendCurrentMemoryUsageToFile):
+        * Shared/WebMemorySampler.h:
+        (WebMemorySampler):
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::capitalizeRFC822HeaderFieldName):
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::searchWithGoogle):
+
 2012-09-06  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Add API unit tests for ewk_view_theme_set.

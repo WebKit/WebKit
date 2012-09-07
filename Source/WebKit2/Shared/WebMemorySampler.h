@@ -52,19 +52,18 @@
 #if ENABLE(MEMORY_SAMPLER)
 
 #include "SandboxExtension.h"
-#include <WebCore/Timer.h>
 #include <WebCore/FileSystem.h>
+#include <WebCore/Timer.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 struct SystemMallocStats;
 
-struct WebMemoryStatistics
-{
+struct WebMemoryStatistics {
     Vector<String> keys;
     Vector<size_t> values;
 };
@@ -73,8 +72,8 @@ class WebMemorySampler {
     WTF_MAKE_NONCOPYABLE(WebMemorySampler);
 public:
     static WebMemorySampler* shared();
-    void start(const double interval=0);
-    void start(const SandboxExtension::Handle&, const String&, const double interval=0);
+    void start(const double interval = 0);
+    void start(const SandboxExtension::Handle&, const String&, const double interval = 0);
     void stop();
     bool isRunning() const;
     
@@ -98,7 +97,6 @@ private:
     
     WebCore::PlatformFileHandle m_sampleLogFile;
     String m_sampleLogFilePath;
-    String m_separator;
     WebCore::Timer<WebMemorySampler> m_sampleTimer;
     WebCore::Timer<WebMemorySampler> m_stopTimer;
     bool m_isRunning;

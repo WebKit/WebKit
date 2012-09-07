@@ -30,11 +30,13 @@
 
 #include <stdio.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
+static const char separator = '\t';
 
 WebMemorySampler* WebMemorySampler::shared()
 {
@@ -45,8 +47,7 @@ WebMemorySampler* WebMemorySampler::shared()
 }
 
 WebMemorySampler::WebMemorySampler() 
-    : m_separator(String("\t"))  
-    , m_sampleTimer(this, &WebMemorySampler::sampleTimerFired)
+    : m_sampleTimer(this, &WebMemorySampler::sampleTimerFired)
     , m_stopTimer(this, &WebMemorySampler::stopTimerFired)
     , m_isRunning(false)
     , m_runningTime(0)
@@ -102,7 +103,7 @@ void WebMemorySampler::stop()
     fflush(stdout);
     m_isRunning = false;
     
-    if(m_stopTimer.isActive())
+    if (m_stopTimer.isActive())
         m_stopTimer.stop();
     
     if (m_sampleLogSandboxExtension) {
@@ -134,21 +135,22 @@ void WebMemorySampler::initializeSandboxedLogFile(const SandboxExtension::Handle
 
 void WebMemorySampler::writeHeaders()
 {
-    String processDetails = String("Process: ");
-    processDetails.append(processName());
-    processDetails.append(String("\n"));
-    writeToFile(m_sampleLogFile, processDetails.utf8().data(), processDetails.utf8().length());
+    String processDetails = "Process: " + processName() + '\n';
+
+    CString utf8String = processDetails.utf8();
+    writeToFile(m_sampleLogFile, utf8String.data(), utf8String.length());
     
-    String header; 
+    StringBuilder header; 
     WebMemoryStatistics stats = sampleWebKit();
     if (!stats.keys.isEmpty()) {
         for (size_t i = 0; i < stats.keys.size(); ++i) {
-            header.append(m_separator);
-            header.append(stats.keys[i].utf8().data());
+            header.append(separator);
+            header.append(stats.keys[i]);
         }
     }
-    header.append(String("\n"));
-    writeToFile(m_sampleLogFile, header.utf8().data(), header.utf8().length());
+    header.append('\n');
+    utf8String = header.toString().utf8();
+    writeToFile(m_sampleLogFile, utf8String.data(), utf8String.length());
 }
 
 void WebMemorySampler::sampleTimerFired(Timer<WebMemorySampler>*)
@@ -168,18 +170,20 @@ void WebMemorySampler::stopTimerFired(Timer<WebMemorySampler>*)
 void WebMemorySampler::appendCurrentMemoryUsageToFile(PlatformFileHandle& file)
 {
     // Collect statistics from allocators and get RSIZE metric
-    String statString; 
+    StringBuilder statString;
     WebMemoryStatistics memoryStats = sampleWebKit();
 
     if (!memoryStats.values.isEmpty()) {
-        statString.append(m_separator);
+        statString.append(separator);
         for (size_t i = 0; i < memoryStats.values.size(); ++i) {
-            statString.append(m_separator);
+            statString.append(separator);
             statString.append(String::number(memoryStats.values[i]));
         }
     }
-    statString.append(String("\n"));
-    writeToFile(m_sampleLogFile, statString.utf8().data(), statString.utf8().length());
+    statString.append('\n');
+
+    CString utf8String = statString.toString().utf8();
+    writeToFile(m_sampleLogFile, utf8String.data(), utf8String.length());
 }
 
 }
