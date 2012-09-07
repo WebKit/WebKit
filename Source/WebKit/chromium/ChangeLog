@@ -1,3 +1,18 @@
+2012-09-07  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Chromium needs access to canvasHasFallbackContent
+        https://bugs.webkit.org/show_bug.cgi?id=96124
+
+        Reviewed by Chris Fleizach.
+
+        Expose canvasHasFallbackContent on Chromium.
+
+        * public/WebAccessibilityObject.h:
+        (WebAccessibilityObject):
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::canvasHasFallbackContent):
+        (WebKit):
+
 2012-09-07  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] Add touchscreen specific fling curve parametrization

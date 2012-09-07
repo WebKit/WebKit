@@ -1,3 +1,16 @@
+2012-09-07  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Chromium needs access to canvasHasFallbackContent
+        https://bugs.webkit.org/show_bug.cgi?id=96124
+
+        Reviewed by Chris Fleizach.
+
+        Distinguish between canvas roles with and without fallback
+        content on Chromium.
+
+        * DumpRenderTree/chromium/TestRunner/AccessibilityUIElementChromium.cpp:
+        (getRole):
+
 2012-09-07  Ojan Vafai  <ojan@chromium.org>
 
         Handle non-existant TestExpectations files gracefully

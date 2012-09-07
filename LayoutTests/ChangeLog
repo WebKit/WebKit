@@ -1,3 +1,15 @@
+2012-09-07  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Chromium needs access to canvasHasFallbackContent
+        https://bugs.webkit.org/show_bug.cgi?id=96124
+
+        Reviewed by Chris Fleizach.
+
+        Update canvas test to distinguish between canvas elements with
+        fallback content on Chromium.
+
+        * platform/chromium/accessibility/canvas-description-and-role-expected.txt:
+
 2012-09-07  Gavin Barraclough  <barraclough@apple.com>
 
         Object.prototype.__define{G,S}etter__ with non-callable second parameter should throw TypeError instead of SyntaxError

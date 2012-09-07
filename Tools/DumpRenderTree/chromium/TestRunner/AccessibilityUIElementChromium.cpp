@@ -234,7 +234,15 @@ string getStringValue(const WebAccessibilityObject& object)
 
 string getRole(const WebAccessibilityObject& object)
 {
-    return roleToString(object.roleValue());
+    string roleString = roleToString(object.roleValue());
+
+    // Special-case canvas with fallback content because Chromium wants to
+    // treat this as essentially a separate role that it can map differently depending
+    // on the platform.
+    if (object.roleValue() == WebAccessibilityRoleCanvas && object.canvasHasFallbackContent())
+        roleString += "WithFallbackContent";
+
+    return roleString;
 }
 
 string getTitle(const WebAccessibilityObject& object)

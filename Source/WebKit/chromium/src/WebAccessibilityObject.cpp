@@ -459,6 +459,14 @@ WebRect WebAccessibilityObject::boundingBoxRect() const
     return m_private->pixelSnappedBoundingBoxRect();
 }
 
+bool WebAccessibilityObject::canvasHasFallbackContent() const
+{
+    if (isDetached())
+        return false;
+
+    return m_private->canvasHasFallbackContent();
+}
+
 double WebAccessibilityObject::estimatedLoadingProgress() const
 {
     if (isDetached())

@@ -7,7 +7,7 @@ PASS axContainer.childrenCount is 2
 Canvas 1 description: AXDescription: Canvas label
 Canvas 1 role: AXRole: AXCanvas
 Canvas 2 description: AXDescription: 
-Canvas 2 role: AXRole: AXCanvas
+Canvas 2 role: AXRole: AXCanvasWithFallbackContent
 PASS successfullyParsed is true
 
 TEST COMPLETE
