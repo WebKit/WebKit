@@ -1,3 +1,23 @@
+2012-09-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, rolling out r127839.
+        http://trac.webkit.org/changeset/127839
+        https://bugs.webkit.org/show_bug.cgi?id=90603
+
+        This patch was landed with wrong implementation and policy.
+
+        * WebCoreSupport/NotificationPresenterClientEfl.cpp:
+        (WebCore::NotificationPresenterClientEfl::NotificationPresenterClientEfl):
+        (WebCore::NotificationPresenterClientEfl::requestPermission):
+        (WebCore::NotificationPresenterClientEfl::checkPermission):
+        (WebCore::NotificationPresenterClientEfl::cancelRequestsForPermission):
+        * WebCoreSupport/NotificationPresenterClientEfl.h:
+        (NotificationPresenterClientEfl):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        * ewk/ewk_view.h:
+        * ewk/ewk_view_private.h:
+
 2012-09-07  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL] Support the permission function of the Web Notification.

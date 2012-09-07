@@ -20,43 +20,25 @@
 #ifndef NotificationPresenterClientEfl_h
 #define NotificationPresenterClientEfl_h
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#include "Notification.h"
 #include "NotificationClient.h"
-#include "ewk_security_origin.h"
-#include <Evas.h>
-#include <wtf/HashMap.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class Notification;
-
 class NotificationPresenterClientEfl : public NotificationClient {
+
 public:
-    explicit NotificationPresenterClientEfl(Evas_Object* view);
+    NotificationPresenterClientEfl();
     ~NotificationPresenterClientEfl();
 
     virtual bool show(Notification*);
     virtual void cancel(Notification*);
     virtual void notificationObjectDestroyed(Notification*);
     virtual void notificationControllerDestroyed();
-#if ENABLE(LEGACY_NOTIFICATIONS)
-    virtual void requestPermission(ScriptExecutionContext*, PassRefPtr<VoidCallback>) { }
-#endif
-    virtual void requestPermission(ScriptExecutionContext*, PassRefPtr<NotificationPermissionCallback>);
+    virtual void requestPermission(ScriptExecutionContext*, PassRefPtr<VoidCallback>);
     virtual NotificationClient::Permission checkPermission(ScriptExecutionContext*);
-    virtual void cancelRequestsForPermission(ScriptExecutionContext*) { }
-
-    void addToPermissionCache(const String& domain, bool isPermitted);
-    void setPermission(const Ewk_Security_Origin*, bool isPermitted);
-
-private:
-    Evas_Object* m_view;
-
-    typedef HashMap<const Ewk_Security_Origin*, RefPtr<WebCore::NotificationPermissionCallback> > PermissionRequestMap;
-    PermissionRequestMap m_pendingPermissionRequests;
-    typedef HashMap<String, bool> PermissionsMap;
-    PermissionsMap m_cachedPermissions;
+    virtual void cancelRequestsForPermission(ScriptExecutionContext*);
 };
 
 }

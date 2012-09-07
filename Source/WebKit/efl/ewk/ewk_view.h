@@ -74,7 +74,6 @@
  *  - "mixedcontent,displayed", void: any of the containing frames has loaded and displayed mixed content.
  *  - "mixedcontent,run", void: any of the containing frames has loaded and run mixed content.
  *  - "navigate,with,data", Ewk_View_Navigation_Data*: reports that view did navigation and gives the navigation details.
- *  - "notification,permission,request", const Ewk_Security_Origin*: request to confirm permission for security origin from user.
  *  - "perform,client,redirect", Ewk_View_Redirection_Data*: reports that view performed a client redirect and gives the redirection details.
  *  - "perform,server,redirect", Ewk_View_Redirection_Data*: reports that view performed a server redirect and gives the redirection details.
  *  - "protocolhandler,registration,requested", Ewk_Custom_Handler_Data: add a handler url for the given protocol.
@@ -2746,33 +2745,6 @@ EAPI Evas_Object* ewk_view_web_inspector_view_get(const Evas_Object *o);
  * @param inspector_view The view of web inspector.
  */
 EAPI void ewk_view_web_inspector_view_set(Evas_Object *o, Evas_Object *inspector_view);
-
-/**
- * Add permitted or denied list to the permission cache for Web Notifications.
- *
- * If there are stored permission lists for Web Notifications,
- * this function need to be called with permission.
- *
- * @param o view object to set the permission cache list.
- * @param domain string for determine the permission.
- * @param permitted @c EINA_TRUE to permit, @c EINA_FALSE to deny.
- *
- * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
- */
-Eina_Bool ewk_view_notification_permission_store(Evas_Object *o, const char *domain, Eina_Bool permitted);
-
-/**
- * Set permitted or denied lists to the permission cache for the Web Notifications.
- *
- * After checking permission, this function have to be called to set permission.
- *
- * @param o view object to set the permission.
- * @param origin security origin object
- * @param permitted @c EINA_TRUE to permit, @c EINA_FALSE to deny.
- *
- * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
- */
-EAPI Eina_Bool ewk_view_notification_permissions_set(Evas_Object *o, const Ewk_Security_Origin *origin, Eina_Bool permitted);
 
 #ifdef __cplusplus
 }
