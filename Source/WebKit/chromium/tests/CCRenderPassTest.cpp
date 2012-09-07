@@ -62,7 +62,7 @@ struct CCRenderPassSize {
 
 TEST(CCRenderPassTest, copyShouldBeIdenticalExceptIdAndQuads)
 {
-    CCRenderPass::Id id(3, 2);
+    int id = 3;
     IntRect outputRect(45, 22, 120, 13);
     WebTransformationMatrix transformToRoot(1, 0.5, 0.5, -0.5, -1, 0);
 
@@ -88,7 +88,7 @@ TEST(CCRenderPassTest, copyShouldBeIdenticalExceptIdAndQuads)
     testPass->sharedQuadStateList().append(CCSharedQuadState::create(WebTransformationMatrix(), IntRect(), IntRect(), 1, false));
     testPass->quadList().append(CCCheckerboardDrawQuad::create(testPass->sharedQuadStateList().last().get(), IntRect()));
 
-    CCRenderPass::Id newId(63, 4);
+    int newId = 63;
 
     OwnPtr<CCRenderPass> copy(pass->copy(newId));
     EXPECT_EQ(newId, copy->id());

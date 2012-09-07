@@ -181,24 +181,16 @@ static inline IntRect computeClippedRectInTarget(const CCLayerImpl* owningLayer)
     return clippedRectInTarget;
 }
 
-CCRenderPass::Id CCRenderSurface::renderPassId()
-{
-    int layerId = m_owningLayer->id();
-    int subId = 0;
-    ASSERT(layerId > 0);
-    return CCRenderPass::Id(layerId, subId);
-}
-
 void CCRenderSurface::appendRenderPasses(CCRenderPassSink& passSink)
 {
-    OwnPtr<CCRenderPass> pass = CCRenderPass::create(renderPassId(), m_contentRect, m_screenSpaceTransform);
+    OwnPtr<CCRenderPass> pass = CCRenderPass::create(m_owningLayer->id(), m_contentRect, m_screenSpaceTransform);
     pass->setDamageRect(m_damageTracker->currentDamageRect());
     pass->setFilters(m_owningLayer->filters());
     pass->setBackgroundFilters(m_owningLayer->backgroundFilters());
     passSink.appendRenderPass(pass.release());
 }
 
-void CCRenderSurface::appendQuads(CCQuadSink& quadSink, CCAppendQuadsData& appendQuadsData, bool forReplica, CCRenderPass::Id renderPassId)
+void CCRenderSurface::appendQuads(CCQuadSink& quadSink, CCAppendQuadsData& appendQuadsData, bool forReplica, int renderPassId)
 {
     ASSERT(!forReplica || m_owningLayer->hasReplica());
 

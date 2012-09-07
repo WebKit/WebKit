@@ -1,3 +1,22 @@
+2012-09-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r127822.
+        http://trac.webkit.org/changeset/127822
+        https://bugs.webkit.org/show_bug.cgi?id=96073
+
+        It broke compilation on chromium debug bots (Requested by
+        loislo on #webkit).
+
+        * tests/CCDrawQuadTest.cpp:
+        (WebCore::TEST):
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        * tests/CCRenderPassTest.cpp:
+        (WebCore::TEST):
+        * tests/CCRenderSurfaceTest.cpp:
+        * tests/CCRendererGLTest.cpp:
+        (FakeCCRendererClient::FakeCCRendererClient):
+
 2012-09-06  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Make RenderPass ids hold both generating layer id and an index

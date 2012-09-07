@@ -29,7 +29,6 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "CCRenderPass.h"
 #include "CCSharedQuadState.h"
 #include "FloatRect.h"
 #include "IntRect.h"
@@ -41,6 +40,7 @@ namespace WebCore {
 
 class CCDamageTracker;
 class CCQuadSink;
+class CCRenderPass;
 class CCRenderPassSink;
 class CCLayerImpl;
 class TextStream;
@@ -106,10 +106,8 @@ public:
 
     CCDamageTracker* damageTracker() const { return m_damageTracker.get(); }
 
-    CCRenderPass::Id renderPassId();
-
     void appendRenderPasses(CCRenderPassSink&);
-    void appendQuads(CCQuadSink&, CCAppendQuadsData&, bool forReplica, CCRenderPass::Id renderPassId);
+    void appendQuads(CCQuadSink&, CCAppendQuadsData&, bool forReplica, int renderPassId);
 
 private:
     CCLayerImpl* m_owningLayer;

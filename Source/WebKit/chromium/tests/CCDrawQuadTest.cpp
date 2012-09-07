@@ -210,7 +210,7 @@ TEST(CCDrawQuadTest, copyIOSurfaceDrawQuad)
 
 TEST(CCDrawQuadTest, copyRenderPassDrawQuad)
 {
-    CCRenderPass::Id renderPassId(22, 64);
+    int renderPassId = 22;
     bool isReplica = true;
     CCResourceProvider::ResourceId maskResourceId = 78;
     IntRect contentsChangedSinceLastFrame(42, 11, 74, 24);
@@ -219,7 +219,7 @@ TEST(CCDrawQuadTest, copyRenderPassDrawQuad)
     float maskTexCoordOffsetX = -45;
     float maskTexCoordOffsetY = -21;
 
-    CCRenderPass::Id copiedRenderPassId(235, 11);
+    int copiedRenderPassId = 235;
 
     CREATE_SHARED_STATE();
     CREATE_QUAD_8_1(CCRenderPassDrawQuad, renderPassId, isReplica, maskResourceId, contentsChangedSinceLastFrame, maskTexCoordScaleX, maskTexCoordScaleY, maskTexCoordOffsetX, maskTexCoordOffsetY, copiedRenderPassId);

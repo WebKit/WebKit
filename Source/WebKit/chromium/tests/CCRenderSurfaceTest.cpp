@@ -124,7 +124,7 @@ TEST(CCRenderSurfaceTest, sanityCheckSurfaceCreatesCorrectSharedQuadState)
     CCAppendQuadsData appendQuadsData;
 
     bool forReplica = false;
-    renderSurface->appendQuads(mockQuadCuller, appendQuadsData, forReplica, CCRenderPass::Id(2, 0));
+    renderSurface->appendQuads(mockQuadCuller, appendQuadsData, forReplica, 2);
 
     ASSERT_EQ(1u, sharedStateList.size());
     CCSharedQuadState* sharedQuadState = sharedStateList[0].get();
@@ -176,7 +176,7 @@ TEST(CCRenderSurfaceTest, sanityCheckSurfaceCreatesCorrectRenderPass)
     ASSERT_EQ(1u, passSink.renderPasses().size());
     CCRenderPass* pass = passSink.renderPasses()[0].get();
 
-    EXPECT_EQ(CCRenderPass::Id(2, 0), pass->id());
+    EXPECT_EQ(2, pass->id());
     EXPECT_EQ(contentRect, pass->outputRect());
     EXPECT_EQ(origin, pass->transformToRootTarget());
 }

@@ -38,23 +38,22 @@ using WebKit::WebTransformationMatrix;
 
 namespace WebCore {
 
-PassOwnPtr<CCRenderPass> CCRenderPass::create(Id id, IntRect outputRect, const WebKit::WebTransformationMatrix& transformToRootTarget)
+PassOwnPtr<CCRenderPass> CCRenderPass::create(int id, IntRect outputRect, const WebKit::WebTransformationMatrix& transformToRootTarget)
 {
     return adoptPtr(new CCRenderPass(id, outputRect, transformToRootTarget));
 }
 
-CCRenderPass::CCRenderPass(Id id, IntRect outputRect, const WebKit::WebTransformationMatrix& transformToRootTarget)
+CCRenderPass::CCRenderPass(int id, IntRect outputRect, const WebKit::WebTransformationMatrix& transformToRootTarget)
     : m_id(id)
     , m_transformToRootTarget(transformToRootTarget)
     , m_outputRect(outputRect)
     , m_hasTransparentBackground(true)
     , m_hasOcclusionFromOutsideTargetSurface(false)
 {
-    ASSERT(id.first > 0);
-    ASSERT(id.second >= 0);
+    ASSERT(id > 0);
 }
 
-PassOwnPtr<CCRenderPass> CCRenderPass::copy(Id newId) const
+PassOwnPtr<CCRenderPass> CCRenderPass::copy(int newId) const
 {
     ASSERT(newId != m_id);
 

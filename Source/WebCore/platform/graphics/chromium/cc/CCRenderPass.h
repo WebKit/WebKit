@@ -60,27 +60,10 @@ typedef Vector<OwnPtr<CCSharedQuadState> > CCSharedQuadStateList;
 class CCRenderPass {
     WTF_MAKE_NONCOPYABLE(CCRenderPass);
 public:
-    struct Id {
-        int layerId;
-        int index;
-
-        Id(int layerId, int index)
-            : layerId(layerId)
-            , index(index)
-        {
-            ASSERT(layerId > 0);
-            ASSERT(index >= 0);
-        }
-
-        bool operator==(const Id& other) const { return layerId == other.layerId && index == other.index; }
-        bool operator!=(const Id& other) const { return !(*this == other); }
-        bool operator<(const Id& other) const { return layerId < other.layerId || (layerId == other.layerId && index < other.index); }
-    };
-
-    static PassOwnPtr<CCRenderPass> create(Id, IntRect outputRect, const WebKit::WebTransformationMatrix& transformToRootTarget);
+    static PassOwnPtr<CCRenderPass> create(int id, IntRect outputRect, const WebKit::WebTransformationMatrix& transformToRootTarget);
 
     // A shallow copy of the render pass, which does not include its quads.
-    PassOwnPtr<CCRenderPass> copy(Id newId) const;
+    PassOwnPtr<CCRenderPass> copy(int newId) const;
 
     void appendQuadsForLayer(CCLayerImpl*, CCOcclusionTrackerImpl*, CCAppendQuadsData&);
     void appendQuadsForRenderSurfaceLayer(CCLayerImpl*, const CCRenderPass* contributingRenderPass, CCOcclusionTrackerImpl*, CCAppendQuadsData&);
@@ -88,7 +71,7 @@ public:
 
     const CCQuadList& quadList() const { return m_quadList; }
 
-    Id id() const { return m_id; }
+    int id() const { return m_id; }
 
     // FIXME: Modify this transform when merging the RenderPass into a parent compositor.
     // Transforms from quad's original content space to the root target's content space.
@@ -112,9 +95,9 @@ public:
     bool hasOcclusionFromOutsideTargetSurface() const { return m_hasOcclusionFromOutsideTargetSurface; }
     void setHasOcclusionFromOutsideTargetSurface(bool hasOcclusionFromOutsideTargetSurface) { m_hasOcclusionFromOutsideTargetSurface = hasOcclusionFromOutsideTargetSurface; }
 protected:
-    CCRenderPass(Id, IntRect outputRect, const WebKit::WebTransformationMatrix& transformToRootTarget);
+    CCRenderPass(int id, IntRect outputRect, const WebKit::WebTransformationMatrix& transformToRootTarget);
 
-    Id m_id;
+    int m_id;
     CCQuadList m_quadList;
     CCSharedQuadStateList m_sharedQuadStateList;
     WebKit::WebTransformationMatrix m_transformToRootTarget;
@@ -126,29 +109,9 @@ protected:
     WebKit::WebFilterOperations m_backgroundFilters;
 };
 
-} // namespace WebCore
-
-namespace WTF {
-template<> struct HashTraits<WebCore::CCRenderPass::Id> : GenericHashTraits<WebCore::CCRenderPass::Id> {
-    static const bool emptyValueIsZero = false;
-    static const bool needsDestruction = false;
-    static WebCore::CCRenderPass::Id emptyValue() { return WebCore::CCRenderPass::Id(0, 0); }
-    static void constructDeletedValue(WebCore::CCRenderPass::Id& slot) { slot = WebCore::CCRenderPass::Id(-1, -1); }
-    static bool isDeletedValue(WebCore::CCRenderPass::Id value) { return value.layerId == -1 && value.index == -1; }
-};
-template<> struct IntHash<WebCore::CCRenderPass::Id> {
-    static unsigned hash(const WebCore::CCRenderPass::Id& key) { return PairHash<int, int>::hash(std::make_pair(key.layerId, key.index)); }
-    static bool equal(const WebCore::CCRenderPass::Id& a, const WebCore::CCRenderPass::Id& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
-};
-template<> struct DefaultHash<WebCore::CCRenderPass::Id> {
-    typedef IntHash<WebCore::CCRenderPass::Id> Hash;
-};
-} // namespace WTF
-
-namespace WebCore {
 typedef Vector<CCRenderPass*> CCRenderPassList;
-typedef HashMap<CCRenderPass::Id, OwnPtr<CCRenderPass> > CCRenderPassIdHashMap;
-} // namespace WebCore
+typedef HashMap<int, OwnPtr<CCRenderPass> > CCRenderPassIdHashMap;
+
+}
 
 #endif

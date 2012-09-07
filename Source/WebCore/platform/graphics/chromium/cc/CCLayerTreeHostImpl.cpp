@@ -309,7 +309,7 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
 
     CCLayerIteratorType end = CCLayerIteratorType::end(frame.renderSurfaceLayerList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(frame.renderSurfaceLayerList); it != end; ++it) {
-        CCRenderPass::Id targetRenderPassId = it.targetRenderSurfaceLayer()->renderSurface()->renderPassId();
+        int targetRenderPassId = it.targetRenderSurfaceLayer()->id();
         CCRenderPass* targetRenderPass = frame.renderPassesById.get(targetRenderPassId);
 
         occlusionTracker.enterLayer(it);
@@ -317,7 +317,7 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
         CCAppendQuadsData appendQuadsData;
 
         if (it.representsContributingRenderSurface()) {
-            CCRenderPass::Id contributingRenderPassId = it->renderSurface()->renderPassId();
+            int contributingRenderPassId = it->id();
             CCRenderPass* contributingRenderPass = frame.renderPassesById.get(contributingRenderPassId);
             targetRenderPass->appendQuadsForRenderSurfaceLayer(*it, contributingRenderPass, &occlusionTracker, appendQuadsData);
         } else if (it.representsItself() && !it->visibleContentRect().isEmpty()) {
@@ -412,14 +412,14 @@ IntSize CCLayerTreeHostImpl::contentSize() const
     return m_rootScrollLayerImpl->children()[0]->contentBounds();
 }
 
-static inline CCRenderPass* findRenderPassById(CCRenderPass::Id renderPassId, const CCLayerTreeHostImpl::FrameData& frame)
+static inline CCRenderPass* findRenderPassById(int renderPassId, const CCLayerTreeHostImpl::FrameData& frame)
 {
     CCRenderPassIdHashMap::const_iterator it = frame.renderPassesById.find(renderPassId);
     ASSERT(it != frame.renderPassesById.end());
     return it->second.get();
 }
 
-static void removeRenderPassesRecursive(CCRenderPass::Id removeRenderPassId, CCLayerTreeHostImpl::FrameData& frame)
+static void removeRenderPassesRecursive(int removeRenderPassId, CCLayerTreeHostImpl::FrameData& frame)
 {
     CCRenderPass* removeRenderPass = findRenderPassById(removeRenderPassId, frame);
     size_t removeIndex = frame.renderPasses.find(removeRenderPass);
@@ -439,7 +439,7 @@ static void removeRenderPassesRecursive(CCRenderPass::Id removeRenderPassId, CCL
         if (currentQuad->material() != CCDrawQuad::RenderPass)
             continue;
 
-        CCRenderPass::Id nextRemoveRenderPassId = CCRenderPassDrawQuad::materialCast(currentQuad)->renderPassId();
+        int nextRemoveRenderPassId = CCRenderPassDrawQuad::materialCast(currentQuad)->renderPassId();
         removeRenderPassesRecursive(nextRemoveRenderPassId, frame);
     }
 }
