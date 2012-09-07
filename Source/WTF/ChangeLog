@@ -1,5 +1,22 @@
 2012-09-07  Michael Saboff  <msaboff@apple.com>
 
+        StringImpl::find(StringImpl*) doesn't handle cases where search and match strings are different bitness
+        https://bugs.webkit.org/show_bug.cgi?id=96125
+
+        Reviewed by Benjamin Poulain.
+
+        Changed findInner and reverseFindInner to be templated on both search and match character types.
+        Changed both find's and reverseFind to use all four bitness combinations of findInner and
+        reverseFindInner.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::findInner):
+        (WTF::StringImpl::find):
+        (WTF::reverseFindInner):
+        (WTF::StringImpl::reverseFind):
+
+2012-09-07  Michael Saboff  <msaboff@apple.com>
+
         equalIgnoringCase of two StringImpls doesn't handle 8 bit strings
         https://bugs.webkit.org/show_bug.cgi?id=96028
 

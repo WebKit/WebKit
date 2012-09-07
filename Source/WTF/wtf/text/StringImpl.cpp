@@ -890,7 +890,7 @@ size_t StringImpl::find(const LChar* matchString, unsigned index)
     const UChar* searchCharacters = characters() + index;
 
     // Optimization 2: keep a running hash of the strings,
-    // only call memcmp if the hashes match.
+    // only call equal if the hashes match.
     unsigned searchHash = 0;
     unsigned matchHash = 0;
     for (unsigned i = 0; i < matchLength; ++i) {
@@ -943,11 +943,11 @@ size_t StringImpl::findIgnoringCase(const LChar* matchString, unsigned index)
     return index + i;
 }
 
-template <typename CharType>
-ALWAYS_INLINE static size_t findInner(const CharType* searchCharacters, const CharType* matchCharacters, unsigned index, unsigned searchLength, unsigned matchLength)
+template <typename SearchCharacterType, typename MatchCharacterType>
+ALWAYS_INLINE static size_t findInner(const SearchCharacterType* searchCharacters, const MatchCharacterType* matchCharacters, unsigned index, unsigned searchLength, unsigned matchLength)
 {
     // Optimization: keep a running hash of the strings,
-    // only call memcmp if the hashes match.
+    // only call equal() if the hashes match.
 
     // delta is the number of additional times to test; delta == 0 means test only once.
     unsigned delta = searchLength - matchLength;
@@ -962,7 +962,7 @@ ALWAYS_INLINE static size_t findInner(const CharType* searchCharacters, const Ch
 
     unsigned i = 0;
     // keep looping until we match
-    while (searchHash != matchHash || memcmp(searchCharacters + i, matchCharacters, matchLength * sizeof(CharType))) {
+    while (searchHash != matchHash || !equal(searchCharacters + i, matchCharacters, matchLength)) {
         if (i == delta)
             return notFound;
         searchHash += searchCharacters[i + matchLength];
@@ -999,10 +999,16 @@ size_t StringImpl::find(StringImpl* matchString)
     if (UNLIKELY(!matchLength))
         return 0;
 
-    if (is8Bit() && matchString->is8Bit())
-        return findInner(characters8(), matchString->characters8(), 0, length(), matchLength);
+    if (is8Bit()) {
+        if (matchString->is8Bit())
+            return findInner(characters8(), matchString->characters8(), 0, length(), matchLength);
+        return findInner(characters8(), matchString->characters16(), 0, length(), matchLength);
+    }
 
-    return findInner(characters(), matchString->characters(), 0, length(), matchLength);
+    if (matchString->is8Bit())
+        return findInner(characters16(), matchString->characters8(), 0, length(), matchLength);
+
+    return findInner(characters16(), matchString->characters16(), 0, length(), matchLength);
 }
 
 size_t StringImpl::find(StringImpl* matchString, unsigned index)
@@ -1035,10 +1041,16 @@ size_t StringImpl::find(StringImpl* matchString, unsigned index)
     if (matchLength > searchLength)
         return notFound;
 
-    if (is8Bit() && matchString->is8Bit())
-        return findInner(characters8() + index, matchString->characters8(), index, searchLength, matchLength);
+    if (is8Bit()) {
+        if (matchString->is8Bit())
+            return findInner(characters8() + index, matchString->characters8(), index, searchLength, matchLength);
+        return findInner(characters8() + index, matchString->characters16(), index, searchLength, matchLength);
+    }
 
-    return findInner(characters() + index, matchString->characters(), index, searchLength, matchLength);
+    if (matchString->is8Bit())
+        return findInner(characters16() + index, matchString->characters8(), index, searchLength, matchLength);
+
+    return findInner(characters16() + index, matchString->characters16(), index, searchLength, matchLength);
 }
 
 size_t StringImpl::findIgnoringCase(StringImpl* matchString, unsigned index)
@@ -1079,11 +1091,11 @@ size_t StringImpl::reverseFind(UChar c, unsigned index)
     return WTF::reverseFind(characters16(), m_length, c, index);
 }
 
-template <typename CharType>
-ALWAYS_INLINE static size_t reverseFindInner(const CharType* searchCharacters, const CharType* matchCharacters, unsigned index, unsigned length, unsigned matchLength)
+template <typename SearchCharacterType, typename MatchCharacterType>
+ALWAYS_INLINE static size_t reverseFindInner(const SearchCharacterType* searchCharacters, const MatchCharacterType* matchCharacters, unsigned index, unsigned length, unsigned matchLength)
 {
     // Optimization: keep a running hash of the strings,
-    // only call memcmp if the hashes match.
+    // only call equal if the hashes match.
 
     // delta is the number of additional times to test; delta == 0 means test only once.
     unsigned delta = min(index, length - matchLength);
@@ -1096,7 +1108,7 @@ ALWAYS_INLINE static size_t reverseFindInner(const CharType* searchCharacters, c
     }
 
     // keep looping until we match
-    while (searchHash != matchHash || memcmp(searchCharacters + delta, matchCharacters, matchLength * sizeof(CharType))) {
+    while (searchHash != matchHash || !equal(searchCharacters + delta, matchCharacters, matchLength)) {
         if (!delta)
             return notFound;
         delta--;
@@ -1127,10 +1139,16 @@ size_t StringImpl::reverseFind(StringImpl* matchString, unsigned index)
     if (matchLength > ourLength)
         return notFound;
 
-    if (is8Bit() && matchString->is8Bit())
-        return reverseFindInner(characters8(), matchString->characters8(), index, ourLength, matchLength);
+    if (is8Bit()) {
+        if (matchString->is8Bit())
+            return reverseFindInner(characters8(), matchString->characters8(), index, ourLength, matchLength);
+        return reverseFindInner(characters8(), matchString->characters16(), index, ourLength, matchLength);
+    }
+    
+    if (matchString->is8Bit())
+        return reverseFindInner(characters16(), matchString->characters8(), index, ourLength, matchLength);
 
-    return reverseFindInner(characters(), matchString->characters(), index, ourLength, matchLength);
+    return reverseFindInner(characters16(), matchString->characters16(), index, ourLength, matchLength);
 }
 
 size_t StringImpl::reverseFindIgnoringCase(StringImpl* matchString, unsigned index)
