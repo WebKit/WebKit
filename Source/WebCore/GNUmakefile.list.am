@@ -4252,8 +4252,6 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/filters/CustomFilterGlobalContext.h \
 	Source/WebCore/platform/graphics/filters/CustomFilterMesh.cpp \
 	Source/WebCore/platform/graphics/filters/CustomFilterMesh.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterMeshGenerator.cpp \
-	Source/WebCore/platform/graphics/filters/CustomFilterMeshGenerator.h \
 	Source/WebCore/platform/graphics/filters/CustomFilterNumberParameter.h \
 	Source/WebCore/platform/graphics/filters/CustomFilterOperation.cpp \
 	Source/WebCore/platform/graphics/filters/CustomFilterOperation.h \

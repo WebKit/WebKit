@@ -70,7 +70,6 @@ String CustomFilterValidatedProgram::defaultFragmentShaderString()
 CustomFilterValidatedProgram::CustomFilterValidatedProgram(CustomFilterGlobalContext* globalContext, const CustomFilterProgramInfo& programInfo)
     : m_globalContext(globalContext)
     , m_programInfo(programInfo)
-    , m_platformCompiledProgram(0)
     , m_isInitialized(false)
 {
     String originalVertexShader = programInfo.vertexShaderString();
@@ -103,7 +102,7 @@ CustomFilterValidatedProgram::CustomFilterValidatedProgram(CustomFilterGlobalCon
 
 PassRefPtr<CustomFilterCompiledProgram> CustomFilterValidatedProgram::compiledProgram()
 {
-    ASSERT(m_isInitialized && m_globalContext && !m_validatedVertexShader.isNull() && !m_validatedFragmentShader.isNull());
+    ASSERT(m_isInitialized && !m_validatedVertexShader.isNull() && !m_validatedFragmentShader.isNull());
     if (!m_compiledProgram)
         m_compiledProgram = CustomFilterCompiledProgram::create(m_globalContext->context(), m_validatedVertexShader, m_validatedFragmentShader);
     return m_compiledProgram;
@@ -264,22 +263,9 @@ String CustomFilterValidatedProgram::compositeFunctionString(CompositeOperator c
     
 CustomFilterValidatedProgram::~CustomFilterValidatedProgram()
 {
-    platformDestroy();
-
     if (m_globalContext)
         m_globalContext->removeValidatedProgram(this);
 }
-
-#if !PLATFORM(BLACKBERRY)
-PlatformCompiledProgram* CustomFilterValidatedProgram::platformCompiledProgram()
-{
-    return 0;
-}
-
-void CustomFilterValidatedProgram::platformDestroy()
-{
-}
-#endif
 
 } // namespace WebCore
 

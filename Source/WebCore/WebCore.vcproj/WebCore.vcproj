@@ -31885,14 +31885,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\filters\CustomFilterMeshGenerator.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\CustomFilterMeshGenerator.h"
-						>
-					</File>
-					<File
 						RelativePath="..\platform\graphics\filters\CustomFilterNumberParameter.h"
 						>
 					</File>
