@@ -738,6 +738,8 @@ static void adjustCaretRects(WebCore::IntRect& startCaret, bool isStartCaretClip
     else {
         startCaret = rectList[0];
         startCaret.setLocation(caretLocationForRect(startCaret, true, isRTL));
+        // Reset width to 1 as we are strictly interested in caret location.
+        startCaret.setWidth(1);
     }
 
     if (isEndCaretClippedOut)
@@ -745,14 +747,12 @@ static void adjustCaretRects(WebCore::IntRect& startCaret, bool isStartCaretClip
     else {
         endCaret = rectList[0];
         endCaret.setLocation(caretLocationForRect(endCaret, false, isRTL));
+        // Reset width to 1 as we are strictly interested in caret location.
+        endCaret.setWidth(1);
     }
 
     if (isStartCaretClippedOut && isEndCaretClippedOut)
         return;
-
-    // Reset width to 1 as we are strictly interested in caret location.
-    startCaret.setWidth(1);
-    endCaret.setWidth(1);
 
     for (unsigned i = 1; i < rectList.size(); i++) {
         WebCore::IntRect currentRect(rectList[i]);
@@ -874,8 +874,8 @@ void SelectionHandler::selectionPositionChanged(bool forceUpdateWithoutChange)
 
     SelectionTimingLog(LogLevelInfo, "SelectionHandler::selectionPositionChanged starting at %f", m_timer.elapsed());
 
-    WebCore::IntRect startCaret;
-    WebCore::IntRect endCaret;
+    WebCore::IntRect startCaret(DOMSupport::InvalidPoint, WebCore::IntSize());
+    WebCore::IntRect endCaret(DOMSupport::InvalidPoint, WebCore::IntSize());
 
     // Get the text rects from the selections range.
     Vector<FloatQuad> quads;

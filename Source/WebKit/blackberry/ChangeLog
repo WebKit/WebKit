@@ -1,3 +1,22 @@
+2012-09-07  Yongxin Dai  <yodai@rim.com>
+
+        [BlackBerry] Initialize caret rectangle with invalid location
+        https://bugs.webkit.org/show_bug.cgi?id=96011
+
+        Reviewed by Rob Buis.
+
+        In SelectionHandler::selectionPositionChanged() method, startCaret and
+        endCaret are used to notify clients about new caret positions. This patch
+        initializes startCaret and endCaret with location(-1. -1), and keeps them
+        empty before they are assigned to valid values. This would help for other
+        classes to check validity of the caret correctly.
+
+        Internal reviewed by Mike Fenton.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::adjustCaretRects):
+        (BlackBerry::WebKit::SelectionHandler::selectionPositionChanged):
+
 2012-09-07  Lianghui Chen  <liachen@rim.com>
 
         [BlackBerry] when one of multiple tabs uses authentication, user can get the auth dialog while the other tab has focus.
