@@ -126,13 +126,13 @@ TEST_F(GraphicsLayerChromiumTest, updateLayerPreserves3DWithAnimations)
 class FakeScrollableArea : public ScrollableArea {
 public:
     virtual bool isActive() const OVERRIDE { return false; }
-    virtual int scrollSize(ScrollbarOrientation) const OVERRIDE { return 0; }
+    virtual int scrollSize(ScrollbarOrientation) const OVERRIDE { return 100; }
     virtual int scrollPosition(Scrollbar*) const OVERRIDE { return 0; }
     virtual bool isScrollCornerVisible() const OVERRIDE { return false; }
     virtual IntRect scrollCornerRect() const OVERRIDE { return IntRect(); }
-    virtual int visibleWidth() const OVERRIDE { return 0; }
-    virtual int visibleHeight() const OVERRIDE { return 0; }
-    virtual IntSize contentsSize() const OVERRIDE { return IntSize(); }
+    virtual int visibleWidth() const OVERRIDE { return 10; }
+    virtual int visibleHeight() const OVERRIDE { return 10; }
+    virtual IntSize contentsSize() const OVERRIDE { return IntSize(100, 100); }
     virtual bool isOnActivePage() const OVERRIDE { return false; }
     virtual ScrollableArea* enclosingScrollableArea() const OVERRIDE { return 0; }
     virtual IntRect scrollableAreaBoundingBox() const OVERRIDE { return IntRect(); }
@@ -146,7 +146,7 @@ private:
     IntPoint m_scrollPosition;
 };
 
-TEST_F(GraphicsLayerChromiumTest, DISABLED_applyScrollToScrollableArea)
+TEST_F(GraphicsLayerChromiumTest, applyScrollToScrollableArea)
 {
     FakeScrollableArea scrollableArea;
     m_graphicsLayer->setScrollableArea(&scrollableArea);

@@ -1,3 +1,16 @@
+2012-09-07  Sami Kyostila  <skyostil@google.com>
+
+        [Chromium] GraphicsLayerChromiumTest::applyScrollToScrollableArea() is failing
+        https://bugs.webkit.org/show_bug.cgi?id=95932
+
+        Reviewed by James Robinson.
+
+        Give the FakeScrollableArea valid geometry to allow ScrollAnimatorMac to
+        properly scroll it.
+
+        * tests/GraphicsLayerChromiumTest.cpp:
+        (WebKit::TEST_F): Re-enable the test.
+
 2012-09-07  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move some CC unit tests into correct gyp variable
