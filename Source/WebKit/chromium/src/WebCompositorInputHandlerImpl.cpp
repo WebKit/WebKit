@@ -27,7 +27,6 @@
 
 #include "WebCompositorInputHandlerImpl.h"
 
-#include "CCActiveGestureAnimation.h"
 #include "CCProxy.h"
 #include "PlatformGestureCurveFactory.h"
 #include "PlatformGestureCurveTarget.h"
@@ -45,42 +44,6 @@ PassOwnPtr<CCInputHandler> CCInputHandler::create(CCInputHandlerClient* inputHan
 {
     return WebKit::WebCompositorInputHandlerImpl::create(inputHandlerClient);
 }
-
-class PlatformGestureToCCGestureAdapter : public CCGestureCurve, public PlatformGestureCurveTarget {
-public:
-    static PassOwnPtr<CCGestureCurve> create(PassOwnPtr<PlatformGestureCurve> platformCurve)
-    {
-        return adoptPtr(new PlatformGestureToCCGestureAdapter(platformCurve));
-    }
-
-    virtual const char* debugName() const
-    {
-        return m_curve->debugName();
-    }
-
-    virtual bool apply(double time, CCGestureCurveTarget* target)
-    {
-        ASSERT(target);
-        m_target = target;
-        return m_curve->apply(time, this);
-    }
-
-    virtual void scrollBy(const IntPoint& scrollDelta)
-    {
-        ASSERT(m_target);
-        m_target->scrollBy(scrollDelta);
-    }
-
-private:
-    PlatformGestureToCCGestureAdapter(PassOwnPtr<PlatformGestureCurve> curve)
-        : m_curve(curve)
-        , m_target(0)
-    {
-    }
-
-    OwnPtr<PlatformGestureCurve> m_curve;
-    CCGestureCurveTarget* m_target;
-};
 
 }
 
@@ -267,9 +230,8 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
     CCInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(IntPoint(gestureEvent.x, gestureEvent.y), CCInputHandlerClient::Gesture);
     switch (scrollStatus) {
     case CCInputHandlerClient::ScrollStarted: {
-        TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::handleGestureFling::started");
-        OwnPtr<PlatformGestureCurve> flingCurve = PlatformGestureCurveFactory::get()->createCurve(gestureEvent.data.flingStart.sourceDevice, FloatPoint(gestureEvent.data.flingStart.velocityX, gestureEvent.data.flingStart.velocityY));
-        m_wheelFlingAnimation = CCActiveGestureAnimation::create(PlatformGestureToCCGestureAdapter::create(flingCurve.release()), this);
+        m_wheelFlingCurve = PlatformGestureCurveFactory::get()->createCurve(gestureEvent.data.flingStart.sourceDevice, FloatPoint(gestureEvent.data.flingStart.velocityX, gestureEvent.data.flingStart.velocityY));
+        TRACE_EVENT_ASYNC_BEGIN1("cc", "WebCompositorInputHandlerImpl::handleGestureFling::started", this, "curve", m_wheelFlingCurve->debugName());
         m_wheelFlingParameters.delta = WebFloatPoint(gestureEvent.data.flingStart.velocityX, gestureEvent.data.flingStart.velocityY);
         m_wheelFlingParameters.point = WebPoint(gestureEvent.x, gestureEvent.y);
         m_wheelFlingParameters.globalPoint = WebPoint(gestureEvent.globalX, gestureEvent.globalY);
@@ -300,13 +262,16 @@ int WebCompositorInputHandlerImpl::identifier() const
 
 void WebCompositorInputHandlerImpl::animate(double monotonicTime)
 {
-    if (!m_wheelFlingAnimation)
+    if (!m_wheelFlingCurve)
         return;
 
-    if (!m_wheelFlingParameters.startTime)
+    if (!m_wheelFlingParameters.startTime) {
         m_wheelFlingParameters.startTime = monotonicTime;
+        m_inputHandlerClient->scheduleAnimation();
+        return;
+    }
 
-    if (m_wheelFlingAnimation->animate(monotonicTime))
+    if (m_wheelFlingCurve->apply(monotonicTime - m_wheelFlingParameters.startTime, this))
         m_inputHandlerClient->scheduleAnimation();
     else {
         TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::animate::flingOver");
@@ -316,9 +281,12 @@ void WebCompositorInputHandlerImpl::animate(double monotonicTime)
 
 bool WebCompositorInputHandlerImpl::cancelCurrentFling()
 {
-    bool hadFlingAnimation = m_wheelFlingAnimation;
+    bool hadFlingAnimation = m_wheelFlingCurve;
+    if (hadFlingAnimation)
+        TRACE_EVENT_ASYNC_END0("cc", "WebCompositorInputHandlerImpl::handleGestureFling::started", this);
+
     TRACE_EVENT_INSTANT1("cc", "WebCompositorInputHandlerImpl::cancelCurrentFling", "hadFlingAnimation", hadFlingAnimation);
-    m_wheelFlingAnimation.clear();
+    m_wheelFlingCurve.clear();
     m_wheelFlingParameters = WebActiveWheelFlingParameters();
     return hadFlingAnimation;
 }

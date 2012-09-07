@@ -27,7 +27,6 @@
 
 #include "WebCompositorInputHandlerImpl.h"
 
-#include "CCActiveGestureAnimation.h"
 #include "CCInputHandler.h"
 #include "CCSingleThreadProxy.h"
 #include "WebCompositorInitializer.h"
@@ -69,9 +68,6 @@ private:
                                          float pageScale,
                                          double startTimeMs,
                                          double durationMs) OVERRIDE { }
-
-    virtual WebCore::CCActiveGestureAnimation* activeGestureAnimation() OVERRIDE { return 0; }
-    virtual void setActiveGestureAnimation(PassOwnPtr<WebCore::CCActiveGestureAnimation>) OVERRIDE { }
 };
 
 class MockWebCompositorInputHandlerClient : public WebCompositorInputHandlerClient {

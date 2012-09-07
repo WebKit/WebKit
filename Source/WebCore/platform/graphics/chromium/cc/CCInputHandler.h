@@ -29,8 +29,6 @@
 
 namespace WebCore {
 
-class CCActiveGestureAnimation;
-class CCGestureCurveTarget;
 class IntPoint;
 class IntSize;
 
@@ -74,9 +72,6 @@ public:
                                          float pageScale,
                                          double startTime,
                                          double duration) = 0;
-
-    virtual CCActiveGestureAnimation* activeGestureAnimation() = 0;
-    virtual void setActiveGestureAnimation(PassOwnPtr<CCActiveGestureAnimation>) = 0;
 
     // Request another callback to CCInputHandler::animate().
     virtual void scheduleAnimation() = 0;

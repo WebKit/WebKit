@@ -28,8 +28,6 @@
 #include "PlatformGestureCurve.h"
 
 #include "ActivePlatformGestureAnimation.h"
-#include "CCActiveGestureAnimation.h"
-#include "CCGestureCurve.h"
 #include "PlatformGestureCurveTarget.h"
 #include "TouchpadFlingPlatformGestureCurve.h"
 #include "WheelFlingPlatformGestureCurve.h"

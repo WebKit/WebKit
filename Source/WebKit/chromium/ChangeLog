@@ -1,5 +1,25 @@
 2012-09-07  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Remove dead CCActiveGestureAnimation code and related classes
+        https://bugs.webkit.org/show_bug.cgi?id=96075
+
+        Reviewed by Adrienne Walker.
+
+        Cuts out unnecessary boilerplate in PlatformGestureCurve evaluation for handling flings. WCIHI can easily
+        evaluate the curve itself without intermediate classes.
+
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebKit::WebCompositorInputHandlerImpl::handleGestureFling):
+        (WebKit::WebCompositorInputHandlerImpl::animate):
+        (WebKit::WebCompositorInputHandlerImpl::cancelCurrentFling):
+        * src/WebCompositorInputHandlerImpl.h:
+        (WebCore):
+        (WebCompositorInputHandlerImpl):
+        * tests/PlatformGestureCurveTest.cpp:
+        * tests/WebCompositorInputHandlerImplTest.cpp:
+
+2012-09-07  James Robinson  <jamesr@chromium.org>
+
         [chromium] Clean up dependencies in ScrollbarLayerChromiumTest
         https://bugs.webkit.org/show_bug.cgi?id=96052
 

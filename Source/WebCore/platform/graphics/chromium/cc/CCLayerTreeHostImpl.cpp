@@ -26,7 +26,6 @@
 
 #include "CCLayerTreeHostImpl.h"
 
-#include "CCActiveGestureAnimation.h"
 #include "CCAppendQuadsData.h"
 #include "CCDamageTracker.h"
 #include "CCDebugRectHistory.h"
@@ -200,7 +199,6 @@ void CCLayerTreeHostImpl::animate(double monotonicTime, double wallClockTime)
 {
     animatePageScale(monotonicTime);
     animateLayers(monotonicTime, wallClockTime);
-    animateGestures(monotonicTime);
     animateScrollbars(monotonicTime);
 }
 
@@ -227,14 +225,6 @@ void CCLayerTreeHostImpl::startPageScaleAnimation(const IntSize& targetPosition,
 
     m_client->setNeedsRedrawOnImplThread();
     m_client->setNeedsCommitOnImplThread();
-}
-
-void CCLayerTreeHostImpl::setActiveGestureAnimation(PassOwnPtr<CCActiveGestureAnimation> gestureAnimation)
-{
-    m_activeGestureAnimation = gestureAnimation;
-
-    if (m_activeGestureAnimation)
-        m_client->setNeedsRedrawOnImplThread();
 }
 
 void CCLayerTreeHostImpl::scheduleAnimation()
@@ -1269,19 +1259,6 @@ void CCLayerTreeHostImpl::dumpRenderSurfaces(TextStream& ts, int indent, const C
 
     for (size_t i = 0; i < layer->children().size(); ++i)
         dumpRenderSurfaces(ts, indent, layer->children()[i].get());
-}
-
-
-void CCLayerTreeHostImpl::animateGestures(double monotonicTime)
-{
-    if (!m_activeGestureAnimation)
-        return;
-
-    bool isContinuing = m_activeGestureAnimation->animate(monotonicTime);
-    if (isContinuing)
-        m_client->setNeedsRedrawOnImplThread();
-    else
-        m_activeGestureAnimation.clear();
 }
 
 int CCLayerTreeHostImpl::sourceAnimationFrameNumber() const

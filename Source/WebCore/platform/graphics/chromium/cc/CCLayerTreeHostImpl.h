@@ -38,7 +38,6 @@
 
 namespace WebCore {
 
-class CCActiveGestureAnimation;
 class CCCompletionEvent;
 class CCDebugRectHistory;
 class CCFrameRateCounter;
@@ -82,9 +81,6 @@ public:
     virtual void pinchGestureUpdate(float, const IntPoint&) OVERRIDE;
     virtual void pinchGestureEnd() OVERRIDE;
     virtual void startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double startTime, double duration) OVERRIDE;
-    virtual CCActiveGestureAnimation* activeGestureAnimation() OVERRIDE { return m_activeGestureAnimation.get(); }
-    // To clear an active animation, pass nullptr.
-    virtual void setActiveGestureAnimation(PassOwnPtr<CCActiveGestureAnimation>) OVERRIDE;
     virtual void scheduleAnimation() OVERRIDE;
 
     struct FrameData : public CCRenderPassSink {
@@ -228,7 +224,6 @@ protected:
     CCLayerTreeHostImpl(const CCLayerTreeSettings&, CCLayerTreeHostImplClient*);
 
     void animatePageScale(double monotonicTime);
-    void animateGestures(double monotonicTime);
     void animateScrollbars(double monotonicTime);
 
     // Exposed for testing.
@@ -300,7 +295,6 @@ private:
     IntPoint m_previousPinchAnchor;
 
     OwnPtr<CCPageScaleAnimation> m_pageScaleAnimation;
-    OwnPtr<CCActiveGestureAnimation> m_activeGestureAnimation;
 
     // This is used for ticking animations slowly when hidden.
     OwnPtr<CCLayerTreeHostImplTimeSourceAdapter> m_timeSourceClientAdapter;
