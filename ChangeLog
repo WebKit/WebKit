@@ -1,3 +1,16 @@
+2012-09-07  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Move user agent helpers to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=95745
+
+        Reviewed by Carlos Garcia Campos.
+
+        Added an autoconf step for the new user agent shared code header in
+        WebCore. This is necessary so that we can use the user agent version
+        based on the information in the configure.ac file.
+
+        * configure.ac:
+
 2012-09-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Simplify hitTestResultAtPoint and nodesFromRect APIs

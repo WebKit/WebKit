@@ -1,3 +1,16 @@
+2012-09-07  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Move user agent helpers to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=95745
+
+        Reviewed by Carlos Garcia Campos.
+
+        Move the code for determining the user agent to WebCore and have WebKit1
+        use the new shared code.
+
+        * webkit/webkitwebsettings.cpp: Use the WebCore code to determine the user
+        agent in WebKit1.
+
 2012-09-05  Sam Weinig  <sam@webkit.org>
 
         Part 2 of removing PlatformString.h, remove PlatformString.h

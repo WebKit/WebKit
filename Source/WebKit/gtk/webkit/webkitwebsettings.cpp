@@ -30,6 +30,7 @@
 #include "FileSystem.h"
 #include "KURL.h"
 #include "PluginDatabase.h"
+#include "UserAgentGtk.h"
 #include "webkitenumtypes.h"
 #include "webkitglobalsprivate.h"
 #include "webkitversion.h"
@@ -38,12 +39,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 #include <glib/gi18n-lib.h>
-
-#if OS(UNIX)
-#include <sys/utsname.h>
-#elif OS(WINDOWS)
-#include "SystemInfo.h"
-#endif
 
 /**
  * SECTION:webkitwebsettings
@@ -125,71 +120,6 @@ enum {
     PROP_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE,
     PROP_MEDIA_PLAYBACK_ALLOWS_INLINE
 };
-
-// Create a default user agent string
-// This is a liberal interpretation of http://www.mozilla.org/build/revised-user-agent-strings.html
-// See also http://developer.apple.com/internet/safari/faq.html#anchor2
-static String webkitPlatform()
-{
-#if PLATFORM(X11)
-    DEFINE_STATIC_LOCAL(const String, uaPlatform, (ASCIILiteral("X11; ")));
-#elif OS(WINDOWS)
-    DEFINE_STATIC_LOCAL(const String, uaPlatform, (String("")));
-#elif PLATFORM(MAC)
-    DEFINE_STATIC_LOCAL(const String, uaPlatform, (ASCIILiteral("Macintosh; ")));
-#elif defined(GDK_WINDOWING_DIRECTFB)
-    DEFINE_STATIC_LOCAL(const String, uaPlatform, (ASCIILiteral("DirectFB; ")));
-#else
-    DEFINE_STATIC_LOCAL(const String, uaPlatform, (ASCIILiteral("Unknown; ")));
-#endif
-
-    return uaPlatform;
-}
-
-static String webkitOSVersion()
-{
-   // FIXME: platform/version detection can be shared.
-#if OS(DARWIN)
-
-#if CPU(X86)
-    DEFINE_STATIC_LOCAL(const String, uaOSVersion, (ASCIILiteral("Intel Mac OS X")));
-#else
-    DEFINE_STATIC_LOCAL(const String, uaOSVersion, (ASCIILiteral("PPC Mac OS X")));
-#endif
-
-#elif OS(UNIX)
-    DEFINE_STATIC_LOCAL(String, uaOSVersion, (String()));
-
-    if (!uaOSVersion.isEmpty())
-        return uaOSVersion;
-
-    struct utsname name;
-    if (uname(&name) != -1)
-        uaOSVersion = makeString(name.sysname, ' ', name.machine);
-    else
-        uaOSVersion = ASCIILiteral("Unknown");
-#elif OS(WINDOWS)
-    DEFINE_STATIC_LOCAL(const String, uaOSVersion, (windowsVersionForUAString()));
-#else
-    DEFINE_STATIC_LOCAL(const String, uaOSVersion, (ASCIILiteral("Unknown")));
-#endif
-
-    return uaOSVersion;
-}
-
-static String chromeUserAgent()
-{
-    // We mention Safari since many broken sites check for it (OmniWeb does this too)
-    // We re-use the WebKit version, though it doesn't seem to matter much in practice
-    // We claim to be Chrome as well, which prevents sites that look for Safari and assume
-    // that since we are not OS X, that we are the mobile version of Safari.
-
-    DEFINE_STATIC_LOCAL(const String, uaVersion, (makeString(String::number(WEBKIT_USER_AGENT_MAJOR_VERSION), '.', String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+')));
-    DEFINE_STATIC_LOCAL(const String, staticUA, (makeString("Mozilla/5.0 (", webkitPlatform(), webkitOSVersion(), ") AppleWebKit/", uaVersion) +
-                                                 makeString(" (KHTML, like Gecko) Chromium/17.0.963.56 Chrome/17.0.963.56 Safari/", uaVersion)));
-
-    return staticUA;
-}
 
 static void webkit_web_settings_finalize(GObject* object);
 
@@ -1125,7 +1055,7 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
         break;
     case PROP_USER_AGENT:
         if (!g_value_get_string(value) || !strlen(g_value_get_string(value)))
-            priv->userAgent = chromeUserAgent().utf8();
+            priv->userAgent = standardUserAgent().utf8();
         else
             priv->userAgent = g_value_get_string(value);
         break;
@@ -1559,7 +1489,7 @@ static String userAgentForURL(const KURL& url)
     // For Google domains, drop the browser's custom User Agent string, and use the
     // standard Chrome one, so they don't give us a broken experience.
     if (isGoogleDomain(url.host()))
-        return chromeUserAgent();
+        return standardUserAgent();
 
     return String();
 }
