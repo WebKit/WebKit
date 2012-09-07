@@ -1,3 +1,14 @@
+2012-09-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r127808.
+        http://trac.webkit.org/changeset/127808
+        https://bugs.webkit.org/show_bug.cgi?id=96057
+
+        geoff rolled back in his change, but not this part (Requested
+        by thorton on #webkit).
+
+        * inspector/debugger/debugger-expand-scope-expected.txt:
+
 2012-09-06  Pravin D  <pravind.2k4@gmail.com>
 
         fast/table/empty-row-crash.html and fast/table/inline-form-assert.html should be dumpAsText tests
