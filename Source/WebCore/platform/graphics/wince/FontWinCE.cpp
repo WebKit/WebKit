@@ -145,7 +145,7 @@ static int generateComponents(TextRunComponents* components, const Font &font, c
             if (Font::treatAsSpace(run[i])) {
                 int add = 0;
                 if (i - start > 0) {
-                    components->append(TextRunComponent(run.characters() + start, i - start,
+                    components->append(TextRunComponent(run.characters16() + start, i - start,
                                                         run, font, offset));
                     offset += components->last().m_width + letterSpacing;
                 }
@@ -160,7 +160,7 @@ static int generateComponents(TextRunComponents* components, const Font &font, c
                 continue;
             }
             if (i - start > 0) {
-                components->append(TextRunComponent(run.characters() + start, i - start,
+                components->append(TextRunComponent(run.characters16() + start, i - start,
                                                     run,
                                                     font, offset));
                 offset += components->last().m_width + letterSpacing;
@@ -168,7 +168,7 @@ static int generateComponents(TextRunComponents* components, const Font &font, c
             start = i;
         }
         if (run.length() - start > 0) {
-            components->append(TextRunComponent(run.characters() + start, run.length() - start,
+            components->append(TextRunComponent(run.characters16() + start, run.length() - start,
                                                 run,
                                                 font, offset));
             offset += components->last().m_width;
@@ -179,7 +179,7 @@ static int generateComponents(TextRunComponents* components, const Font &font, c
         for (int i = 0; i < run.length(); ++i) {
             if (Font::treatAsSpace(run[i])) {
                 if (i - start > 0) {
-                    components->append(TextRunComponent(run.characters() + start, i - start,
+                    components->append(TextRunComponent(run.characters16() + start, i - start,
                                                         run,
                                                         font, offset));
                     offset += components->last().m_width;
@@ -198,7 +198,7 @@ static int generateComponents(TextRunComponents* components, const Font &font, c
             }
         }
         if (run.length() - start > 0) {
-            components->append(TextRunComponent(run.characters() + start, run.length() - start,
+            components->append(TextRunComponent(run.characters16() + start, run.length() - start,
                                                 run,
                                                 font, offset));
             offset += components->last().m_width;
