@@ -19,8 +19,6 @@ Closure
     arguments: Arguments[1]
     makeClosureLocalVar: "local.TextParam"
     n: "TextParam"
-WindowWith Block
-    makeClosure: function makeClosure(n) {
 WindowGlobal
     <section collapsed>
 Script execution resumed.
