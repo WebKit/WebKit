@@ -1,3 +1,14 @@
+2012-09-07  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Fix ROOT_BUILD_DIR on Windows MSVC build.
+        https://bugs.webkit.org/show_bug.cgi?id=96078
+
+        Reviewed by Tor Arne Vestbø.
+
+        Correct JSC, DumpRenderTree, ImageDiff, QtTestBrowser binaries location by adding $$toSystemPath to ROOT_BUILD_DIR generation.
+
+        * qmake/mkspecs/features/default_pre.prf:
+
 2012-09-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Add TestExpectations file for efl-wk1
