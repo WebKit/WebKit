@@ -1,3 +1,19 @@
+2012-09-07  Stephen Chenney  <schenney@chromium.org>
+
+        Font data is purged while fonts are still using it
+        https://bugs.webkit.org/show_bug.cgi?id=93640
+
+        Reviewed by Eric Seidel.
+
+        Tests for font purging. The seamless-custom-font-pruning-crash test
+        was only failing in Chromium Asan, while the seamless-nested-crash case
+        was only failing in Asan DumpRenderTree.
+
+        * fast/frames/seamless/seamless-custom-font-pruning-crash-expected.txt: Added.
+        * fast/frames/seamless/seamless-custom-font-pruning-crash.html: Added.
+        * fast/frames/seamless/seamless-nested-crash-expected.txt: Added.
+        * fast/frames/seamless/seamless-nested-crash.html: Added.
+
 2012-09-07  Ojan Vafai  <ojan@chromium.org>
 
         Fix linter errors. The deleted lines are all tests that are passing
@@ -1372,7 +1388,7 @@
             Use the CSS mix function with the updated color-fill.fs.
         * css3/filters/custom/effect-custom-combined-missing-expected.png:
         * css3/filters/custom/effect-custom-combined-missing.html:
-            Use the CSS mix function with the updated color-offset.fs.           
+            Use the CSS mix function with the updated color-offset.fs.
         * css3/filters/custom/effect-custom-expected.png:
         * css3/filters/custom/effect-custom-parameters-expected.png:
         * css3/filters/custom/effect-custom-parameters.html:

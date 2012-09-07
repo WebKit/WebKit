@@ -32,6 +32,7 @@
 #include "Font.h"
 #include "FontCache.h"
 #include "SegmentedFontData.h"
+#include <wtf/ListHashSet.h>
 
 namespace WebCore {
 
@@ -62,11 +63,26 @@ void FontFallbackList::invalidate(PassRefPtr<FontSelector> fontSelector)
     m_generation = fontCache()->generation();
 }
 
-void FontFallbackList::releaseFontData()
+void FontFallbackList::appendFontData(const FontData* fontData) const
+{
+    bool isCustomFont = fontData->isCustomFont();
+    m_fontList.append(pair<const FontData*, IsCustomFontOrNot>(fontData, isCustomFont ? IsCustomFont : IsNotCustomFont));
+    if (isCustomFont) {
+        // This FontFallbackList is using a FontData object that we wish to live while in use
+        // by any FontFallbackList, so increment its ref count.
+        const_cast<FontData*>(fontData)->ref();
+    }
+}
+
+void FontFallbackList::releaseFontData() const
 {
     unsigned numFonts = m_fontList.size();
     for (unsigned i = 0; i < numFonts; ++i) {
-        if (!m_fontList[i].second) {
+        if (m_fontList[i].second == IsCustomFont) {
+            // This FontFallbackList no longer requires the custom FontData, so deref. If we are the
+            // last FontFallbackList using this custom FontData, it will be deleted.
+            const_cast<FontData*>(m_fontList[i].first)->deref();
+        } else {
             ASSERT(!m_fontList[i].first->isSegmented());
             fontCache()->releaseFontData(static_cast<const SimpleFontData*>(m_fontList[i].first));
         }
@@ -106,7 +122,7 @@ const FontData* FontFallbackList::fontDataAt(const Font* font, unsigned realized
     ASSERT(fontCache()->generation() == m_generation);
     const FontData* result = fontCache()->getFontData(*font, m_familyIndex, m_fontSelector.get());
     if (result) {
-        m_fontList.append(pair<const FontData*, bool>(result, result->isCustomFont()));
+        appendFontData(result);
         if (result->isLoading())
             m_loadingCustomFonts = true;
     }
@@ -118,7 +134,7 @@ void FontFallbackList::setPlatformFont(const FontPlatformData& platformData)
     m_familyIndex = cAllFamiliesScanned;
     ASSERT(fontCache()->generation() == m_generation);
     const FontData* fontData = fontCache()->getCachedFontData(&platformData);
-    m_fontList.append(pair<const FontData*, bool>(fontData, fontData->isCustomFont()));
+    appendFontData(fontData);
 }
 
 }

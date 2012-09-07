@@ -124,14 +124,10 @@ FontData* CSSSegmentedFontFace::getFontData(const FontDescription& fontDescripti
             appendFontDataWithInvalidUnicodeRangeIfLoading(newFontData.get(), faceFontData, m_fontFaces[i]->ranges());
         }
     }
-    if (newFontData->numRanges()) {
-        if (Document* document = m_fontSelector->document()) {
-            fontData = newFontData.get();
-            document->registerCustomFont(newFontData.release());
-        }
-    }
+    if (newFontData->numRanges())
+        return newFontData.leakPtr();
 
-    return fontData;
+    return 0;
 }
 
 }

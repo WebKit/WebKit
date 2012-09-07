@@ -39,6 +39,7 @@ class FontSelector;
 const int cAllFamiliesScanned = -1;
 
 class FontFallbackList : public RefCounted<FontFallbackList> {
+    WTF_MAKE_NONCOPYABLE(FontFallbackList);
 public:
     static PassRefPtr<FontFallbackList> create() { return adoptRef(new FontFallbackList()); }
 
@@ -63,9 +64,7 @@ public:
     const GlyphPages& glyphPages() const { return m_pages; }
 
 private:
-    friend class SVGTextRunRenderingContext;
-    void setGlyphPageZero(GlyphPageTreeNode* pageZero) { m_pageZero = pageZero; }
-    void setGlyphPages(const GlyphPages& pages) { m_pages = pages; }
+    enum IsCustomFontOrNot { IsNotCustomFont, IsCustomFont };
 
     FontFallbackList();
 
@@ -82,9 +81,18 @@ private:
 
     void setPlatformFont(const FontPlatformData&);
 
-    void releaseFontData();
+    void setGlyphPageZero(GlyphPageTreeNode* pageZero) { m_pageZero = pageZero; }
+    void setGlyphPages(const GlyphPages& pages) { m_pages = pages; }
 
-    mutable Vector<pair<const FontData*, bool>, 1> m_fontList;
+    void appendFontData(const FontData*) const;
+    void releaseFontData() const;
+
+    // A custom FontData pointer in this Vector is owned by FontFallbackList and
+    // deleted when no FontFallbackList is using it. A non-custom FontData pointer
+    // is owned by the FontCache and is deleted when the font is purged.
+    // FIXME: Shift to RefPtr for all FontData objects and modify this pair to be a custom class.
+    // https://bugs.webkit.org/show_bug.cgi?id=95866
+    mutable Vector<pair<const FontData*, IsCustomFontOrNot>, 1> m_fontList;
     mutable GlyphPages m_pages;
     mutable GlyphPageTreeNode* m_pageZero;
     mutable const SimpleFontData* m_cachedPrimarySimpleFontData;
@@ -96,6 +104,7 @@ private:
     mutable bool m_loadingCustomFonts : 1;
 
     friend class Font;
+    friend class SVGTextRunRenderingContext;
 };
 
 }
