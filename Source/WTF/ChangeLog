@@ -1,3 +1,21 @@
+2012-09-07  Michael Saboff  <msaboff@apple.com>
+
+        equalIgnoringCase of two StringImpls doesn't handle 8 bit strings
+        https://bugs.webkit.org/show_bug.cgi?id=96028
+
+        Reviewed by Benjamin Poulain.
+
+        Added 8 bit checks and paths to CaseFoldingHash::equal.  Also cleaned up StringHash::equal(), removing
+        obvious and in one case wrong comments.  Moved equalIgnoringCase(UChar*, UChar*) from StringImpl.cpp
+        to StringImpl.h.
+
+        * wtf/text/StringHash.h:
+        (WTF::StringHash::equal):
+        (WTF::CaseFoldingHash::equal):
+        * wtf/text/StringImpl.cpp:
+        * wtf/text/StringImpl.h:
+        (WTF::equalIgnoringCase):
+
 2012-09-07  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Deprecate String += operator

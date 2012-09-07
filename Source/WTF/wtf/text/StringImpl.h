@@ -942,6 +942,11 @@ inline bool equalIgnoringCase(const UChar* a, const char* b, unsigned length) { 
 inline bool equalIgnoringCase(const LChar* a, const UChar* b, unsigned length) { return equalIgnoringCase(b, a, length); }
 inline bool equalIgnoringCase(const char* a, const UChar* b, unsigned length) { return equalIgnoringCase(b, reinterpret_cast<const LChar*>(a), length); }
 inline bool equalIgnoringCase(const char* a, const LChar* b, unsigned length) { return equalIgnoringCase(b, reinterpret_cast<const LChar*>(a), length); }
+inline bool equalIgnoringCase(const UChar* a, const UChar* b, int length)
+{
+    ASSERT(length >= 0);
+    return !Unicode::umemcasecmp(a, b, length);
+}
 
 WTF_EXPORT_STRING_API bool equalIgnoringNullity(StringImpl*, StringImpl*);
 
