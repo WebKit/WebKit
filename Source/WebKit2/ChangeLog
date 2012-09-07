@@ -1,3 +1,25 @@
+2012-09-07  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Add APIs to enable or disable the mouse events of the ewk_view.
+        https://bugs.webkit.org/show_bug.cgi?id=88631
+
+        Reviewed by Gyuyoung Kim.
+
+        We can turn on/off the mouse events of the ewk_view using the mouse
+        events enabling API. This API can be used when we want to turn off the
+        mouse events on the touchscreen device to process the touch events
+        instead of the mouse events.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::_Ewk_View_Private_Data):
+        (_ewk_view_smart_add):
+        (ewk_view_mouse_events_enabled_set):
+        (ewk_view_mouse_events_enabled_get):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2012-09-07  Tim Horton  <timothy_horton@apple.com>
 
         Add optional debug logging when we fall into/out of threaded scrolling

@@ -630,6 +630,28 @@ EAPI Eina_Bool ewk_view_popup_menu_select(Evas_Object *o, unsigned int index);
  */
 EAPI Eina_Bool ewk_view_popup_menu_close(Evas_Object *o);
 
+/**
+ * Sets whether the ewk_view supports the mouse events or not.
+ *
+ * The ewk_view will support the mouse events if EINA_TRUE or not support the
+ * mouse events otherwise. The default value is EINA_TRUE.
+ *
+ * @param o view object to enable/disable the mouse events
+ * @param enabled a state to set
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_view_mouse_events_enabled_set(Evas_Object *o, Eina_Bool enabled);
+
+/**
+ * Queries if the ewk_view supports the mouse events.
+ *
+ * @param o view object to query if the mouse events are enabled
+ *
+ * @return @c EINA_TRUE if the mouse events are enabled or @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool ewk_view_mouse_events_enabled_get(const Evas_Object *o);
+
 #ifdef __cplusplus
 }
 #endif

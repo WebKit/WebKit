@@ -92,6 +92,7 @@ struct _Ewk_View_Private_Data {
     LoadingResourcesMap loadingResourcesMap;
     Ewk_Back_Forward_List* backForwardList;
     OwnPtr<Ewk_Settings> settings;
+    bool areMouseEventsEnabled;
 
     WebPopupMenuProxyEfl* popupMenuProxy;
     Eina_List* popupMenuItems;
@@ -109,6 +110,7 @@ struct _Ewk_View_Private_Data {
     _Ewk_View_Private_Data()
         : cursorObject(0)
         , backForwardList(0)
+        , areMouseEventsEnabled(false)
         , popupMenuProxy(0)
         , popupMenuItems(0)
 #ifdef HAVE_ECORE_X
@@ -413,13 +415,12 @@ static void _ewk_view_smart_add(Evas_Object* ewkView)
     evas_object_smart_member_add(smartData->image, ewkView);
     evas_object_show(smartData->image);
 
+    ewk_view_mouse_events_enabled_set(ewkView, true);
+
 #define CONNECT(s, c) evas_object_event_callback_add(ewkView, s, c, smartData)
     CONNECT(EVAS_CALLBACK_FOCUS_IN, _ewk_view_on_focus_in);
     CONNECT(EVAS_CALLBACK_FOCUS_OUT, _ewk_view_on_focus_out);
     CONNECT(EVAS_CALLBACK_MOUSE_WHEEL, _ewk_view_on_mouse_wheel);
-    CONNECT(EVAS_CALLBACK_MOUSE_DOWN, _ewk_view_on_mouse_down);
-    CONNECT(EVAS_CALLBACK_MOUSE_UP, _ewk_view_on_mouse_up);
-    CONNECT(EVAS_CALLBACK_MOUSE_MOVE, _ewk_view_on_mouse_move);
     CONNECT(EVAS_CALLBACK_KEY_DOWN, _ewk_view_on_key_down);
     CONNECT(EVAS_CALLBACK_KEY_UP, _ewk_view_on_key_up);
 #undef CONNECT
@@ -1551,4 +1552,35 @@ Eina_Bool ewk_view_popup_menu_select(Evas_Object* ewkView, unsigned int selected
     priv->popupMenuProxy->valueChanged(selectedIndex);
 
     return true;
+}
+
+Eina_Bool ewk_view_mouse_events_enabled_set(Evas_Object* ewkView, Eina_Bool enabled)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    enabled = !!enabled;
+    if (priv->areMouseEventsEnabled == enabled)
+        return true;
+
+    priv->areMouseEventsEnabled = enabled;
+    if (enabled) {
+        evas_object_event_callback_add(ewkView, EVAS_CALLBACK_MOUSE_DOWN, _ewk_view_on_mouse_down, smartData);
+        evas_object_event_callback_add(ewkView, EVAS_CALLBACK_MOUSE_UP, _ewk_view_on_mouse_up, smartData);
+        evas_object_event_callback_add(ewkView, EVAS_CALLBACK_MOUSE_MOVE, _ewk_view_on_mouse_move, smartData);
+    } else {
+        evas_object_event_callback_del(ewkView, EVAS_CALLBACK_MOUSE_DOWN, _ewk_view_on_mouse_down);
+        evas_object_event_callback_del(ewkView, EVAS_CALLBACK_MOUSE_UP, _ewk_view_on_mouse_up);
+        evas_object_event_callback_del(ewkView, EVAS_CALLBACK_MOUSE_MOVE, _ewk_view_on_mouse_move);
+    }
+
+    return true;
+}
+
+Eina_Bool ewk_view_mouse_events_enabled_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    return priv->areMouseEventsEnabled;
 }

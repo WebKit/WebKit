@@ -24,6 +24,7 @@
 #include "UnitTestUtils/EWK2UnitTestServer.h"
 #include <EWebKit2.h>
 #include <Ecore.h>
+#include <Eina.h>
 #include <gtest/gtest.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -286,4 +287,16 @@ TEST_F(EWK2UnitTestBase, ewk_view_theme_set)
     ewk_view_theme_set(webView(), environment->pathForResource("big_button_theme.edj").data());
     ewk_view_html_string_load(webView(), buttonHTML, "file:///", 0);
     waitUntilTitleChangedTo("299"); // button of big button theme has 299px as padding (150 to -150)
+}
+
+TEST_F(EWK2UnitTestBase, ewk_view_mouse_events_enabled)
+{
+    ASSERT_TRUE(ewk_view_mouse_events_enabled_set(webView(), EINA_TRUE));
+    ASSERT_TRUE(ewk_view_mouse_events_enabled_get(webView()));
+
+    ASSERT_TRUE(ewk_view_mouse_events_enabled_set(webView(), 2));
+    ASSERT_TRUE(ewk_view_mouse_events_enabled_get(webView()));
+
+    ASSERT_TRUE(ewk_view_mouse_events_enabled_set(webView(), EINA_FALSE));
+    ASSERT_FALSE(ewk_view_mouse_events_enabled_get(webView()));
 }
