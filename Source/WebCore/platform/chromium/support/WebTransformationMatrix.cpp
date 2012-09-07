@@ -162,9 +162,13 @@ void WebTransformationMatrix::applyPerspective(double p)
     m_private.applyPerspective(p);
 }
 
-void WebTransformationMatrix::blend(const WebTransformationMatrix& from, double progress)
+bool WebTransformationMatrix::blend(const WebTransformationMatrix& from, double progress)
 {
+    WebCore::TransformationMatrix::DecomposedType dummy;
+    if (!m_private.decompose(dummy) || !from.m_private.decompose(dummy))
+        return false;
     m_private.blend(from.m_private, progress);
+    return true;
 }
 
 bool WebTransformationMatrix::hasPerspective() const

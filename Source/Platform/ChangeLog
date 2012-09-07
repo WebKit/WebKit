@@ -1,3 +1,18 @@
+2012-09-07  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] We should accelerate all transformations, except when we must blend matrices that cannot be decomposed.
+        https://bugs.webkit.org/show_bug.cgi?id=95855
+
+        Reviewed by James Robinson.
+
+        WebTransformOperations are now able to report if they can successfully blend.
+        WebTransformationMatrix::blend now returns a bool if blending would fail.
+
+        * chromium/public/WebTransformOperations.h:
+        (WebTransformOperations):
+        * chromium/public/WebTransformationMatrix.h:
+        (WebTransformationMatrix):
+
 2012-09-07  Nat Duca  <nduca@chromium.org>
         [chromium] Allow enumeration of WebRenderingStats structure
         https://bugs.webkit.org/show_bug.cgi?id=94565

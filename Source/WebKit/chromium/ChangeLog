@@ -1,3 +1,18 @@
+2012-09-07  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] We should accelerate all transformations, except when we must blend matrices that cannot be decomposed.
+        https://bugs.webkit.org/show_bug.cgi?id=95855
+
+        Reviewed by James Robinson.
+
+        Added the following unit tests:
+          AnimationTranslationUtilTest.createTransformAnimationWithNonDecomposableMatrix
+          AnimationTranslationUtilTest.createTransformAnimationWithNonInvertibleTransform
+
+        * tests/AnimationTranslationUtilTest.cpp:
+        (WebKit::TEST):
+        (WebKit):
+
 2012-09-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         X11 Global Selection

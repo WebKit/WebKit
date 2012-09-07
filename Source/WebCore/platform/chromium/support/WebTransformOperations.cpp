@@ -147,12 +147,10 @@ static double blendDoubles(double from, double to, double progress)
     return from * (1 - progress) + to * progress;
 }
 
-static WebTransformationMatrix blendTransformOperations(const WebTransformOperation* from, const WebTransformOperation* to, double progress)
+static bool blendTransformOperations(const WebTransformOperation* from, const WebTransformOperation* to, double progress, WebTransformationMatrix& result)
 {
-    WebTransformationMatrix toReturn;
-
     if (isIdentity(from) && isIdentity(to))
-        return toReturn;
+        return true;
 
     WebTransformOperation::Type interpolationType = WebTransformOperation::WebTransformOperationIdentity;
     if (isIdentity(to))
@@ -168,9 +166,9 @@ static WebTransformationMatrix blendTransformOperations(const WebTransformOperat
         double toX = isIdentity(to) ? 0 : to->translate.x;
         double toY = isIdentity(to) ? 0 : to->translate.y;
         double toZ = isIdentity(to) ? 0 : to->translate.z;
-        toReturn.translate3d(blendDoubles(fromX, toX, progress),
-                             blendDoubles(fromY, toY, progress),
-                             blendDoubles(fromZ, toZ, progress));
+        result.translate3d(blendDoubles(fromX, toX, progress),
+                           blendDoubles(fromY, toY, progress),
+                           blendDoubles(fromZ, toZ, progress));
         break;
     }
     case WebTransformOperation::WebTransformOperationRotate: {
@@ -180,7 +178,7 @@ static WebTransformationMatrix blendTransformOperations(const WebTransformOperat
         double fromAngle = 0;
         double toAngle = isIdentity(to) ? 0 : to->rotate.angle;
         if (shareSameAxis(from, to, axisX, axisY, axisZ, fromAngle))
-            toReturn.rotate3d(axisX, axisY, axisZ, blendDoubles(fromAngle, toAngle, progress));
+            result.rotate3d(axisX, axisY, axisZ, blendDoubles(fromAngle, toAngle, progress));
         else {
             WebTransformationMatrix toMatrix;
             if (!isIdentity(to))
@@ -188,8 +186,9 @@ static WebTransformationMatrix blendTransformOperations(const WebTransformOperat
             WebTransformationMatrix fromMatrix;
             if (!isIdentity(from))
                 fromMatrix = from->matrix;
-            toReturn = toMatrix;
-            toReturn.blend(fromMatrix, progress);
+            result = toMatrix;
+            if (!result.blend(fromMatrix, progress))
+                return false;
         }
         break;
     }
@@ -200,9 +199,9 @@ static WebTransformationMatrix blendTransformOperations(const WebTransformOperat
         double toX = isIdentity(to) ? 1 : to->scale.x;
         double toY = isIdentity(to) ? 1 : to->scale.y;
         double toZ = isIdentity(to) ? 1 : to->scale.z;
-        toReturn.scale3d(blendDoubles(fromX, toX, progress),
-                         blendDoubles(fromY, toY, progress),
-                         blendDoubles(fromZ, toZ, progress));
+        result.scale3d(blendDoubles(fromX, toX, progress),
+                       blendDoubles(fromY, toY, progress),
+                       blendDoubles(fromZ, toZ, progress));
         break;
     }
     case WebTransformOperation::WebTransformOperationSkew: {
@@ -210,14 +209,14 @@ static WebTransformationMatrix blendTransformOperations(const WebTransformOperat
         double fromY = isIdentity(from) ? 0 : from->skew.y;
         double toX = isIdentity(to) ? 0 : to->skew.x;
         double toY = isIdentity(to) ? 0 : to->skew.y;
-        toReturn.skewX(blendDoubles(fromX, toX, progress));
-        toReturn.skewY(blendDoubles(fromY, toY, progress));
+        result.skewX(blendDoubles(fromX, toX, progress));
+        result.skewY(blendDoubles(fromY, toY, progress));
         break;
     }
     case WebTransformOperation::WebTransformOperationPerspective: {
         double fromPerspectiveDepth = isIdentity(from) ? numeric_limits<double>::max() : from->perspectiveDepth;
         double toPerspectiveDepth = isIdentity(to) ? numeric_limits<double>::max() : to->perspectiveDepth;
-        toReturn.applyPerspective(blendDoubles(fromPerspectiveDepth, toPerspectiveDepth, progress));
+        result.applyPerspective(blendDoubles(fromPerspectiveDepth, toPerspectiveDepth, progress));
         break;
     }
     case WebTransformOperation::WebTransformOperationMatrix: {
@@ -227,8 +226,9 @@ static WebTransformationMatrix blendTransformOperations(const WebTransformOperat
         WebTransformationMatrix fromMatrix;
         if (!isIdentity(from))
             fromMatrix = from->matrix;
-        toReturn = toMatrix;
-        toReturn.blend(fromMatrix, progress);
+        result = toMatrix;
+        if (!result.blend(fromMatrix, progress))
+            return false;
         break;
     }
     case WebTransformOperation::WebTransformOperationIdentity:
@@ -236,32 +236,13 @@ static WebTransformationMatrix blendTransformOperations(const WebTransformOperat
         break;
     }
 
-    return toReturn;
+    return true;
 }
 
 WebTransformationMatrix WebTransformOperations::blend(const WebTransformOperations& from, double progress) const
 {
     WebTransformationMatrix toReturn;
-    bool fromIdentity = from.isIdentity();
-    bool toIdentity = isIdentity();
-    if (fromIdentity && toIdentity)
-        return toReturn;
-
-    if (matchesTypes(from)) {
-        size_t numOperations = max(fromIdentity ? 0 : from.m_private->operations.size(),
-                                   toIdentity ? 0 : m_private->operations.size());
-        for (size_t i = 0; i < numOperations; ++i) {
-            WebTransformationMatrix blended = blendTransformOperations(
-                fromIdentity ? 0 : &from.m_private->operations[i],
-                toIdentity ? 0 : &m_private->operations[i],
-                progress);
-            toReturn.multiply(blended);
-        }
-    } else {
-        toReturn = apply();
-        WebTransformationMatrix fromTransform = from.apply();
-        toReturn.blend(fromTransform, progress);
-    }
+    blendInternal(from, progress, toReturn);
     return toReturn;
 }
 
@@ -281,6 +262,12 @@ bool WebTransformOperations::matchesTypes(const WebTransformOperations& other) c
     }
 
     return true;
+}
+
+bool WebTransformOperations::canBlendWith(const WebTransformOperations& other) const
+{
+    WebTransformationMatrix dummy;
+    return blendInternal(other, 0.5, dummy);
 }
 
 void WebTransformOperations::appendTranslate(double x, double y, double z)
@@ -375,6 +362,33 @@ void WebTransformOperations::initialize(const WebTransformOperations& other)
         m_private.reset(new WebTransformOperationsPrivate(*other.m_private.get()));
     else
         initialize();
+}
+
+bool WebTransformOperations::blendInternal(const WebTransformOperations& from, double progress, WebTransformationMatrix& result) const
+{
+    bool fromIdentity = from.isIdentity();
+    bool toIdentity = isIdentity();
+    if (fromIdentity && toIdentity)
+        return true;
+
+    if (matchesTypes(from)) {
+        size_t numOperations = max(fromIdentity ? 0 : from.m_private->operations.size(),
+                                   toIdentity ? 0 : m_private->operations.size());
+        for (size_t i = 0; i < numOperations; ++i) {
+            WebTransformationMatrix blended;
+            if (!blendTransformOperations(fromIdentity ? 0 : &from.m_private->operations[i],
+                                          toIdentity ? 0 : &m_private->operations[i],
+                                          progress,
+                                          blended))
+                return false;
+            result.multiply(blended);
+        }
+        return true;
+    }
+
+    result = apply();
+    WebTransformationMatrix fromTransform = from.apply();
+    return result.blend(fromTransform, progress);
 }
 
 } // namespace WebKit

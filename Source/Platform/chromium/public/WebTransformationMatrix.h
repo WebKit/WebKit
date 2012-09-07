@@ -77,7 +77,7 @@ public:
     WEBKIT_EXPORT void skewX(double angle);
     WEBKIT_EXPORT void skewY(double angle);
     WEBKIT_EXPORT void applyPerspective(double p);
-    WEBKIT_EXPORT void blend(const WebTransformationMatrix& from, double progress);
+    WEBKIT_EXPORT bool blend(const WebTransformationMatrix& from, double progress);
 
     WEBKIT_EXPORT bool hasPerspective() const;
     WEBKIT_EXPORT bool isInvertible() const;

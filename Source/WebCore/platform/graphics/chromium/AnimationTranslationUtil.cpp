@@ -152,8 +152,13 @@ bool isRotationType(TransformOperation::OperationType transformType)
 template <>
 bool appendKeyframeWithStandardTimingFunction<TransformAnimationValue, WebTransformKeyframe, WebTransformAnimationCurve>(WebTransformAnimationCurve* curve, double keyTime, const TransformAnimationValue* value, const TransformAnimationValue* lastValue, WebKit::WebAnimationCurve::TimingFunctionType timingFunctionType, const FloatSize& boxSize)
 {
+    bool canBlend = !lastValue;
     WebTransformOperations operations = toWebTransformOperations(*value->value(), boxSize);
-    if (operations.apply().isInvertible()) {
+    if (!canBlend) {
+        WebTransformOperations lastOperations = toWebTransformOperations(*lastValue->value(), boxSize);
+        canBlend = lastOperations.canBlendWith(operations);
+    }
+    if (canBlend) {
         curve->add(WebTransformKeyframe(keyTime, operations), timingFunctionType);
         return true;
     }
@@ -163,8 +168,13 @@ bool appendKeyframeWithStandardTimingFunction<TransformAnimationValue, WebTransf
 template <>
 bool appendKeyframeWithCustomBezierTimingFunction<TransformAnimationValue, WebTransformKeyframe, WebTransformAnimationCurve>(WebTransformAnimationCurve* curve, double keyTime, const TransformAnimationValue* value, const TransformAnimationValue* lastValue, double x1, double y1, double x2, double y2, const FloatSize& boxSize)
 {
+    bool canBlend = !lastValue;
     WebTransformOperations operations = toWebTransformOperations(*value->value(), boxSize);
-    if (operations.apply().isInvertible()) {
+    if (!canBlend) {
+        WebTransformOperations lastOperations = toWebTransformOperations(*lastValue->value(), boxSize);
+        canBlend = lastOperations.canBlendWith(operations);
+    }
+    if (canBlend) {
         curve->add(WebTransformKeyframe(keyTime, operations), x1, y1, x2, y2);
         return true;
     }

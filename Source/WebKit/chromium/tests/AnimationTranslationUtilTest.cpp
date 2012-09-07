@@ -31,6 +31,7 @@
 #include "IntSize.h"
 #include "Matrix3DTransformOperation.h"
 #include "RotateTransformOperation.h"
+#include "ScaleTransformOperation.h"
 #include "TransformOperations.h"
 #include "TranslateTransformOperation.h"
 #include <gtest/gtest.h>
@@ -155,7 +156,7 @@ TEST(AnimationTranslationUtilTest, createTransformAnimationWithSmallRotationInvo
     EXPECT_TRUE(animationCanBeTranslated(values, animation.get()));
 }
 
-TEST(AnimationTranslationUtilTest, createTransformAnimationWithSingularMatrix)
+TEST(AnimationTranslationUtilTest, createTransformAnimationWithNonDecomposableMatrix)
 {
     const double duration = 1;
     WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
@@ -175,6 +176,25 @@ TEST(AnimationTranslationUtilTest, createTransformAnimationWithSingularMatrix)
     animation->setDuration(duration);
 
     EXPECT_FALSE(animationCanBeTranslated(values, animation.get()));
+}
+
+TEST(AnimationTranslationUtilTest, createTransformAnimationWithNonInvertibleTransform)
+{
+    const double duration = 1;
+    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
+
+    TransformOperations operations1;
+    operations1.operations().append(ScaleTransformOperation::create(1, 1, 1, TransformOperation::SCALE_3D));
+    values.insert(new TransformAnimationValue(0, &operations1));
+
+    TransformOperations operations2;
+    operations2.operations().append(ScaleTransformOperation::create(1, 0, 1, TransformOperation::SCALE_3D));
+    values.insert(new TransformAnimationValue(duration, &operations2));
+
+    RefPtr<Animation> animation = Animation::create();
+    animation->setDuration(duration);
+
+    EXPECT_TRUE(animationCanBeTranslated(values, animation.get()));
 }
 
 TEST(AnimationTranslationUtilTest, createReversedAnimation)
