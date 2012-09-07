@@ -1,3 +1,16 @@
+2012-09-07  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Add TestExpectations file for efl-wk1
+        https://bugs.webkit.org/show_bug.cgi?id=96019
+
+        Reviewed by Gyuyoung Kim.
+
+        Add TestExpectations file for WebKit1 EFL.
+
+        * platform/efl-wk1/TestExpectations: Added.
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-09-07  Anna Cavender  <annacc@chromium.org>
 
         Rebaselines for windows due to r127831.

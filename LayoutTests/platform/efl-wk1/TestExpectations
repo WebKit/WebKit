@@ -1,0 +1,63 @@
+// We divide the EFL WK2 test expectations into several categories:
+// 1. TESTS EXPECTED TO FAIL
+//    Test cases related to features that we don't expect to be activated for EFL WK2 since
+//    the feature implementation in WebKit2 is missing or not complete yet.
+//    If test cases related to a feature cannot be activated since e.g.
+//    * the feature implementation in WebCore is not complete yet
+//    * the feature is not relevant for the EFL port
+//    * the feature is meant to solve a backwards compatibility issue on other platforms
+//    please put them into EFL TestExpectations file.
+//    If in doubt, please discuss on webkit-efl mailing list whether a set of test cases
+//    should be moved here.
+
+// 2. CRASHES
+
+// 3. FLAKY TESTS
+
+// 4. FAILING TESTS
+//    * Interim failures that are moved here for further investigation as a result of daily
+//      gardening. They should be analysed quickly and either resolved or moved to 1).
+//    * Remaining failures that are moved here until further investigation after
+//      unskipping a directory or block of tests in the Skipped list.
+//    * Tests that we expect to pass once the respective fix for DRT is available or
+//      a relevant compile time feature can be enabled for EFL.
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// TESTS EXPECTED TO FAIL
+//////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// CRASHES
+//////////////////////////////////////////////////////////////////////////////////////////
+
+// Crash shared with the GTK+ port
+BUGWK30724 DEBUG : fast/loader/opaque-base-url.html = CRASH
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// FLAKY TESTS
+//////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// FAILING TESTS
+//////////////////////////////////////////////////////////////////////////////////////////
+
+// EFL's DumpRenderTree should support LayoutTestController's dumpEditingCallbacks()
+BUGWK84835 : editing/execCommand/indent-paragraphs.html = TEXT
+
+// Missing showModalDialog implementation
+BUGWK84589 : fast/animation/request-animation-frame-during-modal.html = TEXT
+BUGWK84589 : http/tests/security/cross-frame-access-call.html = TEXT
+
+// Needs custom policy delegate enhancement to log DOM node info - EFL port is missing DOM node abstraction
+BUGWK87972 : fast/forms/mailto/formenctype-attribute-button-html.html = TEXT
+BUGWK87972 : fast/forms/mailto/formenctype-attribute-input-html.html = TEXT
+
+// New test introduced in r116694 fails
+BUGWK86182 : fast/frames/seamless/seamless-inherited-document-style.html = TEXT
+
+// Feature not mature yet and disabled by default on WebCore
+BUGWK87088 : fast/js/names.html = TEXT
+
+// Failing after 125592
+BUGWK94194 : http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html = TEXT
+

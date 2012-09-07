@@ -207,18 +207,6 @@ BUGWKEFL : fast/ruby/rubyDOM-remove-text2.html = TEXT
 // WebKitTestRunner needs an implementation for testRunner.setStorageDatabaseIdleInterval
 BUGWKEFL : storage/domstorage/storage-close-database-on-idle.html = TEXT
 
-// These test cases pass only in WK2
-BUGWK30724 DEBUG : fast/loader/opaque-base-url.html = PASS 
-BUGWK87355 : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS 
-BUGWK84835 : editing/execCommand/indent-paragraphs.html = TEXT PASS 
-BUGWK84589 : fast/animation/request-animation-frame-during-modal.html = TEXT PASS 
-BUGWK87972 : fast/forms/mailto/formenctype-attribute-button-html.html = TEXT PASS
-BUGWK87972 : fast/forms/mailto/formenctype-attribute-input-html.html = TEXT PASS
-BUGWK86182 : fast/frames/seamless/seamless-inherited-document-style.html = TEXT PASS
-BUGWK87088 : fast/js/names.html = TEXT PASS
-BUGWK84589 : http/tests/security/cross-frame-access-call.html = TEXT PASS
-BUGWK94194 : http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html = TEXT PASS
-
 // Missing undo-redo support
 BUGWK92504 : editing/execCommand/delete-selection-has-style.html = TEXT
 BUGWK92504 : editing/execCommand/format-block-multiple-paragraphs-in-pre.html = TEXT

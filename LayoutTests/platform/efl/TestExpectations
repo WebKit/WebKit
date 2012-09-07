@@ -131,9 +131,6 @@ BUGWKEFL SKIP : http/tests/webarchive = PASS
 BUGWKEFL SKIP : svg/webarchive = PASS
 BUGWKEFL SKIP : svg/custom/image-with-prefix-in-webarchive.svg = PASS
 
-// Feature not mature yet and disabled by default on WebCore
-BUGWK87088 : fast/js/names.html = TEXT
-
 // The EFL port uses different keyboard accelerators than Safari (via Chromium).
 BUGWKEFL SKIP : fast/events/option-tab.html = PASS
 
@@ -374,11 +371,9 @@ BUGWK84338 : fast/forms/plaintext-mode-2.html = MISSING
 BUGWK84338 : fast/forms/textarea-paste-newline.html = TEXT
 
 // Missing showModalDialog implementation
-BUGWK84589 : fast/animation/request-animation-frame-during-modal.html = TEXT
 BUGWK84589 : fast/events/show-modal-dialog-onblur-onfocus.html = TEXT
 BUGWK84589 : fast/harness/show-modal-dialog.html = TEXT
 BUGWK84589 : fast/events/scroll-event-during-modal-dialog.html = TEXT
-BUGWK84589 : http/tests/security/cross-frame-access-call.html = TEXT
 BUGWK84589 : http/tests/security/cross-frame-access-get.html = TEXT
 
 // Issue with timing for suspend/resumeAnimations()?
@@ -409,8 +404,6 @@ BUGWK87974 : http/tests/download = TEXT IMAGE IMAGE+TEXT
 // Needs custom policy delegate enhancement to log DOM node info - EFL port is missing DOM node abstraction
 BUGWK87972 : fast/loader/policy-delegate-action-hit-test-zoomed.html = TEXT
 BUGWK87972 : fast/encoding/mailto-always-utf-8.html = TEXT
-BUGWK87972 : fast/forms/mailto/formenctype-attribute-button-html.html = TEXT
-BUGWK87972 : fast/forms/mailto/formenctype-attribute-input-html.html = TEXT
 
 // EFL's LayoutTestController does not implement layerTreeAsText
 BUGWK82294 : compositing/animation/animation-compositing.html = TEXT
@@ -662,14 +655,10 @@ BUGWK85599 : http/tests/navigation/postredirect-goback1.html = TEXT
 // Interferes with the rAF tests that are enabled
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
 
-// Crash shared with the GTK+ port
-BUGWK30724 DEBUG : fast/loader/opaque-base-url.html = CRASH
-
 // EFL's DumpRenderTree should support LayoutTestController's dumpEditingCallbacks()
 BUGWK84835 : editing/execCommand/4128080-2.html = TEXT
 BUGWK84835 : editing/execCommand/copy-without-selection.html = TEXT
 BUGWK84835 : editing/execCommand/findString-diacriticals.html = TEXT
-BUGWK84835 : editing/execCommand/indent-paragraphs.html = TEXT
 
 // DRT doesn't check for isPrinting().
 BUGWK87226 : printing/iframe-print.html = TEXT
@@ -700,9 +689,6 @@ BUGWKEFL SLOW DEBUG : http/tests/incremental/slow-utf8-html.pl = PASS
 // Tests imported in r116658
 BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE CRASH
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
-
-// New test introduced in r116694 fails
-BUGWK86182 : fast/frames/seamless/seamless-inherited-document-style.html = TEXT
 
 // LEGACY_VIEWPORT_ADAPTION flag is not enabled on EFL port
 BUGWK88191 : fast/viewport/viewport-legacy-handheldfriendly.html = TEXT
@@ -1029,9 +1015,6 @@ BUGWK94024 SKIP : css3/compositing = TEXT
 
 // Fails also on GTK
 BUGWK94080 : fast/overflow/line-clamp-and-columns.html = IMAGE
-
-// Failing after 125592
-BUGWK94194 : http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html = TEXT
 
 // Alt text should be displayed if src attribute is not set.
 BUGWK94198 : fast/dom/HTMLImageElement/image-alt-text.html = IMAGE

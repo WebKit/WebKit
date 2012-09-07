@@ -98,6 +98,8 @@ class EflPort(Port, PulseAudioSanitizer):
         search_paths = []
         if self.get_option('webkit_test_runner'):
             search_paths.append(self.port_name + '-wk2')
+        else:
+            search_paths.append(self.port_name + '-wk1')
         search_paths.append(self.port_name)
         return search_paths
 

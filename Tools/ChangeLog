@@ -1,3 +1,17 @@
+2012-09-07  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Add TestExpectations file for efl-wk1
+        https://bugs.webkit.org/show_bug.cgi?id=96019
+
+        Reviewed by Gyuyoung Kim.
+
+        Update TestExpectations cascading for EFL port
+        so that we use efl-wk1 -> efl search paths
+        for WebKit1 EFL.
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort._search_paths):
+
 2012-09-07  Zan Dobersek  <zandobersek@gmail.com>
 
         [NRWT] XvfbDriver should stop the Xvfb more aggressively
