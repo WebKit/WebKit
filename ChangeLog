@@ -1,3 +1,15 @@
+2012-09-07  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] Multiple feature defines in webcore_cppflags can occur
+        https://bugs.webkit.org/show_bug.cgi?id=95942
+
+        Reviewed by Martin Robinson.
+
+        Add the feature_defines_unstable variable that should control values of feature
+        defines for unstable features when unstable features are not enabled (e.g. release builds).
+
+        * GNUmakefile.am:
+
 2012-09-06  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Remove configuration options for features that are not supported by the Gtk port

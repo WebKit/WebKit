@@ -546,22 +546,26 @@ endif  # END ENABLE_SPELLCHECK
 # ---
 if !ENABLE_UNSTABLE_FEATURES
 # FIXME: List unstable features here once their configuration options are removed.
-feature_defines_overrides +=
+feature_defines_unstable +=
 endif
 
 
 # Fill the feature_defines variable with all the defines, making it possible
 # to override the default define value (as set in feature_defines_defaults)
-# through adding the feature define with the desired value to feature_defines_overrides.
+# through adding the feature define with the desired value to either
+# feature_defines_unstable or feature_defines_overrides.
 feature_defines += $(strip $(foreach bare_define, \
 	$(foreach define,$(feature_defines_defaults), \
 		$(foreach fvalue,0 1, \
 			$(if $(findstring =$(fvalue),$(define)),$(patsubst %=$(fvalue),%,$(define))) \
 		) \
 	), \
-	$(if $(findstring $(bare_define), $(feature_defines_overrides)), \
-		$(filter $(bare_define)=%,$(feature_defines_overrides)), \
-		$(filter $(bare_define)=%,$(feature_defines_defaults)) \
+	$(if $(findstring $(bare_define), $(feature_defines_unstable)), \
+		$(filter $(bare_define)=%,$(feature_defines_unstable)), \
+		$(if $(findstring $(bare_define), $(feature_defines_overrides)), \
+			$(filter $(bare_define)=%,$(feature_defines_overrides)), \
+			$(filter $(bare_define)=%,$(feature_defines_defaults)) \
+		) \
 	) \
 ))
 
