@@ -1,5 +1,16 @@
 2012-09-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
+        Layout Test touchadjustment/iframe-boundary.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=95799
+
+        Unreviewed, fudge the test so it has a larger margin of error.
+
+        * platform/chromium/TestExpectations:
+        * touchadjustment/iframe-boundary.html:
+        * touchadjustment/resources/inner-content-page.html:
+
+2012-09-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
         X11 Global Selection
         https://bugs.webkit.org/show_bug.cgi?id=88238
 

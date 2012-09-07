@@ -3593,9 +3593,6 @@ BUGCR146401 ANDROID : css3/filters/custom/effect-custom-transform-parameters.htm
 BUGCR146401 ANDROID : css3/filters/custom/filter-fallback-to-software.html = IMAGE
 BUGCR146401 ANDROID : fast/css/sticky/sticky-writing-mode-vertical-lr.html = IMAGE
 
-// Started failing after r127457
-BUGWK95799 MAC : touchadjustment/iframe-boundary.html = TEXT
-
 BUGWK95813 : fast/innerHTML/innerHTML-iframe.html = TEXT PASS
 
 BUGWK96041 LINUX : platform/chromium-linux/compositing/gestures = PASS IMAGE
