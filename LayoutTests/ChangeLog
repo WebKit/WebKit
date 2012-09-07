@@ -1,3 +1,15 @@
+2012-09-07  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Unreviewed.
+
+        Skip accessibility/spinbutton-value.html on Windows.
+        Windows only supports MSAA/IAcccessible, which doesn't fully support
+        accessing the min, max, and numeric value of a range control, so it's
+        not possible to support this test until a lot more work is done on
+        Windows accessibility.
+
+        * platform/win/Skipped:
+
 2012-09-07  Fady Samuel  <fsamuel@chromium.org>
 
         Unreviewed rebaseline.
