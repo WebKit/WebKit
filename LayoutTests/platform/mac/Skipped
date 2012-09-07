@@ -1033,7 +1033,7 @@ platform/mac/editing/spelling/autocorrection-simple.html
 platform/mac/editing/spelling/delete-autocorrected-word-1.html
 platform/mac/editing/spelling/delete-autocorrected-word-2.html
 
-// Mac does not have global selections.
+# Mac does not have global selections.
 editing/pasteboard/paste-global-selection.html
 
 # --- WebGL ---

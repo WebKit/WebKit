@@ -1,3 +1,9 @@
+2012-09-07  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed, fix incorrect comment character(s) in Skipped list.
+
+        * platform/mac/Skipped:
+
 2012-09-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Use same default minimum logical font size in DRT and WTR
