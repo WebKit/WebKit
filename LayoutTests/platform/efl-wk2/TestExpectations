@@ -31,13 +31,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 
 BUGWKEFL : inspector/debugger/debugger-eval-on-call-frame.html = CRASH
-BUGWKEFL : fast/js/dfg-poison-fuzz.html = CRASH
-BUGWKEFL : fast/loader/document-with-fragment-url-1.html = CRASH
 BUGWKEFL : fast/overflow/lots-of-sibling-inline-boxes.html = CRASH
 BUGWKEFL : fast/dom/register-protocol-handler.html = CRASH
 BUGWKEFL : fast/dom/unregister-protocol-handler.html = CRASH
-BUGWKEFL : http/tests/loading/fire-error-event-script-no-content-type.html = CRASH
-BUGWKEFL : http/tests/loading/fire-error-event-empty-404-script.html = CRASH
 BUGWK95333 DEBUG : fast/forms/color/input-value-sanitization-color.html = CRASH
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -221,18 +217,15 @@ BUGWKEFL : editing/input/emacs-ctrl-o.html = TEXT
 BUGWKEFL : fast/block/float/float-in-float-hit-testing.html = TEXT
 BUGWKEFL : fast/css/bidi-override-in-anonymous-block.html = TEXT
 BUGWKEFL : fast/dom/Window/mozilla-focus-blur.html = TEXT
-BUGWKEFL : fast/forms/autocomplete-off-with-default-value-does-not-clear.html = TEXT
 BUGWKEFL : fast/forms/legend-access-key.html = TEXT
 BUGWKEFL : fast/forms/select-writing-direction-natural.html = TEXT
 BUGWKEFL : fast/forms/validation-message-in-relative-body.html = TEXT
 BUGWKEFL : fast/frames/flattening/iframe-tiny.html = TEXT
 BUGWKEFL : fast/replaced/no-focus-ring-embed.html = TEXT
 BUGWKEFL : fast/replaced/no-focus-ring-object.html = TEXT
-BUGWKEFL : fast/viewport/viewport-128.html = TEXT
 BUGWKEFL : fast/workers/worker-cloneport.html = TEXT
 BUGWKEFL : http/tests/inspector/network/network-sidebar-width.html = TEXT
 BUGWKEFL : http/tests/inspector/resource-main-cookies.php = TEXT
-BUGWKEFL : http/tests/misc/acid3.html = TEXT
 BUGWKEFL : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TEXT
 BUGWKEFL : http/tests/xmlhttprequest/workers/abort-exception-assert.html = TEXT
 BUGWKEFL : inspector/debugger/debugger-completions-on-call-frame.html = TEXT

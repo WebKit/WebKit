@@ -1,3 +1,15 @@
+2012-09-07  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Unskip test cases that are now passing consistently
+        https://bugs.webkit.org/show_bug.cgi?id=96090
+
+        Unreviewed EFL gardening.
+
+        Remove from TestExpectations several test cases that are now
+        passing consistently on EFL WK2 build bot.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-09-07  Fady Samuel  <fsamuel@chromium.org>
 
         Unreviewed Chromium gardening.
