@@ -36,7 +36,7 @@ namespace WebCore {
         
         class Number : public Expression {
         public:
-            Number(double);
+            explicit Number(double);
         private:
             virtual Value evaluate() const;
             virtual Value::Type resultType() const { return Value::NumberValue; }
@@ -46,7 +46,7 @@ namespace WebCore {
 
         class StringExpression : public Expression {
         public:
-            StringExpression(const String&);
+            explicit StringExpression(const String&);
         private:
             virtual Value evaluate() const;
             virtual Value::Type resultType() const { return Value::StringValue; }
@@ -106,7 +106,7 @@ namespace WebCore {
         class Predicate {
             WTF_MAKE_NONCOPYABLE(Predicate); WTF_MAKE_FAST_ALLOCATED;
         public:
-            Predicate(Expression*);
+            explicit Predicate(Expression*);
             ~Predicate();
             bool evaluate() const;
 

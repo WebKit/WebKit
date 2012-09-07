@@ -41,7 +41,7 @@ public:
     virtual String lookupNamespaceURI(const String& prefix);
 
 private:
-    NativeXPathNSResolver(PassRefPtr<Node>);
+    explicit NativeXPathNSResolver(PassRefPtr<Node>);
     RefPtr<Node> m_node;
 };
 

@@ -45,7 +45,7 @@ enum ProgressEventAction {
 // about every 50ms or for every byte received, whichever is least frequent".
 class XMLHttpRequestProgressEventThrottle : public TimerBase {
 public:
-    XMLHttpRequestProgressEventThrottle(EventTarget*);
+    explicit XMLHttpRequestProgressEventThrottle(EventTarget*);
     virtual ~XMLHttpRequestProgressEventThrottle();
 
     void dispatchProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total);

@@ -67,7 +67,7 @@ namespace WebCore {
         void dispatchEventAndLoadEnd(PassRefPtr<Event>);
 
     private:
-        XMLHttpRequestUpload(XMLHttpRequest*);
+        explicit XMLHttpRequestUpload(XMLHttpRequest*);
 
         virtual void refEventTarget() { ref(); }
         virtual void derefEventTarget() { deref(); }

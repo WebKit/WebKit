@@ -51,7 +51,7 @@ public:
     static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
 
 private:
-    XMLHttpRequestException(const ExceptionCodeDescription& description)
+    explicit XMLHttpRequestException(const ExceptionCodeDescription& description)
         : ExceptionBase(description)
     {
     }
