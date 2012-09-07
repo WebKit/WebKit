@@ -4805,8 +4805,8 @@ webcore_sources += \
 	Source/WebCore/platform/text/UnicodeBidi.h \
 	Source/WebCore/platform/text/UnicodeRange.cpp \
 	Source/WebCore/platform/text/UnicodeRange.h \
-	Source/WebCore/platform/TouchpadFlingPlatformGestureCurve.cpp \
-	Source/WebCore/platform/TouchpadFlingPlatformGestureCurve.h \
+	Source/WebCore/platform/TouchFlingPlatformGestureCurve.cpp \
+	Source/WebCore/platform/TouchFlingPlatformGestureCurve.h \
 	Source/WebCore/platform/ThemeTypes.h \
 	Source/WebCore/platform/ThreadCheck.h \
 	Source/WebCore/platform/ThreadGlobalData.cpp \

@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#include "TouchpadFlingPlatformGestureCurve.h"
+#include "TouchFlingPlatformGestureCurve.h"
 
 #include "PlatformGestureCurveTarget.h"
 #include <math.h>
@@ -51,19 +51,23 @@ using namespace std;
 // The curve is modelled as a 4th order polynomial, starting at t = 0, and ending at t = m_curveDuration.
 // Attempts to generate position/velocity estimates outside this range are undefined.
 
-const int TouchpadFlingPlatformGestureCurve::m_maxSearchIterations = 20;
+static const int cMaxSearchIterations = 20;
 
-PassOwnPtr<PlatformGestureCurve> TouchpadFlingPlatformGestureCurve::create(const FloatPoint& velocity, IntPoint cumulativeScroll)
+PassOwnPtr<PlatformGestureCurve> TouchFlingPlatformGestureCurve::createForTouchPad(const FloatPoint& velocity, IntPoint cumulativeScroll)
 {
     // The default parameters listed below are a matched set, and should not be changed independently of one another.
-    return create(velocity, -5.70762e+03, 1.72e+02, 3.7e+00, 0, 0, 1.3, cumulativeScroll);
+    return create(velocity, -5.70762e+03, 1.72e+02, 3.7e+00, 1.3, cumulativeScroll);
 }
 
-// FIXME: need to remove p3, p4 here and below as they are not used in the exponential curve, but leave in for now to facilitate
-// the in-flight patch for https://bugs.webkit.org/show_bug.cgi?id=81663 .
-PassOwnPtr<PlatformGestureCurve> TouchpadFlingPlatformGestureCurve::create(const FloatPoint& velocity, float p0, float p1, float p2, float p3, float p4, float curveDuration, IntPoint cumulativeScroll)
+PassOwnPtr<PlatformGestureCurve> TouchFlingPlatformGestureCurve::createForTouchScreen(const FloatPoint& velocity, IntPoint cumulativeScroll)
 {
-    return adoptPtr(new TouchpadFlingPlatformGestureCurve(velocity, p0, p1, p2, p3, p4, curveDuration, cumulativeScroll));
+    // The touchscreen-specific parameters listed below are a matched set, and should not be changed independently of one another.
+    return create(velocity, -3.5e+03, 90, 3.0e+00, 1.5864, cumulativeScroll);
+}
+
+PassOwnPtr<PlatformGestureCurve> TouchFlingPlatformGestureCurve::create(const FloatPoint& velocity, float p0, float p1, float p2, float curveDuration, IntPoint cumulativeScroll)
+{
+    return adoptPtr(new TouchFlingPlatformGestureCurve(velocity, p0, p1, p2, curveDuration, cumulativeScroll));
 }
 
 inline double position(double t, float* p)
@@ -76,28 +80,26 @@ inline double velocity(double t, float* p)
     return -p[0] * p[2] * exp(-p[2] * t) - p[1];
 }
 
-TouchpadFlingPlatformGestureCurve::TouchpadFlingPlatformGestureCurve(const FloatPoint& initialVelocity, float p0, float p1, float p2, float p3, float p4, float curveDuration, const IntPoint& cumulativeScroll)
+TouchFlingPlatformGestureCurve::TouchFlingPlatformGestureCurve(const FloatPoint& initialVelocity, float p0, float p1, float p2, float curveDuration, const IntPoint& cumulativeScroll)
     : m_cumulativeScroll(cumulativeScroll)
     , m_curveDuration(curveDuration)
 {
     ASSERT(initialVelocity != FloatPoint::zero());
 
-    m_coeffs[0] = p0; // alpha
-    m_coeffs[1] = p1; // beta
-    m_coeffs[2] = p2; // gamma
-    m_coeffs[3] = p3; // not used
-    m_coeffs[4] = p4; // not used
+    m_coefficients[0] = p0; // alpha
+    m_coefficients[1] = p1; // beta
+    m_coefficients[2] = p2; // gamma
 
     float maxInitialVelocity = max(fabs(initialVelocity.x()), fabs(initialVelocity.y()));
 
     // Force maxInitialVelocity to lie in the range v(0) to v(curveDuration), and assume that
     // the curve parameters define a monotonically decreasing velocity, or else bisection search may
     // fail.
-    if (maxInitialVelocity > velocity(0, m_coeffs))
-        maxInitialVelocity = velocity(0, m_coeffs);
+    if (maxInitialVelocity > velocity(0, m_coefficients))
+        maxInitialVelocity = velocity(0, m_coefficients);
 
-    if (maxInitialVelocity < velocity(m_curveDuration, m_coeffs))
-        maxInitialVelocity = velocity(m_curveDuration, m_coeffs);
+    if (maxInitialVelocity < velocity(m_curveDuration, m_coefficients))
+        maxInitialVelocity = velocity(m_curveDuration, m_coefficients);
 
     // We keep track of relative magnitudes and directions of the velocity/displacement components here.
     m_displacementRatio = FloatPoint(initialVelocity.x() / maxInitialVelocity, initialVelocity.y() / maxInitialVelocity);
@@ -108,10 +110,10 @@ TouchpadFlingPlatformGestureCurve::TouchpadFlingPlatformGestureCurve(const Float
     double t0 = 0;
     double t1 = curveDuration;
     int numIterations = 0;
-    while (t0 < t1 && numIterations < m_maxSearchIterations) {
+    while (t0 < t1 && numIterations < cMaxSearchIterations) {
         numIterations++;
         m_timeOffset = (t0 + t1) * 0.5;
-        double vOffset = velocity(m_timeOffset, m_coeffs);
+        double vOffset = velocity(m_timeOffset, m_coefficients);
         if (fabs(maxInitialVelocity - vOffset) < epsilon)
             break;
 
@@ -122,27 +124,27 @@ TouchpadFlingPlatformGestureCurve::TouchpadFlingPlatformGestureCurve(const Float
     }
 
     // Compute curve position at offset time
-    m_positionOffset = position(m_timeOffset, m_coeffs);
+    m_positionOffset = position(m_timeOffset, m_coefficients);
 }
 
-TouchpadFlingPlatformGestureCurve::~TouchpadFlingPlatformGestureCurve()
+TouchFlingPlatformGestureCurve::~TouchFlingPlatformGestureCurve()
 {
 }
 
-const char* TouchpadFlingPlatformGestureCurve::debugName() const
+const char* TouchFlingPlatformGestureCurve::debugName() const
 {
     return "TouchpadFling";
 }
 
-bool TouchpadFlingPlatformGestureCurve::apply(double time, PlatformGestureCurveTarget* target)
+bool TouchFlingPlatformGestureCurve::apply(double time, PlatformGestureCurveTarget* target)
 {
     float displacement;
     if (time < 0)
         displacement = 0;
     else if (time + m_timeOffset < m_curveDuration)
-        displacement = position(time + m_timeOffset, m_coeffs) - m_positionOffset;
+        displacement = position(time + m_timeOffset, m_coefficients) - m_positionOffset;
     else
-        displacement = position(m_curveDuration, m_coeffs) - m_positionOffset;
+        displacement = position(m_curveDuration, m_coefficients) - m_positionOffset;
 
     // Keep track of integer portion of scroll thus far, and prepare increment.
     IntPoint scroll(displacement * m_displacementRatio.x(), displacement * m_displacementRatio.y());

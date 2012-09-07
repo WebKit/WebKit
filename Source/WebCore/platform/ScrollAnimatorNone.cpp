@@ -46,7 +46,7 @@
 
 #if ENABLE(GESTURE_ANIMATION)
 #include "ActivePlatformGestureAnimation.h"
-#include "TouchpadFlingPlatformGestureCurve.h"
+#include "TouchFlingPlatformGestureCurve.h"
 #endif
 
 
@@ -408,7 +408,7 @@ void ScrollAnimatorNone::fireUpAnAnimation(FloatPoint fp)
 #if ENABLE(GESTURE_ANIMATION)
     if (m_gestureAnimation)
         m_gestureAnimation.clear();
-    m_gestureAnimation = ActivePlatformGestureAnimation::create(TouchpadFlingPlatformGestureCurve::create(fp), this);
+    m_gestureAnimation = ActivePlatformGestureAnimation::create(TouchFlingPlatformGestureCurve::createForTouchPad(fp), this);
 #endif
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
     startNextTimer(0);

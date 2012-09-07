@@ -1,3 +1,21 @@
+2012-09-07  Robert Kroeger  <rjkroege@chromium.org>
+
+        [chromium] Add touchscreen specific fling curve parametrization
+        https://bugs.webkit.org/show_bug.cgi?id=95997
+
+        Reviewed by James Robinson.
+
+        Added a new set of fling curve parameters with a good feel for touchscreen
+        initiated flings. Renamed TouchpadFlingPlatformGestureCurve to
+        TouchFlingPlatformGestureCurve to better reflect that the class
+        can serve for both touchscreen and touchpad flings when appropriately
+        parametrized. Updated build files as necessary for the rename.
+
+        No new tests - existing tests apply.
+
+
+        * tests/PlatformGestureCurveTest.cpp: To use the renamed curve constructor.
+
 2012-09-07  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Make RenderPass ids hold both generating layer id and an index
