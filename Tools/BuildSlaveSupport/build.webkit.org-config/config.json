@@ -289,7 +289,7 @@
                     {
                       "name": "Chromium Android Release", "type": "Build", "builddir": "chromium-linux-android",
                       "platform": "chromium-android", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["google-linux-android"]
+                      "triggers": ["chromium-android-release-tests"], "slavenames": ["google-linux-android"]
                     },
                     {
                       "name": "Chromium Android Release (Tests)", "type": "Test", "builddir": "chromium-android-release-tests",
