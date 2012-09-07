@@ -52,7 +52,7 @@ v8::Handle<v8::Value> V8HTMLSelectElement::indexedPropertyGetter(uint32_t index,
     if (!result)
         return v8Undefined();
 
-    return toV8(result.release(), info.GetIsolate());
+    return toV8(result.release(), info.Holder()->CreationContext(), info.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8HTMLSelectElement::indexedPropertySetter(uint32_t index, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

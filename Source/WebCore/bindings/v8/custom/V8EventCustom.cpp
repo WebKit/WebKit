@@ -53,7 +53,7 @@ v8::Handle<v8::Value> V8Event::dataTransferAccessorGetter(v8::Local<v8::String> 
     Event* event = V8Event::toNative(info.Holder());
 
     if (event->isDragEvent())
-        return toV8(static_cast<MouseEvent*>(event)->clipboard(), info.GetIsolate());
+        return toV8(static_cast<MouseEvent*>(event)->clipboard(), info.Holder()->CreationContext(), info.GetIsolate());
 
     return v8::Undefined();
 }
@@ -63,16 +63,16 @@ v8::Handle<v8::Value> V8Event::clipboardDataAccessorGetter(v8::Local<v8::String>
     Event* event = V8Event::toNative(info.Holder());
 
     if (event->isClipboardEvent())
-        return toV8(static_cast<ClipboardEvent*>(event)->clipboard(), info.GetIsolate());
+        return toV8(static_cast<ClipboardEvent*>(event)->clipboard(), info.Holder()->CreationContext(), info.GetIsolate());
 
     return v8::Undefined();
 }
 
 #define TRY_TO_WRAP_WITH_INTERFACE(interfaceName) \
     if (eventNames().interfaceFor##interfaceName == desiredInterface) \
-        return toV8(static_cast<interfaceName*>(event), isolate);
+        return toV8(static_cast<interfaceName*>(event), creationContext, isolate);
 
-v8::Handle<v8::Value> toV8(Event* event, v8::Isolate *isolate)
+v8::Handle<v8::Value> toV8(Event* event, v8::Handle<v8::Context> creationContext, v8::Isolate *isolate)
 {
     if (!event)
         return v8NullWithCheck(isolate);
@@ -81,11 +81,11 @@ v8::Handle<v8::Value> toV8(Event* event, v8::Isolate *isolate)
 
     // We need to check Event first to avoid infinite recursion.
     if (eventNames().interfaceForEvent == desiredInterface)
-        return V8Event::wrap(event, isolate);
+        return V8Event::wrap(event, creationContext, isolate);
 
     DOM_EVENT_INTERFACES_FOR_EACH(TRY_TO_WRAP_WITH_INTERFACE)
 
-    return V8Event::wrap(event, isolate);
+    return V8Event::wrap(event, creationContext, isolate);
 }
 
 } // namespace WebCore

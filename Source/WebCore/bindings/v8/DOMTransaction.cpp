@@ -142,7 +142,7 @@ void DOMTransaction::callFunction(const char* propertyName)
     if (v8Context.IsEmpty())
         return;
 
-    v8::Handle<v8::Object> receiver = v8::Handle<v8::Object>::Cast(toV8(m_undoManager));
+    v8::Handle<v8::Object> receiver = v8::Handle<v8::Object>::Cast(toV8(m_undoManager, v8::Handle<v8::Context>()));
     if (receiver.IsEmpty())
         return;
     v8::Handle<v8::Value> parameters[0] = { };

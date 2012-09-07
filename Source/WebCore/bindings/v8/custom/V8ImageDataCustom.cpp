@@ -35,22 +35,19 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(ImageData* impl, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(ImageData* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
-    v8::Handle<v8::Object> wrapper = V8ImageData::wrap(impl, isolate);
+    v8::Handle<v8::Object> wrapper = V8ImageData::wrap(impl, creationContext, isolate);
     if (!wrapper.IsEmpty()) {
         // Create a V8 Uint8ClampedArray object.
-        v8::Handle<v8::Value> pixelArray = toV8(impl->data(), isolate);
+        v8::Handle<v8::Value> pixelArray = toV8(impl->data(), creationContext, isolate);
         // Set the "data" property of the ImageData object to
         // the created v8 object, eliminating the C++ callback
         // when accessing the "data" property.
-        if (!pixelArray.IsEmpty()) {
-            wrapper->Set(v8::String::NewSymbol("data"),
-                         pixelArray,
-                         v8::ReadOnly);
-        }
+        if (!pixelArray.IsEmpty())
+            wrapper->Set(v8::String::NewSymbol("data"), pixelArray, v8::ReadOnly);
     }
 
     return wrapper;

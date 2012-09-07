@@ -55,6 +55,7 @@ static v8::Handle<v8::Value> v8HTMLImageElementConstructorCallback(const v8::Arg
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
+    // FIXME: We shouldn't need to go through the Frame to get the Document.
     Frame* frame = currentFrame(BindingState::instance());
     if (!frame)
         return throwError(ReferenceError, "Image constructor associated frame is unavailable", args.GetIsolate());
@@ -64,11 +65,11 @@ static v8::Handle<v8::Value> v8HTMLImageElementConstructorCallback(const v8::Arg
         return throwError(ReferenceError, "Image constructor associated document is unavailable", args.GetIsolate());
 
     // Make sure the document is added to the DOM Node map. Otherwise, the HTMLImageElement instance
-    // may end up being the only node in the map and get garbage-ccollected prematurely.
+    // may end up being the only node in the map and get garbage-collected prematurely.
     // FIXME: The correct way to do this would be to make HTMLImageElement derive from
     // ActiveDOMObject and use its interface to keep its wrapper alive. Then we would
     // remove this code and the special case in isObservableThroughDOM.
-    toV8(document, args.GetIsolate());
+    toV8(document, args.Holder()->CreationContext(), args.GetIsolate());
 
     int width;
     int height;

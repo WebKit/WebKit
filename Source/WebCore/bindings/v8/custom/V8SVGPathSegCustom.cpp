@@ -57,52 +57,52 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(SVGPathSeg* impl, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(SVGPathSeg* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
     switch (impl->pathSegType()) {
     case SVGPathSeg::PATHSEG_CLOSEPATH:
-        return toV8(static_cast<SVGPathSegClosePath*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegClosePath*>(impl), creationContext, isolate);
     case SVGPathSeg::PATHSEG_MOVETO_ABS:
-        return toV8(static_cast<SVGPathSegMovetoAbs*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegMovetoAbs*>(impl), creationContext, isolate);
     case SVGPathSeg::PATHSEG_MOVETO_REL:
-        return toV8(static_cast<SVGPathSegMovetoRel*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegMovetoRel*>(impl), creationContext, isolate);
     case SVGPathSeg::PATHSEG_LINETO_ABS:
-        return toV8(static_cast<SVGPathSegLinetoAbs*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegLinetoAbs*>(impl), creationContext, isolate);
     case SVGPathSeg::PATHSEG_LINETO_REL:
-        return toV8(static_cast<SVGPathSegLinetoRel*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegLinetoRel*>(impl), creationContext, isolate);
     case SVGPathSeg::PATHSEG_CURVETO_CUBIC_ABS:
-        return toV8(static_cast<SVGPathSegCurvetoCubicAbs*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegCurvetoCubicAbs*>(impl), creationContext, isolate);
     case SVGPathSeg::PATHSEG_CURVETO_CUBIC_REL:
-        return toV8(static_cast<SVGPathSegCurvetoCubicRel*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegCurvetoCubicRel*>(impl), creationContext, isolate);
     case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_ABS:
-        return toV8(static_cast<SVGPathSegCurvetoQuadraticAbs*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegCurvetoQuadraticAbs*>(impl), creationContext, isolate);
     case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_REL:
-        return toV8(static_cast<SVGPathSegCurvetoQuadraticRel*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegCurvetoQuadraticRel*>(impl), creationContext, isolate);
     case SVGPathSeg::PATHSEG_ARC_ABS:
-        return toV8(static_cast<SVGPathSegArcAbs*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegArcAbs*>(impl), creationContext, isolate);
     case SVGPathSeg::PATHSEG_ARC_REL:
-        return toV8(static_cast<SVGPathSegArcRel*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegArcRel*>(impl), creationContext, isolate);
     case SVGPathSeg::PATHSEG_LINETO_HORIZONTAL_ABS:
-        return toV8(static_cast<SVGPathSegLinetoHorizontalAbs*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegLinetoHorizontalAbs*>(impl), creationContext, isolate);
     case SVGPathSeg::PATHSEG_LINETO_HORIZONTAL_REL:
-        return toV8(static_cast<SVGPathSegLinetoHorizontalRel*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegLinetoHorizontalRel*>(impl), creationContext, isolate);
     case SVGPathSeg::PATHSEG_LINETO_VERTICAL_ABS:
-        return toV8(static_cast<SVGPathSegLinetoVerticalAbs*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegLinetoVerticalAbs*>(impl), creationContext, isolate);
     case SVGPathSeg::PATHSEG_LINETO_VERTICAL_REL:
-        return toV8(static_cast<SVGPathSegLinetoVerticalRel*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegLinetoVerticalRel*>(impl), creationContext, isolate);
     case SVGPathSeg::PATHSEG_CURVETO_CUBIC_SMOOTH_ABS:
-        return toV8(static_cast<SVGPathSegCurvetoCubicSmoothAbs*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegCurvetoCubicSmoothAbs*>(impl), creationContext, isolate);
     case SVGPathSeg::PATHSEG_CURVETO_CUBIC_SMOOTH_REL:
-        return toV8(static_cast<SVGPathSegCurvetoCubicSmoothRel*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegCurvetoCubicSmoothRel*>(impl), creationContext, isolate);
     case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS:
-        return toV8(static_cast<SVGPathSegCurvetoQuadraticSmoothAbs*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegCurvetoQuadraticSmoothAbs*>(impl), creationContext, isolate);
     case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL:
-        return toV8(static_cast<SVGPathSegCurvetoQuadraticSmoothRel*>(impl), isolate);
+        return toV8(static_cast<SVGPathSegCurvetoQuadraticSmoothRel*>(impl), creationContext, isolate);
     }
     ASSERT_NOT_REACHED();
-    return V8SVGPathSeg::wrap(impl, isolate);
+    return V8SVGPathSeg::wrap(impl, creationContext, isolate);
 }
 
 } // namespace WebCore

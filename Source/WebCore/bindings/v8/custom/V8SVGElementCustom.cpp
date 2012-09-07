@@ -37,11 +37,11 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(SVGElement* impl, v8::Isolate* isolate, bool forceNewObject)
+v8::Handle<v8::Value> toV8(SVGElement* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate, bool forceNewObject)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
-    return createV8SVGWrapper(impl, isolate, forceNewObject);
+    return createV8SVGWrapper(impl, creationContext, isolate, forceNewObject);
 }
 
 } // namespace WebCore

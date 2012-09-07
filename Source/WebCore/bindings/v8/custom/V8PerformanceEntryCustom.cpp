@@ -43,17 +43,17 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(PerformanceEntry* impl, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(PerformanceEntry* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
     if (!impl)
         return v8::Null();
 
 #if ENABLE(RESOURCE_TIMING)
     if (impl->isResource())
-        return toV8(static_cast<PerformanceResourceTiming*>(impl), isolate);
+        return toV8(static_cast<PerformanceResourceTiming*>(impl), creationContext, isolate);
 #endif
 
-    return V8PerformanceEntry::wrap(impl);
+    return V8PerformanceEntry::wrap(impl, creationContext, isolate);
 }
 
 } // namespace WebCore

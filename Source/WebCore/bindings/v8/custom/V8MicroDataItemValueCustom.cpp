@@ -39,13 +39,13 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(MicroDataItemValue* itemValue, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(MicroDataItemValue* itemValue, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
     if (!itemValue)
         return v8::Null();
     if (itemValue->isNode())
-        return toV8(itemValue->getNode());
-    return v8String(itemValue->getString());
+        return toV8(itemValue->getNode(), creationContext, isolate);
+    return v8String(itemValue->getString(), isolate);
 }
 
 }

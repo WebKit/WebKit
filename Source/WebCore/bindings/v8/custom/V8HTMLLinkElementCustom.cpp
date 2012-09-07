@@ -41,7 +41,7 @@ v8::Handle<v8::Value> V8HTMLLinkElement::sizesAccessorGetter(v8::Local<v8::Strin
 {
     INC_STATS("DOM.HTMLLinkElement.sizes._get");
     HTMLLinkElement* imp = V8HTMLLinkElement::toNative(info.Holder());
-    return toV8(imp->sizes(), info.GetIsolate());
+    return toV8(imp->sizes(), info.Holder()->CreationContext(), info.GetIsolate());
 }
 
 void V8HTMLLinkElement::sizesAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

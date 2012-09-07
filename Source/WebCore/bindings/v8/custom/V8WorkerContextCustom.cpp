@@ -130,8 +130,10 @@ v8::Handle<v8::Value> V8WorkerContext::setIntervalCallback(const v8::Arguments& 
     return SetTimeoutOrInterval(args, false);
 }
 
-v8::Handle<v8::Value> toV8(WorkerContext* impl, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(WorkerContext* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
+    // Notice that we explicitly ignore creationContext because the WorkerContext is its own creationContext.
+
     if (!impl)
         return v8NullWithCheck(isolate);
 

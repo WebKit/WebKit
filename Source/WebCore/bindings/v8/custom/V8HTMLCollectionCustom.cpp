@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-static v8::Handle<v8::Value> getNamedItems(HTMLCollection* collection, AtomicString name, v8::Isolate* isolate)
+static v8::Handle<v8::Value> getNamedItems(HTMLCollection* collection, AtomicString name, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
     Vector<RefPtr<Node> > namedItems;
     collection->namedItems(name, namedItems);
@@ -51,12 +51,12 @@ static v8::Handle<v8::Value> getNamedItems(HTMLCollection* collection, AtomicStr
         return v8Undefined();
 
     if (namedItems.size() == 1)
-        return toV8(namedItems.at(0).release(), isolate);
+        return toV8(namedItems.at(0).release(), creationContext, isolate);
 
     if (collection->type() == FormControls)
-        return toV8(collection->base()->radioNodeList(name).get(), isolate);
+        return toV8(collection->base()->radioNodeList(name).get(), creationContext, isolate);
 
-    return toV8(V8NamedNodesCollection::create(namedItems), isolate);
+    return toV8(V8NamedNodesCollection::create(namedItems), creationContext, isolate);
 }
 
 v8::Handle<v8::Value> V8HTMLCollection::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -69,14 +69,14 @@ v8::Handle<v8::Value> V8HTMLCollection::namedPropertyGetter(v8::Local<v8::String
         return v8Undefined();
 
     HTMLCollection* imp = V8HTMLCollection::toNative(info.Holder());
-    return getNamedItems(imp, toWebCoreAtomicString(name), info.GetIsolate());
+    return getNamedItems(imp, toWebCoreAtomicString(name), info.Holder()->CreationContext(), info.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8HTMLCollection::namedItemCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLCollection.namedItem()");
     HTMLCollection* imp = V8HTMLCollection::toNative(args.Holder());
-    v8::Handle<v8::Value> result = getNamedItems(imp, toWebCoreString(args[0]), args.GetIsolate());
+    v8::Handle<v8::Value> result = getNamedItems(imp, toWebCoreString(args[0]), args.Holder()->CreationContext(), args.GetIsolate());
 
     if (result.IsEmpty())
         return v8::Undefined();
@@ -84,11 +84,11 @@ v8::Handle<v8::Value> V8HTMLCollection::namedItemCallback(const v8::Arguments& a
     return result;
 }
 
-v8::Handle<v8::Value> toV8(HTMLCollection* impl, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(HTMLCollection* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
     if (impl->type() == DocAll)
-        return toV8(static_cast<HTMLAllCollection*>(impl), isolate);
-    return V8HTMLCollection::wrap(impl, isolate);
+        return toV8(static_cast<HTMLAllCollection*>(impl), creationContext, isolate);
+    return V8HTMLCollection::wrap(impl, creationContext, isolate);
 }
 
 } // namespace WebCore

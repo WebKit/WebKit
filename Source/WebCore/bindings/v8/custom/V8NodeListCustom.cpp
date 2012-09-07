@@ -56,7 +56,7 @@ v8::Handle<v8::Value> V8NodeList::namedPropertyGetter(v8::Local<v8::String> name
     if (!result)
         return v8Undefined();
 
-    return toV8(result.release(), info.GetIsolate());
+    return toV8(result.release(), info.Holder()->CreationContext(), info.GetIsolate());
 }
 
 void V8NodeList::visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)

@@ -270,13 +270,13 @@ bool V8Location::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Va
     return BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError);
 }
 
-v8::Handle<v8::Value> toV8(Location* impl, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(Location* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
     v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
     if (wrapper.IsEmpty()) {
-        wrapper = V8Location::wrap(impl, isolate);
+        wrapper = V8Location::wrap(impl, creationContext, isolate);
         if (!wrapper.IsEmpty())
             V8DOMWrapper::setNamedHiddenWindowReference(impl->frame(), "location", wrapper);
     }

@@ -81,12 +81,12 @@ namespace WebCore {
 
         static WrapperTypeInfo* domWrapperType(v8::Handle<v8::Object>);
 
-        static v8::Handle<v8::Value> convertEventTargetToV8Object(PassRefPtr<EventTarget> eventTarget, v8::Isolate* isolate = 0)
+        static v8::Handle<v8::Value> convertEventTargetToV8Object(PassRefPtr<EventTarget> eventTarget, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* isolate = 0)
         {
-            return convertEventTargetToV8Object(eventTarget.get(), isolate);
+            return convertEventTargetToV8Object(eventTarget.get(), creationContext, isolate);
         }
 
-        static v8::Handle<v8::Value> convertEventTargetToV8Object(EventTarget*, v8::Isolate* = 0);
+        static v8::Handle<v8::Value> convertEventTargetToV8Object(EventTarget*, v8::Handle<v8::Context> creationContext = v8::Handle<v8::Context>(), v8::Isolate* = 0);
 
         static PassRefPtr<EventListener> getEventListener(v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup);
 

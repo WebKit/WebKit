@@ -638,11 +638,11 @@ public:
         ASSERT(!tryCatch.HasCaught());
         if (messagePorts) {
             for (size_t i = 0; i < messagePorts->size(); i++)
-                m_transferredMessagePorts.set(V8MessagePort::wrap(messagePorts->at(i).get(), m_writer.getIsolate()), i);
+                m_transferredMessagePorts.set(V8MessagePort::wrap(messagePorts->at(i).get(), v8::Handle<v8::Context>(), m_writer.getIsolate()), i);
         }
         if (arrayBuffers) {
             for (size_t i = 0; i < arrayBuffers->size(); i++)  {
-                v8::Handle<v8::Object> v8ArrayBuffer = V8ArrayBuffer::wrap(arrayBuffers->at(i).get(), m_writer.getIsolate());
+                v8::Handle<v8::Object> v8ArrayBuffer = V8ArrayBuffer::wrap(arrayBuffers->at(i).get(), v8::Handle<v8::Context>(), m_writer.getIsolate());
                 // Coalesce multiple occurences of the same buffer to the first index.
                 if (!m_transferredArrayBuffers.contains(v8ArrayBuffer))
                     m_transferredArrayBuffers.set(v8ArrayBuffer, i);
@@ -1057,7 +1057,7 @@ private:
             return 0;
         if (!arrayBufferView->buffer())
             return handleError(DataCloneError, next);
-        v8::Handle<v8::Value> underlyingBuffer = toV8(arrayBufferView->buffer(), m_writer.getIsolate());
+        v8::Handle<v8::Value> underlyingBuffer = toV8(arrayBufferView->buffer(), v8::Handle<v8::Context>(), m_writer.getIsolate());
         if (underlyingBuffer.IsEmpty())
             return handleError(DataCloneError, next);
         StateBase* stateOut = doSerialize(underlyingBuffer, 0);
@@ -1634,7 +1634,7 @@ private:
         ASSERT(pixelArray->length() >= pixelDataLength);
         memcpy(pixelArray->data(), m_buffer + m_position, pixelDataLength);
         m_position += pixelDataLength;
-        *value = toV8(imageData.release(), m_isolate);
+        *value = toV8(imageData.release(), v8::Handle<v8::Context>(), m_isolate);
         return true;
     }
 
@@ -1656,7 +1656,7 @@ private:
         RefPtr<ArrayBuffer> arrayBuffer = doReadArrayBuffer();
         if (!arrayBuffer)
             return false;
-        *value = toV8(arrayBuffer.release(), m_isolate);
+        *value = toV8(arrayBuffer.release(), v8::Handle<v8::Context>(), m_isolate);
         return true;
     }
 
@@ -1682,58 +1682,58 @@ private:
             return false;
         switch (subTag) {
         case ByteArrayTag:
-            *value = toV8(Int8Array::create(arrayBuffer.release(), byteOffset, byteLength), m_isolate);
+            *value = toV8(Int8Array::create(arrayBuffer.release(), byteOffset, byteLength), v8::Handle<v8::Context>(), m_isolate);
             break;
         case UnsignedByteArrayTag:
-            *value = toV8(Uint8Array::create(arrayBuffer.release(), byteOffset, byteLength), m_isolate);
+            *value = toV8(Uint8Array::create(arrayBuffer.release(), byteOffset, byteLength), v8::Handle<v8::Context>(),  m_isolate);
             break;
         case UnsignedByteClampedArrayTag:
-            *value = toV8(Uint8ClampedArray::create(arrayBuffer.release(), byteOffset, byteLength), m_isolate);
+            *value = toV8(Uint8ClampedArray::create(arrayBuffer.release(), byteOffset, byteLength), v8::Handle<v8::Context>(), m_isolate);
             break;
         case ShortArrayTag: {
             uint32_t shortLength = byteLength / sizeof(int16_t);
             if (shortLength * sizeof(int16_t) != byteLength)
                 return false;
-            *value = toV8(Int16Array::create(arrayBuffer.release(), byteOffset, shortLength), m_isolate);
+            *value = toV8(Int16Array::create(arrayBuffer.release(), byteOffset, shortLength), v8::Handle<v8::Context>(), m_isolate);
             break;
         }
         case UnsignedShortArrayTag: {
             uint32_t shortLength = byteLength / sizeof(uint16_t);
             if (shortLength * sizeof(uint16_t) != byteLength)
                 return false;
-            *value = toV8(Uint16Array::create(arrayBuffer.release(), byteOffset, shortLength), m_isolate);
+            *value = toV8(Uint16Array::create(arrayBuffer.release(), byteOffset, shortLength), v8::Handle<v8::Context>(), m_isolate);
             break;
         }
         case IntArrayTag: {
             uint32_t intLength = byteLength / sizeof(int32_t);
             if (intLength * sizeof(int32_t) != byteLength)
                 return false;
-            *value = toV8(Int32Array::create(arrayBuffer.release(), byteOffset, intLength), m_isolate);
+            *value = toV8(Int32Array::create(arrayBuffer.release(), byteOffset, intLength), v8::Handle<v8::Context>(), m_isolate);
             break;
         }
         case UnsignedIntArrayTag: {
             uint32_t intLength = byteLength / sizeof(uint32_t);
             if (intLength * sizeof(uint32_t) != byteLength)
                 return false;
-            *value = toV8(Uint32Array::create(arrayBuffer.release(), byteOffset, intLength), m_isolate);
+            *value = toV8(Uint32Array::create(arrayBuffer.release(), byteOffset, intLength), v8::Handle<v8::Context>(), m_isolate);
             break;
         }
         case FloatArrayTag: {
             uint32_t floatLength = byteLength / sizeof(float);
             if (floatLength * sizeof(float) != byteLength)
                 return false;
-            *value = toV8(Float32Array::create(arrayBuffer.release(), byteOffset, floatLength), m_isolate);
+            *value = toV8(Float32Array::create(arrayBuffer.release(), byteOffset, floatLength), v8::Handle<v8::Context>(), m_isolate);
             break;
         }
         case DoubleArrayTag: {
             uint32_t floatLength = byteLength / sizeof(double);
             if (floatLength * sizeof(double) != byteLength)
                 return false;
-            *value = toV8(Float64Array::create(arrayBuffer.release(), byteOffset, floatLength), m_isolate);
+            *value = toV8(Float64Array::create(arrayBuffer.release(), byteOffset, floatLength), v8::Handle<v8::Context>(), m_isolate);
             break;
         }
         case DataViewTag:
-            *value = toV8(DataView::create(arrayBuffer.release(), byteOffset, byteLength), m_isolate);
+            *value = toV8(DataView::create(arrayBuffer.release(), byteOffset, byteLength), v8::Handle<v8::Context>(), m_isolate);
             break;
         default:
             return false;
@@ -1768,7 +1768,7 @@ private:
         if (!doReadUint64(&size))
             return false;
         PassRefPtr<Blob> blob = Blob::create(KURL(ParsedURLString, url), type, size);
-        *value = toV8(blob, m_isolate);
+        *value = toV8(blob, v8::Handle<v8::Context>(), m_isolate);
         return true;
     }
 
@@ -1785,7 +1785,7 @@ private:
         if (!readWebCoreString(&url))
             return false;
         RefPtr<DOMFileSystem> fs = DOMFileSystem::create(getScriptExecutionContext(), name, static_cast<WebCore::FileSystemType>(type), KURL(ParsedURLString, url), AsyncFileSystem::create());
-        *value = toV8(fs.release(), m_isolate);
+        *value = toV8(fs.release(), v8::Handle<v8::Context>(), m_isolate);
         return true;
     }
 #endif
@@ -1802,7 +1802,7 @@ private:
         if (!readWebCoreString(&type))
             return false;
         PassRefPtr<File> file = File::create(path, KURL(ParsedURLString, url), type);
-        *value = toV8(file, m_isolate);
+        *value = toV8(file, v8::Handle<v8::Context>(), m_isolate);
         return true;
     }
 
@@ -1824,7 +1824,7 @@ private:
                 return false;
             fileList->append(File::create(path, KURL(ParsedURLString, urlString), type));
         }
-        *value = toV8(fileList, m_isolate);
+        *value = toV8(fileList, v8::Handle<v8::Context>(), m_isolate);
         return true;
     }
 
@@ -2022,7 +2022,7 @@ public:
             return false;
         if (index >= m_transferredMessagePorts->size())
             return false;
-        *object = V8MessagePort::wrap(m_transferredMessagePorts->at(index).get(), m_reader.getIsolate());
+        *object = V8MessagePort::wrap(m_transferredMessagePorts->at(index).get(), v8::Handle<v8::Context>(), m_reader.getIsolate());
         return true;
     }
 
@@ -2034,7 +2034,7 @@ public:
             return false;
         v8::Handle<v8::Object> result = m_arrayBuffers.at(index);
         if (result.IsEmpty()) {
-            result = V8ArrayBuffer::wrap(ArrayBuffer::create(m_arrayBufferContents->at(index)).get(), m_reader.getIsolate());
+            result = V8ArrayBuffer::wrap(ArrayBuffer::create(m_arrayBufferContents->at(index)).get(), v8::Handle<v8::Context>(), m_reader.getIsolate());
             m_arrayBuffers[index] = result;
         }
         *object = result;

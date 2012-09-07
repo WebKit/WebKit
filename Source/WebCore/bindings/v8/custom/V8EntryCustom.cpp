@@ -43,16 +43,16 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(Entry* impl, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(Entry* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
 
     if (impl->isFile())
-        return toV8(static_cast<FileEntry*>(impl), isolate);
+        return toV8(static_cast<FileEntry*>(impl), creationContext, isolate);
 
     ASSERT(impl->isDirectory());
-    return toV8(static_cast<DirectoryEntry*>(impl), isolate);
+    return toV8(static_cast<DirectoryEntry*>(impl), creationContext, isolate);
 }
 
 } // namespace WebCore

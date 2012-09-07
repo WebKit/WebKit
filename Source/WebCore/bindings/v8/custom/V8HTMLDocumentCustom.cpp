@@ -80,7 +80,7 @@ v8::Local<v8::Object> V8HTMLDocument::wrapInShadowObject(v8::Local<v8::Object> w
     return shadow;
 }
 
-v8::Handle<v8::Value> V8HTMLDocument::getNamedProperty(HTMLDocument* htmlDocument, const AtomicString& key, v8::Isolate* isolate)
+v8::Handle<v8::Value> V8HTMLDocument::getNamedProperty(HTMLDocument* htmlDocument, const AtomicString& key, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
     if (!htmlDocument->hasNamedItem(key.impl()) && !htmlDocument->hasExtraNamedItem(key.impl()))
         return v8Undefined();
@@ -93,12 +93,12 @@ v8::Handle<v8::Value> V8HTMLDocument::getNamedProperty(HTMLDocument* htmlDocumen
         Node* node = items->item(0);
         Frame* frame = 0;
         if (node->hasTagName(HTMLNames::iframeTag) && (frame = static_cast<HTMLIFrameElement*>(node)->contentFrame()))
-            return toV8(frame->document()->domWindow(), isolate);
+            return toV8(frame->document()->domWindow(), creationContext, isolate);
 
-        return toV8(node, isolate);
+        return toV8(node, creationContext, isolate);
     }
 
-    return toV8(items.release(), isolate);
+    return toV8(items.release(), creationContext, isolate);
 }
 
 // HTMLDocument ----------------------------------------------------------------
@@ -171,7 +171,7 @@ v8::Handle<v8::Value> V8HTMLDocument::allAccessorGetter(v8::Local<v8::String> na
     INC_STATS("DOM.HTMLDocument.all._get");
     v8::Handle<v8::Object> holder = info.Holder();
     HTMLDocument* htmlDocument = V8HTMLDocument::toNative(holder);
-    return toV8(htmlDocument->all(), info.GetIsolate());
+    return toV8(htmlDocument->all(), info.Holder()->CreationContext(), info.GetIsolate());
 }
 
 void V8HTMLDocument::allAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -180,11 +180,11 @@ void V8HTMLDocument::allAccessorSetter(v8::Local<v8::String> name, v8::Local<v8:
     info.This()->ForceSet(name, value);
 }
 
-v8::Handle<v8::Value> toV8(HTMLDocument* impl, v8::Isolate* isolate, bool forceNewObject)
+v8::Handle<v8::Value> toV8(HTMLDocument* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate, bool forceNewObject)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
-    v8::Handle<v8::Object> wrapper = V8HTMLDocument::wrap(impl, isolate, forceNewObject);
+    v8::Handle<v8::Object> wrapper = V8HTMLDocument::wrap(impl, creationContext, isolate, forceNewObject);
     if (wrapper.IsEmpty())
         return wrapper;
     if (!V8IsolatedContext::getEntered()) {

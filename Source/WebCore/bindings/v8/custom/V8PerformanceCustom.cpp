@@ -40,11 +40,12 @@
 
 namespace WebCore {
 
+// FIXME: Why does this need to be custom?
 v8::Handle<v8::Value> V8Performance::memoryAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Performance.memoryAccessorGetter");
     Performance* imp = V8Performance::toNative(info.Holder());
-    return toV8(imp->memory(), info.GetIsolate());
+    return toV8(imp->memory(), info.Holder()->CreationContext(), info.GetIsolate());
 }
 
 } // namespace WebCore

@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(CSSRule* impl, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(CSSRule* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
@@ -52,27 +52,27 @@ v8::Handle<v8::Value> toV8(CSSRule* impl, v8::Isolate* isolate)
         // CSSUnknownRule.idl is explicitly excluded as it doesn't add anything
         // over CSSRule.idl (see WebCore.gyp/WebCore.gyp: 'bindings_idl_files').
         // -> Use the base class wrapper here.
-        return V8CSSRule::wrap(impl, isolate);
+        return V8CSSRule::wrap(impl, creationContext, isolate);
     case CSSRule::STYLE_RULE:
-        return toV8(static_cast<CSSStyleRule*>(impl), isolate);
+        return toV8(static_cast<CSSStyleRule*>(impl), creationContext, isolate);
     case CSSRule::CHARSET_RULE:
-        return toV8(static_cast<CSSCharsetRule*>(impl), isolate);
+        return toV8(static_cast<CSSCharsetRule*>(impl), creationContext, isolate);
     case CSSRule::IMPORT_RULE:
-        return toV8(static_cast<CSSImportRule*>(impl), isolate);
+        return toV8(static_cast<CSSImportRule*>(impl), creationContext, isolate);
     case CSSRule::MEDIA_RULE:
-        return toV8(static_cast<CSSMediaRule*>(impl), isolate);
+        return toV8(static_cast<CSSMediaRule*>(impl), creationContext, isolate);
     case CSSRule::FONT_FACE_RULE:
-        return toV8(static_cast<CSSFontFaceRule*>(impl), isolate);
+        return toV8(static_cast<CSSFontFaceRule*>(impl), creationContext, isolate);
     case CSSRule::PAGE_RULE:
-        return toV8(static_cast<CSSPageRule*>(impl), isolate);
+        return toV8(static_cast<CSSPageRule*>(impl), creationContext, isolate);
     case CSSRule::WEBKIT_KEYFRAME_RULE:
-        return toV8(static_cast<WebKitCSSKeyframeRule*>(impl), isolate);
+        return toV8(static_cast<WebKitCSSKeyframeRule*>(impl), creationContext, isolate);
     case CSSRule::WEBKIT_KEYFRAMES_RULE:
-        return toV8(static_cast<WebKitCSSKeyframesRule*>(impl), isolate);
+        return toV8(static_cast<WebKitCSSKeyframesRule*>(impl), creationContext, isolate);
     case CSSRule::WEBKIT_REGION_RULE:
-        return toV8(static_cast<WebKitCSSRegionRule*>(impl), isolate);
+        return toV8(static_cast<WebKitCSSRegionRule*>(impl), creationContext, isolate);
     }
-    return V8CSSRule::wrap(impl, isolate);
+    return V8CSSRule::wrap(impl, creationContext, isolate);
 }
 
 } // namespace WebCore

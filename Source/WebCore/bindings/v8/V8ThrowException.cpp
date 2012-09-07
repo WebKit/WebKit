@@ -45,7 +45,7 @@ static void domExceptionStackSetter(v8::Local<v8::String> name, v8::Local<v8::Va
 
 #define TRY_TO_CREATE_EXCEPTION(interfaceName) \
     case interfaceName##Type: \
-        exception = toV8(interfaceName::create(description), isolate); \
+        exception = toV8(interfaceName::create(description), v8::Context::GetCurrent(), isolate); \
         break;
 
 v8::Handle<v8::Value> V8ThrowException::setDOMException(int ec, v8::Isolate* isolate)

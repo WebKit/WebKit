@@ -40,18 +40,18 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(HTMLElement* impl, v8::Isolate* isolate, bool forceNewObject)
+v8::Handle<v8::Value> toV8(HTMLElement* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate, bool forceNewObject)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
-    return createV8HTMLWrapper(impl, isolate, forceNewObject);
+    return createV8HTMLWrapper(impl, creationContext, isolate, forceNewObject);
 }
 
 #if ENABLE(MICRODATA)
 v8::Handle<v8::Value> V8HTMLElement::itemValueAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     HTMLElement* impl = V8HTMLElement::toNative(info.Holder());
-    return toV8(impl->itemValue().get(), info.GetIsolate());
+    return toV8(impl->itemValue().get(), info.Holder()->CreationContext(), info.GetIsolate());
 }
 
 void V8HTMLElement::itemValueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

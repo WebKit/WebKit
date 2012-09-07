@@ -92,7 +92,7 @@ v8::Handle<v8::Value> V8Document::evaluateCallback(const v8::Arguments& args)
     if (ec)
         return setDOMException(ec, args.GetIsolate());
 
-    return toV8(result.release(), args.GetIsolate());
+    return toV8(result.release(), args.Holder()->CreationContext(), args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8Document::getCSSCanvasContextCallback(const v8::Arguments& args)
@@ -108,26 +108,26 @@ v8::Handle<v8::Value> V8Document::getCSSCanvasContextCallback(const v8::Argument
     if (!result)
         return v8::Undefined();
     if (result->is2d())
-        return toV8(static_cast<CanvasRenderingContext2D*>(result), args.GetIsolate());
+        return toV8(static_cast<CanvasRenderingContext2D*>(result), args.Holder()->CreationContext(), args.GetIsolate());
 #if ENABLE(WEBGL)
     else if (result->is3d())
-        return toV8(static_cast<WebGLRenderingContext*>(result), args.GetIsolate());
+        return toV8(static_cast<WebGLRenderingContext*>(result), args.Holder()->CreationContext(), args.GetIsolate());
 #endif // ENABLE(WEBGL)
     ASSERT_NOT_REACHED();
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> toV8(Document* impl, v8::Isolate* isolate, bool forceNewObject)
+v8::Handle<v8::Value> toV8(Document* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate, bool forceNewObject)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
     if (impl->isHTMLDocument())
-        return toV8(static_cast<HTMLDocument*>(impl), isolate, forceNewObject);
+        return toV8(static_cast<HTMLDocument*>(impl), creationContext, isolate, forceNewObject);
 #if ENABLE(SVG)
     if (impl->isSVGDocument())
-        return toV8(static_cast<SVGDocument*>(impl), isolate, forceNewObject);
+        return toV8(static_cast<SVGDocument*>(impl), creationContext, isolate, forceNewObject);
 #endif
-    v8::Handle<v8::Object> wrapper = V8Document::wrap(impl, isolate, forceNewObject);
+    v8::Handle<v8::Object> wrapper = V8Document::wrap(impl, creationContext, isolate, forceNewObject);
     if (wrapper.IsEmpty())
         return wrapper;
     if (!V8IsolatedContext::getEntered()) {
@@ -147,7 +147,7 @@ v8::Handle<v8::Value> V8Document::createTouchListCallback(const v8::Arguments& a
         touchList->append(touch);
     }
 
-    return toV8(touchList.release(), args.GetIsolate());
+    return toV8(touchList.release(), args.Holder()->CreationContext(), args.GetIsolate());
 }
 #endif
 

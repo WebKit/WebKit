@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(IDBAny* impl, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(IDBAny* impl, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
@@ -56,23 +56,23 @@ v8::Handle<v8::Value> toV8(IDBAny* impl, v8::Isolate* isolate)
     case IDBAny::NullType:
         return v8NullWithCheck(isolate);
     case IDBAny::DOMStringListType:
-        return toV8(impl->domStringList(), isolate);
+        return toV8(impl->domStringList(), creationContext, isolate);
     case IDBAny::IDBCursorType:
-        return toV8(impl->idbCursor(), isolate);
+        return toV8(impl->idbCursor(), creationContext, isolate);
     case IDBAny::IDBCursorWithValueType:
-        return toV8(impl->idbCursorWithValue(), isolate);
+        return toV8(impl->idbCursorWithValue(), creationContext, isolate);
     case IDBAny::IDBDatabaseType:
-        return toV8(impl->idbDatabase(), isolate);
+        return toV8(impl->idbDatabase(), creationContext, isolate);
     case IDBAny::IDBFactoryType:
-        return toV8(impl->idbFactory(), isolate);
+        return toV8(impl->idbFactory(), creationContext, isolate);
     case IDBAny::IDBIndexType:
-        return toV8(impl->idbIndex(), isolate);
+        return toV8(impl->idbIndex(), creationContext, isolate);
     case IDBAny::IDBKeyType:
-        return toV8(impl->idbKey(), isolate);
+        return toV8(impl->idbKey(), creationContext, isolate);
     case IDBAny::IDBObjectStoreType:
-        return toV8(impl->idbObjectStore(), isolate);
+        return toV8(impl->idbObjectStore(), creationContext, isolate);
     case IDBAny::IDBTransactionType:
-        return toV8(impl->idbTransaction(), isolate);
+        return toV8(impl->idbTransaction(), creationContext, isolate);
     case IDBAny::SerializedScriptValueType:
         return impl->serializedScriptValue()->deserialize(0, isolate);
     case IDBAny::StringType:

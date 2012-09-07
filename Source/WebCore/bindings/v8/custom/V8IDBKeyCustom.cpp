@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(IDBKey* key, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(IDBKey* key, v8::Handle<v8::Context> creationContext, v8::Isolate* isolate)
 {
     if (!key)
         return v8NullWithCheck(isolate);
@@ -58,7 +58,7 @@ v8::Handle<v8::Value> toV8(IDBKey* key, v8::Isolate* isolate)
         {
             v8::Local<v8::Array> array = v8::Array::New(key->array().size());
             for (size_t i = 0; i < key->array().size(); ++i)
-                array->Set(i, toV8(key->array()[i].get(), isolate));
+                array->Set(i, toV8(key->array()[i].get(), creationContext, isolate));
             return array;
         }
     }
