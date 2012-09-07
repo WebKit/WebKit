@@ -1,3 +1,16 @@
+2012-09-07  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Make RenderPass ids hold both generating layer id and an index
+        https://bugs.webkit.org/show_bug.cgi?id=95500
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        * tests/CCRenderSurfaceTest.cpp:
+        * tests/CCRendererGLTest.cpp:
+        (FakeCCRendererClient::FakeCCRendererClient):
+
 2012-09-07  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] IndexedDB: public WebKit API changes for consolidating two-phase connect

@@ -2369,8 +2369,8 @@ public:
     virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* hostImpl) OVERRIDE
     {
         CCRenderer* renderer = hostImpl->renderer();
-        unsigned surface1RenderPassId = hostImpl->rootLayer()->children()[0]->id();
-        unsigned surface2RenderPassId = hostImpl->rootLayer()->children()[0]->children()[0]->id();
+        CCRenderPass::Id surface1RenderPassId = hostImpl->rootLayer()->children()[0]->renderSurface()->renderPassId();
+        CCRenderPass::Id surface2RenderPassId = hostImpl->rootLayer()->children()[0]->children()[0]->renderSurface()->renderPassId();
 
         switch (hostImpl->sourceFrameNumber()) {
         case 0:
