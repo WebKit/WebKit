@@ -167,7 +167,7 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
                     return 0;
 
                 fontData = adoptPtr(new SimpleFontData(m_font->platformDataFromCustomData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic, fontDescription.orientation(),
-                                                                                          fontDescription.textOrientation(), fontDescription.widthVariant(), fontDescription.renderingMode()), true, false));
+                                                                                   fontDescription.textOrientation(), fontDescription.widthVariant(), fontDescription.renderingMode()), true, false));
             }
         } else {
 #if ENABLE(SVG_FONTS)
@@ -187,7 +187,12 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
         fontData = adoptPtr(new SimpleFontData(temporaryFont->platformData(), true, true));
     }
 
-    return fontData.leakPtr();
+    if (Document* document = fontSelector->document()) {
+        cachedData = fontData.get();
+        document->registerCustomFont(fontData.release());
+    }
+
+    return cachedData;
 }
 
 #if ENABLE(SVG_FONTS)

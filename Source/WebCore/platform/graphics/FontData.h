@@ -29,17 +29,13 @@
 #include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
 class SimpleFontData;
 
-// FIXME: The RefCounted functionality is only used by FontFallbackList for custom FontData.
-// The FontCache explicitly deletes FontData for non-custom fonts. All users of FontData should
-// be refactored to use RefPtr. https://bugs.webkit.org/show_bug.cgi?id=95866
-class FontData : public RefCounted<FontData> {
+class FontData {
     WTF_MAKE_NONCOPYABLE(FontData); WTF_MAKE_FAST_ALLOCATED;
 public:
     FontData()

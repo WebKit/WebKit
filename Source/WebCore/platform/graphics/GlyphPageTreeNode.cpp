@@ -374,6 +374,8 @@ void GlyphPageTreeNode::pruneCustomFontData(const FontData* fontData)
 void GlyphPageTreeNode::pruneFontData(const SimpleFontData* fontData, unsigned level)
 {
     ASSERT(fontData);
+    if (!fontData)
+        return;
 
     // Prune fall back child (if any) of this font.
     if (m_systemFallbackChild && m_systemFallbackChild->m_page)
