@@ -32,6 +32,7 @@
 #if ENABLE(INSPECTOR) && ENABLE(SQL_DATABASE)
 
 #include "InspectorBaseAgent.h"
+#include "InspectorFrontend.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
@@ -49,8 +50,6 @@ typedef String ErrorString;
 
 class InspectorDatabaseAgent : public InspectorBaseAgent<InspectorDatabaseAgent>, public InspectorBackendDispatcher::DatabaseCommandHandler {
 public:
-    class FrontendProvider;
-
     static PassOwnPtr<InspectorDatabaseAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state)
     {
         return adoptPtr(new InspectorDatabaseAgent(instrumentingAgents, state));
@@ -67,7 +66,7 @@ public:
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
     virtual void getDatabaseTableNames(ErrorString*, const String& databaseId, RefPtr<TypeBuilder::Array<String> >& names);
-    virtual void executeSQL(ErrorString*, const String& databaseId, const String& query, bool* success, int* transactionId);
+    virtual void executeSQL(ErrorString*, const String& databaseId, const String& query, PassRefPtr<ExecuteSQLCallback>);
 
     // Called from the injected script.
     String databaseId(Database*);
@@ -79,9 +78,9 @@ private:
     Database* databaseForId(const String& databaseId);
     InspectorDatabaseResource* findByFileName(const String& fileName);
 
+    InspectorFrontend::Database* m_frontend;
     typedef HashMap<String, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
     DatabaseResourcesMap m_resources;
-    RefPtr<FrontendProvider> m_frontendProvider;
     bool m_enabled;
 };
 

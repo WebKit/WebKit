@@ -150,7 +150,6 @@ localizedStrings["DOMContent event fired"] = "DOMContent event fired";
 localizedStrings["DOMContent event"] = "DOMContent event";
 localizedStrings["DOM Node Count"] = "DOM Node Count";
 localizedStrings["Database no longer has expected version."] = "Database no longer has expected version.";
-localizedStrings["Database not found."] = "Database not found.";
 localizedStrings["Deactivate all breakpoints."] = "Deactivate all breakpoints.";
 localizedStrings["Deactivate all breakpoints"] = "Deactivate all breakpoints";
 localizedStrings["Debug"] = "Debug";

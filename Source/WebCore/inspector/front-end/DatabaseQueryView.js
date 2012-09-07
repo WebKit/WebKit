@@ -148,18 +148,9 @@ WebInspector.DatabaseQueryView.prototype = {
             this.dispatchEventToListeners(WebInspector.DatabaseQueryView.Events.SchemaUpdated, this.database);
     },
 
-    _queryError: function(query, error)
+    _queryError: function(query, errorMessage)
     {
-        if (typeof error === "string")
-            var message = error;
-        else if (error.message)
-            var message = error.message;
-        else if (error.code == 2)
-            var message = WebInspector.UIString("Database no longer has expected version.");
-        else
-            var message = WebInspector.UIString("An unexpected error %s occurred.", error.code);
-
-        this._appendErrorQueryResult(query, message);
+        this._appendErrorQueryResult(query, errorMessage);
     },
 
     /**

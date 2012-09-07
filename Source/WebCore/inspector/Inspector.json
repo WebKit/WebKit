@@ -1074,7 +1074,11 @@
             {
                 "id": "Error",
                 "type": "object",
-                "description": "Database error."
+                "description": "Database error.",
+                "properties": [
+                    { "name": "message", "type": "string", "description": "Error message." },
+                    { "name": "code", "type": "integer", "description": "Error code." }
+                ]
             }
         ],
         "commands": [
@@ -1097,13 +1101,15 @@
             },
             {
                 "name": "executeSQL",
+                "async": true,
                 "parameters": [
                     { "name": "databaseId", "$ref": "DatabaseId" },
                     { "name": "query", "type": "string" }
                 ],
                 "returns": [
-                    { "name": "success", "type": "boolean" },
-                    { "name": "transactionId", "type": "integer" }
+                    { "name": "columnNames", "type": "array", "optional": true, "items": { "type": "string" } },
+                    { "name": "values", "type": "array", "optional": true, "items": { "type": "any" }},
+                    { "name": "sqlError", "$ref": "Error", "optional": true }
                 ]
             }
         ],
@@ -1112,21 +1118,6 @@
                 "name": "addDatabase",
                 "parameters": [
                     { "name": "database", "$ref": "Database" }
-                ]
-            },
-            {
-                "name": "sqlTransactionSucceeded",
-                "parameters": [
-                    { "name": "transactionId", "type": "integer" },
-                    { "name": "columnNames", "type": "array", "items": { "type": "string" } },
-                    { "name": "values", "type": "array", "items": { "type": "any" }}
-                ]
-            },
-            {
-                "name": "sqlTransactionFailed",
-                "parameters": [
-                    { "name": "transactionId", "type": "integer" },
-                    { "name": "sqlError", "$ref": "Error" }
                 ]
             }
         ]
