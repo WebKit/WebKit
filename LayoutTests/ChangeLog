@@ -1,3 +1,19 @@
+2012-09-07  Kangil Han  <kangil.han@samsung.com>
+
+        [WK2][WTR] Unskip detached-stylesheet-without-wrapper.html test case.
+        https://bugs.webkit.org/show_bug.cgi?id=96069
+
+        Unreviewed EFL gardening.
+
+        fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html test case has been passed on EFL layout test.
+        WebKit EFL doesn't have to skip this.
+
+        * platform/gtk-wk2/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/wk2/Skipped:
+
 2012-09-06  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [REGRESSION] Content is not available for dynamically loaded script sometimes.

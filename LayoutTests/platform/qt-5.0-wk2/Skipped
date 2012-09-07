@@ -102,6 +102,10 @@ fast/dom/DeviceOrientation/no-synchronous-events.html
 fast/dom/DeviceOrientation/null-values.html
 fast/dom/DeviceOrientation/updates.html
 
+# Flakey on both Snow Leopard and Windows 7
+# https://bugs.webkit.org/show_bug.cgi?id=58337
+fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html
+
 ########################################
 
 # NOT YET TRACKED BY BUG REPORTS
