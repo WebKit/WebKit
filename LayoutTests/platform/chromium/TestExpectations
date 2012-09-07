@@ -3598,3 +3598,5 @@ BUGCR146401 ANDROID : fast/css/sticky/sticky-writing-mode-vertical-lr.html = IMA
 BUGWK95813 : fast/innerHTML/innerHTML-iframe.html = TEXT PASS
 
 BUGWK96041 LINUX : platform/chromium-linux/compositing/gestures = PASS IMAGE
+BUGWK96041 LINUX : http/tests/cache/stopped-revalidation.html = MISSING PASS
+BUGWK96041 LINUX : http/tests/cache/subresource-expiration-1.html = MISSING PASS
