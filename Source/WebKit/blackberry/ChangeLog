@@ -1,3 +1,15 @@
+2012-09-07  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Remove feature about:cache/disable and about:cache/enable
+        https://bugs.webkit.org/show_bug.cgi?id=95820
+
+        Reviewed by Yong Li.
+
+        Fix warning that was caused by r127680.
+
+        * WebKitSupport/AboutData.cpp:
+        (BlackBerry::WebKit::cachePage):
+
 2012-09-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Simplify hitTestResultAtPoint and nodesFromRect APIs

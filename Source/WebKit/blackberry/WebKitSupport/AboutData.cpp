@@ -457,9 +457,6 @@ static String cachePage(String cacheCommand)
 
     result.append(String("<html><head><title>BlackBerry Browser Disk Cache</title></head><body>"));
 
-    BlackBerry::Platform::Settings* settings = BlackBerry::Platform::Settings::instance();
-    ASSERT(settings);
-
     if (cacheCommand.isEmpty())
         result.append(String(BlackBerry::Platform::generateHtmlFragmentForCacheKeys().data()));
     else if (cacheCommand.startsWith("?query=", false)) {
