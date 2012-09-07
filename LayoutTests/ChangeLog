@@ -1,3 +1,20 @@
+2012-09-06  Anna Cavender  <annacc@chromium.org>
+
+        Rebaselines due to r127831.
+
+        Unreviewed gardening.
+
+        * platform/chromium-linux/media/track/track-cue-rendering-horizontal-expected.png:
+        * platform/chromium-linux/media/track/track-cue-rendering-horizontal-expected.txt: Added.
+        * platform/chromium-linux/media/track/track-cue-rendering-vertical-expected.png:
+        * platform/chromium-linux/media/track/track-cue-rendering-vertical-expected.txt:
+        * platform/chromium-mac-snowleopard/media/track/track-cue-rendering-horizontal-expected.png:
+        * platform/chromium-mac-snowleopard/media/track/track-cue-rendering-vertical-expected.png:
+        * platform/chromium-mac/media/track/track-cue-rendering-horizontal-expected.png:
+        * platform/chromium-mac/media/track/track-cue-rendering-horizontal-expected.txt:
+        * platform/chromium-mac/media/track/track-cue-rendering-vertical-expected.png:
+        * platform/chromium-mac/media/track/track-cue-rendering-vertical-expected.txt:
+
 2012-09-06  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
