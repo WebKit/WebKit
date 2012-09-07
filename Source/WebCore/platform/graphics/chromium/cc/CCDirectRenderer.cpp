@@ -112,12 +112,12 @@ IntRect CCDirectRenderer::moveScissorToWindowSpace(const DrawingFrame& frame, Fl
 
 void CCDirectRenderer::decideRenderPassAllocationsForFrame(const CCRenderPassList& renderPassesInDrawOrder)
 {
-    HashMap<int, const CCRenderPass*> renderPassesInFrame;
+    HashMap<CCRenderPass::Id, const CCRenderPass*> renderPassesInFrame;
     for (size_t i = 0; i < renderPassesInDrawOrder.size(); ++i)
         renderPassesInFrame.set(renderPassesInDrawOrder[i]->id(), renderPassesInDrawOrder[i]);
 
-    Vector<int> passesToDelete;
-    HashMap<int, OwnPtr<CachedTexture> >::const_iterator passIterator;
+    Vector<CCRenderPass::Id> passesToDelete;
+    HashMap<CCRenderPass::Id, OwnPtr<CachedTexture> >::const_iterator passIterator;
     for (passIterator = m_renderPassTextures.begin(); passIterator != m_renderPassTextures.end(); ++passIterator) {
         const CCRenderPass* renderPassInFrame = renderPassesInFrame.get(passIterator->first);
         if (!renderPassInFrame) {
@@ -212,7 +212,7 @@ bool CCDirectRenderer::useRenderPass(DrawingFrame& frame, const CCRenderPass* re
     return bindFramebufferToTexture(frame, texture, renderPass->outputRect());
 }
 
-bool CCDirectRenderer::haveCachedResourcesForRenderPassId(int id) const
+bool CCDirectRenderer::haveCachedResourcesForRenderPassId(CCRenderPass::Id id) const
 {
     CachedTexture* texture = m_renderPassTextures.get(id);
     return texture && texture->id() && texture->isComplete();

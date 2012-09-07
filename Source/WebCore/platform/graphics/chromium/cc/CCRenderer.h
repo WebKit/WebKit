@@ -77,7 +77,7 @@ public:
     virtual void viewportChanged() { }
 
     virtual void decideRenderPassAllocationsForFrame(const CCRenderPassList&) { }
-    virtual bool haveCachedResourcesForRenderPassId(int) const { return false; }
+    virtual bool haveCachedResourcesForRenderPassId(CCRenderPass::Id) const { return false; }
 
     virtual void drawFrame(const CCRenderPassList&, const CCRenderPassIdHashMap&) = 0;
 

@@ -3475,13 +3475,14 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithScissor)
     grandChild->setDrawsContent(true);
 
     CCTiledLayerImpl* childPtr = child.get();
+    CCRenderPass::Id childPassId(childPtr->id(), 0);
 
     child->addChild(grandChild.release());
     root->addChild(child.release());
     myHostImpl->setRootLayer(root.release());
     myHostImpl->setViewportSize(rootRect.size(), rootRect.size());
 
-    EXPECT_FALSE(myHostImpl->renderer()->haveCachedResourcesForRenderPassId(childPtr->id()));
+    EXPECT_FALSE(myHostImpl->renderer()->haveCachedResourcesForRenderPassId(childPassId));
 
     {
         CCLayerTreeHostImpl::FrameData frame;
@@ -3491,7 +3492,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithScissor)
     }
 
     // We should have cached textures for surface 2.
-    EXPECT_TRUE(myHostImpl->renderer()->haveCachedResourcesForRenderPassId(childPtr->id()));
+    EXPECT_TRUE(myHostImpl->renderer()->haveCachedResourcesForRenderPassId(childPassId));
 
     {
         CCLayerTreeHostImpl::FrameData frame;
@@ -3501,7 +3502,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithScissor)
     }
 
     // We should still have cached textures for surface 2 after drawing with no damage.
-    EXPECT_TRUE(myHostImpl->renderer()->haveCachedResourcesForRenderPassId(childPtr->id()));
+    EXPECT_TRUE(myHostImpl->renderer()->haveCachedResourcesForRenderPassId(childPassId));
 
     // Damage a single tile of surface 2.
     childPtr->setUpdateRect(IntRect(10, 10, 10, 10));
@@ -3514,7 +3515,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithScissor)
     }
 
     // We should have a cached texture for surface 2 again even though it was damaged.
-    EXPECT_TRUE(myHostImpl->renderer()->haveCachedResourcesForRenderPassId(childPtr->id()));
+    EXPECT_TRUE(myHostImpl->renderer()->haveCachedResourcesForRenderPassId(childPassId));
 }
 
 TEST_F(CCLayerTreeHostImplTest, surfaceTextureCaching)
@@ -3876,18 +3877,18 @@ struct RenderPassCacheEntry {
 };
 
 struct RenderPassRemovalTestData : public CCLayerTreeHostImpl::FrameData {
-    std::map<char, RenderPassCacheEntry> renderPassCache;
+    std::map<CCRenderPass::Id, RenderPassCacheEntry> renderPassCache;
     OwnPtr<CCSharedQuadState> sharedQuadState;
 };
 
 class CCTestRenderPass: public CCRenderPass {
 public:
-    static PassOwnPtr<CCRenderPass> create(int id, IntRect outputRect, const WebTransformationMatrix& rootTransform) { return adoptPtr(new CCTestRenderPass(id, outputRect, rootTransform)); }
+    static PassOwnPtr<CCRenderPass> create(CCRenderPass::Id id, IntRect outputRect, const WebTransformationMatrix& rootTransform) { return adoptPtr(new CCTestRenderPass(id, outputRect, rootTransform)); }
 
     void appendQuad(PassOwnPtr<CCDrawQuad> quad) { m_quadList.append(quad); }
 
 protected:
-    CCTestRenderPass(int id, IntRect outputRect, const WebTransformationMatrix& rootTransform) : CCRenderPass(id, outputRect, rootTransform) { }
+    CCTestRenderPass(CCRenderPass::Id id, IntRect outputRect, const WebTransformationMatrix& rootTransform) : CCRenderPass(id, outputRect, rootTransform) { }
 };
 
 class CCTestRenderer : public CCRendererGL, public CCRendererClient {
@@ -3902,9 +3903,9 @@ public:
     }
 
     void clearCachedTextures() { m_textures.clear(); }
-    void setHaveCachedResourcesForRenderPassId(int id) { m_textures.add(id); }
+    void setHaveCachedResourcesForRenderPassId(CCRenderPass::Id id) { m_textures.add(id); }
 
-    virtual bool haveCachedResourcesForRenderPassId(int id) const OVERRIDE { return m_textures.contains(id); }
+    virtual bool haveCachedResourcesForRenderPassId(CCRenderPass::Id id) const OVERRIDE { return m_textures.contains(id); }
 
     // CCRendererClient implementation.
     virtual const IntSize& deviceViewportSize() const OVERRIDE { return m_viewportSize; }
@@ -3921,7 +3922,7 @@ protected:
 private:
     CCLayerTreeSettings m_settings;
     IntSize m_viewportSize;
-    HashSet<int> m_textures;
+    HashSet<CCRenderPass::Id> m_textures;
 };
 
 static void configureRenderPassTestData(const char* testScript, RenderPassRemovalTestData& testData, CCTestRenderer* renderer)
@@ -3934,12 +3935,17 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
     const char* currentChar = testScript;
 
     // Pre-create root pass
-    char rootRenderPassId = testScript[0];
+    CCRenderPass::Id rootRenderPassId = CCRenderPass::Id(testScript[0], testScript[1]);
     OwnPtr<CCRenderPass> rootRenderPass = CCTestRenderPass::create(rootRenderPassId, IntRect(), WebTransformationMatrix());
-    testData.renderPassCache.insert(std::pair<char, RenderPassCacheEntry>(rootRenderPassId, RenderPassCacheEntry(rootRenderPass.release())));
+    testData.renderPassCache.insert(std::pair<CCRenderPass::Id, RenderPassCacheEntry>(rootRenderPassId, RenderPassCacheEntry(rootRenderPass.release())));
     while (*currentChar) {
-        char renderPassId = currentChar[0];
+        int layerId = *currentChar;
         currentChar++;
+        ASSERT_TRUE(currentChar);
+        int index = *currentChar;
+        currentChar++;
+
+        CCRenderPass::Id renderPassId = CCRenderPass::Id(layerId, index);
 
         OwnPtr<CCRenderPass> renderPass;
 
@@ -3959,9 +3965,13 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
                 currentChar++;
             } else if ((*currentChar >= 'A') && (*currentChar <= 'Z')) {
                 // RenderPass draw quad
-                char newRenderPassId = *currentChar;
-                ASSERT_NE(rootRenderPassId, newRenderPassId);
+                int layerId = *currentChar;
                 currentChar++;
+                ASSERT_TRUE(currentChar);
+                int index = *currentChar;
+                currentChar++;
+                CCRenderPass::Id newRenderPassId = CCRenderPass::Id(layerId, index);
+                ASSERT_NE(rootRenderPassId, newRenderPassId);
                 bool hasTexture = false;
                 bool contentsChanged = true;
                 
@@ -3987,7 +3997,7 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
                         renderer->setHaveCachedResourcesForRenderPassId(newRenderPassId);
 
                     OwnPtr<CCRenderPass> renderPass = CCTestRenderPass::create(newRenderPassId, IntRect(), WebTransformationMatrix());
-                    testData.renderPassCache.insert(std::pair<char, RenderPassCacheEntry>(newRenderPassId, RenderPassCacheEntry(renderPass.release())));
+                    testData.renderPassCache.insert(std::pair<CCRenderPass::Id, RenderPassCacheEntry>(newRenderPassId, RenderPassCacheEntry(renderPass.release())));
                 }
 
                 IntRect quadRect = IntRect(0, 0, 1, 1);
@@ -4008,7 +4018,9 @@ void dumpRenderPassTestData(const RenderPassRemovalTestData& testData, char* buf
     char* pos = buffer;
     for (CCRenderPassList::const_reverse_iterator it = testData.renderPasses.rbegin(); it != testData.renderPasses.rend(); ++it) {
         const CCRenderPass* currentPass = *it;
-        *pos = currentPass->id();
+        *pos = currentPass->id().layerId;
+        pos++;
+        *pos = currentPass->id().index;
         pos++;
 
         CCQuadList::const_iterator quadListIterator = currentPass->quadList().begin();
@@ -4020,7 +4032,9 @@ void dumpRenderPassTestData(const RenderPassRemovalTestData& testData, char* buf
                 pos++;
                 break;
             case CCDrawQuad::RenderPass:
-                *pos = CCRenderPassDrawQuad::materialCast(currentQuad)->renderPassId();
+                *pos = CCRenderPassDrawQuad::materialCast(currentQuad)->renderPassId().layerId;
+                pos++;
+                *pos = CCRenderPassDrawQuad::materialCast(currentQuad)->renderPassId().index;
                 pos++;
                 break;
             default:
@@ -4064,115 +4078,115 @@ TestCase removeRenderPassesCases[] =
     {
         {
             "Single root pass",
-            "Rssss\n",
-            "Rssss\n"
+            "R0ssss\n",
+            "R0ssss\n"
         }, {
             "Single pass - no quads",
-            "R\n",
-            "R\n"
+            "R0\n",
+            "R0\n"
         }, {
             "Two passes, no removal",
-            "RssssAsss\n"
-            "Assss\n",
-            "RssssAsss\n"
-            "Assss\n"
+            "R0ssssA0sss\n"
+            "A0ssss\n",
+            "R0ssssA0sss\n"
+            "A0ssss\n"
         }, {
             "Two passes, remove last",
-            "RssssA[ct]sss\n"
-            "Assss\n",
-            "RssssAsss\n"
+            "R0ssssA0[ct]sss\n"
+            "A0ssss\n",
+            "R0ssssA0sss\n"
         }, {
             "Have texture but contents changed - leave pass",
-            "RssssA[t]sss\n"
-            "Assss\n",
-            "RssssAsss\n"
-            "Assss\n"
+            "R0ssssA0[t]sss\n"
+            "A0ssss\n",
+            "R0ssssA0sss\n"
+            "A0ssss\n"
         }, {
             "Contents didn't change but no texture - leave pass",
-            "RssssA[c]sss\n"
-            "Assss\n",
-            "RssssAsss\n"
-            "Assss\n"
+            "R0ssssA0[c]sss\n"
+            "A0ssss\n",
+            "R0ssssA0sss\n"
+            "A0ssss\n"
         }, {
             "Replica: two quads reference the same pass; remove",
-            "RssssA[ct]A[ct]sss\n"
-            "Assss\n",
-            "RssssAAsss\n"
+            "R0ssssA0[ct]A0[ct]sss\n"
+            "A0ssss\n",
+            "R0ssssA0A0sss\n"
         }, {
             "Replica: two quads reference the same pass; leave",
-            "RssssA[c]A[c]sss\n"
-            "Assss\n",
-            "RssssAAsss\n"
-            "Assss\n",
+            "R0ssssA0[c]A0[c]sss\n"
+            "A0ssss\n",
+            "R0ssssA0A0sss\n"
+            "A0ssss\n",
         }, {
             "Many passes, remove all",
-            "RssssA[ct]sss\n"
-            "AsssB[ct]C[ct]s\n"
-            "BsssD[ct]ssE[ct]F[ct]\n"
-            "Essssss\n"
-            "CG[ct]\n"
-            "Dsssssss\n"
-            "Fsssssss\n"
-            "Gsss\n",
+            "R0ssssA0[ct]sss\n"
+            "A0sssB0[ct]C0[ct]s\n"
+            "B0sssD0[ct]ssE0[ct]F0[ct]\n"
+            "E0ssssss\n"
+            "C0G0[ct]\n"
+            "D0sssssss\n"
+            "F0sssssss\n"
+            "G0sss\n",
 
-            "RssssAsss\n"
+            "R0ssssA0sss\n"
         }, {
             "Deep recursion, remove all",
 
-            "RsssssA[ct]ssss\n"
-            "AssssBsss\n"
-            "BC\n"
-            "CD\n"
-            "DE\n"
-            "EF\n"
-            "FG\n"
-            "GH\n"
-            "HsssIsss\n"
-            "IJ\n"
-            "Jssss\n",
+            "R0sssssA0[ct]ssss\n"
+            "A0ssssB0sss\n"
+            "B0C0\n"
+            "C0D0\n"
+            "D0E0\n"
+            "E0F0\n"
+            "F0G0\n"
+            "G0H0\n"
+            "H0sssI0sss\n"
+            "I0J0\n"
+            "J0ssss\n",
             
-            "RsssssAssss\n"
+            "R0sssssA0ssss\n"
         }, {
             "Wide recursion, remove all",
-            "RA[ct]B[ct]C[ct]D[ct]E[ct]F[ct]G[ct]H[ct]I[ct]J[ct]\n"
-            "As\n"
-            "Bs\n"
-            "Cssss\n"
-            "Dssss\n"
-            "Es\n"
-            "F\n"
-            "Gs\n"
-            "Hs\n"
-            "Is\n"
-            "Jssss\n",
+            "R0A0[ct]B0[ct]C0[ct]D0[ct]E0[ct]F0[ct]G0[ct]H0[ct]I0[ct]J0[ct]\n"
+            "A0s\n"
+            "B0s\n"
+            "C0ssss\n"
+            "D0ssss\n"
+            "E0s\n"
+            "F0\n"
+            "G0s\n"
+            "H0s\n"
+            "I0s\n"
+            "J0ssss\n",
             
-            "RABCDEFGHIJ\n"
+            "R0A0B0C0D0E0F0G0H0I0J0\n"
         }, {
             "Remove passes regardless of cache state",
-            "RssssA[ct]sss\n"
-            "AsssBCs\n"
-            "BsssD[c]ssE[t]F\n"
-            "Essssss\n"
-            "CG\n"
-            "Dsssssss\n"
-            "Fsssssss\n"
-            "Gsss\n",
+            "R0ssssA0[ct]sss\n"
+            "A0sssB0C0s\n"
+            "B0sssD0[c]ssE0[t]F0\n"
+            "E0ssssss\n"
+            "C0G0\n"
+            "D0sssssss\n"
+            "F0sssssss\n"
+            "G0sss\n",
 
-            "RssssAsss\n"
+            "R0ssssA0sss\n"
         }, {
             "Leave some passes, remove others",
 
-            "RssssA[c]sss\n"
-            "AsssB[t]C[ct]s\n"
-            "BsssD[c]ss\n"
-            "CG\n"
-            "Dsssssss\n"
-            "Gsss\n",
+            "R0ssssA0[c]sss\n"
+            "A0sssB0[t]C0[ct]s\n"
+            "B0sssD0[c]ss\n"
+            "C0G0\n"
+            "D0sssssss\n"
+            "G0sss\n",
 
-            "RssssAsss\n"
-            "AsssBCs\n"
-            "BsssDss\n"
-            "Dsssssss\n"
+            "R0ssssA0sss\n"
+            "A0sssB0C0s\n"
+            "B0sssD0ss\n"
+            "D0sssssss\n"
         }, {
             0, 0, 0
         }

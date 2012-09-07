@@ -80,9 +80,11 @@ public:
         , m_rootLayer(CCLayerImpl::create(1))
         , m_memoryAllocationLimitBytes(CCPrioritizedTextureManager::defaultMemoryAllocationLimit())
     {
-        OwnPtr<CCRenderPass> rootRenderPass = CCRenderPass::create(m_rootLayer->id(), IntRect(), WebTransformationMatrix());
+        m_rootLayer->createRenderSurface();
+        CCRenderPass::Id renderPassId = m_rootLayer->renderSurface()->renderPassId();
+        OwnPtr<CCRenderPass> rootRenderPass = CCRenderPass::create(renderPassId, IntRect(), WebTransformationMatrix());
         m_renderPassesInDrawOrder.append(rootRenderPass.get());
-        m_renderPasses.set(m_rootLayer->id(), rootRenderPass.release());
+        m_renderPasses.set(renderPassId, rootRenderPass.release());
     }
 
     // CCRendererClient methods.

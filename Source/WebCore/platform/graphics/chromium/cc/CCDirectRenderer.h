@@ -45,7 +45,7 @@ public:
     CCResourceProvider* resourceProvider() const { return m_resourceProvider; }
 
     virtual void decideRenderPassAllocationsForFrame(const CCRenderPassList& renderPassesInDrawOrder) OVERRIDE;
-    virtual bool haveCachedResourcesForRenderPassId(int id) const OVERRIDE;
+    virtual bool haveCachedResourcesForRenderPassId(CCRenderPass::Id) const OVERRIDE;
     virtual void drawFrame(const CCRenderPassList& renderPassesInDrawOrder, const CCRenderPassIdHashMap& renderPassesById) OVERRIDE;
 
 protected:
@@ -101,7 +101,7 @@ protected:
     static void initializeMatrices(DrawingFrame&, const IntRect& drawRect, bool flipY);
     static IntRect moveScissorToWindowSpace(const DrawingFrame&, FloatRect scissorRect);
 
-    bool haveCachedResources(int renderPassId) const;
+    bool haveCachedResources(CCRenderPass::Id) const;
     static IntSize renderPassTextureSize(const CCRenderPass*);
     static GC3Denum renderPassTextureFormat(const CCRenderPass*);
 
@@ -118,7 +118,7 @@ protected:
     virtual void beginDrawingFrame(DrawingFrame&) = 0;
     virtual void finishDrawingFrame(DrawingFrame&) = 0;
 
-    HashMap<int, OwnPtr<CachedTexture> > m_renderPassTextures;
+    HashMap<CCRenderPass::Id, OwnPtr<CachedTexture> > m_renderPassTextures;
     CCResourceProvider* m_resourceProvider;
 };
 
