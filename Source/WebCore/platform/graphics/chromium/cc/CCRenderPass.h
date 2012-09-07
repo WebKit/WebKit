@@ -68,8 +68,6 @@ public:
             : layerId(layerId)
             , index(index)
         {
-            ASSERT(layerId > 0);
-            ASSERT(index >= 0);
         }
 
         bool operator==(const Id& other) const { return layerId == other.layerId && index == other.index; }
