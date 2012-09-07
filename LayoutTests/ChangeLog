@@ -1,3 +1,28 @@
+2012-09-07  Emil A Eklund  <eae@chromium.org>
+
+        Prevent overflows in FractionalLayoutUnit
+        https://bugs.webkit.org/show_bug.cgi?id=95883
+
+        Reviewed by Eric Seidel.
+
+        Add test for handling of large values.
+
+        * fast/sub-pixel/large-sizes-expected.txt: Added.
+        * fast/sub-pixel/large-sizes.html: Added.
+        * platform/chromium-win/media/video-zoom-controls-expected.txt:
+        * platform/chromium/fast/css/large-number-round-trip-expected.txt: Added.
+        * platform/mac-lion/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt-4.8/Skipped:
+        * platform/qt/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/win-xp/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+
 2012-09-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r127920 and r127926.

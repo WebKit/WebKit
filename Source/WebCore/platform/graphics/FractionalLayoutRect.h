@@ -165,7 +165,11 @@ public:
 
     FractionalLayoutRect transposedRect() const { return FractionalLayoutRect(m_location.transposedPoint(), m_size.transposedSize()); }
 
-    static FractionalLayoutRect infiniteRect() {return FractionalLayoutRect(FractionalLayoutUnit::min() / 2, FractionalLayoutUnit::min() / 2, FractionalLayoutUnit::max(), FractionalLayoutUnit::max()); }
+    static FractionalLayoutRect infiniteRect()
+    {
+        // Return a rect that is slightly smaller than the true max rect to allow pixelSnapping to round up to the nearest IntRect without overflowing.
+        return FractionalLayoutRect(FractionalLayoutUnit::nearlyMin() / 2, FractionalLayoutUnit::nearlyMin() / 2, FractionalLayoutUnit::nearlyMax(), FractionalLayoutUnit::nearlyMax());
+    }
 
 #if PLATFORM(QT)
     explicit FractionalLayoutRect(const QRect&);
@@ -207,9 +211,9 @@ inline bool operator!=(const FractionalLayoutRect& a, const FractionalLayoutRect
 inline IntRect pixelSnappedIntRect(const FractionalLayoutRect& rect)
 {
 #if ENABLE(SUBPIXEL_LAYOUT)
-    IntPoint roundedLocation = roundedIntPoint(rect.location());
-    return IntRect(roundedLocation, IntSize((rect.x() + rect.width()).round() - roundedLocation.x(),
-                                            (rect.y() + rect.height()).round() - roundedLocation.y()));
+    return IntRect(roundedIntPoint(rect.location()), IntSize(snapSizeToPixel(rect.width(), rect.x()),
+                                                             snapSizeToPixel(rect.height(), rect.y())));
+
 #else
     return IntRect(rect);
 #endif

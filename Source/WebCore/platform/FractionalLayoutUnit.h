@@ -244,6 +244,21 @@ public:
         m.m_value = std::numeric_limits<int>::min();
         return m;
     }
+
+    // Versions of max/min that are slightly smaller/larger than max/min() to allow for roinding without overflowing.
+    static const FractionalLayoutUnit nearlyMax()
+    {
+        FractionalLayoutUnit m;
+        m.m_value = std::numeric_limits<int>::max() - kFixedPointDenominator / 2;
+        return m;
+    }
+    static const FractionalLayoutUnit nearlyMin()
+    {
+        FractionalLayoutUnit m;
+        m.m_value = std::numeric_limits<int>::min() + kFixedPointDenominator / 2;
+        return m;
+    }
+    
     static FractionalLayoutUnit clamp(double value)
     {
         return clampTo<FractionalLayoutUnit>(value, FractionalLayoutUnit::min(), FractionalLayoutUnit::max());
@@ -792,7 +807,8 @@ inline float& operator/=(float& a, const FractionalLayoutUnit& b)
 
 inline int snapSizeToPixel(FractionalLayoutUnit size, FractionalLayoutUnit location) 
 {
-    return (location + size).round() - location.round();
+    FractionalLayoutUnit fraction = location - location.floor();
+    return (fraction + size).round() - fraction.round();
 }
 
 #if PLATFORM(QT)

@@ -1,0 +1,12 @@
+PASS element.width = 5000px, returns offsetWidth 5000, rect.width 5000 and computed width 5000px as expected.
+PASS element.width = 50000px, returns offsetWidth 50000, rect.width 50000 and computed width 50000px as expected.
+PASS element.width = 500000px, returns offsetWidth 500000, rect.width 500000 and computed width 500000px as expected.
+PASS element.width = 5000000px, returns offsetWidth 5000000, rect.width 5000000 and computed width 5000000px as expected.
+PASS element.width = 50000000px, returns offsetWidth 0, rect.width 0 and computed width 0px as expected.
+PASS element.width = 35791388px, returns offsetWidth 35791388, rect.width 35791388 and computed width 35791388px as expected.
+PASS element.width = 35791390px, returns offsetWidth 35791392, rect.width 35791392 and computed width 35791392px as expected.
+PASS element.width = 35791392px, returns offsetWidth 35791392, rect.width 35791392 and computed width 35791392px as expected.
+PASS element.width = 35791394px, returns offsetWidth 35791392, rect.width 35791392 and computed width 35791392px as expected.
+PASS element.width = 35791395px, returns offsetWidth 0, rect.width 0 and computed width 0px as expected.
+PASS element.width = 35791396px, returns offsetWidth 0, rect.width 0 and computed width 0px as expected.
+Test handling of sizes exceeding the maximum supported value.

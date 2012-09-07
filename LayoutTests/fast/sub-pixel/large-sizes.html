@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../js/resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <p>
+            Test handling of sizes exceeding the maximum supported value.
+        </p>
+        <script>
+            function testSize(width, expectedWidth)
+            {
+                el.style.width = width + 'px';
+                var style = window.getComputedStyle(el, null);
+                var rect = el.getBoundingClientRect();
+                if (el.offsetWidth == expectedWidth && rect.width == expectedWidth && style.width == expectedWidth + 'px')
+                    //testPassed('Element given a width of ' + width + ' returns 
+                    testPassed('element.width = ' + width + 'px, returns offsetWidth ' + el.offsetWidth + ', rect.width ' + rect.width + ' and computed width ' + style.width + ' as expected.');
+                else
+                    testFailed('element.width = ' + width + 'px, returns offsetWidth ' + el.offsetWidth + ', rect.width ' + rect.width + ' and computed width ' + style.width + ', expected ' + expectedWidth + '.');
+            }
+            
+            var el = document.createElement('div');
+            document.body.appendChild(el);
+
+            testSize(5000, 5000);
+            testSize(50000, 50000);
+            testSize(500000, 500000);
+            testSize(5000000, 5000000);
+            testSize(50000000, 0);
+            testSize(35791388, 35791388);
+            testSize(35791390, 35791392); // float impression
+            testSize(35791392, 35791392);
+            testSize(35791394, 35791392); // float impression
+            testSize(35791395, 0);
+            testSize(35791396, 0);
+            
+            document.body.removeChild(el);
+        </script>
+    </body>
+</html>
