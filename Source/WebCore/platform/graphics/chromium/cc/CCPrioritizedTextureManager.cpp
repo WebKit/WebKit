@@ -248,8 +248,6 @@ void CCPrioritizedTextureManager::reduceMemory(CCResourceProvider* resourceProvi
 
 void CCPrioritizedTextureManager::clearAllMemory(CCResourceProvider* resourceProvider)
 {
-    ASSERT(CCProxy::isImplThread() && CCProxy::isMainThreadBlocked());
-    ASSERT(resourceProvider);
     // Unlink and destroy all backing textures.
     while (m_backings.size() > 0) {
         BackingSet::iterator it = m_backings.begin();
@@ -259,24 +257,12 @@ void CCPrioritizedTextureManager::clearAllMemory(CCResourceProvider* resourcePro
     }
 }
 
-void CCPrioritizedTextureManager::unlinkAllBackings()
+void CCPrioritizedTextureManager::allBackingTexturesWereDeleted()
 {
-    ASSERT(CCProxy::isMainThread());
-    for (BackingSet::iterator it = m_backings.begin(); it != m_backings.end(); ++it)
-        if ((*it)->owner())
-            (*it)->owner()->unlink();
-}
-
-void CCPrioritizedTextureManager::deleteAllUnlinkedBackings()
-{
-    ASSERT(CCProxy::isImplThread() && CCProxy::isMainThreadBlocked());
-    BackingVector backingsToDelete;
-    for (BackingSet::iterator it = m_backings.begin(); it != m_backings.end(); ++it)
-        if (!(*it)->owner())
-            backingsToDelete.append((*it));
-
-    for (BackingVector::iterator it = backingsToDelete.begin(); it != backingsToDelete.end(); ++it)
-        destroyBacking((*it), 0);
+    // Same as clearAllMemory, except all our textures were already
+    // deleted externally, so we don't delete them. Passing no
+    // resourceProvider results in leaking the (now invalid) texture ids.
+    clearAllMemory(0);
 }
 
 void CCPrioritizedTextureManager::registerTexture(CCPrioritizedTexture* texture)
