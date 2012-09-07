@@ -66,10 +66,9 @@ function test()
     InspectorTest.addResult("Expanded IndexedDB tree element.");
     WebInspector.panels.resources.indexedDBListTreeElement.expand();
 
-    InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseNamesLoaded", indexedDBTreeElementExpanded, false);
+    InspectorTest.addSniffer(WebInspector.IndexedDBModel.prototype, "_updateOriginDatabaseNames", indexedDBTreeElementExpanded, false);
     function indexedDBTreeElementExpanded()
     {
-        indexedDBModel = WebInspector.panels.resources._indexedDBModel;
         InspectorTest.dumpIndexedDBTree();
         InspectorTest.addResult("Created database.");
         createDatabase(databaseCreated);
@@ -77,12 +76,14 @@ function test()
 
     function databaseCreated()
     {
-        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", databaseLoaded, false);
+        indexedDBModel = WebInspector.panels.resources.indexedDBListTreeElement._indexedDBModel;
+        indexedDBModel.addEventListener(WebInspector.IndexedDBModel.EventTypes.DatabaseLoaded, databaseLoaded);
         WebInspector.panels.resources.indexedDBListTreeElement.refreshIndexedDB();
     }
 
     function databaseLoaded()
     {
+        indexedDBModel.removeEventListener(WebInspector.IndexedDBModel.EventTypes.DatabaseLoaded, databaseLoaded);
         InspectorTest.dumpIndexedDBTree();
         InspectorTest.addResult("Navigated to another security origin.");
         InspectorTest.navigate(withoutIndexedDBURL, navigatedAway);
@@ -105,7 +106,7 @@ function test()
     function databaseDeleted()
     {
         WebInspector.panels.resources.indexedDBListTreeElement.refreshIndexedDB();
-        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseNamesLoaded", databaseNamesLoadedAfterDeleting, false);
+        InspectorTest.addSniffer(WebInspector.IndexedDBModel.prototype, "_updateOriginDatabaseNames", databaseNamesLoadedAfterDeleting, false);
     }
 
     function databaseNamesLoadedAfterDeleting()

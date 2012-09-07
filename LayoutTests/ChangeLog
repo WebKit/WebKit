@@ -1,3 +1,15 @@
+2012-09-06  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Migrate IndexedDB to async protocol commands.
+        https://bugs.webkit.org/show_bug.cgi?id=95978
+
+        Reviewed by Alexander Pavlov.
+
+        * http/tests/inspector/indexeddb/database-data.html:
+        * http/tests/inspector/indexeddb/database-names.html:
+        * http/tests/inspector/indexeddb/database-structure.html:
+        * http/tests/inspector/indexeddb/resources-panel.html:
+
 2012-09-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Add TestExpectations file for efl-wk1

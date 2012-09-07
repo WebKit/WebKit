@@ -22,7 +22,7 @@ function test()
         InspectorTest.addResult("");
     }
 
-    InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseNamesLoaded", step2, false);
+    InspectorTest.addSniffer(WebInspector.IndexedDBModel.prototype, "_updateOriginDatabaseNames", step2, false);
 
     function step2()
     {
@@ -32,7 +32,7 @@ function test()
 
     function step3()
     {
-        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseNamesLoaded", step4, false);
+        InspectorTest.addSniffer(WebInspector.IndexedDBModel.prototype, "_updateOriginDatabaseNames", step4, false);
         indexedDBModel.refreshDatabaseNames();
     }
 
@@ -44,7 +44,7 @@ function test()
 
     function step5()
     {
-        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseNamesLoaded", step6, false);
+        InspectorTest.addSniffer(WebInspector.IndexedDBModel.prototype, "_updateOriginDatabaseNames", step6, false);
         indexedDBModel.refreshDatabaseNames();
     }
 
@@ -56,7 +56,7 @@ function test()
 
     function step7()
     {
-        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseNamesLoaded", step8, false);
+        InspectorTest.addSniffer(WebInspector.IndexedDBModel.prototype, "_updateOriginDatabaseNames", step8, false);
         indexedDBModel.refreshDatabaseNames();
     }
 
@@ -68,7 +68,7 @@ function test()
 
     function step9()
     {
-        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseNamesLoaded", step10, false);
+        InspectorTest.addSniffer(WebInspector.IndexedDBModel.prototype, "_updateOriginDatabaseNames", step10, false);
         indexedDBModel.refreshDatabaseNames();
     }
 

@@ -1231,25 +1231,31 @@
             },
             {
                 "name": "requestDatabaseNamesForFrame",
+                "async": true,
                 "parameters": [
-                    { "name": "requestId", "type": "integer", "description": "Request id." },
                     { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame id." }
+                ],
+                "returns": [
+                    { "name": "securityOriginWithDatabaseNames", "$ref": "SecurityOriginWithDatabaseNames", "description": "Frame with database names." }
                 ],
                 "description": "Requests database names for given frame's security origin."
             },
             {
                 "name": "requestDatabase",
+                "async": true,
                 "parameters": [
-                    { "name": "requestId", "type": "integer", "description": "Request id." },
                     { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame id." },
                     { "name": "databaseName", "type": "string", "description": "Database name." }
+                ],
+                "returns": [
+                    { "name": "databaseWithObjectStores", "$ref": "DatabaseWithObjectStores", "description": "Database with an array of object stores." }
                 ],
                 "description": "Requests database with given name in given frame."
             },
             {
                 "name": "requestData",
+                "async": true,
                 "parameters": [
-                    { "name": "requestId", "type": "integer", "description": "Request id." },
                     { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame id." },
                     { "name": "databaseName", "type": "string", "description": "Database name." },
                     { "name": "objectStoreName", "type": "string", "description": "Object store name." },
@@ -1258,39 +1264,11 @@
                     { "name": "pageSize", "type": "integer", "description": "Number of records to fetch." },
                     { "name": "keyRange", "$ref": "KeyRange", "optional": true, "description": "Key range." }
                 ],
-                "description": "Requests data from object store or index."
-            }
-        ],
-        "events": [
-            {
-                "name": "databaseNamesLoaded",
-                "parameters": [
-                    { "name": "requestId", "type": "number", "description": "Request id." },
-                    { "name": "securityOriginWithDatabaseNames", "$ref": "SecurityOriginWithDatabaseNames", "description": "Frame with database names." }
-                ]
-            },
-            {
-                "name": "databaseLoaded",
-                "parameters": [
-                    { "name": "requestId", "type": "integer", "description": "Request id." },
-                    { "name": "databaseWithObjectStores", "$ref": "DatabaseWithObjectStores", "description": "Database with an array of object stores." }
-                ]
-            },
-            {
-                "name": "objectStoreDataLoaded",
-                "parameters": [
-                    { "name": "requestId", "type": "integer", "description": "Request id." },
+                "returns": [
                     { "name": "objectStoreDataEntries", "type": "array", "items": { "$ref": "DataEntry" }, "description": "Array of object store data entries." },
                     { "name": "hasMore", "type": "boolean", "description": "If true, there are more entries to fetch in the given range." }
-                ]
-            },
-            {
-                "name": "indexDataLoaded",
-                "parameters": [
-                    { "name": "requestId", "type": "integer", "description": "Request id." },
-                    { "name": "indexDataEntries", "type": "array", "items": { "$ref": "DataEntry" }, "description": "Array of index data entries." },
-                    { "name": "hasMore", "type": "boolean", "description": "If true, there are more entries to fetch in the given range." }
-                ]
+                ],
+                "description": "Requests data from object store or index."
             }
         ]
     },

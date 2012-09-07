@@ -73,7 +73,7 @@ function test()
         }
     }
 
-    InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseNamesLoaded", fillDatabase, false);
+    InspectorTest.addSniffer(WebInspector.IndexedDBModel.prototype, "_updateOriginDatabaseNames", fillDatabase, false);
 
     function fillDatabase()
     {
@@ -97,18 +97,19 @@ function test()
 
     function refreshDatabaseNames()
     {
-        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseNamesLoaded", refreshDatabase, false);
+        InspectorTest.addSniffer(WebInspector.IndexedDBModel.prototype, "_updateOriginDatabaseNames", refreshDatabase, false);
         indexedDBModel.refreshDatabaseNames();
     }
 
     function refreshDatabase()
     {
-        InspectorTest.addSniffer(WebInspector.IndexedDBDispatcher.prototype, "databaseLoaded", runObjectStoreTests, false);
+        indexedDBModel.addEventListener(WebInspector.IndexedDBModel.EventTypes.DatabaseLoaded, runObjectStoreTests);
         indexedDBModel.refreshDatabase(databaseId);
     }
 
     function runObjectStoreTests()
     {
+        indexedDBModel.removeEventListener(WebInspector.IndexedDBModel.EventTypes.DatabaseLoaded, runObjectStoreTests);
         loadValuesAndDump(false, null, 0, 3, step2)
 
         function step2()
