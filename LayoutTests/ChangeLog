@@ -1,3 +1,12 @@
+2012-09-07  Fady Samuel  <fsamuel@chromium.org>
+
+        Unreviewed rebaseline.
+
+        Colors changed slightly, but the test's intention is to verify scaling
+        works as expected and it continues to do so.
+
+        * platform/chromium-mac/compositing/overflow/overflow-scaled-descendant-overlapping-expected.png: Added.
+
 2012-09-07  Tony Chang  <tony@chromium.org>
 
         [chromium] Chromium Linux EWS bots and CQ bots are flaky
