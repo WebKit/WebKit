@@ -1,3 +1,12 @@
+2012-09-07  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Deprecate String += operator
+        https://bugs.webkit.org/show_bug.cgi?id=96083
+
+        Reviewed by Adam Barth.
+
+        * wtf/Platform.h:
+
 2012-09-06  Michael Saboff  <msaboff@apple.com>
 
         StringBuilder::toAtomicString() can create an 16 bit string with 8 bit contents
