@@ -39,8 +39,8 @@ public:
     virtual void updateFromElement();
 
 private:    
-    virtual void computeLogicalWidth();
-    virtual void computeLogicalHeight();
+    virtual void computeLogicalWidth() OVERRIDE;
+    virtual void computeLogicalHeight() OVERRIDE;
 
     virtual const char* renderName() const { return "RenderMeter"; }
     virtual bool isMeter() const { return true; }
