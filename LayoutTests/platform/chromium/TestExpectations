@@ -3594,3 +3594,5 @@ BUGCR146401 ANDROID : fast/css/sticky/sticky-writing-mode-vertical-lr.html = IMA
 BUGWK95799 MAC : touchadjustment/iframe-boundary.html = TEXT
 
 BUGWK95813 : fast/innerHTML/innerHTML-iframe.html = TEXT PASS
+
+BUGWK96041 LINUX : platform/chromium-linux/compositing/gestures = PASS IMAGE

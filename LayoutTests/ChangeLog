@@ -1,3 +1,17 @@
+2012-09-06  Tony Chang  <tony@chromium.org>
+
+        Chromium Linux EWS bots and CQ bots are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=96041
+
+        Reviewed by Adam Barth.
+
+        Skip platform/chromium-linux/compositing/gestures tests on the
+        Chromium Linux EWS and CQ bots. By marking them as flaky, they won't
+        be run (the bots use --skip-failing-tests which causes them to skip
+        these tests).  These will still run on the waterfall bots.
+
+        * platform/chromium/TestExpectations:
+
 2012-09-06  Adam Barth  <abarth@webkit.org>
 
         New tests introduced in r127704 fail
