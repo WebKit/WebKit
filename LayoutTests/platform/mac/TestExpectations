@@ -183,8 +183,6 @@ BUGWK69210 : fast/repaint/transform-absolute-in-positioned-container.html = TEXT
 // Tiled-layer compositing tests are flakey.
 BUGWK82546 : compositing/tiling/crash-reparent-tiled-layer.html = PASS TEXT
 
-BUGWK84604 : fast/js/global-constructors.html = TEXT
-
 // Requires rebaseline after bug 83978
 BUGWK83978 SKIP : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = IMAGE+TEXT
 
@@ -236,7 +234,6 @@ BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
 BUGWK85212 : ietestcenter/css3/flexbox/flexbox-layout-002.htm = IMAGE
 
 // Requires rebaseline after bug 85031
-BUGWK85565 : fast/block/float/016.html = IMAGE
 BUGWK85565 : fast/css/border-solid-single-edge-antialias.html = IMAGE
 
 // Interferes with the tests that should pass
@@ -295,9 +292,6 @@ BUGWK90987 : fast/forms/input-in-table-cell-no-value.html = IMAGE
 
 // Skip tests in fast/text/shaping
 BUGWK90951 SKIP : fast/text/shaping = PASS
-
-// [Mac] REGRESSION (r122494): Running platform/mac/plugins/root-object-premature-delete-crash.html results in a crash
-BUGWK91505 : platform/mac/plugins/root-object-premature-delete-crash.html = CRASH
 
 // [Mac] REGRESSION (r122651): fast/text/descent-clip-in-scaled-page.html fails
 BUGWK91552 : fast/text/descent-clip-in-scaled-page.html = IMAGE

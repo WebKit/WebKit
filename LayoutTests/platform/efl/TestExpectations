@@ -101,7 +101,6 @@ BUGWK86623 : editing/pasteboard/drop-text-events.html = TEXT
 BUGWK86623 : editing/pasteboard/get-data-text-plain-drop.html = TEXT
 BUGWK86623 : fast/dom/shadow/drop-event-for-input-in-shadow.html = TEXT
 BUGWK86623 : fast/dom/shadow/drop-event-in-shadow.html = TEXT
-BUGWK86623 SKIP : fast/events/drag-and-drop-subframe-dataTransfer.html = TEXT
 BUGWK86623 : fast/events/drag-display-none-element.html = TEXT
 BUGWK86623 : fast/events/drag-in-frames.html = TEXT
 BUGWK86623 : fast/events/drag-parent-node.html = TEXT
@@ -121,9 +120,6 @@ BUGWK95182 : fast/css/sticky = IMAGE
 // Testcase assumes a thumb width of 12px, default there uses 29px.
 BUGWK95071 : fast/forms/range/slider-in-multi-column.html = TEXT
 BUGWK95071 : fast/forms/range/slider-transformed.html = TEXT
-
-// TestRunner does not implement handleErrorPages()
-BUGWKEFL : fast/history/back-forward-reset-after-error-handling.html = TEXT
 
 // The EFL port has no support for webarchives.
 BUGWKEFL SKIP : webarchive = PASS
@@ -289,7 +285,6 @@ BUGWK84333 : fast/forms/file/file-input-change-event.html = TEXT
 BUGWK84333 : fast/forms/file/file-input-reset.html = IMAGE
 BUGWK84333 : fast/forms/file/get-file-upload.html = TEXT
 BUGWK84333 : fast/forms/file/input-file-directory-upload.html = TEXT
-BUGWK84333 : fast/forms/file/input-file-entries.html = TEXT
 BUGWK84333 : fast/forms/file/input-file-re-render.html = MISSING
 BUGWK84333 : fast/forms/file/input-file-write-files.html = TEXT
 BUGWK84333 : fast/forms/file/recover-file-input-in-unposted-form.html = TEXT

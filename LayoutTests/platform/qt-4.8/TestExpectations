@@ -74,18 +74,8 @@ BUGWK85580 SKIP : inspector/styles/variables = PASS
 
 // Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=6033
 BUGWK6033 : css3/filters/add-filter-rendering.html = PASS IMAGE
-BUGWK6033 : css3/filters/blur-filter-page-scroll-parents.html = PASS IMAGE
-BUGWK6033 : css3/filters/blur-filter-page-scroll.html = PASS IMAGE
 BUGWK6033 : css3/filters/crash-filter-change.html = PASS IMAGE
 BUGWK6033 : css3/filters/crash-hw-sw-switch.html = PASS IMAGE
-BUGWK6033 : css3/filters/custom/custom-filter-shader-cache.html = PASS IMAGE
-BUGWK6033 : css3/filters/custom/effect-color-check.html = PASS IMAGE
-BUGWK6033 : css3/filters/custom/effect-custom-combined-missing.html = PASS IMAGE
-BUGWK6033 : css3/filters/custom/effect-custom.html = PASS IMAGE
-BUGWK6033 : css3/filters/custom/effect-custom-parameters.html = PASS IMAGE
-BUGWK6033 : css3/filters/custom/filter-repaint-custom-clipped.html = PASS IMAGE
-BUGWK6033 : css3/filters/custom/filter-repaint-custom-rotated.html = PASS IMAGE
-BUGWK6033 : css3/filters/custom/filter-repaint-custom.html = PASS IMAGE
 BUGWK6033 : css3/filters/effect-blur.html = PASS IMAGE
 BUGWK6033 : css3/filters/effect-brightness-clamping.html = PASS IMAGE
 BUGWK6033 : css3/filters/effect-brightness.html = PASS IMAGE
@@ -96,10 +86,6 @@ BUGWK6033 : css3/filters/effect-grayscale.html = PASS IMAGE
 BUGWK6033 : css3/filters/effect-hue-rotate.html = PASS IMAGE
 BUGWK6033 : css3/filters/effect-invert.html = PASS IMAGE
 BUGWK6033 : css3/filters/effect-opacity.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-reference-external.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-reference-hw.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-reference-ordering.html = PASS IMAGE
-BUGWK6033 : css3/filters/effect-reference.html = PASS IMAGE
 BUGWK6033 : css3/filters/effect-saturate.html = PASS IMAGE
 BUGWK6033 : css3/filters/effect-sepia.html = PASS IMAGE
 BUGWK6033 : css3/filters/filtered-inline.html = PASS IMAGE
@@ -167,16 +153,11 @@ BUGWK91379 : http/tests/security/contentSecurityPolicy/object-src-none-allowed.h
 BUGWK80219 : compositing/overflow/clip-descendents.html = TEXT
 
 // Require rebaseline after bug 93148
-BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html  = TEXT
-BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.html  = TEXT
 BUGWK93148 : fast/css/nested-layers-with-hover.html = TEXT
 
 BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
 
 BUGWK93654 DEBUG : fast/events/keyevent-iframe-removed-crash.html = CRASH
-
-// Require rebaselining after  https://bugs.webkit.org/show_bug.cgi?id=89826
-BUGWK89826 : fast/css/word-space-extra.html = TEXT
 
 // This has always failed on Qt - exposed by bug 89826
 BUGWK94004 : css2.1/20110323/c541-word-sp-000.htm = IMAGE

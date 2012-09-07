@@ -1,3 +1,18 @@
+2012-09-07  Ojan Vafai  <ojan@chromium.org>
+
+        Fix the remaining linter errors. These are all cases of paths
+        that don't actually exist or that are duplicated between TestExpectations
+        and Skipped files. I left in the Skipped file entries since those
+        were the ones that win out when duplicated.
+
+        * platform/efl/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt-4.8/TestExpectations:
+        * platform/qt/Skipped:
+        * platform/qt/TestExpectations:
+        * platform/win/Skipped:
+        * platform/win/TestExpectations:
+
 2012-09-07  Adam Barth  <abarth@chromium.org>
 
         Enter the creationContext before creating DOM wrappers
