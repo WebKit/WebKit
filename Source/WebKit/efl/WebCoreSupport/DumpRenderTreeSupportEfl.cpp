@@ -277,6 +277,13 @@ void DumpRenderTreeSupportEfl::setLoadsSiteIconsIgnoringImageLoadingSetting(Evas
     page->settings()->setLoadsSiteIconsIgnoringImageLoadingSetting(loadsSiteIconsIgnoringImageLoadingPreferences);
 }
 
+void DumpRenderTreeSupportEfl::setMinimumLogicalFontSize(Evas_Object* ewkView, int size)
+{
+    DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
+
+    page->settings()->setMinimumLogicalFontSize(size);
+}
+
 void DumpRenderTreeSupportEfl::addUserScript(const Evas_Object* ewkView, const String& sourceCode, bool runAtStart, bool allFrames)
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);

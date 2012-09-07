@@ -1,3 +1,17 @@
+2012-09-07  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Use same default minimum logical font size in DRT and WTR
+        https://bugs.webkit.org/show_bug.cgi?id=96116
+
+        Reviewed by Martin Robinson.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues): Set minimum
+        logical font size to 9 to match the value used in WTR.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting): Explicitly set the minimum
+        logical font size to 9 (default value in WK2)
+
 2012-09-07  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: add RTCPeerConnection::createAnswer

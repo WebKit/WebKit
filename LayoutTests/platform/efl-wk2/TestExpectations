@@ -183,26 +183,6 @@ BUGWKEFL : fast/mutation/end-of-task-delivery.html = TEXT
 // testRunner.setUseDeferredFrameLoading() is not implemented in WK2
 BUGWK93980 : http/tests/appcache/load-from-appcache-defer-resume-crash.html = TEXT
 
-// Failing Ruby tests
-BUGWKEFL : fast/ruby/nested-ruby.html = TEXT
-BUGWKEFL : fast/ruby/ruby-beforeafter.html = TEXT
-BUGWKEFL : fast/ruby/ruby-empty-rt.html = TEXT
-BUGWKEFL : fast/ruby/ruby-length.html = TEXT
-BUGWKEFL : fast/ruby/ruby-run-break.html = TEXT
-BUGWKEFL : fast/ruby/ruby-runs-spans.html = TEXT
-BUGWKEFL : fast/ruby/ruby-runs.html = TEXT
-BUGWKEFL : fast/ruby/ruby-simple-rp.html = TEXT
-BUGWKEFL : fast/ruby/ruby-simple.html = TEXT
-BUGWKEFL : fast/ruby/ruby-trailing.html = TEXT
-BUGWKEFL : fast/ruby/rubyDOM-insert-rt.html = TEXT
-BUGWKEFL : fast/ruby/rubyDOM-insert-text1.html = TEXT
-BUGWKEFL : fast/ruby/rubyDOM-insert-text2.html = TEXT
-BUGWKEFL : fast/ruby/rubyDOM-insert-text3.html = TEXT
-BUGWKEFL : fast/ruby/rubyDOM-remove-rt1.html = TEXT
-BUGWKEFL : fast/ruby/rubyDOM-remove-rt2.html = TEXT
-BUGWKEFL : fast/ruby/rubyDOM-remove-text1.html = TEXT
-BUGWKEFL : fast/ruby/rubyDOM-remove-text2.html = TEXT
-
 // WebKitTestRunner needs an implementation for testRunner.setStorageDatabaseIdleInterval
 BUGWKEFL : storage/domstorage/storage-close-database-on-idle.html = TEXT
 
@@ -215,7 +195,6 @@ BUGWK92504 : fast/forms/plaintext-mode-1.html = TEXT
 // Unclassified failures
 BUGWKEFL : editing/input/emacs-ctrl-o.html = TEXT
 BUGWKEFL : fast/block/float/float-in-float-hit-testing.html = TEXT
-BUGWKEFL : fast/css/bidi-override-in-anonymous-block.html = TEXT
 BUGWKEFL : fast/dom/Window/mozilla-focus-blur.html = TEXT
 BUGWKEFL : fast/forms/legend-access-key.html = TEXT
 BUGWKEFL : fast/forms/select-writing-direction-natural.html = TEXT
@@ -226,7 +205,6 @@ BUGWKEFL : fast/replaced/no-focus-ring-object.html = TEXT
 BUGWKEFL : fast/workers/worker-cloneport.html = TEXT
 BUGWKEFL : http/tests/inspector/network/network-sidebar-width.html = TEXT
 BUGWKEFL : http/tests/inspector/resource-main-cookies.php = TEXT
-BUGWKEFL : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TEXT
 BUGWKEFL : http/tests/xmlhttprequest/workers/abort-exception-assert.html = TEXT
 BUGWKEFL : inspector/debugger/debugger-completions-on-call-frame.html = TEXT
 BUGWKEFL : inspector/extensions/extensions-panel.html = TEXT

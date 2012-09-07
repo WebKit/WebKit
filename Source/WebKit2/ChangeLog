@@ -1,3 +1,22 @@
+2012-09-07  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Use same default minimum logical font size in DRT and WTR
+        https://bugs.webkit.org/show_bug.cgi?id=96116
+
+        Reviewed by Martin Robinson.
+
+        Add private bundle C API to set the minimum logicial font
+        size setting. This is needed by WebKitTestRunner.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetMinimumLogicalFontSize):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setMinimumLogicalFontSize):
+        (WebKit):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+
 2012-09-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Simplify hitTestResultAtPoint and nodesFromRect APIs

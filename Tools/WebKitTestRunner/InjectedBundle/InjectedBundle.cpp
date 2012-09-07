@@ -239,6 +239,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     WKBundleSwitchNetworkLoaderToNewTestingSession(m_bundle);
     WKBundleSetAuthorAndUserStylesEnabled(m_bundle, m_pageGroup, true);
     WKBundleSetFrameFlatteningEnabled(m_bundle, m_pageGroup, false);
+    WKBundleSetMinimumLogicalFontSize(m_bundle, m_pageGroup, 9);
 
     WKBundleRemoveAllUserContent(m_bundle, m_pageGroup);
 

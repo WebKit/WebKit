@@ -146,6 +146,11 @@ void WKBundleSetAllowFileAccessFromFileURLs(WKBundleRef bundleRef, WKBundlePageG
     toImpl(bundleRef)->setAllowFileAccessFromFileURLs(toImpl(pageGroupRef), enabled);
 }
 
+void WKBundleSetMinimumLogicalFontSize(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, int size)
+{
+    toImpl(bundleRef)->setMinimumLogicalFontSize(toImpl(pageGroupRef), size);
+}
+
 void WKBundleSetFrameFlatteningEnabled(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
 {
     toImpl(bundleRef)->setFrameFlatteningEnabled(toImpl(pageGroupRef), enabled);
