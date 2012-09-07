@@ -20,6 +20,7 @@
 #define MediaPlayerPrivateBlackBerry_h
 
 #if ENABLE(VIDEO)
+#include "AuthenticationChallengeManager.h"
 #include "MediaPlayerPrivate.h"
 
 #include <BlackBerryPlatformPlayer.h>
@@ -32,7 +33,7 @@ class WebPageClient;
 
 namespace WebCore {
 
-class MediaPlayerPrivate : public MediaPlayerPrivateInterface, public BlackBerry::Platform::IPlatformPlayerListener {
+class MediaPlayerPrivate : public MediaPlayerPrivateInterface, public AuthenticationChallengeClient, public BlackBerry::Platform::IPlatformPlayerListener {
 public:
     virtual ~MediaPlayerPrivate();
 
@@ -132,8 +133,10 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     virtual void onBuffering(bool);
 #endif
-    virtual bool onAuthenticationNeeded(BlackBerry::Platform::MMRAuthChallenge&);
+    virtual void onAuthenticationNeeded(BlackBerry::Platform::MMRAuthChallenge&);
     virtual void onAuthenticationAccepted(const BlackBerry::Platform::MMRAuthChallenge&) const;
+
+    virtual void notifyChallengeResult(const KURL&, const ProtectionSpace&, AuthenticationChallengeResult, const Credential&);
 
     virtual bool isFullscreen() const;
     virtual bool isElementPaused() const;

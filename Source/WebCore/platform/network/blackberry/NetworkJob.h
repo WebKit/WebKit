@@ -19,8 +19,9 @@
 #ifndef NetworkJob_h
 #define NetworkJob_h
 
+#include "AuthenticationChallengeManager.h"
 #include "DeferredData.h"
-#include "ProtectionSpace.h"
+#include "PlatformString.h"
 #include "ResourceHandle.h"
 #include "ResourceResponse.h"
 #include "Timer.h"
@@ -39,11 +40,13 @@ class NetworkStreamFactory;
 
 namespace WebCore {
 
+class Credential;
 class Frame;
 class KURL;
+class ProtectionSpace;
 class ResourceRequest;
 
-class NetworkJob : public BlackBerry::Platform::FilterStream {
+class NetworkJob : public AuthenticationChallengeClient, public BlackBerry::Platform::FilterStream {
 public:
     NetworkJob();
     bool initialize(int playerId,
@@ -80,6 +83,8 @@ public:
     virtual void notifyClose(int status);
     void handleNotifyClose(int status);
     virtual int status() const { return m_extendedStatusCode; }
+
+    virtual void notifyChallengeResult(const KURL&, const ProtectionSpace&, AuthenticationChallengeResult, const Credential&);
 
 private:
     bool isClientAvailable() const { return !m_cancelled && m_handle && m_handle->client(); }

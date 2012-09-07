@@ -20,6 +20,7 @@
 #include "WebPage.h"
 
 #include "ApplicationCacheStorage.h"
+#include "AuthenticationChallengeManager.h"
 #include "AutofillManager.h"
 #include "BackForwardController.h"
 #include "BackForwardListImpl.h"
@@ -2267,14 +2268,20 @@ bool WebPagePrivate::isActive() const
     return m_client->isActive();
 }
 
-bool WebPagePrivate::authenticationChallenge(const KURL& url, const ProtectionSpace& protectionSpace, Credential& inputCredential)
+void WebPagePrivate::authenticationChallenge(const KURL& url, const ProtectionSpace& protectionSpace, const Credential& inputCredential, AuthenticationChallengeClient* client)
 {
     WebString username;
     WebString password;
 
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
-    if (m_dumpRenderTree)
-        return m_dumpRenderTree->didReceiveAuthenticationChallenge(inputCredential);
+    if (m_dumpRenderTree) {
+        Credential credential(inputCredential, inputCredential.persistence());
+        if (m_dumpRenderTree->didReceiveAuthenticationChallenge(credential))
+            client->notifyChallengeResult(url, protectionSpace, AuthenticationChallengeSuccess, credential);
+        else
+            client->notifyChallengeResult(url, protectionSpace, AuthenticationChallengeCancelled, inputCredential);
+        return;
+    }
 #endif
 
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
@@ -2291,8 +2298,11 @@ bool WebPagePrivate::authenticationChallenge(const KURL& url, const ProtectionSp
 #else
     Credential credential(username, password, CredentialPersistenceNone);
 #endif
-    inputCredential = credential;
-    return isConfirmed;
+
+    if (isConfirmed)
+        client->notifyChallengeResult(url, protectionSpace, AuthenticationChallengeSuccess, credential);
+    else
+        client->notifyChallengeResult(url, protectionSpace, AuthenticationChallengeCancelled, inputCredential);
 }
 
 PageClientBlackBerry::SaveCredentialType WebPagePrivate::notifyShouldSaveCredential(bool isNew)

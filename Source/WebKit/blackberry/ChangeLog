@@ -1,3 +1,25 @@
+2012-09-07  Lianghui Chen  <liachen@rim.com>
+
+        [BlackBerry] when one of multiple tabs uses authentication, user can get the auth dialog while the other tab has focus.
+        https://bugs.webkit.org/show_bug.cgi?id=95488
+        PR: 186597.
+
+        Internally reviewed by Joe Mason.
+        Reviewed by Yong Li.
+
+        Use new AuthenticationChallengeClient interface to make authentication
+        challenge asynchronous to NetworkJob, MediaPlayerPrivateBlackBerry, and
+        other module that will use HTTP authentication. WebPage itself still use
+        synchronous authentication though. Switching to asynchronous authentication
+        in WebPage will require bigger platform layer change and not very necessary
+        at the moment for this bug.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::authenticationChallenge):
+        * Api/WebPage_p.h:
+        (WebCore):
+        (WebPagePrivate):
+
 2012-09-07  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Remove feature about:cache/disable and about:cache/enable

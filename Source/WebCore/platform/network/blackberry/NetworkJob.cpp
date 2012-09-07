@@ -752,25 +752,22 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         String username;
         String password;
 
-        if (username.isEmpty() || password.isEmpty()) {
-            // Before asking the user for credentials, we check if the URL contains that.
-            if (!m_handle->getInternal()->m_user.isEmpty() && !m_handle->getInternal()->m_pass.isEmpty()) {
-                username = m_handle->getInternal()->m_user;
-                password = m_handle->getInternal()->m_pass;
+        // Before asking the user for credentials, we check if the URL contains that.
+        if (!m_handle->getInternal()->m_user.isEmpty() && !m_handle->getInternal()->m_pass.isEmpty()) {
+            username = m_handle->getInternal()->m_user;
+            password = m_handle->getInternal()->m_pass;
 
-                // Prevent them from been used again if they are wrong.
-                // If they are correct, they will the put into CredentialStorage.
-                m_handle->getInternal()->m_user = "";
-                m_handle->getInternal()->m_pass = "";
-            } else {
-                if (m_handle->firstRequest().targetType() != ResourceRequest::TargetIsMainFrame && BlackBerry::Platform::Settings::instance()->isChromeProcess())
-                    return false;
-                Credential inputCredential;
-                if (!m_frame->page()->chrome()->client()->platformPageClient()->authenticationChallenge(newURL, protectionSpace, inputCredential))
-                    return false;
-                username = inputCredential.user();
-                password = inputCredential.password();
-            }
+            // Prevent them from been used again if they are wrong.
+            // If they are correct, they will the put into CredentialStorage.
+            m_handle->getInternal()->m_user = "";
+            m_handle->getInternal()->m_pass = "";
+        } else {
+            if (m_handle->firstRequest().targetType() != ResourceRequest::TargetIsMainFrame && BlackBerry::Platform::Settings::instance()->isChromeProcess())
+                return false;
+
+            m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge();
+            m_frame->page()->chrome()->client()->platformPageClient()->authenticationChallenge(newURL, protectionSpace, Credential(), this);
+            return true;
         }
 
         credential = Credential(username, password, CredentialPersistenceForSession);
@@ -778,10 +775,8 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError());
     }
 
-    ResourceRequest newRequest = m_handle->firstRequest();
-    newRequest.setURL(newURL);
-    newRequest.setMustHandleInternally(true);
-    return startNewJobWithRequest(newRequest);
+    notifyChallengeResult(newURL, protectionSpace, AuthenticationChallengeSuccess, credential);
+    return m_newJobWithCredentialsStarted;
 }
 
 void NetworkJob::storeCredentials()
@@ -828,6 +823,22 @@ bool NetworkJob::shouldSendClientData() const
 void NetworkJob::fireDeleteJobTimer(Timer<NetworkJob>*)
 {
     NetworkManager::instance()->deleteJob(this);
+}
+
+void NetworkJob::notifyChallengeResult(const KURL& url, const ProtectionSpace& protectionSpace, AuthenticationChallengeResult result, const Credential& credential)
+{
+    if (result != AuthenticationChallengeSuccess || protectionSpace.host().isEmpty() || !url.isValid()) {
+        m_newJobWithCredentialsStarted = false;
+        return;
+    }
+
+    if (m_handle->getInternal()->m_currentWebChallenge.isNull())
+        m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError());
+
+    ResourceRequest newRequest = m_handle->firstRequest();
+    newRequest.setURL(m_response.url());
+    newRequest.setMustHandleInternally(true);
+    m_newJobWithCredentialsStarted = startNewJobWithRequest(newRequest);
 }
 
 } // namespace WebCore
