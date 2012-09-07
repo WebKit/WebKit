@@ -1,3 +1,12 @@
+2012-09-07  Peter Beverloo  <peter@chromium.org>
+
+        Add the google-android-tests build slave to the master's config
+        https://bugs.webkit.org/show_bug.cgi?id=96113
+
+        Reviewed by Csaba Osztrogonác.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2012-09-07  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [WK2] [EFL] Set theme for WebKit2 API test runner

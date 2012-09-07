@@ -65,6 +65,7 @@
                     { "name": "google-linux-2", "platform": "chromium-linux" },
                     { "name": "google-linux-perf", "platform": "chromium-linux" },
                     { "name": "google-linux-android", "platform": "chromium-android" },
+                    { "name": "google-android-tests", "platform": "chromium-android" },
 
                     { "name": "wincairo-1", "platform": "wincairo" },
 
