@@ -4018,6 +4018,7 @@ ALL_IN_ONE_SOURCES += \
     accessibility/AccessibilityAllInOne.cpp \
     inspector/InspectorAllInOne.cpp \
     loader/appcache/ApplicationCacheAllInOne.cpp \
+    platform/text/TextAllInOne.cpp \
     rendering/style/StyleAllInOne.cpp
 
 contains(DEFINES, ENABLE_XSLT=1):contains(DEFINES, WTF_USE_LIBXML2=1) {
