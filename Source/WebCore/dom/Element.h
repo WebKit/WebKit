@@ -275,6 +275,7 @@ public:
     ElementShadow* shadow() const;
     ElementShadow* ensureShadow();
     virtual void willAddAuthorShadowRoot() { }
+    virtual bool areAuthorShadowsAllowed() const { return true; }
 
     ShadowRoot* userAgentShadowRoot() const;
 
