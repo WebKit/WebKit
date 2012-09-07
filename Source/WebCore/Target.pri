@@ -1073,7 +1073,7 @@ SOURCES += \
     platform/text/TextCodecUTF8.cpp \
     platform/text/TextCodecICU.cpp \
     platform/text/TextEncoding.cpp \
-    platform/text/TextEncodingDetectorNone.cpp \
+    platform/text/TextEncodingDetectorICU.cpp \
     platform/text/TextEncodingRegistry.cpp \
     platform/text/TextStream.cpp \
     platform/ThreadGlobalData.cpp \
