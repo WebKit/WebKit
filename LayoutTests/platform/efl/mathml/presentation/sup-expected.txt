@@ -1,8 +1,8 @@
-layer at (0,0) size 800x600
+layer at (0,0) size 822x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x50
-  RenderBlock {html} at (0,0) size 800x50
-    RenderBody {body} at (8,16) size 784x18
+layer at (0,0) size 800x102
+  RenderBlock {html} at (0,0) size 800x102
+    RenderBody {body} at (8,16) size 784x70
       RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 76x19
           text run at (0,0) width 76: "superscript: "
@@ -15,4 +15,24 @@ layer at (0,0) size 800x50
             RenderInline {mn} at (0,0) size 6x19
               RenderText {#text} at (7,-4) size 6x19
                 text run at (7,-4) width 6: "2"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,34) size 784x36
+        RenderText {#text} at (0,0) size 26x19
+          text run at (0,0) width 26: "For "
+        RenderInline {a} at (0,0) size 71x19 [color=#0000EE]
+          RenderText {#text} at (26,0) size 71x19
+            text run at (26,0) width 71: "Bug 95404"
+        RenderText {#text} at (97,0) size 397x19
+          text run at (97,0) width 13: " - "
+          text run at (110,0) width 384: "mathml.css: Add more { white-space: nowrap } declarations:"
+        RenderBR {br} at (494,0) size 0x19
+        RenderMathMLMath {math} at (0,21) size 814x13 [padding: 0 1 0 1]
+          RenderMathMLSubSup {msup} at (1,0) size 812x13
+            RenderMathMLBlock (anonymous, inline-block) at (0,4) size 407x9
+              RenderInline {mi} at (0,0) size 407x25
+                RenderText {#text} at (0,-9) size 7x25
+                  text run at (0,-9) width 7: "x"
+            RenderInline {mi} at (0,0) size 405x19
+              RenderText {#text} at (407,-7) size 5x19
+                text run at (407,-7) width 5: "y"
         RenderText {#text} at (0,0) size 0x0

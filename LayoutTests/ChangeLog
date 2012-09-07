@@ -1,3 +1,18 @@
+2012-09-06  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] 2 mathml tests need rebaseline after r127769
+        https://bugs.webkit.org/show_bug.cgi?id=96009
+
+        Unreviewed EFL gardening.
+
+        Update baselines for 2 mathml test cases needed after
+        r127769.
+
+        * platform/efl/mathml/presentation/roots-expected.png:
+        * platform/efl/mathml/presentation/roots-expected.txt:
+        * platform/efl/mathml/presentation/sup-expected.png:
+        * platform/efl/mathml/presentation/sup-expected.txt:
+
 2012-09-06  Tony Chang  <tony@chromium.org>
 
         Chromium Linux EWS bots and CQ bots are flaky
