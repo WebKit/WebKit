@@ -1,3 +1,9 @@
+2012-09-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Add Gábor Ballabás as contributor.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-09-07  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Fix ROOT_BUILD_DIR on Windows MSVC build.
