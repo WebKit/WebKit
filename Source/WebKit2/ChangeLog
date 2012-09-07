@@ -1,3 +1,17 @@
+2012-09-07  Tim Horton  <timothy_horton@apple.com>
+
+        Add optional debug logging when we fall into/out of threaded scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=93898
+        <rdar://problem/12089098>
+
+        Reviewed by Simon Fraser.
+
+        Update the scrolling tree's scrollingPerformanceLoggingEnabled preference
+        before the early-return if we don't have layer debugging borders on.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+
 2012-09-06  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Deploy StringBuilder in more places in WebKit2

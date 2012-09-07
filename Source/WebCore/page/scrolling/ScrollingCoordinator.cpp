@@ -36,7 +36,6 @@
 #include "Region.h"
 #include "RenderView.h"
 #include "ScrollAnimator.h"
-#include "ScrollingTreeState.h"
 #include <wtf/MainThread.h>
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -46,6 +45,7 @@
 #if ENABLE(THREADED_SCROLLING)
 #include "ScrollingThread.h"
 #include "ScrollingTree.h"
+#include "ScrollingTreeState.h"
 #include <wtf/Functional.h>
 #include <wtf/PassRefPtr.h>
 #endif
@@ -192,7 +192,7 @@ void ScrollingCoordinator::frameViewHasSlowRepaintObjectsDidChange(FrameView* fr
     if (!coordinatesScrollingForFrameView(frameView))
         return;
 
-    updateShouldUpdateScrollLayerPositionOnMainThread();
+    updateShouldUpdateScrollLayerPositionOnMainThreadReason();
 }
 
 void ScrollingCoordinator::frameViewFixedObjectsDidChange(FrameView* frameView)
@@ -203,7 +203,7 @@ void ScrollingCoordinator::frameViewFixedObjectsDidChange(FrameView* frameView)
     if (!coordinatesScrollingForFrameView(frameView))
         return;
 
-    updateShouldUpdateScrollLayerPositionOnMainThread();
+    updateShouldUpdateScrollLayerPositionOnMainThreadReason();
 }
 
 static GraphicsLayer* scrollLayerForFrameView(FrameView* frameView)
@@ -232,7 +232,7 @@ void ScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView)
 
     frameViewLayoutUpdated(frameView);
     recomputeWheelEventHandlerCount();
-    updateShouldUpdateScrollLayerPositionOnMainThread();
+    updateShouldUpdateScrollLayerPositionOnMainThreadReason();
     setScrollLayer(scrollLayerForFrameView(frameView));
 }
 
@@ -359,7 +359,7 @@ void ScrollingCoordinator::recomputeWheelEventHandlerCount()
     setWheelEventHandlerCount(wheelEventHandlerCount);
 }
 
-bool ScrollingCoordinator::hasNonLayerFixedObjects(FrameView* frameView)
+bool ScrollingCoordinator::hasNonLayerViewportConstrainedObjects(FrameView* frameView)
 {
     const FrameView::ViewportConstrainedObjectSet* viewportConstrainedObjects = frameView->viewportConstrainedObjects();
     if (!viewportConstrainedObjects)
@@ -380,15 +380,26 @@ bool ScrollingCoordinator::hasNonLayerFixedObjects(FrameView* frameView)
 #endif
 }
 
-void ScrollingCoordinator::updateShouldUpdateScrollLayerPositionOnMainThread()
+void ScrollingCoordinator::updateShouldUpdateScrollLayerPositionOnMainThreadReason()
 {
+#if ENABLE(THREADED_SCROLLING)
     FrameView* frameView = m_page->mainFrame()->view();
 
-    setShouldUpdateScrollLayerPositionOnMainThread(m_forceMainThreadScrollLayerPositionUpdates
-        || frameView->hasSlowRepaintObjects()
-        || (!supportsFixedPositionLayers() && frameView->hasViewportConstrainedObjects())
-        || (supportsFixedPositionLayers() && hasNonLayerFixedObjects(frameView))
-        || m_page->mainFrame()->document()->isImageDocument());
+    ReasonForUpdatingScrollLayerPositionOnMainThreadFlags reasonsForUpdatingScrollLayerPositionOnMainThread = (ReasonForUpdatingScrollLayerPositionOnMainThreadFlags)0;
+
+    if (m_forceMainThreadScrollLayerPositionUpdates)
+        reasonsForUpdatingScrollLayerPositionOnMainThread |= ScrollingTreeState::ForcedOnMainThread;
+    if (frameView->hasSlowRepaintObjects())
+        reasonsForUpdatingScrollLayerPositionOnMainThread |= ScrollingTreeState::HasSlowRepaintObjects;
+    if (!supportsFixedPositionLayers() && frameView->hasViewportConstrainedObjects())
+        reasonsForUpdatingScrollLayerPositionOnMainThread |= ScrollingTreeState::HasNonCompositedViewportConstrainedObjects;
+    if (supportsFixedPositionLayers() && hasNonLayerViewportConstrainedObjects(frameView))
+        reasonsForUpdatingScrollLayerPositionOnMainThread |= ScrollingTreeState::HasNonLayerViewportConstrainedObjects;
+    if (m_page->mainFrame()->document()->isImageDocument())
+        reasonsForUpdatingScrollLayerPositionOnMainThread |= ScrollingTreeState::IsImageDocument;
+
+    setShouldUpdateScrollLayerPositionOnMainThreadReason(reasonsForUpdatingScrollLayerPositionOnMainThread);
+#endif
 }
 
 void ScrollingCoordinator::setForceMainThreadScrollLayerPositionUpdates(bool forceMainThreadScrollLayerPositionUpdates)
@@ -397,7 +408,7 @@ void ScrollingCoordinator::setForceMainThreadScrollLayerPositionUpdates(bool for
         return;
 
     m_forceMainThreadScrollLayerPositionUpdates = forceMainThreadScrollLayerPositionUpdates;
-    updateShouldUpdateScrollLayerPositionOnMainThread();
+    updateShouldUpdateScrollLayerPositionOnMainThreadReason();
 }
 
 #if ENABLE(THREADED_SCROLLING)
@@ -435,16 +446,18 @@ void ScrollingCoordinator::setWheelEventHandlerCount(unsigned wheelEventHandlerC
     scheduleTreeStateCommit();
 }
 
-void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(bool shouldUpdateScrollLayerPositionOnMainThread)
+#if ENABLE(THREADED_SCROLLING)
+void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThreadReason(ReasonForUpdatingScrollLayerPositionOnMainThreadFlags reasons)
 {
     // The FrameView's GraphicsLayer is likely to be out-of-synch with the PlatformLayer
     // at this point. So we'll update it before we switch back to main thread scrolling
     // in order to avoid layer positioning bugs.
-    if (shouldUpdateScrollLayerPositionOnMainThread)
+    if (reasons)
         updateMainFrameScrollLayerPosition();
-    m_scrollingTreeState->setShouldUpdateScrollLayerPositionOnMainThread(shouldUpdateScrollLayerPositionOnMainThread);
+    m_scrollingTreeState->setShouldUpdateScrollLayerPositionOnMainThreadReason(reasons);
     scheduleTreeStateCommit();
 }
+#endif
 
 void ScrollingCoordinator::scheduleTreeStateCommit()
 {

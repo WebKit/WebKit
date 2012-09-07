@@ -40,6 +40,8 @@
 
 namespace WebCore {
 
+typedef unsigned ReasonForUpdatingScrollLayerPositionOnMainThreadFlags;
+
 // The ScrollingTreeState object keeps track of the current state of scrolling related properties.
 // Whenever any properties change, the scrolling coordinator will be informed and will update the state
 // and schedule a timer that will clone the new state and send it over to the scrolling thread, avoiding locking.
@@ -54,7 +56,7 @@ public:
         ContentsSize = 1 << 1,
         NonFastScrollableRegion = 1 << 2,
         WheelEventHandlerCount = 1 << 3,
-        ShouldUpdateScrollLayerPositionOnMainThread = 1 << 4,
+        ShouldUpdateScrollLayerPositionOnMainThreadReason = 1 << 4,
         HorizontalScrollElasticity = 1 << 5,
         VerticalScrollElasticity = 1 << 6,
         HasEnabledHorizontalScrollbar = 1 << 7,
@@ -64,6 +66,14 @@ public:
         ScrollOrigin = 1 << 11,
         ScrollLayer = 1 << 12,
         RequestedScrollPosition = 1 << 13,
+    };
+
+    enum ReasonForUpdatingScrollLayerPositionOnMainThread {
+        ForcedOnMainThread = 1 << 0,
+        HasSlowRepaintObjects = 1 << 1,
+        HasNonCompositedViewportConstrainedObjects = 1 << 2,
+        HasNonLayerViewportConstrainedObjects = 1 << 3,
+        IsImageDocument = 1 << 4
     };
 
     bool hasChangedProperties() const { return m_changedProperties; }
@@ -81,8 +91,8 @@ public:
     unsigned wheelEventHandlerCount() const { return m_wheelEventHandlerCount; }
     void setWheelEventHandlerCount(unsigned);
 
-    bool shouldUpdateScrollLayerPositionOnMainThread() const { return m_shouldUpdateScrollLayerPositionOnMainThread; }
-    void setShouldUpdateScrollLayerPositionOnMainThread(bool);
+    ReasonForUpdatingScrollLayerPositionOnMainThreadFlags shouldUpdateScrollLayerPositionOnMainThreadReason() const { return m_shouldUpdateScrollLayerPositionOnMainThreadReason; }
+    void setShouldUpdateScrollLayerPositionOnMainThreadReason(ReasonForUpdatingScrollLayerPositionOnMainThreadFlags);
 
     ScrollElasticity horizontalScrollElasticity() const { return m_horizontalScrollElasticity; }
     void setHorizontalScrollElasticity(ScrollElasticity);
@@ -126,7 +136,7 @@ private:
 
     unsigned m_wheelEventHandlerCount;
 
-    bool m_shouldUpdateScrollLayerPositionOnMainThread;
+    ReasonForUpdatingScrollLayerPositionOnMainThreadFlags m_shouldUpdateScrollLayerPositionOnMainThreadReason;
 
     ScrollElasticity m_horizontalScrollElasticity;
     ScrollElasticity m_verticalScrollElasticity;

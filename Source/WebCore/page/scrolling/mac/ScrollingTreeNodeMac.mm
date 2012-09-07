@@ -37,8 +37,12 @@
 
 #include <wtf/CurrentTime.h>
 #include <wtf/Deque.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
+
+static void logThreadedScrollingMode(unsigned reasonsForUpdatingScrollLayerPositionOnMainThread);
 
 PassOwnPtr<ScrollingTreeNode> ScrollingTreeNode::create(ScrollingTree* scrollingTree)
 {
@@ -70,15 +74,22 @@ void ScrollingTreeNodeMac::update(ScrollingTreeState* state)
     if (state->changedProperties() & (ScrollingTreeState::ScrollLayer | ScrollingTreeState::ContentsSize | ScrollingTreeState::ViewportRect))
         updateMainFramePinState(scrollPosition());
 
-    if ((state->changedProperties() & ScrollingTreeState::ShouldUpdateScrollLayerPositionOnMainThread) && shouldUpdateScrollLayerPositionOnMainThread()) {
-        // We're transitioning to the slow "update scroll layer position on the main thread" mode.
-        // Initialize the probable main thread scroll position with the current scroll layer position.
-        if (state->changedProperties() & ScrollingTreeState::RequestedScrollPosition)
-            m_probableMainThreadScrollPosition = state->requestedScrollPosition();
-        else {
-            CGPoint scrollLayerPosition = m_scrollLayer.get().position;
-            m_probableMainThreadScrollPosition = IntPoint(-scrollLayerPosition.x, -scrollLayerPosition.y);
+    if ((state->changedProperties() & ScrollingTreeState::ShouldUpdateScrollLayerPositionOnMainThreadReason)) {
+        unsigned reasonsForUpdatingScrollLayerPositionOnMainThread = this->shouldUpdateScrollLayerPositionOnMainThreadReason();
+
+        if (reasonsForUpdatingScrollLayerPositionOnMainThread) {
+            // We're transitioning to the slow "update scroll layer position on the main thread" mode.
+            // Initialize the probable main thread scroll position with the current scroll layer position.
+            if (state->changedProperties() & ScrollingTreeState::RequestedScrollPosition)
+                m_probableMainThreadScrollPosition = state->requestedScrollPosition();
+            else {
+                CGPoint scrollLayerPosition = m_scrollLayer.get().position;
+                m_probableMainThreadScrollPosition = IntPoint(-scrollLayerPosition.x, -scrollLayerPosition.y);
+            }
         }
+
+        if (scrollingTree()->scrollingPerformanceLoggingEnabled())
+            logThreadedScrollingMode(reasonsForUpdatingScrollLayerPositionOnMainThread);
     }
 }
 
@@ -225,7 +236,7 @@ void ScrollingTreeNodeMac::stopSnapRubberbandTimer()
 
 IntPoint ScrollingTreeNodeMac::scrollPosition() const
 {
-    if (shouldUpdateScrollLayerPositionOnMainThread())
+    if (shouldUpdateScrollLayerPositionOnMainThreadReason())
         return m_probableMainThreadScrollPosition;
 
     CGPoint scrollLayerPosition = m_scrollLayer.get().position;
@@ -240,7 +251,7 @@ void ScrollingTreeNodeMac::setScrollPosition(const IntPoint& scrollPosition)
 
     setScrollPositionWithoutContentEdgeConstraints(newScrollPosition);
 
-    if (scrollingTree()->scrollingPeformanceLoggingEnabled())
+    if (scrollingTree()->scrollingPerformanceLoggingEnabled())
         logExposedUnfilledArea();
 }
 
@@ -248,7 +259,7 @@ void ScrollingTreeNodeMac::setScrollPositionWithoutContentEdgeConstraints(const 
 {
     updateMainFramePinState(scrollPosition);
 
-    if (shouldUpdateScrollLayerPositionOnMainThread()) {
+    if (shouldUpdateScrollLayerPositionOnMainThreadReason()) {
         m_probableMainThreadScrollPosition = scrollPosition;
         scrollingTree()->updateMainFrameScrollPositionAndScrollLayerPosition(scrollPosition);
         return;
@@ -260,7 +271,7 @@ void ScrollingTreeNodeMac::setScrollPositionWithoutContentEdgeConstraints(const 
 
 void ScrollingTreeNodeMac::setScrollLayerPosition(const IntPoint& position)
 {
-    ASSERT(!shouldUpdateScrollLayerPositionOnMainThread());
+    ASSERT(!shouldUpdateScrollLayerPositionOnMainThreadReason());
     m_scrollLayer.get().position = CGPointMake(-position.x() + scrollOrigin().x(), -position.y() + scrollOrigin().y());
 }
 
@@ -328,6 +339,30 @@ void ScrollingTreeNodeMac::logExposedUnfilledArea()
 
     if (unfilledArea)
         printf("SCROLLING: Exposed tileless area. Time: %f Unfilled Pixels: %u\n", WTF::monotonicallyIncreasingTime(), unfilledArea);
+}
+
+static void logThreadedScrollingMode(unsigned reasonsForUpdatingScrollLayerPositionOnMainThread)
+{
+    if (reasonsForUpdatingScrollLayerPositionOnMainThread) {
+        StringBuilder reasonsDescription;
+
+        if (reasonsForUpdatingScrollLayerPositionOnMainThread & ScrollingTreeState::ForcedOnMainThread)
+            reasonsDescription.append("forced,");
+        if (reasonsForUpdatingScrollLayerPositionOnMainThread & ScrollingTreeState::HasSlowRepaintObjects)
+            reasonsDescription.append("slow-repaint objects,");
+        if (reasonsForUpdatingScrollLayerPositionOnMainThread & ScrollingTreeState::HasNonCompositedViewportConstrainedObjects)
+            reasonsDescription.append("viewport-constrained objects,");
+        if (reasonsForUpdatingScrollLayerPositionOnMainThread & ScrollingTreeState::HasNonLayerViewportConstrainedObjects)
+            reasonsDescription.append("non-layer viewport-constrained objects,");
+        if (reasonsForUpdatingScrollLayerPositionOnMainThread & ScrollingTreeState::IsImageDocument)
+            reasonsDescription.append("image document,");
+
+        // Strip the trailing comma.
+        String reasonsDescriptionTrimmed = reasonsDescription.toString().left(reasonsDescription.length() - 1);
+
+        WTFLogAlways("SCROLLING: Switching to main-thread scrolling mode. Time: %f Reason(s): %s\n", WTF::monotonicallyIncreasingTime(), reasonsDescriptionTrimmed.ascii().data());
+    } else
+        WTFLogAlways("SCROLLING: Switching to threaded scrolling mode. Time: %f\n", WTF::monotonicallyIncreasingTime());
 }
 
 } // namespace WebCore
