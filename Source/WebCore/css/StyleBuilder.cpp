@@ -1013,20 +1013,9 @@ public:
         for (Iterator it = parentMap.begin(); it != end; ++it) {
             CounterDirectives& directives = map.add(it->first, CounterDirectives()).iterator->second;
             if (counterBehavior == Reset) {
-                directives.m_reset = it->second.m_reset;
-                directives.m_resetValue = it->second.m_resetValue;
+                directives.inheritReset(it->second);
             } else {
-                // Inheriting a counter-increment means taking the parent's current value for the counter
-                // and adding it to itself.
-                directives.m_increment = it->second.m_increment;
-                directives.m_incrementValue = 0;
-                if (directives.m_increment) {
-                    float incrementValue = directives.m_incrementValue;
-                    directives.m_incrementValue = clampToInteger(incrementValue + it->second.m_incrementValue);
-                } else {
-                    directives.m_increment = true;
-                    directives.m_incrementValue = it->second.m_incrementValue;
-                }
+                directives.inheritIncrement(it->second);
             }
         }
     }
@@ -1043,9 +1032,9 @@ public:
         Iterator end = map.end();
         for (Iterator it = map.begin(); it != end; ++it)
             if (counterBehavior == Reset)
-                it->second.m_reset = false;
+                it->second.clearReset();
             else
-                it->second.m_increment = false;
+                it->second.clearIncrement();
 
         int length = list ? list->length() : 0;
         for (int i = 0; i < length; ++i) {
@@ -1059,20 +1048,12 @@ public:
 
             AtomicString identifier = static_cast<CSSPrimitiveValue*>(pair->first())->getStringValue();
             int value = static_cast<CSSPrimitiveValue*>(pair->second())->getIntValue();
-            CounterDirectives& directives = map.add(identifier.impl(), CounterDirectives()).iterator->second;
+            CounterDirectives& directives = map.add(identifier, CounterDirectives()).iterator->second;
             if (counterBehavior == Reset) {
-                directives.m_reset = true;
-                directives.m_resetValue = value;
+                directives.setResetValue(value);
             } else {
-                if (directives.m_increment) {
-                    float incrementValue = directives.m_incrementValue;
-                    directives.m_incrementValue = clampToInteger(incrementValue + value);
-                } else {
-                    directives.m_increment = true;
-                    directives.m_incrementValue = value;
-                }
+                directives.addIncrementValue(value);
             }
-            
         }
     }
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &emptyFunction, &applyValue); }

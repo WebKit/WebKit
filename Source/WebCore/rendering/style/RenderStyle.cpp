@@ -1036,6 +1036,13 @@ CounterDirectiveMap& RenderStyle::accessCounterDirectives()
     return *map;
 }
 
+const CounterDirectives RenderStyle::getCounterDirectives(const AtomicString& identifier) const
+{
+    if (const CounterDirectiveMap* directives = counterDirectives())
+        return directives->get(identifier);
+    return CounterDirectives();
+}
+
 const AtomicString& RenderStyle::hyphenString() const
 {
     ASSERT(hyphens() != HyphensNone);

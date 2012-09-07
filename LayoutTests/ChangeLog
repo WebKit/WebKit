@@ -1,3 +1,16 @@
+2012-09-06  Elliott Sprehn  <esprehn@chromium.org>
+
+        Add methods to CounterDirectives to clean up StyleBuilder and RenderCounter.
+        https://bugs.webkit.org/show_bug.cgi?id=94587
+
+        Reviewed by Julien Chaffraix.
+
+        Tests for bug 94642 exposing an unitialized read when using counter-reset and
+        counter-increment: inherit.
+
+        * fast/css/counters/counter-reset-inherit-bug-94642-expected.html: Added.
+        * fast/css/counters/counter-reset-inherit-bug-94642.html: Added.
+
 2012-09-06  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [Gtk] accessibility/canvas-description-and-role expected results needed
