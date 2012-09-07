@@ -33,6 +33,7 @@ public:
     const char* defaultTestPageUrl() const;
     const char* defaultTheme() const;
     CString urlForResource(const char* resource);
+    CString pathForResource(const char* resource);
 
     virtual unsigned int defaultWidth() const { return m_defaultWidth; }
     virtual unsigned int defaultHeight() const { return m_defaultHeight; }

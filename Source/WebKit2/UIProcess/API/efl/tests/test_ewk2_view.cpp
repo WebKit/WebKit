@@ -265,3 +265,25 @@ TEST_F(EWK2UnitTestBase, ewk_view_settings_get)
     ASSERT_TRUE(settings);
     ASSERT_EQ(settings, ewk_view_settings_get(webView()));
 }
+
+TEST_F(EWK2UnitTestBase, ewk_view_theme_set)
+{
+    const char* buttonHTML = "<html><body><input type='button' id='btn'>"
+        "<script>document.title=document.getElementById('btn').clientWidth;</script>"
+        "</body></html>";
+
+    ewk_view_html_string_load(webView(), buttonHTML, "file:///", 0);
+    waitUntilTitleChangedTo("30"); // button of default theme has 30px as padding (15 to -16)
+
+    ewk_view_theme_set(webView(), environment->pathForResource("it_does_not_exist.edj").data());
+    ewk_view_html_string_load(webView(), buttonHTML, "file:///", 0);
+    waitUntilTitleChangedTo("30"); // the result should be same as default theme
+
+    ewk_view_theme_set(webView(), environment->pathForResource("empty_theme.edj").data());
+    ewk_view_html_string_load(webView(), buttonHTML, "file:///", 0);
+    waitUntilTitleChangedTo("30"); // the result should be same as default theme
+
+    ewk_view_theme_set(webView(), environment->pathForResource("big_button_theme.edj").data());
+    ewk_view_html_string_load(webView(), buttonHTML, "file:///", 0);
+    waitUntilTitleChangedTo("299"); // button of big button theme has 299px as padding (150 to -150)
+}
