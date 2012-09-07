@@ -2519,7 +2519,6 @@ BUGWK64000 DEBUG : fast/events/click-focus-anchor.html = PASS TEXT
 
 BUGCR88588 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
 
-BUGCR88894 SLOW : http/tests/cache/subresource-expiration-1.html = PASS
 BUGCR88894 SLOW : http/tests/cache/subresource-expiration-2.html = PASS
 
 // V8 now follows spec on toisostring, test needs to be fixed.
@@ -3599,4 +3598,4 @@ BUGWK95813 : fast/innerHTML/innerHTML-iframe.html = TEXT PASS
 
 BUGWK96041 LINUX : platform/chromium-linux/compositing/gestures = PASS IMAGE
 BUGWK96041 LINUX : http/tests/cache/stopped-revalidation.html = MISSING PASS
-BUGWK96041 LINUX : http/tests/cache/subresource-expiration-1.html = MISSING PASS
+BUGCR88894 BUGWK96041 SLOW LINUX : http/tests/cache/subresource-expiration-1.html = MISSING PASS

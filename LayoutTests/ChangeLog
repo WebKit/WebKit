@@ -1,5 +1,11 @@
 2012-09-07  Tony Chang  <tony@chromium.org>
 
+        [chromium] Unreviewed, fix overlapping test expectation.
+
+        * platform/chromium/TestExpectations:
+
+2012-09-07  Tony Chang  <tony@chromium.org>
+
         [chromium] Chromium Linux EWS bots and CQ bots are flaky
         https://bugs.webkit.org/show_bug.cgi?id=96041
 
