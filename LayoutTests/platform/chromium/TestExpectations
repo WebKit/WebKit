@@ -3317,7 +3317,7 @@ BUGWK92022 DEBUG : svg/W3C-SVG-1.1/struct-dom-06-b.svg = TEXT PASS
 BUGWK92026 DEBUG SNOWLEOPARD : css3/selectors3/xml/css3-modsel-179a.xml = PASS IMAGE+TEXT
 BUGWK92027 DEBUG SNOWLEOPARD : fast/performance/performance-now-timestamps.html = PASS TEXT
 BUGWK92288 SNOWLEOPARD DEBUG : plugins/update-widgets-crash.html = PASS TIMEOUT
-BUGWK92297 DEBUG : media/video-set-rate-from-pause.html = PASS CRASH
+BUGWK92297 WIN LINUX MAC DEBUG : media/video-set-rate-from-pause.html = PASS CRASH
 
 BUGWK92570 WIN DEBUG : inspector/debugger/dom-breakpoints.html = PASS TIMEOUT
 BUGWK92570 WIN DEBUG : inspector/timeline/timeline-network-received-data.html = TEXT PASS TIMEOUT
@@ -3545,6 +3545,7 @@ BUGCR145590 ANDROID : media/video-aspect-ratio.html = TEXT // 8 videos
 BUGCR145590 ANDROID : media/video-buffered.html = TEXT
 BUGCR145590 ANDROID : media/video-canvas-source.html = TEXT
 BUGCR145590 ANDROID : media/video-error-does-not-exist.html = TEXT
+BUGCR145590 ANDROID : media/video-set-rate-from-pause.html = TIMEOUT
 BUGCR145590 ANDROID : media/video-source-error-no-candidate.html = TIMEOUT PASS
 BUGCR145590 ANDROID : media/video-source-type-params.html = TEXT
 BUGCR145590 ANDROID : platform/chromium/compositing/video-frame-size-change.html = TIMEOUT

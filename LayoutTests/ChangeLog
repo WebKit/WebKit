@@ -1,3 +1,9 @@
+2012-09-07  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Unreviewed. Update test expectation media/video-set-rate-from-pause.html on Android.
+
+        * platform/chromium/TestExpectations:
+
 2012-09-07  Kangil Han  <kangil.han@samsung.com>
 
         [WK2][WTR] Unskip detached-stylesheet-without-wrapper.html test case.
