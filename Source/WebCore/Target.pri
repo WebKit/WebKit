@@ -2044,6 +2044,7 @@ HEADERS += \
     platform/graphics/CrossfadeGeneratedImage.h \
     platform/graphics/filters/CustomFilterGlobalContext.h \
     platform/graphics/filters/CustomFilterMesh.h \
+    platform/graphics/filters/CustomFilterMeshGenerator.h \
     platform/graphics/filters/CustomFilterNumberParameter.h \
     platform/graphics/filters/CustomFilterCompiledProgram.h \
     platform/graphics/filters/CustomFilterOperation.h \
@@ -3446,6 +3447,7 @@ contains(DEFINES, ENABLE_FILTERS=1) {
         platform/graphics/filters/CustomFilterProgram.cpp \
         platform/graphics/filters/CustomFilterCompiledProgram.cpp \
         platform/graphics/filters/CustomFilterMesh.cpp \
+        platform/graphics/filters/CustomFilterMeshGenerator.cpp \
         platform/graphics/filters/CustomFilterValidatedProgram.cpp \
         platform/graphics/filters/DistantLightSource.cpp \
         platform/graphics/filters/FEBlend.cpp \
