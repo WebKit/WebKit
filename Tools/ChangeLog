@@ -1,3 +1,12 @@
+2012-09-07  Dean Jackson  <dino@apple.com>
+
+        Unreviewed changes to watchlist.
+
+        - Add new WebGL and Filters definitions
+        - Add myself to OpenGL bugs
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-09-07  Peter Beverloo  <peter@chromium.org>
 
         Actually trigger the Android Tester

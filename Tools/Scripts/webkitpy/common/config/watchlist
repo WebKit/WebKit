@@ -215,6 +215,23 @@
         "WTF": {
             "filename": r"Source/WTF/wtf",
         },
+        "WebGL": {
+            "filename": r"Source/WebCore/html/canvas/.*WebGL.*"
+                        r"|Source/WebCore/bindings/js/.*WebGL.*"
+                        r"|Source/WebCore/platform/graphics/gpu"
+                        r"|Source/WebCore/platform/graphics/opengl"
+                        r"|Source/WebCore/platform/graphics/ANGLE.*"
+                        r"|Source/WebCore/platform/graphics/.*GraphicsContext3D.*"
+                        r"|Source/ThirdParty/ANGLE",
+        },
+        "Filters": {
+            "filename": r"Source/WebCore/platform/graphics/filters"
+                        r"|Source/WebCore/rendering/.*Filter.*"
+                        r"|Source/WebCore/rendering/style/.*Filter.*"
+                        r"|Source/WebCore/rendering/svg/.*Filter.*"
+                        r"|Source/WebCore/svg/graphics/filters"
+                        r"|Source/WebCore/svg/graphics/.*Filter.*",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -232,6 +249,7 @@
         "EFLWebKit2PlatformSpecific": [ "gyuyoung.kim@samsung.com", "rakuco@webkit.org" ],
         "EFLWebKit2PublicAPI": [ "gyuyoung.kim@samsung.com", "rakuco@webkit.org" ],
         "Editing": [ "mifenton@rim.com" ],
+        "Filters": [ "dino@apple.com" ],
         "Forms": [ "tkent@chromium.org", "mifenton@rim.com" ],
         "FrameLoader": [ "abarth@webkit.org", "japhet@chromium.org" ],
         "GStreamerGraphics": [ "alexis@webkit.org", "pnormand@igalia.com", "gns@gnome.org", "mrobinson@webkit.org" ],
@@ -240,7 +258,7 @@
         "MathML": [ "dbarton@mathscribe.com" ],
         "Media": [ "feature-media-reviews@chromium.org", "eric.carlson@apple.com" ],
         "NetworkInfo": [ "gyuyoung.kim@samsung.com" ],
-        "OpenGL" : [ "noam.rosenthal@nokia.com" ],
+        "OpenGL" : [ "noam.rosenthal@nokia.com", "dino@apple.com" ],
         "SkiaGraphics": [ "senorblanco@chromium.org" ],
         "QtBuildSystem" : [ "vestbo@webkit.org", "abecsi@webkit.org" ],
         "QtGraphics" : [ "noam.rosenthal@nokia.com" ],
@@ -256,6 +274,7 @@
         "ThreadingFiles|ThreadingUsage": [ "levin+threading@chromium.org", ],
         "V8Bindings|BindingsScripts": [ "abarth@webkit.org", "japhet@chromium.org", "haraken@chromium.org" ],
         "WatchListScript": [ "levin+watchlist@chromium.org", ],
+        "WebGL": [ "dino@apple.com" ],
         "WebIDL": [ "abarth@webkit.org", "ojan@chromium.org" ],
         "WebKitGTKTranslations": [ "gns@gnome.org", "mrobinson@webkit.org" ],
         "webkitpy": [ "abarth@webkit.org", "ojan@chromium.org", "dpranke@chromium.org" ],
