@@ -2100,7 +2100,7 @@ LayoutUnit RenderBox::computeLogicalClientHeight(SizeType heightType, const Leng
     LayoutUnit heightIncludingScrollbar = computeContentLogicalHeightUsing(heightType, height);
     if (heightIncludingScrollbar == -1)
         return -1;
-    return std::max(LayoutUnit(0), computeContentBoxLogicalHeight(heightIncludingScrollbar) - scrollbarLogicalHeight());
+    return std::max<LayoutUnit>(0, computeContentBoxLogicalHeight(heightIncludingScrollbar) - scrollbarLogicalHeight());
 }
 
 LayoutUnit RenderBox::computeContentLogicalHeightUsing(SizeType heightType, const Length& height) const
@@ -2172,9 +2172,11 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
         result = max<LayoutUnit>(0, contentBoxHeightWithScrollbar - cb->scrollbarLogicalHeight());
     } else if (cbstyle->logicalHeight().isPercent() && !isOutOfFlowPositionedWithSpecifiedHeight) {
         // We need to recur and compute the percentage height for our containing block.
-        result = cb->computePercentageLogicalHeight(cbstyle->logicalHeight());
-        if (result != -1)
-            result = cb->computeContentBoxLogicalHeight(result);
+        LayoutUnit heightWithScrollbar = cb->computePercentageLogicalHeight(cbstyle->logicalHeight());
+        if (heightWithScrollbar != -1) {
+            LayoutUnit contentBoxHeightWithScrollbar = cb->computeContentBoxLogicalHeight(heightWithScrollbar);
+            result = max<LayoutUnit>(0, contentBoxHeightWithScrollbar - cb->scrollbarLogicalHeight());
+        }
     } else if (cb->isRenderView() || (cb->isBody() && document()->inQuirksMode()) || isOutOfFlowPositionedWithSpecifiedHeight) {
         // Don't allow this to affect the block' height() member variable, since this
         // can get called while the block is still laying out its kids.
@@ -2304,10 +2306,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType sizeType, Lengt
                     cb = cb->containingBlock();
                 }
             }
-            availableHeight = computeContentBoxLogicalHeight(valueForLength(logicalHeight, availableHeight));
-            if (cb->isBox() && cb->style()->logicalHeight().isFixed())
-                availableHeight = max<LayoutUnit>(0, availableHeight - toRenderBox(cb)->scrollbarLogicalHeight());
-            return availableHeight;
+            return computeContentBoxLogicalHeight(valueForLength(logicalHeight, availableHeight));
         }
         case ViewportPercentageWidth:
         case ViewportPercentageHeight:
@@ -2325,9 +2324,6 @@ LayoutUnit RenderBox::availableLogicalHeight() const
 
 LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h) const
 {
-    if (h.isFixed())
-        return computeContentBoxLogicalHeight(h.value());
-
     if (isRenderView())
         return isHorizontalWritingMode() ? toRenderView(this)->frameView()->visibleHeight() : toRenderView(this)->frameView()->visibleWidth();
 
@@ -2337,19 +2333,16 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h) const
     if (isTableCell() && (h.isAuto() || h.isPercent()))
         return overrideLogicalContentHeight();
 
-    if (h.isPercent()) {
-        LayoutUnit availableHeight;
-        // https://bugs.webkit.org/show_bug.cgi?id=64046
-        // For absolutely positioned elements whose containing block is based on a block-level element,
-        // the percentage is calculated with respect to the height of the padding box of that element
-        if (isOutOfFlowPositioned())
-            availableHeight = containingBlockLogicalHeightForPositioned(containingBlock());
-        else
-            availableHeight = containingBlock()->availableLogicalHeight();
+    if (h.isPercent() && isOutOfFlowPositioned()) {
+        LayoutUnit availableHeight = containingBlockLogicalHeightForPositioned(containingBlock());
         return computeContentBoxLogicalHeight(valueForLength(h, availableHeight));
     }
 
-    // FIXME: We can't just check top/bottom here.
+    LayoutUnit heightIncludingScrollbar = computeContentLogicalHeightUsing(MainOrPreferredSize, h);
+    if (heightIncludingScrollbar != -1)
+        return std::max<LayoutUnit>(0, computeContentBoxLogicalHeight(heightIncludingScrollbar) - scrollbarLogicalHeight());
+
+    // FIXME: Check logicalTop/logicalBottom here to correctly handle vertical writing-mode.
     // https://bugs.webkit.org/show_bug.cgi?id=46500
     if (isRenderBlock() && isOutOfFlowPositioned() && style()->height().isAuto() && !(style()->top().isAuto() || style()->bottom().isAuto())) {
         RenderBlock* block = const_cast<RenderBlock*>(toRenderBlock(this));

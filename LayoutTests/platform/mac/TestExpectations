@@ -371,3 +371,5 @@ BUGWK80394 : fast/block/margin-collapse/block-inside-inline/025.html = TEXT
 BUGWK94458 SKIP : fast/events/message-port-constructor-for-deleted-document.html = PASS
 
 BUGWK95501 SKIP : http/tests/security/inactive-document-with-empty-security-origin.html = TIMEOUT
+
+BUG_OJAN : fast/css/percent-top-value-with-relative-position.html = TEXT IMAGE+TEXT

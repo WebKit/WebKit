@@ -3598,5 +3598,7 @@ BUGCR146401 ANDROID : fast/css/sticky/sticky-writing-mode-vertical-lr.html = IMA
 
 BUGWK95813 : fast/innerHTML/innerHTML-iframe.html = TEXT PASS
 
+BUG_OJAN MAC WIN : fast/css/percent-top-value-with-relative-position.html = IMAGE+TEXT
+
 BUGWK96041 LINUX : platform/chromium-linux/compositing/gestures = PASS IMAGE
 BUGWK96041 LINUX : http/tests/cache/cancel-during-revalidation-succeeded.html = PASS TEXT

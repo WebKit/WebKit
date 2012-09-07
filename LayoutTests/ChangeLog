@@ -1,3 +1,19 @@
+2012-09-07  Ojan Vafai  <ojan@chromium.org>
+
+        Fix RenderBox::availableHeight to subtract scrollbars in the right places
+        https://bugs.webkit.org/show_bug.cgi?id=96031
+
+        Reviewed by Tony Chang.
+
+        * fast/block/positioning/percent-top-left-on-relative-position-expected.html: Added.
+        * fast/block/positioning/percent-top-left-on-relative-position.html: Added.
+        * fast/css/nested-percent-height-on-replaced-expected.txt: Added.
+        * fast/css/nested-percent-height-on-replaced.html: Added.
+        * platform/chromium-linux/fast/css/percent-top-value-with-relative-position-expected.png:
+        * platform/chromium-win/fast/css/percent-top-value-with-relative-position-expected.txt:
+        This is now correctly centering the 50%. It moved up 8px because that is half of the body's margin.
+        This matches other Firefox 15 and IE9.
+
 2012-09-07  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed, fix incorrect comment character(s) in Skipped list.
