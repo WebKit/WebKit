@@ -1,3 +1,19 @@
+2012-09-07  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: ARIA spin button should support range value attributes
+        https://bugs.webkit.org/show_bug.cgi?id=96076
+
+        Reviewed by Chris Fleizach.
+
+        Expose supportsRangeValue to simplify Chromium logic for when to
+        extract a value from a range.
+
+        * public/WebAccessibilityObject.h:
+        (WebAccessibilityObject):
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::supportsRangeValue):
+        (WebKit):
+
 2012-09-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Simplify hitTestResultAtPoint and nodesFromRect APIs

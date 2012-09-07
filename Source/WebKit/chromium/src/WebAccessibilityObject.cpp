@@ -610,6 +610,14 @@ WebURL WebAccessibilityObject::url() const
     return m_private->url();
 }
 
+bool WebAccessibilityObject::supportsRangeValue() const
+{
+    if (isDetached())
+        return false;
+
+    return m_private->supportsRangeValue();
+}
+
 WebString WebAccessibilityObject::valueDescription() const
 {
     if (isDetached())

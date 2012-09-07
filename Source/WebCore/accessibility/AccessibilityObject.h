@@ -366,7 +366,7 @@ public:
     virtual bool isMenuList() const { return false; }
     virtual bool isMenuListPopup() const { return false; }
     virtual bool isMenuListOption() const { return false; }
-    virtual bool isSpinButton() const { return false; }
+    virtual bool isSpinButton() const { return roleValue() == SpinButtonRole; }
     virtual bool isSpinButtonPart() const { return false; }
     virtual bool isMockObject() const { return false; }
     bool isTextControl() const { return roleValue() == TextAreaRole || roleValue() == TextFieldRole; }
@@ -461,6 +461,7 @@ public:
     bool supportsARIAExpanded() const;
     AccessibilitySortDirection sortDirection() const;
     virtual bool canvasHasFallbackContent() const { return false; }
+    bool supportsRangeValue() const;
     
     // ARIA drag and drop
     virtual bool supportsARIADropping() const { return false; }

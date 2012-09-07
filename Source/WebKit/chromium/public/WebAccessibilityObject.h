@@ -149,6 +149,7 @@ public:
     WEBKIT_EXPORT WebAccessibilityObject titleUIElement() const;
     WEBKIT_EXPORT WebURL url() const;
 
+    WEBKIT_EXPORT bool supportsRangeValue() const;
     WEBKIT_EXPORT WebString valueDescription() const;
     WEBKIT_EXPORT float valueForRange() const;
     WEBKIT_EXPORT float maxValueForRange() const;
