@@ -167,17 +167,18 @@ inline FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, const JSToke
 {
 }
 
-void FunctionBodyNode::finishParsing(const SourceCode& source, ParameterNode* firstParameter, const Identifier& ident)
+void FunctionBodyNode::finishParsing(const SourceCode& source, ParameterNode* firstParameter, const Identifier& ident, FunctionNameIsInScopeToggle functionNameIsInScopeToggle)
 {
     setSource(source);
-    finishParsing(FunctionParameters::create(firstParameter), ident);
+    finishParsing(FunctionParameters::create(firstParameter), ident, functionNameIsInScopeToggle);
 }
 
-void FunctionBodyNode::finishParsing(PassRefPtr<FunctionParameters> parameters, const Identifier& ident)
+void FunctionBodyNode::finishParsing(PassRefPtr<FunctionParameters> parameters, const Identifier& ident, FunctionNameIsInScopeToggle functionNameIsInScopeToggle)
 {
     ASSERT(!source().isNull());
     m_parameters = parameters;
     m_ident = ident;
+    m_functionNameIsInScopeToggle = functionNameIsInScopeToggle;
 }
 
 FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, const JSTokenLocation& location, bool inStrictContext)

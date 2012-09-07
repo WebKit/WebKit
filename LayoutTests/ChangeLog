@@ -1,3 +1,22 @@
+2012-09-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled back in <http://trac.webkit.org/changeset/127698> with a fix for
+        fast/dom/HTMLScriptElement/script-reexecution-pretty-diff.html.
+
+        Added a more explicit test for the feature I broke in 
+        fast/dom/HTMLScriptElement/script-reexecution-pretty-diff.html.
+
+        Reviewed by Gavin Barraclough.
+
+            Named functions should not allocate scope objects for their names
+            https://bugs.webkit.org/show_bug.cgi?id=95659
+
+            Reviewed by Oliver Hunt.
+
+        * fast/dom/HTMLScriptElement/script-reexecution.html:
+        * fast/js/function-name-is-in-scope-expected.txt: Added.
+        * fast/js/function-name-is-in-scope.html: Added.
+
 2012-09-06  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed, revert part of http://trac.webkit.org/changeset/127698

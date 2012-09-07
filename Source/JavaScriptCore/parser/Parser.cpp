@@ -40,7 +40,7 @@ using namespace std;
 namespace JSC {
 
 template <typename LexerType>
-Parser<LexerType>::Parser(JSGlobalData* globalData, const SourceCode& source, FunctionParameters* parameters, JSParserStrictness strictness, JSParserMode parserMode)
+Parser<LexerType>::Parser(JSGlobalData* globalData, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode)
     : m_globalData(globalData)
     , m_source(&source)
     , m_stack(wtfThreadData().stack())
@@ -71,6 +71,8 @@ Parser<LexerType>::Parser(JSGlobalData* globalData, const SourceCode& source, Fu
         for (unsigned i = 0; i < parameters->size(); i++)
             scope->declareParameter(&parameters->at(i));
     }
+    if (!name.isNull())
+        scope->declareCallee(&name);
     next();
     m_lexer->setLastLineNumber(tokenLine());
 }

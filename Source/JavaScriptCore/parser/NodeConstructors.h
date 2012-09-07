@@ -749,14 +749,14 @@ namespace JSC {
         : ExpressionNode(location)
         , m_body(body)
     {
-        m_body->finishParsing(source, parameter, ident);
+        m_body->finishParsing(source, parameter, ident, FunctionNameIsInScope);
     }
 
     inline FuncDeclNode::FuncDeclNode(const JSTokenLocation& location, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter)
         : StatementNode(location)
         , m_body(body)
     {
-        m_body->finishParsing(source, parameter, ident);
+        m_body->finishParsing(source, parameter, ident, FunctionNameIsNotInScope);
     }
 
     inline CaseClauseNode::CaseClauseNode(ExpressionNode* expr, SourceElements* statements)

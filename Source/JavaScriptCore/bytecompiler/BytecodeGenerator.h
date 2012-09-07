@@ -617,7 +617,9 @@ namespace JSC {
         int addGlobalVar(const Identifier&, ConstantMode, FunctionMode);
 
         void addParameter(const Identifier&, int parameterIndex);
-        
+        RegisterID* resolveCallee(FunctionBodyNode*);
+        void addCallee(FunctionBodyNode*, RegisterID*);
+
         void preserveLastVar();
         bool shouldAvoidResolveGlobal();
 
@@ -625,6 +627,9 @@ namespace JSC {
         {
             if (index >= 0)
                 return m_calleeRegisters[index];
+
+            if (index == RegisterFile::Callee)
+                return m_calleeRegister;
 
             ASSERT(m_parameters.size());
             return m_parameters[index + m_parameters.size() + RegisterFile::CallFrameHeaderSize];
@@ -636,16 +641,6 @@ namespace JSC {
 
         unsigned addConstantBuffer(unsigned length);
         
-        FunctionExecutable* makeFunction(ExecState* exec, FunctionBodyNode* body)
-        {
-            return FunctionExecutable::create(exec, body->ident(), body->inferredName(), body->source(), body->usesArguments(), body->parameters(), body->isStrictMode(), body->lineNo(), body->lastLine());
-        }
-
-        FunctionExecutable* makeFunction(JSGlobalData* globalData, FunctionBodyNode* body)
-        {
-            return FunctionExecutable::create(*globalData, body->ident(), body->inferredName(), body->source(), body->usesArguments(), body->parameters(), body->isStrictMode(), body->lineNo(), body->lastLine());
-        }
-
         JSString* addStringConstant(const Identifier&);
 
         void addLineInfo(unsigned lineNo)
@@ -716,6 +711,7 @@ namespace JSC {
         HashSet<RefPtr<StringImpl>, IdentifierRepHash> m_functions;
         RegisterID m_ignoredResultRegister;
         RegisterID m_thisRegister;
+        RegisterID m_calleeRegister;
         RegisterID* m_activationRegister;
         SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
         SegmentedVector<RegisterID, 32> m_calleeRegisters;

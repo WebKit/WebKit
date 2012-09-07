@@ -1403,6 +1403,7 @@ namespace JSC {
         FunctionParameters(ParameterNode*);
     };
 
+    enum FunctionNameIsInScopeToggle { FunctionNameIsNotInScope, FunctionNameIsInScope };
     class FunctionBodyNode : public ScopeNode {
     public:
         static const bool isFunctionNode = true;
@@ -1414,12 +1415,15 @@ namespace JSC {
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
-        void finishParsing(const SourceCode&, ParameterNode*, const Identifier&);
-        void finishParsing(PassRefPtr<FunctionParameters>, const Identifier&);
+        void finishParsing(const SourceCode&, ParameterNode*, const Identifier&, FunctionNameIsInScopeToggle);
+        void finishParsing(PassRefPtr<FunctionParameters>, const Identifier&, FunctionNameIsInScopeToggle);
         
         const Identifier& ident() { return m_ident; }
         void setInferredName(const Identifier& inferredName) { ASSERT(!inferredName.isNull()); m_inferredName = inferredName; }
         const Identifier& inferredName() { return m_inferredName.isEmpty() ? m_ident : m_inferredName; }
+
+        bool functionNameIsInScope() { return m_functionNameIsInScopeToggle == FunctionNameIsInScope; }
+        FunctionNameIsInScopeToggle functionNameIsInScopeToggle() { return m_functionNameIsInScopeToggle; }
 
         static const bool scopeIsFunction = true;
 
@@ -1429,6 +1433,7 @@ namespace JSC {
 
         Identifier m_ident;
         Identifier m_inferredName;
+        FunctionNameIsInScopeToggle m_functionNameIsInScopeToggle;
         RefPtr<FunctionParameters> m_parameters;
     };
 
