@@ -1,3 +1,14 @@
+2012-09-06  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry]  Implement a color picker
+        https://bugs.webkit.org/show_bug.cgi?id=96001
+
+        Reviewed by Rob Buis.
+
+        Add color picker files into building system.
+
+        * PlatformBlackBerry.cmake:
+
 2012-09-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix build with ANGLE on platforms that provide EGL/GLESv2

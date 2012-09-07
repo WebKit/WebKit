@@ -23,6 +23,7 @@
 #include "BackingStoreClient.h"
 #include "CSSStyleDeclaration.h"
 #include "Chrome.h"
+#include "ColorPickerClient.h"
 #include "DOMSupport.h"
 #include "DatePickerClient.h"
 #include "Document.h"
@@ -977,8 +978,11 @@ bool InputHandler::openColorPopup(HTMLInputElement* element)
     m_currentFocusElement = element;
     m_currentFocusElementType = TextPopup;
 
-    // FIXME: Need to add pagePopup support and the colour dialog.
-    // PR 180778
+    // Check if popup already exists, close it if does.
+    m_webPage->m_page->chrome()->client()->closePagePopup(0);
+    ColorPickerClient* client = new ColorPickerClient(element->value(), m_webPage, element);
+    m_webPage->m_page->chrome()->client()->openPagePopup(client,  WebCore::IntRect());
+    return true;
 }
 
 void InputHandler::setInputValue(const WTF::String& value)

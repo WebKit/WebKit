@@ -1,0 +1,107 @@
+/*
+ * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+#include "config.h"
+#include "ColorPickerClient.h"
+
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "Document.h"
+#include "DocumentWriter.h"
+#include "HTMLInputElement.h"
+#include "Page.h"
+#include "PagePopup.h"
+#include "PopupPicker.h"
+#include "RenderObject.h"
+#include "WebPage_p.h"
+#include "WebString.h"
+
+#include <wtf/text/StringBuilder.h>
+
+namespace WebCore {
+
+ColorPickerClient::ColorPickerClient(const BlackBerry::WebKit::WebString& value, BlackBerry::WebKit::WebPagePrivate* webPage, HTMLInputElement* element)
+    : m_webPage(webPage)
+    , m_element(element)
+{
+    generateHTML(value);
+}
+
+void ColorPickerClient::generateHTML(const BlackBerry::WebKit::WebString& value)
+{
+    StringBuilder source;
+    source.append("<style>\n");
+    // Include CSS file.
+    source.append(popupControlBlackBerryCss,
+            sizeof(popupControlBlackBerryCss));
+    source.append("</style>\n<style>");
+    source.append(colorControlBlackBerryCss,
+            sizeof(colorControlBlackBerryCss));
+    source.append("</style></head><body>\n");
+    source.append("<script>\n");
+    source.append("window.addEventListener('load', function () {");
+    source.append("window.popupcontrol.show(");
+    if (!value.isEmpty())
+        source.append("\"" + String(value.impl()) + "\"); \n }); \n");
+    else
+        source.append("); \n }); \n");
+    source.append(colorControlBlackBerryJs, sizeof(colorControlBlackBerryJs));
+    source.append("</script>\n");
+    source.append("</body> </html>\n");
+    m_source = source.toString();
+}
+
+void ColorPickerClient::closePopup()
+{
+    ASSERT(m_webPage);
+    m_webPage->m_page->chrome()->client()->closePagePopup(0);
+}
+
+IntSize ColorPickerClient::contentSize()
+{
+    // FIXME: will generate content size dynamically
+    return IntSize(320, 256);
+}
+
+String ColorPickerClient::htmlSource() const
+{
+    return m_source;
+}
+
+void ColorPickerClient::setValueAndClosePopup(int, const String& value)
+{
+    ASSERT(m_element);
+
+    static const char* cancelValue = "-1";
+    if (value != cancelValue)
+        m_element->setValue(value);
+    closePopup();
+}
+
+void ColorPickerClient::didClosePopup()
+{
+    m_webPage = 0;
+    m_element = 0;
+}
+
+void ColorPickerClient::writeDocument(DocumentWriter& writer)
+{
+    CString sourceString = m_source.utf8();
+    writer.addData(sourceString.data(), sourceString.length());
+}
+}

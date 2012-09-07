@@ -1,3 +1,30 @@
+2012-09-06  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry]  Implement a color picker
+        https://bugs.webkit.org/show_bug.cgi?id=96001
+
+        Reviewed by Rob Buis.
+
+        Add files for color picker, replace old hook to AIR color picker.
+
+        * WebCoreSupport/ColorPickerClient.cpp: Added.
+        (WebCore):
+        (WebCore::ColorPickerClient::ColorPickerClient):
+        (WebCore::ColorPickerClient::~ColorPickerClient):
+        (WebCore::ColorPickerClient::generateHTML):
+        (WebCore::ColorPickerClient::closePopup):
+        (WebCore::ColorPickerClient::contentSize):
+        (WebCore::ColorPickerClient::htmlSource):
+        (WebCore::ColorPickerClient::setValueAndClosePopup):
+        (WebCore::ColorPickerClient::didClosePopup):
+        (WebCore::ColorPickerClient::writeDocument):
+        * WebCoreSupport/ColorPickerClient.h: Added.
+        (WebKit):
+        (WebCore):
+        (ColorPickerClient):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::openColorPopup):
+
 2012-09-06  Genevieve Mak  <gmak@rim.com>
 
         Add data-blackberry-webworks-context attribute and set the custom context when
