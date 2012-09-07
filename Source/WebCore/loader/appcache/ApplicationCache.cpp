@@ -31,11 +31,17 @@
 #include "ApplicationCacheStorage.h"
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
-#include <wtf/text/CString.h>
+#include <algorithm>
 #include <stdio.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
  
+static inline bool fallbackURLLongerThan(const std::pair<KURL, KURL>& lhs, const std::pair<KURL, KURL>& rhs)
+{
+    return lhs.first.string().length() > rhs.first.string().length();
+}
+
 ApplicationCache::ApplicationCache()
     : m_group(0)
     , m_manifest(0)
@@ -159,6 +165,8 @@ void ApplicationCache::setFallbackURLs(const FallbackURLVector& fallbackURLs)
 {
     ASSERT(m_fallbackURLs.isEmpty());
     m_fallbackURLs = fallbackURLs;
+    // FIXME: What's the right behavior if we have 2 or more identical namespace URLs?
+    std::stable_sort(m_fallbackURLs.begin(), m_fallbackURLs.end(), fallbackURLLongerThan);
 }
 
 bool ApplicationCache::urlMatchesFallbackNamespace(const KURL& url, KURL* fallbackURL)

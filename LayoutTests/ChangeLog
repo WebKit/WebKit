@@ -1,3 +1,16 @@
+2012-09-07  Leo Yang  <leoyang@rim.com>
+
+        Appcache fallback URL match should use the longest candidate
+        https://bugs.webkit.org/show_bug.cgi?id=96126
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test with multiple candidates of fallback match.
+
+        * http/tests/appcache/multi-fallback-expected.txt: Added.
+        * http/tests/appcache/multi-fallback.html: Added.
+        * http/tests/appcache/resources/multi-fallback.manifest: Added.
+
 2012-09-07  Stephen Chenney  <schenney@chromium.org>
 
         Font data is purged while fonts are still using it
