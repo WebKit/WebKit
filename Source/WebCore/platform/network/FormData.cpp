@@ -32,9 +32,9 @@
 #include "FormDataBuilder.h"
 #include "FormDataList.h"
 #include "MIMETypeRegistry.h"
-#include "MemoryInstrumentation.h"
 #include "Page.h"
 #include "TextEncoding.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Decoder.h>
 #include <wtf/Encoder.h>
 

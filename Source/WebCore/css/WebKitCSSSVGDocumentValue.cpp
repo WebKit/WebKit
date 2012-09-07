@@ -30,7 +30,7 @@
 #include "CSSParser.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
-#include "MemoryInstrumentation.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
 

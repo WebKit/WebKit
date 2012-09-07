@@ -1149,7 +1149,6 @@ SET(WebCore_SOURCES
     dom/IdTargetObserver.cpp
     dom/IdTargetObserverRegistry.cpp
     dom/KeyboardEvent.cpp
-    dom/MemoryInstrumentation.cpp
     dom/MessageChannel.cpp
     dom/MessageEvent.cpp
     dom/MessagePortChannel.cpp
@@ -1215,6 +1214,7 @@ SET(WebCore_SOURCES
     dom/UserGestureIndicator.cpp
     dom/UserTypingGestureIndicator.cpp
     dom/ViewportArguments.cpp
+    dom/WebCoreMemoryInstrumentation.cpp
     dom/WebKitAnimationEvent.cpp
     dom/WebKitNamedFlow.cpp
     dom/WebKitTransitionEvent.cpp

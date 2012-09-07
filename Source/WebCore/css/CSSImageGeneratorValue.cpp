@@ -30,8 +30,8 @@
 #include "CSSCrossfadeValue.h"
 #include "CSSGradientValue.h"
 #include "Image.h"
-#include "MemoryInstrumentation.h"
 #include "RenderObject.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

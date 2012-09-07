@@ -30,7 +30,7 @@
 #include "config.h"
 #include "WebKitCSSArrayFunctionValue.h"
 
-#include "MemoryInstrumentation.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 #if ENABLE(CSS_SHADERS)
 

@@ -404,7 +404,6 @@ SOURCES += \
     dom/IdTargetObserver.cpp \
     dom/IdTargetObserverRegistry.cpp \
     dom/KeyboardEvent.cpp \
-    dom/MemoryInstrumentation.cpp \
     dom/MessageChannel.cpp \
     dom/MessageEvent.cpp \
     dom/MessagePort.cpp \
@@ -470,6 +469,7 @@ SOURCES += \
     dom/UserGestureIndicator.cpp \
     dom/UserTypingGestureIndicator.cpp \
     dom/ViewportArguments.cpp \
+    dom/WebCoreMemoryInstrumentation.cpp \
     dom/WebKitAnimationEvent.cpp \
     dom/WebKitTransitionEvent.cpp \
     dom/WheelEvent.cpp \
@@ -1612,6 +1612,7 @@ HEADERS += \
     dom/UIEventWithKeyState.h \
     dom/UserGestureIndicator.h \
     dom/ViewportArguments.h \
+    dom/WebCoreMemoryInstrumentation.h \
     dom/WebKitAnimationEvent.h \
     dom/WebKitNamedFlow.h \
     dom/WebKitTransitionEvent.h \

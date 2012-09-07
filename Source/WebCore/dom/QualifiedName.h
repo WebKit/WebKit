@@ -21,7 +21,7 @@
 #ifndef QualifiedName_h
 #define QualifiedName_h
 
-#include "MemoryInstrumentation.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 #include <wtf/HashTraits.h>
 #include <wtf/RefCounted.h>

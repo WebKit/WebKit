@@ -23,11 +23,11 @@
 #include "StyleRareInheritedData.h"
 
 #include "CursorList.h"
-#include "MemoryInstrumentation.h"
 #include "QuotesData.h"
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include "ShadowData.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
 

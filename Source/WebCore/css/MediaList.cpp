@@ -26,7 +26,7 @@
 #include "ExceptionCode.h"
 #include "MediaQuery.h"
 #include "MediaQueryExp.h"
-#include "MemoryInstrumentation.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

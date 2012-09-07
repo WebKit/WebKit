@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CSSTimingFunctionValue.h"
 
-#include "MemoryInstrumentation.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

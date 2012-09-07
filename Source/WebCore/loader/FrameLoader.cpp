@@ -77,7 +77,6 @@
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MainResourceLoader.h"
-#include "MemoryInstrumentation.h"
 #include "Page.h"
 #include "PageCache.h"
 #include "PageTransitionEvent.h"
@@ -99,6 +98,7 @@
 #include "SerializedScriptValue.h"
 #include "Settings.h"
 #include "TextResourceDecoder.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include "WindowFeatures.h"
 #include "XMLDocumentParser.h"
 #include <wtf/CurrentTime.h>

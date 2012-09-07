@@ -26,8 +26,8 @@
 #include "config.h"
 #include "ResourceRequestBase.h"
 
-#include "MemoryInstrumentation.h"
 #include "ResourceRequest.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 using namespace std;
 

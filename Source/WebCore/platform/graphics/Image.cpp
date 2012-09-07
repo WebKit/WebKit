@@ -34,8 +34,8 @@
 #include "IntRect.h"
 #include "Length.h"
 #include "MIMETypeRegistry.h"
-#include "MemoryInstrumentation.h"
 #include "SharedBuffer.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <math.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>

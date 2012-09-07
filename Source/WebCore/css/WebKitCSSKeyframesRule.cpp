@@ -29,9 +29,9 @@
 #include "CSSParser.h"
 #include "CSSRuleList.h"
 #include "CSSStyleSheet.h"
-#include "MemoryInstrumentation.h"
 #include "StylePropertySet.h"
 #include "StyleSheet.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include "WebKitCSSKeyframeRule.h"
 #include <wtf/text/StringBuilder.h>
 

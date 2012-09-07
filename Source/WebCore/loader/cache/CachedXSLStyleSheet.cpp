@@ -29,9 +29,9 @@
 
 #include "CachedResourceClientWalker.h"
 #include "CachedStyleSheetClient.h"
-#include "MemoryInstrumentation.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

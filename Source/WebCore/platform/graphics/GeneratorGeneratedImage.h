@@ -31,8 +31,8 @@
 #include "Image.h"
 #include "ImageBuffer.h"
 #include "IntSize.h"
-#include "MemoryInstrumentation.h"
 #include "Timer.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

@@ -33,8 +33,8 @@
 
 #include "CSSValueList.h"
 #include "Length.h"
-#include "MemoryInstrumentation.h"
 #include "StyleResolver.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>

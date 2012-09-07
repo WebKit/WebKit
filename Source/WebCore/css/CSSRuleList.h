@@ -22,7 +22,7 @@
 #ifndef CSSRuleList_h
 #define CSSRuleList_h
 
-#include "MemoryInstrumentation.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

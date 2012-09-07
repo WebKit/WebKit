@@ -33,10 +33,10 @@
 #include "Image.h"
 #include "IntSize.h"
 #include "IntSizeHash.h"
-#include "MemoryInstrumentation.h"
 #include "NodeRenderStyle.h"
 #include "RenderObject.h"
 #include "StyleResolver.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 

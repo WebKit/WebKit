@@ -32,13 +32,13 @@
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "MediaList.h"
-#include "MemoryInstrumentation.h"
 #include "Node.h"
 #include "SVGNames.h"
 #include "SecurityOrigin.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

@@ -31,10 +31,10 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "MemoryInstrumentation.h"
 #include "RuntimeApplicationChecks.h"
 #include "ScriptExecutionContext.h"
 #include "SuspendableTimer.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
     

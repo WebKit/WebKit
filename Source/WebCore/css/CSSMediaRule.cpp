@@ -27,8 +27,8 @@
 #include "CSSRuleList.h"
 #include "CSSStyleSheet.h"
 #include "ExceptionCode.h"
-#include "MemoryInstrumentation.h"
 #include "StyleRule.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

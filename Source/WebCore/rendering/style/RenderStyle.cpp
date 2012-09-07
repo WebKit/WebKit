@@ -28,7 +28,6 @@
 #include "CSSPropertyNames.h"
 #include "Font.h"
 #include "FontSelector.h"
-#include "MemoryInstrumentation.h"
 #include "QuotesData.h"
 #include "RenderArena.h"
 #include "RenderObject.h"
@@ -40,6 +39,7 @@
 #if ENABLE(TOUCH_EVENTS)
 #include "RenderTheme.h"
 #endif
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/StdLibExtras.h>
 #include <algorithm>
 

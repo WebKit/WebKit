@@ -32,9 +32,9 @@
 #if ENABLE(CSS_SHADERS)
 
 #include "CachedShader.h"
-#include "MemoryInstrumentation.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

@@ -47,11 +47,11 @@
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "MainResourceLoader.h"
-#include "MemoryInstrumentation.h"
 #include "Page.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

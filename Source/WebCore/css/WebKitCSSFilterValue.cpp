@@ -29,7 +29,7 @@
 #if ENABLE(CSS_FILTERS)
 
 #include "CSSValueList.h"
-#include "MemoryInstrumentation.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 

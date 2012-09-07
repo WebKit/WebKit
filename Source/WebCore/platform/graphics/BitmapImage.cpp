@@ -31,8 +31,8 @@
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
-#include "MemoryInstrumentation.h"
 #include "Timer.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

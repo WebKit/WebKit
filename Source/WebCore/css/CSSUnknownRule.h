@@ -23,7 +23,7 @@
 #define CSSUnknownRule_h
 
 #include "CSSRule.h"
-#include "MemoryInstrumentation.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
 

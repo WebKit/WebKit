@@ -28,9 +28,9 @@
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "MemoryCache.h"
-#include "MemoryInstrumentation.h"
 #include "StyleCachedImage.h"
 #include "StylePendingImage.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
 

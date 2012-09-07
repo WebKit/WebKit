@@ -32,6 +32,7 @@
 
 #include "DataRef.h"
 #include "MemoryInstrumentationImpl.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 #include <gtest/gtest.h>
 

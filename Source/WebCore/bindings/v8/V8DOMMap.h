@@ -31,7 +31,7 @@
 #ifndef V8DOMMap_h
 #define V8DOMMap_h
 
-#include "MemoryInstrumentation.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <v8.h>

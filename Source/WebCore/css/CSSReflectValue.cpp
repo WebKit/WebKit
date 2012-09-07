@@ -27,7 +27,7 @@
 #include "CSSReflectValue.h"
 
 #include "CSSPrimitiveValue.h"
-#include "MemoryInstrumentation.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 using namespace std;

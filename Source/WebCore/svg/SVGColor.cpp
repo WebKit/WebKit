@@ -25,9 +25,9 @@
 #include "SVGColor.h"
 
 #include "CSSParser.h"
-#include "MemoryInstrumentation.h"
 #include "RGBColor.h"
 #include "SVGException.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
 

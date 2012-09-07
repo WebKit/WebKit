@@ -29,9 +29,9 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"
-#include "MemoryInstrumentation.h"
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {

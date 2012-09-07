@@ -32,8 +32,8 @@
 #include "DOMDataStore.h"
 
 #include "DOMData.h"
-#include "MemoryInstrumentation.h"
 #include "V8Binding.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {

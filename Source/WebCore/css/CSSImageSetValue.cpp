@@ -33,10 +33,10 @@
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
-#include "MemoryInstrumentation.h"
 #include "Page.h"
 #include "StyleCachedImageSet.h"
 #include "StylePendingImage.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
 

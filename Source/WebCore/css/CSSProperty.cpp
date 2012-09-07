@@ -22,9 +22,9 @@
 #include "CSSProperty.h"
 
 #include "CSSValueList.h"
-#include "MemoryInstrumentation.h"
 #include "RenderStyleConstants.h"
 #include "StylePropertyShorthand.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 #if ENABLE(CSS_VARIABLES)
 #include "CSSVariableValue.h"

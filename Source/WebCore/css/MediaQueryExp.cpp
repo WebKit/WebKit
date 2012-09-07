@@ -32,7 +32,7 @@
 #include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
-#include "MemoryInstrumentation.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

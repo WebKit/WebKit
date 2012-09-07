@@ -26,9 +26,9 @@
 #include "config.h"
 #include "WebKitCSSKeyframeRule.h"
 
-#include "MemoryInstrumentation.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertySet.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include "WebKitCSSKeyframesRule.h"
 #include <wtf/text/StringBuilder.h>
 

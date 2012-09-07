@@ -29,7 +29,7 @@
 #include "config.h"
 #include "CSSAspectRatioValue.h"
 
-#include "MemoryInstrumentation.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

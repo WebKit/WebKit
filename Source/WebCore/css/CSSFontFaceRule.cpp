@@ -22,9 +22,9 @@
 #include "config.h"
 #include "CSSFontFaceRule.h"
 
-#include "MemoryInstrumentation.h"
 #include "StylePropertySet.h"
 #include "StyleRule.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

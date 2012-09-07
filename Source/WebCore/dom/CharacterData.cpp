@@ -26,7 +26,6 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
-#include "MemoryInstrumentation.h"
 #include "MutationEvent.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
@@ -35,6 +34,7 @@
 #include "StyleInheritedData.h"
 #include "TextBreakIterator.h"
 #include "UndoManager.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 using namespace std;
 

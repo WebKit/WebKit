@@ -49,7 +49,6 @@
 #include "FontFeatureSettings.h"
 #include "FontFeatureValue.h"
 #include "FontValue.h"
-#include "MemoryInstrumentation.h"
 #include "Pair.h"
 #include "Rect.h"
 #include "RenderBox.h"
@@ -59,6 +58,7 @@
 #include "StyleInheritedData.h"
 #include "StylePropertySet.h"
 #include "StylePropertyShorthand.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/text/StringBuilder.h>

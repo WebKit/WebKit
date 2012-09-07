@@ -31,10 +31,10 @@
 #include "CachedResourceLoader.h"
 #include "CrossfadeGeneratedImage.h"
 #include "ImageBuffer.h"
-#include "MemoryInstrumentation.h"
 #include "RenderObject.h"
 #include "StyleCachedImage.h"
 #include "StyleGeneratedImage.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

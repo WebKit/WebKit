@@ -26,12 +26,12 @@
 #include "CSSStyleSheet.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
-#include "MemoryInstrumentation.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
 #include "StylePropertySet.h"
 #include "StyledElement.h"
 #include "UndoManager.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 using namespace std;
 

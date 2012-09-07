@@ -28,8 +28,8 @@
 #include "ResourceResponseBase.h"
 
 #include "HTTPParsers.h"
-#include "MemoryInstrumentation.h"
 #include "ResourceResponse.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>

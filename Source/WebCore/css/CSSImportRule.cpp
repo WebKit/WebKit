@@ -27,10 +27,10 @@
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "MediaList.h"
-#include "MemoryInstrumentation.h"
 #include "SecurityOrigin.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

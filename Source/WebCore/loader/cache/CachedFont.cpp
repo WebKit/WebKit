@@ -36,9 +36,9 @@
 #include "CachedResourceLoader.h"
 #include "FontPlatformData.h"
 #include "MemoryCache.h"
-#include "MemoryInstrumentation.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Vector.h>
 
 #ifdef STORE_FONT_CUSTOM_PLATFORM_DATA

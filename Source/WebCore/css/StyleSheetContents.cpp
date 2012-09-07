@@ -26,12 +26,12 @@
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
 #include "Document.h"
-#include "MemoryInstrumentation.h"
 #include "Node.h"
 #include "SecurityOrigin.h"
 #include "StylePropertySet.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Deque.h>
 
 namespace WebCore {

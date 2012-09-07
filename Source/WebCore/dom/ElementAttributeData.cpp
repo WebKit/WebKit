@@ -29,8 +29,8 @@
 #include "Attr.h"
 #include "CSSParser.h"
 #include "CSSStyleSheet.h"
-#include "MemoryInstrumentation.h"
 #include "StyledElement.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
 

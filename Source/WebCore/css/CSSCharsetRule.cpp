@@ -21,7 +21,7 @@
 #include "config.h"
 #include "CSSCharsetRule.h"
 
-#include "MemoryInstrumentation.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
 

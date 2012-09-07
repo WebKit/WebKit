@@ -28,7 +28,7 @@
 
 #include "CSSParserValues.h"
 #include "CSSValueList.h"
-#include "MemoryInstrumentation.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 

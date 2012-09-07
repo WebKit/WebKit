@@ -24,9 +24,9 @@
 #if ENABLE(SVG)
 #include "SVGPaint.h"
 
-#include "MemoryInstrumentation.h"
 #include "SVGException.h"
 #include "SVGURIReference.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

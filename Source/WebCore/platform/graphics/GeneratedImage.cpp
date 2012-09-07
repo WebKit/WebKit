@@ -32,7 +32,7 @@
 #include "GeneratedImage.h"
 
 #include "FloatSize.h"
-#include "MemoryInstrumentation.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 
 namespace WebCore {

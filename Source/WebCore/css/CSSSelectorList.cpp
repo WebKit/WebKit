@@ -28,7 +28,7 @@
 #include "CSSSelectorList.h"
 
 #include "CSSParserValues.h"
-#include "MemoryInstrumentation.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

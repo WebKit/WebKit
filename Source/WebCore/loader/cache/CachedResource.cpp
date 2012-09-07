@@ -37,12 +37,12 @@
 #include "InspectorInstrumentation.h"
 #include "KURL.h"
 #include "Logging.h"
-#include "MemoryInstrumentation.h"
 #include "PurgeableBuffer.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadScheduler.h"
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RefCountedLeakCounter.h>

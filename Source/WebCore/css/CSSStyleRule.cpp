@@ -26,10 +26,10 @@
 #include "CSSSelector.h"
 #include "CSSStyleSheet.h"
 #include "Document.h"
-#include "MemoryInstrumentation.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertySet.h"
 #include "StyleRule.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

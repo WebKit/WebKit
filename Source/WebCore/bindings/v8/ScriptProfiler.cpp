@@ -33,13 +33,13 @@
 #include "ScriptProfiler.h"
 
 #include "BindingVisitors.h"
-#include "MemoryInstrumentation.h"
 #include "RetainedDOMInfo.h"
 #include "ScriptObject.h"
 #include "V8ArrayBufferView.h"
 #include "V8Binding.h"
 #include "V8DOMMap.h"
 #include "V8Node.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include "WrapperTypeInfo.h"
 
 #include <v8-profiler.h>

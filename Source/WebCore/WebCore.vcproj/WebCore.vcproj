@@ -51883,10 +51883,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\MemoryInstrumentation.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\MemoryInstrumentation.h"
 				>
 			</File>
@@ -55304,6 +55300,14 @@
 			</File>
 			<File
 				RelativePath="..\dom\DOMNamedFlowCollection.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\WebCoreMemoryInstrumentation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\WebCoreMemoryInstrumentation.h"
 				>
 			</File>
 			<File

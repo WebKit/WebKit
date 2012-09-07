@@ -29,10 +29,10 @@
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "FontCustomPlatformData.h"
-#include "MemoryInstrumentation.h"
 #include "Node.h"
 #include "SVGFontFaceElement.h"
 #include "StyleSheetContents.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

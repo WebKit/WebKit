@@ -34,7 +34,7 @@
 #include "CSSParserValues.h"
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
-#include "MemoryInstrumentation.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
 

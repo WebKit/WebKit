@@ -27,7 +27,7 @@
 #include "WebKitCSSTransformValue.h"
 
 #include "CSSValueList.h"
-#include "MemoryInstrumentation.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>

@@ -23,7 +23,6 @@
 #include "StyleRareNonInheritedData.h"
 
 #include "ContentData.h"
-#include "MemoryInstrumentation.h"
 #include "RenderCounter.h"
 #include "RenderStyle.h"
 #include "ShadowData.h"
@@ -31,6 +30,7 @@
 #include "StyleTransformData.h"
 #include "StyleImage.h"
 #include "StyleResolver.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
 
