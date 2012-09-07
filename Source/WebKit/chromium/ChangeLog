@@ -1,5 +1,16 @@
 2012-09-07  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Move some CC unit tests into correct gyp variable
+        https://bugs.webkit.org/show_bug.cgi?id=96048
+
+        Reviewed by Adrienne Walker.
+
+        These tests are testing compositor internals, so they belong in the webkit_compositor_unittest_files variable.
+
+        * WebKit.gypi:
+
+2012-09-07  James Robinson  <jamesr@chromium.org>
+
         [chromium] Remove dead CCActiveGestureAnimation code and related classes
         https://bugs.webkit.org/show_bug.cgi?id=96075
 
