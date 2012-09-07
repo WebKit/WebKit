@@ -1,3 +1,15 @@
+2012-09-07  Nat Duca  <nduca@chromium.org>
+        [chromium] Allow enumeration of WebRenderingStats structure
+        https://bugs.webkit.org/show_bug.cgi?id=94565
+
+        Reviewed by James Robinson.
+
+        * chromium/public/WebRenderingStats.h:
+        (WebRenderingStats):
+        (Enumerator):
+        (WebKit::WebRenderingStats::Enumerator::~Enumerator):
+        (WebKit::WebRenderingStats::enumerateFields):
+
 2012-09-07  Yoshifumi Inoue  <yosin@chromium.org>
 
         We should have a localized string of empty for date time field
