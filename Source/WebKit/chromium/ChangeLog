@@ -1,3 +1,18 @@
+2012-09-07  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Clean up dependencies in ScrollbarLayerChromiumTest
+        https://bugs.webkit.org/show_bug.cgi?id=96052
+
+        Reviewed by Adrienne Walker.
+
+        Fixes two minor but annoying dependencies in ScrollbarLayerChromiumTest:
+        *) WebScrollbarImpl.h is #included, but not use
+        *) The two-arg constructor of WebThemeScrollbarPainter is used, but this is guarded by #if
+            WEBKIT_IMPLEMENTATION. The no-arg c'tor does the right thing for this test.
+
+        * tests/ScrollbarLayerChromiumTest.cpp:
+        (WebCore::TEST):
+
 2012-09-07  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: ARIA spin button should support range value attributes

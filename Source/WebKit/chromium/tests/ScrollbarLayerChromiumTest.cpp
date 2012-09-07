@@ -31,7 +31,6 @@
 #include "CCSingleThreadProxy.h"
 #include "FakeWebScrollbarThemeGeometry.h"
 #include "TreeSynchronizer.h"
-#include "WebScrollbarImpl.h"
 #include <gtest/gtest.h>
 #include <public/WebScrollbar.h>
 #include <public/WebScrollbarThemeGeometry.h>
@@ -68,7 +67,7 @@ TEST(ScrollbarLayerChromiumTest, resolveScrollLayerPointer)
 {
     DebugScopedSetImplThread impl;
 
-    WebKit::WebScrollbarThemePainter painter(0, 0);
+    WebKit::WebScrollbarThemePainter painter;
 
     {
         OwnPtr<WebKit::WebScrollbar> scrollbar(FakeWebScrollbar::create());
@@ -109,7 +108,7 @@ TEST(ScrollbarLayerChromiumTest, scrollOffsetSynchronization)
 {
     DebugScopedSetImplThread impl;
 
-    WebKit::WebScrollbarThemePainter painter(0, 0);
+    WebKit::WebScrollbarThemePainter painter;
 
     OwnPtr<WebKit::WebScrollbar> scrollbar(FakeWebScrollbar::create());
     RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
