@@ -572,7 +572,7 @@ class CheckerDispatcher(object):
         elif file_extension == _PNG_FILE_EXTENSION:
             return FileType.PNG
         elif ((not file_extension and os.path.join("Tools", "Scripts") in file_path) or
-              file_extension in _TEXT_FILE_EXTENSIONS):
+              file_extension in _TEXT_FILE_EXTENSIONS or os.path.basename(file_path) == 'TestExpectations'):
             return FileType.TEXT
         else:
             return FileType.NONE

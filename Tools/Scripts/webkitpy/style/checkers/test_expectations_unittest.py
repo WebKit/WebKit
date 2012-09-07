@@ -93,8 +93,7 @@ class TestExpectationsTestCase(unittest.TestCase):
         # Now use a test port so we can check the lines.
         checker._port_obj = host.port_factory.get('test-mac-leopard')
         checker.check_test_expectations(expectations_str='\n'.join(lines),
-                                        tests=[self._test_file],
-                                        overrides=None)
+                                        tests=[self._test_file])
         checker.check_tabs(lines)
         if should_pass:
             self.assertEqual('', self._error_collector.get_errors())
