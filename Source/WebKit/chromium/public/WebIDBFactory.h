@@ -41,6 +41,7 @@ namespace WebKit {
 
 class WebFrame;
 class WebIDBDatabase;
+class WebIDBDatabaseCallbacks;
 class WebSecurityOrigin;
 
 // The entry point into the IndexedDatabase API.  These classes match their Foo and
@@ -54,15 +55,12 @@ public:
 
     virtual void getDatabaseNames(WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
 
-    // FIXME: Delete this method when derived classes in chromium have
-    // implemented the other open method.
-    virtual void open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir)
-    {
-        open(name, WebIDBMetadata::NoIntVersion, callbacks, origin, frame, dataDir);
-    }
-
+    // FIXME: This overload should be removed when WK90411 lands.
     // The WebKit implementation of open ignores the WebFrame* parameter.
     virtual void open(const WebString& name, long long version, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
+
+    // The WebKit implementation of open ignores the WebFrame* parameter.
+    virtual void open(const WebString& name, long long version, WebIDBCallbacks* callbacks, WebIDBDatabaseCallbacks* databaseCallbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
 
     virtual void deleteDatabase(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
 };

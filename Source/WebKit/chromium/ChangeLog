@@ -1,3 +1,21 @@
+2012-09-07  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB: public WebKit API changes for consolidating two-phase connect
+        https://bugs.webkit.org/show_bug.cgi?id=96122
+
+        Reviewed by Adam Barth.
+
+        Prep work for landing Chromium side of http://webkit.org/b/90411 - the IDBFactory
+        open() method now takes the "database callbacks", rather than being sent through
+        in a later call.
+
+        Also, delete an obsolete method.
+
+        * public/WebIDBFactory.h:
+        (WebKit):
+        (WebIDBFactory): Delete pre-version overload of open().
+        (WebKit::WebIDBFactory::open): Add overload that takes WebIDBDatabaseCallbacks.
+
 2012-09-07  Sami Kyostila  <skyostil@google.com>
 
         [Chromium] GraphicsLayerChromiumTest::applyScrollToScrollableArea() is failing
