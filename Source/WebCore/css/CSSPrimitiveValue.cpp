@@ -91,7 +91,9 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::Unit
     case CSSPrimitiveValue:: CSS_ATTR:
     case CSSPrimitiveValue:: CSS_COUNTER:
     case CSSPrimitiveValue:: CSS_COUNTER_NAME:
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     case CSSPrimitiveValue:: CSS_DASHBOARD_REGION:
+#endif
 #if !ENABLE(CSS_IMAGE_RESOLUTION)
     case CSSPrimitiveValue:: CSS_DPPX:
     case CSSPrimitiveValue:: CSS_DPI:
@@ -365,11 +367,14 @@ CSSPrimitiveValue::~CSSPrimitiveValue()
 
 void CSSPrimitiveValue::cleanup()
 {
-    switch (m_primitiveUnitType) {
+    switch (static_cast<UnitTypes>(m_primitiveUnitType)) {
     case CSS_STRING:
     case CSS_URI:
     case CSS_ATTR:
     case CSS_COUNTER_NAME:
+#if ENABLE(CSS_VARIABLES)
+    case CSS_VARIABLE_NAME:
+#endif
     case CSS_PARSER_HEXCOLOR:
         if (m_value.string)
             m_value.string->deref();
@@ -386,7 +391,7 @@ void CSSPrimitiveValue::cleanup()
     case CSS_PAIR:
         m_value.pair->deref();
         break;
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     case CSS_DASHBOARD_REGION:
         if (m_value.region)
             m_value.region->deref();
@@ -394,6 +399,10 @@ void CSSPrimitiveValue::cleanup()
 #endif
     case CSS_CALC:
         m_value.calc->deref();
+        break;
+    case CSS_CALC_PERCENTAGE_WITH_NUMBER:
+    case CSS_CALC_PERCENTAGE_WITH_LENGTH:
+        ASSERT_NOT_REACHED();
         break;
     case CSS_SHAPE:
         m_value.shape->deref();
@@ -421,10 +430,14 @@ void CSSPrimitiveValue::cleanup()
     case CSS_VW:
     case CSS_VH:
     case CSS_VMIN:
+    case CSS_DPPX:
+    case CSS_DPI:
+    case CSS_DPCM:
     case CSS_IDENT:
     case CSS_RGBCOLOR:
     case CSS_DIMENSION:
     case CSS_UNKNOWN:
+    case CSS_UNICODE_RANGE:
     case CSS_PARSER_OPERATOR:
     case CSS_PARSER_IDENTIFIER:
         break;

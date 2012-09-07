@@ -124,7 +124,9 @@ PassRefPtr<CSSValue> CSSParserValue::createCSSValue()
     case CSSPrimitiveValue::CSS_DPI:
     case CSSPrimitiveValue::CSS_DPCM:
     case CSSPrimitiveValue::CSS_PAIR:
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     case CSSPrimitiveValue::CSS_DASHBOARD_REGION:
+#endif
     case CSSPrimitiveValue::CSS_UNICODE_RANGE:
     case CSSPrimitiveValue::CSS_PARSER_OPERATOR:
     case CSSPrimitiveValue::CSS_PARSER_INTEGER:
