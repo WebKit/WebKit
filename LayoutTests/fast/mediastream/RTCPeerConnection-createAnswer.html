@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests RTCPeerConnection createAnswer.");
+
+var pc = null;
+
+function requestFailed3(reason)
+{
+    testFailed('createAnswer request failed.');
+
+    finishJSTest();
+}
+
+function requestSucceeded3()
+{
+    testPassed('createAnswer request succeeded.');
+
+    finishJSTest();
+}
+
+function requestFailed2(reason)
+{
+    testFailed('setRemoteDescription request failed.');
+
+    finishJSTest();
+}
+
+function requestSucceeded2()
+{
+    testPassed('setRemoteDescription request succeeded.');
+
+    shouldNotThrow('pc.createAnswer(requestSucceeded3, requestFailed3);');
+}
+
+function requestFailed1()
+{
+    testPassed('createOffer request failed.');
+
+    sessionDescription = new RTCSessionDescription({type:"answer", sdp:"remote"});
+    shouldNotThrow('pc.setRemoteDescription(sessionDescription, requestSucceeded2, requestFailed2);');
+}
+
+function requestSucceeded1(sd)
+{
+    testFailed('createOffer request succeeded.');
+    finishJSTest();
+}
+
+pc = new webkitRTCPeerConnection(null, null);
+pc.createOffer(requestSucceeded1, requestFailed1);
+
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

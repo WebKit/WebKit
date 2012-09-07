@@ -48,6 +48,7 @@ public:
     virtual bool initialize(const WebRTCConfiguration&, const WebMediaConstraints&) = 0;
 
     virtual void createOffer(const WebRTCSessionDescriptionRequest&, const WebMediaConstraints&) = 0;
+    virtual void createAnswer(const WebRTCSessionDescriptionRequest&, const WebMediaConstraints&) = 0;
     virtual void setLocalDescription(const WebRTCVoidRequest&, const WebRTCSessionDescriptionDescriptor&) = 0;
     virtual void setRemoteDescription(const WebRTCVoidRequest&, const WebRTCSessionDescriptionDescriptor&) = 0;
     virtual WebRTCSessionDescriptionDescriptor localDescription() = 0;

@@ -83,6 +83,15 @@ void RTCPeerConnectionHandlerChromium::createOffer(PassRefPtr<RTCSessionDescript
     m_webHandler->createOffer(request, constraints);
 }
 
+void RTCPeerConnectionHandlerChromium::createAnswer(PassRefPtr<RTCSessionDescriptionRequest> request, PassRefPtr<MediaConstraints> constraints)
+{
+    // FIXME: Should the error callback be triggered here?
+    if (!m_webHandler)
+        return;
+
+    m_webHandler->createAnswer(request, constraints);
+}
+
 void RTCPeerConnectionHandlerChromium::setLocalDescription(PassRefPtr<RTCVoidRequest> request, PassRefPtr<RTCSessionDescriptionDescriptor> sessionDescription)
 {
     if (!m_webHandler)

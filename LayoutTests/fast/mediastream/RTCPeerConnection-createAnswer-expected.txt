@@ -1,0 +1,14 @@
+Tests RTCPeerConnection createAnswer.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS createOffer request failed.
+PASS pc.setRemoteDescription(sessionDescription, requestSucceeded2, requestFailed2); did not throw exception.
+PASS setRemoteDescription request succeeded.
+PASS pc.createAnswer(requestSucceeded3, requestFailed3); did not throw exception.
+PASS createAnswer request succeeded.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

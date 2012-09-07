@@ -13,7 +13,7 @@ function requestFailed2()
 {
     testPassed('requestFailed was called.');
 
-    shouldBe('pc.localDescription.sdp', '"sdp1"');
+    shouldBe('pc.localDescription.type', '"offer"');
     finishJSTest();
 }
 
@@ -33,12 +33,12 @@ function requestSucceeded1()
 {
     testPassed('requestSucceeded was called.');
 
-    sessionDescription = new RTCSessionDescription({type:"answer", sdp:"sdp2"});
+    sessionDescription = new RTCSessionDescription({type:"answer", sdp:"remote"});
     shouldNotThrow('pc.setLocalDescription(sessionDescription, requestSucceeded2, requestFailed2);');
 }
 
 pc = new webkitRTCPeerConnection(null, null);
-var sessionDescription = new RTCSessionDescription({type:"offer", sdp:"sdp1"});
+var sessionDescription = new RTCSessionDescription({type:"offer", sdp:"local"});
 shouldNotThrow('pc.setLocalDescription(sessionDescription, requestSucceeded1, requestFailed1);');
 
 

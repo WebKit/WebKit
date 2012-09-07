@@ -1,3 +1,19 @@
+2012-09-07  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: add RTCPeerConnection::createAnswer
+        https://bugs.webkit.org/show_bug.cgi?id=96092
+
+        Reviewed by Adam Barth.
+
+        * fast/mediastream/RTCPeerConnection-createAnswer-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-createAnswer.html: Added.
+        * fast/mediastream/RTCPeerConnection-createOffer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-createOffer.html:
+        * fast/mediastream/RTCPeerConnection-localDescription-expected.txt:
+        * fast/mediastream/RTCPeerConnection-localDescription.html:
+        * fast/mediastream/RTCPeerConnection-remoteDescription-expected.txt:
+        * fast/mediastream/RTCPeerConnection-remoteDescription.html:
+
 2012-09-07  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Unreviewed. Update test expectation media/video-set-rate-from-pause.html on Android.

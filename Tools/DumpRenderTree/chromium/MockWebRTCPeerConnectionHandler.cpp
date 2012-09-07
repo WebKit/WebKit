@@ -154,7 +154,17 @@ void MockWebRTCPeerConnectionHandler::createOffer(const WebRTCSessionDescription
     WebString shouldSucceed;
     if (constraints.getMandatoryConstraintValue("succeed", shouldSucceed) && shouldSucceed == "true") {
         WebRTCSessionDescriptionDescriptor sessionDescription;
-        sessionDescription.initialize("offer", "Some SDP here");
+        sessionDescription.initialize("offer", "local");
+        postTask(new RTCSessionDescriptionRequestSuccededTask(this, request, sessionDescription));
+    } else
+        postTask(new RTCSessionDescriptionRequestFailedTask(this, request));
+}
+
+void MockWebRTCPeerConnectionHandler::createAnswer(const WebRTCSessionDescriptionRequest& request, const WebMediaConstraints&)
+{
+    if (!m_remoteDescription.isNull()) {
+        WebRTCSessionDescriptionDescriptor sessionDescription;
+        sessionDescription.initialize("answer", "local");
         postTask(new RTCSessionDescriptionRequestSuccededTask(this, request, sessionDescription));
     } else
         postTask(new RTCSessionDescriptionRequestFailedTask(this, request));
@@ -162,7 +172,7 @@ void MockWebRTCPeerConnectionHandler::createOffer(const WebRTCSessionDescription
 
 void MockWebRTCPeerConnectionHandler::setLocalDescription(const WebRTCVoidRequest& request, const WebRTCSessionDescriptionDescriptor& localDescription)
 {
-    if (!localDescription.isNull() && localDescription.type() == "offer") {
+    if (!localDescription.isNull() && localDescription.sdp() == "local") {
         m_localDescription = localDescription;
         postTask(new RTCVoidRequestTask(this, request, true));
     } else
@@ -171,7 +181,7 @@ void MockWebRTCPeerConnectionHandler::setLocalDescription(const WebRTCVoidReques
 
 void MockWebRTCPeerConnectionHandler::setRemoteDescription(const WebRTCVoidRequest& request, const WebRTCSessionDescriptionDescriptor& remoteDescription)
 {
-    if (!remoteDescription.isNull() && remoteDescription.type() == "answer") {
+    if (!remoteDescription.isNull() && remoteDescription.sdp() == "remote") {
         m_remoteDescription = remoteDescription;
         postTask(new RTCVoidRequestTask(this, request, true));
     } else

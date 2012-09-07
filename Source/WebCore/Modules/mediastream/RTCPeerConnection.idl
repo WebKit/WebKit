@@ -41,6 +41,9 @@ module mediastream {
         void createOffer(in [Callback] RTCSessionDescriptionCallback successCallback, in [Callback,Optional=DefaultIsUndefined] RTCErrorCallback failureCallback, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints)
             raises(DOMException);
 
+        void createAnswer(in [Callback] RTCSessionDescriptionCallback successCallback, in [Callback, Optional=DefaultIsUndefined] RTCErrorCallback failureCallback, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints)
+            raises(DOMException);
+
         void setLocalDescription(in RTCSessionDescription description, in [Callback, Optional=DefaultIsUndefined] VoidCallback successCallback, in [Callback, Optional=DefaultIsUndefined] RTCErrorCallback failureCallback)
             raises(DOMException);
         readonly attribute RTCSessionDescription localDescription

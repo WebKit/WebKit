@@ -1,3 +1,13 @@
+2012-09-07  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: add RTCPeerConnection::createAnswer
+        https://bugs.webkit.org/show_bug.cgi?id=96092
+
+        Reviewed by Adam Barth.
+
+        * chromium/public/WebRTCPeerConnectionHandler.h:
+        (WebRTCPeerConnectionHandler):
+
 2012-09-07  Ian Vollick  <vollick@chromium.org>
 
         [chromium] We should accelerate all transformations, except when we must blend matrices that cannot be decomposed.

@@ -49,6 +49,7 @@ public:
     virtual bool initialize(const WebKit::WebRTCConfiguration&, const WebKit::WebMediaConstraints&) OVERRIDE;
 
     virtual void createOffer(const WebKit::WebRTCSessionDescriptionRequest&, const WebKit::WebMediaConstraints&) OVERRIDE;
+    virtual void createAnswer(const WebKit::WebRTCSessionDescriptionRequest&, const WebKit::WebMediaConstraints&) OVERRIDE;
     virtual void setLocalDescription(const WebKit::WebRTCVoidRequest&, const WebKit::WebRTCSessionDescriptionDescriptor&) OVERRIDE;
     virtual void setRemoteDescription(const WebKit::WebRTCVoidRequest&, const WebKit::WebRTCSessionDescriptionDescriptor&) OVERRIDE;
     virtual WebKit::WebRTCSessionDescriptionDescriptor localDescription() OVERRIDE;

@@ -7,7 +7,7 @@ PASS pc.setRemoteDescription(sessionDescription, requestSucceeded1, requestFaile
 PASS requestSucceeded was called.
 PASS pc.setRemoteDescription(sessionDescription, requestSucceeded2, requestFailed2); did not throw exception.
 PASS requestFailed was called.
-PASS pc.remoteDescription.sdp is "sdp1"
+PASS pc.remoteDescription.type is "answer"
 PASS successfullyParsed is true
 
 TEST COMPLETE
