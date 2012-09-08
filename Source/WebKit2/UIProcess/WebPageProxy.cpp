@@ -2962,6 +2962,8 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const W
     }
 
     m_activeContextMenu = m_pageClient->createContextMenuProxy(this);
+    if (!m_activeContextMenu)
+        return;
 
     // Since showContextMenu() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer()->stop();
