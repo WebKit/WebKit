@@ -1,3 +1,16 @@
+2012-09-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r127938.
+        http://trac.webkit.org/changeset/127938
+        https://bugs.webkit.org/show_bug.cgi?id=96166
+
+        It broke the build (Requested by smfr on #webkit).
+
+        * llint/LowLevelInterpreter.cpp:
+        (JSC):
+        (JSC::CLoop::execute):
+        * offlineasm/cloop.rb:
+
 2012-09-07  Geoffrey Garen  <ggaren@apple.com>
 
         Refactored bytecode generator initialization to support moving captured vars around

@@ -1,3 +1,13 @@
+2012-09-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r127938.
+        http://trac.webkit.org/changeset/127938
+        https://bugs.webkit.org/show_bug.cgi?id=96166
+
+        It broke the build (Requested by smfr on #webkit).
+
+        * wtf/Assertions.h:
+
 2012-09-07  Mark Lam  <mark.lam@apple.com>
 
         Fixed ASSERT() and ASSERT_AT() macros so that they can be used in

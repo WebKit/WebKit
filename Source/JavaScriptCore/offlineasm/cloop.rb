@@ -172,7 +172,7 @@ class Address
     def pointerExpr
         if base.is_a? RegisterID and base.name == "sp" 
             offsetValue = "#{offset.value}"
-            "(ASSERT(#{offsetValue} == offsetof(JITStackFrame, globalData)), &sp->globalData)"
+            "(assert(#{offsetValue} == offsetof(JITStackFrame, globalData)), &sp->globalData)"
         elsif offset.value == 0
             "#{base.clValue(:int8Ptr)}"
         elsif offset.value > 0
@@ -236,7 +236,7 @@ class BaseIndex
     def pointerExpr
         if base.is_a? RegisterID and base.name == "sp"
             offsetValue = "(#{index.clValue(:int32)} << #{scaleShift}) + #{offset.clValue})"
-            "(ASSERT(#{offsetValue} == offsetof(JITStackFrame, globalData)), &sp->globalData)"
+            "(assert(#{offsetValue} == offsetof(JITStackFrame, globalData)), &sp->globalData)"
         else
             "#{base.clValue(:int8Ptr)} + (#{index.clValue(:int32)} << #{scaleShift}) + #{offset.clValue}"
         end

@@ -36,7 +36,6 @@
 #include "LLintCLoop.h"
 #include "LLintSlowPaths.h"
 #include "VMInspector.h"
-#include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 
 using namespace JSC::LLInt;
@@ -99,10 +98,6 @@ using namespace JSC::LLInt;
 #define OFFLINE_ASM_LOCAL_LABEL(label)   label:
 
 
-//============================================================================
-// Some utilities:
-//
-
 namespace JSC {
 namespace LLInt {
 
@@ -121,15 +116,11 @@ static double Ints2Double(uint32_t lo, uint32_t hi)
 } // namespace LLint
 
 
-//============================================================================
-// The llint C++ interpreter loop:
-//
-
 JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
                        bool isInitializationPass)
 {
     #define CAST reinterpret_cast
-    #define SIGN_BIT32(x) ((x) & 0x80000000)
+    #define SIGN_BIT32(x) (x & 0x80000000)
 
     // One-time initialization of our address tables. We have to put this code
     // here because our labels are only in scope inside this function. The
